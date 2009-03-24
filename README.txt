@@ -1,3 +1,7 @@
+h1. Have a Cuke, Duke
+
+Cucumber runs on Java!
+
 History.txt entry for Cucumber when this is complete:
 
 This version also brings Cucumber even closer to Java. Although it has been possible to

@@ -5,6 +5,7 @@ require pico
 junit = File.expand_path('~/.m2/repository/junit/junit/4.4/junit-4.4.jar')
 require junit
 
+import 'cucumber.internal.StepDefinition'
 import 'cucumber.internal.StepMother'
 import 'cucumber.Table'
 
@@ -34,10 +35,6 @@ module Cucumber
 
     def new_world!
       @__cucumber_java_step_mother.newWorld
-      @__cucumber_java_step_mother.getStepDefinitions.each do |step_definition|
-        step_definition.extend(StepDefinitionMethods)
-        step_definition.extend(StepDefinitionExtras)
-      end
     end
     
     def step_definitions
@@ -45,8 +42,12 @@ module Cucumber
     end
   end
 end
-
 extend(Cucumber::PureJava)
+
+class Java::CucumberInternal::StepDefinition
+  include Cucumber::StepDefinitionMethods
+  include Cucumber::PureJava::StepDefinitionExtras
+end
 
 project_code = File.expand_path(File.dirname(__FILE__) + '/../../target/cucumber-simple-example-0.2.jar')
 require project_code
