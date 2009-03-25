@@ -1,4 +1,7 @@
-package cucumber;
+package cucumber.internal;
+
+import cucumber.Given;
+import cucumber.Then;
 
 import java.util.Map;
 import java.util.HashMap;

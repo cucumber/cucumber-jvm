@@ -1,69 +1,84 @@
-# http://blog.nicksieger.com/articles/2009/01/10/jruby-1-1-6-gems-in-a-jar
-require 'rubygems'
-require 'cucumber'
+# encoding: utf-8
+ENV['NODOT'] = 'true' # We don't want class diagrams in RDoc
+$:.unshift(File.join(File.dirname(__FILE__), 'lib'))
+task :gem => :jar
+require 'cucumber/java/version'
+require 'hoe'
 
-USE_JRUBY_VERSION    = '1.2.0'
-USE_PICO_VERSION    = '2.8'
-CUCUMBER_VERSIONED   = "cucumber-#{Cucumber::VERSION::STRING}"
+AUTHOR = 'Aslak Hellesøy'  # can also be an array of Authors
+EMAIL = "aslak.hellesoy@gmail.com"
+DESCRIPTION = "Cucumber for Java"
+GEM_NAME = 'cucumber-java' # what ppl will type to install your gem
+HOMEPATH = "http://cukes.info"
+RUBYFORGE_PROJECT = 'rspec'
 
-task :jar => [
-  :clean,
-  'jar:download_jruby',
-  'jar:install_gems',
-  'jar:bundle_gems',
-  'jar:download_jars_deps',
-  'jar:unpack_jar_deps',
-  'jar:bundle_jars',
-  'jar:fix_gem_binaries',
-  'jar:test_jar'
-]
-
-namespace :jar do
-  task :download_jruby do
-    sh "wget http://dist.codehaus.org/jruby/#{USE_JRUBY_VERSION}/jruby-complete-#{USE_JRUBY_VERSION}.jar -O #{CUCUMBER_VERSIONED}.jar"
-  end
-
-  task :install_gems => :gem do
-    mkdir 'pkg/jar_gems'
-    sh "java -jar #{CUCUMBER_VERSIONED}.jar -S gem install -i ./pkg/jar_gems pkg/#{CUCUMBER_VERSIONED}.gem --no-ri --no-rdoc"
-  end
-
-  task :bundle_gems do
-    sh "jar uf #{CUCUMBER_VERSIONED}.jar -C pkg/jar_gems ."
-  end
-
-  task :download_jars_deps do
-    mkdir 'pkg/jar_deps'
-      sh "wget http://repository.codehaus.org/org/picocontainer/picocontainer/#{USE_PICO_VERSION}/picocontainer-#{USE_PICO_VERSION}.jar -O pkg/jar_deps/picocontainer-#{USE_PICO_VERSION}.jar"
-
-#    sh "wget http://repository.codehaus.org/org/jbehave/jbehave-core/#{USE_JBEHAVE_VERSION}/jbehave-core-#{USE_JBEHAVE_VERSION}.jar -O pkg/jar_deps/jbehave-core-#{USE_JBEHAVE_VERSION}.jar"
-#    sh "wget http://mirrors.ibiblio.org/pub/mirrors/maven2/junit/junit/#{USE_JUNIT_VERSION}/junit-#{USE_JUNIT_VERSION}.jar -O pkg/jar_deps/junit-#{USE_JUNIT_VERSION}.jar"
-#    sh "wget http://hamcrest.googlecode.com/files/hamcrest-all-#{USE_HAMCREST_VERSION}.jar -O pkg/jar_deps/hamcrest-all-#{USE_HAMCREST_VERSION}.jar"
-  end
-
-  task :unpack_jar_deps do
-    Dir.chdir 'pkg/jar_deps' do
-      Dir['*.jar'].each do |jar|
-        sh "jar xvf #{jar}"
-        rm_rf jar
-        rm_rf 'META-INF'
-      end
+@config_file = "~/.rubyforge/user-config.yml"
+@config = nil
+RUBYFORGE_USERNAME = "aslak_hellesoy"
+def rubyforge_username
+  unless @config
+    begin
+      @config = YAML.load(File.read(File.expand_path(@config_file)))
+    rescue
+      puts <<-EOS
+ERROR: No rubyforge config file found: #{@config_file}
+Run 'rubyforge setup' to prepare your env for access to Rubyforge
+ - See http://newgem.rubyforge.org/rubyforge.html for more details
+      EOS
+      exit
     end
   end
+  RUBYFORGE_USERNAME.replace @config["username"]
+end
 
-  task :bundle_jars do
-    sh "jar uf #{CUCUMBER_VERSIONED}.jar -C pkg/jar_deps ."
-  end
+REV = nil 
+# UNCOMMENT IF REQUIRED: 
+# REV = YAML.load(`svn info`)['Revision']
+VERS = Cucumber::Java::VERSION::STRING + (REV ? ".#{REV}" : "")
+RDOC_OPTS = ['--quiet', '--title', 'Cucumber documentation',
+    "--opname", "index.html",
+    "--line-numbers", 
+    "--main", "README.textile",
+    "--inline-source"]
+
+class Hoe
+  def extra_deps 
+    @extra_deps.reject! { |x| Array(x).first == 'hoe' } 
+    @extra_deps
+  end 
+end
+
+# Generate all the Rake tasks
+# Run 'rake -T' to see list of generated tasks (from gem root directory)
+$hoe = Hoe.new(GEM_NAME, VERS) do |p|
+  p.developer(AUTHOR, EMAIL)
+  p.description = DESCRIPTION
+  p.summary = DESCRIPTION
+  p.url = HOMEPATH
+  p.rubyforge_name = RUBYFORGE_PROJECT if RUBYFORGE_PROJECT
+  p.clean_globs |= ['**/.*.sw?', '*.gem', '.config', '**/.DS_Store', '**/*.class', '**/*.jar']  #An array of file patterns to delete on clean.
   
-  task :fix_gem_binaries do
-    mkdir_p 'pkg/gem_binaries/META-INF/jruby.home'
-    Dir.chdir 'pkg/gem_binaries/META-INF/jruby.home' do
-      sh "jar xvf ../../../../#{CUCUMBER_VERSIONED}.jar bin"
-    end
-    sh "jar uf #{CUCUMBER_VERSIONED}.jar -C pkg/gem_binaries ."
-  end
+  # == Optional
+  p.changes = p.paragraphs_of("History.txt", 0..1).join("\n\n")
+  #p.extra_deps = []     # An array of rubygem dependencies [name, version], e.g. [ ['active_support', '>= 1.3.1'] ]
+  p.extra_deps = [ 
+    ['cucumber', '>= 0.2.2']
+  ]
 
-  task :test_jar do
-    sh "java -cp examples/jbehave/target/classes -jar #{CUCUMBER_VERSIONED}.jar -S cucumber examples/jbehave/features"
-  end
+  #p.spec_extras = {}    # A hash of extra values to set in the gemspec.
+  
+end
+
+CHANGES = $hoe.paragraphs_of('History.txt', 0..1).join("\\n\\n")
+PATH    = (RUBYFORGE_PROJECT == GEM_NAME) ? RUBYFORGE_PROJECT : "#{RUBYFORGE_PROJECT}/#{GEM_NAME}"
+$hoe.remote_rdoc_dir = File.join(PATH.gsub(/^#{RUBYFORGE_PROJECT}\/?/,''), 'rdoc')
+$hoe.rsync_args = '-av --delete --ignore-errors'
+
+# Hoe gives us :default => :test, but we don't have Test::Unit tests.
+Rake::Task[:default].clear_prerequisites rescue nil # For some super weird reason this fails for some...
+
+task :jar do
+  sh 'mvn clean compile jar:jar'
+  mv 'target/cucumber-java-999.jar', 'lib/cucumber-java.jar'
+  sh 'mvn clean'
 end

@@ -1,8 +1,6 @@
-package cucumber;
+package cucumber.internal;
 
 import org.junit.Test;
-import cucumber.internal.StepDefinition;
-import cucumber.internal.StepMother;
 
 public class StepMotherTest {
     @Test

@@ -1,3 +1,8 @@
+h1. Have a Cuke, Duke
+
+Cucumber runs on Java! This gem lets you write Cucumber steps in pure Java. Example:
+
+<pre>
 package simple;
 
 import java.util.Map;
@@ -5,7 +10,6 @@ import java.util.HashMap;
 import cucumber.*;
 import static org.junit.Assert.assertEquals;
 
-// TODO: This is just testing a Map. We should have some own code to test!!
 public class StuffSteps {
     private final Map<String,String> cukes = new HashMap<String,String>();
 
@@ -18,7 +22,7 @@ public class StuffSteps {
     public void iAddATable(Table table) {
         Map<String,String> hash = table.hashes().get(0);
         assertEquals("1", hash.get("a"));
-        assertEquals("3", hash.get("b"));
+        assertEquals("2", hash.get("b"));
     }
 
     @Then("I should have (\\d+) (.*) cukes")
@@ -30,3 +34,37 @@ public class StuffSteps {
 
     public void thisIsNotAStep() {}
 }
+</pre>
+
+Check out the examples for more details.
+
+h2. Building the cucumber-java gem
+
+This is for hackers. If you just want to use Cucumber with Java, head straight to
+the examples.
+
+h3. Install Maven
+
+You can grab it "here":http://maven.apache.org/
+
+h3. Install JRuby
+
+You can grab it "here":http://jruby.org/
+Make sure you get 1.2.0 or later.
+
+h3. Install Hoe
+
+This gem is needed to build the Cucumber Java gem
+
+<pre>
+jruby -S gem install hoe --no-rdoc --no-ri
+</pre>
+
+h3. Build and install the gem
+
+<pre>
+jruby -S rake gem
+jruby -S gem install pkg/cucumber-java --no-rdoc --no-ri
+</pre>
+
+Now head to the simple example and run it. It serves well as a testbed.

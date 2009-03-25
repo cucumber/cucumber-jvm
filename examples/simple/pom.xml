@@ -39,28 +39,5 @@
         </plugin>
       </plugins>
     </pluginManagement>
-
-    <!--plugins>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>integration-test</phase>
-            <goals>
-              <goal>java</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <mainClass>org.jruby.Main</mainClass>
-          <arguments>
-            <argument>/Users/aslakhellesoy/scm/cucumber_rails/vendor/plugins/cucumber/bin/cucumber
-            </argument>
-            <argument>features</argument>
-          </arguments>
-        </configuration>
-      </plugin>
-    </plugins-->
   </build>
 </project>

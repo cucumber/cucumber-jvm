@@ -4,9 +4,10 @@
                       http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>cucumber</groupId>
-  <artifactId>cucumber-support</artifactId>
+  <artifactId>cucumber-java</artifactId>
   <packaging>jar</packaging>
-  <version>0.2</version>
+  <!-- The version doesn't matter - we're not installing into a maven repo -->
+  <version>999</version>
   <name>Cucumber Java Support</name>
   <url>http://cukes.info/</url>
 
@@ -45,17 +46,6 @@
           <configuration>
             <source>1.5</source>
             <target>1.5</target>
-          </configuration>
-        </plugin>
-
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.4.2</version>
-          <configuration>
-            <includes>
-              <include>Sample.java</include>
-            </includes>
           </configuration>
         </plugin>
       </plugins>

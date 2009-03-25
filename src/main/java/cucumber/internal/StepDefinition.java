@@ -1,7 +1,6 @@
 package cucumber.internal;
 
 import org.jruby.RubyArray;
-import org.jruby.RubyNil;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
@@ -25,11 +24,11 @@ public class StepDefinition {
         return method.toGenericString();
     }
 
-    public void invoke(RubyNil world, RubyArray args) throws Throwable {
+    public void invokeOnTarget(RubyArray args) throws Throwable {
         invokeOnTarget(args.toArray());
     }
 
-    public void invokeOnTarget(Object[] args) throws Throwable {
+    void invokeOnTarget(Object[] args) throws Throwable {
         try {
             method.invoke(target, args);
         } catch(InvocationTargetException e) {
