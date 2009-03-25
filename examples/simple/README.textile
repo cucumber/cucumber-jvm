@@ -5,6 +5,7 @@ Java, writing step definitions in pure Java.
 
 h2. Prerequisites
 
+* Install Maven
 * Install JRuby (1.2.0 or newer)
 * jruby -S gem install cucumber-java
 * Download PicoContainer and JUnit jars
@@ -17,6 +18,16 @@ h3. Build the java code
 <pre>
 mvn clean compile jar:jar
 </pre>
+
+You will get an error from Maven complaining that the cucumber-java jar file doesn't
+exist. (You'll need that jar if you want to use Cucumber tables in Java). Just do what Maven 
+says - the cucumber jar can be found inside your cucumber-java gem, for example:
+
+<pre>
+mvn install:install-file -DgroupId=cucumber -DartifactId=cucumber-java -Dversion=0.0.1 -Dpackaging=jar -Dfile=/usr/local/jruby/lib/ruby/gems/1.8/gems/cucumber-java-0.0.1/lib/cucumber-java-0.0.1.jar 
+</pre>
+
+Now, just try building again.
 
 h3. Run the features:
 
@@ -37,3 +48,9 @@ Here is what I do:
 <pre>
 jruby -I../../lib PATH_TO_CUCUMBER_SRC/bin/cucumber features
 </pre>
+
+h2. TODO
+
+* Make it possible to run Cucumber from Maven
+** Make maven launch JRuby with a classpath that includes picocontainer, junit, step defnitions, code to test, any other deps.
+** Remove all of the jar requires from env.rb

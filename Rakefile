@@ -31,10 +31,6 @@ Run 'rubyforge setup' to prepare your env for access to Rubyforge
   RUBYFORGE_USERNAME.replace @config["username"]
 end
 
-REV = nil 
-# UNCOMMENT IF REQUIRED: 
-# REV = YAML.load(`svn info`)['Revision']
-VERS = Cucumber::Java::VERSION::STRING + (REV ? ".#{REV}" : "")
 RDOC_OPTS = ['--quiet', '--title', 'Cucumber documentation',
     "--opname", "index.html",
     "--line-numbers", 
@@ -50,7 +46,7 @@ end
 
 # Generate all the Rake tasks
 # Run 'rake -T' to see list of generated tasks (from gem root directory)
-$hoe = Hoe.new(GEM_NAME, VERS) do |p|
+$hoe = Hoe.new(GEM_NAME, Cucumber::Java::VERSION::STRING) do |p|
   p.developer(AUTHOR, EMAIL)
   p.description = DESCRIPTION
   p.summary = DESCRIPTION
@@ -79,6 +75,6 @@ Rake::Task[:default].clear_prerequisites rescue nil # For some super weird reaso
 
 task :jar do
   sh 'mvn clean compile jar:jar'
-  mv 'target/cucumber-java-999.jar', 'lib/cucumber-java.jar'
+  mv "target/cucumber-java-#{Cucumber::Java::VERSION::STRING}.jar", 'lib'
   sh 'mvn clean'
 end

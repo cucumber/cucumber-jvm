@@ -8,7 +8,7 @@ examples/simple/features/demo.feature
 examples/simple/features/support/env.rb
 examples/simple/pom.xml
 examples/simple/src/main/java/simple/StuffSteps.java
-lib/cucumber-java.jar
+lib/cucumber-java-0.0.1.jar
 lib/cucumber/java.rb
 lib/cucumber/java/version.rb
 pom.xml

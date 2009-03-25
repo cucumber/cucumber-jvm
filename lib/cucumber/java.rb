@@ -1,4 +1,5 @@
-require 'cucumber-java.jar'
+require 'cucumber/java/version'
+require "cucumber-java-#{Cucumber::Java::VERSION::STRING}.jar"
 import 'cucumber.internal.StepDefinition'
 import 'cucumber.internal.StepMother'
 import 'cucumber.Table'
@@ -6,7 +7,7 @@ import 'cucumber.Table'
 module Cucumber
   module Ast
     class Table
-      include Java::Cucumber::Table
+      include ::Java::Cucumber::Table
     end
   end
   
@@ -41,7 +42,7 @@ module Cucumber
     
     def self.extended(base)
       base.instance_eval do
-        @__cucumber_java_step_mother = Java::CucumberInternal::StepMother.new
+        @__cucumber_java_step_mother = ::Java::CucumberInternal::StepMother.new
       end
     end
 

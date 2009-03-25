@@ -18,14 +18,12 @@ public class StuffSteps {
     public void iAddATable(Table table) {
         Map<String,String> hash = table.hashes().get(0);
         assertEquals("1", hash.get("a"));
-        assertEquals("3", hash.get("b"));
+        assertEquals("2", hash.get("b"));
     }
 
     @Then("I should have (\\d+) (.*) cukes")
     public void iShouldHaveNCukes(String n, String color) {
-        if(!n.equals(cukes.get(color))) {
-            throw new RuntimeException("Expected " + n + ", got " + cukes.get(color));
-        }
+        assertEquals(n, cukes.get(color));
     }
 
     public void thisIsNotAStep() {}
