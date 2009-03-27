@@ -1,15 +1,14 @@
 package cucumber.internal;
 
-import org.picocontainer.MutablePicoContainer;
-import org.picocontainer.DefaultPicoContainer;
-
-import java.util.List;
-import java.util.ArrayList;
-import java.lang.reflect.Method;
-
 import cucumber.Given;
-import cucumber.When;
 import cucumber.Then;
+import cucumber.When;
+import org.picocontainer.DefaultPicoContainer;
+import org.picocontainer.MutablePicoContainer;
+
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 public class StepMother {
     private final List<Class> stepsClasses = new ArrayList<Class>();

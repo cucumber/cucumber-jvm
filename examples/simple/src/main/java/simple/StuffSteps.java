@@ -1,9 +1,13 @@
 package simple;
 
-import java.util.Map;
-import java.util.HashMap;
-import cucumber.*;
+import cucumber.Given;
+import cucumber.Table;
+import cucumber.Then;
+import cucumber.When;
 import static org.junit.Assert.assertEquals;
+
+import java.util.HashMap;
+import java.util.Map;
 
 // TODO: This is just testing a Map. We should have some own code to test!!
 public class StuffSteps {
@@ -23,7 +27,7 @@ public class StuffSteps {
 
     @Then("I should have (\\d+) (.*) cukes")
     public void iShouldHaveNCukes(int n, String color) {
-        assertEquals((long)n, (long)cukes.get(color));
+        assertEquals(n, cukes.get(color));
     }
 
     public void thisIsNotAStep() {}

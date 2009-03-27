@@ -3,8 +3,8 @@ package cucumber.internal;
 import cucumber.Given;
 import cucumber.Then;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 public class FooSteps {
     private final Map<String,Integer> cukes = new HashMap<String,Integer>();
