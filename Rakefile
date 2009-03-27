@@ -74,7 +74,7 @@ $hoe.rsync_args = '-av --delete --ignore-errors'
 Rake::Task[:default].clear_prerequisites rescue nil # For some super weird reason this fails for some...
 
 task :jar do
-  sh 'mvn clean compile jar:jar'
+  sh 'mvn clean package'
   mv "target/cucumber-java-#{Cucumber::Java::VERSION::STRING}.jar", 'lib'
   sh 'mvn clean'
 end

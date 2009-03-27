@@ -16,7 +16,7 @@ h2. Running it
 h3. Build the java code
 
 <pre>
-mvn clean compile jar:jar
+mvn clean package
 </pre>
 
 You will get an error from Maven complaining that the cucumber-java jar file doesn't

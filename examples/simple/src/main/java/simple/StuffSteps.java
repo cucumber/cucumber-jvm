@@ -27,7 +27,7 @@ public class StuffSteps {
 
     @Then("I should have (\\d+) (.*) cukes")
     public void iShouldHaveNCukes(int n, String color) {
-        assertEquals(n, cukes.get(color));
+        assertEquals(n, (int)cukes.get(color));
     }
 
     public void thisIsNotAStep() {}
