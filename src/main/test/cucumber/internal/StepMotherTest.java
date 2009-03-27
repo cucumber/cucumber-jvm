@@ -12,8 +12,8 @@ public class StepMotherTest {
         StepDefinition given = mother.getStepDefinitions().get(0);
         StepDefinition then = mother.getStepDefinitions().get(1);
 
-        given.invokeOnTarget(new Object[]{56, "green"});
-        then.invokeOnTarget(new Object[]{56, "green"});
+        given.invokeOnTarget(new Object[]{"56", "green"});
+        then.invokeOnTarget(new Object[]{"56", "green"});
     }
 
     @Test(expected=RuntimeException.class) 
@@ -25,7 +25,7 @@ public class StepMotherTest {
         StepDefinition given = mother.getStepDefinitions().get(0);
         StepDefinition then = mother.getStepDefinitions().get(1);
 
-        given.invokeOnTarget(new Object[]{56, "green"});
-        then.invokeOnTarget(new Object[]{99, "green"});
+        given.invokeOnTarget(new Object[]{"56", "green"});
+        then.invokeOnTarget(new Object[]{"99", "green"});
     }
 }

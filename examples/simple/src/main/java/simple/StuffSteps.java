@@ -7,10 +7,10 @@ import static org.junit.Assert.assertEquals;
 
 // TODO: This is just testing a Map. We should have some own code to test!!
 public class StuffSteps {
-    private final Map<String,String> cukes = new HashMap<String,String>();
+    private final Map<String,Integer> cukes = new HashMap<String,Integer>();
 
     @Given("I have (\\d+) (.*) cukes")
-    public void iHaveNCukes(String n, String color) {
+    public void iHaveNCukes(int n, String color) {
         this.cukes.put(color, n);
     }
 
@@ -22,8 +22,8 @@ public class StuffSteps {
     }
 
     @Then("I should have (\\d+) (.*) cukes")
-    public void iShouldHaveNCukes(String n, String color) {
-        assertEquals(n, cukes.get(color));
+    public void iShouldHaveNCukes(int n, String color) {
+        assertEquals((long)n, (long)cukes.get(color));
     }
 
     public void thisIsNotAStep() {}

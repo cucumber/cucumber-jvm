@@ -2,8 +2,8 @@ package cucumber.internal;
 
 import org.jruby.RubyArray;
 
-import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 public class StepDefinition {
     private final String regexpString;
@@ -30,8 +30,17 @@ public class StepDefinition {
 
     void invokeOnTarget(Object[] args) throws Throwable {
         try {
-            method.invoke(target, args);
-        } catch(InvocationTargetException e) {
+            Object[] convArgs = new Object[args.length];
+            for (int i = 0; i < method.getParameterTypes().length; i++) {
+                Class clazz = method.getParameterTypes()[i];
+                if (clazz.equals(Integer.TYPE)) {
+                    convArgs[i] = Integer.valueOf((String) args[i]);
+                } else {
+                    convArgs[i] = args[i];
+                }
+            }
+            method.invoke(target, convArgs);
+        } catch (InvocationTargetException e) {
             throw e.getTargetException();
         }
 
