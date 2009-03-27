@@ -7,7 +7,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="cucumber-support" />
+    <orderEntry type="module" module-name="cucumber-java" exported="" />
   </component>
 </module>
 
