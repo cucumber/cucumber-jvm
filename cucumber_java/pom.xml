@@ -7,7 +7,7 @@
   <artifactId>cucumber-java</artifactId>
   <packaging>jar</packaging>
   <!-- IMPORTANT - KEEP IN SYNC WITH version.rb version and Manifest.txt -->
-  <version>0.0.1</version>
+  <version>0.0.2</version>
   <name>Cucumber Java Support</name>
   <url>http://cukes.info/</url>
 

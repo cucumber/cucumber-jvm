@@ -1,3 +1,8 @@
+=== 0.0.2 (In Git)
+
+* Maven support!
+* Strings are converted to int when needed
+
 === 0.0.1 / 2009-03-25
 
 * 1 major enhancement
