@@ -1,0 +1,48 @@
+h1. Cucumber Maven Plugin
+
+A simple cucumber maven plugin. Written by Øystein Ellingbø (ellingbo) and Ole Christian Rynning (oc) :-)
+
+h2. How to use?
+
+ * Install jruby
+ * Add to your maven2 settings.xml (<code>~/.m2/settings.xml</code>):
+
+<pre>
+<settings>
+  ...
+  <pluginGroups>
+    <pluginGroup>cucumber.mojo</pluginGroup>
+  </pluginGroups>
+  ...
+</settings>
+</pre>
+
+This is required if you wish to refer to <code>mvn cucumber:features</code> instead of <code>mvn cucumber.mojo:cucumber:features</code>.
+
+
+h3. Command line
+
+<code>mvn cucumber:features -Dcucumber.features.directory=examples/simple/features -Djruby.home=/opt/jruby-1.2.0</code>
+
+h3. Configure in your project POM
+
+<pre>
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>cucumber.mojo</groupId>
+        <artifactId>cucumber-maven-plugin</artifactId>
+        <configuration>
+          <jrubyHome>/path/to/JRUBY_HOME</jrubyHome>
+          <featuresDirectory>/path/to/features</featuresDirectory>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  ...
+</project>
+</pre>
+
+By default it scans for features in <code>src/test/features</code>.
