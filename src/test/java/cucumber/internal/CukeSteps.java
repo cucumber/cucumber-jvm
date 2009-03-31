@@ -6,7 +6,7 @@ import cucumber.Then;
 import java.util.HashMap;
 import java.util.Map;
 
-public class FooSteps {
+public class CukeSteps {
     private final Map<String,Integer> cukes = new HashMap<String,Integer>();
 
     @Given("I have (\\d+) (.*) cukes")
@@ -19,6 +19,10 @@ public class FooSteps {
         if(n != cukes.get(color)) {
             throw new RuntimeException("Expected " + n + ", got " + cukes.get(color));
         }
+    }
+
+    @Given("Longs: (\\d+)")
+    public void longs(long n) {
     }
 
     public void thisIsNotAStep() {}
