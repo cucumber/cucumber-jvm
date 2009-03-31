@@ -4,8 +4,8 @@
                       http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>cucumber</groupId>
-  <artifactId>cucumber-java</artifactId>
-  <packaging>jar</packaging>
+  <artifactId>cucumber-java-parent</artifactId>
+  <packaging>pom</packaging>
   <!-- IMPORTANT - KEEP IN SYNC WITH version.rb version and Manifest.txt -->
   <version>0.0.2</version>
   <name>Cucumber Java Support</name>
@@ -26,23 +26,30 @@
     </repository>
   </repositories>
 
-  <dependencies>
-    <dependency>
-      <groupId>org.picocontainer</groupId>
-      <artifactId>picocontainer</artifactId>
-      <version>2.8</version>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.4</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jruby</groupId>
-      <artifactId>jruby</artifactId>
-      <version>1.2.0</version>
-    </dependency>
-  </dependencies>
+  <modules>
+    <module>cucumber-maven-plugin</module>
+    <module>cucumber-java</module>
+  </modules>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.picocontainer</groupId>
+        <artifactId>picocontainer</artifactId>
+        <version>2.8</version>
+      </dependency>
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>4.4</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jruby</groupId>
+        <artifactId>jruby</artifactId>
+        <version>1.2.0</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
   <build>
     <pluginManagement>
