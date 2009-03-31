@@ -36,7 +36,7 @@ h3. Configure in your project POM
         <artifactId>cucumber-maven-plugin</artifactId>
         <configuration>
           <jrubyHome>/path/to/JRUBY_HOME</jrubyHome>
-          <featuresDirectory>/path/to/features</featureDirectory>
+          <featuresDirectory>/path/to/features</featuresDirectory>
         </configuration>
       </plugin>
     </plugins>
