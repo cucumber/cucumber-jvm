@@ -24,7 +24,7 @@ exist. (You'll need that jar if you want to use Cucumber tables in Java). Just d
 says - the cucumber jar can be found inside your cucumber-java gem, for example:
 
 <pre>
-mvn install:install-file -DgroupId=cucumber -DartifactId=cucumber-java -Dversion=0.0.1 -Dpackaging=jar -Dfile=/usr/local/jruby/lib/ruby/gems/1.8/gems/cucumber-java-0.0.1/lib/cucumber-java-0.0.1.jar 
+mvn install:install-file -DgroupId=cucumber -DartifactId=cucumber-java -Dversion=0.0.2 -Dpackaging=jar -Dfile=/usr/local/jruby/lib/ruby/gems/1.8/gems/cucumber-java-0.0.2/lib/cucumber-java-0.0.2.jar 
 </pre>
 
 Now, just try building again.
