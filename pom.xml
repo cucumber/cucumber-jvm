@@ -14,7 +14,7 @@
   <distributionManagement>
     <repository>
       <id>cukes</id>
-      <name>Cucumber Maven Repo</name>
+      <name>Cucumber Maven Repo</name> 
       <url>scp://serveradmin%aslakhellesoy.com@cukes.info/home/6664/users/.home/domains/cukes.info/html/maven</url>
     </repository>
   </distributionManagement>
@@ -30,6 +30,18 @@
     <module>cucumber-maven-plugin</module>
     <module>cucumber-java</module>
   </modules>
+
+  <profiles>
+    <profile>
+      <id>examples</id>
+      <modules>
+    <module>examples/webtest</module>
+    <module>examples/simple</module>
+      </modules>
+    </profile>
+  </profiles>
+
+      
 
   <dependencyManagement>
     <dependencies>
