@@ -12,7 +12,8 @@
   <artifactId>cucumber-java</artifactId>
   <packaging>jar</packaging>
   <version>${parent.version}</version>
-
+  <name>Cucumber Java</name>
+  <description>Cucumber AST for writing steps in Java</description>
   <dependencies>
     <dependency>
       <groupId>org.picocontainer</groupId>
@@ -28,5 +29,4 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
 </project>
