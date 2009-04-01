@@ -21,33 +21,18 @@
         </repository>
     </repositories>
 
-<<<<<<< HEAD:examples/simple/pom.xml
     <dependencies>
-        <dependency>
-            <groupId>cucumber</groupId>
-            <artifactId>cucumber-java</artifactId>
-            <version>0.0.1</version>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.4</version>
-        </dependency>
+      <dependency>
+        <groupId>cucumber</groupId>
+        <artifactId>cucumber-java</artifactId>
+        <version>0.0.2</version>
+      </dependency>
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>4.4</version>
+      </dependency>
     </dependencies>
-=======
-  <dependencies>
-    <dependency>
-      <groupId>cucumber</groupId>
-      <artifactId>cucumber-java</artifactId>
-      <version>0.0.2</version>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.4</version>
-    </dependency>
-  </dependencies>
->>>>>>> aslakhellesoy/master:examples/simple/pom.xml
 
     <build>
         <pluginManagement>
@@ -64,7 +49,6 @@
             </plugins>
         </pluginManagement>
 
-<<<<<<< HEAD:examples/simple/pom.xml
         <plugins>
             <plugin>
                 <groupId>cucumber.mojo</groupId>
@@ -85,17 +69,4 @@
             </plugin>
         </plugins>
     </build>
-=======
-    <plugins>
-      <plugin>
-        <groupId>cucumber</groupId>
-        <artifactId>cucumber-maven-plugin</artifactId>
-        <configuration>
-          <jrubyHome>/usr/local/jruby</jrubyHome>
-          <featuresDirectory>features</featuresDirectory>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
->>>>>>> aslakhellesoy/master:examples/simple/pom.xml
 </project>
