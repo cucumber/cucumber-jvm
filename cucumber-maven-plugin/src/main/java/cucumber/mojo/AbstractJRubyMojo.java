@@ -4,7 +4,6 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.apache.tools.ant.BuildEvent;
@@ -18,7 +17,7 @@ import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -51,7 +50,7 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
      *
      * @parameter expression="${jruby.launch.memory}"
      */
-     protected String jrubyLaunchMemory = "384m";
+    protected String jrubyLaunchMemory = "384m";
 
     /**
      * The project compile classpath.
@@ -71,7 +70,7 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
      */
     private List pluginArtifacts;
 
-    protected Java jruby(String[] args) throws MojoExecutionException {
+    protected Java jruby(List<String> args) throws MojoExecutionException {
         launchDirectory.mkdirs();
         Project project = null;
         try {
@@ -116,28 +115,29 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
         p.add((Path) project.getReference("maven.compile.classpath"));
         getLog().debug("java classpath: " + p.toString());
 
-        for (int i = 0; i < args.length; i++) {
+        for (String s : args) {
             arg = java.createArg();
-            arg.setValue(args[i]);
+            arg.setValue(s);
         }
 
         return java;
     }
 
-    protected void ensureGems(String[] gemNames) throws MojoExecutionException {
+    @SuppressWarnings({"unchecked"})
+    protected void installGem(List<String> gem) throws MojoExecutionException {
         List args = new ArrayList();
         args.add("-S");
-        args.add("maybe_install_gems");
-        for (int i = 0; i < gemNames.length; i++) {
-            args.add(gemNames[i]);
+        // maybe_install_gems only takes a list of gems, no versions or sources
+        if (gem.size() > 1) {
+            args.add("gem");
+            args.add("install");
+        } else {
+            args.add("maybe_install_gems");
         }
+        args.addAll(gem);
 
-        Java jruby = jruby((String[]) args.toArray(new String[args.size()]));
+        Java jruby = jruby(args);
         jruby.execute();
-    }
-
-    protected void ensureGem(String gemName) throws MojoExecutionException {
-        ensureGems(new String[] {gemName});
     }
 
     protected Project getProject() throws DependencyResolutionRequiredException {
@@ -149,11 +149,12 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
         return project;
     }
 
-    protected void addReference(Project project, String reference, List artifacts) throws DependencyResolutionRequiredException {
+    @SuppressWarnings({"unchecked"})
+    protected void addReference(Project project, String reference, List artifacts)
+            throws DependencyResolutionRequiredException {
         List list = new ArrayList(artifacts.size());
 
-        for (Iterator i = artifacts.iterator(); i.hasNext();) {
-            Object elem = i.next();
+        for (Object elem : artifacts) {
             String path;
             if (elem instanceof Artifact) {
                 Artifact a = (Artifact) elem;
@@ -171,6 +172,12 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
         Path p = new Path(project);
         p.setPath(StringUtils.join(list.iterator(), File.pathSeparator));
         project.addReference(reference, p);
+    }
+
+    public static <T> List<T> listify(T... objects) {
+        List<T> res = new ArrayList<T>();
+        res.addAll(Arrays.asList(objects));
+        return res;
     }
 
     public class LogAdapter implements BuildListener {
@@ -206,29 +213,29 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
             int priority = event.getPriority();
             Log log = getLog();
             switch (priority) {
-            case Project.MSG_ERR:
-                log.error(event.getMessage());
-                break;
+                case Project.MSG_ERR:
+                    log.error(event.getMessage());
+                    break;
 
-            case Project.MSG_WARN:
-                log.warn(event.getMessage());
-                break;
+                case Project.MSG_WARN:
+                    log.warn(event.getMessage());
+                    break;
 
-            case Project.MSG_INFO:
-                log.info(event.getMessage());
-                break;
+                case Project.MSG_INFO:
+                    log.info(event.getMessage());
+                    break;
 
-            case Project.MSG_VERBOSE:
-                log.debug(event.getMessage());
-                break;
+                case Project.MSG_VERBOSE:
+                    log.debug(event.getMessage());
+                    break;
 
-            case Project.MSG_DEBUG:
-                log.debug(event.getMessage());
-                break;
+                case Project.MSG_DEBUG:
+                    log.debug(event.getMessage());
+                    break;
 
-            default:
-                log.info(event.getMessage());
-            break;
+                default:
+                    log.info(event.getMessage());
+                    break;
             }
         }
     }
