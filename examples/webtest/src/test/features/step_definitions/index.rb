@@ -3,7 +3,7 @@ require 'spec'
 
 Given /^I am on the index page$/ do
   @browser = Celerity::Browser.new
-  @browser.goto('http://localhost:8080/example-webtest/')
+  @browser.goto('http://localhost:8080/cucumber-webtest-example/')
 end
 
 Then /^I should see "([^\"]*)"$/ do |txt|

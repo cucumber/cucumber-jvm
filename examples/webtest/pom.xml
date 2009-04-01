@@ -2,10 +2,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>cucumber</groupId>
-    <artifactId>example-webtest</artifactId>
+    <artifactId>cucumber-webtest-example</artifactId>
     <packaging>war</packaging>
     <version>0.0.1-SNAPSHOT</version>
-    <name>Cucumber Webtest/Acceptance Test simple Java Webapp Example</name>
+    <name>Cucumber Web/Acceptance Test Example</name>
     <url>http://maven.apache.org</url>
     <dependencies>
         <dependency>
@@ -16,7 +16,7 @@
         </dependency>
     </dependencies>
     <build>
-        <finalName>celerity-example</finalName>
+        <finalName>cucumber-webtest-example</finalName>
         <plugins>
             <plugin>
                 <groupId>cucumber.mojo</groupId>
@@ -24,22 +24,12 @@
                 <configuration>
                     <jrubyHome>/usr/ruby</jrubyHome>
                     <gems>
-                        <gem>celerity</gem>
-                        <gem>rspec</gem>
+                        <gem>jarib-celerity:0.0.6:github</gem>
+                        <gem>rspec:1.2.2</gem>
                     </gems>
-                    <skipGems>true</skipGems>
+                    <!--installGems>true</installGems-->
                 </configuration>
                 <executions>
-                    <!--execution>
-                        <id>list-gems</id>
-                        <phase>pre-integration-test</phase>
-                        <goals>
-                            <goal>gem</goal>
-                        </goals>
-                        <configuration>
-                            <args>list</args>
-                        </configuration>
-                    </execution-->
                     <execution>
                         <id>run-webtests</id>
                         <phase>integration-test</phase>
@@ -52,7 +42,7 @@
             <plugin>
                 <groupId>org.mortbay.jetty</groupId>
                 <artifactId>maven-jetty-plugin</artifactId>
-                <version>6.1.10</version>
+                <version>6.1.14</version>
                 <configuration>
                     <scanIntervalSeconds>10</scanIntervalSeconds>
                     <stopKey>foo</stopKey>
