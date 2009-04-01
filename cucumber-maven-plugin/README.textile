@@ -69,7 +69,7 @@ If you wish to run your webapp with Jetty, you can run your features on this app
                 <groupId>cucumber.mojo</groupId>
                 <artifactId>cucumber-maven-plugin</artifactId>
                 <configuration>
-                    <jrubyHome>/usr/ruby</jrubyHome>
+                    <jrubyHome>/usr/local/jruby</jrubyHome>
                     <gems>
                         <gem>jarib-celerity:0.0.6:github</gem>
                         <gem>rspec:1.2.2</gem>
