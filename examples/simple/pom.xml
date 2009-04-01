@@ -25,7 +25,7 @@
     <dependency>
       <groupId>cucumber</groupId>
       <artifactId>cucumber-java</artifactId>
-      <version>0.0.1</version>
+      <version>0.0.2</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
@@ -51,7 +51,7 @@
 
     <plugins>
       <plugin>
-        <groupId>cucumber.mojo</groupId>
+        <groupId>cucumber</groupId>
         <artifactId>cucumber-maven-plugin</artifactId>
         <configuration>
           <jrubyHome>/usr/local/jruby</jrubyHome>

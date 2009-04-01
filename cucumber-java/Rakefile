@@ -1,7 +1,6 @@
 # encoding: utf-8
 ENV['NODOT'] = 'true' # We don't want class diagrams in RDoc
 $:.unshift(File.join(File.dirname(__FILE__), 'lib'))
-task :gem => :jar
 require 'cucumber/java/version'
 require 'hoe'
 
@@ -66,5 +65,5 @@ Rake::Task[:default].clear_prerequisites rescue nil # For some super weird reaso
 task :jar do
   sh 'mvn clean package'
   mv "target/cucumber-java-#{Cucumber::Java::VERSION::STRING}.jar", 'lib'
-  sh 'mvn clean'
 end
+task :gem => :jar
