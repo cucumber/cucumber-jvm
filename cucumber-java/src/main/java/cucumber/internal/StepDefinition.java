@@ -30,7 +30,7 @@ public class StepDefinition {
 
     void invokeOnTarget(Object[] args) throws Throwable {
         try {
-            Object[] convertedArgs = conertArgs(args);
+            Object[] convertedArgs = convertArgs(args);
             method.invoke(target, convertedArgs);
         } catch (InvocationTargetException e) {
             throw e.getTargetException();
@@ -38,7 +38,7 @@ public class StepDefinition {
 
     }
 
-    private Object[] conertArgs(Object[] args) {
+    private Object[] convertArgs(Object[] args) {
         Object[] convertedArgs = new Object[args.length];
         for (int i = 0; i < method.getParameterTypes().length; i++) {
             Class clazz = method.getParameterTypes()[i];
