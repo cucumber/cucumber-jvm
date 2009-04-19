@@ -139,12 +139,11 @@
   </component>
   <component name="ProjectFileVersion" converted="true" />
   <component name="ProjectKey">
-    <option name="state" value="project:///Users/aslakhellesoy/scm/cucumber_java/cucumber-java.ipr" />
+    <option name="state" value="project:///Users/aslakhellesoy/scm/cucumber_java/cucumber-java/cucumber-java.ipr" />
   </component>
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/cucumber-java.iml" filepath="$PROJECT_DIR$/cucumber-java.iml" />
-      <module fileurl="file://$PROJECT_DIR$/examples/simple/simple.iml" filepath="$PROJECT_DIR$/examples/simple/simple.iml" />
     </modules>
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_5" assert-keyword="true" jdk-15="true" project-jdk-name="1.6" project-jdk-type="JavaSDK">
