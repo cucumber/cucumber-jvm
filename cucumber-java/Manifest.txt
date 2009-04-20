@@ -1,3 +1,4 @@
+README.txt
 lib/cucumber-java-0.0.2.jar
 lib/cucumber/java.rb
 lib/cucumber/java/version.rb

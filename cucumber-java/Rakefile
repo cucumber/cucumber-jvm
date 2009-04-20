@@ -30,12 +30,6 @@ Run 'rubyforge setup' to prepare your env for access to Rubyforge
   RUBYFORGE_USERNAME.replace @config["username"]
 end
 
-RDOC_OPTS = ['--quiet', '--title', 'Cucumber documentation',
-    "--opname", "index.html",
-    "--line-numbers", 
-    "--main", "README.textile",
-    "--inline-source"]
-
 class Hoe
   def extra_deps 
     @extra_deps.reject! { |x| Array(x).first == 'hoe' } 
