@@ -2,8 +2,8 @@ package cucumber.mojo;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.tools.ant.taskdefs.Java;
 import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.taskdefs.Java;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +29,6 @@ public class CucumberMojo extends AbstractJRubyMojo {
     protected String[] gems;
 
     @SuppressWarnings({"unchecked"})
-    @Override
     public void execute() throws MojoFailureException, MojoExecutionException {
 
         if (installGems) {
@@ -62,17 +61,17 @@ public class CucumberMojo extends AbstractJRubyMojo {
         String version = gem.length > 1 ? gem[1] : null;
         String source = gem.length > 2 ? gem[2] : null;
 
-        if (name == null || name.isEmpty()) {
+        if (name == null || name.length() == 0) {
             throw new MojoExecutionException("Requires atleast a name for <gem>");
         } else {
             args.add(name);
         }
 
-        if (version != null && !version.isEmpty()) {
+        if (version != null && version.length() != 0) {
             args.add("-v" + version);
         }
 
-        if (source != null && !source.isEmpty()) {
+        if (source != null && source.length() == 0) {
             if (source.contains("github")) {
                 args.add("--source");
                 args.add("http://gems.github.com");

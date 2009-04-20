@@ -11,8 +11,8 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="Maven: org.picocontainer:picocontainer:2.8" level="project" />
-    <orderEntry type="library" exported="" name="Maven: junit:junit:4.4" level="project" />
     <orderEntry type="library" exported="" name="Maven: org.jruby:jruby:1.2.0" level="project" />
+    <orderEntry type="library" exported="" name="Maven: junit:junit:4.4" level="project" />
   </component>
 </module>
 
