@@ -54,7 +54,7 @@
                 <groupId>cucumber.mojo</groupId>
                 <artifactId>cucumber-maven-plugin</artifactId>
                 <configuration>
-                    <jrubyHome>/usr/local/jruby</jrubyHome>
+                    <jrubyHome>${env.JRUBY_HOME}</jrubyHome>
                     <features>features</features>
                 </configuration>
                 <executions>
