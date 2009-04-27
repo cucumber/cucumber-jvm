@@ -1,0 +1,32 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                      http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>cucumber</groupId>
+    <artifactId>cucumber-java-parent</artifactId>
+    <relativePath>../pom.xml</relativePath>
+    <version>0.0.2</version>
+  </parent>
+  <artifactId>cucumber-java</artifactId>
+  <packaging>jar</packaging>
+  <version>${parent.version}</version>
+  <name>Cucumber Java</name>
+  <description>Cucumber AST for writing steps in Java</description>
+  <dependencies>
+    <dependency>
+      <groupId>org.picocontainer</groupId>
+      <artifactId>picocontainer</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jruby</groupId>
+      <artifactId>jruby</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+</project>

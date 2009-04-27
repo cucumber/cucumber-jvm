@@ -2,3 +2,7 @@
 target
 pkg
 *.jar
+*.class
+.project
+.classpath
+.settings
