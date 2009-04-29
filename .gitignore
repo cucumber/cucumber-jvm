@@ -1,4 +1,7 @@
 *.iws
+.settings
+.classpath
+.project
 target
 pkg
 *.jar
