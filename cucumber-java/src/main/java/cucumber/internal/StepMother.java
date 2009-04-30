@@ -11,17 +11,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StepMother {
-    private final List<Class> stepsClasses = new ArrayList<Class>();
+    private final List<Class<?>> stepsClasses = new ArrayList<Class<?>>();
     private final List<StepDefinition> stepDefinitions = new ArrayList<StepDefinition>();
 
-    public void add(Class stepsClass) {
+    public void add(Class<?> stepsClass) {
         stepsClasses.add(stepsClass);
     }
 
     public void newWorld() {
         stepDefinitions.clear();
         MutablePicoContainer pico = new DefaultPicoContainer();
-        for(Class stepsClass : stepsClasses) {
+        for(Class<?> stepsClass : stepsClasses) {
             pico.addComponent(stepsClass);
         }
 

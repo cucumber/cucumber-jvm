@@ -41,15 +41,17 @@ public class StepDefinition {
     private Object[] convertArgs(Object[] args) {
         Object[] convertedArgs = new Object[args.length];
         for (int i = 0; i < method.getParameterTypes().length; i++) {
-            Class clazz = method.getParameterTypes()[i];
+            Class<?> clazz = method.getParameterTypes()[i];
             convertedArgs[i] = convertArg(clazz, args[i]);
         }
         return convertedArgs;
     }
 
-    private Object convertArg(Class clazz, Object arg) {
+    private Object convertArg(Class<?> clazz, Object arg) {
         if (clazz.equals(Integer.TYPE)) {
             return Integer.valueOf((String) arg);
+        } else if (clazz.equals(Long.TYPE)) {
+        	return Long.valueOf((String) arg);
         } else {
             return arg;
         }
