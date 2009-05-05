@@ -3,6 +3,7 @@ package cucumber.internal;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class StepMotherTest {
@@ -47,15 +48,21 @@ public class StepMotherTest {
         StepMother mother = new StepMother();
         mother.add(CukeSteps.class);
         mother.newWorld();
+        
         List<StepDefinition> stepDefs1 = mother.getStepDefinitions();
         assertEquals(3, stepDefs1.size()); 
+        
+        List<StepDefinition> oldSteps = new ArrayList<StepDefinition>();
+        for (StepDefinition stepDefinition : stepDefs1) {
+			oldSteps.add(stepDefinition);
+		}
 
         mother.newWorld();
         List<StepDefinition> stepDefs2 = mother.getStepDefinitions();
         assertEquals(3, stepDefs2.size());
         
         for (int i = 0; i < 3; i++) {
-        	assertNotSame(stepDefs1.get(i), stepDefs2.get(i));
+        	assertNotSame(oldSteps.get(i), stepDefs2.get(i));
         }
     }
 }
