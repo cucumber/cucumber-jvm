@@ -1,6 +1,9 @@
 package cucumber.internal;
 
 import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+
+import java.util.List;
 
 public class StepMotherTest {
     @Test
@@ -37,5 +40,18 @@ public class StepMotherTest {
 
         StepDefinition given = mother.getStepDefinitions().get(2);
 //        given.invokeOnTarget(new Object[]{"33"});
+    }
+
+    @Test
+    public void shouldCreateNewStepDefinitionsForEachNewWorld() throws Throwable {
+        StepMother mother = new StepMother();
+        mother.add(CukeSteps.class);
+        mother.newWorld();
+        List stepDefs1 = mother.getStepDefinitions();
+        assertEquals(3, stepDefs1.size()); 
+
+        mother.newWorld();
+        List stepDefs2 = mother.getStepDefinitions();
+        assertEquals(3, stepDefs1.size());
     }
 }

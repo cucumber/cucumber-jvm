@@ -7,11 +7,6 @@ h2. Prerequisites
 
 * Install Maven
 * Install JRuby (1.2.0 or newer)
-* jruby -S gem install cucumber-java
-* Download PicoContainer and JUnit jars
-** See features/support/env.rb for details. You may have to change the paths there depending on where you put jars.
-
-h2. Running it
 
 h3. Build the java code
 
@@ -46,7 +41,7 @@ cucumber and cucumber-java as "source" instead of gems.
 Here is what I do:
 
 <pre>
-jruby -I../../lib PATH_TO_CUCUMBER_SRC/bin/cucumber features
+jruby -I ../../cucumber-java/lib PATH_TO_CUCUMBER_SRC/bin/cucumber features
 </pre>
 
 h2. TODO
