@@ -1,23 +1,24 @@
 package cucumber.internal;
 
-import cucumber.Given;
-import cucumber.Then;
-import cucumber.When;
-import org.picocontainer.DefaultPicoContainer;
-import org.picocontainer.MutablePicoContainer;
-
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StepMother {
-    private final List<Class<?>> stepsClasses = new ArrayList<Class<?>>();
-    private final List<StepDefinition> stepDefinitions = new ArrayList<StepDefinition>();
+import org.picocontainer.DefaultPicoContainer;
+import org.picocontainer.MutablePicoContainer;
 
+import cucumber.Given;
+import cucumber.Then;
+import cucumber.When;
+
+public class StepMother {
+    protected final List<Class<?>> stepsClasses = new ArrayList<Class<?>>();
+    protected final List<StepDefinition> stepDefinitions = new ArrayList<StepDefinition>();
+    
     public void add(Class<?> stepsClass) {
         stepsClasses.add(stepsClass);
     }
-
+    
     public void newWorld() {
         stepDefinitions.clear();
         MutablePicoContainer pico = new DefaultPicoContainer();
