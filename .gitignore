@@ -1,4 +1,5 @@
 *.iws
+*.ipr
 target
 pkg
 *.jar
