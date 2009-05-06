@@ -28,6 +28,7 @@ public class CucumberMojo extends AbstractJRubyMojo {
      */
     protected String[] gems;
 
+    @SuppressWarnings({"unchecked"})
     public void execute() throws MojoFailureException, MojoExecutionException {
 
         if (installGems) {
