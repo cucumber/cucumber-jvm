@@ -54,8 +54,9 @@
                 <groupId>cucumber.mojo</groupId>
                 <artifactId>cucumber-maven-plugin</artifactId>
                 <configuration>
-                    <jrubyHome>/usr/ruby</jrubyHome>
+                    <jrubyHome>${env.JRUBY_HOME}</jrubyHome>
                     <features>features</features>
+                    <gems><gem>aslakhellesoy-cucumber_java:0.0.2:github</gem></gems>
                 </configuration>
                 <executions>
                     <execution>

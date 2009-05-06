@@ -22,7 +22,7 @@
                 <groupId>cucumber.mojo</groupId>
                 <artifactId>cucumber-maven-plugin</artifactId>
                 <configuration>
-                    <jrubyHome>/usr/ruby</jrubyHome>
+                    <jrubyHome>${env.JRUBY_HOME}</jrubyHome>
                     <gems>
                         <gem>jarib-celerity:0.0.6:github</gem>
                         <gem>rspec:1.2.2</gem>

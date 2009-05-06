@@ -97,6 +97,7 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
             Path p = new Path(java.getProject());
             p.add((Path) project.getReference("maven.plugin.classpath"));
             p.add((Path) project.getReference("maven.compile.classpath"));
+            p.add((Path) project.getReference("maven.test.classpath"));
             classpath.setKey("JRUBY_PARENT_CLASSPATH");
             classpath.setValue(p.toString());
 
