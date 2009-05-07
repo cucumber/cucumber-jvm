@@ -27,18 +27,22 @@ public class StepMother {
         }
 
         for(Object stepObject : pico.getComponents()) {
-            for (Method method : stepObject.getClass().getMethods()) {
-                String regexpString = null;
-                if (method.isAnnotationPresent(Given.class)) {
-                    regexpString = method.getAnnotation(Given.class).value();
-                } else if (method.isAnnotationPresent(When.class)) {
-                    regexpString = method.getAnnotation(When.class).value();
-                } else if (method.isAnnotationPresent(Then.class)) {
-                    regexpString = method.getAnnotation(Then.class).value();
-                }
-                if(regexpString != null) {
-                    stepDefinitions.add(new StepDefinition(regexpString, stepObject, method));
-                }
+            addStepDefinitions(stepObject);
+        }
+    }
+
+    protected void addStepDefinitions(Object stepObject) {
+        for (Method method : stepObject.getClass().getMethods()) {
+            String regexpString = null;
+            if (method.isAnnotationPresent(Given.class)) {
+                regexpString = method.getAnnotation(Given.class).value();
+            } else if (method.isAnnotationPresent(When.class)) {
+                regexpString = method.getAnnotation(When.class).value();
+            } else if (method.isAnnotationPresent(Then.class)) {
+                regexpString = method.getAnnotation(Then.class).value();
+            }
+            if(regexpString != null) {
+                stepDefinitions.add(new StepDefinition(regexpString, stepObject, method));
             }
         }
     }
