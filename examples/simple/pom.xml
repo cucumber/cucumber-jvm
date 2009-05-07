@@ -22,16 +22,16 @@
     </repositories>
 
     <dependencies>
-      <dependency>
-        <groupId>cucumber</groupId>
-        <artifactId>cucumber-java</artifactId>
-        <version>0.0.2</version>
-      </dependency>
-      <dependency>
-        <groupId>junit</groupId>
-        <artifactId>junit</artifactId>
-        <version>4.4</version>
-      </dependency>
+        <dependency>
+            <groupId>cucumber</groupId>
+            <artifactId>cucumber-java</artifactId>
+            <version>0.0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.4</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -54,7 +54,7 @@
                 <groupId>cucumber.mojo</groupId>
                 <artifactId>cucumber-maven-plugin</artifactId>
                 <configuration>
-                    <jrubyHome>/usr/local/jruby</jrubyHome>
+                    <jrubyHome>${env.JRUBY_HOME}</jrubyHome>
                     <features>features</features>
                 </configuration>
                 <executions>

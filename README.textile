@@ -42,4 +42,9 @@ jruby -S rake gem
 jruby -S gem install pkg/cucumber-java --no-rdoc --no-ri
 </pre>
 
-Now head to the simple example and run it. It serves well as a testbed.
+In case you use Windows (Cygwin/MSYS) it's easier to do the :jar task manually <code>mvn clean install && mv target/*.jar /lib</code>. In that case comment out <code>task :gem => :jar</code> at the bottom of the <code>Rakefile</code>
+
+Now head to the simple example and run it. It serves well as a testbed. Or simply mvn clean install -Pexamples
+
+In case you do not have the gems installed already, try <code>mvn clean install -Pexamples -Dcucumber.installGems=true</code>
+
