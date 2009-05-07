@@ -1,8 +1,9 @@
 package cucumber.internal;
 
 import org.junit.Test;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class StepMotherTest {
@@ -39,7 +40,7 @@ public class StepMotherTest {
         mother.newWorld();
 
         StepDefinition given = mother.getStepDefinitions().get(2);
-//        given.invokeOnTarget(new Object[]{"33"});
+        given.invokeOnTarget(new Object[]{"33"});
     }
 
     @Test
@@ -47,11 +48,21 @@ public class StepMotherTest {
         StepMother mother = new StepMother();
         mother.add(CukeSteps.class);
         mother.newWorld();
-        List stepDefs1 = mother.getStepDefinitions();
+        
+        List<StepDefinition> stepDefs1 = mother.getStepDefinitions();
         assertEquals(3, stepDefs1.size()); 
+        
+        List<StepDefinition> oldSteps = new ArrayList<StepDefinition>();
+        for (StepDefinition stepDefinition : stepDefs1) {
+			oldSteps.add(stepDefinition);
+		}
 
         mother.newWorld();
-        List stepDefs2 = mother.getStepDefinitions();
-        assertEquals(3, stepDefs1.size());
+        List<StepDefinition> stepDefs2 = mother.getStepDefinitions();
+        assertEquals(3, stepDefs2.size());
+        
+        for (int i = 0; i < 3; i++) {
+        	assertNotSame(oldSteps.get(i), stepDefs2.get(i));
+        }
     }
 }
