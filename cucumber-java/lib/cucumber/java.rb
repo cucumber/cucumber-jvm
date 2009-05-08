@@ -47,7 +47,7 @@ module Cucumber
     end
 
     def register_steps(steps_class)
-      @__cucumber_java_step_mother.add(steps_class)
+      @__cucumber_java_step_mother.registerSteps(steps_class)
     end
 
     def new_world!

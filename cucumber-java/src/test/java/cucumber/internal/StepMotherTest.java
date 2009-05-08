@@ -10,7 +10,7 @@ public class StepMotherTest {
     @Test
     public void shouldInvokeSuccessfully() throws Throwable {
         StepMother mother = new StepMother();
-        mother.add(CukeSteps.class);
+        mother.registerSteps(CukeSteps.class);
         mother.newWorld();
 
         StepDefinition given = mother.getStepDefinitions().get(0);
@@ -23,7 +23,7 @@ public class StepMotherTest {
     @Test(expected=RuntimeException.class) 
     public void shouldInvokeWithFailure() throws Throwable {
         StepMother mother = new StepMother();
-        mother.add(CukeSteps.class);
+        mother.registerSteps(CukeSteps.class);
         mother.newWorld();
 
         StepDefinition given = mother.getStepDefinitions().get(0);
@@ -36,7 +36,7 @@ public class StepMotherTest {
     @Test
     public void shouldConvertLongs() throws Throwable {
         StepMother mother = new StepMother();
-        mother.add(CukeSteps.class);
+        mother.registerSteps(CukeSteps.class);
         mother.newWorld();
 
         StepDefinition given = mother.getStepDefinitions().get(2);
@@ -46,7 +46,7 @@ public class StepMotherTest {
     @Test
     public void shouldCreateNewStepDefinitionsForEachNewWorld() throws Throwable {
         StepMother mother = new StepMother();
-        mother.add(CukeSteps.class);
+        mother.registerSteps(CukeSteps.class);
         mother.newWorld();
         
         List<StepDefinition> stepDefs1 = mother.getStepDefinitions();

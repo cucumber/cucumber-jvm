@@ -13,7 +13,7 @@ public class SpringBasedStepMotherTest {
     @Test
 	public void shouldInitSpringContext() throws Throwable {
 		SpringBasedStepMother mother = new SpringBasedStepMother("steps.xml");
-		mother.add(SpringSteps.class);
+		mother.registerSteps(SpringSteps.class);
 		mother.newWorld();
 		
 		List<StepDefinition> stepDefinitions = mother.getStepDefinitions();

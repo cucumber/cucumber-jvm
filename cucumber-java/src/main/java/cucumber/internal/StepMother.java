@@ -15,7 +15,7 @@ public class StepMother {
     protected final List<Class<?>> stepsClasses = new ArrayList<Class<?>>();
     protected final List<StepDefinition> stepDefinitions = new ArrayList<StepDefinition>();
     
-    public void add(Class<?> stepsClass) {
+    public void registerSteps(Class<?> stepsClass) {
         stepsClasses.add(stepsClass);
     }
     
