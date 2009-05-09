@@ -1,3 +1,3 @@
-require 'cucumber/java'
+require 'cucumber/pico_container'
 
-register_steps(Java::simple.StuffSteps)
+register_class(Java::simple.StuffSteps)

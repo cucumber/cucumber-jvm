@@ -1,38 +1,29 @@
 package cucumber.internal;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.picocontainer.DefaultPicoContainer;
-import org.picocontainer.MutablePicoContainer;
-
 import cucumber.Given;
 import cucumber.Then;
 import cucumber.When;
 
-public class StepMother {
-    protected final List<Class<?>> stepsClasses = new ArrayList<Class<?>>();
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+
+public abstract class StepMother {
+    protected final List<Class<?>> classes = new ArrayList<Class<?>>();
     protected final List<StepDefinition> stepDefinitions = new ArrayList<StepDefinition>();
-    
-    public void registerSteps(Class<?> stepsClass) {
-        stepsClasses.add(stepsClass);
-    }
-    
-    public void newWorld() {
-        stepDefinitions.clear();
-        MutablePicoContainer pico = new DefaultPicoContainer();
-        for(Class<?> stepsClass : stepsClasses) {
-            pico.addComponent(stepsClass);
-        }
 
-        for(Object stepObject : pico.getComponents()) {
-            addStepDefinitions(stepObject);
-        }
+    public abstract void newWorld();
+
+    public void registerClass(Class<?> stepsClass) {
+        classes.add(stepsClass);
     }
 
-    protected void addStepDefinitions(Object stepObject) {
-        for (Method method : stepObject.getClass().getMethods()) {
+    public List<StepDefinition> getStepDefinitions() {
+        return stepDefinitions;
+    }
+
+    protected void addStepDefinitions(Object object) {
+        for (Method method : object.getClass().getMethods()) {
             String regexpString = null;
             if (method.isAnnotationPresent(Given.class)) {
                 regexpString = method.getAnnotation(Given.class).value();
@@ -41,13 +32,10 @@ public class StepMother {
             } else if (method.isAnnotationPresent(Then.class)) {
                 regexpString = method.getAnnotation(Then.class).value();
             }
-            if(regexpString != null) {
-                stepDefinitions.add(new StepDefinition(regexpString, stepObject, method));
+            if (regexpString != null) {
+                stepDefinitions.add(new StepDefinition(regexpString, object, method));
             }
         }
     }
 
-    public List<StepDefinition> getStepDefinitions() {
-        return stepDefinitions;
-    }
 }

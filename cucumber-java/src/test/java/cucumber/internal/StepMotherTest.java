@@ -1,16 +1,17 @@
 package cucumber.internal;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotSame;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class StepMotherTest {
+public abstract class StepMotherTest {
+    protected StepMother mother;
+
     @Test
     public void shouldInvokeSuccessfully() throws Throwable {
-        StepMother mother = new StepMother();
-        mother.registerSteps(CukeSteps.class);
         mother.newWorld();
 
         StepDefinition given = mother.getStepDefinitions().get(0);
@@ -20,10 +21,8 @@ public class StepMotherTest {
         then.invokeOnTarget(new Object[]{"56", "green"});
     }
 
-    @Test(expected=RuntimeException.class) 
+    @Test(expected = RuntimeException.class)
     public void shouldInvokeWithFailure() throws Throwable {
-        StepMother mother = new StepMother();
-        mother.registerSteps(CukeSteps.class);
         mother.newWorld();
 
         StepDefinition given = mother.getStepDefinitions().get(0);
@@ -35,8 +34,6 @@ public class StepMotherTest {
 
     @Test
     public void shouldConvertLongs() throws Throwable {
-        StepMother mother = new StepMother();
-        mother.registerSteps(CukeSteps.class);
         mother.newWorld();
 
         StepDefinition given = mother.getStepDefinitions().get(2);
@@ -45,24 +42,22 @@ public class StepMotherTest {
 
     @Test
     public void shouldCreateNewStepDefinitionsForEachNewWorld() throws Throwable {
-        StepMother mother = new StepMother();
-        mother.registerSteps(CukeSteps.class);
         mother.newWorld();
-        
+
         List<StepDefinition> stepDefs1 = mother.getStepDefinitions();
-        assertEquals(3, stepDefs1.size()); 
-        
+        assertEquals(4, stepDefs1.size());
+
         List<StepDefinition> oldSteps = new ArrayList<StepDefinition>();
         for (StepDefinition stepDefinition : stepDefs1) {
-			oldSteps.add(stepDefinition);
-		}
+            oldSteps.add(stepDefinition);
+        }
 
         mother.newWorld();
         List<StepDefinition> stepDefs2 = mother.getStepDefinitions();
-        assertEquals(3, stepDefs2.size());
-        
-        for (int i = 0; i < 3; i++) {
-        	assertNotSame(oldSteps.get(i), stepDefs2.get(i));
+        assertEquals(4, stepDefs2.size());
+
+        for (int i = 0; i < 4; i++) {
+            assertNotSame(oldSteps.get(i), stepDefs2.get(i));
         }
     }
 }
