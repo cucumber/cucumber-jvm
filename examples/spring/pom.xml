@@ -32,6 +32,12 @@
         <artifactId>junit</artifactId>
         <version>4.4</version>
       </dependency>
+      <!-- Log4j seems easier to shut up than other logging frameworks -->
+      <dependency>
+          <groupId>log4j</groupId>
+          <artifactId>log4j</artifactId>
+          <version>1.2.14</version>
+      </dependency>
     </dependencies>
 
     <build>
