@@ -41,7 +41,7 @@ public class CucumberJunit4Runner extends BlockJUnit4ClassRunner {
     @Override
     protected Statement methodInvoker(FrameworkMethod method, Object test) {
         if (scenarioMethods.contains(method)) {
-            return executeScenario(test, method);
+            return executeScenario(test, (CucumberScenarioMethod) method);
         }
         return super.methodInvoker(method, test);
     }
@@ -54,10 +54,17 @@ public class CucumberJunit4Runner extends BlockJUnit4ClassRunner {
     }
 
 
-    protected Statement executeScenario(final Object featureObject, final FrameworkMethod method) {
+    protected Statement executeScenario(final Object featureObject, final CucumberScenarioMethod method) {
         return new Statement() {
             public void evaluate() throws Throwable {
                 System.out.println("Executing scenario = " + method.getName());
+                String cli ="cucumber --name " + method.getName();
+                if (method.hasTags()){
+                    cli += " --tags " + method.tagsAsCSV();
+                }
+                cli += " " + featureName;
+                System.out.println(cli);
+
             }
         };
     }
@@ -169,6 +176,21 @@ public class CucumberJunit4Runner extends BlockJUnit4ClassRunner {
         public int hashCode() {
             int result = 31 * cucumberScenario.hashCode();
             return result;
+        }
+
+        public String tagsAsCSV() {
+            String res = "";
+            for (String tag : cucumberScenario.tags) {
+                res += tag + ",";
+            }
+            if (res.endsWith(",")){
+                res = res.substring(0,res.length() -1);
+            }
+            return res;
+        }
+
+        public boolean hasTags() {
+            return !cucumberScenario.tags.isEmpty();
         }
     }
 }
