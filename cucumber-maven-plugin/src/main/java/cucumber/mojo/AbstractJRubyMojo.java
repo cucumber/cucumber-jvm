@@ -73,7 +73,7 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
     /**
      * The project test classpath
      *
-     * @parameter expression="${project.testClasspathELements}"
+     * @parameter expression="${project.testClasspathElements}"
      * @required
      * @readonly
      */
