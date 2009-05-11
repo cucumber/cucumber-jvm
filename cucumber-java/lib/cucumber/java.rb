@@ -67,4 +67,4 @@ class Java::CucumberInternal::StepDefinition
   include Cucumber::PureJava::StepDefinitionExtras
 end
 
-Exception::CUCUMBER_FILTER_PATTERNS.unshift(/^org\/jruby|^cucumber\/java|^org\/junit|^java\/|^sun\/|^\$_dot_dot_/)
+Exception::CUCUMBER_FILTER_PATTERNS.unshift(/^org\/jruby|^cucumber\/java|^cucumber\/internal|^org\/junit|^java\/|^sun\/|^\$_dot_dot_/)
