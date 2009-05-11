@@ -7,14 +7,14 @@
       <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
-    <orderEntry type="jdk" jdkName="1.5" jdkType="JavaSDK" />
+    <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="Maven: org.apache.maven:maven-project:2.0.9" level="project" />
     <orderEntry type="library" exported="" name="Maven: org.apache.maven:maven-settings:2.0.9" level="project" />
     <orderEntry type="library" exported="" name="Maven: org.apache.maven:maven-model:2.0.9" level="project" />
     <orderEntry type="library" exported="" name="Maven: org.codehaus.plexus:plexus-utils:1.5.1" level="project" />
     <orderEntry type="library" exported="" name="Maven: org.codehaus.plexus:plexus-container-default:1.0-alpha-9-stable-1" level="project" />
-    <orderEntry type="library" name="Maven: junit:junit:4.4" level="project" />
+    <orderEntry type="library" name="Maven: junit:junit:4.5" level="project" />
     <orderEntry type="library" exported="" name="Maven: classworlds:classworlds:1.1-alpha-2" level="project" />
     <orderEntry type="library" exported="" name="Maven: org.apache.maven:maven-profile:2.0.9" level="project" />
     <orderEntry type="library" exported="" name="Maven: org.apache.maven:maven-artifact-manager:2.0.9" level="project" />
