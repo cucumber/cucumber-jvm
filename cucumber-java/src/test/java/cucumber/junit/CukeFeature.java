@@ -1,9 +1,6 @@
 package cucumber.junit;
 
-import cucumber.CucumberJunit4Runner;
-import cucumber.Feature;
-import cucumber.Scenario;
-import cucumber.Tag;
+import cucumber.*;
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
 
@@ -12,6 +9,7 @@ import org.junit.runner.RunWith;
  */
 @RunWith(CucumberJunit4Runner.class)
 @Feature("/cucumber/junit/demo.feature") // Optional, default use the name of the class, and append .feature
+@StepDefinitions({CukeFeature.class}) // A list of step definitions to use for this feature
 public class CukeFeature {
 
     @Scenario("3 green cukes")
