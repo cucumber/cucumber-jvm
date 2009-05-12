@@ -73,11 +73,14 @@ public class CucumberJunit4Runner extends BlockJUnit4ClassRunner {
                 List<String> scriptLines = new ArrayList<String>() {{
                     add("require 'rubygems'");
                     add("require 'cucumber'");
-                    add("require 'cucumber/pico_container'");
+                    add("require 'cucumber/java'");
                     //add("register_class(Java::" + Feature.class.getCanonicalName() + ")");
-                    add("register_class(Java::cucumber.junit.CukeFeature)");
-                   // add("load 'cucumber'");
-                    add(" puts 'Executing scenario : " + method.getName() + "'");
+                    add("stepMother = ::Java::CucumberInternal::PicoContainerStepMother.new ");
+                    add("cli = Cucumber::Cli::Main.new(stepMother)");
+                    add("stepMother.register_class(Java::cucumber.junit.CukeFeature)");
+                    //add("cli.initialize(['src/test/java/cucumber/junit/demo.feature'])");
+                    add("cli.execute!(step_mother)");
+                    //add(" puts 'Executing scenario : " + method.getName() + "'");
                 }};
                 String script = "";
                 for (String scriptLine : scriptLines) {
