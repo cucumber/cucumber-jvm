@@ -1,5 +1,8 @@
 package cucumber;
 
+import org.apache.bsf.BSFException;
+import org.apache.bsf.BSFManager;
+import org.jruby.javasupport.bsf.JRubyEngine;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -13,20 +16,30 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+
 /**
  * @author <a href="mailto:kaare.nilsen@gmail.com">Kaare Nilsen</a>
  */
 public class CucumberJunit4Runner extends BlockJUnit4ClassRunner {
     private final List<FrameworkMethod> scenarioMethods = new ArrayList<FrameworkMethod>();
     private final String featureName;
+    private final JRubyEngine rubyEngine;
+
 
     public CucumberJunit4Runner(Class<?> featureClass) throws org.junit.runners.model.InitializationError {
         super(featureClass);
-        featureName = extractFeatureName(featureClass);
-        System.out.println("Creating feature '" + featureName + "'");
-        List<CucumberScenarioWrapper> cucumberScenarios = extractScenarios(featureClass);
-        for (CucumberScenarioWrapper cucumberScenario : cucumberScenarios) {
-            scenarioMethods.add(new CucumberScenarioMethod(cucumberScenario));
+        System.setProperty("jruby.home", "/Users/kaare/develop/resources/jruby-1.2.0");
+        try {
+            BSFManager.registerScriptingEngine("ruby", JRubyEngine.class.getName(), new String[]{"rb"});
+            rubyEngine = (JRubyEngine) new BSFManager().loadScriptingEngine("ruby");
+            featureName = extractFeatureName(featureClass);
+            System.out.println("Creating feature '" + featureName + "'");
+            List<CucumberScenarioWrapper> cucumberScenarios = extractScenarios(featureClass);
+            for (CucumberScenarioWrapper cucumberScenario : cucumberScenarios) {
+                scenarioMethods.add(new CucumberScenarioMethod(cucumberScenario));
+            }
+        } catch (BSFException e) {
+            throw new org.junit.runners.model.InitializationError("Could not initalize jruby engine");
         }
     }
 
@@ -57,10 +70,33 @@ public class CucumberJunit4Runner extends BlockJUnit4ClassRunner {
     protected Statement executeScenario(final Object featureObject, final CucumberScenarioMethod method) {
         return new Statement() {
             public void evaluate() throws Throwable {
-                System.out.println("Executing scenario = " + method.getName());
+                List<String> scriptLines = new ArrayList<String>() {{
+                    add("require 'rubygems'");
+                    add("require 'cucumber'");
+                    add("require 'cucumber/pico_container'");
+                    //add("register_class(Java::" + Feature.class.getCanonicalName() + ")");
+                    add("register_class(Java::cucumber.junit.CukeFeature)");
+                   // add("load 'cucumber'");
+                    add(" puts 'Executing scenario : " + method.getName() + "'");
+                }};
+                String script = "";
+                for (String scriptLine : scriptLines) {
+                    script += scriptLine + "\n";
+                }
+                exec(script);
             }
         };
     }
+
+    public void exec(String script) throws BSFException {
+        try {
+            rubyEngine.exec("CucumberJunit4Runner", 0, 0, script);
+        } catch (BSFException ex) {
+            ex.printStackTrace();
+            throw ex;
+        }
+    }
+
 
     private List<CucumberScenarioWrapper> extractScenarios(Class featureClass) {
         List<CucumberScenarioWrapper> cucumberScenarios = new ArrayList<CucumberScenarioWrapper>();
@@ -176,8 +212,8 @@ public class CucumberJunit4Runner extends BlockJUnit4ClassRunner {
             for (String tag : cucumberScenario.tags) {
                 res += tag + ",";
             }
-            if (res.endsWith(",")){
-                res = res.substring(0,res.length() -1);
+            if (res.endsWith(",")) {
+                res = res.substring(0, res.length() - 1);
             }
             return res;
         }

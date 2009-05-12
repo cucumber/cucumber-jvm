@@ -30,7 +30,11 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>bsf</groupId>
+        <artifactId>bsf</artifactId>
+        <version>2.4.0</version>
     </dependency>
   </dependencies>
 </project>

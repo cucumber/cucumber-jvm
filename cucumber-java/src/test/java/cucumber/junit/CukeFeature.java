@@ -11,8 +11,7 @@ import org.junit.runner.RunWith;
  * @author <a href="mailto:kaare.nilsen@gmail.com">Kaare Nilsen</a>
  */
 @RunWith(CucumberJunit4Runner.class)
-@Feature("/cucumber/junit/demo.feature")
-// Optional, default use the name of the class, and append .feature
+@Feature("/cucumber/junit/demo.feature") // Optional, default use the name of the class, and append .feature
 public class CukeFeature {
 
     @Scenario("3 green cukes")
