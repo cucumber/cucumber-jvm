@@ -13,8 +13,8 @@ import org.junit.runners.model.Statement;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Arrays;
 
 
 /**
@@ -27,7 +27,14 @@ public class CucumberJunit4Runner extends BlockJUnit4ClassRunner {
 
     public CucumberJunit4Runner(Class<?> featureClass) throws org.junit.runners.model.InitializationError {
         super(featureClass);
-        System.setProperty("jruby.home", System.getenv().get("JRUBY_HOME"));
+        if (System.getProperty("jruby.home") == null) {
+            if (System.getenv("JRUBY_HOME") != null) {
+                System.setProperty("jruby.home", System.getenv("JRUBY_HOME"));
+            } else {
+                throw new org.junit.runners.model.InitializationError("Missing system property jruby.home or JRUBY_HOME system enironment property");
+            }
+        }
+
         try {
             BSFManager.registerScriptingEngine("ruby", JRubyEngine.class.getName(), new String[]{"rb"});
             rubyEngine = (JRubyEngine) new BSFManager().loadScriptingEngine("ruby");
@@ -52,8 +59,6 @@ public class CucumberJunit4Runner extends BlockJUnit4ClassRunner {
 
     @Override
     protected Statement methodInvoker(FrameworkMethod method, Object test) {
-        // This throws NPE on JUnit 4.5 because CucumberScenarioMethod ctor passes null to super.
-        // (Java 1.5)
         if (scenarioMethods.contains(method)) {
             return executeScenario(test, (CucumberScenarioMethod) method);
         }
@@ -75,7 +80,7 @@ public class CucumberJunit4Runner extends BlockJUnit4ClassRunner {
                     add("require 'rubygems'");
                     add("require 'cucumber'");
                     add("require 'cucumber/pico_container'");
-                    add("Cucumber::Cli::Main.execute(['--help'])");
+                  //  add("Cucumber::Cli::Main.execute(['--help'])");
                 }};
                 String script = "";
                 for (String scriptLine : scriptLines) {
@@ -105,9 +110,9 @@ public class CucumberJunit4Runner extends BlockJUnit4ClassRunner {
                 Tag tagAnnotation = method.getAnnotation(Tag.class);
                 String scenarioName = extractScenarioName(method, scenarioAnnotation);
                 if (tagAnnotation != null) {
-                    cucumberScenarios.add(new CucumberScenarioWrapper(scenarioName, Arrays.asList(tagAnnotation.value())));
+                    cucumberScenarios.add(new CucumberScenarioWrapper(scenarioName, Arrays.asList(tagAnnotation.value()), method));
                 } else {
-                    cucumberScenarios.add(new CucumberScenarioWrapper(scenarioName));
+                    cucumberScenarios.add(new CucumberScenarioWrapper(scenarioName, method));
                 }
             }
         }
@@ -118,6 +123,7 @@ public class CucumberJunit4Runner extends BlockJUnit4ClassRunner {
         return scenarioAnnotation.value().length() == 0 ? method.getName().replace("_", " ") : scenarioAnnotation.value();
     }
 
+    @SuppressWarnings("unchecked")
     private String extractFeatureName(Class featureClass) {
         Feature featureAnnotation = (Feature) featureClass.getAnnotation(Feature.class);
         return featureAnnotation != null ? featureAnnotation.value() : featureClass.getSimpleName() + ".feature";
@@ -125,16 +131,19 @@ public class CucumberJunit4Runner extends BlockJUnit4ClassRunner {
 
     private class CucumberScenarioWrapper {
         private final String scenarioName;
+        private final Method testMethod;
         private final List<String> tags;
 
-        public CucumberScenarioWrapper(String scenarioName) {
+        public CucumberScenarioWrapper(String scenarioName, Method testMethod) {
             this.scenarioName = scenarioName;
+            this.testMethod = testMethod;
             tags = new ArrayList<String>();
         }
 
-        private CucumberScenarioWrapper(String scenarioName, List<String> tags) {
+        private CucumberScenarioWrapper(String scenarioName, List<String> tags, Method testMethod) {
             this.scenarioName = scenarioName;
             this.tags = tags;
+            this.testMethod = testMethod;
         }
 
         @Override
@@ -166,7 +175,7 @@ public class CucumberJunit4Runner extends BlockJUnit4ClassRunner {
         private final CucumberScenarioWrapper cucumberScenario;
 
         public CucumberScenarioMethod(CucumberScenarioWrapper cucumberScenario) {
-            super(null);
+            super(cucumberScenario.testMethod);
             this.cucumberScenario = cucumberScenario;
         }
 

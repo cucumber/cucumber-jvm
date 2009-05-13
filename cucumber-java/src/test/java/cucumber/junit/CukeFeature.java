@@ -16,7 +16,6 @@ public class CukeFeature {
     @Scenario("3 green cukes")
     // Use the method name (replace _ with space) if a value is not present
     @Tag("aTag")
-    @Test
     public void ThreeGreenCukes() {
     }
 
