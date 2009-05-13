@@ -120,7 +120,7 @@ public class CucumberJunit4Runner extends BlockJUnit4ClassRunner {
     }
 
     private String extractScenarioName(Method method, Scenario scenarioAnnotation) {
-        return scenarioAnnotation.value().isEmpty() ? method.getName().replace("_", " ") : scenarioAnnotation.value();
+        return scenarioAnnotation.value().length() == 0 ? method.getName().replace("_", " ") : scenarioAnnotation.value();
     }
 
     private String extractFeatureName(Class featureClass) {
