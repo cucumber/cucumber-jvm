@@ -2,6 +2,7 @@ package cucumber.junit;
 
 import cucumber.*;
 import org.junit.Ignore;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
@@ -15,6 +16,7 @@ public class CukeFeature {
     @Scenario("3 green cukes")
     // Use the method name (replace _ with space) if a value is not present
     @Tag("aTag")
+    @Test
     public void ThreeGreenCukes() {
     }
 
