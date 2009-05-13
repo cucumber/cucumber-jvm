@@ -23,6 +23,7 @@ import java.util.Arrays;
 public class CucumberJunit4Runner extends BlockJUnit4ClassRunner {
     private final List<FrameworkMethod> scenarioMethods = new ArrayList<FrameworkMethod>();
     private final JRubyEngine rubyEngine;
+    private final String featureName;
 
 
     public CucumberJunit4Runner(Class<?> featureClass) throws org.junit.runners.model.InitializationError {
@@ -38,7 +39,7 @@ public class CucumberJunit4Runner extends BlockJUnit4ClassRunner {
         try {
             BSFManager.registerScriptingEngine("ruby", JRubyEngine.class.getName(), new String[]{"rb"});
             rubyEngine = (JRubyEngine) new BSFManager().loadScriptingEngine("ruby");
-            String featureName = extractFeatureName(featureClass);
+            featureName = extractFeatureName(featureClass);
             System.out.println("Creating feature '" + featureName + "'");
             List<CucumberScenarioWrapper> cucumberScenarios = extractScenarios(featureClass);
             for (CucumberScenarioWrapper cucumberScenario : cucumberScenarios) {
@@ -79,8 +80,9 @@ public class CucumberJunit4Runner extends BlockJUnit4ClassRunner {
                 List<String> scriptLines = new ArrayList<String>() {{
                     add("require 'rubygems'");
                     add("require 'cucumber'");
-                    add("require 'cucumber/pico_container'");
-                  //  add("Cucumber::Cli::Main.execute(['--help'])");
+                    add("require 'cucumber/junit'");
+                    add("register_class(Java::cucumber.junit.JunitCukeSteps)");
+                    add("Cucumber::Cli::Main.execute(['--format', 'progress', '/Users/kaare/develop/projects/com/github/cucumber_java/cucumber-java/src/test/java"+featureName +"'])");
                 }};
                 String script = "";
                 for (String scriptLine : scriptLines) {
