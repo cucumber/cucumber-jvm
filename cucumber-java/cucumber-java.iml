@@ -31,13 +31,13 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="JRuby SDK 1.2.0 facet library" level="application" />
     <orderEntry type="library" exported="" name="Maven: org.picocontainer:picocontainer:2.8" level="project" />
     <orderEntry type="library" exported="" name="Maven: org.springframework:spring:2.5.6" level="project" />
     <orderEntry type="library" exported="" name="Maven: commons-logging:commons-logging:1.1.1" level="project" />
     <orderEntry type="library" exported="" name="Maven: org.jruby:jruby:1.2.0" level="project" />
     <orderEntry type="library" exported="" name="Maven: junit:junit:4.5" level="project" />
     <orderEntry type="library" exported="" name="Maven: bsf:bsf:2.4.0" level="project" />
-    <orderEntry type="library" name="JRuby SDK 1.2.0 facet library" level="application" />
   </component>
 </module>
 
