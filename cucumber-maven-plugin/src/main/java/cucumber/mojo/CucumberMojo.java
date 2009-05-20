@@ -7,6 +7,7 @@ import org.apache.tools.ant.taskdefs.Java;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Arrays;
 
 /**
  * @goal features
@@ -28,6 +29,11 @@ public class CucumberMojo extends AbstractJRubyMojo {
      */
     protected String[] gems;
 
+	/**
+     * @parameter expression="${cucumber.args}"
+     */
+    protected String[] args;
+
     @SuppressWarnings({"unchecked"})
     public void execute() throws MojoFailureException, MojoExecutionException {
 
@@ -41,6 +47,7 @@ public class CucumberMojo extends AbstractJRubyMojo {
         List<String> allArgs = new ArrayList<String>();
         allArgs.add("-S");
         allArgs.add("cucumber");
+		allArgs.addAll(Arrays.asList(args));
         allArgs.add((features != null) ? features : "src/test/features");
 
         Java jruby = jruby(allArgs);
@@ -54,30 +61,30 @@ public class CucumberMojo extends AbstractJRubyMojo {
 
     private List parseGem(String gemSpec) throws MojoExecutionException {
 
-        List<String> args = new ArrayList<String>();
+        List<String> gemArgs = new ArrayList<String>();
         String[] gem = gemSpec.split(":");
 
         String name = gem.length > 0 ? gem[0] : null;
         String version = gem.length > 1 ? gem[1] : null;
         String source = gem.length > 2 ? gem[2] : null;
 
-        if (name == null || name.length() == 0) {
+        if (name == null || name.isEmpty()) {
             throw new MojoExecutionException("Requires atleast a name for <gem>");
         } else {
-            args.add(name);
+            gemArgs.add(name);
         }
 
-        if (version != null && version.length() != 0) {
-            args.add("-v" + version);
+        if (version != null && !version.isEmpty()) {
+            gemArgs.add("-v" + version);
         }
 
-        if (source != null && source.length() == 0) {
+        if (source != null && !source.isEmpty()) {
             if (source.contains("github")) {
-                args.add("--source");
-                args.add("http://gems.github.com");
+                gemArgs.add("--source");
+                gemArgs.add("http://gems.github.com");
             }
         }
-        return args;
+        return gemArgs;
     }
 
 }
