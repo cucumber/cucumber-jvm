@@ -7,6 +7,12 @@
     <facet type="Spring" name="Spring">
       <configuration />
     </facet>
+    <facet type="JRUBY" name="JRuby">
+      <configuration>
+        <JRUBY_FACET_CONFIG_ID NAME="JRUBY_SDK_NAME" VALUE="JRuby SDK 1.2.0" />
+        <JRUBY_FACET_CONFIG_ID NAME="NUMBER" VALUE="0" />
+      </configuration>
+    </facet>
   </component>
   <component name="NewModuleRootManager" inherit-compiler-output="false">
     <output url="file://$MODULE_DIR$/target/classes" />
@@ -25,6 +31,7 @@
     <orderEntry type="library" exported="" name="Maven: org.jruby:jruby:1.2.0" level="project" />
     <orderEntry type="library" exported="" name="Maven: junit:junit:4.5" level="project" />
     <orderEntry type="library" exported="" name="Maven: bsf:bsf:2.4.0" level="project" />
+    <orderEntry type="library" name="JRuby SDK 1.2.0 facet library" level="application" />
   </component>
 </module>
 
