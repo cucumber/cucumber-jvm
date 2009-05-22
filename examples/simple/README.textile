@@ -36,13 +36,13 @@ See the "Cucumber Wiki":http://wiki.github.com/aslakhellesoy/cucumber for more i
 
 h2. Hacking
 
-If you want to hack on the cucumber-java gem and use this example as a testbed, it's easier to run off 
-cucumber and cucumber-java as "source" instead of gems.
-Here is what I do:
-
-<pre>
-jruby -I ../../cucumber-java/lib PATH_TO_CUCUMBER_SRC/bin/cucumber features
-</pre>
+jruby \
+-I features/support \
+-r ~/.m2/repository/org/picocontainer/picocontainer/2.8/picocontainer-2.8.jar \
+-r ~/.m2/repository/junit/junit/4.4/junit-4.4.jar \
+-r target/cucumber-simple-example-1.0.0.jar \
+-I ../../cucumber-java/lib \
+~/scm/cucumber_rails/vendor/plugins/cucumber/bin/cucumber features
 
 h2. TODO
 

@@ -4,6 +4,7 @@ A simple cucumber maven plugin for running your features. Written by Øystein El
 
 h2. Changes
 
+ * Add cucumberOpts to Maven mojo
  * Refactored slightly too much :-)
  * Now supports reading gems from github through a slightly cryptic gem spec :-) (gemname:0.0.1:github). By default it will read from rubyforge.
  * Added cucumber-webtest-example, which should illustrate some pretty basic running of web-(integration)tests with the plugin. (Remember to set your jrubyHome!).

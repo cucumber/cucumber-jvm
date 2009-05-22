@@ -7,12 +7,12 @@ import java.lang.reflect.Method;
 
 public class StepDefinition {
     private final String regexpString;
-    private final Object target;
+    private final Object stepObject;
     private final Method method;
 
-    public StepDefinition(String regexpString, Object target, Method method) {
+    public StepDefinition(String regexpString, Object stepObject, Method method) {
         this.regexpString = regexpString;
-        this.target = target;
+        this.stepObject = stepObject;
         this.method = method;
     }
 
@@ -31,25 +31,29 @@ public class StepDefinition {
     void invokeOnTarget(Object[] args) throws Throwable {
         try {
             Object[] convertedArgs = convertArgs(args);
-            method.invoke(target, convertedArgs);
+            method.invoke(stepObject, convertedArgs);
         } catch (InvocationTargetException e) {
             throw e.getTargetException();
         }
-
     }
 
     private Object[] convertArgs(Object[] args) {
+        if (method.getParameterTypes().length != args.length) {
+            throw new RuntimeException("The method " + method + " was called with " + args.length + " arguments.");
+        }
         Object[] convertedArgs = new Object[args.length];
         for (int i = 0; i < method.getParameterTypes().length; i++) {
-            Class clazz = method.getParameterTypes()[i];
+            Class<?> clazz = method.getParameterTypes()[i];
             convertedArgs[i] = convertArg(clazz, args[i]);
         }
         return convertedArgs;
     }
 
-    private Object convertArg(Class clazz, Object arg) {
+    private Object convertArg(Class<?> clazz, Object arg) {
         if (clazz.equals(Integer.TYPE)) {
             return Integer.valueOf((String) arg);
+        } else if (clazz.equals(Long.TYPE)) {
+            return Long.valueOf((String) arg);
         } else {
             return arg;
         }

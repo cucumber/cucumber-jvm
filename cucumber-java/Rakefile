@@ -30,12 +30,6 @@ Run 'rubyforge setup' to prepare your env for access to Rubyforge
   RUBYFORGE_USERNAME.replace @config["username"]
 end
 
-RDOC_OPTS = ['--quiet', '--title', 'Cucumber documentation',
-    "--opname", "index.html",
-    "--line-numbers", 
-    "--main", "README.textile",
-    "--inline-source"]
-
 class Hoe
   def extra_deps 
     @extra_deps.reject! { |x| Array(x).first == 'hoe' } 
@@ -54,7 +48,7 @@ $hoe = Hoe.new(GEM_NAME, Cucumber::Java::VERSION::STRING) do |p|
   p.clean_globs |= ['**/.*.sw?', '*.gem', '.config', '**/.DS_Store', '**/*.class']  #An array of file patterns to delete on clean.
   #p.extra_deps = []     # An array of rubygem dependencies [name, version], e.g. [ ['active_support', '>= 1.3.1'] ]
   p.extra_deps = [ 
-    ['cucumber', '>= 0.2.3']
+    ['cucumber', '>= 0.3.0']
   ]
   #p.spec_extras = {}    # A hash of extra values to set in the gemspec.
 end

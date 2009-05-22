@@ -1,12 +1,14 @@
-package cucumber.internal;
+package cucumber.junit;
 
 import cucumber.Given;
 import cucumber.Then;
+import cucumber.Steps;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class CukeSteps {
+@Steps
+public class JunitCukeSteps {
     private final Map<String,Integer> cukes = new HashMap<String,Integer>();
 
     @Given("I have (\\d+) (.*) cukes")

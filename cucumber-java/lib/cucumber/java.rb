@@ -1,7 +1,6 @@
 require 'cucumber/java/version'
 require "cucumber-java-#{Cucumber::Java::VERSION::STRING}.jar"
 import 'cucumber.internal.StepDefinition'
-import 'cucumber.internal.StepMother'
 import 'cucumber.Table'
 
 module Cucumber
@@ -39,15 +38,17 @@ module Cucumber
       class JavaException < Exception
       end
     end
-    
-    def self.extended(base)
-      base.instance_eval do
-        @__cucumber_java_step_mother = ::Java::CucumberInternal::StepMother.new
-      end
+
+    def step_mother=(step_mother)
+      @__cucumber_java_step_mother = step_mother
     end
 
-    def register_steps(steps_class)
-      @__cucumber_java_step_mother.add(steps_class)
+    def step_mother
+      @__cucumber_java_step_mother
+    end
+
+    def register_class(clazz)
+      @__cucumber_java_step_mother.registerClass(clazz)
     end
 
     def new_world!
@@ -66,4 +67,4 @@ class Java::CucumberInternal::StepDefinition
   include Cucumber::PureJava::StepDefinitionExtras
 end
 
-Exception::CUCUMBER_FILTER_PATTERNS.unshift(/^org\/jruby|^cucumber\/java|^org\/junit|^java\/|^sun\/|^\$_dot_dot_/)
+Exception::CUCUMBER_FILTER_PATTERNS.unshift(/^org\/jruby|^cucumber\/java|^cucumber\/internal|^org\/junit|^java\/|^sun\/|^\$_dot_dot_/)

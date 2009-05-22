@@ -70,6 +70,15 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
      */
     private List pluginArtifacts;
 
+    /**
+     * The project test classpath
+     *
+     * @parameter expression="${project.testClasspathElements}"
+     * @required
+     * @readonly
+     */
+    private List testClasspathElements;
+
     protected Java jruby(List<String> args) throws MojoExecutionException {
         launchDirectory.mkdirs();
         Project project = null;
@@ -97,6 +106,7 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
             Path p = new Path(java.getProject());
             p.add((Path) project.getReference("maven.plugin.classpath"));
             p.add((Path) project.getReference("maven.compile.classpath"));
+            p.add((Path) project.getReference("maven.test.classpath"));
             classpath.setKey("JRUBY_PARENT_CLASSPATH");
             classpath.setValue(p.toString());
 
@@ -113,6 +123,7 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
         Path p = java.createClasspath();
         p.add((Path) project.getReference("maven.plugin.classpath"));
         p.add((Path) project.getReference("maven.compile.classpath"));
+        p.add((Path) project.getReference("maven.test.classpath"));
         getLog().debug("java classpath: " + p.toString());
 
         for (String s : args) {
@@ -146,6 +157,7 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
         project.addBuildListener(new LogAdapter());
         addReference(project, "maven.compile.classpath", compileClasspathElements);
         addReference(project, "maven.plugin.classpath", pluginArtifacts);
+        addReference(project, "maven.test.classpath", testClasspathElements);
         return project;
     }
 

@@ -4,10 +4,10 @@
                       http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>cucumber</groupId>
-    <artifactId>cucumber-simple-example</artifactId>
+    <artifactId>cucumber-spring-example</artifactId>
     <packaging>jar</packaging>
     <version>1.0.0</version>
-    <name>Cucumber Simple Example</name>
+    <name>Cucumber Spring Example</name>
     <url>http://cukes.info/</url>
 
     <repositories>
@@ -22,16 +22,22 @@
     </repositories>
 
     <dependencies>
-        <dependency>
-            <groupId>cucumber</groupId>
-            <artifactId>cucumber-java</artifactId>
-            <version>0.0.2</version>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.4</version>
-        </dependency>
+      <dependency>
+        <groupId>cucumber</groupId>
+        <artifactId>cucumber-java</artifactId>
+        <version>0.0.2</version>
+      </dependency>
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>4.4</version>
+      </dependency>
+      <!-- Log4j seems easier to shut up than other logging frameworks -->
+      <dependency>
+          <groupId>log4j</groupId>
+          <artifactId>log4j</artifactId>
+          <version>1.2.14</version>
+      </dependency>
     </dependencies>
 
     <build>

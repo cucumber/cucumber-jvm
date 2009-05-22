@@ -21,6 +21,6 @@ Feature: Simple
     Then I should have 3 green cukes
     And I should have 4 yellow cukes
     
-  Scenario: 99 green cukes
+  Scenario: lots of green cukes
     Given I have 99 green cukes
     Then I should have 99 green cukes

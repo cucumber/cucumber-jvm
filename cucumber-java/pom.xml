@@ -13,11 +13,15 @@
   <packaging>jar</packaging>
   <version>${parent.version}</version>
   <name>Cucumber Java</name>
-  <description>Cucumber AST for writing steps in Java</description>
+  <description>Pure Java support for Cucumber</description>
   <dependencies>
     <dependency>
       <groupId>org.picocontainer</groupId>
       <artifactId>picocontainer</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring</artifactId>
     </dependency>
     <dependency>
       <groupId>org.jruby</groupId>
@@ -26,7 +30,11 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>bsf</groupId>
+        <artifactId>bsf</artifactId>
+        <version>2.4.0</version>
     </dependency>
   </dependencies>
 </project>

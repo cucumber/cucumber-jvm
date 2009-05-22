@@ -1,8 +1,10 @@
-*.iws
-target
-pkg
-*.jar
 *.class
 .project
 .classpath
 .settings
+target
+pkg
+*.jar
+*.iws
+*.ipr
+*.iml
