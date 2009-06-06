@@ -1,9 +1,9 @@
 package simple;
 
-import cucumber.Given;
-import cucumber.Table;
-import cucumber.Then;
-import cucumber.When;
+import cuke4duke.Given;
+import cuke4duke.Table;
+import cuke4duke.Then;
+import cuke4duke.When;
 import static org.junit.Assert.assertEquals;
 
 import java.util.HashMap;

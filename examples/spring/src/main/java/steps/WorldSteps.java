@@ -4,13 +4,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import simple.World;
-import cucumber.Given;
-import cucumber.Steps;
-import cucumber.Then;
-import cucumber.When;
+import cuke4duke.Given;
+import cuke4duke.Steps;
+import cuke4duke.Then;
+import cuke4duke.When;
 
 @Steps
 public class WorldSteps {

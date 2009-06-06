@@ -1,4 +1,4 @@
-require 'cucumber/spring'
+require 'cuke4duke/spring'
 
 spring_config('context.xml', 'steps.xml')
 

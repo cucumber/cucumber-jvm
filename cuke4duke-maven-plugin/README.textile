@@ -1,13 +1,13 @@
 h1. Cucumber Maven Plugin
 
-A simple cucumber maven plugin for running your features. Written by Øystein Ellingbø (ellingbo) and Ole Christian Rynning (oc) :-)
+A simple cuke4duke maven plugin for running your features. Written by Øystein Ellingbø (ellingbo) and Ole Christian Rynning (oc) :-)
 
 h2. Changes
 
  * Add cucumberOpts to Maven mojo
  * Refactored slightly too much :-)
  * Now supports reading gems from github through a slightly cryptic gem spec :-) (gemname:0.0.1:github). By default it will read from rubyforge.
- * Added cucumber-webtest-example, which should illustrate some pretty basic running of web-(integration)tests with the plugin. (Remember to set your jrubyHome!).
+ * Added cuke4duke-webtest-example, which should illustrate some pretty basic running of web-(integration)tests with the plugin. (Remember to set your jrubyHome!).
 
 h2. How to Install?
 
@@ -18,20 +18,20 @@ h2. How to Install?
 
 h3. Command Line Use
 
-If you wish to refer to <code>mvn cucumber:features</code> instead of <code>mvn cucumber.mojo:cucumber:features</code>,
+If you wish to refer to <code>mvn cuke4duke:features</code> instead of <code>mvn cuke4duke.mojo:cuke4duke:features</code>,
 add the following to your maven2 settings.xml (<code>~/.m2/settings.xml</code>):
 
 <pre>
 <settings>
   ...
   <pluginGroups>
-    <pluginGroup>cucumber.mojo</pluginGroup>
+    <pluginGroup>cuke4duke.mojo</pluginGroup>
   </pluginGroups>
   ...
 </settings>
 </pre>
 
-<code>mvn cucumber:features -Dcucumber.features=examples/simple/features -Djruby.home=/opt/jruby-1.2.0 -Dcucumber.installGems=true</code>
+<code>mvn cuke4duke:features -Dcucumber.features=examples/simple/features -Djruby.home=/opt/jruby-1.2.0 -Dcucumber.installGems=true</code>
 
 h3. Configure in your project POM
 
@@ -41,8 +41,8 @@ h3. Configure in your project POM
   <build>
     <plugins>
       <plugin>
-        <groupId>cucumber.mojo</groupId>
-        <artifactId>cucumber-maven-plugin</artifactId>
+        <groupId>cuke4duke.mojo</groupId>
+        <artifactId>cuke4duke-maven-plugin</artifactId>
         <configuration>
           <jrubyHome>/path/to/JRUBY_HOME</jrubyHome>
           <features>/optional/path/to/your/features</features>
@@ -54,7 +54,7 @@ h3. Configure in your project POM
 </project>
 </pre>
 
-By default it scans for features in <code>src/test/features</code>.
+By default it scans for features in <code>features</code>.
 
 h3. Configure to automatically run at integration-test
 
@@ -64,11 +64,11 @@ If you wish to run your webapp with Jetty, you can run your features on this app
 <project>
  ...
  <build>
-        <finalName>cucumber-webtest-example</finalName>
+        <finalName>cuke4duke-webtest-example</finalName>
         <plugins>
             <plugin>
-                <groupId>cucumber.mojo</groupId>
-                <artifactId>cucumber-maven-plugin</artifactId>
+                <groupId>cuke4duke.mojo</groupId>
+                <artifactId>cuke4duke-maven-plugin</artifactId>
                 <configuration>
                     <jrubyHome>/usr/local/jruby</jrubyHome>
                     <gems>

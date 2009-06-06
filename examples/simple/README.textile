@@ -14,12 +14,12 @@ h3. Build the java code
 mvn clean package
 </pre>
 
-You will get an error from Maven complaining that the cucumber-java jar file doesn't
+You will get an error from Maven complaining that the cuke4duke-java jar file doesn't
 exist. (You'll need that jar if you want to use Cucumber tables in Java). Just do what Maven 
-says - the cucumber jar can be found inside your cucumber-java gem, for example:
+says - the cuke4duke jar can be found inside your cuke4duke-java gem, for example:
 
 <pre>
-mvn install:install-file -DgroupId=cucumber -DartifactId=cucumber-java -Dversion=0.0.2 -Dpackaging=jar -Dfile=/usr/local/jruby/lib/ruby/gems/1.8/gems/cucumber-java-0.0.2/lib/cucumber-java-0.0.2.jar 
+mvn install:install-file -DgroupId=cuke4duke -DartifactId=cuke4duke-java -Dversion=0.0.2 -Dpackaging=jar -Dfile=/usr/local/jruby/lib/ruby/gems/1.8/gems/cuke4duke-java-0.0.2/lib/cuke4duke-java-0.0.2.jar
 </pre>
 
 Now, just try building again.
@@ -27,12 +27,12 @@ Now, just try building again.
 h3. Run the features:
 
 <pre>
-jruby -S cucumber features
+jruby -S cuke4duke features
 </pre>
 
 Try to make the features fail by modifying the java code or the feature file - check out the output...
 
-See the "Cucumber Wiki":http://wiki.github.com/aslakhellesoy/cucumber for more info.
+See the "Cucumber Wiki":http://wiki.github.com/aslakhellesoy/cuke4duke for more info.
 
 h2. Hacking
 
@@ -40,9 +40,9 @@ jruby \
 -I features/support \
 -r ~/.m2/repository/org/picocontainer/picocontainer/2.8/picocontainer-2.8.jar \
 -r ~/.m2/repository/junit/junit/4.5/junit-4.5.jar \
--r target/cucumber-simple-example-1.0.0.jar \
--I ../../cucumber-java/lib \
-~/scm/cucumber_rails/vendor/plugins/cucumber/bin/cucumber features
+-r target/cuke4duke-simple-example-1.0.0.jar \
+-I ../../cuke4duke-java/lib \
+~/scm/cucumber_rails/vendor/plugins/cuke4duke/bin/cuke4duke features
 
 h2. TODO
 

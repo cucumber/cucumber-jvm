@@ -4,13 +4,13 @@
     <javac srcdir="src/main/java" destdir="target/classes" />
   </target>
 
-  <target name="install-cucumber" depends="-check-jruby" description="Install Cucumber gem">
+  <target name="install-cuke4duke" depends="-check-jruby" description="Install Cucumber gem">
   </target>
 
   <target name="install-jars" description="Install Cucumber gem">
   </target>
 
-  <target name="cucumber" depends="-check-jruby" description="Run Cucumber">
+  <target name="cuke4duke" depends="-check-jruby" description="Run Cucumber">
     <mkdir dir="target/junit-report" />
     <java classname="org.jruby.Main" fork="true" failonerror="true">
       <classpath>
@@ -22,7 +22,7 @@
       </classpath>
       <jvmarg value="-Djruby.home=${ENV.JRUBY_HOME}"/>
       <arg value="-S"/>
-      <arg value="cucumber"/>
+      <arg value="cuke4duke"/>
       <arg value="--color"/>
       <arg value="--format"/>
       <arg value="pretty"/>

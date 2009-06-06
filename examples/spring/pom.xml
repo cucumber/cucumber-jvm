@@ -3,8 +3,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                       http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>cucumber</groupId>
-  <artifactId>cucumber-spring-example</artifactId>
+  <groupId>cuke4duke</groupId>
+  <artifactId>cuke4duke-spring-example</artifactId>
   <packaging>jar</packaging>
   <version>1.0.0</version>
   <name>Cuke4Duke Spring Example</name>
@@ -66,7 +66,6 @@
         <artifactId>maven-plugin</artifactId>
         <configuration>
           <jrubyHome>${env.JRUBY_HOME}</jrubyHome>
-          <features>features</features>
         </configuration>
         <executions>
           <execution>

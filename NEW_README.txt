@@ -9,7 +9,7 @@ mvn clean install -P examples -Dcucumber.installGems=true
 
 TODO: 
 
-* Use a GEM_PATH that will install gems underneath cucumber in maven
+* Use a GEM_PATH that will install gems underneath cuke4duke in maven
 * Package ruby code inside (maven) jar?
 * Package jar inside gem?
 * Both package schemes??
