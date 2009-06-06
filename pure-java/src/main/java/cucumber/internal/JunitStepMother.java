@@ -1,8 +1,5 @@
 package cucumber.internal;
 
-import org.picocontainer.DefaultPicoContainer;
-import org.picocontainer.MutablePicoContainer;
-
 public class JunitStepMother extends StepMother {
     public void newWorld() {
         stepDefinitions.clear();

@@ -146,6 +146,8 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
             args.add("maybe_install_gems");
         }
         args.addAll(gem);
+        args.add("--no-ri");
+        args.add("--no-rdoc");
 
         Java jruby = jruby(args);
         jruby.execute();

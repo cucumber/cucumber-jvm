@@ -4,15 +4,15 @@
                       http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>cucumber</groupId>
-    <artifactId>cucumber-java-parent</artifactId>
+    <groupId>cuke4duke</groupId>
+    <artifactId>parent</artifactId>
     <relativePath>../pom.xml</relativePath>
-    <version>0.0.2</version>
+    <version>0.0.3</version>
   </parent>
-  <artifactId>cucumber-java</artifactId>
+  <artifactId>pure-java</artifactId>
   <packaging>jar</packaging>
   <version>${parent.version}</version>
-  <name>Cucumber Java</name>
+  <name>Cuke4Duke Pure Java</name>
   <description>Pure Java support for Cucumber</description>
   <dependencies>
     <dependency>
@@ -25,16 +25,16 @@
     </dependency>
     <dependency>
       <groupId>org.jruby</groupId>
-      <artifactId>jruby</artifactId>
+      <artifactId>jruby-complete</artifactId>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
     </dependency>
     <dependency>
-        <groupId>bsf</groupId>
-        <artifactId>bsf</artifactId>
-        <version>2.4.0</version>
+      <groupId>bsf</groupId>
+      <artifactId>bsf</artifactId>
+      <version>2.4.0</version>
     </dependency>
   </dependencies>
 </project>

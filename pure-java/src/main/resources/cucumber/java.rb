@@ -1,5 +1,4 @@
 require 'cucumber/java/version'
-require "cucumber-java-#{Cucumber::Java::VERSION::STRING}.jar"
 import 'cucumber.internal.StepDefinition'
 import 'cucumber.Table'
 
