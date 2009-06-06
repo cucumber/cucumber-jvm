@@ -6,7 +6,7 @@
   <groupId>cuke4duke</groupId>
   <artifactId>parent</artifactId>
   <packaging>pom</packaging>
-  <version>0.0.3</version>
+  <version>0.0.4</version>
   <name>Cuke4Duke Main Project</name>
   <url>http://cukes.info/</url>
 
@@ -26,8 +26,8 @@
   </repositories>
 
   <modules>
-    <module>maven-plugin</module>
-    <module>pure-java</module>
+    <module>cuke4duke-maven-plugin</module>
+    <module>cuke4duke</module>
   </modules>
 
   <profiles>

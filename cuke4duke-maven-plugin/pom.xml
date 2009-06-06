@@ -5,7 +5,7 @@
     <groupId>cuke4duke</groupId>
     <artifactId>parent</artifactId>
     <relativePath>../pom.xml</relativePath>
-    <version>0.0.3</version>
+    <version>0.0.4</version>
   </parent>
   <artifactId>maven-plugin</artifactId>
   <packaging>maven-plugin</packaging>
@@ -25,7 +25,7 @@
     </dependency>
     <dependency>
       <groupId>cuke4duke</groupId>
-      <artifactId>pure-java</artifactId>
+      <artifactId>cuke4duke</artifactId>
       <version>${parent.version}</version>
     </dependency>
     <dependency>

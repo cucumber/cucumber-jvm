@@ -1,4 +1,3 @@
-require 'cucumber/java/version'
 import 'cucumber.internal.StepDefinition'
 import 'cucumber.Table'
 

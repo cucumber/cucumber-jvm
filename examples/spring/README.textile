@@ -5,7 +5,7 @@ jruby \
 -r ~/.m2/repository/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar \
 -r ~/.m2/repository/log4j/log4j/1.2.14/log4j-1.2.14.jar \
 -r ~/.m2/repository/org/springframework/spring/2.5.6/spring-2.5.6.jar \
--r ~/.m2/repository/junit/junit/4.4/junit-4.4.jar \
+-r ~/.m2/repository/junit/junit/4.5/junit-4.5.jar \
 -r target/cucumber-spring-example-1.0.0.jar \
 -I ../../cucumber-java/lib \
 ~/scm/cucumber_rails/vendor/plugins/cucumber/bin/cucumber features

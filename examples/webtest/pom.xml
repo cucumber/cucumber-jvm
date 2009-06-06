@@ -11,7 +11,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.4</version>
+      <version>4.5</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -24,10 +24,9 @@
         <configuration>
           <jrubyHome>${env.JRUBY_HOME}</jrubyHome>
           <gems>
-            <gem>celerity:0.0.6</gem>
+            <gem>jarib-celerity:0.0.6.8:github</gem>
             <gem>rspec:1.2.6</gem>
           </gems>
-          <!--installGems>true</installGems-->
         </configuration>
         <executions>
           <execution>

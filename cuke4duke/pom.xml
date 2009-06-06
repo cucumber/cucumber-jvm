@@ -7,12 +7,12 @@
     <groupId>cuke4duke</groupId>
     <artifactId>parent</artifactId>
     <relativePath>../pom.xml</relativePath>
-    <version>0.0.3</version>
+    <version>0.0.4</version>
   </parent>
-  <artifactId>pure-java</artifactId>
+  <artifactId>cuke4duke</artifactId>
   <packaging>jar</packaging>
   <version>${parent.version}</version>
-  <name>Cuke4Duke Pure Java</name>
+  <name>Cuke4Duke</name>
   <description>Pure Java support for Cucumber</description>
   <dependencies>
     <dependency>

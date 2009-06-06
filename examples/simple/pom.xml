@@ -24,8 +24,8 @@
   <dependencies>
     <dependency>
       <groupId>cuke4duke</groupId>
-      <artifactId>pure-java</artifactId>
-      <version>0.0.3</version>
+      <artifactId>cuke4duke</artifactId>
+      <version>0.0.4</version>
     </dependency>
     <dependency>
       <groupId>org.picocontainer</groupId>
@@ -35,7 +35,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.4</version>
+      <version>4.5</version>
     </dependency>
   </dependencies>
 

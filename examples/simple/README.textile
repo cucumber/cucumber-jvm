@@ -39,7 +39,7 @@ h2. Hacking
 jruby \
 -I features/support \
 -r ~/.m2/repository/org/picocontainer/picocontainer/2.8/picocontainer-2.8.jar \
--r ~/.m2/repository/junit/junit/4.4/junit-4.4.jar \
+-r ~/.m2/repository/junit/junit/4.5/junit-4.5.jar \
 -r target/cucumber-simple-example-1.0.0.jar \
 -I ../../cucumber-java/lib \
 ~/scm/cucumber_rails/vendor/plugins/cucumber/bin/cucumber features
