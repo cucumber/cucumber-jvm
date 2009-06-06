@@ -7,6 +7,25 @@
   <version>0.0.1-SNAPSHOT</version>
   <name>Cuke4Duke Celerity Example</name>
   <url>http://maven.apache.org</url>
+
+  <repositories>
+    <repository>
+      <id>codehaus</id>
+      <url>http://repository.codehaus.org</url>
+    </repository>
+    <repository>
+      <id>cukes</id>
+      <url>http://cukes.info/maven</url>
+    </repository>
+  </repositories>
+
+  <pluginRepositories>
+    <pluginRepository>
+      <id>cukes</id>
+      <url>http://cukes.info/maven</url>
+    </pluginRepository>
+  </pluginRepositories>
+  
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -15,12 +34,13 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
   <build>
     <finalName>cuke4duke-webtest-example</finalName>
     <plugins>
       <plugin>
         <groupId>cuke4duke</groupId>
-        <artifactId>maven-plugin</artifactId>
+        <artifactId>cuke4duke-maven-plugin</artifactId>
         <configuration>
           <jrubyHome>${env.JRUBY_HOME}</jrubyHome>
           <gems>

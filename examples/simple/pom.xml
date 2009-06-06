@@ -21,6 +21,13 @@
     </repository>
   </repositories>
 
+  <pluginRepositories>
+    <pluginRepository>
+      <id>cukes</id>
+      <url>http://cukes.info/maven</url>
+    </pluginRepository>
+  </pluginRepositories>
+
   <dependencies>
     <dependency>
       <groupId>cuke4duke</groupId>
@@ -57,7 +64,7 @@
     <plugins>
       <plugin>
         <groupId>cuke4duke</groupId>
-        <artifactId>maven-plugin</artifactId>
+        <artifactId>cuke4duke-maven-plugin</artifactId>
         <configuration>
           <jrubyHome>${env.JRUBY_HOME}</jrubyHome>
         </configuration>
