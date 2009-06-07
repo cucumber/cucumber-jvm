@@ -68,17 +68,17 @@ public class CucumberMojo extends AbstractJRubyMojo {
         String version = gem.length > 1 ? gem[1] : null;
         String source = gem.length > 2 ? gem[2] : null;
 
-        if (name == null || name.isEmpty()) {
+        if (name == null || name.trim().length() == 0) {
             throw new MojoExecutionException("Requires atleast a name for <gem>");
         } else {
             gemArgs.add(name);
         }
 
-        if (version != null && !version.isEmpty()) {
+        if (version != null && version.trim().length() > 0) {
             gemArgs.add("-v" + version);
         }
 
-        if (source != null && !source.isEmpty()) {
+        if (source != null && source.trim().length() > 0) {
             if (source.contains("github")) {
                 gemArgs.add("--source");
                 gemArgs.add("http://gems.github.com");
