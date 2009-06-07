@@ -6,6 +6,6 @@ public class JunitStepMother extends StepMother {
     }
 
     public void registerSteps(Object object) {
-        super.addStepDefinitions(object); 
+        super.addCucumberMethods(object); 
     }
 }

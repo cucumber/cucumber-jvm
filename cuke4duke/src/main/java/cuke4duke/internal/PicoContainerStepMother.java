@@ -12,7 +12,7 @@ public class PicoContainerStepMother extends StepMother {
         }
 
         for (Object object : pico.getComponents()) {
-            addStepDefinitions(object);
+            addCucumberMethods(object);
         }
     }
 }

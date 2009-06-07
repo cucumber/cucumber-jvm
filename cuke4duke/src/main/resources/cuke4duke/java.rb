@@ -49,12 +49,18 @@ module Cucumber
       @__cucumber_java_step_mother.registerClass(clazz)
     end
 
+    # "Overridden" methods from cucumber's StepMother
+
     def new_world!
       @__cucumber_java_step_mother.newWorld
     end
     
     def step_definitions
       @__cucumber_java_step_mother.getStepDefinitions
+    end
+    
+    def execute_before(scenario)
+      @__cucumber_java_step_mother.executeBeforeHooks([scenario])
     end
   end
 end

@@ -30,8 +30,8 @@ public class SpringStepMother extends StepMother {
             @SuppressWarnings("unchecked")
             Map<Object, Object> beans = appContext.getBeansOfType(clazz);
 
-            for (Object stepObject : beans.values()) {
-                addStepDefinitions(stepObject);
+            for (Object object : beans.values()) {
+                addCucumberMethods(object);
             }
         }
     }
