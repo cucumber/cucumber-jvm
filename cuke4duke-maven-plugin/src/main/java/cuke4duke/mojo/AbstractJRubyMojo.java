@@ -227,8 +227,7 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
             int priority = event.getPriority();
             Log log = getLog();
             String message = event.getMessage();
-            if (message.contains("nbb")) return;
-			switch (priority) {
+            switch (priority) {
                 case Project.MSG_ERR:
                     log.error(message);
                     break;
