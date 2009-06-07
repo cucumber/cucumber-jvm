@@ -1,4 +1,4 @@
-package steps;
+package simple;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
