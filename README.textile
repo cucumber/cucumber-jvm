@@ -13,7 +13,7 @@ public class StuffSteps {
 
 Cucumber-Java also brings you first-class Maven support.
 
-h2. Building the cucumber-java gem
+h2. Building the cuke4duke-java gem
 
 This is for hackers. If you just want to use Cucumber with Java, head straight to
 the examples.
@@ -39,7 +39,7 @@ h3. Build and install the gem
 
 <pre>
 jruby -S rake gem
-jruby -S gem install pkg/cucumber-java --no-rdoc --no-ri
+jruby -S gem install pkg/cuke4duke-java --no-rdoc --no-ri
 </pre>
 
 In case you use Windows (Cygwin/MSYS) it's easier to do the :jar task manually <code>mvn clean install && mv target/*.jar /lib</code>. In that case comment out <code>task :gem => :jar</code> at the bottom of the <code>Rakefile</code>

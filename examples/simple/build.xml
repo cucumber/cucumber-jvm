@@ -1,0 +1,47 @@
+<project name="Cucumber Demo" default="cucumber" basedir=".">
+  <target name ="compile" description="Compile classes">
+    <mkdir dir="target/classes" />
+    <javac srcdir="src/main/java" destdir="target/classes" />
+  </target>
+
+  <target name="install-cuke4duke" depends="-check-jruby" description="Install Cucumber gem">
+  </target>
+
+  <target name="install-jars" description="Install Cucumber gem">
+  </target>
+
+  <target name="cuke4duke" depends="-check-jruby" description="Run Cucumber">
+    <mkdir dir="target/junit-report" />
+    <java classname="org.jruby.Main" fork="true" failonerror="true">
+      <classpath>
+        <pathelement path="${ENV.JRUBY_HOME}/lib/jruby.jar"/>
+        <pathelement path="target/classes"/>
+        <pathelement path="lib/cuke4duke-0.0.4.jar"/>
+        <pathelement path="lib/picocontainer-2.8.jar"/>
+        <pathelement path="lib/junit-4.5.jar"/>
+      </classpath>
+      <jvmarg value="-Djruby.home=${ENV.JRUBY_HOME}"/>
+      <arg value="-S"/>
+      <arg value="cuke4duke"/>
+      <arg value="--color"/>
+      <arg value="--format"/>
+      <arg value="pretty"/>
+      <arg value="--format"/>
+      <arg value="junit"/>
+      <arg value="--out"/>
+      <arg value="target/junit-report"/>
+      <arg value="features"/>
+    </java>
+  </target>
+  
+  <target name="-check-jruby">
+    <property environment="ENV" />
+    <fail unless="ENV.JRUBY_HOME">
+      (::) ERROR (::)
+      Define JRUBY_HOME in your shell. For example:
+      
+      export JRUBY_HOME=/usr/local/jruby
+      set JRUBY_HOME=C:\jruby
+    </fail>
+  </target>
+</project>
