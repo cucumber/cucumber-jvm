@@ -1,6 +1,5 @@
 <project xmlns:ivy="antlib:org.apache.ivy.ant" name="Cucumber Demo" default="cucumber" basedir=".">
-  <property environment="ENV"/>
-  <property name="ENV.GEM_PATH" value="${basedir}/lib/gems"/>
+  <property name="gems" value="${basedir}/lib/gems"/>
 
   <target name="compile-steps" description="Compile test classes">
     <mkdir dir="target/test-classes"/>
@@ -23,7 +22,8 @@
         </fileset>
         <pathelement location="target/test-classes"/>
       </classpath>
-      <arg value="${ENV.GEM_PATH}/bin/cucumber"/>
+      <env key="GEM_PATH" value="${gems}"/>
+      <arg value="${gems}/bin/cucumber"/>
       <arg value="--color"/>
       <arg value="--format"/>
       <arg value="pretty"/>
@@ -42,7 +42,7 @@
   </target>
 
   <target name="install-gems">
-    <mkdir dir="${ENV.GEM_PATH}"/>
+    <mkdir dir="${gems}"/>
 
     <java classname="org.jruby.Main" fork="true" failonerror="true">
       <classpath>
@@ -56,7 +56,7 @@
       <arg value="--no-ri"/>
       <arg value="--no-rdoc"/>
       <arg value="--install-dir"/>
-      <arg value="${ENV.GEM_PATH}"/>
+      <arg value="${gems}"/>
       <arg value="cucumber"/>
       <arg value="rspec"/>
     </java>
@@ -64,7 +64,10 @@
 
   <target name="clean" description="Delete all generated artifacts">
     <delete dir="${basedir}/target"/>
-    <delete dir="${basedir}/lib"/>
+    <delete dir="${gems}"/>
+    <delete>
+      <fileset dir="${basedir}/lib" includes="**/*.jar"/>
+    </delete>
   </target>
 
 </project>
