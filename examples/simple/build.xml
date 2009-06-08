@@ -1,28 +1,29 @@
-<project name="Cucumber Demo" default="cucumber" basedir=".">
-  <target name ="compile" description="Compile classes">
-    <mkdir dir="target/classes" />
-    <javac srcdir="src/main/java" destdir="target/classes" />
+<project xmlns:ivy="antlib:org.apache.ivy.ant" name="Cucumber Demo" default="cucumber" basedir=".">
+  <property environment="ENV"/>
+  <property name="ENV.GEM_PATH" value="${basedir}/lib/gems"/>
+
+  <target name="compile-steps" description="Compile test classes">
+    <mkdir dir="target/test-classes"/>
+    <javac srcdir="src/test/java" destdir="target/test-classes">
+      <classpath>
+        <fileset dir="lib">
+          <include name="**/*.jar"/>
+        </fileset>
+      </classpath>
+    </javac>
   </target>
 
-  <target name="install-cuke4duke" depends="-check-jruby" description="Install Cucumber gem">
-  </target>
+  <target name="cucumber" depends="compile-steps" description="Run Cucumber">
+    <mkdir dir="target/junit-report"/>
 
-  <target name="install-jars" description="Install Cucumber gem">
-  </target>
-
-  <target name="cuke4duke" depends="-check-jruby" description="Run Cucumber">
-    <mkdir dir="target/junit-report" />
     <java classname="org.jruby.Main" fork="true" failonerror="true">
       <classpath>
-        <pathelement path="${ENV.JRUBY_HOME}/lib/jruby.jar"/>
-        <pathelement path="target/classes"/>
-        <pathelement path="lib/cuke4duke-0.0.5.jar"/>
-        <pathelement path="lib/picocontainer-2.8.jar"/>
-        <pathelement path="lib/junit-4.5.jar"/>
+        <fileset dir="lib">
+          <include name="**/*.jar"/>
+        </fileset>
+        <pathelement location="target/test-classes"/>
       </classpath>
-      <jvmarg value="-Djruby.home=${ENV.JRUBY_HOME}"/>
-      <arg value="-S"/>
-      <arg value="cuke4duke"/>
+      <arg value="${ENV.GEM_PATH}/bin/cucumber"/>
       <arg value="--color"/>
       <arg value="--format"/>
       <arg value="pretty"/>
@@ -33,15 +34,37 @@
       <arg value="features"/>
     </java>
   </target>
-  
-  <target name="-check-jruby">
-    <property environment="ENV" />
-    <fail unless="ENV.JRUBY_HOME">
-      (::) ERROR (::)
-      Define JRUBY_HOME in your shell. For example:
-      
-      export JRUBY_HOME=/usr/local/jruby
-      set JRUBY_HOME=C:\jruby
-    </fail>
+
+  <target name="install-deps" depends="download-jars, install-gems" description="Install all dependencies"/>
+
+  <target name="download-jars" description="Download jars with ivy">
+    <ivy:retrieve/>
   </target>
+
+  <target name="install-gems">
+    <mkdir dir="${ENV.GEM_PATH}"/>
+
+    <java classname="org.jruby.Main" fork="true" failonerror="true">
+      <classpath>
+        <fileset dir="lib">
+          <include name="**/jruby*.jar"/>
+        </fileset>
+      </classpath>
+      <arg value="-S"/>
+      <arg value="gem"/>
+      <arg value="install"/>
+      <arg value="--no-ri"/>
+      <arg value="--no-rdoc"/>
+      <arg value="--install-dir"/>
+      <arg value="${ENV.GEM_PATH}"/>
+      <arg value="cucumber"/>
+      <arg value="rspec"/>
+    </java>
+  </target>
+
+  <target name="clean" description="Delete all generated artifacts">
+    <delete dir="${basedir}/target"/>
+    <delete dir="${basedir}/lib"/>
+  </target>
+
 </project>
