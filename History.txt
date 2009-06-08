@@ -1,10 +1,16 @@
-=== 0.0.2 (In Git)
+== 0.0.5 (In Git)
 
-* Maven support!
-* Strings are converted to int when needed
+=== Bugfixes
+* Everything compiles on Java 5 (Ole Christian Rynning)
 
-=== 0.0.1 / 2009-03-25
+== 0.0.4 2009-06-07
 
-* 1 major enhancement
-  * Birthday!
+This is the first release of Cuke4Duke that mostly works.
 
+=== New features
+* Spring support (Trond Marius Øvstetun)
+* Maven support! (Ole Christian Rynning, Øystein Ellingbø)
+* Strings are converted to int when needed (Eivind Waaler)
+* Run with JUnit (Kaare Nilsen)
+* Simple @Before hooks (Aslak Hellesøy)
+* Use pure java step definitions (Aslak Hellesøy)

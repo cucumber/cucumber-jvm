@@ -5,7 +5,7 @@
     <groupId>cuke4duke</groupId>
     <artifactId>parent</artifactId>
     <relativePath>../pom.xml</relativePath>
-    <version>0.0.4</version>
+    <version>0.0.5</version>
   </parent>
   <artifactId>cuke4duke-maven-plugin</artifactId>
   <packaging>maven-plugin</packaging>

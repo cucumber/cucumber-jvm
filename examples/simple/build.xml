@@ -16,7 +16,7 @@
       <classpath>
         <pathelement path="${ENV.JRUBY_HOME}/lib/jruby.jar"/>
         <pathelement path="target/classes"/>
-        <pathelement path="lib/cuke4duke-0.0.4.jar"/>
+        <pathelement path="lib/cuke4duke-0.0.5.jar"/>
         <pathelement path="lib/picocontainer-2.8.jar"/>
         <pathelement path="lib/junit-4.5.jar"/>
       </classpath>
