@@ -1,6 +1,6 @@
 h1. Have a Cuke, Duke
 
-Cucumber-Java lets you write Cucumber steps in pure Java. Example:
+cuke4duke lets you write Cucumber steps in pure Java. Example:
 
 <pre>
 public class StuffSteps {
@@ -11,7 +11,7 @@ public class StuffSteps {
 }
 </pre>
 
-Cucumber-Java also brings you first-class Maven support.
+cuke4duke also brings you first-class Maven support.
 
 h2. Building cuke4duke
 
@@ -35,4 +35,6 @@ To build from scratch and install all required gems
 mvn clean install -Dcucumber.installGems=true
 </pre>
 
-Now head to the simple example and run it. It serves well as a testbed. Or simply <code>mvn clean install -Pexamples</code>
+h3. Examples
+
+Now head to the simple example and run it. It serves well as a testbed. Or simply <code>mvn clean install -Pexamples -Dcucumber.installGems=true</code>
