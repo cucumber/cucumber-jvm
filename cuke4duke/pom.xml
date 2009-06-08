@@ -9,6 +9,7 @@
     <relativePath>../pom.xml</relativePath>
     <version>0.0.5</version>
   </parent>
+  
   <artifactId>cuke4duke</artifactId>
   <packaging>jar</packaging>
   <version>${parent.version}</version>
@@ -35,6 +36,12 @@
       <groupId>bsf</groupId>
       <artifactId>bsf</artifactId>
       <version>2.4.0</version>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>1.2.14</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 </project>

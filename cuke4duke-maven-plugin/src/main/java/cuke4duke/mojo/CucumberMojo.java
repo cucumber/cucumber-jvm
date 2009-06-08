@@ -29,7 +29,7 @@ public class CucumberMojo extends AbstractJRubyMojo {
      */
     protected String[] gems;
 
-	/**
+	 /**
      * @parameter expression="${cucumber.args}"
      */
     protected String[] args;
@@ -47,7 +47,7 @@ public class CucumberMojo extends AbstractJRubyMojo {
         List<String> allArgs = new ArrayList<String>();
         allArgs.add("-S");
         allArgs.add("cucumber");
-		allArgs.addAll(Arrays.asList(args));
+		    allArgs.addAll(Arrays.asList(args));
         allArgs.add((features != null) ? features : "features");
 
         Java jruby = jruby(allArgs);
