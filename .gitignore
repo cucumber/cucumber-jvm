@@ -1,10 +1,10 @@
-*.iws
-*.ipr
-*.iml
-.settings
-.classpath
+*.class
 .project
+.classpath
+.settings
 target
 pkg
 *.jar
-
+*.iws
+*.ipr
+*.iml

@@ -226,29 +226,30 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
         private void log(BuildEvent event) {
             int priority = event.getPriority();
             Log log = getLog();
+            String message = event.getMessage();
             switch (priority) {
                 case Project.MSG_ERR:
-                    log.error(event.getMessage());
+                    log.error(message);
                     break;
 
                 case Project.MSG_WARN:
-                    log.warn(event.getMessage());
+                    log.warn(message);
                     break;
 
                 case Project.MSG_INFO:
-                    log.info(event.getMessage());
+                    log.info(message);
                     break;
 
                 case Project.MSG_VERBOSE:
-                    log.debug(event.getMessage());
+                    log.debug(message);
                     break;
 
                 case Project.MSG_DEBUG:
-                    log.debug(event.getMessage());
+                    log.debug(message);
                     break;
 
                 default:
-                    log.info(event.getMessage());
+                    log.info(message);
                     break;
             }
         }
