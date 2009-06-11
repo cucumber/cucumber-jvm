@@ -42,7 +42,6 @@
         <groupId>cuke4duke</groupId>
         <artifactId>cuke4duke-maven-plugin</artifactId>
         <configuration>
-          <jrubyHome>${env.JRUBY_HOME}</jrubyHome>
           <gems>
             <gem>jarib-celerity:0.0.6.8:github</gem>
             <gem>rspec:1.2.6</gem>
