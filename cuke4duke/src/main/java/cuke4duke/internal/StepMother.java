@@ -25,11 +25,11 @@ public abstract class StepMother {
         classes.add(stepsClass);
     }
 
-    StepDefinition getStepDefinition(String regexp) {
+    public StepDefinition getStepDefinition(String regexp) {
         return stepDefinitions.get(regexp);
     }
     
-	Collection<StepDefinition> getStepDefinitions() {
+	public Collection<StepDefinition> getStepDefinitions() {
 		return stepDefinitions.values();
 	}
 
