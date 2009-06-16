@@ -1,19 +1,22 @@
 package cuke4duke.internal;
 
-import cuke4duke.Given;
-import cuke4duke.Then;
-import cuke4duke.When;
-import cuke4duke.Before;
-
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.jruby.RubyArray;
 
+import cuke4duke.Before;
+import cuke4duke.Given;
+import cuke4duke.Then;
+import cuke4duke.When;
+
 public abstract class StepMother {
     protected final List<Class<?>> classes = new ArrayList<Class<?>>();
-    protected final List<StepDefinition> stepDefinitions = new ArrayList<StepDefinition>();
+    protected final Map<String, StepDefinition> stepDefinitions = new HashMap<String, StepDefinition>();
     private List<Hook> beforeHooks = new ArrayList<Hook>();
 
     public abstract void newWorld();
@@ -22,9 +25,13 @@ public abstract class StepMother {
         classes.add(stepsClass);
     }
 
-    public List<StepDefinition> getStepDefinitions() {
-        return stepDefinitions;
+    StepDefinition getStepDefinition(String regexp) {
+        return stepDefinitions.get(regexp);
     }
+    
+	Collection<StepDefinition> getStepDefinitions() {
+		return stepDefinitions.values();
+	}
 
     public void executeBeforeHooks(RubyArray arrayWithScenario) throws Throwable {
         for(Hook hook : beforeHooks) {
@@ -55,7 +62,7 @@ public abstract class StepMother {
             regexpString = method.getAnnotation(Then.class).value();
         }
         if (regexpString != null) {
-            stepDefinitions.add(new StepDefinition(object, method, regexpString));
+            stepDefinitions.put(regexpString, new StepDefinition(object, method, regexpString));
         }
     }
 }
