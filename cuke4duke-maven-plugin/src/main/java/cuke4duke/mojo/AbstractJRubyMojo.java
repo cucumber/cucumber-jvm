@@ -2,6 +2,7 @@ package cuke4duke.mojo;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
+import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
@@ -41,11 +42,6 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
     protected File launchDirectory;
 
     /**
-     * @parameter expression="${jruby.home}"
-     */
-    protected String jrubyHome;
-
-    /**
      * The amount of memory to use when forking JRuby. Default is "384m".
      *
      * @parameter expression="${jruby.launch.memory}"
@@ -78,6 +74,13 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
      * @readonly
      */
     private List testClasspathElements;
+
+    /**
+     * @parameter expression="${localRepository}"
+     * @required
+     * @readonly
+     */
+    private ArtifactRepository localRepository;
 
     protected Java jruby(List<String> args) throws MojoExecutionException {
         launchDirectory.mkdirs();
@@ -113,12 +116,10 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
             java.addEnv(classpath);
         }
 
-        if (jrubyHome != null) {
-            Environment.Variable v = new Environment.Variable();
-            v.setKey("jruby.home");
-            v.setValue(jrubyHome);
-            java.addSysproperty(v);
-        }
+        Environment.Variable gemPathVar = new Environment.Variable();
+        gemPathVar.setKey("GEM_PATH");
+        gemPathVar.setValue(gemHome().getAbsolutePath());
+        java.addEnv(gemPathVar);
 
         Path p = java.createClasspath();
         p.add((Path) project.getReference("maven.plugin.classpath"));
@@ -138,19 +139,67 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
     protected void installGem(List<String> gem) throws MojoExecutionException {
         List args = new ArrayList();
         args.add("-S");
-        // maybe_install_gems only takes a list of gems, no versions or sources
-        if (gem.size() > 1) {
-            args.add("gem");
-            args.add("install");
-        } else {
-            args.add("maybe_install_gems");
-        }
-        args.addAll(gem);
+        args.add("gem");
+        args.add("install");
         args.add("--no-ri");
         args.add("--no-rdoc");
+        args.add("--install-dir");
+        args.add(gemHome().getAbsolutePath());
+
+        args.addAll(gem);
 
         Java jruby = jruby(args);
+
+        // We have to override HOME to make RubyGems install gems
+        // where we want it. Setting GEM_HOME and using --install-dir
+        // is not enough.
+        Environment.Variable homeVar = new Environment.Variable();
+        homeVar.setKey("HOME");
+        homeVar.setValue(dotGemParent().getAbsolutePath());
+        jruby.addEnv(homeVar);
+        dotGemParent().mkdirs();
+
         jruby.execute();
+    }
+
+    protected List parseGem(String gemSpec) throws MojoExecutionException {
+
+        List<String> gemArgs = new ArrayList<String>();
+        String[] gem = gemSpec.split(":");
+
+        String name = gem.length > 0 ? gem[0] : null;
+        String version = gem.length > 1 ? gem[1] : null;
+        String source = gem.length > 2 ? gem[2] : null;
+
+        if (name == null || name.trim().length() == 0) {
+            throw new MojoExecutionException("Requires atleast a name for <gem>");
+        } else {
+            gemArgs.add(name);
+        }
+
+        if (version != null && version.trim().length() > 0) {
+            gemArgs.add("-v" + version);
+        }
+
+        if (source != null && source.trim().length() > 0) {
+            if (source.contains("github")) {
+                gemArgs.add("--source");
+                gemArgs.add("http://gems.github.com");
+            }
+        }
+        return gemArgs;
+    }
+
+    protected File dotGemParent() {
+        return new File(localRepository.getBasedir());
+    }
+
+    protected File gemHome() {
+        return new File(dotGemParent(), ".gem");
+    }
+
+    protected File binDir() {
+        return new File(gemHome(), "bin");
     }
 
     protected Project getProject() throws DependencyResolutionRequiredException {

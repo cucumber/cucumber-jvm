@@ -71,9 +71,6 @@
       <plugin>
         <groupId>cuke4duke</groupId>
         <artifactId>cuke4duke-maven-plugin</artifactId>
-        <configuration>
-          <jrubyHome>${env.JRUBY_HOME}</jrubyHome>
-        </configuration>
         <executions>
           <execution>
             <id>run-features</id>

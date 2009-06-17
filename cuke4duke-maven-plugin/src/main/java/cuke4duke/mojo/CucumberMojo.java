@@ -8,6 +8,7 @@ import org.apache.tools.ant.taskdefs.Java;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Arrays;
+import java.io.File;
 
 /**
  * @goal features
@@ -29,7 +30,7 @@ public class CucumberMojo extends AbstractJRubyMojo {
      */
     protected String[] gems;
 
-	 /**
+    /**
      * @parameter expression="${cucumber.args}"
      */
     protected String[] args;
@@ -43,48 +44,22 @@ public class CucumberMojo extends AbstractJRubyMojo {
                 installGem(parseGem(s));
             }
         }
-        
+
         List<String> allArgs = new ArrayList<String>();
-        allArgs.add("-S");
-        allArgs.add("cucumber");
-		    allArgs.addAll(Arrays.asList(args));
+        allArgs.add(cucumberBin().getAbsolutePath());
+        allArgs.addAll(Arrays.asList(args));
         allArgs.add((features != null) ? features : "features");
 
         Java jruby = jruby(allArgs);
         try {
             jruby.execute();
         } catch (BuildException e) {
-            // suck it & spit
-            throw new MojoFailureException("Cucumber failed: " + e.getMessage());
+            throw new MojoFailureException("Cucumber failed", e);
         }
     }
 
-    private List parseGem(String gemSpec) throws MojoExecutionException {
-
-        List<String> gemArgs = new ArrayList<String>();
-        String[] gem = gemSpec.split(":");
-
-        String name = gem.length > 0 ? gem[0] : null;
-        String version = gem.length > 1 ? gem[1] : null;
-        String source = gem.length > 2 ? gem[2] : null;
-
-        if (name == null || name.trim().length() == 0) {
-            throw new MojoExecutionException("Requires atleast a name for <gem>");
-        } else {
-            gemArgs.add(name);
-        }
-
-        if (version != null && version.trim().length() > 0) {
-            gemArgs.add("-v" + version);
-        }
-
-        if (source != null && source.trim().length() > 0) {
-            if (source.contains("github")) {
-                gemArgs.add("--source");
-                gemArgs.add("http://gems.github.com");
-            }
-        }
-        return gemArgs;
+    private File cucumberBin() {
+        return new File(binDir(), "cucumber");
     }
 
 }
