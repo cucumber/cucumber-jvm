@@ -35,7 +35,6 @@ public class CucumberMojo extends AbstractJRubyMojo {
      */
     protected String[] args;
 
-    @SuppressWarnings({"unchecked"})
     public void execute() throws MojoFailureException, MojoExecutionException {
 
         if (installGems) {
@@ -54,7 +53,7 @@ public class CucumberMojo extends AbstractJRubyMojo {
         try {
             jruby.execute();
         } catch (BuildException e) {
-            throw new MojoFailureException("Cucumber failed", e);
+            throw new MojoFailureException("Cucumber failed: "+e.getMessage());
         }
     }
 

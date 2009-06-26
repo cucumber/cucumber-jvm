@@ -1,6 +1,12 @@
 package cuke4duke.mojo;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.AbstractMojo;
@@ -15,11 +21,6 @@ import org.apache.tools.ant.types.Commandline;
 import org.apache.tools.ant.types.Environment;
 import org.apache.tools.ant.types.Path;
 import org.codehaus.plexus.util.StringUtils;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Base for all JRuby mojos.
@@ -40,7 +41,12 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
      * @required
      */
     protected File launchDirectory;
-
+    
+    /**
+     * @parameter expression="${features.log4j.configuration}" default-value="${project.basedir}/target/test-classes/log4j.xml"
+     */
+    protected File log4jConfiguration;
+    
     /**
      * The amount of memory to use when forking JRuby. Default is "384m".
      *
@@ -55,7 +61,7 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
      * @required
      * @readonly
      */
-    private List compileClasspathElements;
+    private List<String> compileClasspathElements;
 
     /**
      * The plugin dependencies.
@@ -64,8 +70,8 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
      * @required
      * @readonly
      */
-    private List pluginArtifacts;
-
+    private List<Artifact> pluginArtifacts;
+    
     /**
      * The project test classpath
      *
@@ -73,7 +79,7 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
      * @required
      * @readonly
      */
-    private List testClasspathElements;
+    private List<String> testClasspathElements;
 
     /**
      * @parameter expression="${localRepository}"
@@ -104,6 +110,8 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
 
             arg = java.createJvmarg();
             arg.setValue("-Xmx" + jrubyLaunchMemory);
+            arg = java.createJvmarg();
+            arg.setValue("-Dlog4j.configuration=file://"+log4jConfiguration);
             Environment.Variable classpath = new Environment.Variable();
 
             Path p = new Path(java.getProject());
@@ -135,9 +143,8 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
         return java;
     }
 
-    @SuppressWarnings({"unchecked"})
     protected void installGem(List<String> gem) throws MojoExecutionException {
-        List args = new ArrayList();
+        List<String> args = new ArrayList<String>();
         args.add("-S");
         args.add("gem");
         args.add("install");
@@ -149,7 +156,6 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
         args.addAll(gem);
 
         Java jruby = jruby(args);
-
         // We have to override HOME to make RubyGems install gems
         // where we want it. Setting GEM_HOME and using --install-dir
         // is not enough.
@@ -158,11 +164,10 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
         homeVar.setValue(dotGemParent().getAbsolutePath());
         jruby.addEnv(homeVar);
         dotGemParent().mkdirs();
-
         jruby.execute();
     }
 
-    protected List parseGem(String gemSpec) throws MojoExecutionException {
+    protected List<String> parseGem(String gemSpec) throws MojoExecutionException {
 
         List<String> gemArgs = new ArrayList<String>();
         String[] gem = gemSpec.split(":");
@@ -212,10 +217,9 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
         return project;
     }
 
-    @SuppressWarnings({"unchecked"})
-    protected void addReference(Project project, String reference, List artifacts)
+    protected void addReference(Project project, String reference, List<? extends Object> artifacts)
             throws DependencyResolutionRequiredException {
-        List list = new ArrayList(artifacts.size());
+        List<String> list = new ArrayList<String>(artifacts.size());
 
         for (Object elem : artifacts) {
             String path;
