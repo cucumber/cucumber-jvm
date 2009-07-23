@@ -1,11 +1,11 @@
 package cuke4duke.junit;
 
-import cuke4duke.Given;
-import cuke4duke.Then;
-import cuke4duke.Steps;
+import cuke4duke.*;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
 
 @Steps
 public class JunitCukeSteps {
@@ -18,9 +18,15 @@ public class JunitCukeSteps {
 
     @Then("I should have (\\d+) (.*) cukes")
     public void iShouldHaveNCukes(int n, String color) {
-        if(n != cukes.get(color)) {
+        int cukesOfColor = cukes.get(color);
+        if(n != cukesOfColor) {
             throw new RuntimeException("Expected " + n + ", got " + cukes.get(color));
         }
+    }
+
+    @When("^I add a table$")
+    public void aTable(Table table) {
+        assertEquals(1, table.hashes().size());
     }
 
     @Given("Longs: (\\d+)")

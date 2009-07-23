@@ -5,8 +5,7 @@ Feature: Simple
     When I add a table
       |a|b|
       |1|2|
-    Then I should have 3 green cukes
-    And I should have 0 yellow cukes
+    Then I should have 4 green cukes
     
   Scenario: 4 green cukes
     Given I have 4 green cukes

@@ -135,6 +135,15 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
         return java;
     }
 
+    /**
+     * Installs gems. Each string must follow one of the following patterns:
+     *
+     * <ul>
+     *   <li>name</li>
+     *   <li>name:version</li>
+     *   <li>name:version:github</li>
+     * </ul>
+     */
     @SuppressWarnings({"unchecked"})
     protected void installGem(List<String> gem) throws MojoExecutionException {
         List args = new ArrayList();

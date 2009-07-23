@@ -39,7 +39,6 @@ public class CucumberMojo extends AbstractJRubyMojo {
     public void execute() throws MojoFailureException, MojoExecutionException {
 
         if (installGems) {
-            installGem(listify("cucumber"));
             for (String s : gems) {
                 installGem(parseGem(s));
             }

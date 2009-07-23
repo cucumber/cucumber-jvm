@@ -66,7 +66,12 @@
         <groupId>cuke4duke</groupId>
         <artifactId>cuke4duke-maven-plugin</artifactId>
         <configuration>
-          <jrubyHome>${env.JRUBY_HOME}</jrubyHome>
+          <!-- <args>
+            <arg>-b</arg>
+          </args> -->
+          <gems>
+            <gem>cucumber:0.3.11</gem>
+          </gems>
         </configuration>
         <executions>
           <execution>

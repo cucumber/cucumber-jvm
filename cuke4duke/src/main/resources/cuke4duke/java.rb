@@ -1,3 +1,4 @@
+require 'cucumber'
 import 'cuke4duke.internal.StepDefinition'
 import 'cuke4duke.Table'
 
@@ -11,7 +12,7 @@ module Cucumber
   module PureJava
     module StepDefinitionExtras
       def regexp
-        Regexp.new(getRegexpString)
+        Regexp.new(getRegexpString())
       end
 
       def invoke(world, args)

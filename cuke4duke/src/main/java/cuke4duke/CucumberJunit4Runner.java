@@ -1,52 +1,44 @@
 package cuke4duke;
 
-import org.apache.bsf.BSFException;
-import org.apache.bsf.BSFManager;
-import org.jruby.javasupport.bsf.JRubyEngine;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
+import org.apache.bsf.BSFException;
+import org.jruby.RubyException;
+import org.jruby.RubyString;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Arrays;
+
+import cuke4duke.internal.CucumberRunner;
+import cuke4duke.internal.PicoContainerStepMother;
+import cuke4duke.internal.Visitor;
+import cuke4duke.internal.StepMother;
 
 
-/**
- * @author <a href="mailto:kaare.nilsen@gmail.com">Kaare Nilsen</a>
- */
 public class CucumberJunit4Runner extends BlockJUnit4ClassRunner {
-    private final List<FrameworkMethod> scenarioMethods = new ArrayList<FrameworkMethod>();
-    private final JRubyEngine rubyEngine;
-    private final String featureName;
+    private final CucumberRunner cucumberRunner;
 
+    private final List<FrameworkMethod> scenarioMethods;
+    private final String featurePath;
 
-    public CucumberJunit4Runner(Class<?> featureClass) throws org.junit.runners.model.InitializationError {
+    public CucumberJunit4Runner(Class<?> featureClass) throws org.junit.runners.model.InitializationError, BSFException {
         super(featureClass);
-        if (System.getProperty("jruby.home") == null) {
-            if (System.getenv("JRUBY_HOME") != null) {
-                System.setProperty("jruby.home", System.getenv("JRUBY_HOME"));
-            } else {
-                throw new org.junit.runners.model.InitializationError("Missing system property jruby.home or JRUBY_HOME system enironment property");
-            }
-        }
+        featurePath = featurePathFor(featureClass);
+        scenarioMethods = extractScenarios(featureClass);
+        StepMother stepMother = new PicoContainerStepMother();
+        registerStepDefinitions(stepMother, featureClass);
+        cucumberRunner = new CucumberRunner(stepMother);
+    }
 
-        try {
-            BSFManager.registerScriptingEngine("ruby", JRubyEngine.class.getName(), new String[]{"rb"});
-            rubyEngine = (JRubyEngine) new BSFManager().loadScriptingEngine("ruby");
-            featureName = extractFeatureName(featureClass);
-            System.out.println("Creating feature '" + featureName + "'");
-            List<CucumberScenarioWrapper> cucumberScenarios = extractScenarios(featureClass);
-            for (CucumberScenarioWrapper cucumberScenario : cucumberScenarios) {
-                scenarioMethods.add(new CucumberScenarioMethod(cucumberScenario));
-            }
-        } catch (BSFException e) {
-            throw new org.junit.runners.model.InitializationError("Could not initalize jruby engine");
+    private void registerStepDefinitions(StepMother stepMother, Class<?> featureClass) {
+        StepDefinitions stepDefinitions = (StepDefinitions) featureClass.getAnnotation(StepDefinitions.class);
+        for(Class stepDefinition : stepDefinitions.value()) {
+            stepMother.registerClass(stepDefinition);
         }
     }
 
@@ -61,7 +53,7 @@ public class CucumberJunit4Runner extends BlockJUnit4ClassRunner {
     @Override
     protected Statement methodInvoker(FrameworkMethod method, Object test) {
         if (scenarioMethods.contains(method)) {
-            return executeScenario(test, (CucumberScenarioMethod) method);
+            return scenarioStatement((CucumberScenarioMethod) method);
         }
         return super.methodInvoker(method, test);
     }
@@ -73,52 +65,29 @@ public class CucumberJunit4Runner extends BlockJUnit4ClassRunner {
         validateTestMethods(errors);
     }
 
-
-    protected Statement executeScenario(final Object featureObject, final CucumberScenarioMethod method) {
+    protected Statement scenarioStatement(final CucumberScenarioMethod method) {
         return new Statement() {
             public void evaluate() throws Throwable {
-                List<String> scriptLines = new ArrayList<String>() {{
-                    add("require 'rubygems'");
-                    add("require 'cuke4duke'");
-                    add("require 'cuke4duke/junit'");
-                    add("register_class(Java::cuke4duke.junit.JunitCukeSteps)");
-                    add("Cucumber::Cli::Main.execute(['--format', 'progress', '/Users/kaare/develop/projects/com/github/cucumber_java/cuke4duke-java/src/test/java"+featureName +"'])");
-                }};
-                String script = "";
-                for (String scriptLine : scriptLines) {
-                    script += scriptLine + "\n";
+                JUnitVisitor visitor = new JUnitVisitor();
+                cucumberRunner.run(featurePath, method.getName(), visitor);
+                if(visitor.getException() != null) {
+                    throw visitor.getException();
                 }
-                exec(script);
             }
         };
     }
 
-    public void exec(String script) throws BSFException {
-        try {
-            rubyEngine.exec("CucumberJunit4Runner", 0, 0, script);
-        } catch (BSFException ex) {
-            ex.printStackTrace();
-            throw ex;
-        }
-    }
-
-
-    private List<CucumberScenarioWrapper> extractScenarios(Class featureClass) {
-        List<CucumberScenarioWrapper> cucumberScenarios = new ArrayList<CucumberScenarioWrapper>();
+    private List<FrameworkMethod> extractScenarios(Class featureClass) {
+        List<FrameworkMethod> scenarioMethods = new ArrayList<FrameworkMethod>();
         for (Method method : featureClass.getMethods()) {
             Scenario scenarioAnnotation = method.getAnnotation(Scenario.class);
             Ignore ignoreAnnotation = method.getAnnotation(Ignore.class);
             if (scenarioAnnotation != null && ignoreAnnotation == null) {
-                Tag tagAnnotation = method.getAnnotation(Tag.class);
                 String scenarioName = extractScenarioName(method, scenarioAnnotation);
-                if (tagAnnotation != null) {
-                    cucumberScenarios.add(new CucumberScenarioWrapper(scenarioName, Arrays.asList(tagAnnotation.value()), method));
-                } else {
-                    cucumberScenarios.add(new CucumberScenarioWrapper(scenarioName, method));
-                }
+                scenarioMethods.add(new CucumberScenarioMethod(method, scenarioName));
             }
         }
-        return cucumberScenarios;
+        return scenarioMethods;
     }
 
     private String extractScenarioName(Method method, Scenario scenarioAnnotation) {
@@ -126,104 +95,42 @@ public class CucumberJunit4Runner extends BlockJUnit4ClassRunner {
     }
 
     @SuppressWarnings("unchecked")
-    private String extractFeatureName(Class featureClass) {
+    private String featurePathFor(Class featureClass) {
         Feature featureAnnotation = (Feature) featureClass.getAnnotation(Feature.class);
         return featureAnnotation != null ? featureAnnotation.value() : featureClass.getSimpleName() + ".feature";
     }
 
-    private class CucumberScenarioWrapper {
-        private final String scenarioName;
-        private final Method testMethod;
-        private final List<String> tags;
-
-        public CucumberScenarioWrapper(String scenarioName, Method testMethod) {
-            this.scenarioName = scenarioName;
-            this.testMethod = testMethod;
-            tags = new ArrayList<String>();
-        }
-
-        private CucumberScenarioWrapper(String scenarioName, List<String> tags, Method testMethod) {
-            this.scenarioName = scenarioName;
-            this.tags = tags;
-            this.testMethod = testMethod;
-        }
-
-        @Override
-        public String toString() {
-            String res = scenarioName;
-            if (!tags.isEmpty()) {
-                res += ", tags=" + tags;
-            }
-            return res;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof CucumberScenarioWrapper)) return false;
-
-            CucumberScenarioWrapper that = (CucumberScenarioWrapper) o;
-
-            return scenarioName.equals(that.scenarioName);
-        }
-
-        @Override
-        public int hashCode() {
-            return scenarioName.hashCode();
-        }
-    }
-
     private static class CucumberScenarioMethod extends FrameworkMethod {
-        private final CucumberScenarioWrapper cucumberScenario;
+        private final String scenarioName;
 
-        public CucumberScenarioMethod(CucumberScenarioWrapper cucumberScenario) {
-            super(cucumberScenario.testMethod);
-            this.cucumberScenario = cucumberScenario;
+        public CucumberScenarioMethod(Method scenarioMethod, String scenarioName) {
+            super(scenarioMethod);
+            this.scenarioName = scenarioName;
         }
 
         @Override
         public String getName() {
-            return cucumberScenario.scenarioName;
+            return scenarioName;
+        }
+    }
+
+    private class JUnitVisitor implements Visitor {
+        private Exception exception;
+
+        public void visitFeatures() {
         }
 
-        @Override
-        public Annotation[] getAnnotations() {
-            return new Annotation[0];
+        public void visitScenarioName(String keyword, String scenarioName) {
         }
 
-        @Override
-        public <T extends Annotation> T getAnnotation(Class<T> annotationType) {
-            return null;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof CucumberScenarioMethod)) return false;
-
-            CucumberScenarioMethod that = (CucumberScenarioMethod) o;
-
-            return cucumberScenario.equals(that.cucumberScenario);
-        }
-
-        @Override
-        public int hashCode() {
-            return 31 * cucumberScenario.hashCode();
-        }
-
-        public String tagsAsCSV() {
-            String res = "";
-            for (String tag : cucumberScenario.tags) {
-                res += tag + ",";
+        public void visitStepResult(String keyword, String status, RubyException exception) {
+            if(exception != null && this.exception == null) {
+                this.exception = new Exception(exception.message.toString());
             }
-            if (res.endsWith(",")) {
-                res = res.substring(0, res.length() - 1);
-            }
-            return res;
         }
 
-        public boolean hasTags() {
-            return !cucumberScenario.tags.isEmpty();
+        public Exception getException() {
+            return exception;
         }
     }
 }

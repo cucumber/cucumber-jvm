@@ -19,8 +19,8 @@ public class Invokable {
     }
 
     void invokeOnTarget(Object[] args) throws Throwable {
+        Object[] convertedArgs = convertArgs(args);
         try {
-            Object[] convertedArgs = convertArgs(args);
             method.invoke(target, convertedArgs);
         } catch (InvocationTargetException e) {
             throw e.getTargetException();
