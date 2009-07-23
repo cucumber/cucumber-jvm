@@ -66,9 +66,9 @@
         <groupId>cuke4duke</groupId>
         <artifactId>cuke4duke-maven-plugin</artifactId>
         <configuration>
-          <!-- <args>
+          <args>
             <arg>-b</arg>
-          </args> -->
+          </args>
           <gems>
             <gem>cucumber:0.3.11</gem>
           </gems>

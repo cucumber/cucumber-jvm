@@ -1,5 +1,8 @@
 == 0.0.5 (In Git)
 
+=== New features
+* Ability to specify cucumber bin with -Dcucumber.bin= or <configuration><bin> in the POM.
+
 === Bugfixes
 * Everything compiles on Java 5 (Ole Christian Rynning)
 

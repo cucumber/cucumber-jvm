@@ -3,12 +3,10 @@ import 'cuke4duke.internal.StepDefinition'
 import 'cuke4duke.Table'
 
 module Cucumber
-  module Ast
-    class Table
-      include ::Java::Cuke4duke::Table
-    end
+  class Ast::Table
+    include ::Java::Cuke4duke::Table
   end
-  
+
   module PureJava
     module StepDefinitionExtras
       def regexp
@@ -16,6 +14,11 @@ module Cucumber
       end
 
       def invoke(world, args)
+if Ast::Table === args[0]
+  args = args[0] 
+  puts "RUBY ARG: #{args.class} , #{args.class.ancestors}"
+  return invokeSingleTarget(args)
+end
         begin
           invokeOnTarget(args)
         rescue Exception => e
@@ -25,7 +28,7 @@ module Cucumber
       end
 
       private
-    
+
       def java_exception_to_ruby_exception(java_exception)
         bt = java_exception.backtrace
         Exception.cucumber_strip_backtrace!(bt, nil, nil)

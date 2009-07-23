@@ -35,6 +35,11 @@ public class CucumberMojo extends AbstractJRubyMojo {
      */
     protected String[] args;
 
+    /**
+     * @parameter expression="${cucumber.bin}"
+     */
+    private File cucumberBin;
+
     @SuppressWarnings({"unchecked"})
     public void execute() throws MojoFailureException, MojoExecutionException {
 
@@ -58,6 +63,10 @@ public class CucumberMojo extends AbstractJRubyMojo {
     }
 
     private File cucumberBin() {
+        return (cucumberBin != null) ? cucumberBin : gemCucumberBin();
+    }
+
+    private File gemCucumberBin() {
         return new File(binDir(), "cucumber");
     }
 

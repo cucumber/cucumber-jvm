@@ -14,6 +14,10 @@ public class Invokable {
         this.target = target;
     }
 
+    public void invokeSingleTarget(Object arg) throws Throwable {
+System.out.println("SINGLE JAVA ARG: " + arg);
+    }
+
     public void invokeOnTarget(RubyArray args) throws Throwable {
         invokeOnTarget(args.toArray());
     }
