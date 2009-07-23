@@ -10,7 +10,7 @@ public class CucumberRunnerTest {
     @Test
     public void dummy() {}
 
-//    @Test
+    @Test
     public void shouldBeAbleToRunSingleFeature() throws BSFException {
         Visitor visitor = mock(Visitor.class);
         StepMother stepMother = new PicoContainerStepMother();
