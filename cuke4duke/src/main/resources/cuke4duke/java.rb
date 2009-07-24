@@ -4,9 +4,9 @@ import 'cuke4duke.Table'
 
 module Cucumber
   class Ast::Table
-    include ::Java::Cuke4duke::Table
+    include Java.cuke4duke.Table
   end
-
+  
   module PureJava
     module StepDefinitionExtras
       def regexp
@@ -14,13 +14,8 @@ module Cucumber
       end
 
       def invoke(world, args)
-if Ast::Table === args[0]
-  args = args[0] 
-  puts "RUBY ARG: #{args.class} , #{args.class.ancestors}"
-  return invokeSingleTarget(args)
-end
         begin
-          invokeOnTarget(args)
+          invokeOnTarget(args.to_java)
         rescue Exception => e
           java_exception_to_ruby_exception(e)
           raise(java_exception_to_ruby_exception(e))
@@ -64,7 +59,7 @@ end
     end
     
     def execute_before(scenario)
-      @__cucumber_java_step_mother.executeBeforeHooks([scenario])
+      @__cucumber_java_step_mother.executeBeforeHooks([scenario].to_java)
     end
   end
 end

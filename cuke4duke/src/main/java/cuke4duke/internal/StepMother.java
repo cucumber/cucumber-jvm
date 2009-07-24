@@ -7,8 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jruby.RubyArray;
-
 import cuke4duke.Before;
 import cuke4duke.Given;
 import cuke4duke.Then;
@@ -33,7 +31,7 @@ public abstract class StepMother {
 		return stepDefinitions.values();
 	}
 
-    public void executeBeforeHooks(RubyArray arrayWithScenario) throws Throwable {
+    public void executeBeforeHooks(Object[] arrayWithScenario) throws Throwable {
         for(Hook hook : beforeHooks) {
             hook.invokeOnTarget(arrayWithScenario);
         }

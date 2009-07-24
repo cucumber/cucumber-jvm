@@ -1,7 +1,5 @@
 package cuke4duke.internal;
 
-import org.jruby.RubyArray;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -14,15 +12,7 @@ public class Invokable {
         this.target = target;
     }
 
-    public void invokeSingleTarget(Object arg) throws Throwable {
-System.out.println("SINGLE JAVA ARG: " + arg);
-    }
-
-    public void invokeOnTarget(RubyArray args) throws Throwable {
-        invokeOnTarget(args.toArray());
-    }
-
-    void invokeOnTarget(Object[] args) throws Throwable {
+    public void invokeOnTarget(Object[] args) throws Throwable {
         Object[] convertedArgs = convertArgs(args);
         try {
             method.invoke(target, convertedArgs);
