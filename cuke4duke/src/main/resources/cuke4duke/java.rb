@@ -1,12 +1,8 @@
+require 'java'
 require 'cucumber'
 import 'cuke4duke.internal.StepDefinition'
-import 'cuke4duke.Table'
 
 module Cucumber
-  class Ast::Table
-    include Java.cuke4duke.Table
-  end
-  
   module PureJava
     module StepDefinitionExtras
       def regexp

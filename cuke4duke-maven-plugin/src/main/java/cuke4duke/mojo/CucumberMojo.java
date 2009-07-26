@@ -50,6 +50,8 @@ public class CucumberMojo extends AbstractJRubyMojo {
         }
 
         List<String> allArgs = new ArrayList<String>();
+        allArgs.add("-r");
+        allArgs.add("cuke4duke/cucumber_ext");
         allArgs.add(cucumberBin().getAbsolutePath());
         allArgs.addAll(Arrays.asList(args));
         allArgs.add((features != null) ? features : "features");

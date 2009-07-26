@@ -1,6 +1,7 @@
 <project xmlns:ivy="antlib:org.apache.ivy.ant" name="Cucumber Demo" default="cucumber" basedir=".">
   <property name="dotgem.parent" value="${basedir}/lib"/>
   <property name="gem.home" value="${dotgem.parent}/.gem"/>
+  <property name="cucumber.bin" value="${gem.home}/bin/cucumber"/>
 
   <target name="compile-steps" description="Compile test classes">
     <mkdir dir="target/test-classes"/>
@@ -24,7 +25,9 @@
         <pathelement location="target/test-classes"/>
       </classpath>
       <env key="GEM_PATH" value="${gem.home}"/>
-      <arg value="${basedir}/lib/.gem/bin/cucumber"/>
+      <arg value="-r"/>
+      <arg value="cuke4duke/cucumber_ext"/>
+      <arg value="${cucumber.bin}"/>
       <arg value="--color"/>
       <arg value="--format"/>
       <arg value="pretty"/>

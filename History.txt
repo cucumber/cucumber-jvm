@@ -1,7 +1,10 @@
-== 0.0.5 (In Git)
+== 0.0.6 (In Git)
 
 === New features
-* Ability to specify cucumber bin with -Dcucumber.bin= or <configuration><bin> in the POM.
+* Compatibility with cucumber 0.3.90
+* Ability to specify cucumber bin with -Dcucumber.bin= or <configuration><bin> in the Maven plugin (POM).
+
+== 0.0.5 (Never properly released)
 
 === Bugfixes
 * Everything compiles on Java 5 (Ole Christian Rynning)
