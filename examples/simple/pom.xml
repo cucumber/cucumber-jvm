@@ -70,7 +70,7 @@
             <arg>-b</arg>
           </args>
           <gems>
-            <gem>cucumber:0.3.11</gem>
+            <gem>cucumber:0.3.91</gem>
           </gems>
         </configuration>
         <executions>
