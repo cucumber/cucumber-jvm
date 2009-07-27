@@ -1,6 +1,7 @@
 == 0.0.6 (In Git)
 
 === New features
+* Added diffLists and diffHashes methods to cuke4duke.Table. Maps to Ast::Cucumber::Table.diff!
 * Compatibility with cucumber 0.3.90
 * Ability to specify cucumber bin with -Dcucumber.bin= or <configuration><bin> in the Maven plugin (POM).
 
