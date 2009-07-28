@@ -18,12 +18,12 @@ public class CucumberMojo extends AbstractJRubyMojo {
     /**
      * @parameter expression="${cucumber.features}"
      */
-    private String features;
+    protected String features;
 
     /**
      * @parameter expression="${cucumber.installGems}"
      */
-    private boolean installGems = false;
+    protected boolean installGems = false;
 
     /**
      * @parameter expression="${cucumber.gems}"
@@ -38,9 +38,8 @@ public class CucumberMojo extends AbstractJRubyMojo {
     /**
      * @parameter expression="${cucumber.bin}"
      */
-    private File cucumberBin;
+    protected File cucumberBin;
 
-    @SuppressWarnings({"unchecked"})
     public void execute() throws MojoFailureException, MojoExecutionException {
 
         if (installGems) {
@@ -60,7 +59,7 @@ public class CucumberMojo extends AbstractJRubyMojo {
         try {
             jruby.execute();
         } catch (BuildException e) {
-            throw new MojoFailureException("Cucumber failed", e);
+            throw new MojoFailureException("Cucumber failed: "+e.getMessage());
         }
     }
 
