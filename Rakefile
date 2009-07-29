@@ -8,3 +8,13 @@ task :fix_cr_lf do
     File.open(f, "w") { |io| io.write(s) }
   end
 end
+
+desc 'Release'
+task :release do
+  version = IO.read(File.dirname(__FILE__) + '/pom.xml').match(/<version>(.*)<\/version>/)[1]
+  `mvn clean deploy site:deploy`
+  `git commit -a -m "Release #{version}"`
+  `git tag -a "v#{version}" -m "Release #{version}"`
+  `git push`
+  `git push --tags`
+end
