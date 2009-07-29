@@ -36,6 +36,13 @@ public class CucumberMojo extends AbstractJRubyMojo {
     protected String[] args;
 
     /**
+     * Extra JVM arguments to pass when running JRuby.
+     *
+     * @parameter expression="${cucumber.jvmArgs}"
+     */
+    protected String[] jvmArgs;
+
+    /**
      * @parameter expression="${cucumber.bin}"
      */
     protected File cucumberBin;
@@ -71,4 +78,7 @@ public class CucumberMojo extends AbstractJRubyMojo {
         return new File(binDir(), "cucumber");
     }
 
+    protected String[] getJvmArgs() {
+        return jvmArgs;
+    }
 }

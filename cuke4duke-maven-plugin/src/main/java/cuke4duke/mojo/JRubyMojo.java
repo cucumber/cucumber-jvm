@@ -8,7 +8,7 @@ import java.util.Arrays;
 /**
  * @goal jruby
  */
-public class JRubyMojo extends AbstractJRubyMojo {
+public abstract class JRubyMojo extends AbstractJRubyMojo {
     /**
      * @parameter expression="${jruby.args}"
      */

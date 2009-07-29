@@ -42,18 +42,6 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
     protected File launchDirectory;
     
     /**
-     * @parameter expression="${features.log4j.configuration}" default-value="${project.basedir}/target/test-classes/log4j.xml"
-     */
-    protected File log4jConfiguration;
-    
-    /**
-     * The amount of memory to use when forking JRuby. Default is "384m".
-     *
-     * @parameter expression="${jruby.launch.memory}"
-     */
-    protected String jrubyLaunchMemory = "384m";
-
-    /**
      * The project compile classpath.
      *
      * @parameter default-value="${project.compileClasspathElements}"
@@ -107,10 +95,11 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
             java.setFork(true);
             java.setDir(launchDirectory);
 
-            arg = java.createJvmarg();
-            arg.setValue("-Xmx" + jrubyLaunchMemory);
-            arg = java.createJvmarg();
-            arg.setValue("-Dlog4j.configuration=file://"+log4jConfiguration);
+            for (String jvmArg : getJvmArgs()) {
+                arg = java.createJvmarg();
+                arg.setValue(jvmArg);
+            }
+
             Environment.Variable classpath = new Environment.Variable();
 
             Path p = new Path(java.getProject());
@@ -141,6 +130,8 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
 
         return java;
     }
+
+    protected abstract String[] getJvmArgs();
 
     /**
      * Installs gems. Each string must follow one of the following patterns:
