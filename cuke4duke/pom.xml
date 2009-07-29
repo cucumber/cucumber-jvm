@@ -15,6 +15,26 @@
   <version>${parent.version}</version>
   <name>Cuke4Duke</name>
   <description>Pure Java support for Cucumber</description>
+
+  <distributionManagement>
+    <site>
+      <id>cukes.info</id>
+      <url>scp://serveradmin%aslakhellesoy.com@cukes.info/home/6664/users/.home/domains/cukes.info/html/cuke4duke</url>
+    </site>
+  </distributionManagement>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <excludePackageNames>*.internal</excludePackageNames>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
+
   <dependencies>
     <dependency>
       <groupId>org.picocontainer</groupId>
