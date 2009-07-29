@@ -44,7 +44,7 @@
         <configuration>
           <gems>
             <gem>cucumber:0.3.92</gem>
-            <gem>jarib-celerity:0.0.6.8:github</gem>
+            <gem>jarib-celerity:0.0.6.12:github</gem>
             <gem>rspec:1.2.8</gem>
           </gems>
         </configuration>

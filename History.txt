@@ -1,14 +1,20 @@
-== 0.0.6 2009-07-29
+== In Git
+
+=== Bugfixes
+* Downgraded JRuby from 1.4dev to 1.3.1 so people don't have to build their own JRuby (Aslak Hellesøy)
+* Upgrade webtest example to jarib-celerity to 0.0.6.12
+
+== 0.0.7 2009-07-29
 
 This release fixes compatibility issues with the latest Cucumbe release, extends the Table API
 and improves the Maven plugin in several areas.
 
 === New features
-* Added new jvmArgs property to Maven plugin. See the Spring example for sample usage.
-* Cucumber gem (and optional version) must be declared in POM. -Dcucumber.installGems no longer installs it by default.
-* Added several more methods to cuke4duke.Table, including the new diff methods.
-* Compatibility with cucumber 0.3.92
-* Ability to specify cucumber bin with -Dcucumber.bin= or <configuration><bin> in the Maven plugin (POM).
+* Added new jvmArgs property to Maven plugin. See the Spring example for sample usage. (Aslak Hellesøy)
+* Cucumber gem (and optional version) must be declared in POM. -Dcucumber.installGems no longer installs it by default.  (Aslak Hellesøy)
+* Added several more methods to cuke4duke.Table, including the new diff methods.  (Aslak Hellesøy)
+* Compatibility with cucumber 0.3.92  (Aslak Hellesøy)
+* Ability to specify cucumber bin with -Dcucumber.bin= or <configuration><bin> in the Maven plugin (POM).  (Aslak Hellesøy)
 
 == 0.0.5 (Never properly released)
 

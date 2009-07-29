@@ -50,8 +50,8 @@ public class CucumberMojo extends AbstractJRubyMojo {
     public void execute() throws MojoFailureException, MojoExecutionException {
 
         if (installGems) {
-            for (String s : gems) {
-                installGem(parseGem(s));
+            for (String gemSpec : gems) {
+                installGem(gemSpec);
             }
         }
 

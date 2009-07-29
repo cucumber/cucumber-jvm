@@ -134,17 +134,18 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
     protected abstract String[] getJvmArgs();
 
     /**
-     * Installs gems. Each string must follow one of the following patterns:
+     * Installs a gem.
      *
+     * @param gemSpec name and optional version and location separated by colon. Example:
      * <ul>
      *   <li>name</li>
      *   <li>name:version</li>
      *   <li>name:version:github</li>
      * </ul>
-     * @param gems gems to install.
+
      * @throws org.apache.maven.plugin.MojoExecutionException if gem installation fails.
      */
-    protected void installGem(List<String> gems) throws MojoExecutionException {
+    protected void installGem(String gemSpec) throws MojoExecutionException {
         List<String> args = new ArrayList<String>();
         args.add("-S");
         args.add("gem");
@@ -153,8 +154,7 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
         args.add("--no-rdoc");
         args.add("--install-dir");
         args.add(gemHome().getAbsolutePath());
-
-        args.addAll(gems);
+        args.addAll(parseGem(gemSpec));
 
         Java jruby = jruby(args);
         // We have to override HOME to make RubyGems install gems
@@ -168,7 +168,12 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
         jruby.execute();
     }
 
-    protected List<String> parseGem(String gemSpec) throws MojoExecutionException {
+    /**
+     * @param gemSpec colon separated string. See installGem.
+     * @return arguments that the gem command understands.
+     * @throws MojoExecutionException if gem installation fails.
+     */
+    private List<String> parseGem(String gemSpec) throws MojoExecutionException {
 
         List<String> gemArgs = new ArrayList<String>();
         String[] gem = gemSpec.split(":");
