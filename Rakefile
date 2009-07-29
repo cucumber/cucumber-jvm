@@ -11,8 +11,12 @@ end
 
 desc 'Release'
 task :release do
-  version = IO.read(File.dirname(__FILE__) + '/pom.xml').match(/<version>(.*)<\/version>/)[1]
-  sh %{mvn clean deploy site:deploy}
+  version = IO.read('pom.xml').match(/<version>(.*)<\/version>/)[1]
+  sh %{mvn clean -P examples install}
+  sh %{mvn deploy}
+  Dir.chdir('cuke4duke') do
+    sh %{mvn site:site site:deploy}
+  end
   sh %{git commit -a -m "Release #{version}"}
   sh %{git tag -a "v#{version}" -m "Release #{version}"}
   sh %{git push}
