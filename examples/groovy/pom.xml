@@ -4,7 +4,7 @@
                       http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>cuke4duke</groupId>
-  <artifactId>cuke4duke-simple-example</artifactId>
+  <artifactId>cuke4duke-groovy-example</artifactId>
   <packaging>jar</packaging>
   <version>1.0.0</version>
   <name>Cuke4Duke Simple Example</name>
@@ -44,6 +44,11 @@
       <artifactId>junit</artifactId>
       <version>4.5</version>
     </dependency>
+    <dependency>
+      <groupId>org.codehaus.groovy</groupId>
+      <artifactId>groovy-all</artifactId>
+      <version>1.6.3</version>
+    </dependency>
   </dependencies>
 
   <build>
@@ -79,6 +84,18 @@
             <phase>integration-test</phase>
             <goals>
               <goal>features</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.groovy.maven</groupId>
+        <artifactId>gmaven-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>testCompile</goal>
             </goals>
           </execution>
         </executions>

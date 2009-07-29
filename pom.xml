@@ -34,6 +34,7 @@
     <profile>
       <id>examples</id>
       <modules>
+        <module>examples/groovy</module>
         <module>examples/simple</module>
         <module>examples/spring</module>
         <module>examples/webtest</module>

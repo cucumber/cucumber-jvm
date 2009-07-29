@@ -1,5 +1,8 @@
 == In Git
 
+=== New Features
+* Added Paul King's Groovy example from the aa-ftt mailing list (Aslak Hellesøy)
+
 === Bugfixes
 * Downgraded JRuby from 1.4dev to 1.3.1 so people don't have to build their own JRuby (Aslak Hellesøy)
 * Upgrade webtest example to jarib-celerity to 0.0.6.12
