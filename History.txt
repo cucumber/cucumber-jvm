@@ -1,6 +1,7 @@
 == In Git
 
 === New Features
+* Added support for After blocks (Juan Barreneche)
 * Added Paul King's Groovy example from the aa-ftt mailing list (Aslak Hellesøy)
 
 === Bugfixes
