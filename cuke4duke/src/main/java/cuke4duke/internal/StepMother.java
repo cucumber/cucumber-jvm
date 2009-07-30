@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cuke4duke.After;
 import cuke4duke.Before;
 import cuke4duke.Given;
 import cuke4duke.Then;
@@ -16,6 +17,7 @@ public abstract class StepMother {
     protected final List<Class<?>> classes = new ArrayList<Class<?>>();
     protected final Map<String, StepDefinition> stepDefinitions = new HashMap<String, StepDefinition>();
     private List<Hook> beforeHooks = new ArrayList<Hook>();
+    private List<Hook> afterHooks = new ArrayList<Hook>();
 
     public abstract void newWorld();
 
@@ -37,16 +39,29 @@ public abstract class StepMother {
         }
     }
 
+    public void executeAfterHooks(Object[] arrayWithScenario) throws Throwable {
+        for(Hook hook : afterHooks) {
+            hook.invokeOnTarget(arrayWithScenario);
+        }
+    }
+
     protected void addCucumberMethods(Object object) {
         for (Method method : object.getClass().getMethods()) {
             registerStepDefinition(object, method);
             registerBefore(object, method);
+            registerAfter(object, method);
         }
     }
 
     private void registerBefore(Object object, Method method) {
         if (method.isAnnotationPresent(Before.class)) {
             beforeHooks.add(new Hook(object, method, method.getAnnotation(Before.class).value()));
+        }
+    }
+
+    private void registerAfter(Object object, Method method) {
+        if (method.isAnnotationPresent(After.class)) {
+            afterHooks.add(new Hook(object, method, method.getAnnotation(After.class).value()));
         }
     }
 

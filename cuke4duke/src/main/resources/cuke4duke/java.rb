@@ -57,6 +57,10 @@ module Cucumber
     def execute_before(scenario)
       @__cucumber_java_step_mother.executeBeforeHooks([scenario].to_java)
     end
+
+    def execute_after(scenario)
+      @__cucumber_java_step_mother.executeAfterHooks([scenario].to_java)
+    end
   end
 end
 extend(Cucumber::PureJava)
