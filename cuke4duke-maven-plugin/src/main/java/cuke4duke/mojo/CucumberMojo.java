@@ -66,7 +66,7 @@ public class CucumberMojo extends AbstractJRubyMojo {
         try {
             jruby.execute();
         } catch (BuildException e) {
-            throw new MojoFailureException("Cucumber failed: "+e.getMessage());
+            throw new MojoFailureException("Cucumber failed: " + cmd(jruby) + " :" + e.getMessage());
         }
     }
 

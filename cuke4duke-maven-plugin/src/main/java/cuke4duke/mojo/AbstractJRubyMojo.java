@@ -40,7 +40,7 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
      * @required
      */
     protected File launchDirectory;
-    
+
     /**
      * The project compile classpath.
      *
@@ -58,7 +58,7 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
      * @readonly
      */
     protected List<Artifact> pluginArtifacts;
-    
+
     /**
      * The project test classpath
      *
@@ -137,13 +137,13 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
      * Installs a gem.
      *
      * @param gemSpec name and optional version and location separated by colon. Example:
-     * <ul>
-     *   <li>name</li>
-     *   <li>name:version</li>
-     *   <li>name:version:github</li>
-     * </ul>
-
-     * @throws org.apache.maven.plugin.MojoExecutionException if gem installation fails.
+     *                <ul>
+     *                <li>name</li>
+     *                <li>name:version</li>
+     *                <li>name:version:github</li>
+     *                </ul>
+     * @throws org.apache.maven.plugin.MojoExecutionException
+     *          if gem installation fails.
      */
     protected void installGem(String gemSpec) throws MojoExecutionException {
         List<String> args = new ArrayList<String>();
@@ -251,6 +251,19 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
         List<T> res = new ArrayList<T>();
         res.addAll(Arrays.asList(objects));
         return res;
+    }
+
+    protected String cmd(Java jruby) {
+        return join(jruby.getCommandLine().getCommandline());
+    }
+
+    protected String join(String[] strings) {
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < strings.length; i++) {
+            if (i != 0) sb.append(' ');
+            sb.append(strings[i]);
+        }
+        return sb.toString();
     }
 
     public class LogAdapter implements BuildListener {

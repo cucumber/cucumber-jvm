@@ -6,7 +6,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.util.Map;
 
-public class SpringStepMother extends StepMother {
+public class SpringStepMother {
     private AbstractApplicationContext appContext = null;
 
     // TODO: Find out why this gets called and not the RubyArray one....
@@ -23,16 +23,15 @@ public class SpringStepMother extends StepMother {
     }
 
     public void newWorld() {
-        stepDefinitions.clear();
         appContext.refresh();
 
-        for (Class<?> clazz : classes) {
-            @SuppressWarnings("unchecked")
-            Map<Object, Object> beans = appContext.getBeansOfType(clazz);
-
-            for (Object object : beans.values()) {
-                addCucumberMethods(object);
-            }
-        }
+//        for (Class<?> clazz : classes) {
+//            @SuppressWarnings("unchecked")
+//            Map<Object, Object> beans = appContext.getBeansOfType(clazz);
+//
+//            for (Object object : beans.values()) {
+//                addCucumberMethods(object);
+//            }
+//        }
     }
 }

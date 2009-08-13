@@ -27,10 +27,10 @@ public class StuffSteps {
            Arrays.asList("a", "b"),
            Arrays.asList("1", "2")
         ));
-        List<Map<String, String>> hashes = new ArrayList(table.hashes());
+        List<Map<String, String>> hashes = new ArrayList<Map<String, String>>(table.hashes());
         Map<String, String> newRow = hashes.get(0);
         hashes.add(newRow);
-        table.diffHashes(hashes, new HashMap(){{
+        table.diffHashes(hashes, new HashMap<String, Boolean>(){{
             put("surplus_row", false);
         }});
     }

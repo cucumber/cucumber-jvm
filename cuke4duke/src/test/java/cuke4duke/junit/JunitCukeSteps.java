@@ -1,6 +1,7 @@
 package cuke4duke.junit;
 
 import cuke4duke.*;
+import cuke4duke.spring.Steps;
 
 import java.util.HashMap;
 import java.util.Map;

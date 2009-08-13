@@ -1,20 +1,20 @@
 package cuke4duke.internal;
 
-import org.apache.bsf.BSFManager;
 import org.apache.bsf.BSFException;
+import org.apache.bsf.BSFManager;
 import org.jruby.javasupport.bsf.JRubyEngine;
 
 import java.net.URL;
 
 public class CucumberRunner {
-    private final StepMother stepMother;
+//    private final AnnotationStepMother stepMother;
     private JRubyEngine rubyEngine;
     private BSFManager bsfManager;
 
-    public CucumberRunner(StepMother stepMother) throws BSFException {
-        this.stepMother = stepMother;
-        initializeCucumber();
-    }
+//    public CucumberRunner(AnnotationStepMother stepMother) throws BSFException {
+//        this.stepMother = stepMother;
+//        initializeCucumber();
+//    }
 
     private void initializeCucumber() throws BSFException {
         if (System.getProperty("jruby.home") == null) {
@@ -27,7 +27,7 @@ public class CucumberRunner {
 
         BSFManager.registerScriptingEngine("ruby", JRubyEngine.class.getName(), new String[]{"rb"});
         bsfManager = new BSFManager();
-        bsfManager.declareBean("cuke4duke_step_mother", stepMother, stepMother.getClass());
+//        bsfManager.declareBean("cuke4duke_step_mother", stepMother, stepMother.getClass());
         rubyEngine = (JRubyEngine) bsfManager.loadScriptingEngine("ruby");
         String script =
             "require 'rubygems'\n" +

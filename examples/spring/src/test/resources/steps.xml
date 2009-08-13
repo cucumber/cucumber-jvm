@@ -9,7 +9,7 @@
 
 
   <context:component-scan base-package="*" >
-    <context:include-filter type="annotation" expression="cuke4duke.Steps"/>
+    <context:include-filter type="annotation" expression="cuke4duke.spring.Steps"/>
   </context:component-scan>
   
   <import resource="context.xml"/>

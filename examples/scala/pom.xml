@@ -4,10 +4,10 @@
                       http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>cuke4duke</groupId>
-  <artifactId>cuke4duke-simple-example</artifactId>
+  <artifactId>cuke4duke-scala-example</artifactId>
   <packaging>jar</packaging>
   <version>1.0.0</version>
-  <name>Cuke4Duke Simple Example</name>
+  <name>Cuke4Duke Scala Example</name>
   <url>http://cukes.info/</url>
 
   <repositories>
@@ -30,6 +30,11 @@
 
   <dependencies>
     <dependency>
+        <groupId>org.scala-lang</groupId>
+        <artifactId>scala-library</artifactId>
+        <version>2.7.5</version>
+    </dependency>
+    <dependency>
       <groupId>cuke4duke</groupId>
       <artifactId>cuke4duke</artifactId>
       <version>0.0.7</version>
@@ -47,33 +52,26 @@
   </dependencies>
 
   <build>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <version>2.0.2</version>
-          <configuration>
-            <source>1.5</source>
-            <target>1.5</target>
-          </configuration>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-
     <plugins>
+      <plugin>
+        <groupId>org.scala-tools</groupId>
+        <artifactId>maven-scala-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>compile</goal>
+              <goal>testCompile</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
       <plugin>
         <groupId>cuke4duke</groupId>
         <artifactId>cuke4duke-maven-plugin</artifactId>
         <configuration>
-          <jvmArgs>
-            <jvmArg>-Dcuke4duke.objectFactory=cuke4duke.internal.java.PicoFactory</jvmArg>
-          </jvmArgs>
           <args>
-            <arg>--backtrace</arg>
-            <arg>--verbose</arg>
-            <arg>--require</arg>
-            <arg>${basedir}/src/test/java</arg>
+            <arg>-b</arg>
           </args>
           <gems>
             <gem>cucumber:0.3.92</gem>

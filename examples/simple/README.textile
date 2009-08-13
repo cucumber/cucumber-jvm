@@ -1,4 +1,4 @@
-h1. Groovy Example
+h1. Simple Example
 
 This project demonstrates how to write step definitions in Java. The code under test is in Java.
 
