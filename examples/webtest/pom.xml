@@ -30,7 +30,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.5</version>
+      <version>4.7</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -45,7 +45,7 @@
           <gems>
             <gem>cucumber:0.3.92</gem>
             <gem>jarib-celerity:0.0.6.12:github</gem>
-            <gem>rspec:1.2.8</gem>
+            <gem>rspec:1.2.8.3</gem>
           </gems>
         </configuration>
         <executions>
