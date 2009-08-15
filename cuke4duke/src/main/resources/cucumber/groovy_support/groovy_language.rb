@@ -2,7 +2,7 @@ module Cucumber
   module GroovySupport
     class GroovyLanguage
       extend Forwardable
-      include ::Cucumber::LanguageMethods
+      include ::Cucumber::LanguageSupport::LanguageMethods
 
       def_delegators :@delegate, :step_mother, :load_step_def_file, :begin_scenario, :end_scenario
 
@@ -18,13 +18,13 @@ module Cucumber
 end
 
 class ::Java::Cuke4dukeInternalGroovy::GroovyLanguage
-  include ::Cucumber::LanguageMethods
+  include ::Cucumber::LanguageSupport::LanguageMethods
 end
 
 class ::Java::Cuke4dukeInternalGroovy::GroovyStepDefinition
-  include ::Cucumber::StepDefinitionMethods
+  include ::Cucumber::LanguageSupport::StepDefinitionMethods
 end
 
 class ::Java::Cuke4dukeInternalGroovy::GroovyHook
-  include ::Cucumber::HookMethods
+  include ::Cucumber::LanguageSupport::HookMethods
 end

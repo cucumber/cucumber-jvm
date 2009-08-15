@@ -4,7 +4,7 @@ module Cucumber
   module JavaSupport
     class JavaLanguage
       extend Forwardable
-      include ::Cucumber::LanguageMethods
+      include ::Cucumber::LanguageSupport::LanguageMethods
 
       def_delegators :@delegate, :step_mother, :load_step_def_file, :begin_scenario, :end_scenario
 
@@ -20,13 +20,13 @@ module Cucumber
 end
 
 class ::Java::Cuke4dukeInternalJava::JavaLanguage
-  include ::Cucumber::LanguageMethods
+  include ::Cucumber::LanguageSupport::LanguageMethods
 end
 
 class ::Java::Cuke4dukeInternalJava::JavaStepDefinition
-  include ::Cucumber::StepDefinitionMethods
+  include ::Cucumber::LanguageSupport::StepDefinitionMethods
 end
 
 class ::Java::Cuke4dukeInternalJava::JavaHook
-  include ::Cucumber::HookMethods
+  include ::Cucumber::LanguageSupport::HookMethods
 end
