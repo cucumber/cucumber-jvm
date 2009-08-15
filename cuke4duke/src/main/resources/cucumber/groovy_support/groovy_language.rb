@@ -4,7 +4,7 @@ module Cucumber
       extend Forwardable
       include ::Cucumber::LanguageMethods
 
-      def_delegators :@delegate, :load_step_def_file, :new_world, :nil_world
+      def_delegators :@delegate, :step_mother, :load_step_def_file, :begin_scenario, :end_scenario
 
       def initialize(step_mother, adverbs)
         @delegate = ::Java::Cuke4dukeInternalGroovy::GroovyLanguage.new(step_mother, adverbs)

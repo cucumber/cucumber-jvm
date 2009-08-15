@@ -13,11 +13,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-public class GroovyLanguage implements ProgrammingLanguage {
+public class GroovyLanguage extends ProgrammingLanguage {
     private final GroovyShell shell;
     private Object currentWorld;
 
     public GroovyLanguage(StepMother stepMother, List<String> adverbs) {
+        super(stepMother);
         GroovyDsl.stepMother = stepMother;
         GroovyDsl.groovyLanguage = this;
         Binding binding = new Binding();
@@ -34,11 +35,11 @@ public class GroovyLanguage implements ProgrammingLanguage {
         shell.evaluate(new File(step_def_file));
       }
 
-    public void new_world(StepMother stepMother) {
+    public void begin_scenario() {
         currentWorld = new Object();
     }
 
-    public void nil_world() {
+    public void end_scenario() {
         currentWorld = null;
     }
 

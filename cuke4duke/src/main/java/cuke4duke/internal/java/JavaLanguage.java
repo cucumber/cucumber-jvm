@@ -11,12 +11,11 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-public class JavaLanguage implements ProgrammingLanguage {
-    private final StepMother stepMother;
+public class JavaLanguage extends ProgrammingLanguage {
     private final ObjectFactory objectFactory;
 
     public JavaLanguage(StepMother stepMother, List<String> adverbs) throws Throwable {
-        this.stepMother = stepMother;
+        super(stepMother);
 
         String className = System.getProperty("cuke4duke.objectFactory");
         if(className == null) {
@@ -37,8 +36,12 @@ public class JavaLanguage implements ProgrammingLanguage {
         objectFactory.addClass(clazz);
     }
 
-    public void new_world(StepMother stepMother) {
+    public void begin_scenario() {
         objectFactory.newWorld();
+    }
+
+    public void end_scenario() {
+        objectFactory.dispose();
     }
 
     private Class loadClass(String javaPath) throws ClassNotFoundException {
@@ -78,29 +81,25 @@ public class JavaLanguage implements ProgrammingLanguage {
         }
         if (regexpString != null) {
             StepDefinition stepDefinition = new JavaStepDefinition(this, method, regexpString);
-            stepMother.register_step_definition(stepDefinition);
+            step_mother().register_step_definition(stepDefinition);
         }
     }
 
     private void registerBeforeMaybe(Method method) {
         if (method.isAnnotationPresent(Before.class)) {
             List<String> tagNames = Arrays.asList(method.getAnnotation(Before.class).value().split(","));
-            stepMother.register_hook("before", new JavaHook(tagNames, method, this));
+            step_mother().register_hook("before", new JavaHook(tagNames, method, this));
         }
     }
 
     private void registerAfterMaybe(Method method) {
         if (method.isAnnotationPresent(After.class)) {
             List<String> tagNames = Arrays.asList(method.getAnnotation(After.class).value().split(","));
-            stepMother.register_hook("after", new JavaHook(tagNames, method, this));
+            step_mother().register_hook("after", new JavaHook(tagNames, method, this));
         }
     }
 
-    public void nil_world() {
-        objectFactory.dispose();
-    }
-
-    public Object getTarget(Class<?> type) {
+    Object getTarget(Class<?> type) {
         Object target = objectFactory.getComponent(type);
         if(target == null) {
             throw new NullPointerException("Couldn't find object for type " + type);

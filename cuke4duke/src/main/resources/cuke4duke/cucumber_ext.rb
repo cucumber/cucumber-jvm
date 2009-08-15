@@ -4,7 +4,6 @@ import 'cuke4duke.internal.language.StepMother'
 
 module Cucumber
   class StepMother
-    puts "EXTENDING"
     include Java.cuke4duke.internal.language.StepMother
   end
 
