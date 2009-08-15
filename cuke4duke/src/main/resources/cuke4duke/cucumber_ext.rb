@@ -1,7 +1,13 @@
 require 'java'
 import 'cuke4duke.Table'
+import 'cuke4duke.internal.language.StepMother'
 
 module Cucumber
+  class StepMother
+    puts "EXTENDING"
+    include Java.cuke4duke.internal.language.StepMother
+  end
+
   module Ast
     class Table
       include Java.cuke4duke.Table

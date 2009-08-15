@@ -8,8 +8,8 @@ module Cucumber
 
       def_delegators :@delegate, :load_step_def_file, :new_world, :nil_world
 
-      def initialize(step_mother)
-        @delegate = ::Java::Cuke4dukeInternalJava::JavaLanguage.new(step_mother)
+      def initialize(step_mother, adverbs)
+        @delegate = ::Java::Cuke4dukeInternalJava::JavaLanguage.new(step_mother, adverbs)
       end
       
       def snippet_text(step_keyword, step_name, multiline_arg_class = nil)

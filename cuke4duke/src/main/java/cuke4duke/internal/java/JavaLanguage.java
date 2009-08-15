@@ -2,9 +2,8 @@ package cuke4duke.internal.java;
 
 import cuke4duke.internal.language.ProgrammingLanguage;
 import cuke4duke.internal.language.StepDefinition;
-import cuke4duke.internal.StepMotherAdapter;
+import cuke4duke.internal.language.StepMother;
 import cuke4duke.*;
-import org.jruby.runtime.builtin.IRubyObject;
 
 import java.util.List;
 import java.util.Arrays;
@@ -13,11 +12,11 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 public class JavaLanguage implements ProgrammingLanguage {
-    private final StepMotherAdapter stepMotherAdapter;
-    private ObjectFactory objectFactory;
+    private final StepMother stepMother;
+    private final ObjectFactory objectFactory;
 
-    public JavaLanguage(IRubyObject stepMother) throws Throwable {
-        stepMotherAdapter = new StepMotherAdapter(stepMother);
+    public JavaLanguage(StepMother stepMother, List<String> adverbs) throws Throwable {
+        this.stepMother = stepMother;
 
         String className = System.getProperty("cuke4duke.objectFactory");
         if(className == null) {
@@ -38,7 +37,7 @@ public class JavaLanguage implements ProgrammingLanguage {
         objectFactory.addClass(clazz);
     }
 
-    public void new_world(IRubyObject stepMother) {
+    public void new_world(StepMother stepMother) {
         objectFactory.newWorld();
     }
 
@@ -66,7 +65,6 @@ public class JavaLanguage implements ProgrammingLanguage {
             registerBeforeMaybe(method);
             registerAfterMaybe(method);
         }
-
     }
 
     private void registerStepDefinitionMaybe(Method method) {
@@ -80,21 +78,21 @@ public class JavaLanguage implements ProgrammingLanguage {
         }
         if (regexpString != null) {
             StepDefinition stepDefinition = new JavaStepDefinition(this, method, regexpString);
-            stepMotherAdapter.registerStepDefinition(stepDefinition);
+            stepMother.register_step_definition(stepDefinition);
         }
     }
 
     private void registerBeforeMaybe(Method method) {
         if (method.isAnnotationPresent(Before.class)) {
             List<String> tagNames = Arrays.asList(method.getAnnotation(Before.class).value().split(","));
-            stepMotherAdapter.registerBefore(new JavaHook(tagNames, method, this));
+            stepMother.register_hook("before", new JavaHook(tagNames, method, this));
         }
     }
 
     private void registerAfterMaybe(Method method) {
         if (method.isAnnotationPresent(After.class)) {
             List<String> tagNames = Arrays.asList(method.getAnnotation(After.class).value().split(","));
-            stepMotherAdapter.registerAfter(new JavaHook(tagNames, method, this));
+            stepMother.register_hook("after", new JavaHook(tagNames, method, this));
         }
     }
 

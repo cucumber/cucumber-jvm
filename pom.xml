@@ -26,7 +26,7 @@
   </repositories>
 
   <modules>
-    <!--module>cuke4duke-maven-plugin</module-->
+    <module>cuke4duke-maven-plugin</module>
     <module>cuke4duke</module>
   </modules>
 
@@ -34,8 +34,8 @@
     <profile>
       <id>examples</id>
       <modules>
-        <module>examples/spring</module>
         <module>examples/simple</module>
+        <module>examples/spring</module>
         <module>examples/groovy</module>
         <module>examples/webtest</module>
       </modules>

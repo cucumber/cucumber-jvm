@@ -1,26 +1,24 @@
 package cuke4duke.internal.groovy;
 
 import cuke4duke.internal.StringConverter;
-import cuke4duke.internal.StepMotherAdapter;
 import cuke4duke.internal.language.ProgrammingLanguage;
+import cuke4duke.internal.language.StepMother;
 import cuke4duke.GroovyDsl;
 import org.jruby.RubyArray;
-import org.jruby.runtime.builtin.IRubyObject;
 import groovy.lang.Closure;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 public class GroovyLanguage implements ProgrammingLanguage {
     private final GroovyShell shell;
-    private final IRubyObject stepMother;
     private Object currentWorld;
 
-    public GroovyLanguage(IRubyObject stepMother) {
-        this.stepMother = stepMother;
-        GroovyDsl.stepMotherAdapter = new StepMotherAdapter(stepMother);
+    public GroovyLanguage(StepMother stepMother, List<String> adverbs) {
+        GroovyDsl.stepMother = stepMother;
         GroovyDsl.groovyLanguage = this;
         Binding binding = new Binding();
         shell = new GroovyShell(binding);
@@ -36,7 +34,7 @@ public class GroovyLanguage implements ProgrammingLanguage {
         shell.evaluate(new File(step_def_file));
       }
 
-    public void new_world(IRubyObject stepMother) {
+    public void new_world(StepMother stepMother) {
         currentWorld = new Object();
     }
 

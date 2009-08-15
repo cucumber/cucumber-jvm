@@ -7,17 +7,21 @@ import java.util.List;
 import cuke4duke.internal.groovy.GroovyStepDefinition;
 import cuke4duke.internal.groovy.GroovyHook;
 import cuke4duke.internal.groovy.GroovyLanguage;
-import cuke4duke.internal.StepMotherAdapter;
+import cuke4duke.internal.language.StepMother;
 
 /**
  * The DSL for Groovy step definitions.
  */
 public class GroovyDsl {
-    public static StepMotherAdapter stepMotherAdapter;
+    public static StepMother stepMother;
     public static GroovyLanguage groovyLanguage;
 
     public static void Before(List<String> tagNames, Closure body) {
-        stepMotherAdapter.registerBefore(new GroovyHook(tagNames, body, groovyLanguage));
+        stepMother.register_hook("before", new GroovyHook(tagNames, body, groovyLanguage));
+    }
+
+    public static void After(List<String> tagNames, Closure body) {
+        stepMother.register_hook("after", new GroovyHook(tagNames, body, groovyLanguage));
     }
 
     public static void Given(Pattern pattern, Closure body) {
@@ -33,6 +37,6 @@ public class GroovyDsl {
     }
 
     private static void registerStepDefinition(Pattern pattern, Closure body) {
-        stepMotherAdapter.registerStepDefinition(new GroovyStepDefinition(groovyLanguage, pattern, body));
+        stepMother.register_step_definition(new GroovyStepDefinition(groovyLanguage, pattern, body));
     }
 }

@@ -21,7 +21,7 @@ public class GroovyHook extends AbstractHook {
 
     public void invoke(String location, IRubyObject scenario) {
         RubyArray args = RubyArray.newArray(Ruby.getGlobalRuntime());
-        args.add(null); // Needed because groovy closures always seem to have arity 1(??)
+        args.add(scenario);
         groovyLanguage.invokeClosure(body, args);
     }
 

@@ -9,7 +9,7 @@ same plugin API for a .NET equivalent of Cuke4Duke).
 
 === New Features
 * Automatically load StepDefinitions with --require (works with .java and .groovy) (Aslak Hellesøy)
-* Refactored original Groovy example to a DSL. (Aslak Hellesøy)
+* New Groovy DSL. (Aslak Hellesøy)
 * Added support for After blocks (Juan Barreneche)
 * Added Paul King's Groovy example from the aa-ftt mailing list (Aslak Hellesøy)
 
