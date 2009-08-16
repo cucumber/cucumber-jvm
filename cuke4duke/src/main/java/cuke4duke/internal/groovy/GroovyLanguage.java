@@ -11,13 +11,12 @@ import groovy.lang.GroovyShell;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 public class GroovyLanguage extends ProgrammingLanguage {
     private final GroovyShell shell;
     private Object currentWorld;
 
-    public GroovyLanguage(StepMother stepMother, List<String> adverbs) {
+    public GroovyLanguage(StepMother stepMother) {
         super(stepMother);
         GroovyDsl.stepMother = stepMother;
         GroovyDsl.groovyLanguage = this;

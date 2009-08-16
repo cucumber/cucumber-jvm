@@ -14,7 +14,7 @@ import java.lang.reflect.InvocationTargetException;
 public class JavaLanguage extends ProgrammingLanguage {
     private final ObjectFactory objectFactory;
 
-    public JavaLanguage(StepMother stepMother, List<String> adverbs) throws Throwable {
+    public JavaLanguage(StepMother stepMother) throws Throwable {
         super(stepMother);
 
         String className = System.getProperty("cuke4duke.objectFactory");
