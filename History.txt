@@ -1,19 +1,29 @@
-== In Git
+== 0.1.0
 
 This release is almost a complete rewrite of Cuke4Duke's internals. This is to take advantage
-of Cucumber 0.4's new plugin API for language add-ons like Cuke4Duke. (The plan is to use the
+of Cucumber 0.3.96' new plugin API for language add-ons like Cuke4Duke. (The plan is to use the
 same plugin API for a .NET equivalent of Cuke4Duke).
 
-=== Removed features
-* There are no more cuke4duke/*.rb files that you need to require in support/env.rb. You don't even need support/env.rb. (Aslak Hellesøy)
+Check out the new Groovy DSL! It's almost identical to the native Ruby DSL.
+
+This means that your existing Cuke4Duke project will probably break. If you're using Pure Java
+Step Definitions, you no longer have to register them in support/env.rb. Instead you have to
+use --require. Choosing between PicoContainer or Spring is done with the -Dcuke4duke.objectFactory
+JVM argument.
 
 === New Features
 * Automatically load StepDefinitions with --require (works with .java and .groovy) (Aslak Hellesøy)
 * New Groovy DSL. (Aslak Hellesøy)
 * Added support for After blocks (Juan Barreneche)
-* Added Paul King's Groovy example from the aa-ftt mailing list (Aslak Hellesøy)
+
+=== Removed features
+* There are no more cuke4duke/*.rb files that you need to require in support/env.rb. You don't even need support/env.rb. (Aslak Hellesøy)
+
+=== Changed Features
+* The cuke4duke.spring.Steps annotation has been renamed to cuke4duke.spring.StepDefinitions
 
 === Bugfixes
+* Java and Ruby step defs should be able to coexist (#4 Aslak Hellesøy)
 * Downgraded JRuby from 1.4dev to 1.3.1 so people don't have to build their own JRuby (Aslak Hellesøy)
 * Upgrade webtest example to jarib-celerity to 0.0.6.12 (Aslak Hellesøy)
 

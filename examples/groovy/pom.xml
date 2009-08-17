@@ -76,7 +76,7 @@
             <arg>--verbose</arg>
           </args>
           <gems>
-            <gem>cucumber:0.3.92</gem>
+            <gem>cucumber:0.3.96</gem>
           </gems>
         </configuration>
         <executions>

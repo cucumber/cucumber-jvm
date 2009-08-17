@@ -6,12 +6,9 @@
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
                       http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-2.5.xsd
                       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd">
-
-
-  <context:component-scan base-package="*" >
-    <context:include-filter type="annotation" expression="cuke4duke.spring.Steps"/>
+  <context:component-scan base-package="simple" >
+    <context:include-filter type="annotation" expression="cuke4duke.spring.StepDefinitions"/>
   </context:component-scan>
   
   <import resource="context.xml"/>
-
 </beans>

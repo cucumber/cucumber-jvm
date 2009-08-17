@@ -7,11 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import simple.World;
 import cuke4duke.Given;
-import cuke4duke.spring.Steps;
+import cuke4duke.spring.StepDefinitions;
 import cuke4duke.Then;
 import cuke4duke.When;
 
-@Steps
+@StepDefinitions
 public class WorldSteps {
 	@Autowired
 	private World world;

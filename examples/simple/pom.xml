@@ -70,13 +70,13 @@
             <jvmArg>-Dcuke4duke.objectFactory=cuke4duke.internal.java.PicoFactory</jvmArg>
           </jvmArgs>
           <args>
-            <arg>--backtrace</arg>
             <arg>--verbose</arg>
+            <arg>--strict</arg>
             <arg>--require</arg>
             <arg>${basedir}/src/test/java</arg>
           </args>
           <gems>
-            <gem>cucumber:0.3.92</gem>
+            <gem>cucumber:0.3.96</gem>
           </gems>
         </configuration>
         <executions>

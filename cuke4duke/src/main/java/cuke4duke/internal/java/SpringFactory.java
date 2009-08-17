@@ -10,10 +10,7 @@ public class SpringFactory implements ObjectFactory {
     private final AbstractApplicationContext appContext;
 
     public SpringFactory() {
-        String springXml = System.getProperty("cuke4duke.springXml");
-        if(springXml == null) {
-            throw new RuntimeException("Missing system property: cuke4duke.springXml");
-        }
+        String springXml = System.getProperty("cuke4duke.springXml", "cucumber.xml");
         appContext = new ClassPathXmlApplicationContext(springXml);
     }
 
