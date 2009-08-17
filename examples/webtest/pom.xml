@@ -47,6 +47,11 @@
             <gem>jarib-celerity:0.0.6.12:github</gem>
             <gem>rspec:1.2.8</gem>
           </gems>
+          <args>
+            <arg>--color</arg>
+            <arg>--verbose</arg>
+            <arg>--strict</arg>
+          </args>
         </configuration>
         <executions>
           <execution>

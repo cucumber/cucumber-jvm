@@ -70,6 +70,7 @@
             <jvmArg>-Dcuke4duke.objectFactory=cuke4duke.internal.java.PicoFactory</jvmArg>
           </jvmArgs>
           <args>
+            <arg>--color</arg>
             <arg>--verbose</arg>
             <arg>--strict</arg>
             <arg>--require</arg>

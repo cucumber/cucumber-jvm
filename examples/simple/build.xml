@@ -25,9 +25,12 @@
         <pathelement location="target/test-classes"/>
       </classpath>
       <env key="GEM_PATH" value="${gem.home}"/>
+      <jvmarg value="-Dcuke4duke.objectFactory=cuke4duke.internal.java.PicoFactory"/>
       <arg value="-r"/>
       <arg value="cuke4duke/cucumber_ext"/>
       <arg value="${cucumber.bin}"/>
+      <arg value="--require"/>
+      <arg value="src/test/java"/>
       <arg value="--color"/>
       <arg value="--format"/>
       <arg value="pretty"/>

@@ -14,7 +14,7 @@
     <repository>
       <id>cukes</id>
       <name>Cucumber Maven Repo</name>
-      <url>scp://serveradmin%aslakhellesoy.com@cukes.info/home/6664/users/.home/domains/cukes.info/html/maven</url>
+      <url>scp://cukes.info/home/6664/users/.home/domains/cukes.info/html/maven</url>
     </repository>
   </distributionManagement>
 
@@ -59,7 +59,7 @@
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
-        <version>4.6</version>
+        <version>4.7</version>
       </dependency>
       <dependency>
         <groupId>org.jruby</groupId>

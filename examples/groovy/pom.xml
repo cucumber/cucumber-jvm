@@ -72,8 +72,9 @@
         <artifactId>cuke4duke-maven-plugin</artifactId>
         <configuration>
           <args>
-            <arg>--backtrace</arg>
+            <arg>--color</arg>
             <arg>--verbose</arg>
+            <arg>--strict</arg>
           </args>
           <gems>
             <gem>cucumber:0.3.96</gem>

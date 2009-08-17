@@ -79,6 +79,7 @@
             <jvmArg>-Dcuke4duke.springXml=cucumber.xml</jvmArg>
           </jvmArgs>
           <args>
+            <arg>--color</arg>
             <arg>--verbose</arg>
             <arg>--strict</arg>
             <arg>--require</arg>
