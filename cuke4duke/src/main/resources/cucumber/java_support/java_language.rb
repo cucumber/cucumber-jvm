@@ -16,7 +16,8 @@ module Cucumber
       end
 
       def snippet_text(step_keyword, step_name, multiline_arg_class = nil)
-        "YAY A JAVA SNIPPET: #{step_keyword}, #{step_name}, #{multiline_arg_class}"
+        step_description = step_name.gsub(/"/, '\"')
+        "@#{step_keyword}(\"^#{step_description}$\") \npublic void #{step_name.gsub(/"/, '')}(#{multiline_arg_class}) { \n} "
       end
     end
   end
