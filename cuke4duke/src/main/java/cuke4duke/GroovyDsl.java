@@ -1,27 +1,27 @@
 package cuke4duke;
 
-import groovy.lang.Closure;
-import java.util.regex.Pattern;
-import java.util.List;
-
-import cuke4duke.internal.groovy.GroovyStepDefinition;
 import cuke4duke.internal.groovy.GroovyHook;
 import cuke4duke.internal.groovy.GroovyLanguage;
-import cuke4duke.internal.language.StepMother;
+import cuke4duke.internal.groovy.GroovyStepDefinition;
+import cuke4duke.internal.language.LanguageMixin;
+import groovy.lang.Closure;
+
+import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * The DSL for Groovy step definitions.
  */
 public class GroovyDsl {
-    public static StepMother stepMother;
     public static GroovyLanguage groovyLanguage;
+    public static LanguageMixin languageMixin;
 
     public static void Before(List<String> tagNames, Closure body) {
-        stepMother.register_hook("before", new GroovyHook(tagNames, body, groovyLanguage));
+        languageMixin.add_hook("before", new GroovyHook(tagNames, body, groovyLanguage));
     }
 
     public static void After(List<String> tagNames, Closure body) {
-        stepMother.register_hook("after", new GroovyHook(tagNames, body, groovyLanguage));
+        languageMixin.add_hook("after", new GroovyHook(tagNames, body, groovyLanguage));
     }
 
     public static void Given(Pattern pattern, Closure body) {
@@ -37,6 +37,6 @@ public class GroovyDsl {
     }
 
     private static void registerStepDefinition(Pattern pattern, Closure body) {
-        stepMother.register_step_definition(new GroovyStepDefinition(groovyLanguage, pattern, body));
+        groovyLanguage.addStepDefinition(new GroovyStepDefinition(groovyLanguage, pattern, body));
     }
 }

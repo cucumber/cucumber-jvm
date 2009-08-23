@@ -1,22 +1,23 @@
 package cuke4duke.internal.java;
 
+import cuke4duke.*;
 import cuke4duke.internal.language.ProgrammingLanguage;
 import cuke4duke.internal.language.StepDefinition;
 import cuke4duke.internal.language.StepMother;
-import cuke4duke.*;
+import cuke4duke.internal.language.LanguageMixin;
 
-import java.util.List;
-import java.util.Arrays;
-import java.lang.reflect.Method;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.List;
 
 public class JavaLanguage extends ProgrammingLanguage {
     private final ObjectFactory objectFactory;
+    private final LanguageMixin languageMixin;
 
-    public JavaLanguage(StepMother stepMother) throws Throwable {
-        super(stepMother);
-
+    public JavaLanguage(LanguageMixin languageMixin) throws Throwable {
+        this.languageMixin = languageMixin;
         String className = System.getProperty("cuke4duke.objectFactory");
         if(className == null) {
             throw new RuntimeException("Missing system property: cuke4duke.objectFactory");
@@ -30,8 +31,8 @@ public class JavaLanguage extends ProgrammingLanguage {
         }
     }
 
-    public void load_step_def_file(String step_def_file) throws Exception {
-        Class clazz = loadClass(step_def_file);
+    protected void load(String java_file) throws ClassNotFoundException {
+        Class clazz = loadClass(java_file);
         registerStepDefinitionsFor(clazz);
         objectFactory.addClass(clazz);
     }
@@ -81,21 +82,21 @@ public class JavaLanguage extends ProgrammingLanguage {
         }
         if (regexpString != null) {
             StepDefinition stepDefinition = new JavaStepDefinition(this, method, regexpString);
-            step_mother().register_step_definition(stepDefinition);
+            addStepDefinition(stepDefinition);
         }
     }
 
     private void registerBeforeMaybe(Method method) {
         if (method.isAnnotationPresent(Before.class)) {
             List<String> tagNames = Arrays.asList(method.getAnnotation(Before.class).value().split(","));
-            step_mother().register_hook("before", new JavaHook(tagNames, method, this));
+            languageMixin.add_hook("before", new JavaHook(tagNames, method, this));
         }
     }
 
     private void registerAfterMaybe(Method method) {
         if (method.isAnnotationPresent(After.class)) {
             List<String> tagNames = Arrays.asList(method.getAnnotation(After.class).value().split(","));
-            step_mother().register_hook("after", new JavaHook(tagNames, method, this));
+            languageMixin.add_hook("after", new JavaHook(tagNames, method, this));
         }
     }
 

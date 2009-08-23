@@ -2,12 +2,12 @@ package cuke4duke.internal.java;
 
 import cuke4duke.internal.language.AbstractHook;
 import cuke4duke.internal.language.MethodInvoker;
-import org.jruby.RubyArray;
 import org.jruby.Ruby;
+import org.jruby.RubyArray;
 import org.jruby.runtime.builtin.IRubyObject;
 
-import java.util.List;
 import java.lang.reflect.Method;
+import java.util.List;
 
 public class JavaHook extends AbstractHook {
     private final MethodInvoker methodInvoker;
