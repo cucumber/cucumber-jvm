@@ -16,8 +16,14 @@ module Cucumber
       end
 
       def snippet_text(step_keyword, step_name, multiline_arg_class = nil)
-        step_description = step_name.gsub(/"/, '\"')
-        "@#{step_keyword}(\"^#{step_description}$\") \npublic void #{step_name.gsub(/"/, '')}(#{multiline_arg_class}) { \n} "
+        step_name_with_wildcards = step_name.gsub(/ "[a-zA-Z0-9]"/, '\"([^\"]*)\"')
+        args = []
+        step_name_with_wildcards.count('[').times do
+          number_of_args++  
+          args.push("String arg#{number_of_args}")
+        end
+        
+        "@#{step_keyword}(\"^#{step_name_with_wildcards}$\") \npublic void #{step_name.gsub(/"/, '')}(#{multiline_arg_class}, #{args}) { \n} "
       end
     end
   end
