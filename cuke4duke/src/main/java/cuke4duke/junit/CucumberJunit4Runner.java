@@ -1,9 +1,9 @@
 package cuke4duke.junit;
 
+import cuke4duke.Feature;
+import cuke4duke.Scenario;
 import cuke4duke.internal.CucumberRunner;
 import cuke4duke.internal.Visitor;
-import cuke4duke.Scenario;
-import cuke4duke.Feature;
 import org.apache.bsf.BSFException;
 import org.jruby.RubyException;
 import org.junit.After;

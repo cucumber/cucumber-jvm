@@ -1,10 +1,10 @@
 package cuke4duke.internal.java;
 
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 public class SpringFactory implements ObjectFactory {
     private final AbstractApplicationContext appContext;

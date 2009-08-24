@@ -1,7 +1,7 @@
 package cuke4duke.internal.language;
 
-import org.jruby.RubyArray;
 import cuke4duke.internal.StringConverter;
+import org.jruby.RubyArray;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

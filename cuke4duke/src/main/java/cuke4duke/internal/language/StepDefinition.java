@@ -1,7 +1,7 @@
 package cuke4duke.internal.language;
 
-import org.jruby.RubyRegexp;
 import org.jruby.RubyArray;
+import org.jruby.RubyRegexp;
 
 public interface StepDefinition {
     /**

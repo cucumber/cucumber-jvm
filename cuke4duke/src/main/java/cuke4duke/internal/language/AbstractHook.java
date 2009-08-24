@@ -1,7 +1,7 @@
 package cuke4duke.internal.language;
 
-import org.jruby.RubyArray;
 import org.jruby.Ruby;
+import org.jruby.RubyArray;
 
 import java.util.List;
 

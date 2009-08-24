@@ -2,12 +2,11 @@ package cuke4duke.internal.groovy;
 
 import cuke4duke.internal.language.StepDefinition;
 import groovy.lang.Closure;
-
-import java.util.regex.Pattern;
-
-import org.jruby.RubyRegexp;
 import org.jruby.Ruby;
 import org.jruby.RubyArray;
+import org.jruby.RubyRegexp;
+
+import java.util.regex.Pattern;
 
 public class GroovyStepDefinition implements StepDefinition {
     private final GroovyLanguage groovyLanguage;

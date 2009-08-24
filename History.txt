@@ -1,3 +1,7 @@
+== 0.1.1
+
+This release is just an update to comply with API changes in Cucumber 0.3.97
+
 == 0.1.0
 
 This release is almost a complete rewrite of Cuke4Duke's internals. This is to take advantage

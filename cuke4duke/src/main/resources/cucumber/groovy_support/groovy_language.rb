@@ -4,10 +4,10 @@ module Cucumber
       extend Forwardable
       include ::Cucumber::LanguageSupport::LanguageMethods
 
-      def_delegators :@delegate, :step_mother, :load_step_def_file, :begin_scenario, :end_scenario
+      def_delegators :@delegate, :step_definitions_for, :begin_scenario, :end_scenario
 
       def initialize(step_mother)
-        @delegate = ::Java::Cuke4dukeInternalGroovy::GroovyLanguage.new(step_mother)
+        @delegate = ::Java::Cuke4dukeInternalGroovy::GroovyLanguage.new(self)
       end
 
       def alias_adverbs(adverbs)
@@ -26,8 +26,4 @@ end
 
 class ::Java::Cuke4dukeInternalGroovy::GroovyStepDefinition
   include ::Cucumber::LanguageSupport::StepDefinitionMethods
-end
-
-class ::Java::Cuke4dukeInternalGroovy::GroovyHook
-  include ::Cucumber::LanguageSupport::HookMethods
 end

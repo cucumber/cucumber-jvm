@@ -1,8 +1,8 @@
 package cuke4duke.internal;
 
-import org.jruby.RubyArray;
 import cuke4duke.Table;
 import static cuke4duke.internal.Utils.join;
+import org.jruby.RubyArray;
 
 /**
  * Converts the arguments that come from Cucumber to other types,

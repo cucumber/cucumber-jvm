@@ -1,13 +1,12 @@
 package cuke4duke.internal.groovy;
 
-import groovy.lang.Closure;
 import cuke4duke.internal.language.AbstractHook;
+import groovy.lang.Closure;
+import org.jruby.Ruby;
+import org.jruby.RubyArray;
+import org.jruby.runtime.builtin.IRubyObject;
 
 import java.util.List;
-
-import org.jruby.RubyArray;
-import org.jruby.Ruby;
-import org.jruby.runtime.builtin.IRubyObject;
 
 public class GroovyHook extends AbstractHook {
     private final GroovyLanguage groovyLanguage;
