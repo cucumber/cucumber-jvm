@@ -24,7 +24,7 @@ import org.codehaus.plexus.util.StringUtils;
 /**
  * Base for all JRuby mojos.
  *
- * @requiresDependencyResolution compile
+ * @requiresDependencyResolution test
  */
 public abstract class AbstractJRubyMojo extends AbstractMojo {
 
