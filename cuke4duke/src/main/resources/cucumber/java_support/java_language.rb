@@ -1,3 +1,4 @@
+require 'cucumber/java_support/backtrace_filter'
 require 'forwardable'
 
 module Cucumber

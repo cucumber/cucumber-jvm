@@ -1,3 +1,4 @@
+# This file is loaded before Cucumber is loaded.
 require 'java'
 import 'cuke4duke.Table'
 import 'cuke4duke.internal.language.StepMother'

@@ -1,3 +1,6 @@
+require 'cucumber/groovy_support/backtrace_filter'
+require 'forwardable'
+
 module Cucumber
   module GroovySupport
     class GroovyLanguage

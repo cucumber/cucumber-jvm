@@ -1,6 +1,7 @@
 == 0.1.2 (In Git)
 
 === Bugfixes
+* Backtrace filtering is working again. (Aslak Hellesøy)
 * Maven plugin resolve test dependencies so test scoped jars are included on the classpath (Darrin Holst)
 * Allow for PyStrings by converting string type objects to strings instead of casting (Darrin Holst)
 
