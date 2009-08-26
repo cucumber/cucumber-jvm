@@ -9,7 +9,7 @@
 
 This release is just an update to comply with API changes in Cucumber 0.3.97
 
-== 0.1.0
+== 0.1.0 2009-08-17
 
 This release is almost a complete rewrite of Cuke4Duke's internals. This is to take advantage
 of Cucumber 0.3.96' new plugin API for language add-ons like Cuke4Duke. (The plan is to use the
