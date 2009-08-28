@@ -71,6 +71,9 @@
 
   <target name="clean" description="Delete all generated artifacts">
     <delete dir="${basedir}/target"/>
+  </target>
+
+  <target name="clean-deps" description="Delete all dependencies">
     <delete dir="${basedir}/lib/.gem"/>
     <delete>
       <fileset dir="${basedir}/lib" includes=".jar"/>
