@@ -1,6 +1,7 @@
 == (In Git)
 
 === Bugfixes
+* @Before tag should have optional scenario parameter (#11 Aslak Hellesøy, Henning Jensen)
 * Fixed broken Ant script for Groovy example. (Aslak Hellesøy)
 
 == 0.1.2 2009-08-25
@@ -9,8 +10,8 @@ Bugfix release. This release requires Cucumber 0.3.98.
 
 === Bugfixes
 * Backtrace filtering is working again. (Aslak Hellesøy)
-* Maven plugin resolve test dependencies so test scoped jars are included on the classpath (Darrin Holst)
-* Allow for PyStrings by converting string type objects to strings instead of casting (Darrin Holst)
+* Maven plugin resolve test dependencies so test scoped jars are included on the classpath (#9 Darrin Holst)
+* Allow for PyStrings by converting string type objects to strings instead of casting (#10 Darrin Holst)
 
 == 0.1.1 2009-08-23
 
