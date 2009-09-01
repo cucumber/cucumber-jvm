@@ -9,11 +9,17 @@ import static org.junit.Assert.assertEquals;
 
 public class HookSteps {
     private String b4;
+    private String b4WithoutArgs;
     private static String myStatic = "clean";
 
     @Before("@b4,@whatever")
     public void setB4(Object scenario) {
         b4 = "b4 was here";
+    }
+
+    @Before
+    public void setB4WithoutArgs() {
+        b4WithoutArgs = "b4WithoutArgs was here";
     }
 
     @Then("^b4 should have the value \"([^\"]*)\"$")
@@ -34,5 +40,6 @@ public class HookSteps {
     @After("")
     public void setAfter(Object scenario) {
         myStatic = "clean";
+        assertEquals("b4WithoutArgs was here", b4WithoutArgs);
     }
 }

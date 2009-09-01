@@ -1,3 +1,4 @@
+require 'cucumber/java_support/backtrace_filter'
 require 'forwardable'
 
 module Cucumber
@@ -27,10 +28,6 @@ module Cucumber
       end
     end
   end
-end
-
-class ::Java::Cuke4dukeInternalJava::JavaLanguage
-  include ::Cucumber::LanguageSupport::LanguageMethods
 end
 
 class ::Java::Cuke4dukeInternalJava::JavaStepDefinition

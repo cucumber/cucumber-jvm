@@ -9,8 +9,6 @@
     </fileset>
   </path>
 
-  <taskdef name="groovyc" classname="org.codehaus.groovy.ant.Groovyc" classpathref="lib"/>
-
   <target name="compile-main" description="Compile main classes">
     <mkdir dir="target/classes"/>
     <javac srcdir="src/main/java" destdir="target/classes">
@@ -18,17 +16,7 @@
     </javac>
   </target>
 
-  <target name="compile-steps" depends="compile-main" description="Compile test classes">
-    <mkdir dir="target/test-classes"/>
-    <groovyc srcdir="src/test/groovy" destdir="target/test-classes">
-      <classpath refid="lib" />
-      <classpath>
-        <pathelement location="target/classes"/>
-      </classpath>
-    </groovyc>
-  </target>
-
-  <target name="cucumber" depends="compile-steps" description="Run Cucumber">
+  <target name="cucumber" depends="compile-main" description="Run Cucumber">
     <mkdir dir="target/junit-report"/>
 
     <java classname="org.jruby.Main" fork="true" failonerror="true">
@@ -58,29 +46,48 @@
     <ivy:retrieve/>
   </target>
 
-  <target name="install-gems">
-    <java classname="org.jruby.Main" fork="true" failonerror="true">
-      <classpath>
-        <fileset dir="lib">
-          <include name="**/jruby*.jar"/>
-        </fileset>
-      </classpath>
-      <!-- Gems will go into lib/.gems --> 
-      <env key="HOME" value="${dotgem.parent}"/>
-      <arg value="-S"/>
-      <arg value="gem"/>
-      <arg value="install"/>
-      <arg value="--no-ri"/>
-      <arg value="--no-rdoc"/>
-      <arg value="--install-dir"/>
-      <arg value="${gem.home}"/>
-      <arg value="cucumber"/>
-      <arg value="rspec"/>
-    </java>
+  <target name="install-gems" description="Install gems">
+    <install-gem gem="cucumber" version="0.3.98" />
+    <install-gem gem="rspec" version="1.2.8" />
+    <!-- You can skip this if you're not on Windows -->
+    <install-gem gem="aslakhellesoy-ansicolor" version="1.0" source="http://gems.github.com/"/>
   </target>
+
+  <macrodef name="install-gem">
+    <attribute name="gem"/>
+    <attribute name="version"/>
+    <attribute name="source" default="http://gems.rubyforge.org/"/>
+    
+    <sequential>
+      <java classname="org.jruby.Main" fork="true" failonerror="true">
+        <classpath>
+          <fileset dir="lib">
+            <include name="**/jruby*.jar"/>
+          </fileset>
+        </classpath>
+        <!-- Gems will go into lib/.gems --> 
+        <env key="HOME" value="${dotgem.parent}"/>
+        <arg value="-S"/>
+        <arg value="gem"/>
+        <arg value="install"/>
+        <arg value="--no-ri"/>
+        <arg value="--no-rdoc"/>
+        <arg value="--install-dir"/>
+        <arg value="${gem.home}"/>
+        <arg value="--source"/>
+        <arg value="@{source}"/>
+        <arg value="--version"/>
+        <arg value="@{version}"/>
+        <arg value="@{gem}"/>
+      </java>
+    </sequential>
+  </macrodef>
 
   <target name="clean" description="Delete all generated artifacts">
     <delete dir="${basedir}/target"/>
+  </target>
+
+  <target name="clean-deps" description="Delete all dependencies">
     <delete dir="${basedir}/lib/.gem"/>
     <delete>
       <fileset dir="${basedir}/lib" includes=".jar"/>

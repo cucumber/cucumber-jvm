@@ -24,7 +24,11 @@ public class JavaHook extends AbstractHook {
     public void invoke(String location, IRubyObject scenario) throws Throwable {
         Object target = javaLanguage.getTarget(method.getDeclaringClass());
         RubyArray args = RubyArray.newArray(Ruby.getGlobalRuntime());
-        args.append(scenario);
+        if(method.getParameterTypes().length == 1) {
+            args.append(scenario);
+        } else if(method.getParameterTypes().length > 1) {
+            throw new RuntimeException("Hooks must take 0 or 1 arguments. " + method);
+        }
         methodInvoker.invoke(target, method.getParameterTypes(), args);
     }
 }

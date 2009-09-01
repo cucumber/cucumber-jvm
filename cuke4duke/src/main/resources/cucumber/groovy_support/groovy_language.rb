@@ -1,3 +1,6 @@
+require 'cucumber/groovy_support/backtrace_filter'
+require 'forwardable'
+
 module Cucumber
   module GroovySupport
     class GroovyLanguage
@@ -18,10 +21,6 @@ module Cucumber
       end
     end
   end
-end
-
-class ::Java::Cuke4dukeInternalGroovy::GroovyLanguage
-  include ::Cucumber::LanguageSupport::LanguageMethods
 end
 
 class ::Java::Cuke4dukeInternalGroovy::GroovyStepDefinition

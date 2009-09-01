@@ -35,7 +35,7 @@ public class StringConverter {
             } else if (type.equals(Table.class)) {
                 return (Table) arg;
             } else if (type.equals(String.class)) {
-                return (String) arg;
+                return String.valueOf(arg);
             } else {
                 return arg;
             }

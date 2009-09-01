@@ -1,8 +1,23 @@
-== 0.1.1
+== (In Git)
+
+=== Bugfixes
+* @Before tag should have optional scenario parameter (#11 Aslak Hellesøy, Henning Jensen)
+* Fixed broken Ant script for Groovy example. (Aslak Hellesøy)
+
+== 0.1.2 2009-08-25
+
+Bugfix release. This release requires Cucumber 0.3.98.
+
+=== Bugfixes
+* Backtrace filtering is working again. (Aslak Hellesøy)
+* Maven plugin resolve test dependencies so test scoped jars are included on the classpath (#9 Darrin Holst)
+* Allow for PyStrings by converting string type objects to strings instead of casting (#10 Darrin Holst)
+
+== 0.1.1 2009-08-23
 
 This release is just an update to comply with API changes in Cucumber 0.3.97
 
-== 0.1.0
+== 0.1.0 2009-08-17
 
 This release is almost a complete rewrite of Cuke4Duke's internals. This is to take advantage
 of Cucumber 0.3.96' new plugin API for language add-ons like Cuke4Duke. (The plan is to use the

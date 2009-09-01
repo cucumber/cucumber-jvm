@@ -13,6 +13,11 @@ Feature: Simple
     When I add a table
       |a|b|
       |1|2|
+    And I add a string
+      """
+      Hello
+      World
+      """
     Then I should have 4 green cukes
   
   Scenario: 3 green and 4 yellow cukes

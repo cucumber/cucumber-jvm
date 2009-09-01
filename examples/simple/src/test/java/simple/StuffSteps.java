@@ -35,6 +35,12 @@ public class StuffSteps {
         }});
     }
 
+    @When("^I add a string$") 
+    public void iAddAString(String s) {
+        assertEquals("Hello\nWorld", s);
+    } 
+
+
     @Then("I should have (\\d+) (.*) cukes")
     public void iShouldHaveNCukes(int n, String color) {
         int number = cukes.get(color) != null ? cukes.get(color) : 0;
