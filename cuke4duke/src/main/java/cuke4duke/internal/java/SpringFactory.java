@@ -17,7 +17,8 @@ public class SpringFactory implements ObjectFactory {
     public void dispose() {
     }
 
-    public Object getComponent(Class<?> type) {
+    @SuppressWarnings("unchecked")
+	public Object getComponent(Class<?> type) {
         List beans = new ArrayList(appContext.getBeansOfType(type).values());
         if(beans.size() == 1) {
             return beans.get(0);
@@ -26,7 +27,7 @@ public class SpringFactory implements ObjectFactory {
         }
     }
 
-    public void addClass(Class clazz) {
+    public void addClass(Class<?> clazz) {
     }
 
     public void newWorld() {

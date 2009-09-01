@@ -10,7 +10,8 @@ import cuke4duke.internal.JRuby;
 
 public class MethodInvokerTest {
     private class SomethingWithPending {
-        @Pending
+		@Pending
+		@SuppressWarnings("unused")
         public void dontExecuteMe() {
             throw new RuntimeException("Shouldn't be executed");
         }

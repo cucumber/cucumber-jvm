@@ -1,8 +1,5 @@
 package cuke4duke.junit;
 
-import cuke4duke.*;
-import org.junit.Ignore;
-import org.junit.runner.RunWith;
 import org.junit.Test;
 
 // @RunWith(CucumberJunit4Runner.class)
