@@ -24,10 +24,6 @@ module Cucumber
   end
 end
 
-class ::Java::Cuke4dukeInternalJava::JavaLanguage
-  include ::Cucumber::LanguageSupport::LanguageMethods
-end
-
 class ::Java::Cuke4dukeInternalJava::JavaStepDefinition
   include ::Cucumber::LanguageSupport::StepDefinitionMethods
 end

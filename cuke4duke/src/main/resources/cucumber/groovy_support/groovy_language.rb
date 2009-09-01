@@ -23,10 +23,6 @@ module Cucumber
   end
 end
 
-class ::Java::Cuke4dukeInternalGroovy::GroovyLanguage
-  include ::Cucumber::LanguageSupport::LanguageMethods
-end
-
 class ::Java::Cuke4dukeInternalGroovy::GroovyStepDefinition
   include ::Cucumber::LanguageSupport::StepDefinitionMethods
 end
