@@ -2,7 +2,7 @@ package cuke4duke.internal.java;
 
 import cuke4duke.internal.language.MethodInvoker;
 import cuke4duke.internal.language.StepDefinition;
-import org.jruby.Ruby;
+import cuke4duke.internal.JRuby;
 import org.jruby.RubyArray;
 import org.jruby.RubyRegexp;
 
@@ -18,7 +18,7 @@ public class JavaStepDefinition implements StepDefinition {
         this.method = method; 
         methodInvoker = new MethodInvoker(method);
         this.javaLanguage = javaLanguage;
-        this.regexp = RubyRegexp.newRegexp(Ruby.getGlobalRuntime(), regexpString, RubyRegexp.RE_OPTION_LONGEST);
+        this.regexp = RubyRegexp.newRegexp(JRuby.getRuntime(), regexpString, RubyRegexp.RE_OPTION_LONGEST);
     }
 
     public RubyRegexp regexp() {

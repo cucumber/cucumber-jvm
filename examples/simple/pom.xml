@@ -72,7 +72,6 @@
           <args>
             <arg>--color</arg>
             <arg>--verbose</arg>
-            <arg>--strict</arg>
             <arg>--require</arg>
             <arg>${basedir}/src/test/java</arg>
           </args>

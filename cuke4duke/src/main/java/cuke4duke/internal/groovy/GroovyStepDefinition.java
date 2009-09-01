@@ -1,8 +1,8 @@
 package cuke4duke.internal.groovy;
 
 import cuke4duke.internal.language.StepDefinition;
+import cuke4duke.internal.JRuby;
 import groovy.lang.Closure;
-import org.jruby.Ruby;
 import org.jruby.RubyArray;
 import org.jruby.RubyRegexp;
 
@@ -26,7 +26,7 @@ public class GroovyStepDefinition implements StepDefinition {
 
     public RubyRegexp regexp() {
         // TODO: Translate and pass correct flags.
-        return RubyRegexp.newRegexp(Ruby.getGlobalRuntime(), pattern.pattern(), RubyRegexp.RE_OPTION_LONGEST);
+        return RubyRegexp.newRegexp(JRuby.getRuntime(), pattern.pattern(), RubyRegexp.RE_OPTION_LONGEST);
     }
 
     public String file_colon_line() {

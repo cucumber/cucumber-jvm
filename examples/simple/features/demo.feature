@@ -29,3 +29,7 @@ Feature: Simple
   Scenario: 99 green cukes
     Given I have 99 green cukes
     Then I should have 99 green cukes
+
+  Scenario: Let's try pending
+    Given a pending step
+    And a failing step that is preceded by a pending

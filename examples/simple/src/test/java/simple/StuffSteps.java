@@ -1,9 +1,6 @@
 package simple;
 
-import cuke4duke.Given;
-import cuke4duke.Table;
-import cuke4duke.Then;
-import cuke4duke.When;
+import cuke4duke.*;
 import static org.junit.Assert.assertEquals;
 
 import java.util.List;
@@ -15,6 +12,17 @@ import java.util.Arrays;
 // TODO: This is just testing a Map. We should have some own code to test!!
 public class StuffSteps {
     private final Map<String,Integer> cukes = new HashMap<String,Integer>();
+
+    @Pending("Let's procrastinate")
+    @Given("a pending step")
+    public void intentionallyPending() {
+        throw new RuntimeException("We shouldn't get here because we are @Pending");
+    }
+
+    @Given("a failing step that is preceded by a pending")
+    public void intentionallyFailing() {
+        throw new RuntimeException("We shouldn't get here either because the previous one is pending");
+    }
 
     @Given("I have (\\d+) (.*) cukes")
     public void iHaveNCukes(int n, String color) {

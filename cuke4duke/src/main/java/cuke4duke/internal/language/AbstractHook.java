@@ -1,9 +1,8 @@
 package cuke4duke.internal.language;
 
-import org.jruby.Ruby;
 import org.jruby.RubyArray;
-
 import java.util.List;
+import cuke4duke.internal.JRuby;
 
 public abstract class AbstractHook implements Hook  {
     protected final List<String> tagNames;
@@ -13,7 +12,7 @@ public abstract class AbstractHook implements Hook  {
     }
 
     public RubyArray tag_names() {
-        RubyArray arr = RubyArray.newArray(Ruby.getGlobalRuntime());
+        RubyArray arr = RubyArray.newArray(JRuby.getRuntime());
         for(String tag : tagNames) {
             String trimmed = tag.trim();
             if(!trimmed.equals("")) {

@@ -2,7 +2,7 @@ package cuke4duke.internal.java;
 
 import cuke4duke.internal.language.AbstractHook;
 import cuke4duke.internal.language.MethodInvoker;
-import org.jruby.Ruby;
+import cuke4duke.internal.JRuby;
 import org.jruby.RubyArray;
 import org.jruby.runtime.builtin.IRubyObject;
 
@@ -23,7 +23,7 @@ public class JavaHook extends AbstractHook {
 
     public void invoke(String location, IRubyObject scenario) throws Throwable {
         Object target = javaLanguage.getTarget(method.getDeclaringClass());
-        RubyArray args = RubyArray.newArray(Ruby.getGlobalRuntime());
+        RubyArray args = RubyArray.newArray(JRuby.getRuntime());
         if(method.getParameterTypes().length == 1) {
             args.append(scenario);
         } else if(method.getParameterTypes().length > 1) {
