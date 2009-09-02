@@ -3,12 +3,12 @@ package cuke4duke.internal.java;
 import cuke4duke.*;
 import cuke4duke.internal.language.ProgrammingLanguage;
 import cuke4duke.internal.language.StepDefinition;
-import cuke4duke.internal.language.StepMother;
 import cuke4duke.internal.language.LanguageMixin;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
 
@@ -34,7 +34,9 @@ public class JavaLanguage extends ProgrammingLanguage {
     protected void load(String java_file) throws ClassNotFoundException {
         Class clazz = loadClass(java_file);
         registerStepDefinitionsFor(clazz);
-        objectFactory.addClass(clazz);
+        if(!Modifier.isAbstract(clazz.getModifiers())) {
+            objectFactory.addClass(clazz);
+        }
     }
 
     public void begin_scenario() {
