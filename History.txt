@@ -1,5 +1,8 @@
 == (In Git)
 
+=== New features
+* Added new @Pending annotation that can be used as a substitute for Ruby-Cucumber's #pending method. (Aslak Hellesøy)
+
 === Bugfixes
 * @Before tag should have optional scenario parameter (#11 Aslak Hellesøy, Henning Jensen)
 * Fixed broken Ant script for Groovy example. (Aslak Hellesøy)

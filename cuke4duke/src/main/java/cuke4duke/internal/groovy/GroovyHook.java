@@ -1,8 +1,8 @@
 package cuke4duke.internal.groovy;
 
 import cuke4duke.internal.language.AbstractHook;
+import cuke4duke.internal.JRuby;
 import groovy.lang.Closure;
-import org.jruby.Ruby;
 import org.jruby.RubyArray;
 import org.jruby.runtime.builtin.IRubyObject;
 
@@ -19,7 +19,7 @@ public class GroovyHook extends AbstractHook {
     }
 
     public void invoke(String location, IRubyObject scenario) {
-        RubyArray args = RubyArray.newArray(Ruby.getGlobalRuntime());
+        RubyArray args = RubyArray.newArray(JRuby.getRuntime());
         args.add(scenario);
         groovyLanguage.invokeClosure(body, args);
     }
