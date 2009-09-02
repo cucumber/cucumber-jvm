@@ -8,19 +8,9 @@ Before(['@notused']) {
   throw new RuntimeException("Keep out")
 }
 
-/*
 Given(~/I have entered (\d+) into the calculator/) { int number ->
   calc = new calc.Calculator()
   calc.push number
-}
-*/
-
-Given(~/entered/) { ->
-    println "entered"
-}
-
-Given(~/calculator/) { ->
-    println "calculator"
 }
 
 When(~/I press (\w+)/) { String opname ->
