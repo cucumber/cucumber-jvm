@@ -5,7 +5,7 @@ public interface ObjectFactory {
 
     Object getComponent(Class<?> type);
 
-    void addClass(Class clazz);
+    void addClass(Class<?> clazz);
 
     void newWorld();
 }

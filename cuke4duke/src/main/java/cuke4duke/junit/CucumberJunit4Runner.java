@@ -28,17 +28,8 @@ public class CucumberJunit4Runner extends BlockJUnit4ClassRunner {
         super(featureClass);
         featurePath = featurePathFor(featureClass);
         scenarioMethods = extractScenarios(featureClass);
-//        AnnotationStepMother stepMother = new PicoContainerStepMother();
-//        registerStepDefinitions(stepMother, featureClass);
         cucumberRunner = null; //ew CucumberRunner(stepMother);
     }
-
-//    private void registerStepDefinitions(AnnotationStepMother stepMother, Class<?> featureClass) {
-//        StepDefinitions stepDefinitions = (StepDefinitions) featureClass.getAnnotation(StepDefinitions.class);
-//        for(Class stepDefinition : stepDefinitions.value()) {
-//            stepMother.registerClass(stepDefinition);
-//        }
-//    }
 
     @Override
     protected List<FrameworkMethod> getChildren() {
@@ -75,7 +66,8 @@ public class CucumberJunit4Runner extends BlockJUnit4ClassRunner {
         };
     }
 
-    private List<FrameworkMethod> extractScenarios(Class featureClass) {
+    @SuppressWarnings("unchecked")
+	private List<FrameworkMethod> extractScenarios(Class featureClass) {
         List<FrameworkMethod> scenarioMethods = new ArrayList<FrameworkMethod>();
         for (Method method : featureClass.getMethods()) {
             Scenario scenarioAnnotation = method.getAnnotation(Scenario.class);
