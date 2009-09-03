@@ -36,6 +36,7 @@
       <arg value="junit"/>
       <arg value="--out"/>
       <arg value="target/junit-report"/>
+      <arg value="--guess"/>
       <arg value="features"/>
     </java>
   </target>

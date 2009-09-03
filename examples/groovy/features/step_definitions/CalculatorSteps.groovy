@@ -8,9 +8,13 @@ Before(['@notused']) {
   throw new RuntimeException("Keep out")
 }
 
-Given(~/I have entered (\d+) into the calculator/) { int number ->
+Given(~/I have entered (\d+) into (.*) calculator/) { int number, String ignore ->
   calc = new calc.Calculator()
   calc.push number
+}
+
+Given(~/(\d+) into the/) { ->
+  throw new RuntimeException("should never get here since we're running with --guess")
 }
 
 When(~/I press (\w+)/) { String opname ->

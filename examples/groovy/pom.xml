@@ -75,6 +75,7 @@
             <arg>--color</arg>
             <arg>--verbose</arg>
             <arg>--strict</arg>
+            <arg>--guess</arg>
           </args>
           <gems>
             <gem>cucumber:0.3.98</gem>
