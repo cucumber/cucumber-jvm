@@ -152,6 +152,10 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
         args.add("install");
         args.add("--no-ri");
         args.add("--no-rdoc");
+        args.add("--source");
+        args.add("http://gems.rubyforge.org");
+        args.add("--source");
+        args.add("http://gems.github.com");
         args.add("--install-dir");
         args.add(gemHome().getAbsolutePath());
         args.addAll(parseGem(gemSpec));
