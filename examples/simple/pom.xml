@@ -69,12 +69,12 @@
           <jvmArgs>
             <jvmArg>-Dcuke4duke.objectFactory=cuke4duke.internal.java.PicoFactory</jvmArg>
           </jvmArgs>
-          <args>
-            <arg>--color</arg>
-            <arg>--verbose</arg>
-            <arg>--require</arg>
-            <arg>${basedir}/src/test/java</arg>
-          </args>
+          <cucumberArgs>
+            <!--cucumberArg>color</cucumberArg-->
+            <cucumberArg>--verbose</cucumberArg>
+            <cucumberArg>--require</cucumberArg>
+            <cucumberArg>${basedir}/src/test/java</cucumberArg>
+          </cucumberArgs>
           <gems>
             <gem>cucumber:0.3.99</gem>
           </gems>
