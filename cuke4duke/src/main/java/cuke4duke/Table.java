@@ -16,7 +16,7 @@ public interface Table {
     public List<List<String>> raw();
     public List<List<String>> rows();
     public void diffLists(List<List<String>> table);
-    public void diffLists(List<List<String>> table, Map options);
+    public void diffLists(List<List<String>> table, Map<?, ?> options);
     public void diffHashes(List<Map<String, String>> table);
-    public void diffHashes(List<Map<String, String>> table, Map options);
+    public void diffHashes(List<Map<String, String>> table, Map<?, ?> options);
 }

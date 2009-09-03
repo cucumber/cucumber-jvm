@@ -1,10 +1,10 @@
 package cuke4duke.internal;
 
+import java.net.URL;
+
 import org.apache.bsf.BSFException;
 import org.apache.bsf.BSFManager;
 import org.jruby.javasupport.bsf.JRubyEngine;
-
-import java.net.URL;
 
 public class CucumberRunner {
 //    private final AnnotationStepMother stepMother;
@@ -16,7 +16,8 @@ public class CucumberRunner {
 //        initializeCucumber();
 //    }
 
-    private void initializeCucumber() throws BSFException {
+    @SuppressWarnings("unused")
+	private void initializeCucumber() throws BSFException {
         if (System.getProperty("jruby.home") == null) {
             if (System.getenv("JRUBY_HOME") != null) {
                 System.setProperty("jruby.home", System.getenv("JRUBY_HOME"));
