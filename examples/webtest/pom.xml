@@ -47,7 +47,7 @@
           </jvmArgs>
           <gems>
             <gem>jarib-celerity:0.0.6.18</gem>
-            <gem>cucumber:0.3.98</gem>
+            <gem>cucumber:0.3.99</gem>
             <gem>rspec:1.2.8</gem>
           </gems>
           <args>

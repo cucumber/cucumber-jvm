@@ -32,7 +32,7 @@
     <dependency>
       <groupId>cuke4duke</groupId>
       <artifactId>cuke4duke</artifactId>
-      <version>0.1.2</version>
+      <version>0.1.3</version>
     </dependency>
     <dependency>
       <groupId>org.picocontainer</groupId>
@@ -76,7 +76,7 @@
             <arg>${basedir}/src/test/java</arg>
           </args>
           <gems>
-            <gem>cucumber:0.3.98</gem>
+            <gem>cucumber:0.3.99</gem>
           </gems>
         </configuration>
         <executions>
