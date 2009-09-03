@@ -7,6 +7,7 @@
 * Gem dependencies in Maven no longer use the form gem:version:source. rubyforge, github and gemcutter are always used. (Darrin Holst, Aslak Hellesøy)
 
 === Bugfixes
+* undefined method `jlength' (NoMethodError) for ambiguous matches with --guess. Requires Cucumber 0.3.99. (Aslak Hellesøy)
 * The @Before annotation of a superclass has no effect in a subclass. (Works now if superclass is abstract) (Aslak Hellesøy)
 * @Before tag should have optional scenario parameter (#11 Aslak Hellesøy, Henning Jensen)
 * Fixed broken Ant script for Groovy example. (Aslak Hellesøy)
