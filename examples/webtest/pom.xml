@@ -42,9 +42,12 @@
         <groupId>cuke4duke</groupId>
         <artifactId>cuke4duke-maven-plugin</artifactId>
         <configuration>
+          <jvmArgs>
+            <jvmArg>-Xmx384m</jvmArg>
+          </jvmArgs>
           <gems>
+            <gem>jarib-celerity:0.0.6.18</gem>
             <gem>cucumber:0.3.98</gem>
-            <gem>jarib-celerity:0.0.6.12:github</gem>
             <gem>rspec:1.2.8</gem>
           </gems>
           <args>
