@@ -1,8 +1,6 @@
 package cuke4duke.mojo;
 
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.taskdefs.Java;
 
 import java.util.ArrayList;
@@ -47,7 +45,7 @@ public class CucumberMojo extends AbstractJRubyMojo {
      */
     protected File cucumberBin;
 
-    public void execute() throws MojoFailureException, MojoExecutionException {
+    public void execute() throws MojoExecutionException {
 
         if (installGems) {
             for (String gemSpec : gems) {
@@ -63,11 +61,7 @@ public class CucumberMojo extends AbstractJRubyMojo {
         allArgs.add((features != null) ? features : "features");
 
         Java jruby = jruby(allArgs);
-        try {
-            jruby.execute();
-        } catch (BuildException e) {
-            throw new MojoFailureException("Cucumber failed: " + cmd(jruby) + " :" + e.getMessage());
-        }
+        jruby.execute();
     }
 
     private File cucumberBin() {

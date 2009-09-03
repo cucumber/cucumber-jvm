@@ -4,6 +4,7 @@ This release improves Java annotations and build scripts. Nothing major, but wor
 Make sure you upgrade the cucumber gem to 0.3.99.
 
 === New features
+* No longer print java command on failures. If needed it can be printed by passing -X to Maven. (#16 Aslak Hellesøy, Darrin Holst)
 * Added new @Pending annotation that can be used as a substitute for Ruby-Cucumber's #pending method. (Aslak Hellesøy)
 
 === Changed features
