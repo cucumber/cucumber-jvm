@@ -46,7 +46,7 @@
             <jvmArg>-Xmx384m</jvmArg>
           </jvmArgs>
           <gems>
-            <gem>jarib-celerity:0.0.6.18</gem>
+            <gem>celerity:0.0.7</gem>
             <gem>cucumber:0.3.99</gem>
             <gem>rspec:1.2.8</gem>
           </gems>
@@ -68,8 +68,8 @@
       </plugin>
       <plugin>
         <groupId>org.mortbay.jetty</groupId>
-        <artifactId>maven-jetty-plugin</artifactId>
-        <version>6.1.14</version>
+        <artifactId>jetty-maven-plugin</artifactId>
+        <version>7.0.0.1beta3</version>
         <configuration>
           <scanIntervalSeconds>10</scanIntervalSeconds>
           <stopKey>foo</stopKey>
