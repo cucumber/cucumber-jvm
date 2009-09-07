@@ -15,6 +15,10 @@ public class GroovyDsl {
     public static GroovyLanguage groovyLanguage;
     public static LanguageMixin languageMixin;
 
+    public static void World(Closure body) {
+        groovyLanguage.registerWorldFactory(body);
+    }
+
     public static void Before(List<String> tagNames, Closure body) {
         languageMixin.add_hook("before", new GroovyHook(tagNames, body, groovyLanguage));
     }

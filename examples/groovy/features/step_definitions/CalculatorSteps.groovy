@@ -1,6 +1,17 @@
 this.metaClass.mixin(cuke4duke.GroovyDsl)
 
+class CustomWorld {
+  String customMethod() {
+    "foo"
+  }
+}
+
+World {
+  new CustomWorld()
+}
+
 Before([]) {
+  assert "foo" == customMethod()
   calc = new calc.Calculator()
 }
 

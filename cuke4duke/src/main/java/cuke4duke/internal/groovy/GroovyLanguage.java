@@ -17,6 +17,7 @@ import cuke4duke.internal.language.ProgrammingLanguage;
 public class GroovyLanguage extends ProgrammingLanguage {
     private final GroovyShell shell;
     private Object currentWorld;
+    private Closure worldFactory;
 
     public GroovyLanguage(LanguageMixin languageMixin) {
         GroovyDsl.groovyLanguage = this;
@@ -32,7 +33,7 @@ public class GroovyLanguage extends ProgrammingLanguage {
     }
 
     public void begin_scenario() {
-        currentWorld = new Object();
+        currentWorld = worldFactory == null ? new Object() : worldFactory.call();
     }
 
     public void end_scenario() {
@@ -43,4 +44,10 @@ public class GroovyLanguage extends ProgrammingLanguage {
         shell.evaluate(new File(groovy_file));
     }
 
+    public void registerWorldFactory(Closure worldFactory) {
+        if(this.worldFactory != null) {
+            throw new RuntimeException("You can only define one World closure");
+        }
+        this.worldFactory = worldFactory;
+    }
 }
