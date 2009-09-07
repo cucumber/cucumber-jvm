@@ -39,7 +39,6 @@
       <artifactId>spring</artifactId>
       <version>2.5.6</version>
     </dependency>
-    <!-- Log4j seems easier to shut up than other logging frameworks -->
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
