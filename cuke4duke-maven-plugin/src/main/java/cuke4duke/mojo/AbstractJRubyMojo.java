@@ -110,7 +110,6 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
             classpath.setValue(p.toString());
 
             java.addEnv(classpath);
-            java.setCloneVm(true);
         }
 
         Environment.Variable gemPathVar = new Environment.Variable();
