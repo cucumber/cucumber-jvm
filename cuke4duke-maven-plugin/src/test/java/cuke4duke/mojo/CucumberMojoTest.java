@@ -40,7 +40,7 @@ public class CucumberMojoTest {
 
     @Test
     public void shouldSplitAddCucumberArgsIntoRealCucumberArgs() {
-        mojo.extraCucumberArgs = "arg1:arg2:arg3";
+        mojo.extraCucumberArgs = "arg1 arg2 arg3";
         List<String> referenceList = new ArrayList<String>();
         referenceList.add("arg1");
         referenceList.add("arg2");

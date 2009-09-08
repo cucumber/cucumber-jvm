@@ -85,7 +85,7 @@ public class CucumberMojo extends AbstractJRubyMojo {
         if (cucumberArgs != null)
             allCucumberArgs.addAll(cucumberArgs);
         if (extraCucumberArgs != null)
-            allCucumberArgs.addAll(Arrays.asList(extraCucumberArgs.split(":")));
+            allCucumberArgs.addAll(Arrays.asList(extraCucumberArgs.split(" ")));
         return allCucumberArgs;
     }
 

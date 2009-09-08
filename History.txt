@@ -2,8 +2,7 @@
 
 === New features
 * examples/webtest upgraded to celerity 0.0.7 and jetty 7.0.0.1beta3 (Aslak Hellesøy)
-* the -Dcucumber.extraArgs command line parameter allows us to add extra cucumber arguments as a string with ":" as the delimitor 
-E.g "-Dcucmber.extraArgs=--tag:@dev"
+* the -Dcucumber.extraArgs command line parameter allows us to add extra cucumber arguments as a string surrounded with " " and a space as the delimitorE.g -Dcucmber.extraArgs="--color --tag @dev"
 
 === Changed Features
 * Groovy step definitions must use String instead of Regexp. The regexp matching happens on the Ruby side, so Regexp was misleading (Aslak Hellesøy)
