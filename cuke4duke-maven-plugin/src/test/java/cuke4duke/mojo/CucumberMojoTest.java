@@ -21,7 +21,7 @@ public class CucumberMojoTest {
     @Test
     public void shouldAllowZeroCucumberArgs() {
         mojo.cucumberArgs = null;
-        mojo.addExtraCucumberArgs();
+        mojo.addCucumberArgs();
     }
 
     @Test
@@ -29,13 +29,13 @@ public class CucumberMojoTest {
         String cucumberArg = "testArg";
         mojo.cucumberArgs = new ArrayList<String>();
         mojo.cucumberArgs.add(cucumberArg);
-        assertTrue(mojo.addExtraCucumberArgs().contains(cucumberArg));
+        assertTrue(mojo.addCucumberArgs().contains(cucumberArg));
     }
 
     @Test
     public void shouldAllowZeroAddCucumberArgs() {
         mojo.extraCucumberArgs = null;
-        mojo.addExtraCucumberArgs();
+        mojo.addCucumberArgs();
     }
 
     @Test
@@ -45,7 +45,7 @@ public class CucumberMojoTest {
         referenceList.add("arg1");
         referenceList.add("arg2");
         referenceList.add("arg3");
-        assertEquals(referenceList, mojo.addExtraCucumberArgs());
+        assertEquals(referenceList, mojo.addCucumberArgs());
     }
 
     @Test
@@ -53,6 +53,6 @@ public class CucumberMojoTest {
         mojo.extraCucumberArgs = "arg1";
         List<String> referenceList = new ArrayList<String>();
         referenceList.add("arg1");
-        assertEquals(referenceList, mojo.addExtraCucumberArgs());
+        assertEquals(referenceList, mojo.addCucumberArgs());
     }
 }

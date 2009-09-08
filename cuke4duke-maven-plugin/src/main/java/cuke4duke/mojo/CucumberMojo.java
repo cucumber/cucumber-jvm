@@ -73,14 +73,14 @@ public class CucumberMojo extends AbstractJRubyMojo {
         allArgs.add(cucumberBin().getAbsolutePath());
         if (args != null)
             allArgs.addAll(args);
-        allArgs.addAll(addExtraCucumberArgs());
+        allArgs.addAll(addCucumberArgs());
         allArgs.add((features != null) ? features : "features");
 
         Java jruby = jruby(allArgs);
         jruby.execute();
     }
 
-    List<String> addExtraCucumberArgs() {
+    List<String> addCucumberArgs() {
         List<String> allCucumberArgs = new ArrayList<String>();
         if (cucumberArgs != null)
             allCucumberArgs.addAll(cucumberArgs);
@@ -98,6 +98,6 @@ public class CucumberMojo extends AbstractJRubyMojo {
     }
 
     protected List<String> getJvmArgs() {
-        return jvmArgs;
+        return (jvmArgs != null) ? jvmArgs : new ArrayList<String>();
     }
 }
