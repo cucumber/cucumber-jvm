@@ -1,3 +1,11 @@
+== (In Git)
+
+=== New features
+* examples/webtest upgraded to celerity 0.0.7 and jetty 7.0.0.1beta3 (Aslak Hellesøy)
+
+=== Changed Features
+* Groovy step definitions must use String instead of Regexp. The regexp matching happens on the Ruby side, so Regexp was misleading (Aslak Hellesøy)
+
 == 0.1.3 2009-09-03
 
 This release improves Java annotations and build scripts. Nothing major, but worth an upgrade!

@@ -23,7 +23,7 @@ public class SpringFactory implements ObjectFactory {
         if(beans.size() == 1) {
             return beans.get(0);
         } else {
-            throw new RuntimeException("Found " + beans.size() + "Beans for class " + type + ". Expected exactly 1.");
+            throw new RuntimeException("Found " + beans.size() + " Beans for class " + type + ". Expected exactly 1.");
         }
     }
 
