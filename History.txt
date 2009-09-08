@@ -1,6 +1,7 @@
 == (In Git)
 
 === New features
+* Examples' Maven builds install aslakhellesoy-ansicolor (needed for the poor windows users) (Aslak Hellesøy)
 * examples/webtest upgraded to celerity 0.0.7 and jetty 7.0.0.1beta3 (Aslak Hellesøy)
 
 === Changed Features

@@ -86,6 +86,7 @@
           </args>
           <gems>
             <gem>cucumber:0.3.99</gem>
+            <gem>aslakhellesoy-ansicolor:1.0</gem>
           </gems>
         </configuration>
         <executions>
