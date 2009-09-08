@@ -43,9 +43,9 @@ public class CucumberMojo extends AbstractJRubyMojo {
      * Can be used to add multiple arguments on the command line. e.g.
      * -DaddArgs=--format:html The delimitor is :
      * 
-     * @parameter expression="${cucumber.addArgs}
+     * @parameter expression="${cucumber.extraArgs}
      */
-    protected String addCucumberArgs;
+    protected String extraCucumberArgs;
 
     /**
      * Extra JVM arguments to pass when running JRuby.
@@ -73,19 +73,19 @@ public class CucumberMojo extends AbstractJRubyMojo {
         allArgs.add(cucumberBin().getAbsolutePath());
         if (args != null)
             allArgs.addAll(args);
-        allArgs.addAll(addCucumberArgs());
+        allArgs.addAll(addExtraCucumberArgs());
         allArgs.add((features != null) ? features : "features");
 
         Java jruby = jruby(allArgs);
         jruby.execute();
     }
 
-    List<String> addCucumberArgs() {
+    List<String> addExtraCucumberArgs() {
         List<String> allCucumberArgs = new ArrayList<String>();
         if (cucumberArgs != null)
             allCucumberArgs.addAll(cucumberArgs);
-        if (addCucumberArgs != null)
-            allCucumberArgs.addAll(Arrays.asList(addCucumberArgs.split(":")));
+        if (extraCucumberArgs != null)
+            allCucumberArgs.addAll(Arrays.asList(extraCucumberArgs.split(":")));
         return allCucumberArgs;
     }
 

@@ -70,7 +70,7 @@
             <jvmArg>-Dcuke4duke.objectFactory=cuke4duke.internal.java.PicoFactory</jvmArg>
           </jvmArgs>
           <cucumberArgs>
-            <!--cucumberArg>color</cucumberArg-->
+            <cucumberArg>--color</cucumberArg>
             <cucumberArg>--verbose</cucumberArg>
             <cucumberArg>--require</cucumberArg>
             <cucumberArg>${basedir}/src/test/java</cucumberArg>
