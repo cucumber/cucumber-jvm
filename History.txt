@@ -1,6 +1,7 @@
 == (In Git)
 
 === New features
+* Java snippets should now be valid Java code (Aslak Hellesøy)
 * Examples' Maven builds install aslakhellesoy-ansicolor (needed for the poor windows users) (Aslak Hellesøy)
 * examples/webtest upgraded to celerity 0.0.7 and jetty 7.0.0.1beta3 (Aslak Hellesøy)
 * Added -Dcucumber.extraArgs command line parameter that allows us to add extra cucumber arguments as a string surrounded with " " and a space as the delimitor. E.g -Dcucmber.extraArgs="--color --tag @dev" (#8 Torbjørn Vatn)
