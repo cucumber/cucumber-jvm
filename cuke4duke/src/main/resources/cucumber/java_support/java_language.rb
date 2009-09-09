@@ -16,9 +16,9 @@ module Cucumber
       def alias_adverbs(adverbs)
       end
 
-      def snippet_text(step_keyword, step_name, multiline_arg_class = nil)
-        step_description = step_name.gsub(/"/, '\"')
-        "@#{step_keyword}(\"^#{step_description}$\") \npublic void #{step_name.gsub(/"/, '')}(#{multiline_arg_class}) { \n} "
+			def snippet_text(step_keyword, step_name, multiline_arg_class = nil)
+				name = step_name.strip.gsub(/Undefined step: /, '').chop.gsub(/^"/, '')
+        " @#{step_keyword}(\"^#{name}$\")\n public void #{name.gsub(/ /, '')}() { \n }"
       end
     end
   end
