@@ -39,15 +39,12 @@ module Cucumber
         %{@#{step_keyword}("^#{escaped}$")\n} +
         %{@Pending\n} +
         %{public void #{method_name}(#{arg_string}) {\n}}
-
-        # step_description = step_name.gsub(/"/, '\"')
-        # "@#{step_keyword}(\"^#{step_description}$\") \npublic void #{step_name.gsub(/"/, '')}(#{multiline_arg_class}) { \n} "
       end
 
       private
 
       PARAM_PATTERN = /"([^\"]*)"/
-      ESCAPED_PARAM_PATTERN = '"([^\\"]*)"'
+      ESCAPED_PARAM_PATTERN = '\\"([^\\"]*)\\"'
 
     end
   end

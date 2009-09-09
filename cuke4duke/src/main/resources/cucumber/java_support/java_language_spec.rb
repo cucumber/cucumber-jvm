@@ -31,7 +31,7 @@ module Cucumber
       
       it "should recognise quotes in name and make according regexp" do
         @java.snippet_text('Given', 'A "first" arg').should == unindented(%{
-          @Given("^A \"([^\\\"]*)\" arg$")
+          @Given("^A \\\"([^\\\"]*)\\\" arg$")
           @Pending
           public void aFirstArg(String arg1) {
           }
@@ -40,7 +40,7 @@ module Cucumber
 
       it "should recognise several quoted words in name and make according regexp and args" do
         @java.snippet_text('Given', 'Æ "first" and "second" arg').should == unindented(%{
-          @Given("^Æ \"([^\\\"]*)\" and \"([^\\\"]*)\" arg$")
+          @Given("^Æ \\\"([^\\\"]*)\\\" and \\\"([^\\\"]*)\\\" arg$")
           @Pending
           public void aEFirstAndSecondArg(String arg1, String arg2) {
           }
@@ -58,7 +58,7 @@ module Cucumber
 
       it "should be helpful with tables" do
         @java.snippet_text('Given', 'A "first" arg', Cucumber::Ast::Table).should == unindented(%{
-          @Given("^A \"([^\\\"]*)\" arg$")
+          @Given("^A \\\"([^\\\"]*)\\\" arg$")
           @Pending
           public void aFirstArgWithTable(String arg1, cuke4duke.Table table) {
           }
