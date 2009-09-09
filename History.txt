@@ -1,4 +1,6 @@
-== (In Git)
+== 0.1.4 2009-09-09
+
+The JavaZone release!
 
 === New features
 * Java snippets should now be valid Java code (Aslak Hellesøy)
