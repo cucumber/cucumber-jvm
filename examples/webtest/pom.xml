@@ -47,8 +47,9 @@
           </jvmArgs>
           <gems>
             <gem>celerity:0.0.7</gem>
-            <gem>cucumber:0.3.99</gem>
             <gem>rspec:1.2.8</gem>
+            <gem>cucumber:0.3.99</gem>
+            <gem>aslakhellesoy-ansicolor:1.0</gem>
           </gems>
           <args>
             <arg>--color</arg>
