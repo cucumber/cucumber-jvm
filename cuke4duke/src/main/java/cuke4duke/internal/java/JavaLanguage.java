@@ -1,19 +1,16 @@
 package cuke4duke.internal.java;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.List;
-
-import cuke4duke.After;
-import cuke4duke.Before;
-import cuke4duke.Given;
-import cuke4duke.Then;
-import cuke4duke.When;
+import cuke4duke.*;
 import cuke4duke.internal.language.LanguageMixin;
 import cuke4duke.internal.language.ProgrammingLanguage;
 import cuke4duke.internal.language.StepDefinition;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.Arrays;
+import java.util.List;
 
 public class JavaLanguage extends ProgrammingLanguage {
     private final ObjectFactory objectFactory;
@@ -38,7 +35,9 @@ public class JavaLanguage extends ProgrammingLanguage {
     protected void load(String java_file) throws ClassNotFoundException {
         Class<?> clazz = loadClass(java_file);
         registerStepDefinitionsFor(clazz);
-        objectFactory.addClass(clazz);
+        if(!Modifier.isAbstract(clazz.getModifiers())) {
+            objectFactory.addClass(clazz);
+        }
     }
 
     public void begin_scenario() {

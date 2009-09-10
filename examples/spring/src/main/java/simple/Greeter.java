@@ -1,5 +1,5 @@
 package simple;
 
-public interface World {
+public interface Greeter {
 	String hello();
 }

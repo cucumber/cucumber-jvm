@@ -1,9 +1,27 @@
 == (In Git)
 
 === New features
+* examples/webtest upgraded to celerity 0.0.7 and jetty 7.0.0.1beta3 (Aslak Hellesøy)
+* the -Dcucumber.extraArgs command line parameter allows us to add extra cucumber arguments as a string surrounded with " " and a space as the delimitorE.g -Dcucmber.extraArgs="--color --tag @dev"
+
+=== Changed Features
+* Groovy step definitions must use String instead of Regexp. The regexp matching happens on the Ruby side, so Regexp was misleading (Aslak Hellesøy)
+
+== 0.1.3 2009-09-03
+
+This release improves Java annotations and build scripts. Nothing major, but worth an upgrade!
+Make sure you upgrade the cucumber gem to 0.3.99.
+
+=== New features
+* No longer print java command on failures. If needed it can be printed by passing -X to Maven. (#16 Aslak Hellesøy, Darrin Holst)
 * Added new @Pending annotation that can be used as a substitute for Ruby-Cucumber's #pending method. (Aslak Hellesøy)
 
+=== Changed features
+* Gem dependencies in Maven no longer use the form gem:version:source. rubyforge, github and gemcutter are always used. (Darrin Holst, Aslak Hellesøy)
+
 === Bugfixes
+* undefined method `jlength' (NoMethodError) for ambiguous matches with --guess. Requires Cucumber 0.3.99. (Aslak Hellesøy)
+* The @Before annotation of a superclass has no effect in a subclass. (Works now if superclass is abstract) (Aslak Hellesøy)
 * @Before tag should have optional scenario parameter (#11 Aslak Hellesøy, Henning Jensen)
 * Fixed broken Ant script for Groovy example. (Aslak Hellesøy)
 

@@ -23,7 +23,7 @@ import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Base for all JRuby mojos.
- *
+ * 
  * @requiresDependencyResolution test
  */
 public abstract class AbstractJRubyMojo extends AbstractMojo {
@@ -43,7 +43,7 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
 
     /**
      * The project compile classpath.
-     *
+     * 
      * @parameter default-value="${project.compileClasspathElements}"
      * @required
      * @readonly
@@ -52,7 +52,7 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
 
     /**
      * The plugin dependencies.
-     *
+     * 
      * @parameter expression="${plugin.artifacts}"
      * @required
      * @readonly
@@ -61,7 +61,7 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
 
     /**
      * The project test classpath
-     *
+     * 
      * @parameter expression="${project.testClasspathElements}"
      * @required
      * @readonly
@@ -131,19 +131,25 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
         return java;
     }
 
-    protected abstract String[] getJvmArgs();
+    protected abstract List<String> getJvmArgs();
 
     /**
-     * Installs a gem.
-     *
-     * @param gemSpec name and optional version and location separated by colon. Example:
-     *                <ul>
-     *                <li>name</li>
-     *                <li>name:version</li>
-     *                <li>name:version:github</li>
-     *                </ul>
+     * Installs a gem. Sources used:
+     * <ul>
+     * <li>http://gems.rubyforge.org</li>
+     * <li>http://gemcutter.org</li>
+     * <li>http://gems.github.com</li>
+     * </ul>
+     * 
+     * @param gemSpec
+     *            name and optional version and location separated by colon.
+     *            Example:
+     *            <ul>
+     *            <li>name</li>
+     *            <li>name:version</li>
+     *            </ul>
      * @throws org.apache.maven.plugin.MojoExecutionException
-     *          if gem installation fails.
+     *             if gem installation fails.
      */
     protected void installGem(String gemSpec) throws MojoExecutionException {
         List<String> args = new ArrayList<String>();
@@ -152,6 +158,12 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
         args.add("install");
         args.add("--no-ri");
         args.add("--no-rdoc");
+        args.add("--source");
+        args.add("http://gems.rubyforge.org");
+        args.add("--source");
+        args.add("http://gemcutter.org");
+        args.add("--source");
+        args.add("http://gems.github.com");
         args.add("--install-dir");
         args.add(gemHome().getAbsolutePath());
         args.addAll(parseGem(gemSpec));
@@ -169,9 +181,11 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
     }
 
     /**
-     * @param gemSpec colon separated string. See installGem.
+     * @param gemSpec
+     *            colon separated string. See installGem.
      * @return arguments that the gem command understands.
-     * @throws MojoExecutionException if gem installation fails.
+     * @throws MojoExecutionException
+     *             if gem installation fails.
      */
     private List<String> parseGem(String gemSpec) throws MojoExecutionException {
 
@@ -180,23 +194,16 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
 
         String name = gem.length > 0 ? gem[0] : null;
         String version = gem.length > 1 ? gem[1] : null;
-        String source = gem.length > 2 ? gem[2] : null;
 
         if (name == null || name.trim().length() == 0) {
-            throw new MojoExecutionException("Requires atleast a name for <gem>");
+            throw new MojoExecutionException(
+                    "Requires atleast a name for <gem>");
         } else {
             gemArgs.add(name);
         }
 
         if (version != null && version.trim().length() > 0) {
             gemArgs.add("-v" + version);
-        }
-
-        if (source != null && source.trim().length() > 0) {
-            if (source.contains("github")) {
-                gemArgs.add("--source");
-                gemArgs.add("http://gems.github.com");
-            }
         }
         return gemArgs;
     }
@@ -217,14 +224,15 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
         Project project = new Project();
         project.setBaseDir(mavenProject.getBasedir());
         project.addBuildListener(new LogAdapter());
-        addReference(project, "maven.compile.classpath", compileClasspathElements);
+        addReference(project, "maven.compile.classpath",
+                compileClasspathElements);
         addReference(project, "maven.plugin.classpath", pluginArtifacts);
         addReference(project, "maven.test.classpath", testClasspathElements);
         return project;
     }
 
-    protected void addReference(Project project, String reference, List<?> artifacts)
-            throws DependencyResolutionRequiredException {
+    protected void addReference(Project project, String reference,
+            List<?> artifacts) throws DependencyResolutionRequiredException {
         List<String> list = new ArrayList<String>(artifacts.size());
 
         for (Object elem : artifacts) {
@@ -260,7 +268,8 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
     protected String join(String[] strings) {
         StringBuffer sb = new StringBuffer();
         for (int i = 0; i < strings.length; i++) {
-            if (i != 0) sb.append(' ');
+            if (i != 0)
+                sb.append(' ');
             sb.append(strings[i]);
         }
         return sb.toString();
@@ -300,29 +309,29 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
             Log log = getLog();
             String message = event.getMessage();
             switch (priority) {
-                case Project.MSG_ERR:
-                    log.error(message);
-                    break;
+            case Project.MSG_ERR:
+                log.error(message);
+                break;
 
-                case Project.MSG_WARN:
-                    log.warn(message);
-                    break;
+            case Project.MSG_WARN:
+                log.warn(message);
+                break;
 
-                case Project.MSG_INFO:
-                    log.info(message);
-                    break;
+            case Project.MSG_INFO:
+                log.info(message);
+                break;
 
-                case Project.MSG_VERBOSE:
-                    log.debug(message);
-                    break;
+            case Project.MSG_VERBOSE:
+                log.debug(message);
+                break;
 
-                case Project.MSG_DEBUG:
-                    log.debug(message);
-                    break;
+            case Project.MSG_DEBUG:
+                log.debug(message);
+                break;
 
-                default:
-                    log.info(message);
-                    break;
+            default:
+                log.info(message);
+                break;
             }
         }
     }

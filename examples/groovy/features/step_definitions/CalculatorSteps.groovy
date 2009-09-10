@@ -1,22 +1,37 @@
 this.metaClass.mixin(cuke4duke.GroovyDsl)
 
-Before(['@newcalc']) {
+class CustomWorld {
+  String customMethod() {
+    "foo"
+  }
+}
+
+World {
+  new CustomWorld()
+}
+
+Before([]) {
+  assert "foo" == customMethod()
   calc = new calc.Calculator()
 }
 
-Before(['@notused']) {
+Before(["@notused"]) {
   throw new RuntimeException("Keep out")
 }
 
-Given(~/I have entered (\d+) into the calculator/) { int number ->
+Given("I have entered (\\d+) into (.*) calculator") { int number, String ignore ->
   calc = new calc.Calculator()
   calc.push number
 }
 
-When(~/I press (\w+)/) { String opname ->
+Given("(\\d+) into the") { ->
+  throw new RuntimeException("should never get here since we're running with --guess")
+}
+
+When("I press (\\w+)") { String opname ->
   result = calc."$opname"()
 }
 
-Then(~/the stored result should be (.*)/) { double expected -> 
+Then("the stored result should be (.*)") { double expected -> 
   assert expected == result
 }
