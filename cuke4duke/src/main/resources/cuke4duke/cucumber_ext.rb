@@ -24,7 +24,7 @@ module Cucumber
       end
 
       def diffHashes(table, options={})
-        diff!(table, opts(options))
+        diff!(maps_to_hashes(table), opts(options))
       end
 
     private
@@ -34,6 +34,16 @@ module Cucumber
         opts = {}
         options.each{|k, v| opts[k.to_sym] = v}
         opts
+      end
+
+      def maps_to_hashes(table)
+        table.collect{|map| map_to_hash(map)}
+      end
+
+      def map_to_hash(map)
+        hash = {}
+        map.each{|entry| hash[entry[0]] = entry[1]}
+        hash
       end
     end
   end
