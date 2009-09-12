@@ -36,8 +36,8 @@ module Cucumber
         opts
       end
 
-      def maps_to_hashes(table)
-        table.collect{|map| map_to_hash(map)}
+      def maps_to_hashes(maps)
+        maps.collect{|map| map_to_hash(map)}
       end
 
       def map_to_hash(map)

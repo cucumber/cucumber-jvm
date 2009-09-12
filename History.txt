@@ -1,6 +1,4 @@
-== 0.1.4 2009-09-09
-
-The JavaZone release!
+== (In Git)
 
 === New features
 * Java snippets should now be valid Java code (Aslak Hellesøy)
@@ -10,6 +8,9 @@ The JavaZone release!
 
 === Changed Features
 * Groovy step definitions must use String instead of Regexp. The regexp matching happens on the Ruby side, so Regexp was misleading (Aslak Hellesøy)
+
+=== Bugfixes
+* diffHashes method in Table not working properly (#18 Darrin Holst)
 
 == 0.1.3 2009-09-03
 
