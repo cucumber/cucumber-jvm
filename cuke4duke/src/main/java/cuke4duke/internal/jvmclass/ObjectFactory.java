@@ -1,11 +1,11 @@
-package cuke4duke.internal.java;
+package cuke4duke.internal.jvmclass;
 
 public interface ObjectFactory {
-    void dispose();
+    void disposeObjects();
 
     Object getComponent(Class<?> type);
 
     void addClass(Class<?> clazz);
 
-    void newWorld();
+    void createObjects();
 }

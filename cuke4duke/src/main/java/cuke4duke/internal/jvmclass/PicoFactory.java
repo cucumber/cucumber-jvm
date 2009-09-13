@@ -1,4 +1,4 @@
-package cuke4duke.internal.java;
+package cuke4duke.internal.jvmclass;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +10,7 @@ public class PicoFactory implements ObjectFactory {
     private MutablePicoContainer pico;
     private final List<Class<?>> classes = new ArrayList<Class<?>>();
 
-    public void dispose() {
+    public void disposeObjects() {
         pico.stop();
         pico.dispose();
     }
@@ -23,7 +23,7 @@ public class PicoFactory implements ObjectFactory {
         classes.add(clazz);
     }
 
-    public void newWorld() {
+    public void createObjects() {
         pico = new PicoBuilder().withCaching().build();
         for (Class<?> clazz : classes) {
             pico.addComponent(clazz);
