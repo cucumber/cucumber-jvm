@@ -13,7 +13,7 @@ public class ClassLanguageTest {
 
     @Before
     public void createLanguage() throws Throwable {
-        language = new ClassLanguage(mock(LanguageMixin.class), Collections.<ClassAnalyzer>emptyList());
+        language = new ClassLanguage(mock(ClassLanguageMixin.class), Collections.<ClassAnalyzer>emptyList());
     }
 
     @Test

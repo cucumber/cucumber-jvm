@@ -1,7 +1,6 @@
 package cuke4duke.internal.jvmclass;
 
 import cuke4duke.internal.language.ProgrammingLanguage;
-import cuke4duke.internal.language.LanguageMixin;
 import cuke4duke.internal.language.Hook;
 import cuke4duke.internal.language.StepDefinition;
 
@@ -13,9 +12,11 @@ import java.util.List;
 public class ClassLanguage extends ProgrammingLanguage {
     private final ObjectFactory objectFactory;
     private final List<ClassAnalyzer> analyzers;
+    private final ClassLanguageMixin classLanguageMixin;
 
-    public ClassLanguage(LanguageMixin languageMixin, List<ClassAnalyzer> analyzers) throws Throwable {
+    public ClassLanguage(ClassLanguageMixin languageMixin, List<ClassAnalyzer> analyzers) throws Throwable {
         super(languageMixin);
+        this.classLanguageMixin = languageMixin;
         this.analyzers = analyzers;
         String className = System.getProperty("cuke4duke.objectFactory");
         if(className == null) {
@@ -72,8 +73,8 @@ public class ClassLanguage extends ProgrammingLanguage {
     }
 
     public void addHook(String phase, Hook hook, ClassAnalyzer analyzer) {
-        languageMixin.activate(analyzer);
-        languageMixin.add_hook(phase, hook);
+        classLanguageMixin.activate(analyzer);
+        classLanguageMixin.add_hook(phase, hook);
     }
 
     public Object getTarget(Class<?> type) {
@@ -85,7 +86,7 @@ public class ClassLanguage extends ProgrammingLanguage {
     }
 
     public void addStepDefinition(StepDefinition stepDefinition, ClassAnalyzer analyzer) {
-        languageMixin.activate(analyzer);
+        classLanguageMixin.activate(analyzer);
         addStepDefinition(stepDefinition);
     }
 }
