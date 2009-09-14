@@ -22,10 +22,10 @@ public class ClassLanguage extends ProgrammingLanguage {
         if(className == null) {
             throw new RuntimeException("Missing system property: cuke4duke.objectFactory");
         }
-        Class<ObjectFactory> ofc = (Class<ObjectFactory>) Thread.currentThread().getContextClassLoader().loadClass(className);
-        Constructor<ObjectFactory> ctor = ofc.getConstructor();
+        Class ofc = Thread.currentThread().getContextClassLoader().loadClass(className);
+        Constructor ctor = ofc.getConstructor();
         try {
-            objectFactory = ctor.newInstance();
+            objectFactory = (ObjectFactory) ctor.newInstance();
         } catch(InvocationTargetException e) {
             throw e.getTargetException();
         }
@@ -38,7 +38,6 @@ public class ClassLanguage extends ProgrammingLanguage {
     public void end_scenario() {
         objectFactory.disposeObjects();
     }
-
 
     protected void load(String classFile) throws Throwable {
         Class<?> clazz = loadClass(classFile);
