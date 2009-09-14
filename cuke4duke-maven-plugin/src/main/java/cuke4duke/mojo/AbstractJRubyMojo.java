@@ -121,7 +121,7 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
         p.add((Path) project.getReference("maven.plugin.classpath"));
         p.add((Path) project.getReference("maven.compile.classpath"));
         p.add((Path) project.getReference("maven.test.classpath"));
-        getLog().debug("annotation classpath: " + p.toString());
+        getLog().debug("java classpath: " + p.toString());
 
         for (String s : args) {
             arg = java.createArg();

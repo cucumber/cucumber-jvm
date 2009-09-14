@@ -14,7 +14,7 @@ module Cucumber
       def_delegators :@delegate, :step_definitions_for, :begin_scenario, :end_scenario
 
       def initialize(step_mother)
-        analyzers = [::Java::Cuke4dukeInternalAnnotation::AnnotationAnalyzer.new]
+        analyzers = [::Java::Cuke4dukeInternalJava::JavaAnalyzer.new]
         @delegate = ::Java::Cuke4dukeInternalJvmclass::ClassLanguage.new(self, analyzers)
       end
 
@@ -32,10 +32,10 @@ module Cucumber
   end
 end
 
-class ::Java::Cuke4dukeInternalAnnotation::AnnotationStepDefinition
+class ::Java::Cuke4dukeInternalJava::JavaStepDefinition
   include ::Cucumber::LanguageSupport::StepDefinitionMethods
 end
-class ::Java::Cuke4dukeInternalAnnotation::AnnotationAnalyzer
+class ::Java::Cuke4dukeInternalJava::JavaAnalyzer
   def snippet_generator
     require 'cucumber/java_support/java_snippet_generator'
     Cucumber::JavaSupport::JavaSnippetGenerator.new

@@ -1,4 +1,4 @@
-package cuke4duke.internal.annotation;
+package cuke4duke.internal.java;
 
 import cuke4duke.internal.language.AbstractHook;
 import cuke4duke.internal.language.MethodInvoker;
@@ -10,12 +10,12 @@ import org.jruby.runtime.builtin.IRubyObject;
 import java.lang.reflect.Method;
 import java.util.List;
 
-public class AnnotationHook extends AbstractHook {
+public class JavaHook extends AbstractHook {
     private final MethodInvoker methodInvoker;
     private final Method method;
     private final ClassLanguage classLanguage;
 
-    public AnnotationHook(List<String> tagNames, Method method, ClassLanguage classLanguage) {
+    public JavaHook(List<String> tagNames, Method method, ClassLanguage classLanguage) {
         super(tagNames);
         this.method = method;
         this.classLanguage = classLanguage;

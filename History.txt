@@ -1,7 +1,7 @@
 == (In Git - generic_jvm_class_language branch)
 
 === Changed Features
-* -Dcuke4duke.objectFactory classes have changed package from cuke4duke.internal.annotation to cuke4duke.internal.jvmclass (Aslak Hellesøy)
+* -Dcuke4duke.objectFactory classes have changed package from cuke4duke.internal.java to cuke4duke.internal.jvmclass (Aslak Hellesøy)
 * --require **/*.java no longer supported. --require **/*.class instead (Aslak Hellesøy)
 
 == (In Git)

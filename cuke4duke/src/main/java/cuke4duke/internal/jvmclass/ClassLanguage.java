@@ -3,21 +3,20 @@ package cuke4duke.internal.jvmclass;
 import cuke4duke.internal.language.ProgrammingLanguage;
 import cuke4duke.internal.language.LanguageMixin;
 import cuke4duke.internal.language.Hook;
-import cuke4duke.internal.java.JavaRegistrar;
+import cuke4duke.internal.language.StepDefinition;
 
-import java.util.List;
-import java.util.ArrayList;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
+import java.util.List;
 
 public class ClassLanguage extends ProgrammingLanguage {
-    private final LanguageMixin languageMixin;
     private final ObjectFactory objectFactory;
-    private final List<HookAndStepDefinitionRegistrar> analyzers = new ArrayList<HookAndStepDefinitionRegistrar>();
+    private final List<ClassAnalyzer> analyzers;
 
-    public ClassLanguage(LanguageMixin languageMixin) throws Throwable {
-        this.languageMixin = languageMixin;
+    public ClassLanguage(LanguageMixin languageMixin, List<ClassAnalyzer> analyzers) throws Throwable {
+        super(languageMixin);
+        this.analyzers = analyzers;
         String className = System.getProperty("cuke4duke.objectFactory");
         if(className == null) {
             throw new RuntimeException("Missing system property: cuke4duke.objectFactory");
@@ -29,9 +28,6 @@ public class ClassLanguage extends ProgrammingLanguage {
         } catch(InvocationTargetException e) {
             throw e.getTargetException();
         }
-
-        analyzers.add(new JavaRegistrar());
-        // Add more analyzers here - e.g. ScalaRegistrar
     }
 
     public void begin_scenario() {
@@ -52,7 +48,7 @@ public class ClassLanguage extends ProgrammingLanguage {
     }
 
     private void registerHooksAndStepDefinitionsFor(Class<?> clazz) throws Throwable {
-        for(HookAndStepDefinitionRegistrar analyzer : analyzers) {
+        for(ClassAnalyzer analyzer : analyzers) {
             analyzer.registerHooksAndStepDefinitionsFor(clazz, this);
         }
     }
@@ -75,7 +71,8 @@ public class ClassLanguage extends ProgrammingLanguage {
         throw new ClassNotFoundException("Couldn't determine class from file: " + classFile);
     }
 
-    public void addHook(String phase, Hook hook) {
+    public void addHook(String phase, Hook hook, ClassAnalyzer analyzer) {
+        languageMixin.activate(analyzer);
         languageMixin.add_hook(phase, hook);
     }
 
@@ -85,5 +82,10 @@ public class ClassLanguage extends ProgrammingLanguage {
             throw new NullPointerException("Couldn't find object for type " + type);
         }
         return target;
+    }
+
+    public void addStepDefinition(StepDefinition stepDefinition, ClassAnalyzer analyzer) {
+        languageMixin.activate(analyzer);
+        addStepDefinition(stepDefinition);
     }
 }
