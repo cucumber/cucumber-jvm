@@ -1,5 +1,5 @@
 package cuke4duke.internal.jvmclass;
 
-public interface HookAndStepDefinitionRegistrar {
+public interface ClassAnalyzer {
     void registerHooksAndStepDefinitionsFor(Class<?> clazz, ClassLanguage classLanguage);
 }

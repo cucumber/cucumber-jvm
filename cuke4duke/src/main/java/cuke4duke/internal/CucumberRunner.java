@@ -32,7 +32,7 @@ public class CucumberRunner {
         rubyEngine = (JRubyEngine) bsfManager.loadScriptingEngine("ruby");
         String script =
             "require 'rubygems'\n" +
-            "require 'cuke4duke/java'\n" +
+            "require 'cuke4duke/annotation'\n" +
             "self.step_mother = $cuke4duke_step_mother\n";
         rubyEngine.exec("CucumberRunner", 0, 0, script);
     }

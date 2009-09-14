@@ -4,7 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class ProgrammingLanguage {
+    protected final LanguageMixin languageMixin;
     private List<StepDefinition> stepDefinitions;
+
+    public ProgrammingLanguage(LanguageMixin languageMixin) {
+        this.languageMixin = languageMixin;
+    }
 
     public List<StepDefinition> step_definitions_for(String file) throws Throwable {
         stepDefinitions = new ArrayList<StepDefinition>();

@@ -20,6 +20,7 @@ public class GroovyLanguage extends ProgrammingLanguage {
     private Closure worldFactory;
 
     public GroovyLanguage(LanguageMixin languageMixin) {
+        super(languageMixin);
         GroovyDsl.groovyLanguage = this;
         GroovyDsl.languageMixin = languageMixin;
         Binding binding = new Binding();

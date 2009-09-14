@@ -1,22 +1,8 @@
-require 'cucumber/java_support/backtrace_filter'
-require 'forwardable'
 require 'iconv'
 
 module Cucumber
   module JavaSupport
-    class JavaLanguage
-      extend Forwardable
-      include ::Cucumber::LanguageSupport::LanguageMethods
-
-      def_delegators :@delegate, :step_definitions_for, :begin_scenario, :end_scenario
-
-      def initialize(step_mother)
-        @delegate = ::Java::Cuke4dukeInternalJava::JavaLanguage.new(self)
-      end
-
-      def alias_adverbs(adverbs)
-      end
-
+    class JavaSnippetGenerator
       def snippet_text(step_keyword, step_name, multiline_arg_class = nil)
         escaped = Regexp.escape(step_name).gsub('\ ', ' ').gsub('/', '\/')
         escaped = escaped.gsub(PARAM_PATTERN, ESCAPED_PARAM_PATTERN)
@@ -48,8 +34,4 @@ module Cucumber
 
     end
   end
-end
-
-class ::Java::Cuke4dukeInternalJava::JavaStepDefinition
-  include ::Cucumber::LanguageSupport::StepDefinitionMethods
 end

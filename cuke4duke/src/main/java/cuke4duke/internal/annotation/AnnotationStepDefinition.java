@@ -1,4 +1,4 @@
-package cuke4duke.internal.java;
+package cuke4duke.internal.annotation;
 
 import cuke4duke.internal.language.MethodInvoker;
 import cuke4duke.internal.language.StepDefinition;
@@ -9,13 +9,13 @@ import org.jruby.RubyRegexp;
 
 import java.lang.reflect.Method;
 
-public class JavaStepDefinition implements StepDefinition {
+public class AnnotationStepDefinition implements StepDefinition {
     private final RubyRegexp regexp;
     private final MethodInvoker methodInvoker;
     private final ClassLanguage classLanguage;
     private final Method method;
 
-    public JavaStepDefinition(ClassLanguage classLanguage, Method method, String regexpString) {
+    public AnnotationStepDefinition(ClassLanguage classLanguage, Method method, String regexpString) {
         this.classLanguage = classLanguage;
         this.method = method; 
         methodInvoker = new MethodInvoker(method);

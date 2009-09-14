@@ -14,7 +14,7 @@ import java.lang.reflect.Modifier;
 public class ClassLanguage extends ProgrammingLanguage {
     private final LanguageMixin languageMixin;
     private final ObjectFactory objectFactory;
-    private final List<HookAndStepDefinitionRegistrar> registrars = new ArrayList<HookAndStepDefinitionRegistrar>();
+    private final List<HookAndStepDefinitionRegistrar> analyzers = new ArrayList<HookAndStepDefinitionRegistrar>();
 
     public ClassLanguage(LanguageMixin languageMixin) throws Throwable {
         this.languageMixin = languageMixin;
@@ -30,8 +30,8 @@ public class ClassLanguage extends ProgrammingLanguage {
             throw e.getTargetException();
         }
 
-        registrars.add(new JavaRegistrar());
-        // Add more registrars here - e.g. ScalaRegistrar
+        analyzers.add(new JavaRegistrar());
+        // Add more analyzers here - e.g. ScalaRegistrar
     }
 
     public void begin_scenario() {
@@ -52,8 +52,8 @@ public class ClassLanguage extends ProgrammingLanguage {
     }
 
     private void registerHooksAndStepDefinitionsFor(Class<?> clazz) throws Throwable {
-        for(HookAndStepDefinitionRegistrar registrar : registrars) {
-            registrar.registerHooksAndStepDefinitionsFor(clazz, this);
+        for(HookAndStepDefinitionRegistrar analyzer : analyzers) {
+            analyzer.registerHooksAndStepDefinitionsFor(clazz, this);
         }
     }
 
