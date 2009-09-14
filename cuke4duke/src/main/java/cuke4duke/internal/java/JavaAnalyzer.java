@@ -1,9 +1,9 @@
 package cuke4duke.internal.java;
 
 import cuke4duke.*;
-import cuke4duke.internal.language.StepDefinition;
 import cuke4duke.internal.jvmclass.ClassAnalyzer;
 import cuke4duke.internal.jvmclass.ClassLanguage;
+import cuke4duke.internal.language.StepDefinition;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;

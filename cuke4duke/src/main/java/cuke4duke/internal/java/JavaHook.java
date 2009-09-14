@@ -1,9 +1,9 @@
 package cuke4duke.internal.java;
 
-import cuke4duke.internal.language.AbstractHook;
-import cuke4duke.internal.language.MethodInvoker;
 import cuke4duke.internal.JRuby;
 import cuke4duke.internal.jvmclass.ClassLanguage;
+import cuke4duke.internal.language.AbstractHook;
+import cuke4duke.internal.language.MethodInvoker;
 import org.jruby.RubyArray;
 import org.jruby.runtime.builtin.IRubyObject;
 

@@ -1,9 +1,9 @@
 package cuke4duke.internal.java;
 
-import cuke4duke.internal.language.MethodInvoker;
-import cuke4duke.internal.language.StepDefinition;
 import cuke4duke.internal.JRuby;
 import cuke4duke.internal.jvmclass.ClassLanguage;
+import cuke4duke.internal.language.MethodInvoker;
+import cuke4duke.internal.language.StepDefinition;
 import org.jruby.RubyArray;
 import org.jruby.RubyRegexp;
 

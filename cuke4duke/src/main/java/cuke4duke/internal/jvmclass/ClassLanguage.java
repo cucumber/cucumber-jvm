@@ -1,7 +1,7 @@
 package cuke4duke.internal.jvmclass;
 
-import cuke4duke.internal.language.ProgrammingLanguage;
 import cuke4duke.internal.language.Hook;
+import cuke4duke.internal.language.ProgrammingLanguage;
 import cuke4duke.internal.language.StepDefinition;
 
 import java.lang.reflect.Constructor;

@@ -1,10 +1,10 @@
 package cuke4duke.internal.jvmclass;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.picocontainer.MutablePicoContainer;
 import org.picocontainer.PicoBuilder;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class PicoFactory implements ObjectFactory {
     private MutablePicoContainer pico;

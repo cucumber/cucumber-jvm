@@ -1,8 +1,8 @@
 package cuke4duke.internal;
 
 import org.jruby.Ruby;
-import org.jruby.RubyModule;
 import org.jruby.RubyClass;
+import org.jruby.RubyModule;
 import org.jruby.exceptions.RaiseException;
 
 /**
