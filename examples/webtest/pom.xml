@@ -46,10 +46,10 @@
             <jvmArg>-Xmx384m</jvmArg>
           </jvmArgs>
           <gems>
-            <gem>celerity:0.0.7</gem>
-            <gem>rspec:1.2.8</gem>
-            <gem>cucumber:0.3.100</gem>
-            <gem>aslakhellesoy-ansicolor:1.0</gem>
+            <gem>celerity --version 0.0.7</gem>
+            <gem>rspec --version 1.2.8</gem>
+            <gem>cucumber --version 0.3.101</gem>
+            <gem>aslakhellesoy-ansicolor --version 1.0 --source http://gems.github.com/</gem>
           </gems>
           <args>
             <arg>--color</arg>

@@ -1,10 +1,5 @@
 package cuke4duke.mojo;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -20,6 +15,11 @@ import org.apache.tools.ant.types.Commandline;
 import org.apache.tools.ant.types.Environment;
 import org.apache.tools.ant.types.Path;
 import org.codehaus.plexus.util.StringUtils;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Base for all JRuby mojos.
@@ -141,32 +141,27 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
      * <li>http://gems.github.com</li>
      * </ul>
      * 
-     * @param gemSpec
-     *            name and optional version and location separated by colon.
+     * @param gemArgs
+     *            name and optional arguments.
      *            Example:
      *            <ul>
-     *            <li>name</li>
-     *            <li>name:version</li>
+     *            <li>awesome</li>
+     *            <li>awesome --version 9.8</li>
+     *            <li>awesome --version 9.8 --source http://some.gem.server</li>
      *            </ul>
      * @throws org.apache.maven.plugin.MojoExecutionException
      *             if gem installation fails.
      */
-    protected void installGem(String gemSpec) throws MojoExecutionException {
+    protected void installGem(String gemArgs) throws MojoExecutionException {
         List<String> args = new ArrayList<String>();
         args.add("-S");
         args.add("gem");
         args.add("install");
         args.add("--no-ri");
         args.add("--no-rdoc");
-        args.add("--source");
-        args.add("http://gems.rubyforge.org");
-        args.add("--source");
-        args.add("http://gemcutter.org");
-        args.add("--source");
-        args.add("http://gems.github.com");
         args.add("--install-dir");
         args.add(gemHome().getAbsolutePath());
-        args.addAll(parseGem(gemSpec));
+        args.addAll(Arrays.asList(gemArgs.split("\\s+")));
 
         Java jruby = jruby(args);
         // We have to override HOME to make RubyGems install gems
@@ -178,34 +173,6 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
         jruby.addEnv(homeVar);
         dotGemParent().mkdirs();
         jruby.execute();
-    }
-
-    /**
-     * @param gemSpec
-     *            colon separated string. See installGem.
-     * @return arguments that the gem command understands.
-     * @throws MojoExecutionException
-     *             if gem installation fails.
-     */
-    private List<String> parseGem(String gemSpec) throws MojoExecutionException {
-
-        List<String> gemArgs = new ArrayList<String>();
-        String[] gem = gemSpec.split(":");
-
-        String name = gem.length > 0 ? gem[0] : null;
-        String version = gem.length > 1 ? gem[1] : null;
-
-        if (name == null || name.trim().length() == 0) {
-            throw new MojoExecutionException(
-                    "Requires atleast a name for <gem>");
-        } else {
-            gemArgs.add(name);
-        }
-
-        if (version != null && version.trim().length() > 0) {
-            gemArgs.add("-v" + version);
-        }
-        return gemArgs;
     }
 
     protected File dotGemParent() {
