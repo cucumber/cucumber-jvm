@@ -32,7 +32,7 @@
     <dependency>
       <groupId>cuke4duke</groupId>
       <artifactId>cuke4duke</artifactId>
-      <version>0.1.3</version>
+      <version>0.1.4</version>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
@@ -74,7 +74,7 @@
           <jvmArgs>
             <jvmArg>-Xmx384m</jvmArg>
             <jvmArg>-Dlog4j.configuration=file:///${project.basedir}/target/test-classes/log4j.properties</jvmArg>
-            <jvmArg>-Dcuke4duke.objectFactory=cuke4duke.internal.java.SpringFactory</jvmArg>
+            <jvmArg>-Dcuke4duke.objectFactory=cuke4duke.internal.jvmclass.SpringFactory</jvmArg>
             <jvmArg>-Dcuke4duke.springXml=cucumber.xml</jvmArg>
           </jvmArgs>
           <args>
@@ -82,10 +82,10 @@
             <arg>--verbose</arg>
             <arg>--strict</arg>
             <arg>--require</arg>
-            <arg>${basedir}/src/test/java</arg>
+            <cucumberArg>${basedir}/target/test-classes</cucumberArg>
           </args>
           <gems>
-            <gem>cucumber:0.3.99</gem>
+            <gem>cucumber:0.3.100</gem>
             <gem>aslakhellesoy-ansicolor:1.0</gem>
           </gems>
         </configuration>

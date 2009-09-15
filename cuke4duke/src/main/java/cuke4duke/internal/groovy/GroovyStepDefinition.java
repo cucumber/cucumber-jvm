@@ -1,7 +1,7 @@
 package cuke4duke.internal.groovy;
 
-import cuke4duke.internal.language.StepDefinition;
 import cuke4duke.internal.JRuby;
+import cuke4duke.internal.language.StepDefinition;
 import groovy.lang.Closure;
 import org.jruby.RubyArray;
 import org.jruby.RubyRegexp;

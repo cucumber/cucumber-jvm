@@ -1,8 +1,9 @@
 package cuke4duke.internal.java;
 
+import cuke4duke.internal.JRuby;
+import cuke4duke.internal.jvmclass.ClassLanguage;
 import cuke4duke.internal.language.MethodInvoker;
 import cuke4duke.internal.language.StepDefinition;
-import cuke4duke.internal.JRuby;
 import org.jruby.RubyArray;
 import org.jruby.RubyRegexp;
 
@@ -10,14 +11,14 @@ import java.lang.reflect.Method;
 
 public class JavaStepDefinition implements StepDefinition {
     private final RubyRegexp regexp;
-    private final JavaLanguage javaLanguage;
     private final MethodInvoker methodInvoker;
+    private final ClassLanguage classLanguage;
     private final Method method;
 
-    public JavaStepDefinition(JavaLanguage javaLanguage, Method method, String regexpString) {
+    public JavaStepDefinition(ClassLanguage classLanguage, Method method, String regexpString) {
+        this.classLanguage = classLanguage;
         this.method = method; 
         methodInvoker = new MethodInvoker(method);
-        this.javaLanguage = javaLanguage;
         this.regexp = RubyRegexp.newRegexp(JRuby.getRuntime(), regexpString, RubyRegexp.RE_OPTION_LONGEST);
     }
 
@@ -30,7 +31,7 @@ public class JavaStepDefinition implements StepDefinition {
     }
 
     public void invoke(RubyArray rubyArgs) throws Throwable {
-        Object target = javaLanguage.getTarget(method.getDeclaringClass());
+        Object target = classLanguage.getTarget(method.getDeclaringClass());
         Class<?>[] types = method.getParameterTypes();
         methodInvoker.invoke(target, types, rubyArgs);
     }

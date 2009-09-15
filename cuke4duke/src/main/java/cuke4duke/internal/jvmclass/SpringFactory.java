@@ -1,4 +1,4 @@
-package cuke4duke.internal.java;
+package cuke4duke.internal.jvmclass;
 
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -14,7 +14,14 @@ public class SpringFactory implements ObjectFactory {
         appContext = new ClassPathXmlApplicationContext(springXml);
     }
 
-    public void dispose() {
+    public void createObjects() {
+        appContext.refresh();
+    }
+
+    public void disposeObjects() {
+    }
+
+    public void addClass(Class<?> clazz) {
     }
 
     @SuppressWarnings("unchecked")
@@ -25,12 +32,5 @@ public class SpringFactory implements ObjectFactory {
         } else {
             throw new RuntimeException("Found " + beans.size() + " Beans for class " + type + ". Expected exactly 1.");
         }
-    }
-
-    public void addClass(Class<?> clazz) {
-    }
-
-    public void newWorld() {
-        appContext.refresh();
     }
 }
