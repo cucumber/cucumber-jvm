@@ -1,13 +1,18 @@
 == (In Git)
 
+This release has some small backwards incompatible changes that should only affect your build scripts. If you're
+using Groovy you also have to change your step definitions to use strings instead of regexps.
+
 === New features
 * Java snippets should now be valid Java code (Aslak Hellesøy)
 * Examples' Maven builds install aslakhellesoy-ansicolor (needed for the poor windows users) (Aslak Hellesøy)
 * examples/webtest upgraded to celerity 0.0.7 and jetty 7.0.0.1beta3 (Aslak Hellesøy)
-* Added -Dcucumber.extraArgs command line parameter that allows us to add extra cucumber arguments as a string surrounded with " " and a space as the delimitor. E.g -Dcucmber.extraArgs="--color --tag @dev" (#8 Torbjørn Vatn)
+* Added -Dcucumber.extraArgs command line parameter that allows us to add extra cucumber arguments as a string surrounded with " " and a space as the delimitor. E.g -Dcucmber.extraArgs="--color --tag @dev" (#14 Torbjørn Vatn)
 
 === Changed Features
 * Groovy step definitions must use String instead of Regexp. The regexp matching happens on the Ruby side, so Regexp was misleading (Aslak Hellesøy)
+* -Dcuke4duke.objectFactory classes have changed package from cuke4duke.internal.java to cuke4duke.internal.jvmclass (Aslak Hellesøy)
+* --require **/*.java no longer supported. --require **/*.class instead (Aslak Hellesøy)
 
 === Bugfixes
 * diffHashes method in Table not working properly (#18 Darrin Holst)

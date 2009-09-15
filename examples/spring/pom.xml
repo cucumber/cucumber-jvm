@@ -74,7 +74,7 @@
           <jvmArgs>
             <jvmArg>-Xmx384m</jvmArg>
             <jvmArg>-Dlog4j.configuration=file:///${project.basedir}/target/test-classes/log4j.properties</jvmArg>
-            <jvmArg>-Dcuke4duke.objectFactory=cuke4duke.internal.java.SpringFactory</jvmArg>
+            <jvmArg>-Dcuke4duke.objectFactory=cuke4duke.internal.jvmclass.SpringFactory</jvmArg>
             <jvmArg>-Dcuke4duke.springXml=cucumber.xml</jvmArg>
           </jvmArgs>
           <args>
@@ -82,7 +82,7 @@
             <arg>--verbose</arg>
             <arg>--strict</arg>
             <arg>--require</arg>
-            <arg>${basedir}/src/test/java</arg>
+            <cucumberArg>${basedir}/target/test-classes</cucumberArg>
           </args>
           <gems>
             <gem>cucumber:0.3.100</gem>
