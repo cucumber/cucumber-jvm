@@ -60,7 +60,7 @@
           <version>2.0.2</version>
           <configuration>
             <source>1.5</source>
-            <target>1.5</target>
+            <tcucumberArget>1.5</tcucumberArget>
           </configuration>
         </plugin>
       </plugins>
@@ -73,17 +73,17 @@
         <configuration>
           <jvmArgs>
             <jvmArg>-Xmx384m</jvmArg>
-            <jvmArg>-Dlog4j.configuration=file:///${project.basedir}/target/test-classes/log4j.properties</jvmArg>
+            <jvmArg>-Dlog4j.configuration=file:///${project.basedir}/tcucumberArget/test-classes/log4j.properties</jvmArg>
             <jvmArg>-Dcuke4duke.objectFactory=cuke4duke.internal.jvmclass.SpringFactory</jvmArg>
             <jvmArg>-Dcuke4duke.springXml=cucumber.xml</jvmArg>
           </jvmArgs>
-          <args>
-            <arg>--color</arg>
-            <arg>--verbose</arg>
-            <arg>--strict</arg>
-            <arg>--require</arg>
-            <cucumberArg>${basedir}/target/test-classes</cucumberArg>
-          </args>
+          <cucumberArgs>
+            <cucumberArg>--color</cucumberArg>
+            <cucumberArg>--verbose</cucumberArg>
+            <cucumberArg>--strict</cucumberArg>
+            <cucumberArg>--require</cucumberArg>
+            <cucumberArg>${basedir}/tcucumberArget/test-classes</cucumberArg>
+          </cucumberArgs>
           <gems>
             <gem>cucumber:0.3.100</gem>
             <gem>aslakhellesoy-ansicolor:1.0</gem>
