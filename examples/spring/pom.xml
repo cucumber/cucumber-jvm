@@ -60,7 +60,7 @@
           <version>2.0.2</version>
           <configuration>
             <source>1.5</source>
-            <tcucumberArget>1.5</tcucumberArget>
+            <target>1.5</target>
           </configuration>
         </plugin>
       </plugins>
@@ -73,7 +73,7 @@
         <configuration>
           <jvmArgs>
             <jvmArg>-Xmx384m</jvmArg>
-            <jvmArg>-Dlog4j.configuration=file:///${project.basedir}/tcucumberArget/test-classes/log4j.properties</jvmArg>
+            <jvmArg>-Dlog4j.configuration=file:///${project.basedir}/target/test-classes/log4j.properties</jvmArg>
             <jvmArg>-Dcuke4duke.objectFactory=cuke4duke.internal.jvmclass.SpringFactory</jvmArg>
             <jvmArg>-Dcuke4duke.springXml=cucumber.xml</jvmArg>
           </jvmArgs>
@@ -82,7 +82,7 @@
             <cucumberArg>--verbose</cucumberArg>
             <cucumberArg>--strict</cucumberArg>
             <cucumberArg>--require</cucumberArg>
-            <cucumberArg>${basedir}/tcucumberArget/test-classes</cucumberArg>
+            <cucumberArg>${basedir}/target/test-classes</cucumberArg>
           </cucumberArgs>
           <gems>
             <gem>cucumber --version 0.3.101</gem>
