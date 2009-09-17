@@ -33,16 +33,19 @@
       <groupId>cuke4duke</groupId>
       <artifactId>cuke4duke</artifactId>
       <version>0.1.4</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.picocontainer</groupId>
       <artifactId>picocontainer</artifactId>
       <version>2.8.3</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.7</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 
@@ -76,8 +79,8 @@
             <cucumberArg>${basedir}/target/test-classes</cucumberArg>
           </cucumberArgs>
           <gems>
-            <gem>cucumber:0.3.100</gem>
-            <gem>aslakhellesoy-ansicolor:1.0</gem>
+            <gem>cucumber --version 0.3.101</gem>
+            <gem>aslakhellesoy-ansicolor --version 1.0 --source http://gems.github.com/</gem>
           </gems>
         </configuration>
         <executions>
