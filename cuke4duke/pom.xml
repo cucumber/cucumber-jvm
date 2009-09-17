@@ -12,7 +12,6 @@
   
   <artifactId>cuke4duke</artifactId>
   <packaging>jar</packaging>
-  <version>${parent.version}</version>
   <name>Cuke4Duke</name>
   <description>Pure Java support for Cucumber</description>
 
