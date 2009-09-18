@@ -1,7 +1,7 @@
 package cuke4duke.internal;
 
-import cuke4duke.Table;
 import static cuke4duke.internal.Utils.join;
+
 import org.jruby.RubyArray;
 
 /**
@@ -32,10 +32,6 @@ public class StringConverter {
                 return Long.valueOf((String) arg);
             } else if (type.equals(Double.TYPE)) {
                 return Double.valueOf((String) arg);
-            } else if (type.equals(Table.class)) {
-                return (Table) arg;
-            } else if (type.equals(String.class)) {
-                return String.valueOf(arg);
             } else {
                 return arg;
             }
