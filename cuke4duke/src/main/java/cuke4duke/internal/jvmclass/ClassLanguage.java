@@ -22,8 +22,8 @@ public class ClassLanguage extends ProgrammingLanguage {
         if(className == null) {
             throw new RuntimeException("Missing system property: cuke4duke.objectFactory");
         }
-        Class ofc = Thread.currentThread().getContextClassLoader().loadClass(className);
-        Constructor ctor = ofc.getConstructor();
+        Class<?> ofc = Thread.currentThread().getContextClassLoader().loadClass(className);
+        Constructor<?> ctor = ofc.getConstructor();
         try {
             objectFactory = (ObjectFactory) ctor.newInstance();
         } catch(InvocationTargetException e) {

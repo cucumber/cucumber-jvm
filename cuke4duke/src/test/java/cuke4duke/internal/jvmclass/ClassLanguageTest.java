@@ -1,12 +1,13 @@
 package cuke4duke.internal.jvmclass;
 
-import org.junit.Test;
-import org.junit.Before;
 import static org.mockito.Mockito.mock;
-import cuke4duke.internal.language.ProgrammingLanguage;
-import cuke4duke.internal.language.LanguageMixin;
 
 import java.util.Collections;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import cuke4duke.internal.language.ProgrammingLanguage;
 
 public class ClassLanguageTest {
     private ProgrammingLanguage language;
