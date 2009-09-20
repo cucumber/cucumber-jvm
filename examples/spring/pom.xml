@@ -77,13 +77,13 @@
             <jvmArg>-Dcuke4duke.objectFactory=cuke4duke.internal.jvmclass.SpringFactory</jvmArg>
             <jvmArg>-Dcuke4duke.springXml=cucumber.xml</jvmArg>
           </jvmArgs>
-          <args>
-            <arg>--color</arg>
-            <arg>--verbose</arg>
-            <arg>--strict</arg>
-            <arg>--require</arg>
+          <cucumberArgs>
+            <cucumberArg>--color</cucumberArg>
+            <cucumberArg>--verbose</cucumberArg>
+            <cucumberArg>--strict</cucumberArg>
+            <cucumberArg>--require</cucumberArg>
             <cucumberArg>${basedir}/target/test-classes</cucumberArg>
-          </args>
+          </cucumberArgs>
           <gems>
             <gem>cucumber --version 0.3.101</gem>
             <gem>aslakhellesoy-ansicolor --version 1.0 --source http://gems.github.com/</gem>

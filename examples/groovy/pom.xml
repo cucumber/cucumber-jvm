@@ -71,12 +71,12 @@
         <groupId>cuke4duke</groupId>
         <artifactId>cuke4duke-maven-plugin</artifactId>
         <configuration>
-          <args>
-            <arg>--color</arg>
-            <arg>--verbose</arg>
-            <arg>--strict</arg>
-            <arg>--guess</arg>
-          </args>
+          <cucumberArgs>
+            <cucumberArg>--color</cucumberArg>
+            <cucumberArg>--verbose</cucumberArg>
+            <cucumberArg>--strict</cucumberArg>
+            <cucumberArg>--guess</cucumberArg>
+          </cucumberArgs>
           <gems>
             <gem>cucumber --version 0.3.101</gem>
             <gem>aslakhellesoy-ansicolor --version 1.0 --source http://gems.github.com/</gem>
