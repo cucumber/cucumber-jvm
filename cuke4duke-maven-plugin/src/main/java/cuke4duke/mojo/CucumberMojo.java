@@ -9,14 +9,14 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * @goal features
+ * @goal cucumber
  */
 public class CucumberMojo extends AbstractJRubyMojo {
 
     /**
      * @parameter expression="${cucumber.features}"
      */
-    protected String features;
+    protected String features = "features";
 
     /**
      * @parameter expression="${cucumber.installGems}"
@@ -27,12 +27,6 @@ public class CucumberMojo extends AbstractJRubyMojo {
      * @parameter
      */
     protected List<String> gems;
-
-    /**
-     * @parameter
-     * @deprecated
-     */
-    protected List<String> args;
 
     /**
      * @parameter
@@ -74,10 +68,8 @@ public class CucumberMojo extends AbstractJRubyMojo {
         allArgs.add("-r");
         allArgs.add("cuke4duke/cucumber_ext");
         allArgs.add(cucumberBin().getAbsolutePath());
-        if (args != null)
-            allArgs.addAll(args);
         allArgs.addAll(addCucumberArgs());
-        allArgs.add((features != null) ? features : "features");
+        allArgs.add(features);
 
         Java jruby = jruby(allArgs);
         jruby.execute();
