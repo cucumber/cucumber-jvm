@@ -10,13 +10,13 @@ import org.junit.Test;
 
 import cuke4duke.Table;
 
-public class StringConverterTest {
+public class ArgumentsConverterTest {
 
-    private StringConverter converter;
+    private ArgumentsConverter converter;
 
     @Before
     public void setUp() {
-        converter = new StringConverter();
+        converter = new ArgumentsConverter();
     }
 
     @Test

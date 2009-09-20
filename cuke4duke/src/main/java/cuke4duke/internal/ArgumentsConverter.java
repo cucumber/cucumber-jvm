@@ -8,7 +8,7 @@ import org.jruby.RubyArray;
  * Converts the arguments that come from Cucumber to other types,
  * before they are sent in to step definitions.
  */
-public class StringConverter {
+public class ArgumentsConverter {
     public Object[] convert(Class<?>[] types, RubyArray args) {
         return convert(types, args.toArray());
     }

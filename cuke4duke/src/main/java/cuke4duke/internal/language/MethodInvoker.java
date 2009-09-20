@@ -2,7 +2,7 @@ package cuke4duke.internal.language;
 
 import cuke4duke.Pending;
 import cuke4duke.internal.JRuby;
-import cuke4duke.internal.StringConverter;
+import cuke4duke.internal.ArgumentsConverter;
 import org.jruby.RubyArray;
 
 import java.lang.reflect.InvocationTargetException;
@@ -17,7 +17,7 @@ public class MethodInvoker {
 
     public void invoke(Object target, Class<?>[] types, RubyArray rubyArgs) throws Throwable {
         Object[] args = rubyArgs.toArray();
-        Object[] javaArgs = new StringConverter().convert(types, args);
+        Object[] javaArgs = new ArgumentsConverter().convert(types, args);
         try {
             if(method.isAnnotationPresent(Pending.class)) {
                 JRuby.raisePending(method.getAnnotation(Pending.class).value());

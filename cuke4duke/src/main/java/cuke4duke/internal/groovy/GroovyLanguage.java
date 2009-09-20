@@ -1,7 +1,7 @@
 package cuke4duke.internal.groovy;
 
 import cuke4duke.GroovyDsl;
-import cuke4duke.internal.StringConverter;
+import cuke4duke.internal.ArgumentsConverter;
 import cuke4duke.internal.language.LanguageMixin;
 import cuke4duke.internal.language.ProgrammingLanguage;
 import groovy.lang.Binding;
@@ -26,7 +26,7 @@ public class GroovyLanguage extends ProgrammingLanguage {
     }
 
     void invokeClosure(Closure body, RubyArray args) {
-        Object[] converted = new StringConverter().convert(body.getParameterTypes(), args);
+        Object[] converted = new ArgumentsConverter().convert(body.getParameterTypes(), args);
         body.setDelegate(currentWorld);
         body.call(converted);
     }
