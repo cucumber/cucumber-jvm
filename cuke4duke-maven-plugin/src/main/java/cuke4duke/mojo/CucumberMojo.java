@@ -40,9 +40,12 @@ public class CucumberMojo extends AbstractJRubyMojo {
     protected List<String> cucumberArgs;
 
     /**
-     * Can be used to add multiple arguments on the command line. e.g.
-     * -DaddArgs=--format:html The delimitor is :
-     * 
+     * Appends additional arguments on the command line. e.g.
+     * <code>-Dcucumber.extraArgs="--format profile --out target/profile.txt"</code>
+     *
+     * These arguments will be appended to the cucumberArgs you declare
+     * in your POM.
+     *
      * @parameter expression="${cucumber.extraArgs}
      */
     protected String extraCucumberArgs;
