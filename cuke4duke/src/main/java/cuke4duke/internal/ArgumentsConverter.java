@@ -32,8 +32,10 @@ public class ArgumentsConverter {
                 return Long.valueOf((String) arg);
             } else if (type.equals(Double.TYPE)) {
                 return Double.valueOf((String) arg);
+            } else if (type.equals(String.class)) {
+                return String.valueOf(arg);
             } else {
-                return arg;
+                return type.cast(arg);
             }
         } catch(Exception e) {
             throw new IllegalArgumentException("Sorry, cuke4duke doesn't know how to convert a " + arg + "(" + arg.getClass() + ") to type " + type, e);
