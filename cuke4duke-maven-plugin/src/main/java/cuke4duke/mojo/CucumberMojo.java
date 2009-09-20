@@ -9,14 +9,14 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * @goal features
+ * @goal cucumber
  */
 public class CucumberMojo extends AbstractJRubyMojo {
 
     /**
      * @parameter expression="${cucumber.features}"
      */
-    protected String features;
+    protected String features = "features";
 
     /**
      * @parameter expression="${cucumber.installGems}"
@@ -30,19 +30,16 @@ public class CucumberMojo extends AbstractJRubyMojo {
 
     /**
      * @parameter
-     * @deprecated
-     */
-    protected List<String> args;
-
-    /**
-     * @parameter
      */
     protected List<String> cucumberArgs;
 
     /**
-     * Can be used to add multiple arguments on the command line. e.g.
-     * -DaddArgs=--format:html The delimitor is :
-     * 
+     * Appends additional arguments on the command line. e.g.
+     * <code>-Dcucumber.extraArgs="--format profile --out target/profile.txt"</code>
+     *
+     * These arguments will be appended to the cucumberArgs you declare
+     * in your POM.
+     *
      * @parameter expression="${cucumber.extraArgs}
      */
     protected String extraCucumberArgs;
@@ -71,10 +68,8 @@ public class CucumberMojo extends AbstractJRubyMojo {
         allArgs.add("-r");
         allArgs.add("cuke4duke/cucumber_ext");
         allArgs.add(cucumberBin().getAbsolutePath());
-        if (args != null)
-            allArgs.addAll(args);
         allArgs.addAll(addCucumberArgs());
-        allArgs.add((features != null) ? features : "features");
+        allArgs.add(features);
 
         Java jruby = jruby(allArgs);
         jruby.execute();

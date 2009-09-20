@@ -42,6 +42,21 @@
     </profile>
   </profiles>
 
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <configuration>
+            <source>1.5</source>
+            <target>1.5</target>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+    
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -60,6 +75,7 @@
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
         <version>4.7</version>
+        <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.jruby</groupId>

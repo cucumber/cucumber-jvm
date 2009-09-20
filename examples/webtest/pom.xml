@@ -62,7 +62,7 @@
             <id>run-webtests</id>
             <phase>integration-test</phase>
             <goals>
-              <goal>features</goal>
+              <goal>cucumber</goal>
             </goals>
           </execution>
         </executions>
