@@ -6,7 +6,7 @@
   <groupId>cuke4duke</groupId>
   <artifactId>cuke4duke-groovy-example</artifactId>
   <packaging>jar</packaging>
-  <version>1.0.0</version>
+  <version>0.1.4-SNAPSHOT</version>
   <name>Cuke4Duke Groovy Example</name>
   <url>http://cukes.info/</url>
 

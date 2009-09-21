@@ -10,6 +10,10 @@
   <name>Cuke4Duke Main Project</name>
   <url>http://cukes.info/</url>
 
+  <scm>
+    <connection>scm:git:git://github.com/aslakhellesoy/cuke4duke.git</connection>
+  </scm>
+
   <distributionManagement>
     <repository>
       <id>cukes</id>
