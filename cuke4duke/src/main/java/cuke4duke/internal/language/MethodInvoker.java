@@ -1,12 +1,9 @@
 package cuke4duke.internal.language;
 
-import cuke4duke.internal.StringConverter;
-import cuke4duke.internal.JRuby;
 import cuke4duke.Pending;
+import cuke4duke.internal.JRuby;
+import cuke4duke.internal.ArgumentsConverter;
 import org.jruby.RubyArray;
-import org.jruby.RubyClass;
-import org.jruby.RubyModule;
-import org.jruby.exceptions.RaiseException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -20,10 +17,10 @@ public class MethodInvoker {
 
     public void invoke(Object target, Class<?>[] types, RubyArray rubyArgs) throws Throwable {
         Object[] args = rubyArgs.toArray();
-        Object[] javaArgs = new StringConverter().convert(types, args);
+        Object[] javaArgs = new ArgumentsConverter().convert(types, args);
         try {
             if(method.isAnnotationPresent(Pending.class)) {
-                raisePending();
+                JRuby.raisePending(method.getAnnotation(Pending.class).value());
             } else {
                 method.invoke(target, javaArgs);
             }
@@ -35,15 +32,4 @@ public class MethodInvoker {
         }
     }
 
-    private void raisePending() {
-        String message = method.getAnnotation(Pending.class).value();
-        RubyModule cucumber = JRuby.getRuntime().getModule("Cucumber");
-        RubyClass pending = cucumber.getClass("Pending");
-        throw new RaiseException(
-                JRuby.getRuntime(),
-                pending,
-                message,
-                true
-        );
-    }
 }

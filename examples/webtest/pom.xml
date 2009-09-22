@@ -4,7 +4,7 @@
   <groupId>cuke4duke</groupId>
   <artifactId>cuke4duke-webtest-example</artifactId>
   <packaging>war</packaging>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.1.5-SNAPSHOT</version>
   <name>Cuke4Duke Celerity Example</name>
   <url>http://maven.apache.org</url>
 
@@ -46,22 +46,23 @@
             <jvmArg>-Xmx384m</jvmArg>
           </jvmArgs>
           <gems>
-            <gem>celerity:0.0.7</gem>
-            <gem>cucumber:0.3.99</gem>
-            <gem>rspec:1.2.8</gem>
+            <gem>celerity --version 0.0.7</gem>
+            <gem>rspec --version 1.2.8</gem>
+            <gem>cucumber --version 0.3.101</gem>
+            <gem>aslakhellesoy-ansicolor --version 1.0 --source http://gems.github.com/</gem>
           </gems>
-          <args>
-            <arg>--color</arg>
-            <arg>--verbose</arg>
-            <arg>--strict</arg>
-          </args>
+          <cucumberArgs>
+            <cucumberArg>--color</cucumberArg>
+            <cucumberArg>--verbose</cucumberArg>
+            <cucumberArg>--strict</cucumberArg>
+          </cucumberArgs>
         </configuration>
         <executions>
           <execution>
             <id>run-webtests</id>
             <phase>integration-test</phase>
             <goals>
-              <goal>features</goal>
+              <goal>cucumber</goal>
             </goals>
           </execution>
         </executions>

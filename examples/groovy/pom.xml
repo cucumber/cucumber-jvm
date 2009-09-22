@@ -6,7 +6,7 @@
   <groupId>cuke4duke</groupId>
   <artifactId>cuke4duke-groovy-example</artifactId>
   <packaging>jar</packaging>
-  <version>1.0.0</version>
+  <version>0.1.5-SNAPSHOT</version>
   <name>Cuke4Duke Groovy Example</name>
   <url>http://cukes.info/</url>
 
@@ -32,7 +32,7 @@
     <dependency>
       <groupId>cuke4duke</groupId>
       <artifactId>cuke4duke</artifactId>
-      <version>0.1.3</version>
+      <version>0.1.5-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.picocontainer</groupId>
@@ -71,14 +71,15 @@
         <groupId>cuke4duke</groupId>
         <artifactId>cuke4duke-maven-plugin</artifactId>
         <configuration>
-          <args>
-            <arg>--color</arg>
-            <arg>--verbose</arg>
-            <arg>--strict</arg>
-            <arg>--guess</arg>
-          </args>
+          <cucumberArgs>
+            <cucumberArg>--color</cucumberArg>
+            <cucumberArg>--verbose</cucumberArg>
+            <cucumberArg>--strict</cucumberArg>
+            <cucumberArg>--guess</cucumberArg>
+          </cucumberArgs>
           <gems>
-            <gem>cucumber:0.3.99</gem>
+            <gem>cucumber --version 0.3.101</gem>
+            <gem>aslakhellesoy-ansicolor --version 1.0 --source http://gems.github.com/</gem>
           </gems>
         </configuration>
         <executions>
@@ -86,7 +87,7 @@
             <id>run-features</id>
             <phase>integration-test</phase>
             <goals>
-              <goal>features</goal>
+              <goal>cucumber</goal>
             </goals>
           </execution>
         </executions>

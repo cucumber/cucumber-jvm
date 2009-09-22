@@ -25,12 +25,12 @@
         <pathelement location="target/test-classes"/>
       </classpath>
       <env key="GEM_PATH" value="${gem.home}"/>
-      <jvmarg value="-Dcuke4duke.objectFactory=cuke4duke.internal.java.PicoFactory"/>
+      <jvmarg value="-Dcuke4duke.objectFactory=cuke4duke.internal.jvmclass.PicoFactorytory"/>
       <arg value="-r"/>
       <arg value="cuke4duke/cucumber_ext"/>
       <arg value="${cucumber.bin}"/>
       <arg value="--require"/>
-      <arg value="src/test/java"/>
+      <arg value="target/test-classes"/>
       <arg value="--color"/>
       <arg value="--format"/>
       <arg value="pretty"/>
@@ -49,7 +49,7 @@
   </target>
 
   <target name="install-gems" description="Install gems">
-    <install-gem gem="cucumber" version="0.3.99" />
+    <install-gem gem="cucumber" version="0.3.101" />
     <install-gem gem="rspec" version="1.2.8" />
     <!-- You can skip this if you're not on Windows -->
     <install-gem gem="aslakhellesoy-ansicolor" version="1.0" source="http://gems.github.com/"/>
