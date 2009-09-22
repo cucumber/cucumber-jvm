@@ -8,6 +8,7 @@ import cuke4duke.internal.language.StepDefinition;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class JavaAnalyzer implements ClassAnalyzer {
     public void registerHooksAndStepDefinitionsFor(Class<?> clazz, ClassLanguage classLanguage) {
@@ -28,7 +29,8 @@ public class JavaAnalyzer implements ClassAnalyzer {
             regexpString = method.getAnnotation(Then.class).value();
         }
         if (regexpString != null) {
-            StepDefinition stepDefinition = new JavaStepDefinition(classLanguage, method, regexpString);
+            Pattern regexp = Pattern.compile(regexpString);
+            StepDefinition stepDefinition = new JavaStepDefinition(classLanguage, method, regexp);
             classLanguage.addStepDefinition(stepDefinition, this);
         }
     }

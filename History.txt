@@ -1,3 +1,19 @@
+== 0.1.5-SNAPSHOT (In Git)
+
+Important! This release requires cucumber 0.3.102
+
+Starting with this release we recommend you use gemcutter as the primary source for gems.
+You can do this by using --source http://gemcutter.org/ in your Maven POM's <gem> elements,
+or similar in Ant (assuming you copied and adapted one of the example Ant scripts).
+
+So go ahead and update your POMs with <gem>cucumber --version 0.3.102 --source http://gemcutter.org/</gem>
+and install it once with -Dcucumber.installGems=true
+
+=== Changed Features
+* Minimum Cucumber version is now 0.3.102. (Aslak Hellesøy)
+* Regular expression matching in step definitions are now native to the used programming language. (Aslak Hellesøy)
+* Groovy step definitions *must* use Regexps, not Strings. Just prepend a ~ to your regexp string. (Aslak Hellesøy)
+
 == 0.1.4 2009-09-21
 
 This release has several small backwards incompatible changes that should for the most part only affect your build scripts. 

@@ -1,29 +1,35 @@
 package cuke4duke.internal.java;
 
-import cuke4duke.internal.JRuby;
 import cuke4duke.internal.jvmclass.ClassLanguage;
 import cuke4duke.internal.language.MethodInvoker;
 import cuke4duke.internal.language.StepDefinition;
+import cuke4duke.internal.language.Group;
+import cuke4duke.internal.language.JdkRegexpGroup;
 import org.jruby.RubyArray;
-import org.jruby.RubyRegexp;
 
 import java.lang.reflect.Method;
+import java.util.regex.Pattern;
+import java.util.List;
 
 public class JavaStepDefinition implements StepDefinition {
-    private final RubyRegexp regexp;
+    private final Pattern regexp;
     private final MethodInvoker methodInvoker;
     private final ClassLanguage classLanguage;
     private final Method method;
 
-    public JavaStepDefinition(ClassLanguage classLanguage, Method method, String regexpString) {
+    public JavaStepDefinition(ClassLanguage classLanguage, Method method, Pattern regexp) {
         this.classLanguage = classLanguage;
         this.method = method; 
         methodInvoker = new MethodInvoker(method);
-        this.regexp = RubyRegexp.newRegexp(JRuby.getRuntime(), regexpString, RubyRegexp.RE_OPTION_LONGEST);
+        this.regexp = regexp;
     }
 
-    public RubyRegexp regexp() {
-        return regexp;
+    public List<Group> groups(String stepName) {
+        return JdkRegexpGroup.groupsFrom(regexp, stepName);
+    }
+
+    public boolean op_equal(StepDefinition other) {
+        throw new RuntimeException("GOT HERE");
     }
 
     public String file_colon_line() {
