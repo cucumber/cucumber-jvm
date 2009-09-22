@@ -7,6 +7,7 @@ import cuke4duke.internal.language.LanguageMixin;
 import groovy.lang.Closure;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * The DSL for Groovy step definitions.
@@ -27,19 +28,19 @@ public class GroovyDsl {
         languageMixin.add_hook("after", new GroovyHook(tagNames, body, groovyLanguage));
     }
 
-    public static void Given(String regexp, Closure body) {
+    public static void Given(Pattern regexp, Closure body) {
         registerStepDefinition(regexp, body);
     }
 
-    public static void When(String regexp, Closure body) {
+    public static void When(Pattern regexp, Closure body) {
         registerStepDefinition(regexp, body);
     }
 
-    public static void Then(String regexp, Closure body) {
+    public static void Then(Pattern regexp, Closure body) {
         registerStepDefinition(regexp, body);
     }
 
-    private static void registerStepDefinition(String regexp, Closure body) {
+    private static void registerStepDefinition(Pattern regexp, Closure body) {
         groovyLanguage.addStepDefinition(new GroovyStepDefinition(groovyLanguage, regexp, body));
     }
 }
