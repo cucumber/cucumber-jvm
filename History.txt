@@ -9,6 +9,9 @@ or similar in Ant (assuming you copied and adapted one of the example Ant script
 So go ahead and update your POMs with <gem>cucumber --version 0.3.102 --source http://gemcutter.org/</gem>
 and install it once with -Dcucumber.installGems=true
 
+=== New Features
+* New experimental Clojure support. (Aslak Hellesøy)
+
 === Changed Features
 * Minimum Cucumber version is now 0.3.102. (Aslak Hellesøy)
 * Regular expression matching in step definitions are now native to the used programming language. (Aslak Hellesøy)
