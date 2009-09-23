@@ -38,10 +38,10 @@
     <profile>
       <id>examples</id>
       <modules>
+        <module>examples/clojure</module>
         <module>examples/simple</module>
         <module>examples/spring</module>
         <module>examples/groovy</module>
-        <module>examples/clojure</module>
         <module>examples/webtest</module>
       </modules>
     </profile>

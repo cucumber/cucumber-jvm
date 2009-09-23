@@ -8,5 +8,5 @@ public interface StepDefinition {
     String regexp_source();
     String file_colon_line();
     void invoke(RubyArray args) throws Throwable;
-    List<Group> groups(String stepName);
+    List<StepArgument> arguments_from(String stepName);
 }

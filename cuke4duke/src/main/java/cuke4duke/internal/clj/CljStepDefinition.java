@@ -1,8 +1,8 @@
 package cuke4duke.internal.clj;
 
 import cuke4duke.internal.language.StepDefinition;
-import cuke4duke.internal.language.Group;
-import cuke4duke.internal.language.JdkRegexpGroup;
+import cuke4duke.internal.language.StepArgument;
+import cuke4duke.internal.language.JdkPatternArgumentMatcher;
 import org.jruby.RubyArray;
 
 import java.util.List;
@@ -34,8 +34,8 @@ public class CljStepDefinition implements StepDefinition {
         functionInvoke.invoke(closure, javaArgs);
     }
 
-    public List<Group> groups(String stepName) {
-        return JdkRegexpGroup.groupsFrom(regexp, stepName);
+    public List<StepArgument> arguments_from(String stepName) {
+        return JdkPatternArgumentMatcher.argumentsFrom(regexp, stepName);
     }
 
     // Clojure's AFunction.invoke doesn't take varargs :-/

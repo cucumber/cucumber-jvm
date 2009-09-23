@@ -1,8 +1,8 @@
 package cuke4duke.internal.groovy;
 
 import cuke4duke.internal.language.StepDefinition;
-import cuke4duke.internal.language.Group;
-import cuke4duke.internal.language.JdkRegexpGroup;
+import cuke4duke.internal.language.StepArgument;
+import cuke4duke.internal.language.JdkPatternArgumentMatcher;
 import groovy.lang.Closure;
 import org.jruby.RubyArray;
 
@@ -32,7 +32,7 @@ public class GroovyStepDefinition implements StepDefinition {
         groovyLanguage.invokeClosure(body, args);
     }
 
-    public List<Group> groups(String stepName) {
-        return JdkRegexpGroup.groupsFrom(regexp, stepName);
+    public List<StepArgument> arguments_from(String stepName) {
+        return JdkPatternArgumentMatcher.argumentsFrom(regexp, stepName);
     }
 }

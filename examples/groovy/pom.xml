@@ -73,7 +73,7 @@
             <cucumberArg>--guess</cucumberArg>
           </cucumberArgs>
           <gems>
-            <gem>cucumber --version 0.3.102 --source http://gemcutter.org/</gem>
+            <gem>cucumber --version 0.3.102 --source http://gems.rubyforge.org/</gem>
             <gem>aslakhellesoy-ansicolor --version 1.0 --source http://gems.github.com/</gem>
           </gems>
         </configuration>

@@ -3,8 +3,8 @@ package cuke4duke.internal.java;
 import cuke4duke.internal.jvmclass.ClassLanguage;
 import cuke4duke.internal.language.MethodInvoker;
 import cuke4duke.internal.language.StepDefinition;
-import cuke4duke.internal.language.Group;
-import cuke4duke.internal.language.JdkRegexpGroup;
+import cuke4duke.internal.language.StepArgument;
+import cuke4duke.internal.language.JdkPatternArgumentMatcher;
 import org.jruby.RubyArray;
 
 import java.lang.reflect.Method;
@@ -28,8 +28,8 @@ public class JavaStepDefinition implements StepDefinition {
         return regexp.pattern();
     }
     
-    public List<Group> groups(String stepName) {
-        return JdkRegexpGroup.groupsFrom(regexp, stepName);
+    public List<StepArgument> arguments_from(String stepName) {
+        return JdkPatternArgumentMatcher.argumentsFrom(regexp, stepName);
     }
 
     public String file_colon_line() {
