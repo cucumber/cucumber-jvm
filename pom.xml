@@ -38,6 +38,7 @@
     <profile>
       <id>examples</id>
       <modules>
+        <module>examples/clojure</module>
         <module>examples/simple</module>
         <module>examples/spring</module>
         <module>examples/groovy</module>
@@ -90,6 +91,12 @@
         <groupId>org.codehaus.groovy</groupId>
         <artifactId>groovy-all</artifactId>
         <version>1.6.4</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.clojure</groupId>
+        <artifactId>clojure</artifactId>
+        <version>1.0.0</version>
         <scope>provided</scope>
       </dependency>
     </dependencies>

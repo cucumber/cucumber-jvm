@@ -4,10 +4,10 @@
                       http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>cuke4duke</groupId>
-  <artifactId>cuke4duke-groovy-example</artifactId>
+  <artifactId>cuke4duke-clojure-example</artifactId>
   <packaging>jar</packaging>
   <version>0.1.5-SNAPSHOT</version>
-  <name>Cuke4Duke Groovy Example</name>
+  <name>Cuke4Duke Clojure Example</name>
   <url>http://cukes.info/</url>
 
   <repositories>
@@ -35,14 +35,9 @@
       <version>0.1.5-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.7</version>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.groovy</groupId>
-      <artifactId>groovy-all</artifactId>
-      <version>1.6.4</version>
+      <groupId>org.clojure</groupId>
+      <artifactId>clojure</artifactId>
+      <version>1.0.0</version>
     </dependency>
   </dependencies>
 
@@ -70,7 +65,6 @@
             <cucumberArg>--color</cucumberArg>
             <cucumberArg>--verbose</cucumberArg>
             <cucumberArg>--strict</cucumberArg>
-            <cucumberArg>--guess</cucumberArg>
           </cucumberArgs>
           <gems>
             <gem>cucumber --version 0.3.102 --source http://gemcutter.org/</gem>
