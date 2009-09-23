@@ -1,12 +1,13 @@
 == 0.1.5-SNAPSHOT (In Git)
 
-Important! This release requires cucumber 0.3.102
+Important! This snapshot requires changes that were added after cucumber 0.3.102 (Currently in Git - unreleased)
+So if you use this, use -Dcucumber.bin=/path/to/bleeding/edge/cucumber/bin/cucumber
 
 Starting with this release we recommend you use gemcutter as the primary source for gems.
 You can do this by using --source http://gemcutter.org/ in your Maven POM's <gem> elements,
 or similar in Ant (assuming you copied and adapted one of the example Ant scripts).
 
-So go ahead and update your POMs with <gem>cucumber --version 0.3.102 --source http://gemcutter.org/</gem>
+So go ahead and update your POMs with <gem>cucumber --version ???? --source http://gemcutter.org/</gem>
 and install it once with -Dcucumber.installGems=true
 
 === New Features

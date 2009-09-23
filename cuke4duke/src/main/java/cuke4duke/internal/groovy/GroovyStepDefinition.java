@@ -14,11 +14,14 @@ public class GroovyStepDefinition implements StepDefinition {
     private final Pattern regexp;
     private final Closure body;
 
-
     public GroovyStepDefinition(GroovyLanguage groovyLanguage, Pattern regexp, Closure body) {
         this.groovyLanguage = groovyLanguage;
         this.regexp = regexp;
         this.body = body;
+    }
+
+    public String regexp_source() {
+        return regexp.pattern();
     }
 
     public String file_colon_line() {

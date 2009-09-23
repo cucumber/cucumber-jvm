@@ -20,6 +20,10 @@ public class CljStepDefinition implements StepDefinition {
         this.closure = closure;
     }
 
+    public String regexp_source() {
+        return regexp.pattern();
+    }
+
     public String file_colon_line() {
         return closure.toString();
     }

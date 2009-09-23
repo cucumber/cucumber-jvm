@@ -24,12 +24,12 @@ public class JavaStepDefinition implements StepDefinition {
         this.regexp = regexp;
     }
 
+    public String regexp_source() {
+        return regexp.pattern();
+    }
+    
     public List<Group> groups(String stepName) {
         return JdkRegexpGroup.groupsFrom(regexp, stepName);
-    }
-
-    public boolean op_equal(StepDefinition other) {
-        throw new RuntimeException("GOT HERE");
     }
 
     public String file_colon_line() {

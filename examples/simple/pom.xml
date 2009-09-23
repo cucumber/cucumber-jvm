@@ -75,7 +75,12 @@
           <cucumberArgs>
             <cucumberArg>--color</cucumberArg>
             <cucumberArg>--verbose</cucumberArg>
-            <cucumberArg>--require</cucumberArg>
+            <cucumberArg>--format</cucumberArg>
+            <cucumberArg>pretty</cucumberArg>
+            <cucumberArg>--format</cucumberArg>
+            <cucumberArg>junit</cucumberArg>
+            <cucumberArg>--out</cucumberArg>
+            <cucumberArg>target</cucumberArg>
             <cucumberArg>${basedir}/target/test-classes</cucumberArg>
           </cucumberArgs>
           <gems>
