@@ -20,7 +20,7 @@ public class MethodInvoker {
         Object[] javaArgs = new ArgumentsConverter().convert(types, args);
         try {
             if(method.isAnnotationPresent(Pending.class)) {
-                JRuby.cucumberPending(method.getAnnotation(Pending.class).value());
+                throw JRuby.cucumberPending(method.getAnnotation(Pending.class).value());
             } else {
                 method.invoke(target, javaArgs);
             }
