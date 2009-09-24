@@ -94,6 +94,11 @@
         <scope>provided</scope>
       </dependency>
       <dependency>
+        <groupId>org.scala-lang</groupId>
+        <artifactId>scala-library</artifactId>
+        <version>2.7.5</version>
+      </dependency>
+      <dependency>
         <groupId>org.clojure</groupId>
         <artifactId>clojure</artifactId>
         <version>1.0.0</version>
