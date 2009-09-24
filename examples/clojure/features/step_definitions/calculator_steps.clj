@@ -1,16 +1,15 @@
-; TODO: Not sure how to deal with this in a functional
-; programming language like Clojure - we can't *store*
-; the entered values anywhere...
-; Need some expert help here...
+(add-classpath (str "file://" (.. (java.io.File. *file*) getParentFile getParentFile getParent) "/lib/"))
+(use 'calculator)
 
-(Given #"I have entered (\d+) into the calculator"
-  (fn [n]
-    (println "Entered: " n)))
 
-(When #"I press (\w+)"
+(Given #"^I have entered ([\d.]+) into the calculator$"
+  (fn [number]
+    (push-number (Float. number))))
+
+(When #"^I press (\w+)$"
   (fn [btn]
-    (println "Pressed: " btn)))
+    (calculate ({"divide" / "add" +} btn))))
 
-(Then #"the stored result should be (.*)"
-  (fn [res]
-    (println "Expected: " res)))
+(Then #"^the current value should be ([\d.]+)$"
+  (fn [expected-value]
+  (assert (= (current-value) (Float. expected-value)))))

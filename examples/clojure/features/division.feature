@@ -7,4 +7,4 @@ Feature: Division
     Given I have entered 3 into the calculator
     And I have entered 2 into the calculator
     When I press divide
-    Then the stored result should be 1.5
+    Then the current value should be 1.5
