@@ -1,0 +1,106 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                      http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>cuke4duke</groupId>
+  <artifactId>cuke4duke-erlang-example</artifactId>
+  <packaging>jar</packaging>
+  <version>0.1.5-SNAPSHOT</version>
+  <name>Cuke4Duke Erlang Example</name>
+  <url>http://cukes.info/</url>
+
+  <repositories>
+    <repository>
+      <id>codehaus</id>
+      <url>http://repository.codehaus.org</url>
+    </repository>
+    <repository>
+      <id>cukes</id>
+      <url>http://cukes.info/maven</url>
+    </repository>
+  </repositories>
+
+  <pluginRepositories>
+    <pluginRepository>
+      <id>cukes</id>
+      <url>http://cukes.info/maven</url>
+    </pluginRepository>
+  </pluginRepositories>
+
+  <dependencies>
+    <dependency>
+      <groupId>cuke4duke</groupId>
+      <artifactId>cuke4duke</artifactId>
+      <version>0.1.5-SNAPSHOT</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>net.sf.maven-erlang</groupId>
+        <artifactId>erlang-plugin</artifactId>
+        <extensions>true</extensions> <!-- mandatory if you want to use the custom lifecycle phases -->
+        <configuration>
+          <!-- Optional parameter: path to the erlang installation directory, i.e. path in path/bin/erlc -->
+          <!-- <erlPath>C:/Program Files/erl5.5</erlPath> -->
+          <!-- Optional parameter : path to eunit i.e. path in path/ebin -->
+          <!-- <eunitPath></eunitPath> -->
+          <!-- Optional parameter: if we should generate surefire-compatible
+          reports. Requires eunit. -->
+          <surefireReports>true</surefireReports>
+          <!-- Optional parameter: debug_info (defaults to false, required to run dialyzer) -->
+          <debugInfo>true</debugInfo>
+          <!-- Optional parameter: compiler additional options -->
+          <!-- <erlcOptions><param>+export_all</param></erlcOptions> -->
+          <!-- Optional parameter: run dialyzer (defaults to false) -->
+          <useDialyzer>true</useDialyzer>
+          <!-- Optional parameter: compiler additional options for tests (in addition to erlcOptions) -->
+          <!-- <erlcTestOptions><param>+debug_info</param><param>-DTEST</param></erlcTestOptions> -->
+          <!-- Optional parameter: run dialyzer for tests (defaults to false) -->
+          <!-- <testUseDialyzer>true</testUseDialyzer> -->
+          <!-- Optional parameter: dialyzer additional options -->
+          <!-- <dialyzerOptions><param>-Werror_handling</param></dialyzerOptions> -->
+          <!-- Optional parameter: fail on dialyzer warnings (defaults to false) -->
+          <dialyzerWarningsAreErrors>true</dialyzerWarningsAreErrors>
+          <!-- Optional parameter: run code coverage during tests -->
+          <!-- <codeCoverage>true</codeCoverage> -->
+          <!-- Optional parameter : generate edoc documentation with package. -->
+          <useEdoc>true</useEdoc>
+          <!-- Optional parameter : application resource file. If this file
+          exists, it will be used with edoc and it will be copied to "ebin/"
+          directory. Defaults to artifactId.app -->
+          <!-- <applicationResourceFile>mymodule.app</applicationResourceFile> -->
+          <!-- Optional parameter : edoc options -->
+          <!-- <edocOptions><param>{def, {macro, "value"}}</param></edocOptions> -->
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>cuke4duke</groupId>
+        <artifactId>cuke4duke-maven-plugin</artifactId>
+        <configuration>
+          <cucumberArgs>
+            <cucumberArg>--color</cucumberArg>
+            <cucumberArg>--verbose</cucumberArg>
+            <cucumberArg>--strict</cucumberArg>
+          </cucumberArgs>
+          <gems>
+            <gem>cucumber --version 0.3.103 --source http://gems.rubyforge.org/</gem>
+            <gem>aslakhellesoy-ansicolor --version 1.0 --source http://gems.github.com/</gem>
+          </gems>
+        </configuration>
+        <executions>
+          <execution>
+            <id>run-features</id>
+            <phase>integration-test</phase>
+            <goals>
+              <goal>cucumber</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>
