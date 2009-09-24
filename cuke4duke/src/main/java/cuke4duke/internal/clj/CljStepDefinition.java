@@ -8,6 +8,7 @@ import org.jruby.RubyArray;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
 
 import clojure.lang.AFunction;
 
@@ -31,7 +32,11 @@ public class CljStepDefinition implements StepDefinition {
     public void invoke(RubyArray args) throws Throwable {
         Object[] javaArgs = args.toArray();
         Method functionInvoke = lookupInvokeMethod(javaArgs.length);
-        functionInvoke.invoke(closure, javaArgs);
+        try {
+            functionInvoke.invoke(closure, javaArgs);
+        } catch (InvocationTargetException e) {
+            throw e.getTargetException();
+        }
     }
 
     public List<StepArgument> arguments_from(String stepName) {
