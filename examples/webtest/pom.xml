@@ -48,7 +48,7 @@
           <gems>
             <gem>celerity --version 0.0.7</gem>
             <gem>rspec --version 1.2.8</gem>
-            <gem>cucumber --version 0.3.102 --source http://gems.rubyforge.org/</gem>
+            <gem>cucumber --version 0.3.103 --source http://gems.rubyforge.org/</gem>
             <gem>aslakhellesoy-ansicolor --version 1.0 --source http://gems.github.com/</gem>
           </gems>
           <cucumberArgs>

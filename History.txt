@@ -1,16 +1,13 @@
 == 0.1.5-SNAPSHOT (In Git)
 
-Important! This snapshot requires changes that were added after cucumber 0.3.102 (Currently in Git - unreleased)
-So if you use this, use -Dcucumber.bin=/path/to/bleeding/edge/cucumber/bin/cucumber
-
-So go ahead and update your POMs with <gem>cucumber --version ????</gem>
+Important! This snapshot requires cucumber 0.3.103, so go ahead and update your POMs with <gem>cucumber --version 0.3.103</gem>
 and install it once with -Dcucumber.installGems=true
 
 === New Features
-* New experimental Clojure support. (Aslak Hellesøy)
+* Clojure support. (Aslak Hellesøy, Ben Mabey)
 
 === Changed Features
-* Minimum Cucumber version is now 0.3.102. (Aslak Hellesøy)
+* Minimum Cucumber version is now 0.3.103. (Aslak Hellesøy)
 * Regular expression matching in step definitions are now native to the used programming language. (Aslak Hellesøy)
 * Groovy step definitions *must* use Regexps, not Strings. Just prepend a ~ to your regexp string. (Aslak Hellesøy)
 
