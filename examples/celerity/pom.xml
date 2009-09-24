@@ -36,7 +36,7 @@
   </dependencies>
 
   <build>
-    <finalName>cuke4duke-webtest-example</finalName>
+    <finalName>cuke4duke-celerity-example</finalName>
     <plugins>
       <plugin>
         <groupId>cuke4duke</groupId>

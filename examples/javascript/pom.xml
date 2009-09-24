@@ -1,0 +1,74 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                      http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>cuke4duke</groupId>
+  <artifactId>cuke4duke-javascript-example</artifactId>
+  <packaging>jar</packaging>
+  <version>0.1.5-SNAPSHOT</version>
+  <name>Cuke4Duke Javascript Example</name>
+  <url>http://cukes.info/</url>
+
+  <repositories>
+    <repository>
+      <id>codehaus</id>
+      <url>http://repository.codehaus.org</url>
+    </repository>
+    <repository>
+      <id>cukes</id>
+      <url>http://cukes.info/maven</url>
+    </repository>
+  </repositories>
+
+  <pluginRepositories>
+    <pluginRepository>
+      <id>cukes</id>
+      <url>http://cukes.info/maven</url>
+    </pluginRepository>
+  </pluginRepositories>
+
+  <dependencies>
+    <dependency>
+      <groupId>cuke4duke</groupId>
+      <artifactId>cuke4duke</artifactId>
+      <version>0.1.5-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>rhino</groupId>
+      <artifactId>js</artifactId>
+      <version>1.7R2</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>cuke4duke</groupId>
+        <artifactId>cuke4duke-maven-plugin</artifactId>
+        <configuration>
+          <cucumberArgs>
+            <cucumberArg>--color</cucumberArg>
+            <cucumberArg>--verbose</cucumberArg>
+            <cucumberArg>--strict</cucumberArg>
+          </cucumberArgs>
+          <gems>
+            <gem>cucumber --version 0.3.103 --source http://gems.rubyforge.org/</gem>
+            <gem>aslakhellesoy-ansicolor --version 1.0 --source http://gems.github.com/</gem>
+          </gems>
+        </configuration>
+        <executions>
+          <execution>
+            <id>run-features</id>
+            <phase>integration-test</phase>
+            <goals>
+              <goal>cucumber</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

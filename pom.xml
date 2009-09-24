@@ -38,6 +38,7 @@
     <profile>
       <id>examples</id>
       <modules>
+        <module>examples/javascript</module>
         <module>examples/clojure</module>
         <module>examples/java</module>
         <module>examples/spring</module>
@@ -97,6 +98,12 @@
         <groupId>org.clojure</groupId>
         <artifactId>clojure</artifactId>
         <version>1.0.0</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>rhino</groupId>
+        <artifactId>js</artifactId>
+        <version>1.7R2</version>
         <scope>provided</scope>
       </dependency>
     </dependencies>
