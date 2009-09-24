@@ -5,7 +5,9 @@ module Cucumber
   module ClassSupport
     class ClassLanguage
       class << self
-        attr_accessor :snippet_generator
+        def analyzers
+          @analyzers ||= []
+        end
       end
       
       extend Forwardable
@@ -14,8 +16,7 @@ module Cucumber
       def_delegators :@delegate, :step_definitions_for, :begin_scenario, :end_scenario
 
       def initialize(step_mother)
-        analyzers = [::Java::Cuke4dukeInternalJava::JavaAnalyzer.new]
-        @delegate = ::Java::Cuke4dukeInternalJvmclass::ClassLanguage.new(self, analyzers)
+        @delegate = ::Java::Cuke4dukeInternalJvmclass::ClassLanguage.new(self, self.class.analyzers)
       end
 
       def alias_adverbs(adverbs)
@@ -32,14 +33,5 @@ module Cucumber
   end
 end
 
-class ::Java::Cuke4dukeInternalJava::JavaStepDefinition
-  include ::Cucumber::LanguageSupport::StepDefinitionMethods
-end
-class ::Java::Cuke4dukeInternalJava::JavaAnalyzer
-  def snippet_generator
-    require 'cucumber/java_support/java_snippet_generator'
-    Cucumber::JavaSupport::JavaSnippetGenerator.new
-  end
-end
-
-# Add more .class based programming languages here later
+require 'cucumber/java_support/java_analyzer'
+require 'cucumber/scala_support/scala_analyzer'
