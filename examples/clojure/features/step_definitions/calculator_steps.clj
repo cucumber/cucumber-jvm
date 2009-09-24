@@ -12,4 +12,4 @@
 
 (Then #"^the current value should be ([\d.]+)$"
   (fn [expected-value]
-  (assert (= (current-value) (Float. expected-value)))))
+    (assert (= (current-value) (Float. expected-value)))))
