@@ -1,4 +1,4 @@
-<project xmlns:ivy="antlib:org.apache.ivy.ant" name="Cuke4Duke Simple Demo" default="cucumber" basedir=".">
+<project xmlns:ivy="antlib:org.apache.ivy.ant" name="Cuke4Duke Java Demo" default="cucumber" basedir=".">
   <property name="dotgem.parent" value="${basedir}/lib"/>
   <property name="gem.home" value="${dotgem.parent}/.gem"/>
   <property name="cucumber.bin" value="${gem.home}/bin/cucumber"/>

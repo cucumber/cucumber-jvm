@@ -4,10 +4,10 @@
                       http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>cuke4duke</groupId>
-  <artifactId>cuke4duke-simple-example</artifactId>
+  <artifactId>cuke4duke-java-example</artifactId>
   <packaging>jar</packaging>
   <version>0.1.5-SNAPSHOT</version>
-  <name>Cuke4Duke Simple Example</name>
+  <name>Cuke4Duke Java Example</name>
   <url>http://cukes.info/</url>
 
   <repositories>

@@ -39,10 +39,10 @@
       <id>examples</id>
       <modules>
         <module>examples/clojure</module>
-        <module>examples/simple</module>
+        <module>examples/java</module>
         <module>examples/spring</module>
         <module>examples/groovy</module>
-        <module>examples/webtest</module>
+        <module>examples/celerity</module>
       </modules>
     </profile>
   </profiles>

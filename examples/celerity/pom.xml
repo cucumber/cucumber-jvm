@@ -2,7 +2,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>cuke4duke</groupId>
-  <artifactId>cuke4duke-webtest-example</artifactId>
+  <artifactId>cuke4duke-celerity-example</artifactId>
   <packaging>war</packaging>
   <version>0.1.5-SNAPSHOT</version>
   <name>Cuke4Duke Celerity Example</name>
