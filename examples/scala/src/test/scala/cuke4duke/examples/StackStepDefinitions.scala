@@ -19,11 +19,9 @@ class StackStepDefinitions extends ScalaDsl {
       case '*' => stack.reduceLeft{ _ * _ }
       case '/' => stack.reduceLeft{ _ / _ }
     })
-    println(stack)
   }
 
   Then("""the top should be (\d)""") { i:Int =>
-    println(stack)
     assert(stack.top == i)
   }
 }
