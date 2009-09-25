@@ -8,7 +8,7 @@ begin
       Cucumber::JavaSupport::ScalaSnippetGenerator.new
     end
 
-    Cucumber::ClassSupport::ClassLanguage.analyzers << self.new
+    Cucumber::ClassSupport::ClassLanguage.add_analyzers(self.new)
   end
 rescue NameError
 end

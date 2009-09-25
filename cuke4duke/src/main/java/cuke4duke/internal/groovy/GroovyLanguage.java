@@ -8,9 +8,11 @@ import groovy.lang.Binding;
 import groovy.lang.Closure;
 import groovy.lang.GroovyShell;
 import org.jruby.RubyArray;
+import org.jruby.runtime.builtin.IRubyObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 public class GroovyLanguage extends ProgrammingLanguage {
     private final GroovyShell shell;
@@ -39,8 +41,13 @@ public class GroovyLanguage extends ProgrammingLanguage {
         currentWorld = null;
     }
 
-    protected void load(String groovy_file) throws ClassNotFoundException, IOException {
+    public void load_code_file(String groovy_file) throws ClassNotFoundException, IOException {
         shell.evaluate(new File(groovy_file));
+    }
+
+    @Override
+    public List<IRubyObject> step_match_list(String step_name, String formatted_step_name) {
+        throw new UnsupportedOperationException("Fixme");
     }
 
     public void registerWorldFactory(Closure worldFactory) {
