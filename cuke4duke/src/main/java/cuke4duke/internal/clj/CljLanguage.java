@@ -8,6 +8,9 @@ import clojure.lang.RT;
 import clojure.lang.AFunction;
 
 import java.util.regex.Pattern;
+import java.util.List;
+
+import org.jruby.runtime.builtin.IRubyObject;
 
 public class CljLanguage extends ProgrammingLanguage {
     private static CljLanguage instance;
@@ -24,7 +27,7 @@ public class CljLanguage extends ProgrammingLanguage {
 
     public void createAndAddStepDefinition(Pattern regexp, AFunction closure) throws Exception {
         StepDefinition stepDefinition = new CljStepDefinition(regexp, closure);
-        addStepDefinition(stepDefinition);
+        //addStepDefinition(stepDefinition);
     }
 
     public void begin_scenario() {
@@ -33,7 +36,12 @@ public class CljLanguage extends ProgrammingLanguage {
     public void end_scenario() {
     }
 
-    protected void load(String file) throws Throwable {
+    public void load_code_file(String file) throws Throwable {
         Compiler.loadFile(file);
+    }
+
+    @Override
+    public List<IRubyObject> step_match_list(String step_name, String formatted_step_name) {
+        throw new UnsupportedOperationException("Fixme");
     }
 }

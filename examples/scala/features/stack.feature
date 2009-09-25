@@ -5,9 +5,8 @@ Feature: Stack
 
   Scenario: Use Stack as Calculator
     Given I have an empty stack
-    And I push + onto the stack
-    And I push 1 onto the stack
+    When I push 1 onto the stack
     And I push 7 onto the stack
-    When I evaluate the stack
+    And I push + onto the stack
     Then the top should be 8
     

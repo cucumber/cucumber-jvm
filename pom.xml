@@ -38,9 +38,9 @@
     <profile>
       <id>examples</id>
       <modules>
+        <module>examples/java</module>
         <module>examples/scala</module>
         <module>examples/clojure</module>
-        <module>examples/java</module>
         <module>examples/spring</module>
         <module>examples/groovy</module>
         <module>examples/celerity</module>

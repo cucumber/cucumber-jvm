@@ -1,27 +1,29 @@
 package cuke4duke.examples
 
 import cuke4duke.ScalaDsl
+import collection.immutable.Stack
 
 class StackStepDefinitions extends ScalaDsl {
 
+  var stack:Stack[Int] = _
+
   Given("I have an empty stack") {
-
+    stack = new Stack[Int]
   }
 
-  Given("I push + onto the stack") { op:String =>
-
+  When("""I push (.) onto the stack""") { something:Char =>
+    stack = stack.push(something match {
+      case i if i.isDigit => something.toString.toInt
+      case '+' => stack.reduceLeft{ _ + _ }
+      case '-' => stack.reduceLeft{ _ - _ }
+      case '*' => stack.reduceLeft{ _ * _ }
+      case '/' => stack.reduceLeft{ _ / _ }
+    })
+    println(stack)
   }
 
-  Given("""I push "(\d+)" onto the stack""") { num:Int =>
-
-
+  Then("""the top should be (\d)""") { i:Int =>
+    println(stack)
+    assert(stack.top == i)
   }
-  When("I evaluate the stack"){
-
-  }
-
-  Then("the top should be 8") {
-
-  }
-
 }
