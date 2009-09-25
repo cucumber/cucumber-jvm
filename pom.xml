@@ -40,10 +40,11 @@
       <modules>
         <module>examples/javascript</module>
         <module>examples/clojure</module>
-        <module>examples/java</module>
-        <module>examples/spring</module>
         <module>examples/groovy</module>
         <module>examples/celerity</module>
+        <module>examples/spring</module>
+        <module>examples/java</module>
+        <module>examples/scala</module>
       </modules>
     </profile>
   </profiles>
@@ -93,6 +94,16 @@
         <artifactId>groovy-all</artifactId>
         <version>1.6.4</version>
         <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.scala-lang</groupId>
+        <artifactId>scala-library</artifactId>
+        <version>2.7.5</version>
+      </dependency>
+      <dependency>
+        <groupId>org.scala-lang</groupId>
+        <artifactId>scala-compiler</artifactId>
+        <version>2.7.5</version>
       </dependency>
       <dependency>
         <groupId>org.clojure</groupId>

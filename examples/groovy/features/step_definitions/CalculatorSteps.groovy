@@ -20,7 +20,6 @@ Before(["@notused"]) {
 }
 
 Given(~"I have entered (\\d+) into (.*) calculator") { int number, String ignore ->
-  calc = new calc.Calculator()
   calc.push number
 }
 

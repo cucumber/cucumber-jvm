@@ -24,14 +24,27 @@ public class JRuby {
         return runtime;
     }
 
-    public static void raisePending(String message) {
+    public static RaiseException cucumberPending(String message) {
+        return error("Pending", message);
+    }
+
+    public static RaiseException cucumberArityMismatchError(String message) {
+        return error("ArityMismatchError", message);
+    }
+
+    public static RaiseException cucumberUndefined(String message){
+        return error("Undefined", message);
+    }
+
+    private static RaiseException error(String errorClass, String message) {
         RubyModule cucumber = getRuntime().getModule("Cucumber");
-        RubyClass pending = cucumber.getClass("Pending");
-        throw new RaiseException(
+        RubyClass error = cucumber.getClass(errorClass);
+        return new RaiseException(
                 getRuntime(),
-                pending,
+                error,
                 message,
                 true
         );
     }
+
 }

@@ -1,7 +1,7 @@
 package cuke4duke.internal.java;
 
 import cuke4duke.internal.JRuby;
-import cuke4duke.internal.jvmclass.ClassLanguage;
+import cuke4duke.internal.jvmclass.ObjectFactory;
 import cuke4duke.internal.language.AbstractHook;
 import cuke4duke.internal.language.MethodInvoker;
 import org.jruby.RubyArray;
@@ -13,17 +13,17 @@ import java.util.List;
 public class JavaHook extends AbstractHook {
     private final MethodInvoker methodInvoker;
     private final Method method;
-    private final ClassLanguage classLanguage;
+    private final ObjectFactory objectFactory;
 
-    public JavaHook(List<String> tagNames, Method method, ClassLanguage classLanguage) {
+    public JavaHook(List<String> tagNames, Method method, ObjectFactory objectFactory) {
         super(tagNames);
         this.method = method;
-        this.classLanguage = classLanguage;
+        this.objectFactory = objectFactory;
         this.methodInvoker = new MethodInvoker(method);
     }
 
     public void invoke(String location, IRubyObject scenario) throws Throwable {
-        Object target = classLanguage.getTarget(method.getDeclaringClass());
+        Object target = objectFactory.getComponent(method.getDeclaringClass());
         RubyArray args = RubyArray.newArray(JRuby.getRuntime());
         if(method.getParameterTypes().length == 1) {
             args.append(scenario);

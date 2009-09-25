@@ -19,11 +19,11 @@ public class ClassLanguageTest {
 
     @Test
     public void shouldLoadExistingClassFromJavaFileName() throws Throwable {
-        language.step_definitions_for("foo/java/lang/String.class");
+        language.load_code_file("foo/java/lang/String.class");
     }
 
     @Test(expected = ClassNotFoundException.class)
     public void shouldFailToLoadMissingClassFromJavaFileName() throws Throwable {
-        language.step_definitions_for("foo/java/lang/Strix.class");
+        language.load_code_file("foo/java/lang/Strix.class");
     }
 }

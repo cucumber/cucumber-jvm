@@ -1,7 +1,6 @@
 (add-classpath (str "file://" (.. (java.io.File. *file*) getParentFile getParentFile getParent) "/lib/"))
 (use 'calculator)
 
-
 (Given #"^I have entered ([\d.]+) into the calculator$"
   (fn [number]
     (push-number (Float. number))))
