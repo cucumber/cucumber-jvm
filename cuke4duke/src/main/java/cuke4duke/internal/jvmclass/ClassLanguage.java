@@ -1,10 +1,6 @@
 package cuke4duke.internal.jvmclass;
 
-import cuke4duke.internal.language.Hook;
 import cuke4duke.internal.language.ProgrammingLanguage;
-import cuke4duke.internal.language.StepArgument;
-import cuke4duke.internal.language.StepDefinition;
-import org.jruby.runtime.builtin.IRubyObject;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -15,15 +11,10 @@ import java.util.List;
 public class ClassLanguage extends ProgrammingLanguage {
     private final ObjectFactory objectFactory;
     private final List<ClassAnalyzer> analyzers;
-    private final ClassLanguageMixin classLanguageMixin;
     private List<Class<?>> classes = new ArrayList<Class<?>>();
-    private List<Hook> befores;
-    private List<StepDefinition> stepDefinitions;
-    private List<Hook> afters;
 
     public ClassLanguage(ClassLanguageMixin languageMixin, List<ClassAnalyzer> analyzers) throws Throwable {
         super(languageMixin);
-        this.classLanguageMixin = languageMixin;
         this.analyzers = analyzers;
         String className = System.getProperty("cuke4duke.objectFactory");
         if(className == null) {
@@ -46,43 +37,19 @@ public class ClassLanguage extends ProgrammingLanguage {
         classes.add(clazz);
     }
 
-    @Override
-    public void begin_scenario() throws Throwable {
-        befores = new ArrayList<Hook>();
-        stepDefinitions = new ArrayList<StepDefinition>();
-        afters = new ArrayList<Hook>();
-
+    protected void prepareScenario() throws Throwable {
+        clearHooksAndStepDefinitions();
         objectFactory.createObjects();
         for(ClassAnalyzer analyzer : analyzers){
             for(Class<?> clazz : classes){
-                analyzer.populateStepDefinitionsAndHooksFor(clazz, objectFactory, befores, stepDefinitions, afters);
+                analyzer.populateStepDefinitionsAndHooksFor(clazz, objectFactory, this);
             }
         }
-        for(Hook before : befores){
-            before.invoke("before", null);
-        }
-
     }
 
     @Override
-    public List<IRubyObject> step_match_list(String step_name, String formatted_step_name) {
-        List<IRubyObject> matches = new ArrayList<IRubyObject>();
-        for(StepDefinition stepDefinition : stepDefinitions){
-            List<StepArgument> arguments = stepDefinition.arguments_from(step_name);
-            if(arguments != null){
-                matches.add(classLanguageMixin.create_step_match(stepDefinition, step_name, formatted_step_name, arguments));
-            }
-        }
-        return matches;
-    }
-
-    @Override
-    public void end_scenario() throws Throwable {
-        for(Hook after : afters){
-            after.invoke("after", null);
-        }
+    public void cleanupScenario() throws Throwable {
         objectFactory.disposeObjects();
-        //dispose stepdefinitions
     }
 
     private Class<?> loadClass(String classFile) throws ClassNotFoundException {

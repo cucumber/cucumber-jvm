@@ -1,25 +1,22 @@
 package cuke4duke.internal.scala
 
 import _root_.java.lang.Class
-import _root_.java.util.{List => JList}
 import cuke4duke.ScalaDsl
-import cuke4duke.internal.language.{StepDefinition, Hook}
-import cuke4duke.internal.jvmclass.{ObjectFactory, ClassAnalyzer}
-
+import jvmclass.{ClassLanguage, ObjectFactory, ClassAnalyzer}
 class ScalaAnalyzer extends ClassAnalyzer {
 
-  def populateStepDefinitionsAndHooksFor(clazz: Class[_], objectFactory:ObjectFactory, befores: JList[Hook], stepDefinitions: JList[StepDefinition], afters: JList[Hook]) {
+  def populateStepDefinitionsAndHooksFor(clazz: Class[_], objectFactory:ObjectFactory, classLanguage:ClassLanguage) {
     if (classOf[ScalaDsl].isAssignableFrom(clazz)) {
       val scalaDsl = objectFactory.getComponent(clazz).asInstanceOf[ScalaDsl]
 
-      for (stepDefinition <- scalaDsl.stepDefinitions)
-        stepDefinitions.add(stepDefinition)
-
       for (before <- scalaDsl.beforeHooks)
-        befores.add(before)
+        classLanguage.addBeforeHook(before)
+
+      for (stepDefinition <- scalaDsl.stepDefinitions)
+        classLanguage.addStepDefinition(stepDefinition)
 
       for (after <- scalaDsl.afterHooks)
-        afters.add(after)
+        classLanguage.addAfterHook(after)
     }
   }
 }

@@ -41,7 +41,6 @@ public class GroovyDsl {
     }
 
     private static void registerStepDefinition(Pattern regexp, Closure body) {
-        //groovyLanguage.addStepDefinition(new GroovyStepDefinition(groovyLanguage, regexp, body));
-        throw new UnsupportedOperationException("fixme");
+        groovyLanguage.addStepDefinition(new GroovyStepDefinition(groovyLanguage, regexp, body));
     }
 }

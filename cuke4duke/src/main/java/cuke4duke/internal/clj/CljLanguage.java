@@ -1,16 +1,12 @@
 package cuke4duke.internal.clj;
 
-import cuke4duke.internal.language.ProgrammingLanguage;
-import cuke4duke.internal.language.LanguageMixin;
-import cuke4duke.internal.language.StepDefinition;
+import clojure.lang.AFunction;
 import clojure.lang.Compiler;
 import clojure.lang.RT;
-import clojure.lang.AFunction;
+import cuke4duke.internal.language.LanguageMixin;
+import cuke4duke.internal.language.ProgrammingLanguage;
 
 import java.util.regex.Pattern;
-import java.util.List;
-
-import org.jruby.runtime.builtin.IRubyObject;
 
 public class CljLanguage extends ProgrammingLanguage {
     private static CljLanguage instance;
@@ -18,30 +14,21 @@ public class CljLanguage extends ProgrammingLanguage {
     public CljLanguage(LanguageMixin languageMixin) throws Exception {
         super(languageMixin);
         instance = this;
+        clearHooksAndStepDefinitions();
         RT.load("cuke4duke/internal/clj/clj_dsl");
     }
 
     public static void addStepDefinition(Pattern regexp, AFunction closure) throws Exception {
-        instance.createAndAddStepDefinition(regexp, closure);
+        instance.addStepDefinition(new CljStepDefinition(regexp, closure));
     }
 
-    public void createAndAddStepDefinition(Pattern regexp, AFunction closure) throws Exception {
-        StepDefinition stepDefinition = new CljStepDefinition(regexp, closure);
-        //addStepDefinition(stepDefinition);
+    public void load_code_file(String cljFile) throws Throwable {
+        Compiler.loadFile(cljFile);
     }
 
-    public void begin_scenario() {
+    protected void prepareScenario() throws Throwable {
     }
 
-    public void end_scenario() {
-    }
-
-    public void load_code_file(String file) throws Throwable {
-        Compiler.loadFile(file);
-    }
-
-    @Override
-    public List<IRubyObject> step_match_list(String step_name, String formatted_step_name) {
-        throw new UnsupportedOperationException("Fixme");
+    public void cleanupScenario() throws Throwable {
     }
 }
