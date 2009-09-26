@@ -15,9 +15,9 @@ trait ScalaDsl {
   private [cuke4duke] val beforeHooks = new ListBuffer[ScalaHook]
   private [cuke4duke] val afterHooks = new ListBuffer[ScalaHook]
 
-  object Given extends Step
-  object When extends Step
-  object Then extends Step
+  val Given = new Step("Given")
+  val When = new Step("When")
+  val Then = new Step("Then")
 
   def Before(f: => Unit) = beforeHooks += new ScalaHook(Nil, f _)
   def Before(tags: String*)(f: => Unit) = beforeHooks += new ScalaHook(tags.toList, f _)
@@ -67,10 +67,10 @@ trait ScalaDsl {
 
   /**/
 
-  sealed trait Step {
+  final class Step(name:String) {
     def apply(regex:String) = new {
       def apply(f: => Unit):Unit = apply(f0toFun(f _))
-      def apply(fun:Fun) = stepDefinitions += new ScalaStepDefinition(regex, fun.f, fun.types, conversions)
+      def apply(fun:Fun) = stepDefinitions += new ScalaStepDefinition(name, regex, fun.f, fun.types, conversions)
     }
   }
 

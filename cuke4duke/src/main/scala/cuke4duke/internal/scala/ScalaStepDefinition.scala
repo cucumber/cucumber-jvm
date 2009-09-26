@@ -6,11 +6,16 @@ import cuke4duke.internal.language.{JdkPatternArgumentMatcher, StepDefinition}
 import _root_.java.util.regex.Pattern
 import cuke4duke.internal.JRuby
 
-class ScalaStepDefinition(r: String, f: Any, types: List[Class[_]], conversions:TreeMap[Class[_], String => Option[_]]) extends StepDefinition {
+class ScalaStepDefinition(name:String, r: String, f: Any, types: List[Class[_]], conversions:TreeMap[Class[_], String => Option[_]]) extends StepDefinition {
 
   private val pattern = Pattern.compile(r)
 
-  def file_colon_line = "TODO: recreate function signature <see Manifest.toString>"
+  def file_colon_line = name + "(\""+r+"\"){ "+argTypes+" => ... }"
+
+  private val argTypes = types.map(_.getSimpleName) match {
+    case one :: Nil => one
+    case zero_or_many => zero_or_many.mkString("(",",",")")
+  }
 
   def regexp_source = r
 

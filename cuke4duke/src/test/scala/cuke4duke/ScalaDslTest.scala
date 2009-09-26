@@ -11,9 +11,8 @@ import Assert._
 import _root_.scala.collection.mutable.Map
 import org.jruby.RubyArray
 
-class ScalaDslTest extends ScalaDsl {
+class ScalaDslTest extends ScalaDsl with Norwegian {
 
-  //test helpers
   var result = ""
 
   val step = Map[String, StepDefinition]()
@@ -127,7 +126,7 @@ class ScalaDslTest extends ScalaDsl {
   def test_Pending{
     val comment = try{
       step("pending comment").invoke(array())
-      fail()
+      fail("did not throw Cucumber::Pending")
     } catch {
       case e:RaiseException if rubyClassName(e) == "Cucumber::Pending" => e.getMessage
     }
@@ -142,7 +141,7 @@ class ScalaDslTest extends ScalaDsl {
   def test_PendingNoComment{
     val comment = try{
       step("pending no comment").invoke(array())
-      fail()
+      fail("did not throw Cucumber::Pending")
     } catch {
       case e:RaiseException if rubyClassName(e) == "Cucumber::Pending" => e.getMessage
     }
@@ -174,7 +173,7 @@ class ScalaDslTest extends ScalaDsl {
   def test_ArityMismatchException{
     try{
       step("then f3 -> int").invoke(array("foo", "5")) //missing the third argument
-      fail("did not throw aritymismatchexception")
+      fail("did not throw Cucumber::ArityMismatchError")
     } catch {
       case e:RaiseException if rubyClassName(e) == "Cucumber::ArityMismatchError" => e.getMessage
     }
@@ -188,7 +187,7 @@ class ScalaDslTest extends ScalaDsl {
   def test_Undefined{
     try{
       step("unknown type").invoke(array("foo"))
-      fail("did throw undefinedexception")
+      fail("did not throw Cucumber::Undefined")
     } catch {
       case e:RaiseException if rubyClassName(e) == "Cucumber::Undefined" => e.getMessage
     }
@@ -206,8 +205,31 @@ class ScalaDslTest extends ScalaDsl {
   var user:User = _
   
   Then("""^(user \w+) should be friends with (user \w+)$"""){ (user:User, friend:User) =>
-    assert(user.friends_with(friend))
+    assertTrue(user.friends_with(friend))
   }
+
+  Given("g file_colon_line"){}
+  When("w file_colon_line"){ a:String => ()}
+  Then("t file_colon_line"){ (a:User, b:String) => ()}
+
+  @Test
+  def test_file_colon_line{
+    assertEquals("Given(\"g file_colon_line\"){ () => ... }", step("g file_colon_line").file_colon_line)
+    assertEquals("When(\"w file_colon_line\"){ String => ... }", step("w file_colon_line").file_colon_line)
+    assertEquals("Then(\"t file_colon_line\"){ (User,String) => ... }", step("t file_colon_line").file_colon_line)
+  }
+
+  Gitt("Gitt i18n"){}
+  Når("Når i18n"){ a:String => ()}
+  Så("Så i18n"){ (a:User, b:String) => ()}
+
+  @Test
+  def test_file_colon_line_i18n{
+    assertEquals("Gitt(\"Gitt i18n\"){ () => ... }", step("Gitt i18n").file_colon_line)
+    assertEquals("Når(\"Når i18n\"){ String => ... }", step("Når i18n").file_colon_line)
+    assertEquals("Så(\"Så i18n\"){ (User,String) => ... }", step("Så i18n").file_colon_line)
+  }
+
 
 //# feature file
 //Scenario: friend'ing
