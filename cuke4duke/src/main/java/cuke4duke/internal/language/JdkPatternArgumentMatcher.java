@@ -9,11 +9,11 @@ public class JdkPatternArgumentMatcher {
     public static List<StepArgument> argumentsFrom(Pattern regexp, String stepName) {
         Matcher matcher = regexp.matcher(stepName);
         if(matcher.matches()) {
-            List<StepArgument> groups = new ArrayList<StepArgument>();
+            List<StepArgument> arguments = new ArrayList<StepArgument>();
             for(int i = 1; i <= matcher.groupCount(); i++) {
-                groups.add(new StepArgument(matcher.group(i), matcher.start(i)));
+                arguments.add(new StepArgument(matcher.group(i), matcher.start(i)));
             }
-            return groups;
+            return arguments;
         } else {
             return null;
         }

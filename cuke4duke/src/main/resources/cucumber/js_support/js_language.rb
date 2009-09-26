@@ -7,7 +7,7 @@ module Cucumber
       extend Forwardable
       include ::Cucumber::LanguageSupport::LanguageMethods
 
-      def_delegators :@delegate, :step_definitions_for, :begin_scenario, :end_scenario
+      def_delegators :@delegate, :load_code_file, :step_matches, :begin_scenario, :end_scenario
 
       def initialize(step_mother)
         @delegate = ::Java::Cuke4dukeInternalJs::JsLanguage.new(self)
