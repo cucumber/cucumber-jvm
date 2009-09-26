@@ -194,18 +194,33 @@ class ScalaDslTest extends ScalaDsl with Norwegian {
   }
 
   class User(name:String){
-    def friends_with(user:User):Boolean = true
+    def friends_with(user:User):Boolean = name match {
+      case "a" => true
+      case "b" => false
+    }
   }
   object User{
-    def find_by_username(name:String):Option[User] = null
+    def find_by_username(name:String):Option[User] = Some(new User(name))
   }
 
-  convert[User](name => User.find_by_username(name))
+  Transform[User](name => User.find_by_username(name))
 
   var user:User = _
   
-  Then("""^(user \w+) should be friends with (user \w+)$"""){ (user:User, friend:User) =>
+  Then("""^(\w+) should be friends with (\w+)$"""){ (user:User, friend:User) =>
     assertTrue(user.friends_with(friend))
+  }
+  
+  @Test
+  def test_transform{
+    val friends = step("""^(\w+) should be friends with (\w+)$""")
+    friends.invoke(array("a", "b"))
+    try{
+      friends.invoke(array("b", "a"))
+      fail("b should not be friends with a")
+    } catch {
+      case e:AssertionError =>
+    }
   }
 
   Given("g file_colon_line"){}
@@ -229,14 +244,6 @@ class ScalaDslTest extends ScalaDsl with Norwegian {
     assertEquals("Når(\"Når i18n\"){ String => ... }", step("Når i18n").file_colon_line)
     assertEquals("Så(\"Så i18n\"){ (User,String) => ... }", step("Så i18n").file_colon_line)
   }
-
-
-//# feature file
-//Scenario: friend'ing
-//  Given ...
-//  When ...
-//  Then user larrytheliquid should be friends with user dastels
-
 
   //known limitation: call by name steps are defined 'f: => Unit' which gets converted to a 'f() => Unit'
   //if it was defined 'f: => Any' it would swallow the other variants (f0..f22 => _) as we capture the whole function

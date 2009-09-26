@@ -28,49 +28,46 @@ trait ScalaDsl {
   def pending(message:String){ throw JRuby.cucumberPending(message) }
   def pending{ pending("TODO") }
 
-  /* conversions */
+  def Transform[T](f:String => Option[T])(implicit m:Manifest[T]){
+    transformations = transformations.insert(m.erasure, attempt(f))
+  }
+
   private implicit def orderedClass(a:Class[_]) = new Ordered[Class[_]]{
     def compare(that: Class[_]) = {
       if(a == that) 0
       else if(that.isAssignableFrom(a)) 1
       else -1
-      }
     }
+  }
 
-  private var conversions = new TreeMap[Class[_], String => Option[_]]
+  private var transformations = new TreeMap[Class[_], String => Option[_]]
 
-  private def attempt[T](conversion:String => Option[T]) =
+  private def attempt[T](transformation:String => Option[T]) =
       (s:String) => {
         try{
-          conversion(s)
+          transformation(s)
         } catch {
           case _ => None
         }
       }
 
-  def convert[T](f:String => Option[T])(implicit m:Manifest[T]){
-    conversions = conversions.insert(m.erasure, attempt(f))
-  }
-
-  //default conversions
-  convert[Int](x => Some(x.toInt))
-  convert[Long](x => Some(x.toLong))
-  convert[String](x => Some(x))
-  convert[Double](x => Some(x.toDouble))
-  convert[Float](x => Some(x.toFloat))
-  convert[Short](x => Some(x.toShort))
-  convert[Byte](x => Some(x.toByte))
-  convert[BigDecimal](x => Some(BigDecimal(x)))
-  convert[BigInt](x => Some(BigInt(x)))
-  convert[Char](x => if(x.length == 1) Some(x.charAt(0)) else None)
-  convert[Boolean](x => Some(x.toBoolean))
-
-  /**/
+  //default transformations
+  Transform[Int](x => Some(x.toInt))
+  Transform[Long](x => Some(x.toLong))
+  Transform[String](x => Some(x))
+  Transform[Double](x => Some(x.toDouble))
+  Transform[Float](x => Some(x.toFloat))
+  Transform[Short](x => Some(x.toShort))
+  Transform[Byte](x => Some(x.toByte))
+  Transform[BigDecimal](x => Some(BigDecimal(x)))
+  Transform[BigInt](x => Some(BigInt(x)))
+  Transform[Char](x => if(x.length == 1) Some(x.charAt(0)) else None)
+  Transform[Boolean](x => Some(x.toBoolean))
 
   final class Step(name:String) {
     def apply(regex:String) = new {
       def apply(f: => Unit):Unit = apply(f0toFun(f _))
-      def apply(fun:Fun) = stepDefinitions += new ScalaStepDefinition(name, regex, fun.f, fun.types, conversions)
+      def apply(fun:Fun) = stepDefinitions += new ScalaStepDefinition(name, regex, fun.f, fun.types, transformations)
     }
   }
 
