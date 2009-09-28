@@ -38,8 +38,8 @@
     <profile>
       <id>examples</id>
       <modules>
-        <module>examples/javascript</module>
         <module>examples/scala</module>
+        <module>examples/javascript</module>
         <module>examples/clojure</module>
         <module>examples/groovy</module>
         <module>examples/celerity</module>
