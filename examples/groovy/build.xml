@@ -48,7 +48,7 @@
   </target>
 
   <target name="install-gems" description="Install gems">
-    <install-gem gem="cucumber" version="0.3.103" source="http://gems.rubyforge.org/"/>
+    <install-gem gem="cucumber" version="0.3.104" source="http://gems.rubyforge.org/"/>
     <install-gem gem="rspec" version="1.2.8" />
     <!-- You can skip this if you're not on Windows -->
     <install-gem gem="aslakhellesoy-ansicolor" version="1.0" source="http://gems.github.com/"/>

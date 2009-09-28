@@ -8,7 +8,7 @@
     <groupId>cuke4duke</groupId>
     <artifactId>parent</artifactId>
     <relativePath>../pom.xml</relativePath>
-    <version>0.1.5-SNAPSHOT</version>
+    <version>0.1.5</version>
   </parent>
   
   <artifactId>cuke4duke</artifactId>
@@ -55,6 +55,10 @@
     <dependency>
       <groupId>org.clojure</groupId>
       <artifactId>clojure</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>rhino</groupId>
+      <artifactId>js</artifactId>
     </dependency>
     <dependency>
       <groupId>junit</groupId>

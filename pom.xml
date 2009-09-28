@@ -6,7 +6,7 @@
   <groupId>cuke4duke</groupId>
   <artifactId>parent</artifactId>
   <packaging>pom</packaging>
-  <version>0.1.5-SNAPSHOT</version>
+  <version>0.1.5</version>
   <name>Cuke4Duke Main Project</name>
   <url>http://cukes.info/</url>
 
@@ -38,6 +38,7 @@
     <profile>
       <id>examples</id>
       <modules>
+        <module>examples/javascript</module>
         <module>examples/scala</module>
         <module>examples/clojure</module>
         <module>examples/groovy</module>
@@ -108,6 +109,12 @@
         <groupId>org.clojure</groupId>
         <artifactId>clojure</artifactId>
         <version>1.0.0</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>rhino</groupId>
+        <artifactId>js</artifactId>
+        <version>1.7R2</version>
         <scope>provided</scope>
       </dependency>
     </dependencies>

@@ -1,10 +1,24 @@
-== 0.1.5-SNAPSHOT (In Git)
+== 0.1.5 2009-09-27
 
-Important! This snapshot requires cucumber 0.3.103, so go ahead and update your POMs with <gem>cucumber --version 0.3.103</gem>
+This is a very exciting release, as it sports support for 3 (!) new programming languages for Cuke4Duke. This means you can now
+use all of Cucumber's goodness and write your step definitions in the following programming languages:
+
+* Scala
+* Clojure
+* Javascript
+* Java
+* Groovy
+
+The Scala support was mostly Jon-Anders Teigen's effort, with a little help from Ole Christian Rynning and Aslak Hellesøy.
+Thanks to Ben Mabey for making the Clojure example code work!
+
+Important! This snapshot requires cucumber 0.3.104, so go ahead and update your POMs with <gem>cucumber --version 0.3.104</gem>
 and install it once with -Dcucumber.installGems=true
 
 === New Features
-* Clojure support. (Aslak Hellesøy, Ben Mabey)
+* Scala support. (Jon-Anders Teigen)
+* Javascript support (via Rhino). (Aslak Hellesøy)
+* Clojure support. (Aslak Hellesøy)
 
 === Changed Features
 * Minimum Cucumber version is now 0.3.103. (Aslak Hellesøy)
@@ -21,7 +35,7 @@ Make sure you read the release notes carefully before upgrading!
 === New features
 * Java snippets should now produce valid Java code (Aslak Hellesøy)
 * Examples' Maven builds install aslakhellesoy-ansicolor (needed for the poor windows users) (Aslak Hellesøy)
-* examples/webtest upgraded to celerity 0.0.7 and jetty 7.0.0.1beta3 (Aslak Hellesøy)
+* examples/celerity upgraded to celerity 0.0.7 and jetty 7.0.0.1beta3 (Aslak Hellesøy)
 * Added -Dcucumber.extraArgs command line argument that lets us append extra cucumber arguments on the command line. E.g -Dcucmber.extraArgs="--color --tag @dev" (#14 Torbjørn Vatn)
 
 === Changed Features

@@ -26,7 +26,7 @@ public class CljStepDefinition implements StepDefinition {
     }
 
     public String file_colon_line() {
-        return closure.toString();
+        return regexp_source();
     }
 
     public void invoke(RubyArray args) throws Throwable {
