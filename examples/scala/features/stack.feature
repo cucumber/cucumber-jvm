@@ -14,8 +14,8 @@ Feature: Stack
     Examples: 2 arguments
       | x | y | op | top |
       | 1 | 7 | +  | 8   |
-      | 2 | 6 | -  | 4   |
-      | 2 | 8 | /  | 4   |
+      | 6 | 2 | -  | 4   |
+      | 8 | 2 | /  | 4   |
       | 2 | 3 | *  | 6   |
 
   Scenario: Multiply 3 args

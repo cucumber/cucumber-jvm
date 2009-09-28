@@ -2,6 +2,7 @@ package cuke4duke.examples
 
 import cuke4duke.ScalaDsl
 import collection.mutable.Stack
+import org.junit.Assert._
 
 class StackStepDefinitions extends ScalaDsl {
 
@@ -13,9 +14,11 @@ class StackStepDefinitions extends ScalaDsl {
 
   When("""I push (.) onto the stack""") { something:Char =>
 
-    def calc(f:(Int, Int) => Int){
-      while(stack.size > 1){
-        stack.push(f(stack.pop, stack.pop))
+    def calc(f:(Int, Int) => Int) {
+      while(stack.size > 1) {
+        val a = stack.pop
+        val b = stack.pop
+        stack.push(f(b, a))
       }
     }
 
@@ -30,10 +33,10 @@ class StackStepDefinitions extends ScalaDsl {
   }
 
   Then("""the top should be (\d)""") { i:Int =>
-    assert(stack.top == i)
+    assertEquals(i, stack.top)
   }
 
   Then("""the size should be (\d)""") { i:Int =>
-    assert(stack.size == i)
+    assertEquals(i, stack.size)
   }
 }
