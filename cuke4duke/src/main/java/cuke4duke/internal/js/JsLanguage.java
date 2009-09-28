@@ -3,9 +3,8 @@ package cuke4duke.internal.js;
 import cuke4duke.internal.language.LanguageMixin;
 import cuke4duke.internal.language.ProgrammingLanguage;
 import org.mozilla.javascript.Context;
-import org.mozilla.javascript.NativeObject;
-import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.NativeFunction;
+import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.regexp.NativeRegExp;
 import org.mozilla.javascript.tools.shell.Global;
 
@@ -40,7 +39,7 @@ public class JsLanguage extends ProgrammingLanguage {
     }
 
     public void addStepDefinition(Global jsStepDefinition, NativeFunction argumentsFrom, NativeRegExp regexp, NativeFunction closure) throws Exception {
-        addStepDefinition(new JsStepDefinition(cx, scope, jsStepDefinition, argumentsFrom, regexp, closure));
+        addStepDefinition(new JsStepDefinition(this, cx, scope, jsStepDefinition, argumentsFrom, regexp, closure));
     }
 
     public void cleanupScenario() throws Throwable {

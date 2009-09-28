@@ -20,13 +20,15 @@ public class JsStepDefinition extends AbstractStepDefinition {
     private final NativeFunction closure;
     private List<StepArgument> arguments;
 
-    public JsStepDefinition(Context cx, Scriptable scope, Global jsStepDefinition, NativeFunction argumentsFrom, NativeRegExp regexp, NativeFunction closure) {
+    public JsStepDefinition(JsLanguage programmingLanguage, Context cx, Scriptable scope, Global jsStepDefinition, NativeFunction argumentsFrom, NativeRegExp regexp, NativeFunction closure) {
+        super(programmingLanguage);
         this.cx = cx;
         this.scope = scope;
         this.jsStepDefinition = jsStepDefinition;
         this.argumentsFrom = argumentsFrom;
         this.regexp = regexp;
         this.closure = closure;
+        register();
     }
 
     public String regexp_source() {

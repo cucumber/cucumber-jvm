@@ -14,9 +14,11 @@ public class GroovyStepDefinition extends AbstractStepDefinition {
     private final Closure body;
 
     public GroovyStepDefinition(GroovyLanguage groovyLanguage, Pattern regexp, Closure body) {
+        super(groovyLanguage);
         this.groovyLanguage = groovyLanguage;
         this.regexp = regexp;
         this.body = body;
+        register();
     }
 
     public String regexp_source() {

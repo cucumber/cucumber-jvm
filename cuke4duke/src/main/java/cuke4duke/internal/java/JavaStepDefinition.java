@@ -17,15 +17,14 @@ public class JavaStepDefinition extends AbstractStepDefinition {
     private final MethodInvoker methodInvoker;
     private final ObjectFactory objectFactory;
     private final Method method;
-    private final ClassLanguage classLanguage;
 
-    public JavaStepDefinition(ObjectFactory objectFactory, Method method, Pattern regexp, ClassLanguage classLanguage) {
+    public JavaStepDefinition(ClassLanguage programmingLanguage, ObjectFactory objectFactory, Method method, Pattern regexp) {
+        super(programmingLanguage);
         this.objectFactory = objectFactory;
         this.method = method;
-        this.classLanguage = classLanguage;
         methodInvoker = new MethodInvoker(method);
         this.regexp = regexp;
-        classLanguage.availableStepDefinition(regexp_source(), file_colon_line());
+        register();
     }
 
     public String regexp_source() {
@@ -50,7 +49,6 @@ public class JavaStepDefinition extends AbstractStepDefinition {
 
     public void invokeWithJavaArgs(Object[] args) throws Throwable {
         Object target = objectFactory.getComponent(method.getDeclaringClass());
-        classLanguage.invokedStepDefinition(regexp_source(), file_colon_line());
         methodInvoker.invoke(target, args);
     }
 

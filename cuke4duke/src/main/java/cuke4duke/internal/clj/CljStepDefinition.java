@@ -15,9 +15,11 @@ public class CljStepDefinition extends AbstractStepDefinition {
     private final Pattern regexp;
     private final AFunction closure;
 
-    public CljStepDefinition(Pattern regexp, AFunction closure) {
+    public CljStepDefinition(CljLanguage cljLanguage, Pattern regexp, AFunction closure) {
+        super(cljLanguage);
         this.regexp = regexp;
         this.closure = closure;
+        register();
     }
 
     public String regexp_source() {

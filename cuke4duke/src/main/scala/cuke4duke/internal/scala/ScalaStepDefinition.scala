@@ -1,11 +1,12 @@
 package cuke4duke.internal.scala
 
 import collection.immutable.TreeMap
-import cuke4duke.internal.language.{JdkPatternArgumentMatcher, AbstractStepDefinition}
+import cuke4duke.internal.language.{JdkPatternArgumentMatcher, StepDefinition}
 import _root_.java.util.regex.Pattern
 import cuke4duke.internal.JRuby
+import org.jruby.RubyArray
 
-class ScalaStepDefinition(name:String, r: String, f: Any, types: List[Class[_]], conversions:TreeMap[Class[_], String => Option[_]]) extends AbstractStepDefinition {
+class ScalaStepDefinition(name:String, r: String, f: Any, types: List[Class[_]], conversions:TreeMap[Class[_], String => Option[_]]) extends StepDefinition {
 
   private val pattern = Pattern.compile(r)
 
@@ -20,8 +21,8 @@ class ScalaStepDefinition(name:String, r: String, f: Any, types: List[Class[_]],
 
   def arguments_from(step_name:String) = JdkPatternArgumentMatcher.argumentsFrom(pattern, step_name)
 
-  def invokeWithJavaArgs(ra: Array[Object]) {
-    transform(ra.toList.map(_.toString), types) match {
+  def invoke(ra: RubyArray) {
+    transform(ra.toArray.toList.map(_.toString), types) match {
       case List() => f.asInstanceOf[Function0[_]]()
       case List(t1) => f.asInstanceOf[Function1[Any, _]](t1)
       case List(t1, t2) => f.asInstanceOf[Function2[Any, Any, _]](t1, t2)
@@ -46,10 +47,6 @@ class ScalaStepDefinition(name:String, r: String, f: Any, types: List[Class[_]],
       case List(t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21) => f.asInstanceOf[Function21[Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, _]](t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21)
       case List(t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21, t22) => f.asInstanceOf[Function22[Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, _]](t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21, t22)
     }
-  }
-
-  def getParameterTypes(ra: Array[Object]):Array[Class[_]] = {
-    null
   }
 
   private [this] def transform(args:List[String], types:List[Class[_]]) = {
