@@ -2,11 +2,9 @@ package cuke4duke.internal;
 
 import static junit.framework.Assert.assertTrue;
 
-import java.util.List;
-import java.util.Map;
-
 import org.junit.Before;
 import org.junit.Test;
+import static org.mockito.Mockito.mock;
 
 import cuke4duke.Table;
 
@@ -48,7 +46,7 @@ public class ArgumentsConverterTest {
     
     @Test
     public void shouldConvertFromTableToTable() {
-        Object[] convertedObject = converter.convert(new Class<?>[] {Table.class}, new Object[] { new MyTable() });
+        Object[] convertedObject = converter.convert(new Class<?>[] {Table.class}, new Object[] { mock(Table.class) });
         assertTrue(convertedObject[0].getClass().getInterfaces()[0].equals(Table.class));
     }
     
@@ -60,50 +58,6 @@ public class ArgumentsConverterTest {
     }
     
     private class MyClass {
-        
-    }
-    
-    private class MyTable implements Table {
-
-        public void diffHashes(List<Map<String, String>> table) {
-            // TODO Auto-generated method stub
-            
-        }
-
-        public void diffHashes(List<Map<String, String>> table, Map<?, ?> options) {
-            // TODO Auto-generated method stub
-            
-        }
-
-        public void diffLists(List<List<String>> table) {
-            // TODO Auto-generated method stub
-            
-        }
-
-        public void diffLists(List<List<String>> table, Map<?, ?> options) {
-            // TODO Auto-generated method stub
-            
-        }
-
-        public List<Map<String, String>> hashes() {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-        public List<List<String>> raw() {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-        public List<List<String>> rows() {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-        public Map<String, String> rowsHash() {
-            // TODO Auto-generated method stub
-            return null;
-        }
         
     }
 }

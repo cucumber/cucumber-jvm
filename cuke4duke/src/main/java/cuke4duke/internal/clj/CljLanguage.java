@@ -1,0 +1,34 @@
+package cuke4duke.internal.clj;
+
+import clojure.lang.AFunction;
+import clojure.lang.Compiler;
+import clojure.lang.RT;
+import cuke4duke.internal.language.LanguageMixin;
+import cuke4duke.internal.language.ProgrammingLanguage;
+
+import java.util.regex.Pattern;
+
+public class CljLanguage extends ProgrammingLanguage {
+    private static CljLanguage instance;
+
+    public CljLanguage(LanguageMixin languageMixin) throws Exception {
+        super(languageMixin);
+        instance = this;
+        clearHooksAndStepDefinitions();
+        RT.load("cuke4duke/internal/clj/clj_dsl");
+    }
+
+    public static void addStepDefinition(Pattern regexp, AFunction closure) throws Exception {
+        instance.addStepDefinition(new CljStepDefinition(regexp, closure));
+    }
+
+    public void load_code_file(String cljFile) throws Throwable {
+        Compiler.loadFile(cljFile);
+    }
+
+    protected void prepareScenario() throws Throwable {
+    }
+
+    public void cleanupScenario() throws Throwable {
+    }
+}

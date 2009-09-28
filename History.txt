@@ -1,22 +1,49 @@
-== (In Git)
+== 0.1.5 2009-09-27
 
-This release has some small backwards incompatible changes that should only affect your build scripts. If you're
-using Groovy you also have to change your step definitions to use strings instead of regexps.
+This is a very exciting release, as it sports support for 3 (!) new programming languages for Cuke4Duke. This means you can now
+use all of Cucumber's goodness and write your step definitions in the following programming languages:
+
+* Scala
+* Clojure
+* Javascript
+* Java
+* Groovy
+
+The Scala support was mostly Jon-Anders Teigen's effort, with a little help from Ole Christian Rynning and Aslak Hellesøy.
+Thanks to Ben Mabey for making the Clojure example code work!
+
+Important! This snapshot requires cucumber 0.3.104, so go ahead and update your POMs with <gem>cucumber --version 0.3.104</gem>
+and install it once with -Dcucumber.installGems=true
+
+=== New Features
+* Scala support. (Jon-Anders Teigen)
+* Javascript support (via Rhino). (Aslak Hellesøy)
+* Clojure support. (Aslak Hellesøy)
+
+=== Changed Features
+* Minimum Cucumber version is now 0.3.103. (Aslak Hellesøy)
+* Regular expression matching in step definitions are now native to the used programming language. (Aslak Hellesøy)
+* Groovy step definitions *must* use Regexps, not Strings. Just prepend a ~ to your regexp string. (Aslak Hellesøy)
+
+== 0.1.4 2009-09-21
+
+This release has several small backwards incompatible changes that should for the most part only affect your build scripts. 
+If you're using Groovy you also have to change your step definitions to use strings instead of regexps.
 
 Make sure you read the release notes carefully before upgrading!
 
 === New features
-* Java snippets should now be valid Java code (Aslak Hellesøy)
+* Java snippets should now produce valid Java code (Aslak Hellesøy)
 * Examples' Maven builds install aslakhellesoy-ansicolor (needed for the poor windows users) (Aslak Hellesøy)
-* examples/webtest upgraded to celerity 0.0.7 and jetty 7.0.0.1beta3 (Aslak Hellesøy)
-* Added -Dcucumber.extraArgs command line parameter that allows us to add extra cucumber arguments as a string surrounded with " " and a space as the delimiter. E.g -Dcucmber.extraArgs="--color --tag @dev" (#14 Torbjørn Vatn)
+* examples/celerity upgraded to celerity 0.0.7 and jetty 7.0.0.1beta3 (Aslak Hellesøy)
+* Added -Dcucumber.extraArgs command line argument that lets us append extra cucumber arguments on the command line. E.g -Dcucmber.extraArgs="--color --tag @dev" (#14 Torbjørn Vatn)
 
 === Changed Features
 * The Maven "feature" goal has been renamed to "cucumber" (Aslak Hellesøy)
 * The Maven <gem> element has changed. You can now pass extra arguments, and there are no funny : delimiters. See examples. (#22 Aslak Hellesøy)
 * Groovy step definitions must use String instead of Regexp. The regexp matching happens on the Ruby side, so Regexp was misleading (Aslak Hellesøy)
 * -Dcuke4duke.objectFactory classes have changed package from cuke4duke.internal.java to cuke4duke.internal.jvmclass (Aslak Hellesøy)
-* --require **/*.java no longer supported. --require **/*.class instead (Aslak Hellesøy)
+* --require **/*.java no longer supported. Use --require **/*.class instead (Aslak Hellesøy)
 
 === Removed features
 * The Maven property configuration.args (<configuration><args>...) has been removed. Use configuration.cucumberArgs instead. (Aslak Hellesøy)

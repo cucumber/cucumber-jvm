@@ -137,7 +137,7 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
      * Installs a gem. Sources used:
      * <ul>
      * <li>http://gems.rubyforge.org</li>
-     * <li>http://gemcutter.org</li>
+     * <li>http://gemcutter.org/</li>
      * <li>http://gems.github.com</li>
      * </ul>
      * 

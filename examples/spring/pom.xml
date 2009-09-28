@@ -6,7 +6,7 @@
   <groupId>cuke4duke</groupId>
   <artifactId>cuke4duke-spring-example</artifactId>
   <packaging>jar</packaging>
-  <version>1.0.0</version>
+  <version>0.1.5</version>
   <name>Cuke4Duke Spring Example</name>
   <url>http://cukes.info/</url>
 
@@ -32,7 +32,7 @@
     <dependency>
       <groupId>cuke4duke</groupId>
       <artifactId>cuke4duke</artifactId>
-      <version>0.1.4-SNAPSHOT</version>
+      <version>0.1.5</version>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
@@ -85,7 +85,7 @@
             <cucumberArg>${basedir}/target/test-classes</cucumberArg>
           </cucumberArgs>
           <gems>
-            <gem>cucumber --version 0.3.101</gem>
+            <gem>cucumber --version 0.3.104 --source http://gems.rubyforge.org/</gem>
             <gem>aslakhellesoy-ansicolor --version 1.0 --source http://gems.github.com/</gem>
           </gems>
         </configuration>
