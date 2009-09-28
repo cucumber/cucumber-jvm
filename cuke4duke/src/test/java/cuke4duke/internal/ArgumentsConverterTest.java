@@ -35,7 +35,7 @@ public class ArgumentsConverterTest {
     @Test
     public void shouldConvertFromStringToDouble() {
         Object[] convertedObject = converter
-                .convert(new Class<?>[] { Double.TYPE }, new Object[] { String.format("%f", Double.MAX_VALUE) });
+                .convert(new Class<?>[] { Double.TYPE }, new Object[] { String.format("%e", Double.MAX_VALUE) });
         assertTrue(convertedObject[0].getClass().isAssignableFrom(Double.class));
     }
 
