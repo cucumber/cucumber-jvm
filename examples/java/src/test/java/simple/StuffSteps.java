@@ -24,6 +24,10 @@ public class StuffSteps {
         throw new RuntimeException("We shouldn't get here because we are @Pending");
     }
 
+    @Given("a step definition that is never used")
+    public void neverUsed() {
+    }
+
     @Given("a failing step that is preceded by a pending")
     public void intentionallyFailing() {
         throw new RuntimeException("We shouldn't get here either because the previous one is pending");

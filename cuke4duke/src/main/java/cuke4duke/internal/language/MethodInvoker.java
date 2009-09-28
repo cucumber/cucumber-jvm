@@ -2,8 +2,6 @@ package cuke4duke.internal.language;
 
 import cuke4duke.Pending;
 import cuke4duke.internal.JRuby;
-import cuke4duke.internal.ArgumentsConverter;
-import org.jruby.RubyArray;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -15,9 +13,7 @@ public class MethodInvoker {
         this.method = method;
     }
 
-    public void invoke(Object target, Class<?>[] types, RubyArray rubyArgs) throws Throwable {
-        Object[] args = rubyArgs.toArray();
-        Object[] javaArgs = new ArgumentsConverter().convert(types, args);
+    public void invoke(Object target, Object[] javaArgs) throws Throwable {
         try {
             if(method.isAnnotationPresent(Pending.class)) {
                 throw JRuby.cucumberPending(method.getAnnotation(Pending.class).value());
@@ -25,8 +21,8 @@ public class MethodInvoker {
                 method.invoke(target, javaArgs);
             }
         } catch (IllegalArgumentException e) {
-            String m = "Couldn't invoke " + method.toGenericString() + " with " + cuke4duke.internal.Utils.join(args, ",");
-            throw new IllegalArgumentException(m, e);
+            String m = "Couldn't invokeWithJavaArgs " + method.toGenericString() + " with " + cuke4duke.internal.Utils.join(javaArgs, ",");
+            throw JRuby.cucumberArityMismatchError(m);
         } catch (InvocationTargetException e) {
             throw e.getTargetException();
         }

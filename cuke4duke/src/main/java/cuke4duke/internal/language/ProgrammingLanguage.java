@@ -4,8 +4,7 @@ import cuke4duke.internal.JRuby;
 import org.jruby.RubyArray;
 import org.jruby.runtime.builtin.IRubyObject;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public abstract class ProgrammingLanguage {
     protected final LanguageMixin languageMixin;
@@ -18,7 +17,7 @@ public abstract class ProgrammingLanguage {
     }
 
     final public RubyArray step_matches(String step_name, String formatted_step_name) {
-        return RubyArray.newArray(JRuby.getRuntime(), step_match_list(step_name, formatted_step_name));
+        return JRuby.newArray(step_match_list(step_name, formatted_step_name));
     }
 
     public abstract void load_code_file(String file) throws Throwable;
@@ -69,4 +68,12 @@ public abstract class ProgrammingLanguage {
     protected abstract void prepareScenario() throws Throwable;
 
     public abstract void cleanupScenario() throws Throwable;
+
+    public void availableStepDefinition(String regexp_source, String file_colon_line) {
+        languageMixin.available_step_definition(regexp_source, file_colon_line);
+    }
+
+    public void invokedStepDefinition(String regexp_source, String file_colon_line) {
+        languageMixin.invoked_step_definition(regexp_source, file_colon_line);
+    }
 }

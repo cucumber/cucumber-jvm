@@ -1,8 +1,8 @@
 package cuke4duke.internal.js;
 
+import cuke4duke.internal.language.AbstractStepDefinition;
+import cuke4duke.internal.Utils;
 import cuke4duke.internal.language.StepArgument;
-import cuke4duke.internal.language.StepDefinition;
-import org.jruby.RubyArray;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.NativeFunction;
 import org.mozilla.javascript.Scriptable;
@@ -11,7 +11,7 @@ import org.mozilla.javascript.tools.shell.Global;
 
 import java.util.List;
 
-public class JsStepDefinition implements StepDefinition {
+public class JsStepDefinition extends AbstractStepDefinition {
     private final Context cx;
     private final Scriptable scope;
     private final Global jsStepDefinition;
@@ -37,8 +37,11 @@ public class JsStepDefinition implements StepDefinition {
         return regexp_source();
     }
 
-    public void invoke(RubyArray rubyArgs) throws Throwable {
-        Object[] args = rubyArgs.toArray();
+    protected Class<?>[] getParameterTypes(Object[] args) {
+        return Utils.objectClassArray(args.length);
+    }
+
+    public void invokeWithJavaArgs(Object[] args) throws Throwable {
         closure.call(cx, scope, scope, args);
     }
 

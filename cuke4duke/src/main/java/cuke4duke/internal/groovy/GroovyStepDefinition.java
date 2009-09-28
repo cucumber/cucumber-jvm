@@ -1,15 +1,14 @@
 package cuke4duke.internal.groovy;
 
-import cuke4duke.internal.language.StepDefinition;
-import cuke4duke.internal.language.StepArgument;
+import cuke4duke.internal.language.AbstractStepDefinition;
 import cuke4duke.internal.language.JdkPatternArgumentMatcher;
+import cuke4duke.internal.language.StepArgument;
 import groovy.lang.Closure;
-import org.jruby.RubyArray;
 
-import java.util.regex.Pattern;
 import java.util.List;
+import java.util.regex.Pattern;
 
-public class GroovyStepDefinition implements StepDefinition {
+public class GroovyStepDefinition extends AbstractStepDefinition {
     private final GroovyLanguage groovyLanguage;
     private final Pattern regexp;
     private final Closure body;
@@ -28,7 +27,11 @@ public class GroovyStepDefinition implements StepDefinition {
         return body.toString();
     }
 
-    public void invoke(RubyArray args) {
+    protected Class<?>[] getParameterTypes(Object[] args) {
+        return body.getParameterTypes();
+    }
+
+    public void invokeWithJavaArgs(Object[] args) {
         groovyLanguage.invokeClosure(body, args);
     }
 

@@ -39,12 +39,12 @@
       <id>examples</id>
       <modules>
         <module>examples/scala</module>
-        <module>examples/javascript</module>
+        <module>examples/java</module>
         <module>examples/clojure</module>
+        <module>examples/javascript</module>
         <module>examples/groovy</module>
         <module>examples/celerity</module>
         <module>examples/spring</module>
-        <module>examples/java</module>
       </modules>
     </profile>
   </profiles>
