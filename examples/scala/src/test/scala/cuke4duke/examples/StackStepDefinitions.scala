@@ -39,4 +39,10 @@ class StackStepDefinitions extends ScalaDsl {
   Then("""the size should be (\d)""") { i:Int =>
     assertEquals(i, stack.size)
   }
+
+  Then("""this should never be run, and it should show up in target/usage.txt""") {
+    // And to make that work, ScalaStepDefinition should inherit from AbstractStepDefinition.
+    // Remember to invoke register() at the end of the constructor.
+    assertEquals(1, 2)
+  }
 }

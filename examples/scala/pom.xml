@@ -63,6 +63,12 @@
           <cucumberArgs>
             <cucumberArg>--color</cucumberArg>
             <cucumberArg>--verbose</cucumberArg>
+            <cucumberArg>--format</cucumberArg>
+            <cucumberArg>pretty</cucumberArg>
+            <cucumberArg>--format</cucumberArg>
+            <cucumberArg>usage</cucumberArg>
+            <cucumberArg>--out</cucumberArg>
+            <cucumberArg>target/usage.txt</cucumberArg>
             <cucumberArg>--require</cucumberArg>
             <cucumberArg>${basedir}/target/test-classes</cucumberArg>
           </cucumberArgs>
