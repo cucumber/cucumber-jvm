@@ -2,7 +2,8 @@ package cuke4duke.internal.scala
 
 import _root_.java.lang.Class
 import cuke4duke.ScalaDsl
-import jvmclass.{ClassLanguage, ObjectFactory, ClassAnalyzer}
+import cuke4duke.internal.jvmclass.{ClassLanguage, ObjectFactory, ClassAnalyzer}
+
 class ScalaAnalyzer extends ClassAnalyzer {
 
   def populateStepDefinitionsAndHooksFor(clazz: Class[_], objectFactory:ObjectFactory, classLanguage:ClassLanguage) {
@@ -13,7 +14,7 @@ class ScalaAnalyzer extends ClassAnalyzer {
         classLanguage.addBeforeHook(before)
 
       for (stepDefinition <- scalaDsl.stepDefinitions)
-        classLanguage.addStepDefinition(stepDefinition)
+        classLanguage.addStepDefinition(stepDefinition(classLanguage))
 
       for (after <- scalaDsl.afterHooks)
         classLanguage.addAfterHook(after)

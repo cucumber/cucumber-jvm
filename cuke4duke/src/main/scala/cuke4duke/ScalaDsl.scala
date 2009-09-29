@@ -3,6 +3,7 @@ package cuke4duke
 import _root_.scala.collection.mutable.ListBuffer
 import _root_.scala.reflect.Manifest
 import internal.JRuby
+import internal.language.ProgrammingLanguage
 import internal.scala.{ScalaHook, ScalaStepDefinition}
 import collection.immutable.TreeMap
 
@@ -11,7 +12,7 @@ import collection.immutable.TreeMap
  */
 trait ScalaDsl {
 
-  private [cuke4duke] val stepDefinitions = new ListBuffer[ScalaStepDefinition]
+  private [cuke4duke] val stepDefinitions = new ListBuffer[ProgrammingLanguage => ScalaStepDefinition]
   private [cuke4duke] val beforeHooks = new ListBuffer[ScalaHook]
   private [cuke4duke] val afterHooks = new ListBuffer[ScalaHook]
 
@@ -67,7 +68,7 @@ trait ScalaDsl {
   final class Step(name:String) {
     def apply(regex:String) = new {
       def apply(f: => Unit):Unit = apply(f0toFun(f _))
-      def apply(fun:Fun) = stepDefinitions += new ScalaStepDefinition(name, regex, fun.f, fun.types, transformations)
+      def apply(fun:Fun) = stepDefinitions += ((programmingLanguage:ProgrammingLanguage) => new ScalaStepDefinition(name, regex, fun.f, fun.types, transformations, programmingLanguage))
     }
   }
 
