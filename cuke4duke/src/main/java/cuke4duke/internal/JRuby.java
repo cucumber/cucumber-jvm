@@ -50,7 +50,7 @@ public class JRuby {
         );
     }
 
-    public static RubyArray newArray(Collection collection) {
+    public static RubyArray newArray(Collection<?> collection) {
         RubyArray result = RubyArray.newArray(getRuntime());
         for (Object o : collection) {
             result.add(o);

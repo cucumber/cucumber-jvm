@@ -1,10 +1,10 @@
 package cuke4duke.internal.language;
 
-import org.junit.Test;
-import org.junit.Before;
-import org.jruby.RubyArray;
-
 import java.lang.reflect.Method;
+
+import org.junit.Before;
+import org.junit.Test;
+
 import cuke4duke.Pending;
 import cuke4duke.internal.JRuby;
 
