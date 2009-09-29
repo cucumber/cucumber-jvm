@@ -38,10 +38,9 @@ public class JavaAnalyzer implements ClassAnalyzer {
         }
         if (regexpString != null) {
             Pattern regexp = Pattern.compile(regexpString);
-            classLanguage.addStepDefinition(new JavaStepDefinition(objectFactory, method, regexp));
+            classLanguage.addStepDefinition(new JavaStepDefinition(classLanguage, objectFactory, method, regexp));
         }
     }
-
 
     private void registerAfterMaybe(Method method, ClassLanguage classLanguage, ObjectFactory objectFactory) {
         if (method.isAnnotationPresent(After.class)) {

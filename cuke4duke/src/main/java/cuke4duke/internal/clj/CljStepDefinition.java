@@ -1,24 +1,25 @@
 package cuke4duke.internal.clj;
 
-import cuke4duke.internal.language.StepDefinition;
-import cuke4duke.internal.language.StepArgument;
+import clojure.lang.AFunction;
+import cuke4duke.internal.language.AbstractStepDefinition;
+import cuke4duke.internal.Utils;
 import cuke4duke.internal.language.JdkPatternArgumentMatcher;
-import org.jruby.RubyArray;
+import cuke4duke.internal.language.StepArgument;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.regex.Pattern;
-import java.lang.reflect.Method;
-import java.lang.reflect.InvocationTargetException;
 
-import clojure.lang.AFunction;
-
-public class CljStepDefinition implements StepDefinition {
+public class CljStepDefinition extends AbstractStepDefinition {
     private final Pattern regexp;
     private final AFunction closure;
 
-    public CljStepDefinition(Pattern regexp, AFunction closure) {
+    public CljStepDefinition(CljLanguage cljLanguage, Pattern regexp, AFunction closure) {
+        super(cljLanguage);
         this.regexp = regexp;
         this.closure = closure;
+        register();
     }
 
     public String regexp_source() {
@@ -29,9 +30,12 @@ public class CljStepDefinition implements StepDefinition {
         return regexp_source();
     }
 
-    public void invoke(RubyArray args) throws Throwable {
-        Object[] javaArgs = args.toArray();
-        Method functionInvoke = lookupInvokeMethod(javaArgs.length);
+    protected Class<?>[] getParameterTypes(Object[] args) {
+        return Utils.objectClassArray(args.length);
+    }
+
+    public void invokeWithJavaArgs(Object[] javaArgs) throws Throwable {
+        Method functionInvoke = lookupInvokeMethod(javaArgs);
         try {
             functionInvoke.invoke(closure, javaArgs);
         } catch (InvocationTargetException e) {
@@ -44,11 +48,7 @@ public class CljStepDefinition implements StepDefinition {
     }
 
     // Clojure's AFunction.invoke doesn't take varargs :-/
-    private Method lookupInvokeMethod(int argCount) throws NoSuchMethodException {
-        Class<?>[] parameterTypes = new Class[argCount];
-        for(int i = 0; i < argCount; i++) {
-            parameterTypes[i] = Object.class;
-        }
-        return AFunction.class.getMethod("invoke", parameterTypes);
+    private Method lookupInvokeMethod(Object[] args) throws NoSuchMethodException {
+        return AFunction.class.getMethod("invoke", getParameterTypes(args));
     }
 }

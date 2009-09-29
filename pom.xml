@@ -6,7 +6,7 @@
   <groupId>cuke4duke</groupId>
   <artifactId>parent</artifactId>
   <packaging>pom</packaging>
-  <version>0.1.5</version>
+  <version>0.1.6-SNAPSHOT</version>
   <name>Cuke4Duke Main Project</name>
   <url>http://cukes.info/</url>
 
@@ -38,13 +38,13 @@
     <profile>
       <id>examples</id>
       <modules>
-        <module>examples/javascript</module>
         <module>examples/scala</module>
+        <module>examples/java</module>
         <module>examples/clojure</module>
+        <module>examples/javascript</module>
         <module>examples/groovy</module>
         <module>examples/celerity</module>
         <module>examples/spring</module>
-        <module>examples/java</module>
       </modules>
     </profile>
   </profiles>

@@ -3,7 +3,7 @@
   <groupId>cuke4duke.examples</groupId>
   <artifactId>cuke4duke-scala-example</artifactId>
   <name>Cuke4Duke Scala Example</name>
-  <version>0.1.5</version>
+  <version>0.1.6-SNAPSHOT</version>
   <inceptionYear>2009</inceptionYear>
   <properties>
     <scala.version>2.7.5</scala.version>
@@ -19,7 +19,7 @@
     <dependency>
       <groupId>cuke4duke</groupId>
       <artifactId>cuke4duke</artifactId>
-      <version>0.1.5</version>
+      <version>0.1.6-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -63,6 +63,12 @@
           <cucumberArgs>
             <cucumberArg>--color</cucumberArg>
             <cucumberArg>--verbose</cucumberArg>
+            <cucumberArg>--format</cucumberArg>
+            <cucumberArg>pretty</cucumberArg>
+            <cucumberArg>--format</cucumberArg>
+            <cucumberArg>usage</cucumberArg>
+            <cucumberArg>--out</cucumberArg>
+            <cucumberArg>target/usage.txt</cucumberArg>
             <cucumberArg>--require</cucumberArg>
             <cucumberArg>${basedir}/target/test-classes</cucumberArg>
           </cucumberArgs>

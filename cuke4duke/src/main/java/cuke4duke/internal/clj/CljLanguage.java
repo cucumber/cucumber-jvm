@@ -19,7 +19,7 @@ public class CljLanguage extends ProgrammingLanguage {
     }
 
     public static void addStepDefinition(Pattern regexp, AFunction closure) throws Exception {
-        instance.addStepDefinition(new CljStepDefinition(regexp, closure));
+        instance.addStepDefinition(new CljStepDefinition(instance, regexp, closure));
     }
 
     public void load_code_file(String cljFile) throws Throwable {

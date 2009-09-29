@@ -1,10 +1,10 @@
 package cuke4duke.internal.scala
 
-import org.jruby.RubyArray
 import collection.immutable.TreeMap
 import cuke4duke.internal.language.{JdkPatternArgumentMatcher, StepDefinition}
 import _root_.java.util.regex.Pattern
 import cuke4duke.internal.JRuby
+import org.jruby.RubyArray
 
 class ScalaStepDefinition(name:String, r: String, f: Any, types: List[Class[_]], conversions:TreeMap[Class[_], String => Option[_]]) extends StepDefinition {
 

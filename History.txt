@@ -1,3 +1,8 @@
+== (In Git)
+
+=== New features
+* The cucumber usage formatter is working, reporting defined, but unused step definitions. (Aslak Hellesøy)
+
 == 0.1.5 2009-09-27
 
 This is a very exciting release, as it sports support for 3 (!) new programming languages for Cuke4Duke. This means you can now
