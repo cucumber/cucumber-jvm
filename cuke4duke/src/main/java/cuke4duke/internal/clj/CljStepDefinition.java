@@ -45,7 +45,7 @@ public class CljStepDefinition implements StepDefinition {
 
     // Clojure's AFunction.invoke doesn't take varargs :-/
     private Method lookupInvokeMethod(int argCount) throws NoSuchMethodException {
-        Class[] parameterTypes = new Class[argCount];
+        Class<?>[] parameterTypes = new Class[argCount];
         for(int i = 0; i < argCount; i++) {
             parameterTypes[i] = Object.class;
         }

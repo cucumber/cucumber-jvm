@@ -1,18 +1,18 @@
 package cuke4duke.internal.js;
 
-import cuke4duke.internal.language.LanguageMixin;
-import cuke4duke.internal.language.ProgrammingLanguage;
-import org.mozilla.javascript.Context;
-import org.mozilla.javascript.NativeObject;
-import org.mozilla.javascript.Scriptable;
-import org.mozilla.javascript.NativeFunction;
-import org.mozilla.javascript.regexp.NativeRegExp;
-import org.mozilla.javascript.tools.shell.Global;
-
 import java.io.FileReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.mozilla.javascript.Context;
+import org.mozilla.javascript.NativeFunction;
+import org.mozilla.javascript.Scriptable;
+import org.mozilla.javascript.regexp.NativeRegExp;
+import org.mozilla.javascript.tools.shell.Global;
+
+import cuke4duke.internal.language.LanguageMixin;
+import cuke4duke.internal.language.ProgrammingLanguage;
 
 public class JsLanguage extends ProgrammingLanguage {
     private static final String JS_DSL = "/cuke4duke/internal/js/js_dsl.js";
