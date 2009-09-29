@@ -3,6 +3,7 @@
 .classpath
 .settings
 target
+test-output
 pkg
 *.jar
 *.iws
