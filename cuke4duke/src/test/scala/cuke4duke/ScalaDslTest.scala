@@ -1,15 +1,17 @@
 package cuke4duke
 
 import internal.JRuby
-import internal.language.StepDefinition
+import internal.language._
+import java.util.List
 import internal.scala.ScalaStepDefinition
 
 import org.jruby.exceptions.RaiseException
 import org.junit.{Test, Before => JunitBefore, Assert}
 import Assert._
 
-import _root_.scala.collection.mutable.Map
+import _root_.scala.collection.mutable.{Map, ListBuffer}
 import org.jruby.RubyArray
+import java.lang.String
 
 class ScalaDslTest extends ScalaDsl with Norwegian {
 
@@ -27,6 +29,24 @@ class ScalaDslTest extends ScalaDsl with Norwegian {
     r
   }
 
+  val invokedStepdefinitions = new ListBuffer[String]
+  val availableStepdefinitions = new ListBuffer[String]
+
+  val programmingLanguage = new ProgrammingLanguage(new LanguageMixin{
+    def invoked_step_definition(regexp_source: String, file_colon_line: String) = {
+      invokedStepdefinitions += regexp_source
+    }
+    def available_step_definition(regexp_source: String, file_colon_line: String) = {
+      availableStepdefinitions += regexp_source
+    }
+    def create_step_match(step_definition: StepDefinition, step_name: String, formatted_step_name: String, step_arguments: List[StepArgument]) = null
+    def add_hook(phase: String, hook: Hook) = {}
+  }){
+    def cleanupScenario = {}
+    protected[cuke4duke] def prepareScenario = {}
+    def load_code_file(file: String) = {}
+  }
+
   @JunitBefore
   def setUp{
     JRuby.getRuntime().evalScriptlet("""
@@ -37,8 +57,10 @@ class ScalaDslTest extends ScalaDsl with Norwegian {
     end
     """);
 
-    for(s <- stepDefinitions)
-      step(regexp(s)) = s
+    for(s <- stepDefinitions){
+      val sd = s(programmingLanguage)
+      step(regexp(sd)) = sd
+    }
   }
 
   Before{
@@ -243,6 +265,22 @@ class ScalaDslTest extends ScalaDsl with Norwegian {
     assertEquals("Gitt(\"Gitt i18n\"){ () => ... }", step("Gitt i18n").file_colon_line)
     assertEquals("Når(\"Når i18n\"){ String => ... }", step("Når i18n").file_colon_line)
     assertEquals("Så(\"Så i18n\"){ (User,String) => ... }", step("Så i18n").file_colon_line)
+  }
+
+  Given("programmingLanguage.invoked_step_definition"){
+    //whatever
+  }
+
+  @Test //issue#29
+  def test_programmingLanguage_available_step_definition_is_called_when_creating_step_definition{
+    assertTrue(availableStepdefinitions.contains("programmingLanguage.invoked_step_definition"))
+  }
+
+  @Test //issue#29
+  def test_programmingLanguage_invoked_step_definition_is_invoked_when_invoking_step_definition{
+    assertFalse(invokedStepdefinitions.contains("programmingLanguage.invoked_step_definition"))
+    step("programmingLanguage.invoked_step_definition").invoke(array())
+    assertTrue(invokedStepdefinitions.contains("programmingLanguage.invoked_step_definition"))
   }
 
   //known limitation: call by name steps are defined 'f: => Unit' which gets converted to a 'f() => Unit'

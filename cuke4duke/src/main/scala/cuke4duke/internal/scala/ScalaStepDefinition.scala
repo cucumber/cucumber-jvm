@@ -1,12 +1,14 @@
 package cuke4duke.internal.scala
 
 import collection.immutable.TreeMap
-import cuke4duke.internal.language.{JdkPatternArgumentMatcher, StepDefinition}
 import _root_.java.util.regex.Pattern
 import cuke4duke.internal.JRuby
 import org.jruby.RubyArray
+import cuke4duke.internal.language.{ProgrammingLanguage, JdkPatternArgumentMatcher, StepDefinition}
 
-class ScalaStepDefinition(name:String, r: String, f: Any, types: List[Class[_]], conversions:TreeMap[Class[_], String => Option[_]]) extends StepDefinition {
+class ScalaStepDefinition(name:String, r: String, f: Any, types: List[Class[_]], conversions:TreeMap[Class[_], String => Option[_]], programmingLanguage:ProgrammingLanguage) extends StepDefinition {
+
+  programmingLanguage.availableStepDefinition(regexp_source, file_colon_line)
 
   private val pattern = Pattern.compile(r)
 
@@ -47,6 +49,7 @@ class ScalaStepDefinition(name:String, r: String, f: Any, types: List[Class[_]],
       case List(t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21) => f.asInstanceOf[Function21[Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, _]](t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21)
       case List(t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21, t22) => f.asInstanceOf[Function22[Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, _]](t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21, t22)
     }
+    programmingLanguage.invokedStepDefinition(regexp_source, file_colon_line)
   }
 
   private [this] def transform(args:List[String], types:List[Class[_]]) = {
@@ -71,5 +74,4 @@ class ScalaStepDefinition(name:String, r: String, f: Any, types: List[Class[_]],
         }
       }
     }
-
 }
