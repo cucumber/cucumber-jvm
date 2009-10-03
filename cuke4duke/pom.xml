@@ -85,6 +85,11 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>ioke.lang</groupId>
+      <artifactId>ikj</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
       <version>1.2.14</version>

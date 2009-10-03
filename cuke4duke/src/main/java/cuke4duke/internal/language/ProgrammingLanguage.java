@@ -16,13 +16,13 @@ public abstract class ProgrammingLanguage {
         this.languageMixin = languageMixin;
     }
 
-    final public RubyArray step_matches(String step_name, String formatted_step_name) {
+    final public RubyArray step_matches(String step_name, String formatted_step_name) throws Throwable {
         return JRuby.newArray(step_match_list(step_name, formatted_step_name));
     }
 
     public abstract void load_code_file(String file) throws Throwable;
 
-    public final List<IRubyObject> step_match_list(String step_name, String formatted_step_name) {
+    public final List<IRubyObject> step_match_list(String step_name, String formatted_step_name) throws Throwable {
         List<IRubyObject> matches = new ArrayList<IRubyObject>();
         for(StepDefinition stepDefinition : stepDefinitions){
             List<StepArgument> arguments = stepDefinition.arguments_from(step_name);
