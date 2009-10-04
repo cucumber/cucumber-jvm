@@ -17,6 +17,7 @@ public class JavaAnalyzer implements ClassAnalyzer {
             registerBeforeMaybe(method, classLanguage, objectFactory);
             registerStepDefinitionMaybe(method, classLanguage, objectFactory);
             registerAfterMaybe(method, classLanguage, objectFactory);
+            registerTransformMaybe(method, classLanguage, objectFactory);
         }
     }
 
