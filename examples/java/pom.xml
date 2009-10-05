@@ -74,6 +74,7 @@
           </jvmArgs>
           <!-- You may not need all of these arguments in your own project. We have a lot here for testing purposes... -->
           <cucumberArgs>
+            <cucumberArg>--backtrace</cucumberArg>
             <cucumberArg>--color</cucumberArg>
             <cucumberArg>--verbose</cucumberArg>
             <cucumberArg>--format</cucumberArg>
