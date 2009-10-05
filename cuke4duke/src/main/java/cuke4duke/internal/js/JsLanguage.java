@@ -1,7 +1,7 @@
 package cuke4duke.internal.js;
 
 import cuke4duke.internal.language.LanguageMixin;
-import cuke4duke.internal.language.ProgrammingLanguage;
+import cuke4duke.internal.language.AbstractProgrammingLanguage;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.NativeFunction;
 import org.mozilla.javascript.Scriptable;
@@ -13,7 +13,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JsLanguage extends ProgrammingLanguage {
+public class JsLanguage extends AbstractProgrammingLanguage {
     private static final String JS_DSL = "/cuke4duke/internal/js/js_dsl.js";
     private final List<String> jsFiles = new ArrayList<String>();
     private Context cx;

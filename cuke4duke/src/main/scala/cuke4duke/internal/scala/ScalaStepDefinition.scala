@@ -4,9 +4,9 @@ import collection.immutable.TreeMap
 import _root_.java.util.regex.Pattern
 import cuke4duke.internal.JRuby
 import org.jruby.RubyArray
-import cuke4duke.internal.language.{ProgrammingLanguage, JdkPatternArgumentMatcher, StepDefinition}
+import cuke4duke.internal.language.{AbstractProgrammingLanguage, JdkPatternArgumentMatcher, StepDefinition}
 
-class ScalaStepDefinition(name:String, r: String, f: Any, types: List[Class[_]], conversions:TreeMap[Class[_], String => Option[_]], programmingLanguage:ProgrammingLanguage) extends StepDefinition {
+class ScalaStepDefinition(name:String, r: String, f: Any, types: List[Class[_]], conversions:TreeMap[Class[_], String => Option[_]], programmingLanguage:AbstractProgrammingLanguage) extends StepDefinition {
 
   programmingLanguage.availableStepDefinition(regexp_source, file_colon_line)
 

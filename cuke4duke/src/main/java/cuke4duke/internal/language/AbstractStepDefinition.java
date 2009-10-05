@@ -5,9 +5,9 @@ import org.jruby.RubyArray;
 
 public abstract class AbstractStepDefinition implements StepDefinition {
     private final ArgumentsConverter argumentsConverter = new ArgumentsConverter();
-    private final ProgrammingLanguage programmingLanguage;
+    private final AbstractProgrammingLanguage programmingLanguage;
 
-    public AbstractStepDefinition(ProgrammingLanguage programmingLanguage) {
+    public AbstractStepDefinition(AbstractProgrammingLanguage programmingLanguage) {
         this.programmingLanguage = programmingLanguage;
     }
 
