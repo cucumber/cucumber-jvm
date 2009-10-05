@@ -32,7 +32,7 @@ class ScalaDslTest extends ScalaDsl with Norwegian {
   val invokedStepdefinitions = new ListBuffer[String]
   val availableStepdefinitions = new ListBuffer[String]
 
-  val programmingLanguage = new ProgrammingLanguage(new LanguageMixin{
+  val programmingLanguage = new AbstractProgrammingLanguage(new LanguageMixin{
     def invoked_step_definition(regexp_source: String, file_colon_line: String) = {
       invokedStepdefinitions += regexp_source
     }

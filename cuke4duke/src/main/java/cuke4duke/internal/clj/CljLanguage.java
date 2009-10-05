@@ -4,11 +4,11 @@ import clojure.lang.AFunction;
 import clojure.lang.Compiler;
 import clojure.lang.RT;
 import cuke4duke.internal.language.LanguageMixin;
-import cuke4duke.internal.language.ProgrammingLanguage;
+import cuke4duke.internal.language.AbstractProgrammingLanguage;
 
 import java.util.regex.Pattern;
 
-public class CljLanguage extends ProgrammingLanguage {
+public class CljLanguage extends AbstractProgrammingLanguage {
     private static CljLanguage instance;
 
     public CljLanguage(LanguageMixin languageMixin) throws Exception {

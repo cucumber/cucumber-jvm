@@ -1,6 +1,6 @@
 package cuke4duke.internal.jvmclass;
 
-import cuke4duke.internal.language.ProgrammingLanguage;
+import cuke4duke.internal.language.AbstractProgrammingLanguage;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -8,7 +8,7 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ClassLanguage extends ProgrammingLanguage {
+public class ClassLanguage extends AbstractProgrammingLanguage {
     private final ObjectFactory objectFactory;
     private final List<ClassAnalyzer> analyzers;
     private List<Class<?>> classes = new ArrayList<Class<?>>();
