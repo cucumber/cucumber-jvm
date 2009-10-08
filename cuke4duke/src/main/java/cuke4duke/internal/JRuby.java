@@ -39,7 +39,7 @@ public class JRuby {
         return error("Undefined", message);
     }
 
-    private static RaiseException error(String errorClass, String message) {
+    public static RaiseException error(String errorClass, String message) {
         RubyModule cucumber = getRuntime().getModule("Cucumber");
         RubyClass error = cucumber.getClass(errorClass);
         return new RaiseException(

@@ -3,6 +3,7 @@ package cuke4duke.internal.ik;
 import cuke4duke.internal.language.AbstractStepDefinition;
 import cuke4duke.internal.language.StepArgument;
 import cuke4duke.internal.Utils;
+import cuke4duke.internal.JRuby;
 import cuke4duke.Table;
 import ioke.lang.IokeObject;
 import ioke.lang.Message;
@@ -16,6 +17,10 @@ public class IkStepDefinition extends AbstractStepDefinition {
     private final Runtime ioke;
     private final IokeObject iokeStepDefObject;
     private String regexpSource;
+
+    public static void throwCucumberIokeException(String message) {
+        throw JRuby.error("IokeException", message);
+    }
 
     public IkStepDefinition(IkLanguage ikLanguage, Runtime ioke, IokeObject iokeStepDefObject) throws Throwable {
         super(ikLanguage);
@@ -31,15 +36,23 @@ public class IkStepDefinition extends AbstractStepDefinition {
     public void invokeWithJavaArgs(Object[] args) throws Throwable {
         IokeObject msg = ioke.newMessage("invoke");
         Message invoke = (Message) IokeObject.data(msg);
+        Object multilineArg;
 
         // TODO: Change Cucumber API so that we get an additional argument
         // telling us whether or not we have a multiline argument. Needed
         // to support multiline Strings.
         if(args[args.length-1] instanceof Table) {
-            invoke.sendTo(msg, iokeStepDefObject, iokeStepDefObject, args[args.length-1]);
+            multilineArg = args[args.length-1];
         } else {
-            invoke.sendTo(msg, iokeStepDefObject, iokeStepDefObject, IokeData.Nil);
+            multilineArg = IokeData.Nil;
         }
+        Object result = invoke.sendTo(msg, iokeStepDefObject, iokeStepDefObject, multilineArg);
+        // Maybe look at result to figure out whether or not to throw an exception
+        // It would be really nice if the exception had a stacktrace going back to the Ioke
+        // code. Maybe throwCucumberIokeException() needs to be called from within Ioke to
+        // achieve that?
+        //
+        // throwCucumberIokeException(msg);
     }
 
     public String regexp_source() throws Throwable {

@@ -1,6 +1,9 @@
-#require 'cucumber/clj_support/backtrace_filter'
+require 'cucumber/ik_support/backtrace_filter'
 require 'forwardable'
 module Cucumber
+  class IokeException < StandardError
+  end
+
   module IkSupport
     class IkLanguage
       extend Forwardable
