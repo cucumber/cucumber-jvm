@@ -64,7 +64,7 @@
       </plugins>
     </pluginManagement>
   </build>
-    
+
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -121,6 +121,11 @@
       <dependency>
         <groupId>ioke.lang</groupId>
         <artifactId>ikj</artifactId>
+        <version>0.4.0</version>
+      </dependency>
+      <dependency>
+        <groupId>ioke.lang</groupId>
+        <artifactId>ikj-lib</artifactId>
         <version>0.4.0</version>
       </dependency>
     </dependencies>
