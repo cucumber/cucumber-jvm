@@ -3,9 +3,11 @@ package cuke4duke.internal.ik;
 import cuke4duke.internal.language.AbstractStepDefinition;
 import cuke4duke.internal.language.StepArgument;
 import cuke4duke.internal.Utils;
+import cuke4duke.Table;
 import ioke.lang.IokeObject;
 import ioke.lang.Message;
 import ioke.lang.Runtime;
+import ioke.lang.IokeData;
 import ioke.lang.exceptions.ControlFlow;
 
 import java.util.List;
@@ -29,7 +31,15 @@ public class IkStepDefinition extends AbstractStepDefinition {
     public void invokeWithJavaArgs(Object[] args) throws Throwable {
         IokeObject msg = ioke.newMessage("invoke");
         Message invoke = (Message) IokeObject.data(msg);
-        invoke.sendTo(msg, iokeStepDefObject, iokeStepDefObject);
+
+        // TODO: Change Cucumber API so that we get an additional argument
+        // telling us whether or not we have a multiline argument. Needed
+        // to support multiline Strings.
+        if(args[args.length-1] instanceof Table) {
+            invoke.sendTo(msg, iokeStepDefObject, iokeStepDefObject, args[args.length-1]);
+        } else {
+            invoke.sendTo(msg, iokeStepDefObject, iokeStepDefObject, IokeData.Nil);
+        }
     }
 
     public String regexp_source() throws Throwable {

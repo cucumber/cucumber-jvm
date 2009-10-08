@@ -7,9 +7,8 @@ Cucumber = Origin mimic
 Cucumber StepDefinition = Origin mimic do(
   initialize = method(regexp, code,
     @regexp = regexp
-    args = @regexp names map(m, Message fromText(m asText))
-    args << code
-    @lexicalBlock = LexicalBlock createFrom(args, Ground)
+    @code = code
+    @arg_names = @regexp names map(m, Message fromText(m asText))
     self
   )
 
@@ -20,7 +19,7 @@ Cucumber StepDefinition = Origin mimic do(
   arguments_from = method(stepName,
     if(@regexp =~ stepName,
       args = ArrayList new
-      @captures = it captures
+      @arg_values = it captures
       it captures each(n, c,
         args add(cuke4duke:internal:language:StepArgument new(c, it start(n+1)))
       )
@@ -29,8 +28,16 @@ Cucumber StepDefinition = Origin mimic do(
     )
   )
 
-  invoke = method(
-    @lexicalBlock call(*(@captures))
+  invoke = method(multilineArg,
+    arg_names = @arg_names mimic
+    arg_values = @arg_values mimic
+    if(multilineArg,
+      arg_names << Message fromText("table" asText)
+      arg_values << multilineArg
+    )
+    arg_names << @code
+    lexicalBlock = LexicalBlock createFrom(arg_names, Ground)
+    lexicalBlock call(*(arg_values))
   )
 )
 
