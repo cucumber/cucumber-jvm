@@ -6,6 +6,7 @@ import cuke4duke.internal.Utils;
 import ioke.lang.IokeObject;
 import ioke.lang.Message;
 import ioke.lang.Runtime;
+import ioke.lang.exceptions.ControlFlow;
 
 import java.util.List;
 
@@ -26,9 +27,6 @@ public class IkStepDefinition extends AbstractStepDefinition {
     public void invokeWithJavaArgs(Object[] args) throws Throwable {
         IokeObject msg = ioke.newMessage("invoke");
         Message invoke = (Message) IokeObject.data(msg);
-        // We could pass the args, but I don't think it's needed. The ioke stepdef code block
-        // will access the arguments by group name instead. We just need to figure out a way to
-        // make them available.
         invoke.sendTo(msg, iokeStepDefObject, iokeStepDefObject);
     }
 

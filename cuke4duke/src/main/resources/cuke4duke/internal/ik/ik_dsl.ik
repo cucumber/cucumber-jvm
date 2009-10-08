@@ -1,3 +1,5 @@
+  use("ispec")
+
 import(java:util:ArrayList)
 
 Cucumber = Origin mimic
@@ -5,28 +7,27 @@ Cucumber = Origin mimic
 Cucumber StepDefinition = Origin mimic do(
   initialize = method(regexp, code,
     @regexp = regexp
-    @code = code
+    args = @regexp names map(m, Message fromText(m asText))
+    args << code
+    @lexicalBlock = LexicalBlock createFrom(args, Ground)
     self
   )
 
   arguments_from = method(stepName,
     if(@regexp =~ stepName,
       args = ArrayList new
-      n = 1
-      it captures each(c,
-        args add(cuke4duke:internal:language:StepArgument new(c, it start(n)))
-        n++
+      @captures = it captures
+      it captures each(n, c,
+        args add(cuke4duke:internal:language:StepArgument new(c, it start(n+1)))
       )
       args,
       nil
     )
   )
-  
+
   invoke = method(
-    ; TODO - invoke @code. Either pass the regexp match from above as single arg,
-    ; or do something magic to make it possible to access the args without using "it".
+    @lexicalBlock call(*(@captures))
   )
-  
 )
 
 
