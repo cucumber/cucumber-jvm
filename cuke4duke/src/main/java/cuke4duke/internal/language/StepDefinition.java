@@ -4,9 +4,11 @@ import org.jruby.RubyArray;
 
 import java.util.List;
 
+import ioke.lang.exceptions.ControlFlow;
+
 public interface StepDefinition {
-    String regexp_source();
-    String file_colon_line();
+    String regexp_source() throws Throwable;
+    String file_colon_line() throws Throwable;
 
     /**
      * Returns a list of arguments if our regexp matches stepName. If it doesn't

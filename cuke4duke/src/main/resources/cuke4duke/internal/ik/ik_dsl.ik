@@ -13,6 +13,10 @@ Cucumber StepDefinition = Origin mimic do(
     self
   )
 
+  regexp_source = method(
+    @regexp inspect
+  )
+
   arguments_from = method(stepName,
     if(@regexp =~ stepName,
       args = ArrayList new

@@ -28,19 +28,19 @@ public class GroovyDsl {
         languageMixin.add_hook("after", new GroovyHook(tagNames, body, groovyLanguage));
     }
 
-    public static void Given(Pattern regexp, Closure body) {
+    public static void Given(Pattern regexp, Closure body) throws Throwable {
         registerStepDefinition(regexp, body);
     }
 
-    public static void When(Pattern regexp, Closure body) {
+    public static void When(Pattern regexp, Closure body) throws Throwable {
         registerStepDefinition(regexp, body);
     }
 
-    public static void Then(Pattern regexp, Closure body) {
+    public static void Then(Pattern regexp, Closure body) throws Throwable {
         registerStepDefinition(regexp, body);
     }
 
-    private static void registerStepDefinition(Pattern regexp, Closure body) {
+    private static void registerStepDefinition(Pattern regexp, Closure body) throws Throwable {
         groovyLanguage.addStepDefinition(new GroovyStepDefinition(groovyLanguage, regexp, body));
     }
 }

@@ -19,7 +19,7 @@ public class IkLanguage extends ProgrammingLanguage {
         clearHooksAndStepDefinitions();
     }
 
-    public void addIokeStepDefinition(Object iokeStepDefObject) {
+    public void addIokeStepDefinition(Object iokeStepDefObject) throws Throwable {
         // Cast because of Ioke bug (?)
         addStepDefinition(new IkStepDefinition(this, ioke, (IokeObject) iokeStepDefObject));
     }

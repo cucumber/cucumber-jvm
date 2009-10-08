@@ -13,7 +13,7 @@ public class GroovyStepDefinition extends AbstractStepDefinition {
     private final Pattern regexp;
     private final Closure body;
 
-    public GroovyStepDefinition(GroovyLanguage groovyLanguage, Pattern regexp, Closure body) {
+    public GroovyStepDefinition(GroovyLanguage groovyLanguage, Pattern regexp, Closure body) throws Throwable {
         super(groovyLanguage);
         this.groovyLanguage = groovyLanguage;
         this.regexp = regexp;

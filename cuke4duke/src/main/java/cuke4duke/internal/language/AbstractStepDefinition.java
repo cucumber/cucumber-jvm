@@ -11,7 +11,7 @@ public abstract class AbstractStepDefinition implements StepDefinition {
         this.programmingLanguage = programmingLanguage;
     }
 
-    protected void register() {
+    protected void register() throws Throwable {
         programmingLanguage.availableStepDefinition(regexp_source(), file_colon_line());
     }
 

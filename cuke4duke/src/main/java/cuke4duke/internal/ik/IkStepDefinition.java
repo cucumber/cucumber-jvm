@@ -13,11 +13,13 @@ import java.util.List;
 public class IkStepDefinition extends AbstractStepDefinition {
     private final Runtime ioke;
     private final IokeObject iokeStepDefObject;
+    private String regexpSource;
 
-    public IkStepDefinition(IkLanguage ikLanguage, Runtime ioke, IokeObject iokeStepDefObject) {
+    public IkStepDefinition(IkLanguage ikLanguage, Runtime ioke, IokeObject iokeStepDefObject) throws Throwable {
         super(ikLanguage);
         this.ioke = ioke;
         this.iokeStepDefObject = iokeStepDefObject;
+        register();
     }
 
     protected Class<?>[] getParameterTypes(Object[] args) {
@@ -30,12 +32,13 @@ public class IkStepDefinition extends AbstractStepDefinition {
         invoke.sendTo(msg, iokeStepDefObject, iokeStepDefObject);
     }
 
-    public String regexp_source() {
-        return "/NOT_IMPLEMENTED/";
+    public String regexp_source() throws Throwable {
+        if(regexpSource == null) findRegexpSource();
+        return regexpSource;
     }
 
-    public String file_colon_line() {
-        return "NOT_IMPLEMENTED:-1";
+    public String file_colon_line() throws Throwable {
+        return regexp_source();
     }
 
     public List<StepArgument> arguments_from(String stepName) throws Throwable {
@@ -48,4 +51,11 @@ public class IkStepDefinition extends AbstractStepDefinition {
             return null;
         }
     }
+
+    private void findRegexpSource() throws ControlFlow {
+        IokeObject msg = ioke.newMessage("regexp_source");
+        Message regexp_source = (Message) IokeObject.data(msg);
+        regexpSource = regexp_source.sendTo(msg, iokeStepDefObject, iokeStepDefObject).toString();
+    }
+
 }

@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 
 public class JavaAnalyzer implements ClassAnalyzer {
 
-    public void populateStepDefinitionsAndHooksFor(Class<?> clazz, ObjectFactory objectFactory, ClassLanguage classLanguage) {
+    public void populateStepDefinitionsAndHooksFor(Class<?> clazz, ObjectFactory objectFactory, ClassLanguage classLanguage) throws Throwable {
         for (Method method : clazz.getMethods()) {
             registerBeforeMaybe(method, classLanguage, objectFactory);
             registerStepDefinitionMaybe(method, classLanguage, objectFactory);
@@ -27,7 +27,7 @@ public class JavaAnalyzer implements ClassAnalyzer {
         }
     }
 
-    private void registerStepDefinitionMaybe(Method method, ClassLanguage classLanguage, ObjectFactory objectFactory) {
+    private void registerStepDefinitionMaybe(Method method, ClassLanguage classLanguage, ObjectFactory objectFactory) throws Throwable {
         String regexpString = null;
         if (method.isAnnotationPresent(Given.class)) {
             regexpString = method.getAnnotation(Given.class).value();
