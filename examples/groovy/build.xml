@@ -27,7 +27,7 @@
       </classpath>
       <env key="GEM_PATH" value="${gem.home}"/>
       <arg value="-r"/>
-      <arg value="cuke4duke/cucumber_ext"/>
+      <arg value="cuke4duke"/>
       <arg value="${cucumber.bin}"/>
       <arg value="--color"/>
       <arg value="--format"/>

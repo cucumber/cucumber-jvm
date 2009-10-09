@@ -27,7 +27,7 @@
       <env key="GEM_PATH" value="${gem.home}"/>
       <jvmarg value="-Dcuke4duke.objectFactory=cuke4duke.internal.jvmclass.PicoFactorytory"/>
       <arg value="-r"/>
-      <arg value="cuke4duke/cucumber_ext"/>
+      <arg value="cuke4duke"/>
       <arg value="${cucumber.bin}"/>
       <arg value="--require"/>
       <arg value="target/test-classes"/>

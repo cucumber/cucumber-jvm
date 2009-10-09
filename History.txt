@@ -1,6 +1,7 @@
 == (In Git)
 
 === New features
+* Added a simpler way to add a new programming language. See clj_language.rb for an example. (Aslak Hellesøy)
 * The cucumber usage formatter is working, reporting defined, but unused step definitions. (Aslak Hellesøy)
 
 == 0.1.5 2009-09-27
