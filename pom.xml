@@ -121,12 +121,12 @@
       <dependency>
         <groupId>ioke.lang</groupId>
         <artifactId>ikj</artifactId>
-        <version>0.4.0</version>
+        <version>8a5e2b0b47847cf74200dfdd547b098900dbf83e</version>
       </dependency>
       <dependency>
         <groupId>ioke.lang</groupId>
         <artifactId>ikj-lib</artifactId>
-        <version>0.4.0</version>
+        <version>8a5e2b0b47847cf74200dfdd547b098900dbf83e</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

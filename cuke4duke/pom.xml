@@ -23,6 +23,13 @@
     </site>
   </distributionManagement>
 
+  <repositories>
+    <repository>
+      <id>ioke</id>
+      <url>file://${project.basedir}/../examples/ioke/maven</url>
+    </repository>
+  </repositories>
+
   <reporting>
     <plugins>
       <plugin>
