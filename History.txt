@@ -1,8 +1,17 @@
 == (In Git)
 
+IMPORTANT: You *must* upgrade to JRuby 1.4.0RC1 and Cucumber 0.4.0.
+
+There are several steps to this:
+1) rm -Rf ~/.m2/repository/.gem
+3) Change your POM to use JRuby 1.4.0RC1
+3) Change your POM to use Cucumber 0.4.0
+2) Run mvn integration-test once with -Dcucumber.installGems=true
+
 === New features
+* Upgraded to use Cucumber 0.4.0
 * Added a simpler way to add a new programming language. See clj_language.rb for an example. (Aslak Hellesøy)
-* The cucumber usage formatter is working, reporting defined, but unused step definitions. (Aslak Hellesøy)
+* The cucumber usage formatter is working, reporting unused step definitions. (Aslak Hellesøy)
 
 == 0.1.5 2009-09-27
 
