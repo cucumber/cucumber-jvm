@@ -20,7 +20,7 @@ public class JsStepDefinition extends AbstractStepDefinition {
     private final NativeFunction closure;
     private List<StepArgument> arguments;
 
-    public JsStepDefinition(JsLanguage programmingLanguage, Context cx, Scriptable scope, Global jsStepDefinition, NativeFunction argumentsFrom, NativeRegExp regexp, NativeFunction closure) {
+    public JsStepDefinition(JsLanguage programmingLanguage, Context cx, Scriptable scope, Global jsStepDefinition, NativeFunction argumentsFrom, NativeRegExp regexp, NativeFunction closure) throws Throwable {
         super(programmingLanguage);
         this.cx = cx;
         this.scope = scope;

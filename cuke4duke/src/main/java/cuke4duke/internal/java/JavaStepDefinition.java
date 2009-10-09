@@ -18,7 +18,7 @@ public class JavaStepDefinition extends AbstractStepDefinition {
     private final ObjectFactory objectFactory;
     private final Method method;
 
-    public JavaStepDefinition(ClassLanguage programmingLanguage, ObjectFactory objectFactory, Method method, Pattern regexp) {
+    public JavaStepDefinition(ClassLanguage programmingLanguage, ObjectFactory objectFactory, Method method, Pattern regexp) throws Throwable {
         super(programmingLanguage);
         this.objectFactory = objectFactory;
         this.method = method;

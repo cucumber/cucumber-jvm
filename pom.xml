@@ -38,6 +38,8 @@
     <profile>
       <id>examples</id>
       <modules>
+        <module>examples/ioke</module>
+        <module>examples/scala</module>
         <module>examples/java</module>
         <module>examples/clojure</module>
         <module>examples/scala</module>
@@ -63,7 +65,7 @@
       </plugins>
     </pluginManagement>
   </build>
-    
+
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -116,6 +118,16 @@
         <artifactId>js</artifactId>
         <version>1.7R2</version>
         <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>ioke.lang</groupId>
+        <artifactId>ikj</artifactId>
+        <version>8a5e2b0b47847cf74200dfdd547b098900dbf83e</version>
+      </dependency>
+      <dependency>
+        <groupId>ioke.lang</groupId>
+        <artifactId>ikj-lib</artifactId>
+        <version>8a5e2b0b47847cf74200dfdd547b098900dbf83e</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

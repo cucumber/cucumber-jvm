@@ -18,7 +18,7 @@ public class CljLanguage extends AbstractProgrammingLanguage {
         RT.load("cuke4duke/internal/clj/clj_dsl");
     }
 
-    public static void addStepDefinition(Pattern regexp, AFunction closure) throws Exception {
+    public static void addStepDefinition(Pattern regexp, AFunction closure) throws Throwable {
         instance.addStepDefinition(new CljStepDefinition(instance, regexp, closure));
     }
 

@@ -38,7 +38,7 @@ public class JsLanguage extends AbstractProgrammingLanguage {
         }
     }
 
-    public void addStepDefinition(Global jsStepDefinition, NativeFunction argumentsFrom, NativeRegExp regexp, NativeFunction closure) throws Exception {
+    public void addStepDefinition(Global jsStepDefinition, NativeFunction argumentsFrom, NativeRegExp regexp, NativeFunction closure) throws Throwable {
         addStepDefinition(new JsStepDefinition(this, cx, scope, jsStepDefinition, argumentsFrom, regexp, closure));
     }
 
