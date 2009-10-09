@@ -3,8 +3,8 @@ package cuke4duke.internal.clj;
 import clojure.lang.AFunction;
 import clojure.lang.Compiler;
 import clojure.lang.RT;
-import cuke4duke.internal.language.LanguageMixin;
 import cuke4duke.internal.language.AbstractProgrammingLanguage;
+import cuke4duke.internal.language.LanguageMixin;
 
 import java.util.regex.Pattern;
 

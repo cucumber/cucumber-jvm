@@ -1,8 +1,8 @@
 package cuke4duke.internal.clj;
 
 import clojure.lang.AFunction;
-import cuke4duke.internal.language.AbstractStepDefinition;
 import cuke4duke.internal.Utils;
+import cuke4duke.internal.language.AbstractStepDefinition;
 import cuke4duke.internal.language.JdkPatternArgumentMatcher;
 import cuke4duke.internal.language.StepArgument;
 

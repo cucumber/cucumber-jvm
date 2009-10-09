@@ -1,7 +1,7 @@
 package calc;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Calculator {
     List<Double> stack = new ArrayList<Double>();

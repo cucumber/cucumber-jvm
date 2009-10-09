@@ -1,7 +1,7 @@
 package cuke4duke.internal.js;
 
-import cuke4duke.internal.language.AbstractStepDefinition;
 import cuke4duke.internal.Utils;
+import cuke4duke.internal.language.AbstractStepDefinition;
 import cuke4duke.internal.language.StepArgument;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.NativeFunction;

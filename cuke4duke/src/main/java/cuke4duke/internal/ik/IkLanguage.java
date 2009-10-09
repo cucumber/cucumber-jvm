@@ -1,9 +1,9 @@
 package cuke4duke.internal.ik;
 
-import cuke4duke.internal.language.LanguageMixin;
 import cuke4duke.internal.language.AbstractProgrammingLanguage;
-import ioke.lang.Runtime;
+import cuke4duke.internal.language.LanguageMixin;
 import ioke.lang.IokeObject;
+import ioke.lang.Runtime;
 import ioke.lang.exceptions.ControlFlow;
 
 public class IkLanguage extends AbstractProgrammingLanguage {

@@ -1,8 +1,8 @@
 package cuke4duke.internal.groovy;
 
 import cuke4duke.GroovyDsl;
-import cuke4duke.internal.language.LanguageMixin;
 import cuke4duke.internal.language.AbstractProgrammingLanguage;
+import cuke4duke.internal.language.LanguageMixin;
 import groovy.lang.Binding;
 import groovy.lang.Closure;
 import groovy.lang.GroovyShell;

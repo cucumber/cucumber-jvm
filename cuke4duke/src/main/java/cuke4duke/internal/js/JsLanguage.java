@@ -1,7 +1,7 @@
 package cuke4duke.internal.js;
 
-import cuke4duke.internal.language.LanguageMixin;
 import cuke4duke.internal.language.AbstractProgrammingLanguage;
+import cuke4duke.internal.language.LanguageMixin;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.NativeFunction;
 import org.mozilla.javascript.Scriptable;

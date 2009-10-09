@@ -1,12 +1,10 @@
 package cuke4duke.internal;
 
+import cuke4duke.Table;
 import static junit.framework.Assert.assertTrue;
-
 import org.junit.Before;
 import org.junit.Test;
 import static org.mockito.Mockito.mock;
-
-import cuke4duke.Table;
 
 public class ArgumentsConverterTest {
 

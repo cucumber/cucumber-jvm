@@ -1,14 +1,14 @@
 package cuke4duke.internal.ik;
 
+import cuke4duke.Table;
+import cuke4duke.internal.JRuby;
+import cuke4duke.internal.Utils;
 import cuke4duke.internal.language.AbstractStepDefinition;
 import cuke4duke.internal.language.StepArgument;
-import cuke4duke.internal.Utils;
-import cuke4duke.internal.JRuby;
-import cuke4duke.Table;
+import ioke.lang.IokeData;
 import ioke.lang.IokeObject;
 import ioke.lang.Message;
 import ioke.lang.Runtime;
-import ioke.lang.IokeData;
 import ioke.lang.exceptions.ControlFlow;
 
 import java.util.List;

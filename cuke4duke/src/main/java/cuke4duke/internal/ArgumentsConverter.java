@@ -1,7 +1,6 @@
 package cuke4duke.internal;
 
 import static cuke4duke.internal.Utils.join;
-
 import org.jruby.RubyArray;
 
 /**

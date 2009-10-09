@@ -4,7 +4,8 @@ import cuke4duke.internal.JRuby;
 import org.jruby.RubyArray;
 import org.jruby.runtime.builtin.IRubyObject;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class AbstractProgrammingLanguage implements ProgrammignLanguage {
     protected final LanguageMixin languageMixin;
