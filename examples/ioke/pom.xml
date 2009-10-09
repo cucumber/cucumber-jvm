@@ -55,7 +55,7 @@
           <cucumberArgs>
             <cucumberArg>--color</cucumberArg>
             <cucumberArg>--verbose</cucumberArg>
-            <cucumberArg>--strict</cucumberArg>
+            <cucumberArg>--wip</cucumberArg>
           </cucumberArgs>
           <gems>
             <gem>cucumber --version 0.3.104 --source http://gems.rubyforge.org/</gem>
