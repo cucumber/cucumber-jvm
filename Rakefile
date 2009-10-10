@@ -11,12 +11,12 @@ end
 
 desc 'Release'
 task :release do
+  sh %{mvn clean -P examples install -Dcucumber.installGems=true}
+  Dir.chdir('cuke4duke') do
+    sh %{MAVEN_OPTS="-Xmx512m" mvn site:site site:deploy}
+  end
   version = IO.read('pom.xml').match(/<version>(.*)<\/version>/)[1]
-  # sh %{mvn clean -P examples install}
   sh %{mvn deploy}
-  # Dir.chdir('cuke4duke') do
-  #   sh %{mvn site:site site:deploy}
-  # end
   sh %{git commit -a -m "Release #{version}"}
   sh %{git tag -a "v#{version}" -m "Release #{version}"}
   sh %{git push}

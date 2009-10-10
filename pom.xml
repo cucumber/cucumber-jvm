@@ -20,6 +20,10 @@
       <name>Cucumber Maven Repo</name>
       <url>scp://cukes.info/home/6664/users/.home/domains/cukes.info/html/maven</url>
     </repository>
+    <site>
+      <id>cukes</id>
+      <url>scp://cukes.info/home/6664/users/.home/domains/cukes.info/html/cuke4duke</url>
+    </site>
   </distributionManagement>
 
   <repositories>
