@@ -1,3 +1,18 @@
+== In Git
+
+You can now call other steps by String:
+
+  @When("^I call another step$")
+  public void iCallAnotherStep() {
+      Given("it is magic");
+  }
+
+This is currently only supported if you use PicoContainer. Your Step Definition class must inherit from cuke4duke.Steps and 
+declare a dependency on cuke4duke.StepMother in the constructor.
+
+=== New Features
+* Enable Java step definitions to call other steps indirectly by just providing a string. (#26 Aslak Hellesøy)
+
 == 0.4.0 2009-10-09
 
 IMPORTANT: You *must* upgrade to JRuby 1.4.0RC1 and Cucumber 0.4.0.
