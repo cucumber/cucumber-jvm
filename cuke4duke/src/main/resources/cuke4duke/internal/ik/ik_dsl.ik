@@ -5,9 +5,10 @@ import(java:util:ArrayList)
 Cucumber = Origin mimic
 
 Cucumber StepDefinition = Origin mimic do(
-  initialize = method(regexp, code,
+  initialize = method(regexp, code, tableName 'table,
     @regexp = regexp
     @code = code
+    @tableName = tableName
     @arg_names = @regexp names map(m, Message fromText(m asText))
     self
   )
@@ -32,7 +33,7 @@ Cucumber StepDefinition = Origin mimic do(
     arg_names = @arg_names mimic
     arg_values = @arg_values mimic
     if(multilineArg,
-      arg_names << Message fromText("table" asText)
+      arg_names << @tableName
       arg_values << multilineArg
     )
     arg_names << @code
@@ -44,7 +45,10 @@ Cucumber StepDefinition = Origin mimic do(
 
 Cucumber addStepDefinition = dmacro(
     [>regexp, code]
-    CucumberLanguage addIokeStepDefinition(Cucumber StepDefinition mimic(regexp, code))
+    CucumberLanguage addIokeStepDefinition(Cucumber StepDefinition mimic(regexp, code)),
+
+    [>regexp, tableName, code]
+    CucumberLanguage addIokeStepDefinition(Cucumber StepDefinition mimic(regexp, code, tableName))
   )
 
 Cucumber Given = Cucumber cell(:addStepDefinition)
