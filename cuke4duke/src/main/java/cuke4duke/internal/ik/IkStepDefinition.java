@@ -44,15 +44,9 @@ public class IkStepDefinition extends AbstractStepDefinition {
         if(args[args.length-1] instanceof Table) {
             multilineArg = args[args.length-1];
         } else {
-            multilineArg = IokeData.Nil;
+            multilineArg = ioke.nil;
         }
-        Object result = invoke.sendTo(msg, iokeStepDefObject, iokeStepDefObject, multilineArg);
-        // Maybe look at result to figure out whether or not to throw an exception
-        // It would be really nice if the exception had a stacktrace going back to the Ioke
-        // code. Maybe throwCucumberIokeException() needs to be called from within Ioke to
-        // achieve that?
-        //
-        // throwCucumberIokeException(msg);
+        invoke.sendTo(msg, iokeStepDefObject, iokeStepDefObject, multilineArg);
     }
 
     public String regexp_source() throws Throwable {
