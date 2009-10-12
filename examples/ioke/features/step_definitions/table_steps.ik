@@ -10,5 +10,9 @@ Given(#/^I have some ({what}\w+) dudes:$/,
 Given(#/^I have another ({collection}\w+) of some fine dudes:$/, dudes,
   collection should == "set"
   secondDude = dudes raw get(2) get(0)
-  firstDude asText should == "Sam"
+  secondDude asText should == "Sam"
+)
+
+Given(#/^I have a really long String:$/, solong,
+  solong should == "OMG\nSo\nbig!"
 )

@@ -5,10 +5,10 @@ import(java:util:ArrayList)
 Cucumber = Origin mimic
 
 Cucumber StepDefinition = Origin mimic do(
-  initialize = method(regexp, code, tableName 'table,
+  initialize = method(regexp, code, multilineArgName 'table,  ; multiline arg may ba a String or a Table, but Table is more common
     @regexp = regexp
     @code = code
-    @tableName = tableName
+    @multilineArgName = multilineArgName
     @arg_names = @regexp names map(m, Message fromText(m asText))
     self
   )
@@ -33,7 +33,7 @@ Cucumber StepDefinition = Origin mimic do(
     arg_names = @arg_names mimic
     arg_values = @arg_values mimic
     if(multilineArg,
-      arg_names << @tableName
+      arg_names << @multilineArgName
       arg_values << multilineArg
     )
     arg_names << @code

@@ -1,6 +1,7 @@
 package cuke4duke.internal;
 
 import static cuke4duke.internal.Utils.join;
+import cuke4duke.PyString;
 import org.jruby.RubyArray;
 
 /**
@@ -32,7 +33,11 @@ public class ArgumentsConverter {
             } else if (type.equals(Double.TYPE)) {
                 return Double.valueOf((String) arg);
             } else if (type.equals(String.class)) {
-                return String.valueOf(arg);
+                if(arg instanceof PyString) {
+                    return ((PyString) arg).to_s();
+                } else {
+                    return String.valueOf(arg);
+                }
             } else {
                 return type.cast(arg);
             }
