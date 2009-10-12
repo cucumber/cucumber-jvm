@@ -3,7 +3,7 @@ require 'forwardable'
 module Cuke4Duke
   class << self    
     # Defines a Ruby class for +lang+ that will delegate to cuke4duke.
-    def cuke4!(lang, define_step_definition=true)
+    def cuke4!(lang)
       require "cucumber/#{lang}_support/backtrace_filter"
 
       Cucumber.module_eval do
@@ -26,12 +26,6 @@ module Cuke4Duke
             end
           end)
         end)
-      end
-
-      if(define_step_definition)
-        eval("Java::Cuke4dukeInternal#{lang.capitalize}::#{lang.capitalize}StepDefinition").class_eval do
-          include Cucumber::LanguageSupport::StepDefinitionMethods
-        end
       end
     end
   end

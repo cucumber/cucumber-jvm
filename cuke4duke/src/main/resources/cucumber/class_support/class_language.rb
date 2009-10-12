@@ -1,6 +1,6 @@
 require 'cuke4duke/language_proxy'
 
-Cuke4Duke.cuke4!('class', false)
+Cuke4Duke.cuke4!('class')
 
 module Cucumber
   module ClassSupport
