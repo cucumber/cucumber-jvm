@@ -51,7 +51,13 @@ Cucumber addStepDefinition = dmacro(
     CucumberLanguage addIokeStepDefinition(Cucumber StepDefinition mimic(regexp, code, tableName))
   )
 
+Cucumber Pending = Condition mimic
 Cucumber Given = Cucumber cell(:addStepDefinition)
 Cucumber When  = Cucumber cell(:addStepDefinition)
 Cucumber Then  = Cucumber cell(:addStepDefinition)
+Cucumber pending = method(message "TODO",
+;  warn!("Not implemented yet")
+;  signal!(Cucumber Pending)
+)
+
 Ground mimic!(Cucumber)

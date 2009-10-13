@@ -12,3 +12,7 @@ Given(#/^I have another ({collection}\w+) of some fine dudes:$/, dudes,
   secondDude = dudes raw get(2) get(0)
   secondDude asText should == "Sam"
 )
+
+Then(#/^they should win the lotto twice$/,
+  pending
+)

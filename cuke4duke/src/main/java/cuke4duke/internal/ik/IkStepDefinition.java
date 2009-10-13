@@ -41,11 +41,14 @@ public class IkStepDefinition extends AbstractStepDefinition {
         // TODO: Change Cucumber API so that we get an additional argument
         // telling us whether or not we have a multiline argument. Needed
         // to support multiline Strings.
-        if(args[args.length-1] instanceof Table) {
+        if(args.length > 0 && (args[args.length-1] instanceof Table)) {
             multilineArg = args[args.length-1];
         } else {
             multilineArg = ioke.nil;
         }
+
+        // TODO: catch pending and resignal it
+        // TODO: catch expectation failures and resignal correctly
         invoke.sendTo(msg, iokeStepDefObject, iokeStepDefObject, multilineArg);
     }
 
