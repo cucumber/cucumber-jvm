@@ -1,12 +1,11 @@
 package cuke4duke.internal.language;
 
-import org.junit.Test;
-import org.junit.Before;
-import org.jruby.RubyArray;
-
-import java.lang.reflect.Method;
 import cuke4duke.Pending;
 import cuke4duke.internal.JRuby;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.lang.reflect.Method;
 
 public class MethodInvokerTest {
     private class SomethingWithPending {

@@ -1,6 +1,7 @@
 package cuke4duke.internal.jvmclass;
 
 import cuke4duke.internal.language.AbstractProgrammingLanguage;
+import cuke4duke.StepMother;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -13,7 +14,7 @@ public class ClassLanguage extends AbstractProgrammingLanguage {
     private final List<ClassAnalyzer> analyzers;
     private List<Class<?>> classes = new ArrayList<Class<?>>();
 
-    public ClassLanguage(ClassLanguageMixin languageMixin, List<ClassAnalyzer> analyzers) throws Throwable {
+    public ClassLanguage(ClassLanguageMixin languageMixin, StepMother stepMother, List<ClassAnalyzer> analyzers) throws Throwable {
         super(languageMixin);
         this.analyzers = analyzers;
         String className = System.getProperty("cuke4duke.objectFactory");
@@ -24,6 +25,7 @@ public class ClassLanguage extends AbstractProgrammingLanguage {
         Constructor<?> ctor = ofc.getConstructor();
         try {
             objectFactory = (ObjectFactory) ctor.newInstance();
+            objectFactory.addInstance(stepMother);
         } catch(InvocationTargetException e) {
             throw e.getTargetException();
         }

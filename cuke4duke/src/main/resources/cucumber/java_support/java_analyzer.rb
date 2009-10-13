@@ -1,7 +1,4 @@
 begin
-  class ::Java::Cuke4dukeInternalJava::JavaStepDefinition
-    include ::Cucumber::LanguageSupport::StepDefinitionMethods
-  end
   class ::Java::Cuke4dukeInternalJava::JavaAnalyzer
     def snippet_generator
       require 'cucumber/java_support/java_snippet_generator'

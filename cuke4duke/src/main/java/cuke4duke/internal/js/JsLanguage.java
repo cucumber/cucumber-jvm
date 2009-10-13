@@ -1,7 +1,7 @@
 package cuke4duke.internal.js;
 
-import cuke4duke.internal.language.LanguageMixin;
 import cuke4duke.internal.language.AbstractProgrammingLanguage;
+import cuke4duke.internal.language.LanguageMixin;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.NativeFunction;
 import org.mozilla.javascript.Scriptable;
@@ -38,7 +38,7 @@ public class JsLanguage extends AbstractProgrammingLanguage {
         }
     }
 
-    public void addStepDefinition(Global jsStepDefinition, NativeFunction argumentsFrom, NativeRegExp regexp, NativeFunction closure) throws Exception {
+    public void addStepDefinition(Global jsStepDefinition, NativeFunction argumentsFrom, NativeRegExp regexp, NativeFunction closure) throws Throwable {
         addStepDefinition(new JsStepDefinition(this, cx, scope, jsStepDefinition, argumentsFrom, regexp, closure));
     }
 

@@ -24,6 +24,10 @@ public class SpringFactory implements ObjectFactory {
     public void addClass(Class<?> clazz) {
     }
 
+    public void addInstance(Object instance) {
+        System.err.println("WARNING: Adding instances to Spring is not implemented.");
+    }
+
     @SuppressWarnings("unchecked")
 	public Object getComponent(Class<?> type) {
         List beans = new ArrayList(appContext.getBeansOfType(type).values());

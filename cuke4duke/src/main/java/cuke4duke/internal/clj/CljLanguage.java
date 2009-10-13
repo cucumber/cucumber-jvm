@@ -3,8 +3,8 @@ package cuke4duke.internal.clj;
 import clojure.lang.AFunction;
 import clojure.lang.Compiler;
 import clojure.lang.RT;
-import cuke4duke.internal.language.LanguageMixin;
 import cuke4duke.internal.language.AbstractProgrammingLanguage;
+import cuke4duke.internal.language.LanguageMixin;
 
 import java.util.regex.Pattern;
 
@@ -18,7 +18,7 @@ public class CljLanguage extends AbstractProgrammingLanguage {
         RT.load("cuke4duke/internal/clj/clj_dsl");
     }
 
-    public static void addStepDefinition(Pattern regexp, AFunction closure) throws Exception {
+    public static void addStepDefinition(Pattern regexp, AFunction closure) throws Throwable {
         instance.addStepDefinition(new CljStepDefinition(instance, regexp, closure));
     }
 
