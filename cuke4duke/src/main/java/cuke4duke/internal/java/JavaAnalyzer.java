@@ -21,6 +21,12 @@ public class JavaAnalyzer implements ClassAnalyzer {
         }
     }
 
+    private void registerTransformMaybe(Method method, ClassLanguage classLanguage, ObjectFactory objectFactory) {
+        if (method.isAnnotationPresent(Transform.class)) {
+            classLanguage.addTransformHook(new JavaHook(method, objectFactory));
+        }
+    }
+
     private void registerBeforeMaybe(Method method, ClassLanguage classLanguage, ObjectFactory objectFactory) {
         if (method.isAnnotationPresent(Before.class)) {
             List<String> tagNames = Arrays.asList(method.getAnnotation(Before.class).value().split(","));

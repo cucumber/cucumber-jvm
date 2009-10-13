@@ -1,47 +1,58 @@
 package cuke4duke.internal.java;
 
+import static junit.framework.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.MockitoAnnotations.initMocks;
 
-import java.util.Arrays;
-import java.util.List;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 
-import cuke4duke.app.HelloService;
-import cuke4duke.app.PicoContainerHelloService;
+import cuke4duke.Transform;
 import cuke4duke.internal.jvmclass.ClassLanguage;
 import cuke4duke.internal.jvmclass.ObjectFactory;
-import cuke4duke.internal.language.Hook;
-import cuke4duke.steps.PicoContainerSteps;
 
 public class JavaAnalyzerTest {
-    
+
     private JavaAnalyzer javaAnalyzer;
-    private TestTransformer transformer;
+    private ClassWithTransformer transformer;
     @Mock
     private ObjectFactory objectFactory;
     @Mock
     private ClassLanguage classLanguage;
-    
+
     public JavaAnalyzerTest() {
         initMocks(this);
         this.javaAnalyzer = new JavaAnalyzer();
-        this.transformer = new TestTransformer();
+        this.transformer = new ClassWithTransformer();
     }
-    
+
     @Test
-    public void shouldAddTransformToClassLanguage() {
-        List<String> tagNames = Arrays.asList("");
-        Hook transformer = new JavaHook(tagNames , method, objectFactory);
+    public void shouldAddTransformToClassLanguage() throws Throwable {
         javaAnalyzer.populateStepDefinitionsAndHooksFor(transformer.getClass(), objectFactory, classLanguage);
-        verify(classLanguage).addTransformer(Mockito.e);
-    }
-    
-    private class TestTransformer {
+        ArgumentCaptor<JavaHook> argument = ArgumentCaptor.forClass(JavaHook.class);
+        verify(classLanguage).addTransformHook(argument.capture());
+        JavaHook hook = argument.getValue();
         
+       for (Field field : hook.getClass().getDeclaredFields()) {
+           if (field.getDeclaringClass().isAssignableFrom(Method.class)) {
+               field.setAccessible(true);
+               assertEquals(((Method) field.get(hook)).getName(), transformer.getClass().getDeclaredMethods()[0]);
+           }
+       }
+    }
+
+    private class ClassWithTransformer {
+
+        @SuppressWarnings("unused")
+        @Transform
+        public int transformToInteger(String input) {
+            return Integer.valueOf(input);
+        }
+
     }
 
 }

@@ -1,13 +1,13 @@
 package cuke4duke.internal.jvmclass;
 
-import cuke4duke.internal.language.AbstractProgrammingLanguage;
-import cuke4duke.StepMother;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
+
+import cuke4duke.StepMother;
+import cuke4duke.internal.language.AbstractProgrammingLanguage;
 
 public class ClassLanguage extends AbstractProgrammingLanguage {
     private final ObjectFactory objectFactory;
@@ -71,4 +71,5 @@ public class ClassLanguage extends AbstractProgrammingLanguage {
         }
         throw new ClassNotFoundException("Couldn't determine class from file: " + classFile);
     }
+
 }

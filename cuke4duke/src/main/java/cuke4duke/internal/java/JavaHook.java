@@ -20,6 +20,13 @@ public class JavaHook extends AbstractHook {
         this.objectFactory = objectFactory;
         this.methodInvoker = new MethodInvoker(method);
     }
+    
+    public JavaHook(Method method, ObjectFactory objectFactory) {
+        super(null);
+        this.method = method;
+        this.objectFactory = objectFactory;
+        this.methodInvoker = new MethodInvoker(method);
+    }
 
     public void invoke(String location, IRubyObject scenario) throws Throwable {
         Object target = objectFactory.getComponent(method.getDeclaringClass());
