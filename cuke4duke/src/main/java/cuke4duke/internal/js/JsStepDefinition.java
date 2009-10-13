@@ -1,7 +1,7 @@
 package cuke4duke.internal.js;
 
-import cuke4duke.internal.language.AbstractStepDefinition;
 import cuke4duke.internal.Utils;
+import cuke4duke.internal.language.AbstractStepDefinition;
 import cuke4duke.internal.language.StepArgument;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.NativeFunction;
@@ -20,7 +20,7 @@ public class JsStepDefinition extends AbstractStepDefinition {
     private final NativeFunction closure;
     private List<StepArgument> arguments;
 
-    public JsStepDefinition(JsLanguage programmingLanguage, Context cx, Scriptable scope, Global jsStepDefinition, NativeFunction argumentsFrom, NativeRegExp regexp, NativeFunction closure) {
+    public JsStepDefinition(JsLanguage programmingLanguage, Context cx, Scriptable scope, Global jsStepDefinition, NativeFunction argumentsFrom, NativeRegExp regexp, NativeFunction closure) throws Throwable {
         super(programmingLanguage);
         this.cx = cx;
         this.scope = scope;

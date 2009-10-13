@@ -35,7 +35,7 @@ public class JavaAnalyzerTest {
     @Test
     public void shouldAddTransformToClassLanguage() {
         List<String> tagNames = Arrays.asList("");
-        Hook transformer = new JavaHook(tagNames , method, objectFactory)
+        Hook transformer = new JavaHook(tagNames , method, objectFactory);
         javaAnalyzer.populateStepDefinitionsAndHooksFor(transformer.getClass(), objectFactory, classLanguage);
         verify(classLanguage).addTransformer(Mockito.e);
     }

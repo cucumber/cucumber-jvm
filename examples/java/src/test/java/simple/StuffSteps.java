@@ -1,18 +1,9 @@
 package simple;
 
+import cuke4duke.*;
 import static org.junit.Assert.assertEquals;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import cuke4duke.Given;
-import cuke4duke.Pending;
-import cuke4duke.Table;
-import cuke4duke.Then;
-import cuke4duke.When;
+import java.util.*;
 
 // TODO: This is just testing a Map. We should have some own code to test!!
 public class StuffSteps {

@@ -1,9 +1,9 @@
 package cuke4duke.internal.java;
 
-import cuke4duke.internal.language.AbstractStepDefinition;
 import cuke4duke.internal.JRuby;
 import cuke4duke.internal.jvmclass.ClassLanguage;
 import cuke4duke.internal.jvmclass.ObjectFactory;
+import cuke4duke.internal.language.AbstractStepDefinition;
 import cuke4duke.internal.language.JdkPatternArgumentMatcher;
 import cuke4duke.internal.language.MethodInvoker;
 import cuke4duke.internal.language.StepArgument;
@@ -18,7 +18,7 @@ public class JavaStepDefinition extends AbstractStepDefinition {
     private final ObjectFactory objectFactory;
     private final Method method;
 
-    public JavaStepDefinition(ClassLanguage programmingLanguage, ObjectFactory objectFactory, Method method, Pattern regexp) {
+    public JavaStepDefinition(ClassLanguage programmingLanguage, ObjectFactory objectFactory, Method method, Pattern regexp) throws Throwable {
         super(programmingLanguage);
         this.objectFactory = objectFactory;
         this.method = method;

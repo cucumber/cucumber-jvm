@@ -5,7 +5,6 @@
 target
 test-output
 pkg
-*.jar
 *.iws
 *.ipr
 *.iml

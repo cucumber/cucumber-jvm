@@ -6,7 +6,7 @@
   <groupId>cuke4duke</groupId>
   <artifactId>parent</artifactId>
   <packaging>pom</packaging>
-  <version>0.1.6-SNAPSHOT</version>
+  <version>0.1.6</version>
   <name>Cuke4Duke Main Project</name>
   <url>http://cukes.info/</url>
 
@@ -20,6 +20,10 @@
       <name>Cucumber Maven Repo</name>
       <url>scp://cukes.info/home/6664/users/.home/domains/cukes.info/html/maven</url>
     </repository>
+    <site>
+      <id>cukes</id>
+      <url>scp://cukes.info/home/6664/users/.home/domains/cukes.info/html/cuke4duke</url>
+    </site>
   </distributionManagement>
 
   <repositories>
@@ -38,13 +42,14 @@
     <profile>
       <id>examples</id>
       <modules>
-        <module>examples/java</module>
-        <module>examples/scala</module>
-        <module>examples/clojure</module>
         <module>examples/javascript</module>
         <module>examples/groovy</module>
+        <module>examples/ioke</module>
+        <module>examples/scala</module>
+        <module>examples/java</module>
         <module>examples/celerity</module>
         <module>examples/spring</module>
+        <module>examples/clojure</module> <!-- Fails on windows. Can't load calculator.clj -->
       </modules>
     </profile>
   </profiles>
@@ -63,7 +68,7 @@
       </plugins>
     </pluginManagement>
   </build>
-    
+
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -87,7 +92,7 @@
       <dependency>
         <groupId>org.jruby</groupId>
         <artifactId>jruby-complete</artifactId>
-        <version>1.3.1</version>
+        <version>1.4.0RC1</version>
       </dependency>
       <dependency>
         <groupId>org.codehaus.groovy</groupId>
@@ -116,6 +121,16 @@
         <artifactId>js</artifactId>
         <version>1.7R2</version>
         <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>ioke.lang</groupId>
+        <artifactId>ikj</artifactId>
+        <version>8a5e2b0b47847cf74200dfdd547b098900dbf83e</version>
+      </dependency>
+      <dependency>
+        <groupId>ioke.lang</groupId>
+        <artifactId>ikj-lib</artifactId>
+        <version>8a5e2b0b47847cf74200dfdd547b098900dbf83e</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
