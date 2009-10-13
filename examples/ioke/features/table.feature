@@ -13,4 +13,4 @@ Feature: Table
       | Ola   | Sweden  |
       | Sam   | England |
       | Aslak | Norway  |
-    Then they should win the lotto twice
+    Then they should win the lotto too

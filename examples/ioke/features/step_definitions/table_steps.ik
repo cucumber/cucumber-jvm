@@ -13,6 +13,6 @@ Given(#/^I have another ({collection}\w+) of some fine dudes:$/, dudes,
   secondDude asText should == "Sam"
 )
 
-Then(#/^they should win the lotto twice$/,
+Then(#/^they should win the lotto too$/,
   pending
 )
