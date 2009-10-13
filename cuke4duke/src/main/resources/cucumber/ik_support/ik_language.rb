@@ -19,7 +19,7 @@ module Cucumber
       end
 
       def snippet_text(step_keyword, step_name, multiline_arg_class = nil)
-        "YAY A IOKE SNIPPET: #{step_keyword}, #{step_name}, #{multiline_arg_class}"
+        "#{step_keyword}(#/^#{step_name}$/,\n  pending\n)\n"
       end
     end
   end
