@@ -6,21 +6,19 @@ import org.jruby.runtime.builtin.IRubyObject;
 
 import java.util.*;
 
-public abstract class ProgrammingLanguage {
+public abstract class AbstractProgrammingLanguage implements ProgrammignLanguage {
     protected final LanguageMixin languageMixin;
     private List<StepDefinition> stepDefinitions;
     private List<Hook> befores;
     private List<Hook> afters;
 
-    public ProgrammingLanguage(LanguageMixin languageMixin) {
+    public AbstractProgrammingLanguage(LanguageMixin languageMixin) {
         this.languageMixin = languageMixin;
     }
 
     final public RubyArray step_matches(String step_name, String formatted_step_name) {
         return JRuby.newArray(step_match_list(step_name, formatted_step_name));
     }
-
-    public abstract void load_code_file(String file) throws Throwable;
 
     public final List<IRubyObject> step_match_list(String step_name, String formatted_step_name) {
         List<IRubyObject> matches = new ArrayList<IRubyObject>();

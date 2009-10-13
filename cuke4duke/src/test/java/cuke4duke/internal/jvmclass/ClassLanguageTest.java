@@ -7,10 +7,10 @@ import java.util.Collections;
 import org.junit.Before;
 import org.junit.Test;
 
-import cuke4duke.internal.language.ProgrammingLanguage;
+import cuke4duke.internal.language.ProgrammignLanguage;
 
 public class ClassLanguageTest {
-    private ProgrammingLanguage language;
+    private ProgrammignLanguage language;
 
     @Before
     public void createLanguage() throws Throwable {

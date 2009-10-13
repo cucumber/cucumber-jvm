@@ -38,7 +38,7 @@ public class ArgumentsConverter {
                 return type.cast(arg);
             }
         } catch(Exception e) {
-            throw new IllegalArgumentException("Sorry, cuke4duke doesn't know how to convert a " + arg + "(" + arg.getClass() + ") to type " + type, e);
+            throw new IllegalArgumentException("Sorry, cuke4duke doesn't know how to convert a " + arg + " (" + arg.getClass() + ") to type " + type, e);
         }
     }
 
