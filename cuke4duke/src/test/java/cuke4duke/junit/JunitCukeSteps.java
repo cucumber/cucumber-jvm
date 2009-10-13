@@ -1,11 +1,13 @@
 package cuke4duke.junit;
 
-import cuke4duke.*;
+import cuke4duke.Given;
+import cuke4duke.Table;
+import cuke4duke.Then;
+import cuke4duke.When;
+import static org.junit.Assert.assertEquals;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import static org.junit.Assert.assertEquals;
 
 public class JunitCukeSteps {
     private final Map<String,Integer> cukes = new HashMap<String,Integer>();

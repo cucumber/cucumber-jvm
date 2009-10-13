@@ -1,0 +1,99 @@
+<project xmlns:ivy="antlib:org.apache.ivy.ant" name="Cuke4Duke Java Demo" default="cucumber" basedir=".">
+  <property name="dotgem.parent" value="${basedir}/lib"/>
+  <property name="gem.home" value="${dotgem.parent}/.gem"/>
+  <property name="cucumber.bin" value="${gem.home}/bin/cucumber"/>
+
+  <target name="compile-steps" description="Compile test classes">
+    <mkdir dir="target/test-classes"/>
+    <javac srcdir="src/test/java" destdir="target/test-classes">
+      <classpath>
+        <fileset dir="lib">
+          <include name="**/*.jar"/>
+        </fileset>
+      </classpath>
+    </javac>
+  </target>
+
+  <target name="cucumber" depends="compile-steps" description="Run Cucumber">
+    <mkdir dir="target/junit-report"/>
+
+    <java classname="org.jruby.Main" fork="true" failonerror="true">
+      <classpath>
+        <fileset dir="lib">
+          <include name="**/*.jar"/>
+        </fileset>
+        <pathelement location="target/test-classes"/>
+      </classpath>
+      <env key="GEM_PATH" value="${gem.home}"/>
+      <jvmarg value="-Dcuke4duke.objectFactory=cuke4duke.internal.jvmclass.PicoFactory"/>
+      <arg value="-r"/>
+      <arg value="cuke4duke"/>
+      <arg value="${cucumber.bin}"/>
+      <arg value="--require"/>
+      <arg value="target/test-classes"/>
+      <arg value="--color"/>
+      <arg value="--format"/>
+      <arg value="pretty"/>
+      <arg value="--format"/>
+      <arg value="junit"/>
+      <arg value="--out"/>
+      <arg value="target/junit-report"/>
+      <arg value="features"/>
+    </java>
+  </target>
+
+  <target name="install-deps" depends="download-jars, install-gems" description="Install all dependencies"/>
+
+  <target name="download-jars" description="Download jars with ivy">
+    <ivy:retrieve/>
+  </target>
+
+  <target name="install-gems" description="Install gems">
+    <install-gem gem="cucumber" version="0.4.0" source="http://gems.rubyforge.org/" />
+    <install-gem gem="rspec" version="1.2.9" />
+    <!-- You can skip this if you're not on Windows -->
+    <install-gem gem="aslakhellesoy-ansicolor" version="1.0" source="http://gems.github.com/"/>
+  </target>
+
+  <macrodef name="install-gem">
+    <attribute name="gem"/>
+    <attribute name="version"/>
+    <attribute name="source" default="http://gems.rubyforge.org/"/>
+    
+    <sequential>
+      <java classname="org.jruby.Main" fork="true" failonerror="true">
+        <classpath>
+          <fileset dir="lib">
+            <include name="**/jruby*.jar"/>
+          </fileset>
+        </classpath>
+        <!-- Gems will go into lib/.gems --> 
+        <env key="HOME" value="${dotgem.parent}"/>
+        <arg value="-S"/>
+        <arg value="gem"/>
+        <arg value="install"/>
+        <arg value="--no-ri"/>
+        <arg value="--no-rdoc"/>
+        <arg value="--install-dir"/>
+        <arg value="${gem.home}"/>
+        <arg value="--source"/>
+        <arg value="@{source}"/>
+        <arg value="--version"/>
+        <arg value="@{version}"/>
+        <arg value="@{gem}"/>
+      </java>
+    </sequential>
+  </macrodef>
+
+  <target name="clean" description="Delete all generated artifacts">
+    <delete dir="${basedir}/target"/>
+  </target>
+
+  <target name="clean-deps" description="Delete all dependencies">
+    <delete dir="${basedir}/lib/.gem"/>
+    <delete>
+      <fileset dir="${basedir}/lib" includes=".jar"/>
+    </delete>
+  </target>
+
+</project>

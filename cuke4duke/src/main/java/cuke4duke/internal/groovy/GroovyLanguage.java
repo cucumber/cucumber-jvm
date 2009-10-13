@@ -1,19 +1,19 @@
 package cuke4duke.internal.groovy;
 
 import cuke4duke.GroovyDsl;
-import cuke4duke.internal.ArgumentsConverter;
+import cuke4duke.internal.language.AbstractProgrammingLanguage;
 import cuke4duke.internal.language.LanguageMixin;
-import cuke4duke.internal.language.ProgrammingLanguage;
 import groovy.lang.Binding;
 import groovy.lang.Closure;
 import groovy.lang.GroovyShell;
-import org.jruby.RubyArray;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
-public class GroovyLanguage extends ProgrammingLanguage {
-    private final GroovyShell shell;
+public class GroovyLanguage extends AbstractProgrammingLanguage {
+    private final List<String> groovyFiles = new ArrayList<String>();
     private Object currentWorld;
     private Closure worldFactory;
 
@@ -21,26 +21,28 @@ public class GroovyLanguage extends ProgrammingLanguage {
         super(languageMixin);
         GroovyDsl.groovyLanguage = this;
         GroovyDsl.languageMixin = languageMixin;
-        Binding binding = new Binding();
-        shell = new GroovyShell(binding);
     }
 
-    void invokeClosure(Closure body, RubyArray args) {
-        Object[] converted = new ArgumentsConverter().convert(body.getParameterTypes(), args);
+    void invokeClosure(Closure body, Object[] args) {
         body.setDelegate(currentWorld);
-        body.call(converted);
+        body.call(args);
     }
 
-    public void begin_scenario() {
+    public void prepareScenario() throws IOException {
+        clearHooksAndStepDefinitions();
+        worldFactory = null;
+        GroovyShell shell = new GroovyShell(new Binding());
+        for(String groovyFile : groovyFiles) {
+            shell.evaluate(new File(groovyFile));
+        }
         currentWorld = worldFactory == null ? new Object() : worldFactory.call();
     }
 
-    public void end_scenario() {
-        currentWorld = null;
+    public void cleanupScenario() {
     }
 
-    protected void load(String groovy_file) throws ClassNotFoundException, IOException {
-        shell.evaluate(new File(groovy_file));
+    public void load_code_file(String groovyFile) throws ClassNotFoundException, IOException {
+        groovyFiles.add(groovyFile);
     }
 
     public void registerWorldFactory(Closure worldFactory) {

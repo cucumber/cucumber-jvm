@@ -3,25 +3,25 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                       http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-    
+
   <parent>
     <groupId>cuke4duke</groupId>
     <artifactId>parent</artifactId>
     <relativePath>../pom.xml</relativePath>
-    <version>0.1.5-SNAPSHOT</version>
+    <version>0.1.6</version>
   </parent>
-  
+
   <artifactId>cuke4duke</artifactId>
   <packaging>jar</packaging>
   <name>Cuke4Duke</name>
   <description>Pure Java support for Cucumber</description>
 
-  <distributionManagement>
-    <site>
-      <id>cukes.info</id>
-      <url>scp://serveradmin%aslakhellesoy.com@cukes.info/home/6664/users/.home/domains/cukes.info/html/cuke4duke</url>
-    </site>
-  </distributionManagement>
+  <repositories>
+    <repository>
+      <id>ioke</id>
+      <url>file://${project.basedir}/../examples/ioke/maven</url>
+    </repository>
+  </repositories>
 
   <reporting>
     <plugins>
@@ -53,6 +53,14 @@
       <artifactId>groovy-all</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.clojure</groupId>
+      <artifactId>clojure</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>rhino</groupId>
+      <artifactId>js</artifactId>
+    </dependency>
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
     </dependency>
@@ -66,6 +74,25 @@
       <groupId>bsf</groupId>
       <artifactId>bsf</artifactId>
       <version>2.4.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.scala-lang</groupId>
+      <artifactId>scala-library</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.scala-lang</groupId>
+      <artifactId>scala-compiler</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>ioke.lang</groupId>
+      <artifactId>ikj</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>ioke.lang</groupId>
+      <artifactId>ikj-lib</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>log4j</groupId>
@@ -88,6 +115,20 @@
             <exclude>**/FeatureTest.java</exclude>
           </excludes>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.scala-tools</groupId>
+        <artifactId>maven-scala-plugin</artifactId>
+        <version>2.11</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>add-source</goal>
+              <goal>compile</goal>
+              <goal>testCompile</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>

@@ -4,7 +4,7 @@
 .settings
 target
 pkg
-*.jar
 *.iws
 *.ipr
 *.iml
+*.sw?

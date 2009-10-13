@@ -13,4 +13,12 @@ public class Utils {
         }
         return s;
     }
+
+    public static Class<?>[] objectClassArray(int n) {
+        Class<?>[] arr = new Class<?>[n];
+        for(int i = 0; i < n; i++) {
+            arr[i] = Object.class;
+        }
+        return arr;
+    }
 }

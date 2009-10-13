@@ -1,7 +1,0 @@
-h1. Simple Example
-
-This project demonstrates how to write step definitions in Java. The code under test is in Java.
-
-See "Ant":http://wiki.github.com/aslakhellesoy/cuke4duke/ant or 
-"Maven":http://wiki.github.com/aslakhellesoy/cuke4duke/maven for details about how to run the example.
-
