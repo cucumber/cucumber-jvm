@@ -8,3 +8,4 @@ pkg
 *.ipr
 *.iml
 *.sw?
+.idea

@@ -1,5 +1,7 @@
 == In Git
 
+This is an exciting new release with several great new features.
+
 You can now call other steps by String:
 
   @When("^I call another step$")
@@ -10,7 +12,10 @@ You can now call other steps by String:
 This is currently only supported if you use PicoContainer. Your Step Definition class must inherit from cuke4duke.Steps and 
 declare a dependency on cuke4duke.StepMother in the constructor.
 
+Another great new feature is support for Guice. Cuke4Duke now supports three DI containers.
+
 === New Features
+* Guice support (Henning Jensen)
 * Enable Java step definitions to call other steps indirectly by just providing a string. (#26 Aslak Hellesøy)
 
 == 0.1.6 2009-10-09

@@ -24,6 +24,9 @@ public class BillingSteps {
 
     @Given("^I have a transaction$")
     public void iHaveATransaction() {
+		if(transaction != null) {
+			throw new RuntimeException("Wait what? The instance is shared across scenarios?");
+		}
         transaction = new Transaction("12345678", new BigDecimal("50.00"));
     }
 

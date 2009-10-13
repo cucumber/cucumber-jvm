@@ -42,6 +42,7 @@
     <profile>
       <id>examples</id>
       <modules>
+        <module>examples/guice</module>
         <module>examples/javascript</module>
         <module>examples/groovy</module>
         <module>examples/ioke</module>
@@ -50,7 +51,6 @@
         <module>examples/celerity</module>
         <module>examples/spring</module>
         <module>examples/clojure</module> <!-- Fails on windows. Can't load calculator.clj -->
-        <module>examples/guice</module>
       </modules>
     </profile>
   </profiles>
