@@ -18,8 +18,8 @@ public class IkStepDefinition extends AbstractStepDefinition {
     private final Runtime ioke;
     private final IokeObject iokeStepDefObject;
     private String regexpSource;
+    private final IkLanguage lang;
 
-	// Not used yet
     public static void throwCucumberIokeException(String message) {
         throw JRuby.error("IokeException", message);
     }
@@ -28,6 +28,7 @@ public class IkStepDefinition extends AbstractStepDefinition {
         super(ikLanguage);
         this.ioke = ioke;
         this.iokeStepDefObject = iokeStepDefObject;
+        this.lang = ikLanguage;
         register();
     }
 
@@ -39,27 +40,33 @@ public class IkStepDefinition extends AbstractStepDefinition {
         IokeObject msg = ioke.newMessage("invoke");
         Message invoke = (Message) IokeObject.data(msg);
 
-        // TODO: catch expectation failures and resignal correctly
         List<Runtime.RescueInfo> pendingRescues = new ArrayList<Runtime.RescueInfo>();
         IokeObject rr = IokeObject.as(((Message)IokeObject.data(ioke.mimic)).sendTo(ioke.mimic, ioke.ground, ioke.rescue), ioke.ground);
         List<Object> conds = new ArrayList();
-        final IokeObject pendingCondition = IokeObject.as(IokeObject.getCellChain(ioke.condition,
-                                                                                  ioke.message,
-                                                                                  ioke.ground,
-                                                                                  "Pending"), ioke.ground);
-        conds.add(pendingCondition);
+        conds.add(lang.pendingCondition);
         pendingRescues.add(new Runtime.RescueInfo(rr, conds, pendingRescues, ioke.getBindIndex()));
         ioke.registerRescues(pendingRescues);
+
+
+        List<Runtime.RescueInfo> failureRescues = new ArrayList<Runtime.RescueInfo>();
+        IokeObject rr2 = IokeObject.as(((Message)IokeObject.data(ioke.mimic)).sendTo(ioke.mimic, ioke.ground, ioke.rescue), ioke.ground);
+        List<Object> failureConds = new ArrayList();
+        failureConds.add(lang.failedExpectationCondition);
+        failureRescues.add(new Runtime.RescueInfo(rr2, failureConds, failureRescues, ioke.getBindIndex()));
+        ioke.registerRescues(failureRescues);
+
         try {
 	        invoke.sendTo(msg, iokeStepDefObject, iokeStepDefObject, multilineArg(args));
         } catch(ControlFlow.Rescue e) {
             if(e.getRescue().token == pendingRescues) {
                 throw JRuby.cucumberPending("TODO");
-                //                throw (Exception)(e.getCondition().getCell(ioke.message, ioke.ground, "rootException"));
+            } else if(e.getRescue().token == failureRescues) {
+                throwCucumberIokeException(((Message)IokeObject.data(ioke.reportMessage)).sendTo(ioke.reportMessage, ioke.ground, e.getCondition()).toString());
             } else {
                 throw e;
             }
         } finally {
+            ioke.unregisterRescues(failureRescues);
             ioke.unregisterRescues(pendingRescues);
         }
     }
