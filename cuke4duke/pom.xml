@@ -16,6 +16,13 @@
   <name>Cuke4Duke</name>
   <description>Pure Java support for Cucumber</description>
 
+  <repositories>
+    <repository>
+      <id>ioke</id>
+      <url>file://${project.basedir}/../examples/ioke/maven</url>
+    </repository>
+  </repositories>
+  
   <reporting>
     <plugins>
       <plugin>
