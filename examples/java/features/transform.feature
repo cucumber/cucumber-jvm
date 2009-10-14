@@ -1,3 +1,4 @@
+@transform
 Feature: Step argument transformations
   In order to maintain modularity within step definitions
   As a step definition editor
