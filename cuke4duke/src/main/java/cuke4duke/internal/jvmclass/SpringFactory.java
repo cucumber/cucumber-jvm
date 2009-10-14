@@ -1,19 +1,21 @@
 package cuke4duke.internal.jvmclass;
 
-import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.FactoryBean;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.support.StaticApplicationContext;
+
+import cuke4duke.StepMother;
+
 public class SpringFactory implements ObjectFactory {
-    private final AbstractApplicationContext appContext;
-
-    public SpringFactory() {
-        String springXml = System.getProperty("cuke4duke.springXml", "cucumber.xml");
-        appContext = new ClassPathXmlApplicationContext(springXml);
-    }
-
+    
+    private AbstractApplicationContext appContext;
+    private static ThreadLocal<StepMother> mother = new ThreadLocal<StepMother>();
+    
     public void createObjects() {
         appContext.refresh();
     }
@@ -24,8 +26,20 @@ public class SpringFactory implements ObjectFactory {
     public void addClass(Class<?> clazz) {
     }
 
-    public void addInstance(Object instance) {
-        System.err.println("WARNING: Adding instances to Spring is not implemented.");
+    public void addStepMother(StepMother instance) {
+        if (appContext == null) {
+            mother.set(instance);
+            
+            StaticApplicationContext parent = new StaticApplicationContext();
+            parent.registerSingleton("stepMother", StepMotherFactory.class);
+            parent.refresh();
+            
+            String springXml = System.getProperty("cuke4duke.springXml", "cucumber.xml");
+            appContext = new ClassPathXmlApplicationContext(new String[]{springXml}, parent);
+            if (mother.get() != null) {
+                throw new IllegalStateException("Expected ObjectMotherFactory to snatch up the thread local. Concurrent runs?");
+            }
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -35,6 +49,25 @@ public class SpringFactory implements ObjectFactory {
             return beans.get(0);
         } else {
             throw new RuntimeException("Found " + beans.size() + " Beans for class " + type + ". Expected exactly 1.");
+        }
+    }
+    
+    static class StepMotherFactory implements FactoryBean, InitializingBean {
+        private StepMother mother;
+        
+        public void afterPropertiesSet() throws Exception {
+            this.mother = SpringFactory.mother.get();
+            SpringFactory.mother.set(null);
+        }
+        
+        public Object getObject() throws Exception {
+            return mother;
+        }
+        public Class<StepMother> getObjectType() {
+            return StepMother.class;
+        }
+        public boolean isSingleton() {
+            return true;
         }
     }
 }

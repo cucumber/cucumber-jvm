@@ -25,7 +25,7 @@ public class ClassLanguage extends AbstractProgrammingLanguage {
         Constructor<?> ctor = ofc.getConstructor();
         try {
             objectFactory = (ObjectFactory) ctor.newInstance();
-            objectFactory.addInstance(stepMother);
+            objectFactory.addStepMother(stepMother);
         } catch(InvocationTargetException e) {
             throw e.getTargetException();
         }

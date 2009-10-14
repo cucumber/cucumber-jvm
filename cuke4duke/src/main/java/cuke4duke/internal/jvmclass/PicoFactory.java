@@ -3,6 +3,8 @@ package cuke4duke.internal.jvmclass;
 import org.picocontainer.MutablePicoContainer;
 import org.picocontainer.PicoBuilder;
 
+import cuke4duke.StepMother;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +33,7 @@ public class PicoFactory implements ObjectFactory {
         classes.add(clazz);
     }
 
-    public void addInstance(Object instance) {
+    public void addStepMother(StepMother instance) {
         instances.add(instance);
     }
 
