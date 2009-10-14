@@ -1,7 +1,9 @@
 package cuke4duke.internal.language;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.jruby.RubyArray;
 import org.jruby.runtime.builtin.IRubyObject;
@@ -13,7 +15,7 @@ public abstract class AbstractProgrammingLanguage implements ProgrammingLanguage
     private List<StepDefinition> stepDefinitions;
     private List<Hook> befores;
     private List<Hook> afters;
-    private List<Hook> transforms;
+    private Map<Class<?>, Hook> transforms;
 
     public AbstractProgrammingLanguage(LanguageMixin languageMixin) {
         this.languageMixin = languageMixin;
@@ -44,7 +46,7 @@ public abstract class AbstractProgrammingLanguage implements ProgrammingLanguage
     }
 
     protected void clearHooksAndStepDefinitions() {
-        transforms = new ArrayList<Hook>();
+        transforms = new HashMap<Class<?>, Hook>();
         befores = new ArrayList<Hook>();
         stepDefinitions = new ArrayList<StepDefinition>();
         afters = new ArrayList<Hook>();
@@ -57,8 +59,12 @@ public abstract class AbstractProgrammingLanguage implements ProgrammingLanguage
         cleanupScenario();
     }
     
-    public void addTransformHook(Hook transform) {
-        transforms.add(transform);
+    public final Map<Class<?>, Hook> getTransforms() {
+        return transforms;
+    }
+    
+    public void addTransformHook(Class<?> type, Hook transform) {
+        transforms.put(type, transform);
     }
 
     public void addBeforeHook(Hook before) {

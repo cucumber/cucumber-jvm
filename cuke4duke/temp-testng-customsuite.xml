@@ -1,0 +1,8 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="cuke4duke">
+  <test verbose="2" name="cuke4duke.internal.java.JavaAnalyzerTest" annotations="JDK">
+    <classes>
+      <class name="cuke4duke.internal.java.JavaAnalyzerTest"/>
+    </classes>
+  </test>
+</suite>

@@ -1,6 +1,7 @@
 package cuke4duke.internal.java;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.MockitoAnnotations.initMocks;
 
@@ -30,19 +31,24 @@ public class JavaAnalyzerTest {
         this.transformer = new ClassWithTransformer();
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void shouldAddTransformToClassLanguage() throws Throwable {
         javaAnalyzer.populateStepDefinitionsAndHooksFor(transformer.getClass(), objectFactory, classLanguage);
-        ArgumentCaptor<JavaHook> argument = ArgumentCaptor.forClass(JavaHook.class);
-        verify(classLanguage).addTransformHook(argument.capture());
-        JavaHook hook = argument.getValue();
+        ArgumentCaptor<JavaHook> hookArgument = ArgumentCaptor.forClass(JavaHook.class);
+        ArgumentCaptor<Class> returnTypeArgument = ArgumentCaptor.forClass(Class.class);
+        verify(classLanguage).addTransformHook(returnTypeArgument.capture(), hookArgument.capture());
+        Class returnType = returnTypeArgument.getValue();
+        JavaHook hook = hookArgument.getValue();
         
-       for (Field field : hook.getClass().getDeclaredFields()) {
-           if (field.getDeclaringClass().isAssignableFrom(Method.class)) {
-               field.setAccessible(true);
-               assertEquals(((Method) field.get(hook)).getName(), transformer.getClass().getDeclaredMethods()[0]);
-           }
-       }
+        assertTrue(returnType.isAssignableFrom(Integer.TYPE));
+
+        for (Field field : hook.getClass().getDeclaredFields()) {
+            if (field.getDeclaringClass().isAssignableFrom(Method.class)) {
+                field.setAccessible(true);
+                assertEquals(((Method) field.get(hook)).getName(), transformer.getClass().getDeclaredMethods()[0]);
+            }
+        }
     }
 
     private class ClassWithTransformer {

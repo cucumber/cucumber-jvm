@@ -22,10 +22,7 @@ public class JavaHook extends AbstractHook {
     }
     
     public JavaHook(Method method, ObjectFactory objectFactory) {
-        super(null);
-        this.method = method;
-        this.objectFactory = objectFactory;
-        this.methodInvoker = new MethodInvoker(method);
+        this(null, method, objectFactory);
     }
 
     public void invoke(String location, IRubyObject scenario) throws Throwable {
