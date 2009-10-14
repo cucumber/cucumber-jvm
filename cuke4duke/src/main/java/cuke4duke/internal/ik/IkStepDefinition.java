@@ -11,6 +11,7 @@ import ioke.lang.Message;
 import ioke.lang.Runtime;
 import ioke.lang.exceptions.ControlFlow;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class IkStepDefinition extends AbstractStepDefinition {
@@ -18,6 +19,7 @@ public class IkStepDefinition extends AbstractStepDefinition {
     private final IokeObject iokeStepDefObject;
     private String regexpSource;
 
+	// Not used yet
     public static void throwCucumberIokeException(String message) {
         throw JRuby.error("IokeException", message);
     }
@@ -36,7 +38,30 @@ public class IkStepDefinition extends AbstractStepDefinition {
     public void invokeWithJavaArgs(Object[] args) throws Throwable {
         IokeObject msg = ioke.newMessage("invoke");
         Message invoke = (Message) IokeObject.data(msg);
-        invoke.sendTo(msg, iokeStepDefObject, iokeStepDefObject, multilineArg(args));
+
+        // TODO: catch expectation failures and resignal correctly
+        List<Runtime.RescueInfo> pendingRescues = new ArrayList<Runtime.RescueInfo>();
+        IokeObject rr = IokeObject.as(((Message)IokeObject.data(ioke.mimic)).sendTo(ioke.mimic, ioke.ground, ioke.rescue), ioke.ground);
+        List<Object> conds = new ArrayList();
+        final IokeObject pendingCondition = IokeObject.as(IokeObject.getCellChain(ioke.condition,
+                                                                                  ioke.message,
+                                                                                  ioke.ground,
+                                                                                  "Pending"), ioke.ground);
+        conds.add(pendingCondition);
+        pendingRescues.add(new Runtime.RescueInfo(rr, conds, pendingRescues, ioke.getBindIndex()));
+        ioke.registerRescues(pendingRescues);
+        try {
+	        invoke.sendTo(msg, iokeStepDefObject, iokeStepDefObject, multilineArg(args));
+        } catch(ControlFlow.Rescue e) {
+            if(e.getRescue().token == pendingRescues) {
+                throw JRuby.cucumberPending("TODO");
+                //                throw (Exception)(e.getCondition().getCell(ioke.message, ioke.ground, "rootException"));
+            } else {
+                throw e;
+            }
+        } finally {
+            ioke.unregisterRescues(pendingRescues);
+        }
     }
 
     public String regexp_source() throws Throwable {

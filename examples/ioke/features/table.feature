@@ -13,7 +13,7 @@ Feature: Table
       | Ola   | Sweden  |
       | Sam   | England |
       | Aslak | Norway  |
-    Then they should win the lotto
+    Then they should win the lotto too
 
   Scenario: Strings
     Given I have a really long String:
@@ -23,4 +23,3 @@ Feature: Table
       big!
       """
     Then just say something to make cucumber fail
-    

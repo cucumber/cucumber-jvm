@@ -42,9 +42,10 @@
     <profile>
       <id>examples</id>
       <modules>
+        <module>examples/guice</module>
+        <module>examples/ioke</module>
         <module>examples/javascript</module>
         <module>examples/groovy</module>
-        <module>examples/ioke</module>
         <module>examples/scala</module>
         <module>examples/java</module>
         <module>examples/celerity</module>
@@ -81,6 +82,12 @@
         <groupId>org.springframework</groupId>
         <artifactId>spring</artifactId>
         <version>2.5.6</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.google.inject</groupId>
+        <artifactId>guice</artifactId>
+        <version>2.0</version>
         <scope>provided</scope>
       </dependency>
       <dependency>
@@ -125,12 +132,12 @@
       <dependency>
         <groupId>ioke.lang</groupId>
         <artifactId>ikj</artifactId>
-        <version>8a5e2b0b47847cf74200dfdd547b098900dbf83e</version>
+        <version>0.4.0-1</version>
       </dependency>
       <dependency>
         <groupId>ioke.lang</groupId>
         <artifactId>ikj-lib</artifactId>
-        <version>8a5e2b0b47847cf74200dfdd547b098900dbf83e</version>
+        <version>0.4.0-1</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

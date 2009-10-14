@@ -16,13 +16,6 @@
   <name>Cuke4Duke</name>
   <description>Pure Java support for Cucumber</description>
 
-  <repositories>
-    <repository>
-      <id>ioke</id>
-      <url>file://${project.basedir}/../examples/ioke/maven</url>
-    </repository>
-  </repositories>
-
   <reporting>
     <plugins>
       <plugin>
@@ -43,6 +36,10 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.google.inject</groupId>
+      <artifactId>guice</artifactId>
     </dependency>
     <dependency>
       <groupId>org.jruby</groupId>
@@ -87,12 +84,10 @@
     <dependency>
       <groupId>ioke.lang</groupId>
       <artifactId>ikj</artifactId>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>ioke.lang</groupId>
       <artifactId>ikj-lib</artifactId>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>log4j</groupId>
