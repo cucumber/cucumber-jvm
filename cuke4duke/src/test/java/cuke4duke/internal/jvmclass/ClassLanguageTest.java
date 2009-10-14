@@ -1,6 +1,6 @@
 package cuke4duke.internal.jvmclass;
 
-import cuke4duke.internal.language.ProgrammignLanguage;
+import cuke4duke.internal.language.ProgrammingLanguage;
 import cuke4duke.StepMother;
 import org.junit.Before;
 import org.junit.Test;
@@ -9,7 +9,7 @@ import static org.mockito.Mockito.mock;
 import java.util.Collections;
 
 public class ClassLanguageTest {
-    private ProgrammignLanguage language;
+    private ProgrammingLanguage language;
 
     @Before
     public void createLanguage() throws Throwable {

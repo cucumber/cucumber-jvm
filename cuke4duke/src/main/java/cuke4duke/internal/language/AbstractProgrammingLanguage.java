@@ -8,7 +8,7 @@ import org.jruby.runtime.builtin.IRubyObject;
 
 import cuke4duke.internal.JRuby;
 
-public abstract class AbstractProgrammingLanguage implements ProgrammignLanguage {
+public abstract class AbstractProgrammingLanguage implements ProgrammingLanguage {
     protected final LanguageMixin languageMixin;
     private List<StepDefinition> stepDefinitions;
     private List<Hook> befores;
