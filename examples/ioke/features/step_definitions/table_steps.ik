@@ -16,3 +16,7 @@ Given(#/^I have another ({collection}\w+) of some fine dudes:$/, dudes,
 Then(#/^they should win the lotto too$/,
   pending
 )
+
+Given(#/^I have a really long String:$/, solong,
+  solong should == "OMG\nSo\nbig!"
+)

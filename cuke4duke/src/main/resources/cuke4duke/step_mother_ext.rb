@@ -1,7 +1,7 @@
-import 'cuke4duke.internal.language.StepMother'
+import 'cuke4duke.StepMother'
 
 module Cucumber
   class StepMother
-    include Java.cuke4duke.internal.language.StepMother
+    include Java.cuke4duke.StepMother
   end
 end

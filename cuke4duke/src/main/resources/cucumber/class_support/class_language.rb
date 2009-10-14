@@ -1,6 +1,6 @@
 require 'cuke4duke/language_proxy'
 
-Cuke4Duke.cuke4!('class', false)
+Cuke4Duke.cuke4!('class')
 
 module Cucumber
   module ClassSupport
@@ -16,7 +16,7 @@ module Cucumber
       end
       
       def initialize(step_mother)
-        @delegate = ::Java::Cuke4dukeInternalJvmclass::ClassLanguage.new(self, self.class.analyzers)
+        @delegate = ::Java::Cuke4dukeInternalJvmclass::ClassLanguage.new(self, step_mother, self.class.analyzers)
       end
 
       def snippet_text(step_keyword, step_name, multiline_arg_class = nil)

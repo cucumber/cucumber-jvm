@@ -11,4 +11,5 @@ require 'java'
 Java.cuke4duke.internal.JRuby.setRuntime(JRuby.runtime)
 
 require 'cuke4duke/step_mother_ext'
+require 'cuke4duke/py_string_ext'
 require 'cuke4duke/table_ext'

@@ -14,3 +14,12 @@ Feature: Table
       | Sam   | England |
       | Aslak | Norway  |
     Then they should win the lotto too
+
+  Scenario: Strings
+    Given I have a really long String:
+      """
+      OMG
+      So
+      big!
+      """
+    Then just say something to make cucumber fail
