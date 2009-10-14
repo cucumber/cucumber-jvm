@@ -26,9 +26,9 @@ public class SpringFactory implements ObjectFactory {
     public void addClass(Class<?> clazz) {
     }
 
-    public void addInstance(Object instance) {
+    public void addStepMother(StepMother instance) {
         if (appContext == null) {
-            mother.set((StepMother) instance);
+            mother.set(instance);
             
             StaticApplicationContext parent = new StaticApplicationContext();
             parent.registerSingleton("stepMother", StepMotherFactory.class);
