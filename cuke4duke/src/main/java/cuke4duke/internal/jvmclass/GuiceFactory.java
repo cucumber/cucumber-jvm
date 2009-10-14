@@ -8,6 +8,7 @@ import java.util.List;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
+import cuke4duke.StepMother;
 
 /**
  * @author Henning Jensen
@@ -28,7 +29,8 @@ public class GuiceFactory implements ObjectFactory {
         classes.add(clazz);
     }
 
-    public void addInstance(Object instance) {
+    public void addStepMother(StepMother mother) {
+        // Not supported yet.
     }
 
     public void createObjects() {
