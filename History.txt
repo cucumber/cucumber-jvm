@@ -14,9 +14,12 @@ declare a dependency on cuke4duke.StepMother in the constructor.
 
 Another great new feature is support for Guice. Cuke4Duke now supports three DI containers.
 
+Ioke now supports snippets and has better error reporting.
+
 === New Features
 * Guice support (Henning Jensen)
 * Enable Java step definitions to call other steps indirectly by just providing a string. (#26 Aslak Hellesøy)
+* Ioke snippets and better error reporting. (Ola Bini)
 
 == 0.1.6 2009-10-09
 

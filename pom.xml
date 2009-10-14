@@ -43,9 +43,9 @@
       <id>examples</id>
       <modules>
         <module>examples/guice</module>
+        <module>examples/ioke</module>
         <module>examples/javascript</module>
         <module>examples/groovy</module>
-        <module>examples/ioke</module>
         <module>examples/scala</module>
         <module>examples/java</module>
         <module>examples/celerity</module>
@@ -132,12 +132,12 @@
       <dependency>
         <groupId>ioke.lang</groupId>
         <artifactId>ikj</artifactId>
-        <version>8a5e2b0b47847cf74200dfdd547b098900dbf83e</version>
+        <version>0.4.0-1</version>
       </dependency>
       <dependency>
         <groupId>ioke.lang</groupId>
         <artifactId>ikj-lib</artifactId>
-        <version>8a5e2b0b47847cf74200dfdd547b098900dbf83e</version>
+        <version>0.4.0-1</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
