@@ -6,7 +6,7 @@
   <groupId>cuke4duke</groupId>
   <artifactId>cuke4duke-java-example</artifactId>
   <packaging>jar</packaging>
-  <version>0.1.7</version>
+  <version>0.1.8-SNAPSHOT</version>
   <name>Cuke4Duke Java Example</name>
   <url>http://cukes.info/</url>
 
@@ -32,7 +32,7 @@
     <dependency>
       <groupId>cuke4duke</groupId>
       <artifactId>cuke4duke</artifactId>
-      <version>0.1.7</version>
+      <version>0.1.8-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>

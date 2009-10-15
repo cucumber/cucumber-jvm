@@ -4,7 +4,7 @@
   <groupId>cuke4duke</groupId>
   <artifactId>cuke4duke-celerity-example</artifactId>
   <packaging>war</packaging>
-  <version>0.1.7</version>
+  <version>0.1.8-SNAPSHOT</version>
   <name>Cuke4Duke Celerity Example</name>
   <url>http://maven.apache.org</url>
 
