@@ -8,6 +8,9 @@ import ioke.lang.exceptions.ControlFlow;
 
 public class IkLanguage extends AbstractProgrammingLanguage {
     private final Runtime ioke;
+    final IokeObject pendingCondition;
+    final IokeObject failedExpectationCondition;
+
 
     public IkLanguage(LanguageMixin languageMixin) throws Exception, ControlFlow {
         super(languageMixin);
@@ -17,6 +20,17 @@ public class IkLanguage extends AbstractProgrammingLanguage {
         ioke.ground.setCell("CucumberLanguage", this);
         ioke.evaluateString("use(\"cuke4duke/internal/ik/ik_dsl\")");
         clearHooksAndStepDefinitions();
+
+        pendingCondition = IokeObject.as(IokeObject.getCellChain(ioke.condition,
+                                                                 ioke.message,
+                                                                 ioke.ground,
+                                                                 "Pending"), ioke.ground);
+
+        failedExpectationCondition = IokeObject.as(IokeObject.getCellChain(ioke.condition,
+                                                                           ioke.message,
+                                                                           ioke.ground,
+                                                                           "ISpec",
+                                                                           "ExpectationNotMet"), ioke.ground);
     }
 
     public void addIokeStepDefinition(Object iokeStepDefObject) throws Throwable {
