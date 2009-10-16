@@ -38,6 +38,28 @@ public class JavaAnalyzerTest {
         ArgumentCaptor<JavaHook> hookArgument = ArgumentCaptor.forClass(JavaHook.class);
         ArgumentCaptor<Class> returnTypeArgument = ArgumentCaptor.forClass(Class.class);
         verify(classLanguage).addTransformHook(returnTypeArgument.capture(), hookArgument.capture());
+        
+        Class returnType = returnTypeArgument.getValue();
+        JavaHook hook = hookArgument.getValue();
+        
+        assertTrue(returnType.isAssignableFrom(Integer.TYPE));
+
+        for (Field field : hook.getClass().getDeclaredFields()) {
+            if (field.getDeclaringClass().isAssignableFrom(Method.class)) {
+                field.setAccessible(true);
+                assertEquals(((Method) field.get(hook)).getName(), transformer.getClass().getDeclaredMethods()[0]);
+            }
+        }
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Test
+    public void shouldAddDefaultJavaTransformsToClassLanguage() throws Throwable {
+        javaAnalyzer.populateStepDefinitionsAndHooksFor(transformer.getClass(), objectFactory, classLanguage);
+        ArgumentCaptor<JavaHook> hookArgument = ArgumentCaptor.forClass(JavaHook.class);
+        ArgumentCaptor<Class> returnTypeArgument = ArgumentCaptor.forClass(Class.class);
+        verify(classLanguage).addTransformHook(returnTypeArgument.capture(), hookArgument.capture());
+        
         Class returnType = returnTypeArgument.getValue();
         JavaHook hook = hookArgument.getValue();
         

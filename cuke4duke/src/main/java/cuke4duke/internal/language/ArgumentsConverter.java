@@ -1,14 +1,25 @@
-package cuke4duke.internal;
+package cuke4duke.internal.language;
 
 import static cuke4duke.internal.Utils.join;
-import cuke4duke.PyString;
+
+import java.util.Map;
+
 import org.jruby.RubyArray;
+
+import cuke4duke.PyString;
 
 /**
  * Converts the arguments that come from Cucumber to other types,
  * before they are sent in to step definitions.
  */
 public class ArgumentsConverter {
+    
+    private final Map<Class<?>, Hook> transforms;
+
+    public ArgumentsConverter(Map<Class<?>, Hook> transforms) {
+        this.transforms = transforms;
+    }
+
     public Object[] convert(Class<?>[] types, RubyArray args) {
         return convert(types, args.toArray());
     }
@@ -26,24 +37,26 @@ public class ArgumentsConverter {
 
     private Object convertObject(Class<?> type, Object arg) {
         try {
-            if (type.equals(Integer.TYPE)) {
-                return Integer.valueOf((String) arg);
-            } else if (type.equals(Long.TYPE)) {
-                return Long.valueOf((String) arg);
-            } else if (type.equals(Double.TYPE)) {
-                return Double.valueOf((String) arg);
-            } else if (type.equals(String.class)) {
-                if(arg instanceof PyString) {
-                    return ((PyString) arg).to_s();
-                } else {
-                    return String.valueOf(arg);
-                }
-            } else {
-                return type.cast(arg);
-            }
-        } catch(Exception e) {
+            Hook hook = transforms.get(type);
+            return type.cast(hook.invoke((String)arg, null));
+//            if (type.equals(Integer.TYPE)) {
+//                return Integer.valueOf((String) arg);
+//            } else if (type.equals(Long.TYPE)) {
+//                return Long.valueOf((String) arg);
+//            } else if (type.equals(Double.TYPE)) {
+//                return Double.valueOf((String) arg);
+//            } else if (type.equals(String.class)) {
+//                if(arg instanceof PyString) {
+//                    return ((PyString) arg).to_s();
+//                } else {
+//                    return String.valueOf(arg);
+//                }
+//            } else {
+//                return type.cast(arg);
+//            }
+        } catch(Throwable e) {
             throw new IllegalArgumentException("Sorry, cuke4duke doesn't know how to convert a " + arg + " (" + arg.getClass() + ") to type " + type, e);
-        }
+        } 
     }
 
     private void throwArgumentError(Class<?>[] types, Object[] objetcs) {
