@@ -30,16 +30,15 @@
 
   <dependencies>
     <dependency>
+      <groupId>rhino</groupId>
+      <artifactId>js</artifactId>
+      <version>1.7R2</version>
+    </dependency>
+    <dependency>
       <groupId>cuke4duke</groupId>
       <artifactId>cuke4duke</artifactId>
       <version>0.1.7</version>
       <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>rhino</groupId>
-      <artifactId>js</artifactId>
-      <version>1.7R2</version>
-      <scope>provided</scope>
     </dependency>
   </dependencies>
 
