@@ -17,7 +17,7 @@ public class ClassLanguage extends AbstractProgrammingLanguage {
     public ClassLanguage(ClassLanguageMixin languageMixin, StepMother stepMother, List<ClassAnalyzer> analyzers) throws Throwable {
         super(languageMixin);
         this.analyzers = analyzers;
-        String className = System.getProperty("cuke4duke.objectFactory");
+        String className = System.getProperty("cuke4duke.objectFactory", "cuke4duke.internal.jvmclass.PicoFactory");
         if(className == null) {
             throw new RuntimeException("Missing system property: cuke4duke.objectFactory");
         }
