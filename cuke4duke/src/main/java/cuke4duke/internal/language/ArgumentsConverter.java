@@ -14,9 +14,9 @@ import cuke4duke.PyString;
  */
 public class ArgumentsConverter {
     
-    private final Map<Class<?>, Hook> transforms;
+    private final Map<Class<?>, Transformable> transforms;
 
-    public ArgumentsConverter(Map<Class<?>, Hook> transforms) {
+    public ArgumentsConverter(Map<Class<?>, Transformable> transforms) {
         this.transforms = transforms;
     }
 
@@ -37,8 +37,17 @@ public class ArgumentsConverter {
 
     private Object convertObject(Class<?> type, Object arg) {
         try {
-            Hook hook = transforms.get(type);
-            return type.cast(hook.invoke((String)arg, null));
+            
+            if (type.equals(String.class)) {
+                if (arg instanceof PyString) {
+                    return ((PyString) arg).to_s();
+                } else {
+                    return String.valueOf(arg);
+                }
+            } else {
+                Transformable transform = transforms.get(type);
+                return transform.transform(type, arg);
+            }
 //            if (type.equals(Integer.TYPE)) {
 //                return Integer.valueOf((String) arg);
 //            } else if (type.equals(Long.TYPE)) {

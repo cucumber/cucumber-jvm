@@ -18,10 +18,11 @@ public class JavaTransform implements Transformable {
         this.methodInvoker = new MethodInvoker(method);
     }
 
-    public Class<?> transform(Class<?> returnType, Object arg) {
+    public Class<?> transform(Class<?> returnType, Object arg) throws Throwable {
         String argument = String.valueOf(arg);
         Object target = objectFactory.getComponent(method.getDeclaringClass());
-        return methodInvoker.invoke(target, new Object[]{argument});
+        methodInvoker.invoke(target, new Object[]{argument});
+        return null;
     }
 
 }

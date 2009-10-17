@@ -7,24 +7,24 @@ import java.lang.reflect.Method;
 import org.junit.Before;
 import org.junit.Test;
 
-import cuke4duke.internal.java.JavaHook;
+import cuke4duke.internal.java.JavaTransform;
 
 public class AbstractProgrammingLanguageTest {
 
     private Method method;
-    private JavaHook transformHook;
+    private JavaTransform transform;
 
     @Before
     public void setUp() {
-        this.transformHook = new JavaHook(method, null);
+        this.transform = new JavaTransform(method, null);
     }
 
     @Test
     public void shouldAddTransformHooksToTransformsMap() throws Throwable {
         AbstractProgrammingLanguage programmingLanguage = new TestProgrammingLanguage(null);
         programmingLanguage.prepareScenario();
-        programmingLanguage.addTransformHook(Integer.TYPE, transformHook);
-        assertEquals(transformHook, programmingLanguage.getTransforms().get(Integer.TYPE));
+        programmingLanguage.addTransform(Integer.TYPE, transform);
+        assertEquals(transform, programmingLanguage.getTransforms().get(Integer.TYPE));
     }
 
     private class TestProgrammingLanguage extends AbstractProgrammingLanguage {

@@ -23,7 +23,7 @@ public class JavaAnalyzer implements ClassAnalyzer {
 
     private void registerTransformMaybe(Method method, ClassLanguage classLanguage, ObjectFactory objectFactory) {
         if (method.isAnnotationPresent(Transform.class)) {
-            classLanguage.addTransformHook(method.getReturnType(), new JavaHook(method, objectFactory));
+            classLanguage.addTransform(method.getReturnType(), new JavaTransform(method, objectFactory));
         }
     }
 

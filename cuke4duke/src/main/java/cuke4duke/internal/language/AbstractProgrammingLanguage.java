@@ -15,7 +15,7 @@ public abstract class AbstractProgrammingLanguage implements ProgrammingLanguage
     private List<StepDefinition> stepDefinitions;
     private List<Hook> befores;
     private List<Hook> afters;
-    private Map<Class<?>, Hook> transforms;
+    private Map<Class<?>, Transformable> transforms;
 
     public AbstractProgrammingLanguage(LanguageMixin languageMixin) {
         this.languageMixin = languageMixin;
@@ -29,9 +29,9 @@ public abstract class AbstractProgrammingLanguage implements ProgrammingLanguage
 
     public final List<IRubyObject> step_match_list(String step_name, String formatted_step_name) throws Throwable {
         List<IRubyObject> matches = new ArrayList<IRubyObject>();
-        for(StepDefinition stepDefinition : stepDefinitions){
+        for (StepDefinition stepDefinition : stepDefinitions) {
             List<StepArgument> arguments = stepDefinition.arguments_from(step_name);
-            if(arguments != null){
+            if (arguments != null) {
                 matches.add(languageMixin.create_step_match(stepDefinition, step_name, formatted_step_name, arguments));
             }
         }
@@ -40,31 +40,31 @@ public abstract class AbstractProgrammingLanguage implements ProgrammingLanguage
 
     public final void begin_scenario() throws Throwable {
         prepareScenario();
-        for(Hook before : befores){
+        for (Hook before : befores) {
             before.invoke("before", null);
         }
     }
 
     protected void clearHooksAndStepDefinitions() {
-        transforms = new HashMap<Class<?>, Hook>();
+        transforms = new HashMap<Class<?>, Transformable>();
         befores = new ArrayList<Hook>();
         stepDefinitions = new ArrayList<StepDefinition>();
         afters = new ArrayList<Hook>();
     }
 
     public final void end_scenario() throws Throwable {
-        for(Hook after : afters){
+        for (Hook after : afters) {
             after.invoke("after", null);
         }
         cleanupScenario();
     }
-    
-    public final Map<Class<?>, Hook> getTransforms() {
+
+    public final Map<Class<?>, Transformable> getTransforms() {
         return transforms;
     }
-    
-    public void addTransformHook(Class<?> type, Hook transform) {
-        transforms.put(type, transform);
+
+    public void addTransform(Class<?> type, Transformable transform) {
+        this.transforms.put(type, transform);
     }
 
     public void addBeforeHook(Hook before) {

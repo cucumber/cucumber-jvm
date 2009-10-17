@@ -5,37 +5,29 @@ import static org.mockito.Mockito.mock;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.apache.tools.ant.types.CommandlineJava.SysProperties;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mockito.Mock;
 
-import cuke4duke.StepMother;
 import cuke4duke.internal.java.DefaultJavaTransforms;
-import cuke4duke.internal.java.JavaAnalyzer;
-import cuke4duke.internal.java.JavaHook;
-import cuke4duke.internal.jvmclass.ClassAnalyzer;
-import cuke4duke.internal.jvmclass.ClassLanguage;
-import cuke4duke.internal.jvmclass.ClassLanguageMixin;
+import cuke4duke.internal.java.JavaTransform;
 import cuke4duke.internal.jvmclass.ObjectFactory;
 import cuke4duke.internal.language.ArgumentsConverter;
-import cuke4duke.internal.language.Hook;
+import cuke4duke.internal.language.Transformable;
 
 public class ArgumentsConverterTest {
 
-    private static final Map<Class<?>, Hook> transforms = new HashMap<Class<?>, Hook>();
+    private static final Map<Class<?>, Transformable> transforms = new HashMap<Class<?>, Transformable>();
     private ArgumentsConverter converter;
     
     @BeforeClass
     public static void classSetUp() {
         ObjectFactory objectFactory = mock(ObjectFactory.class);
         for (Method method : DefaultJavaTransforms.class.getMethods()) {
-            transforms.put(method.getReturnType(), new JavaHook(method, objectFactory));
+            transforms.put(method.getReturnType(), new JavaTransform(method, objectFactory));
         }
     }
 
