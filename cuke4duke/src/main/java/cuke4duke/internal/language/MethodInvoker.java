@@ -13,12 +13,12 @@ public class MethodInvoker {
         this.method = method;
     }
 
-    public void invoke(Object target, Object[] javaArgs) throws Throwable {
+    public Object invoke(Object target, Object[] javaArgs) throws Throwable {
         try {
             if(method.isAnnotationPresent(Pending.class)) {
                 throw JRuby.cucumberPending(method.getAnnotation(Pending.class).value());
             } else {
-                method.invoke(target, javaArgs);
+                return method.invoke(target, javaArgs);
             }
         } catch (IllegalArgumentException e) {
             String m = "Couldn't invokeWithJavaArgs " + method.toGenericString() + " with " + cuke4duke.internal.Utils.join(javaArgs, ",");
