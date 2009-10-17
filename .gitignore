@@ -10,3 +10,4 @@ pkg
 *.iml
 *.sw?
 .idea
+cuke4duke/test-output/
