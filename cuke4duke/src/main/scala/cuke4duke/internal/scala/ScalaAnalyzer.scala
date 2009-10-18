@@ -6,7 +6,7 @@ import cuke4duke.{StepMother, ScalaDsl}
 
 class ScalaAnalyzer extends ClassAnalyzer {
 
-  def allwaysLoad = Array(classOf[ScalaTransformations])
+  def alwaysLoad = Array(classOf[ScalaTransformations])
 
   def populateStepDefinitionsAndHooksFor(clazz: Class[_], objectFactory:ObjectFactory, classLanguage:ClassLanguage) {
     if (classOf[ScalaDsl].isAssignableFrom(clazz)) {

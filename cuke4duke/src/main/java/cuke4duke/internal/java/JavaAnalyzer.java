@@ -20,8 +20,7 @@ public class JavaAnalyzer implements ClassAnalyzer {
         }
     }
 
-    @Override
-    public Class<?>[] allwaysLoad() {
+    public Class<?>[] alwaysLoad() {
         return new Class<?>[0];
     }
 

@@ -30,7 +30,7 @@ public class ClassLanguage extends AbstractProgrammingLanguage {
             throw e.getTargetException();
         }
         for(ClassAnalyzer analyzer : analyzers){
-            for(Class<?> clazz : analyzer.allwaysLoad()){
+            for(Class<?> clazz : analyzer.alwaysLoad()){
                 objectFactory.addClass(clazz);
             }
         }
