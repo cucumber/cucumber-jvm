@@ -29,6 +29,11 @@ public class ClassLanguage extends AbstractProgrammingLanguage {
         } catch(InvocationTargetException e) {
             throw e.getTargetException();
         }
+        for(ClassAnalyzer analyzer : analyzers){
+            for(Class<?> clazz : analyzer.allwaysLoad()){
+                objectFactory.addClass(clazz);
+            }
+        }
     }
 
     public void load_code_file(String classFile) throws Throwable {
