@@ -21,7 +21,7 @@ class ScalaAnalyzer extends ClassAnalyzer {
     }
   }
   
-  def addDefaultTransforms(objectFactory:ObjectFactory, classLanguage:ClassLanguage) {
+  def addDefaultTransforms(classLanguage:ClassLanguage, objectFactory:ObjectFactory) {
       
   }
 }

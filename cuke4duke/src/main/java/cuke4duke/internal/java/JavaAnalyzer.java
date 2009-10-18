@@ -26,7 +26,7 @@ public class JavaAnalyzer implements ClassAnalyzer {
         }
     }
 
-    public void addDefaultTransforms(ObjectFactory objectFactory, ClassLanguage classLanguage) {
+    public void addDefaultTransforms(ClassLanguage classLanguage, ObjectFactory objectFactory) {
         for (Method method : DefaultJavaTransforms.class.getMethods()) {
             registerTransformMaybe(method, classLanguage, objectFactory);
         }
