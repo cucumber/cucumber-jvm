@@ -20,4 +20,8 @@ class ScalaAnalyzer extends ClassAnalyzer {
         classLanguage.addAfterHook(after)
     }
   }
+  
+  def addDefaultTransforms(objectFactory:ObjectFactory, classLanguage:ClassLanguage) {
+      
+  }
 }

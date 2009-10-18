@@ -43,6 +43,7 @@ public class ClassLanguage extends AbstractProgrammingLanguage {
         clearHooksAndStepDefinitions();
         objectFactory.createObjects();
         for(ClassAnalyzer analyzer : analyzers){
+            analyzer.addDefaultTransforms(objectFactory, this);
             for(Class<?> clazz : classes){
                 analyzer.populateStepDefinitionsAndHooksFor(clazz, objectFactory, this);
             }

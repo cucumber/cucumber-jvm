@@ -18,11 +18,11 @@ public class JavaTransform implements Transformable {
         this.methodInvoker = new MethodInvoker(method);
     }
 
-    public Class<?> transform(Class<?> returnType, Object arg) throws Throwable {
+    @SuppressWarnings("unchecked")
+    public <T> T transform(Class<T> returnType, Object arg) throws Throwable {
         String argument = String.valueOf(arg);
         Object target = objectFactory.getComponent(method.getDeclaringClass());
-        methodInvoker.invoke(target, new Object[]{argument});
-        return null;
+        return (T) (methodInvoker.invoke(target, new Object[] { argument }));
     }
 
 }

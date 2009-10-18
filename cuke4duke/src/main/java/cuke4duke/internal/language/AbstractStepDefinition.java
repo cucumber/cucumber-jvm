@@ -2,6 +2,9 @@ package cuke4duke.internal.language;
 
 import org.jruby.RubyArray;
 
+import cuke4duke.internal.jvmclass.ArgumentsConverter;
+
+
 public abstract class AbstractStepDefinition implements StepDefinition {
     private final ArgumentsConverter argumentsConverter;
     private final AbstractProgrammingLanguage programmingLanguage;

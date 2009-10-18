@@ -2,17 +2,13 @@
 Feature: Step argument transformations
   In order to maintain modularity within step definitions
   As a step definition editor
-  I want to register a regex to capture and tranform step definition arguments.
+  I want to register a @Transform annotated method to capture and tranform step definition arguments.
 
-  Scenario Outline: transform matches to different types
-    Then I should transform '<value>' to <type>
+  Scenario: transform with matches
+    Given I pass '10' to a method with int as parameter
+    When something happens
+    Then all is good
 
-  Examples:
-    | value | type 	  |
-    | 10    | Integer |
-    | abc   | Symbol  |
-    | 10    | Float   |
-    | abc   | Array   |	
       
   Scenario: transform without matches
-    Then I should not transform '10' to an Integer
+    Given I pass '10' to a method with Car as parameter

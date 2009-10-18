@@ -1,14 +1,19 @@
 package cuke4duke.internal.java;
 
-import cuke4duke.*;
-import cuke4duke.internal.jvmclass.ClassAnalyzer;
-import cuke4duke.internal.jvmclass.ClassLanguage;
-import cuke4duke.internal.jvmclass.ObjectFactory;
-
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
+
+import cuke4duke.After;
+import cuke4duke.Before;
+import cuke4duke.Given;
+import cuke4duke.Then;
+import cuke4duke.Transform;
+import cuke4duke.When;
+import cuke4duke.internal.jvmclass.ClassAnalyzer;
+import cuke4duke.internal.jvmclass.ClassLanguage;
+import cuke4duke.internal.jvmclass.ObjectFactory;
 
 public class JavaAnalyzer implements ClassAnalyzer {
 
@@ -17,6 +22,12 @@ public class JavaAnalyzer implements ClassAnalyzer {
             registerBeforeMaybe(method, classLanguage, objectFactory);
             registerStepDefinitionMaybe(method, classLanguage, objectFactory);
             registerAfterMaybe(method, classLanguage, objectFactory);
+            registerTransformMaybe(method, classLanguage, objectFactory);
+        }
+    }
+
+    public void addDefaultTransforms(ObjectFactory objectFactory, ClassLanguage classLanguage) {
+        for (Method method : DefaultJavaTransforms.class.getMethods()) {
             registerTransformMaybe(method, classLanguage, objectFactory);
         }
     }
@@ -55,4 +66,5 @@ public class JavaAnalyzer implements ClassAnalyzer {
             classLanguage.addAfterHook(new JavaHook(tagNames, method, objectFactory));
         }
     }
+
 }
