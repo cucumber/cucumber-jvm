@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cuke4duke.StepMother;
+import cuke4duke.internal.java.DefaultJavaTransforms;
 import cuke4duke.internal.language.AbstractProgrammingLanguage;
 
 public class ClassLanguage extends AbstractProgrammingLanguage {
@@ -41,9 +42,12 @@ public class ClassLanguage extends AbstractProgrammingLanguage {
 
     protected void prepareScenario() throws Throwable {
         clearHooksAndStepDefinitions();
+        
+        objectFactory.addClass(DefaultJavaTransforms.class);
         objectFactory.createObjects();
+        
         for(ClassAnalyzer analyzer : analyzers){
-            analyzer.addDefaultTransforms(objectFactory, this);
+            analyzer.addDefaultTransforms(this, objectFactory);
             for(Class<?> clazz : classes){
                 analyzer.populateStepDefinitionsAndHooksFor(clazz, objectFactory, this);
             }
