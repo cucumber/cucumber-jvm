@@ -7,7 +7,7 @@
 === Bugfixes
 * Made programming language dependencies optional (Aslak Hellesøy)
 
-== 0.1.7
+== 0.1.7 2009-10-15
 
 This is an exciting new release with several great new features. (You must upgrade to cucumber 0.4.2).
 
