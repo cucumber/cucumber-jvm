@@ -6,7 +6,7 @@
   <groupId>cuke4duke</groupId>
   <artifactId>parent</artifactId>
   <packaging>pom</packaging>
-  <version>0.1.6</version>
+  <version>0.1.8-SNAPSHOT</version>
   <name>Cuke4Duke Main Project</name>
   <url>http://cukes.info/</url>
 
@@ -69,76 +69,4 @@
       </plugins>
     </pluginManagement>
   </build>
-
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>org.picocontainer</groupId>
-        <artifactId>picocontainer</artifactId>
-        <version>2.8.3</version>
-        <scope>provided</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring</artifactId>
-        <version>2.5.6</version>
-        <scope>provided</scope>
-      </dependency>
-      <dependency>
-        <groupId>com.google.inject</groupId>
-        <artifactId>guice</artifactId>
-        <version>2.0</version>
-        <scope>provided</scope>
-      </dependency>
-      <dependency>
-        <groupId>junit</groupId>
-        <artifactId>junit</artifactId>
-        <version>4.7</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.jruby</groupId>
-        <artifactId>jruby-complete</artifactId>
-        <version>1.4.0RC1</version>
-      </dependency>
-      <dependency>
-        <groupId>org.codehaus.groovy</groupId>
-        <artifactId>groovy-all</artifactId>
-        <version>1.6.4</version>
-        <scope>provided</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.scala-lang</groupId>
-        <artifactId>scala-library</artifactId>
-        <version>2.7.5</version>
-      </dependency>
-      <dependency>
-        <groupId>org.scala-lang</groupId>
-        <artifactId>scala-compiler</artifactId>
-        <version>2.7.5</version>
-      </dependency>
-      <dependency>
-        <groupId>org.clojure</groupId>
-        <artifactId>clojure</artifactId>
-        <version>1.0.0</version>
-        <scope>provided</scope>
-      </dependency>
-      <dependency>
-        <groupId>rhino</groupId>
-        <artifactId>js</artifactId>
-        <version>1.7R2</version>
-        <scope>provided</scope>
-      </dependency>
-      <dependency>
-        <groupId>ioke.lang</groupId>
-        <artifactId>ikj</artifactId>
-        <version>0.4.0-1</version>
-      </dependency>
-      <dependency>
-        <groupId>ioke.lang</groupId>
-        <artifactId>ikj-lib</artifactId>
-        <version>0.4.0-1</version>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
 </project>

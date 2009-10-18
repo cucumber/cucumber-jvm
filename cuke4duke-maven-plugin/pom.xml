@@ -5,7 +5,7 @@
     <groupId>cuke4duke</groupId>
     <artifactId>parent</artifactId>
     <relativePath>../pom.xml</relativePath>
-    <version>0.1.6</version>
+    <version>0.1.8-SNAPSHOT</version>
   </parent>
 
   <artifactId>cuke4duke-maven-plugin</artifactId>
@@ -14,6 +14,12 @@
   <description>Cuke4Duke Maven plugin</description>
 
   <dependencies>
+    <dependency>
+      <groupId>org.jruby</groupId>
+      <artifactId>jruby-complete</artifactId>
+      <version>1.4.0RC1</version>
+    </dependency>
+
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-project</artifactId>
@@ -27,7 +33,7 @@
     <dependency>
       <groupId>cuke4duke</groupId>
       <artifactId>cuke4duke</artifactId>
-      <version>0.1.6</version>
+      <version>0.1.8-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>ant</groupId>
@@ -37,6 +43,8 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
+      <version>4.7</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 </project>

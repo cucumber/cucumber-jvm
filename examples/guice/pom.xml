@@ -4,7 +4,7 @@
   <groupId>cuke4duke</groupId>
   <artifactId>cuke4duke-guice-example</artifactId>
   <packaging>jar</packaging>
-  <version>0.1.6</version>
+  <version>0.1.8-SNAPSHOT</version>
   <name>Cuke4Duke Guice Example</name>
   <url>http://cukes.info/</url>
 
@@ -28,11 +28,6 @@
 
   <dependencies>
     <dependency>
-      <groupId>cuke4duke</groupId>
-      <artifactId>cuke4duke</artifactId>
-      <version>0.1.6</version>
-    </dependency>
-    <dependency>
       <groupId>com.google.inject</groupId>
       <artifactId>guice</artifactId>
       <version>2.0</version>
@@ -43,14 +38,21 @@
       <version>1.2.14</version>
     </dependency>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.7</version>
-    </dependency>
-    <dependency>
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
       <version>2.4</version>
+    </dependency>
+    <dependency>
+      <groupId>cuke4duke</groupId>
+      <artifactId>cuke4duke</artifactId>
+      <version>0.1.8-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.7</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 
@@ -88,8 +90,7 @@
             <cucumberArg>${basedir}/target/test-classes</cucumberArg>
           </cucumberArgs>
           <gems>
-            <gem>cucumber --version 0.4.0 --source http://gems.rubyforge.org/</gem>
-            <gem>aslakhellesoy-ansicolor --version 1.0 --source http://gems.github.com/</gem>
+            <gem>cucumber --version 0.4.2 --source http://gems.rubyforge.org/</gem>
           </gems>
         </configuration>
         <executions>

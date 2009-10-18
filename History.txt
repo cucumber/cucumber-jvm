@@ -1,6 +1,14 @@
-== In Git
+== 0.1.8-SNAPSHOT (In Git)
 
-This is an exciting new release with several great new features.
+=== New Features
+* Ability to call steps from step definitions in Guice. (Henning Jensen)
+
+=== Bugfixes
+* Made programming language dependencies optional (Aslak Hellesøy)
+
+== 0.1.7
+
+This is an exciting new release with several great new features. (You must upgrade to cucumber 0.4.2).
 
 You can now call other steps by String:
 
@@ -17,6 +25,7 @@ Another great new feature is support for Guice. Cuke4Duke now supports three DI 
 Ioke support is also getting better. It now supports snippets and has better error reporting.
 
 === New Features
+* Better ANSI color support on Windows with http://github.com/aslakhellesoy/wac. (Aslak Hellesøy)
 * Guice support (Henning Jensen)
 * Enable Java step definitions to call other steps indirectly by just providing a string. (#26 Aslak Hellesøy, Trond Marius Øvstetun)
 * Ioke snippets and better error reporting. (Ola Bini)
