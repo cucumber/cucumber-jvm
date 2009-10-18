@@ -5,13 +5,13 @@ import cuke4duke.Given;
 import cuke4duke.Then;
 import cuke4duke.When;
 public class TransformSteps {
-
-    @Given("^I pass '10' to a method with int as parameter$")
+    
+    @Given("^I pass '(.*)' to a method with int as parameter$")
     public void transformedToA(int value) {
         assertEquals(10, value);
     }
     
-    @Given("^I pass '10' to a method with Car as parameter$")
+    @Given("^I pass '(.*)' to a method with Car as parameter$")
     public void transformedToA(Car value) {
         assertEquals(10, value);
     }
