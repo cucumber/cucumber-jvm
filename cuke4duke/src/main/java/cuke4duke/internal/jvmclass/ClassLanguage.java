@@ -17,18 +17,8 @@ public class ClassLanguage extends AbstractProgrammingLanguage {
     public ClassLanguage(ClassLanguageMixin languageMixin, StepMother stepMother, List<ClassAnalyzer> analyzers) throws Throwable {
         super(languageMixin);
         this.analyzers = analyzers;
-        String className = System.getProperty("cuke4duke.objectFactory", "cuke4duke.internal.jvmclass.PicoFactory");
-        if(className == null) {
-            throw new RuntimeException("Missing system property: cuke4duke.objectFactory");
-        }
-        Class<?> ofc = Thread.currentThread().getContextClassLoader().loadClass(className);
-        Constructor<?> ctor = ofc.getConstructor();
-        try {
-            objectFactory = (ObjectFactory) ctor.newInstance();
-            objectFactory.addStepMother(stepMother);
-        } catch(InvocationTargetException e) {
-            throw e.getTargetException();
-        }
+        objectFactory = createObjectFactory();
+        objectFactory.addStepMother(stepMother);
         for(ClassAnalyzer analyzer : analyzers){
             for(Class<?> clazz : analyzer.alwaysLoad()){
                 objectFactory.addClass(clazz);
@@ -76,4 +66,19 @@ public class ClassLanguage extends AbstractProgrammingLanguage {
         }
         throw new ClassNotFoundException("Couldn't determine class from file: " + classFile);
     }
+
+    private ObjectFactory createObjectFactory() throws Throwable {
+        String className = System.getProperty("cuke4duke.objectFactory", "cuke4duke.internal.jvmclass.PicoFactory");
+        if(className == null) {
+            throw new RuntimeException("Missing system property: cuke4duke.objectFactory");
+        }
+        Class<?> ofc = Thread.currentThread().getContextClassLoader().loadClass(className);
+        Constructor<?> ctor = ofc.getConstructor();
+        try {
+            return(ObjectFactory) ctor.newInstance();
+        } catch(InvocationTargetException e) {
+            throw e.getTargetException();
+        }
+    }
+
 }

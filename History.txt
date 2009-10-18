@@ -1,6 +1,7 @@
 == 0.1.8-SNAPSHOT (In Git)
 
 === New Features
+* Ability to call steps from step definitions in Scala. (Jon-Anders Teigen)
 * Ability to call steps from step definitions in Guice. (Henning Jensen)
 
 === Bugfixes
