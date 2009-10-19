@@ -1,12 +1,10 @@
 package cuke4duke.internal.scala
 
-import collection.immutable.TreeMap
 import _root_.java.util.regex.Pattern
-import cuke4duke.internal.JRuby
 import org.jruby.RubyArray
 import cuke4duke.internal.language.{AbstractProgrammingLanguage, JdkPatternArgumentMatcher, StepDefinition}
 
-class ScalaStepDefinition(name:String, r: String, f: Any, types: List[Class[_]], conversions:TreeMap[Class[_], String => Option[_]], programmingLanguage:AbstractProgrammingLanguage) extends StepDefinition {
+class ScalaStepDefinition(name:String, r: String, f: Any, types: List[Class[_]], transformations:ScalaTransformations, programmingLanguage:AbstractProgrammingLanguage) extends StepDefinition {
 
   programmingLanguage.availableStepDefinition(regexp_source, file_colon_line)
 
@@ -24,7 +22,7 @@ class ScalaStepDefinition(name:String, r: String, f: Any, types: List[Class[_]],
   def arguments_from(step_name:String) = JdkPatternArgumentMatcher.argumentsFrom(pattern, step_name)
 
   def invoke(ra: RubyArray) {
-    transform(ra.toArray.toList.map(_.toString), types) match {
+    transformations.transform(ra.toArray.toList.map(_.toString), types) match {
       case List() => f.asInstanceOf[Function0[_]]()
       case List(t1) => f.asInstanceOf[Function1[Any, _]](t1)
       case List(t1, t2) => f.asInstanceOf[Function2[Any, Any, _]](t1, t2)
@@ -51,27 +49,4 @@ class ScalaStepDefinition(name:String, r: String, f: Any, types: List[Class[_]],
     }
     programmingLanguage.invokedStepDefinition(regexp_source, file_colon_line)
   }
-
-  private [this] def transform(args:List[String], types:List[Class[_]]) = {
-    if(args.length != types.length){
-      def s(list:List[_]) = if(list.length != 1) "s" else ""
-      throw JRuby.cucumberArityMismatchError("Your block takes "+types.length+" argument" + s(types)+", but the Regexp matched "+args.length+" argument"+s(args))
-    } else {
-      for((value, kind) <- args zip types)
-        yield {
-          convert(value, kind).getOrElse(throw JRuby.cucumberUndefined("No conversion defined from value '"+value+"' to "+kind))
-        }
-    }
-  }
-
-  private def convert(value:String, to:Class[_]):Option[_] = {
-      val start:Option[_] = if(to.isAssignableFrom(value.getClass)) Some(value) else None
-
-      (start /: conversions.elements){ (acc, entry) =>
-        acc match {
-          case None if to.isAssignableFrom(entry._1) => entry._2(value)
-          case _ => acc
-        }
-      }
-    }
 }

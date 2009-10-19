@@ -5,9 +5,28 @@
   <name>Cuke4Duke Scala Example</name>
   <version>0.1.8-SNAPSHOT</version>
   <inceptionYear>2009</inceptionYear>
+
   <properties>
     <scala.version>2.7.5</scala.version>
   </properties>
+
+  <repositories>
+    <repository>
+      <id>codehaus</id>
+      <url>http://repository.codehaus.org</url>
+    </repository>
+    <repository>
+      <id>cukes</id>
+      <url>http://cukes.info/maven</url>
+    </repository>
+  </repositories>
+
+  <pluginRepositories>
+    <pluginRepository>
+      <id>cukes</id>
+      <url>http://cukes.info/maven</url>
+    </pluginRepository>
+  </pluginRepositories>
 
   <dependencies>
     <dependency>
@@ -15,7 +34,6 @@
       <artifactId>scala-library</artifactId>
       <version>${scala.version}</version>
     </dependency>
-
     <dependency>
       <groupId>cuke4duke</groupId>
       <artifactId>cuke4duke</artifactId>
@@ -60,20 +78,24 @@
           <jvmArgs>
             <jvmArg>-Dcuke4duke.objectFactory=cuke4duke.internal.jvmclass.PicoFactory</jvmArg>
           </jvmArgs>
+          <!-- You may not need all of these arguments in your own project. We have a lot here for testing purposes... -->
           <cucumberArgs>
             <cucumberArg>--color</cucumberArg>
             <cucumberArg>--verbose</cucumberArg>
             <cucumberArg>--format</cucumberArg>
             <cucumberArg>pretty</cucumberArg>
             <cucumberArg>--format</cucumberArg>
+            <cucumberArg>junit</cucumberArg>
+            <cucumberArg>--out</cucumberArg>
+            <cucumberArg>target</cucumberArg>
+            <cucumberArg>--format</cucumberArg>
             <cucumberArg>usage</cucumberArg>
             <cucumberArg>--out</cucumberArg>
             <cucumberArg>target/usage.txt</cucumberArg>
-            <cucumberArg>--require</cucumberArg>
             <cucumberArg>${basedir}/target/test-classes</cucumberArg>
           </cucumberArgs>
           <gems>
-            <gem>cucumber --version 0.4.0</gem>
+            <gem>cucumber --version 0.4.2 --source http://gems.rubyforge.org/</gem>
           </gems>
         </configuration>
         <executions>

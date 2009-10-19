@@ -2,9 +2,8 @@ package cuke4duke
 
 import internal.JRuby
 import internal.language._
+import internal.scala.{ScalaTransformations, ScalaStepDefinition}
 import java.util.List
-import internal.scala.ScalaStepDefinition
-
 import org.jruby.exceptions.RaiseException
 import org.junit.{Test, Before => JunitBefore, Assert}
 import Assert._
@@ -31,6 +30,7 @@ class ScalaDslTest extends ScalaDsl with Norwegian {
 
   val invokedStepdefinitions = new ListBuffer[String]
   val availableStepdefinitions = new ListBuffer[String]
+  val calledFromStepdefintions = new ListBuffer[String]
 
   val programmingLanguage = new AbstractProgrammingLanguage(new LanguageMixin{
     def invoked_step_definition(regexp_source: String, file_colon_line: String) = {
@@ -57,10 +57,19 @@ class ScalaDslTest extends ScalaDsl with Norwegian {
     end
     """);
 
+    val t = new ScalaTransformations
+    t.addAll(transformations)
+
     for(s <- stepDefinitions){
-      val sd = s(programmingLanguage)
+      val sd = s(programmingLanguage, t)
       step(regexp(sd)) = sd
     }
+
+    executionMode(new StepMother{
+      def invoke(regex:String) = calledFromStepdefintions += regex
+      def invoke(step:String, table:Table){}
+      def invoke(step:String, multilineString:String){}
+    })
   }
 
   Before{
@@ -221,6 +230,7 @@ class ScalaDslTest extends ScalaDsl with Norwegian {
       case "b" => false
     }
   }
+
   object User{
     def find_by_username(name:String):Option[User] = Some(new User(name))
   }
@@ -281,6 +291,16 @@ class ScalaDslTest extends ScalaDsl with Norwegian {
     assertFalse(invokedStepdefinitions.contains("programmingLanguage.invoked_step_definition"))
     step("programmingLanguage.invoked_step_definition").invoke(array())
     assertTrue(invokedStepdefinitions.contains("programmingLanguage.invoked_step_definition"))
+  }
+
+  Given("step_can_call_other (.*)") { s:String =>
+    Given("step_can_be "+s)
+  }
+
+  @Test //call_steps
+  def test_steps_can_call_other_steps {
+    step("step_can_call_other (.*)").invoke(array("x"))
+    assertTrue(calledFromStepdefintions.contains("step_can_be x"))
   }
 
   //known limitation: call by name steps are defined 'f: => Unit' which gets converted to a 'f() => Unit'

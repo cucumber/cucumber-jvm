@@ -20,6 +20,10 @@ public class JavaAnalyzer implements ClassAnalyzer {
         }
     }
 
+    public Class<?>[] alwaysLoad() {
+        return new Class<?>[0];
+    }
+
     private void registerBeforeMaybe(Method method, ClassLanguage classLanguage, ObjectFactory objectFactory) {
         if (method.isAnnotationPresent(Before.class)) {
             List<String> tagNames = Arrays.asList(method.getAnnotation(Before.class).value().split(","));
