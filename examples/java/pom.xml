@@ -6,7 +6,7 @@
   <groupId>cuke4duke</groupId>
   <artifactId>cuke4duke-java-example</artifactId>
   <packaging>jar</packaging>
-  <version>0.1.7</version>
+  <version>0.1.8-SNAPSHOT</version>
   <name>Cuke4Duke Java Example</name>
   <url>http://cukes.info/</url>
 
@@ -30,15 +30,15 @@
 
   <dependencies>
     <dependency>
-      <groupId>cuke4duke</groupId>
-      <artifactId>cuke4duke</artifactId>
-      <version>0.1.7</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>org.picocontainer</groupId>
       <artifactId>picocontainer</artifactId>
       <version>2.8.3</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>cuke4duke</groupId>
+      <artifactId>cuke4duke</artifactId>
+      <version>0.1.8-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>

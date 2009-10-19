@@ -42,7 +42,7 @@ public class IkStepDefinition extends AbstractStepDefinition {
 
         List<Runtime.RescueInfo> pendingRescues = new ArrayList<Runtime.RescueInfo>();
         IokeObject rr = IokeObject.as(((Message)IokeObject.data(ioke.mimic)).sendTo(ioke.mimic, ioke.ground, ioke.rescue), ioke.ground);
-        List<Object> conds = new ArrayList();
+        List<Object> conds = new ArrayList<Object>();
         conds.add(lang.pendingCondition);
         pendingRescues.add(new Runtime.RescueInfo(rr, conds, pendingRescues, ioke.getBindIndex()));
         ioke.registerRescues(pendingRescues);
@@ -50,7 +50,7 @@ public class IkStepDefinition extends AbstractStepDefinition {
 
         List<Runtime.RescueInfo> failureRescues = new ArrayList<Runtime.RescueInfo>();
         IokeObject rr2 = IokeObject.as(((Message)IokeObject.data(ioke.mimic)).sendTo(ioke.mimic, ioke.ground, ioke.rescue), ioke.ground);
-        List<Object> failureConds = new ArrayList();
+        List<Object> failureConds = new ArrayList<Object>();
         failureConds.add(lang.failedExpectationCondition);
         failureRescues.add(new Runtime.RescueInfo(rr2, failureConds, failureRescues, ioke.getBindIndex()));
         ioke.registerRescues(failureRescues);
@@ -80,11 +80,12 @@ public class IkStepDefinition extends AbstractStepDefinition {
         return regexp_source();
     }
 
+    @SuppressWarnings("unchecked")
     public List<StepArgument> arguments_from(String stepName) throws Throwable {
         IokeObject msg = ioke.newMessage("arguments_from");
         Message arguments_from = (Message) IokeObject.data(msg);
         Object args = arguments_from.sendTo(msg, iokeStepDefObject, iokeStepDefObject, stepName);
-        if(args instanceof List) {
+        if(args instanceof List<?>) {
             return (List<StepArgument>) args;
         } else {
             return null;

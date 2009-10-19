@@ -4,17 +4,18 @@ import _root_.scala.collection.mutable.ListBuffer
 import _root_.scala.reflect.Manifest
 import cuke4duke.internal.JRuby
 import cuke4duke.internal.language.AbstractProgrammingLanguage
-import cuke4duke.internal.scala.{ScalaHook, ScalaStepDefinition}
-import collection.immutable.TreeMap
+import collection.mutable.Map
+import internal.scala.{ScalaTransformations, ScalaHook, ScalaStepDefinition}
 
 /*
   <yourclass> {extends|with} ScalaDsl
  */
 trait ScalaDsl {
 
-  private [cuke4duke] val stepDefinitions = new ListBuffer[AbstractProgrammingLanguage => ScalaStepDefinition]
+  private [cuke4duke] val stepDefinitions = new ListBuffer[(AbstractProgrammingLanguage,ScalaTransformations) => ScalaStepDefinition]
   private [cuke4duke] val beforeHooks = new ListBuffer[ScalaHook]
   private [cuke4duke] val afterHooks = new ListBuffer[ScalaHook]
+  private [cuke4duke] var transformations = Map[Class[_], String => Option[_]]()
 
   val Given = new Step("Given")
   val When = new Step("When")
@@ -30,46 +31,31 @@ trait ScalaDsl {
   def pending{ pending("TODO") }
 
   def Transform[T](f:String => Option[T])(implicit m:Manifest[T]){
-    transformations = transformations.insert(m.erasure, attempt(f))
+    transformations(m.erasure) = f
   }
 
-  private implicit def orderedClass(a:Class[_]) = new Ordered[Class[_]]{
-    def compare(that: Class[_]) = {
-      if(a == that) 0
-      else if(that.isAssignableFrom(a)) 1
-      else -1
+  private [cuke4duke] def executionMode(stepMother:StepMother){
+    handleRegex = (name:String, regex:String) => {
+      stepMother.invoke(regex)
+      new Handle{
+        def apply(fun:Fun) = error("cannot register new stepdefinitions in execution mode")
+      }
     }
   }
 
-  private var transformations = new TreeMap[Class[_], String => Option[_]]
+  private val Record = (name:String, regex:String) => new Handle {
+    def apply(fun:Fun) = stepDefinitions += ((programmingLanguage:AbstractProgrammingLanguage, t:ScalaTransformations) => new ScalaStepDefinition(name, regex, fun.f, fun.types, t, programmingLanguage))
+  }
 
-  private def attempt[T](transformation:String => Option[T]) =
-      (s:String) => {
-        try{
-          transformation(s)
-        } catch {
-          case _ => None
-        }
-      }
+  private var handleRegex: (String, String) => Handle = Record
 
-  //default transformations
-  Transform[Int](x => Some(x.toInt))
-  Transform[Long](x => Some(x.toLong))
-  Transform[String](x => Some(x))
-  Transform[Double](x => Some(x.toDouble))
-  Transform[Float](x => Some(x.toFloat))
-  Transform[Short](x => Some(x.toShort))
-  Transform[Byte](x => Some(x.toByte))
-  Transform[BigDecimal](x => Some(BigDecimal(x)))
-  Transform[BigInt](x => Some(BigInt(x)))
-  Transform[Char](x => if(x.length == 1) Some(x.charAt(0)) else None)
-  Transform[Boolean](x => Some(x.toBoolean))
+  sealed trait Handle {
+    def apply(f: => Unit):Unit = apply(f0toFun(f _))
+    def apply(fun:Fun)
+  }
 
   final class Step(name:String) {
-    def apply(regex:String) = new {
-      def apply(f: => Unit):Unit = apply(f0toFun(f _))
-      def apply(fun:Fun) = stepDefinitions += ((programmingLanguage:AbstractProgrammingLanguage) => new ScalaStepDefinition(name, regex, fun.f, fun.types, transformations, programmingLanguage))
-    }
+    def apply(regex:String) = handleRegex(name, regex)
   }
 
   final class Fun private[ScalaDsl](private [ScalaDsl] val f: Any, manifests: Manifest[_]*) {
