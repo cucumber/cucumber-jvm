@@ -27,6 +27,7 @@ public class ClassLanguage extends AbstractProgrammingLanguage {
         try {
             objectFactory = (ObjectFactory) ctor.newInstance();
             objectFactory.addStepMother(stepMother);
+            objectFactory.addClass(DefaultJavaTransforms.class);
         } catch(InvocationTargetException e) {
             throw e.getTargetException();
         }
@@ -43,7 +44,6 @@ public class ClassLanguage extends AbstractProgrammingLanguage {
     protected void prepareScenario() throws Throwable {
         clearHooksAndStepDefinitions();
         
-        objectFactory.addClass(DefaultJavaTransforms.class);
         objectFactory.createObjects();
         
         for(ClassAnalyzer analyzer : analyzers){
