@@ -18,24 +18,19 @@ public class ClassLanguage extends AbstractProgrammingLanguage {
     public ClassLanguage(ClassLanguageMixin languageMixin, StepMother stepMother, List<ClassAnalyzer> analyzers) throws Throwable {
         super(languageMixin);
         this.analyzers = analyzers;
-        String className = System.getProperty("cuke4duke.objectFactory");
-        if(className == null) {
-            throw new RuntimeException("Missing system property: cuke4duke.objectFactory");
-        }
-        Class<?> ofc = Thread.currentThread().getContextClassLoader().loadClass(className);
-        Constructor<?> ctor = ofc.getConstructor();
-        try {
-            objectFactory = (ObjectFactory) ctor.newInstance();
-            objectFactory.addStepMother(stepMother);
-            objectFactory.addClass(DefaultJavaTransforms.class);
-        } catch(InvocationTargetException e) {
-            throw e.getTargetException();
+        objectFactory = createObjectFactory();
+        objectFactory.addStepMother(stepMother);
+        objectFactory.addClass(DefaultJavaTransforms.class);
+        for (ClassAnalyzer analyzer : analyzers) {
+            for (Class<?> clazz : analyzer.alwaysLoad()) {
+                objectFactory.addClass(clazz);
+            }
         }
     }
 
     public void load_code_file(String classFile) throws Throwable {
         Class<?> clazz = loadClass(classFile);
-        if(!Modifier.isAbstract(clazz.getModifiers())) {
+        if (!Modifier.isAbstract(clazz.getModifiers())) {
             objectFactory.addClass(clazz);
         }
         classes.add(clazz);
@@ -43,12 +38,10 @@ public class ClassLanguage extends AbstractProgrammingLanguage {
 
     protected void prepareScenario() throws Throwable {
         clearHooksAndStepDefinitions();
-        
         objectFactory.createObjects();
-        
-        for(ClassAnalyzer analyzer : analyzers){
+        for (ClassAnalyzer analyzer : analyzers) {
             analyzer.addDefaultTransforms(this, objectFactory);
-            for(Class<?> clazz : classes){
+            for (Class<?> clazz : classes) {
                 analyzer.populateStepDefinitionsAndHooksFor(clazz, objectFactory, this);
             }
         }
@@ -63,8 +56,8 @@ public class ClassLanguage extends AbstractProgrammingLanguage {
         String withoutExt = classFile.substring(0, classFile.length() - ".class".length());
         String[] pathElements = withoutExt.split("\\/");
         String className = null;
-        for(int i = pathElements.length - 1; i >= 0; i--) {
-            if(className == null) {
+        for (int i = pathElements.length - 1; i >= 0; i--) {
+            if (className == null) {
                 className = pathElements[i];
             } else {
                 className = pathElements[i] + "." + className;
@@ -75,6 +68,20 @@ public class ClassLanguage extends AbstractProgrammingLanguage {
             }
         }
         throw new ClassNotFoundException("Couldn't determine class from file: " + classFile);
+    }
+
+    private ObjectFactory createObjectFactory() throws Throwable {
+        String className = System.getProperty("cuke4duke.objectFactory", "cuke4duke.internal.jvmclass.PicoFactory");
+        if (className == null) {
+            throw new RuntimeException("Missing system property: cuke4duke.objectFactory");
+        }
+        Class<?> ofc = Thread.currentThread().getContextClassLoader().loadClass(className);
+        Constructor<?> ctor = ofc.getConstructor();
+        try {
+            return (ObjectFactory) ctor.newInstance();
+        } catch (InvocationTargetException e) {
+            throw e.getTargetException();
+        }
     }
 
 }
