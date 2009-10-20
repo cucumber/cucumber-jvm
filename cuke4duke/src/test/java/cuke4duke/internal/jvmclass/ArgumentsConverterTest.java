@@ -10,7 +10,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import cuke4duke.StepMother;
@@ -22,11 +21,6 @@ public class ArgumentsConverterTest {
 
     private Map<Class<?>, Transformable> transforms;
     private ArgumentsConverter converter;
-
-    @BeforeClass
-    public static void classSetUp() throws Throwable {
-
-    }
 
     @Before
     public void setUp() throws Throwable {

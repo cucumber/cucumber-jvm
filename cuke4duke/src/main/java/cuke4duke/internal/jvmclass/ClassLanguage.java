@@ -23,7 +23,6 @@ public class ClassLanguage extends AbstractProgrammingLanguage {
         objectFactory = createObjectFactory();
         objectFactory.addStepMother(stepMother);
         objectFactory.addClass(DefaultJvmTransforms.class);
-        addDefaultJvmTransforms();
         for (ClassAnalyzer analyzer : analyzers) {
             for (Class<?> clazz : analyzer.alwaysLoad()) {
                 objectFactory.addClass(clazz);
@@ -41,7 +40,7 @@ public class ClassLanguage extends AbstractProgrammingLanguage {
 
     protected void prepareScenario() throws Throwable {
         clearHooksAndStepDefinitions();
-        // addDefaultJvmTransforms();
+        addDefaultJvmTransforms();
         objectFactory.createObjects();
         for (ClassAnalyzer analyzer : analyzers) {
             for (Class<?> clazz : classes) {

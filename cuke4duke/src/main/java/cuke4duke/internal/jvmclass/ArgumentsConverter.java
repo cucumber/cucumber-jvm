@@ -50,21 +50,6 @@ public class ArgumentsConverter {
                 else
                     return type.cast(arg);
             }
-            // if (type.equals(Integer.TYPE)) {
-            // return Integer.valueOf((String) arg);
-            // } else if (type.equals(Long.TYPE)) {
-            // return Long.valueOf((String) arg);
-            // } else if (type.equals(Double.TYPE)) {
-            // return Double.valueOf((String) arg);
-            // } else if (type.equals(String.class)) {
-            // if(arg instanceof PyString) {
-            // return ((PyString) arg).to_s();
-            // } else {
-            // return String.valueOf(arg);
-            // }
-            // } else {
-            // return type.cast(arg);
-            // }
         } catch (Throwable e) {
             throw new IllegalArgumentException("Sorry, cuke4duke doesn't know how to convert a " + arg + " (" + arg.getClass() + ") to type " + type, e);
         }
