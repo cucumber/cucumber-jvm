@@ -1,11 +1,11 @@
-package cuke4duke.internal.java;
+package cuke4duke.internal.jvmclass;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import cuke4duke.Transform;
 
-public class DefaultJavaTransforms {
+public class DefaultJvmTransforms {
   
     @Transform
     public int transformStringToInt(String argument) {

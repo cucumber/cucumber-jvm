@@ -9,7 +9,6 @@ import java.util.List;
 
 import cuke4duke.StepMother;
 import cuke4duke.Transform;
-import cuke4duke.internal.java.DefaultJavaTransforms;
 import cuke4duke.internal.java.JavaTransform;
 import cuke4duke.internal.language.AbstractProgrammingLanguage;
 
@@ -23,7 +22,7 @@ public class ClassLanguage extends AbstractProgrammingLanguage {
         this.analyzers = analyzers;
         objectFactory = createObjectFactory();
         objectFactory.addStepMother(stepMother);
-        objectFactory.addClass(DefaultJavaTransforms.class);
+        objectFactory.addClass(DefaultJvmTransforms.class);
         addDefaultJvmTransforms();
         for (ClassAnalyzer analyzer : analyzers) {
             for (Class<?> clazz : analyzer.alwaysLoad()) {
@@ -52,7 +51,7 @@ public class ClassLanguage extends AbstractProgrammingLanguage {
     }
 
     void addDefaultJvmTransforms() {
-        for (Method method : DefaultJavaTransforms.class.getMethods()) {
+        for (Method method : DefaultJvmTransforms.class.getMethods()) {
             if (method.isAnnotationPresent(Transform.class))
                 addTransform(method.getReturnType(), new JavaTransform(method, objectFactory));
         }
