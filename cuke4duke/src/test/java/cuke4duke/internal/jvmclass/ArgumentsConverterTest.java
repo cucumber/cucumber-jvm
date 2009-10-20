@@ -12,36 +12,29 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mockito.Mock;
 
 import cuke4duke.StepMother;
 import cuke4duke.Table;
 import cuke4duke.internal.java.JavaAnalyzer;
-import cuke4duke.internal.jvmclass.ArgumentsConverter;
-import cuke4duke.internal.jvmclass.ClassAnalyzer;
-import cuke4duke.internal.jvmclass.ClassLanguage;
-import cuke4duke.internal.jvmclass.ClassLanguageMixin;
 import cuke4duke.internal.language.Transformable;
 
 public class ArgumentsConverterTest {
 
-    @Mock
-    private static ClassLanguageMixin languageMixin;
-
-    private static Map<Class<?>, Transformable> transforms;
+    private Map<Class<?>, Transformable> transforms;
     private ArgumentsConverter converter;
 
     @BeforeClass
     public static void classSetUp() throws Throwable {
-        System.setProperty("cuke4duke.objectFactory", "cuke4duke.internal.jvmclass.PicoFactory");
-        ClassLanguage classLanguage = new ClassLanguage(languageMixin, mock(StepMother.class), Arrays.asList(new ClassAnalyzer[] { new JavaAnalyzer() }));
-        classLanguage.prepareScenario();
-        ArgumentsConverterTest.transforms = classLanguage.getTransforms();
+
     }
 
     @Before
     public void setUp() throws Throwable {
-        converter = new ArgumentsConverter(ArgumentsConverterTest.transforms);
+        System.setProperty("cuke4duke.objectFactory", "cuke4duke.internal.jvmclass.PicoFactory");
+        ClassLanguage classLanguage = new ClassLanguage(mock(ClassLanguageMixin.class), mock(StepMother.class), Arrays.asList(new ClassAnalyzer[] { new JavaAnalyzer() }));
+        classLanguage.prepareScenario();
+        transforms = classLanguage.getTransforms();
+        converter = new ArgumentsConverter(transforms);
     }
 
     @Test
@@ -159,6 +152,7 @@ public class ArgumentsConverterTest {
         Object[] convertedObject = converter
                 .convert(new Class<?>[] { Boolean.TYPE }, new Object[] { String.format(Locale.US, "%b", Boolean.TRUE) });
         assertTrue(convertedObject[0].getClass().isAssignableFrom(Boolean.class));
+        assertTrue((Boolean)convertedObject[0]);
     }
 
     @Test

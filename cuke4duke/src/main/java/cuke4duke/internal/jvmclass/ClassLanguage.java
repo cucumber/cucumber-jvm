@@ -2,12 +2,15 @@ package cuke4duke.internal.jvmclass;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
 import cuke4duke.StepMother;
+import cuke4duke.Transform;
 import cuke4duke.internal.java.DefaultJavaTransforms;
+import cuke4duke.internal.java.JavaTransform;
 import cuke4duke.internal.language.AbstractProgrammingLanguage;
 
 public class ClassLanguage extends AbstractProgrammingLanguage {
@@ -21,6 +24,7 @@ public class ClassLanguage extends AbstractProgrammingLanguage {
         objectFactory = createObjectFactory();
         objectFactory.addStepMother(stepMother);
         objectFactory.addClass(DefaultJavaTransforms.class);
+        addDefaultJvmTransforms();
         for (ClassAnalyzer analyzer : analyzers) {
             for (Class<?> clazz : analyzer.alwaysLoad()) {
                 objectFactory.addClass(clazz);
@@ -38,12 +42,19 @@ public class ClassLanguage extends AbstractProgrammingLanguage {
 
     protected void prepareScenario() throws Throwable {
         clearHooksAndStepDefinitions();
+        // addDefaultJvmTransforms();
         objectFactory.createObjects();
         for (ClassAnalyzer analyzer : analyzers) {
-            analyzer.addDefaultTransforms(this, objectFactory);
             for (Class<?> clazz : classes) {
                 analyzer.populateStepDefinitionsAndHooksFor(clazz, objectFactory, this);
             }
+        }
+    }
+
+    void addDefaultJvmTransforms() {
+        for (Method method : DefaultJavaTransforms.class.getMethods()) {
+            if (method.isAnnotationPresent(Transform.class))
+                addTransform(method.getReturnType(), new JavaTransform(method, objectFactory));
         }
     }
 

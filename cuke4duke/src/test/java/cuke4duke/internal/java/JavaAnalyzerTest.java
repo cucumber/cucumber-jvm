@@ -53,27 +53,6 @@ public class JavaAnalyzerTest {
         }
     }
     
-    @SuppressWarnings("unchecked")
-    @Test
-    public void shouldAddDefaultJavaTransformsToClassLanguage() throws Throwable {
-        javaAnalyzer.populateStepDefinitionsAndHooksFor(transformer.getClass(), objectFactory, classLanguage);
-        ArgumentCaptor<Transformable> transformableArgument = ArgumentCaptor.forClass(Transformable.class);
-        ArgumentCaptor<Class> returnTypeArgument = ArgumentCaptor.forClass(Class.class);
-        verify(classLanguage).addTransform(returnTypeArgument.capture(), transformableArgument.capture());
-        
-        Class returnType = returnTypeArgument.getValue();
-        Transformable transform = transformableArgument.getValue();
-        
-        assertTrue(returnType.isAssignableFrom(Integer.TYPE));
-
-        for (Field field : transform.getClass().getDeclaredFields()) {
-            if (field.getDeclaringClass().isAssignableFrom(Method.class)) {
-                field.setAccessible(true);
-                assertEquals(((Method) field.get(transform)).getName(), transformer.getClass().getDeclaredMethods()[0]);
-            }
-        }
-    }
-
     private class ClassWithTransformer {
 
         @SuppressWarnings("unused")

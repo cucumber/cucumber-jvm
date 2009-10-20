@@ -21,7 +21,7 @@ public class JavaTransform implements Transformable {
     @SuppressWarnings("unchecked")
     public <T> T transform(Class<T> returnType, Object arg) throws Throwable {
         String argument = String.valueOf(arg);
-        Object target = objectFactory.getComponent(method.getDeclaringClass());
+        Object target = objectFactory.getComponent((Class<?>) method.getDeclaringClass());
         return (T) (methodInvoker.invoke(target, new Object[] { argument }));
     }
 

@@ -15,7 +15,7 @@ public abstract class AbstractProgrammingLanguage implements ProgrammingLanguage
     private List<StepDefinition> stepDefinitions;
     private List<Hook> befores;
     private List<Hook> afters;
-    private Map<Class<?>, Transformable> transforms;
+    private Map<Class<?>, Transformable> transforms = new HashMap<Class<?>, Transformable>();
 
     public AbstractProgrammingLanguage(LanguageMixin languageMixin) {
         this.languageMixin = languageMixin;
@@ -46,7 +46,7 @@ public abstract class AbstractProgrammingLanguage implements ProgrammingLanguage
     }
 
     protected void clearHooksAndStepDefinitions() {
-        transforms = new HashMap<Class<?>, Transformable>();
+//        transforms = new HashMap<Class<?>, Transformable>();
         befores = new ArrayList<Hook>();
         stepDefinitions = new ArrayList<StepDefinition>();
         afters = new ArrayList<Hook>();
