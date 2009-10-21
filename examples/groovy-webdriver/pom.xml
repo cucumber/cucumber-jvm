@@ -1,0 +1,116 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                      http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>cuke4duke</groupId>
+  <artifactId>cuke4duke-groovy-webdriver-example</artifactId>
+  <packaging>jar</packaging>
+  <version>0.1.8-SNAPSHOT</version>
+  <name>Cuke4Duke Groovy Webdriver Example</name>
+  <url>http://cukes.info/</url>
+
+  <repositories>
+    <repository>
+      <id>codehaus</id>
+      <url>http://repository.codehaus.org</url>
+    </repository>
+    <repository>
+      <id>cukes</id>
+      <url>http://cukes.info/maven</url>
+    </repository>
+    <repository>
+      <id>openqa-releases</id>
+      <name>OpenQA Releases</name>
+      <url>http://archiva.openqa.org/repository/releases</url>
+    </repository>
+  </repositories>
+
+  <pluginRepositories>
+    <pluginRepository>
+      <id>cukes</id>
+      <url>http://cukes.info/maven</url>
+    </pluginRepository>
+  </pluginRepositories>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.codehaus.groovy</groupId>
+      <artifactId>groovy-all</artifactId>
+      <version>1.6.4</version>
+    </dependency>
+    <dependency>
+      <groupId>cuke4duke</groupId>
+      <artifactId>cuke4duke</artifactId>
+      <version>0.1.8-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.7</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+  		<groupId>org.seleniumhq.webdriver</groupId>
+  		<artifactId>webdriver-firefox</artifactId>
+  		<version>0.9.7376</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>2.0.2</version>
+          <configuration>
+            <source>1.5</source>
+            <target>1.5</target>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
+    <plugins>
+      <plugin>
+        <groupId>cuke4duke</groupId>
+        <artifactId>cuke4duke-maven-plugin</artifactId>
+        <configuration>
+          <cucumberArgs>
+            <cucumberArg>--color</cucumberArg>
+            <cucumberArg>--verbose</cucumberArg>
+            <cucumberArg>--strict</cucumberArg>
+            <cucumberArg>--guess</cucumberArg>
+          </cucumberArgs>
+          <gems>
+            <gem>cucumber --version 0.4.2 --source http://gems.rubyforge.org/</gem>
+          </gems>
+        </configuration>
+        <executions>
+          <execution>
+            <id>run-features</id>
+            <phase>integration-test</phase>
+            <goals>
+              <goal>cucumber</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.groovy.maven</groupId>
+        <artifactId>gmaven-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>testCompile</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

@@ -5,12 +5,12 @@ module Cucumber
     class Table
       include Java.cuke4duke.Table
       
-      def diffLists(table, options={})
-        diff!(table, opts(options))
+      def diffLists(list_list, options={})
+        diff!(lists_to_arrays(list_list), opts(options))
       end
 
-      def diffHashes(table, options={})
-        diff!(maps_to_hashes(table), opts(options))
+      def diffHashes(map_list, options={})
+        diff!(maps_to_hashes(map_list), opts(options))
       end
 
     private
@@ -22,8 +22,12 @@ module Cucumber
         opts
       end
 
-      def maps_to_hashes(maps)
-        maps.collect{|map| map_to_hash(map)}
+      def lists_to_arrays(list_list)
+        list_list.map{|list| list.map{|e| e}}
+      end
+
+      def maps_to_hashes(map_list)
+        map_list.collect{|map| map_to_hash(map)}
       end
 
       def map_to_hash(map)
