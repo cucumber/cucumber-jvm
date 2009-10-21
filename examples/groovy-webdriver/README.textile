@@ -1,0 +1,7 @@
+h1. Groovy Webdriver Example
+
+This project demonstrates how you can test web applications (in any language) using Groovy and WebDriver.
+
+See "Ant":http://wiki.github.com/aslakhellesoy/cuke4duke/ant or 
+"Maven":http://wiki.github.com/aslakhellesoy/cuke4duke/maven for details about how to run the example.
+
