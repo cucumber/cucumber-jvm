@@ -1,18 +1,17 @@
-package cuke4duke.internal.java;
+package cuke4duke.internal.jvmclass;
 
 import java.lang.reflect.Method;
 
-import cuke4duke.internal.jvmclass.ObjectFactory;
 import cuke4duke.internal.language.MethodInvoker;
 import cuke4duke.internal.language.Transformable;
 
-public class JavaTransform implements Transformable {
+public class JvmTransform implements Transformable {
 
     private final Method method;
     private final ObjectFactory objectFactory;
     private final MethodInvoker methodInvoker;
 
-    public JavaTransform(Method method, ObjectFactory objectFactory) {
+    public JvmTransform(Method method, ObjectFactory objectFactory) {
         this.method = method;
         this.objectFactory = objectFactory;
         this.methodInvoker = new MethodInvoker(method);

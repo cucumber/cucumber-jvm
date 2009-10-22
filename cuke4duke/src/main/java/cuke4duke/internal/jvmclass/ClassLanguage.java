@@ -9,7 +9,7 @@ import java.util.List;
 
 import cuke4duke.StepMother;
 import cuke4duke.Transform;
-import cuke4duke.internal.java.JavaTransform;
+import cuke4duke.internal.jvmclass.JvmTransform;
 import cuke4duke.internal.language.AbstractProgrammingLanguage;
 
 public class ClassLanguage extends AbstractProgrammingLanguage {
@@ -52,7 +52,7 @@ public class ClassLanguage extends AbstractProgrammingLanguage {
     void addDefaultJvmTransforms() {
         for (Method method : DefaultJvmTransforms.class.getMethods()) {
             if (method.isAnnotationPresent(Transform.class))
-                addTransform(method.getReturnType(), new JavaTransform(method, objectFactory));
+                addTransform(method.getReturnType(), new JvmTransform(method, objectFactory));
         }
     }
 

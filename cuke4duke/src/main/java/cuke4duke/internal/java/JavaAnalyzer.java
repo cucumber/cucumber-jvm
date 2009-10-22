@@ -13,6 +13,7 @@ import cuke4duke.Transform;
 import cuke4duke.When;
 import cuke4duke.internal.jvmclass.ClassAnalyzer;
 import cuke4duke.internal.jvmclass.ClassLanguage;
+import cuke4duke.internal.jvmclass.JvmTransform;
 import cuke4duke.internal.jvmclass.ObjectFactory;
 
 public class JavaAnalyzer implements ClassAnalyzer {
@@ -28,7 +29,7 @@ public class JavaAnalyzer implements ClassAnalyzer {
 
     private void registerTransformMaybe(Method method, ClassLanguage classLanguage, ObjectFactory objectFactory) {
         if (method.isAnnotationPresent(Transform.class)) {
-            classLanguage.addTransform(method.getReturnType(), new JavaTransform(method, objectFactory));
+            classLanguage.addTransform(method.getReturnType(), new JvmTransform(method, objectFactory));
         }
     }
 
