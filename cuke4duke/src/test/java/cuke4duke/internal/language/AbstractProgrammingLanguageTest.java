@@ -7,17 +7,17 @@ import java.lang.reflect.Method;
 import org.junit.Before;
 import org.junit.Test;
 
-import cuke4duke.internal.jvmclass.JvmTransform;
+import cuke4duke.internal.java.JavaTransform;
 
 
 public class AbstractProgrammingLanguageTest {
 
     private Method method;
-    private JvmTransform transform;
+    private JavaTransform transform;
 
     @Before
     public void setUp() {
-        this.transform = new JvmTransform(method, null);
+        this.transform = new JavaTransform(method, null);
     }
 
     @Test

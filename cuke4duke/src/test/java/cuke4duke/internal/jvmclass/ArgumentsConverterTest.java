@@ -32,6 +32,13 @@ public class ArgumentsConverterTest {
     }
 
     @Test
+    public void shouldConvertFromStringToObject() {
+        Object[] convertedObject = converter.convert(new Class<?>[] { Object.class },
+                new Object[] {"An Object"});
+        assertTrue(convertedObject[0].getClass().isAssignableFrom(String.class));
+    }
+    
+    @Test
     public void shouldConvertFromStringToInt() {
         Object[] convertedObject = converter.convert(new Class<?>[] { Integer.TYPE },
                 new Object[] { String.format(Locale.US, "%d", Integer.MAX_VALUE) });

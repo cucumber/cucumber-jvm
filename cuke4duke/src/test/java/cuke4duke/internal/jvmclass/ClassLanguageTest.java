@@ -1,6 +1,5 @@
 package cuke4duke.internal.jvmclass;
 
-import static junit.framework.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
 import java.util.Collections;
@@ -28,9 +27,4 @@ public class ClassLanguageTest {
         language.load_code_file("foo/java/lang/Strix.class");
     }
 
-    @Test
-    public void shouldAddDefaultJavaTransformsToClassLanguage() throws Throwable {
-        language.prepareScenario();
-        assertTrue(language.getTransforms().size() > 0);
-    }
 }

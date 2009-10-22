@@ -18,6 +18,7 @@ public class ArgumentsConverter {
 
     public ArgumentsConverter(Map<Class<?>, Transformable> transforms) {
         this.transforms = transforms;
+        this.transforms.putAll(new DefaultJvmTransforms().createDefaultJvmTransforms());
     }
 
     public Object[] convert(Class<?>[] types, RubyArray args) {
