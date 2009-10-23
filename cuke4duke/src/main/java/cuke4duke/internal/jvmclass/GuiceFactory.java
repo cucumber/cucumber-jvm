@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.ConfigurationException;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
@@ -41,7 +42,11 @@ public class GuiceFactory implements ObjectFactory {
     public void createObjects() {
         injector = Guice.createInjector(modules);
         for (Class<?> clazz : classes) {
-            instances.put(clazz, injector.getInstance(clazz));
+        	try {
+        		instances.put(clazz, injector.getInstance(clazz));
+			} catch (ConfigurationException e) {
+				System.err.println("Could not create instance for "+clazz.getCanonicalName()+":\n"+e.getLocalizedMessage());
+			}
         }
     }
 
