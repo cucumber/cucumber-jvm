@@ -10,11 +10,12 @@ Given(~"I am on the Google search page") { ->
 When(~"I search for \"(.*)\"") { String query ->
   searchField = browser.findElement(By.name("q"))
   searchField.sendKeys(query)
-  searchField.submit() // WebDriver will find the containing form for us from the searchField element
+  // WebDriver will find the containing form for us from the searchField element
+  searchField.submit()
 }
 
 Then(~"I should see") { String text -> 
   if(browser.getPageSource().indexOf(text) == -1) {
-    fail("Didin't find " + text + " on the page")
+    fail("Didn't find " + text + " on the page")
   }
 }
