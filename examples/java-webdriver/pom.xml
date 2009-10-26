@@ -87,7 +87,7 @@
         <artifactId>cuke4duke-maven-plugin</artifactId>
         <configuration>
           <jvmArgs>
-            <!-- Comment in the line below to use FireFox instead of HTMLUnit (default) -->
+            <!-- Comment in the line below to use Firefox instead of HTMLUnit (default) -->
             <!--jvmArg>-Dwebdriver.impl=org.openqa.selenium.firefox.FirefoxDriver</jvmArg-->
           </jvmArgs>
           <cucumberArgs>
