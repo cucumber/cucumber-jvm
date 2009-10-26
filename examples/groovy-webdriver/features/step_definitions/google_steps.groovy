@@ -1,7 +1,8 @@
 import org.openqa.selenium.By
+import static org.junit.Assert.*
+import static org.junit.matchers.JUnitMatchers.*
 
 this.metaClass.mixin(cuke4duke.GroovyDsl)
-import static junit.framework.Assert.*
 
 Given(~"I am on the Google search page") { ->
   browser.get("http://google.com/")
@@ -15,7 +16,5 @@ When(~"I search for \"(.*)\"") { String query ->
 }
 
 Then(~"I should see") { String text -> 
-  if(browser.getPageSource().indexOf(text) == -1) {
-    fail("Didn't find " + text + " on the page")
-  }
+  assertThat(browser.getPageSource(), containsString(text))
 }
