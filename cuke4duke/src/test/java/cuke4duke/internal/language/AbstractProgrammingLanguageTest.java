@@ -12,12 +12,11 @@ import cuke4duke.internal.java.JavaTransform;
 
 public class AbstractProgrammingLanguageTest {
 
-    private Method method;
     private JavaTransform transform;
 
     @Before
     public void setUp() {
-        this.transform = new JavaTransform(method, null);
+        this.transform = new JavaTransform(null, null);
     }
 
     @Test
@@ -36,20 +35,15 @@ public class AbstractProgrammingLanguageTest {
 
         @Override
         public void cleanupScenario() throws Throwable {
-            // TODO Auto-generated method stub
-
         }
 
         @Override
         public void load_code_file(String file) throws Throwable {
-            // TODO Auto-generated method stub
-
         }
 
         @Override
         protected void prepareScenario() throws Throwable {
             clearHooksAndStepDefinitions();
         }
-
     }
 }
