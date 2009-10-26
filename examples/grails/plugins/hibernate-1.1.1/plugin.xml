@@ -1,0 +1,13 @@
+<plugin name='hibernate' version='1.1.1' grailsVersion='1.1.1 &gt; *'>
+  <author>Graeme Rocher</author>
+  <title>Hibernate for Grails</title>
+  <description>A plugin that provides integration between Grails and Hibernate through GORM</description>
+  <documentation>http://grails.org/doc/$version</documentation>
+  <resources />
+  <dependencies>
+    <plugin name='dataSource' version='1.1 &gt; *' />
+    <plugin name='i18n' version='1.1 &gt; *' />
+    <plugin name='core' version='1.1 &gt; *' />
+    <plugin name='domainClass' version='1.1 &gt; *' />
+  </dependencies>
+</plugin>
