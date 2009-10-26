@@ -32,7 +32,7 @@
     <dependency>
       <groupId>org.codehaus.groovy</groupId>
       <artifactId>groovy-all</artifactId>
-      <version>1.6.4</version>
+      <version>1.6.5</version>
     </dependency>
     <dependency>
       <groupId>cuke4duke</groupId>
