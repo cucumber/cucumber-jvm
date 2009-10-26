@@ -4,10 +4,10 @@
                       http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>cuke4duke</groupId>
-  <artifactId>cuke4duke-java-example</artifactId>
+  <artifactId>cuke4duke-java-webdriver-example</artifactId>
   <packaging>jar</packaging>
   <version>0.1.8-SNAPSHOT</version>
-  <name>Cuke4Duke Java Example</name>
+  <name>Cuke4Duke Java Webdriver Example</name>
   <url>http://cukes.info/</url>
 
   <repositories>
@@ -18,6 +18,11 @@
     <repository>
       <id>cukes</id>
       <url>http://cukes.info/maven</url>
+    </repository>
+    <repository>
+      <id>openqa-releases</id>
+      <name>OpenQA Releases</name>
+      <url>http://archiva.openqa.org/repository/releases</url>
     </repository>
   </repositories>
 
@@ -47,6 +52,18 @@
       <version>4.7</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.seleniumhq.webdriver</groupId>
+      <artifactId>webdriver-htmlunit</artifactId>
+      <version>0.9.7376</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.seleniumhq.webdriver</groupId>
+      <artifactId>webdriver-firefox</artifactId>
+      <version>0.9.7376</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
@@ -70,23 +87,12 @@
         <artifactId>cuke4duke-maven-plugin</artifactId>
         <configuration>
           <jvmArgs>
-            <jvmArg>-Dcuke4duke.objectFactory=cuke4duke.internal.jvmclass.PicoFactory</jvmArg>
+            <!-- Comment in the line below to use FireFox instead of HTMLUnit (default) -->
+            <!--jvmArg>-Dwebdriver.impl=org.openqa.selenium.firefox.FirefoxDriver</jvmArg-->
           </jvmArgs>
-          <!-- You may not need all of these arguments in your own project. We have a lot here for testing purposes... -->
           <cucumberArgs>
-            <cucumberArg>--backtrace</cucumberArg>
-            <cucumberArg>--color</cucumberArg>
             <cucumberArg>--verbose</cucumberArg>
-            <cucumberArg>--format</cucumberArg>
-            <cucumberArg>pretty</cucumberArg>
-            <cucumberArg>--format</cucumberArg>
-            <cucumberArg>junit</cucumberArg>
-            <cucumberArg>--out</cucumberArg>
-            <cucumberArg>target</cucumberArg>
-            <cucumberArg>--format</cucumberArg>
-            <cucumberArg>usage</cucumberArg>
-            <cucumberArg>--out</cucumberArg>
-            <cucumberArg>target/usage.txt</cucumberArg>
+            <cucumberArg>--color</cucumberArg>
             <cucumberArg>--require</cucumberArg>
             <cucumberArg>${basedir}/target/test-classes</cucumberArg>
           </cucumberArgs>

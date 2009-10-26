@@ -1,7 +1,7 @@
 == 0.1.8-SNAPSHOT (In Git)
 
 === New Features
-* A new example using WebDriver has been added. (Aslak Hellesøy)
+* Two new examples using WebDriver (with Groovy or Java) have been added. (Aslak Hellesøy)
 * Ability to call steps from step definitions in Scala. (Jon-Anders Teigen)
 * Ability to call steps from step definitions in Guice. (Henning Jensen)
 * A new @Transform is used to annotate methods that converts a string to specific type. 
