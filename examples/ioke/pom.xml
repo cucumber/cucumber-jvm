@@ -30,14 +30,14 @@
 
   <dependencies>
     <dependency>
-      <groupId>ioke.lang</groupId>
-      <artifactId>ikj</artifactId>
-      <version>0.4.0-1</version>
+      <groupId>org.ioke</groupId>
+      <artifactId>ioke-lang</artifactId>
+      <version>E-0.4.0-1</version>
     </dependency>
     <dependency>
-      <groupId>ioke.lang</groupId>
-      <artifactId>ikj-lib</artifactId>
-      <version>0.4.0-1</version>
+      <groupId>org.ioke</groupId>
+      <artifactId>ioke-lang-lib</artifactId>
+      <version>E-0.4.0-1</version>
     </dependency>
     <dependency>
       <groupId>cuke4duke</groupId>

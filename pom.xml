@@ -42,10 +42,10 @@
     <profile>
       <id>examples</id>
       <modules>
+        <module>examples/ioke</module>
         <module>examples/java-webdriver</module>
         <module>examples/groovy-webdriver</module>
         <module>examples/guice</module>
-        <module>examples/ioke</module>
         <module>examples/javascript</module>
         <module>examples/groovy</module>
         <module>examples/scala</module>

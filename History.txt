@@ -7,6 +7,9 @@
 * A new @Transform is used to annotate methods that converts a string to specific type. 
   See examples/java/features/transform.feature an example of how it's done (Torbjørn Vatn)
 
+=== Changed Features
+* Ioke jars are removed from Git. We're using the jars in the Maven repo instead. (Aslak Hellesøy)
+
 === Bugfixes
 * Made programming language dependencies optional (Aslak Hellesøy)
 
