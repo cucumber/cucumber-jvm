@@ -1,4 +1,9 @@
-== 0.1.8-SNAPSHOT (In Git)
+== 0.1.8 2009-11-03
+
+Several exciting news in this release - transforms, calling of steps from step definitions
+and WebDriver examples.
+
+IMPORTANT: You should upgrade to JRuby 1.4.0 and Cucumber 0.4.3.
 
 === New Features
 * Two new examples using WebDriver (with Groovy or Java) have been added. (Aslak Hellesøy)
