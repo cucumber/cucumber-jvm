@@ -6,7 +6,6 @@
   (dosync (alter numbers conj num)))
 
 (defn calculate [operator]
-  (println @numbers)
   (dosync
     (ref-set numbers [(apply operator @numbers)])))
 
