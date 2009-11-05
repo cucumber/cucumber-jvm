@@ -37,6 +37,9 @@ public class ArgumentsConverter {
     }
 
     private Object convertObject(Class<?> type, Object arg) {
+        if(type.isAssignableFrom(arg.getClass())) {
+            return arg;
+        }
         try {
             if (type.equals(String.class)) {
                 if (arg instanceof PyString) {

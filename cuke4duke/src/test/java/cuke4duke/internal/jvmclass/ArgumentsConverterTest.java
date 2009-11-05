@@ -177,6 +177,12 @@ public class ArgumentsConverterTest {
     }
 
     @Test
+    public void shouldConvertFromTableToObject() {
+        Object[] convertedObject = converter.convert(new Class<?>[] { Object.class }, new Object[] { mock(Table.class) });
+        assertTrue(convertedObject[0].getClass().getInterfaces()[0].equals(Table.class));
+    }
+
+    @Test
     public void shouldConvertFromClassToClass() {
         Object[] convertedObject = converter.convert(new Class<?>[] { MyClass.class }, new Object[] { new MyClass() });
         assertTrue(convertedObject[0].getClass().isAssignableFrom(

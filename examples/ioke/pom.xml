@@ -55,6 +55,7 @@
         <configuration>
           <cucumberArgs>
             <cucumberArg>--color</cucumberArg>
+            <cucumberArg>--backtrace</cucumberArg>
             <cucumberArg>--verbose</cucumberArg>
             <cucumberArg>--wip</cucumberArg>
           </cucumberArgs>

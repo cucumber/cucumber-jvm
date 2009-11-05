@@ -1,5 +1,8 @@
 == In Git
 
+=== Bug fixes
+* Fixed a regression from 0.1.8 where transforming Table to Object failed (now skipping transform if type is ok). (Aslak Hellesøy)
+
 === New Features
 * Before hooks are working in Clojure. (Stu Halloway and Aslak Hellesøy)
 
