@@ -4,7 +4,7 @@
   <groupId>cuke4duke</groupId>
   <artifactId>cuke4duke-guice-example</artifactId>
   <packaging>jar</packaging>
-  <version>0.1.8-SNAPSHOT</version>
+  <version>0.1.8</version>
   <name>Cuke4Duke Guice Example</name>
   <url>http://cukes.info/</url>
 
@@ -45,7 +45,7 @@
     <dependency>
       <groupId>cuke4duke</groupId>
       <artifactId>cuke4duke</artifactId>
-      <version>0.1.8-SNAPSHOT</version>
+      <version>0.1.8</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -90,7 +90,7 @@
             <cucumberArg>${basedir}/target/test-classes</cucumberArg>
           </cucumberArgs>
           <gems>
-            <gem>cucumber --version 0.4.2 --source http://gems.rubyforge.org/</gem>
+            <gem>cucumber --version 0.4.3 --source http://gems.rubyforge.org/</gem>
           </gems>
         </configuration>
         <executions>

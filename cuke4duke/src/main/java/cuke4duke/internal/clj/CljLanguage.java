@@ -17,8 +17,12 @@ public class CljLanguage extends AbstractProgrammingLanguage {
         RT.load("cuke4duke/internal/clj/clj_dsl");
     }
 
-    public static void addStepDefinition(Pattern regexp, AFunction closure) throws Throwable {
+    public static void addCljStepDefinition(Pattern regexp, AFunction closure) throws Throwable {
         instance.addStepDefinition(new CljStepDefinition(instance, regexp, closure));
+    }
+
+    public static void addCljBeforeHook(AFunction closure) {
+        instance.addBeforeHook(new CljHook(instance, closure));
     }
 
     public void load_code_file(String cljFile) throws Throwable {

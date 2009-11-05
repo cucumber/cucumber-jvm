@@ -48,7 +48,7 @@
   </target>
 
   <target name="install-gems" description="Install gems">
-    <install-gem gem="cucumber" version="0.4.2" source="http://gems.rubyforge.org/"/>
+    <install-gem gem="cucumber" version="0.4.3" source="http://gems.rubyforge.org/"/>
     <install-gem gem="rspec" version="1.2.8" />
   </target>
 

@@ -8,7 +8,7 @@
     <groupId>cuke4duke</groupId>
     <artifactId>parent</artifactId>
     <relativePath>../pom.xml</relativePath>
-    <version>0.1.8-SNAPSHOT</version>
+    <version>0.1.8</version>
   </parent>
 
   <artifactId>cuke4duke</artifactId>
@@ -16,13 +16,6 @@
   <name>Cuke4Duke</name>
   <description>Pure Java support for Cucumber</description>
 
-  <repositories>
-    <repository>
-      <id>ioke</id>
-      <url>file://${project.basedir}/../examples/ioke/maven</url>
-    </repository>
-  </repositories>
-  
   <reporting>
     <plugins>
       <plugin>
@@ -39,7 +32,7 @@
     <dependency>
       <groupId>org.jruby</groupId>
       <artifactId>jruby-complete</artifactId>
-      <version>1.4.0RC1</version>
+      <version>1.4.0</version>
     </dependency>
 
     <dependency>

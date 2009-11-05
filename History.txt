@@ -1,4 +1,17 @@
-== 0.1.8-SNAPSHOT (In Git)
+== In Git
+
+=== New Features
+* Before hooks are working in Clojure. (Stu Halloway and Aslak Hellesøy)
+
+=== Changed Features
+* Ioke jars are removed from Git. We're using the jars in the Maven repo instead. (Aslak Hellesøy)
+
+== 0.1.8 2009-11-03
+
+Several exciting news in this release - transforms, calling of steps from step definitions
+and WebDriver examples.
+
+IMPORTANT: You should upgrade to JRuby 1.4.0 and Cucumber 0.4.3.
 
 === New Features
 * Two new examples using WebDriver (with Groovy or Java) have been added. (Aslak Hellesøy)
@@ -6,9 +19,6 @@
 * Ability to call steps from step definitions in Guice. (Henning Jensen)
 * A new @Transform is used to annotate methods that converts a string to specific type. 
   See examples/java/features/transform.feature an example of how it's done (Torbjørn Vatn)
-
-=== Changed Features
-* Ioke jars are removed from Git. We're using the jars in the Maven repo instead. (Aslak Hellesøy)
 
 === Bugfixes
 * Made programming language dependencies optional (Aslak Hellesøy)
