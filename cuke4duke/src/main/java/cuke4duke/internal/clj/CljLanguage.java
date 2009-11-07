@@ -25,6 +25,11 @@ public class CljLanguage extends AbstractProgrammingLanguage {
         instance.addBeforeHook(new CljHook(instance, closure));
     }
 
+
+    public static void addCljAfterHook(AFunction closure) {
+        instance.addAfterHook(new CljHook(instance, closure));
+    }
+
     public void load_code_file(String cljFile) throws Throwable {
         Compiler.loadFile(cljFile);
     }
