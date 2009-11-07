@@ -4,7 +4,7 @@
 * Fixed a regression from 0.1.8 where transforming Table to Object failed (now skipping transform if type is ok). (Aslak Hellesøy)
 
 === New Features
-* Before hooks are working in Clojure. (Stu Halloway and Aslak Hellesøy)
+* Added Before and After hooks to Clojure. (Stu Halloway and Aslak Hellesøy)
 
 === Changed Features
 * Ioke jars are removed from Git. We're using the jars in the Maven repo instead. (Aslak Hellesøy)

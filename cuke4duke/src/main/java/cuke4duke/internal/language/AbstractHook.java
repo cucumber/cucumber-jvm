@@ -12,7 +12,7 @@ public abstract class AbstractHook implements Hook  {
         this.tagNames = tagNames;
     }
 
-    public RubyArray tag_names() {
+    public final RubyArray tag_names() {
         return JRuby.newArray(tagNames);
     }
 }

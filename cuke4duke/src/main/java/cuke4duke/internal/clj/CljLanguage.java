@@ -5,6 +5,8 @@ import clojure.lang.Compiler;
 import clojure.lang.RT;
 import cuke4duke.internal.language.AbstractProgrammingLanguage;
 import cuke4duke.internal.language.LanguageMixin;
+
+import java.util.Collections;
 import java.util.regex.Pattern;
 
 public class CljLanguage extends AbstractProgrammingLanguage {
@@ -22,12 +24,12 @@ public class CljLanguage extends AbstractProgrammingLanguage {
     }
 
     public static void addCljBeforeHook(AFunction closure) {
-        instance.addBeforeHook(new CljHook(instance, closure));
+        instance.addBeforeHook(new CljHook(Collections.<String>emptyList(), closure));
     }
 
 
     public static void addCljAfterHook(AFunction closure) {
-        instance.addAfterHook(new CljHook(instance, closure));
+        instance.addAfterHook(new CljHook(Collections.<String>emptyList(), closure));
     }
 
     public void load_code_file(String cljFile) throws Throwable {
