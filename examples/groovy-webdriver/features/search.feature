@@ -8,5 +8,5 @@ Feature: Search
     When I search for "cucumber github"
     Then I should see
       """
-      plain-text functional descriptions
+      <em>Cucumber</em> itself is written in Ruby
       """
