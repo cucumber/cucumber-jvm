@@ -5,7 +5,9 @@ import cuke4duke.internal.language.Hook;
 import org.jruby.RubyArray;
 import org.jruby.runtime.builtin.IRubyObject;
 
+@SuppressWarnings("serial")
 public class CljHook extends AFunction implements Hook {
+    @SuppressWarnings("unused")
     private final CljLanguage instance;
     private final AFunction closure;
 

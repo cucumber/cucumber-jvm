@@ -2,8 +2,6 @@ package cuke4duke.internal.language;
 
 import static junit.framework.Assert.assertEquals;
 
-import java.lang.reflect.Method;
-
 import org.junit.Before;
 import org.junit.Test;
 
