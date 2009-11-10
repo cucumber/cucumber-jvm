@@ -2,6 +2,7 @@ package cuke4duke.internal.jvmclass;
 
 import static cuke4duke.internal.Utils.join;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.jruby.RubyArray;
@@ -17,8 +18,12 @@ public class ArgumentsConverter {
     private final Map<Class<?>, Transformable> transforms;
 
     public ArgumentsConverter(Map<Class<?>, Transformable> transforms) {
-        this.transforms = transforms;
-        this.transforms.putAll(new DefaultJvmTransforms().createDefaultJvmTransforms());
+        this.transforms = createDefaultTransformations();
+        this.transforms.putAll(transforms);
+    }
+
+    private HashMap<Class<?>, Transformable> createDefaultTransformations() {
+        return new HashMap<Class<?>, Transformable>(new DefaultJvmTransforms().createDefaultJvmTransforms());
     }
 
     public Object[] convert(Class<?>[] types, RubyArray args) {

@@ -14,9 +14,20 @@ public class TransformSteps extends Steps {
     
     private boolean exceptionThrown = false;
     private User user;
+    private boolean yes;
 
     public TransformSteps(StepMother stepMother) {
         super(stepMother);
+    }
+    
+    @Transform
+    public User transformStringToUserWithAge(String age) {
+        return new User(Integer.valueOf(age));
+    }
+    
+    @Transform
+    public boolean overrideBooleanPrimitiveTransform(String boolValue) {
+        return boolValue.equals("yes") ? true : false;
     }
 
     @Given("^I pass '(.*)' to a method with int as parameter$")
@@ -37,14 +48,14 @@ public class TransformSteps extends Steps {
     public void passACar(Car value) {
     }
     
-    @Transform
-    public User transformStringToUserWithAge(String age) {
-        return new User(Integer.valueOf(age));
-    }
-    
     @Given("^I pass '(.*)' to a method with User as parameter$")
     public void transformToA(User user) {
         this.user = user;
+    }
+
+    @Given("^I pass '(.*)' to a method with boolean as parameter$")
+    public void iPassYesToAMethodWithBooleanAsParameter(boolean yes) {
+        this.yes = yes;
     }
     
     @When("^something happens$")
@@ -65,6 +76,11 @@ public class TransformSteps extends Steps {
     public void exceptionIsThrown() {
         assertTrue(exceptionThrown);
     }
+    
+     @Then("^the parameter is true$")
+     public void theParameterIsTrue() {
+         assertTrue(yes);
+     }
 
     private class Car {
     }
