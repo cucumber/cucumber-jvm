@@ -1,5 +1,6 @@
 package cuke4duke.internal.java;
 
+import cuke4duke.After;
 import cuke4duke.internal.JRuby;
 import cuke4duke.internal.jvmclass.ObjectFactory;
 import cuke4duke.internal.language.AbstractHook;
@@ -7,6 +8,8 @@ import cuke4duke.internal.language.MethodInvoker;
 import org.jruby.runtime.builtin.IRubyObject;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class JavaHook extends AbstractHook {
@@ -21,10 +24,6 @@ public class JavaHook extends AbstractHook {
         this.methodInvoker = new MethodInvoker(method);
     }
     
-    public JavaHook(Method method, ObjectFactory objectFactory) {
-        this(null, method, objectFactory);
-    }
-
     public void invoke(String location, IRubyObject scenario) throws Throwable {
         Object target = objectFactory.getComponent(method.getDeclaringClass());
         Object[] args = null;
@@ -34,5 +33,13 @@ public class JavaHook extends AbstractHook {
             throw JRuby.cucumberArityMismatchError("Hooks must take 0 or 1 arguments. " + method);
         }
         methodInvoker.invoke(target, args);
+    }
+
+    public static List<String> getTagNames(String names) {
+        if("".equals(names)) {
+            return Collections.emptyList();
+        } else {
+            return Arrays.asList(names.split(","));
+        }
     }
 }

@@ -13,8 +13,6 @@ import cuke4duke.internal.JRuby;
 public abstract class AbstractProgrammingLanguage implements ProgrammingLanguage {
     protected final LanguageMixin languageMixin;
     private List<StepDefinition> stepDefinitions;
-    private List<Hook> befores;
-    private List<Hook> afters;
     private Map<Class<?>, Transformable> transforms;
 
     public AbstractProgrammingLanguage(LanguageMixin languageMixin) {
@@ -38,24 +36,16 @@ public abstract class AbstractProgrammingLanguage implements ProgrammingLanguage
         return matches;
     }
 
-    public final void begin_scenario() throws Throwable {
+    public final void begin_scenario(IRubyObject scenario) throws Throwable {
         prepareScenario();
-        for (Hook before : befores) {
-            before.invoke("before", null);
-        }
     }
 
     protected void clearHooksAndStepDefinitions() {
         transforms = new HashMap<Class<?>, Transformable>();
-        befores = new ArrayList<Hook>();
         stepDefinitions = new ArrayList<StepDefinition>();
-        afters = new ArrayList<Hook>();
     }
 
     public final void end_scenario() throws Throwable {
-        for (Hook after : afters) {
-            after.invoke("after", null);
-        }
         cleanupScenario();
     }
 
@@ -68,7 +58,7 @@ public abstract class AbstractProgrammingLanguage implements ProgrammingLanguage
     }
 
     public void addBeforeHook(Hook before) {
-        befores.add(before);
+        languageMixin.add_hook("before", before);
     }
 
     public void addStepDefinition(StepDefinition stepDefinition) {
@@ -76,7 +66,7 @@ public abstract class AbstractProgrammingLanguage implements ProgrammingLanguage
     }
 
     public void addAfterHook(Hook after) {
-        afters.add(after);
+        languageMixin.add_hook("after", after);
     }
 
     protected abstract void prepareScenario() throws Throwable;

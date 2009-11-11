@@ -10,6 +10,11 @@ public class HookSteps extends SuperSteps {
     private String b4WithoutArgs;
     private static String myStatic = "clean";
 
+    @Before("@nothing_tagged_with_this")
+    public void cryWolf() {
+        throw new RuntimeException("CRY WOLF");
+    }
+
     @Before
     public void setB4WithoutArgs() {
         b4WithoutArgs = "b4WithoutArgs was here";
@@ -30,7 +35,7 @@ public class HookSteps extends SuperSteps {
         assertEquals(expected, myStatic);
     }
 
-    @After("")
+    @After
     public void setAfter(Object scenario) {
         myStatic = "clean";
         assertEquals("b4WithoutArgs was here", b4WithoutArgs);
