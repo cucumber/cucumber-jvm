@@ -2,8 +2,7 @@ package cuke4duke.internal.language;
 
 import static junit.framework.Assert.assertEquals;
 
-import java.lang.reflect.Method;
-
+import org.jruby.runtime.builtin.IRubyObject;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -22,7 +21,7 @@ public class AbstractProgrammingLanguageTest {
     @Test
     public void shouldAddTransformHooksToTransformsMap() throws Throwable {
         AbstractProgrammingLanguage programmingLanguage = new TestProgrammingLanguage(null);
-        programmingLanguage.prepareScenario();
+        programmingLanguage.begin_scenario(null);
         programmingLanguage.addTransform(Integer.TYPE, transform);
         assertEquals(transform, programmingLanguage.getTransforms().get(Integer.TYPE));
     }
@@ -34,7 +33,7 @@ public class AbstractProgrammingLanguageTest {
         }
 
         @Override
-        public void cleanupScenario() throws Throwable {
+        public void end_scenario() throws Throwable {
         }
 
         @Override
@@ -42,7 +41,7 @@ public class AbstractProgrammingLanguageTest {
         }
 
         @Override
-        protected void prepareScenario() throws Throwable {
+        protected void begin_scenario(IRubyObject scenario) throws Throwable {
             clearHooksAndStepDefinitions();
         }
     }

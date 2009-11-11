@@ -2,6 +2,7 @@ package cuke4duke.internal.js;
 
 import cuke4duke.internal.language.AbstractProgrammingLanguage;
 import cuke4duke.internal.language.LanguageMixin;
+import org.jruby.runtime.builtin.IRubyObject;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.NativeFunction;
 import org.mozilla.javascript.Scriptable;
@@ -27,7 +28,7 @@ public class JsLanguage extends AbstractProgrammingLanguage {
         jsFiles.add(jsFile);
     }
 
-    protected void prepareScenario() throws Throwable {
+    protected void begin_scenario(IRubyObject scenario) throws Throwable {
         clearHooksAndStepDefinitions();
         cx = Context.enter();
         scope = new Global(cx); // This gives us access to global functions like load()
@@ -42,6 +43,6 @@ public class JsLanguage extends AbstractProgrammingLanguage {
         addStepDefinition(new JsStepDefinition(this, cx, scope, jsStepDefinition, argumentsFrom, regexp, closure));
     }
 
-    public void cleanupScenario() throws Throwable {
+    public void end_scenario() throws Throwable {
     }
 }

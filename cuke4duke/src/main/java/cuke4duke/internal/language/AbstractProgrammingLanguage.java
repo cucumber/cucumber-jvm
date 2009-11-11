@@ -36,17 +36,9 @@ public abstract class AbstractProgrammingLanguage implements ProgrammingLanguage
         return matches;
     }
 
-    public final void begin_scenario(IRubyObject scenario) throws Throwable {
-        prepareScenario();
-    }
-
     protected void clearHooksAndStepDefinitions() {
         transforms = new HashMap<Class<?>, Transformable>();
         stepDefinitions = new ArrayList<StepDefinition>();
-    }
-
-    public final void end_scenario() throws Throwable {
-        cleanupScenario();
     }
 
     public final Map<Class<?>, Transformable> getTransforms() {
@@ -69,9 +61,9 @@ public abstract class AbstractProgrammingLanguage implements ProgrammingLanguage
         languageMixin.add_hook("after", after);
     }
 
-    protected abstract void prepareScenario() throws Throwable;
+    protected abstract void begin_scenario(IRubyObject scenario) throws Throwable;
 
-    public abstract void cleanupScenario() throws Throwable;
+    public abstract void end_scenario() throws Throwable;
 
     public void availableStepDefinition(String regexp_source, String file_colon_line) {
         languageMixin.available_step_definition(regexp_source, file_colon_line);

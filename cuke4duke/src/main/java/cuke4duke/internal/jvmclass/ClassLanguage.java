@@ -8,6 +8,7 @@ import java.util.List;
 
 import cuke4duke.StepMother;
 import cuke4duke.internal.language.AbstractProgrammingLanguage;
+import org.jruby.runtime.builtin.IRubyObject;
 
 public class ClassLanguage extends AbstractProgrammingLanguage {
     private final ObjectFactory objectFactory;
@@ -34,7 +35,7 @@ public class ClassLanguage extends AbstractProgrammingLanguage {
         classes.add(clazz);
     }
 
-    protected void prepareScenario() throws Throwable {
+    protected void begin_scenario(IRubyObject scenario) throws Throwable {
         clearHooksAndStepDefinitions();
         objectFactory.createObjects();
         for (ClassAnalyzer analyzer : analyzers) {
@@ -45,7 +46,7 @@ public class ClassLanguage extends AbstractProgrammingLanguage {
     }
 
     @Override
-    public void cleanupScenario() throws Throwable {
+    public void end_scenario() throws Throwable {
         objectFactory.disposeObjects();
     }
 

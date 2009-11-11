@@ -18,3 +18,8 @@ Feature: Step argument transformations
     Given I pass '10' to a method with Car as parameter
     When something happens
     Then an exception is thrown
+    
+  Scenario: overriding a default transform
+    Given I pass 'yes' to a method with boolean as parameter
+    When something happens
+    Then the parameter is true

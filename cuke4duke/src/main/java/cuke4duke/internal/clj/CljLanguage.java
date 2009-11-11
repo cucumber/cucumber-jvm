@@ -5,6 +5,7 @@ import clojure.lang.Compiler;
 import clojure.lang.RT;
 import cuke4duke.internal.language.AbstractProgrammingLanguage;
 import cuke4duke.internal.language.LanguageMixin;
+import org.jruby.runtime.builtin.IRubyObject;
 
 import java.util.Collections;
 import java.util.regex.Pattern;
@@ -36,9 +37,9 @@ public class CljLanguage extends AbstractProgrammingLanguage {
         Compiler.loadFile(cljFile);
     }
 
-    protected void prepareScenario() throws Throwable {
+    protected void begin_scenario(IRubyObject scenario) throws Throwable {
     }
 
-    public void cleanupScenario() throws Throwable {
+    public void end_scenario() throws Throwable {
     }
 }

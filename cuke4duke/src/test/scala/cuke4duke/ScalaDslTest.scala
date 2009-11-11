@@ -9,6 +9,7 @@ import org.junit.{Test, Before => JunitBefore, Assert}
 import Assert._
 
 import _root_.scala.collection.mutable.{Map, ListBuffer}
+import org.jruby.runtime.builtin.IRubyObject
 import org.jruby.RubyArray
 import java.lang.String
 
@@ -42,8 +43,8 @@ class ScalaDslTest extends ScalaDsl with Norwegian {
     def create_step_match(step_definition: StepDefinition, step_name: String, formatted_step_name: String, step_arguments: List[StepArgument]) = null
     def add_hook(phase: String, hook: Hook) = {}
   }){
-    def cleanupScenario = {}
-    protected[cuke4duke] def prepareScenario = {}
+    def begin_scenario(scenario: IRubyObject) = {}
+    def end_scenario = {}
     def load_code_file(file: String) = {}
   }
 

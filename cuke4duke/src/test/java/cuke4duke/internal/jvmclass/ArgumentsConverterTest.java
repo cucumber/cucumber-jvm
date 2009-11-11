@@ -26,7 +26,7 @@ public class ArgumentsConverterTest {
     public void setUp() throws Throwable {
         System.setProperty("cuke4duke.objectFactory", "cuke4duke.internal.jvmclass.PicoFactory");
         ClassLanguage classLanguage = new ClassLanguage(mock(ClassLanguageMixin.class), mock(StepMother.class), Arrays.asList(new ClassAnalyzer[] { new JavaAnalyzer() }));
-        classLanguage.prepareScenario();
+        classLanguage.begin_scenario(null);
         transforms = classLanguage.getTransforms();
         converter = new ArgumentsConverter(transforms);
     }

@@ -6,6 +6,7 @@ import cuke4duke.internal.language.LanguageMixin;
 import groovy.lang.Binding;
 import groovy.lang.Closure;
 import groovy.lang.GroovyShell;
+import org.jruby.runtime.builtin.IRubyObject;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,7 +29,7 @@ public class GroovyLanguage extends AbstractProgrammingLanguage {
         body.call(args);
     }
 
-    public void prepareScenario() throws IOException {
+    public void begin_scenario(IRubyObject scenario) throws IOException {
         clearHooksAndStepDefinitions();
         worldFactory = null;
         GroovyShell shell = new GroovyShell(new Binding());
@@ -38,7 +39,7 @@ public class GroovyLanguage extends AbstractProgrammingLanguage {
         currentWorld = worldFactory == null ? new Object() : worldFactory.call();
     }
 
-    public void cleanupScenario() {
+    public void end_scenario() {
     }
 
     public void load_code_file(String groovyFile) throws ClassNotFoundException, IOException {
