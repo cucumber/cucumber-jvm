@@ -6,7 +6,6 @@ import cuke4duke.internal.groovy.GroovyStepDefinition;
 import cuke4duke.internal.language.LanguageMixin;
 import groovy.lang.Closure;
 
-import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -20,11 +19,17 @@ public class GroovyDsl {
         groovyLanguage.registerWorldFactory(body);
     }
 
-    public static void Before(List<String> tagNames, Closure body) {
+    public static void Before(Object... tagsAndBody) {
+        String[] tagNames = new String[tagsAndBody.length-1];
+        System.arraycopy(tagsAndBody, 0, tagNames, 0, tagNames.length);
+        Closure body = (Closure) tagsAndBody[tagsAndBody.length-1];
         languageMixin.add_hook("before", new GroovyHook(tagNames, body, groovyLanguage));
     }
 
-    public static void After(List<String> tagNames, Closure body) {
+    public static void After(Object... tagsAndBody) {
+        String[] tagNames = new String[tagsAndBody.length-1];
+        System.arraycopy(tagsAndBody, 0, tagNames, 0, tagNames.length);
+        Closure body = (Closure) tagsAndBody[tagsAndBody.length-1];
         languageMixin.add_hook("after", new GroovyHook(tagNames, body, groovyLanguage));
     }
 

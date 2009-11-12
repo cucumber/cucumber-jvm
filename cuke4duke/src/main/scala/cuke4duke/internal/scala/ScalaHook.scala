@@ -5,9 +5,8 @@ import cuke4duke.internal.language.AbstractHook
 import org.jruby.runtime.builtin.IRubyObject
 
 import _root_.java.lang.{Throwable, String}
-import _root_.java.util.{ArrayList}
 
-class ScalaHook(tagNames:List[String], f:() => Unit) extends AbstractHook(new ArrayList[String]{ for(t <- tagNames) add(t) }) {
+class ScalaHook(tagNames:Array[String], f:() => Unit) extends AbstractHook(tagNames) {
 
   @throws(classOf[Throwable])
   def invoke(location: String, scenario: IRubyObject){

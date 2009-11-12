@@ -2,7 +2,7 @@ import org.openqa.selenium.By
 import static org.junit.Assert.*
 import static org.junit.matchers.JUnitMatchers.*
 
-this.metaClass.mixin(cuke4duke.GroovyDsl)
+this.metaClass.mixin(cuke4duke.GroovyDsl2)
 
 Given(~"I am on the Google search page") { ->
   browser.get("http://google.com/")

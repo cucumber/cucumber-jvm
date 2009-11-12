@@ -25,6 +25,11 @@ public class HookSteps extends SuperSteps {
         assertEquals(b4Value, b4);
     }
 
+    @Then("^b4AndForever should have the value \"([^\"]*)\"$")
+    public void thenB4AndForever(String b4AndForeverValue) {
+        assertEquals(b4AndForeverValue, b4AndForever);
+    }
+
     @When("^I set static value to \"([^\"]*)\"$")
     public void setStatic(String newValue) {
         myStatic = newValue;

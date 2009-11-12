@@ -1,7 +1,7 @@
 //import org.openqa.selenium.firefox.FirefoxDriver
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
 
-this.metaClass.mixin(cuke4duke.GroovyDsl)
+this.metaClass.mixin(cuke4duke.GroovyDsl2)
 
 Before([]) {
   //browser = new FirefoxDriver()

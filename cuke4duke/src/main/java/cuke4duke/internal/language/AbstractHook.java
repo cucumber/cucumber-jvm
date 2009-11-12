@@ -1,18 +1,24 @@
 package cuke4duke.internal.language;
 
-import cuke4duke.internal.JRuby;
-import org.jruby.RubyArray;
-
 import java.util.List;
 
 public abstract class AbstractHook implements Hook  {
-    protected final List<String> tagNames;
+    private String[] tagNames;
+    private List<List<String>> tagNameLists;
 
-    public AbstractHook(List<String> tagNames) {
+    public AbstractHook(String[] tagNames) {
         this.tagNames = tagNames;
     }
 
-    public final RubyArray tag_names() {
-        return JRuby.newArray(tagNames);
+    public final String[] tag_names() {
+        return tagNames;
+    }
+
+    public final void setTagNameLists(List<List<String>> tagNameLists) {
+        this.tagNameLists = tagNameLists;
+    }
+
+    public final List<List<String>> getTagNameLists() {
+        return tagNameLists;
     }
 }

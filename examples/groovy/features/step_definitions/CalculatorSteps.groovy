@@ -10,13 +10,23 @@ World {
   new CustomWorld()
 }
 
-Before([]) {
+println("NUUUUU")
+Before("AA")
+Before("AA", "BB")
+println("NUUUUUBIE")
+Before(["AAPE"])
+
+Before() {
   assert "foo" == customMethod()
   calc = new calc.Calculator()
 }
 
-Before(["@notused"]) {
-  throw new RuntimeException("Keep out")
+Before("@notused") {
+  throw new RuntimeException("Never happens")
+}
+
+Before("@notused,@important", "@alsonotused") {
+  throw new RuntimeException("Never happens")
 }
 
 Given(~"I have entered (\\d+) into (.*) calculator") { int number, String ignore ->

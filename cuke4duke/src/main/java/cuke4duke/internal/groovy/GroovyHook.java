@@ -4,13 +4,11 @@ import cuke4duke.internal.language.AbstractHook;
 import groovy.lang.Closure;
 import org.jruby.runtime.builtin.IRubyObject;
 
-import java.util.List;
-
 public class GroovyHook extends AbstractHook {
     private final GroovyLanguage groovyLanguage;
     private final Closure body;
 
-    public GroovyHook(List<String> tagNames, Closure body, GroovyLanguage groovyLanguage) {
+    public GroovyHook(String[] tagNames, Closure body, GroovyLanguage groovyLanguage) {
         super(tagNames);
         this.groovyLanguage = groovyLanguage;
         this.body = body;
