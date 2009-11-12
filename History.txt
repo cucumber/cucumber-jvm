@@ -1,10 +1,17 @@
 == In Git
 
+This release has improved support for boolean logic in tags. Here is an example in Java:
+@Before({"@important,@customer", "@super-important"})
+
+This means (@important && @customer) || @super-important.
+A comma in a String is a &&, a comma between arguments is a ||.
+
 === Bugfixes
 * @Before("@scenario") does not work as expected (#38 Aslak Hellesøy)
 * Fixed a regression from 0.1.8 where transforming Table to Object failed (now skipping transform if type is ok). (Aslak Hellesøy)
 
 === New Features
+* Support for boolean tag logic aligned with Cucumber. (Aslak Hellesøy)
 * Added Before and After hooks to Clojure. (Stu Halloway and Aslak Hellesøy)
 
 === Changed Features
