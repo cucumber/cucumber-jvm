@@ -1,6 +1,6 @@
 # This file is loaded before Cucumber is loaded.
 require 'rubygems'
-gem 'cucumber', '0.4.3'
+gem 'cucumber', '0.4.4'
 require 'java'
 
 # Workaround to make the java code have access to the same Ruby
