@@ -1,17 +1,7 @@
 == In Git
 
 This release sports much improved Before and After hooks in several areas. You can now construct more complex
-boolean queries with tagged hooks. This is featured in Cucumber 0.4.4:
-
-* http://wiki.github.com/aslakhellesoy/cucumber/hooks
-* http://wiki.github.com/aslakhellesoy/cucumber/tags
-
-=== Java:
-@Before("@something")
-@Before({"@important,@customer", "@super-important"}) // Use {} when you need several (if you want ||).
-
-=== Groovy and Scala:
-Before("@important,@customer", "@super-important") {}
+boolean queries with tagged hooks. This is featured in Cucumber 0.4.4.
 
 For these examples this resolves to the following boolean query: (@important && @customer) || @super-important.
 A comma in a String is a &&, a comma between arguments is a ||.
