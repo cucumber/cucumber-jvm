@@ -1,9 +1,8 @@
 package cuke4duke.internal.jvmclass;
 
+import cuke4duke.StepMother;
 import org.picocontainer.MutablePicoContainer;
 import org.picocontainer.PicoBuilder;
-
-import cuke4duke.StepMother;
 
 import java.util.ArrayList;
 import java.util.List;

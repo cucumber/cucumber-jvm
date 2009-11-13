@@ -1,14 +1,13 @@
 package cuke4duke.internal.language;
 
+import cuke4duke.internal.JRuby;
+import org.jruby.RubyArray;
+import org.jruby.runtime.builtin.IRubyObject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.jruby.RubyArray;
-import org.jruby.runtime.builtin.IRubyObject;
-
-import cuke4duke.internal.JRuby;
 
 public abstract class AbstractProgrammingLanguage implements ProgrammingLanguage {
     protected final LanguageMixin languageMixin;

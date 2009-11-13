@@ -8,7 +8,7 @@ import org.mozilla.javascript.NativeFunction;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.regexp.NativeRegExp;
 import org.mozilla.javascript.tools.shell.Global;
- 
+
 import java.io.FileReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;

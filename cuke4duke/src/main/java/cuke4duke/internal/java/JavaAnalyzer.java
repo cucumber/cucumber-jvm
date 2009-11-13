@@ -1,28 +1,21 @@
 package cuke4duke.internal.java;
 
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.regex.Pattern;
-
-import cuke4duke.After;
-import cuke4duke.Before;
-import cuke4duke.Given;
-import cuke4duke.Then;
-import cuke4duke.Transform;
-import cuke4duke.When;
+import cuke4duke.*;
 import cuke4duke.internal.jvmclass.ClassAnalyzer;
 import cuke4duke.internal.jvmclass.ClassLanguage;
 import cuke4duke.internal.jvmclass.ObjectFactory;
 
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.regex.Pattern;
+
 public class JavaAnalyzer implements ClassAnalyzer {
 
-    public void populateStepDefinitionsAndHooksFor(Class<?> clazz, ObjectFactory objectFactory, ClassLanguage classLanguage) throws Throwable {
-        for (Method method : clazz.getMethods()) {
-            registerBeforeMaybe(method, classLanguage, objectFactory);
-            registerStepDefinitionMaybe(method, classLanguage, objectFactory);
-            registerAfterMaybe(method, classLanguage, objectFactory);
-            registerTransformMaybe(method, classLanguage, objectFactory);
-        }
+    public void populateStepDefinitionsAndHooksFor(Method method, ObjectFactory objectFactory, ClassLanguage classLanguage) throws Throwable {
+        registerBeforeMaybe(method, classLanguage, objectFactory);
+        registerStepDefinitionMaybe(method, classLanguage, objectFactory);
+        registerAfterMaybe(method, classLanguage, objectFactory);
+        registerTransformMaybe(method, classLanguage, objectFactory);
     }
 
     private void registerTransformMaybe(Method method, ClassLanguage classLanguage, ObjectFactory objectFactory) {

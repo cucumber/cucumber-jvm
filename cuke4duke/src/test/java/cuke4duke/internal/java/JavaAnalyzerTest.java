@@ -7,6 +7,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -35,7 +36,9 @@ public class JavaAnalyzerTest {
     @SuppressWarnings("unchecked")
     @Test
     public void shouldAddTransformToClassLanguage() throws Throwable {
-        javaAnalyzer.populateStepDefinitionsAndHooksFor(transformer.getClass(), objectFactory, classLanguage);
+        for(Method method: transformer.getClass().getMethods()) {
+            javaAnalyzer.populateStepDefinitionsAndHooksFor(method, objectFactory, classLanguage);
+        }
         ArgumentCaptor<Transformable> trasnformableArgument = ArgumentCaptor.forClass(Transformable.class);
         ArgumentCaptor<Class> returnTypeArgument = ArgumentCaptor.forClass(Class.class);
         verify(classLanguage).addTransform(returnTypeArgument.capture(), trasnformableArgument.capture());

@@ -1,10 +1,10 @@
 package cuke4duke.internal.java;
 
-import java.lang.reflect.Method;
-
 import cuke4duke.internal.jvmclass.ObjectFactory;
 import cuke4duke.internal.language.MethodInvoker;
 import cuke4duke.internal.language.Transformable;
+
+import java.lang.reflect.Method;
 
 public class JavaTransform implements Transformable {
 

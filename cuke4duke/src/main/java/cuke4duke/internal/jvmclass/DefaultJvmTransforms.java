@@ -1,13 +1,13 @@
 package cuke4duke.internal.jvmclass;
 
+import cuke4duke.Transform;
+import cuke4duke.internal.language.Transformable;
+
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
-
-import cuke4duke.Transform;
-import cuke4duke.internal.language.Transformable;
 
 public class DefaultJvmTransforms implements Transformable {
 

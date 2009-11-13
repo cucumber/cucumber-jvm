@@ -1,7 +1,5 @@
 package cuke4duke;
 
-import cuke4duke.StepMother;
-
 public class Steps {
     private final StepMother stepMother;
 

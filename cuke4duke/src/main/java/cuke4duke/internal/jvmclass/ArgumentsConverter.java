@@ -1,14 +1,12 @@
 package cuke4duke.internal.jvmclass;
 
+import cuke4duke.PyString;
 import static cuke4duke.internal.Utils.join;
+import cuke4duke.internal.language.Transformable;
+import org.jruby.RubyArray;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import org.jruby.RubyArray;
-
-import cuke4duke.PyString;
-import cuke4duke.internal.language.Transformable;
 
 /**
  * Converts the arguments that come from Cucumber to other types, before they are sent in to step definitions.

@@ -1,7 +1,7 @@
 package cuke4duke.internal.ik;
 
-import cuke4duke.Table;
 import cuke4duke.PyString;
+import cuke4duke.Table;
 import cuke4duke.internal.JRuby;
 import cuke4duke.internal.Utils;
 import cuke4duke.internal.language.AbstractStepDefinition;

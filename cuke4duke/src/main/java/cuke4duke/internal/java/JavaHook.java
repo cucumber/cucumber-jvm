@@ -30,4 +30,8 @@ public class JavaHook extends AbstractHook {
         }
         methodInvoker.invoke(target, args);
     }
+
+    public Method getMethod() {
+        return method;
+    }
 }

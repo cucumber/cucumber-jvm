@@ -1,15 +1,14 @@
 package cuke4duke.internal.jvmclass;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import cuke4duke.StepMother;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.StaticApplicationContext;
 
-import cuke4duke.StepMother;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SpringFactory implements ObjectFactory {
     

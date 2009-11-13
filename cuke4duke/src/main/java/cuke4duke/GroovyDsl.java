@@ -5,9 +5,7 @@ import cuke4duke.internal.groovy.GroovyLanguage;
 import cuke4duke.internal.groovy.GroovyStepDefinition;
 import cuke4duke.internal.language.LanguageMixin;
 import groovy.lang.Closure;
-import groovy.lang.Script;
 
-import java.util.List;
 import java.util.regex.Pattern;
 
 /**

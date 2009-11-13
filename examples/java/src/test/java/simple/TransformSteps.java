@@ -82,10 +82,10 @@ public class TransformSteps extends Steps {
          assertTrue(yes);
      }
 
-    private class Car {
+    public static class Car {
     }
     
-    private class User {
+    public static class User {
         public final int age;
 
         public User(int age){
