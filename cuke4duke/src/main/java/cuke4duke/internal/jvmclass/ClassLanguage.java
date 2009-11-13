@@ -1,20 +1,18 @@
 package cuke4duke.internal.jvmclass;
 
-import cuke4duke.Order;
 import cuke4duke.StepMother;
 import cuke4duke.internal.language.AbstractProgrammingLanguage;
 import org.jruby.runtime.builtin.IRubyObject;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
 
 public class ClassLanguage extends AbstractProgrammingLanguage {
     private final ObjectFactory objectFactory;
     private final List<ClassAnalyzer> analyzers;
-    private List<Class<?>> classes = new ArrayList<Class<?>>();
+    private Collection<Class<?>> classes = new ArrayList<Class<?>>();
 
     public ClassLanguage(ClassLanguageMixin languageMixin, StepMother stepMother, List<ClassAnalyzer> analyzers) throws Throwable {
         this(languageMixin, stepMother, analyzers, createObjectFactory());
@@ -45,34 +43,17 @@ public class ClassLanguage extends AbstractProgrammingLanguage {
         classes.add(clazz);
     }
 
+    public Collection<Class<?>> getClasses() {
+        return classes;
+    }
+
     @Override
     protected void begin_scenario(IRubyObject scenario) throws Throwable {
         clearHooksAndStepDefinitions();
         objectFactory.createObjects();
-        List<Method> orderedMethods = orderedMethods();
         for (ClassAnalyzer analyzer : analyzers) {
-            for(Method method : orderedMethods) {
-                analyzer.populateStepDefinitionsAndHooksFor(method, objectFactory, this);
-            }
+            analyzer.populateStepDefinitionsAndHooks(objectFactory, this);
         }
-    }
-
-    private List<Method> orderedMethods() {
-        List<Method> methods = new ArrayList<Method>();
-        for(Class clazz :  classes) {
-            methods.addAll(Arrays.asList(clazz.getMethods()));
-        }
-        Collections.sort(methods, new Comparator<Method>() {
-            public int compare(Method m1, Method m2) {
-                return order(m1) - order(m2);
-            }
-
-            private int order(Method m) {
-                Order order = m.getAnnotation(Order.class);
-                return (order == null) ? Integer.MAX_VALUE : order.value();
-            }
-        });
-        return methods;
     }
 
     @Override

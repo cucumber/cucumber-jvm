@@ -1,7 +1,7 @@
 == In Git
 
-This release sports much improved Before and After hooks with improved tag logic featured in Cucumber 0.4.4.
-The Hook and tag APIs have changed slighty - with more elaborate boolean logic:
+This release sports much improved Before and After hooks in several areas. You can now construct more complex
+boolean queries with tagged hooks. This is featured in Cucumber 0.4.4:
 
 * http://wiki.github.com/aslakhellesoy/cucumber/hooks
 * http://wiki.github.com/aslakhellesoy/cucumber/tags
@@ -17,6 +17,7 @@ For these examples this resolves to the following boolean query: (@important && 
 A comma in a String is a &&, a comma between arguments is a ||.
 
 === New Features
+* Ability to order Java annotation hooks with @Order. (#)
 * Support for boolean tag logic in Before and After hooks just like in Ruby Cucumber. (Aslak Hellesøy)
 * Added Before and After hooks to Clojure. (Stu Halloway and Aslak Hellesøy)
 * Simplified the WebDriverFacade in the Java WebDriver example. (Aslak Hellesøy)

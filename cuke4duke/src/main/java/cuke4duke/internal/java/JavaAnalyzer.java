@@ -6,16 +6,18 @@ import cuke4duke.internal.jvmclass.ClassLanguage;
 import cuke4duke.internal.jvmclass.ObjectFactory;
 
 import java.lang.reflect.Method;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Pattern;
 
 public class JavaAnalyzer implements ClassAnalyzer {
 
-    public void populateStepDefinitionsAndHooksFor(Method method, ObjectFactory objectFactory, ClassLanguage classLanguage) throws Throwable {
-        registerBeforeMaybe(method, classLanguage, objectFactory);
-        registerStepDefinitionMaybe(method, classLanguage, objectFactory);
-        registerAfterMaybe(method, classLanguage, objectFactory);
-        registerTransformMaybe(method, classLanguage, objectFactory);
+    public void populateStepDefinitionsAndHooks(ObjectFactory objectFactory, ClassLanguage classLanguage) throws Throwable {
+        for(Method method: getOrderedMethods(classLanguage)) {
+            registerBeforeMaybe(method, classLanguage, objectFactory);
+            registerStepDefinitionMaybe(method, classLanguage, objectFactory);
+            registerAfterMaybe(method, classLanguage, objectFactory);
+            registerTransformMaybe(method, classLanguage, objectFactory);
+        }
     }
 
     private void registerTransformMaybe(Method method, ClassLanguage classLanguage, ObjectFactory objectFactory) {
@@ -26,6 +28,24 @@ public class JavaAnalyzer implements ClassAnalyzer {
 
     public Class<?>[] alwaysLoad() {
         return new Class<?>[0];
+    }
+
+    public List<Method> getOrderedMethods(ClassLanguage classLanguage) {
+        List<Method> methods = new ArrayList<Method>();
+        for(Class clazz :  classLanguage.getClasses()) {
+            methods.addAll(Arrays.asList(clazz.getMethods()));
+        }
+        Collections.sort(methods, new Comparator<Method>() {
+            public int compare(Method m1, Method m2) {
+                return order(m1) - order(m2);
+            }
+
+            private int order(Method m) {
+                Order order = m.getAnnotation(Order.class);
+                return (order == null) ? Integer.MAX_VALUE : order.value();
+            }
+        });
+        return methods;
     }
 
     private void registerBeforeMaybe(Method method, ClassLanguage classLanguage, ObjectFactory objectFactory) {

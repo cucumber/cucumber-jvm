@@ -2,12 +2,12 @@ package cuke4duke.internal.java;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.Arrays;
+import java.util.Collections;
 
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -36,9 +36,9 @@ public class JavaAnalyzerTest {
     @SuppressWarnings("unchecked")
     @Test
     public void shouldAddTransformToClassLanguage() throws Throwable {
-        for(Method method: transformer.getClass().getMethods()) {
-            javaAnalyzer.populateStepDefinitionsAndHooksFor(method, objectFactory, classLanguage);
-        }
+        when(classLanguage.getClasses()).thenReturn(Collections.<Class<?>>singletonList(ClassWithTransformer.class));
+        javaAnalyzer.populateStepDefinitionsAndHooks(objectFactory, classLanguage);
+
         ArgumentCaptor<Transformable> trasnformableArgument = ArgumentCaptor.forClass(Transformable.class);
         ArgumentCaptor<Class> returnTypeArgument = ArgumentCaptor.forClass(Class.class);
         verify(classLanguage).addTransform(returnTypeArgument.capture(), trasnformableArgument.capture());
