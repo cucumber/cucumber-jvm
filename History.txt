@@ -1,7 +1,10 @@
 == In Git
 
 This release sports much improved Before and After hooks with improved tag logic featured in Cucumber 0.4.4.
-The Hook APIs have changed slighty:
+The Hook and tag APIs have changed slighty - with more elaborate boolean logic:
+
+* http://wiki.github.com/aslakhellesoy/cucumber/hooks
+* http://wiki.github.com/aslakhellesoy/cucumber/tags
 
 === Java:
 @Before("@something")
