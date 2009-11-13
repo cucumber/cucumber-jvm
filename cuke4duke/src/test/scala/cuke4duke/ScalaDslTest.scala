@@ -94,8 +94,8 @@ class ScalaDslTest extends ScalaDsl with Norwegian {
   def test_taggedBefore{
     val hook = beforeHooks(1)
     assertEquals(2, hook.tag_names.size)
-    assertEquals("tag1", hook.tag_names.get(0))
-    assertEquals("tag2", hook.tag_names.get(1))
+    assertEquals("tag1", hook.tag_names.apply(0))
+    assertEquals("tag2", hook.tag_names.apply(1))
     hook.invoke("", null)
     assertEquals("tagged before", result)
   }
@@ -121,8 +121,8 @@ class ScalaDslTest extends ScalaDsl with Norwegian {
   def test_taggedAfter{
     val hook = afterHooks(1)
     assertEquals(2, hook.tag_names.size)
-    assertEquals("tag1", hook.tag_names.get(0))
-    assertEquals("tag2", hook.tag_names.get(1))
+    assertEquals("tag1", hook.tag_names.apply(0))
+    assertEquals("tag2", hook.tag_names.apply(1))
     hook.invoke("", null)
     assertEquals("tagged after", result)
   }

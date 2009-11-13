@@ -3,16 +3,17 @@ package cuke4duke.webdriver;
 import cuke4duke.Then;
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.containsString;
+import org.openqa.selenium.WebDriver;
 
 public class ResultsPage {
-    private final WebDriverFacade facade;
+    private final WebDriver d;
 
     public ResultsPage(WebDriverFacade facade) {
-        this.facade = facade;
+        d = facade.getWebDriver();
     }
 
     @Then("^I should see$")
     public void seeSearchResults(String results) {
-        assertThat(facade.getBrowser().getPageSource(), containsString(results));
+        assertThat(d.getPageSource(), containsString(results));
     }
 }

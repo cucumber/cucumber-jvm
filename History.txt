@@ -1,13 +1,29 @@
 == In Git
 
+This release sports much improved Before and After hooks with improved tag logic featured in Cucumber 0.4.4.
+The Hook APIs have changed slighty:
+
+=== Java:
+@Before("@something")
+@Before({"@important,@customer", "@super-important"}) // Use {} when you need several (if you want ||).
+
+=== Groovy and Scala:
+Before("@important,@customer", "@super-important") {}
+
+For these examples this resolves to the following boolean query: (@important && @customer) || @super-important.
+A comma in a String is a &&, a comma between arguments is a ||.
+
+=== New Features
+* Support for boolean tag logic in Before and After hooks just like in Ruby Cucumber. (Aslak Hellesøy)
+* Added Before and After hooks to Clojure. (Stu Halloway and Aslak Hellesøy)
+* Simplified the WebDriverFacade in the Java WebDriver example. (Aslak Hellesøy)
+
 === Bugfixes
 * @Before("@scenario") does not work as expected (#38 Aslak Hellesøy)
 * Fixed a regression from 0.1.8 where transforming Table to Object failed (now skipping transform if type is ok). (Aslak Hellesøy)
 
-=== New Features
-* Added Before and After hooks to Clojure. (Stu Halloway and Aslak Hellesøy)
-
 === Changed Features
+* Groovy Before and After hooks take varargs instead of an array of String. Tag logic like Ruby Cucumber. (Aslak Hellesøy
 * Ioke jars are removed from Git. We're using the jars in the Maven repo instead. (Aslak Hellesøy)
 
 == 0.1.8 2009-11-03

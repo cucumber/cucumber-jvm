@@ -7,6 +7,7 @@ import cuke4duke.internal.language.AbstractProgrammingLanguage;
 import cuke4duke.internal.language.LanguageMixin;
 import org.jruby.runtime.builtin.IRubyObject;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.regex.Pattern;
 
@@ -25,12 +26,12 @@ public class CljLanguage extends AbstractProgrammingLanguage {
     }
 
     public static void addCljBeforeHook(AFunction closure) {
-        instance.addBeforeHook(new CljHook(Collections.<String>emptyList(), closure));
+        instance.addBeforeHook(new CljHook(new String[0], closure));
     }
 
 
     public static void addCljAfterHook(AFunction closure) {
-        instance.addAfterHook(new CljHook(Collections.<String>emptyList(), closure));
+        instance.addAfterHook(new CljHook(new String[0], closure));
     }
 
     public void load_code_file(String cljFile) throws Throwable {

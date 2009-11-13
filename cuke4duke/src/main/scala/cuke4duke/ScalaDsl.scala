@@ -21,11 +21,11 @@ trait ScalaDsl {
   val When = new Step("When")
   val Then = new Step("Then")
 
-  def Before(f: => Unit) = beforeHooks += new ScalaHook(Nil, f _)
-  def Before(tags: String*)(f: => Unit) = beforeHooks += new ScalaHook(tags.toList, f _)
+  def Before(f: => Unit) = beforeHooks += new ScalaHook(Nil.toArray, f _)
+  def Before(tags: String*)(f: => Unit) = beforeHooks += new ScalaHook(tags.toArray, f _)
 
-  def After(f: => Unit) = afterHooks += new ScalaHook(Nil, f _)
-  def After(tags: String*)(f: => Unit) = afterHooks += new ScalaHook(tags.toList, f _)
+  def After(f: => Unit) = afterHooks += new ScalaHook(Nil.toArray, f _)
+  def After(tags: String*)(f: => Unit) = afterHooks += new ScalaHook(tags.toArray, f _)
 
   def pending(message:String){ throw JRuby.cucumberPending(message) }
   def pending{ pending("TODO") }

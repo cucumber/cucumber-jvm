@@ -3,6 +3,7 @@ Feature: Division
   In order to avoid silly mistakes
   Cashiers must be able to calculate a fraction
 
+  @important
   Scenario: Regular numbers
     Given I have entered 3 into the calculator
     And I have entered 2 into the calculator
