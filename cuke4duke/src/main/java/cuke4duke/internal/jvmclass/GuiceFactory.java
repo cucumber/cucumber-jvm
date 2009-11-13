@@ -5,18 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.ConfigurationException;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Module;
-import com.google.inject.Provider;
+import com.google.inject.*;
 
 import cuke4duke.StepMother;
 
-/**
- * @author Henning Jensen
- */
 public class GuiceFactory implements ObjectFactory {
 
     private static final String CONFIG_GUICE_MODULE = "cuke4duke.guiceModule";
@@ -24,10 +16,12 @@ public class GuiceFactory implements ObjectFactory {
     private final List<Module> modules = new ArrayList<Module>();
     private final List<Class<?>> classes = new ArrayList<Class<?>>();
     private final Map<Class<?>, Object> instances = new HashMap<Class<?>, Object>();
-    private Injector injector;
 
     public GuiceFactory() throws Throwable {
-        String moduleClassName = System.getProperty(CONFIG_GUICE_MODULE, null);
+        this(System.getProperty(CONFIG_GUICE_MODULE, null));
+    }
+
+    public GuiceFactory(String moduleClassName) throws Throwable {
         modules.add((Module) Class.forName(moduleClassName).newInstance());
     }
 
@@ -40,13 +34,13 @@ public class GuiceFactory implements ObjectFactory {
     }
 
     public void createObjects() {
-        injector = Guice.createInjector(modules);
+        Injector injector = Guice.createInjector(modules);
         for (Class<?> clazz : classes) {
-        	try {
-        		instances.put(clazz, injector.getInstance(clazz));
-			} catch (ConfigurationException e) {
-				System.err.println("Could not create instance for "+clazz.getCanonicalName()+":\n"+e.getLocalizedMessage());
-			}
+            try {
+                instances.put(clazz, injector.getInstance(clazz));
+            } catch (ConfigurationException e) {
+                System.err.println("WARNING: Cuke4Duke/Guice could not create instance for " + clazz.getCanonicalName() + ":\n" + e.getLocalizedMessage());
+            }
         }
     }
 

@@ -19,6 +19,7 @@ A comma in a String is a &&, a comma between arguments is a ||.
 * Simplified the WebDriverFacade in the Java WebDriver example. (Aslak Hellesøy)
 
 === Bugfixes
+* Guice fails when trying to instantiate anonymous and non-static inner classes in step classes (#33 Martin Mauch)
 * @Before("@scenario") does not work as expected (#38 Aslak Hellesøy)
 * Fixed a regression from 0.1.8 where transforming Table to Object failed (now skipping transform if type is ok). (Aslak Hellesøy)
 
