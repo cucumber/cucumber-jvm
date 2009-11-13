@@ -2,7 +2,7 @@ import org.openqa.selenium.By
 import static org.junit.Assert.*
 import static org.junit.matchers.JUnitMatchers.*
 
-this.metaClass.mixin(cuke4duke.GroovyDsl2)
+this.metaClass.mixin(cuke4duke.GroovyDsl); Before([] as Object[]); After([] as Object[]) // HACK: http://jira.codehaus.org/browse/GROOVY-3878
 
 Given(~"I am on the Google search page") { ->
   browser.get("http://google.com/")
@@ -15,6 +15,7 @@ When(~"I search for \"(.*)\"") { String query ->
   searchField.submit()
 }
 
-Then(~"I should see") { String text -> 
+Then(~"I should see") { String text ->
   assertThat(browser.getPageSource(), containsString(text))
 }
+

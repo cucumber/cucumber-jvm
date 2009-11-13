@@ -1,4 +1,4 @@
-this.metaClass.mixin(cuke4duke.GroovyDsl)
+this.metaClass.mixin(cuke4duke.GroovyDsl); Before([] as Object[]); After([] as Object[]) // HACK: http://jira.codehaus.org/browse/GROOVY-3878
 
 class CustomWorld {
   String customMethod() {
@@ -9,12 +9,6 @@ class CustomWorld {
 World {
   new CustomWorld()
 }
-
-println("NUUUUU")
-Before("AA")
-Before("AA", "BB")
-println("NUUUUUBIE")
-Before(["AAPE"])
 
 Before() {
   assert "foo" == customMethod()
@@ -41,6 +35,6 @@ When(~"I press (\\w+)") { String opname ->
   result = calc."$opname"()
 }
 
-Then(~"the stored result should be (.*)") { double expected -> 
+Then(~"the stored result should be (.*)") { double expected ->
   assert expected == result
 }
