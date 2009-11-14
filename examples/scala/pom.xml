@@ -89,7 +89,7 @@
             <cucumberArg>--format</cucumberArg>
             <cucumberArg>junit</cucumberArg>
             <cucumberArg>--out</cucumberArg>
-            <cucumberArg>target</cucumberArg>
+            <cucumberArg>target/surefire-report</cucumberArg>
             <cucumberArg>--format</cucumberArg>
             <cucumberArg>usage</cucumberArg>
             <cucumberArg>--out</cucumberArg>
