@@ -97,7 +97,8 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
 
             for (String jvmArg : getJvmArgs()) {
                 arg = java.createJvmarg();
-                arg.setValue(jvmArg);
+                if (jvmArg != null)
+                    arg.setValue(jvmArg);
             }
 
             Environment.Variable classpath = new Environment.Variable();
@@ -142,8 +143,7 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
      * </ul>
      * 
      * @param gemArgs
-     *            name and optional arguments.
-     *            Example:
+     *            name and optional arguments. Example:
      *            <ul>
      *            <li>awesome</li>
      *            <li>awesome --version 9.8</li>
