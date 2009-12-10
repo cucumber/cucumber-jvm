@@ -61,7 +61,7 @@
     <dependency>
       <groupId>org.codehaus.groovy</groupId>
       <artifactId>groovy-all</artifactId>
-      <version>1.6.5</version>
+      <version>1.6.7</version>
       <optional>true</optional>
     </dependency>
     <dependency>

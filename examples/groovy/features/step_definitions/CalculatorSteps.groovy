@@ -1,4 +1,4 @@
-this.metaClass.mixin(cuke4duke.GroovyDsl); Before([] as Object[]); After([] as Object[]) // HACK: http://jira.codehaus.org/browse/GROOVY-3878
+this.metaClass.mixin(cuke4duke.GroovyDsl)
 
 class CustomWorld {
   String customMethod() {
