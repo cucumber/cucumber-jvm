@@ -32,7 +32,7 @@ public class JavaAnalyzer implements ClassAnalyzer {
 
     public List<Method> getOrderedMethods(ClassLanguage classLanguage) {
         List<Method> methods = new ArrayList<Method>();
-        for(Class clazz :  classLanguage.getClasses()) {
+        for(Class<?> clazz :  classLanguage.getClasses()) {
             methods.addAll(Arrays.asList(clazz.getMethods()));
         }
         Collections.sort(methods, new Comparator<Method>() {
