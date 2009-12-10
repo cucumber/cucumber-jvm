@@ -24,6 +24,16 @@ public class CucumberMojo extends AbstractJRubyMojo {
     protected boolean installGems = false;
 
     /**
+     * Will cause the project build to look successful, rather than fail, even if there are Cucumber test failures.
+     *
+     * This can be useful on a continuous integration server, if your only option to be able to collect output files,
+     * is if the project builds successfully.
+     *
+     * @parameter expression="${cucumber.failOnError}"
+     */
+    protected boolean failOnError = true;
+
+    /**
      * @parameter
      */
     protected List<String> gems;
@@ -72,7 +82,16 @@ public class CucumberMojo extends AbstractJRubyMojo {
         allArgs.add(features);
 
         Java jruby = jruby(allArgs);
-        jruby.execute();
+
+        if (failOnError){
+            jruby.execute();
+        }else{
+            try {
+                jruby.execute();
+            } catch (Exception ignore) {
+            }
+        }
+
     }
 
     List<String> addCucumberArgs() {
