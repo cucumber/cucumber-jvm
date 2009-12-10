@@ -25,7 +25,6 @@ public class CucumberMojo extends AbstractJRubyMojo {
 
     /**
      * Will cause the project build to look successful, rather than fail, even if there are Cucumber test failures.
-     *
      * This can be useful on a continuous integration server, if your only option to be able to collect output files,
      * is if the project builds successfully.
      *
@@ -46,7 +45,6 @@ public class CucumberMojo extends AbstractJRubyMojo {
     /**
      * Appends additional arguments on the command line. e.g.
      * <code>-Dcucumber.extraArgs="--format profile --out target/profile.txt"</code>
-     *
      * These arguments will be appended to the cucumberArgs you declare
      * in your POM.
      *
@@ -56,7 +54,7 @@ public class CucumberMojo extends AbstractJRubyMojo {
 
     /**
      * Extra JVM arguments to pass when running JRuby.
-     * 
+     *
      * @parameter
      */
     protected List<String> jvmArgs;
@@ -82,16 +80,13 @@ public class CucumberMojo extends AbstractJRubyMojo {
         allArgs.add(features);
 
         Java jruby = jruby(allArgs);
-
-        if (failOnError){
+        try {
             jruby.execute();
-        }else{
-            try {
-                jruby.execute();
-            } catch (Exception ignore) {
+        } catch (Exception e) {
+            if (failOnError) {
+                throw new MojoExecutionException("JRuby failed.", e);
             }
         }
-
     }
 
     List<String> addCucumberArgs() {

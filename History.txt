@@ -1,3 +1,13 @@
+== In Git
+
+== New Features
+* Cuke4Duke no longer depends on an exact version of cucumber, but rather >= (equal or greater) (Mike Gaffney)
+* jvmArgs with empty values are now stripped. Comes in handy when adding empty properties in a <jvmArg>
+  in the pom. Makes it possible to add extra jvmArgs via pom profiles (Torbjørn Vatn)
+* Added optional parameter failOnError, so Maven build can be made to look successful, even when there are 
+  Cucumber test failures. This can be useful on a continuous integration server, if your only option to be able to 
+  collect output files is if the project builds successfully. (Hugo Josefson)
+
 == 0.1.9
 
 This release sports much improved Before and After hooks in several areas. You can now construct more complex
