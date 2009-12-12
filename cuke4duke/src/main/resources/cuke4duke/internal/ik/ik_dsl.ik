@@ -22,7 +22,7 @@ Cucumber StepDefinition = Origin mimic do(
       args = ArrayList new
       @arg_values = it captures
       it captures each(n, c,
-        args add(cuke4duke:internal:language:StepArgument new(c, it start(n+1)))
+        args add(cuke4duke:internal:language:StepArgument new(c, it start(n+1), stepName))
       )
       args,
       nil

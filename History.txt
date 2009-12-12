@@ -1,5 +1,8 @@
 == In Git
 
+== Bugfixes
+* Improved UTF-8. Make sure you compile your stepdefs with -encoding UTF-8 and save feature files in UTF-8 (Aslak Hellesøy)
+
 == New Features
 * Upgrade examples to Groovy 1.6.7, which removes the need for dirty hacks to get tagged hooks working. (Aslak Hellesøy)
 * Upgrade examples to Ant 1.7.1. (Aslak Hellesøy)

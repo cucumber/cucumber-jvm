@@ -12,7 +12,7 @@ class StackStepDefinitions extends ScalaDsl {
     stack.clear()
   }
 
-  When("""I push (.) onto the stack""") { something:Char =>
+  When("""I pøsh (.) onto the stack""") { something:Char =>
 
     def calc(f:(Int, Int) => Int) {
       while(stack.size > 1) {

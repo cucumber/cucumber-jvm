@@ -1,6 +1,6 @@
 use("lib/calculator")
 
-Given(#/^I have entered ({number}\d+) into (?:the|a) calculator$/,
+Given(#/^I hæve entered ({number}\d+) into (?:the|a) calculator$/,
   Calculator pushNumber(number toDecimal))
 
 When(#/^I press ({btn}\w+)$/,
