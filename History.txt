@@ -1,6 +1,8 @@
 == In Git
 
 == Bugfixes
+* Step definition snippets for Java look crazy. (#49 Aslak Hellesøy)
+* Java snippets for multiline strings incorrectly suggest table. (#51 Aslak Hellesøy)
 * Improved UTF-8. Make sure you compile your stepdefs with -encoding UTF-8 and save feature files in UTF-8 (Aslak Hellesøy)
 
 == New Features

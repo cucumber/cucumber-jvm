@@ -51,6 +51,15 @@ module Cucumber
           }
         })
       end
+
+      it "should be helpful with multiline strings" do
+        @generator.snippet_text('Given', 'A "first" arg', Cucumber::Ast::PyString).should == unindented(%{
+          @Given("^A \\\"([^\\\"]*)\\\" arg$")
+          @Pending
+          public void aFirstArgWithString(String arg1, String string) {
+          }
+        })
+      end
     end
   end
 end
