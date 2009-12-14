@@ -222,26 +222,6 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
         project.addReference(reference, p);
     }
 
-    public static <T> List<T> listify(T... objects) {
-        List<T> res = new ArrayList<T>();
-        res.addAll(Arrays.asList(objects));
-        return res;
-    }
-
-    protected String cmd(Java jruby) {
-        return join(jruby.getCommandLine().getCommandline());
-    }
-
-    protected String join(String[] strings) {
-        StringBuffer sb = new StringBuffer();
-        for (int i = 0; i < strings.length; i++) {
-            if (i != 0)
-                sb.append(' ');
-            sb.append(strings[i]);
-        }
-        return sb.toString();
-    }
-
     public class LogAdapter implements BuildListener {
         public void buildStarted(BuildEvent event) {
             log(event);
