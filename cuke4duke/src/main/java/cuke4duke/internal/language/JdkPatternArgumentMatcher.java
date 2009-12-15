@@ -1,7 +1,5 @@
 package cuke4duke.internal.language;
 
-import cuke4duke.internal.Utils;
-
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;

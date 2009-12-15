@@ -6,6 +6,7 @@
 * Improved UTF-8. Make sure you compile your stepdefs with -encoding UTF-8 and save feature files in UTF-8 (Aslak Hellesøy)
 
 == New Features
+* New cuke4duke.methodFormat system property that can be used for more control of how stepdef location is reported. (#48 Aslak Hellesøy)
 * Upgrade examples to Groovy 1.6.7, which removes the need for dirty hacks to get tagged hooks working. (Aslak Hellesøy)
 * Upgrade examples to Ant 1.7.1. (Aslak Hellesøy)
 * Cuke4Duke no longer depends on an exact version of cucumber, but rather >= (equal or greater) (Mike Gaffney)

@@ -1,12 +1,11 @@
 package cuke4duke.internal.language;
 
-import static junit.framework.Assert.assertEquals;
-
+import cuke4duke.internal.java.JavaTransform;
 import org.jruby.runtime.builtin.IRubyObject;
 import org.junit.Before;
 import org.junit.Test;
 
-import cuke4duke.internal.java.JavaTransform;
+import static junit.framework.Assert.assertEquals;
 
 
 public class AbstractProgrammingLanguageTest {

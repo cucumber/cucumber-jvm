@@ -1,11 +1,12 @@
 package cuke4duke.internal.language;
 
-import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.regex.Pattern;
+
+import static org.junit.Assert.assertEquals;
 
 public class JdkPatternArgumentMatcherTest {
     @Test

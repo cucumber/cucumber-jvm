@@ -7,7 +7,9 @@ import org.jruby.runtime.builtin.IRubyObject;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class ClassLanguage extends AbstractProgrammingLanguage {
     private final ObjectFactory objectFactory;
