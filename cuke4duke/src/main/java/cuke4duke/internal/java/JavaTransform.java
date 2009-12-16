@@ -1,7 +1,6 @@
 package cuke4duke.internal.java;
 
 import cuke4duke.internal.jvmclass.ObjectFactory;
-import cuke4duke.internal.language.MethodInvoker;
 import cuke4duke.internal.language.Transformable;
 
 import java.lang.reflect.Method;

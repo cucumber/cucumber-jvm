@@ -1,22 +1,22 @@
 package cuke4duke.internal.java;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
-import static org.mockito.Mockito.*;
-import static org.mockito.MockitoAnnotations.initMocks;
+import cuke4duke.Transform;
+import cuke4duke.internal.jvmclass.ClassLanguage;
+import cuke4duke.internal.jvmclass.ObjectFactory;
+import cuke4duke.internal.language.Transformable;
+import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Collections;
 
-import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
-
-import cuke4duke.Transform;
-import cuke4duke.internal.jvmclass.ClassLanguage;
-import cuke4duke.internal.jvmclass.ObjectFactory;
-import cuke4duke.internal.language.Transformable;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
 
 public class JavaAnalyzerTest {
 

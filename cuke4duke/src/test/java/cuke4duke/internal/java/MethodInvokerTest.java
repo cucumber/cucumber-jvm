@@ -1,4 +1,4 @@
-package cuke4duke.internal.language;
+package cuke4duke.internal.java;
 
 import cuke4duke.Pending;
 import cuke4duke.internal.JRuby;

@@ -5,6 +5,7 @@ import cuke4duke.internal.language.JdkPatternArgumentMatcher;
 import cuke4duke.internal.language.StepArgument;
 import groovy.lang.Closure;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -37,7 +38,7 @@ public class GroovyStepDefinition extends AbstractStepDefinition {
         groovyLanguage.invokeClosure(body, args);
     }
 
-    public List<StepArgument> arguments_from(String stepName) {
+    public List<StepArgument> arguments_from(String stepName) throws UnsupportedEncodingException {
         return JdkPatternArgumentMatcher.argumentsFrom(regexp, stepName);
     }
 }

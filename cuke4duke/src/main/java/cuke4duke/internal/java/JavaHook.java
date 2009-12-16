@@ -3,7 +3,6 @@ package cuke4duke.internal.java;
 import cuke4duke.internal.JRuby;
 import cuke4duke.internal.jvmclass.ObjectFactory;
 import cuke4duke.internal.language.AbstractHook;
-import cuke4duke.internal.language.MethodInvoker;
 import org.jruby.runtime.builtin.IRubyObject;
 
 import java.lang.reflect.Method;

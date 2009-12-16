@@ -73,6 +73,10 @@ public class CucumberMojo extends AbstractJRubyMojo {
         }
 
         List<String> allArgs = new ArrayList<String>();
+        if(cucumberBin != null) {
+            allArgs.add("-I");
+            allArgs.add(new File(cucumberBin.getParentFile().getParentFile(), "lib").getAbsolutePath());
+        }
         allArgs.add("-r");
         allArgs.add("cuke4duke");
         allArgs.add(cucumberBin().getAbsolutePath());

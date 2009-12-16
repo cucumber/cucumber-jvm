@@ -1,17 +1,15 @@
 package cuke4duke.internal;
 
 public class Utils {
-    public static String join(Object[] oa, String sep) {
-        String s = "";
-        boolean doSep = false;
-        for (Object o : oa) {
-            if(doSep) {
-                s += sep;
-            }
-            doSep = true;
-            s += o;
+    public static String join(Object[] objects, String separator) {
+        StringBuilder sb = new StringBuilder();
+        int i = 0;
+        for (Object o : objects) {
+            if (i != 0) sb.append(separator);
+            sb.append(o);
+            i++;
         }
-        return s;
+        return sb.toString();
     }
 
     public static Class<?>[] objectClassArray(int n) {

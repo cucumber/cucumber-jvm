@@ -75,6 +75,7 @@
           <artifactId>maven-compiler-plugin</artifactId>
           <version>2.0.2</version>
           <configuration>
+            <encoding>UTF-8</encoding>
             <source>1.5</source>
             <target>1.5</target>
           </configuration>
@@ -89,6 +90,7 @@
         <configuration>
           <jvmArgs>
             <jvmArg>-Dcuke4duke.objectFactory=cuke4duke.internal.jvmclass.PicoFactory</jvmArg>
+            <jvmArg>-Dfile.encoding=UTF-8</jvmArg>
           </jvmArgs>
           <!-- You may not need all of these arguments in your own project. We have a lot here for testing purposes... -->
           <cucumberArgs>

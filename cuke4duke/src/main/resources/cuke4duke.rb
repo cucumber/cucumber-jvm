@@ -1,7 +1,13 @@
 # This file is loaded before Cucumber is loaded.
-require 'rubygems'
-gem 'cucumber', '>= 0.4.4'
 require 'java'
+require 'rubygems'
+begin
+  require 'cucumber'
+rescue LoadError
+  gem 'cucumber', '>= 0.4.5'
+  require 'cucumber'
+end
+require 'cucumber/formatter/unicode'
 
 # Workaround to make the java code have access to the same Ruby
 # interpreter as the one that is used to run this script.

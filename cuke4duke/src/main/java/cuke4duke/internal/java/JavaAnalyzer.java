@@ -10,6 +10,11 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 public class JavaAnalyzer implements ClassAnalyzer {
+    private final MethodFormat methodFormat;
+
+    public JavaAnalyzer() {
+        this.methodFormat = new MethodFormat(System.getProperty("cuke4duke.methodFormat", "%c.%m(%a)"));
+    }
 
     public void populateStepDefinitionsAndHooks(ObjectFactory objectFactory, ClassLanguage classLanguage) throws Throwable {
         for(Method method: getOrderedMethods(classLanguage)) {
@@ -65,7 +70,7 @@ public class JavaAnalyzer implements ClassAnalyzer {
         }
         if (regexpString != null) {
             Pattern regexp = Pattern.compile(regexpString);
-            classLanguage.addStepDefinition(new JavaStepDefinition(classLanguage, objectFactory, method, regexp));
+            classLanguage.addStepDefinition(new JavaStepDefinition(classLanguage, objectFactory, method, regexp, methodFormat));
         }
     }
 

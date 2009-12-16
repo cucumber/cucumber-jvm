@@ -4,11 +4,11 @@ var registerStepDefinition = function(regexp, closure) {
     if(match) {
       var arguments = new Packages.java.util.ArrayList();
       var s = match[0];
-      pos = 0;
+      var charOffset = 0;
       for(i = 1; i < match.length; i++) {
         var arg = match[i];
-        var pos = s.indexOf(arg, pos);
-        arguments.add(new Packages.cuke4duke.internal.language.StepArgument(arg, pos));
+        var charOffset = s.indexOf(arg, charOffset);
+        arguments.add(new Packages.cuke4duke.internal.language.StepArgument(arg, charOffset, stepName));
       }
       stepDefinition.addArguments(arguments);
     }

@@ -1,22 +1,23 @@
 package cuke4duke.internal.jvmclass;
 
+import cuke4duke.StepMother;
 import cuke4duke.internal.java.JavaAnalyzer;
 import cuke4duke.internal.java.JavaHook;
+import cuke4duke.internal.java.MethodFormat;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
-import static org.junit.Assert.assertEquals;
+import org.junit.Before;
+import org.junit.Test;
 import org.mockito.InOrder;
-import static org.mockito.Matchers.*;
-import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.mock;
 
 import java.util.Collections;
 
-import org.junit.Before;
-import org.junit.Test;
-
-import cuke4duke.StepMother;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.argThat;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mock;
 
 public class ClassLanguageTest {
     private ClassLanguage language;

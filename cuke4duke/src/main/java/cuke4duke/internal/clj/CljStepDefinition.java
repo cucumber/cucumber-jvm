@@ -6,6 +6,7 @@ import cuke4duke.internal.language.AbstractStepDefinition;
 import cuke4duke.internal.language.JdkPatternArgumentMatcher;
 import cuke4duke.internal.language.StepArgument;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
@@ -43,7 +44,7 @@ public class CljStepDefinition extends AbstractStepDefinition {
         }
     }
 
-    public List<StepArgument> arguments_from(String stepName) {
+    public List<StepArgument> arguments_from(String stepName) throws UnsupportedEncodingException {
         return JdkPatternArgumentMatcher.argumentsFrom(regexp, stepName);
     }
 

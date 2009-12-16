@@ -1,11 +1,13 @@
 package cuke4duke.internal.language;
 
+import java.io.UnsupportedEncodingException;
+
 public class StepArgument {
     private final String val;
-    private final int pos;
+    private final int byteOffset;
 
-    public StepArgument(String val, int pos) {
-        this.pos = pos;
+    public StepArgument(String val, int charOffset, String stepName) throws UnsupportedEncodingException {
+        this.byteOffset = stepName.substring(0, charOffset).getBytes("UTF-8").length;
         this.val = val;
     }
 
@@ -13,7 +15,7 @@ public class StepArgument {
         return val;
     }
 
-    public int getPos() {
-        return pos;
+    public int getByteOffset() {
+        return byteOffset;
     }
 }
