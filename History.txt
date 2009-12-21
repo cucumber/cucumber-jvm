@@ -1,7 +1,7 @@
-== In Git
+== 0.2.0 2009-12-21
 
-This release (plus the recent Cucumber 0.5.1 release) fixes several bugs related to UTF-8 and Windows.
-As usual there are several bug fixes and new features.
+This release (plus the recent Cucumber 0.5.1 release) fixes several bugs related to UTF-8 and Windows,
+and there is new and improved support for Ant. As usual there are several bug fixes and new features.
 
 === IMPORTANT INFORMATION FOR MAVEN USERS
 
@@ -32,7 +32,7 @@ other gem commands from Maven.
 * Maven will install gems under ~/.m2/repository/.jruby instead of the old ~/.m2/repository/.gem (Aslak Hellesøy)
 * (Internal) the Maven support now delegates to the new Ant tasks. (Aslak Hellesøy).
 
-== 0.2.0
+== 0.1.9 2009-11-13
 
 This release sports much improved Before and After hooks in several areas. You can now construct more complex
 boolean queries with tagged hooks. This is featured in Cucumber 0.4.4. You *must* upgrade to Cucumber 0.4.4

@@ -52,7 +52,7 @@
           </jvmArgs>
           <gems>
             <gem>install celerity --version 0.0.7</gem>
-            <gem>install rspec --version 1.2.8</gem>
+            <gem>install rspec --version 1.2.9</gem>
             <gem>install cucumber --version 0.5.1</gem>
           </gems>
           <cucumberArgs>
