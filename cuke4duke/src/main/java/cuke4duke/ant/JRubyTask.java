@@ -3,45 +3,62 @@ package cuke4duke.ant;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.taskdefs.Java;
 import org.apache.tools.ant.types.Environment;
+import org.apache.tools.ant.types.Path;
 
 import java.io.File;
 
 public class JRubyTask extends Java {
     public JRubyTask() {
+        setFork(true);
         setFailonerror(true);
     }
 
     @Override
     public void execute() throws BuildException {
         setClassname("org.jruby.Main");
-        setGemPath();
-        setHome();
+        setClasspath(getJrubyClasspath());
+        ensureJrubyHomeExists();
+        setJRubyHome();
         super.execute();
     }
 
-    private void setGemPath() {
+    protected File getJrubyHome() {
+        String gemHome = getProject().getProperty("jruby.home");
+        if(gemHome == null) {
+            throw new BuildException("Please set the jruby.home property in your build script.");
+        }
+        return new File(gemHome);
+    }
+
+    private void ensureJrubyHomeExists() {
+        getJrubyHome().mkdirs();
+    }
+
+    private Path getJrubyClasspath() {
+        Object jrubyClasspath = getProject().getReference("jruby.classpath");
+        if(jrubyClasspath == null || !(jrubyClasspath instanceof Path)) {
+            throw new BuildException("Please create a path with id jruby.classpath");
+        }
+        return (Path) jrubyClasspath;
+    }
+
+    private void setJRubyHome() {
+        Environment.Variable gemHome = new Environment.Variable();
+        gemHome.setKey("GEM_HOME");
+        gemHome.setFile(getJrubyHome());
+        this.addEnv(gemHome);
+
         Environment.Variable gemPath = new Environment.Variable();
         gemPath.setKey("GEM_PATH");
-        gemPath.setFile(gemHome());
+        gemPath.setFile(getJrubyHome());
         this.addEnv(gemPath);
     }
 
-    private void setHome() {
-        Environment.Variable gemPath = new Environment.Variable();
-        gemPath.setKey("HOME");
-        gemPath.setFile(gemHome());
-        this.addEnv(gemPath);
+    private File getBinDir() {
+        return new File(getJrubyHome(), "bin");
     }
 
-    private File gemRoot() {
-        return new File(getProject().getProperty("jruby.gem.root"));
-    }
-
-    private File gemHome() {
-        return new File(gemRoot(), ".gem");
-    }
-
-    private File binDir() {
-        return new File(gemHome(), "bin");
+    protected File getGemBinFile(String baseName) {
+        return new File(getBinDir(), baseName);
     }
 }

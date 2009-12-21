@@ -1,94 +1,50 @@
 <project xmlns:ivy="antlib:org.apache.ivy.ant" name="Cuke4Duke Java Demo" default="cucumber" basedir=".">
-  <property name="dotgem.parent" value="${basedir}/lib"/>
-  <property name="gem.home" value="${dotgem.parent}/.gem"/>
-  <property name="cucumber.bin" value="${gem.home}/bin/cucumber"/>
+  <property name="jruby.home" value="${basedir}/lib/.jruby"/>
 
-  <target name="compile-steps" description="Compile test classes">
+  <target name="-compile-steps" depends="-define-paths">
     <mkdir dir="target/test-classes"/>
-    <javac srcdir="src/test/java" destdir="target/test-classes">
-      <classpath>
-        <fileset dir="lib">
-          <include name="**/*.jar"/>
-        </fileset>
-      </classpath>
-    </javac>
+    <javac srcdir="src/test/java" destdir="target/test-classes" classpathref="compile.classpath" encoding="UTF-8"/>
   </target>
 
-  <target name="cucumber" depends="compile-steps" description="Run Cucumber">
+  <target name="cucumber" depends="-compile-steps,-install-gems" description="Run Cucumber">
     <mkdir dir="target/junit-report"/>
-
-    <java classname="org.jruby.Main" fork="true" failonerror="true">
+    <taskdef name="cucumber" classname="cuke4duke.ant.CucumberTask" classpathref="compile.classpath"/>
+    <cucumber args="--verbose --require target/test-classes --color --format pretty --format junit --out target/junit-report features" objectFactory="pico">
       <classpath>
-        <fileset dir="lib">
-          <include name="**/*.jar"/>
-        </fileset>
         <pathelement location="target/test-classes"/>
       </classpath>
-      <env key="GEM_PATH" value="${gem.home}"/>
-      <jvmarg value="-Dcuke4duke.objectFactory=cuke4duke.internal.jvmclass.PicoFactory"/>
-      <arg value="-r"/>
-      <arg value="cuke4duke"/>
-      <arg value="${cucumber.bin}"/>
-      <arg value="--require"/>
-      <arg value="target/test-classes"/>
-      <arg value="--color"/>
-      <arg value="--format"/>
-      <arg value="pretty"/>
-      <arg value="--format"/>
-      <arg value="junit"/>
-      <arg value="--out"/>
-      <arg value="target/junit-report"/>
-      <arg value="features"/>
-    </java>
+    </cucumber>
   </target>
 
-  <target name="install-deps" depends="download-jars, install-gems" description="Install all dependencies"/>
-
-  <target name="download-jars" description="Download jars with ivy">
+  <target name="-download-jars" if="ivy">
     <ivy:retrieve/>
   </target>
 
-  <target name="install-gems" description="Install gems">
-    <install-gem gem="cucumber" version="0.4.4" source="http://gems.rubyforge.org/" />
-    <install-gem gem="rspec" version="1.2.9" />
+  <target name="-install-gems" depends="-define-paths" if="gems">
+    <taskdef name="gem" classname="cuke4duke.ant.GemTask" classpathref="compile.classpath"/>
+    <gem args="install cucumber --version 0.5.1 --source http://gemcutter.org/"/>
   </target>
 
-  <macrodef name="install-gem">
-    <attribute name="gem"/>
-    <attribute name="version"/>
-    <attribute name="source" default="http://gems.rubyforge.org/"/>
-    
-    <sequential>
-      <java classname="org.jruby.Main" fork="true" failonerror="true">
-        <classpath>
-          <fileset dir="lib">
-            <include name="**/jruby*.jar"/>
-          </fileset>
-        </classpath>
-        <!-- Gems will go into lib/.gems --> 
-        <env key="HOME" value="${dotgem.parent}"/>
-        <arg value="-S"/>
-        <arg value="gem"/>
-        <arg value="install"/>
-        <arg value="--no-ri"/>
-        <arg value="--no-rdoc"/>
-        <arg value="--install-dir"/>
-        <arg value="${gem.home}"/>
-        <arg value="--source"/>
-        <arg value="@{source}"/>
-        <arg value="--version"/>
-        <arg value="@{version}"/>
-        <arg value="@{gem}"/>
-      </java>
-    </sequential>
-  </macrodef>
+  <target name="-define-paths" depends="-download-jars">
+    <path id="jruby.classpath">
+      <fileset dir="lib">
+        <include name="**/*.jar"/>
+      </fileset>
+    </path>
+
+    <path id="compile.classpath">
+      <fileset dir="lib">
+        <include name="**/*.jar"/>
+      </fileset>
+    </path>
+  </target>
 
   <target name="clean" description="Delete all generated artifacts">
     <delete dir="${basedir}/target"/>
   </target>
 
   <target name="clean-deps" description="Delete all dependencies">
-    <delete dir="${basedir}/lib/.gem"/>
+    <delete dir="${basedir}/lib/.jruby"/>
     <delete>
       <fileset dir="${basedir}/lib" includes=".jar"/>
     </delete>

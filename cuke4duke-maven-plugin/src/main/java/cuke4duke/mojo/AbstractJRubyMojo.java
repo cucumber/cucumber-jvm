@@ -1,5 +1,6 @@
 package cuke4duke.mojo;
 
+import cuke4duke.ant.GemTask;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -10,25 +11,19 @@ import org.apache.maven.project.MavenProject;
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.BuildListener;
 import org.apache.tools.ant.Project;
-import org.apache.tools.ant.taskdefs.Java;
-import org.apache.tools.ant.types.Commandline;
-import org.apache.tools.ant.types.Environment;
 import org.apache.tools.ant.types.Path;
 import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
  * Base for all JRuby mojos.
- * 
+ *
  * @requiresDependencyResolution test
  */
 public abstract class AbstractJRubyMojo extends AbstractMojo {
-
-    protected boolean shouldFork = true;
 
     /**
      * @parameter expression="${project}"
@@ -43,7 +38,7 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
 
     /**
      * The project compile classpath.
-     * 
+     *
      * @parameter default-value="${project.compileClasspathElements}"
      * @required
      * @readonly
@@ -52,7 +47,7 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
 
     /**
      * The plugin dependencies.
-     * 
+     *
      * @parameter expression="${plugin.artifacts}"
      * @required
      * @readonly
@@ -61,7 +56,7 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
 
     /**
      * The project test classpath
-     * 
+     *
      * @parameter expression="${project.testClasspathElements}"
      * @required
      * @readonly
@@ -75,63 +70,6 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
      */
     protected ArtifactRepository localRepository;
 
-    protected Java jruby(List<String> args) throws MojoExecutionException {
-        launchDirectory.mkdirs();
-        Project project;
-        try {
-            project = getProject();
-        } catch (DependencyResolutionRequiredException e) {
-            throw new MojoExecutionException("error resolving dependencies", e);
-        }
-
-        Java java = new Java();
-        java.setProject(project);
-        java.setClassname("org.jruby.Main");
-        java.setFailonerror(true);
-
-        Commandline.Argument arg;
-
-        if (shouldFork) {
-            java.setFork(true);
-            java.setDir(launchDirectory);
-
-            for (String jvmArg : getJvmArgs()) {
-                arg = java.createJvmarg();
-                if (jvmArg != null)
-                    arg.setValue(jvmArg);
-            }
-
-            Environment.Variable classpath = new Environment.Variable();
-
-            Path p = new Path(java.getProject());
-            p.add((Path) project.getReference("maven.plugin.classpath"));
-            p.add((Path) project.getReference("maven.compile.classpath"));
-            p.add((Path) project.getReference("maven.test.classpath"));
-            classpath.setKey("JRUBY_PARENT_CLASSPATH");
-            classpath.setValue(p.toString());
-
-            java.addEnv(classpath);
-        }
-
-        Environment.Variable gemPathVar = new Environment.Variable();
-        gemPathVar.setKey("GEM_PATH");
-        gemPathVar.setValue(gemHome().getAbsolutePath());
-        java.addEnv(gemPathVar);
-
-        Path p = java.createClasspath();
-        p.add((Path) project.getReference("maven.plugin.classpath"));
-        p.add((Path) project.getReference("maven.compile.classpath"));
-        p.add((Path) project.getReference("maven.test.classpath"));
-        getLog().debug("java classpath: " + p.toString());
-
-        for (String s : args) {
-            arg = java.createArg();
-            arg.setValue(s);
-        }
-
-        return java;
-    }
-
     protected abstract List<String> getJvmArgs();
 
     /**
@@ -141,65 +79,47 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
      * <li>http://gemcutter.org/</li>
      * <li>http://gems.github.com</li>
      * </ul>
-     * 
-     * @param gemArgs
-     *            name and optional arguments. Example:
-     *            <ul>
-     *            <li>awesome</li>
-     *            <li>awesome --version 9.8</li>
-     *            <li>awesome --version 9.8 --source http://some.gem.server</li>
-     *            </ul>
+     *
+     * @param gemArgs name and optional arguments. Example:
+     *                <ul>
+     *                <li>awesome</li>
+     *                <li>awesome --version 9.8</li>
+     *                <li>awesome --version 9.8 --source http://some.gem.server</li>
+     *                </ul>
      * @throws org.apache.maven.plugin.MojoExecutionException
-     *             if gem installation fails.
+     *          if gem installation fails.
      */
     protected void installGem(String gemArgs) throws MojoExecutionException {
-        List<String> args = new ArrayList<String>();
-        args.add("-S");
-        args.add("gem");
-        args.add("install");
-        args.add("--no-ri");
-        args.add("--no-rdoc");
-        args.add("--install-dir");
-        args.add(gemHome().getAbsolutePath());
-        args.addAll(Arrays.asList(gemArgs.split("\\s+")));
-
-        Java jruby = jruby(args);
-        // We have to override HOME to make RubyGems install gems
-        // where we want it. Setting GEM_HOME and using --install-dir
-        // is not enough.
-        Environment.Variable homeVar = new Environment.Variable();
-        homeVar.setKey("HOME");
-        homeVar.setValue(dotGemParent().getAbsolutePath());
-        jruby.addEnv(homeVar);
-        dotGemParent().mkdirs();
-        jruby.execute();
+        GemTask gem = new GemTask();
+        gem.setProject(getProject());
+        gem.setArgs(gemArgs);
+        gem.execute();
     }
 
-    protected File dotGemParent() {
-        return new File(localRepository.getBasedir());
+    protected File jrubyHome() {
+        return new File(localRepository.getBasedir(), ".jruby");
     }
 
-    protected File gemHome() {
-        return new File(dotGemParent(), ".gem");
-    }
-
-    protected File binDir() {
-        return new File(gemHome(), "bin");
-    }
-
-    protected Project getProject() throws DependencyResolutionRequiredException {
+    protected Project getProject() throws MojoExecutionException {
         Project project = new Project();
         project.setBaseDir(mavenProject.getBasedir());
+        project.setProperty("jruby.home", jrubyHome().getAbsolutePath());
         project.addBuildListener(new LogAdapter());
-        addReference(project, "maven.compile.classpath",
-                compileClasspathElements);
-        addReference(project, "maven.plugin.classpath", pluginArtifacts);
-        addReference(project, "maven.test.classpath", testClasspathElements);
-        return project;
+
+        Path jrubyClasspath = new Path(project);
+        project.addReference("jruby.classpath", jrubyClasspath);
+
+        try {
+            append(jrubyClasspath, compileClasspathElements);
+            append(jrubyClasspath, pluginArtifacts);
+            append(jrubyClasspath, testClasspathElements);
+            return project;
+        } catch (DependencyResolutionRequiredException e) {
+            throw new MojoExecutionException("error resolving dependencies", e);
+        }
     }
 
-    protected void addReference(Project project, String reference,
-            List<?> artifacts) throws DependencyResolutionRequiredException {
+    protected void append(Path classPath, List<?> artifacts) throws DependencyResolutionRequiredException {
         List<String> list = new ArrayList<String>(artifacts.size());
 
         for (Object elem : artifacts) {
@@ -217,9 +137,9 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
             list.add(path);
         }
 
-        Path p = new Path(project);
+        Path p = new Path(classPath.getProject());
         p.setPath(StringUtils.join(list.iterator(), File.pathSeparator));
-        project.addReference(reference, p);
+        classPath.append(p);
     }
 
     public class LogAdapter implements BuildListener {
@@ -256,29 +176,29 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
             Log log = getLog();
             String message = event.getMessage();
             switch (priority) {
-            case Project.MSG_ERR:
-                log.error(message);
-                break;
+                case Project.MSG_ERR:
+                    log.error(message);
+                    break;
 
-            case Project.MSG_WARN:
-                log.warn(message);
-                break;
+                case Project.MSG_WARN:
+                    log.warn(message);
+                    break;
 
-            case Project.MSG_INFO:
-                log.info(message);
-                break;
+                case Project.MSG_INFO:
+                    log.info(message);
+                    break;
 
-            case Project.MSG_VERBOSE:
-                log.debug(message);
-                break;
+                case Project.MSG_VERBOSE:
+                    log.debug(message);
+                    break;
 
-            case Project.MSG_DEBUG:
-                log.debug(message);
-                break;
+                case Project.MSG_DEBUG:
+                    log.debug(message);
+                    break;
 
-            default:
-                log.info(message);
-                break;
+                default:
+                    log.info(message);
+                    break;
             }
         }
     }

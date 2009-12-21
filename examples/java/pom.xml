@@ -6,7 +6,7 @@
   <groupId>cuke4duke</groupId>
   <artifactId>cuke4duke-java-example</artifactId>
   <packaging>jar</packaging>
-  <version>0.1.9</version>
+  <version>0.2.0</version>
   <name>Cuke4Duke Java Example</name>
   <url>http://cukes.info/</url>
 
@@ -43,7 +43,7 @@
     <dependency>
       <groupId>cuke4duke</groupId>
       <artifactId>cuke4duke</artifactId>
-      <version>0.1.9</version>
+      <version>0.2.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -89,6 +89,7 @@
         <artifactId>cuke4duke-maven-plugin</artifactId>
         <configuration>
           <jvmArgs>
+            <jvmArg>-Xmx384m</jvmArg>
             <jvmArg>-Dcuke4duke.objectFactory=cuke4duke.internal.jvmclass.PicoFactory</jvmArg>
             <jvmArg>-Dfile.encoding=UTF-8</jvmArg>
           </jvmArgs>
@@ -111,7 +112,7 @@
             <cucumberArg>${basedir}/target/test-classes</cucumberArg>
           </cucumberArgs>
           <gems>
-            <gem>cucumber --version 0.4.4 --source http://gems.rubyforge.org/</gem>
+            <gem>install cucumber --version 0.5.1</gem>
           </gems>
         </configuration>
         <executions>
