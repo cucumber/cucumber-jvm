@@ -18,7 +18,7 @@ task :release do
   version = IO.read('pom.xml').match(/<version>(.*)<\/version>/)[1]
   sh %{mvn deploy}
   sh %{git commit -a -m "Release #{version}"}
-  sh %{git tag "v#{version}" -m "Release #{version}"}
+  sh %{git tag -a "v#{version}" -m "Release #{version}"}
   sh %{git push}
   sh %{git push --tags}
 end
