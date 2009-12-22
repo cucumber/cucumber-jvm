@@ -36,7 +36,6 @@ public class MethodFormat {
                 .replaceAll("%c", "{6}")
                 .replaceAll("%a", "{7}")
                 .replaceAll("%e", "{8}");
-        System.out.println("FORMAT:"+pattern);
         this.format = new MessageFormat(pattern);
     }
 

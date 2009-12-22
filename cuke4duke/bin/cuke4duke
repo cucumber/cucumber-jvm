@@ -1,0 +1,13 @@
+#!/usr/bin/env ruby
+$:.unshift(File.dirname(__FILE__) + '/../lib') unless $:.include?(File.dirname(__FILE__) + '/../lib')
+
+require 'cuke4duke.jar'
+require 'cuke4duke.rb'
+require 'cucumber'
+
+module Cuke4Duke
+  VERSION = IO.read(File.dirname(__FILE__) + '/../VERSION').strip
+  Cucumber::VERSION << " (cuke4duke #{VERSION})"
+end
+
+load Cucumber::BINARY

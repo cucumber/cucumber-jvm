@@ -6,7 +6,7 @@
   <groupId>cuke4duke</groupId>
   <artifactId>parent</artifactId>
   <packaging>pom</packaging>
-  <version>0.1.9</version>
+  <version>0.2.1</version>
   <name>Cuke4Duke Main Project</name>
   <url>http://cukes.info/</url>
 
@@ -48,6 +48,21 @@
         <module>examples/groovy-webdriver</module>
         <module>examples/ioke</module>
         <module>examples/clojure</module> <!-- Fails on windows. Can't load calculator.clj -->
+        <module>examples/java-webdriver</module>
+        <module>examples/guice</module>
+        <module>examples/javascript</module>
+        <module>examples/celerity</module>
+        <module>examples/spring</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>win</id>
+      <modules>
+        <module>examples/java</module>
+        <module>examples/scala</module>
+        <module>examples/groovy</module>
+        <module>examples/groovy-webdriver</module>
+        <module>examples/ioke</module>
         <module>examples/java-webdriver</module>
         <module>examples/guice</module>
         <module>examples/javascript</module>

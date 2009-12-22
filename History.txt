@@ -1,11 +1,35 @@
-== In Git
+== 0.2.1 2009-12-21
 
-== Bugfixes
+Cuke4Duke gets an executable!
+
+Many people have asked for a command line for Cuke4Duke, similar to the familiar cucumber command line.
+Wait no longer! See http://wiki.github.com/aslakhellesoy/cuke4duke/command-line for details.
+
+=== New Features
+* Gem with command line (#40 Aslak Hellesøy)
+
+=== Changed Features
+* All usage (Ant, Maven, Command Line) now requires the cuke4duke gem to be installed instead of the cucumber gem. (Aslak Hellesøy)
+
+== 0.2.0 2009-12-21
+
+This release (plus the recent Cucumber 0.5.1 release) fixes several bugs related to UTF-8 and Windows,
+and there is new and improved support for Ant. As usual there are several bug fixes and new features.
+
+=== IMPORTANT INFORMATION FOR MAVEN USERS
+
+In previous releases you would install gems with e.g. <gem>cuke4duke --version 0.2.1</gem>
+In other words, RubyGems' "install" command was implicit. Starting with this release you have to be explicit, so to install
+a gem you need to do: <gem>install cuke4duke --version 0.2.1</gem>. This allows you to more easily uninstall or execute
+other gem commands from Maven.
+
+=== Bugfixes
 * Step definition snippets for Java look crazy. (#49 Aslak Hellesøy)
 * Java snippets for multiline strings incorrectly suggest table. (#51 Aslak Hellesøy)
 * Improved UTF-8. Make sure you compile your stepdefs with -encoding UTF-8 and save feature files in UTF-8 (Aslak Hellesøy)
 
-== New Features
+=== New Features
+* New Ant tasks for gem and cucumber.
 * New cuke4duke.methodFormat system property for better reporting. See http://wiki.github.com/aslakhellesoy/cuke4duke/method-format (#48 Aslak Hellesøy)
 * Upgrade examples to Groovy 1.6.7, which removes the need for dirty hacks to get tagged hooks working. (Aslak Hellesøy)
 * Upgrade examples to Ant 1.7.1. (Aslak Hellesøy)
@@ -16,7 +40,12 @@
   Cucumber test failures. This can be useful on a continuous integration server, if your only option to be able to 
   collect output files is if the project builds successfully. (Hugo Josefson)
 
-== 0.1.9
+=== Changed Features
+* The <gem> element in Maven just wraps the gem command. You *must* prepend "install" (or some other gem command). (Aslak Hellesøy)
+* Maven will install gems under ~/.m2/repository/.jruby instead of the old ~/.m2/repository/.gem (Aslak Hellesøy)
+* (Internal) the Maven support now delegates to the new Ant tasks. (Aslak Hellesøy).
+
+== 0.1.9 2009-11-13
 
 This release sports much improved Before and After hooks in several areas. You can now construct more complex
 boolean queries with tagged hooks. This is featured in Cucumber 0.4.4. You *must* upgrade to Cucumber 0.4.4

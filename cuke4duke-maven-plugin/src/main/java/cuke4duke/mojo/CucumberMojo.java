@@ -1,11 +1,12 @@
 package cuke4duke.mojo;
 
+import cuke4duke.ant.CucumberTask;
+import cuke4duke.internal.Utils;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.tools.ant.taskdefs.Java;
+import org.apache.tools.ant.types.Commandline;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -40,7 +41,7 @@ public class CucumberMojo extends AbstractJRubyMojo {
     /**
      * @parameter
      */
-    protected List<String> cucumberArgs;
+    protected List<String> cucumberArgs = Collections.<String>emptyList();
 
     /**
      * Appends additional arguments on the command line. e.g.
@@ -59,33 +60,16 @@ public class CucumberMojo extends AbstractJRubyMojo {
      */
     protected List<String> jvmArgs;
 
-    /**
-     * @parameter expression="${cucumber.bin}"
-     */
-    protected File cucumberBin;
-
     public void execute() throws MojoExecutionException {
-
         if (installGems) {
             for (String gemSpec : gems) {
                 installGem(gemSpec);
             }
         }
 
-        List<String> allArgs = new ArrayList<String>();
-        if(cucumberBin != null) {
-            allArgs.add("-I");
-            allArgs.add(new File(cucumberBin.getParentFile().getParentFile(), "lib").getAbsolutePath());
-        }
-        allArgs.add("-r");
-        allArgs.add("cuke4duke");
-        allArgs.add(cucumberBin().getAbsolutePath());
-        allArgs.addAll(addCucumberArgs());
-        allArgs.add(features);
-
-        Java jruby = jruby(allArgs);
+        CucumberTask cucumber = cucumber(allCucumberArgs());
         try {
-            jruby.execute();
+            cucumber.execute();
         } catch (Exception e) {
             if (failOnError) {
                 throw new MojoExecutionException("JRuby failed.", e);
@@ -93,24 +77,30 @@ public class CucumberMojo extends AbstractJRubyMojo {
         }
     }
 
-    List<String> addCucumberArgs() {
+    public CucumberTask cucumber(String args) throws MojoExecutionException {
+        CucumberTask cucumber = new CucumberTask();
+        cucumber.setProject(getProject());
+        for(String jvmArg : getJvmArgs()) {
+            if(jvmArg != null) {
+                Commandline.Argument arg = cucumber.createJvmarg();
+                arg.setValue(jvmArg);
+            }
+        }
+        cucumber.setArgs(args);
+        return cucumber;
+    }
+
+    String allCucumberArgs() {
         List<String> allCucumberArgs = new ArrayList<String>();
         if (cucumberArgs != null)
             allCucumberArgs.addAll(cucumberArgs);
         if (extraCucumberArgs != null)
-            allCucumberArgs.addAll(Arrays.asList(extraCucumberArgs.split(" ")));
-        return allCucumberArgs;
-    }
-
-    private File cucumberBin() {
-        return (cucumberBin != null) ? cucumberBin : gemCucumberBin();
-    }
-
-    private File gemCucumberBin() {
-        return new File(binDir(), "cucumber");
+            allCucumberArgs.add(extraCucumberArgs);
+        allCucumberArgs.add(features);
+        return Utils.join(allCucumberArgs.toArray(), " ");
     }
 
     protected List<String> getJvmArgs() {
-        return (jvmArgs != null) ? jvmArgs : new ArrayList<String>();
+        return (jvmArgs != null) ? jvmArgs : Collections.<String>emptyList();
     }
 }

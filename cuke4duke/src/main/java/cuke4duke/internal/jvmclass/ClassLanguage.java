@@ -1,15 +1,15 @@
 package cuke4duke.internal.jvmclass;
 
 import cuke4duke.StepMother;
+import cuke4duke.internal.JRuby;
 import cuke4duke.internal.language.AbstractProgrammingLanguage;
 import org.jruby.runtime.builtin.IRubyObject;
 
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 public class ClassLanguage extends AbstractProgrammingLanguage {
     private final ObjectFactory objectFactory;
@@ -74,7 +74,7 @@ public class ClassLanguage extends AbstractProgrammingLanguage {
                 className = pathElements[i] + "." + className;
             }
             try {
-                return Thread.currentThread().getContextClassLoader().loadClass(className);
+                return JRuby.getRuntime().getJRubyClassLoader().loadClass(className);
             } catch (ClassNotFoundException ignore) {
             }
         }
@@ -83,7 +83,7 @@ public class ClassLanguage extends AbstractProgrammingLanguage {
 
     private static ObjectFactory createObjectFactory() throws Throwable {
         String objectFactoryClassName = System.getProperty("cuke4duke.objectFactory", "cuke4duke.internal.jvmclass.PicoFactory");
-        Class<?> ofc = Thread.currentThread().getContextClassLoader().loadClass(objectFactoryClassName);
+        Class<?> ofc = JRuby.getRuntime().getJRubyClassLoader().loadClass(objectFactoryClassName);
         Constructor<?> ctor = ofc.getConstructor();
         try {
             return (ObjectFactory) ctor.newInstance();
