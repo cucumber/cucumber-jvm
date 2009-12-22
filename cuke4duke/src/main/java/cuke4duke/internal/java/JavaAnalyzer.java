@@ -11,6 +11,8 @@ import java.util.regex.Pattern;
 
 public class JavaAnalyzer implements ClassAnalyzer {
     private final MethodFormat methodFormat;
+    private boolean needsHookRegistration = true;
+
 
     public JavaAnalyzer() {
         this.methodFormat = new MethodFormat(System.getProperty("cuke4duke.methodFormat", "%c.%m(%a)"));
@@ -18,11 +20,14 @@ public class JavaAnalyzer implements ClassAnalyzer {
 
     public void populateStepDefinitionsAndHooks(ObjectFactory objectFactory, ClassLanguage classLanguage) throws Throwable {
         for(Method method: getOrderedMethods(classLanguage)) {
-            registerBeforeMaybe(method, classLanguage, objectFactory);
+            if(needsHookRegistration) {
+                registerBeforeMaybe(method, classLanguage, objectFactory);
+                registerAfterMaybe(method, classLanguage, objectFactory);
+            }
             registerStepDefinitionMaybe(method, classLanguage, objectFactory);
-            registerAfterMaybe(method, classLanguage, objectFactory);
             registerTransformMaybe(method, classLanguage, objectFactory);
         }
+        needsHookRegistration = false;
     }
 
     private void registerTransformMaybe(Method method, ClassLanguage classLanguage, ObjectFactory objectFactory) {

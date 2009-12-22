@@ -5,7 +5,6 @@ import cuke4duke.internal.JRuby;
 import cuke4duke.internal.language.AbstractProgrammingLanguage;
 import org.jruby.runtime.builtin.IRubyObject;
 
-import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
@@ -56,6 +55,7 @@ public class ClassLanguage extends AbstractProgrammingLanguage {
         for (ClassAnalyzer analyzer : analyzers) {
             analyzer.populateStepDefinitionsAndHooks(objectFactory, this);
         }
+
     }
 
     @Override
