@@ -11,7 +11,6 @@ end
 
 desc 'Release'
 task :release do
-  sh %{mvn clean -P examples install}
   Dir.chdir('cuke4duke') do
     sh %{MAVEN_OPTS="-Xmx512m" mvn site:site site:deploy}
   end
