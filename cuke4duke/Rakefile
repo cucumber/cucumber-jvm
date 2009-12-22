@@ -12,7 +12,7 @@ begin
     gem.homepage = "http://cukes.info"
     gem.authors = ["Aslak Hellesøy"]
     gem.executables = ["cuke4duke"]
-    gem.files += FileList['lib/cuke4duke.jar']
+    gem.files = FileList['VERSION', 'lib/cuke4duke.jar', 'bin/cuke4duke']
     gem.test_files = []
 
     gem.add_dependency 'cucumber', '>= 0.5.1'

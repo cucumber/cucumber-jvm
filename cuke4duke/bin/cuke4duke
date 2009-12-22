@@ -5,7 +5,7 @@ require 'cucumber'
 
 module Cuke4Duke
   VERSION = IO.read(File.dirname(__FILE__) + '/../VERSION').strip
-  Cucumber::VERSION << " (Cuke4Duke #{VERSION})"
+  Cucumber::VERSION << " (cuke4duke #{VERSION})"
 end
 
 load Cucumber::BINARY
