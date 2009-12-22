@@ -8,7 +8,7 @@
     <groupId>cuke4duke</groupId>
     <artifactId>parent</artifactId>
     <relativePath>../pom.xml</relativePath>
-    <version>0.2.0</version>
+    <version>0.2.1</version>
   </parent>
 
   <artifactId>cuke4duke</artifactId>
@@ -128,6 +128,23 @@
               <goal>add-source</goal>
               <goal>compile</goal>
               <goal>testCompile</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <configuration>
+              <tasks>
+                <copy file="${project.build.directory}/${project.build.finalName}.jar" tofile="lib/cuke4duke.jar" />
+              </tasks>
+            </configuration>
+            <goals>
+              <goal>run</goal>
             </goals>
           </execution>
         </executions>
