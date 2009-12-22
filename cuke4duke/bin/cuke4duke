@@ -1,7 +1,5 @@
 #!/usr/bin/env ruby
-
-puts "MY LOAD_PATH"
-puts $:
+$:.unshift(File.dirname(__FILE__) + '/../lib') unless $:.include?(File.dirname(__FILE__) + '/../lib')
 
 require 'cuke4duke.jar'
 require 'cuke4duke.rb'

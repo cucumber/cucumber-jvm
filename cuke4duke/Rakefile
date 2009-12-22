@@ -23,9 +23,3 @@ begin
 rescue LoadError
   puts "Jeweler (or a dependency) not available. Install it with: sudo gem install jeweler"
 end
-
-task :copy_jar do
-  Dir["target/cuke4duke*.jar"].each{|jar| cp jar, "lib/cuke4duke.jar"}
-end
-
-task :build => :copy_jar
