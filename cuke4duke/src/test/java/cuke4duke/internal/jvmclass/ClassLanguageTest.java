@@ -3,7 +3,6 @@ package cuke4duke.internal.jvmclass;
 import cuke4duke.StepMother;
 import cuke4duke.internal.java.JavaAnalyzer;
 import cuke4duke.internal.java.JavaHook;
-import cuke4duke.internal.java.MethodFormat;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;

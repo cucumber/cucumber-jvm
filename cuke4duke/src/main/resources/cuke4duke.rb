@@ -4,7 +4,7 @@ require 'rubygems'
 begin
   require 'cucumber'
 rescue LoadError
-  gem 'cucumber', '>= 0.5.1'
+  gem 'cucumber'
   require 'cucumber'
 end
 require 'cucumber/formatter/unicode'

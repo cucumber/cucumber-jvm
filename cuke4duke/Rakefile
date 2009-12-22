@@ -1,0 +1,31 @@
+# encoding: utf-8
+require 'rubygems'
+require 'rake'
+
+begin
+  require 'jeweler'
+  Jeweler::Tasks.new do |gem|
+    gem.name = "cuke4duke"
+    gem.summary = %Q{JVM support for Cucumber}
+    gem.description = %Q{Write Cucumber Step Definitions in Java, Scala, Groovy, Rhino Javascript, Clojure or Ioke}
+    gem.email = "cukes@googlegroups.com"
+    gem.homepage = "http://cukes.info"
+    gem.authors = ["Aslak Hellesøy"]
+    gem.executables = ["cuke4duke"]
+    gem.files += FileList['lib/cuke4duke.jar']
+    gem.test_files = []
+
+    gem.add_dependency 'cucumber', '>= 0.5.1'
+    gem.platform = 'java'
+  end
+
+  Jeweler::GemcutterTasks.new
+rescue LoadError
+  puts "Jeweler (or a dependency) not available. Install it with: sudo gem install jeweler"
+end
+
+task :copy_jar do
+  Dir["target/cuke4duke*.jar"].each{|jar| cp jar, "lib/cuke4duke.jar"}
+end
+
+task :build => :copy_jar

@@ -1,0 +1,11 @@
+#!/usr/bin/env ruby
+require 'cuke4duke.jar'
+require 'cuke4duke.rb'
+require 'cucumber'
+
+module Cuke4Duke
+  VERSION = IO.read(File.dirname(__FILE__) + '/../VERSION').strip
+  Cucumber::VERSION << " (Cuke4Duke #{VERSION})"
+end
+
+load Cucumber::BINARY
