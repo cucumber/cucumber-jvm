@@ -58,7 +58,11 @@ public class JRubyTask extends Java {
         return new File(getJrubyHome(), "bin");
     }
 
-    protected File getGemBinFile(String baseName) {
-        return new File(getBinDir(), baseName);
+    protected File getCuke4dukeBinFile() {
+        if(System.getProperty("cuke4duke.bin") != null) {
+            return new File(System.getProperty("cuke4duke.bin"));
+        } else {
+            return new File(getBinDir(), "cuke4duke");
+        }
     }
 }

@@ -3,29 +3,13 @@ package cuke4duke.ant;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.types.Environment;
 
-import java.io.File;
-
 public class CucumberTask extends JRubyTask {
     private String args = "";
 
     public void execute() throws BuildException {
-        createArg().setValue("-r");
-        createArg().setValue("cuke4duke");
-        setCucumberBin();
+        createArg().setFile(getCuke4dukeBinFile());
         getCommandLine().createArgument().setLine(args);
         super.execute();
-    }
-
-    private void setCucumberBin() {
-        String cucumberBinProperty = System.getProperty("cucumber.bin");
-        if(cucumberBinProperty != null) {
-            File cucumberBin = new File(cucumberBinProperty);
-            createArg().setValue("-I");
-            createArg().setFile(new File(cucumberBin.getParentFile().getParentFile(), "lib"));
-            createArg().setFile(cucumberBin);
-        } else {
-            createArg().setFile(getGemBinFile("cucumber"));
-        }
     }
 
     public void setArgs(String args) {

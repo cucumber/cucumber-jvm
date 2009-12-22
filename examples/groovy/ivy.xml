@@ -1,7 +1,7 @@
 <ivy-module version="2.0">
   <info organisation="cukes.info" module="groovy-example"/>
   <dependencies>
-    <dependency org="cuke4duke" name="cuke4duke" rev="0.2.0"/>
+    <dependency org="cuke4duke" name="cuke4duke" rev="0.2.1"/>
     <dependency org="org.jruby" name="jruby-complete" rev="1.4.0" transitive="false"/>
     <dependency org="org.picocontainer" name="picocontainer" rev="2.8.3"/>
     <dependency org="junit" name="junit" rev="4.7"/>
