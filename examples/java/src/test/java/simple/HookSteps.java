@@ -9,6 +9,11 @@ import static org.junit.Assert.assertEquals;
 public class HookSteps extends SuperSteps {
     private String b4WithoutArgs;
     private static String myStatic = "clean";
+    private static int beforeHookCount;
+
+    public HookSteps() {
+        beforeHookCount = 0;
+    }
 
     @Before("@nothing_tagged_with_this")
     public void cryWolf() {
@@ -17,6 +22,7 @@ public class HookSteps extends SuperSteps {
 
     @Before
     public void setB4WithoutArgs() {
+        beforeHookCount++;
         b4WithoutArgs = "b4WithoutArgs was here";
     }
 
@@ -44,5 +50,6 @@ public class HookSteps extends SuperSteps {
     public void setAfter(Object scenario) {
         myStatic = "clean";
         assertEquals("b4WithoutArgs was here", b4WithoutArgs);
+        assertEquals(1, beforeHookCount);
     }
 }
