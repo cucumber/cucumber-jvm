@@ -3,6 +3,9 @@
 === Bugfixes
 * Hooks not being cleared per scenario (#54 Aslak Hellesøy, Darrin Holst)
 
+=== New Features
+* You can install your gems from a local directory. Just set the property cucumber.gemDirectory and add a --local flag to your <gem></gem> definitions.
+
 == 0.2.1 2009-12-21
 
 Cuke4Duke gets an executable!
