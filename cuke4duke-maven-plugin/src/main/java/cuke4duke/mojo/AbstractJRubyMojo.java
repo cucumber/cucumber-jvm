@@ -38,7 +38,6 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
 
     /**
      * @parameter expression="${cucumber.gemDirectory}"
-     * @required
      */
     protected File gemDirectory;
 
