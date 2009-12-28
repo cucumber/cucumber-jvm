@@ -1,5 +1,9 @@
 == In Git
 
+=== New features
+* Upgrade to Groovy 1.7.0 (Aslak Hellesøy)
+* Upgrade to Ioke P-0.4.0 (Aslak Hellesøy)
+
 === Bugfixes
 * Hooks not being cleared per scenario (#54 Aslak Hellesøy, Darrin Holst)
 

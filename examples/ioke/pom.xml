@@ -37,12 +37,12 @@
     <dependency>
       <groupId>org.ioke</groupId>
       <artifactId>ioke-lang</artifactId>
-      <version>E-0.4.0-1</version>
+      <version>P-0.4.0</version>
     </dependency>
     <dependency>
       <groupId>org.ioke</groupId>
       <artifactId>ioke-lang-lib</artifactId>
-      <version>E-0.4.0-1</version>
+      <version>P-0.4.0</version>
     </dependency>
     <dependency>
       <groupId>cuke4duke</groupId>
