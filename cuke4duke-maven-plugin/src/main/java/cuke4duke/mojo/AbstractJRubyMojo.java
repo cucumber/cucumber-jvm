@@ -37,6 +37,11 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
     protected File launchDirectory;
 
     /**
+     * @parameter expression="${cucumber.gemDirectory}"
+     */
+    protected File gemDirectory;
+
+    /**
      * The project compile classpath.
      *
      * @parameter default-value="${project.compileClasspathElements}"
@@ -91,6 +96,9 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
      */
     protected void installGem(String gemArgs) throws MojoExecutionException {
         GemTask gem = new GemTask();
+        if (gemDirectory != null && gemDirectory.exists()) {
+            gem.setDir(gemDirectory);
+        }
         gem.setProject(getProject());
         gem.setArgs(gemArgs);
         gem.execute();
