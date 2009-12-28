@@ -42,10 +42,10 @@
     <profile>
       <id>examples</id>
       <modules>
-        <module>examples/scala</module>
-        <module>examples/java</module>
         <module>examples/groovy</module>
         <module>examples/groovy-webdriver</module>
+        <module>examples/scala</module>
+        <module>examples/java</module>
         <module>examples/ioke</module>
         <module>examples/clojure</module> <!-- Fails on windows. Can't load calculator.clj -->
         <module>examples/java-webdriver</module>
@@ -58,10 +58,10 @@
     <profile>
       <id>win</id>
       <modules>
-        <module>examples/scala</module>
-        <module>examples/java</module>
         <module>examples/groovy</module>
         <module>examples/groovy-webdriver</module>
+        <module>examples/scala</module>
+        <module>examples/java</module>
         <module>examples/ioke</module>
         <module>examples/java-webdriver</module>
         <module>examples/guice</module>
