@@ -1,14 +1,13 @@
 == In Git
 
 === New features
+* You can install your gems from a local directory. Just set the property cucumber.gemDirectory and add a --local flag to your <gem></gem> definitions. (Yves Senn)
+* Added support for Spring 3.0.0 (#52 Trond Marius Øvstetun)
 * Upgrade to Groovy 1.7.0 (Aslak Hellesøy)
 * Upgrade to Ioke P-0.4.0 (Aslak Hellesøy)
 
 === Bugfixes
 * Hooks not being cleared per scenario (#54 Aslak Hellesøy, Darrin Holst)
-
-=== New Features
-* You can install your gems from a local directory. Just set the property cucumber.gemDirectory and add a --local flag to your <gem></gem> definitions.
 
 == 0.2.1 2009-12-21
 

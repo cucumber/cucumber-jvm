@@ -42,6 +42,7 @@
     <profile>
       <id>examples</id>
       <modules>
+        <module>examples/spring</module>
         <module>examples/ioke</module>
         <module>examples/groovy</module>
         <module>examples/groovy-webdriver</module>
@@ -52,12 +53,12 @@
         <module>examples/guice</module>
         <module>examples/javascript</module>
         <module>examples/celerity</module>
-        <module>examples/spring</module>
       </modules>
     </profile>
     <profile>
       <id>win</id>
       <modules>
+        <module>examples/spring</module>
         <module>examples/ioke</module>
         <module>examples/groovy</module>
         <module>examples/groovy-webdriver</module>
@@ -67,7 +68,6 @@
         <module>examples/guice</module>
         <module>examples/javascript</module>
         <module>examples/celerity</module>
-        <module>examples/spring</module>
       </modules>
     </profile>
   </profiles>
