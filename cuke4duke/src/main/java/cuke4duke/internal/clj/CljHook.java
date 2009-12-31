@@ -7,8 +7,8 @@ import org.jruby.runtime.builtin.IRubyObject;
 public class CljHook extends AbstractHook {
     private final AFunction closure;
 
-    public CljHook(String[] tagNames, AFunction closure) {
-        super(tagNames);
+    public CljHook(String[] tagExpressions, AFunction closure) {
+        super(tagExpressions);
         this.closure = closure;
     }
 

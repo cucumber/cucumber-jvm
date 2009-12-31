@@ -8,8 +8,8 @@ public class GroovyHook extends AbstractHook {
     private final GroovyLanguage groovyLanguage;
     private final Closure body;
 
-    public GroovyHook(String[] tags, Closure body, GroovyLanguage groovyLanguage) {
-        super(tags);
+    public GroovyHook(String[] tagExpressions, Closure body, GroovyLanguage groovyLanguage) {
+        super(tagExpressions);
         this.groovyLanguage = groovyLanguage;
         this.body = body;
     }

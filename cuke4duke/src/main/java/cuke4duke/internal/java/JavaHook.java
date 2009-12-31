@@ -12,8 +12,8 @@ public class JavaHook extends AbstractHook {
     private final Method method;
     private final ObjectFactory objectFactory;
 
-    public JavaHook(String[] tagNames, Method method, ObjectFactory objectFactory) {
-        super(tagNames);
+    public JavaHook(String[] tagExpressions, Method method, ObjectFactory objectFactory) {
+        super(tagExpressions);
         this.method = method;
         this.objectFactory = objectFactory;
         this.methodInvoker = new MethodInvoker(method);
