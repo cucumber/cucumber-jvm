@@ -11,17 +11,15 @@ end
 
 desc 'Release'
 task :release do
+  version = IO.read('pom.xml').match(/<version>(.*)<\/version>/)[1]
   Dir.chdir('cuke4duke') do
+    sh %{rake gemspec}
+    sh %{git commit -a -m "Release #{version}"}
+    sh %{git tag -a "v#{version}" -m "Release #{version}"}
+    sh %{rake gemcutter:release}
     sh %{MAVEN_OPTS="-Xmx512m" mvn site:site site:deploy}
   end
-  version = IO.read('pom.xml').match(/<version>(.*)<\/version>/)[1]
   sh %{mvn deploy}
-  sh %{git commit -a -m "Release #{version}"}
-  sh %{git tag -a "v#{version}" -m "Release #{version}"}
   sh %{git push}
   sh %{git push --tags}
-
-  Dir.chdir('cuke4duke') do
-    sh %{rake release}
-  end
 end
