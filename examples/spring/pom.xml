@@ -6,7 +6,7 @@
   <groupId>cuke4duke</groupId>
   <artifactId>cuke4duke-spring-example</artifactId>
   <packaging>jar</packaging>
-  <version>0.2.1</version>
+  <version>0.2.2</version>
   <name>Cuke4Duke Spring Example</name>
   <url>http://cukes.info/</url>
 
@@ -47,7 +47,7 @@
     <dependency>
       <groupId>cuke4duke</groupId>
       <artifactId>cuke4duke</artifactId>
-      <version>0.2.1</version>
+      <version>0.2.2</version>
 	  <scope>test</scope>
     </dependency>
     <dependency>
@@ -92,7 +92,7 @@
             <cucumberArg>${basedir}/target/test-classes</cucumberArg>
           </cucumberArgs>
           <gems>
-            <gem>install cuke4duke --version 0.2.1</gem>
+            <gem>install cuke4duke --version 0.2.2</gem>
           </gems>
         </configuration>
         <executions>

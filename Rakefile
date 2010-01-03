@@ -20,4 +20,8 @@ task :release do
   sh %{git tag -a "v#{version}" -m "Release #{version}"}
   sh %{git push}
   sh %{git push --tags}
+
+  Dir.chdir('cuke4duke') do
+    sh %{rake release}
+  end
 end

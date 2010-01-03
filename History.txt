@@ -1,7 +1,6 @@
-== In Git
+== 0.2.2 2010-01-03
 
-This release requires a new Cucumber release too. Make sure you have read the Cucumber History.txt file on GitHub.
-There are important changes in how tag boolean logic works.
+This release depends on Cucumber 0.6.0 - make sure you have read the release notes for that release before upgrading.
 
 === New features
 * You can install your gems from a local directory. Just set the property cucumber.gemDirectory and add a --local flag to your <gem></gem> definitions. (Yves Senn)
