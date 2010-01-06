@@ -24,7 +24,7 @@ public class MethodInvokerTest {
     @Test(expected = org.jruby.exceptions.RaiseException.class)
     public void shouldRaiseCucumberPendingWhenAnnotatedWithPending() throws Throwable {
         Method dontExecuteMe = SomethingWithPending.class.getDeclaredMethod("dontExecuteMe");
-        MethodInvoker mi = new MethodInvoker(dontExecuteMe);
-        mi.invoke(new SomethingWithPending(), new Object[0]);
+        MethodInvoker mi = new MethodInvoker();
+        mi.invoke(dontExecuteMe, new SomethingWithPending(), new Object[0]);
     }
 }

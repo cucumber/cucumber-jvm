@@ -31,14 +31,11 @@ public class CljStepDefinition extends AbstractStepDefinition {
         return regexp_source();
     }
 
-    protected Class<?>[] getParameterTypes(Object[] args) {
-        return Utils.objectClassArray(args.length);
-    }
-
-    public void invokeWithJavaArgs(Object[] javaArgs) throws Throwable {
+    @Override
+    public Object invokeWithArgs(Object[] javaArgs) throws Throwable {
         Method functionInvoke = lookupInvokeMethod(javaArgs);
         try {
-            functionInvoke.invoke(closure, javaArgs);
+            return functionInvoke.invoke(closure, javaArgs);
         } catch (InvocationTargetException e) {
             throw e.getTargetException();
         }
@@ -48,8 +45,8 @@ public class CljStepDefinition extends AbstractStepDefinition {
         return JdkPatternArgumentMatcher.argumentsFrom(regexp, stepName);
     }
 
-    // Clojure's AFunction.invoke doesn't take varargs :-/
+    // Clojure's AFunction.invokeWithArgs doesn't take varargs :-/
     private Method lookupInvokeMethod(Object[] args) throws NoSuchMethodException {
-        return AFunction.class.getMethod("invoke", getParameterTypes(args));
+        return AFunction.class.getMethod("invoke", Utils.objectClassArray(args.length));
     }
 }

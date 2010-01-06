@@ -11,7 +11,7 @@ import Assert._
 import _root_.scala.collection.mutable.{Map, ListBuffer}
 import org.jruby.runtime.builtin.IRubyObject
 import org.jruby.RubyArray
-import java.lang.String
+import java.lang.{Class, String}
 
 class ScalaDslTest extends ScalaDsl with Norwegian {
 
@@ -42,10 +42,12 @@ class ScalaDslTest extends ScalaDsl with Norwegian {
     }
     def create_step_match(step_definition: StepDefinition, step_name: String, formatted_step_name: String, step_arguments: List[StepArgument]) = null
     def add_hook(phase: String, hook: Hook) = {}
+    def clear_hooks() = {}
   }){
     def begin_scenario(scenario: IRubyObject) = {}
     def end_scenario = {}
     def load_code_file(file: String) = {}
+    def customTransform(arg: Object, parameterType: Class[_]) = {}
   }
 
   @JunitBefore

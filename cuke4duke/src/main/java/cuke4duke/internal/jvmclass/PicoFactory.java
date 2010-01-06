@@ -39,4 +39,8 @@ public class PicoFactory implements ObjectFactory {
     public Object getComponent(Class<?> type) {
         return pico.getComponent(type);
     }
+
+    public List<Class<?>> getClasses() {
+        return classes;
+    }
 }

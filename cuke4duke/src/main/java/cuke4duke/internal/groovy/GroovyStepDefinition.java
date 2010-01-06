@@ -30,12 +30,8 @@ public class GroovyStepDefinition extends AbstractStepDefinition {
         return body.toString();
     }
 
-    protected Class<?>[] getParameterTypes(Object[] args) {
-        return body.getParameterTypes();
-    }
-
-    public void invokeWithJavaArgs(Object[] args) {
-        groovyLanguage.invokeClosure(body, args);
+    public Object invokeWithArgs(Object[] args) throws Throwable {
+        return groovyLanguage.invokeClosure(body, args);
     }
 
     public List<StepArgument> arguments_from(String stepName) throws UnsupportedEncodingException {

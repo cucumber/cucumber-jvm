@@ -89,7 +89,11 @@
         <artifactId>cuke4duke-maven-plugin</artifactId>
         <configuration>
           <jvmArgs>
-            <jvmArg>-Xmx384m</jvmArg>
+            <!-- Debugging. See http://wiki.github.com/aslakhellesoy/cuke4duke/debug-cuke4duke-steps -->
+            <!--jvmArg>-Xdebug</jvmArg>
+            <jvmArg>-Xnoagent</jvmArg>
+            <jvmArg>-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=4000</jvmArg>
+            <jvmArg>-Xmx384m</jvmArg-->
             <jvmArg>-Dcuke4duke.objectFactory=cuke4duke.internal.jvmclass.PicoFactory</jvmArg>
             <jvmArg>-Dfile.encoding=UTF-8</jvmArg>
           </jvmArgs>
@@ -110,6 +114,7 @@
             <cucumberArg>target/usage.txt</cucumberArg>
             <cucumberArg>--require</cucumberArg>
             <cucumberArg>${basedir}/target/test-classes</cucumberArg>
+            <cucumberArg>features/transform.feature:22</cucumberArg>
           </cucumberArgs>
           <gems>
             <gem>install cuke4duke --version 0.2.2</gem>

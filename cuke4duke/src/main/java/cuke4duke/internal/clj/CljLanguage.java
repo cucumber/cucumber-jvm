@@ -41,4 +41,9 @@ public class CljLanguage extends AbstractProgrammingLanguage {
 
     public void end_scenario() throws Throwable {
     }
+
+    @Override
+    protected Object customTransform(Object arg, Class<?> parameterType) {
+        return null;
+    }
 }

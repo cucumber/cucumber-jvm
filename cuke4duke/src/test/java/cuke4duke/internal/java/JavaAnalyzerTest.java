@@ -1,8 +1,11 @@
 package cuke4duke.internal.java;
 
+import cuke4duke.Given;
+import cuke4duke.StepMother;
 import cuke4duke.Transform;
-import cuke4duke.internal.jvmclass.ClassLanguage;
-import cuke4duke.internal.jvmclass.ObjectFactory;
+import cuke4duke.internal.jvmclass.*;
+import cuke4duke.internal.language.AbstractStepDefinition;
+import cuke4duke.internal.language.StepDefinition;
 import cuke4duke.internal.language.Transformable;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -10,7 +13,9 @@ import org.mockito.Mock;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
@@ -26,6 +31,10 @@ public class JavaAnalyzerTest {
     private ObjectFactory objectFactory;
     @Mock
     private ClassLanguage classLanguage;
+    @Mock
+    private StepMother stepMother;
+    @Mock
+    private ClassLanguageMixin languageMixin;
 
     public JavaAnalyzerTest() {
         initMocks(this);
@@ -39,12 +48,12 @@ public class JavaAnalyzerTest {
         when(classLanguage.getClasses()).thenReturn(Collections.<Class<?>>singletonList(ClassWithTransformer.class));
         javaAnalyzer.populateStepDefinitionsAndHooks(objectFactory, classLanguage);
 
-        ArgumentCaptor<Transformable> trasnformableArgument = ArgumentCaptor.forClass(Transformable.class);
+        ArgumentCaptor<Transformable> transformableArgument = ArgumentCaptor.forClass(Transformable.class);
         ArgumentCaptor<Class> returnTypeArgument = ArgumentCaptor.forClass(Class.class);
-        verify(classLanguage).addTransform(returnTypeArgument.capture(), trasnformableArgument.capture());
+//        verify(classLanguage).addTransform(returnTypeArgument.capture(), transformableArgument.capture());
         
         Class returnType = returnTypeArgument.getValue();
-        Transformable transform = trasnformableArgument.getValue();
+        Transformable transform = transformableArgument.getValue();
         
         assertTrue(returnType.isAssignableFrom(Integer.TYPE));
 
@@ -66,4 +75,41 @@ public class JavaAnalyzerTest {
 
     }
 
+    public abstract static class FlintStone {
+        @Given("where is dino")
+        public Class whereIsDino() {
+            return getClass();
+        }
+    }
+
+    public static class Fred extends FlintStone {
+    }
+
+    public static class Wilma extends FlintStone {
+    }
+
+    @Test
+    public void shouldAllowOneInheritedSubclass() throws Throwable {
+        ClassLanguage classLanguage = new ClassLanguage(languageMixin, stepMother, Arrays.<ClassAnalyzer>asList(javaAnalyzer));
+        classLanguage.addClass(FlintStone.class);
+        classLanguage.addClass(Fred.class);
+        classLanguage.begin_scenario(null);
+        List<StepDefinition> stepDefinitions = classLanguage.getStepDefinitions();
+        assertEquals(1, stepDefinitions.size());
+
+        assertEquals(Fred.class, ((AbstractStepDefinition)stepDefinitions.get(0)).invokeWithArgs(new Object[0]));
+    }
+
+    @Test(expected=Exception.class)
+    public void shouldFailWithTwoInheritedSubclass() throws Throwable {
+        ClassLanguage classLanguage = new ClassLanguage(languageMixin, stepMother, Arrays.<ClassAnalyzer>asList(javaAnalyzer));
+        classLanguage.addClass(FlintStone.class);
+        classLanguage.addClass(Fred.class);
+        classLanguage.addClass(Wilma.class);
+        classLanguage.begin_scenario(null);
+        List<StepDefinition> stepDefinitions = classLanguage.getStepDefinitions();
+        assertEquals(1, stepDefinitions.size());
+
+        assertEquals(Fred.class, ((AbstractStepDefinition)stepDefinitions.get(0)).invokeWithArgs(new Object[0]));
+    }
 }

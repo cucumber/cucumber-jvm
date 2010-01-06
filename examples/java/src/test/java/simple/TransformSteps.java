@@ -27,7 +27,7 @@ public class TransformSteps extends Steps {
     
     @Transform
     public boolean overrideBooleanPrimitiveTransform(String boolValue) {
-        return boolValue.equals("yes") ? true : false;
+        return boolValue.equals("yes");
     }
 
     @Given("^I pass '(.*)' to a method with int as parameter$")

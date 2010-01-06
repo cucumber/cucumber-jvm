@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SpringFactory implements ObjectFactory {
-    
+    private final List<Class<?>> classes = new ArrayList<Class<?>>();
     private AbstractApplicationContext appContext;
     private static ThreadLocal<StepMother> mother = new ThreadLocal<StepMother>();
     
@@ -23,6 +23,7 @@ public class SpringFactory implements ObjectFactory {
     }
 
     public void addClass(Class<?> clazz) {
+        classes.add(clazz);
     }
 
     public void addStepMother(StepMother instance) {
@@ -50,7 +51,11 @@ public class SpringFactory implements ObjectFactory {
             throw new RuntimeException("Found " + beans.size() + " Beans for class " + type + ". Expected exactly 1.");
         }
     }
-    
+
+    public List<Class<?>> getClasses() {
+        return classes;
+    }
+
     static class StepMotherFactory implements FactoryBean, InitializingBean {
         private StepMother mother;
         

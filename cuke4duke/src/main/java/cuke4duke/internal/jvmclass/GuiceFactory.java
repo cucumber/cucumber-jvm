@@ -50,6 +50,10 @@ public class GuiceFactory implements ObjectFactory {
         return instances.get(clazz);
     }
 
+    public List<Class<?>> getClasses() {
+        return classes;
+    }
+
     class StepMotherModule extends AbstractModule {
 
         private Provider<? extends StepMother> stepMotherProvider;

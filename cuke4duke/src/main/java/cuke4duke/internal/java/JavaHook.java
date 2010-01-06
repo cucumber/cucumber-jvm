@@ -1,36 +1,26 @@
 package cuke4duke.internal.java;
 
 import cuke4duke.internal.JRuby;
+import cuke4duke.internal.jvmclass.ClassLanguage;
 import cuke4duke.internal.jvmclass.ObjectFactory;
 import cuke4duke.internal.language.AbstractHook;
 import org.jruby.runtime.builtin.IRubyObject;
+import scala.tools.nsc.Global;
 
 import java.lang.reflect.Method;
 
 public class JavaHook extends AbstractHook {
-    private final MethodInvoker methodInvoker;
+    private final ClassLanguage classLanguage;
     private final Method method;
-    private final ObjectFactory objectFactory;
 
-    public JavaHook(String[] tagExpressions, Method method, ObjectFactory objectFactory) {
+    public JavaHook(ClassLanguage classLanguage, Method method, String[] tagExpressions) {
         super(tagExpressions);
+        this.classLanguage = classLanguage;
+
         this.method = method;
-        this.objectFactory = objectFactory;
-        this.methodInvoker = new MethodInvoker(method);
     }
     
     public void invoke(String location, IRubyObject scenario) throws Throwable {
-        Object target = objectFactory.getComponent(method.getDeclaringClass());
-        Object[] args = null;
-        if(method.getParameterTypes().length == 1) {
-            args = new Object[]{scenario};
-        } else if(method.getParameterTypes().length > 1) {
-            throw JRuby.cucumberArityMismatchError("Hooks must take 0 or 1 arguments. " + method);
-        }
-        methodInvoker.invoke(target, args);
-    }
-
-    public Method getMethod() {
-        return method;
+        classLanguage.invokeHook(method, scenario);
     }
 }

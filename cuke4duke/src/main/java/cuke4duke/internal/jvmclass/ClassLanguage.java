@@ -3,17 +3,19 @@ package cuke4duke.internal.jvmclass;
 import cuke4duke.StepMother;
 import cuke4duke.internal.JRuby;
 import cuke4duke.internal.language.AbstractProgrammingLanguage;
+import cuke4duke.internal.language.Transformable;
 import org.jruby.runtime.builtin.IRubyObject;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
 
 public class ClassLanguage extends AbstractProgrammingLanguage {
     private final ObjectFactory objectFactory;
     private final List<ClassAnalyzer> analyzers;
-    private Collection<Class<?>> classes = new ArrayList<Class<?>>();
+    private final Map<Class<?>, Transformable> transformers = new HashMap<Class<?>, Transformable>();
 
     public ClassLanguage(ClassLanguageMixin languageMixin, StepMother stepMother, List<ClassAnalyzer> analyzers) throws Throwable {
         this(languageMixin, stepMother, analyzers, createObjectFactory());
@@ -31,6 +33,16 @@ public class ClassLanguage extends AbstractProgrammingLanguage {
         }
     }
 
+    public void addTransform(Class<?> returnType, Transformable javaTransform) {
+        transformers.put(returnType, javaTransform);
+    }
+
+    @Override
+    protected Object customTransform(Object arg, Class<?> parameterType) throws Throwable {
+        Transformable transformer = transformers.get(parameterType);
+        return transformer == null ? null : transformer.transform(arg);
+    }
+
     @Override
     public void load_code_file(String classFile) throws Throwable {
         Class<?> clazz = loadClass(classFile);
@@ -41,21 +53,15 @@ public class ClassLanguage extends AbstractProgrammingLanguage {
         if (!Modifier.isAbstract(clazz.getModifiers())) {
             objectFactory.addClass(clazz);
         }
-        classes.add(clazz);
-    }
-
-    public Collection<Class<?>> getClasses() {
-        return classes;
     }
 
     @Override
-    protected void begin_scenario(IRubyObject scenario) throws Throwable {
+    public void begin_scenario(IRubyObject scenario) throws Throwable {
         clearHooksAndStepDefinitions();
         objectFactory.createObjects();
         for (ClassAnalyzer analyzer : analyzers) {
             analyzer.populateStepDefinitionsAndHooks(objectFactory, this);
         }
-
     }
 
     @Override
@@ -92,4 +98,23 @@ public class ClassLanguage extends AbstractProgrammingLanguage {
         }
     }
 
+    public Object invokeHook(Method method, IRubyObject scenario) throws Throwable {
+        Object[] args = new Object[0];
+        if(method.getParameterTypes().length == 1) {
+            args = new Object[]{scenario};
+        } else if(method.getParameterTypes().length > 1) {
+            throw JRuby.cucumberArityMismatchError("Hooks must take 0 or 1 arguments. " + method);
+        }
+        return invoke(method, args);
+    }
+
+    public Object invoke(Method method, Object[] args) throws Throwable {
+        Object target = objectFactory.getComponent(method.getDeclaringClass());
+        Object[] transformedArgs = transform(args, method.getParameterTypes());
+        return methodInvoker.invoke(method, target, transformedArgs);
+    }
+
+    public List<Class<?>> getClasses() {
+        return objectFactory.getClasses();
+    }
 }

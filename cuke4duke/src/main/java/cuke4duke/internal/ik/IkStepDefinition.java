@@ -3,7 +3,6 @@ package cuke4duke.internal.ik;
 import cuke4duke.PyString;
 import cuke4duke.Table;
 import cuke4duke.internal.JRuby;
-import cuke4duke.internal.Utils;
 import cuke4duke.internal.language.AbstractStepDefinition;
 import cuke4duke.internal.language.StepArgument;
 import ioke.lang.IokeObject;
@@ -20,7 +19,7 @@ public class IkStepDefinition extends AbstractStepDefinition {
     private String regexpSource;
     private final IkLanguage lang;
 
-    public static void throwCucumberIokeException(String message) {
+    public static Object throwCucumberIokeException(String message) {
         throw JRuby.error("IokeException", message);
     }
 
@@ -32,11 +31,7 @@ public class IkStepDefinition extends AbstractStepDefinition {
         register();
     }
 
-    protected Class<?>[] getParameterTypes(Object[] args) {
-        return Utils.objectClassArray(args.length);
-    }
-
-    public void invokeWithJavaArgs(Object[] args) throws Throwable {
+    public Object invokeWithArgs(Object[] args) throws Throwable {
         IokeObject msg = ioke.newMessage("invoke");
         Message invoke = (Message) IokeObject.data(msg);
 
@@ -56,12 +51,12 @@ public class IkStepDefinition extends AbstractStepDefinition {
         ioke.registerRescues(failureRescues);
 
         try {
-	        invoke.sendTo(msg, iokeStepDefObject, iokeStepDefObject, multilineArg(args));
+	        return invoke.sendTo(msg, iokeStepDefObject, iokeStepDefObject, multilineArg(args));
         } catch(ControlFlow.Rescue e) {
             if(e.getRescue().token == pendingRescues) {
                 throw JRuby.cucumberPending("TODO");
             } else if(e.getRescue().token == failureRescues) {
-                throwCucumberIokeException(((Message)IokeObject.data(ioke.reportMessage)).sendTo(ioke.reportMessage, ioke.ground, e.getCondition()).toString());
+                return throwCucumberIokeException(((Message)IokeObject.data(ioke.reportMessage)).sendTo(ioke.reportMessage, ioke.ground, e.getCondition()).toString());
             } else {
                 throw e;
             }

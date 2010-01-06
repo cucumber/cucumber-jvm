@@ -24,9 +24,11 @@ public class GroovyLanguage extends AbstractProgrammingLanguage {
         GroovyDsl.languageMixin = languageMixin;
     }
 
-    void invokeClosure(Closure body, Object[] args) {
+    Object invokeClosure(Closure body, Object[] args) throws Throwable {
         body.setDelegate(currentWorld);
-        body.call(args);
+        Class[] classes = body.getParameterTypes();
+        Object[] transformedArgs = transform(args, classes);
+        return body.call(transformedArgs);
     }
 
     public void begin_scenario(IRubyObject scenario) throws IOException {
@@ -40,6 +42,11 @@ public class GroovyLanguage extends AbstractProgrammingLanguage {
     }
 
     public void end_scenario() {
+    }
+
+    @Override
+    protected Object customTransform(Object arg, Class<?> parameterType) {
+        return null;
     }
 
     public void load_code_file(String groovyFile) throws ClassNotFoundException, IOException {

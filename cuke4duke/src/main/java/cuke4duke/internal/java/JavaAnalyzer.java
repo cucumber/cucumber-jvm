@@ -11,8 +11,6 @@ import java.util.regex.Pattern;
 
 public class JavaAnalyzer implements ClassAnalyzer {
     private final MethodFormat methodFormat;
-    private boolean needsHookRegistration = true;
-
 
     public JavaAnalyzer() {
         this.methodFormat = new MethodFormat(System.getProperty("cuke4duke.methodFormat", "%c.%m(%a)"));
@@ -20,19 +18,16 @@ public class JavaAnalyzer implements ClassAnalyzer {
 
     public void populateStepDefinitionsAndHooks(ObjectFactory objectFactory, ClassLanguage classLanguage) throws Throwable {
         for(Method method: getOrderedMethods(classLanguage)) {
-            if(needsHookRegistration) {
-                registerBeforeMaybe(method, classLanguage, objectFactory);
-                registerAfterMaybe(method, classLanguage, objectFactory);
-            }
-            registerStepDefinitionMaybe(method, classLanguage, objectFactory);
-            registerTransformMaybe(method, classLanguage, objectFactory);
+            registerBeforeMaybe(method, classLanguage);
+            registerAfterMaybe(method, classLanguage);
+            registerStepDefinitionMaybe(method, classLanguage);
+            registerTransformMaybe(method, classLanguage);
         }
-        needsHookRegistration = false;
     }
 
-    private void registerTransformMaybe(Method method, ClassLanguage classLanguage, ObjectFactory objectFactory) {
+    private void registerTransformMaybe(Method method, ClassLanguage classLanguage) {
         if (method.isAnnotationPresent(Transform.class)) {
-            classLanguage.addTransform(method.getReturnType(), new JavaTransform(method, objectFactory));
+            classLanguage.addTransform(method.getReturnType(), new JavaTransform(classLanguage, method));
         }
     }
 
@@ -40,12 +35,13 @@ public class JavaAnalyzer implements ClassAnalyzer {
         return new Class<?>[0];
     }
 
-    public List<Method> getOrderedMethods(ClassLanguage classLanguage) {
-        List<Method> methods = new ArrayList<Method>();
-        for(Class<?> clazz :  classLanguage.getClasses()) {
+    private List<Method> getOrderedMethods(ClassLanguage classLanguage) {
+        Set<Method> methods = new HashSet<Method>();
+        for(Class<?> clazz : classLanguage.getClasses()) {
             methods.addAll(Arrays.asList(clazz.getMethods()));
         }
-        Collections.sort(methods, new Comparator<Method>() {
+        List<Method> sortedMethods = new ArrayList<Method>(methods);
+        Collections.sort(sortedMethods, new Comparator<Method>() {
             public int compare(Method m1, Method m2) {
                 return order(m1) - order(m2);
             }
@@ -55,16 +51,22 @@ public class JavaAnalyzer implements ClassAnalyzer {
                 return (order == null) ? Integer.MAX_VALUE : order.value();
             }
         });
-        return methods;
+        return sortedMethods;
     }
 
-    private void registerBeforeMaybe(Method method, ClassLanguage classLanguage, ObjectFactory objectFactory) {
+    private void registerBeforeMaybe(Method method, ClassLanguage classLanguage) {
         if (method.isAnnotationPresent(Before.class)) {
-            classLanguage.addBeforeHook(new JavaHook(method.getAnnotation(Before.class).value(), method, objectFactory));
+            classLanguage.addBeforeHook(new JavaHook(classLanguage, method, method.getAnnotation(Before.class).value()));
         }
     }
 
-    private void registerStepDefinitionMaybe(Method method, ClassLanguage classLanguage, ObjectFactory objectFactory) throws Throwable {
+    private void registerAfterMaybe(Method method, ClassLanguage classLanguage) {
+        if (method.isAnnotationPresent(After.class)) {
+            classLanguage.addAfterHook(new JavaHook(classLanguage, method, method.getAnnotation(After.class).value()));
+        }
+    }
+
+    private void registerStepDefinitionMaybe(Method method, ClassLanguage classLanguage) throws Throwable {
         String regexpString = null;
         if (method.isAnnotationPresent(Given.class)) {
             regexpString = method.getAnnotation(Given.class).value();
@@ -75,14 +77,7 @@ public class JavaAnalyzer implements ClassAnalyzer {
         }
         if (regexpString != null) {
             Pattern regexp = Pattern.compile(regexpString);
-            classLanguage.addStepDefinition(new JavaStepDefinition(classLanguage, objectFactory, method, regexp, methodFormat));
+            classLanguage.addStepDefinition(new JavaStepDefinition(classLanguage, method, regexp, methodFormat));
         }
     }
-
-    private void registerAfterMaybe(Method method, ClassLanguage classLanguage, ObjectFactory objectFactory) {
-        if (method.isAnnotationPresent(After.class)) {
-            classLanguage.addAfterHook(new JavaHook(method.getAnnotation(After.class).value(), method, objectFactory));
-        }
-    }
-
 }

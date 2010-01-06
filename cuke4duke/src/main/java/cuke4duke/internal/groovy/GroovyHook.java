@@ -14,8 +14,7 @@ public class GroovyHook extends AbstractHook {
         this.body = body;
     }
 
-    public void invoke(String location, IRubyObject scenario) {
+    public void invoke(String location, IRubyObject scenario) throws Throwable {
         groovyLanguage.invokeClosure(body, new Object[]{scenario});
     }
-
 }

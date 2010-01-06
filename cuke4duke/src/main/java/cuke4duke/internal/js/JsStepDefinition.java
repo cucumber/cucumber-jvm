@@ -1,6 +1,5 @@
 package cuke4duke.internal.js;
 
-import cuke4duke.internal.Utils;
 import cuke4duke.internal.language.AbstractStepDefinition;
 import cuke4duke.internal.language.StepArgument;
 import org.mozilla.javascript.Context;
@@ -39,12 +38,8 @@ public class JsStepDefinition extends AbstractStepDefinition {
         return regexp_source();
     }
 
-    protected Class<?>[] getParameterTypes(Object[] args) {
-        return Utils.objectClassArray(args.length);
-    }
-
-    public void invokeWithJavaArgs(Object[] args) throws Throwable {
-        closure.call(cx, scope, scope, args);
+    public Object invokeWithArgs(Object[] args) throws Throwable {
+        return closure.call(cx, scope, scope, args);
     }
 
     public List<StepArgument> arguments_from(String stepName) {

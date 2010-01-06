@@ -7,7 +7,11 @@ import java.util.*;
 
 // TODO: This is just testing a Map. We should have some own code to test!!
 public class StuffSteps {
-    private final Map<String,Integer> cukes = new HashMap<String,Integer>();
+    private final Map<String,Integer> cukes;
+
+    public StuffSteps() {
+        cukes = new HashMap<String,Integer>();
+    }
 
     @Pending("Let's procrastinate")
     @Given("a pending step")
