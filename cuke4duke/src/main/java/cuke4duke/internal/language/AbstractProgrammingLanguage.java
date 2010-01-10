@@ -86,7 +86,6 @@ public abstract class AbstractProgrammingLanguage implements ProgrammingLanguage
         return transformed;
     }
 
-    // TODO: Generify
     public Object transformOne(Object arg, Class<?> parameterType) throws Throwable {
         if(PyString.class.isAssignableFrom(arg.getClass())) {
             arg = ((PyString)arg).to_s();

@@ -39,21 +39,21 @@ public class ArgumentsConverterTest {
     
     @Test
     public void shouldConvertFromStringToInt() throws Throwable {
-        assertEquals(3, p.transformOne("An Object", Integer.TYPE));
+        assertEquals(3, p.transformOne("3", Integer.TYPE));
     }
 
     @Test
     public void shouldConvertFromStringToInteger() throws Throwable {
-        assertEquals(new Integer(4), p.transformOne("An Object", Integer.class));
+        assertEquals(4, p.transformOne("4", Integer.class));
     }
 
     @Test
     public void shouldConvertFromStringToLongPrimitive() throws Throwable {
-        assertEquals(3L, p.transformOne("An Object", Long.TYPE));
+        assertEquals(3L, p.transformOne("3", Long.TYPE));
     }
 
     @Test
     public void shouldConvertFromStringToLong() throws Throwable {
-        assertEquals(new Long(3L), p.transformOne("An Object", Long.class));
+        assertEquals(4L, p.transformOne("4", Long.class));
     }
 }

@@ -93,7 +93,7 @@ public class ClassLanguageTest {
 
         public boolean matches(Object o) {
             JavaHook hook = (JavaHook) o;
-//            actualMethodName = hook.getMethod().getName();
+            actualMethodName = hook.getMethod().getName();
             return methodName.equals(actualMethodName);
         }
     }
