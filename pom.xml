@@ -44,6 +44,7 @@
       <modules>
         <module>examples/java</module>
         <module>examples/scala</module>
+        <module>examples/java-ejb3</module>
         <module>examples/clojure</module> <!-- Fails on windows. Can't load calculator.clj -->
         <module>examples/ioke</module>
         <module>examples/groovy</module>
@@ -60,6 +61,7 @@
       <modules>
         <module>examples/java</module>
         <module>examples/scala</module>
+        <module>examples/java-ejb3</module>
         <module>examples/ioke</module>
         <module>examples/groovy</module>
         <module>examples/spring</module>

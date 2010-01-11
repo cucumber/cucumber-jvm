@@ -11,23 +11,18 @@ import java.util.regex.Pattern;
 
 public class JavaAnalyzer implements ClassAnalyzer {
     private final MethodFormat methodFormat;
-    private boolean dunit;
 
     public JavaAnalyzer() {
         this.methodFormat = new MethodFormat(System.getProperty("cuke4duke.methodFormat", "%c.%m(%a)"));
     }
 
     public void populateStepDefinitionsAndHooks(ObjectFactory objectFactory, ClassLanguage classLanguage) throws Throwable {
-        if(dunit) {
-            return;
-        }
         for(Method method: getOrderedMethods(classLanguage)) {
             registerBeforeMaybe(method, classLanguage);
             registerAfterMaybe(method, classLanguage);
             registerStepDefinitionMaybe(method, classLanguage);
             registerTransformMaybe(method, classLanguage);
         }
-        dunit = true;
     }
 
     private void registerTransformMaybe(Method method, ClassLanguage classLanguage) {

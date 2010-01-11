@@ -1,3 +1,8 @@
+== In Git
+
+=== New Features
+* Added EJB3 example using OpenEJB (Jonas Bandi)
+
 == 0.2.2 2010-01-03
 
 This release depends on Cucumber 0.6.1 - make sure you have read the release notes for that release before upgrading.
