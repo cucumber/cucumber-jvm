@@ -1,36 +1,35 @@
 package org.books.test.acceptance;
 
-import java.util.Properties;
+import cuke4duke.After;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-
-import cuke4duke.After;
+import java.util.Properties;
 
 public class ContainerInitializer {
 
-	private final Context context;
+    private final Context context;
 
-	public ContainerInitializer() throws NamingException {
-		Properties p = new Properties();
-		p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
-		p.put("bookstoreDatabase", "new://Resource?type=DataSource");
-		p.put("bookstoreDatabase.JdbcDriver", "org.hsqldb.jdbcDriver");
-		p.put("bookstoreDatabase.JdbcUrl", "jdbc:hsqldb:mem:moviedb");
+    public ContainerInitializer() throws NamingException {
+        Properties p = new Properties();
+        p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
+        p.put("bookstoreDatabase", "new://Resource?type=DataSource");
+        p.put("bookstoreDatabase.JdbcDriver", "org.hsqldb.jdbcDriver");
+        p.put("bookstoreDatabase.JdbcUrl", "jdbc:hsqldb:mem:moviedb");
 
-		p.put("openejb.embedded.initialcontext.close", "destroy");
-		p.put("openejb.tempclassloader.skip", "annotations");
+        p.put("openejb.embedded.initialcontext.close", "destroy");
+        p.put("openejb.tempclassloader.skip", "annotations");
 
-		context = new InitialContext(p);
-	}
+        context = new InitialContext(p);
+    }
 
-	public Context getContext() {
-		return context;
-	}
+    public Context getContext() {
+        return context;
+    }
 
-	@After
-	public void shutdown() throws Exception {
-		context.close();
-	}
+    @After
+    public void shutdown() throws Exception {
+        context.close();
+    }
 }

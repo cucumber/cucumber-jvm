@@ -1,16 +1,15 @@
 package org.books.dao;
 
-import java.util.List;
+import org.books.domain.Book;
 
 import javax.ejb.Local;
-
-import org.books.domain.Book;
+import java.util.List;
 
 @Local
 public interface BookDao {
-    void addBook(Book book) throws Exception ;
+    void addBook(Book book) throws Exception;
 
-    void deleteBook(Book book) throws Exception ;
+    void deleteBook(Book book) throws Exception;
 
     List<Book> getBooks();
 }

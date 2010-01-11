@@ -1,24 +1,23 @@
 package org.books.business;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.books.domain.Book;
+import org.books.domain.BookQuery;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-
-import org.books.domain.Book;
-import org.books.domain.BookQuery;
+import java.util.ArrayList;
+import java.util.List;
 
 @Stateless
-public class CatalogManagerImpl implements CatalogManager{
+public class CatalogManagerImpl implements CatalogManager {
 
     @PersistenceContext(unitName = "bookstore")
     private EntityManager entityManager;
-    
-	private String message = "first";
-	
+
+    private String message = "first";
+
     public List<Book> searchBooks(BookQuery bookQuery) {
         if ((bookQuery.getTitle() + bookQuery.getAuthor() + bookQuery.getPublisher()).length() == 0) {
             return new ArrayList<Book>();
@@ -30,11 +29,11 @@ public class CatalogManagerImpl implements CatalogManager{
         return query.getResultList();
     }
 
-	public void setMessage(String message){
-		this.message = message;
-	}
-	
-	public String getMessage(){
-		return message;
-	}
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public String getMessage() {
+        return message;
+    }
 }

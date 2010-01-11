@@ -31,7 +31,7 @@ public class Book {
     private String title;
     private int year;
 
-	private double price;
+    private double price;
 
     public Book() {
     }
@@ -75,10 +75,11 @@ public class Book {
         this.publisher = publisher;
     }
 
-	public void setPrice(double price) {
-		this.price = price;
-	}
-	public double getPrice() {
-		return price;
-	}
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public double getPrice() {
+        return price;
+    }
 }
