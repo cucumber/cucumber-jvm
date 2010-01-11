@@ -42,11 +42,11 @@
     <profile>
       <id>examples</id>
       <modules>
+        <module>examples/java</module>
         <module>examples/scala</module>
         <module>examples/clojure</module> <!-- Fails on windows. Can't load calculator.clj -->
         <module>examples/ioke</module>
         <module>examples/groovy</module>
-        <module>examples/java</module>
         <module>examples/spring</module>
         <module>examples/guice</module>
         <module>examples/javascript</module>
@@ -58,10 +58,10 @@
     <profile>
       <id>win</id>
       <modules>
+        <module>examples/java</module>
         <module>examples/scala</module>
         <module>examples/ioke</module>
         <module>examples/groovy</module>
-        <module>examples/java</module>
         <module>examples/spring</module>
         <module>examples/guice</module>
         <module>examples/javascript</module>
