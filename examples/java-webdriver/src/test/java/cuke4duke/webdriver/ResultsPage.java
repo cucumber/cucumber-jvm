@@ -13,7 +13,7 @@ public class ResultsPage {
     }
 
     @Then("^I should see$")
-    public void seeSearchResults(String results) {
+    public void shouldSee(String results) {
         assertThat(d.getPageSource(), containsString(results));
     }
 }
