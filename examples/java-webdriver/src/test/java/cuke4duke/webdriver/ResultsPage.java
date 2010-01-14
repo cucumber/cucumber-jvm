@@ -5,10 +5,12 @@ import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.containsString;
 import org.openqa.selenium.WebDriver;
 
+import java.lang.reflect.InvocationTargetException;
+
 public class ResultsPage {
     private final WebDriver d;
 
-    public ResultsPage(WebDriverFacade facade) {
+    public ResultsPage(WebDriverFacade facade) throws InvocationTargetException, InstantiationException, IllegalAccessException {
         d = facade.getWebDriver();
     }
 

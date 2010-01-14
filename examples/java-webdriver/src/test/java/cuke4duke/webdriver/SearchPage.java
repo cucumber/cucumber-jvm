@@ -6,10 +6,12 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import java.lang.reflect.InvocationTargetException;
+
 public class SearchPage {
     private final WebDriver d;
 
-    public SearchPage(WebDriverFacade facade) {
+    public SearchPage(WebDriverFacade facade) throws InvocationTargetException, InstantiationException, IllegalAccessException {
         d = facade.getWebDriver();
     }
 

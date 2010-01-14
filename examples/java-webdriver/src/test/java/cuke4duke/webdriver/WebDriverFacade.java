@@ -20,19 +20,20 @@ public class WebDriverFacade {
         }
     }
 
-    private final WebDriver browser;
+    private WebDriver browser;
 
-    public WebDriverFacade() throws IllegalAccessException, InvocationTargetException, InstantiationException {
-        browser = driverConstructor.newInstance();
-    }
-
-    public WebDriver getWebDriver() {
+    public WebDriver getWebDriver() throws InvocationTargetException, IllegalAccessException, InstantiationException {
+        if(browser == null) {
+            browser = driverConstructor.newInstance();
+        }
         return browser;
     }
 
     @After
     public void closeBrowser() throws IllegalAccessException, InvocationTargetException, InstantiationException {
-        browser.close();
-        browser.quit();
+        if(browser == null) {
+            browser.close();
+            browser.quit();
+        }
     }
 }
