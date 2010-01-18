@@ -43,7 +43,7 @@
 						<cucumberArg>${basedir}/target/test-classes</cucumberArg>
 					</cucumberArgs>
 					<gems>
-						<gem>install cuke4duke --version 0.2.2</gem>
+						<gem>install cuke4duke --version 0.2.3</gem>
 					</gems>
 				</configuration>
 				<executions>

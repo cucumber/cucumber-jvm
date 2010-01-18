@@ -6,7 +6,7 @@
   <groupId>cuke4duke</groupId>
   <artifactId>cuke4duke-java-example</artifactId>
   <packaging>jar</packaging>
-  <version>0.2.2</version>
+  <version>0.2.3</version>
   <name>Cuke4Duke Java Example</name>
   <url>http://cukes.info/</url>
 
@@ -43,7 +43,7 @@
     <dependency>
       <groupId>cuke4duke</groupId>
       <artifactId>cuke4duke</artifactId>
-      <version>0.2.2</version>
+      <version>0.2.3</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -117,7 +117,7 @@
             <cucumberArg>features/transform.feature:22</cucumberArg>
           </cucumberArgs>
           <gems>
-            <gem>install cuke4duke --version 0.2.2</gem>
+            <gem>install cuke4duke --version 0.2.3</gem>
           </gems>
         </configuration>
         <executions>
