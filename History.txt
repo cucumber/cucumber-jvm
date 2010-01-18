@@ -6,6 +6,7 @@
 === Internal changes
 * Big refactoring in the default transform logic (Aslak Hellesøy)
 
+
 == 0.2.3 2010-01-03
 
 This release depends on Cucumber 0.6.1 - make sure you have read the release notes for that release before upgrading.
