@@ -2,6 +2,7 @@
 
 === New Features
 * Added EJB3 example using OpenEJB (Jonas Bandi)
+* Added basic support for Cucumber::Ast::Table#map_columns! and Cucumber::Ast::Table#map_headers!
 
 === Internal changes
 * Big refactoring in the default transform logic (Aslak Hellesøy)

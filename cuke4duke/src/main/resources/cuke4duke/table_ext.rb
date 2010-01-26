@@ -13,6 +13,14 @@ module Cucumber
         diff!(maps_to_hashes(map_list), opts(options))
       end
 
+      def convertColumn(column, converter)
+        map_column!(column) { |value| converter.convert(value) }
+      end
+
+      def convertHeaders(converter)
+        map_headers! { |header| converter.convert(header) }
+      end
+      
     private
 
       def opts(options)
