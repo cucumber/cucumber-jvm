@@ -22,7 +22,7 @@ class ScalaStepDefinition(name:String, r: String, f: Any, types: List[Class[_]],
   def arguments_from(step_name:String) = JdkPatternArgumentMatcher.argumentsFrom(pattern, step_name)
 
   def invoke(ra: RubyArray) {
-    transformations.transform(ra.toArray.toList.map(_.toString), types) match {
+    transformations.transform(ra.toArray.toList, types) match {
       case List() => f.asInstanceOf[Function0[_]]()
       case List(t1) => f.asInstanceOf[Function1[Any, _]](t1)
       case List(t1, t2) => f.asInstanceOf[Function2[Any, Any, _]](t1, t2)
