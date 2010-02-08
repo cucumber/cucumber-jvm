@@ -1,5 +1,8 @@
 == In Git
 
+=== New Features
+* Added Table.mapColumn and Table.mapHeaders. (#60 Yves Senn, Aslak Hellesøy)
+
 === Bugfixes
 * Support Tables and PyStrings in Scala (#61 Jon-Anders Teigen)
 
