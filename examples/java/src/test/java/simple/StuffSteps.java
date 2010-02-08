@@ -71,4 +71,21 @@ public class StuffSteps {
 
         return hash;
     }
+
+    @Given("a table that we convert:")
+    public void converTable(Table t) {
+        t.mapColumn("b", new CellConverter() {
+            public String convertCell(String cellValue) {
+                return "converted_" + cellValue;
+            }
+        });
+        t.mapHeaders(new HashMap<Object, String>() {{
+            put("a", "A");
+        }});
+
+        List<Map<String, String>> hashes = new ArrayList<Map<String, String>>();
+        hashes.add(hash("A", "eenie", "b", "converted_meenie"));
+        hashes.add(hash("A", "miney", "b", "converted_moe"));
+        assertEquals(hashes, t.hashes());
+    }
 }

@@ -19,6 +19,6 @@ public interface Table {
     public void diffLists(List<List<String>> table, Map<?, ?> options);
     public void diffHashes(List<Map<String, String>> table);
     public void diffHashes(List<Map<String, String>> table, Map<?, ?> options);
-    public void convertColumn(String column, TableConverter converter);
-    public void convertHeaders(TableConverter converter);
+    public void mapColumn(String column, CellConverter converter);
+    public void mapHeaders(Map<Object, String> mappings);
 }

@@ -33,3 +33,9 @@ Feature: Simple
   Scenario: Let's try pending
     Given a pending step
     And a failing step that is preceded by a pending
+
+  Scenario: Mapping tables
+    Given a table that we convert:
+      |a    |b     |
+      |eenie|meenie|
+      |miney|moe   |

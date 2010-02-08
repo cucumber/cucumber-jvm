@@ -13,12 +13,12 @@ module Cucumber
         diff!(maps_to_hashes(map_list), opts(options))
       end
 
-      def convertColumn(column, converter)
-        map_column!(column) { |value| converter.convert(value) }
+      def mapColumn(column, converter)
+        map_column!(column) { |cellValue| converter.convertCell(cellValue) }
       end
 
-      def convertHeaders(converter)
-        map_headers! { |header| converter.convert(header) }
+      def mapHeaders(mappings)
+        map_headers!(Hash[mappings.entrySet.map{|e| [e.key, e.value]}])
       end
       
     private
