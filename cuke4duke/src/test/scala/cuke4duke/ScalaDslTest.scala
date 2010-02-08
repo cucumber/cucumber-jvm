@@ -330,6 +330,8 @@ class ScalaDslTest extends ScalaDsl with Norwegian {
     def diffHashes(table: JList[JMap[String, String]]) = {}
     def diffLists(table: JList[JList[String]], options: JMap[_, _]) = {}
     def diffLists(table: JList[JList[String]]) = {}
+    def mapColumn(column: String, converter: CellConverter) = {}
+    def mapHeaders(mappings: JMap[Object, String]) = {}
     def rows = null
     def raw = null
     def rowsHash = null
