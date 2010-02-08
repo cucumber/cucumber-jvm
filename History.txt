@@ -1,3 +1,8 @@
+== In Git
+
+=== Bugfixes
+* Support Tables and PyStrings in Scala (#61 Jon-Anders Teigen)
+
 == 0.2.3 2010-01-18
 
 === New Features
@@ -6,8 +11,7 @@
 === Internal changes
 * Big refactoring in the default transform logic (Aslak Hellesøy)
 
-
-== 0.2.3 2010-01-03
+== 0.2.2 2010-01-03
 
 This release depends on Cucumber 0.6.1 - make sure you have read the release notes for that release before upgrading.
 
