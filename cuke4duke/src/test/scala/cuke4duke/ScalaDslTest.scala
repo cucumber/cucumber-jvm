@@ -3,7 +3,6 @@ package cuke4duke
 import internal.JRuby
 import internal.language._
 import internal.scala.{ScalaTransformations, ScalaStepDefinition}
-import java.util.List
 import org.jruby.exceptions.RaiseException
 import org.junit.{Test, Before => JunitBefore, Assert}
 import Assert._
@@ -12,6 +11,7 @@ import _root_.scala.collection.mutable.{Map, ListBuffer}
 import org.jruby.runtime.builtin.IRubyObject
 import org.jruby.RubyArray
 import java.lang.{Class, String}
+import java.util.{Map => JMap, List => JList}
 
 class ScalaDslTest extends ScalaDsl with Norwegian {
 
@@ -23,7 +23,7 @@ class ScalaDslTest extends ScalaDsl with Norwegian {
 
   def rubyClassName(raise:RaiseException) = raise.getException.getType.getName
 
-  def array(s:String*) = {
+  def array(s:AnyRef*) = {
     val r = RubyArray.newArray(JRuby.getRuntime)
     s.foreach(r.add(_))
     r
@@ -34,20 +34,20 @@ class ScalaDslTest extends ScalaDsl with Norwegian {
   val calledFromStepdefintions = new ListBuffer[String]
 
   val programmingLanguage = new AbstractProgrammingLanguage(new LanguageMixin{
-    def invoked_step_definition(regexp_source: String, file_colon_line: String) = {
+    override def invoked_step_definition(regexp_source: String, file_colon_line: String) = {
       invokedStepdefinitions += regexp_source
     }
-    def available_step_definition(regexp_source: String, file_colon_line: String) = {
+    override def available_step_definition(regexp_source: String, file_colon_line: String) = {
       availableStepdefinitions += regexp_source
     }
-    def create_step_match(step_definition: StepDefinition, step_name: String, formatted_step_name: String, step_arguments: List[StepArgument]) = null
-    def add_hook(phase: String, hook: Hook) = {}
-    def clear_hooks() = {}
+    override def create_step_match(step_definition: StepDefinition, step_name: String, formatted_step_name: String, step_arguments: JList[StepArgument]) = null
+    override def add_hook(phase: String, hook: Hook) = {}
+    override def clear_hooks() = {}
   }){
-    def begin_scenario(scenario: IRubyObject) = {}
-    def end_scenario = {}
-    def load_code_file(file: String) = {}
-    def customTransform(arg: Object, parameterType: Class[_]) = {}
+    override def begin_scenario(scenario: IRubyObject) = {}
+    override def end_scenario = {}
+    override def load_code_file(file: String) = {}
+    override def customTransform(arg: Object, parameterType: Class[_]) = {}
   }
 
   @JunitBefore
@@ -70,8 +70,8 @@ class ScalaDslTest extends ScalaDsl with Norwegian {
 
     executionMode(new StepMother{
       def invoke(regex:String) = calledFromStepdefintions += regex
-      def invoke(step:String, table:Table){}
-      def invoke(step:String, multilineString:String){}
+      def invoke(regex:String, table:Table){ step(regex).invoke(array(table)) }
+      def invoke(regex:String, py:String){ step(regex).invoke(array(py)) }
     })
   }
 
@@ -238,10 +238,9 @@ class ScalaDslTest extends ScalaDsl with Norwegian {
     def find_by_username(name:String):Option[User] = Some(new User(name))
   }
 
-  Transform[User](name => User.find_by_username(name))
+  //Transform[User](name => User.find_by_username(name))
+  Transform(User.find_by_username)
 
-  var user:User = _
-  
   Then("""^(\w+) should be friends with (\w+)$"""){ (user:User, friend:User) =>
     assertTrue(user.friends_with(friend))
   }
@@ -304,6 +303,69 @@ class ScalaDslTest extends ScalaDsl with Norwegian {
   def test_steps_can_call_other_steps {
     step("step_can_call_other (.*)").invoke(array("x"))
     assertTrue(calledFromStepdefintions.contains("step_can_be x"))
+  }
+
+  Given("step_can_call_other_with_table_or_py"){
+    Given("a table", DummyTable)
+    Given("a pystring","""
+      |a
+      |multi
+      |line
+    """.stripMargin)
+  }
+
+  @Test
+  def test_steps_can_call_other_steps_with_tables_and_py_strings{
+    step("step_can_call_other_with_table_or_py").invoke(array())
+    assertSame(DummyTable, table)
+    assertEquals("""
+    |a
+    |multi
+    |line
+    """.stripMargin, pyString)
+  }
+
+  object DummyTable extends Table{
+    def diffHashes(table: JList[JMap[String, String]], options: JMap[_, _]) = {}
+    def diffHashes(table: JList[JMap[String, String]]) = {}
+    def diffLists(table: JList[JList[String]], options: JMap[_, _]) = {}
+    def diffLists(table: JList[JList[String]]) = {}
+    def rows = null
+    def raw = null
+    def rowsHash = null
+    def hashes = null
+  }
+
+  var table:Table = _
+
+  Given("a table"){ t:Table =>
+    table = t
+  }
+
+  @Test
+  def test_tables_are_supported {
+    step("a table").invoke(array(DummyTable))
+    assertSame(DummyTable, table)
+  }
+
+  var pyString:String = _
+
+  Given("a pystring"){ s:String =>
+    pyString = s
+  }
+
+  @Test
+  def test_pyStrings_are_supported {
+    val expected = new PyString{
+      def to_s = "foo"
+    }
+    step("a pystring").invoke(array(expected))
+    assertEquals("foo", pyString)
+  }
+
+  //special case support for calling a no-arg step definition from a step-definition without the limitation described below
+  Given("a"){
+    Given("b")
   }
 
   //known limitation: call by name steps are defined 'f: => Unit' which gets converted to a 'f() => Unit'

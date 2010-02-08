@@ -7,5 +7,5 @@ begin
 
     Cucumber::ClassSupport::ClassLanguage.add_analyzers(self.new)
   end
-rescue NameError
+rescue NameError => ignore
 end

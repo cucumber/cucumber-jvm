@@ -15,7 +15,7 @@ trait ScalaDsl {
   private [cuke4duke] val stepDefinitions = new ListBuffer[(AbstractProgrammingLanguage,ScalaTransformations) => ScalaStepDefinition]
   private [cuke4duke] val beforeHooks = new ListBuffer[ScalaHook]
   private [cuke4duke] val afterHooks = new ListBuffer[ScalaHook]
-  private [cuke4duke] var transformations = Map[Class[_], String => Option[_]]()
+  private [cuke4duke] val transformations = Map[Class[_], String => Option[_]]()
 
   val Given = new Step("Given")
   val When = new Step("When")
@@ -34,34 +34,50 @@ trait ScalaDsl {
     transformations(m.erasure) = f
   }
 
+  sealed trait CreateHandle{
+    def apply(name:String, regex:String):Handle
+    def apply(name:String, regex:String, table:Table):Unit
+    def apply(name:String, regex:String, py:String):Unit
+  }
+
+  private var handleRegex:CreateHandle = new CreateHandle {
+    override def apply(name:String, regex:String) = new Handle{
+      def apply(fun:Fun) = stepDefinitions += ((programmingLanguage:AbstractProgrammingLanguage, t:ScalaTransformations) => new ScalaStepDefinition(name, regex, fun.f, fun.types, t, programmingLanguage))
+    }
+    override def apply(name:String, regex:String, table:Table) = error(name+"("+regex+", 'Table') is only inteded for calling other steps")
+    override def apply(name:String, regex:String, py:String) = error(name+"("+regex+", 'String') is only inteded for calling other steps")
+  }
+
   private [cuke4duke] def executionMode(stepMother:StepMother){
-    handleRegex = (name:String, regex:String) => {
-      stepMother.invoke(regex)
-      new Handle{
+    handleRegex = new CreateHandle {
+      override def apply(name:String, regex:String) = new Handle{
+        stepMother.invoke(regex)
         def apply(fun:Fun) = error("cannot register new stepdefinitions in execution mode")
       }
+      override def apply(name:String, regex:String, table:Table) = stepMother.invoke(regex, table)
+      override def apply(name:String, regex:String, py:String) = stepMother.invoke(regex, py)
     }
   }
 
-  private val Record = (name:String, regex:String) => new Handle {
-    def apply(fun:Fun) = stepDefinitions += ((programmingLanguage:AbstractProgrammingLanguage, t:ScalaTransformations) => new ScalaStepDefinition(name, regex, fun.f, fun.types, t, programmingLanguage))
-  }
-
-  private var handleRegex: (String, String) => Handle = Record
-
   sealed trait Handle {
+    //treat call-by-name like a Fun of Function0
     def apply(f: => Unit):Unit = apply(f0toFun(f _))
     def apply(fun:Fun)
   }
 
   final class Step(name:String) {
-    def apply(regex:String) = handleRegex(name, regex)
+    def apply(regex:String):Handle = handleRegex(name, regex)
+    def apply(regex:String, py:String):Unit = handleRegex(name, regex, py)
+    def apply(regex:String, table:Table):Unit = handleRegex(name, regex, table)
   }
 
   final class Fun private[ScalaDsl](private [ScalaDsl] val f: Any, manifests: Manifest[_]*) {
     private [ScalaDsl] val types = manifests.toList.map(_.erasure)
   }
 
+  // treat Handle like a Fun of Function0
+  implicit def handle2Fun(h:Handle) = new Fun(() => h)
+  // only functions can be converted to 'Fun' instances
   implicit def f0toFun(f: Function0[_]) = new Fun(f)
   implicit def f1toFun[T1, _](f: Function1[T1, _])(implicit m1: Manifest[T1]) = new Fun(f, m1)
   implicit def f2toFun[T1, T2, _](f: Function2[T1, T2, _])(implicit m1: Manifest[T1], m2: Manifest[T2]) = new Fun(f, m1, m2)
