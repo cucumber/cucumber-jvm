@@ -73,7 +73,7 @@ public class StuffSteps {
     }
 
     @Given("a table that we convert:")
-    public void converTable(Table t) {
+    public void convertTable(Table t) {
         t.mapColumn("b", new CellConverter() {
             public String convertCell(String cellValue) {
                 return "converted_" + cellValue;

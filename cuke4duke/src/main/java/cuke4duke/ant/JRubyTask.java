@@ -30,6 +30,10 @@ public class JRubyTask extends Java {
         return new File(gemHome);
     }
 
+    protected File getBinDir() {
+        return new File(getJrubyHome(), "bin");
+    }
+
     private void ensureJrubyHomeExists() {
         getJrubyHome().mkdirs();
     }
@@ -52,17 +56,5 @@ public class JRubyTask extends Java {
         gemPath.setKey("GEM_PATH");
         gemPath.setFile(getJrubyHome());
         this.addEnv(gemPath);
-    }
-
-    private File getBinDir() {
-        return new File(getJrubyHome(), "bin");
-    }
-
-    protected File getCuke4dukeBinFile() {
-        if(System.getProperty("cuke4duke.bin") != null) {
-            return new File(System.getProperty("cuke4duke.bin"));
-        } else {
-            return new File(getBinDir(), "cuke4duke");
-        }
     }
 }

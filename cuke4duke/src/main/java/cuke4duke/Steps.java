@@ -7,6 +7,27 @@ public class Steps {
         this.stepMother = stepMother;
     }
 
+    /**
+     * See {@link cuke4duke.StepMother#ask(String, int)}.
+     */
+    protected String ask(String question, int timeoutSecs) {
+        return stepMother.ask(question, timeoutSecs);        
+    }
+
+    /**
+     * See {@link cuke4duke.StepMother#announce(String)}.
+     */
+    protected void announce(String message) {
+        stepMother.announce(message);
+    }
+
+    /**
+     * See {@link cuke4duke.StepMother#embed(String, String)}.
+     */
+    protected void embed(String file, String mimeType) {
+        stepMother.embed(file, mimeType);        
+    }
+
     public void Given(String step) {
         stepMother.invoke(step);
     }

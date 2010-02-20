@@ -57,11 +57,11 @@ public class DefaultJvmTransforms {
     }
 
     public static char transformStringToChar(String argument) {
-        return Character.valueOf(argument.charAt(0));
+        return argument.charAt(0);
     }
 
     public static Character transformStringToCharacters(String argument) {
-        return Character.valueOf(argument.charAt(0));
+        return argument.charAt(0);
     }
 
     public static BigDecimal transformStringToBigDecimal(String argument) {

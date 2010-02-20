@@ -5,6 +5,8 @@ begin
   require 'cucumber'
 rescue LoadError
   gem 'cucumber'
+  puts 'LOADPATH'
+  puts $:
   require 'cucumber'
 end
 require 'cucumber/formatter/unicode'

@@ -2,6 +2,8 @@ package cuke4duke.ant;
 
 import org.apache.tools.ant.BuildException;
 
+import java.io.File;
+
 public class GemTask extends JRubyTask {
     private String args = "";
 
@@ -23,5 +25,13 @@ public class GemTask extends JRubyTask {
 
     public void setArgs(String args) {
         this.args = args;
+    }
+
+    protected File getCuke4dukeBinFile() {
+        if(System.getProperty("cuke4duke.bin") != null) {
+            return new File(System.getProperty("cuke4duke.bin"));
+        } else {
+            return new File(getBinDir(), "cuke4duke");
+        }
     }
 }

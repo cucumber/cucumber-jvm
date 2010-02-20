@@ -1,6 +1,7 @@
 == In Git
 
 === New Features
+* Added embed, ask and announce methods to the Steps class. Makes it easier to output custom info and interact with users. (Aslak Hellesøy)
 * Added Table.mapColumn and Table.mapHeaders. (#60 Yves Senn, Aslak Hellesøy)
 
 === Bugfixes

@@ -77,10 +77,10 @@ public class TransformSteps extends Steps {
         assertTrue(exceptionThrown);
     }
     
-     @Then("^the parameter is true$")
-     public void theParameterIsTrue() {
-         assertTrue(yes);
-     }
+    @Then("^the parameter is true$")
+    public void theParameterIsTrue() {
+        assertTrue(yes);
+    }
 
     public static class Car {
     }
