@@ -1,10 +1,12 @@
 package cuke4duke.internal.java;
 
 import cuke4duke.*;
+import cuke4duke.internal.java.annotation.StepDef;
 import cuke4duke.internal.jvmclass.ClassAnalyzer;
 import cuke4duke.internal.jvmclass.ClassLanguage;
 import cuke4duke.internal.jvmclass.ObjectFactory;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -20,7 +22,7 @@ public class JavaAnalyzer implements ClassAnalyzer {
         for(Method method: getOrderedMethods(classLanguage)) {
             registerBeforeMaybe(method, classLanguage);
             registerAfterMaybe(method, classLanguage);
-            registerStepDefinitionMaybe(method, classLanguage);
+            registerStepDefinitionsFromAnnotations(method, classLanguage);
             registerTransformMaybe(method, classLanguage);
         }
     }
@@ -66,18 +68,16 @@ public class JavaAnalyzer implements ClassAnalyzer {
         }
     }
 
-    private void registerStepDefinitionMaybe(Method method, ClassLanguage classLanguage) throws Throwable {
-        String regexpString = null;
-        if (method.isAnnotationPresent(Given.class)) {
-            regexpString = method.getAnnotation(Given.class).value();
-        } else if (method.isAnnotationPresent(When.class)) {
-            regexpString = method.getAnnotation(When.class).value();
-        } else if (method.isAnnotationPresent(Then.class)) {
-            regexpString = method.getAnnotation(Then.class).value();
-        }
-        if (regexpString != null) {
-            Pattern regexp = Pattern.compile(regexpString);
-            classLanguage.addStepDefinition(new JavaStepDefinition(classLanguage, method, regexp, methodFormat));
+    private void registerStepDefinitionsFromAnnotations(Method method, ClassLanguage classLanguage) throws Throwable {
+        for(Annotation annotation: method.getAnnotations()) {
+            if(annotation.annotationType().isAnnotationPresent(StepDef.class)) {
+                Method value = annotation.getClass().getMethod("value");
+                String regexpString = (String) value.invoke(annotation);
+                if (regexpString != null) {
+                    Pattern regexp = Pattern.compile(regexpString);
+                    classLanguage.addStepDefinition(new JavaStepDefinition(classLanguage, method, regexp, methodFormat));
+                }
+            }
         }
     }
 }

@@ -73,6 +73,8 @@ class ScalaDslTest extends ScalaDsl with Norwegian {
       def invoke(regex:String, table:Table){ step(regex).invoke(array(table)) }
       def invoke(regex:String, py:String){ step(regex).invoke(array(py)) }
       def ask(question:String, timeoutSecs:int) = { "" }
+      def embed(file:String, mimeType:String) = {}
+      def announce(file:String) = {}
     })
   }
 
