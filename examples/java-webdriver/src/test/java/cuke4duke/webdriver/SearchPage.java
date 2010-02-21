@@ -1,7 +1,6 @@
 package cuke4duke.webdriver;
 
-import cuke4duke.Given;
-import cuke4duke.When;
+import cuke4duke.annotation.English.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;

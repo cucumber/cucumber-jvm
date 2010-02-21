@@ -1,10 +1,10 @@
 package simple;
 
+import cuke4duke.annotation.English.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import cuke4duke.StepMother;
 import cuke4duke.Steps;
-import cuke4duke.When;
 import cuke4duke.spring.StepDefinitions;
 
 @StepDefinitions

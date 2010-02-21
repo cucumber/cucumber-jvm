@@ -2,9 +2,9 @@ package billing;
 
 import com.google.inject.Inject;
 
-import cuke4duke.When;
 import cuke4duke.Steps;
 import cuke4duke.StepMother;
+import cuke4duke.annotation.English.*;
 
 public class CallingSteps extends Steps {
     

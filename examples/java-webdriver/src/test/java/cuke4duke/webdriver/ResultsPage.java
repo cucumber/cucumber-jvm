@@ -1,8 +1,9 @@
 package cuke4duke.webdriver;
 
-import cuke4duke.Then;
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.containsString;
+
+import cuke4duke.annotation.English.*;
 import org.openqa.selenium.WebDriver;
 
 import java.lang.reflect.InvocationTargetException;

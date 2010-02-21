@@ -1,9 +1,7 @@
 package cuke4duke.junit;
 
-import cuke4duke.Given;
+import cuke4duke.annotation.English.*;
 import cuke4duke.Table;
-import cuke4duke.Then;
-import cuke4duke.When;
 
 import java.util.HashMap;
 import java.util.Map;

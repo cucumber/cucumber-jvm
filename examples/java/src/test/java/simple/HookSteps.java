@@ -2,8 +2,8 @@ package simple;
 
 import cuke4duke.After;
 import cuke4duke.Before;
-import cuke4duke.Then;
-import cuke4duke.When;
+import cuke4duke.annotation.English.*;
+
 import static org.junit.Assert.assertEquals;
 
 public class HookSteps extends SuperSteps {

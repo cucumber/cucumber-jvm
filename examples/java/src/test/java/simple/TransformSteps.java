@@ -3,12 +3,11 @@ package simple;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
-import cuke4duke.Given;
+
+import cuke4duke.annotation.English.*;
 import cuke4duke.StepMother;
 import cuke4duke.Steps;
-import cuke4duke.Then;
 import cuke4duke.Transform;
-import cuke4duke.When;
 
 public class TransformSteps extends Steps {
     

@@ -1,6 +1,8 @@
 package simple;
 
 import cuke4duke.*;
+import cuke4duke.annotation.English.*;
+
 import static org.junit.Assert.assertEquals;
 
 import java.util.*;
@@ -49,7 +51,7 @@ public class StuffSteps {
         table.diffHashes(hashes, options);
     }
 
-    @When("^I add a string$") 
+    @When("^I add a string$")
     public void iAddAString(String s) {
         assertEquals("Hello\nWorld", s);
     } 

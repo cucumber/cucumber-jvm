@@ -4,6 +4,9 @@
 * Added embed, ask and announce methods to the Steps class. Makes it easier to output custom info and interact with users. (Aslak Hellesøy)
 * Added Table.mapColumn and Table.mapHeaders. (#60 Yves Senn, Aslak Hellesøy)
 
+=== Changed Features
+* @Given, @When, @Then annotations have moved to inner classes of cuke4duke.annotation.English. (Aslak Hellesøy)
+
 === Bugfixes
 * Support Tables and PyStrings in Scala (#61 Jon-Anders Teigen)
 

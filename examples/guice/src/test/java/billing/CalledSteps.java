@@ -1,7 +1,7 @@
 package billing;
 
-import cuke4duke.Then;
-import cuke4duke.Given;
+import cuke4duke.annotation.English.*;
+
 import static org.junit.Assert.assertTrue;
 
 public class CalledSteps {
