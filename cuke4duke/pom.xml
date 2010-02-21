@@ -126,7 +126,13 @@
       <plugin>
         <groupId>org.scala-tools</groupId>
         <artifactId>maven-scala-plugin</artifactId>
-        <version>2.11</version>
+        <version>2.12</version>
+        <configuration>
+          <encoding>UTF-8</encoding>
+          <excludes>
+           <exclude>**/*.java</exclude>
+          </excludes>
+        </configuration>
         <executions>
           <execution>
             <goals>
