@@ -1,7 +1,8 @@
 package cuke4duke.internal.scala
 
-import cuke4duke.{StepMother, ScalaDsl}
-import cuke4duke.internal.jvmclass.{PicoFactory, ClassLanguage, ClassAnalyzer, ObjectFactory}
+import cuke4duke.{StepMother}
+import cuke4duke.internal.jvmclass.{ClassLanguage, ClassAnalyzer, ObjectFactory}
+import cuke4duke.scala.Dsl
 
 class ScalaAnalyzer extends ClassAnalyzer {
   def alwaysLoad = Array(classOf[ScalaTransformations])
@@ -10,8 +11,8 @@ class ScalaAnalyzer extends ClassAnalyzer {
     val it = classLanguage.getClasses.iterator;
     while(it.hasNext) {
       val clazz = it.next
-      if (classOf[ScalaDsl].isAssignableFrom(clazz)) {
-        val scalaDsl = objectFactory.getComponent(clazz).asInstanceOf[ScalaDsl]
+      if (classOf[Dsl].isAssignableFrom(clazz)) {
+        val scalaDsl = objectFactory.getComponent(clazz).asInstanceOf[Dsl]
         val transformations = objectFactory.getComponent(classOf[ScalaTransformations]).asInstanceOf[ScalaTransformations]
 
         transformations.addAll(scalaDsl.transformations)

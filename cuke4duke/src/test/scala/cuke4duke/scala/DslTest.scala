@@ -1,8 +1,5 @@
-package cuke4duke
+package cuke4duke.scala
 
-import internal.JRuby
-import internal.language._
-import internal.scala.{ScalaTransformations, ScalaStepDefinition}
 import org.jruby.exceptions.RaiseException
 import org.junit.{Test, Before => JunitBefore, Assert}
 import Assert._
@@ -12,8 +9,11 @@ import org.jruby.runtime.builtin.IRubyObject
 import org.jruby.RubyArray
 import java.lang.{Class, String}
 import java.util.{Map => JMap, List => JList}
-
-class ScalaDslTest extends ScalaDsl with English with Norwegian {
+import cuke4duke.internal.scala._
+import cuke4duke.{PyString, CellConverter, Table, StepMother}
+import cuke4duke.internal.language._
+import cuke4duke.internal.JRuby
+class DslTest extends Dsl with EN with NO {
 
   var result = ""
 

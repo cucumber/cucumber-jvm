@@ -1,16 +1,16 @@
-package cuke4duke
+package cuke4duke.scala
 
 import _root_.scala.collection.mutable.ListBuffer
 import _root_.scala.reflect.Manifest
 import cuke4duke.internal.JRuby
 import cuke4duke.internal.language.AbstractProgrammingLanguage
 import collection.mutable.Map
-import internal.scala.{ScalaTransformations, ScalaHook, ScalaStepDefinition}
-
+import cuke4duke.internal.scala._
+import cuke4duke.{StepMother, Table}
 /*
-  <yourclass> {extends|with} ScalaDsl
+  <yourclass> {extends|with} Dsl with EN
  */
-trait ScalaDsl {
+trait Dsl {
 
   private [cuke4duke] val stepDefinitions = new ListBuffer[(AbstractProgrammingLanguage,ScalaTransformations) => ScalaStepDefinition]
   private [cuke4duke] val beforeHooks = new ListBuffer[ScalaHook]
@@ -67,8 +67,8 @@ trait ScalaDsl {
     def apply(regex:String, table:Table):Unit = handleRegex(name, regex, table)
   }
 
-  final class Fun private[ScalaDsl](private [ScalaDsl] val f: Any, manifests: Manifest[_]*) {
-    private [ScalaDsl] val types = manifests.toList.map(_.erasure)
+  final class Fun private[Dsl](private [Dsl] val f: Any, manifests: Manifest[_]*) {
+    private [Dsl] val types = manifests.toList.map(_.erasure)
   }
 
   // treat Handle like a Fun of Function0

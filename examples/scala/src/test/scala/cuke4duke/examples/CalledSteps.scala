@@ -1,9 +1,9 @@
 package cuke4duke.examples
 
 import org.junit.Assert.assertTrue
-import cuke4duke.{English, ScalaDsl}
+import cuke4duke.scala.{Dsl, EN}
 
-class CalledSteps extends ScalaDsl with English {
+class CalledSteps extends Dsl with EN {
   var magic = false
 
   Given("^it is (.*)$") { what: String =>
