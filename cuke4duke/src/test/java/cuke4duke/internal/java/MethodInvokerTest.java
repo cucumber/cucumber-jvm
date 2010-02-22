@@ -1,6 +1,6 @@
 package cuke4duke.internal.java;
 
-import cuke4duke.Pending;
+import cuke4duke.annotation.Pending;
 import cuke4duke.internal.JRuby;
 import org.junit.Before;
 import org.junit.Test;

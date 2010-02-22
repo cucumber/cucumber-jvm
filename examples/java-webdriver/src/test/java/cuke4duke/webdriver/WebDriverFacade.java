@@ -1,7 +1,6 @@
 package cuke4duke.webdriver;
 
-import cuke4duke.After;
-import cuke4duke.Before;
+import cuke4duke.annotation.After;
 import org.openqa.selenium.WebDriver;
 
 import java.lang.reflect.Constructor;

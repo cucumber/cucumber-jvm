@@ -1,6 +1,6 @@
 package cuke4duke.internal.jvmclass;
 
-import cuke4duke.Transform;
+import cuke4duke.annotation.Transform;
 
 public class MyTransforms {
 

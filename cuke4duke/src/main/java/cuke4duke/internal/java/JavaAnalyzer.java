@@ -1,6 +1,9 @@
 package cuke4duke.internal.java;
 
-import cuke4duke.*;
+import cuke4duke.annotation.After;
+import cuke4duke.annotation.Before;
+import cuke4duke.annotation.Order;
+import cuke4duke.annotation.Transform;
 import cuke4duke.internal.java.annotation.StepDef;
 import cuke4duke.internal.jvmclass.ClassAnalyzer;
 import cuke4duke.internal.jvmclass.ClassLanguage;

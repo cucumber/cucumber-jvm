@@ -1,6 +1,6 @@
 package org.books.test.acceptance;
 
-import cuke4duke.After;
+import cuke4duke.annotation.After;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;

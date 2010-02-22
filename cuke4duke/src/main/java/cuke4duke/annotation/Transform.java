@@ -1,4 +1,4 @@
-package cuke4duke;
+package cuke4duke.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,6 +7,5 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface After {
-    String[] value() default "";
+public @interface Transform {
 }

@@ -7,7 +7,7 @@ import static junit.framework.Assert.assertTrue;
 import cuke4duke.annotation.EN.*;
 import cuke4duke.StepMother;
 import cuke4duke.Steps;
-import cuke4duke.Transform;
+import cuke4duke.annotation.Transform;
 
 public class TransformSteps extends Steps {
     

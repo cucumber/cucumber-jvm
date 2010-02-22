@@ -1,6 +1,7 @@
 package cuke4duke.internal.jvmclass;
 
 import cuke4duke.StepMother;
+import cuke4duke.annotation.Order;
 import cuke4duke.internal.java.JavaAnalyzer;
 import cuke4duke.internal.java.JavaHook;
 import org.hamcrest.BaseMatcher;
@@ -43,8 +44,8 @@ public class ClassLanguageTest {
             this.b = b;
         }
 
-        @cuke4duke.Before()
-        @cuke4duke.Order(1)
+        @cuke4duke.annotation.Before()
+        @Order(1)
         public void doA() {
             assertEquals("Heldlo from B", b.message);
         }
@@ -53,8 +54,8 @@ public class ClassLanguageTest {
     public static class B {
         public String message;
 
-        @cuke4duke.Before()
-        @cuke4duke.Order(2)
+        @cuke4duke.annotation.Before()
+        @Order(2)
         public void doB() {
             message = "Hello from B";
         }

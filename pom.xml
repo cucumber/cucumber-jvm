@@ -42,9 +42,9 @@
     <profile>
       <id>examples</id>
       <modules>
+        <module>examples/java-ejb3</module>
         <module>examples/java</module>
         <module>examples/scala</module>
-        <module>examples/java-ejb3</module>
         <module>examples/clojure</module>
         <module>examples/ioke</module>
         <module>examples/groovy</module>

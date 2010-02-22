@@ -1,6 +1,8 @@
 package org.books.test.acceptance;
 
-import cuke4duke.*;
+import cuke4duke.annotation.After;
+import cuke4duke.annotation.Before;
+import cuke4duke.annotation.EN.*;
 import org.apache.openejb.api.LocalClient;
 import org.books.business.CatalogManager;
 import org.books.dao.BookDao;
