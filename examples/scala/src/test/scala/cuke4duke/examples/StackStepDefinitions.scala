@@ -1,10 +1,10 @@
 package cuke4duke.examples
 
-import cuke4duke.ScalaDsl
 import collection.mutable.Stack
 import org.junit.Assert._
+import cuke4duke.{English, ScalaDsl}
 
-class StackStepDefinitions extends ScalaDsl {
+class StackStepDefinitions extends ScalaDsl with English {
 
   val stack:Stack[Int] = new Stack[Int]
 

@@ -13,7 +13,7 @@ import org.jruby.RubyArray
 import java.lang.{Class, String}
 import java.util.{Map => JMap, List => JList}
 
-class ScalaDslTest extends ScalaDsl with Norwegian {
+class ScalaDslTest extends ScalaDsl with English with Norwegian {
 
   var result = ""
 

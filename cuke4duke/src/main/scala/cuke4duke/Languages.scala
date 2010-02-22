@@ -154,6 +154,9 @@ trait Lithuanian { this: ScalaDsl =>
   val Tada = new Step("Tada")
 }
 trait English { this: ScalaDsl =>
+  val Given = new Step("Given")
+  val When = new Step("When")
+  val Then = new Step("Then")
 }
 trait ChineseSimplified { this: ScalaDsl =>
   val 假如 = new Step("假如")

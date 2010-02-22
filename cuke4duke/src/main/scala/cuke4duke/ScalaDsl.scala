@@ -17,10 +17,6 @@ trait ScalaDsl {
   private [cuke4duke] val afterHooks = new ListBuffer[ScalaHook]
   private [cuke4duke] val transformations = Map[Class[_], String => Option[_]]()
 
-  val Given = new Step("Given")
-  val When = new Step("When")
-  val Then = new Step("Then")
-
   def Before(f: => Unit) = beforeHooks += new ScalaHook(Nil.toArray, f _)
   def Before(tags: String*)(f: => Unit) = beforeHooks += new ScalaHook(tags.toArray, f _)
 

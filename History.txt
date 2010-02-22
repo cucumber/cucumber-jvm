@@ -8,6 +8,7 @@
 === Changed Features
 * @Given, @When, @Then annotations have moved to inner classes of cuke4duke.annotation.EN. (Aslak Hellesøy)
 * @Before, @After, @Transform and @Order annotations have moved to the cuke4duke.annotation package (Aslak Hellesøy)
+* Scala step definitions must explicitly specify i18n language. Ex: extends ScalaDsl with EN. (Aslak Hellesøy)
 
 === Bugfixes
 * Support Tables and PyStrings in Scala (#61 Jon-Anders Teigen)
