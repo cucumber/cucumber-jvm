@@ -1,5 +1,9 @@
 == In Git
 
+The big news in this release is support for all of Cucumber's 40 I18n languages in Java annotations and Scala traits.
+This means that you no longer need to mix English and your native language. It also means that snippets in non-English
+will actually compile.
+
 === New Features
 * I18n support for all of Cucumber's 40 i18n languages. (Java annotations only). (Aslak Hellesøy)
 * Added embed, ask and announce methods to the Steps class. Makes it easier to output custom info and interact with users. (Aslak Hellesøy)

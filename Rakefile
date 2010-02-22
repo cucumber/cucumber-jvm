@@ -35,11 +35,18 @@ task :i18n_generate do
     language.sanitized_key.upcase
   end
 
-  erb = ERB.new(IO.read(File.dirname(__FILE__) + '/cuke4duke/src/main/code_generator/java_annotation.erb'), nil, '-')
+  java = ERB.new(IO.read(File.dirname(__FILE__) + '/cuke4duke/src/main/code_generator/java_annotation.erb'), nil, '-')
   Gherkin::I18n.all.each do |language|
-    code = erb.result(binding)
     File.open(File.dirname(__FILE__) + '/cuke4duke/src/main/java/cuke4duke/annotation/' + classify(language) + '.java', 'wb') do |io|
-      io.write(code)
+      io.write(java.result(binding))
+    end
+  end
+
+  scala = ERB.new(IO.read(File.dirname(__FILE__) + '/cuke4duke/src/main/code_generator/scala_trait.erb'), nil, '-')
+  File.open(File.dirname(__FILE__) + '/cuke4duke/src/main/scala/cuke4duke/scala/I18n.scala', 'wb') do |io|
+    io.write("package cuke4duke.scala\n\n")
+    Gherkin::I18n.all.each do |language|
+      io.write(scala.result(binding))
     end
   end
 end
