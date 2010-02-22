@@ -25,3 +25,21 @@ task :release do
   sh %{git push}
   sh %{git push --tags}
 end
+
+desc 'Generate i18n Step Definitions'
+task :i18n_generate do
+  require 'gherkin/tools/code_generator'
+  require 'erb'
+
+  def classify(language)
+    language.sanitized_key.upcase
+  end
+
+  erb = ERB.new(IO.read(File.dirname(__FILE__) + '/cuke4duke/src/main/code_generator/java_annotation.erb'), nil, '-')
+  Gherkin::I18n.all.each do |language|
+    code = erb.result(binding)
+    File.open(File.dirname(__FILE__) + '/cuke4duke/src/main/java/cuke4duke/annotation/' + classify(language) + '.java', 'wb') do |io|
+      io.write(code)
+    end
+  end
+end

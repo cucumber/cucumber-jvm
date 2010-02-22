@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 
 import cuke4duke.Steps;
 import cuke4duke.StepMother;
-import cuke4duke.annotation.English.*;
+import cuke4duke.annotation.EN.*;
 
 public class CallingSteps extends Steps {
     

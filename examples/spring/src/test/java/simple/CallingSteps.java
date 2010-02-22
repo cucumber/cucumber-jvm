@@ -1,6 +1,6 @@
 package simple;
 
-import cuke4duke.annotation.English.*;
+import cuke4duke.annotation.EN.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import cuke4duke.StepMother;

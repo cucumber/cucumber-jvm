@@ -3,7 +3,7 @@ package cuke4duke.webdriver;
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.containsString;
 
-import cuke4duke.annotation.English.*;
+import cuke4duke.annotation.EN.*;
 import org.openqa.selenium.WebDriver;
 
 import java.lang.reflect.InvocationTargetException;

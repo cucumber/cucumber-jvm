@@ -1,6 +1,6 @@
 package simple;
 
-import cuke4duke.annotation.English.*;
+import cuke4duke.annotation.EN.*;
 
 public class NorwegianSteps {
     @When("^Jæ (.+) ålsker (.+) lændet$")

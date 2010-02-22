@@ -1,6 +1,6 @@
 package cuke4duke.junit;
 
-import cuke4duke.annotation.English.*;
+import cuke4duke.annotation.EN.*;
 import cuke4duke.Table;
 
 import java.util.HashMap;

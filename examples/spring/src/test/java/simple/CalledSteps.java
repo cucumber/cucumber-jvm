@@ -2,7 +2,7 @@ package simple;
 
 import static org.junit.Assert.assertTrue;
 
-import cuke4duke.annotation.English.*;
+import cuke4duke.annotation.EN.*;
 import cuke4duke.spring.StepDefinitions;
 
 @StepDefinitions

@@ -1,6 +1,6 @@
 package simple;
 
-import cuke4duke.annotation.English.*;
+import cuke4duke.annotation.EN.*;
 
 import static org.junit.Assert.assertTrue;
 

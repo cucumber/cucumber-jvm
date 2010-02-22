@@ -1,6 +1,6 @@
 package cuke4duke.steps;
 
-import cuke4duke.annotation.English.*;
+import cuke4duke.annotation.EN.*;
 import cuke4duke.app.HelloService;
 
 import java.util.HashMap;

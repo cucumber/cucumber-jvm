@@ -1,6 +1,6 @@
 package cuke4duke.internal.java;
 
-import cuke4duke.annotation.English.*;
+import cuke4duke.annotation.EN.*;
 import cuke4duke.StepMother;
 import cuke4duke.internal.jvmclass.ClassAnalyzer;
 import cuke4duke.internal.jvmclass.ClassLanguage;

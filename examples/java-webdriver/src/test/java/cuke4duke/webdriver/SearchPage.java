@@ -1,6 +1,6 @@
 package cuke4duke.webdriver;
 
-import cuke4duke.annotation.English.*;
+import cuke4duke.annotation.EN.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
