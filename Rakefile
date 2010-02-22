@@ -28,7 +28,7 @@ end
 
 desc 'Generate i18n Step Definitions'
 task :i18n_generate do
-  require 'gherkin/tools/code_generator'
+  require 'gherkin/i18n'
   require 'erb'
 
   def classify(language)
