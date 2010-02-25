@@ -118,9 +118,9 @@ public abstract class AbstractJRubyMojo extends AbstractMojo {
         project.addReference("jruby.classpath", jrubyClasspath);
 
         try {
+            append(jrubyClasspath, testClasspathElements);
             append(jrubyClasspath, compileClasspathElements);
             append(jrubyClasspath, pluginArtifacts);
-            append(jrubyClasspath, testClasspathElements);
             return project;
         } catch (DependencyResolutionRequiredException e) {
             throw new MojoExecutionException("error resolving dependencies", e);
