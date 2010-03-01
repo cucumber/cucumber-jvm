@@ -1,4 +1,3 @@
-(add-classpath (str "file://" (.. (java.io.File. *file*) getParentFile getParentFile getParent) "/lib/"))
 (use 'calculator)
 ;; We're not using test-is yet, since failures are just printed - nothing is raised.
 ;; (use 'clojure.contrib.test-is)

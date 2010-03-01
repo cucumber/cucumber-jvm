@@ -42,24 +42,7 @@
     <profile>
       <id>examples</id>
       <modules>
-        <module>examples/scala</module>
-        <module>examples/java</module>
         <module>examples/clojure</module>
-        <module>examples/ioke</module>
-        <module>examples/groovy</module>
-        <module>examples/spring</module>
-        <module>examples/guice</module>
-        <module>examples/javascript</module>
-        <module>examples/celerity</module>
-        <module>examples/java-webdriver</module>
-        <module>examples/groovy-webdriver</module>
-        <module>examples/java-ejb3</module>
-      </modules>
-    </profile>
-    <profile>
-      <id>win</id>
-      <modules>
-        <!-- The clojure example fails on windows. Can't load calculator.clj -->
         <module>examples/scala</module>
         <module>examples/java</module>
         <module>examples/ioke</module>
