@@ -1,7 +1,7 @@
 Feature: Order processing
-In order to get satisfied customers
-As the shop owner
-I want orders to be processed automatically
+  In order to get satisfied customers
+  As the shop owner
+  I want orders to be processed automatically
   
   Scenario: Order gets processed automatically after creation
     Given a newly submitted order

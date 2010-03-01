@@ -1,7 +1,7 @@
 Feature: Shopping cart
-In order to create an order
-As a customer
-I want to put books into my shopping cart
+  In order to create an order
+  As a customer
+  I want to put books into my shopping cart
   
   Scenario: Putting one book into the shopping cart
     When I put a book with price 11.5 into my shopping cart

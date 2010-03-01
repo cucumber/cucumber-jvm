@@ -14,8 +14,10 @@ will actually compile.
 * @Before, @After, @Transform and @Order annotations have moved to the cuke4duke.annotation package (Aslak Hellesøy)
 * ScalaDsl and Languages have moved to cuke4duke.scala.Dsl and cuke4duke.scala.I18n (Aslak Hellesøy)
 * Scala step definitions must explicitly specify i18n language. Ex: extends ScalaDsl with EN. (Aslak Hellesøy)
+* Upgraded to JUnit 4.8.1, Ant 1.8.0, PicoContainer 2.10.2, Mockito 1.8.2, Groovy 1.7.1 (Aslak Hellesøy)
 
 === Bugfixes
+* Ensure that test classes come first on the classpath when using Maven. (Christof Koenig)
 * Support Tables and PyStrings in Scala (#61 Jon-Anders Teigen)
 
 == 0.2.3 2010-01-18

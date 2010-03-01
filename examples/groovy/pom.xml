@@ -37,7 +37,7 @@
     <dependency>
       <groupId>org.codehaus.groovy</groupId>
       <artifactId>groovy-all</artifactId>
-      <version>1.7.0</version>
+      <version>1.7.1</version>
     </dependency>
     <dependency>
       <groupId>cuke4duke</groupId>
@@ -48,7 +48,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.7</version>
+      <version>4.8.1</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
