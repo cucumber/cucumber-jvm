@@ -1,4 +1,4 @@
-== In Git
+== 0.2.4 2010-03-02
 
 The big news in this release is support for all of Cucumber's 40 I18n languages in Java annotations and Scala traits.
 This means that you no longer need to mix English and your native language. It also means that snippets in non-English

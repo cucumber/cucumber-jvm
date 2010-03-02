@@ -4,7 +4,7 @@
   <groupId>cuke4duke</groupId>
   <artifactId>cuke4duke-ejb3-example</artifactId>
   <packaging>jar</packaging>
-  <version>0.2.3</version>
+  <version>0.2.4</version>
   <name>Cuke4Duke EJB3 Example</name>
   <url>http://maven.apache.org</url>
   <build>
@@ -43,7 +43,7 @@
             <cucumberArg>${basedir}/target/test-classes</cucumberArg>
           </cucumberArgs>
           <gems>
-            <gem>install cuke4duke --version 0.2.3</gem>
+            <gem>install cuke4duke --version 0.2.4</gem>
           </gems>
         </configuration>
         <executions>
@@ -69,7 +69,7 @@
     <dependency>
       <groupId>cuke4duke</groupId>
       <artifactId>cuke4duke</artifactId>
-      <version>0.2.3</version>
+      <version>0.2.4</version>
       <scope>test</scope>
     </dependency>
     <dependency>
