@@ -10,6 +10,13 @@ public class DE {
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
     @StepDef
+    public static @interface Angenommen {
+        public abstract String value();
+    }
+
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.METHOD)
+    @StepDef
     public static @interface Gegebensei {
         public abstract String value();
     }

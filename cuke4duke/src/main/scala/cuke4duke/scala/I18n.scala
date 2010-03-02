@@ -43,6 +43,7 @@ trait DA { this: Dsl =>
 }
 
 trait DE { this: Dsl =>
+  val Angenommen = new Step("Angenommen")
   val Gegebensei = new Step("Gegebensei")
   val Wenn = new Step("Wenn")
   val Dann = new Step("Dann")
@@ -141,7 +142,9 @@ trait JA { this: Dsl =>
 
 trait KO { this: Dsl =>
   val 조건 = new Step("조건")
+  val 먼저 = new Step("먼저")
   val 만일 = new Step("만일")
+  val 만약 = new Step("만약")
   val 그러면 = new Step("그러면")
 }
 

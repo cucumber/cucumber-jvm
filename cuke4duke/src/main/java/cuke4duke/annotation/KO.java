@@ -17,7 +17,21 @@ public class KO {
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
     @StepDef
+    public static @interface 먼저 {
+        public abstract String value();
+    }
+
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.METHOD)
+    @StepDef
     public static @interface 만일 {
+        public abstract String value();
+    }
+
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.METHOD)
+    @StepDef
+    public static @interface 만약 {
         public abstract String value();
     }
 
