@@ -130,7 +130,7 @@
         <configuration>
           <encoding>UTF-8</encoding>
           <excludes>
-           <exclude>**/*.java</exclude>
+            <exclude>**/*.java</exclude>
           </excludes>
         </configuration>
         <executions>
