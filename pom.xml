@@ -42,6 +42,8 @@
     <profile>
       <id>examples</id>
       <modules>
+        <module>examples/java-webdriver</module>
+        <module>examples/groovy-webdriver</module>
         <module>examples/clojure</module>
         <module>examples/scala</module>
         <module>examples/java</module>
@@ -51,8 +53,6 @@
         <module>examples/guice</module>
         <module>examples/javascript</module>
         <module>examples/celerity</module>
-        <module>examples/java-webdriver</module>
-        <module>examples/groovy-webdriver</module>
         <module>examples/java-ejb3</module>
       </modules>
     </profile>

@@ -14,7 +14,7 @@ trait BG { this: Dsl =>
   val То = new Step("То")
 }
 
-trait CAT { this: Dsl =>
+trait CA { this: Dsl =>
   val Donat = new Step("Donat")
   val Donada = new Step("Donada")
   val Atès = new Step("Atès")
@@ -30,7 +30,7 @@ trait CS { this: Dsl =>
   val Pak = new Step("Pak")
 }
 
-trait CY { this: Dsl =>
+trait CYGB { this: Dsl =>
   val anrhegediga = new Step("anrhegediga")
   val Pryd = new Step("Pryd")
   val Yna = new Step("Yna")
@@ -53,6 +53,15 @@ trait EN { this: Dsl =>
   val Given = new Step("Given")
   val When = new Step("When")
   val Then = new Step("Then")
+}
+
+trait ENSCOUSE { this: Dsl =>
+  val Givun = new Step("Givun")
+  val Youseknowwhenyousegot = new Step("Youseknowwhenyousegot")
+  val Wun = new Step("Wun")
+  val Youseknowlikewhen = new Step("Youseknowlikewhen")
+  val Dun = new Step("Dun")
+  val Denyousegotta = new Step("Denyousegotta")
 }
 
 trait ENAU { this: Dsl =>
@@ -192,7 +201,7 @@ trait RO { this: Dsl =>
   val Atunci = new Step("Atunci")
 }
 
-trait RO2 { this: Dsl =>
+trait RORO { this: Dsl =>
   val Dacă = new Step("Dacă")
   val Când = new Step("Când")
   val Atunci = new Step("Atunci")
@@ -204,19 +213,13 @@ trait RU { this: Dsl =>
   val То = new Step("То")
 }
 
-trait SE { this: Dsl =>
-  val Givet = new Step("Givet")
-  val När = new Step("När")
-  val Så = new Step("Så")
-}
-
 trait SK { this: Dsl =>
   val Pokiaľ = new Step("Pokiaľ")
   val Keď = new Step("Keď")
   val Tak = new Step("Tak")
 }
 
-trait SR { this: Dsl =>
+trait SRCYRL { this: Dsl =>
   val Задато = new Step("Задато")
   val Задате = new Step("Задате")
   val Задати = new Step("Задати")
@@ -232,6 +235,12 @@ trait SRLATN { this: Dsl =>
   val Kada = new Step("Kada")
   val Kad = new Step("Kad")
   val Onda = new Step("Onda")
+}
+
+trait SV { this: Dsl =>
+  val Givet = new Step("Givet")
+  val När = new Step("När")
+  val Så = new Step("Så")
 }
 
 trait TR { this: Dsl =>

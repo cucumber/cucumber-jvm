@@ -6,7 +6,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-public class CY {
+public class CYGB {
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
     @StepDef

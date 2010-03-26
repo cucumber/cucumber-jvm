@@ -6,53 +6,46 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-public class CAT {
+public class ENSCOUSE {
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
     @StepDef
-    public static @interface Donat {
+    public static @interface Givun {
         public abstract String value();
     }
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
     @StepDef
-    public static @interface Donada {
+    public static @interface Youseknowwhenyousegot {
         public abstract String value();
     }
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
     @StepDef
-    public static @interface Atès {
+    public static @interface Wun {
         public abstract String value();
     }
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
     @StepDef
-    public static @interface Atesa {
+    public static @interface Youseknowlikewhen {
         public abstract String value();
     }
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
     @StepDef
-    public static @interface Quan {
+    public static @interface Dun {
         public abstract String value();
     }
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
     @StepDef
-    public static @interface Aleshores {
-        public abstract String value();
-    }
-
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target(ElementType.METHOD)
-    @StepDef
-    public static @interface Cal {
+    public static @interface Denyousegotta {
         public abstract String value();
     }
 

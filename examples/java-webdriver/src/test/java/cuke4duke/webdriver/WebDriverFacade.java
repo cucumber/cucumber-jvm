@@ -30,7 +30,7 @@ public class WebDriverFacade {
 
     @After
     public void closeBrowser() throws IllegalAccessException, InvocationTargetException, InstantiationException {
-        if(browser == null) {
+        if(browser != null) {
             browser.close();
             browser.quit();
         }

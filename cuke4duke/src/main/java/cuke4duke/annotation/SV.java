@@ -6,7 +6,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-public class SE {
+public class SV {
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
     @StepDef

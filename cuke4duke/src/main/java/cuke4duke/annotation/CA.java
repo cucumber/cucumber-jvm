@@ -6,46 +6,53 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-public class SR {
+public class CA {
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
     @StepDef
-    public static @interface Задато {
+    public static @interface Donat {
         public abstract String value();
     }
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
     @StepDef
-    public static @interface Задате {
+    public static @interface Donada {
         public abstract String value();
     }
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
     @StepDef
-    public static @interface Задати {
+    public static @interface Atès {
         public abstract String value();
     }
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
     @StepDef
-    public static @interface Када {
+    public static @interface Atesa {
         public abstract String value();
     }
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
     @StepDef
-    public static @interface Кад {
+    public static @interface Quan {
         public abstract String value();
     }
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
     @StepDef
-    public static @interface Онда {
+    public static @interface Aleshores {
+        public abstract String value();
+    }
+
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.METHOD)
+    @StepDef
+    public static @interface Cal {
         public abstract String value();
     }
 
