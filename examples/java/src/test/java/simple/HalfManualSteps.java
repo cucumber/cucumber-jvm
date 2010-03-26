@@ -1,7 +1,7 @@
 package simple;
 
 import cuke4duke.*;
-import cuke4duke.annotation.EN.*;
+import cuke4duke.annotation.I18n.EN.*;
 
 import static org.junit.Assert.fail;
 

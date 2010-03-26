@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 
 import com.google.inject.Inject;
 
-import cuke4duke.annotation.EN.*;
+import cuke4duke.annotation.I18n.EN.*;
 
 /**
  * @author Henning Jensen

@@ -1,6 +1,6 @@
 package billing;
 
-import cuke4duke.annotation.EN.*;
+import cuke4duke.annotation.I18n.EN.*;
 
 import static org.junit.Assert.assertTrue;
 

@@ -4,7 +4,7 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 
-import cuke4duke.annotation.EN.*;
+import cuke4duke.annotation.I18n.EN.*;
 import cuke4duke.StepMother;
 import cuke4duke.Steps;
 import cuke4duke.annotation.Transform;

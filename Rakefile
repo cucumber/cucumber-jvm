@@ -35,14 +35,28 @@ task :i18n_generate do
     language.sanitized_key.upcase
   end
 
-  java = ERB.new(IO.read(File.dirname(__FILE__) + '/cuke4duke/src/main/code_generator/java_annotation.erb'), nil, '-')
-  Gherkin::I18n.all.each do |language|
-    File.open(File.dirname(__FILE__) + '/cuke4duke/src/main/java/cuke4duke/annotation/' + classify(language) + '.java', 'wb') do |io|
+  java = ERB.new(IO.read(File.dirname(__FILE__) + '/cuke4duke/src/main/code_generator/I18n.java.erb'), nil, '-')
+  File.open(File.dirname(__FILE__) + '/cuke4duke/src/main/java/cuke4duke/annotation/I18n.java', 'wb') do |io|
+    io.write(<<-HEADER)
+package cuke4duke.annotation;
+
+import cuke4duke.internal.java.annotation.StepDef;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+public interface I18n {
+
+HEADER
+    Gherkin::I18n.all.each do |language|
       io.write(java.result(binding))
     end
+
+    io.write("}")
   end
 
-  scala = ERB.new(IO.read(File.dirname(__FILE__) + '/cuke4duke/src/main/code_generator/scala_trait.erb'), nil, '-')
+  scala = ERB.new(IO.read(File.dirname(__FILE__) + '/cuke4duke/src/main/code_generator/I18n.scala.erb'), nil, '-')
   File.open(File.dirname(__FILE__) + '/cuke4duke/src/main/scala/cuke4duke/scala/I18n.scala', 'wb') do |io|
     io.write("package cuke4duke.scala\n\n")
     Gherkin::I18n.all.each do |language|
