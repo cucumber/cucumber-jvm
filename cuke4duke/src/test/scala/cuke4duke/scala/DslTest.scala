@@ -9,7 +9,7 @@ import org.jruby.runtime.builtin.IRubyObject
 import org.jruby.RubyArray
 import java.lang.{Class, String}
 import java.util.{Map => JMap, List => JList}
-import cuke4duke.internal.scala._
+import _root_.cuke4duke.internal.scala._
 import cuke4duke.{PyString, CellConverter, Table, StepMother}
 import cuke4duke.internal.language._
 import cuke4duke.internal.JRuby
@@ -47,7 +47,7 @@ class DslTest extends Dsl with EN with NO {
     override def begin_scenario(scenario: IRubyObject) = {}
     override def end_scenario = {}
     override def load_code_file(file: String) = {}
-    override def customTransform(arg: Object, parameterType: Class[_]) = {}
+    override def customTransform(arg: Object, parameterType: Class[_]) = null
   }
 
   @JunitBefore
@@ -72,7 +72,7 @@ class DslTest extends Dsl with EN with NO {
       def invoke(regex:String) = calledFromStepdefintions += regex
       def invoke(regex:String, table:Table){ step(regex).invoke(array(table)) }
       def invoke(regex:String, py:String){ step(regex).invoke(array(py)) }
-      def ask(question:String, timeoutSecs:int) = { "" }
+      def ask(question:String, timeoutSecs:Int) = { "" }
       def embed(file:String, mimeType:String) = {}
       def announce(file:String) = {}
     })

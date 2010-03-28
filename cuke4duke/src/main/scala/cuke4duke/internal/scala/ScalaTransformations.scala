@@ -22,10 +22,10 @@ Switch transformations datastructure to Map[Class[_], List[String => Option[_]] 
 
 private [cuke4duke] class ScalaTransformations {
 
-  implicit def orderedClass(a:Class[_]) = new Ordered[Class[_]]{
-    def compare(that: Class[_]) = {
-      if(a == that) 0
-      else if(that.isAssignableFrom(a)) 1
+  implicit val classOrdering:Ordering[Class[_]] = new Ordering[Class[_]]{
+    def compare(a:Class[_], b: Class[_]) = {
+      if(a == b) 0
+      else if(b.isAssignableFrom(a)) 1
       else -1
     }
   }
@@ -43,7 +43,7 @@ private [cuke4duke] class ScalaTransformations {
 
   def addAll(t:Iterable[(Class[_], String => Option[_])]){
     for((key, value) <- t){
-      transformations = transformations.update(key, attempt(value))
+      transformations = transformations.updated(key, attempt(value))
     }
   }
 
@@ -79,7 +79,7 @@ private [cuke4duke] class ScalaTransformations {
   def convert(value:AnyRef, to:Class[_]):Option[_] = {
       val start:Option[_] = if(to.isAssignableFrom(value.getClass)) Some(value) else None
 
-      (start /: transformations.elements){ (acc, entry) =>
+      (start /: transformations.iterator){ (acc, entry) =>
         acc match {
           case None if to == classOf[Table] => Some(value)
           case None if to == classOf[String] && value.isInstanceOf[PyString] => Some(value.asInstanceOf[PyString].to_s)
