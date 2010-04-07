@@ -78,6 +78,7 @@
             <cucumberArg>--verbose</cucumberArg>
             <cucumberArg>--strict</cucumberArg>
             <cucumberArg>--guess</cucumberArg>
+            <cucumberArg>--backtrace</cucumberArg>
           </cucumberArgs>
           <gems>
             <gem>install cuke4duke --version 0.2.4</gem>

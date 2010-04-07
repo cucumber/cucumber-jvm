@@ -7,6 +7,7 @@ import groovy.lang.Closure;
 
 import java.io.UnsupportedEncodingException;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 public class GroovyStepDefinition extends AbstractStepDefinition {
@@ -31,7 +32,7 @@ public class GroovyStepDefinition extends AbstractStepDefinition {
     }
 
     public Object invokeWithArgs(Object[] args) throws Throwable {
-        return groovyLanguage.invokeClosure(body, args);
+        return groovyLanguage.invokeClosure(body, args, Locale.getDefault());
     }
 
     public List<StepArgument> arguments_from(String stepName) throws UnsupportedEncodingException {
