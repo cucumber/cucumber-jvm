@@ -1,3 +1,5 @@
+TODO: Use Locale from feature language, now that it's ISO compliant.
+
 == 0.2.4 2010-03-02
 
 The big news in this release is support for all of Cucumber's 40 I18n languages in Java annotations and Scala traits.
