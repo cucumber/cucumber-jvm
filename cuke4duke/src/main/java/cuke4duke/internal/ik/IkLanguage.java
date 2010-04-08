@@ -7,6 +7,8 @@ import ioke.lang.Runtime;
 import ioke.lang.exceptions.ControlFlow;
 import org.jruby.runtime.builtin.IRubyObject;
 
+import java.util.Locale;
+
 public class IkLanguage extends AbstractProgrammingLanguage {
     private final Runtime ioke;
     final IokeObject pendingCondition;
@@ -50,7 +52,7 @@ public class IkLanguage extends AbstractProgrammingLanguage {
     }
 
     @Override
-    protected Object customTransform(Object arg, Class<?> parameterType) {
+    protected Object customTransform(Object arg, Class<?> parameterType, Locale locale) {
         return null;
     }
 }

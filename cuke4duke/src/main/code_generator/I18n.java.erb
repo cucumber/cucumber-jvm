@@ -1,8 +1,8 @@
-    public class <%= classify(language) %> {
-<% language.gwt_keywords.reject{|kw| kw =~ /\*/ }.each do |kw| -%>
+    public class <%= classify(i18n) %> {
+<% i18n.gwt_keywords.reject{|kw| kw =~ /\*/ }.each do |kw| -%>
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
-        @StepDef
+        @StepDef("<%= i18n.key %>")
         public static @interface <%= kw.strip.gsub(/[\s']/, "") %> {
             public abstract String value();
         }

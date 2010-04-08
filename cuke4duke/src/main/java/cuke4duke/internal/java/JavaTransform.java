@@ -4,6 +4,7 @@ import cuke4duke.internal.jvmclass.ClassLanguage;
 import cuke4duke.internal.language.Transformable;
 
 import java.lang.reflect.Method;
+import java.util.Locale;
 
 public class JavaTransform implements Transformable {
 
@@ -16,8 +17,8 @@ public class JavaTransform implements Transformable {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T transform(Object arg) throws Throwable {
-        return (T) classLanguage.invoke(method, new Object[]{arg});
+    public <T> T transform(Object arg, Locale locale) throws Throwable {
+        return (T) classLanguage.invoke(method, new Object[]{arg}, locale);
     }
 
 }

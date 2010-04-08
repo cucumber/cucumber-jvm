@@ -1,11 +1,18 @@
-== 0.2.4 2010-03-02
+== In Git
+
+=== Changed Features
+* Java step definitions are now Locale-aware. Transformed Java primitives will use the Locale identified by 
+  the Annotation's language. For example a step definition annotated with @cuke4duke.annotation.I18n.NO.Gitt
+  and a method taking a double, will have the double transformed based on the NO Locale. (Aslak Hellesøy)
+
+== 0.2.4 2010-03-01
 
 The big news in this release is support for all of Cucumber's 40 I18n languages in Java annotations and Scala traits.
 This means that you no longer need to mix English and your native language. It also means that snippets in non-English
 will actually compile.
 
 === New Features
-* I18n support for all of Cucumber's 40 i18n languages. (Java annotations only). (Aslak Hellesøy)
+* I18n support for all of Cucumber's 40 i18n languages. (Java annotations only). (#28 Aslak Hellesøy)
 * Added embed, ask and announce methods to the Steps class. Makes it easier to output custom info and interact with users. (Aslak Hellesøy)
 * Added Table.mapColumn and Table.mapHeaders. (#60 Yves Senn, Aslak Hellesøy)
 

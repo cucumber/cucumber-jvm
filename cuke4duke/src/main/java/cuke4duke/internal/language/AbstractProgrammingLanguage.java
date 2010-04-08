@@ -9,10 +9,7 @@ import org.jruby.RubyArray;
 import org.jruby.runtime.builtin.IRubyObject;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public abstract class AbstractProgrammingLanguage implements ProgrammingLanguage {
     protected final LanguageMixin languageMixin;
@@ -78,36 +75,36 @@ public abstract class AbstractProgrammingLanguage implements ProgrammingLanguage
         languageMixin.invoked_step_definition(regexp_source, file_colon_line);
     }
 
-    protected Object[] transform(Object[] args, Class<?>[] parameterTypes) throws Throwable {
+    protected Object[] transform(Object[] args, Class<?>[] parameterTypes, Locale locale) throws Throwable {
         Object[] transformed = new Object[args.length];
         for (int i = 0; i < transformed.length; i++) {
-            transformed[i] = transformOne(args[i], parameterTypes[i]);
+            transformed[i] = transformOne(args[i], parameterTypes[i], locale);
         }
         return transformed;
     }
 
-    public Object transformOne(Object arg, Class<?> parameterType) throws Throwable {
+    public Object transformOne(Object arg, Class<?> parameterType, Locale locale) throws Throwable {
         if(PyString.class.isAssignableFrom(arg.getClass())) {
             arg = ((PyString)arg).to_s();
         }
         if(parameterType.isAssignableFrom(arg.getClass())) {
             return arg;
         }
-        Object customTransform = customTransform(arg, parameterType);
+        Object customTransform = customTransform(arg, parameterType, null);
         if(customTransform != null) {
             return customTransform;
         } else {
-            return defaultTransform(arg, parameterType);
+            return defaultTransform(arg, parameterType, locale);
         }
     }
 
-    private Object defaultTransform(Object arg, Class<?> parameterType) throws Throwable {
+    private Object defaultTransform(Object arg, Class<?> parameterType, Locale locale) throws Throwable {
         Method transformMethod = transformMethods.get(parameterType);
         if(transformMethod == null) {
             throw new CantTransform(arg, parameterType);
         }
-        return methodInvoker.invoke(transformMethod, null, new Object[]{arg});
+        return methodInvoker.invoke(transformMethod, null, new Object[]{arg, locale});
     }
 
-    protected abstract Object customTransform(Object arg, Class<?> parameterType) throws Throwable;
+    protected abstract Object customTransform(Object arg, Class<?> parameterType, Locale locale) throws Throwable;
 }

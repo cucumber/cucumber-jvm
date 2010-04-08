@@ -12,6 +12,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class ClassLanguage extends AbstractProgrammingLanguage {
@@ -40,9 +41,9 @@ public class ClassLanguage extends AbstractProgrammingLanguage {
     }
 
     @Override
-    protected Object customTransform(Object arg, Class<?> parameterType) throws Throwable {
+    protected Object customTransform(Object arg, Class<?> parameterType, Locale locale) throws Throwable {
         Transformable transformer = transformers.get(parameterType);
-        return transformer == null ? null : transformer.transform(arg);
+        return transformer == null ? null : transformer.transform(arg, locale);
     }
 
     @Override
@@ -107,12 +108,12 @@ public class ClassLanguage extends AbstractProgrammingLanguage {
         } else if(method.getParameterTypes().length > 1) {
             throw JRuby.cucumberArityMismatchError("Hooks must take 0 or 1 arguments. " + method);
         }
-        return invoke(method, args);
+        return invoke(method, args, Locale.getDefault());
     }
 
-    public Object invoke(Method method, Object[] args) throws Throwable {
+    public Object invoke(Method method, Object[] args, Locale locale) throws Throwable {
         Object target = objectFactory.getComponent(method.getDeclaringClass());
-        Object[] transformedArgs = transform(args, method.getParameterTypes());
+        Object[] transformedArgs = transform(args, method.getParameterTypes(), locale);
         return methodInvoker.invoke(method, target, transformedArgs);
     }
 

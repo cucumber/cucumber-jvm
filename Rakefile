@@ -49,7 +49,7 @@ import java.lang.annotation.Target;
 public interface I18n {
 
 HEADER
-    Gherkin::I18n.all.each do |language|
+    Gherkin::I18n.all.each do |i18n|
       io.write(java.result(binding))
     end
 
@@ -59,7 +59,7 @@ HEADER
   scala = ERB.new(IO.read(File.dirname(__FILE__) + '/cuke4duke/src/main/code_generator/I18n.scala.erb'), nil, '-')
   File.open(File.dirname(__FILE__) + '/cuke4duke/src/main/scala/cuke4duke/scala/I18n.scala', 'wb') do |io|
     io.write("package cuke4duke.scala\n\n")
-    Gherkin::I18n.all.each do |language|
+    Gherkin::I18n.all.each do |i18n|
       io.write(scala.result(binding))
     end
   end

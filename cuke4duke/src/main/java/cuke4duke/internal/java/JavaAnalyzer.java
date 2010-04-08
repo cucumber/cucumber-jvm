@@ -4,6 +4,7 @@ import cuke4duke.annotation.After;
 import cuke4duke.annotation.Before;
 import cuke4duke.annotation.Order;
 import cuke4duke.annotation.Transform;
+import cuke4duke.internal.Utils;
 import cuke4duke.internal.java.annotation.StepDef;
 import cuke4duke.internal.jvmclass.ClassAnalyzer;
 import cuke4duke.internal.jvmclass.ClassLanguage;
@@ -74,11 +75,12 @@ public class JavaAnalyzer implements ClassAnalyzer {
     private void registerStepDefinitionsFromAnnotations(Method method, ClassLanguage classLanguage) throws Throwable {
         for(Annotation annotation: method.getAnnotations()) {
             if(annotation.annotationType().isAnnotationPresent(StepDef.class)) {
-                Method value = annotation.getClass().getMethod("value");
-                String regexpString = (String) value.invoke(annotation);
+                Locale locale = Utils.localeFor(annotation.annotationType().getAnnotation(StepDef.class).value());
+                Method regexpMethod = annotation.getClass().getMethod("value");
+                String regexpString = (String) regexpMethod.invoke(annotation);
                 if (regexpString != null) {
                     Pattern regexp = Pattern.compile(regexpString);
-                    classLanguage.addStepDefinition(new JavaStepDefinition(classLanguage, method, regexp, methodFormat));
+                    classLanguage.addStepDefinition(new JavaStepDefinition(classLanguage, method, regexp, methodFormat, locale));
                 }
             }
         }

@@ -4,6 +4,8 @@ import cuke4duke.internal.language.AbstractHook;
 import groovy.lang.Closure;
 import org.jruby.runtime.builtin.IRubyObject;
 
+import java.util.Locale;
+
 public class GroovyHook extends AbstractHook {
     private final GroovyLanguage groovyLanguage;
     private final Closure body;
@@ -15,6 +17,6 @@ public class GroovyHook extends AbstractHook {
     }
 
     public void invoke(String location, IRubyObject scenario) throws Throwable {
-        groovyLanguage.invokeClosure(body, new Object[]{scenario});
+        groovyLanguage.invokeClosure(body, new Object[]{scenario}, Locale.getDefault());
     }
 }

@@ -13,6 +13,7 @@ import java.io.FileReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class JsLanguage extends AbstractProgrammingLanguage {
     private static final String JS_DSL = "/cuke4duke/internal/js/js_dsl.js";
@@ -47,7 +48,7 @@ public class JsLanguage extends AbstractProgrammingLanguage {
     }
 
     @Override
-    protected Object customTransform(Object arg, Class<?> parameterType) {
+    protected Object customTransform(Object arg, Class<?> parameterType, Locale locale) {
         return null;
     }
 }

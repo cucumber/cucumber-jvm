@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class GroovyLanguage extends AbstractProgrammingLanguage {
     private final List<String> groovyFiles = new ArrayList<String>();
@@ -24,10 +25,10 @@ public class GroovyLanguage extends AbstractProgrammingLanguage {
         GroovyDsl.languageMixin = languageMixin;
     }
 
-    Object invokeClosure(Closure body, Object[] args) throws Throwable {
+    Object invokeClosure(Closure body, Object[] args, Locale locale) throws Throwable {
         body.setDelegate(currentWorld);
         Class[] classes = body.getParameterTypes();
-        Object[] transformedArgs = transform(args, classes);
+        Object[] transformedArgs = transform(args, classes, locale);
         return body.call(transformedArgs);
     }
 
@@ -45,7 +46,7 @@ public class GroovyLanguage extends AbstractProgrammingLanguage {
     }
 
     @Override
-    protected Object customTransform(Object arg, Class<?> parameterType) {
+    protected Object customTransform(Object arg, Class<?> parameterType, Locale locale) {
         return null;
     }
 

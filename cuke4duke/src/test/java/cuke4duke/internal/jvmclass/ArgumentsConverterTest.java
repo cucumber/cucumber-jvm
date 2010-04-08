@@ -5,6 +5,8 @@ import org.jruby.runtime.builtin.IRubyObject;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Locale;
+
 import static org.junit.Assert.assertEquals;
 
 public class ArgumentsConverterTest {
@@ -26,7 +28,7 @@ public class ArgumentsConverterTest {
             }
 
             @Override
-            protected Object customTransform(Object arg, Class<?> parameterType) throws Throwable {
+            protected Object customTransform(Object arg, Class<?> parameterType, Locale locale) throws Throwable {
                 return null;
             }
         };
@@ -34,26 +36,26 @@ public class ArgumentsConverterTest {
 
     @Test
     public void shouldConvertFromStringToObject() throws Throwable {
-        assertEquals("An Object", p.transformOne("An Object", Object.class));
+        assertEquals("An Object", p.transformOne("An Object", Object.class, Locale.getDefault()));
     }
     
     @Test
     public void shouldConvertFromStringToInt() throws Throwable {
-        assertEquals(3, p.transformOne("3", Integer.TYPE));
+        assertEquals(3, p.transformOne("3", Integer.TYPE, Locale.getDefault()));
     }
 
     @Test
     public void shouldConvertFromStringToInteger() throws Throwable {
-        assertEquals(4, p.transformOne("4", Integer.class));
+        assertEquals(4, p.transformOne("4", Integer.class, Locale.getDefault()));
     }
 
     @Test
     public void shouldConvertFromStringToLongPrimitive() throws Throwable {
-        assertEquals(3L, p.transformOne("3", Long.TYPE));
+        assertEquals(3L, p.transformOne("3", Long.TYPE, Locale.getDefault()));
     }
 
     @Test
     public void shouldConvertFromStringToLong() throws Throwable {
-        assertEquals(4L, p.transformOne("4", Long.class));
+        assertEquals(4L, p.transformOne("4", Long.class, Locale.getDefault()));
     }
 }

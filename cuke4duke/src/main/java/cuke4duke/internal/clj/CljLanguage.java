@@ -7,6 +7,7 @@ import cuke4duke.internal.language.AbstractProgrammingLanguage;
 import cuke4duke.internal.language.LanguageMixin;
 import org.jruby.runtime.builtin.IRubyObject;
 
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 public class CljLanguage extends AbstractProgrammingLanguage {
@@ -43,7 +44,7 @@ public class CljLanguage extends AbstractProgrammingLanguage {
     }
 
     @Override
-    protected Object customTransform(Object arg, Class<?> parameterType) {
+    protected Object customTransform(Object arg, Class<?> parameterType, Locale locale) {
         return null;
     }
 }
