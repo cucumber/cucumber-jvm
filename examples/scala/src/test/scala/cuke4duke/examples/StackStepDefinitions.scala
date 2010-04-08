@@ -2,11 +2,11 @@ package cuke4duke.examples
 
 import collection.mutable.Stack
 import org.junit.Assert._
-import cuke4duke.scala.{Dsl, EN}
+import cuke4duke._
 
-class StackStepDefinitions extends Dsl with EN {
+class StackStepDefinitions extends ScalaDsl with EN {
 
-  val stack:Stack[Int] = new Stack[Int]
+  val stack = new Stack[Int]
 
   Given("I have an empty stack") {
     stack.clear()

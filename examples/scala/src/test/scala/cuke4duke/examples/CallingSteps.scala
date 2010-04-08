@@ -1,8 +1,8 @@
 package cuke4duke.examples
 
-import cuke4duke.scala.{Dsl, EN}
+import cuke4duke._
 
-class CallingSteps extends Dsl with EN {
+class CallingSteps extends ScalaDsl with EN {
   When("^I call another step$") { () =>
     Given("it is magic")
   }

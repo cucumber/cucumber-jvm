@@ -9,6 +9,6 @@ public interface ObjectFactory {
     void disposeObjects();
     void addClass(Class<?> clazz);
     void addStepMother(StepMother mother);
-    Object getComponent(Class<?> type);
+    <T> T getComponent(Class<T> type);
     List<Class<?>> getClasses();
 }

@@ -1,4 +1,4 @@
-trait <%= classify(language) %> { this: Dsl =>
+trait <%= classify(language) %> { this: ScalaDsl =>
 <% language.gwt_keywords.reject{|kw| kw =~ /\*/ }.each do |kw| -%>
   val <%= kw.strip.gsub(/[\s']/, "") %> = new Step("<%= kw.strip.gsub(/[\s']/, "") %>")
 <% end -%>

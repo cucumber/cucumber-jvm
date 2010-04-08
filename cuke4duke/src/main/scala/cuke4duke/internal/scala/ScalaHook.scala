@@ -10,7 +10,7 @@ class ScalaHook(tagNames:Array[String], f:() => Unit) extends AbstractHook(tagNa
 
   @throws(classOf[Throwable])
   def invoke(location: String, scenario: IRubyObject){
-    //legg til støtte for f:(Scenario) => Unit
+    //add support for f:(Scenario) => Unit // when there will be a Scenario class
     f()
   }
 }

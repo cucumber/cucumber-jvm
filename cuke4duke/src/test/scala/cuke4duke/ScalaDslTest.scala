@@ -1,31 +1,31 @@
-package cuke4duke.scala
+package cuke4duke
 
 import org.jruby.exceptions.RaiseException
+import org.jruby.runtime.builtin.IRubyObject
+import org.jruby.RubyArray
+
 import org.junit.{Test, Before => JunitBefore, Assert}
 import Assert._
 
-import _root_.scala.collection.mutable.{Map, ListBuffer}
-import org.jruby.runtime.builtin.IRubyObject
-import org.jruby.RubyArray
 import java.lang.{Class, String}
 import java.util.{Map => JMap, List => JList}
-import _root_.cuke4duke.internal.scala._
-import cuke4duke.{PyString, CellConverter, Table, StepMother}
+
+import _root_.scala.collection.mutable.{Map, ListBuffer}
+
 import cuke4duke.internal.language._
 import cuke4duke.internal.JRuby
-class DslTest extends Dsl with EN with NO {
+
+class ScalaDslTest extends ScalaDsl with EN with NO {
 
   var result = ""
 
   val step = Map[String, StepDefinition]()
 
-  def regexp(step:ScalaStepDefinition) = step.regexp_source
-
   def rubyClassName(raise:RaiseException) = raise.getException.getType.getName
 
-  def array(s:AnyRef*) = {
+  def ra(args:AnyRef*) = {
     val r = RubyArray.newArray(JRuby.getRuntime)
-    s.foreach(r.add(_))
+    args.foreach(r.add(_))
     r
   }
 
@@ -60,23 +60,24 @@ class DslTest extends Dsl with EN with NO {
     end
     """);
 
-    val t = new ScalaTransformations
-    t.addAll(transformations)
-
     for(s <- stepDefinitions){
-      val sd = s(programmingLanguage, t)
-      step(regexp(sd)) = sd
+      val sd = s(programmingLanguage)
+      step(sd.regexp_source) = sd
     }
 
     executionMode(new StepMother{
       def invoke(regex:String) = calledFromStepdefintions += regex
-      def invoke(regex:String, table:Table){ step(regex).invoke(array(table)) }
-      def invoke(regex:String, py:String){ step(regex).invoke(array(py)) }
-      def ask(question:String, timeoutSecs:Int) = { "" }
-      def embed(file:String, mimeType:String) = {}
-      def announce(file:String) = {}
+      def invoke(regex:String, table:Table){ step(regex).invoke(ra(table)) }
+      def invoke(regex:String, py:String){ step(regex).invoke(ra(py)) }
+      def ask(question:String, timeoutSecs:Int) = {asked = (question, timeoutSecs); "x"}
+      def embed(file:String, mimeType:String) = embedded = (file, mimeType)
+      def announce(message:String) = announced = message
     })
   }
+
+  var asked:(String, Int) = _
+  var embedded:(String, String) = _
+  var announced:String = _
 
   Before{
     result = "before hook 0"
@@ -139,7 +140,7 @@ class DslTest extends Dsl with EN with NO {
 
   @Test
   def test_CallByName{
-    step("call by name").invoke(array())
+    step("call by name").invoke(ra())
     assertEquals("given call-by-name", result)
   }
 
@@ -150,7 +151,7 @@ class DslTest extends Dsl with EN with NO {
 
   @Test
   def test_GivenF1{
-    step("given f1").invoke(array("xxx"))
+    step("given f1").invoke(ra("xxx"))
     assertEquals("given f1 xxx", result)
   }
 
@@ -162,7 +163,7 @@ class DslTest extends Dsl with EN with NO {
   @Test
   def test_Pending{
     val comment = try{
-      step("pending comment").invoke(array())
+      step("pending comment").invoke(ra())
       fail("did not throw Cucumber::Pending")
     } catch {
       case e:RaiseException if rubyClassName(e) == "Cucumber::Pending" => e.getMessage
@@ -177,7 +178,7 @@ class DslTest extends Dsl with EN with NO {
   @Test
   def test_PendingNoComment{
     val comment = try{
-      step("pending no comment").invoke(array())
+      step("pending no comment").invoke(ra())
       fail("did not throw Cucumber::Pending")
     } catch {
       case e:RaiseException if rubyClassName(e) == "Cucumber::Pending" => e.getMessage
@@ -191,7 +192,7 @@ class DslTest extends Dsl with EN with NO {
 
   @Test
   def test_WhenF2{
-    step("when f2 -> unit").invoke(array("foo", "5"))
+    step("when f2 -> unit").invoke(ra("foo", "5"))
     assertEquals("when f2 foo 5", result)
   }
 
@@ -202,31 +203,17 @@ class DslTest extends Dsl with EN with NO {
 
   @Test
   def test_ThenF3{
-    step("then f3 -> int").invoke(array("foo", "5", "true"))
+    step("then f3 -> int").invoke(ra("foo", "5", "true"))
     assertEquals("then f3 foo 5 true", result)
   }
 
   @Test
   def test_ArityMismatchException{
     try{
-      step("then f3 -> int").invoke(array("foo", "5")) //missing the third argument
+      step("then f3 -> int").invoke(ra("foo", "5")) //missing the third argument
       fail("did not throw Cucumber::ArityMismatchError")
     } catch {
       case e:RaiseException if rubyClassName(e) == "Cucumber::ArityMismatchError" => e.getMessage
-    }
-  }
-
-  Given("unknown type"){ a:(String,String) =>
-    
-  }
-
-  @Test
-  def test_Undefined{
-    try{
-      step("unknown type").invoke(array("foo"))
-      fail("did not throw Cucumber::Undefined")
-    } catch {
-      case e:RaiseException if rubyClassName(e) == "Cucumber::Undefined" => e.getMessage
     }
   }
 
@@ -238,11 +225,10 @@ class DslTest extends Dsl with EN with NO {
   }
 
   object User{
-    def find_by_username(name:String):Option[User] = Some(new User(name))
+    def find_by_username(name:String):User = new User(name)
   }
 
-  //Transform[User](name => User.find_by_username(name))
-  Transform(User.find_by_username)
+  implicit val t2User = Transform(User.find_by_username)
 
   Then("""^(\w+) should be friends with (\w+)$"""){ (user:User, friend:User) =>
     assertTrue(user.friends_with(friend))
@@ -251,9 +237,9 @@ class DslTest extends Dsl with EN with NO {
   @Test
   def test_transform{
     val friends = step("""^(\w+) should be friends with (\w+)$""")
-    friends.invoke(array("a", "b"))
+    friends.invoke(ra("a", "b"))
     try{
-      friends.invoke(array("b", "a"))
+      friends.invoke(ra("b", "a"))
       fail("b should not be friends with a")
     } catch {
       case e:AssertionError =>
@@ -294,7 +280,7 @@ class DslTest extends Dsl with EN with NO {
   @Test //issue#29
   def test_programmingLanguage_invoked_step_definition_is_invoked_when_invoking_step_definition{
     assertFalse(invokedStepdefinitions.contains("programmingLanguage.invoked_step_definition"))
-    step("programmingLanguage.invoked_step_definition").invoke(array())
+    step("programmingLanguage.invoked_step_definition").invoke(ra())
     assertTrue(invokedStepdefinitions.contains("programmingLanguage.invoked_step_definition"))
   }
 
@@ -304,7 +290,7 @@ class DslTest extends Dsl with EN with NO {
 
   @Test //call_steps
   def test_steps_can_call_other_steps {
-    step("step_can_call_other (.*)").invoke(array("x"))
+    step("step_can_call_other (.*)").invoke(ra("x"))
     assertTrue(calledFromStepdefintions.contains("step_can_be x"))
   }
 
@@ -319,7 +305,7 @@ class DslTest extends Dsl with EN with NO {
 
   @Test
   def test_steps_can_call_other_steps_with_tables_and_py_strings{
-    step("step_can_call_other_with_table_or_py").invoke(array())
+    step("step_can_call_other_with_table_or_py").invoke(ra())
     assertSame(DummyTable, table)
     assertEquals("""
     |a
@@ -349,7 +335,7 @@ class DslTest extends Dsl with EN with NO {
 
   @Test
   def test_tables_are_supported {
-    step("a table").invoke(array(DummyTable))
+    step("a table").invoke(ra(DummyTable))
     assertSame(DummyTable, table)
   }
 
@@ -364,8 +350,61 @@ class DslTest extends Dsl with EN with NO {
     val expected = new PyString{
       def to_s = "foo"
     }
-    step("a pystring").invoke(array(expected))
+    step("a pystring").invoke(ra(expected))
     assertEquals("foo", pyString)
+  }
+
+  Given("5"){
+    () => 5
+  }
+
+  try{
+    ask("should blow up", 1)
+  } catch {
+    case _:IllegalStateException =>
+  }
+
+  try{
+    announce("should blow up")
+  } catch {
+    case _:IllegalStateException =>
+  }
+
+  try{
+    embed("should blow up", "text/simple")
+  } catch {
+    case _:IllegalStateException =>
+  }
+
+  Given("ask"){
+    val x = ask("asked", 1)
+    assertEquals("x", x)
+  }
+
+  Given("announce"){
+    announce("announced")
+  }
+
+  Given("embed"){
+    embed("a file", "a mimeType")
+  }
+
+  @Test
+  def test_ask{
+    step("ask").invoke(ra())
+    assertEquals(("asked", 1), asked)
+  }
+
+  @Test
+  def test_announce {
+    step("announce").invoke(ra())
+    assertEquals("announced", announced)
+  }
+
+  @Test
+  def test_embed {
+    step("embed").invoke(ra())
+    assertEquals(("a file", "a mimeType"), embedded)
   }
 
   //special case support for calling a no-arg step definition from a step-definition without the limitation described below

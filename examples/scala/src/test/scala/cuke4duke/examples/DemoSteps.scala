@@ -1,12 +1,11 @@
 package cuke4duke.examples
 
 import collection.mutable.Map
-import java.util.{ArrayList, Arrays, List => JList, Map => JMap, HashMap => JHashMap}
+import _root_.java.util.{ArrayList, Arrays, List => JList, Map => JMap, HashMap => JHashMap}
 import org.junit.Assert.{assertEquals, fail}
-import cuke4duke.scala.{Dsl, EN}
-import cuke4duke.Table
+import cuke4duke._
 
-class DemoSteps extends Dsl with EN {
+class DemoSteps extends ScalaDsl with EN {
   val cukes = Map[String, Int]()
 
   Given("a pending step"){
