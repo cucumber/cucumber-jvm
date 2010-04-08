@@ -8,7 +8,7 @@ import org.junit.{Test, Before => JunitBefore, Assert}
 import Assert._
 
 import java.lang.{Class, String}
-import java.util.{Map => JMap, List => JList}
+import java.util.{Locale, Map => JMap, List => JList}
 
 import _root_.scala.collection.mutable.{Map, ListBuffer}
 
@@ -47,7 +47,7 @@ class ScalaDslTest extends ScalaDsl with EN with NO {
     override def begin_scenario(scenario: IRubyObject) = {}
     override def end_scenario = {}
     override def load_code_file(file: String) = {}
-    override def customTransform(arg: Object, parameterType: Class[_]) = null
+    override def customTransform(arg: Object, parameterType: Class[_], locale: Locale) = {}
   }
 
   @JunitBefore
