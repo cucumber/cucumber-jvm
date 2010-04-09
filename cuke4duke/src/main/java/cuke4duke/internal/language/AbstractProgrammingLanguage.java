@@ -2,11 +2,11 @@ package cuke4duke.internal.language;
 
 import cuke4duke.PyString;
 import cuke4duke.Scenario;
-import cuke4duke.spi.jruby.JRuby;
 import cuke4duke.internal.java.MethodInvoker;
 import cuke4duke.internal.jvmclass.CantTransform;
 import cuke4duke.internal.jvmclass.DefaultJvmTransforms;
 import cuke4duke.spi.ExceptionFactory;
+import cuke4duke.spi.jruby.JRuby;
 import org.jruby.RubyArray;
 import org.jruby.runtime.builtin.IRubyObject;
 

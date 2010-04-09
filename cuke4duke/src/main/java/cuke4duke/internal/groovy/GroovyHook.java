@@ -3,7 +3,6 @@ package cuke4duke.internal.groovy;
 import cuke4duke.Scenario;
 import cuke4duke.internal.language.AbstractHook;
 import groovy.lang.Closure;
-import org.jruby.runtime.builtin.IRubyObject;
 
 import java.util.Locale;
 

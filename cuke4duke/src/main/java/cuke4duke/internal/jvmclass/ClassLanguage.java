@@ -2,10 +2,10 @@ package cuke4duke.internal.jvmclass;
 
 import cuke4duke.Scenario;
 import cuke4duke.StepMother;
-import cuke4duke.spi.jruby.JRuby;
 import cuke4duke.internal.language.AbstractProgrammingLanguage;
 import cuke4duke.internal.language.Transformable;
 import cuke4duke.spi.ExceptionFactory;
+import cuke4duke.spi.jruby.JRuby;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;

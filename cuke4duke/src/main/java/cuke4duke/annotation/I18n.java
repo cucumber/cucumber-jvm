@@ -1,6 +1,7 @@
 package cuke4duke.annotation;
 
 import cuke4duke.internal.java.annotation.StepDef;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

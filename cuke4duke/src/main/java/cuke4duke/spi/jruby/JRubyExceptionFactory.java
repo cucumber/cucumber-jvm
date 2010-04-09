@@ -1,6 +1,5 @@
 package cuke4duke.spi.jruby;
 
-import cuke4duke.spi.jruby.JRuby;
 import cuke4duke.spi.ExceptionFactory;
 import org.jruby.RubyClass;
 import org.jruby.RubyModule;
