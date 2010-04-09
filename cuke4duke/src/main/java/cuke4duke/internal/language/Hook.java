@@ -1,8 +1,8 @@
 package cuke4duke.internal.language;
 
-import org.jruby.runtime.builtin.IRubyObject;
+import cuke4duke.Scenario;
 
 public interface Hook {
     public String[] tag_expressions();
-    void invoke(String location, IRubyObject scenario) throws Throwable;
+    void invoke(String location, Scenario scenario) throws Throwable;
 }

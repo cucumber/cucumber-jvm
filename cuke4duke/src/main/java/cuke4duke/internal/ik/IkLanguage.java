@@ -1,12 +1,12 @@
 package cuke4duke.internal.ik;
 
+import cuke4duke.Scenario;
 import cuke4duke.internal.language.AbstractProgrammingLanguage;
 import cuke4duke.internal.language.LanguageMixin;
 import cuke4duke.spi.ExceptionFactory;
 import ioke.lang.IokeObject;
 import ioke.lang.Runtime;
 import ioke.lang.exceptions.ControlFlow;
-import org.jruby.runtime.builtin.IRubyObject;
 
 import java.util.Locale;
 
@@ -46,7 +46,7 @@ public class IkLanguage extends AbstractProgrammingLanguage {
         this.ioke.evaluateString("use(\"" + ikFile + "\")");
     }
 
-    protected void begin_scenario(IRubyObject scenario) throws Throwable {
+    protected void begin_scenario(Scenario scenario) throws Throwable {
     }
 
     public void end_scenario() throws Throwable {

@@ -1,11 +1,11 @@
 package cuke4duke.internal.jvmclass;
 
+import cuke4duke.Scenario;
 import cuke4duke.StepMother;
 import cuke4duke.spi.jruby.JRuby;
 import cuke4duke.internal.language.AbstractProgrammingLanguage;
 import cuke4duke.internal.language.Transformable;
 import cuke4duke.spi.ExceptionFactory;
-import org.jruby.runtime.builtin.IRubyObject;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -60,7 +60,7 @@ public class ClassLanguage extends AbstractProgrammingLanguage {
     }
 
     @Override
-    public void begin_scenario(IRubyObject scenario) throws Throwable {
+    public void begin_scenario(Scenario scenario) throws Throwable {
         clearHooksAndStepDefinitions();
         objectFactory.createObjects();
         for (ClassAnalyzer analyzer : analyzers) {
@@ -102,7 +102,7 @@ public class ClassLanguage extends AbstractProgrammingLanguage {
         }
     }
 
-    public Object invokeHook(Method method, IRubyObject scenario) throws Throwable {
+    public Object invokeHook(Method method, Scenario scenario) throws Throwable {
         Object[] args = new Object[0];
         if(method.getParameterTypes().length == 1) {
             args = new Object[]{scenario};

@@ -1,6 +1,7 @@
 package cuke4duke.internal.clj;
 
 import clojure.lang.AFunction;
+import cuke4duke.Scenario;
 import cuke4duke.internal.language.AbstractHook;
 import org.jruby.runtime.builtin.IRubyObject;
 
@@ -12,7 +13,7 @@ public class CljHook extends AbstractHook {
         this.closure = closure;
     }
 
-    public void invoke(String location, IRubyObject scenario) throws Throwable {
+    public void invoke(String location, Scenario scenario) throws Throwable {
         closure.call();
     }
 }

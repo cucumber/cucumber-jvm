@@ -1,5 +1,3 @@
-import 'cuke4duke.PyString'
-
 module Cucumber
   module Ast
     class PyString

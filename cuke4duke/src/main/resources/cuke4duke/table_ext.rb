@@ -1,5 +1,3 @@
-import 'cuke4duke.Table'
-
 module Cucumber
   module Ast
     class Table

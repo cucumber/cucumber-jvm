@@ -1,6 +1,7 @@
 package cuke4duke.internal.language;
 
 import cuke4duke.PyString;
+import cuke4duke.Scenario;
 import cuke4duke.spi.jruby.JRuby;
 import cuke4duke.internal.java.MethodInvoker;
 import cuke4duke.internal.jvmclass.CantTransform;
@@ -68,7 +69,7 @@ public abstract class AbstractProgrammingLanguage implements ProgrammingLanguage
         languageMixin.add_hook("after", after);
     }
 
-    protected abstract void begin_scenario(IRubyObject scenario) throws Throwable;
+    protected abstract void begin_scenario(Scenario scenario) throws Throwable;
 
     public abstract void end_scenario() throws Throwable;
 

@@ -1,7 +1,7 @@
 package cuke4duke.internal.jvmclass;
 
+import cuke4duke.Scenario;
 import cuke4duke.internal.language.AbstractProgrammingLanguage;
-import org.jruby.runtime.builtin.IRubyObject;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -20,7 +20,7 @@ public class ArgumentsConverterTest {
             }
 
             @Override
-            protected void begin_scenario(IRubyObject scenario) throws Throwable {
+            protected void begin_scenario(Scenario scenario) throws Throwable {
             }
 
             @Override

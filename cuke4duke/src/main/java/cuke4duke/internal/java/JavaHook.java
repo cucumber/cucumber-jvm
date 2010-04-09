@@ -1,8 +1,8 @@
 package cuke4duke.internal.java;
 
+import cuke4duke.Scenario;
 import cuke4duke.internal.jvmclass.ClassLanguage;
 import cuke4duke.internal.language.AbstractHook;
-import org.jruby.runtime.builtin.IRubyObject;
 
 import java.lang.reflect.Method;
 
@@ -17,7 +17,7 @@ public class JavaHook extends AbstractHook {
         this.method = method;
     }
     
-    public void invoke(String location, IRubyObject scenario) throws Throwable {
+    public void invoke(String location, Scenario scenario) throws Throwable {
         classLanguage.invokeHook(method, scenario);
     }
 

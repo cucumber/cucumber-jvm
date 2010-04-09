@@ -1,5 +1,6 @@
 package cuke4duke.internal.groovy;
 
+import cuke4duke.Scenario;
 import cuke4duke.internal.language.AbstractHook;
 import groovy.lang.Closure;
 import org.jruby.runtime.builtin.IRubyObject;
@@ -16,7 +17,7 @@ public class GroovyHook extends AbstractHook {
         this.body = body;
     }
 
-    public void invoke(String location, IRubyObject scenario) throws Throwable {
+    public void invoke(String location, Scenario scenario) throws Throwable {
         groovyLanguage.invokeClosure(body, new Object[]{scenario}, Locale.getDefault());
     }
 }

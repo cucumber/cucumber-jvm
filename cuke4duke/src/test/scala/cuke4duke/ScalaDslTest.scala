@@ -1,7 +1,6 @@
 package cuke4duke
 
 import org.jruby.exceptions.RaiseException
-import org.jruby.runtime.builtin.IRubyObject
 import org.jruby.RubyArray
 
 import org.junit.{Test, Before => JunitBefore, Assert}
@@ -44,7 +43,7 @@ class ScalaDslTest extends ScalaDsl with EN with NO {
     override def add_hook(phase: String, hook: Hook) = {}
     override def clear_hooks() = {}
   }, null){
-    override def begin_scenario(scenario: IRubyObject) = {}
+    override def begin_scenario(scenario: Scenario) = {}
     override def end_scenario = {}
     override def load_code_file(file: String) = {}
     override def customTransform(arg: Object, parameterType: Class[_], locale: Locale) = null

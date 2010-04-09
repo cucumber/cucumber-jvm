@@ -1,13 +1,13 @@
 package cuke4duke.internal.groovy;
 
 import cuke4duke.GroovyDsl;
+import cuke4duke.Scenario;
 import cuke4duke.internal.language.AbstractProgrammingLanguage;
 import cuke4duke.internal.language.LanguageMixin;
 import cuke4duke.spi.ExceptionFactory;
 import groovy.lang.Binding;
 import groovy.lang.Closure;
 import groovy.lang.GroovyShell;
-import org.jruby.runtime.builtin.IRubyObject;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,7 +33,7 @@ public class GroovyLanguage extends AbstractProgrammingLanguage {
         return body.call(transformedArgs);
     }
 
-    public void begin_scenario(IRubyObject scenario) throws IOException {
+    public void begin_scenario(Scenario scenario) throws IOException {
         clearHooksAndStepDefinitions();
         worldFactory = null;
         GroovyShell shell = new GroovyShell(new Binding());

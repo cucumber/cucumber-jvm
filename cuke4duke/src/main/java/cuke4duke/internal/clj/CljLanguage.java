@@ -3,10 +3,10 @@ package cuke4duke.internal.clj;
 import clojure.lang.AFunction;
 import clojure.lang.Compiler;
 import clojure.lang.RT;
+import cuke4duke.Scenario;
 import cuke4duke.internal.language.AbstractProgrammingLanguage;
 import cuke4duke.internal.language.LanguageMixin;
 import cuke4duke.spi.ExceptionFactory;
-import org.jruby.runtime.builtin.IRubyObject;
 
 import java.util.Locale;
 import java.util.regex.Pattern;
@@ -38,7 +38,7 @@ public class CljLanguage extends AbstractProgrammingLanguage {
         Compiler.loadFile(cljFile);
     }
 
-    protected void begin_scenario(IRubyObject scenario) throws Throwable {
+    protected void begin_scenario(Scenario scenario) throws Throwable {
     }
 
     public void end_scenario() throws Throwable {
