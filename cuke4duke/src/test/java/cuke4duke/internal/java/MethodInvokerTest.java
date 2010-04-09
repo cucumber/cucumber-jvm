@@ -1,7 +1,8 @@
 package cuke4duke.internal.java;
 
 import cuke4duke.annotation.Pending;
-import cuke4duke.internal.JRuby;
+import cuke4duke.spi.jruby.JRuby;
+import cuke4duke.spi.jruby.JRubyExceptionFactory;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -24,7 +25,7 @@ public class MethodInvokerTest {
     @Test(expected = org.jruby.exceptions.RaiseException.class)
     public void shouldRaiseCucumberPendingWhenAnnotatedWithPending() throws Throwable {
         Method dontExecuteMe = SomethingWithPending.class.getDeclaredMethod("dontExecuteMe");
-        MethodInvoker mi = new MethodInvoker();
+        MethodInvoker mi = new MethodInvoker(new JRubyExceptionFactory());
         mi.invoke(dontExecuteMe, new SomethingWithPending(), new Object[0]);
     }
 }

@@ -2,17 +2,17 @@ package cuke4duke
 
 import _root_.scala.collection.mutable.ListBuffer
 import _root_.scala.reflect.Manifest
-import cuke4duke.internal.JRuby
 import cuke4duke.internal.scala._
 import cuke4duke.internal.language.AbstractProgrammingLanguage
+import cuke4duke.spi.jruby.JRubyExceptionFactory
 /*
   <yourclass> {extends|with} ScalaDsl with EN
  */
 trait ScalaDsl {
-
   private[cuke4duke] val stepDefinitions = new ListBuffer[AbstractProgrammingLanguage => ScalaStepDefinition]
   private[cuke4duke] val beforeHooks = new ListBuffer[ScalaHook]
   private[cuke4duke] val afterHooks = new ListBuffer[ScalaHook]
+  private[cuke4duke] val exceptionFactory = new JRubyExceptionFactory
 
   /*
    * Adds a Hook to be run before every scenario
@@ -37,7 +37,7 @@ trait ScalaDsl {
   /*
    * Marks the given feature as pending with the given message
    */
-  def pending(message: String) { throw JRuby.cucumberPending(message) }
+  def pending(message: String) { throw exceptionFactory.cucumberPending(message) }
 
   /*
    * Marks the given feature as pending with the default message "TODO"
@@ -116,7 +116,7 @@ trait ScalaDsl {
       val sig = signature(manifests)
       val f:List[Any] => Any = pf orElse {
         case x =>
-          throw JRuby.cucumberArityMismatchError("Your block takes "+manifests.length+" argument" + s(manifests)+", but the Regexp matched "+x.length+" argument"+s(x)) 
+          throw exceptionFactory.cucumberArityMismatchError("Your block takes "+manifests.length+" argument" + s(manifests)+", but the Regexp matched "+x.length+" argument"+s(x))
       }
       handle(f, sig)
     }

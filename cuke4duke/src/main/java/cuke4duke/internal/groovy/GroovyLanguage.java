@@ -3,6 +3,7 @@ package cuke4duke.internal.groovy;
 import cuke4duke.GroovyDsl;
 import cuke4duke.internal.language.AbstractProgrammingLanguage;
 import cuke4duke.internal.language.LanguageMixin;
+import cuke4duke.spi.ExceptionFactory;
 import groovy.lang.Binding;
 import groovy.lang.Closure;
 import groovy.lang.GroovyShell;
@@ -19,8 +20,8 @@ public class GroovyLanguage extends AbstractProgrammingLanguage {
     private Object currentWorld;
     private Closure worldFactory;
 
-    public GroovyLanguage(LanguageMixin languageMixin) {
-        super(languageMixin);
+    public GroovyLanguage(LanguageMixin languageMixin, ExceptionFactory exceptionFactory) {
+        super(languageMixin, exceptionFactory);
         GroovyDsl.groovyLanguage = this;
         GroovyDsl.languageMixin = languageMixin;
     }

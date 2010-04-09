@@ -2,6 +2,7 @@ package cuke4duke.internal.js;
 
 import cuke4duke.internal.language.AbstractProgrammingLanguage;
 import cuke4duke.internal.language.LanguageMixin;
+import cuke4duke.spi.ExceptionFactory;
 import org.jruby.runtime.builtin.IRubyObject;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.NativeFunction;
@@ -21,8 +22,8 @@ public class JsLanguage extends AbstractProgrammingLanguage {
     private Context cx;
     private Scriptable scope;
 
-    public JsLanguage(LanguageMixin languageMixin) throws Exception {
-        super(languageMixin);
+    public JsLanguage(LanguageMixin languageMixin, ExceptionFactory exceptionFactory) throws Exception {
+        super(languageMixin, exceptionFactory);
     }
 
     public void load_code_file(String jsFile) throws Throwable {

@@ -5,6 +5,7 @@ import clojure.lang.Compiler;
 import clojure.lang.RT;
 import cuke4duke.internal.language.AbstractProgrammingLanguage;
 import cuke4duke.internal.language.LanguageMixin;
+import cuke4duke.spi.ExceptionFactory;
 import org.jruby.runtime.builtin.IRubyObject;
 
 import java.util.Locale;
@@ -13,8 +14,8 @@ import java.util.regex.Pattern;
 public class CljLanguage extends AbstractProgrammingLanguage {
     private static CljLanguage instance;
 
-    public CljLanguage(LanguageMixin languageMixin) throws Exception {
-        super(languageMixin);
+    public CljLanguage(LanguageMixin languageMixin, ExceptionFactory exceptionFactory) throws Exception {
+        super(languageMixin, exceptionFactory);
         instance = this;
         clearHooksAndStepDefinitions();
         RT.load("cuke4duke/internal/clj/clj_dsl");

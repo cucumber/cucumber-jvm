@@ -9,6 +9,7 @@ import java.lang.reflect.InvocationTargetException;
 public class WebDriverFacade {
     private static Constructor<WebDriver> driverConstructor = getDriverConstructor();
 
+    @SuppressWarnings("unchecked")
     private static Constructor<WebDriver> getDriverConstructor() {
         String driverName = System.getProperty("webdriver.impl", "org.openqa.selenium.htmlunit.HtmlUnitDriver");
         try {

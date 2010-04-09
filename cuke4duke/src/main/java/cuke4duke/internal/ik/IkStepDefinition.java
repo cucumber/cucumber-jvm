@@ -2,7 +2,6 @@ package cuke4duke.internal.ik;
 
 import cuke4duke.PyString;
 import cuke4duke.Table;
-import cuke4duke.internal.JRuby;
 import cuke4duke.internal.language.AbstractStepDefinition;
 import cuke4duke.internal.language.StepArgument;
 import ioke.lang.IokeObject;
@@ -18,10 +17,6 @@ public class IkStepDefinition extends AbstractStepDefinition {
     private final IokeObject iokeStepDefObject;
     private String regexpSource;
     private final IkLanguage lang;
-
-    public static Object throwCucumberIokeException(String message) {
-        throw JRuby.error("IokeException", message);
-    }
 
     public IkStepDefinition(IkLanguage ikLanguage, Runtime ioke, IokeObject iokeStepDefObject) throws Throwable {
         super(ikLanguage);
@@ -54,9 +49,9 @@ public class IkStepDefinition extends AbstractStepDefinition {
 	        return invoke.sendTo(msg, iokeStepDefObject, iokeStepDefObject, multilineArg(args));
         } catch(ControlFlow.Rescue e) {
             if(e.getRescue().token == pendingRescues) {
-                throw JRuby.cucumberPending("TODO");
+                throw lang.cucumberPending("TODO");
             } else if(e.getRescue().token == failureRescues) {
-                return throwCucumberIokeException(((Message)IokeObject.data(ioke.reportMessage)).sendTo(ioke.reportMessage, ioke.ground, e.getCondition()).toString());
+                throw lang.error("IokeException", ((Message)IokeObject.data(ioke.reportMessage)).sendTo(ioke.reportMessage, ioke.ground, e.getCondition()).toString());
             } else {
                 throw e;
             }

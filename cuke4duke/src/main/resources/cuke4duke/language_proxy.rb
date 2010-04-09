@@ -15,7 +15,7 @@ module Cuke4Duke
             def_delegators :@delegate, :load_code_file, :step_matches, :begin_scenario, :end_scenario
 
             define_method(:initialize) do |step_mother|
-              @delegate = eval("Java::Cuke4dukeInternal#{lang.capitalize}::#{lang.capitalize}Language").new(self)
+              @delegate = eval("Java::Cuke4dukeInternal#{lang.capitalize}::#{lang.capitalize}Language").new(self, Java::Cuke4dukeSpiJruby::JRubyExceptionFactory.new)
             end
 
             def alias_adverbs(adverbs)

@@ -1,9 +1,10 @@
 package cuke4duke.internal.jvmclass;
 
 import cuke4duke.StepMother;
-import cuke4duke.internal.JRuby;
+import cuke4duke.spi.jruby.JRuby;
 import cuke4duke.internal.language.AbstractProgrammingLanguage;
 import cuke4duke.internal.language.Transformable;
+import cuke4duke.spi.ExceptionFactory;
 import org.jruby.runtime.builtin.IRubyObject;
 
 import java.lang.reflect.Constructor;
@@ -20,12 +21,12 @@ public class ClassLanguage extends AbstractProgrammingLanguage {
     private final List<ClassAnalyzer> analyzers;
     private final Map<Class<?>, Transformable> transformers = new HashMap<Class<?>, Transformable>();
 
-    public ClassLanguage(ClassLanguageMixin languageMixin, StepMother stepMother, List<ClassAnalyzer> analyzers) throws Throwable {
-        this(languageMixin, stepMother, analyzers, createObjectFactory());
+    public ClassLanguage(ClassLanguageMixin languageMixin, ExceptionFactory exceptionFactory, StepMother stepMother, List<ClassAnalyzer> analyzers) throws Throwable {
+        this(languageMixin, exceptionFactory, stepMother, analyzers, createObjectFactory());
     }
 
-    public ClassLanguage(ClassLanguageMixin languageMixin, StepMother stepMother, List<ClassAnalyzer> analyzers, ObjectFactory objectFactory) throws Throwable {
-        super(languageMixin);
+    public ClassLanguage(ClassLanguageMixin languageMixin, ExceptionFactory exceptionFactory, StepMother stepMother, List<ClassAnalyzer> analyzers, ObjectFactory objectFactory) throws Throwable {
+        super(languageMixin, exceptionFactory);
         this.analyzers = analyzers;
         this.objectFactory = objectFactory;
         objectFactory.addStepMother(stepMother);
@@ -106,7 +107,7 @@ public class ClassLanguage extends AbstractProgrammingLanguage {
         if(method.getParameterTypes().length == 1) {
             args = new Object[]{scenario};
         } else if(method.getParameterTypes().length > 1) {
-            throw JRuby.cucumberArityMismatchError("Hooks must take 0 or 1 arguments. " + method);
+            throw cucumberArityMismatchError("Hooks must take 0 or 1 arguments. " + method);
         }
         return invoke(method, args, Locale.getDefault());
     }

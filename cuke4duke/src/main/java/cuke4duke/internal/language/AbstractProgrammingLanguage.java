@@ -1,10 +1,11 @@
 package cuke4duke.internal.language;
 
 import cuke4duke.PyString;
-import cuke4duke.internal.JRuby;
+import cuke4duke.spi.jruby.JRuby;
 import cuke4duke.internal.java.MethodInvoker;
 import cuke4duke.internal.jvmclass.CantTransform;
 import cuke4duke.internal.jvmclass.DefaultJvmTransforms;
+import cuke4duke.spi.ExceptionFactory;
 import org.jruby.RubyArray;
 import org.jruby.runtime.builtin.IRubyObject;
 
@@ -13,12 +14,16 @@ import java.util.*;
 
 public abstract class AbstractProgrammingLanguage implements ProgrammingLanguage {
     protected final LanguageMixin languageMixin;
-    protected final MethodInvoker methodInvoker = new MethodInvoker();
+    protected final MethodInvoker methodInvoker;
+    private final ExceptionFactory exceptionFactory;
     private final Map<Class<?>, Method> transformMethods = new HashMap<Class<?>, Method>();
     private List<StepDefinition> stepDefinitions;
 
-    public AbstractProgrammingLanguage(LanguageMixin languageMixin) {
+    public AbstractProgrammingLanguage(LanguageMixin languageMixin, ExceptionFactory exceptionFactory) {
         this.languageMixin = languageMixin;
+        this.exceptionFactory = exceptionFactory;
+        this.methodInvoker = new MethodInvoker(this.exceptionFactory);
+
         for(Method method : DefaultJvmTransforms.class.getDeclaredMethods()) {
             transformMethods.put(method.getReturnType(), method);
         }
@@ -107,4 +112,16 @@ public abstract class AbstractProgrammingLanguage implements ProgrammingLanguage
     }
 
     protected abstract Object customTransform(Object arg, Class<?> parameterType, Locale locale) throws Throwable;
+
+    public Exception cucumberArityMismatchError(String message) {
+        return exceptionFactory.cucumberArityMismatchError(message);
+    }
+
+    public Exception cucumberPending(String message) {
+        return exceptionFactory.cucumberPending(message);
+    }
+
+    public Exception error(String type, String message) {
+        return exceptionFactory.error(type, message);
+    }
 }

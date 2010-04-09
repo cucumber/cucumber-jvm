@@ -14,7 +14,7 @@ public class ArgumentsConverterTest {
 
     @Before
     public void setup() {
-        p = new AbstractProgrammingLanguage(null) {
+        p = new AbstractProgrammingLanguage(null, null) {
             @Override
             public void load_code_file(String file) throws Throwable {
             }

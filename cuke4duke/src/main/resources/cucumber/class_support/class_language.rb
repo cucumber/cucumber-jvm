@@ -16,7 +16,7 @@ module Cucumber
       end
       
       def initialize(step_mother)
-        @delegate = ::Java::Cuke4dukeInternalJvmclass::ClassLanguage.new(self, step_mother, self.class.analyzers)
+        @delegate = ::Java::Cuke4dukeInternalJvmclass::ClassLanguage.new(self, Java::Cuke4dukeSpiJruby::JRubyExceptionFactory.new, step_mother, self.class.analyzers)
       end
 
       def snippet_text(step_keyword, step_name, multiline_arg_class = nil)

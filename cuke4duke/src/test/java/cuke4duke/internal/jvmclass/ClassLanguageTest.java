@@ -4,6 +4,7 @@ import cuke4duke.StepMother;
 import cuke4duke.annotation.Order;
 import cuke4duke.internal.java.JavaAnalyzer;
 import cuke4duke.internal.java.JavaHook;
+import cuke4duke.spi.ExceptionFactory;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -24,7 +25,7 @@ public class ClassLanguageTest {
 
     @Before
     public void createLanguage() throws Throwable {
-        language = new ClassLanguage(mock(ClassLanguageMixin.class), mock(StepMother.class), Collections.<ClassAnalyzer> emptyList());
+        language = new ClassLanguage(mock(ClassLanguageMixin.class), mock(ExceptionFactory.class), mock(StepMother.class), Collections.<ClassAnalyzer> emptyList());
     }
 
     @Test
@@ -65,7 +66,7 @@ public class ClassLanguageTest {
     public void shouldRunBeforeHooksInOrderOfDependencies() throws Throwable {
         ObjectFactory objectFactory = new PicoFactory();
         ClassLanguageMixin languageMixin = mock(ClassLanguageMixin.class);
-        language = new ClassLanguage(languageMixin, mock(StepMother.class), Collections.<ClassAnalyzer>singletonList(new JavaAnalyzer()), objectFactory);
+        language = new ClassLanguage(languageMixin, mock(ExceptionFactory.class), mock(StepMother.class), Collections.<ClassAnalyzer>singletonList(new JavaAnalyzer()), objectFactory);
         language.addClass(A.class);
         language.addClass(B.class);
 

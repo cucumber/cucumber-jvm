@@ -2,6 +2,7 @@ package cuke4duke.internal.ik;
 
 import cuke4duke.internal.language.AbstractProgrammingLanguage;
 import cuke4duke.internal.language.LanguageMixin;
+import cuke4duke.spi.ExceptionFactory;
 import ioke.lang.IokeObject;
 import ioke.lang.Runtime;
 import ioke.lang.exceptions.ControlFlow;
@@ -15,8 +16,8 @@ public class IkLanguage extends AbstractProgrammingLanguage {
     final IokeObject failedExpectationCondition;
 
 
-    public IkLanguage(LanguageMixin languageMixin) throws Exception, ControlFlow {
-        super(languageMixin);
+    public IkLanguage(LanguageMixin languageMixin, ExceptionFactory exceptionFactory) throws Exception, ControlFlow {
+        super(languageMixin, exceptionFactory);
 
         ioke = new Runtime();
         ioke.init();
@@ -55,4 +56,5 @@ public class IkLanguage extends AbstractProgrammingLanguage {
     protected Object customTransform(Object arg, Class<?> parameterType, Locale locale) {
         return null;
     }
+
 }

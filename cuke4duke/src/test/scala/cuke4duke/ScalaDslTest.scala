@@ -13,7 +13,7 @@ import java.util.{Locale, Map => JMap, List => JList}
 import _root_.scala.collection.mutable.{Map, ListBuffer}
 
 import cuke4duke.internal.language._
-import cuke4duke.internal.JRuby
+import spi.jruby.{JRuby}
 
 class ScalaDslTest extends ScalaDsl with EN with NO {
 
@@ -43,7 +43,7 @@ class ScalaDslTest extends ScalaDsl with EN with NO {
     override def create_step_match(step_definition: StepDefinition, step_name: String, formatted_step_name: String, step_arguments: JList[StepArgument]) = null
     override def add_hook(phase: String, hook: Hook) = {}
     override def clear_hooks() = {}
-  }){
+  }, null){
     override def begin_scenario(scenario: IRubyObject) = {}
     override def end_scenario = {}
     override def load_code_file(file: String) = {}
