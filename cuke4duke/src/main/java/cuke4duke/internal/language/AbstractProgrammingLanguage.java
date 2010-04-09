@@ -6,9 +6,7 @@ import cuke4duke.internal.java.MethodInvoker;
 import cuke4duke.internal.jvmclass.CantTransform;
 import cuke4duke.internal.jvmclass.DefaultJvmTransforms;
 import cuke4duke.spi.ExceptionFactory;
-import cuke4duke.spi.jruby.JRuby;
-import org.jruby.RubyArray;
-import org.jruby.runtime.builtin.IRubyObject;
+import cuke4duke.spi.jruby.StepMatch;
 
 import java.lang.reflect.Method;
 import java.util.*;
@@ -30,14 +28,14 @@ public abstract class AbstractProgrammingLanguage implements ProgrammingLanguage
         }
     }
 
-    final public RubyArray step_matches(String step_name, String formatted_step_name) throws Throwable {
-        return JRuby.newArray(step_match_list(step_name, formatted_step_name));
+    final public List<StepMatch> step_matches(String step_name, String formatted_step_name) throws Throwable {
+        return step_match_list(step_name, formatted_step_name);
     }
 
     public abstract void load_code_file(String file) throws Throwable;
 
-    public final List<IRubyObject> step_match_list(String step_name, String formatted_step_name) throws Throwable {
-        List<IRubyObject> matches = new ArrayList<IRubyObject>();
+    public final List<StepMatch> step_match_list(String step_name, String formatted_step_name) throws Throwable {
+        List<StepMatch> matches = new ArrayList<StepMatch>();
         for (StepDefinition stepDefinition : stepDefinitions) {
             List<StepArgument> arguments = stepDefinition.arguments_from(step_name);
             if (arguments != null) {

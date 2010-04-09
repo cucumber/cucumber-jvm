@@ -16,9 +16,10 @@ require 'cucumber/formatter/unicode'
 # org.jruby.Main uses a different instance than what 
 # org.jruby.Ruby.getGlobalRuntime() returns. It might be considered
 # a JRuby bug.
-Java.cuke4duke.internal.JRuby.setRuntime(JRuby.runtime)
+Java.cuke4duke.spi.jruby.JRuby.setRuntime(JRuby.runtime)
 
 require 'cuke4duke/step_mother_ext'
 require 'cuke4duke/py_string_ext'
 require 'cuke4duke/table_ext'
 require 'cuke4duke/scenario_ext'
+require 'cuke4duke/step_match_ext'
