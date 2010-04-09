@@ -46,8 +46,9 @@ public class GuiceFactory implements ObjectFactory {
     public void disposeObjects() {
     }
 
-    public Object getComponent(Class<?> clazz) {
-        return instances.get(clazz);
+    @SuppressWarnings("unchecked")
+    public <T> T getComponent(Class<T> clazz) {
+        return (T) instances.get(clazz);
     }
 
     public List<Class<?>> getClasses() {

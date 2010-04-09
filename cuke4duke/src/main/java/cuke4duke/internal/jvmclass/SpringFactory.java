@@ -43,10 +43,10 @@ public class SpringFactory implements ObjectFactory {
     }
 
     @SuppressWarnings("unchecked")
-	public Object getComponent(Class<?> type) {
+	public <T> T getComponent(Class<T> type) {
         List beans = new ArrayList(appContext.getBeansOfType(type).values());
         if(beans.size() == 1) {
-            return beans.get(0);
+            return (T) beans.get(0);
         } else {
             throw new RuntimeException("Found " + beans.size() + " Beans for class " + type + ". Expected exactly 1.");
         }
