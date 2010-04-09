@@ -1,6 +1,7 @@
 == In Git
 
 === Changed Features
+* The Scala step definition DSL has moved from cuke4duke.scala.Dsl to cuke4duke.ScalaDsl. (Jon-Anders Teigen)
 * Java step definitions are now Locale-aware. Transformed Java primitives will use the Locale identified by 
   the Annotation's language. For example a step definition annotated with @cuke4duke.annotation.I18n.NO.Gitt
   and a method taking a double, will have the double transformed based on the NO Locale. (Aslak Hellesøy)
