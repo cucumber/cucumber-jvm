@@ -47,7 +47,7 @@ class ScalaDslTest extends ScalaDsl with EN with NO {
     override def begin_scenario(scenario: IRubyObject) = {}
     override def end_scenario = {}
     override def load_code_file(file: String) = {}
-    override def customTransform(arg: Object, parameterType: Class[_], locale: Locale) = {}
+    override def customTransform(arg: Object, parameterType: Class[_], locale: Locale) = null
   }
 
   @JunitBefore
