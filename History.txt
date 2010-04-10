@@ -1,6 +1,7 @@
 == In Git
 
 === Changed Features
+* Both Java and Scala DSLs now use undersocres for Locales. NO, EN, CH_ZN, SR_CYRL and so on. (Aslak Hellesøy)
 * The Scala step definition DSL has moved from cuke4duke.scala.Dsl to cuke4duke.ScalaDsl. (Jon-Anders Teigen)
 * Java step definitions are now Locale-aware. Transformed Java primitives will use the Locale identified by 
   the Annotation's language. For example a step definition annotated with @cuke4duke.annotation.I18n.NO.Gitt

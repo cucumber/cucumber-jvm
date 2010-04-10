@@ -57,8 +57,8 @@ HEADER
   end
 
   scala = ERB.new(IO.read(File.dirname(__FILE__) + '/cuke4duke/src/main/code_generator/I18n.scala.erb'), nil, '-')
-  File.open(File.dirname(__FILE__) + '/cuke4duke/src/main/scala/cuke4duke/scala/I18n.scala', 'wb') do |io|
-    io.write("package cuke4duke.scala\n\n")
+  File.open(File.dirname(__FILE__) + '/cuke4duke/src/main/scala/cuke4duke/I18n.scala', 'wb') do |io|
+    io.write("package cuke4duke\n\n")
     Gherkin::I18n.all.each do |i18n|
       io.write(scala.result(binding))
     end

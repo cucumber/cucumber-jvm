@@ -1,6 +1,6 @@
 package simple;
 
-import cuke4duke.annotation.I18n.ZHCN.*;
+import cuke4duke.annotation.I18n.ZH_CN.*;
 
 public class ChineseCalculatorSteps {
 

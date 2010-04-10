@@ -1,7 +1,6 @@
 package cuke4duke.annotation;
 
 import cuke4duke.internal.java.annotation.StepDef;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -143,7 +142,7 @@ public interface I18n {
         }
 
     }
-    public class CYGB {
+    public class CY_GB {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("cy-GB")
@@ -242,7 +241,7 @@ public interface I18n {
         }
 
     }
-    public class ENSCOUSE {
+    public class EN_SCOUSE {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("en-Scouse")
@@ -286,7 +285,7 @@ public interface I18n {
         }
 
     }
-    public class ENAU {
+    public class EN_AU {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("en-au")
@@ -309,7 +308,7 @@ public interface I18n {
         }
 
     }
-    public class ENLOL {
+    public class EN_LOL {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("en-lol")
@@ -332,7 +331,7 @@ public interface I18n {
         }
 
     }
-    public class ENTX {
+    public class EN_TX {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("en-tx")
@@ -846,7 +845,7 @@ public interface I18n {
         }
 
     }
-    public class RORO {
+    public class RO_RO {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("ro-RO")
@@ -915,7 +914,7 @@ public interface I18n {
         }
 
     }
-    public class SRCYRL {
+    public class SR_CYRL {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("sr-Cyrl")
@@ -959,7 +958,7 @@ public interface I18n {
         }
 
     }
-    public class SRLATN {
+    public class SR_LATN {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("sr-Latn")
@@ -1049,6 +1048,43 @@ public interface I18n {
         }
 
     }
+    public class UK {
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("uk")
+        public static @interface Припустимо {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("uk")
+        public static @interface Припустимощо {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("uk")
+        public static @interface Нехай {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("uk")
+        public static @interface Якщо {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("uk")
+        public static @interface То {
+            public abstract String value();
+        }
+
+    }
     public class UZ {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
@@ -1095,7 +1131,7 @@ public interface I18n {
         }
 
     }
-    public class ZHCN {
+    public class ZH_CN {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("zh-CN")
@@ -1118,7 +1154,7 @@ public interface I18n {
         }
 
     }
-    public class ZHTW {
+    public class ZH_TW {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("zh-TW")
