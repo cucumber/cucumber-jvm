@@ -12,5 +12,6 @@ public interface StepMatch {
     String inspect();
     String format_args(Object format, Object proc);
     String format_args(Object format);
+    String format_args();
     void invoke(Object format);
 }

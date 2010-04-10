@@ -1,18 +1,16 @@
 package cuke4duke
 
 import org.jruby.exceptions.RaiseException
-import org.jruby.RubyArray
 
 import org.junit.{Test, Before => JunitBefore, Assert}
 import Assert._
 
 import java.lang.{Class, String}
-import java.util.{Locale, Map => JMap, List => JList}
-
 import _root_.scala.collection.mutable.{Map, ListBuffer}
 
 import cuke4duke.internal.language._
 import spi.jruby.{JRuby}
+import java.util.{ArrayList, Locale, Map => JMap, List => JList}
 
 class ScalaDslTest extends ScalaDsl with EN with NO {
 
@@ -23,7 +21,7 @@ class ScalaDslTest extends ScalaDsl with EN with NO {
   def rubyClassName(raise:RaiseException) = raise.getException.getType.getName
 
   def ra(args:AnyRef*) = {
-    val r = RubyArray.newArray(JRuby.getRuntime)
+    val r = new ArrayList[Object]
     args.foreach(r.add(_))
     r
   }

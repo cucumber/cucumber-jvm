@@ -1,7 +1,6 @@
 package cuke4duke.internal.scala
 
 import _root_.java.util.regex.Pattern
-import org.jruby.RubyArray
 import cuke4duke.internal.language.{AbstractProgrammingLanguage, JdkPatternArgumentMatcher, StepDefinition}
 
 class ScalaStepDefinition(name:String, val regexp_source: String, f:List[Any] => Any, signature:String, programmingLanguage:AbstractProgrammingLanguage) extends StepDefinition {
@@ -14,8 +13,8 @@ class ScalaStepDefinition(name:String, val regexp_source: String, f:List[Any] =>
 
   def arguments_from(step_name:String) = JdkPatternArgumentMatcher.argumentsFrom(pattern, step_name)
 
-  def invoke(ra: RubyArray) {
-    f(ra.toArray.toList)
+  def invoke(arguments: _root_.java.util.List[Object]) {
+    f(arguments.toArray.toList)
     programmingLanguage.invoked(regexp_source, file_colon_line)
   }
 }

@@ -1,7 +1,5 @@
 package cuke4duke.internal.language;
 
-import org.jruby.RubyArray;
-
 import java.util.List;
 
 public interface StepDefinition {
@@ -17,5 +15,5 @@ public interface StepDefinition {
      * @throws Throwable when anything inside blows up
      */
     List<StepArgument> arguments_from(String stepName) throws Throwable;
-    void invoke(RubyArray rubyArgs) throws Throwable;
+    void invoke(List<Object> arguments) throws Throwable;
 }

@@ -1,7 +1,6 @@
 package cuke4duke.internal.language;
 
-import org.jruby.RubyArray;
-
+import java.util.List;
 
 public abstract class AbstractStepDefinition implements StepDefinition {
     private final AbstractProgrammingLanguage programmingLanguage;
@@ -14,9 +13,9 @@ public abstract class AbstractStepDefinition implements StepDefinition {
         programmingLanguage.availableStepDefinition(regexp_source(), file_colon_line());
     }
 
-    public final void invoke(RubyArray rubyArgs) throws Throwable {
+    public final void invoke(List arguments) throws Throwable {
         programmingLanguage.invoked(regexp_source(), file_colon_line());
-        invokeWithArgs(rubyArgs.toArray());
+        invokeWithArgs(arguments.toArray());
     }
 
     public abstract Object invokeWithArgs(Object[] args) throws Throwable;
