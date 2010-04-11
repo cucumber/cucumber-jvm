@@ -31,10 +31,6 @@ task :i18n_generate do
   require 'gherkin/i18n'
   require 'erb'
 
-  def classify(language)
-    language.sanitized_key.upcase
-  end
-
   java = ERB.new(IO.read(File.dirname(__FILE__) + '/cuke4duke/src/main/code_generator/I18n.java.erb'), nil, '-')
   File.open(File.dirname(__FILE__) + '/cuke4duke/src/main/java/cuke4duke/annotation/I18n.java', 'wb') do |io|
     io.write(<<-HEADER)

@@ -1,5 +1,5 @@
-trait <%= classify(i18n) %> { this: ScalaDsl =>
-<% i18n.gwt_keywords.reject{|kw| kw =~ /\*/ }.each do |kw| -%>
-  val <%= kw.strip.gsub(/[\s']/, "") %> = new Step("<%= kw.strip.gsub(/[\s']/, "") %>")
+trait <%= i18n.sanitized_key.upcase %> { this: ScalaDsl =>
+<% i18n.code_keywords.each do |kw| -%>
+  val <%= kw %> = new Step("<%= kw %>")
 <% end -%>
 }
