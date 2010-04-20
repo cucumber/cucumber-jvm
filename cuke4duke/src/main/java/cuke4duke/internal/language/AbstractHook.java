@@ -1,13 +1,15 @@
 package cuke4duke.internal.language;
 
-public abstract class AbstractHook implements Hook  {
-    private final String[] tagExpressions;
+import java.util.List;
 
-    public AbstractHook(String[] tagExpressions) {
+public abstract class AbstractHook implements Hook  {
+    private final List<String> tagExpressions;
+
+    public AbstractHook(List<String> tagExpressions) {
         this.tagExpressions = tagExpressions;
     }
 
-    public final String[] tag_expressions() {
+    public final List<String> getTagExpressions() {
         return tagExpressions;
     }
 }

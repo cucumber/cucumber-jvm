@@ -27,7 +27,7 @@ trait CS { this: ScalaDsl =>
   val Pak = new Step("Pak")
 }
 trait CY_GB { this: ScalaDsl =>
-  val anrhegediga = new Step("anrhegediga")
+  val Anrhegediga = new Step("Anrhegediga")
   val Pryd = new Step("Pryd")
   val Yna = new Step("Yna")
 }
@@ -69,6 +69,11 @@ trait EN_TX { this: ScalaDsl =>
   val Givenyall = new Step("Givenyall")
   val Whenyall = new Step("Whenyall")
   val Thenyall = new Step("Thenyall")
+}
+trait EO { this: ScalaDsl =>
+  val Donitaĵo = new Step("Donitaĵo")
+  val Se = new Step("Se")
+  val Do = new Step("Do")
 }
 trait ES { this: ScalaDsl =>
   val Dado = new Step("Dado")

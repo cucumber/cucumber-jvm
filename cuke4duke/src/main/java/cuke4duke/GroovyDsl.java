@@ -6,6 +6,7 @@ import cuke4duke.internal.groovy.GroovyStepDefinition;
 import cuke4duke.internal.language.LanguageMixin;
 import groovy.lang.Closure;
 
+import java.util.Arrays;
 import java.util.regex.Pattern;
 
 /**
@@ -32,7 +33,7 @@ public class GroovyDsl {
         String[] tagNames = new String[tagsAndBody.length-1];
         System.arraycopy(tagsAndBody, 0, tagNames, 0, tagNames.length);
         Closure body = (Closure) tagsAndBody[tagsAndBody.length-1];
-        languageMixin.add_hook(phase, new GroovyHook(tagNames, body, groovyLanguage));
+        languageMixin.add_hook(phase, new GroovyHook(Arrays.asList(tagNames), body, groovyLanguage));
     }
 
     public static void Given(Pattern regexp, Closure body) throws Throwable {

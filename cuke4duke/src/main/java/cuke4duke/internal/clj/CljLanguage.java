@@ -8,6 +8,7 @@ import cuke4duke.internal.language.AbstractProgrammingLanguage;
 import cuke4duke.internal.language.LanguageMixin;
 import cuke4duke.spi.ExceptionFactory;
 
+import java.util.Collections;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
@@ -26,12 +27,12 @@ public class CljLanguage extends AbstractProgrammingLanguage {
     }
 
     public static void addCljBeforeHook(AFunction closure) {
-        instance.addBeforeHook(new CljHook(new String[0], closure));
+        instance.addBeforeHook(new CljHook(Collections.<String>emptyList(), closure));
     }
 
 
     public static void addCljAfterHook(AFunction closure) {
-        instance.addAfterHook(new CljHook(new String[0], closure));
+        instance.addAfterHook(new CljHook(Collections.<String>emptyList(), closure));
     }
 
     public void load_code_file(String cljFile) throws Throwable {

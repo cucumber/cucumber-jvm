@@ -1,5 +1,6 @@
 package cuke4duke
 
+import _root_.java.util.ArrayList
 import _root_.scala.collection.mutable.ListBuffer
 import _root_.scala.reflect.Manifest
 import cuke4duke.internal.scala._
@@ -17,22 +18,30 @@ trait ScalaDsl {
   /*
    * Adds a Hook to be run before every scenario
    */
-  def Before(f: => Unit) = beforeHooks += new ScalaHook(Array(), f _)
+  def Before(f: => Unit) = beforeHooks += new ScalaHook(new ArrayList[String], f _)
 
   /*
    * Adds a Hook to be run before every scenario tagged with one of the given tags
    */
-  def Before(tags: String*)(f: => Unit) = beforeHooks += new ScalaHook(tags.toArray, f _)
+  def Before(tags: String*)(f: => Unit) {
+    val tagList = new ArrayList[String]
+    tags.foreach(tag => tagList.add(tag))
+    beforeHooks += new ScalaHook(tagList, f _)
+  }
 
   /*
    * Adds a Hook to be run before every scenario
    */
-  def After(f: => Unit) = afterHooks += new ScalaHook(Array(), f _)
+  def After(f: => Unit) = afterHooks += new ScalaHook(new ArrayList[String], f _)
 
   /*
    * Adds a Hook to be run before every scenario tagged with one of the given tags
    */
-  def After(tags: String*)(f: => Unit) = afterHooks += new ScalaHook(tags.toArray, f _)
+  def After(tags: String*)(f: => Unit) {
+    val tagList = new ArrayList[String]
+    tags.foreach(tag => tagList.add(tag))
+    afterHooks += new ScalaHook(tagList, f _)
+  }
 
   /*
    * Marks the given feature as pending with the given message

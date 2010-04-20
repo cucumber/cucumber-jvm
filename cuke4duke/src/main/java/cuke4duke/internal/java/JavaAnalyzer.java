@@ -62,13 +62,13 @@ public class JavaAnalyzer implements ClassAnalyzer {
 
     private void registerBeforeMaybe(Method method, ClassLanguage classLanguage) {
         if (method.isAnnotationPresent(Before.class)) {
-            classLanguage.addBeforeHook(new JavaHook(classLanguage, method, method.getAnnotation(Before.class).value()));
+            classLanguage.addBeforeHook(new JavaHook(classLanguage, method, Arrays.asList(method.getAnnotation(Before.class).value())));
         }
     }
 
     private void registerAfterMaybe(Method method, ClassLanguage classLanguage) {
         if (method.isAnnotationPresent(After.class)) {
-            classLanguage.addAfterHook(new JavaHook(classLanguage, method, method.getAnnotation(After.class).value()));
+            classLanguage.addAfterHook(new JavaHook(classLanguage, method, Arrays.asList(method.getAnnotation(After.class).value())));
         }
     }
 

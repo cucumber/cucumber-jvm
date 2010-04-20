@@ -5,12 +5,13 @@ import cuke4duke.internal.jvmclass.ClassLanguage;
 import cuke4duke.internal.language.AbstractHook;
 
 import java.lang.reflect.Method;
+import java.util.List;
 
 public class JavaHook extends AbstractHook {
     private final ClassLanguage classLanguage;
     private final Method method;
 
-    public JavaHook(ClassLanguage classLanguage, Method method, String[] tagExpressions) {
+    public JavaHook(ClassLanguage classLanguage, Method method, List<String> tagExpressions) {
         super(tagExpressions);
         this.classLanguage = classLanguage;
 

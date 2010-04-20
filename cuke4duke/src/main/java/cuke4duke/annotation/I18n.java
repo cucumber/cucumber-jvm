@@ -146,7 +146,7 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("cy-GB")
-        public static @interface anrhegediga {
+        public static @interface Anrhegediga {
             public abstract String value();
         }
 
@@ -350,6 +350,29 @@ public interface I18n {
         @Target(ElementType.METHOD)
         @StepDef("en-tx")
         public static @interface Thenyall {
+            public abstract String value();
+        }
+
+    }
+    public class EO {
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("eo")
+        public static @interface Donitaĵo {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("eo")
+        public static @interface Se {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("eo")
+        public static @interface Do {
             public abstract String value();
         }
 

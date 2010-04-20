@@ -4,8 +4,10 @@ import cuke4duke.internal.language.AbstractHook
 import cuke4duke.Scenario
 
 import _root_.java.lang.{Throwable, String}
+import _root_.java.util.{List => JList}
 
-class ScalaHook(tagNames:Array[String], f:() => Unit) extends AbstractHook(tagNames) {
+
+class ScalaHook(tagNames:JList[String], f:() => Unit) extends AbstractHook(tagNames) {
 
   @throws(classOf[Throwable])
   def invoke(location: String, scenario: Scenario){
