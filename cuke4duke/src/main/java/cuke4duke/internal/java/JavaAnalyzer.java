@@ -17,6 +17,7 @@ import java.util.regex.Pattern;
 
 public class JavaAnalyzer implements ClassAnalyzer {
     private final MethodFormat methodFormat;
+    private static final String[] NO_TAGS = new String[0];
 
     public JavaAnalyzer() {
         this.methodFormat = new MethodFormat(System.getProperty("cuke4duke.methodFormat", "%c.%m(%a)"));
@@ -62,13 +63,21 @@ public class JavaAnalyzer implements ClassAnalyzer {
 
     private void registerBeforeMaybe(Method method, ClassLanguage classLanguage) {
         if (method.isAnnotationPresent(Before.class)) {
-            classLanguage.addBeforeHook(new JavaHook(classLanguage, method, Arrays.asList(method.getAnnotation(Before.class).value())));
+            String[] tagExpressions = method.getAnnotation(Before.class).value();
+            if("".equals(tagExpressions[0])) {
+                tagExpressions = NO_TAGS;
+            }
+            classLanguage.addBeforeHook(new JavaHook(classLanguage, method, Arrays.asList(tagExpressions)));
         }
     }
 
     private void registerAfterMaybe(Method method, ClassLanguage classLanguage) {
         if (method.isAnnotationPresent(After.class)) {
-            classLanguage.addAfterHook(new JavaHook(classLanguage, method, Arrays.asList(method.getAnnotation(After.class).value())));
+            String[] tagExpressions = method.getAnnotation(After.class).value();
+            if("".equals(tagExpressions[0])) {
+                tagExpressions = NO_TAGS;
+            }
+            classLanguage.addAfterHook(new JavaHook(classLanguage, method, Arrays.asList(tagExpressions)));
         }
     }
 
