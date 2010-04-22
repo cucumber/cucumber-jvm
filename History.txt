@@ -1,7 +1,7 @@
 == 0.3.0.beta.1
 
 === New Features
-* Much, much faster feature parsing, thanks to dependency on Cucumber 0.7.0: http://bit.ly/c0NuEK (Aslak Hellesøy)
+* Much, much faster feature parsing, thanks to dependency on Cucumber 0.7.0: http://bit.ly/c0NuEK. (Aslak Hellesøy)
 
 === Changed Features
 * Both Java and Scala DSLs now use undersocres for Locales. NO, EN, CH_ZN, SR_CYRL and so on. (Aslak Hellesøy)
