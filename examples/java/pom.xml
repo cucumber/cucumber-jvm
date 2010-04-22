@@ -114,6 +114,8 @@
             <cucumberArg>target/usage.txt</cucumberArg>
             <cucumberArg>--require</cucumberArg>
             <cucumberArg>${basedir}/target/test-classes</cucumberArg>
+            <cucumberArg>--require</cucumberArg>
+            <cucumberArg>${basedir}/src/test/ruby</cucumberArg>
             <cucumberArg>features/transform.feature:22</cucumberArg>
           </cucumberArgs>
           <gems>

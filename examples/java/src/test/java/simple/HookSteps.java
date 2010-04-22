@@ -5,6 +5,7 @@ import cuke4duke.annotation.Before;
 import cuke4duke.annotation.I18n.EN.*;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class HookSteps extends SuperSteps {
     private String b4WithoutArgs;
@@ -51,5 +52,12 @@ public class HookSteps extends SuperSteps {
         myStatic = "clean";
         assertEquals("b4WithoutArgs was here", b4WithoutArgs);
         assertEquals(1, beforeHookCount);
+    }
+
+    public static boolean flag = false;
+
+    @After("@b4")
+    public void checkThatRubyBeforeSetsFlag() {
+        assertTrue(flag);
     }
 }
