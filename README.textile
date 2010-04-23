@@ -2,3 +2,16 @@ h1. Cuke4Duke
 
 Cuke4Duke is an addon to Cucumber, making it possible to write step definitions in several different JVM languages.
 
+h2. Release process
+
+Before release:
+
+* Update version in all pom.xml files, and cuke4duke/VERSION
+* Update Cucumber dependency in cuke4duke/Rakefile
+* pushd cuke4duke && rake install_gems && popd
+* rake i18n_generate
+* mvn -P examples clean install -Dcuke4duke.bin=cuke4duke/bin/cuke4duke
+
+If all ok:
+
+* rake release

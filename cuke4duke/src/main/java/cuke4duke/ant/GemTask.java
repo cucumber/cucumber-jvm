@@ -20,7 +20,11 @@ public class GemTask extends JRubyTask {
         createArg().setValue("--no-ri");
         createArg().setValue("--no-rdoc");
 
-        super.execute();
+        try {
+            super.execute();
+        } catch(Exception e) {
+            throw new BuildException("Failed to run gem with arguments: " + args, e);
+        }
     }
 
     public void setArgs(String args) {
