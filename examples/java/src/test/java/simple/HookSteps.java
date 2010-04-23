@@ -56,7 +56,7 @@ public class HookSteps extends SuperSteps {
 
     public static boolean flag = false;
 
-    @After("@b4")
+    @After("@b4,@nowhere")
     public void checkThatRubyBeforeSetsFlag() {
         assertTrue(flag);
     }
