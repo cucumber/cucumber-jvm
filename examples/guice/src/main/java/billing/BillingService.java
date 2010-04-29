@@ -1,7 +1,6 @@
 package billing;
 
 import billing.CreateTransactionResponse.Status;
-
 import com.google.inject.Inject;
 
 /**

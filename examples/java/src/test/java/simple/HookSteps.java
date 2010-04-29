@@ -2,7 +2,8 @@ package simple;
 
 import cuke4duke.annotation.After;
 import cuke4duke.annotation.Before;
-import cuke4duke.annotation.I18n.EN.*;
+import cuke4duke.annotation.I18n.EN.Then;
+import cuke4duke.annotation.I18n.EN.When;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

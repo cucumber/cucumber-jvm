@@ -31,7 +31,7 @@ public class JavaStepDefinition extends AbstractStepDefinition {
     public String regexp_source() {
         return regexp.pattern();
     }
-    
+
     public List<StepArgument> arguments_from(String stepName) throws UnsupportedEncodingException {
         return JdkPatternArgumentMatcher.argumentsFrom(regexp, stepName);
     }

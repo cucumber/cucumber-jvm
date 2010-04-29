@@ -80,8 +80,8 @@ public class CucumberMojo extends AbstractJRubyMojo {
     public CucumberTask cucumber(String args) throws MojoExecutionException {
         CucumberTask cucumber = new CucumberTask();
         cucumber.setProject(getProject());
-        for(String jvmArg : getJvmArgs()) {
-            if(jvmArg != null) {
+        for (String jvmArg : getJvmArgs()) {
+            if (jvmArg != null) {
                 Commandline.Argument arg = cucumber.createJvmarg();
                 arg.setValue(jvmArg);
             }

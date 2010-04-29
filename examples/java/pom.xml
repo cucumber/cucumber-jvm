@@ -90,15 +90,15 @@
         <configuration>
           <jvmArgs>
             <!-- Debugging. See http://wiki.github.com/aslakhellesoy/cuke4duke/debug-cuke4duke-steps -->
-            <!--jvmArg>-Xdebug</jvmArg>
-            <jvmArg>-Xnoagent</jvmArg>
-            <jvmArg>-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=4000</jvmArg>
-            <jvmArg>-Xmx384m</jvmArg-->
-            <jvmArg>-Dcuke4duke.objectFactory=cuke4duke.internal.jvmclass.PicoFactory</jvmArg>
+              <!--jvmArg>-Xdebug</jvmArg>
+              <jvmArg>-Xnoagent</jvmArg>
+              <jvmArg>-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=4000</jvmArg>
+              <jvmArg>-Xmx384m</jvmArg-->
+              <jvmArg>-Dcuke4duke.objectFactory=cuke4duke.internal.jvmclass.PicoFactory</jvmArg>
             <jvmArg>-Dfile.encoding=UTF-8</jvmArg>
           </jvmArgs>
-          <!-- You may not need all of these arguments in your own project. We have a lot here for testing purposes... -->
-          <cucumberArgs>
+            <!-- You may not need all of these arguments in your own project. We have a lot here for testing purposes... -->
+            <cucumberArgs>
             <cucumberArg>--backtrace</cucumberArg>
             <cucumberArg>--color</cucumberArg>
             <cucumberArg>--verbose</cucumberArg>

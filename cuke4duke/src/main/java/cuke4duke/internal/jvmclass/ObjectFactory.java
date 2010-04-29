@@ -6,9 +6,14 @@ import java.util.List;
 
 public interface ObjectFactory {
     void createObjects();
+
     void disposeObjects();
+
     void addClass(Class<?> clazz);
+
     void addStepMother(StepMother mother);
+
     <T> T getComponent(Class<T> type);
+
     List<Class<?>> getClasses();
 }

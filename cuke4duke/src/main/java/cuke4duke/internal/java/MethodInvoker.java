@@ -15,7 +15,7 @@ public class MethodInvoker {
 
     public Object invoke(Method method, Object target, Object[] javaArgs) throws Throwable {
         try {
-            if(method.isAnnotationPresent(Pending.class)) {
+            if (method.isAnnotationPresent(Pending.class)) {
                 throw exceptionFactory.cucumberPending(method.getAnnotation(Pending.class).value());
             } else {
                 return method.invoke(target, javaArgs);

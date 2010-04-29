@@ -9,9 +9,9 @@ import java.util.regex.Pattern;
 public class JdkPatternArgumentMatcher {
     public static List<StepArgument> argumentsFrom(Pattern regexp, String stepName) throws UnsupportedEncodingException {
         Matcher matcher = regexp.matcher(stepName);
-        if(matcher.matches()) {
+        if (matcher.matches()) {
             List<StepArgument> arguments = new ArrayList<StepArgument>();
-            for(int i = 1; i <= matcher.groupCount(); i++) {
+            for (int i = 1; i <= matcher.groupCount(); i++) {
                 arguments.add(new StepArgument(matcher.group(i), matcher.start(i), stepName));
             }
             return arguments;

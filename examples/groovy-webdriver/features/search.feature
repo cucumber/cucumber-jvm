@@ -7,6 +7,6 @@ Feature: Search
     Given I am on the Google search page
     When I search for "cucumber github"
     Then I should see
-      """
-      <em>Cucumber</em> itself is written in Ruby
-      """
+    """
+    <em>Cucumber</em> itself is written in Ruby
+    """

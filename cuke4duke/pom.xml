@@ -19,8 +19,8 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <!--<scala.version>2.8.0.Beta1</scala.version>-->
-    <scala.version>2.7.7</scala.version>
+      <!--<scala.version>2.8.0.Beta1</scala.version>-->
+      <scala.version>2.7.7</scala.version>
   </properties>
 
   <reporting>
@@ -152,7 +152,7 @@
             <phase>package</phase>
             <configuration>
               <tasks>
-                <copy file="${project.build.directory}/${project.build.finalName}.jar" tofile="lib/cuke4duke.jar" />
+                <copy file="${project.build.directory}/${project.build.finalName}.jar" tofile="lib/cuke4duke.jar"/>
               </tasks>
             </configuration>
             <goals>

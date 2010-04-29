@@ -18,7 +18,7 @@ public class JRuby {
     }
 
     public static Ruby getRuntime() {
-        if(runtime == null) {
+        if (runtime == null) {
             runtime = Ruby.getGlobalRuntime();
         }
         return runtime;

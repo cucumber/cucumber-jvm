@@ -47,13 +47,14 @@
         <module>examples/java</module>
         <module>examples/groovy</module>
         <module>examples/scala</module>
-        <module>examples/javascript</module>
         <module>examples/java-webdriver</module>
         <module>examples/groovy-webdriver</module>
         <module>examples/clojure</module>
         <module>examples/ioke</module>
         <module>examples/spring</module>
         <module>examples/guice</module>
+        <!-- Broken now because of new v8 support in Cucumber -->
+        <module>examples/javascript</module>
       </modules>
     </profile>
   </profiles>

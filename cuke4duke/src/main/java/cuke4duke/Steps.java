@@ -11,7 +11,7 @@ public class Steps {
      * See {@link cuke4duke.StepMother#ask(String, int)}.
      */
     protected String ask(String question, int timeoutSecs) {
-        return stepMother.ask(question, timeoutSecs);        
+        return stepMother.ask(question, timeoutSecs);
     }
 
     /**
@@ -25,7 +25,7 @@ public class Steps {
      * See {@link cuke4duke.StepMother#embed(String, String)}.
      */
     protected void embed(String file, String mimeType) {
-        stepMother.embed(file, mimeType);        
+        stepMother.embed(file, mimeType);
     }
 
     public void Given(String step) {

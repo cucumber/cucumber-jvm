@@ -16,9 +16,9 @@ Gem::Specification.new do |s|
   s.email = %q{cukes@googlegroups.com}
   s.executables = ["cuke4duke"]
   s.files = [
-    "VERSION",
-     "bin/cuke4duke",
-     "lib/cuke4duke.jar"
+          "VERSION",
+          "bin/cuke4duke",
+          "lib/cuke4duke.jar"
   ]
   s.homepage = %q{http://cukes.info}
   s.rdoc_options = ["--charset=UTF-8"]

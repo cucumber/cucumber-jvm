@@ -37,7 +37,7 @@ public class GroovyLanguage extends AbstractProgrammingLanguage {
         clearHooksAndStepDefinitions();
         worldFactory = null;
         GroovyShell shell = new GroovyShell(new Binding());
-        for(String groovyFile : groovyFiles) {
+        for (String groovyFile : groovyFiles) {
             shell.evaluate(new File(groovyFile));
         }
         currentWorld = worldFactory == null ? new Object() : worldFactory.call();
@@ -56,7 +56,7 @@ public class GroovyLanguage extends AbstractProgrammingLanguage {
     }
 
     public void registerWorldFactory(Closure worldFactory) {
-        if(this.worldFactory != null) {
+        if (this.worldFactory != null) {
             throw new RuntimeException("You can only define one World closure");
         }
         this.worldFactory = worldFactory;

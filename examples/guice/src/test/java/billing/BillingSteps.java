@@ -1,12 +1,13 @@
 package billing;
 
-import static org.junit.Assert.assertTrue;
+import com.google.inject.Inject;
+import cuke4duke.annotation.I18n.EN.Given;
+import cuke4duke.annotation.I18n.EN.Then;
+import cuke4duke.annotation.I18n.EN.When;
 
 import java.math.BigDecimal;
 
-import com.google.inject.Inject;
-
-import cuke4duke.annotation.I18n.EN.*;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Henning Jensen
@@ -22,9 +23,9 @@ public class BillingSteps {
 
     @Given("^I have a transaction$")
     public void iHaveATransaction() {
-		if(transaction != null) {
-			throw new RuntimeException("Wait what? The instance is shared across scenarios?");
-		}
+        if (transaction != null) {
+            throw new RuntimeException("Wait what? The instance is shared across scenarios?");
+        }
         transaction = new Transaction("12345678", new BigDecimal("50.00"));
     }
 

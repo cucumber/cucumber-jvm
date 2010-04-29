@@ -1,6 +1,7 @@
 package cuke4duke
 
-trait AR { this: ScalaDsl =>
+trait AR {
+  this: ScalaDsl =>
   val بفرض = new Step("بفرض")
   val متى = new Step("متى")
   val عندما = new Step("عندما")
@@ -9,14 +10,16 @@ trait AR { this: ScalaDsl =>
   val و = new Step("و")
   val لكن = new Step("لكن")
 }
-trait BG { this: ScalaDsl =>
+trait BG {
+  this: ScalaDsl =>
   val Дадено = new Step("Дадено")
   val Когато = new Step("Когато")
   val То = new Step("То")
   val И = new Step("И")
   val Но = new Step("Но")
 }
-trait CA { this: ScalaDsl =>
+trait CA {
+  this: ScalaDsl =>
   val Donat = new Step("Donat")
   val Donada = new Step("Donada")
   val Atès = new Step("Atès")
@@ -27,7 +30,8 @@ trait CA { this: ScalaDsl =>
   val I = new Step("I")
   val Però = new Step("Però")
 }
-trait CS { this: ScalaDsl =>
+trait CS {
+  this: ScalaDsl =>
   val Pokud = new Step("Pokud")
   val Když = new Step("Když")
   val Pak = new Step("Pak")
@@ -35,21 +39,24 @@ trait CS { this: ScalaDsl =>
   val Ataké = new Step("Ataké")
   val Ale = new Step("Ale")
 }
-trait CY_GB { this: ScalaDsl =>
+trait CY_GB {
+  this: ScalaDsl =>
   val Anrhegediga = new Step("Anrhegediga")
   val Pryd = new Step("Pryd")
   val Yna = new Step("Yna")
   val A = new Step("A")
   val Ond = new Step("Ond")
 }
-trait DA { this: ScalaDsl =>
+trait DA {
+  this: ScalaDsl =>
   val Givet = new Step("Givet")
   val Når = new Step("Når")
   val Så = new Step("Så")
   val Og = new Step("Og")
   val Men = new Step("Men")
 }
-trait DE { this: ScalaDsl =>
+trait DE {
+  this: ScalaDsl =>
   val Angenommen = new Step("Angenommen")
   val Gegebensei = new Step("Gegebensei")
   val Wenn = new Step("Wenn")
@@ -57,14 +64,16 @@ trait DE { this: ScalaDsl =>
   val Und = new Step("Und")
   val Aber = new Step("Aber")
 }
-trait EN { this: ScalaDsl =>
+trait EN {
+  this: ScalaDsl =>
   val Given = new Step("Given")
   val When = new Step("When")
   val Then = new Step("Then")
   val And = new Step("And")
   val But = new Step("But")
 }
-trait EN_SCOUSE { this: ScalaDsl =>
+trait EN_SCOUSE {
+  this: ScalaDsl =>
   val Givun = new Step("Givun")
   val Youseknowwhenyousegot = new Step("Youseknowwhenyousegot")
   val Wun = new Step("Wun")
@@ -74,56 +83,64 @@ trait EN_SCOUSE { this: ScalaDsl =>
   val An = new Step("An")
   val Buh = new Step("Buh")
 }
-trait EN_AU { this: ScalaDsl =>
+trait EN_AU {
+  this: ScalaDsl =>
   val Yaknowhow = new Step("Yaknowhow")
   val When = new Step("When")
   val Yagotta = new Step("Yagotta")
   val N = new Step("N")
   val Cept = new Step("Cept")
 }
-trait EN_LOL { this: ScalaDsl =>
+trait EN_LOL {
+  this: ScalaDsl =>
   val ICANHAZ = new Step("ICANHAZ")
   val WEN = new Step("WEN")
   val DEN = new Step("DEN")
   val AN = new Step("AN")
   val BUT = new Step("BUT")
 }
-trait EN_TX { this: ScalaDsl =>
+trait EN_TX {
+  this: ScalaDsl =>
   val Givenyall = new Step("Givenyall")
   val Whenyall = new Step("Whenyall")
   val Thenyall = new Step("Thenyall")
   val Andyall = new Step("Andyall")
   val Butyall = new Step("Butyall")
 }
-trait EO { this: ScalaDsl =>
+trait EO {
+  this: ScalaDsl =>
   val Donitaĵo = new Step("Donitaĵo")
   val Se = new Step("Se")
   val Do = new Step("Do")
   val Kaj = new Step("Kaj")
   val Sed = new Step("Sed")
 }
-trait ES { this: ScalaDsl =>
+trait ES {
+  this: ScalaDsl =>
   val Dado = new Step("Dado")
   val Cuando = new Step("Cuando")
   val Entonces = new Step("Entonces")
   val Y = new Step("Y")
   val Pero = new Step("Pero")
 }
-trait ET { this: ScalaDsl =>
+trait ET {
+  this: ScalaDsl =>
   val Eeldades = new Step("Eeldades")
   val Kui = new Step("Kui")
   val Siis = new Step("Siis")
   val Ja = new Step("Ja")
   val Kuid = new Step("Kuid")
 }
-trait FI { this: ScalaDsl =>
+trait FI {
+  this: ScalaDsl =>
   val Oletetaan = new Step("Oletetaan")
   val Kun = new Step("Kun")
   val Niin = new Step("Niin")
   val Ja = new Step("Ja")
   val Mutta = new Step("Mutta")
 }
-trait FR { this: ScalaDsl =>
+trait FR {
+  this: ScalaDsl =>
   val Soit = new Step("Soit")
   val Etantdonné = new Step("Etantdonné")
   val Quand = new Step("Quand")
@@ -133,7 +150,8 @@ trait FR { this: ScalaDsl =>
   val Et = new Step("Et")
   val Mais = new Step("Mais")
 }
-trait HE { this: ScalaDsl =>
+trait HE {
+  this: ScalaDsl =>
   val בהינתן = new Step("בהינתן")
   val כאשר = new Step("כאשר")
   val אז = new Step("אז")
@@ -141,7 +159,8 @@ trait HE { this: ScalaDsl =>
   val וגם = new Step("וגם")
   val אבל = new Step("אבל")
 }
-trait HR { this: ScalaDsl =>
+trait HR {
+  this: ScalaDsl =>
   val Zadan = new Step("Zadan")
   val Zadani = new Step("Zadani")
   val Zadano = new Step("Zadano")
@@ -151,28 +170,32 @@ trait HR { this: ScalaDsl =>
   val I = new Step("I")
   val Ali = new Step("Ali")
 }
-trait HU { this: ScalaDsl =>
+trait HU {
+  this: ScalaDsl =>
   val Ha = new Step("Ha")
   val Majd = new Step("Majd")
   val Akkor = new Step("Akkor")
   val És = new Step("És")
   val De = new Step("De")
 }
-trait ID { this: ScalaDsl =>
+trait ID {
+  this: ScalaDsl =>
   val Dengan = new Step("Dengan")
   val Ketika = new Step("Ketika")
   val Maka = new Step("Maka")
   val Dan = new Step("Dan")
   val Tapi = new Step("Tapi")
 }
-trait IT { this: ScalaDsl =>
+trait IT {
+  this: ScalaDsl =>
   val Dato = new Step("Dato")
   val Quando = new Step("Quando")
   val Allora = new Step("Allora")
   val E = new Step("E")
   val Ma = new Step("Ma")
 }
-trait JA { this: ScalaDsl =>
+trait JA {
+  this: ScalaDsl =>
   val 前提 = new Step("前提")
   val もし = new Step("もし")
   val ならば = new Step("ならば")
@@ -181,7 +204,8 @@ trait JA { this: ScalaDsl =>
   val 但し = new Step("但し")
   val ただし = new Step("ただし")
 }
-trait KO { this: ScalaDsl =>
+trait KO {
+  this: ScalaDsl =>
   val 조건 = new Step("조건")
   val 먼저 = new Step("먼저")
   val 만일 = new Step("만일")
@@ -191,21 +215,24 @@ trait KO { this: ScalaDsl =>
   val 하지만 = new Step("하지만")
   val 단 = new Step("단")
 }
-trait LT { this: ScalaDsl =>
+trait LT {
+  this: ScalaDsl =>
   val Duota = new Step("Duota")
   val Kai = new Step("Kai")
   val Tada = new Step("Tada")
   val Ir = new Step("Ir")
   val Bet = new Step("Bet")
 }
-trait LV { this: ScalaDsl =>
+trait LV {
+  this: ScalaDsl =>
   val Kad = new Step("Kad")
   val Ja = new Step("Ja")
   val Tad = new Step("Tad")
   val Un = new Step("Un")
   val Bet = new Step("Bet")
 }
-trait NL { this: ScalaDsl =>
+trait NL {
+  this: ScalaDsl =>
   val Gegeven = new Step("Gegeven")
   val Stel = new Step("Stel")
   val Als = new Step("Als")
@@ -213,21 +240,24 @@ trait NL { this: ScalaDsl =>
   val En = new Step("En")
   val Maar = new Step("Maar")
 }
-trait NO { this: ScalaDsl =>
+trait NO {
+  this: ScalaDsl =>
   val Gitt = new Step("Gitt")
   val Når = new Step("Når")
   val Så = new Step("Så")
   val Og = new Step("Og")
   val Men = new Step("Men")
 }
-trait PL { this: ScalaDsl =>
+trait PL {
+  this: ScalaDsl =>
   val Zakładając = new Step("Zakładając")
   val Jeżeli = new Step("Jeżeli")
   val Wtedy = new Step("Wtedy")
   val Oraz = new Step("Oraz")
   val Ale = new Step("Ale")
 }
-trait PT { this: ScalaDsl =>
+trait PT {
+  this: ScalaDsl =>
   val Dado = new Step("Dado")
   val Quando = new Step("Quando")
   val Então = new Step("Então")
@@ -235,21 +265,24 @@ trait PT { this: ScalaDsl =>
   val E = new Step("E")
   val Mas = new Step("Mas")
 }
-trait RO { this: ScalaDsl =>
+trait RO {
+  this: ScalaDsl =>
   val Daca = new Step("Daca")
   val Cand = new Step("Cand")
   val Atunci = new Step("Atunci")
   val Si = new Step("Si")
   val Dar = new Step("Dar")
 }
-trait RO_RO { this: ScalaDsl =>
+trait RO_RO {
+  this: ScalaDsl =>
   val Dacă = new Step("Dacă")
   val Când = new Step("Când")
   val Atunci = new Step("Atunci")
   val Și = new Step("Și")
   val Dar = new Step("Dar")
 }
-trait RU { this: ScalaDsl =>
+trait RU {
+  this: ScalaDsl =>
   val Допустим = new Step("Допустим")
   val Если = new Step("Если")
   val То = new Step("То")
@@ -258,14 +291,16 @@ trait RU { this: ScalaDsl =>
   val Но = new Step("Но")
   val А = new Step("А")
 }
-trait SK { this: ScalaDsl =>
+trait SK {
+  this: ScalaDsl =>
   val Pokiaľ = new Step("Pokiaľ")
   val Keď = new Step("Keď")
   val Tak = new Step("Tak")
   val A = new Step("A")
   val Ale = new Step("Ale")
 }
-trait SR_CYRL { this: ScalaDsl =>
+trait SR_CYRL {
+  this: ScalaDsl =>
   val Задато = new Step("Задато")
   val Задате = new Step("Задате")
   val Задати = new Step("Задати")
@@ -275,7 +310,8 @@ trait SR_CYRL { this: ScalaDsl =>
   val И = new Step("И")
   val Али = new Step("Али")
 }
-trait SR_LATN { this: ScalaDsl =>
+trait SR_LATN {
+  this: ScalaDsl =>
   val Zadato = new Step("Zadato")
   val Zadate = new Step("Zadate")
   val Zatati = new Step("Zatati")
@@ -285,14 +321,16 @@ trait SR_LATN { this: ScalaDsl =>
   val I = new Step("I")
   val Ali = new Step("Ali")
 }
-trait SV { this: ScalaDsl =>
+trait SV {
+  this: ScalaDsl =>
   val Givet = new Step("Givet")
   val När = new Step("När")
   val Så = new Step("Så")
   val Och = new Step("Och")
   val Men = new Step("Men")
 }
-trait TR { this: ScalaDsl =>
+trait TR {
+  this: ScalaDsl =>
   val Diyelimki = new Step("Diyelimki")
   val Eğerki = new Step("Eğerki")
   val Ozaman = new Step("Ozaman")
@@ -300,7 +338,8 @@ trait TR { this: ScalaDsl =>
   val Fakat = new Step("Fakat")
   val Ama = new Step("Ama")
 }
-trait UK { this: ScalaDsl =>
+trait UK {
+  this: ScalaDsl =>
   val Припустимо = new Step("Припустимо")
   val Припустимощо = new Step("Припустимощо")
   val Нехай = new Step("Нехай")
@@ -309,7 +348,8 @@ trait UK { this: ScalaDsl =>
   val І = new Step("І")
   val Але = new Step("Але")
 }
-trait UZ { this: ScalaDsl =>
+trait UZ {
+  this: ScalaDsl =>
   val Агар = new Step("Агар")
   val Унда = new Step("Унда")
   val Ва = new Step("Ва")
@@ -317,7 +357,8 @@ trait UZ { this: ScalaDsl =>
   val Бирок = new Step("Бирок")
   val Аммо = new Step("Аммо")
 }
-trait VI { this: ScalaDsl =>
+trait VI {
+  this: ScalaDsl =>
   val Biết = new Step("Biết")
   val Cho = new Step("Cho")
   val Khi = new Step("Khi")
@@ -325,14 +366,16 @@ trait VI { this: ScalaDsl =>
   val Và = new Step("Và")
   val Nhưng = new Step("Nhưng")
 }
-trait ZH_CN { this: ScalaDsl =>
+trait ZH_CN {
+  this: ScalaDsl =>
   val 假如 = new Step("假如")
   val 当 = new Step("当")
   val 那么 = new Step("那么")
   val 而且 = new Step("而且")
   val 但是 = new Step("但是")
 }
-trait ZH_TW { this: ScalaDsl =>
+trait ZH_TW {
+  this: ScalaDsl =>
   val 假設 = new Step("假設")
   val 當 = new Step("當")
   val 那麼 = new Step("那麼")

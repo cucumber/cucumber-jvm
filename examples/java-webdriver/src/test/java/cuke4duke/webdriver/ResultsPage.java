@@ -1,12 +1,12 @@
 package cuke4duke.webdriver;
 
-import static org.junit.Assert.assertThat;
-import static org.junit.matchers.JUnitMatchers.containsString;
-
-import cuke4duke.annotation.I18n.EN.*;
+import cuke4duke.annotation.I18n.EN.Then;
 import org.openqa.selenium.WebDriver;
 
 import java.lang.reflect.InvocationTargetException;
+
+import static org.junit.Assert.assertThat;
+import static org.junit.matchers.JUnitMatchers.containsString;
 
 public class ResultsPage {
     private final WebDriver d;

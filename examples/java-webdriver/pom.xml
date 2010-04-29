@@ -93,7 +93,7 @@
         <configuration>
           <jvmArgs>
             <!-- Comment in the line below to use Firefox instead of HTMLUnit (default) -->
-            <!--jvmArg>-Dwebdriver.impl=org.openqa.selenium.firefox.FirefoxDriver</jvmArg-->
+              <!--jvmArg>-Dwebdriver.impl=org.openqa.selenium.firefox.FirefoxDriver</jvmArg-->
           </jvmArgs>
           <cucumberArgs>
             <cucumberArg>--verbose</cucumberArg>

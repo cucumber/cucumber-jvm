@@ -24,7 +24,7 @@ public class JRubyTask extends Java {
 
     protected File getJrubyHome() {
         String gemHome = getProject().getProperty("jruby.home");
-        if(gemHome == null) {
+        if (gemHome == null) {
             throw new BuildException("Please set the jruby.home property in your build script.");
         }
         return new File(gemHome);
@@ -40,7 +40,7 @@ public class JRubyTask extends Java {
 
     private Path getJrubyClasspath() {
         Object jrubyClasspath = getProject().getReference("jruby.classpath");
-        if(jrubyClasspath == null || !(jrubyClasspath instanceof Path)) {
+        if (jrubyClasspath == null || !(jrubyClasspath instanceof Path)) {
             throw new BuildException("Please create a path with id jruby.classpath");
         }
         return (Path) jrubyClasspath;

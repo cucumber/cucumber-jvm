@@ -104,9 +104,9 @@ public class ClassLanguage extends AbstractProgrammingLanguage {
 
     public Object invokeHook(Method method, Scenario scenario) throws Throwable {
         Object[] args = new Object[0];
-        if(method.getParameterTypes().length == 1) {
+        if (method.getParameterTypes().length == 1) {
             args = new Object[]{scenario};
-        } else if(method.getParameterTypes().length > 1) {
+        } else if (method.getParameterTypes().length > 1) {
             throw cucumberArityMismatchError("Hooks must take 0 or 1 arguments. " + method);
         }
         return invoke(method, args, Locale.getDefault());

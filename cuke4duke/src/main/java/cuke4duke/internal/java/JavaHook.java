@@ -17,7 +17,7 @@ public class JavaHook extends AbstractHook {
 
         this.method = method;
     }
-    
+
     public void invoke(String location, Scenario scenario) throws Throwable {
         classLanguage.invokeHook(method, scenario);
     }

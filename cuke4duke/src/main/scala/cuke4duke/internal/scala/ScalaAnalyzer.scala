@@ -12,20 +12,20 @@ import cuke4duke.internal.jvmclass.{ClassLanguage, ClassAnalyzer, ObjectFactory}
 class ScalaAnalyzer extends ClassAnalyzer {
   def alwaysLoad = Array()
 
-  def populateStepDefinitionsAndHooks(objectFactory:ObjectFactory, classLanguage:ClassLanguage) {
+  def populateStepDefinitionsAndHooks(objectFactory: ObjectFactory, classLanguage: ClassLanguage) {
     //ugly, but works on both 2.7.x and 2.8
-    var dsls:List[ScalaDsl] = Nil
+    var dsls: List[ScalaDsl] = Nil
     val iterator = classLanguage.getClasses.iterator
-    while(iterator.hasNext){
+    while (iterator.hasNext) {
       val next = iterator.next
-      if(classOf[ScalaDsl].isAssignableFrom(next))
+      if (classOf[ScalaDsl].isAssignableFrom(next))
         dsls ::= objectFactory.getComponent(next.asInstanceOf[Class[ScalaDsl]])
     }
     populate(dsls, objectFactory.getComponent(classOf[StepMother]), classLanguage)
   }
 
-  def populate(dsls: List[ScalaDsl], stepMother:StepMother, language:AbstractProgrammingLanguage){
-    for(dsl <- dsls){
+  def populate(dsls: List[ScalaDsl], stepMother: StepMother, language: AbstractProgrammingLanguage) {
+    for (dsl <- dsls) {
       for (before <- dsl.beforeHooks)
         language.addBeforeHook(before)
 

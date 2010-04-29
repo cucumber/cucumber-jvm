@@ -1,6 +1,7 @@
 package cuke4duke.annotation;
 
 import cuke4duke.internal.java.annotation.StepDef;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -59,6 +60,7 @@ public interface I18n {
         }
 
     }
+
     public class BG {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
@@ -96,6 +98,7 @@ public interface I18n {
         }
 
     }
+
     public class CA {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
@@ -161,6 +164,7 @@ public interface I18n {
         }
 
     }
+
     public class CS {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
@@ -205,6 +209,7 @@ public interface I18n {
         }
 
     }
+
     public class CY_GB {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
@@ -242,6 +247,7 @@ public interface I18n {
         }
 
     }
+
     public class DA {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
@@ -279,6 +285,7 @@ public interface I18n {
         }
 
     }
+
     public class DE {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
@@ -323,6 +330,7 @@ public interface I18n {
         }
 
     }
+
     public class EN {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
@@ -360,6 +368,7 @@ public interface I18n {
         }
 
     }
+
     public class EN_SCOUSE {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
@@ -418,6 +427,7 @@ public interface I18n {
         }
 
     }
+
     public class EN_AU {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
@@ -455,6 +465,7 @@ public interface I18n {
         }
 
     }
+
     public class EN_LOL {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
@@ -492,6 +503,7 @@ public interface I18n {
         }
 
     }
+
     public class EN_TX {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
@@ -529,6 +541,7 @@ public interface I18n {
         }
 
     }
+
     public class EO {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
@@ -566,6 +579,7 @@ public interface I18n {
         }
 
     }
+
     public class ES {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
@@ -603,6 +617,7 @@ public interface I18n {
         }
 
     }
+
     public class ET {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
@@ -640,6 +655,7 @@ public interface I18n {
         }
 
     }
+
     public class FI {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
@@ -677,6 +693,7 @@ public interface I18n {
         }
 
     }
+
     public class FR {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
@@ -735,6 +752,7 @@ public interface I18n {
         }
 
     }
+
     public class HE {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
@@ -779,6 +797,7 @@ public interface I18n {
         }
 
     }
+
     public class HR {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
@@ -837,6 +856,7 @@ public interface I18n {
         }
 
     }
+
     public class HU {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
@@ -874,6 +894,7 @@ public interface I18n {
         }
 
     }
+
     public class ID {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
@@ -911,6 +932,7 @@ public interface I18n {
         }
 
     }
+
     public class IT {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
@@ -948,6 +970,7 @@ public interface I18n {
         }
 
     }
+
     public class JA {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
@@ -999,6 +1022,7 @@ public interface I18n {
         }
 
     }
+
     public class KO {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
@@ -1057,6 +1081,7 @@ public interface I18n {
         }
 
     }
+
     public class LT {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
@@ -1094,6 +1119,7 @@ public interface I18n {
         }
 
     }
+
     public class LV {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
@@ -1131,6 +1157,7 @@ public interface I18n {
         }
 
     }
+
     public class NL {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
@@ -1175,6 +1202,7 @@ public interface I18n {
         }
 
     }
+
     public class NO {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
@@ -1212,6 +1240,7 @@ public interface I18n {
         }
 
     }
+
     public class PL {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
@@ -1249,6 +1278,7 @@ public interface I18n {
         }
 
     }
+
     public class PT {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
@@ -1293,6 +1323,7 @@ public interface I18n {
         }
 
     }
+
     public class RO {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
@@ -1330,6 +1361,7 @@ public interface I18n {
         }
 
     }
+
     public class RO_RO {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
@@ -1367,6 +1399,7 @@ public interface I18n {
         }
 
     }
+
     public class RU {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
@@ -1418,6 +1451,7 @@ public interface I18n {
         }
 
     }
+
     public class SK {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
@@ -1455,6 +1489,7 @@ public interface I18n {
         }
 
     }
+
     public class SR_CYRL {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
@@ -1513,6 +1548,7 @@ public interface I18n {
         }
 
     }
+
     public class SR_LATN {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
@@ -1571,6 +1607,7 @@ public interface I18n {
         }
 
     }
+
     public class SV {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
@@ -1608,6 +1645,7 @@ public interface I18n {
         }
 
     }
+
     public class TR {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
@@ -1652,6 +1690,7 @@ public interface I18n {
         }
 
     }
+
     public class UK {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
@@ -1703,6 +1742,7 @@ public interface I18n {
         }
 
     }
+
     public class UZ {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
@@ -1747,6 +1787,7 @@ public interface I18n {
         }
 
     }
+
     public class VI {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
@@ -1791,6 +1832,7 @@ public interface I18n {
         }
 
     }
+
     public class ZH_CN {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
@@ -1828,6 +1870,7 @@ public interface I18n {
         }
 
     }
+
     public class ZH_TW {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)

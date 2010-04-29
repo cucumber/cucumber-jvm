@@ -1,4 +1,5 @@
 Feature: Table
+
   Scenario: Table
     Given I have some fine dudes:
       | who   | where   |
@@ -17,9 +18,9 @@ Feature: Table
 
   Scenario: Strings
     Given I have a really long String:
-      """
-      OMG
-      So
-      big!
-      """
+    """
+    OMG
+    So
+    big!
+    """
     Then just say something to make cucumber fail

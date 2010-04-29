@@ -1,5 +1,5 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>cuke4duke</groupId>
   <artifactId>cuke4duke-ejb3-example</artifactId>
@@ -30,11 +30,11 @@
           <jvmArgs>
             <jvmArg>-Dcuke4duke.objectFactory=cuke4duke.internal.jvmclass.PicoFactory</jvmArg>
           </jvmArgs>
-          <!--
-            You may not need all of these arguments in your own project. We
-            have a lot here for testing purposes...
-          -->
-          <cucumberArgs>
+            <!--
+              You may not need all of these arguments in your own project. We
+              have a lot here for testing purposes...
+            -->
+            <cucumberArgs>
             <cucumberArg>--color</cucumberArg>
             <cucumberArg>--format</cucumberArg>
             <cucumberArg>pretty</cucumberArg>
@@ -80,12 +80,12 @@
       <scope>test</scope>
     </dependency>
 
-    <!-- 
-    Normally, cuke4duke projects don't need the gherkin jar, as it's inside the gherkin rubygem,
-    which is a dependency of the cuke4duke gem. However, due to classloader issues with EJB we 
-    need it here too.
-    -->
-    <dependency>
+      <!--
+      Normally, cuke4duke projects don't need the gherkin jar, as it's inside the gherkin rubygem,
+      which is a dependency of the cuke4duke gem. However, due to classloader issues with EJB we
+      need it here too.
+      -->
+      <dependency>
       <groupId>gherkin</groupId>
       <artifactId>gherkin</artifactId>
       <version>1.0.18</version>
@@ -99,8 +99,8 @@
       <scope>test</scope>
     </dependency>
 
-    <!-- spec apis such as javax.persistence -->
-    <dependency>
+      <!-- spec apis such as javax.persistence -->
+      <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>javaee-api</artifactId>
       <version>5.0-1</version>
@@ -114,8 +114,8 @@
       <scope>test</scope>
     </dependency>
 
-    <!-- openejb container for running tests -->
-    <dependency>
+      <!-- openejb container for running tests -->
+      <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-core</artifactId>
       <version>3.1.2</version>
@@ -128,8 +128,8 @@
       </exclusions>
     </dependency>
 
-    <!-- hibernate dependencies -->
-    <dependency>
+      <!-- hibernate dependencies -->
+      <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate</artifactId>
       <version>3.2.5.ga</version>

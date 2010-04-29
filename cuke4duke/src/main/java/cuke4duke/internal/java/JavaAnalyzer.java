@@ -24,7 +24,7 @@ public class JavaAnalyzer implements ClassAnalyzer {
     }
 
     public void populateStepDefinitionsAndHooks(ObjectFactory objectFactory, ClassLanguage classLanguage) throws Throwable {
-        for(Method method: getOrderedMethods(classLanguage)) {
+        for (Method method : getOrderedMethods(classLanguage)) {
             registerBeforeMaybe(method, classLanguage);
             registerAfterMaybe(method, classLanguage);
             registerStepDefinitionsFromAnnotations(method, classLanguage);
@@ -44,7 +44,7 @@ public class JavaAnalyzer implements ClassAnalyzer {
 
     private List<Method> getOrderedMethods(ClassLanguage classLanguage) {
         Set<Method> methods = new HashSet<Method>();
-        for(Class<?> clazz : classLanguage.getClasses()) {
+        for (Class<?> clazz : classLanguage.getClasses()) {
             methods.addAll(Arrays.asList(clazz.getMethods()));
         }
         List<Method> sortedMethods = new ArrayList<Method>(methods);
@@ -64,7 +64,7 @@ public class JavaAnalyzer implements ClassAnalyzer {
     private void registerBeforeMaybe(Method method, ClassLanguage classLanguage) {
         if (method.isAnnotationPresent(Before.class)) {
             String[] tagExpressions = method.getAnnotation(Before.class).value();
-            if("".equals(tagExpressions[0])) {
+            if ("".equals(tagExpressions[0])) {
                 tagExpressions = NO_TAGS;
             }
             classLanguage.addBeforeHook(new JavaHook(classLanguage, method, Arrays.asList(tagExpressions)));
@@ -74,7 +74,7 @@ public class JavaAnalyzer implements ClassAnalyzer {
     private void registerAfterMaybe(Method method, ClassLanguage classLanguage) {
         if (method.isAnnotationPresent(After.class)) {
             String[] tagExpressions = method.getAnnotation(After.class).value();
-            if("".equals(tagExpressions[0])) {
+            if ("".equals(tagExpressions[0])) {
                 tagExpressions = NO_TAGS;
             }
             classLanguage.addAfterHook(new JavaHook(classLanguage, method, Arrays.asList(tagExpressions)));
@@ -82,8 +82,8 @@ public class JavaAnalyzer implements ClassAnalyzer {
     }
 
     private void registerStepDefinitionsFromAnnotations(Method method, ClassLanguage classLanguage) throws Throwable {
-        for(Annotation annotation: method.getAnnotations()) {
-            if(annotation.annotationType().isAnnotationPresent(StepDef.class)) {
+        for (Annotation annotation : method.getAnnotations()) {
+            if (annotation.annotationType().isAnnotationPresent(StepDef.class)) {
                 Locale locale = Utils.localeFor(annotation.annotationType().getAnnotation(StepDef.class).value());
                 Method regexpMethod = annotation.getClass().getMethod("value");
                 String regexpString = (String) regexpMethod.invoke(annotation);

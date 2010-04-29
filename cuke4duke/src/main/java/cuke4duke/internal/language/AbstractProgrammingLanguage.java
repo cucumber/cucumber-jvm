@@ -23,7 +23,7 @@ public abstract class AbstractProgrammingLanguage implements ProgrammingLanguage
         this.exceptionFactory = exceptionFactory;
         this.methodInvoker = new MethodInvoker(this.exceptionFactory);
 
-        for(Method method : DefaultJvmTransforms.class.getDeclaredMethods()) {
+        for (Method method : DefaultJvmTransforms.class.getDeclaredMethods()) {
             transformMethods.put(method.getReturnType(), method);
         }
     }
@@ -88,14 +88,14 @@ public abstract class AbstractProgrammingLanguage implements ProgrammingLanguage
     }
 
     public Object transformOne(Object arg, Class<?> parameterType, Locale locale) throws Throwable {
-        if(PyString.class.isAssignableFrom(arg.getClass())) {
-            arg = ((PyString)arg).to_s();
+        if (PyString.class.isAssignableFrom(arg.getClass())) {
+            arg = ((PyString) arg).to_s();
         }
-        if(parameterType.isAssignableFrom(arg.getClass())) {
+        if (parameterType.isAssignableFrom(arg.getClass())) {
             return arg;
         }
         Object customTransform = customTransform(arg, parameterType, null);
-        if(customTransform != null) {
+        if (customTransform != null) {
             return customTransform;
         } else {
             return defaultTransform(arg, parameterType, locale);
@@ -104,7 +104,7 @@ public abstract class AbstractProgrammingLanguage implements ProgrammingLanguage
 
     private Object defaultTransform(Object arg, Class<?> parameterType, Locale locale) throws Throwable {
         Method transformMethod = transformMethods.get(parameterType);
-        if(transformMethod == null) {
+        if (transformMethod == null) {
             throw new CantTransform(arg, parameterType);
         }
         return methodInvoker.invoke(transformMethod, null, new Object[]{arg, locale});

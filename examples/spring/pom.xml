@@ -37,7 +37,8 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-context</artifactId>
-      <version>3.0.0.RELEASE</version> <!-- also works with any version in the range [2.5,) -->
+      <version>3.0.0.RELEASE</version>
+        <!-- also works with any version in the range [2.5,) -->
     </dependency>
     <dependency>
       <groupId>log4j</groupId>

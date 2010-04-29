@@ -1,19 +1,20 @@
 package simple;
 
+import cuke4duke.annotation.I18n.EN.Given;
+import cuke4duke.annotation.I18n.EN.Then;
+import cuke4duke.annotation.I18n.EN.When;
+import cuke4duke.spring.StepDefinitions;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import cuke4duke.annotation.I18n.EN.*;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import cuke4duke.spring.StepDefinitions;
-
 @StepDefinitions
 public class GreeterSteps {
-    
+
     @Autowired
     private Greeter greeter;
-    
+
     private String helloResponse;
 
     @Given("I have a greeter")

@@ -2,8 +2,6 @@ package cuke4duke.ant;
 
 import org.apache.tools.ant.BuildException;
 
-import java.io.File;
-
 public class GemTask extends JRubyTask {
     private String args = "";
 
@@ -22,7 +20,7 @@ public class GemTask extends JRubyTask {
 
         try {
             super.execute();
-        } catch(Exception e) {
+        } catch (Exception e) {
             throw new BuildException("Failed to run gem with arguments: " + args, e);
         }
     }

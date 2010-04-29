@@ -23,7 +23,7 @@ public class WebDriverFacade {
     private WebDriver browser;
 
     public WebDriver getWebDriver() throws InvocationTargetException, IllegalAccessException, InstantiationException {
-        if(browser == null) {
+        if (browser == null) {
             browser = driverConstructor.newInstance();
         }
         return browser;
@@ -31,7 +31,7 @@ public class WebDriverFacade {
 
     @After
     public void closeBrowser() throws IllegalAccessException, InvocationTargetException, InstantiationException {
-        if(browser != null) {
+        if (browser != null) {
             browser.close();
             browser.quit();
         }

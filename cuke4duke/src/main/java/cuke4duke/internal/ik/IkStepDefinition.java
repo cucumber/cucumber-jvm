@@ -31,7 +31,7 @@ public class IkStepDefinition extends AbstractStepDefinition {
         Message invoke = (Message) IokeObject.data(msg);
 
         List<Runtime.RescueInfo> pendingRescues = new ArrayList<Runtime.RescueInfo>();
-        IokeObject rr = IokeObject.as(((Message)IokeObject.data(ioke.mimic)).sendTo(ioke.mimic, ioke.ground, ioke.rescue), ioke.ground);
+        IokeObject rr = IokeObject.as(((Message) IokeObject.data(ioke.mimic)).sendTo(ioke.mimic, ioke.ground, ioke.rescue), ioke.ground);
         List<Object> conds = new ArrayList<Object>();
         conds.add(lang.pendingCondition);
         pendingRescues.add(new Runtime.RescueInfo(rr, conds, pendingRescues, ioke.getBindIndex()));
@@ -39,19 +39,19 @@ public class IkStepDefinition extends AbstractStepDefinition {
 
 
         List<Runtime.RescueInfo> failureRescues = new ArrayList<Runtime.RescueInfo>();
-        IokeObject rr2 = IokeObject.as(((Message)IokeObject.data(ioke.mimic)).sendTo(ioke.mimic, ioke.ground, ioke.rescue), ioke.ground);
+        IokeObject rr2 = IokeObject.as(((Message) IokeObject.data(ioke.mimic)).sendTo(ioke.mimic, ioke.ground, ioke.rescue), ioke.ground);
         List<Object> failureConds = new ArrayList<Object>();
         failureConds.add(lang.failedExpectationCondition);
         failureRescues.add(new Runtime.RescueInfo(rr2, failureConds, failureRescues, ioke.getBindIndex()));
         ioke.registerRescues(failureRescues);
 
         try {
-	        return invoke.sendTo(msg, iokeStepDefObject, iokeStepDefObject, multilineArg(args));
-        } catch(ControlFlow.Rescue e) {
-            if(e.getRescue().token == pendingRescues) {
+            return invoke.sendTo(msg, iokeStepDefObject, iokeStepDefObject, multilineArg(args));
+        } catch (ControlFlow.Rescue e) {
+            if (e.getRescue().token == pendingRescues) {
                 throw lang.cucumberPending("TODO");
-            } else if(e.getRescue().token == failureRescues) {
-                throw lang.error("IokeException", ((Message)IokeObject.data(ioke.reportMessage)).sendTo(ioke.reportMessage, ioke.ground, e.getCondition()).toString());
+            } else if (e.getRescue().token == failureRescues) {
+                throw lang.error("IokeException", ((Message) IokeObject.data(ioke.reportMessage)).sendTo(ioke.reportMessage, ioke.ground, e.getCondition()).toString());
             } else {
                 throw e;
             }
@@ -62,7 +62,7 @@ public class IkStepDefinition extends AbstractStepDefinition {
     }
 
     public String regexp_source() throws Throwable {
-        if(regexpSource == null) findRegexpSource();
+        if (regexpSource == null) findRegexpSource();
         return regexpSource;
     }
 
@@ -75,7 +75,7 @@ public class IkStepDefinition extends AbstractStepDefinition {
         IokeObject msg = ioke.newMessage("arguments_from");
         Message arguments_from = (Message) IokeObject.data(msg);
         Object args = arguments_from.sendTo(msg, iokeStepDefObject, iokeStepDefObject, stepName);
-        if(args instanceof List<?>) {
+        if (args instanceof List<?>) {
             return (List<StepArgument>) args;
         } else {
             return null;
@@ -90,11 +90,11 @@ public class IkStepDefinition extends AbstractStepDefinition {
 
     private Object multilineArg(Object[] args) {
         Object multilineArg;
-        if(args.length > 0) {
-            if(args[args.length-1] instanceof PyString) {
-                multilineArg = ioke.newText(((PyString) args[args.length-1]).to_s());
-            } else if(args[args.length-1] instanceof Table) {
-                multilineArg = args[args.length-1];
+        if (args.length > 0) {
+            if (args[args.length - 1] instanceof PyString) {
+                multilineArg = ioke.newText(((PyString) args[args.length - 1]).to_s());
+            } else if (args[args.length - 1] instanceof Table) {
+                multilineArg = args[args.length - 1];
             } else {
                 multilineArg = ioke.nil;
             }

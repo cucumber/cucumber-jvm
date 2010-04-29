@@ -26,15 +26,15 @@ public class IkLanguage extends AbstractProgrammingLanguage {
         clearHooksAndStepDefinitions();
 
         pendingCondition = IokeObject.as(IokeObject.getCellChain(ioke.condition,
-                                                                 ioke.message,
-                                                                 ioke.ground,
-                                                                 "Pending"), ioke.ground);
+                ioke.message,
+                ioke.ground,
+                "Pending"), ioke.ground);
 
         failedExpectationCondition = IokeObject.as(IokeObject.getCellChain(ioke.condition,
-                                                                           ioke.message,
-                                                                           ioke.ground,
-                                                                           "ISpec",
-                                                                           "ExpectationNotMet"), ioke.ground);
+                ioke.message,
+                ioke.ground,
+                "ISpec",
+                "ExpectationNotMet"), ioke.ground);
     }
 
     public void addIokeStepDefinition(Object iokeStepDefObject) throws Throwable {

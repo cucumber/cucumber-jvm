@@ -6,8 +6,8 @@
   <persistence-unit name="bookstore">
     <provider>org.hibernate.ejb.HibernatePersistence</provider>
     <jta-data-source>bookstoreDatabase</jta-data-source>
-    <!--non-jta-data-source>bookstoreDatabaseUnmanaged</non-jta-data-source-->
-    <properties>
+      <!--non-jta-data-source>bookstoreDatabaseUnmanaged</non-jta-data-source-->
+      <properties>
       <property name="hibernate.hbm2ddl.auto" value="create-drop"/>
       <property name="hibernate.transaction.manager_lookup_class"
                 value="org.apache.openejb.hibernate.TransactionManagerLookup"/>

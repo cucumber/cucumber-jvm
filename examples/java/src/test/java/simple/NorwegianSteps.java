@@ -1,7 +1,7 @@
 package simple;
 
-import cuke4duke.annotation.I18n.EN.*;
-import cuke4duke.annotation.I18n.NO.*;
+import cuke4duke.annotation.I18n.EN.When;
+import cuke4duke.annotation.I18n.NO.Så;
 
 import static org.junit.Assert.assertEquals;
 

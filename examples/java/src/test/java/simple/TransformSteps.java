@@ -1,16 +1,16 @@
 package simple;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertTrue;
-
-import cuke4duke.annotation.I18n.EN.*;
 import cuke4duke.StepMother;
 import cuke4duke.Steps;
+import cuke4duke.annotation.I18n.EN.Given;
+import cuke4duke.annotation.I18n.EN.Then;
+import cuke4duke.annotation.I18n.EN.When;
 import cuke4duke.annotation.Transform;
 
+import static junit.framework.Assert.*;
+
 public class TransformSteps extends Steps {
-    
+
     private boolean exceptionThrown = false;
     private User user;
     private boolean yes;
@@ -18,12 +18,12 @@ public class TransformSteps extends Steps {
     public TransformSteps(StepMother stepMother) {
         super(stepMother);
     }
-    
+
     @Transform
     public User transformStringToUserWithAge(String age) {
         return new User(Integer.valueOf(age));
     }
-    
+
     @Transform
     public boolean overrideBooleanPrimitiveTransform(String boolValue) {
         return boolValue.equals("yes");
@@ -42,11 +42,11 @@ public class TransformSteps extends Steps {
             exceptionThrown = true;
         }
     }
-    
+
     @Given("^pass '(.*)' as a Car$")
     public void passACar(Car value) {
     }
-    
+
     @Given("^I pass '(.*)' to a method with User as parameter$")
     public void transformToA(User user) {
         this.user = user;
@@ -56,7 +56,7 @@ public class TransformSteps extends Steps {
     public void iPassYesToAMethodWithBooleanAsParameter(boolean yes) {
         this.yes = yes;
     }
-    
+
     @When("^something happens$")
     public void somethingHappens() {
     }
@@ -65,17 +65,17 @@ public class TransformSteps extends Steps {
     public void allIsGood() {
         assertFalse(exceptionThrown);
     }
-    
+
     @Then("^a User with age '(.*)' is created$")
     public void aUserWithAgeIsCreated(int age) {
         assertTrue(this.user.age == age);
     }
-    
+
     @Then("^an exception is thrown$")
     public void exceptionIsThrown() {
         assertTrue(exceptionThrown);
     }
-    
+
     @Then("^the parameter is true$")
     public void theParameterIsTrue() {
         assertTrue(yes);
@@ -83,11 +83,11 @@ public class TransformSteps extends Steps {
 
     public static class Car {
     }
-    
+
     public static class User {
         public final int age;
 
-        public User(int age){
+        public User(int age) {
             this.age = age;
         }
     }

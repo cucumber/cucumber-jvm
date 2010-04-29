@@ -8,17 +8,17 @@ Feature: Step argument transformations
     Given I pass '10' to a method with int as parameter
     When something happens
     Then all is good
-    
+
   Scenario: transform with custom match
     Given I pass '10' to a method with User as parameter
     When something happens
     Then a User with age '10' is created
-      
+
   Scenario: transform without match
     Given I pass '10' to a method with Car as parameter
     When something happens
     Then an exception is thrown
-    
+
   Scenario: overriding a default transform
     Given I pass 'yes' to a method with boolean as parameter
     When something happens

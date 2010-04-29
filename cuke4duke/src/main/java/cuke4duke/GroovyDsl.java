@@ -29,10 +29,10 @@ public class GroovyDsl {
     }
 
     private static void addHook(String phase, Object[] tagsAndBody) {
-        if(tagsAndBody.length == 0) return;
-        String[] tagNames = new String[tagsAndBody.length-1];
+        if (tagsAndBody.length == 0) return;
+        String[] tagNames = new String[tagsAndBody.length - 1];
         System.arraycopy(tagsAndBody, 0, tagNames, 0, tagNames.length);
-        Closure body = (Closure) tagsAndBody[tagsAndBody.length-1];
+        Closure body = (Closure) tagsAndBody[tagsAndBody.length - 1];
         languageMixin.add_hook(phase, new GroovyHook(Arrays.asList(tagNames), body, groovyLanguage));
     }
 

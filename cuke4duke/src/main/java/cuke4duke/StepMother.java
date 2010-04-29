@@ -2,14 +2,16 @@ package cuke4duke;
 
 public interface StepMother {
     void invoke(String step);
+
     void invoke(String step, Table table);
+
     void invoke(String step, String multilineString);
 
     /**
      * Suspends execution and asks for input. This is known to work witn Ant,
      * but not with Maven, which seems to mess up STDIN.
      *
-     * @param question a question to print to the console
+     * @param question    a question to print to the console
      * @param timeoutSecs number of seconds to wait before a timeout exception occurs.
      * @return the line of text that the user wrote.
      */

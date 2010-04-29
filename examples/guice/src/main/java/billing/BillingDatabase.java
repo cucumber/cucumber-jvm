@@ -8,5 +8,5 @@ import billing.CreateTransactionResponse.Status;
 public interface BillingDatabase {
 
     public Status createTransaction(Transaction transaction);
-    
+
 }

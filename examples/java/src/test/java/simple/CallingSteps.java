@@ -3,7 +3,7 @@ package simple;
 
 import cuke4duke.StepMother;
 import cuke4duke.Steps;
-import cuke4duke.annotation.I18n.EN.*;
+import cuke4duke.annotation.I18n.EN.When;
 
 public class CallingSteps extends Steps {
     public CallingSteps(StepMother stepMother) {
@@ -15,5 +15,5 @@ public class CallingSteps extends Steps {
         Given("it is magic");
     }
 
-    
+
 }

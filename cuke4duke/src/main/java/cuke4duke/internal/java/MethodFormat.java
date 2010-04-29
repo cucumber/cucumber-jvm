@@ -12,18 +12,18 @@ public class MethodFormat {
 
     /**
      * @param format the format string to use. There are several pattern tokens that can be used:
-     * <ul>
-     * <li><strong>%M</strong>: Modifiers</li>
-     * <li><strong>%qr</strong>: Qualified return type</li>
-     * <li><strong>%r</strong>: Unqualified return type</li>
-     * <li><strong>%qc</strong>: Qualified class</li>
-     * <li><strong>%c</strong>: Unqualified class</li>
-     * <li><strong>%m</strong>: Method name</li>
-     * <li><strong>%qa</strong>: Qualified arguments</li>
-     * <li><strong>%a</strong>: Unqualified arguments</li>
-     * <li><strong>%qe</strong>: Qualified exceptions</li>
-     * <li><strong>%e</strong>: Unqualified exceptions</li>
-     * </ul>
+     *               <ul>
+     *               <li><strong>%M</strong>: Modifiers</li>
+     *               <li><strong>%qr</strong>: Qualified return type</li>
+     *               <li><strong>%r</strong>: Unqualified return type</li>
+     *               <li><strong>%qc</strong>: Qualified class</li>
+     *               <li><strong>%c</strong>: Unqualified class</li>
+     *               <li><strong>%m</strong>: Method name</li>
+     *               <li><strong>%qa</strong>: Qualified arguments</li>
+     *               <li><strong>%a</strong>: Unqualified arguments</li>
+     *               <li><strong>%qe</strong>: Qualified exceptions</li>
+     *               <li><strong>%e</strong>: Unqualified exceptions</li>
+     *               </ul>
      */
     public MethodFormat(String format) {
         String pattern = format
@@ -42,7 +42,7 @@ public class MethodFormat {
     public String format(Method method) {
         String signature = method.toGenericString();
         Matcher matcher = METHOD_PATTERN.matcher(signature);
-        if(matcher.find()) {
+        if (matcher.find()) {
             String M = matcher.group(1);
             String r = matcher.group(2);
             String qc = matcher.group(3);

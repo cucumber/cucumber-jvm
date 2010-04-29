@@ -44,7 +44,7 @@ import java.lang.annotation.Target;
 
 public interface I18n {
 
-HEADER
+    HEADER
     Gherkin::I18n.all.each do |i18n|
       io.write(java.result(binding))
     end
