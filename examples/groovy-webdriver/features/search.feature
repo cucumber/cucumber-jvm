@@ -8,5 +8,5 @@ Feature: Search
     When I search for "cucumber github"
     Then I should see
     """
-    <em>Cucumber</em> itself is written in Ruby
+    BDD that talks to domain experts first and code second
     """
