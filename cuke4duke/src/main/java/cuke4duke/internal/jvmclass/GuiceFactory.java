@@ -44,6 +44,7 @@ public class GuiceFactory implements ObjectFactory {
     }
 
     public void disposeObjects() {
+	      instances.clear();
     }
 
     @SuppressWarnings("unchecked")

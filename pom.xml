@@ -42,16 +42,16 @@
     <profile>
       <id>examples</id>
       <modules>
+        <module>examples/guice</module>
+        <module>examples/java-webdriver</module>
+        <module>examples/groovy-webdriver</module>
         <module>examples/java</module>
         <module>examples/groovy</module>
         <module>examples/java-ejb3</module>
         <module>examples/scala</module>
-        <module>examples/java-webdriver</module>
-        <module>examples/groovy-webdriver</module>
         <module>examples/clojure</module>
         <module>examples/ioke</module>
         <module>examples/spring</module>
-        <module>examples/guice</module>
         <module>examples/celerity</module>
         <!-- Broken now because of new v8 support in Cucumber -->
         <module>examples/javascript</module>

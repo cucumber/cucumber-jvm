@@ -1,12 +1,16 @@
 == 0.3.0
 
+=== Bugfixes
+* Hopefully(?) fixed a memory leak bug with Guice, disposing objects after each scenario. (Aslak Hellesøy)
+
 === New Features
 * Cucumber 0.7.2 support. (Aslak Hellesøy)
 * JRuby 1.5.0.RC3 support. (Aslak Hellesøy)
 
 === Changed Features
+* In the examples: Replaced WebDriver dependency with its successor Selenium 2 (Richard Paul)
 
-== 0.3.0
+== 0.3.0.beta.2
 
 === New Features
 * JRuby 1.5.0.RC1 support. (Aslak Hellesøy)
