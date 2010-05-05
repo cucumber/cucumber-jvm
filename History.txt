@@ -1,4 +1,4 @@
-== 0.3.0
+== 0.3.0 (2010-05-05)
 
 === Bugfixes
 * Hopefully(?) fixed a memory leak bug with Guice, disposing objects after each scenario. (Aslak Hellesøy)
