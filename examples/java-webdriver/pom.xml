@@ -27,7 +27,7 @@
     <repository>
       <id>openqa-releases</id>
       <name>OpenQA Releases</name>
-      <url>http://archiva.openqa.org/repository/releases</url>
+      <url>http://nexus.openqa.org/content/repositories/releases</url>
     </repository>
   </repositories>
 
@@ -58,15 +58,15 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.seleniumhq.webdriver</groupId>
-      <artifactId>webdriver-htmlunit</artifactId>
-      <version>0.9.7376</version>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-htmlunit-driver</artifactId>
+      <version>2.0a2</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.seleniumhq.webdriver</groupId>
-      <artifactId>webdriver-firefox</artifactId>
-      <version>0.9.7376</version>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-firefox-driver</artifactId>
+      <version>2.0a2</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
