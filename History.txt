@@ -1,4 +1,12 @@
-== 0.3.0.beta.2
+== 0.3.0
+
+=== New Features
+* Cucumber 0.7.2 support. (Aslak Hellesøy)
+* JRuby 1.5.0.RC3 support. (Aslak Hellesøy)
+
+=== Changed Features
+
+== 0.3.0
 
 === New Features
 * JRuby 1.5.0.RC1 support. (Aslak Hellesøy)

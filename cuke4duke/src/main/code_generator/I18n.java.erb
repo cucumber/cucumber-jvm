@@ -1,11 +1,12 @@
-public class <%= i18n.underscored_iso_code.upcase %> {
+    public class <%= i18n.underscored_iso_code.upcase %> {
 <% i18n.code_keywords.each do |kw| -%>
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-@StepDef("<%= i18n.iso_code %>")
-public static@interface <%= kw %> {
-public abstract String value();
-}
 
-        <% end -%>
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("<%= i18n.iso_code %>")
+        public static @interface <%= kw %> {
+            public abstract String value();
         }
+<% end -%>
+    }
+

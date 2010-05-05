@@ -6,7 +6,7 @@
   <groupId>cuke4duke</groupId>
   <artifactId>cuke4duke-groovy-example</artifactId>
   <packaging>jar</packaging>
-  <version>0.3.0.beta.2</version>
+  <version>0.3.0</version>
   <name>Cuke4Duke Groovy Example</name>
   <url>http://cukes.info/</url>
 
@@ -42,7 +42,7 @@
     <dependency>
       <groupId>cuke4duke</groupId>
       <artifactId>cuke4duke</artifactId>
-      <version>0.3.0.beta.2</version>
+      <version>0.3.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -81,7 +81,7 @@
             <cucumberArg>--backtrace</cucumberArg>
           </cucumberArgs>
           <gems>
-            <gem>install cuke4duke --version 0.3.0.beta.2</gem>
+            <gem>install cuke4duke --version 0.3.0</gem>
           </gems>
         </configuration>
         <executions>

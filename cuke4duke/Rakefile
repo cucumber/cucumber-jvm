@@ -15,18 +15,11 @@ begin
     gem.files = FileList['VERSION', 'lib/cuke4duke.jar', 'bin/cuke4duke']
     gem.test_files = []
 
-    gem.add_dependency 'cucumber', '>= 0.7.0.beta.7'
+    gem.add_dependency 'cucumber', '>= 0.7.2'
     gem.platform = 'java'
   end
 
   Jeweler::GemcutterTasks.new
 rescue LoadError
   puts "Jeweler (or a dependency) not available. Install it with: sudo gem install jeweler"
-end
-
-desc 'Installs gems into JRuby under Maven'
-task :install_gems do
-  sh "jruby -S gem install --install-dir ~/.m2/repository/.jruby --no-ri --no-rdoc gherkin"
-  sh "jruby -S gem install --install-dir ~/.m2/repository/.jruby --no-ri --no-rdoc cucumber --pre"
-  sh "jruby -S gem install --install-dir ~/.m2/repository/.jruby --no-ri --no-rdoc pkg/cuke4duke"
 end

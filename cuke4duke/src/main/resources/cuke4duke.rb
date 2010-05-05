@@ -1,12 +1,13 @@
 # This file is loaded before Cucumber is loaded.
-require 'java'
 require 'rubygems'
 begin
   require 'cucumber'
-rescue LoadError
+rescue LoadError => e
   gem 'cucumber'
   puts 'LOADPATH'
   puts $:
+  puts e.message
+  puts e.backtrace
   require 'cucumber'
 end
 require 'cucumber/formatter/unicode'

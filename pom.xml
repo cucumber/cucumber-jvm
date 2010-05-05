@@ -6,7 +6,7 @@
   <groupId>cuke4duke</groupId>
   <artifactId>parent</artifactId>
   <packaging>pom</packaging>
-  <version>0.3.0.beta.2</version>
+  <version>0.3.0</version>
   <name>Cuke4Duke Main Project</name>
   <url>http://cukes.info/</url>
 
@@ -42,10 +42,9 @@
     <profile>
       <id>examples</id>
       <modules>
-        <module>examples/java-ejb3</module>
-        <module>examples/celerity</module>
         <module>examples/java</module>
         <module>examples/groovy</module>
+        <module>examples/java-ejb3</module>
         <module>examples/scala</module>
         <module>examples/java-webdriver</module>
         <module>examples/groovy-webdriver</module>
@@ -53,6 +52,7 @@
         <module>examples/ioke</module>
         <module>examples/spring</module>
         <module>examples/guice</module>
+        <module>examples/celerity</module>
         <!-- Broken now because of new v8 support in Cucumber -->
         <module>examples/javascript</module>
       </modules>

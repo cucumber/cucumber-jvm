@@ -1,4 +1,5 @@
-trait <%= i18n.underscored_iso_code.upcase %> { this: ScalaDsl =>
+trait <%= i18n.underscored_iso_code.upcase %> {
+  this: ScalaDsl =>
 <% i18n.code_keywords.each do |kw| -%>
   val <%= kw %> = new Step("<%= kw %>")
 <% end -%>
