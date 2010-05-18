@@ -32,7 +32,9 @@ public class ClassLanguage extends AbstractProgrammingLanguage {
         objectFactory.addStepMother(stepMother);
         for (ClassAnalyzer analyzer : analyzers) {
             for (Class<?> clazz : analyzer.alwaysLoad()) {
-                objectFactory.addClass(clazz);
+                if (objectFactory.canHandle(clazz)) {
+                    objectFactory.addClass(clazz);
+                }
             }
         }
     }
@@ -54,7 +56,7 @@ public class ClassLanguage extends AbstractProgrammingLanguage {
     }
 
     public void addClass(Class<?> clazz) {
-        if (!Modifier.isAbstract(clazz.getModifiers())) {
+        if (!Modifier.isAbstract(clazz.getModifiers()) && objectFactory.canHandle(clazz)) {
             objectFactory.addClass(clazz);
         }
     }

@@ -6,6 +6,7 @@ import org.picocontainer.PicoBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.lang.reflect.Modifier;
 
 public class PicoFactory implements ObjectFactory {
     private MutablePicoContainer pico;
@@ -26,6 +27,10 @@ public class PicoFactory implements ObjectFactory {
     public void disposeObjects() {
         pico.stop();
         pico.dispose();
+    }
+
+    public boolean canHandle(Class<?> clazz) {
+        return true;
     }
 
     public void addClass(Class<?> clazz) {

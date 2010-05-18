@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.lang.reflect.Modifier;
 
 public class GuiceFactory implements ObjectFactory {
 
@@ -22,6 +23,11 @@ public class GuiceFactory implements ObjectFactory {
 
     public GuiceFactory(String moduleClassName) throws Throwable {
         modules.add((Module) Class.forName(moduleClassName).newInstance());
+    }
+
+    public boolean canHandle(Class<?> clazz) {
+        return Modifier.isStatic(clazz.getModifiers())
+           || clazz.getEnclosingClass() == null;
     }
 
     public void addClass(Class<?> clazz) {
