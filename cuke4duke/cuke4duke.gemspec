@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Aslak Helles\303\270y"]
-  s.date = %q{2010-05-05}
+  s.date = %q{2010-05-17}
   s.default_executable = %q{cuke4duke}
   s.description = %q{Write Cucumber Step Definitions in Java, Scala, Groovy, Rhino Javascript, Clojure or Ioke}
   s.email = %q{cukes@googlegroups.com}
@@ -23,7 +23,7 @@ Gem::Specification.new do |s|
   s.homepage = %q{http://cukes.info}
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.3.6}
+  s.rubygems_version = %q{1.3.5}
   s.summary = %q{JVM support for Cucumber}
 
   if s.respond_to? :specification_version then
