@@ -14,7 +14,6 @@ begin
     gem.executables = ["cuke4duke"]
     gem.files = FileList['VERSION', 'lib/cuke4duke.jar', 'bin/cuke4duke']
     gem.test_files = []
-
     gem.add_dependency 'cucumber', '~> 0.8.2'
     gem.platform = 'java'
   end
