@@ -172,8 +172,11 @@ trait HR {
 }
 trait HU {
   this: ScalaDsl =>
-  val Ha = new Step("Ha")
+  val Amennyiben = new Step("Amennyiben")
+  val Adott = new Step("Adott")
   val Majd = new Step("Majd")
+  val Ha = new Step("Ha")
+  val Amikor = new Step("Amikor")
   val Akkor = new Step("Akkor")
   val És = new Step("És")
   val De = new Step("De")
@@ -222,6 +225,16 @@ trait LT {
   val Tada = new Step("Tada")
   val Ir = new Step("Ir")
   val Bet = new Step("Bet")
+}
+trait LU {
+  this: ScalaDsl =>
+  val ugeholl = new Step("ugeholl")
+  val wann = new Step("wann")
+  val dann = new Step("dann")
+  val an = new Step("an")
+  val a = new Step("a")
+  val awer = new Step("awer")
+  val mä = new Step("mä")
 }
 trait LV {
   this: ScalaDsl =>
@@ -284,8 +297,12 @@ trait RO_RO {
 trait RU {
   this: ScalaDsl =>
   val Допустим = new Step("Допустим")
+  val Дано = new Step("Дано")
+  val Пусть = new Step("Пусть")
   val Если = new Step("Если")
+  val Когда = new Step("Когда")
   val То = new Step("То")
+  val Тогда = new Step("Тогда")
   val И = new Step("И")
   val Ктомуже = new Step("Ктомуже")
   val Но = new Step("Но")
@@ -343,9 +360,14 @@ trait UK {
   val Припустимо = new Step("Припустимо")
   val Припустимощо = new Step("Припустимощо")
   val Нехай = new Step("Нехай")
+  val Дано = new Step("Дано")
   val Якщо = new Step("Якщо")
+  val Коли = new Step("Коли")
   val То = new Step("То")
+  val Тоді = new Step("Тоді")
   val І = new Step("І")
+  val Атакож = new Step("Атакож")
+  val Та = new Step("Та")
   val Але = new Step("Але")
 }
 trait UZ {

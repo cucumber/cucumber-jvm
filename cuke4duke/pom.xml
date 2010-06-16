@@ -8,7 +8,7 @@
     <groupId>cuke4duke</groupId>
     <artifactId>parent</artifactId>
     <relativePath>../pom.xml</relativePath>
-    <version>0.3.0</version>
+    <version>0.3.1</version>
   </parent>
 
   <artifactId>cuke4duke</artifactId>
@@ -37,15 +37,21 @@
 
   <dependencies>
     <dependency>
+      <groupId>gherkin</groupId>
+      <artifactId>gherkin</artifactId>
+      <version>2.0.2</version>
+    </dependency>
+
+    <dependency>
       <groupId>org.jruby</groupId>
       <artifactId>jruby-complete</artifactId>
-      <version>1.5.0.RC3</version>
+      <version>1.5.1</version>
     </dependency>
 
     <dependency>
       <groupId>org.apache.ant</groupId>
       <artifactId>ant</artifactId>
-      <version>1.8.0</version>
+      <version>1.8.1</version>
     </dependency>
     <dependency>
       <groupId>org.picocontainer</groupId>
@@ -68,7 +74,7 @@
     <dependency>
       <groupId>org.codehaus.groovy</groupId>
       <artifactId>groovy-all</artifactId>
-      <version>1.7.1</version>
+      <version>1.7.3</version>
       <optional>true</optional>
     </dependency>
     <dependency>
@@ -116,7 +122,7 @@
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-all</artifactId>
-      <version>1.8.4</version>
+      <version>1.8.5</version>
       <scope>test</scope>
       <optional>true</optional>
     </dependency>

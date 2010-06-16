@@ -1,3 +1,11 @@
+== 0.3.1 (2010-06-16)
+
+=== New Features
+* Upgraded to Cucumber 0.8.2.
+
+=== Bugfixes
+* Fixed gem dependencies so that we don't accidentally get too new cucumber and gherkin gems in the future. (Aslak Hellesøy)
+
 == 0.3.0 (2010-05-05)
 
 === Bugfixes

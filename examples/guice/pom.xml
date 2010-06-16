@@ -5,7 +5,7 @@
   <groupId>cuke4duke</groupId>
   <artifactId>cuke4duke-guice-example</artifactId>
   <packaging>jar</packaging>
-  <version>0.3.0</version>
+  <version>0.3.1</version>
   <name>Cuke4Duke Guice Example</name>
   <url>http://cukes.info/</url>
 
@@ -51,7 +51,7 @@
     <dependency>
       <groupId>cuke4duke</groupId>
       <artifactId>cuke4duke</artifactId>
-      <version>0.3.0</version>
+      <version>0.3.1</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -96,7 +96,7 @@
             <cucumberArg>${basedir}/target/test-classes</cucumberArg>
           </cucumberArgs>
           <gems>
-            <gem>install cuke4duke --version 0.3.0</gem>
+            <gem>install cuke4duke --version 0.3.1</gem>
           </gems>
         </configuration>
         <executions>
