@@ -43,7 +43,9 @@ public class GuiceFactoryTest {
 
         SomeClass instance = new SomeClass();
         Class<? extends SomeInnerClass> someInnerClass = instance.new SomeInnerClass().getClass();
-        guiceFactory.addClass(someInnerClass);
+        if (guiceFactory.canHandle(someInnerClass)) {
+            guiceFactory.addClass(someInnerClass);
+        }
         guiceFactory.createObjects();
 		
 	}

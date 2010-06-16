@@ -9,6 +9,8 @@ public interface ObjectFactory {
 
     void disposeObjects();
 
+    boolean canHandle(Class<?> clazz);
+
     void addClass(Class<?> clazz);
 
     void addStepMother(StepMother mother);

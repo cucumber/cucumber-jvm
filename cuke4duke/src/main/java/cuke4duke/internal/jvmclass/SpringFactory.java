@@ -9,6 +9,7 @@ import org.springframework.context.support.StaticApplicationContext;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.lang.reflect.Modifier;
 
 public class SpringFactory implements ObjectFactory {
     private final List<Class<?>> classes = new ArrayList<Class<?>>();
@@ -20,6 +21,10 @@ public class SpringFactory implements ObjectFactory {
     }
 
     public void disposeObjects() {
+    }
+
+    public boolean canHandle(Class<?> clazz) {
+        return true;
     }
 
     public void addClass(Class<?> clazz) {
