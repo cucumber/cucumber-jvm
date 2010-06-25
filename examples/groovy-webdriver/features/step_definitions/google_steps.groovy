@@ -16,6 +16,6 @@ When(~"I search for \"(.*)\"") { String query ->
 }
 
 Then(~"I should see") { String text ->
-  assertThat(browser.getPageSource(), containsString(text))
+  assertThat(browser.findElementByTagName('body').text, containsString(text))
 }
 
