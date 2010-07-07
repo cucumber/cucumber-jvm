@@ -25,6 +25,13 @@ public class CucumberMojo extends AbstractJRubyMojo {
     protected boolean installGems = false;
 
     /**
+     * Set this to 'true' to skip running features.
+     * 
+     * @parameter expression="${maven.test.skip}"
+     */
+    private boolean skip;
+
+    /**
      * Will cause the project build to look successful, rather than fail, even if there are Cucumber test failures.
      * This can be useful on a continuous integration server, if your only option to be able to collect output files,
      * is if the project builds successfully.
@@ -65,6 +72,11 @@ public class CucumberMojo extends AbstractJRubyMojo {
             for (String gemSpec : gems) {
                 installGem(gemSpec);
             }
+        }
+
+        if (skip) {
+            getLog().info("Cucumber Features are skipped");
+            return;
         }
 
         CucumberTask cucumber = cucumber(allCucumberArgs());
