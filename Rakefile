@@ -15,11 +15,18 @@ task :release do
   Dir.chdir('cuke4duke') do
     sh %{rake gemspec}
   end
-  Dir.chdir('cuke4duke') do
-    sh %{rake gemcutter:release}
-    sh %{MAVEN_OPTS="-Xmx512m -Dmaven.wagon.provider.http=httpclient" mvn site:site site:deploy}
-  end
-  sh %{mvn -Dmaven.wagon.provider.http=httpclient deploy}
+
+  # Disabled because of this retarded Maven error:
+  #
+  # Unable to configure Wagon: 'scp'
+  # Embedded error: While configuring wagon for 'cukes': Unable to apply wagon configuration.
+  # Cannot find setter nor field in org.apache.maven.wagon.providers.ssh.jsch.ScpWagon for 'httpHeaders'
+  # Dir.chdir('cuke4duke') do
+  #  sh %{MAVEN_OPTS="-Xmx512m" mvn site:site site:deploy}
+  # end
+  
+  #sh %{mvn -Dmaven.wagon.provider.http=httpclient deploy}
+  sh %{mvn deploy}
   sh %{git push}
   sh %{git tag -a "v#{version}" -m "Release #{version}"}
   sh %{git push --tags}
