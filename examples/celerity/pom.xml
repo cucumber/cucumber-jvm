@@ -4,7 +4,7 @@
   <groupId>cuke4duke</groupId>
   <artifactId>cuke4duke-celerity-example</artifactId>
   <packaging>war</packaging>
-  <version>0.3.1</version>
+  <version>0.3.2</version>
   <name>Cuke4Duke Celerity Example</name>
   <url>http://maven.apache.org</url>
 
@@ -52,8 +52,8 @@
           </jvmArgs>
           <gems>
             <gem>install celerity --version 0.7.9</gem>
-            <gem>install rspec --version 2.0.0.beta.12</gem>
-            <gem>install cuke4duke --version 0.3.1</gem>
+            <gem>install rspec --version 2.0.0.beta.17</gem>
+            <gem>install cuke4duke --version 0.3.2</gem>
           </gems>
           <cucumberArgs>
             <cucumberArg>--color</cucumberArg>

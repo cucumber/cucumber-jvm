@@ -503,6 +503,44 @@ public interface I18n {
         }
     }
 
+    public class EN_PIRATE {
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("en-pirate")
+        public static @interface Gangway {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("en-pirate")
+        public static @interface Blimey {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("en-pirate")
+        public static @interface Letgoandhaul {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("en-pirate")
+        public static @interface Aye {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("en-pirate")
+        public static @interface Avast {
+            public abstract String value();
+        }
+    }
+
     public class EN_TX {
 
         @Retention(RetentionPolicy.RUNTIME)

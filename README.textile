@@ -9,8 +9,9 @@ First, cd to cuke4duke and run mvn install once. This will install JRuby under y
 h3. Install required gems:
 
 <pre>
-GEM_PATH=~/.m2/repository/.jruby GEM_HOME=~/.m2/repository/.jruby jruby -S gem install rake jeweler celerity rspec
-GEM_PATH=~/.m2/repository/.jruby GEM_HOME=~/.m2/repository/.jruby jruby -S rake install
+GEM_PATH=~/.m2/repository/.jruby GEM_HOME=~/.m2/repository/.jruby jruby -S gem install rake jeweler celerity gherkin cucumber
+# When rspec 2.0 is released - drop the --pre option
+GEM_PATH=~/.m2/repository/.jruby GEM_HOME=~/.m2/repository/.jruby jruby -S gem install rspec --pre
 </pre>
 
 h2. Release process
@@ -19,6 +20,7 @@ Before release:
 
 * Update version in all pom.xml files, and cuke4duke/VERSION
 * Update Cucumber dependency in cuke4duke/Rakefile
+* Update Gherkin dependency in cuke4duke/pom.xml
 * pushd cuke4duke && GEM_PATH=~/.m2/repository/.jruby GEM_HOME=~/.m2/repository/.jruby jruby -S rake install && popd
 * rake i18n_generate
 * mvn -P examples clean install -Dcuke4duke.bin=cuke4duke/bin/cuke4duke

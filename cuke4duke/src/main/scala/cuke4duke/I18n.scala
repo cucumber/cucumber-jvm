@@ -99,6 +99,14 @@ trait EN_LOL {
   val AN = new Step("AN")
   val BUT = new Step("BUT")
 }
+trait EN_PIRATE {
+  this: ScalaDsl =>
+  val Gangway = new Step("Gangway")
+  val Blimey = new Step("Blimey")
+  val Letgoandhaul = new Step("Letgoandhaul")
+  val Aye = new Step("Aye")
+  val Avast = new Step("Avast")
+}
 trait EN_TX {
   this: ScalaDsl =>
   val Givenyall = new Step("Givenyall")
