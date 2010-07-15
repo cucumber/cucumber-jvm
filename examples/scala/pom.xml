@@ -3,14 +3,13 @@
   <groupId>cuke4duke.examples</groupId>
   <artifactId>cuke4duke-scala-example</artifactId>
   <name>Cuke4Duke Scala Example</name>
-  <version>0.3.1</version>
+  <version>0.3.2</version>
   <inceptionYear>2009</inceptionYear>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <scala.version>2.7.7</scala.version>
-    <!--<scala.version>2.8.0.Beta1</scala.version>-->
+    <scala.version>2.8.0</scala.version>
   </properties>
 
   <repositories>
@@ -46,7 +45,7 @@
     <dependency>
       <groupId>cuke4duke</groupId>
       <artifactId>cuke4duke</artifactId>
-      <version>0.3.1</version>
+      <version>0.3.2</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -104,7 +103,7 @@
             <cucumberArg>${basedir}/target/test-classes</cucumberArg>
           </cucumberArgs>
           <gems>
-            <gem>install cuke4duke --version 0.3.1</gem>
+            <gem>install cuke4duke --version 0.3.2</gem>
           </gems>
         </configuration>
         <executions>

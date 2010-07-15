@@ -19,9 +19,9 @@ task :release do
   sh %{git tag -a "v#{version}" -m "Release #{version}"}
   Dir.chdir('cuke4duke') do
     sh %{rake gemcutter:release}
-    sh %{MAVEN_OPTS="-Xmx512m" mvn site:site site:deploy}
+    sh %{MAVEN_OPTS="-Xmx512m -Dmaven.wagon.provider.http=httpclient" mvn site:site site:deploy}
   end
-  sh %{mvn deploy}
+  sh %{mvn -Dmaven.wagon.provider.http=httpclient deploy}
   sh %{git push}
   sh %{git push --tags}
 end
