@@ -15,14 +15,13 @@ task :release do
   Dir.chdir('cuke4duke') do
     sh %{rake gemspec}
   end
-  sh %{git commit -a -m "Release #{version}"}
-  sh %{git tag -a "v#{version}" -m "Release #{version}"}
   Dir.chdir('cuke4duke') do
     sh %{rake gemcutter:release}
     sh %{MAVEN_OPTS="-Xmx512m -Dmaven.wagon.provider.http=httpclient" mvn site:site site:deploy}
   end
   sh %{mvn -Dmaven.wagon.provider.http=httpclient deploy}
   sh %{git push}
+  sh %{git tag -a "v#{version}" -m "Release #{version}"}
   sh %{git push --tags}
 end
 
