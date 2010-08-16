@@ -31,7 +31,18 @@
       <id>codehaus</id>
       <url>http://repository.codehaus.org</url>
     </repository>
+    <repository>
+      <id>cukes</id>
+      <url>http://cukes.info/maven</url>
+    </repository>
   </repositories>
+
+<pluginRepositories>
+  <pluginRepository>
+    <id>cukes</id>
+    <url>http://cukes.info/maven</url>
+  </pluginRepository>
+</pluginRepositories>
 
   <modules>
     <module>cuke4duke</module>
