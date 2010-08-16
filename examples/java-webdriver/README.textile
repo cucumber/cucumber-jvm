@@ -22,6 +22,8 @@ See "Ant":http://wiki.github.com/aslakhellesoy/cuke4duke/ant or
 
 
 
+h2. Example project
+James Ladd maintains a decent "example project":http://github.com/jamesladd/maven-cuke4duke-jump-start – A Maven project that incorporates cuke4duke (Cucumber), Spring3, and Jetty + automated UI (Selenium) tests as a project jump start. 
 
 
 
