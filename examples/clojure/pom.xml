@@ -24,6 +24,10 @@
       <id>cukes</id>
       <url>http://cukes.info/maven</url>
     </repository>
+    <repository>
+      <id>clojars.org</id>
+      <url>http://clojars.org/repo</url>
+    </repository>
   </repositories>
 
   <pluginRepositories>
@@ -42,7 +46,7 @@
     <dependency>
       <groupId>org.clojure</groupId>
       <artifactId>clojure</artifactId>
-      <version>1.1.0</version>
+      <version>1.2.0</version>
     </dependency>
   </dependencies>
 
