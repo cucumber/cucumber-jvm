@@ -1,5 +1,10 @@
 == 0.3.3 (2010-10-01)
 
+=== New Features
+* Upgraded to Clojure 1.2.0. (Martin Jul)
+* Upgraded to PicoContainer 2.11.2 (Jesper Rønn-Jensen)
+* Upgraded to Selenium 2.0a5 (Jesper Rønn-Jensen)
+
 == 0.3.2 (2010-07-15)
 
 Various fixes to bring Cuke4Duke uptodate with latest Gherkin and Cucumber
