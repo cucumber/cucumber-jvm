@@ -2,6 +2,28 @@ h1. Java Webdriver Example
 
 This project demonstrates how you can test web applications (in any language) using Java and WebDriver.
 
+h2. Installation instructions
+cd to examples/java-webdriver (this folder) and run this command once:
+
+<pre>
+mvn -Dcucumber.installGems=true cuke4duke:cucumber
+</pre>
+
+ This will install JRuby and all 
+required dependencies under your Maven repo.
+
+h3. Test your install
+Test your installation with
+
+<pre>mvn integration-test</pre>
+
 See "Ant":http://wiki.github.com/aslakhellesoy/cuke4duke/ant or 
 "Maven":http://wiki.github.com/aslakhellesoy/cuke4duke/maven for details about how to run the example.
+
+
+
+h2. Example project
+James Ladd maintains a decent "example project":http://github.com/jamesladd/maven-cuke4duke-jump-start – A Maven project that incorporates cuke4duke (Cucumber), Spring3, and Jetty + automated UI (Selenium) tests as a project jump start. 
+
+
 
