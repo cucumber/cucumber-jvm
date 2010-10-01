@@ -6,7 +6,7 @@
   <groupId>cuke4duke</groupId>
   <artifactId>cuke4duke-clojure-example</artifactId>
   <packaging>jar</packaging>
-  <version>0.3.2</version>
+  <version>0.3.3</version>
   <name>Cuke4Duke Clojure Example</name>
   <url>http://cukes.info/</url>
 
@@ -41,7 +41,7 @@
     <dependency>
       <groupId>cuke4duke</groupId>
       <artifactId>cuke4duke</artifactId>
-      <version>0.3.2</version>
+      <version>0.3.3</version>
     </dependency>
     <dependency>
       <groupId>org.clojure</groupId>
@@ -68,7 +68,7 @@
             <cucumberArg>--strict</cucumberArg>
           </cucumberArgs>
           <gems>
-            <gem>install cuke4duke --version 0.3.2</gem>
+            <gem>install cuke4duke --version 0.3.3</gem>
           </gems>
         </configuration>
         <executions>

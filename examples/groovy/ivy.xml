@@ -1,10 +1,10 @@
 <ivy-module version="2.0">
   <info organisation="cukes.info" module="groovy-example"/>
   <dependencies>
-    <dependency org="cuke4duke" name="cuke4duke" rev="0.3.2"/>
+    <dependency org="cuke4duke" name="cuke4duke" rev="0.3.3"/>
     <dependency org="org.jruby" name="jruby-complete" rev="1.5.1" transitive="false"/>
-    <dependency org="org.picocontainer" name="picocontainer" rev="2.10.2"/>
+    <dependency org="org.picocontainer" name="picocontainer" rev="2.11.2"/>
     <dependency org="junit" name="junit" rev="4.8.1"/>
-    <dependency org="org.codehaus.groovy" name="groovy-all" rev="1.7.3"/>
+    <dependency org="org.codehaus.groovy" name="groovy-all" rev="1.7.5"/>
   </dependencies>
 </ivy-module>

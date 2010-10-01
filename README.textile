@@ -22,7 +22,7 @@ Before release:
 * Update Cucumber dependency in cuke4duke/Rakefile
 * Update Gherkin dependency in cuke4duke/pom.xml
 * pushd cuke4duke && GEM_PATH=~/.m2/repository/.jruby GEM_HOME=~/.m2/repository/.jruby jruby -S rake install && popd
-* rake i18n_generate
+* GEM_PATH=~/.m2/repository/.jruby rake i18n_generate
 * mvn -P examples clean install -Dcuke4duke.bin=cuke4duke/bin/cuke4duke
 
 If all ok:

@@ -13,7 +13,7 @@ public abstract class AbstractStepDefinition implements StepDefinition {
         programmingLanguage.availableStepDefinition(regexp_source(), file_colon_line());
     }
 
-    public final void invoke(List arguments) throws Throwable {
+    public final void invoke(List<Object> arguments) throws Throwable {
         programmingLanguage.invoked(regexp_source(), file_colon_line());
         invokeWithArgs(arguments.toArray());
     }

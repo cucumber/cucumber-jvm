@@ -4,7 +4,7 @@
   <groupId>cuke4duke</groupId>
   <artifactId>cuke4duke-celerity-example</artifactId>
   <packaging>war</packaging>
-  <version>0.3.2</version>
+  <version>0.3.3</version>
   <name>Cuke4Duke Celerity Example</name>
   <url>http://maven.apache.org</url>
 
@@ -29,6 +29,14 @@
       <id>cukes</id>
       <url>http://cukes.info/maven</url>
     </pluginRepository>
+    <pluginRepository>
+      <id>larry</id>
+      <url>http://download.java.net/maven/2</url>
+    </pluginRepository>
+    <pluginRepository>
+      <id>glassfish</id>
+      <url>http://download.java.net/maven/glassfish</url>
+    </pluginRepository>
   </pluginRepositories>
   
   <dependencies>
@@ -51,9 +59,9 @@
             <jvmArg>-Xmx384m</jvmArg>
           </jvmArgs>
           <gems>
-            <gem>install celerity --version 0.7.9</gem>
-            <gem>install rspec --version 2.0.0.beta.17</gem>
-            <gem>install cuke4duke --version 0.3.2</gem>
+            <gem>install celerity --version 0.8.2</gem>
+            <gem>install rspec --version 2.0.0.beta.22</gem>
+            <gem>install cuke4duke --version 0.3.3</gem>
           </gems>
           <cucumberArgs>
             <cucumberArg>--color</cucumberArg>
@@ -74,7 +82,7 @@
       <plugin>
         <groupId>org.mortbay.jetty</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
-        <version>7.0.0.RC6</version>
+        <version>8.0.0.M1</version>
         <configuration>
           <scanIntervalSeconds>10</scanIntervalSeconds>
           <stopKey>foo</stopKey>

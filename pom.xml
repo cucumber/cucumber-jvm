@@ -6,7 +6,7 @@
   <groupId>cuke4duke</groupId>
   <artifactId>parent</artifactId>
   <packaging>pom</packaging>
-  <version>0.3.2</version>
+  <version>0.3.3</version>
   <name>Cuke4Duke Main Project</name>
   <url>http://cukes.info/</url>
 
@@ -37,12 +37,12 @@
     </repository>
   </repositories>
 
-<pluginRepositories>
-  <pluginRepository>
-    <id>cukes</id>
-    <url>http://cukes.info/maven</url>
-  </pluginRepository>
-</pluginRepositories>
+  <pluginRepositories>
+    <pluginRepository>
+      <id>cukes</id>
+      <url>http://cukes.info/maven</url>
+    </pluginRepository>
+  </pluginRepositories>
 
   <modules>
     <module>cuke4duke</module>
@@ -54,13 +54,13 @@
       <id>examples</id>
       <modules>
         <module>examples/celerity</module>
-        <module>examples/java-ejb3</module>
+        <module>examples/java</module>
+        <module>examples/scala</module>
         <module>examples/guice</module>
+        <module>examples/java-ejb3</module>
         <module>examples/java-webdriver</module>
         <module>examples/groovy-webdriver</module>
-        <module>examples/java</module>
         <module>examples/groovy</module>
-        <module>examples/scala</module>
         <module>examples/clojure</module>
         <module>examples/ioke</module>
         <module>examples/spring</module>
