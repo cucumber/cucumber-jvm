@@ -58,7 +58,7 @@
         <module>examples/ioke</module>
         <module>examples/spring</module>
         <!-- Broken now because of new v8 support in Cucumber -->
-        <module>examples/javascript</module>
+        <!--module>examples/javascript</module-->
       </modules>
     </profile>
   </profiles>
