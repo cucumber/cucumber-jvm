@@ -10,7 +10,7 @@
     <mkdir dir="target/junit-report"/>
     <taskdef name="cucumber" classname="cuke4duke.ant.CucumberTask" classpathref="compile.classpath"/>
     <cucumber
-            args="--verbose --require target/test-classes --color --format pretty --format junit --out target/junit-report features"
+            args="--verbose --require target/test-classes --require src/test/ruby --color --format pretty --format junit --out target/junit-report features"
             objectFactory="pico">
       <classpath>
         <pathelement location="target/test-classes"/>
