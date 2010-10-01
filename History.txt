@@ -1,5 +1,8 @@
 == 0.3.3 (2010-10-01)
 
+=== Bugfixes
+* Add ruby stepdefs to Java example in Ant build script. (Richard Lawrence)
+
 === New Features
 * Upgraded to Clojure 1.2.0. (Martin Jul)
 * Upgraded to PicoContainer 2.11.2 (Jesper Rønn-Jensen)
