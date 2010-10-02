@@ -1,15 +1,12 @@
-# This file is loaded before Cucumber is loaded.
 require 'rubygems'
-begin
-  require 'cucumber'
-rescue LoadError => e
-  gem 'cucumber'
-  puts 'LOADPATH'
-  puts $:
-  puts e.message
-  puts e.backtrace
-  require 'cucumber'
+require 'cucumber'
+
+module Cuke4Duke
+  VERSION = Gem::Specification.load(File.dirname(__FILE__) + '/../cuke4duke.gemspec').version
 end
+require "cuke4duke-#{Cuke4Duke::VERSION}.jar"
+Cucumber::VERSION << " (cuke4duke #{Cuke4Duke::VERSION})"
+
 require 'cucumber/formatter/unicode'
 
 # Workaround to make the java code have access to the same Ruby

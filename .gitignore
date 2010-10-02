@@ -11,3 +11,6 @@ pkg
 *.sw?
 .idea
 cuke4duke/test-output/
+.bundle
+.rvmrc
+Gemfile.lock

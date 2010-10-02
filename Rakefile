@@ -1,3 +1,8 @@
+require 'rubygems'
+require 'bundler'
+Bundler.setup
+Bundler::GemHelper.install_tasks
+
 desc 'Make all files use UNIX (\n) line endings'
 task :fix_cr_lf do
   files = FileList['**/*']
@@ -10,7 +15,7 @@ task :fix_cr_lf do
 end
 
 desc 'Release'
-task :release do
+task :releaseXX do
   version = IO.read('pom.xml').match(/<version>(.*)<\/version>/)[1]
   Dir.chdir('cuke4duke') do
     sh %{rake gemspec}
