@@ -14,9 +14,9 @@ Gem::Specification.new do |s|
 
   s.rubygems_version   = "1.3.7"
   s.files            = `git ls-files -- lib`.split("\n")
-  s.files            << 'cuke4duke.jar'
+  s.files            << "lib/cuke4duke-#{s.version}.jar"
   s.executables      = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
-  s.extra_rdoc_files = ["LICENSE", "README.textile"]
+  s.extra_rdoc_files = ["LICENCE", "README.textile"]
   s.rdoc_options     = ["--charset=UTF-8"]
   s.require_path     = "lib"
 end

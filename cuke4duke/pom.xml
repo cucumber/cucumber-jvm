@@ -157,7 +157,7 @@
             <phase>package</phase>
             <configuration>
               <tasks>
-                <copy file="${project.build.directory}/${project.build.finalName}.jar" tofile="../lib/cuke4duke.jar"/>
+                <copy file="${project.build.directory}/${project.build.finalName}.jar" todir="../lib"/>
               </tasks>
             </configuration>
             <goals>
