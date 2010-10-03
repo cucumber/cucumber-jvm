@@ -26,6 +26,9 @@ class ReleaseHelper < Bundler::GemHelper
   end
 
   def maven_release
+    Dir['lib/*.jar'].each{|jar| FileUtils.rm(jar)}
+    ENV['RUBYLIB'] = File.expand_path("../lib", __FILE__)
+    system('mvn -P examples clean -B release:prepare -Dcuke4duke.bin=bin/cuke4duke')
   end
 end
 
