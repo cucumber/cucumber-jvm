@@ -28,4 +28,26 @@ Not using RVM:
 
 h2. Release process
 
+First, bump the release number:
+
+<pre>rake remove_snapshots</pre>
+
+Build again:
+
+<pre>rake build_all</pre>
+
+If all is OK, commit:
+
+<pre>git commit -am "Release"</pre>
+
+And release:
+
 <pre>rake release</pre>
+
+Finally, bump version:
+
+<pre>rake add_snapshots</pre>
+
+And commit again:
+
+<pre>git commit -am "Starting new development cycle"</pre>

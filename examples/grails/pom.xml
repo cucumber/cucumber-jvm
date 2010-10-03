@@ -4,7 +4,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
   <groupId>cuke4duke.grails</groupId>
   <artifactId>cuke4duke-grails-example</artifactId>
   <packaging>war</packaging>
-  <version>0.2.0-SNAPSHOT</version>
+  <version>0.2.0</version>
   <name>Cuke4Duke Grails Example</name>
   <url>http://cukes.info/</url>
 

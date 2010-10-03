@@ -19,6 +19,14 @@ class ReleaseHelper < Bundler::GemHelper
     task 'maven_release' do
       maven_release
     end
+
+    task 'remove_snapshots' do
+      remove_snapshots
+    end
+
+    task 'add_snapshots' do
+      add_snapshots
+    end
   end
 
   def release_jar_and_gem
@@ -33,49 +41,44 @@ class ReleaseHelper < Bundler::GemHelper
   end
 
   def remove_snapshots
-    system(%{find . -name 'pom.xml' -exec sed -i '' 's/-SNAPSHOT//' '{}' \;})
+    system(%{find . -name 'pom.xml' -exec sed -i '' 's/-SNAPSHOT//' '{}' \\;})
   end
 
   def add_snapshots
-    unless Cuke4Duke::VERSION =~ /(\d+\.\d+\.)(\d+)-SNAPSHOT$/
-      new_major = $2.to_i + 1
-      new_snapshot = "#{$1}#{new_major}-SNAPSHOT"
-      puts new_snapshot
-      #system(%{find . -name 'pom.xml' -exec sed -i '' 's/-SNAPSHOT//' '{}' \;})
+    if Cuke4Duke::VERSION =~ /(\d+\.\d+\.)(\d+)$/
+      major_minor = $1
+      new_patch = $2.to_i + 1
+      default_snapshot = "#{major_minor}#{new_patch}-SNAPSHOT"
+      asked_snapshot = Bundler.ui.instance_variable_get('@shell').ask("What is the new SNAPSHOT version? (#{new_snapshot})", :green)
+      
+      snapshot = asked_snapshot.strip == "" ? default_snapshot : snapshot
+      system(%{find . -name 'pom.xml' -exec sed -i '' 's/#{Cuke4Duke::VERSION}/#{snapshot}/' '{}' \\;})
     else
       raise "You're already at a -SNAPSHOT version: #{Cuke4Duke::VERSION}"
     end
   end
 
   def maven_release
+    # We have to run this in 2 separate mvn invocations to avoid:
+    #
+    # Unable to configure Wagon: 'scp'
+    # Embedded error: While configuring wagon for 'cukes': Unable to apply wagon configuration.
+    # Cannot find setter nor field in org.apache.maven.wagon.providers.ssh.jsch.ScpWagon for 'httpHeaders'
+    Dir.chdir('cuke4duke') do
+     sh %{MAVEN_OPTS="-Xmx512m" mvn site:site}
+     sh %{mvn site:deploy}
+    end
+    sh %{mvn deploy}
   end
 end
 
 ReleaseHelper.install_tasks
 
+task :default => :build_all
+
 task :build_all => :i18n_generate do
   Dir['lib/*.jar'].each{|jar| FileUtils.rm(jar)}
   sh('mvn -P examples clean install')
-end
-
-desc 'Release'
-task :releaseXX do
-  version = IO.read('pom.xml').match(/<version>(.*)<\/version>/)[1]
-
-  # Disabled because of this retarded Maven error:
-  #
-  # Unable to configure Wagon: 'scp'
-  # Embedded error: While configuring wagon for 'cukes': Unable to apply wagon configuration.
-  # Cannot find setter nor field in org.apache.maven.wagon.providers.ssh.jsch.ScpWagon for 'httpHeaders'
-  # Dir.chdir('cuke4duke') do
-  #  sh %{MAVEN_OPTS="-Xmx512m" mvn site:site site:deploy}
-  # end
-  
-  #sh %{mvn -Dmaven.wagon.provider.http=httpclient deploy}
-  sh %{mvn deploy}
-  sh %{git push}
-  sh %{git tag -a "v#{version}" -m "Release #{version}"}
-  sh %{git push --tags}
 end
 
 desc 'Generate i18n Step Definitions'
