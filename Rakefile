@@ -34,9 +34,9 @@ class ReleaseHelper < Bundler::GemHelper
     guard_already_tagged
     built_gem_path = build_gem
     tag_version {
-      git_push
       maven_release
       rubygem_push(built_gem_path)
+      git_push
     }
   end
 
@@ -49,7 +49,7 @@ class ReleaseHelper < Bundler::GemHelper
       major_minor = $1
       new_patch = $2.to_i + 1
       default_snapshot = "#{major_minor}#{new_patch}-SNAPSHOT"
-      asked_snapshot = Bundler.ui.instance_variable_get('@shell').ask("What is the new SNAPSHOT version? (#{new_snapshot})", :green)
+      asked_snapshot = Bundler.ui.instance_variable_get('@shell').ask("What is the new SNAPSHOT version? (#{default_snapshot})", :green)
       
       snapshot = asked_snapshot.strip == "" ? default_snapshot : snapshot
       system(%{find . -name 'pom.xml' -exec sed -i '' 's/#{Cuke4Duke::VERSION}/#{snapshot}/' '{}' \\;})

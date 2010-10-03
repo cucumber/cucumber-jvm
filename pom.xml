@@ -6,7 +6,7 @@
   <groupId>cuke4duke</groupId>
   <artifactId>parent</artifactId>
   <packaging>pom</packaging>
-  <version>0.4.0</version>
+  <version>0.4.1-SNAPSHOT</version>
   <name>Cuke4Duke: Parent</name>
   <url>http://cukes.info/</url>
 
