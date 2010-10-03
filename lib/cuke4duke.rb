@@ -1,10 +1,11 @@
 require 'rubygems'
 require 'cucumber'
-
-module Cuke4Duke
-  VERSION = Gem::Specification.load(File.dirname(__FILE__) + '/../cuke4duke.gemspec').version
+require 'cuke4duke/version'
+begin
+  require "cuke4duke-#{Cuke4Duke::VERSION}.jar"
+rescue LoadError
+  require "cuke4duke-#{Cuke4Duke::VERSION.gsub(/\.beta$/, '-SNAPSHOT')}.jar"
 end
-require "cuke4duke-#{Cuke4Duke::VERSION}.jar"
 Cucumber::VERSION << " (cuke4duke #{Cuke4Duke::VERSION})"
 
 require 'cucumber/formatter/unicode'

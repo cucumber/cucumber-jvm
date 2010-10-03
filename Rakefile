@@ -1,25 +1,45 @@
 require 'rubygems'
 require 'bundler'
 Bundler.setup
-Bundler::GemHelper.install_tasks
 
-desc 'Make all files use UNIX (\n) line endings'
-task :fix_cr_lf do
-  files = FileList['**/*']
-  files.each do |f|
-    next if File.directory?(f)
-    s = IO.read(f)
-    s.gsub!(/\r?\n/, "\n")
-    File.open(f, "w") { |io| io.write(s) }
+class ReleaseHelper < Bundler::GemHelper
+  def install
+    desc "Create tag #{version_tag} and upload #{name}-#{version}.jar and #{name}-#{version}.gem"
+    task 'release' do
+      release_jar_and_gem
+    end
+
+    task 'maven_release' do
+      maven_release
+    end
   end
+
+  def release_jar_and_gem
+    guard_clean
+    guard_already_tagged
+    built_gem_path = build_gem
+    tag_version {
+      git_push
+      maven_release
+      rubygem_push(built_gem_path)
+    }
+  end
+
+  def maven_release
+  end
+end
+
+ReleaseHelper.install_tasks
+
+task :build_all => :i18n_generate do
+  Dir['lib/*.jar'].each{|jar| FileUtils.rm(jar)}
+  ENV['RUBYLIB'] = File.expand_path("../lib", __FILE__)
+  system('mvn -P examples clean install -Dcuke4duke.bin=bin/cuke4duke')
 end
 
 desc 'Release'
 task :releaseXX do
   version = IO.read('pom.xml').match(/<version>(.*)<\/version>/)[1]
-  Dir.chdir('cuke4duke') do
-    sh %{rake gemspec}
-  end
 
   # Disabled because of this retarded Maven error:
   #
@@ -69,5 +89,16 @@ public interface I18n {
     Gherkin::I18n.all.each do |i18n|
       io.write(scala.result(binding))
     end
+  end
+end
+
+desc 'Make all files use UNIX (\n) line endings'
+task :fix_cr_lf do
+  files = FileList['**/*']
+  files.each do |f|
+    next if File.directory?(f)
+    s = IO.read(f)
+    s.gsub!(/\r?\n/, "\n")
+    File.open(f, "w") { |io| io.write(s) }
   end
 end

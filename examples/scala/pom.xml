@@ -1,34 +1,19 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                      http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>cuke4duke.examples</groupId>
+
+  <parent>
+    <groupId>cuke4duke</groupId>
+    <artifactId>parent</artifactId>
+    <relativePath>../../pom.xml</relativePath>
+    <version>0.4.0-SNAPSHOT</version>
+  </parent>
+
   <artifactId>cuke4duke-scala-example</artifactId>
-  <name>Cuke4Duke Scala Example</name>
-  <version>0.3.3</version>
-  <inceptionYear>2009</inceptionYear>
-
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <scala.version>2.8.0</scala.version>
-  </properties>
-
-  <repositories>
-    <repository>
-      <id>codehaus</id>
-      <url>http://repository.codehaus.org</url>
-    </repository>
-    <repository>
-      <id>cukes</id>
-      <url>http://cukes.info/maven</url>
-    </repository>
-  </repositories>
-
-  <pluginRepositories>
-    <pluginRepository>
-      <id>cukes</id>
-      <url>http://cukes.info/maven</url>
-    </pluginRepository>
-  </pluginRepositories>
+  <packaging>jar</packaging>
+  <name>Cuke4Duke: Scala Example</name>
 
   <dependencies>
     <dependency>

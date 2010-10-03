@@ -3,39 +3,24 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                       http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>cuke4duke</groupId>
+
+  <parent>
+    <groupId>cuke4duke</groupId>
+    <artifactId>parent</artifactId>
+    <relativePath>../../pom.xml</relativePath>
+    <version>0.4.0-SNAPSHOT</version>
+  </parent>
+
   <artifactId>cuke4duke-clojure-example</artifactId>
   <packaging>jar</packaging>
-  <version>0.3.3</version>
-  <name>Cuke4Duke Clojure Example</name>
-  <url>http://cukes.info/</url>
-
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-  </properties>
+  <name>Cuke4Duke: Clojure Example</name>
 
   <repositories>
-    <repository>
-      <id>codehaus</id>
-      <url>http://repository.codehaus.org</url>
-    </repository>
-    <repository>
-      <id>cukes</id>
-      <url>http://cukes.info/maven</url>
-    </repository>
     <repository>
       <id>clojars.org</id>
       <url>http://clojars.org/repo</url>
     </repository>
   </repositories>
-
-  <pluginRepositories>
-    <pluginRepository>
-      <id>cukes</id>
-      <url>http://cukes.info/maven</url>
-    </pluginRepository>
-  </pluginRepositories>
 
   <dependencies>
     <dependency>

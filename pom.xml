@@ -6,9 +6,16 @@
   <groupId>cuke4duke</groupId>
   <artifactId>parent</artifactId>
   <packaging>pom</packaging>
-  <version>0.3.3</version>
-  <name>Cuke4Duke Main Project</name>
+  <version>0.4.0-SNAPSHOT</version>
+  <name>Cuke4Duke: Parent</name>
   <url>http://cukes.info/</url>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+    <scala.version>2.8.0</scala.version>
+  </properties>
 
   <scm>
     <connection>scm:git:git://github.com/aslakhellesoy/cuke4duke.git</connection>
@@ -53,7 +60,6 @@
     <profile>
       <id>examples</id>
       <modules>
-        <module>examples/celerity</module>
         <module>examples/java</module>
         <module>examples/scala</module>
         <module>examples/guice</module>
@@ -64,6 +70,7 @@
         <module>examples/clojure</module>
         <module>examples/ioke</module>
         <module>examples/spring</module>
+        <module>examples/celerity</module>
         <!-- Broken now because of new v8 support in Cucumber -->
         <!--module>examples/javascript</module-->
       </modules>

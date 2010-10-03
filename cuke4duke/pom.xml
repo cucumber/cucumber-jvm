@@ -8,31 +8,12 @@
     <groupId>cuke4duke</groupId>
     <artifactId>parent</artifactId>
     <relativePath>../pom.xml</relativePath>
-    <version>0.3.3</version>
+    <version>0.4.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>cuke4duke</artifactId>
   <packaging>jar</packaging>
-  <name>Cuke4Duke</name>
-  <description>Pure Java support for Cucumber</description>
-
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <scala.version>2.8.0</scala.version>
-  </properties>
-
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <configuration>
-          <excludePackageNames>*.internal</excludePackageNames>
-        </configuration>
-      </plugin>
-    </plugins>
-  </reporting>
+  <name>Cuke4Duke: Core</name>
 
   <dependencies>
     <dependency>
@@ -40,13 +21,11 @@
       <artifactId>gherkin</artifactId>
       <version>2.2.5</version>
     </dependency>
-
     <dependency>
       <groupId>org.jruby</groupId>
       <artifactId>jruby-complete</artifactId>
       <version>1.5.3</version>
     </dependency>
-
     <dependency>
       <groupId>org.apache.ant</groupId>
       <artifactId>ant</artifactId>
@@ -168,4 +147,16 @@
       </plugin>
     </plugins>
   </build>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <excludePackageNames>*.internal</excludePackageNames>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
 </project>

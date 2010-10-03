@@ -1,69 +1,19 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                      http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>cuke4duke</groupId>
+
+  <parent>
+    <groupId>cuke4duke</groupId>
+    <artifactId>parent</artifactId>
+    <relativePath>../../pom.xml</relativePath>
+    <version>0.4.0-SNAPSHOT</version>
+  </parent>
+
   <artifactId>cuke4duke-ejb3-example</artifactId>
   <packaging>jar</packaging>
-  <version>0.3.3</version>
-  <name>Cuke4Duke EJB3 Example</name>
-  <url>http://maven.apache.org</url>
-
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-  </properties>
-
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>1.5</source>
-          <target>1.5</target>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>cuke4duke</groupId>
-        <artifactId>cuke4duke-maven-plugin</artifactId>
-        <configuration>
-          <jvmArgs>
-            <jvmArg>-Dcuke4duke.objectFactory=cuke4duke.internal.jvmclass.PicoFactory</jvmArg>
-          </jvmArgs>
-            <!--
-              You may not need all of these arguments in your own project. We
-              have a lot here for testing purposes...
-            -->
-            <cucumberArgs>
-            <cucumberArg>--color</cucumberArg>
-            <cucumberArg>--format</cucumberArg>
-            <cucumberArg>pretty</cucumberArg>
-            <cucumberArg>--format</cucumberArg>
-            <cucumberArg>junit</cucumberArg>
-            <cucumberArg>--out</cucumberArg>
-            <cucumberArg>target</cucumberArg>
-            <cucumberArg>--format</cucumberArg>
-            <cucumberArg>usage</cucumberArg>
-            <cucumberArg>--out</cucumberArg>
-            <cucumberArg>target/usage.txt</cucumberArg>
-            <cucumberArg>${basedir}/target/test-classes</cucumberArg>
-          </cucumberArgs>
-          <gems>
-            <gem>install cuke4duke --version 0.3.3</gem>
-          </gems>
-        </configuration>
-        <executions>
-          <execution>
-            <id>run-features</id>
-            <phase>integration-test</phase>
-            <goals>
-              <goal>cucumber</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
+  <name>Cuke4Duke: EJB3 Example</name>
 
   <dependencies>
     <dependency>
@@ -183,10 +133,55 @@
     </repository>
   </repositories>
 
-  <pluginRepositories>
-    <pluginRepository>
-      <id>cukes</id>
-      <url>http://cukes.info/maven</url>
-    </pluginRepository>
-  </pluginRepositories>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.5</source>
+          <target>1.5</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>cuke4duke</groupId>
+        <artifactId>cuke4duke-maven-plugin</artifactId>
+        <configuration>
+          <jvmArgs>
+            <jvmArg>-Dcuke4duke.objectFactory=cuke4duke.internal.jvmclass.PicoFactory</jvmArg>
+          </jvmArgs>
+            <!--
+              You may not need all of these arguments in your own project. We
+              have a lot here for testing purposes...
+            -->
+            <cucumberArgs>
+            <cucumberArg>--color</cucumberArg>
+            <cucumberArg>--format</cucumberArg>
+            <cucumberArg>pretty</cucumberArg>
+            <cucumberArg>--format</cucumberArg>
+            <cucumberArg>junit</cucumberArg>
+            <cucumberArg>--out</cucumberArg>
+            <cucumberArg>target</cucumberArg>
+            <cucumberArg>--format</cucumberArg>
+            <cucumberArg>usage</cucumberArg>
+            <cucumberArg>--out</cucumberArg>
+            <cucumberArg>target/usage.txt</cucumberArg>
+            <cucumberArg>${basedir}/target/test-classes</cucumberArg>
+          </cucumberArgs>
+          <gems>
+            <gem>install cuke4duke --version 0.3.3</gem>
+          </gems>
+        </configuration>
+        <executions>
+          <execution>
+            <id>run-features</id>
+            <phase>integration-test</phase>
+            <goals>
+              <goal>cucumber</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 </project>

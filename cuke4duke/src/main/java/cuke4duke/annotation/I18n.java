@@ -13,28 +13,14 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("ar")
-        public static @interface بفرض {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("ar")
-        public static @interface متى {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("ar")
-        public static @interface عندما {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("ar")
         public static @interface اذاً {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("ar")
+        public static @interface بفرض {
             public abstract String value();
         }
 
@@ -48,7 +34,7 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("ar")
-        public static @interface و {
+        public static @interface عندما {
             public abstract String value();
         }
 
@@ -56,6 +42,20 @@ public interface I18n {
         @Target(ElementType.METHOD)
         @StepDef("ar")
         public static @interface لكن {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("ar")
+        public static @interface متى {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("ar")
+        public static @interface و {
             public abstract String value();
         }
     }
@@ -72,21 +72,14 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("bg")
-        public static @interface Когато {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("bg")
-        public static @interface То {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("bg")
         public static @interface И {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("bg")
+        public static @interface Когато {
             public abstract String value();
         }
 
@@ -96,6 +89,13 @@ public interface I18n {
         public static @interface Но {
             public abstract String value();
         }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("bg")
+        public static @interface То {
+            public abstract String value();
+        }
     }
 
     public class CA {
@@ -103,21 +103,7 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("ca")
-        public static @interface Donat {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("ca")
-        public static @interface Donada {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("ca")
-        public static @interface Atès {
+        public static @interface Aleshores {
             public abstract String value();
         }
 
@@ -131,14 +117,7 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("ca")
-        public static @interface Quan {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("ca")
-        public static @interface Aleshores {
+        public static @interface Atès {
             public abstract String value();
         }
 
@@ -146,6 +125,20 @@ public interface I18n {
         @Target(ElementType.METHOD)
         @StepDef("ca")
         public static @interface Cal {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("ca")
+        public static @interface Donada {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("ca")
+        public static @interface Donat {
             public abstract String value();
         }
 
@@ -162,30 +155,16 @@ public interface I18n {
         public static @interface Però {
             public abstract String value();
         }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("ca")
+        public static @interface Quan {
+            public abstract String value();
+        }
     }
 
     public class CS {
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("cs")
-        public static @interface Pokud {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("cs")
-        public static @interface Když {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("cs")
-        public static @interface Pak {
-            public abstract String value();
-        }
 
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
@@ -207,6 +186,27 @@ public interface I18n {
         public static @interface Ale {
             public abstract String value();
         }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("cs")
+        public static @interface Když {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("cs")
+        public static @interface Pak {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("cs")
+        public static @interface Pokud {
+            public abstract String value();
+        }
     }
 
     public class CY_GB {
@@ -214,7 +214,21 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("cy-GB")
+        public static @interface A {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("cy-GB")
         public static @interface Anrhegediga {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("cy-GB")
+        public static @interface Ond {
             public abstract String value();
         }
 
@@ -231,20 +245,6 @@ public interface I18n {
         public static @interface Yna {
             public abstract String value();
         }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("cy-GB")
-        public static @interface A {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("cy-GB")
-        public static @interface Ond {
-            public abstract String value();
-        }
     }
 
     public class DA {
@@ -259,14 +259,14 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("da")
-        public static @interface Når {
+        public static @interface Men {
             public abstract String value();
         }
 
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("da")
-        public static @interface Så {
+        public static @interface Når {
             public abstract String value();
         }
 
@@ -280,7 +280,7 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("da")
-        public static @interface Men {
+        public static @interface Så {
             public abstract String value();
         }
     }
@@ -290,21 +290,14 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("de")
+        public static @interface Aber {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("de")
         public static @interface Angenommen {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("de")
-        public static @interface Gegebensei {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("de")
-        public static @interface Wenn {
             public abstract String value();
         }
 
@@ -318,6 +311,13 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("de")
+        public static @interface Gegebensei {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("de")
         public static @interface Und {
             public abstract String value();
         }
@@ -325,33 +325,12 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("de")
-        public static @interface Aber {
+        public static @interface Wenn {
             public abstract String value();
         }
     }
 
     public class EN {
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("en")
-        public static @interface Given {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("en")
-        public static @interface When {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("en")
-        public static @interface Then {
-            public abstract String value();
-        }
 
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
@@ -366,6 +345,27 @@ public interface I18n {
         public static @interface But {
             public abstract String value();
         }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("en")
+        public static @interface Given {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("en")
+        public static @interface Then {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("en")
+        public static @interface When {
+            public abstract String value();
+        }
     }
 
     public class EN_SCOUSE {
@@ -373,14 +373,35 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("en-Scouse")
-        public static @interface Givun {
+        public static @interface An {
             public abstract String value();
         }
 
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("en-Scouse")
-        public static @interface Youseknowwhenyousegot {
+        public static @interface Buh {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("en-Scouse")
+        public static @interface Denyousegotta {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("en-Scouse")
+        public static @interface Dun {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("en-Scouse")
+        public static @interface Givun {
             public abstract String value();
         }
 
@@ -401,28 +422,7 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("en-Scouse")
-        public static @interface Dun {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("en-Scouse")
-        public static @interface Denyousegotta {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("en-Scouse")
-        public static @interface An {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("en-Scouse")
-        public static @interface Buh {
+        public static @interface Youseknowwhenyousegot {
             public abstract String value();
         }
     }
@@ -432,7 +432,14 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("en-au")
-        public static @interface Yaknowhow {
+        public static @interface Cept {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("en-au")
+        public static @interface N {
             public abstract String value();
         }
 
@@ -453,40 +460,12 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("en-au")
-        public static @interface N {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("en-au")
-        public static @interface Cept {
+        public static @interface Yaknowhow {
             public abstract String value();
         }
     }
 
     public class EN_LOL {
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("en-lol")
-        public static @interface ICANHAZ {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("en-lol")
-        public static @interface WEN {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("en-lol")
-        public static @interface DEN {
-            public abstract String value();
-        }
 
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
@@ -501,6 +480,27 @@ public interface I18n {
         public static @interface BUT {
             public abstract String value();
         }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("en-lol")
+        public static @interface DEN {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("en-lol")
+        public static @interface ICANHAZ {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("en-lol")
+        public static @interface WEN {
+            public abstract String value();
+        }
     }
 
     public class EN_PIRATE {
@@ -508,21 +508,7 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("en-pirate")
-        public static @interface Gangway {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("en-pirate")
-        public static @interface Blimey {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("en-pirate")
-        public static @interface Letgoandhaul {
+        public static @interface Avast {
             public abstract String value();
         }
 
@@ -536,33 +522,26 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("en-pirate")
-        public static @interface Avast {
+        public static @interface Blimey {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("en-pirate")
+        public static @interface Gangway {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("en-pirate")
+        public static @interface Letgoandhaul {
             public abstract String value();
         }
     }
 
     public class EN_TX {
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("en-tx")
-        public static @interface Givenyall {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("en-tx")
-        public static @interface Whenyall {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("en-tx")
-        public static @interface Thenyall {
-            public abstract String value();
-        }
 
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
@@ -577,23 +556,30 @@ public interface I18n {
         public static @interface Butyall {
             public abstract String value();
         }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("en-tx")
+        public static @interface Givenyall {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("en-tx")
+        public static @interface Thenyall {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("en-tx")
+        public static @interface Whenyall {
+            public abstract String value();
+        }
     }
 
     public class EO {
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("eo")
-        public static @interface Donitaĵo {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("eo")
-        public static @interface Se {
-            public abstract String value();
-        }
 
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
@@ -605,7 +591,21 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("eo")
+        public static @interface Donitaĵo {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("eo")
         public static @interface Kaj {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("eo")
+        public static @interface Se {
             public abstract String value();
         }
 
@@ -622,14 +622,14 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("es")
-        public static @interface Dado {
+        public static @interface Cuando {
             public abstract String value();
         }
 
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("es")
-        public static @interface Cuando {
+        public static @interface Dado {
             public abstract String value();
         }
 
@@ -643,14 +643,14 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("es")
-        public static @interface Y {
+        public static @interface Pero {
             public abstract String value();
         }
 
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("es")
-        public static @interface Pero {
+        public static @interface Y {
             public abstract String value();
         }
     }
@@ -667,21 +667,14 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("et")
-        public static @interface Kui {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("et")
-        public static @interface Siis {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("et")
         public static @interface Ja {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("et")
+        public static @interface Kui {
             public abstract String value();
         }
 
@@ -691,6 +684,13 @@ public interface I18n {
         public static @interface Kuid {
             public abstract String value();
         }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("et")
+        public static @interface Siis {
+            public abstract String value();
+        }
     }
 
     public class FI {
@@ -698,7 +698,7 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("fi")
-        public static @interface Oletetaan {
+        public static @interface Ja {
             public abstract String value();
         }
 
@@ -712,6 +712,13 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("fi")
+        public static @interface Mutta {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("fi")
         public static @interface Niin {
             public abstract String value();
         }
@@ -719,54 +726,12 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("fi")
-        public static @interface Ja {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("fi")
-        public static @interface Mutta {
+        public static @interface Oletetaan {
             public abstract String value();
         }
     }
 
     public class FR {
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("fr")
-        public static @interface Soit {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("fr")
-        public static @interface Etantdonné {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("fr")
-        public static @interface Quand {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("fr")
-        public static @interface Lorsque {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("fr")
-        public static @interface Lorsqu {
-            public abstract String value();
-        }
 
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
@@ -785,7 +750,42 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("fr")
+        public static @interface Etantdonné {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("fr")
+        public static @interface Lorsqu {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("fr")
+        public static @interface Lorsque {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("fr")
         public static @interface Mais {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("fr")
+        public static @interface Quand {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("fr")
+        public static @interface Soit {
             public abstract String value();
         }
     }
@@ -795,14 +795,7 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("he")
-        public static @interface בהינתן {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("he")
-        public static @interface כאשר {
+        public static @interface אבל {
             public abstract String value();
         }
 
@@ -823,6 +816,13 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("he")
+        public static @interface בהינתן {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("he")
         public static @interface וגם {
             public abstract String value();
         }
@@ -830,12 +830,47 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("he")
-        public static @interface אבל {
+        public static @interface כאשר {
             public abstract String value();
         }
     }
 
     public class HR {
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("hr")
+        public static @interface Ali {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("hr")
+        public static @interface I {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("hr")
+        public static @interface Kad {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("hr")
+        public static @interface Kada {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("hr")
+        public static @interface Onda {
+            public abstract String value();
+        }
 
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
@@ -857,41 +892,6 @@ public interface I18n {
         public static @interface Zadano {
             public abstract String value();
         }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("hr")
-        public static @interface Kada {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("hr")
-        public static @interface Kad {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("hr")
-        public static @interface Onda {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("hr")
-        public static @interface I {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("hr")
-        public static @interface Ali {
-            public abstract String value();
-        }
     }
 
     public class HU {
@@ -899,35 +899,7 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("hu")
-        public static @interface Amennyiben {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("hu")
         public static @interface Adott {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("hu")
-        public static @interface Majd {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("hu")
-        public static @interface Ha {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("hu")
-        public static @interface Amikor {
             public abstract String value();
         }
 
@@ -941,7 +913,14 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("hu")
-        public static @interface És {
+        public static @interface Amennyiben {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("hu")
+        public static @interface Amikor {
             public abstract String value();
         }
 
@@ -951,9 +930,37 @@ public interface I18n {
         public static @interface De {
             public abstract String value();
         }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("hu")
+        public static @interface Ha {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("hu")
+        public static @interface Majd {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("hu")
+        public static @interface És {
+            public abstract String value();
+        }
     }
 
     public class ID {
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("id")
+        public static @interface Dan {
+            public abstract String value();
+        }
 
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
@@ -979,13 +986,6 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("id")
-        public static @interface Dan {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("id")
         public static @interface Tapi {
             public abstract String value();
         }
@@ -996,21 +996,14 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("it")
-        public static @interface Dato {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("it")
-        public static @interface Quando {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("it")
         public static @interface Allora {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("it")
+        public static @interface Dato {
             public abstract String value();
         }
 
@@ -1027,30 +1020,16 @@ public interface I18n {
         public static @interface Ma {
             public abstract String value();
         }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("it")
+        public static @interface Quando {
+            public abstract String value();
+        }
     }
 
     public class JA {
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("ja")
-        public static @interface 前提 {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("ja")
-        public static @interface もし {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("ja")
-        public static @interface ならば {
-            public abstract String value();
-        }
 
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
@@ -1069,6 +1048,27 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("ja")
+        public static @interface ただし {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("ja")
+        public static @interface ならば {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("ja")
+        public static @interface もし {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("ja")
         public static @interface 但し {
             public abstract String value();
         }
@@ -1076,40 +1076,12 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("ja")
-        public static @interface ただし {
+        public static @interface 前提 {
             public abstract String value();
         }
     }
 
     public class KO {
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("ko")
-        public static @interface 조건 {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("ko")
-        public static @interface 먼저 {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("ko")
-        public static @interface 만일 {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("ko")
-        public static @interface 만약 {
-            public abstract String value();
-        }
 
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
@@ -1128,14 +1100,42 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("ko")
-        public static @interface 하지만 {
+        public static @interface 단 {
             public abstract String value();
         }
 
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("ko")
-        public static @interface 단 {
+        public static @interface 만약 {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("ko")
+        public static @interface 만일 {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("ko")
+        public static @interface 먼저 {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("ko")
+        public static @interface 조건 {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("ko")
+        public static @interface 하지만 {
             public abstract String value();
         }
     }
@@ -1145,7 +1145,21 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("lt")
+        public static @interface Bet {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("lt")
         public static @interface Duota {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("lt")
+        public static @interface Ir {
             public abstract String value();
         }
 
@@ -1162,23 +1176,44 @@ public interface I18n {
         public static @interface Tada {
             public abstract String value();
         }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("lt")
-        public static @interface Ir {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("lt")
-        public static @interface Bet {
-            public abstract String value();
-        }
     }
 
     public class LU {
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("lu")
+        public static @interface a {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("lu")
+        public static @interface an {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("lu")
+        public static @interface awer {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("lu")
+        public static @interface dann {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("lu")
+        public static @interface mä {
+            public abstract String value();
+        }
 
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
@@ -1193,41 +1228,6 @@ public interface I18n {
         public static @interface wann {
             public abstract String value();
         }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("lu")
-        public static @interface dann {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("lu")
-        public static @interface an {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("lu")
-        public static @interface a {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("lu")
-        public static @interface awer {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("lu")
-        public static @interface mä {
-            public abstract String value();
-        }
     }
 
     public class LV {
@@ -1235,7 +1235,7 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("lv")
-        public static @interface Kad {
+        public static @interface Bet {
             public abstract String value();
         }
 
@@ -1243,6 +1243,13 @@ public interface I18n {
         @Target(ElementType.METHOD)
         @StepDef("lv")
         public static @interface Ja {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("lv")
+        public static @interface Kad {
             public abstract String value();
         }
 
@@ -1259,30 +1266,9 @@ public interface I18n {
         public static @interface Un {
             public abstract String value();
         }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("lv")
-        public static @interface Bet {
-            public abstract String value();
-        }
     }
 
     public class NL {
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("nl")
-        public static @interface Gegeven {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("nl")
-        public static @interface Stel {
-            public abstract String value();
-        }
 
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
@@ -1308,7 +1294,21 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("nl")
+        public static @interface Gegeven {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("nl")
         public static @interface Maar {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("nl")
+        public static @interface Stel {
             public abstract String value();
         }
     }
@@ -1325,14 +1325,14 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("no")
-        public static @interface Når {
+        public static @interface Men {
             public abstract String value();
         }
 
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("no")
-        public static @interface Så {
+        public static @interface Når {
             public abstract String value();
         }
 
@@ -1346,7 +1346,7 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("no")
-        public static @interface Men {
+        public static @interface Så {
             public abstract String value();
         }
     }
@@ -1356,7 +1356,7 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("pl")
-        public static @interface Zakładając {
+        public static @interface Ale {
             public abstract String value();
         }
 
@@ -1370,13 +1370,6 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("pl")
-        public static @interface Wtedy {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("pl")
         public static @interface Oraz {
             public abstract String value();
         }
@@ -1384,7 +1377,14 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("pl")
-        public static @interface Ale {
+        public static @interface Wtedy {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("pl")
+        public static @interface Zakładając {
             public abstract String value();
         }
     }
@@ -1401,14 +1401,7 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("pt")
-        public static @interface Quando {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("pt")
-        public static @interface Então {
+        public static @interface E {
             public abstract String value();
         }
 
@@ -1422,7 +1415,7 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("pt")
-        public static @interface E {
+        public static @interface Então {
             public abstract String value();
         }
 
@@ -1432,6 +1425,13 @@ public interface I18n {
         public static @interface Mas {
             public abstract String value();
         }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("pt")
+        public static @interface Quando {
+            public abstract String value();
+        }
     }
 
     public class RO {
@@ -1439,7 +1439,7 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("ro")
-        public static @interface Daca {
+        public static @interface Atunci {
             public abstract String value();
         }
 
@@ -1453,14 +1453,7 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("ro")
-        public static @interface Atunci {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("ro")
-        public static @interface Si {
+        public static @interface Daca {
             public abstract String value();
         }
 
@@ -1470,6 +1463,13 @@ public interface I18n {
         public static @interface Dar {
             public abstract String value();
         }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("ro")
+        public static @interface Si {
+            public abstract String value();
+        }
     }
 
     public class RO_RO {
@@ -1477,7 +1477,7 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("ro-RO")
-        public static @interface Dacă {
+        public static @interface Atunci {
             public abstract String value();
         }
 
@@ -1491,14 +1491,7 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("ro-RO")
-        public static @interface Atunci {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("ro-RO")
-        public static @interface Și {
+        public static @interface Dacă {
             public abstract String value();
         }
 
@@ -1508,6 +1501,13 @@ public interface I18n {
         public static @interface Dar {
             public abstract String value();
         }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("ro-RO")
+        public static @interface Și {
+            public abstract String value();
+        }
     }
 
     public class RU {
@@ -1515,7 +1515,7 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("ru")
-        public static @interface Допустим {
+        public static @interface А {
             public abstract String value();
         }
 
@@ -1529,7 +1529,7 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("ru")
-        public static @interface Пусть {
+        public static @interface Допустим {
             public abstract String value();
         }
 
@@ -1537,27 +1537,6 @@ public interface I18n {
         @Target(ElementType.METHOD)
         @StepDef("ru")
         public static @interface Если {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("ru")
-        public static @interface Когда {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("ru")
-        public static @interface То {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("ru")
-        public static @interface Тогда {
             public abstract String value();
         }
 
@@ -1578,6 +1557,13 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("ru")
+        public static @interface Когда {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("ru")
         public static @interface Но {
             public abstract String value();
         }
@@ -1585,33 +1571,26 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("ru")
-        public static @interface А {
+        public static @interface Пусть {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("ru")
+        public static @interface То {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("ru")
+        public static @interface Тогда {
             public abstract String value();
         }
     }
 
     public class SK {
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("sk")
-        public static @interface Pokiaľ {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("sk")
-        public static @interface Keď {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("sk")
-        public static @interface Tak {
-            public abstract String value();
-        }
 
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
@@ -1626,6 +1605,27 @@ public interface I18n {
         public static @interface Ale {
             public abstract String value();
         }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("sk")
+        public static @interface Keď {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("sk")
+        public static @interface Pokiaľ {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("sk")
+        public static @interface Tak {
+            public abstract String value();
+        }
     }
 
     public class SR_CYRL {
@@ -1633,7 +1633,7 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("sr-Cyrl")
-        public static @interface Задато {
+        public static @interface Али {
             public abstract String value();
         }
 
@@ -1654,21 +1654,7 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("sr-Cyrl")
-        public static @interface Када {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("sr-Cyrl")
-        public static @interface Кад {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("sr-Cyrl")
-        public static @interface Онда {
+        public static @interface Задато {
             public abstract String value();
         }
 
@@ -1682,7 +1668,21 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("sr-Cyrl")
-        public static @interface Али {
+        public static @interface Кад {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("sr-Cyrl")
+        public static @interface Када {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("sr-Cyrl")
+        public static @interface Онда {
             public abstract String value();
         }
     }
@@ -1692,42 +1692,7 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("sr-Latn")
-        public static @interface Zadato {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("sr-Latn")
-        public static @interface Zadate {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("sr-Latn")
-        public static @interface Zatati {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("sr-Latn")
-        public static @interface Kada {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("sr-Latn")
-        public static @interface Kad {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("sr-Latn")
-        public static @interface Onda {
+        public static @interface Ali {
             public abstract String value();
         }
 
@@ -1741,7 +1706,42 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("sr-Latn")
-        public static @interface Ali {
+        public static @interface Kad {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("sr-Latn")
+        public static @interface Kada {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("sr-Latn")
+        public static @interface Onda {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("sr-Latn")
+        public static @interface Zadate {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("sr-Latn")
+        public static @interface Zadato {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("sr-Latn")
+        public static @interface Zatati {
             public abstract String value();
         }
     }
@@ -1758,14 +1758,14 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("sv")
-        public static @interface När {
+        public static @interface Men {
             public abstract String value();
         }
 
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("sv")
-        public static @interface Så {
+        public static @interface När {
             public abstract String value();
         }
 
@@ -1779,12 +1779,19 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("sv")
-        public static @interface Men {
+        public static @interface Så {
             public abstract String value();
         }
     }
 
     public class TR {
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("tr")
+        public static @interface Ama {
+            public abstract String value();
+        }
 
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
@@ -1803,6 +1810,13 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("tr")
+        public static @interface Fakat {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("tr")
         public static @interface Ozaman {
             public abstract String value();
         }
@@ -1813,23 +1827,51 @@ public interface I18n {
         public static @interface Ve {
             public abstract String value();
         }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("tr")
-        public static @interface Fakat {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("tr")
-        public static @interface Ama {
-            public abstract String value();
-        }
     }
 
     public class UK {
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("uk")
+        public static @interface І {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("uk")
+        public static @interface Атакож {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("uk")
+        public static @interface Але {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("uk")
+        public static @interface Дано {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("uk")
+        public static @interface Коли {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("uk")
+        public static @interface Нехай {
+            public abstract String value();
+        }
 
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
@@ -1848,28 +1890,7 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("uk")
-        public static @interface Нехай {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("uk")
-        public static @interface Дано {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("uk")
-        public static @interface Якщо {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("uk")
-        public static @interface Коли {
+        public static @interface Та {
             public abstract String value();
         }
 
@@ -1890,28 +1911,7 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("uk")
-        public static @interface І {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("uk")
-        public static @interface Атакож {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("uk")
-        public static @interface Та {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("uk")
-        public static @interface Але {
+        public static @interface Якщо {
             public abstract String value();
         }
     }
@@ -1928,7 +1928,14 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("uz")
-        public static @interface Унда {
+        public static @interface Аммо {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("uz")
+        public static @interface Бирок {
             public abstract String value();
         }
 
@@ -1949,14 +1956,7 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("uz")
-        public static @interface Бирок {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("uz")
-        public static @interface Аммо {
+        public static @interface Унда {
             public abstract String value();
         }
     }
@@ -1987,6 +1987,13 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("vi")
+        public static @interface Nhưng {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("vi")
         public static @interface Thì {
             public abstract String value();
         }
@@ -1997,16 +2004,16 @@ public interface I18n {
         public static @interface Và {
             public abstract String value();
         }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("vi")
-        public static @interface Nhưng {
-            public abstract String value();
-        }
     }
 
     public class ZH_CN {
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("zh-CN")
+        public static @interface 但是 {
+            public abstract String value();
+        }
 
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
@@ -2025,13 +2032,6 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("zh-CN")
-        public static @interface 那么 {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("zh-CN")
         public static @interface 而且 {
             public abstract String value();
         }
@@ -2039,12 +2039,26 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("zh-CN")
-        public static @interface 但是 {
+        public static @interface 那么 {
             public abstract String value();
         }
     }
 
     public class ZH_TW {
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("zh-TW")
+        public static @interface 並且 {
+            public abstract String value();
+        }
+
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        @StepDef("zh-TW")
+        public static @interface 但是 {
+            public abstract String value();
+        }
 
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
@@ -2063,13 +2077,6 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("zh-TW")
-        public static @interface 那麼 {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("zh-TW")
         public static @interface 而且 {
             public abstract String value();
         }
@@ -2077,14 +2084,7 @@ public interface I18n {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @StepDef("zh-TW")
-        public static @interface 並且 {
-            public abstract String value();
-        }
-
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @StepDef("zh-TW")
-        public static @interface 但是 {
+        public static @interface 那麼 {
             public abstract String value();
         }
     }
