@@ -2,6 +2,9 @@ require 'rubygems'
 require 'bundler'
 Bundler.setup
 
+$:.unshift(File.dirname(__FILE__) + '/lib')
+require 'cuke4duke/version'
+
 # Make sure subprocesses use our local code.
 ENV['MAVEN_OPTS'] = (ENV['MAVEN_OPTS'] || '') + " -Dcuke4duke.bin=#{File.expand_path("../bin/cuke4duke", __FILE__)}"
 ENV['RUBYLIB'] = File.expand_path("../lib", __FILE__)
@@ -27,6 +30,21 @@ class ReleaseHelper < Bundler::GemHelper
       maven_release
       rubygem_push(built_gem_path)
     }
+  end
+
+  def remove_snapshots
+    system(%{find . -name 'pom.xml' -exec sed -i '' 's/-SNAPSHOT//' '{}' \;})
+  end
+
+  def add_snapshots
+    unless Cuke4Duke::VERSION =~ /(\d+\.\d+\.)(\d+)-SNAPSHOT$/
+      new_major = $2.to_i + 1
+      new_snapshot = "#{$1}#{new_major}-SNAPSHOT"
+      puts new_snapshot
+      #system(%{find . -name 'pom.xml' -exec sed -i '' 's/-SNAPSHOT//' '{}' \;})
+    else
+      raise "You're already at a -SNAPSHOT version: #{Cuke4Duke::VERSION}"
+    end
   end
 
   def maven_release
