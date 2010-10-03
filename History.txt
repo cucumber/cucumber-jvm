@@ -1,3 +1,13 @@
+== 0.4.1 (2010-10-03)
+
+=== Bugfixes
+* Dependency conflict with cuke4duke 0.3.2, gherkin-2.1.4 and cucumber-0.9.0 ruby gem (#77 Aslak Hellesøy)
+
+== 0.4.0 (2010-10-03)
+
+=== New Features
+* Completely rewrote the build system to use Bundler. (Aslak Hellesøy)
+
 == 0.3.3 (2010-10-01)
 
 === Bugfixes
