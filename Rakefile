@@ -2,6 +2,10 @@ require 'rubygems'
 require 'bundler'
 Bundler.setup
 
+# Make sure subprocesses use our local code.
+ENV['MAVEN_OPTS'] = (ENV['MAVEN_OPTS'] || '') + " -Dcuke4duke.bin=#{File.expand_path("../bin/cuke4duke", __FILE__)}"
+ENV['RUBYLIB'] = File.expand_path("../lib", __FILE__)
+
 class ReleaseHelper < Bundler::GemHelper
   def install
     desc "Create tag #{version_tag} and upload #{name}-#{version}.jar and #{name}-#{version}.gem"
@@ -26,9 +30,6 @@ class ReleaseHelper < Bundler::GemHelper
   end
 
   def maven_release
-    Dir['lib/*.jar'].each{|jar| FileUtils.rm(jar)}
-    ENV['RUBYLIB'] = File.expand_path("../lib", __FILE__)
-    system('mvn -P examples clean -B release:prepare -Dcuke4duke.bin=bin/cuke4duke')
   end
 end
 
@@ -36,8 +37,7 @@ ReleaseHelper.install_tasks
 
 task :build_all => :i18n_generate do
   Dir['lib/*.jar'].each{|jar| FileUtils.rm(jar)}
-  ENV['RUBYLIB'] = File.expand_path("../lib", __FILE__)
-  system('mvn -P examples clean install -Dcuke4duke.bin=bin/cuke4duke')
+  sh('mvn -P examples clean install')
 end
 
 desc 'Release'
