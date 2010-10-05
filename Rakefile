@@ -16,6 +16,11 @@ class ReleaseHelper < Bundler::GemHelper
       release_jar_and_gem
     end
 
+    desc 'Build gem'
+    task 'gem' do
+      build_gem
+    end
+
     task 'maven_release' do
       maven_release
     end
