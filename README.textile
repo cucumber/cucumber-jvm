@@ -50,4 +50,4 @@ Finally, bump version:
 
 And commit again:
 
-<pre>git commit -am "Starting new development cycle"</pre>
+<pre>git commit -m "Starting new development cycle"</pre>
