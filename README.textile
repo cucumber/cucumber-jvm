@@ -38,7 +38,7 @@ Build again:
 
 If all is OK, commit:
 
-<pre>git commit -am "Release"</pre>
+<pre>git commit -m "Release"</pre>
 
 And release:
 
