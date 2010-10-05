@@ -19,12 +19,10 @@
     <dependency>
       <groupId>rhino</groupId>
       <artifactId>js</artifactId>
-      <version>1.7R2</version>
     </dependency>
     <dependency>
       <groupId>cuke4duke</groupId>
       <artifactId>cuke4duke</artifactId>
-      <version>0.3.3</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -41,7 +39,7 @@
             <cucumberArg>--strict</cucumberArg>
           </cucumberArgs>
           <gems>
-            <gem>install cuke4duke --version 0.3.3</gem>
+            <gem>install cuke4duke --version ${cuke4duke.version}</gem>
           </gems>
         </configuration>
         <executions>

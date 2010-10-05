@@ -19,21 +19,24 @@
     <dependency>
       <groupId>org.picocontainer</groupId>
       <artifactId>picocontainer</artifactId>
-      <version>2.11.2</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>cuke4duke</groupId>
       <artifactId>cuke4duke</artifactId>
-      <version>0.3.3</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>gherkin</groupId>
+      <artifactId>gherkin</artifactId>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.8.1</version>
       <scope>test</scope>
     </dependency>
 
@@ -41,14 +44,12 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>javaee-api</artifactId>
-      <version>5.0-1</version>
       <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>org.apache.ant</groupId>
       <artifactId>ant</artifactId>
-      <version>1.8.1</version>
       <scope>test</scope>
     </dependency>
 
@@ -56,7 +57,6 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>3.1.2</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
@@ -70,7 +70,6 @@
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate</artifactId>
-      <version>3.2.5.ga</version>
       <exclusions>
         <exclusion>
           <groupId>javax.transaction</groupId>
@@ -89,31 +88,26 @@
           <artifactId>cglib</artifactId>
         </exclusion>
       </exclusions>
-      <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-entitymanager</artifactId>
-      <version>3.2.1.ga</version>
       <exclusions>
         <exclusion>
           <groupId>javax.persistence</groupId>
           <artifactId>persistence-api</artifactId>
         </exclusion>
       </exclusions>
-      <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>asm</groupId>
       <artifactId>asm</artifactId>
-      <version>2.2.3</version>
     </dependency>
     <dependency>
       <groupId>cglib</groupId>
       <artifactId>cglib-nodep</artifactId>
-      <version>2.1_3</version>
     </dependency>
   </dependencies>
 
@@ -169,7 +163,7 @@
             <cucumberArg>${basedir}/target/test-classes</cucumberArg>
           </cucumberArgs>
           <gems>
-            <gem>install cuke4duke --version 0.3.3</gem>
+            <gem>install cuke4duke --version ${cuke4duke.version}</gem>
           </gems>
         </configuration>
         <executions>

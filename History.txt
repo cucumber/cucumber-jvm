@@ -2,6 +2,7 @@
 
 === Bugfixes
 * error for mvn -Dcucumber.installGems=true cuke4duke:cucumber (#79 Aslak Hellesøy)
+* Fixed inconsistent jar dependencies with help from dependencyManagement
 
 == 0.4.1 (2010-10-03)
 
