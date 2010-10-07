@@ -3,14 +3,14 @@ package cucumber;
 import cucumber.runtime.ExecuteFormatter;
 import gherkin.FeatureParser;
 import gherkin.GherkinParser;
-import gherkin.formatter.PrettyFormatter;
+import gherkin.formatter.Formatter;
 
 import java.util.List;
 
 public class Runtime {
     private final FeatureParser parser;
 
-    public Runtime(List<StepDefinition> stepDefinitions, PrettyFormatter formatter) {
+    public Runtime(List<StepDefinition> stepDefinitions, Formatter formatter) {
         ExecuteFormatter executeFormatter = new ExecuteFormatter(stepDefinitions, formatter);
         parser = new GherkinParser(executeFormatter);
     }

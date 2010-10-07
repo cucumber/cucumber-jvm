@@ -3,7 +3,6 @@ package cucumber.runtime;
 import cucumber.StepDefinition;
 import gherkin.formatter.Argument;
 import gherkin.formatter.Formatter;
-import gherkin.formatter.PrettyFormatter;
 import gherkin.formatter.model.Background;
 import gherkin.formatter.model.DescribedStatement;
 import gherkin.formatter.model.Examples;
@@ -18,13 +17,13 @@ import java.util.List;
 
 public class ExecuteFormatter implements Formatter {
     private final List<StepDefinition> stepDefinitions;
-    private final PrettyFormatter formatter;
+    private final Formatter formatter;
     private String uri;
     private Feature feature;
     private DescribedStatement featureElement;
     private final List<Step> steps = new ArrayList<Step>();
 
-    public ExecuteFormatter(List<StepDefinition> stepDefinitions, PrettyFormatter formatter) {
+    public ExecuteFormatter(List<StepDefinition> stepDefinitions, Formatter formatter) {
         this.stepDefinitions = stepDefinitions;
         this.formatter = formatter;
     }
@@ -44,12 +43,12 @@ public class ExecuteFormatter implements Formatter {
     }
 
     public void scenario(Scenario scenario) {
-        replay();
+        replayFeatureElement();
         featureElement = scenario;
     }
 
     public void scenarioOutline(ScenarioOutline scenarioOutline) {
-        replay();
+        replayFeatureElement();
         featureElement = scenarioOutline;
     }
 
@@ -62,7 +61,7 @@ public class ExecuteFormatter implements Formatter {
     }
 
     public void eof() {
-        replay();
+        replayFeatureElement();
         formatter.eof();
     }
 
@@ -70,19 +69,19 @@ public class ExecuteFormatter implements Formatter {
         formatter.syntaxError(state, event, legalEvents, uri, line);
     }
 
-    private void replay() {
-        if(featureElement != null) {
-            List<List<String>> stepStrings = new ArrayList<List<String>>();
-            for(Step step: steps) {
-                stepStrings.add(Arrays.asList(step.getKeyword(), step.getName()));
-            }
-            formatter.steps(stepStrings);
+    public void steps(List<Step> steps) {
+        throw new UnsupportedOperationException();
+    }
 
+    private void replayFeatureElement() {
+        if(featureElement != null) {
+            formatter.steps(steps);
             featureElement.replay(formatter);
             for(Step step: steps) {
                 List<Argument> arguments = Arrays.asList(new Argument(7, "3"));
                 new StepMatch(stepDefinitions.get(0), arguments, step, uri, feature.getName(), featureElement.getName()).execute(formatter);
             }
+            steps.clear();
         }
     }
 }
