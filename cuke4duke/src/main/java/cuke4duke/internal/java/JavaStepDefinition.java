@@ -1,5 +1,6 @@
 package cuke4duke.internal.java;
 
+import cucumber.runtime.java.MethodFormat;
 import cuke4duke.internal.jvmclass.ClassLanguage;
 import cuke4duke.internal.language.AbstractStepDefinition;
 import cuke4duke.internal.language.JdkPatternArgumentMatcher;

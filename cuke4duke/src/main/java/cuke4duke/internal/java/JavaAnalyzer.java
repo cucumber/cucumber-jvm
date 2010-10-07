@@ -1,5 +1,6 @@
 package cuke4duke.internal.java;
 
+import cucumber.runtime.java.MethodFormat;
 import cuke4duke.annotation.After;
 import cuke4duke.annotation.Before;
 import cuke4duke.annotation.Order;

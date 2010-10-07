@@ -1,4 +1,4 @@
-package cuke4duke.internal.java;
+package cucumber.runtime.java;
 
 import java.lang.reflect.Method;
 import java.text.MessageFormat;
@@ -9,6 +9,13 @@ public class MethodFormat {
     private static final Pattern METHOD_PATTERN = Pattern.compile("((?:static\\s|public\\s)+)([^\\s]*)\\s\\.?(.*)\\.([^\\(]*)\\(([^\\)]*)\\)(?: throws )?(.*)");
     private static final String PACKAGE_PATTERN = "[^,]*\\.";
     private final MessageFormat format;
+
+    /**
+     * Creates an instance with default formatting.
+     */
+    public MethodFormat() {
+        this("%c.%m(%a)");
+    }
 
     /**
      * @param format the format string to use. There are several pattern tokens that can be used:
