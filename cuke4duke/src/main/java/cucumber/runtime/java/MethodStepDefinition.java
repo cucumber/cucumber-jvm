@@ -22,7 +22,7 @@ public class MethodStepDefinition implements StepDefinition {
         this.methodFormat = new MethodFormat();
     }
 
-    public Result execute(List<Argument> arguments, String stepLocation) {
+    public Result execute(List<Argument> arguments, StackTraceElement stepStackTraceElement) {
         String status = "passed";
         Throwable error = null;
         try {
@@ -34,30 +34,33 @@ public class MethodStepDefinition implements StepDefinition {
             error = t;
             status = "failed";
         }
-        return new Result(status, stackTrace(error, stepLocation), arguments, methodFormat.format(method));
+        return new Result(status, stackTrace(error, stepStackTraceElement), arguments, methodFormat.format(method));
     }
 
-    private String stackTrace(Throwable error, String stepLocation) {
+    private String stackTrace(Throwable error, StackTraceElement stepStackTraceElement) {
         if(error == null) return null;
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
 
-        printFilteredStacktrace(error, pw);
-        pw.println("\tat " + stepLocation);
+        filterStacktrace(error, stepStackTraceElement);
 
+        error.printStackTrace(pw);
         pw.flush();
         return sw.toString();
     }
 
-    private void printFilteredStacktrace(Throwable error, PrintWriter pw) {
-        pw.println(error);
+    private void filterStacktrace(Throwable error, StackTraceElement stepStackTraceElement) {
         StackTraceElement[] stackTraceElements = error.getStackTrace();
-        for(StackTraceElement e : stackTraceElements) {
-            pw.println("\tat " + e);
-            if(isMethodElement(e)) {
+        int stackLength;
+        for(stackLength = 1; stackLength < stackTraceElements.length; ++stackLength) {
+            if(isMethodElement(stackTraceElements[stackLength-1])) {
                 break;
             }
         }
+        StackTraceElement[] result = new StackTraceElement[stackLength+1];
+        System.arraycopy(stackTraceElements, 0, result, 0, stackLength);
+        result[stackLength] = stepStackTraceElement;
+        error.setStackTrace(result);
     }
 
     private boolean isMethodElement(StackTraceElement e) {

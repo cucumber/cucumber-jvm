@@ -7,6 +7,7 @@ import gherkin.GherkinParser;
 import gherkin.formatter.Argument;
 import gherkin.formatter.PrettyFormatter;
 import gherkin.formatter.model.BasicStatement;
+import gherkin.formatter.model.Feature;
 import gherkin.formatter.model.Step;
 
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ public class Runtime {
 
     private BasicStatement featureElement;
     private String uri;
+    private Feature feature;
 
     public Runtime(List<StepDefinition> stepDefinitions, PrettyFormatter formatter) {
         this.stepDefinitions = stepDefinitions;
@@ -39,6 +41,11 @@ public class Runtime {
 
     public void uri(String uri) {
         this.uri = uri;
+    }
+
+
+    public void feature(Feature feature) {
+        this.feature = feature;
     }
 
     public void featureElement(BasicStatement featureElement) {
@@ -60,7 +67,7 @@ public class Runtime {
             featureElement.replay(formatter);
             for(Step step: steps) {
                 List<Argument> arguments = Arrays.asList(new Argument(7, "3"));
-                new StepMatch(stepDefinitions.get(0), uri, step, arguments).execute(formatter);
+                new StepMatch(stepDefinitions.get(0), arguments, step, uri, feature.getName(), featureElement.getName()).execute(formatter);
             }
         }
     }

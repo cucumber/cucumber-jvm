@@ -55,7 +55,7 @@ public class RuntimeTest {
                 "      java.lang.RuntimeException: Oh noes\n" +
                 "      \tat cucumber.RuntimeTest$CukeSteps.badStuff(RuntimeTest.java:32)\n" +
                 "      \tat cucumber.RuntimeTest$CukeSteps.haveNCukesAndFail(RuntimeTest.java:28)\n" +
-                "      \tat Given I have 3 cukes(features/hello.feature:4)\n" +
+                "      \tat Hello.Hi.Given I have 3 cukes(features/hello.feature:4)\n" +
                 "\n";
 
         assertOutput(have3Cukes, expectedOutput, "haveNCukesAndFail");

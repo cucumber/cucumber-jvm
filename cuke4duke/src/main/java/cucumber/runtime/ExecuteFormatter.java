@@ -27,6 +27,7 @@ public class ExecuteFormatter implements Formatter {
     }
 
     public void feature(Feature feature) {
+        runtime.feature(feature);
         formatter.feature(feature);
     }
 
