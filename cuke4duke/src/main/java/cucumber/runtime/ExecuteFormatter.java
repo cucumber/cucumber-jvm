@@ -22,6 +22,7 @@ public class ExecuteFormatter implements Formatter {
     }
 
     public void uri(String uri) {
+        runtime.uri(uri);
         formatter.uri(uri);
     }
 

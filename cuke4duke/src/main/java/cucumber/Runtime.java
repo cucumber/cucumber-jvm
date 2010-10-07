@@ -5,13 +5,10 @@ import cucumber.runtime.StepMatch;
 import gherkin.FeatureParser;
 import gherkin.GherkinParser;
 import gherkin.formatter.Argument;
-import gherkin.formatter.Formatter;
 import gherkin.formatter.PrettyFormatter;
 import gherkin.formatter.model.BasicStatement;
-import gherkin.formatter.model.Scenario;
 import gherkin.formatter.model.Step;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -19,9 +16,11 @@ import java.util.List;
 public class Runtime {
     private final List<StepDefinition> stepDefinitions;
     private final PrettyFormatter formatter;
+    private final FeatureParser parser;
+    private final List<Step> steps = new ArrayList<Step>();
+
     private BasicStatement featureElement;
-    private FeatureParser parser;
-    private List<Step> steps = new ArrayList<Step>();
+    private String uri;
 
     public Runtime(List<StepDefinition> stepDefinitions, PrettyFormatter formatter) {
         this.stepDefinitions = stepDefinitions;
@@ -38,10 +37,18 @@ public class Runtime {
         parser.parse(source, location, 0);
     }
 
+    public void uri(String uri) {
+        this.uri = uri;
+    }
+
     public void featureElement(BasicStatement featureElement) {
         this.featureElement = featureElement;
     }
 
+    public void step(Step step) {
+        steps.add(step);
+    }
+    
     public void replay() {
         if(featureElement != null) {
             List<List<String>> stepStrings = new ArrayList<List<String>>();
@@ -53,12 +60,8 @@ public class Runtime {
             featureElement.replay(formatter);
             for(Step step: steps) {
                 List<Argument> arguments = Arrays.asList(new Argument(7, "3"));
-                new StepMatch(stepDefinitions.get(0), step, arguments).execute(formatter);
+                new StepMatch(stepDefinitions.get(0), uri, step, arguments).execute(formatter);
             }
         }
-    }
-
-    public void step(Step step) {
-        steps.add(step);
     }
 }

@@ -19,9 +19,13 @@ public class RuntimeTest {
             "    Given I have 3 cukes\n" +
             "";
 
-    private static class CukeSteps {
+    public static class CukeSteps {
         public void haveNCukes(String n) {
 
+        }
+
+        public void haveNCukesAndFail(String n) {
+            throw new RuntimeException("Oh noes");
         }
     }
 
@@ -35,6 +39,21 @@ public class RuntimeTest {
                 "";
 
         assertOutput(have3Cukes, expectedOutput, "haveNCukes");
+    }
+
+    @Test
+    public void testShouldPrintResultsWithErrors() throws NoSuchMethodException {
+        String expectedOutput = "" +
+                "Feature: Hello\n" +
+                "\n" +
+                "  Scenario: Hi           # features/hello.feature:3\n" +
+                "    Given I have 3 cukes # RuntimeTest$CukeSteps.haveNCukesAndFail(String)\n" +
+                "      java.lang.RuntimeException: Oh noes\n" +
+                "      \tat cucumber.RuntimeTest$CukeSteps.haveNCukesAndFail(RuntimeTest.java:28)\n" +
+                "      \tat Given I have 3 cukes(features/hello.feature:4)\n" +
+                "\n";
+
+        assertOutput(have3Cukes, expectedOutput, "haveNCukesAndFail");
     }
 
     private void assertOutput(String source, String expectedOutput, String methodName) throws NoSuchMethodException {
