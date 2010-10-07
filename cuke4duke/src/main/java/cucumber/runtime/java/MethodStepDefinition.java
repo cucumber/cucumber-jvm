@@ -42,16 +42,26 @@ public class MethodStepDefinition implements StepDefinition {
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
 
-        pw.println(error);
-        StackTraceElement[] stackTraceElements = error.getStackTrace();
-        for(StackTraceElement e : stackTraceElements) {
-            pw.println("\tat " + e);
-            break;
-        }
+        printFilteredStacktrace(error, pw);
         pw.println("\tat " + stepLocation);
 
         pw.flush();
         return sw.toString();
+    }
+
+    private void printFilteredStacktrace(Throwable error, PrintWriter pw) {
+        pw.println(error);
+        StackTraceElement[] stackTraceElements = error.getStackTrace();
+        for(StackTraceElement e : stackTraceElements) {
+            pw.println("\tat " + e);
+            if(isMethodElement(e)) {
+                break;
+            }
+        }
+    }
+
+    private boolean isMethodElement(StackTraceElement e) {
+        return e.getClassName().equals(method.getDeclaringClass().getName()) && e.getMethodName().equals(method.getName());
     }
 
     private Object[] methodArgs(List<Argument> arguments) {

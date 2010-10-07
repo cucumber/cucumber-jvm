@@ -25,6 +25,10 @@ public class RuntimeTest {
         }
 
         public void haveNCukesAndFail(String n) {
+            badStuff();
+        }
+
+        private void badStuff() {
             throw new RuntimeException("Oh noes");
         }
     }
@@ -49,6 +53,7 @@ public class RuntimeTest {
                 "  Scenario: Hi           # features/hello.feature:3\n" +
                 "    Given I have 3 cukes # RuntimeTest$CukeSteps.haveNCukesAndFail(String)\n" +
                 "      java.lang.RuntimeException: Oh noes\n" +
+                "      \tat cucumber.RuntimeTest$CukeSteps.badStuff(RuntimeTest.java:32)\n" +
                 "      \tat cucumber.RuntimeTest$CukeSteps.haveNCukesAndFail(RuntimeTest.java:28)\n" +
                 "      \tat Given I have 3 cukes(features/hello.feature:4)\n" +
                 "\n";
