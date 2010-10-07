@@ -1,7 +1,5 @@
 package cucumber;
 
-import gherkin.formatter.Formatter;
-
 public class FeatureSource {
     private final String source;
     private final String uri;
