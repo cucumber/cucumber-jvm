@@ -17,6 +17,10 @@
 
   <dependencies>
     <dependency>
+      <groupId>gherkin</groupId>
+      <artifactId>gherkin</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.jruby</groupId>
       <artifactId>jruby-complete</artifactId>
     </dependency>
