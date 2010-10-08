@@ -9,7 +9,7 @@ import cuke4duke.internal.Utils;
 import cuke4duke.internal.java.annotation.StepDef;
 import cuke4duke.internal.jvmclass.ClassAnalyzer;
 import cuke4duke.internal.jvmclass.ClassLanguage;
-import cuke4duke.internal.jvmclass.ObjectFactory;
+import cucumber.runtime.java.ObjectFactory;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;

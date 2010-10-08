@@ -1,5 +1,7 @@
 package cuke4duke.internal.jvmclass;
 
+import cucumber.runtime.java.ObjectFactory;
+import cucumber.runtime.java.picocontainer.PicoFactory;
 import cuke4duke.StepMother;
 import cuke4duke.annotation.Order;
 import cuke4duke.internal.java.JavaAnalyzer;

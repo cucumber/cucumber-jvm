@@ -1,20 +1,28 @@
-package cuke4duke.internal.jvmclass;
+package cucumber.runtime.java.guice;
 
-import com.google.inject.*;
+import com.google.inject.AbstractModule;
+import com.google.inject.ConfigurationException;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Module;
+import com.google.inject.Provider;
+import cucumber.runtime.java.ObjectFactory;
 import cuke4duke.StepMother;
 
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.lang.reflect.Modifier;
+import java.util.Set;
 
 public class GuiceFactory implements ObjectFactory {
 
     private static final String CONFIG_GUICE_MODULE = "cuke4duke.guiceModule";
 
     private final List<Module> modules = new ArrayList<Module>();
-    private final List<Class<?>> classes = new ArrayList<Class<?>>();
+    private final Set<Class<?>> classes = new HashSet<Class<?>>();
     private final Map<Class<?>, Object> instances = new HashMap<Class<?>, Object>();
 
     public GuiceFactory() throws Throwable {
@@ -58,7 +66,7 @@ public class GuiceFactory implements ObjectFactory {
         return (T) instances.get(clazz);
     }
 
-    public List<Class<?>> getClasses() {
+    public Set<Class<?>> getClasses() {
         return classes;
     }
 

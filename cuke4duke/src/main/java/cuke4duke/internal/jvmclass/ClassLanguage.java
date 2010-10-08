@@ -1,5 +1,6 @@
 package cuke4duke.internal.jvmclass;
 
+import cucumber.runtime.java.ObjectFactory;
 import cuke4duke.Scenario;
 import cuke4duke.StepMother;
 import cuke4duke.internal.language.AbstractProgrammingLanguage;
@@ -15,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 public class ClassLanguage extends AbstractProgrammingLanguage {
     private final ObjectFactory objectFactory;
@@ -94,7 +96,7 @@ public class ClassLanguage extends AbstractProgrammingLanguage {
     }
 
     private static ObjectFactory createObjectFactory() throws Throwable {
-        String objectFactoryClassName = System.getProperty("cuke4duke.objectFactory", "cuke4duke.internal.jvmclass.PicoFactory");
+        String objectFactoryClassName = System.getProperty("cuke4duke.objectFactory", "cucumber.runtime.java.picocontainer.PicoFactory");
         Class<?> ofc = JRuby.getRuntime().getJRubyClassLoader().loadClass(objectFactoryClassName);
         Constructor<?> ctor = ofc.getConstructor();
         try {
@@ -120,7 +122,7 @@ public class ClassLanguage extends AbstractProgrammingLanguage {
         return methodInvoker.invoke(method, target, transformedArgs);
     }
 
-    public List<Class<?>> getClasses() {
+    public Set<Class<?>> getClasses() {
         return objectFactory.getClasses();
     }
 }

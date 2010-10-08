@@ -1,5 +1,6 @@
-package cuke4duke.internal.jvmclass;
+package cucumber.runtime.java.spring;
 
+import cucumber.runtime.java.ObjectFactory;
 import cuke4duke.StepMother;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
@@ -8,11 +9,12 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.StaticApplicationContext;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.lang.reflect.Modifier;
+import java.util.Set;
 
 public class SpringFactory implements ObjectFactory {
-    private final List<Class<?>> classes = new ArrayList<Class<?>>();
+    private final Set<Class<?>> classes = new HashSet<Class<?>>();
     private AbstractApplicationContext appContext;
     private static ThreadLocal<StepMother> mother = new ThreadLocal<StepMother>();
 
@@ -57,7 +59,7 @@ public class SpringFactory implements ObjectFactory {
         }
     }
 
-    public List<Class<?>> getClasses() {
+    public Set<Class<?>> getClasses() {
         return classes;
     }
 

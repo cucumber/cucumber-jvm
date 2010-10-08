@@ -1,8 +1,9 @@
-package cuke4duke.internal.jvmclass;
+package cucumber.runtime.java;
 
 import cuke4duke.StepMother;
 
 import java.util.List;
+import java.util.Set;
 
 public interface ObjectFactory {
     void createObjects();
@@ -17,5 +18,5 @@ public interface ObjectFactory {
 
     <T> T getComponent(Class<T> type);
 
-    List<Class<?>> getClasses();
+    Set<Class<?>> getClasses();
 }

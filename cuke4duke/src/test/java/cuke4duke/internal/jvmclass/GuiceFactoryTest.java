@@ -2,6 +2,7 @@ package cuke4duke.internal.jvmclass;
 
 
 import com.google.inject.AbstractModule;
+import cucumber.runtime.java.guice.GuiceFactory;
 import cuke4duke.internal.jvmclass.GuiceFactoryTest.SomeClass.SomeInnerClass;
 import org.junit.Before;
 import org.junit.Test;

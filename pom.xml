@@ -15,7 +15,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-    <gherkin.version>2.2.8</gherkin.version>
+    <gherkin.version>2.2.9</gherkin.version>
     <jruby.version>1.5.3</jruby.version>
     <ant.version>1.8.1</ant.version>
     <pico.version>2.11.2</pico.version>
@@ -196,6 +196,11 @@
       <id>codehaus</id>
       <url>http://repository.codehaus.org</url>
     </repository>
+      <repository>
+          <id>reflections-repo</id>
+          <name>Reflections Maven2 Repository</name>
+          <url>http://reflections.googlecode.com/svn/repo</url>
+      </repository>
     <repository>
       <id>cukes</id>
       <url>http://cukes.info/maven</url>

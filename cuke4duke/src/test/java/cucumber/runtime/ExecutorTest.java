@@ -1,17 +1,21 @@
-package cucumber;
+package cucumber.runtime;
 
+import cucumber.FeatureSource;
+import cucumber.StepDefinition;
 import cucumber.runtime.java.MethodStepDefinition;
+import cucumber.runtime.java.picocontainer.PicoFactory;
 import gherkin.formatter.PrettyFormatter;
 import org.junit.Test;
 
 import java.io.StringWriter;
 import java.lang.reflect.Method;
+import java.util.regex.Pattern;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 
-public class RuntimeTest {
+public class ExecutorTest {
     private String have3Cukes = "" +
             "Feature: Hello\n" +
             "\n" +
@@ -39,10 +43,10 @@ public class RuntimeTest {
                 "Feature: Hello\n" +
                 "\n" +
                 "  Scenario: Hi           # features/hello.feature:3\n" +
-                "    Given I have 3 cukes # RuntimeTest$CukeSteps.haveNCukes(String)\n" +
+                "    Given I have 3 cukes # ExecutorTest$CukeSteps.haveNCukes(String)\n" +
                 "";
 
-        assertOutput(have3Cukes, expectedOutput, "haveNCukes");
+        assertOutput(have3Cukes, Pattern.compile("I have (\\d+) cukes"), "haveNCukes", expectedOutput);
     }
 
     @Test
@@ -51,23 +55,23 @@ public class RuntimeTest {
                 "Feature: Hello\n" +
                 "\n" +
                 "  Scenario: Hi           # features/hello.feature:3\n" +
-                "    Given I have 3 cukes # RuntimeTest$CukeSteps.haveNCukesAndFail(String)\n" +
+                "    Given I have 3 cukes # ExecutorTest$CukeSteps.haveNCukesAndFail(String)\n" +
                 "      java.lang.RuntimeException: Oh noes\n" +
-                "      \tat cucumber.RuntimeTest$CukeSteps.badStuff(RuntimeTest.java:32)\n" +
-                "      \tat cucumber.RuntimeTest$CukeSteps.haveNCukesAndFail(RuntimeTest.java:28)\n" +
+                "      \tat cucumber.runtime.ExecutorTest$CukeSteps.badStuff(ExecutorTest.java:36)\n" +
+                "      \tat cucumber.runtime.ExecutorTest$CukeSteps.haveNCukesAndFail(ExecutorTest.java:32)\n" +
                 "      \tat Hello.Hi.Given I have 3 cukes(features/hello.feature:4)\n" +
                 "\n";
 
-        assertOutput(have3Cukes, expectedOutput, "haveNCukesAndFail");
+        assertOutput(have3Cukes, Pattern.compile("I have (\\d+) cukes"), "haveNCukesAndFail", expectedOutput);
     }
 
-    private void assertOutput(String source, String expectedOutput, String methodName) throws NoSuchMethodException {
-        StepDefinition haveCukes = stepDefinition(methodName);
+    private void assertOutput(String source, Pattern pattern, String methodName, String expectedOutput) throws NoSuchMethodException {
+        StepDefinition haveCukes = stepDefinition(pattern, methodName);
 
         StringWriter output = new StringWriter();
         PrettyFormatter pretty = new PrettyFormatter(output, false);
 
-        Runtime runtime = new Runtime(asList(haveCukes), pretty);
+        Executor runtime = new Executor(asList(haveCukes), pretty);
 
         FeatureSource helloFeature = new FeatureSource(source, "features/hello.feature");
         runtime.execute(helloFeature);
@@ -75,9 +79,12 @@ public class RuntimeTest {
         assertThat(output.toString(), equalTo(expectedOutput));
     }
 
-    private StepDefinition stepDefinition(String methodName) throws NoSuchMethodException {
+    private StepDefinition stepDefinition(Pattern pattern, String methodName) throws NoSuchMethodException {
         Method method = CukeSteps.class.getDeclaredMethod(methodName, String.class);
-        return new MethodStepDefinition(method, new CukeSteps());
+        PicoFactory objectFactory = new PicoFactory();
+        objectFactory.addClass(method.getDeclaringClass());
+        objectFactory.createObjects();
+        return new MethodStepDefinition(pattern, method, objectFactory);
     }
 
 }

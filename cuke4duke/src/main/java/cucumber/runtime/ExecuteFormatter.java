@@ -1,7 +1,6 @@
 package cucumber.runtime;
 
 import cucumber.StepDefinition;
-import gherkin.formatter.Argument;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.model.Background;
 import gherkin.formatter.model.DescribedStatement;
@@ -12,16 +11,16 @@ import gherkin.formatter.model.ScenarioOutline;
 import gherkin.formatter.model.Step;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class ExecuteFormatter implements Formatter {
     private final List<StepDefinition> stepDefinitions;
     private final Formatter formatter;
+    private final List<Step> steps = new ArrayList<Step>();
+
     private String uri;
     private Feature feature;
     private DescribedStatement featureElement;
-    private final List<Step> steps = new ArrayList<Step>();
 
     public ExecuteFormatter(List<StepDefinition> stepDefinitions, Formatter formatter) {
         this.stepDefinitions = stepDefinitions;
@@ -78,10 +77,31 @@ public class ExecuteFormatter implements Formatter {
             formatter.steps(steps);
             featureElement.replay(formatter);
             for(Step step: steps) {
-                List<Argument> arguments = Arrays.asList(new Argument(7, "3"));
-                new StepMatch(stepDefinitions.get(0), arguments, step, uri, feature.getName(), featureElement.getName()).execute(formatter);
+                execute(step);
             }
             steps.clear();
         }
+    }
+
+    private void execute(Step step) {
+        StepMatch stepMatch = stepMatch(step);
+        StackTraceElement stepStackTraceElement = new StackTraceElement(feature.getName() + "." + featureElement.getName(), step.getKeyword()+step.getName(), uri, step.getLine());
+        stepMatch.execute(formatter, stepStackTraceElement);
+    }
+
+    private StepMatch stepMatch(Step step) {
+        List<StepMatch> stepMatches = stepMatches(step);
+        return stepMatches.get(0);
+    }
+
+    private List<StepMatch> stepMatches(Step step) {
+        List<StepMatch> result = new ArrayList<StepMatch>();
+        for(StepDefinition stepDefinition : stepDefinitions) {
+            StepMatch stepMatch = stepDefinition.stepMatch(step);
+            if(stepMatch != null) {
+                result.add(stepMatch);
+            }
+        }
+        return result;
     }
 }

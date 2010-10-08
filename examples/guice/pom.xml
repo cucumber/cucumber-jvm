@@ -63,7 +63,7 @@
           <jvmArgs>
             <jvmArg>-Xmx384m</jvmArg>
             <jvmArg>-Dlog4j.configuration=file:///${project.basedir}/target/test-classes/log4j.properties</jvmArg>
-            <jvmArg>-Dcuke4duke.objectFactory=cuke4duke.internal.jvmclass.GuiceFactory</jvmArg>
+            <jvmArg>-Dcuke4duke.objectFactory=cucumber.runtime.java.guice.GuiceFactory</jvmArg>
             <jvmArg>-Dcuke4duke.guiceModule=billing.DependenciesModule</jvmArg>
           </jvmArgs>
           <cucumberArgs>

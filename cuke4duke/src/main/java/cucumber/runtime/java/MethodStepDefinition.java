@@ -1,8 +1,11 @@
 package cucumber.runtime.java;
 
 import cucumber.StepDefinition;
+import cucumber.runtime.JdkPatternArgumentMatcher;
+import cucumber.runtime.StepMatch;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Result;
+import gherkin.formatter.model.Step;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -10,15 +13,20 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class MethodStepDefinition implements StepDefinition {
-    private MethodFormat methodFormat;
-    private Method method;
-    private final Object target;
+    private final MethodFormat methodFormat;
+    private final Method method;
+    private final ObjectFactory objectFactory;
+    private final JdkPatternArgumentMatcher argumentMatcher;
+    private final Pattern pattern;
 
-    public MethodStepDefinition(Method method, Object target) {
+    public MethodStepDefinition(Pattern pattern, Method method, ObjectFactory objectFactory) {
+        this.pattern = pattern;
+        this.argumentMatcher = new JdkPatternArgumentMatcher(pattern);
         this.method = method;
-        this.target = target;
+        this.objectFactory = objectFactory;
         this.methodFormat = new MethodFormat();
     }
 
@@ -26,7 +34,7 @@ public class MethodStepDefinition implements StepDefinition {
         String status = "passed";
         Throwable error = null;
         try {
-            method.invoke(target, methodArgs(arguments));
+            method.invoke(objectFactory.getComponent(method.getDeclaringClass()), methodArgs(arguments));
         } catch (InvocationTargetException e) {
             error = e.getTargetException();
             status = "failed";
@@ -35,6 +43,11 @@ public class MethodStepDefinition implements StepDefinition {
             status = "failed";
         }
         return new Result(status, stackTrace(error, stepStackTraceElement), arguments, methodFormat.format(method));
+    }
+
+    public StepMatch stepMatch(Step step) {
+        List<Argument> arguments = argumentMatcher.argumentsFrom(step.getName());
+        return new StepMatch(this, arguments, step);
     }
 
     private String stackTrace(Throwable error, StackTraceElement stepStackTraceElement) {
@@ -73,5 +86,9 @@ public class MethodStepDefinition implements StepDefinition {
             result.add(a.getVal());
         }
         return result.toArray();
+    }
+
+    public String toString() {
+        return "/" + pattern + "/ -> " + methodFormat.format(method);
     }
 }

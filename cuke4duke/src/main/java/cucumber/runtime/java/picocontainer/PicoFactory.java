@@ -1,16 +1,18 @@
-package cuke4duke.internal.jvmclass;
+package cucumber.runtime.java.picocontainer;
 
+import cucumber.runtime.java.ObjectFactory;
 import cuke4duke.StepMother;
 import org.picocontainer.MutablePicoContainer;
 import org.picocontainer.PicoBuilder;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.lang.reflect.Modifier;
+import java.util.Set;
 
 public class PicoFactory implements ObjectFactory {
     private MutablePicoContainer pico;
-    private final List<Class<?>> classes = new ArrayList<Class<?>>();
+    private final Set<Class<?>> classes = new HashSet<Class<?>>();
     private final List<Object> instances = new ArrayList<Object>();
 
     public void createObjects() {
@@ -45,7 +47,7 @@ public class PicoFactory implements ObjectFactory {
         return pico.getComponent(type);
     }
 
-    public List<Class<?>> getClasses() {
+    public Set<Class<?>> getClasses() {
         return classes;
     }
 }

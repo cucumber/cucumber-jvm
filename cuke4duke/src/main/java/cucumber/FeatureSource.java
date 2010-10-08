@@ -1,5 +1,8 @@
 package cucumber;
 
+import cucumber.runtime.Executor;
+import gherkin.FeatureParser;
+
 public class FeatureSource {
     private final String source;
     private final String uri;
@@ -9,7 +12,7 @@ public class FeatureSource {
         this.uri = uri;
     }
 
-    public void execute(Runtime runtime) {
-        runtime.execute(source, uri);
+    public void execute(FeatureParser parser) {
+        parser.parse(source, uri, 0);
     }
 }

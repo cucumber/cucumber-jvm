@@ -3,7 +3,8 @@ package cuke4duke.internal.scala
 import cuke4duke.{StepMother}
 import cuke4duke.ScalaDsl
 import cuke4duke.internal.language.AbstractProgrammingLanguage
-import cuke4duke.internal.jvmclass.{ClassLanguage, ClassAnalyzer, ObjectFactory}
+import cuke4duke.internal.jvmclass.{ClassLanguage, ClassAnalyzer}
+import cucumber.runtime.java.ObjectFactory
 
 /**
  * Collects hooks and step definitions from all classes with the 'ScalaDsl' trait.
