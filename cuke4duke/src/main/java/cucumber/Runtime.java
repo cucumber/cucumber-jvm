@@ -23,8 +23,8 @@ public class Runtime {
         executor = new Executor(stepDefinitions, formatter);
     }
 
-    public void execute(String... featurePaths) throws IOException {
-        String featurePath = featurePaths[0];
+    public void execute(List<String> featurePaths) throws IOException {
+        String featurePath = featurePaths.get(0);
         String source = read(featurePath);
         FeatureSource featureSource = new FeatureSource(source, featurePath);
         executor.execute(featureSource);

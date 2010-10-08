@@ -3,7 +3,7 @@ package cucumber.runtime;
 import cucumber.FeatureSource;
 import cucumber.StepDefinition;
 import cucumber.runtime.java.MethodStepDefinition;
-import cucumber.runtime.java.picocontainer.PicoFactory;
+import cucumber.runtime.java.pico.PicoFactory;
 import gherkin.formatter.PrettyFormatter;
 import org.junit.Test;
 

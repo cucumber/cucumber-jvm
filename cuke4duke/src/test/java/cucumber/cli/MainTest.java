@@ -18,15 +18,11 @@ public class MainTest {
                 "    Given I have 3 cukes # CukesSteps.haveNCukes(String)\n";
 
         StringWriter sw = new StringWriter();
-
-        Main main = new Main();
-        main.execute(sw, "cucumber.runtime.fixtures", new String[]{"cucumber/runtime/fixtures/cukes.feature"});
-
-        String output = sw.toString();
-
-        System.out.println(output);
-
-        assertThat(output, equalTo(expectedOutput));
+        Main.mainWithWriter(sw,
+                "--stepdefs", "cucumber.runtime.fixtures",
+                "cucumber/runtime/fixtures/cukes.feature"
+        );
+        assertThat(sw.toString(), equalTo(expectedOutput));
     }
 
 }

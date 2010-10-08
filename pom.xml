@@ -16,6 +16,8 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
     <gherkin.version>2.2.9</gherkin.version>
+    <reflections.version>0.9.5-RC1</reflections.version>
+    <jcommander.version>1.7</jcommander.version>
     <jruby.version>1.5.3</jruby.version>
     <ant.version>1.8.1</ant.version>
     <pico.version>2.11.2</pico.version>
@@ -50,6 +52,16 @@
         <groupId>gherkin</groupId>
         <artifactId>gherkin</artifactId>
         <version>${gherkin.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.beust</groupId>
+        <artifactId>jcommander</artifactId>
+        <version>${jcommander.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.reflections</groupId>
+        <artifactId>reflections</artifactId>
+        <version>${reflections.version}</version>
       </dependency>
       <dependency>
         <groupId>org.jruby</groupId>
