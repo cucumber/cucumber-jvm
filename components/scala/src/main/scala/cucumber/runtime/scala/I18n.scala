@@ -1,4 +1,4 @@
-package cuke4duke
+package cucumber.runtime.scala
 
 trait AR {
   this: ScalaDsl =>

@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                       http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>cuke4duke</groupId>
+  <groupId>cucumber</groupId>
   <artifactId>parent</artifactId>
   <packaging>pom</packaging>
   <version>0.4.3-SNAPSHOT</version>
@@ -44,8 +44,8 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>cuke4duke</groupId>
-        <artifactId>cuke4duke</artifactId>
+        <groupId>cucumber</groupId>
+        <artifactId>core</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -227,7 +227,8 @@
   </pluginRepositories>
 
   <modules>
-    <module>cuke4duke</module>
+      <module>components/core</module>
+      <module>components/scala</module>
     <module>cuke4duke-maven-plugin</module>
   </modules>
 

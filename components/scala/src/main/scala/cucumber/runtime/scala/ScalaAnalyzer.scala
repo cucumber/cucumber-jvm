@@ -1,7 +1,6 @@
-package cuke4duke.internal.scala
+package cucumber.runtime.scala
 
-import cuke4duke.{StepMother}
-import cuke4duke.ScalaDsl
+import cuke4duke.StepMother
 import cuke4duke.internal.language.AbstractProgrammingLanguage
 import cuke4duke.internal.jvmclass.{ClassLanguage, ClassAnalyzer}
 import cucumber.runtime.java.ObjectFactory

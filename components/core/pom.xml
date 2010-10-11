@@ -5,13 +5,13 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>cuke4duke</groupId>
+    <groupId>cucumber</groupId>
     <artifactId>parent</artifactId>
-    <relativePath>../pom.xml</relativePath>
+    <relativePath>../../pom.xml</relativePath>
     <version>0.4.3-SNAPSHOT</version>
   </parent>
 
-  <artifactId>cuke4duke</artifactId>
+  <artifactId>core</artifactId>
   <packaging>jar</packaging>
   <name>Cuke4Duke: Core</name>
 
@@ -102,34 +102,13 @@
   <build>
     <plugins>
       <plugin>
-        <groupId>org.scala-tools</groupId>
-        <artifactId>maven-scala-plugin</artifactId>
-        <version>2.12</version>
-        <configuration>
-          <encoding>UTF-8</encoding>
-          <excludes>
-            <exclude>**/*.java</exclude>
-          </excludes>
-        </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>add-source</goal>
-              <goal>compile</goal>
-              <goal>testCompile</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
         <artifactId>maven-antrun-plugin</artifactId>
         <executions>
           <execution>
             <phase>package</phase>
             <configuration>
               <tasks>
-                <copy file="${project.build.directory}/${project.build.finalName}.jar" todir="../lib"/>
+                <copy file="${project.build.directory}/${project.build.finalName}.jar" todir="../../lib"/>
               </tasks>
             </configuration>
             <goals>
@@ -140,16 +119,4 @@
       </plugin>
     </plugins>
   </build>
-
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <configuration>
-          <excludePackageNames>*.internal</excludePackageNames>
-        </configuration>
-      </plugin>
-    </plugins>
-  </reporting>
 </project>

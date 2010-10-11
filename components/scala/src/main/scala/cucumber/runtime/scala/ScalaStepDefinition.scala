@@ -1,4 +1,4 @@
-package cuke4duke.internal.scala
+package cucumber.runtime.scala
 
 import _root_.java.util.regex.Pattern
 import cuke4duke.internal.language.{AbstractProgrammingLanguage, JdkPatternArgumentMatcher, StepDefinition}

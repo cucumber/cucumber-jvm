@@ -1,19 +1,19 @@
-package cuke4duke
+package cucumber.runtime.scala
 
 import _root_.java.util.ArrayList
 import _root_.scala.collection.mutable.ListBuffer
 import _root_.scala.reflect.Manifest
-import cuke4duke.internal.scala._
-import cuke4duke.internal.language.AbstractProgrammingLanguage
-import cuke4duke.spi.jruby.JRubyExceptionFactory
+import _root_.cuke4duke.internal.language.AbstractProgrammingLanguage
+import _root_.cuke4duke.spi.jruby.JRubyExceptionFactory
+import _root_.cuke4duke.{PyString, StepMother, Table}
 /*
   <yourclass> {extends|with} ScalaDsl with EN
  */
 trait ScalaDsl {
-  private[cuke4duke] val stepDefinitions = new ListBuffer[AbstractProgrammingLanguage => ScalaStepDefinition]
-  private[cuke4duke] val beforeHooks = new ListBuffer[ScalaHook]
-  private[cuke4duke] val afterHooks = new ListBuffer[ScalaHook]
-  private[cuke4duke] val exceptionFactory = new JRubyExceptionFactory
+  private[cucumber] val stepDefinitions = new ListBuffer[AbstractProgrammingLanguage => ScalaStepDefinition]
+  private[cucumber] val beforeHooks = new ListBuffer[ScalaHook]
+  private[cucumber] val afterHooks = new ListBuffer[ScalaHook]
+  private[cucumber] val exceptionFactory = new JRubyExceptionFactory
 
   /*
    * Adds a Hook to be run before every scenario
@@ -201,7 +201,7 @@ trait ScalaDsl {
   gets called by 'ScalaAnalyzer' after recording of step definitions is done.
   switches to 'execution-mode'
    */
-  private[cuke4duke] def executionMode(stepMother: StepMother) {
+  private[cucumber] def executionMode(stepMother: StepMother) {
     mode = new Mode {
       override def createHandle(name: String, regex: String) = new StepBody {
         stepMother.invoke(regex)

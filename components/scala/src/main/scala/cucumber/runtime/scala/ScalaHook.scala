@@ -1,4 +1,4 @@
-package cuke4duke.internal.scala
+package cucumber.runtime.scala
 
 import cuke4duke.internal.language.AbstractHook
 import cuke4duke.Scenario

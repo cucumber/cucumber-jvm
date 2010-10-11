@@ -1,4 +1,4 @@
-package cuke4duke
+package cucumber.runtime.scala
 
 import org.jruby.exceptions.RaiseException
 
@@ -9,8 +9,9 @@ import java.lang.{Class, String}
 import _root_.scala.collection.mutable.{Map, ListBuffer}
 
 import cuke4duke.internal.language._
-import spi.jruby.{JRuby}
 import java.util.{ArrayList, Locale, Map => JMap, List => JList}
+import cuke4duke.spi.jruby.JRuby
+import cuke4duke._
 
 class ScalaDslTest extends ScalaDsl with EN with NO {
 
