@@ -24,7 +24,7 @@
 
   <target name="-install-gems" depends="-define-paths" if="gems">
     <taskdef name="gem" classname="cuke4duke.ant.GemTask" classpathref="compile.classpath"/>
-    <gem args="install cuke4duke --version ${cuke4duke.version}"/>
+    <gem args="install cuke4duke --version 0.4.2"/>
   </target>
 
   <target name="-define-paths" depends="-download-jars">
