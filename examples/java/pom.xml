@@ -4,31 +4,47 @@
                       http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>cuke4duke</groupId>
-    <artifactId>parent</artifactId>
-    <relativePath>../../pom.xml</relativePath>
-    <version>0.4.3-SNAPSHOT</version>
-  </parent>
-
+  <groupId>cuke4duke</groupId>
   <artifactId>cuke4duke-java-example</artifactId>
+  <version>0.4.2</version>
   <packaging>jar</packaging>
   <name>Cuke4Duke: Java Example</name>
 
+  <repositories>
+    <repository>
+      <id>codehaus</id>
+      <url>http://repository.codehaus.org</url>
+    </repository>
+    <repository>
+      <id>cukes</id>
+      <url>http://cukes.info/maven</url>
+    </repository>
+  </repositories>
+
+  <pluginRepositories>
+    <pluginRepository>
+      <id>cukes</id>
+      <url>http://cukes.info/maven</url>
+    </pluginRepository>
+  </pluginRepositories>
+
   <dependencies>
-    <dependency>
-      <groupId>org.picocontainer</groupId>
-      <artifactId>picocontainer</artifactId>
-      <scope>test</scope>
-    </dependency>
     <dependency>
       <groupId>cuke4duke</groupId>
       <artifactId>cuke4duke</artifactId>
+      <version>0.4.2</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.picocontainer</groupId>
+      <artifactId>picocontainer</artifactId>
+      <version>2.11.2</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
+      <version>4.8.1</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -66,6 +82,7 @@
       <plugin>
         <groupId>cuke4duke</groupId>
         <artifactId>cuke4duke-maven-plugin</artifactId>
+        <version>0.4.2</version>
         <configuration>
           <jvmArgs>
             <!-- Debugging. See http://wiki.github.com/aslakhellesoy/cuke4duke/debug-cuke4duke-steps -->
@@ -95,10 +112,9 @@
             <cucumberArg>${basedir}/target/test-classes</cucumberArg>
             <cucumberArg>--require</cucumberArg>
             <cucumberArg>${basedir}/src/test/ruby</cucumberArg>
-            <cucumberArg>features/transform.feature:22</cucumberArg>
           </cucumberArgs>
           <gems>
-            <gem>install cuke4duke --version ${cuke4duke.version}</gem>
+            <gem>install cuke4duke --version 0.4.2</gem>
           </gems>
         </configuration>
         <executions>
