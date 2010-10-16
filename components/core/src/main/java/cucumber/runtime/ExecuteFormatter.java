@@ -15,7 +15,6 @@ import java.util.List;
 
 public class ExecuteFormatter implements Formatter {
     private final Backend backend;
-    private final List<StepDefinition> stepDefinitions;
     private final Formatter formatter;
     private final List<Step> steps = new ArrayList<Step>();
 
@@ -23,9 +22,8 @@ public class ExecuteFormatter implements Formatter {
     private Feature feature;
     private DescribedStatement featureElement;
 
-    public ExecuteFormatter(Backend backend, List<StepDefinition> stepDefinitions, Formatter formatter) {
+    public ExecuteFormatter(Backend backend, Formatter formatter) {
         this.backend = backend;
-        this.stepDefinitions = stepDefinitions;
         this.formatter = formatter;
     }
 
@@ -75,11 +73,11 @@ public class ExecuteFormatter implements Formatter {
     }
 
     private void replayFeatureElement() {
-        if(featureElement != null) {
+        if (featureElement != null) {
             backend.newScenario();
             formatter.steps(steps);
             featureElement.replay(formatter);
-            for(Step step: steps) {
+            for (Step step : steps) {
                 execute(step);
             }
             steps.clear();
@@ -88,23 +86,23 @@ public class ExecuteFormatter implements Formatter {
 
     private void execute(Step step) {
         StepMatch stepMatch = stepMatch(step);
-        StackTraceElement stepStackTraceElement = new StackTraceElement(feature.getName() + "." + featureElement.getName(), step.getKeyword()+step.getName(), uri, step.getLine());
+        StackTraceElement stepStackTraceElement = new StackTraceElement(feature.getName() + "." + featureElement.getName(), step.getKeyword() + step.getName(), uri, step.getLine());
         stepMatch.execute(formatter, stepStackTraceElement);
     }
 
     private StepMatch stepMatch(Step step) {
-        List<StepMatch> stepMatches = stepMatches(step);
-        return stepMatches.get(0);
+        return stepMatches(step).get(0);
     }
 
     private List<StepMatch> stepMatches(Step step) {
         List<StepMatch> result = new ArrayList<StepMatch>();
-        for(StepDefinition stepDefinition : stepDefinitions) {
+        for (StepDefinition stepDefinition : backend.getStepDefinitions()) {
             StepMatch stepMatch = stepDefinition.stepMatch(step);
-            if(stepMatch != null) {
+            if (stepMatch != null) {
                 result.add(stepMatch);
             }
         }
         return result;
     }
+
 }

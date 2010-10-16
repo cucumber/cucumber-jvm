@@ -2,7 +2,6 @@ package cucumber.runtime.java;
 
 import cuke4duke.StepMother;
 
-import java.util.List;
 import java.util.Set;
 
 public interface ObjectFactory {

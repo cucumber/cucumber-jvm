@@ -20,7 +20,7 @@ public class Runtime {
 
     public Runtime(Backend backend, Formatter formatter) {
         List<StepDefinition> stepDefinitions = backend.getStepDefinitions();
-        executor = new Executor(backend, stepDefinitions, formatter);
+        executor = new Executor(backend, formatter);
     }
 
     public void execute(List<String> featurePaths) throws IOException {
@@ -33,9 +33,9 @@ public class Runtime {
     private String read(String path) throws IOException {
         try {
             return read(new FileReader(path));
-        } catch(FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             InputStream stream = getClass().getClassLoader().getResourceAsStream(path);
-            if(stream != null) {
+            if (stream != null) {
                 return read(new InputStreamReader(stream, "UTF-8"));
             } else {
                 throw new IOException("Could not find " + path + " on file or in class path.");

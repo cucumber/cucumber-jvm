@@ -9,5 +9,6 @@ import java.util.List;
 
 public interface StepDefinition {
     Result execute(List<Argument> arguments, StackTraceElement stepStackTraceElement);
+
     StepMatch stepMatch(Step step);
 }

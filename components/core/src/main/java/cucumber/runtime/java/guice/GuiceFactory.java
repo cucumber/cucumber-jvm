@@ -35,7 +35,7 @@ public class GuiceFactory implements ObjectFactory {
 
     public boolean canHandle(Class<?> clazz) {
         return Modifier.isStatic(clazz.getModifiers())
-           || clazz.getEnclosingClass() == null;
+                || clazz.getEnclosingClass() == null;
     }
 
     public void addClass(Class<?> clazz) {
@@ -58,7 +58,7 @@ public class GuiceFactory implements ObjectFactory {
     }
 
     public void disposeObjects() {
-	      instances.clear();
+        instances.clear();
     }
 
     @SuppressWarnings("unchecked")

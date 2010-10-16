@@ -2,17 +2,17 @@ package cucumber.runtime;
 
 import cucumber.FeatureSource;
 import cucumber.StepDefinition;
-import cucumber.runtime.java.JavaBackend;
-import cucumber.runtime.java.MethodStepDefinition;
+import cucumber.runtime.java.JavaMethodStepDefinition;
+import cucumber.runtime.java.ObjectFactory;
 import cucumber.runtime.java.pico.PicoFactory;
 import gherkin.formatter.PrettyFormatter;
 import org.junit.Test;
 
 import java.io.StringWriter;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.regex.Pattern;
 
-import static java.util.Arrays.asList;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 
@@ -62,16 +62,16 @@ public class ExecutorTest {
 
     private void assertOutput(String source, Pattern pattern, String methodName, String expectedOutput) throws NoSuchMethodException {
         Method method = CukeSteps.class.getDeclaredMethod(methodName, String.class);
-        PicoFactory objectFactory = new PicoFactory();
+        ObjectFactory objectFactory = new PicoFactory();
         objectFactory.addClass(method.getDeclaringClass());
         objectFactory.createObjects();
-        StepDefinition haveCukes = new MethodStepDefinition(pattern, method, objectFactory);
+        StepDefinition haveCukes = new JavaMethodStepDefinition(pattern, method, objectFactory);
 
         StringWriter output = new StringWriter();
         PrettyFormatter pretty = new PrettyFormatter(output, true);
 
-        Backend backend = new JavaBackend(objectFactory, "nothing");
-        Executor runtime = new Executor(backend, asList(haveCukes), pretty);
+        Backend backend = new SimpleBackend(Arrays.asList(haveCukes), objectFactory);
+        Executor runtime = new Executor(backend, pretty);
 
         FeatureSource helloFeature = new FeatureSource(source, "features/hello.feature");
         runtime.execute(helloFeature);

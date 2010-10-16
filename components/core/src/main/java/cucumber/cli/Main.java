@@ -6,8 +6,9 @@ import com.beust.jcommander.ParameterException;
 import com.beust.jcommander.converters.BaseConverter;
 import cucumber.Runtime;
 import cucumber.runtime.Backend;
-import cucumber.runtime.java.JavaBackend;
+import cucumber.runtime.java.JavaMethodBackend;
 import cucumber.runtime.java.ObjectFactory;
+import cucumber.runtime.java.ReflectionsMethodFinder;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.PrettyFormatter;
 
@@ -30,10 +31,10 @@ public class Main {
     public ObjectFactory objectFactory;
 
     public void execute(Writer out) throws IOException {
-        if(objectFactory == null)
+        if (objectFactory == null)
             objectFactory = new ObjectFactoryConverter("--factory").convert("pico");
 
-        Backend backend = new JavaBackend(objectFactory, stepDefPackage);
+        Backend backend = new JavaMethodBackend(objectFactory, new ReflectionsMethodFinder(stepDefPackage));
         Formatter formatter = new PrettyFormatter(out, true);
         Runtime runtime = new Runtime(backend, formatter);
         runtime.execute(features);

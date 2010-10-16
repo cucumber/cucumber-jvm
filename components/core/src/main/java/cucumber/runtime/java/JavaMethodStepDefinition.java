@@ -15,14 +15,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public class MethodStepDefinition implements StepDefinition {
+public class JavaMethodStepDefinition implements StepDefinition {
     private final MethodFormat methodFormat;
     private final Method method;
     private final ObjectFactory objectFactory;
     private final JdkPatternArgumentMatcher argumentMatcher;
     private final Pattern pattern;
 
-    public MethodStepDefinition(Pattern pattern, Method method, ObjectFactory objectFactory) {
+    public JavaMethodStepDefinition(Pattern pattern, Method method, ObjectFactory objectFactory) {
         this.pattern = pattern;
         this.argumentMatcher = new JdkPatternArgumentMatcher(pattern);
         this.method = method;
@@ -51,7 +51,7 @@ public class MethodStepDefinition implements StepDefinition {
     }
 
     private String stackTrace(Throwable error, StackTraceElement stepStackTraceElement) {
-        if(error == null) return null;
+        if (error == null) return null;
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
 
@@ -65,12 +65,12 @@ public class MethodStepDefinition implements StepDefinition {
     private void filterStacktrace(Throwable error, StackTraceElement stepStackTraceElement) {
         StackTraceElement[] stackTraceElements = error.getStackTrace();
         int stackLength;
-        for(stackLength = 1; stackLength < stackTraceElements.length; ++stackLength) {
-            if(isMethodElement(stackTraceElements[stackLength-1])) {
+        for (stackLength = 1; stackLength < stackTraceElements.length; ++stackLength) {
+            if (isMethodElement(stackTraceElements[stackLength - 1])) {
                 break;
             }
         }
-        StackTraceElement[] result = new StackTraceElement[stackLength+1];
+        StackTraceElement[] result = new StackTraceElement[stackLength + 1];
         System.arraycopy(stackTraceElements, 0, result, 0, stackLength);
         result[stackLength] = stepStackTraceElement;
         error.setStackTrace(result);
@@ -82,7 +82,7 @@ public class MethodStepDefinition implements StepDefinition {
 
     private Object[] methodArgs(List<Argument> arguments) {
         List<Object> result = new ArrayList<Object>();
-        for(Argument a : arguments) {
+        for (Argument a : arguments) {
             result.add(a.getVal());
         }
         return result.toArray();
