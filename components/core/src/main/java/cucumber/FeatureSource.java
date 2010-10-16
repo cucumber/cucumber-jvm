@@ -1,6 +1,5 @@
 package cucumber;
 
-import cucumber.runtime.Executor;
 import gherkin.FeatureParser;
 
 public class FeatureSource {

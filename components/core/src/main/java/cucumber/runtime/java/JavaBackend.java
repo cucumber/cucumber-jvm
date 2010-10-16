@@ -38,8 +38,11 @@ public class JavaBackend implements Backend {
             result.add(new MethodStepDefinition(pattern, method, objectFactory));
         }
 
-        objectFactory.createObjects();
         return result;
+    }
+
+    public void newScenario() {
+        objectFactory.createObjects();
     }
 
     private Configuration configuration() {

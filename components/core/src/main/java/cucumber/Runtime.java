@@ -20,7 +20,7 @@ public class Runtime {
 
     public Runtime(Backend backend, Formatter formatter) {
         List<StepDefinition> stepDefinitions = backend.getStepDefinitions();
-        executor = new Executor(stepDefinitions, formatter);
+        executor = new Executor(backend, stepDefinitions, formatter);
     }
 
     public void execute(List<String> featurePaths) throws IOException {

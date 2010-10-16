@@ -2,6 +2,7 @@ package cucumber.runtime;
 
 import cucumber.FeatureSource;
 import cucumber.StepDefinition;
+import cucumber.runtime.java.JavaBackend;
 import cucumber.runtime.java.MethodStepDefinition;
 import cucumber.runtime.java.pico.PicoFactory;
 import gherkin.formatter.PrettyFormatter;
@@ -16,27 +17,6 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 
 public class ExecutorTest {
-    private String have3Cukes = "" +
-            "Feature: Hello\n" +
-            "\n" +
-            "  Scenario: Hi\n" +
-            "    Given I have 3 cukes\n" +
-            "";
-
-    public static class CukeSteps {
-        public void haveNCukes(String n) {
-
-        }
-
-        public void haveNCukesAndFail(String n) {
-            badStuff();
-        }
-
-        private void badStuff() {
-            throw new RuntimeException("Oh noes");
-        }
-    }
-
     @Test
     public void testShouldPrintSimpleResults() throws NoSuchMethodException {
         String expectedOutput = "" +
@@ -50,6 +30,21 @@ public class ExecutorTest {
     }
 
     @Test
+    public void testShouldInstantiateNewWorld() throws NoSuchMethodException {
+        String expectedOutput = "" +
+                "Feature: Hello\n" +
+                "\n" +
+                "  Scenario: Hi           # features/hello.feature:3\n" +
+                "    Given I have 3 cukes # ExecutorTest$CukeSteps.keepState(String)\n" +
+                "\n" +
+                "  Scenario: Hi again      # features/hello.feature:6\n" +
+                "    Given I have 10 cukes # ExecutorTest$CukeSteps.keepState(String)\n" +
+                "";
+
+        assertOutput(haveManyCukes, Pattern.compile("I have (\\d+) cukes"), "keepState", expectedOutput);
+    }
+
+    @Test
     public void testShouldPrintResultsWithErrors() throws NoSuchMethodException {
         String expectedOutput = "" +
                 "Feature: Hello\n" +
@@ -57,8 +52,8 @@ public class ExecutorTest {
                 "  Scenario: Hi           # features/hello.feature:3\n" +
                 "    Given I have 3 cukes # ExecutorTest$CukeSteps.haveNCukesAndFail(String)\n" +
                 "      java.lang.RuntimeException: Oh noes\n" +
-                "      \tat cucumber.runtime.ExecutorTest$CukeSteps.badStuff(ExecutorTest.java:36)\n" +
-                "      \tat cucumber.runtime.ExecutorTest$CukeSteps.haveNCukesAndFail(ExecutorTest.java:32)\n" +
+                "      \tat cucumber.runtime.ExecutorTest$CukeSteps.badStuff(ExecutorTest.java:111)\n" +
+                "      \tat cucumber.runtime.ExecutorTest$CukeSteps.haveNCukesAndFail(ExecutorTest.java:107)\n" +
                 "      \tat Hello.Hi.Given I have 3 cukes(features/hello.feature:4)\n" +
                 "\n";
 
@@ -66,12 +61,17 @@ public class ExecutorTest {
     }
 
     private void assertOutput(String source, Pattern pattern, String methodName, String expectedOutput) throws NoSuchMethodException {
-        StepDefinition haveCukes = stepDefinition(pattern, methodName);
+        Method method = CukeSteps.class.getDeclaredMethod(methodName, String.class);
+        PicoFactory objectFactory = new PicoFactory();
+        objectFactory.addClass(method.getDeclaringClass());
+        objectFactory.createObjects();
+        StepDefinition haveCukes = new MethodStepDefinition(pattern, method, objectFactory);
 
         StringWriter output = new StringWriter();
-        PrettyFormatter pretty = new PrettyFormatter(output, false);
+        PrettyFormatter pretty = new PrettyFormatter(output, true);
 
-        Executor runtime = new Executor(asList(haveCukes), pretty);
+        Backend backend = new JavaBackend(objectFactory, "nothing");
+        Executor runtime = new Executor(backend, asList(haveCukes), pretty);
 
         FeatureSource helloFeature = new FeatureSource(source, "features/hello.feature");
         runtime.execute(helloFeature);
@@ -79,12 +79,43 @@ public class ExecutorTest {
         assertThat(output.toString(), equalTo(expectedOutput));
     }
 
-    private StepDefinition stepDefinition(Pattern pattern, String methodName) throws NoSuchMethodException {
-        Method method = CukeSteps.class.getDeclaredMethod(methodName, String.class);
-        PicoFactory objectFactory = new PicoFactory();
-        objectFactory.addClass(method.getDeclaringClass());
-        objectFactory.createObjects();
-        return new MethodStepDefinition(pattern, method, objectFactory);
-    }
+    private String have3Cukes = "" +
+            "Feature: Hello\n" +
+            "\n" +
+            "  Scenario: Hi\n" +
+            "    Given I have 3 cukes\n" +
+            "";
 
+    private String haveManyCukes = "" +
+            "Feature: Hello\n" +
+            "\n" +
+            "  Scenario: Hi\n" +
+            "    Given I have 3 cukes\n" +
+            "\n" +
+            "  Scenario: Hi again\n" +
+            "    Given I have 10 cukes\n" +
+            "";
+
+    public static class CukeSteps {
+        int state = 0;
+
+        public void haveNCukes(String n) {
+
+        }
+
+        public void haveNCukesAndFail(String n) {
+            badStuff();
+        }
+
+        private void badStuff() {
+            throw new RuntimeException("Oh noes");
+        }
+
+        public void keepState(String n) {
+            if(state > 0) {
+                throw new RuntimeException("Didn't get a new instance");
+            }
+            state++;
+        }
+    }
 }

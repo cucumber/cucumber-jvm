@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ExecuteFormatter implements Formatter {
+    private final Backend backend;
     private final List<StepDefinition> stepDefinitions;
     private final Formatter formatter;
     private final List<Step> steps = new ArrayList<Step>();
@@ -22,7 +23,8 @@ public class ExecuteFormatter implements Formatter {
     private Feature feature;
     private DescribedStatement featureElement;
 
-    public ExecuteFormatter(List<StepDefinition> stepDefinitions, Formatter formatter) {
+    public ExecuteFormatter(Backend backend, List<StepDefinition> stepDefinitions, Formatter formatter) {
+        this.backend = backend;
         this.stepDefinitions = stepDefinitions;
         this.formatter = formatter;
     }
@@ -74,6 +76,7 @@ public class ExecuteFormatter implements Formatter {
 
     private void replayFeatureElement() {
         if(featureElement != null) {
+            backend.newScenario();
             formatter.steps(steps);
             featureElement.replay(formatter);
             for(Step step: steps) {
