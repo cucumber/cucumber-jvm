@@ -8,7 +8,7 @@ public abstract class ContainerSteps {
     protected static Context context;
 
     public ContainerSteps(ContainerInitializer initializer) throws NamingException {
-        // constructor-injection by cuke4duke/picocontainer
+        // constructor-injection by cuke4duke/pico
         context = initializer.getContext();
         context.bind("inject", this);
     }

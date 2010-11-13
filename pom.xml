@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                       http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>cuke4duke</groupId>
+  <groupId>cucumber</groupId>
   <artifactId>parent</artifactId>
   <packaging>pom</packaging>
   <version>0.4.3-SNAPSHOT</version>
@@ -15,7 +15,9 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-    <gherkin.version>2.2.8</gherkin.version>
+    <gherkin.version>2.2.9</gherkin.version>
+    <reflections.version>0.9.5-RC1</reflections.version>
+    <jcommander.version>1.7</jcommander.version>
     <jruby.version>1.5.3</jruby.version>
     <ant.version>1.8.1</ant.version>
     <pico.version>2.11.2</pico.version>
@@ -42,14 +44,24 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>cuke4duke</groupId>
-        <artifactId>cuke4duke</artifactId>
+        <groupId>cucumber</groupId>
+        <artifactId>core</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>gherkin</groupId>
         <artifactId>gherkin</artifactId>
         <version>${gherkin.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.beust</groupId>
+        <artifactId>jcommander</artifactId>
+        <version>${jcommander.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.reflections</groupId>
+        <artifactId>reflections</artifactId>
+        <version>${reflections.version}</version>
       </dependency>
       <dependency>
         <groupId>org.jruby</groupId>
@@ -196,6 +208,11 @@
       <id>codehaus</id>
       <url>http://repository.codehaus.org</url>
     </repository>
+      <repository>
+          <id>reflections-repo</id>
+          <name>Reflections Maven2 Repository</name>
+          <url>http://reflections.googlecode.com/svn/repo</url>
+      </repository>
     <repository>
       <id>cukes</id>
       <url>http://cukes.info/maven</url>
@@ -210,7 +227,8 @@
   </pluginRepositories>
 
   <modules>
-    <module>cuke4duke</module>
+      <module>components/core</module>
+      <module>components/scala</module>
     <module>cuke4duke-maven-plugin</module>
   </modules>
 
