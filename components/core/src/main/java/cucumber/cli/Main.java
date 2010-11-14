@@ -8,7 +8,7 @@ import cucumber.Runtime;
 import cucumber.runtime.Backend;
 import cucumber.runtime.java.JavaMethodBackend;
 import cucumber.runtime.java.ObjectFactory;
-import cucumber.runtime.java.ReflectionsMethodFinder;
+import cucumber.runtime.java.reflections.ReflectionsMethodFinder;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.PrettyFormatter;
 

@@ -3,7 +3,7 @@
 
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
-        @StepDef("<%= i18n.iso_code %>")
+        @CucumberAnnotation("<%= i18n.iso_code %>")
         public static @interface <%= kw %> {
             public abstract String value();
         }
