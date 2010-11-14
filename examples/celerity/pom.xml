@@ -5,15 +5,15 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>cuke4duke</groupId>
+    <groupId>cucumber</groupId>
     <artifactId>parent</artifactId>
     <relativePath>../../pom.xml</relativePath>
     <version>0.4.3-SNAPSHOT</version>
   </parent>
 
-  <artifactId>cuke4duke-celerity-example</artifactId>
+  <artifactId>cucumber-celerity-example</artifactId>
   <packaging>jar</packaging>
-  <name>Cuke4Duke: Celerity Example</name>
+  <name>Cucumber: Celerity Example</name>
 
   <repositories>
     <repository>
@@ -50,11 +50,11 @@
   </dependencies>
 
   <build>
-    <finalName>cuke4duke-celerity-example</finalName>
+    <finalName>cucumber-celerity-example</finalName>
     <plugins>
       <plugin>
-        <groupId>cuke4duke</groupId>
-        <artifactId>cuke4duke-maven-plugin</artifactId>
+        <groupId>cucumber</groupId>
+        <artifactId>cucumber-maven-plugin</artifactId>
         <configuration>
           <jvmArgs>
             <jvmArg>-Xmx384m</jvmArg>

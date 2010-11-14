@@ -5,15 +5,15 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>cuke4duke</groupId>
+    <groupId>cucumber</groupId>
     <artifactId>parent</artifactId>
     <relativePath>../../pom.xml</relativePath>
     <version>0.4.3-SNAPSHOT</version>
   </parent>
 
-  <artifactId>cuke4duke-javascript-example</artifactId>
+  <artifactId>cucumber-javascript-example</artifactId>
   <packaging>jar</packaging>
-  <name>Cuke4Duke: Javascript Example</name>
+  <name>Cucumber: Javascript Example</name>
 
   <dependencies>
     <dependency>
@@ -21,8 +21,8 @@
       <artifactId>js</artifactId>
     </dependency>
     <dependency>
-      <groupId>cuke4duke</groupId>
-      <artifactId>cuke4duke</artifactId>
+      <groupId>cucumber</groupId>
+      <artifactId>cucumber</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -30,8 +30,8 @@
   <build>
     <plugins>
       <plugin>
-        <groupId>cuke4duke</groupId>
-        <artifactId>cuke4duke-maven-plugin</artifactId>
+        <groupId>cucumber</groupId>
+        <artifactId>cucumber-maven-plugin</artifactId>
         <configuration>
           <cucumberArgs>
             <cucumberArg>--color</cucumberArg>

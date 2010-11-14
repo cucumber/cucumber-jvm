@@ -5,15 +5,15 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>cuke4duke</groupId>
+    <groupId>cucumber</groupId>
     <artifactId>parent</artifactId>
     <relativePath>../../pom.xml</relativePath>
     <version>0.4.3-SNAPSHOT</version>
   </parent>
 
-  <artifactId>cuke4duke-java-webdriver-example</artifactId>
+  <artifactId>cucumber-java-webdriver-example</artifactId>
   <packaging>jar</packaging>
-  <name>Cuke4Duke: Java WebDriver Example</name>
+  <name>Cucumber: Java WebDriver Example</name>
 
   <repositories>
     <repository>
@@ -30,8 +30,8 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>cuke4duke</groupId>
-      <artifactId>cuke4duke</artifactId>
+      <groupId>cucumber</groupId>
+      <artifactId>cucumber</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -68,8 +68,8 @@
 
     <plugins>
       <plugin>
-        <groupId>cuke4duke</groupId>
-        <artifactId>cuke4duke-maven-plugin</artifactId>
+        <groupId>cucumber</groupId>
+        <artifactId>cucumber-maven-plugin</artifactId>
         <configuration>
           <jvmArgs>
             <!-- Comment in the line below to use Firefox instead of HTMLUnit (default) -->

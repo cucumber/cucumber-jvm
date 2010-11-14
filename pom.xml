@@ -7,7 +7,7 @@
   <artifactId>parent</artifactId>
   <packaging>pom</packaging>
   <version>0.4.3-SNAPSHOT</version>
-  <name>Cuke4Duke: Parent</name>
+  <name>Cucumber: Parent</name>
   <url>http://cukes.info/</url>
 
 
@@ -15,7 +15,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-    <gherkin.version>2.2.9</gherkin.version>
+    <gherkin.version>2.3.1</gherkin.version>
     <reflections.version>0.9.5-RC1</reflections.version>
     <jcommander.version>1.7</jcommander.version>
     <jruby.version>1.5.3</jruby.version>
@@ -227,9 +227,9 @@
   </pluginRepositories>
 
   <modules>
-      <module>components/core</module>
-      <module>components/scala</module>
-    <module>cuke4duke-maven-plugin</module>
+    <module>components/core</module>
+    <module>components/scala</module>
+    <!--module>components/maven-plugin</module-->
   </modules>
 
   <profiles>

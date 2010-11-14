@@ -5,15 +5,15 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>cuke4duke</groupId>
+    <groupId>cucumber</groupId>
     <artifactId>parent</artifactId>
-    <relativePath>../pom.xml</relativePath>
+    <relativePath>../../pom.xml</relativePath>
     <version>0.4.3-SNAPSHOT</version>
   </parent>
 
-  <artifactId>cuke4duke-maven-plugin</artifactId>
+  <artifactId>cucumber-maven-plugin</artifactId>
   <packaging>maven-plugin</packaging>
-  <name>Cuke4Duke: Maven Plugin</name>
+  <name>Cucumber: Maven Plugin</name>
 
   <dependencies>
     <dependency>
@@ -27,8 +27,8 @@
       <version>2.0.9</version>
     </dependency>
     <dependency>
-      <groupId>cuke4duke</groupId>
-      <artifactId>cuke4duke</artifactId>
+      <groupId>cucumber</groupId>
+      <artifactId>cucumber</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.ant</groupId>

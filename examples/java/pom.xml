@@ -4,11 +4,11 @@
                       http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>cuke4duke</groupId>
-  <artifactId>cuke4duke-java-example</artifactId>
+  <groupId>cucumber</groupId>
+  <artifactId>cucumber-java-example</artifactId>
   <version>0.4.2</version>
   <packaging>jar</packaging>
-  <name>Cuke4Duke: Java Example</name>
+  <name>Cucumber: Java Example</name>
 
   <repositories>
     <repository>
@@ -30,8 +30,8 @@
 
   <dependencies>
     <dependency>
-      <groupId>cuke4duke</groupId>
-      <artifactId>cuke4duke</artifactId>
+      <groupId>cucumber</groupId>
+      <artifactId>cucumber</artifactId>
       <version>0.4.2</version>
       <scope>test</scope>
     </dependency>
@@ -80,8 +80,8 @@
 
     <plugins>
       <plugin>
-        <groupId>cuke4duke</groupId>
-        <artifactId>cuke4duke-maven-plugin</artifactId>
+        <groupId>cucumber</groupId>
+        <artifactId>cucumber-maven-plugin</artifactId>
         <version>0.4.2</version>
         <configuration>
           <jvmArgs>

@@ -2,6 +2,7 @@ package cucumber;
 
 import gherkin.FeatureParser;
 
+// TODO: Internal class. Top level package should only deal with URIs for features.
 public class FeatureSource {
     private final String source;
     private final String uri;

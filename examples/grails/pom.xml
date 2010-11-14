@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>cuke4duke.grails</groupId>
-  <artifactId>cuke4duke-grails-example</artifactId>
+  <groupId>cucumber.grails</groupId>
+  <artifactId>cucumber-grails-example</artifactId>
   <packaging>war</packaging>
   <version>0.2.0</version>
-  <name>Cuke4Duke Grails Example</name>
+  <name>Cucumber Grails Example</name>
   <url>http://cukes.info/</url>
 
   <dependencies>

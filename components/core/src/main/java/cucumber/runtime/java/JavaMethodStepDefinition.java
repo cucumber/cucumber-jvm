@@ -1,8 +1,9 @@
 package cucumber.runtime.java;
 
 import cucumber.StepDefinition;
+import cucumber.runtime.CucumberException;
 import cucumber.runtime.JdkPatternArgumentMatcher;
-import cucumber.runtime.StepMatch;
+import cucumber.runtime.CucumberMatch;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Result;
 import gherkin.formatter.model.Step;
@@ -34,7 +35,14 @@ public class JavaMethodStepDefinition implements StepDefinition {
         String status = "passed";
         Throwable error = null;
         try {
-            method.invoke(objectFactory.getComponent(method.getDeclaringClass()), methodArgs(arguments));
+            Class<?> type = method.getDeclaringClass();
+            Object target = objectFactory.getComponent(type);
+            if(target == null) {
+                throw new CucumberException("BUG: no component for method " + method);
+            }
+            method.invoke(target, methodArgs(arguments));
+        } catch(CucumberException e) {
+            throw e;
         } catch (InvocationTargetException e) {
             error = e.getTargetException();
             status = "failed";
@@ -42,15 +50,15 @@ public class JavaMethodStepDefinition implements StepDefinition {
             error = t;
             status = "failed";
         }
-        return new Result(status, stackTrace(error, stepStackTraceElement), arguments, methodFormat.format(method));
+        return new Result(status, errorMessageWithStackTrace(error, stepStackTraceElement));
     }
 
-    public StepMatch stepMatch(Step step) {
+    public CucumberMatch stepMatch(Step step) {
         List<Argument> arguments = argumentMatcher.argumentsFrom(step.getName());
-        return new StepMatch(this, arguments, step);
+        return new CucumberMatch(arguments,  methodFormat.format(method), this);
     }
 
-    private String stackTrace(Throwable error, StackTraceElement stepStackTraceElement) {
+    private String errorMessageWithStackTrace(Throwable error, StackTraceElement stepStackTraceElement) {
         if (error == null) return null;
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);

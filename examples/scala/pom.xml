@@ -5,15 +5,15 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>cuke4duke</groupId>
+    <groupId>cucumber</groupId>
     <artifactId>parent</artifactId>
     <relativePath>../../pom.xml</relativePath>
     <version>0.4.3-SNAPSHOT</version>
   </parent>
 
-  <artifactId>cuke4duke-scala-example</artifactId>
+  <artifactId>cucumber-scala-example</artifactId>
   <packaging>jar</packaging>
-  <name>Cuke4Duke: Scala Example</name>
+  <name>Cucumber: Scala Example</name>
 
   <dependencies>
     <dependency>
@@ -26,8 +26,8 @@
       <optional>true</optional>
     </dependency>
     <dependency>
-      <groupId>cuke4duke</groupId>
-      <artifactId>cuke4duke</artifactId>
+      <groupId>cucumber</groupId>
+      <artifactId>cucumber</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -60,8 +60,8 @@
         </executions>
       </plugin>
       <plugin>
-        <groupId>cuke4duke</groupId>
-        <artifactId>cuke4duke-maven-plugin</artifactId>
+        <groupId>cucumber</groupId>
+        <artifactId>cucumber-maven-plugin</artifactId>
         <configuration>
           <jvmArgs>
             <jvmArg>-Dcuke4duke.objectFactory=cucumber.runtime.java.pico.PicoFactory</jvmArg>

@@ -2,13 +2,7 @@ package cucumber.runtime;
 
 import cucumber.StepDefinition;
 import gherkin.formatter.Formatter;
-import gherkin.formatter.model.Background;
-import gherkin.formatter.model.DescribedStatement;
-import gherkin.formatter.model.Examples;
-import gherkin.formatter.model.Feature;
-import gherkin.formatter.model.Scenario;
-import gherkin.formatter.model.ScenarioOutline;
-import gherkin.formatter.model.Step;
+import gherkin.formatter.model.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +31,10 @@ public class ExecuteFormatter implements Formatter {
         formatter.feature(feature);
     }
 
+    public void steps(List<Step> steps) {
+        throw new UnsupportedOperationException();
+    }
+    
     public void background(Background background) {
         formatter.background(background);
     }
@@ -59,16 +57,27 @@ public class ExecuteFormatter implements Formatter {
         steps.add(step);
     }
 
+    public void match(Match match) {
+        throw new UnsupportedOperationException();
+//        formatter.match(match);
+    }
+
+    public void result(Result result) {
+        throw new UnsupportedOperationException();
+//        formatter.result(result);
+    }
+
     public void eof() {
         replayFeatureElement();
         formatter.eof();
     }
 
     public void syntaxError(String state, String event, List<String> legalEvents, String uri, int line) {
-        formatter.syntaxError(state, event, legalEvents, uri, line);
+        throw new UnsupportedOperationException();
+//        formatter.syntaxError(state, event, legalEvents, uri, line);
     }
 
-    public void steps(List<Step> steps) {
+    public void embedding(String mimeType, byte[] data) {
         throw new UnsupportedOperationException();
     }
 
@@ -85,21 +94,24 @@ public class ExecuteFormatter implements Formatter {
     }
 
     private void execute(Step step) {
-        StepMatch stepMatch = stepMatch(step);
+        formatter.step(step);
+        CucumberMatch match = stepMatch(step);
         StackTraceElement stepStackTraceElement = new StackTraceElement(feature.getName() + "." + featureElement.getName(), step.getKeyword() + step.getName(), uri, step.getLine());
-        stepMatch.execute(formatter, stepStackTraceElement);
+        match.execute(formatter, stepStackTraceElement);
     }
 
-    private StepMatch stepMatch(Step step) {
+    private CucumberMatch stepMatch(Step step) {
+        // TODO: Ambiguous for > 1
+        // TODO: Undefined for 0
         return stepMatches(step).get(0);
     }
 
-    private List<StepMatch> stepMatches(Step step) {
-        List<StepMatch> result = new ArrayList<StepMatch>();
+    private List<CucumberMatch> stepMatches(Step step) {
+        List<CucumberMatch> result = new ArrayList<CucumberMatch>();
         for (StepDefinition stepDefinition : backend.getStepDefinitions()) {
-            StepMatch stepMatch = stepDefinition.stepMatch(step);
-            if (stepMatch != null) {
-                result.add(stepMatch);
+            CucumberMatch match = stepDefinition.stepMatch(step);
+            if (match != null) {
+                result.add(match);
             }
         }
         return result;

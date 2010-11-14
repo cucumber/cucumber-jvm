@@ -24,6 +24,7 @@ public class JavaMethodBackend implements Backend {
         List<StepDefinition> result = new ArrayList<StepDefinition>();
         for (Method method : methods) {
             objectFactory.addClass(method.getDeclaringClass());
+            // TODO: Look for other annotations too.
             Pattern pattern = Pattern.compile(method.getAnnotation(I18n.EN.Given.class).value());
             result.add(new JavaMethodStepDefinition(pattern, method, objectFactory));
         }

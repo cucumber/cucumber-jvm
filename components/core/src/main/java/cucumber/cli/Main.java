@@ -35,7 +35,7 @@ public class Main {
             objectFactory = new ObjectFactoryConverter("--factory").convert("pico");
 
         Backend backend = new JavaMethodBackend(objectFactory, new ReflectionsMethodFinder(stepDefPackage));
-        Formatter formatter = new PrettyFormatter(out, true);
+        Formatter formatter = new PrettyFormatter(out, true, true);
         Runtime runtime = new Runtime(backend, formatter);
         runtime.execute(features);
     }

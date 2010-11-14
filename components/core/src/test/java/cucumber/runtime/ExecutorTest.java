@@ -18,7 +18,7 @@ import static org.junit.Assert.assertThat;
 
 public class ExecutorTest {
     @Test
-    public void testShouldPrintSimpleResults() throws NoSuchMethodException {
+    public void printsSimpleResults() throws NoSuchMethodException {
         String expectedOutput = "" +
                 "Feature: Hello\n" +
                 "\n" +
@@ -30,7 +30,7 @@ public class ExecutorTest {
     }
 
     @Test
-    public void testShouldInstantiateNewWorld() throws NoSuchMethodException {
+    public void instantiatesNewWorld() throws NoSuchMethodException {
         String expectedOutput = "" +
                 "Feature: Hello\n" +
                 "\n" +
@@ -45,7 +45,7 @@ public class ExecutorTest {
     }
 
     @Test
-    public void testShouldPrintResultsWithErrors() throws NoSuchMethodException {
+    public void printsResultsWithErrors() throws NoSuchMethodException {
         String expectedOutput = "" +
                 "Feature: Hello\n" +
                 "\n" +
@@ -68,7 +68,7 @@ public class ExecutorTest {
         StepDefinition haveCukes = new JavaMethodStepDefinition(pattern, method, objectFactory);
 
         StringWriter output = new StringWriter();
-        PrettyFormatter pretty = new PrettyFormatter(output, true);
+        PrettyFormatter pretty = new PrettyFormatter(output, true, true);
 
         Backend backend = new SimpleBackend(Arrays.asList(haveCukes), objectFactory);
         Executor runtime = new Executor(backend, pretty);

@@ -148,7 +148,7 @@ and there is new and improved support for Ant. As usual there are several bug fi
 
 === IMPORTANT INFORMATION FOR MAVEN USERS
 
-In previous releases you would install gems with e.g. <gem>cuke4duke --version 0.2.1</gem>
+In previous releases you would install gems with e.g. <gem>cucumber --version 0.2.1</gem>
 In other words, RubyGems' "install" command was implicit. Starting with this release you have to be explicit, so to install
 a gem you need to do: <gem>install cuke4duke --version 0.2.1</gem>. This allows you to more easily uninstall or execute
 other gem commands from Maven.

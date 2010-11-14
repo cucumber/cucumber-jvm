@@ -5,15 +5,15 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>cuke4duke</groupId>
+    <groupId>cucumber</groupId>
     <artifactId>parent</artifactId>
     <relativePath>../../pom.xml</relativePath>
     <version>0.4.3-SNAPSHOT</version>
   </parent>
 
-  <artifactId>cuke4duke-guice-example</artifactId>
+  <artifactId>cucumber-guice-example</artifactId>
   <packaging>jar</packaging>
-  <name>Cuke4Duke: Guice Example</name>
+  <name>Cucumber: Guice Example</name>
 
   <dependencies>
     <dependency>
@@ -29,8 +29,8 @@
       <artifactId>commons-lang</artifactId>
     </dependency>
     <dependency>
-      <groupId>cuke4duke</groupId>
-      <artifactId>cuke4duke</artifactId>
+      <groupId>cucumber</groupId>
+      <artifactId>cucumber</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -57,8 +57,8 @@
 
     <plugins>
       <plugin>
-        <groupId>cuke4duke</groupId>
-        <artifactId>cuke4duke-maven-plugin</artifactId>
+        <groupId>cucumber</groupId>
+        <artifactId>cucumber-maven-plugin</artifactId>
         <configuration>
           <jvmArgs>
             <jvmArg>-Xmx384m</jvmArg>

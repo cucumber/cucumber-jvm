@@ -19,11 +19,11 @@ public class Runtime {
     private final Executor executor;
 
     public Runtime(Backend backend, Formatter formatter) {
-        List<StepDefinition> stepDefinitions = backend.getStepDefinitions();
         executor = new Executor(backend, formatter);
     }
 
     public void execute(List<String> featurePaths) throws IOException {
+        // TODO: Loop over and run them all
         String featurePath = featurePaths.get(0);
         String source = read(featurePath);
         FeatureSource featureSource = new FeatureSource(source, featurePath);

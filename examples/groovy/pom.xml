@@ -5,15 +5,15 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>cuke4duke</groupId>
+    <groupId>cucumber</groupId>
     <artifactId>parent</artifactId>
     <relativePath>../../pom.xml</relativePath>
     <version>0.4.3-SNAPSHOT</version>
   </parent>
 
-  <artifactId>cuke4duke-groovy-example</artifactId>
+  <artifactId>cucumber-groovy-example</artifactId>
   <packaging>jar</packaging>
-  <name>Cuke4Duke: Groovy Example</name>
+  <name>Cucumber: Groovy Example</name>
 
   <dependencies>
     <dependency>
@@ -21,8 +21,8 @@
       <artifactId>groovy-all</artifactId>
     </dependency>
     <dependency>
-      <groupId>cuke4duke</groupId>
-      <artifactId>cuke4duke</artifactId>
+      <groupId>cucumber</groupId>
+      <artifactId>cucumber</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -49,8 +49,8 @@
 
     <plugins>
       <plugin>
-        <groupId>cuke4duke</groupId>
-        <artifactId>cuke4duke-maven-plugin</artifactId>
+        <groupId>cucumber</groupId>
+        <artifactId>cucumber-maven-plugin</artifactId>
         <configuration>
           <cucumberArgs>
             <cucumberArg>--color</cucumberArg>
