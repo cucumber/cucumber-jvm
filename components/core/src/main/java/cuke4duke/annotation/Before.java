@@ -9,8 +9,6 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-
-// TODO: remove me. Experimental
 @CucumberAnnotation("en")
 public @interface Before {
     String[] value() default "";

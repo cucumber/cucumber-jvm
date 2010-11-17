@@ -6,18 +6,12 @@ import cuke4duke.StepMother;
 import cuke4duke.internal.language.AbstractProgrammingLanguage;
 import cuke4duke.internal.language.Transformable;
 import cuke4duke.spi.ExceptionFactory;
-import cuke4duke.spi.jruby.JRuby;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
+@Deprecated
 public class ClassLanguage extends AbstractProgrammingLanguage {
     private final ObjectFactory objectFactory;
     private final List<ClassAnalyzer> analyzers;
@@ -87,23 +81,20 @@ public class ClassLanguage extends AbstractProgrammingLanguage {
             } else {
                 className = pathElements[i] + "." + className;
             }
-            try {
-                return JRuby.getRuntime().getJRubyClassLoader().loadClass(className);
-            } catch (ClassNotFoundException ignore) {
-            }
         }
         throw new ClassNotFoundException("Couldn't determine class from file: " + classFile);
     }
 
     private static ObjectFactory createObjectFactory() throws Throwable {
-        String objectFactoryClassName = System.getProperty("cuke4duke.objectFactory", "cucumber.runtime.java.pico.PicoFactory");
-        Class<?> ofc = JRuby.getRuntime().getJRubyClassLoader().loadClass(objectFactoryClassName);
-        Constructor<?> ctor = ofc.getConstructor();
-        try {
-            return (ObjectFactory) ctor.newInstance();
-        } catch (InvocationTargetException e) {
-            throw e.getTargetException();
-        }
+//        String objectFactoryClassName = System.getProperty("cuke4duke.objectFactory", "cucumber.runtime.java.pico.PicoFactory");
+//        Class<?> ofc = JRuby.getRuntime().getJRubyClassLoader().loadClass(objectFactoryClassName);
+//        Constructor<?> ctor = ofc.getConstructor();
+//        try {
+//            return (ObjectFactory) ctor.newInstance();
+//        } catch (InvocationTargetException e) {
+//            throw e.getTargetException();
+//        }
+        return null;
     }
 
     public Object invokeHook(Method method, Scenario scenario) throws Throwable {
