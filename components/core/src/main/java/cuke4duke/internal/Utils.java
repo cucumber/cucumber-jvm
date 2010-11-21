@@ -22,6 +22,7 @@ public class Utils {
         return arr;
     }
 
+    // TODO: only used in one place? Move.
     public static Locale localeFor(String isoString) {
         String[] languageAndCountry = isoString.split("-");
         if (languageAndCountry.length == 1) {

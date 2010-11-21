@@ -2,14 +2,10 @@ package cucumber;
 
 import cucumber.runtime.Backend;
 import cucumber.runtime.Executor;
+import cucumber.runtime.java.ClasspathMethodScanner;
 import gherkin.formatter.Formatter;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.io.*;
 import java.util.List;
 
 /**
@@ -38,7 +34,7 @@ public class Runtime {
             if (stream != null) {
                 return read(new InputStreamReader(stream, "UTF-8"));
             } else {
-                throw new IOException("Could not find " + path + " on file or in class path.");
+                throw new IOException("Could not find " + path + " on file or in class path.\nCurrent dir:" + System.getProperty("user.dir") + "\nClasspath:\n" + ClasspathMethodScanner.getClasspath());
             }
         }
     }

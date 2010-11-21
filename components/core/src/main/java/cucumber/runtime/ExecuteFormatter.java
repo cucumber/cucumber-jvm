@@ -1,10 +1,12 @@
 package cucumber.runtime;
 
 import cucumber.StepDefinition;
+import gherkin.formatter.Argument;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.model.*;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class ExecuteFormatter implements Formatter {
@@ -32,7 +34,7 @@ public class ExecuteFormatter implements Formatter {
     }
 
     public void steps(List<Step> steps) {
-        throw new UnsupportedOperationException();
+        formatter.steps(steps);
     }
     
     public void background(Background background) {
@@ -86,24 +88,43 @@ public class ExecuteFormatter implements Formatter {
             backend.newScenario();
             formatter.steps(steps);
             featureElement.replay(formatter);
+            boolean skip = false; // TODO: Add ability to instantiate entire runner with skip=false, for dry runs
             for (Step step : steps) {
-                execute(step);
+                skip = execute(step, skip);
             }
             steps.clear();
         }
     }
 
-    private void execute(Step step) {
+    private boolean execute(Step step, boolean skip) {
         formatter.step(step);
         CucumberMatch match = stepMatch(step);
         StackTraceElement stepStackTraceElement = new StackTraceElement(feature.getName() + "." + featureElement.getName(), step.getKeyword() + step.getName(), uri, step.getLine());
-        match.execute(formatter, stepStackTraceElement);
+        return match.execute(skip, formatter, stepStackTraceElement);
     }
 
     private CucumberMatch stepMatch(Step step) {
-        // TODO: Ambiguous for > 1
         // TODO: Undefined for 0
-        return stepMatches(step).get(0);
+        List<CucumberMatch> matches = stepMatches(step);
+        if(matches.size() == 0) {
+            String stepLocation = uri + ":" + step.getLine();
+            StepDefinition undefinedStepDefinition = new StepDefinition() {
+                public Result execute(List<Argument> arguments, StackTraceElement stepStackTraceElement) {
+                    return new Result("undefined", null);
+                }
+
+                public CucumberMatch stepMatch(Step step) {
+                    throw new UnsupportedOperationException();
+                }
+            };
+            return new CucumberMatch(Collections.<Argument>emptyList(), stepLocation, undefinedStepDefinition);
+        }
+        if(matches.size() == 1) {
+            return matches.get(0);
+        } else {
+            // TODO: Ambiguous for > 1
+            throw new RuntimeException("TODO: Support ambiguous matches");
+        }
     }
 
     private List<CucumberMatch> stepMatches(Step step) {

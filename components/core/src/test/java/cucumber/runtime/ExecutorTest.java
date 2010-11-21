@@ -11,6 +11,7 @@ import org.junit.Test;
 import java.io.StringWriter;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -52,8 +53,8 @@ public class ExecutorTest {
                 "  Scenario: Hi           # features/hello.feature:3\n" +
                 "    Given I have 3 cukes # ExecutorTest$CukeSteps.haveNCukesAndFail(String)\n" +
                 "      java.lang.RuntimeException: Oh noes\n" +
-                "      \tat cucumber.runtime.ExecutorTest$CukeSteps.badStuff(ExecutorTest.java:111)\n" +
-                "      \tat cucumber.runtime.ExecutorTest$CukeSteps.haveNCukesAndFail(ExecutorTest.java:107)\n" +
+                "      \tat cucumber.runtime.ExecutorTest$CukeSteps.badStuff(ExecutorTest.java:112)\n" +
+                "      \tat cucumber.runtime.ExecutorTest$CukeSteps.haveNCukesAndFail(ExecutorTest.java:108)\n" +
                 "      \tat Hello.Hi.Given I have 3 cukes(features/hello.feature:4)\n" +
                 "\n";
 
@@ -65,7 +66,7 @@ public class ExecutorTest {
         ObjectFactory objectFactory = new PicoFactory();
         objectFactory.addClass(method.getDeclaringClass());
         objectFactory.createObjects();
-        StepDefinition haveCukes = new JavaMethodStepDefinition(pattern, method, objectFactory);
+        StepDefinition haveCukes = new JavaMethodStepDefinition(pattern, method, objectFactory, Locale.US);
 
         StringWriter output = new StringWriter();
         PrettyFormatter pretty = new PrettyFormatter(output, true, true);

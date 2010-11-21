@@ -6,9 +6,9 @@ import com.beust.jcommander.ParameterException;
 import com.beust.jcommander.converters.BaseConverter;
 import cucumber.Runtime;
 import cucumber.runtime.Backend;
+import cucumber.runtime.java.ClasspathMethodScanner;
 import cucumber.runtime.java.JavaMethodBackend;
 import cucumber.runtime.java.ObjectFactory;
-import cucumber.runtime.java.reflections.ReflectionsMethodFinder;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.PrettyFormatter;
 
@@ -25,7 +25,7 @@ public class Main {
     private List<String> features = null;
 
     @Parameter(names = "--stepdefs", required = true)
-    public String stepDefPackage;
+    public String packagePrefix;
 
     @Parameter(names = "--factory", converter = ObjectFactoryConverter.class)
     public ObjectFactory objectFactory;
@@ -34,7 +34,7 @@ public class Main {
         if (objectFactory == null)
             objectFactory = new ObjectFactoryConverter("--factory").convert("pico");
 
-        Backend backend = new JavaMethodBackend(objectFactory, new ReflectionsMethodFinder(stepDefPackage));
+        Backend backend = new JavaMethodBackend(objectFactory, new ClasspathMethodScanner(), packagePrefix);
         Formatter formatter = new PrettyFormatter(out, true, true);
         Runtime runtime = new Runtime(backend, formatter);
         runtime.execute(features);
@@ -50,7 +50,8 @@ public class Main {
         main.execute(out);
     }
 
-
+    // TODO: Make this optional and guess factory from current classpath. Use generic code from MethodFinder:
+    // Set<Class<ObjectFactory>> factories = classFinder.getClasses()...
     public class ObjectFactoryConverter extends BaseConverter<ObjectFactory> {
 
         public ObjectFactoryConverter(String optionName) {

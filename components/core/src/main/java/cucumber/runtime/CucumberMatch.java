@@ -16,9 +16,15 @@ public class CucumberMatch extends Match {
         this.stepDefinition = stepDefinition;
     }
 
-    public void execute(Formatter formatter, StackTraceElement stepStackTraceElement) {
+    public boolean execute(boolean skip, Formatter formatter, StackTraceElement stepStackTraceElement) {
         formatter.match(this);
-        Result result = stepDefinition.execute(getArguments(), stepStackTraceElement);
+        Result result;
+        if(skip) {
+            result = new Result("skipped", null);
+        } else {
+            result = stepDefinition.execute(getArguments(), stepStackTraceElement);
+        }
         formatter.result(result);
+        return result.getStatus().equals("passed");
     }
 }

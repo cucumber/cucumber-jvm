@@ -14,6 +14,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 public class JavaMethodStepDefinition implements StepDefinition {
@@ -22,13 +23,15 @@ public class JavaMethodStepDefinition implements StepDefinition {
     private final ObjectFactory objectFactory;
     private final JdkPatternArgumentMatcher argumentMatcher;
     private final Pattern pattern;
+    private final Locale locale;
 
-    public JavaMethodStepDefinition(Pattern pattern, Method method, ObjectFactory objectFactory) {
+    public JavaMethodStepDefinition(Pattern pattern, Method method, ObjectFactory objectFactory, Locale locale) {
         this.pattern = pattern;
         this.argumentMatcher = new JdkPatternArgumentMatcher(pattern);
         this.method = method;
         this.objectFactory = objectFactory;
         this.methodFormat = new MethodFormat();
+        this.locale = locale;
     }
 
     public Result execute(List<Argument> arguments, StackTraceElement stepStackTraceElement) {
@@ -91,6 +94,7 @@ public class JavaMethodStepDefinition implements StepDefinition {
     private Object[] methodArgs(List<Argument> arguments) {
         List<Object> result = new ArrayList<Object>();
         for (Argument a : arguments) {
+            // TODO: Use the Locale for transformation
             result.add(a.getVal());
         }
         return result.toArray();
