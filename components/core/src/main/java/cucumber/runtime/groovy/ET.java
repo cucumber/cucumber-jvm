@@ -3,24 +3,24 @@ package cucumber.runtime.groovy;
 import groovy.lang.Closure;
 import java.util.regex.Pattern;
 
-public class EN {
-    public static void Given(Pattern regexp, Closure body) throws Throwable {
+public class ET {
+    public static void Eeldades(Pattern regexp, Closure body) throws Throwable {
         GroovyBackend.addStepDefinition(regexp, body);
     }
 
-    public static void When(Pattern regexp, Closure body) throws Throwable {
+    public static void Kui(Pattern regexp, Closure body) throws Throwable {
         GroovyBackend.addStepDefinition(regexp, body);
     }
 
-    public static void Then(Pattern regexp, Closure body) throws Throwable {
+    public static void Siis(Pattern regexp, Closure body) throws Throwable {
         GroovyBackend.addStepDefinition(regexp, body);
     }
 
-    public static void And(Pattern regexp, Closure body) throws Throwable {
+    public static void Ja(Pattern regexp, Closure body) throws Throwable {
         GroovyBackend.addStepDefinition(regexp, body);
     }
 
-    public static void But(Pattern regexp, Closure body) throws Throwable {
+    public static void Kuid(Pattern regexp, Closure body) throws Throwable {
         GroovyBackend.addStepDefinition(regexp, body);
     }
 

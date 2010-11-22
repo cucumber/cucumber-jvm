@@ -3,7 +3,7 @@
 
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
-        @CucumberAnnotation("<%= i18n.iso_code %>")
+        @CucumberAnnotation("<%= i18n.iso_code %>") // TODO: REMOVE
         public static @interface <%= kw %> {
             public abstract String value();
         }

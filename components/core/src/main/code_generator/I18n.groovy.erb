@@ -1,0 +1,13 @@
+package cucumber.runtime.groovy;
+
+import groovy.lang.Closure;
+import java.util.regex.Pattern;
+
+public class <%= i18n.underscored_iso_code.upcase %> {
+<% i18n.code_keywords.each do |kw| -%>
+    public static void <%= kw %>(Pattern regexp, Closure body) throws Throwable {
+        GroovyBackend.addStepDefinition(regexp, body);
+    }
+
+<% end -%>
+}

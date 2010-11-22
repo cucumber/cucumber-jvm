@@ -1,11 +1,14 @@
-desc 'Generate i18n annotations'
-task :generate do
-  require 'gherkin/i18n'
-  require 'erb'
+require 'gherkin/i18n'
+require 'erb'
 
-  java = ERB.new(IO.read(File.dirname(__FILE__) + '/src/main/code_generator/I18n.java.erb'), nil, '-')
-  File.open(File.dirname(__FILE__) + '/src/main/java/cucumber/annotation/I18n.java', 'wb') do |io|
-    io.write(<<-HEADER)
+task :default => ['generate:java', 'generate:groovy']
+
+namespace :generate do
+  desc 'Generate Java code'
+  task :java do
+    java = ERB.new(IO.read(File.dirname(__FILE__) + '/src/main/code_generator/I18n.java.erb'), nil, '-')
+    File.open(File.dirname(__FILE__) + '/src/main/java/cucumber/annotation/I18n.java', 'wb') do |io|
+      io.write(<<-HEADER)
 package cucumber.annotation;
 
 import cucumber.runtime.java.CucumberAnnotation;
@@ -17,10 +20,21 @@ import java.lang.annotation.Target;
 public interface I18n {
 
     HEADER
-    Gherkin::I18n.all.each do |i18n|
-      io.write(java.result(binding))
-    end
+      Gherkin::I18n.all.each do |i18n|
+        io.write(java.result(binding))
+      end
 
-    io.write("}")
+      io.write("}")
+    end
+  end
+
+  desc 'Generate Groovy code'
+  task :groovy do
+    groovy = ERB.new(IO.read(File.dirname(__FILE__) + '/src/main/code_generator/I18n.groovy.erb'), nil, '-')
+    Gherkin::I18n.all.each do |i18n|
+      File.open(File.dirname(__FILE__) + "/src/main/java/cucumber/runtime/groovy/#{i18n.underscored_iso_code.upcase}.java", 'wb') do |io|
+        io.write(groovy.result(binding))
+      end
+    end
   end
 end

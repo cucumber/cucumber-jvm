@@ -3,8 +3,8 @@ package cucumber.runtime.groovy;
 import groovy.lang.Closure;
 import java.util.regex.Pattern;
 
-public class EN {
-    public static void Given(Pattern regexp, Closure body) throws Throwable {
+public class EN_AU {
+    public static void Yaknowhow(Pattern regexp, Closure body) throws Throwable {
         GroovyBackend.addStepDefinition(regexp, body);
     }
 
@@ -12,15 +12,15 @@ public class EN {
         GroovyBackend.addStepDefinition(regexp, body);
     }
 
-    public static void Then(Pattern regexp, Closure body) throws Throwable {
+    public static void Yagotta(Pattern regexp, Closure body) throws Throwable {
         GroovyBackend.addStepDefinition(regexp, body);
     }
 
-    public static void And(Pattern regexp, Closure body) throws Throwable {
+    public static void N(Pattern regexp, Closure body) throws Throwable {
         GroovyBackend.addStepDefinition(regexp, body);
     }
 
-    public static void But(Pattern regexp, Closure body) throws Throwable {
+    public static void Cept(Pattern regexp, Closure body) throws Throwable {
         GroovyBackend.addStepDefinition(regexp, body);
     }
 
