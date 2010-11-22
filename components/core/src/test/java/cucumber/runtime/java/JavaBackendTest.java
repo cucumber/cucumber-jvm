@@ -1,40 +1,36 @@
-package cucumber.runtime.groovy;
+package cucumber.runtime.java;
 
 import cucumber.runtime.AbstractBackendTest;
 import cucumber.runtime.Backend;
+import cucumber.runtime.groovy.GroovyBackend;
+import cucumber.runtime.java.pico.PicoFactory;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-public class GroovyBackendTest extends AbstractBackendTest {
+public class JavaBackendTest extends AbstractBackendTest {
     @Override
     protected String expectedStart() {
-        return "Feature: Cukes\n" +
+        return "" +
+                "Feature: Cukes\n" +
                 "\n" +
                 "  Scenario: 1 cuke                     # cucumber/runtime/cukes.feature:2\n" +
-                "    Given I have 5 cukes in my belly   # stepdefs.groovy:23\n" +
-                "    Then there are 4 cukes in my belly # stepdefs.groovy:27\n" +
+                "    Given I have 5 cukes in my belly   # StepDefs.haveCukes(String)\n" +
+                "    Then there are 4 cukes in my belly # StepDefs.checkCukes(String)\n" +
                 "      junit.framework.ComparisonFailure: null expected:<[5]> but was:<[4]>";
-
     }
 
     @Override
     protected String expectedEnd() {
         return "" +
-                "      \tat cucumber.runtime.groovy.CustomWorld.checkCukes(stepdefs.groovy:15)\n" +
+                "      \tat cucumber.runtime.java.StepDefs.checkCukes(StepDefs.java:17)\n" +
                 "      \tat Cukes.1 cuke.Then there are 4 cukes in my belly(cucumber/runtime/cukes.feature:4)" +
                 "\n" +
                 "\n";
     }
 
     protected Backend backend() throws IOException {
-        List<GroovyBackend.Script> scripts = Arrays.asList(script("cucumber/runtime/groovy/stepdefs.groovy"));
-        return new GroovyBackend(scripts);
+        return new JavaBackend(new PicoFactory(), new ClasspathMethodScanner(), "cucumber.runtime.java");
     }
-
-    private GroovyBackend.Script script(String path) throws IOException {
-        return new GroovyBackend.Script(reader(path), path);
-    }
-
 }

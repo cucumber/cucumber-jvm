@@ -1,10 +1,15 @@
 package cucumber.runtime.java;
 
+import cucumber.runtime.CucumberException;
+
 import java.lang.reflect.Method;
 import java.text.MessageFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Helper class for formatting a method signature to a shorter form.
+ */
 public class MethodFormat {
     private static final Pattern METHOD_PATTERN = Pattern.compile("((?:static\\s|public\\s)+)([^\\s]*)\\s\\.?(.*)\\.([^\\(]*)\\(([^\\)]*)\\)(?: throws )?(.*)");
     private static final String PACKAGE_PATTERN = "[^,]*\\.";
@@ -72,7 +77,7 @@ public class MethodFormat {
                     e
             });
         } else {
-            throw new RuntimeException("Cuke4Duke bug: Couldn't format " + signature);
+            throw new CucumberException("Cucumber bug: Couldn't format " + signature);
         }
     }
 }

@@ -1,6 +1,7 @@
 package cucumber.runtime;
 
 import cucumber.StepDefinition;
+import gherkin.formatter.Argument;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.model.*;
 
@@ -117,9 +118,9 @@ public class ExecuteFormatter implements Formatter {
     private List<CucumberMatch> stepMatches(Step step) {
         List<CucumberMatch> result = new ArrayList<CucumberMatch>();
         for (StepDefinition stepDefinition : backend.getStepDefinitions()) {
-            CucumberMatch match = stepDefinition.stepMatch(step);
-            if (match != null) {
-                result.add(match);
+            List<Argument> arguments = stepDefinition.argumentsFrom(step);
+            if (arguments != null) {
+                result.add(new CucumberMatch(arguments, stepDefinition));
             }
         }
         return result;

@@ -3,7 +3,6 @@ package cuke4duke.internal.clj;
 import clojure.lang.AFunction;
 import cuke4duke.internal.Utils;
 import cuke4duke.internal.language.AbstractStepDefinition;
-import cuke4duke.internal.language.JdkPatternArgumentMatcher;
 import cuke4duke.internal.language.StepArgument;
 
 import java.io.UnsupportedEncodingException;
@@ -42,7 +41,8 @@ public class CljStepDefinition extends AbstractStepDefinition {
     }
 
     public List<StepArgument> arguments_from(String stepName) throws UnsupportedEncodingException {
-        return JdkPatternArgumentMatcher.argumentsFrom(regexp, stepName);
+//        return JdkPatternArgumentMatcher.argumentsFrom(regexp, stepName);
+        throw new UnsupportedOperationException();
     }
 
     // Clojure's AFunction.invokeWithArgs doesn't take varargs :-/

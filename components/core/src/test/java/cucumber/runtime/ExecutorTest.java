@@ -1,8 +1,9 @@
 package cucumber.runtime;
 
+import cucumber.Cucumber;
 import cucumber.FeatureSource;
 import cucumber.StepDefinition;
-import cucumber.runtime.java.JavaMethodStepDefinition;
+import cucumber.runtime.java.JavaStepDefinition;
 import cucumber.runtime.java.ObjectFactory;
 import cucumber.runtime.java.pico.PicoFactory;
 import gherkin.formatter.PrettyFormatter;
@@ -54,8 +55,8 @@ public class ExecutorTest {
                 "  Scenario: Hi           # features/hello.feature:3\n" +
                 "    Given I have 3 cukes # ExecutorTest$CukeSteps.haveNCukesAndFail(String)\n" +
                 "      java.lang.RuntimeException: Oh noes\n" +
-                "      \tat cucumber.runtime.ExecutorTest$CukeSteps.badStuff(ExecutorTest.java:112)\n" +
-                "      \tat cucumber.runtime.ExecutorTest$CukeSteps.haveNCukesAndFail(ExecutorTest.java:108)\n" +
+                "      \tat cucumber.runtime.ExecutorTest$CukeSteps.badStuff(ExecutorTest.java:113)\n" +
+                "      \tat cucumber.runtime.ExecutorTest$CukeSteps.haveNCukesAndFail(ExecutorTest.java:109)\n" +
                 "      \tat Hello.Hi.Given I have 3 cukes(features/hello.feature:4)\n" +
                 "\n";
 
@@ -67,13 +68,13 @@ public class ExecutorTest {
         ObjectFactory objectFactory = new PicoFactory();
         objectFactory.addClass(method.getDeclaringClass());
         objectFactory.createObjects();
-        StepDefinition haveCukes = new JavaMethodStepDefinition(pattern, method, objectFactory, Locale.US);
+        StepDefinition haveCukes = new JavaStepDefinition(pattern, method, objectFactory, Locale.US);
 
         StringWriter output = new StringWriter();
         PrettyFormatter pretty = new PrettyFormatter(output, true, true);
 
         Backend backend = new SimpleBackend(Arrays.asList(haveCukes), objectFactory);
-        cucumber.Runtime runtime = new cucumber.Runtime(backend, pretty);
+        Cucumber runtime = new Cucumber(backend, pretty);
 
         runtime.executeSources(Arrays.asList(new FeatureSource(source, "features/hello.feature")));
 

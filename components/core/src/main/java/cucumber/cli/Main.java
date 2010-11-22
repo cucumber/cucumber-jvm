@@ -4,10 +4,10 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
 import com.beust.jcommander.converters.BaseConverter;
-import cucumber.Runtime;
+import cucumber.Cucumber;
 import cucumber.runtime.Backend;
 import cucumber.runtime.java.ClasspathMethodScanner;
-import cucumber.runtime.java.JavaMethodBackend;
+import cucumber.runtime.java.JavaBackend;
 import cucumber.runtime.java.ObjectFactory;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.PrettyFormatter;
@@ -18,7 +18,7 @@ import java.io.Writer;
 import java.util.List;
 
 /**
- * Command line interface around {@link cucumber.Runtime}
+ * Command line interface around {@link cucumber.Cucumber}
  */
 public class Main {
     @Parameter
@@ -34,10 +34,10 @@ public class Main {
         if (objectFactory == null)
             objectFactory = new ObjectFactoryConverter("--factory").convert("pico");
 
-        Backend backend = new JavaMethodBackend(objectFactory, new ClasspathMethodScanner(), packagePrefix);
+        Backend backend = new JavaBackend(objectFactory, new ClasspathMethodScanner(), packagePrefix);
         Formatter formatter = new PrettyFormatter(out, true, true);
-        Runtime runtime = new Runtime(backend, formatter);
-        runtime.execute(features);
+        Cucumber cucumber = new Cucumber(backend, formatter);
+        cucumber.execute(features);
     }
 
     public static void main(String[] argv) throws IOException {

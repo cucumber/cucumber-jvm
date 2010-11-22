@@ -14,14 +14,14 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 public class ClasspathMethodScanner implements MethodScanner {
-    public void scan(JavaMethodBackend javaMethodBackend, String packagePrefix) {
+    public void scan(JavaBackend javaBackend, String packagePrefix) {
         try {
             Set<Class<? extends Annotation>> cucumberAnnotations = findCucumberAnnotationClasses();
             for (Class<?> clazz : Reflections.getClasses(packagePrefix)) {
                 Method[] methods = clazz.getMethods();
                 for (Method method : methods) {
                     if (Reflections.isPublic(method.getModifiers())) {
-                        scan(method, cucumberAnnotations, javaMethodBackend);
+                        scan(method, cucumberAnnotations, javaBackend);
                     }
                 }
             }
@@ -34,7 +34,7 @@ public class ClasspathMethodScanner implements MethodScanner {
         return Reflections.getSubtypesOf(Annotation.class, "cucumber.annotation");
     }
 
-    private void scan(Method method, Set<Class<? extends Annotation>> cucumberAnnotationClasses, JavaMethodBackend javaMethodBackend) {
+    private void scan(Method method, Set<Class<? extends Annotation>> cucumberAnnotationClasses, JavaBackend javaBackend) {
         for (Class<? extends Annotation> cucumberAnnotationClass : cucumberAnnotationClasses) {
             Annotation annotation = method.getAnnotation(cucumberAnnotationClass);
             if (annotation != null) {
@@ -48,7 +48,7 @@ public class ClasspathMethodScanner implements MethodScanner {
                     String regexpString = (String) regexpMethod.invoke(annotation);
                     if (regexpString != null) {
                         Pattern pattern = Pattern.compile(regexpString);
-                        javaMethodBackend.addStepDefinition(pattern, method, locale);
+                        javaBackend.addStepDefinition(pattern, method, locale);
                     }
                 } catch (NoSuchMethodException ignore) {
                 } catch (IllegalAccessException ignore) {

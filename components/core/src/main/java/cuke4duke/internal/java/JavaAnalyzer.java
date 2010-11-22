@@ -90,7 +90,7 @@ public class JavaAnalyzer implements ClassAnalyzer {
                 String regexpString = (String) regexpMethod.invoke(annotation);
                 if (regexpString != null) {
                     Pattern regexp = Pattern.compile(regexpString);
-                    classLanguage.addStepDefinition(new JavaStepDefinition(classLanguage, method, regexp, methodFormat, locale));
+//                    classLanguage.addStepDefinition(new JavaStepDefinition(classLanguage, method, regexp, methodFormat, locale));
                 }
             }
         }

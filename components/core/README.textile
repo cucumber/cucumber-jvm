@@ -1,0 +1,15 @@
+h2. Registering classes
+
+Cucumber can easily be extended by implementing various interfaces and telling Cucumber where to find them.
+
+This is done simply with:
+
+  Cucumber cucumber = new Cucumber("my.package", "my.other.package");
+
+Cucumber will scan those packages for implementations of:
+
+  * Step Definitions (Java)
+  * Hooks
+  * ObjectFactory
+  * Transforms
+  * Formatters

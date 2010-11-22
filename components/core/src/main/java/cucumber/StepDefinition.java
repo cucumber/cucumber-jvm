@@ -1,14 +1,14 @@
 package cucumber;
 
-import cucumber.runtime.CucumberMatch;
 import gherkin.formatter.Argument;
-import gherkin.formatter.model.Result;
 import gherkin.formatter.model.Step;
 
 import java.util.List;
 
 public interface StepDefinition {
-    Result execute(List<Argument> arguments, StackTraceElement stepStackTraceElement);
-    CucumberMatch stepMatch(Step step);
+    List<Argument> argumentsFrom(Step step);
     String getLocation();
+    Class<?>[] getParameterTypes();
+    void execute(Object[] args) throws Throwable;
+    boolean isDefinedAt(StackTraceElement stackTraceElement);
 }

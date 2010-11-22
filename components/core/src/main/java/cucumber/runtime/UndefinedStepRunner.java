@@ -14,7 +14,7 @@ public class UndefinedStepRunner extends Match implements StepRunner {
         super(Collections.<Argument>emptyList(), stepLocation.getFileName() + ":" + stepLocation.getLineNumber());
     }
 
-    public boolean execute(boolean skip, Formatter formatter, StackTraceElement stepStackTraceElement) {
+    public boolean execute(boolean skip, Formatter formatter, StackTraceElement stepLocation) {
         formatter.match(this);
         formatter.result(UNDEFINED);
         return true;

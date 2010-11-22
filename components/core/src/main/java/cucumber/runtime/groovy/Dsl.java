@@ -11,6 +11,18 @@ public class Dsl {
         registerStepDefinition(regexp, body);
     }
 
+    public static void When(Pattern regexp, Closure body) throws Throwable {
+        registerStepDefinition(regexp, body);
+    }
+
+    public static void Then(Pattern regexp, Closure body) throws Throwable {
+        registerStepDefinition(regexp, body);
+    }
+
+    public static void World(Closure body) throws Throwable {
+        backend.registerWorld(body);
+    }
+
     private static void registerStepDefinition(Pattern regexp, Closure body) {
         StackTraceElement location = stepDefLocation();
         backend.addStepDefinition(regexp, body, location);

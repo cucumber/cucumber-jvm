@@ -9,16 +9,15 @@ import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
-public class JavaMethodBackend implements Backend {
+public class JavaBackend implements Backend {
     private final ObjectFactory objectFactory;
     private List<StepDefinition> stepDefinitions = new ArrayList<StepDefinition>();
 
-    public JavaMethodBackend(ObjectFactory objectFactory, MethodScanner methodScanner, String packagePrefix) {
+    public JavaBackend(ObjectFactory objectFactory, MethodScanner methodScanner, String packagePrefix) {
         this.objectFactory = objectFactory;
         methodScanner.scan(this, packagePrefix);
     }
 
-    // TODO: Use Set
     public List<StepDefinition> getStepDefinitions() {
         return stepDefinitions;
     }
@@ -26,7 +25,7 @@ public class JavaMethodBackend implements Backend {
     void addStepDefinition(Pattern pattern, Method method, Locale locale) {
         Class<?> clazz = method.getDeclaringClass();
         objectFactory.addClass(clazz);
-        stepDefinitions.add(new JavaMethodStepDefinition(pattern, method, objectFactory, locale));
+        stepDefinitions.add(new JavaStepDefinition(pattern, method, objectFactory, locale));
     }
 
     public void newScenario() {

@@ -13,10 +13,10 @@ import java.util.List;
 /**
  * A high level façade for running Cucumber features.
  */
-public class Runtime {
+public class Cucumber {
     private final FeatureParser parser;
 
-    public Runtime(Backend backend, Formatter formatter) {
+    public Cucumber(Backend backend, Formatter formatter) {
         ExecuteFormatter executeFormatter = new ExecuteFormatter(backend, formatter);
         parser = new GherkinParser(executeFormatter);
     }
