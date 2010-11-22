@@ -1,29 +1,39 @@
 package cucumber;
 
 import cucumber.runtime.Backend;
-import cucumber.runtime.Executor;
-import cucumber.runtime.java.ClasspathMethodScanner;
+import cucumber.runtime.ExecuteFormatter;
+import gherkin.FeatureParser;
+import gherkin.GherkinParser;
 import gherkin.formatter.Formatter;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * A high level façade for running Cucumber features.
  */
 public class Runtime {
-    private final Executor executor;
+    private final FeatureParser parser;
 
     public Runtime(Backend backend, Formatter formatter) {
-        executor = new Executor(backend, formatter);
+        ExecuteFormatter executeFormatter = new ExecuteFormatter(backend, formatter);
+        parser = new GherkinParser(executeFormatter);
     }
 
-    public void execute(List<String> featurePaths) throws IOException {
-        // TODO: Loop over and run them all
-        String featurePath = featurePaths.get(0);
-        String source = read(featurePath);
-        FeatureSource featureSource = new FeatureSource(source, featurePath);
-        executor.execute(featureSource);
+    public void execute(List<String> paths) throws IOException {
+        List<FeatureSource> sources = new ArrayList<FeatureSource>();
+        for (String path : paths) {
+            String source = read(path);
+            sources.add(new FeatureSource(source, path));
+        }
+        executeSources(sources);
+    }
+
+    public void executeSources(List<FeatureSource> sources) {
+        for (FeatureSource source : sources) {
+            source.execute(parser);
+        }
     }
 
     private String read(String path) throws IOException {
@@ -31,11 +41,7 @@ public class Runtime {
             return read(new FileReader(path));
         } catch (FileNotFoundException e) {
             InputStream stream = getClass().getClassLoader().getResourceAsStream(path);
-            if (stream != null) {
-                return read(new InputStreamReader(stream, "UTF-8"));
-            } else {
-                throw new IOException("Could not find " + path + " on file or in class path.\nCurrent dir:" + System.getProperty("user.dir") + "\nClasspath:\n" + ClasspathMethodScanner.getClasspath());
-            }
+            return read(new InputStreamReader(stream, "UTF-8"));
         }
     }
 

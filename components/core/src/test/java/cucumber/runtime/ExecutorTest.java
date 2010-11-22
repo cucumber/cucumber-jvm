@@ -8,6 +8,7 @@ import cucumber.runtime.java.pico.PicoFactory;
 import gherkin.formatter.PrettyFormatter;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.io.StringWriter;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -19,7 +20,7 @@ import static org.junit.Assert.assertThat;
 
 public class ExecutorTest {
     @Test
-    public void printsSimpleResults() throws NoSuchMethodException {
+    public void printsSimpleResults() throws NoSuchMethodException, IOException {
         String expectedOutput = "" +
                 "Feature: Hello\n" +
                 "\n" +
@@ -31,7 +32,7 @@ public class ExecutorTest {
     }
 
     @Test
-    public void instantiatesNewWorld() throws NoSuchMethodException {
+    public void instantiatesNewWorld() throws NoSuchMethodException, IOException {
         String expectedOutput = "" +
                 "Feature: Hello\n" +
                 "\n" +
@@ -46,7 +47,7 @@ public class ExecutorTest {
     }
 
     @Test
-    public void printsResultsWithErrors() throws NoSuchMethodException {
+    public void printsResultsWithErrors() throws NoSuchMethodException, IOException {
         String expectedOutput = "" +
                 "Feature: Hello\n" +
                 "\n" +
@@ -61,7 +62,7 @@ public class ExecutorTest {
         assertOutput(have3Cukes, Pattern.compile("I have (\\d+) cukes"), "haveNCukesAndFail", expectedOutput);
     }
 
-    private void assertOutput(String source, Pattern pattern, String methodName, String expectedOutput) throws NoSuchMethodException {
+    private void assertOutput(String source, Pattern pattern, String methodName, String expectedOutput) throws NoSuchMethodException, IOException {
         Method method = CukeSteps.class.getDeclaredMethod(methodName, String.class);
         ObjectFactory objectFactory = new PicoFactory();
         objectFactory.addClass(method.getDeclaringClass());
@@ -72,10 +73,9 @@ public class ExecutorTest {
         PrettyFormatter pretty = new PrettyFormatter(output, true, true);
 
         Backend backend = new SimpleBackend(Arrays.asList(haveCukes), objectFactory);
-        Executor runtime = new Executor(backend, pretty);
+        cucumber.Runtime runtime = new cucumber.Runtime(backend, pretty);
 
-        FeatureSource helloFeature = new FeatureSource(source, "features/hello.feature");
-        runtime.execute(helloFeature);
+        runtime.executeSources(Arrays.asList(new FeatureSource(source, "features/hello.feature")));
 
         assertThat(output.toString(), equalTo(expectedOutput));
     }

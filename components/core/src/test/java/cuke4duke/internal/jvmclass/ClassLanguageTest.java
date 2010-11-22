@@ -1,9 +1,9 @@
 package cuke4duke.internal.jvmclass;
 
+import cucumber.annotation.Order;
 import cucumber.runtime.java.ObjectFactory;
 import cucumber.runtime.java.pico.PicoFactory;
 import cuke4duke.StepMother;
-import cuke4duke.annotation.Order;
 import cuke4duke.internal.java.JavaAnalyzer;
 import cuke4duke.internal.java.JavaHook;
 import cuke4duke.spi.ExceptionFactory;
@@ -54,7 +54,7 @@ public class ClassLanguageTest {
             this.b = b;
         }
 
-        @cuke4duke.annotation.Before()
+        @cucumber.annotation.Before()
         @Order(1)
         public void doA() {
             assertEquals("Heldlo from B", b.message);
@@ -64,7 +64,7 @@ public class ClassLanguageTest {
     public static class B {
         public String message;
 
-        @cuke4duke.annotation.Before()
+        @cucumber.annotation.Before()
         @Order(2)
         public void doB() {
             message = "Hello from B";

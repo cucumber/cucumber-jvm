@@ -22,11 +22,6 @@
     <ivy:retrieve/>
   </target>
 
-  <target name="-install-gems" depends="-define-paths" if="gems">
-    <taskdef name="gem" classname="cuke4duke.ant.GemTask" classpathref="compile.classpath"/>
-    <gem args="install cuke4duke --version ${cuke4duke.version}"/>
-  </target>
-
   <target name="-define-paths" depends="-download-jars">
     <path id="jruby.classpath">
       <fileset dir="lib">

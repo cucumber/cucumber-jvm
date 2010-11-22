@@ -1,6 +1,6 @@
 package simple;
 
-import cuke4duke.annotation.Before;
+import cucumber.annotation.annotation.Before;
 
 public abstract class SuperSteps {
     protected String b4AndForever = "notSet";

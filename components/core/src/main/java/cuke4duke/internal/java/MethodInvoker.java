@@ -1,6 +1,6 @@
 package cuke4duke.internal.java;
 
-import cuke4duke.annotation.Pending;
+import cucumber.annotation.Pending;
 import cuke4duke.spi.ExceptionFactory;
 
 import java.lang.reflect.InvocationTargetException;

@@ -1,8 +1,8 @@
 package simple;
 
-import cuke4duke.annotation.I18n.ZH_CN.假如;
-import cuke4duke.annotation.I18n.ZH_CN.当;
-import cuke4duke.annotation.I18n.ZH_CN.那么;
+import cucumber.annotation.annotation.I18n.ZH_CN.假如;
+import cucumber.annotation.annotation.I18n.ZH_CN.当;
+import cucumber.annotation.annotation.I18n.ZH_CN.那么;
 
 public class ChineseCalculatorSteps {
 

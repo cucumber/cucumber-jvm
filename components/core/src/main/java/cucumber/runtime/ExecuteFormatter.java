@@ -1,12 +1,10 @@
 package cucumber.runtime;
 
 import cucumber.StepDefinition;
-import gherkin.formatter.Argument;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.model.*;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class ExecuteFormatter implements Formatter {
@@ -98,26 +96,15 @@ public class ExecuteFormatter implements Formatter {
 
     private boolean execute(Step step, boolean skip) {
         formatter.step(step);
-        CucumberMatch match = stepMatch(step);
         StackTraceElement stepStackTraceElement = new StackTraceElement(feature.getName() + "." + featureElement.getName(), step.getKeyword() + step.getName(), uri, step.getLine());
-        return match.execute(skip, formatter, stepStackTraceElement);
+        StepRunner stepRunner = stepRunner(step, stepStackTraceElement);
+        return stepRunner.execute(skip, formatter, stepStackTraceElement);
     }
 
-    private CucumberMatch stepMatch(Step step) {
-        // TODO: Undefined for 0
+    private StepRunner stepRunner(Step step, StackTraceElement stepStackTraceElement) {
         List<CucumberMatch> matches = stepMatches(step);
         if(matches.size() == 0) {
-            String stepLocation = uri + ":" + step.getLine();
-            StepDefinition undefinedStepDefinition = new StepDefinition() {
-                public Result execute(List<Argument> arguments, StackTraceElement stepStackTraceElement) {
-                    return new Result("undefined", null);
-                }
-
-                public CucumberMatch stepMatch(Step step) {
-                    throw new UnsupportedOperationException();
-                }
-            };
-            return new CucumberMatch(Collections.<Argument>emptyList(), stepLocation, undefinedStepDefinition);
+            return new UndefinedStepRunner(stepStackTraceElement);
         }
         if(matches.size() == 1) {
             return matches.get(0);
@@ -137,5 +124,4 @@ public class ExecuteFormatter implements Formatter {
         }
         return result;
     }
-
 }

@@ -1,6 +1,6 @@
-package cuke4duke.annotation;
+package cucumber.annotation;
 
-import cuke4duke.internal.java.annotation.CucumberAnnotation;
+import cucumber.runtime.java.CucumberAnnotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -10,5 +10,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 @CucumberAnnotation("en")
-public @interface Transform {
+public @interface Before {
+    String[] value() default "";
 }

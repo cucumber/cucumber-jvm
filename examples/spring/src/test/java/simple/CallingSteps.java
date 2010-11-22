@@ -2,7 +2,7 @@ package simple;
 
 import cuke4duke.StepMother;
 import cuke4duke.Steps;
-import cuke4duke.annotation.I18n.EN.When;
+import cucumber.annotation.annotation.I18n.EN.When;
 import cuke4duke.spring.StepDefinitions;
 import org.springframework.beans.factory.annotation.Autowired;
 

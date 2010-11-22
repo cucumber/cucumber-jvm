@@ -1,4 +1,4 @@
-package cuke4duke.internal.java.annotation;
+package cucumber.runtime.java;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

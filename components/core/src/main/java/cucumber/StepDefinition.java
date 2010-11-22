@@ -10,4 +10,5 @@ import java.util.List;
 public interface StepDefinition {
     Result execute(List<Argument> arguments, StackTraceElement stepStackTraceElement);
     CucumberMatch stepMatch(Step step);
+    String getLocation();
 }

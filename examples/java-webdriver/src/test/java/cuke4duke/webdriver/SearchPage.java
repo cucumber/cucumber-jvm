@@ -1,7 +1,7 @@
 package cuke4duke.webdriver;
 
-import cuke4duke.annotation.I18n.EN.Given;
-import cuke4duke.annotation.I18n.EN.When;
+import cucumber.annotation.annotation.I18n.EN.Given;
+import cucumber.annotation.annotation.I18n.EN.When;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;

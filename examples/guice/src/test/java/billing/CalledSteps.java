@@ -1,7 +1,7 @@
 package billing;
 
-import cuke4duke.annotation.I18n.EN.Given;
-import cuke4duke.annotation.I18n.EN.Then;
+import cucumber.annotation.annotation.I18n.EN.Given;
+import cucumber.annotation.annotation.I18n.EN.Then;
 
 import static org.junit.Assert.assertTrue;
 

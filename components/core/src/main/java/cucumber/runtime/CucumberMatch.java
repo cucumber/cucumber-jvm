@@ -8,11 +8,11 @@ import gherkin.formatter.model.Result;
 
 import java.util.List;
 
-public class CucumberMatch extends Match {
+public class CucumberMatch extends Match implements StepRunner {
     private final StepDefinition stepDefinition;
 
-    public CucumberMatch(List<Argument> arguments, String location, StepDefinition stepDefinition) {
-        super(arguments, location);
+    public CucumberMatch(List<Argument> arguments, StepDefinition stepDefinition) {
+        super(arguments, stepDefinition.getLocation());
         this.stepDefinition = stepDefinition;
     }
 

@@ -1,7 +1,7 @@
 package org.books.test.acceptance;
 
-import cuke4duke.annotation.I18n.EN.Given;
-import cuke4duke.annotation.I18n.EN.When;
+import cucumber.annotation.annotation.I18n.EN.Given;
+import cucumber.annotation.annotation.I18n.EN.When;
 import org.apache.openejb.api.LocalClient;
 import org.books.business.OrderManager;
 import org.books.domain.LineItem;

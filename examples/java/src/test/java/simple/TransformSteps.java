@@ -2,10 +2,10 @@ package simple;
 
 import cuke4duke.StepMother;
 import cuke4duke.Steps;
-import cuke4duke.annotation.I18n.EN.Given;
-import cuke4duke.annotation.I18n.EN.Then;
-import cuke4duke.annotation.I18n.EN.When;
-import cuke4duke.annotation.Transform;
+import cucumber.annotation.annotation.I18n.EN.Given;
+import cucumber.annotation.annotation.I18n.EN.Then;
+import cucumber.annotation.annotation.I18n.EN.When;
+import cucumber.annotation.annotation.Transform;
 
 import static junit.framework.Assert.*;
 

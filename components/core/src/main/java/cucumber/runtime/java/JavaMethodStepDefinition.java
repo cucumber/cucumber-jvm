@@ -22,11 +22,9 @@ public class JavaMethodStepDefinition implements StepDefinition {
     private final Method method;
     private final ObjectFactory objectFactory;
     private final JdkPatternArgumentMatcher argumentMatcher;
-    private final Pattern pattern;
-    private final Locale locale;
+    private final Locale locale; // TODO: Use to convert arguments before executions (float etc.) Maybe pass it to execute instead (taking it from the locale of feature instead).
 
     public JavaMethodStepDefinition(Pattern pattern, Method method, ObjectFactory objectFactory, Locale locale) {
-        this.pattern = pattern;
         this.argumentMatcher = new JdkPatternArgumentMatcher(pattern);
         this.method = method;
         this.objectFactory = objectFactory;
@@ -58,7 +56,11 @@ public class JavaMethodStepDefinition implements StepDefinition {
 
     public CucumberMatch stepMatch(Step step) {
         List<Argument> arguments = argumentMatcher.argumentsFrom(step.getName());
-        return new CucumberMatch(arguments,  methodFormat.format(method), this);
+        return new CucumberMatch(arguments, this);
+    }
+
+    public String getLocation() {
+        return methodFormat.format(method);
     }
 
     private String errorMessageWithStackTrace(Throwable error, StackTraceElement stepStackTraceElement) {
@@ -98,9 +100,5 @@ public class JavaMethodStepDefinition implements StepDefinition {
             result.add(a.getVal());
         }
         return result.toArray();
-    }
-
-    public String toString() {
-        return "/" + pattern + "/ -> " + methodFormat.format(method);
     }
 }

@@ -2,8 +2,8 @@ package simple;
 
 import cuke4duke.StepMother;
 import cuke4duke.Steps;
-import cuke4duke.annotation.I18n.EN.Then;
-import cuke4duke.annotation.I18n.EN.When;
+import cucumber.annotation.annotation.I18n.EN.Then;
+import cucumber.annotation.annotation.I18n.EN.When;
 
 import static org.junit.Assert.fail;
 

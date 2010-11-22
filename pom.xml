@@ -223,7 +223,8 @@
 
     <modules>
         <module>components/core</module>
-        <module>components/scala</module>
+        <!--module>components/scala</module-->
+        <module>components/cucumber-ant</module>
         <!--module>components/maven-plugin</module-->
     </modules>
 

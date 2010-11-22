@@ -1,12 +1,12 @@
 package cuke4duke.internal.java;
 
+import cucumber.annotation.After;
+import cucumber.annotation.Order;
+import cucumber.runtime.java.CucumberAnnotation;
 import cucumber.runtime.java.MethodFormat;
-import cuke4duke.annotation.After;
-import cuke4duke.annotation.Before;
-import cuke4duke.annotation.Order;
-import cuke4duke.annotation.Transform;
+import cucumber.annotation.Before;
+import cucumber.annotation.Transform;
 import cuke4duke.internal.Utils;
-import cuke4duke.internal.java.annotation.CucumberAnnotation;
 import cuke4duke.internal.jvmclass.ClassAnalyzer;
 import cuke4duke.internal.jvmclass.ClassLanguage;
 import cucumber.runtime.java.ObjectFactory;

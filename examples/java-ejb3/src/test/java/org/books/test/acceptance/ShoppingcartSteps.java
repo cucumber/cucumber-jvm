@@ -1,7 +1,7 @@
 package org.books.test.acceptance;
 
-import cuke4duke.annotation.I18n.EN.Then;
-import cuke4duke.annotation.I18n.EN.When;
+import cucumber.annotation.annotation.I18n.EN.Then;
+import cucumber.annotation.annotation.I18n.EN.When;
 import org.apache.openejb.api.LocalClient;
 import org.books.business.CartManager;
 import org.books.domain.Book;

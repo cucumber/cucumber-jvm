@@ -1,7 +1,7 @@
 package simple;
 
-import cuke4duke.annotation.I18n.EN.Given;
-import cuke4duke.annotation.I18n.EN.Then;
+import cucumber.annotation.annotation.I18n.EN.Given;
+import cucumber.annotation.annotation.I18n.EN.Then;
 import cuke4duke.spring.StepDefinitions;
 
 import static org.junit.Assert.assertTrue;

@@ -1,10 +1,10 @@
 package org.books.test.acceptance;
 
-import cuke4duke.annotation.After;
-import cuke4duke.annotation.Before;
-import cuke4duke.annotation.I18n.EN.Given;
-import cuke4duke.annotation.I18n.EN.Then;
-import cuke4duke.annotation.I18n.EN.When;
+import cucumber.annotation.annotation.After;
+import cucumber.annotation.annotation.Before;
+import cucumber.annotation.annotation.I18n.EN.Given;
+import cucumber.annotation.annotation.I18n.EN.Then;
+import cucumber.annotation.annotation.I18n.EN.When;
 import org.apache.openejb.api.LocalClient;
 import org.books.business.CatalogManager;
 import org.books.dao.BookDao;
