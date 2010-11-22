@@ -12,13 +12,13 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public class GroovyBackend implements Backend {
-    private List<StepDefinition> stepDefinitions = new ArrayList<StepDefinition>();
-
-    private Closure worldClosure;
-    private Object world;
+    private static List<StepDefinition> stepDefinitions = new ArrayList<StepDefinition>();
+    private static Closure worldClosure;
+    private static Object world;
+    private static GroovyBackend instance;
 
     public GroovyBackend(List<Script> scripts) {
-        Dsl.backend = this;
+        instance = this;
         defineStepDefinitions(scripts);
     }
 
@@ -38,12 +38,12 @@ public class GroovyBackend implements Backend {
         world = null;
     }
 
-    public void addStepDefinition(Pattern regexp, Closure body, StackTraceElement location) {
-        stepDefinitions.add(new GroovyStepDefinition(regexp, body, location, this));
+    public static void addStepDefinition(Pattern regexp, Closure body) {
+        stepDefinitions.add(new GroovyStepDefinition(regexp, body, stepDefLocation(), instance));
     }
 
-    public void registerWorld(Closure worldClosure) {
-        this.worldClosure = worldClosure;
+    public static void registerWorld(Closure closure) {
+        worldClosure = closure;
     }
 
     public void invokeStepDefinition(Closure body, Object[] args) {
@@ -66,5 +66,16 @@ public class GroovyBackend implements Backend {
             this.reader = reader;
             this.fileName = fileName;
         }
+    }
+
+    private static StackTraceElement stepDefLocation() {
+        Throwable t = new Throwable();
+        StackTraceElement[] stackTraceElements = t.getStackTrace();
+        for (StackTraceElement stackTraceElement : stackTraceElements) {
+            if(stackTraceElement.getFileName().endsWith(".groovy")) {
+                return stackTraceElement;
+            }
+        }
+        throw new RuntimeException("Couldn't find location for step definition");
     }
 }
