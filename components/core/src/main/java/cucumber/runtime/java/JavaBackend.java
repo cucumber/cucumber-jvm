@@ -1,6 +1,6 @@
 package cucumber.runtime.java;
 
-import cucumber.StepDefinition;
+import cucumber.runtime.StepDefinition;
 import cucumber.runtime.Backend;
 
 import java.lang.reflect.Method;

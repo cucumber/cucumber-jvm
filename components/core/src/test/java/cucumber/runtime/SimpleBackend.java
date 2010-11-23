@@ -1,6 +1,5 @@
 package cucumber.runtime;
 
-import cucumber.StepDefinition;
 import cucumber.runtime.java.ObjectFactory;
 import cucumber.runtime.java.pico.PicoFactory;
 

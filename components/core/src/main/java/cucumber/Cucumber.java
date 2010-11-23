@@ -1,13 +1,11 @@
 package cucumber;
 
-import cucumber.runtime.Backend;
-import cucumber.runtime.ExecuteFormatter;
+import cucumber.runtime.*;
 import gherkin.FeatureParser;
 import gherkin.GherkinParser;
 import gherkin.formatter.Formatter;
 
-import java.io.*;
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -22,35 +20,15 @@ public class Cucumber {
     }
 
     public void execute(List<String> paths) throws IOException {
-        List<FeatureSource> sources = new ArrayList<FeatureSource>();
         for (String path : paths) {
-            String source = read(path);
-            sources.add(new FeatureSource(source, path));
-        }
-        executeSources(sources);
-    }
+            // TODO: Check for :line:line.
+            // TODO: Make Classpath.scan deal with both files and dirs. Tests!!!
 
-    public void executeSources(List<FeatureSource> sources) {
-        for (FeatureSource source : sources) {
-            source.execute(parser);
+            Classpath.scan(path, ".feature", new Consumer() {
+                public void consume(Input input) throws IOException {
+                    parser.parse(input.getString(), input.getPath(), 0);
+                }
+            });
         }
-    }
-
-    private String read(String path) throws IOException {
-        try {
-            return read(new FileReader(path));
-        } catch (FileNotFoundException e) {
-            InputStream stream = getClass().getClassLoader().getResourceAsStream(path);
-            return read(new InputStreamReader(stream, "UTF-8"));
-        }
-    }
-
-    private String read(Reader reader) throws IOException {
-        StringBuffer sb = new StringBuffer();
-        int n;
-        while ((n = reader.read()) != -1) {
-            sb.append((char) n);
-        }
-        return sb.toString();
     }
 }

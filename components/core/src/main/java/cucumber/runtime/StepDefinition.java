@@ -1,4 +1,4 @@
-package cucumber;
+package cucumber.runtime;
 
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;

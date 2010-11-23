@@ -15,11 +15,11 @@ public class MainTest {
                 "Feature: Hello\n" +
                 "\n" +
                 "  Scenario: Hi           # cucumber/runtime/fixtures/cukes.feature:2\n" +
-                "    Given I have 3 cukes # CukesSteps.haveNCukes(String)\n";
+                "    Given I have 3 cukes # StepDefs.haveNCukes(String)\n";
 
         StringWriter sw = new StringWriter();
         Main.mainWithWriter(sw,
-                "--stepdefs", "cucumber.runtime.fixtures",
+                "--stepdefs", "cucumber.runtime.java",
                 "cucumber/runtime/fixtures/cukes.feature"
         );
         assertThat(sw.toString(), equalTo(expectedOutput));

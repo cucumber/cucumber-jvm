@@ -1,6 +1,6 @@
 package cucumber.runtime.groovy;
 
-import cucumber.StepDefinition;
+import cucumber.runtime.StepDefinition;
 import cucumber.runtime.JdkPatternArgumentMatcher;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;

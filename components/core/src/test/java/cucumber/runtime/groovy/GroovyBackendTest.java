@@ -3,8 +3,6 @@ package cucumber.runtime.groovy;
 import cucumber.runtime.*;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 
 public class GroovyBackendTest extends AbstractBackendTest {
     @Override
@@ -28,6 +26,6 @@ public class GroovyBackendTest extends AbstractBackendTest {
     }
 
     protected Backend backend() throws IOException {
-        return new GroovyBackend("cucumber.runtime.groovy");
+        return new GroovyBackend("cucumber/runtime/groovy");
     }
 }

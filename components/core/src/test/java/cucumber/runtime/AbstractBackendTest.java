@@ -7,10 +7,7 @@ import org.junit.Test;
 import org.junit.internal.matchers.SubstringMatcher;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.io.StringWriter;
-import java.net.URL;
 import java.util.Arrays;
 
 import static org.junit.Assert.assertThat;
@@ -20,7 +17,7 @@ public abstract class AbstractBackendTest {
     public void producesCorrectOutput() throws IOException {
         StringWriter out = new StringWriter();
         Cucumber cucumber = new Cucumber(backend(), new PrettyFormatter(out, true, true));
-        cucumber.execute(Arrays.asList("cucumber/runtime/cukes.feature"));
+        cucumber.execute(Arrays.asList("cucumber/runtime"));
         assertThat(out.toString(), startsWith(expectedStart()));
         assertThat(out.toString(), endsWith(expectedEnd()));
     }
@@ -59,9 +56,4 @@ public abstract class AbstractBackendTest {
 
 
     protected abstract Backend backend() throws IOException;
-
-    protected Reader reader(String path) throws IOException {
-        URL resource = getClass().getClassLoader().getResource(path);
-        return new InputStreamReader(resource.openStream());
-    }
 }

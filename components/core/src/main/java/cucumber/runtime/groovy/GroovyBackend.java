@@ -1,23 +1,21 @@
 package cucumber.runtime.groovy;
 
-import cucumber.StepDefinition;
 import cucumber.runtime.*;
 import groovy.lang.Binding;
 import groovy.lang.Closure;
 import groovy.lang.GroovyShell;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
 public class GroovyBackend implements Backend {
-    private static List<StepDefinition> stepDefinitions = new ArrayList<StepDefinition>();
+    private static GroovyBackend instance;
+
+    private List<StepDefinition> stepDefinitions = new ArrayList<StepDefinition>();
     private static Closure worldClosure;
     private static Object world;
-    private static GroovyBackend instance;
 
     public GroovyBackend(String packagePrefix) {
         instance = this;
@@ -32,8 +30,7 @@ public class GroovyBackend implements Backend {
         final GroovyShell shell = new GroovyShell(new Binding());
         Classpath.scan(packagePrefix, ".groovy", new Consumer() {
             public void consume(Input input) throws IOException {
-                Reader source = new InputStreamReader(input.stream(), "UTF-8");
-                shell.evaluate(source, input.getPath());
+                shell.evaluate(input.getString(), input.getPath());
             }
         });
     }
@@ -47,7 +44,7 @@ public class GroovyBackend implements Backend {
     }
 
     public static void addStepDefinition(Pattern regexp, Closure body) {
-        stepDefinitions.add(new GroovyStepDefinition(regexp, body, stepDefLocation(), instance));
+        instance.stepDefinitions.add(new GroovyStepDefinition(regexp, body, stepDefLocation(), instance));
     }
 
     public static void registerWorld(Closure closure) {

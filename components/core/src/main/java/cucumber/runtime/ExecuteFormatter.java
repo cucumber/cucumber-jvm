@@ -1,6 +1,5 @@
 package cucumber.runtime;
 
-import cucumber.StepDefinition;
 import gherkin.formatter.Argument;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.model.*;

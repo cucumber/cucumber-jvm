@@ -17,7 +17,7 @@ public class ClasspathMethodScanner implements MethodScanner {
     public void scan(JavaBackend javaBackend, String packagePrefix) {
         try {
             Set<Class<? extends Annotation>> cucumberAnnotations = findCucumberAnnotationClasses();
-            for (Class<?> clazz : Classpath.getClasses(packagePrefix)) {
+            for (Class<?> clazz : Classpath.getPublicClasses(packagePrefix)) {
                 Method[] methods = clazz.getMethods();
                 for (Method method : methods) {
                     if (Classpath.isPublic(method.getModifiers())) {
@@ -31,7 +31,7 @@ public class ClasspathMethodScanner implements MethodScanner {
     }
 
     private Set<Class<? extends Annotation>> findCucumberAnnotationClasses() throws IOException {
-        return Classpath.getSubtypesOf(Annotation.class, "cucumber.annotation");
+        return Classpath.getPublicSubtypesOf(Annotation.class, "cucumber.annotation");
     }
 
     private void scan(Method method, Set<Class<? extends Annotation>> cucumberAnnotationClasses, JavaBackend javaBackend) {

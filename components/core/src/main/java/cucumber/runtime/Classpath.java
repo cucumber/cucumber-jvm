@@ -8,7 +8,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 public class Classpath {
-    public static Set<Class<?>> getClasses(final String packagePrefix) throws IOException {
+    public static Set<Class<?>> getPublicClasses(final String packagePrefix) throws IOException {
         final Set<Class<?>> classes = new HashSet<Class<?>>();
         final Consumer consumer = new Consumer() {
             public void consume(Input input) {
@@ -25,6 +25,17 @@ public class Classpath {
         return classes;
     }
 
+    public static <T> Set<Class<? extends T>> getPublicSubtypesOf(Class<T> type, String packagePrefix) throws IOException {
+        Set<Class<? extends T>> result = new HashSet<Class<? extends T>>();
+        Set<Class<?>> classes = getPublicClasses(packagePrefix);
+        for (Class<?> clazz : classes) {
+            if (!type.equals(clazz) && type.isAssignableFrom(clazz)) {
+                result.add(clazz.asSubclass(type));
+            }
+        }
+        return result;
+    }
+
     public static void scan(String packagePrefix, String suffix, Consumer consumer) throws IOException {
         String pathPrefix = packagePrefix.replace(".", "/");
         final List<URL> startUrls = classpathUrls(pathPrefix);
@@ -37,22 +48,30 @@ public class Classpath {
         }
     }
 
-    public static <T> Set<Class<? extends T>> getSubtypesOf(Class<T> type, String packagePrefix) throws IOException {
-        Set<Class<? extends T>> result = new HashSet<Class<? extends T>>();
-        Set<Class<?>> classes = getClasses(packagePrefix);
-        for (Class<?> clazz : classes) {
-            if (!type.equals(clazz) && type.isAssignableFrom(clazz)) {
-                result.add(clazz.asSubclass(type));
-            }
-        }
-        return result;
-    }
-
     private static List<URL> classpathUrls(String path) throws IOException {
         return Collections.list(cl().getResources(path));
     }
 
-    private static class ZipInput implements Input {
+    private static abstract class AbstractInput implements Input {
+        public String getString() throws IOException {
+            return read(getReader());
+        }
+
+        public Reader getReader() throws IOException {
+            return new InputStreamReader(getInputStream(), "UTF-8");
+        }
+
+        private String read(Reader reader) throws IOException {
+            StringBuffer sb = new StringBuffer();
+            int n;
+            while ((n = reader.read()) != -1) {
+                sb.append((char) n);
+            }
+            return sb.toString();
+        }
+    }
+
+    private static class ZipInput extends AbstractInput {
         private final ZipFile jarFile;
         private final ZipEntry jarEntry;
 
@@ -65,12 +84,12 @@ public class Classpath {
             return jarEntry.getName();
         }
 
-        public InputStream stream() throws IOException {
+        public InputStream getInputStream() throws IOException {
             return jarFile.getInputStream(jarEntry);
         }
     }
 
-    private static class FileInput implements Input {
+    private static class FileInput extends AbstractInput {
         private final File rootDir;
         private final File file;
 
@@ -83,7 +102,7 @@ public class Classpath {
             return file.getAbsolutePath().substring(rootDir.getAbsolutePath().length() + 1, file.getAbsolutePath().length());
         }
 
-        public InputStream stream() throws IOException {
+        public InputStream getInputStream() throws IOException {
             return new FileInputStream(file);
         }
     }

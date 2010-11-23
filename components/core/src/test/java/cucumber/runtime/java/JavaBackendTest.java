@@ -2,12 +2,9 @@ package cucumber.runtime.java;
 
 import cucumber.runtime.AbstractBackendTest;
 import cucumber.runtime.Backend;
-import cucumber.runtime.groovy.GroovyBackend;
 import cucumber.runtime.java.pico.PicoFactory;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 
 public class JavaBackendTest extends AbstractBackendTest {
     @Override

@@ -21,13 +21,13 @@ public class ReflectionsTest {
     @Test
     public void looksUpClassesOnClassPath() throws IOException {
         Set<Class<?>> expected = new HashSet<Class<?>> (Arrays.asList(FormatterListener.class, ParseError.class, Parser.class, StateMachineReader.class));
-        assertEquals(expected, Classpath.getClasses("gherkin.parser"));
+        assertEquals(expected, Classpath.getPublicClasses("gherkin.parser"));
     }
 
     @Test
     public void looksUpSubclassesOnClassPath() throws IOException {
         Set<Class<? extends Formatter>> expected = new HashSet<Class<? extends Formatter>> (Arrays.asList(JSONFormatter.class, PrettyFormatter.class, FilterFormatter.class));
-        assertEquals(expected, Classpath.getSubtypesOf(Formatter.class, "gherkin"));
+        assertEquals(expected, Classpath.getPublicSubtypesOf(Formatter.class, "gherkin"));
     }
 
 }
