@@ -1,11 +1,13 @@
 package cucumber.runtime.groovy;
 
 import cucumber.StepDefinition;
-import cucumber.runtime.Backend;
+import cucumber.runtime.*;
 import groovy.lang.Binding;
 import groovy.lang.Closure;
 import groovy.lang.GroovyShell;
 
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,17 +19,23 @@ public class GroovyBackend implements Backend {
     private static Object world;
     private static GroovyBackend instance;
 
-    public GroovyBackend(List<Script> scripts) {
+    public GroovyBackend(String packagePrefix) {
         instance = this;
-        defineStepDefinitions(scripts);
+        try {
+            defineStepDefinitions(packagePrefix);
+        } catch (IOException e) {
+            throw new CucumberException("Couldn't load stepdefs", e);
+        }
     }
 
-    private void defineStepDefinitions(List<Script> scripts) {
-        GroovyShell shell = new GroovyShell(new Binding());
-        for (Script groovyFile : scripts) {
-            // TODO: set the metaClass here instead of in the stepdef file
-            shell.evaluate(groovyFile.reader, groovyFile.fileName);
-        }
+    private void defineStepDefinitions(String packagePrefix) throws IOException {
+        final GroovyShell shell = new GroovyShell(new Binding());
+        Classpath.scan(packagePrefix, ".groovy", new Consumer() {
+            public void consume(Input input) throws IOException {
+                Reader source = new InputStreamReader(input.stream(), "UTF-8");
+                shell.evaluate(source, input.getPath());
+            }
+        });
     }
 
     public List<StepDefinition> getStepDefinitions() {
@@ -56,16 +64,6 @@ public class GroovyBackend implements Backend {
             world = worldClosure == null ? new Object() : worldClosure.call();
         }
         return world;
-    }
-
-    public static class Script {
-        public final Reader reader;
-        public final String fileName;
-
-        public Script(Reader reader, String fileName) {
-            this.reader = reader;
-            this.fileName = fileName;
-        }
     }
 
     private static StackTraceElement stepDefLocation() {

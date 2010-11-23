@@ -1,7 +1,6 @@
 package cucumber.runtime.groovy;
 
-import cucumber.runtime.AbstractBackendTest;
-import cucumber.runtime.Backend;
+import cucumber.runtime.*;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -29,12 +28,6 @@ public class GroovyBackendTest extends AbstractBackendTest {
     }
 
     protected Backend backend() throws IOException {
-        List<GroovyBackend.Script> scripts = Arrays.asList(script("cucumber/runtime/groovy/stepdefs.groovy"));
-        return new GroovyBackend(scripts);
+        return new GroovyBackend("cucumber.runtime.groovy");
     }
-
-    private GroovyBackend.Script script(String path) throws IOException {
-        return new GroovyBackend.Script(reader(path), path);
-    }
-
 }

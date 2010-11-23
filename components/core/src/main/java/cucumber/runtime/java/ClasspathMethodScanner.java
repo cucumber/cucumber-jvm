@@ -2,7 +2,7 @@ package cucumber.runtime.java;
 
 import cucumber.annotation.After;
 import cucumber.annotation.Before;
-import cucumber.runtime.Reflections;
+import cucumber.runtime.Classpath;
 import cuke4duke.internal.Utils;
 
 import java.io.IOException;
@@ -17,10 +17,10 @@ public class ClasspathMethodScanner implements MethodScanner {
     public void scan(JavaBackend javaBackend, String packagePrefix) {
         try {
             Set<Class<? extends Annotation>> cucumberAnnotations = findCucumberAnnotationClasses();
-            for (Class<?> clazz : Reflections.getClasses(packagePrefix)) {
+            for (Class<?> clazz : Classpath.getClasses(packagePrefix)) {
                 Method[] methods = clazz.getMethods();
                 for (Method method : methods) {
-                    if (Reflections.isPublic(method.getModifiers())) {
+                    if (Classpath.isPublic(method.getModifiers())) {
                         scan(method, cucumberAnnotations, javaBackend);
                     }
                 }
@@ -31,7 +31,7 @@ public class ClasspathMethodScanner implements MethodScanner {
     }
 
     private Set<Class<? extends Annotation>> findCucumberAnnotationClasses() throws IOException {
-        return Reflections.getSubtypesOf(Annotation.class, "cucumber.annotation");
+        return Classpath.getSubtypesOf(Annotation.class, "cucumber.annotation");
     }
 
     private void scan(Method method, Set<Class<? extends Annotation>> cucumberAnnotationClasses, JavaBackend javaBackend) {
