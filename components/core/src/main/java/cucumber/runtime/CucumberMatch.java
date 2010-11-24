@@ -83,6 +83,9 @@ public class CucumberMatch extends Match implements StepRunner {
             return filterStacktrace(error.getCause(), stepStackTraceElement);
         }
         StackTraceElement[] stackTraceElements = error.getStackTrace();
+        if(stackTraceElements.length == 0) {
+            return error;
+        }
         int stackLength;
         for (stackLength = 1; stackLength < stackTraceElements.length; ++stackLength) {
             if (stepDefinition.isDefinedAt(stackTraceElements[stackLength - 1])) {

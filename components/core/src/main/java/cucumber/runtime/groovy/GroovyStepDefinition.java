@@ -22,7 +22,7 @@ public class GroovyStepDefinition implements StepDefinition {
         this.location = location;
     }
 
-    public List<Argument> argumentsFrom(Step step) {
+    public List<Argument> matchedArguments(Step step) {
         return argumentMatcher.argumentsFrom(step.getName());
     }
 

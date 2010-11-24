@@ -29,7 +29,7 @@ public class RhinoStepDefinition implements StepDefinition {
         this.argumentsFromFunc = argumentsFromFunc;
     }
 
-    public List<Argument> argumentsFrom(Step step) {
+    public List<Argument> matchedArguments(Step step) {
         NativeJavaObject args = (NativeJavaObject) argumentsFromFunc.call(cx, scope, jsStepDefinition, new Object[]{step.getName(), this});
         return args == null ? null : (List<Argument>) args.unwrap();
     }

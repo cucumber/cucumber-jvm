@@ -117,7 +117,7 @@ public class ExecuteFormatter implements Formatter {
     private List<CucumberMatch> stepMatches(Step step) {
         List<CucumberMatch> result = new ArrayList<CucumberMatch>();
         for (StepDefinition stepDefinition : backend.getStepDefinitions()) {
-            List<Argument> arguments = stepDefinition.argumentsFrom(step);
+            List<Argument> arguments = stepDefinition.matchedArguments(step);
             if (arguments != null) {
                 result.add(new CucumberMatch(arguments, stepDefinition));
             }

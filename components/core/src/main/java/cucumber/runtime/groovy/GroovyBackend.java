@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 public class GroovyBackend implements Backend {
     private static GroovyBackend instance;
 
-    private List<StepDefinition> stepDefinitions = new ArrayList<StepDefinition>();
+    private final List<StepDefinition> stepDefinitions = new ArrayList<StepDefinition>();
     private static Closure worldClosure;
     private static Object world;
 

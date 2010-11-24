@@ -30,7 +30,7 @@ public class JavaStepDefinition implements StepDefinition {
         method.invoke(target, args);
     }
 
-    public List<Argument> argumentsFrom(Step step) {
+    public List<Argument> matchedArguments(Step step) {
         return argumentMatcher.argumentsFrom(step.getName());
     }
 

@@ -18,6 +18,7 @@ public abstract class AbstractBackendTest {
         StringWriter out = new StringWriter();
         Cucumber cucumber = new Cucumber(backend(), new PrettyFormatter(out, true, true));
         cucumber.execute(Arrays.asList("cucumber/runtime"));
+        System.out.println(out.toString());
         assertThat(out.toString(), startsWith(expectedStart()));
         assertThat(out.toString(), endsWith(expectedEnd()));
     }

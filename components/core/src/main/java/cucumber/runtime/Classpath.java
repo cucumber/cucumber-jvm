@@ -121,8 +121,8 @@ public class Classpath {
                     consumer.consume(new ZipInput(jarFile, jarEntry));
                 }
             }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (IOException t) {
+            throw new CucumberException("Failed to scan jar", t);
         }
     }
 

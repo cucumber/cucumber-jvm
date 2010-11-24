@@ -22,7 +22,7 @@ Cucumber StepDefinition = Origin mimic do(
       args = ArrayList new
       @arg_values = it captures
       it captures each(n, c,
-        args add(cuke4duke:internal:language:StepArgument new(c, it start(n+1), stepName))
+        args add(gherkin:formatter:Argument new(it start(n+1), c))
       )
       args,
       nil
@@ -42,13 +42,12 @@ Cucumber StepDefinition = Origin mimic do(
   )
 )
 
-
 Cucumber addStepDefinition = dmacro(
     [>regexp, code]
-    CucumberLanguage addIokeStepDefinition(Cucumber StepDefinition mimic(regexp, code)),
+    IokeBackend addStepDefinition(Cucumber StepDefinition mimic(regexp, code)),
 
     [>regexp, tableName, code]
-    CucumberLanguage addIokeStepDefinition(Cucumber StepDefinition mimic(regexp, code, tableName))
+    IokeBackend addStepDefinition(Cucumber StepDefinition mimic(regexp, code, tableName))
   )
 
 Cucumber Pending = Condition mimic
