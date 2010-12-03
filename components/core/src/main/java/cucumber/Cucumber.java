@@ -3,7 +3,7 @@ package cucumber;
 import cucumber.runtime.*;
 import gherkin.FeatureParser;
 import gherkin.GherkinParser;
-import gherkin.formatter.Formatter;
+import gherkin.formatter.Reporter;
 
 import java.io.IOException;
 import java.util.List;
@@ -14,8 +14,8 @@ import java.util.List;
 public class Cucumber {
     private final FeatureParser parser;
 
-    public Cucumber(Backend backend, Formatter formatter) {
-        ExecuteFormatter executeFormatter = new ExecuteFormatter(backend, formatter);
+    public Cucumber(Backend backend, Reporter reporter) {
+        ExecuteFormatter executeFormatter = new ExecuteFormatter(backend, reporter);
         parser = new GherkinParser(executeFormatter);
     }
 

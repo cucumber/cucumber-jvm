@@ -31,7 +31,7 @@ public class ClasspathMethodScanner implements MethodScanner {
     }
 
     private Set<Class<? extends Annotation>> findCucumberAnnotationClasses() throws IOException {
-        return Classpath.getPublicSubtypesOf(Annotation.class, "cucumber.annotation");
+        return Classpath.getPublicSubclassesOf(Annotation.class, "cucumber.annotation");
     }
 
     private void scan(Method method, Set<Class<? extends Annotation>> cucumberAnnotationClasses, JavaBackend javaBackend) {

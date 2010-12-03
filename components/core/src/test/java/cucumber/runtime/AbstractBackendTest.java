@@ -2,15 +2,13 @@ package cucumber.runtime;
 
 import cucumber.Cucumber;
 import gherkin.formatter.PrettyFormatter;
-import org.hamcrest.Matcher;
 import org.junit.Test;
-import org.junit.internal.matchers.SubstringMatcher;
 
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Arrays;
 
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertEquals;
 
 public abstract class AbstractBackendTest {
     @Test
@@ -19,42 +17,10 @@ public abstract class AbstractBackendTest {
         Cucumber cucumber = new Cucumber(backend(), new PrettyFormatter(out, true, true));
         cucumber.execute(Arrays.asList("cucumber/runtime"));
         System.out.println(out.toString());
-        assertThat(out.toString(), startsWith(expectedStart()));
-        assertThat(out.toString(), endsWith(expectedEnd()));
+        assertEquals(expectedOutput(), out.toString());
     }
 
-    protected abstract String expectedStart();
-
-    protected abstract String expectedEnd();
-
-    private Matcher<String> startsWith(String start) {
-        return new SubstringMatcher(start) {
-            @Override
-            protected boolean evalSubstringOf(String string) {
-                return string.startsWith(substring);
-            }
-
-            @Override
-            protected String relationship() {
-                return "beginning with";
-            }
-        };
-    }
-
-    private Matcher<String> endsWith(String end) {
-        return new SubstringMatcher(end) {
-             @Override
-             protected boolean evalSubstringOf(String string) {
-                 return string.endsWith(substring);
-             }
-
-             @Override
-             protected String relationship() {
-                 return "ending with";
-             }
-         };
-     }
-
+    protected abstract String expectedOutput();
 
     protected abstract Backend backend() throws IOException;
 }

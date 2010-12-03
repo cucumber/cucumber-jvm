@@ -25,7 +25,7 @@ public class Classpath {
         return classes;
     }
 
-    public static <T> Set<Class<? extends T>> getPublicSubtypesOf(Class<T> type, String packagePrefix) throws IOException {
+    public static <T> Set<Class<? extends T>> getPublicSubclassesOf(Class<T> type, String packagePrefix) throws IOException {
         Set<Class<? extends T>> result = new HashSet<Class<? extends T>>();
         Set<Class<?>> classes = getPublicClasses(packagePrefix);
         for (Class<?> clazz : classes) {

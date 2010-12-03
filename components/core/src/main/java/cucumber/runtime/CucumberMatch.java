@@ -1,9 +1,9 @@
 package cucumber.runtime;
 
 import gherkin.formatter.Argument;
-import gherkin.formatter.Formatter;
 import gherkin.formatter.model.Match;
 import gherkin.formatter.model.Result;
+import gherkin.formatter.model.Step;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -18,15 +18,15 @@ public class CucumberMatch extends Match implements StepRunner {
         this.stepDefinition = stepDefinition;
     }
 
-    public boolean execute(boolean skip, Formatter formatter, StackTraceElement stepLocation) {
-        formatter.match(this);
+    public boolean execute(boolean skip, StepResultHandler stepResultHandler, StackTraceElement stepLocation, Step step) {
+        stepResultHandler.match(this);
         Result result;
         if(skip) {
             result = new Result("skipped", null);
         } else {
             result = execute(stepDefinition.getParameterTypes(), stepLocation);
         }
-        formatter.result(result);
+        stepResultHandler.result(step, result);
         boolean passed = result.getStatus().equals("passed");
         return !passed;
     }

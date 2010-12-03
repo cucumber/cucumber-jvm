@@ -14,7 +14,7 @@ public class ExecuteFormatterTest {
     @Test
     public void shouldPrintUndefinedSteps() {
         StringWriter out = new StringWriter();
-        Formatter pf = new PrettyFormatter(out, true, true);
+        PrettyFormatter pf = new PrettyFormatter(out, true, true);
         Backend backend = new SimpleBackend();
         Formatter ef = new ExecuteFormatter(backend, pf);
 
@@ -24,7 +24,7 @@ public class ExecuteFormatterTest {
 
         ef.uri("some_feature.feature");
         ef.feature(new Feature(Collections.<Comment>emptyList(), Collections.<Tag>emptyList(), "Feature", "Foo", "", 1));
-        ef.steps(steps);
+        pf.steps(steps);
         ef.scenario(scenario);
         ef.step(step);
         ef.scenario(null);

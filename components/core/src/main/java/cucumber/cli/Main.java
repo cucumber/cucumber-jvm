@@ -9,7 +9,6 @@ import cucumber.runtime.Backend;
 import cucumber.runtime.java.ClasspathMethodScanner;
 import cucumber.runtime.java.JavaBackend;
 import cucumber.runtime.java.ObjectFactory;
-import gherkin.formatter.Formatter;
 import gherkin.formatter.PrettyFormatter;
 
 import java.io.IOException;
@@ -35,8 +34,8 @@ public class Main {
             objectFactory = new ObjectFactoryConverter("--factory").convert("pico");
 
         Backend backend = new JavaBackend(objectFactory, new ClasspathMethodScanner(), packagePrefix);
-        Formatter formatter = new PrettyFormatter(out, true, true);
-        Cucumber cucumber = new Cucumber(backend, formatter);
+        PrettyFormatter reporter = new PrettyFormatter(out, false, true);
+        Cucumber cucumber = new Cucumber(backend, reporter);
         cucumber.execute(features);
     }
 

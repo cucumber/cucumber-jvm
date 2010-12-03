@@ -1,9 +1,6 @@
 package cucumber.runtime;
 
-import gherkin.formatter.FilterFormatter;
-import gherkin.formatter.Formatter;
-import gherkin.formatter.JSONFormatter;
-import gherkin.formatter.PrettyFormatter;
+import gherkin.formatter.*;
 import gherkin.parser.FormatterListener;
 import gherkin.parser.ParseError;
 import gherkin.parser.Parser;
@@ -26,8 +23,8 @@ public class ReflectionsTest {
 
     @Test
     public void looksUpSubclassesOnClassPath() throws IOException {
-        Set<Class<? extends Formatter>> expected = new HashSet<Class<? extends Formatter>> (Arrays.asList(JSONFormatter.class, PrettyFormatter.class, FilterFormatter.class));
-        assertEquals(expected, Classpath.getPublicSubtypesOf(Formatter.class, "gherkin"));
+        Set<Class<? extends Formatter>> expected = new HashSet<Class<? extends Formatter>> (Arrays.asList(JSONFormatter.class, PrettyFormatter.class, FilterFormatter.class, Reporter.class));
+        assertEquals(expected, Classpath.getPublicSubclassesOf(Formatter.class, "gherkin"));
     }
 
 }

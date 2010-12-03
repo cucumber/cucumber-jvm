@@ -1,21 +1,23 @@
 package cucumber.runtime.ioke;
 
 import cucumber.runtime.*;
+import cuke4duke.PyString;
+import cuke4duke.Table;
 import ioke.lang.IokeObject;
+import ioke.lang.Message;
 import ioke.lang.Runtime;
 import ioke.lang.exceptions.ControlFlow;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class IokeBackend implements Backend {
     private final Runtime ioke;
+    private final List<Runtime.RescueInfo> failureRescues;
+    private final List<Runtime.RescueInfo> pendingRescues;
     private final List<StepDefinition> stepDefinitions = new ArrayList<StepDefinition>();
     private String currentLocation;
-
-    final IokeObject pendingCondition;
-    final IokeObject failedExpectationCondition;
-
 
     public IokeBackend(String scriptPath) {
         try {
@@ -23,18 +25,10 @@ public class IokeBackend implements Backend {
             ioke.init();
             ioke.ground.setCell("IokeBackend", this);
             ioke.evaluateString("use(\"cucumber/runtime/ioke/dsl\")");
-//        clearHooksAndStepDefinitions();
 
-            pendingCondition = IokeObject.as(IokeObject.getCellChain(ioke.condition,
-                    ioke.message,
-                    ioke.ground,
-                    "Pending"), ioke.ground);
+            failureRescues = createRescues("ISpec","ExpectationNotMet");
+            pendingRescues = createRescues("Pending");
 
-            failedExpectationCondition = IokeObject.as(IokeObject.getCellChain(ioke.condition,
-                    ioke.message,
-                    ioke.ground,
-                    "ISpec",
-                    "ExpectationNotMet"), ioke.ground);
             Classpath.scan(scriptPath, ".ik", new Consumer() {
                 public void consume(Input input) {
                     try {
@@ -61,4 +55,64 @@ public class IokeBackend implements Backend {
 
     public void newScenario() {
     }
+
+    private List<Runtime.RescueInfo> createRescues(String... names) throws ControlFlow {
+        IokeObject condition = IokeObject.as(IokeObject.getCellChain(ioke.condition,
+                ioke.message,
+                ioke.ground,
+                names), ioke.ground);
+        List<Runtime.RescueInfo> rescues = new ArrayList<Runtime.RescueInfo>();
+        IokeObject rr = IokeObject.as(((Message) IokeObject.data(ioke.mimic)).sendTo(ioke.mimic, ioke.ground, ioke.rescue), ioke.ground);
+        List<Object> conds = new ArrayList<Object>();
+        conds.add(condition);
+        rescues.add(new Runtime.RescueInfo(rr, conds, rescues, ioke.getBindIndex()));
+        return rescues;
+    }
+
+    void execute(IokeObject iokeStepDefObject, Object[] args) throws Throwable {
+        try {
+            ioke.registerRescues(failureRescues);
+            ioke.registerRescues(pendingRescues);
+            invoke(iokeStepDefObject, "invoke", multilineArg(args));
+        } catch (ControlFlow.Rescue e) {
+            // We may handle these differently in the future...
+            if (e.getRescue().token == pendingRescues) {
+                throw e;
+            } else if (e.getRescue().token == failureRescues) {
+                Message message = (Message) IokeObject.data(ioke.reportMessage);
+                String errorMessage = message.sendTo(ioke.reportMessage, ioke.ground, e.getCondition()).toString();
+                throw new AssertionError(errorMessage);
+            } else {
+                throw e;
+            }
+        } finally {
+            ioke.unregisterRescues(failureRescues);
+            ioke.unregisterRescues(pendingRescues);
+        }
+
+    }
+
+    private Object multilineArg(Object[] args) {
+        Object multilineArg;
+        if (args.length > 0) {
+            if (args[args.length - 1] instanceof PyString) {
+                multilineArg = ioke.newText(((PyString) args[args.length - 1]).to_s());
+            } else if (args[args.length - 1] instanceof Table) {
+                multilineArg = args[args.length - 1];
+            } else {
+                multilineArg = ioke.nil;
+            }
+        } else {
+            multilineArg = ioke.nil;
+        }
+        return multilineArg;
+    }
+
+    Object invoke(IokeObject iokeStepDefObject, String message, Object... args) throws ControlFlow {
+        IokeObject msg = ioke.newMessage(message);
+        Message m = (Message) IokeObject.data(msg);
+        return m.sendTo(msg, iokeStepDefObject, iokeStepDefObject, Arrays.asList(args));
+    }
+
+
 }

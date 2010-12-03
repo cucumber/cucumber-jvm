@@ -8,8 +8,33 @@ This is done simply with:
 
 Cucumber will scan those packages for implementations of:
 
-  * Step Definitions (Java)
-  * Hooks
-  * ObjectFactory
-  * Transforms
-  * Formatters
+* Step Definitions (Java)
+* Hooks
+* ObjectFactory
+* Transforms
+* Formatters
+
+h2. TODO before release
+
+* Outlines
+* Support Hooks
+* Run Hooks in order
+* Support ambiguous
+* Convert args
+* Handle multiline args
+* Add diffing
+* Support no-skip
+* Use locale from feature in transformations
+* Autodiscover ObjectFactory
+* EmptyCtorFactory
+* Ensure we can run single feature files
+* Ensure we can pass line numbers
+* Ensure we can pass line tags
+* Ensure we can pass line names/regexen
+* Export cucumber.json with stepdefs and usage
+* Ant task (POJO)
+* Maven plugin
+* Port examples
+
+h2. Release 2
+* Dry run
