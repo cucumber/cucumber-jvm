@@ -16,4 +16,14 @@ public class StepDefs {
     public void checkCukes(String n) {
         assertEquals(cukes, n);
     }
+
+    @I18n.EN.Then("^the (.*) contains (.*)")
+    public void containerContainsIngredient(String container, String ingredient) {
+        assertEquals("glass", container);
+    }
+
+    @I18n.EN.Then("^I add (.*)")
+    public void addLiquid(String liquid) {
+        assertEquals("milk", liquid);
+    }
 }

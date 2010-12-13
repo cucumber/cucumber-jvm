@@ -38,3 +38,5 @@ h2. TODO before release
 
 h2. Release 2
 * Dry run
+
+h2. Printing examples tables

@@ -65,7 +65,7 @@ public class ExecuteFormatter implements Formatter {
         reporter.nextRow();
 
         for (Row example : rows) {
-            cellResults = example.createResults("skipped");
+            cellResults = example.createResults("executing");
             executeExample(example);
         }
     }
@@ -213,7 +213,6 @@ public class ExecuteFormatter implements Formatter {
         for (CellResult matchedResult : matchedResults) {
             matchedResult.addResult(result);
         }
-
         reporter.row(cellResults);
     }
 }

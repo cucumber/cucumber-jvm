@@ -1,0 +1,128 @@
+[INFO] Scanning for projects...
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for cucumber:core:jar:0.4.3-SNAPSHOT
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-jar-plugin is missing. @ line 97, column 21
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-source-plugin is missing. @ cucumber:parent:0.4.3-SNAPSHOT, /Users/ahellesoy/scm/cuke4duke/pom.xml, line 267, column 21
+[WARNING] 
+[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
+[WARNING] 
+[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
+[WARNING] 
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building Cucumber: Core 0.4.3-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.3:resources (default-resources) @ core ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 3 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:2.3.2:compile (default-compile) @ core ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.3:testResources (default-testResources) @ core ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 6 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:2.3.2:testCompile (default-testCompile) @ core ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.5:test (default-test) @ core ---
+[INFO] Surefire report directory: /Users/ahellesoy/scm/cuke4duke/components/core/target/surefire-reports
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running cucumber.runtime.groovy.GroovyBackendTest
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.859 sec
+Running cuke4duke.internal.java.MethodFormatTest
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.009 sec
+Running cucumber.runtime.ReflectionsTest
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.058 sec
+Running cucumber.runtime.java.JavaBackendTest
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.19 sec
+Running cuke4duke.internal.java.JavaAnalyzerTest
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 1, Time elapsed: 0.126 sec
+Running cucumber.runtime.ioke.IokeBackendTest
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.162 sec
+Running cucumber.runtime.JdkPatternArgumentMatcherTest
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.004 sec
+Running cuke4duke.internal.jvmclass.ArgumentsConverterTest
+Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.007 sec
+Running cuke4duke.internal.jvmclass.GuiceFactoryTest
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.157 sec
+Running cuke4duke.internal.jvmclass.ClassLanguageTest
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 3, Time elapsed: 0.004 sec
+Running cucumber.cli.MainTest
+Feature: Cukes
+
+  Scenario: 1 cuke                     [90m# cucumber/runtime/cukes.feature:2[m
+    [35mGiven [m[35mI have [m[35;1m5[m[35m cukes in my belly[m   [90m# StepDefs.haveCukes(String)[m
+[1A    [32mGiven [m[32mI have [m[32;1m5[m[32m cukes in my belly[m   [90m# StepDefs.haveCukes(String)[m
+    [35mThen [m[35mthere are [m[35;1m4[m[35m cukes in my belly[m [90m# StepDefs.checkCukes(String)[m
+[1A    [31mThen [m[31mthere are [m[31;1m4[m[31m cukes in my belly[m [90m# StepDefs.checkCukes(String)[m
+      junit.framework.ComparisonFailure: null expected:<[5]> but was:<[4]>
+      	at junit.framework.Assert.assertEquals(Assert.java:81)
+      	at junit.framework.Assert.assertEquals(Assert.java:87)
+      	at cucumber.runtime.java.StepDefs.checkCukes(StepDefs.java:17)
+      	at Cukes.1 cuke.Then there are 4 cukes in my belly(cucumber/runtime/cukes.feature:4)
+
+
+  Scenario Outline: cooking                     [90m# cucumber/runtime/cukes.feature:6[m
+    [35mGiven [m[35mthe [m[35;1m<container>[m[35m contains [m[35;1m<ingredient>[m [90m# cucumber/runtime/cukes.feature:7[m
+[1A    [36mGiven [m[36mthe [m[36;1m<container>[m[36m contains [m[36;1m<ingredient>[m [90m# cucumber/runtime/cukes.feature:7[m
+    [35mWhen [m[35mI add [m[35;1m<liquid>[m                         [90m# cucumber/runtime/cukes.feature:8[m
+[1A    [36mWhen [m[36mI add [m[36;1m<liquid>[m                         [90m# cucumber/runtime/cukes.feature:8[m
+    [35mAnd [m[35mserve it to my guests[m                   [90m# cucumber/runtime/cukes.feature:9[m
+[1A    [36mAnd [m[36mserve it to my guests[m                   [90m# cucumber/runtime/cukes.feature:9[m
+    [35mThen [m[35mthey'll be eating [m[35;1m<dish>[m               [90m# cucumber/runtime/cukes.feature:10[m
+[1A    [36mThen [m[36mthey'll be eating [m[36;1m<dish>[m               [90m# cucumber/runtime/cukes.feature:10[m
+
+    Examples: 
+      | [36;1mcontainer[m | [36;1mingredient[m | [36;1mliquid[m    | [36;1mdish[m         |
+      | [36mbowl[m      | [36moats[m       | [36mmilk[m      | [36moatmeal[m      |
+      | [36mbowl[m      | [36moats[m       | [35mmilk[m      | [36moatmeal[m      |
+      | [36mbowl[m      | [36moats[m       | [36mmilk[m      | [36moatmeal[m      |
+      | [36mbowl[m      | [36moats[m       | [36mmilk[m      | [36moatmeal[m      |
+      | [36mglass[m     | [36mguinness[m   | [36mchampagne[m | [36mblack velvet[m |
+      | [36mglass[m     | [36mguinness[m   | [36mchampagne[m | [36mblack velvet[m |
+      | [36mglass[m     | [36mguinness[m   | [36mchampagne[m | [36mblack velvet[m |
+      | [36mglass[m     | [36mguinness[m   | [36mchampagne[m | [36mblack velvet[m |
+
+Tests run: 1, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 0.071 sec <<< FAILURE!
+Running cuke4duke.internal.UtilsTest
+Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.006 sec
+Running cucumber.runtime.ExecuteFormatterTest
+Feature: Foo
+
+  Scenario: foo             # some_feature.feature:9
+    Given this is undefined # some_feature.feature:10
+
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.007 sec
+Running cucumber.runtime.rhino.RhinoBackendTest
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.17 sec
+
+Results :
+
+Failed tests: 
+  testShouldRunCukes(cucumber.cli.MainTest)
+
+Tests run: 33, Failures: 1, Errors: 0, Skipped: 4
+
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 7.540s
+[INFO] Finished at: Fri Dec 03 15:04:25 GMT 2010
+[INFO] Final Memory: 6M/81M
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:2.5:test (default-test) on project core: There are test failures.
+[ERROR] 
+[ERROR] Please refer to /Users/ahellesoy/scm/cuke4duke/components/core/target/surefire-reports for the individual test results.
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
