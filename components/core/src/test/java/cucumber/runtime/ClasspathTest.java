@@ -1,20 +1,20 @@
 package cucumber.runtime;
 
 import gherkin.formatter.*;
+import gherkin.formatter.Formatter;
 import gherkin.parser.FormatterListener;
 import gherkin.parser.ParseError;
 import gherkin.parser.Parser;
 import gherkin.parser.StateMachineReader;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 
-public class ReflectionsTest {
+public class ClasspathTest {
     @Test
     public void looksUpClassesOnClassPath() throws IOException {
         Set<Class<?>> expected = new HashSet<Class<?>> (Arrays.asList(FormatterListener.class, ParseError.class, Parser.class, StateMachineReader.class));
@@ -27,4 +27,25 @@ public class ReflectionsTest {
         assertEquals(expected, Classpath.getPublicSubclassesOf(Formatter.class, "gherkin"));
     }
 
+    @Test
+    public void looksUpFeatureFilesByDir() throws IOException {
+        final List<String> paths = new ArrayList<String>();
+        Classpath.scan("cucumber/runtime", ".feature", new Consumer() {
+            public void consume(Input input) throws IOException {
+                paths.add(input.getPath());
+            }
+        });
+        assertEquals(Arrays.asList("cucumber/runtime/cukes.feature"), paths);
+    }
+
+    @Test
+    public void looksUpFeatureFilesByFile() throws IOException {
+        final List<String> paths = new ArrayList<String>();
+        Classpath.scan("cucumber/runtime/cukes.feature", new Consumer() {
+            public void consume(Input input) throws IOException {
+                paths.add(input.getPath());
+            }
+        });
+        assertEquals(Arrays.asList("cucumber/runtime/cukes.feature"), paths);
+    }
 }

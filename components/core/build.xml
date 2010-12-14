@@ -1,0 +1,20 @@
+<project basedir="." name="cucumber" default="cucumber">
+    <target name="cucumber">
+        <java fork="true" classname="cucumber.cli.Main">
+            <classpath>
+                <pathelement location="/Users/ahellesoy/.m2/repository/gherkin/gherkin/2.3.2/gherkin-2.3.2.jar"/>
+                <pathelement location="/Users/ahellesoy/.m2/repository/net/iharder/base64/2.3.8/base64-2.3.8.jar"/>
+                <pathelement location="/Users/ahellesoy/.m2/repository/com/googlecode/json-simple/json-simple/1.1/json-simple-1.1.jar"/>
+                <pathelement location="/Users/ahellesoy/.m2/repository/com/beust/jcommander/1.7/jcommander-1.7.jar"/>
+                <pathelement location="/Users/ahellesoy/.m2/repository/org/fusesource/jansi/jansi/1.4/jansi-1.4.jar"/>
+                <pathelement location="/Users/ahellesoy/.m2/repository/org/picocontainer/picocontainer/2.11.2/picocontainer-2.11.2.jar"/>
+                <pathelement location="/Users/ahellesoy/.m2/repository/junit/junit/4.8.1/junit-4.8.1.jar"/>
+                <pathelement location="target/test-classes"/>
+                <pathelement location="target/core-0.4.3-SNAPSHOT.jar"/>
+            </classpath>
+            <arg value="--stepdefs"/>
+            <arg value="cucumber.runtime.java"/>
+            <arg value="cucumber/runtime"/>
+        </java>
+    </target>
+</project>

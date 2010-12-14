@@ -18,11 +18,15 @@ public class ClasspathMethodScanner implements MethodScanner {
         try {
             Set<Class<? extends Annotation>> cucumberAnnotations = findCucumberAnnotationClasses();
             for (Class<?> clazz : Classpath.getPublicClasses(packagePrefix)) {
-                Method[] methods = clazz.getMethods();
-                for (Method method : methods) {
-                    if (Classpath.isPublic(method.getModifiers())) {
-                        scan(method, cucumberAnnotations, javaBackend);
+                try {
+                    Method[] methods = clazz.getMethods();
+                    for (Method method : methods) {
+                        if (Classpath.isPublic(method.getModifiers())) {
+                            scan(method, cucumberAnnotations, javaBackend);
+                        }
                     }
+                } catch (NoClassDefFoundError ignore) {
+                } catch (SecurityException ignore) {
                 }
             }
         } catch (IOException e) {

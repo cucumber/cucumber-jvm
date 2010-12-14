@@ -34,7 +34,7 @@ public class Main {
             objectFactory = new ObjectFactoryConverter("--factory").convert("pico");
 
         Backend backend = new JavaBackend(objectFactory, new ClasspathMethodScanner(), packagePrefix);
-        PrettyFormatter reporter = new PrettyFormatter(out, true, true);
+        PrettyFormatter reporter = new PrettyFormatter(out, false, true);
         Cucumber cucumber = new Cucumber(backend, reporter);
         cucumber.execute(features);
     }

@@ -15,13 +15,14 @@ public class Classpath {
                 String className = className(input.getPath());
                 try {
                     addClassIfPublic(classes, className);
-                } catch (ClassNotFoundException e) {
-                    throw new RuntimeException("Failed to load class " + className + " from " + input.getPath(), e);
+                } catch (NoClassDefFoundError ignore) {
+                } catch (ClassNotFoundException ignore) {
+                    //throw new RuntimeException("Failed to load class " + className + " from " + input.getPath(), e);
                 }
             }
         };
 
-        scan(packagePrefix, ".class", consumer);
+        scan(packagePrefix.replace('.', '/'), ".class", consumer);
         return classes;
     }
 
@@ -36,14 +37,24 @@ public class Classpath {
         return result;
     }
 
-    public static void scan(String packagePrefix, String suffix, Consumer consumer) throws IOException {
-        String pathPrefix = packagePrefix.replace(".", "/");
+    public static void scan(String pathPrefix, String suffix, Consumer consumer) throws IOException {
         final List<URL> startUrls = classpathUrls(pathPrefix);
-        for (URL startDir : startUrls) {
-            if (startDir.getProtocol().equals("jar")) {
-                scanJar(pathPrefix, startDir, suffix, consumer);
+        for (URL startUrl : startUrls) {
+            if (startUrl.getProtocol().equals("jar")) {
+                scanJar(startUrl, pathPrefix, suffix, consumer);
             } else {
-                scanFilesystem(pathPrefix, startDir, suffix, consumer);
+                scanFilesystem(startUrl, pathPrefix, suffix, consumer);
+            }
+        }
+    }
+
+    public static void scan(String pathName, Consumer consumer) throws IOException {
+        final List<URL> startUrls = classpathUrls(pathName);
+        for (URL startUrl : startUrls) {
+            if (startUrl.getProtocol().equals("jar")) {
+                scanJar(startUrl, pathName, null, consumer);
+            } else {
+                scanFilesystem(startUrl, pathName, null, consumer);
             }
         }
     }
@@ -107,7 +118,7 @@ public class Classpath {
         }
     }
 
-    private static void scanJar(String pathPrefix, URL jarDir, String suffix, Consumer consumer) {
+    private static void scanJar(URL jarDir, String pathPrefix, String suffix, Consumer consumer) {
         String url = jarDir.toExternalForm();
         String pathWithProtocol = url.substring(0, jarDir.toExternalForm().indexOf("!/"));
         String[] segments = pathWithProtocol.split(":");
@@ -117,7 +128,7 @@ public class Classpath {
             while (entries.hasMoreElements()) {
                 ZipEntry jarEntry = entries.nextElement();
                 String entryName = jarEntry.getName();
-                if (entryName.startsWith(pathPrefix) && entryName.endsWith(suffix)) {
+                if (entryName.startsWith(pathPrefix) && hasSuffix(suffix, entryName)) {
                     consumer.consume(new ZipInput(jarFile, jarEntry));
                 }
             }
@@ -126,7 +137,7 @@ public class Classpath {
         }
     }
 
-    private static void scanFilesystem(String pathPrefix, URL startDir, String suffix, Consumer consumer) throws IOException {
+    private static void scanFilesystem(URL startDir, String pathPrefix, String suffix, Consumer consumer) throws IOException {
         File dir = new File(startDir.getFile());
         String rootPath = startDir.getFile().substring(0, startDir.getFile().length() - pathPrefix.length() - 1);
         File rootDir = new File(rootPath);
@@ -139,17 +150,21 @@ public class Classpath {
                 scanFilesystem(rootDir, child, suffix, consumer);
             }
         } else {
-            if (file.getName().endsWith(suffix)) {
+            if (hasSuffix(suffix, file.getName())) {
                 consumer.consume(new FileInput(rootDir, file));
             }
         }
+    }
+
+    private static boolean hasSuffix(String suffix, String name) {
+        return suffix == null || name.endsWith(suffix);
     }
 
     private static String className(String pathToClass) {
         return pathToClass.substring(0, pathToClass.length() - 6).replace("/", ".");
     }
 
-    private static void addClassIfPublic(Set<Class<?>> classes, String className) throws ClassNotFoundException {
+    private static void addClassIfPublic(Set<Class<?>> classes, String className) throws ClassNotFoundException, NoClassDefFoundError {
         Class<?> clazz = cl().loadClass(className);
         if (isPublic(clazz.getModifiers())) {
             classes.add(clazz);
