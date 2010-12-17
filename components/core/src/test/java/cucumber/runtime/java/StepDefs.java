@@ -18,12 +18,12 @@ public class StepDefs {
     }
 
     @I18n.EN.Then("^the (.*) contains (.*)")
-    public void containerContainsIngredient(String container, String ingredient) {
+    public void containerContainsIngredient(String container, String ingredient) throws InterruptedException {
         assertEquals("glass", container);
     }
 
     @I18n.EN.Then("^I add (.*)")
-    public void addLiquid(String liquid) {
+    public void addLiquid(String liquid) throws InterruptedException {
         assertEquals("milk", liquid);
     }
 }

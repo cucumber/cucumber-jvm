@@ -77,13 +77,8 @@ public class ExecuteFormatter implements Formatter {
         boolean skip = false; // TODO: Add ability to instantiate entire runner with skip=false, for dry runs
         for (Step step : Steps) {
             skip = execute(step, skip);
-
-            // TODO: print the row again for each step. A cell might have changed. A cell might even change twice.
-            // :-) We have the cellResults array to help us with that yay!!
-            //reporter.row(formats);
         }
         reporter.nextRow();
-        // TODO: print all the exceptions.
     }
 
     private List<Step> createExampleSteps(Row example) {
