@@ -64,7 +64,7 @@
         <artifactId>cucumber-maven-plugin</artifactId>
         <configuration>
           <jvmArgs>
-            <jvmArg>-Dcuke4duke.objectFactory=cucumber.runtime.java.pico.PicoFactory</jvmArg>
+            <jvmArg>-Dcuke4duke.objectFactory=cucumber.runtime.java.picocontainer.PicoFactory</jvmArg>
           </jvmArgs>
           <!-- You may not need all of these arguments in your own project. We have a lot here for testing purposes... -->
           <cucumberArgs>

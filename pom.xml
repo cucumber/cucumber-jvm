@@ -15,7 +15,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <gherkin.version>2.3.1</gherkin.version>
+        <gherkin.version>2.3.2</gherkin.version>
         <asm.version>3.3</asm.version>
         <jcommander.version>1.7</jcommander.version>
         <jruby.version>1.5.3</jruby.version>
@@ -222,7 +222,10 @@
     </pluginRepositories>
 
     <modules>
-        <module>components/core</module>
+      <module>components/core</module>
+      <module>components/spring</module>
+      <module>components/guice</module>
+      <module>components/picocontainer</module>
         <!--module>components/scala</module-->
         <module>components/cucumber-ant</module>
         <!--module>components/maven-plugin</module-->

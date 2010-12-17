@@ -1,4 +1,4 @@
-package cucumber.runtime.java.pico;
+package cucumber.runtime.java.picocontainer;
 
 import cucumber.runtime.java.ObjectFactory;
 import cuke4duke.StepMother;

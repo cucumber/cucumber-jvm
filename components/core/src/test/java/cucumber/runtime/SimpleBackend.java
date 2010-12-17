@@ -1,7 +1,7 @@
 package cucumber.runtime;
 
 import cucumber.runtime.java.ObjectFactory;
-import cucumber.runtime.java.pico.PicoFactory;
+import cucumber.runtime.java.ReflectionFactory;
 
 import java.util.Collections;
 import java.util.List;
@@ -16,7 +16,7 @@ public class SimpleBackend implements Backend {
     }
 
     public SimpleBackend() {
-        this(Collections.<StepDefinition>emptyList(), new PicoFactory());
+        this(Collections.<StepDefinition>emptyList(), new ReflectionFactory());
     }
 
     public List<StepDefinition> getStepDefinitions() {

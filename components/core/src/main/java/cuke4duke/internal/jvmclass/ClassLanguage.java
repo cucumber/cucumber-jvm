@@ -86,7 +86,7 @@ public class ClassLanguage extends AbstractProgrammingLanguage {
     }
 
     private static ObjectFactory createObjectFactory() throws Throwable {
-//        String objectFactoryClassName = System.getProperty("cuke4duke.objectFactory", "cucumber.runtime.java.pico.PicoFactory");
+//        String objectFactoryClassName = System.getProperty("cuke4duke.objectFactory", "cucumber.runtime.java.picocontainer.PicoFactory");
 //        Class<?> ofc = JRuby.getRuntime().getJRubyClassLoader().loadClass(objectFactoryClassName);
 //        Constructor<?> ctor = ofc.getConstructor();
 //        try {

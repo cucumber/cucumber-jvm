@@ -2,7 +2,7 @@ package cuke4duke.internal.jvmclass;
 
 import cucumber.annotation.Order;
 import cucumber.runtime.java.ObjectFactory;
-import cucumber.runtime.java.pico.PicoFactory;
+import cucumber.runtime.java.ReflectionFactory;
 import cuke4duke.StepMother;
 import cuke4duke.internal.java.JavaAnalyzer;
 import cuke4duke.internal.java.JavaHook;
@@ -74,7 +74,7 @@ public class ClassLanguageTest {
     @Test
     @Ignore
     public void shouldRunBeforeHooksInOrderOfDependencies() throws Throwable {
-        ObjectFactory objectFactory = new PicoFactory();
+        ObjectFactory objectFactory = new ReflectionFactory();
         ClassLanguageMixin languageMixin = mock(ClassLanguageMixin.class);
         language = new ClassLanguage(languageMixin, mock(ExceptionFactory.class), mock(StepMother.class), Collections.<ClassAnalyzer>singletonList(new JavaAnalyzer()), objectFactory);
         language.addClass(A.class);

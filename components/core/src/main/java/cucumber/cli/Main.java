@@ -31,7 +31,7 @@ public class Main {
 
     public void execute(Writer out) throws IOException {
         if (objectFactory == null)
-            objectFactory = new ObjectFactoryConverter("--factory").convert("pico");
+            objectFactory = new ObjectFactoryConverter("--factory").convert("picocontainer");
 
         Backend backend = new JavaBackend(objectFactory, new ClasspathMethodScanner(), packagePrefix);
         PrettyFormatter reporter = new PrettyFormatter(out, false, true);

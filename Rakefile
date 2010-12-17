@@ -91,34 +91,20 @@ task :i18n_generate do
   require 'gherkin/i18n'
   require 'erb'
 
-  java = ERB.new(IO.read(File.dirname(__FILE__) + '/cuke4duke/src/main/code_generator/I18n.java.erb'), nil, '-')
-  File.open(File.dirname(__FILE__) + '/cuke4duke/src/main/java/cuke4duke/annotation/I18n.java', 'wb') do |io|
-    io.write(<<-HEADER)
-package cuke4duke.annotation;
-
-import cuke4duke.internal.java.annotation.StepDef;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
-public interface I18n {
-
-    HEADER
-    Gherkin::I18n.all.each do |i18n|
+  java = ERB.new(IO.read(File.dirname(__FILE__) + '/components/core/src/main/code_generator/I18n.java.erb'), nil, '-')
+  Gherkin::I18n.all.each do |i18n|
+    File.open(File.dirname(__FILE__) + "/components/core/src/main/java/cucumber/annotation/#{i18n.underscored_iso_code.upcase}.java", 'wb') do |io|
       io.write(java.result(binding))
     end
-
-    io.write("}")
   end
 
-  scala = ERB.new(IO.read(File.dirname(__FILE__) + '/cuke4duke/src/main/code_generator/I18n.scala.erb'), nil, '-')
-  File.open(File.dirname(__FILE__) + '/cuke4duke/src/main/scala/cuke4duke/I18n.scala', 'wb') do |io|
-    io.write("package cuke4duke\n\n")
-    Gherkin::I18n.all.each do |i18n|
-      io.write(scala.result(binding))
-    end
-  end
+#  scala = ERB.new(IO.read(File.dirname(__FILE__) + '/components/core/src/main/code_generator/I18n.scala.erb'), nil, '-')
+#  File.open(File.dirname(__FILE__) + '/components/core/src/main/scala/cuke4duke/I18n.scala', 'wb') do |io|
+#    io.write("package cuke4duke\n\n")
+#    Gherkin::I18n.all.each do |i18n|
+#      io.write(scala.result(binding))
+#    end
+#  end
 end
 
 desc 'Make all files use UNIX (\n) line endings'

@@ -1,5 +1,6 @@
-package cuke4duke.app;
+package cucumber.runtime.java.spring;
 
+import cuke4duke.app.HelloService;
 import org.springframework.stereotype.Service;
 
 @Service

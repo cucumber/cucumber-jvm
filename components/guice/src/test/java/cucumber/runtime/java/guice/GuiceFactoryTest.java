@@ -1,9 +1,8 @@
-package cuke4duke.internal.jvmclass;
+package cucumber.runtime.java.guice;
 
 
 import com.google.inject.AbstractModule;
-import cucumber.runtime.java.guice.GuiceFactory;
-import cuke4duke.internal.jvmclass.GuiceFactoryTest.SomeClass.SomeInnerClass;
+import cucumber.runtime.java.guice.GuiceFactoryTest.SomeClass.SomeInnerClass;
 import org.junit.Before;
 import org.junit.Test;
 

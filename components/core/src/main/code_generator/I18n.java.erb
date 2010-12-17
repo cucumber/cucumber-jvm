@@ -1,12 +1,20 @@
-    public class <%= i18n.underscored_iso_code.upcase %> {
+package cucumber.annotation;
+
+import cucumber.runtime.java.CucumberAnnotation;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+public class <%= i18n.underscored_iso_code.upcase %> {
 <% i18n.code_keywords.each do |kw| -%>
 
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @CucumberAnnotation("<%= i18n.iso_code %>") // TODO: REMOVE
-        public static @interface <%= kw %> {
-            public abstract String value();
-        }
-<% end -%>
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.METHOD)
+    @CucumberAnnotation("<%= i18n.iso_code %>") // TODO: REMOVE
+    public static @interface <%= kw %> {
+        public abstract String value();
     }
+<% end -%>
+}
 
