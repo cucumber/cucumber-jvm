@@ -30,11 +30,6 @@
             <artifactId>ant</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.codehaus.groovy</groupId>
-            <artifactId>groovy-all</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>
             <optional>true</optional>
@@ -47,21 +42,6 @@
         <dependency>
             <groupId>org.clojure</groupId>
             <artifactId>clojure</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>rhino</groupId>
-            <artifactId>js</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.ioke</groupId>
-            <artifactId>ioke-lang</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.ioke</groupId>
-            <artifactId>ioke-lang-lib</artifactId>
             <optional>true</optional>
         </dependency>
         <dependency>

@@ -11,10 +11,10 @@
         <version>0.4.3-SNAPSHOT</version>
     </parent>
 
-    <artifactId>picocontainer</artifactId>
+    <artifactId>ioke</artifactId>
     <version>0.4.3-SNAPSHOT</version>
     <packaging>jar</packaging>
-    <name>Cucumber: PicoContainer</name>
+    <name>Cucumber: Ioke</name>
 
     <dependencies>
         <dependency>
@@ -22,8 +22,12 @@
             <artifactId>core</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.picocontainer</groupId>
-            <artifactId>picocontainer</artifactId>
+            <groupId>org.ioke</groupId>
+            <artifactId>ioke-lang-lib</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.ioke</groupId>
+            <artifactId>ioke-lang</artifactId>
         </dependency>
         <dependency>
             <groupId>cucumber</groupId>

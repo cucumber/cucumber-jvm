@@ -1,4 +1,4 @@
-package cuke4duke.internal.js;
+package cuke4duke.internal.rhino;
 
 import cuke4duke.Scenario;
 import cuke4duke.internal.language.AbstractProgrammingLanguage;
@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Locale;
 
 public class JsLanguage extends AbstractProgrammingLanguage {
-    private static final String JS_DSL = "/cuke4duke/internal/js/js_dsl.js";
+    private static final String JS_DSL = "/cuke4duke/internal/rhino/js_dsl.rhino";
     private final List<String> jsFiles = new ArrayList<String>();
     private Context cx;
     private Scriptable scope;

@@ -1,4 +1,4 @@
-package cuke4duke.internal.js;
+package cuke4duke.internal.rhino;
 
 import cuke4duke.internal.language.AbstractStepDefinition;
 import cuke4duke.internal.language.StepArgument;

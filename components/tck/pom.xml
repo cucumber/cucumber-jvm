@@ -11,25 +11,15 @@
         <version>0.4.3-SNAPSHOT</version>
     </parent>
 
-    <artifactId>picocontainer</artifactId>
+    <artifactId>tck</artifactId>
     <version>0.4.3-SNAPSHOT</version>
     <packaging>jar</packaging>
-    <name>Cucumber: PicoContainer</name>
+    <name>Cucumber: TCK</name>
 
     <dependencies>
         <dependency>
             <groupId>cucumber</groupId>
             <artifactId>core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.picocontainer</groupId>
-            <artifactId>picocontainer</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>cucumber</groupId>
-            <artifactId>tck</artifactId>
-            <version>0.4.3-SNAPSHOT</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

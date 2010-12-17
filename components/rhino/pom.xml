@@ -11,10 +11,10 @@
         <version>0.4.3-SNAPSHOT</version>
     </parent>
 
-    <artifactId>picocontainer</artifactId>
+    <artifactId>rhino</artifactId>
     <version>0.4.3-SNAPSHOT</version>
     <packaging>jar</packaging>
-    <name>Cucumber: PicoContainer</name>
+    <name>Cucumber: Rhino</name>
 
     <dependencies>
         <dependency>
@@ -22,8 +22,8 @@
             <artifactId>core</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.picocontainer</groupId>
-            <artifactId>picocontainer</artifactId>
+            <groupId>rhino</groupId>
+            <artifactId>js</artifactId>
         </dependency>
         <dependency>
             <groupId>cucumber</groupId>
