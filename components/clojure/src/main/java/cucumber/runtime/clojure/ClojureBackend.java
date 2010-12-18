@@ -12,8 +12,10 @@ import java.util.regex.Pattern;
 public class ClojureBackend implements Backend {
     private final List<StepDefinition> stepDefinitions = new ArrayList<StepDefinition>();
     private String scriptPath;
+    private static ClojureBackend instance;
 
     public ClojureBackend(String scriptPath) {
+        instance = this;
         this.scriptPath = scriptPath;
         try {
             defineStepDefinitions();
@@ -24,10 +26,10 @@ public class ClojureBackend implements Backend {
 
     private void defineStepDefinitions() throws Exception {
         RT.load("cucumber/runtime/clojure/dsl");
-        Classpath.scan(this.scriptPath, ".rhino", new Consumer() {
+        Classpath.scan(this.scriptPath, ".clj", new Consumer() {
             public void consume(Input input) throws IOException {
                 try {
-                    RT.load(input.getPath());
+                    RT.load(input.getPath().replaceAll(".clj$", ""));
                 } catch (Exception e) {
                     throw new IOException(e);
                 }
@@ -36,14 +38,28 @@ public class ClojureBackend implements Backend {
 
     }
 
-    public void addStepDefinition(Pattern regexp, AFunction body) {
-        stepDefinitions.add(new ClojureStepDefinition(this, regexp, body));
-    }
-
     public List<StepDefinition> getStepDefinitions() {
         return stepDefinitions;
     }
 
     public void newScenario() {
     }
+
+    private StackTraceElement stepDefLocation(String interpreterClassName, String interpreterMethodName) {
+        Throwable t = new Throwable();
+        StackTraceElement[] stackTraceElements = t.getStackTrace();
+        for (int i = 0; i < stackTraceElements.length; i++) {
+            StackTraceElement element = stackTraceElements[i];
+            if(element.getClassName().equals(interpreterClassName) && element.getMethodName().equals(interpreterMethodName)) {
+                return stackTraceElements[i-1];
+            }
+        }
+        throw new CucumberException("Couldn't find location for step definition");
+    }
+
+    public static void addStepDefinition(Pattern regexp, AFunction body) {
+        StackTraceElement location = instance.stepDefLocation("clojure.lang.Compiler", "eval");
+        instance.stepDefinitions.add(new ClojureStepDefinition(regexp, body, location));
+    }
+
 }

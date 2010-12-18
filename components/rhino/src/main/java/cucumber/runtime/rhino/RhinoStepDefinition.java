@@ -20,7 +20,7 @@ public class RhinoStepDefinition implements StepDefinition {
     private final StackTraceElement location;
     private final NativeFunction argumentsFromFunc;
 
-    public RhinoStepDefinition(Context cx, Scriptable scope, Global jsStepDefinition, NativeRegExp regexp, NativeFunction bodyFunc, StackTraceElement location, NativeFunction argumentsFromFunc) {
+    public RhinoStepDefinition(Context cx, Scriptable scope, Global jsStepDefinition, NativeFunction bodyFunc, StackTraceElement location, NativeFunction argumentsFromFunc) {
         this.cx = cx;
         this.scope = scope;
         this.jsStepDefinition = jsStepDefinition;

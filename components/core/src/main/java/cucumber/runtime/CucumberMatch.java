@@ -52,11 +52,11 @@ public class CucumberMatch extends Match implements StepRunner {
 
 
     private Object[] getTransformedArgs(Class<?>[] parameterTypes) {
-        if(parameterTypes.length != getArguments().size()) {
-            throw new RuntimeException("Bad number of args"); // TODO: Handle multiline args here...
+        if(parameterTypes != null && parameterTypes.length != getArguments().size()) {
+            throw new CucumberException("Bad number of args"); // TODO: Handle multiline args here...
         }
 
-        Object[] result = new Object[parameterTypes.length];
+        Object[] result = new Object[getArguments().size()];
         int n = 0;
         for (Argument a : getArguments()) {
             // TODO: Use the Locale for transformation

@@ -4,7 +4,6 @@ import cucumber.runtime.*;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.NativeFunction;
 import org.mozilla.javascript.Scriptable;
-import org.mozilla.javascript.regexp.NativeRegExp;
 import org.mozilla.javascript.tools.shell.Global;
 
 import java.io.IOException;
@@ -42,12 +41,6 @@ public class RhinoBackend implements Backend {
         });
     }
 
-    public void addStepDefinition(Global jsStepDefinition, NativeRegExp regexp, NativeFunction bodyFunc, NativeFunction argumentsFromFunc) throws Throwable {
-        StackTraceElement stepDefLocation = stepDefLocation();
-        RhinoStepDefinition stepDefinition = new RhinoStepDefinition(cx, scope, jsStepDefinition, regexp, bodyFunc, stepDefLocation, argumentsFromFunc);
-        stepDefinitions.add(stepDefinition);
-    }
-
     public List<StepDefinition> getStepDefinitions() {
         return stepDefinitions;
     }
@@ -55,11 +48,11 @@ public class RhinoBackend implements Backend {
     public void newScenario() {
     }
 
-    private StackTraceElement stepDefLocation() {
+    private StackTraceElement stepDefLocation(String extension) {
         Throwable t = new Throwable();
         StackTraceElement[] stackTraceElements = t.getStackTrace();
         for (StackTraceElement stackTraceElement : stackTraceElements) {
-            boolean js = stackTraceElement.getFileName().endsWith(".js");
+            boolean js = stackTraceElement.getFileName().endsWith(extension);
             boolean inScriptPath = stackTraceElement.getFileName().startsWith(scriptPath);
             boolean hasLine = stackTraceElement.getLineNumber() != -1;
             if(js && inScriptPath && hasLine) {
@@ -67,5 +60,11 @@ public class RhinoBackend implements Backend {
             }
         }
         throw new RuntimeException("Couldn't find location for step definition");
+    }
+
+    public void addStepDefinition(Global jsStepDefinition, NativeFunction bodyFunc, NativeFunction argumentsFromFunc) throws Throwable {
+        StackTraceElement stepDefLocation = stepDefLocation(".js");
+        RhinoStepDefinition stepDefinition = new RhinoStepDefinition(cx, scope, jsStepDefinition, bodyFunc, stepDefLocation, argumentsFromFunc);
+        stepDefinitions.add(stepDefinition);
     }
 }

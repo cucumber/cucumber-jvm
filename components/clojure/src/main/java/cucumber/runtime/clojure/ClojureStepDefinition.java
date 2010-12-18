@@ -15,10 +15,12 @@ import java.util.regex.Pattern;
 public class ClojureStepDefinition implements StepDefinition {
     private final Pattern regexp;
     private final AFunction closure;
+    private StackTraceElement location;
 
-    public ClojureStepDefinition(ClojureBackend clojureBackend, Pattern regexp, AFunction closure)  {
+    public ClojureStepDefinition(Pattern regexp, AFunction closure, StackTraceElement location)  {
         this.regexp = regexp;
         this.closure = closure;
+        this.location = location;
     }
 
     // Clojure's AFunction.invokeWithArgs doesn't take varargs :-/
@@ -31,11 +33,11 @@ public class ClojureStepDefinition implements StepDefinition {
     }
 
     public String getLocation() {
-        throw new UnsupportedOperationException();
+        return location.getFileName() + ":" + location.getLineNumber();
     }
 
     public Class<?>[] getParameterTypes() {
-        throw new UnsupportedOperationException();
+        return null;
     }
 
     public void execute(Object[] args) throws Throwable {
@@ -48,6 +50,6 @@ public class ClojureStepDefinition implements StepDefinition {
     }
 
     public boolean isDefinedAt(StackTraceElement stackTraceElement) {
-        throw new UnsupportedOperationException();
+        return location.getFileName().equals(stackTraceElement.getFileName());
     }
 }
