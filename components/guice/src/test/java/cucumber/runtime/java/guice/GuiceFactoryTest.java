@@ -15,7 +15,7 @@ public class GuiceFactoryTest {
         };
     }
 
-    public class SomeModule extends AbstractModule {
+    public static class SomeModule extends AbstractModule {
         @Override
         protected void configure() {
         }
@@ -25,7 +25,7 @@ public class GuiceFactoryTest {
 
     @Before
     public void setUp() throws Throwable {
-        guiceFactory = new GuiceFactory("cuke4duke.internal.jvmclass.SomeModule");
+        guiceFactory = new GuiceFactory(SomeModule.class.getName());
     }
 
     /**

@@ -10,12 +10,14 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static org.mockito.Mockito.mock;
+
 public class ExecuteFormatterTest {
     @Test
     public void shouldPrintUndefinedSteps() {
         StringWriter out = new StringWriter();
         PrettyFormatter pf = new PrettyFormatter(out, true, true);
-        Backend backend = new SimpleBackend();
+        Backend backend = mock(Backend.class);
         Formatter ef = new ExecuteFormatter(backend, pf);
 
         Step step = new Step(Collections.<Comment>emptyList(), "Given ", "this is undefined", 10);

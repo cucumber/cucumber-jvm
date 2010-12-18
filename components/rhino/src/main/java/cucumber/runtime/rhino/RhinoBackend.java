@@ -35,7 +35,7 @@ public class RhinoBackend implements Backend {
         InputStreamReader dsl = new InputStreamReader(getClass().getResourceAsStream(JS_DSL));
         cx.evaluateReader(scope, dsl, JS_DSL, 1, null);
 
-        Classpath.scan(scriptPath, ".rhino", new Consumer() {
+        Classpath.scan(this.scriptPath, ".rhino", new Consumer() {
             public void consume(Input input) throws IOException {
                 cx.evaluateReader(scope, input.getReader(), input.getPath(), 1, null);
             }

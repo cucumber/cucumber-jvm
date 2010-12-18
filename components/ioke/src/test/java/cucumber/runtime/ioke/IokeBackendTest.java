@@ -16,7 +16,7 @@ public class IokeBackendTest extends AbstractBackendTest {
                 "      java.lang.AssertionError: expected:<\"[4]\"> but was:<\"[5]\"> (ISpec ExpectationNotMet)\n" +
                 "      \n" +
                 "      \n" +
-                "      \tat cucumber.runtime.ioke.IokeBackend.execute(IokeBackend.java:84)\n" +
+                "      \tat cucumber.runtime.ioke.IokeBackend.execute(IokeBackend.java:83)\n" +
                 "      \tat Cukes.1 cuke.Then there are 4 cukes in my belly(cucumber/runtime/cukes.feature:4)\n" +
                 "\n" +
                 "\n" +

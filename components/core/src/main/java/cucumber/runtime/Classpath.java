@@ -1,6 +1,7 @@
 package cucumber.runtime;
 
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.util.*;
@@ -61,6 +62,33 @@ public class Classpath {
 
     private static List<URL> classpathUrls(String path) throws IOException {
         return Collections.list(cl().getResources(path));
+    }
+
+    public static <T> T instantiateSubclass(Class<T> type, Object... constructorArguments) throws IOException {
+        Set<Class<? extends T>> classes = getPublicSubclassesOf(type, "cucumber.runtime");
+        if(classes.size() == 1) {
+            Class<? extends T> clazz = classes.iterator().next();
+            try {
+                Class[] argumentTypes = new Class[constructorArguments.length];
+                for (int i = 0; i < constructorArguments.length; i++) {
+                    argumentTypes[i] = constructorArguments[i].getClass();
+                }
+                return clazz.getConstructor(argumentTypes).newInstance(constructorArguments);
+            } catch (InstantiationException e) {
+                throw new CucumberException("Couldn't instantiate " + clazz, e);
+            } catch (IllegalAccessException e) {
+                throw new CucumberException("Couldn't instantiate " + clazz, e);
+            } catch (NoSuchMethodException e) {
+                throw new CucumberException("Couldn't instantiate " + clazz, e);
+            } catch (InvocationTargetException e) {
+                throw new CucumberException("Couldn't instantiate " + clazz, e);
+            }
+        } else if(classes.size() == 0) {
+            throw new CucumberException("Couldn't find a suitable instance");
+        } else {
+            throw new CucumberException("Found too many classes: " + classes);
+        }
+
     }
 
     private static abstract class AbstractInput implements Input {

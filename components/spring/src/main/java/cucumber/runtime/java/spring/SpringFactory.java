@@ -1,7 +1,6 @@
 package cucumber.runtime.java.spring;
 
 import cucumber.runtime.java.ObjectFactory;
-import cuke4duke.StepMother;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -16,7 +15,7 @@ import java.util.Set;
 public class SpringFactory implements ObjectFactory {
     private final Set<Class<?>> classes = new HashSet<Class<?>>();
     private AbstractApplicationContext appContext;
-    private static ThreadLocal<StepMother> mother = new ThreadLocal<StepMother>();
+    //private static ThreadLocal<StepMother> mother = new ThreadLocal<StepMother>();
 
     public void createObjects() {
         appContext.refresh();
@@ -33,6 +32,7 @@ public class SpringFactory implements ObjectFactory {
         classes.add(clazz);
     }
 
+    /*
     public void addStepMother(StepMother instance) {
         if (appContext == null) {
             mother.set(instance);
@@ -48,6 +48,7 @@ public class SpringFactory implements ObjectFactory {
             }
         }
     }
+    */
 
     @SuppressWarnings("unchecked")
     public <T> T getComponent(Class<T> type) {
@@ -63,6 +64,7 @@ public class SpringFactory implements ObjectFactory {
         return classes;
     }
 
+    /*
     static class StepMotherFactory implements FactoryBean, InitializingBean {
         private StepMother mother;
 
@@ -83,4 +85,5 @@ public class SpringFactory implements ObjectFactory {
             return true;
         }
     }
+    */
 }

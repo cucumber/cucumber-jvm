@@ -19,7 +19,8 @@
     <dependencies>
         <dependency>
             <groupId>cucumber</groupId>
-            <artifactId>core</artifactId>
+            <artifactId>java</artifactId>
+            <version>0.4.3-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>

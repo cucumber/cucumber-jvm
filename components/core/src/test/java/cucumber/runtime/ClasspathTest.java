@@ -6,7 +6,6 @@ import gherkin.parser.FormatterListener;
 import gherkin.parser.ParseError;
 import gherkin.parser.Parser;
 import gherkin.parser.StateMachineReader;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -28,24 +27,24 @@ public class ClasspathTest {
     }
 
     @Test
-    public void looksUpFeatureFilesByDir() throws IOException {
+    public void looksUpFilesByDir() throws IOException {
         final List<String> paths = new ArrayList<String>();
-        Classpath.scan("cucumber/runtime", ".feature", new Consumer() {
+        Classpath.scan("cucumber/runtime", ".xyz", new Consumer() {
             public void consume(Input input) throws IOException {
                 paths.add(input.getPath());
             }
         });
-        assertEquals(Arrays.asList("cucumber/runtime/cukes.feature"), paths);
+        assertEquals(Arrays.asList("cucumber/runtime/bar.xyz", "cucumber/runtime/foo.xyz"), paths);
     }
 
     @Test
-    public void looksUpFeatureFilesByFile() throws IOException {
+    public void looksUpFilesByFile() throws IOException {
         final List<String> paths = new ArrayList<String>();
-        Classpath.scan("cucumber/runtime/cukes.feature", new Consumer() {
+        Classpath.scan("cucumber/runtime/foo.xyz", new Consumer() {
             public void consume(Input input) throws IOException {
                 paths.add(input.getPath());
             }
         });
-        assertEquals(Arrays.asList("cucumber/runtime/cukes.feature"), paths);
+        assertEquals(Arrays.asList("cucumber/runtime/foo.xyz"), paths);
     }
 }

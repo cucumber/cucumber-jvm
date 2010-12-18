@@ -1,7 +1,6 @@
 package cucumber.runtime.java.picocontainer;
 
 import cucumber.runtime.java.ObjectFactory;
-import cuke4duke.StepMother;
 import org.picocontainer.MutablePicoContainer;
 import org.picocontainer.PicoBuilder;
 
@@ -37,10 +36,6 @@ public class PicoFactory implements ObjectFactory {
 
     public void addClass(Class<?> clazz) {
         classes.add(clazz);
-    }
-
-    public void addStepMother(StepMother instance) {
-        instances.add(instance);
     }
 
     public <T> T getComponent(Class<T> type) {

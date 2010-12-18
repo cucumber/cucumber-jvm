@@ -1,8 +1,7 @@
 package cucumber.runtime.ioke;
 
+import cucumber.Table;
 import cucumber.runtime.*;
-import cuke4duke.PyString;
-import cuke4duke.Table;
 import ioke.lang.IokeObject;
 import ioke.lang.Message;
 import ioke.lang.Runtime;
@@ -95,8 +94,8 @@ public class IokeBackend implements Backend {
     private Object multilineArg(Object[] args) {
         Object multilineArg;
         if (args.length > 0) {
-            if (args[args.length - 1] instanceof PyString) {
-                multilineArg = ioke.newText(((PyString) args[args.length - 1]).to_s());
+            if (args[args.length - 1] instanceof String) {
+                multilineArg = ioke.newText((String) args[args.length - 1]);
             } else if (args[args.length - 1] instanceof Table) {
                 multilineArg = args[args.length - 1];
             } else {

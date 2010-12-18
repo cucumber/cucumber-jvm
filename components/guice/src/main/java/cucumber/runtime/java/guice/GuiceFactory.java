@@ -7,7 +7,6 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.Provider;
 import cucumber.runtime.java.ObjectFactory;
-import cuke4duke.StepMother;
 
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -42,9 +41,9 @@ public class GuiceFactory implements ObjectFactory {
         classes.add(clazz);
     }
 
-    public void addStepMother(StepMother stepMother) {
-        modules.add(new StepMotherModule(stepMother));
-    }
+//    public void addStepMother(StepMother stepMother) {
+//        modules.add(new StepMotherModule(stepMother));
+//    }
 
     public void createObjects() {
         Injector injector = Guice.createInjector(modules);
@@ -70,31 +69,31 @@ public class GuiceFactory implements ObjectFactory {
         return classes;
     }
 
-    class StepMotherModule extends AbstractModule {
+//    class StepMotherModule extends AbstractModule {
+//
+//        private Provider<? extends StepMother> stepMotherProvider;
+//
+//        public StepMotherModule(StepMother stepMother) {
+//            stepMotherProvider = new StepMotherProvider(stepMother);
+//        }
+//
+//        @Override
+//        protected void configure() {
+//            bind(StepMother.class).toProvider(stepMotherProvider);
+//        }
+//    }
 
-        private Provider<? extends StepMother> stepMotherProvider;
-
-        public StepMotherModule(StepMother stepMother) {
-            stepMotherProvider = new StepMotherProvider(stepMother);
-        }
-
-        @Override
-        protected void configure() {
-            bind(StepMother.class).toProvider(stepMotherProvider);
-        }
-    }
-
-    class StepMotherProvider implements Provider<StepMother> {
-
-        private StepMother stepMother;
-
-        public StepMotherProvider(StepMother stepMother) {
-            this.stepMother = stepMother;
-        }
-
-        public StepMother get() {
-            return stepMother;
-        }
-    }
+//    class StepMotherProvider implements Provider<StepMother> {
+//
+//        private StepMother stepMother;
+//
+//        public StepMotherProvider(StepMother stepMother) {
+//            this.stepMother = stepMother;
+//        }
+//
+//        public StepMother get() {
+//            return stepMother;
+//        }
+//    }
 
 }
