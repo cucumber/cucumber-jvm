@@ -22,7 +22,7 @@ public class CucumberMatch extends Match implements StepRunner {
         stepResultHandler.match(this);
         Result result;
         if (skip) {
-            result = new Result("skipped", null);
+            result = Result.SKIPPED;
         } else {
             result = execute(stepDefinition.getParameterTypes(), stepLocation);
         }
@@ -34,6 +34,7 @@ public class CucumberMatch extends Match implements StepRunner {
     private Result execute(Class<?>[] parameterTypes, StackTraceElement stepLocation) {
         String status = "passed";
         Throwable error = null;
+        long start = System.currentTimeMillis();
         try {
             stepDefinition.execute(getTransformedArgs(parameterTypes));
         } catch (CucumberException e) {
@@ -45,8 +46,9 @@ public class CucumberMatch extends Match implements StepRunner {
             error = t;
             status = "failed";
         }
+        long duration = System.currentTimeMillis() - start;
         String errorMessage = errorMessageWithStackTrace(error, stepLocation);
-        return new Result(status, errorMessage);
+        return new Result(status, duration, errorMessage);
 
     }
 

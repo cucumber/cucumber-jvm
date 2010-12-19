@@ -16,7 +16,9 @@ Cucumber will scan those packages for implementations of:
 
 h2. TODO before release
 
-* Outlines
+* Print snippets
+* Print stats (only for certain formatters)
+* Export cucumber.json with stepdefs and usage
 * Support Hooks
 * Run Hooks in order
 * Support ambiguous
@@ -25,16 +27,16 @@ h2. TODO before release
 * Add diffing
 * Support no-skip
 * Use locale from feature in transformations
-* Autodiscover ObjectFactory
-* EmptyCtorFactory
-* Ensure we can run single feature files
 * Ensure we can pass line numbers
 * Ensure we can pass line tags
 * Ensure we can pass line names/regexen
-* Export cucumber.json with stepdefs and usage
 * Ant task (POJO)
 * Maven plugin
 * Port examples
+* [OKish - needs polishing in prettyformatter] Outlines
+* [OK] Put duration in results
+* [OK] Autodiscover ObjectFactory
+* [OK] Ensure we can run single feature files
 
 h2. Release 2
 * Dry run
