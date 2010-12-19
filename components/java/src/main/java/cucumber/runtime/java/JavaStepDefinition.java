@@ -26,7 +26,7 @@ public class JavaStepDefinition implements StepDefinition {
     }
 
     public void execute(Object[] args) throws Throwable {
-        Object target = objectFactory.getComponent(method.getDeclaringClass());
+        Object target = objectFactory.getInstance(method.getDeclaringClass());
         method.invoke(target, args);
     }
 

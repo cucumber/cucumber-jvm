@@ -43,6 +43,9 @@ public class GroovyBackend implements Backend {
         world = null;
     }
 
+    public void disposeScenario() {
+    }
+
     public static void addStepDefinition(Pattern regexp, Closure body) {
         instance.stepDefinitions.add(new GroovyStepDefinition(regexp, body, stepDefLocation(), instance));
     }

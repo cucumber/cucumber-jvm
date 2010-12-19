@@ -28,7 +28,7 @@
         </dependency>
         <dependency>
             <groupId>cucumber</groupId>
-            <artifactId>tck</artifactId>
+            <artifactId>tck-java</artifactId>
             <version>0.4.3-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>

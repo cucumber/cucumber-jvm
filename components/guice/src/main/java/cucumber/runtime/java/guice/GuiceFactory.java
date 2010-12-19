@@ -38,7 +38,7 @@ public class GuiceFactory implements ObjectFactory {
 //        modules.add(new StepMotherModule(stepMother));
 //    }
 
-    public void createObjects() {
+    public void createInstances() {
         Injector injector = Guice.createInjector(modules);
         for (Class<?> clazz : classes) {
             try {
@@ -49,17 +49,13 @@ public class GuiceFactory implements ObjectFactory {
         }
     }
 
-    public void disposeObjects() {
+    public void disposeInstances() {
         instances.clear();
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T getComponent(Class<T> clazz) {
+    public <T> T getInstance(Class<T> clazz) {
         return (T) instances.get(clazz);
-    }
-
-    public Set<Class<?>> getClasses() {
-        return classes;
     }
 
 //    class StepMotherModule extends AbstractModule {

@@ -224,6 +224,7 @@
     <modules>
       <module>components/core</module>
       <module>components/tck</module>
+      <module>components/tck-java</module>
       <module>components/spring</module>
       <module>components/guice</module>
       <module>components/picocontainer</module>

@@ -30,6 +30,10 @@ public class JavaBackend implements Backend {
     }
 
     public void newScenario() {
-        objectFactory.createObjects();
+        objectFactory.createInstances();
+    }
+
+    public void disposeScenario() {
+        objectFactory.disposeInstances();
     }
 }

@@ -55,6 +55,9 @@ public class IokeBackend implements Backend {
     public void newScenario() {
     }
 
+    public void disposeScenario() {
+    }
+
     private List<Runtime.RescueInfo> createRescues(String... names) throws ControlFlow {
         IokeObject condition = IokeObject.as(IokeObject.getCellChain(ioke.condition,
                 ioke.message,

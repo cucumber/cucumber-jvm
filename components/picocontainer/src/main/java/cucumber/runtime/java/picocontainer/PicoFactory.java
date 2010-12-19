@@ -4,28 +4,22 @@ import cucumber.runtime.java.ObjectFactory;
 import org.picocontainer.MutablePicoContainer;
 import org.picocontainer.PicoBuilder;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class PicoFactory implements ObjectFactory {
     private MutablePicoContainer pico;
     private final Set<Class<?>> classes = new HashSet<Class<?>>();
-    private final List<Object> instances = new ArrayList<Object>();
 
-    public void createObjects() {
+    public void createInstances() {
         pico = new PicoBuilder().withCaching().build();
         for (Class<?> clazz : classes) {
             pico.addComponent(clazz);
         }
-        for (Object instance : instances) {
-            pico.addComponent(instance);
-        }
         pico.start();
     }
 
-    public void disposeObjects() {
+    public void disposeInstances() {
         pico.stop();
         pico.dispose();
     }
@@ -38,11 +32,7 @@ public class PicoFactory implements ObjectFactory {
         classes.add(clazz);
     }
 
-    public <T> T getComponent(Class<T> type) {
+    public <T> T getInstance(Class<T> type) {
         return pico.getComponent(type);
-    }
-
-    public Set<Class<?>> getClasses() {
-        return classes;
     }
 }

@@ -23,6 +23,7 @@ public class ExecuteFormatter implements Formatter {
     private Map<Step, List<CellResult>> matchedResultsByStep = new HashMap<Step, List<CellResult>>();
     private Row examplesHeaderRow;
     private String featureElementClassName;
+    private boolean hasPreviousScenario = false;
 
     public ExecuteFormatter(Backend backend, Reporter reporter) {
         this.backend = backend;
@@ -139,6 +140,11 @@ public class ExecuteFormatter implements Formatter {
     }
 
     private void replayScenario() {
+        if(hasPreviousScenario) {
+            backend.disposeScenario();
+        }
+        hasPreviousScenario = true;
+
         reporter.steps(steps);
         featureElement.replay(reporter);
 

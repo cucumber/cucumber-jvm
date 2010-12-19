@@ -13,11 +13,11 @@ public class SpringFactory implements ObjectFactory {
     private AbstractApplicationContext appContext;
     //private static ThreadLocal<StepMother> mother = new ThreadLocal<StepMother>();
 
-    public void createObjects() {
+    public void createInstances() {
         appContext.refresh();
     }
 
-    public void disposeObjects() {
+    public void disposeInstances() {
     }
 
     public boolean canHandle(Class<?> clazz) {
@@ -47,17 +47,13 @@ public class SpringFactory implements ObjectFactory {
     */
 
     @SuppressWarnings("unchecked")
-    public <T> T getComponent(Class<T> type) {
+    public <T> T getInstance(Class<T> type) {
         List beans = new ArrayList(appContext.getBeansOfType(type).values());
         if (beans.size() == 1) {
             return (T) beans.get(0);
         } else {
             throw new RuntimeException("Found " + beans.size() + " Beans for class " + type + ". Expected exactly 1.");
         }
-    }
-
-    public Set<Class<?>> getClasses() {
-        return classes;
     }
 
     /*

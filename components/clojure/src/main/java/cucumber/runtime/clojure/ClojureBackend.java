@@ -44,6 +44,9 @@ public class ClojureBackend implements Backend {
     public void newScenario() {
     }
 
+    public void disposeScenario() {
+    }
+
     private StackTraceElement stepDefLocation(String interpreterClassName, String interpreterMethodName) {
         Throwable t = new Throwable();
         StackTraceElement[] stackTraceElements = t.getStackTrace();

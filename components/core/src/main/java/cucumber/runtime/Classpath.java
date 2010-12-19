@@ -92,7 +92,6 @@ public class Classpath {
         } else {
             throw new CucumberException("Found too many classes: " + classes);
         }
-
     }
 
     private static abstract class AbstractInput implements Input {

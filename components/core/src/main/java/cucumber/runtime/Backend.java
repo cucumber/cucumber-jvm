@@ -10,4 +10,6 @@ public interface Backend {
      * setup of new, isolated state here.
      */
     void newScenario();
+
+    void disposeScenario();
 }

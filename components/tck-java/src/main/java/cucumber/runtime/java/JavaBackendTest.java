@@ -5,7 +5,7 @@ import cucumber.runtime.Backend;
 
 import java.io.IOException;
 
-public class JavaBackendTest extends AbstractBackendTest {
+public abstract class JavaBackendTest extends AbstractBackendTest {
     public static final String OUTPUT = "" +
             "Feature: Cukes\n" +
             "\n" +

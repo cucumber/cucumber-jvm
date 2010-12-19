@@ -46,7 +46,7 @@ public class GuiceFactoryTest {
         if (guiceFactory.canHandle(someInnerClass)) {
             guiceFactory.addClass(someInnerClass);
         }
-        guiceFactory.createObjects();
+        guiceFactory.createInstances();
 
     }
 

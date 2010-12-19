@@ -13,7 +13,7 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-public class ClasspathMethodScanner implements MethodScanner {
+public class ClasspathMethodScanner {
     public void scan(JavaBackend javaBackend, String packagePrefix) {
         try {
             Set<Class<? extends Annotation>> cucumberAnnotations = findCucumberAnnotationClasses();

@@ -52,6 +52,9 @@ public class RhinoBackend implements Backend {
     public void newScenario() {
     }
 
+    public void disposeScenario() {
+    }
+
     private StackTraceElement stepDefLocation(String extension) {
         Throwable t = new Throwable();
         StackTraceElement[] stackTraceElements = t.getStackTrace();
