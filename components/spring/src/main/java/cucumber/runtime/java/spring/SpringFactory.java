@@ -1,81 +1,44 @@
 package cucumber.runtime.java.spring;
 
+import cucumber.runtime.CucumberException;
 import cucumber.runtime.java.ObjectFactory;
 import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.support.StaticApplicationContext;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class SpringFactory implements ObjectFactory {
     private final Set<Class<?>> classes = new HashSet<Class<?>>();
     private AbstractApplicationContext appContext;
-    //private static ThreadLocal<StepMother> mother = new ThreadLocal<StepMother>();
+    private StaticApplicationContext stepDefContext;
+
+    public SpringFactory() {
+        stepDefContext = new StaticApplicationContext();
+        appContext = new ClassPathXmlApplicationContext(new String[]{"context.xml"}, stepDefContext);
+    }
 
     public void createInstances() {
-        appContext.refresh();
     }
 
     public void disposeInstances() {
     }
 
-    public boolean canHandle(Class<?> clazz) {
-        return true;
-    }
-
     public void addClass(Class<?> clazz) {
+        if(!classes.contains(clazz)) {
+            stepDefContext.registerSingleton(clazz.getName(), clazz);
+        }
         classes.add(clazz);
     }
 
-    /*
-    public void addStepMother(StepMother instance) {
-        if (appContext == null) {
-            mother.set(instance);
-
-            StaticApplicationContext parent = new StaticApplicationContext();
-            parent.registerSingleton("stepMother", StepMotherFactory.class);
-            parent.refresh();
-
-            String springXml = System.getProperty("cuke4duke.springXml", "cucumber.xml");
-            appContext = new ClassPathXmlApplicationContext(new String[]{springXml}, parent);
-            if (mother.get() != null) {
-                throw new IllegalStateException("Expected ObjectMotherFactory to snatch up the thread local. Concurrent runs?");
-            }
-        }
-    }
-    */
-
-    @SuppressWarnings("unchecked")
     public <T> T getInstance(Class<T> type) {
-        List beans = new ArrayList(appContext.getBeansOfType(type).values());
+        Collection<T> beans = appContext.getBeansOfType(type).values();
         if (beans.size() == 1) {
-            return (T) beans.get(0);
+            return beans.iterator().next();
         } else {
-            throw new RuntimeException("Found " + beans.size() + " Beans for class " + type + ". Expected exactly 1.");
+            throw new CucumberException("Found " + beans.size() + " Beans for class " + type + ". Expected exactly 1.");
         }
     }
-
-    /*
-    static class StepMotherFactory implements FactoryBean, InitializingBean {
-        private StepMother mother;
-
-        public void afterPropertiesSet() throws Exception {
-            this.mother = SpringFactory.mother.get();
-            SpringFactory.mother.set(null);
-        }
-
-        public Object getObject() throws Exception {
-            return mother;
-        }
-
-        public Class<StepMother> getObjectType() {
-            return StepMother.class;
-        }
-
-        public boolean isSingleton() {
-            return true;
-        }
-    }
-    */
 }

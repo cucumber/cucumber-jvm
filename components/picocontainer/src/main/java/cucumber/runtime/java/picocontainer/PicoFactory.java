@@ -24,10 +24,6 @@ public class PicoFactory implements ObjectFactory {
         pico.dispose();
     }
 
-    public boolean canHandle(Class<?> clazz) {
-        return true;
-    }
-
     public void addClass(Class<?> clazz) {
         classes.add(clazz);
     }

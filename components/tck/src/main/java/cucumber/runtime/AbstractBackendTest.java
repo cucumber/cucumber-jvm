@@ -15,7 +15,7 @@ public abstract class AbstractBackendTest {
     public void producesCorrectOutput() throws IOException {
         StringWriter out = new StringWriter();
         Backend backend = backend();
-        Cucumber cucumber = new Cucumber(backend, new PrettyFormatter(out, true, true));
+        Cucumber cucumber = new Cucumber(Arrays.asList(backend), new PrettyFormatter(out, true, true));
         cucumber.execute(Arrays.asList("cucumber/runtime"));
         assertEquals(expectedOutput(), out.toString());
     }

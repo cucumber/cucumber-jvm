@@ -1,12 +1,17 @@
-package cucumber.runtime.java.spring;
+package cucumber.runtime.java;
 
 
 import cucumber.annotation.EN.Given;
 import cucumber.annotation.EN.Then;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static junit.framework.Assert.assertEquals;
 
 public class StepDefs {
+    @Autowired
+    public StepDefs(SomeDependency someDependency) {
+    }
+
     private String cukes;
 
     @Given("^I have (\\d+) cukes in my belly")

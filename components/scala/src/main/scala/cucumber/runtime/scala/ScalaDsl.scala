@@ -3,8 +3,7 @@ package cucumber.runtime.scala
 import _root_.java.util.ArrayList
 import _root_.scala.collection.mutable.ListBuffer
 import _root_.scala.reflect.Manifest
-import _root_.cuke4duke.internal.language.AbstractProgrammingLanguage
-import _root_.cuke4duke.{PyString, StepMother, Table}
+
 /*
   <yourclass> {extends|with} ScalaDsl with EN
  */

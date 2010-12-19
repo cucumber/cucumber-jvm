@@ -233,7 +233,7 @@
       <module>components/rhino</module>
       <module>components/java</module>
       <module>components/clojure</module>
-        <!--module>components/scala</module-->
+      <!--module>components/scala</module-->
         <module>components/cucumber-ant</module>
         <!--module>components/maven-plugin</module-->
     </modules>

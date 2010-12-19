@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 public class ExecuteFormatter implements Formatter {
-    private final Backend backend;
+    private List<Backend> backends;
     private final Reporter reporter;
     private final List<Step> steps = new ArrayList<Step>();
     private List<CellResult> cellResults;
@@ -25,8 +25,8 @@ public class ExecuteFormatter implements Formatter {
     private String featureElementClassName;
     private boolean hasPreviousScenario = false;
 
-    public ExecuteFormatter(Backend backend, Reporter reporter) {
-        this.backend = backend;
+    public ExecuteFormatter(List<Backend> backends, Reporter reporter) {
+        this.backends = backends;
         this.reporter = reporter;
     }
 
@@ -141,14 +141,18 @@ public class ExecuteFormatter implements Formatter {
 
     private void replayScenario() {
         if(hasPreviousScenario) {
-            backend.disposeScenario();
+            for (Backend backend : backends) {
+                backend.disposeScenario();
+            }
         }
         hasPreviousScenario = true;
 
         reporter.steps(steps);
         featureElement.replay(reporter);
 
-        backend.newScenario();
+        for (Backend backend : backends) {
+            backend.newScenario();
+        }
         boolean skip = false; // TODO: Add ability to instantiate entire runner with skip=false, for dry runs
         for (Step step : steps) {
             skip = execute(step, skip);
@@ -192,10 +196,12 @@ public class ExecuteFormatter implements Formatter {
 
     private List<CucumberMatch> stepMatches(Step step) {
         List<CucumberMatch> result = new ArrayList<CucumberMatch>();
-        for (StepDefinition stepDefinition : backend.getStepDefinitions()) {
-            List<Argument> arguments = stepDefinition.matchedArguments(step);
-            if (arguments != null) {
-                result.add(new CucumberMatch(arguments, stepDefinition));
+        for (Backend backend : backends) {
+            for (StepDefinition stepDefinition : backend.getStepDefinitions()) {
+                List<Argument> arguments = stepDefinition.matchedArguments(step);
+                if (arguments != null) {
+                    result.add(new CucumberMatch(arguments, stepDefinition));
+                }
             }
         }
         return result;

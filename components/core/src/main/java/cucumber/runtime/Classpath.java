@@ -29,7 +29,7 @@ public class Classpath {
 
     public static <T> Set<Class<? extends T>> getPublicSubclassesOf(Class<T> type, String packagePrefix) {
         Set<Class<? extends T>> result = new HashSet<Class<? extends T>>();
-        Set<Class<?>> classes = getPublicClasses(packagePrefix);
+        Collection<Class<?>> classes = getPublicClasses(packagePrefix);
         for (Class<?> clazz : classes) {
             if (!type.equals(clazz) && type.isAssignableFrom(clazz)) {
                 result.add(clazz.asSubclass(type));
@@ -69,15 +69,27 @@ public class Classpath {
     }
 
     public static <T> T instantiateSubclass(Class<T> type, Object... constructorArguments) {
-        Set<Class<? extends T>> classes = getPublicSubclassesOf(type, "cucumber.runtime");
-        if (classes.size() == 1) {
-            Class<? extends T> clazz = classes.iterator().next();
+        Collection<T> instances = instantiateSubclasses(type, constructorArguments);
+        if (instances.size() == 1) {
+            return instances.iterator().next();
+        } else if (instances.size() == 0) {
+            throw new CucumberException("Couldn't find a suitable instance");
+        } else {
+            throw new CucumberException("Found too many instances: " + instances);
+        }
+    }
+
+    public static <T> List<T> instantiateSubclasses(Class<T> type, Object... constructorArguments) {
+        List<T> result = new ArrayList<T>();
+
+        Collection<Class<? extends T>> classes = getPublicSubclassesOf(type, "cucumber.runtime");
+        for (Class<? extends T> clazz : classes) {
             try {
                 Class[] argumentTypes = new Class[constructorArguments.length];
                 for (int i = 0; i < constructorArguments.length; i++) {
                     argumentTypes[i] = constructorArguments[i].getClass();
                 }
-                return clazz.getConstructor(argumentTypes).newInstance(constructorArguments);
+                result.add(clazz.getConstructor(argumentTypes).newInstance(constructorArguments));
             } catch (InstantiationException e) {
                 throw new CucumberException("Couldn't instantiate " + clazz, e);
             } catch (IllegalAccessException e) {
@@ -87,11 +99,9 @@ public class Classpath {
             } catch (InvocationTargetException e) {
                 throw new CucumberException("Couldn't instantiate " + clazz, e);
             }
-        } else if (classes.size() == 0) {
-            throw new CucumberException("Couldn't find a suitable instance");
-        } else {
-            throw new CucumberException("Found too many classes: " + classes);
+
         }
+        return result;
     }
 
     private static abstract class AbstractInput implements Input {
@@ -211,8 +221,10 @@ public class Classpath {
         return pathToClass.substring(0, pathToClass.length() - 6).replace("/", ".");
     }
 
-    private static void addClassIfPublic(Set<Class<?>> classes, String className) throws ClassNotFoundException, NoClassDefFoundError {
+    private static void addClassIfPublic(Collection<Class<?>> classes, String className) throws ClassNotFoundException, NoClassDefFoundError {
         Class<?> clazz = cl().loadClass(className);
+        boolean isInstantiable =
+                Modifier.isStatic(clazz.getModifiers()) || clazz.getEnclosingClass() == null;
         if (Modifier.isPublic(clazz.getModifiers())) {
             classes.add(clazz);
         }

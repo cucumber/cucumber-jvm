@@ -7,7 +7,7 @@ import cucumber.annotation.EN.Then;
 import static junit.framework.Assert.assertEquals;
 
 public class StepDefs {
-    public StepDefs(SomeDependency someDependency) {
+    public StepDefs() {
 
     }
 

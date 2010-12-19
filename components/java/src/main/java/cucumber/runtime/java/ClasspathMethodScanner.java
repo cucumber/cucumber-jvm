@@ -10,18 +10,18 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Collection;
 import java.util.Locale;
-import java.util.Set;
 import java.util.regex.Pattern;
 
 public class ClasspathMethodScanner {
     public void scan(JavaBackend javaBackend, String packagePrefix) {
         try {
-            Set<Class<? extends Annotation>> cucumberAnnotations = findCucumberAnnotationClasses();
+            Collection<Class<? extends Annotation>> cucumberAnnotations = findCucumberAnnotationClasses();
             for (Class<?> clazz : Classpath.getPublicClasses(packagePrefix)) {
                 try {
                     if(Modifier.isPublic(clazz.getModifiers()) && !Modifier.isAbstract(clazz.getModifiers())) {
-                        javaBackend.addClass(clazz);
+                        // TODO: How do we know what other dependendencies to add?
                     }
                     Method[] methods = clazz.getMethods();
                     for (Method method : methods) {
@@ -38,11 +38,11 @@ public class ClasspathMethodScanner {
         }
     }
 
-    private Set<Class<? extends Annotation>> findCucumberAnnotationClasses() throws IOException {
+    private Collection<Class<? extends Annotation>> findCucumberAnnotationClasses() throws IOException {
         return Classpath.getPublicSubclassesOf(Annotation.class, "cucumber.annotation");
     }
 
-    private void scan(Method method, Set<Class<? extends Annotation>> cucumberAnnotationClasses, JavaBackend javaBackend) {
+    private void scan(Method method, Collection<Class<? extends Annotation>> cucumberAnnotationClasses, JavaBackend javaBackend) {
         for (Class<? extends Annotation> cucumberAnnotationClass : cucumberAnnotationClasses) {
             Annotation annotation = method.getAnnotation(cucumberAnnotationClass);
             if (annotation != null) {

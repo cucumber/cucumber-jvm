@@ -17,17 +17,8 @@ public class GuiceFactory implements ObjectFactory {
     private final Set<Class<?>> classes = new HashSet<Class<?>>();
     private final Map<Class<?>, Object> instances = new HashMap<Class<?>, Object>();
 
-    public GuiceFactory() throws Throwable {
-        this(System.getProperty(CONFIG_GUICE_MODULE, null));
-    }
-
     public GuiceFactory(String moduleClassName) throws Throwable {
         modules.add((Module) Class.forName(moduleClassName).newInstance());
-    }
-
-    public boolean canHandle(Class<?> clazz) {
-        return Modifier.isStatic(clazz.getModifiers())
-                || clazz.getEnclosingClass() == null;
     }
 
     public void addClass(Class<?> clazz) {

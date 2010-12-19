@@ -23,9 +23,9 @@ public class Main {
     public String packagePrefix;
 
     public void execute(Writer out) throws IOException {
-        Backend backend = Classpath.instantiateSubclass(Backend.class, packagePrefix);
+        List<Backend> backends = Classpath.instantiateSubclasses(Backend.class, packagePrefix);
         PrettyFormatter reporter = new PrettyFormatter(out, false, true);
-        Cucumber cucumber = new Cucumber(backend, reporter);
+        Cucumber cucumber = new Cucumber(backends, reporter);
         cucumber.execute(features);
     }
 

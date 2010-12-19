@@ -14,8 +14,8 @@ import java.util.List;
 public class Cucumber {
     private final FeatureParser parser;
 
-    public Cucumber(Backend backend, Reporter reporter) {
-        ExecuteFormatter executeFormatter = new ExecuteFormatter(backend, reporter);
+    public Cucumber(List<Backend> backends, Reporter reporter) {
+        ExecuteFormatter executeFormatter = new ExecuteFormatter(backends, reporter);
         parser = new GherkinParser(executeFormatter);
     }
 

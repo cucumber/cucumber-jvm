@@ -9,7 +9,8 @@ import cucumber.runtime.java.ObjectFactory
  * Collects hooks and step definitions from all classes with the 'ScalaDsl' trait.
  * After collection it sets the 'ScalaDsl' instance in execution-mode
  */
-class ScalaAnalyzer extends ClassAnalyzer {
+class ScalaAnalyzer  {
+  /*
   def alwaysLoad = Array()
 
   def populateStepDefinitionsAndHooks(objectFactory: ObjectFactory, classLanguage: ClassLanguage) {
@@ -39,4 +40,5 @@ class ScalaAnalyzer extends ClassAnalyzer {
       dsl.executionMode(stepMother)
     }
   }
+  */
 }

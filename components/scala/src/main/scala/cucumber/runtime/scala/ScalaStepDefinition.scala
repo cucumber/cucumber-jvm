@@ -1,9 +1,9 @@
 package cucumber.runtime.scala
 
 import _root_.java.util.regex.Pattern
-import cuke4duke.internal.language.{AbstractProgrammingLanguage, JdkPatternArgumentMatcher, StepDefinition}
+import cucumber.runtime.{JdkPatternArgumentMatcher, StepDefinition}
 
-class ScalaStepDefinition(name: String, val regexp_source: String, f: List[Any] => Any, signature: String, programmingLanguage: AbstractProgrammingLanguage) extends StepDefinition {
+class ScalaStepDefinition(name: String, val regexp_source: String, f: List[Any] => Any, signature: String) extends StepDefinition {
   programmingLanguage.availableStepDefinition(regexp_source, file_colon_line)
 
   private val pattern = Pattern.compile(regexp_source)

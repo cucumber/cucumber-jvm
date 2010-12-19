@@ -18,7 +18,7 @@ public class ExecuteFormatterTest {
         StringWriter out = new StringWriter();
         PrettyFormatter pf = new PrettyFormatter(out, true, true);
         Backend backend = mock(Backend.class);
-        Formatter ef = new ExecuteFormatter(backend, pf);
+        Formatter ef = new ExecuteFormatter(Arrays.asList(backend), pf);
 
         Step step = new Step(Collections.<Comment>emptyList(), "Given ", "this is undefined", 10);
         List<Step> steps = Arrays.asList(step);
