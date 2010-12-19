@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Locale;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -19,9 +20,12 @@ public class ClasspathMethodScanner {
             Set<Class<? extends Annotation>> cucumberAnnotations = findCucumberAnnotationClasses();
             for (Class<?> clazz : Classpath.getPublicClasses(packagePrefix)) {
                 try {
+                    if(Modifier.isPublic(clazz.getModifiers()) && !Modifier.isAbstract(clazz.getModifiers())) {
+                        javaBackend.addClass(clazz);
+                    }
                     Method[] methods = clazz.getMethods();
                     for (Method method : methods) {
-                        if (Classpath.isPublic(method.getModifiers())) {
+                        if (Modifier.isPublic(method.getModifiers())) {
                             scan(method, cucumberAnnotations, javaBackend);
                         }
                     }

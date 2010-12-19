@@ -25,7 +25,7 @@ public class JavaBackend implements Backend {
 
     void addStepDefinition(Pattern pattern, Method method, Locale locale) {
         Class<?> clazz = method.getDeclaringClass();
-        objectFactory.addClass(clazz);
+        addClass(clazz);
         stepDefinitions.add(new JavaStepDefinition(pattern, method, objectFactory, locale));
     }
 
@@ -35,5 +35,9 @@ public class JavaBackend implements Backend {
 
     public void disposeScenario() {
         objectFactory.disposeInstances();
+    }
+
+    public void addClass(Class<?> clazz) {
+        objectFactory.addClass(clazz);
     }
 }

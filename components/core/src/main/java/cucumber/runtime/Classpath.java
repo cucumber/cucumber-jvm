@@ -213,13 +213,9 @@ public class Classpath {
 
     private static void addClassIfPublic(Set<Class<?>> classes, String className) throws ClassNotFoundException, NoClassDefFoundError {
         Class<?> clazz = cl().loadClass(className);
-        if (isPublic(clazz.getModifiers())) {
+        if (Modifier.isPublic(clazz.getModifiers())) {
             classes.add(clazz);
         }
-    }
-
-    public static boolean isPublic(int modifiers) {
-        return (modifiers & Modifier.PUBLIC) != 0;
     }
 
     private static ClassLoader cl() {
