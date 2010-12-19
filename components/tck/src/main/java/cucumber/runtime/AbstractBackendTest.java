@@ -16,7 +16,7 @@ public abstract class AbstractBackendTest {
         StringWriter out = new StringWriter();
         Backend backend = backend();
         Cucumber cucumber = new Cucumber(Arrays.asList(backend), new PrettyFormatter(out, true, true));
-        cucumber.execute(Arrays.asList("cucumber/runtime"));
+        cucumber.execute("cucumber/runtime/cukes.feature");
         assertEquals(expectedOutput(), out.toString());
     }
 

@@ -5,7 +5,6 @@ import gherkin.FeatureParser;
 import gherkin.GherkinParser;
 import gherkin.formatter.Reporter;
 
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -19,7 +18,7 @@ public class Cucumber {
         parser = new GherkinParser(executeFormatter);
     }
 
-    public void execute(List<String> paths) throws IOException {
+    public void execute(String... paths) {
         for (String path : paths) {
             // TODO: Check for :line:line.
             // TODO: Make Classpath.scan deal with both files and dirs. Tests!!!

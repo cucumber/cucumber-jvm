@@ -13,11 +13,14 @@ import java.util.Map;
 public class ExecuteFormatter implements Formatter {
     private List<Backend> backends;
     private final Reporter reporter;
-    private final List<Step> steps = new ArrayList<Step>();
+    private final List<Step> scenarioSteps = new ArrayList<Step>();
+    private final List<Step> backgroundSteps = new ArrayList<Step>();
+    private List<Step> steps;
     private List<CellResult> cellResults;
 
     private String uri;
     private Feature feature;
+    private Background background;
     private DescribedStatement featureElement;
     private StepResultHandler stepResultHandler;
     private Map<Step, List<CellResult>> matchedResultsByStep = new HashMap<Step, List<CellResult>>();
@@ -38,16 +41,18 @@ public class ExecuteFormatter implements Formatter {
     public void feature(Feature feature) {
         this.feature = feature;
         reporter.feature(feature);
+        background = null;
     }
 
     public void background(Background background) {
-        reporter.background(background);
+        this.background = background;
+        steps = backgroundSteps;
     }
 
     public void scenario(Scenario scenario) {
         replayPreviousFeatureElement();
         featureElement = scenario;
-        stepResultHandler = new ScenarioStepResultHandler(this);
+        steps = scenarioSteps;
     }
 
     public void scenarioOutline(ScenarioOutline scenarioOutline) {
@@ -84,7 +89,7 @@ public class ExecuteFormatter implements Formatter {
 
     private List<Step> createExampleSteps(Row example) {
         List<Step> result = new ArrayList<Step>();
-        for (Step outlineStep : steps) {
+        for (Step outlineStep : scenarioSteps) {
             result.add(exampleStep(outlineStep, example));
         }
         return result;
@@ -129,7 +134,7 @@ public class ExecuteFormatter implements Formatter {
 
             if (featureElement instanceof Scenario) {
                 replayScenario();
-                steps.clear();
+                scenarioSteps.clear();
             } else if (featureElement instanceof ScenarioOutline) {
                 replayScenarioOutline();
             } else {
@@ -147,23 +152,37 @@ public class ExecuteFormatter implements Formatter {
         }
         hasPreviousScenario = true;
 
-        reporter.steps(steps);
-        featureElement.replay(reporter);
-
         for (Backend backend : backends) {
             backend.newScenario();
         }
+
         boolean skip = false; // TODO: Add ability to instantiate entire runner with skip=false, for dry runs
-        for (Step step : steps) {
+
+        if(background != null) {
+            reporter.steps(backgroundSteps);
+            background.replay(reporter);
+            background = null;
+            stepResultHandler = new ReportingStepResultHandler(reporter);
+        } else {
+            stepResultHandler = new OnlyOnFailureReportingStepResultHandler(reporter);
+        }
+        for (Step step : backgroundSteps) {
+            skip = execute(step, skip);
+        }
+
+        reporter.steps(scenarioSteps);
+        featureElement.replay(reporter);
+        stepResultHandler = new ReportingStepResultHandler(reporter);
+        for (Step step : scenarioSteps) {
             skip = execute(step, skip);
         }
     }
 
     private void replayScenarioOutline() {
-        reporter.steps(steps);
+        reporter.steps(scenarioSteps);
         featureElement.replay(reporter);
 
-        for (Step step : steps) {
+        for (Step step : scenarioSteps) {
             reporter.step(step);
             reporter.match(step.getOutlineMatch(uri + ":" + step.getLine()));
             reporter.result(Result.SKIPPED);
@@ -205,14 +224,6 @@ public class ExecuteFormatter implements Formatter {
             }
         }
         return result;
-    }
-
-    public void scenarioStepMatch(Match match) {
-        reporter.match(match);
-    }
-
-    public void scenarioStepResult(Result result) {
-        reporter.result(result);
     }
 
     public void exampleResult(Step step, Result result) {
