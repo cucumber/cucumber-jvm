@@ -12,13 +12,13 @@ public interface StepDefinition {
      * and bigger sizes if it matches several.
      */
     List<Argument> matchedArguments(Step step);
-    
+
     /**
      * The source line where the step definition is defined.
      * Example: foo/bar/Zap.brainfuck:42
      */
     String getLocation();
-    
+
     /**
      * The parameter types this step definition can be invoked with.
      * This will be used to coerce string values from arguments before
@@ -26,13 +26,13 @@ public interface StepDefinition {
      * must be equal to the number of arguments accepted by execute.
      */
     Class<?>[] getParameterTypes();
-    
+
     /**
      * Invokes the step definition. The method should raise a Throwable
      * if the invocation fails, which will cause the step to fail.
      */
     void execute(Object[] args) throws Throwable;
-    
+
     /**
      * Return true if this matches the location. This is used to filter
      * stack traces.

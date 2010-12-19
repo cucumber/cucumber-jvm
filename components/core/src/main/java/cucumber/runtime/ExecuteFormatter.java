@@ -98,7 +98,7 @@ public class ExecuteFormatter implements Formatter {
             String headerCell = headerCells.get(i);
             String value = example.getCells().get(i);
             String token = "<" + headerCell + ">";
-            if(name.contains(token)) {
+            if (name.contains(token)) {
                 name = name.replace(token, value);
                 matchedResults.add(cellResults.get(i));
             }
@@ -125,7 +125,7 @@ public class ExecuteFormatter implements Formatter {
     private void replayPreviousFeatureElement() {
         if (featureElement != null) {
             featureElementClassName = feature.getName() + "." + featureElement.getName();
-            
+
             if (featureElement instanceof Scenario) {
                 replayScenario();
                 steps.clear();

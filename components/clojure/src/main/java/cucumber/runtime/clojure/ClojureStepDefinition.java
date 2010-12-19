@@ -17,7 +17,7 @@ public class ClojureStepDefinition implements StepDefinition {
     private final AFunction closure;
     private StackTraceElement location;
 
-    public ClojureStepDefinition(Pattern regexp, AFunction closure, StackTraceElement location)  {
+    public ClojureStepDefinition(Pattern regexp, AFunction closure, StackTraceElement location) {
         this.regexp = regexp;
         this.closure = closure;
         this.location = location;

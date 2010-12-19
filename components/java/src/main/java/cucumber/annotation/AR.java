@@ -11,49 +11,56 @@ public class AR {
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
-    @CucumberAnnotation("ar") // TODO: REMOVE
+    @CucumberAnnotation("ar")
+    // TODO: REMOVE
     public static @interface بفرض {
         public abstract String value();
     }
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
-    @CucumberAnnotation("ar") // TODO: REMOVE
+    @CucumberAnnotation("ar")
+    // TODO: REMOVE
     public static @interface متى {
         public abstract String value();
     }
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
-    @CucumberAnnotation("ar") // TODO: REMOVE
+    @CucumberAnnotation("ar")
+    // TODO: REMOVE
     public static @interface عندما {
         public abstract String value();
     }
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
-    @CucumberAnnotation("ar") // TODO: REMOVE
+    @CucumberAnnotation("ar")
+    // TODO: REMOVE
     public static @interface اذاً {
         public abstract String value();
     }
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
-    @CucumberAnnotation("ar") // TODO: REMOVE
+    @CucumberAnnotation("ar")
+    // TODO: REMOVE
     public static @interface ثم {
         public abstract String value();
     }
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
-    @CucumberAnnotation("ar") // TODO: REMOVE
+    @CucumberAnnotation("ar")
+    // TODO: REMOVE
     public static @interface و {
         public abstract String value();
     }
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
-    @CucumberAnnotation("ar") // TODO: REMOVE
+    @CucumberAnnotation("ar")
+    // TODO: REMOVE
     public static @interface لكن {
         public abstract String value();
     }

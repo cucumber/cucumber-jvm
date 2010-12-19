@@ -1,7 +1,8 @@
 package cucumber.runtime.java;
 
 
-import cucumber.annotation.EN.*;
+import cucumber.annotation.EN.Given;
+import cucumber.annotation.EN.Then;
 
 import static junit.framework.Assert.assertEquals;
 

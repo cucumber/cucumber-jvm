@@ -25,7 +25,7 @@ public class IokeBackend implements Backend {
             ioke.ground.setCell("IokeBackend", this);
             ioke.evaluateString("use(\"cucumber/runtime/ioke/dsl\")");
 
-            failureRescues = createRescues("ISpec","ExpectationNotMet");
+            failureRescues = createRescues("ISpec", "ExpectationNotMet");
             pendingRescues = createRescues("Pending");
 
             Classpath.scan(scriptPath, ".ik", new Consumer() {

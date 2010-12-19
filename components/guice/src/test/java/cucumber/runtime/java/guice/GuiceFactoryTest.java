@@ -47,7 +47,7 @@ public class GuiceFactoryTest {
             guiceFactory.addClass(someInnerClass);
         }
         guiceFactory.createObjects();
-		
-	}
+
+    }
 
 }

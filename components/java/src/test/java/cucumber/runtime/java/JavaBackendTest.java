@@ -15,7 +15,7 @@ public class JavaBackendTest extends AbstractBackendTest {
             "      junit.framework.ComparisonFailure: null expected:<[5]> but was:<[4]>\n" +
             "      \tat junit.framework.Assert.assertEquals(Assert.java:81)\n" +
             "      \tat junit.framework.Assert.assertEquals(Assert.java:87)\n" +
-            "      \tat cucumber.runtime.java.StepDefs.checkCukes(StepDefs.java:18)\n" +
+            "      \tat cucumber.runtime.java.StepDefs.checkCukes(StepDefs.java:19)\n" +
             "      \tat Cukes.1 cuke.Then there are 4 cukes in my belly(cucumber/runtime/cukes.feature:4)\n" +
             "\n" +
             "\n" +
@@ -31,28 +31,28 @@ public class JavaBackendTest extends AbstractBackendTest {
             "      junit.framework.ComparisonFailure: null expected:<[glass]> but was:<[bowl]>\n" +
             "      \tat junit.framework.Assert.assertEquals(Assert.java:81)\n" +
             "      \tat junit.framework.Assert.assertEquals(Assert.java:87)\n" +
-            "      \tat cucumber.runtime.java.StepDefs.containerContainsIngredient(StepDefs.java:23)\n" +
+            "      \tat cucumber.runtime.java.StepDefs.containerContainsIngredient(StepDefs.java:24)\n" +
             "      \tat Cukes.cooking.Given the bowl contains oats(cucumber/runtime/cukes.feature:7)\n" +
             "\n" +
             "      | bowl      | oats       | milk      | oatmeal      |\n" +
             "      junit.framework.ComparisonFailure: null expected:<[glass]> but was:<[bowl]>\n" +
             "      \tat junit.framework.Assert.assertEquals(Assert.java:81)\n" +
             "      \tat junit.framework.Assert.assertEquals(Assert.java:87)\n" +
-            "      \tat cucumber.runtime.java.StepDefs.containerContainsIngredient(StepDefs.java:23)\n" +
+            "      \tat cucumber.runtime.java.StepDefs.containerContainsIngredient(StepDefs.java:24)\n" +
             "      \tat Cukes.cooking.Given the bowl contains oats(cucumber/runtime/cukes.feature:7)\n" +
             "\n" +
             "      | bowl      | oats       | milk      | oatmeal      |\n" +
             "      junit.framework.ComparisonFailure: null expected:<[glass]> but was:<[bowl]>\n" +
             "      \tat junit.framework.Assert.assertEquals(Assert.java:81)\n" +
             "      \tat junit.framework.Assert.assertEquals(Assert.java:87)\n" +
-            "      \tat cucumber.runtime.java.StepDefs.containerContainsIngredient(StepDefs.java:23)\n" +
+            "      \tat cucumber.runtime.java.StepDefs.containerContainsIngredient(StepDefs.java:24)\n" +
             "      \tat Cukes.cooking.Given the bowl contains oats(cucumber/runtime/cukes.feature:7)\n" +
             "\n" +
             "      | bowl      | oats       | milk      | oatmeal      |\n" +
             "      junit.framework.ComparisonFailure: null expected:<[glass]> but was:<[bowl]>\n" +
             "      \tat junit.framework.Assert.assertEquals(Assert.java:81)\n" +
             "      \tat junit.framework.Assert.assertEquals(Assert.java:87)\n" +
-            "      \tat cucumber.runtime.java.StepDefs.containerContainsIngredient(StepDefs.java:23)\n" +
+            "      \tat cucumber.runtime.java.StepDefs.containerContainsIngredient(StepDefs.java:24)\n" +
             "      \tat Cukes.cooking.Given the bowl contains oats(cucumber/runtime/cukes.feature:7)\n" +
             "\n" +
             "      | glass     | guinness   | champagne | black velvet |\n" +
@@ -60,24 +60,23 @@ public class JavaBackendTest extends AbstractBackendTest {
             "      junit.framework.ComparisonFailure: null expected:<[milk]> but was:<[champagne]>\n" +
             "      \tat junit.framework.Assert.assertEquals(Assert.java:81)\n" +
             "      \tat junit.framework.Assert.assertEquals(Assert.java:87)\n" +
-            "      \tat cucumber.runtime.java.StepDefs.addLiquid(StepDefs.java:28)\n" +
+            "      \tat cucumber.runtime.java.StepDefs.addLiquid(StepDefs.java:29)\n" +
             "      \tat Cukes.cooking.When I add champagne(cucumber/runtime/cukes.feature:8)\n" +
             "\n" +
             "      | glass     | guinness   | champagne | black velvet |\n" +
             "      junit.framework.ComparisonFailure: null expected:<[milk]> but was:<[champagne]>\n" +
             "      \tat junit.framework.Assert.assertEquals(Assert.java:81)\n" +
             "      \tat junit.framework.Assert.assertEquals(Assert.java:87)\n" +
-            "      \tat cucumber.runtime.java.StepDefs.addLiquid(StepDefs.java:28)\n" +
+            "      \tat cucumber.runtime.java.StepDefs.addLiquid(StepDefs.java:29)\n" +
             "      \tat Cukes.cooking.When I add champagne(cucumber/runtime/cukes.feature:8)\n" +
             "\n" +
             "      | glass     | guinness   | champagne | black velvet |\n" +
             "      junit.framework.ComparisonFailure: null expected:<[milk]> but was:<[champagne]>\n" +
             "      \tat junit.framework.Assert.assertEquals(Assert.java:81)\n" +
             "      \tat junit.framework.Assert.assertEquals(Assert.java:87)\n" +
-            "      \tat cucumber.runtime.java.StepDefs.addLiquid(StepDefs.java:28)\n" +
+            "      \tat cucumber.runtime.java.StepDefs.addLiquid(StepDefs.java:29)\n" +
             "      \tat Cukes.cooking.When I add champagne(cucumber/runtime/cukes.feature:8)\n" +
-            "\n" +
-            "";
+            "\n";
 
     @Override
     protected String expectedOutput() {
@@ -85,6 +84,6 @@ public class JavaBackendTest extends AbstractBackendTest {
     }
 
     protected Backend backend() throws IOException {
-        return new JavaBackend(new ReflectionFactory(), new ClasspathMethodScanner(), "cucumber.runtime.java");
+        return new JavaBackend("cucumber.runtime.java");
     }
 }

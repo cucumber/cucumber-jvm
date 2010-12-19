@@ -25,7 +25,7 @@ public class Cucumber {
             // TODO: Make Classpath.scan deal with both files and dirs. Tests!!!
 
             Classpath.scan(path, ".feature", new Consumer() {
-                public void consume(Input input) throws IOException {
+                public void consume(Input input) {
                     parser.parse(input.getString(), input.getPath(), 0);
                 }
             });

@@ -7,7 +7,6 @@ import org.mozilla.javascript.Context;
 import org.mozilla.javascript.NativeFunction;
 import org.mozilla.javascript.NativeJavaObject;
 import org.mozilla.javascript.Scriptable;
-import org.mozilla.javascript.regexp.NativeRegExp;
 import org.mozilla.javascript.tools.shell.Global;
 
 import java.util.List;
@@ -41,7 +40,7 @@ public class RhinoStepDefinition implements StepDefinition {
 
     public Class<?>[] getParameterTypes() {
         Class[] types = new Class[bodyFunc.getArity()];
-        for(int i = 0; i < types.length ; i++) {
+        for (int i = 0; i < types.length; i++) {
             types[i] = String.class;
         }
         return types;

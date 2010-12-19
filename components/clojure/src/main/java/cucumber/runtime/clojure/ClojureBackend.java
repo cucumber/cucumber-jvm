@@ -4,7 +4,6 @@ import clojure.lang.AFunction;
 import clojure.lang.RT;
 import cucumber.runtime.*;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -27,11 +26,11 @@ public class ClojureBackend implements Backend {
     private void defineStepDefinitions() throws Exception {
         RT.load("cucumber/runtime/clojure/dsl");
         Classpath.scan(this.scriptPath, ".clj", new Consumer() {
-            public void consume(Input input) throws IOException {
+            public void consume(Input input) {
                 try {
                     RT.load(input.getPath().replaceAll(".clj$", ""));
                 } catch (Exception e) {
-                    throw new IOException(e);
+                    throw new CucumberException("Failed to parse file " + input.getPath(), e);
                 }
             }
         });
@@ -50,8 +49,8 @@ public class ClojureBackend implements Backend {
         StackTraceElement[] stackTraceElements = t.getStackTrace();
         for (int i = 0; i < stackTraceElements.length; i++) {
             StackTraceElement element = stackTraceElements[i];
-            if(element.getClassName().equals(interpreterClassName) && element.getMethodName().equals(interpreterMethodName)) {
-                return stackTraceElements[i-1];
+            if (element.getClassName().equals(interpreterClassName) && element.getMethodName().equals(interpreterMethodName)) {
+                return stackTraceElements[i - 1];
             }
         }
         throw new CucumberException("Couldn't find location for step definition");

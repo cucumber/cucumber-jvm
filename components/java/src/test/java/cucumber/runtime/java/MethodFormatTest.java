@@ -1,6 +1,5 @@
 package cucumber.runtime.java;
 
-import cucumber.runtime.java.MethodFormat;
 import org.junit.Before;
 import org.junit.Test;
 

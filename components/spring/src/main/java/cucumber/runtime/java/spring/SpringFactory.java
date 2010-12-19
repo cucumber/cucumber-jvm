@@ -1,11 +1,7 @@
 package cucumber.runtime.java.spring;
 
 import cucumber.runtime.java.ObjectFactory;
-import org.springframework.beans.factory.FactoryBean;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.context.support.StaticApplicationContext;
 
 import java.util.ArrayList;
 import java.util.HashSet;

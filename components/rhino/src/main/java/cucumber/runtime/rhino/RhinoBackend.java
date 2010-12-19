@@ -35,8 +35,12 @@ public class RhinoBackend implements Backend {
         cx.evaluateReader(scope, dsl, JS_DSL, 1, null);
 
         Classpath.scan(this.scriptPath, ".js", new Consumer() {
-            public void consume(Input input) throws IOException {
-                cx.evaluateReader(scope, input.getReader(), input.getPath(), 1, null);
+            public void consume(Input input) {
+                try {
+                    cx.evaluateReader(scope, input.getReader(), input.getPath(), 1, null);
+                } catch (IOException e) {
+                    throw new CucumberException("Failed to evaluate Javascript in " + input.getPath(), e);
+                }
             }
         });
     }
@@ -55,7 +59,7 @@ public class RhinoBackend implements Backend {
             boolean js = stackTraceElement.getFileName().endsWith(extension);
             boolean inScriptPath = stackTraceElement.getFileName().startsWith(scriptPath);
             boolean hasLine = stackTraceElement.getLineNumber() != -1;
-            if(js && inScriptPath && hasLine) {
+            if (js && inScriptPath && hasLine) {
                 return stackTraceElement;
             }
         }

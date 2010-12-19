@@ -29,7 +29,7 @@ public class IokeStepDefinition implements StepDefinition {
     public List<Argument> matchedArguments(Step step) {
         try {
             Object args = backend.invoke(iokeStepDefObject, "arguments_from", step.getName());
-            if(args.equals(ioke.nil)) {
+            if (args.equals(ioke.nil)) {
                 return null;
             } else {
                 return (List<Argument>) args;

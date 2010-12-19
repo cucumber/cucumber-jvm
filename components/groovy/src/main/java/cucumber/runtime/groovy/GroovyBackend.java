@@ -29,7 +29,7 @@ public class GroovyBackend implements Backend {
     private void defineStepDefinitions(String packagePrefix) throws IOException {
         final GroovyShell shell = new GroovyShell(new Binding());
         Classpath.scan(packagePrefix, ".groovy", new Consumer() {
-            public void consume(Input input) throws IOException {
+            public void consume(Input input) {
                 shell.evaluate(input.getString(), input.getPath());
             }
         });
@@ -57,7 +57,7 @@ public class GroovyBackend implements Backend {
     }
 
     private Object getWorld() {
-        if(world == null) {
+        if (world == null) {
             world = worldClosure == null ? new Object() : worldClosure.call();
         }
         return world;
@@ -67,7 +67,7 @@ public class GroovyBackend implements Backend {
         Throwable t = new Throwable();
         StackTraceElement[] stackTraceElements = t.getStackTrace();
         for (StackTraceElement stackTraceElement : stackTraceElements) {
-            if(stackTraceElement.getFileName().endsWith(".groovy")) {
+            if (stackTraceElement.getFileName().endsWith(".groovy")) {
                 return stackTraceElement;
             }
         }

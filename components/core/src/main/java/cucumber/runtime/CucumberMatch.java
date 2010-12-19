@@ -21,7 +21,7 @@ public class CucumberMatch extends Match implements StepRunner {
     public boolean execute(boolean skip, StepResultHandler stepResultHandler, StackTraceElement stepLocation, Step step) {
         stepResultHandler.match(this);
         Result result;
-        if(skip) {
+        if (skip) {
             result = new Result("skipped", null);
         } else {
             result = execute(stepDefinition.getParameterTypes(), stepLocation);
@@ -36,7 +36,7 @@ public class CucumberMatch extends Match implements StepRunner {
         Throwable error = null;
         try {
             stepDefinition.execute(getTransformedArgs(parameterTypes));
-        } catch(CucumberException e) {
+        } catch (CucumberException e) {
             throw e;
         } catch (InvocationTargetException t) {
             error = t.getTargetException();
@@ -52,7 +52,7 @@ public class CucumberMatch extends Match implements StepRunner {
 
 
     private Object[] getTransformedArgs(Class<?>[] parameterTypes) {
-        if(parameterTypes != null && parameterTypes.length != getArguments().size()) {
+        if (parameterTypes != null && parameterTypes.length != getArguments().size()) {
             throw new CucumberException("Bad number of args"); // TODO: Handle multiline args here...
         }
 
@@ -79,11 +79,11 @@ public class CucumberMatch extends Match implements StepRunner {
     }
 
     private Throwable filterStacktrace(Throwable error, StackTraceElement stepStackTraceElement) {
-        if(error.getCause() != null && error.getCause() != error) {
+        if (error.getCause() != null && error.getCause() != error) {
             return filterStacktrace(error.getCause(), stepStackTraceElement);
         }
         StackTraceElement[] stackTraceElements = error.getStackTrace();
-        if(stackTraceElements.length == 0) {
+        if (stackTraceElements.length == 0) {
             return error;
         }
         int stackLength;

@@ -1,6 +1,7 @@
 package cucumber.runtime.groovy;
 
-import cucumber.runtime.*;
+import cucumber.runtime.AbstractBackendTest;
+import cucumber.runtime.Backend;
 
 import java.io.IOException;
 

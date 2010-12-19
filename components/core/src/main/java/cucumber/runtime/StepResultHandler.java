@@ -6,5 +6,6 @@ import gherkin.formatter.model.Step;
 
 public interface StepResultHandler {
     void match(Match match);
+
     void result(Step step, Result result);
 }

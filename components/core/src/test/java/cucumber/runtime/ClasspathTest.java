@@ -16,13 +16,13 @@ import static org.junit.Assert.assertEquals;
 public class ClasspathTest {
     @Test
     public void looksUpClassesOnClassPath() throws IOException {
-        Set<Class<?>> expected = new HashSet<Class<?>> (Arrays.asList(FormatterListener.class, ParseError.class, Parser.class, StateMachineReader.class));
+        Set<Class<?>> expected = new HashSet<Class<?>>(Arrays.asList(FormatterListener.class, ParseError.class, Parser.class, StateMachineReader.class));
         assertEquals(expected, Classpath.getPublicClasses("gherkin.parser"));
     }
 
     @Test
     public void looksUpSubclassesOnClassPath() throws IOException {
-        Set<Class<? extends Formatter>> expected = new HashSet<Class<? extends Formatter>> (Arrays.asList(JSONFormatter.class, PrettyFormatter.class, FilterFormatter.class, Reporter.class));
+        Set<Class<? extends Formatter>> expected = new HashSet<Class<? extends Formatter>>(Arrays.asList(JSONFormatter.class, PrettyFormatter.class, FilterFormatter.class, Reporter.class));
         assertEquals(expected, Classpath.getPublicSubclassesOf(Formatter.class, "gherkin"));
     }
 
@@ -30,7 +30,7 @@ public class ClasspathTest {
     public void looksUpFilesByDir() throws IOException {
         final List<String> paths = new ArrayList<String>();
         Classpath.scan("cucumber/runtime", ".xyz", new Consumer() {
-            public void consume(Input input) throws IOException {
+            public void consume(Input input) {
                 paths.add(input.getPath());
             }
         });
@@ -41,7 +41,7 @@ public class ClasspathTest {
     public void looksUpFilesByFile() throws IOException {
         final List<String> paths = new ArrayList<String>();
         Classpath.scan("cucumber/runtime/foo.xyz", new Consumer() {
-            public void consume(Input input) throws IOException {
+            public void consume(Input input) {
                 paths.add(input.getPath());
             }
         });
