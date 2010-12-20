@@ -27,6 +27,7 @@ public class ExecuteFormatter implements Formatter {
     private Row examplesHeaderRow;
     private String featureElementClassName;
     private boolean hasPreviousScenario = false;
+    private List<Step> undefinedSteps = new ArrayList<Step>();
 
     public ExecuteFormatter(List<Backend> backends, Reporter reporter) {
         this.backends = backends;
@@ -203,6 +204,7 @@ public class ExecuteFormatter implements Formatter {
     private StepRunner stepRunner(Step step, StackTraceElement stepStackTraceElement) {
         List<CucumberMatch> matches = stepMatches(step);
         if (matches.size() == 0) {
+            undefinedSteps.add(step);
             return new UndefinedStepRunner(stepStackTraceElement);
         }
         if (matches.size() == 1) {

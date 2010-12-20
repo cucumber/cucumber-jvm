@@ -11,7 +11,7 @@ import java.util.Arrays;
 
 public class BackgroundTest {
     @Test
-    public void canRunFeatureWithBackground() {
+    public void canRunFeatureWithBackgroundEYEBALLING() {
         Reporter reporter = new PrettyFormatter(System.out, true, true);
         Backend backend = new JavaBackend("cucumber.runtime.java.background");
         Cucumber cucumber = new Cucumber(Arrays.asList(backend), reporter);
