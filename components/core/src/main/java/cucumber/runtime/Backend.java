@@ -1,5 +1,7 @@
 package cucumber.runtime;
 
+import gherkin.formatter.model.Step;
+
 import java.util.List;
 
 public interface Backend {
@@ -12,4 +14,6 @@ public interface Backend {
     void newScenario();
 
     void disposeScenario();
+
+    String getSnippet(Step step);
 }

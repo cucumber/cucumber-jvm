@@ -3,6 +3,7 @@ package cucumber.runtime.clojure;
 import clojure.lang.AFunction;
 import clojure.lang.RT;
 import cucumber.runtime.*;
+import gherkin.formatter.model.Step;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +46,10 @@ public class ClojureBackend implements Backend {
     }
 
     public void disposeScenario() {
+    }
+
+    public String getSnippet(Step step) {
+        return null;
     }
 
     private StackTraceElement stepDefLocation(String interpreterClassName, String interpreterMethodName) {

@@ -32,5 +32,6 @@ public class Cucumber {
                 }
             });
         }
+        executeFormatter.getSnippets();
     }
 }

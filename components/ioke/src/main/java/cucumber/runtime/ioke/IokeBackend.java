@@ -2,6 +2,7 @@ package cucumber.runtime.ioke;
 
 import cucumber.Table;
 import cucumber.runtime.*;
+import gherkin.formatter.model.Step;
 import ioke.lang.IokeObject;
 import ioke.lang.Message;
 import ioke.lang.Runtime;
@@ -56,6 +57,10 @@ public class IokeBackend implements Backend {
     }
 
     public void disposeScenario() {
+    }
+
+    public String getSnippet(Step step) {
+        return null;
     }
 
     private List<Runtime.RescueInfo> createRescues(String... names) throws ControlFlow {

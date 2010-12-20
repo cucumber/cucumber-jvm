@@ -1,6 +1,7 @@
 package cucumber.runtime.rhino;
 
 import cucumber.runtime.*;
+import gherkin.formatter.model.Step;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.NativeFunction;
 import org.mozilla.javascript.Scriptable;
@@ -53,6 +54,10 @@ public class RhinoBackend implements Backend {
     }
 
     public void disposeScenario() {
+    }
+
+    public String getSnippet(Step step) {
+        return null;
     }
 
     private StackTraceElement stepDefLocation(String extension) {

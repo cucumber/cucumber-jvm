@@ -1,6 +1,7 @@
 package cucumber.runtime.groovy;
 
 import cucumber.runtime.*;
+import gherkin.formatter.model.Step;
 import groovy.lang.Binding;
 import groovy.lang.Closure;
 import groovy.lang.GroovyShell;
@@ -44,6 +45,10 @@ public class GroovyBackend implements Backend {
     }
 
     public void disposeScenario() {
+    }
+
+    public String getSnippet(Step step) {
+        return null;
     }
 
     public static void addStepDefinition(Pattern regexp, Closure body) {

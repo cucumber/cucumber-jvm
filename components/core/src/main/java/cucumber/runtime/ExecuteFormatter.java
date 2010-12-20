@@ -235,4 +235,15 @@ public class ExecuteFormatter implements Formatter {
         }
         reporter.row(cellResults);
     }
+
+    public List<String> getSnippets() {
+        List<String> snippets = new ArrayList<String>();
+        for (Step step : undefinedSteps) {
+            for (Backend backend : backends) {
+                String snippet = backend.getSnippet(step);
+                snippets.add(snippet);
+            }
+        }
+        return snippets;
+    }
 }

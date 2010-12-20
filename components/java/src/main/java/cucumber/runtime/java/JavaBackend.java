@@ -3,6 +3,7 @@ package cucumber.runtime.java;
 import cucumber.runtime.Backend;
 import cucumber.runtime.Classpath;
 import cucumber.runtime.StepDefinition;
+import gherkin.formatter.model.Step;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -29,6 +30,10 @@ public class JavaBackend implements Backend {
 
     public void disposeScenario() {
         objectFactory.disposeInstances();
+    }
+
+    public String getSnippet(Step step) {
+        throw new UnsupportedOperationException();
     }
 
     void addStepDefinition(Pattern pattern, Method method, Locale locale) {
