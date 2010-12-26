@@ -2,6 +2,7 @@ package cucumber.runtime.java;
 
 import cucumber.runtime.Backend;
 import cucumber.runtime.Classpath;
+import cucumber.runtime.SnippetGenerator;
 import cucumber.runtime.StepDefinition;
 import gherkin.formatter.model.Step;
 
@@ -33,7 +34,7 @@ public class JavaBackend implements Backend {
     }
 
     public String getSnippet(Step step) {
-        throw new UnsupportedOperationException();
+        return new JavaSnippetGenerator(step).getSnippet();
     }
 
     void addStepDefinition(Pattern pattern, Method method, Locale locale) {
