@@ -8,7 +8,6 @@ import org.junit.Test;
 import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 import static org.mockito.Mockito.mock;
 
@@ -21,12 +20,10 @@ public class ExecuteFormatterTest {
         Formatter ef = new ExecuteFormatter(Arrays.asList(backend), pf);
 
         Step step = new Step(Collections.<Comment>emptyList(), "Given ", "this is undefined", 10);
-        List<Step> steps = Arrays.asList(step);
         Scenario scenario = new Scenario(Collections.<Comment>emptyList(), Collections.<Tag>emptyList(), "Scenario", "foo", "", 9);
 
         ef.uri("some_feature.feature");
         ef.feature(new Feature(Collections.<Comment>emptyList(), Collections.<Tag>emptyList(), "Feature", "Foo", "", 1));
-        pf.steps(steps);
         ef.scenario(scenario);
         ef.step(step);
         ef.scenario(null);

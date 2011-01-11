@@ -5,6 +5,7 @@ import com.beust.jcommander.Parameter;
 import cucumber.Cucumber;
 import cucumber.runtime.Backend;
 import cucumber.runtime.Classpath;
+import cucumber.runtime.SummaryReporter;
 import gherkin.formatter.PrettyFormatter;
 
 import java.io.IOException;
@@ -25,7 +26,7 @@ public class Main {
     public void execute(Writer out) throws IOException {
         List<Backend> backends = Classpath.instantiateSubclasses(Backend.class, packagePrefix);
         PrettyFormatter reporter = new PrettyFormatter(out, false, true);
-        Cucumber cucumber = new Cucumber(backends, reporter);
+        Cucumber cucumber = new Cucumber(backends, reporter, new SummaryReporter(out));
         cucumber.execute(features.toArray(new String[features.size()]));
     }
 

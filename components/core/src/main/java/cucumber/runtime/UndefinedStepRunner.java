@@ -1,6 +1,7 @@
 package cucumber.runtime;
 
 import gherkin.formatter.Argument;
+import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Match;
 import gherkin.formatter.model.Result;
 import gherkin.formatter.model.Step;
@@ -12,9 +13,9 @@ public class UndefinedStepRunner extends Match implements StepRunner {
         super(Collections.<Argument>emptyList(), stepLocation.getFileName() + ":" + stepLocation.getLineNumber());
     }
 
-    public boolean execute(boolean skip, StepResultHandler stepResultHandler, StackTraceElement stepLocation, Step step) {
-        stepResultHandler.match(this);
-        stepResultHandler.result(step, Result.UNDEFINED);
+    public boolean execute(boolean skip, Reporter reporter, StackTraceElement stepLocation) {
+        reporter.match(this);
+        reporter.result(Result.UNDEFINED);
         return true;
     }
 }

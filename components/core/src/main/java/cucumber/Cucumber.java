@@ -7,16 +7,24 @@ import gherkin.formatter.Reporter;
 
 import java.util.List;
 
+import static java.util.Arrays.asList;
+
 /**
  * A high level façade for running Cucumber features.
  */
 public class Cucumber {
     private final List<Backend> backends;
     private final Reporter reporter;
+    private final SummaryReporter summaryReporter;
 
-    public Cucumber(List<Backend> backends, Reporter reporter) {
+    public Cucumber(List<Backend> backends, Reporter reporter, SummaryReporter summaryReporter) {
         this.backends = backends;
         this.reporter = reporter;
+        this.summaryReporter = summaryReporter;
+    }
+
+    public Cucumber(Backend backend, Reporter reporter, SummaryReporter summaryReporter) {
+        this(asList(backend), reporter, summaryReporter);
     }
 
     public void execute(String... paths) {
@@ -32,6 +40,6 @@ public class Cucumber {
                 }
             });
         }
-        executeFormatter.getSnippets();
+        executeFormatter.reportSummary(summaryReporter);
     }
 }

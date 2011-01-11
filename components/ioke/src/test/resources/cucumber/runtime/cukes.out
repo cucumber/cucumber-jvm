@@ -1,0 +1,11 @@
+Feature: Cukes
+
+  Scenario: 1 cuke                     # cucumber/runtime/cukes.feature:2
+    Given I have 5 cukes in my belly   # cucumber/runtime/ioke/stepdefs.ik
+    Then there are 4 cukes in my belly # cucumber/runtime/ioke/stepdefs.ik
+      java.lang.AssertionError: expected:<"[4]"> but was:<"[5]"> (ISpec ExpectationNotMet)
+      
+      
+      	at cucumber.runtime.ioke.IokeBackend.execute(IokeBackend.java:91)
+      	at Cukes.1 cuke.Then there are 4 cukes in my belly(cucumber/runtime/cukes.feature:4)
+

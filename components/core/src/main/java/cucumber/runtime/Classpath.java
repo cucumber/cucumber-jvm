@@ -49,7 +49,7 @@ public class Classpath {
         }
     }
 
-    public static void scan(String pathName, Consumer consumer) throws IOException {
+    public static void scan(String pathName, Consumer consumer) {
         final List<URL> startUrls = classpathUrls(pathName);
         for (URL startUrl : startUrls) {
             if (startUrl.getProtocol().equals("jar")) {
@@ -62,7 +62,11 @@ public class Classpath {
 
     private static List<URL> classpathUrls(String path) {
         try {
-            return Collections.list(cl().getResources(path));
+            Enumeration<URL> resources = cl().getResources(path);
+            if(!resources.hasMoreElements()) {
+                throw new CucumberException("No resources at path " + path);
+            }
+            return Collections.list(resources);
         } catch (IOException e) {
             throw new CucumberException("Failed to look up resources at path " + path, e);
         }

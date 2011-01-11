@@ -9,6 +9,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Base class for generating snippets.
+ */
 public abstract class SnippetGenerator {
     private static final Pattern[] ARG_PATTERNS = new Pattern[]{
             Pattern.compile("\"([^\"]*)\""),

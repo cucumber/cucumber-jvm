@@ -1,0 +1,15 @@
+Feature: Cukes
+
+  Scenario: 1 cuke                     # cucumber/runtime/cukes.feature:2
+    Given I have 5 cukes in my belly   # stepdefs.groovy:24
+    Then there are 4 cukes in my belly # stepdefs.groovy:28
+      junit.framework.ComparisonFailure: null expected:<[5]> but was:<[4]>
+      	at junit.framework.Assert.assertEquals(Assert.java:81)
+      	at groovy.util.GroovyTestCase.assertEquals(GroovyTestCase.java:441)
+      	at groovy.util.GroovyTestCase$assertEquals.callStatic(Unknown Source)
+      	at org.codehaus.groovy.runtime.callsite.CallSiteArray.defaultCallStatic(CallSiteArray.java:48)
+      	at org.codehaus.groovy.runtime.callsite.AbstractCallSite.callStatic(AbstractCallSite.java:165)
+      	at org.codehaus.groovy.runtime.callsite.AbstractCallSite.callStatic(AbstractCallSite.java:177)
+      	at cucumber.runtime.groovy.CustomWorld.checkCukes(stepdefs.groovy:16)
+      	at Cukes.1 cuke.Then there are 4 cukes in my belly(cucumber/runtime/cukes.feature:4)
+

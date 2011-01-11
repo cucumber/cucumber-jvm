@@ -1,6 +1,6 @@
 Feature: background
   Background:
-    Given this runs every time
+    Given this fails
 
   Scenario: A
     When I do A
