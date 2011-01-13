@@ -1,0 +1,55 @@
+Feature: Cukes
+
+  Scenario Outline: cooking                     # cucumber/runtime/outline.feature:3
+    Given the <container> contains <ingredient>
+    When I add <liquid>
+    And serve it to my guests
+    Then they'll be eating <dish>
+
+    Examples: 
+      | container | ingredient | liquid    | dish         |
+      | bowl      | oats       | milk      | oatmeal      |
+      | bowl      | oats       | milk      | oatmeal      |
+      | bowl      | oats       | milk      | oatmeal      |
+      | bowl      | oats       | milk      | oatmeal      |
+      | bowl      | oats       | milk      | oatmeal      |
+      | bowl      | oats       | milk      | oatmeal      |
+      | glass     | guinness   | champagne | black velvet |
+      | glass     | guinness   | champagne | black velvet |
+      | glass     | guinness   | champagne | black velvet |
+      | glass     | guinness   | champagne | black velvet |
+      | glass     | guinness   | champagne | black velvet |
+      | glass     | guinness   | champagne | black velvet |
+
+You can implement step definitions for undefined steps with these snippets:
+
+@And("^serve it to my guests$")
+public void serve_it_to_my_guests() {
+    // Express the Regexp above with the code you wish you had
+}
+
+@Then("^they'll be eating oatmeal$")
+public void they'll_be_eating_oatmeal() {
+    // Express the Regexp above with the code you wish you had
+}
+
+@And("^serve it to my guests$")
+public void serve_it_to_my_guests() {
+    // Express the Regexp above with the code you wish you had
+}
+
+@Then("^they'll be eating black velvet$")
+public void they'll_be_eating_black_velvet() {
+    // Express the Regexp above with the code you wish you had
+}
+
+@And("^serve it to my guests$")
+public void serve_it_to_my_guests() {
+    // Express the Regexp above with the code you wish you had
+}
+
+@Then("^they'll be eating <dish>$")
+public void they'll_be_eating_<dish>() {
+    // Express the Regexp above with the code you wish you had
+}
+

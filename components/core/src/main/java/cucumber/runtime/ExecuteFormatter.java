@@ -6,25 +6,20 @@ import gherkin.formatter.Reporter;
 import gherkin.formatter.model.*;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ExecuteFormatter implements Formatter {
     private List<Backend> backends;
     private final Reporter reporter;
-//    private final List<Step> scenarioSteps = new ArrayList<Step>();
-//    private List<CellResult> cellResults;
 
     private String uri;
     private Feature feature;
     private DescribedStatement featureElement;
-    private Map<Step, List<CellResult>> matchedResultsByStep = new HashMap<Step, List<CellResult>>();
-//    private Row examplesHeaderRow;
     private List<Step> undefinedSteps = new ArrayList<Step>();
     private List<Step> backgroundSteps = new ArrayList<Step>();
     private List<Step> steps = new ArrayList<Step>();
     private boolean inBackground;
+    private String featureElementClassName;
 
     public ExecuteFormatter(List<Backend> backends, Reporter reporter) {
         this.backends = backends;
@@ -44,21 +39,21 @@ public class ExecuteFormatter implements Formatter {
     }
 
     public void background(Background background) {
-        this.featureElement = background;
+        setFeatureElement(background);
         inBackground = true;
         reporter.background(background);
     }
 
     public void scenario(Scenario scenario) {
         executePrevious();
-        this.featureElement = scenario;
+        setFeatureElement(scenario);
         inBackground = false;
         reporter.scenario(scenario);
     }
 
     public void scenarioOutline(ScenarioOutline scenarioOutline) {
         executePrevious();
-        this.featureElement = scenarioOutline;
+        setFeatureElement(scenarioOutline);
         inBackground = false;
         reporter.scenarioOutline(scenarioOutline);
     }
@@ -77,59 +72,47 @@ public class ExecuteFormatter implements Formatter {
         steps.clear();
     }
 
-    public void examples(Examples examples) {
-        reporter.examples(examples);
-//        replayPreviousFeatureElement();
-//        examples.replay(reporter);
-//        reporter.table(examples.getRows());
-//
-//        List<Row> rows = new ArrayList<Row>(examples.getRows());
-//        examplesHeaderRow = rows.remove(0);
-//        reporter.row(examplesHeaderRow.createResults("skipped_arg"));
-//        reporter.nextRow();
-//
-//        for (Row example : rows) {
-//            cellResults = example.createResults("executing");
-//            executeExample(example);
-//        }
+    // TODO: Move to prettyformatter...
+    private void replayScenarioOutline() {
+        if(featureElement != null) {
+            featureElement.replay(reporter);
+            for (Step step : steps) {
+                reporter.step(step);
+            }
+            for (Step step : steps) {
+                reporter.match(step.getOutlineMatch(uri + ":" + step.getLine()));
+                reporter.result(Result.SKIPPED);
+            }
+            featureElement = null;
+        }
     }
 
-//    private void executeExample(Row example) {
-//        List<Step> Steps = createExampleSteps(example);
-//        boolean skip = false; // TODO: Add ability to instantiate entire runner with skip=false, for dry runs
-//        for (Step step : Steps) {
-//            skip = execute(step, skip);
-//        }
-//        reporter.nextRow();
-//    }
+    public void examples(Examples examples) {
+//        replayScenarioOutline();
+        reporter.examples(examples);
 
-//    private List<Step> createExampleSteps(Row example) {
-//        List<Step> result = new ArrayList<Step>();
-//        for (Step outlineStep : scenarioSteps) {
-//            result.add(exampleStep(outlineStep, example));
-//        }
-//        return result;
-//    }
+        List<Row> rows = new ArrayList<Row>(examples.getRows());
+        Row headerRow = rows.remove(0);
+        for (Row example : rows) {
+            executeExample(headerRow, example);
+        }
+    }
 
-//    private Step exampleStep(Step outlineStep, Row example) {
-//        List<CellResult> matchedResults = new ArrayList<CellResult>();
-//        String name = outlineStep.getName();
-//
-//        List<String> headerCells = examplesHeaderRow.getCells();
-//        for (int i = 0; i < headerCells.size(); i++) {
-//            String headerCell = headerCells.get(i);
-//            String value = example.getCells().get(i);
-//            String token = "<" + headerCell + ">";
-//            if (name.contains(token)) {
-//                name = name.replace(token, value);
-//                matchedResults.add(cellResults.get(i));
-//            }
-//        }
-//
-//        Step step = new Step(outlineStep.getComments(), outlineStep.getKeyword(), name, outlineStep.getLine());
-//        matchedResultsByStep.put(step, matchedResults);
-//        return step;
-//    }
+    private void executeExample(Row headerRow, Row example) {
+        List<Step> exampleSteps = createExampleSteps(headerRow, example);
+        boolean skip = false; // TODO: Add ability to instantiate entire runner with skip=false, for dry runs
+        for (Step step : exampleSteps) {
+            skip = execute(step, skip);
+        }
+    }
+
+    private List<Step> createExampleSteps(Row headerRow, Row example) {
+        List<Step> result = new ArrayList<Step>();
+        for (Step outlineStep : steps) {
+            result.add(outlineStep.createExampleStep(headerRow, example));
+        }
+        return result;
+    }
 
     public void step(Step step) {
         if(inBackground) {
@@ -142,8 +125,6 @@ public class ExecuteFormatter implements Formatter {
 
     public void eof() {
         executePrevious();
-
-//        replayPreviousFeatureElement();
         reporter.eof();
     }
 
@@ -202,16 +183,6 @@ public class ExecuteFormatter implements Formatter {
 //        }
 //    }
 
-//    private void replayScenarioOutline() {
-//        featureElement.replay(reporter);
-//
-//        for (Step step : scenarioSteps) {
-//            reporter.step(step);
-//            reporter.match(step.getOutlineMatch(uri + ":" + step.getLine()));
-//            reporter.result(Result.SKIPPED);
-//        }
-//    }
-
     private boolean execute(Step step, boolean skip) {
         StackTraceElement stepStackTraceElement = createStackTraceElement(step);
         StepRunner stepRunner = stepRunner(step, stepStackTraceElement);
@@ -219,11 +190,12 @@ public class ExecuteFormatter implements Formatter {
     }
 
     private StackTraceElement createStackTraceElement(Step step) {
-        return new StackTraceElement(featureElementClassName(), step.getKeyword() + step.getName(), uri, step.getLine());
+        return new StackTraceElement(featureElementClassName, step.getKeyword() + step.getName(), uri, step.getLine());
     }
 
-    private String featureElementClassName() {
-        return feature.getName() + "." + featureElement.getName();
+    private void setFeatureElement(DescribedStatement featureElement) {
+        featureElementClassName =  feature.getName() + "." + featureElement.getName();
+        this.featureElement = featureElement;
     }
 
     private StepRunner stepRunner(Step step, StackTraceElement stepStackTraceElement) {
@@ -253,14 +225,6 @@ public class ExecuteFormatter implements Formatter {
         return result;
     }
 
-//    public void exampleResult(Step step, Result result) {
-//        List<CellResult> matchedResults = matchedResultsByStep.get(step);
-//        for (CellResult matchedResult : matchedResults) {
-//            matchedResult.addResult(result);
-//        }
-//        reporter.row(cellResults);
-//    }
-//
     private List<String> getSnippets() {
         List<String> snippets = new ArrayList<String>();
         for (Step step : undefinedSteps) {

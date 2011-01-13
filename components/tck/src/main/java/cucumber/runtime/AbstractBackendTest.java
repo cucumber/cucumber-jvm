@@ -18,6 +18,7 @@ public abstract class AbstractBackendTest {
         assertCorrectOutput("cucumber/runtime/cukes.feature");
     }
 
+    @Test
     public void outlineFeature() throws IOException {
         assertCorrectOutput("cucumber/runtime/outline.feature");
     }
