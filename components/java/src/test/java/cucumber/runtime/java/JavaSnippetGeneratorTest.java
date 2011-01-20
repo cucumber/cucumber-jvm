@@ -15,7 +15,7 @@ public class JavaSnippetGeneratorTest {
         Step step = new Step(Collections.<Comment>emptyList(), "Given ", "I have 4 cukes in my \"big\" belly", 0);
         String snippet = new JavaSnippetGenerator(step).getSnippet();
         String expected = "" +
-                "@Given(\"^I have (\\d+) cukes in my \"([^\"]*)\" belly$\")\n" +
+                "@Given(\"^I have (\\d+) cukes in my \\\"([^\\\"]*)\\\" belly$\")\n" +
                 "public void I_have_cukes_in_my_belly(int arg1, String arg2) {\n" +
                 "    // Express the Regexp above with the code you wish you had\n" +
                 "}\n";

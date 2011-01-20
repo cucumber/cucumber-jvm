@@ -57,7 +57,7 @@ public class RhinoBackend implements Backend {
     }
 
     public String getSnippet(Step step) {
-        return null;
+        return "[Snippets not implemented for Javascript]";
     }
 
     private StackTraceElement stepDefLocation(String extension) {

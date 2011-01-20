@@ -26,7 +26,6 @@ public class ExecuteFormatterTest {
         ef.feature(new Feature(Collections.<Comment>emptyList(), Collections.<Tag>emptyList(), "Feature", "Foo", "", 1));
         ef.scenario(scenario);
         ef.step(step);
-        ef.scenario(null);
 
         System.out.println(out.getBuffer());
     }

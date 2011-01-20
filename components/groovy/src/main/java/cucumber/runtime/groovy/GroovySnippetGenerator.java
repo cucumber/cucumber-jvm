@@ -1,12 +1,12 @@
-package cucumber.runtime.java;
+package cucumber.runtime.groovy;
 
 import cucumber.runtime.SnippetGenerator;
 import gherkin.formatter.model.Step;
 
 import java.util.List;
 
-public class JavaSnippetGenerator extends SnippetGenerator {
-    public JavaSnippetGenerator(Step step) {
+public class GroovySnippetGenerator extends SnippetGenerator {
+    public GroovySnippetGenerator(Step step) {
         super(step);
     }
 
@@ -25,14 +25,16 @@ public class JavaSnippetGenerator extends SnippetGenerator {
             }
             sb.append(argType.getSimpleName()).append(" ").append("arg").append(n++);
         }
+        if(sb.length() > 0) {
+            sb.append(" ");
+        }
         return sb.toString();
     }
 
     @Override
     protected String template() {
-        return "@{0}(\"{1}\")\n" +
-                "public void {2}({3}) '{'\n" +
+        return "{0}(~\"{1}\") '{' {3}->\n" +
                 "    // {4}\n" +
-                "'}'\n";
+                "'}'";
     }
 }

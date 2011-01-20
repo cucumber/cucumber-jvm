@@ -25,7 +25,7 @@ public abstract class SnippetGenerator {
 
     private final Step step;
 
-    public SnippetGenerator(Step step) {
+    protected SnippetGenerator(Step step) {
         this.step = step;
     }
 
@@ -52,7 +52,7 @@ public abstract class SnippetGenerator {
         return f;
     }
 
-    private String pattern(String name) {
+    protected String pattern(String name) {
         String snippetPattern = name;
         for (Pattern argPattern : ARG_PATTERNS) {
             Matcher m = argPattern.matcher(snippetPattern);

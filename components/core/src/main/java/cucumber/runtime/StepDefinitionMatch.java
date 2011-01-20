@@ -10,11 +10,11 @@ import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
-public class CucumberMatch extends Match implements StepRunner {
+public class StepDefinitionMatch extends Match implements StepRunner {
     private final StepDefinition stepDefinition;
 
-    public CucumberMatch(List<Argument> arguments, StepDefinition stepDefinition) {
-        super(arguments, stepDefinition.getLocation());
+    public StepDefinitionMatch(List<Argument> arguments, StepDefinition stepDefinition, List<Integer> matchedColumns) {
+        super(arguments, stepDefinition.getLocation(), matchedColumns);
         this.stepDefinition = stepDefinition;
     }
 

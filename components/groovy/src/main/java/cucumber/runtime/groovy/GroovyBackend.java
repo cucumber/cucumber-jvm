@@ -48,7 +48,7 @@ public class GroovyBackend implements Backend {
     }
 
     public String getSnippet(Step step) {
-        return null;
+        return new GroovySnippetGenerator(step).getSnippet();
     }
 
     public static void addStepDefinition(Pattern regexp, Closure body) {

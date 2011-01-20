@@ -1,6 +1,6 @@
 Feature: Cukes
 
-  Scenario: 1 cuke                     # cucumber/runtime/cukes.feature:2
+  Scenario: 1 cuke                     # cucumber/runtime/simple.feature:2
     Given I have 5 cukes in my belly   # stepdefs.groovy:24
     Then there are 4 cukes in my belly # stepdefs.groovy:28
       junit.framework.ComparisonFailure: null expected:<[5]> but was:<[4]>
@@ -11,5 +11,5 @@ Feature: Cukes
       	at org.codehaus.groovy.runtime.callsite.AbstractCallSite.callStatic(AbstractCallSite.java:165)
       	at org.codehaus.groovy.runtime.callsite.AbstractCallSite.callStatic(AbstractCallSite.java:177)
       	at cucumber.runtime.groovy.CustomWorld.checkCukes(stepdefs.groovy:16)
-      	at Cukes.1 cuke.Then there are 4 cukes in my belly(cucumber/runtime/cukes.feature:4)
+      	at Cukes.1 cuke.Then there are 4 cukes in my belly(cucumber/runtime/simple.feature:4)
 

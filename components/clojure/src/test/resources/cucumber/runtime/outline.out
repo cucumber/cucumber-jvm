@@ -27,13 +27,4 @@ Feature: Cukes
 
 You can implement step definitions for undefined steps with these snippets:
 
-@And("^serve it to my guests$")
-public void serve_it_to_my_guests() {
-    // Express the Regexp above with the code you wish you had
-}
-
-@Then("^they'll be eating \"([^\"]*)\"$")
-public void they'll_be_eating_(String arg1) {
-    // Express the Regexp above with the code you wish you had
-}
-
+[Snippets not implemented for Clojure]

@@ -49,7 +49,7 @@ public class ClojureBackend implements Backend {
     }
 
     public String getSnippet(Step step) {
-        return null;
+        return "[Snippets not implemented for Clojure]";
     }
 
     private StackTraceElement stepDefLocation(String interpreterClassName, String interpreterMethodName) {

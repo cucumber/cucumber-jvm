@@ -28,3 +28,11 @@ Given(~"^I have (\\d+) cukes in my belly") { String cukes ->
 Then(~"^there are (\\d+) cukes in my belly") { String cukes ->
   checkCukes(cukes)
 }
+
+Then(~"^the (.*) contains (.*)") { String container, String ingredient ->
+  assertEqlaus("glass", container)
+}
+
+Then(~"^I add (.*)") { String liquid ->
+  assertEqlaus("milk", liquid)
+}
