@@ -1,6 +1,5 @@
 package cucumber.runtime;
 
-import gherkin.I18n;
 import gherkin.formatter.Argument;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
@@ -19,9 +18,11 @@ public class ExecuteFormatter implements Formatter {
     private Feature feature;
     private List<Step> undefinedSteps = new ArrayList<Step>();
     private List<Step> backgroundSteps = new ArrayList<Step>();
-    private List<Step> steps = new ArrayList<Step>();
-    private boolean inBackground;
+    private List<Step> scenarioSteps = new ArrayList<Step>();
+    private List<Step> scenarioOutlineSteps = new ArrayList<Step>();
+    private List<Step> steps;
     private String featureElementClassName;
+    private boolean scenarioOutlineReported;
 
     public ExecuteFormatter(List<Backend> backends, Reporter reporter) {
         this.backends = backends;
@@ -35,32 +36,36 @@ public class ExecuteFormatter implements Formatter {
 
     public void feature(Feature feature) {
         this.feature = feature;
-        inBackground = false;
         backgroundSteps.clear();
         reporter.feature(feature);
     }
 
     public void background(Background background) {
         setFeatureElementClassNameFrom(background);
-        inBackground = true;
+        backgroundSteps.clear();
+        steps = backgroundSteps;
         reporter.background(background);
     }
 
     public void scenario(Scenario scenario) {
         executePrevious();
         setFeatureElementClassNameFrom(scenario);
-        inBackground = false;
+        scenarioSteps.clear();
+        steps = scenarioSteps;
         reporter.scenario(scenario);
     }
 
     public void scenarioOutline(ScenarioOutline scenarioOutline) {
         executePrevious();
         setFeatureElementClassNameFrom(scenarioOutline);
-        inBackground = false;
+        scenarioOutlineSteps.clear();
+        steps = scenarioOutlineSteps;
+        scenarioOutlineReported = false;
         reporter.scenarioOutline(scenarioOutline);
     }
 
     public void examples(Examples examples) {
+        executePrevious();
         reporter.examples(examples);
 
         List<Row> rows = new ArrayList<Row>(examples.getRows());
@@ -68,15 +73,10 @@ public class ExecuteFormatter implements Formatter {
         for (Row example : rows) {
             executeExample(headerRow, example);
         }
-        steps.clear();
     }
 
     public void step(Step step) {
-        if(inBackground) {
-            backgroundSteps.add(step);
-        } else {
-            steps.add(step);
-        }
+        steps.add(step);
         reporter.step(step);
     }
 
@@ -97,13 +97,18 @@ public class ExecuteFormatter implements Formatter {
         for (Step step : backgroundSteps) {
             skip = execute(step, skip);
         }
-        System.out.println("EXEC PREV");
-        for (Step step : steps) {
-            System.out.println("exec step = " + step);
+        for (Step step : scenarioSteps) {
             skip = execute(step, skip);
         }
-        System.out.println("CLEARING STEPS");
-        steps.clear();
+        scenarioSteps.clear();
+
+        if(!scenarioOutlineReported) {
+            for (Step step : scenarioOutlineSteps) {
+                reporter.match(step.getOutlineMatch(uri + ":" + step.getLine()));
+                reporter.result(Result.SKIPPED);
+            }
+            scenarioOutlineReported = true;
+        }
     }
 
     private void executeExample(Row headerRow, Row example) {
@@ -116,7 +121,8 @@ public class ExecuteFormatter implements Formatter {
 
     private List<Step> createExampleSteps(Row headerRow, Row example) {
         List<Step> result = new ArrayList<Step>();
-        for (Step outlineStep : steps) {
+        // TODO: Make this based on a copy of steps, because we need to clear this to prevent it from running again!!
+        for (Step outlineStep : scenarioOutlineSteps) {
             result.add(outlineStep.createExampleStep(headerRow, example));
         }
         return result;

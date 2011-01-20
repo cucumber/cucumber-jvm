@@ -14,7 +14,7 @@ import static org.mockito.Mockito.mock;
 public abstract class AbstractBackendTest {
     @Test
     public void simpleFeature() throws IOException {
-//        assertCorrectOutput("cucumber/runtime/simple.feature");
+        assertCorrectOutput("cucumber/runtime/simple.feature");
     }
 
     @Test

@@ -1,10 +1,10 @@
 Feature: Cukes
 
   Scenario Outline: cooking                     # cucumber/runtime/outline.feature:3
-    Given the <container> contains <ingredient>
-    When I add <liquid>
-    And serve it to my guests
-    Then they'll be eating "<dish>"
+    Given the <container> contains <ingredient> # cucumber/runtime/outline.feature:4
+    When I add <liquid>                         # cucumber/runtime/outline.feature:5
+    And serve it to my guests                   # cucumber/runtime/outline.feature:6
+    Then they'll be eating "<dish>"             # cucumber/runtime/outline.feature:7
 
     Examples: 
       | container | ingredient | liquid    | dish         |
