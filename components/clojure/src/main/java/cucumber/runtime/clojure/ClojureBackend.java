@@ -20,7 +20,7 @@ public class ClojureBackend implements Backend {
         try {
             defineStepDefinitions();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new CucumberException("Failed to define Cloure Step Definitions", e);
         }
     }
 
@@ -49,7 +49,7 @@ public class ClojureBackend implements Backend {
     }
 
     public String getSnippet(Step step) {
-        return "[Snippets not implemented for Clojure]";
+        return new ClojureSnippetGenerator(step).getSnippet();
     }
 
     private StackTraceElement stepDefLocation(String interpreterClassName, String interpreterMethodName) {

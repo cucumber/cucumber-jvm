@@ -10,21 +10,79 @@ Feature: Cukes
       | container | ingredient | liquid    | dish         |
       | bowl      | oats       | milk      | oatmeal      |
       | bowl      | oats       | milk      | oatmeal      |
+      org.mozilla.javascript.JavaScriptException: Expected glass, but got bowl (cucumber/runtime/rhino/stepdefs.js#3)
+      	at org.mozilla.javascript.gen.c5._c1(cucumber/runtime/rhino/stepdefs.js:3)
+      	at Cukes.cooking.Given the bowl contains oats(cucumber/runtime/outline.feature:4)
+
       | bowl      | oats       | milk      | oatmeal      |
       | bowl      | oats       | milk      | oatmeal      |
+      org.mozilla.javascript.JavaScriptException: Expected glass, but got bowl (cucumber/runtime/rhino/stepdefs.js#3)
+      	at org.mozilla.javascript.gen.c5._c1(cucumber/runtime/rhino/stepdefs.js:3)
+      	at Cukes.cooking.Given the bowl contains oats(cucumber/runtime/outline.feature:4)
+
       | bowl      | oats       | milk      | oatmeal      |
       | bowl      | oats       | milk      | oatmeal      |
+      org.mozilla.javascript.JavaScriptException: Expected glass, but got bowl (cucumber/runtime/rhino/stepdefs.js#3)
+      	at org.mozilla.javascript.gen.c5._c1(cucumber/runtime/rhino/stepdefs.js:3)
+      	at Cukes.cooking.Given the bowl contains oats(cucumber/runtime/outline.feature:4)
+
       | bowl      | oats       | milk      | oatmeal      |
       | bowl      | oats       | milk      | oatmeal      |
+      org.mozilla.javascript.JavaScriptException: Expected glass, but got bowl (cucumber/runtime/rhino/stepdefs.js#3)
+      	at org.mozilla.javascript.gen.c5._c1(cucumber/runtime/rhino/stepdefs.js:3)
+      	at Cukes.cooking.Given the bowl contains oats(cucumber/runtime/outline.feature:4)
+
       | glass     | guinness   | champagne | black velvet |
       | glass     | guinness   | champagne | black velvet |
       | glass     | guinness   | champagne | black velvet |
       | glass     | guinness   | champagne | black velvet |
+      org.mozilla.javascript.JavaScriptException: Expected milk, but got champagne (cucumber/runtime/rhino/stepdefs.js#3)
+      	at org.mozilla.javascript.gen.c5._c1(cucumber/runtime/rhino/stepdefs.js:3)
+      	at Cukes.cooking.When I add champagne(cucumber/runtime/outline.feature:5)
+
       | glass     | guinness   | champagne | black velvet |
       | glass     | guinness   | champagne | black velvet |
+      org.mozilla.javascript.JavaScriptException: Expected milk, but got champagne (cucumber/runtime/rhino/stepdefs.js#3)
+      	at org.mozilla.javascript.gen.c5._c1(cucumber/runtime/rhino/stepdefs.js:3)
+      	at Cukes.cooking.When I add champagne(cucumber/runtime/outline.feature:5)
+
       | glass     | guinness   | champagne | black velvet |
       | glass     | guinness   | champagne | black velvet |
+      org.mozilla.javascript.JavaScriptException: Expected milk, but got champagne (cucumber/runtime/rhino/stepdefs.js#3)
+      	at org.mozilla.javascript.gen.c5._c1(cucumber/runtime/rhino/stepdefs.js:3)
+      	at Cukes.cooking.When I add champagne(cucumber/runtime/outline.feature:5)
+
+
+    Examples: 
+      | container | ingredient | liquid    | dish        |
+      | glass     | oats       | champagne | weird stuff |
+      | glass     | oats       | champagne | weird stuff |
+      | glass     | oats       | champagne | weird stuff |
+      | glass     | oats       | champagne | weird stuff |
+      org.mozilla.javascript.JavaScriptException: Expected milk, but got champagne (cucumber/runtime/rhino/stepdefs.js#3)
+      	at org.mozilla.javascript.gen.c5._c1(cucumber/runtime/rhino/stepdefs.js:3)
+      	at Cukes.cooking.When I add champagne(cucumber/runtime/outline.feature:5)
+
+      | glass     | oats       | champagne | weird stuff |
+      | glass     | oats       | champagne | weird stuff |
+      org.mozilla.javascript.JavaScriptException: Expected milk, but got champagne (cucumber/runtime/rhino/stepdefs.js#3)
+      	at org.mozilla.javascript.gen.c5._c1(cucumber/runtime/rhino/stepdefs.js:3)
+      	at Cukes.cooking.When I add champagne(cucumber/runtime/outline.feature:5)
+
+      | glass     | oats       | champagne | weird stuff |
+      | glass     | oats       | champagne | weird stuff |
+      org.mozilla.javascript.JavaScriptException: Expected milk, but got champagne (cucumber/runtime/rhino/stepdefs.js#3)
+      	at org.mozilla.javascript.gen.c5._c1(cucumber/runtime/rhino/stepdefs.js:3)
+      	at Cukes.cooking.When I add champagne(cucumber/runtime/outline.feature:5)
+
 
 You can implement step definitions for undefined steps with these snippets:
 
-[Snippets not implemented for Javascript]
+And(/^serve it to my guests$/, function() {
+  // Express the Regexp above with the code you wish you had
+});
+
+Then(/^they'll be eating "([^"]*)"$/, function(arg1) {
+  // Express the Regexp above with the code you wish you had
+});
+

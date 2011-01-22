@@ -1,12 +1,12 @@
-package cucumber.runtime.groovy;
+package cucumber.runtime.clojure;
 
 import cucumber.runtime.SnippetGenerator;
 import gherkin.formatter.model.Step;
 
 import java.util.List;
 
-public class GroovySnippetGenerator extends SnippetGenerator {
-    public GroovySnippetGenerator(Step step) {
+public class ClojureSnippetGenerator extends SnippetGenerator{
+    protected ClojureSnippetGenerator(Step step) {
         super(step);
     }
 
@@ -17,23 +17,20 @@ public class GroovySnippetGenerator extends SnippetGenerator {
 
     @Override
     protected String template() {
-        return "{0}(~\"{1}\") '{' {3}->\n" +
-                "    // {4}\n" +
-                "'}'\n";
+        return "({0} #\"{1}\"\n" +
+                "  (fn [{3}]\n" +
+                "    \" {4}\n" + // TODO: The " should be a ', but that causes a propblem with MessageFormat escaping {4}. Need to read up on MessageFormat docs.
+                "    ))\n";
     }
 
     @Override
     protected String arguments(List<Class<?>> argumentTypes) {
         StringBuilder sb = new StringBuilder ();
-        int n = 1;
-        for (Class<?> argType : argumentTypes) {
+        for (int n = 0; n < argumentTypes.size(); n++) {
             if (n > 1) {
                 sb.append(", ");
             }
-            sb.append(argType.getSimpleName()).append(" ").append("arg").append(n++);
-        }
-        if(sb.length() > 0) {
-            sb.append(" ");
+            sb.append("arg").append(n+1);
         }
         return sb.toString();
     }

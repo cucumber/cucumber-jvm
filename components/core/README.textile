@@ -16,7 +16,6 @@ Cucumber will scan those packages for implementations of:
 
 h2. TODO before release
 
-* Print stats (only for certain formatters)
 * Export cucumber.json with stepdefs and usage
 * Support Hooks
 * Run Hooks in order
@@ -32,7 +31,7 @@ h2. TODO before release
 * Ant task (POJO)
 * Maven plugin
 * Port examples
-* [OKish] Print snippets (main logic done for java at least)
+* [OKish] Print stats (only for certain formatters)
 * [OKish - needs polishing in prettyformatter] Outlines
 * [OK] Put duration in results
 * [OK] Autodiscover ObjectFactory

@@ -10,6 +10,8 @@ import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
+import static java.util.Arrays.asList;
+
 public class StepDefinitionMatch extends Match implements StepRunner {
     private final StepDefinition stepDefinition;
 
@@ -55,7 +57,7 @@ public class StepDefinitionMatch extends Match implements StepRunner {
 
     private Object[] getTransformedArgs(Class<?>[] parameterTypes) {
         if (parameterTypes != null && parameterTypes.length != getArguments().size()) {
-            throw new CucumberException("Bad number of args"); // TODO: Handle multiline args here...
+            throw new CucumberException("Arity mismatch. Parameters: " + asList(parameterTypes) + ". Matched arguments: " + getArguments()); // TODO: Handle multiline args here...
         }
 
         Object[] result = new Object[getArguments().size()];
@@ -68,23 +70,23 @@ public class StepDefinitionMatch extends Match implements StepRunner {
         return result;
     }
 
-    private String errorMessageWithStackTrace(Throwable error, StackTraceElement stepStackTraceElement) {
+    private String errorMessageWithStackTrace(Throwable error, StackTraceElement stepLocation) {
         if (error == null) return null;
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
 
-        error = filterStacktrace(error, stepStackTraceElement);
+        error = filterStacktrace(error, stepLocation);
 
         error.printStackTrace(pw);
         pw.flush();
         return sw.toString();
     }
 
-    private Throwable filterStacktrace(Throwable error, StackTraceElement stepStackTraceElement) {
-        if (error.getCause() != null && error.getCause() != error) {
-            return filterStacktrace(error.getCause(), stepStackTraceElement);
-        }
+    private Throwable filterStacktrace(Throwable error, StackTraceElement stepLocation) {
         StackTraceElement[] stackTraceElements = error.getStackTrace();
+        if (error.getCause() != null && error.getCause() != error) {
+            return filterStacktrace(error.getCause(), stepLocation);
+        }
         if (stackTraceElements.length == 0) {
             return error;
         }
@@ -96,7 +98,7 @@ public class StepDefinitionMatch extends Match implements StepRunner {
         }
         StackTraceElement[] result = new StackTraceElement[stackLength + 1];
         System.arraycopy(stackTraceElements, 0, result, 0, stackLength);
-        result[stackLength] = stepStackTraceElement;
+        result[stackLength] = stepLocation;
         error.setStackTrace(result);
         return error;
     }

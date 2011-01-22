@@ -30,9 +30,9 @@ Then(~"^there are (\\d+) cukes in my belly") { String cukes ->
 }
 
 Then(~"^the (.*) contains (.*)") { String container, String ingredient ->
-  assertEqlaus("glass", container)
+  assertEquals("glass", container)
 }
 
 Then(~"^I add (.*)") { String liquid ->
-  assertEqlaus("milk", liquid)
+  assertEquals("milk", liquid)
 }

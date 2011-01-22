@@ -10,3 +10,5 @@
 (def Given stepdef)
 (def When stepdef)
 (def Then stepdef)
+(def And stepdef)
+(def But stepdef)

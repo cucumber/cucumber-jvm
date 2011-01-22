@@ -10,3 +10,7 @@ Feature: Cukes
       | container | ingredient | liquid    | dish         |
       | bowl      | oats       | milk      | oatmeal      |
       | glass     | guinness   | champagne | black velvet |
+
+    Examples:
+      | container | ingredient | liquid    | dish        |
+      | glass     | oats       | champagne | weird stuff |

@@ -60,7 +60,7 @@ public class IokeBackend implements Backend {
     }
 
     public String getSnippet(Step step) {
-        return "[Snippets not implemented for Ioke]";
+        return new IokeSnippetGenerator(step).getSnippet();
     }
 
     private List<Runtime.RescueInfo> createRescues(String... names) throws ControlFlow {
