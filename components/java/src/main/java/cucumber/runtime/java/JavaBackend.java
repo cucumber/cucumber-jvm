@@ -25,7 +25,7 @@ public class JavaBackend implements Backend {
         return stepDefinitions;
     }
 
-    public void newScenario() {
+    public void newWorld() {
         objectFactory.createInstances();
     }
 

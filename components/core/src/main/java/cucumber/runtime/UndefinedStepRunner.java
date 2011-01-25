@@ -18,4 +18,12 @@ public class UndefinedStepRunner extends Match implements StepRunner {
         reporter.result(Result.UNDEFINED);
         return true;
     }
+
+    public boolean canRun() {
+        return false;
+    }
+
+    public void run() {
+        throw new CucumberException("Cucumber Bug. Should never happen.");
+    }
 }

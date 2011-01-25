@@ -222,18 +222,19 @@
     </pluginRepositories>
 
     <modules>
-      <module>components/core</module>
-      <module>components/tck</module>
-      <module>components/tck-java</module>
-      <module>components/spring</module>
-      <module>components/guice</module>
-      <module>components/picocontainer</module>
-      <module>components/groovy</module>
-      <module>components/ioke</module>
-      <module>components/rhino</module>
-      <module>components/java</module>
-      <module>components/clojure</module>
-      <!--module>components/scala</module-->
+        <module>components/junit</module>
+        <module>components/core</module>
+        <module>components/tck</module>
+        <module>components/tck-java</module>
+        <module>components/spring</module>
+        <module>components/guice</module>
+        <module>components/picocontainer</module>
+        <module>components/groovy</module>
+        <module>components/ioke</module>
+        <module>components/rhino</module>
+        <module>components/java</module>
+        <module>components/clojure</module>
+        <!--module>components/scala</module-->
         <module>components/cucumber-ant</module>
         <!--module>components/maven-plugin</module-->
     </modules>

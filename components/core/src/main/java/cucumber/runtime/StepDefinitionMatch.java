@@ -4,6 +4,7 @@ import gherkin.formatter.Argument;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Match;
 import gherkin.formatter.model.Result;
+import gherkin.formatter.model.Step;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -14,10 +15,12 @@ import static java.util.Arrays.asList;
 
 public class StepDefinitionMatch extends Match implements StepRunner {
     private final StepDefinition stepDefinition;
+    private final Step step;
 
-    public StepDefinitionMatch(List<Argument> arguments, StepDefinition stepDefinition, List<Integer> matchedColumns) {
+    public StepDefinitionMatch(List<Argument> arguments, StepDefinition stepDefinition, Step step, List<Integer> matchedColumns) {
         super(arguments, stepDefinition.getLocation(), matchedColumns);
         this.stepDefinition = stepDefinition;
+        this.step = step;
     }
 
     public boolean execute(boolean skip, Reporter reporter, StackTraceElement stepLocation) {
@@ -31,6 +34,22 @@ public class StepDefinitionMatch extends Match implements StepRunner {
         reporter.result(result);
         boolean passed = result.getStatus().equals("passed");
         return !passed;
+    }
+
+    public boolean canRun() {
+        return true;
+    }
+
+    public void run() throws Throwable {
+        try {
+            stepDefinition.execute(getTransformedArgs(stepDefinition.getParameterTypes()));
+        } catch (CucumberException e) {
+            throw e;
+        } catch (InvocationTargetException t) {
+            throw filterStacktrace(t.getTargetException(), step.getStackTraceElement());
+        } catch (Throwable t) {
+            throw filterStacktrace(t, step.getStackTraceElement());
+        }
     }
 
     private Result execute(Class<?>[] parameterTypes, StackTraceElement stepLocation) {
@@ -51,7 +70,6 @@ public class StepDefinitionMatch extends Match implements StepRunner {
         long duration = System.currentTimeMillis() - start;
         String errorMessage = errorMessageWithStackTrace(error, stepLocation);
         return new Result(status, duration, errorMessage);
-
     }
 
 

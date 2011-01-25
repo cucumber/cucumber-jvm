@@ -91,7 +91,7 @@ public class ExecuteFormatter implements Formatter {
 
     private void executePrevious() {
         for (Backend backend : backends) {
-            backend.newScenario();
+            backend.newWorld();
         }
         boolean skip = false;
         for (Step step : backgroundSteps) {
@@ -162,7 +162,7 @@ public class ExecuteFormatter implements Formatter {
             for (StepDefinition stepDefinition : backend.getStepDefinitions()) {
                 List<Argument> arguments = stepDefinition.matchedArguments(step);
                 if (arguments != null) {
-                    result.add(new StepDefinitionMatch(arguments, stepDefinition, step.getMatchedColumns()));
+                    result.add(new StepDefinitionMatch(arguments, stepDefinition, step, step.getMatchedColumns()));
                 }
             }
         }

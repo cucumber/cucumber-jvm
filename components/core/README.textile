@@ -16,22 +16,25 @@ Cucumber will scan those packages for implementations of:
 
 h2. TODO before release
 
+* Merge Core, TCK, TCK-Java, Junit, Picocontainer(?) into Core.
 * Export cucumber.json with stepdefs and usage
 * Support Hooks
 * Run Hooks in order
 * Support ambiguous
-* Convert args
+* Convert args to right types
 * Handle multiline args
 * Add diffing
 * Support no-skip
 * Use locale from feature in transformations
-* Ensure we can pass line numbers
-* Ensure we can pass line tags
-* Ensure we can pass line names/regexen
+* CLI Ensure we can pass line numbers
+* CLI Ensure we can pass line tags
+* CLI Ensure we can pass line names/regexen
+* I18n for all backends
 * Ant task (POJO)
 * Maven plugin
 * Port examples
 * [OKish] Print stats (only for certain formatters)
+* [OK] Print snippets for all languages
 * [OKish - needs polishing in prettyformatter] Outlines
 * [OK] Put duration in results
 * [OK] Autodiscover ObjectFactory

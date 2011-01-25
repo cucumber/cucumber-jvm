@@ -27,7 +27,6 @@ public abstract class AbstractBackendTest {
         Cucumber cucumber = new Cucumber(Arrays.asList(backend), new PrettyFormatter(out, true, true), new SummaryReporter(out));
         cucumber.execute(featurePath);
         String expected = getExpected(featurePath.replaceAll("feature$", "out"));
-        System.out.println(out);
         assertEquals(expected, out.toString());
     }
 

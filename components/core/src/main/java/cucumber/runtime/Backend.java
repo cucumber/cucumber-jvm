@@ -11,7 +11,7 @@ public interface Backend {
      * Invoked before a new scenario starts. Implementations should do any necessary
      * setup of new, isolated state here.
      */
-    void newScenario();
+    void newWorld();
 
     void disposeScenario();
 

@@ -40,7 +40,7 @@ public class GroovyBackend implements Backend {
         return stepDefinitions;
     }
 
-    public void newScenario() {
+    public void newWorld() {
         world = null;
     }
 

@@ -51,7 +51,7 @@ public class RhinoBackend implements Backend {
         return stepDefinitions;
     }
 
-    public void newScenario() {
+    public void newWorld() {
     }
 
     public void disposeScenario() {

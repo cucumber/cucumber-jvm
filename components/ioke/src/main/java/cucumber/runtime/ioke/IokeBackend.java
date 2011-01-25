@@ -53,7 +53,7 @@ public class IokeBackend implements Backend {
         return stepDefinitions;
     }
 
-    public void newScenario() {
+    public void newWorld() {
     }
 
     public void disposeScenario() {
