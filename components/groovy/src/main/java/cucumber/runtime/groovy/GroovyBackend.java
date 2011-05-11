@@ -1,7 +1,10 @@
 package cucumber.runtime.groovy;
 
+import cucumber.classpath.Classpath;
+import cucumber.classpath.Consumer;
+import cucumber.classpath.Input;
 import cucumber.runtime.*;
-import gherkin.formatter.model.Step;
+import gherkin.model.Step;
 import groovy.lang.Binding;
 import groovy.lang.Closure;
 import groovy.lang.GroovyShell;
@@ -44,7 +47,7 @@ public class GroovyBackend implements Backend {
         world = null;
     }
 
-    public void disposeScenario() {
+    public void disposeWorld() {
     }
 
     public String getSnippet(Step step) {

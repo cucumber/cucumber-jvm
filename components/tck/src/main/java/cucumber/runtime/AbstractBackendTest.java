@@ -1,7 +1,10 @@
 package cucumber.runtime;
 
 import cucumber.Cucumber;
-import gherkin.formatter.PrettyFormatter;
+import cucumber.classpath.Classpath;
+import cucumber.classpath.Consumer;
+import cucumber.classpath.Input;
+import gherkin.formatter.PrettyPrinterOld;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -24,7 +27,8 @@ public abstract class AbstractBackendTest {
     private void assertCorrectOutput(String featurePath) throws IOException {
         StringWriter out = new StringWriter();
         Backend backend = backend();
-        Cucumber cucumber = new Cucumber(Arrays.asList(backend), new PrettyFormatter(out, true, true), new SummaryReporter(out));
+        // TODO: Pass in the right thing here.
+        Cucumber cucumber = new Cucumber(Arrays.asList(backend), new PrettyPrinterOld(out, true, null), new SummaryReporter(out));
         cucumber.execute(featurePath);
         String expected = getExpected(featurePath.replaceAll("feature$", "out"));
         assertEquals(expected, out.toString());

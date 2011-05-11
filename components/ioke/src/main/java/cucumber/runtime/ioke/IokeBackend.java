@@ -1,8 +1,11 @@
 package cucumber.runtime.ioke;
 
 import cucumber.Table;
+import cucumber.classpath.Classpath;
+import cucumber.classpath.Consumer;
+import cucumber.classpath.Input;
 import cucumber.runtime.*;
-import gherkin.formatter.model.Step;
+import gherkin.model.Step;
 import ioke.lang.IokeObject;
 import ioke.lang.Message;
 import ioke.lang.Runtime;
@@ -56,7 +59,7 @@ public class IokeBackend implements Backend {
     public void newWorld() {
     }
 
-    public void disposeScenario() {
+    public void disposeWorld() {
     }
 
     public String getSnippet(Step step) {

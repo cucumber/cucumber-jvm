@@ -1,4 +1,4 @@
-package cucumber.runtime;
+package cucumber.classpath;
 
 public interface Consumer {
     public void consume(Input input);

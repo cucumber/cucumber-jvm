@@ -2,7 +2,7 @@ package cucumber.runtime.rhino;
 
 import cucumber.runtime.StepDefinition;
 import gherkin.formatter.Argument;
-import gherkin.formatter.model.Step;
+import gherkin.model.Step;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.NativeFunction;
 import org.mozilla.javascript.NativeJavaObject;
@@ -33,7 +33,6 @@ public class RhinoStepDefinition implements StepDefinition {
         return args == null ? null : (List<Argument>) args.unwrap();
     }
 
-    // TODO: Pull up to ScriptStepDefinition?
     public String getLocation() {
         return location.getFileName() + ":" + location.getLineNumber();
     }
@@ -50,7 +49,6 @@ public class RhinoStepDefinition implements StepDefinition {
         bodyFunc.call(cx, scope, scope, args);
     }
 
-    // TODO: Pull up to ScriptStepDefinition?
     public boolean isDefinedAt(StackTraceElement stackTraceElement) {
         return location.getFileName().equals(stackTraceElement.getFileName());
     }

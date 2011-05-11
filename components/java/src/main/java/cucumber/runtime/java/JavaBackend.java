@@ -1,10 +1,9 @@
 package cucumber.runtime.java;
 
 import cucumber.runtime.Backend;
-import cucumber.runtime.Classpath;
-import cucumber.runtime.SnippetGenerator;
+import cucumber.classpath.Classpath;
 import cucumber.runtime.StepDefinition;
-import gherkin.formatter.model.Step;
+import gherkin.model.Step;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -29,7 +28,7 @@ public class JavaBackend implements Backend {
         objectFactory.createInstances();
     }
 
-    public void disposeScenario() {
+    public void disposeWorld() {
         objectFactory.disposeInstances();
     }
 

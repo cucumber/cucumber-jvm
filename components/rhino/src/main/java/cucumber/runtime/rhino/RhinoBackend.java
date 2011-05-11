@@ -1,8 +1,11 @@
 package cucumber.runtime.rhino;
 
+import cucumber.classpath.Classpath;
+import cucumber.classpath.Consumer;
+import cucumber.classpath.Input;
 import cucumber.runtime.*;
 import cucumber.runtime.javascript.JavascriptSnippetGenerator;
-import gherkin.formatter.model.Step;
+import gherkin.model.Step;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.NativeFunction;
 import org.mozilla.javascript.Scriptable;
@@ -54,7 +57,7 @@ public class RhinoBackend implements Backend {
     public void newWorld() {
     }
 
-    public void disposeScenario() {
+    public void disposeWorld() {
     }
 
     public String getSnippet(Step step) {

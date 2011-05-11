@@ -3,7 +3,7 @@ package cucumber.runtime.ioke;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.StepDefinition;
 import gherkin.formatter.Argument;
-import gherkin.formatter.model.Step;
+import gherkin.model.Step;
 import ioke.lang.IokeObject;
 import ioke.lang.Runtime;
 import ioke.lang.exceptions.ControlFlow;

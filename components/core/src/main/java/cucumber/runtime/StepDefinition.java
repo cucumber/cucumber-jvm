@@ -1,7 +1,7 @@
 package cucumber.runtime;
 
 import gherkin.formatter.Argument;
-import gherkin.formatter.model.Step;
+import gherkin.model.Step;
 
 import java.util.List;
 
@@ -24,6 +24,8 @@ public interface StepDefinition {
      * This will be used to coerce string values from arguments before
      * invoking the step definition. The size of the returned array
      * must be equal to the number of arguments accepted by execute.
+     * 
+     * If the parameter types are unknown at runtime, the result may be null.
      */
     Class<?>[] getParameterTypes();
 

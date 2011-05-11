@@ -3,7 +3,7 @@ package cucumber.runtime.java;
 import cucumber.runtime.JdkPatternArgumentMatcher;
 import cucumber.runtime.StepDefinition;
 import gherkin.formatter.Argument;
-import gherkin.formatter.model.Step;
+import gherkin.model.Step;
 
 import java.lang.reflect.Method;
 import java.util.List;

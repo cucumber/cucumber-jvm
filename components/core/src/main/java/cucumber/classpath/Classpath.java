@@ -1,4 +1,6 @@
-package cucumber.runtime;
+package cucumber.classpath;
+
+import cucumber.runtime.CucumberException;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
@@ -8,17 +10,20 @@ import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+/**
+ * Static utility methods for looking up classes and resources on the classpath.
+ */
 public class Classpath {
-    public static Set<Class<?>> getPublicClasses(final String packagePrefix) {
+    public static Set<Class<?>> getInstantiableClasses(final String packagePrefix) {
         final Set<Class<?>> classes = new HashSet<Class<?>>();
         final Consumer consumer = new Consumer() {
             public void consume(Input input) {
-                String className = className(input.getPath());
+                String path = input.getPath();
+                String className = className(path);
                 try {
-                    addClassIfPublic(classes, className);
+                    addClassIfInstantiable(classes, className);
                 } catch (NoClassDefFoundError ignore) {
                 } catch (ClassNotFoundException ignore) {
-                    //throw new RuntimeException("Failed to load class " + className + " from " + input.getPath(), e);
                 }
             }
         };
@@ -27,9 +32,9 @@ public class Classpath {
         return classes;
     }
 
-    public static <T> Set<Class<? extends T>> getPublicSubclassesOf(Class<T> type, String packagePrefix) {
+    public static <T> Set<Class<? extends T>> getInstantiableSubclassesOf(Class<T> type, String packagePrefix) {
         Set<Class<? extends T>> result = new HashSet<Class<? extends T>>();
-        Collection<Class<?>> classes = getPublicClasses(packagePrefix);
+        Collection<Class<?>> classes = getInstantiableClasses(packagePrefix);
         for (Class<?> clazz : classes) {
             if (!type.equals(clazz) && type.isAssignableFrom(clazz)) {
                 result.add(clazz.asSubclass(type));
@@ -79,14 +84,14 @@ public class Classpath {
         } else if (instances.size() == 0) {
             throw new CucumberException("Couldn't find a suitable instance");
         } else {
-            throw new CucumberException("Found too many instances: " + instances);
+            throw new CucumberException("Expected only one instance, but found too many: " + instances);
         }
     }
 
     public static <T> List<T> instantiateSubclasses(Class<T> type, Object... constructorArguments) {
         List<T> result = new ArrayList<T>();
 
-        Collection<Class<? extends T>> classes = getPublicSubclassesOf(type, "cucumber.runtime");
+        Collection<Class<? extends T>> classes = getInstantiableSubclassesOf(type, "cucumber.runtime");
         for (Class<? extends T> clazz : classes) {
             try {
                 Class[] argumentTypes = new Class[constructorArguments.length];
@@ -225,11 +230,10 @@ public class Classpath {
         return pathToClass.substring(0, pathToClass.length() - 6).replace("/", ".");
     }
 
-    private static void addClassIfPublic(Collection<Class<?>> classes, String className) throws ClassNotFoundException, NoClassDefFoundError {
+    private static void addClassIfInstantiable(Collection<Class<?>> classes, String className) throws ClassNotFoundException, NoClassDefFoundError {
         Class<?> clazz = cl().loadClass(className);
-        boolean isInstantiable =
-                Modifier.isStatic(clazz.getModifiers()) || clazz.getEnclosingClass() == null;
-        if (Modifier.isPublic(clazz.getModifiers())) {
+        boolean isInstantiable = Modifier.isStatic(clazz.getModifiers()) || clazz.getEnclosingClass() == null;
+        if (Modifier.isPublic(clazz.getModifiers()) && isInstantiable) {
             classes.add(clazz);
         }
     }

@@ -1,11 +1,9 @@
 package cucumber.runtime;
 
-import gherkin.formatter.*;
-import gherkin.formatter.Formatter;
-import gherkin.parser.FormatterListener;
-import gherkin.parser.ParseError;
-import gherkin.parser.Parser;
-import gherkin.parser.StateMachineReader;
+import cucumber.classpath.Classpath;
+import cucumber.classpath.Consumer;
+import cucumber.classpath.Input;
+import gherkin.GherkinParser;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -14,16 +12,14 @@ import java.util.*;
 import static org.junit.Assert.assertEquals;
 
 public class ClasspathTest {
+    public static class Person {}
+    public static class Fred extends Person {}
+    public static class Wilma extends Person {}
+    
     @Test
-    public void looksUpClassesOnClassPath() throws IOException {
-        Set<Class<?>> expected = new HashSet<Class<?>>(Arrays.asList(FormatterListener.class, ParseError.class, Parser.class, StateMachineReader.class));
-        assertEquals(expected, Classpath.getPublicClasses("gherkin.parser"));
-    }
-
-    @Test
-    public void looksUpSubclassesOnClassPath() throws IOException {
-        Set<Class<? extends Formatter>> expected = new HashSet<Class<? extends Formatter>>(Arrays.asList(JSONFormatter.class, PrettyFormatter.class, FilterFormatter.class, Reporter.class));
-        assertEquals(expected, Classpath.getPublicSubclassesOf(Formatter.class, "gherkin"));
+    public void looksUpInstantiableSubclassesOnClassPath() throws IOException {
+        Set<Class<? extends Person>> expected = new HashSet<Class<? extends Person>>(Arrays.asList(Fred.class, Wilma.class));
+        assertEquals(expected, Classpath.getInstantiableSubclassesOf(Person.class, "cucumber.runtime"));
     }
 
     @Test

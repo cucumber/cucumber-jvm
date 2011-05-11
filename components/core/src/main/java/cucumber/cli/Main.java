@@ -3,10 +3,10 @@ package cucumber.cli;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import cucumber.Cucumber;
+import cucumber.classpath.Classpath;
 import cucumber.runtime.Backend;
-import cucumber.runtime.Classpath;
 import cucumber.runtime.SummaryReporter;
-import gherkin.formatter.PrettyFormatter;
+import gherkin.formatter.PrettyPrinterOld;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -25,7 +25,7 @@ public class Main {
 
     public void execute(Writer out) throws IOException {
         List<Backend> backends = Classpath.instantiateSubclasses(Backend.class, packagePrefix);
-        PrettyFormatter reporter = new PrettyFormatter(out, false, true);
+        PrettyPrinterOld reporter = new PrettyPrinterOld(out, false, null); // TODO: Pass a real CucumberRuntime here...
         Cucumber cucumber = new Cucumber(backends, reporter, new SummaryReporter(out));
         cucumber.execute(features.toArray(new String[features.size()]));
     }

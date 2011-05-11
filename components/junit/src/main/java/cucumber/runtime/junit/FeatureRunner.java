@@ -1,31 +1,38 @@
 package cucumber.runtime.junit;
 
-import cucumber.runtime.*;
+import cucumber.classpath.Classpath;
+import cucumber.classpath.Consumer;
+import cucumber.classpath.Input;
 import cucumber.runtime.Runtime;
-import gherkin.formatter.model.Feature;
-import gherkin.formatter.model.FeatureElement;
-import gherkin.formatter.model.Scenario;
-import gherkin.formatter.model.ScenarioOutline;
+import gherkin.GherkinParser;
+import gherkin.model.Feature;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class FeatureRunner extends ParentRunner<ParentRunner> {
-    private Feature feature;
     private final Class featureClass;
-    private final Runtime runtime;
-    private List<ParentRunner> children;
+    private final Feature feature;
+    private final RunnerBuilder builder;
 
     private static Runtime runtime(Class testClass) {
         String packageName = testClass.getName().substring(0, testClass.getName().lastIndexOf("."));
         // TODO: Using the package name as glueCodePrefix will work for the JavaBackend, but
         // not for other backends that require a script path. We'll have to provide alternative
         // mechanisms to look it up, such as an annotation or a system property.
-        return new Runtime(packageName);
+        final Runtime runtime = new Runtime(packageName);
+        java.lang.Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
+            public void run() {
+                for (String snippet : runtime.getSnippets()) {
+                    System.out.println(snippet);
+                }
+            }
+        });
+        return runtime;
     }
 
     /**
@@ -35,23 +42,12 @@ public class FeatureRunner extends ParentRunner<ParentRunner> {
         this(testClass, runtime(testClass));
     }
 
-    public FeatureRunner(Class testClass, Runtime runtime) throws InitializationError {
+    public FeatureRunner(Class testClass, final Runtime runtime) throws InitializationError {
         super(null);
         featureClass = testClass;
-        this.runtime = runtime;
         feature = parseFeature();
-        children = new ArrayList<ParentRunner>();
-        for (FeatureElement featureElement : feature.getFeatureElements()) {
-            try {
-                if(featureElement instanceof ScenarioOutline) {
-                    children.add(new ScenarioOutlineRunner(runtime, (ScenarioOutline) featureElement));
-                } else {
-                    children.add(new ScenarioRunner(runtime, (Scenario) featureElement));
-                }
-            } catch (InitializationError initializationError) {
-                throw new CucumberException("This shouldn't be possible", initializationError);
-            }
-        }
+        builder = new RunnerBuilder(runtime);
+        feature.accept(builder);
     }
 
     @Override
@@ -61,7 +57,7 @@ public class FeatureRunner extends ParentRunner<ParentRunner> {
 
     @Override
     protected List<ParentRunner> getChildren() {
-        return children;
+        return builder.getFeatureElementRunners();
     }
 
     @Override
@@ -77,18 +73,16 @@ public class FeatureRunner extends ParentRunner<ParentRunner> {
     @Override
     protected void runChild(ParentRunner runner, RunNotifier notifier) {
         runner.run(notifier);
-        for (String snippet : runtime.getSnippets()) {
-            System.out.println(snippet);
-        }
     }
 
     private Feature parseFeature() {
         final String[] gherkin = new String[1];
-        Classpath.scan(featureClass.getName().replace('.', '/') + ".feature", new Consumer() {
+        String pathName = featureClass.getName().replace('.', '/') + ".feature";
+        Classpath.scan(pathName, new Consumer() {
             public void consume(Input input) {
                 gherkin[0] = input.getString();
             }
         });
-        return Feature.parseGherkin(gherkin[0]);
+        return new GherkinParser().parse(gherkin[0], pathName, 0);
     }
 }

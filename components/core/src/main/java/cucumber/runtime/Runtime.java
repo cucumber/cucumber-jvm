@@ -1,7 +1,8 @@
 package cucumber.runtime;
 
+import cucumber.classpath.Classpath;
 import gherkin.formatter.Argument;
-import gherkin.formatter.model.Step;
+import gherkin.model.Step;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,11 +17,11 @@ public class Runtime {
         backends = Classpath.instantiateSubclasses(Backend.class, glueCodePrefix);
     }
 
-    public StepRunner stepRunner(Step step) {
+    public StepDefinitionMatch stepDefinitionMatch(Step step) {
         List<StepDefinitionMatch> matches = stepDefinitionMatches(step);
         if (matches.size() == 0) {
             undefinedSteps.add(step);
-            return new UndefinedStepRunner(step.getStackTraceElement(), step.getMatchedColumns());
+            return null;
         }
         if (matches.size() == 1) {
             return matches.get(0);
@@ -72,9 +73,7 @@ public class Runtime {
         return snippets;
     }
 
-    public void newWorld() {
-        for (Backend backend : backends) {
-            backend.newWorld();
-        }
+    public World newWorld() {
+        return new World(backends, this);
     }
 }

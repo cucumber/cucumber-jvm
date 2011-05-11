@@ -1,7 +1,7 @@
 package cucumber.runtime.java;
 
-import gherkin.formatter.model.Comment;
-import gherkin.formatter.model.Step;
+import gherkin.model.Comment;
+import gherkin.model.Step;
 import org.junit.Test;
 
 import java.util.Collections;

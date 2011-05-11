@@ -1,7 +1,7 @@
 package cucumber.runtime;
 
 import gherkin.I18n;
-import gherkin.formatter.model.Step;
+import gherkin.model.Step;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;

@@ -1,6 +1,6 @@
 package cucumber.runtime;
 
-import gherkin.formatter.model.Step;
+import gherkin.model.Step;
 
 import java.util.List;
 
@@ -13,7 +13,7 @@ public interface Backend {
      */
     void newWorld();
 
-    void disposeScenario();
+    void disposeWorld();
 
     String getSnippet(Step step);
 }

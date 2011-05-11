@@ -1,7 +1,7 @@
 package cucumber.runtime.clojure;
 
 import cucumber.runtime.SnippetGenerator;
-import gherkin.formatter.model.Step;
+import gherkin.model.Step;
 
 import java.util.List;
 

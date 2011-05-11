@@ -2,8 +2,11 @@ package cucumber.runtime.clojure;
 
 import clojure.lang.AFunction;
 import clojure.lang.RT;
+import cucumber.classpath.Classpath;
+import cucumber.classpath.Consumer;
+import cucumber.classpath.Input;
 import cucumber.runtime.*;
-import gherkin.formatter.model.Step;
+import gherkin.model.Step;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +48,7 @@ public class ClojureBackend implements Backend {
     public void newWorld() {
     }
 
-    public void disposeScenario() {
+    public void disposeWorld() {
     }
 
     public String getSnippet(Step step) {
