@@ -1,0 +1,15 @@
+<project basedir="" name="cucumber" default="cucumber">
+    <target name="cucumber">
+        <java fork="true" classname="cucumber.cli.Main">
+            <classpath>
+                <pathelement path="target/test-classes"/>
+                <fileset dir="${basedir}/target">
+                    <include name="**/*.jar"/>
+                </fileset>
+            </classpath>
+            <arg value="--stepdefs"/>
+            <arg value="cucumber.runtime.java"/>
+            <arg value="cucumber/runtime"/>
+        </java>
+    </target>
+</project>

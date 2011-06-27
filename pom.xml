@@ -15,7 +15,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <gherkin.version>2.3.3</gherkin.version>
+        <gherkin.version>2.4.1</gherkin.version>
         <asm.version>3.3</asm.version>
         <jcommander.version>1.7</jcommander.version>
         <jruby.version>1.5.3</jruby.version>
@@ -30,7 +30,7 @@
         <ioke.version>P-0.4.0</ioke.version>
         <junit.version>4.8.2</junit.version>
         <mockito.version>1.8.5</mockito.version>
-        <selenium.version>2.0a5</selenium.version>
+        <selenium.version>2.0rc3</selenium.version>
         <log4j.version>1.2.14</log4j.version>
         <commons-lang.version>2.4</commons-lang.version>
         <javaee-api.version>5.0-1</javaee-api.version>
@@ -204,11 +204,6 @@
             <url>http://repository.codehaus.org</url>
         </repository>
         <repository>
-            <id>reflections-repo</id>
-            <name>Reflections Maven2 Repository</name>
-            <url>http://reflections.googlecode.com/svn/repo</url>
-        </repository>
-        <repository>
             <id>cukes</id>
             <url>http://cukes.info/maven</url>
         </repository>
@@ -222,20 +217,17 @@
     </pluginRepositories>
 
     <modules>
-        <module>components/junit</module>
-        <module>components/core</module>
-        <module>components/tck</module>
-        <module>components/tck-java</module>
-        <module>components/spring</module>
-        <module>components/guice</module>
-        <module>components/picocontainer</module>
-        <module>components/groovy</module>
-        <module>components/ioke</module>
-        <module>components/rhino</module>
-        <module>components/java</module>
-        <module>components/clojure</module>
+        <module>core</module>
+        <module>spring</module>
+        <module>guice</module>
+        <module>picocontainer</module>
+        <module>groovy</module>
+        <module>ioke</module>
+        <module>rhino</module>
+        <module>java</module>
+        <module>clojure</module>
         <!--module>components/scala</module-->
-        <module>components/cucumber-ant</module>
+        <module>cucumber-ant</module>
         <!--module>components/maven-plugin</module-->
     </modules>
 

@@ -1,16 +1,3 @@
-*.class
-.project
-.classpath
-.settings
 target
-test-output
-pkg
-*.iws
 *.ipr
-*.iml
-*.sw?
-.idea
-cuke4duke/test-output/
-.bundle
-.rvmrc
-Gemfile.lock
+*.iws

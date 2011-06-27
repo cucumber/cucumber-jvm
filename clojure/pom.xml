@@ -1,0 +1,34 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                      http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>cucumber</groupId>
+        <artifactId>parent</artifactId>
+        <relativePath>../pom.xml</relativePath>
+        <version>0.4.3-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>clojure</artifactId>
+    <version>0.4.3-SNAPSHOT</version>
+    <packaging>jar</packaging>
+    <name>Cucumber: Clojure</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>cucumber</groupId>
+            <artifactId>core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.clojure</groupId>
+            <artifactId>clojure</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>
