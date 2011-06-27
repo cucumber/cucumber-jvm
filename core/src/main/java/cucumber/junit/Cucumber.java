@@ -22,7 +22,7 @@ public class Cucumber extends ParentRunner<ParentRunner> {
 
     private static Runtime runtime(Class testClass) {
         String packageName = testClass.getName().substring(0, testClass.getName().lastIndexOf("."));
-        final Runtime runtime = new Runtime();
+        final Runtime runtime = new Runtime(packageName);
         java.lang.Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
@@ -44,7 +44,12 @@ public class Cucumber extends ParentRunner<ParentRunner> {
     public Cucumber(Class featureClass, final Runtime runtime) throws InitializationError {
         // Why aren't we passing the class to super? I don't remember, but there is probably a good reason.
         super(null);
-        pathName = featureClass.getName().replace('.', '/') + ".feature";
+        cucumber.junit.Feature featureAnnotation = (cucumber.junit.Feature) featureClass.getAnnotation(cucumber.junit.Feature.class);
+        if(featureAnnotation != null) {
+            pathName = featureAnnotation.value();
+        } else {
+            pathName = featureClass.getName().replace('.', '/') + ".feature";
+        }
         builder = new RunnerBuilder(runtime, children);
         feature = parseFeature();
     }

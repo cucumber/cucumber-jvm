@@ -21,8 +21,8 @@ public class Runtime {
         this.backends = asList(backends);
     }
 
-    public Runtime() {
-        backends = Classpath.instantiateSubclasses(Backend.class, "cucumber.runtime");
+    public Runtime(String packageName) {
+        backends = Classpath.instantiateSubclasses(Backend.class, packageName);
     }
 
     public StepDefinitionMatch stepDefinitionMatch(Step step) {

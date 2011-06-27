@@ -2,6 +2,7 @@ package cucumber.junit;
 
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Runtime;
+import gherkin.GherkinParser;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.model.*;
 import org.junit.runners.ParentRunner;
@@ -14,7 +15,7 @@ class RunnerBuilder implements Formatter {
     private final Runtime runtime;
     private final List<ParentRunner> children;
     private List<ScenarioRunner> scenarioRunners = new ArrayList<ScenarioRunner>();
-    private Feature feature;
+    private gherkin.formatter.model.Feature feature;
     private ScenarioRunner scenarioRunner;
 
     public RunnerBuilder(Runtime runtime, List<ParentRunner> children) {
@@ -25,7 +26,7 @@ class RunnerBuilder implements Formatter {
     public void uri(String uri) {
     }
 
-    public void feature(Feature feature) {
+    public void feature(gherkin.formatter.model.Feature feature) {
         this.feature = feature;
     }
 
@@ -57,7 +58,7 @@ class RunnerBuilder implements Formatter {
     public void syntaxError(String state, String event, List<String> legalEvents, String uri, int line) {
     }
 
-    public Feature getFeature() {
+    public gherkin.formatter.model.Feature getFeature() {
         return feature;
     }
 
