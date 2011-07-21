@@ -1,7 +1,5 @@
 package cucumber.runtime.ioke;
 
-import cucumber.runtime.CucumberException;
-import cucumber.runtime.StepDefinition;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 import ioke.lang.IokeObject;
@@ -9,14 +7,19 @@ import ioke.lang.Runtime;
 import ioke.lang.exceptions.ControlFlow;
 
 import java.util.List;
+import java.util.Locale;
 
-public class IokeStepDefinition implements StepDefinition {
+import cucumber.runtime.AbstractStepDefinition;
+import cucumber.runtime.CucumberException;
+
+public class IokeStepDefinition extends AbstractStepDefinition {
     private final Runtime ioke;
     private final IokeObject iokeStepDefObject;
     private final IokeBackend backend;
     private final String location;
 
-    public IokeStepDefinition(IokeBackend iokeBackend, Runtime ioke, IokeObject iokeStepDefObject, String location) throws Throwable {
+    public IokeStepDefinition(IokeBackend iokeBackend, Runtime ioke, IokeObject iokeStepDefObject, String location, Locale locale) throws Throwable {
+    	super(locale);
         this.ioke = ioke;
         this.iokeStepDefObject = iokeStepDefObject;
         this.backend = iokeBackend;
