@@ -1,13 +1,14 @@
 package cucumber.runtime.transformers;
 
 import java.math.BigDecimal;
-import java.util.Locale;
 
-public class BigDecimalTransformable implements Transformable<BigDecimal> {
+public class BigDecimalTransformable extends
+		TransformableWithNumberFormat<BigDecimal> {
 
-	public BigDecimal transform(String argument, Locale locale) {
-		
-		return null;
+	@Override
+	protected BigDecimal doTransform(Number number) {
+		// See http://java.sun.com/j2se/6/docs/api/java/math/BigDecimal.html#BigDecimal%28double%29
+		return new BigDecimal(Double.toString(number.doubleValue()));
 	}
 
 }

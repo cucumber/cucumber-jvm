@@ -6,6 +6,7 @@ import gherkin.formatter.model.Step;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.Locale;
 
 import static java.util.Arrays.asList;
 
@@ -39,12 +40,17 @@ public class StepDefinitionMatch extends Match {
         Object[] result = new Object[getArguments().size()];
         int n = 0;
         for (Argument a : getArguments()) {
+        	getLocale();
             // TODO: Use the Locale for transformation
             // TODO: Also use method signature to transform ints...
             result[n++] = a.getVal();
         }
         return result;
     }
+
+	private Locale getLocale() {
+		return this.stepDefinition.getLocale();
+	}
 
     private Throwable filterStacktrace(Throwable error, StackTraceElement stepLocation) {
         StackTraceElement[] stackTraceElements = error.getStackTrace();
