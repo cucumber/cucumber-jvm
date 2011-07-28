@@ -37,6 +37,7 @@ public class Transformer {
 
 	protected Map<Class<?>, Transformable<?>> registerDefaultTransformables() {
 		HashMap<Class<?>, Transformable<?>> hashMap = new HashMap<Class<?>, Transformable<?>>();
+		hashMap.put(String.class, new StringTransformable());
 		hashMap.put(Date.class, new DateTransformable());
 		hashMap.put(BigDecimal.class, new BigDecimalTransformable());
 		hashMap.put(BigIntegerTransformable.class, new BigIntegerTransformable());
