@@ -1,16 +1,20 @@
 package cucumber.runtime.clojure;
 
+import gherkin.formatter.model.Step;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.regex.Pattern;
+
 import clojure.lang.AFunction;
 import clojure.lang.RT;
 import cucumber.classpath.Classpath;
 import cucumber.classpath.Consumer;
 import cucumber.classpath.Input;
-import cucumber.runtime.*;
-import gherkin.formatter.model.Step;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Pattern;
+import cucumber.runtime.Backend;
+import cucumber.runtime.CucumberException;
+import cucumber.runtime.StepDefinition;
 
 public class ClojureBackend implements Backend {
     private final List<StepDefinition> stepDefinitions = new ArrayList<StepDefinition>();
@@ -67,9 +71,9 @@ public class ClojureBackend implements Backend {
         throw new CucumberException("Couldn't find location for step definition");
     }
 
-    public static void addStepDefinition(Pattern regexp, AFunction body) {
+    public static void addStepDefinition(Pattern regexp, AFunction body, Locale locale) {
         StackTraceElement location = instance.stepDefLocation("clojure.lang.Compiler", "eval");
-        instance.stepDefinitions.add(new ClojureStepDefinition(regexp, body, location));
+        instance.stepDefinitions.add(new ClojureStepDefinition(regexp, body, location, locale));
     }
 
 }

@@ -1,20 +1,25 @@
 package cucumber.runtime.rhino;
 
-import cucumber.classpath.Classpath;
-import cucumber.classpath.Consumer;
-import cucumber.classpath.Input;
-import cucumber.runtime.*;
-import cucumber.runtime.javascript.JavascriptSnippetGenerator;
 import gherkin.formatter.model.Step;
-import org.mozilla.javascript.Context;
-import org.mozilla.javascript.NativeFunction;
-import org.mozilla.javascript.Scriptable;
-import org.mozilla.javascript.tools.shell.Global;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+
+import org.mozilla.javascript.Context;
+import org.mozilla.javascript.NativeFunction;
+import org.mozilla.javascript.Scriptable;
+import org.mozilla.javascript.tools.shell.Global;
+
+import cucumber.classpath.Classpath;
+import cucumber.classpath.Consumer;
+import cucumber.classpath.Input;
+import cucumber.runtime.Backend;
+import cucumber.runtime.CucumberException;
+import cucumber.runtime.StepDefinition;
+import cucumber.runtime.javascript.JavascriptSnippetGenerator;
 
 public class RhinoBackend implements Backend {
     private static final String JS_DSL = "/cucumber/runtime/rhino/dsl.js";
@@ -78,9 +83,9 @@ public class RhinoBackend implements Backend {
         throw new RuntimeException("Couldn't find location for step definition");
     }
 
-    public void addStepDefinition(Global jsStepDefinition, NativeFunction bodyFunc, NativeFunction argumentsFromFunc) throws Throwable {
+    public void addStepDefinition(Global jsStepDefinition, NativeFunction bodyFunc, NativeFunction argumentsFromFunc, Locale locale) throws Throwable {
         StackTraceElement stepDefLocation = stepDefLocation(".js");
-        RhinoStepDefinition stepDefinition = new RhinoStepDefinition(cx, scope, jsStepDefinition, bodyFunc, stepDefLocation, argumentsFromFunc);
+        RhinoStepDefinition stepDefinition = new RhinoStepDefinition(cx, scope, jsStepDefinition, bodyFunc, stepDefLocation, argumentsFromFunc, locale);
         stepDefinitions.add(stepDefinition);
     }
 }

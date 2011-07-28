@@ -1,12 +1,5 @@
 package cucumber.runtime.ioke;
 
-import cucumber.Table;
-import cucumber.classpath.Classpath;
-import cucumber.classpath.Consumer;
-import cucumber.classpath.Input;
-import cucumber.runtime.Backend;
-import cucumber.runtime.CucumberException;
-import cucumber.runtime.StepDefinition;
 import gherkin.formatter.model.Step;
 import ioke.lang.IokeObject;
 import ioke.lang.Message;
@@ -16,6 +9,15 @@ import ioke.lang.exceptions.ControlFlow;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
+
+import cucumber.Table;
+import cucumber.classpath.Classpath;
+import cucumber.classpath.Consumer;
+import cucumber.classpath.Input;
+import cucumber.runtime.Backend;
+import cucumber.runtime.CucumberException;
+import cucumber.runtime.StepDefinition;
 
 public class IokeBackend implements Backend {
     private final Runtime ioke;
@@ -50,8 +52,8 @@ public class IokeBackend implements Backend {
         }
     }
 
-    public void addStepDefinition(Object iokeStepDefObject) throws Throwable {
-        stepDefinitions.add(new IokeStepDefinition(this, ioke, (IokeObject) iokeStepDefObject, currentLocation));
+    public void addStepDefinition(Object iokeStepDefObject, Locale locale) throws Throwable {
+        stepDefinitions.add(new IokeStepDefinition(this, ioke, (IokeObject) iokeStepDefObject, currentLocation, locale));
     }
 
     public List<StepDefinition> getStepDefinitions() {

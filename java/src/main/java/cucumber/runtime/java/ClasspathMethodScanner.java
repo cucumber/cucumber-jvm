@@ -49,7 +49,7 @@ public class ClasspathMethodScanner {
                 if (isHookAnnotation(annotation)) {
                     // TODO Add hook
                 }
-
+                //TODO: scan cucumber.annotation.Transform annotations
                 Locale locale = Utils.localeFor(annotation.annotationType().getAnnotation(CucumberAnnotation.class).value());
                 try {
                     Method regexpMethod = annotation.getClass().getMethod("value");

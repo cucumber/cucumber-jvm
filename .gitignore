@@ -3,3 +3,5 @@ target
 *.iws
 tmp/
 doc/
+/.settings
+/.project

@@ -6,17 +6,22 @@ import gherkin.formatter.model.Step;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.Locale;
+
+import cucumber.runtime.transformers.Transformer;
 
 import static java.util.Arrays.asList;
 
 public class StepDefinitionMatch extends Match {
     private final StepDefinition stepDefinition;
     private final Step step;
+	private Transformer transformer;
 
-    public StepDefinitionMatch(List<Argument> arguments, StepDefinition stepDefinition, Step step) {
+    public StepDefinitionMatch(List<Argument> arguments, StepDefinition stepDefinition, Step step, Transformer transformer) {
         super(arguments, stepDefinition.getLocation());
         this.stepDefinition = stepDefinition;
         this.step = step;
+        this.transformer = transformer;
     }
 
     public void run(String path) throws Throwable {
@@ -39,12 +44,14 @@ public class StepDefinitionMatch extends Match {
         Object[] result = new Object[getArguments().size()];
         int n = 0;
         for (Argument a : getArguments()) {
-            // TODO: Use the Locale for transformation
-            // TODO: Also use method signature to transform ints...
-            result[n++] = a.getVal();
+            result[n] = this.transformer.transform(a, parameterTypes[n++], getLocale());
         }
         return result;
     }
+
+	private Locale getLocale() {
+		return this.stepDefinition.getLocale();
+	}
 
     private Throwable filterStacktrace(Throwable error, StackTraceElement stepLocation) {
         StackTraceElement[] stackTraceElements = error.getStackTrace();
