@@ -20,4 +20,15 @@ public class Utils {
             return new Locale(languageAndCountry[0], languageAndCountry[1]);
         }
     }
+    
+    public static String join(Object[] objects, String separator) {
+        StringBuilder sb = new StringBuilder();
+        int i = 0;
+        for (Object o : objects) {
+            if (i != 0) sb.append(separator);
+            sb.append(o);
+            i++;
+        }
+        return sb.toString();
+    }
 }
