@@ -40,7 +40,7 @@ public class World {
             } finally {
                 long duration = System.nanoTime() - start;
                 String status = e == null ? Result.PASSED : Result.FAILED;
-                Result result = new Result(status, duration, e);
+                Result result = new Result(status, duration, e, null);
                 reporter.result(result);
             }
         } else {
