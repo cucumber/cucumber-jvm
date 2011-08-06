@@ -12,7 +12,6 @@
     </parent>
 
     <artifactId>groovy</artifactId>
-    <version>0.4.3-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>Cucumber: Groovy</name>
 
