@@ -2,7 +2,7 @@ package cucumber.junit;
 
 import cucumber.classpath.Classpath;
 import cucumber.classpath.Consumer;
-import cucumber.classpath.Input;
+import cucumber.classpath.Resource;
 import cucumber.runtime.Runtime;
 import gherkin.GherkinParser;
 import gherkin.formatter.model.Feature;
@@ -82,8 +82,8 @@ public class Cucumber extends ParentRunner<ParentRunner> {
     private Feature parseFeature() {
         final String[] gherkin = new String[1];
         Classpath.scan(pathName, new Consumer() {
-            public void consume(Input input) {
-                gherkin[0] = input.getString();
+            public void consume(Resource resource) {
+                gherkin[0] = resource.getString();
             }
         });
         GherkinParser gherkinParser = new GherkinParser(builder);

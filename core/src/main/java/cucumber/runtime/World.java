@@ -10,7 +10,8 @@ import java.util.List;
 public class World {
     private final List<Backend> backends;
     private final Runtime runtime;
-    private boolean runNext = true;
+    private boolean skipNextStep = false;
+    private static final Object DUMMY_ARG = new Object();
 
     public World(List<Backend> backends, Runtime runtime) {
         this.backends = backends;
@@ -26,27 +27,27 @@ public class World {
             reporter.match(match);
         } else {
             reporter.match(Match.NONE);
-            runNext = false;
+            skipNextStep = true;
         }
 
-        if (runNext) {
+        if (skipNextStep) {
+            // TODO: Do we really want to send a skipped (blue) for undefined steps?
+            // Think about implications for pretty printer and JUnit....
+            reporter.result(Result.SKIPPED);
+        } else {
             Throwable e = null;
             long start = System.nanoTime();
             try {
                 match.run(path);
             } catch (Throwable t) {
-                runNext = false;
+                skipNextStep = true;
                 e = t;
             } finally {
                 long duration = System.nanoTime() - start;
                 String status = e == null ? Result.PASSED : Result.FAILED;
-                Result result = new Result(status, duration, e);
+                Result result = new Result(status, duration, e, DUMMY_ARG);
                 reporter.result(result);
             }
-        } else {
-            // TODO: Do we really want to send a skipped (blue) for undefined steps?
-            // Think about implications for pretty printer and JUnit....
-            reporter.result(Result.SKIPPED);
         }
     }
 

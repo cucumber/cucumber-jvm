@@ -11,6 +11,12 @@ module CucumberJavaMappings
     run_simple "mvn test", false
   end
 
+  def run_feature
+    write_pom
+    write_test_unit_classes
+    run_simple "mvn test", false
+  end
+
   def write_pom
     write_file('pom.xml', <<-EOF)
 <project xmlns="http://maven.apache.org/POM/4.0.0"
@@ -51,21 +57,193 @@ package cucumber.test;
 import cucumber.annotation.EN.Given;
 
 public class Mappings<%= @@mappings_counter %> {
-  @Given("<%= step_name -%>")
-  public void <%= step_name.gsub(/ /, '_') -%>() {
-    // ARUBA_IGNORE_START
-    try {
-      new java.io.FileWriter("<%= step_file(step_name) %>");
-    } catch(java.io.IOException e) {
-      throw new RuntimeException(e);
+    @Given("<%= step_name -%>")
+    public void <%= step_name.gsub(/ /, '_') -%>() {
+        // ARUBA_IGNORE_START
+        try {
+            new java.io.FileWriter("<%= step_file(step_name) %>");
+        } catch(java.io.IOException e) {
+            throw new RuntimeException(e);
+        }
+        // ARUBA_IGNORE_END
     }
-    // ARUBA_IGNORE_END
-  }
 }
 
 EOF
     write_file("src/test/java/cucumber/test/Mappings#{@@mappings_counter}.java", erb.result(binding))
     @@mappings_counter += 1
+  end
+
+  def write_failing_mapping(step_name)
+    erb = ERB.new(<<-EOF, nil, '-')
+package cucumber.test;
+
+import cucumber.annotation.EN.Given;
+
+public class Mappings<%= @@mappings_counter %> {
+    @Given("<%= step_name -%>")
+    public void <%= step_name.gsub(/ /, '_') -%>() {
+        // ARUBA_IGNORE_START
+        try {
+            new java.io.FileWriter("<%= step_file(step_name) %>");
+        } catch(java.io.IOException e) {
+            throw new RuntimeException(e);
+        }
+        // ARUBA_IGNORE_END
+        throw new RuntimeException("bang!");
+    }
+}
+
+EOF
+    write_file("src/test/java/cucumber/test/Mappings#{@@mappings_counter}.java", erb.result(binding))
+    @@mappings_counter += 1
+  end
+
+  def write_pending_mapping(step_name)
+    erb = ERB.new(<<-EOF, nil, '-')
+package cucumber.test;
+
+import cucumber.annotation.EN.Given;
+
+public class Mappings<%= @@mappings_counter %> {
+    @Given("<%= step_name -%>")
+    public void <%= step_name.gsub(/ /, '_') -%>() {
+        // ARUBA_IGNORE_START
+        try {
+            new java.io.FileWriter("<%= step_file(step_name) %>");
+        } catch(java.io.IOException e) {
+            throw new RuntimeException(e);
+        }
+        // ARUBA_IGNORE_END
+        throw new cucumber.runtime.Pending("TODO");
+    }
+}
+
+EOF
+    write_file("src/test/java/cucumber/test/Mappings#{@@mappings_counter}.java", erb.result(binding))
+    @@mappings_counter += 1
+  end
+
+  def write_calculator_code
+    code = <<-EOF
+package cucumber.test;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static java.util.Arrays.asList;
+
+public class RpnCalculator {
+    private final List<Number> stack = new ArrayList<Number>();
+    private static final List<String> OPS = asList("-", "+", "*", "/");
+
+    public void push(Object arg) {
+        if (OPS.contains(arg)) {
+            Number y = stack.remove(stack.size() - 1);
+            Number x = stack.remove(stack.size() - 1);
+            Double val = null;
+            if (arg.equals("-")) {
+                val = x.doubleValue() - y.doubleValue();
+            } else if (arg.equals("+")) {
+                val = x.doubleValue() + y.doubleValue();
+            } else if (arg.equals("*")) {
+                val = x.doubleValue() * y.doubleValue();
+            } else if (arg.equals("/")) {
+                val = x.doubleValue() / y.doubleValue();
+            }
+            push(val);
+        } else {
+            stack.add((Number) arg);
+        }
+    }
+
+    public void PI() {
+        push(Math.PI);
+    }
+
+    public Number value() {
+        return stack.get(stack.size() - 1);
+    }
+}
+EOF
+    write_file("src/main/java/cucumber/test/RpnCalculator.java", code)
+  end
+
+  def write_mappings_for_calculator
+    code = <<-EOF
+package cucumber.test;
+
+import cucumber.annotation.EN;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+public class CalculatorSteps {
+
+    private RpnCalculator calc;
+
+    @EN.Given("^a calculator$")
+    public void aCalculator() {
+        calc = new RpnCalculator();
+    }
+
+    @EN.When("^the calculator computes PI$")
+    public void pi() {
+        calc.PI();
+    }
+    
+    @EN.When("^the calculator adds up ([\\\\d\\\\.]+) and ([\\\\d\\\\.]+)$")
+    public void addDoubles(String n1, String n2) {
+        calc.push(Double.parseDouble(n1));
+        calc.push(Double.parseDouble(n2));
+        calc.push("+");
+    }
+
+    @EN.When("^the calculator adds up \\"([^\\"]*)\\" and \\"([^\\"]*)\\"$")
+    public void addInts(String n1, String n2) {
+        calc.push(Integer.parseInt(n1));
+        calc.push(Integer.parseInt(n2));
+        calc.push("+");
+    }
+
+    @EN.When("^the calculator adds up \\"([^\\"]*)\\", \\"([^\\"]*)\\" and \\"([^\\"]*)\\"$")
+    public void addInts(String n1, String n2, String n3) {
+        calc.push(Integer.parseInt(n1));
+        calc.push(Integer.parseInt(n2));
+        calc.push(Integer.parseInt(n3));
+        calc.push("+");
+        calc.push("+");
+    }
+
+    @EN.When("^the calculator adds up the following numbers:")
+    public void addInts(String numbers) {
+        int pushed = 0;
+        for (String number : numbers.split("\\n")) {
+            calc.push(Integer.parseInt(number));
+            pushed++;
+            if(pushed > 1) {
+                calc.push("+");
+            }
+        }
+    }
+    
+    @EN.Then("^the calculator returns PI$")
+    public void returnsPI() {
+        assertEquals(Math.PI, (Double) calc.value(), 0.00001);
+    }
+
+    @EN.Then("^the calculator returns \\"([^\\"]*)\\"$")
+    public void returns(String value) {
+        assertEquals(Double.parseDouble(value), (Double) calc.value(), 0.00001);
+    }
+
+    @EN.Then("^the calculator does not return ([\\\\d\\\\.]+)$")
+    public void doesNotReturn(String value) {
+        assertTrue(Math.abs(Double.parseDouble(value) - (Double) calc.value()) > 0.00001);
+    }
+}
+EOF
+    write_file("src/test/java/cucumber/test/CalculatorSteps.java", code)
   end
 
   def write_test_unit_classes
@@ -91,14 +269,36 @@ EOF
   end
 
   def assert_passing_scenario
-    2 tests because we have 2 steps
-    assert_partial_output("Tests run: 2, Failures: 0, Errors: 0, Skipped: 0", all_output)
+    assert_matching_output("Tests run: [1-9]+, Failures: 0, Errors: 0, Skipped: 0", all_output)
     assert_success true
+  end
+
+  def assert_failing_scenario
+    begin
+      assert_matching_output("Tests run: [1-9]+, Failures: 0, Errors: [1-9]+, Skipped: [0-9]+", all_output)
+    rescue
+      assert_matching_output("Tests run: [1-9]+, Failures: [1-9]+, Errors: 0, Skipped: [0-9]+", all_output)
+    end
+    assert_success false
+  end
+
+  def assert_pending_scenario
+    assert_matching_output("Tests run: [1-9]+, Failures: 0, Errors: 0, Skipped: [1-9]+", all_output)
+    assert_success true
+  end
+
+  def assert_undefined_scenario
+    assert_matching_output("Tests run: [1-9]+, Failures: 0, Errors: 0, Skipped: [1-9]+", all_output)
+    assert_success true
+  end
+
+  def failed_output
+    /Errors: [1-9]+/
   end
 end
 
 World(CucumberJavaMappings)
 
 Before do
-  @aruba_timeout_seconds = 10
+  @aruba_timeout_seconds = 30 # Maven is really slow...
 end

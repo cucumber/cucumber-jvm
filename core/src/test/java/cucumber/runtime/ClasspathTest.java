@@ -2,7 +2,7 @@ package cucumber.runtime;
 
 import cucumber.classpath.Classpath;
 import cucumber.classpath.Consumer;
-import cucumber.classpath.Input;
+import cucumber.classpath.Resource;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -25,8 +25,8 @@ public class ClasspathTest {
     public void looksUpFilesByDir() throws IOException {
         final List<String> paths = new ArrayList<String>();
         Classpath.scan("cucumber/runtime", ".xyz", new Consumer() {
-            public void consume(Input input) {
-                paths.add(input.getPath());
+            public void consume(Resource resource) {
+                paths.add(resource.getPath());
             }
         });
         assertEquals(Arrays.asList("cucumber/runtime/bar.xyz", "cucumber/runtime/foo.xyz"), paths);
@@ -36,8 +36,8 @@ public class ClasspathTest {
     public void looksUpFilesByFile() throws IOException {
         final List<String> paths = new ArrayList<String>();
         Classpath.scan("cucumber/runtime/foo.xyz", new Consumer() {
-            public void consume(Input input) {
-                paths.add(input.getPath());
+            public void consume(Resource resource) {
+                paths.add(resource.getPath());
             }
         });
         assertEquals(Arrays.asList("cucumber/runtime/foo.xyz"), paths);

@@ -2,7 +2,7 @@ package cucumber.runtime.rhino;
 
 import cucumber.classpath.Classpath;
 import cucumber.classpath.Consumer;
-import cucumber.classpath.Input;
+import cucumber.classpath.Resource;
 import cucumber.runtime.*;
 import cucumber.runtime.javascript.JavascriptSnippetGenerator;
 import gherkin.formatter.model.Step;
@@ -40,11 +40,11 @@ public class RhinoBackend implements Backend {
         cx.evaluateReader(scope, dsl, JS_DSL, 1, null);
 
         Classpath.scan(this.scriptPath, ".js", new Consumer() {
-            public void consume(Input input) {
+            public void consume(Resource resource) {
                 try {
-                    cx.evaluateReader(scope, input.getReader(), input.getPath(), 1, null);
+                    cx.evaluateReader(scope, resource.getReader(), resource.getPath(), 1, null);
                 } catch (IOException e) {
-                    throw new CucumberException("Failed to evaluate Javascript in " + input.getPath(), e);
+                    throw new CucumberException("Failed to evaluate Javascript in " + resource.getPath(), e);
                 }
             }
         });

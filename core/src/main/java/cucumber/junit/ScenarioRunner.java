@@ -1,5 +1,6 @@
 package cucumber.junit;
 
+import cucumber.runtime.Pending;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.World;
 import gherkin.formatter.Reporter;
@@ -85,11 +86,12 @@ class ScenarioRunner extends ParentRunner<Step> {
         }
 
         public void result(Result result) {
-            if (Result.SKIPPED == result) {
+            Throwable error = result.getError();
+            if (Result.SKIPPED == result || error instanceof Pending) {
                 eachTestNotifier.fireTestIgnored();
             } else {
-                if (result.getError() != null) {
-                    eachTestNotifier.addFailure(result.getError());
+                if (error != null) {
+                    eachTestNotifier.addFailure(error);
                 }
                 eachTestNotifier.fireTestFinished();
             }

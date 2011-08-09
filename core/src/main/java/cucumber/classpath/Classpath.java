@@ -1,6 +1,5 @@
 package cucumber.classpath;
 
-import cucumber.runtime.NoSuchResource;
 import cucumber.runtime.CucumberException;
 
 import java.io.*;
@@ -18,7 +17,7 @@ public class Classpath {
     public static Set<Class<?>> getInstantiableClasses(final String packagePrefix) {
         final Set<Class<?>> classes = new HashSet<Class<?>>();
         final Consumer consumer = new Consumer() {
-            public void consume(Input input) {
+            public void consume(Resource input) {
                 String path = input.getPath();
                 String className = className(path);
                 try {
@@ -66,11 +65,11 @@ public class Classpath {
         }
     }
 
-    private static List<URL> classpathUrls(String path) {
+    private static List<URL> classpathUrls(String path) throws NoSuchResourceException {
         try {
             Enumeration<URL> resources = cl().getResources(path);
             if(!resources.hasMoreElements()) {
-                throw new NoSuchResource("No resources at path " + path);
+                throw new NoSuchResourceException("No resources at path " + path);
             }
             return Collections.list(resources);
         } catch (IOException e) {
@@ -78,21 +77,21 @@ public class Classpath {
         }
     }
 
-    public static <T> T instantiateSubclass(Class<T> type, Object... constructorArguments) {
-        Collection<T> instances = instantiateSubclasses(type, constructorArguments);
+    public static <T> T instantiateExactlyOneSubclass(Class<T> type, String packagePrefix, Object... constructorArguments) {
+        Collection<T> instances = instantiateSubclasses(type, packagePrefix, constructorArguments);
         if (instances.size() == 1) {
             return instances.iterator().next();
         } else if (instances.size() == 0) {
-            throw new CucumberException("Couldn't find a suitable instance");
+            throw new CucumberException("Couldn't find a single implementation of " + type);
         } else {
             throw new CucumberException("Expected only one instance, but found too many: " + instances);
         }
     }
 
-    public static <T> List<T> instantiateSubclasses(Class<T> type, Object... constructorArguments) {
+    public static <T> List<T> instantiateSubclasses(Class<T> type, String packagePrefix, Object... constructorArguments) {
         List<T> result = new ArrayList<T>();
 
-        Collection<Class<? extends T>> classes = getInstantiableSubclassesOf(type, "cucumber.runtime");
+        Collection<Class<? extends T>> classes = getInstantiableSubclassesOf(type, packagePrefix);
         for (Class<? extends T> clazz : classes) {
             try {
                 Class[] argumentTypes = new Class[constructorArguments.length];
@@ -114,7 +113,7 @@ public class Classpath {
         return result;
     }
 
-    private static abstract class AbstractInput implements Input {
+    private static abstract class AbstractResource implements Resource {
         public String getString() {
             return read(getReader());
         }
@@ -129,7 +128,7 @@ public class Classpath {
 
         private String read(Reader reader) {
             try {
-                StringBuffer sb = new StringBuffer();
+                StringBuilder sb = new StringBuilder();
                 int n;
                 while ((n = reader.read()) != -1) {
                     sb.append((char) n);
@@ -141,11 +140,11 @@ public class Classpath {
         }
     }
 
-    private static class ZipInput extends AbstractInput {
+    private static class ZipResource extends AbstractResource {
         private final ZipFile jarFile;
         private final ZipEntry jarEntry;
 
-        public ZipInput(ZipFile jarFile, ZipEntry jarEntry) {
+        public ZipResource(ZipFile jarFile, ZipEntry jarEntry) {
             this.jarFile = jarFile;
             this.jarEntry = jarEntry;
         }
@@ -163,11 +162,11 @@ public class Classpath {
         }
     }
 
-    private static class FileInput extends AbstractInput {
+    private static class FileResource extends AbstractResource {
         private final File rootDir;
         private final File file;
 
-        public FileInput(File rootDir, File file) {
+        public FileResource(File rootDir, File file) {
             this.rootDir = rootDir;
             this.file = file;
         }
@@ -196,7 +195,7 @@ public class Classpath {
                 ZipEntry jarEntry = entries.nextElement();
                 String entryName = jarEntry.getName();
                 if (entryName.startsWith(pathPrefix) && hasSuffix(suffix, entryName)) {
-                    consumer.consume(new ZipInput(jarFile, jarEntry));
+                    consumer.consume(new ZipResource(jarFile, jarEntry));
                 }
             }
         } catch (IOException t) {
@@ -218,7 +217,7 @@ public class Classpath {
             }
         } else {
             if (hasSuffix(suffix, file.getName())) {
-                consumer.consume(new FileInput(rootDir, file));
+                consumer.consume(new FileResource(rootDir, file));
             }
         }
     }

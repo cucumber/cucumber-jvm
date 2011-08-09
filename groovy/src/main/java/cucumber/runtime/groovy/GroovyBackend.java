@@ -2,7 +2,7 @@ package cucumber.runtime.groovy;
 
 import cucumber.classpath.Classpath;
 import cucumber.classpath.Consumer;
-import cucumber.classpath.Input;
+import cucumber.classpath.Resource;
 import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.StepDefinition;
@@ -35,8 +35,8 @@ public class GroovyBackend implements Backend {
     private void defineStepDefinitions(String pathPrefix) throws IOException {
         final GroovyShell shell = new GroovyShell(new Binding());
         Classpath.scan(pathPrefix, ".groovy", new Consumer() {
-            public void consume(Input input) {
-                shell.evaluate(input.getString(), input.getPath());
+            public void consume(Resource resource) {
+                shell.evaluate(resource.getString(), resource.getPath());
             }
         });
     }

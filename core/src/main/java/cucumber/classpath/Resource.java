@@ -3,7 +3,7 @@ package cucumber.classpath;
 import java.io.InputStream;
 import java.io.Reader;
 
-public interface Input {
+public interface Resource {
     String getPath();
 
     InputStream getInputStream();

@@ -3,7 +3,7 @@ package cucumber.runtime.ioke;
 import cucumber.Table;
 import cucumber.classpath.Classpath;
 import cucumber.classpath.Consumer;
-import cucumber.classpath.Input;
+import cucumber.classpath.Resource;
 import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.StepDefinition;
@@ -35,12 +35,12 @@ public class IokeBackend implements Backend {
             pendingRescues = createRescues("Pending");
 
             Classpath.scan(scriptPath, ".ik", new Consumer() {
-                public void consume(Input input) {
+                public void consume(Resource resource) {
                     try {
-                        currentLocation = input.getPath();
-                        ioke.evaluateString("use(\"" + input.getPath() + "\")");
+                        currentLocation = resource.getPath();
+                        ioke.evaluateString("use(\"" + resource.getPath() + "\")");
                     } catch (ControlFlow controlFlow) {
-                        throw new CucumberException("Failed to load " + input.getPath(), controlFlow);
+                        throw new CucumberException("Failed to load " + resource.getPath(), controlFlow);
                     }
                 }
             });

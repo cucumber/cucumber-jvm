@@ -16,7 +16,7 @@ public class JavaBackend implements Backend {
     private List<StepDefinition> stepDefinitions = new ArrayList<StepDefinition>();
 
     public JavaBackend(String packagePrefix) {
-        this.objectFactory = Classpath.instantiateSubclass(ObjectFactory.class);
+        this.objectFactory = Classpath.instantiateExactlyOneSubclass(ObjectFactory.class, "cucumber.runtime");
         new ClasspathMethodScanner().scan(this, packagePrefix);
     }
 

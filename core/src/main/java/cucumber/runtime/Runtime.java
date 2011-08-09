@@ -1,9 +1,7 @@
 package cucumber.runtime;
 
 import cucumber.classpath.Classpath;
-import gherkin.GherkinParser;
 import gherkin.formatter.Argument;
-import gherkin.formatter.model.Feature;
 import gherkin.formatter.model.Step;
 
 import java.util.ArrayList;
@@ -22,7 +20,7 @@ public class Runtime {
     }
 
     public Runtime(String packageName) {
-        backends = Classpath.instantiateSubclasses(Backend.class, packageName);
+        backends = Classpath.instantiateSubclasses(Backend.class, "cucumber.runtime", packageName);
     }
 
     public StepDefinitionMatch stepDefinitionMatch(Step step) {

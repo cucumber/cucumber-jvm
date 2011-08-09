@@ -1,4 +1,5 @@
 source 'http://rubygems.org'
 
-gem 'cucumber', '1.0.0'
-gem 'aruba', '0.4.3'
+gem 'rake', '0.9.2'
+gem 'cucumber', '1.0.2'
+gem 'aruba', '0.4.6'

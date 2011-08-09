@@ -4,7 +4,7 @@ import clojure.lang.AFunction;
 import clojure.lang.RT;
 import cucumber.classpath.Classpath;
 import cucumber.classpath.Consumer;
-import cucumber.classpath.Input;
+import cucumber.classpath.Resource;
 import cucumber.runtime.*;
 import gherkin.formatter.model.Step;
 
@@ -30,11 +30,11 @@ public class ClojureBackend implements Backend {
     private void defineStepDefinitions() throws Exception {
         RT.load("cucumber/runtime/clojure/dsl");
         Classpath.scan(this.scriptPath, ".clj", new Consumer() {
-            public void consume(Input input) {
+            public void consume(Resource resource) {
                 try {
-                    RT.load(input.getPath().replaceAll(".clj$", ""));
+                    RT.load(resource.getPath().replaceAll(".clj$", ""));
                 } catch (Exception e) {
-                    throw new CucumberException("Failed to parse file " + input.getPath(), e);
+                    throw new CucumberException("Failed to parse file " + resource.getPath(), e);
                 }
             }
         });
