@@ -21,7 +21,7 @@ public class World {
         }
     }
 
-    public void runStep(Step step, String path, Reporter reporter) {
+    public void runStep(Step step, String stackTracePath, Reporter reporter) {
         StepDefinitionMatch match = runtime.stepDefinitionMatch(step);
         if (match != null) {
             reporter.match(match);
@@ -38,7 +38,7 @@ public class World {
             Throwable e = null;
             long start = System.nanoTime();
             try {
-                match.run(path);
+                match.runStep(step, stackTracePath);
             } catch (Throwable t) {
                 skipNextStep = true;
                 e = t;

@@ -19,29 +19,36 @@ public class StepDefinitionMatch extends Match {
         this.step = step;
     }
 
-    public void run(String path) throws Throwable {
+    public void runStep(Step step, String stackTracePath) throws Throwable {
         try {
-            stepDefinition.execute(getTransformedArgs(stepDefinition.getParameterTypes()));
+            stepDefinition.execute(getTransformedArgs(stepDefinition.getParameterTypes(), step));
         } catch (CucumberException e) {
             throw e;
         } catch (InvocationTargetException t) {
-            throw filterStacktrace(t.getTargetException(), step.getStackTraceElement(path));
+            throw filterStacktrace(t.getTargetException(), this.step.getStackTraceElement(stackTracePath));
         } catch (Throwable t) {
-            throw filterStacktrace(t, step.getStackTraceElement(path));
+            throw filterStacktrace(t, this.step.getStackTraceElement(stackTracePath));
         }
     }
 
-    private Object[] getTransformedArgs(Class<?>[] parameterTypes) {
-        if (parameterTypes != null && parameterTypes.length != getArguments().size()) {
-            throw new CucumberException("Arity mismatch. Parameters: " + asList(parameterTypes) + ". Matched arguments: " + getArguments()); // TODO: Handle multiline args here...
+    private Object[] getTransformedArgs(Class<?>[] parameterTypes, Step step) {
+        int argumentCount = getArguments().size() + (step.getMultilineArg() == null ? 0 : 1);
+        if (parameterTypes != null && parameterTypes.length != argumentCount) {
+            throw new CucumberException("Arity mismatch. Parameters: " + asList(parameterTypes) + ". Matched arguments: " + getArguments());
         }
 
-        Object[] result = new Object[getArguments().size()];
+        Object[] result = new Object[argumentCount];
         int n = 0;
         for (Argument a : getArguments()) {
             // TODO: Use the Locale for transformation
             // TODO: Also use method signature to transform ints...
             result[n++] = a.getVal();
+        }
+        if(step.getDocString() != null) {
+            result[n] = step.getDocString().getValue();
+        }
+        if(step.getRows() != null) {
+            result[n] = step.getRows();
         }
         return result;
     }
