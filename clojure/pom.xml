@@ -12,7 +12,6 @@
     </parent>
 
     <artifactId>clojure</artifactId>
-    <version>0.4.3-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>Cucumber: Clojure</name>
 
