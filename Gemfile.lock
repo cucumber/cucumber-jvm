@@ -41,5 +41,6 @@ PLATFORMS
 
 DEPENDENCIES
   aruba (= 0.4.6)
+  bundler (= 1.0.17)
   cucumber (= 1.0.2)
   rake (= 0.9.2)

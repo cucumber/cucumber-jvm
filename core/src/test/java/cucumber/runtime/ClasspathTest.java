@@ -2,7 +2,7 @@ package cucumber.runtime;
 
 import cucumber.classpath.Classpath;
 import cucumber.classpath.Consumer;
-import cucumber.classpath.Resource;
+import cucumber.io.Resource;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -17,7 +17,8 @@ public class ClasspathTest {
     
     @Test
     public void looksUpInstantiableSubclassesOnClassPath() throws IOException {
-        Set<Class<? extends Person>> expected = new HashSet<Class<? extends Person>>(Arrays.asList(Fred.class, Wilma.class));
+        List<Class<? extends Person>> classes = Arrays.asList(Fred.class, Wilma.class);
+        Set<Class<? extends Person>> expected = new HashSet<Class<? extends Person>>(classes);
         assertEquals(expected, Classpath.getInstantiableSubclassesOf(Person.class, "cucumber.runtime"));
     }
 

@@ -4,7 +4,7 @@ import clojure.lang.AFunction;
 import clojure.lang.RT;
 import cucumber.classpath.Classpath;
 import cucumber.classpath.Consumer;
-import cucumber.classpath.Resource;
+import cucumber.io.Resource;
 import cucumber.runtime.*;
 import gherkin.formatter.model.Step;
 

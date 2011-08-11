@@ -1,4 +1,4 @@
-package cucumber.classpath;
+package cucumber.io;
 
 import java.io.InputStream;
 import java.io.Reader;

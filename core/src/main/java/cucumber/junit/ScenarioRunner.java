@@ -17,7 +17,7 @@ import org.junit.runners.model.InitializationError;
 import java.util.ArrayList;
 import java.util.List;
 
-class ScenarioRunner extends ParentRunner<Step> {
+public class ScenarioRunner extends ParentRunner<Step> {
     private final Runtime runtime;
     private final Scenario scenario;
     private final List<Step> steps = new ArrayList<Step>();
@@ -69,12 +69,14 @@ class ScenarioRunner extends ParentRunner<Step> {
 
     private static class JUnitReporter implements Reporter {
         private final EachTestNotifier eachTestNotifier;
+        private Match match;
 
         public JUnitReporter(EachTestNotifier eachTestNotifier) {
             this.eachTestNotifier = eachTestNotifier;
         }
 
         public void match(Match match) {
+            this.match = match;
             if (match == Match.NONE) {
                 eachTestNotifier.fireTestIgnored();
             } else {
@@ -88,7 +90,10 @@ class ScenarioRunner extends ParentRunner<Step> {
         public void result(Result result) {
             Throwable error = result.getError();
             if (Result.SKIPPED == result || error instanceof Pending) {
-                eachTestNotifier.fireTestIgnored();
+                if(match != Match.NONE) {
+                    // No need to say it's ignored twice
+                    eachTestNotifier.fireTestIgnored();
+                }
             } else {
                 if (error != null) {
                     eachTestNotifier.addFailure(error);

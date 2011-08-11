@@ -31,8 +31,7 @@ public class World {
         }
 
         if (skipNextStep) {
-            // TODO: Do we really want to send a skipped (blue) for undefined steps?
-            // Think about implications for pretty printer and JUnit....
+            // Undefined steps (Match.NONE) will always get the Result.SKIPPED result
             reporter.result(Result.SKIPPED);
         } else {
             Throwable e = null;

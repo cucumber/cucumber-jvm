@@ -4,18 +4,17 @@ import cucumber.runtime.CucumberException;
 import cucumber.runtime.Runtime;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.model.*;
-import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
 
 import java.util.List;
 
-class RunnerBuilder implements Formatter {
+public class RunnerBuilder implements Formatter {
     private final Runtime runtime;
-    private final List<ParentRunner> children;
+    private final List<ScenarioRunner> children;
     private gherkin.formatter.model.Feature feature;
     private ScenarioRunner scenarioRunner;
 
-    public RunnerBuilder(Runtime runtime, List<ParentRunner> children) {
+    public RunnerBuilder(Runtime runtime, List<ScenarioRunner> children) {
         this.runtime = runtime;
         this.children = children;
     }

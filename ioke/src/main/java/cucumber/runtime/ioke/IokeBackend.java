@@ -3,7 +3,7 @@ package cucumber.runtime.ioke;
 import cucumber.Table;
 import cucumber.classpath.Classpath;
 import cucumber.classpath.Consumer;
-import cucumber.classpath.Resource;
+import cucumber.io.Resource;
 import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.StepDefinition;

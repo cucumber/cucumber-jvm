@@ -1,5 +1,8 @@
 package cucumber.classpath;
 
+import cucumber.io.FileResource;
+import cucumber.io.Resource;
+import cucumber.io.ZipResource;
 import cucumber.runtime.CucumberException;
 
 import java.io.*;
@@ -111,77 +114,6 @@ public class Classpath {
 
         }
         return result;
-    }
-
-    private static abstract class AbstractResource implements Resource {
-        public String getString() {
-            return read(getReader());
-        }
-
-        public Reader getReader() {
-            try {
-                return new InputStreamReader(getInputStream(), "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                throw new CucumberException("Failed to open path " + getPath(), e);
-            }
-        }
-
-        private String read(Reader reader) {
-            try {
-                StringBuilder sb = new StringBuilder();
-                int n;
-                while ((n = reader.read()) != -1) {
-                    sb.append((char) n);
-                }
-                return sb.toString();
-            } catch (IOException e) {
-                throw new CucumberException("Failed to read", e);
-            }
-        }
-    }
-
-    private static class ZipResource extends AbstractResource {
-        private final ZipFile jarFile;
-        private final ZipEntry jarEntry;
-
-        public ZipResource(ZipFile jarFile, ZipEntry jarEntry) {
-            this.jarFile = jarFile;
-            this.jarEntry = jarEntry;
-        }
-
-        public String getPath() {
-            return jarEntry.getName();
-        }
-
-        public InputStream getInputStream() {
-            try {
-                return jarFile.getInputStream(jarEntry);
-            } catch (IOException e) {
-                throw new CucumberException("Failed to read from jar file", e);
-            }
-        }
-    }
-
-    private static class FileResource extends AbstractResource {
-        private final File rootDir;
-        private final File file;
-
-        public FileResource(File rootDir, File file) {
-            this.rootDir = rootDir;
-            this.file = file;
-        }
-
-        public String getPath() {
-            return file.getAbsolutePath().substring(rootDir.getAbsolutePath().length() + 1, file.getAbsolutePath().length());
-        }
-
-        public InputStream getInputStream() {
-            try {
-                return new FileInputStream(file);
-            } catch (FileNotFoundException e) {
-                throw new CucumberException("Failed to read from file " + file.getAbsolutePath(), e);
-            }
-        }
     }
 
     private static void scanJar(URL jarDir, String pathPrefix, String suffix, Consumer consumer) {

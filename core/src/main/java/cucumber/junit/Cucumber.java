@@ -2,7 +2,7 @@ package cucumber.junit;
 
 import cucumber.classpath.Classpath;
 import cucumber.classpath.Consumer;
-import cucumber.classpath.Resource;
+import cucumber.io.Resource;
 import cucumber.runtime.Runtime;
 import gherkin.GherkinParser;
 import gherkin.formatter.model.Feature;
@@ -14,10 +14,10 @@ import org.junit.runners.model.InitializationError;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Cucumber extends ParentRunner<ParentRunner> {
+public class Cucumber extends ParentRunner<ScenarioRunner> {
     private final Feature feature;
     private final String pathName;
-    private final List<ParentRunner> children = new ArrayList<ParentRunner>();
+    private final List<ScenarioRunner> children = new ArrayList<ScenarioRunner>();
     private final RunnerBuilder builder;
 
     private static Runtime runtime(Class testClass) {
@@ -60,12 +60,12 @@ public class Cucumber extends ParentRunner<ParentRunner> {
     }
 
     @Override
-    protected List<ParentRunner> getChildren() {
+    protected List<ScenarioRunner> getChildren() {
         return children;
     }
 
     @Override
-    protected Description describeChild(ParentRunner child) {
+    protected Description describeChild(ScenarioRunner child) {
         return child.getDescription();
     }
 
@@ -75,7 +75,7 @@ public class Cucumber extends ParentRunner<ParentRunner> {
     }
 
     @Override
-    protected void runChild(ParentRunner runner, RunNotifier notifier) {
+    protected void runChild(ScenarioRunner runner, RunNotifier notifier) {
         runner.run(notifier);
     }
 

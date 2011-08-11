@@ -1,3 +1,4 @@
+require 'bundler/setup'
 require 'cucumber/rake/task'
 
 Cucumber::Rake::Task.new(:picocontainer) do |t|

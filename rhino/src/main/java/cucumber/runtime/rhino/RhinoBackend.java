@@ -2,7 +2,7 @@ package cucumber.runtime.rhino;
 
 import cucumber.classpath.Classpath;
 import cucumber.classpath.Consumer;
-import cucumber.classpath.Resource;
+import cucumber.io.Resource;
 import cucumber.runtime.*;
 import cucumber.runtime.javascript.JavascriptSnippetGenerator;
 import gherkin.formatter.model.Step;
