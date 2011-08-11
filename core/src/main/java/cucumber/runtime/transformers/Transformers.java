@@ -1,12 +1,12 @@
 package cucumber.runtime.transformers;
 
-import gherkin.formatter.Argument;
-
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+
+import static java.util.Arrays.asList;
 
 /**
  * Class for transforming String arguments from Gherkin to a certain type using a Locale
@@ -14,12 +14,12 @@ import java.util.Map;
 public class Transformers {
     private Map<Class<?>, Transformer<?>> transformables;
 
-    public <T> T transform(Argument argument, Class<T> clazz, Locale locale) {
+    public <T> T transform(Locale locale, Class<T> clazz, String... arguments) {
         Transformer<T> transformer = getTransformable(clazz);
         if (transformer == null) {
-            throw new TransformationException("Can't transform " + argument.getVal() + " to: " + clazz.getName() + ". No transformer found.");
+            throw new TransformationException("Can't transform " + asList(arguments) + " to: " + clazz.getName() + ". No transformer found.");
         }
-        return transformer.transform(argument.getVal(), locale);
+        return transformer.transform(locale, arguments);
     }
 
     @SuppressWarnings("unchecked")

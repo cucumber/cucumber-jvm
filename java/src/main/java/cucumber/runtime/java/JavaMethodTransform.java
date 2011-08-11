@@ -1,6 +1,7 @@
 package cucumber.runtime.java;
 
 import cucumber.runtime.transformers.Transformer;
+import cucumber.runtime.transformers.Transformers;
 
 import java.lang.reflect.Method;
 import java.util.Locale;
@@ -16,8 +17,13 @@ public class JavaMethodTransform implements Transformer<Object> {
         this.backend = backend;
     }
 
-    public Object transform(String argument, Locale locale) {
-        return this.backend.invoke(this.transformMethod, new Object[]{argument});
+    public Object transform(Locale locale, String... arguments) {
+        Transformers transformers = new Transformers();
+        Object[] transformedArguments = new Object[arguments.length];
+        for(int i = 0; i < arguments.length; i++) {
+            transformedArguments[i] = transformers.transform(locale, transformMethod.getParameterTypes()[i], arguments[i]);
+        }
+        return this.backend.invoke(this.transformMethod, transformedArguments);
     }
 
 }

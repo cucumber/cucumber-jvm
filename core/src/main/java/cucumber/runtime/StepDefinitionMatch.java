@@ -44,7 +44,7 @@ public class StepDefinitionMatch extends Match {
         Object[] result = new Object[argumentCount];
         int n = 0;
         for (Argument a : getArguments()) {
-            result[n] = this.transformers.transform(a, parameterTypes[n++], getLocale());
+            result[n] = transformers.transform(getLocale(), parameterTypes[n++], a.getVal());
         }
         if (step.getDocString() != null) {
             result[n] = step.getDocString().getValue();

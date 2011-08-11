@@ -4,11 +4,11 @@ import java.util.Locale;
 
 public class BooleanTransformer implements Transformer<Boolean> {
 
-    public Boolean transform(String argument, Locale locale) {
-        if ("false".equalsIgnoreCase(argument) || "true".equalsIgnoreCase(argument)) {
-            return Boolean.parseBoolean(argument);
+    public Boolean transform(Locale locale, String... arguments) {
+        if ("false".equalsIgnoreCase(arguments[0]) || "true".equalsIgnoreCase(arguments[0])) {
+            return Boolean.parseBoolean(arguments[0]);
         } else {
-            throw new TransformationException(String.format(locale, "Could not convert %s to Boolean", argument));
+            throw new TransformationException(String.format(locale, "Could not convert %s to Boolean", arguments));
         }
     }
 

@@ -7,8 +7,8 @@ import java.util.Locale;
 public abstract class TransformerWithNumberFormat<T extends Number> extends TransformerWithFormat<T> {
 
     @Override
-    public T transform(String argument, Locale locale) {
-        return doTransform(super.transform(argument, locale));
+    public T transform(Locale locale, String... arguments) {
+        return doTransform(super.transform(locale, arguments));
     }
 
     @Override

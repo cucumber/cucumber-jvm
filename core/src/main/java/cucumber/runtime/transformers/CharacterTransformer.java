@@ -4,11 +4,11 @@ import java.util.Locale;
 
 public class CharacterTransformer implements Transformer<Character> {
 
-    public Character transform(String argument, Locale locale) {
-        if (argument.length() < 1) {
+    public Character transform(Locale locale, String... arguments) {
+        if (arguments[0].length() < 1) {
             return null;
         }
-        return argument.charAt(0);
+        return arguments[0].charAt(0);
     }
 
 }

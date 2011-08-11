@@ -59,9 +59,15 @@ public class JavaBackend implements Backend {
                 return method.invoke(this.objectFactory.getInstance(method.getDeclaringClass()), javaArgs);
             }
         } catch (IllegalArgumentException e) {
-            String m = "Couldn't invokeWithArgs " + method.toGenericString() + " with "
-                    + Utils.join(javaArgs, ",");
-            throw new CucumberException(m);
+            StringBuilder m = new StringBuilder("Couldn't invokeWithArgs ").append(method.toGenericString()).append(" with ").append(Utils.join(javaArgs, ",")).append(" (");
+            boolean comma = false;
+            for (Object javaArg : javaArgs) {
+                if(comma) m.append(",");
+                m.append(javaArg.getClass());
+                comma = true;
+            }
+            m.append(")");
+            throw new CucumberException(m.toString(), e);
         } catch (InvocationTargetException e) {
             throw new CucumberException("Couldn't invoke method", e.getTargetException());
         } catch (IllegalAccessException e) {
