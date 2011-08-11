@@ -27,7 +27,7 @@ public class SpringFactory implements ObjectFactory {
     }
 
     public void addClass(Class<?> clazz) {
-        if(!classes.contains(clazz)) {
+        if (!classes.contains(clazz)) {
             stepDefContext.registerSingleton(clazz.getName(), clazz);
         }
         classes.add(clazz);

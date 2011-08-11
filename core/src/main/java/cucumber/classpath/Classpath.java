@@ -5,7 +5,8 @@ import cucumber.io.Resource;
 import cucumber.io.ZipResource;
 import cucumber.runtime.CucumberException;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.net.URL;
@@ -71,7 +72,7 @@ public class Classpath {
     private static List<URL> classpathUrls(String path) throws NoSuchResourceException {
         try {
             Enumeration<URL> resources = cl().getResources(path);
-            if(!resources.hasMoreElements()) {
+            if (!resources.hasMoreElements()) {
                 throw new NoSuchResourceException("No resources at path " + path);
             }
             return Collections.list(resources);

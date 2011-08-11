@@ -90,7 +90,7 @@ public class ScenarioRunner extends ParentRunner<Step> {
         public void result(Result result) {
             Throwable error = result.getError();
             if (Result.SKIPPED == result || error instanceof Pending) {
-                if(match != Match.NONE) {
+                if (match != Match.NONE) {
                     // No need to say it's ignored twice
                     eachTestNotifier.fireTestIgnored();
                 }

@@ -14,8 +14,8 @@ public class Main {
     public static void main(String[] argv) {
         Runtime runtime = null;
 
-        List<String> filesOrDirs = new ArrayList<String>(); 
-        
+        List<String> filesOrDirs = new ArrayList<String>();
+
         List<String> args = new ArrayList<String>(asList(argv));
         while (!args.isEmpty()) {
             String arg = args.remove(0);
@@ -33,7 +33,7 @@ public class Main {
                 filesOrDirs.add(arg);
             }
         }
-        if(runtime == null) {
+        if (runtime == null) {
             System.out.println("Missing option: --glue");
         }
 

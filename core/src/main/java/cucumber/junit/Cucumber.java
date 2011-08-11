@@ -45,7 +45,7 @@ public class Cucumber extends ParentRunner<ScenarioRunner> {
         // Why aren't we passing the class to super? I don't remember, but there is probably a good reason.
         super(null);
         cucumber.junit.Feature featureAnnotation = (cucumber.junit.Feature) featureClass.getAnnotation(cucumber.junit.Feature.class);
-        if(featureAnnotation != null) {
+        if (featureAnnotation != null) {
             pathName = featureAnnotation.value();
         } else {
             pathName = featureClass.getName().replace('.', '/') + ".feature";

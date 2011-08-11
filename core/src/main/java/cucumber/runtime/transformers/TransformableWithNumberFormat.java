@@ -5,18 +5,18 @@ import java.text.NumberFormat;
 import java.util.Locale;
 
 public abstract class TransformableWithNumberFormat<T extends Number> extends
-		TransformableWithFormat<T> {
+        TransformableWithFormat<T> {
 
-	@Override
-	public T transform(String argument, Locale locale) {
-		return doTransform(super.transform(argument, locale));
-	}
-	
-	@Override
-	public Format getFormat(Locale locale) {
-		return NumberFormat.getNumberInstance(locale);
-	}
+    @Override
+    public T transform(String argument, Locale locale) {
+        return doTransform(super.transform(argument, locale));
+    }
 
-	protected abstract T doTransform(Number argument);
+    @Override
+    public Format getFormat(Locale locale) {
+        return NumberFormat.getNumberInstance(locale);
+    }
+
+    protected abstract T doTransform(Number argument);
 
 }

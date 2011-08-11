@@ -7,11 +7,11 @@ import java.util.Locale;
 
 public class DateTransformable extends TransformableWithFormat<Date> {
 
-	public Format getFormat(Locale locale) {
-		DateFormat format = DateFormat
-				.getDateInstance(DateFormat.SHORT, locale);
-		format.setLenient(false);
-		return format;
-	}
+    public Format getFormat(Locale locale) {
+        DateFormat format = DateFormat
+                .getDateInstance(DateFormat.SHORT, locale);
+        format.setLenient(false);
+        return format;
+    }
 
 }

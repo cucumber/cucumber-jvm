@@ -23,10 +23,10 @@ public class JavaBackend implements Backend {
         this.objectFactory = Classpath.instantiateExactlyOneSubclass(ObjectFactory.class, "cucumber.runtime");
         new ClasspathMethodScanner().scan(this, packagePrefix);
     }
-    
+
     public JavaBackend(ObjectFactory objectFactory, List<StepDefinition> stepDefinitions) {
-    	this.objectFactory = objectFactory;
-    	this.stepDefinitions = stepDefinitions;
+        this.objectFactory = objectFactory;
+        this.stepDefinitions = stepDefinitions;
     }
 
     public List<StepDefinition> getStepDefinitions() {
@@ -50,22 +50,22 @@ public class JavaBackend implements Backend {
         objectFactory.addClass(clazz);
         stepDefinitions.add(new JavaStepDefinition(pattern, method, objectFactory, locale));
     }
-    
+
     public Object invoke(Method method, Object[] javaArgs) {
-		try {
-			if (method.isAnnotationPresent(Pending.class)) {
-				throw new CucumberException(method.getAnnotation(Pending.class).value());
-			} else {
-				return method.invoke(this.objectFactory.getInstance(method.getDeclaringClass()), javaArgs);
-			}
-		} catch (IllegalArgumentException e) {
-			String m = "Couldn't invokeWithArgs " + method.toGenericString() + " with "
-					+ Utils.join(javaArgs, ",");
-			throw new CucumberException(m);
-		} catch (InvocationTargetException e) {
-			throw new CucumberException("Couldn't invoke method", e.getTargetException());
-		} catch (IllegalAccessException e) {
-			throw new CucumberException("Couldn't invoke method", e);
-		}
-	}
+        try {
+            if (method.isAnnotationPresent(Pending.class)) {
+                throw new CucumberException(method.getAnnotation(Pending.class).value());
+            } else {
+                return method.invoke(this.objectFactory.getInstance(method.getDeclaringClass()), javaArgs);
+            }
+        } catch (IllegalArgumentException e) {
+            String m = "Couldn't invokeWithArgs " + method.toGenericString() + " with "
+                    + Utils.join(javaArgs, ",");
+            throw new CucumberException(m);
+        } catch (InvocationTargetException e) {
+            throw new CucumberException("Couldn't invoke method", e.getTargetException());
+        } catch (IllegalAccessException e) {
+            throw new CucumberException("Couldn't invoke method", e);
+        }
+    }
 }

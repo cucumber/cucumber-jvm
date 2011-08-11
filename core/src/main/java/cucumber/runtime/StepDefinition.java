@@ -25,7 +25,7 @@ public interface StepDefinition {
      * This will be used to coerce string values from arguments before
      * invoking the step definition. The size of the returned array
      * must be equal to the number of arguments accepted by execute.
-     * 
+     * <p/>
      * If the parameter types are unknown at runtime, the result may be null.
      */
     Class<?>[] getParameterTypes();
@@ -41,9 +41,9 @@ public interface StepDefinition {
      * stack traces.
      */
     boolean isDefinedAt(StackTraceElement stackTraceElement); // TODO: redundant with getLocation?
-    
+
     /**
-     *  @return the locale associated with the step
+     * @return the locale associated with the step
      */
     Locale getLocale();
 }

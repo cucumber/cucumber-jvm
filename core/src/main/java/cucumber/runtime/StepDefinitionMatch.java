@@ -1,5 +1,6 @@
 package cucumber.runtime;
 
+import cucumber.runtime.transformers.Transformer;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Match;
 import gherkin.formatter.model.Step;
@@ -8,14 +9,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Locale;
 
-import cucumber.runtime.transformers.Transformer;
-
 import static java.util.Arrays.asList;
 
 public class StepDefinitionMatch extends Match {
     private final StepDefinition stepDefinition;
     private final Step step;
-	private Transformer transformer;
+    private Transformer transformer;
 
     public StepDefinitionMatch(List<Argument> arguments, StepDefinition stepDefinition, Step step, Transformer transformer) {
         super(arguments, stepDefinition.getLocation());
@@ -47,19 +46,19 @@ public class StepDefinitionMatch extends Match {
         for (Argument a : getArguments()) {
             result[n] = this.transformer.transform(a, parameterTypes[n++], getLocale());
         }
-        if(step.getDocString() != null) {
+        if (step.getDocString() != null) {
             result[n] = step.getDocString().getValue();
         }
-        if(step.getRows() != null) {
+        if (step.getRows() != null) {
             // TODO: This should be a cucumber.Table, which will wrap the data in the rows, providing a similar API to the ruby impl (especially diffing)
             result[n] = step.getRows();
         }
         return result;
     }
 
-	private Locale getLocale() {
-		return this.stepDefinition.getLocale();
-	}
+    private Locale getLocale() {
+        return this.stepDefinition.getLocale();
+    }
 
     private Throwable filterStacktrace(Throwable error, StackTraceElement stepLocation) {
         StackTraceElement[] stackTraceElements = error.getStackTrace();

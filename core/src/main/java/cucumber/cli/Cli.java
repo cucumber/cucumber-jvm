@@ -27,7 +27,7 @@ public class Cli {
 
         RunNotifier notifier = new RunNotifier();
         notifier.addListener(new CucumberRunListener());
-        
+
         for (ScenarioRunner scenarioRunner : scenarioRunners) {
             scenarioRunner.run(notifier);
         }

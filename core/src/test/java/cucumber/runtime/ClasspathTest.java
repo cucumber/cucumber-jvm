@@ -11,10 +11,15 @@ import java.util.*;
 import static org.junit.Assert.assertEquals;
 
 public class ClasspathTest {
-    public static class Person {}
-    public static class Fred extends Person {}
-    public static class Wilma extends Person {}
-    
+    public static class Person {
+    }
+
+    public static class Fred extends Person {
+    }
+
+    public static class Wilma extends Person {
+    }
+
     @Test
     public void looksUpInstantiableSubclassesOnClassPath() throws IOException {
         List<Class<? extends Person>> classes = Arrays.asList(Fred.class, Wilma.class);
