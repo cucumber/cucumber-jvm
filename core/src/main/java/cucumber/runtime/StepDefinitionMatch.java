@@ -6,22 +6,27 @@ import gherkin.formatter.model.Step;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.Locale;
+
+import cucumber.runtime.transformers.Transformer;
 
 import static java.util.Arrays.asList;
 
 public class StepDefinitionMatch extends Match {
     private final StepDefinition stepDefinition;
     private final Step step;
+	private Transformer transformer;
 
-    public StepDefinitionMatch(List<Argument> arguments, StepDefinition stepDefinition, Step step) {
+    public StepDefinitionMatch(List<Argument> arguments, StepDefinition stepDefinition, Step step, Transformer transformer) {
         super(arguments, stepDefinition.getLocation());
         this.stepDefinition = stepDefinition;
         this.step = step;
+        this.transformer = transformer;
     }
 
     public void runStep(Step step, String stackTracePath) throws Throwable {
         try {
-            stepDefinition.execute(getTransformedArgs(stepDefinition.getParameterTypes(), step));
+            stepDefinition.execute(transformedArgs(stepDefinition.getParameterTypes(), step));
         } catch (CucumberException e) {
             throw e;
         } catch (InvocationTargetException t) {
@@ -31,27 +36,30 @@ public class StepDefinitionMatch extends Match {
         }
     }
 
-    private Object[] getTransformedArgs(Class<?>[] parameterTypes, Step step) {
+    private Object[] transformedArgs(Class<?>[] parameterTypes, Step step) {
         int argumentCount = getArguments().size() + (step.getMultilineArg() == null ? 0 : 1);
-        if (parameterTypes != null && parameterTypes.length != argumentCount) {
+        if (parameterTypes.length != argumentCount) {
             throw new CucumberException("Arity mismatch. Parameters: " + asList(parameterTypes) + ". Matched arguments: " + getArguments());
         }
 
         Object[] result = new Object[argumentCount];
         int n = 0;
         for (Argument a : getArguments()) {
-            // TODO: Use the Locale for transformation
-            // TODO: Also use method signature to transform ints...
-            result[n++] = a.getVal();
+            result[n] = this.transformer.transform(a, parameterTypes[n++], getLocale());
         }
         if(step.getDocString() != null) {
             result[n] = step.getDocString().getValue();
         }
         if(step.getRows() != null) {
+            // TODO: This should be a cucumber.Table, which will wrap the data in the rows, providing a similar API to the ruby impl (especially diffing)
             result[n] = step.getRows();
         }
         return result;
     }
+
+	private Locale getLocale() {
+		return this.stepDefinition.getLocale();
+	}
 
     private Throwable filterStacktrace(Throwable error, StackTraceElement stepLocation) {
         StackTraceElement[] stackTraceElements = error.getStackTrace();

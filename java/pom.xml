@@ -12,7 +12,6 @@
     </parent>
 
     <artifactId>java</artifactId>
-    <version>0.4.3-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>Cucumber: Java</name>
 
@@ -25,6 +24,12 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <scope>test</scope>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 </project>

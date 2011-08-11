@@ -1,6 +1,7 @@
 package cucumber.runtime;
 
 import cucumber.classpath.Classpath;
+import cucumber.runtime.transformers.Transformer;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 
@@ -14,6 +15,7 @@ import static java.util.Arrays.asList;
 public class Runtime {
     private final List<Backend> backends;
     private final List<Step> undefinedSteps = new ArrayList<Step>();
+    private Transformer transformer;
 
     public Runtime(Backend... backends) {
         this.backends = asList(backends);
@@ -43,7 +45,7 @@ public class Runtime {
             for (StepDefinition stepDefinition : backend.getStepDefinitions()) {
                 List<Argument> arguments = stepDefinition.matchedArguments(step);
                 if (arguments != null) {
-                    result.add(new StepDefinitionMatch(arguments, stepDefinition, step));
+                    result.add(new StepDefinitionMatch(arguments, stepDefinition, step, getTransformer()));
                 }
             }
         }
@@ -81,5 +83,16 @@ public class Runtime {
 
     public World newWorld() {
         return new World(backends, this);
+    }
+
+    public Transformer getTransformer() {
+        if (this.transformer == null) {
+            this.transformer = new Transformer();
+        }
+        return this.transformer;
+    }
+
+    public void setTransformer(Transformer transformer) {
+        this.transformer = transformer;
     }
 }

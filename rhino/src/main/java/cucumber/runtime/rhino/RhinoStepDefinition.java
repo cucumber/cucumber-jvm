@@ -1,17 +1,20 @@
 package cucumber.runtime.rhino;
 
-import cucumber.runtime.StepDefinition;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
+
+import java.util.List;
+import java.util.Locale;
+
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.NativeFunction;
 import org.mozilla.javascript.NativeJavaObject;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.tools.shell.Global;
 
-import java.util.List;
+import cucumber.runtime.AbstractStepDefinition;
 
-public class RhinoStepDefinition implements StepDefinition {
+public class RhinoStepDefinition extends AbstractStepDefinition {
     private final Context cx;
     private final Scriptable scope;
     private final Global jsStepDefinition;
@@ -19,8 +22,9 @@ public class RhinoStepDefinition implements StepDefinition {
     private final StackTraceElement location;
     private final NativeFunction argumentsFromFunc;
 
-    public RhinoStepDefinition(Context cx, Scriptable scope, Global jsStepDefinition, NativeFunction bodyFunc, StackTraceElement location, NativeFunction argumentsFromFunc) {
-        this.cx = cx;
+    public RhinoStepDefinition(Context cx, Scriptable scope, Global jsStepDefinition, NativeFunction bodyFunc, StackTraceElement location, NativeFunction argumentsFromFunc, Locale locale) {
+        super(locale);
+    	this.cx = cx;
         this.scope = scope;
         this.jsStepDefinition = jsStepDefinition;
         this.bodyFunc = bodyFunc;

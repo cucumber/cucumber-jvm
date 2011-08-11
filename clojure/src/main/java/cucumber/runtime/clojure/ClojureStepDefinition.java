@@ -1,24 +1,27 @@
 package cucumber.runtime.clojure;
 
-import clojure.lang.AFunction;
-import cucumber.runtime.JdkPatternArgumentMatcher;
-import cucumber.runtime.StepDefinition;
-import cuke4duke.internal.Utils;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
-public class ClojureStepDefinition implements StepDefinition {
+import clojure.lang.AFunction;
+import cucumber.runtime.AbstractStepDefinition;
+import cucumber.runtime.JdkPatternArgumentMatcher;
+import cuke4duke.internal.Utils;
+
+public class ClojureStepDefinition extends AbstractStepDefinition {
     private final Pattern regexp;
     private final AFunction closure;
     private StackTraceElement location;
 
-    public ClojureStepDefinition(Pattern regexp, AFunction closure, StackTraceElement location) {
-        this.regexp = regexp;
+    public ClojureStepDefinition(Pattern regexp, AFunction closure, StackTraceElement location, Locale locale) {
+        super(locale);
+    	this.regexp = regexp;
         this.closure = closure;
         this.location = location;
     }

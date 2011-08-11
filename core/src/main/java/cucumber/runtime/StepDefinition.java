@@ -4,6 +4,7 @@ import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 
 import java.util.List;
+import java.util.Locale;
 
 public interface StepDefinition {
     /**
@@ -40,4 +41,9 @@ public interface StepDefinition {
      * stack traces.
      */
     boolean isDefinedAt(StackTraceElement stackTraceElement); // TODO: redundant with getLocation?
+    
+    /**
+     *  @return the locale associated with the step
+     */
+    Locale getLocale();
 }

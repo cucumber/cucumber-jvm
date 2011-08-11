@@ -16,6 +16,7 @@ import ioke.lang.exceptions.ControlFlow;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 public class IokeBackend implements Backend {
     private final Runtime ioke;
@@ -50,8 +51,8 @@ public class IokeBackend implements Backend {
         }
     }
 
-    public void addStepDefinition(Object iokeStepDefObject) throws Throwable {
-        stepDefinitions.add(new IokeStepDefinition(this, ioke, (IokeObject) iokeStepDefObject, currentLocation));
+    public void addStepDefinition(Object iokeStepDefObject, Locale locale) throws Throwable {
+        stepDefinitions.add(new IokeStepDefinition(this, ioke, (IokeObject) iokeStepDefObject, currentLocation, locale));
     }
 
     public List<StepDefinition> getStepDefinitions() {
