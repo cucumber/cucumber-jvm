@@ -2,7 +2,7 @@ package cucumber.runtime.transformers;
 
 import java.util.Locale;
 
-public class BooleanTransformable implements Transformable<Boolean> {
+public class BooleanTransformer implements Transformer<Boolean> {
 
     public Boolean transform(String argument, Locale locale) {
         if ("false".equalsIgnoreCase(argument) || "true".equalsIgnoreCase(argument)) {

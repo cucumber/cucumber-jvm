@@ -1,11 +1,11 @@
 package cucumber.runtime.java;
 
-import cucumber.runtime.transformers.Transformable;
+import cucumber.runtime.transformers.Transformer;
 
 import java.lang.reflect.Method;
 import java.util.Locale;
 
-public class JavaMethodTransform implements Transformable<Object> {
+public class JavaMethodTransform implements Transformer<Object> {
 
     private Method transformMethod;
     private JavaBackend backend;

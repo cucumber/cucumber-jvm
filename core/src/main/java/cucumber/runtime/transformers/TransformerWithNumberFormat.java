@@ -4,8 +4,7 @@ import java.text.Format;
 import java.text.NumberFormat;
 import java.util.Locale;
 
-public abstract class TransformableWithNumberFormat<T extends Number> extends
-        TransformableWithFormat<T> {
+public abstract class TransformerWithNumberFormat<T extends Number> extends TransformerWithFormat<T> {
 
     @Override
     public T transform(String argument, Locale locale) {

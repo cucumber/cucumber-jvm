@@ -13,25 +13,25 @@ import java.util.Locale;
 public class StandardTransformersTest {
     @Test
     public void shouldTransformBoolean() {
-        Boolean transformFalse = new BooleanTransformable().transform("false", Locale.ENGLISH);
-        Boolean transformTrue = new BooleanTransformable().transform("true", Locale.ENGLISH);
+        Boolean transformFalse = new BooleanTransformer().transform("false", Locale.ENGLISH);
+        Boolean transformTrue = new BooleanTransformer().transform("true", Locale.ENGLISH);
         Assert.assertFalse(transformFalse);
         Assert.assertTrue(transformTrue);
     }
 
     @Test(expected = TransformationException.class)
     public void shouldThrowTransformationExceptionWhenConvertingBoolean() {
-        new BooleanTransformable().transform("vrai", Locale.ENGLISH);
+        new BooleanTransformer().transform("vrai", Locale.ENGLISH);
     }
 
     @Test
     public void shouldTransformBigDecimal() {
-        BigDecimal englishBigDecimal = new BigDecimalTransformable().transform("300.15",
+        BigDecimal englishBigDecimal = new BigDecimalTransformer().transform("300.15",
                 Locale.ENGLISH);
-        BigDecimal englishBigDecimal2 = new BigDecimalTransformable().transform("30000000.15",
+        BigDecimal englishBigDecimal2 = new BigDecimalTransformer().transform("30000000.15",
                 Locale.ENGLISH);
-        BigDecimal englishInteger = new BigDecimalTransformable().transform("300", Locale.ENGLISH);
-        BigDecimal frenchBigDecimal = new BigDecimalTransformable().transform("300,15",
+        BigDecimal englishInteger = new BigDecimalTransformer().transform("300", Locale.ENGLISH);
+        BigDecimal frenchBigDecimal = new BigDecimalTransformer().transform("300,15",
                 Locale.FRENCH);
         Assert.assertEquals(new BigDecimal("300.15"), englishBigDecimal);
         Assert.assertEquals(new BigDecimal("30000000.15"), englishBigDecimal2);
@@ -42,15 +42,15 @@ public class StandardTransformersTest {
     @Test
     public void shouldTransformDate() {
         Assert.assertEquals(getDateToTest(),
-                new DateTransformable().transform("11/29/2011", Locale.ENGLISH));
+                new DateTransformer().transform("11/29/2011", Locale.ENGLISH));
         Assert.assertEquals(getDateToTest(),
-                new DateTransformable().transform("29/11/2011", Locale.FRENCH));
+                new DateTransformer().transform("29/11/2011", Locale.FRENCH));
     }
 
     @Test(expected = TransformationException.class)
     public void shouldThrowTransformationExceptionWhenConvertingInvalidDate() {
         Assert.assertEquals(getDateToTest(),
-                new DateTransformable().transform("29/11/2011", Locale.ENGLISH));
+                new DateTransformer().transform("29/11/2011", Locale.ENGLISH));
     }
 
     private Date getDateToTest() {
@@ -63,30 +63,30 @@ public class StandardTransformersTest {
     @Test
     public void shouldTransformIntegers() {
         Integer expected = Integer.valueOf(1000);
-        Assert.assertEquals(expected, new IntegerTransformable().transform("1000", Locale.ENGLISH));
-        Assert.assertEquals(expected, new IntegerTransformable().transform("1,000", Locale.ENGLISH));
+        Assert.assertEquals(expected, new IntegerTransformer().transform("1000", Locale.ENGLISH));
+        Assert.assertEquals(expected, new IntegerTransformer().transform("1,000", Locale.ENGLISH));
         Assert.assertEquals(expected,
-                new IntegerTransformable().transform("1.000", Utils.localeFor("pt")));
+                new IntegerTransformer().transform("1.000", Utils.localeFor("pt")));
     }
 
     @Test
     public void shouldTransformDoubles() {
         Double expected = Double.valueOf(3000.15);
         Assert.assertEquals(expected,
-                new DoubleTransformable().transform("3000.15", Locale.ENGLISH));
+                new DoubleTransformer().transform("3000.15", Locale.ENGLISH));
         Assert.assertEquals(expected,
-                new DoubleTransformable().transform("3,000.15", Locale.ENGLISH));
+                new DoubleTransformer().transform("3,000.15", Locale.ENGLISH));
         Assert.assertEquals(expected,
-                new DoubleTransformable().transform("3.000,15", Utils.localeFor("pt")));
+                new DoubleTransformer().transform("3.000,15", Utils.localeFor("pt")));
         Assert.assertEquals(expected,
-                new DoubleTransformable().transform("3000,15", Locale.FRENCH));
+                new DoubleTransformer().transform("3000,15", Locale.FRENCH));
     }
 
     @Test
     public void shouldTransformLongs() {
         Long expected = Long.valueOf(8589934592L);
-        Assert.assertEquals(expected, new LongTransformable().transform("8589934592", Locale.ENGLISH));
-        Assert.assertEquals(expected, new LongTransformable().transform("8,589,934,592", Locale.ENGLISH));
+        Assert.assertEquals(expected, new LongTransformer().transform("8589934592", Locale.ENGLISH));
+        Assert.assertEquals(expected, new LongTransformer().transform("8,589,934,592", Locale.ENGLISH));
     }
 
     @Test
@@ -95,38 +95,38 @@ public class StandardTransformersTest {
         short exp2 = -32768;
         Short expected = Short.valueOf(exp);
         Short expected2 = Short.valueOf(exp2);
-        Assert.assertEquals(expected, new ShortTransformable().transform("32767", Locale.ENGLISH));
-        Assert.assertEquals(expected, new ShortTransformable().transform("32,767", Locale.ENGLISH));
-        Assert.assertEquals(expected2, new ShortTransformable().transform("-32,768", Locale.ENGLISH));
+        Assert.assertEquals(expected, new ShortTransformer().transform("32767", Locale.ENGLISH));
+        Assert.assertEquals(expected, new ShortTransformer().transform("32,767", Locale.ENGLISH));
+        Assert.assertEquals(expected2, new ShortTransformer().transform("-32,768", Locale.ENGLISH));
     }
 
     @Test
     public void shouldTransformBytes() {
         byte exp = 127;
         Byte expected = Byte.valueOf(exp);
-        Assert.assertEquals(expected, new ByteTransformable().transform("127", Locale.ENGLISH));
-        Assert.assertEquals(expected, new ByteTransformable().transform("127", Locale.ENGLISH));
+        Assert.assertEquals(expected, new ByteTransformer().transform("127", Locale.ENGLISH));
+        Assert.assertEquals(expected, new ByteTransformer().transform("127", Locale.ENGLISH));
     }
 
     @Test
     public void shouldTransformChars() {
         Character expected = Character.valueOf('C');
-        Assert.assertEquals(expected, new CharacterTransformable().transform("Cedric", Locale.ENGLISH));
-        Assert.assertEquals(expected, new CharacterTransformable().transform("C", Locale.ENGLISH));
+        Assert.assertEquals(expected, new CharacterTransformer().transform("Cedric", Locale.ENGLISH));
+        Assert.assertEquals(expected, new CharacterTransformer().transform("C", Locale.ENGLISH));
     }
 
     @Test
     public void shouldTransformFloats() {
         Float expected = Float.valueOf(3000.15f);
-        Assert.assertEquals(expected, new FloatTransformable().transform("3000.15", Locale.ENGLISH));
-        Assert.assertEquals(expected, new FloatTransformable().transform("3,000.15", Locale.ENGLISH));
+        Assert.assertEquals(expected, new FloatTransformer().transform("3000.15", Locale.ENGLISH));
+        Assert.assertEquals(expected, new FloatTransformer().transform("3,000.15", Locale.ENGLISH));
     }
 
     @Test
     public void shouldTransformBigInteger() {
         BigInteger expected = BigInteger.valueOf(8589934592L);
-        Assert.assertEquals(expected, new BigIntegerTransformable().transform("8589934592", Locale.ENGLISH));
-        Assert.assertEquals(expected, new BigIntegerTransformable().transform("8,589,934,592", Locale.ENGLISH));
+        Assert.assertEquals(expected, new BigIntegerTransformer().transform("8589934592", Locale.ENGLISH));
+        Assert.assertEquals(expected, new BigIntegerTransformer().transform("8,589,934,592", Locale.ENGLISH));
     }
 
 }

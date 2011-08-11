@@ -1,6 +1,6 @@
 package cucumber.runtime;
 
-import cucumber.runtime.transformers.Transformer;
+import cucumber.runtime.transformers.Transformers;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 import org.junit.Test;
@@ -24,7 +24,7 @@ public class StepDefinitionMatchTest {
         when(stepWithoutDocStringOrTable.getDocString()).thenReturn(null);
         when(stepWithoutDocStringOrTable.getRows()).thenReturn(null);
 
-        StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(arguments, stepDefinition, stepWithoutDocStringOrTable, new Transformer());
+        StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(arguments, stepDefinition, stepWithoutDocStringOrTable, new Transformers());
         stepDefinitionMatch.runStep(stepWithoutDocStringOrTable, "step-definition-match-test");
         Object[] args = {5};
         verify(stepDefinition).execute(args);
