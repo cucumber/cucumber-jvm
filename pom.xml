@@ -14,11 +14,10 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-
-        <gherkin.version>2.4.5</gherkin.version>
+        <gherkin.version>2.4.6</gherkin.version>
         <asm.version>3.3</asm.version>
         <jcommander.version>1.7</jcommander.version>
-        <jruby.version>1.5.3</jruby.version>
+        <jruby.version>1.6.3</jruby.version>
         <ant.version>1.8.1</ant.version>
         <pico.version>2.11.2</pico.version>
         <spring.version>3.0.4.RELEASE</spring.version>
@@ -260,8 +259,8 @@
                     <artifactId>maven-compiler-plugin</artifactId>
                     <configuration>
                         <encoding>UTF-8</encoding>
-                        <source>1.5</source>
-                        <target>1.5</target>
+                        <source>1.6</source>
+                        <target>1.6</target>
                     </configuration>
                 </plugin>
             </plugins>

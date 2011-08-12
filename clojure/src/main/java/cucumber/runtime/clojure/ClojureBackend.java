@@ -1,20 +1,19 @@
 package cucumber.runtime.clojure;
 
+import clojure.lang.AFunction;
+import clojure.lang.RT;
+import cucumber.classpath.Classpath;
+import cucumber.classpath.Consumer;
+import cucumber.io.Resource;
+import cucumber.runtime.Backend;
+import cucumber.runtime.CucumberException;
+import cucumber.runtime.StepDefinition;
 import gherkin.formatter.model.Step;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
-
-import clojure.lang.AFunction;
-import clojure.lang.RT;
-import cucumber.classpath.Classpath;
-import cucumber.classpath.Consumer;
-import cucumber.classpath.Input;
-import cucumber.runtime.Backend;
-import cucumber.runtime.CucumberException;
-import cucumber.runtime.StepDefinition;
 
 public class ClojureBackend implements Backend {
     private final List<StepDefinition> stepDefinitions = new ArrayList<StepDefinition>();
@@ -34,11 +33,11 @@ public class ClojureBackend implements Backend {
     private void defineStepDefinitions() throws Exception {
         RT.load("cucumber/runtime/clojure/dsl");
         Classpath.scan(this.scriptPath, ".clj", new Consumer() {
-            public void consume(Input input) {
+            public void consume(Resource resource) {
                 try {
-                    RT.load(input.getPath().replaceAll(".clj$", ""));
+                    RT.load(resource.getPath().replaceAll(".clj$", ""));
                 } catch (Exception e) {
-                    throw new CucumberException("Failed to parse file " + input.getPath(), e);
+                    throw new CucumberException("Failed to parse file " + resource.getPath(), e);
                 }
             }
         });

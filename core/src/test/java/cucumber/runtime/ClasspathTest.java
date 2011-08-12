@@ -2,7 +2,7 @@ package cucumber.runtime;
 
 import cucumber.classpath.Classpath;
 import cucumber.classpath.Consumer;
-import cucumber.classpath.Input;
+import cucumber.io.Resource;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -11,13 +11,19 @@ import java.util.*;
 import static org.junit.Assert.assertEquals;
 
 public class ClasspathTest {
-    public static class Person {}
-    public static class Fred extends Person {}
-    public static class Wilma extends Person {}
-    
+    public static class Person {
+    }
+
+    public static class Fred extends Person {
+    }
+
+    public static class Wilma extends Person {
+    }
+
     @Test
     public void looksUpInstantiableSubclassesOnClassPath() throws IOException {
-        Set<Class<? extends Person>> expected = new HashSet<Class<? extends Person>>(Arrays.asList(Fred.class, Wilma.class));
+        List<Class<? extends Person>> classes = Arrays.asList(Fred.class, Wilma.class);
+        Set<Class<? extends Person>> expected = new HashSet<Class<? extends Person>>(classes);
         assertEquals(expected, Classpath.getInstantiableSubclassesOf(Person.class, "cucumber.runtime"));
     }
 
@@ -25,8 +31,8 @@ public class ClasspathTest {
     public void looksUpFilesByDir() throws IOException {
         final List<String> paths = new ArrayList<String>();
         Classpath.scan("cucumber/runtime", ".xyz", new Consumer() {
-            public void consume(Input input) {
-                paths.add(input.getPath());
+            public void consume(Resource resource) {
+                paths.add(resource.getPath());
             }
         });
         assertEquals(Arrays.asList("cucumber/runtime/bar.xyz", "cucumber/runtime/foo.xyz"), paths);
@@ -36,8 +42,8 @@ public class ClasspathTest {
     public void looksUpFilesByFile() throws IOException {
         final List<String> paths = new ArrayList<String>();
         Classpath.scan("cucumber/runtime/foo.xyz", new Consumer() {
-            public void consume(Input input) {
-                paths.add(input.getPath());
+            public void consume(Resource resource) {
+                paths.add(resource.getPath());
             }
         });
         assertEquals(Arrays.asList("cucumber/runtime/foo.xyz"), paths);

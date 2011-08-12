@@ -10,7 +10,7 @@ import java.util.List;
 
 class RunnerWithChildren extends ParentRunner<ParentRunner> {
     private final String name;
-    private final List<ParentRunner> children =new ArrayList<ParentRunner>();
+    private final List<ParentRunner> children = new ArrayList<ParentRunner>();
 
     public RunnerWithChildren(String name) throws InitializationError {
         super(null);

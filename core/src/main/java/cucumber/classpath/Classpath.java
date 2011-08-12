@@ -1,9 +1,12 @@
 package cucumber.classpath;
 
-import cucumber.runtime.NoSuchResource;
+import cucumber.io.FileResource;
+import cucumber.io.Resource;
+import cucumber.io.ZipResource;
 import cucumber.runtime.CucumberException;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.net.URL;
@@ -18,7 +21,7 @@ public class Classpath {
     public static Set<Class<?>> getInstantiableClasses(final String packagePrefix) {
         final Set<Class<?>> classes = new HashSet<Class<?>>();
         final Consumer consumer = new Consumer() {
-            public void consume(Input input) {
+            public void consume(Resource input) {
                 String path = input.getPath();
                 String className = className(path);
                 try {
@@ -66,11 +69,11 @@ public class Classpath {
         }
     }
 
-    private static List<URL> classpathUrls(String path) {
+    private static List<URL> classpathUrls(String path) throws NoSuchResourceException {
         try {
             Enumeration<URL> resources = cl().getResources(path);
-            if(!resources.hasMoreElements()) {
-                throw new NoSuchResource("No resources at path " + path);
+            if (!resources.hasMoreElements()) {
+                throw new NoSuchResourceException("No resources at path " + path);
             }
             return Collections.list(resources);
         } catch (IOException e) {
@@ -78,21 +81,21 @@ public class Classpath {
         }
     }
 
-    public static <T> T instantiateSubclass(Class<T> type, Object... constructorArguments) {
-        Collection<T> instances = instantiateSubclasses(type, constructorArguments);
+    public static <T> T instantiateExactlyOneSubclass(Class<T> type, String packagePrefix, Object... constructorArguments) {
+        Collection<T> instances = instantiateSubclasses(type, packagePrefix, constructorArguments);
         if (instances.size() == 1) {
             return instances.iterator().next();
         } else if (instances.size() == 0) {
-            throw new CucumberException("Couldn't find a suitable instance");
+            throw new CucumberException("Couldn't find a single implementation of " + type);
         } else {
             throw new CucumberException("Expected only one instance, but found too many: " + instances);
         }
     }
 
-    public static <T> List<T> instantiateSubclasses(Class<T> type, Object... constructorArguments) {
+    public static <T> List<T> instantiateSubclasses(Class<T> type, String packagePrefix, Object... constructorArguments) {
         List<T> result = new ArrayList<T>();
 
-        Collection<Class<? extends T>> classes = getInstantiableSubclassesOf(type, "cucumber.runtime");
+        Collection<Class<? extends T>> classes = getInstantiableSubclassesOf(type, packagePrefix);
         for (Class<? extends T> clazz : classes) {
             try {
                 Class[] argumentTypes = new Class[constructorArguments.length];
@@ -114,77 +117,6 @@ public class Classpath {
         return result;
     }
 
-    private static abstract class AbstractInput implements Input {
-        public String getString() {
-            return read(getReader());
-        }
-
-        public Reader getReader() {
-            try {
-                return new InputStreamReader(getInputStream(), "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                throw new CucumberException("Failed to open path " + getPath(), e);
-            }
-        }
-
-        private String read(Reader reader) {
-            try {
-                StringBuffer sb = new StringBuffer();
-                int n;
-                while ((n = reader.read()) != -1) {
-                    sb.append((char) n);
-                }
-                return sb.toString();
-            } catch (IOException e) {
-                throw new CucumberException("Failed to read", e);
-            }
-        }
-    }
-
-    private static class ZipInput extends AbstractInput {
-        private final ZipFile jarFile;
-        private final ZipEntry jarEntry;
-
-        public ZipInput(ZipFile jarFile, ZipEntry jarEntry) {
-            this.jarFile = jarFile;
-            this.jarEntry = jarEntry;
-        }
-
-        public String getPath() {
-            return jarEntry.getName();
-        }
-
-        public InputStream getInputStream() {
-            try {
-                return jarFile.getInputStream(jarEntry);
-            } catch (IOException e) {
-                throw new CucumberException("Failed to read from jar file", e);
-            }
-        }
-    }
-
-    private static class FileInput extends AbstractInput {
-        private final File rootDir;
-        private final File file;
-
-        public FileInput(File rootDir, File file) {
-            this.rootDir = rootDir;
-            this.file = file;
-        }
-
-        public String getPath() {
-            return file.getAbsolutePath().substring(rootDir.getAbsolutePath().length() + 1, file.getAbsolutePath().length());
-        }
-
-        public InputStream getInputStream() {
-            try {
-                return new FileInputStream(file);
-            } catch (FileNotFoundException e) {
-                throw new CucumberException("Failed to read from file " + file.getAbsolutePath(), e);
-            }
-        }
-    }
-
     private static void scanJar(URL jarDir, String pathPrefix, String suffix, Consumer consumer) {
         String url = jarDir.toExternalForm();
         String pathWithProtocol = url.substring(0, jarDir.toExternalForm().indexOf("!/"));
@@ -196,7 +128,7 @@ public class Classpath {
                 ZipEntry jarEntry = entries.nextElement();
                 String entryName = jarEntry.getName();
                 if (entryName.startsWith(pathPrefix) && hasSuffix(suffix, entryName)) {
-                    consumer.consume(new ZipInput(jarFile, jarEntry));
+                    consumer.consume(new ZipResource(jarFile, jarEntry));
                 }
             }
         } catch (IOException t) {
@@ -218,7 +150,7 @@ public class Classpath {
             }
         } else {
             if (hasSuffix(suffix, file.getName())) {
-                consumer.consume(new FileInput(rootDir, file));
+                consumer.consume(new FileResource(rootDir, file));
             }
         }
     }

@@ -1,25 +1,23 @@
 package cucumber.runtime.rhino;
 
+import cucumber.classpath.Classpath;
+import cucumber.classpath.Consumer;
+import cucumber.io.Resource;
+import cucumber.runtime.Backend;
+import cucumber.runtime.CucumberException;
+import cucumber.runtime.StepDefinition;
+import cucumber.runtime.javascript.JavascriptSnippetGenerator;
 import gherkin.formatter.model.Step;
+import org.mozilla.javascript.Context;
+import org.mozilla.javascript.NativeFunction;
+import org.mozilla.javascript.Scriptable;
+import org.mozilla.javascript.tools.shell.Global;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
-import org.mozilla.javascript.Context;
-import org.mozilla.javascript.NativeFunction;
-import org.mozilla.javascript.Scriptable;
-import org.mozilla.javascript.tools.shell.Global;
-
-import cucumber.classpath.Classpath;
-import cucumber.classpath.Consumer;
-import cucumber.classpath.Input;
-import cucumber.runtime.Backend;
-import cucumber.runtime.CucumberException;
-import cucumber.runtime.StepDefinition;
-import cucumber.runtime.javascript.JavascriptSnippetGenerator;
 
 public class RhinoBackend implements Backend {
     private static final String JS_DSL = "/cucumber/runtime/rhino/dsl.js";
@@ -45,11 +43,11 @@ public class RhinoBackend implements Backend {
         cx.evaluateReader(scope, dsl, JS_DSL, 1, null);
 
         Classpath.scan(this.scriptPath, ".js", new Consumer() {
-            public void consume(Input input) {
+            public void consume(Resource resource) {
                 try {
-                    cx.evaluateReader(scope, input.getReader(), input.getPath(), 1, null);
+                    cx.evaluateReader(scope, resource.getReader(), resource.getPath(), 1, null);
                 } catch (IOException e) {
-                    throw new CucumberException("Failed to evaluate Javascript in " + input.getPath(), e);
+                    throw new CucumberException("Failed to evaluate Javascript in " + resource.getPath(), e);
                 }
             }
         });

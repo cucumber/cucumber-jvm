@@ -12,7 +12,7 @@ public class SummaryReporter {
     }
 
     public void snippets(List<String> snippets) {
-        if(!snippets.isEmpty()) {
+        if (!snippets.isEmpty()) {
             out.println();
             out.println("You can implement step definitions for undefined steps with these snippets:");
             out.println();

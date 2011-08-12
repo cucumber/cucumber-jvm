@@ -20,13 +20,13 @@ public class JavaBackend implements Backend {
     private List<StepDefinition> stepDefinitions = new ArrayList<StepDefinition>();
 
     public JavaBackend(String packagePrefix) {
-        this.objectFactory = Classpath.instantiateSubclass(ObjectFactory.class);
+        this.objectFactory = Classpath.instantiateExactlyOneSubclass(ObjectFactory.class, "cucumber.runtime");
         new ClasspathMethodScanner().scan(this, packagePrefix);
     }
-    
+
     public JavaBackend(ObjectFactory objectFactory, List<StepDefinition> stepDefinitions) {
-    	this.objectFactory = objectFactory;
-    	this.stepDefinitions = stepDefinitions;
+        this.objectFactory = objectFactory;
+        this.stepDefinitions = stepDefinitions;
     }
 
     public List<StepDefinition> getStepDefinitions() {
@@ -50,22 +50,28 @@ public class JavaBackend implements Backend {
         objectFactory.addClass(clazz);
         stepDefinitions.add(new JavaStepDefinition(pattern, method, objectFactory, locale));
     }
-    
+
     public Object invoke(Method method, Object[] javaArgs) {
-		try {
-			if (method.isAnnotationPresent(Pending.class)) {
-				throw new CucumberException(method.getAnnotation(Pending.class).value());
-			} else {
-				return method.invoke(this.objectFactory.getInstance(method.getDeclaringClass()), javaArgs);
-			}
-		} catch (IllegalArgumentException e) {
-			String m = "Couldn't invokeWithArgs " + method.toGenericString() + " with "
-					+ Utils.join(javaArgs, ",");
-			throw new CucumberException(m);
-		} catch (InvocationTargetException e) {
-			throw new CucumberException("Couldn't invoke method", e.getTargetException());
-		} catch (IllegalAccessException e) {
-			throw new CucumberException("Couldn't invoke method", e);
-		}
-	}
+        try {
+            if (method.isAnnotationPresent(Pending.class)) {
+                throw new CucumberException(method.getAnnotation(Pending.class).value());
+            } else {
+                return method.invoke(this.objectFactory.getInstance(method.getDeclaringClass()), javaArgs);
+            }
+        } catch (IllegalArgumentException e) {
+            StringBuilder m = new StringBuilder("Couldn't invokeWithArgs ").append(method.toGenericString()).append(" with ").append(Utils.join(javaArgs, ",")).append(" (");
+            boolean comma = false;
+            for (Object javaArg : javaArgs) {
+                if(comma) m.append(",");
+                m.append(javaArg.getClass());
+                comma = true;
+            }
+            m.append(")");
+            throw new CucumberException(m.toString(), e);
+        } catch (InvocationTargetException e) {
+            throw new CucumberException("Couldn't invoke method", e.getTargetException());
+        } catch (IllegalAccessException e) {
+            throw new CucumberException("Couldn't invoke method", e);
+        }
+    }
 }

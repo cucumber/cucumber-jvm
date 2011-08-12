@@ -1,6 +1,7 @@
 package cucumber.runtime;
 
-import static java.util.Arrays.asList;
+import cucumber.classpath.Classpath;
+import cucumber.runtime.transformers.Transformers;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 
@@ -9,20 +10,19 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import cucumber.classpath.Classpath;
-import cucumber.runtime.transformers.Transformer;
+import static java.util.Arrays.asList;
 
 public class Runtime {
     private final List<Backend> backends;
     private final List<Step> undefinedSteps = new ArrayList<Step>();
-    private Transformer transformer;
+    private Transformers transformers;
 
     public Runtime(Backend... backends) {
         this.backends = asList(backends);
     }
 
     public Runtime(String packageName) {
-        backends = Classpath.instantiateSubclasses(Backend.class, packageName);
+        backends = Classpath.instantiateSubclasses(Backend.class, "cucumber.runtime", packageName);
     }
 
     public StepDefinitionMatch stepDefinitionMatch(Step step) {
@@ -45,7 +45,7 @@ public class Runtime {
             for (StepDefinition stepDefinition : backend.getStepDefinitions()) {
                 List<Argument> arguments = stepDefinition.matchedArguments(step);
                 if (arguments != null) {
-                    result.add(new StepDefinitionMatch(arguments, stepDefinition, step, getTransformer()));
+                    result.add(new StepDefinitionMatch(arguments, stepDefinition, step, getTransformers()));
                 }
             }
         }
@@ -85,14 +85,14 @@ public class Runtime {
         return new World(backends, this);
     }
 
-	public Transformer getTransformer() {
-		if (this.transformer == null) {
-			this.transformer = new Transformer();
-		}
-		return this.transformer;
-	}
+    public Transformers getTransformers() {
+        if (this.transformers == null) {
+            this.transformers = new Transformers();
+        }
+        return this.transformers;
+    }
 
-	public void setTransformer(Transformer transformer) {
-		this.transformer = transformer;
-	}
+    public void setTransformers(Transformers transformers) {
+        this.transformers = transformers;
+    }
 }

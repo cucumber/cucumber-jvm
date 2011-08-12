@@ -1,5 +1,11 @@
 package cucumber.runtime.groovy;
 
+import cucumber.classpath.Classpath;
+import cucumber.classpath.Consumer;
+import cucumber.io.Resource;
+import cucumber.runtime.Backend;
+import cucumber.runtime.CucumberException;
+import cucumber.runtime.StepDefinition;
 import gherkin.formatter.model.Step;
 import groovy.lang.Binding;
 import groovy.lang.Closure;
@@ -10,13 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
-
-import cucumber.classpath.Classpath;
-import cucumber.classpath.Consumer;
-import cucumber.classpath.Input;
-import cucumber.runtime.Backend;
-import cucumber.runtime.CucumberException;
-import cucumber.runtime.StepDefinition;
 
 public class GroovyBackend implements Backend {
     private static GroovyBackend instance;
@@ -37,8 +36,8 @@ public class GroovyBackend implements Backend {
     private void defineStepDefinitions(String pathPrefix) throws IOException {
         final GroovyShell shell = new GroovyShell(new Binding());
         Classpath.scan(pathPrefix, ".groovy", new Consumer() {
-            public void consume(Input input) {
-                shell.evaluate(input.getString(), input.getPath());
+            public void consume(Resource resource) {
+                shell.evaluate(resource.getString(), resource.getPath());
             }
         });
     }

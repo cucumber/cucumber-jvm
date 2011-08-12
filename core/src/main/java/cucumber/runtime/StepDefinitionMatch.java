@@ -1,5 +1,6 @@
 package cucumber.runtime;
 
+import cucumber.runtime.transformers.Transformers;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Match;
 import gherkin.formatter.model.Step;
@@ -8,50 +9,56 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Locale;
 
-import cucumber.runtime.transformers.Transformer;
-
 import static java.util.Arrays.asList;
 
 public class StepDefinitionMatch extends Match {
     private final StepDefinition stepDefinition;
     private final Step step;
-	private Transformer transformer;
+    private Transformers transformers;
 
-    public StepDefinitionMatch(List<Argument> arguments, StepDefinition stepDefinition, Step step, Transformer transformer) {
+    public StepDefinitionMatch(List<Argument> arguments, StepDefinition stepDefinition, Step step, Transformers transformers) {
         super(arguments, stepDefinition.getLocation());
         this.stepDefinition = stepDefinition;
         this.step = step;
-        this.transformer = transformer;
+        this.transformers = transformers;
     }
 
-    public void run(String path) throws Throwable {
+    public void runStep(Step step, String stackTracePath) throws Throwable {
         try {
-            stepDefinition.execute(getTransformedArgs(stepDefinition.getParameterTypes()));
+            stepDefinition.execute(transformedArgs(stepDefinition.getParameterTypes(), step));
         } catch (CucumberException e) {
             throw e;
         } catch (InvocationTargetException t) {
-            throw filterStacktrace(t.getTargetException(), step.getStackTraceElement(path));
+            throw filterStacktrace(t.getTargetException(), this.step.getStackTraceElement(stackTracePath));
         } catch (Throwable t) {
-            throw filterStacktrace(t, step.getStackTraceElement(path));
+            throw filterStacktrace(t, this.step.getStackTraceElement(stackTracePath));
         }
     }
 
-    private Object[] getTransformedArgs(Class<?>[] parameterTypes) {
-        if (parameterTypes != null && parameterTypes.length != getArguments().size()) {
-            throw new CucumberException("Arity mismatch. Parameters: " + asList(parameterTypes) + ". Matched arguments: " + getArguments()); // TODO: Handle multiline args here...
+    private Object[] transformedArgs(Class<?>[] parameterTypes, Step step) {
+        int argumentCount = getArguments().size() + (step.getMultilineArg() == null ? 0 : 1);
+        if (parameterTypes.length != argumentCount) {
+            throw new CucumberException("Arity mismatch. Parameters: " + asList(parameterTypes) + ". Matched arguments: " + getArguments());
         }
 
-        Object[] result = new Object[getArguments().size()];
+        Object[] result = new Object[argumentCount];
         int n = 0;
         for (Argument a : getArguments()) {
-            result[n] = this.transformer.transform(a, parameterTypes[n++], getLocale());
+            result[n] = transformers.transform(getLocale(), parameterTypes[n++], a.getVal());
+        }
+        if (step.getDocString() != null) {
+            result[n] = step.getDocString().getValue();
+        }
+        if (step.getRows() != null) {
+            // TODO: This should be a cucumber.Table, which will wrap the data in the rows, providing a similar API to the ruby impl (especially diffing)
+            result[n] = step.getRows();
         }
         return result;
     }
 
-	private Locale getLocale() {
-		return this.stepDefinition.getLocale();
-	}
+    private Locale getLocale() {
+        return this.stepDefinition.getLocale();
+    }
 
     private Throwable filterStacktrace(Throwable error, StackTraceElement stepLocation) {
         StackTraceElement[] stackTraceElements = error.getStackTrace();

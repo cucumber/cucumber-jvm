@@ -40,9 +40,9 @@ public abstract class SnippetGenerator {
     /**
      * Constructor for langauges that support named capture groups, such ash Ioke.
      *
-     * @param step the step to generate snippet for.
+     * @param step            the step to generate snippet for.
      * @param namedGroupStart beginning of named group, for example "{arg".
-     * @param namedGroupEnd end of named group, for example "}".
+     * @param namedGroupEnd   end of named group, for example "}".
      */
     protected SnippetGenerator(Step step, String namedGroupStart, String namedGroupEnd) {
         this.step = step;

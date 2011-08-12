@@ -17,7 +17,7 @@ public class JavaSnippetGenerator extends SnippetGenerator {
 
     @Override
     protected String arguments(List<Class<?>> argumentTypes) {
-        StringBuilder sb = new StringBuilder ();
+        StringBuilder sb = new StringBuilder();
         int n = 1;
         for (Class<?> argType : argumentTypes) {
             if (n > 1) {

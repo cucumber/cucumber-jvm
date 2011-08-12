@@ -2,7 +2,7 @@ package cucumber.junit;
 
 import cucumber.classpath.Classpath;
 import cucumber.classpath.Consumer;
-import cucumber.classpath.Input;
+import cucumber.io.Resource;
 import cucumber.runtime.Runtime;
 import gherkin.GherkinParser;
 import gherkin.formatter.model.Feature;
@@ -14,10 +14,10 @@ import org.junit.runners.model.InitializationError;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Cucumber extends ParentRunner<ParentRunner> {
+public class Cucumber extends ParentRunner<ScenarioRunner> {
     private final Feature feature;
     private final String pathName;
-    private final List<ParentRunner> children = new ArrayList<ParentRunner>();
+    private final List<ScenarioRunner> children = new ArrayList<ScenarioRunner>();
     private final RunnerBuilder builder;
 
     private static Runtime runtime(Class testClass) {
@@ -45,7 +45,7 @@ public class Cucumber extends ParentRunner<ParentRunner> {
         // Why aren't we passing the class to super? I don't remember, but there is probably a good reason.
         super(null);
         cucumber.junit.Feature featureAnnotation = (cucumber.junit.Feature) featureClass.getAnnotation(cucumber.junit.Feature.class);
-        if(featureAnnotation != null) {
+        if (featureAnnotation != null) {
             pathName = featureAnnotation.value();
         } else {
             pathName = featureClass.getName().replace('.', '/') + ".feature";
@@ -60,12 +60,12 @@ public class Cucumber extends ParentRunner<ParentRunner> {
     }
 
     @Override
-    protected List<ParentRunner> getChildren() {
+    protected List<ScenarioRunner> getChildren() {
         return children;
     }
 
     @Override
-    protected Description describeChild(ParentRunner child) {
+    protected Description describeChild(ScenarioRunner child) {
         return child.getDescription();
     }
 
@@ -75,15 +75,15 @@ public class Cucumber extends ParentRunner<ParentRunner> {
     }
 
     @Override
-    protected void runChild(ParentRunner runner, RunNotifier notifier) {
+    protected void runChild(ScenarioRunner runner, RunNotifier notifier) {
         runner.run(notifier);
     }
 
     private Feature parseFeature() {
         final String[] gherkin = new String[1];
         Classpath.scan(pathName, new Consumer() {
-            public void consume(Input input) {
-                gherkin[0] = input.getString();
+            public void consume(Resource resource) {
+                gherkin[0] = resource.getString();
             }
         });
         GherkinParser gherkinParser = new GherkinParser(builder);

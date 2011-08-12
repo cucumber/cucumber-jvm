@@ -20,7 +20,7 @@ public class ClasspathMethodScanner {
             Collection<Class<? extends Annotation>> cucumberAnnotations = findCucumberAnnotationClasses();
             for (Class<?> clazz : Classpath.getInstantiableClasses(packagePrefix)) {
                 try {
-                    if(Modifier.isPublic(clazz.getModifiers()) && !Modifier.isAbstract(clazz.getModifiers())) {
+                    if (Modifier.isPublic(clazz.getModifiers()) && !Modifier.isAbstract(clazz.getModifiers())) {
                         // TODO: How do we know what other dependendencies to add?
                     }
                     Method[] methods = clazz.getMethods();
