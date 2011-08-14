@@ -1,6 +1,6 @@
 package cucumber.runtime.groovy;
 
-import cuke4duke.internal.Utils;
+import cucumber.runtime.Utils;
 import groovy.lang.Closure;
 import java.util.Locale;
 import java.util.regex.Pattern;

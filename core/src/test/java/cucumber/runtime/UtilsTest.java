@@ -1,6 +1,5 @@
 package cucumber.runtime;
 
-import cuke4duke.internal.Utils;
 import org.junit.Assert;
 import org.junit.Test;
 

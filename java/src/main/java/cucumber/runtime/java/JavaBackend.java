@@ -5,7 +5,7 @@ import cucumber.classpath.Classpath;
 import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.StepDefinition;
-import cuke4duke.internal.Utils;
+import cucumber.runtime.Utils;
 import gherkin.formatter.model.Step;
 
 import java.lang.reflect.InvocationTargetException;

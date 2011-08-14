@@ -3,7 +3,7 @@ package cucumber.runtime.java;
 import cucumber.annotation.After;
 import cucumber.annotation.Before;
 import cucumber.classpath.Classpath;
-import cuke4duke.internal.Utils;
+import cucumber.runtime.Utils;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;

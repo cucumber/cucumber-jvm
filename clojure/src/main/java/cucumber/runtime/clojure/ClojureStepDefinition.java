@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 import clojure.lang.AFunction;
 import cucumber.runtime.AbstractStepDefinition;
 import cucumber.runtime.JdkPatternArgumentMatcher;
-import cuke4duke.internal.Utils;
+import cucumber.runtime.Utils;
 
 public class ClojureStepDefinition extends AbstractStepDefinition {
     private final Pattern regexp;

@@ -1,4 +1,4 @@
-package cuke4duke.internal;
+package cucumber.runtime;
 
 import java.util.Locale;
 

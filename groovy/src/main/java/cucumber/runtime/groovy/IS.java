@@ -5,17 +5,17 @@ import groovy.lang.Closure;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
-public class DA {
-    private final static Locale locale = Utils.localeFor("da");
-    public static void Givet(Pattern regexp, Closure body) throws Throwable {
+public class IS {
+    private final static Locale locale = Utils.localeFor("is");
+    public static void Ef(Pattern regexp, Closure body) throws Throwable {
         GroovyBackend.addStepDefinition(regexp, body, locale);
     }
 
-    public static void Når(Pattern regexp, Closure body) throws Throwable {
+    public static void Þegar(Pattern regexp, Closure body) throws Throwable {
         GroovyBackend.addStepDefinition(regexp, body, locale);
     }
 
-    public static void Så(Pattern regexp, Closure body) throws Throwable {
+    public static void Þá(Pattern regexp, Closure body) throws Throwable {
         GroovyBackend.addStepDefinition(regexp, body, locale);
     }
 
@@ -23,7 +23,7 @@ public class DA {
         GroovyBackend.addStepDefinition(regexp, body, locale);
     }
 
-    public static void Men(Pattern regexp, Closure body) throws Throwable {
+    public static void En(Pattern regexp, Closure body) throws Throwable {
         GroovyBackend.addStepDefinition(regexp, body, locale);
     }
 

@@ -1,7 +1,6 @@
 package cucumber.runtime.transformers;
 
-import cuke4duke.internal.Utils;
-import org.junit.Assert;
+import cucumber.runtime.Utils;
 import org.junit.Test;
 
 import java.math.BigDecimal;
