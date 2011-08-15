@@ -1,38 +1,35 @@
 package cucumber.runtime.groovy;
 
-import cucumber.runtime.Utils;
 import groovy.lang.Closure;
-import java.util.Locale;
 import java.util.regex.Pattern;
 
 public class LU {
-    private final static Locale locale = Utils.localeFor("lu");
     public static void ugeholl(Pattern regexp, Closure body) throws Throwable {
-        GroovyBackend.addStepDefinition(regexp, body, locale);
+        GroovyBackend.addStepDefinition(regexp, body);
     }
 
     public static void wann(Pattern regexp, Closure body) throws Throwable {
-        GroovyBackend.addStepDefinition(regexp, body, locale);
+        GroovyBackend.addStepDefinition(regexp, body);
     }
 
     public static void dann(Pattern regexp, Closure body) throws Throwable {
-        GroovyBackend.addStepDefinition(regexp, body, locale);
+        GroovyBackend.addStepDefinition(regexp, body);
     }
 
     public static void an(Pattern regexp, Closure body) throws Throwable {
-        GroovyBackend.addStepDefinition(regexp, body, locale);
+        GroovyBackend.addStepDefinition(regexp, body);
     }
 
     public static void a(Pattern regexp, Closure body) throws Throwable {
-        GroovyBackend.addStepDefinition(regexp, body, locale);
+        GroovyBackend.addStepDefinition(regexp, body);
     }
 
     public static void awer(Pattern regexp, Closure body) throws Throwable {
-        GroovyBackend.addStepDefinition(regexp, body, locale);
+        GroovyBackend.addStepDefinition(regexp, body);
     }
 
     public static void mä(Pattern regexp, Closure body) throws Throwable {
-        GroovyBackend.addStepDefinition(regexp, body, locale);
+        GroovyBackend.addStepDefinition(regexp, body);
     }
 
 }

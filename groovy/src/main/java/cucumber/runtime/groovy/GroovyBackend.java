@@ -14,7 +14,6 @@ import groovy.lang.GroovyShell;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.regex.Pattern;
 
 public class GroovyBackend implements Backend {
@@ -57,8 +56,8 @@ public class GroovyBackend implements Backend {
         return new GroovySnippetGenerator(step).getSnippet();
     }
 
-    public static void addStepDefinition(Pattern regexp, Closure body, Locale locale) {
-        instance.stepDefinitions.add(new GroovyStepDefinition(regexp, body, stepDefLocation(), instance, locale));
+    public static void addStepDefinition(Pattern regexp, Closure body) {
+        instance.stepDefinitions.add(new GroovyStepDefinition(regexp, body, stepDefLocation(), instance));
     }
 
     public static void registerWorld(Closure closure) {

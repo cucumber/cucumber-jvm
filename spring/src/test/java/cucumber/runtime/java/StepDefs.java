@@ -1,8 +1,8 @@
 package cucumber.runtime.java;
 
 
-import cucumber.annotation.EN.Given;
-import cucumber.annotation.EN.Then;
+import cucumber.annotation.en.Given;
+import cucumber.annotation.en.Then;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static junit.framework.Assert.assertEquals;

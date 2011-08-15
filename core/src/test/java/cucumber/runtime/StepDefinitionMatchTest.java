@@ -16,7 +16,6 @@ public class StepDefinitionMatchTest {
     public void shouldConvertParameters() throws Throwable {
         List<Argument> arguments = Arrays.asList(new Argument(0, "5"));
         StepDefinition stepDefinition = mock(StepDefinition.class);
-        when(stepDefinition.getLocale()).thenReturn(Locale.ENGLISH);
         Class<?>[] parameterTypes = {Integer.TYPE};
         when(stepDefinition.getParameterTypes()).thenReturn(parameterTypes);
 
@@ -25,7 +24,7 @@ public class StepDefinitionMatchTest {
         when(stepWithoutDocStringOrTable.getRows()).thenReturn(null);
 
         StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(arguments, stepDefinition, stepWithoutDocStringOrTable, new Transformers());
-        stepDefinitionMatch.runStep(stepWithoutDocStringOrTable, "step-definition-match-test");
+        stepDefinitionMatch.runStep(stepWithoutDocStringOrTable, "step-definition-match-test", Locale.ENGLISH);
         Object[] args = {5};
         verify(stepDefinition).execute(args);
     }

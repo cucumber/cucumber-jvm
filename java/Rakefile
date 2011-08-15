@@ -1,0 +1,21 @@
+require 'gherkin/i18n'
+require 'erb'
+
+task :default => ['generate:java']
+
+namespace :generate do
+  desc 'Generate Java code'
+  task :java do
+    java = ERB.new(IO.read(File.dirname(__FILE__) + '/src/main/code_generator/I18n.java.erb'), nil, '-')
+    Gherkin::I18n.all.each do |i18n|
+      i18n.code_keywords.each do |kw|
+        file = File.dirname(__FILE__) + "/src/main/java/cucumber/annotation/#{i18n.underscored_iso_code}/#{kw}.java"
+        mkdir_p(File.dirname(file))
+        File.open(file, 'wb') do |io|
+          io.write(java.result(binding))
+        end
+      end
+    end
+  end
+
+ end

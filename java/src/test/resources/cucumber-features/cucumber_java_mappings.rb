@@ -54,7 +54,7 @@ EOF
     erb = ERB.new(<<-EOF, nil, '-')
 package cucumber.test;
 
-import cucumber.annotation.EN.Given;
+import cucumber.annotation.en.Given;
 
 public class Mappings<%= @@mappings_counter %> {
     @Given("<%= step_name -%>")
@@ -78,7 +78,7 @@ EOF
     erb = ERB.new(<<-EOF, nil, '-')
 package cucumber.test;
 
-import cucumber.annotation.EN.Given;
+import cucumber.annotation.en.Given;
 
 public class Mappings<%= @@mappings_counter %> {
     @Given("<%= step_name -%>")
@@ -103,7 +103,7 @@ EOF
     erb = ERB.new(<<-EOF, nil, '-')
 package cucumber.test;
 
-import cucumber.annotation.EN.Given;
+import cucumber.annotation.en.Given;
 
 public class Mappings<%= @@mappings_counter %> {
     @Given("<%= step_name -%>")
@@ -173,7 +173,7 @@ EOF
     code = <<-EOF
 package cucumber.test;
 
-import cucumber.annotation.EN;
+import cucumber.annotation.en.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -182,31 +182,31 @@ public class CalculatorSteps {
 
     private RpnCalculator calc;
 
-    @EN.Given("^a calculator$")
+    @Given("^a calculator$")
     public void aCalculator() {
         calc = new RpnCalculator();
     }
 
-    @EN.When("^the calculator computes PI$")
+    @When("^the calculator computes PI$")
     public void pi() {
         calc.PI();
     }
     
-    @EN.When("^the calculator adds up ([\\\\d\\\\.]+) and ([\\\\d\\\\.]+)$")
+    @When("^the calculator adds up ([\\\\d\\\\.]+) and ([\\\\d\\\\.]+)$")
     public void addDoubles(String n1, String n2) {
         calc.push(Double.parseDouble(n1));
         calc.push(Double.parseDouble(n2));
         calc.push("+");
     }
 
-    @EN.When("^the calculator adds up \\"([^\\"]*)\\" and \\"([^\\"]*)\\"$")
+    @When("^the calculator adds up \\"([^\\"]*)\\" and \\"([^\\"]*)\\"$")
     public void addInts(String n1, String n2) {
         calc.push(Integer.parseInt(n1));
         calc.push(Integer.parseInt(n2));
         calc.push("+");
     }
 
-    @EN.When("^the calculator adds up \\"([^\\"]*)\\", \\"([^\\"]*)\\" and \\"([^\\"]*)\\"$")
+    @When("^the calculator adds up \\"([^\\"]*)\\", \\"([^\\"]*)\\" and \\"([^\\"]*)\\"$")
     public void addInts(String n1, String n2, String n3) {
         calc.push(Integer.parseInt(n1));
         calc.push(Integer.parseInt(n2));
@@ -215,7 +215,7 @@ public class CalculatorSteps {
         calc.push("+");
     }
 
-    @EN.When("^the calculator adds up the following numbers:")
+    @When("^the calculator adds up the following numbers:")
     public void addInts(String numbers) {
         int pushed = 0;
         for (String number : numbers.split("\\n")) {
@@ -227,17 +227,17 @@ public class CalculatorSteps {
         }
     }
     
-    @EN.Then("^the calculator returns PI$")
+    @Then("^the calculator returns PI$")
     public void returnsPI() {
         assertEquals(Math.PI, (Double) calc.value(), 0.00001);
     }
 
-    @EN.Then("^the calculator returns \\"([^\\"]*)\\"$")
+    @Then("^the calculator returns \\"([^\\"]*)\\"$")
     public void returns(String value) {
         assertEquals(Double.parseDouble(value), (Double) calc.value(), 0.00001);
     }
 
-    @EN.Then("^the calculator does not return ([\\\\d\\\\.]+)$")
+    @Then("^the calculator does not return ([\\\\d\\\\.]+)$")
     public void doesNotReturn(String value) {
         assertTrue(Math.abs(Double.parseDouble(value) - (Double) calc.value()) > 0.00001);
     }

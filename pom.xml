@@ -14,7 +14,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <gherkin.version>2.4.6</gherkin.version>
+        <gherkin.version>2.4.7</gherkin.version>
         <asm.version>3.3</asm.version>
         <jcommander.version>1.7</jcommander.version>
         <jruby.version>1.6.3</jruby.version>

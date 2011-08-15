@@ -6,7 +6,7 @@ import java.util.Locale;
 
 public abstract class TransformerWithFormat<T> implements Transformer<T> {
 
-    public T transform(Locale locale, String... arguments) {
+    public T transform(Locale locale, String... arguments) throws TransformationException {
         return transform(getFormat(locale), arguments[0]);
     }
 
@@ -26,7 +26,7 @@ public abstract class TransformerWithFormat<T> implements Transformer<T> {
      * @throws TransformationException Thrown if parsing fails
      */
     @SuppressWarnings("unchecked")
-    protected T transform(final Format format, final String argument) {
+    protected T transform(final Format format, final String argument) throws TransformationException {
         ParsePosition position = new ParsePosition(0);
         Object result = format.parseObject(argument, position);
         if (position.getErrorIndex() != -1) {

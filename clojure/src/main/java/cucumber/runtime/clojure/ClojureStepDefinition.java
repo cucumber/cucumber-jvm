@@ -1,5 +1,6 @@
 package cucumber.runtime.clojure;
 
+import cucumber.runtime.StepDefinition;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 
@@ -10,17 +11,15 @@ import java.util.Locale;
 import java.util.regex.Pattern;
 
 import clojure.lang.AFunction;
-import cucumber.runtime.AbstractStepDefinition;
 import cucumber.runtime.JdkPatternArgumentMatcher;
 import cucumber.runtime.Utils;
 
-public class ClojureStepDefinition extends AbstractStepDefinition {
+public class ClojureStepDefinition implements StepDefinition {
     private final Pattern regexp;
     private final AFunction closure;
     private StackTraceElement location;
 
-    public ClojureStepDefinition(Pattern regexp, AFunction closure, StackTraceElement location, Locale locale) {
-        super(locale);
+    public ClojureStepDefinition(Pattern regexp, AFunction closure, StackTraceElement location) {
     	this.regexp = regexp;
         this.closure = closure;
         this.location = location;

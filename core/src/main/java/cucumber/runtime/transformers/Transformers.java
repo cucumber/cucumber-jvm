@@ -14,7 +14,7 @@ import static java.util.Arrays.asList;
 public class Transformers {
     private Map<Class<?>, Transformer<?>> transformables;
 
-    public <T> T transform(Locale locale, Class<T> clazz, String... arguments) {
+    public <T> T transform(Locale locale, Class<T> clazz, String... arguments) throws TransformationException {
         Transformer<T> transformer = getTransformable(clazz);
         if (transformer == null) {
             throw new TransformationException("Can't transform " + asList(arguments) + " to: " + clazz.getName() + ". No transformer found.");
