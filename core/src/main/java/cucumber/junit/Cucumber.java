@@ -4,8 +4,9 @@ import cucumber.classpath.Classpath;
 import cucumber.classpath.Consumer;
 import cucumber.io.Resource;
 import cucumber.runtime.Runtime;
-import gherkin.GherkinParser;
+import gherkin.I18n;
 import gherkin.formatter.model.Feature;
+import gherkin.parser.Parser;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
@@ -15,10 +16,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Cucumber extends ParentRunner<ScenarioRunner> {
-    private final Feature feature;
+    private Feature feature;
     private final String pathName;
     private final List<ScenarioRunner> children = new ArrayList<ScenarioRunner>();
     private final RunnerBuilder builder;
+    private I18n i18n;
 
     private static Runtime runtime(Class testClass) {
         String packageName = testClass.getName().substring(0, testClass.getName().lastIndexOf("."));
@@ -51,7 +53,7 @@ public class Cucumber extends ParentRunner<ScenarioRunner> {
             pathName = featureClass.getName().replace('.', '/') + ".feature";
         }
         builder = new RunnerBuilder(runtime, children);
-        feature = parseFeature();
+        parseFeature();
     }
 
     @Override
@@ -70,24 +72,21 @@ public class Cucumber extends ParentRunner<ScenarioRunner> {
     }
 
     @Override
-    public void run(RunNotifier notifier) {
-        super.run(notifier);
-    }
-
-    @Override
     protected void runChild(ScenarioRunner runner, RunNotifier notifier) {
+        runner.setLocale(i18n.getLocale());
         runner.run(notifier);
     }
 
-    private Feature parseFeature() {
+    private void parseFeature() {
         final String[] gherkin = new String[1];
         Classpath.scan(pathName, new Consumer() {
             public void consume(Resource resource) {
                 gherkin[0] = resource.getString();
             }
         });
-        GherkinParser gherkinParser = new GherkinParser(builder);
-        gherkinParser.parse(gherkin[0], pathName, 0);
-        return builder.getFeature();
+        Parser parser = new Parser(builder);
+        parser.parse(gherkin[0], pathName, 0);
+        i18n = parser.getI18nLanguage();
+        feature = builder.getFeature();
     }
 }

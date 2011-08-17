@@ -3,7 +3,6 @@ package cucumber.runtime.java;
 import cucumber.annotation.After;
 import cucumber.annotation.Before;
 import cucumber.classpath.Classpath;
-import cuke4duke.internal.Utils;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -11,7 +10,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
-import java.util.Locale;
 import java.util.regex.Pattern;
 
 public class ClasspathMethodScanner {
@@ -50,13 +48,12 @@ public class ClasspathMethodScanner {
                     // TODO Add hook
                 }
                 //TODO: scan cucumber.annotation.Transform annotations
-                Locale locale = Utils.localeFor(annotation.annotationType().getAnnotation(CucumberAnnotation.class).value());
                 try {
                     Method regexpMethod = annotation.getClass().getMethod("value");
                     String regexpString = (String) regexpMethod.invoke(annotation);
                     if (regexpString != null) {
                         Pattern pattern = Pattern.compile(regexpString);
-                        javaBackend.addStepDefinition(pattern, method, locale);
+                        javaBackend.addStepDefinition(pattern, method);
                     }
                 } catch (NoSuchMethodException ignore) {
                 } catch (IllegalAccessException ignore) {

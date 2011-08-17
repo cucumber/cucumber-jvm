@@ -1,5 +1,6 @@
 package cucumber.runtime.java;
 
+import cucumber.runtime.transformers.TransformationException;
 import cucumber.runtime.transformers.Transformer;
 import cucumber.runtime.transformers.Transformers;
 
@@ -17,7 +18,7 @@ public class JavaMethodTransform implements Transformer<Object> {
         this.backend = backend;
     }
 
-    public Object transform(Locale locale, String... arguments) {
+    public Object transform(Locale locale, String... arguments) throws TransformationException {
         Transformers transformers = new Transformers();
         Object[] transformedArguments = new Object[arguments.length];
         for(int i = 0; i < arguments.length; i++) {

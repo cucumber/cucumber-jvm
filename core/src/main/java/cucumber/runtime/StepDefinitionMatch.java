@@ -1,5 +1,6 @@
 package cucumber.runtime;
 
+import cucumber.runtime.transformers.TransformationException;
 import cucumber.runtime.transformers.Transformers;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Match;
@@ -23,9 +24,9 @@ public class StepDefinitionMatch extends Match {
         this.transformers = transformers;
     }
 
-    public void runStep(Step step, String stackTracePath) throws Throwable {
+    public void runStep(Step step, String stackTracePath, Locale locale) throws Throwable {
         try {
-            stepDefinition.execute(transformedArgs(stepDefinition.getParameterTypes(), step));
+            stepDefinition.execute(transformedArgs(stepDefinition.getParameterTypes(), step, locale));
         } catch (CucumberException e) {
             throw e;
         } catch (InvocationTargetException t) {
@@ -35,7 +36,7 @@ public class StepDefinitionMatch extends Match {
         }
     }
 
-    private Object[] transformedArgs(Class<?>[] parameterTypes, Step step) {
+    private Object[] transformedArgs(Class<?>[] parameterTypes, Step step, Locale locale) throws TransformationException {
         int argumentCount = getArguments().size() + (step.getMultilineArg() == null ? 0 : 1);
         if (parameterTypes.length != argumentCount) {
             throw new CucumberException("Arity mismatch. Parameters: " + asList(parameterTypes) + ". Matched arguments: " + getArguments());
@@ -44,7 +45,7 @@ public class StepDefinitionMatch extends Match {
         Object[] result = new Object[argumentCount];
         int n = 0;
         for (Argument a : getArguments()) {
-            result[n] = transformers.transform(getLocale(), parameterTypes[n++], a.getVal());
+            result[n] = transformers.transform(locale, parameterTypes[n++], a.getVal());
         }
         if (step.getDocString() != null) {
             result[n] = step.getDocString().getValue();
@@ -54,10 +55,6 @@ public class StepDefinitionMatch extends Match {
             result[n] = step.getRows();
         }
         return result;
-    }
-
-    private Locale getLocale() {
-        return this.stepDefinition.getLocale();
     }
 
     private Throwable filterStacktrace(Throwable error, StackTraceElement stepLocation) {

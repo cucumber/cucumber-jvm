@@ -41,9 +41,4 @@ public interface StepDefinition {
      * stack traces.
      */
     boolean isDefinedAt(StackTraceElement stackTraceElement); // TODO: redundant with getLocation?
-
-    /**
-     * @return the locale associated with the step
-     */
-    Locale getLocale();
 }

@@ -1,26 +1,24 @@
 package cucumber.runtime.java;
 
-import cucumber.runtime.AbstractStepDefinition;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.JdkPatternArgumentMatcher;
+import cucumber.runtime.StepDefinition;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 
 import java.lang.reflect.Method;
 import java.util.List;
-import java.util.Locale;
 import java.util.regex.Pattern;
 
 import static java.util.Arrays.asList;
 
-public class JavaStepDefinition extends AbstractStepDefinition {
+public class JavaStepDefinition implements StepDefinition {
     private final MethodFormat methodFormat;
     private final Method method;
     private final ObjectFactory objectFactory;
     private final JdkPatternArgumentMatcher argumentMatcher;
 
-    public JavaStepDefinition(Pattern pattern, Method method, ObjectFactory objectFactory, Locale locale) {
-        super(locale);
+    public JavaStepDefinition(Pattern pattern, Method method, ObjectFactory objectFactory) {
         this.argumentMatcher = new JdkPatternArgumentMatcher(pattern);
         this.method = method;
         this.objectFactory = objectFactory;

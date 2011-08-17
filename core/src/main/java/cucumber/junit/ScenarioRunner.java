@@ -16,12 +16,14 @@ import org.junit.runners.model.InitializationError;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class ScenarioRunner extends ParentRunner<Step> {
     private final Runtime runtime;
     private final Scenario scenario;
     private final List<Step> steps = new ArrayList<Step>();
     private World world;
+    private Locale locale;
 
     public ScenarioRunner(Runtime runtime, Scenario scenario) throws InitializationError {
         super(null);
@@ -54,7 +56,7 @@ public class ScenarioRunner extends ParentRunner<Step> {
     @Override
     protected void runChild(Step step, RunNotifier notifier) {
         Reporter reporter = makeReporter(step, notifier);
-        world.runStep(step, getName(), reporter);
+        world.runStep(step, getName(), reporter, locale);
     }
 
     private Reporter makeReporter(Step step, RunNotifier notifier) {
@@ -65,6 +67,10 @@ public class ScenarioRunner extends ParentRunner<Step> {
 
     public void step(Step step) {
         steps.add(step);
+    }
+
+    public void setLocale(Locale locale) {
+        this.locale = locale;
     }
 
     private static class JUnitReporter implements Reporter {

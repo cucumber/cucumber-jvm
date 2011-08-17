@@ -6,6 +6,7 @@ import gherkin.formatter.model.Result;
 import gherkin.formatter.model.Step;
 
 import java.util.List;
+import java.util.Locale;
 
 public class World {
     private final List<Backend> backends;
@@ -21,7 +22,7 @@ public class World {
         }
     }
 
-    public void runStep(Step step, String stackTracePath, Reporter reporter) {
+    public void runStep(Step step, String stackTracePath, Reporter reporter, Locale locale) {
         StepDefinitionMatch match = runtime.stepDefinitionMatch(step);
         if (match != null) {
             reporter.match(match);
@@ -37,7 +38,7 @@ public class World {
             Throwable e = null;
             long start = System.nanoTime();
             try {
-                match.runStep(step, stackTracePath);
+                match.runStep(step, stackTracePath, locale);
             } catch (Throwable t) {
                 skipNextStep = true;
                 e = t;
