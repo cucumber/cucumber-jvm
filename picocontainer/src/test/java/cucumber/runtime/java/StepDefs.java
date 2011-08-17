@@ -1,16 +1,11 @@
 package cucumber.runtime.java;
 
-
-import cucumber.annotation.EN.Given;
-import cucumber.annotation.EN.Then;
+import cucumber.annotation.en.Given;
+import cucumber.annotation.en.Then;
 
 import static junit.framework.Assert.assertEquals;
 
 public class StepDefs {
-    public StepDefs() {
-
-    }
-
     private String cukes;
 
     @Given("^I have (\\d+) cukes in my belly")

@@ -1,7 +1,5 @@
 package cucumber.runtime.transformers;
 
-import cuke4duke.internal.Utils;
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -10,9 +8,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class StandardTransformersTest {
     @Test
@@ -63,7 +59,7 @@ public class StandardTransformersTest {
         Integer expected = 1000;
         assertEquals(expected, new IntegerTransformer().transform(Locale.ENGLISH, "1000"));
         assertEquals(expected, new IntegerTransformer().transform(Locale.ENGLISH, "1,000"));
-        assertEquals(expected, new IntegerTransformer().transform(Utils.localeFor("pt"), "1.000"));
+        assertEquals(expected, new IntegerTransformer().transform(new Locale("pt"), "1.000"));
     }
 
     @Test
@@ -71,7 +67,7 @@ public class StandardTransformersTest {
         Double expected = 3000.15;
         assertEquals(expected, new DoubleTransformer().transform(Locale.ENGLISH, "3000.15"));
         assertEquals(expected, new DoubleTransformer().transform(Locale.ENGLISH, "3,000.15"));
-        assertEquals(expected, new DoubleTransformer().transform(Utils.localeFor("pt"), "3.000,15"));
+        assertEquals(expected, new DoubleTransformer().transform(new Locale("pt"), "3.000,15"));
         assertEquals(expected, new DoubleTransformer().transform(Locale.FRENCH, "3000,15"));
     }
 

@@ -5,14 +5,13 @@ import cucumber.classpath.Classpath;
 import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.StepDefinition;
-import cuke4duke.internal.Utils;
+import cucumber.runtime.Utils;
 import gherkin.formatter.model.Step;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.regex.Pattern;
 
 public class JavaBackend implements Backend {
@@ -45,10 +44,10 @@ public class JavaBackend implements Backend {
         return new JavaSnippetGenerator(step).getSnippet();
     }
 
-    void addStepDefinition(Pattern pattern, Method method, Locale locale) {
+    void addStepDefinition(Pattern pattern, Method method) {
         Class<?> clazz = method.getDeclaringClass();
         objectFactory.addClass(clazz);
-        stepDefinitions.add(new JavaStepDefinition(pattern, method, objectFactory, locale));
+        stepDefinitions.add(new JavaStepDefinition(pattern, method, objectFactory));
     }
 
     public Object invoke(Method method, Object[] javaArgs) {

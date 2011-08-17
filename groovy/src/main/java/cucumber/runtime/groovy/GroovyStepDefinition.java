@@ -1,5 +1,6 @@
 package cucumber.runtime.groovy;
 
+import cucumber.runtime.StepDefinition;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 import groovy.lang.Closure;
@@ -8,17 +9,15 @@ import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
-import cucumber.runtime.AbstractStepDefinition;
 import cucumber.runtime.JdkPatternArgumentMatcher;
 
-public class GroovyStepDefinition extends AbstractStepDefinition {
+public class GroovyStepDefinition implements StepDefinition {
     private final JdkPatternArgumentMatcher argumentMatcher;
     private final Closure body;
     private final StackTraceElement location;
     private GroovyBackend backend;
 
-    public GroovyStepDefinition(Pattern pattern, Closure body, StackTraceElement location, GroovyBackend backend, Locale locale) {
-    	super(locale);
+    public GroovyStepDefinition(Pattern pattern, Closure body, StackTraceElement location, GroovyBackend backend) {
         this.backend = backend;
         this.argumentMatcher = new JdkPatternArgumentMatcher(pattern);
         this.body = body;

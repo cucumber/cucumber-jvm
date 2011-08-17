@@ -1,4 +1,3 @@
-require 'rubygems'
 require 'gherkin/i18n'
 require 'erb'
 
