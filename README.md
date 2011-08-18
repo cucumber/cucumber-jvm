@@ -22,18 +22,7 @@ Cucumber-JVM also integrates with the following Dependency Injection containers:
 
 ## Hacking
 
-To hack on Cucumber-JVM you need a JDK and a Ruby interpreter. Ruby is only used for code generation (Cucumber-JVM does not have any Ruby runtime dependencies). Both MRI and JRuby will do. 
-
-### Code generation
-
-With Ruby installed and on your path, install some gems that are needed for code generation:
-
-    gem install bundler
-    bundle install
-
-Now you can generate code:
-
-    rake generate
+To hack on Cucumber-JVM you need a JDK and Maven. 
 
 ### Building Cucumber-JVM
 
@@ -50,6 +39,19 @@ All Cucumber implementations (cucumber-ruby, cucumber-jvm, cucumber-js) share a 
 Now you can run the cross-platform Cucumber features:
 
     rake
+
+### Code generation
+
+StepDefinition APIs in all of Gherkin's supported i18n languages are generated using Ruby. If a new Gherkin version is released (with i18n changes), the StepDefinition APIs have to be regenerated. With Ruby installed and on your path, install some gems that are needed for code generation:
+
+    gem install bundler
+    bundle install
+
+Now you can generate code:
+
+    rake generate
+
+The generated files are added to Git. This is contrary to common practice, but it simplifies development as occasional contributors will not have to install Ruby. The files change relatively rarely anyway.
 
 ## Contributing fixes
 
