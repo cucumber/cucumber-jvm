@@ -20,6 +20,8 @@ Cucumber-JVM also integrates with the following Dependency Injection containers:
 * PicoContainer
 * Spring
 
+Documentation and releases will come later. For now you have to build it yourself and read the code to understand what to do.
+
 ## Hacking
 
 To hack on Cucumber-JVM you need a JDK and Maven. 
@@ -56,3 +58,4 @@ The generated files are added to Git. This is contrary to common practice, but i
 ## Contributing fixes
 
 Fork the repository on Github, clone it and send a pull request when you have fixed something. Please commit each feature/bugfix on a separate branch as this makes it easier for us to decide what to merge and what not to merge.
+
