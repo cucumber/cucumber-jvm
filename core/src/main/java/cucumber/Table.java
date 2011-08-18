@@ -14,6 +14,7 @@ public class Table {
 
     private final List<List<String>> raw;
     private Map<String, Transformer<?>> columnTransformers = new HashMap<String, Transformer<?>>();
+    private Map<String, String> headerMappings;
 
     public Table(List<Row> gherkinRows) {
         this.raw = new ArrayList<List<String>>();
@@ -29,7 +30,20 @@ public class Table {
      * @return the headers of the table (first <i>raw</i> row with labels)
      */
     public List<String> getHeaders() {
-        return this.raw.get(0);
+        return transformHeaders(this.raw.get(0));
+    }
+
+    private List<String> transformHeaders(List<String> rawHeaders) {
+        List<String> transformedHeaders = new ArrayList<String>();
+        for (String rawHeader : rawHeaders) {
+            String transformedHeader = getHeaderMappings().get(rawHeader);
+            if (transformedHeader != null) {
+                transformedHeaders.add(transformedHeader);
+            } else {
+                transformedHeaders.add(rawHeader);
+            }
+        }
+        return transformedHeaders;
     }
 
     public List<List<String>> raw() {
@@ -39,14 +53,14 @@ public class Table {
     public List<List<String>> rows() {
         return this.raw.subList(1, this.raw.size());
     }
-    
+
     public List<Map<String, Object>> hashes() {
         List<Map<String, Object>> hashes = new ArrayList<Map<String, Object>>();
         List<String> headers = getHeaders();
         List<List<String>> rows = rows();
         for (List<String> row : rows) {
             Map<String, Object> map = new HashMap<String, Object>();
-            for(int i=0;i<row.size();i++) {
+            for (int i = 0; i < row.size(); i++) {
                 String header = headers.get(i);
                 Object hashValue = transformCellValue(header, row.get(i));
                 map.put(header, hashValue);
@@ -59,16 +73,32 @@ public class Table {
     private Object transformCellValue(String header, String cellValue) {
         Object hashValue;
         Transformer<?> transformer = this.columnTransformers.get(header);
-        if(transformer!=null) {
-            //TODO: How to get Locale from here?
+        if (transformer != null) {
+            // TODO: How to get Locale from here?
             hashValue = transformer.transform(Locale.getDefault(), cellValue);
         } else {
             hashValue = cellValue;
         }
         return hashValue;
     }
-    
+
     public void mapColumn(String column, Transformer<?> transformer) {
         this.columnTransformers.put(column, transformer);
     }
+
+    public void mapHeaders(Map<String, String> mappings) {
+        setHeaderMappings(mappings);
+    }
+    
+    public Map<String, String> getHeaderMappings() {
+        if (this.headerMappings == null) {
+            this.headerMappings = new HashMap<String, String>();
+        }
+        return this.headerMappings;
+    }
+
+    public void setHeaderMappings(Map<String, String> headerMappings) {
+        this.headerMappings = headerMappings;
+    }
+
 }

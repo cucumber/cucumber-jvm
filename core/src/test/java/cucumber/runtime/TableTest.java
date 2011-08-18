@@ -7,6 +7,7 @@ import gherkin.formatter.model.Row;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -61,11 +62,10 @@ public class TableTest {
         assertEquals("Hashes", 1, hashes.size());
         Map<String, Object> hash = hashes.get(0);
         assertEquals("Hash First Col", "4444", hash.get("one"));
-        assertEquals("Hash First Col", "55555", hash.get("four"));
-        assertEquals("Hash First Col", "666666", hash.get("seven"));
-
+        assertEquals("Hash Second Col", "55555", hash.get("four"));
+        assertEquals("Hash Third Col", "666666", hash.get("seven"));
     }
-    
+
     @Test
     public void shouldAllowMappingColumns() {
         this.simpleTable.mapColumn("one", new IntegerTransformer());
@@ -73,5 +73,31 @@ public class TableTest {
         assertEquals("Hashes", 1, hashes.size());
         Map<String, Object> hash = hashes.get(0);
         assertEquals("Hash First Col", 4444, hash.get("one"));
+    }
+
+    @Test
+    public void shouldAllowMappingHeaders() {
+        this.simpleTable.mapHeaders(getHeaderMappings());
+        List<String> headers = this.simpleTable.getHeaders();
+        assertTrue("Header's items", headers.containsAll(Arrays.asList("ein", "vier", "sieben")));
+    }
+
+    private Map<String, String> getHeaderMappings() {
+        Map<String, String> mappings = new HashMap<String, String>();
+        mappings.put("one", "ein");
+        mappings.put("four", "vier");
+        mappings.put("seven", "sieben");
+        return mappings;
+    }
+    
+    @Test
+    public void shouldBeConvertibleToAListOfMapAfterMapped() {
+        this.simpleTable.mapHeaders(getHeaderMappings());
+        List<Map<String, Object>> hashes = this.simpleTable.hashes();
+        assertEquals("Hashes", 1, hashes.size());
+        Map<String, Object> hash = hashes.get(0);
+        assertEquals("Hash First Col", "4444", hash.get("ein"));
+        assertEquals("Hash Second Col", "55555", hash.get("vier"));
+        assertEquals("Hash Third Col", "666666", hash.get("sieben"));
     }
 }
