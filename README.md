@@ -21,3 +21,22 @@ Cucumber-JVM also integrates with the following Dependency Injection containers:
 * Spring
 
 ## Hacking
+
+To hack on Cucumber-JVM you need a JDK and a Ruby interpreter. Ruby is only used for code generation (Cucumber-JVM does not have any Ruby runtime dependencies). Both MRI and JRuby will do.
+
+### Code generation
+
+With Ruby installed and on your path, install some gems that are needed for code generation:
+
+    gem install bundler
+    bundle install
+
+Now you can generate code:
+
+    rake generate
+
+### Building Cucumber-JVM
+
+You'll need Maven to build the Java code (we're happily accepting patches for other build systems). To build and run tests, run:
+
+    mvn clean install
