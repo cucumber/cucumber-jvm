@@ -74,7 +74,7 @@ public class Table {
         Object hashValue;
         Transformer<?> transformer = this.columnTransformers.get(header);
         if (transformer != null) {
-            // TODO: How to get Locale from here?
+            // TODO: How to get Locale from here? -> from a field...
             hashValue = transformer.transform(Locale.getDefault(), cellValue);
         } else {
             hashValue = cellValue;
@@ -87,7 +87,7 @@ public class Table {
     }
 
     public void mapHeaders(Map<String, String> mappings) {
-        setHeaderMappings(mappings);
+        this.headerMappings = mappings;
     }
     
     public Map<String, String> getHeaderMappings() {
@@ -95,10 +95,6 @@ public class Table {
             this.headerMappings = new HashMap<String, String>();
         }
         return this.headerMappings;
-    }
-
-    public void setHeaderMappings(Map<String, String> headerMappings) {
-        this.headerMappings = headerMappings;
     }
 
 }

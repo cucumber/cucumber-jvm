@@ -23,7 +23,7 @@ public class TableTest {
     private Table simpleTable;
 
     @Before
-    public void initSimpleRows() {
+    public void initSimpleTable() {
         this.simpleRows = new ArrayList<Row>();
         String[] firstLine = new String[] { "one", "four", "seven" };
         this.simpleRows.add(new Row(new ArrayList<Comment>(), Arrays.asList(firstLine), 1));
@@ -79,12 +79,12 @@ public class TableTest {
     public void shouldAllowMappingHeaders() {
         this.simpleTable.mapHeaders(getHeaderMappings());
         List<String> headers = this.simpleTable.getHeaders();
-        assertTrue("Header's items", headers.containsAll(Arrays.asList("ein", "vier", "sieben")));
+        assertTrue("Header's items", headers.containsAll(Arrays.asList("eins", "vier", "sieben")));
     }
 
     private Map<String, String> getHeaderMappings() {
         Map<String, String> mappings = new HashMap<String, String>();
-        mappings.put("one", "ein");
+        mappings.put("one", "eins");
         mappings.put("four", "vier");
         mappings.put("seven", "sieben");
         return mappings;
@@ -96,8 +96,9 @@ public class TableTest {
         List<Map<String, Object>> hashes = this.simpleTable.hashes();
         assertEquals("Hashes", 1, hashes.size());
         Map<String, Object> hash = hashes.get(0);
-        assertEquals("Hash First Col", "4444", hash.get("ein"));
+        assertEquals("Hash First Col", "4444", hash.get("eins"));
         assertEquals("Hash Second Col", "55555", hash.get("vier"));
         assertEquals("Hash Third Col", "666666", hash.get("sieben"));
     }
+    
 }
