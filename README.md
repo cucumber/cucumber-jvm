@@ -20,11 +20,17 @@ Cucumber-JVM also integrates with the following Dependency Injection containers:
 * PicoContainer
 * Spring
 
-Documentation and releases will come later. For now you have to build it yourself and read the code to understand what to do.
+## Downloading / Installation
+
+There are no downloadable releases yet. See the Hacking section for installation instructions. Downloadable releases will be made available when the time is right.
+
+## Examples
+
+You will find an example under examples/java-calculator. You should be able to run `basic_arithmetic.feature` by running the `cucumber.examples.java.calculator.basic_arithmetic_Test` JUnit test from your IDE. -Or simply by running it with Maven: `mvn clean install -P examples` once to build it all. Then `cd examples/java-calculator` followed by `mvn test` each time you make a change. Try to make the feature fail!
 
 ## Hacking
 
-To hack on Cucumber-JVM you need a JDK and Maven. 
+To hack on Cucumber-JVM you need a JDK, Maven and Git to get the code.
 
 ### Building Cucumber-JVM
 
