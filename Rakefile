@@ -4,7 +4,7 @@ require 'cucumber/rake/task'
 task :generate do
   Dir['*/Rakefile'].each do |rakefile|
     Dir.chdir(File.dirname(rakefile)) do
-      sh "bundle exec rake generate"
+      puts `bundle exec rake generate`
     end
   end
 end
