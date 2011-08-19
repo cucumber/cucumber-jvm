@@ -13,7 +13,7 @@
 
     <artifactId>spring</artifactId>
     <packaging>jar</packaging>
-    <name>Cucumber: Spring</name>
+    <name>Cucumber-JVM: Spring</name>
 
     <dependencies>
         <dependency>

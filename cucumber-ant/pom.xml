@@ -13,7 +13,7 @@
 
     <artifactId>cucumber-ant</artifactId>
     <packaging>jar</packaging>
-    <name>Cucumber: Ant</name>
+    <name>Cucumber-JVM: Ant</name>
 
     <dependencies>
         <dependency>

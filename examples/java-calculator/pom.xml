@@ -7,23 +7,19 @@
     <parent>
         <groupId>cucumber</groupId>
         <artifactId>parent</artifactId>
-        <relativePath>../pom.xml</relativePath>
+        <relativePath>../../pom.xml</relativePath>
         <version>0.4.3-SNAPSHOT</version>
     </parent>
 
-    <artifactId>guice</artifactId>
+    <artifactId>java-calculator</artifactId>
     <packaging>jar</packaging>
-    <name>Cucumber-JVM: Guice</name>
+    <name>Examples: Java Calculator</name>
 
     <dependencies>
         <dependency>
             <groupId>cucumber</groupId>
-            <artifactId>java</artifactId>
+            <artifactId>picocontainer</artifactId>
             <version>0.4.3-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.inject</groupId>
-            <artifactId>guice</artifactId>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

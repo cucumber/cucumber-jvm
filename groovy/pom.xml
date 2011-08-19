@@ -13,7 +13,7 @@
 
     <artifactId>groovy</artifactId>
     <packaging>jar</packaging>
-    <name>Cucumber: Groovy</name>
+    <name>Cucumber-JVM: Groovy</name>
 
     <dependencies>
         <dependency>

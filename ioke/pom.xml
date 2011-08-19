@@ -13,7 +13,7 @@
 
     <artifactId>ioke</artifactId>
     <packaging>jar</packaging>
-    <name>Cucumber: Ioke</name>
+    <name>Cucumber-JVM: Ioke</name>
 
     <dependencies>
         <dependency>

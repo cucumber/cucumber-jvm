@@ -13,7 +13,7 @@
 
     <artifactId>picocontainer</artifactId>
     <packaging>jar</packaging>
-    <name>Cucumber: PicoContainer</name>
+    <name>Cucumber-JVM: PicoContainer</name>
 
     <dependencies>
         <dependency>

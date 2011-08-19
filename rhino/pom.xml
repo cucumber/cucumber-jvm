@@ -13,7 +13,7 @@
 
     <artifactId>rhino</artifactId>
     <packaging>jar</packaging>
-    <name>Cucumber: Rhino</name>
+    <name>Cucumber-JVM: Rhino</name>
 
     <dependencies>
         <dependency>

@@ -13,7 +13,7 @@
 
     <artifactId>clojure</artifactId>
     <packaging>jar</packaging>
-    <name>Cucumber: Clojure</name>
+    <name>Cucumber-JVM: Clojure</name>
 
     <dependencies>
         <dependency>
