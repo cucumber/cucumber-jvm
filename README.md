@@ -44,16 +44,28 @@ Now you can run the cross-platform Cucumber features:
 
 ### Code generation
 
-StepDefinition APIs in all of Gherkin's supported i18n languages are generated using Ruby. If a new Gherkin version is released (with i18n changes), the StepDefinition APIs have to be regenerated. With Ruby installed and on your path, install some gems that are needed for code generation:
+StepDefinition APIs in all of Gherkin's supported i18n languages are generated using Ruby. 
+The i18n Java annotations (except English) are not added to the Git repo because Git on both OS X and Windows handles UTF-8 file names badly.
+In order to compile `cucumber-java` with all I18n annotations, you have to generate them yourelf.
+With Ruby installed and on your path, install some gems that are needed for code generation:
 
     gem install bundler
     bundle install
 
-Now you can generate code:
+Now you can generate the code:
 
     rake generate
 
-The generated files are added to Git. This is contrary to common practice, but it simplifies development as occasional contributors will not have to install Ruby. The files change relatively rarely anyway.
+## Troubleshooting
+
+Below are some common problems you might encounter while hacking on Cucumber-JVM - and solutions.
+
+### IntelliJ Idea fails to compile the generated I18n Java annotations
+
+This can be solved by changing the Compiler settings: `Preferences -> Compiler -> Java Compiler`:
+
+* *Use compiler:* `Javac in-process (Java6+ only)`
+* *Additional command line parameters:* `-target 1.6 -source 1.6 -encoding UTF-8`
 
 ## Contributing fixes
 
