@@ -17,7 +17,7 @@ public class FileResource extends AbstractResource {
     }
 
     public String getPath() {
-        return file.getAbsolutePath().substring(rootDir.getAbsolutePath().length() + 1, file.getAbsolutePath().length());
+        return file.getAbsolutePath().substring(rootDir.getAbsolutePath().length() + 1, file.getAbsolutePath().length()).replace(File.separatorChar, '/');
     }
 
     public InputStream getInputStream() {

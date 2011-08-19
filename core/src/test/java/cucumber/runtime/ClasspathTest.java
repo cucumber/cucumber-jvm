@@ -29,13 +29,16 @@ public class ClasspathTest {
 
     @Test
     public void looksUpFilesByDir() throws IOException {
+        final List<Resource> resources = new ArrayList<Resource>();
         final List<String> paths = new ArrayList<String>();
         Classpath.scan("cucumber/runtime", ".xyz", new Consumer() {
             public void consume(Resource resource) {
                 paths.add(resource.getPath());
+                resources.add(resource);
             }
         });
         assertEquals(Arrays.asList("cucumber/runtime/bar.xyz", "cucumber/runtime/foo.xyz"), paths);
+        assertEquals("BAR", resources.get(0).getString());
     }
 
     @Test
