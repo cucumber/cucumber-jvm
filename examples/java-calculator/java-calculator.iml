@@ -24,11 +24,11 @@
     <orderEntry type="module" module-name="picocontainer" />
     <orderEntry type="module" module-name="java" />
     <orderEntry type="module" module-name="core" />
-    <orderEntry type="library" name="Maven: com.beust:jcommander:1.7" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.ant:ant:1.8.1" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.ant:ant-launcher:1.8.1" level="project" />
+    <orderEntry type="library" name="Maven: com.beust:jcommander:1.18" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.ant:ant:1.8.2" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.ant:ant-launcher:1.8.2" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.8.2" level="project" />
-    <orderEntry type="library" name="Maven: org.picocontainer:picocontainer:2.11.2" level="project" />
+    <orderEntry type="library" name="Maven: org.picocontainer:picocontainer:2.13.6" level="project" />
   </component>
 </module>
 
