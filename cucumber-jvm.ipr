@@ -296,15 +296,37 @@
         <root url="jar://$MAVEN_REPOSITORY$/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: gherkin:gherkin:2.4.13">
+    <library name="Maven: gherkin:gherkin:2.4.14">
       <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/gherkin/gherkin/2.4.13/gherkin-2.4.13.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/gherkin/gherkin/2.4.14/gherkin-2.4.14.jar!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/gherkin/gherkin/2.4.13/gherkin-2.4.13-javadoc.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/gherkin/gherkin/2.4.14/gherkin-2.4.14-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/gherkin/gherkin/2.4.13/gherkin-2.4.13-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/gherkin/gherkin/2.4.14/gherkin-2.4.14-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: gherkin:gherkin:2.4.14">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/gherkin/gherkin/2.4.14/gherkin-2.4.14.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/gherkin/gherkin/2.4.14/gherkin-2.4.14-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/gherkin/gherkin/2.4.14/gherkin-2.4.14-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: gherkin:gherkin:2.4.14">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/gherkin/gherkin/2.4.14/gherkin-2.4.14.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/gherkin/gherkin/2.4.14/gherkin-2.4.14-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/gherkin/gherkin/2.4.14/gherkin-2.4.14-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: junit:junit:4.8.2">

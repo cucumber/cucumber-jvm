@@ -38,7 +38,7 @@ public class ClasspathTest {
             }
         });
         assertEquals(Arrays.asList("cucumber/runtime/bar.xyz", "cucumber/runtime/foo.xyz"), paths);
-        assertEquals("BAR", resources.get(0).getString());
+        assertEquals("BAR", resources.get(0).getString().trim());
     }
 
     @Test

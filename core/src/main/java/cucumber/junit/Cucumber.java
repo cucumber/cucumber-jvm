@@ -5,6 +5,7 @@ import cucumber.classpath.Consumer;
 import cucumber.io.Resource;
 import cucumber.runtime.FeatureBuilder;
 import cucumber.runtime.Runtime;
+import cucumber.runtime.SnippetPrinter;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.model.CucumberScenario;
 import gherkin.formatter.model.Feature;
@@ -26,9 +27,7 @@ public class Cucumber extends ParentRunner<ScenarioRunner> {
         java.lang.Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
-                for (String snippet : runtime.getSnippets()) {
-                    System.out.println(snippet);
-                }
+                new SnippetPrinter(System.out).printSnippets(runtime);
             }
         });
         return runtime;
