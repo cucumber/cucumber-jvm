@@ -186,8 +186,6 @@
         <module>java</module>
         <module>clojure</module>
         <!--module>components/scala</module-->
-        <module>cucumber-ant</module>
-        <!--module>components/maven-plugin</module-->
     </modules>
 
     <profiles>

@@ -2,7 +2,6 @@ package cucumber.runtime.java;
 
 import cucumber.annotation.Pending;
 import cucumber.annotation.Transform;
-import cucumber.runtime.CucumberException;
 import cucumber.runtime.PendingException;
 import junit.framework.Assert;
 import org.junit.Test;

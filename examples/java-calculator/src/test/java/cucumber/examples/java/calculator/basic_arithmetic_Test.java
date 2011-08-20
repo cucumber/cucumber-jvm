@@ -11,4 +11,5 @@ import org.junit.runner.RunWith;
  */
 @RunWith(Cucumber.class)
 @Feature("basic_arithmetic.feature")
-public class basic_arithmetic_Test {}
+public class basic_arithmetic_Test {
+}

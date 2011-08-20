@@ -67,7 +67,7 @@ public class JavaBackend implements Backend {
         StringBuilder m = new StringBuilder("Couldn't invoke ").append(method.toGenericString()).append(" with ").append(Utils.join(javaArgs, ",")).append(" (");
         boolean comma = false;
         for (Object javaArg : javaArgs) {
-            if(comma) m.append(",");
+            if (comma) m.append(",");
             m.append(javaArg.getClass());
             comma = true;
         }

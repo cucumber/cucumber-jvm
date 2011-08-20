@@ -14,7 +14,7 @@ public class RpnCalculatorStepdefs {
         calc.push(arg2);
         calc.push("+");
     }
-    
+
     @Then("^the result is (\\d+)$")
     public void the_result_is(double expected) {
         assertEquals(expected, calc.value());
