@@ -137,6 +137,11 @@
                 <artifactId>cglib-nodep</artifactId>
                 <version>2.1_3</version>
             </dependency>
+            <dependency>
+                <groupId>cucumber</groupId>
+                <artifactId>core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
         </dependencies>
     </dependencyManagement>
