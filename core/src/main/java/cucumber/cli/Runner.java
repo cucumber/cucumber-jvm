@@ -9,7 +9,6 @@ import cucumber.runtime.Runtime;
 import cucumber.runtime.model.CucumberFeature;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
-import gherkin.parser.Parser;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -38,7 +37,7 @@ public class Runner {
     private void traverse(String[] filesOrDirs) {
         for (String fileOrDir : filesOrDirs) {
             File file = new File(fileOrDir);
-            if(file.exists()) {
+            if (file.exists()) {
                 // Read it directly from the file system
                 traverse(file);
             } else {
@@ -49,7 +48,7 @@ public class Runner {
                         builder.parse(resource);
                     }
                 };
-                if(fileOrDir.endsWith(".feature")) {
+                if (fileOrDir.endsWith(".feature")) {
                     Classpath.scan(fileOrDir, consumer);
                 } else {
                     Classpath.scan(fileOrDir, ".feature", consumer);

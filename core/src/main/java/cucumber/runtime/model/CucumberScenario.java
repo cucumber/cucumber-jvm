@@ -1,28 +1,26 @@
 package cucumber.runtime.model;
 
-import cucumber.runtime.*;
 import cucumber.runtime.Runtime;
+import cucumber.runtime.World;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
-import gherkin.formatter.model.*;
+import gherkin.formatter.model.Scenario;
+import gherkin.formatter.model.Step;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 public class CucumberScenario {
     private final List<Step> steps = new ArrayList<Step>();
-    private final Feature feature;
-    private final Background background;
     private final Scenario scenario;
+    private final CucumberFeature cucumberFeature;
     private final String uri;
 
     private World world;
-    
-    public CucumberScenario(String uri, Feature feature, Background background, Scenario scenario) {
+
+    public CucumberScenario(CucumberFeature cucumberFeature, String uri, Scenario scenario) {
+        this.cucumberFeature = cucumberFeature;
         this.uri = uri;
-        this.feature = feature;
-        this.background = background;
         this.scenario = scenario;
     }
 
@@ -30,25 +28,32 @@ public class CucumberScenario {
         return scenario;
     }
 
-    protected List<Step> getSteps() {
+    public List<Step> getSteps() {
         return steps;
     }
 
-    public void run(Runtime runtime, Formatter formatter, Reporter reporter, Locale locale) {
+    public void disposeWorld() {
+        world.dispose();
+    }
+
+    public void newWorld(Runtime runtime) {
         world = runtime.newWorld();
+    }
+
+    public void run(Runtime runtime, Formatter formatter, Reporter reporter) {
+        newWorld(runtime);
         formatter.scenario(scenario);
         for (Step step : steps) {
             formatter.step(step);
         }
         for (Step step : steps) {
-            runStep(step, reporter, locale);
+            runStep(step, reporter);
         }
-        world.dispose();
+        disposeWorld();
     }
 
-    protected void runStep(Step step, Reporter reporter, Locale locale) {
-//        Reporter reporter = makeReporter(step, notifier);
-        world.runStep(step, uri + ":" + step.getLine(), reporter, locale);
+    public void runStep(Step step, Reporter reporter) {
+        world.runStep(uri, step, reporter, cucumberFeature.getLocale());
     }
 
 //    private Reporter makeReporter(Step step, RunNotifier notifier) {

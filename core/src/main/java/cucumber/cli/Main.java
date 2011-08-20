@@ -40,13 +40,13 @@ public class Main {
         }
 
         Runner runner = new Runner(runtime, filesOrDirs);
-        
+
         PrettyFormatter prettyFormatter = new PrettyFormatter(System.out, false, true);
-        
+
         runner.run(prettyFormatter, prettyFormatter);
 
         List<String> snippets = runtime.getSnippets();
-        if(!snippets.isEmpty()) {
+        if (!snippets.isEmpty()) {
             System.out.println();
             System.out.println("You can implement missing steps with the snippets below:");
             System.out.println();

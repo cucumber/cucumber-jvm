@@ -19,7 +19,6 @@ public abstract class TransformerWithFormat<T> implements Transformer<T> {
     /**
      * Parses a value using one of the java.util.text format classes.
      *
-     *
      * @param format   The format to use
      * @param argument The object to parse
      * @return The object

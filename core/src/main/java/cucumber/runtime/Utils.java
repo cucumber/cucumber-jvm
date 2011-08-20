@@ -1,7 +1,5 @@
 package cucumber.runtime;
 
-import java.util.Locale;
-
 public class Utils {
     public static Class<?>[] objectClassArray(int n) {
         Class<?>[] arr = new Class<?>[n];

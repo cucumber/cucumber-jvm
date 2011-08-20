@@ -15,7 +15,7 @@ import static java.util.Arrays.asList;
 public class StepDefinitionMatch extends Match {
     private final StepDefinition stepDefinition;
     private final Step step;
-    private Transformers transformers;
+    private final Transformers transformers;
 
     public StepDefinitionMatch(List<Argument> arguments, StepDefinition stepDefinition, Step step, Transformers transformers) {
         super(arguments, stepDefinition.getLocation());
@@ -25,7 +25,7 @@ public class StepDefinitionMatch extends Match {
     }
 
     public void runStep(Step step, String stackTracePath, Locale locale) throws Throwable {
-        if(locale == null) {
+        if (locale == null) {
             throw new NullPointerException("null Locale!");
         }
         try {
@@ -60,7 +60,7 @@ public class StepDefinitionMatch extends Match {
         return result;
     }
 
-    private Throwable filterStacktrace(Throwable error, StackTraceElement stepLocation) {
+    public Throwable filterStacktrace(Throwable error, StackTraceElement stepLocation) {
         StackTraceElement[] stackTraceElements = error.getStackTrace();
         if (error.getCause() != null && error.getCause() != error) {
             return filterStacktrace(error.getCause(), stepLocation);
@@ -79,5 +79,9 @@ public class StepDefinitionMatch extends Match {
         result[stackLength] = stepLocation;
         error.setStackTrace(result);
         return error;
+    }
+
+    public String getPattern() {
+        return stepDefinition.getPattern();
     }
 }

@@ -17,8 +17,10 @@ public class JavaStepDefinition implements StepDefinition {
     private final Method method;
     private final ObjectFactory objectFactory;
     private final JdkPatternArgumentMatcher argumentMatcher;
+    private final Pattern pattern;
 
     public JavaStepDefinition(Pattern pattern, Method method, ObjectFactory objectFactory) {
+        this.pattern = pattern;
         this.argumentMatcher = new JdkPatternArgumentMatcher(pattern);
         this.method = method;
         this.objectFactory = objectFactory;
@@ -49,5 +51,10 @@ public class JavaStepDefinition implements StepDefinition {
 
     public boolean isDefinedAt(StackTraceElement e) {
         return e.getClassName().equals(method.getDeclaringClass().getName()) && e.getMethodName().equals(method.getName());
+    }
+
+    @Override
+    public String getPattern() {
+        return pattern.pattern();
     }
 }

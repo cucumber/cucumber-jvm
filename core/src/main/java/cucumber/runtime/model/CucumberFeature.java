@@ -30,7 +30,7 @@ public class CucumberFeature {
     }
 
     public void scenario(Scenario scenario) {
-        currentCucumberScenario = new CucumberScenario(featureUri, feature, background, scenario);
+        currentCucumberScenario = new CucumberScenario(this, featureUri, scenario);
         cucumberScenarios.add(currentCucumberScenario);
     }
 
@@ -46,11 +46,19 @@ public class CucumberFeature {
         formatter.uri(featureUri);
         formatter.feature(feature);
         for (CucumberScenario cucumberScenario : cucumberScenarios) {
-            cucumberScenario.run(runtime, formatter, reporter, locale);
+            cucumberScenario.run(runtime, formatter, reporter);
         }
+    }
+
+    public List<CucumberScenario> getCucumberScenarios() {
+        return cucumberScenarios;
     }
 
     public void setLocale(Locale locale) {
         this.locale = locale;
+    }
+
+    public Locale getLocale() {
+        return locale;
     }
 }

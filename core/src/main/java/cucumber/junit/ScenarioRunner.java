@@ -2,7 +2,7 @@ package cucumber.junit;
 
 import cucumber.runtime.Pending;
 import cucumber.runtime.Runtime;
-import cucumber.runtime.World;
+import cucumber.runtime.model.CucumberScenario;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Match;
 import gherkin.formatter.model.Result;
@@ -14,31 +14,27 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 public class ScenarioRunner extends ParentRunner<Step> {
     private final Runtime runtime;
-    private final Scenario scenario;
-    private final List<Step> steps = new ArrayList<Step>();
-    private World world;
-    private Locale locale;
+    private final CucumberScenario cucumberScenario;
 
-    public ScenarioRunner(Runtime runtime, Scenario scenario) throws InitializationError {
+    public ScenarioRunner(Runtime runtime, CucumberScenario cucumberScenario) throws InitializationError {
         super(null);
         this.runtime = runtime;
-        this.scenario = scenario;
+        this.cucumberScenario = cucumberScenario;
     }
 
     @Override
     public String getName() {
+        Scenario scenario = cucumberScenario.getScenario();
         return scenario.getKeyword() + ": " + scenario.getName();
     }
 
     @Override
     protected List<Step> getChildren() {
-        return steps;
+        return cucumberScenario.getSteps();
     }
 
     @Override
@@ -48,29 +44,21 @@ public class ScenarioRunner extends ParentRunner<Step> {
 
     @Override
     public void run(RunNotifier notifier) {
-        world = runtime.newWorld();
+        cucumberScenario.newWorld(runtime);
         super.run(notifier);
-        world.dispose();
+        cucumberScenario.disposeWorld();
     }
 
     @Override
     protected void runChild(Step step, RunNotifier notifier) {
         Reporter reporter = makeReporter(step, notifier);
-        world.runStep(step, getName(), reporter, locale);
+        cucumberScenario.runStep(step, reporter);
     }
 
     private Reporter makeReporter(Step step, RunNotifier notifier) {
         Description description = describeChild(step);
         final EachTestNotifier eachTestNotifier = new EachTestNotifier(notifier, description);
         return new JUnitReporter(eachTestNotifier);
-    }
-
-    public void step(Step step) {
-        steps.add(step);
-    }
-
-    public void setLocale(Locale locale) {
-        this.locale = locale;
     }
 
     private static class JUnitReporter implements Reporter {

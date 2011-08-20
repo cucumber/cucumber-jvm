@@ -1,26 +1,24 @@
 package cucumber.runtime.clojure;
 
+import clojure.lang.AFunction;
+import cucumber.runtime.JdkPatternArgumentMatcher;
 import cucumber.runtime.StepDefinition;
+import cucumber.runtime.Utils;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
-import java.util.Locale;
 import java.util.regex.Pattern;
 
-import clojure.lang.AFunction;
-import cucumber.runtime.JdkPatternArgumentMatcher;
-import cucumber.runtime.Utils;
-
 public class ClojureStepDefinition implements StepDefinition {
-    private final Pattern regexp;
+    private final Pattern pattern;
     private final AFunction closure;
     private StackTraceElement location;
 
-    public ClojureStepDefinition(Pattern regexp, AFunction closure, StackTraceElement location) {
-    	this.regexp = regexp;
+    public ClojureStepDefinition(Pattern pattern, AFunction closure, StackTraceElement location) {
+        this.pattern = pattern;
         this.closure = closure;
         this.location = location;
     }
@@ -31,7 +29,7 @@ public class ClojureStepDefinition implements StepDefinition {
     }
 
     public List<Argument> matchedArguments(Step step) {
-        return new JdkPatternArgumentMatcher(regexp).argumentsFrom(step.getName());
+        return new JdkPatternArgumentMatcher(pattern).argumentsFrom(step.getName());
     }
 
     public String getLocation() {
@@ -53,5 +51,10 @@ public class ClojureStepDefinition implements StepDefinition {
 
     public boolean isDefinedAt(StackTraceElement stackTraceElement) {
         return location.getFileName().equals(stackTraceElement.getFileName());
+    }
+
+    @Override
+    public String getPattern() {
+        return pattern.pattern();
     }
 }

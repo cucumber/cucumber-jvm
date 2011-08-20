@@ -140,7 +140,7 @@ public class Classpath {
         String[] segments = pathWithProtocol.split(":");
         // WINDOWS: jar:file:/C:/Users/ahellesoy/scm/cucumber-jvm/java/target/java-0.4.3-SNAPSHOT.jar
         // POSIX:   jar:file:/Users/ahellesoy/scm/cucumber-jvm/java/target/java-0.4.3-SNAPSHOT.jar
-        return segments.length == 4 ?  segments[2].substring(1) + ":" + segments[3] : segments[2];
+        return segments.length == 4 ? segments[2].substring(1) + ":" + segments[3] : segments[2];
     }
 
     private static void scanFilesystem(URL startDir, String pathPrefix, String suffix, Consumer consumer) {

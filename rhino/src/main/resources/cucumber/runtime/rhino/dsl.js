@@ -15,7 +15,7 @@ var registerStepDefinition = function(regexp, bodyFunc) {
       return null;
     }
   };
-  jsBackend.addStepDefinition(this, bodyFunc, argumentsFromFunc);
+  jsBackend.addStepDefinition(this, regexp, bodyFunc, argumentsFromFunc);
 };
 
 var Given = registerStepDefinition;

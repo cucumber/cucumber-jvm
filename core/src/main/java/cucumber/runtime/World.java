@@ -22,8 +22,9 @@ public class World {
         }
     }
 
-    public void runStep(Step step, String stackTracePath, Reporter reporter, Locale locale) {
-        StepDefinitionMatch match = runtime.stepDefinitionMatch(step);
+    public void runStep(String uri, Step step, Reporter reporter, Locale locale) {
+        String stackTracePath = uri + ":" + step.getLine();
+        StepDefinitionMatch match = runtime.stepDefinitionMatch(stackTracePath, step);
         if (match != null) {
             reporter.match(match);
         } else {
