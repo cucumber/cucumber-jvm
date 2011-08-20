@@ -1,6 +1,7 @@
 package cucumber.cli;
 
 import cucumber.runtime.Runtime;
+import gherkin.formatter.PrettyFormatter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,9 +36,23 @@ public class Main {
         }
         if (runtime == null) {
             System.out.println("Missing option: --glue");
+            System.exit(1);
         }
 
-        Cli cli = new Cli(runtime, filesOrDirs);
-        cli.run();
+        Runner runner = new Runner(runtime, filesOrDirs);
+        
+        PrettyFormatter prettyFormatter = new PrettyFormatter(System.out, false, true);
+        
+        runner.run(prettyFormatter, prettyFormatter);
+
+        List<String> snippets = runtime.getSnippets();
+        if(!snippets.isEmpty()) {
+            System.out.println();
+            System.out.println("You can implement missing steps with the snippets below:");
+            System.out.println();
+            for (String snippet : snippets) {
+                System.out.println(snippet);
+            }
+        }
     }
 }

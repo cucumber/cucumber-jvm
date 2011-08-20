@@ -25,6 +25,9 @@ public class StepDefinitionMatch extends Match {
     }
 
     public void runStep(Step step, String stackTracePath, Locale locale) throws Throwable {
+        if(locale == null) {
+            throw new NullPointerException("null Locale!");
+        }
         try {
             stepDefinition.execute(transformedArgs(stepDefinition.getParameterTypes(), step, locale));
         } catch (CucumberException e) {

@@ -17,6 +17,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>gherkin</groupId>
+            <artifactId>gherkin</artifactId>
+            <version>2.4.12</version>
+        </dependency>
+        <dependency>
             <groupId>cucumber</groupId>
             <artifactId>picocontainer</artifactId>
             <version>0.4.3-SNAPSHOT</version>
