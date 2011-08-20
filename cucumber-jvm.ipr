@@ -212,6 +212,7 @@
     <dictionary name="ahellesoy">
       <words>
         <w>matchers</w>
+        <w>springframework</w>
       </words>
     </dictionary>
   </component>
