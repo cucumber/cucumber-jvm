@@ -1,6 +1,6 @@
 package cucumber.junit;
 
-import cucumber.runtime.Pending;
+import cucumber.runtime.PendingException;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.model.CucumberScenario;
 import gherkin.formatter.Reporter;
@@ -83,7 +83,7 @@ public class ScenarioRunner extends ParentRunner<Step> {
 
         public void result(Result result) {
             Throwable error = result.getError();
-            if (Result.SKIPPED == result || error instanceof Pending) {
+            if (Result.SKIPPED == result || error instanceof PendingException) {
                 if (match != Match.NONE) {
                     // No need to say it's ignored twice
                     eachTestNotifier.fireTestIgnored();

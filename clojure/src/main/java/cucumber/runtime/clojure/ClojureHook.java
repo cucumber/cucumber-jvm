@@ -4,10 +4,10 @@ import clojure.lang.AFunction;
 
 import java.util.List;
 
-public class CljHook {
+public class ClojureHook {
     private final AFunction closure;
 
-    public CljHook(List<String> tagExpressions, AFunction closure) {
+    public ClojureHook(List<String> tagExpressions, AFunction closure) {
         //super(tagExpressions);
         this.closure = closure;
     }
