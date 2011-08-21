@@ -1,4 +1,4 @@
-package cucumber.runtime;
+package cucumber.table;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.junit.Before;
@@ -30,7 +31,7 @@ public class TableTest {
         String[] firstLine = new String[] { "one", "four", "seven" };
         this.simpleRows.add(new Row(new ArrayList<Comment>(), Arrays.asList(firstLine), 1));
         this.simpleRows.add(new Row(new ArrayList<Comment>(), Arrays.asList("4444", "55555", "666666"), 2));
-        this.simpleTable = new Table(this.simpleRows);
+        this.simpleTable = new Table(this.simpleRows, Locale.getDefault());
     }
 
     @Test

@@ -15,8 +15,10 @@ public class Table {
     private final List<List<String>> raw;
     private Map<String, Transformer<?>> columnTransformers = new HashMap<String, Transformer<?>>();
     private TableHeaderMapper headerMapper;
+    private final Locale locale;
 
-    public Table(List<Row> gherkinRows) {
+    public Table(List<Row> gherkinRows, Locale locale) {
+        this.locale = locale;
         this.raw = new ArrayList<List<String>>();
         for (Row row : gherkinRows) {
             List<String> list = new ArrayList<String>();
@@ -74,8 +76,7 @@ public class Table {
         Object hashValue;
         Transformer<?> transformer = this.columnTransformers.get(header);
         if (transformer != null) {
-            // TODO: How to get Locale from here? -> from a field...
-            hashValue = transformer.transform(Locale.getDefault(), cellValue);
+            hashValue = transformer.transform(this.locale, cellValue);
         } else {
             hashValue = cellValue;
         }
