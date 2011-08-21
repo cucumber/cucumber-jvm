@@ -2,7 +2,6 @@ package cucumber.runtime;
 
 import cucumber.classpath.Classpath;
 import cucumber.classpath.Consumer;
-import cucumber.io.FileResource;
 import cucumber.io.Resource;
 import org.junit.Test;
 
