@@ -4,7 +4,6 @@ import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 
 import java.util.List;
-import java.util.Locale;
 
 public interface StepDefinition {
     /**
@@ -41,4 +40,9 @@ public interface StepDefinition {
      * stack traces.
      */
     boolean isDefinedAt(StackTraceElement stackTraceElement); // TODO: redundant with getLocation?
+
+    /**
+     * @return the pattern associated with this instance. Used for error reporting only.
+     */
+    String getPattern();
 }

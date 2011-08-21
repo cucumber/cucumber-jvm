@@ -6,20 +6,20 @@
 
     <parent>
         <groupId>cucumber</groupId>
-        <artifactId>parent</artifactId>
+        <artifactId>cucumber-jvm</artifactId>
         <relativePath>../pom.xml</relativePath>
-        <version>0.4.3-SNAPSHOT</version>
+        <version>1.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>picocontainer</artifactId>
     <packaging>jar</packaging>
-    <name>Cucumber: PicoContainer</name>
+    <name>Cucumber-JVM: PicoContainer</name>
 
     <dependencies>
         <dependency>
             <groupId>cucumber</groupId>
             <artifactId>java</artifactId>
-            <version>0.4.3-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.picocontainer</groupId>

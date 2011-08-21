@@ -3,10 +3,12 @@ package cucumber.junit;
 import cucumber.classpath.Classpath;
 import cucumber.classpath.Consumer;
 import cucumber.io.Resource;
+import cucumber.runtime.FeatureBuilder;
 import cucumber.runtime.Runtime;
-import gherkin.I18n;
+import cucumber.runtime.SnippetPrinter;
+import cucumber.runtime.model.CucumberFeature;
+import cucumber.runtime.model.CucumberScenario;
 import gherkin.formatter.model.Feature;
-import gherkin.parser.Parser;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
@@ -16,11 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Cucumber extends ParentRunner<ScenarioRunner> {
-    private Feature feature;
-    private final String pathName;
-    private final List<ScenarioRunner> children = new ArrayList<ScenarioRunner>();
-    private final RunnerBuilder builder;
-    private I18n i18n;
+    private CucumberFeature cucumberFeature;
+    private final Runtime runtime;
 
     private static Runtime runtime(Class testClass) {
         String packageName = testClass.getName().substring(0, testClass.getName().lastIndexOf("."));
@@ -28,9 +27,7 @@ public class Cucumber extends ParentRunner<ScenarioRunner> {
         java.lang.Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
-                for (String snippet : runtime.getSnippets()) {
-                    System.out.println(snippet);
-                }
+                new SnippetPrinter(System.out).printSnippets(runtime);
             }
         });
         return runtime;
@@ -46,24 +43,34 @@ public class Cucumber extends ParentRunner<ScenarioRunner> {
     public Cucumber(Class featureClass, final Runtime runtime) throws InitializationError {
         // Why aren't we passing the class to super? I don't remember, but there is probably a good reason.
         super(null);
+        this.runtime = runtime;
         cucumber.junit.Feature featureAnnotation = (cucumber.junit.Feature) featureClass.getAnnotation(cucumber.junit.Feature.class);
+        String pathName;
         if (featureAnnotation != null) {
             pathName = featureAnnotation.value();
         } else {
             pathName = featureClass.getName().replace('.', '/') + ".feature";
         }
-        builder = new RunnerBuilder(runtime, children);
-        parseFeature();
+        cucumberFeature = parseFeature(pathName);
     }
 
     @Override
     public String getName() {
+        Feature feature = cucumberFeature.getFeature();
         return feature.getKeyword() + ": " + feature.getName();
     }
 
     @Override
     protected List<ScenarioRunner> getChildren() {
-        return children;
+        List<ScenarioRunner> scenarioRunners = new ArrayList<ScenarioRunner>();
+        for (CucumberScenario cucumberScenario : cucumberFeature.getCucumberScenarios()) {
+            try {
+                scenarioRunners.add(new ScenarioRunner(runtime, cucumberScenario));
+            } catch (InitializationError e) {
+                throw new RuntimeException("Failed to create scenario runner", e);
+            }
+        }
+        return scenarioRunners;
     }
 
     @Override
@@ -73,20 +80,17 @@ public class Cucumber extends ParentRunner<ScenarioRunner> {
 
     @Override
     protected void runChild(ScenarioRunner runner, RunNotifier notifier) {
-        runner.setLocale(i18n.getLocale());
         runner.run(notifier);
     }
 
-    private void parseFeature() {
-        final String[] gherkin = new String[1];
+    private CucumberFeature parseFeature(String pathName) {
+        List<CucumberFeature> cucumberFeatures = new ArrayList<CucumberFeature>();
+        final FeatureBuilder builder = new FeatureBuilder(cucumberFeatures);
         Classpath.scan(pathName, new Consumer() {
             public void consume(Resource resource) {
-                gherkin[0] = resource.getString();
+                builder.parse(resource);
             }
         });
-        Parser parser = new Parser(builder);
-        parser.parse(gherkin[0], pathName, 0);
-        i18n = parser.getI18nLanguage();
-        feature = builder.getFeature();
+        return cucumberFeatures.get(0);
     }
 }

@@ -7,6 +7,7 @@ import org.mozilla.javascript.Context;
 import org.mozilla.javascript.NativeFunction;
 import org.mozilla.javascript.NativeJavaObject;
 import org.mozilla.javascript.Scriptable;
+import org.mozilla.javascript.regexp.NativeRegExp;
 import org.mozilla.javascript.tools.shell.Global;
 
 import java.util.List;
@@ -15,14 +16,16 @@ public class RhinoStepDefinition implements StepDefinition {
     private final Context cx;
     private final Scriptable scope;
     private final Global jsStepDefinition;
+    private final NativeRegExp regexp;
     private final NativeFunction bodyFunc;
     private final StackTraceElement location;
     private final NativeFunction argumentsFromFunc;
 
-    public RhinoStepDefinition(Context cx, Scriptable scope, Global jsStepDefinition, NativeFunction bodyFunc, StackTraceElement location, NativeFunction argumentsFromFunc) {
+    public RhinoStepDefinition(Context cx, Scriptable scope, Global jsStepDefinition, NativeRegExp regexp, NativeFunction bodyFunc, StackTraceElement location, NativeFunction argumentsFromFunc) {
         this.cx = cx;
         this.scope = scope;
         this.jsStepDefinition = jsStepDefinition;
+        this.regexp = regexp;
         this.bodyFunc = bodyFunc;
         this.location = location;
         this.argumentsFromFunc = argumentsFromFunc;
@@ -51,5 +54,10 @@ public class RhinoStepDefinition implements StepDefinition {
 
     public boolean isDefinedAt(StackTraceElement stackTraceElement) {
         return location.getFileName().equals(stackTraceElement.getFileName());
+    }
+
+    @Override
+    public String getPattern() {
+        return regexp.toString();
     }
 }

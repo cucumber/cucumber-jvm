@@ -118,11 +118,10 @@ public class Classpath {
     }
 
     private static void scanJar(URL jarDir, String pathPrefix, String suffix, Consumer consumer) {
-        String url = jarDir.toExternalForm();
-        String pathWithProtocol = url.substring(0, jarDir.toExternalForm().indexOf("!/"));
-        String[] segments = pathWithProtocol.split(":");
+        String jarUrl = jarDir.toExternalForm();
+        String path = filePath(jarUrl);
         try {
-            ZipFile jarFile = new ZipFile(segments[2]);
+            ZipFile jarFile = new ZipFile(path);
             Enumeration<? extends ZipEntry> entries = jarFile.entries();
             while (entries.hasMoreElements()) {
                 ZipEntry jarEntry = entries.nextElement();
@@ -134,6 +133,14 @@ public class Classpath {
         } catch (IOException t) {
             throw new CucumberException("Failed to scan jar", t);
         }
+    }
+
+    private static String filePath(String jarUrl) {
+        String pathWithProtocol = jarUrl.substring(0, jarUrl.indexOf("!/"));
+        String[] segments = pathWithProtocol.split(":");
+        // WINDOWS: jar:file:/C:/Users/ahellesoy/scm/cucumber-jvm/java/target/java-1.0.0-SNAPSHOT.jar
+        // POSIX:   jar:file:/Users/ahellesoy/scm/cucumber-jvm/java/target/java-1.0.0-SNAPSHOT.jar
+        return segments.length == 4 ? segments[2].substring(1) + ":" + segments[3] : segments[2];
     }
 
     private static void scanFilesystem(URL startDir, String pathPrefix, String suffix, Consumer consumer) {

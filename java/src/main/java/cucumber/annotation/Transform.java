@@ -17,6 +17,5 @@ import cucumber.runtime.java.CucumberAnnotation;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-@CucumberAnnotation("en")
 public @interface Transform {
 }

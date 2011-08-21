@@ -29,7 +29,7 @@ public abstract class SnippetGenerator {
     private final String namedGroupEnd;
 
     /**
-     * Constructor for langauges that do not support named capture groups, such ash Java.
+     * Constructor for languages that do not support named capture groups, such as Java.
      *
      * @param step the step to generate snippet for.
      */

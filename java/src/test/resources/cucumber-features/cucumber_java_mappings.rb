@@ -29,11 +29,11 @@ module CucumberJavaMappings
         <groupId>cucumber</groupId>
         <artifactId>parent</artifactId>
         <relativePath>../../pom.xml</relativePath>
-        <version>0.4.3-SNAPSHOT</version>
+        <version>1.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>cucumber-picocontainer-test</artifactId>
-    <version>0.4.3-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>Cucumber: PicoContainer Test</name>
 
@@ -41,7 +41,7 @@ module CucumberJavaMappings
         <dependency>
             <groupId>cucumber</groupId>
             <artifactId>picocontainer</artifactId>
-            <version>0.4.3-SNAPSHOT</version>
+            <version>1.0.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
 </project>

@@ -11,6 +11,7 @@ import gherkin.formatter.model.Step;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.NativeFunction;
 import org.mozilla.javascript.Scriptable;
+import org.mozilla.javascript.regexp.NativeRegExp;
 import org.mozilla.javascript.tools.shell.Global;
 
 import java.io.IOException;
@@ -80,9 +81,9 @@ public class RhinoBackend implements Backend {
         throw new RuntimeException("Couldn't find location for step definition");
     }
 
-    public void addStepDefinition(Global jsStepDefinition, NativeFunction bodyFunc, NativeFunction argumentsFromFunc) throws Throwable {
+    public void addStepDefinition(Global jsStepDefinition, NativeRegExp regexp, NativeFunction bodyFunc, NativeFunction argumentsFromFunc) throws Throwable {
         StackTraceElement stepDefLocation = stepDefLocation(".js");
-        RhinoStepDefinition stepDefinition = new RhinoStepDefinition(cx, scope, jsStepDefinition, bodyFunc, stepDefLocation, argumentsFromFunc);
+        RhinoStepDefinition stepDefinition = new RhinoStepDefinition(cx, scope, jsStepDefinition, regexp, bodyFunc, stepDefLocation, argumentsFromFunc);
         stepDefinitions.add(stepDefinition);
     }
 }

@@ -1,7 +1,8 @@
 target
-*.ipr
+Gemfile.lock
 *.iws
 tmp/
 doc/
 /.settings
 /.project
+/.idea

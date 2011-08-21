@@ -2,7 +2,7 @@ package cucumber.runtime.java;
 
 import cucumber.annotation.Pending;
 import cucumber.annotation.Transform;
-import cucumber.runtime.CucumberException;
+import cucumber.runtime.PendingException;
 import junit.framework.Assert;
 import org.junit.Test;
 
@@ -28,7 +28,7 @@ public class JavaMethodTransformTest {
         Assert.assertEquals(3, ((User) transformed).getAge());
     }
 
-    @Test(expected = CucumberException.class)
+    @Test(expected = PendingException.class)
     public void shouldThrowExceptionWhenUsingPendingTransform() throws Exception {
         HasAPendingTransformMethod hasATransformMethod = new HasAPendingTransformMethod();
         Method transformMethod = hasATransformMethod.getClass().getMethod("transformToUser", String.class);

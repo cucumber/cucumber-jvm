@@ -2,10 +2,7 @@ package cucumber.runtime.java;
 
 import cucumber.annotation.Pending;
 import cucumber.classpath.Classpath;
-import cucumber.runtime.Backend;
-import cucumber.runtime.CucumberException;
-import cucumber.runtime.StepDefinition;
-import cucumber.runtime.Utils;
+import cucumber.runtime.*;
 import gherkin.formatter.model.Step;
 
 import java.lang.reflect.InvocationTargetException;
@@ -53,24 +50,28 @@ public class JavaBackend implements Backend {
     public Object invoke(Method method, Object[] javaArgs) {
         try {
             if (method.isAnnotationPresent(Pending.class)) {
-                throw new CucumberException(method.getAnnotation(Pending.class).value());
+                throw new PendingException(method.getAnnotation(Pending.class).value());
             } else {
                 return method.invoke(this.objectFactory.getInstance(method.getDeclaringClass()), javaArgs);
             }
         } catch (IllegalArgumentException e) {
-            StringBuilder m = new StringBuilder("Couldn't invokeWithArgs ").append(method.toGenericString()).append(" with ").append(Utils.join(javaArgs, ",")).append(" (");
-            boolean comma = false;
-            for (Object javaArg : javaArgs) {
-                if(comma) m.append(",");
-                m.append(javaArg.getClass());
-                comma = true;
-            }
-            m.append(")");
-            throw new CucumberException(m.toString(), e);
+            throw new CucumberException(errorMessage(method, javaArgs), e);
         } catch (InvocationTargetException e) {
-            throw new CucumberException("Couldn't invoke method", e.getTargetException());
+            throw new CucumberException(errorMessage(method, javaArgs), e.getTargetException());
         } catch (IllegalAccessException e) {
-            throw new CucumberException("Couldn't invoke method", e);
+            throw new CucumberException(errorMessage(method, javaArgs), e);
         }
+    }
+
+    private String errorMessage(Method method, Object[] javaArgs) {
+        StringBuilder m = new StringBuilder("Couldn't invoke ").append(method.toGenericString()).append(" with ").append(Utils.join(javaArgs, ",")).append(" (");
+        boolean comma = false;
+        for (Object javaArg : javaArgs) {
+            if (comma) m.append(",");
+            m.append(javaArg.getClass());
+            comma = true;
+        }
+        m.append(")");
+        return m.toString();
     }
 }

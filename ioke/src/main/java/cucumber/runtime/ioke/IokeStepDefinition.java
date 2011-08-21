@@ -23,8 +23,12 @@ public class IokeStepDefinition implements StepDefinition {
         this.location = location;
     }
 
-    public String regexp_source() throws Throwable {
-        return (String) backend.invoke(iokeStepDefObject, "regexp_source");
+    public String getPattern() {
+        try {
+            return (String) backend.invoke(iokeStepDefObject, "regexp_source");
+        } catch (ControlFlow controlFlow) {
+            throw new CucumberException("Couldn't get pattern", controlFlow);
+        }
     }
 
     public List<Argument> matchedArguments(Step step) {

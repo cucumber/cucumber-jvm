@@ -6,19 +6,20 @@
 
     <parent>
         <groupId>cucumber</groupId>
-        <artifactId>parent</artifactId>
+        <artifactId>cucumber-jvm</artifactId>
         <relativePath>../pom.xml</relativePath>
-        <version>0.4.3-SNAPSHOT</version>
+        <version>1.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>ioke</artifactId>
     <packaging>jar</packaging>
-    <name>Cucumber: Ioke</name>
+    <name>Cucumber-JVM: Ioke</name>
 
     <dependencies>
         <dependency>
             <groupId>cucumber</groupId>
             <artifactId>core</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.ioke</groupId>

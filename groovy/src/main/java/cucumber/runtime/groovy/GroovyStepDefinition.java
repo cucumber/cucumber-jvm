@@ -1,23 +1,23 @@
 package cucumber.runtime.groovy;
 
+import cucumber.runtime.JdkPatternArgumentMatcher;
 import cucumber.runtime.StepDefinition;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 import groovy.lang.Closure;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.regex.Pattern;
-
-import cucumber.runtime.JdkPatternArgumentMatcher;
 
 public class GroovyStepDefinition implements StepDefinition {
     private final JdkPatternArgumentMatcher argumentMatcher;
     private final Closure body;
     private final StackTraceElement location;
+    private final Pattern pattern;
     private GroovyBackend backend;
 
     public GroovyStepDefinition(Pattern pattern, Closure body, StackTraceElement location, GroovyBackend backend) {
+        this.pattern = pattern;
         this.backend = backend;
         this.argumentMatcher = new JdkPatternArgumentMatcher(pattern);
         this.body = body;
@@ -42,5 +42,10 @@ public class GroovyStepDefinition implements StepDefinition {
 
     public boolean isDefinedAt(StackTraceElement stackTraceElement) {
         return location.getFileName().equals(stackTraceElement.getFileName());
+    }
+
+    @Override
+    public String getPattern() {
+        return pattern.pattern();
     }
 }
