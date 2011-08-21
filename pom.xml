@@ -137,7 +137,11 @@
                 <artifactId>cglib-nodep</artifactId>
                 <version>2.1_3</version>
             </dependency>
-
+            <dependency>
+                <groupId>org.jruby</groupId>
+                <artifactId>jruby</artifactId>
+                <version>1.6.3</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -185,6 +189,7 @@
         <module>rhino</module>
         <module>java</module>
         <module>clojure</module>
+        <module>jruby</module>
         <!--module>components/scala</module-->
     </modules>
 

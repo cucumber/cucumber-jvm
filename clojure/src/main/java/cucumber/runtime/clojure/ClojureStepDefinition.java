@@ -25,7 +25,7 @@ public class ClojureStepDefinition implements StepDefinition {
 
     // Clojure's AFunction.invokeWithArgs doesn't take varargs :-/
     private Method lookupInvokeMethod(Object[] args) throws NoSuchMethodException {
-        return AFunction.class.getMethod("invoke", Utils.objectClassArray(args.length));
+        return AFunction.class.getMethod("invoke", Utils.classArray(args.length, Object.class));
     }
 
     public List<Argument> matchedArguments(Step step) {

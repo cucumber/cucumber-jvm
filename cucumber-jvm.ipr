@@ -213,6 +213,7 @@
       <words>
         <w>matchers</w>
         <w>springframework</w>
+        <w>stepdef</w>
       </words>
     </dictionary>
   </component>
@@ -225,6 +226,7 @@
       <module fileurl="file://$PROJECT_DIR$/ioke/ioke.iml" filepath="$PROJECT_DIR$/ioke/ioke.iml" />
       <module fileurl="file://$PROJECT_DIR$/java/java.iml" filepath="$PROJECT_DIR$/java/java.iml" />
       <module fileurl="file://$PROJECT_DIR$/examples/java-calculator/java-calculator.iml" filepath="$PROJECT_DIR$/examples/java-calculator/java-calculator.iml" />
+      <module fileurl="file://$PROJECT_DIR$/jruby/jruby.iml" filepath="$PROJECT_DIR$/jruby/jruby.iml" />
       <module fileurl="file://$PROJECT_DIR$/parent.iml" filepath="$PROJECT_DIR$/parent.iml" />
       <module fileurl="file://$PROJECT_DIR$/picocontainer/picocontainer.iml" filepath="$PROJECT_DIR$/picocontainer/picocontainer.iml" />
       <module fileurl="file://$PROJECT_DIR$/rhino/rhino.iml" filepath="$PROJECT_DIR$/rhino/rhino.iml" />
@@ -426,6 +428,17 @@
       </JAVADOC>
       <SOURCES>
         <root url="jar://$MAVEN_REPOSITORY$/org/ioke/ioke-lang/P-0.4.0-p11/ioke-lang-P-0.4.0-p11-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.jruby:jruby:1.6.3">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/jruby/jruby/1.6.3/jruby-1.6.3.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/org/jruby/jruby/1.6.3/jruby-1.6.3-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/jruby/jruby/1.6.3/jruby-1.6.3-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: org.mockito:mockito-all:1.9.0-rc1">

@@ -40,7 +40,6 @@ public class ClojureBackend implements Backend {
                 }
             }
         });
-
     }
 
     public List<StepDefinition> getStepDefinitions() {

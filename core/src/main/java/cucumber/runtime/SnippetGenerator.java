@@ -56,7 +56,7 @@ public abstract class SnippetGenerator {
 
     protected abstract String template();
 
-    protected abstract String arguments(List<Class<?>> argymentTypes);
+    protected abstract String arguments(List<Class<?>> argumentTypes);
 
     protected String pattern(String name) {
         String snippetPattern = name;
