@@ -14,8 +14,10 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
-import cucumber.Table;
 import cucumber.runtime.transformers.IntegerTransformer;
+import cucumber.table.SimpleTableHeaderMapper;
+import cucumber.table.Table;
+import cucumber.table.TableHeaderMapper;
 
 public class TableTest {
 
@@ -82,12 +84,12 @@ public class TableTest {
         assertTrue("Header's items", headers.containsAll(Arrays.asList("eins", "vier", "sieben")));
     }
 
-    private Map<String, String> getHeaderMappings() {
+    private TableHeaderMapper getHeaderMappings() {
         Map<String, String> mappings = new HashMap<String, String>();
         mappings.put("one", "eins");
         mappings.put("four", "vier");
         mappings.put("seven", "sieben");
-        return mappings;
+        return new SimpleTableHeaderMapper(mappings);
     }
     
     @Test

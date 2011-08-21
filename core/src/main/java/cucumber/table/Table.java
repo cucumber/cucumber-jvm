@@ -1,4 +1,4 @@
-package cucumber;
+package cucumber.table;
 
 import gherkin.formatter.model.Row;
 
@@ -14,7 +14,7 @@ public class Table {
 
     private final List<List<String>> raw;
     private Map<String, Transformer<?>> columnTransformers = new HashMap<String, Transformer<?>>();
-    private Map<String, String> headerMappings;
+    private TableHeaderMapper headerMapper;
 
     public Table(List<Row> gherkinRows) {
         this.raw = new ArrayList<List<String>>();
@@ -36,7 +36,7 @@ public class Table {
     private List<String> transformHeaders(List<String> rawHeaders) {
         List<String> transformedHeaders = new ArrayList<String>();
         for (String rawHeader : rawHeaders) {
-            String transformedHeader = getHeaderMappings().get(rawHeader);
+            String transformedHeader = getHeaderMapper().map(rawHeader);
             if (transformedHeader != null) {
                 transformedHeaders.add(transformedHeader);
             } else {
@@ -86,15 +86,15 @@ public class Table {
         this.columnTransformers.put(column, transformer);
     }
 
-    public void mapHeaders(Map<String, String> mappings) {
-        this.headerMappings = mappings;
-    }
-    
-    public Map<String, String> getHeaderMappings() {
-        if (this.headerMappings == null) {
-            this.headerMappings = new HashMap<String, String>();
-        }
-        return this.headerMappings;
+    public void mapHeaders(TableHeaderMapper mapper) {
+        this.headerMapper = mapper;
     }
 
+    public TableHeaderMapper getHeaderMapper() {
+        if(this.headerMapper == null) {
+            this.headerMapper = new NoOpTableHeaderMapper();
+        }
+        return this.headerMapper;
+    }
+    
 }
