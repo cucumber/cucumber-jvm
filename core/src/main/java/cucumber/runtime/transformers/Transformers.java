@@ -15,7 +15,7 @@ public class Transformers {
     private Map<Class<?>, Transformer<?>> transformables;
 
     public <T> T transform(Locale locale, Class<T> clazz, String... arguments) throws TransformationException {
-        Transformer<T> transformer = getTransformable(clazz);
+        Transformer<T> transformer = getTransformer(clazz);
         if (transformer == null) {
             throw new TransformationException("Can't transform " + asList(arguments) + " to: " + clazz.getName() + ". No transformer found.");
         }
@@ -23,7 +23,7 @@ public class Transformers {
     }
 
     @SuppressWarnings("unchecked")
-    private <T> Transformer<T> getTransformable(Class<T> clazz) {
+    public <T> Transformer<T> getTransformer(Class<T> clazz) {
         return (Transformer<T>) getTransformers().get(clazz);
     }
 

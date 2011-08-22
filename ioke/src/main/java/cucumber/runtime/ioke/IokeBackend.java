@@ -1,6 +1,6 @@
 package cucumber.runtime.ioke;
 
-import cucumber.Table;
+import cucumber.table.Table;
 import cucumber.classpath.Classpath;
 import cucumber.classpath.Consumer;
 import cucumber.io.Resource;
