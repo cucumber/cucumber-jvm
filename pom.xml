@@ -183,22 +183,6 @@
         </dependencies>
     </dependencyManagement>
 
-    <scm>
-        <connection>scm:git:git://github.com/aslakhellesoy/cuke4duke.git</connection>
-    </scm>
-
-    <distributionManagement>
-        <repository>
-            <id>cukes</id>
-            <name>Cucumber Maven Repo</name>
-            <url>scp://cukes.info/home/6664/users/.home/domains/cukes.info/html/maven</url>
-        </repository>
-        <site>
-            <id>cukes</id>
-            <url>scp://cukes.info/home/6664/users/.home/domains/cukes.info/html/cuke4duke</url>
-        </site>
-    </distributionManagement>
-
     <repositories>
         <repository>
             <id>codehaus</id>
@@ -213,13 +197,6 @@
             <url>https://repository.jboss.org/nexus/content/groups/public-jboss</url>
         </repository>
     </repositories>
-
-    <pluginRepositories>
-        <pluginRepository>
-            <id>cukes</id>
-            <url>http://cukes.info/maven</url>
-        </pluginRepository>
-    </pluginRepositories>
 
     <modules>
         <module>core</module>
