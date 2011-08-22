@@ -13,6 +13,16 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>info.cukes</groupId>
+                <artifactId>cucumber-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>info.cukes</groupId>
+                <artifactId>cucumber-java</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>gherkin</groupId>
                 <artifactId>gherkin</artifactId>
                 <version>2.4.14</version>
@@ -143,14 +153,14 @@
                 <version>1.6.3</version>
             </dependency>
             <dependency>
-                <groupId>info.cukes</groupId>
-                <artifactId>cucumber-core</artifactId>
-                <version>${project.version}</version>
+                <groupId>org.jboss.weld.se</groupId>
+                <artifactId>weld-se</artifactId>
+                <version>1.1.0.Final</version>
             </dependency>
             <dependency>
-                <groupId>info.cukes</groupId>
-                <artifactId>cucumber-java</artifactId>
-                <version>${project.version}</version>
+                <groupId>javax.enterprise</groupId>
+                <artifactId>cdi-api</artifactId>
+                <version>1.0-SP1</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -180,6 +190,10 @@
             <id>cukes</id>
             <url>http://cukes.info/maven</url>
         </repository>
+        <repository>
+            <id>jboss.org</id>
+            <url>https://repository.jboss.org/nexus/content/groups/public-jboss</url>
+        </repository>
     </repositories>
 
     <pluginRepositories>
@@ -194,6 +208,7 @@
         <module>spring</module>
         <module>guice</module>
         <module>picocontainer</module>
+        <module>weld</module>
         <module>groovy</module>
         <module>ioke</module>
         <module>rhino</module>

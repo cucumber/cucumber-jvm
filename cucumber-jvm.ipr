@@ -231,6 +231,7 @@
       <module fileurl="file://$PROJECT_DIR$/picocontainer/picocontainer.iml" filepath="$PROJECT_DIR$/picocontainer/picocontainer.iml" />
       <module fileurl="file://$PROJECT_DIR$/rhino/rhino.iml" filepath="$PROJECT_DIR$/rhino/rhino.iml" />
       <module fileurl="file://$PROJECT_DIR$/spring/spring.iml" filepath="$PROJECT_DIR$/spring/spring.iml" />
+      <module fileurl="file://$PROJECT_DIR$/weld/weld.iml" filepath="$PROJECT_DIR$/weld/weld.iml" />
     </modules>
   </component>
   <component name="ProjectResources">
@@ -344,6 +345,28 @@
         <root url="jar://$MAVEN_REPOSITORY$/gherkin/gherkin/2.4.14/gherkin-2.4.14-sources.jar!/" />
       </SOURCES>
     </library>
+    <library name="Maven: javax.annotation:jsr250-api:1.0">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/javax/annotation/jsr250-api/1.0/jsr250-api-1.0.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/javax/annotation/jsr250-api/1.0/jsr250-api-1.0-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/javax/annotation/jsr250-api/1.0/jsr250-api-1.0-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: javax.enterprise:cdi-api:1.0-SP1">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/javax/enterprise/cdi-api/1.0-SP1/cdi-api-1.0-SP1.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/javax/enterprise/cdi-api/1.0-SP1/cdi-api-1.0-SP1-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/javax/enterprise/cdi-api/1.0-SP1/cdi-api-1.0-SP1-sources.jar!/" />
+      </SOURCES>
+    </library>
     <library name="Maven: javax.inject:javax.inject:1">
       <CLASSES>
         <root url="jar://$MAVEN_REPOSITORY$/javax/inject/javax.inject/1/javax.inject-1.jar!/" />
@@ -441,6 +464,28 @@
       </JAVADOC>
       <SOURCES>
         <root url="jar://$MAVEN_REPOSITORY$/org/ioke/ioke-lang/P-0.4.0-p11/ioke-lang-P-0.4.0-p11-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.jboss.interceptor:jboss-interceptor-api:1.1">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/jboss/interceptor/jboss-interceptor-api/1.1/jboss-interceptor-api-1.1.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/org/jboss/interceptor/jboss-interceptor-api/1.1/jboss-interceptor-api-1.1-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/jboss/interceptor/jboss-interceptor-api/1.1/jboss-interceptor-api-1.1-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.jboss.weld.se:weld-se:1.1.0.Final">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/jboss/weld/se/weld-se/1.1.0.Final/weld-se-1.1.0.Final.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/org/jboss/weld/se/weld-se/1.1.0.Final/weld-se-1.1.0.Final-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/jboss/weld/se/weld-se/1.1.0.Final/weld-se-1.1.0.Final-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: org.jruby:jruby:1.6.3">
