@@ -10,6 +10,24 @@
     <name>Cucumber-JVM</name>
     <url>http://cukes.info/</url>
 
+    <parent>
+        <groupId>org.sonatype.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>6</version>
+    </parent>
+
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>http://www.opensource.org/licenses/mit-license</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    <scm>
+        <connection>scm:git:git://github.com/cucumber/cucumber-jvm.git</connection>
+        <developerConnection>scm:git:git@github.com:cucumber/cucumber-jvm.git</developerConnection>
+        <url>git://github.com/cucumber/cucumber-jvm.git</url>
+    </scm>
     <dependencyManagement>
         <dependencies>
             <dependency>
