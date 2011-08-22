@@ -152,7 +152,9 @@ public class Classpath {
 
     private static void scanFilesystem(File rootDir, File file, String suffix, Consumer consumer) {
         if (file.isDirectory()) {
-            for (File child : file.listFiles()) {
+            File[] children = file.listFiles();
+            Arrays.sort(children);
+            for (File child : children) {
                 scanFilesystem(rootDir, child, suffix, consumer);
             }
         } else {
