@@ -19,7 +19,6 @@
         <dependency>
             <groupId>cucumber</groupId>
             <artifactId>java</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.google.inject</groupId>

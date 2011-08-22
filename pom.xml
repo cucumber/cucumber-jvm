@@ -142,6 +142,16 @@
                 <artifactId>jruby</artifactId>
                 <version>1.6.3</version>
             </dependency>
+            <dependency>
+                <groupId>cucumber</groupId>
+                <artifactId>core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cucumber</groupId>
+                <artifactId>java</artifactId>
+                <version>${project.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

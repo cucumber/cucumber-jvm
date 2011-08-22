@@ -19,7 +19,6 @@
         <dependency>
             <groupId>cucumber</groupId>
             <artifactId>core</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jruby</groupId>
