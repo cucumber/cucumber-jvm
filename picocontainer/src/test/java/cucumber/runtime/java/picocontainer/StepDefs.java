@@ -1,4 +1,4 @@
-package cucumber.runtime.java;
+package cucumber.runtime.java.picocontainer;
 
 import cucumber.annotation.en.Given;
 import cucumber.annotation.en.Then;

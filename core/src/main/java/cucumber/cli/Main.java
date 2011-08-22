@@ -12,6 +12,7 @@ import static java.util.Arrays.asList;
 public class Main {
     private static final String USAGE = "HELP";
     private static final String VERSION = "1.0.0"; // TODO: get this from a file
+    private static final Object[] NO_FILTERS = new Object[0];
 
     public static void main(String[] argv) {
         Runtime runtime = null;
@@ -40,7 +41,7 @@ public class Main {
             System.exit(1);
         }
 
-        Runner runner = new Runner(runtime, filesOrDirs);
+        Runner runner = new Runner(runtime, filesOrDirs, NO_FILTERS);
 
         PrettyFormatter prettyFormatter = new PrettyFormatter(System.out, false, true);
         runner.run(prettyFormatter, prettyFormatter);

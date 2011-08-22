@@ -1,7 +1,6 @@
 package cucumber.runtime.java.picocontainer;
 
 import cucumber.runtime.java.ObjectFactory;
-import cucumber.runtime.java.StepDefs;
 import org.junit.Ignore;
 import org.junit.Test;
 

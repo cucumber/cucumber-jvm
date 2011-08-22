@@ -3,14 +3,16 @@ package cucumber.runtime;
 import cucumber.io.Resource;
 import cucumber.runtime.model.CucumberFeature;
 import gherkin.I18n;
+import gherkin.formatter.FilterFormatter;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.model.*;
 import gherkin.parser.Parser;
 
 import java.util.List;
 
+import static java.util.Arrays.asList;
+
 public class FeatureBuilder implements Formatter {
-    private final Parser parser = new Parser(this);
     private final List<CucumberFeature> cucumberFeatures;
     private CucumberFeature currentCucumberFeature;
     private String uri;
@@ -61,9 +63,17 @@ public class FeatureBuilder implements Formatter {
     public void syntaxError(String state, String event, List<String> legalEvents, String uri, int line) {
     }
 
-    public void parse(Resource resource) {
+    public void parse(Resource resource, Object[] filters) {
+        Formatter formatter = this;
+        if(filters.length > 0) {
+            formatter = new FilterFormatter(this, asList(filters));
+        }
+        Parser parser = new Parser(formatter);
         parser.parse(resource.getString(), resource.getPath(), 0);
         I18n i18n = parser.getI18nLanguage();
-        currentCucumberFeature.setLocale(i18n.getLocale());
+        if(currentCucumberFeature != null) {
+            // The current feature may be null if we used a very restrictive filter, say a tag that isn't used.
+            currentCucumberFeature.setLocale(i18n.getLocale());
+        }
     }
 }

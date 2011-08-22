@@ -19,33 +19,35 @@ public class Runner {
     private final List<String> filesOrDirs;
     private final List<CucumberFeature> cucumberFeatures = new ArrayList<CucumberFeature>();
     private final FeatureBuilder builder = new FeatureBuilder(cucumberFeatures);
+    private final Object[] filters;
 
-    public Runner(Runtime runtime, List<String> filesOrDirs) {
+    public Runner(Runtime runtime, List<String> filesOrDirs, Object[] filters) {
         this.runtime = runtime;
         this.filesOrDirs = filesOrDirs;
+        this.filters = filters;
     }
 
     public void run(Formatter formatter, Reporter reporter) {
         // Parse all gherkin files and build CucumberFeatures
-        traverse(filesOrDirs.toArray(new String[filesOrDirs.size()]));
+        traverse(filesOrDirs.toArray(new String[filesOrDirs.size()]), filters);
 
         for (CucumberFeature cucumberFeature : cucumberFeatures) {
             cucumberFeature.run(runtime, formatter, reporter);
         }
     }
 
-    private void traverse(String[] filesOrDirs) {
+    private void traverse(String[] filesOrDirs, final Object[] filters) {
         for (String fileOrDir : filesOrDirs) {
             File file = new File(fileOrDir);
             if (file.exists()) {
                 // Read it directly from the file system
-                traverse(file);
+                traverse(file, filters);
             } else {
                 // Read it from the classpath
                 Consumer consumer = new Consumer() {
                     @Override
                     public void consume(Resource resource) {
-                        builder.parse(resource);
+                        builder.parse(resource, filters);
                     }
                 };
                 if (fileOrDir.endsWith(".feature")) {
@@ -57,20 +59,20 @@ public class Runner {
         }
     }
 
-    private void traverse(File fileOrDir) {
+    private void traverse(File fileOrDir, Object[] filters) {
         if (fileOrDir.isDirectory()) {
             File[] files = fileOrDir.listFiles();
             for (File file : files) {
-                traverse(file);
+                traverse(file, filters);
             }
         } else if (fileOrDir.isFile() && fileOrDir.getName().endsWith(".feature")) {
-            addFeature(fileOrDir);
+            addFeature(fileOrDir, filters);
         }
     }
 
-    private void addFeature(File path) {
+    private void addFeature(File path, Object[] filters) {
         File rootDir = path.getParentFile(); // TODO: use current dir, and fix FileResource to deal with incompatible paths
         Resource resource = new FileResource(rootDir, path);
-        builder.parse(resource);
+        builder.parse(resource, filters);
     }
 }
