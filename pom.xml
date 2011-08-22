@@ -31,7 +31,6 @@
         <mockito.version>1.8.5</mockito.version>
         <selenium.version>2.0rc3</selenium.version>
         <log4j.version>1.2.14</log4j.version>
-        <commons-lang.version>2.4</commons-lang.version>
         <javaee-api.version>5.0-1</javaee-api.version>
         <openejb.version>3.1.2</openejb.version>
         <hibernate.version>3.2.5.ga</hibernate.version>
@@ -141,11 +140,6 @@
                 <groupId>log4j</groupId>
                 <artifactId>log4j</artifactId>
                 <version>${log4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-lang</groupId>
-                <artifactId>commons-lang</artifactId>
-                <version>${commons-lang.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.openejb</groupId>

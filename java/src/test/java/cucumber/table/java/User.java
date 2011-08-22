@@ -2,9 +2,6 @@ package cucumber.table.java;
 
 import java.util.Date;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-
 public class User {
     private String name;
     private Date birthDate;
@@ -45,23 +42,41 @@ public class User {
         this.credits = credits;
     }
 
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        User rhs = (User) obj;
-        return new EqualsBuilder().append(name, rhs.name).append(birthDate, rhs.birthDate).append(credits, rhs.credits)
-                .isEquals();
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((this.birthDate == null) ? 0 : this.birthDate.hashCode());
+        result = prime * result + ((this.credits == null) ? 0 : this.credits.hashCode());
+        result = prime * result + ((this.name == null) ? 0 : this.name.hashCode());
+        return result;
     }
 
-    public int hashCode() {
-        return new HashCodeBuilder(17, 37).append(name).append(birthDate).append(credits).toHashCode();
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        User other = (User) obj;
+        if (this.birthDate == null) {
+            if (other.birthDate != null)
+                return false;
+        } else if (!this.birthDate.equals(other.birthDate))
+            return false;
+        if (this.credits == null) {
+            if (other.credits != null)
+                return false;
+        } else if (!this.credits.equals(other.credits))
+            return false;
+        if (this.name == null) {
+            if (other.name != null)
+                return false;
+        } else if (!this.name.equals(other.name))
+            return false;
+        return true;
     }
 
 }

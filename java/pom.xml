@@ -31,10 +31,5 @@
             <scope>test</scope>
             <optional>true</optional>
         </dependency>
-        <dependency>
-        	<groupId>org.apache.commons</groupId>
-        	<artifactId>commons-lang3</artifactId>
-        	<version>3.0.1</version>
-        </dependency>
     </dependencies>
 </project>
