@@ -38,12 +38,8 @@ public class ClasspathTest {
                 resources.add(resource);
             }
         });
-        assertTrue(paths.containsAll(Arrays.asList("cucumber/runtime/bar.xyz", "cucumber/runtime/foo.xyz")));
-        List<String> actualResourcesString = new ArrayList<String>();
-        for (Resource res : resources) {
-        	actualResourcesString.add(res.getString().trim());
-		}
-        assertTrue(actualResourcesString.containsAll(Arrays.asList("BAR", "FOO")));
+        assertEquals(Arrays.asList("cucumber/runtime/bar.xyz", "cucumber/runtime/foo.xyz"), paths);
+        assertEquals("BAR", resources.get(0).getString().trim());
     }
 
     @Test
