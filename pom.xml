@@ -142,6 +142,16 @@
                 <artifactId>jruby</artifactId>
                 <version>1.6.3</version>
             </dependency>
+            <dependency>
+                <groupId>org.jboss.weld.se</groupId>
+                <artifactId>weld-se</artifactId>
+                <version>1.1.0.Final</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.enterprise</groupId>
+                <artifactId>cdi-api</artifactId>
+                <version>1.0-SP1</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -184,6 +194,7 @@
         <module>spring</module>
         <module>guice</module>
         <module>picocontainer</module>
+        <module>weld</module>
         <module>groovy</module>
         <module>ioke</module>
         <module>rhino</module>
