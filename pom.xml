@@ -143,6 +143,7 @@
                 <version>1.6.3</version>
             </dependency>
             <dependency>
+<<<<<<< HEAD
                 <groupId>org.jboss.weld.se</groupId>
                 <artifactId>weld-se</artifactId>
                 <version>1.1.0.Final</version>
@@ -151,6 +152,16 @@
                 <groupId>javax.enterprise</groupId>
                 <artifactId>cdi-api</artifactId>
                 <version>1.0-SP1</version>
+=======
+                <groupId>cucumber</groupId>
+                <artifactId>core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cucumber</groupId>
+                <artifactId>java</artifactId>
+                <version>${project.version}</version>
+>>>>>>> d4dd0f0066a7baa793750441da13f37874a8d08b
             </dependency>
         </dependencies>
     </dependencyManagement>
