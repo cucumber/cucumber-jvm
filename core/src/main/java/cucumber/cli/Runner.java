@@ -19,9 +19,9 @@ public class Runner {
     private final List<String> filesOrDirs;
     private final List<CucumberFeature> cucumberFeatures = new ArrayList<CucumberFeature>();
     private final FeatureBuilder builder = new FeatureBuilder(cucumberFeatures);
-    private final Object[] filters;
+    private final List<Object> filters;
 
-    public Runner(Runtime runtime, List<String> filesOrDirs, Object[] filters) {
+    public Runner(Runtime runtime, List<String> filesOrDirs, List<Object> filters) {
         this.runtime = runtime;
         this.filesOrDirs = filesOrDirs;
         this.filters = filters;
@@ -36,7 +36,7 @@ public class Runner {
         }
     }
 
-    private void traverse(String[] filesOrDirs, final Object[] filters) {
+    private void traverse(String[] filesOrDirs, final List<Object> filters) {
         for (String fileOrDir : filesOrDirs) {
             File file = new File(fileOrDir);
             if (file.exists()) {
@@ -59,7 +59,7 @@ public class Runner {
         }
     }
 
-    private void traverse(File fileOrDir, Object[] filters) {
+    private void traverse(File fileOrDir, List<Object> filters) {
         if (fileOrDir.isDirectory()) {
             File[] files = fileOrDir.listFiles();
             for (File file : files) {
@@ -70,7 +70,7 @@ public class Runner {
         }
     }
 
-    private void addFeature(File path, Object[] filters) {
+    private void addFeature(File path, List<Object> filters) {
         File rootDir = path.getParentFile(); // TODO: use current dir, and fix FileResource to deal with incompatible paths
         Resource resource = new FileResource(rootDir, path);
         builder.parse(resource, filters);

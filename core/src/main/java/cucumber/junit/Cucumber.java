@@ -13,11 +13,11 @@ import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
-import sun.text.normalizer.IntTrie;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.jar.Attributes;
+
+import static java.util.Arrays.asList;
 
 public class Cucumber extends ParentRunner<ScenarioRunner> {
     private final Runtime runtime;
@@ -62,7 +62,7 @@ public class Cucumber extends ParentRunner<ScenarioRunner> {
         return pathName;
     }
 
-    private Object[] filters(Class featureClass) {
+    private List<Object> filters(Class featureClass) {
         cucumber.junit.Feature featureAnnotation = (cucumber.junit.Feature) featureClass.getAnnotation(cucumber.junit.Feature.class);
         Object[] filters = null;
         if (featureAnnotation != null) {
@@ -73,7 +73,7 @@ public class Cucumber extends ParentRunner<ScenarioRunner> {
                 filters = tags;
             }
         }
-        return filters;
+        return asList(filters);
     }
 
     @Override
@@ -96,7 +96,7 @@ public class Cucumber extends ParentRunner<ScenarioRunner> {
         runner.run(notifier);
     }
 
-    private void parseFeature(String pathName, final Object[] filters) {
+    private void parseFeature(String pathName, final List<Object> filters) {
         List<CucumberFeature> cucumberFeatures = new ArrayList<CucumberFeature>();
         final FeatureBuilder builder = new FeatureBuilder(cucumberFeatures);
         Classpath.scan(pathName, new Consumer() {

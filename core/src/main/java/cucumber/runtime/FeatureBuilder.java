@@ -10,8 +10,6 @@ import gherkin.parser.Parser;
 
 import java.util.List;
 
-import static java.util.Arrays.asList;
-
 public class FeatureBuilder implements Formatter {
     private final List<CucumberFeature> cucumberFeatures;
     private CucumberFeature currentCucumberFeature;
@@ -63,10 +61,10 @@ public class FeatureBuilder implements Formatter {
     public void syntaxError(String state, String event, List<String> legalEvents, String uri, int line) {
     }
 
-    public void parse(Resource resource, Object[] filters) {
+    public void parse(Resource resource, List<Object> filters) {
         Formatter formatter = this;
-        if(filters.length > 0) {
-            formatter = new FilterFormatter(this, asList(filters));
+        if(!filters.isEmpty()) {
+            formatter = new FilterFormatter(this, filters);
         }
         Parser parser = new Parser(formatter);
         parser.parse(resource.getString(), resource.getPath(), 0);
