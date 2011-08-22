@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.*;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class ClasspathTest {
     public static class Person {
@@ -37,8 +38,12 @@ public class ClasspathTest {
                 resources.add(resource);
             }
         });
-        assertEquals(Arrays.asList("cucumber/runtime/bar.xyz", "cucumber/runtime/foo.xyz"), paths);
-        assertEquals("BAR", resources.get(0).getString().trim());
+        assertTrue(paths.containsAll(Arrays.asList("cucumber/runtime/bar.xyz", "cucumber/runtime/foo.xyz")));
+        List<String> actualResourcesString = new ArrayList<String>();
+        for (Resource res : resources) {
+        	actualResourcesString.add(res.getString().trim());
+		}
+        assertTrue(actualResourcesString.containsAll(Arrays.asList("BAR", "FOO")));
     }
 
     @Test
