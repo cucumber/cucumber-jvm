@@ -298,6 +298,19 @@
         <root url="jar://$MAVEN_REPOSITORY$/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1-sources.jar!/" />
       </SOURCES>
     </library>
+    <library name="Maven: cucumber:core:1.0.0-SNAPSHOT">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/core/pom.xml!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$PROJECT_DIR$/core/pom-javadoc.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/cucumber/core/1.0.0-SNAPSHOT/core-1.0.0-SNAPSHOT-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$PROJECT_DIR$/core/pom-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/cucumber/core/1.0.0-SNAPSHOT/core-1.0.0-SNAPSHOT-sources.jar!/" />
+      </SOURCES>
+    </library>
     <library name="Maven: gherkin:gherkin:2.4.14">
       <CLASSES>
         <root url="jar://$MAVEN_REPOSITORY$/gherkin/gherkin/2.4.14/gherkin-2.4.14.jar!/" />

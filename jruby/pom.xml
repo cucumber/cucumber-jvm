@@ -5,20 +5,20 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>cucumber</groupId>
+        <groupId>info.cukes</groupId>
         <artifactId>cucumber-jvm</artifactId>
         <relativePath>../pom.xml</relativePath>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>jruby</artifactId>
+    <artifactId>cucumber-jruby</artifactId>
     <packaging>jar</packaging>
     <name>Cucumber-JVM: JRuby</name>
 
     <dependencies>
         <dependency>
-            <groupId>cucumber</groupId>
-            <artifactId>core</artifactId>
+            <groupId>info.cukes</groupId>
+            <artifactId>cucumber-core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jruby</groupId>

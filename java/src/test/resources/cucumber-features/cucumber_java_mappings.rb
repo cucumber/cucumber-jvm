@@ -26,7 +26,7 @@ module CucumberJavaMappings
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>cucumber</groupId>
+        <groupId>info.cukes</groupId>
         <artifactId>parent</artifactId>
         <relativePath>../../pom.xml</relativePath>
         <version>1.0.0-SNAPSHOT</version>
@@ -39,7 +39,7 @@ module CucumberJavaMappings
 
     <dependencies>
         <dependency>
-            <groupId>cucumber</groupId>
+            <groupId>info.cukes</groupId>
             <artifactId>picocontainer</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>

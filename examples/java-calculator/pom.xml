@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>cucumber</groupId>
+        <groupId>info.cukes</groupId>
         <artifactId>cucumber-jvm</artifactId>
         <relativePath>../../pom.xml</relativePath>
         <version>1.0.0-SNAPSHOT</version>
@@ -22,8 +22,8 @@
             <version>2.4.14</version>
         </dependency>
         <dependency>
-            <groupId>cucumber</groupId>
-            <artifactId>picocontainer</artifactId>
+            <groupId>info.cukes</groupId>
+            <artifactId>cucumber-picocontainer</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

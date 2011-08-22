@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                       http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>cucumber</groupId>
+    <groupId>info.cukes</groupId>
     <artifactId>cucumber-jvm</artifactId>
     <packaging>pom</packaging>
     <version>1.0.0-SNAPSHOT</version>
@@ -143,13 +143,13 @@
                 <version>1.6.3</version>
             </dependency>
             <dependency>
-                <groupId>cucumber</groupId>
-                <artifactId>core</artifactId>
+                <groupId>info.cukes</groupId>
+                <artifactId>cucumber-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>cucumber</groupId>
-                <artifactId>java</artifactId>
+                <groupId>info.cukes</groupId>
+                <artifactId>cucumber-java</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>
@@ -237,6 +237,30 @@
                         <goals>
                             <goal>jar</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>1.4</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <shadedArtifactAttached>true</shadedArtifactAttached>
+                            <shadedClassifierName>full</shadedClassifierName>
+                            <transformers>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>cucumber.cli.Main</mainClass>
+                                </transformer>
+                            </transformers>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
