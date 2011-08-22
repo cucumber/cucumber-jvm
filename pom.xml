@@ -180,6 +180,10 @@
             <id>cukes</id>
             <url>http://cukes.info/maven</url>
         </repository>
+        <repository>
+            <id>jboss.org</id>
+            <url>https://repository.jboss.org/nexus/content/groups/public-jboss</url>
+        </repository>
     </repositories>
 
     <pluginRepositories>
