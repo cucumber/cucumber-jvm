@@ -1,24 +1,15 @@
 package cucumber.table;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertEquals;
+import cucumber.runtime.transformers.IntegerTransformer;
 import gherkin.formatter.model.Comment;
 import gherkin.formatter.model.Row;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
 import org.junit.Before;
 import org.junit.Test;
 
-import cucumber.runtime.transformers.IntegerTransformer;
-import cucumber.table.SimpleTableHeaderMapper;
-import cucumber.table.Table;
-import cucumber.table.TableHeaderMapper;
+import java.util.*;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class TableTest {
 

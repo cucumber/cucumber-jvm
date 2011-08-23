@@ -1,25 +1,22 @@
 package cucumber.table;
 
+import cucumber.runtime.transformers.Transformer;
 import gherkin.formatter.model.Row;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import cucumber.runtime.transformers.Transformer;
+import java.util.*;
 
 public class Table {
 
     private final List<List<String>> raw;
     private List<String> headers;
-    private Map<String, Transformer<?>> columnTransformersByHeader;
+    private final Map<String, Transformer<?>> columnTransformersByHeader = new HashMap<String, Transformer<?>>();
     private Map<Integer, Transformer<?>> columnTransformers;
     private TableHeaderMapper headerMapper;
     private final Locale locale;
+    private List<Row> gherkinRows;
 
     public Table(List<Row> gherkinRows, Locale locale) {
+        this.gherkinRows = gherkinRows;
         this.locale = locale;
         this.raw = new ArrayList<List<String>>();
         for (Row row : gherkinRows) {
@@ -30,12 +27,11 @@ public class Table {
     }
 
     /**
-     * 
      * @return the headers of the table (first <i>raw</i> row with labels)
      */
     public List<String> getHeaders() {
         if (this.headers == null) {
-            this.headers = transformHeaders(this.raw.get(0)); 
+            this.headers = transformHeaders(this.raw.get(0));
         }
         return this.headers;
     }
@@ -56,22 +52,22 @@ public class Table {
     public List<List<String>> raw() {
         return this.raw;
     }
+
     /**
-     * 
-     * @return a List of Row, with each each cell value transformed 
+     * @return a List of Row, with each each cell value transformed
      */
     public List<List<Object>> rows() {
         List<List<Object>> rows = new ArrayList<List<Object>>();
         for (List<String> rawRow : getRawRows()) {
             List<Object> newRow = new ArrayList<Object>();
-            for (int i=0; i<rawRow.size();i++) {
+            for (int i = 0; i < rawRow.size(); i++) {
                 newRow.add(transformCellValue(i, rawRow.get(i)));
             }
             rows.add(newRow);
         }
         return rows;
     }
-    
+
     private List<List<String>> getRawRows() {
         return this.raw.subList(1, this.raw.size());
     }
@@ -101,17 +97,17 @@ public class Table {
     }
 
     private Transformer<?> getColumnTransformer(String header) {
-        return getColumnTransformersByHeader().get(header);
+        return this.columnTransformersByHeader.get(header);
     }
-    
+
     private Transformer<?> getColumnTransformer(int colPos) {
         return getColumnTransformers().get(colPos);
     }
 
     public void mapColumn(String columnName, Transformer<?> transformer) {
-        getColumnTransformersByHeader().put(columnName, transformer);
+        this.columnTransformersByHeader.put(columnName, transformer);
     }
-    
+
     public void mapColumn(int columnIndex, Transformer<?> transformer) {
         getColumnTransformers().put(columnIndex, transformer);
     }
@@ -121,7 +117,7 @@ public class Table {
     }
 
     public TableHeaderMapper getHeaderMapper() {
-        if(this.headerMapper == null) {
+        if (this.headerMapper == null) {
             this.headerMapper = new NoOpTableHeaderMapper();
         }
         return this.headerMapper;
@@ -147,14 +143,48 @@ public class Table {
         return transformersMap;
     }
 
-    public Map<String, Transformer<?>> getColumnTransformersByHeader() {
-        if (this.columnTransformersByHeader == null) {
-            this.columnTransformersByHeader = new HashMap<String, Transformer<?>>();
-        }
-        return this.columnTransformersByHeader;
-    }
-    
     public void diff(Table other) {
         new TableDiffer(this, other).calculateDiffs();
+    }
+
+    public List<Row> getGherkinRows() {
+        return gherkinRows;
+    }
+
+    public Locale getLocale() {
+        return locale;
+    }
+
+    List<DiffableRow> diffableRows() {
+        List<DiffableRow> result = new ArrayList<DiffableRow>();
+        List<List<Object>> convertedRows = rows();
+        for(int i = 0; i < convertedRows.size(); i++) {
+            result.add(new DiffableRow(getGherkinRows().get(i+1), convertedRows.get(i)));
+        }
+        return result;
+    }
+
+    class DiffableRow {
+        public final Row row;
+        public final List<Object> convertedRow;
+
+        public DiffableRow(Row row, List<Object> convertedRow) {
+            this.row = row;
+            this.convertedRow = convertedRow;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            DiffableRow that = (DiffableRow) o;
+            return convertedRow.equals(that.convertedRow);
+
+        }
+
+        @Override
+        public int hashCode() {
+            return convertedRow.hashCode();
+        }
     }
 }

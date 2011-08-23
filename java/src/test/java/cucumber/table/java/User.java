@@ -8,11 +8,9 @@ public class User {
     private Integer credits;
 
     public User() {
-        super();
     }
 
     public User(String name, Date birthDate, Integer credits) {
-        super();
         this.name = name;
         this.birthDate = birthDate;
         this.credits = credits;
@@ -43,40 +41,24 @@ public class User {
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((this.birthDate == null) ? 0 : this.birthDate.hashCode());
-        result = prime * result + ((this.credits == null) ? 0 : this.credits.hashCode());
-        result = prime * result + ((this.name == null) ? 0 : this.name.hashCode());
-        return result;
-    }
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        User other = (User) obj;
-        if (this.birthDate == null) {
-            if (other.birthDate != null)
-                return false;
-        } else if (!this.birthDate.equals(other.birthDate))
-            return false;
-        if (this.credits == null) {
-            if (other.credits != null)
-                return false;
-        } else if (!this.credits.equals(other.credits))
-            return false;
-        if (this.name == null) {
-            if (other.name != null)
-                return false;
-        } else if (!this.name.equals(other.name))
-            return false;
+        User user = (User) o;
+
+        if (birthDate != null ? !birthDate.equals(user.birthDate) : user.birthDate != null) return false;
+        if (credits != null ? !credits.equals(user.credits) : user.credits != null) return false;
+        if (name != null ? !name.equals(user.name) : user.name != null) return false;
+
         return true;
     }
 
+    @Override
+    public int hashCode() {
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (birthDate != null ? birthDate.hashCode() : 0);
+        result = 31 * result + (credits != null ? credits.hashCode() : 0);
+        return result;
+    }
 }

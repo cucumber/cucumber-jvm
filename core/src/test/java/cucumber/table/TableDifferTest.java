@@ -1,85 +1,85 @@
 package cucumber.table;
 
-import gherkin.formatter.model.Comment;
-import gherkin.formatter.model.Row;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-
-import junit.framework.Assert;
-
-import org.junit.Before;
+import gherkin.formatter.PrettyFormatter;
 import org.junit.Test;
 
-public class TableDifferTest {
+import static junit.framework.Assert.assertEquals;
 
-    private Table origTable;
-    private Table otherTable;
-    private Table otherTableWithExtraRows;
+public class TableDifferTest {
+    private Table table() {
+        String source = 
+                "| name  | email                | credits |\n" +
+                "| Aslak | aslak@email.com      | 123     |\n" +
+                "| Joe   | joe@email.com        | 234     |\n" +
+                "| Bryan | bryan@email.org      | 456     |\n" +
+                "| Ni    | ni@email.com         | 654     |\n";
+        return TableParser.parse(source);
+    }
+
+    private Table otherTableWithDeletedAndInserted() {
+        String source = 
+                "| name  | email                | credits |\n" +
+                "| Aslak | aslak@email.com      | 123     |\n" +
+                "| Doe   | joe@email.com        | 234     |\n" +
+                "| Foo   | schnickens@email.net | 789     |\n" +
+                "| Bryan | bryan@email.org      | 456     |\n";
+        return TableParser.parse(source);
+    }
+
+    private Table otherTableWithInsertedAtEnd() {
+        String source = 
+                "| name  | email                | credits |\n" +
+                "| Aslak | aslak@email.com      | 123     |\n" +
+                "| Joe   | joe@email.com        | 234     |\n" +
+                "| Bryan | bryan@email.org      | 456     |\n" +
+                "| Ni    | ni@email.com         | 654     |\n" +
+                "| Doe   | joe@email.com        | 234     |\n" +
+                "| Foo   | schnickens@email.net | 789     |\n";
+        return TableParser.parse(source);
+    }
 
     @Test(expected = TableDiffException.class)
     public void shouldFindDifferences() {
         try {
-            new TableDiffer(this.origTable, this.otherTable).calculateDiffs();
+            new TableDiffer(table(), otherTableWithDeletedAndInserted()).calculateDiffs();
         } catch (TableDiffException e) {
-            List<RowDiff> rowDiffs = e.getTableDiff().getRowDiffs();
-            Assert.assertEquals("Size of diff list", 6, rowDiffs.size());
-            Assert.assertEquals("First row diff is NONE", DiffType.NONE, rowDiffs.get(0).getDiffType());
-            Assert.assertEquals("Second row diff is DELETE", DiffType.DELETE, rowDiffs.get(1).getDiffType());
-            Assert.assertEquals("Third row diff is INSERT", DiffType.INSERT, rowDiffs.get(2).getDiffType());
-            Assert.assertEquals("Sixth row diff is DELETE", DiffType.DELETE, rowDiffs.get(5).getDiffType());
+            String expected = 
+                    "      | name | email                | credits |\n" +
+                    "    - | Joe  | joe@email.com        | 234     |\n" +
+                    "    + | Doe  | joe@email.com        | 234     |\n" +
+                    "    + | Foo  | schnickens@email.net | 789     |\n" +
+                    "      | Joe  | joe@email.com        | 234     |\n" +
+                    "    - | Ni   | ni@email.com         | 654     |\n";
+
+            assertEquals(expected, pretty(e.getDiffTable()));
             throw e;
         }
+    }
+
+    private String pretty(Table table) {
+        StringBuilder result = new StringBuilder();
+        PrettyFormatter pf = new PrettyFormatter(result, true, false);
+        pf.table(table.getGherkinRows());
+        pf.eof();
+        return result.toString();
     }
 
     @Test(expected = TableDiffException.class)
     public void shouldFindNewLinesAtEnd() {
         try {
-            new TableDiffer(this.origTable, this.otherTableWithExtraRows).calculateDiffs();
+            new TableDiffer(table(), otherTableWithInsertedAtEnd()).calculateDiffs();
         } catch (TableDiffException e) {
-            List<RowDiff> rowDiffs = e.getTableDiff().getRowDiffs();
-            Assert.assertEquals("Size of diff list", 6, rowDiffs.size());
-            Assert.assertEquals("Third row diff is INSERT", DiffType.INSERT, rowDiffs.get(4).getDiffType());
-            Assert.assertEquals("Third row diff is INSERT", DiffType.INSERT, rowDiffs.get(5).getDiffType());
+            String expected = 
+                    "      | name  | email                | credits |\n" +
+                    "      | Aslak | aslak@email.com      | 123     |\n" +
+                    "      | Joe   | joe@email.com        | 234     |\n" +
+                    "      | Bryan | bryan@email.org      | 456     |\n" +
+                    "    + | Doe   | joe@email.com        | 234     |\n" +
+                    "    + | Foo   | schnickens@email.net | 789     |\n";
+
+            assertEquals(expected, pretty(e.getDiffTable()));
             throw e;
         }
-    }
-
-    @Before
-    public void createOtherTable() {
-        List<Row> rows = new ArrayList<Row>();
-        rows.add(new Row(new ArrayList<Comment>(), Arrays.asList("name", "email", "credits"), 1));
-        rows.add(new Row(new ArrayList<Comment>(), Arrays.asList("Aslak", "aslak@email.com", "123"), 2));
-        rows.add(new Row(new ArrayList<Comment>(), Arrays.asList("Doe", "joe@email.com", "234"), 3));
-        rows.add(new Row(new ArrayList<Comment>(), Arrays.asList("Foo", "schnickens@email.net", "789"), 4));
-        rows.add(new Row(new ArrayList<Comment>(), Arrays.asList("Bryan", "bryan@email.org", "456"), 5));
-        this.otherTable = new Table(rows, Locale.ENGLISH);
-    }
-
-    @Before
-    public void createOrigTable() {
-        List<Row> rows = new ArrayList<Row>();
-        rows.add(new Row(new ArrayList<Comment>(), Arrays.asList("name", "email", "credits"), 1));
-        rows.add(new Row(new ArrayList<Comment>(), Arrays.asList("Aslak", "aslak@email.com", "123"), 2));
-        rows.add(new Row(new ArrayList<Comment>(), Arrays.asList("Joe", "joe@email.com", "234"), 3));
-        rows.add(new Row(new ArrayList<Comment>(), Arrays.asList("Bryan", "bryan@email.org", "456"), 4));
-        rows.add(new Row(new ArrayList<Comment>(), Arrays.asList("Ni", "ni@email.com", "654"), 4));
-        this.origTable = new Table(rows, Locale.ENGLISH);
-    }
-
-    @Before
-    public void createOtherTableWithExtraRows() {
-        List<Row> rows = new ArrayList<Row>();
-        rows.add(new Row(new ArrayList<Comment>(), Arrays.asList("name", "email", "credits"), 1));
-        rows.add(new Row(new ArrayList<Comment>(), Arrays.asList("Aslak", "aslak@email.com", "123"), 2));
-        rows.add(new Row(new ArrayList<Comment>(), Arrays.asList("Joe", "joe@email.com", "234"), 3));
-        rows.add(new Row(new ArrayList<Comment>(), Arrays.asList("Bryan", "bryan@email.org", "456"), 4));
-        rows.add(new Row(new ArrayList<Comment>(), Arrays.asList("Ni", "ni@email.com", "654"), 4));
-        rows.add(new Row(new ArrayList<Comment>(), Arrays.asList("Doe", "joe@email.com", "234"), 3));
-        rows.add(new Row(new ArrayList<Comment>(), Arrays.asList("Foo", "schnickens@email.net", "789"), 4));
-        this.otherTableWithExtraRows = new Table(rows, Locale.ENGLISH);
     }
 
 }

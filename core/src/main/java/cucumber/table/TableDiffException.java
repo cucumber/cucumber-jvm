@@ -2,14 +2,14 @@ package cucumber.table;
 
 public class TableDiffException extends RuntimeException {
     
-    private TableDiff tableDiff;
+    private Table tableDiff;
     
-    public TableDiffException(TableDiff tableDiff) {
+    public TableDiffException(Table tableDiff) {
         super("Tables were not identical");
         this.tableDiff = tableDiff;
     }
 
-    public TableDiff getTableDiff() {
+    public Table getDiffTable() {
         return this.tableDiff;
     }
     

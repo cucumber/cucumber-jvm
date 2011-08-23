@@ -362,6 +362,17 @@
         <root url="jar://$MAVEN_REPOSITORY$/gherkin/gherkin/2.4.14/gherkin-2.4.14-sources.jar!/" />
       </SOURCES>
     </library>
+    <library name="Maven: gherkin:gherkin:2.4.15">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/gherkin/gherkin/2.4.15/gherkin-2.4.15.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/gherkin/gherkin/2.4.15/gherkin-2.4.15-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/gherkin/gherkin/2.4.15/gherkin-2.4.15-sources.jar!/" />
+      </SOURCES>
+    </library>
     <library name="Maven: javax.annotation:jsr250-api:1.0">
       <CLASSES>
         <root url="jar://$MAVEN_REPOSITORY$/javax/annotation/jsr250-api/1.0/jsr250-api-1.0.jar!/" />
