@@ -112,4 +112,5 @@ public class TableTest {
         Map<String, Object> hash = hashes.get(0);
         assertEquals("Hash First Col", 55555, hash.get("four"));
     }
+    
 }

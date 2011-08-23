@@ -37,6 +37,7 @@
         <hibernate-entitymanager.version>3.2.1.ga</hibernate-entitymanager.version>
         <asm.version>2.2.3</asm.version>
         <cglib.version>2.1_3</cglib.version>
+        <diffutils.version>1.2.1</diffutils.version>
     </properties>
 
     <dependencyManagement>
@@ -171,7 +172,11 @@
                 <artifactId>cglib-nodep</artifactId>
                 <version>${cglib.version}</version>
             </dependency>
-
+            <dependency>
+                <groupId>com.googlecode.java-diff-utils</groupId>
+                <artifactId>diffutils</artifactId>
+                <version>${diffutils.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

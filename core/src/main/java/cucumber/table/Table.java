@@ -153,5 +153,8 @@ public class Table {
         }
         return this.columnTransformersByHeader;
     }
-
+    
+    public void diff(Table other) {
+        new TableDiffer(this, other).calculateDiffs();
+    }
 }
