@@ -1,4 +1,4 @@
-package cucumber.classpath;
+package cucumber.resources;
 
 import cucumber.runtime.CucumberException;
 

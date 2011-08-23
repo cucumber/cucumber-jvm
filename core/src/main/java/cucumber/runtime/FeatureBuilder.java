@@ -1,6 +1,6 @@
 package cucumber.runtime;
 
-import cucumber.io.Resource;
+import cucumber.resources.Resource;
 import cucumber.runtime.model.CucumberFeature;
 import gherkin.I18n;
 import gherkin.formatter.FilterFormatter;

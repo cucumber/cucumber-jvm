@@ -1,7 +1,8 @@
-package cucumber.io;
+package cucumber.resources;
 
 import java.io.InputStream;
 import java.io.Reader;
+import java.util.List;
 
 public interface Resource {
     String getPath();
@@ -11,4 +12,6 @@ public interface Resource {
     Reader getReader();
 
     String getString();
+    
+    List<Long> getLines();
 }

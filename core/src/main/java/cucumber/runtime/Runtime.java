@@ -1,6 +1,6 @@
 package cucumber.runtime;
 
-import cucumber.classpath.Classpath;
+import cucumber.resources.Resources;
 import cucumber.runtime.transformers.Transformers;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
@@ -22,7 +22,7 @@ public class Runtime {
     }
 
     public Runtime(String packageName) {
-        backends = Classpath.instantiateSubclasses(Backend.class, "cucumber.runtime", packageName);
+        backends = Resources.instantiateSubclasses(Backend.class, "cucumber.runtime", packageName);
     }
 
     public StepDefinitionMatch stepDefinitionMatch(String stackTracePath, Step step) {

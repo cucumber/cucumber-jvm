@@ -2,9 +2,9 @@ package cucumber.runtime.clojure;
 
 import clojure.lang.AFunction;
 import clojure.lang.RT;
-import cucumber.classpath.Classpath;
-import cucumber.classpath.Consumer;
-import cucumber.io.Resource;
+import cucumber.resources.Resource;
+import cucumber.resources.Resources;
+import cucumber.resources.Consumer;
 import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.StepDefinition;
@@ -31,7 +31,7 @@ public class ClojureBackend implements Backend {
 
     private void defineStepDefinitions() throws Exception {
         RT.load("cucumber/runtime/clojure/dsl");
-        Classpath.scan(this.scriptPath, ".clj", new Consumer() {
+        Resources.scan(this.scriptPath, ".clj", new Consumer() {
             public void consume(Resource resource) {
                 try {
                     RT.load(resource.getPath().replaceAll(".clj$", ""));

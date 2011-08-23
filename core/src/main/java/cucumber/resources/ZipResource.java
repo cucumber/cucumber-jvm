@@ -1,4 +1,4 @@
-package cucumber.io;
+package cucumber.resources;
 
 import cucumber.runtime.CucumberException;
 
@@ -11,7 +11,8 @@ public class ZipResource extends AbstractResource {
     private final ZipFile jarFile;
     private final ZipEntry jarEntry;
 
-    public ZipResource(ZipFile jarFile, ZipEntry jarEntry) {
+    public ZipResource(ZipFile jarFile, ZipEntry jarEntry, PathWithLines pwl) {
+        super(pwl);
         this.jarFile = jarFile;
         this.jarEntry = jarEntry;
     }

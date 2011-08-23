@@ -1,4 +1,4 @@
-package cucumber.io;
+package cucumber.resources;
 
 import cucumber.runtime.CucumberException;
 
@@ -11,12 +11,14 @@ public class FileResource extends AbstractResource {
     private final File rootDir;
     private final File file;
 
-    public FileResource(File rootDir, File file) {
+    public FileResource(File rootDir, PathWithLines pathWithLines) {
+        super(pathWithLines);
         this.rootDir = rootDir;
-        this.file = file;
+        this.file = new File(pathWithLines.path);
     }
 
     public String getPath() {
+        //return pathWithLines.path;
         return file.getAbsolutePath().substring(rootDir.getAbsolutePath().length() + 1, file.getAbsolutePath().length()).replace(File.separatorChar, '/');
     }
 

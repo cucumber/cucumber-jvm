@@ -1,9 +1,9 @@
 package cucumber.runtime.ioke;
 
 import cucumber.Table;
-import cucumber.classpath.Classpath;
-import cucumber.classpath.Consumer;
-import cucumber.io.Resource;
+import cucumber.resources.Resource;
+import cucumber.resources.Resources;
+import cucumber.resources.Consumer;
 import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.StepDefinition;
@@ -34,7 +34,7 @@ public class IokeBackend implements Backend {
             failureRescues = createRescues("ISpec", "ExpectationNotMet");
             pendingRescues = createRescues("Pending");
 
-            Classpath.scan(scriptPath, ".ik", new Consumer() {
+            Resources.scan(scriptPath, ".ik", new Consumer() {
                 public void consume(Resource resource) {
                     try {
                         currentLocation = resource.getPath();

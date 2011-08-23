@@ -1,8 +1,8 @@
 package cucumber.junit;
 
-import cucumber.classpath.Classpath;
-import cucumber.classpath.Consumer;
-import cucumber.io.Resource;
+import cucumber.resources.Resource;
+import cucumber.resources.Resources;
+import cucumber.resources.Consumer;
 import cucumber.runtime.FeatureBuilder;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.SnippetPrinter;
@@ -99,7 +99,7 @@ public class Cucumber extends ParentRunner<ScenarioRunner> {
     private void parseFeature(String pathName, final List<Object> filters) {
         List<CucumberFeature> cucumberFeatures = new ArrayList<CucumberFeature>();
         final FeatureBuilder builder = new FeatureBuilder(cucumberFeatures);
-        Classpath.scan(pathName, new Consumer() {
+        Resources.scan(pathName, new Consumer() {
             public void consume(Resource resource) {
                 builder.parse(resource, filters);
             }

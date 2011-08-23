@@ -1,6 +1,4 @@
-package cucumber.classpath;
-
-import cucumber.io.Resource;
+package cucumber.resources;
 
 public interface Consumer {
     public void consume(Resource resource);

@@ -1,8 +1,5 @@
-package cucumber.classpath;
+package cucumber.resources;
 
-import cucumber.io.FileResource;
-import cucumber.io.Resource;
-import cucumber.io.ZipResource;
 import cucumber.runtime.CucumberException;
 
 import java.io.File;
@@ -10,14 +7,19 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import static java.util.Collections.emptyList;
+
 /**
  * Static utility methods for looking up classes and resources on the classpath.
  */
-public class Classpath {
+public class Resources {
+    private static final List<Object> NO_FILTERS = emptyList();
+
     public static Set<Class<?>> getInstantiableClasses(final String packagePrefix) {
         final Set<Class<?>> classes = new HashSet<Class<?>>();
         final Consumer consumer = new Consumer() {
@@ -48,36 +50,43 @@ public class Classpath {
     }
 
     public static void scan(String pathPrefix, String suffix, Consumer consumer) {
-        final List<URL> startUrls = classpathUrls(pathPrefix);
+        PathWithLines pwl = new PathWithLines(pathPrefix);
+        final List<URL> startUrls = classpathUrls(pwl.path);
         for (URL startUrl : startUrls) {
             if (startUrl.getProtocol().equals("jar")) {
-                scanJar(startUrl, pathPrefix, suffix, consumer);
+                scanJar(startUrl, pwl, suffix, consumer);
             } else {
-                scanFilesystem(startUrl, pathPrefix, suffix, consumer);
+                scanFilesystem(startUrl, pwl, suffix, consumer);
             }
         }
     }
 
     public static void scan(String pathName, Consumer consumer) {
-        final List<URL> startUrls = classpathUrls(pathName);
-        for (URL startUrl : startUrls) {
-            if (startUrl.getProtocol().equals("jar")) {
-                scanJar(startUrl, pathName, null, consumer);
-            } else {
-                scanFilesystem(startUrl, pathName, null, consumer);
-            }
-        }
+        scan(pathName, null, consumer);
     }
 
     private static List<URL> classpathUrls(String path) throws NoSuchResourceException {
         try {
             Enumeration<URL> resources = cl().getResources(path);
             if (!resources.hasMoreElements()) {
-                throw new NoSuchResourceException("No resources at path " + path);
+                throw new NoSuchResourceException("No resources at path " + path + "\nCLASSPATH:\n" + classpath());
             }
             return Collections.list(resources);
         } catch (IOException e) {
             throw new CucumberException("Failed to look up resources at path " + path, e);
+        }
+    }
+
+    private static String classpath() {
+        if(cl() instanceof URLClassLoader) {
+            URLClassLoader urlClassLoader = (URLClassLoader) cl();
+            StringBuilder result = new StringBuilder();
+            for (URL url : urlClassLoader.getURLs()) {
+                result.append(url).append("\n");
+            }
+            return result.toString();
+        } else {
+            return "Can't inspect CLASSPATH for " + cl().getClass();
         }
     }
 
@@ -117,7 +126,7 @@ public class Classpath {
         return result;
     }
 
-    private static void scanJar(URL jarDir, String pathPrefix, String suffix, Consumer consumer) {
+    private static void scanJar(URL jarDir, PathWithLines pwl, String suffix, Consumer consumer) {
         String jarUrl = jarDir.toExternalForm();
         String path = filePath(jarUrl);
         try {
@@ -126,8 +135,8 @@ public class Classpath {
             while (entries.hasMoreElements()) {
                 ZipEntry jarEntry = entries.nextElement();
                 String entryName = jarEntry.getName();
-                if (entryName.startsWith(pathPrefix) && hasSuffix(suffix, entryName)) {
-                    consumer.consume(new ZipResource(jarFile, jarEntry));
+                if (entryName.startsWith(pwl.path) && hasSuffix(suffix, entryName)) {
+                    consumer.consume(new ZipResource(jarFile, jarEntry, pwl));
                 }
             }
         } catch (IOException t) {
@@ -143,23 +152,24 @@ public class Classpath {
         return segments.length == 4 ? segments[2].substring(1) + ":" + segments[3] : segments[2];
     }
 
-    private static void scanFilesystem(URL startDir, String pathPrefix, String suffix, Consumer consumer) {
-        File dir = new File(startDir.getFile());
-        String rootPath = startDir.getFile().substring(0, startDir.getFile().length() - pathPrefix.length() - 1);
+    private static void scanFilesystem(URL startDir, PathWithLines pathPrefix, String suffix, Consumer consumer) {
+        PathWithLines dir = new PathWithLines(startDir.getFile());
+        String rootPath = startDir.getFile().substring(0, startDir.getFile().length() - pathPrefix.path.length() - 1);
         File rootDir = new File(rootPath);
         scanFilesystem(rootDir, dir, suffix, consumer);
     }
 
-    private static void scanFilesystem(File rootDir, File file, String suffix, Consumer consumer) {
+    private static void scanFilesystem(File rootDir, PathWithLines pathWithLines, String suffix, Consumer consumer) {
+        File file = new File(pathWithLines.path);
         if (file.isDirectory()) {
             File[] children = file.listFiles();
             Arrays.sort(children);
             for (File child : children) {
-                scanFilesystem(rootDir, child, suffix, consumer);
+                scanFilesystem(rootDir, new PathWithLines(child.getAbsolutePath()), suffix, consumer);
             }
         } else {
             if (hasSuffix(suffix, file.getName())) {
-                consumer.consume(new FileResource(rootDir, file));
+                consumer.consume(new FileResource(rootDir, pathWithLines));
             }
         }
     }

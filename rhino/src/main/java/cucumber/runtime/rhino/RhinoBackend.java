@@ -1,8 +1,8 @@
 package cucumber.runtime.rhino;
 
-import cucumber.classpath.Classpath;
-import cucumber.classpath.Consumer;
-import cucumber.io.Resource;
+import cucumber.resources.Resource;
+import cucumber.resources.Resources;
+import cucumber.resources.Consumer;
 import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.StepDefinition;
@@ -42,7 +42,7 @@ public class RhinoBackend implements Backend {
         InputStreamReader dsl = new InputStreamReader(getClass().getResourceAsStream(JS_DSL));
         cx.evaluateReader(scope, dsl, JS_DSL, 1, null);
 
-        Classpath.scan(this.scriptPath, ".js", new Consumer() {
+        Resources.scan(this.scriptPath, ".js", new Consumer() {
             public void consume(Resource resource) {
                 try {
                     cx.evaluateReader(scope, resource.getReader(), resource.getPath(), 1, null);

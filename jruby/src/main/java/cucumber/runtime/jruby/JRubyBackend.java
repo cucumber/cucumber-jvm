@@ -1,8 +1,8 @@
 package cucumber.runtime.jruby;
 
-import cucumber.classpath.Classpath;
-import cucumber.classpath.Consumer;
-import cucumber.io.Resource;
+import cucumber.resources.Resource;
+import cucumber.resources.Resources;
+import cucumber.resources.Consumer;
 import cucumber.runtime.Backend;
 import cucumber.runtime.StepDefinition;
 import gherkin.formatter.model.Step;
@@ -26,7 +26,7 @@ public class JRubyBackend implements Backend {
     private void defineStepDefinitions(String scriptPath) throws UnsupportedEncodingException {
         jruby.put("$backend", this);
         jruby.runScriptlet(new InputStreamReader(getClass().getResourceAsStream(DSL), "UTF-8"), DSL);
-        Classpath.scan(scriptPath, ".rb", new Consumer() {
+        Resources.scan(scriptPath, ".rb", new Consumer() {
             public void consume(Resource resource) {
                 jruby.runScriptlet(resource.getReader(), resource.getPath());
             }

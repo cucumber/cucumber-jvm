@@ -1,7 +1,7 @@
 package cucumber.runtime.java;
 
 import cucumber.annotation.Pending;
-import cucumber.classpath.Classpath;
+import cucumber.resources.Resources;
 import cucumber.runtime.*;
 import gherkin.formatter.model.Step;
 
@@ -16,7 +16,7 @@ public class JavaBackend implements Backend {
     private List<StepDefinition> stepDefinitions = new ArrayList<StepDefinition>();
 
     public JavaBackend(String packagePrefix) {
-        this.objectFactory = Classpath.instantiateExactlyOneSubclass(ObjectFactory.class, "cucumber.runtime");
+        this.objectFactory = Resources.instantiateExactlyOneSubclass(ObjectFactory.class, "cucumber.runtime");
         new ClasspathMethodScanner().scan(this, packagePrefix);
     }
 
