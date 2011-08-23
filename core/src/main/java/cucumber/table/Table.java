@@ -13,7 +13,9 @@ import cucumber.runtime.transformers.Transformer;
 public class Table {
 
     private final List<List<String>> raw;
-    private Map<String, Transformer<?>> columnTransformers = new HashMap<String, Transformer<?>>();
+    private List<String> headers;
+    private Map<String, Transformer<?>> columnTransformersByHeader;
+    private Map<Integer, Transformer<?>> columnTransformers;
     private TableHeaderMapper headerMapper;
     private final Locale locale;
 
@@ -32,7 +34,10 @@ public class Table {
      * @return the headers of the table (first <i>raw</i> row with labels)
      */
     public List<String> getHeaders() {
-        return transformHeaders(this.raw.get(0));
+        if (this.headers == null) {
+            this.headers = transformHeaders(this.raw.get(0)); 
+        }
+        return this.headers;
     }
 
     private List<String> transformHeaders(List<String> rawHeaders) {
@@ -51,30 +56,42 @@ public class Table {
     public List<List<String>> raw() {
         return this.raw;
     }
-
-    public List<List<String>> rows() {
+    /**
+     * 
+     * @return a List of Row, with each each cell value transformed 
+     */
+    public List<List<Object>> rows() {
+        List<List<Object>> rows = new ArrayList<List<Object>>();
+        for (List<String> rawRow : getRawRows()) {
+            List<Object> newRow = new ArrayList<Object>();
+            for (int i=0; i<rawRow.size();i++) {
+                newRow.add(transformCellValue(i, rawRow.get(i)));
+            }
+            rows.add(newRow);
+        }
+        return rows;
+    }
+    
+    private List<List<String>> getRawRows() {
         return this.raw.subList(1, this.raw.size());
     }
 
     public List<Map<String, Object>> hashes() {
         List<Map<String, Object>> hashes = new ArrayList<Map<String, Object>>();
-        List<String> headers = getHeaders();
-        List<List<String>> rows = rows();
-        for (List<String> row : rows) {
+        List<List<Object>> rows = rows();
+        for (List<Object> row : rows) {
             Map<String, Object> map = new HashMap<String, Object>();
             for (int i = 0; i < row.size(); i++) {
-                String header = headers.get(i);
-                Object hashValue = transformCellValue(header, row.get(i));
-                map.put(header, hashValue);
+                map.put(getHeaders().get(i), row.get(i));
             }
             hashes.add(map);
         }
         return hashes;
     }
 
-    private Object transformCellValue(String header, String cellValue) {
+    private Object transformCellValue(int colPos, String cellValue) {
         Object hashValue;
-        Transformer<?> transformer = this.columnTransformers.get(header);
+        Transformer<?> transformer = getColumnTransformer(colPos);
         if (transformer != null) {
             hashValue = transformer.transform(this.locale, cellValue);
         } else {
@@ -83,8 +100,20 @@ public class Table {
         return hashValue;
     }
 
-    public void mapColumn(String column, Transformer<?> transformer) {
-        this.columnTransformers.put(column, transformer);
+    private Transformer<?> getColumnTransformer(String header) {
+        return getColumnTransformersByHeader().get(header);
+    }
+    
+    private Transformer<?> getColumnTransformer(int colPos) {
+        return getColumnTransformers().get(colPos);
+    }
+
+    public void mapColumn(String columnName, Transformer<?> transformer) {
+        getColumnTransformersByHeader().put(columnName, transformer);
+    }
+    
+    public void mapColumn(int columnIndex, Transformer<?> transformer) {
+        getColumnTransformers().put(columnIndex, transformer);
     }
 
     public void mapHeaders(TableHeaderMapper mapper) {
@@ -97,5 +126,32 @@ public class Table {
         }
         return this.headerMapper;
     }
-    
+
+    public Map<Integer, Transformer<?>> getColumnTransformers() {
+        if (this.columnTransformers == null) {
+            this.columnTransformers = createColumnTransformers();
+        }
+        return this.columnTransformers;
+    }
+
+    private Map<Integer, Transformer<?>> createColumnTransformers() {
+        Map<Integer, Transformer<?>> transformersMap = new HashMap<Integer, Transformer<?>>();
+        if (this.columnTransformersByHeader != null) {
+            for (int i = 0; i < getHeaders().size(); i++) {
+                Transformer<?> transformer = getColumnTransformer(getHeaders().get(i));
+                if (transformer != null) {
+                    transformersMap.put(i, transformer);
+                }
+            }
+        }
+        return transformersMap;
+    }
+
+    public Map<String, Transformer<?>> getColumnTransformersByHeader() {
+        if (this.columnTransformersByHeader == null) {
+            this.columnTransformersByHeader = new HashMap<String, Transformer<?>>();
+        }
+        return this.columnTransformersByHeader;
+    }
+
 }

@@ -54,7 +54,7 @@ public class TableTest {
     @Test
     public void shouldHaveOneRow() {
         List<String> firstRow = this.simpleRows.get(1).getCells();
-        List<List<String>> tableRows = this.simpleTable.rows();
+        List<List<Object>> tableRows = this.simpleTable.rows();
         assertEquals("Rows", 1, tableRows.size());
         assertTrue("Rows' items", tableRows.get(0).containsAll(firstRow));
     }
@@ -104,4 +104,12 @@ public class TableTest {
         assertEquals("Hash Third Col", "666666", hash.get("sieben"));
     }
     
+    @Test
+    public void shouldAllowMappingColumnsByIndex() {
+        this.simpleTable.mapColumn(1, new IntegerTransformer());
+        List<Map<String, Object>> hashes = this.simpleTable.hashes();
+        assertEquals("Hashes", 1, hashes.size());
+        Map<String, Object> hash = hashes.get(0);
+        assertEquals("Hash First Col", 55555, hash.get("four"));
+    }
 }
