@@ -14,20 +14,16 @@ import java.util.*;
  */
 public class CDIFactory extends Weld implements ObjectFactory  {
 
-    private Map<Class<?>,Object> instances = new HashMap<Class<?>, Object>();
-
     private WeldContainer weld;
-
-    public CDIFactory() {
-         weld = super.initialize();
-    }
 
     @Override
     public void createInstances() {
+    	weld = super.initialize();
     }
 
     @Override
     public void disposeInstances() {
+    	this.shutdown();
     }
 
     @Override
