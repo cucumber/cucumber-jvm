@@ -18,7 +18,7 @@ public class IokeSnippetGenerator extends SnippetGenerator {
     }
 
     @Override
-    protected String arguments(List<Class<?>> argymentTypes) {
+    protected String arguments(List<Class<?>> argumentTypes) {
         return null; // not used
     }
 }

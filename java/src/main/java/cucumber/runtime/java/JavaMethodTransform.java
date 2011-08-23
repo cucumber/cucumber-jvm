@@ -21,7 +21,7 @@ public class JavaMethodTransform implements Transformer<Object> {
     public Object transform(Locale locale, String... arguments) throws TransformationException {
         Transformers transformers = new Transformers();
         Object[] transformedArguments = new Object[arguments.length];
-        for(int i = 0; i < arguments.length; i++) {
+        for (int i = 0; i < arguments.length; i++) {
             transformedArguments[i] = transformers.transform(locale, transformMethod.getParameterTypes()[i], arguments[i]);
         }
         return this.backend.invoke(this.transformMethod, transformedArguments);

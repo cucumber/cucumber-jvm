@@ -26,22 +26,22 @@ module CucumberJavaMappings
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>cucumber</groupId>
+        <groupId>info.cukes</groupId>
         <artifactId>parent</artifactId>
         <relativePath>../../pom.xml</relativePath>
-        <version>0.4.3-SNAPSHOT</version>
+        <version>1.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>cucumber-picocontainer-test</artifactId>
-    <version>0.4.3-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>Cucumber: PicoContainer Test</name>
 
     <dependencies>
         <dependency>
-            <groupId>cucumber</groupId>
+            <groupId>info.cukes</groupId>
             <artifactId>picocontainer</artifactId>
-            <version>0.4.3-SNAPSHOT</version>
+            <version>1.0.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
 </project>

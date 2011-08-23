@@ -24,7 +24,7 @@ public class GroovySnippetGenerator extends SnippetGenerator {
 
     @Override
     protected String arguments(List<Class<?>> argumentTypes) {
-        StringBuilder sb = new StringBuilder ();
+        StringBuilder sb = new StringBuilder();
         int n = 1;
         for (Class<?> argType : argumentTypes) {
             if (n > 1) {
@@ -32,7 +32,7 @@ public class GroovySnippetGenerator extends SnippetGenerator {
             }
             sb.append(argType.getSimpleName()).append(" ").append("arg").append(n++);
         }
-        if(sb.length() > 0) {
+        if (sb.length() > 0) {
             sb.append(" ");
         }
         return sb.toString();

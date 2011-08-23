@@ -17,7 +17,8 @@ public class SpringFactory implements ObjectFactory {
 
     public SpringFactory() {
         stepDefContext = new StaticApplicationContext();
-        appContext = new ClassPathXmlApplicationContext(new String[]{"context.xml"}, stepDefContext);
+        stepDefContext.refresh();
+        appContext = new ClassPathXmlApplicationContext(new String[]{"cucumber.xml"}, stepDefContext);
     }
 
     public void createInstances() {

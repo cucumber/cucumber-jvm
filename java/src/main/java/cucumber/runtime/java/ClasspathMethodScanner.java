@@ -2,7 +2,7 @@ package cucumber.runtime.java;
 
 import cucumber.annotation.After;
 import cucumber.annotation.Before;
-import cucumber.classpath.Classpath;
+import cucumber.resources.Resources;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -16,7 +16,7 @@ public class ClasspathMethodScanner {
     public void scan(JavaBackend javaBackend, String packagePrefix) {
         try {
             Collection<Class<? extends Annotation>> cucumberAnnotations = findCucumberAnnotationClasses();
-            for (Class<?> clazz : Classpath.getInstantiableClasses(packagePrefix)) {
+            for (Class<?> clazz : Resources.getInstantiableClasses(packagePrefix)) {
                 try {
                     if (Modifier.isPublic(clazz.getModifiers()) && !Modifier.isAbstract(clazz.getModifiers())) {
                         // TODO: How do we know what other dependendencies to add?
@@ -37,7 +37,7 @@ public class ClasspathMethodScanner {
     }
 
     private Collection<Class<? extends Annotation>> findCucumberAnnotationClasses() throws IOException {
-        return Classpath.getInstantiableSubclassesOf(Annotation.class, "cucumber.annotation");
+        return Resources.getInstantiableSubclassesOf(Annotation.class, "cucumber.annotation");
     }
 
     private void scan(Method method, Collection<Class<? extends Annotation>> cucumberAnnotationClasses, JavaBackend javaBackend) {

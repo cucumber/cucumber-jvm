@@ -1,8 +1,8 @@
 package cucumber.runtime.rhino;
 
-import cucumber.classpath.Classpath;
-import cucumber.classpath.Consumer;
-import cucumber.io.Resource;
+import cucumber.resources.Resource;
+import cucumber.resources.Resources;
+import cucumber.resources.Consumer;
 import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.StepDefinition;
@@ -11,6 +11,7 @@ import gherkin.formatter.model.Step;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.NativeFunction;
 import org.mozilla.javascript.Scriptable;
+import org.mozilla.javascript.regexp.NativeRegExp;
 import org.mozilla.javascript.tools.shell.Global;
 
 import java.io.IOException;
@@ -41,7 +42,7 @@ public class RhinoBackend implements Backend {
         InputStreamReader dsl = new InputStreamReader(getClass().getResourceAsStream(JS_DSL));
         cx.evaluateReader(scope, dsl, JS_DSL, 1, null);
 
-        Classpath.scan(this.scriptPath, ".js", new Consumer() {
+        Resources.scan(this.scriptPath, ".js", new Consumer() {
             public void consume(Resource resource) {
                 try {
                     cx.evaluateReader(scope, resource.getReader(), resource.getPath(), 1, null);
@@ -80,9 +81,9 @@ public class RhinoBackend implements Backend {
         throw new RuntimeException("Couldn't find location for step definition");
     }
 
-    public void addStepDefinition(Global jsStepDefinition, NativeFunction bodyFunc, NativeFunction argumentsFromFunc) throws Throwable {
+    public void addStepDefinition(Global jsStepDefinition, NativeRegExp regexp, NativeFunction bodyFunc, NativeFunction argumentsFromFunc) throws Throwable {
         StackTraceElement stepDefLocation = stepDefLocation(".js");
-        RhinoStepDefinition stepDefinition = new RhinoStepDefinition(cx, scope, jsStepDefinition, bodyFunc, stepDefLocation, argumentsFromFunc);
+        RhinoStepDefinition stepDefinition = new RhinoStepDefinition(cx, scope, jsStepDefinition, regexp, bodyFunc, stepDefLocation, argumentsFromFunc);
         stepDefinitions.add(stepDefinition);
     }
 }

@@ -5,20 +5,20 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>cucumber</groupId>
-        <artifactId>parent</artifactId>
+        <groupId>info.cukes</groupId>
+        <artifactId>cucumber-jvm</artifactId>
         <relativePath>../pom.xml</relativePath>
-        <version>0.4.3-SNAPSHOT</version>
+        <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>rhino</artifactId>
+    <artifactId>cucumber-rhino</artifactId>
     <packaging>jar</packaging>
-    <name>Cucumber: Rhino</name>
+    <name>Cucumber-JVM: Rhino</name>
 
     <dependencies>
         <dependency>
-            <groupId>cucumber</groupId>
-            <artifactId>core</artifactId>
+            <groupId>info.cukes</groupId>
+            <artifactId>cucumber-core</artifactId>
         </dependency>
         <dependency>
             <groupId>rhino</groupId>

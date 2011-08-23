@@ -9,4 +9,6 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE})
 public @interface Feature {
     String value();
+    long[] lines() default {};
+    String[] tags() default {};
 }

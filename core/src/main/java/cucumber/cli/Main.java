@@ -1,6 +1,8 @@
 package cucumber.cli;
 
 import cucumber.runtime.Runtime;
+import cucumber.runtime.SnippetPrinter;
+import gherkin.formatter.PrettyFormatter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +17,7 @@ public class Main {
         Runtime runtime = null;
 
         List<String> filesOrDirs = new ArrayList<String>();
+        List<Object> filters = new ArrayList<Object>();
 
         List<String> args = new ArrayList<String>(asList(argv));
         while (!args.isEmpty()) {
@@ -29,15 +32,23 @@ public class Main {
             } else if (arg.equals("--glue") || arg.equals("-g")) {
                 String packageNameOrScriptPrefix = args.remove(0);
                 runtime = new Runtime(packageNameOrScriptPrefix);
+            } else if (arg.equals("--tags") || arg.equals("-t")) {
+                filters.add(args.remove(0));
             } else {
                 filesOrDirs.add(arg);
             }
         }
         if (runtime == null) {
             System.out.println("Missing option: --glue");
+            System.exit(1);
         }
 
-        Cli cli = new Cli(runtime, filesOrDirs);
-        cli.run();
+        Runner runner = new Runner(runtime, filesOrDirs, filters);
+
+        PrettyFormatter prettyFormatter = new PrettyFormatter(System.out, false, true);
+        runner.run(prettyFormatter, prettyFormatter);
+
+        new SnippetPrinter(System.out).printSnippets(runtime);
+
     }
 }

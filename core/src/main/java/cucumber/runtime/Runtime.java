@@ -1,6 +1,6 @@
 package cucumber.runtime;
 
-import cucumber.classpath.Classpath;
+import cucumber.resources.Resources;
 import cucumber.runtime.transformers.Transformers;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
@@ -22,10 +22,10 @@ public class Runtime {
     }
 
     public Runtime(String packageName) {
-        backends = Classpath.instantiateSubclasses(Backend.class, "cucumber.runtime", packageName);
+        backends = Resources.instantiateSubclasses(Backend.class, "cucumber.runtime", packageName);
     }
 
-    public StepDefinitionMatch stepDefinitionMatch(Step step) {
+    public StepDefinitionMatch stepDefinitionMatch(String stackTracePath, Step step) {
         List<StepDefinitionMatch> matches = stepDefinitionMatches(step);
         if (matches.size() == 0) {
             undefinedSteps.add(step);
@@ -34,8 +34,7 @@ public class Runtime {
         if (matches.size() == 1) {
             return matches.get(0);
         } else {
-            // TODO: Ambiguous for > 1
-            throw new RuntimeException("TODO: Support ambiguous matches");
+            throw new AmbiguousStepDefinitionsException(stackTracePath, step, matches);
         }
     }
 

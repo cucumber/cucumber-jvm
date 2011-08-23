@@ -3,198 +3,190 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                       http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>cucumber</groupId>
-    <artifactId>parent</artifactId>
+    <groupId>info.cukes</groupId>
+    <artifactId>cucumber-jvm</artifactId>
     <packaging>pom</packaging>
-    <version>0.4.3-SNAPSHOT</version>
-    <name>Cucumber: Parent</name>
+    <version>1.0.0-SNAPSHOT</version>
+    <name>Cucumber-JVM</name>
     <url>http://cukes.info/</url>
 
+    <parent>
+        <groupId>org.sonatype.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>6</version>
+    </parent>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <gherkin.version>2.4.7</gherkin.version>
-        <asm.version>3.3</asm.version>
-        <jcommander.version>1.7</jcommander.version>
-        <jruby.version>1.6.3</jruby.version>
-        <ant.version>1.8.1</ant.version>
-        <pico.version>2.11.2</pico.version>
-        <spring.version>3.0.4.RELEASE</spring.version>
-        <guice.version>2.0</guice.version>
-        <groovy.version>1.7.5</groovy.version>
-        <scala.version>2.8.0</scala.version>
-        <clojure.version>1.2.0</clojure.version>
-        <rhino.version>1.7R2</rhino.version>
-        <ioke.version>P-0.4.0</ioke.version>
-        <junit.version>4.8.2</junit.version>
-        <mockito.version>1.8.5</mockito.version>
-        <selenium.version>2.0rc3</selenium.version>
-        <log4j.version>1.2.14</log4j.version>
-        <javaee-api.version>5.0-1</javaee-api.version>
-        <openejb.version>3.1.2</openejb.version>
-        <hibernate.version>3.2.5.ga</hibernate.version>
-        <hibernate-entitymanager.version>3.2.1.ga</hibernate-entitymanager.version>
-        <asm.version>2.2.3</asm.version>
-        <cglib.version>2.1_3</cglib.version>
-        <diffutils.version>1.2.1</diffutils.version>
-    </properties>
-
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>http://www.opensource.org/licenses/mit-license</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    <scm>
+        <connection>scm:git:git://github.com/cucumber/cucumber-jvm.git</connection>
+        <developerConnection>scm:git:git@github.com:cucumber/cucumber-jvm.git</developerConnection>
+        <url>git://github.com/cucumber/cucumber-jvm.git</url>
+    </scm>
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>cucumber</groupId>
-                <artifactId>core</artifactId>
+                <groupId>info.cukes</groupId>
+                <artifactId>cucumber-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>info.cukes</groupId>
+                <artifactId>cucumber-java</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>gherkin</groupId>
                 <artifactId>gherkin</artifactId>
-                <version>${gherkin.version}</version>
+                <version>2.4.14</version>
             </dependency>
             <dependency>
                 <groupId>com.beust</groupId>
                 <artifactId>jcommander</artifactId>
-                <version>${jcommander.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jruby</groupId>
-                <artifactId>jruby-complete</artifactId>
-                <version>${jruby.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.ant</groupId>
-                <artifactId>ant</artifactId>
-                <version>${ant.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.picocontainer</groupId>
-                <artifactId>picocontainer</artifactId>
-                <version>${pico.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-context</artifactId>
-                <version>${spring.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.google.inject</groupId>
-                <artifactId>guice</artifactId>
-                <version>${guice.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.codehaus.groovy</groupId>
-                <artifactId>groovy-all</artifactId>
-                <version>${groovy.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.scala-lang</groupId>
-                <artifactId>scala-library</artifactId>
-                <version>${scala.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.scala-lang</groupId>
-                <artifactId>scala-compiler</artifactId>
-                <version>${scala.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.clojure</groupId>
-                <artifactId>clojure</artifactId>
-                <version>${clojure.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>rhino</groupId>
-                <artifactId>js</artifactId>
-                <version>${rhino.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.ioke</groupId>
-                <artifactId>ioke-lang</artifactId>
-                <version>${ioke.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.ioke</groupId>
-                <artifactId>ioke-lang-lib</artifactId>
-                <version>${ioke.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>${junit.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.mockito</groupId>
-                <artifactId>mockito-all</artifactId>
-                <version>${mockito.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.seleniumhq.selenium</groupId>
-                <artifactId>selenium-htmlunit-driver</artifactId>
-                <version>${selenium.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.seleniumhq.selenium</groupId>
-                <artifactId>selenium-firefox-driver</artifactId>
-                <version>${selenium.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>log4j</groupId>
-                <artifactId>log4j</artifactId>
-                <version>${log4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.openejb</groupId>
-                <artifactId>javaee-api</artifactId>
-                <version>${javaee-api.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.openejb</groupId>
-                <artifactId>openejb-core</artifactId>
-                <version>${openejb.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate</artifactId>
-                <version>${hibernate.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-entitymanager</artifactId>
-                <version>${hibernate-entitymanager.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>asm</groupId>
-                <artifactId>asm</artifactId>
-                <version>${asm.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>cglib</groupId>
-                <artifactId>cglib-nodep</artifactId>
-                <version>${cglib.version}</version>
+                <version>1.18</version>
             </dependency>
             <dependency>
                 <groupId>com.googlecode.java-diff-utils</groupId>
                 <artifactId>diffutils</artifactId>
-                <version>${diffutils.version}</version>
+                <version>1.2.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.ant</groupId>
+                <artifactId>ant</artifactId>
+                <version>1.8.2</version>
+            </dependency>
+            <dependency>
+                <groupId>org.picocontainer</groupId>
+                <artifactId>picocontainer</artifactId>
+                <version>2.13.6</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context</artifactId>
+                <version>3.0.5.RELEASE</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.inject</groupId>
+                <artifactId>guice</artifactId>
+                <version>3.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.groovy</groupId>
+                <artifactId>groovy-all</artifactId>
+                <version>1.9.0-beta-2</version>
+            </dependency>
+            <dependency>
+                <groupId>org.scala-lang</groupId>
+                <artifactId>scala-library</artifactId>
+                <version>2.9.1.RC3</version>
+            </dependency>
+            <dependency>
+                <groupId>org.scala-lang</groupId>
+                <artifactId>scala-compiler</artifactId>
+                <version>2.9.1.RC3</version>
+            </dependency>
+            <dependency>
+                <groupId>org.clojure</groupId>
+                <artifactId>clojure</artifactId>
+                <version>1.3.0-beta1</version>
+            </dependency>
+            <dependency>
+                <groupId>rhino</groupId>
+                <artifactId>js</artifactId>
+                <version>1.7R2</version>
+            </dependency>
+            <dependency>
+                <groupId>org.ioke</groupId>
+                <artifactId>ioke-lang</artifactId>
+                <version>P-0.4.0-p11</version>
+            </dependency>
+            <dependency>
+                <groupId>org.ioke</groupId>
+                <artifactId>ioke-lang-lib</artifactId>
+                <version>P-0.4.0-p11</version>
+            </dependency>
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>4.8.2</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-all</artifactId>
+                <version>1.9.0-rc1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.seleniumhq.selenium</groupId>
+                <artifactId>selenium-htmlunit-driver</artifactId>
+                <version>2.4.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.seleniumhq.selenium</groupId>
+                <artifactId>selenium-firefox-driver</artifactId>
+                <version>2.4.0</version>
+            </dependency>
+            <dependency>
+                <groupId>log4j</groupId>
+                <artifactId>log4j</artifactId>
+                <version>1.2.16</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-lang</groupId>
+                <artifactId>commons-lang</artifactId>
+                <version>2.4</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.openejb</groupId>
+                <artifactId>javaee-api</artifactId>
+                <version>5.0-1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.openejb</groupId>
+                <artifactId>openejb-core</artifactId>
+                <version>3.1.2</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate</artifactId>
+                <version>3.2.5.ga</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-entitymanager</artifactId>
+                <version>3.2.1.ga</version>
+            </dependency>
+            <dependency>
+                <groupId>asm</groupId>
+                <artifactId>asm</artifactId>
+                <version>3.3</version>
+            </dependency>
+            <dependency>
+                <groupId>cglib</groupId>
+                <artifactId>cglib-nodep</artifactId>
+                <version>2.1_3</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jruby</groupId>
+                <artifactId>jruby</artifactId>
+                <version>1.6.3</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.weld.se</groupId>
+                <artifactId>weld-se</artifactId>
+                <version>1.1.0.Final</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.enterprise</groupId>
+                <artifactId>cdi-api</artifactId>
+                <version>1.0-SP1</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
-
-    <scm>
-        <connection>scm:git:git://github.com/aslakhellesoy/cuke4duke.git</connection>
-    </scm>
-
-    <distributionManagement>
-        <repository>
-            <id>cukes</id>
-            <name>Cucumber Maven Repo</name>
-            <url>scp://cukes.info/home/6664/users/.home/domains/cukes.info/html/maven</url>
-        </repository>
-        <site>
-            <id>cukes</id>
-            <url>scp://cukes.info/home/6664/users/.home/domains/cukes.info/html/cuke4duke</url>
-        </site>
-    </distributionManagement>
 
     <repositories>
         <repository>
@@ -205,48 +197,64 @@
             <id>cukes</id>
             <url>http://cukes.info/maven</url>
         </repository>
+        <repository>
+            <id>jboss.org</id>
+            <url>https://repository.jboss.org/nexus/content/groups/public-jboss</url>
+        </repository>
     </repositories>
-
-    <pluginRepositories>
-        <pluginRepository>
-            <id>cukes</id>
-            <url>http://cukes.info/maven</url>
-        </pluginRepository>
-    </pluginRepositories>
 
     <modules>
         <module>core</module>
         <module>spring</module>
         <module>guice</module>
         <module>picocontainer</module>
+        <module>weld</module>
         <module>groovy</module>
         <module>ioke</module>
         <module>rhino</module>
         <module>java</module>
         <module>clojure</module>
+        <module>jruby</module>
         <!--module>components/scala</module-->
-        <module>cucumber-ant</module>
-        <!--module>components/maven-plugin</module-->
     </modules>
 
     <profiles>
         <profile>
             <id>examples</id>
             <modules>
-                <module>examples/java-ejb3</module>
-                <module>examples/java</module>
-                <module>examples/scala</module>
-                <module>examples/guice</module>
-                <module>examples/java-webdriver</module>
-                <module>examples/groovy-webdriver</module>
-                <module>examples/groovy</module>
-                <module>examples/clojure</module>
-                <module>examples/ioke</module>
-                <module>examples/spring</module>
-                <module>examples/celerity</module>
-                <!-- Broken now because of new v8 support in Cucumber -->
-                <!--module>examples/javascript</module-->
+                <module>examples/java-calculator</module>
             </modules>
+        </profile>
+
+        <profile>
+            <id>full</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-shade-plugin</artifactId>
+                        <version>1.4</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>shade</goal>
+                                </goals>
+                                <configuration>
+                                    <shadedArtifactAttached>true</shadedArtifactAttached>
+                                    <shadedClassifierName>full</shadedClassifierName>
+                                    <transformers>
+                                        <transformer
+                                                implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                            <mainClass>cucumber.cli.Main</mainClass>
+                                        </transformer>
+                                    </transformers>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
 
@@ -268,6 +276,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
+                <version>2.1.2</version>
                 <executions>
                     <execution>
                         <id>bind-sources</id>

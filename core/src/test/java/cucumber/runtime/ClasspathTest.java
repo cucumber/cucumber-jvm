@@ -1,13 +1,15 @@
 package cucumber.runtime;
 
-import cucumber.classpath.Classpath;
-import cucumber.classpath.Consumer;
-import cucumber.io.Resource;
+import cucumber.resources.Resource;
+import cucumber.resources.Resources;
+import cucumber.resources.Consumer;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.util.*;
 
+import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 
 public class ClasspathTest {
@@ -24,28 +26,44 @@ public class ClasspathTest {
     public void looksUpInstantiableSubclassesOnClassPath() throws IOException {
         List<Class<? extends Person>> classes = Arrays.asList(Fred.class, Wilma.class);
         Set<Class<? extends Person>> expected = new HashSet<Class<? extends Person>>(classes);
-        assertEquals(expected, Classpath.getInstantiableSubclassesOf(Person.class, "cucumber.runtime"));
+        assertEquals(expected, Resources.getInstantiableSubclassesOf(Person.class, "cucumber.runtime"));
     }
 
     @Test
-    public void looksUpFilesByDir() throws IOException {
+    public void looksUpFilesFromDirectoriesOnClasspath() throws IOException {
+        final List<Resource> resources = new ArrayList<Resource>();
         final List<String> paths = new ArrayList<String>();
-        Classpath.scan("cucumber/runtime", ".xyz", new Consumer() {
+        Resources.scan("cucumber/runtime", ".properties", new Consumer() {
+            public void consume(Resource resource) {
+                paths.add(resource.getPath());
+                resources.add(resource);
+            }
+        });
+        assertEquals(Arrays.asList("cucumber/runtime/bar.properties", "cucumber/runtime/foo.properties"), paths);
+        assertEquals("bar=BAR", resources.get(0).getString().trim());
+    }
+
+    @Test
+    public void looksUpFilesOnClasspath() throws IOException {
+        final List<String> paths = new ArrayList<String>();
+        Resources.scan("cucumber/runtime/foo.properties", new Consumer() {
             public void consume(Resource resource) {
                 paths.add(resource.getPath());
             }
         });
-        assertEquals(Arrays.asList("cucumber/runtime/bar.xyz", "cucumber/runtime/foo.xyz"), paths);
+        assertEquals(Arrays.asList("cucumber/runtime/foo.properties"), paths);
     }
 
     @Test
-    public void looksUpFilesByFile() throws IOException {
-        final List<String> paths = new ArrayList<String>();
-        Classpath.scan("cucumber/runtime/foo.xyz", new Consumer() {
+    @Ignore
+    public void looksUpFilesWithLinesOnClasspath() throws IOException {
+        final List<Resource> paths = new ArrayList<Resource>();
+        Resources.scan("cucumber/runtime/foo.properties:99:100", new Consumer() {
             public void consume(Resource resource) {
-                paths.add(resource.getPath());
+                paths.add(resource);
             }
         });
-        assertEquals(Arrays.asList("cucumber/runtime/foo.xyz"), paths);
+        assertEquals("cucumber/runtime/foo.properties", paths.get(0).getPath());
+        assertEquals(asList(99L, 100L), paths.get(0).getLines());
     }
 }
