@@ -2,6 +2,7 @@ package cucumber.runtime;
 
 import cucumber.runtime.transformers.TransformationException;
 import cucumber.runtime.transformers.Transformers;
+import cucumber.table.Table;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Match;
 import gherkin.formatter.model.Step;
@@ -51,8 +52,7 @@ public class StepDefinitionMatch extends Match {
             result[n] = step.getDocString().getValue();
         }
         if (step.getRows() != null) {
-            // TODO: This should be a cucumber.Table, which will wrap the data in the rows, providing a similar API to the ruby impl (especially diffing)
-            result[n] = step.getRows();
+            result[n] = new Table(step.getRows(), locale);
         }
         return result;
     }
