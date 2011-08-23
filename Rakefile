@@ -1,10 +1,14 @@
-require 'bundler/setup'
 require 'cucumber/rake/task'
 
 task :generate do
   Dir['*/Rakefile'].each do |rakefile|
     Dir.chdir(File.dirname(rakefile)) do
-      puts `bundle exec rake generate`
+      if ENV['SKIP_BUNDLER'].to_s == 'true'
+        puts `rake generate`
+      else
+        require 'bundler/setup'
+        puts `bundle exec rake generate`
+      end
     end
   end
 end
