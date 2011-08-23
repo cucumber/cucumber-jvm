@@ -19,15 +19,16 @@ public class CDIFactory extends Weld implements ObjectFactory  {
     private WeldContainer weld;
 
     public CDIFactory() {
-         weld = super.initialize();
     }
 
     @Override
     public void createInstances() {
+    	weld = super.initialize();
     }
 
     @Override
     public void disposeInstances() {
+    	this.shutdown();
     }
 
     @Override
