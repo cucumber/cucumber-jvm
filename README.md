@@ -47,6 +47,8 @@ All Cucumber implementations (cucumber-ruby, cucumber-jvm, cucumber-js) share a 
 
 Now you can run the cross-platform Cucumber features:
 
+    gem install bundler
+    bundle install
     rake
 
 ### Code generation
@@ -56,12 +58,23 @@ The i18n Java annotations (except English) are not added to the Git repo because
 In order to compile `cucumber-java` with all I18n annotations, you have to generate them yourelf.
 With Ruby installed and on your path, install some gems that are needed for code generation:
 
+#### Using bundler
+
+Try this first
+
     gem install bundler
     bundle install
 
 Now you can generate the code:
 
     rake generate
+
+#### Without bundler
+
+On Windows it might be tricky to install all the gems. (The listed gems are used for both code generation and for running the cross-platform features). If you only want to generate code, you can get away with:
+
+    gem install gherkin
+    rake generate SKIP_BUNDLER=true
 
 ## Troubleshooting
 
