@@ -23,8 +23,7 @@ public class World {
     }
 
     public void runStep(String uri, Step step, Reporter reporter, Locale locale) {
-        String stackTracePath = uri + ":" + step.getLine();
-        StepDefinitionMatch match = runtime.stepDefinitionMatch(stackTracePath, step);
+        StepDefinitionMatch match = runtime.stepDefinitionMatch(uri, step);
         if (match != null) {
             reporter.match(match);
         } else {
@@ -39,7 +38,7 @@ public class World {
             Throwable e = null;
             long start = System.nanoTime();
             try {
-                match.runStep(step, stackTracePath, locale);
+                match.runStep(locale);
             } catch (Throwable t) {
                 skipNextStep = true;
                 e = t;

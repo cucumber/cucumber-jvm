@@ -164,6 +164,8 @@ public class Table {
         return result;
     }
 
+    // TODO: Get rid of this class if we base the diffing on simple List<List<String>
+    // from the List<Row> list passed to the ctor.
     class DiffableRow {
         public final Row row;
         public final List<Object> convertedRow;

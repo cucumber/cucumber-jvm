@@ -13,9 +13,9 @@ import java.util.List;
 import static java.util.Arrays.asList;
 
 public class Runtime {
-    private final List<Backend> backends;
+    private final Transformers transformers = new Transformers();
     private final List<Step> undefinedSteps = new ArrayList<Step>();
-    private Transformers transformers;
+    private final List<Backend> backends;
 
     public Runtime(Backend... backends) {
         this.backends = asList(backends);
@@ -25,8 +25,8 @@ public class Runtime {
         backends = Resources.instantiateSubclasses(Backend.class, "cucumber.runtime", packageName);
     }
 
-    public StepDefinitionMatch stepDefinitionMatch(String stackTracePath, Step step) {
-        List<StepDefinitionMatch> matches = stepDefinitionMatches(step);
+    public StepDefinitionMatch stepDefinitionMatch(String uri, Step step) {
+        List<StepDefinitionMatch> matches = stepDefinitionMatches(uri, step);
         if (matches.size() == 0) {
             undefinedSteps.add(step);
             return null;
@@ -34,17 +34,17 @@ public class Runtime {
         if (matches.size() == 1) {
             return matches.get(0);
         } else {
-            throw new AmbiguousStepDefinitionsException(stackTracePath, step, matches);
+            throw new AmbiguousStepDefinitionsException(step, matches);
         }
     }
 
-    private List<StepDefinitionMatch> stepDefinitionMatches(Step step) {
+    private List<StepDefinitionMatch> stepDefinitionMatches(String uri, Step step) {
         List<StepDefinitionMatch> result = new ArrayList<StepDefinitionMatch>();
         for (Backend backend : backends) {
             for (StepDefinition stepDefinition : backend.getStepDefinitions()) {
                 List<Argument> arguments = stepDefinition.matchedArguments(step);
                 if (arguments != null) {
-                    result.add(new StepDefinitionMatch(arguments, stepDefinition, step, getTransformers()));
+                    result.add(new StepDefinitionMatch(arguments, stepDefinition, uri, step, this.transformers));
                 }
             }
         }
@@ -82,16 +82,5 @@ public class Runtime {
 
     public World newWorld() {
         return new World(backends, this);
-    }
-
-    public Transformers getTransformers() {
-        if (this.transformers == null) {
-            this.transformers = new Transformers();
-        }
-        return this.transformers;
-    }
-
-    public void setTransformers(Transformers transformers) {
-        this.transformers = transformers;
     }
 }
