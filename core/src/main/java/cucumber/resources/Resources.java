@@ -12,6 +12,7 @@ import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import static cucumber.resources.FilePathExtractor.filePath;
 import static java.util.Collections.emptyList;
 
 /**
@@ -142,14 +143,6 @@ public class Resources {
         } catch (IOException t) {
             throw new CucumberException("Failed to scan jar", t);
         }
-    }
-
-    private static String filePath(String jarUrl) {
-        String pathWithProtocol = jarUrl.substring(0, jarUrl.indexOf("!/"));
-        String[] segments = pathWithProtocol.split(":");
-        // WINDOWS: jar:file:/C:/Users/ahellesoy/scm/cucumber-jvm/java/target/java-1.0.0-SNAPSHOT.jar
-        // POSIX:   jar:file:/Users/ahellesoy/scm/cucumber-jvm/java/target/java-1.0.0-SNAPSHOT.jar
-        return segments.length == 4 ? segments[2].substring(1) + ":" + segments[3] : segments[2];
     }
 
     private static void scanFilesystem(URL startDir, PathWithLines pathPrefix, String suffix, Consumer consumer) {
