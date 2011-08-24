@@ -17,14 +17,14 @@ public class StepDefinitionMatch extends Match {
     private final StepDefinition stepDefinition;
     private final Step step;
     private final Transformers transformers;
-    private final String stepLocation;
+    private final String uri;
 
     public StepDefinitionMatch(List<Argument> arguments, StepDefinition stepDefinition, String uri, Step step, Transformers transformers) {
         super(arguments, stepDefinition.getLocation());
         this.stepDefinition = stepDefinition;
         this.step = step;
         this.transformers = transformers;
-        this.stepLocation = uri + ":" + step.getLine();
+        this.uri = uri;
 
     }
 
@@ -34,13 +34,12 @@ public class StepDefinitionMatch extends Match {
         }
         try {
             stepDefinition.execute(transformedArgs(stepDefinition.getParameterTypes(), step, locale));
-            // T
         } catch (CucumberException e) {
             throw e;
         } catch (InvocationTargetException t) {
-            throw filterStacktrace(t.getTargetException(), step.getStackTraceElement(stepLocation));
+            throw filterStacktrace(t.getTargetException(), getStepLocation());
         } catch (Throwable t) {
-            throw filterStacktrace(t, step.getStackTraceElement(stepLocation));
+            throw filterStacktrace(t, getStepLocation());
         }
     }
 
@@ -89,7 +88,7 @@ public class StepDefinitionMatch extends Match {
         return stepDefinition.getPattern();
     }
 
-    public String getStepLocation() {
-        return stepLocation;
+    public StackTraceElement getStepLocation() {
+        return step.getStackTraceElement(uri);
     }
 }

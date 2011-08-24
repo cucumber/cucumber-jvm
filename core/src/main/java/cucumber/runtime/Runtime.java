@@ -34,7 +34,7 @@ public class Runtime {
         if (matches.size() == 1) {
             return matches.get(0);
         } else {
-            throw new AmbiguousStepDefinitionsException(step, matches);
+            throw new AmbiguousStepDefinitionsException(matches);
         }
     }
 
