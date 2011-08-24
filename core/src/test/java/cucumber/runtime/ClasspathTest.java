@@ -39,7 +39,7 @@ public class ClasspathTest {
                 resources.add(resource);
             }
         });
-        assertEquals(Arrays.asList("cucumber/runtime/bar.properties", "cucumber/runtime/foo.properties"), paths);
+        assertEquals(Arrays.asList("cucumber/runtime/bar.properties", "cucumber/runtime/foo.properties", "cucumber/runtime/has spaces.properties"), paths);
         assertEquals("bar=BAR", resources.get(0).getString().trim());
     }
 
@@ -52,6 +52,18 @@ public class ClasspathTest {
             }
         });
         assertEquals(Arrays.asList("cucumber/runtime/foo.properties"), paths);
+    }
+
+    @Test
+    public void looksUpFilesWithSpaceInFilenameOnClasspath() throws IOException {
+        final List<Resource> resources = new ArrayList<Resource>();
+        Resources.scan("cucumber/runtime/has spaces.properties", new Consumer() {
+            public void consume(Resource resource) {
+                resources.add(resource);
+            }
+        });
+        assertEquals("cucumber/runtime/has spaces.properties", resources.get(0).getPath());
+        assertEquals("has = spaces", resources.get(0).getString().trim());
     }
 
     @Test
