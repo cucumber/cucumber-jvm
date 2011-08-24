@@ -1,45 +1,50 @@
 package cucumber.runtime.java.spring;
 
-import cucumber.runtime.CucumberException;
-import cucumber.runtime.java.ObjectFactory;
-import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.context.support.StaticApplicationContext;
-
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.support.StaticApplicationContext;
+
+import cucumber.runtime.CucumberException;
+import cucumber.runtime.java.ObjectFactory;
+
 public class SpringFactory implements ObjectFactory {
     private final Set<Class<?>> classes = new HashSet<Class<?>>();
-    private AbstractApplicationContext appContext;
-    private StaticApplicationContext stepDefContext;
+    private StaticApplicationContext stepDefContext = null;
+    private AbstractApplicationContext appContext = null;
 
     public SpringFactory() {
         stepDefContext = new StaticApplicationContext();
         stepDefContext.refresh();
-        appContext = new ClassPathXmlApplicationContext(new String[]{"cucumber.xml"}, stepDefContext);
+        appContext = new ClassPathXmlApplicationContext(new String[] { "cucumber.xml" }, stepDefContext);
+
     }
 
-    public void createInstances() {
-    }
-
-    public void disposeInstances() {
-    }
-
-    public void addClass(Class<?> clazz) {
+    @Override
+    public void addClass(final Class<?> clazz) {
         if (!classes.contains(clazz)) {
             stepDefContext.registerSingleton(clazz.getName(), clazz);
         }
         classes.add(clazz);
     }
 
-    public <T> T getInstance(Class<T> type) {
-        Collection<T> beans = appContext.getBeansOfType(type).values();
-        if (beans.size() == 1) {
+    @Override
+    public void createInstances() {
+        appContext.refresh();
+    }
+
+    @Override
+    public void disposeInstances() {}
+
+    @Override
+    public <T> T getInstance(final Class<T> type) {
+        final Collection<T> beans = appContext.getBeansOfType(type).values();
+        if (beans.size() == 1)
             return beans.iterator().next();
-        } else {
+        else
             throw new CucumberException("Found " + beans.size() + " Beans for class " + type + ". Expected exactly 1.");
-        }
     }
 }
