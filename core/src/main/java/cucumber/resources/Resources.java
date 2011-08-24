@@ -101,7 +101,7 @@ public class Resources {
             throw new CucumberException("Expected only one instance, but found too many: " + instances);
         }
     }
-
+    
     public static <T> List<T> instantiateSubclasses(Class<T> type, String packagePrefix, Object... constructorArguments) {
         List<T> result = new ArrayList<T>();
 
