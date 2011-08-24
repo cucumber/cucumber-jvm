@@ -14,6 +14,7 @@ import java.util.zip.ZipFile;
 
 /**
  * Static utility methods for looking up classes and resources on the classpath.
+ * TODO: Look them op on the file system as well. The CLI needs to offer resources like that. DUH!
  */
 public class Resources {
     public static Set<Class<?>> getInstantiableClasses(final String packagePrefix) {
@@ -25,7 +26,9 @@ public class Resources {
                 try {
                     addClassIfInstantiable(classes, className);
                 } catch (NoClassDefFoundError ignore) {
+                    ignore.printStackTrace();
                 } catch (ClassNotFoundException ignore) {
+                    ignore.printStackTrace();
                 }
             }
         };

@@ -1,8 +1,5 @@
-package cucumber.runtime;
+package cucumber.resources;
 
-import cucumber.resources.Resource;
-import cucumber.resources.Resources;
-import cucumber.resources.Consumer;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -12,7 +9,7 @@ import java.util.*;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 
-public class ClasspathTest {
+public class ResourcesTest {
     public static class Person {
     }
 
@@ -26,7 +23,7 @@ public class ClasspathTest {
     public void looksUpInstantiableSubclassesOnClassPath() throws IOException {
         List<Class<? extends Person>> classes = Arrays.asList(Fred.class, Wilma.class);
         Set<Class<? extends Person>> expected = new HashSet<Class<? extends Person>>(classes);
-        assertEquals(expected, Resources.getInstantiableSubclassesOf(Person.class, "cucumber.runtime"));
+        assertEquals(expected, Resources.getInstantiableSubclassesOf(Person.class, "cucumber.resources"));
     }
 
     @Test
