@@ -12,7 +12,7 @@ import java.util.*;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 
-public class ClasspathTest {
+public class ResourcesTest {
     public static class Person {
     }
 
