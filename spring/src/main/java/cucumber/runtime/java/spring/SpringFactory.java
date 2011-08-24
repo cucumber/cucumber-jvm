@@ -1,47 +1,39 @@
 package cucumber.runtime.java.spring;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-
+import cucumber.runtime.CucumberException;
+import cucumber.runtime.java.ObjectFactory;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.StaticApplicationContext;
 
-import cucumber.runtime.CucumberException;
-import cucumber.runtime.java.ObjectFactory;
+import java.util.Collection;
 
 public class SpringFactory implements ObjectFactory {
-    private final Set<Class<?>> classes = new HashSet<Class<?>>();
-    private StaticApplicationContext stepDefContext = null;
-    private AbstractApplicationContext appContext = null;
-
+    private final StaticApplicationContext staticContext = new StaticApplicationContext();
+    private final AbstractApplicationContext classpathContext;
     public SpringFactory() {
-        stepDefContext = new StaticApplicationContext();
-        stepDefContext.refresh();
-        appContext = new ClassPathXmlApplicationContext(new String[] { "cucumber.xml" }, stepDefContext);
-
+        staticContext.refresh();
+        classpathContext = new ClassPathXmlApplicationContext(new String[]{"cucumber.xml"}, staticContext);
     }
 
     @Override
     public void addClass(final Class<?> clazz) {
-        if (!classes.contains(clazz)) {
-            stepDefContext.registerSingleton(clazz.getName(), clazz);
-        }
-        classes.add(clazz);
+        staticContext.registerSingleton(clazz.getName(), clazz);
     }
 
     @Override
     public void createInstances() {
-        appContext.refresh();
+        classpathContext.refresh();
     }
 
     @Override
-    public void disposeInstances() {}
+    public void disposeInstances() {
+        classpathContext.close();
+    }
 
     @Override
     public <T> T getInstance(final Class<T> type) {
-        final Collection<T> beans = appContext.getBeansOfType(type).values();
+        final Collection<T> beans = classpathContext.getBeansOfType(type).values();
         if (beans.size() == 1)
             return beans.iterator().next();
         else
