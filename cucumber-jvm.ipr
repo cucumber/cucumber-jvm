@@ -329,48 +329,15 @@
         <root url="jar://$MAVEN_REPOSITORY$/cucumber/core/1.0.0-SNAPSHOT/core-1.0.0-SNAPSHOT-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: gherkin:gherkin:2.4.14">
+    <library name="Maven: gherkin:gherkin:2.4.16">
       <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/gherkin/gherkin/2.4.14/gherkin-2.4.14.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/gherkin/gherkin/2.4.16/gherkin-2.4.16.jar!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/gherkin/gherkin/2.4.14/gherkin-2.4.14-javadoc.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/gherkin/gherkin/2.4.16/gherkin-2.4.16-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/gherkin/gherkin/2.4.14/gherkin-2.4.14-sources.jar!/" />
-      </SOURCES>
-    </library>
-    <library name="Maven: gherkin:gherkin:2.4.14">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/gherkin/gherkin/2.4.14/gherkin-2.4.14.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/gherkin/gherkin/2.4.14/gherkin-2.4.14-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/gherkin/gherkin/2.4.14/gherkin-2.4.14-sources.jar!/" />
-      </SOURCES>
-    </library>
-    <library name="Maven: gherkin:gherkin:2.4.14">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/gherkin/gherkin/2.4.14/gherkin-2.4.14.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/gherkin/gherkin/2.4.14/gherkin-2.4.14-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/gherkin/gherkin/2.4.14/gherkin-2.4.14-sources.jar!/" />
-      </SOURCES>
-    </library>
-    <library name="Maven: gherkin:gherkin:2.4.15">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/gherkin/gherkin/2.4.15/gherkin-2.4.15.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/gherkin/gherkin/2.4.15/gherkin-2.4.15-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/gherkin/gherkin/2.4.15/gherkin-2.4.15-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/gherkin/gherkin/2.4.16/gherkin-2.4.16-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: javax.annotation:jsr250-api:1.0">

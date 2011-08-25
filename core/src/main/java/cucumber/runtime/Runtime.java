@@ -5,10 +5,7 @@ import cucumber.runtime.transformers.Transformers;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 import static java.util.Arrays.asList;
 
@@ -80,8 +77,8 @@ public class Runtime {
         return snippets;
     }
 
-    public World newWorld() {
-        return new World(backends, this);
+    public World newWorld(Set<String> tags) {
+        return new World(backends, this, tags);
     }
     
 }

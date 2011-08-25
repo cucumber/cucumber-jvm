@@ -6,10 +6,13 @@ import gherkin.formatter.model.Scenario;
 import gherkin.formatter.model.Step;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import cucumber.runtime.Runtime;
 import cucumber.runtime.World;
+import gherkin.formatter.model.Tag;
 
 public class CucumberScenario {
     private final List<Step> steps = new ArrayList<Step>();
@@ -33,18 +36,17 @@ public class CucumberScenario {
         return steps;
     }
 
-    public void disposeWorld() {   
-        world.runAfterHooks();
+    public void prepare(Runtime runtime) {
+        world = runtime.newWorld(tags());
+        world.prepare();
+    }
+
+    public void dispose() {   
         world.dispose();
     }
 
-    public void newWorld(Runtime runtime) {
-        world = runtime.newWorld();
-        world.runBeforeHooks();
-    }
-
     public void run(Runtime runtime, Formatter formatter, Reporter reporter) {
-        newWorld(runtime);
+        prepare(runtime);
         formatter.scenario(scenario);        
         for (Step step : steps) {
             formatter.step(step);
@@ -52,20 +54,25 @@ public class CucumberScenario {
         for (Step step : steps) {
             runStep(step, reporter);
         }        
-        disposeWorld();
+        dispose();
     }
 
     public void runStep(Step step, Reporter reporter) {
         world.runStep(uri, step, reporter, cucumberFeature.getLocale());
     }
 
-//    private Reporter makeReporter(Step step, RunNotifier notifier) {
-//        Description description = describeChild(step);
-//        final EachTestNotifier eachTestNotifier = new EachTestNotifier(notifier, description);
-//        return new JUnitReporter(eachTestNotifier);
-//    }
-
     public void step(Step step) {
         steps.add(step);
+    }
+
+    private Set<String> tags() {
+        Set<String> tags = new HashSet<String>();
+        for (Tag tag : cucumberFeature.getFeature().getTags()) {
+            tags.add(tag.getName());
+        }
+        for (Tag tag : scenario.getTags()) {
+            tags.add(tag.getName());
+        }
+        return tags;
     }
 }

@@ -1,5 +1,7 @@
 package cucumber.runtime.java;
 
+import cucumber.annotation.After;
+import gherkin.TagExpression;
 import gherkin.formatter.model.Step;
 
 import java.lang.annotation.Annotation;
@@ -18,6 +20,8 @@ import cucumber.runtime.HookDefinition;
 import cucumber.runtime.PendingException;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.Utils;
+
+import static java.util.Arrays.asList;
 
 public class JavaBackend implements Backend {
     private final ObjectFactory objectFactory;
@@ -90,9 +94,11 @@ public class JavaBackend implements Backend {
         objectFactory.addClass(clazz);
 
         if (annotation.annotationType().equals(Before.class)) {
-            beforeHooks.add(new JavaHookDefinition(method, objectFactory));
+            String[] tagExpressions = ((Before) annotation).value();
+            beforeHooks.add(new JavaHookDefinition(method, tagExpressions, objectFactory));
         } else {
-            afterHooks.add(new JavaHookDefinition(method, objectFactory));
+            String[] tagExpressions = ((After) annotation).value();
+            afterHooks.add(new JavaHookDefinition(method, tagExpressions, objectFactory));
         }
     }
 

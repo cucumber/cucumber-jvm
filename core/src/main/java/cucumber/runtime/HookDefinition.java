@@ -1,6 +1,8 @@
 package cucumber.runtime;
 
-public interface HookDefinition {
+import java.util.Collection;
 
-        void execute() throws Throwable;
+public interface HookDefinition {
+    void execute() throws Throwable;
+    boolean matches(Collection<String> tags);
 }

@@ -1,17 +1,23 @@
 package cucumber.runtime.java;
 
-import java.lang.reflect.Method;
-
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.HookDefinition;
+import gherkin.TagExpression;
+
+import java.lang.reflect.Method;
+import java.util.Collection;
+
+import static java.util.Arrays.asList;
 
 public class JavaHookDefinition implements HookDefinition {
 
     private final ObjectFactory objectFactory;
     private final Method method;
+    private final TagExpression tagExpression;
 
-    public JavaHookDefinition(Method method, ObjectFactory objectFactory) {
+    public JavaHookDefinition(Method method, String[] tagExpressions, ObjectFactory objectFactory) {
         this.method = method;
+        tagExpression = new TagExpression(asList(tagExpressions));
         this.objectFactory = objectFactory;
     }
 
@@ -28,6 +34,11 @@ public class JavaHookDefinition implements HookDefinition {
             throw new CucumberException("Can't invoke "
                     + new MethodFormat().format(method));
         }
+    }
+
+    @Override
+    public boolean matches(Collection<String> tags) {
+        return tagExpression.eval(tags);
     }
 
 }

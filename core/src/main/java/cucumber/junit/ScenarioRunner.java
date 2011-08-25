@@ -49,13 +49,13 @@ public class ScenarioRunner extends ParentRunner<Step> {
     @Override
     public void run(RunNotifier notifier) {
         try {
-            cucumberScenario.newWorld(runtime);
+            cucumberScenario.prepare(runtime);
         } catch (CucumberException e) {
             notifier.fireTestFailure(new Failure(getDescription(),e));
         }        
         super.run(notifier);
         try {
-            cucumberScenario.disposeWorld();
+            cucumberScenario.dispose();
         } catch (CucumberException e) {
             notifier.fireTestFailure(new Failure(getDescription(),e));
         } 

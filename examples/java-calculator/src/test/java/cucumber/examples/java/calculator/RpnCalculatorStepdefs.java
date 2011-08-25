@@ -22,9 +22,9 @@ public class RpnCalculatorStepdefs {
         assertEquals(expected, calc.value());
     }
 
-    @Before
+    @Before({"~@foo"})
     public void before() {
-
+        System.out.println("Runs before scenarios *not* tagged with @foo");
     }
 
     @After

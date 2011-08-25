@@ -5,24 +5,55 @@ import gherkin.formatter.model.Match;
 import gherkin.formatter.model.Result;
 import gherkin.formatter.model.Step;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 public class World {
-    private final List<Backend> backends;
-    private final Runtime runtime;
-    private boolean skipNextStep = false;
     private static final Object DUMMY_ARG = new Object();
 
-    public World(List<Backend> backends, Runtime runtime) {
+    private final List<Backend> backends;
+    private final Runtime runtime;
+    private final Collection<String> tags;
+
+    private boolean skipNextStep = false;
+
+    public World(List<Backend> backends, Runtime runtime, Collection<String> tags) {
         this.backends = backends;
         this.runtime = runtime;
+        this.tags = tags;
+    }
+    
+    public void prepare() {
         for (Backend backend : backends) {
             backend.newWorld();
+
+            List<HookDefinition> hooks = backend.getBeforeHooks();
+            for (HookDefinition hook : hooks) {
+                runHookMaybe(hook);
+            }
         }
     }
 
+    public void dispose() {
+        for (Backend backend : backends) {
+            backend.disposeWorld();
+            List<HookDefinition> hooks = backend.getAfterHooks();
+            for (HookDefinition hook : hooks) {
+                runHookMaybe(hook);
+            }
+        }
+    }
+
+    private void runHookMaybe(HookDefinition hook) {
+        if (hook.matches(tags)) {
+            try {
+                hook.execute();
+            } catch (Throwable t) {
+                skipNextStep = true;
+                throw new CucumberException("Hook execution failed", t);
+            }
+        }
+    }
+    
     public void runStep(String uri, Step step, Reporter reporter, Locale locale) {
         StepDefinitionMatch match = runtime.stepDefinitionMatch(uri, step);
         if (match != null) {
@@ -50,39 +81,5 @@ public class World {
                 reporter.result(result);
             }
         }
-    }
-
-    public void dispose() {
-        for (Backend backend : backends) {
-            backend.disposeWorld();
-        }
-    }
-    
-
-    public void runBeforeHooks() {
-        List<HookDefinition> hooks = new ArrayList<HookDefinition>();    	
-        for (Backend backend : backends) {
-            hooks.addAll(backend.getBeforeHooks());
-        }
-        executeHooks(hooks);
-    }
-
-    private void executeHooks(List<HookDefinition> hooks) {		
-        try {
-            for (HookDefinition hook : hooks) {
-                hook.execute();
-            }
-        } catch (Throwable t) {
-            skipNextStep = true;
-            throw new CucumberException("Hook execution failed", t);
-        }
-    }
-    
-    public void runAfterHooks() {
-        List<HookDefinition> hooks = new ArrayList<HookDefinition>();    	
-        for (Backend backend : backends) {
-            hooks.addAll(backend.getAfterHooks());
-        }
-        executeHooks(hooks);
     }
 }
