@@ -58,12 +58,12 @@ public class JRubyBackend implements Backend {
     }
     
     @Override
-	public List<HookDefinition> getBeforeHooks() {
-		return new ArrayList<HookDefinition>();
-	}
+    public List<HookDefinition> getBeforeHooks() {
+        return new ArrayList<HookDefinition>();
+    }
 
     @Override
-	public List<HookDefinition> getAfterHooks() {
-		return new ArrayList<HookDefinition>();
-	}
+    public List<HookDefinition> getAfterHooks() {
+        return new ArrayList<HookDefinition>();
+    }
 }

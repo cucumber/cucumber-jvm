@@ -34,7 +34,7 @@ public class CucumberScenario {
     }
 
     public void disposeWorld() {   
-    	world.runAfterHooks();
+        world.runAfterHooks();
         world.dispose();
     }
 
@@ -44,7 +44,7 @@ public class CucumberScenario {
     }
 
     public void run(Runtime runtime, Formatter formatter, Reporter reporter) {
-    	newWorld(runtime);
+        newWorld(runtime);
         formatter.scenario(scenario);        
         for (Step step : steps) {
             formatter.step(step);

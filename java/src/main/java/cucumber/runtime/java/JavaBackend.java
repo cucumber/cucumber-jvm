@@ -23,7 +23,7 @@ public class JavaBackend implements Backend {
     private final ObjectFactory objectFactory;
     private List<StepDefinition> stepDefinitions = new ArrayList<StepDefinition>();
     private List<HookDefinition> beforeHooks = new ArrayList<HookDefinition>();
-	private List<HookDefinition> afterHooks = new ArrayList<HookDefinition>();
+    private List<HookDefinition> afterHooks = new ArrayList<HookDefinition>();
 
     public JavaBackend(String packagePrefix) {
         this.objectFactory = Resources.instantiateExactlyOneSubclass(ObjectFactory.class, "cucumber.runtime");
@@ -85,24 +85,24 @@ public class JavaBackend implements Backend {
         return m.toString();
     }
 
-	void registerHook(Annotation annotation, Method method) {
-		Class<?> clazz = method.getDeclaringClass();
+    void registerHook(Annotation annotation, Method method) {
+        Class<?> clazz = method.getDeclaringClass();
         objectFactory.addClass(clazz);
 
         if (annotation.annotationType().equals(Before.class)) {
-        	beforeHooks.add(new JavaHookDefinition(method, objectFactory));
+            beforeHooks.add(new JavaHookDefinition(method, objectFactory));
         } else {
-        	afterHooks.add(new JavaHookDefinition(method, objectFactory));
+            afterHooks.add(new JavaHookDefinition(method, objectFactory));
         }
-	}
+    }
 
-	@Override
-	public List<HookDefinition> getBeforeHooks() {
-		return beforeHooks;
-	}
+    @Override
+    public List<HookDefinition> getBeforeHooks() {
+        return beforeHooks;
+    }
 
-	@Override
-	public List<HookDefinition> getAfterHooks() {		
-		return afterHooks;
-	}
+    @Override
+    public List<HookDefinition> getAfterHooks() {		
+        return afterHooks;
+    }
 }
