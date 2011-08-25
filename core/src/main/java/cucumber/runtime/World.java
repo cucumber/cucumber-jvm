@@ -5,6 +5,7 @@ import gherkin.formatter.model.Match;
 import gherkin.formatter.model.Result;
 import gherkin.formatter.model.Step;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -55,5 +56,33 @@ public class World {
         for (Backend backend : backends) {
             backend.disposeWorld();
         }
+    }
+    
+
+    public void runBeforeHooks() {
+    	List<HookDefinition> hooks = new ArrayList<HookDefinition>();    	
+    	for (Backend backend : backends) {
+    		hooks.addAll(backend.getBeforeHooks());
+    	}
+    	executeHooks(hooks);
+    }
+
+	private void executeHooks(List<HookDefinition> hooks) {		
+		try {
+			for (HookDefinition hook : hooks) {
+				hook.execute();
+			}
+		} catch (Throwable t) {
+			skipNextStep = true;
+			throw new CucumberException("Hook execution failed", t);
+		}
+	}
+    
+    public void runAfterHooks() {
+    	List<HookDefinition> hooks = new ArrayList<HookDefinition>();    	
+    	for (Backend backend : backends) {
+    		hooks.addAll(backend.getAfterHooks());
+    	}
+    	executeHooks(hooks);
     }
 }

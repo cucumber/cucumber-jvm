@@ -5,6 +5,7 @@ import cucumber.resources.Resource;
 import cucumber.resources.Resources;
 import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
+import cucumber.runtime.HookDefinition;
 import cucumber.runtime.StepDefinition;
 import cucumber.table.Table;
 import gherkin.formatter.model.Step;
@@ -126,5 +127,14 @@ public class IokeBackend implements Backend {
         return m.sendTo(msg, iokeStepDefObject, iokeStepDefObject, Arrays.asList(args));
     }
 
+	@Override
+	public List<HookDefinition> getBeforeHooks() {
+		return new ArrayList<HookDefinition>();
+	}
+
+    @Override
+	public List<HookDefinition> getAfterHooks() {
+		return new ArrayList<HookDefinition>();
+	}
 
 }

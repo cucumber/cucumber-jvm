@@ -1,7 +1,5 @@
 package cucumber.runtime.model;
 
-import cucumber.runtime.Runtime;
-import cucumber.runtime.World;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Scenario;
@@ -9,6 +7,9 @@ import gherkin.formatter.model.Step;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import cucumber.runtime.Runtime;
+import cucumber.runtime.World;
 
 public class CucumberScenario {
     private final List<Step> steps = new ArrayList<Step>();
@@ -32,23 +33,25 @@ public class CucumberScenario {
         return steps;
     }
 
-    public void disposeWorld() {
+    public void disposeWorld() {   
+    	world.runAfterHooks();
         world.dispose();
     }
 
     public void newWorld(Runtime runtime) {
         world = runtime.newWorld();
+        world.runBeforeHooks();
     }
 
     public void run(Runtime runtime, Formatter formatter, Reporter reporter) {
-        newWorld(runtime);
-        formatter.scenario(scenario);
+    	newWorld(runtime);
+        formatter.scenario(scenario);        
         for (Step step : steps) {
             formatter.step(step);
         }
         for (Step step : steps) {
             runStep(step, reporter);
-        }
+        }        
         disposeWorld();
     }
 

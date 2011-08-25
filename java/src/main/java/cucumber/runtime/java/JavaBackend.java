@@ -1,19 +1,29 @@
 package cucumber.runtime.java;
 
-import cucumber.annotation.Pending;
-import cucumber.resources.Resources;
-import cucumber.runtime.*;
 import gherkin.formatter.model.Step;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import cucumber.annotation.Before;
+import cucumber.annotation.Pending;
+import cucumber.resources.Resources;
+import cucumber.runtime.Backend;
+import cucumber.runtime.CucumberException;
+import cucumber.runtime.HookDefinition;
+import cucumber.runtime.PendingException;
+import cucumber.runtime.StepDefinition;
+import cucumber.runtime.Utils;
+
 public class JavaBackend implements Backend {
     private final ObjectFactory objectFactory;
     private List<StepDefinition> stepDefinitions = new ArrayList<StepDefinition>();
+    private List<HookDefinition> beforeHooks = new ArrayList<HookDefinition>();
+	private List<HookDefinition> afterHooks = new ArrayList<HookDefinition>();
 
     public JavaBackend(String packagePrefix) {
         this.objectFactory = Resources.instantiateExactlyOneSubclass(ObjectFactory.class, "cucumber.runtime");
@@ -74,4 +84,25 @@ public class JavaBackend implements Backend {
         m.append(")");
         return m.toString();
     }
+
+	void registerHook(Annotation annotation, Method method) {
+		Class<?> clazz = method.getDeclaringClass();
+        objectFactory.addClass(clazz);
+
+        if (annotation.annotationType().equals(Before.class)) {
+        	beforeHooks.add(new JavaHookDefinition(method, objectFactory));
+        } else {
+        	afterHooks.add(new JavaHookDefinition(method, objectFactory));
+        }
+	}
+
+	@Override
+	public List<HookDefinition> getBeforeHooks() {
+		return beforeHooks;
+	}
+
+	@Override
+	public List<HookDefinition> getAfterHooks() {		
+		return afterHooks;
+	}
 }
