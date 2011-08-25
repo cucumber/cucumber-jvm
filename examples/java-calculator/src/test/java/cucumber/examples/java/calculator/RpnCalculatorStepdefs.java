@@ -21,12 +21,12 @@ public class RpnCalculatorStepdefs {
     public void the_result_is(double expected) {
         assertEquals(expected, calc.value());
     }
-    
+
     @Before
-    public void before(){
+    public void before() {
 
     }
-    
+
     @After
     public void after() {
 
