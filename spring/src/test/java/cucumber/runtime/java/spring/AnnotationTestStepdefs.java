@@ -7,35 +7,35 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public class AnnotationTestStepdefs {
 
-	private boolean preDestroyCalled;
-	private boolean postConstructCalled;
-	private boolean autowired;
-	
-	@PostConstruct
-	public void postConstruct() {
-		postConstructCalled = true;
-	}
-	
-	@PreDestroy
-	public void preDestroy() {
-		preDestroyCalled = true;
-	}
-	
-	@Autowired
-	public void setAutowiredCollaborator(DummyComponent collaborator) {
-		autowired = true;
-	}
+    private boolean preDestroyCalled;
+    private boolean postConstructCalled;
+    private boolean autowired;
 
-	public boolean isAutowired() {
-		return autowired;
-	}
-	
-	public boolean isPostConstructCalled() {
-		return postConstructCalled;
-	}
-	
-	public boolean isPreDestroyCalled() {
-		return preDestroyCalled;
-	}
-	
+    @PostConstruct
+    public void postConstruct() {
+        postConstructCalled = true;
+    }
+
+    @PreDestroy
+    public void preDestroy() {
+        preDestroyCalled = true;
+    }
+
+    @Autowired
+    public void setAutowiredCollaborator(DummyComponent collaborator) {
+        autowired = true;
+    }
+
+    public boolean isAutowired() {
+        return autowired;
+    }
+
+    public boolean isPostConstructCalled() {
+        return postConstructCalled;
+    }
+
+    public boolean isPreDestroyCalled() {
+        return preDestroyCalled;
+    }
+
 }
