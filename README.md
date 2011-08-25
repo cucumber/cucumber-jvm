@@ -31,7 +31,13 @@ You will find an example under examples/java-calculator. You should be able to r
 
 ## Hacking
 
-To hack on Cucumber-JVM you need a JDK, Maven and Git to get the code.
+To hack on Cucumber-JVM you need a JDK, Maven and Git to get the code. You also need to set your IDE/text editor to use:
+
+* UTF-8 file encoding
+* LF (UNIX) line endings
+* 4 Space indent
+
+If we get a pull request where an entire file is changed because of insignificant whitespace changes we cannot see what you have changed.
 
 ### Building Cucumber-JVM
 

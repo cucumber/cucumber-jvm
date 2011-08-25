@@ -1,8 +1,5 @@
-target
-Gemfile.lock
+.settings
+.project
+.classpath
 *.iws
-tmp/
-doc/
-/.settings
-/.project
-/.idea
+target

@@ -21,7 +21,6 @@ public class PathWithLinesTest {
         assertEquals(asList(999L, 2000L), pathWithLines.lines);
     }
 
-
     @Test
     public void should_create_FileWithFilters_with_2_lines_and_windows_path() {
         PathWithLines pathWithLines = new PathWithLines("C:\\bar\\foo.feature:999:2000");

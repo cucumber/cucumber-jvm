@@ -7,39 +7,36 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.StaticApplicationContext;
 
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
 public class SpringFactory implements ObjectFactory {
-    private final Set<Class<?>> classes = new HashSet<Class<?>>();
-    private AbstractApplicationContext appContext;
-    private StaticApplicationContext stepDefContext;
-
+    private final StaticApplicationContext staticContext = new StaticApplicationContext();
+    private final AbstractApplicationContext classpathContext;
     public SpringFactory() {
-        stepDefContext = new StaticApplicationContext();
-        stepDefContext.refresh();
-        appContext = new ClassPathXmlApplicationContext(new String[]{"cucumber.xml"}, stepDefContext);
+        staticContext.refresh();
+        classpathContext = new ClassPathXmlApplicationContext(new String[]{"cucumber.xml"}, staticContext);
     }
 
+    @Override
+    public void addClass(final Class<?> clazz) {
+        staticContext.registerSingleton(clazz.getName(), clazz);
+    }
+
+    @Override
     public void createInstances() {
+        classpathContext.refresh();
     }
 
+    @Override
     public void disposeInstances() {
+        classpathContext.close();
     }
 
-    public void addClass(Class<?> clazz) {
-        if (!classes.contains(clazz)) {
-            stepDefContext.registerSingleton(clazz.getName(), clazz);
-        }
-        classes.add(clazz);
-    }
-
-    public <T> T getInstance(Class<T> type) {
-        Collection<T> beans = appContext.getBeansOfType(type).values();
-        if (beans.size() == 1) {
+    @Override
+    public <T> T getInstance(final Class<T> type) {
+        final Collection<T> beans = classpathContext.getBeansOfType(type).values();
+        if (beans.size() == 1)
             return beans.iterator().next();
-        } else {
+        else
             throw new CucumberException("Found " + beans.size() + " Beans for class " + type + ". Expected exactly 1.");
-        }
     }
 }
