@@ -1,42 +1,86 @@
 package cucumber.runtime.java.spring;
 
-import cucumber.runtime.CucumberException;
-import cucumber.runtime.java.ObjectFactory;
+import java.util.ArrayList;
+import java.util.Collection;
+
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor;
+import org.springframework.context.annotation.CommonAnnotationBeanPostProcessor;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.StaticApplicationContext;
 
-import java.util.Collection;
+import cucumber.runtime.CucumberException;
+import cucumber.runtime.java.ObjectFactory;
 
+/**
+ * Spring based implementation of ObjectFactory.
+ *
+ * <p>
+ * It uses two Spring contexts:
+ * <ul>
+ * <li>one which represents the application under test. This is configured by
+ * cucumber.xml (in the class path) and is never reloaded.</li>
+ * <li>one which contains the step definitions and is reloaded for each
+ * scenario.</li>
+ * </ul>
+ * </p>
+ *
+ * <p>
+ * Application beans are accessible from the step definitions using autowiring
+ * (with annotations).
+ * </p>
+ */
 public class SpringFactory implements ObjectFactory {
-    private final StaticApplicationContext staticContext = new StaticApplicationContext();
-    private final AbstractApplicationContext classpathContext;
-    public SpringFactory() {
-        staticContext.refresh();
-        classpathContext = new ClassPathXmlApplicationContext(new String[]{"cucumber.xml"}, staticContext);
+
+    private static AbstractApplicationContext applicationContext;
+
+    private StaticApplicationContext stepContext;
+    private final Collection<Class<?>> stepClasses = new ArrayList<Class<?>>();
+
+    static {
+        applicationContext = new ClassPathXmlApplicationContext(new String[] { "cucumber.xml" });
+        applicationContext.registerShutdownHook();
     }
 
     @Override
     public void addClass(final Class<?> clazz) {
-        staticContext.registerSingleton(clazz.getName(), clazz);
+        stepClasses.add(clazz);
     }
 
     @Override
     public void createInstances() {
-        classpathContext.refresh();
+        createNewStepContext();
+        populateStepContext();
+    }
+
+    private void createNewStepContext() {
+        stepContext = new StaticApplicationContext(applicationContext);
+        AutowiredAnnotationBeanPostProcessor autowirer = new AutowiredAnnotationBeanPostProcessor();
+        autowirer.setBeanFactory(stepContext.getBeanFactory());
+        stepContext.getBeanFactory().addBeanPostProcessor(autowirer);
+        stepContext.getBeanFactory().addBeanPostProcessor(new CommonAnnotationBeanPostProcessor());
+    }
+
+    private void populateStepContext() {
+        for (Class<?> stepClass : stepClasses) {
+            stepContext.registerSingleton(stepClass.getName(), stepClass);
+        }
+        stepContext.refresh();
     }
 
     @Override
     public void disposeInstances() {
-        classpathContext.close();
+        stepContext.close();
     }
 
     @Override
     public <T> T getInstance(final Class<T> type) {
-        final Collection<T> beans = classpathContext.getBeansOfType(type).values();
-        if (beans.size() == 1)
-            return beans.iterator().next();
-        else
-            throw new CucumberException("Found " + beans.size() + " Beans for class " + type + ". Expected exactly 1.");
+        try {
+            return stepContext.getBean(type);
+        } catch (NoSuchBeanDefinitionException exception) {
+            throw new CucumberException(exception.getMessage(), exception);
+        }
     }
+
 }
