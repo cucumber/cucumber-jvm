@@ -26,7 +26,7 @@ public class TemperatureStepdefs {
     }
 
     @Before
-    public void startChrome() throws Exception {
+    public void startBrowser() throws Exception {
         try {
             browser = new ChromeDriver();
         } catch (Exception e) {

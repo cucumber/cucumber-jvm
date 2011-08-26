@@ -1,4 +1,3 @@
-@chrome
 Feature: Temperature conversion
   
   Scenario: Celcius to Fahrenheit
