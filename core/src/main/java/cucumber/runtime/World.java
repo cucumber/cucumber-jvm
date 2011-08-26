@@ -23,23 +23,26 @@ public class World {
     }
     
     public void prepare() {
+        List<HookDefinition> hooks = new ArrayList<HookDefinition>();
         for (Backend backend : backends) {
             backend.newWorld();
-
-            List<HookDefinition> hooks = backend.getBeforeHooks();
-            for (HookDefinition hook : hooks) {
-                runHookMaybe(hook);
-            }
+            hooks.addAll(backend.getBeforeHooks());
+        }
+        Collections.sort(hooks, new HookComparator(true));
+        for (HookDefinition hook : hooks) {
+            runHookMaybe(hook);
         }
     }
 
     public void dispose() {
+        List<HookDefinition> hooks = new ArrayList<HookDefinition>();
         for (Backend backend : backends) {
             backend.disposeWorld();
-            List<HookDefinition> hooks = backend.getAfterHooks();
-            for (HookDefinition hook : hooks) {
-                runHookMaybe(hook);
-            }
+            hooks.addAll(backend.getAfterHooks());            
+        }
+        Collections.sort(hooks, new HookComparator(false));
+        for (HookDefinition hook : hooks) {
+            runHookMaybe(hook);            
         }
     }
 
@@ -80,6 +83,21 @@ public class World {
                 Result result = new Result(status, duration, e, DUMMY_ARG);
                 reporter.result(result);
             }
+        }
+    }
+    
+    private final class HookComparator implements Comparator<HookDefinition> {
+        
+        final boolean ascending;
+        
+        public HookComparator(boolean ascending) {
+            this.ascending = ascending;
+        }
+        
+        @Override
+        public int compare(HookDefinition hook1, HookDefinition hook2) {                
+            int comparison = hook1.getOrder() - hook2.getOrder();
+            return ascending ? comparison : -comparison;
         }
     }
 }

@@ -2,6 +2,7 @@ package cucumber.runtime.java;
 
 import cucumber.annotation.After;
 import cucumber.annotation.Before;
+import cucumber.annotation.Order;
 import cucumber.runtime.HookDefinition;
 import org.junit.Test;
 
@@ -43,6 +44,20 @@ public class JavaHookTest {
         assertEquals(0, backend.getBeforeHooks().size());
         assertEquals(AFTER, hookDef.getMethod());
     }
+    
+    @Test
+    public void hook_order_gets_registered() {
+        backend.registerHook(AFTER.getAnnotation(After.class), AFTER);
+        HookDefinition hookDef = backend.getAfterHooks().get(0);
+        assertEquals(1, hookDef.getOrder());
+    }
+    
+    @Test
+    public void hook_with_no_order_is_last() {
+        backend.registerHook(BEFORE.getAnnotation(Before.class), BEFORE);
+        HookDefinition hookDef = backend.getBeforeHooks().get(0);
+        assertEquals(Integer.MAX_VALUE, hookDef.getOrder());
+    }
 
     @Test
     public void matches_matching_tags() {
@@ -65,6 +80,7 @@ public class JavaHookTest {
 
         }
 
+        @Order(1)
         @After
         public void after() {
 

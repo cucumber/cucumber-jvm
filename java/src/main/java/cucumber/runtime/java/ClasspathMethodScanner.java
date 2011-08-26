@@ -2,6 +2,7 @@ package cucumber.runtime.java;
 
 import cucumber.annotation.After;
 import cucumber.annotation.Before;
+import cucumber.annotation.Order;
 import cucumber.resources.Resources;
 
 import java.io.IOException;
@@ -43,7 +44,7 @@ public class ClasspathMethodScanner {
     private void scan(Method method, Collection<Class<? extends Annotation>> cucumberAnnotationClasses, JavaBackend javaBackend) {
         for (Class<? extends Annotation> cucumberAnnotationClass : cucumberAnnotationClasses) {
             Annotation annotation = method.getAnnotation(cucumberAnnotationClass);
-            if (annotation != null) {
+            if (annotation != null && !annotation.annotationType().equals(Order.class)) {
                 if (isHookAnnotation(annotation)) {
                     javaBackend.registerHook(annotation, method);
                 } else {
