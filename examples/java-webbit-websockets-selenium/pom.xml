@@ -11,15 +11,30 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>java-calculator</artifactId>
+    <artifactId>java-webbit-websockets-selenium</artifactId>
     <packaging>jar</packaging>
-    <name>Examples: Java Calculator</name>
+    <name>Examples: Webbit WebSockets tested with Selenium</name>
 
     <dependencies>
+        <dependency>
+            <groupId>org.webbitserver</groupId>
+            <artifactId>webbit</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>info.cukes</groupId>
             <artifactId>cucumber-picocontainer</artifactId>
             <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-chrome-driver</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-server</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

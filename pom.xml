@@ -122,13 +122,18 @@
             </dependency>
             <dependency>
                 <groupId>org.seleniumhq.selenium</groupId>
-                <artifactId>selenium-htmlunit-driver</artifactId>
-                <version>2.4.0</version>
+                <artifactId>selenium-chrome-driver</artifactId>
+                <version>2.5.0</version>
             </dependency>
             <dependency>
                 <groupId>org.seleniumhq.selenium</groupId>
-                <artifactId>selenium-firefox-driver</artifactId>
-                <version>2.4.0</version>
+                <artifactId>selenium-server</artifactId>
+                <version>2.5.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.webbitserver</groupId>
+                <artifactId>webbit</artifactId>
+                <version>0.2.0</version>
             </dependency>
             <dependency>
                 <groupId>log4j</groupId>
@@ -223,6 +228,7 @@
             <id>examples</id>
             <modules>
                 <module>examples/java-calculator</module>
+                <module>examples/java-webbit-websockets-selenium</module>
             </modules>
         </profile>
 
