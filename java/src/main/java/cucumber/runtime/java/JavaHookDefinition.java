@@ -14,11 +14,13 @@ public class JavaHookDefinition implements HookDefinition {
     private final ObjectFactory objectFactory;
     private final Method method;
     private final TagExpression tagExpression;
+    private final int order;
 
-    public JavaHookDefinition(Method method, String[] tagExpressions, ObjectFactory objectFactory) {
+    public JavaHookDefinition(Method method, String[] tagExpressions, int order, ObjectFactory objectFactory) {
         this.method = method;
         tagExpression = new TagExpression(asList(tagExpressions));
         this.objectFactory = objectFactory;
+        this.order = order;
     }
 
     Method getMethod() {
@@ -39,6 +41,11 @@ public class JavaHookDefinition implements HookDefinition {
     @Override
     public boolean matches(Collection<String> tags) {
         return tagExpression.eval(tags);
+    }
+
+    @Override
+    public int getOrder() {
+        return order;
     }
 
 }
