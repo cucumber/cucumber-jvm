@@ -36,7 +36,7 @@ public class TemperatureStepdefs {
     }
 
     @After
-    public void closeBrowser() throws IOException {
+    public void closeBrowser() {
         browser.close();
     }
 
@@ -46,7 +46,7 @@ public class TemperatureStepdefs {
     }
 
     @Given("^I am on the front page$")
-    public void i_am_on_the_front_page() throws InterruptedException {
+    public void i_am_on_the_front_page() {
         browser.get("http://localhost:" + PORT);
     }
 
