@@ -34,12 +34,12 @@ public class World {
     }
 
     public void dispose() {
-        for (Backend backend : backends) {
-            backend.disposeWorld();
+        for (Backend backend : backends) {            
             List<HookDefinition> hooks = backend.getAfterHooks();
             for (HookDefinition hook : hooks) {
                 runHookMaybe(hook);
             }
+            backend.disposeWorld();
         }
     }
 
