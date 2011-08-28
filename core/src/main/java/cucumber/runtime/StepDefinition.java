@@ -5,6 +5,8 @@ import gherkin.formatter.model.Step;
 
 import java.util.List;
 
+import cucumber.table.TableParser;
+
 public interface StepDefinition {
     /**
      * Returns a list of arguments. Return null if the step definition
@@ -45,4 +47,13 @@ public interface StepDefinition {
      * @return the pattern associated with this instance. Used for error reporting only.
      */
     String getPattern();
+
+    /**
+     * 
+     * @param argIndex
+     *            : index of the argument
+     * @return the {@link TableArgumentProcessor} associated with the argument
+     *         at argIndex or null if there's none
+     */
+    TableArgumentProcessor getTableProcessor(int argIndex);
 }

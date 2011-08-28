@@ -2,6 +2,7 @@ package cucumber.runtime.groovy;
 
 import cucumber.runtime.JdkPatternArgumentMatcher;
 import cucumber.runtime.StepDefinition;
+import cucumber.runtime.TableArgumentProcessor;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 import groovy.lang.Closure;
@@ -47,5 +48,10 @@ public class GroovyStepDefinition implements StepDefinition {
     @Override
     public String getPattern() {
         return pattern.pattern();
+    }
+
+    @Override
+    public TableArgumentProcessor getTableProcessor(int argIndex) {
+        return null;
     }
 }

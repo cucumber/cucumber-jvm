@@ -1,11 +1,16 @@
 package cucumber.runtime.java;
 
+import cucumber.annotation.TableProcessorInfo;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.JdkPatternArgumentMatcher;
 import cucumber.runtime.StepDefinition;
+import cucumber.runtime.TableArgumentProcessor;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -56,5 +61,48 @@ public class JavaStepDefinition implements StepDefinition {
     @Override
     public String getPattern() {
         return pattern.pattern();
+    }
+
+    @Override
+    public TableArgumentProcessor getTableProcessor(int argIndex) {
+        Annotation[] annotations = this.method.getParameterAnnotations()[argIndex];
+        for (Annotation annotation : annotations) {
+            if (annotation instanceof TableProcessorInfo) {
+                return newTableArgumentProcessor((TableProcessorInfo) annotation);
+            } else if (annotation.annotationType().isAnnotationPresent(TableProcessorInfo.class)) {
+                return newTableArgumentProcessor(annotation.annotationType().getAnnotation(TableProcessorInfo.class), annotation);
+            }
+        }
+        return null;
+    }
+
+    private TableArgumentProcessor newTableArgumentProcessor(TableProcessorInfo tableProcessorInfo, Annotation extraInfo) {
+        try {
+            Method valueMethod = extraInfo.annotationType().getMethod("value");
+            Constructor<? extends TableArgumentProcessor> constructor = tableProcessorInfo.processorClass().getConstructor(valueMethod.getReturnType());
+            return constructor.newInstance(valueMethod.invoke(extraInfo));
+        } catch (IllegalArgumentException e) {
+            throw new CucumberException("Error instantiating " + tableProcessorInfo.processorClass(), e);
+        } catch (InstantiationException e) {
+            throw new CucumberException("Error instantiating " + tableProcessorInfo.processorClass(), e);
+        } catch (IllegalAccessException e) {
+            throw new CucumberException("Error instantiating " + tableProcessorInfo.processorClass(), e);
+        } catch (InvocationTargetException e) {
+            throw new CucumberException("Error instantiating " + tableProcessorInfo.processorClass(), e);
+        } catch (SecurityException e) {
+            throw new CucumberException("Error instantiating " + tableProcessorInfo.processorClass(), e);
+        } catch (NoSuchMethodException e) {
+            throw new CucumberException("Error instantiating " + tableProcessorInfo.processorClass(), e);
+        }
+    }
+
+    private TableArgumentProcessor newTableArgumentProcessor(TableProcessorInfo tableProcessorInfo) {
+        try {
+            return tableProcessorInfo.processorClass().newInstance();
+        } catch (InstantiationException e) {
+            throw new CucumberException("Error instantiating " + tableProcessorInfo.processorClass(), e);
+        } catch (IllegalAccessException e) {
+            throw new CucumberException("Error instantiating " + tableProcessorInfo.processorClass(), e);
+        }
     }
 }

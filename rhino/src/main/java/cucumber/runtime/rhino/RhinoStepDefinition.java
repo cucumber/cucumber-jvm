@@ -1,6 +1,7 @@
 package cucumber.runtime.rhino;
 
 import cucumber.runtime.StepDefinition;
+import cucumber.runtime.TableArgumentProcessor;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 import org.mozilla.javascript.Context;
@@ -59,5 +60,10 @@ public class RhinoStepDefinition implements StepDefinition {
     @Override
     public String getPattern() {
         return regexp.toString();
+    }
+
+    @Override
+    public TableArgumentProcessor getTableProcessor(int argIndex) {
+        return null;
     }
 }
