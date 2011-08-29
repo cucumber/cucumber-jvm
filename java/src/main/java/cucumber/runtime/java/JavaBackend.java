@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import cucumber.annotation.Before;
+import cucumber.annotation.Order;
 import cucumber.annotation.Pending;
 import cucumber.resources.Resources;
 import cucumber.runtime.Backend;
@@ -92,13 +93,16 @@ public class JavaBackend implements Backend {
     void registerHook(Annotation annotation, Method method) {
         Class<?> clazz = method.getDeclaringClass();
         objectFactory.addClass(clazz);
+        
+        Order order = method.getAnnotation(Order.class);
+        int hookOrder = (order == null) ? Integer.MAX_VALUE : order.value();
 
         if (annotation.annotationType().equals(Before.class)) {
             String[] tagExpressions = ((Before) annotation).value();
-            beforeHooks.add(new JavaHookDefinition(method, tagExpressions, objectFactory));
+            beforeHooks.add(new JavaHookDefinition(method, tagExpressions, hookOrder, objectFactory));
         } else {
             String[] tagExpressions = ((After) annotation).value();
-            afterHooks.add(new JavaHookDefinition(method, tagExpressions, objectFactory));
+            afterHooks.add(new JavaHookDefinition(method, tagExpressions, hookOrder, objectFactory));
         }
     }
 
