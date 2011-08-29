@@ -14,7 +14,11 @@ trait ScalaDsl { self =>
   }
 
   def Before(tags: String*)(f: => Unit) {
-    beforeHooks += new ScalaHookDefinition(f _, tags)
+    Before(Int.MaxValue, tags :_*)(f)
+  }
+
+  def Before(order:Int, tags:String*)(f: => Unit){
+    beforeHooks += new ScalaHookDefinition(f _, order, tags)
   }
 
   def After(f: => Unit){
@@ -22,7 +26,11 @@ trait ScalaDsl { self =>
   }
 
   def After(tags: String*)(f: => Unit) {
-    afterHooks += new ScalaHookDefinition(f _, tags)
+    After(Int.MaxValue, tags:_*)(f)
+  }
+
+  def After(order:Int, tags: String*)(f: => Unit){
+    afterHooks += new ScalaHookDefinition(f _, order, tags)
   }
 
   final class Step(name: String) {

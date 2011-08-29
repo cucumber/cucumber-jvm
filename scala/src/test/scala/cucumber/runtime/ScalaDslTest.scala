@@ -22,6 +22,7 @@ class ScalaDslTest {
     assertTrue(hook.matches(List[String]().asJava))
     hook.execute()
     assertTrue(called)
+    assertEquals(Int.MaxValue, hook.getOrder)
   }
 
   @Test
@@ -43,6 +44,37 @@ class ScalaDslTest {
 
     hook.execute()
     assertTrue(called)
+    assertEquals(Int.MaxValue, hook.getOrder)
+  }
+
+  @Test
+  def orderedBefore {
+
+    var called = false
+
+    object Befores extends ScalaDsl with EN {
+      Before(10){
+        called = true
+      }
+    }
+
+    val hook = Befores.beforeHooks(0)
+    assertEquals(10, hook.getOrder)
+  }
+
+  @Test
+  def taggedOrderedBefore {
+
+    var called = false
+
+    object Befores extends ScalaDsl with EN {
+      Before(10, "@foo,@bar", "@zap"){
+        called = true
+      }
+    }
+
+    val hook = Befores.beforeHooks(0)
+    assertEquals(10, hook.getOrder)
   }
 
   @Test
@@ -96,7 +128,7 @@ class ScalaDslTest {
 
     assertEquals(1, Dummy.stepDefinitions.size)
     val step = Dummy.stepDefinitions.head
-    assertEquals("ScalaDslTest.scala:92", step.getLocation) // be careful with formatting or this test will break
+    assertEquals("ScalaDslTest.scala:124", step.getLocation) // be careful with formatting or this test will break
     assertEquals("x", step.getPattern)
     step.execute(Array())
     assertTrue(called)
