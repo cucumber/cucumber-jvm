@@ -11,4 +11,6 @@ class ScalaHookDefinition(f:() => Unit, tags:Seq[String]) extends HookDefinition
   def execute() { f() }
 
   def matches(tags: Collection[String]) = tagExpression.eval(tags)
+
+  def getOrder() = Integer.MAX_VALUE
 }
