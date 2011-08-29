@@ -21,7 +21,7 @@ public class World {
         this.runtime = runtime;
         this.tags = tags;
     }
-    
+
     public void prepare() {
         List<HookDefinition> hooks = new ArrayList<HookDefinition>();
         for (Backend backend : backends) {
@@ -37,12 +37,14 @@ public class World {
     public void dispose() {
         List<HookDefinition> hooks = new ArrayList<HookDefinition>();
         for (Backend backend : backends) {
-            backend.disposeWorld();
-            hooks.addAll(backend.getAfterHooks());            
+            hooks.addAll(backend.getAfterHooks());
         }
         Collections.sort(hooks, new HookComparator(false));
         for (HookDefinition hook : hooks) {
-            runHookMaybe(hook);            
+            runHookMaybe(hook);
+        }
+        for (Backend backend : backends) {
+            backend.disposeWorld();
         }
     }
 
@@ -56,7 +58,7 @@ public class World {
             }
         }
     }
-    
+
     public void runStep(String uri, Step step, Reporter reporter, Locale locale) {
         StepDefinitionMatch match = runtime.stepDefinitionMatch(uri, step);
         if (match != null) {
@@ -85,17 +87,17 @@ public class World {
             }
         }
     }
-    
+
     private final class HookComparator implements Comparator<HookDefinition> {
-        
+
         final boolean ascending;
-        
+
         public HookComparator(boolean ascending) {
             this.ascending = ascending;
         }
-        
+
         @Override
-        public int compare(HookDefinition hook1, HookDefinition hook2) {                
+        public int compare(HookDefinition hook1, HookDefinition hook2) {
             int comparison = hook1.getOrder() - hook2.getOrder();
             return ascending ? comparison : -comparison;
         }
