@@ -34,6 +34,20 @@
   <component name="EntryPointsManager">
     <entry_points version="2.0" />
   </component>
+  <component name="FacetAutodetectingManager">
+    <autodetection-disabled>
+      <facet-type id="scala">
+        <modules>
+          <module name="scala" />
+          <module name="scala-calculator" />
+        </modules>
+      </facet-type>
+    </autodetection-disabled>
+  </component>
+  <component name="HighlightingAdvisor">
+    <option name="SUGGEST_TYPE_AWARE_HIGHLIGHTING" value="false" />
+    <option name="TYPE_AWARE_HIGHLIGHTING_ENABLED" value="true" />
+  </component>
   <component name="InspectionProjectProfileManager">
     <profiles>
       <profile version="1.0" is_locked="false">
@@ -267,8 +281,9 @@
       <module fileurl="file://$PROJECT_DIR$/parent.iml" filepath="$PROJECT_DIR$/parent.iml" />
       <module fileurl="file://$PROJECT_DIR$/picocontainer/picocontainer.iml" filepath="$PROJECT_DIR$/picocontainer/picocontainer.iml" />
       <module fileurl="file://$PROJECT_DIR$/rhino/rhino.iml" filepath="$PROJECT_DIR$/rhino/rhino.iml" />
+      <module fileurl="file://$PROJECT_DIR$/scala/scala.iml" filepath="$PROJECT_DIR$/scala/scala.iml" />
+      <module fileurl="file://$PROJECT_DIR$/examples/scala-calculator/scala-calculator.iml" filepath="$PROJECT_DIR$/examples/scala-calculator/scala-calculator.iml" />
       <module fileurl="file://$PROJECT_DIR$/spring/spring.iml" filepath="$PROJECT_DIR$/spring/spring.iml" />
-      <module fileurl="file://$PROJECT_DIR$/weld/weld.iml" filepath="$PROJECT_DIR$/weld/weld.iml" />
       <module fileurl="file://$PROJECT_DIR$/weld/weld.iml" filepath="$PROJECT_DIR$/weld/weld.iml" />
     </modules>
   </component>
@@ -755,6 +770,36 @@
       </JAVADOC>
       <SOURCES>
         <root url="jar://$MAVEN_REPOSITORY$/org/picocontainer/picocontainer/2.13.6/picocontainer-2.13.6-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.scala-lang:scala-compiler-bundle:2.9.0-1">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/scala-lang/scala-compiler/2.9.0-1/scala-compiler-2.9.0-1.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/scala-lang/scala-library/2.9.0-1/scala-library-2.9.0-1.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="Maven: org.scala-lang:scala-compiler:2.9.0-1">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/scala-lang/scala-compiler/2.9.0-1/scala-compiler-2.9.0-1.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/org/scala-lang/scala-compiler/2.9.0-1/scala-compiler-2.9.0-1-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/scala-lang/scala-compiler/2.9.0-1/scala-compiler-2.9.0-1-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.scala-lang:scala-library:2.9.0-1">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/scala-lang/scala-library/2.9.0-1/scala-library-2.9.0-1.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/org/scala-lang/scala-library/2.9.0-1/scala-library-2.9.0-1-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/scala-lang/scala-library/2.9.0-1/scala-library-2.9.0-1-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: org.seleniumhq.selenium:selenium-android-driver:2.5.0">
