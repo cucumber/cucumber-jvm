@@ -43,10 +43,10 @@ public class Main {
             System.exit(1);
         }
 
-        Runner runner = new Runner(runtime, filesOrDirs, filters);
+        Runner runner = new Runner(runtime);
 
         PrettyFormatter prettyFormatter = new PrettyFormatter(System.out, false, true);
-        runner.run(prettyFormatter, prettyFormatter);
+        runner.run(filesOrDirs, filters, prettyFormatter, prettyFormatter);
 
         new SnippetPrinter(System.out).printSnippets(runtime);
 
