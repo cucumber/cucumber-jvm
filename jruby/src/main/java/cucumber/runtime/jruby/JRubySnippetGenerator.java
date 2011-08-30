@@ -12,7 +12,7 @@ public class JRubySnippetGenerator extends SnippetGenerator {
 
     @Override
     protected String template() {
-        return "{0} '/' {1}'/'  do {3}\n" +
+        return "{0} '/'{1}'/' do {3}\n" +
                 "  # {4}\n" +
                 "end\n";
     }
