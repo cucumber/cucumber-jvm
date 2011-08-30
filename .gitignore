@@ -4,3 +4,4 @@
 *.iws
 target
 chromedriver.log
+Gemfile.lock

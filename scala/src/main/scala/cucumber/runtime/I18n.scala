@@ -33,8 +33,8 @@ trait CA {
 trait CS {
   this: ScalaDsl =>
   val A = new Step("A")
-  val Ataké = new Step("Ataké")
   val Ale = new Step("Ale")
+  val Ataké = new Step("Ataké")
   val Když = new Step("Když")
   val Pak = new Step("Pak")
   val Pokud = new Step("Pokud")
@@ -197,6 +197,14 @@ trait ID {
   val Maka = new Step("Maka")
   val Tapi = new Step("Tapi")
 }
+trait IS {
+  this: ScalaDsl =>
+  val Ef = new Step("Ef")
+  val En = new Step("En")
+  val Og = new Step("Og")
+  val Þegar = new Step("Þegar")
+  val Þá = new Step("Þá")
+}
 trait IT {
   this: ScalaDsl =>
   val Allora = new Step("Allora")
@@ -272,7 +280,10 @@ trait NO {
 trait PL {
   this: ScalaDsl =>
   val Ale = new Step("Ale")
+  val I = new Step("I")
+  val Jeśli = new Step("Jeśli")
   val Jeżeli = new Step("Jeżeli")
+  val Mając = new Step("Mając")
   val Oraz = new Step("Oraz")
   val Wtedy = new Step("Wtedy")
   val Zakładając = new Step("Zakładając")
@@ -290,16 +301,15 @@ trait RO {
   this: ScalaDsl =>
   val Atunci = new Step("Atunci")
   val Cand = new Step("Cand")
-  val Daca = new Step("Daca")
-  val Dar = new Step("Dar")
-  val Si = new Step("Si")
-}
-trait RO_RO {
-  this: ScalaDsl =>
-  val Atunci = new Step("Atunci")
   val Când = new Step("Când")
-  val Dacă = new Step("Dacă")
   val Dar = new Step("Dar")
+  val Datefiind = new Step("Datefiind")
+  val Datfiind = new Step("Datfiind")
+  val Datifiind = new Step("Datifiind")
+  val Daţifiind = new Step("Daţifiind")
+  val Dațifiind = new Step("Dațifiind")
+  val Si = new Step("Si")
+  val Şi = new Step("Şi")
   val Și = new Step("Și")
 }
 trait RU {
@@ -309,8 +319,8 @@ trait RU {
   val Допустим = new Step("Допустим")
   val Если = new Step("Если")
   val И = new Step("И")
-  val Ктомуже = new Step("Ктомуже")
   val Когда = new Step("Когда")
+  val Ктомуже = new Step("Ктомуже")
   val Но = new Step("Но")
   val Пусть = new Step("Пусть")
   val То = new Step("То")
@@ -366,8 +376,8 @@ trait TR {
 trait UK {
   this: ScalaDsl =>
   val І = new Step("І")
-  val Атакож = new Step("Атакож")
   val Але = new Step("Але")
+  val Атакож = new Step("Атакож")
   val Дано = new Step("Дано")
   val Коли = new Step("Коли")
   val Нехай = new Step("Нехай")
