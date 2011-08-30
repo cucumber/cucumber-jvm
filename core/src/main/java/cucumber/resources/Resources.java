@@ -12,14 +12,11 @@ import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import static java.util.Collections.emptyList;
-
 /**
  * Static utility methods for looking up classes and resources on the classpath.
+ * TODO: Look them op on the file system as well. The CLI needs to offer resources like that. DUH!
  */
 public class Resources {
-    private static final List<Object> NO_FILTERS = emptyList();
-
     public static Set<Class<?>> getInstantiableClasses(final String packagePrefix) {
         final Set<Class<?>> classes = new HashSet<Class<?>>();
         final Consumer consumer = new Consumer() {
@@ -29,7 +26,9 @@ public class Resources {
                 try {
                     addClassIfInstantiable(classes, className);
                 } catch (NoClassDefFoundError ignore) {
+                    ignore.printStackTrace();
                 } catch (ClassNotFoundException ignore) {
+                    ignore.printStackTrace();
                 }
             }
         };
@@ -153,12 +152,16 @@ public class Resources {
     }
 
     private static void scanFilesystem(URL startDir, PathWithLines pathPrefix, String suffix, Consumer consumer) {
-        PathWithLines dir = new PathWithLines(startDir.getFile());
-        String rootPath = startDir.getFile().substring(0, startDir.getFile().length() - pathPrefix.path.length() - 1);
+        PathWithLines dir = new PathWithLines(getPath(startDir));
+        String rootPath = getPath(startDir).substring(0, getPath(startDir).length() - pathPrefix.path.length() - 1);
         File rootDir = new File(rootPath);
         scanFilesystem(rootDir, dir, suffix, consumer);
     }
 
+    private static String getPath(URL url) {
+        return url.getPath().replaceAll("%20", " ");
+    }
+    
     private static void scanFilesystem(File rootDir, PathWithLines pathWithLines, String suffix, Consumer consumer) {
         File file = new File(pathWithLines.path);
         if (file.isDirectory()) {

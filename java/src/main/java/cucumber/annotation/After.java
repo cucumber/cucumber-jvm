@@ -8,5 +8,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface After {
-    String[] value() default "";
+    /**
+     * @return a tag expression
+     */
+    String[] value() default {};
 }

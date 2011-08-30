@@ -37,18 +37,18 @@ public class TableDiffer {
             if (delta == null) {
                 diffTableRows.add(orig.getGherkinRows().get(i));
             } else {
-                i += addRowsToTableDiffAndReturnNumberOfRows(diffTableRows, orig.getGherkinRows(), delta);
+                i += addRowsToTableDiffAndReturnNumberOfRows(diffTableRows, delta);
             }
         }
         // Can have new lines at end
         Delta remainingDelta = deltasByLine.get(rows.size());
         if (remainingDelta != null) {
-            addRowsToTableDiffAndReturnNumberOfRows(diffTableRows, orig.getGherkinRows(), remainingDelta);
+            addRowsToTableDiffAndReturnNumberOfRows(diffTableRows, remainingDelta);
         }
         return new Table(diffTableRows, orig.getLocale());
     }
 
-    private int addRowsToTableDiffAndReturnNumberOfRows(List<Row> diffTableRows, List<Row> origRows, Delta delta) {
+    private int addRowsToTableDiffAndReturnNumberOfRows(List<Row> diffTableRows, Delta delta) {
         if (delta.getType() == Delta.TYPE.CHANGE || delta.getType() == Delta.TYPE.DELETE) {
             List<Table.DiffableRow> deletedLines = (List<Table.DiffableRow>) delta.getOriginal().getLines();
             for (Table.DiffableRow row : deletedLines) {

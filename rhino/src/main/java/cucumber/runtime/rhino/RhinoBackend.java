@@ -5,6 +5,7 @@ import cucumber.resources.Resources;
 import cucumber.resources.Consumer;
 import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
+import cucumber.runtime.HookDefinition;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.javascript.JavascriptSnippetGenerator;
 import gherkin.formatter.model.Step;
@@ -85,5 +86,15 @@ public class RhinoBackend implements Backend {
         StackTraceElement stepDefLocation = stepDefLocation(".js");
         RhinoStepDefinition stepDefinition = new RhinoStepDefinition(cx, scope, jsStepDefinition, regexp, bodyFunc, stepDefLocation, argumentsFromFunc);
         stepDefinitions.add(stepDefinition);
+    }
+    
+    @Override
+    public List<HookDefinition> getBeforeHooks() {
+        return new ArrayList<HookDefinition>();
+    }
+
+    @Override
+    public List<HookDefinition> getAfterHooks() {
+        return new ArrayList<HookDefinition>();
     }
 }

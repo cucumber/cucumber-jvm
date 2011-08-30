@@ -17,14 +17,10 @@
 
     <dependencies>
         <dependency>
-            <groupId>gherkin</groupId>
-            <artifactId>gherkin</artifactId>
-            <version>2.4.14</version>
-        </dependency>
-        <dependency>
             <groupId>info.cukes</groupId>
             <artifactId>cucumber-picocontainer</artifactId>
             <version>${project.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

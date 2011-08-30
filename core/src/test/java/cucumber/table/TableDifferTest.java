@@ -56,14 +56,6 @@ public class TableDifferTest {
         }
     }
 
-    private String pretty(Table table) {
-        StringBuilder result = new StringBuilder();
-        PrettyFormatter pf = new PrettyFormatter(result, true, false);
-        pf.table(table.getGherkinRows());
-        pf.eof();
-        return result.toString();
-    }
-
     @Test(expected = TableDiffException.class)
     public void shouldFindNewLinesAtEnd() {
         try {
@@ -82,4 +74,11 @@ public class TableDifferTest {
         }
     }
 
+    private String pretty(Table table) {
+        StringBuilder result = new StringBuilder();
+        PrettyFormatter pf = new PrettyFormatter(result, true, false);
+        pf.table(table.getGherkinRows());
+        pf.eof();
+        return result.toString();
+    }
 }

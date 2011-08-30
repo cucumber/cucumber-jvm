@@ -4,6 +4,7 @@ import cucumber.resources.Resource;
 import cucumber.resources.Resources;
 import cucumber.resources.Consumer;
 import cucumber.runtime.Backend;
+import cucumber.runtime.HookDefinition;
 import cucumber.runtime.StepDefinition;
 import gherkin.formatter.model.Step;
 import org.jruby.RubyObject;
@@ -54,5 +55,15 @@ public class JRubyBackend implements Backend {
     @Override
     public String getSnippet(Step step) {
         return new JRubySnippetGenerator(step).getSnippet();
+    }
+    
+    @Override
+    public List<HookDefinition> getBeforeHooks() {
+        return new ArrayList<HookDefinition>();
+    }
+
+    @Override
+    public List<HookDefinition> getAfterHooks() {
+        return new ArrayList<HookDefinition>();
     }
 }

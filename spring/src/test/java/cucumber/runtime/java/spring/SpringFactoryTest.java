@@ -1,31 +1,68 @@
 package cucumber.runtime.java.spring;
 
-import cucumber.runtime.java.ObjectFactory;
-import org.junit.Ignore;
-import org.junit.Test;
-
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
+
+import cucumber.runtime.java.ObjectFactory;
 
 public class SpringFactoryTest {
-    @Ignore("Needs to be fixed")
+
     @Test
-    public void shouldGiveUsNewInstancesForEachScenario() {
-        ObjectFactory factory = new SpringFactory();
+    public void shouldGiveUsNewStepInstancesForEachScenario() {
+        final ObjectFactory factory = new SpringFactory();
         factory.addClass(BellyStepdefs.class);
-        
+
         // Scenario 1
         factory.createInstances();
-        BellyStepdefs o1 = factory.getInstance(BellyStepdefs.class);
+        final BellyStepdefs o1 = factory.getInstance(BellyStepdefs.class);
         factory.disposeInstances();
 
         // Scenario 2
         factory.createInstances();
-        BellyStepdefs o2 = factory.getInstance(BellyStepdefs.class);
+        final BellyStepdefs o2 = factory.getInstance(BellyStepdefs.class);
         factory.disposeInstances();
-        
+
         assertNotNull(o1);
+        assertNotNull(o2);
         assertNotSame(o1, o2);
+    }
+
+    @Test
+    public void shouldNeverCreateNewApplicationBeanInstances() {
+        // Feature 1
+        final ObjectFactory factory1 = new SpringFactory();
+        factory1.createInstances();
+        final DummyComponent o1 = factory1.getInstance(DummyComponent.class);
+        factory1.disposeInstances();
+
+        // Feature 2
+        final ObjectFactory factory2 = new SpringFactory();
+        factory2.createInstances();
+        final DummyComponent o2 = factory2.getInstance(DummyComponent.class);
+        factory2.disposeInstances();
+
+        assertNotNull(o1);
+        assertNotNull(o2);
+        assertSame(o1, o2);
+    }
+
+    @Test
+    public void shouldRespectCommonAnnotationsInStepDefs() {
+        final ObjectFactory factory = new SpringFactory();
+        factory.addClass(AnnotationTestStepdefs.class);
+        factory.createInstances();
+        final AnnotationTestStepdefs stepdef = factory
+                .getInstance(AnnotationTestStepdefs.class);
+        factory.disposeInstances();
+
+        assertNotNull(stepdef);
+        assertTrue(stepdef.isAutowired());
+        assertTrue(stepdef.isPostConstructCalled());
+        assertTrue(stepdef.isPreDestroyCalled());
     }
 
 }

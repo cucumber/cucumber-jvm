@@ -17,15 +17,18 @@ public class StepDefinitionMatch extends Match {
     private final StepDefinition stepDefinition;
     private final Step step;
     private final Transformers transformers;
+    private final String uri;
 
-    public StepDefinitionMatch(List<Argument> arguments, StepDefinition stepDefinition, Step step, Transformers transformers) {
+    public StepDefinitionMatch(List<Argument> arguments, StepDefinition stepDefinition, String uri, Step step, Transformers transformers) {
         super(arguments, stepDefinition.getLocation());
         this.stepDefinition = stepDefinition;
         this.step = step;
         this.transformers = transformers;
+        this.uri = uri;
+
     }
 
-    public void runStep(Step step, String stackTracePath, Locale locale) throws Throwable {
+    public void runStep(Locale locale) throws Throwable {
         if (locale == null) {
             throw new NullPointerException("null Locale!");
         }
@@ -34,9 +37,9 @@ public class StepDefinitionMatch extends Match {
         } catch (CucumberException e) {
             throw e;
         } catch (InvocationTargetException t) {
-            throw filterStacktrace(t.getTargetException(), this.step.getStackTraceElement(stackTracePath));
+            throw filterStacktrace(t.getTargetException(), getStepLocation());
         } catch (Throwable t) {
-            throw filterStacktrace(t, this.step.getStackTraceElement(stackTracePath));
+            throw filterStacktrace(t, getStepLocation());
         }
     }
 
@@ -92,5 +95,9 @@ public class StepDefinitionMatch extends Match {
 
     public String getPattern() {
         return stepDefinition.getPattern();
+    }
+
+    public StackTraceElement getStepLocation() {
+        return step.getStackTraceElement(uri);
     }
 }

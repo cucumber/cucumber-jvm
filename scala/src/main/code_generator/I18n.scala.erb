@@ -1,6 +1,10 @@
+package cucumber.runtime
+
+<% Gherkin::I18n.all.each do |i18n| -%>
 trait <%= i18n.underscored_iso_code.upcase %> {
   this: ScalaDsl =>
-<% i18n.code_keywords.each do |kw| -%>
+<% i18n.code_keywords.sort.each do |kw| -%>
   val <%= kw %> = new Step("<%= kw %>")
 <% end -%>
 }
+<% end -%>

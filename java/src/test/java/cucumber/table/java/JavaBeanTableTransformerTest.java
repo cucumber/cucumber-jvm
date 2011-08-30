@@ -1,16 +1,12 @@
 package cucumber.table.java;
 
+import cucumber.table.Table;
 import gherkin.formatter.model.Comment;
 import gherkin.formatter.model.Row;
-
-import java.util.*;
-
-import junit.framework.Assert;
-
 import org.junit.Before;
 import org.junit.Test;
 
-import cucumber.table.Table;
+import java.util.*;
 
 import static junit.framework.Assert.assertEquals;
 
