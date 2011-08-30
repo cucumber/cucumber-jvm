@@ -464,6 +464,19 @@
         <root url="jar://$MAVEN_REPOSITORY$/gherkin/gherkin/2.4.16/gherkin-2.4.16-sources.jar!/" />
       </SOURCES>
     </library>
+    <library name="Maven: info.cukes:scala:1.0.0-SNAPSHOT">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/scala/1.0.0-SNAPSHOT/scala-1.0.0-SNAPSHOT.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$PROJECT_DIR$/scala/pom-javadoc.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/scala/1.0.0-SNAPSHOT/scala-1.0.0-SNAPSHOT-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$PROJECT_DIR$/scala/pom-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/scala/1.0.0-SNAPSHOT/scala-1.0.0-SNAPSHOT-sources.jar!/" />
+      </SOURCES>
+    </library>
     <library name="Maven: javax.annotation:jsr250-api:1.0">
       <CLASSES>
         <root url="jar://$MAVEN_REPOSITORY$/javax/annotation/jsr250-api/1.0/jsr250-api-1.0.jar!/" />

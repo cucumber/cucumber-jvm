@@ -11,7 +11,7 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>scala</artifactId>
+    <artifactId>cucumber-scala</artifactId>
     <packaging>jar</packaging>
     <name>Cucumber-JVM: Scala</name>
 
