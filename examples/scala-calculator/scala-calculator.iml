@@ -20,7 +20,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" scope="TEST" name="Maven: info.cukes:scala:1.0.0-SNAPSHOT" level="project" />
+    <orderEntry type="module" module-name="scala" scope="TEST" />
     <orderEntry type="module" module-name="core" scope="TEST" />
     <orderEntry type="library" scope="TEST" name="Maven: gherkin:gherkin:2.4.16" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: com.googlecode.json-simple:json-simple:1.1" level="project" />
