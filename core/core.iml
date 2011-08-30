@@ -25,6 +25,7 @@
     <orderEntry type="library" name="Maven: org.apache.ant:ant-launcher:1.8.2" level="project" />
     <orderEntry type="library" name="Maven: junit:junit:4.8.2" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.mockito:mockito-all:1.9.0-rc1" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: com.google.code.gson:gson:1.7.1" level="project" />
     <orderEntry type="library" name="Maven: com.googlecode.java-diff-utils:diffutils:1.2.1" level="project" />
   </component>
 </module>
