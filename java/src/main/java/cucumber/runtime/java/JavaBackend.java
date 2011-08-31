@@ -1,7 +1,11 @@
 package cucumber.runtime.java;
 
 import cucumber.annotation.After;
-import gherkin.TagExpression;
+import cucumber.annotation.Before;
+import cucumber.annotation.Order;
+import cucumber.annotation.Pending;
+import cucumber.resources.Resources;
+import cucumber.runtime.*;
 import gherkin.formatter.model.Step;
 
 import java.lang.annotation.Annotation;
@@ -10,19 +14,6 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
-
-import cucumber.annotation.Before;
-import cucumber.annotation.Order;
-import cucumber.annotation.Pending;
-import cucumber.resources.Resources;
-import cucumber.runtime.Backend;
-import cucumber.runtime.CucumberException;
-import cucumber.runtime.HookDefinition;
-import cucumber.runtime.PendingException;
-import cucumber.runtime.StepDefinition;
-import cucumber.runtime.Utils;
-
-import static java.util.Arrays.asList;
 
 public class JavaBackend implements Backend {
     private final ObjectFactory objectFactory;
@@ -93,7 +84,7 @@ public class JavaBackend implements Backend {
     void registerHook(Annotation annotation, Method method) {
         Class<?> clazz = method.getDeclaringClass();
         objectFactory.addClass(clazz);
-        
+
         Order order = method.getAnnotation(Order.class);
         int hookOrder = (order == null) ? Integer.MAX_VALUE : order.value();
 
@@ -112,7 +103,7 @@ public class JavaBackend implements Backend {
     }
 
     @Override
-    public List<HookDefinition> getAfterHooks() {		
+    public List<HookDefinition> getAfterHooks() {
         return afterHooks;
     }
 }

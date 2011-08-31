@@ -1,8 +1,8 @@
 package cucumber.runtime.rhino;
 
+import cucumber.resources.Consumer;
 import cucumber.resources.Resource;
 import cucumber.resources.Resources;
-import cucumber.resources.Consumer;
 import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.HookDefinition;
@@ -87,7 +87,7 @@ public class RhinoBackend implements Backend {
         RhinoStepDefinition stepDefinition = new RhinoStepDefinition(cx, scope, jsStepDefinition, regexp, bodyFunc, stepDefLocation, argumentsFromFunc);
         stepDefinitions.add(stepDefinition);
     }
-    
+
     @Override
     public List<HookDefinition> getBeforeHooks() {
         return new ArrayList<HookDefinition>();

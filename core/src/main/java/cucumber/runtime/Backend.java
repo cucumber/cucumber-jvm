@@ -16,8 +16,8 @@ public interface Backend {
     void disposeWorld();
 
     String getSnippet(Step step);
-    
+
     List<HookDefinition> getBeforeHooks();
-    
+
     List<HookDefinition> getAfterHooks();
 }

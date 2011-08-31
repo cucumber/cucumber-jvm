@@ -3,10 +3,14 @@ package cucumber.runtime.java;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.JdkPatternArgumentMatcher;
 import cucumber.runtime.StepDefinition;
+import cucumber.table.Table;
+import cucumber.table.java.JavaBeanTableTransformer;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -56,5 +60,16 @@ public class JavaStepDefinition implements StepDefinition {
     @Override
     public String getPattern() {
         return pattern.pattern();
+    }
+
+    @Override
+    public Object tableArgument(int argIndex, Table table) {
+        Type genericParameterType = method.getGenericParameterTypes()[argIndex];
+        if (genericParameterType instanceof ParameterizedType) {
+            Type[] parameters = ((ParameterizedType) genericParameterType).getActualTypeArguments();
+            return new JavaBeanTableTransformer((Class<?>) parameters[0]).transformTable(table);
+        } else {
+            return table;
+        }
     }
 }

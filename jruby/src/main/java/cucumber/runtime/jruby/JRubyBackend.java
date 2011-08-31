@@ -1,8 +1,8 @@
 package cucumber.runtime.jruby;
 
+import cucumber.resources.Consumer;
 import cucumber.resources.Resource;
 import cucumber.resources.Resources;
-import cucumber.resources.Consumer;
 import cucumber.runtime.Backend;
 import cucumber.runtime.HookDefinition;
 import cucumber.runtime.StepDefinition;
@@ -37,7 +37,7 @@ public class JRubyBackend implements Backend {
     public void registerStepdef(RubyObject stepdef) {
         stepDefinitions.add(new JRubyStepDefinition(stepdef));
     }
-    
+
     @Override
     public List<StepDefinition> getStepDefinitions() {
         return stepDefinitions;
@@ -56,7 +56,7 @@ public class JRubyBackend implements Backend {
     public String getSnippet(Step step) {
         return new JRubySnippetGenerator(step).getSnippet();
     }
-    
+
     @Override
     public List<HookDefinition> getBeforeHooks() {
         return new ArrayList<HookDefinition>();
