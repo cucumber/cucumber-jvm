@@ -19,10 +19,10 @@ public class TableDifferTest {
 
     private Table otherTableWithDeletedAndInserted() {
         String source =
-                "| Aslak | aslak@email.com      | 123     |" + EOL +
-                "| Doe   | joe@email.com        | 234     |" + EOL +
-                "| Foo   | schnickens@email.net | 789     |" + EOL +
-                "| Bryan | bryan@email.org      | 456     |" + EOL;
+                "| Aslak | aslak@email.com      | 123 |" + EOL +
+                "| Doe   | joe@email.com        | 234 |" + EOL +
+                "| Foo   | schnickens@email.net | 789 |" + EOL +
+                "| Bryan | bryan@email.org      | 456 |" + EOL;
         return TableParser.parse(source);
     }
 
@@ -43,11 +43,12 @@ public class TableDifferTest {
             new TableDiffer(table(), otherTableWithDeletedAndInserted()).calculateDiffs();
         } catch (TableDiffException e) {
             String expected =
-                    "    - | Joe | joe@email.com        | 234 |" + EOL +
-                    "    + | Doe | joe@email.com        | 234 |" + EOL +
-                    "    + | Foo | schnickens@email.net | 789 |" + EOL +
-                    "      | Joe | joe@email.com        | 234 |" + EOL +
-                    "    - | Ni  | ni@email.com         | 654 |" + EOL;
+                    "      | Aslak | aslak@email.com      | 123 |" + EOL +
+                    "    - | Joe   | joe@email.com        | 234 |" + EOL +
+                    "    + | Doe   | joe@email.com        | 234 |" + EOL +
+                    "    + | Foo   | schnickens@email.net | 789 |" + EOL +
+                    "      | Bryan | bryan@email.org      | 456 |" + EOL +
+                    "    - | Ni    | ni@email.com         | 654 |" + EOL;
             assertEquals(expected, pretty(e.getDiffTable()));
             throw e;
         }
@@ -62,6 +63,7 @@ public class TableDifferTest {
                     "      | Aslak | aslak@email.com      | 123 |" + EOL +
                     "      | Joe   | joe@email.com        | 234 |" + EOL +
                     "      | Bryan | bryan@email.org      | 456 |" + EOL +
+                    "      | Ni    | ni@email.com         | 654 |" + EOL +
                     "    + | Doe   | joe@email.com        | 234 |" + EOL +
                     "    + | Foo   | schnickens@email.net | 789 |" + EOL;
             assertEquals(expected, pretty(e.getDiffTable()));
