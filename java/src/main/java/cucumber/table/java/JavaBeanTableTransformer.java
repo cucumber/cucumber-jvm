@@ -3,7 +3,6 @@ package cucumber.table.java;
 import cucumber.runtime.transformers.TransformationException;
 import cucumber.runtime.transformers.Transformers;
 import cucumber.table.Table;
-import cucumber.table.TableTransformer;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
@@ -25,7 +24,6 @@ public class JavaBeanTableTransformer implements TableTransformer {
     private final Transformers transformers = new Transformers();
 
     public JavaBeanTableTransformer(Class<?> beanClass) {
-        super();
         this.beanClass = beanClass;
     }
 

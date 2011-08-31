@@ -1,6 +1,5 @@
 package cucumber.runtime.java;
 
-import cucumber.annotation.JavaBeanClass;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.StepDefinitionMatch;
 import cucumber.runtime.transformers.Transformers;
@@ -23,7 +22,7 @@ public class JavaBeanTableProcessorTest {
     public static class StepDefs {
         public List<User> users;
 
-        public void stepMethodWithList(@JavaBeanClass(User.class) List<User> users) {
+        public void stepMethodWithList(List<User> users) {
             this.users = users;
         }
     }

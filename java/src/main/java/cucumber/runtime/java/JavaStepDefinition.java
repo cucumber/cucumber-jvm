@@ -1,17 +1,16 @@
 package cucumber.runtime.java;
 
-import cucumber.annotation.TableProcessorInfo;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.JdkPatternArgumentMatcher;
 import cucumber.runtime.StepDefinition;
 import cucumber.table.Table;
+import cucumber.table.java.JavaBeanTableTransformer;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -65,44 +64,12 @@ public class JavaStepDefinition implements StepDefinition {
 
     @Override
     public Object tableArgument(int argIndex, Table table) {
-        Annotation[] annotations = this.method.getParameterAnnotations()[argIndex];
-        for (Annotation annotation : annotations) {
-            if (annotation instanceof TableProcessorInfo) {
-                return newTableArgumentProcessor((TableProcessorInfo) annotation).process(table);
-            } else if (annotation.annotationType().isAnnotationPresent(TableProcessorInfo.class)) {
-                return newTableArgumentProcessor(annotation.annotationType().getAnnotation(TableProcessorInfo.class), annotation).process(table);
-            }
-        }
-        return table;
-    }
-
-    private TableProcessor newTableArgumentProcessor(TableProcessorInfo tableProcessorInfo, Annotation extraInfo) {
-        try {
-            Method valueMethod = extraInfo.annotationType().getMethod("value");
-            Constructor<? extends TableProcessor> constructor = (Constructor<? extends TableProcessor>) tableProcessorInfo.processorClass().getConstructor(valueMethod.getReturnType());
-            return constructor.newInstance(valueMethod.invoke(extraInfo));
-        } catch (IllegalArgumentException e) {
-            throw new CucumberException("Error instantiating " + tableProcessorInfo.processorClass(), e);
-        } catch (InstantiationException e) {
-            throw new CucumberException("Error instantiating " + tableProcessorInfo.processorClass(), e);
-        } catch (IllegalAccessException e) {
-            throw new CucumberException("Error instantiating " + tableProcessorInfo.processorClass(), e);
-        } catch (InvocationTargetException e) {
-            throw new CucumberException("Error instantiating " + tableProcessorInfo.processorClass(), e);
-        } catch (SecurityException e) {
-            throw new CucumberException("Error instantiating " + tableProcessorInfo.processorClass(), e);
-        } catch (NoSuchMethodException e) {
-            throw new CucumberException("Error instantiating " + tableProcessorInfo.processorClass(), e);
-        }
-    }
-
-    private TableProcessor newTableArgumentProcessor(TableProcessorInfo tableProcessorInfo) {
-        try {
-            return (TableProcessor) tableProcessorInfo.processorClass().newInstance();
-        } catch (InstantiationException e) {
-            throw new CucumberException("Error instantiating " + tableProcessorInfo.processorClass(), e);
-        } catch (IllegalAccessException e) {
-            throw new CucumberException("Error instantiating " + tableProcessorInfo.processorClass(), e);
+        Type genericParameterType = method.getGenericParameterTypes()[argIndex];
+        if (genericParameterType instanceof ParameterizedType) {
+            Type[] parameters = ((ParameterizedType) genericParameterType).getActualTypeArguments();
+            return new JavaBeanTableTransformer((Class<?>) parameters[0]).transformTable(table);
+        } else {
+            return table;
         }
     }
 }
