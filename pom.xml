@@ -15,7 +15,9 @@
         <artifactId>oss-parent</artifactId>
         <version>6</version>
     </parent>
-
+    <properties>
+        <outputDirectory>${project.build.directory}</outputDirectory>
+    </properties>
     <licenses>
         <license>
             <name>MIT License</name>
@@ -198,6 +200,34 @@
             <id>codehaus</id>
             <url>http://repository.codehaus.org</url>
         </repository>
+    <repository>
+      <id>clojars</id>
+      <url>http://clojars.org/repo</url>
+    </repository>
+    <repository>
+      <id>clojure-snapshots</id>
+      <url>http://build.clojure.org/snapshots</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>clojure-releases</id>
+      <url>http://build.clojure.org/releases</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+        <repository>
+            <id>mvnrepository</id>
+            <url>http://mvnrepository.com</url>
+        </repository>
         <repository>
             <id>cukes</id>
             <url>http://cukes.info/maven</url>
@@ -292,24 +322,6 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-report-plugin</artifactId>
-                <version>2.7.2</version>
-                <configuration>
-                    <aggregate>true</aggregate>
-                    <outputDirectory>${project.build.directory}/../reporting</outputDirectory>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-site-plugin</artifactId>
-                <version>2.1</version>
-                <configuration>
-                    <aggregate>true</aggregate>
-                    <outputDirectory>${project.build.directory}/../reporting</outputDirectory>
-                </configuration>
             </plugin>
         </plugins>
     </build>
