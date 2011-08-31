@@ -52,7 +52,7 @@ public class StepDefinitionMatch extends Match {
         Object[] result = new Object[argumentCount];
         int n = 0;
         if (step.getRows() != null) {
-            result[n] = processTable(step, locale, n++);
+            result[n] = tableArg(step, locale, n++);
         } else if (step.getDocString() != null) {
             result[n] = step.getDocString().getValue();
         } else {
@@ -63,13 +63,9 @@ public class StepDefinitionMatch extends Match {
         return result;
     }
 
-    private Object processTable(Step step, Locale locale, int argIndex) {
+    private Object tableArg(Step step, Locale locale, int argIndex) {
         Table table = new Table(step.getRows(), locale);
-        TableArgumentProcessor tableProcessor = this.stepDefinition.getTableProcessor(argIndex);
-        if (tableProcessor != null) {
-            return tableProcessor.process(table);
-        }
-        return table;
+        return stepDefinition.tableArgument(argIndex, table);
     }
 
     public Throwable filterStacktrace(Throwable error, StackTraceElement stepLocation) {

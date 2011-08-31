@@ -3,8 +3,8 @@ package cucumber.runtime.clojure;
 import clojure.lang.AFunction;
 import cucumber.runtime.JdkPatternArgumentMatcher;
 import cucumber.runtime.StepDefinition;
-import cucumber.runtime.TableArgumentProcessor;
 import cucumber.runtime.Utils;
+import cucumber.table.Table;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 
@@ -60,7 +60,7 @@ public class ClojureStepDefinition implements StepDefinition {
     }
 
     @Override
-    public TableArgumentProcessor getTableProcessor(int argIndex) {
-        return null;
+    public Object tableArgument(int argIndex, Table table) {
+        return table;
     }
 }

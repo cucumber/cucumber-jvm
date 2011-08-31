@@ -2,9 +2,9 @@ package cucumber.runtime.clojure;
 
 import clojure.lang.AFunction;
 import clojure.lang.RT;
+import cucumber.resources.Consumer;
 import cucumber.resources.Resource;
 import cucumber.resources.Resources;
-import cucumber.resources.Consumer;
 import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.HookDefinition;

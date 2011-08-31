@@ -1,4 +1,7 @@
-package cucumber.runtime
+package cucumber
+package runtime
+
+import cucumber.table.Table
 
 import gherkin.formatter.model.Step
 
@@ -11,6 +14,8 @@ class ScalaStepDefinition(frame:StackTraceElement, name:String, pattern:String, 
   private val argumentMatcher = new JdkPatternArgumentMatcher(Pattern.compile(pattern))
 
   def matchedArguments(step: Step) = argumentMatcher.argumentsFrom(step.getName)
+
+  def tableArgument(argIndex: Int, table: Table) = table
 
   def getLocation = frame.getFileName + ":" + frame.getLineNumber
 

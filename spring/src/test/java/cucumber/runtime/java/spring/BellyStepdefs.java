@@ -1,11 +1,10 @@
 package cucumber.runtime.java.spring;
 
-import static junit.framework.Assert.assertEquals;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
 import cucumber.annotation.en.Given;
 import cucumber.annotation.en.Then;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import static junit.framework.Assert.assertEquals;
 
 public class BellyStepdefs {
     private final Belly belly;

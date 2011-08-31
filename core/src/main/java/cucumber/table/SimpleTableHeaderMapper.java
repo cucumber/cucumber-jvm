@@ -5,7 +5,7 @@ import java.util.Map;
 public class SimpleTableHeaderMapper implements TableHeaderMapper {
 
     private final Map<String, String> mappings;
-    
+
     public SimpleTableHeaderMapper(Map<String, String> mappings) {
         this.mappings = mappings;
     }

@@ -1,5 +1,10 @@
 package cucumber.table.java;
 
+import cucumber.runtime.transformers.TransformationException;
+import cucumber.runtime.transformers.Transformers;
+import cucumber.table.Table;
+import cucumber.table.TableTransformer;
+
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
@@ -13,17 +18,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import cucumber.runtime.transformers.TransformationException;
-import cucumber.runtime.transformers.Transformers;
-import cucumber.table.Table;
-import cucumber.table.TableTransformer;
-
 public class JavaBeanTableTransformer implements TableTransformer {
-    
+
     private Class<?> beanClass;
     private Map<String, PropertyDescriptor> beanPropertyDescriptors;
     private final Transformers transformers = new Transformers();
-    
+
     public JavaBeanTableTransformer(Class<?> beanClass) {
         super();
         this.beanClass = beanClass;
@@ -46,7 +46,7 @@ public class JavaBeanTableTransformer implements TableTransformer {
             table.mapColumn(propertyName, this.transformers.getTransformer(propertyDescriptor.getPropertyType()));
         }
     }
-    
+
     private Object createAndPopulateNewBean(Map<String, Object> fieldValues) {
         Object newObject = createNewBean();
         for (Map.Entry<String, Object> entry : fieldValues.entrySet()) {
@@ -54,7 +54,7 @@ public class JavaBeanTableTransformer implements TableTransformer {
         }
         return newObject;
     }
-    
+
     private void setBeanProperty(Object beanInstance, Entry<String, Object> headerValueEntry) {
         PropertyDescriptor propertyDescriptor = getBeanPropertyDescriptors().get(headerValueEntry.getKey());
         Method setter = propertyDescriptor.getWriteMethod();

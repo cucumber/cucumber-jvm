@@ -61,4 +61,13 @@ public class User {
         result = 31 * result + (credits != null ? credits.hashCode() : 0);
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "name='" + name + '\'' +
+                ", birthDate=" + birthDate +
+                ", credits=" + credits +
+                '}';
+    }
 }

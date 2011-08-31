@@ -77,7 +77,7 @@ public class Resources {
     }
 
     private static String classpath() {
-        if(cl() instanceof URLClassLoader) {
+        if (cl() instanceof URLClassLoader) {
             URLClassLoader urlClassLoader = (URLClassLoader) cl();
             StringBuilder result = new StringBuilder();
             for (URL url : urlClassLoader.getURLs()) {
@@ -161,7 +161,7 @@ public class Resources {
     private static String getPath(URL url) {
         return url.getPath().replaceAll("%20", " ");
     }
-    
+
     private static void scanFilesystem(File rootDir, PathWithLines pathWithLines, String suffix, Consumer consumer) {
         File file = new File(pathWithLines.path);
         if (file.isDirectory()) {

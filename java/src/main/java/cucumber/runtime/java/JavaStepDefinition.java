@@ -4,7 +4,7 @@ import cucumber.annotation.TableProcessorInfo;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.JdkPatternArgumentMatcher;
 import cucumber.runtime.StepDefinition;
-import cucumber.runtime.TableArgumentProcessor;
+import cucumber.table.Table;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 
@@ -64,22 +64,22 @@ public class JavaStepDefinition implements StepDefinition {
     }
 
     @Override
-    public TableArgumentProcessor getTableProcessor(int argIndex) {
+    public Object tableArgument(int argIndex, Table table) {
         Annotation[] annotations = this.method.getParameterAnnotations()[argIndex];
         for (Annotation annotation : annotations) {
             if (annotation instanceof TableProcessorInfo) {
-                return newTableArgumentProcessor((TableProcessorInfo) annotation);
+                return newTableArgumentProcessor((TableProcessorInfo) annotation).process(table);
             } else if (annotation.annotationType().isAnnotationPresent(TableProcessorInfo.class)) {
-                return newTableArgumentProcessor(annotation.annotationType().getAnnotation(TableProcessorInfo.class), annotation);
+                return newTableArgumentProcessor(annotation.annotationType().getAnnotation(TableProcessorInfo.class), annotation).process(table);
             }
         }
-        return null;
+        return table;
     }
 
-    private TableArgumentProcessor newTableArgumentProcessor(TableProcessorInfo tableProcessorInfo, Annotation extraInfo) {
+    private TableProcessor newTableArgumentProcessor(TableProcessorInfo tableProcessorInfo, Annotation extraInfo) {
         try {
             Method valueMethod = extraInfo.annotationType().getMethod("value");
-            Constructor<? extends TableArgumentProcessor> constructor = tableProcessorInfo.processorClass().getConstructor(valueMethod.getReturnType());
+            Constructor<? extends TableProcessor> constructor = (Constructor<? extends TableProcessor>) tableProcessorInfo.processorClass().getConstructor(valueMethod.getReturnType());
             return constructor.newInstance(valueMethod.invoke(extraInfo));
         } catch (IllegalArgumentException e) {
             throw new CucumberException("Error instantiating " + tableProcessorInfo.processorClass(), e);
@@ -96,9 +96,9 @@ public class JavaStepDefinition implements StepDefinition {
         }
     }
 
-    private TableArgumentProcessor newTableArgumentProcessor(TableProcessorInfo tableProcessorInfo) {
+    private TableProcessor newTableArgumentProcessor(TableProcessorInfo tableProcessorInfo) {
         try {
-            return tableProcessorInfo.processorClass().newInstance();
+            return (TableProcessor) tableProcessorInfo.processorClass().newInstance();
         } catch (InstantiationException e) {
             throw new CucumberException("Error instantiating " + tableProcessorInfo.processorClass(), e);
         } catch (IllegalAccessException e) {

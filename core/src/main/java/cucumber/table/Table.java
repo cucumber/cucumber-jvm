@@ -158,8 +158,8 @@ public class Table {
     List<DiffableRow> diffableRows() {
         List<DiffableRow> result = new ArrayList<DiffableRow>();
         List<List<Object>> convertedRows = rows();
-        for(int i = 0; i < convertedRows.size(); i++) {
-            result.add(new DiffableRow(getGherkinRows().get(i+1), convertedRows.get(i)));
+        for (int i = 0; i < convertedRows.size(); i++) {
+            result.add(new DiffableRow(getGherkinRows().get(i + 1), convertedRows.get(i)));
         }
         return result;
     }
