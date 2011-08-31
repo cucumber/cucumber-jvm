@@ -793,26 +793,26 @@
       <JAVADOC />
       <SOURCES />
     </library>
-    <library name="Maven: org.scala-lang:scala-compiler:2.9.0-1">
+    <library name="Maven: org.scala-lang:scala-compiler:2.9.1.RC4">
       <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/scala-lang/scala-compiler/2.9.0-1/scala-compiler-2.9.0-1.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/scala-lang/scala-compiler/2.9.1.RC4/scala-compiler-2.9.1.RC4.jar!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/org/scala-lang/scala-compiler/2.9.0-1/scala-compiler-2.9.0-1-javadoc.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/scala-lang/scala-compiler/2.9.1.RC4/scala-compiler-2.9.1.RC4-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/scala-lang/scala-compiler/2.9.0-1/scala-compiler-2.9.0-1-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/scala-lang/scala-compiler/2.9.1.RC4/scala-compiler-2.9.1.RC4-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: org.scala-lang:scala-library:2.9.0-1">
+    <library name="Maven: org.scala-lang:scala-library:2.9.1.RC4">
       <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/scala-lang/scala-library/2.9.0-1/scala-library-2.9.0-1.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/scala-lang/scala-library/2.9.1.RC4/scala-library-2.9.1.RC4.jar!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/org/scala-lang/scala-library/2.9.0-1/scala-library-2.9.0-1-javadoc.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/scala-lang/scala-library/2.9.1.RC4/scala-library-2.9.1.RC4-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/scala-lang/scala-library/2.9.0-1/scala-library-2.9.0-1-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/scala-lang/scala-library/2.9.1.RC4/scala-library-2.9.1.RC4-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: org.seleniumhq.selenium:selenium-android-driver:2.5.0">
