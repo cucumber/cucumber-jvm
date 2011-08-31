@@ -10,7 +10,6 @@ public class TableDifferTest {
 
     private Table table() {
         String source =
-                "| name  | email                | credits |" + EOL +
                 "| Aslak | aslak@email.com      | 123     |" + EOL +
                 "| Joe   | joe@email.com        | 234     |" + EOL +
                 "| Bryan | bryan@email.org      | 456     |" + EOL +
@@ -20,7 +19,6 @@ public class TableDifferTest {
 
     private Table otherTableWithDeletedAndInserted() {
         String source =
-                "| name  | email                | credits |" + EOL +
                 "| Aslak | aslak@email.com      | 123     |" + EOL +
                 "| Doe   | joe@email.com        | 234     |" + EOL +
                 "| Foo   | schnickens@email.net | 789     |" + EOL +
@@ -30,13 +28,12 @@ public class TableDifferTest {
 
     private Table otherTableWithInsertedAtEnd() {
         String source =
-                "| name  | email                | credits |" + EOL +
-                "| Aslak | aslak@email.com      | 123     |" + EOL +
-                "| Joe   | joe@email.com        | 234     |" + EOL +
-                "| Bryan | bryan@email.org      | 456     |" + EOL +
-                "| Ni    | ni@email.com         | 654     |" + EOL +
-                "| Doe   | joe@email.com        | 234     |" + EOL +
-                "| Foo   | schnickens@email.net | 789     |" + EOL;
+                "| Aslak | aslak@email.com      | 123 |" + EOL +
+                "| Joe   | joe@email.com        | 234 |" + EOL +
+                "| Bryan | bryan@email.org      | 456 |" + EOL +
+                "| Ni    | ni@email.com         | 654 |" + EOL +
+                "| Doe   | joe@email.com        | 234 |" + EOL +
+                "| Foo   | schnickens@email.net | 789 |" + EOL;
         return TableParser.parse(source);
     }
 
@@ -46,12 +43,11 @@ public class TableDifferTest {
             new TableDiffer(table(), otherTableWithDeletedAndInserted()).calculateDiffs();
         } catch (TableDiffException e) {
             String expected =
-                    "      | name | email                | credits |" + EOL +
-                    "    - | Joe  | joe@email.com        | 234     |" + EOL +
-                    "    + | Doe  | joe@email.com        | 234     |" + EOL +
-                    "    + | Foo  | schnickens@email.net | 789     |" + EOL +
-                    "      | Joe  | joe@email.com        | 234     |" + EOL +
-                    "    - | Ni   | ni@email.com         | 654     |" + EOL;
+                    "    - | Joe | joe@email.com        | 234 |" + EOL +
+                    "    + | Doe | joe@email.com        | 234 |" + EOL +
+                    "    + | Foo | schnickens@email.net | 789 |" + EOL +
+                    "      | Joe | joe@email.com        | 234 |" + EOL +
+                    "    - | Ni  | ni@email.com         | 654 |" + EOL;
             assertEquals(expected, pretty(e.getDiffTable()));
             throw e;
         }
@@ -63,12 +59,11 @@ public class TableDifferTest {
             new TableDiffer(table(), otherTableWithInsertedAtEnd()).calculateDiffs();
         } catch (TableDiffException e) {
             String expected =
-                    "      | name  | email                | credits |" + EOL +
-                    "      | Aslak | aslak@email.com      | 123     |" + EOL +
-                    "      | Joe   | joe@email.com        | 234     |" + EOL +
-                    "      | Bryan | bryan@email.org      | 456     |" + EOL +
-                    "    + | Doe   | joe@email.com        | 234     |" + EOL +
-                    "    + | Foo   | schnickens@email.net | 789     |" + EOL;
+                    "      | Aslak | aslak@email.com      | 123 |" + EOL +
+                    "      | Joe   | joe@email.com        | 234 |" + EOL +
+                    "      | Bryan | bryan@email.org      | 456 |" + EOL +
+                    "    + | Doe   | joe@email.com        | 234 |" + EOL +
+                    "    + | Foo   | schnickens@email.net | 789 |" + EOL;
             assertEquals(expected, pretty(e.getDiffTable()));
             throw e;
         }
