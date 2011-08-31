@@ -200,34 +200,6 @@
             <id>codehaus</id>
             <url>http://repository.codehaus.org</url>
         </repository>
-    <repository>
-      <id>clojars</id>
-      <url>http://clojars.org/repo</url>
-    </repository>
-    <repository>
-      <id>clojure-snapshots</id>
-      <url>http://build.clojure.org/snapshots</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-    <repository>
-      <id>clojure-releases</id>
-      <url>http://build.clojure.org/releases</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-        <repository>
-            <id>mvnrepository</id>
-            <url>http://mvnrepository.com</url>
-        </repository>
         <repository>
             <id>cukes</id>
             <url>http://cukes.info/maven</url>
