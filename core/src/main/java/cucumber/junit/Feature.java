@@ -13,4 +13,6 @@ public @interface Feature {
     long[] lines() default {};
 
     String[] tags() default {};
+
+    String[] packages() default {};
 }

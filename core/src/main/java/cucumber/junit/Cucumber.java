@@ -49,6 +49,14 @@ public class Cucumber extends ParentRunner<ScenarioRunner> {
         this.runtime = runtime;
         String pathName = featurePath(featureClass);
         parseFeature(pathName, filters(featureClass));
+        addAdditionalScanPaths(featureClass, this.runtime);
+    }
+
+    private void addAdditionalScanPaths(Class featureClass, final Runtime runtime) {
+        cucumber.junit.Feature featureAnnotation = (cucumber.junit.Feature) featureClass.getAnnotation(cucumber.junit.Feature.class);
+        if (featureAnnotation != null) {
+            runtime.addStepdefScanPath(featureAnnotation.packages());
+        }
     }
 
     private String featurePath(Class featureClass) {
