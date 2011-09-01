@@ -12,6 +12,8 @@ import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import static cucumber.resources.FilePathExtractor.*;
+
 /**
  * Static utility methods for looking up classes and resources on the classpath.
  * TODO: Look them op on the file system as well. The CLI needs to offer resources like that. DUH!
@@ -143,14 +145,6 @@ public class Resources {
         }
     }
 
-    private static String filePath(String jarUrl) {
-        String pathWithProtocol = jarUrl.substring(0, jarUrl.indexOf("!/"));
-        String[] segments = pathWithProtocol.split(":");
-        // WINDOWS: jar:file:/C:/Users/ahellesoy/scm/cucumber-jvm/java/target/java-1.0.0-SNAPSHOT.jar
-        // POSIX:   jar:file:/Users/ahellesoy/scm/cucumber-jvm/java/target/java-1.0.0-SNAPSHOT.jar
-        return segments.length == 4 ? segments[2].substring(1) + ":" + segments[3] : segments[2];
-    }
-
     private static void scanFilesystem(URL startDir, PathWithLines pathPrefix, String suffix, Consumer consumer) {
         PathWithLines dir = new PathWithLines(getPath(startDir));
         String rootPath = getPath(startDir).substring(0, getPath(startDir).length() - pathPrefix.path.length() - 1);
@@ -159,7 +153,8 @@ public class Resources {
     }
 
     private static String getPath(URL url) {
-        return url.getPath().replaceAll("%20", " ");
+        String path = url.getPath();
+        return resolveEncodedBlanksInPath(path);
     }
 
     private static void scanFilesystem(File rootDir, PathWithLines pathWithLines, String suffix, Consumer consumer) {
