@@ -4,14 +4,19 @@ import cucumber.runtime.CucumberException;
 import cucumber.runtime.JdkPatternArgumentMatcher;
 import cucumber.runtime.StepDefinition;
 import cucumber.table.Table;
-import cucumber.table.java.JavaBeanTableTransformer;
+import cucumber.table.TableConverter;
+import cucumber.table.java.JavaBeanPropertyHeaderMapper;
 import gherkin.formatter.Argument;
+import gherkin.formatter.model.Row;
 import gherkin.formatter.model.Step;
+import gherkin.util.Mapper;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 import static java.util.Arrays.asList;
@@ -22,6 +27,8 @@ public class JavaStepDefinition implements StepDefinition {
     private final ObjectFactory objectFactory;
     private final JdkPatternArgumentMatcher argumentMatcher;
     private final Pattern pattern;
+    private final JavaBeanPropertyHeaderMapper mapper = new JavaBeanPropertyHeaderMapper();
+    private TableConverter tableConverter;
 
     public JavaStepDefinition(Pattern pattern, Method method, ObjectFactory objectFactory) {
         this.pattern = pattern;
@@ -63,13 +70,46 @@ public class JavaStepDefinition implements StepDefinition {
     }
 
     @Override
-    public Object tableArgument(int argIndex, Table table) {
+    public Object tableArgument(int argIndex, List<Row> rows, Locale locale) {
         Type genericParameterType = method.getGenericParameterTypes()[argIndex];
         if (genericParameterType instanceof ParameterizedType) {
             Type[] parameters = ((ParameterizedType) genericParameterType).getActualTypeArguments();
-            return new JavaBeanTableTransformer((Class<?>) parameters[0]).transformTable(table);
+            Class<?> itemType = (Class<?>) parameters[0];
+            return tableConverter().convert(itemType, attributeNames(rows), attributeValues(rows));
         } else {
-            return table;
+            return new Table(rows, locale);
         }
+    }
+
+    private TableConverter tableConverter() {
+        if (tableConverter == null) {
+            tableConverter = new TableConverter();
+        }
+        return tableConverter;
+    }
+
+    private List<List<String>> attributeValues(List<Row> rows) {
+        List<List<String>> attributeValues = new ArrayList<List<String>>();
+        List<Row> valueRows = rows.subList(1, rows.size());
+        for (Row valueRow : valueRows) {
+            attributeValues.add(toStrings(valueRow));
+        }
+        return attributeValues;
+    }
+
+    private List<String> attributeNames(List<Row> rows) {
+        List<String> strings = new ArrayList<String>();
+        for (String string : rows.get(0).getCells()) {
+            strings.add(mapper.map(string));
+        }
+        return strings;
+    }
+
+    private List<String> toStrings(Row row) {
+        List<String> strings = new ArrayList<String>();
+        for (String string : row.getCells()) {
+            strings.add(string);
+        }
+        return strings;
     }
 }

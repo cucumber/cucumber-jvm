@@ -78,6 +78,7 @@ public class Table {
         throw new UnsupportedOperationException("TODO: i9mplement this method and get rid of the hashes() method");
     }
 
+    @Deprecated
     public List<Map<String, Object>> hashes() {
         List<Map<String, Object>> hashes = new ArrayList<Map<String, Object>>();
         List<List<Object>> rows = rows();
@@ -110,18 +111,27 @@ public class Table {
         return getColumnTransformers().get(colPos);
     }
 
+    @Deprecated
     public void mapColumn(String columnName, Transformer<?> transformer) {
         this.columnTransformersByHeader.put(columnName, transformer);
     }
 
+    /**
+     * @deprecated I don't think we need to map colums at this low level.
+     * We have rather advanced logic for transforming an entire table, which
+     * is nicer to work with, and the effect of mapping columns seems unuseful.
+     */
+    @Deprecated
     public void mapColumn(int columnIndex, Transformer<?> transformer) {
         getColumnTransformers().put(columnIndex, transformer);
     }
 
+    @Deprecated
     public void mapHeaders(TableHeaderMapper mapper) {
         this.headerMapper = mapper;
     }
 
+    @Deprecated
     public TableHeaderMapper getHeaderMapper() {
         if (this.headerMapper == null) {
             this.headerMapper = new NoOpTableHeaderMapper();

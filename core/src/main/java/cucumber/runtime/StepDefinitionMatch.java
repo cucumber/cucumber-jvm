@@ -2,7 +2,6 @@ package cucumber.runtime;
 
 import cucumber.runtime.transformers.TransformationException;
 import cucumber.runtime.transformers.Transformers;
-import cucumber.table.Table;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Match;
 import gherkin.formatter.model.Step;
@@ -52,7 +51,7 @@ public class StepDefinitionMatch extends Match {
         Object[] result = new Object[argumentCount];
         int n = 0;
         if (step.getRows() != null) {
-            result[n] = tableArg(step, locale, n++);
+            result[n] = tableArgument(step, locale, n++);
         } else if (step.getDocString() != null) {
             result[n] = step.getDocString().getValue();
         } else {
@@ -63,9 +62,8 @@ public class StepDefinitionMatch extends Match {
         return result;
     }
 
-    private Object tableArg(Step step, Locale locale, int argIndex) {
-        Table table = new Table(step.getRows(), locale);
-        return stepDefinition.tableArgument(argIndex, table);
+    private Object tableArgument(Step step, Locale locale, int argIndex) {
+        return stepDefinition.tableArgument(argIndex, step.getRows(), locale);
     }
 
     public Throwable filterStacktrace(Throwable error, StackTraceElement stepLocation) {

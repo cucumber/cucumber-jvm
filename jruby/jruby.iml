@@ -23,8 +23,7 @@
     <orderEntry type="library" name="Maven: com.googlecode.json-simple:json-simple:1.1" level="project" />
     <orderEntry type="library" name="Maven: net.iharder:base64:2.3.8" level="project" />
     <orderEntry type="library" name="Maven: com.beust:jcommander:1.18" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.ant:ant:1.8.2" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.ant:ant-launcher:1.8.2" level="project" />
+    <orderEntry type="library" name="Maven: com.thoughtworks.xstream:xstream:1.4.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.8.2" level="project" />
     <orderEntry type="library" name="Maven: com.googlecode.java-diff-utils:diffutils:1.2.1" level="project" />
     <orderEntry type="library" name="Maven: org.jruby:jruby:1.6.3" level="project" />

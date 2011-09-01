@@ -385,6 +385,17 @@
         <root url="jar://$MAVEN_REPOSITORY$/com/googlecode/json-simple/json-simple/1.1/json-simple-1.1-sources.jar!/" />
       </SOURCES>
     </library>
+    <library name="Maven: com.thoughtworks.xstream:xstream:1.4.1">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/com/thoughtworks/xstream/xstream/1.4.1/xstream-1.4.1.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/com/thoughtworks/xstream/xstream/1.4.1/xstream-1.4.1-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/com/thoughtworks/xstream/xstream/1.4.1/xstream-1.4.1-sources.jar!/" />
+      </SOURCES>
+    </library>
     <library name="Maven: commons-codec:commons-codec:1.4">
       <CLASSES>
         <root url="jar://$MAVEN_REPOSITORY$/commons-codec/commons-codec/1.4/commons-codec-1.4.jar!/" />
@@ -598,28 +609,6 @@
         <root url="jar://$MAVEN_REPOSITORY$/net/sourceforge/nekohtml/nekohtml/1.9.15/nekohtml-1.9.15-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: org.apache.ant:ant-launcher:1.8.2">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/apache/ant/ant-launcher/1.8.2/ant-launcher-1.8.2.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/org/apache/ant/ant-launcher/1.8.2/ant-launcher-1.8.2-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/apache/ant/ant-launcher/1.8.2/ant-launcher-1.8.2-sources.jar!/" />
-      </SOURCES>
-    </library>
-    <library name="Maven: org.apache.ant:ant:1.8.2">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/apache/ant/ant/1.8.2/ant-1.8.2.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/org/apache/ant/ant/1.8.2/ant-1.8.2-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/apache/ant/ant/1.8.2/ant-1.8.2-sources.jar!/" />
-      </SOURCES>
-    </library>
     <library name="Maven: org.apache.httpcomponents:httpclient:4.1.2">
       <CLASSES>
         <root url="jar://$MAVEN_REPOSITORY$/org/apache/httpcomponents/httpclient/4.1.2/httpclient-4.1.2.jar!/" />
@@ -789,6 +778,14 @@
       <CLASSES>
         <root url="jar://$MAVEN_REPOSITORY$/org/scala-lang/scala-compiler/2.9.0-1/scala-compiler-2.9.0-1.jar!/" />
         <root url="jar://$MAVEN_REPOSITORY$/org/scala-lang/scala-library/2.9.0-1/scala-library-2.9.0-1.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="Maven: org.scala-lang:scala-compiler-bundle:2.9.1.RC4">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/scala-lang/scala-compiler/2.9.1.RC4/scala-compiler-2.9.1.RC4.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/scala-lang/scala-library/2.9.1.RC4/scala-library-2.9.1.RC4.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES />

@@ -15,9 +15,13 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static junit.framework.Assert.assertEquals;
 
 public class JavaBeanTableProcessorTest {
+
+    private static final List<Argument> NO_ARGS = emptyList();
+    private static final List<Comment> NO_COMMENTS = emptyList();
 
     public static class StepDefs {
         public List<User> users;
@@ -32,10 +36,10 @@ public class JavaBeanTableProcessorTest {
         StepDefs stepDefs = new StepDefs();
         StepDefinition stepDefinition = new JavaStepDefinition(Pattern.compile("whatever"), stepMethodWithList(), new SingletonFactory(stepDefs));
 
-        Step stepWithRows = new Step(Collections.<Comment>emptyList(), "Given", "something that wants users", 10);
+        Step stepWithRows = new Step(NO_COMMENTS, "Given", "something that wants users", 10);
         stepWithRows.setMultilineArg(rowsList());
 
-        StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(Collections.<Argument>emptyList(), stepDefinition, "some.feature", stepWithRows, new Transformers());
+        StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(NO_ARGS, stepDefinition, "some.feature", stepWithRows, new Transformers());
         stepDefinitionMatch.runStep(Locale.ENGLISH);
 
         assertEquals(asList(new User("Sid Vicious", sidsBirthday(), 1000)), stepDefs.users);
@@ -47,8 +51,8 @@ public class JavaBeanTableProcessorTest {
 
     private List<Row> rowsList() {
         List<Row> rows = new ArrayList<Row>();
-        rows.add(new Row(new ArrayList<Comment>(), Arrays.asList("name", "birth date", "credits"), 1));
-        rows.add(new Row(new ArrayList<Comment>(), Arrays.asList("Sid Vicious", "5/10/1957", "1000"), 2));
+        rows.add(new Row(new ArrayList<Comment>(), asList("name", "birth date", "credits"), 1));
+        rows.add(new Row(new ArrayList<Comment>(), asList("Sid Vicious", "1957-05-10 00:00:00 UTC", "1000"), 2));
         return rows;
     }
 
@@ -56,6 +60,7 @@ public class JavaBeanTableProcessorTest {
         Calendar sidsBirthDay = Calendar.getInstance();
         sidsBirthDay.set(1957, 4, 10, 0, 0, 0);
         sidsBirthDay.set(Calendar.MILLISECOND, 0);
+        sidsBirthDay.setTimeZone(TimeZone.getTimeZone("UTC"));
         return sidsBirthDay.getTime();
     }
 }

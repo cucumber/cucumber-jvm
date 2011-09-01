@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import java.util.*;
 
+import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -18,24 +19,24 @@ public class TableTest {
 
     @Before
     public void initSimpleTable() {
-        this.simpleRows = new ArrayList<Row>();
+        simpleRows = new ArrayList<Row>();
         String[] firstLine = new String[]{"one", "four", "seven"};
-        this.simpleRows.add(new Row(new ArrayList<Comment>(), Arrays.asList(firstLine), 1));
-        this.simpleRows.add(new Row(new ArrayList<Comment>(), Arrays.asList("4444", "55555", "666666"), 2));
-        this.simpleTable = new Table(this.simpleRows, Locale.getDefault());
+        simpleRows.add(new Row(new ArrayList<Comment>(), asList(firstLine), 1));
+        simpleRows.add(new Row(new ArrayList<Comment>(), asList("4444", "55555", "666666"), 2));
+        simpleTable = new Table(simpleRows, Locale.getDefault());
     }
 
     @Test
     public void shouldHaveHeaders() {
-        List<String> cells = this.simpleRows.get(0).getCells();
-        List<String> headers = this.simpleTable.getHeaders();
+        List<String> cells = simpleRows.get(0).getCells();
+        List<String> headers = simpleTable.getHeaders();
         assertTrue("Header's items", headers.containsAll(cells));
         assertEquals("Header length", cells.size(), headers.size());
     }
 
     @Test
     public void rawShouldHaveThreeColumnsAndTwoRows() {
-        List<List<String>> raw = this.simpleTable.raw();
+        List<List<String>> raw = simpleTable.raw();
         assertEquals("Rows size", 2, raw.size());
         for (List<String> list : raw) {
             assertEquals("Cols size: " + list, 3, list.size());
@@ -44,15 +45,15 @@ public class TableTest {
 
     @Test
     public void shouldHaveOneRow() {
-        List<String> firstRow = this.simpleRows.get(1).getCells();
-        List<List<Object>> tableRows = this.simpleTable.rows();
+        List<String> firstRow = simpleRows.get(1).getCells();
+        List<List<Object>> tableRows = simpleTable.rows();
         assertEquals("Rows", 1, tableRows.size());
         assertTrue("Rows' items", tableRows.get(0).containsAll(firstRow));
     }
 
     @Test
     public void shouldBeConvertibleToAListOfMap() {
-        List<Map<String, Object>> hashes = this.simpleTable.hashes();
+        List<Map<String, Object>> hashes = simpleTable.hashes();
         assertEquals("Hashes", 1, hashes.size());
         Map<String, Object> hash = hashes.get(0);
         assertEquals("Hash First Col", "4444", hash.get("one"));
@@ -62,8 +63,8 @@ public class TableTest {
 
     @Test
     public void shouldAllowMappingColumns() {
-        this.simpleTable.mapColumn("one", new IntegerTransformer());
-        List<Map<String, Object>> hashes = this.simpleTable.hashes();
+        simpleTable.mapColumn("one", new IntegerTransformer());
+        List<Map<String, Object>> hashes = simpleTable.hashes();
         assertEquals("Hashes", 1, hashes.size());
         Map<String, Object> hash = hashes.get(0);
         assertEquals("Hash First Col", 4444, hash.get("one"));
@@ -71,9 +72,9 @@ public class TableTest {
 
     @Test
     public void shouldAllowMappingHeaders() {
-        this.simpleTable.mapHeaders(getHeaderMappings());
-        List<String> headers = this.simpleTable.getHeaders();
-        assertTrue("Header's items", headers.containsAll(Arrays.asList("eins", "vier", "sieben")));
+        simpleTable.mapHeaders(getHeaderMappings());
+        List<String> headers = simpleTable.getHeaders();
+        assertTrue("Header's items", headers.containsAll(asList("eins", "vier", "sieben")));
     }
 
     private TableHeaderMapper getHeaderMappings() {
@@ -86,8 +87,8 @@ public class TableTest {
 
     @Test
     public void shouldBeConvertibleToAListOfMapAfterMapped() {
-        this.simpleTable.mapHeaders(getHeaderMappings());
-        List<Map<String, Object>> hashes = this.simpleTable.hashes();
+        simpleTable.mapHeaders(getHeaderMappings());
+        List<Map<String, Object>> hashes = simpleTable.hashes();
         assertEquals("Hashes", 1, hashes.size());
         Map<String, Object> hash = hashes.get(0);
         assertEquals("Hash First Col", "4444", hash.get("eins"));
@@ -97,8 +98,8 @@ public class TableTest {
 
     @Test
     public void shouldAllowMappingColumnsByIndex() {
-        this.simpleTable.mapColumn(1, new IntegerTransformer());
-        List<Map<String, Object>> hashes = this.simpleTable.hashes();
+        simpleTable.mapColumn(1, new IntegerTransformer());
+        List<Map<String, Object>> hashes = simpleTable.hashes();
         assertEquals("Hashes", 1, hashes.size());
         Map<String, Object> hash = hashes.get(0);
         assertEquals("Hash First Col", 55555, hash.get("four"));

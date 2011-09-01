@@ -4,10 +4,12 @@ import cucumber.runtime.JdkPatternArgumentMatcher;
 import cucumber.runtime.StepDefinition;
 import cucumber.table.Table;
 import gherkin.formatter.Argument;
+import gherkin.formatter.model.Row;
 import gherkin.formatter.model.Step;
 import groovy.lang.Closure;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 public class GroovyStepDefinition implements StepDefinition {
@@ -51,7 +53,7 @@ public class GroovyStepDefinition implements StepDefinition {
     }
 
     @Override
-    public Object tableArgument(int argIndex, Table table) {
-        return table;
+    public Object tableArgument(int argIndex, List<Row> rows, Locale locale) {
+        return new Table(rows, locale);
     }
 }

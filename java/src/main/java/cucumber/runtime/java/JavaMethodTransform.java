@@ -7,13 +7,14 @@ import cucumber.runtime.transformers.Transformers;
 import java.lang.reflect.Method;
 import java.util.Locale;
 
+// TODO: Where is this used other than in a test??
+@Deprecated
 public class JavaMethodTransform implements Transformer<Object> {
 
-    private Method transformMethod;
-    private JavaBackend backend;
+    private final Method transformMethod;
+    private final JavaBackend backend;
 
     public JavaMethodTransform(Method transformMethod, JavaBackend backend) {
-        super();
         this.transformMethod = transformMethod;
         this.backend = backend;
     }
@@ -24,7 +25,7 @@ public class JavaMethodTransform implements Transformer<Object> {
         for (int i = 0; i < arguments.length; i++) {
             transformedArguments[i] = transformers.transform(locale, transformMethod.getParameterTypes()[i], arguments[i]);
         }
-        return this.backend.invoke(this.transformMethod, transformedArguments);
+        return backend.invoke(transformMethod, transformedArguments);
     }
 
 }

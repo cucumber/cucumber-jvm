@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+@Deprecated
 public class JavaBeanTableTransformer implements TableTransformer {
 
     private Class<?> beanClass;
