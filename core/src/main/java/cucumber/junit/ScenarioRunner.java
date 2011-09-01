@@ -1,5 +1,6 @@
 package cucumber.junit;
 
+import cucumber.runtime.CucumberException;
 import cucumber.runtime.PendingException;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.model.CucumberScenario;
@@ -10,6 +11,7 @@ import gherkin.formatter.model.Scenario;
 import gherkin.formatter.model.Step;
 import org.junit.internal.runners.model.EachTestNotifier;
 import org.junit.runner.Description;
+import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
@@ -44,9 +46,17 @@ public class ScenarioRunner extends ParentRunner<Step> {
 
     @Override
     public void run(RunNotifier notifier) {
-        cucumberScenario.newWorld(runtime);
+        try {
+            cucumberScenario.prepare(runtime);
+        } catch (CucumberException e) {
+            notifier.fireTestFailure(new Failure(getDescription(), e));
+        }
         super.run(notifier);
-        cucumberScenario.disposeWorld();
+        try {
+            cucumberScenario.dispose();
+        } catch (CucumberException e) {
+            notifier.fireTestFailure(new Failure(getDescription(), e));
+        }
     }
 
     @Override

@@ -8,12 +8,13 @@ import java.util.*;
 public class Table {
 
     private final List<List<String>> raw;
-    private List<String> headers;
     private final Map<String, Transformer<?>> columnTransformersByHeader = new HashMap<String, Transformer<?>>();
     private Map<Integer, Transformer<?>> columnTransformers;
     private TableHeaderMapper headerMapper;
     private final Locale locale;
-    private List<Row> gherkinRows;
+    private final List<Row> gherkinRows;
+
+    private List<String> headers;
 
     public Table(List<Row> gherkinRows, Locale locale) {
         this.gherkinRows = gherkinRows;
@@ -54,6 +55,7 @@ public class Table {
     }
 
     /**
+     * TODO: Not sure how valuable this method is. See asList() and automatic table conversion.
      * @return a List of Row, with each each cell value transformed
      */
     public List<List<Object>> rows() {
@@ -70,6 +72,10 @@ public class Table {
 
     private List<List<String>> getRawRows() {
         return this.raw.subList(1, this.raw.size());
+    }
+
+    public <T> List<T> asList(T type) {
+        throw new UnsupportedOperationException("TODO: i9mplement this method and get rid of the hashes() method");
     }
 
     public List<Map<String, Object>> hashes() {
@@ -89,7 +95,7 @@ public class Table {
         Object hashValue;
         Transformer<?> transformer = getColumnTransformer(colPos);
         if (transformer != null) {
-            hashValue = transformer.transform(this.locale, cellValue);
+            hashValue = transformer.transform(locale, cellValue);
         } else {
             hashValue = cellValue;
         }
@@ -157,20 +163,18 @@ public class Table {
 
     List<DiffableRow> diffableRows() {
         List<DiffableRow> result = new ArrayList<DiffableRow>();
-        List<List<Object>> convertedRows = rows();
-        for(int i = 0; i < convertedRows.size(); i++) {
-            result.add(new DiffableRow(getGherkinRows().get(i+1), convertedRows.get(i)));
+        List<List<String>> convertedRows = raw();
+        for (int i = 0; i < convertedRows.size(); i++) {
+            result.add(new DiffableRow(getGherkinRows().get(i), convertedRows.get(i)));
         }
         return result;
     }
 
-    // TODO: Get rid of this class if we base the diffing on simple List<List<String>
-    // from the List<Row> list passed to the ctor.
     class DiffableRow {
         public final Row row;
-        public final List<Object> convertedRow;
+        public final List<String> convertedRow;
 
-        public DiffableRow(Row row, List<Object> convertedRow) {
+        public DiffableRow(Row row, List<String> convertedRow) {
             this.row = row;
             this.convertedRow = convertedRow;
         }

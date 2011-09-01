@@ -11,7 +11,7 @@ import org.junit.runner.RunWith;
  */
 @RunWith(Cucumber.class)
 //@Feature(value="cukes.feature", tags={"@foo"})
-@Feature(value="cukes.feature", lines={8})
+@Feature(value = "cukes.feature", lines = {8})
 //@Feature("cukes.feature")
 public class cukes_Test {
 }

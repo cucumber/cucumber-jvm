@@ -13,7 +13,7 @@ public class PicoFactoryTest {
     public void shouldGiveUsNewInstancesForEachScenario() {
         ObjectFactory factory = new PicoFactory();
         factory.addClass(StepDefs.class);
-        
+
         // Scenario 1
         factory.createInstances();
         StepDefs o1 = factory.getInstance(StepDefs.class);
@@ -23,7 +23,7 @@ public class PicoFactoryTest {
         factory.createInstances();
         StepDefs o2 = factory.getInstance(StepDefs.class);
         factory.disposeInstances();
-        
+
         assertNotNull(o1);
         assertNotSame(o1, o2);
     }

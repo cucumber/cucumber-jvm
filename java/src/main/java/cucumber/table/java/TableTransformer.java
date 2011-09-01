@@ -1,4 +1,6 @@
-package cucumber.table;
+package cucumber.table.java;
+
+import cucumber.table.Table;
 
 import java.util.List;
 

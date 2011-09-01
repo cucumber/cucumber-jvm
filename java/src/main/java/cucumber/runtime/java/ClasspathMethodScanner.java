@@ -2,6 +2,7 @@ package cucumber.runtime.java;
 
 import cucumber.annotation.After;
 import cucumber.annotation.Before;
+import cucumber.annotation.Order;
 import cucumber.resources.Resources;
 
 import java.io.IOException;
@@ -43,28 +44,31 @@ public class ClasspathMethodScanner {
     private void scan(Method method, Collection<Class<? extends Annotation>> cucumberAnnotationClasses, JavaBackend javaBackend) {
         for (Class<? extends Annotation> cucumberAnnotationClass : cucumberAnnotationClasses) {
             Annotation annotation = method.getAnnotation(cucumberAnnotationClass);
-            if (annotation != null) {
+            if (annotation != null && !annotation.annotationType().equals(Order.class)) {
                 if (isHookAnnotation(annotation)) {
-                    // TODO Add hook
-                }
-                //TODO: scan cucumber.annotation.Transform annotations
-                try {
-                    Method regexpMethod = annotation.getClass().getMethod("value");
-                    String regexpString = (String) regexpMethod.invoke(annotation);
-                    if (regexpString != null) {
-                        Pattern pattern = Pattern.compile(regexpString);
-                        javaBackend.addStepDefinition(pattern, method);
+                    javaBackend.registerHook(annotation, method);
+                } else {
+                    // TODO: scan cucumber.annotation.Transform annotations
+                    try {
+                        Method regexpMethod = annotation.getClass().getMethod(
+                                "value");
+                        String regexpString = (String) regexpMethod
+                                .invoke(annotation);
+                        if (regexpString != null) {
+                            Pattern pattern = Pattern.compile(regexpString);
+                            javaBackend.addStepDefinition(pattern, method);
+                        }
+                    } catch (NoSuchMethodException ignore) {
+                    } catch (IllegalAccessException ignore) {
+                    } catch (InvocationTargetException ignore) {
                     }
-                } catch (NoSuchMethodException ignore) {
-                } catch (IllegalAccessException ignore) {
-                } catch (InvocationTargetException ignore) {
                 }
             }
         }
     }
 
     private boolean isHookAnnotation(Annotation annotation) {
-        Class<? extends Annotation> annotationClass = annotation.getClass();
+        Class<? extends Annotation> annotationClass = annotation.annotationType();
         return annotationClass.equals(Before.class) || annotationClass.equals(After.class);
     }
 }

@@ -13,7 +13,7 @@ public class GuiceFactoryTest {
     public void shouldGiveUsNewInstancesForEachScenario() {
         ObjectFactory factory = new GuiceFactory();
         factory.addClass(Mappings.class);
-        
+
         // Scenario 1
         factory.createInstances();
         Mappings o1 = factory.getInstance(Mappings.class);
@@ -23,7 +23,7 @@ public class GuiceFactoryTest {
         factory.createInstances();
         Mappings o2 = factory.getInstance(Mappings.class);
         factory.disposeInstances();
-        
+
         assertNotNull(o1);
         assertNotSame(o1, o2);
     }

@@ -19,7 +19,7 @@ public class TableTest {
     @Before
     public void initSimpleTable() {
         this.simpleRows = new ArrayList<Row>();
-        String[] firstLine = new String[] { "one", "four", "seven" };
+        String[] firstLine = new String[]{"one", "four", "seven"};
         this.simpleRows.add(new Row(new ArrayList<Comment>(), Arrays.asList(firstLine), 1));
         this.simpleRows.add(new Row(new ArrayList<Comment>(), Arrays.asList("4444", "55555", "666666"), 2));
         this.simpleTable = new Table(this.simpleRows, Locale.getDefault());
@@ -83,7 +83,7 @@ public class TableTest {
         mappings.put("seven", "sieben");
         return new SimpleTableHeaderMapper(mappings);
     }
-    
+
     @Test
     public void shouldBeConvertibleToAListOfMapAfterMapped() {
         this.simpleTable.mapHeaders(getHeaderMappings());
@@ -94,7 +94,7 @@ public class TableTest {
         assertEquals("Hash Second Col", "55555", hash.get("vier"));
         assertEquals("Hash Third Col", "666666", hash.get("sieben"));
     }
-    
+
     @Test
     public void shouldAllowMappingColumnsByIndex() {
         this.simpleTable.mapColumn(1, new IntegerTransformer());
@@ -103,5 +103,5 @@ public class TableTest {
         Map<String, Object> hash = hashes.get(0);
         assertEquals("Hash First Col", 55555, hash.get("four"));
     }
-    
+
 }

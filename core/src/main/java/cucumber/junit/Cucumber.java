@@ -1,8 +1,8 @@
 package cucumber.junit;
 
+import cucumber.resources.Consumer;
 import cucumber.resources.Resource;
 import cucumber.resources.Resources;
-import cucumber.resources.Consumer;
 import cucumber.runtime.FeatureBuilder;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.SnippetPrinter;
@@ -68,7 +68,7 @@ public class Cucumber extends ParentRunner<ScenarioRunner> {
         if (featureAnnotation != null) {
             Long[] lines = toLong(featureAnnotation.lines());
             filters = lines;
-            if(filters.length == 0) {
+            if (filters.length == 0) {
                 String[] tags = featureAnnotation.tags();
                 filters = tags;
             }
@@ -105,7 +105,7 @@ public class Cucumber extends ParentRunner<ScenarioRunner> {
             }
         });
 
-        if(cucumberFeatures.isEmpty()) {
+        if (cucumberFeatures.isEmpty()) {
             name = "No matching features";
         } else {
             CucumberFeature cucumberFeature = cucumberFeatures.get(0);
@@ -123,7 +123,7 @@ public class Cucumber extends ParentRunner<ScenarioRunner> {
                 throw new RuntimeException("Failed to create scenario runner", e);
             }
         }
-        
+
     }
 
     private Long[] toLong(long[] plongs) {

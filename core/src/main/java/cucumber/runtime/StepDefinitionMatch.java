@@ -51,16 +51,21 @@ public class StepDefinitionMatch extends Match {
 
         Object[] result = new Object[argumentCount];
         int n = 0;
-        for (Argument a : getArguments()) {
-            result[n] = transformers.transform(locale, parameterTypes[n++], a.getVal());
-        }
-        if (step.getDocString() != null) {
-            result[n] = step.getDocString().getValue();
-        }
         if (step.getRows() != null) {
-            result[n] = new Table(step.getRows(), locale);
+            result[n] = tableArg(step, locale, n++);
+        } else if (step.getDocString() != null) {
+            result[n] = step.getDocString().getValue();
+        } else {
+            for (Argument a : getArguments()) {
+                result[n] = transformers.transform(locale, parameterTypes[n++], a.getVal());
+            }
         }
         return result;
+    }
+
+    private Object tableArg(Step step, Locale locale, int argIndex) {
+        Table table = new Table(step.getRows(), locale);
+        return stepDefinition.tableArgument(argIndex, table);
     }
 
     public Throwable filterStacktrace(Throwable error, StackTraceElement stepLocation) {

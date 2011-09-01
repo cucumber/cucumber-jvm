@@ -12,6 +12,6 @@ public interface Resource {
     Reader getReader();
 
     String getString();
-    
+
     List<Long> getLines();
 }

@@ -13,7 +13,7 @@ public class PathWithLines {
 
     public PathWithLines(String pathName) {
         Matcher matcher = FILE_COLON_LINE_PATTERN.matcher(pathName);
-        if(matcher.matches()) {
+        if (matcher.matches()) {
             path = matcher.group(1);
             lines.addAll(toLongs(matcher.group(2).split(":")));
         } else {
@@ -28,7 +28,7 @@ public class PathWithLines {
         }
         return result;
     }
-    
+
     public String toString() {
         return path + ":" + lines;
     }

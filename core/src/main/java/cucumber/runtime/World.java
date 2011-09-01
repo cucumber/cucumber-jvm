@@ -5,20 +5,57 @@ import gherkin.formatter.model.Match;
 import gherkin.formatter.model.Result;
 import gherkin.formatter.model.Step;
 
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 public class World {
-    private final List<Backend> backends;
-    private final Runtime runtime;
-    private boolean skipNextStep = false;
     private static final Object DUMMY_ARG = new Object();
 
-    public World(List<Backend> backends, Runtime runtime) {
+    private final List<Backend> backends;
+    private final Runtime runtime;
+    private final Collection<String> tags;
+
+    private boolean skipNextStep = false;
+
+    public World(List<Backend> backends, Runtime runtime, Collection<String> tags) {
         this.backends = backends;
         this.runtime = runtime;
+        this.tags = tags;
+    }
+
+    public void prepare() {
+        List<HookDefinition> hooks = new ArrayList<HookDefinition>();
         for (Backend backend : backends) {
             backend.newWorld();
+            hooks.addAll(backend.getBeforeHooks());
+        }
+        Collections.sort(hooks, new HookComparator(true));
+        for (HookDefinition hook : hooks) {
+            runHookMaybe(hook);
+        }
+    }
+
+    public void dispose() {
+        List<HookDefinition> hooks = new ArrayList<HookDefinition>();
+        for (Backend backend : backends) {
+            hooks.addAll(backend.getAfterHooks());
+        }
+        Collections.sort(hooks, new HookComparator(false));
+        for (HookDefinition hook : hooks) {
+            runHookMaybe(hook);
+        }
+        for (Backend backend : backends) {
+            backend.disposeWorld();
+        }
+    }
+
+    private void runHookMaybe(HookDefinition hook) {
+        if (hook.matches(tags)) {
+            try {
+                hook.execute();
+            } catch (Throwable t) {
+                skipNextStep = true;
+                throw new CucumberException("Hook execution failed", t);
+            }
         }
     }
 
@@ -51,9 +88,18 @@ public class World {
         }
     }
 
-    public void dispose() {
-        for (Backend backend : backends) {
-            backend.disposeWorld();
+    private final class HookComparator implements Comparator<HookDefinition> {
+
+        final boolean ascending;
+
+        public HookComparator(boolean ascending) {
+            this.ascending = ascending;
+        }
+
+        @Override
+        public int compare(HookDefinition hook1, HookDefinition hook2) {
+            int comparison = hook1.getOrder() - hook2.getOrder();
+            return ascending ? comparison : -comparison;
         }
     }
 }

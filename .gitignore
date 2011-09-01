@@ -3,3 +3,5 @@
 .classpath
 *.iws
 target
+chromedriver.log
+Gemfile.lock
