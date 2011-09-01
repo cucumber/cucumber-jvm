@@ -6,8 +6,8 @@ import java.util.Locale;
 
 public abstract class TransformerWithFormat<T> implements Transformer<T> {
 
-    public T transform(Locale locale, String... arguments) throws TransformationException {
-        return transform(getFormat(locale), arguments[0]);
+    public T transform(Locale locale, String string) throws TransformationException {
+        return transform(getFormat(locale), string);
     }
 
     /**

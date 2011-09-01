@@ -14,12 +14,12 @@ import static java.util.Arrays.asList;
 public class Transformers {
     private Map<Class<?>, Transformer<?>> transformables;
 
-    public <T> T transform(Locale locale, Class<T> clazz, String... arguments) throws TransformationException {
+    public <T> T transform(Locale locale, Class<T> clazz, String string) throws TransformationException {
         Transformer<T> transformer = getTransformer(clazz);
         if (transformer == null) {
-            throw new TransformationException("Can't transform " + asList(arguments) + " to: " + clazz.getName() + ". No transformer found.");
+            throw new TransformationException("Can't transform " + asList(string) + " to: " + clazz.getName() + ". No transformer found.");
         }
-        return transformer.transform(locale, arguments);
+        return transformer.transform(locale, string);
     }
 
     @SuppressWarnings("unchecked")
