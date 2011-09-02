@@ -1,7 +1,7 @@
 package cucumber.runtime;
 
 import cucumber.resources.Resources;
-import cucumber.runtime.transformers.ConverterLookups;
+import cucumber.runtime.converters.ConverterLookups;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 

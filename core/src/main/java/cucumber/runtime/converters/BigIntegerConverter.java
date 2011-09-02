@@ -1,11 +1,11 @@
-package cucumber.runtime.transformers;
+package cucumber.runtime.converters;
 
 import java.math.BigInteger;
 import java.util.Locale;
 
-public class BigIntegerTransformer extends TransformerWithNumberFormat<BigInteger> {
+public class BigIntegerConverter extends ConverterWithNumberFormat<BigInteger> {
 
-    public BigIntegerTransformer(Locale locale) {
+    public BigIntegerConverter(Locale locale) {
         super(locale, new Class[]{BigInteger.class});
     }
 

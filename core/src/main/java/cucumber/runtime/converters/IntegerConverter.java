@@ -1,10 +1,10 @@
-package cucumber.runtime.transformers;
+package cucumber.runtime.converters;
 
 import java.util.Locale;
 
-public class IntegerTransformer extends TransformerWithNumberFormat<Integer> {
+public class IntegerConverter extends ConverterWithNumberFormat<Integer> {
 
-    public IntegerTransformer(Locale locale) {
+    public IntegerConverter(Locale locale) {
         super(locale, new Class[]{Integer.class, Integer.TYPE});
     }
 

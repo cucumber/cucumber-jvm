@@ -1,12 +1,12 @@
-package cucumber.runtime.transformers;
+package cucumber.runtime.converters;
 
 import java.text.Format;
 import java.text.NumberFormat;
 import java.util.Locale;
 
-public abstract class TransformerWithNumberFormat<T extends Number> extends TransformerWithFormat<T> {
+public abstract class ConverterWithNumberFormat<T extends Number> extends ConverterWithFormat<T> {
 
-    public TransformerWithNumberFormat(Locale locale, Class[] convertibleTypes) {
+    public ConverterWithNumberFormat(Locale locale, Class[] convertibleTypes) {
         super(locale, convertibleTypes);
     }
 

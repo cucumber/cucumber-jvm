@@ -1,4 +1,4 @@
-package cucumber.runtime.transformers;
+package cucumber.runtime.converters;
 
 import com.thoughtworks.xstream.converters.SingleValueConverter;
 import cucumber.runtime.CucumberException;
@@ -7,12 +7,12 @@ import java.text.Format;
 import java.text.ParsePosition;
 import java.util.Locale;
 
-public abstract class TransformerWithFormat<T> implements SingleValueConverter {
+public abstract class ConverterWithFormat<T> implements SingleValueConverter {
 
     private final Locale locale;
     private final Class[] convertibleTypes;
 
-    public TransformerWithFormat(Locale locale, Class[] convertibleTypes) {
+    public ConverterWithFormat(Locale locale, Class[] convertibleTypes) {
         this.locale = locale;
         this.convertibleTypes = convertibleTypes;
     }

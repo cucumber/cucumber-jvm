@@ -1,10 +1,10 @@
-package cucumber.runtime.transformers;
+package cucumber.runtime.converters;
 
 import java.util.Locale;
 
-public class DoubleTransformer extends TransformerWithNumberFormat<Double> {
+public class DoubleConverter extends ConverterWithNumberFormat<Double> {
 
-    public DoubleTransformer(Locale locale) {
+    public DoubleConverter(Locale locale) {
         super(locale, new Class[]{Double.class, Double.TYPE});
     }
 

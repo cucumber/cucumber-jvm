@@ -1,10 +1,10 @@
-package cucumber.runtime.transformers;
+package cucumber.runtime.converters;
 
 import java.util.Locale;
 
-public class ByteTransformer extends TransformerWithNumberFormat<Byte> {
+public class ByteConverter extends ConverterWithNumberFormat<Byte> {
 
-    public ByteTransformer(Locale locale) {
+    public ByteConverter(Locale locale) {
         super(locale, new Class[]{Byte.class, Byte.TYPE});
     }
 

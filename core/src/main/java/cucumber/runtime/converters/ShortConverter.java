@@ -1,10 +1,10 @@
-package cucumber.runtime.transformers;
+package cucumber.runtime.converters;
 
 import java.util.Locale;
 
-public class ShortTransformer extends TransformerWithNumberFormat<Short> {
+public class ShortConverter extends ConverterWithNumberFormat<Short> {
 
-    public ShortTransformer(Locale locale) {
+    public ShortConverter(Locale locale) {
         super(locale, new Class[]{Short.class, Short.TYPE});
     }
 

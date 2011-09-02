@@ -1,10 +1,10 @@
-package cucumber.runtime.transformers;
+package cucumber.runtime.converters;
 
 import java.util.Locale;
 
-public class FloatTransformer extends TransformerWithNumberFormat<Float> {
+public class FloatConverter extends ConverterWithNumberFormat<Float> {
 
-    public FloatTransformer(Locale locale) {
+    public FloatConverter(Locale locale) {
         super(locale, new Class[]{Float.class, Float.TYPE});
     }
 

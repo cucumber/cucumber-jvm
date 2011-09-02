@@ -1,7 +1,8 @@
-package cucumber.runtime.transformers;
+package cucumber.runtime.converters;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.ConverterLookup;
+import com.thoughtworks.xstream.converters.SingleValueConverter;
 import com.thoughtworks.xstream.converters.SingleValueConverterWrapper;
 import com.thoughtworks.xstream.core.DefaultConverterLookup;
 
@@ -24,9 +25,23 @@ public class ConverterLookups {
     private ConverterLookup newLookup(Locale locale) {
         DefaultConverterLookup lookup = new DefaultConverterLookup();
         
+        // Calling XStream's ctor is currently the only way to have all the default converters registered :-/
         new XStream(null, null, Thread.currentThread().getContextClassLoader(), null, lookup, lookup);
-        lookup.registerConverter(new SingleValueConverterWrapper(new FloatTransformer(locale)), 10000);
-        
+
+        // Override what XStream does with our own Locale-aware converters.
+        register(lookup, new BigDecimalConverter(locale));
+        register(lookup, new BigIntegerConverter(locale));
+        register(lookup, new ByteConverter(locale));
+        register(lookup, new DateConverter(locale)); // TODO: pass in format!!
+        register(lookup, new DoubleConverter(locale));
+        register(lookup, new FloatConverter(locale));
+        register(lookup, new IntegerConverter(locale));
+        register(lookup, new LongConverter(locale));
+
         return lookup;
+    }
+
+    private void register(DefaultConverterLookup lookup, SingleValueConverter conve) {
+        lookup.registerConverter(new SingleValueConverterWrapper(conve), 10000);
     }
 }

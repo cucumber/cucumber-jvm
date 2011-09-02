@@ -1,13 +1,13 @@
-package cucumber.runtime.transformers;
+package cucumber.runtime.converters;
 
 import java.text.DateFormat;
 import java.text.Format;
 import java.util.Date;
 import java.util.Locale;
 
-public class DateTransformer extends TransformerWithFormat<Date> {
+public class DateConverter extends ConverterWithFormat<Date> {
 
-    public DateTransformer(Locale locale) {
+    public DateConverter(Locale locale) {
         super(locale, new Class[]{Date.class});
     }
 

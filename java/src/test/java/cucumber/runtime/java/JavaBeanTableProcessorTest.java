@@ -2,7 +2,7 @@ package cucumber.runtime.java;
 
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.StepDefinitionMatch;
-import cucumber.runtime.transformers.ConverterLookups;
+import cucumber.runtime.converters.ConverterLookups;
 import cucumber.table.java.User;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Comment;
