@@ -6,8 +6,8 @@ import org.junit.runner.RunWith;
 
 /**
  * This test class tells JUnit to run a particular feature with Cucumber.
- * The package of this class is significant - step definitions will be scanned
- * underneath this class' package.
+ * Step definitions will be scanned underneath both this class' package, and
+ * underneath cucumber.examples.java.calculator. 
  */
 @RunWith(Cucumber.class)
 @Feature(value = "basic_arithmetic.feature", packages = {"cucumber.examples.java.calculator"})
