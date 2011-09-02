@@ -129,7 +129,7 @@ public class Resources {
 
     private static void scanJar(URL jarDir, PathWithLines pwl, String suffix, Consumer consumer) {
         String jarUrl = jarDir.toExternalForm();
-        String path = filePath(jarUrl);
+        String path = new FilePathExtractor().filePath(jarUrl);
         try {
             ZipFile jarFile = new ZipFile(path);
             Enumeration<? extends ZipEntry> entries = jarFile.entries();
@@ -154,7 +154,7 @@ public class Resources {
 
     private static String getPath(URL url) {
         String path = url.getPath();
-        return resolveEncodedBlanksInPath(path);
+        return new FilePathExtractor().resolveEncodedBlanksInPath(path);
     }
 
     private static void scanFilesystem(File rootDir, PathWithLines pathWithLines, String suffix, Consumer consumer) {
