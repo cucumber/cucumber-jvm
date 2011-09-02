@@ -2,7 +2,7 @@ package cucumber.runtime.java;
 
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.StepDefinitionMatch;
-import cucumber.runtime.transformers.Transformers;
+import cucumber.runtime.transformers.ConverterLookups;
 import cucumber.table.java.User;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Comment;
@@ -39,7 +39,7 @@ public class JavaBeanTableProcessorTest {
         Step stepWithRows = new Step(NO_COMMENTS, "Given", "something that wants users", 10);
         stepWithRows.setMultilineArg(rowsList());
 
-        StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(NO_ARGS, stepDefinition, "some.feature", stepWithRows, new Transformers());
+        StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(NO_ARGS, stepDefinition, "some.feature", stepWithRows, new ConverterLookups());
         stepDefinitionMatch.runStep(Locale.ENGLISH);
 
         assertEquals(asList(new User("Sid Vicious", sidsBirthday(), 1000)), stepDefs.users);

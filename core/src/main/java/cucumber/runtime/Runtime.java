@@ -1,7 +1,7 @@
 package cucumber.runtime;
 
 import cucumber.resources.Resources;
-import cucumber.runtime.transformers.Transformers;
+import cucumber.runtime.transformers.ConverterLookups;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 
@@ -10,9 +10,9 @@ import java.util.*;
 import static java.util.Arrays.asList;
 
 public class Runtime {
-    private final Transformers transformers = new Transformers();
     private final List<Step> undefinedSteps = new ArrayList<Step>();
     private final List<Backend> backends;
+    private final ConverterLookups converterLookups = new ConverterLookups();
 
     public Runtime(Backend... backends) {
         this.backends = asList(backends);
@@ -41,7 +41,7 @@ public class Runtime {
             for (StepDefinition stepDefinition : backend.getStepDefinitions()) {
                 List<Argument> arguments = stepDefinition.matchedArguments(step);
                 if (arguments != null) {
-                    result.add(new StepDefinitionMatch(arguments, stepDefinition, uri, step, this.transformers));
+                    result.add(new StepDefinitionMatch(arguments, stepDefinition, uri, step, converterLookups));
                 }
             }
         }

@@ -1,12 +1,23 @@
 package cucumber.runtime.transformers;
 
+import com.thoughtworks.xstream.converters.SingleValueConverter;
+import cucumber.runtime.CucumberException;
+
 import java.text.Format;
 import java.text.ParsePosition;
 import java.util.Locale;
 
-public abstract class TransformerWithFormat<T> implements Transformer<T> {
+public abstract class TransformerWithFormat<T> implements SingleValueConverter {
 
-    public T transform(Locale locale, String string) throws TransformationException {
+    private final Locale locale;
+    private final Class[] convertibleTypes;
+
+    public TransformerWithFormat(Locale locale, Class[] convertibleTypes) {
+        this.locale = locale;
+        this.convertibleTypes = convertibleTypes;
+    }
+
+    public T fromString(String string) {
         return transform(getFormat(locale), string);
     }
 
@@ -22,15 +33,29 @@ public abstract class TransformerWithFormat<T> implements Transformer<T> {
      * @param format   The format to use
      * @param argument The object to parse
      * @return The object
-     * @throws TransformationException Thrown if parsing fails
      */
     @SuppressWarnings("unchecked")
-    protected T transform(final Format format, final String argument) throws TransformationException {
+    protected T transform(final Format format, final String argument) {
         ParsePosition position = new ParsePosition(0);
         Object result = format.parseObject(argument, position);
         if (position.getErrorIndex() != -1) {
-            throw new TransformationException("Can't parse '" + argument + "' using format " + format);
+            throw new CucumberException("Can't parse '" + argument + "' using format " + format);
         }
         return (T) result;
+    }
+
+    @Override
+    public String toString(Object obj) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean canConvert(Class type) {
+        for (Class convertibleType : convertibleTypes) {
+            if(convertibleType.isAssignableFrom(type)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

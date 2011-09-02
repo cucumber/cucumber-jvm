@@ -1,8 +1,13 @@
 package cucumber.runtime.transformers;
 
 import java.math.BigDecimal;
+import java.util.Locale;
 
 public class BigDecimalTransformer extends TransformerWithNumberFormat<BigDecimal> {
+
+    public BigDecimalTransformer(Locale locale) {
+        super(locale, new Class[]{BigDecimal.class});
+    }
 
     @Override
     protected BigDecimal doTransform(Number argument) {

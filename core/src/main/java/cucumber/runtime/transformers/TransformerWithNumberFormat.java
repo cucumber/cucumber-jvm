@@ -6,9 +6,13 @@ import java.util.Locale;
 
 public abstract class TransformerWithNumberFormat<T extends Number> extends TransformerWithFormat<T> {
 
+    public TransformerWithNumberFormat(Locale locale, Class[] convertibleTypes) {
+        super(locale, convertibleTypes);
+    }
+
     @Override
-    public T transform(Locale locale, String string) throws TransformationException {
-        return doTransform(super.transform(locale, string));
+    public T fromString(String string) {
+        return doTransform(super.fromString(string));
     }
 
     @Override
@@ -17,5 +21,4 @@ public abstract class TransformerWithNumberFormat<T extends Number> extends Tran
     }
 
     protected abstract T doTransform(Number argument);
-
 }

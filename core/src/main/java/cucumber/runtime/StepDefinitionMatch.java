@@ -1,7 +1,8 @@
 package cucumber.runtime;
 
-import cucumber.runtime.transformers.TransformationException;
-import cucumber.runtime.transformers.Transformers;
+import com.thoughtworks.xstream.converters.ConverterLookup;
+import com.thoughtworks.xstream.converters.SingleValueConverter;
+import cucumber.runtime.transformers.ConverterLookups;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Match;
 import gherkin.formatter.model.Step;
@@ -14,17 +15,16 @@ import static java.util.Arrays.asList;
 
 public class StepDefinitionMatch extends Match {
     private final StepDefinition stepDefinition;
-    private final Step step;
-    private final Transformers transformers;
     private final String uri;
+    private final Step step;
+    private final ConverterLookups converterLookups;
 
-    public StepDefinitionMatch(List<Argument> arguments, StepDefinition stepDefinition, String uri, Step step, Transformers transformers) {
+    public StepDefinitionMatch(List<Argument> arguments, StepDefinition stepDefinition, String uri, Step step, ConverterLookups converterLookups) {
         super(arguments, stepDefinition.getLocation());
         this.stepDefinition = stepDefinition;
-        this.step = step;
-        this.transformers = transformers;
         this.uri = uri;
-
+        this.step = step;
+        this.converterLookups = converterLookups;
     }
 
     public void runStep(Locale locale) throws Throwable {
@@ -42,7 +42,7 @@ public class StepDefinitionMatch extends Match {
         }
     }
 
-    private Object[] transformedArgs(Class<?>[] parameterTypes, Step step, Locale locale) throws TransformationException {
+    private Object[] transformedArgs(Class<?>[] parameterTypes, Step step, Locale locale) {
         int argumentCount = getArguments().size() + (step.getMultilineArg() == null ? 0 : 1);
         if (parameterTypes.length != argumentCount) {
             throw new CucumberException("Arity mismatch. Parameters: " + asList(parameterTypes) + ". Matched arguments: " + getArguments());
@@ -55,8 +55,13 @@ public class StepDefinitionMatch extends Match {
         } else if (step.getDocString() != null) {
             result[n] = step.getDocString().getValue();
         } else {
+            ConverterLookup converterLookup = converterLookups.forLocale(locale);
             for (Argument a : getArguments()) {
-                result[n] = transformers.transform(locale, parameterTypes[n++], a.getVal());
+                // TODO: We might get a lookup that doesn't implement SingleValueConverter
+                // Need to throw a more friendly exception in that case.
+                SingleValueConverter converter = (SingleValueConverter) converterLookup.lookupConverterForType(parameterTypes[n]);
+                result[n] = converter.fromString(a.getVal());
+                n++;
             }
         }
         return result;
@@ -80,10 +85,12 @@ public class StepDefinitionMatch extends Match {
                 break;
             }
         }
-        StackTraceElement[] result = new StackTraceElement[stackLength + 1];
-        System.arraycopy(stackTraceElements, 0, result, 0, stackLength);
-        result[stackLength] = stepLocation;
-        error.setStackTrace(result);
+        if(stepLocation != null) {
+            StackTraceElement[] result = new StackTraceElement[stackLength + 1];
+            System.arraycopy(stackTraceElements, 0, result, 0, stackLength);
+            result[stackLength] = stepLocation;
+            error.setStackTrace(result);
+        }
         return error;
     }
 

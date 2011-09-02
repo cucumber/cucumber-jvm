@@ -1,5 +1,7 @@
 package cucumber.runtime.transformers;
 
+import com.thoughtworks.xstream.converters.ConverterLookup;
+import com.thoughtworks.xstream.converters.SingleValueConverter;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -11,13 +13,16 @@ import static org.junit.Assert.assertTrue;
 public class TransformersTest {
     @Test
     public void shouldTransformToTheRightType() {
-        Transformers transformers = new Transformers();
+        ConverterLookups transformers = new ConverterLookups();
 
-        assertTrue(transformers.<Boolean>transform(Locale.ENGLISH, Boolean.class, "true"));
-        assertTrue(transformers.<Boolean>transform(Locale.ENGLISH, Boolean.TYPE, "true"));
-        assertEquals(3000.15f, transformers.transform(Locale.ENGLISH, Float.class, "3000.15"), 0.000001);
-        assertEquals(3000.15f, transformers.transform(Locale.ENGLISH, Float.TYPE, "3000.15"), 0.000001);
-        assertEquals(3000.15f, transformers.transform(new Locale("NO"), Float.TYPE, "3000,15"), 0.000001);
-        assertEquals(new BigDecimal("3000.15"), transformers.transform(Locale.ENGLISH, BigDecimal.class, "3000.15"));
+        ConverterLookup en = transformers.forLocale(Locale.ENGLISH);
+        assertTrue((Boolean) ((SingleValueConverter)en.lookupConverterForType(Boolean.class)).fromString("true"));
+        assertTrue((Boolean) ((SingleValueConverter)en.lookupConverterForType(Boolean.TYPE)).fromString("true"));
+        assertEquals(3000.15f, (Float) ((SingleValueConverter)en.lookupConverterForType(Float.class)).fromString("3000.15"), 0.000001);
+        assertEquals(3000.15f, (Float) ((SingleValueConverter)en.lookupConverterForType(Float.TYPE)).fromString("3000.15"), 0.000001);
+        assertEquals(new BigDecimal("3000.15"), ((SingleValueConverter)en.lookupConverterForType(BigDecimal.class)).fromString("3000.15"));
+
+        ConverterLookup no = transformers.forLocale(new Locale("NO"));
+        assertEquals(3000.15f, (Float) ((SingleValueConverter)no.lookupConverterForType(Float.TYPE)).fromString("3000,15"), 0.000001);
     }
 }
