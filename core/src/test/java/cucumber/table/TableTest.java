@@ -1,11 +1,15 @@
 package cucumber.table;
 
+import com.thoughtworks.xstream.XStream;
+import cucumber.runtime.converters.LocalizedXStreams;
 import gherkin.formatter.model.Comment;
 import gherkin.formatter.model.Row;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
@@ -17,10 +21,10 @@ public class TableTest {
     @Before
     public void initSimpleTable() {
         List<Row> simpleRows = new ArrayList<Row>();
-        String[] firstLine = new String[]{"one", "four", "seven"};
-        simpleRows.add(new Row(new ArrayList<Comment>(), asList(firstLine), 1));
+        simpleRows.add(new Row(new ArrayList<Comment>(), asList("one", "four", "seven"), 1));
         simpleRows.add(new Row(new ArrayList<Comment>(), asList("4444", "55555", "666666"), 2));
-        simpleTable = new Table(simpleRows);
+        XStream xStream = new LocalizedXStreams().get(Locale.UK);
+        simpleTable = new Table(simpleRows, new TableConverter(xStream), new CamelCaseHeaderMapper());
     }
 
     @Test

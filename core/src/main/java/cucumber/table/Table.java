@@ -4,15 +4,18 @@ import gherkin.formatter.model.Row;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 public class Table {
 
     private final List<List<String>> raw;
     private final List<Row> gherkinRows;
+    private final TableConverter tableConverter;
+    private final TableHeaderMapper tableHeaderMapper;
 
-    public Table(List<Row> gherkinRows) {
+    public Table(List<Row> gherkinRows, TableConverter tableConverter, TableHeaderMapper tableHeaderMapper) {
         this.gherkinRows = gherkinRows;
+        this.tableConverter = tableConverter;
+        this.tableHeaderMapper = tableHeaderMapper;
         this.raw = new ArrayList<List<String>>();
         for (Row row : gherkinRows) {
             List<String> list = new ArrayList<String>();
@@ -25,9 +28,36 @@ public class Table {
         return this.raw;
     }
 
-    public <T> List<T> asList(T type) {
-        throw new UnsupportedOperationException("TODO: i9mplement this method and get rid of the hashes() method");
+    public <T> List<T> asList(Class itemType) {
+        return tableConverter.convert(itemType, attributeNames(), attributeValues());
     }
+
+
+    private List<List<String>> attributeValues() {
+        List<List<String>> attributeValues = new ArrayList<List<String>>();
+        List<Row> valueRows = gherkinRows.subList(1, gherkinRows.size());
+        for (Row valueRow : valueRows) {
+            attributeValues.add(toStrings(valueRow));
+        }
+        return attributeValues;
+    }
+
+    private List<String> attributeNames() {
+        List<String> strings = new ArrayList<String>();
+        for (String string : gherkinRows.get(0).getCells()) {
+            strings.add(tableHeaderMapper.map(string));
+        }
+        return strings;
+    }
+
+    private List<String> toStrings(Row row) {
+        List<String> strings = new ArrayList<String>();
+        for (String string : row.getCells()) {
+            strings.add(string);
+        }
+        return strings;
+    }
+
 
     public void diff(Table other) {
         new TableDiffer(this, other).calculateDiffs();
@@ -44,6 +74,14 @@ public class Table {
             result.add(new DiffableRow(getGherkinRows().get(i), convertedRows.get(i)));
         }
         return result;
+    }
+
+    TableConverter getTableConverter() {
+        return tableConverter;
+    }
+
+    TableHeaderMapper getTableHeaderMapper() {
+        return tableHeaderMapper;
     }
 
     class DiffableRow {

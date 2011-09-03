@@ -2,15 +2,10 @@ package cucumber.runtime.groovy;
 
 import cucumber.runtime.JdkPatternArgumentMatcher;
 import cucumber.runtime.StepDefinition;
-import cucumber.table.Table;
-import cucumber.table.TableConverter;
 import gherkin.formatter.Argument;
-import gherkin.formatter.model.Row;
 import gherkin.formatter.model.Step;
 import groovy.lang.Closure;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.List;
 import java.util.regex.Pattern;
 

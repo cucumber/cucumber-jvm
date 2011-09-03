@@ -1,10 +1,7 @@
 package cucumber.runtime.rhino;
 
 import cucumber.runtime.StepDefinition;
-import cucumber.table.Table;
-import cucumber.table.TableConverter;
 import gherkin.formatter.Argument;
-import gherkin.formatter.model.Row;
 import gherkin.formatter.model.Step;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.NativeFunction;

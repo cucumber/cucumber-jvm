@@ -1,7 +1,6 @@
 package cucumber.runtime.converters;
 
 import com.thoughtworks.xstream.converters.ConversionException;
-import cucumber.runtime.CucumberException;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -10,7 +9,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class StandardConvertersTest {
     @Test

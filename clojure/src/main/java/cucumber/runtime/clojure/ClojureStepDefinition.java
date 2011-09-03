@@ -4,10 +4,7 @@ import clojure.lang.AFunction;
 import cucumber.runtime.JdkPatternArgumentMatcher;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.Utils;
-import cucumber.table.Table;
-import cucumber.table.TableConverter;
 import gherkin.formatter.Argument;
-import gherkin.formatter.model.Row;
 import gherkin.formatter.model.Step;
 
 import java.lang.reflect.InvocationTargetException;

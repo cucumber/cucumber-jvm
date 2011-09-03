@@ -30,30 +30,32 @@ class XStreamTableReader extends AbstractReader {
 
     @Override
     public boolean hasMoreChildren() {
-        switch(depth) {
+        switch (depth) {
             case 0:
                 return itemIterator.hasNext();
             case 1:
                 return attributeNameIterator.hasNext();
-            case 2: 
+            case 2:
                 return false;
-            default: throw new IllegalStateException("Depth is " + depth);
+            default:
+                throw new IllegalStateException("Depth is " + depth);
         }
     }
 
     @Override
     public void moveDown() {
         depth++;
-        switch(depth) {
+        switch (depth) {
             case 1:
                 attributeNameIterator = attributeNames.iterator();
                 attributeValueIterator = itemIterator.next().iterator();
                 break;
-            case 2:                
+            case 2:
                 attributeName = attributeNameIterator.next();
                 attributeValue = attributeValueIterator.next();
                 break;
-            default: throw new IllegalStateException("Depth is " + depth);
+            default:
+                throw new IllegalStateException("Depth is " + depth);
         }
     }
 
@@ -64,11 +66,15 @@ class XStreamTableReader extends AbstractReader {
 
     @Override
     public String getNodeName() {
-        switch(depth) {
-            case 0: return "list";
-            case 1: return elementType.getName();
-            case 2: return attributeName;
-            default: throw new IllegalStateException("Depth is " + depth);
+        switch (depth) {
+            case 0:
+                return "list";
+            case 1:
+                return elementType.getName();
+            case 2:
+                return attributeName;
+            default:
+                throw new IllegalStateException("Depth is " + depth);
         }
     }
 

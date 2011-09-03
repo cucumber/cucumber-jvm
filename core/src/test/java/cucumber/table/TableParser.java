@@ -71,6 +71,6 @@ public class TableParser {
             }
         });
         l.scan(source);
-        return new Table(rows);
+        return new Table(rows, null, null);
     }
 }

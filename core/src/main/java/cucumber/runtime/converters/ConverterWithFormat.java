@@ -19,7 +19,7 @@ public abstract class ConverterWithFormat<T> implements SingleValueConverter {
         for (Format format : getFormats()) {
             try {
                 return transform(format, string);
-            } catch(Exception ignore) {
+            } catch (Exception ignore) {
                 // no worries, let's try the next format.
             }
         }
@@ -57,7 +57,7 @@ public abstract class ConverterWithFormat<T> implements SingleValueConverter {
     @Override
     public boolean canConvert(Class type) {
         for (Class convertibleType : convertibleTypes) {
-            if(convertibleType.isAssignableFrom(type)) {
+            if (convertibleType.isAssignableFrom(type)) {
                 return true;
             }
         }

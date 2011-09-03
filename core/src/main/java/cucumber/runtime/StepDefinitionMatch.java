@@ -8,11 +8,9 @@ import cucumber.table.TableConverter;
 import cucumber.table.TableHeaderMapper;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Match;
-import gherkin.formatter.model.Row;
 import gherkin.formatter.model.Step;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -59,8 +57,7 @@ public class StepDefinitionMatch extends Match {
         Object[] result = new Object[argumentCount];
         int n = 0;
         if (step.getRows() != null) {
-            TableConverter tableConverter = new TableConverter(localizedXStreams.get(locale));
-            result[n] = tableArgument(step, tableConverter, n++);
+            result[n] = tableArgument(step, n++, locale);
         } else if (step.getDocString() != null) {
             result[n] = step.getDocString().getValue();
         } else {
@@ -76,40 +73,17 @@ public class StepDefinitionMatch extends Match {
         return result;
     }
 
-    private Object tableArgument(Step step, TableConverter tableConverter, int argIndex) {
+    private Object tableArgument(Step step, int argIndex, Locale locale) {
+        Table table = new Table(step.getRows(), new TableConverter(localizedXStreams.get(locale)), tableHeaderMapper);
+
         Class listType = stepDefinition.getTypeForTableList(argIndex);
-        if(listType != null) {
-            return tableConverter.convert(listType, attributeNames(step.getRows()), attributeValues(step.getRows()));
+        if (listType != null) {
+            return table.asList(listType);
         } else {
-            return new Table(step.getRows());
+            return table;
         }
     }
 
-    private List<List<String>> attributeValues(List<Row> rows) {
-        List<List<String>> attributeValues = new ArrayList<List<String>>();
-        List<Row> valueRows = rows.subList(1, rows.size());
-        for (Row valueRow : valueRows) {
-            attributeValues.add(toStrings(valueRow));
-        }
-        return attributeValues;
-    }
-
-    private List<String> attributeNames(List<Row> rows) {
-        List<String> strings = new ArrayList<String>();
-        for (String string : rows.get(0).getCells()) {
-            strings.add(tableHeaderMapper.map(string));
-        }
-        return strings;
-    }
-
-    private List<String> toStrings(Row row) {
-        List<String> strings = new ArrayList<String>();
-        for (String string : row.getCells()) {
-            strings.add(string);
-        }
-        return strings;
-    }
-    
     public Throwable filterStacktrace(Throwable error, StackTraceElement stepLocation) {
         StackTraceElement[] stackTraceElements = error.getStackTrace();
         if (error.getCause() != null && error.getCause() != error) {
@@ -124,7 +98,7 @@ public class StepDefinitionMatch extends Match {
                 break;
             }
         }
-        if(stepLocation != null) {
+        if (stepLocation != null) {
             StackTraceElement[] result = new StackTraceElement[stackLength + 1];
             System.arraycopy(stackTraceElements, 0, result, 0, stackLength);
             result[stackLength] = stepLocation;
