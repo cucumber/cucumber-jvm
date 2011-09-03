@@ -4,7 +4,8 @@ Cucumber-JVM is a pure Java implementation of Cucumber that supports the followi
 * Groovy
 * Ioke
 * Java
-* JavaScript (Rhino)
+* JavaScript (Rhino interpreter)
+* Ruby (JRuby interpreter)
 * Scala
 
 Cucumber-JVM provides the following mechanisms for running Cucumber Features:
