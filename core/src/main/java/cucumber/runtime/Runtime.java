@@ -2,6 +2,8 @@ package cucumber.runtime;
 
 import cucumber.resources.Resources;
 import cucumber.runtime.converters.LocalizedXStreams;
+import cucumber.table.CamelCaseHeaderMapper;
+import cucumber.table.TableHeaderMapper;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 
@@ -13,6 +15,7 @@ public class Runtime {
     private final List<Step> undefinedSteps = new ArrayList<Step>();
     private final List<Backend> backends;
     private final LocalizedXStreams localizedXStreams = new LocalizedXStreams();
+    private final TableHeaderMapper tableHeaderMapper = new CamelCaseHeaderMapper();
 
     public Runtime(Backend... backends) {
         this.backends = asList(backends);
@@ -41,7 +44,7 @@ public class Runtime {
             for (StepDefinition stepDefinition : backend.getStepDefinitions()) {
                 List<Argument> arguments = stepDefinition.matchedArguments(step);
                 if (arguments != null) {
-                    result.add(new StepDefinitionMatch(arguments, stepDefinition, uri, step, localizedXStreams));
+                    result.add(new StepDefinitionMatch(arguments, stepDefinition, uri, step, localizedXStreams, tableHeaderMapper));
                 }
             }
         }

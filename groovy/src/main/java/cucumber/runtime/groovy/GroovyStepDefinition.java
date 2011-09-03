@@ -9,6 +9,8 @@ import gherkin.formatter.model.Row;
 import gherkin.formatter.model.Step;
 import groovy.lang.Closure;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -31,6 +33,11 @@ public class GroovyStepDefinition implements StepDefinition {
         return argumentMatcher.argumentsFrom(step.getName());
     }
 
+    @Override
+    public Class getTypeForTableList(int argIndex) {
+        return null;
+    }
+
     public String getLocation() {
         return location.getFileName() + ":" + location.getLineNumber();
     }
@@ -50,10 +57,5 @@ public class GroovyStepDefinition implements StepDefinition {
     @Override
     public String getPattern() {
         return pattern.pattern();
-    }
-
-    @Override
-    public Object tableArgument(int argIndex, List<Row> rows, TableConverter tableConverter) {
-        return new Table(rows);
     }
 }

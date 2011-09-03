@@ -35,6 +35,11 @@ public class ClojureStepDefinition implements StepDefinition {
         return new JdkPatternArgumentMatcher(pattern).argumentsFrom(step.getName());
     }
 
+    @Override
+    public Class getTypeForTableList(int argIndex) {
+        return null;
+    }
+
     public String getLocation() {
         return location.getFileName() + ":" + location.getLineNumber();
     }
@@ -59,10 +64,5 @@ public class ClojureStepDefinition implements StepDefinition {
     @Override
     public String getPattern() {
         return pattern.pattern();
-    }
-
-    @Override
-    public Object tableArgument(int argIndex, List<Row> rows, TableConverter tableConverter) {
-        return new Table(rows);
     }
 }

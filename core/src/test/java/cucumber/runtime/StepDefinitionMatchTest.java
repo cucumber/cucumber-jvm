@@ -23,7 +23,7 @@ public class StepDefinitionMatchTest {
         when(stepWithoutDocStringOrTable.getDocString()).thenReturn(null);
         when(stepWithoutDocStringOrTable.getRows()).thenReturn(null);
 
-        StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(arguments, stepDefinition, "some.feature", stepWithoutDocStringOrTable, new LocalizedXStreams());
+        StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(arguments, stepDefinition, "some.feature", stepWithoutDocStringOrTable, new LocalizedXStreams(), null);
         stepDefinitionMatch.runStep(Locale.ENGLISH);
         Object[] args = {5};
         verify(stepDefinition).execute(args);

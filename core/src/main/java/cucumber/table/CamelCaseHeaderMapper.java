@@ -1,10 +1,8 @@
-package cucumber.table.java;
-
-import cucumber.table.TableHeaderMapper;
+package cucumber.table;
 
 import java.util.regex.Pattern;
 
-public class JavaBeanPropertyHeaderMapper implements TableHeaderMapper {
+public class CamelCaseHeaderMapper implements TableHeaderMapper {
 
     private static final String WHITESPACE = " ";
     private static final Pattern WHITESPACE_PATTERN = Pattern.compile("\\s+");
@@ -21,8 +19,8 @@ public class JavaBeanPropertyHeaderMapper implements TableHeaderMapper {
 
     private String join(String[] splitted) {
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < splitted.length; i++) {
-            sb.append(splitted[i]);
+        for (String s : splitted) {
+            sb.append(s);
         }
         return sb.toString();
     }

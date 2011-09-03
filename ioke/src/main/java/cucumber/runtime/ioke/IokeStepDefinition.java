@@ -2,10 +2,7 @@ package cucumber.runtime.ioke;
 
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.StepDefinition;
-import cucumber.table.Table;
-import cucumber.table.TableConverter;
 import gherkin.formatter.Argument;
-import gherkin.formatter.model.Row;
 import gherkin.formatter.model.Step;
 import ioke.lang.IokeObject;
 import ioke.lang.Runtime;
@@ -47,6 +44,11 @@ public class IokeStepDefinition implements StepDefinition {
         }
     }
 
+    @Override
+    public Class getTypeForTableList(int argIndex) {
+        return null;
+    }
+
     public String getLocation() {
         return location;
     }
@@ -73,10 +75,5 @@ public class IokeStepDefinition implements StepDefinition {
 
     public boolean isDefinedAt(StackTraceElement stackTraceElement) {
         return stackTraceElement.getClassName().equals(IokeBackend.class.getName());
-    }
-
-    @Override
-    public Object tableArgument(int argIndex, List<Row> rows, TableConverter tableConverter) {
-        return new Table(rows);
     }
 }

@@ -39,6 +39,11 @@ public class RhinoStepDefinition implements StepDefinition {
         return args == null ? null : (List<Argument>) args.unwrap();
     }
 
+    @Override
+    public Class getTypeForTableList(int argIndex) {
+        return null;
+    }
+
     public String getLocation() {
         return location.getFileName() + ":" + location.getLineNumber();
     }
@@ -62,10 +67,5 @@ public class RhinoStepDefinition implements StepDefinition {
     @Override
     public String getPattern() {
         return regexp.toString();
-    }
-
-    @Override
-    public Object tableArgument(int argIndex, List<Row> rows, TableConverter tableConverter) {
-        return new Table(rows);
     }
 }

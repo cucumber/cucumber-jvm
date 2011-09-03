@@ -3,12 +3,16 @@ package cucumber.runtime;
 import com.thoughtworks.xstream.converters.ConverterLookup;
 import com.thoughtworks.xstream.converters.SingleValueConverter;
 import cucumber.runtime.converters.LocalizedXStreams;
+import cucumber.table.Table;
 import cucumber.table.TableConverter;
+import cucumber.table.TableHeaderMapper;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Match;
+import gherkin.formatter.model.Row;
 import gherkin.formatter.model.Step;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -19,13 +23,15 @@ public class StepDefinitionMatch extends Match {
     private final String uri;
     private final Step step;
     private final LocalizedXStreams localizedXStreams;
+    private final TableHeaderMapper tableHeaderMapper;
 
-    public StepDefinitionMatch(List<Argument> arguments, StepDefinition stepDefinition, String uri, Step step, LocalizedXStreams localizedXStreams) {
+    public StepDefinitionMatch(List<Argument> arguments, StepDefinition stepDefinition, String uri, Step step, LocalizedXStreams localizedXStreams, TableHeaderMapper tableHeaderMapper) {
         super(arguments, stepDefinition.getLocation());
         this.stepDefinition = stepDefinition;
         this.uri = uri;
         this.step = step;
         this.localizedXStreams = localizedXStreams;
+        this.tableHeaderMapper = tableHeaderMapper;
     }
 
     public void runStep(Locale locale) throws Throwable {
@@ -33,7 +39,8 @@ public class StepDefinitionMatch extends Match {
             throw new NullPointerException("null Locale!");
         }
         try {
-            stepDefinition.execute(transformedArgs(stepDefinition.getParameterTypes(), step, locale));
+            Object[] args = transformedArgs(stepDefinition.getParameterTypes(), step, locale);
+            stepDefinition.execute(args);
         } catch (CucumberException e) {
             throw e;
         } catch (InvocationTargetException t) {
@@ -70,9 +77,39 @@ public class StepDefinitionMatch extends Match {
     }
 
     private Object tableArgument(Step step, TableConverter tableConverter, int argIndex) {
-        return stepDefinition.tableArgument(argIndex, step.getRows(), tableConverter);
+        Class listType = stepDefinition.getTypeForTableList(argIndex);
+        if(listType != null) {
+            return tableConverter.convert(listType, attributeNames(step.getRows()), attributeValues(step.getRows()));
+        } else {
+            return new Table(step.getRows());
+        }
     }
 
+    private List<List<String>> attributeValues(List<Row> rows) {
+        List<List<String>> attributeValues = new ArrayList<List<String>>();
+        List<Row> valueRows = rows.subList(1, rows.size());
+        for (Row valueRow : valueRows) {
+            attributeValues.add(toStrings(valueRow));
+        }
+        return attributeValues;
+    }
+
+    private List<String> attributeNames(List<Row> rows) {
+        List<String> strings = new ArrayList<String>();
+        for (String string : rows.get(0).getCells()) {
+            strings.add(tableHeaderMapper.map(string));
+        }
+        return strings;
+    }
+
+    private List<String> toStrings(Row row) {
+        List<String> strings = new ArrayList<String>();
+        for (String string : row.getCells()) {
+            strings.add(string);
+        }
+        return strings;
+    }
+    
     public Throwable filterStacktrace(Throwable error, StackTraceElement stepLocation) {
         StackTraceElement[] stackTraceElements = error.getStackTrace();
         if (error.getCause() != null && error.getCause() != error) {

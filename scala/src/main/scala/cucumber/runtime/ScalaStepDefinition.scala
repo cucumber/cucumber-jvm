@@ -17,7 +17,7 @@ class ScalaStepDefinition(frame:StackTraceElement, name:String, pattern:String, 
 
   def matchedArguments(step: Step) = argumentMatcher.argumentsFrom(step.getName)
 
-  def tableArgument(argIndex: Int, rows: java.util.List[Row], locale: Locale) = new Table(rows, locale)
+  def getTypeForTableList(argIndex: Int) = null
 
   def getLocation = frame.getFileName + ":" + frame.getLineNumber
 
