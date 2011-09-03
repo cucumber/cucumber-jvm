@@ -24,9 +24,8 @@ public class Cucumber extends ParentRunner<ScenarioRunner> {
     private final List<ScenarioRunner> scenarioRunners = new ArrayList<ScenarioRunner>();
     private String name;
 
-    private static Runtime runtime(Class testClass) {
-        String packageName = testClass.getName().substring(0, testClass.getName().lastIndexOf("."));
-        final Runtime runtime = new Runtime(packageName);
+    private static Runtime runtime(Class featureClass) {
+        final Runtime runtime = new Runtime(packageNamesOrScriptPaths(featureClass));
         java.lang.Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
@@ -34,6 +33,19 @@ public class Cucumber extends ParentRunner<ScenarioRunner> {
             }
         });
         return runtime;
+    }
+
+    private static List<String> packageNamesOrScriptPaths(Class featureClass) {
+        List<String> packageNamesOrScriptPaths = new ArrayList<String>();
+        String featurePackageName = featureClass.getName().substring(0, featureClass.getName().lastIndexOf("."));
+        packageNamesOrScriptPaths.add(featurePackageName);
+
+        // Add additional ones
+        cucumber.junit.Feature featureAnnotation = (cucumber.junit.Feature) featureClass.getAnnotation(cucumber.junit.Feature.class);
+        if (featureAnnotation != null) {
+            packageNamesOrScriptPaths.addAll(asList(featureAnnotation.packages()));
+        }
+        return packageNamesOrScriptPaths;
     }
 
     /**
@@ -49,14 +61,6 @@ public class Cucumber extends ParentRunner<ScenarioRunner> {
         this.runtime = runtime;
         String pathName = featurePath(featureClass);
         parseFeature(pathName, filters(featureClass));
-        addAdditionalScanPaths(featureClass, this.runtime);
-    }
-
-    private void addAdditionalScanPaths(Class featureClass, final Runtime runtime) {
-        cucumber.junit.Feature featureAnnotation = (cucumber.junit.Feature) featureClass.getAnnotation(cucumber.junit.Feature.class);
-        if (featureAnnotation != null) {
-            runtime.addStepdefScanPath(featureAnnotation.packages());
-        }
     }
 
     private String featurePath(Class featureClass) {

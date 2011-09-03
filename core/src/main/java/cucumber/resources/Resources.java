@@ -91,8 +91,8 @@ public class Resources {
         }
     }
 
-    public static <T> T instantiateExactlyOneSubclass(Class<T> type, String packagePrefix, Object... constructorArguments) {
-        Collection<T> instances = instantiateSubclasses(type, packagePrefix, constructorArguments);
+    public static <T> T instantiateExactlyOneSubclass(Class<T> type, String packagePrefix, Class[] argumentTypes, Object[] constructorArguments) {
+        Collection<T> instances = instantiateSubclasses(type, packagePrefix, argumentTypes, constructorArguments);
         if (instances.size() == 1) {
             return instances.iterator().next();
         } else if (instances.size() == 0) {
@@ -102,16 +102,12 @@ public class Resources {
         }
     }
 
-    public static <T> List<T> instantiateSubclasses(Class<T> type, String packagePrefix, Object... constructorArguments) {
+    public static <T> List<T> instantiateSubclasses(Class<T> type, String packagePrefix, Class[] argumentTypes, Object[] constructorArguments) {
         List<T> result = new ArrayList<T>();
 
         Collection<Class<? extends T>> classes = getInstantiableSubclassesOf(type, packagePrefix);
         for (Class<? extends T> clazz : classes) {
             try {
-                Class[] argumentTypes = new Class[constructorArguments.length];
-                for (int i = 0; i < constructorArguments.length; i++) {
-                    argumentTypes[i] = constructorArguments[i].getClass();
-                }
                 result.add(clazz.getConstructor(argumentTypes).newInstance(constructorArguments));
             } catch (InstantiationException e) {
                 throw new CucumberException("Couldn't instantiate " + clazz, e);

@@ -9,20 +9,14 @@ import gherkin.formatter.model.Step;
 
 import java.util.*;
 
-import static java.util.Arrays.asList;
-
 public class Runtime {
     private final List<Step> undefinedSteps = new ArrayList<Step>();
     private final List<Backend> backends;
     private final LocalizedXStreams localizedXStreams = new LocalizedXStreams();
     private final TableHeaderMapper tableHeaderMapper = new CamelCaseHeaderMapper();
 
-    public Runtime(Backend... backends) {
-        this.backends = asList(backends);
-    }
-
-    public Runtime(String packageName) {
-        backends = Resources.instantiateSubclasses(Backend.class, "cucumber.runtime", packageName);
+    public Runtime(List<String> packageNamesOrScriptPaths) {
+        backends = Resources.instantiateSubclasses(Backend.class, "cucumber.runtime", new Class[]{List.class}, new Object[]{packageNamesOrScriptPaths});
     }
 
     public StepDefinitionMatch stepDefinitionMatch(String uri, Step step) {
@@ -82,15 +76,5 @@ public class Runtime {
 
     public World newWorld(Set<String> tags) {
         return new World(backends, this, tags);
-    }
-
-    // XXX: should this be ctor initialized?
-    public void addStepdefScanPath(String[] packages) {
-        for (String packageName : packages) {
-            if(packageName.matches("^([a-z]\\w*\\.?)+$"))
-                backends.addAll(Resources.instantiateSubclasses(Backend.class, "cucumber.runtime", packageName));
-            else
-                throw new CucumberException("Additional package isn't valid: " + packageName);
-        }
     }
 }
