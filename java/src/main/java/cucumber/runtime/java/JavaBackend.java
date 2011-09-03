@@ -9,6 +9,7 @@ import cucumber.runtime.*;
 import gherkin.formatter.model.Step;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -53,7 +54,20 @@ public class JavaBackend implements Backend {
     void addStepDefinition(Pattern pattern, Method method) {
         Class<?> clazz = method.getDeclaringClass();
         objectFactory.addClass(clazz);
+        addConstructorDependencies(clazz);
         stepDefinitions.add(new JavaStepDefinition(pattern, method, objectFactory));
+    }
+
+    private void addConstructorDependencies(Class<?> clazz) {
+        for (Constructor constructor : clazz.getConstructors())
+        {
+            for(Class paramClazz : constructor.getParameterTypes())
+            {
+                // TODO: Check if class was already registered to prevent endless recursion
+                objectFactory.addClass(paramClazz);
+                addConstructorDependencies(paramClazz);
+            }
+        }
     }
 
     public Object invoke(Method method, Object[] javaArgs) {
