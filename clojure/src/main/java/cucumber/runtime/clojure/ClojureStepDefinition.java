@@ -4,7 +4,6 @@ import clojure.lang.AFunction;
 import cucumber.runtime.JdkPatternArgumentMatcher;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.Utils;
-import cucumber.table.Table;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 
@@ -33,6 +32,11 @@ public class ClojureStepDefinition implements StepDefinition {
         return new JdkPatternArgumentMatcher(pattern).argumentsFrom(step.getName());
     }
 
+    @Override
+    public Class getTypeForTableList(int argIndex) {
+        return null;
+    }
+
     public String getLocation() {
         return location.getFileName() + ":" + location.getLineNumber();
     }
@@ -57,10 +61,5 @@ public class ClojureStepDefinition implements StepDefinition {
     @Override
     public String getPattern() {
         return pattern.pattern();
-    }
-
-    @Override
-    public Object tableArgument(int argIndex, Table table) {
-        return table;
     }
 }

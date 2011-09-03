@@ -21,9 +21,12 @@ public class JavaBackend implements Backend {
     private List<HookDefinition> beforeHooks = new ArrayList<HookDefinition>();
     private List<HookDefinition> afterHooks = new ArrayList<HookDefinition>();
 
-    public JavaBackend(String packagePrefix) {
-        this.objectFactory = Resources.instantiateExactlyOneSubclass(ObjectFactory.class, "cucumber.runtime");
-        new ClasspathMethodScanner().scan(this, packagePrefix);
+    public JavaBackend(List<String> packagePrefixes) {
+        this.objectFactory = Resources.instantiateExactlyOneSubclass(ObjectFactory.class, "cucumber.runtime", new Class[0], new Object[0]);
+        ClasspathMethodScanner classpathMethodScanner = new ClasspathMethodScanner();
+        for (String packagePrefix : packagePrefixes) {
+            classpathMethodScanner.scan(this, packagePrefix);
+        }
     }
 
     public JavaBackend(ObjectFactory objectFactory, List<StepDefinition> stepDefinitions) {

@@ -2,7 +2,6 @@ package cucumber.runtime.jruby;
 
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.Utils;
-import cucumber.table.Table;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 import org.jruby.RubyObject;
@@ -26,6 +25,11 @@ public class JRubyStepDefinition implements StepDefinition {
         RubyString stepName = stepdef.getRuntime().newString(step.getName());
         IRubyObject arguments = stepdef.callMethod("matched_arguments", stepName);
         return (List<Argument>) arguments.toJava(List.class);
+    }
+
+    @Override
+    public Class getTypeForTableList(int argIndex) {
+        return null;
     }
 
     @Override
@@ -63,10 +67,5 @@ public class JRubyStepDefinition implements StepDefinition {
     @Override
     public String getPattern() {
         return (String) stepdef.callMethod("pattern").toJava(String.class);
-    }
-
-    @Override
-    public Object tableArgument(int argIndex, Table table) {
-        return table;
     }
 }

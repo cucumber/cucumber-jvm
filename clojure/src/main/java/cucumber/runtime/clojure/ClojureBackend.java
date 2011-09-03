@@ -16,31 +16,32 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public class ClojureBackend implements Backend {
-    private final List<StepDefinition> stepDefinitions = new ArrayList<StepDefinition>();
-    private String scriptPath;
     private static ClojureBackend instance;
 
-    public ClojureBackend(String scriptPath) {
+    private final List<StepDefinition> stepDefinitions = new ArrayList<StepDefinition>();
+
+    public ClojureBackend(List<String> scriptPaths) {
         instance = this;
-        this.scriptPath = scriptPath;
         try {
-            defineStepDefinitions();
+            defineStepDefinitions(scriptPaths);
         } catch (Exception e) {
             throw new CucumberException("Failed to define Cloure Step Definitions", e);
         }
     }
 
-    private void defineStepDefinitions() throws Exception {
+    private void defineStepDefinitions(List<String> scriptPaths) throws Exception {
         RT.load("cucumber/runtime/clojure/dsl");
-        Resources.scan(this.scriptPath, ".clj", new Consumer() {
-            public void consume(Resource resource) {
-                try {
-                    RT.load(resource.getPath().replaceAll(".clj$", ""));
-                } catch (Exception e) {
-                    throw new CucumberException("Failed to parse file " + resource.getPath(), e);
+        for (String scriptPath : scriptPaths) {
+            Resources.scan(scriptPath.replace('.', '/'), ".clj", new Consumer() {
+                public void consume(Resource resource) {
+                    try {
+                        RT.load(resource.getPath().replaceAll(".clj$", ""));
+                    } catch (Exception e) {
+                        throw new CucumberException("Failed to parse file " + resource.getPath(), e);
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     public List<StepDefinition> getStepDefinitions() {

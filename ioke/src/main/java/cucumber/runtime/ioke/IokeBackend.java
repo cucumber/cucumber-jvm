@@ -25,7 +25,7 @@ public class IokeBackend implements Backend {
     private final List<StepDefinition> stepDefinitions = new ArrayList<StepDefinition>();
     private String currentLocation;
 
-    public IokeBackend(String scriptPath) {
+    public IokeBackend(List<String> scriptPaths) {
         try {
             ioke = new Runtime();
             ioke.init();
@@ -35,17 +35,18 @@ public class IokeBackend implements Backend {
             failureRescues = createRescues("ISpec", "ExpectationNotMet");
             pendingRescues = createRescues("Pending");
 
-            Resources.scan(scriptPath, ".ik", new Consumer() {
-                public void consume(Resource resource) {
-                    try {
-                        currentLocation = resource.getPath();
-                        ioke.evaluateString("use(\"" + resource.getPath() + "\")");
-                    } catch (ControlFlow controlFlow) {
-                        throw new CucumberException("Failed to load " + resource.getPath(), controlFlow);
+            for (String scriptPath : scriptPaths) {
+                Resources.scan(scriptPath.replace('.', '/'), ".ik", new Consumer() {
+                    public void consume(Resource resource) {
+                        try {
+                            currentLocation = resource.getPath();
+                            ioke.evaluateString("use(\"" + resource.getPath() + "\")");
+                        } catch (ControlFlow controlFlow) {
+                            throw new CucumberException("Failed to load " + resource.getPath(), controlFlow);
+                        }
                     }
-                }
-            });
-
+                });
+            }
         } catch (Throwable e) {
             throw new CucumberException("Failed to initialize Ioke", e);
         }

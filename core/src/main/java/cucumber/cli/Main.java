@@ -14,9 +14,8 @@ public class Main {
     private static final String VERSION = "1.0.0"; // TODO: get this from a file
 
     public static void main(String[] argv) {
-        Runtime runtime = null;
-
         List<String> filesOrDirs = new ArrayList<String>();
+        List<String> packageNamesOrScriptPaths = new ArrayList<String>();
         List<Object> filters = new ArrayList<Object>();
 
         List<String> args = new ArrayList<String>(asList(argv));
@@ -30,19 +29,20 @@ public class Main {
                 System.out.println(VERSION);
                 System.exit(0);
             } else if (arg.equals("--glue") || arg.equals("-g")) {
-                String packageNameOrScriptPrefix = args.remove(0);
-                runtime = new Runtime(packageNameOrScriptPrefix);
+                String packageNameOrScriptPath = args.remove(0);
+                packageNamesOrScriptPaths.add(packageNameOrScriptPath);
             } else if (arg.equals("--tags") || arg.equals("-t")) {
                 filters.add(args.remove(0));
             } else {
                 filesOrDirs.add(arg);
             }
         }
-        if (runtime == null) {
+        if (packageNamesOrScriptPaths.isEmpty()) {
             System.out.println("Missing option: --glue");
             System.exit(1);
         }
 
+        Runtime runtime = new Runtime(packageNamesOrScriptPaths);
         Runner runner = new Runner(runtime);
 
         PrettyFormatter prettyFormatter = new PrettyFormatter(System.out, false, true);

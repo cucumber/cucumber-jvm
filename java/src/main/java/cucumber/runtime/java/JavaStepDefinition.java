@@ -3,8 +3,6 @@ package cucumber.runtime.java;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.JdkPatternArgumentMatcher;
 import cucumber.runtime.StepDefinition;
-import cucumber.table.Table;
-import cucumber.table.java.JavaBeanTableTransformer;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 
@@ -63,13 +61,13 @@ public class JavaStepDefinition implements StepDefinition {
     }
 
     @Override
-    public Object tableArgument(int argIndex, Table table) {
+    public Class getTypeForTableList(int argIndex) {
         Type genericParameterType = method.getGenericParameterTypes()[argIndex];
         if (genericParameterType instanceof ParameterizedType) {
             Type[] parameters = ((ParameterizedType) genericParameterType).getActualTypeArguments();
-            return new JavaBeanTableTransformer((Class<?>) parameters[0]).transformTable(table);
+            return (Class<?>) parameters[0];
         } else {
-            return table;
+            return null;
         }
     }
 }

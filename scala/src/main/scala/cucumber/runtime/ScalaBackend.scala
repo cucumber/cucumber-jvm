@@ -6,9 +6,10 @@ import resources.Resources
 
 import collection.JavaConverters._
 
-class ScalaBackend(packagePrefix:String) extends Backend {
+class ScalaBackend(packagePrefixes:java.util.List[String]) extends Backend {
 
-  val instances = Resources.instantiateSubclasses(classOf[ScalaDsl], packagePrefix).asScala
+  // TODO: loop over all packagePrefixes. Don't know enough Scala syntax (AH)
+  val instances = Resources.instantiateSubclasses(classOf[ScalaDsl], packagePrefixes.get(0), Array(), Array()).asScala
 
   def getStepDefinitions = instances.flatMap(_.stepDefinitions).asJava
 

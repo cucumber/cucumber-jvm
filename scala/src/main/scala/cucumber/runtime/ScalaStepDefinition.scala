@@ -4,9 +4,11 @@ package runtime
 import cucumber.table.Table
 
 import gherkin.formatter.model.Step
+import gherkin.formatter.model.Row
 
 import collection.JavaConverters._
 
+import _root_.java.util.Locale
 import _root_.java.util.regex.Pattern
 
 class ScalaStepDefinition(frame:StackTraceElement, name:String, pattern:String, parameterTypes:List[Class[_]], f:List[Any] => Any) extends StepDefinition {
@@ -15,7 +17,7 @@ class ScalaStepDefinition(frame:StackTraceElement, name:String, pattern:String, 
 
   def matchedArguments(step: Step) = argumentMatcher.argumentsFrom(step.getName)
 
-  def tableArgument(argIndex: Int, table: Table) = table
+  def getTypeForTableList(argIndex: Int) = null
 
   def getLocation = frame.getFileName + ":" + frame.getLineNumber
 

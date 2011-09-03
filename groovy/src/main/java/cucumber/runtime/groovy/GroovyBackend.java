@@ -24,22 +24,24 @@ public class GroovyBackend implements Backend {
     private static Closure worldClosure;
     private static Object world;
 
-    public GroovyBackend(String packagePrefix) {
+    public GroovyBackend(List<String> scriptPaths) {
         instance = this;
         try {
-            defineStepDefinitions(packagePrefix.replace('.', '/'));
+            defineStepDefinitions(scriptPaths);
         } catch (IOException e) {
             throw new CucumberException("Couldn't load stepdefs", e);
         }
     }
 
-    private void defineStepDefinitions(String pathPrefix) throws IOException {
+    private void defineStepDefinitions(List<String> scriptPaths) throws IOException {
         final GroovyShell shell = new GroovyShell(new Binding());
-        Resources.scan(pathPrefix, ".groovy", new Consumer() {
-            public void consume(Resource resource) {
-                shell.evaluate(resource.getString(), resource.getPath());
-            }
-        });
+        for (String scriptPath : scriptPaths) {
+            Resources.scan(scriptPath.replace('.', '/'), ".groovy", new Consumer() {
+                public void consume(Resource resource) {
+                    shell.evaluate(resource.getString(), resource.getPath());
+                }
+            });
+        }
     }
 
     public List<StepDefinition> getStepDefinitions() {

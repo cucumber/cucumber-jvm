@@ -1,6 +1,5 @@
 package cucumber.runtime;
 
-import cucumber.table.Table;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 
@@ -15,16 +14,14 @@ public interface StepDefinition {
     List<Argument> matchedArguments(Step step);
 
     /**
-     * Returns a different representation of {@code table} for the argument at position {@code argIndex}. This allows
-     * step definitions to accept a higher level argument type. If the implementation does not know how to transform
-     * a table, the table itself should be returned.
-     * 
-     * @param argIndex index of the argument
-     * @param table the table to transform
-     * @return the {@link Object} associated with the argument
-     *         at argIndex or table if there's none
+     * Cucumber will try to convert each Gherkin step table into a {@link List} of objects. The header row is used to
+     * identify property names of the objects, and each row underneath will be converted to an object.
+     * <p/>
+     * If this method returns null, Cucumber will convert the rows into an instance of {@link cucumber.table.Table}.
+     *
+     * @return the kind of object Cucumber should instantiate for each row, or null if no conversion should happen.
      */
-    Object tableArgument(int argIndex, Table table);
+    Class getTypeForTableList(int argIndex);
 
     /**
      * The source line where the step definition is defined.

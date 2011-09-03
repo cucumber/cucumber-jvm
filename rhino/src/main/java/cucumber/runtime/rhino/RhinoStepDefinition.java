@@ -1,7 +1,6 @@
 package cucumber.runtime.rhino;
 
 import cucumber.runtime.StepDefinition;
-import cucumber.table.Table;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 import org.mozilla.javascript.Context;
@@ -37,6 +36,11 @@ public class RhinoStepDefinition implements StepDefinition {
         return args == null ? null : (List<Argument>) args.unwrap();
     }
 
+    @Override
+    public Class getTypeForTableList(int argIndex) {
+        return null;
+    }
+
     public String getLocation() {
         return location.getFileName() + ":" + location.getLineNumber();
     }
@@ -60,10 +64,5 @@ public class RhinoStepDefinition implements StepDefinition {
     @Override
     public String getPattern() {
         return regexp.toString();
-    }
-
-    @Override
-    public Object tableArgument(int argIndex, Table table) {
-        return table;
     }
 }
