@@ -4,15 +4,15 @@ import cucumber.runtime.CucumberException;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.net.URLDecoder;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-
-import static cucumber.resources.FilePathExtractor.*;
 
 /**
  * Static utility methods for looking up classes and resources on the classpath.
@@ -129,8 +129,8 @@ public class Resources {
 
     private static void scanJar(URL jarDir, PathWithLines pwl, String suffix, Consumer consumer) {
         String jarUrl = jarDir.toExternalForm();
-        String path = new FilePathExtractor().filePath(jarUrl);
         try {
+            String path = new FilePathExtractor().filePath(jarUrl);
             ZipFile jarFile = new ZipFile(path);
             Enumeration<? extends ZipEntry> entries = jarFile.entries();
             while (entries.hasMoreElements()) {
@@ -140,7 +140,7 @@ public class Resources {
                     consumer.consume(new ZipResource(jarFile, jarEntry, pwl));
                 }
             }
-        } catch (IOException t) {
+        } catch (Exception t) {
             throw new CucumberException("Failed to scan jar", t);
         }
     }
@@ -153,8 +153,11 @@ public class Resources {
     }
 
     private static String getPath(URL url) {
-        String path = url.getPath();
-        return new FilePathExtractor().resolveEncodedBlanksInPath(path);
+        try {
+            return URLDecoder.decode(url.getPath(), "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new CucumberException("Encoding problem", e);
+        }
     }
 
     private static void scanFilesystem(File rootDir, PathWithLines pathWithLines, String suffix, Consumer consumer) {
