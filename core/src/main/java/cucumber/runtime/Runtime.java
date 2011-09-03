@@ -84,4 +84,13 @@ public class Runtime {
         return new World(backends, this, tags);
     }
 
+    // XXX: should this be ctor initialized?
+    public void addStepdefScanPath(String[] packages) {
+        for (String packageName : packages) {
+            if(packageName.matches("^([a-z]\\w*\\.?)+$"))
+                backends.addAll(Resources.instantiateSubclasses(Backend.class, "cucumber.runtime", packageName));
+            else
+                throw new CucumberException("Additional package isn't valid: " + packageName);
+        }
+    }
 }
