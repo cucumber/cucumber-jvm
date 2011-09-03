@@ -3,6 +3,7 @@ package cucumber.runtime.ioke;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.StepDefinition;
 import cucumber.table.Table;
+import cucumber.table.TableConverter;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Row;
 import gherkin.formatter.model.Step;
@@ -11,7 +12,6 @@ import ioke.lang.Runtime;
 import ioke.lang.exceptions.ControlFlow;
 
 import java.util.List;
-import java.util.Locale;
 
 public class IokeStepDefinition implements StepDefinition {
     private final Runtime ioke;
@@ -76,7 +76,7 @@ public class IokeStepDefinition implements StepDefinition {
     }
 
     @Override
-    public Object tableArgument(int argIndex, List<Row> rows, Locale locale) {
-        return new Table(rows, locale);
+    public Object tableArgument(int argIndex, List<Row> rows, TableConverter tableConverter) {
+        return new Table(rows);
     }
 }

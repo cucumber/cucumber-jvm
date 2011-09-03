@@ -1,5 +1,6 @@
 package cucumber.runtime.converters;
 
+import com.thoughtworks.xstream.converters.ConversionException;
 import cucumber.runtime.CucumberException;
 import org.junit.Test;
 
@@ -30,8 +31,8 @@ public class StandardConvertersTest {
         assertEquals(getDateToTest(), new DateConverter(Locale.FRANCE).fromString("29/11/2011"));
     }
 
-    @Test(expected = CucumberException.class)
-    public void shouldThrowTransformationExceptionWhenConvertingInvalidDate() {
+    @Test(expected = ConversionException.class)
+    public void shouldThrowConversionExceptionWhenConvertingInvalidDate() {
         assertEquals(getDateToTest(), new DateConverter(Locale.US).fromString("29/11/2011"));
     }
 

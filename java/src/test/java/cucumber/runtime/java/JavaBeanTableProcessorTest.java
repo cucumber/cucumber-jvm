@@ -2,7 +2,7 @@ package cucumber.runtime.java;
 
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.StepDefinitionMatch;
-import cucumber.runtime.converters.ConverterLookups;
+import cucumber.runtime.converters.LocalizedXStreams;
 import cucumber.table.java.User;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Comment;
@@ -39,8 +39,8 @@ public class JavaBeanTableProcessorTest {
         Step stepWithRows = new Step(NO_COMMENTS, "Given", "something that wants users", 10);
         stepWithRows.setMultilineArg(rowsList());
 
-        StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(NO_ARGS, stepDefinition, "some.feature", stepWithRows, new ConverterLookups());
-        stepDefinitionMatch.runStep(Locale.ENGLISH);
+        StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(NO_ARGS, stepDefinition, "some.feature", stepWithRows, new LocalizedXStreams());
+        stepDefinitionMatch.runStep(Locale.UK);
 
         assertEquals(asList(new User("Sid Vicious", sidsBirthday(), 1000)), stepDefs.users);
     }
@@ -52,7 +52,7 @@ public class JavaBeanTableProcessorTest {
     private List<Row> rowsList() {
         List<Row> rows = new ArrayList<Row>();
         rows.add(new Row(new ArrayList<Comment>(), asList("name", "birth date", "credits"), 1));
-        rows.add(new Row(new ArrayList<Comment>(), asList("Sid Vicious", "1957-05-10 00:00:00 UTC", "1000"), 2));
+        rows.add(new Row(new ArrayList<Comment>(), asList("Sid Vicious", "10/05/1957", "1000"), 2));
         return rows;
     }
 

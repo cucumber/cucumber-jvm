@@ -9,7 +9,6 @@ import gherkin.lexer.i18n.EN;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 
 public class TableParser {
     private static final List<Comment> NO_COMMENTS = Collections.emptyList();
@@ -72,6 +71,6 @@ public class TableParser {
             }
         });
         l.scan(source);
-        return new Table(rows, Locale.ENGLISH);
+        return new Table(rows);
     }
 }

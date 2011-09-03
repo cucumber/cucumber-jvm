@@ -9,12 +9,10 @@ import java.util.Locale;
 public class Table {
 
     private final List<List<String>> raw;
-    private final Locale locale;
     private final List<Row> gherkinRows;
 
-    public Table(List<Row> gherkinRows, Locale locale) {
+    public Table(List<Row> gherkinRows) {
         this.gherkinRows = gherkinRows;
-        this.locale = locale;
         this.raw = new ArrayList<List<String>>();
         for (Row row : gherkinRows) {
             List<String> list = new ArrayList<String>();
@@ -37,10 +35,6 @@ public class Table {
 
     public List<Row> getGherkinRows() {
         return gherkinRows;
-    }
-
-    public Locale getLocale() {
-        return locale;
     }
 
     List<DiffableRow> diffableRows() {

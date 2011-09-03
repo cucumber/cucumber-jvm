@@ -45,7 +45,7 @@ public class TableDiffer {
         if (remainingDelta != null) {
             addRowsToTableDiffAndReturnNumberOfRows(diffTableRows, remainingDelta);
         }
-        return new Table(diffTableRows, orig.getLocale());
+        return new Table(diffTableRows);
     }
 
     private int addRowsToTableDiffAndReturnNumberOfRows(List<Row> diffTableRows, Delta delta) {

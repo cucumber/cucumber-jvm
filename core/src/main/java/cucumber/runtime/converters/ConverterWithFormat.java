@@ -1,31 +1,36 @@
 package cucumber.runtime.converters;
 
+import com.thoughtworks.xstream.converters.ConversionException;
 import com.thoughtworks.xstream.converters.SingleValueConverter;
 import cucumber.runtime.CucumberException;
 
 import java.text.Format;
 import java.text.ParsePosition;
-import java.util.Locale;
+import java.util.List;
 
 public abstract class ConverterWithFormat<T> implements SingleValueConverter {
-
-    private final Locale locale;
     private final Class[] convertibleTypes;
 
-    public ConverterWithFormat(Locale locale, Class[] convertibleTypes) {
-        this.locale = locale;
+    public ConverterWithFormat(Class[] convertibleTypes) {
         this.convertibleTypes = convertibleTypes;
     }
 
     public T fromString(String string) {
-        return transform(getFormat(locale), string);
+        for (Format format : getFormats()) {
+            try {
+                return transform(format, string);
+            } catch(Exception ignore) {
+                // no worries, let's try the next format.
+            }
+        }
+        throw new ConversionException("Cannot parse date " + string);
+
     }
 
     /**
-     * @param locale The locale used to parse
      * @return A Format to parse the argument
      */
-    public abstract Format getFormat(Locale locale);
+    protected abstract List<Format> getFormats();
 
     /**
      * Parses a value using one of the java.util.text format classes.

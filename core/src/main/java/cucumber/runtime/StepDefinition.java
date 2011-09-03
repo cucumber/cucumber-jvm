@@ -1,11 +1,11 @@
 package cucumber.runtime;
 
+import cucumber.table.TableConverter;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Row;
 import gherkin.formatter.model.Step;
 
 import java.util.List;
-import java.util.Locale;
 
 public interface StepDefinition {
     /**
@@ -20,13 +20,14 @@ public interface StepDefinition {
      * step definitions to accept a higher level argument type. If the implementation does not know how to transform
      * a table, the table itself should be returned.
      *
+     *
      * @param argIndex index of the argument
      * @param rows
-     * @param locale
+     * @param tableConverter
      * @return the {@link Object} associated with the argument
      *         at argIndex or table if there's none
      */
-    Object tableArgument(int argIndex, List<Row> rows, Locale locale);
+    Object tableArgument(int argIndex, List<Row> rows, TableConverter tableConverter);
 
     /**
      * The source line where the step definition is defined.

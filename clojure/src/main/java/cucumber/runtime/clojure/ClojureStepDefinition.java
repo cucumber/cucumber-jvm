@@ -5,6 +5,7 @@ import cucumber.runtime.JdkPatternArgumentMatcher;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.Utils;
 import cucumber.table.Table;
+import cucumber.table.TableConverter;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Row;
 import gherkin.formatter.model.Step;
@@ -12,7 +13,6 @@ import gherkin.formatter.model.Step;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
-import java.util.Locale;
 import java.util.regex.Pattern;
 
 public class ClojureStepDefinition implements StepDefinition {
@@ -62,7 +62,7 @@ public class ClojureStepDefinition implements StepDefinition {
     }
 
     @Override
-    public Object tableArgument(int argIndex, List<Row> rows, Locale locale) {
-        return new Table(rows, locale);
+    public Object tableArgument(int argIndex, List<Row> rows, TableConverter tableConverter) {
+        return new Table(rows);
     }
 }

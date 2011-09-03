@@ -1,7 +1,6 @@
 package cucumber.runtime.converters;
 
 import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.converters.ConverterLookup;
 import com.thoughtworks.xstream.converters.SingleValueConverter;
 import com.thoughtworks.xstream.converters.SingleValueConverterWrapper;
 import com.thoughtworks.xstream.core.DefaultConverterLookup;
@@ -10,25 +9,25 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-public class ConverterLookups {
-    private final Map<Locale,ConverterLookup> lookups = new HashMap<Locale, ConverterLookup>();
-    
-    public ConverterLookup forLocale(Locale locale) {
-        ConverterLookup lookup = lookups.get(locale);
-        if(lookup == null) {
-            lookup = newLookup(locale);
-            lookups.put(locale, lookup);
+public class LocalizedXStreams {
+    private final Map<Locale, XStream> xStreams = new HashMap<Locale, XStream>();
+
+    public XStream get(Locale locale) {
+        XStream xStream = xStreams.get(locale);
+        if (xStream == null) {
+            xStream = newXStream(locale);
+            xStreams.put(locale, xStream);
         }
-        return lookup;
+        return xStream;
     }
 
-    private ConverterLookup newLookup(Locale locale) {
+    private XStream newXStream(Locale locale) {
         DefaultConverterLookup lookup = new DefaultConverterLookup();
-        
-        // Calling XStream's ctor is currently the only way to have all the default converters registered :-/
-        new XStream(null, null, Thread.currentThread().getContextClassLoader(), null, lookup, lookup);
 
-        // Override what XStream does with our own Locale-aware converters.
+        // XStream's registers all the default converters.
+        XStream xStream = new XStream(null, null, Thread.currentThread().getContextClassLoader(), null, lookup, lookup);
+
+        // Override with our own Locale-aware converters.
         register(lookup, new BigDecimalConverter(locale));
         register(lookup, new BigIntegerConverter(locale));
         register(lookup, new ByteConverter(locale));
@@ -38,7 +37,7 @@ public class ConverterLookups {
         register(lookup, new IntegerConverter(locale));
         register(lookup, new LongConverter(locale));
 
-        return lookup;
+        return xStream;
     }
 
     private void register(DefaultConverterLookup lookup, SingleValueConverter conve) {

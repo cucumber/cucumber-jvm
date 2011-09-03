@@ -3,6 +3,7 @@ package cucumber.runtime.jruby;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.Utils;
 import cucumber.table.Table;
+import cucumber.table.TableConverter;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Row;
 import gherkin.formatter.model.Step;
@@ -11,7 +12,6 @@ import org.jruby.RubyString;
 import org.jruby.runtime.builtin.IRubyObject;
 
 import java.util.List;
-import java.util.Locale;
 
 public class JRubyStepDefinition implements StepDefinition {
 
@@ -68,7 +68,7 @@ public class JRubyStepDefinition implements StepDefinition {
     }
 
     @Override
-    public Object tableArgument(int argIndex, List<Row> rows, Locale locale) {
-        return new Table(rows, locale);
+    public Object tableArgument(int argIndex, List<Row> rows, TableConverter tableConverter) {
+        return new Table(rows);
     }
 }

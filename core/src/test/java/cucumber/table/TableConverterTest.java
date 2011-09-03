@@ -1,21 +1,22 @@
 package cucumber.table;
 
+import com.thoughtworks.xstream.XStream;
+import cucumber.runtime.converters.LocalizedXStreams;
 import org.junit.Test;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.TimeZone;
+import java.util.*;
 
 import static java.util.Arrays.asList;
+import static org.junit.Assert.assertEquals;
 
 public class TableConverterTest {
 
     @Test
     public void converts_table_to_list_of_pojos() {
-        TableConverter tc = new TableConverter();
+        XStream xStream = new LocalizedXStreams().get(Locale.UK);
+        TableConverter tc = new TableConverter(xStream);
         List<User> users = tc.convert(User.class, headerRow(), bodyRows());
-        System.out.println("users = " + users);
+        assertEquals(sidsBirthday(), users.get(0).birthDate);
     }
 
     private List<String> headerRow() {
@@ -24,8 +25,8 @@ public class TableConverterTest {
 
     private List<List<String>> bodyRows() {
         return asList(
-                asList("Sid Vicious", "1957-10-05 12:30:39 UTC", "1000"),
-                asList("Frank Zappa", "1940-12-21 14:56:12 UTC", "3000")
+                asList("Sid Vicious", "10/05/1957", "1000"),
+                asList("Frank Zappa", "21/12/1940", "3000")
         );
     }
 

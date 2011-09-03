@@ -2,7 +2,8 @@ package cucumber.runtime;
 
 import com.thoughtworks.xstream.converters.ConverterLookup;
 import com.thoughtworks.xstream.converters.SingleValueConverter;
-import cucumber.runtime.converters.ConverterLookups;
+import cucumber.runtime.converters.LocalizedXStreams;
+import cucumber.table.TableConverter;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Match;
 import gherkin.formatter.model.Step;
@@ -17,14 +18,14 @@ public class StepDefinitionMatch extends Match {
     private final StepDefinition stepDefinition;
     private final String uri;
     private final Step step;
-    private final ConverterLookups converterLookups;
+    private final LocalizedXStreams localizedXStreams;
 
-    public StepDefinitionMatch(List<Argument> arguments, StepDefinition stepDefinition, String uri, Step step, ConverterLookups converterLookups) {
+    public StepDefinitionMatch(List<Argument> arguments, StepDefinition stepDefinition, String uri, Step step, LocalizedXStreams localizedXStreams) {
         super(arguments, stepDefinition.getLocation());
         this.stepDefinition = stepDefinition;
         this.uri = uri;
         this.step = step;
-        this.converterLookups = converterLookups;
+        this.localizedXStreams = localizedXStreams;
     }
 
     public void runStep(Locale locale) throws Throwable {
@@ -51,11 +52,12 @@ public class StepDefinitionMatch extends Match {
         Object[] result = new Object[argumentCount];
         int n = 0;
         if (step.getRows() != null) {
-            result[n] = tableArgument(step, locale, n++);
+            TableConverter tableConverter = new TableConverter(localizedXStreams.get(locale));
+            result[n] = tableArgument(step, tableConverter, n++);
         } else if (step.getDocString() != null) {
             result[n] = step.getDocString().getValue();
         } else {
-            ConverterLookup converterLookup = converterLookups.forLocale(locale);
+            ConverterLookup converterLookup = localizedXStreams.get(locale).getConverterLookup();
             for (Argument a : getArguments()) {
                 // TODO: We might get a lookup that doesn't implement SingleValueConverter
                 // Need to throw a more friendly exception in that case.
@@ -67,8 +69,8 @@ public class StepDefinitionMatch extends Match {
         return result;
     }
 
-    private Object tableArgument(Step step, Locale locale, int argIndex) {
-        return stepDefinition.tableArgument(argIndex, step.getRows(), locale);
+    private Object tableArgument(Step step, TableConverter tableConverter, int argIndex) {
+        return stepDefinition.tableArgument(argIndex, step.getRows(), tableConverter);
     }
 
     public Throwable filterStacktrace(Throwable error, StackTraceElement stepLocation) {

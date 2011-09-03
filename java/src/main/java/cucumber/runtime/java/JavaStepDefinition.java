@@ -9,14 +9,12 @@ import cucumber.table.java.JavaBeanPropertyHeaderMapper;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Row;
 import gherkin.formatter.model.Step;
-import gherkin.util.Mapper;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.regex.Pattern;
 
 import static java.util.Arrays.asList;
@@ -28,7 +26,6 @@ public class JavaStepDefinition implements StepDefinition {
     private final JdkPatternArgumentMatcher argumentMatcher;
     private final Pattern pattern;
     private final JavaBeanPropertyHeaderMapper mapper = new JavaBeanPropertyHeaderMapper();
-    private TableConverter tableConverter;
 
     public JavaStepDefinition(Pattern pattern, Method method, ObjectFactory objectFactory) {
         this.pattern = pattern;
@@ -70,22 +67,15 @@ public class JavaStepDefinition implements StepDefinition {
     }
 
     @Override
-    public Object tableArgument(int argIndex, List<Row> rows, Locale locale) {
+    public Object tableArgument(int argIndex, List<Row> rows, TableConverter tableConverter) {
         Type genericParameterType = method.getGenericParameterTypes()[argIndex];
         if (genericParameterType instanceof ParameterizedType) {
             Type[] parameters = ((ParameterizedType) genericParameterType).getActualTypeArguments();
             Class<?> itemType = (Class<?>) parameters[0];
-            return tableConverter().convert(itemType, attributeNames(rows), attributeValues(rows));
+            return tableConverter.convert(itemType, attributeNames(rows), attributeValues(rows));
         } else {
-            return new Table(rows, locale);
+            return new Table(rows);
         }
-    }
-
-    private TableConverter tableConverter() {
-        if (tableConverter == null) {
-            tableConverter = new TableConverter();
-        }
-        return tableConverter;
     }
 
     private List<List<String>> attributeValues(List<Row> rows) {

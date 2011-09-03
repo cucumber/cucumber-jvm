@@ -20,7 +20,7 @@ public class TableTest {
         String[] firstLine = new String[]{"one", "four", "seven"};
         simpleRows.add(new Row(new ArrayList<Comment>(), asList(firstLine), 1));
         simpleRows.add(new Row(new ArrayList<Comment>(), asList("4444", "55555", "666666"), 2));
-        simpleTable = new Table(simpleRows, Locale.getDefault());
+        simpleTable = new Table(simpleRows);
     }
 
     @Test

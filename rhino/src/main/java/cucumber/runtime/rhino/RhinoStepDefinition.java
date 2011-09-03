@@ -2,6 +2,7 @@ package cucumber.runtime.rhino;
 
 import cucumber.runtime.StepDefinition;
 import cucumber.table.Table;
+import cucumber.table.TableConverter;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Row;
 import gherkin.formatter.model.Step;
@@ -13,7 +14,6 @@ import org.mozilla.javascript.regexp.NativeRegExp;
 import org.mozilla.javascript.tools.shell.Global;
 
 import java.util.List;
-import java.util.Locale;
 
 public class RhinoStepDefinition implements StepDefinition {
     private final Context cx;
@@ -65,7 +65,7 @@ public class RhinoStepDefinition implements StepDefinition {
     }
 
     @Override
-    public Object tableArgument(int argIndex, List<Row> rows, Locale locale) {
-        return new Table(rows, locale);
+    public Object tableArgument(int argIndex, List<Row> rows, TableConverter tableConverter) {
+        return new Table(rows);
     }
 }
