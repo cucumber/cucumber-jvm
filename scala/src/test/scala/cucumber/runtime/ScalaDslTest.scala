@@ -20,7 +20,7 @@ class ScalaDslTest {
     assertEquals(1, Befores.beforeHooks.size)
     val hook = Befores.beforeHooks.head
     assertTrue(hook.matches(List[String]().asJava))
-    hook.execute()
+    hook.execute(null)
     assertTrue(called)
     assertEquals(Int.MaxValue, hook.getOrder)
   }
@@ -42,7 +42,7 @@ class ScalaDslTest {
     assertTrue(hook.matches(List("@bar", "@zap").asJava))
     assertFalse(hook.matches(List("@bar").asJava))
 
-    hook.execute()
+    hook.execute(null)
     assertTrue(called)
     assertEquals(Int.MaxValue, hook.getOrder)
   }
@@ -91,7 +91,7 @@ class ScalaDslTest {
     assertEquals(1, Afters.afterHooks.size)
     val hook = Afters.afterHooks.head
     assertTrue(hook.matches(List[String]().asJava))
-    hook.execute()
+    hook.execute(null)
     assertTrue(called)
   }
 
@@ -112,7 +112,7 @@ class ScalaDslTest {
     assertTrue(hook.matches(List("@bar", "@zap").asJava))
     assertFalse(hook.matches(List("@bar").asJava))
 
-    hook.execute()
+    hook.execute(null)
     assertTrue(called)
   }
 

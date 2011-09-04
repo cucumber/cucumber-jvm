@@ -32,7 +32,7 @@ public class HookTest {
         world.dispose();
 
         InOrder inOrder = inOrder(hook, backend);
-        inOrder.verify(hook).execute();
+        inOrder.verify(hook).execute(null);
         inOrder.verify(backend).disposeWorld();
     }
 
