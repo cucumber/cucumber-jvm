@@ -8,10 +8,14 @@ import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import static org.junit.Assert.assertEquals;
 
 public class StandardConvertersTest {
+
+    private static final TimeZone UTC = TimeZone.getTimeZone("UTC");
+
     @Test
     public void shouldTransformBigDecimal() {
         BigDecimal englishBigDecimal = new BigDecimalConverter(Locale.US).fromString("300.15");
@@ -36,7 +40,7 @@ public class StandardConvertersTest {
     }
 
     private Date getDateToTest() {
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance(UTC);
         calendar.set(2011, 10, 29, 0, 0, 0);
         calendar.set(Calendar.MILLISECOND, 0);
         return calendar.getTime();
