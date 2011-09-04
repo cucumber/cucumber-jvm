@@ -12,7 +12,7 @@ module Cucumber
         # Lifted from regexp_argument_matcher.rb in Cucumber 1.0
         def matched_arguments(step_name)
           match = @regexp.match(step_name)
-          if match
+          if(match)
             n = 0
             match.captures.map do |val|
               n += 1

@@ -278,6 +278,7 @@
       <module fileurl="file://$PROJECT_DIR$/examples/java-calculator/java-calculator.iml" filepath="$PROJECT_DIR$/examples/java-calculator/java-calculator.iml" />
       <module fileurl="file://$PROJECT_DIR$/examples/java-webbit-websockets-selenium/java-webbit-websockets-selenium.iml" filepath="$PROJECT_DIR$/examples/java-webbit-websockets-selenium/java-webbit-websockets-selenium.iml" />
       <module fileurl="file://$PROJECT_DIR$/jruby/jruby.iml" filepath="$PROJECT_DIR$/jruby/jruby.iml" />
+      <module fileurl="file://$PROJECT_DIR$/jython/jython.iml" filepath="$PROJECT_DIR$/jython/jython.iml" />
       <module fileurl="file://$PROJECT_DIR$/parent.iml" filepath="$PROJECT_DIR$/parent.iml" />
       <module fileurl="file://$PROJECT_DIR$/picocontainer/picocontainer.iml" filepath="$PROJECT_DIR$/picocontainer/picocontainer.iml" />
       <module fileurl="file://$PROJECT_DIR$/rhino/rhino.iml" filepath="$PROJECT_DIR$/rhino/rhino.iml" />
@@ -772,6 +773,17 @@
       </JAVADOC>
       <SOURCES>
         <root url="jar://$MAVEN_REPOSITORY$/org/picocontainer/picocontainer/2.13.6/picocontainer-2.13.6-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.python:jython-standalone:2.5.2">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/python/jython-standalone/2.5.2/jython-standalone-2.5.2.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/org/python/jython-standalone/2.5.2/jython-standalone-2.5.2-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/python/jython-standalone/2.5.2/jython-standalone-2.5.2-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: org.scala-lang:scala-compiler-bundle:2.9.0-1">

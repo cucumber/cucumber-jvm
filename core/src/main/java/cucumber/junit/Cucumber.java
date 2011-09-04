@@ -76,7 +76,7 @@ public class Cucumber extends ParentRunner<ScenarioRunner> {
 
     private List<Object> filters(Class featureClass) {
         cucumber.junit.Feature featureAnnotation = (cucumber.junit.Feature) featureClass.getAnnotation(cucumber.junit.Feature.class);
-        Object[] filters = null;
+        Object[] filters = new Object[0];
         if (featureAnnotation != null) {
             Long[] lines = toLong(featureAnnotation.lines());
             filters = lines;
