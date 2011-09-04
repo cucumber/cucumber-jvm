@@ -243,6 +243,13 @@
 
     <profiles>
         <profile>
+            <id>aruba</id>
+            <modules>
+                <module>tmp/aruba</module>
+            </modules>
+        </profile>
+
+        <profile>
             <id>examples</id>
             <modules>
                 <module>examples/java-calculator</module>

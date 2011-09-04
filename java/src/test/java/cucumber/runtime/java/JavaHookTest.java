@@ -25,7 +25,7 @@ public class JavaHookTest {
         }
     }
 
-    private JavaBackend backend = new JavaBackend(mock(ObjectFactory.class), null);
+    private JavaBackend backend = new JavaBackend(mock(ObjectFactory.class));
 
     @Test
     public void before_hooks_get_registered() throws Exception {
