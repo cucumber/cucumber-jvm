@@ -7,7 +7,7 @@ import static org.junit.Assert.assertEquals;
 
 public class ScenarioResultTest {
 
-    private ScenarioResult r = new ScenarioResult();
+    private ScenarioResultImpl r = new ScenarioResultImpl();
 
     @Test
     public void no_steps_is_passed() throws Exception {

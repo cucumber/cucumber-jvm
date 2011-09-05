@@ -15,7 +15,7 @@ public class World {
     private final Collection<String> tags;
 
     private boolean skipNextStep = false;
-    private ScenarioResult scenarioResult;
+    private ScenarioResultImpl scenarioResult;
 
     public World(List<Backend> backends, Runtime runtime, Collection<String> tags) {
         this.backends = backends;
@@ -24,7 +24,7 @@ public class World {
     }
 
     public void prepare() {
-        scenarioResult = new ScenarioResult();
+        scenarioResult = new ScenarioResultImpl();
         List<HookDefinition> beforeHooks = new ArrayList<HookDefinition>();
         for (Backend backend : backends) {
             backend.newWorld();
