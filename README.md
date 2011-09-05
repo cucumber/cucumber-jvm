@@ -25,11 +25,25 @@ Cucumber-JVM also integrates with the following Dependency Injection containers:
 
 ## Downloading / Installation
 
-There are no downloadable releases yet. See the Hacking section for installation instructions. Downloadable releases will be made available when the time is right.
+Final releases will be published in [Maven Central](http://search.maven.org/) when the time is right. Until then you can grab 
+SNAPSHOT releases by adding this repo to your POM:
+
+    <repository>
+        <id>sonatype-snapshots</id>
+        <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </repository>
+
+Now you can grab jars with the following dependency in your POM:
+
+    <dependency>
+        <groupId>info.cukes</groupId>
+        <artifactId>cucumber-core</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </dependency>
 
 ## Examples
 
-You will find an example under examples/java-calculator. You should be able to run `basic_arithmetic.feature` by running the `cucumber.examples.java.calculator.basic_arithmetic_Test` JUnit test from your IDE. -Or simply by running it with Maven: `mvn clean install -P examples` once to build it all. Then `cd examples/java-calculator` followed by `mvn test` each time you make a change. Try to make the feature fail!
+You will find an example in Git under examples/java-calculator. You should be able to run `basic_arithmetic.feature` by running the `cucumber.examples.java.calculator.basic_arithmetic_Test` JUnit test from your IDE. -Or simply by running it with Maven: `mvn clean install -P examples` once to build it all. Then `cd examples/java-calculator` followed by `mvn test` each time you make a change. Try to make the feature fail!
 
 ## Hacking
 
