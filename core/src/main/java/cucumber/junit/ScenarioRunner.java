@@ -41,7 +41,11 @@ public class ScenarioRunner extends ParentRunner<Step> {
 
     @Override
     protected Description describeChild(Step step) {
-        return Description.createSuiteDescription(step.getKeyword() + step.getName());
+        // use scenario and step as class and method names (in order to generate useable JUnit reports)
+        String className = getName();
+        String methodName = step.getKeyword() + step.getName();
+        String formattedDescription = String.format("%s(%s)", methodName, className);
+        return Description.createSuiteDescription(formattedDescription);
     }
 
     @Override
