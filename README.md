@@ -41,6 +41,12 @@ Now you can grab jars with the following dependency in your POM:
         <version>1.0.0-SNAPSHOT</version>
     </dependency>
 
+## Documentation
+
+### API Docs
+
+* http://cukes.info/cucumber/jvm/api/1.0.0-SNAPSHOT/apidocs/ (URL subject to change)
+
 ## Examples
 
 You will find an example in Git under examples/java-calculator. You should be able to run `basic_arithmetic.feature` by running the `cucumber.examples.java.calculator.basic_arithmetic_Test` JUnit test from your IDE. -Or simply by running it with Maven: `mvn clean install -P examples` once to build it all. Then `cd examples/java-calculator` followed by `mvn test` each time you make a change. Try to make the feature fail!
