@@ -12,7 +12,7 @@ public class RpnCalculator {
     public void push(Object arg) {
         if (OPS.contains(arg)) {
             Number y = stack.remove(stack.size() - 1);
-            Number x = stack.remove(stack.size() - 1);
+            Number x = stack.isEmpty() ? 0 : stack.remove(stack.size() - 1);
             Double val = null;
             if (arg.equals("-")) {
                 val = x.doubleValue() - y.doubleValue();

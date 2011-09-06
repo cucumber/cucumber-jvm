@@ -6,6 +6,7 @@ import org.junit.runner.RunWith;
 
 /**
  * This test class tells JUnit to run a particular feature with Cucumber.
+ * 
  * Step definitions will be scanned underneath both this class' package, and
  * underneath cucumber.examples.java.calculator. 
  */
