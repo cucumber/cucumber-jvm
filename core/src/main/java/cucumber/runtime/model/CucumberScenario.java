@@ -35,25 +35,24 @@ public class CucumberScenario {
         return steps;
     }
 
-    public void prepare(Runtime runtime) {
+    public void prepareAndFormat(Runtime runtime, Formatter formatter) {
         world = runtime.newWorld(tags());
         world.prepare();
-    }
-
-    public void dispose() {
-        world.dispose();
-    }
-
-    public void run(Runtime runtime, Formatter formatter, Reporter reporter) {
-        prepare(runtime);
         formatter.scenario(scenario);
         for (Step step : steps) {
             formatter.step(step);
         }
+    }
+
+    public void runAndDispose(Reporter reporter) {
         for (Step step : steps) {
             runStep(step, reporter);
         }
         dispose();
+    }
+
+    public void dispose() {
+        world.dispose();
     }
 
     public void runStep(Step step, Reporter reporter) {

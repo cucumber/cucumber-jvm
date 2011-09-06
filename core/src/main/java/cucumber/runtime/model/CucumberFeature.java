@@ -46,7 +46,8 @@ public class CucumberFeature {
         formatter.uri(featureUri);
         formatter.feature(feature);
         for (CucumberScenario cucumberScenario : cucumberScenarios) {
-            cucumberScenario.run(runtime, formatter, reporter);
+            cucumberScenario.prepareAndFormat(runtime, formatter);
+            cucumberScenario.runAndDispose(reporter);
         }
     }
 

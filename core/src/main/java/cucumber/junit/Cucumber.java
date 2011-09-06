@@ -8,6 +8,7 @@ import cucumber.runtime.Runtime;
 import cucumber.runtime.SnippetPrinter;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.model.CucumberScenario;
+import gherkin.formatter.PrettyFormatter;
 import gherkin.formatter.model.Feature;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
@@ -22,9 +23,15 @@ import static java.util.Arrays.asList;
 public class Cucumber extends ParentRunner<ScenarioRunner> {
     private final Runtime runtime;
     private final List<ScenarioRunner> scenarioRunners = new ArrayList<ScenarioRunner>();
-    private String name;
+    private final JUnitReporter jUnitReporter;
+    private final Feature feature;
+    private final String featurePath;
 
     private static Runtime runtime(Class featureClass) {
+        // TODO: This creates a Runtime for each test class. That's expensive.
+        // We should only have a single Runtime per JVM. This means package/script paths
+        // must not be passed to the constructor. Instead, each stepdef must know where it was
+        // loaded from so we can apply the correct ones.
         final Runtime runtime = new Runtime(packageNamesOrScriptPaths(featureClass));
         java.lang.Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
@@ -48,19 +55,25 @@ public class Cucumber extends ParentRunner<ScenarioRunner> {
         return packageNamesOrScriptPaths;
     }
 
+    private static JUnitReporter jUnitReporter() {
+        PrettyFormatter pf = new PrettyFormatter(System.out, false, true);
+        return new JUnitReporter(pf, pf);
+    }
+    
     /**
      * Constructor called by JUnit.
      */
     public Cucumber(Class featureClass) throws InitializationError {
-        this(featureClass, runtime(featureClass));
+        this(featureClass, runtime(featureClass), jUnitReporter());
     }
 
-    public Cucumber(Class featureClass, final Runtime runtime) throws InitializationError {
-        // Why aren't we passing the class to super? I don't remember, but there is probably a good reason.
-        super(null);
+    public Cucumber(Class featureClass, final Runtime runtime, JUnitReporter jUnitReporter) throws InitializationError {
+        super(featureClass);
         this.runtime = runtime;
-        String pathName = featurePath(featureClass);
-        parseFeature(pathName, filters(featureClass));
+        this.jUnitReporter = jUnitReporter;
+
+        featurePath = featurePath(featureClass);
+        this.feature = parseFeature(featurePath, filters(featureClass));
     }
 
     private String featurePath(Class featureClass) {
@@ -78,11 +91,9 @@ public class Cucumber extends ParentRunner<ScenarioRunner> {
         cucumber.junit.Feature featureAnnotation = (cucumber.junit.Feature) featureClass.getAnnotation(cucumber.junit.Feature.class);
         Object[] filters = new Object[0];
         if (featureAnnotation != null) {
-            Long[] lines = toLong(featureAnnotation.lines());
-            filters = lines;
+            filters = toLong(featureAnnotation.lines());
             if (filters.length == 0) {
-                String[] tags = featureAnnotation.tags();
-                filters = tags;
+                filters = featureAnnotation.tags();
             }
         }
         return asList(filters);
@@ -90,7 +101,7 @@ public class Cucumber extends ParentRunner<ScenarioRunner> {
 
     @Override
     public String getName() {
-        return name;
+        return feature != null ? feature.getKeyword() + ": " + feature.getName() : "No matching features - did you use too restrictive filters?";
     }
 
     @Override
@@ -108,7 +119,17 @@ public class Cucumber extends ParentRunner<ScenarioRunner> {
         runner.run(notifier);
     }
 
-    private void parseFeature(String pathName, final List<Object> filters) {
+    @Override
+    public void run(RunNotifier notifier) {
+        if (feature != null) {
+            jUnitReporter.feature(feature);
+            jUnitReporter.uri(featurePath);
+            super.run(notifier);
+            jUnitReporter.eof();
+        }
+    }
+
+    private Feature parseFeature(String pathName, final List<Object> filters) {
         List<CucumberFeature> cucumberFeatures = new ArrayList<CucumberFeature>();
         final FeatureBuilder builder = new FeatureBuilder(cucumberFeatures);
         Resources.scan(pathName, new Consumer() {
@@ -118,19 +139,18 @@ public class Cucumber extends ParentRunner<ScenarioRunner> {
         });
 
         if (cucumberFeatures.isEmpty()) {
-            name = "No matching features";
+            return null;
         } else {
             CucumberFeature cucumberFeature = cucumberFeatures.get(0);
-            Feature feature = cucumberFeature.getFeature();
-            name = feature.getKeyword() + ": " + feature.getName();
             buildScenarioRunners(cucumberFeature);
+            return cucumberFeature.getFeature();
         }
     }
 
     private void buildScenarioRunners(CucumberFeature cucumberFeature) {
         for (CucumberScenario cucumberScenario : cucumberFeature.getCucumberScenarios()) {
             try {
-                scenarioRunners.add(new ScenarioRunner(runtime, cucumberScenario));
+                scenarioRunners.add(new ScenarioRunner(runtime, cucumberScenario, jUnitReporter));
             } catch (InitializationError e) {
                 throw new RuntimeException("Failed to create scenario runner", e);
             }
