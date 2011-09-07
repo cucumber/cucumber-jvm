@@ -1,29 +1,21 @@
 package cucumber.runtime.model;
 
-import cucumber.runtime.Runtime;
-import cucumber.runtime.World;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Scenario;
 import gherkin.formatter.model.Step;
 import gherkin.formatter.model.Tag;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class CucumberScenario {
-    private final List<Step> steps = new ArrayList<Step>();
-    private final Scenario scenario;
-    private final CucumberFeature cucumberFeature;
-    private final String uri;
+import cucumber.runtime.World;
 
-    private World world;
+public class CucumberScenario extends AbstractFeatureElement {
+    private final Scenario scenario;
 
     public CucumberScenario(CucumberFeature cucumberFeature, String uri, Scenario scenario) {
-        this.cucumberFeature = cucumberFeature;
-        this.uri = uri;
+        super(cucumberFeature, uri);
         this.scenario = scenario;
     }
 
@@ -31,44 +23,22 @@ public class CucumberScenario {
         return scenario;
     }
 
-    public List<Step> getSteps() {
-        return steps;
-    }
-
-    public void prepare(Runtime runtime) {
-        world = runtime.newWorld(tags());
-        world.prepare();
-    }
-
-    public void dispose() {
-        world.dispose();
-    }
-
-    public void run(Runtime runtime, Formatter formatter, Reporter reporter) {
-        prepare(runtime);
+    public void run(World world, Formatter formatter, Reporter reporter, List<Step> stepsToRun) {
         formatter.scenario(scenario);
-        for (Step step : steps) {
+        for (Step step : stepsToRun) {
             formatter.step(step);
         }
-        for (Step step : steps) {
-            runStep(step, reporter);
+        for (Step step : stepsToRun) {
+            world.runStep(getUri(), step, reporter, getCucumberFeature().getLocale());
         }
-        dispose();
     }
 
     public void runStep(Step step, Reporter reporter) {
-        world.runStep(uri, step, reporter, cucumberFeature.getLocale());
+        getWorld().runStep(getUri(), step, reporter, getCucumberFeature().getLocale());
     }
 
-    public void step(Step step) {
-        steps.add(step);
-    }
-
-    private Set<String> tags() {
-        Set<String> tags = new HashSet<String>();
-        for (Tag tag : cucumberFeature.getFeature().getTags()) {
-            tags.add(tag.getName());
-        }
+    public Set<String> tags() {
+        Set<String> tags = getCucumberFeature().tags();
         for (Tag tag : scenario.getTags()) {
             tags.add(tag.getName());
         }

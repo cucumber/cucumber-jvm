@@ -92,6 +92,37 @@ public class World {
         }
     }
 
+    public void runOutlineStep(String uri, Step step, Reporter reporter, Locale locale) {
+        StepDefinitionMatch match = runtime.stepDefinitionMatch(uri, step);
+        if (match != null) {
+//            reporter.match(match);
+        } else {
+//            reporter.match(Match.NONE);
+            skipNextStep = true;
+        }
+
+        if (skipNextStep) {
+            // Undefined steps (Match.NONE) will always get the Result.SKIPPED result
+            scenarioResult.add(Result.SKIPPED);
+//            reporter.result(Result.SKIPPED);
+        } else {
+            Throwable e = null;
+            long start = System.nanoTime();
+            try {
+                match.runStep(locale);
+            } catch (Throwable t) {
+                skipNextStep = true;
+                e = t;
+            } finally {
+                long duration = System.nanoTime() - start;
+                String status = e == null ? Result.PASSED : Result.FAILED;
+                Result result = new Result(status, duration, e, DUMMY_ARG);
+                scenarioResult.add(result);
+//                reporter.result(result);
+            }
+        }
+    }
+
     private final class HookComparator implements Comparator<HookDefinition> {
 
         final boolean ascending;
@@ -105,5 +136,9 @@ public class World {
             int comparison = hook1.getOrder() - hook2.getOrder();
             return ascending ? comparison : -comparison;
         }
+    }
+
+    public ScenarioResult getScenarioResult() {
+        return scenarioResult;
     }
 }
