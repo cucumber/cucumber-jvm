@@ -1,8 +1,7 @@
 package cucumber.runtime.java.spring;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
+import cucumber.runtime.CucumberException;
+import cucumber.runtime.java.ObjectFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor;
 import org.springframework.context.annotation.CommonAnnotationBeanPostProcessor;
@@ -10,12 +9,12 @@ import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.StaticApplicationContext;
 
-import cucumber.runtime.CucumberException;
-import cucumber.runtime.java.ObjectFactory;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * Spring based implementation of ObjectFactory.
- *
+ * <p/>
  * <p>
  * It uses two Spring contexts:
  * <ul>
@@ -25,7 +24,7 @@ import cucumber.runtime.java.ObjectFactory;
  * scenario.</li>
  * </ul>
  * </p>
- *
+ * <p/>
  * <p>
  * Application beans are accessible from the step definitions using autowiring
  * (with annotations).
@@ -39,7 +38,7 @@ public class SpringFactory implements ObjectFactory {
     private final Collection<Class<?>> stepClasses = new ArrayList<Class<?>>();
 
     static {
-        applicationContext = new ClassPathXmlApplicationContext(new String[] { "cucumber.xml" });
+        applicationContext = new ClassPathXmlApplicationContext(new String[]{"cucumber.xml"});
         applicationContext.registerShutdownHook();
     }
 

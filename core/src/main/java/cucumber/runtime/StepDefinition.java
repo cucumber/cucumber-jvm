@@ -14,6 +14,16 @@ public interface StepDefinition {
     List<Argument> matchedArguments(Step step);
 
     /**
+     * Cucumber will try to convert each Gherkin step table into a {@link List} of objects. The header row is used to
+     * identify property names of the objects, and each row underneath will be converted to an object.
+     * <p/>
+     * If this method returns null, Cucumber will convert the rows into an instance of {@link cucumber.table.Table}.
+     *
+     * @return the kind of object Cucumber should instantiate for each row, or null if no conversion should happen.
+     */
+    Class getTypeForTableList(int argIndex);
+
+    /**
      * The source line where the step definition is defined.
      * Example: foo/bar/Zap.brainfuck:42
      */

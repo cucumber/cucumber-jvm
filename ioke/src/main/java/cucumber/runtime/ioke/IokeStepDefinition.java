@@ -44,6 +44,11 @@ public class IokeStepDefinition implements StepDefinition {
         }
     }
 
+    @Override
+    public Class getTypeForTableList(int argIndex) {
+        return null;
+    }
+
     public String getLocation() {
         return location;
     }

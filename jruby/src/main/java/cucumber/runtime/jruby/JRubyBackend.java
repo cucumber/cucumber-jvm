@@ -1,8 +1,8 @@
 package cucumber.runtime.jruby;
 
+import cucumber.resources.Consumer;
 import cucumber.resources.Resource;
 import cucumber.resources.Resources;
-import cucumber.resources.Consumer;
 import cucumber.runtime.Backend;
 import cucumber.runtime.HookDefinition;
 import cucumber.runtime.StepDefinition;
@@ -20,24 +20,26 @@ public class JRubyBackend implements Backend {
     private final ScriptingContainer jruby = new ScriptingContainer();
     private final List<StepDefinition> stepDefinitions = new ArrayList<StepDefinition>();
 
-    public JRubyBackend(String packagePrefix) throws UnsupportedEncodingException {
-        defineStepDefinitions(packagePrefix.replace('.', '/'));
+    public JRubyBackend(List<String> scriptPaths) throws UnsupportedEncodingException {
+        defineStepDefinitions(scriptPaths);
     }
 
-    private void defineStepDefinitions(String scriptPath) throws UnsupportedEncodingException {
+    private void defineStepDefinitions(List<String> scriptPaths) throws UnsupportedEncodingException {
         jruby.put("$backend", this);
         jruby.runScriptlet(new InputStreamReader(getClass().getResourceAsStream(DSL), "UTF-8"), DSL);
-        Resources.scan(scriptPath, ".rb", new Consumer() {
-            public void consume(Resource resource) {
-                jruby.runScriptlet(resource.getReader(), resource.getPath());
-            }
-        });
+        for (String scriptPath : scriptPaths) {
+            Resources.scan(scriptPath.replace('.', '/'), ".rb", new Consumer() {
+                public void consume(Resource resource) {
+                    jruby.runScriptlet(resource.getReader(), resource.getPath());
+                }
+            });
+        }
     }
 
     public void registerStepdef(RubyObject stepdef) {
         stepDefinitions.add(new JRubyStepDefinition(stepdef));
     }
-    
+
     @Override
     public List<StepDefinition> getStepDefinitions() {
         return stepDefinitions;
@@ -56,7 +58,7 @@ public class JRubyBackend implements Backend {
     public String getSnippet(Step step) {
         return new JRubySnippetGenerator(step).getSnippet();
     }
-    
+
     @Override
     public List<HookDefinition> getBeforeHooks() {
         return new ArrayList<HookDefinition>();

@@ -1,6 +1,6 @@
 package cucumber.runtime;
 
-import cucumber.runtime.transformers.Transformers;
+import cucumber.runtime.converters.LocalizedXStreams;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 import org.junit.Test;
@@ -23,7 +23,7 @@ public class StepDefinitionMatchTest {
         when(stepWithoutDocStringOrTable.getDocString()).thenReturn(null);
         when(stepWithoutDocStringOrTable.getRows()).thenReturn(null);
 
-        StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(arguments, stepDefinition, "some.feature", stepWithoutDocStringOrTable, new Transformers());
+        StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(arguments, stepDefinition, "some.feature", stepWithoutDocStringOrTable, new LocalizedXStreams(), null);
         stepDefinitionMatch.runStep(Locale.ENGLISH);
         Object[] args = {5};
         verify(stepDefinition).execute(args);

@@ -9,9 +9,7 @@ import org.junit.Test;
 import java.lang.reflect.Method;
 
 import static java.util.Arrays.asList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 
 public class JavaHookTest {
@@ -27,7 +25,7 @@ public class JavaHookTest {
         }
     }
 
-    private JavaBackend backend = new JavaBackend(mock(ObjectFactory.class), null);
+    private JavaBackend backend = new JavaBackend(mock(ObjectFactory.class));
 
     @Test
     public void before_hooks_get_registered() throws Exception {
@@ -44,14 +42,14 @@ public class JavaHookTest {
         assertEquals(0, backend.getBeforeHooks().size());
         assertEquals(AFTER, hookDef.getMethod());
     }
-    
+
     @Test
     public void hook_order_gets_registered() {
         backend.registerHook(AFTER.getAnnotation(After.class), AFTER);
         HookDefinition hookDef = backend.getAfterHooks().get(0);
         assertEquals(1, hookDef.getOrder());
     }
-    
+
     @Test
     public void hook_with_no_order_is_last() {
         backend.registerHook(BEFORE.getAnnotation(Before.class), BEFORE);

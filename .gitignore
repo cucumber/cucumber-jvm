@@ -2,5 +2,8 @@
 .project
 .classpath
 *.iws
+*.iml
+*.ipr
 target
 chromedriver.log
+Gemfile.lock

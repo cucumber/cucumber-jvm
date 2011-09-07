@@ -1,12 +1,16 @@
 package cucumber.runtime.java;
 
+import cucumber.annotation.Pending;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.JdkPatternArgumentMatcher;
+import cucumber.runtime.PendingException;
 import cucumber.runtime.StepDefinition;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -28,6 +32,9 @@ public class JavaStepDefinition implements StepDefinition {
     }
 
     public void execute(Object[] args) throws Throwable {
+        if (method.isAnnotationPresent(Pending.class)) {
+            throw new PendingException(method.getAnnotation(Pending.class).value());
+        } 
         Object target = objectFactory.getInstance(method.getDeclaringClass());
         try {
             method.invoke(target, args);
@@ -56,5 +63,16 @@ public class JavaStepDefinition implements StepDefinition {
     @Override
     public String getPattern() {
         return pattern.pattern();
+    }
+
+    @Override
+    public Class getTypeForTableList(int argIndex) {
+        Type genericParameterType = method.getGenericParameterTypes()[argIndex];
+        if (genericParameterType instanceof ParameterizedType) {
+            Type[] parameters = ((ParameterizedType) genericParameterType).getActualTypeArguments();
+            return (Class<?>) parameters[0];
+        } else {
+            return null;
+        }
     }
 }

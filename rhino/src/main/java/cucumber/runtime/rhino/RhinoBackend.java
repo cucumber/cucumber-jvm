@@ -1,8 +1,8 @@
 package cucumber.runtime.rhino;
 
+import cucumber.resources.Consumer;
 import cucumber.resources.Resource;
 import cucumber.resources.Resources;
-import cucumber.resources.Consumer;
 import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.HookDefinition;
@@ -25,33 +25,35 @@ public class RhinoBackend implements Backend {
     private final List<StepDefinition> stepDefinitions = new ArrayList<StepDefinition>();
     private Context cx;
     private Scriptable scope;
-    private final String scriptPath;
+    private final List<String> scriptPaths;
 
-    public RhinoBackend(String scriptPath) {
-        this.scriptPath = scriptPath;
+    public RhinoBackend(List<String> scriptPaths) {
+        this.scriptPaths = scriptPaths;
         try {
-            defineStepDefinitions();
+            defineStepDefinitions(scriptPaths);
         } catch (IOException e) {
             throw new CucumberException("Couldn't load stepdefs", e);
         }
     }
 
-    private void defineStepDefinitions() throws IOException {
+    private void defineStepDefinitions(List<String> scriptPaths) throws IOException {
         cx = Context.enter();
         scope = new Global(cx); // This gives us access to global functions like load()
         scope.put("jsBackend", scope, this);
         InputStreamReader dsl = new InputStreamReader(getClass().getResourceAsStream(JS_DSL));
         cx.evaluateReader(scope, dsl, JS_DSL, 1, null);
 
-        Resources.scan(this.scriptPath, ".js", new Consumer() {
-            public void consume(Resource resource) {
-                try {
-                    cx.evaluateReader(scope, resource.getReader(), resource.getPath(), 1, null);
-                } catch (IOException e) {
-                    throw new CucumberException("Failed to evaluate Javascript in " + resource.getPath(), e);
+        for (String scriptPath : scriptPaths) {
+            Resources.scan(scriptPath.replace('.', '/'), ".js", new Consumer() {
+                public void consume(Resource resource) {
+                    try {
+                        cx.evaluateReader(scope, resource.getReader(), resource.getPath(), 1, null);
+                    } catch (IOException e) {
+                        throw new CucumberException("Failed to evaluate Javascript in " + resource.getPath(), e);
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     public List<StepDefinition> getStepDefinitions() {
@@ -73,10 +75,12 @@ public class RhinoBackend implements Backend {
         StackTraceElement[] stackTraceElements = t.getStackTrace();
         for (StackTraceElement stackTraceElement : stackTraceElements) {
             boolean js = stackTraceElement.getFileName().endsWith(extension);
-            boolean inScriptPath = stackTraceElement.getFileName().startsWith(scriptPath);
-            boolean hasLine = stackTraceElement.getLineNumber() != -1;
-            if (js && inScriptPath && hasLine) {
-                return stackTraceElement;
+            for (String scriptPath : scriptPaths) {
+                boolean inScriptPath = stackTraceElement.getFileName().startsWith(scriptPath);
+                boolean hasLine = stackTraceElement.getLineNumber() != -1;
+                if (js && inScriptPath && hasLine) {
+                    return stackTraceElement;
+                }
             }
         }
         throw new RuntimeException("Couldn't find location for step definition");
@@ -87,7 +91,7 @@ public class RhinoBackend implements Backend {
         RhinoStepDefinition stepDefinition = new RhinoStepDefinition(cx, scope, jsStepDefinition, regexp, bodyFunc, stepDefLocation, argumentsFromFunc);
         stepDefinitions.add(stepDefinition);
     }
-    
+
     @Override
     public List<HookDefinition> getBeforeHooks() {
         return new ArrayList<HookDefinition>();

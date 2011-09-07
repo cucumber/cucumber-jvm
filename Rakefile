@@ -1,5 +1,6 @@
 require 'cucumber/rake/task'
 
+desc "Generate code"
 task :generate do
   Dir['*/Rakefile'].each do |rakefile|
     Dir.chdir(File.dirname(rakefile)) do

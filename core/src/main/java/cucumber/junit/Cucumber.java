@@ -1,8 +1,8 @@
 package cucumber.junit;
 
+import cucumber.resources.Consumer;
 import cucumber.resources.Resource;
 import cucumber.resources.Resources;
-import cucumber.resources.Consumer;
 import cucumber.runtime.FeatureBuilder;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.SnippetPrinter;
@@ -24,9 +24,8 @@ public class Cucumber extends ParentRunner<ScenarioRunner> {
     private final List<ScenarioRunner> scenarioRunners = new ArrayList<ScenarioRunner>();
     private String name;
 
-    private static Runtime runtime(Class testClass) {
-        String packageName = testClass.getName().substring(0, testClass.getName().lastIndexOf("."));
-        final Runtime runtime = new Runtime(packageName);
+    private static Runtime runtime(Class featureClass) {
+        final Runtime runtime = new Runtime(packageNamesOrScriptPaths(featureClass));
         java.lang.Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
@@ -34,6 +33,19 @@ public class Cucumber extends ParentRunner<ScenarioRunner> {
             }
         });
         return runtime;
+    }
+
+    private static List<String> packageNamesOrScriptPaths(Class featureClass) {
+        List<String> packageNamesOrScriptPaths = new ArrayList<String>();
+        String featurePackageName = featureClass.getName().substring(0, featureClass.getName().lastIndexOf("."));
+        packageNamesOrScriptPaths.add(featurePackageName);
+
+        // Add additional ones
+        cucumber.junit.Feature featureAnnotation = (cucumber.junit.Feature) featureClass.getAnnotation(cucumber.junit.Feature.class);
+        if (featureAnnotation != null) {
+            packageNamesOrScriptPaths.addAll(asList(featureAnnotation.packages()));
+        }
+        return packageNamesOrScriptPaths;
     }
 
     /**
@@ -64,11 +76,11 @@ public class Cucumber extends ParentRunner<ScenarioRunner> {
 
     private List<Object> filters(Class featureClass) {
         cucumber.junit.Feature featureAnnotation = (cucumber.junit.Feature) featureClass.getAnnotation(cucumber.junit.Feature.class);
-        Object[] filters = null;
+        Object[] filters = new Object[0];
         if (featureAnnotation != null) {
             Long[] lines = toLong(featureAnnotation.lines());
             filters = lines;
-            if(filters.length == 0) {
+            if (filters.length == 0) {
                 String[] tags = featureAnnotation.tags();
                 filters = tags;
             }
@@ -105,7 +117,7 @@ public class Cucumber extends ParentRunner<ScenarioRunner> {
             }
         });
 
-        if(cucumberFeatures.isEmpty()) {
+        if (cucumberFeatures.isEmpty()) {
             name = "No matching features";
         } else {
             CucumberFeature cucumberFeature = cucumberFeatures.get(0);
@@ -123,7 +135,7 @@ public class Cucumber extends ParentRunner<ScenarioRunner> {
                 throw new RuntimeException("Failed to create scenario runner", e);
             }
         }
-        
+
     }
 
     private Long[] toLong(long[] plongs) {

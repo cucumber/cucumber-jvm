@@ -17,7 +17,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>gherkin</groupId>
+            <groupId>info.cukes</groupId>
             <artifactId>gherkin</artifactId>
         </dependency>
         <dependency>
@@ -25,8 +25,8 @@
             <artifactId>jcommander</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.ant</groupId>
-            <artifactId>ant</artifactId>
+            <groupId>com.thoughtworks.xstream</groupId>
+            <artifactId>xstream</artifactId>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

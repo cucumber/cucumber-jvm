@@ -12,8 +12,8 @@ import java.util.Map;
 
 public class TableDiffer {
 
-    private Table orig;
-    private Table other;
+    private final Table orig;
+    private final Table other;
 
     public TableDiffer(Table origTable, Table otherTable) {
         this.orig = origTable;
@@ -21,7 +21,7 @@ public class TableDiffer {
     }
 
     public void calculateDiffs() {
-        Patch patch = DiffUtils.diff(this.orig.diffableRows(), this.other.diffableRows());
+        Patch patch = DiffUtils.diff(orig.diffableRows(), other.diffableRows());
         List<Delta> deltas = patch.getDeltas();
         if (!deltas.isEmpty()) {
             Map<Integer, Delta> deltasByLine = createDeltasByLine(deltas);
@@ -31,7 +31,7 @@ public class TableDiffer {
 
     private Table createTableDiff(Map<Integer, Delta> deltasByLine) {
         List<Row> diffTableRows = new ArrayList<Row>();
-        List<List<Object>> rows = orig.rows();
+        List<List<String>> rows = orig.raw();
         for (int i = 0; i < rows.size(); i++) {
             Delta delta = deltasByLine.get(i);
             if (delta == null) {
@@ -45,7 +45,7 @@ public class TableDiffer {
         if (remainingDelta != null) {
             addRowsToTableDiffAndReturnNumberOfRows(diffTableRows, remainingDelta);
         }
-        return new Table(diffTableRows, orig.getLocale());
+        return new Table(diffTableRows, orig.getTableConverter(), orig.getTableHeaderMapper());
     }
 
     private int addRowsToTableDiffAndReturnNumberOfRows(List<Row> diffTableRows, Delta delta) {

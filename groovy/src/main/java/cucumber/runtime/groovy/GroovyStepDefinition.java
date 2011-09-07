@@ -28,6 +28,11 @@ public class GroovyStepDefinition implements StepDefinition {
         return argumentMatcher.argumentsFrom(step.getName());
     }
 
+    @Override
+    public Class getTypeForTableList(int argIndex) {
+        return null;
+    }
+
     public String getLocation() {
         return location.getFileName() + ":" + location.getLineNumber();
     }

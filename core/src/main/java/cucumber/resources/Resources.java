@@ -4,10 +4,12 @@ import cucumber.runtime.CucumberException;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.net.URLDecoder;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -77,7 +79,7 @@ public class Resources {
     }
 
     private static String classpath() {
-        if(cl() instanceof URLClassLoader) {
+        if (cl() instanceof URLClassLoader) {
             URLClassLoader urlClassLoader = (URLClassLoader) cl();
             StringBuilder result = new StringBuilder();
             for (URL url : urlClassLoader.getURLs()) {
@@ -89,8 +91,8 @@ public class Resources {
         }
     }
 
-    public static <T> T instantiateExactlyOneSubclass(Class<T> type, String packagePrefix, Object... constructorArguments) {
-        Collection<T> instances = instantiateSubclasses(type, packagePrefix, constructorArguments);
+    public static <T> T instantiateExactlyOneSubclass(Class<T> type, String packagePrefix, Class[] argumentTypes, Object[] constructorArguments) {
+        Collection<T> instances = instantiateSubclasses(type, packagePrefix, argumentTypes, constructorArguments);
         if (instances.size() == 1) {
             return instances.iterator().next();
         } else if (instances.size() == 0) {
@@ -100,16 +102,12 @@ public class Resources {
         }
     }
 
-    public static <T> List<T> instantiateSubclasses(Class<T> type, String packagePrefix, Object... constructorArguments) {
+    public static <T> List<T> instantiateSubclasses(Class<T> type, String packagePrefix, Class[] argumentTypes, Object[] constructorArguments) {
         List<T> result = new ArrayList<T>();
 
         Collection<Class<? extends T>> classes = getInstantiableSubclassesOf(type, packagePrefix);
         for (Class<? extends T> clazz : classes) {
             try {
-                Class[] argumentTypes = new Class[constructorArguments.length];
-                for (int i = 0; i < constructorArguments.length; i++) {
-                    argumentTypes[i] = constructorArguments[i].getClass();
-                }
                 result.add(clazz.getConstructor(argumentTypes).newInstance(constructorArguments));
             } catch (InstantiationException e) {
                 throw new CucumberException("Couldn't instantiate " + clazz, e);
@@ -127,8 +125,8 @@ public class Resources {
 
     private static void scanJar(URL jarDir, PathWithLines pwl, String suffix, Consumer consumer) {
         String jarUrl = jarDir.toExternalForm();
-        String path = filePath(jarUrl);
         try {
+            String path = new FilePathExtractor().filePath(jarUrl);
             ZipFile jarFile = new ZipFile(path);
             Enumeration<? extends ZipEntry> entries = jarFile.entries();
             while (entries.hasMoreElements()) {
@@ -138,17 +136,9 @@ public class Resources {
                     consumer.consume(new ZipResource(jarFile, jarEntry, pwl));
                 }
             }
-        } catch (IOException t) {
+        } catch (Exception t) {
             throw new CucumberException("Failed to scan jar", t);
         }
-    }
-
-    private static String filePath(String jarUrl) {
-        String pathWithProtocol = jarUrl.substring(0, jarUrl.indexOf("!/"));
-        String[] segments = pathWithProtocol.split(":");
-        // WINDOWS: jar:file:/C:/Users/ahellesoy/scm/cucumber-jvm/java/target/java-1.0.0-SNAPSHOT.jar
-        // POSIX:   jar:file:/Users/ahellesoy/scm/cucumber-jvm/java/target/java-1.0.0-SNAPSHOT.jar
-        return segments.length == 4 ? segments[2].substring(1) + ":" + segments[3] : segments[2];
     }
 
     private static void scanFilesystem(URL startDir, PathWithLines pathPrefix, String suffix, Consumer consumer) {
@@ -159,9 +149,13 @@ public class Resources {
     }
 
     private static String getPath(URL url) {
-        return url.getPath().replaceAll("%20", " ");
+        try {
+            return URLDecoder.decode(url.getPath(), "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new CucumberException("Encoding problem", e);
+        }
     }
-    
+
     private static void scanFilesystem(File rootDir, PathWithLines pathWithLines, String suffix, Consumer consumer) {
         File file = new File(pathWithLines.path);
         if (file.isDirectory()) {

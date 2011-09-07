@@ -2,6 +2,7 @@ package cucumber.runtime.java;
 
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.HookDefinition;
+import cucumber.runtime.ScenarioResult;
 import gherkin.TagExpression;
 
 import java.lang.reflect.Method;
@@ -13,14 +14,14 @@ public class JavaHookDefinition implements HookDefinition {
 
     private final ObjectFactory objectFactory;
     private final Method method;
-    private final TagExpression tagExpression;
     private final int order;
+    private final TagExpression tagExpression;
 
     public JavaHookDefinition(Method method, String[] tagExpressions, int order, ObjectFactory objectFactory) {
         this.method = method;
         tagExpression = new TagExpression(asList(tagExpressions));
-        this.objectFactory = objectFactory;
         this.order = order;
+        this.objectFactory = objectFactory;
     }
 
     Method getMethod() {
@@ -28,10 +29,16 @@ public class JavaHookDefinition implements HookDefinition {
     }
 
     @Override
-    public void execute() throws Throwable {
+    public void execute(ScenarioResult scenarioResult) throws Throwable {
         Object target = objectFactory.getInstance(method.getDeclaringClass());
+        Object[] args;
+        if(method.getParameterTypes().length == 1) {
+            args = new Object[]{scenarioResult};
+        } else {
+            args = new Object[0];
+        }
         try {
-            method.invoke(target);
+            method.invoke(target, args);
         } catch (IllegalArgumentException e) {
             throw new CucumberException("Can't invoke "
                     + new MethodFormat().format(method));

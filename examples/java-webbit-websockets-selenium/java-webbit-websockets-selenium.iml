@@ -23,12 +23,11 @@
     <orderEntry type="module" module-name="picocontainer" scope="TEST" />
     <orderEntry type="module" module-name="java" scope="TEST" />
     <orderEntry type="module" module-name="core" scope="TEST" />
-    <orderEntry type="library" scope="TEST" name="Maven: gherkin:gherkin:2.4.16" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: info.cukes:gherkin:2.4.18" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: com.googlecode.json-simple:json-simple:1.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: net.iharder:base64:2.3.8" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: com.beust:jcommander:1.18" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.apache.ant:ant:1.8.2" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.apache.ant:ant-launcher:1.8.2" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: com.thoughtworks.xstream:xstream:1.4.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.8.2" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: com.googlecode.java-diff-utils:diffutils:1.2.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.picocontainer:picocontainer:2.13.6" level="project" />

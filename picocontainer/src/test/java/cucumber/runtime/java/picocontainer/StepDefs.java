@@ -1,7 +1,9 @@
 package cucumber.runtime.java.picocontainer;
 
+import cucumber.annotation.After;
 import cucumber.annotation.en.Given;
 import cucumber.annotation.en.Then;
+import cucumber.runtime.ScenarioResult;
 
 import static junit.framework.Assert.assertEquals;
 
@@ -26,5 +28,12 @@ public class StepDefs {
     @Then("^I add (.*)")
     public void addLiquid(String liquid) throws InterruptedException {
         assertEquals("milk", liquid);
+    }
+    
+    @After
+    public void letsSeeWhatHappened(ScenarioResult result) {
+        if(result.isFailed()) {
+            // Maybe take a screenshot!
+        }
     }
 }

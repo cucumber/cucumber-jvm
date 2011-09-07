@@ -28,6 +28,11 @@ public class JRubyStepDefinition implements StepDefinition {
     }
 
     @Override
+    public Class getTypeForTableList(int argIndex) {
+        return null;
+    }
+
+    @Override
     public String getLocation() {
         if (file == null) {
             List fileAndLine = (List) stepdef.callMethod("file_and_line").toJava(List.class);

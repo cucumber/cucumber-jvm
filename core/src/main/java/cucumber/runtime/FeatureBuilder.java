@@ -63,13 +63,13 @@ public class FeatureBuilder implements Formatter {
 
     public void parse(Resource resource, List<Object> filters) {
         Formatter formatter = this;
-        if(!filters.isEmpty()) {
+        if (!filters.isEmpty()) {
             formatter = new FilterFormatter(this, filters);
         }
         Parser parser = new Parser(formatter);
         parser.parse(resource.getString(), resource.getPath(), 0);
         I18n i18n = parser.getI18nLanguage();
-        if(currentCucumberFeature != null) {
+        if (currentCucumberFeature != null) {
             // The current feature may be null if we used a very restrictive filter, say a tag that isn't used.
             currentCucumberFeature.setLocale(i18n.getLocale());
         }

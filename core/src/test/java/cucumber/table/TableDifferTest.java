@@ -6,35 +6,34 @@ import org.junit.Test;
 import static junit.framework.Assert.assertEquals;
 
 public class TableDifferTest {
+    private static final String EOL = System.getProperty("line.separator");
+
     private Table table() {
-        String source = 
-                "| name  | email                | credits |\n" +
-                "| Aslak | aslak@email.com      | 123     |\n" +
-                "| Joe   | joe@email.com        | 234     |\n" +
-                "| Bryan | bryan@email.org      | 456     |\n" +
-                "| Ni    | ni@email.com         | 654     |\n";
+        String source =
+                "| Aslak | aslak@email.com      | 123     |" + EOL +
+                "| Joe   | joe@email.com        | 234     |" + EOL +
+                "| Bryan | bryan@email.org      | 456     |" + EOL +
+                "| Ni    | ni@email.com         | 654     |" + EOL;
         return TableParser.parse(source);
     }
 
     private Table otherTableWithDeletedAndInserted() {
-        String source = 
-                "| name  | email                | credits |\n" +
-                "| Aslak | aslak@email.com      | 123     |\n" +
-                "| Doe   | joe@email.com        | 234     |\n" +
-                "| Foo   | schnickens@email.net | 789     |\n" +
-                "| Bryan | bryan@email.org      | 456     |\n";
+        String source =
+                "| Aslak | aslak@email.com      | 123 |" + EOL +
+                "| Doe   | joe@email.com        | 234 |" + EOL +
+                "| Foo   | schnickens@email.net | 789 |" + EOL +
+                "| Bryan | bryan@email.org      | 456 |" + EOL;
         return TableParser.parse(source);
     }
 
     private Table otherTableWithInsertedAtEnd() {
-        String source = 
-                "| name  | email                | credits |\n" +
-                "| Aslak | aslak@email.com      | 123     |\n" +
-                "| Joe   | joe@email.com        | 234     |\n" +
-                "| Bryan | bryan@email.org      | 456     |\n" +
-                "| Ni    | ni@email.com         | 654     |\n" +
-                "| Doe   | joe@email.com        | 234     |\n" +
-                "| Foo   | schnickens@email.net | 789     |\n";
+        String source =
+                "| Aslak | aslak@email.com      | 123 |" + EOL +
+                "| Joe   | joe@email.com        | 234 |" + EOL +
+                "| Bryan | bryan@email.org      | 456 |" + EOL +
+                "| Ni    | ni@email.com         | 654 |" + EOL +
+                "| Doe   | joe@email.com        | 234 |" + EOL +
+                "| Foo   | schnickens@email.net | 789 |" + EOL;
         return TableParser.parse(source);
     }
 
@@ -43,14 +42,13 @@ public class TableDifferTest {
         try {
             new TableDiffer(table(), otherTableWithDeletedAndInserted()).calculateDiffs();
         } catch (TableDiffException e) {
-            String expected = 
-                    "      | name | email                | credits |\n" +
-                    "    - | Joe  | joe@email.com        | 234     |\n" +
-                    "    + | Doe  | joe@email.com        | 234     |\n" +
-                    "    + | Foo  | schnickens@email.net | 789     |\n" +
-                    "      | Joe  | joe@email.com        | 234     |\n" +
-                    "    - | Ni   | ni@email.com         | 654     |\n";
-
+            String expected =
+                    "      | Aslak | aslak@email.com      | 123 |" + EOL +
+                    "    - | Joe   | joe@email.com        | 234 |" + EOL +
+                    "    + | Doe   | joe@email.com        | 234 |" + EOL +
+                    "    + | Foo   | schnickens@email.net | 789 |" + EOL +
+                    "      | Bryan | bryan@email.org      | 456 |" + EOL +
+                    "    - | Ni    | ni@email.com         | 654 |" + EOL;
             assertEquals(expected, pretty(e.getDiffTable()));
             throw e;
         }
@@ -61,14 +59,13 @@ public class TableDifferTest {
         try {
             new TableDiffer(table(), otherTableWithInsertedAtEnd()).calculateDiffs();
         } catch (TableDiffException e) {
-            String expected = 
-                    "      | name  | email                | credits |\n" +
-                    "      | Aslak | aslak@email.com      | 123     |\n" +
-                    "      | Joe   | joe@email.com        | 234     |\n" +
-                    "      | Bryan | bryan@email.org      | 456     |\n" +
-                    "    + | Doe   | joe@email.com        | 234     |\n" +
-                    "    + | Foo   | schnickens@email.net | 789     |\n";
-
+            String expected =
+                    "      | Aslak | aslak@email.com      | 123 |" + EOL +
+                    "      | Joe   | joe@email.com        | 234 |" + EOL +
+                    "      | Bryan | bryan@email.org      | 456 |" + EOL +
+                    "      | Ni    | ni@email.com         | 654 |" + EOL +
+                    "    + | Doe   | joe@email.com        | 234 |" + EOL +
+                    "    + | Foo   | schnickens@email.net | 789 |" + EOL;
             assertEquals(expected, pretty(e.getDiffTable()));
             throw e;
         }
