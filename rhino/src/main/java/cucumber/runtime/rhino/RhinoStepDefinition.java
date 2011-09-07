@@ -1,6 +1,7 @@
 package cucumber.runtime.rhino;
 
 import cucumber.runtime.StepDefinition;
+import cucumber.runtime.Utils;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 import org.mozilla.javascript.Context;
@@ -46,11 +47,7 @@ public class RhinoStepDefinition implements StepDefinition {
     }
 
     public Class<?>[] getParameterTypes() {
-        Class[] types = new Class[bodyFunc.getArity()];
-        for (int i = 0; i < types.length; i++) {
-            types[i] = String.class;
-        }
-        return types;
+        return Utils.classArray(bodyFunc.getArity(), String.class);
     }
 
     public void execute(Object[] args) throws Throwable {

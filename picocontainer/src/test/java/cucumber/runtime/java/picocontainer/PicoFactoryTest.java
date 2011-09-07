@@ -8,7 +8,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 
 public class PicoFactoryTest {
-    @Ignore("Needs to be fixed")
     @Test
     public void shouldGiveUsNewInstancesForEachScenario() {
         ObjectFactory factory = new PicoFactory();

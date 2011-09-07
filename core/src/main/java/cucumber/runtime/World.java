@@ -15,6 +15,7 @@ public class World {
     private final Collection<String> tags;
 
     private boolean skipNextStep = false;
+    private ScenarioResultImpl scenarioResult;
 
     public World(List<Backend> backends, Runtime runtime, Collection<String> tags) {
         this.backends = backends;
@@ -23,35 +24,36 @@ public class World {
     }
 
     public void prepare() {
-        List<HookDefinition> hooks = new ArrayList<HookDefinition>();
+        scenarioResult = new ScenarioResultImpl();
+        List<HookDefinition> beforeHooks = new ArrayList<HookDefinition>();
         for (Backend backend : backends) {
             backend.newWorld();
-            hooks.addAll(backend.getBeforeHooks());
+            beforeHooks.addAll(backend.getBeforeHooks());
         }
-        Collections.sort(hooks, new HookComparator(true));
-        for (HookDefinition hook : hooks) {
-            runHookMaybe(hook);
+        Collections.sort(beforeHooks, new HookComparator(true));
+        for (HookDefinition hook : beforeHooks) {
+            runHookMaybe(hook, null);
         }
     }
 
     public void dispose() {
-        List<HookDefinition> hooks = new ArrayList<HookDefinition>();
+        List<HookDefinition> afterHooks = new ArrayList<HookDefinition>();
         for (Backend backend : backends) {
-            hooks.addAll(backend.getAfterHooks());
+            afterHooks.addAll(backend.getAfterHooks());
         }
-        Collections.sort(hooks, new HookComparator(false));
-        for (HookDefinition hook : hooks) {
-            runHookMaybe(hook);
+        Collections.sort(afterHooks, new HookComparator(false));
+        for (HookDefinition hook : afterHooks) {
+            runHookMaybe(hook, scenarioResult);
         }
         for (Backend backend : backends) {
             backend.disposeWorld();
         }
     }
 
-    private void runHookMaybe(HookDefinition hook) {
+    private void runHookMaybe(HookDefinition hook, ScenarioResult scenarioResult) {
         if (hook.matches(tags)) {
             try {
-                hook.execute();
+                hook.execute(scenarioResult);
             } catch (Throwable t) {
                 skipNextStep = true;
                 throw new CucumberException("Hook execution failed", t);
@@ -70,6 +72,7 @@ public class World {
 
         if (skipNextStep) {
             // Undefined steps (Match.NONE) will always get the Result.SKIPPED result
+            scenarioResult.add(Result.SKIPPED);
             reporter.result(Result.SKIPPED);
         } else {
             Throwable e = null;
@@ -83,6 +86,7 @@ public class World {
                 long duration = System.nanoTime() - start;
                 String status = e == null ? Result.PASSED : Result.FAILED;
                 Result result = new Result(status, duration, e, DUMMY_ARG);
+                scenarioResult.add(result);
                 reporter.result(result);
             }
         }

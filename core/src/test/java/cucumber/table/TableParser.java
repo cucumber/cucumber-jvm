@@ -62,7 +62,7 @@ public class TableParser {
             }
 
             @Override
-            public void docString(String string, int line) {
+            public void docString(String contentType, String string, int line) {
                 throw new UnsupportedOperationException();
             }
 

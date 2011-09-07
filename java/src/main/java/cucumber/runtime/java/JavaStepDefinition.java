@@ -1,7 +1,9 @@
 package cucumber.runtime.java;
 
+import cucumber.annotation.Pending;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.JdkPatternArgumentMatcher;
+import cucumber.runtime.PendingException;
 import cucumber.runtime.StepDefinition;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
@@ -30,6 +32,9 @@ public class JavaStepDefinition implements StepDefinition {
     }
 
     public void execute(Object[] args) throws Throwable {
+        if (method.isAnnotationPresent(Pending.class)) {
+            throw new PendingException(method.getAnnotation(Pending.class).value());
+        } 
         Object target = objectFactory.getInstance(method.getDeclaringClass());
         try {
             method.invoke(target, args);

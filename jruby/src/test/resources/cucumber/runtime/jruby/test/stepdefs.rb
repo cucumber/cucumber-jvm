@@ -1,6 +1,6 @@
 Given /I have (\d+) "(.?*)" in my belly/ do |n, what|
-  @what = what
   @n = n.to_i
+  @what = what
 end
 
 Then /^I am "([^"]*)"$/ do |mood|

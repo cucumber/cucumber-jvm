@@ -30,9 +30,9 @@ public class HookOrderTest {
         world.prepare();
 
         InOrder inOrder = inOrder(hooks.toArray());
-        inOrder.verify(hooks.get(2)).execute();
-        inOrder.verify(hooks.get(0)).execute();
-        inOrder.verify(hooks.get(1)).execute();
+        inOrder.verify(hooks.get(2)).execute(null);
+        inOrder.verify(hooks.get(0)).execute(null);
+        inOrder.verify(hooks.get(1)).execute(null);
     }
 
     @Test
@@ -43,9 +43,9 @@ public class HookOrderTest {
         world.dispose();
 
         InOrder inOrder = inOrder(hooks.toArray());
-        inOrder.verify(hooks.get(1)).execute();
-        inOrder.verify(hooks.get(2)).execute();
-        inOrder.verify(hooks.get(0)).execute();
+        inOrder.verify(hooks.get(1)).execute(null);
+        inOrder.verify(hooks.get(2)).execute(null);
+        inOrder.verify(hooks.get(0)).execute(null);
     }
 
     @Test
@@ -62,12 +62,12 @@ public class HookOrderTest {
         allHooks.addAll(backend2Hooks);
 
         InOrder inOrder = inOrder(allHooks.toArray());
-        inOrder.verify(backend1Hooks.get(2)).execute();
-        inOrder.verify(backend2Hooks.get(0)).execute();
-        inOrder.verify(backend1Hooks.get(0)).execute();
-        inOrder.verify(backend2Hooks.get(2)).execute();
-        verify(backend2Hooks.get(1)).execute();
-        verify(backend1Hooks.get(1)).execute();
+        inOrder.verify(backend1Hooks.get(2)).execute(null);
+        inOrder.verify(backend2Hooks.get(0)).execute(null);
+        inOrder.verify(backend1Hooks.get(0)).execute(null);
+        inOrder.verify(backend2Hooks.get(2)).execute(null);
+        verify(backend2Hooks.get(1)).execute(null);
+        verify(backend1Hooks.get(1)).execute(null);
     }
 
     private List<HookDefinition> mockHooks(int... ordering) {

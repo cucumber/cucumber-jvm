@@ -17,7 +17,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>gherkin</groupId>
+            <groupId>info.cukes</groupId>
             <artifactId>gherkin</artifactId>
         </dependency>
         <dependency>

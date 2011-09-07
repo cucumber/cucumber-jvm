@@ -25,13 +25,6 @@ public class ClojureSnippetGenerator extends SnippetGenerator {
 
     @Override
     protected String arguments(List<Class<?>> argumentTypes) {
-        StringBuilder sb = new StringBuilder();
-        for (int n = 0; n < argumentTypes.size(); n++) {
-            if (n > 1) {
-                sb.append(", ");
-            }
-            sb.append("arg").append(n + 1);
-        }
-        return sb.toString();
+        return untypedArguments(argumentTypes);
     }
 }

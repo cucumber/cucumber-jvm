@@ -27,7 +27,7 @@ module CucumberJavaMappings
 
     <parent>
         <groupId>info.cukes</groupId>
-        <artifactId>parent</artifactId>
+        <artifactId>cucumber-jvm</artifactId>
         <relativePath>../../pom.xml</relativePath>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
@@ -40,7 +40,7 @@ module CucumberJavaMappings
     <dependencies>
         <dependency>
             <groupId>info.cukes</groupId>
-            <artifactId>picocontainer</artifactId>
+            <artifactId>cucumber-picocontainer</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
@@ -75,6 +75,10 @@ EOF
   end
 
   def write_failing_mapping(step_name)
+    write_failing_mapping_with_message(step_name, "bang!")
+  end
+
+  def write_failing_mapping_with_message(step_name, message)
     erb = ERB.new(<<-EOF, nil, '-')
 package cucumber.test;
 
@@ -90,7 +94,7 @@ public class Mappings<%= @@mappings_counter %> {
             throw new RuntimeException(e);
         }
         // ARUBA_IGNORE_END
-        throw new RuntimeException("bang!");
+        throw new RuntimeException("<%= message %>");
     }
 }
 
@@ -104,8 +108,10 @@ EOF
 package cucumber.test;
 
 import cucumber.annotation.en.Given;
+import cucumber.annotation.Pending;
 
 public class Mappings<%= @@mappings_counter %> {
+    @Pending
     @Given("<%= step_name -%>")
     public void <%= step_name.gsub(/ /, '_') -%>() {
         // ARUBA_IGNORE_START
@@ -115,7 +121,6 @@ public class Mappings<%= @@mappings_counter %> {
             throw new RuntimeException(e);
         }
         // ARUBA_IGNORE_END
-        throw new cucumber.runtime.Pending("TODO");
     }
 }
 
@@ -290,6 +295,16 @@ EOF
   def assert_undefined_scenario
     assert_matching_output("Tests run: [1-9]+, Failures: 0, Errors: 0, Skipped: [1-9]+", all_output)
     assert_success true
+  end
+
+  def assert_scenario_reported_as_failing(scenario_name)
+    # Maven JUnit output is too lame to grab the name...
+    assert_failing_scenario
+  end
+  
+  def assert_scenario_not_reported_as_failing(scenario_name)
+    # TODO
+    # We'd have to look inside surefire reports to determine this. Why is Maven so complicated??
   end
 
   def failed_output

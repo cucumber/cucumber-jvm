@@ -11,6 +11,15 @@ import java.util.regex.Pattern;
 
 /**
  * Base class for generating snippets.
+ * 
+ * Subclasses can access common values:
+ * <ul>
+ *     <li>{0} : Keyword</li>
+ *     <li>{1} : Regexp</li>
+ *     <li>{2} : Function name</li>
+ *     <li>{3} : Arguments</li>
+ *     <li>{4} : Hint comment</li>
+ * </ul>
  */
 public abstract class SnippetGenerator {
     private static final Pattern[] ARG_PATTERNS = new Pattern[]{
@@ -114,5 +123,16 @@ public abstract class SnippetGenerator {
             }
         }
         return argTypes;
+    }
+
+    protected String untypedArguments(List<Class<?>> argumentTypes) {
+        StringBuilder sb = new StringBuilder();
+        for (int n = 0; n < argumentTypes.size(); n++) {
+            if (n > 1) {
+                sb.append(", ");
+            }
+            sb.append("arg").append(n + 1);
+        }
+        return sb.toString();
     }
 }

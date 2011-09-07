@@ -3,9 +3,10 @@ package cucumber.runtime.java;
 import cucumber.annotation.After;
 import cucumber.annotation.Before;
 import cucumber.annotation.Order;
-import cucumber.annotation.Pending;
 import cucumber.resources.Resources;
-import cucumber.runtime.*;
+import cucumber.runtime.Backend;
+import cucumber.runtime.HookDefinition;
+import cucumber.runtime.StepDefinition;
 import gherkin.formatter.model.Step;
 
 import java.lang.annotation.Annotation;
@@ -18,9 +19,9 @@ import java.util.regex.Pattern;
 
 public class JavaBackend implements Backend {
     private final ObjectFactory objectFactory;
-    private List<StepDefinition> stepDefinitions = new ArrayList<StepDefinition>();
-    private List<HookDefinition> beforeHooks = new ArrayList<HookDefinition>();
-    private List<HookDefinition> afterHooks = new ArrayList<HookDefinition>();
+    private final List<StepDefinition> stepDefinitions = new ArrayList<StepDefinition>();
+    private final List<HookDefinition> beforeHooks = new ArrayList<HookDefinition>();
+    private final List<HookDefinition> afterHooks = new ArrayList<HookDefinition>();
 
     public JavaBackend(List<String> packagePrefixes) {
         this.objectFactory = Resources.instantiateExactlyOneSubclass(ObjectFactory.class, "cucumber.runtime", new Class[0], new Object[0]);
@@ -30,9 +31,8 @@ public class JavaBackend implements Backend {
         }
     }
 
-    public JavaBackend(ObjectFactory objectFactory, List<StepDefinition> stepDefinitions) {
+    public JavaBackend(ObjectFactory objectFactory) {
         this.objectFactory = objectFactory;
-        this.stepDefinitions = stepDefinitions;
     }
 
     public List<StepDefinition> getStepDefinitions() {
@@ -56,46 +56,6 @@ public class JavaBackend implements Backend {
         objectFactory.addClass(clazz);
         addConstructorDependencies(clazz);
         stepDefinitions.add(new JavaStepDefinition(pattern, method, objectFactory));
-    }
-
-    private void addConstructorDependencies(Class<?> clazz) {
-        for (Constructor constructor : clazz.getConstructors())
-        {
-            for(Class paramClazz : constructor.getParameterTypes())
-            {
-                // TODO: Check if class was already registered to prevent endless recursion
-                objectFactory.addClass(paramClazz);
-                addConstructorDependencies(paramClazz);
-            }
-        }
-    }
-
-    public Object invoke(Method method, Object[] javaArgs) {
-        try {
-            if (method.isAnnotationPresent(Pending.class)) {
-                throw new PendingException(method.getAnnotation(Pending.class).value());
-            } else {
-                return method.invoke(this.objectFactory.getInstance(method.getDeclaringClass()), javaArgs);
-            }
-        } catch (IllegalArgumentException e) {
-            throw new CucumberException(errorMessage(method, javaArgs), e);
-        } catch (InvocationTargetException e) {
-            throw new CucumberException(errorMessage(method, javaArgs), e.getTargetException());
-        } catch (IllegalAccessException e) {
-            throw new CucumberException(errorMessage(method, javaArgs), e);
-        }
-    }
-
-    private String errorMessage(Method method, Object[] javaArgs) {
-        StringBuilder m = new StringBuilder("Couldn't invoke ").append(method.toGenericString()).append(" with ").append(Utils.join(javaArgs, ",")).append(" (");
-        boolean comma = false;
-        for (Object javaArg : javaArgs) {
-            if (comma) m.append(",");
-            m.append(javaArg.getClass());
-            comma = true;
-        }
-        m.append(")");
-        return m.toString();
     }
 
     void registerHook(Annotation annotation, Method method) {
