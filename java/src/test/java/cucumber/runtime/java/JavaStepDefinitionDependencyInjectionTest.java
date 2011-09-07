@@ -28,21 +28,20 @@ public class JavaStepDefinitionDependencyInjectionTest {
         }
     }
 
-    List<StepDefinition> stepDefinitions = new ArrayList<StepDefinition>();
     private ObjectFactory mockObjectFactory = mock(ObjectFactory.class);
-    private JavaBackend backend = new JavaBackend(mockObjectFactory, stepDefinitions);
+    private JavaBackend backend = new JavaBackend(mockObjectFactory);
 
     @Test
     public void constructor_arguments_get_registered() {
-        backend.addStepDefinition(Pattern.compile("not relevant"), GIVEN);
+        backend.addStepDefinition(Pattern.compile("whatever"), GIVEN);
         verify(mockObjectFactory).addClass(Steps.class);
         verify(mockObjectFactory).addClass(StepContext1.class);
         verify(mockObjectFactory).addClass(StepContext2.class);
     }
 
-    @Test @Ignore("Currently there is no way to check if a class was already registered with the objectfactory!")
+    @Test
     public void constructor_arguments_get_registered_exactly_once() {
-        backend.addStepDefinition(Pattern.compile("not relevant"), OTHER_GIVEN);
+        backend.addStepDefinition(Pattern.compile("whatever"), OTHER_GIVEN);
         verify(mockObjectFactory, times(1)).addClass(OtherSteps.class);
         verify(mockObjectFactory, times(1)).addClass(StepContext3.class);
         verify(mockObjectFactory, times(1)).addClass(StepContext4.class);
@@ -64,7 +63,6 @@ public class JavaStepDefinitionDependencyInjectionTest {
     public class StepContext2 {
     }
 
-
     public class OtherSteps {
 
         public OtherSteps(StepContext3 context3, StepContext4 context4) {
@@ -81,5 +79,7 @@ public class JavaStepDefinitionDependencyInjectionTest {
     }
 
     public class StepContext4 {
+        public StepContext4(StepContext3 context3) {
+        }
     }
 }
