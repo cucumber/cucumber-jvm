@@ -14,6 +14,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -22,6 +23,7 @@ public class JavaBackend implements Backend {
     private final List<StepDefinition> stepDefinitions = new ArrayList<StepDefinition>();
     private final List<HookDefinition> beforeHooks = new ArrayList<HookDefinition>();
     private final List<HookDefinition> afterHooks = new ArrayList<HookDefinition>();
+    private final HashSet<Class> stepDefinitionClasses = new HashSet<Class>();
 
     public JavaBackend(List<String> packagePrefixes) {
         this.objectFactory = Resources.instantiateExactlyOneSubclass(ObjectFactory.class, "cucumber.runtime", new Class[0], new Object[0]);
@@ -53,8 +55,7 @@ public class JavaBackend implements Backend {
 
     void addStepDefinition(Pattern pattern, Method method) {
         Class<?> clazz = method.getDeclaringClass();
-        objectFactory.addClass(clazz);
-        addConstructorDependencies(clazz);
+        registerClassInObjectFactory(clazz);
         stepDefinitions.add(new JavaStepDefinition(pattern, method, objectFactory));
     }
 
@@ -71,6 +72,25 @@ public class JavaBackend implements Backend {
         } else {
             String[] tagExpressions = ((After) annotation).value();
             afterHooks.add(new JavaHookDefinition(method, tagExpressions, hookOrder, objectFactory));
+        }
+    }
+
+    private void registerClassInObjectFactory(Class<?> clazz) {
+        if (!stepDefinitionClasses.contains(clazz))
+        {
+            objectFactory.addClass(clazz);
+            stepDefinitionClasses.add(clazz);
+            addConstructorDependencies(clazz);
+        }
+    }
+
+    private void addConstructorDependencies(Class<?> clazz) {
+        for (Constructor constructor : clazz.getConstructors())
+        {
+            for(Class paramClazz : constructor.getParameterTypes())
+            {
+                registerClassInObjectFactory(paramClazz);
+            }
         }
     }
 
