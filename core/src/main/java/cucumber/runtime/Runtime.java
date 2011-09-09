@@ -1,19 +1,24 @@
 package cucumber.runtime;
 
-import cucumber.resources.Resources;
-import cucumber.runtime.converters.LocalizedXStreams;
-import cucumber.table.CamelCaseHeaderMapper;
-import cucumber.table.TableHeaderMapper;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
+
+import cucumber.resources.Resources;
+import cucumber.runtime.converters.LocalizedXStreams;
+import cucumber.table.NoOpTableHeaderMapper;
+import cucumber.table.TableHeaderMapper;
 
 public class Runtime {
     private final List<Step> undefinedSteps = new ArrayList<Step>();
     private final List<Backend> backends;
     private final LocalizedXStreams localizedXStreams = new LocalizedXStreams();
-    private final TableHeaderMapper tableHeaderMapper = new CamelCaseHeaderMapper();
+    private final TableHeaderMapper tableHeaderMapper = new NoOpTableHeaderMapper();
 
     public Runtime(List<String> packageNamesOrScriptPaths) {
         backends = Resources.instantiateSubclasses(Backend.class, "cucumber.runtime", new Class[]{List.class}, new Object[]{packageNamesOrScriptPaths});

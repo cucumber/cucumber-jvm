@@ -21,6 +21,9 @@ public class GroovyBackend implements Backend {
     private static GroovyBackend instance;
 
     private final List<StepDefinition> stepDefinitions = new ArrayList<StepDefinition>();
+    private List<HookDefinition> beforeHooks = new ArrayList<HookDefinition>();
+    private List<HookDefinition> afterHooks = new ArrayList<HookDefinition>();
+    
     private static Closure worldClosure;
     private static Object world;
 
@@ -82,9 +85,12 @@ public class GroovyBackend implements Backend {
     private static StackTraceElement stepDefLocation() {
         Throwable t = new Throwable();
         StackTraceElement[] stackTraceElements = t.getStackTrace();
+        StackTraceElement potentialMatch = null;
         for (StackTraceElement stackTraceElement : stackTraceElements) {
-            if (stackTraceElement.getFileName().endsWith(".groovy")) {
-                return stackTraceElement;
+            if (potentialMatch != null && GroovyShell.class.getName().equals(stackTraceElement.getClassName())) {
+                return potentialMatch;
+            } else if (stackTraceElement.getFileName() != null && stackTraceElement.getFileName().endsWith(".groovy")) {
+                potentialMatch = stackTraceElement;
             }
         }
         throw new RuntimeException("Couldn't find location for step definition");
@@ -92,11 +98,19 @@ public class GroovyBackend implements Backend {
 
     @Override
     public List<HookDefinition> getBeforeHooks() {
-        return new ArrayList<HookDefinition>();
+        return beforeHooks;
     }
 
     @Override
     public List<HookDefinition> getAfterHooks() {
-        return new ArrayList<HookDefinition>();
+        return afterHooks;
+    }
+
+    public static void addBeforeHook(HookDefinition hook) {
+        instance.beforeHooks.add(hook);
+    }
+
+    public static void addAfterHook(HookDefinition hook) {
+        instance.afterHooks.add(hook);
     }
 }

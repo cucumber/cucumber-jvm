@@ -50,7 +50,7 @@ public class StepDefinitionMatch extends Match {
 
     private Object[] transformedArgs(Class<?>[] parameterTypes, Step step, Locale locale) {
         int argumentCount = getArguments().size() + (step.getMultilineArg() == null ? 0 : 1);
-        if (parameterTypes.length != argumentCount) {
+        if (parameterTypes.length < argumentCount) {
             throw new CucumberException("Arity mismatch. Parameters: " + asList(parameterTypes) + ". Matched arguments: " + getArguments());
         }
 
@@ -63,10 +63,14 @@ public class StepDefinitionMatch extends Match {
         } else {
             ConverterLookup converterLookup = localizedXStreams.get(locale).getConverterLookup();
             for (Argument a : getArguments()) {
-                // TODO: We might get a lookup that doesn't implement SingleValueConverter
-                // Need to throw a more friendly exception in that case.
-                SingleValueConverter converter = (SingleValueConverter) converterLookup.lookupConverterForType(parameterTypes[n]);
-                result[n] = converter.fromString(a.getVal());
+                if (parameterTypes[n] == Object.class) {
+                    result[n] = a.getVal();
+                } else {
+                    // TODO: We might get a lookup that doesn't implement SingleValueConverter
+                    // Need to throw a more friendly exception in that case.
+                    SingleValueConverter converter = (SingleValueConverter) converterLookup.lookupConverterForType(parameterTypes[n]);
+                    result[n] = converter.fromString(a.getVal());
+                }
                 n++;
             }
         }

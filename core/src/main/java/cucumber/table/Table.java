@@ -3,7 +3,9 @@ package cucumber.table;
 import gherkin.formatter.model.Row;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Table {
 
@@ -28,10 +30,26 @@ public class Table {
         return this.raw;
     }
 
-    public <T> List<T> asList(Class itemType) {
-        return tableConverter.convert(itemType, attributeNames(), attributeValues());
+    public List<List<String>> rows() {
+        return attributeValues();
     }
 
+    public List<Map<String, String>> hashes() {
+        List<Map<String, String>> maps = new ArrayList<Map<String, String>>();
+        List<String> names = attributeNames();
+        for (List<String> values : attributeValues()) {
+            Map<String, String> map = new HashMap<String, String>();
+            for (int i = 0; i < names.size(); i++) {
+                map.put(names.get(i), values.get(i));
+            }
+            maps.add(map);
+        }
+        return maps;
+    }
+
+    public <T> List<T> asList(Class<T> itemType) {
+        return tableConverter.convert(itemType, attributeNames(), attributeValues());
+    }
 
     private List<List<String>> attributeValues() {
         List<List<String>> attributeValues = new ArrayList<List<String>>();
