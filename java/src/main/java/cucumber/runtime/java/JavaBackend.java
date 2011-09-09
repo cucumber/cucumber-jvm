@@ -10,16 +10,20 @@ import cucumber.runtime.StepDefinition;
 import gherkin.formatter.model.Step;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 public class JavaBackend implements Backend {
-    private final ObjectFactory objectFactory;
     private final List<StepDefinition> stepDefinitions = new ArrayList<StepDefinition>();
     private final List<HookDefinition> beforeHooks = new ArrayList<HookDefinition>();
     private final List<HookDefinition> afterHooks = new ArrayList<HookDefinition>();
+    private final Set<Class> stepDefinitionClasses = new HashSet<Class>();
+    private final ObjectFactory objectFactory;
 
     public JavaBackend(List<String> packagePrefixes) {
         this.objectFactory = Resources.instantiateExactlyOneSubclass(ObjectFactory.class, "cucumber.runtime", new Class[0], new Object[0]);
@@ -37,6 +41,16 @@ public class JavaBackend implements Backend {
         return stepDefinitions;
     }
 
+    @Override
+    public List<HookDefinition> getBeforeHooks() {
+        return beforeHooks;
+    }
+
+    @Override
+    public List<HookDefinition> getAfterHooks() {
+        return afterHooks;
+    }
+
     public void newWorld() {
         objectFactory.createInstances();
     }
@@ -51,13 +65,13 @@ public class JavaBackend implements Backend {
 
     void addStepDefinition(Pattern pattern, Method method) {
         Class<?> clazz = method.getDeclaringClass();
-        objectFactory.addClass(clazz);
+        registerClassInObjectFactory(clazz);
         stepDefinitions.add(new JavaStepDefinition(pattern, method, objectFactory));
     }
 
     void registerHook(Annotation annotation, Method method) {
         Class<?> clazz = method.getDeclaringClass();
-        objectFactory.addClass(clazz);
+        registerClassInObjectFactory(clazz);
 
         Order order = method.getAnnotation(Order.class);
         int hookOrder = (order == null) ? Integer.MAX_VALUE : order.value();
@@ -71,13 +85,19 @@ public class JavaBackend implements Backend {
         }
     }
 
-    @Override
-    public List<HookDefinition> getBeforeHooks() {
-        return beforeHooks;
+    private void registerClassInObjectFactory(Class<?> clazz) {
+        if (!stepDefinitionClasses.contains(clazz)) {
+            objectFactory.addClass(clazz);
+            stepDefinitionClasses.add(clazz);
+            addConstructorDependencies(clazz);
+        }
     }
 
-    @Override
-    public List<HookDefinition> getAfterHooks() {
-        return afterHooks;
+    private void addConstructorDependencies(Class<?> clazz) {
+        for (Constructor constructor : clazz.getConstructors()) {
+            for (Class paramClazz : constructor.getParameterTypes()) {
+                registerClassInObjectFactory(paramClazz);
+            }
+        }
     }
 }
