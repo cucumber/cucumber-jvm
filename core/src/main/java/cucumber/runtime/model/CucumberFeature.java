@@ -58,6 +58,10 @@ public class CucumberFeature {
         return feature;
     }
 
+    public String getFeatureUri() {
+        return featureUri;
+    }
+
     public void run(Runtime runtime, Formatter formatter, Reporter reporter) {
         formatter.uri(featureUri);
         formatter.feature(feature);

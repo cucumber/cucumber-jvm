@@ -42,12 +42,11 @@ public class CucumberScenarioOutline extends AbstractFeatureElement {
             formatter.step(step);
         }
         Table table = new Table(examples.getRows(), new TableConverter(new XStream()), new NoOpTableHeaderMapper());
+        formatter.examples(examples);
         for (Map<String, String> map : table.hashes()) {
-            formatter.examples(examples);
             for (Step step : stepsToRun) {
                 world.runOutlineStep(getUri(), getOutlineStep(step, map), reporter, getCucumberFeature().getLocale());
             }
-//            formatter.examples(examples);
         }
     }
 
