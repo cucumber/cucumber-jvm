@@ -159,34 +159,9 @@
                 <version>0.2.0</version>
             </dependency>
             <dependency>
-                <groupId>log4j</groupId>
-                <artifactId>log4j</artifactId>
-                <version>1.2.16</version>
-            </dependency>
-            <dependency>
                 <groupId>commons-lang</groupId>
                 <artifactId>commons-lang</artifactId>
                 <version>2.4</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.openejb</groupId>
-                <artifactId>javaee-api</artifactId>
-                <version>5.0-1</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.openejb</groupId>
-                <artifactId>openejb-core</artifactId>
-                <version>3.1.2</version>
-            </dependency>
-            <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate</artifactId>
-                <version>3.2.5.ga</version>
-            </dependency>
-            <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-entitymanager</artifactId>
-                <version>3.2.1.ga</version>
             </dependency>
             <dependency>
                 <groupId>asm</groupId>
@@ -261,6 +236,31 @@
         </profile>
 
         <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.1</version>
+                        <configuration>
+                            <useAgent>true</useAgent>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
             <id>full</id>
             <build>
                 <plugins>
@@ -325,35 +325,17 @@
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-                <version>1.1</version>
-                <configuration>
-                    <useAgent>true</useAgent>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>sign-artifacts</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>sign</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
                 <version>3.0</version>
             </plugin>
         </plugins>
 
-        <extensions> 
-            <extension> 
-                <groupId>org.apache.maven.wagon</groupId> 
-                <artifactId>wagon-ssh</artifactId> 
-                <version>1.0</version> 
-            </extension> 
+        <extensions>
+            <extension>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-ssh</artifactId>
+                <version>1.0</version>
+            </extension>
         </extensions>
     </build>
 </project>
