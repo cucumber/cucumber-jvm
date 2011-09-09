@@ -4,7 +4,7 @@
     <facet type="scala" name="Scala">
       <configuration>
         <option name="compilerLibraryLevel" value="Project" />
-        <option name="compilerLibraryName" value="Maven: org.scala-lang:scala-compiler-bundle:2.9.1.RC4" />
+        <option name="compilerLibraryName" value="Maven: org.scala-lang:scala-compiler-bundle:2.9.1" />
         <option name="vmOptions" value="" />
       </configuration>
     </facet>
@@ -27,8 +27,8 @@
     <orderEntry type="library" name="Maven: com.thoughtworks.xstream:xstream:1.4.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.8.2" level="project" />
     <orderEntry type="library" name="Maven: com.googlecode.java-diff-utils:diffutils:1.2.1" level="project" />
-    <orderEntry type="library" name="Maven: org.scala-lang:scala-library:2.9.1.RC4" level="project" />
-    <orderEntry type="library" name="Maven: org.scala-lang:scala-compiler:2.9.1.RC4" level="project" />
+    <orderEntry type="library" name="Maven: org.scala-lang:scala-library:2.9.1" level="project" />
+    <orderEntry type="library" name="Maven: org.scala-lang:scala-compiler:2.9.1" level="project" />
   </component>
 </module>
 

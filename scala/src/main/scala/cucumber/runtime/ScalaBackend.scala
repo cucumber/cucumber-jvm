@@ -10,7 +10,7 @@ import collection.JavaConverters._
 
 class ScalaBackend(packagePrefixes:JList[String]) extends Backend {
 
-  val instances = packagePrefixes.asScala.flatMap { Resources.instantiateSubclasses(classOf[ScalaDsl], _, Array(), Array()).asScala }
+  private var instances:Seq[ScalaDsl] = Nil 
 
   def getStepDefinitions = instances.flatMap(_.stepDefinitions).asJava
 
@@ -18,9 +18,13 @@ class ScalaBackend(packagePrefixes:JList[String]) extends Backend {
 
   def getAfterHooks = instances.flatMap(_.afterHooks).asJava
 
-  def newWorld() {}
+  def newWorld() {
+    instances = packagePrefixes.asScala.flatMap { Resources.instantiateSubclasses(classOf[ScalaDsl], _, Array(), Array()).asScala }  
+  }
 
-  def disposeWorld() {}
+  def disposeWorld() {
+    instances = Nil
+  }
 
   def getSnippet(step: Step) = new ScalaSnippetGenerator(step).getSnippet
 }
