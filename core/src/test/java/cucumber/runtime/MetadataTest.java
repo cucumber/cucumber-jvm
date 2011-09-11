@@ -79,6 +79,11 @@ public class MetadataTest {
             }
 
             @Override
+            public Class getTypeForTableList(int argIndex) {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
             public String getLocation() {
                 throw new UnsupportedOperationException("TODO");
             }
