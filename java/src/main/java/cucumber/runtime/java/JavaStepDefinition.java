@@ -34,8 +34,9 @@ public class JavaStepDefinition implements StepDefinition {
     public void execute(Object[] args) throws Throwable {
         if (method.isAnnotationPresent(Pending.class)) {
             throw new PendingException(method.getAnnotation(Pending.class).value());
-        } 
-        Object target = objectFactory.getInstance(method.getDeclaringClass());
+        }
+        Class<?> clazz = method.getDeclaringClass();
+        Object target = objectFactory.getInstance(clazz);
         try {
             method.invoke(target, args);
         } catch (IllegalArgumentException e) {

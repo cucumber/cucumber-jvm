@@ -7,32 +7,27 @@ import cucumber.resources.Resource;
 import cucumber.resources.Resources;
 import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
-import cucumber.runtime.HookDefinition;
-import cucumber.runtime.StepDefinition;
+import cucumber.runtime.World;
 import gherkin.formatter.model.Step;
 
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.List;
 import java.util.regex.Pattern;
 
 public class ClojureBackend implements Backend {
     private static ClojureBackend instance;
+    private World world;
 
-    private final List<StepDefinition> stepDefinitions = new ArrayList<StepDefinition>();
-
-    public ClojureBackend(List<String> scriptPaths) {
+    public ClojureBackend() throws ClassNotFoundException, IOException {
         instance = this;
-        try {
-            defineStepDefinitions(scriptPaths);
-        } catch (Exception e) {
-            throw new CucumberException("Failed to define Cloure Step Definitions", e);
-        }
+        RT.load("cucumber/runtime/clojure/dsl");
     }
 
-    private void defineStepDefinitions(List<String> scriptPaths) throws Exception {
-        RT.load("cucumber/runtime/clojure/dsl");
-        for (String scriptPath : scriptPaths) {
-            Resources.scan(scriptPath.replace('.', '/'), ".clj", new Consumer() {
+    @Override
+    public void buildWorld(List<String> codePaths, World world) {
+        this.world = world;
+        for (String codePath : codePaths) {
+            Resources.scan(codePath.replace('.', '/'), ".clj", new Consumer() {
                 public void consume(Resource resource) {
                     try {
                         RT.load(resource.getPath().replaceAll(".clj$", ""));
@@ -44,16 +39,11 @@ public class ClojureBackend implements Backend {
         }
     }
 
-    public List<StepDefinition> getStepDefinitions() {
-        return stepDefinitions;
-    }
-
-    public void newWorld() {
-    }
-
+    @Override
     public void disposeWorld() {
     }
 
+    @Override
     public String getSnippet(Step step) {
         return new ClojureSnippetGenerator(step).getSnippet();
     }
@@ -72,16 +62,6 @@ public class ClojureBackend implements Backend {
 
     public static void addStepDefinition(Pattern regexp, AFunction body) {
         StackTraceElement location = instance.stepDefLocation("clojure.lang.Compiler", "eval");
-        instance.stepDefinitions.add(new ClojureStepDefinition(regexp, body, location));
-    }
-
-    @Override
-    public List<HookDefinition> getBeforeHooks() {
-        return new ArrayList<HookDefinition>();
-    }
-
-    @Override
-    public List<HookDefinition> getAfterHooks() {
-        return new ArrayList<HookDefinition>();
+        instance.world.addStepDefinition(new ClojureStepDefinition(regexp, body, location));
     }
 }

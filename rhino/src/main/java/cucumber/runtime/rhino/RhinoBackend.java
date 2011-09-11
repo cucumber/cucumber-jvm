@@ -5,8 +5,7 @@ import cucumber.resources.Resource;
 import cucumber.resources.Resources;
 import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
-import cucumber.runtime.HookDefinition;
-import cucumber.runtime.StepDefinition;
+import cucumber.runtime.World;
 import cucumber.runtime.javascript.JavascriptSnippetGenerator;
 import gherkin.formatter.model.Step;
 import org.mozilla.javascript.Context;
@@ -17,34 +16,32 @@ import org.mozilla.javascript.tools.shell.Global;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class RhinoBackend implements Backend {
     private static final String JS_DSL = "/cucumber/runtime/rhino/dsl.js";
-    private final List<StepDefinition> stepDefinitions = new ArrayList<StepDefinition>();
-    private Context cx;
-    private Scriptable scope;
-    private final List<String> scriptPaths;
+    private final Context cx;
+    private final Scriptable scope;
+    private final Set<String> codePaths = new HashSet<String>();
+    private World world;
 
-    public RhinoBackend(List<String> scriptPaths) {
-        this.scriptPaths = scriptPaths;
-        try {
-            defineStepDefinitions(scriptPaths);
-        } catch (IOException e) {
-            throw new CucumberException("Couldn't load stepdefs", e);
-        }
-    }
-
-    private void defineStepDefinitions(List<String> scriptPaths) throws IOException {
+    public RhinoBackend() throws IOException {
         cx = Context.enter();
         scope = new Global(cx); // This gives us access to global functions like load()
         scope.put("jsBackend", scope, this);
         InputStreamReader dsl = new InputStreamReader(getClass().getResourceAsStream(JS_DSL));
         cx.evaluateReader(scope, dsl, JS_DSL, 1, null);
+    }
 
-        for (String scriptPath : scriptPaths) {
-            Resources.scan(scriptPath.replace('.', '/'), ".js", new Consumer() {
+    @Override
+    public void buildWorld(List<String> codePaths, World world) {
+        this.world = world;
+        for (String codePath : codePaths) {
+            codePath = codePath.replace('.', '/');
+            codePaths.add(codePath);
+            Resources.scan(codePath, ".js", new Consumer() {
                 public void consume(Resource resource) {
                     try {
                         cx.evaluateReader(scope, resource.getReader(), resource.getPath(), 1, null);
@@ -56,16 +53,11 @@ public class RhinoBackend implements Backend {
         }
     }
 
-    public List<StepDefinition> getStepDefinitions() {
-        return stepDefinitions;
-    }
-
-    public void newWorld() {
-    }
-
+    @Override
     public void disposeWorld() {
     }
 
+    @Override
     public String getSnippet(Step step) {
         return new JavascriptSnippetGenerator(step).getSnippet();
     }
@@ -75,7 +67,7 @@ public class RhinoBackend implements Backend {
         StackTraceElement[] stackTraceElements = t.getStackTrace();
         for (StackTraceElement stackTraceElement : stackTraceElements) {
             boolean js = stackTraceElement.getFileName().endsWith(extension);
-            for (String scriptPath : scriptPaths) {
+            for (String scriptPath : codePaths) {
                 boolean inScriptPath = stackTraceElement.getFileName().startsWith(scriptPath);
                 boolean hasLine = stackTraceElement.getLineNumber() != -1;
                 if (js && inScriptPath && hasLine) {
@@ -89,16 +81,6 @@ public class RhinoBackend implements Backend {
     public void addStepDefinition(Global jsStepDefinition, NativeRegExp regexp, NativeFunction bodyFunc, NativeFunction argumentsFromFunc) throws Throwable {
         StackTraceElement stepDefLocation = stepDefLocation(".js");
         RhinoStepDefinition stepDefinition = new RhinoStepDefinition(cx, scope, jsStepDefinition, regexp, bodyFunc, stepDefLocation, argumentsFromFunc);
-        stepDefinitions.add(stepDefinition);
-    }
-
-    @Override
-    public List<HookDefinition> getBeforeHooks() {
-        return new ArrayList<HookDefinition>();
-    }
-
-    @Override
-    public List<HookDefinition> getAfterHooks() {
-        return new ArrayList<HookDefinition>();
+        world.addStepDefinition(stepDefinition);
     }
 }

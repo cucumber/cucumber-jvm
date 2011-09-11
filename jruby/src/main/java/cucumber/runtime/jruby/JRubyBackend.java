@@ -4,50 +4,36 @@ import cucumber.resources.Consumer;
 import cucumber.resources.Resource;
 import cucumber.resources.Resources;
 import cucumber.runtime.Backend;
-import cucumber.runtime.HookDefinition;
-import cucumber.runtime.StepDefinition;
+import cucumber.runtime.World;
 import gherkin.formatter.model.Step;
 import org.jruby.RubyObject;
 import org.jruby.embed.ScriptingContainer;
 
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class JRubyBackend implements Backend {
     private static final String DSL = "/cucumber/runtime/jruby/dsl.rb";
     private final ScriptingContainer jruby = new ScriptingContainer();
-    private final List<StepDefinition> stepDefinitions = new ArrayList<StepDefinition>();
+    private World world;
 
-    public JRubyBackend(List<String> scriptPaths) throws UnsupportedEncodingException {
-        defineStepDefinitions(scriptPaths);
-    }
-
-    private void defineStepDefinitions(List<String> scriptPaths) throws UnsupportedEncodingException {
+    public JRubyBackend() throws UnsupportedEncodingException {
         jruby.put("$backend", this);
         jruby.runScriptlet(new InputStreamReader(getClass().getResourceAsStream(DSL), "UTF-8"), DSL);
-        for (String scriptPath : scriptPaths) {
-            Resources.scan(scriptPath.replace('.', '/'), ".rb", new Consumer() {
+    }
+
+    @Override
+    public void buildWorld(List<String> codePaths, World world) {
+        this.world = world;
+        jruby.put("$world", new Object());
+        for (String codePath : codePaths) {
+            Resources.scan(codePath.replace('.', '/'), ".rb", new Consumer() {
                 public void consume(Resource resource) {
                     jruby.runScriptlet(resource.getReader(), resource.getPath());
                 }
             });
         }
-    }
-
-    public void registerStepdef(RubyObject stepdef) {
-        stepDefinitions.add(new JRubyStepDefinition(stepdef));
-    }
-
-    @Override
-    public List<StepDefinition> getStepDefinitions() {
-        return stepDefinitions;
-    }
-
-    @Override
-    public void newWorld() {
-        jruby.put("$world", new Object());
     }
 
     @Override
@@ -59,13 +45,8 @@ public class JRubyBackend implements Backend {
         return new JRubySnippetGenerator(step).getSnippet();
     }
 
-    @Override
-    public List<HookDefinition> getBeforeHooks() {
-        return new ArrayList<HookDefinition>();
+    public void registerStepdef(RubyObject stepdef) {
+        world.addStepDefinition(new JRubyStepDefinition(stepdef));
     }
 
-    @Override
-    public List<HookDefinition> getAfterHooks() {
-        return new ArrayList<HookDefinition>();
-    }
 }

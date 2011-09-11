@@ -1,8 +1,5 @@
 package cucumber.runtime.model;
 
-import cucumber.runtime.Runtime;
-import gherkin.formatter.Formatter;
-import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Background;
 import gherkin.formatter.model.Feature;
 import gherkin.formatter.model.Scenario;
@@ -40,14 +37,6 @@ public class CucumberFeature {
 
     public Feature getFeature() {
         return feature;
-    }
-
-    public void run(Runtime runtime, Formatter formatter, Reporter reporter) {
-        formatter.uri(featureUri);
-        formatter.feature(feature);
-        for (CucumberScenario cucumberScenario : cucumberScenarios) {
-            cucumberScenario.run(runtime, formatter, reporter);
-        }
     }
 
     public List<CucumberScenario> getCucumberScenarios() {

@@ -11,14 +11,14 @@ import java.util.regex.Pattern;
 
 /**
  * Base class for generating snippets.
- * 
+ * <p/>
  * Subclasses can access common values:
  * <ul>
- *     <li>{0} : Keyword</li>
- *     <li>{1} : Regexp</li>
- *     <li>{2} : Function name</li>
- *     <li>{3} : Arguments</li>
- *     <li>{4} : Hint comment</li>
+ * <li>{0} : Keyword</li>
+ * <li>{1} : Regexp</li>
+ * <li>{2} : Function name</li>
+ * <li>{3} : Arguments</li>
+ * <li>{4} : Hint comment</li>
  * </ul>
  */
 public abstract class SnippetGenerator {

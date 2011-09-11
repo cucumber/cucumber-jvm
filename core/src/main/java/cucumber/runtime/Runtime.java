@@ -1,48 +1,48 @@
 package cucumber.runtime;
 
 import cucumber.resources.Resources;
-import cucumber.runtime.converters.LocalizedXStreams;
-import cucumber.table.CamelCaseHeaderMapper;
-import cucumber.table.TableHeaderMapper;
-import gherkin.formatter.Argument;
+import cucumber.runtime.model.CucumberScenario;
+import gherkin.formatter.Formatter;
+import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Step;
 
 import java.util.*;
 
+import static java.util.Arrays.asList;
+
 public class Runtime {
     private final List<Step> undefinedSteps = new ArrayList<Step>();
     private final List<Backend> backends;
-    private final LocalizedXStreams localizedXStreams = new LocalizedXStreams();
-    private final TableHeaderMapper tableHeaderMapper = new CamelCaseHeaderMapper();
+    private final List<String> codePaths;
+    private World world;
 
-    public Runtime(List<String> packageNamesOrScriptPaths) {
-        backends = Resources.instantiateSubclasses(Backend.class, "cucumber.runtime", new Class[]{List.class}, new Object[]{packageNamesOrScriptPaths});
+    public Runtime() {
+        this(System.getProperty("cucumber.glue") != null ? asList(System.getProperty("cucumber.glue").split(",")) : new ArrayList<String>());
     }
 
-    public StepDefinitionMatch stepDefinitionMatch(String uri, Step step) {
-        List<StepDefinitionMatch> matches = stepDefinitionMatches(uri, step);
-        if (matches.size() == 0) {
-            undefinedSteps.add(step);
-            return null;
-        }
-        if (matches.size() == 1) {
-            return matches.get(0);
-        } else {
-            throw new AmbiguousStepDefinitionsException(matches);
+    public Runtime(List<String> codePaths) {
+        backends = Resources.instantiateSubclasses(Backend.class, "cucumber.runtime", new Class[0], new Object[0]);
+        this.codePaths = codePaths;
+    }
+
+    public void prepareAndFormat(CucumberScenario cucumberScenario, Formatter formatter, List<String> extraCodePaths) {
+        List<String> allCodePaths = new ArrayList<String>(codePaths);
+        allCodePaths.addAll(extraCodePaths);
+
+        world = new World(backends, this, cucumberScenario.tags());
+        world.prepare(allCodePaths);
+        formatter.scenario(cucumberScenario.getScenario());
+        for (Step step : cucumberScenario.getSteps()) {
+            formatter.step(step);
         }
     }
 
-    private List<StepDefinitionMatch> stepDefinitionMatches(String uri, Step step) {
-        List<StepDefinitionMatch> result = new ArrayList<StepDefinitionMatch>();
-        for (Backend backend : backends) {
-            for (StepDefinition stepDefinition : backend.getStepDefinitions()) {
-                List<Argument> arguments = stepDefinition.matchedArguments(step);
-                if (arguments != null) {
-                    result.add(new StepDefinitionMatch(arguments, stepDefinition, uri, step, localizedXStreams, tableHeaderMapper));
-                }
-            }
-        }
-        return result;
+    public void runStep(String uri, Step step, Reporter reporter, Locale locale) {
+        world.runStep(uri, step, reporter, locale);
+    }
+
+    public void dispose() {
+        world.dispose();
     }
 
     /**
@@ -74,7 +74,7 @@ public class Runtime {
         return snippets;
     }
 
-    public World newWorld(Set<String> tags) {
-        return new World(backends, this, tags);
+    public void undefinedStep(Step step) {
+        undefinedSteps.add(step);
     }
 }

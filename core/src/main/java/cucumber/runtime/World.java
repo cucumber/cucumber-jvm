@@ -1,5 +1,9 @@
 package cucumber.runtime;
 
+import cucumber.runtime.converters.LocalizedXStreams;
+import cucumber.table.CamelCaseHeaderMapper;
+import cucumber.table.TableHeaderMapper;
+import gherkin.formatter.Argument;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Match;
 import gherkin.formatter.model.Result;
@@ -9,6 +13,12 @@ import java.util.*;
 
 public class World {
     private static final Object DUMMY_ARG = new Object();
+
+    private final LocalizedXStreams localizedXStreams = new LocalizedXStreams();
+    private final TableHeaderMapper tableHeaderMapper = new CamelCaseHeaderMapper();
+    private final List<StepDefinition> stepDefinitions = new ArrayList<StepDefinition>();
+    private final List<HookDefinition> beforeHooks = new ArrayList<HookDefinition>();
+    private final List<HookDefinition> afterHooks = new ArrayList<HookDefinition>();
 
     private final List<Backend> backends;
     private final Runtime runtime;
@@ -23,24 +33,30 @@ public class World {
         this.tags = tags;
     }
 
-    public void prepare() {
-        scenarioResult = new ScenarioResultImpl();
-        List<HookDefinition> beforeHooks = new ArrayList<HookDefinition>();
+    public void prepare(List<String> codePaths) {
         for (Backend backend : backends) {
-            backend.newWorld();
-            beforeHooks.addAll(backend.getBeforeHooks());
+            backend.buildWorld(codePaths, this);
         }
+
+        scenarioResult = new ScenarioResultImpl();
         Collections.sort(beforeHooks, new HookComparator(true));
         for (HookDefinition hook : beforeHooks) {
             runHookMaybe(hook, null);
         }
     }
 
-    public void dispose() {
-        List<HookDefinition> afterHooks = new ArrayList<HookDefinition>();
-        for (Backend backend : backends) {
-            afterHooks.addAll(backend.getAfterHooks());
+    private List<StepDefinitionMatch> stepDefinitionMatches(String uri, Step step) {
+        List<StepDefinitionMatch> result = new ArrayList<StepDefinitionMatch>();
+        for (StepDefinition stepDefinition : stepDefinitions) {
+            List<Argument> arguments = stepDefinition.matchedArguments(step);
+            if (arguments != null) {
+                result.add(new StepDefinitionMatch(arguments, stepDefinition, uri, step, localizedXStreams, tableHeaderMapper));
+            }
         }
+        return result;
+    }
+
+    public void dispose() {
         Collections.sort(afterHooks, new HookComparator(false));
         for (HookDefinition hook : afterHooks) {
             runHookMaybe(hook, scenarioResult);
@@ -62,7 +78,7 @@ public class World {
     }
 
     public void runStep(String uri, Step step, Reporter reporter, Locale locale) {
-        StepDefinitionMatch match = runtime.stepDefinitionMatch(uri, step);
+        StepDefinitionMatch match = stepDefinitionMatch(uri, step);
         if (match != null) {
             reporter.match(match);
         } else {
@@ -92,8 +108,40 @@ public class World {
         }
     }
 
-    private final class HookComparator implements Comparator<HookDefinition> {
+    private StepDefinitionMatch stepDefinitionMatch(String uri, Step step) {
+        List<StepDefinitionMatch> matches = stepDefinitionMatches(uri, step);
+        if (matches.size() == 0) {
+            runtime.undefinedStep(step);
+            return null;
+        }
+        if (matches.size() == 1) {
+            return matches.get(0);
+        } else {
+            throw new AmbiguousStepDefinitionsException(matches);
+        }
+    }
 
+    public void addStepDefinition(StepDefinition stepDefinition) {
+        stepDefinitions.add(stepDefinition);
+    }
+
+    public void addBeforeHook(HookDefinition hookDefinition) {
+        beforeHooks.add(hookDefinition);
+    }
+
+    public void addAfterHook(HookDefinition hookDefinition) {
+        afterHooks.add(hookDefinition);
+    }
+
+    public List<HookDefinition> getBeforeHooks() {
+        return beforeHooks;
+    }
+
+    public List<HookDefinition> getAfterHooks() {
+        return afterHooks;
+    }
+
+    private final class HookComparator implements Comparator<HookDefinition> {
         final boolean ascending;
 
         public HookComparator(boolean ascending) {

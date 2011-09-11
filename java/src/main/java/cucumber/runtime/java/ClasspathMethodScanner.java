@@ -48,12 +48,9 @@ public class ClasspathMethodScanner {
                 if (isHookAnnotation(annotation)) {
                     javaBackend.registerHook(annotation, method);
                 } else {
-                    // TODO: scan cucumber.annotation.Transform annotations
                     try {
-                        Method regexpMethod = annotation.getClass().getMethod(
-                                "value");
-                        String regexpString = (String) regexpMethod
-                                .invoke(annotation);
+                        Method regexpMethod = annotation.getClass().getMethod("value");
+                        String regexpString = (String) regexpMethod.invoke(annotation);
                         if (regexpString != null) {
                             Pattern pattern = Pattern.compile(regexpString);
                             javaBackend.addStepDefinition(pattern, method);
