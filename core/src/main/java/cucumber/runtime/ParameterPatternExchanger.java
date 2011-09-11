@@ -6,9 +6,19 @@ import java.util.regex.Pattern;
 public class ParameterPatternExchanger {
 
     private final Pattern pattern;
+    private final Class<?> type;
 
-    public ParameterPatternExchanger(Pattern pattern) {
+    public ParameterPatternExchanger(Pattern pattern, Class<?> type ) {
         this.pattern = pattern;
+        this.type = type;
+    }
+    
+    public Pattern pattern() {
+        return pattern;
+    }
+    
+    public Class<?> typeForMethodSignature(){
+        return type;
     }
 
     public String replaceMatches(String name) {

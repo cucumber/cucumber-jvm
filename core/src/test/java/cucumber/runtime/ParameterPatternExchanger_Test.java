@@ -10,7 +10,7 @@ import org.junit.Test;
 
 public class ParameterPatternExchanger_Test {
 	private Pattern singleDigit = Pattern.compile("(\\d)");
-	private ParameterPatternExchanger exchanger = new ParameterPatternExchanger(singleDigit);
+	private ParameterPatternExchanger exchanger = new ParameterPatternExchanger(singleDigit, Integer.TYPE);
 
 	@Test
 	public void replacesMatchWithPattern() {
