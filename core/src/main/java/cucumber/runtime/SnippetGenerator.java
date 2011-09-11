@@ -1,5 +1,6 @@
 package cucumber.runtime;
 
+import static cucumber.runtime.ParameterPatternExchanger.ExchangeMatchsWithPattern;
 import gherkin.I18n;
 import gherkin.formatter.model.Step;
 
@@ -23,8 +24,8 @@ import java.util.regex.Pattern;
  */
 public abstract class SnippetGenerator {
     private static final ParameterPatternExchanger[] ParameterPatterns = new ParameterPatternExchanger[] {
-          new ParameterPatternExchanger(Pattern.compile("\"([^\"]*)\""), String.class),
-          new ParameterPatternExchanger(Pattern.compile("(\\d+)"), Integer.TYPE)
+          ExchangeMatchsWithPattern(Pattern.compile("\"([^\"]*)\""), String.class),
+          ExchangeMatchsWithPattern(Pattern.compile("(\\d+)"), Integer.TYPE)
     };
     private static final Pattern GROUP_PATTERN = Pattern.compile("\\(");
     private static final String HINT = "Express the Regexp above with the code you wish you had";
@@ -65,8 +66,8 @@ public abstract class SnippetGenerator {
 
     protected String pattern(String name) {
         String snippetPattern = name;
-        for(ParameterPatternExchanger exchanger: ParameterPatterns) {
-            snippetPattern =  exchanger.replaceMatches(snippetPattern);
+        for(ParameterPatternExchanger exchanger: parameterPatterns()) {
+            snippetPattern =  exchanger.exchangeMatches(snippetPattern);
         }
         if (namedGroupStart != null) {
             snippetPattern = withNamedGroups(snippetPattern);
@@ -77,7 +78,7 @@ public abstract class SnippetGenerator {
 
     private String functionName(String name) {
         String functionName = name;
-        for(ParameterPatternExchanger exchanger: ParameterPatterns) {
+        for(ParameterPatternExchanger exchanger: parameterPatterns()) {
             functionName =  exchanger.replaceMatchWithSpace(functionName);
         }
 
@@ -101,16 +102,16 @@ public abstract class SnippetGenerator {
 
     private List<Class<?>> argumentTypes(String name) {
         List<Class<?>> argTypes = new ArrayList<Class<?>>();
-        Matcher[] matchers = new Matcher[ParameterPatterns.length];
-        for (int i = 0; i < ParameterPatterns.length; i++) {
-            matchers[i] =  ParameterPatterns[i].pattern().matcher(name);
+        Matcher[] matchers = new Matcher[parameterPatterns().length];
+        for (int i = 0; i < parameterPatterns().length; i++) {
+            matchers[i] =  parameterPatterns()[i].pattern().matcher(name);
         }
         int pos = 0;
         while (true) {
             for (int i = 0; i < matchers.length; i++) {
                 Matcher m = matchers[i].region(pos, name.length());
                 if (m.lookingAt()) {
-                    Class<?> typeForSignature = ParameterPatterns[i].typeForMethodSignature();
+                    Class<?> typeForSignature = parameterPatterns()[i].typeForMethodSignature();
                     argTypes.add(typeForSignature);
                 }
             }
@@ -119,6 +120,10 @@ public abstract class SnippetGenerator {
             }
         }
         return argTypes;
+    }
+    
+    protected ParameterPatternExchanger[] parameterPatterns() {
+        return ParameterPatterns;
     }
 
     protected String untypedArguments(List<Class<?>> argumentTypes) {

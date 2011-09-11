@@ -6,10 +6,21 @@ import java.util.regex.Pattern;
 public class ParameterPatternExchanger {
 
     private final Pattern pattern;
+    private final String replacement;
     private final Class<?> type;
+    
+    
+    public static ParameterPatternExchanger ExchangeMatchsWithPattern(Pattern pattern, Class<?> type) {
+        return new ParameterPatternExchanger(pattern, pattern.pattern(), type);
+    }
+    
+    public static ParameterPatternExchanger ExchangeMatchesWithReplacement(Pattern pattern, String replacement, Class<?>type) {
+        return new ParameterPatternExchanger(pattern, replacement, type);
+    }
 
-    public ParameterPatternExchanger(Pattern pattern, Class<?> type ) {
+    public ParameterPatternExchanger(Pattern pattern, String replacement, Class<?> type) {
         this.pattern = pattern;
+        this.replacement = replacement;
         this.type = type;
     }
     
@@ -21,8 +32,7 @@ public class ParameterPatternExchanger {
         return type;
     }
 
-    public String replaceMatches(String name) {
-        String replacement = pattern.pattern();
+    public String exchangeMatches(String name) {
         return replaceMatchWith(name, replacement);
     }
 

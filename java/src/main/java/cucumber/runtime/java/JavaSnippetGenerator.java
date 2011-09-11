@@ -1,11 +1,18 @@
 package cucumber.runtime.java;
 
+import cucumber.runtime.ParameterPatternExchanger;
 import cucumber.runtime.SnippetGenerator;
 import gherkin.formatter.model.Step;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class JavaSnippetGenerator extends SnippetGenerator {
+    private static final ParameterPatternExchanger[] JavaParameterPatterns = new ParameterPatternExchanger[] {
+        ParameterPatternExchanger.ExchangeMatchsWithPattern(Pattern.compile("\"([^\"]*)\""), String.class),
+        ParameterPatternExchanger.ExchangeMatchesWithReplacement(Pattern.compile("(\\d+)"), "(\\\\d+)",Integer.TYPE)
+  };
+    
     public JavaSnippetGenerator(Step step) {
         super(step);
     }
@@ -34,5 +41,10 @@ public class JavaSnippetGenerator extends SnippetGenerator {
                 "public void {2}({3}) '{'\n" +
                 "    // {4}\n" +
                 "'}'\n";
+    }
+    
+    @Override
+    protected ParameterPatternExchanger[] parameterPatterns() {
+        return JavaParameterPatterns;
     }
 }
