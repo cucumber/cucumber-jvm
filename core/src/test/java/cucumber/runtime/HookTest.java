@@ -20,14 +20,10 @@ public class HookTest {
         HookDefinition hook = mock(HookDefinition.class);
         when(hook.matches(anyListOf(String.class))).thenReturn(true);
 
-        List<HookDefinition> hookList = new ArrayList<HookDefinition>();
-        hookList.add(hook);
-        when(backend.getAfterHooks()).thenReturn(hookList);
-
         List<Backend> backendList = new ArrayList<Backend>();
         backendList.add(backend);
-        World world = new World(backendList, mock(Runtime.class),
-                new ArrayList<String>());
+        World world = new World(backendList, mock(Runtime.class), new ArrayList<String>());
+        world.addAfterHook(hook);
 
         world.dispose();
 

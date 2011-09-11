@@ -4,7 +4,10 @@ import cucumber.runtime.StepDefinition;
 import cucumber.runtime.Utils;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
-import org.python.core.*;
+import org.python.core.PyInstance;
+import org.python.core.PyList;
+import org.python.core.PyObject;
+import org.python.core.PyString;
 
 import java.util.List;
 
@@ -23,7 +26,7 @@ public class JythonStepDefinition implements StepDefinition {
     public List<Argument> matchedArguments(Step step) {
         PyObject stepName = new PyString(step.getName());
         PyObject matched_arguments = stepdef.invoke("matched_arguments", stepName);
-        if(matched_arguments instanceof PyList) {
+        if (matched_arguments instanceof PyList) {
             return (PyList) matched_arguments;
         } else {
             return null;

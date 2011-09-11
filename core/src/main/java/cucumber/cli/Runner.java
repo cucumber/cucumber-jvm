@@ -6,8 +6,10 @@ import cucumber.resources.Resources;
 import cucumber.runtime.FeatureBuilder;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.model.CucumberFeature;
+import cucumber.runtime.model.CucumberScenario;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
+import gherkin.formatter.model.Step;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +23,14 @@ public class Runner {
 
     public void run(List<String> filesOrDirs, final List<Object> filters, Formatter formatter, Reporter reporter) {
         for (CucumberFeature cucumberFeature : load(filesOrDirs, filters)) {
-            cucumberFeature.run(runtime, formatter, reporter);
+            for (CucumberScenario cucumberScenario : cucumberFeature.getCucumberScenarios()) {
+                // TODO: Maybe get extraPaths from scenario
+                runtime.prepareAndFormat(cucumberScenario, formatter, new ArrayList<String>());
+                for (Step step : cucumberScenario.getSteps()) {
+                    runtime.runStep(cucumberScenario.getUri(), step, reporter, cucumberScenario.getLocale());
+                }
+                runtime.dispose();
+            }
         }
     }
 

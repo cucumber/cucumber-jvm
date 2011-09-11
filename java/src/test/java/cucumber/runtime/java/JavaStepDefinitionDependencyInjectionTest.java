@@ -1,18 +1,15 @@
 package cucumber.runtime.java;
 
 import cucumber.annotation.en.Given;
-import cucumber.runtime.StepDefinition;
-import org.junit.Ignore;
+import cucumber.runtime.Backend;
+import cucumber.runtime.World;
 import org.junit.Test;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
 import java.util.regex.Pattern;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 public class JavaStepDefinitionDependencyInjectionTest {
 
@@ -33,6 +30,7 @@ public class JavaStepDefinitionDependencyInjectionTest {
 
     @Test
     public void constructor_arguments_get_registered() {
+        backend.buildWorld(Collections.<String>emptyList(), new World(Collections.<Backend>emptyList(), null, Collections.<String>emptyList()));
         backend.addStepDefinition(Pattern.compile("whatever"), GIVEN);
         verify(mockObjectFactory).addClass(Steps.class);
         verify(mockObjectFactory).addClass(StepContext1.class);
@@ -41,6 +39,7 @@ public class JavaStepDefinitionDependencyInjectionTest {
 
     @Test
     public void constructor_arguments_get_registered_exactly_once() {
+        backend.buildWorld(Collections.<String>emptyList(), new World(Collections.<Backend>emptyList(), null, Collections.<String>emptyList()));
         backend.addStepDefinition(Pattern.compile("whatever"), OTHER_GIVEN);
         verify(mockObjectFactory, times(1)).addClass(OtherSteps.class);
         verify(mockObjectFactory, times(1)).addClass(StepContext3.class);

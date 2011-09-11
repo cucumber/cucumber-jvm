@@ -13,14 +13,16 @@ import org.junit.runners.model.InitializationError;
 
 import java.util.List;
 
-public class ScenarioRunner extends ParentRunner<Step> {
+class ScenarioRunner extends ParentRunner<Step> {
     private final Runtime runtime;
+    private final List<String> extraCodePaths;
     private final CucumberScenario cucumberScenario;
     private final JUnitReporter jUnitReporter;
 
-    public ScenarioRunner(Runtime runtime, CucumberScenario cucumberScenario, JUnitReporter jUnitReporter) throws InitializationError {
+    public ScenarioRunner(Runtime runtime, List<String> extraCodePaths, CucumberScenario cucumberScenario, JUnitReporter jUnitReporter) throws InitializationError {
         super(null);
         this.runtime = runtime;
+        this.extraCodePaths = extraCodePaths;
         this.cucumberScenario = cucumberScenario;
         this.jUnitReporter = jUnitReporter;
     }
@@ -49,13 +51,13 @@ public class ScenarioRunner extends ParentRunner<Step> {
     public void run(RunNotifier notifier) {
         jUnitReporter.setRunner(this, notifier);
         try {
-            cucumberScenario.prepareAndFormat(runtime, jUnitReporter);
+            runtime.prepareAndFormat(cucumberScenario, jUnitReporter, extraCodePaths);
         } catch (CucumberException e) {
             notifier.fireTestFailure(new Failure(getDescription(), e));
         }
         super.run(notifier);
         try {
-            cucumberScenario.dispose();
+            runtime.dispose();
         } catch (CucumberException e) {
             notifier.fireTestFailure(new Failure(getDescription(), e));
         }
@@ -63,6 +65,6 @@ public class ScenarioRunner extends ParentRunner<Step> {
 
     @Override
     protected void runChild(Step step, RunNotifier notifier) {
-        cucumberScenario.runStep(step, jUnitReporter);
+        runtime.runStep(cucumberScenario.getUri(), step, jUnitReporter, cucumberScenario.getLocale());
     }
 }

@@ -5,8 +5,7 @@ import cucumber.resources.Resource;
 import cucumber.resources.Resources;
 import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
-import cucumber.runtime.HookDefinition;
-import cucumber.runtime.StepDefinition;
+import cucumber.runtime.World;
 import cucumber.table.Table;
 import gherkin.formatter.model.Step;
 import ioke.lang.IokeObject;
@@ -22,52 +21,50 @@ public class IokeBackend implements Backend {
     private final Runtime ioke;
     private final List<Runtime.RescueInfo> failureRescues;
     private final List<Runtime.RescueInfo> pendingRescues;
-    private final List<StepDefinition> stepDefinitions = new ArrayList<StepDefinition>();
     private String currentLocation;
+    private World world;
 
-    public IokeBackend(List<String> scriptPaths) {
+    public IokeBackend() {
         try {
             ioke = new Runtime();
             ioke.init();
             ioke.ground.setCell("IokeBackend", this);
             ioke.evaluateString("use(\"cucumber/runtime/ioke/dsl\")");
-
             failureRescues = createRescues("ISpec", "ExpectationNotMet");
             pendingRescues = createRescues("Pending");
-
-            for (String scriptPath : scriptPaths) {
-                Resources.scan(scriptPath.replace('.', '/'), ".ik", new Consumer() {
-                    public void consume(Resource resource) {
-                        try {
-                            currentLocation = resource.getPath();
-                            ioke.evaluateString("use(\"" + resource.getPath() + "\")");
-                        } catch (ControlFlow controlFlow) {
-                            throw new CucumberException("Failed to load " + resource.getPath(), controlFlow);
-                        }
-                    }
-                });
-            }
         } catch (Throwable e) {
             throw new CucumberException("Failed to initialize Ioke", e);
         }
     }
 
-    public void addStepDefinition(Object iokeStepDefObject) throws Throwable {
-        stepDefinitions.add(new IokeStepDefinition(this, ioke, (IokeObject) iokeStepDefObject, currentLocation));
+    @Override
+    public void buildWorld(List<String> codePaths, World world) {
+        this.world = world;
+        for (String codePath : codePaths) {
+            Resources.scan(codePath.replace('.', '/'), ".ik", new Consumer() {
+                public void consume(Resource resource) {
+                    try {
+                        currentLocation = resource.getPath();
+                        ioke.evaluateString("use(\"" + resource.getPath() + "\")");
+                    } catch (ControlFlow controlFlow) {
+                        throw new CucumberException("Failed to load " + resource.getPath(), controlFlow);
+                    }
+                }
+            });
+        }
     }
 
-    public List<StepDefinition> getStepDefinitions() {
-        return stepDefinitions;
-    }
-
-    public void newWorld() {
-    }
-
+    @Override
     public void disposeWorld() {
     }
 
+    @Override
     public String getSnippet(Step step) {
         return new IokeSnippetGenerator(step).getSnippet();
+    }
+
+    public void addStepDefinition(Object iokeStepDefObject) throws Throwable {
+        world.addStepDefinition(new IokeStepDefinition(this, ioke, (IokeObject) iokeStepDefObject, currentLocation));
     }
 
     private List<Runtime.RescueInfo> createRescues(String... names) throws ControlFlow {
@@ -127,15 +124,4 @@ public class IokeBackend implements Backend {
         Message m = (Message) IokeObject.data(msg);
         return m.sendTo(msg, iokeStepDefObject, iokeStepDefObject, Arrays.asList(args));
     }
-
-    @Override
-    public List<HookDefinition> getBeforeHooks() {
-        return new ArrayList<HookDefinition>();
-    }
-
-    @Override
-    public List<HookDefinition> getAfterHooks() {
-        return new ArrayList<HookDefinition>();
-    }
-
 }

@@ -8,69 +8,52 @@ import cucumber.runtime.Runtime;
 import cucumber.runtime.SnippetPrinter;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.model.CucumberScenario;
-import gherkin.formatter.PrettyFormatter;
 import gherkin.formatter.model.Feature;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Arrays.asList;
 
+/**
+ * Classes annotated with {@code @RunWith(Cucumber.class)} will run a Cucumber Feature.
+ * The class should be empty without any fields or methods.
+ * 
+ * Cucumber will look for a {@code .feature} file on the classpath, using the same resource
+ * path as the annotated class ({@code .class} substituted by {@code .feature}).
+ * 
+ * Additional hints can be given to Cucumber by annotating the class with {@link cucumber.junit.Feature}.
+ * 
+ * @see cucumber.junit.Feature
+ */
 public class Cucumber extends ParentRunner<ScenarioRunner> {
-    private final Runtime runtime;
-    private final List<ScenarioRunner> scenarioRunners = new ArrayList<ScenarioRunner>();
-    private final JUnitReporter jUnitReporter;
-    private final Feature feature;
-    private final String featurePath;
+    private static final Runtime runtime = new Runtime();
+    private static JUnitReporter jUnitReporter;
 
-    private static Runtime runtime(Class featureClass) {
-        // TODO: This creates a Runtime for each test class. That's expensive.
-        // We should only have a single Runtime per JVM. This means package/script paths
-        // must not be passed to the constructor. Instead, each stepdef must know where it was
-        // loaded from so we can apply the correct ones.
-        final Runtime runtime = new Runtime(packageNamesOrScriptPaths(featureClass));
+    static {
+        jUnitReporter = JUnitReporterFactory.create(System.getProperty("cucumber.reporter"));
         java.lang.Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
                 new SnippetPrinter(System.out).printSnippets(runtime);
             }
         });
-        return runtime;
     }
 
-    private static List<String> packageNamesOrScriptPaths(Class featureClass) {
-        List<String> packageNamesOrScriptPaths = new ArrayList<String>();
-        String featurePackageName = featureClass.getName().substring(0, featureClass.getName().lastIndexOf("."));
-        packageNamesOrScriptPaths.add(featurePackageName);
+    private final List<ScenarioRunner> scenarioRunners = new ArrayList<ScenarioRunner>();
+    private final Feature feature;
+    private final String featurePath;
 
-        // Add additional ones
-        cucumber.junit.Feature featureAnnotation = (cucumber.junit.Feature) featureClass.getAnnotation(cucumber.junit.Feature.class);
-        if (featureAnnotation != null) {
-            packageNamesOrScriptPaths.addAll(asList(featureAnnotation.packages()));
-        }
-        return packageNamesOrScriptPaths;
-    }
-
-    private static JUnitReporter jUnitReporter() {
-        PrettyFormatter pf = new PrettyFormatter(System.out, false, true);
-        return new JUnitReporter(pf, pf);
-    }
-    
     /**
      * Constructor called by JUnit.
      */
-    public Cucumber(Class featureClass) throws InitializationError {
-        this(featureClass, runtime(featureClass), jUnitReporter());
-    }
-
-    public Cucumber(Class featureClass, final Runtime runtime, JUnitReporter jUnitReporter) throws InitializationError {
+    public Cucumber(Class featureClass) throws InitializationError, IOException {
         super(featureClass);
-        this.runtime = runtime;
-        this.jUnitReporter = jUnitReporter;
 
         featurePath = featurePath(featureClass);
         this.feature = parseFeature(featurePath, filters(featureClass));
@@ -150,12 +133,12 @@ public class Cucumber extends ParentRunner<ScenarioRunner> {
     private void buildScenarioRunners(CucumberFeature cucumberFeature) {
         for (CucumberScenario cucumberScenario : cucumberFeature.getCucumberScenarios()) {
             try {
-                scenarioRunners.add(new ScenarioRunner(runtime, cucumberScenario, jUnitReporter));
+                List<String> extraCodePaths = extraCodePaths(super.getTestClass().getJavaClass());
+                scenarioRunners.add(new ScenarioRunner(runtime, extraCodePaths, cucumberScenario, jUnitReporter));
             } catch (InitializationError e) {
                 throw new RuntimeException("Failed to create scenario runner", e);
             }
         }
-
     }
 
     private Long[] toLong(long[] plongs) {
@@ -164,5 +147,18 @@ public class Cucumber extends ParentRunner<ScenarioRunner> {
             longs[i] = plongs[i];
         }
         return longs;
+    }
+
+    private List<String> extraCodePaths(Class featureClass) {
+        List<String> packageNamesOrScriptPaths = new ArrayList<String>();
+        String featurePackageName = featureClass.getName().substring(0, featureClass.getName().lastIndexOf("."));
+        packageNamesOrScriptPaths.add(featurePackageName);
+
+        // Add additional ones
+        cucumber.junit.Feature featureAnnotation = (cucumber.junit.Feature) featureClass.getAnnotation(cucumber.junit.Feature.class);
+        if (featureAnnotation != null) {
+            packageNamesOrScriptPaths.addAll(asList(featureAnnotation.packages()));
+        }
+        return packageNamesOrScriptPaths;
     }
 }

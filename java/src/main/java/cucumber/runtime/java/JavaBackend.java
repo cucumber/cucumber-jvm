@@ -5,60 +5,46 @@ import cucumber.annotation.Before;
 import cucumber.annotation.Order;
 import cucumber.resources.Resources;
 import cucumber.runtime.Backend;
-import cucumber.runtime.HookDefinition;
-import cucumber.runtime.StepDefinition;
+import cucumber.runtime.World;
 import gherkin.formatter.model.Step;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
 public class JavaBackend implements Backend {
-    private final List<StepDefinition> stepDefinitions = new ArrayList<StepDefinition>();
-    private final List<HookDefinition> beforeHooks = new ArrayList<HookDefinition>();
-    private final List<HookDefinition> afterHooks = new ArrayList<HookDefinition>();
     private final Set<Class> stepDefinitionClasses = new HashSet<Class>();
     private final ObjectFactory objectFactory;
+    private final ClasspathMethodScanner classpathMethodScanner = new ClasspathMethodScanner();
+    private World world;
 
-    public JavaBackend(List<String> packagePrefixes) {
-        this.objectFactory = Resources.instantiateExactlyOneSubclass(ObjectFactory.class, "cucumber.runtime", new Class[0], new Object[0]);
-        ClasspathMethodScanner classpathMethodScanner = new ClasspathMethodScanner();
-        for (String packagePrefix : packagePrefixes) {
-            classpathMethodScanner.scan(this, packagePrefix);
-        }
+    public JavaBackend() {
+        this(Resources.instantiateExactlyOneSubclass(ObjectFactory.class, "cucumber.runtime", new Class[0], new Object[0]));
     }
 
     public JavaBackend(ObjectFactory objectFactory) {
         this.objectFactory = objectFactory;
     }
 
-    public List<StepDefinition> getStepDefinitions() {
-        return stepDefinitions;
-    }
-
     @Override
-    public List<HookDefinition> getBeforeHooks() {
-        return beforeHooks;
-    }
-
-    @Override
-    public List<HookDefinition> getAfterHooks() {
-        return afterHooks;
-    }
-
-    public void newWorld() {
+    public void buildWorld(List<String> codePaths, World world) {
+        this.world = world;
+        for (String codePath : codePaths) {
+            classpathMethodScanner.scan(this, codePath);
+        }
         objectFactory.createInstances();
     }
 
+    @Override
     public void disposeWorld() {
         objectFactory.disposeInstances();
     }
 
+    @Override
     public String getSnippet(Step step) {
         return new JavaSnippetGenerator(step).getSnippet();
     }
@@ -66,7 +52,7 @@ public class JavaBackend implements Backend {
     void addStepDefinition(Pattern pattern, Method method) {
         Class<?> clazz = method.getDeclaringClass();
         registerClassInObjectFactory(clazz);
-        stepDefinitions.add(new JavaStepDefinition(pattern, method, objectFactory));
+        world.addStepDefinition(new JavaStepDefinition(pattern, method, objectFactory));
     }
 
     void registerHook(Annotation annotation, Method method) {
@@ -78,10 +64,10 @@ public class JavaBackend implements Backend {
 
         if (annotation.annotationType().equals(Before.class)) {
             String[] tagExpressions = ((Before) annotation).value();
-            beforeHooks.add(new JavaHookDefinition(method, tagExpressions, hookOrder, objectFactory));
+            world.addBeforeHook(new JavaHookDefinition(method, tagExpressions, hookOrder, objectFactory));
         } else {
             String[] tagExpressions = ((After) annotation).value();
-            afterHooks.add(new JavaHookDefinition(method, tagExpressions, hookOrder, objectFactory));
+            world.addAfterHook(new JavaHookDefinition(method, tagExpressions, hookOrder, objectFactory));
         }
     }
 

@@ -279,6 +279,7 @@
       <module fileurl="file://$PROJECT_DIR$/examples/java-calculator/java-calculator.iml" filepath="$PROJECT_DIR$/examples/java-calculator/java-calculator.iml" />
       <module fileurl="file://$PROJECT_DIR$/examples/java-webbit-websockets-selenium/java-webbit-websockets-selenium.iml" filepath="$PROJECT_DIR$/examples/java-webbit-websockets-selenium/java-webbit-websockets-selenium.iml" />
       <module fileurl="file://$PROJECT_DIR$/jruby/jruby.iml" filepath="$PROJECT_DIR$/jruby/jruby.iml" />
+      <module fileurl="file://$PROJECT_DIR$/junit/junit.iml" filepath="$PROJECT_DIR$/junit/junit.iml" />
       <module fileurl="file://$PROJECT_DIR$/jython/jython.iml" filepath="$PROJECT_DIR$/jython/jython.iml" />
       <module fileurl="file://$PROJECT_DIR$/parent.iml" filepath="$PROJECT_DIR$/parent.iml" />
       <module fileurl="file://$PROJECT_DIR$/picocontainer/picocontainer.iml" filepath="$PROJECT_DIR$/picocontainer/picocontainer.iml" />

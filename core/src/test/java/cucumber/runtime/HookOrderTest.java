@@ -5,7 +5,6 @@ import org.junit.Test;
 import org.mockito.InOrder;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.mockito.Matchers.anyListOf;
@@ -14,20 +13,20 @@ import static org.mockito.Mockito.*;
 public class HookOrderTest {
 
     private World world;
-    private Backend[] backends;
 
     @Before
     public void buildMockWorld() {
-        backends = new Backend[]{mock(Backend.class), mock(Backend.class)};
-        world = new World(Arrays.asList(backends), mock(Runtime.class), new ArrayList<String>());
+        world = new World(new ArrayList<Backend>(), mock(Runtime.class), new ArrayList<String>());
     }
 
     @Test
     public void before_hooks_execute_in_order() throws Throwable {
         List<HookDefinition> hooks = mockHooks(3, Integer.MAX_VALUE, 1);
-        when(backends[0].getBeforeHooks()).thenReturn(hooks);
+        for (HookDefinition hook : hooks) {
+            world.addBeforeHook(hook);
+        }
 
-        world.prepare();
+        world.prepare(new ArrayList<String>());
 
         InOrder inOrder = inOrder(hooks.toArray());
         inOrder.verify(hooks.get(2)).execute(null);
@@ -38,7 +37,9 @@ public class HookOrderTest {
     @Test
     public void after_hooks_execute_in_reverse_order() throws Throwable {
         List<HookDefinition> hooks = mockHooks(2, Integer.MAX_VALUE, 4);
-        when(backends[0].getAfterHooks()).thenReturn(hooks);
+        for (HookDefinition hook : hooks) {
+            world.addAfterHook(hook);
+        }
 
         world.dispose();
 
@@ -51,11 +52,15 @@ public class HookOrderTest {
     @Test
     public void hooks_order_across_many_backends() throws Throwable {
         List<HookDefinition> backend1Hooks = mockHooks(3, Integer.MAX_VALUE, 1);
+        for (HookDefinition hook : backend1Hooks) {
+            world.addBeforeHook(hook);
+        }
         List<HookDefinition> backend2Hooks = mockHooks(2, Integer.MAX_VALUE, 4);
-        when(backends[0].getBeforeHooks()).thenReturn(backend1Hooks);
-        when(backends[1].getBeforeHooks()).thenReturn(backend2Hooks);
+        for (HookDefinition hook : backend2Hooks) {
+            world.addBeforeHook(hook);
+        }
 
-        world.prepare();
+        world.prepare(new ArrayList<String>());
 
         List<HookDefinition> allHooks = new ArrayList<HookDefinition>();
         allHooks.addAll(backend1Hooks);

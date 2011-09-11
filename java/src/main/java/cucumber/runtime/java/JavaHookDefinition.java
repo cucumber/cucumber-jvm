@@ -31,8 +31,11 @@ public class JavaHookDefinition implements HookDefinition {
     @Override
     public void execute(ScenarioResult scenarioResult) throws Throwable {
         Object target = objectFactory.getInstance(method.getDeclaringClass());
+        if (target == null) {
+            throw new IllegalStateException("Bug: No target for " + method);
+        }
         Object[] args;
-        if(method.getParameterTypes().length == 1) {
+        if (method.getParameterTypes().length == 1) {
             args = new Object[]{scenarioResult};
         } else {
             args = new Object[0];
@@ -40,8 +43,7 @@ public class JavaHookDefinition implements HookDefinition {
         try {
             method.invoke(target, args);
         } catch (IllegalArgumentException e) {
-            throw new CucumberException("Can't invoke "
-                    + new MethodFormat().format(method));
+            throw new CucumberException("Can't invoke " + new MethodFormat().format(method));
         }
     }
 
