@@ -7,3 +7,4 @@
 target
 chromedriver.log
 Gemfile.lock
+.scala_dependencies

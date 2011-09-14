@@ -1,5 +1,6 @@
 package cucumber.runtime;
 
+import static cucumber.runtime.ParameterPatternExchanger.ExchangeMatchsWithPattern;
 import gherkin.I18n;
 import gherkin.formatter.model.Step;
 
@@ -22,13 +23,9 @@ import java.util.regex.Pattern;
  * </ul>
  */
 public abstract class SnippetGenerator {
-    private static final Pattern[] ARG_PATTERNS = new Pattern[]{
-            Pattern.compile("\"([^\"]*)\""),
-            Pattern.compile("(\\d+)")
-    };
-    private static final Class<?>[] ARG_TYPES = new Class<?>[]{
-            String.class,
-            Integer.TYPE
+    private static final ParameterPatternExchanger[] ParameterPatterns = new ParameterPatternExchanger[] {
+          ExchangeMatchsWithPattern(Pattern.compile("\"([^\"]*)\""), String.class),
+          ExchangeMatchsWithPattern(Pattern.compile("(\\d+)"), Integer.TYPE)
     };
     private static final Pattern GROUP_PATTERN = Pattern.compile("\\(");
     private static final String HINT = "Express the Regexp above with the code you wish you had";
@@ -69,9 +66,8 @@ public abstract class SnippetGenerator {
 
     protected String pattern(String name) {
         String snippetPattern = name;
-        for (Pattern argPattern : ARG_PATTERNS) {
-            Matcher m = argPattern.matcher(snippetPattern);
-            snippetPattern = m.replaceAll(Matcher.quoteReplacement(argPattern.pattern()));
+        for(ParameterPatternExchanger exchanger: parameterPatterns()) {
+            snippetPattern =  exchanger.exchangeMatches(snippetPattern);
         }
         if (namedGroupStart != null) {
             snippetPattern = withNamedGroups(snippetPattern);
@@ -81,13 +77,13 @@ public abstract class SnippetGenerator {
     }
 
     private String functionName(String name) {
-        String f = name;
-        for (Pattern argPattern : ARG_PATTERNS) {
-            Matcher m = argPattern.matcher(f);
-            f = m.replaceAll(" ");
+        String functionName = name;
+        for(ParameterPatternExchanger exchanger: parameterPatterns()) {
+            functionName =  exchanger.replaceMatchWithSpace(functionName);
         }
-        f = f.replaceAll("\\s+", "_");
-        return f;
+
+        functionName = functionName.replaceAll("\\s+", "_");
+        return functionName;
     }
 
     private String withNamedGroups(String snippetPattern) {
@@ -106,16 +102,17 @@ public abstract class SnippetGenerator {
 
     private List<Class<?>> argumentTypes(String name) {
         List<Class<?>> argTypes = new ArrayList<Class<?>>();
-        Matcher[] matchers = new Matcher[ARG_TYPES.length];
-        for (int i = 0; i < ARG_TYPES.length; i++) {
-            matchers[i] = ARG_PATTERNS[i].matcher(name);
+        Matcher[] matchers = new Matcher[parameterPatterns().length];
+        for (int i = 0; i < parameterPatterns().length; i++) {
+            matchers[i] =  parameterPatterns()[i].pattern().matcher(name);
         }
         int pos = 0;
         while (true) {
             for (int i = 0; i < matchers.length; i++) {
                 Matcher m = matchers[i].region(pos, name.length());
                 if (m.lookingAt()) {
-                    argTypes.add(ARG_TYPES[i]);
+                    Class<?> typeForSignature = parameterPatterns()[i].typeForMethodSignature();
+                    argTypes.add(typeForSignature);
                 }
             }
             if (pos++ == name.length()) {
@@ -123,6 +120,10 @@ public abstract class SnippetGenerator {
             }
         }
         return argTypes;
+    }
+    
+    protected ParameterPatternExchanger[] parameterPatterns() {
+        return ParameterPatterns;
     }
 
     protected String untypedArguments(List<Class<?>> argumentTypes) {
