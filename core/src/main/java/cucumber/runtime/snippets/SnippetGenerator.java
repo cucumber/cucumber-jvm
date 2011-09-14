@@ -1,6 +1,6 @@
-package cucumber.runtime;
+package cucumber.runtime.snippets;
 
-import static cucumber.runtime.ParameterPatternExchanger.ExchangeMatchsWithPattern;
+import cucumber.runtime.ArgumentPattern;
 import gherkin.I18n;
 import gherkin.formatter.model.Step;
 
@@ -23,9 +23,9 @@ import java.util.regex.Pattern;
  * </ul>
  */
 public abstract class SnippetGenerator {
-    private static final ParameterPatternExchanger[] ParameterPatterns = new ParameterPatternExchanger[] {
-          ExchangeMatchsWithPattern(Pattern.compile("\"([^\"]*)\""), String.class),
-          ExchangeMatchsWithPattern(Pattern.compile("(\\d+)"), Integer.TYPE)
+    private static final ArgumentPattern[] DEFAULT_ARGUMENT_PATTERNS = new ArgumentPattern[]{
+            new ArgumentPattern(Pattern.compile("\"([^\"]*)\""), String.class),
+            new ArgumentPattern(Pattern.compile("(\\d+)"), Integer.TYPE)
     };
     private static final Pattern GROUP_PATTERN = Pattern.compile("\\(");
     private static final String HINT = "Express the Regexp above with the code you wish you had";
@@ -57,29 +57,29 @@ public abstract class SnippetGenerator {
     }
 
     public String getSnippet() {
-        return MessageFormat.format(template(), I18n.codeKeywordFor(step.getKeyword()), pattern(step.getName()), functionName(step.getName()), arguments(argumentTypes(step.getName())), HINT);
+        return MessageFormat.format(template(), I18n.codeKeywordFor(step.getKeyword()), patternFor(step.getName()), functionName(step.getName()), arguments(argumentTypes(step.getName())), HINT);
     }
 
     protected abstract String template();
 
     protected abstract String arguments(List<Class<?>> argumentTypes);
 
-    protected String pattern(String name) {
-        String snippetPattern = name;
-        for(ParameterPatternExchanger exchanger: parameterPatterns()) {
-            snippetPattern =  exchanger.exchangeMatches(snippetPattern);
+    protected String patternFor(String stepName) {
+        String pattern = stepName;
+        for (ArgumentPattern argumentPattern : argumentPatterns()) {
+            pattern = argumentPattern.replaceMatchesWithGroups(pattern);
         }
         if (namedGroupStart != null) {
-            snippetPattern = withNamedGroups(snippetPattern);
+            pattern = withNamedGroups(pattern);
         }
 
-        return "^" + snippetPattern + "$";
+        return "^" + pattern + "$";
     }
 
     private String functionName(String name) {
         String functionName = name;
-        for(ParameterPatternExchanger exchanger: parameterPatterns()) {
-            functionName =  exchanger.replaceMatchWithSpace(functionName);
+        for (ArgumentPattern argumentPattern : argumentPatterns()) {
+            functionName = argumentPattern.replaceMatchesWithSpace(functionName);
         }
 
         functionName = functionName.replaceAll("\\s+", "_");
@@ -102,16 +102,16 @@ public abstract class SnippetGenerator {
 
     private List<Class<?>> argumentTypes(String name) {
         List<Class<?>> argTypes = new ArrayList<Class<?>>();
-        Matcher[] matchers = new Matcher[parameterPatterns().length];
-        for (int i = 0; i < parameterPatterns().length; i++) {
-            matchers[i] =  parameterPatterns()[i].pattern().matcher(name);
+        Matcher[] matchers = new Matcher[argumentPatterns().length];
+        for (int i = 0; i < argumentPatterns().length; i++) {
+            matchers[i] = argumentPatterns()[i].pattern().matcher(name);
         }
         int pos = 0;
         while (true) {
             for (int i = 0; i < matchers.length; i++) {
                 Matcher m = matchers[i].region(pos, name.length());
                 if (m.lookingAt()) {
-                    Class<?> typeForSignature = parameterPatterns()[i].typeForMethodSignature();
+                    Class<?> typeForSignature = argumentPatterns()[i].type();
                     argTypes.add(typeForSignature);
                 }
             }
@@ -121,9 +121,9 @@ public abstract class SnippetGenerator {
         }
         return argTypes;
     }
-    
-    protected ParameterPatternExchanger[] parameterPatterns() {
-        return ParameterPatterns;
+
+    protected ArgumentPattern[] argumentPatterns() {
+        return DEFAULT_ARGUMENT_PATTERNS;
     }
 
     protected String untypedArguments(List<Class<?>> argumentTypes) {

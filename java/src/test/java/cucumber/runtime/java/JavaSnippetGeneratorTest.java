@@ -1,40 +1,40 @@
 package cucumber.runtime.java;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
 import gherkin.formatter.model.Comment;
 import gherkin.formatter.model.Step;
 
 import java.util.Collections;
-import java.util.List;
 
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+
 public class JavaSnippetGeneratorTest {
-	private List<Comment> noComments = Collections.<Comment>emptyList();
-	private String keyword = "Given";
-	private String name = "I have 4 cukes in my \"big\" belly";
-	private int line = 0;
 
     @Test
     public void generatesPlainSnippet() {
-		String asExpected = "" +
+		String expected = "" +
                 "@Given(\"^I have (\\\\d+) cukes in my \\\"([^\\\"]*)\\\" belly$\")\n" +
                 "public void I_have_cukes_in_my_belly(int arg1, String arg2) {\n" +
                 "    // Express the Regexp above with the code you wish you had\n" +
                 "}\n";
-		assertThat(theGeneratedSnippet(), is(asExpected));
+		assertEquals(expected, snippetFor("I have 4 cukes in my \"big\" belly"));
     }
 
     @Test
     public void generatesCopyPasteReadyStepSnippetForNumberParameters() throws Exception {
-    	name = "before 5 after";
-    	assertThat(theGeneratedSnippet(), containsString("before (\\\\d+) after"));
+        String expected = "" +
+                "@Given(\"^before (\\\\d+) after$\")\n" +
+                "public void before_after(int arg1) {\n" +
+                "    // Express the Regexp above with the code you wish you had\n" +
+                "}\n";
+        String snippet = snippetFor("before 5 after");
+        System.out.println(snippet);
+        assertEquals(expected, snippet);
     }
     
-	private String theGeneratedSnippet() {
-		Step step = new Step(noComments, keyword, name, line);
+    private String snippetFor(String name) {
+        Step step = new Step(Collections.<Comment>emptyList(), "Given ", name, 0);
         return new JavaSnippetGenerator(step).getSnippet();
 	}
 }

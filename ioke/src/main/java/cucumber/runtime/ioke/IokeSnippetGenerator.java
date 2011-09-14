@@ -1,6 +1,6 @@
 package cucumber.runtime.ioke;
 
-import cucumber.runtime.SnippetGenerator;
+import cucumber.runtime.snippets.SnippetGenerator;
 import gherkin.formatter.model.Step;
 
 import java.util.List;

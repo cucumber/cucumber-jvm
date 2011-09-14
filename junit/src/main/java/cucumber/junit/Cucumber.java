@@ -5,7 +5,7 @@ import cucumber.resources.Resource;
 import cucumber.resources.Resources;
 import cucumber.runtime.FeatureBuilder;
 import cucumber.runtime.Runtime;
-import cucumber.runtime.SnippetPrinter;
+import cucumber.runtime.snippets.SnippetPrinter;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.model.CucumberScenario;
 import gherkin.formatter.model.Feature;

@@ -1,5 +1,6 @@
-package cucumber.runtime;
+package cucumber.runtime.snippets;
 
+import cucumber.runtime.*;
 import gherkin.formatter.NiceAppendable;
 
 import java.util.List;
@@ -11,7 +12,7 @@ public class SnippetPrinter {
         this.out = new NiceAppendable(out);
     }
 
-    public void printSnippets(Runtime runtime) {
+    public void printSnippets(cucumber.runtime.Runtime runtime) {
         List<String> snippets = runtime.getSnippets();
         if (!snippets.isEmpty()) {
             out.append("\n");

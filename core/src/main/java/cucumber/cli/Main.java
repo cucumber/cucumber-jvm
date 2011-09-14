@@ -1,7 +1,7 @@
 package cucumber.cli;
 
 import cucumber.runtime.Runtime;
-import cucumber.runtime.SnippetPrinter;
+import cucumber.runtime.snippets.SnippetPrinter;
 import gherkin.formatter.PrettyFormatter;
 
 import java.util.ArrayList;

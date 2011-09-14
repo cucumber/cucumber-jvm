@@ -1,6 +1,6 @@
 package cucumber.runtime.clojure;
 
-import cucumber.runtime.SnippetGenerator;
+import cucumber.runtime.snippets.SnippetGenerator;
 import gherkin.formatter.model.Step;
 
 import java.util.List;
@@ -11,8 +11,8 @@ public class ClojureSnippetGenerator extends SnippetGenerator {
     }
 
     @Override
-    protected String pattern(String name) {
-        return super.pattern(name).replaceAll("\"", "\\\\\"");
+    protected String patternFor(String stepName) {
+        return super.patternFor(stepName).replaceAll("\"", "\\\\\"");
     }
 
     @Override
