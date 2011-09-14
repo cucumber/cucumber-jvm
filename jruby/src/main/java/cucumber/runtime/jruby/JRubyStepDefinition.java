@@ -53,7 +53,11 @@ public class JRubyStepDefinition implements StepDefinition {
     public void execute(Object[] args) throws Throwable {
         IRubyObject[] jrybyArgs = new IRubyObject[args.length];
         for (int i = 0; i < args.length; i++) {
-            jrybyArgs[i] = stepdef.getRuntime().newString((String) args[i]);
+            if (args[i] != null) {
+                jrybyArgs[i] = stepdef.getRuntime().newString((String) args[i]);
+            } else {
+                jrybyArgs[i] = null;
+            }
         }
         stepdef.callMethod("execute", jrybyArgs);
     }
