@@ -5,9 +5,9 @@ Feature: Cukes
 
   Scenario: Optional arguments, argument present
     Given Something with an optional argument
-     Then the argument should not be null
+    Then the argument should not be nil
 
   Scenario: Optional arguments, argument not present
     Given Something
-     Then the argument should be null
+    Then the argument should be nil
 

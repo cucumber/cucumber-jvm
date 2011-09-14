@@ -13,15 +13,15 @@ Given /^Something( with an optional argument)?$/ do |argument|
   @argument = argument
 end
 
-Then /^the argument should be null$/ do
-    if (@argument != nil)
-        raise("Argument should be nil")
-    end
+Then /^the argument should be nil/ do
+  if (!@argument.nil?)
+    raise("Argument should be nil")
+  end
 end
 
-Then /^the argument should not be null$/ do
-    if (@argument == nil)
-        raise("Argument should not be nil")
-    end
+Then /^the argument should not be nil/ do
+  if (@argument.nil?)
+    raise("Argument should not be nil")
+  end
 end
 
