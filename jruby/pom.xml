@@ -22,7 +22,7 @@
         </dependency>
         <dependency>
             <groupId>org.jruby</groupId>
-            <artifactId>jruby</artifactId>
+            <artifactId>jruby-complete</artifactId>
         </dependency>
         <dependency>
             <groupId>info.cukes</groupId>
