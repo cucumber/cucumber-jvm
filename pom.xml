@@ -190,7 +190,7 @@
             </dependency>
             <dependency>
                 <groupId>org.jruby</groupId>
-                <artifactId>jruby</artifactId>
+                <artifactId>jruby-complete</artifactId>
                 <version>1.6.3</version>
             </dependency>
             <dependency>
