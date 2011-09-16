@@ -733,15 +733,15 @@
         <root url="jar://$MAVEN_REPOSITORY$/org/jboss/weld/se/weld-se/1.1.0.Final/weld-se-1.1.0.Final-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: org.jruby:jruby:1.6.3">
+    <library name="Maven: org.jruby:jruby-complete:1.6.3">
       <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/jruby/jruby/1.6.3/jruby-1.6.3.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/jruby/jruby-complete/1.6.3/jruby-complete-1.6.3.jar!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/org/jruby/jruby/1.6.3/jruby-1.6.3-javadoc.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/jruby/jruby-complete/1.6.3/jruby-complete-1.6.3-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/jruby/jruby/1.6.3/jruby-1.6.3-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/jruby/jruby-complete/1.6.3/jruby-complete-1.6.3-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: org.json:json:20080701">

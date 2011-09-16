@@ -16,7 +16,7 @@ Given /^Something( with an optional argument)?$/ do |argument|
 end
 
 Then /^the argument should be nil/ do
-  assert_equal(nil, @argument, "Argument should be nil")
+  assert_nil(@argument, "Argument should be nil")
 end
 
 Then /^the argument should not be nil/ do
