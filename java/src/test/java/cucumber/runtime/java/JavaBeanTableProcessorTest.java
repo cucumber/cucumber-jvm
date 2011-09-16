@@ -1,10 +1,11 @@
 package cucumber.runtime.java;
 
+import com.thoughtworks.xstream.annotations.XStreamConverter;
+import com.thoughtworks.xstream.converters.javabean.JavaBeanConverter;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.StepDefinitionMatch;
 import cucumber.runtime.converters.LocalizedXStreams;
 import cucumber.table.CamelCaseHeaderMapper;
-import cucumber.table.java.User;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Comment;
 import gherkin.formatter.model.Row;
@@ -25,35 +26,48 @@ public class JavaBeanTableProcessorTest {
     private static final List<Comment> NO_COMMENTS = emptyList();
 
     public static class StepDefs {
-        public List<User> users;
+        public List<UserPojo> userPojos;
+        public List<UserBean> userBeans;
 
-        public void stepMethodWithList(List<User> users) {
-            this.users = users;
+        public void listOfPojos(List<UserPojo> userPojos) {
+            this.userPojos = userPojos;
+        }
+
+        public void listOfBeans(List<UserBean> userBeans) {
+            this.userBeans = userBeans;
         }
     }
 
     @Test
-    public void shouldExecuteWithAListOfUsers() throws Throwable {
+    public void transforms_to_list_of_pojos_by_default() throws Throwable {
+        Method listOfPojos = StepDefs.class.getMethod("listOfPojos", List.class);
+        StepDefs stepDefs = runStepDef(listOfPojos);
+        assertEquals(sidsBirthday(), stepDefs.userPojos.get(0).birthDate);
+    }
+
+    @Test
+    public void transforms_to_list_of_beans_when_annotated() throws Throwable {
+        Method listOfBeans = StepDefs.class.getMethod("listOfBeans", List.class);
+        StepDefs stepDefs = runStepDef(listOfBeans);
+        assertEquals(sidsBirthday(), stepDefs.userBeans.get(0).getBirthDate());
+    }
+
+    private StepDefs runStepDef(Method method) throws Throwable {
         StepDefs stepDefs = new StepDefs();
-        StepDefinition stepDefinition = new JavaStepDefinition(Pattern.compile("whatever"), stepMethodWithList(), new SingletonFactory(stepDefs));
+        StepDefinition stepDefinition = new JavaStepDefinition(Pattern.compile("whatever"), method, new SingletonFactory(stepDefs));
 
         Step stepWithRows = new Step(NO_COMMENTS, "Given", "something that wants users", 10);
         stepWithRows.setMultilineArg(rowsList());
 
         StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(NO_ARGS, stepDefinition, "some.feature", stepWithRows, new LocalizedXStreams(), new CamelCaseHeaderMapper());
         stepDefinitionMatch.runStep(Locale.UK);
-
-        assertEquals(asList(new User("Sid Vicious", sidsBirthday(), 1000)), stepDefs.users);
-    }
-
-    private Method stepMethodWithList() throws SecurityException, NoSuchMethodException {
-        return StepDefs.class.getMethod("stepMethodWithList", List.class);
+        return stepDefs;
     }
 
     private List<Row> rowsList() {
         List<Row> rows = new ArrayList<Row>();
-        rows.add(new Row(new ArrayList<Comment>(), asList("name", "birth date", "credits"), 1));
-        rows.add(new Row(new ArrayList<Comment>(), asList("Sid Vicious", "10/05/1957", "1000"), 2));
+        rows.add(new Row(new ArrayList<Comment>(), asList("birth date"), 1));
+        rows.add(new Row(new ArrayList<Comment>(), asList("10/05/1957"), 2));
         return rows;
     }
 
@@ -63,5 +77,22 @@ public class JavaBeanTableProcessorTest {
         sidsBirthDay.set(Calendar.MILLISECOND, 0);
         sidsBirthDay.setTimeZone(TimeZone.getTimeZone("UTC"));
         return sidsBirthDay.getTime();
+    }
+
+    public static class UserPojo {
+        private Date birthDate;
+    }
+
+    @XStreamConverter(JavaBeanConverter.class)
+    public static class UserBean {
+        private Date birthDateX;
+
+        public Date getBirthDate() {
+            return this.birthDateX;
+        }
+
+        public void setBirthDate(Date birthDate) {
+            this.birthDateX = birthDate;
+        }
     }
 }

@@ -1,6 +1,8 @@
 package cucumber.table;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.annotations.XStreamConverter;
+import com.thoughtworks.xstream.converters.javabean.JavaBeanConverter;
 import cucumber.runtime.converters.LocalizedXStreams;
 import org.junit.Test;
 
@@ -15,8 +17,16 @@ public class TableConverterTest {
     public void converts_table_to_list_of_pojos() {
         XStream xStream = new LocalizedXStreams().get(Locale.UK);
         TableConverter tc = new TableConverter(xStream);
-        List<User> users = tc.convert(User.class, headerRow(), bodyRows());
+        List<UserPojo> users = tc.convert(UserPojo.class, headerRow(), bodyRows());
         assertEquals(sidsBirthday(), users.get(0).birthDate);
+    }
+
+    @Test
+    public void converts_table_to_list_of_beans() {
+        XStream xStream = new LocalizedXStreams().get(Locale.UK);
+        TableConverter tc = new TableConverter(xStream);
+        List<UserBean> users = tc.convert(UserBean.class, headerRow(), bodyRows());
+        assertEquals(sidsBirthday(), users.get(0).getBirthDate());
     }
 
     private List<String> headerRow() {
@@ -38,18 +48,44 @@ public class TableConverterTest {
         return sidsBirthDay.getTime();
     }
 
-    public static class User {
+    // No setters
+    public static class UserPojo {
         public String name;
         public Date birthDate;
         public Integer credits;
 
-        @Override
-        public String toString() {
-            return "User{" +
-                    "name='" + name + '\'' +
-                    ", birthDate=" + birthDate +
-                    ", credits=" + credits +
-                    '}';
+        public UserPojo(int foo) {
+        }
+    }
+
+    @XStreamConverter(JavaBeanConverter.class)
+    public static class UserBean {
+        private String nameX;
+        private Date birthDateX;
+        private Integer creditsX;
+
+        public String getName() {
+            return nameX;
+        }
+
+        public void setName(String name) {
+            this.nameX = name;
+        }
+
+        public Date getBirthDate() {
+            return birthDateX;
+        }
+
+        public void setBirthDate(Date birthDate) {
+            this.birthDateX = birthDate;
+        }
+
+        public Integer getCredits() {
+            return creditsX;
+        }
+
+        public void setCredits(Integer credits) {
+            this.creditsX = credits;
         }
     }
 }
