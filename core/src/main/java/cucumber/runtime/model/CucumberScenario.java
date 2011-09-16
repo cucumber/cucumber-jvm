@@ -1,36 +1,24 @@
 package cucumber.runtime.model;
 
-import cucumber.runtime.World;
 import gherkin.formatter.model.Scenario;
-import gherkin.formatter.model.Step;
 import gherkin.formatter.model.Tag;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Set;
 
-public class CucumberScenario {
-    private final List<Step> steps = new ArrayList<Step>();
-    private final Scenario scenario;
+public class CucumberScenario extends StepContainer {
     private final CucumberFeature cucumberFeature;
     private final String uri;
+    private final CucumberBackground cucumberBackground;
+    private final Scenario scenario;
 
-    private World world;
-
-    public CucumberScenario(CucumberFeature cucumberFeature, String uri, Scenario scenario) {
+    public CucumberScenario(CucumberFeature cucumberFeature, String uri, CucumberBackground cucumberBackground, Scenario scenario) {
+        super(scenario);
         this.cucumberFeature = cucumberFeature;
         this.uri = uri;
+        this.cucumberBackground = cucumberBackground;
         this.scenario = scenario;
-    }
-
-    public Scenario getScenario() {
-        return scenario;
-    }
-
-    public List<Step> getSteps() {
-        return steps;
-    }
-
-    public void step(Step step) {
-        steps.add(step);
     }
 
     public Set<String> tags() {
@@ -50,5 +38,13 @@ public class CucumberScenario {
 
     public Locale getLocale() {
         return cucumberFeature.getLocale();
+    }
+
+    public String getName() {
+        return scenario.getKeyword() + ": " + scenario.getName();
+    }
+
+    public CucumberBackground getCucumberBackground() {
+        return cucumberBackground;
     }
 }

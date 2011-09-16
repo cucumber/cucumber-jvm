@@ -25,11 +25,17 @@ public class Runner {
         for (CucumberFeature cucumberFeature : load(filesOrDirs, filters)) {
             for (CucumberScenario cucumberScenario : cucumberFeature.getCucumberScenarios()) {
                 // TODO: Maybe get extraPaths from scenario
-                runtime.prepareAndFormat(cucumberScenario, formatter, new ArrayList<String>());
+
+                // TODO: split up prepareAndFormat o we can run Background in isolation.
+                // Or maybe just try to make Background behave like a regular Scenario?? Printing wise at least.
+
+                runtime.createWorld(new ArrayList<String>(), cucumberScenario.tags());
+
+                cucumberScenario.format(formatter);
                 for (Step step : cucumberScenario.getSteps()) {
                     runtime.runStep(cucumberScenario.getUri(), step, reporter, cucumberScenario.getLocale());
                 }
-                runtime.dispose();
+                runtime.disposeWorld();
             }
         }
     }

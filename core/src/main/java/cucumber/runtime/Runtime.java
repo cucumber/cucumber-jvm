@@ -1,8 +1,6 @@
 package cucumber.runtime;
 
 import cucumber.resources.Resources;
-import cucumber.runtime.model.CucumberScenario;
-import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Step;
 
@@ -25,23 +23,19 @@ public class Runtime {
         this.codePaths = codePaths;
     }
 
-    public void prepareAndFormat(CucumberScenario cucumberScenario, Formatter formatter, List<String> extraCodePaths) {
+    public void createWorld(List<String> extraCodePaths, Set<String> tags) {
         List<String> allCodePaths = new ArrayList<String>(codePaths);
         allCodePaths.addAll(extraCodePaths);
 
-        world = new World(backends, this, cucumberScenario.tags());
+        world = new World(backends, this, tags);
         world.prepare(allCodePaths);
-        formatter.scenario(cucumberScenario.getScenario());
-        for (Step step : cucumberScenario.getSteps()) {
-            formatter.step(step);
-        }
     }
 
-    public void runStep(String uri, Step step, Reporter reporter, Locale locale) {
-        world.runStep(uri, step, reporter, locale);
+    public Throwable runStep(String uri, Step step, Reporter reporter, Locale locale) {
+        return world.runStep(uri, step, reporter, locale);
     }
 
-    public void dispose() {
+    public void disposeWorld() {
         world.dispose();
     }
 
@@ -50,7 +44,7 @@ public class Runtime {
      *         This should be displayed after a run.
      */
     public List<String> getSnippets() {
-        // TODO: Convert "And" and "But" to the Given/When/Then keyword above.
+        // TODO: Convert "And" and "But" to the Given/When/Then keyword above in the Gherkin source.
         Collections.sort(undefinedSteps, new Comparator<Step>() {
             public int compare(Step a, Step b) {
                 int keyword = a.getKeyword().compareTo(b.getKeyword());

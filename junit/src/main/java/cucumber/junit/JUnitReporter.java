@@ -111,4 +111,12 @@ class JUnitReporter implements Reporter, Formatter {
         this.scenarioRunner = scenarioRunner;
         this.notifier = notifier;
     }
+
+    public Formatter getFormatter() {
+        return formatter;
+    }
+
+    public Reporter getReporter() {
+        return reporter;
+    }
 }

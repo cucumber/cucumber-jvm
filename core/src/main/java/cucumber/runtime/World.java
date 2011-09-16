@@ -77,7 +77,7 @@ public class World {
         }
     }
 
-    public void runStep(String uri, Step step, Reporter reporter, Locale locale) {
+    public Throwable runStep(String uri, Step step, Reporter reporter, Locale locale) {
         StepDefinitionMatch match = stepDefinitionMatch(uri, step);
         if (match != null) {
             reporter.match(match);
@@ -86,12 +86,12 @@ public class World {
             skipNextStep = true;
         }
 
+        Throwable e = null;
         if (skipNextStep) {
             // Undefined steps (Match.NONE) will always get the Result.SKIPPED result
             scenarioResult.add(Result.SKIPPED);
             reporter.result(Result.SKIPPED);
         } else {
-            Throwable e = null;
             long start = System.nanoTime();
             try {
                 match.runStep(locale);
@@ -106,6 +106,7 @@ public class World {
                 reporter.result(result);
             }
         }
+        return e;
     }
 
     private StepDefinitionMatch stepDefinitionMatch(String uri, Step step) {

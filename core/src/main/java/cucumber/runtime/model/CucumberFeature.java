@@ -12,8 +12,8 @@ import java.util.Locale;
 public class CucumberFeature {
     private final String featureUri;
     private final Feature feature;
-    private Background background;
-    private CucumberScenario currentCucumberScenario;
+    private CucumberBackground cucumberBackground;
+    private StepContainer currentStepContainer;
     private List<CucumberScenario> cucumberScenarios = new ArrayList<CucumberScenario>();
     private Locale locale;
 
@@ -23,16 +23,18 @@ public class CucumberFeature {
     }
 
     public void background(Background background) {
-        this.background = background;
+        cucumberBackground = new CucumberBackground(background);
+        currentStepContainer = cucumberBackground;
     }
 
     public void scenario(Scenario scenario) {
-        currentCucumberScenario = new CucumberScenario(this, featureUri, scenario);
-        cucumberScenarios.add(currentCucumberScenario);
+        CucumberScenario cucumberScenario = new CucumberScenario(this, featureUri, cucumberBackground, scenario);
+        currentStepContainer = cucumberScenario;
+        cucumberScenarios.add(cucumberScenario);
     }
 
     public void step(Step step) {
-        currentCucumberScenario.step(step);
+        currentStepContainer.step(step);
     }
 
     public Feature getFeature() {
