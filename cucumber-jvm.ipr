@@ -489,6 +489,17 @@
         <root url="jar://$MAVEN_REPOSITORY$/info/cukes/gherkin/2.4.18/gherkin-2.4.18-sources.jar!/" />
       </SOURCES>
     </library>
+    <library name="Maven: info.cukes:gherkin:2.4.21">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/gherkin/2.4.21/gherkin-2.4.21.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/gherkin/2.4.21/gherkin-2.4.21-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/gherkin/2.4.21/gherkin-2.4.21-sources.jar!/" />
+      </SOURCES>
+    </library>
     <library name="Maven: info.cukes:scala:1.0.0-SNAPSHOT">
       <CLASSES>
         <root url="jar://$MAVEN_REPOSITORY$/info/cukes/scala/1.0.0-SNAPSHOT/scala-1.0.0-SNAPSHOT.jar!/" />
