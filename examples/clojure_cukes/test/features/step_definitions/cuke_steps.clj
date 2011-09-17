@@ -1,4 +1,4 @@
-(Given #"^I have (\d+) \"([^\"]*)\" in my belly$"
+(Given #"^I have (\d+) big \"([^\"]*)\" in my belly$"
   (fn [n, cukes]
     ))
 
