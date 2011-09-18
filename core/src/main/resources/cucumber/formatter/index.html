@@ -5,16 +5,21 @@
     <title>Cucumber Features</title>
     <link href="style.css" rel="stylesheet">
     <script src="jquery-1.6.4.min.js"></script>
-    <script src="report.js"></script>
+    <script src="gherkin-dom.js"></script>
+    <script src="cucumber-report.js"></script>
 </head>
 <body>
 
+<div id="root"></div>
+
 <div id="templates">
-    <section class="feature">
-        <h1><span class="keyword">Feature</span>: <span class="title">This is the feature title</span></h1>
-        <details class="description">
+    <section class="header">
+        <details>
+            <summary><span class="keyword">Feature</span>: <span class="title">Title</span></summary>
+            <p class="description">
             The description
             goes here
+            </p>
         </details>
     </section>
 </div>
