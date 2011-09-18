@@ -1,22 +1,42 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8">
-    <title>Cucumber Features</title>
-    <link href="style.css" rel="stylesheet">
-    <script src="jquery-1.6.4.min.js"></script>
-    <script src="report.js"></script>
+<meta charset="utf-8">
+<title>Cucumber Features</title>
+<link href="style.css" rel="stylesheet">
+<script src="jquery-1.6.4.min.js"></script>
+<script src="formatter.js"></script>
+<script src="report.js"></script>
 </head>
 <body>
 
-<div id="templates">
-    <section class="feature">
-        <h1><span class="keyword">Feature</span>: <span class="title">This is the feature title</span></h1>
-        <details class="description">
-            The description
-            goes here
-        </details>
+  <div id="templates">
+    <section class="blockelement" itemscope itemtype="http://cukes.info/Feature">
+      <header>
+        <span class="keyword" itemprop="keyword">Keyword</span>: <span itemprop="name" class="name">This is the
+          block name</span>
+      </header>
+      <details itemprop="description" class="description invisible"> The description goes here
+      </details>
+      <section class="childrenElements"></section>
     </section>
-</div>
+    <section class="step" itemscope itemtype="http://cukes.info/Step">
+      <header>
+          <span class="keyword" itemprop="keyword">Step</span> <span itemprop="name" class="name">This is the
+            step name</span>
+      </header>
+      <section class="examples"></section>
+      <img itemprop="screenshot" style="display: none;" class="screenshot" id="screenshot" />
+    </section>
+    <section class="examples" itemscope itemtype="http://cukes.info/Examples">
+      <header>
+        <span class="keyword" itemprop="keyword">Examples</span>: <span itemprop="name" class="name">This is the
+          examples name</span>
+      </header>
+      <details itemprop="description" class="description invisible"> The description goes here
+      </details>
+      <section class="examples"></section>
+    </section>
+  </div>
 </body>
 </html>

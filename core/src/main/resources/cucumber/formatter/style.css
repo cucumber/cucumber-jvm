@@ -1,3 +1,35 @@
+body {
+  font-family: Helvetica,Arial,sans-serif;
+}
 #templates {
-    display: none;
+  display: none;
+}
+
+.keyword {
+  color: #164B2B;
+}
+
+.description {
+  font-style: italic;
+}
+
+.blockelement {
+  margin-bottom: 20px;
+}
+
+.featureElements {
+  margin-left: 20px;
+}
+
+.steps {
+  margin-left: 20px;
+}
+
+table.examples {
+  margin-left: 20px;
+}
+
+table.examples td {
+  border: 1px;
+  border-style: solid;
 }
