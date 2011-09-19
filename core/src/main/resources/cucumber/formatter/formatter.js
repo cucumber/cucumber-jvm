@@ -1,11 +1,24 @@
 var Cucumber = {};
 
+//See http://www.w3.org/TR/html4/types.html#type-id
+/**
+ * Generates an unique id so we can find statements and mark them after execution
+ */
+Cucumber.encodeId = function(uri, line) {
+    return 'id_' + uri.replace(/(:|\.|\/)/g,'_') + '_' + line;
+}
+
 Cucumber.DOMFormatter = function(rootNode) {
     var rootNode = rootNode;
     var featureElementsNode;
     var scenarioElementsNode;
     var currentNode;
+    var currentUri;
 
+    this.uri = function(uri) {
+        currentUri = uri;
+    }
+    
     this.feature = function(feature) {
         currentNode = $('#templates .blockelement').clone().appendTo(rootNode);
         currentNode.addClass('feature');
@@ -53,13 +66,13 @@ Cucumber.DOMFormatter = function(rootNode) {
     }
     
     var printExamples = function(examples, node) {
-        var table = $('<table></table>').appendTo(node);
+        var table = $('<table>').appendTo(node);
         table.addClass('examples');
         $.each(examples, function(index, example) {
-            var tr = $('<tr></tr>').appendTo(table);
+            var tr = $('<tr>').appendTo(table);
             tr.addClass('exampleRow');
             $.each(example.cells,function(index, cell) {
-                var td = $('<td></td>').appendTo(tr);
+                var td = $('<td>').appendTo(tr);
                 td.addClass('exampleCell');
                 td.text(cell);
             });
@@ -67,6 +80,7 @@ Cucumber.DOMFormatter = function(rootNode) {
     }
 
     var printStatement = function(statement, heading) {
+        currentNode.attr('id', Cucumber.encodeId(currentUri, statement.line));
         currentNode.find('.keyword').text(statement.keyword);
         currentNode.find('.name').text(statement.name);
         if (statement.description !== undefined) {
@@ -84,5 +98,4 @@ Cucumber.DOMFormatter = function(rootNode) {
             currentNode.find('.examples').remove();
         }
     }
-
 }
