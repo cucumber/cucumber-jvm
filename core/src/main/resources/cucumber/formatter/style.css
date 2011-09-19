@@ -33,3 +33,15 @@ table.examples td {
   border: 1px;
   border-style: solid;
 }
+
+.passed {
+  background-color: #C5D88A;
+}
+
+.skipped {
+  background-color: #EAEC2D;
+}
+
+.failed {
+  background-color: #D88A8A;
+}

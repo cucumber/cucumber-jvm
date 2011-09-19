@@ -70,6 +70,7 @@ Cucumber.DOMFormatter = function(rootNode) {
         table.addClass('examples');
         $.each(examples, function(index, example) {
             var tr = $('<tr>').appendTo(table);
+            tr.attr('id', Cucumber.encodeId(currentUri, example.line));
             tr.addClass('exampleRow');
             $.each(example.cells,function(index, cell) {
                 var td = $('<td>').appendTo(tr);
@@ -97,5 +98,18 @@ Cucumber.DOMFormatter = function(rootNode) {
         } else {
             currentNode.find('.examples').remove();
         }
+    }
+}
+
+Cucumber.Reporter = function() {
+    var idMatched; 
+    this.result = function(result) {
+        $('#'+idMatched).addClass(result.status);
+        if (result.error_message !== undefined) {
+            $('<pre>').appendTo($('#'+idMatched)).text(result.error_message);
+        }
+    }
+    this.match = function(match) {
+        idMatched = Cucumber.encodeId(match.uri, match.step.line);
     }
 }

@@ -13,4 +13,28 @@ $(document).ready(function() {
     formatter.scenarioOutline({keyword:'Scenario Outline', name: 'Scenario with examples', description:'It should be good to format outlined arguments.', line: 13});
     formatter.step({keyword:'Given', name:'I have a <name> which costs <price>', line: 14});
     formatter.examples({description:'', name:'Some good examples', keyword:'Examples', line: 15, rows:[{cells:['name', 'price'], line:16}, {cells:['milk', '9'], line:17}, {cells:['bread', '7'], line:18}, {cells:['soap', '5'], line:19}]})
+    
+    var reporter = new Cucumber.Reporter();
+    reporter.match({uri:'report.feature', step:{line:4}});
+    reporter.result({status:'passed', duration: 0});
+    reporter.match({uri:'report.feature', step:{line:5}});
+    reporter.result({status:'passed', duration: 0});
+    
+    reporter.match({uri:'report.feature', step:{line:7}});
+    reporter.result({status:'passed', duration: 0});
+    reporter.match({uri:'report.feature', step:{line:8}});
+    reporter.result({status:'failed', error_message:'something went wrong...', duration: 0});
+    reporter.match({uri:'report.feature', step:{line:9}});
+    reporter.result({status:'skipped', duration: 0});
+    reporter.match({uri:'report.feature', step:{line:10}});
+    reporter.result({status:'passed', duration: 0});
+    
+    reporter.match({uri:'report.feature', step:{line:16}});
+    reporter.result({status:'passed', duration: 0});
+    reporter.match({uri:'report.feature', step:{line:17}});
+    reporter.result({status:'passed', duration: 0});
+    reporter.match({uri:'report.feature', step:{line:18}});
+    reporter.result({status:'passed', duration: 0});
+    reporter.match({uri:'report.feature', step:{line:19}});
+    reporter.result({status:'failed', error_message:'I didn\'t do it.', duration: 0});
 });
