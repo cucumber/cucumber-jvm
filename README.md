@@ -69,7 +69,7 @@ You'll need Maven to build the Java code (we're happily accepting patches for ot
 
 ### Running cross-platform Cucumber features
 
-All Cucumber implementations (cucumber-ruby, cucumber-jvm, cucumber-js) share a common set of Cucumber features to ensure all implementations support the same basic features. To run these you need to clone the cucumber-features into your cucumber-jcm working copy:
+All Cucumber implementations (cucumber-ruby, cucumber-jvm, cucumber-js) share a common set of Cucumber features to ensure all implementations support the same basic features. To run these you need to clone the cucumber-features into your cucumber-jvm working copy:
 
     git submodule update --init
 
@@ -83,7 +83,7 @@ Now you can run the cross-platform Cucumber features:
 
 StepDefinition APIs in all of Gherkin's supported i18n languages are generated using Ruby. 
 The i18n Java annotations (except English) are not added to the Git repo because Git on both OS X and Windows handles UTF-8 file names badly.
-In order to compile `cucumber-java` with all I18n annotations, you have to generate them yourelf.
+In order to compile `cucumber-java` with all I18n annotations, you have to generate them yourself.
 With Ruby installed and on your path, install some gems that are needed for code generation:
 
 #### Using bundler
