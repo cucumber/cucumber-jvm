@@ -20,27 +20,19 @@ Cucumber.DOMFormatter = function(rootNode) {
     }
     
     this.feature = function(feature) {
-        currentNode = $('#templates .blockelement').clone().appendTo(rootNode);
-        currentNode.addClass('feature');
-        printStatement(feature, '<h1>');
+        prepareAndPrintCurrentNode(feature, {parentNode: rootNode, className: 'feature', heading: '<h1>'});
         featureElementsNode = currentNode.find('.childrenElements');
         featureElementsNode.addClass('featureElements');
     }
 
     this.background = function(background) {
-        currentNode = $('#templates .blockelement').clone().appendTo(featureElementsNode);
-        currentNode.addClass('background');
-        printStatement(background, '<h2>');
-        scenarioElementsNode = currentNode.find('.childrenElements');
-        scenarioElementsNode.addClass('steps');
+        prepareAndPrintCurrentNode(background, {parentNode: featureElementsNode, className: 'background', heading: '<h2>'});
+        prepareScenarioElementsNode();
     }
 
     this.scenario = function(scenario) {
-        currentNode = $('#templates .blockelement').clone().appendTo(featureElementsNode);
-        currentNode.addClass('scenario');
-        printStatement(scenario, '<h2>');
-        scenarioElementsNode = currentNode.find('.childrenElements');
-        scenarioElementsNode.addClass('steps');
+        prepareAndPrintCurrentNode(scenario, {parentNode: featureElementsNode, className: 'scenario', heading: '<h2>'});
+        prepareScenarioElementsNode();
     }
 
     this.scenarioOutline = function(outline) {
@@ -49,18 +41,27 @@ Cucumber.DOMFormatter = function(rootNode) {
     }
 
     this.step = function(step) {
-        currentNode = $('#templates .blockelement').clone().appendTo(scenarioElementsNode);
+        prepareAndPrintCurrentNode(step, {parentNode: scenarioElementsNode, className: 'step', heading: '<h3>'});
         currentNode.attr('id', step.id);
-        printStatement(step, '<h3>');
         if (hasExamples(step)) {
             printExamples(step.multiline_arg.value, false);
         }
     }
     
     this.examples = function(examples) {
-        currentNode = $('#templates .blockelement').clone().appendTo(featureElementsNode);
-        printStatement(examples, '<h2>');
+        prepareAndPrintCurrentNode(examples, {parentNode: featureElementsNode, className: 'exampleBlock', heading: '<h2>'});
         printExamples(examples.rows, true);
+    }
+    
+    var prepareScenarioElementsNode = function() {
+        scenarioElementsNode = currentNode.find('.childrenElements');
+        scenarioElementsNode.addClass('steps');
+    }
+    
+    var prepareAndPrintCurrentNode = function(statement, nodeInfo) {
+        currentNode = $('#templates .blockelement').clone().appendTo(nodeInfo.parentNode);
+        currentNode.addClass(nodeInfo.className);
+        printStatement(statement, nodeInfo.heading);
     }
     
     var hasExamples = function(step) {
