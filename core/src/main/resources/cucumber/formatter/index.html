@@ -9,33 +9,26 @@
 <script src="report.js"></script>
 </head>
 <body>
-
   <div id="templates">
-    <section class="blockelement" itemscope itemtype="http://cukes.info/Feature">
-      <header>
-        <span class="keyword" itemprop="keyword">Keyword</span>: <span itemprop="name" class="name">This is the
-          block name</span>
-      </header>
-      <details itemprop="description" class="description invisible"> The description goes here
+    <section class="blockelement" itemscope itemtype="http://cukes.info/microformat/Feature">
+      <details open>
+        <summary class="header">
+          <span class="keyword" itemprop="keyword">Keyword</span>: <span itemprop="name" class="name">This is the
+            block name</span>
+        </summary>
+        <details itemprop="description" class="description"> The description goes here
+        </details>
+        <section class="childrenElements"></section>
       </details>
-      <section class="childrenElements"></section>
     </section>
-    <section class="step" itemscope itemtype="http://cukes.info/Step">
-      <header>
-          <span class="keyword" itemprop="keyword">Step</span> <span itemprop="name" class="name">This is the
-            step name</span>
-      </header>
-      <section class="examples"></section>
+    <table class="examples">
+      <thead class="examplesHeader">
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+    <section class="embed">
       <img itemprop="screenshot" style="display: none;" class="screenshot" id="screenshot" />
-    </section>
-    <section class="examples" itemscope itemtype="http://cukes.info/Examples">
-      <header>
-        <span class="keyword" itemprop="keyword">Examples</span>: <span itemprop="name" class="name">This is the
-          examples name</span>
-      </header>
-      <details itemprop="description" class="description invisible"> The description goes here
-      </details>
-      <section class="examples"></section>
     </section>
   </div>
 </body>

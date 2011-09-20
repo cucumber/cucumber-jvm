@@ -11,6 +11,7 @@ body {
 
 .description {
   font-style: italic;
+  margin-left: 20px;
 }
 
 .blockelement {
@@ -27,6 +28,10 @@ body {
 
 table.examples {
   margin-left: 20px;
+}
+
+table.examples thead {
+  background-color: #C0C0C0;
 }
 
 table.examples td {

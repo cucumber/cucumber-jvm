@@ -29,8 +29,6 @@ $(document).ready(function() {
     reporter.match({uri:'report.feature', step:{line:10}});
     reporter.result({status:'passed', duration: 0});
     
-    reporter.match({uri:'report.feature', step:{line:16}});
-    reporter.result({status:'passed', duration: 0});
     reporter.match({uri:'report.feature', step:{line:17}});
     reporter.result({status:'passed', duration: 0});
     reporter.match({uri:'report.feature', step:{line:18}});

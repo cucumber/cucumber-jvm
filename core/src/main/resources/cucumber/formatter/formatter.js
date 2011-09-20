@@ -49,34 +49,44 @@ Cucumber.DOMFormatter = function(rootNode) {
     }
 
     this.step = function(step) {
-        currentNode = $('#templates .step').clone().appendTo(scenarioElementsNode);
+        currentNode = $('#templates .blockelement').clone().appendTo(scenarioElementsNode);
         currentNode.attr('id', step.id);
         printStatement(step, '<h3>');
-        printStepExamples(step);
+        if (hasExamples(step)) {
+            printExamples(step.multiline_arg.value, false);
+        }
     }
     
     this.examples = function(examples) {
-        currentNode = $('#templates .examples').clone().appendTo(featureElementsNode);
+        currentNode = $('#templates .blockelement').clone().appendTo(featureElementsNode);
         printStatement(examples, '<h2>');
-        printExamples(examples.rows, currentNode.find('.examples'));
+        printExamples(examples.rows, true);
     }
     
     var hasExamples = function(step) {
         return step.multiline_arg !== undefined && step.multiline_arg.type === 'table';
     }
     
-    var printExamples = function(examples, node) {
-        var table = $('<table>').appendTo(node);
-        table.addClass('examples');
+    var printExamples = function(examples, hasHeader) {
+        var table = $('#templates .examples').clone().appendTo(currentNode.find('.childrenElements'));
         $.each(examples, function(index, example) {
-            var tr = $('<tr>').appendTo(table);
-            tr.attr('id', Cucumber.encodeId(currentUri, example.line));
-            tr.addClass('exampleRow');
-            $.each(example.cells,function(index, cell) {
-                var td = $('<td>').appendTo(tr);
-                td.addClass('exampleCell');
-                td.text(cell);
-            });
+            if (index === 0 && hasHeader) {
+                node = table.find('thead');
+            } else {
+                node = table.find('tbody');
+            }
+            printExampleRow(node, example);
+        });
+    }
+    
+    var printExampleRow = function(node, example) {
+        var tr = $('<tr>').appendTo(node);
+        tr.attr('id', Cucumber.encodeId(currentUri, example.line));
+        tr.addClass('exampleRow');
+        $.each(example.cells,function(index, cell) {
+            var td = $('<td>').appendTo(tr);
+            td.addClass('exampleCell');
+            td.text(cell);
         });
     }
 
@@ -84,20 +94,12 @@ Cucumber.DOMFormatter = function(rootNode) {
         currentNode.attr('id', Cucumber.encodeId(currentUri, statement.line));
         currentNode.find('.keyword').text(statement.keyword);
         currentNode.find('.name').text(statement.name);
-        if (statement.description !== undefined) {
+        if (statement.description !== undefined && $.trim(statement.description) !== '') {
             currentNode.find('.description').text(statement.description);
         } else {
             currentNode.find('.description').remove();
         }
         currentNode.find('header').wrapInner(heading);
-    }
-    
-    var printStepExamples = function(step) {
-        if (hasExamples(step)) {
-            printExamples(step.multiline_arg.value, currentNode.find('.examples'));
-        } else {
-            currentNode.find('.examples').remove();
-        }
     }
 }
 
