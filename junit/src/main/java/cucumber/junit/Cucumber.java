@@ -105,8 +105,8 @@ public class Cucumber extends ParentRunner<ScenarioRunner> {
     @Override
     public void run(RunNotifier notifier) {
         if (feature != null) {
-            jUnitReporter.feature(feature);
             jUnitReporter.uri(featurePath);
+            jUnitReporter.feature(feature);
             super.run(notifier);
             jUnitReporter.eof();
         }

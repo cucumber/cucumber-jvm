@@ -54,41 +54,27 @@ class ScenarioRunner extends ParentRunner<Step> {
 
             CucumberBackground cucumberBackground = cucumberScenario.getCucumberBackground();
             if (cucumberBackground != null) {
-                runBackground(notifier, cucumberBackground);
+                /*
+                   We're running the background without reporting the steps as junit children - we don't want them to show up in the
+                   junit report. However, if any of the background steps fail, we mark the entire scenario as failed. Scenario steps
+                   will be skipped.
+                */
+                Throwable failure = runtime.runBackground(cucumberBackground, jUnitReporter.getFormatter(), jUnitReporter.getReporter());
+                if (failure != null) {
+                    notifier.fireTestFailure(new Failure(getDescription(), failure));
+                }
             }
-
             cucumberScenario.format(jUnitReporter);
-        } catch (CucumberException e) {
-            notifier.fireTestFailure(new Failure(getDescription(), e));
         } catch (Throwable e) {
-            // bug
-            e.printStackTrace();
+            // Shouldn't happen, but in case it does....
+            notifier.fireTestFailure(new Failure(getDescription(), e));
         }
+        // Run the steps
         super.run(notifier);
         try {
             runtime.disposeWorld();
         } catch (CucumberException e) {
             notifier.fireTestFailure(new Failure(getDescription(), e));
-        }
-    }
-
-    /*
-    We're running the background without reporting the steps as junit children - we don't want them to show up in the
-    junit report. However, if any of the background steps fail, we mark the entire scenario as failed. Scenario steps
-    will be skipped.
-     */
-    private void runBackground(RunNotifier notifier, CucumberBackground cucumberBackground) {
-        cucumberBackground.format(jUnitReporter.getFormatter());
-        List<Step> steps = cucumberBackground.getSteps();
-        Throwable failure = null;
-        for (Step step : steps) {
-            Throwable e = runtime.runStep(cucumberScenario.getUri(), step, jUnitReporter.getReporter(), cucumberScenario.getLocale());
-            if (e != null) {
-                failure = e;
-            }
-        }
-        if (failure != null) {
-            notifier.fireTestFailure(new Failure(getDescription(), failure));
         }
     }
 

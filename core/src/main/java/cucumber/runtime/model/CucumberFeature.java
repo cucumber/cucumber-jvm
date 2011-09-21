@@ -10,25 +10,25 @@ import java.util.List;
 import java.util.Locale;
 
 public class CucumberFeature {
-    private final String featureUri;
+    private final String uri;
     private final Feature feature;
     private CucumberBackground cucumberBackground;
     private StepContainer currentStepContainer;
     private List<CucumberScenario> cucumberScenarios = new ArrayList<CucumberScenario>();
     private Locale locale;
 
-    public CucumberFeature(Feature feature, String featureUri) {
+    public CucumberFeature(Feature feature, String uri) {
         this.feature = feature;
-        this.featureUri = featureUri;
+        this.uri = uri;
     }
 
     public void background(Background background) {
-        cucumberBackground = new CucumberBackground(background);
+        cucumberBackground = new CucumberBackground(this, background);
         currentStepContainer = cucumberBackground;
     }
 
     public void scenario(Scenario scenario) {
-        CucumberScenario cucumberScenario = new CucumberScenario(this, featureUri, cucumberBackground, scenario);
+        CucumberScenario cucumberScenario = new CucumberScenario(this, uri, cucumberBackground, scenario);
         currentStepContainer = cucumberScenario;
         cucumberScenarios.add(cucumberScenario);
     }
@@ -51,5 +51,9 @@ public class CucumberFeature {
 
     public Locale getLocale() {
         return locale;
+    }
+
+    public String getUri() {
+        return uri;
     }
 }

@@ -43,10 +43,9 @@ public class Main {
         }
 
         Runtime runtime = new Runtime(packageNamesOrScriptPaths);
-        Runner runner = new Runner(runtime);
 
         PrettyFormatter prettyFormatter = new PrettyFormatter(System.out, false, true);
-        runner.run(filesOrDirs, filters, prettyFormatter, prettyFormatter);
+        runtime.run(filesOrDirs, filters, prettyFormatter, prettyFormatter);
 
         new SnippetPrinter(System.out).printSnippets(runtime);
 

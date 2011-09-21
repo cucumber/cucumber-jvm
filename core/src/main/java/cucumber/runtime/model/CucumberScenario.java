@@ -4,19 +4,14 @@ import gherkin.formatter.model.Scenario;
 import gherkin.formatter.model.Tag;
 
 import java.util.HashSet;
-import java.util.Locale;
 import java.util.Set;
 
 public class CucumberScenario extends StepContainer {
-    private final CucumberFeature cucumberFeature;
-    private final String uri;
     private final CucumberBackground cucumberBackground;
     private final Scenario scenario;
 
     public CucumberScenario(CucumberFeature cucumberFeature, String uri, CucumberBackground cucumberBackground, Scenario scenario) {
-        super(scenario);
-        this.cucumberFeature = cucumberFeature;
-        this.uri = uri;
+        super(cucumberFeature, scenario);
         this.cucumberBackground = cucumberBackground;
         this.scenario = scenario;
     }
@@ -30,14 +25,6 @@ public class CucumberScenario extends StepContainer {
             tags.add(tag.getName());
         }
         return tags;
-    }
-
-    public String getUri() {
-        return uri;
-    }
-
-    public Locale getLocale() {
-        return cucumberFeature.getLocale();
     }
 
     public String getName() {

@@ -6,7 +6,7 @@ Feature: Cucumber Runner Rocks
   
   Scenario: Few cukes
     Given I have 3 cukes in my belly
-    And I have 5 cukes in my belly
+    Then there are 3 cukes in my belly
     
   Scenario Outline: Various things
     Given I have <n> <what> in my belly
