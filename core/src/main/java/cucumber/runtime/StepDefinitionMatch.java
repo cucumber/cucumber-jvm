@@ -48,27 +48,38 @@ public class StepDefinitionMatch extends Match {
         }
     }
 
+    /**
+     * @param parameterTypes types of the stepdefs args. Some backends will pass null if they can't determine types or arity.
+     * @param step
+     * @param locale
+     * @return an Array matching the types or {@code parameterTypes}, or an array of String if {@code parameterTypes} is null
+     */
     private Object[] transformedArgs(Class<?>[] parameterTypes, Step step, Locale locale) {
         int argumentCount = getArguments().size() + (step.getMultilineArg() == null ? 0 : 1);
-        if (parameterTypes.length != argumentCount) {
+        if (parameterTypes != null && parameterTypes.length != argumentCount) {
             throw new CucumberException("Arity mismatch. Parameters: " + asList(parameterTypes) + ". Matched arguments: " + getArguments());
         }
 
         Object[] result = new Object[argumentCount];
+        ConverterLookup converterLookup = localizedXStreams.get(locale).getConverterLookup();
+
         int n = 0;
-        if (step.getRows() != null) {
-            result[n] = tableArgument(step, n++, locale);
-        } else if (step.getDocString() != null) {
-            result[n] = step.getDocString().getValue();
-        } else {
-            ConverterLookup converterLookup = localizedXStreams.get(locale).getConverterLookup();
-            for (Argument a : getArguments()) {
+        for (Argument a : getArguments()) {
+            if (parameterTypes != null) {
                 // TODO: We might get a lookup that doesn't implement SingleValueConverter
                 // Need to throw a more friendly exception in that case.
                 SingleValueConverter converter = (SingleValueConverter) converterLookup.lookupConverterForType(parameterTypes[n]);
                 result[n] = converter.fromString(a.getVal());
-                n++;
+            } else {
+                result[n] = a.getVal();
             }
+            n++;
+        }
+
+        if (step.getRows() != null) {
+            result[n] = tableArgument(step, n++, locale);
+        } else if (step.getDocString() != null) {
+            result[n] = step.getDocString().getValue();
         }
         return result;
     }

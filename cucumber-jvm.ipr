@@ -53,6 +53,18 @@
       <profile version="1.0" is_locked="false">
         <option name="myName" value="Project Default" />
         <option name="myLocal" value="false" />
+        <inspection_tool class="HtmlUnknownAttribute" enabled="true" level="WARNING" enabled_by_default="true">
+          <option name="myValues">
+            <value>
+              <list size="3">
+                <item index="0" class="java.lang.String" itemvalue="itemscope" />
+                <item index="1" class="java.lang.String" itemvalue="itemtype" />
+                <item index="2" class="java.lang.String" itemvalue="itemprop" />
+              </list>
+            </value>
+          </option>
+          <option name="myCustomValuesEnabled" value="true" />
+        </inspection_tool>
         <inspection_tool class="JavaDoc" enabled="false" level="WARNING" enabled_by_default="false">
           <option name="TOP_LEVEL_CLASS_OPTIONS">
             <value>
@@ -291,7 +303,7 @@
     </modules>
   </component>
   <component name="ProjectResources">
-    <default-html-doctype>http://www.w3.org/1999/xhtml</default-html-doctype>
+    <default-html-doctype>$APPLICATION_HOME_DIR$/lib/idea.jar!/standardSchemas/html5/xhtml5.xsd</default-html-doctype>
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_6" assert-keyword="true" jdk-15="true" project-jdk-name="1.6" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/out" />
@@ -487,6 +499,17 @@
       </JAVADOC>
       <SOURCES>
         <root url="jar://$MAVEN_REPOSITORY$/info/cukes/gherkin/2.4.18/gherkin-2.4.18-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: info.cukes:gherkin:2.4.21">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/gherkin/2.4.21/gherkin-2.4.21.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/gherkin/2.4.21/gherkin-2.4.21-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/gherkin/2.4.21/gherkin-2.4.21-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: info.cukes:scala:1.0.0-SNAPSHOT">
@@ -733,15 +756,15 @@
         <root url="jar://$MAVEN_REPOSITORY$/org/jboss/weld/se/weld-se/1.1.0.Final/weld-se-1.1.0.Final-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: org.jruby:jruby:1.6.3">
+    <library name="Maven: org.jruby:jruby-complete:1.6.3">
       <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/jruby/jruby/1.6.3/jruby-1.6.3.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/jruby/jruby-complete/1.6.3/jruby-complete-1.6.3.jar!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/org/jruby/jruby/1.6.3/jruby-1.6.3-javadoc.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/jruby/jruby-complete/1.6.3/jruby-complete-1.6.3-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/jruby/jruby/1.6.3/jruby-1.6.3-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/jruby/jruby-complete/1.6.3/jruby-complete-1.6.3-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: org.json:json:20080701">

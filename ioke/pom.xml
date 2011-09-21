@@ -23,10 +23,12 @@
         <dependency>
             <groupId>org.ioke</groupId>
             <artifactId>ioke-lang-lib</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.ioke</groupId>
             <artifactId>ioke-lang</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
