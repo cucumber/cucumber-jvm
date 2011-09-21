@@ -61,24 +61,25 @@ public class StepDefinitionMatch extends Match {
         }
 
         Object[] result = new Object[argumentCount];
+        ConverterLookup converterLookup = localizedXStreams.get(locale).getConverterLookup();
+
         int n = 0;
+        for (Argument a : getArguments()) {
+            if (parameterTypes != null) {
+                // TODO: We might get a lookup that doesn't implement SingleValueConverter
+                // Need to throw a more friendly exception in that case.
+                SingleValueConverter converter = (SingleValueConverter) converterLookup.lookupConverterForType(parameterTypes[n]);
+                result[n] = converter.fromString(a.getVal());
+            } else {
+                result[n] = a.getVal();
+            }
+            n++;
+        }
+
         if (step.getRows() != null) {
             result[n] = tableArgument(step, n++, locale);
         } else if (step.getDocString() != null) {
             result[n] = step.getDocString().getValue();
-        } else {
-            ConverterLookup converterLookup = localizedXStreams.get(locale).getConverterLookup();
-            for (Argument a : getArguments()) {
-                if (parameterTypes != null) {
-                    // TODO: We might get a lookup that doesn't implement SingleValueConverter
-                    // Need to throw a more friendly exception in that case.
-                    SingleValueConverter converter = (SingleValueConverter) converterLookup.lookupConverterForType(parameterTypes[n]);
-                    result[n] = converter.fromString(a.getVal());
-                } else {
-                    result[n] = a.getVal();
-                }
-                n++;
-            }
         }
         return result;
     }
