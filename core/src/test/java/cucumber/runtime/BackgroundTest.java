@@ -22,7 +22,7 @@ public class BackgroundTest {
                 "  Background:\n" +
                 "    Given b\n" +
                 "  Scenario:\n" +
-                "    When s");
+                "    When s\n");
 
         StringBuilder out = new StringBuilder();
         PrettyFormatter pretty = new PrettyFormatter(out, true, true);
@@ -34,7 +34,7 @@ public class BackgroundTest {
                 "    Given b\n" +
                 "\n" +
                 "  Scenario:  # test.feature:4\n" +
-                "    When s";
+                "    When s\n";
         assertEquals(expectedOutput, out.toString());
     }
 
