@@ -55,7 +55,9 @@ public class StepDefinitionMatch extends Match {
      * @return an Array matching the types or {@code parameterTypes}, or an array of String if {@code parameterTypes} is null
      */
     private Object[] transformedArgs(Class<?>[] parameterTypes, Step step, Locale locale) {
-        int argumentCount = getArguments().size() + (step.getMultilineArg() == null ? 0 : 1);
+        int argumentCount = getArguments().size();
+        if(step.getDocString() != null) argumentCount++;
+        if(step.getRows() != null) argumentCount++;
         if (parameterTypes != null && parameterTypes.length != argumentCount) {
             throw new CucumberException("Arity mismatch. Parameters: " + asList(parameterTypes) + ". Matched arguments: " + getArguments());
         }

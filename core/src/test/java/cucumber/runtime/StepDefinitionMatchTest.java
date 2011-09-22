@@ -39,7 +39,6 @@ public class StepDefinitionMatchTest {
 
         Step stepWithDocString = mock(Step.class);
         DocString docString = new DocString("test", "HELLO", 999);
-        when(stepWithDocString.getMultilineArg()).thenReturn(docString);
         when(stepWithDocString.getDocString()).thenReturn(docString);
         when(stepWithDocString.getRows()).thenReturn(null);
 
@@ -56,7 +55,6 @@ public class StepDefinitionMatchTest {
 
         Step stepWithDocString = mock(Step.class);
         DocString docString = new DocString("test", "HELLO", 999);
-        when(stepWithDocString.getMultilineArg()).thenReturn(docString);
         when(stepWithDocString.getDocString()).thenReturn(docString);
         when(stepWithDocString.getRows()).thenReturn(null);
 
