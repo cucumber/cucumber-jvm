@@ -57,7 +57,7 @@ public class JavaBeanTableProcessorTest {
         StepDefinition stepDefinition = new JavaStepDefinition(Pattern.compile("whatever"), method, new SingletonFactory(stepDefs));
 
         Step stepWithRows = new Step(NO_COMMENTS, "Given", "something that wants users", 10);
-        stepWithRows.setMultilineArg(rowsList());
+        stepWithRows.setRows(rowsList());
 
         StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(NO_ARGS, stepDefinition, "some.feature", stepWithRows, new LocalizedXStreams(), new CamelCaseHeaderMapper());
         stepDefinitionMatch.runStep(Locale.UK);

@@ -55,30 +55,33 @@ public class StepDefinitionMatch extends Match {
      * @return an Array matching the types or {@code parameterTypes}, or an array of String if {@code parameterTypes} is null
      */
     private Object[] transformedArgs(Class<?>[] parameterTypes, Step step, Locale locale) {
-        int argumentCount = getArguments().size() + (step.getMultilineArg() == null ? 0 : 1);
+        int argumentCount = getArguments().size();
+        if(step.getDocString() != null) argumentCount++;
+        if(step.getRows() != null) argumentCount++;
         if (parameterTypes != null && parameterTypes.length != argumentCount) {
             throw new CucumberException("Arity mismatch. Parameters: " + asList(parameterTypes) + ". Matched arguments: " + getArguments());
         }
 
         Object[] result = new Object[argumentCount];
+        ConverterLookup converterLookup = localizedXStreams.get(locale).getConverterLookup();
+
         int n = 0;
+        for (Argument a : getArguments()) {
+            if (parameterTypes != null) {
+                // TODO: We might get a lookup that doesn't implement SingleValueConverter
+                // Need to throw a more friendly exception in that case.
+                SingleValueConverter converter = (SingleValueConverter) converterLookup.lookupConverterForType(parameterTypes[n]);
+                result[n] = converter.fromString(a.getVal());
+            } else {
+                result[n] = a.getVal();
+            }
+            n++;
+        }
+
         if (step.getRows() != null) {
             result[n] = tableArgument(step, n++, locale);
         } else if (step.getDocString() != null) {
             result[n] = step.getDocString().getValue();
-        } else {
-            ConverterLookup converterLookup = localizedXStreams.get(locale).getConverterLookup();
-            for (Argument a : getArguments()) {
-                if (parameterTypes != null) {
-                    // TODO: We might get a lookup that doesn't implement SingleValueConverter
-                    // Need to throw a more friendly exception in that case.
-                    SingleValueConverter converter = (SingleValueConverter) converterLookup.lookupConverterForType(parameterTypes[n]);
-                    result[n] = converter.fromString(a.getVal());
-                } else {
-                    result[n] = a.getVal();
-                }
-                n++;
-            }
         }
         return result;
     }

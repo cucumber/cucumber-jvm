@@ -1,20 +1,23 @@
 package cucumber.runtime;
 
 import cucumber.runtime.converters.LocalizedXStreams;
+import cucumber.table.Table;
 import gherkin.formatter.Argument;
+import gherkin.formatter.model.DocString;
 import gherkin.formatter.model.Step;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
+import static java.util.Collections.emptyList;
 import static org.mockito.Mockito.*;
 
 public class StepDefinitionMatchTest {
     @Test
-    public void shouldConvertParameters() throws Throwable {
-        List<Argument> arguments = Arrays.asList(new Argument(0, "5"));
+    public void converts_numbers() throws Throwable {
         StepDefinition stepDefinition = mock(StepDefinition.class);
         Class<?>[] parameterTypes = {Integer.TYPE};
         when(stepDefinition.getParameterTypes()).thenReturn(parameterTypes);
@@ -23,9 +26,40 @@ public class StepDefinitionMatchTest {
         when(stepWithoutDocStringOrTable.getDocString()).thenReturn(null);
         when(stepWithoutDocStringOrTable.getRows()).thenReturn(null);
 
-        StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(arguments, stepDefinition, "some.feature", stepWithoutDocStringOrTable, new LocalizedXStreams(), null);
+        StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(Arrays.asList(new Argument(0, "5")), stepDefinition, "some.feature", stepWithoutDocStringOrTable, new LocalizedXStreams(), null);
         stepDefinitionMatch.runStep(Locale.ENGLISH);
-        Object[] args = {5};
-        verify(stepDefinition).execute(args);
+        verify(stepDefinition).execute(new Object[]{5});
+    }
+
+    @Test
+    public void can_have_doc_string_as_only_argument() throws Throwable {
+        StepDefinition stepDefinition = mock(StepDefinition.class);
+        Class<?>[] parameterTypes = {String.class};
+        when(stepDefinition.getParameterTypes()).thenReturn(parameterTypes);
+
+        Step stepWithDocString = mock(Step.class);
+        DocString docString = new DocString("test", "HELLO", 999);
+        when(stepWithDocString.getDocString()).thenReturn(docString);
+        when(stepWithDocString.getRows()).thenReturn(null);
+
+        StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(new ArrayList<Argument>(), stepDefinition, "some.feature", stepWithDocString, new LocalizedXStreams(), null);
+        stepDefinitionMatch.runStep(Locale.ENGLISH);
+        verify(stepDefinition).execute(new Object[]{"HELLO"});
+    }
+
+    @Test
+    public void can_have_doc_string_as_last_argument_among_many() throws Throwable {
+        StepDefinition stepDefinition = mock(StepDefinition.class);
+        Class<?>[] parameterTypes = {Integer.TYPE, String.class};
+        when(stepDefinition.getParameterTypes()).thenReturn(parameterTypes);
+
+        Step stepWithDocString = mock(Step.class);
+        DocString docString = new DocString("test", "HELLO", 999);
+        when(stepWithDocString.getDocString()).thenReturn(docString);
+        when(stepWithDocString.getRows()).thenReturn(null);
+
+        StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(Arrays.asList(new Argument(0, "5")), stepDefinition, "some.feature", stepWithDocString, new LocalizedXStreams(), null);
+        stepDefinitionMatch.runStep(Locale.ENGLISH);
+        verify(stepDefinition).execute(new Object[]{5, "HELLO"});
     }
 }
