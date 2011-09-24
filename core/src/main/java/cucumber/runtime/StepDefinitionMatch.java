@@ -19,7 +19,9 @@ import static java.util.Arrays.asList;
 public class StepDefinitionMatch extends Match {
     private final StepDefinition stepDefinition;
     private final String uri;
-    private final Step step;
+    // The official JSON gherkin format doesn't have a step attribute, so we're marking this as transient
+    // to prevent it from ending up in the JSON.
+    private final transient Step step;
     private final LocalizedXStreams localizedXStreams;
     private final TableHeaderMapper tableHeaderMapper;
 

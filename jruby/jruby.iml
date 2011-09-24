@@ -19,7 +19,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="core" />
-    <orderEntry type="library" name="Maven: info.cukes:gherkin:2.5.0" level="project" />
+    <orderEntry type="library" name="Maven: info.cukes:gherkin:2.5.1" level="project" />
     <orderEntry type="library" name="Maven: com.googlecode.json-simple:json-simple:1.1" level="project" />
     <orderEntry type="library" name="Maven: net.iharder:base64:2.3.8" level="project" />
     <orderEntry type="library" name="Maven: com.thoughtworks.xstream:xstream:1.4.1" level="project" />
