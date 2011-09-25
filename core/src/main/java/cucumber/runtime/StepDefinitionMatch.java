@@ -19,7 +19,9 @@ import static java.util.Arrays.asList;
 public class StepDefinitionMatch extends Match {
     private final StepDefinition stepDefinition;
     private final String uri;
-    private final Step step;
+    // The official JSON gherkin format doesn't have a step attribute, so we're marking this as transient
+    // to prevent it from ending up in the JSON.
+    private final transient Step step;
     private final LocalizedXStreams localizedXStreams;
     private final TableHeaderMapper tableHeaderMapper;
 
@@ -55,7 +57,9 @@ public class StepDefinitionMatch extends Match {
      * @return an Array matching the types or {@code parameterTypes}, or an array of String if {@code parameterTypes} is null
      */
     private Object[] transformedArgs(Class<?>[] parameterTypes, Step step, Locale locale) {
-        int argumentCount = getArguments().size() + (step.getMultilineArg() == null ? 0 : 1);
+        int argumentCount = getArguments().size();
+        if(step.getDocString() != null) argumentCount++;
+        if(step.getRows() != null) argumentCount++;
         if (parameterTypes != null && parameterTypes.length != argumentCount) {
             throw new CucumberException("Arity mismatch. Parameters: " + asList(parameterTypes) + ". Matched arguments: " + getArguments());
         }

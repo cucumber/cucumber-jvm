@@ -18,12 +18,13 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="core" scope="TEST" />
     <orderEntry type="library" name="Maven: org.webbitserver:webbit:0.2.0" level="project" />
     <orderEntry type="library" name="Maven: org.jboss.netty:netty:3.2.4.Final" level="project" />
     <orderEntry type="module" module-name="picocontainer" scope="TEST" />
     <orderEntry type="module" module-name="java" scope="TEST" />
-    <orderEntry type="module" module-name="core" scope="TEST" />
-    <orderEntry type="library" scope="TEST" name="Maven: info.cukes:gherkin:2.4.21" level="project" />
+    <orderEntry type="module" module-name="cucumber-core" scope="TEST" />
+    <orderEntry type="library" scope="TEST" name="Maven: info.cukes:gherkin:2.5.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: com.googlecode.json-simple:json-simple:1.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: net.iharder:base64:2.3.8" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: com.thoughtworks.xstream:xstream:1.4.1" level="project" />

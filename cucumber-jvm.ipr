@@ -283,6 +283,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/clojure/clojure.iml" filepath="$PROJECT_DIR$/clojure/clojure.iml" />
       <module fileurl="file://$PROJECT_DIR$/core/core.iml" filepath="$PROJECT_DIR$/core/core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/core/cucumber-core.iml" filepath="$PROJECT_DIR$/core/cucumber-core.iml" />
       <module fileurl="file://$PROJECT_DIR$/tmp/aruba/cucumber-picocontainer-test.iml" filepath="$PROJECT_DIR$/tmp/aruba/cucumber-picocontainer-test.iml" />
       <module fileurl="file://$PROJECT_DIR$/groovy/groovy.iml" filepath="$PROJECT_DIR$/groovy/groovy.iml" />
       <module fileurl="file://$PROJECT_DIR$/guice/guice.iml" filepath="$PROJECT_DIR$/guice/guice.iml" />
@@ -501,15 +502,15 @@
         <root url="jar://$MAVEN_REPOSITORY$/info/cukes/gherkin/2.4.18/gherkin-2.4.18-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: info.cukes:gherkin:2.4.21">
+    <library name="Maven: info.cukes:gherkin:2.5.1">
       <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/gherkin/2.4.21/gherkin-2.4.21.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/gherkin/2.5.1/gherkin-2.5.1.jar!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/gherkin/2.4.21/gherkin-2.4.21-javadoc.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/gherkin/2.5.1/gherkin-2.5.1-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/gherkin/2.4.21/gherkin-2.4.21-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/gherkin/2.5.1/gherkin-2.5.1-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: info.cukes:scala:1.0.0-SNAPSHOT">
