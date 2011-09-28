@@ -67,11 +67,11 @@ public class JavaStepDefinition implements StepDefinition {
     }
 
     @Override
-    public Class getTypeForTableList(int argIndex) {
+    public Type getTypeForTableList(int argIndex) {
         Type genericParameterType = method.getGenericParameterTypes()[argIndex];
         if (genericParameterType instanceof ParameterizedType) {
             Type[] parameters = ((ParameterizedType) genericParameterType).getActualTypeArguments();
-            return (Class<?>) parameters[0];
+            return parameters[0];
         } else {
             return null;
         }

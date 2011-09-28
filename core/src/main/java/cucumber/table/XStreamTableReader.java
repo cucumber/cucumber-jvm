@@ -3,6 +3,8 @@ package cucumber.table;
 import com.thoughtworks.xstream.converters.ErrorWriter;
 import com.thoughtworks.xstream.io.AbstractReader;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -11,7 +13,7 @@ import java.util.List;
  * Adapts rows in a table to an XStream Reader so that XStream can turn it into a List of objects.
  */
 class XStreamTableReader extends AbstractReader {
-    private final Class elementType;
+    private final Type elementType;
     private final List<String> attributeNames;
     private final Iterator<List<String>> itemIterator;
 
@@ -22,7 +24,7 @@ class XStreamTableReader extends AbstractReader {
     private Iterator<String> attributeValueIterator;
     private String attributeValue;
 
-    public XStreamTableReader(Class elementType, List<String> attributeNames, List<List<String>> items) {
+    public XStreamTableReader(Type elementType, List<String> attributeNames, List<List<String>> items) {
         this.elementType = elementType;
         this.attributeNames = attributeNames;
         this.itemIterator = items.iterator();
@@ -64,13 +66,17 @@ class XStreamTableReader extends AbstractReader {
         depth--;
     }
 
+    private Class<?> getElementClass() {
+        return ((elementType instanceof Class) ? (Class<?>) elementType :
+            (Class<?>) ((ParameterizedType) elementType).getRawType());
+    }
     @Override
     public String getNodeName() {
         switch (depth) {
             case 0:
                 return "list";
             case 1:
-                return elementType.getName();
+                return getElementClass().getName();
             case 2:
                 return attributeName;
             default:

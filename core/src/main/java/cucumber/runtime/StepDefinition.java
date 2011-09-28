@@ -3,6 +3,7 @@ package cucumber.runtime;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 
+import java.lang.reflect.Type;
 import java.util.List;
 
 public interface StepDefinition {
@@ -21,7 +22,7 @@ public interface StepDefinition {
      *
      * @return the kind of object Cucumber should instantiate for each row, or null if no conversion should happen.
      */
-    Class getTypeForTableList(int argIndex);
+    Type getTypeForTableList(int argIndex);
 
     /**
      * The source line where the step definition is defined.

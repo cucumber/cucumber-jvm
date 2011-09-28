@@ -6,6 +6,7 @@ import com.thoughtworks.xstream.converters.javabean.JavaBeanConverter;
 import cucumber.runtime.converters.LocalizedXStreams;
 import org.junit.Test;
 
+import java.lang.reflect.Type;
 import java.util.*;
 
 import static java.util.Arrays.asList;

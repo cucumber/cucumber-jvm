@@ -9,6 +9,7 @@ import gherkin.formatter.model.Step;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -33,7 +34,7 @@ public class ClojureStepDefinition implements StepDefinition {
     }
 
     @Override
-    public Class getTypeForTableList(int argIndex) {
+    public Type getTypeForTableList(int argIndex) {
         return null;
     }
 

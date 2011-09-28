@@ -11,6 +11,7 @@ import gherkin.formatter.model.Match;
 import gherkin.formatter.model.Step;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Locale;
 
@@ -91,7 +92,7 @@ public class StepDefinitionMatch extends Match {
     private Object tableArgument(Step step, int argIndex, Locale locale) {
         Table table = new Table(step.getRows(), new TableConverter(localizedXStreams.get(locale)), tableHeaderMapper);
 
-        Class listType = stepDefinition.getTypeForTableList(argIndex);
+        Type listType = stepDefinition.getTypeForTableList(argIndex);
         if (listType != null) {
             return table.asList(listType);
         } else {
