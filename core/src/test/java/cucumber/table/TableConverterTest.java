@@ -41,6 +41,15 @@ public class TableConverterTest {
         );
     }
 
+    @Test
+    public void converts_table_to_maps() {
+        XStream xStream = new LocalizedXStreams().get(Locale.UK);
+        TableConverter tc = new TableConverter(xStream);
+
+        List<Map<String,String>> users = tc.convert(Map.class, headerRow(), bodyRows());
+        assertEquals(sidsBirthday(), users.get(0).get("birthDate"));
+    }
+
     private Date sidsBirthday() {
         Calendar sidsBirthDay = Calendar.getInstance();
         sidsBirthDay.setTimeZone(TimeZone.getTimeZone("UTC"));
