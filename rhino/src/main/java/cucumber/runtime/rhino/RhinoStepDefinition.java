@@ -11,6 +11,7 @@ import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.regexp.NativeRegExp;
 import org.mozilla.javascript.tools.shell.Global;
 
+import java.lang.reflect.Type;
 import java.util.List;
 
 public class RhinoStepDefinition implements StepDefinition {
@@ -38,7 +39,7 @@ public class RhinoStepDefinition implements StepDefinition {
     }
 
     @Override
-    public Class getTypeForTableList(int argIndex) {
+    public Type getTypeForTableList(int argIndex) {
         return null;
     }
 

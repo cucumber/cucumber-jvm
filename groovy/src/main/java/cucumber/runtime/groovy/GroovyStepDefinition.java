@@ -6,6 +6,7 @@ import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 import groovy.lang.Closure;
 
+import java.lang.reflect.Type;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -29,7 +30,7 @@ public class GroovyStepDefinition implements StepDefinition {
     }
 
     @Override
-    public Class getTypeForTableList(int argIndex) {
+    public Type getTypeForTableList(int argIndex) {
         return null;
     }
 

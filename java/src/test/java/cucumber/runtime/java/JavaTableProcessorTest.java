@@ -2,6 +2,7 @@ package cucumber.runtime.java;
 
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 import com.thoughtworks.xstream.converters.javabean.JavaBeanConverter;
+import cucumber.runtime.CucumberException;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.StepDefinitionMatch;
 import cucumber.runtime.converters.LocalizedXStreams;
@@ -10,7 +11,9 @@ import gherkin.formatter.Argument;
 import gherkin.formatter.model.Comment;
 import gherkin.formatter.model.Row;
 import gherkin.formatter.model.Step;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import java.lang.reflect.Method;
 import java.util.*;
@@ -21,6 +24,8 @@ import static java.util.Collections.emptyList;
 import static junit.framework.Assert.assertEquals;
 
 public class JavaTableProcessorTest {
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     private static final List<Argument> NO_ARGS = emptyList();
     private static final List<Comment> NO_COMMENTS = emptyList();
@@ -28,7 +33,10 @@ public class JavaTableProcessorTest {
     public static class StepDefs {
         public List<UserPojo> userPojos;
         public List<UserBean> userBeans;
-        public List<Map<String, String>> userMaps;
+        public List<Map<String, String>> mapsOfStringToString;
+        public List<Map<String, Object>> mapsOfStringToObject;
+        public List<Map<Date, String>> mapsOfDateToString;
+        public List<Map<String, Date>> mapsOfStringToDate;
 
         public void listOfPojos(List<UserPojo> userPojos) {
             this.userPojos = userPojos;
@@ -38,8 +46,20 @@ public class JavaTableProcessorTest {
             this.userBeans = userBeans;
         }
 
-        public void listOfMaps(List<Map<String,String>> userMaps) {
-            this.userMaps = userMaps;
+        public void listOfMapsOfStringToString(List<Map<String, String>> userMaps) {
+            this.mapsOfStringToString = userMaps;
+        }
+
+        public void listOfMapsOfStringToObject(List<Map<String, Object>> mapsOfStringToObject) {
+            this.mapsOfStringToObject = mapsOfStringToObject;
+        }
+
+        public void listOfMapsOfDateToString(List<Map<Date, String>> mapsOfDateToString) {
+            this.mapsOfDateToString = mapsOfDateToString;
+        }
+
+        public void listOfMapsOfStringToDate(List<Map<String, Date>> mapsOfStringToDate) {
+            this.mapsOfStringToDate = mapsOfStringToDate;
         }
     }
 
@@ -58,10 +78,37 @@ public class JavaTableProcessorTest {
     }
 
     @Test
-    public void transforms_to_list_of_maps() throws Throwable {
-        Method listOfBeans = StepDefs.class.getMethod("listOfMaps", List.class);
+    public void transforms_to_list_of_map_of_string_to_string() throws Throwable {
+        Method listOfBeans = StepDefs.class.getMethod("listOfMapsOfStringToString", List.class);
         StepDefs stepDefs = runStepDef(listOfBeans);
-        assertEquals("10/05/1957", stepDefs.userMaps.get(0).get("birth date"));
+        assertEquals("10/05/1957", stepDefs.mapsOfStringToString.get(0).get("birthDate"));
+    }
+
+    @Test
+    public void transforms_to_list_of_map_of_string_to_object() throws Throwable {
+        Method listOfBeans = StepDefs.class.getMethod("listOfMapsOfStringToObject", List.class);
+        StepDefs stepDefs = runStepDef(listOfBeans);
+        assertEquals("10/05/1957", stepDefs.mapsOfStringToObject.get(0).get("birthDate"));
+    }
+
+    @Test
+    public void does_not_transform_to_list_of_map_of_date_to_string() throws Throwable {
+        thrown.expect(CucumberException.class);
+        thrown.expectMessage("Tables can only be transformed to a List<Map<K,V>> when K is String. It was class java.util.Date");
+        
+        Method listOfBeans = StepDefs.class.getMethod("listOfMapsOfDateToString", List.class);
+        StepDefs stepDefs = runStepDef(listOfBeans);
+        assertEquals("10/05/1957", stepDefs.mapsOfDateToString.get(0).get("birthDate"));
+    }
+
+    @Test
+    public void does_not_transform_to_list_of_map_of_string_to_date() throws Throwable {
+        thrown.expect(CucumberException.class);
+        thrown.expectMessage("Tables can only be transformed to a List<Map<K,V>> when V is String or Object. It was class java.util.Date");
+        
+        Method listOfBeans = StepDefs.class.getMethod("listOfMapsOfStringToDate", List.class);
+        StepDefs stepDefs = runStepDef(listOfBeans);
+        assertEquals("10/05/1957", stepDefs.mapsOfStringToDate.get(0).get("birthDate"));
     }
 
     private StepDefs runStepDef(Method method) throws Throwable {

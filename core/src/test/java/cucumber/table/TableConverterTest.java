@@ -6,6 +6,8 @@ import com.thoughtworks.xstream.converters.javabean.JavaBeanConverter;
 import cucumber.runtime.converters.LocalizedXStreams;
 import org.junit.Test;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.*;
 
 import static java.util.Arrays.asList;
@@ -34,7 +36,8 @@ public class TableConverterTest {
         XStream xStream = new LocalizedXStreams().get(Locale.UK);
         TableConverter tc = new TableConverter(xStream);
 
-        List<Map<String, String>> users = tc.convert(Map.class, headerRow(), bodyRows());
+        Type mapType = new TypeReference<Map<String,String>>(){}.getType();
+        List<Map<String, String>> users = tc.convert(mapType, headerRow(), bodyRows());
         assertEquals("10/05/1957", users.get(0).get("birthDate"));
     }
 

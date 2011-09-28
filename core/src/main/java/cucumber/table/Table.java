@@ -2,6 +2,7 @@ package cucumber.table;
 
 import gherkin.formatter.model.Row;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,8 +29,8 @@ public class Table {
         return this.raw;
     }
 
-    public <T> List<T> asList(Class itemType) {
-        return tableConverter.convert(itemType, attributeNames(), attributeValues());
+    public <T> List<T> asList(Type listType) {
+        return tableConverter.convert(listType, attributeNames(), attributeValues());
     }
 
     private List<List<String>> attributeValues() {

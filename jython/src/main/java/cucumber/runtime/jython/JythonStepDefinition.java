@@ -9,6 +9,7 @@ import org.python.core.PyList;
 import org.python.core.PyObject;
 import org.python.core.PyString;
 
+import java.lang.reflect.Type;
 import java.util.List;
 
 public class JythonStepDefinition implements StepDefinition {
@@ -34,7 +35,7 @@ public class JythonStepDefinition implements StepDefinition {
     }
 
     @Override
-    public Class getTypeForTableList(int argIndex) {
+    public Type getTypeForTableList(int argIndex) {
         return null;
     }
 
