@@ -81,9 +81,12 @@ public abstract class SnippetGenerator {
         for (ArgumentPattern argumentPattern : argumentPatterns()) {
             functionName = argumentPattern.replaceMatchesWithSpace(functionName);
         }
-
-        functionName = functionName.replaceAll("\\s+", "_");
+        functionName = sanitizeFunctionName(functionName);
         return functionName;
+    }
+
+    protected String sanitizeFunctionName(String functionName) {
+        return functionName.replaceAll("\\s+", "_");
     }
 
     private String withNamedGroups(String snippetPattern) {
