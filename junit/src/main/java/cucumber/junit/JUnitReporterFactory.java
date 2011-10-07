@@ -1,9 +1,9 @@
 package cucumber.junit;
 
-import cucumber.runtime.NullReporter;
+import cucumber.formatter.FormatterFactory;
+import cucumber.formatter.NullReporter;
+
 import gherkin.formatter.Formatter;
-import gherkin.formatter.PrettyFormatter;
-import gherkin.formatter.Reporter;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -15,10 +15,10 @@ class JUnitReporterFactory {
      * @param reporterString what underlying reporter/formatter to create
      * @return a reporter
      */
+    
     static JUnitReporter create(String reporterString) {
-        Reporter reporter = null;
-        Formatter formatter;
-
+        Formatter formatter = null;
+        FormatterFactory formatterReporterFactory = new FormatterFactory();
         if(reporterString != null) {
             String[] nameAndOut = reporterString.split("=");
             String name = nameAndOut[0];
@@ -46,20 +46,11 @@ class JUnitReporterFactory {
                 System.err.println("ERROR: Failed to create file " + nameAndOut[0] + ". Using STDOUT instead.");
                 appendable = System.out;
             }
-            if(name.equals("pretty")) {
-                reporter = new PrettyFormatter(appendable, false, true);
-            } else {
-                // TODO: instantiate it with reflection. name is classname. expect one arg (Appendable).
-            }
+            formatter = formatterReporterFactory.createFormatter(name, appendable);
         }
-        if(reporter == null) {
-            reporter = new NullReporter();
-        }
-        if(reporter instanceof Formatter) {
-            formatter = (Formatter) reporter;           
-        } else {
+        if(formatter == null) {
             formatter = new NullReporter();
         }
-        return new JUnitReporter(reporter, formatter);
+        return new JUnitReporter(formatterReporterFactory.reporter(formatter), formatter);
     }
 }
