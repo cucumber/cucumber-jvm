@@ -78,7 +78,7 @@ public class FormatterFactory {
 
     private Constructor<Formatter> getConstructorWithAppendableIfExists(Class<Formatter> formatterClass) {
         try {
-            return formatterClass.getConstructor(Appendable.class);
+            return formatterClass.getDeclaredConstructor(Appendable.class);
         } catch (SecurityException e) {
             throw new CucumberException("Error while getting Appendable Constructor from formatter class: "
                     + formatterClass.getName(), e);
