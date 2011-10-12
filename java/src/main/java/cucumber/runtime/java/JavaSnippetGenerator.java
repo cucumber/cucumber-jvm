@@ -6,7 +6,6 @@ import gherkin.formatter.model.Step;
 import java.util.List;
 
 public class JavaSnippetGenerator extends SnippetGenerator {
-    private static final Character SUBST = '_';
 
     public JavaSnippetGenerator(Step step) {
         super(step);
@@ -37,18 +36,5 @@ public class JavaSnippetGenerator extends SnippetGenerator {
                 "    // {4}\n" +
                 "'}'\n";
     }
-    
-    @Override
-    protected String sanitizeFunctionName(String functionName) {
-        StringBuilder sanitized = new StringBuilder();
-        sanitized.append(Character.isJavaIdentifierStart(functionName.charAt(0)) ? functionName.charAt(0) : SUBST);
-        for (int i = 1; i < functionName.length(); i++) {
-            if (Character.isJavaIdentifierPart(functionName.charAt(i))) {
-                sanitized.append(functionName.charAt(i));
-            } else if (sanitized.charAt(sanitized.length() - 1) != SUBST && i != functionName.length() - 1) {
-                sanitized.append(SUBST);
-            }
-        }
-        return sanitized.toString();
-    }
+
 }

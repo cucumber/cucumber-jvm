@@ -29,7 +29,8 @@ public abstract class SnippetGenerator {
     };
     private static final Pattern GROUP_PATTERN = Pattern.compile("\\(");
     private static final String HINT = "Express the Regexp above with the code you wish you had";
-
+    private static final Character SUBST = '_';
+    
     private final Step step;
     private final String namedGroupStart;
     private final String namedGroupEnd;
@@ -86,7 +87,16 @@ public abstract class SnippetGenerator {
     }
 
     protected String sanitizeFunctionName(String functionName) {
-        return functionName.replaceAll("\\s+", "_");
+        StringBuilder sanitized = new StringBuilder();
+        sanitized.append(Character.isJavaIdentifierStart(functionName.charAt(0)) ? functionName.charAt(0) : SUBST);
+        for (int i = 1; i < functionName.length(); i++) {
+            if (Character.isJavaIdentifierPart(functionName.charAt(i))) {
+                sanitized.append(functionName.charAt(i));
+            } else if (sanitized.charAt(sanitized.length() - 1) != SUBST && i != functionName.length() - 1) {
+                sanitized.append(SUBST);
+            }
+        }
+        return sanitized.toString();
     }
 
     private String withNamedGroups(String snippetPattern) {
