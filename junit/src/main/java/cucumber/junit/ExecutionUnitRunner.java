@@ -12,7 +12,7 @@ import org.junit.runners.model.InitializationError;
 
 import java.util.List;
 
-public class ExecutionUnitRunner extends ParentRunner<Step> {
+class ExecutionUnitRunner extends ParentRunner<Step> {
     private final Runtime runtime;
     private final List<String> extraCodePaths;
     private final CucumberScenario cucumberScenario;

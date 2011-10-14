@@ -10,7 +10,7 @@ import org.junit.runners.model.InitializationError;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ExamplesRunner extends Suite {
+class ExamplesRunner extends Suite {
     private final CucumberExamples cucumberExamples;
 
     protected ExamplesRunner(Runtime runtime, List<String> extraCodePaths, CucumberExamples cucumberExamples, JUnitReporter jUnitReporter) throws InitializationError {

@@ -10,7 +10,7 @@ import org.junit.runners.model.InitializationError;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ScenarioOutlineRunner extends Suite {
+class ScenarioOutlineRunner extends Suite {
     private final CucumberScenarioOutline cucumberScenarioOutline;
 
     public ScenarioOutlineRunner(Runtime runtime, List<String> extraCodePaths, CucumberScenarioOutline cucumberScenarioOutline, JUnitReporter jUnitReporter) throws InitializationError {
