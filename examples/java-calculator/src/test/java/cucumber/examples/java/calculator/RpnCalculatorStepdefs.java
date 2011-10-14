@@ -14,7 +14,6 @@ public class RpnCalculatorStepdefs {
     @Given("^a calculator I just turned on$")
     public void a_calculator_I_just_turned_on() {
         calc = new RpnCalculator();
-        throw new RuntimeException("HEY");
     }
 
     @When("^I add (\\d+) and (\\d+)$")

@@ -1,9 +1,6 @@
 package cucumber.runtime.model;
 
-import gherkin.formatter.model.Background;
-import gherkin.formatter.model.Feature;
-import gherkin.formatter.model.Scenario;
-import gherkin.formatter.model.Step;
+import gherkin.formatter.model.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,8 +11,9 @@ public class CucumberFeature {
     private final Feature feature;
     private CucumberBackground cucumberBackground;
     private StepContainer currentStepContainer;
-    private List<CucumberScenario> cucumberScenarios = new ArrayList<CucumberScenario>();
+    private List<CucumberFeatureElement> cucumberFeatureElements = new ArrayList<CucumberFeatureElement>();
     private Locale locale;
+    private CucumberScenarioOutline currentScenarioOutline;
 
     public CucumberFeature(Feature feature, String uri) {
         this.feature = feature;
@@ -28,9 +26,20 @@ public class CucumberFeature {
     }
 
     public void scenario(Scenario scenario) {
-        CucumberScenario cucumberScenario = new CucumberScenario(this, uri, cucumberBackground, scenario);
-        currentStepContainer = cucumberScenario;
-        cucumberScenarios.add(cucumberScenario);
+        CucumberFeatureElement cucumberFeatureElement = new CucumberScenario(this, cucumberBackground, scenario);
+        currentStepContainer = cucumberFeatureElement;
+        cucumberFeatureElements.add(cucumberFeatureElement);
+    }
+
+    public void scenarioOutline(ScenarioOutline scenarioOutline) {
+        CucumberScenarioOutline cucumberScenarioOutline = new CucumberScenarioOutline(this, cucumberBackground, scenarioOutline);
+        currentScenarioOutline = cucumberScenarioOutline;
+        currentStepContainer = cucumberScenarioOutline;
+        cucumberFeatureElements.add(cucumberScenarioOutline);
+    }
+
+    public void examples(Examples examples) {
+        currentScenarioOutline.examples(examples);
     }
 
     public void step(Step step) {
@@ -41,8 +50,8 @@ public class CucumberFeature {
         return feature;
     }
 
-    public List<CucumberScenario> getCucumberScenarios() {
-        return cucumberScenarios;
+    public List<CucumberFeatureElement> getFeatureElements() {
+        return cucumberFeatureElements;
     }
 
     public void setLocale(Locale locale) {

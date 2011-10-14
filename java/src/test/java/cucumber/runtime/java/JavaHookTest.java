@@ -3,7 +3,6 @@ package cucumber.runtime.java;
 import cucumber.annotation.After;
 import cucumber.annotation.Before;
 import cucumber.annotation.Order;
-import cucumber.runtime.Backend;
 import cucumber.runtime.HookDefinition;
 import cucumber.runtime.World;
 import org.junit.Test;
@@ -12,9 +11,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 import static java.util.Arrays.asList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 
 public class JavaHookTest {
@@ -31,7 +28,7 @@ public class JavaHookTest {
     }
 
     private final JavaBackend backend = new JavaBackend(mock(ObjectFactory.class));
-    private final World world = new World(new ArrayList<Backend>(), null, new ArrayList<String>());
+    private final World world = new World(null, new ArrayList<String>());
 
     @Test
     public void before_hooks_get_registered() throws Exception {

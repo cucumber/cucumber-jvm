@@ -3,14 +3,16 @@ package cucumber.runtime;
 import cucumber.resources.Consumer;
 import cucumber.resources.Resource;
 import cucumber.resources.Resources;
-import cucumber.runtime.model.CucumberBackground;
 import cucumber.runtime.model.CucumberFeature;
-import cucumber.runtime.model.CucumberScenario;
+import cucumber.runtime.model.CucumberFeatureElement;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Step;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import static java.util.Arrays.asList;
 
@@ -19,9 +21,9 @@ import static java.util.Arrays.asList;
  */
 public class Runtime {
     private final List<Step> undefinedSteps = new ArrayList<Step>();
-    private final List<String> codePaths;
     private final List<Backend> backends;
-    private World world;
+    // TODO
+    private final List<String> codePaths;
 
     public Runtime() {
         this(System.getProperty("cucumber.glue") != null ? asList(System.getProperty("cucumber.glue").split(",")) : new ArrayList<String>());
@@ -34,22 +36,6 @@ public class Runtime {
     public Runtime(List<String> codePaths, List<Backend> backends) {
         this.backends = backends;
         this.codePaths = codePaths;
-    }
-
-    public void createWorld(List<String> extraCodePaths, Set<String> tags) {
-        List<String> allCodePaths = new ArrayList<String>(codePaths);
-        allCodePaths.addAll(extraCodePaths);
-
-        world = new World(backends, this, tags);
-        world.prepare(allCodePaths);
-    }
-
-    public Throwable runStep(String uri, Step step, Reporter reporter, Locale locale) {
-        return world.runStep(uri, step, reporter, locale);
-    }
-
-    public void disposeWorld() {
-        world.dispose();
     }
 
     /**
@@ -94,44 +80,11 @@ public class Runtime {
     public void run(CucumberFeature cucumberFeature, Formatter formatter, Reporter reporter) {
         formatter.uri(cucumberFeature.getUri());
         formatter.feature(cucumberFeature.getFeature());
-        for (CucumberScenario cucumberScenario : cucumberFeature.getCucumberScenarios()) {
-            run(cucumberScenario, formatter, reporter);
+        for (CucumberFeatureElement cucumberFeatureElement : cucumberFeature.getFeatureElements()) {
+            cucumberFeatureElement.run(formatter, reporter, this, backends);
         }
     }
 
-    public void run(CucumberScenario cucumberScenario, Formatter formatter, Reporter reporter) {
-        // TODO: Maybe get extraPaths from scenario
-
-        // TODO: split up prepareAndFormat so we can run Background in isolation.
-        // Or maybe just try to make Background behave like a regular Scenario?? Printing wise at least.
-
-        createWorld(new ArrayList<String>(), cucumberScenario.tags());
-
-        CucumberBackground cucumberBackground = cucumberScenario.getCucumberBackground();
-        if (cucumberBackground != null) {
-            runBackground(cucumberBackground, formatter, reporter);
-        }
-
-        cucumberScenario.format(formatter);
-        for (Step step : cucumberScenario.getSteps()) {
-            runStep(cucumberScenario.getUri(), step, reporter, cucumberScenario.getLocale());
-        }
-        disposeWorld();
-    }
-
-    public Throwable runBackground(CucumberBackground cucumberBackground, Formatter formatter, Reporter reporter) {
-        cucumberBackground.format(formatter);
-        List<Step> steps = cucumberBackground.getSteps();
-        Throwable failure = null;
-        for (Step step : steps) {
-            Throwable e = runStep(cucumberBackground.getUri(), step, reporter, cucumberBackground.getLocale());
-            if (e != null) {
-                failure = e;
-            }
-        }
-        return failure;
-    }
-    
     private List<CucumberFeature> load(List<String> filesOrDirs, final List<Object> filters) {
         final List<CucumberFeature> cucumberFeatures = new ArrayList<CucumberFeature>();
         final FeatureBuilder builder = new FeatureBuilder(cucumberFeatures);
@@ -144,5 +97,17 @@ public class Runtime {
             });
         }
         return cucumberFeatures;
+    }
+
+    public void buildWorlds(List<String> codePaths, World world) {
+        for (Backend backend : backends) {
+            backend.buildWorld(codePaths, world);
+        }
+    }
+
+    public void disposeWorlds() {
+        for (Backend backend : backends) {
+            backend.disposeWorld();
+        }
     }
 }

@@ -33,11 +33,11 @@ public class StepContainer {
         }
     }
 
-    public String getUri() {
+    protected String getUri() {
         return cucumberFeature.getUri();
     }
 
-    public Locale getLocale() {
+    protected Locale getLocale() {
         return cucumberFeature.getLocale();
     }
 }

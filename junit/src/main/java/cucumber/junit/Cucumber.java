@@ -5,9 +5,11 @@ import cucumber.resources.Resource;
 import cucumber.resources.Resources;
 import cucumber.runtime.FeatureBuilder;
 import cucumber.runtime.Runtime;
-import cucumber.runtime.snippets.SnippetPrinter;
 import cucumber.runtime.model.CucumberFeature;
+import cucumber.runtime.model.CucumberFeatureElement;
 import cucumber.runtime.model.CucumberScenario;
+import cucumber.runtime.model.CucumberScenarioOutline;
+import cucumber.runtime.snippets.SnippetPrinter;
 import gherkin.formatter.model.Feature;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
@@ -23,15 +25,15 @@ import static java.util.Arrays.asList;
 /**
  * Classes annotated with {@code @RunWith(Cucumber.class)} will run a Cucumber Feature.
  * The class should be empty without any fields or methods.
- * 
+ * <p/>
  * Cucumber will look for a {@code .feature} file on the classpath, using the same resource
  * path as the annotated class ({@code .class} substituted by {@code .feature}).
- * 
+ * <p/>
  * Additional hints can be given to Cucumber by annotating the class with {@link cucumber.junit.Feature}.
- * 
+ *
  * @see cucumber.junit.Feature
  */
-public class Cucumber extends ParentRunner<ScenarioRunner> {
+public class Cucumber extends ParentRunner<ParentRunner> {
     private static final Runtime runtime = new Runtime();
     private static JUnitReporter jUnitReporter;
 
@@ -45,7 +47,7 @@ public class Cucumber extends ParentRunner<ScenarioRunner> {
         });
     }
 
-    private final List<ScenarioRunner> scenarioRunners = new ArrayList<ScenarioRunner>();
+    private final List<ParentRunner> featureElementRunners = new ArrayList<ParentRunner>();
     private final Feature feature;
     private final String featurePath;
 
@@ -88,17 +90,17 @@ public class Cucumber extends ParentRunner<ScenarioRunner> {
     }
 
     @Override
-    protected List<ScenarioRunner> getChildren() {
-        return scenarioRunners;
+    protected List<ParentRunner> getChildren() {
+        return featureElementRunners;
     }
 
     @Override
-    protected Description describeChild(ScenarioRunner child) {
+    protected Description describeChild(ParentRunner child) {
         return child.getDescription();
     }
 
     @Override
-    protected void runChild(ScenarioRunner runner, RunNotifier notifier) {
+    protected void runChild(ParentRunner runner, RunNotifier notifier) {
         runner.run(notifier);
     }
 
@@ -125,16 +127,22 @@ public class Cucumber extends ParentRunner<ScenarioRunner> {
             return null;
         } else {
             CucumberFeature cucumberFeature = cucumberFeatures.get(0);
-            buildScenarioRunners(cucumberFeature);
+            buildFeatureElementRunners(cucumberFeature);
             return cucumberFeature.getFeature();
         }
     }
 
-    private void buildScenarioRunners(CucumberFeature cucumberFeature) {
-        for (CucumberScenario cucumberScenario : cucumberFeature.getCucumberScenarios()) {
+    private void buildFeatureElementRunners(CucumberFeature cucumberFeature) {
+        for (CucumberFeatureElement cucumberFeatureElement : cucumberFeature.getFeatureElements()) {
             try {
                 List<String> extraCodePaths = extraCodePaths(super.getTestClass().getJavaClass());
-                scenarioRunners.add(new ScenarioRunner(runtime, extraCodePaths, cucumberScenario, jUnitReporter));
+                ParentRunner featureElementRunner;
+                if (cucumberFeatureElement instanceof CucumberScenario) {
+                    featureElementRunner = new ExecutionUnitRunner(runtime, extraCodePaths, (CucumberScenario) cucumberFeatureElement, jUnitReporter);
+                } else {
+                    featureElementRunner = new ScenarioOutlineRunner(runtime, extraCodePaths, (CucumberScenarioOutline) cucumberFeatureElement, jUnitReporter);
+                }
+                featureElementRunners.add(featureElementRunner);
             } catch (InitializationError e) {
                 throw new RuntimeException("Failed to create scenario runner", e);
             }
