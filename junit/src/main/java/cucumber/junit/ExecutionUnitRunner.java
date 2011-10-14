@@ -33,7 +33,7 @@ public class ExecutionUnitRunner extends ParentRunner<Step> {
 
     @Override
     public String getName() {
-        return cucumberScenario.getKeywordAndName();
+        return cucumberScenario.getVisualName();
     }
 
     @Override

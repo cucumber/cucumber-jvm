@@ -30,8 +30,13 @@ public abstract class CucumberFeatureElement extends StepContainer {
         return tags;
     }
 
-    public String getKeywordAndName() {
-        return featureElement.getKeyword() + ": " + featureElement.getName();
+    public String getVisualName() {
+        if (featureElement.getName() != null) {
+            return featureElement.getKeyword() + ": " + featureElement.getName();
+        } else {
+            // Example rows get "compiled" into a Scenario, using the row as the keyword and a null name
+            return featureElement.getKeyword();
+        }
     }
 
     public abstract void run(Formatter formatter, Reporter reporter, Runtime runtime, List<Backend> backends);

@@ -34,7 +34,7 @@ public class CucumberScenarioOutline extends CucumberFeatureElement {
     }
 
     CucumberScenario createExampleScenario(Row header, Row example, Examples examples) {
-        Scenario exampleScenario = new Scenario(example.getComments(), examples.getTags(), examples.getKeyword(), exampleName(example), null, example.getLine());
+        Scenario exampleScenario = new Scenario(example.getComments(), examples.getTags(), exampleName(example), null, null, example.getLine());
         CucumberScenario cucumberScenario = new CucumberScenario(cucumberFeature, cucumberBackground, exampleScenario);
         for (Step step : getSteps()) {
             cucumberScenario.step(createExampleStep(step, header, example));

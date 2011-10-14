@@ -3,27 +3,25 @@ package cucumber.junit;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.model.CucumberExamples;
 import cucumber.runtime.model.CucumberScenario;
-import org.junit.runner.Description;
-import org.junit.runner.notification.RunNotifier;
-import org.junit.runners.ParentRunner;
+import org.junit.runner.Runner;
+import org.junit.runners.Suite;
 import org.junit.runners.model.InitializationError;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ExamplesRunner extends ParentRunner<ExecutionUnitRunner> {
+public class ExamplesRunner extends Suite {
     private final CucumberExamples cucumberExamples;
-    private final List<ExecutionUnitRunner> children = new ArrayList<ExecutionUnitRunner>();
 
     protected ExamplesRunner(Runtime runtime, List<String> extraCodePaths, CucumberExamples cucumberExamples, JUnitReporter jUnitReporter) throws InitializationError {
-        super(null);
+        super(null, new ArrayList<Runner>());
         this.cucumberExamples = cucumberExamples;
 
         List<CucumberScenario> exampleScenarios = cucumberExamples.createExampleScenarios();
         for (CucumberScenario scenario : exampleScenarios) {
             try {
                 ExecutionUnitRunner exampleScenarioRunner = new ExecutionUnitRunner(runtime, extraCodePaths, scenario, jUnitReporter);
-                children.add(exampleScenarioRunner);
+                getChildren().add(exampleScenarioRunner);
             } catch (InitializationError initializationError) {
                 initializationError.printStackTrace();
             }
@@ -31,22 +29,7 @@ public class ExamplesRunner extends ParentRunner<ExecutionUnitRunner> {
     }
 
     @Override
-    protected List<ExecutionUnitRunner> getChildren() {
-        return children;
-    }
-
-    @Override
     protected String getName() {
         return cucumberExamples.getExamples().getKeyword() + ": " + cucumberExamples.getExamples().getName();
-    }
-
-    @Override
-    protected Description describeChild(ExecutionUnitRunner child) {
-        return child.getDescription();
-    }
-
-    @Override
-    protected void runChild(ExecutionUnitRunner child, RunNotifier notifier) {
-        child.run(notifier);
     }
 }

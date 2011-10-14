@@ -11,9 +11,10 @@ import cucumber.runtime.model.CucumberScenario;
 import cucumber.runtime.model.CucumberScenarioOutline;
 import cucumber.runtime.snippets.SnippetPrinter;
 import gherkin.formatter.model.Feature;
-import org.junit.runner.Description;
+import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
+import org.junit.runners.Suite;
 import org.junit.runners.model.InitializationError;
 
 import java.io.IOException;
@@ -33,7 +34,7 @@ import static java.util.Arrays.asList;
  *
  * @see cucumber.junit.Feature
  */
-public class Cucumber extends ParentRunner<ParentRunner> {
+public class Cucumber extends Suite {
     private static final Runtime runtime = new Runtime();
     private static JUnitReporter jUnitReporter;
 
@@ -47,7 +48,6 @@ public class Cucumber extends ParentRunner<ParentRunner> {
         });
     }
 
-    private final List<ParentRunner> featureElementRunners = new ArrayList<ParentRunner>();
     private final Feature feature;
     private final String featurePath;
 
@@ -55,7 +55,7 @@ public class Cucumber extends ParentRunner<ParentRunner> {
      * Constructor called by JUnit.
      */
     public Cucumber(Class featureClass) throws InitializationError, IOException {
-        super(featureClass);
+        super(featureClass, new ArrayList<Runner>());
 
         featurePath = featurePath(featureClass);
         this.feature = parseFeature(featurePath, filters(featureClass));
@@ -87,21 +87,6 @@ public class Cucumber extends ParentRunner<ParentRunner> {
     @Override
     public String getName() {
         return feature != null ? feature.getKeyword() + ": " + feature.getName() : "No matching features - did you use too restrictive filters?";
-    }
-
-    @Override
-    protected List<ParentRunner> getChildren() {
-        return featureElementRunners;
-    }
-
-    @Override
-    protected Description describeChild(ParentRunner child) {
-        return child.getDescription();
-    }
-
-    @Override
-    protected void runChild(ParentRunner runner, RunNotifier notifier) {
-        runner.run(notifier);
     }
 
     @Override
@@ -142,7 +127,7 @@ public class Cucumber extends ParentRunner<ParentRunner> {
                 } else {
                     featureElementRunner = new ScenarioOutlineRunner(runtime, extraCodePaths, (CucumberScenarioOutline) cucumberFeatureElement, jUnitReporter);
                 }
-                featureElementRunners.add(featureElementRunner);
+                getChildren().add(featureElementRunner);
             } catch (InitializationError e) {
                 throw new RuntimeException("Failed to create scenario runner", e);
             }
