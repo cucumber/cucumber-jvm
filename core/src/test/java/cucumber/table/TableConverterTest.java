@@ -29,6 +29,15 @@ public class TableConverterTest {
         assertEquals(sidsBirthday(), users.get(0).getBirthDate());
     }
 
+    @Test
+    public void converts_table_to_map_of_string_string() {
+        XStream xStream = new LocalizedXStreams().get(Locale.UK);
+        TableConverter tc = new TableConverter(xStream);
+
+        List<Map<String, String>> users = tc.convert(Map.class, headerRow(), bodyRows());
+        assertEquals("10/05/1957", users.get(0).get("birthDate"));
+    }
+
     private List<String> headerRow() {
         return asList("name", "birthDate", "credits");
     }

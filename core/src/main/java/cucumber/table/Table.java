@@ -32,7 +32,6 @@ public class Table {
         return tableConverter.convert(itemType, attributeNames(), attributeValues());
     }
 
-
     private List<List<String>> attributeValues() {
         List<List<String>> attributeValues = new ArrayList<List<String>>();
         List<Row> valueRows = gherkinRows.subList(1, gherkinRows.size());
