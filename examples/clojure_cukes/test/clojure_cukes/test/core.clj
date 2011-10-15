@@ -1,5 +1,5 @@
 (ns clojure_cukes.test.core
-  (:use [clojure_cukes.core])
+  (:use [clojure-cukes.core])
   (:use [clojure.test]))
 
 (deftest run-cukes
