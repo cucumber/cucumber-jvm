@@ -1,46 +1,57 @@
 package cucumber.runtime.model;
 
-import gherkin.formatter.model.Background;
-import gherkin.formatter.model.Feature;
-import gherkin.formatter.model.Scenario;
-import gherkin.formatter.model.Step;
+import gherkin.formatter.model.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 public class CucumberFeature {
-    private final String featureUri;
+    private final String uri;
     private final Feature feature;
-    private Background background;
-    private CucumberScenario currentCucumberScenario;
-    private List<CucumberScenario> cucumberScenarios = new ArrayList<CucumberScenario>();
+    private CucumberBackground cucumberBackground;
+    private StepContainer currentStepContainer;
+    private List<CucumberFeatureElement> cucumberFeatureElements = new ArrayList<CucumberFeatureElement>();
     private Locale locale;
+    private CucumberScenarioOutline currentScenarioOutline;
 
-    public CucumberFeature(Feature feature, String featureUri) {
+    public CucumberFeature(Feature feature, String uri) {
         this.feature = feature;
-        this.featureUri = featureUri;
+        this.uri = uri;
     }
 
     public void background(Background background) {
-        this.background = background;
+        cucumberBackground = new CucumberBackground(this, background);
+        currentStepContainer = cucumberBackground;
     }
 
     public void scenario(Scenario scenario) {
-        currentCucumberScenario = new CucumberScenario(this, featureUri, scenario);
-        cucumberScenarios.add(currentCucumberScenario);
+        CucumberFeatureElement cucumberFeatureElement = new CucumberScenario(this, cucumberBackground, scenario);
+        currentStepContainer = cucumberFeatureElement;
+        cucumberFeatureElements.add(cucumberFeatureElement);
+    }
+
+    public void scenarioOutline(ScenarioOutline scenarioOutline) {
+        CucumberScenarioOutline cucumberScenarioOutline = new CucumberScenarioOutline(this, cucumberBackground, scenarioOutline);
+        currentScenarioOutline = cucumberScenarioOutline;
+        currentStepContainer = cucumberScenarioOutline;
+        cucumberFeatureElements.add(cucumberScenarioOutline);
+    }
+
+    public void examples(Examples examples) {
+        currentScenarioOutline.examples(examples);
     }
 
     public void step(Step step) {
-        currentCucumberScenario.step(step);
+        currentStepContainer.step(step);
     }
 
     public Feature getFeature() {
         return feature;
     }
 
-    public List<CucumberScenario> getCucumberScenarios() {
-        return cucumberScenarios;
+    public List<CucumberFeatureElement> getFeatureElements() {
+        return cucumberFeatureElements;
     }
 
     public void setLocale(Locale locale) {
@@ -49,5 +60,9 @@ public class CucumberFeature {
 
     public Locale getLocale() {
         return locale;
+    }
+
+    public String getUri() {
+        return uri;
     }
 }

@@ -42,10 +42,12 @@ public class FeatureBuilder implements Formatter {
 
     @Override
     public void scenarioOutline(ScenarioOutline scenarioOutline) {
+        currentCucumberFeature.scenarioOutline(scenarioOutline);
     }
 
     @Override
     public void examples(Examples examples) {
+        currentCucumberFeature.examples(examples);
     }
 
     @Override
