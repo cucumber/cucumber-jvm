@@ -2,6 +2,7 @@ package cucumber.table;
 
 import com.thoughtworks.xstream.XStream;
 
+import java.lang.reflect.Type;
 import java.util.List;
 
 public class TableConverter {
@@ -11,7 +12,7 @@ public class TableConverter {
         this.xStream = xStream;
     }
 
-    public <T> List<T> convert(Class itemType, List<String> attributeNames, List<List<String>> attributeValues) {
-        return (List) xStream.unmarshal(new XStreamTableReader(itemType, attributeNames, attributeValues));
+    public <T> List<T> convert(Type listType, List<String> attributeNames, List<List<String>> attributeValues) {
+        return (List) xStream.unmarshal(new XStreamTableReader(listType, attributeNames, attributeValues));
     }
 }

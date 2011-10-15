@@ -6,6 +6,7 @@ import com.thoughtworks.xstream.converters.javabean.JavaBeanConverter;
 import cucumber.runtime.converters.LocalizedXStreams;
 import org.junit.Test;
 
+import java.lang.reflect.Type;
 import java.util.*;
 
 import static java.util.Arrays.asList;
@@ -38,6 +39,15 @@ public class TableConverterTest {
                 asList("Sid Vicious", "10/05/1957", "1000"),
                 asList("Frank Zappa", "21/12/1940", "3000")
         );
+    }
+
+    @Test
+    public void converts_table_to_maps() {
+        XStream xStream = new LocalizedXStreams().get(Locale.UK);
+        TableConverter tc = new TableConverter(xStream);
+
+        List<Map<String,String>> users = tc.convert(Map.class, headerRow(), bodyRows());
+        assertEquals(sidsBirthday(), users.get(0).get("birthDate"));
     }
 
     private Date sidsBirthday() {

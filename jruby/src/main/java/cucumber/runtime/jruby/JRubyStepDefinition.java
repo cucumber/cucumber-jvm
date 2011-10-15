@@ -8,6 +8,7 @@ import org.jruby.RubyObject;
 import org.jruby.RubyString;
 import org.jruby.runtime.builtin.IRubyObject;
 
+import java.lang.reflect.Type;
 import java.util.List;
 
 public class JRubyStepDefinition implements StepDefinition {
@@ -28,7 +29,7 @@ public class JRubyStepDefinition implements StepDefinition {
     }
 
     @Override
-    public Class getTypeForTableList(int argIndex) {
+    public Type getTypeForTableList(int argIndex) {
         return null;
     }
 
