@@ -6,6 +6,7 @@ import gherkin.formatter.model.Step;
 import java.util.List;
 
 public class JavaSnippetGenerator extends SnippetGenerator {
+
     public JavaSnippetGenerator(Step step) {
         super(step);
     }
@@ -35,4 +36,5 @@ public class JavaSnippetGenerator extends SnippetGenerator {
                 "    // {4}\n" +
                 "'}'\n";
     }
+
 }
