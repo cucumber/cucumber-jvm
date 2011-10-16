@@ -14,7 +14,7 @@ import java.util.*;
 public class World {
     private static final Object DUMMY_ARG = new Object();
 
-    // TODO - it's expensive to create one for each scenario - reuse a global one.
+    // TODO - it's expensive to create a new LocalizedXStreams for each scenario - reuse a global one.
     private final LocalizedXStreams localizedXStreams = new LocalizedXStreams();
     private final TableHeaderMapper tableHeaderMapper = new CamelCaseHeaderMapper();
     private final List<StepDefinition> stepDefinitions = new ArrayList<StepDefinition>();

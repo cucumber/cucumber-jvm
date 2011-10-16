@@ -1,4 +1,4 @@
-package cucumber.runtime;
+package cucumber.runtime.snippets;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

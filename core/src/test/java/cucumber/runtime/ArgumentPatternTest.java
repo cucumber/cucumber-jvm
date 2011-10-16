@@ -1,5 +1,6 @@
 package cucumber.runtime;
 
+import cucumber.runtime.snippets.ArgumentPattern;
 import org.junit.Test;
 
 import java.util.regex.Pattern;

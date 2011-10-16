@@ -11,7 +11,7 @@ import gherkin.formatter.model.Step;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CucumberScenario extends CucumberFeatureElement {
+public class CucumberScenario extends CucumberTagStatement {
     private final CucumberBackground cucumberBackground;
     private World world;
 

@@ -11,12 +11,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public abstract class CucumberFeatureElement extends StepContainer {
-    protected final TagStatement featureElement;
+public abstract class CucumberTagStatement extends StepContainer {
+    protected final TagStatement tagStatement;
 
-    public CucumberFeatureElement(CucumberFeature cucumberFeature, TagStatement featureElement) {
-        super(cucumberFeature, featureElement);
-        this.featureElement = featureElement;
+    public CucumberTagStatement(CucumberFeature cucumberFeature, TagStatement tagStatement) {
+        super(cucumberFeature, tagStatement);
+        this.tagStatement = tagStatement;
     }
 
     protected Set<String> tags() {
@@ -24,18 +24,18 @@ public abstract class CucumberFeatureElement extends StepContainer {
         for (Tag tag : cucumberFeature.getFeature().getTags()) {
             tags.add(tag.getName());
         }
-        for (Tag tag : featureElement.getTags()) {
+        for (Tag tag : tagStatement.getTags()) {
             tags.add(tag.getName());
         }
         return tags;
     }
 
     public String getVisualName() {
-        if (featureElement.getName() != null) {
-            return featureElement.getKeyword() + ": " + featureElement.getName();
+        if (tagStatement.getName() != null) {
+            return tagStatement.getKeyword() + ": " + tagStatement.getName();
         } else {
             // Example rows get "compiled" into a Scenario, using the row as the keyword and a null name
-            return featureElement.getKeyword();
+            return tagStatement.getKeyword();
         }
     }
 

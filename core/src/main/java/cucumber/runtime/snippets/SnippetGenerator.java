@@ -1,6 +1,5 @@
 package cucumber.runtime.snippets;
 
-import cucumber.runtime.ArgumentPattern;
 import gherkin.I18n;
 import gherkin.formatter.model.Step;
 
@@ -30,7 +29,7 @@ public abstract class SnippetGenerator {
     private static final Pattern GROUP_PATTERN = Pattern.compile("\\(");
     private static final String HINT = "Express the Regexp above with the code you wish you had";
     private static final Character SUBST = '_';
-    
+
     private final Step step;
     private final String namedGroupStart;
     private final String namedGroupEnd;

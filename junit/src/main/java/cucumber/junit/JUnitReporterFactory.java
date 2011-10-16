@@ -1,6 +1,6 @@
 package cucumber.junit;
 
-import cucumber.runtime.NullReporter;
+import cucumber.formatter.NullReporter;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.PrettyFormatter;
 import gherkin.formatter.Reporter;

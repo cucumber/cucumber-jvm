@@ -6,7 +6,7 @@ import cucumber.resources.Resources;
 import cucumber.runtime.FeatureBuilder;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.model.CucumberFeature;
-import cucumber.runtime.model.CucumberFeatureElement;
+import cucumber.runtime.model.CucumberTagStatement;
 import cucumber.runtime.model.CucumberScenario;
 import cucumber.runtime.model.CucumberScenarioOutline;
 import cucumber.runtime.snippets.SnippetPrinter;
@@ -118,14 +118,14 @@ public class Cucumber extends Suite {
     }
 
     private void buildFeatureElementRunners(CucumberFeature cucumberFeature) {
-        for (CucumberFeatureElement cucumberFeatureElement : cucumberFeature.getFeatureElements()) {
+        for (CucumberTagStatement cucumberTagStatement : cucumberFeature.getFeatureElements()) {
             try {
                 List<String> extraCodePaths = extraCodePaths(super.getTestClass().getJavaClass());
                 ParentRunner featureElementRunner;
-                if (cucumberFeatureElement instanceof CucumberScenario) {
-                    featureElementRunner = new ExecutionUnitRunner(runtime, extraCodePaths, (CucumberScenario) cucumberFeatureElement, jUnitReporter);
+                if (cucumberTagStatement instanceof CucumberScenario) {
+                    featureElementRunner = new ExecutionUnitRunner(runtime, extraCodePaths, (CucumberScenario) cucumberTagStatement, jUnitReporter);
                 } else {
-                    featureElementRunner = new ScenarioOutlineRunner(runtime, extraCodePaths, (CucumberScenarioOutline) cucumberFeatureElement, jUnitReporter);
+                    featureElementRunner = new ScenarioOutlineRunner(runtime, extraCodePaths, (CucumberScenarioOutline) cucumberTagStatement, jUnitReporter);
                 }
                 getChildren().add(featureElementRunner);
             } catch (InitializationError e) {

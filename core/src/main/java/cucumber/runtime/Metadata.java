@@ -1,7 +1,7 @@
 package cucumber.runtime;
 
 import cucumber.runtime.model.CucumberFeature;
-import cucumber.runtime.model.CucumberFeatureElement;
+import cucumber.runtime.model.CucumberTagStatement;
 import gherkin.formatter.model.Step;
 
 import java.util.*;
@@ -26,9 +26,9 @@ public class Metadata {
             List<String> matchingSteps = new ArrayList<String>();
             result.put(stepDef.getPattern(), matchingSteps);
             for (CucumberFeature feature : features) {
-                List<CucumberFeatureElement> cucumberFeatureElements = feature.getFeatureElements();
-                for (CucumberFeatureElement featureElement : cucumberFeatureElements) {
-                    List<Step> steps = featureElement.getSteps();
+                List<CucumberTagStatement> cucumberTagStatements = feature.getFeatureElements();
+                for (CucumberTagStatement tagStatement : cucumberTagStatements) {
+                    List<Step> steps = tagStatement.getSteps();
                     for (Step step : steps) {
                         if(stepDef.matchedArguments(step) != null) {
                             matchingSteps.add(step.getName());

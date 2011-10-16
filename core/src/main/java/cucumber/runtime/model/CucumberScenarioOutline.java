@@ -11,7 +11,7 @@ import java.util.List;
 
 import static gherkin.util.FixJava.join;
 
-public class CucumberScenarioOutline extends CucumberFeatureElement {
+public class CucumberScenarioOutline extends CucumberTagStatement {
     private final List<CucumberExamples> cucumberExamplesList = new ArrayList<CucumberExamples>();
     private final CucumberBackground cucumberBackground;
 
@@ -61,7 +61,8 @@ public class CucumberScenarioOutline extends CucumberFeatureElement {
             }
         }
 
-        // TODO: Create CucumberStep where we can add matchedColumns
+        // TODO: Create CucumberStep where we can add matchedColumns. This allows us
+        // to colour individual cells differently
         return new Step(step.getComments(), step.getKeyword(), name, step.getLine());
     }
 }

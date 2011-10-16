@@ -1,4 +1,4 @@
-package cucumber.runtime;
+package cucumber.formatter;
 
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;

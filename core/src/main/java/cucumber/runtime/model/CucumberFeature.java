@@ -11,7 +11,7 @@ public class CucumberFeature {
     private final Feature feature;
     private CucumberBackground cucumberBackground;
     private StepContainer currentStepContainer;
-    private List<CucumberFeatureElement> cucumberFeatureElements = new ArrayList<CucumberFeatureElement>();
+    private List<CucumberTagStatement> cucumberTagStatements = new ArrayList<CucumberTagStatement>();
     private Locale locale;
     private CucumberScenarioOutline currentScenarioOutline;
 
@@ -26,16 +26,16 @@ public class CucumberFeature {
     }
 
     public void scenario(Scenario scenario) {
-        CucumberFeatureElement cucumberFeatureElement = new CucumberScenario(this, cucumberBackground, scenario);
-        currentStepContainer = cucumberFeatureElement;
-        cucumberFeatureElements.add(cucumberFeatureElement);
+        CucumberTagStatement cucumberTagStatement = new CucumberScenario(this, cucumberBackground, scenario);
+        currentStepContainer = cucumberTagStatement;
+        cucumberTagStatements.add(cucumberTagStatement);
     }
 
     public void scenarioOutline(ScenarioOutline scenarioOutline) {
         CucumberScenarioOutline cucumberScenarioOutline = new CucumberScenarioOutline(this, cucumberBackground, scenarioOutline);
         currentScenarioOutline = cucumberScenarioOutline;
         currentStepContainer = cucumberScenarioOutline;
-        cucumberFeatureElements.add(cucumberScenarioOutline);
+        cucumberTagStatements.add(cucumberScenarioOutline);
     }
 
     public void examples(Examples examples) {
@@ -50,8 +50,8 @@ public class CucumberFeature {
         return feature;
     }
 
-    public List<CucumberFeatureElement> getFeatureElements() {
-        return cucumberFeatureElements;
+    public List<CucumberTagStatement> getFeatureElements() {
+        return cucumberTagStatements;
     }
 
     public void setLocale(Locale locale) {

@@ -4,7 +4,7 @@ import cucumber.resources.Consumer;
 import cucumber.resources.Resource;
 import cucumber.resources.Resources;
 import cucumber.runtime.model.CucumberFeature;
-import cucumber.runtime.model.CucumberFeatureElement;
+import cucumber.runtime.model.CucumberTagStatement;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Step;
@@ -80,8 +80,8 @@ public class Runtime {
     public void run(CucumberFeature cucumberFeature, Formatter formatter, Reporter reporter) {
         formatter.uri(cucumberFeature.getUri());
         formatter.feature(cucumberFeature.getFeature());
-        for (CucumberFeatureElement cucumberFeatureElement : cucumberFeature.getFeatureElements()) {
-            cucumberFeatureElement.run(formatter, reporter, this, backends);
+        for (CucumberTagStatement cucumberTagStatement : cucumberFeature.getFeatureElements()) {
+            cucumberTagStatement.run(formatter, reporter, this, backends);
         }
     }
 
