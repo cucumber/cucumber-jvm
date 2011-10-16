@@ -1,7 +1,6 @@
 package cucumber.runtime.java;
 
 import cucumber.annotation.en.Given;
-import cucumber.runtime.Backend;
 import cucumber.runtime.World;
 import org.junit.Test;
 
@@ -30,7 +29,7 @@ public class JavaStepDefinitionDependencyInjectionTest {
 
     @Test
     public void constructor_arguments_get_registered() {
-        backend.buildWorld(Collections.<String>emptyList(), new World(Collections.<Backend>emptyList(), null, Collections.<String>emptyList()));
+        backend.buildWorld(Collections.<String>emptyList(), new World(null, Collections.<String>emptyList()));
         backend.addStepDefinition(Pattern.compile("whatever"), GIVEN);
         verify(mockObjectFactory).addClass(Steps.class);
         verify(mockObjectFactory).addClass(StepContext1.class);
@@ -39,7 +38,7 @@ public class JavaStepDefinitionDependencyInjectionTest {
 
     @Test
     public void constructor_arguments_get_registered_exactly_once() {
-        backend.buildWorld(Collections.<String>emptyList(), new World(Collections.<Backend>emptyList(), null, Collections.<String>emptyList()));
+        backend.buildWorld(Collections.<String>emptyList(), new World(null, Collections.<String>emptyList()));
         backend.addStepDefinition(Pattern.compile("whatever"), OTHER_GIVEN);
         verify(mockObjectFactory, times(1)).addClass(OtherSteps.class);
         verify(mockObjectFactory, times(1)).addClass(StepContext3.class);

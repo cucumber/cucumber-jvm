@@ -47,11 +47,10 @@ public class Main {
         }
 
         Runtime runtime = new Runtime(packageNamesOrScriptPaths);
-        Runner runner = new Runner(runtime);
 
         FormatterFactory formatterReporterFactory = new FormatterFactory();
         Formatter formatter = formatterReporterFactory.createFormatter(format, System.out);
-        runner.run(filesOrDirs, filters, formatter, formatterReporterFactory.reporter(formatter));
+        runtime.run(filesOrDirs, filters, formatter, formatterReporterFactory.reporter(formatter));
 
         new SnippetPrinter(System.out).printSnippets(runtime);
 

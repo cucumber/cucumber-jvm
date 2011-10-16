@@ -7,6 +7,7 @@ import cucumber.resources.Resource;
 import cucumber.resources.Resources;
 import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
+import cucumber.runtime.clojure.ClojureHookDefinition;
 import cucumber.runtime.World;
 import gherkin.formatter.model.Step;
 
@@ -63,5 +64,13 @@ public class ClojureBackend implements Backend {
     public static void addStepDefinition(Pattern regexp, AFunction body) {
         StackTraceElement location = instance.stepDefLocation("clojure.lang.Compiler", "eval");
         instance.world.addStepDefinition(new ClojureStepDefinition(regexp, body, location));
+    }
+
+    public static void addBeforeHook(AFunction body) {
+        instance.world.addBeforeHook(new ClojureHookDefinition(new String[0], body));
+    }
+
+    public static void addAfterHook(AFunction body) {
+        instance.world.addAfterHook(new ClojureHookDefinition(new String[0], body));
     }
 }

@@ -1,6 +1,5 @@
 package cucumber.runtime.snippets;
 
-import cucumber.runtime.*;
 import gherkin.formatter.NiceAppendable;
 
 import java.util.List;

@@ -19,7 +19,7 @@ class JUnitReporter implements Reporter, Formatter {
 
     private EachTestNotifier eachTestNotifier;
     private Match match;
-    private ScenarioRunner scenarioRunner;
+    private ExecutionUnitRunner executionUnitRunner;
     private RunNotifier notifier;
 
     public JUnitReporter(Reporter reporter, Formatter formatter) {
@@ -30,7 +30,7 @@ class JUnitReporter implements Reporter, Formatter {
     public void match(Match match) {
         this.match = match;
 
-        Description description = scenarioRunner.describeChild(steps.remove(0));
+        Description description = executionUnitRunner.describeChild(steps.remove(0));
         eachTestNotifier = new EachTestNotifier(notifier, description);
 
         if (match == Match.NONE) {
@@ -107,8 +107,16 @@ class JUnitReporter implements Reporter, Formatter {
         formatter.syntaxError(s, s1, strings, s2, i);
     }
 
-    public void setRunner(ScenarioRunner scenarioRunner, RunNotifier notifier) {
-        this.scenarioRunner = scenarioRunner;
+    public void setStepParentRunner(ExecutionUnitRunner executionUnitRunner, RunNotifier notifier) {
+        this.executionUnitRunner = executionUnitRunner;
         this.notifier = notifier;
+    }
+
+    public Formatter getFormatter() {
+        return formatter;
+    }
+
+    public Reporter getReporter() {
+        return reporter;
     }
 }
