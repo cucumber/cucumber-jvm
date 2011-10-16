@@ -14,14 +14,14 @@ import java.util.List;
 
 class ExecutionUnitRunner extends ParentRunner<Step> {
     private final Runtime runtime;
-    private final List<String> extraCodePaths;
+    private final List<String> codePaths;
     private final CucumberScenario cucumberScenario;
     private final JUnitReporter jUnitReporter;
 
-    public ExecutionUnitRunner(Runtime runtime, List<String> extraCodePaths, CucumberScenario cucumberScenario, JUnitReporter jUnitReporter) throws InitializationError {
+    public ExecutionUnitRunner(Runtime runtime, List<String> codePaths, CucumberScenario cucumberScenario, JUnitReporter jUnitReporter) throws InitializationError {
         super(ExecutionUnitRunner.class);
         this.runtime = runtime;
-        this.extraCodePaths = extraCodePaths;
+        this.codePaths = codePaths;
         this.cucumberScenario = cucumberScenario;
         this.jUnitReporter = jUnitReporter;
     }
@@ -45,7 +45,7 @@ class ExecutionUnitRunner extends ParentRunner<Step> {
     public void run(RunNotifier notifier) {
         jUnitReporter.setStepParentRunner(this, notifier);
         try {
-            cucumberScenario.createWorld(extraCodePaths, runtime);
+            cucumberScenario.createWorld(codePaths, runtime);
 
             /*
                We're running the background without reporting the steps as junit children - we don't want them to show up in the

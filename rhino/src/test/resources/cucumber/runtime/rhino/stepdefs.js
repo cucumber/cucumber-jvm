@@ -17,9 +17,9 @@ Then(/^there are (\d+) cukes in my belly$/, function(n) {
 });
 
 Then(/^the (.*) contains (.*)$/, function(container, ingredient) {
-  assertEquals("glass", container)
+    assertEquals("glass", container)
 });
 
 When(/^I add (.*)$/, function(liquid) {
-  assertEquals("milk", liquid);
+    assertEquals("milk", liquid);
 });

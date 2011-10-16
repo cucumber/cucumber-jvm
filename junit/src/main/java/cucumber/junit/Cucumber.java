@@ -120,12 +120,12 @@ public class Cucumber extends Suite {
     private void buildFeatureElementRunners(CucumberFeature cucumberFeature) {
         for (CucumberTagStatement cucumberTagStatement : cucumberFeature.getFeatureElements()) {
             try {
-                List<String> extraCodePaths = extraCodePaths(super.getTestClass().getJavaClass());
+                List<String> codePaths = codePaths(super.getTestClass().getJavaClass());
                 ParentRunner featureElementRunner;
                 if (cucumberTagStatement instanceof CucumberScenario) {
-                    featureElementRunner = new ExecutionUnitRunner(runtime, extraCodePaths, (CucumberScenario) cucumberTagStatement, jUnitReporter);
+                    featureElementRunner = new ExecutionUnitRunner(runtime, codePaths, (CucumberScenario) cucumberTagStatement, jUnitReporter);
                 } else {
-                    featureElementRunner = new ScenarioOutlineRunner(runtime, extraCodePaths, (CucumberScenarioOutline) cucumberTagStatement, jUnitReporter);
+                    featureElementRunner = new ScenarioOutlineRunner(runtime, codePaths, (CucumberScenarioOutline) cucumberTagStatement, jUnitReporter);
                 }
                 getChildren().add(featureElementRunner);
             } catch (InitializationError e) {
@@ -134,24 +134,24 @@ public class Cucumber extends Suite {
         }
     }
 
-    private Long[] toLong(long[] plongs) {
-        Long[] longs = new Long[plongs.length];
-        for (int i = 0; i < plongs.length; i++) {
-            longs[i] = plongs[i];
+    private Long[] toLong(long[] primitiveLongs) {
+        Long[] longs = new Long[primitiveLongs.length];
+        for (int i = 0; i < primitiveLongs.length; i++) {
+            longs[i] = primitiveLongs[i];
         }
         return longs;
     }
 
-    private List<String> extraCodePaths(Class featureClass) {
-        List<String> packageNamesOrScriptPaths = new ArrayList<String>();
+    private List<String> codePaths(Class featureClass) {
+        List<String> codePaths = new ArrayList<String>();
         String featurePackageName = featureClass.getName().substring(0, featureClass.getName().lastIndexOf("."));
-        packageNamesOrScriptPaths.add(featurePackageName);
+        codePaths.add(featurePackageName);
 
         // Add additional ones
         cucumber.junit.Feature featureAnnotation = (cucumber.junit.Feature) featureClass.getAnnotation(cucumber.junit.Feature.class);
         if (featureAnnotation != null) {
-            packageNamesOrScriptPaths.addAll(asList(featureAnnotation.packages()));
+            codePaths.addAll(asList(featureAnnotation.packages()));
         }
-        return packageNamesOrScriptPaths;
+        return codePaths;
     }
 }

@@ -29,21 +29,17 @@ public class CucumberScenarioOutline extends CucumberTagStatement {
     }
 
     @Override
-    public void run(Formatter formatter, Reporter reporter, Runtime runtime, List<Backend> backends) {
+    public void run(Formatter formatter, Reporter reporter, Runtime runtime, List<Backend> backends, List<String> codePaths) {
         throw new UnsupportedOperationException();
     }
 
     CucumberScenario createExampleScenario(Row header, Row example, Examples examples) {
-        Scenario exampleScenario = new Scenario(example.getComments(), examples.getTags(), exampleName(example), null, null, example.getLine());
-        CucumberScenario cucumberScenario = new CucumberScenario(cucumberFeature, cucumberBackground, exampleScenario);
+        Scenario exampleScenario = new Scenario(example.getComments(), examples.getTags(), tagStatement.getKeyword(), tagStatement.getName(), null, example.getLine());
+        CucumberScenario cucumberScenario = new CucumberScenario(cucumberFeature, cucumberBackground, exampleScenario, example);
         for (Step step : getSteps()) {
             cucumberScenario.step(createExampleStep(step, header, example));
         }
         return cucumberScenario;
-    }
-
-    private String exampleName(Row example) {
-        return "| " + join(example.getCells(), " | ") + " |";
     }
 
     private Step createExampleStep(Step step, Row header, Row example) {

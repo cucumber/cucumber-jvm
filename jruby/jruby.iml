@@ -25,7 +25,7 @@
     <orderEntry type="library" name="Maven: net.iharder:base64:2.3.8" level="project" />
     <orderEntry type="library" name="Maven: com.thoughtworks.xstream:xstream:1.4.1" level="project" />
     <orderEntry type="library" name="Maven: com.googlecode.java-diff-utils:diffutils:1.2.1" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jruby:jruby-complete:1.6.3" level="project" />
+    <orderEntry type="library" name="Maven: org.jruby:jruby-complete:1.6.3" level="project" />
     <orderEntry type="module" module-name="junit" scope="TEST" />
     <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.8.2" level="project" />
   </component>

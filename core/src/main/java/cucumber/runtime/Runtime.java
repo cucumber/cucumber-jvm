@@ -22,7 +22,6 @@ import static java.util.Arrays.asList;
 public class Runtime {
     private final List<Step> undefinedSteps = new ArrayList<Step>();
     private final List<Backend> backends;
-    // TODO
     private final List<String> codePaths;
 
     public Runtime() {
@@ -81,7 +80,7 @@ public class Runtime {
         formatter.uri(cucumberFeature.getUri());
         formatter.feature(cucumberFeature.getFeature());
         for (CucumberTagStatement cucumberTagStatement : cucumberFeature.getFeatureElements()) {
-            cucumberTagStatement.run(formatter, reporter, this, backends);
+            cucumberTagStatement.run(formatter, reporter, this, backends, codePaths);
         }
     }
 

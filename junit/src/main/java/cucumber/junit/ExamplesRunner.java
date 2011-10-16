@@ -13,14 +13,14 @@ import java.util.List;
 class ExamplesRunner extends Suite {
     private final CucumberExamples cucumberExamples;
 
-    protected ExamplesRunner(Runtime runtime, List<String> extraCodePaths, CucumberExamples cucumberExamples, JUnitReporter jUnitReporter) throws InitializationError {
+    protected ExamplesRunner(Runtime runtime, List<String> codePaths, CucumberExamples cucumberExamples, JUnitReporter jUnitReporter) throws InitializationError {
         super(null, new ArrayList<Runner>());
         this.cucumberExamples = cucumberExamples;
 
         List<CucumberScenario> exampleScenarios = cucumberExamples.createExampleScenarios();
         for (CucumberScenario scenario : exampleScenarios) {
             try {
-                ExecutionUnitRunner exampleScenarioRunner = new ExecutionUnitRunner(runtime, extraCodePaths, scenario, jUnitReporter);
+                ExecutionUnitRunner exampleScenarioRunner = new ExecutionUnitRunner(runtime, codePaths, scenario, jUnitReporter);
                 getChildren().add(exampleScenarioRunner);
             } catch (InitializationError initializationError) {
                 initializationError.printStackTrace();

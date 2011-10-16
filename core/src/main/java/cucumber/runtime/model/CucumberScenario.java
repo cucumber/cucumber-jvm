@@ -5,11 +5,13 @@ import cucumber.runtime.Runtime;
 import cucumber.runtime.World;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
+import gherkin.formatter.model.Row;
 import gherkin.formatter.model.Scenario;
 import gherkin.formatter.model.Step;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import static gherkin.util.FixJava.join;
 
 public class CucumberScenario extends CucumberTagStatement {
     private final CucumberBackground cucumberBackground;
@@ -20,22 +22,24 @@ public class CucumberScenario extends CucumberTagStatement {
         this.cucumberBackground = cucumberBackground;
     }
 
-    public void createWorld(List<String> codePaths, Runtime runtime) {
-//        List<String> allCodePaths = new ArrayList<String>(codePaths);
-//        allCodePaths.addAll(extraCodePaths);
+    public CucumberScenario(CucumberFeature cucumberFeature, CucumberBackground cucumberBackground, Scenario exampleScenario, Row example) {
+        super(cucumberFeature, exampleScenario, example);
+        this.cucumberBackground = cucumberBackground;
+    }
 
+    public void createWorld(List<String> codePaths, Runtime runtime) {
         world = new World(runtime, tags());
         world.prepare(codePaths);
     }
 
     @Override
-    public void run(Formatter formatter, Reporter reporter, Runtime runtime, List<Backend> backends) {
+    public void run(Formatter formatter, Reporter reporter, Runtime runtime, List<Backend> backends, List<String> codePaths) {
         // TODO: Maybe get extraPaths from scenario
 
         // TODO: split up prepareAndFormat so we can run Background in isolation.
         // Or maybe just try to make Background behave like a regular Scenario?? Printing wise at least.
 
-        createWorld(new ArrayList<String>(), runtime);
+        createWorld(codePaths, runtime);
 
         runBackground(formatter, reporter);
 
