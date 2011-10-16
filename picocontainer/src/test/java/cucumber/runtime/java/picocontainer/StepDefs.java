@@ -29,10 +29,10 @@ public class StepDefs {
     public void addLiquid(String liquid) throws InterruptedException {
         assertEquals("milk", liquid);
     }
-    
+
     @After
     public void letsSeeWhatHappened(ScenarioResult result) {
-        if(result.isFailed()) {
+        if (result.isFailed()) {
             // Maybe take a screenshot!
         }
     }

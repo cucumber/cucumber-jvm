@@ -7,7 +7,6 @@ import cucumber.resources.Resource;
 import cucumber.resources.Resources;
 import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
-import cucumber.runtime.clojure.ClojureHookDefinition;
 import cucumber.runtime.World;
 import gherkin.formatter.model.Step;
 

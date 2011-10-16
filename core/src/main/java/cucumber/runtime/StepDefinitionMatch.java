@@ -59,8 +59,8 @@ public class StepDefinitionMatch extends Match {
      */
     private Object[] transformedArgs(Class<?>[] parameterTypes, Step step, XStream xStream) {
         int argumentCount = getArguments().size();
-        if(step.getDocString() != null) argumentCount++;
-        if(step.getRows() != null) argumentCount++;
+        if (step.getDocString() != null) argumentCount++;
+        if (step.getRows() != null) argumentCount++;
         if (parameterTypes != null && parameterTypes.length != argumentCount) {
             throw new CucumberException("Arity mismatch. Parameters: " + asList(parameterTypes) + ". Matched arguments: " + getArguments());
         }

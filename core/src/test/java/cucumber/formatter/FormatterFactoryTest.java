@@ -3,10 +3,9 @@ package cucumber.formatter;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.JSONFormatter;
 import gherkin.formatter.PrettyFormatter;
+import org.junit.Test;
 
 import java.io.StringWriter;
-
-import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertSame;

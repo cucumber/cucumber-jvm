@@ -3,7 +3,6 @@ package cucumber.cli;
 import cucumber.formatter.FormatterFactory;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.snippets.SnippetPrinter;
-
 import gherkin.formatter.Formatter;
 
 import java.util.ArrayList;

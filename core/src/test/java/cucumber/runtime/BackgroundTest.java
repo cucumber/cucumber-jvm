@@ -39,7 +39,7 @@ public class BackgroundTest {
     }
 
     // TODO: Add some negative tests to verify how it behaves with failure
-    
+
     private class TestBackend implements Backend {
         @Override
         public void buildWorld(List<String> codePaths, World world) {

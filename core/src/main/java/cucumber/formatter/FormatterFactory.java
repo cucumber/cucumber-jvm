@@ -1,5 +1,6 @@
 package cucumber.formatter;
 
+import cucumber.runtime.CucumberException;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.JSONFormatter;
 import gherkin.formatter.PrettyFormatter;
@@ -7,8 +8,6 @@ import gherkin.formatter.Reporter;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-
-import cucumber.runtime.CucumberException;
 
 public class FormatterFactory {
 
@@ -29,7 +28,6 @@ public class FormatterFactory {
     }
 
     /**
-     * 
      * @param formatter
      * @return reporter if the formatter also implements Reporter else returns
      *         {@link NullReporter}

@@ -103,8 +103,8 @@ class JUnitReporter implements Reporter, Formatter {
     }
 
     @Override
-    public void syntaxError(String s, String s1, List<String> strings, String s2, int i) {
-        formatter.syntaxError(s, s1, strings, s2, i);
+    public void syntaxError(String state, String event, List<String> legalEvents, String uri, int line) {
+        formatter.syntaxError(state, event, legalEvents, uri, line);
     }
 
     public void setStepParentRunner(ExecutionUnitRunner executionUnitRunner, RunNotifier notifier) {

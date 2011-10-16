@@ -1,6 +1,7 @@
 package cucumber.runtime.clojure;
 
 // import cucumber.runtime.CucumberException;
+
 import clojure.lang.AFunction;
 import cucumber.runtime.HookDefinition;
 import cucumber.runtime.ScenarioResult;

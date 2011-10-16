@@ -17,9 +17,9 @@ public class CucumberExamples {
 
     public List<CucumberScenario> createExampleScenarios() {
         List<CucumberScenario> exampleScenarios = new ArrayList<CucumberScenario>();
-        
+
         List<Row> rows = examples.getRows();
-        for(int i = 1; i < rows.size(); i++) {
+        for (int i = 1; i < rows.size(); i++) {
             exampleScenarios.add(cucumberScenarioOutline.createExampleScenario(rows.get(0), rows.get(i), examples));
         }
         return exampleScenarios;

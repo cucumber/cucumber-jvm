@@ -3,7 +3,6 @@ package cucumber.runtime.converters;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.SingleValueConverter;
 import com.thoughtworks.xstream.converters.SingleValueConverterWrapper;
-import com.thoughtworks.xstream.converters.javabean.JavaBeanConverter;
 import com.thoughtworks.xstream.core.DefaultConverterLookup;
 
 import java.util.HashMap;

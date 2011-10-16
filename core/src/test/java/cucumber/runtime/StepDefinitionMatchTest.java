@@ -1,7 +1,6 @@
 package cucumber.runtime;
 
 import cucumber.runtime.converters.LocalizedXStreams;
-import cucumber.table.Table;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.DocString;
 import gherkin.formatter.model.Step;
@@ -9,10 +8,8 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Locale;
 
-import static java.util.Collections.emptyList;
 import static org.mockito.Mockito.*;
 
 public class StepDefinitionMatchTest {

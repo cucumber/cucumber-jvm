@@ -47,7 +47,7 @@ public class XStreamMapReader extends AbstractReader {
     private String attributeValue;
 
     private boolean entryKey = true;
-    
+
     public XStreamMapReader(List<String> attributeNames, List<List<String>> items) {
         this.attributeNames = attributeNames;
         this.itemIterator = items.iterator();
