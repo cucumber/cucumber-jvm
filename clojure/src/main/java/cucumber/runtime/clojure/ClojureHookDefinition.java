@@ -27,7 +27,7 @@ public class ClojureHookDefinition implements HookDefinition {
 
     // Clojure's AFunction.invokeWithArgs doesn't take varargs :-/
     private Method lookupInvokeMethod(Object[] args) throws NoSuchMethodException {
-        return AFunction.class.getMethod("invoke", Utils.classArray(args.length, Object.class));
+        return AFunction.class.getMethod("invoke", Utils.classArray(args.length, String.class));
     }
 
     @Override

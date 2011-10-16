@@ -18,7 +18,7 @@ class JUnitReporterFactory {
     
     static JUnitReporter create(String reporterString) {
         Formatter formatter = null;
-        FormatterFactory formatterReporterFactory = new FormatterFactory();
+        FormatterFactory formatterFactory = new FormatterFactory();
         if(reporterString != null) {
             String[] nameAndOut = reporterString.split("=");
             String name = nameAndOut[0];
@@ -46,11 +46,11 @@ class JUnitReporterFactory {
                 System.err.println("ERROR: Failed to create file " + nameAndOut[0] + ". Using STDOUT instead.");
                 appendable = System.out;
             }
-            formatter = formatterReporterFactory.createFormatter(name, appendable);
+            formatter = formatterFactory.createFormatter(name, appendable);
         }
         if(formatter == null) {
             formatter = new NullReporter();
         }
-        return new JUnitReporter(formatterReporterFactory.reporter(formatter), formatter);
+        return new JUnitReporter(formatterFactory.reporter(formatter), formatter);
     }
 }
