@@ -12,12 +12,15 @@ import java.lang.reflect.InvocationTargetException;
 public class FormatterFactory {
 
     private static final String CUCUMBER_MONOCHROME_PROPERTY = "cucumber.monochrome";
+    private static final String PROGRESS_FORMATTER = "progress";
     private static final String HTML_FORMATTER = "html";
     private static final String JSON_FORMATTER = "json";
     private static final String PRETTY_FORMATTER = "pretty";
 
     public Formatter createFormatter(String formatterName, Appendable appendable) {
-        if (PRETTY_FORMATTER.equals(formatterName)) {
+        if (PROGRESS_FORMATTER.equals(formatterName)) {
+            return new ProgressFormatter(appendable, isMonochrome());
+        } else if (PRETTY_FORMATTER.equals(formatterName)) {
             return new PrettyFormatter(appendable, isMonochrome(), true);
         } else if (JSON_FORMATTER.equals(formatterName)) {
             return new JSONFormatter(appendable);

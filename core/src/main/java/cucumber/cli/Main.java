@@ -18,7 +18,7 @@ public class Main {
         List<String> filesOrDirs = new ArrayList<String>();
         List<String> packageNamesOrScriptPaths = new ArrayList<String>();
         List<Object> filters = new ArrayList<Object>();
-        String format = "html";
+        String format = "progress";
         List<String> args = new ArrayList<String>(asList(argv));
         while (!args.isEmpty()) {
             String arg = args.remove(0);
