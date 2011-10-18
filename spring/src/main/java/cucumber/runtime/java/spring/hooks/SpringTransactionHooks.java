@@ -64,7 +64,7 @@ public class SpringTransactionHooks implements BeanFactoryAware {
     }
 
     PlatformTransactionManager obtainPlatformTransactionManager() {
-        if (txnManagerBeanName == null) {
+        if (getTxnManagerBeanName() == null) {
             return beanFactory.getBean(PlatformTransactionManager.class);
         } else {
             return beanFactory.getBean(txnManagerBeanName, PlatformTransactionManager.class);
