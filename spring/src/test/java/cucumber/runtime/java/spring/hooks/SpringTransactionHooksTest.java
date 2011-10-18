@@ -15,14 +15,14 @@ import org.springframework.transaction.support.SimpleTransactionStatus;
 @RunWith(MockitoJUnitRunner.class)
 public class SpringTransactionHooksTest {
 
-	private AbstractSpringTransactionHooks target;
+	private SpringTransactionHooks target;
 	
 	@Mock
 	private PlatformTransactionManager mockedPlatformTransactionManager;
 	
 	@Before
 	public void setUp() {
-		target = new AbstractSpringTransactionHooks();
+		target = new SpringTransactionHooks();
 		target.setPlatformTransactionManager(mockedPlatformTransactionManager);
 	}
 	
