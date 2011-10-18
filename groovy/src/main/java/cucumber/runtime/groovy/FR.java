@@ -13,6 +13,34 @@ public class FR {
         GroovyBackend.addStepDefinition(regexp, body);
     }
 
+    public static void Etantdonnée(Pattern regexp, Closure body) throws Throwable {
+        GroovyBackend.addStepDefinition(regexp, body);
+    }
+
+    public static void Etantdonnés(Pattern regexp, Closure body) throws Throwable {
+        GroovyBackend.addStepDefinition(regexp, body);
+    }
+
+    public static void Etantdonnées(Pattern regexp, Closure body) throws Throwable {
+        GroovyBackend.addStepDefinition(regexp, body);
+    }
+
+    public static void Étantdonné(Pattern regexp, Closure body) throws Throwable {
+        GroovyBackend.addStepDefinition(regexp, body);
+    }
+
+    public static void Étantdonnée(Pattern regexp, Closure body) throws Throwable {
+        GroovyBackend.addStepDefinition(regexp, body);
+    }
+
+    public static void Étantdonnés(Pattern regexp, Closure body) throws Throwable {
+        GroovyBackend.addStepDefinition(regexp, body);
+    }
+
+    public static void Étantdonnées(Pattern regexp, Closure body) throws Throwable {
+        GroovyBackend.addStepDefinition(regexp, body);
+    }
+
     public static void Quand(Pattern regexp, Closure body) throws Throwable {
         GroovyBackend.addStepDefinition(regexp, body);
     }
