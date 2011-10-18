@@ -75,8 +75,6 @@ public class SpringTransactionHooksTest {
 		final SimpleTransactionStatus dummyTxStatus = new SimpleTransactionStatus();
 		target.txStatus = dummyTxStatus;
 		
-		mockedPlatformTransactionManager.rollback(dummyTxStatus);
-		
 		target.rollBackAfterHook();
 		
 		verify(mockedPlatformTransactionManager).rollback(dummyTxStatus);

@@ -60,7 +60,7 @@ public class SpringTransactionHooks implements BeanFactoryAware {
     
     @After({"@txn"})
     public void rollBackAfterHook() {
-//        obtainPlatformTransactionManager().rollback(txStatus);
+        obtainPlatformTransactionManager().rollback(txStatus);
     }
 
     PlatformTransactionManager obtainPlatformTransactionManager() {
