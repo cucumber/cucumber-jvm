@@ -90,7 +90,7 @@
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
-                <artifactId>spring-context</artifactId>
+                <artifactId>spring-tx</artifactId>
                 <version>3.0.6.RELEASE</version>
             </dependency>
             <dependency>
