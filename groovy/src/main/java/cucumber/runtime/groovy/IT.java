@@ -9,6 +9,18 @@ public class IT {
         GroovyBackend.addStepDefinition(regexp, body);
     }
 
+    public static void Data(Pattern regexp, Closure body) throws Throwable {
+        GroovyBackend.addStepDefinition(regexp, body);
+    }
+
+    public static void Dati(Pattern regexp, Closure body) throws Throwable {
+        GroovyBackend.addStepDefinition(regexp, body);
+    }
+
+    public static void Date(Pattern regexp, Closure body) throws Throwable {
+        GroovyBackend.addStepDefinition(regexp, body);
+    }
+
     public static void Quando(Pattern regexp, Closure body) throws Throwable {
         GroovyBackend.addStepDefinition(regexp, body);
     }

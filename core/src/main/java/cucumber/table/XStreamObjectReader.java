@@ -8,9 +8,23 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Adapts rows in a table to an XStream Reader so that XStream can turn it into a List of objects.
+ * Generates XStream XML data from table rows that will create a List of objects. Example:
+ * <pre>
+ * <list>
+ *     <cucumber.table.TableConverterTest_-UserPojo>
+ *         <name>Sid Vicious</name>
+ *         <birthDate>1957-05-10 00:00:00.0 UTC</birthDate>
+ *         <credits>1000</credits>
+ *     </cucumber.table.TableConverterTest_-UserPojo>
+ *     <cucumber.table.TableConverterTest_-UserPojo>
+ *         <name>Frank Zappa</name>
+ *         <birthDate>1940-12-21 00:00:00.0 UTC</birthDate>
+ *         <credits>3000</credits>
+ *     </cucumber.table.TableConverterTest_-UserPojo>
+ * </list>
+ * </pre>
  */
-class XStreamTableReader extends AbstractReader {
+class XStreamObjectReader extends AbstractReader {
     private final Class elementType;
     private final List<String> attributeNames;
     private final Iterator<List<String>> itemIterator;
@@ -22,7 +36,7 @@ class XStreamTableReader extends AbstractReader {
     private Iterator<String> attributeValueIterator;
     private String attributeValue;
 
-    public XStreamTableReader(Class elementType, List<String> attributeNames, List<List<String>> items) {
+    public XStreamObjectReader(Class elementType, List<String> attributeNames, List<List<String>> items) {
         this.elementType = elementType;
         this.attributeNames = attributeNames;
         this.itemIterator = items.iterator();

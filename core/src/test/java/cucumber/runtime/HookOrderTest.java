@@ -16,7 +16,7 @@ public class HookOrderTest {
 
     @Before
     public void buildMockWorld() {
-        world = new World(new ArrayList<Backend>(), mock(Runtime.class), new ArrayList<String>());
+        world = new World(mock(Runtime.class), new ArrayList<String>());
     }
 
     @Test

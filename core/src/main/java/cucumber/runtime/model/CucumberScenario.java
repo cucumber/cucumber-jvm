@@ -1,54 +1,77 @@
 package cucumber.runtime.model;
 
+import cucumber.runtime.Backend;
+import cucumber.runtime.Runtime;
 import cucumber.runtime.World;
+import gherkin.formatter.Formatter;
+import gherkin.formatter.Reporter;
+import gherkin.formatter.model.Row;
 import gherkin.formatter.model.Scenario;
 import gherkin.formatter.model.Step;
-import gherkin.formatter.model.Tag;
 
-import java.util.*;
+import java.util.List;
 
-public class CucumberScenario {
-    private final List<Step> steps = new ArrayList<Step>();
-    private final Scenario scenario;
-    private final CucumberFeature cucumberFeature;
-    private final String uri;
+import static gherkin.util.FixJava.join;
 
+public class CucumberScenario extends CucumberTagStatement {
+    private final CucumberBackground cucumberBackground;
     private World world;
 
-    public CucumberScenario(CucumberFeature cucumberFeature, String uri, Scenario scenario) {
-        this.cucumberFeature = cucumberFeature;
-        this.uri = uri;
-        this.scenario = scenario;
+    public CucumberScenario(CucumberFeature cucumberFeature, CucumberBackground cucumberBackground, Scenario scenario) {
+        super(cucumberFeature, scenario);
+        this.cucumberBackground = cucumberBackground;
     }
 
-    public Scenario getScenario() {
-        return scenario;
+    public CucumberScenario(CucumberFeature cucumberFeature, CucumberBackground cucumberBackground, Scenario exampleScenario, Row example) {
+        super(cucumberFeature, exampleScenario, example);
+        this.cucumberBackground = cucumberBackground;
     }
 
-    public List<Step> getSteps() {
-        return steps;
+    public void createWorld(List<String> codePaths, Runtime runtime) {
+        world = new World(runtime, tags());
+        world.prepare(codePaths);
     }
 
-    public void step(Step step) {
-        steps.add(step);
-    }
+    @Override
+    public void run(Formatter formatter, Reporter reporter, Runtime runtime, List<Backend> backends, List<String> codePaths) {
+        // TODO: Maybe get extraPaths from scenario
 
-    public Set<String> tags() {
-        Set<String> tags = new HashSet<String>();
-        for (Tag tag : cucumberFeature.getFeature().getTags()) {
-            tags.add(tag.getName());
+        // TODO: split up prepareAndFormat so we can run Background in isolation.
+        // Or maybe just try to make Background behave like a regular Scenario?? Printing wise at least.
+
+        createWorld(codePaths, runtime);
+
+        runBackground(formatter, reporter);
+
+        format(formatter);
+        for (Step step : getSteps()) {
+            runStep(step, reporter);
         }
-        for (Tag tag : scenario.getTags()) {
-            tags.add(tag.getName());
+        disposeWorld();
+    }
+
+    public Throwable runBackground(Formatter formatter, Reporter reporter) {
+        if (cucumberBackground == null) {
+            return null;
         }
-        return tags;
+        cucumberBackground.format(formatter);
+        List<Step> steps = cucumberBackground.getSteps();
+        Throwable failure = null;
+        for (Step step : steps) {
+            Throwable e = runStep(step, reporter);
+            if (e != null) {
+                failure = e;
+            }
+        }
+        return failure;
     }
 
-    public String getUri() {
-        return uri;
+    public Throwable runStep(Step step, Reporter reporter) {
+        return world.runStep(getUri(), step, reporter, getLocale());
     }
 
-    public Locale getLocale() {
-        return cucumberFeature.getLocale();
+    public void disposeWorld() {
+        world.dispose();
     }
+
 }

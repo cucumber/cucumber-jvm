@@ -9,6 +9,18 @@ public class ES {
         GroovyBackend.addStepDefinition(regexp, body);
     }
 
+    public static void Dada(Pattern regexp, Closure body) throws Throwable {
+        GroovyBackend.addStepDefinition(regexp, body);
+    }
+
+    public static void Dados(Pattern regexp, Closure body) throws Throwable {
+        GroovyBackend.addStepDefinition(regexp, body);
+    }
+
+    public static void Dadas(Pattern regexp, Closure body) throws Throwable {
+        GroovyBackend.addStepDefinition(regexp, body);
+    }
+
     public static void Cuando(Pattern regexp, Closure body) throws Throwable {
         GroovyBackend.addStepDefinition(regexp, body);
     }

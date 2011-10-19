@@ -1,4 +1,4 @@
-package cucumber.runtime;
+package cucumber.formatter;
 
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
@@ -40,7 +40,7 @@ public class NullReporter implements Reporter, Formatter {
     }
 
     @Override
-    public void syntaxError(String s, String s1, List<String> strings, String s2, int i) {
+    public void syntaxError(String state, String event, List<String> legalEvents, String uri, int line) {
     }
 
     @Override

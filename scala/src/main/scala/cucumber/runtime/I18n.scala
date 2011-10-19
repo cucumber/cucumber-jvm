@@ -126,7 +126,10 @@ trait EO {
 trait ES {
   this: ScalaDsl =>
   val Cuando = new Step("Cuando")
+  val Dada = new Step("Dada")
+  val Dadas = new Step("Dadas")
   val Dado = new Step("Dado")
+  val Dados = new Step("Dados")
   val Entonces = new Step("Entonces")
   val Pero = new Step("Pero")
   val Y = new Step("Y")
@@ -152,11 +155,18 @@ trait FR {
   val Alors = new Step("Alors")
   val Et = new Step("Et")
   val Etantdonné = new Step("Etantdonné")
+  val Etantdonnée = new Step("Etantdonnée")
+  val Etantdonnées = new Step("Etantdonnées")
+  val Etantdonnés = new Step("Etantdonnés")
   val Lorsqu = new Step("Lorsqu")
   val Lorsque = new Step("Lorsque")
   val Mais = new Step("Mais")
   val Quand = new Step("Quand")
   val Soit = new Step("Soit")
+  val Étantdonné = new Step("Étantdonné")
+  val Étantdonnée = new Step("Étantdonnée")
+  val Étantdonnées = new Step("Étantdonnées")
+  val Étantdonnés = new Step("Étantdonnés")
 }
 trait HE {
   this: ScalaDsl =>
@@ -208,6 +218,9 @@ trait IS {
 trait IT {
   this: ScalaDsl =>
   val Allora = new Step("Allora")
+  val Data = new Step("Data")
+  val Date = new Step("Date")
+  val Dati = new Step("Dati")
   val Dato = new Step("Dato")
   val E = new Step("E")
   val Ma = new Step("Ma")
@@ -290,7 +303,10 @@ trait PL {
 }
 trait PT {
   this: ScalaDsl =>
+  val Dada = new Step("Dada")
+  val Dadas = new Step("Dadas")
   val Dado = new Step("Dado")
+  val Dados = new Step("Dados")
   val E = new Step("E")
   val Entao = new Step("Entao")
   val Então = new Step("Então")

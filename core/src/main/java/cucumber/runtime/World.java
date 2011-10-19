@@ -14,33 +14,31 @@ import java.util.*;
 public class World {
     private static final Object DUMMY_ARG = new Object();
 
+    // TODO - it's expensive to create a new LocalizedXStreams for each scenario - reuse a global one.
     private final LocalizedXStreams localizedXStreams = new LocalizedXStreams();
     private final TableHeaderMapper tableHeaderMapper = new CamelCaseHeaderMapper();
     private final List<StepDefinition> stepDefinitions = new ArrayList<StepDefinition>();
     private final List<HookDefinition> beforeHooks = new ArrayList<HookDefinition>();
     private final List<HookDefinition> afterHooks = new ArrayList<HookDefinition>();
 
-    private final List<Backend> backends;
     private final Runtime runtime;
     private final Collection<String> tags;
 
     private boolean skipNextStep = false;
     private ScenarioResultImpl scenarioResult;
 
-    public World(List<Backend> backends, Runtime runtime, Collection<String> tags) {
-        this.backends = backends;
+    public World(Runtime runtime, Collection<String> tags) {
         this.runtime = runtime;
         this.tags = tags;
     }
 
     public void prepare(List<String> codePaths) {
-        for (Backend backend : backends) {
-            backend.buildWorld(codePaths, this);
-        }
+        runtime.buildWorlds(codePaths, this);
 
         scenarioResult = new ScenarioResultImpl();
         Collections.sort(beforeHooks, new HookComparator(true));
         for (HookDefinition hook : beforeHooks) {
+            // We're passing in null deliberately so Before hooks can't access the result.
             runHookMaybe(hook, null);
         }
     }
@@ -61,9 +59,7 @@ public class World {
         for (HookDefinition hook : afterHooks) {
             runHookMaybe(hook, scenarioResult);
         }
-        for (Backend backend : backends) {
-            backend.disposeWorld();
-        }
+        runtime.disposeWorlds();
     }
 
     private void runHookMaybe(HookDefinition hook, ScenarioResult scenarioResult) {
@@ -77,7 +73,7 @@ public class World {
         }
     }
 
-    public void runStep(String uri, Step step, Reporter reporter, Locale locale) {
+    public Throwable runStep(String uri, Step step, Reporter reporter, Locale locale) {
         StepDefinitionMatch match = stepDefinitionMatch(uri, step);
         if (match != null) {
             reporter.match(match);
@@ -86,12 +82,12 @@ public class World {
             skipNextStep = true;
         }
 
+        Throwable e = null;
         if (skipNextStep) {
             // Undefined steps (Match.NONE) will always get the Result.SKIPPED result
             scenarioResult.add(Result.SKIPPED);
             reporter.result(Result.SKIPPED);
         } else {
-            Throwable e = null;
             long start = System.nanoTime();
             try {
                 match.runStep(locale);
@@ -106,6 +102,7 @@ public class World {
                 reporter.result(result);
             }
         }
+        return e;
     }
 
     private StepDefinitionMatch stepDefinitionMatch(String uri, Step step) {

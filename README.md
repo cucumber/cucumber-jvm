@@ -11,10 +11,8 @@ Cucumber-JVM is a pure Java implementation of Cucumber that supports the followi
 
 Cucumber-JVM provides the following mechanisms for running Cucumber Features:
 
-* Ant
 * Command Line
-* JUnit (from an IDE)
-* Maven
+* JUnit (via IDE, Maven, Ant or anything that knows how to run JUnit)
 
 Cucumber-JVM also integrates with the following Dependency Injection containers:
 

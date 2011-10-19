@@ -64,4 +64,12 @@ public class ClojureBackend implements Backend {
         StackTraceElement location = instance.stepDefLocation("clojure.lang.Compiler", "eval");
         instance.world.addStepDefinition(new ClojureStepDefinition(regexp, body, location));
     }
+
+    public static void addBeforeHook(AFunction body) {
+        instance.world.addBeforeHook(new ClojureHookDefinition(new String[0], body));
+    }
+
+    public static void addAfterHook(AFunction body) {
+        instance.world.addAfterHook(new ClojureHookDefinition(new String[0], body));
+    }
 }

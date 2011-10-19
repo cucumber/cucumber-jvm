@@ -1,9 +1,8 @@
 package cucumber.junit;
 
-import cucumber.runtime.NullReporter;
+import cucumber.formatter.FormatterFactory;
+import cucumber.formatter.NullReporter;
 import gherkin.formatter.Formatter;
-import gherkin.formatter.PrettyFormatter;
-import gherkin.formatter.Reporter;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -11,23 +10,22 @@ import java.io.IOException;
 class JUnitReporterFactory {
     /**
      * Creates a JUnitReporter with an underlying gherkin reporter/formatter.
-     * 
+     *
      * @param reporterString what underlying reporter/formatter to create
      * @return a reporter
      */
-    static JUnitReporter create(String reporterString) {
-        Reporter reporter = null;
-        Formatter formatter;
 
-        if(reporterString != null) {
+    static JUnitReporter create(String reporterString) {
+        Formatter formatter = null;
+        FormatterFactory formatterFactory = new FormatterFactory();
+        if (reporterString != null) {
             String[] nameAndOut = reporterString.split("=");
             String name = nameAndOut[0];
             Appendable appendable;
             try {
                 if (nameAndOut.length < 2) {
                     appendable = System.out;
-                }
-                else {
+                } else {
                     final FileWriter fw = new FileWriter(nameAndOut[1]);
                     Runtime.getRuntime().addShutdownHook(new Thread() {
                         @Override
@@ -39,27 +37,18 @@ class JUnitReporterFactory {
                             }
                         }
                     });
-                    
+
                     appendable = fw;
                 }
             } catch (IOException e) {
                 System.err.println("ERROR: Failed to create file " + nameAndOut[0] + ". Using STDOUT instead.");
                 appendable = System.out;
             }
-            if(name.equals("pretty")) {
-                reporter = new PrettyFormatter(appendable, false, true);
-            } else {
-                // TODO: instantiate it with reflection. name is classname. expect one arg (Appendable).
-            }
+            formatter = formatterFactory.createFormatter(name, appendable);
         }
-        if(reporter == null) {
-            reporter = new NullReporter();
-        }
-        if(reporter instanceof Formatter) {
-            formatter = (Formatter) reporter;           
-        } else {
+        if (formatter == null) {
             formatter = new NullReporter();
         }
-        return new JUnitReporter(reporter, formatter);
+        return new JUnitReporter(formatterFactory.reporter(formatter), formatter);
     }
 }

@@ -1,8 +1,9 @@
 package cucumber.cli;
 
+import cucumber.formatter.FormatterFactory;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.snippets.SnippetPrinter;
-import gherkin.formatter.PrettyFormatter;
+import gherkin.formatter.Formatter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +18,7 @@ public class Main {
         List<String> filesOrDirs = new ArrayList<String>();
         List<String> packageNamesOrScriptPaths = new ArrayList<String>();
         List<Object> filters = new ArrayList<Object>();
-
+        String format = "progress";
         List<String> args = new ArrayList<String>(asList(argv));
         while (!args.isEmpty()) {
             String arg = args.remove(0);
@@ -33,6 +34,8 @@ public class Main {
                 packageNamesOrScriptPaths.add(packageNameOrScriptPath);
             } else if (arg.equals("--tags") || arg.equals("-t")) {
                 filters.add(args.remove(0));
+            } else if (arg.equals("--format") || arg.equals("-f")) {
+                format = args.remove(0);
             } else {
                 filesOrDirs.add(arg);
             }
@@ -43,10 +46,10 @@ public class Main {
         }
 
         Runtime runtime = new Runtime(packageNamesOrScriptPaths);
-        Runner runner = new Runner(runtime);
 
-        PrettyFormatter prettyFormatter = new PrettyFormatter(System.out, false, true);
-        runner.run(filesOrDirs, filters, prettyFormatter, prettyFormatter);
+        FormatterFactory formatterReporterFactory = new FormatterFactory();
+        Formatter formatter = formatterReporterFactory.createFormatter(format, System.out);
+        runtime.run(filesOrDirs, filters, formatter, formatterReporterFactory.reporter(formatter));
 
         new SnippetPrinter(System.out).printSnippets(runtime);
 

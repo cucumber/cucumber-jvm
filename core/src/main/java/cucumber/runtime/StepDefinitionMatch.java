@@ -1,5 +1,6 @@
 package cucumber.runtime;
 
+import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.ConverterLookup;
 import com.thoughtworks.xstream.converters.SingleValueConverter;
 import cucumber.runtime.converters.LocalizedXStreams;
@@ -18,7 +19,7 @@ import static java.util.Arrays.asList;
 
 public class StepDefinitionMatch extends Match {
     private final StepDefinition stepDefinition;
-    private final String uri;
+    private final transient String uri;
     // The official JSON gherkin format doesn't have a step attribute, so we're marking this as transient
     // to prevent it from ending up in the JSON.
     private final transient Step step;
@@ -39,7 +40,7 @@ public class StepDefinitionMatch extends Match {
             throw new NullPointerException("null Locale!");
         }
         try {
-            Object[] args = transformedArgs(stepDefinition.getParameterTypes(), step, locale);
+            Object[] args = transformedArgs(stepDefinition.getParameterTypes(), step, localizedXStreams.get(locale));
             stepDefinition.execute(args);
         } catch (CucumberException e) {
             throw e;
@@ -53,19 +54,19 @@ public class StepDefinitionMatch extends Match {
     /**
      * @param parameterTypes types of the stepdefs args. Some backends will pass null if they can't determine types or arity.
      * @param step
-     * @param locale
+     * @param xStream
      * @return an Array matching the types or {@code parameterTypes}, or an array of String if {@code parameterTypes} is null
      */
-    private Object[] transformedArgs(Class<?>[] parameterTypes, Step step, Locale locale) {
+    private Object[] transformedArgs(Class<?>[] parameterTypes, Step step, XStream xStream) {
         int argumentCount = getArguments().size();
-        if(step.getDocString() != null) argumentCount++;
-        if(step.getRows() != null) argumentCount++;
+        if (step.getDocString() != null) argumentCount++;
+        if (step.getRows() != null) argumentCount++;
         if (parameterTypes != null && parameterTypes.length != argumentCount) {
             throw new CucumberException("Arity mismatch. Parameters: " + asList(parameterTypes) + ". Matched arguments: " + getArguments());
         }
 
         Object[] result = new Object[argumentCount];
-        ConverterLookup converterLookup = localizedXStreams.get(locale).getConverterLookup();
+        ConverterLookup converterLookup = xStream.getConverterLookup();
 
         int n = 0;
         for (Argument a : getArguments()) {
@@ -81,15 +82,15 @@ public class StepDefinitionMatch extends Match {
         }
 
         if (step.getRows() != null) {
-            result[n] = tableArgument(step, n++, locale);
+            result[n] = tableArgument(step, n++, xStream);
         } else if (step.getDocString() != null) {
             result[n] = step.getDocString().getValue();
         }
         return result;
     }
 
-    private Object tableArgument(Step step, int argIndex, Locale locale) {
-        Table table = new Table(step.getRows(), new TableConverter(localizedXStreams.get(locale)), tableHeaderMapper);
+    private Object tableArgument(Step step, int argIndex, XStream xStream) {
+        Table table = new Table(step.getRows(), new TableConverter(xStream), tableHeaderMapper);
 
         Class listType = stepDefinition.getTypeForTableList(argIndex);
         if (listType != null) {

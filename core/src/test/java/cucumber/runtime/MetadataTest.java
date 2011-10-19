@@ -52,7 +52,7 @@ public class MetadataTest {
             }
 
             @Override
-            public InputStream getInputStream()  {
+            public InputStream getInputStream() {
                 try {
                     return new ByteArrayInputStream(("" +
                             "Feature: Test\n" +
