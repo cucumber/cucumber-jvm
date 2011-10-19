@@ -186,6 +186,13 @@
       </item>
     </group>
   </component>
+  <component name="ProjectDictionaryState">
+    <dictionary name="ahellesoy">
+      <words>
+        <w>defs</w>
+      </words>
+    </dictionary>
+  </component>
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/clojure/cucumber-clojure.iml" filepath="$PROJECT_DIR$/clojure/cucumber-clojure.iml" />

@@ -20,7 +20,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static junit.framework.Assert.assertEquals;
 
-public class JavaBeanTableProcessorTest {
+public class JavaTableProcessorTest {
 
     private static final List<Argument> NO_ARGS = emptyList();
     private static final List<Comment> NO_COMMENTS = emptyList();
@@ -28,6 +28,7 @@ public class JavaBeanTableProcessorTest {
     public static class StepDefs {
         public List<UserPojo> userPojos;
         public List<UserBean> userBeans;
+        public List<Map<String, String>> userMaps;
 
         public void listOfPojos(List<UserPojo> userPojos) {
             this.userPojos = userPojos;
@@ -36,27 +37,38 @@ public class JavaBeanTableProcessorTest {
         public void listOfBeans(List<UserBean> userBeans) {
             this.userBeans = userBeans;
         }
+
+        public void listOfMaps(List<Map<String,String>> userMaps) {
+            this.userMaps = userMaps;
+        }
     }
 
     @Test
-    public void transforms_to_list_of_pojos_by_default() throws Throwable {
+    public void transforms_to_list_of_pojos() throws Throwable {
         Method listOfPojos = StepDefs.class.getMethod("listOfPojos", List.class);
         StepDefs stepDefs = runStepDef(listOfPojos);
         assertEquals(sidsBirthday(), stepDefs.userPojos.get(0).birthDate);
     }
 
     @Test
-    public void transforms_to_list_of_beans_when_annotated() throws Throwable {
+    public void transforms_to_list_of_beans() throws Throwable {
         Method listOfBeans = StepDefs.class.getMethod("listOfBeans", List.class);
         StepDefs stepDefs = runStepDef(listOfBeans);
         assertEquals(sidsBirthday(), stepDefs.userBeans.get(0).getBirthDate());
+    }
+
+    @Test
+    public void transforms_to_list_of_maps() throws Throwable {
+        Method listOfBeans = StepDefs.class.getMethod("listOfMaps", List.class);
+        StepDefs stepDefs = runStepDef(listOfBeans);
+        assertEquals("10/05/1957", stepDefs.userMaps.get(0).get("birth date"));
     }
 
     private StepDefs runStepDef(Method method) throws Throwable {
         StepDefs stepDefs = new StepDefs();
         StepDefinition stepDefinition = new JavaStepDefinition(Pattern.compile("whatever"), method, new SingletonFactory(stepDefs));
 
-        Step stepWithRows = new Step(NO_COMMENTS, "Given", "something that wants users", 10);
+        Step stepWithRows = new Step(NO_COMMENTS, "Given ", "something that wants users", 10);
         stepWithRows.setRows(rowsList());
 
         StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(NO_ARGS, stepDefinition, "some.feature", stepWithRows, new LocalizedXStreams(), new CamelCaseHeaderMapper());
@@ -66,8 +78,8 @@ public class JavaBeanTableProcessorTest {
 
     private List<Row> rowsList() {
         List<Row> rows = new ArrayList<Row>();
-        rows.add(new Row(new ArrayList<Comment>(), asList("birth date"), 1));
-        rows.add(new Row(new ArrayList<Comment>(), asList("10/05/1957"), 2));
+        rows.add(new Row(NO_COMMENTS, asList("birth date"), 1));
+        rows.add(new Row(NO_COMMENTS, asList("10/05/1957"), 2));
         return rows;
     }
 
