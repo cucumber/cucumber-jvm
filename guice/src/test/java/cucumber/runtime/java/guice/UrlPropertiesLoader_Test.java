@@ -34,15 +34,14 @@ public class UrlPropertiesLoader_Test {
         Properties originalProperties = new Properties();
         originalProperties.put("key", "value");
         URL propertiesFileUrl = writeToAFile(originalProperties);
-
+        
         Properties loadedProperties = loader.load(propertiesFileUrl);
         assertThat(loadedProperties, is(originalProperties));
     }
 
-    @Test
-    public void testName() throws Exception {
+    @Test(expected=LoadingPropertiesFileFailed.class)
+    public void onExceptionDuringPropertiesLoading() throws Exception {
         URL noneExistingPropertiesFile = aNoneExistingFile();
-        UrlPropertiesLoader loader = new UrlPropertiesLoader();
         loader.load(noneExistingPropertiesFile);
     }
 
