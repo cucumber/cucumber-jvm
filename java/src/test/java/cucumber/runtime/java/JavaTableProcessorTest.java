@@ -35,8 +35,6 @@ public class JavaTableProcessorTest {
         public List<UserBean> userBeans;
         public List<Map<String, String>> mapsOfStringToString;
         public List<Map<String, Object>> mapsOfStringToObject;
-        public List<Map<Date, String>> mapsOfDateToString;
-        public List<Map<String, Date>> mapsOfStringToDate;
 
         public void listOfPojos(List<UserPojo> userPojos) {
             this.userPojos = userPojos;
@@ -55,11 +53,12 @@ public class JavaTableProcessorTest {
         }
 
         public void listOfMapsOfDateToString(List<Map<Date, String>> mapsOfDateToString) {
-            this.mapsOfDateToString = mapsOfDateToString;
         }
 
         public void listOfMapsOfStringToDate(List<Map<String, Date>> mapsOfStringToDate) {
-            this.mapsOfStringToDate = mapsOfStringToDate;
+        }
+
+        public void listOfMaps(List<Map> maps) {
         }
     }
 
@@ -94,21 +93,28 @@ public class JavaTableProcessorTest {
     @Test
     public void does_not_transform_to_list_of_map_of_date_to_string() throws Throwable {
         thrown.expect(CucumberException.class);
-        thrown.expectMessage("Tables can only be transformed to a List<Map<K,V>> when K is String. It was class java.util.Date");
+        thrown.expectMessage("Tables can only be transformed to a List<Map<K,V>> when K is String. It was class java.util.Date.");
         
         Method listOfBeans = StepDefs.class.getMethod("listOfMapsOfDateToString", List.class);
         StepDefs stepDefs = runStepDef(listOfBeans);
-        assertEquals("10/05/1957", stepDefs.mapsOfDateToString.get(0).get("birthDate"));
     }
 
     @Test
     public void does_not_transform_to_list_of_map_of_string_to_date() throws Throwable {
         thrown.expect(CucumberException.class);
-        thrown.expectMessage("Tables can only be transformed to a List<Map<K,V>> when V is String or Object. It was class java.util.Date");
+        thrown.expectMessage("Tables can only be transformed to a List<Map<K,V>> when V is String or Object. It was class java.util.Date.");
         
         Method listOfBeans = StepDefs.class.getMethod("listOfMapsOfStringToDate", List.class);
         StepDefs stepDefs = runStepDef(listOfBeans);
-        assertEquals("10/05/1957", stepDefs.mapsOfStringToDate.get(0).get("birthDate"));
+    }
+
+    @Test
+    public void does_not_transform_to_list_of_non_generic_map() throws Throwable {
+        thrown.expect(CucumberException.class);
+        thrown.expectMessage("Tables can only be transformed to List<Map<String,String>> or List<Map<String,Object>>. You have to declare generic types.");
+        
+        Method listOfBeans = StepDefs.class.getMethod("listOfMaps", List.class);
+        StepDefs stepDefs = runStepDef(listOfBeans);
     }
 
     private StepDefs runStepDef(Method method) throws Throwable {
