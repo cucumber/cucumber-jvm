@@ -1,12 +1,12 @@
 package cucumber.runtime.java.guice;
 
+import static cucumber.runtime.Utils.closeQuietly;
+
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import org.apache.commons.io.IOUtils;
 
 public class UrlPropertiesLoader {
     private final Logger logger;
@@ -36,7 +36,7 @@ public class UrlPropertiesLoader {
         } catch (Exception e) {
             logger.log(Level.INFO, "Could not load properties file"+resource.toExternalForm(), e);
         } finally {
-            IOUtils.closeQuietly(input);
+            closeQuietly(input);
         }
     }
 }
