@@ -1,7 +1,8 @@
 package cucumber.runtime.java.guice;
 
+import static cucumber.runtime.Utils.closeQuietly;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.contains;
 import static org.mockito.Matchers.eq;
@@ -18,7 +19,6 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.commons.io.IOUtils;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -75,7 +75,7 @@ public class UrlPropertiesLoader_Test {
             outputStream = new FileOutputStream(propertiesFile1);
             propertiesWithContent.store(outputStream, "a comment");
         } finally {
-            IOUtils.closeQuietly(outputStream);
+            closeQuietly(outputStream);
         }
         return propertiesFile1.toURI().toURL();
     }
