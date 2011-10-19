@@ -4,6 +4,7 @@ import static cucumber.runtime.Utils.closeQuietly;
 
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.Properties;
 
 public class UrlPropertiesLoader {
@@ -22,7 +23,8 @@ public class UrlPropertiesLoader {
             input = new InputStreamReader(resource.openStream());
             properties.load(input);
         } catch (Exception e) {
-            //properties file is optional, nothing to do
+            String message = MessageFormat.format("Could not load properties from ''{0}''", resource.toExternalForm());
+            throw new LoadingPropertiesFileFailed(message, e);
         } finally {
             closeQuietly(input);
         }
