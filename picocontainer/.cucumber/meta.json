@@ -1,0 +1,11 @@
+{
+  "^I have (\\d+) cukes in my belly": [
+    "I have 12 cukes in my belly",
+    "I have 3 cukes in my belly"
+  ],
+  "^there are (\\d+) cukes in my belly": [
+    "there are 3 cukes in my belly"
+  ],
+  "^the (.*) contains (.*)": [],
+  "^I add (.*)": []
+}

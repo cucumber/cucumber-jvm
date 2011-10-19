@@ -138,6 +138,10 @@ public class World {
         return afterHooks;
     }
 
+    public List<StepDefinition> getStepDefinitions() {
+        return stepDefinitions;
+    }
+
     private final class HookComparator implements Comparator<HookDefinition> {
         final boolean ascending;
 

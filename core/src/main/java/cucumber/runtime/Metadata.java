@@ -11,15 +11,6 @@ import java.util.Map;
 
 /**
  * Generates metadata to be used for Code Completion: https://github.com/cucumber/gherkin/wiki/Code-Completion
- * <p/>
- * The intention is to run this over all step definitions and all features. This can happen at different times,
- * and we need to decide what's the best:
- * <p/>
- * 1) At the end of a Cucumber run. Pros: Developers will not forget to run it. Cons: It will write "bad" data if Cucumber only runs a subset of features/stepdefs
- * <p/>
- * 2) As a separate process apart from Cucumber. Pros: We can make sure all stpedefs/features are included. Cons: Developers might forget to run it
- * <p/>
- * If we go for a separate process it could be run in the background by IDE plugins...
  */
 public class Metadata {
     public Map<String, List<String>> generate(List<StepDefinition> stepDefs, List<CucumberFeature> features) {

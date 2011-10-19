@@ -1,5 +1,7 @@
 package cucumber.runtime;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import cucumber.resources.Consumer;
 import cucumber.resources.Resource;
 import cucumber.resources.Resources;
@@ -9,17 +11,21 @@ import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Step;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.*;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 
 /**
  * This is the main entry point for running Cucumber features.
  */
 public class Runtime {
+    private static final List<Object> NO_FILTERS = emptyList();
+    private static final Collection<String> NO_TAGS = emptyList();
+
     private final List<Step> undefinedSteps = new ArrayList<Step>();
     private final List<Backend> backends;
     private final List<String> gluePaths;
@@ -108,5 +114,15 @@ public class Runtime {
         for (Backend backend : backends) {
             backend.disposeWorld();
         }
+    }
+
+    public void writeMeta(List<String> filesOrDirs, Appendable out) throws IOException {
+        List<CucumberFeature> features = load(filesOrDirs, NO_FILTERS);
+        World world = new World(this, NO_TAGS);
+        buildWorlds(gluePaths, world);
+        List<StepDefinition> stepDefs = world.getStepDefinitions();
+        Map<String, List<String>> meta = new Metadata().generate(stepDefs, features);
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        out.append(gson.toJson(meta));
     }
 }
