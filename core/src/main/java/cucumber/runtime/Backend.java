@@ -9,10 +9,10 @@ public interface Backend {
      * Invoked before a new scenario starts. Implementations should do any necessary
      * setup of new, isolated state here.
      *
-     * @param codePaths
+     * @param gluePaths
      * @param world
      */
-    void buildWorld(List<String> codePaths, World world);
+    void buildWorld(List<String> gluePaths, World world);
 
     void disposeWorld();
 

@@ -27,19 +27,19 @@ public class CucumberScenario extends CucumberTagStatement {
         this.cucumberBackground = cucumberBackground;
     }
 
-    public void createWorld(List<String> codePaths, Runtime runtime) {
+    public void createWorld(List<String> gluePaths, Runtime runtime) {
         world = new World(runtime, tags());
-        world.prepare(codePaths);
+        world.prepare(gluePaths);
     }
 
     @Override
-    public void run(Formatter formatter, Reporter reporter, Runtime runtime, List<Backend> backends, List<String> codePaths) {
+    public void run(Formatter formatter, Reporter reporter, Runtime runtime, List<Backend> backends, List<String> gluePaths) {
         // TODO: Maybe get extraPaths from scenario
 
         // TODO: split up prepareAndFormat so we can run Background in isolation.
         // Or maybe just try to make Background behave like a regular Scenario?? Printing wise at least.
 
-        createWorld(codePaths, runtime);
+        createWorld(gluePaths, runtime);
 
         runBackground(formatter, reporter);
 

@@ -24,7 +24,7 @@ public class RhinoBackend implements Backend {
     private static final String JS_DSL = "/cucumber/runtime/rhino/dsl.js";
     private final Context cx;
     private final Scriptable scope;
-    private final Set<String> codePaths = new HashSet<String>();
+    private final Set<String> gluePaths = new HashSet<String>();
     private World world;
 
     public RhinoBackend() throws IOException {
@@ -36,12 +36,12 @@ public class RhinoBackend implements Backend {
     }
 
     @Override
-    public void buildWorld(List<String> codePaths, World world) {
+    public void buildWorld(List<String> gluePaths, World world) {
         this.world = world;
-        for (String codePath : codePaths) {
-            codePath = codePath.replace('.', '/');
-            codePaths.add(codePath);
-            Resources.scan(codePath, ".js", new Consumer() {
+        for (String gluePath : gluePaths) {
+            gluePath = gluePath.replace('.', '/');
+            gluePaths.add(gluePath);
+            Resources.scan(gluePath, ".js", new Consumer() {
                 public void consume(Resource resource) {
                     try {
                         cx.evaluateReader(scope, resource.getReader(), resource.getPath(), 1, null);
@@ -67,7 +67,7 @@ public class RhinoBackend implements Backend {
         StackTraceElement[] stackTraceElements = t.getStackTrace();
         for (StackTraceElement stackTraceElement : stackTraceElements) {
             boolean js = stackTraceElement.getFileName().endsWith(extension);
-            for (String scriptPath : codePaths) {
+            for (String scriptPath : gluePaths) {
                 boolean inScriptPath = stackTraceElement.getFileName().startsWith(scriptPath);
                 boolean hasLine = stackTraceElement.getLineNumber() != -1;
                 if (js && inScriptPath && hasLine) {

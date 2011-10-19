@@ -16,7 +16,7 @@ public class Main {
 
     public static void main(String[] argv) {
         List<String> filesOrDirs = new ArrayList<String>();
-        List<String> packageNamesOrScriptPaths = new ArrayList<String>();
+        List<String> gluePaths = new ArrayList<String>();
         List<Object> filters = new ArrayList<Object>();
         String format = "progress";
         List<String> args = new ArrayList<String>(asList(argv));
@@ -31,7 +31,7 @@ public class Main {
                 System.exit(0);
             } else if (arg.equals("--glue") || arg.equals("-g")) {
                 String packageNameOrScriptPath = args.remove(0);
-                packageNamesOrScriptPaths.add(packageNameOrScriptPath);
+                gluePaths.add(packageNameOrScriptPath);
             } else if (arg.equals("--tags") || arg.equals("-t")) {
                 filters.add(args.remove(0));
             } else if (arg.equals("--format") || arg.equals("-f")) {
@@ -40,12 +40,12 @@ public class Main {
                 filesOrDirs.add(arg);
             }
         }
-        if (packageNamesOrScriptPaths.isEmpty()) {
+        if (gluePaths.isEmpty()) {
             System.out.println("Missing option: --glue");
             System.exit(1);
         }
 
-        Runtime runtime = new Runtime(packageNamesOrScriptPaths);
+        Runtime runtime = new Runtime(gluePaths);
 
         FormatterFactory formatterReporterFactory = new FormatterFactory();
         Formatter formatter = formatterReporterFactory.createFormatter(format, System.out);

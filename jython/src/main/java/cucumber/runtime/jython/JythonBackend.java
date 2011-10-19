@@ -25,11 +25,11 @@ public class JythonBackend implements Backend {
     }
 
     @Override
-    public void buildWorld(List<String> codePaths, World world) {
+    public void buildWorld(List<String> gluePaths, World world) {
         this.pyWorld = jython.eval("World()");
         this.world = world;
-        for (String codePath : codePaths) {
-            Resources.scan(codePath.replace('.', '/'), ".py", new Consumer() {
+        for (String gluePath : gluePaths) {
+            Resources.scan(gluePath.replace('.', '/'), ".py", new Consumer() {
                 public void consume(Resource resource) {
                     jython.execfile(resource.getInputStream(), resource.getPath());
                 }

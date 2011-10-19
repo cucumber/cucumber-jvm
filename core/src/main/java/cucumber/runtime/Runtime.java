@@ -22,19 +22,19 @@ import static java.util.Arrays.asList;
 public class Runtime {
     private final List<Step> undefinedSteps = new ArrayList<Step>();
     private final List<Backend> backends;
-    private final List<String> codePaths;
+    private final List<String> gluePaths;
 
     public Runtime() {
         this(System.getProperty("cucumber.glue") != null ? asList(System.getProperty("cucumber.glue").split(",")) : new ArrayList<String>());
     }
 
-    public Runtime(List<String> codePaths) {
-        this(codePaths, Resources.instantiateSubclasses(Backend.class, "cucumber.runtime", new Class[0], new Object[0]));
+    public Runtime(List<String> gluePaths) {
+        this(gluePaths, Resources.instantiateSubclasses(Backend.class, "cucumber.runtime", new Class[0], new Object[0]));
     }
 
-    public Runtime(List<String> codePaths, List<Backend> backends) {
+    public Runtime(List<String> gluePaths, List<Backend> backends) {
         this.backends = backends;
-        this.codePaths = codePaths;
+        this.gluePaths = gluePaths;
     }
 
     /**
@@ -80,7 +80,7 @@ public class Runtime {
         formatter.uri(cucumberFeature.getUri());
         formatter.feature(cucumberFeature.getFeature());
         for (CucumberTagStatement cucumberTagStatement : cucumberFeature.getFeatureElements()) {
-            cucumberTagStatement.run(formatter, reporter, this, backends, codePaths);
+            cucumberTagStatement.run(formatter, reporter, this, backends, gluePaths);
         }
     }
 
@@ -98,9 +98,9 @@ public class Runtime {
         return cucumberFeatures;
     }
 
-    public void buildWorlds(List<String> codePaths, World world) {
+    public void buildWorlds(List<String> gluePaths, World world) {
         for (Backend backend : backends) {
-            backend.buildWorld(codePaths, world);
+            backend.buildWorld(gluePaths, world);
         }
     }
 

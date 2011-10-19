@@ -31,10 +31,10 @@ public class JavaBackend implements Backend {
     }
 
     @Override
-    public void buildWorld(List<String> codePaths, World world) {
+    public void buildWorld(List<String> gluePaths, World world) {
         this.world = world;
-        for (String codePath : codePaths) {
-            classpathMethodScanner.scan(this, codePath);
+        for (String gluePath : gluePaths) {
+            classpathMethodScanner.scan(this, gluePath);
         }
         objectFactory.createInstances();
     }

@@ -120,12 +120,12 @@ public class Cucumber extends Suite {
     private void buildFeatureElementRunners(CucumberFeature cucumberFeature) {
         for (CucumberTagStatement cucumberTagStatement : cucumberFeature.getFeatureElements()) {
             try {
-                List<String> codePaths = codePaths(super.getTestClass().getJavaClass());
+                List<String> gluePaths = gluePaths(super.getTestClass().getJavaClass());
                 ParentRunner featureElementRunner;
                 if (cucumberTagStatement instanceof CucumberScenario) {
-                    featureElementRunner = new ExecutionUnitRunner(runtime, codePaths, (CucumberScenario) cucumberTagStatement, jUnitReporter);
+                    featureElementRunner = new ExecutionUnitRunner(runtime, gluePaths, (CucumberScenario) cucumberTagStatement, jUnitReporter);
                 } else {
-                    featureElementRunner = new ScenarioOutlineRunner(runtime, codePaths, (CucumberScenarioOutline) cucumberTagStatement, jUnitReporter);
+                    featureElementRunner = new ScenarioOutlineRunner(runtime, gluePaths, (CucumberScenarioOutline) cucumberTagStatement, jUnitReporter);
                 }
                 getChildren().add(featureElementRunner);
             } catch (InitializationError e) {
@@ -142,16 +142,16 @@ public class Cucumber extends Suite {
         return longs;
     }
 
-    private List<String> codePaths(Class featureClass) {
-        List<String> codePaths = new ArrayList<String>();
+    private List<String> gluePaths(Class featureClass) {
+        List<String> gluePaths = new ArrayList<String>();
         String featurePackageName = featureClass.getName().substring(0, featureClass.getName().lastIndexOf("."));
-        codePaths.add(featurePackageName);
+        gluePaths.add(featurePackageName);
 
         // Add additional ones
         cucumber.junit.Feature featureAnnotation = (cucumber.junit.Feature) featureClass.getAnnotation(cucumber.junit.Feature.class);
         if (featureAnnotation != null) {
-            codePaths.addAll(asList(featureAnnotation.packages()));
+            gluePaths.addAll(asList(featureAnnotation.packages()));
         }
-        return codePaths;
+        return gluePaths;
     }
 }

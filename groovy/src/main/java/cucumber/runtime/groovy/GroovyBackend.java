@@ -29,10 +29,10 @@ public class GroovyBackend implements Backend {
     }
 
     @Override
-    public void buildWorld(List<String> codePaths, World world) {
+    public void buildWorld(List<String> gluePaths, World world) {
         this.world = world;
-        for (String codePath : codePaths) {
-            Resources.scan(codePath.replace('.', '/'), ".groovy", new Consumer() {
+        for (String gluePath : gluePaths) {
+            Resources.scan(gluePath.replace('.', '/'), ".groovy", new Consumer() {
                 public void consume(Resource resource) {
                     shell.evaluate(resource.getString(), resource.getPath());
                 }

@@ -45,5 +45,5 @@ public abstract class CucumberTagStatement extends StepContainer {
         return visualName;
     }
 
-    public abstract void run(Formatter formatter, Reporter reporter, Runtime runtime, List<Backend> backends, List<String> codePaths);
+    public abstract void run(Formatter formatter, Reporter reporter, Runtime runtime, List<Backend> backends, List<String> gluePaths);
 }

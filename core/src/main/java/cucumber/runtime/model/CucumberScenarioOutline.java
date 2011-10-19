@@ -29,7 +29,7 @@ public class CucumberScenarioOutline extends CucumberTagStatement {
     }
 
     @Override
-    public void run(Formatter formatter, Reporter reporter, Runtime runtime, List<Backend> backends, List<String> codePaths) {
+    public void run(Formatter formatter, Reporter reporter, Runtime runtime, List<Backend> backends, List<String> gluePaths) {
         throw new UnsupportedOperationException();
     }
 

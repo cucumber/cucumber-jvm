@@ -38,10 +38,10 @@ public class IokeBackend implements Backend {
     }
 
     @Override
-    public void buildWorld(List<String> codePaths, World world) {
+    public void buildWorld(List<String> gluePaths, World world) {
         this.world = world;
-        for (String codePath : codePaths) {
-            Resources.scan(codePath.replace('.', '/'), ".ik", new Consumer() {
+        for (String gluePath : gluePaths) {
+            Resources.scan(gluePath.replace('.', '/'), ".ik", new Consumer() {
                 public void consume(Resource resource) {
                     try {
                         currentLocation = resource.getPath();

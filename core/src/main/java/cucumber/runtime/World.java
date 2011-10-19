@@ -32,8 +32,8 @@ public class World {
         this.tags = tags;
     }
 
-    public void prepare(List<String> codePaths) {
-        runtime.buildWorlds(codePaths, this);
+    public void prepare(List<String> gluePaths) {
+        runtime.buildWorlds(gluePaths, this);
 
         scenarioResult = new ScenarioResultImpl();
         Collections.sort(beforeHooks, new HookComparator(true));

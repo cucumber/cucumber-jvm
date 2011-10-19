@@ -42,7 +42,7 @@ public class BackgroundTest {
 
     private class TestBackend implements Backend {
         @Override
-        public void buildWorld(List<String> codePaths, World world) {
+        public void buildWorld(List<String> gluePaths, World world) {
         }
 
         @Override

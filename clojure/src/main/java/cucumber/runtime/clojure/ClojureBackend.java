@@ -24,10 +24,10 @@ public class ClojureBackend implements Backend {
     }
 
     @Override
-    public void buildWorld(List<String> codePaths, World world) {
+    public void buildWorld(List<String> gluePaths, World world) {
         this.world = world;
-        for (String codePath : codePaths) {
-            Resources.scan(codePath.replace('.', '/'), ".clj", new Consumer() {
+        for (String gluePath : gluePaths) {
+            Resources.scan(gluePath.replace('.', '/'), ".clj", new Consumer() {
                 public void consume(Resource resource) {
                     try {
                         RT.load(resource.getPath().replaceAll(".clj$", ""));
