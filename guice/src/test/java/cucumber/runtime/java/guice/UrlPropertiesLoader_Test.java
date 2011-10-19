@@ -3,11 +3,6 @@ package cucumber.runtime.java.guice;
 import static cucumber.runtime.Utils.closeQuietly;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.contains;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -16,8 +11,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -27,8 +20,7 @@ public class UrlPropertiesLoader_Test {
 
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
-    public final Logger logger = mock(Logger.class);
-    private final UrlPropertiesLoader loader = new UrlPropertiesLoader(logger);
+    private final UrlPropertiesLoader loader = new UrlPropertiesLoader();
 
     @Test
     public void returnsEmptyPropertiesIfNullIsPassedAsResource() throws Exception {
@@ -47,13 +39,6 @@ public class UrlPropertiesLoader_Test {
         assertThat(loadedProperties, is(originalProperties));
     }
 
-    @Test
-    public void logsOutputIfProvidedUrlDoesNotPointToAPropertyFile() throws Exception {
-        URL noneExistingPropertiesFile = aNoneExistingFile();
-        loader.load(noneExistingPropertiesFile);
-        verify(logger).log(eq(Level.INFO), contains("Could not load properties file"), any(Throwable.class));
-    }
-    
     @Test
     public void testName() throws Exception {
         URL noneExistingPropertiesFile = aNoneExistingFile();
