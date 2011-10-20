@@ -9,8 +9,6 @@ import gherkin.formatter.model.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static gherkin.util.FixJava.join;
-
 public class CucumberScenarioOutline extends CucumberTagStatement {
     private final List<CucumberExamples> cucumberExamplesList = new ArrayList<CucumberExamples>();
     private final CucumberBackground cucumberBackground;
@@ -30,7 +28,14 @@ public class CucumberScenarioOutline extends CucumberTagStatement {
 
     @Override
     public void run(Formatter formatter, Reporter reporter, Runtime runtime, List<Backend> backends, List<String> gluePaths) {
-        throw new UnsupportedOperationException();
+        format(formatter);
+        for (CucumberExamples cucumberExamples : cucumberExamplesList) {
+            cucumberExamples.format(formatter);
+            List<CucumberScenario> exampleScenarios = cucumberExamples.createExampleScenarios();
+            for (CucumberScenario exampleScenario : exampleScenarios) {
+                exampleScenario.run(formatter, reporter, runtime, backends, gluePaths);
+            }
+        }
     }
 
     CucumberScenario createExampleScenario(Row header, Row example, Examples examples) {

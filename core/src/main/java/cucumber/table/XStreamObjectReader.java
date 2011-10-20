@@ -82,8 +82,9 @@ class XStreamObjectReader extends AbstractReader {
 
     private Class<?> getElementClass() {
         return ((elementType instanceof Class) ? (Class<?>) elementType :
-            (Class<?>) ((ParameterizedType) elementType).getRawType());
+                (Class<?>) ((ParameterizedType) elementType).getRawType());
     }
+
     @Override
     public String getNodeName() {
         switch (depth) {

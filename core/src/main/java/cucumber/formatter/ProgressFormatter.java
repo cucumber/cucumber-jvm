@@ -11,14 +11,14 @@ import java.util.List;
 import java.util.Map;
 
 public class ProgressFormatter implements Formatter, Reporter {
-    private static final Map<String,Character> CHARS = new HashMap<String,Character>(){{
+    private static final Map<String, Character> CHARS = new HashMap<String, Character>() {{
         put("passed", '.');
         put("undefined", 'U');
         put("pending", 'P');
         put("skipped", '-');
         put("failed", 'F');
     }};
-    private static final Map<String,AnsiEscapes> ANSI_ESCAPES = new HashMap<String,AnsiEscapes>(){{
+    private static final Map<String, AnsiEscapes> ANSI_ESCAPES = new HashMap<String, AnsiEscapes>() {{
         put("passed", AnsiEscapes.GREEN);
         put("undefined", AnsiEscapes.YELLOW);
         put("pending", AnsiEscapes.YELLOW);
@@ -72,11 +72,11 @@ public class ProgressFormatter implements Formatter, Reporter {
 
     @Override
     public void result(Result result) {
-        if(!monochrome) {
+        if (!monochrome) {
             ANSI_ESCAPES.get(result.getStatus()).appendTo(out);
         }
         out.append(CHARS.get(result.getStatus()));
-        if(!monochrome) {
+        if (!monochrome) {
             AnsiEscapes.RESET.appendTo(out);
         }
     }

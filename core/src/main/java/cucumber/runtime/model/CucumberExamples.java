@@ -1,5 +1,6 @@
 package cucumber.runtime.model;
 
+import gherkin.formatter.Formatter;
 import gherkin.formatter.model.Examples;
 import gherkin.formatter.model.Row;
 
@@ -27,5 +28,9 @@ public class CucumberExamples {
 
     public Examples getExamples() {
         return examples;
+    }
+
+    public void format(Formatter formatter) {
+        examples.replay(formatter);
     }
 }

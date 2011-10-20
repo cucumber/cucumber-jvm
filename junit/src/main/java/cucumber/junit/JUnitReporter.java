@@ -33,7 +33,7 @@ class JUnitReporter implements Reporter, Formatter {
         Description description = executionUnitRunner.describeChild(steps.remove(0));
         eachTestNotifier = new EachTestNotifier(notifier, description);
 
-        if (match == Match.NONE) {
+        if (match == Match.UNDEFINED) {
             eachTestNotifier.fireTestIgnored();
         } else {
             eachTestNotifier.fireTestStarted();
@@ -48,7 +48,7 @@ class JUnitReporter implements Reporter, Formatter {
     public void result(Result result) {
         Throwable error = result.getError();
         if (Result.SKIPPED == result || error instanceof PendingException) {
-            if (match != Match.NONE) {
+            if (match != Match.UNDEFINED) {
                 // No need to say it's ignored twice
                 eachTestNotifier.fireTestIgnored();
             }

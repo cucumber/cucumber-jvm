@@ -78,13 +78,14 @@ public class World {
         if (match != null) {
             reporter.match(match);
         } else {
-            reporter.match(Match.NONE);
+            reporter.match(Match.UNDEFINED);
+            reporter.result(Result.UNDEFINED);
             skipNextStep = true;
+            return null;
         }
 
         Throwable e = null;
         if (skipNextStep) {
-            // Undefined steps (Match.NONE) will always get the Result.SKIPPED result
             scenarioResult.add(Result.SKIPPED);
             reporter.result(Result.SKIPPED);
         } else {

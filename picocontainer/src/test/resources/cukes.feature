@@ -3,6 +3,7 @@ Feature: Cucumber Runner Rocks
   Scenario: Many cukes
     Given I have 12 cukes in my belly
     And a big basket with cukes
+    And I have 12 cukes in my belly
   
   Scenario: Few cukes
     Given I have 3 cukes in my belly
@@ -16,3 +17,4 @@ Feature: Cucumber Runner Rocks
       |  n | what   | mood  |
       | 13 | cukes  | happy |
       |  4 | apples | tired |
+      |  8 | shots  | wired |
