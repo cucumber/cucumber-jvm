@@ -85,7 +85,7 @@ public class World {
         }
         
         if (runtime.isDryRun()) {
-        	skipNextStep = true;
+            skipNextStep = true;
         }
 
         Throwable e = null;
