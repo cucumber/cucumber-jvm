@@ -24,6 +24,7 @@ public class Main {
         String format = "progress";
         List<String> args = new ArrayList<String>(asList(argv));
         String meta = null;
+        boolean isDryRun = false;
 
         while (!args.isEmpty()) {
             String arg = args.remove(0);
@@ -43,6 +44,8 @@ public class Main {
                 format = args.remove(0);
             } else if (arg.equals("--meta") || arg.equals("-m")) {
                 meta = args.remove(0);
+            } else if (arg.equals("--dry-run") || arg.equals("-d")) {
+                isDryRun = true;
             } else {
                 filesOrDirs.add(arg);
             }
@@ -52,7 +55,7 @@ public class Main {
             System.exit(1);
         }
 
-        Runtime runtime = new Runtime(gluePaths);
+        Runtime runtime = new Runtime(gluePaths, isDryRun);
 
         if (meta != null) {
             File out = new File(meta);
