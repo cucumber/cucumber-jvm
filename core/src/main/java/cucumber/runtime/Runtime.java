@@ -86,6 +86,7 @@ public class Runtime {
         for (CucumberTagStatement cucumberTagStatement : cucumberFeature.getFeatureElements()) {
             cucumberTagStatement.run(formatter, reporter, this, backends, gluePaths);
         }
+        formatter.eof();
     }
 
     private List<CucumberFeature> load(List<String> filesOrDirs, final List<Object> filters) {
