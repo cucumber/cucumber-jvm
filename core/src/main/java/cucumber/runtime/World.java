@@ -83,6 +83,10 @@ public class World {
             skipNextStep = true;
             return null;
         }
+        
+        if (runtime.isDryRun()) {
+        	skipNextStep = true;
+        }
 
         Throwable e = null;
         if (skipNextStep) {

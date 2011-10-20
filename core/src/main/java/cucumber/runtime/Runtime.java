@@ -27,18 +27,24 @@ public class Runtime {
     private final List<Step> undefinedSteps = new ArrayList<Step>();
     private final List<Backend> backends;
     private final List<String> gluePaths;
+	private final boolean isDryRun;
+    
 
-    public Runtime() {
-        this(System.getProperty("cucumber.glue") != null ? asList(System.getProperty("cucumber.glue").split(",")) : new ArrayList<String>());
+	public Runtime() {
+		this(false);
+	}
+    public Runtime(boolean isDryRun) {
+        this(System.getProperty("cucumber.glue") != null ? asList(System.getProperty("cucumber.glue").split(",")) : new ArrayList<String>(), isDryRun);
     }
 
-    public Runtime(List<String> gluePaths) {
-        this(gluePaths, Resources.instantiateSubclasses(Backend.class, "cucumber.runtime", new Class[0], new Object[0]));
+    public Runtime(List<String> gluePaths, boolean isDryRun) {
+        this(gluePaths, Resources.instantiateSubclasses(Backend.class, "cucumber.runtime", new Class[0], new Object[0]), isDryRun);
     }
 
-    public Runtime(List<String> gluePaths, List<Backend> backends) {
+    public Runtime(List<String> gluePaths, List<Backend> backends, boolean isDryRun) {
         this.backends = backends;
         this.gluePaths = gluePaths;
+		this.isDryRun = isDryRun;
     }
 
     /**
@@ -122,5 +128,9 @@ public class Runtime {
         Map<String, List<String>> meta = new Metadata().generate(stepDefs, features);
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         out.append(gson.toJson(meta));
+    }
+    
+    public boolean isDryRun() {
+    	return isDryRun;
     }
 }
