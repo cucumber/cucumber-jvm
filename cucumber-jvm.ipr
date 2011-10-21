@@ -394,15 +394,15 @@
         <root url="jar://$MAVEN_REPOSITORY$/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: info.cukes:gherkin:2.5.3">
+    <library name="Maven: info.cukes:gherkin:2.5.4">
       <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/gherkin/2.5.3/gherkin-2.5.3.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/gherkin/2.5.4/gherkin-2.5.4.jar!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/gherkin/2.5.3/gherkin-2.5.3-javadoc.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/gherkin/2.5.4/gherkin-2.5.4-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/gherkin/2.5.3/gherkin-2.5.3-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/gherkin/2.5.4/gherkin-2.5.4-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: javax.annotation:jsr250-api:1.0">
