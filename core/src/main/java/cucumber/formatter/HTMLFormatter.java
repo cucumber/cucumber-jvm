@@ -16,12 +16,15 @@ import gherkin.formatter.model.ScenarioOutline;
 import gherkin.formatter.model.Step;
 
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.json.simple.JSONValue;
 
@@ -31,10 +34,19 @@ public class HTMLFormatter implements Formatter, Reporter {
     private final String htmlReportDir = getHtmlReportDir();
     private BufferedWriter bufferedWriter;
     private boolean firstFeature = true;
+    private int embeddedIndex;
     private static final String JS_FORMATTER_VAR = "formatter";
     private static final String JS_REPORT_FILENAME = "report.js";
     private static final String[] REPORT_ITEMS = new String[] {"formatter.js", "index.html", "jquery-1.6.4.min.js", "style.css"};
     private static final String CUCUMBER_HTMLREPORTERDIR = "cucumber.htmlreporterdir";
+    private static final Map<String, String> MIME_TYPES_EXTENSIONS = new HashMap<String, String>() {
+        {
+            put("image/bmp", "bmp");
+            put("image/gif", "gif");
+            put("image/jpeg", "jpg");
+            put("image/png", "png");
+        }
+    };
 
     public HTMLFormatter() {
         try {
@@ -123,7 +135,15 @@ public class HTMLFormatter implements Formatter, Reporter {
 
     @Override
     public void embedding(String mimeType, byte[] data) {
-        // TODO Treat embedded data
+        // Creating a file instead of using data urls to not clutter the js file
+        String extension = MIME_TYPES_EXTENSIONS.get(mimeType);
+        if (extension != null) {
+            StringBuilder fileName = new StringBuilder("embedded").append(embeddedIndex++).append(".")
+                    .append(extension);
+            copyResource(new ByteArrayInputStream(data), reportFileOutputStream(fileName.toString()));
+            writeToJsReport("embedding", new StringBuilder("'").append(mimeType).append("','").append(fileName)
+                    .append("'").toString());
+        }
     }
 
     private void copyReportFiles() {
@@ -131,11 +151,15 @@ public class HTMLFormatter implements Formatter, Reporter {
         InputStream resourceAsStream;
         for (String reportItem : REPORT_ITEMS) {
             resourceAsStream = getClass().getClassLoader().getResourceAsStream(packageName + reportItem);
-            try {
-                copyResource(resourceAsStream, new FileOutputStream(htmlReportDir + reportItem));
-            } catch (FileNotFoundException e) {
-                throw new CucumberException("Unable to create file report file item: " + reportItem, e);
-            }
+            copyResource(resourceAsStream, reportFileOutputStream(reportItem));
+        }
+    }
+
+    protected FileOutputStream reportFileOutputStream(String reportItem) {
+        try {
+            return new FileOutputStream(htmlReportDir + reportItem);
+        } catch (FileNotFoundException e) {
+            throw new CucumberException("Error creating html report file: " + htmlReportDir + reportItem, e);
         }
     }
 
