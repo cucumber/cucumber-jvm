@@ -28,12 +28,12 @@ public class Runtime {
     private final List<Backend> backends;
     private final List<String> gluePaths;
     private final boolean isDryRun;
-    
+
 
     public Runtime() {
         this(false);
     }
-    
+
     public Runtime(boolean isDryRun) {
         this(System.getProperty("cucumber.glue") != null ? asList(System.getProperty("cucumber.glue").split(",")) : new ArrayList<String>(), isDryRun);
     }
@@ -131,7 +131,7 @@ public class Runtime {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         out.append(gson.toJson(meta));
     }
-    
+
     public boolean isDryRun() {
         return isDryRun;
     }
