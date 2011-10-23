@@ -24,7 +24,7 @@ public class HookTest {
         HookDefinition hook = mock(HookDefinition.class);
         when(hook.matches(anyListOf(String.class))).thenReturn(true);
 
-        Runtime runtime = new Runtime(CODE_PATHS, asList(backend));
+        Runtime runtime = new Runtime(CODE_PATHS, asList(backend), false);
         World world = new World(runtime, TAGS);
         world.addAfterHook(hook);
 
