@@ -17,7 +17,7 @@ class JUnitReporter implements Reporter, Formatter {
     private final Reporter reporter;
     private final Formatter formatter;
 
-    private EachTestNotifier eachTestNotifier;
+    private EachTestNotifier stepNotifier;
     private ExecutionUnitRunner executionUnitRunner;
     private RunNotifier notifier;
 
@@ -28,8 +28,8 @@ class JUnitReporter implements Reporter, Formatter {
 
     public void match(Match match) {
         Description description = executionUnitRunner.describeChild(steps.remove(0));
-        eachTestNotifier = new EachTestNotifier(notifier, description);
-        eachTestNotifier.fireTestStarted();
+        stepNotifier = new EachTestNotifier(notifier, description);
+        stepNotifier.fireTestStarted();
         reporter.match(match);
     }
 
@@ -40,13 +40,13 @@ class JUnitReporter implements Reporter, Formatter {
     public void result(Result result) {
         Throwable error = result.getError();
         if (Result.SKIPPED == result || Result.UNDEFINED == result || error instanceof PendingException) {
-            eachTestNotifier.fireTestIgnored();
+            stepNotifier.fireTestIgnored();
         } else {
             if (error != null) {
-                eachTestNotifier.addFailure(error);
+                stepNotifier.addFailure(error);
             }
         }
-        eachTestNotifier.fireTestFinished();
+        stepNotifier.fireTestFinished();
         reporter.result(result);
     }
 
