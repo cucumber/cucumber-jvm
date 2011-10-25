@@ -28,7 +28,6 @@ public class GuiceFactoryTest {
         assertNotSame(o1, o2);
     }
 
-    // TODO: verify that this is what the author meant
     @Test
     public void missing_guice_module_property_causes_mapping_to_be_null() throws Exception {
         ObjectFactory factory = new GuiceFactory(new Properties());
