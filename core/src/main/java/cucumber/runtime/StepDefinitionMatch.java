@@ -16,8 +16,6 @@ import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Locale;
 
-import static java.util.Arrays.asList;
-
 public class StepDefinitionMatch extends Match {
     private final StepDefinition stepDefinition;
     private final transient String uri;
@@ -54,16 +52,16 @@ public class StepDefinitionMatch extends Match {
 
     /**
      * @param parameterTypes types of the stepdefs args. Some backends will pass null if they can't determine types or arity.
-     * @param step
-     * @param xStream
+     * @param step the step to run
+     * @param xStream used to convert a string to declared stepdef arguments
      * @return an Array matching the types or {@code parameterTypes}, or an array of String if {@code parameterTypes} is null
      */
-    private Object[] transformedArgs(Class<?>[] parameterTypes, Step step, XStream xStream) {
+    private Object[] transformedArgs(List<ParameterType> parameterTypes, Step step, XStream xStream) {
         int argumentCount = getArguments().size();
         if (step.getDocString() != null) argumentCount++;
         if (step.getRows() != null) argumentCount++;
-        if (parameterTypes != null && parameterTypes.length != argumentCount) {
-            throw new CucumberException("Arity mismatch. Parameters: " + asList(parameterTypes) + ". Matched arguments: " + getArguments());
+        if (parameterTypes != null && parameterTypes.size() != argumentCount) {
+            throw new CucumberException("Arity mismatch. Parameters: " + parameterTypes + ". Matched arguments: " + getArguments());
         }
 
         Object[] result = new Object[argumentCount];
@@ -74,7 +72,9 @@ public class StepDefinitionMatch extends Match {
             if (parameterTypes != null) {
                 // TODO: We might get a lookup that doesn't implement SingleValueConverter
                 // Need to throw a more friendly exception in that case.
-                SingleValueConverter converter = (SingleValueConverter) converterLookup.lookupConverterForType(parameterTypes[n]);
+                ParameterType parameterType = parameterTypes.get(n);
+                // TODO: Can't cast like this
+                SingleValueConverter converter = (SingleValueConverter) converterLookup.lookupConverterForType(parameterType.getParameterClass());
                 result[n] = converter.fromString(a.getVal());
             } else {
                 result[n] = a.getVal();
@@ -93,7 +93,7 @@ public class StepDefinitionMatch extends Match {
     private Object tableArgument(Step step, int argIndex, XStream xStream) {
         Table table = new Table(step.getRows(), new TableConverter(xStream), tableHeaderMapper);
 
-        Type listType = stepDefinition.getTypeForTableList(argIndex);
+        Type listType = getGenericListType(argIndex);
         if (listType != null) {
             return table.asList(listType);
         } else {
@@ -101,6 +101,11 @@ public class StepDefinitionMatch extends Match {
         }
     }
 
+    private Type getGenericListType(int argIndex) {
+        ParameterType parameterType = stepDefinition.getParameterTypes().get(argIndex);
+        return parameterType.getActualTypeArguments()[0];
+    }
+    
     public Throwable filterStacktrace(Throwable error, StackTraceElement stepLocation) {
         StackTraceElement[] stackTraceElements = error.getStackTrace();
         if (error.getCause() != null && error.getCause() != error) {

@@ -2,6 +2,7 @@ package cucumber.runtime.clojure;
 
 import clojure.lang.AFunction;
 import cucumber.runtime.JdkPatternArgumentMatcher;
+import cucumber.runtime.ParameterType;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.Utils;
 import gherkin.formatter.Argument;
@@ -9,7 +10,6 @@ import gherkin.formatter.model.Step;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -26,23 +26,18 @@ public class ClojureStepDefinition implements StepDefinition {
 
     // Clojure's AFunction.invokeWithArgs doesn't take varargs :-/
     private Method lookupInvokeMethod(Object[] args) throws NoSuchMethodException {
-        return AFunction.class.getMethod("invoke", Utils.classArray(args.length, Object.class));
+        return AFunction.class.getMethod("invoke", (Class<?>[]) Utils.arrayOf(args.length, Object.class).toArray());
     }
 
     public List<Argument> matchedArguments(Step step) {
         return new JdkPatternArgumentMatcher(pattern).argumentsFrom(step.getName());
     }
 
-    @Override
-    public Type getTypeForTableList(int argIndex) {
-        return null;
-    }
-
     public String getLocation() {
         return location.getFileName() + ":" + location.getLineNumber();
     }
 
-    public Class<?>[] getParameterTypes() {
+    public List<ParameterType> getParameterTypes() {
         return null;
     }
 

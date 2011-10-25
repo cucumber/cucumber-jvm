@@ -1,5 +1,6 @@
 package cucumber.runtime.jruby;
 
+import cucumber.runtime.ParameterType;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.Utils;
 import gherkin.formatter.Argument;
@@ -8,7 +9,6 @@ import org.jruby.RubyObject;
 import org.jruby.RubyString;
 import org.jruby.runtime.builtin.IRubyObject;
 
-import java.lang.reflect.Type;
 import java.util.List;
 
 public class JRubyStepDefinition implements StepDefinition {
@@ -29,11 +29,6 @@ public class JRubyStepDefinition implements StepDefinition {
     }
 
     @Override
-    public Type getTypeForTableList(int argIndex) {
-        return null;
-    }
-
-    @Override
     public String getLocation() {
         if (file == null) {
             List fileAndLine = (List) stepdef.callMethod("file_and_line").toJava(List.class);
@@ -44,10 +39,10 @@ public class JRubyStepDefinition implements StepDefinition {
     }
 
     @Override
-    public Class<?>[] getParameterTypes() {
+    public List<ParameterType> getParameterTypes() {
         IRubyObject argCountR = stepdef.callMethod("arg_count");
         int argCount = (Integer) argCountR.toJava(Integer.class);
-        return Utils.classArray(Math.max(0, argCount), String.class);
+        return Utils.arrayOf(Math.max(0, argCount), new ParameterType(String.class, null, null));
     }
 
     @Override

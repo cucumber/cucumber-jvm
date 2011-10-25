@@ -1,16 +1,14 @@
 package cucumber.runtime.java;
 
 import cucumber.annotation.Pending;
-import cucumber.runtime.CucumberException;
-import cucumber.runtime.JdkPatternArgumentMatcher;
-import cucumber.runtime.PendingException;
-import cucumber.runtime.StepDefinition;
+import cucumber.runtime.*;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -53,8 +51,15 @@ public class JavaStepDefinition implements StepDefinition {
         return methodFormat.format(method);
     }
 
-    public Class<?>[] getParameterTypes() {
-        return method.getParameterTypes();
+    public List<ParameterType> getParameterTypes() {
+        List<ParameterType> result = new ArrayList<ParameterType>();
+        Class<?>[] parameterTypes = method.getParameterTypes();
+        Type[] genericParameterTypes = method.getGenericParameterTypes();
+        Annotation[][] annotations = method.getParameterAnnotations();
+        for(int i = 0; i < parameterTypes.length; i++) {
+            result.add(new ParameterType(parameterTypes[i], genericParameterTypes[i], annotations[i]));
+        }
+        return result;
     }
 
     public boolean isDefinedAt(StackTraceElement e) {
@@ -64,16 +69,5 @@ public class JavaStepDefinition implements StepDefinition {
     @Override
     public String getPattern() {
         return pattern.pattern();
-    }
-
-    @Override
-    public Type getTypeForTableList(int argIndex) {
-        Type genericParameterType = method.getGenericParameterTypes()[argIndex];
-        if (genericParameterType instanceof ParameterizedType) {
-            Type[] parameters = ((ParameterizedType) genericParameterType).getActualTypeArguments();
-            return parameters[0];
-        } else {
-            return null;
-        }
     }
 }

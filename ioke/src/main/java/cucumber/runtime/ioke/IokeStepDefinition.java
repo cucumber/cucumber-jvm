@@ -1,6 +1,7 @@
 package cucumber.runtime.ioke;
 
 import cucumber.runtime.CucumberException;
+import cucumber.runtime.ParameterType;
 import cucumber.runtime.StepDefinition;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
@@ -8,8 +9,9 @@ import ioke.lang.IokeObject;
 import ioke.lang.Runtime;
 import ioke.lang.exceptions.ControlFlow;
 
-import java.lang.reflect.Type;
 import java.util.List;
+
+import static cucumber.runtime.Utils.arrayOf;
 
 public class IokeStepDefinition implements StepDefinition {
     private final Runtime ioke;
@@ -45,26 +47,17 @@ public class IokeStepDefinition implements StepDefinition {
         }
     }
 
-    @Override
-    public Type getTypeForTableList(int argIndex) {
-        return null;
-    }
-
     public String getLocation() {
         return location;
     }
 
-    public Class<?>[] getParameterTypes() {
+    public List<ParameterType> getParameterTypes() {
         try {
             IokeObject argNames = (IokeObject) backend.invoke(iokeStepDefObject, "arg_names");
             IokeObject argLength = (IokeObject) backend.invoke(argNames, "length");
             int groupCount = Integer.parseInt(argLength.toString()); // Not sure how to do this properly...
 
-            Class[] types = new Class[groupCount];
-            for (int i = 0; i < types.length; i++) {
-                types[i] = Object.class;
-            }
-            return types;
+            return arrayOf(groupCount, new ParameterType(String.class, null, null));
         } catch (ControlFlow controlFlow) {
             throw new CucumberException("Couldn't inspect arity of stepdef", controlFlow);
         }

@@ -1,5 +1,6 @@
 package cucumber.runtime.rhino;
 
+import cucumber.runtime.ParameterType;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.Utils;
 import gherkin.formatter.Argument;
@@ -11,7 +12,6 @@ import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.regexp.NativeRegExp;
 import org.mozilla.javascript.tools.shell.Global;
 
-import java.lang.reflect.Type;
 import java.util.List;
 
 public class RhinoStepDefinition implements StepDefinition {
@@ -38,17 +38,12 @@ public class RhinoStepDefinition implements StepDefinition {
         return args == null ? null : (List<Argument>) args.unwrap();
     }
 
-    @Override
-    public Type getTypeForTableList(int argIndex) {
-        return null;
-    }
-
     public String getLocation() {
         return location.getFileName() + ":" + location.getLineNumber();
     }
 
-    public Class<?>[] getParameterTypes() {
-        return Utils.classArray(bodyFunc.getArity(), String.class);
+    public List<ParameterType> getParameterTypes() {
+        return Utils.arrayOf(bodyFunc.getArity(), new ParameterType(String.class, null, null));
     }
 
     public void execute(Object[] args) throws Throwable {
