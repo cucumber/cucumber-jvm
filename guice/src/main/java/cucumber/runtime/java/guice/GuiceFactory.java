@@ -34,7 +34,11 @@ public class GuiceFactory implements ObjectFactory {
         Properties properties = new Properties();
         InputStream inputStream = GuiceFactory.class.getClassLoader().getResourceAsStream("cucumber-guice.properties");
         if (inputStream != null) {
-            properties.load(inputStream);
+            try {
+                properties.load(inputStream);
+            } finally {
+                inputStream.close();
+            }
         }
         return properties;
     }
