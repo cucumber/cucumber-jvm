@@ -25,7 +25,7 @@ public class FormatterFactory {
         } else if (JSON_FORMATTER.equals(formatterName)) {
             return new JSONFormatter(appendable);
         } else if (HTML_FORMATTER.equals(formatterName)) {
-            return new HTMLFormatter(appendable);
+            return new HTMLFormatter();
         }
         return createFormatterFromClassName(formatterName, appendable);
     }
