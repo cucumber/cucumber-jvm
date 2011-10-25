@@ -1,5 +1,6 @@
 package cucumber.runtime.java;
 
+import cucumber.annotation.DateFormat;
 import cucumber.annotation.Pending;
 import cucumber.runtime.*;
 import gherkin.formatter.Argument;
@@ -53,11 +54,17 @@ public class JavaStepDefinition implements StepDefinition {
 
     public List<ParameterType> getParameterTypes() {
         List<ParameterType> result = new ArrayList<ParameterType>();
-        Class<?>[] parameterTypes = method.getParameterTypes();
         Type[] genericParameterTypes = method.getGenericParameterTypes();
         Annotation[][] annotations = method.getParameterAnnotations();
-        for(int i = 0; i < parameterTypes.length; i++) {
-            result.add(new ParameterType(parameterTypes[i], genericParameterTypes[i], annotations[i]));
+        for(int i = 0; i < genericParameterTypes.length; i++) {
+            String dateFormat = null;
+            for (Annotation annotation : annotations[i]) {
+                if(annotation instanceof DateFormat) {
+                    dateFormat = ((DateFormat) annotation).value();
+                    break;
+                }
+            }
+            result.add(new ParameterType(genericParameterTypes[i], dateFormat));
         }
         return result;
     }

@@ -11,7 +11,7 @@ import ioke.lang.exceptions.ControlFlow;
 
 import java.util.List;
 
-import static cucumber.runtime.Utils.arrayOf;
+import static cucumber.runtime.Utils.listOf;
 
 public class IokeStepDefinition implements StepDefinition {
     private final Runtime ioke;
@@ -57,7 +57,7 @@ public class IokeStepDefinition implements StepDefinition {
             IokeObject argLength = (IokeObject) backend.invoke(argNames, "length");
             int groupCount = Integer.parseInt(argLength.toString()); // Not sure how to do this properly...
 
-            return arrayOf(groupCount, new ParameterType(String.class, null, null));
+            return listOf(groupCount, new ParameterType(String.class, null));
         } catch (ControlFlow controlFlow) {
             throw new CucumberException("Couldn't inspect arity of stepdef", controlFlow);
         }

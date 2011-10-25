@@ -17,7 +17,7 @@ public class DatesSteps {
     }
 
     @Then("^the date should be (.+)$")
-    public void the_date_should_be(@DateFormat("yyyy/MM/dd") Date date) {
+    public void the_date_should_be(@DateFormat("MMM dd yyyy") Date date) {
         assertEquals(this.date, date);
     }
 }

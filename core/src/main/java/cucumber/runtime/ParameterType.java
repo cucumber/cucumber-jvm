@@ -1,6 +1,5 @@
 package cucumber.runtime;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
@@ -8,26 +7,32 @@ import java.lang.reflect.Type;
  * This class composes all interesting parameter information into one object.
  */
 public class ParameterType {
-    private final Class<?> clazz;
-    private final Type genericType;
-    private final Annotation[] annotations;
+    private final Type type;
+    private final String dateFormat;
 
-    public ParameterType(Class<?> clazz, Type genericType, Annotation[] annotations) {
-        this.clazz = clazz;
-        this.genericType = genericType;
-        this.annotations = annotations;
+    public ParameterType(Type type, String dateFormat) {
+        this.type = type;
+        this.dateFormat = dateFormat;
     }
 
     public Class<?> getParameterClass() {
-        return clazz;
+        if (type instanceof ParameterizedType) {
+            return (Class<?>) ((ParameterizedType) type).getRawType();
+        } else {
+            return (Class<?>) type;
+        }
     }
 
     public Type[] getActualTypeArguments() {
-        if (genericType != null && genericType instanceof ParameterizedType) {
-            Type[] parameters = ((ParameterizedType) genericType).getActualTypeArguments();
+        if (type instanceof ParameterizedType) {
+            Type[] parameters = ((ParameterizedType) type).getActualTypeArguments();
             return parameters;
         } else {
             return null;
         }
+    }
+
+    public String getDateFormat() {
+        return dateFormat;
     }
 }

@@ -3,6 +3,7 @@ package cucumber.runtime;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.ConverterLookup;
 import com.thoughtworks.xstream.converters.SingleValueConverter;
+import com.thoughtworks.xstream.converters.basic.DateConverter;
 import cucumber.runtime.converters.LocalizedXStreams;
 import cucumber.table.Table;
 import cucumber.table.TableConverter;
@@ -52,8 +53,8 @@ public class StepDefinitionMatch extends Match {
 
     /**
      * @param parameterTypes types of the stepdefs args. Some backends will pass null if they can't determine types or arity.
-     * @param step the step to run
-     * @param xStream used to convert a string to declared stepdef arguments
+     * @param step           the step to run
+     * @param xStream        used to convert a string to declared stepdef arguments
      * @return an Array matching the types or {@code parameterTypes}, or an array of String if {@code parameterTypes} is null
      */
     private Object[] transformedArgs(List<ParameterType> parameterTypes, Step step, XStream xStream) {
@@ -70,11 +71,15 @@ public class StepDefinitionMatch extends Match {
         int n = 0;
         for (Argument a : getArguments()) {
             if (parameterTypes != null) {
-                // TODO: We might get a lookup that doesn't implement SingleValueConverter
-                // Need to throw a more friendly exception in that case.
+                SingleValueConverter converter;
                 ParameterType parameterType = parameterTypes.get(n);
-                // TODO: Can't cast like this
-                SingleValueConverter converter = (SingleValueConverter) converterLookup.lookupConverterForType(parameterType.getParameterClass());
+                if (parameterType.getDateFormat() != null) {
+                    converter = new DateConverter(parameterType.getDateFormat(), null);
+                } else {
+                    // TODO: We might get a lookup that doesn't implement SingleValueConverter
+                    // Need to throw a more friendly exception in that case.
+                    converter = (SingleValueConverter) converterLookup.lookupConverterForType(parameterType.getParameterClass());
+                }
                 result[n] = converter.fromString(a.getVal());
             } else {
                 result[n] = a.getVal();
@@ -105,7 +110,7 @@ public class StepDefinitionMatch extends Match {
         ParameterType parameterType = stepDefinition.getParameterTypes().get(argIndex);
         return parameterType.getActualTypeArguments()[0];
     }
-    
+
     public Throwable filterStacktrace(Throwable error, StackTraceElement stepLocation) {
         StackTraceElement[] stackTraceElements = error.getStackTrace();
         if (error.getCause() != null && error.getCause() != error) {

@@ -18,7 +18,7 @@ public class StepDefinitionMatchTest {
     @Test
     public void converts_numbers() throws Throwable {
         StepDefinition stepDefinition = mock(StepDefinition.class);
-        List<ParameterType> parameterTypes = asList(new ParameterType(Integer.TYPE, null, null));
+        List<ParameterType> parameterTypes = asList(new ParameterType(Integer.TYPE, null));
         when(stepDefinition.getParameterTypes()).thenReturn(parameterTypes);
 
         Step stepWithoutDocStringOrTable = mock(Step.class);
@@ -33,7 +33,7 @@ public class StepDefinitionMatchTest {
     @Test
     public void can_have_doc_string_as_only_argument() throws Throwable {
         StepDefinition stepDefinition = mock(StepDefinition.class);
-        List<ParameterType> parameterTypes = asList(new ParameterType(String.class, null, null));
+        List<ParameterType> parameterTypes = asList(new ParameterType(String.class, null));
         when(stepDefinition.getParameterTypes()).thenReturn(parameterTypes);
 
         Step stepWithDocString = mock(Step.class);
@@ -49,7 +49,7 @@ public class StepDefinitionMatchTest {
     @Test
     public void can_have_doc_string_as_last_argument_among_many() throws Throwable {
         StepDefinition stepDefinition = mock(StepDefinition.class);
-        List<ParameterType> parameterTypes = asList(new ParameterType(Integer.TYPE, null, null), new ParameterType(String.class, null, null));
+        List<ParameterType> parameterTypes = asList(new ParameterType(Integer.TYPE, null), new ParameterType(String.class, null));
         when(stepDefinition.getParameterTypes()).thenReturn(parameterTypes);
 
         Step stepWithDocString = mock(Step.class);

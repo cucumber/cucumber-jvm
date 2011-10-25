@@ -43,7 +43,7 @@ public class RhinoStepDefinition implements StepDefinition {
     }
 
     public List<ParameterType> getParameterTypes() {
-        return Utils.arrayOf(bodyFunc.getArity(), new ParameterType(String.class, null, null));
+        return Utils.listOf(bodyFunc.getArity(), new ParameterType(String.class, null));
     }
 
     public void execute(Object[] args) throws Throwable {

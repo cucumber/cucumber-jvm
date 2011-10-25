@@ -41,7 +41,7 @@ public class JythonStepDefinition implements StepDefinition {
 
     @Override
     public List<ParameterType> getParameterTypes() {
-        return Utils.arrayOf(arity, new ParameterType(String.class, null, null));
+        return Utils.listOf(arity, new ParameterType(String.class, null));
     }
 
     @Override
