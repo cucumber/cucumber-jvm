@@ -394,6 +394,17 @@
         <root url="jar://$MAVEN_REPOSITORY$/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1-sources.jar!/" />
       </SOURCES>
     </library>
+    <library name="Maven: info.cukes:cucumber-html:1.0.0-SNAPSHOT">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/cucumber-html/1.0.0-SNAPSHOT/cucumber-html-1.0.0-SNAPSHOT.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/cucumber-html/1.0.0-SNAPSHOT/cucumber-html-1.0.0-SNAPSHOT-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/cucumber-html/1.0.0-SNAPSHOT/cucumber-html-1.0.0-SNAPSHOT-sources.jar!/" />
+      </SOURCES>
+    </library>
     <library name="Maven: info.cukes:gherkin:2.5.4">
       <CLASSES>
         <root url="jar://$MAVEN_REPOSITORY$/info/cukes/gherkin/2.5.4/gherkin-2.5.4.jar!/" />
