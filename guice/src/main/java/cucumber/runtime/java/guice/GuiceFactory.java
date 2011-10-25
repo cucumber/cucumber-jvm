@@ -1,18 +1,40 @@
 package cucumber.runtime.java.guice;
 
+import static java.util.Collections.emptyList;
+
 import com.google.inject.ConfigurationException;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import cucumber.runtime.java.ObjectFactory;
 
+import java.net.URL;
 import java.util.*;
 
 public class GuiceFactory implements ObjectFactory {
-    private final List<Module> modules = new ArrayList<Module>();
+    private final List<Module> modules;
     private final Set<Class<?>> classes = new HashSet<Class<?>>();
     private final Map<Class<?>, Object> instances = new HashMap<Class<?>, Object>();
-
+    
+    private static URL urlToGuiceProperties() {
+        return GuiceFactory.class.getClassLoader().getResource("cucumber-guice.properties");
+    }
+    
+    
+    public GuiceFactory() {
+        this(new UrlPropertiesLoader().load(urlToGuiceProperties()));
+    }
+    
+    public GuiceFactory(Properties properties) {
+        String guiceModuleClass = properties.getProperty("guiceModule");
+        boolean userDidNotConfigureAModuleClass = null == guiceModuleClass;
+        if( userDidNotConfigureAModuleClass) {
+            this.modules = emptyList();
+        } else {
+            this.modules = new ModuleInstantiator().instantiate(guiceModuleClass);
+        }
+    }
+    
     public void addClass(Class<?> clazz) {
         classes.add(clazz);
     }
