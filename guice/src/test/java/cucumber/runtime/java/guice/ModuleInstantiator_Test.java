@@ -19,25 +19,21 @@ public class ModuleInstantiator_Test {
     }
 
     @Test(expected=GuiceModuleInstantiationFailed.class)
-    public void onNonExistingClass() throws Exception {
+    public void fails_to_instantiate_non_existant_class() throws Exception {
         instantiator.instantiate("some.bogus.Class");
     }
     
     @Test(expected=GuiceModuleInstantiationFailed.class)
-    public void onClassNotImplementingModule() throws Exception {
-        tryToInstantiateAsModule(String.class);
+    public void fails_to_instantiate_class_not_implementing_module() throws Exception {
+        instantiate(String.class);
     }
     
     @Test(expected=GuiceModuleInstantiationFailed.class)
-    public void onClassWithPrivateConstructor() throws Exception {
-        tryToInstantiateAsModule(PrivateConstructor.class);
-    }
-    
-    private Module instantiate(Class<YourModuleClass> moduleClass) {
-        return tryToInstantiateAsModule(moduleClass);
+    public void fails_to_instantiate_class_with_private_constructor() throws Exception {
+        instantiate(PrivateConstructor.class);
     }
 
-    private Module tryToInstantiateAsModule(Class<?> moduleClass) {
+    private Module instantiate(Class<?> moduleClass) {
         String moduleClassName = moduleClass.getCanonicalName();
         return instantiator.instantiate(moduleClassName).get(0);
     }    

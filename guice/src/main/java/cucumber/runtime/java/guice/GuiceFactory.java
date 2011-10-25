@@ -1,40 +1,44 @@
 package cucumber.runtime.java.guice;
 
-import static java.util.Collections.emptyList;
-
 import com.google.inject.ConfigurationException;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import cucumber.runtime.java.ObjectFactory;
 
-import java.net.URL;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
+
+import static java.util.Collections.emptyList;
 
 public class GuiceFactory implements ObjectFactory {
     private final List<Module> modules;
     private final Set<Class<?>> classes = new HashSet<Class<?>>();
     private final Map<Class<?>, Object> instances = new HashMap<Class<?>, Object>();
-    
-    private static URL urlToGuiceProperties() {
-        return GuiceFactory.class.getClassLoader().getResource("cucumber-guice.properties");
+
+    public GuiceFactory() throws IOException {
+        this(loadCucumberGuiceProperties());
     }
-    
-    
-    public GuiceFactory() {
-        this(new UrlPropertiesLoader().load(urlToGuiceProperties()));
-    }
-    
-    public GuiceFactory(Properties properties) {
-        String guiceModuleClass = properties.getProperty("guiceModule");
-        boolean userDidNotConfigureAModuleClass = null == guiceModuleClass;
-        if( userDidNotConfigureAModuleClass) {
+
+    GuiceFactory(Properties properties) throws IOException {
+        String guiceModuleClassName = properties.getProperty("guiceModule");
+        if (guiceModuleClassName == null) {
             this.modules = emptyList();
         } else {
-            this.modules = new ModuleInstantiator().instantiate(guiceModuleClass);
+            this.modules = new ModuleInstantiator().instantiate(guiceModuleClassName);
         }
     }
-    
+
+    private static Properties loadCucumberGuiceProperties() throws IOException {
+        Properties properties = new Properties();
+        InputStream inputStream = GuiceFactory.class.getClassLoader().getResourceAsStream("cucumber-guice.properties");
+        if (inputStream != null) {
+            properties.load(inputStream);
+        }
+        return properties;
+    }
+
     public void addClass(Class<?> clazz) {
         classes.add(clazz);
     }
