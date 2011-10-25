@@ -23,7 +23,7 @@ Cucumber-JVM also integrates with the following Dependency Injection containers:
 
 ## Downloading / Installation
 
-Final releases will be published in [Maven Central](http://search.maven.org/) when the time is right. Until then you can grab 
+Final releases will be published in [Maven Central](http://search.maven.org/) when all issues in [Milestone 1](https://github.com/cucumber/cucumber-jvm/issues?milestone=1&state=open) are closed. Until then you can grab 
 SNAPSHOT releases by adding this repo to your POM:
 
     <repository>
