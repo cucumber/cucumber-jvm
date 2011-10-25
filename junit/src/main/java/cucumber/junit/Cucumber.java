@@ -142,10 +142,11 @@ public class Cucumber extends Suite {
         return longs;
     }
 
-    private List<String> gluePaths(Class featureClass) {
+    private static List<String> gluePaths(Class featureClass) {
+        String className = featureClass.getName();
+        String packageName = packageName(className);
         List<String> gluePaths = new ArrayList<String>();
-        String featurePackageName = featureClass.getName().substring(0, featureClass.getName().lastIndexOf("."));
-        gluePaths.add(featurePackageName);
+        gluePaths.add(packageName);
 
         // Add additional ones
         cucumber.junit.Feature featureAnnotation = (cucumber.junit.Feature) featureClass.getAnnotation(cucumber.junit.Feature.class);
@@ -153,5 +154,9 @@ public class Cucumber extends Suite {
             gluePaths.addAll(asList(featureAnnotation.packages()));
         }
         return gluePaths;
+    }
+
+    static String packageName(String className) {
+        return className.substring(0, Math.max(0, className.lastIndexOf(".")));
     }
 }
