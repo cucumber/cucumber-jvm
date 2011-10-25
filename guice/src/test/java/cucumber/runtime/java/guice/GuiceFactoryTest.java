@@ -11,24 +11,23 @@ import org.junit.Test;
 
 import cucumber.runtime.java.ObjectFactory;
 
+import java.io.IOException;
+import java.util.Properties;
+
 public class GuiceFactoryTest {
-    private final ObjectFactory factory = new GuiceFactory();
-
-    @Before
-    public void registerStepsClassWithFactory() {
-        factory.addClass(Mappings.class);
-    }
-
     @Test
-    public void shouldGiveUsNewInstancesForEachScenario() {
+    public void shouldGiveUsNewInstancesForEachScenario() throws IOException {
+        ObjectFactory factory = new GuiceFactory();
+        factory.addClass(Mappings.class);
+
         // Scenario 1
         factory.createInstances();
-        Mappings o1 = instantiateStepsClass();
+        Mappings o1 = factory.getInstance(Mappings.class);
         factory.disposeInstances();
 
         // Scenario 2
         factory.createInstances();
-        Mappings o2 = instantiateStepsClass();
+        Mappings o2 = factory.getInstance(Mappings.class);
         factory.disposeInstances();
 
         assertNotNull(o1);
@@ -37,11 +36,9 @@ public class GuiceFactoryTest {
 
     @Test
     public void copeWithMissingGuiceModuleProperty() throws Exception {
+        ObjectFactory factory = new GuiceFactory(new Properties());
         factory.createInstances();
-        assertThat(instantiateStepsClass(), is(notNullValue()));
-    }
-    
-    private Mappings instantiateStepsClass() {
-        return factory.getInstance(Mappings.class);
+        Mappings mappings = factory.getInstance(Mappings.class);
+        assertThat(mappings, is(notNullValue()));
     }
 }
