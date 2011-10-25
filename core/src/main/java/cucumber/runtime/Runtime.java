@@ -21,14 +21,15 @@ import static java.util.Collections.emptyList;
  * This is the main entry point for running Cucumber features.
  */
 public class Runtime {
+    private static final byte ERRORS = 0x1;
     private static final List<Object> NO_FILTERS = emptyList();
     private static final Collection<String> NO_TAGS = emptyList();
 
     private final List<Step> undefinedSteps = new ArrayList<Step>();
+    private final List<Throwable> errors = new ArrayList<Throwable>();
     private final List<Backend> backends;
     private final List<String> gluePaths;
     private final boolean isDryRun;
-
 
     public Runtime() {
         this(false);
@@ -77,7 +78,11 @@ public class Runtime {
         return snippets;
     }
 
-    public void undefinedStep(Step step) {
+    public void addError(Throwable error) {
+        errors.add(error);
+    }
+
+    public void addUndefinedStep(Step step) {
         undefinedSteps.add(step);
     }
 
@@ -134,5 +139,17 @@ public class Runtime {
 
     public boolean isDryRun() {
         return isDryRun;
+    }
+
+    public List<Throwable> getErrors() {
+        return errors;
+    }
+
+    public byte exitStatus() {
+        byte result = 0x0;
+        if(!errors.isEmpty()) {
+            result |= ERRORS;
+        }
+        return result;
     }
 }

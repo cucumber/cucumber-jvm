@@ -99,6 +99,7 @@ public class World {
             } catch (Throwable t) {
                 skipNextStep = true;
                 e = t;
+                runtime.addError(e);
             } finally {
                 long duration = System.nanoTime() - start;
                 String status = e == null ? Result.PASSED : Result.FAILED;
@@ -113,7 +114,7 @@ public class World {
     private StepDefinitionMatch stepDefinitionMatch(String uri, Step step) {
         List<StepDefinitionMatch> matches = stepDefinitionMatches(uri, step);
         if (matches.size() == 0) {
-            runtime.undefinedStep(step);
+            runtime.addUndefinedStep(step);
             return null;
         }
         if (matches.size() == 1) {

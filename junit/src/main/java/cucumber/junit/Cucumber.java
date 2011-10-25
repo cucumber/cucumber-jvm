@@ -9,7 +9,7 @@ import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.model.CucumberScenario;
 import cucumber.runtime.model.CucumberScenarioOutline;
 import cucumber.runtime.model.CucumberTagStatement;
-import cucumber.runtime.snippets.SnippetPrinter;
+import cucumber.runtime.snippets.SummaryPrinter;
 import gherkin.formatter.model.Feature;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
@@ -43,7 +43,7 @@ public class Cucumber extends Suite {
         java.lang.Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
-                new SnippetPrinter(System.out).printSnippets(runtime);
+                new SummaryPrinter(System.out).print(runtime);
             }
         });
     }

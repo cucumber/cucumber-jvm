@@ -2,7 +2,7 @@ package cucumber.cli;
 
 import cucumber.formatter.FormatterFactory;
 import cucumber.runtime.Runtime;
-import cucumber.runtime.snippets.SnippetPrinter;
+import cucumber.runtime.snippets.SummaryPrinter;
 import gherkin.formatter.Formatter;
 
 import java.io.File;
@@ -58,17 +58,28 @@ public class Main {
         Runtime runtime = new Runtime(gluePaths, isDryRun);
 
         if (meta != null) {
-            File out = new File(meta);
-            out.getParentFile().mkdirs();
-            FileWriter fileWriter = new FileWriter(out);
-            runtime.writeMeta(filesOrDirs, fileWriter);
-            fileWriter.close();
-        } else {
-            FormatterFactory formatterReporterFactory = new FormatterFactory();
-            Formatter formatter = formatterReporterFactory.createFormatter(format, System.out);
-            runtime.run(filesOrDirs, filters, formatter, formatterReporterFactory.reporter(formatter));
-
-            new SnippetPrinter(System.out).printSnippets(runtime);
+            writeMeta(filesOrDirs, meta, runtime);
         }
+        run(filesOrDirs, filters, format, runtime);
+        printSummary(runtime);
+        System.exit(runtime.exitStatus());
+    }
+
+    private static void writeMeta(List<String> filesOrDirs, String metaPath, Runtime runtime) throws IOException {
+        File out = new File(metaPath);
+        out.getParentFile().mkdirs();
+        FileWriter fileWriter = new FileWriter(out);
+        runtime.writeMeta(filesOrDirs, fileWriter);
+        fileWriter.close();
+    }
+
+    private static void run(List<String> filesOrDirs, List<Object> filters, String format, Runtime runtime) {
+        FormatterFactory formatterFactory = new FormatterFactory();
+        Formatter formatter = formatterFactory.createFormatter(format, System.out);
+        runtime.run(filesOrDirs, filters, formatter, formatterFactory.reporter(formatter));
+    }
+
+    private static void printSummary(Runtime runtime) {
+        new SummaryPrinter(System.out).print(runtime);
     }
 }
