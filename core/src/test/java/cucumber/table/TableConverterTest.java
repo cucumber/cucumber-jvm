@@ -39,7 +39,7 @@ public class TableConverterTest {
     public void converts_table_to_list_of_class_with_special_fields() {
         XStream xStream = new LocalizedXStreams().get(Locale.UK);
         TableConverter tc = new TableConverter(xStream);
-        List<UserWithAgeField> users = tc.convert(UserWithAgeField.class, headerRow(), bodyRows());
+        List<UserWithNameField> users = tc.convert(UserWithNameField.class, headerRow(), bodyRows());
         assertEquals("Sid", users.get(0).name.first);
         assertEquals("Vicious", users.get(0).name.last);
     }
@@ -115,7 +115,7 @@ public class TableConverterTest {
         }
     }
 
-    public static class UserWithAgeField {
+    public static class UserWithNameField {
         public Name name;
         public Date birthDate;
         public Integer credits;
