@@ -24,5 +24,5 @@ Feature: Basic Arithmetic
 
      Examples: Double digits
        |  a |  b |  c |
-       | 10 | 20 | 31 |
+       | 10 | 20 | 30 |
        | 20 | 30 | 50 |
