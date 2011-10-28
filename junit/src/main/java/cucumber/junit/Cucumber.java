@@ -3,6 +3,7 @@ package cucumber.junit;
 import cucumber.resources.Consumer;
 import cucumber.resources.Resource;
 import cucumber.resources.Resources;
+import cucumber.runtime.CucumberException;
 import cucumber.runtime.FeatureBuilder;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.model.CucumberFeature;
@@ -54,26 +55,39 @@ public class Cucumber extends Suite {
     /**
      * Constructor called by JUnit.
      */
-    public Cucumber(Class featureClass) throws InitializationError, IOException {
-        super(featureClass, new ArrayList<Runner>());
-
-        featurePath = featurePath(featureClass);
-        this.feature = parseFeature(featurePath, filters(featureClass));
+    public Cucumber(Class clazz) throws InitializationError, IOException {
+        super(clazz, new ArrayList<Runner>());
+        assertNoDeclaredMethods(clazz);
+        featurePath = featurePath(clazz);
+        this.feature = parseFeature(featurePath, filters(clazz));
     }
 
-    private String featurePath(Class featureClass) {
-        cucumber.junit.Feature featureAnnotation = (cucumber.junit.Feature) featureClass.getAnnotation(cucumber.junit.Feature.class);
+    private void assertNoDeclaredMethods(Class clazz) {
+        if (clazz.getDeclaredMethods().length != 0) {
+            throw new CucumberException(
+                    "\n\n" +
+                            "Classes annotated with @RunWith(Cucumber.class) must not define any methods.\n" +
+                            "Their sole purpose is to serve as an entry point for JUnit.\n" +
+                            "Step Definitions should be defined in their own classes.\n" +
+                            "This allows them to be reused across features.\n" +
+                            "Offending class: " + clazz + "\n"
+            );
+        }
+    }
+
+    private String featurePath(Class clazz) {
+        cucumber.junit.Feature featureAnnotation = (cucumber.junit.Feature) clazz.getAnnotation(cucumber.junit.Feature.class);
         String pathName;
         if (featureAnnotation != null) {
             pathName = featureAnnotation.value();
         } else {
-            pathName = featureClass.getName().replace('.', '/') + ".feature";
+            pathName = clazz.getName().replace('.', '/') + ".feature";
         }
         return pathName;
     }
 
-    private List<Object> filters(Class featureClass) {
-        cucumber.junit.Feature featureAnnotation = (cucumber.junit.Feature) featureClass.getAnnotation(cucumber.junit.Feature.class);
+    private List<Object> filters(Class clazz) {
+        cucumber.junit.Feature featureAnnotation = (cucumber.junit.Feature) clazz.getAnnotation(cucumber.junit.Feature.class);
         Object[] filters = new Object[0];
         if (featureAnnotation != null) {
             filters = toLong(featureAnnotation.lines());
@@ -142,14 +156,14 @@ public class Cucumber extends Suite {
         return longs;
     }
 
-    private static List<String> gluePaths(Class featureClass) {
-        String className = featureClass.getName();
+    private static List<String> gluePaths(Class clazz) {
+        String className = clazz.getName();
         String packageName = packageName(className);
         List<String> gluePaths = new ArrayList<String>();
         gluePaths.add(packageName);
 
         // Add additional ones
-        cucumber.junit.Feature featureAnnotation = (cucumber.junit.Feature) featureClass.getAnnotation(cucumber.junit.Feature.class);
+        cucumber.junit.Feature featureAnnotation = (cucumber.junit.Feature) clazz.getAnnotation(cucumber.junit.Feature.class);
         if (featureAnnotation != null) {
             gluePaths.addAll(asList(featureAnnotation.packages()));
         }
