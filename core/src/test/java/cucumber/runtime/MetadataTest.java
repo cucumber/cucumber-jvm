@@ -33,11 +33,11 @@ public class MetadataTest {
         Map<String, List<String>> metadata = meta.generate(stepDefs, features());
         assertEquals("" +
                 "{\n" +
+                "  \"I have (\\\\d+) apples in my bowl\": [],\n" +
                 "  \"I have (\\\\d+) cukes in my belly\": [\n" +
                 "    \"I have 4 cukes in my belly\",\n" +
                 "    \"I have 42 cukes in my belly\"\n" +
-                "  ],\n" +
-                "  \"I have (\\\\d+) apples in my bowl\": []\n" +
+                "  ]\n" +
                 "}",
                 GSON.toJson(metadata));
     }
