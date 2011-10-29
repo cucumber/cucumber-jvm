@@ -7,7 +7,9 @@ import gherkin.formatter.Reporter;
 import gherkin.formatter.model.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class CucumberScenarioOutline extends CucumberTagStatement {
     private final List<CucumberExamples> cucumberExamplesList = new ArrayList<CucumberExamples>();
@@ -38,8 +40,8 @@ public class CucumberScenarioOutline extends CucumberTagStatement {
         }
     }
 
-    CucumberScenario createExampleScenario(Row header, Row example, Examples examples) {
-        Scenario exampleScenario = new Scenario(example.getComments(), examples.getTags(), tagStatement.getKeyword(), tagStatement.getName(), null, example.getLine());
+    CucumberScenario createExampleScenario(Row header, Row example, List<Tag> tags) {
+        Scenario exampleScenario = new Scenario(example.getComments(), tags, tagStatement.getKeyword(), tagStatement.getName(), null, example.getLine());
         CucumberScenario cucumberScenario = new CucumberScenario(cucumberFeature, cucumberBackground, exampleScenario, example);
         for (Step step : getSteps()) {
             cucumberScenario.step(createExampleStep(step, header, example));
@@ -47,23 +49,55 @@ public class CucumberScenarioOutline extends CucumberTagStatement {
         return cucumberScenario;
     }
 
-    private Step createExampleStep(Step step, Row header, Row example) {
-        List<Integer> matchedColumns = new ArrayList<Integer>();
-        String name = step.getName();
-
+    static ExampleStep createExampleStep(Step step, Row header, Row example) {
+        Set<Integer> matchedColumns = new HashSet<Integer>();
         List<String> headerCells = header.getCells();
+        List<String> exampleCells = example.getCells();
+
+        // Create a step with replaced tokens
+        String name = replaceTokens(matchedColumns, headerCells, exampleCells, step.getName());
+        ExampleStep exampleStep = new ExampleStep(step.getComments(), step.getKeyword(), name, step.getLine(), matchedColumns);
+        exampleStep.setDocString(docStringWithTokensReplaced(step.getDocString(), headerCells, exampleCells, matchedColumns));
+        exampleStep.setRows(rowsWithTokensReplaced(step.getRows(), headerCells, exampleCells, matchedColumns));
+
+        return exampleStep;
+    }
+
+    private static List<Row> rowsWithTokensReplaced(List<Row> rows, List<String> headerCells, List<String> exampleCells, Set<Integer> matchedColumns) {
+        if (rows != null) {
+            List<Row> newRows = new ArrayList<Row>(rows.size());
+            for (Row row : rows) {
+                List<String> newCells = new ArrayList<String>(row.getCells().size());
+                for (String cell : row.getCells()) {
+                    newCells.add(replaceTokens(matchedColumns, headerCells, exampleCells, cell));
+                }
+                newRows.add(new Row(row.getComments(), newCells, row.getLine()));
+            }
+            return newRows;
+        } else {
+            return null;
+        }
+    }
+
+    private static DocString docStringWithTokensReplaced(DocString docString, List<String> headerCells, List<String> exampleCells, Set<Integer> matchedColumns) {
+        if (docString != null) {
+            String docStringValue = replaceTokens(matchedColumns, headerCells, exampleCells, docString.getValue());
+            return new DocString(docString.getContentType(), docStringValue, docString.getLine());
+        } else {
+            return null;
+        }
+    }
+
+    private static String replaceTokens(Set<Integer> matchedColumns, List<String> headerCells, List<String> exampleCells, String text) {
         for (int i = 0; i < headerCells.size(); i++) {
             String headerCell = headerCells.get(i);
-            String value = example.getCells().get(i);
+            String value = exampleCells.get(i);
             String token = "<" + headerCell + ">";
-            if (name.contains(token)) {
-                name = name.replace(token, value);
+            if (text.contains(token)) {
+                text = text.replace(token, value);
                 matchedColumns.add(i);
             }
         }
-
-        // TODO: Create CucumberStep where we can add matchedColumns. This allows us
-        // to colour individual cells differently
-        return new Step(step.getComments(), step.getKeyword(), name, step.getLine());
+        return text;
     }
 }
