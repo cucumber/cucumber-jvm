@@ -39,6 +39,8 @@ Now you can grab jars with the following dependency in your POM:
         <version>1.0.0-SNAPSHOT</version>
     </dependency>
 
+If you are not using Maven you can download the SNAPSHOT jars manually from https://oss.sonatype.org/content/repositories/snapshots/info/cukes/
+
 ## Documentation
 
 There isn't any documentation yet apart from API docs. Documentation will be published when the first release candidate for 1.0.0 is ready.
