@@ -3,6 +3,7 @@ package cucumber.table;
 import difflib.Delta;
 import difflib.DiffUtils;
 import difflib.Patch;
+import gherkin.formatter.model.DataTableRow;
 import gherkin.formatter.model.Row;
 
 import java.util.ArrayList;
@@ -30,7 +31,7 @@ public class TableDiffer {
     }
 
     private Table createTableDiff(Map<Integer, Delta> deltasByLine) {
-        List<Row> diffTableRows = new ArrayList<Row>();
+        List<DataTableRow> diffTableRows = new ArrayList<DataTableRow>();
         List<List<String>> rows = orig.raw();
         for (int i = 0; i < rows.size(); i++) {
             Delta delta = deltasByLine.get(i);
@@ -48,16 +49,16 @@ public class TableDiffer {
         return new Table(diffTableRows, orig.getTableConverter(), orig.getTableHeaderMapper());
     }
 
-    private int addRowsToTableDiffAndReturnNumberOfRows(List<Row> diffTableRows, Delta delta) {
+    private int addRowsToTableDiffAndReturnNumberOfRows(List<DataTableRow> diffTableRows, Delta delta) {
         if (delta.getType() == Delta.TYPE.CHANGE || delta.getType() == Delta.TYPE.DELETE) {
             List<Table.DiffableRow> deletedLines = (List<Table.DiffableRow>) delta.getOriginal().getLines();
             for (Table.DiffableRow row : deletedLines) {
-                diffTableRows.add(new Row(row.row.getComments(), row.row.getCells(), row.row.getLine(), Row.DiffType.DELETE));
+                diffTableRows.add(new DataTableRow(row.row.getComments(), row.row.getCells(), row.row.getLine(), Row.DiffType.DELETE));
             }
         }
         List<Table.DiffableRow> insertedLines = (List<Table.DiffableRow>) delta.getRevised().getLines();
         for (Table.DiffableRow row : insertedLines) {
-            diffTableRows.add(new Row(row.row.getComments(), row.row.getCells(), row.row.getLine(), Row.DiffType.INSERT));
+            diffTableRows.add(new DataTableRow(row.row.getComments(), row.row.getCells(), row.row.getLine(), Row.DiffType.INSERT));
         }
         return delta.getOriginal().getLines().size() - 1;
     }

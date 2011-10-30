@@ -112,7 +112,12 @@ public class HTMLFormatter implements Formatter, Reporter {
 
     @Override
     public void syntaxError(String state, String event, List<String> legalEvents, String uri, int line) {
-        //
+    }
+
+    @Override
+    public void close() {
+        // TODO - Close the HTML
+        out.close();
     }
 
     private void writeToJsReport(String functionName, Mappable statement) {

@@ -15,13 +15,13 @@ public class CucumberExamplesTest {
 
     @Test
     public void should_create_example_scenarios() {
-        ScenarioOutline so = new ScenarioOutline(COMMENTS, TAGS, "Scenario Outline", "", "", 1);
+        ScenarioOutline so = new ScenarioOutline(COMMENTS, TAGS, "Scenario Outline", "", "", 1, "");
         CucumberScenarioOutline cso = new CucumberScenarioOutline(null, null, so);
-        cso.step(new Step(COMMENTS, "Given ", "I have 5 <what> in my <where>", 2));
-        Examples examples = new Examples(COMMENTS, TAGS, "Examples", "", "", 3, asList(
-                new Row(COMMENTS, asList("what", "where"), 4),
-                new Row(COMMENTS, asList("cukes", "belly"), 5),
-                new Row(COMMENTS, asList("apples", "basket"), 6)
+        cso.step(new Step(COMMENTS, "Given ", "I have 5 <what> in my <where>", 2, null, null));
+        Examples examples = new Examples(COMMENTS, TAGS, "Examples", "", "", 3, "", asList(
+                new ExamplesTableRow(COMMENTS, asList("what", "where"), 4, ""),
+                new ExamplesTableRow(COMMENTS, asList("cukes", "belly"), 5, ""),
+                new ExamplesTableRow(COMMENTS, asList("apples", "basket"), 6, "")
         ));
 
         CucumberExamples cucumberExamples = new CucumberExamples(cso, examples);
