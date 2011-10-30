@@ -1,16 +1,16 @@
 package cucumber.runtime.java.guice;
 
 import cucumber.runtime.java.ObjectFactory;
-import org.junit.Ignore;
 import org.junit.Test;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
+import java.io.IOException;
+import java.util.Properties;
+
+import static org.junit.Assert.*;
 
 public class GuiceFactoryTest {
-    @Ignore("Needs to be fixed")
     @Test
-    public void shouldGiveUsNewInstancesForEachScenario() {
+    public void shouldGiveUsNewInstancesForEachScenario() throws IOException {
         ObjectFactory factory = new GuiceFactory();
         factory.addClass(Mappings.class);
 
@@ -28,4 +28,11 @@ public class GuiceFactoryTest {
         assertNotSame(o1, o2);
     }
 
+    @Test
+    public void missing_guice_module_property_causes_mapping_to_be_null() throws Exception {
+        ObjectFactory factory = new GuiceFactory(new Properties());
+        factory.createInstances();
+        Mappings mappings = factory.getInstance(Mappings.class);
+        assertNull(mappings);
+    }
 }

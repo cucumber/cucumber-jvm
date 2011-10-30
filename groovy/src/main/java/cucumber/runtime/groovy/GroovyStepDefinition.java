@@ -1,12 +1,13 @@
 package cucumber.runtime.groovy;
 
 import cucumber.runtime.JdkPatternArgumentMatcher;
+import cucumber.runtime.ParameterType;
 import cucumber.runtime.StepDefinition;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 import groovy.lang.Closure;
 
-import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -29,17 +30,17 @@ public class GroovyStepDefinition implements StepDefinition {
         return argumentMatcher.argumentsFrom(step.getName());
     }
 
-    @Override
-    public Type getTypeForTableList(int argIndex) {
-        return null;
-    }
-
     public String getLocation() {
         return location.getFileName() + ":" + location.getLineNumber();
     }
 
-    public Class<?>[] getParameterTypes() {
-        return body.getParameterTypes();
+    public List<ParameterType> getParameterTypes() {
+        Class[] parameterTypes = body.getParameterTypes();
+        List<ParameterType> result = new ArrayList<ParameterType>(parameterTypes.length);
+        for (Class parameterType : parameterTypes) {
+            result.add(new ParameterType(parameterType, null));
+        }
+        return result;
     }
 
     public void execute(Object[] args) throws Throwable {

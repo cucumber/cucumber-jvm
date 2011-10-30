@@ -32,7 +32,7 @@ public class LocalizedXStreams {
         register(lookup, new BigDecimalConverter(locale));
         register(lookup, new BigIntegerConverter(locale));
         register(lookup, new ByteConverter(locale));
-        register(lookup, new DateConverter(locale)); // TODO: pass in format!!
+        register(lookup, new DateConverter(locale));
         register(lookup, new DoubleConverter(locale));
         register(lookup, new FloatConverter(locale));
         register(lookup, new IntegerConverter(locale));

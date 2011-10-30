@@ -2,7 +2,7 @@ package cucumber.cli;
 
 import cucumber.formatter.FormatterFactory;
 import cucumber.runtime.Runtime;
-import cucumber.runtime.snippets.SnippetPrinter;
+import cucumber.runtime.snippets.SummaryPrinter;
 import gherkin.formatter.Formatter;
 
 import java.io.File;
@@ -24,6 +24,7 @@ public class Main {
         String format = "progress";
         List<String> args = new ArrayList<String>(asList(argv));
         String meta = null;
+        boolean isDryRun = false;
 
         while (!args.isEmpty()) {
             String arg = args.remove(0);
@@ -43,6 +44,8 @@ public class Main {
                 format = args.remove(0);
             } else if (arg.equals("--meta") || arg.equals("-m")) {
                 meta = args.remove(0);
+            } else if (arg.equals("--dry-run") || arg.equals("-d")) {
+                isDryRun = true;
             } else {
                 filesOrDirs.add(arg);
             }
@@ -52,20 +55,31 @@ public class Main {
             System.exit(1);
         }
 
-        Runtime runtime = new Runtime(gluePaths);
+        Runtime runtime = new Runtime(gluePaths, isDryRun);
 
         if (meta != null) {
-            File out = new File(meta);
-            out.getParentFile().mkdirs();
-            FileWriter fileWriter = new FileWriter(out);
-            runtime.writeMeta(filesOrDirs, fileWriter);
-            fileWriter.close();
-        } else {
-            FormatterFactory formatterReporterFactory = new FormatterFactory();
-            Formatter formatter = formatterReporterFactory.createFormatter(format, System.out);
-            runtime.run(filesOrDirs, filters, formatter, formatterReporterFactory.reporter(formatter));
-
-            new SnippetPrinter(System.out).printSnippets(runtime);
+            writeMeta(filesOrDirs, meta, runtime);
         }
+        run(filesOrDirs, filters, format, runtime);
+        printSummary(runtime);
+        System.exit(runtime.exitStatus());
+    }
+
+    private static void writeMeta(List<String> filesOrDirs, String metaPath, Runtime runtime) throws IOException {
+        File out = new File(metaPath);
+        out.getParentFile().mkdirs();
+        FileWriter fileWriter = new FileWriter(out);
+        runtime.writeMeta(filesOrDirs, fileWriter);
+        fileWriter.close();
+    }
+
+    private static void run(List<String> filesOrDirs, List<Object> filters, String format, Runtime runtime) {
+        FormatterFactory formatterFactory = new FormatterFactory();
+        Formatter formatter = formatterFactory.createFormatter(format, System.out);
+        runtime.run(filesOrDirs, filters, formatter, formatterFactory.reporter(formatter));
+    }
+
+    private static void printSummary(Runtime runtime) {
+        new SummaryPrinter(System.out).print(runtime);
     }
 }

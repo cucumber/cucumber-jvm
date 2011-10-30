@@ -53,16 +53,21 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>1.2.1</version>
                 <executions>
-                    <!-- Generate .cucumber/meta.json -->
+                    <!-- Run with CLI runnner -->
                     <execution>
                         <phase>test</phase>
                         <goals>
-                            <goal>java</goal>
+                            <goal>exec</goal>
                         </goals>
                         <configuration>
+                            <executable>java</executable>
                             <classpathScope>test</classpathScope>
-                            <mainClass>cucumber.cli.Main</mainClass>
                             <arguments>
+                                <argument>-classpath</argument>
+                                <classpath/>
+                                <argument>cucumber.cli.Main</argument>
+                                <argument>--meta</argument>
+                                <argument>${basedir}/.cucumber/meta.json</argument>
                                 <argument>--format</argument>
                                 <argument>progress</argument>
                                 <argument>--glue</argument>

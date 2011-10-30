@@ -1,5 +1,6 @@
 package cucumber.runtime.jython;
 
+import cucumber.runtime.ParameterType;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.Utils;
 import gherkin.formatter.Argument;
@@ -9,7 +10,6 @@ import org.python.core.PyList;
 import org.python.core.PyObject;
 import org.python.core.PyString;
 
-import java.lang.reflect.Type;
 import java.util.List;
 
 public class JythonStepDefinition implements StepDefinition {
@@ -35,18 +35,13 @@ public class JythonStepDefinition implements StepDefinition {
     }
 
     @Override
-    public Type getTypeForTableList(int argIndex) {
-        return null;
-    }
-
-    @Override
     public String getLocation() {
         return null;
     }
 
     @Override
-    public Class<?>[] getParameterTypes() {
-        return Utils.classArray(arity, String.class);
+    public List<ParameterType> getParameterTypes() {
+        return Utils.listOf(arity, new ParameterType(String.class, null));
     }
 
     @Override

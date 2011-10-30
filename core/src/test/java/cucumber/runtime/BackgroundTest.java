@@ -16,7 +16,7 @@ public class BackgroundTest {
     @Test
     public void should_run_background() {
         Backend backend = new TestBackend();
-        Runtime runtime = new Runtime(new ArrayList<String>(), asList(backend));
+        Runtime runtime = new Runtime(new ArrayList<String>(), asList(backend), false);
         CucumberFeature feature = feature("test.feature", "" +
                 "Feature:\n" +
                 "  Background:\n" +

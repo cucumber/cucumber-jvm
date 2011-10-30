@@ -1,11 +1,14 @@
 package cucumber.runtime;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Utils {
-    public static Class<?>[] classArray(int size, Class<?> clazz) {
-        Class<?>[] arr = new Class<?>[size];
+    public static <T> List<T> listOf(int size, T obj) {
+        List<T> list = new ArrayList<T>();
         for (int i = 0; i < size; i++) {
-            arr[i] = clazz;
+            list.add(obj);
         }
-        return arr;
+        return list;
     }
 }

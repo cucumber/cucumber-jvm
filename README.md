@@ -65,6 +65,10 @@ You'll need Maven to build the Java code (we're happily accepting patches for ot
 
     mvn clean install
 
+### Continuous Integration
+
+http://jenkins-01.public.cifoundry.net/job/Cucumber%20JVM/
+
 ### Running cross-platform Cucumber features
 
 All Cucumber implementations (cucumber-ruby, cucumber-jvm, cucumber-js) share a common set of Cucumber features to ensure all implementations support the same basic features. To run these you need to clone the cucumber-features into your cucumber-jvm working copy:
