@@ -39,6 +39,8 @@ Now you can grab jars with the following dependency in your POM:
         <version>1.0.0-SNAPSHOT</version>
     </dependency>
 
+If you are not using Maven you can download the SNAPSHOT jars manually from https://oss.sonatype.org/content/repositories/snapshots/info/cukes/
+
 ## Documentation
 
 ### API Docs
@@ -64,6 +66,10 @@ If we get a pull request where an entire file is changed because of insignifican
 You'll need Maven to build the Java code (we're happily accepting patches for other build systems). To build and run tests, run:
 
     mvn clean install
+
+### Continuous Integration
+
+http://jenkins-01.public.cifoundry.net/job/Cucumber%20JVM/
 
 ### Running cross-platform Cucumber features
 

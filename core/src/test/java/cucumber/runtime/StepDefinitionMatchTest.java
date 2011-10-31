@@ -8,15 +8,17 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
+import static java.util.Arrays.asList;
 import static org.mockito.Mockito.*;
 
 public class StepDefinitionMatchTest {
     @Test
     public void converts_numbers() throws Throwable {
         StepDefinition stepDefinition = mock(StepDefinition.class);
-        Class<?>[] parameterTypes = {Integer.TYPE};
+        List<ParameterType> parameterTypes = asList(new ParameterType(Integer.TYPE, null));
         when(stepDefinition.getParameterTypes()).thenReturn(parameterTypes);
 
         Step stepWithoutDocStringOrTable = mock(Step.class);
@@ -31,7 +33,7 @@ public class StepDefinitionMatchTest {
     @Test
     public void can_have_doc_string_as_only_argument() throws Throwable {
         StepDefinition stepDefinition = mock(StepDefinition.class);
-        Class<?>[] parameterTypes = {String.class};
+        List<ParameterType> parameterTypes = asList(new ParameterType(String.class, null));
         when(stepDefinition.getParameterTypes()).thenReturn(parameterTypes);
 
         Step stepWithDocString = mock(Step.class);
@@ -47,7 +49,7 @@ public class StepDefinitionMatchTest {
     @Test
     public void can_have_doc_string_as_last_argument_among_many() throws Throwable {
         StepDefinition stepDefinition = mock(StepDefinition.class);
-        Class<?>[] parameterTypes = {Integer.TYPE, String.class};
+        List<ParameterType> parameterTypes = asList(new ParameterType(Integer.TYPE, null), new ParameterType(String.class, null));
         when(stepDefinition.getParameterTypes()).thenReturn(parameterTypes);
 
         Step stepWithDocString = mock(Step.class);

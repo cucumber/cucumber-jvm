@@ -21,24 +21,32 @@ import static java.util.Collections.emptyList;
  * This is the main entry point for running Cucumber features.
  */
 public class Runtime {
+    private static final byte ERRORS = 0x1;
     private static final List<Object> NO_FILTERS = emptyList();
     private static final Collection<String> NO_TAGS = emptyList();
 
     private final List<Step> undefinedSteps = new ArrayList<Step>();
+    private final List<Throwable> errors = new ArrayList<Throwable>();
     private final List<Backend> backends;
     private final List<String> gluePaths;
+    private final boolean isDryRun;
 
     public Runtime() {
-        this(System.getProperty("cucumber.glue") != null ? asList(System.getProperty("cucumber.glue").split(",")) : new ArrayList<String>());
+        this(false);
     }
 
-    public Runtime(List<String> gluePaths) {
-        this(gluePaths, Resources.instantiateSubclasses(Backend.class, "cucumber.runtime", new Class[0], new Object[0]));
+    public Runtime(boolean isDryRun) {
+        this(System.getProperty("cucumber.glue") != null ? asList(System.getProperty("cucumber.glue").split(",")) : new ArrayList<String>(), isDryRun);
     }
 
-    public Runtime(List<String> gluePaths, List<Backend> backends) {
+    public Runtime(List<String> gluePaths, boolean isDryRun) {
+        this(gluePaths, Resources.instantiateSubclasses(Backend.class, "cucumber.runtime", new Class[0], new Object[0]), isDryRun);
+    }
+
+    public Runtime(List<String> gluePaths, List<Backend> backends, boolean isDryRun) {
         this.backends = backends;
         this.gluePaths = gluePaths;
+        this.isDryRun = isDryRun;
     }
 
     /**
@@ -70,7 +78,11 @@ public class Runtime {
         return snippets;
     }
 
-    public void undefinedStep(Step step) {
+    public void addError(Throwable error) {
+        errors.add(error);
+    }
+
+    public void addUndefinedStep(Step step) {
         undefinedSteps.add(step);
     }
 
@@ -123,5 +135,21 @@ public class Runtime {
         Map<String, List<String>> meta = new Metadata().generate(stepDefs, features);
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         out.append(gson.toJson(meta));
+    }
+
+    public boolean isDryRun() {
+        return isDryRun;
+    }
+
+    public List<Throwable> getErrors() {
+        return errors;
+    }
+
+    public byte exitStatus() {
+        byte result = 0x0;
+        if(!errors.isEmpty()) {
+            result |= ERRORS;
+        }
+        return result;
     }
 }

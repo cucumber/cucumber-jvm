@@ -6,12 +6,42 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 import cucumber.runtime.java.ObjectFactory;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 
+import static java.util.Collections.emptyList;
+
 public class GuiceFactory implements ObjectFactory {
-    private final List<Module> modules = new ArrayList<Module>();
+    private final List<Module> modules;
     private final Set<Class<?>> classes = new HashSet<Class<?>>();
     private final Map<Class<?>, Object> instances = new HashMap<Class<?>, Object>();
+
+    public GuiceFactory() throws IOException {
+        this(loadCucumberGuiceProperties());
+    }
+
+    GuiceFactory(Properties properties) throws IOException {
+        String guiceModuleClassName = properties.getProperty("guiceModule");
+        if (guiceModuleClassName == null) {
+            this.modules = emptyList();
+        } else {
+            this.modules = new ModuleInstantiator().instantiate(guiceModuleClassName);
+        }
+    }
+
+    private static Properties loadCucumberGuiceProperties() throws IOException {
+        Properties properties = new Properties();
+        InputStream inputStream = GuiceFactory.class.getClassLoader().getResourceAsStream("cucumber-guice.properties");
+        if (inputStream != null) {
+            try {
+                properties.load(inputStream);
+            } finally {
+                inputStream.close();
+            }
+        }
+        return properties;
+    }
 
     public void addClass(Class<?> clazz) {
         classes.add(clazz);
