@@ -1,7 +1,7 @@
 package cucumber.table;
 
 import gherkin.formatter.model.Comment;
-import gherkin.formatter.model.Row;
+import gherkin.formatter.model.DataTableRow;
 import gherkin.lexer.Lexer;
 import gherkin.lexer.Listener;
 import gherkin.lexer.i18n.EN;
@@ -14,7 +14,7 @@ public class TableParser {
     private static final List<Comment> NO_COMMENTS = Collections.emptyList();
 
     public static Table parse(String source) {
-        final List<Row> rows = new ArrayList<Row>();
+        final List<DataTableRow> rows = new ArrayList<DataTableRow>();
         Lexer l = new EN(new Listener() {
             @Override
             public void comment(String comment, int line) {
@@ -58,7 +58,7 @@ public class TableParser {
 
             @Override
             public void row(List<String> cells, int line) {
-                rows.add(new Row(NO_COMMENTS, cells, line));
+                rows.add(new DataTableRow(NO_COMMENTS, cells, line));
             }
 
             @Override

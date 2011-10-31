@@ -416,15 +416,15 @@
         <root url="jar://$MAVEN_REPOSITORY$/info/cukes/cucumber-html/1.0.0-SNAPSHOT/cucumber-html-1.0.0-SNAPSHOT-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: info.cukes:gherkin:2.5.4">
+    <library name="Maven: info.cukes:gherkin:2.6.0">
       <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/gherkin/2.5.4/gherkin-2.5.4.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/gherkin/2.6.0/gherkin-2.6.0.jar!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/gherkin/2.5.4/gherkin-2.5.4-javadoc.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/gherkin/2.6.0/gherkin-2.6.0-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/gherkin/2.5.4/gherkin-2.5.4-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/gherkin/2.6.0/gherkin-2.6.0-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: javax.annotation:jsr250-api:1.0">

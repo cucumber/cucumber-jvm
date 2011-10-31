@@ -96,6 +96,11 @@ class JUnitReporter implements Reporter, Formatter {
         formatter.syntaxError(state, event, legalEvents, uri, line);
     }
 
+    @Override
+    public void close() {
+        formatter.close();
+    }
+
     public void setStepParentRunner(ExecutionUnitRunner executionUnitRunner, RunNotifier notifier) {
         this.executionUnitRunner = executionUnitRunner;
         this.notifier = notifier;

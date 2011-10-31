@@ -63,6 +63,10 @@ public class FeatureBuilder implements Formatter {
     public void syntaxError(String state, String event, List<String> legalEvents, String uri, int line) {
     }
 
+    @Override
+    public void close() {
+    }
+
     public void parse(Resource resource, List<Object> filters) {
         Formatter formatter = this;
         if (!filters.isEmpty()) {

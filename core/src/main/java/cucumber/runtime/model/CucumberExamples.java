@@ -2,7 +2,7 @@ package cucumber.runtime.model;
 
 import gherkin.formatter.Formatter;
 import gherkin.formatter.model.Examples;
-import gherkin.formatter.model.Row;
+import gherkin.formatter.model.ExamplesTableRow;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +19,7 @@ public class CucumberExamples {
     public List<CucumberScenario> createExampleScenarios() {
         List<CucumberScenario> exampleScenarios = new ArrayList<CucumberScenario>();
 
-        List<Row> rows = examples.getRows();
+        List<ExamplesTableRow> rows = examples.getRows();
         for (int i = 1; i < rows.size(); i++) {
             exampleScenarios.add(cucumberScenarioOutline.createExampleScenario(rows.get(0), rows.get(i), examples.getTags()));
         }

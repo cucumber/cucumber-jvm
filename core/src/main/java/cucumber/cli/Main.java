@@ -77,6 +77,7 @@ public class Main {
         FormatterFactory formatterFactory = new FormatterFactory();
         Formatter formatter = formatterFactory.createFormatter(format, System.out);
         runtime.run(filesOrDirs, filters, formatter, formatterFactory.reporter(formatter));
+        formatter.close();
     }
 
     private static void printSummary(Runtime runtime) {

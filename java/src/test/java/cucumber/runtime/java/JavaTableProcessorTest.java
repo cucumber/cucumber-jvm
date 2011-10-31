@@ -9,7 +9,7 @@ import cucumber.runtime.converters.LocalizedXStreams;
 import cucumber.table.CamelCaseHeaderMapper;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Comment;
-import gherkin.formatter.model.Row;
+import gherkin.formatter.model.DataTableRow;
 import gherkin.formatter.model.Step;
 import org.junit.Rule;
 import org.junit.Test;
@@ -94,7 +94,7 @@ public class JavaTableProcessorTest {
     public void does_not_transform_to_list_of_map_of_date_to_string() throws Throwable {
         thrown.expect(CucumberException.class);
         thrown.expectMessage("Tables can only be transformed to a List<Map<K,V>> when K is String. It was class java.util.Date.");
-        
+
         Method listOfBeans = StepDefs.class.getMethod("listOfMapsOfDateToString", List.class);
         StepDefs stepDefs = runStepDef(listOfBeans);
     }
@@ -103,7 +103,7 @@ public class JavaTableProcessorTest {
     public void does_not_transform_to_list_of_map_of_string_to_date() throws Throwable {
         thrown.expect(CucumberException.class);
         thrown.expectMessage("Tables can only be transformed to a List<Map<K,V>> when V is String or Object. It was class java.util.Date.");
-        
+
         Method listOfBeans = StepDefs.class.getMethod("listOfMapsOfStringToDate", List.class);
         StepDefs stepDefs = runStepDef(listOfBeans);
     }
@@ -112,7 +112,7 @@ public class JavaTableProcessorTest {
     public void does_not_transform_to_list_of_non_generic_map() throws Throwable {
         thrown.expect(CucumberException.class);
         thrown.expectMessage("Tables can only be transformed to List<Map<String,String>> or List<Map<String,Object>>. You have to declare generic types.");
-        
+
         Method listOfBeans = StepDefs.class.getMethod("listOfMaps", List.class);
         StepDefs stepDefs = runStepDef(listOfBeans);
     }
@@ -121,18 +121,17 @@ public class JavaTableProcessorTest {
         StepDefs stepDefs = new StepDefs();
         StepDefinition stepDefinition = new JavaStepDefinition(Pattern.compile("whatever"), method, new SingletonFactory(stepDefs));
 
-        Step stepWithRows = new Step(NO_COMMENTS, "Given ", "something that wants users", 10);
-        stepWithRows.setRows(rowsList());
+        Step stepWithRows = new Step(NO_COMMENTS, "Given ", "something that wants users", 10, rowsList(), null);
 
         StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(NO_ARGS, stepDefinition, "some.feature", stepWithRows, new LocalizedXStreams(), new CamelCaseHeaderMapper());
         stepDefinitionMatch.runStep(Locale.UK);
         return stepDefs;
     }
 
-    private List<Row> rowsList() {
-        List<Row> rows = new ArrayList<Row>();
-        rows.add(new Row(NO_COMMENTS, asList("birth date"), 1));
-        rows.add(new Row(NO_COMMENTS, asList("10/05/1957"), 2));
+    private List<DataTableRow> rowsList() {
+        List<DataTableRow> rows = new ArrayList<DataTableRow>();
+        rows.add(new DataTableRow(NO_COMMENTS, asList("birth date"), 1));
+        rows.add(new DataTableRow(NO_COMMENTS, asList("10/05/1957"), 2));
         return rows;
     }
 
