@@ -1,6 +1,10 @@
 require 'erb'
 
 module CucumberJavaMappings
+  WORLD_VARIABLE_LOG_FILE        = "world_variable.log"
+  WORLD_FUNCTION_LOG_FILE        = "world_function.log"
+  DATA_TABLE_LOG_FILE            = "data_table.log"
+
   def features_dir
     "src/test/resources"
   end
@@ -161,7 +165,7 @@ public class Mappings<%= @@mappings_counter %> {
     public void <%= step_name.gsub(/[\s:]/, '_') -%>(DataTable table) {
         // ARUBA_IGNORE_START
         try {
-            java.io.Writer w = new java.io.FileWriter("data_table.log");
+            java.io.Writer w = new java.io.FileWriter("<%= DATA_TABLE_LOG_FILE %>");
             w.write(new com.google.gson.GsonBuilder().setPrettyPrinting().create().toJson(table.raw()));
             w.flush();
             w.close();
@@ -192,7 +196,7 @@ public class Mappings<%= @@mappings_counter %> {
     public void <%= step_name.gsub(/[\s:]/, '_') -%>(List<Map<String, String>> maps) {
         // ARUBA_IGNORE_START
         try {
-            java.io.Writer w = new java.io.FileWriter("data_table.log");
+            java.io.Writer w = new java.io.FileWriter("<%= DATA_TABLE_LOG_FILE %>");
             w.write(new com.google.gson.GsonBuilder().setPrettyPrinting().create().toJson(maps));
             w.flush();
             w.close();
@@ -261,7 +265,7 @@ public class WritesSomeValue<%= @@mappings_counter %> {
     public void <%= step_name.gsub(/[\s:]/, '_') -%>() {
         // ARUBA_IGNORE_START
         try {
-            java.io.Writer w = new java.io.FileWriter("world_variable.log.<%= time %>");
+            java.io.Writer w = new java.io.FileWriter("<%= WORLD_VARIABLE_LOG_FILE %>.<%= time %>");
             w.write(String.valueOf(someValue.value));
             w.flush();
             w.close();
@@ -277,13 +281,64 @@ EOF
     @@mappings_counter += 1
   end
 
+  def write_world_function
+    erb = ERB.new(<<-EOF, nil, '-')
+package cucumber.test;
+
+public class SomeMethod {
+    public void someMethod() {
+        // ARUBA_IGNORE_START
+        try {
+            new java.io.FileWriter("<%= WORLD_FUNCTION_LOG_FILE %>");
+        } catch(java.io.IOException e) {
+            throw new RuntimeException(e);
+        }
+        // ARUBA_IGNORE_END
+    }
+}
+
+EOF
+    write_file("src/test/java/cucumber/test/SomeMethod.java", erb.result(binding))
+  end
+
+  def write_mapping_calling_world_function(step_name)
+    erb = ERB.new(<<-EOF, nil, '-')
+package cucumber.test;
+
+import cucumber.annotation.en.Given;
+
+public class InvokesSomeMethod {
+    private final SomeMethod someMethod;
+
+    public InvokesSomeMethod(SomeMethod someMethod) {
+        this.someMethod = someMethod;
+    }
+
+    @Given("<%= step_name -%>")
+    public void <%= step_name.gsub(/[\s:]/, '_') -%>() {
+        someMethod.someMethod();
+    }
+}
+
+EOF
+    write_file("src/test/java/cucumber/test/InvokesSomeMethod.java", erb.result(binding))
+  end
+
+  def write_custom_world_constructor
+    # Nothing special to do here.
+  end
+
+  def assert_world_function_called
+    check_file_presence [WORLD_FUNCTION_LOG_FILE], true
+  end
+
   def assert_world_variable_held_value_at_time(value, time)
-    check_exact_file_content "world_variable.log.#{time}", value
+    check_exact_file_content "#{WORLD_VARIABLE_LOG_FILE}.#{time}", value
   end
 
   def assert_data_table_equals_json(json)
     prep_for_fs_check do
-      log_file_contents = IO.read("data_table.log")
+      log_file_contents = IO.read(DATA_TABLE_LOG_FILE)
       actual_array      = JSON.parse(log_file_contents)
       expected_array    = JSON.parse(json)
       actual_array.should == expected_array
