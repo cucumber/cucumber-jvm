@@ -43,6 +43,9 @@ If you are not using Maven you can download the SNAPSHOT jars manually from http
 
 ## Documentation
 
+There isn't any documentation yet apart from API docs. Documentation will be published when the first release candidate for 1.0.0 is ready.
+If you are adventurous, check out the examples, read the code and ask specific questions on the Cucumber mailing list.
+
 ### API Docs
 
 * http://cukes.info/cucumber/jvm/api/1.0.0-SNAPSHOT/apidocs/ (URL subject to change)

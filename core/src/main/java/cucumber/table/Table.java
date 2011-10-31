@@ -1,5 +1,6 @@
 package cucumber.table;
 
+import gherkin.formatter.model.DataTableRow;
 import gherkin.formatter.model.Row;
 
 import java.lang.reflect.Type;
@@ -9,11 +10,11 @@ import java.util.List;
 public class Table {
 
     private final List<List<String>> raw;
-    private final List<Row> gherkinRows;
+    private final List<DataTableRow> gherkinRows;
     private final TableConverter tableConverter;
     private final TableHeaderMapper tableHeaderMapper;
 
-    public Table(List<Row> gherkinRows, TableConverter tableConverter, TableHeaderMapper tableHeaderMapper) {
+    public Table(List<DataTableRow> gherkinRows, TableConverter tableConverter, TableHeaderMapper tableHeaderMapper) {
         this.gherkinRows = gherkinRows;
         this.tableConverter = tableConverter;
         this.tableHeaderMapper = tableHeaderMapper;
@@ -35,7 +36,7 @@ public class Table {
 
     private List<List<String>> attributeValues() {
         List<List<String>> attributeValues = new ArrayList<List<String>>();
-        List<Row> valueRows = gherkinRows.subList(1, gherkinRows.size());
+        List<DataTableRow> valueRows = gherkinRows.subList(1, gherkinRows.size());
         for (Row valueRow : valueRows) {
             attributeValues.add(toStrings(valueRow));
         }
@@ -63,7 +64,7 @@ public class Table {
         new TableDiffer(this, other).calculateDiffs();
     }
 
-    public List<Row> getGherkinRows() {
+    public List<DataTableRow> getGherkinRows() {
         return gherkinRows;
     }
 

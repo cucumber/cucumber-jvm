@@ -40,8 +40,8 @@ public class CucumberScenarioOutline extends CucumberTagStatement {
         }
     }
 
-    CucumberScenario createExampleScenario(Row header, Row example, List<Tag> tags) {
-        Scenario exampleScenario = new Scenario(example.getComments(), tags, tagStatement.getKeyword(), tagStatement.getName(), null, example.getLine());
+    CucumberScenario createExampleScenario(ExamplesTableRow header, ExamplesTableRow example, List<Tag> tags) {
+        Scenario exampleScenario = new Scenario(example.getComments(), tags, tagStatement.getKeyword(), tagStatement.getName(), null, example.getLine(), example.getId());
         CucumberScenario cucumberScenario = new CucumberScenario(cucumberFeature, cucumberBackground, exampleScenario, example);
         for (Step step : getSteps()) {
             cucumberScenario.step(createExampleStep(step, header, example));
@@ -49,29 +49,33 @@ public class CucumberScenarioOutline extends CucumberTagStatement {
         return cucumberScenario;
     }
 
-    static ExampleStep createExampleStep(Step step, Row header, Row example) {
+    static ExampleStep createExampleStep(Step step, ExamplesTableRow header, ExamplesTableRow example) {
         Set<Integer> matchedColumns = new HashSet<Integer>();
         List<String> headerCells = header.getCells();
         List<String> exampleCells = example.getCells();
 
         // Create a step with replaced tokens
         String name = replaceTokens(matchedColumns, headerCells, exampleCells, step.getName());
-        ExampleStep exampleStep = new ExampleStep(step.getComments(), step.getKeyword(), name, step.getLine(), matchedColumns);
-        exampleStep.setDocString(docStringWithTokensReplaced(step.getDocString(), headerCells, exampleCells, matchedColumns));
-        exampleStep.setRows(rowsWithTokensReplaced(step.getRows(), headerCells, exampleCells, matchedColumns));
 
-        return exampleStep;
+        return new ExampleStep(
+                step.getComments(), 
+                step.getKeyword(), 
+                name, 
+                step.getLine(),
+                rowsWithTokensReplaced(step.getRows(), headerCells, exampleCells, matchedColumns),
+                docStringWithTokensReplaced(step.getDocString(), headerCells, exampleCells, matchedColumns),
+                matchedColumns);
     }
 
-    private static List<Row> rowsWithTokensReplaced(List<Row> rows, List<String> headerCells, List<String> exampleCells, Set<Integer> matchedColumns) {
+    private static List<DataTableRow> rowsWithTokensReplaced(List<DataTableRow> rows, List<String> headerCells, List<String> exampleCells, Set<Integer> matchedColumns) {
         if (rows != null) {
-            List<Row> newRows = new ArrayList<Row>(rows.size());
+            List<DataTableRow> newRows = new ArrayList<DataTableRow>(rows.size());
             for (Row row : rows) {
                 List<String> newCells = new ArrayList<String>(row.getCells().size());
                 for (String cell : row.getCells()) {
                     newCells.add(replaceTokens(matchedColumns, headerCells, exampleCells, cell));
                 }
-                newRows.add(new Row(row.getComments(), newCells, row.getLine()));
+                newRows.add(new DataTableRow(row.getComments(), newCells, row.getLine()));
             }
             return newRows;
         } else {

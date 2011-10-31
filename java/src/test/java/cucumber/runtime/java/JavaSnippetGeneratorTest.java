@@ -42,7 +42,7 @@ public class JavaSnippetGeneratorTest {
     }
 
     private String snippetFor(String name) {
-        Step step = new Step(Collections.<Comment>emptyList(), "Given ", name, 0);
+        Step step = new Step(Collections.<Comment>emptyList(), "Given ", name, 0, null, null);
         return new JavaSnippetGenerator(step).getSnippet();
     }
 }

@@ -71,6 +71,12 @@ public class ProgressFormatter implements Formatter, Reporter {
     }
 
     @Override
+    public void close() {
+        out.println();
+        out.close();
+    }
+
+    @Override
     public void result(Result result) {
         if (!monochrome) {
             ANSI_ESCAPES.get(result.getStatus()).appendTo(out);
