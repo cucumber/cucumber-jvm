@@ -14,15 +14,14 @@ Feature: Basic Arithmetic
     Then the result is 11
 
   Scenario Outline: Many additions
-      Given the following movements:
-		|code|	from|	to|
-		|A|	 |	G|
-		|A|	G|	R1|
-		|A|	R1|	C1|
-		|B|	 |	G|
-  
-     When I add <a> and <b>
-     Then the result is <c>
+  	Given the following movements:
+	  	|code| from| to|
+		|A| | G|
+		|A| G| R1|
+		|A| R1| C1|
+		|B| | G|
+	When I add <a> and <b>    
+    Then the result is <c>
      
      Examples: Single digits
        | a | b | c |
