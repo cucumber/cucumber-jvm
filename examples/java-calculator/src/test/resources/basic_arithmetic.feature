@@ -15,7 +15,7 @@ Feature: Basic Arithmetic
 			
   Scenario Outline: Many additions
   	Given the previous additions:
-	  	| first | second | operation |
+		| first | second | operation |
 		| 1 | 1 | + |
 		| 2 | 1 | + |
 	When I add <a> and <b>    
