@@ -7,17 +7,15 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Table {
+public class DataTable {
 
     private final List<List<String>> raw;
     private final List<DataTableRow> gherkinRows;
     private final TableConverter tableConverter;
-    private final TableHeaderMapper tableHeaderMapper;
 
-    public Table(List<DataTableRow> gherkinRows, TableConverter tableConverter, TableHeaderMapper tableHeaderMapper) {
+    public DataTable(List<DataTableRow> gherkinRows, TableConverter tableConverter) {
         this.gherkinRows = gherkinRows;
         this.tableConverter = tableConverter;
-        this.tableHeaderMapper = tableHeaderMapper;
         this.raw = new ArrayList<List<String>>();
         for (Row row : gherkinRows) {
             List<String> list = new ArrayList<String>();
@@ -31,7 +29,7 @@ public class Table {
     }
 
     public <T> List<T> asList(Type listType) {
-        return tableConverter.convert(listType, attributeNames(), attributeValues());
+        return tableConverter.convert(listType, gherkinRows.get(0).getCells(), attributeValues());
     }
 
     private List<List<String>> attributeValues() {
@@ -43,14 +41,6 @@ public class Table {
         return attributeValues;
     }
 
-    private List<String> attributeNames() {
-        List<String> strings = new ArrayList<String>();
-        for (String string : gherkinRows.get(0).getCells()) {
-            strings.add(tableHeaderMapper.map(string));
-        }
-        return strings;
-    }
-
     private List<String> toStrings(Row row) {
         List<String> strings = new ArrayList<String>();
         for (String string : row.getCells()) {
@@ -59,8 +49,7 @@ public class Table {
         return strings;
     }
 
-
-    public void diff(Table other) {
+    public void diff(DataTable other) {
         new TableDiffer(this, other).calculateDiffs();
     }
 
@@ -79,10 +68,6 @@ public class Table {
 
     TableConverter getTableConverter() {
         return tableConverter;
-    }
-
-    TableHeaderMapper getTableHeaderMapper() {
-        return tableHeaderMapper;
     }
 
     class DiffableRow {

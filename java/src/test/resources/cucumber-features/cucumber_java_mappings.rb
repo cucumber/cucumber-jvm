@@ -56,6 +56,12 @@ module CucumberJavaMappings
             <version>4.10</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>1.7.2</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>
 EOF
@@ -71,7 +77,7 @@ import cucumber.annotation.en.Given;
 
 public class Mappings<%= @@mappings_counter %> {
     @Given("<%= step_name -%>")
-    public void <%= step_name.gsub(/ /, '_') -%>() {
+    public void <%= step_name.gsub(/[\s:]/, '_') -%>() {
         // ARUBA_IGNORE_START
         try {
             new java.io.FileWriter("<%= step_file(step_name) %>");
@@ -99,7 +105,7 @@ import cucumber.annotation.en.Given;
 
 public class Mappings<%= @@mappings_counter %> {
     @Given("<%= step_name -%>")
-    public void <%= step_name.gsub(/ /, '_') -%>() {
+    public void <%= step_name.gsub(/[\s:]/, '_') -%>() {
         // ARUBA_IGNORE_START
         try {
             new java.io.FileWriter("<%= step_file(step_name) %>");
@@ -126,7 +132,7 @@ import cucumber.annotation.Pending;
 public class Mappings<%= @@mappings_counter %> {
     @Pending
     @Given("<%= step_name -%>")
-    public void <%= step_name.gsub(/ /, '_') -%>() {
+    public void <%= step_name.gsub(/[\s:]/, '_') -%>() {
         // ARUBA_IGNORE_START
         try {
             new java.io.FileWriter("<%= step_file(step_name) %>");
@@ -140,6 +146,77 @@ public class Mappings<%= @@mappings_counter %> {
 EOF
     write_file("src/test/java/cucumber/test/Mappings#{@@mappings_counter}.java", erb.result(binding))
     @@mappings_counter += 1
+  end
+
+  def write_mapping_receiving_data_table_as_raw(step_name)
+    erb = ERB.new(<<-EOF, nil, '-')
+package cucumber.test;
+
+import cucumber.annotation.en.Given;
+import cucumber.annotation.Pending;
+import cucumber.table.DataTable;
+
+public class Mappings<%= @@mappings_counter %> {
+  
+    @Given("<%= step_name -%>")
+    public void <%= step_name.gsub(/[\s:]/, '_') -%>(DataTable table) {
+        // ARUBA_IGNORE_START
+        try {
+            java.io.Writer w = new java.io.FileWriter("data_table.log");
+            w.write(new com.google.gson.GsonBuilder().setPrettyPrinting().create().toJson(table.raw()));
+            w.flush();
+            w.close();
+        } catch(java.io.IOException e) {
+            throw new RuntimeException(e);
+        }
+        // ARUBA_IGNORE_END
+    }
+}
+
+EOF
+    write_file("src/test/java/cucumber/test/Mappings#{@@mappings_counter}.java", erb.result(binding))
+    @@mappings_counter += 1
+  end
+
+  def write_mapping_receiving_data_table_as_hashes(step_name)
+    erb = ERB.new(<<-EOF, nil, '-')
+package cucumber.test;
+
+import cucumber.annotation.en.Given;
+import cucumber.annotation.Pending;
+import cucumber.table.DataTable;
+import java.util.List;
+import java.util.Map;
+
+public class Mappings<%= @@mappings_counter %> {
+
+    @Given("<%= step_name -%>")
+    public void <%= step_name.gsub(/[\s:]/, '_') -%>(List<Map<String, String>> maps) {
+        // ARUBA_IGNORE_START
+        try {
+            java.io.Writer w = new java.io.FileWriter("data_table.log");
+            w.write(new com.google.gson.GsonBuilder().setPrettyPrinting().create().toJson(maps));
+            w.flush();
+            w.close();
+        } catch(java.io.IOException e) {
+            throw new RuntimeException(e);
+        }
+        // ARUBA_IGNORE_END
+    }
+}
+
+EOF
+    write_file("src/test/java/cucumber/test/Mappings#{@@mappings_counter}.java", erb.result(binding))
+    @@mappings_counter += 1
+  end
+
+  def assert_data_table_equals_json(json)
+    prep_for_fs_check do
+      log_file_contents = IO.read("data_table.log")
+      actual_array      = JSON.parse(log_file_contents)
+      expected_array    = JSON.parse(json)
+      actual_array.should == expected_array
+    end
   end
 
   def write_calculator_code

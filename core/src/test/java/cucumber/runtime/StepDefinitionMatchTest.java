@@ -25,7 +25,7 @@ public class StepDefinitionMatchTest {
         when(stepWithoutDocStringOrTable.getDocString()).thenReturn(null);
         when(stepWithoutDocStringOrTable.getRows()).thenReturn(null);
 
-        StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(Arrays.asList(new Argument(0, "5")), stepDefinition, "some.feature", stepWithoutDocStringOrTable, new LocalizedXStreams(), null);
+        StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(Arrays.asList(new Argument(0, "5")), stepDefinition, "some.feature", stepWithoutDocStringOrTable, new LocalizedXStreams());
         stepDefinitionMatch.runStep(Locale.ENGLISH);
         verify(stepDefinition).execute(new Object[]{5});
     }
@@ -41,7 +41,7 @@ public class StepDefinitionMatchTest {
         when(stepWithDocString.getDocString()).thenReturn(docString);
         when(stepWithDocString.getRows()).thenReturn(null);
 
-        StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(new ArrayList<Argument>(), stepDefinition, "some.feature", stepWithDocString, new LocalizedXStreams(), null);
+        StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(new ArrayList<Argument>(), stepDefinition, "some.feature", stepWithDocString, new LocalizedXStreams());
         stepDefinitionMatch.runStep(Locale.ENGLISH);
         verify(stepDefinition).execute(new Object[]{"HELLO"});
     }
@@ -57,7 +57,7 @@ public class StepDefinitionMatchTest {
         when(stepWithDocString.getDocString()).thenReturn(docString);
         when(stepWithDocString.getRows()).thenReturn(null);
 
-        StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(Arrays.asList(new Argument(0, "5")), stepDefinition, "some.feature", stepWithDocString, new LocalizedXStreams(), null);
+        StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(Arrays.asList(new Argument(0, "5")), stepDefinition, "some.feature", stepWithDocString, new LocalizedXStreams());
         stepDefinitionMatch.runStep(Locale.ENGLISH);
         verify(stepDefinition).execute(new Object[]{5, "HELLO"});
     }

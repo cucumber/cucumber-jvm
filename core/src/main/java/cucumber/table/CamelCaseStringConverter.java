@@ -2,14 +2,14 @@ package cucumber.table;
 
 import java.util.regex.Pattern;
 
-public class CamelCaseHeaderMapper implements TableHeaderMapper {
+public class CamelCaseStringConverter implements StringConverter {
 
     private static final String WHITESPACE = " ";
     private static final Pattern WHITESPACE_PATTERN = Pattern.compile("\\s+");
 
     @Override
-    public String map(String originalHeaderName) {
-        String[] splitted = normalizeSpace(originalHeaderName).split(WHITESPACE);
+    public String map(String string) {
+        String[] splitted = normalizeSpace(string).split(WHITESPACE);
         splitted[0] = uncapitalize(splitted[0]);
         for (int i = 1; i < splitted.length; i++) {
             splitted[i] = capitalize(splitted[i]);

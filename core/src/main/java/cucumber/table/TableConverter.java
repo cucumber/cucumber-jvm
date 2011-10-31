@@ -3,11 +3,14 @@ package cucumber.table;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import cucumber.runtime.CucumberException;
+import gherkin.util.Mapper;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
+
+import static gherkin.util.FixJava.map;
 
 public class TableConverter {
     private final XStream xStream;
@@ -22,6 +25,13 @@ public class TableConverter {
         if (isMapOfStringToStringAssignable(itemType)) {
             reader = new XStreamMapReader(attributeNames, attributeValues);
         } else {
+            final StringConverter mapper = new CamelCaseStringConverter();
+            attributeNames = map(attributeNames, new Mapper<String, String>() {
+                @Override
+                public String map(String attributeName) {
+                    return mapper.map(attributeName);
+                }
+            });
             reader = new XStreamObjectReader(itemType, attributeNames, attributeValues);
         }
         return (List) xStream.unmarshal(reader);

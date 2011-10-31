@@ -14,9 +14,9 @@ import java.util.Locale;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 
-public class TableTest {
+public class DataTableTest {
 
-    private Table simpleTable;
+    private DataTable simpleTable;
 
     @Before
     public void initSimpleTable() {
@@ -24,7 +24,7 @@ public class TableTest {
         simpleRows.add(new DataTableRow(new ArrayList<Comment>(), asList("one", "four", "seven"), 1));
         simpleRows.add(new DataTableRow(new ArrayList<Comment>(), asList("4444", "55555", "666666"), 2));
         XStream xStream = new LocalizedXStreams().get(Locale.UK);
-        simpleTable = new Table(simpleRows, new TableConverter(xStream), new CamelCaseHeaderMapper());
+        simpleTable = new DataTable(simpleRows, new TableConverter(xStream));
     }
 
     @Test
