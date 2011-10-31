@@ -226,10 +226,10 @@ package cucumber.test;
 
 import cucumber.annotation.en.Given;
 
-public class IncrementsSomeValue {
+public class IncrementsSomeValue<%= @@mappings_counter %> {
     private final SomeValue someValue;
 
-    public IncrementsSomeValue(SomeValue someValue) {
+    public IncrementsSomeValue<%= @@mappings_counter %>(SomeValue someValue) {
         this.someValue = someValue;
     }
   
@@ -240,7 +240,8 @@ public class IncrementsSomeValue {
 }
 
 EOF
-    write_file("src/test/java/cucumber/test/IncrementsSomeValue.java", erb.result(binding))
+    write_file("src/test/java/cucumber/test/IncrementsSomeValue#{@@mappings_counter}.java", erb.result(binding))
+    @@mappings_counter += 1
   end
 
   def write_mapping_logging_world_variable_value(step_name, time = "1")
@@ -249,10 +250,10 @@ package cucumber.test;
 
 import cucumber.annotation.en.Given;
 
-public class WritesSomeValue {
+public class WritesSomeValue<%= @@mappings_counter %> {
     private final SomeValue someValue;
 
-    public WritesSomeValue(SomeValue someValue) {
+    public WritesSomeValue<%= @@mappings_counter %>(SomeValue someValue) {
         this.someValue = someValue;
     }
 
@@ -272,7 +273,8 @@ public class WritesSomeValue {
 }
 
 EOF
-    write_file("src/test/java/cucumber/test/WritesSomeValue.java", erb.result(binding))
+    write_file("src/test/java/cucumber/test/WritesSomeValue#{@@mappings_counter}.java", erb.result(binding))
+    @@mappings_counter += 1
   end
 
   def assert_world_variable_held_value_at_time(value, time)
