@@ -153,7 +153,6 @@ EOF
 package cucumber.test;
 
 import cucumber.annotation.en.Given;
-import cucumber.annotation.Pending;
 import cucumber.table.DataTable;
 
 public class Mappings<%= @@mappings_counter %> {
@@ -183,7 +182,6 @@ EOF
 package cucumber.test;
 
 import cucumber.annotation.en.Given;
-import cucumber.annotation.Pending;
 import cucumber.table.DataTable;
 import java.util.List;
 import java.util.Map;
@@ -208,6 +206,77 @@ public class Mappings<%= @@mappings_counter %> {
 EOF
     write_file("src/test/java/cucumber/test/Mappings#{@@mappings_counter}.java", erb.result(binding))
     @@mappings_counter += 1
+  end
+
+  def write_world_variable_with_numeric_value(value)
+    erb = ERB.new(<<-EOF, nil, '-')
+package cucumber.test;
+
+public class SomeValue {
+    public int value = <%= value %>;
+}
+
+EOF
+    write_file("src/test/java/cucumber/test/SomeValue.java", erb.result(binding))
+  end
+
+  def write_mapping_incrementing_world_variable_by_value(step_name, increment_value)
+    erb = ERB.new(<<-EOF, nil, '-')
+package cucumber.test;
+
+import cucumber.annotation.en.Given;
+
+public class IncrementsSomeValue {
+    private final SomeValue someValue;
+
+    public IncrementsSomeValue(SomeValue someValue) {
+        this.someValue = someValue;
+    }
+  
+    @Given("<%= step_name -%>")
+    public void <%= step_name.gsub(/[\s:]/, '_') -%>() {
+        someValue.value += <%= increment_value %>;
+    }
+}
+
+EOF
+    write_file("src/test/java/cucumber/test/IncrementsSomeValue.java", erb.result(binding))
+  end
+
+  def write_mapping_logging_world_variable_value(step_name, time = "1")
+    erb = ERB.new(<<-EOF, nil, '-')
+package cucumber.test;
+
+import cucumber.annotation.en.Given;
+
+public class WritesSomeValue {
+    private final SomeValue someValue;
+
+    public WritesSomeValue(SomeValue someValue) {
+        this.someValue = someValue;
+    }
+
+    @Given("<%= step_name -%>")
+    public void <%= step_name.gsub(/[\s:]/, '_') -%>() {
+        // ARUBA_IGNORE_START
+        try {
+            java.io.Writer w = new java.io.FileWriter("world_variable.log.<%= time %>");
+            w.write(String.valueOf(someValue.value));
+            w.flush();
+            w.close();
+        } catch(java.io.IOException e) {
+            throw new RuntimeException(e);
+        }
+        // ARUBA_IGNORE_END
+    }
+}
+
+EOF
+    write_file("src/test/java/cucumber/test/WritesSomeValue.java", erb.result(binding))
+  end
+
+  def assert_world_variable_held_value_at_time(value, time)
+    check_exact_file_content "world_variable.log.#{time}", value
   end
 
   def assert_data_table_equals_json(json)
