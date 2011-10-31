@@ -12,14 +12,12 @@ Feature: Basic Arithmetic
     # Try to change one of the values below to provoke a failure
     When I add 4 and 7
     Then the result is 11
-
+			
   Scenario Outline: Many additions
-  	Given the following movements:
-	  	|code| from| to|
-		|A| | G|
-		|A| G| R1|
-		|A| R1| C1|
-		|B| | G|
+  	Given the previous additions:
+	  	| first | second | operation |
+		| 1 | 1 | + |
+		| 2 | 1 | + |
 	When I add <a> and <b>    
     Then the result is <c>
      

@@ -14,7 +14,6 @@ import cucumber.annotation.en.When;
 
 public class RpnCalculatorStepdefs {
 	private RpnCalculator calc;
-	private List<ScenarioMovement> stepDefmovements;
 
 	@Given("^a calculator I just turned on$")
 	public void a_calculator_I_just_turned_on() {
@@ -43,52 +42,57 @@ public class RpnCalculatorStepdefs {
 
 	}
 
-	@Given("^the following movements:$")
-	public void theFollowingMovements(List<ScenarioMovement> movements) {
-		calc = new RpnCalculator();
-		stepDefmovements = new ArrayList<RpnCalculatorStepdefs.ScenarioMovement>();
-		for (Iterator<ScenarioMovement> iterator = movements.iterator(); iterator
+	/**
+	 * Shows you can use the @Given annotation even inside a scenario outline,
+	 * having a List<SomeObject> as the argument
+	 * @param additions
+	 */
+	@Given("^the previous additions:$")
+	public void thePreviousAdditions(List<PreviousAddition> additions) {
+		calc = new RpnCalculator();		
+		for (Iterator<PreviousAddition> iterator = additions.iterator(); iterator
 				.hasNext();) {
-
-			stepDefmovements.add(iterator.next());
+			PreviousAddition operation = iterator.next();
+			calc.push(operation.getFirst());
+			calc.push(operation.getSecond());
+			calc.push("+");
 		}
 	}
 
-	public class ScenarioMovement {
-		String code;
-		String from;
-		String to;
-
-		public ScenarioMovement(String code, String from, String to) {
+	public class PreviousAddition {
+		Integer first;
+		Integer second;
+		String operation;
+		
+		public PreviousAddition(Integer first, Integer second, String operation) {
 			super();
-			this.code = code;
-			this.from = from;
-			this.to = to;
+			this.first = first;
+			this.second = second;
+			this.operation = operation;
 		}
 
-		public String getCode() {
-			return code;
+		public Integer getFirst() {
+			return first;
 		}
 
-		public void setCode(String code) {
-			this.code = code;
+		public void setFirst(Integer first) {
+			this.first = first;
 		}
 
-		public String getFrom() {
-			return from;
+		public Integer getSecond() {
+			return second;
 		}
 
-		public void setFrom(String from) {
-			this.from = from;
+		public void setSecond(Integer second) {
+			this.second = second;
 		}
 
-		public String getTo() {
-			return to;
+		public String getOperation() {
+			return operation;
 		}
 
-		public void setTo(String to) {
-			this.to = to;
+		public void setOperation(String operation) {
+			this.operation = operation;
 		}
-
 	}
 }
