@@ -1,8 +1,6 @@
 package cucumber.runtime;
 
 import cucumber.runtime.converters.LocalizedXStreams;
-import cucumber.table.CamelCaseHeaderMapper;
-import cucumber.table.TableHeaderMapper;
 import gherkin.formatter.Argument;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Match;
@@ -16,7 +14,6 @@ public class World {
 
     // TODO - it's expensive to create a new LocalizedXStreams for each scenario - reuse a global one.
     private final LocalizedXStreams localizedXStreams = new LocalizedXStreams();
-    private final TableHeaderMapper tableHeaderMapper = new CamelCaseHeaderMapper();
     private final List<StepDefinition> stepDefinitions = new ArrayList<StepDefinition>();
     private final List<HookDefinition> beforeHooks = new ArrayList<HookDefinition>();
     private final List<HookDefinition> afterHooks = new ArrayList<HookDefinition>();
@@ -48,7 +45,7 @@ public class World {
         for (StepDefinition stepDefinition : stepDefinitions) {
             List<Argument> arguments = stepDefinition.matchedArguments(step);
             if (arguments != null) {
-                result.add(new StepDefinitionMatch(arguments, stepDefinition, uri, step, localizedXStreams, tableHeaderMapper));
+                result.add(new StepDefinitionMatch(arguments, stepDefinition, uri, step, localizedXStreams));
             }
         }
         return result;

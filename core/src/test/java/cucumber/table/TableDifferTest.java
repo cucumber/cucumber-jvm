@@ -8,7 +8,7 @@ import static junit.framework.Assert.assertEquals;
 public class TableDifferTest {
     private static final String EOL = System.getProperty("line.separator");
 
-    private Table table() {
+    private DataTable table() {
         String source =
                 "| Aslak | aslak@email.com      | 123     |" + EOL +
                 "| Joe   | joe@email.com        | 234     |" + EOL +
@@ -17,7 +17,7 @@ public class TableDifferTest {
         return TableParser.parse(source);
     }
 
-    private Table otherTableWithDeletedAndInserted() {
+    private DataTable otherTableWithDeletedAndInserted() {
         String source =
                 "| Aslak | aslak@email.com      | 123 |" + EOL +
                 "| Doe   | joe@email.com        | 234 |" + EOL +
@@ -26,7 +26,7 @@ public class TableDifferTest {
         return TableParser.parse(source);
     }
 
-    private Table otherTableWithInsertedAtEnd() {
+    private DataTable otherTableWithInsertedAtEnd() {
         String source =
                 "| Aslak | aslak@email.com      | 123 |" + EOL +
                 "| Joe   | joe@email.com        | 234 |" + EOL +
@@ -71,7 +71,7 @@ public class TableDifferTest {
         }
     }
 
-    private String pretty(Table table) {
+    private String pretty(DataTable table) {
         StringBuilder result = new StringBuilder();
         PrettyFormatter pf = new PrettyFormatter(result, true, false);
         pf.table(table.getGherkinRows());

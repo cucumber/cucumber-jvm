@@ -6,7 +6,7 @@ import cucumber.runtime.CucumberException;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.StepDefinitionMatch;
 import cucumber.runtime.converters.LocalizedXStreams;
-import cucumber.table.CamelCaseHeaderMapper;
+import cucumber.table.DataTable;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Comment;
 import gherkin.formatter.model.DataTableRow;
@@ -35,6 +35,7 @@ public class JavaTableProcessorTest {
         public List<UserBean> userBeans;
         public List<Map<String, String>> mapsOfStringToString;
         public List<Map<String, Object>> mapsOfStringToObject;
+        public DataTable dataTable;
 
         public void listOfPojos(List<UserPojo> userPojos) {
             this.userPojos = userPojos;
@@ -52,6 +53,10 @@ public class JavaTableProcessorTest {
             this.mapsOfStringToObject = mapsOfStringToObject;
         }
 
+        public void plainDataTable(DataTable dataTable) {
+            this.dataTable = dataTable;
+        }
+
         public void listOfMapsOfDateToString(List<Map<Date, String>> mapsOfDateToString) {
         }
 
@@ -64,30 +69,38 @@ public class JavaTableProcessorTest {
 
     @Test
     public void transforms_to_list_of_pojos() throws Throwable {
-        Method listOfPojos = StepDefs.class.getMethod("listOfPojos", List.class);
-        StepDefs stepDefs = runStepDef(listOfPojos);
+        Method m = StepDefs.class.getMethod("listOfPojos", List.class);
+        StepDefs stepDefs = runStepDef(m);
         assertEquals(sidsBirthday(), stepDefs.userPojos.get(0).birthDate);
     }
 
     @Test
     public void transforms_to_list_of_beans() throws Throwable {
-        Method listOfBeans = StepDefs.class.getMethod("listOfBeans", List.class);
-        StepDefs stepDefs = runStepDef(listOfBeans);
+        Method m = StepDefs.class.getMethod("listOfBeans", List.class);
+        StepDefs stepDefs = runStepDef(m);
         assertEquals(sidsBirthday(), stepDefs.userBeans.get(0).getBirthDate());
     }
 
     @Test
     public void transforms_to_list_of_map_of_string_to_string() throws Throwable {
-        Method listOfBeans = StepDefs.class.getMethod("listOfMapsOfStringToString", List.class);
-        StepDefs stepDefs = runStepDef(listOfBeans);
-        assertEquals("10/05/1957", stepDefs.mapsOfStringToString.get(0).get("birthDate"));
+        Method m = StepDefs.class.getMethod("listOfMapsOfStringToString", List.class);
+        StepDefs stepDefs = runStepDef(m);
+        assertEquals("10/05/1957", stepDefs.mapsOfStringToString.get(0).get("Birth Date"));
     }
 
     @Test
     public void transforms_to_list_of_map_of_string_to_object() throws Throwable {
-        Method listOfBeans = StepDefs.class.getMethod("listOfMapsOfStringToObject", List.class);
-        StepDefs stepDefs = runStepDef(listOfBeans);
-        assertEquals("10/05/1957", stepDefs.mapsOfStringToObject.get(0).get("birthDate"));
+        Method m = StepDefs.class.getMethod("listOfMapsOfStringToObject", List.class);
+        StepDefs stepDefs = runStepDef(m);
+        assertEquals("10/05/1957", stepDefs.mapsOfStringToObject.get(0).get("Birth Date"));
+    }
+
+    @Test
+    public void passes_plain_data_table() throws Throwable {
+        Method m = StepDefs.class.getMethod("plainDataTable", DataTable.class);
+        StepDefs stepDefs = runStepDef(m);
+        assertEquals("10/05/1957", stepDefs.dataTable.raw().get(1).get(0));
+        assertEquals("Birth Date", stepDefs.dataTable.raw().get(0).get(0));
     }
 
     @Test
@@ -96,7 +109,7 @@ public class JavaTableProcessorTest {
         thrown.expectMessage("Tables can only be transformed to a List<Map<K,V>> when K is String. It was class java.util.Date.");
 
         Method listOfBeans = StepDefs.class.getMethod("listOfMapsOfDateToString", List.class);
-        StepDefs stepDefs = runStepDef(listOfBeans);
+        runStepDef(listOfBeans);
     }
 
     @Test
@@ -105,7 +118,7 @@ public class JavaTableProcessorTest {
         thrown.expectMessage("Tables can only be transformed to a List<Map<K,V>> when V is String or Object. It was class java.util.Date.");
 
         Method listOfBeans = StepDefs.class.getMethod("listOfMapsOfStringToDate", List.class);
-        StepDefs stepDefs = runStepDef(listOfBeans);
+        runStepDef(listOfBeans);
     }
 
     @Test
@@ -114,7 +127,7 @@ public class JavaTableProcessorTest {
         thrown.expectMessage("Tables can only be transformed to List<Map<String,String>> or List<Map<String,Object>>. You have to declare generic types.");
 
         Method listOfBeans = StepDefs.class.getMethod("listOfMaps", List.class);
-        StepDefs stepDefs = runStepDef(listOfBeans);
+        runStepDef(listOfBeans);
     }
 
     private StepDefs runStepDef(Method method) throws Throwable {
@@ -123,14 +136,14 @@ public class JavaTableProcessorTest {
 
         Step stepWithRows = new Step(NO_COMMENTS, "Given ", "something that wants users", 10, rowsList(), null);
 
-        StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(NO_ARGS, stepDefinition, "some.feature", stepWithRows, new LocalizedXStreams(), new CamelCaseHeaderMapper());
+        StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(NO_ARGS, stepDefinition, "some.feature", stepWithRows, new LocalizedXStreams());
         stepDefinitionMatch.runStep(Locale.UK);
         return stepDefs;
     }
 
     private List<DataTableRow> rowsList() {
         List<DataTableRow> rows = new ArrayList<DataTableRow>();
-        rows.add(new DataTableRow(NO_COMMENTS, asList("birth date"), 1));
+        rows.add(new DataTableRow(NO_COMMENTS, asList("Birth Date"), 1));
         rows.add(new DataTableRow(NO_COMMENTS, asList("10/05/1957"), 2));
         return rows;
     }
