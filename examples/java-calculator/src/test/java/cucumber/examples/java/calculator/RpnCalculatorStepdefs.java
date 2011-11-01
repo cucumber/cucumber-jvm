@@ -6,6 +6,8 @@ import cucumber.annotation.en.Given;
 import cucumber.annotation.en.Then;
 import cucumber.annotation.en.When;
 
+import java.util.List;
+
 import static junit.framework.Assert.assertEquals;
 
 public class RpnCalculatorStepdefs {
@@ -23,6 +25,11 @@ public class RpnCalculatorStepdefs {
         calc.push("+");
     }
 
+    @Given("^I press (.+)$")
+    public void I_press(String what) {
+        calc.push(what);
+    }
+
     @Then("^the result is (\\d+)$")
     public void the_result_is(double expected) {
         assertEquals(expected, calc.value());
@@ -36,5 +43,20 @@ public class RpnCalculatorStepdefs {
     @After
     public void after() {
 
+    }
+
+    @Given("^the previous entries:$")
+    public void thePreviousEntries(List<Entry> entries) {
+        for (Entry entry : entries) {
+            calc.push(entry.first);
+            calc.push(entry.second);
+            calc.push(entry.operation);
+        }
+    }
+
+    public class Entry {
+        Integer first;
+        Integer second;
+        String operation;
     }
 }
