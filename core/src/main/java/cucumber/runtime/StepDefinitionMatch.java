@@ -5,17 +5,22 @@ import com.thoughtworks.xstream.converters.ConverterLookup;
 import com.thoughtworks.xstream.converters.SingleValueConverter;
 import com.thoughtworks.xstream.converters.basic.DateConverter;
 import cucumber.runtime.converters.LocalizedXStreams;
-import cucumber.table.Table;
+import cucumber.table.DataTable;
 import cucumber.table.TableConverter;
-import cucumber.table.TableHeaderMapper;
+import cucumber.table.StringConverter;
 import gherkin.formatter.Argument;
+import gherkin.formatter.model.DataTableRow;
 import gherkin.formatter.model.Match;
 import gherkin.formatter.model.Step;
+import gherkin.util.Mapper;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
+import static gherkin.util.FixJava.map;
 
 public class StepDefinitionMatch extends Match {
     private final StepDefinition stepDefinition;
@@ -24,15 +29,13 @@ public class StepDefinitionMatch extends Match {
     // to prevent it from ending up in the JSON.
     private final transient Step step;
     private final LocalizedXStreams localizedXStreams;
-    private final TableHeaderMapper tableHeaderMapper;
 
-    public StepDefinitionMatch(List<Argument> arguments, StepDefinition stepDefinition, String uri, Step step, LocalizedXStreams localizedXStreams, TableHeaderMapper tableHeaderMapper) {
+    public StepDefinitionMatch(List<Argument> arguments, StepDefinition stepDefinition, String uri, Step step, LocalizedXStreams localizedXStreams) {
         super(arguments, stepDefinition.getLocation());
         this.stepDefinition = stepDefinition;
         this.uri = uri;
         this.step = step;
         this.localizedXStreams = localizedXStreams;
-        this.tableHeaderMapper = tableHeaderMapper;
     }
 
     public void runStep(Locale locale) throws Throwable {
@@ -62,7 +65,8 @@ public class StepDefinitionMatch extends Match {
         if (step.getDocString() != null) argumentCount++;
         if (step.getRows() != null) argumentCount++;
         if (parameterTypes != null && parameterTypes.size() != argumentCount) {
-            throw new CucumberException("Arity mismatch. Parameters: " + parameterTypes + ". Matched arguments: " + getArguments());
+            List<Argument> arguments = createArgumentsForErrorMessage(step);
+            throw new CucumberException("Arity mismatch. Declared parameters: " + parameterTypes + ". Matched arguments: " + arguments);
         }
 
         Object[] result = new Object[argumentCount];
@@ -95,11 +99,29 @@ public class StepDefinitionMatch extends Match {
         return result;
     }
 
+    private List<Argument> createArgumentsForErrorMessage(Step step) {
+        List<Argument> arguments = new ArrayList<Argument>(getArguments());
+        if (step.getDocString() != null) {
+            arguments.add(new Argument(-1, "DocString:" + step.getDocString().getValue()));
+        }
+        if (step.getRows() != null) {
+            List<List<String>> rows = map(step.getRows(), new Mapper<DataTableRow,List<String>>() {
+                @Override
+                public List<String> map(DataTableRow row) {
+                    return row.getCells();
+                }
+            });
+            arguments.add(new Argument(-1, "Table:" + rows.toString()));
+        }
+        return arguments;
+    }
+
     private Object tableArgument(Step step, int argIndex, XStream xStream) {
-        Table table = new Table(step.getRows(), new TableConverter(xStream), tableHeaderMapper);
+        DataTable table = new DataTable(step.getRows(), new TableConverter(xStream));
 
         Type listType = getGenericListType(argIndex);
         if (listType != null) {
+            StringConverter stringConverter;
             return table.asList(listType);
         } else {
             return table;
@@ -108,7 +130,8 @@ public class StepDefinitionMatch extends Match {
 
     private Type getGenericListType(int argIndex) {
         ParameterType parameterType = stepDefinition.getParameterTypes().get(argIndex);
-        return parameterType.getActualTypeArguments()[0];
+        Type[] actualTypeArguments = parameterType.getActualTypeArguments();
+        return actualTypeArguments != null && actualTypeArguments.length > 0 ? actualTypeArguments[0] : null;
     }
 
     public Throwable filterStacktrace(Throwable error, StackTraceElement stepLocation) {

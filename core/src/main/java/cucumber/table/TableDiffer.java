@@ -13,10 +13,10 @@ import java.util.Map;
 
 public class TableDiffer {
 
-    private final Table orig;
-    private final Table other;
+    private final DataTable orig;
+    private final DataTable other;
 
-    public TableDiffer(Table origTable, Table otherTable) {
+    public TableDiffer(DataTable origTable, DataTable otherTable) {
         this.orig = origTable;
         this.other = otherTable;
     }
@@ -30,7 +30,7 @@ public class TableDiffer {
         }
     }
 
-    private Table createTableDiff(Map<Integer, Delta> deltasByLine) {
+    private DataTable createTableDiff(Map<Integer, Delta> deltasByLine) {
         List<DataTableRow> diffTableRows = new ArrayList<DataTableRow>();
         List<List<String>> rows = orig.raw();
         for (int i = 0; i < rows.size(); i++) {
@@ -46,18 +46,18 @@ public class TableDiffer {
         if (remainingDelta != null) {
             addRowsToTableDiffAndReturnNumberOfRows(diffTableRows, remainingDelta);
         }
-        return new Table(diffTableRows, orig.getTableConverter(), orig.getTableHeaderMapper());
+        return new DataTable(diffTableRows, orig.getTableConverter());
     }
 
     private int addRowsToTableDiffAndReturnNumberOfRows(List<DataTableRow> diffTableRows, Delta delta) {
         if (delta.getType() == Delta.TYPE.CHANGE || delta.getType() == Delta.TYPE.DELETE) {
-            List<Table.DiffableRow> deletedLines = (List<Table.DiffableRow>) delta.getOriginal().getLines();
-            for (Table.DiffableRow row : deletedLines) {
+            List<DataTable.DiffableRow> deletedLines = (List<DataTable.DiffableRow>) delta.getOriginal().getLines();
+            for (DataTable.DiffableRow row : deletedLines) {
                 diffTableRows.add(new DataTableRow(row.row.getComments(), row.row.getCells(), row.row.getLine(), Row.DiffType.DELETE));
             }
         }
-        List<Table.DiffableRow> insertedLines = (List<Table.DiffableRow>) delta.getRevised().getLines();
-        for (Table.DiffableRow row : insertedLines) {
+        List<DataTable.DiffableRow> insertedLines = (List<DataTable.DiffableRow>) delta.getRevised().getLines();
+        for (DataTable.DiffableRow row : insertedLines) {
             diffTableRows.add(new DataTableRow(row.row.getComments(), row.row.getCells(), row.row.getLine(), Row.DiffType.INSERT));
         }
         return delta.getOriginal().getLines().size() - 1;

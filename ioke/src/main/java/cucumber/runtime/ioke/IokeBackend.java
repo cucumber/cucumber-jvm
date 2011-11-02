@@ -6,7 +6,7 @@ import cucumber.resources.Resources;
 import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.World;
-import cucumber.table.Table;
+import cucumber.table.DataTable;
 import gherkin.formatter.model.Step;
 import ioke.lang.IokeObject;
 import ioke.lang.Message;
@@ -108,7 +108,7 @@ public class IokeBackend implements Backend {
         if (args.length > 0) {
             if (args[args.length - 1] instanceof String) {
                 multilineArg = ioke.newText((String) args[args.length - 1]);
-            } else if (args[args.length - 1] instanceof Table) {
+            } else if (args[args.length - 1] instanceof DataTable) {
                 multilineArg = args[args.length - 1];
             } else {
                 multilineArg = ioke.nil;

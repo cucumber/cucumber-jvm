@@ -13,7 +13,7 @@ import java.util.List;
 public class TableParser {
     private static final List<Comment> NO_COMMENTS = Collections.emptyList();
 
-    public static Table parse(String source) {
+    public static DataTable parse(String source) {
         final List<DataTableRow> rows = new ArrayList<DataTableRow>();
         Lexer l = new EN(new Listener() {
             @Override
@@ -71,6 +71,6 @@ public class TableParser {
             }
         });
         l.scan(source);
-        return new Table(rows, null, null);
+        return new DataTable(rows, null);
     }
 }
