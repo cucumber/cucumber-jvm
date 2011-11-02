@@ -48,5 +48,13 @@ public class JRubyBackend implements Backend {
     public void registerStepdef(RubyObject stepdef) {
         world.addStepDefinition(new JRubyStepDefinition(stepdef));
     }
+    
+    public void addBeforeHook(RubyObject body) {
+    	world.addBeforeHook(new JRubyHookDefinition(new String[0],body));
+    }
+    
+    public void addAfterHook(RubyObject body) {
+    	world.addAfterHook(new JRubyHookDefinition(new String[0],body));
+    }
 
 }
