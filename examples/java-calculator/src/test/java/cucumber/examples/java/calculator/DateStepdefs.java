@@ -10,15 +10,13 @@ import static org.junit.Assert.*;
 
 public class DateStepdefs {
 
-	private Date now;
+	
 	String result;
 	private DateCalculator calculator;
 	
-	@Given("^today is (.+)$")
-	
+	@Given("^today is (.+)$")	
 	public void today_is_(@DateFormat("yyyy-MM-dd") Date date) {
-		calculator = new DateCalculator(date);
-		now = date;
+		calculator = new DateCalculator(date);		
 	}
 
 	@Then("^the result should be (\\d+)$")
