@@ -26,18 +26,22 @@ Cucumber-JVM also integrates with the following Dependency Injection containers:
 Final releases will be published in [Maven Central](http://search.maven.org/) when all issues in [Milestone 1](https://github.com/cucumber/cucumber-jvm/issues?milestone=1&state=open) are closed. Until then you can grab 
 SNAPSHOT releases by adding this repo to your POM:
 
-    <repository>
-        <id>sonatype-snapshots</id>
-        <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-    </repository>
+```xml
+<repository>
+    <id>sonatype-snapshots</id>
+    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+</repository>
+```
 
 Now you can grab jars with the following dependency in your POM:
 
-    <dependency>
-        <groupId>info.cukes</groupId>
-        <artifactId>cucumber-core</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
-    </dependency>
+```xml
+<dependency>
+    <groupId>info.cukes</groupId>
+    <artifactId>cucumber-core</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+</dependency>
+```
 
 If you are not using Maven you can download the SNAPSHOT jars manually from https://oss.sonatype.org/content/repositories/snapshots/info/cukes/
 
