@@ -65,6 +65,10 @@ To hack on Cucumber-JVM you need a JDK, Maven and Git to get the code. You also 
 * UTF-8 file encoding
 * LF (UNIX) line endings
 * 4 Space indent
+  * Java
+  * XML
+* 2 Space indent
+  * Gherkin
 
 If we get a pull request where an entire file is changed because of insignificant whitespace changes we cannot see what you have changed.
 
