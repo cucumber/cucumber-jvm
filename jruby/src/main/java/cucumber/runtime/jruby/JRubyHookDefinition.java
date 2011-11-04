@@ -12,13 +12,11 @@ import static java.util.Arrays.asList;
 
 public class JRubyHookDefinition implements HookDefinition {
 
-    private RubyObject hook;
-    private int order;
     private final TagExpression tagExpression;
+    private final RubyObject hook;
 
     public JRubyHookDefinition(String[] tagExpressions, RubyObject hook) {
         tagExpression = new TagExpression(asList(tagExpressions));
-        this.order = 0;
         this.hook = hook;
     }
 
@@ -35,7 +33,7 @@ public class JRubyHookDefinition implements HookDefinition {
 
     @Override
     public int getOrder() {
-        return order;
+        return 0;
     }
 
 }

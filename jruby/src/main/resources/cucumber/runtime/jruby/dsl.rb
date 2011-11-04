@@ -65,7 +65,7 @@ module Cucumber
 end
 
 def register(regexp, proc)
-  $backend.registerStepdef(Cucumber::Runtime::JRuby::StepDefinition.new(regexp, proc))
+  $backend.addStepdef(Cucumber::Runtime::JRuby::StepDefinition.new(regexp, proc))
 end
 
 def Given(regexp, &proc)
@@ -81,9 +81,9 @@ def Then(regexp, &proc)
 end
 
 def Before(&proc)
-	$backend.addBeforeHook(Cucumber::Runtime::JRuby::HookDefinition.new(proc))	
+  $backend.addBeforeHook(Cucumber::Runtime::JRuby::HookDefinition.new(proc))	
 end
 
 def After(&proc)
-	$backend.addAfterHook(Cucumber::Runtime::JRuby::HookDefinition.new(proc))
+  $backend.addAfterHook(Cucumber::Runtime::JRuby::HookDefinition.new(proc))
 end

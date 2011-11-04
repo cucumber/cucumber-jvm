@@ -1,7 +1,5 @@
 package cucumber.runtime.clojure;
 
-// import cucumber.runtime.CucumberException;
-
 import clojure.lang.AFunction;
 import cucumber.runtime.HookDefinition;
 import cucumber.runtime.ScenarioResult;
@@ -16,13 +14,11 @@ import static java.util.Arrays.asList;
 
 public class ClojureHookDefinition implements HookDefinition {
 
-    private final AFunction closure;
-    private final int order;
     private final TagExpression tagExpression;
+    private final AFunction closure;
 
     public ClojureHookDefinition(String[] tagExpressions, AFunction closure) {
         tagExpression = new TagExpression(asList(tagExpressions));
-        this.order = 0;
         this.closure = closure;
     }
 
@@ -49,7 +45,7 @@ public class ClojureHookDefinition implements HookDefinition {
 
     @Override
     public int getOrder() {
-        return order;
+        return 0;
     }
 
 }

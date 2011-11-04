@@ -45,7 +45,7 @@ public class JRubyBackend implements Backend {
         return new JRubySnippetGenerator(step).getSnippet();
     }
 
-    public void registerStepdef(RubyObject stepdef) {
+    public void addStepdef(RubyObject stepdef) {
         world.addStepDefinition(new JRubyStepDefinition(stepdef));
     }
 
