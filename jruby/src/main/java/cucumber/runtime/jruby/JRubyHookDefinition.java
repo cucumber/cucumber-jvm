@@ -1,15 +1,15 @@
 package cucumber.runtime.jruby;
 
-import static java.util.Arrays.asList;
-import gherkin.TagExpression;
-
-import java.util.Collection;
-
-import org.jruby.RubyObject;
-import org.jruby.runtime.builtin.IRubyObject;
 
 import cucumber.runtime.HookDefinition;
 import cucumber.runtime.ScenarioResult;
+import gherkin.TagExpression;
+import org.jruby.RubyObject;
+import org.jruby.runtime.builtin.IRubyObject;
+
+import java.util.Collection;
+
+import static java.util.Arrays.asList;
 
 public class JRubyHookDefinition implements HookDefinition {
 
