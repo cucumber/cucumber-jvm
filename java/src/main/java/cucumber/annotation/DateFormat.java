@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
  * about how to transform a string to a Date.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.PARAMETER, ElementType.FIELD})
+@Target(ElementType.PARAMETER)
 public @interface DateFormat {
     String value();
 }
