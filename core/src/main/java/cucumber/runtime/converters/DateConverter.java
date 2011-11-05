@@ -2,30 +2,52 @@ package cucumber.runtime.converters;
 
 import java.text.DateFormat;
 import java.text.Format;
+import java.text.SimpleDateFormat;
 import java.util.*;
+
+import static java.util.Arrays.asList;
 
 public class DateConverter extends ConverterWithFormat<Date> {
     private static final TimeZone UTC = TimeZone.getTimeZone("UTC");
-    private final List<Format> formats = new ArrayList<Format>();
+    private final List<DateFormat> formats = new ArrayList<DateFormat>();
+    private SimpleDateFormat onlyFormat;
 
     public DateConverter(Locale locale) {
         super(new Class[]{Date.class});
 
-        addFormat(locale, DateFormat.SHORT);
-        addFormat(locale, DateFormat.MEDIUM);
-        addFormat(locale, DateFormat.LONG);
-        addFormat(locale, DateFormat.FULL);
+        addFormat(DateFormat.SHORT, locale);
+        addFormat(DateFormat.MEDIUM, locale);
+        addFormat(DateFormat.LONG, locale);
+        addFormat(DateFormat.FULL, locale);
     }
 
-    private void addFormat(Locale locale, int aShort) {
-        DateFormat shortFormat = DateFormat.getDateInstance(aShort, locale);
-        shortFormat.setLenient(false);
-        shortFormat.setTimeZone(UTC);
-        formats.add(shortFormat);
+    public DateConverter(String dateFormatString, Locale locale) {
+        super(new Class[]{Date.class});
+        // TODO - these are expensive to create. Cache by format+string, or use the XStream DF cache util thingy
+        add(new SimpleDateFormat(dateFormatString, locale));
     }
 
-    public List<Format> getFormats() {
-        return formats;
+    private void addFormat(int style, Locale locale) {
+        add(DateFormat.getDateInstance(style, locale));
     }
 
+    private void add(DateFormat dateFormat) {
+        dateFormat.setLenient(false);
+        dateFormat.setTimeZone(UTC);
+        formats.add(dateFormat);
+    }
+
+    public List<? extends Format> getFormats() {
+        return onlyFormat == null ? formats : asList(onlyFormat);
+    }
+
+    public void setOnlyFormat(String dateFormatString, Locale locale) {
+        onlyFormat = new SimpleDateFormat(dateFormatString, locale);
+        onlyFormat.setLenient(false);
+        onlyFormat.setTimeZone(UTC);
+    }
+
+    public void removeOnlyFormat() {
+        onlyFormat = null;
+    }
 }

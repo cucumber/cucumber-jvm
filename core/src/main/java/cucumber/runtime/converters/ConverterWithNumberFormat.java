@@ -1,13 +1,12 @@
 package cucumber.runtime.converters;
 
-import java.text.Format;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 public abstract class ConverterWithNumberFormat<T extends Number> extends ConverterWithFormat<T> {
-    private final List<Format> formats = new ArrayList<Format>();
+    private final List<NumberFormat> formats = new ArrayList<NumberFormat>();
 
     public ConverterWithNumberFormat(Locale locale, Class[] convertibleTypes) {
         super(convertibleTypes);
@@ -20,7 +19,7 @@ public abstract class ConverterWithNumberFormat<T extends Number> extends Conver
     }
 
     @Override
-    public List<Format> getFormats() {
+    public List<NumberFormat> getFormats() {
         return formats;
     }
 

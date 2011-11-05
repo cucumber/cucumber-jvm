@@ -25,8 +25,7 @@ public class ParameterType {
 
     public Type[] getActualTypeArguments() {
         if (type instanceof ParameterizedType) {
-            Type[] parameters = ((ParameterizedType) type).getActualTypeArguments();
-            return parameters;
+            return ((ParameterizedType) type).getActualTypeArguments();
         } else {
             return null;
         }

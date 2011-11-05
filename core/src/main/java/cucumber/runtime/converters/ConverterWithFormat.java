@@ -30,7 +30,7 @@ public abstract class ConverterWithFormat<T> implements SingleValueConverter {
     /**
      * @return A Format to parse the argument
      */
-    protected abstract List<Format> getFormats();
+    protected abstract List<? extends Format> getFormats();
 
     /**
      * Parses a value using one of the java.util.text format classes.

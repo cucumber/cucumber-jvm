@@ -58,9 +58,9 @@ public class CucumberScenarioOutline extends CucumberTagStatement {
         String name = replaceTokens(matchedColumns, headerCells, exampleCells, step.getName());
 
         return new ExampleStep(
-                step.getComments(), 
-                step.getKeyword(), 
-                name, 
+                step.getComments(),
+                step.getKeyword(),
+                name,
                 step.getLine(),
                 rowsWithTokensReplaced(step.getRows(), headerCells, exampleCells, matchedColumns),
                 docStringWithTokensReplaced(step.getDocString(), headerCells, exampleCells, matchedColumns),

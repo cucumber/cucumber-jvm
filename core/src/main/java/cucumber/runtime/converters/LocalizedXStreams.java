@@ -2,7 +2,6 @@ package cucumber.runtime.converters;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.SingleValueConverter;
-import com.thoughtworks.xstream.converters.SingleValueConverterWrapper;
 import com.thoughtworks.xstream.core.DefaultConverterLookup;
 
 import java.util.HashMap;
@@ -37,11 +36,10 @@ public class LocalizedXStreams {
         register(lookup, new FloatConverter(locale));
         register(lookup, new IntegerConverter(locale));
         register(lookup, new LongConverter(locale));
-
         return xStream;
     }
 
     private void register(DefaultConverterLookup lookup, SingleValueConverter converter) {
-        lookup.registerConverter(new SingleValueConverterWrapper(converter), XStream.PRIORITY_VERY_HIGH);
+        lookup.registerConverter(new SingleValueConverterWrapperExt(converter), XStream.PRIORITY_VERY_HIGH);
     }
 }
