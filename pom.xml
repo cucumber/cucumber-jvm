@@ -50,6 +50,11 @@
             </dependency>
             <dependency>
                 <groupId>info.cukes</groupId>
+                <artifactId>cucumber-groovy</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>info.cukes</groupId>
                 <artifactId>cucumber-junit</artifactId>
                 <version>${project.version}</version>
             </dependency>
