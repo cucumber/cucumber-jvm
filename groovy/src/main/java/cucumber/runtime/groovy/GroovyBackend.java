@@ -4,20 +4,18 @@ import cucumber.resources.Consumer;
 import cucumber.resources.Resource;
 import cucumber.resources.Resources;
 import cucumber.runtime.Backend;
-import cucumber.runtime.StepDefinition;
 import cucumber.runtime.World;
+import gherkin.TagExpression;
 import gherkin.formatter.model.Step;
 import groovy.lang.Binding;
 import groovy.lang.Closure;
 import groovy.lang.GroovyShell;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
 public class GroovyBackend implements Backend {
-    private static GroovyBackend instance;
-    private final List<StepDefinition> stepDefinitions = new ArrayList<StepDefinition>();
+    static GroovyBackend instance;
     private final GroovyShell shell;
     private Closure worldClosure;
     private Object groovyWorld;
@@ -50,15 +48,23 @@ public class GroovyBackend implements Backend {
         return new GroovySnippetGenerator(step).getSnippet();
     }
 
-    public static void addStepDefinition(Pattern regexp, Closure body) {
-        instance.stepDefinitions.add(new GroovyStepDefinition(regexp, body, stepDefLocation(), instance));
+    public void addStepDefinition(Pattern regexp, Closure body) {
+        world.addStepDefinition(new GroovyStepDefinition(regexp, body, stepDefLocation(), instance));
     }
 
-    public static void registerWorld(Closure closure) {
-        instance.worldClosure = closure;
+    public void registerWorld(Closure closure) {
+        worldClosure = closure;
     }
 
-    public void invokeStepDefinition(Closure body, Object[] args) {
+    void addBeforeHook(TagExpression tagExpression, Closure body) {
+        world.addBeforeHook(new GroovyHook(body, tagExpression, instance));
+    }
+    
+    public void addAfterHook(TagExpression tagExpression, Closure body) {
+        world.addBeforeHook(new GroovyHook(body, tagExpression, instance));
+    }
+
+    public void invoke(Closure body, Object[] args) {
         body.setDelegate(getGroovyWorld());
         body.call(args);
     }

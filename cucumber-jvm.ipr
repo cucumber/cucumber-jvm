@@ -226,6 +226,7 @@
       <module fileurl="file://$PROJECT_DIR$/rhino/cucumber-rhino.iml" filepath="$PROJECT_DIR$/rhino/cucumber-rhino.iml" />
       <module fileurl="file://$PROJECT_DIR$/spring/cucumber-spring.iml" filepath="$PROJECT_DIR$/spring/cucumber-spring.iml" />
       <module fileurl="file://$PROJECT_DIR$/weld/cucumber-weld.iml" filepath="$PROJECT_DIR$/weld/cucumber-weld.iml" />
+      <module fileurl="file://$PROJECT_DIR$/examples/groovy-calculator/groovy-calculator.iml" filepath="$PROJECT_DIR$/examples/groovy-calculator/groovy-calculator.iml" />
       <module fileurl="file://$PROJECT_DIR$/examples/java-calculator/java-calculator.iml" filepath="$PROJECT_DIR$/examples/java-calculator/java-calculator.iml" />
       <module fileurl="file://$PROJECT_DIR$/examples/java-webbit-websockets-selenium/java-webbit-websockets-selenium.iml" filepath="$PROJECT_DIR$/examples/java-webbit-websockets-selenium/java-webbit-websockets-selenium.iml" />
     </modules>
