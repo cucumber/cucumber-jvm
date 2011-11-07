@@ -49,12 +49,23 @@ module Cucumber
           @regexp.inspect
         end
       end
+
+      class HookDefinition
+      	def initialize(proc)
+          @proc = proc
+        end
+      
+      	def execute(*args)
+          $world.instance_exec(*args, &@proc)
+        end
+      end
+      	
     end
   end
 end
 
 def register(regexp, proc)
-  $backend.registerStepdef(Cucumber::Runtime::JRuby::StepDefinition.new(regexp, proc))
+  $backend.addStepdef(Cucumber::Runtime::JRuby::StepDefinition.new(regexp, proc))
 end
 
 def Given(regexp, &proc)
@@ -67,4 +78,12 @@ end
 
 def Then(regexp, &proc)
   register(regexp, proc)
+end
+
+def Before(&proc)
+  $backend.addBeforeHook(Cucumber::Runtime::JRuby::HookDefinition.new(proc))	
+end
+
+def After(&proc)
+  $backend.addAfterHook(Cucumber::Runtime::JRuby::HookDefinition.new(proc))
 end

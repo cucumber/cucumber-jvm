@@ -3,11 +3,11 @@ package cucumber.runtime;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.ConverterLookup;
 import com.thoughtworks.xstream.converters.SingleValueConverter;
-import com.thoughtworks.xstream.converters.basic.DateConverter;
+import cucumber.runtime.converters.DateConverter;
 import cucumber.runtime.converters.LocalizedXStreams;
+import cucumber.runtime.converters.SingleValueConverterWrapperExt;
 import cucumber.table.DataTable;
 import cucumber.table.TableConverter;
-import cucumber.table.StringConverter;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.DataTableRow;
 import gherkin.formatter.model.Match;
@@ -17,6 +17,7 @@ import gherkin.util.Mapper;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -43,7 +44,7 @@ public class StepDefinitionMatch extends Match {
             throw new NullPointerException("null Locale!");
         }
         try {
-            Object[] args = transformedArgs(stepDefinition.getParameterTypes(), step, localizedXStreams.get(locale));
+            Object[] args = transformedArgs(stepDefinition.getParameterTypes(), step, localizedXStreams.get(locale), locale);
             stepDefinition.execute(args);
         } catch (CucumberException e) {
             throw e;
@@ -58,9 +59,10 @@ public class StepDefinitionMatch extends Match {
      * @param parameterTypes types of the stepdefs args. Some backends will pass null if they can't determine types or arity.
      * @param step           the step to run
      * @param xStream        used to convert a string to declared stepdef arguments
+     * @param locale         the feature's locale
      * @return an Array matching the types or {@code parameterTypes}, or an array of String if {@code parameterTypes} is null
      */
-    private Object[] transformedArgs(List<ParameterType> parameterTypes, Step step, XStream xStream) {
+    private Object[] transformedArgs(List<ParameterType> parameterTypes, Step step, XStream xStream, Locale locale) {
         int argumentCount = getArguments().size();
         if (step.getDocString() != null) argumentCount++;
         if (step.getRows() != null) argumentCount++;
@@ -74,25 +76,34 @@ public class StepDefinitionMatch extends Match {
 
         int n = 0;
         for (Argument a : getArguments()) {
-            if (parameterTypes != null) {
-                SingleValueConverter converter;
-                ParameterType parameterType = parameterTypes.get(n);
-                if (parameterType.getDateFormat() != null) {
-                    converter = new DateConverter(parameterType.getDateFormat(), null);
-                } else {
-                    // TODO: We might get a lookup that doesn't implement SingleValueConverter
-                    // Need to throw a more friendly exception in that case.
-                    converter = (SingleValueConverter) converterLookup.lookupConverterForType(parameterType.getParameterClass());
-                }
-                result[n] = converter.fromString(a.getVal());
+            SingleValueConverter converter;
+            ParameterType parameterType = parameterTypes.get(n);
+            if (parameterType.getDateFormat() != null) {
+                converter = new DateConverter(parameterType.getDateFormat(), locale);
             } else {
-                result[n] = a.getVal();
+                // TODO: We might get a lookup that doesn't implement SingleValueConverter
+                // Need to throw a more friendly exception in that case.
+                converter = (SingleValueConverter) converterLookup.lookupConverterForType(parameterType.getParameterClass());
             }
+            result[n] = converter.fromString(a.getVal());
             n++;
         }
 
         if (step.getRows() != null) {
-            result[n] = tableArgument(step, n++, xStream);
+            ParameterType parameterType = parameterTypes.get(n);
+            DateConverter dateConverter = null;
+            if (parameterType.getDateFormat() != null) {
+                SingleValueConverterWrapperExt converterWrapper = (SingleValueConverterWrapperExt) xStream.getConverterLookup().lookupConverterForType(Date.class);
+                dateConverter = (DateConverter) converterWrapper.getConverter();
+                dateConverter.setOnlyFormat(parameterType.getDateFormat(), locale);
+            }
+            try {
+                result[n] = tableArgument(step, n, xStream);
+            } finally {
+                if (dateConverter != null) {
+                    dateConverter.removeOnlyFormat();
+                }
+            }
         } else if (step.getDocString() != null) {
             result[n] = step.getDocString().getValue();
         }
@@ -105,7 +116,7 @@ public class StepDefinitionMatch extends Match {
             arguments.add(new Argument(-1, "DocString:" + step.getDocString().getValue()));
         }
         if (step.getRows() != null) {
-            List<List<String>> rows = map(step.getRows(), new Mapper<DataTableRow,List<String>>() {
+            List<List<String>> rows = map(step.getRows(), new Mapper<DataTableRow, List<String>>() {
                 @Override
                 public List<String> map(DataTableRow row) {
                     return row.getCells();
@@ -121,7 +132,6 @@ public class StepDefinitionMatch extends Match {
 
         Type listType = getGenericListType(argIndex);
         if (listType != null) {
-            StringConverter stringConverter;
             return table.asList(listType);
         } else {
             return table;

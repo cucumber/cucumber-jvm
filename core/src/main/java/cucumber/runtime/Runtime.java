@@ -147,7 +147,7 @@ public class Runtime {
 
     public byte exitStatus() {
         byte result = 0x0;
-        if(!errors.isEmpty()) {
+        if (!errors.isEmpty()) {
             result |= ERRORS;
         }
         return result;

@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * This annotation can be specified on hooks (methods annotated with {@link Before} and {@link After}) to specify 
+ * This annotation can be specified on hooks (methods annotated with {@link Before} and {@link After}) to specify
  * the order in which the hooks should run.
  */
 @Retention(RetentionPolicy.RUNTIME)

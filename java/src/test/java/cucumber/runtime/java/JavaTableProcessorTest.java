@@ -2,6 +2,7 @@ package cucumber.runtime.java;
 
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 import com.thoughtworks.xstream.converters.javabean.JavaBeanConverter;
+import cucumber.annotation.DateFormat;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.StepDefinitionMatch;
@@ -37,11 +38,11 @@ public class JavaTableProcessorTest {
         public List<Map<String, Object>> mapsOfStringToObject;
         public DataTable dataTable;
 
-        public void listOfPojos(List<UserPojo> userPojos) {
+        public void listOfPojos(@DateFormat("yyyy-MM-dd") List<UserPojo> userPojos) {
             this.userPojos = userPojos;
         }
 
-        public void listOfBeans(List<UserBean> userBeans) {
+        public void listOfBeans(@DateFormat("yyyy-MM-dd") List<UserBean> userBeans) {
             this.userBeans = userBeans;
         }
 
@@ -85,21 +86,21 @@ public class JavaTableProcessorTest {
     public void transforms_to_list_of_map_of_string_to_string() throws Throwable {
         Method m = StepDefs.class.getMethod("listOfMapsOfStringToString", List.class);
         StepDefs stepDefs = runStepDef(m);
-        assertEquals("10/05/1957", stepDefs.mapsOfStringToString.get(0).get("Birth Date"));
+        assertEquals("1957-05-10", stepDefs.mapsOfStringToString.get(0).get("Birth Date"));
     }
 
     @Test
     public void transforms_to_list_of_map_of_string_to_object() throws Throwable {
         Method m = StepDefs.class.getMethod("listOfMapsOfStringToObject", List.class);
         StepDefs stepDefs = runStepDef(m);
-        assertEquals("10/05/1957", stepDefs.mapsOfStringToObject.get(0).get("Birth Date"));
+        assertEquals("1957-05-10", stepDefs.mapsOfStringToObject.get(0).get("Birth Date"));
     }
 
     @Test
     public void passes_plain_data_table() throws Throwable {
         Method m = StepDefs.class.getMethod("plainDataTable", DataTable.class);
         StepDefs stepDefs = runStepDef(m);
-        assertEquals("10/05/1957", stepDefs.dataTable.raw().get(1).get(0));
+        assertEquals("1957-05-10", stepDefs.dataTable.raw().get(1).get(0));
         assertEquals("Birth Date", stepDefs.dataTable.raw().get(0).get(0));
     }
 
@@ -144,7 +145,7 @@ public class JavaTableProcessorTest {
     private List<DataTableRow> rowsList() {
         List<DataTableRow> rows = new ArrayList<DataTableRow>();
         rows.add(new DataTableRow(NO_COMMENTS, asList("Birth Date"), 1));
-        rows.add(new DataTableRow(NO_COMMENTS, asList("10/05/1957"), 2));
+        rows.add(new DataTableRow(NO_COMMENTS, asList("1957-05-10"), 2));
         return rows;
     }
 

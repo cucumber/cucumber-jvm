@@ -56,10 +56,10 @@ public class JavaStepDefinition implements StepDefinition {
         List<ParameterType> result = new ArrayList<ParameterType>();
         Type[] genericParameterTypes = method.getGenericParameterTypes();
         Annotation[][] annotations = method.getParameterAnnotations();
-        for(int i = 0; i < genericParameterTypes.length; i++) {
+        for (int i = 0; i < genericParameterTypes.length; i++) {
             String dateFormat = null;
             for (Annotation annotation : annotations[i]) {
-                if(annotation instanceof DateFormat) {
+                if (annotation instanceof DateFormat) {
                     dateFormat = ((DateFormat) annotation).value();
                     break;
                 }

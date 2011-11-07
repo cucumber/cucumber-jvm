@@ -12,10 +12,10 @@ import static java.util.Arrays.asList;
 
 public class JavaHookDefinition implements HookDefinition {
 
-    private final ObjectFactory objectFactory;
     private final Method method;
-    private final int order;
     private final TagExpression tagExpression;
+    private final int order;
+    private final ObjectFactory objectFactory;
 
     public JavaHookDefinition(Method method, String[] tagExpressions, int order, ObjectFactory objectFactory) {
         this.method = method;

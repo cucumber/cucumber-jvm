@@ -6,8 +6,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * This annotation can be specified on Hooks (methods annotated with @Before and @After).
- * It can be used to specify the order in which Hooks should run.
+ * This annotation can be specified on method parameters or fields to give Cucumber a hint
+ * about how to transform a string to a Date.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.PARAMETER)
