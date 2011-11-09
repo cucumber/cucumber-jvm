@@ -23,7 +23,7 @@ public class Main {
         List<Object> filters = new ArrayList<Object>();
         String format = "progress";
         List<String> args = new ArrayList<String>(asList(argv));
-        String meta = null;
+        String dotCucumber = null;
         boolean isDryRun = false;
 
         while (!args.isEmpty()) {
@@ -42,8 +42,8 @@ public class Main {
                 filters.add(args.remove(0));
             } else if (arg.equals("--format") || arg.equals("-f")) {
                 format = args.remove(0);
-            } else if (arg.equals("--meta") || arg.equals("-m")) {
-                meta = args.remove(0);
+            } else if (arg.equals("--dotcucumber") || arg.equals("-d")) {
+                dotCucumber = args.remove(0);
             } else if (arg.equals("--dry-run") || arg.equals("-d")) {
                 isDryRun = true;
             } else {
@@ -57,20 +57,18 @@ public class Main {
 
         Runtime runtime = new Runtime(gluePaths, isDryRun);
 
-        if (meta != null) {
-            writeMeta(filesOrDirs, meta, runtime);
+        if (dotCucumber != null) {
+            writeDotCucumber(filesOrDirs, dotCucumber, runtime);
         }
         run(filesOrDirs, filters, format, runtime);
         printSummary(runtime);
         System.exit(runtime.exitStatus());
     }
 
-    private static void writeMeta(List<String> filesOrDirs, String metaPath, Runtime runtime) throws IOException {
-        File out = new File(metaPath);
-        out.getParentFile().mkdirs();
-        FileWriter fileWriter = new FileWriter(out);
-        runtime.writeMeta(filesOrDirs, fileWriter);
-        fileWriter.close();
+    private static void writeDotCucumber(List<String> filesOrDirs, String dotCucumberPath, Runtime runtime) throws IOException {
+        File dotCucumber = new File(dotCucumberPath);
+        dotCucumber.mkdirs();
+        runtime.writeMeta(filesOrDirs, dotCucumber);
     }
 
     private static void run(List<String> filesOrDirs, List<Object> filters, String format, Runtime runtime) {

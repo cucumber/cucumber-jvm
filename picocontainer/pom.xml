@@ -66,8 +66,8 @@
                                 <argument>-classpath</argument>
                                 <classpath/>
                                 <argument>cucumber.cli.Main</argument>
-                                <argument>--meta</argument>
-                                <argument>${basedir}/.cucumber/meta.json</argument>
+                                <argument>--dotcucumber</argument>
+                                <argument>${basedir}/.cucumber</argument>
                                 <argument>--format</argument>
                                 <argument>progress</argument>
                                 <argument>--glue</argument>

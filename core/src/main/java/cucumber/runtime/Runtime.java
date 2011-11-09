@@ -11,6 +11,8 @@ import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Step;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 
@@ -127,14 +129,24 @@ public class Runtime {
         }
     }
 
-    public void writeMeta(List<String> filesOrDirs, Appendable out) throws IOException {
+    public void writeMeta(List<String> filesOrDirs, File dotCucumber) throws IOException {
         List<CucumberFeature> features = load(filesOrDirs, NO_FILTERS);
         World world = new World(this, NO_TAGS);
         buildWorlds(gluePaths, world);
         List<StepDefinition> stepDefs = world.getStepDefinitions();
         Map<String, List<String>> meta = new Metadata().generate(stepDefs, features);
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        out.append(gson.toJson(meta));
+        String json = gson.toJson(meta);
+
+        FileWriter metaJson = new FileWriter(new File(dotCucumber, "meta.json"));
+        metaJson.append(json);
+        metaJson.close();
+
+        FileWriter metaJsonp = new FileWriter(new File(dotCucumber, "meta_jsonp.js"));
+        metaJsonp.append("cucumberMeta(");
+        metaJsonp.append(json);
+        metaJsonp.append(");");
+        metaJsonp.close();
     }
 
     public boolean isDryRun() {
