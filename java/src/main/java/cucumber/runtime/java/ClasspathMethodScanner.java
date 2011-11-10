@@ -45,7 +45,7 @@ public class ClasspathMethodScanner {
             if (annotation != null && !annotation.annotationType().equals(Order.class)) {
                 if (isHookAnnotation(annotation)) {
                     javaBackend.addHook(annotation, method);
-                } else {
+                } else if(isStepdefAnnotation(annotation)) {
                     javaBackend.addStepDefinition(annotation, method);
                 }
             }
@@ -55,5 +55,15 @@ public class ClasspathMethodScanner {
     private boolean isHookAnnotation(Annotation annotation) {
         Class<? extends Annotation> annotationClass = annotation.annotationType();
         return annotationClass.equals(Before.class) || annotationClass.equals(After.class);
+    }
+
+    private boolean isStepdefAnnotation(Annotation annotation) {
+        Class<? extends Annotation> annotationClass = annotation.annotationType();
+        try {
+            annotationClass.getMethod("tags");
+            return true;
+        } catch (NoSuchMethodException e) {
+            return false;
+        }
     }
 }
