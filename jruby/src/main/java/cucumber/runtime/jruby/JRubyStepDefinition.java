@@ -9,6 +9,7 @@ import org.jruby.RubyObject;
 import org.jruby.RubyString;
 import org.jruby.runtime.builtin.IRubyObject;
 
+import java.util.Collection;
 import java.util.List;
 
 public class JRubyStepDefinition implements StepDefinition {
@@ -67,5 +68,10 @@ public class JRubyStepDefinition implements StepDefinition {
     @Override
     public String getPattern() {
         return (String) stepdef.callMethod("pattern").toJava(String.class);
+    }
+
+    @Override
+    public boolean matches(Collection<String> tags) {
+        return true;
     }
 }

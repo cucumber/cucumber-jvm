@@ -10,6 +10,7 @@ import org.python.core.PyList;
 import org.python.core.PyObject;
 import org.python.core.PyString;
 
+import java.util.Collection;
 import java.util.List;
 
 public class JythonStepDefinition implements StepDefinition {
@@ -57,5 +58,10 @@ public class JythonStepDefinition implements StepDefinition {
     @Override
     public String getPattern() {
         return stepdef.invoke("pattern").toString();
+    }
+
+    @Override
+    public boolean matches(Collection<String> tags) {
+        return true;
     }
 }

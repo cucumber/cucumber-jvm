@@ -29,7 +29,7 @@ public class Runtime {
 
     private final List<Step> undefinedSteps = new ArrayList<Step>();
     private final List<Throwable> errors = new ArrayList<Throwable>();
-    private final List<Backend> backends;
+    private final List<? extends Backend> backends;
     private final List<String> gluePaths;
     private final boolean isDryRun;
 
@@ -45,7 +45,7 @@ public class Runtime {
         this(gluePaths, Resources.instantiateSubclasses(Backend.class, "cucumber.runtime", new Class[0], new Object[0]), isDryRun);
     }
 
-    public Runtime(List<String> gluePaths, List<Backend> backends, boolean isDryRun) {
+    public Runtime(List<String> gluePaths, List<? extends Backend> backends, boolean isDryRun) {
         this.backends = backends;
         this.gluePaths = gluePaths;
         this.isDryRun = isDryRun;

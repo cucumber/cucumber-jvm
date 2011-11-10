@@ -3,6 +3,7 @@ package cucumber.runtime;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface StepDefinition {
@@ -45,4 +46,12 @@ public interface StepDefinition {
      * @return the pattern associated with this instance. Used for error reporting only.
      */
     String getPattern();
+
+    /**
+     * Returns true if this instance matches the tags.
+     * 
+     * @param tags from feature and scenario
+     * @return true or false
+     */
+    boolean matches(Collection<String> tags);
 }

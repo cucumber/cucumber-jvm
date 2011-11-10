@@ -10,6 +10,7 @@ import gherkin.formatter.model.Step;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -57,5 +58,10 @@ public class ClojureStepDefinition implements StepDefinition {
     @Override
     public String getPattern() {
         return pattern.pattern();
+    }
+
+    @Override
+    public boolean matches(Collection<String> tags) {
+        return true;
     }
 }

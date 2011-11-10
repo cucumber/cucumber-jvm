@@ -33,7 +33,7 @@ public class JavaHookTest {
     @Test
     public void before_hooks_get_registered() throws Exception {
         backend.buildWorld(new ArrayList<String>(), world);
-        backend.registerHook(BEFORE.getAnnotation(Before.class), BEFORE);
+        backend.addHook(BEFORE.getAnnotation(Before.class), BEFORE);
         JavaHookDefinition hookDef = (JavaHookDefinition) world.getBeforeHooks().get(0);
         assertEquals(0, world.getAfterHooks().size());
         assertEquals(BEFORE, hookDef.getMethod());
@@ -42,7 +42,7 @@ public class JavaHookTest {
     @Test
     public void after_hooks_get_registered() throws Exception {
         backend.buildWorld(new ArrayList<String>(), world);
-        backend.registerHook(AFTER.getAnnotation(After.class), AFTER);
+        backend.addHook(AFTER.getAnnotation(After.class), AFTER);
         JavaHookDefinition hookDef = (JavaHookDefinition) world.getAfterHooks().get(0);
         assertEquals(0, world.getBeforeHooks().size());
         assertEquals(AFTER, hookDef.getMethod());
@@ -51,7 +51,7 @@ public class JavaHookTest {
     @Test
     public void hook_order_gets_registered() {
         backend.buildWorld(new ArrayList<String>(), world);
-        backend.registerHook(AFTER.getAnnotation(After.class), AFTER);
+        backend.addHook(AFTER.getAnnotation(After.class), AFTER);
         HookDefinition hookDef = world.getAfterHooks().get(0);
         assertEquals(1, hookDef.getOrder());
     }
@@ -59,7 +59,7 @@ public class JavaHookTest {
     @Test
     public void hook_with_no_order_is_last() {
         backend.buildWorld(new ArrayList<String>(), world);
-        backend.registerHook(BEFORE.getAnnotation(Before.class), BEFORE);
+        backend.addHook(BEFORE.getAnnotation(Before.class), BEFORE);
         HookDefinition hookDef = world.getBeforeHooks().get(0);
         assertEquals(Integer.MAX_VALUE, hookDef.getOrder());
     }
@@ -67,7 +67,7 @@ public class JavaHookTest {
     @Test
     public void matches_matching_tags() {
         backend.buildWorld(new ArrayList<String>(), world);
-        backend.registerHook(BEFORE.getAnnotation(Before.class), BEFORE);
+        backend.addHook(BEFORE.getAnnotation(Before.class), BEFORE);
         HookDefinition before = world.getBeforeHooks().get(0);
         assertTrue(before.matches(asList("@bar", "@zap")));
     }
@@ -75,7 +75,7 @@ public class JavaHookTest {
     @Test
     public void does_not_match_non_matching_tags() {
         backend.buildWorld(new ArrayList<String>(), world);
-        backend.registerHook(BEFORE.getAnnotation(Before.class), BEFORE);
+        backend.addHook(BEFORE.getAnnotation(Before.class), BEFORE);
         HookDefinition before = world.getBeforeHooks().get(0);
         assertFalse(before.matches(asList("@bar")));
     }

@@ -12,6 +12,7 @@ import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.regexp.NativeRegExp;
 import org.mozilla.javascript.tools.shell.Global;
 
+import java.util.Collection;
 import java.util.List;
 
 public class RhinoStepDefinition implements StepDefinition {
@@ -57,5 +58,10 @@ public class RhinoStepDefinition implements StepDefinition {
     @Override
     public String getPattern() {
         return regexp.toString();
+    }
+
+    @Override
+    public boolean matches(Collection<String> tags) {
+        return true;
     }
 }

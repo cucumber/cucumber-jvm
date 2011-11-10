@@ -31,7 +31,7 @@ public class CucumberScenario extends CucumberTagStatement {
     }
 
     @Override
-    public void run(Formatter formatter, Reporter reporter, Runtime runtime, List<Backend> backends, List<String> gluePaths) {
+    public void run(Formatter formatter, Reporter reporter, Runtime runtime, List<? extends Backend> backends, List<String> gluePaths) {
         // TODO: Maybe get extraPaths from scenario
 
         // TODO: split up prepareAndFormat so we can run Background in isolation.

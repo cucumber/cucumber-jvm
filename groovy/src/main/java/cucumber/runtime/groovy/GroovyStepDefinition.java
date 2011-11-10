@@ -8,6 +8,7 @@ import gherkin.formatter.model.Step;
 import groovy.lang.Closure;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -54,5 +55,10 @@ public class GroovyStepDefinition implements StepDefinition {
     @Override
     public String getPattern() {
         return pattern.pattern();
+    }
+
+    @Override
+    public boolean matches(Collection<String> tags) {
+        return true;
     }
 }

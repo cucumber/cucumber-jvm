@@ -9,6 +9,7 @@ import ioke.lang.IokeObject;
 import ioke.lang.Runtime;
 import ioke.lang.exceptions.ControlFlow;
 
+import java.util.Collection;
 import java.util.List;
 
 import static cucumber.runtime.Utils.listOf;
@@ -32,6 +33,11 @@ public class IokeStepDefinition implements StepDefinition {
         } catch (ControlFlow controlFlow) {
             throw new CucumberException("Couldn't get pattern", controlFlow);
         }
+    }
+
+    @Override
+    public boolean matches(Collection<String> tags) {
+        return true;
     }
 
     public List<Argument> matchedArguments(Step step) {

@@ -8,6 +8,14 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface <%= kw %> {
-    public abstract String value();
+    /**
+     * @return a regular expression
+     */
+    String value();
+
+    /**
+     * @return a tag expression
+     */
+    String[] tags() default {};
 }
 

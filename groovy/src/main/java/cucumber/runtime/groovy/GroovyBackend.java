@@ -57,11 +57,11 @@ public class GroovyBackend implements Backend {
     }
 
     void addBeforeHook(TagExpression tagExpression, Closure body) {
-        world.addBeforeHook(new GroovyHook(body, tagExpression, instance));
+        world.addBeforeHook(new GroovyHookDefinition(body, tagExpression, instance));
     }
     
     public void addAfterHook(TagExpression tagExpression, Closure body) {
-        world.addBeforeHook(new GroovyHook(body, tagExpression, instance));
+        world.addBeforeHook(new GroovyHookDefinition(body, tagExpression, instance));
     }
 
     public void invoke(Closure body, Object[] args) {

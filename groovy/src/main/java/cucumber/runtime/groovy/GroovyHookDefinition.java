@@ -7,12 +7,12 @@ import groovy.lang.Closure;
 
 import java.util.Collection;
 
-public class GroovyHook implements HookDefinition {
+public class GroovyHookDefinition implements HookDefinition {
     private final Closure body;
     private final TagExpression tagExpression;
     private final GroovyBackend backend;
 
-    public GroovyHook(Closure body, TagExpression tagExpression, GroovyBackend backend) {
+    public GroovyHookDefinition(Closure body, TagExpression tagExpression, GroovyBackend backend) {
         this.body = body;
         this.tagExpression = tagExpression;
         this.backend = backend;
