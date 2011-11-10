@@ -67,7 +67,7 @@
                                 <classpath/>
                                 <argument>cucumber.cli.Main</argument>
                                 <argument>--dotcucumber</argument>
-                                <argument>${basedir}/.cucumber</argument>
+                                <argument>${basedir}/src/test/resources/.cucumber</argument>
                                 <argument>--format</argument>
                                 <argument>progress</argument>
                                 <argument>--glue</argument>
