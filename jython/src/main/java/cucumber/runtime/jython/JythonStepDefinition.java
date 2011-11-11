@@ -59,9 +59,4 @@ public class JythonStepDefinition implements StepDefinition {
     public String getPattern() {
         return stepdef.invoke("pattern").toString();
     }
-
-    @Override
-    public boolean matches(Collection<String> tags) {
-        return true;
-    }
 }

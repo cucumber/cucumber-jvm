@@ -35,11 +35,6 @@ public class IokeStepDefinition implements StepDefinition {
         }
     }
 
-    @Override
-    public boolean matches(Collection<String> tags) {
-        return true;
-    }
-
     public List<Argument> matchedArguments(Step step) {
         try {
             Object args = backend.invoke(iokeStepDefObject, "arguments_from", step.getName());

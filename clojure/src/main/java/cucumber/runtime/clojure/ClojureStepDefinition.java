@@ -59,9 +59,4 @@ public class ClojureStepDefinition implements StepDefinition {
     public String getPattern() {
         return pattern.pattern();
     }
-
-    @Override
-    public boolean matches(Collection<String> tags) {
-        return true;
-    }
 }

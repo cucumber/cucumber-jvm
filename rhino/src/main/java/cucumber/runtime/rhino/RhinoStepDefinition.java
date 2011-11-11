@@ -59,9 +59,4 @@ public class RhinoStepDefinition implements StepDefinition {
     public String getPattern() {
         return regexp.toString();
     }
-
-    @Override
-    public boolean matches(Collection<String> tags) {
-        return true;
-    }
 }

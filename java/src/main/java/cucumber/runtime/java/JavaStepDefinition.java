@@ -23,14 +23,12 @@ public class JavaStepDefinition implements StepDefinition {
     private final Method method;
     private final Pattern pattern;
     private final JdkPatternArgumentMatcher argumentMatcher;
-    private final TagExpression tagExpression;
     private final ObjectFactory objectFactory;
 
-    public JavaStepDefinition(Method method, Pattern pattern, String[] tagExpressions, ObjectFactory objectFactory) {
+    public JavaStepDefinition(Method method, Pattern pattern, ObjectFactory objectFactory) {
         this.method = method;
         this.pattern = pattern;
         this.argumentMatcher = new JdkPatternArgumentMatcher(pattern);
-        tagExpression = new TagExpression(asList(tagExpressions));
         this.objectFactory = objectFactory;
     }
 
@@ -80,10 +78,5 @@ public class JavaStepDefinition implements StepDefinition {
     @Override
     public String getPattern() {
         return pattern.pattern();
-    }
-
-    @Override
-    public boolean matches(Collection<String> tags) {
-        return tagExpression.eval(tags);
     }
 }

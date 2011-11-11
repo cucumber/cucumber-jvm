@@ -44,7 +44,7 @@ public class World {
         List<StepDefinitionMatch> result = new ArrayList<StepDefinitionMatch>();
         for (StepDefinition stepDefinition : stepDefinitions) {
             List<Argument> arguments = stepDefinition.matchedArguments(step);
-            if (arguments != null && stepDefinition.matches(tags)) {
+            if (arguments != null) {
                 result.add(new StepDefinitionMatch(arguments, stepDefinition, uri, step, localizedXStreams));
             }
         }

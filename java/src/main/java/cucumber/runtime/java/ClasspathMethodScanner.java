@@ -59,11 +59,6 @@ public class ClasspathMethodScanner {
 
     private boolean isStepdefAnnotation(Annotation annotation) {
         Class<? extends Annotation> annotationClass = annotation.annotationType();
-        try {
-            annotationClass.getMethod("tags");
-            return true;
-        } catch (NoSuchMethodException e) {
-            return false;
-        }
+        return annotationClass.getAnnotation(StepDefAnnotation.class) != null;
     }
 }

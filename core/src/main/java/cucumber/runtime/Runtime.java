@@ -141,12 +141,6 @@ public class Runtime {
         FileWriter metaJson = new FileWriter(new File(dotCucumber, "meta.json"));
         metaJson.append(json);
         metaJson.close();
-
-        FileWriter metaJsonp = new FileWriter(new File(dotCucumber, "meta_jsonp.js"));
-        metaJsonp.append("cucumberMeta(");
-        metaJsonp.append(json);
-        metaJsonp.append(");");
-        metaJsonp.close();
     }
 
     public boolean isDryRun() {

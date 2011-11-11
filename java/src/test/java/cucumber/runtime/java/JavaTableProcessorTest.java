@@ -133,7 +133,7 @@ public class JavaTableProcessorTest {
 
     private StepDefs runStepDef(Method method) throws Throwable {
         StepDefs stepDefs = new StepDefs();
-        StepDefinition stepDefinition = new JavaStepDefinition(method, Pattern.compile("whatever"), new String[0], new SingletonFactory(stepDefs));
+        StepDefinition stepDefinition = new JavaStepDefinition(method, Pattern.compile("whatever"), new SingletonFactory(stepDefs));
 
         Step stepWithRows = new Step(NO_COMMENTS, "Given ", "something that wants users", 10, rowsList(), null);
 

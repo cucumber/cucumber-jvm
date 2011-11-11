@@ -57,11 +57,9 @@ public class JavaBackend implements Backend {
             String regexpString = (String) regexpMethod.invoke(annotation);
             if (regexpString != null) {
                 Pattern pattern = Pattern.compile(regexpString);
-                Method tagsMethod = annotation.getClass().getMethod("tags");
-                String[] tagExpressions = (String[]) tagsMethod.invoke(annotation);
                 Class<?> clazz = method.getDeclaringClass();
                 registerClassInObjectFactory(clazz);
-                world.addStepDefinition(new JavaStepDefinition(method, pattern, tagExpressions, objectFactory));
+                world.addStepDefinition(new JavaStepDefinition(method, pattern, objectFactory));
             }
         } catch (NoSuchMethodException e) {
             throw new CucumberException(e);

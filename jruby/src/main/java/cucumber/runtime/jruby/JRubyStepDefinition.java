@@ -69,9 +69,4 @@ public class JRubyStepDefinition implements StepDefinition {
     public String getPattern() {
         return (String) stepdef.callMethod("pattern").toJava(String.class);
     }
-
-    @Override
-    public boolean matches(Collection<String> tags) {
-        return true;
-    }
 }

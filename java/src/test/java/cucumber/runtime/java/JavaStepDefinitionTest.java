@@ -24,14 +24,12 @@ public class JavaStepDefinitionTest {
     private static final List<Comment> NO_COMMENTS = Collections.emptyList();
     private static final List<String> NO_PATHS = Collections.emptyList();
     private static final Method FOO;
-    private static final Method FOO_OR_BAR;
-    private static final Method NOT_FOO;
+    private static final Method BAR;
 
     static {
         try {
             FOO = Defs.class.getMethod("foo");
-            FOO_OR_BAR = Defs.class.getMethod("foo_or_bar");
-            NOT_FOO = Defs.class.getMethod("not_foo");
+            BAR = Defs.class.getMethod("bar");
         } catch (NoSuchMethodException e) {
             throw new InternalError("dang");
         }
@@ -46,43 +44,37 @@ public class JavaStepDefinitionTest {
     public void throws_ambiguous_when_two_matches_are_found() {
         backend.buildWorld(new ArrayList<String>(), fooWorld);
         backend.addStepDefinition(FOO.getAnnotation(Given.class), FOO);
-        backend.addStepDefinition(FOO_OR_BAR.getAnnotation(Given.class), FOO_OR_BAR);
+        backend.addStepDefinition(BAR.getAnnotation(Given.class), BAR);
 
         Reporter reporter = mock(Reporter.class);
         fooWorld.prepare(NO_PATHS);
         fooWorld.runStep("uri", new Step(NO_COMMENTS, "Given ", "pattern", 1, null, null), reporter, Locale.US);
     }
 
-    public void does_not_throw_ambiguous_when_tags_cause_only_one_to_match() {
+    @Test
+    public void does_not_throw_ambiguous_when_nothing_is_ambiguous() {
         backend.buildWorld(new ArrayList<String>(), fooWorld);
         backend.addStepDefinition(FOO.getAnnotation(Given.class), FOO);
-        backend.addStepDefinition(NOT_FOO.getAnnotation(Given.class), NOT_FOO);
 
         Reporter reporter = mock(Reporter.class);
         fooWorld.prepare(NO_PATHS);
         fooWorld.runStep("uri", new Step(NO_COMMENTS, "Given ", "pattern", 1, null, null), reporter, Locale.US);
         assertTrue(defs.foo);
-        assertFalse(defs.not_foo);
+        assertFalse(defs.bar);
     }
 
     private class Defs {
         public boolean foo;
-        public boolean foo_or_bar;
-        public boolean not_foo;
+        public boolean bar;
 
-        @Given(value = "pattern", tags = {"@foo"})
+        @Given(value = "pattern")
         public void foo() {
             foo = true;
         }
 
-        @Given(value = "pattern", tags = {"@foo,@bar"})
-        public void foo_or_bar() {
-            foo_or_bar = true;
-        }
-
-        @Given(value = "pattern", tags = {"~@foo"})
-        public void not_foo() {
-            not_foo  = true;
+        @Given(value = "pattern")
+        public void bar() {
+            bar = true;
         }
     }
 }
