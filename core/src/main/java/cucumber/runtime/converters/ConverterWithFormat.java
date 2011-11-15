@@ -8,6 +8,8 @@ import java.text.Format;
 import java.text.ParsePosition;
 import java.util.List;
 
+import static java.util.Arrays.asList;
+
 public abstract class ConverterWithFormat<T> implements SingleValueConverter {
     private final Class[] convertibleTypes;
 
@@ -23,7 +25,7 @@ public abstract class ConverterWithFormat<T> implements SingleValueConverter {
                 // no worries, let's try the next format.
             }
         }
-        throw new ConversionException("Cannot parse " + string);
+        throw new ConversionException("Couldn't convert \"" + string + "\" to an instance of: " + asList(convertibleTypes));
 
     }
 

@@ -1,8 +1,6 @@
 package cucumber.runtime.converters;
 
 import com.thoughtworks.xstream.converters.ConversionException;
-import com.thoughtworks.xstream.converters.SingleValueConverter;
-
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -13,6 +11,7 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 public class StandardConvertersTest {
 
@@ -55,17 +54,16 @@ public class StandardConvertersTest {
         assertEquals(expected, new IntegerConverter(Locale.US).fromString("1,000"));
         assertEquals(expected, new IntegerConverter(new Locale("pt")).fromString("1.000"));
     }
-    
+
     @Test
     public void shouldThrowCorrectErrorMessage() {
-        
         try {
-            new IntegerConverter(new Locale("pt")).fromString(null);
+            new IntegerConverter(new Locale("pt")).fromString("hello");
+            fail();
         } catch (ConversionException e) {
-            assertEquals("Cannot parse null",e.getShortMessage());
+            assertEquals("Couldn't convert \"hello\" to an instance of: [class java.lang.Integer, int]", e.getShortMessage());
         }
     }
-    
 
 
     @Test
