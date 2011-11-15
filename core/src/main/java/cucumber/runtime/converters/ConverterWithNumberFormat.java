@@ -15,7 +15,8 @@ public abstract class ConverterWithNumberFormat<T extends Number> extends Conver
 
     @Override
     public T fromString(String string) {
-        return doTransform(super.fromString(string));
+        T number = super.fromString(string);
+        return number == null ? null : downcast(number);
     }
 
     @Override
@@ -23,5 +24,5 @@ public abstract class ConverterWithNumberFormat<T extends Number> extends Conver
         return formats;
     }
 
-    protected abstract T doTransform(Number argument);
+    protected abstract T downcast(Number argument);
 }

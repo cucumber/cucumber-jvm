@@ -9,7 +9,7 @@ public class DoubleConverter extends ConverterWithNumberFormat<Double> {
     }
 
     @Override
-    protected Double doTransform(Number argument) {
+    protected Double downcast(Number argument) {
         return argument.doubleValue();
     }
 

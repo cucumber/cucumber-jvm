@@ -9,7 +9,7 @@ public class ShortConverter extends ConverterWithNumberFormat<Short> {
     }
 
     @Override
-    protected Short doTransform(Number argument) {
+    protected Short downcast(Number argument) {
         return argument.shortValue();
     }
 

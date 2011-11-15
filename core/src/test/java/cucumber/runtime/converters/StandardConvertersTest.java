@@ -18,6 +18,21 @@ public class StandardConvertersTest {
     private static final TimeZone UTC = TimeZone.getTimeZone("UTC");
 
     @Test
+    public void shouldThrowInformativeErrorMessageWhenTransformationFails() {
+        try {
+            new IntegerConverter(new Locale("pt")).fromString("hello");
+            fail();
+        } catch (ConversionException e) {
+            assertEquals("Couldn't convert \"hello\" to an instance of: [class java.lang.Integer, int]", e.getShortMessage());
+        }
+    }
+
+    @Test
+    public void shouldConvertToNullWhenArgumentIsNull() {
+        assertEquals(null, new IntegerConverter(Locale.US).fromString(null));
+    }
+
+    @Test
     public void shouldTransformBigDecimal() {
         BigDecimal englishBigDecimal = new BigDecimalConverter(Locale.US).fromString("300.15");
         BigDecimal englishBigDecimal2 = new BigDecimalConverter(Locale.US).fromString("30000000.15");
@@ -54,17 +69,6 @@ public class StandardConvertersTest {
         assertEquals(expected, new IntegerConverter(Locale.US).fromString("1,000"));
         assertEquals(expected, new IntegerConverter(new Locale("pt")).fromString("1.000"));
     }
-
-    @Test
-    public void shouldThrowCorrectErrorMessage() {
-        try {
-            new IntegerConverter(new Locale("pt")).fromString("hello");
-            fail();
-        } catch (ConversionException e) {
-            assertEquals("Couldn't convert \"hello\" to an instance of: [class java.lang.Integer, int]", e.getShortMessage());
-        }
-    }
-
 
     @Test
     public void shouldTransformDoubles() {
@@ -111,5 +115,4 @@ public class StandardConvertersTest {
         assertEquals(expected, new BigIntegerConverter(Locale.US).fromString("8589934592"));
         assertEquals(expected, new BigIntegerConverter(Locale.US).fromString("8,589,934,592"));
     }
-
 }

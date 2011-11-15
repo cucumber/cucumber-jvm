@@ -9,7 +9,7 @@ public class IntegerConverter extends ConverterWithNumberFormat<Integer> {
     }
 
     @Override
-    protected Integer doTransform(Number argument) {
+    protected Integer downcast(Number argument) {
         return argument.intValue();
     }
 

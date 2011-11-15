@@ -10,7 +10,7 @@ public class BigIntegerConverter extends ConverterWithNumberFormat<BigInteger> {
     }
 
     @Override
-    protected BigInteger doTransform(Number argument) {
+    protected BigInteger downcast(Number argument) {
         return BigInteger.valueOf(argument.longValue());
     }
 

@@ -9,7 +9,7 @@ public class ByteConverter extends ConverterWithNumberFormat<Byte> {
     }
 
     @Override
-    protected Byte doTransform(Number argument) {
+    protected Byte downcast(Number argument) {
         return argument.byteValue();
     }
 

@@ -9,7 +9,7 @@ public class FloatConverter extends ConverterWithNumberFormat<Float> {
     }
 
     @Override
-    protected Float doTransform(Number argument) {
+    protected Float downcast(Number argument) {
         return argument.floatValue();
     }
 

@@ -9,7 +9,7 @@ public class LongConverter extends ConverterWithNumberFormat<Long> {
     }
 
     @Override
-    protected Long doTransform(Number argument) {
+    protected Long downcast(Number argument) {
         return argument.longValue();
     }
 
