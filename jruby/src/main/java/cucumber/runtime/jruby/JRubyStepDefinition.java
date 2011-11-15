@@ -9,6 +9,7 @@ import org.jruby.RubyObject;
 import org.jruby.RubyString;
 import org.jruby.runtime.builtin.IRubyObject;
 
+import java.util.Collection;
 import java.util.List;
 
 public class JRubyStepDefinition implements StepDefinition {

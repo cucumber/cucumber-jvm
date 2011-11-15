@@ -8,6 +8,7 @@ import gherkin.formatter.model.Step;
 import groovy.lang.Closure;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -44,7 +45,7 @@ public class GroovyStepDefinition implements StepDefinition {
     }
 
     public void execute(Object[] args) throws Throwable {
-        backend.invokeStepDefinition(body, args);
+        backend.invoke(body, args);
     }
 
     public boolean isDefinedAt(StackTraceElement stackTraceElement) {

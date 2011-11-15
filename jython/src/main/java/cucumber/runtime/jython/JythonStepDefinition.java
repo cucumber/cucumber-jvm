@@ -10,6 +10,7 @@ import org.python.core.PyList;
 import org.python.core.PyObject;
 import org.python.core.PyString;
 
+import java.util.Collection;
 import java.util.List;
 
 public class JythonStepDefinition implements StepDefinition {

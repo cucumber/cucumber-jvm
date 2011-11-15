@@ -3,6 +3,7 @@ package cucumber.runtime;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface StepDefinition {

@@ -6,7 +6,6 @@ import org.junit.Test;
 
 import java.lang.reflect.Method;
 import java.util.Collections;
-import java.util.regex.Pattern;
 
 import static org.mockito.Mockito.*;
 
@@ -30,7 +29,7 @@ public class JavaStepDefinitionDependencyInjectionTest {
     @Test
     public void constructor_arguments_get_registered() {
         backend.buildWorld(Collections.<String>emptyList(), new World(null, Collections.<String>emptyList()));
-        backend.addStepDefinition(Pattern.compile("whatever"), GIVEN);
+        backend.addStepDefinition(GIVEN.getAnnotation(Given.class), GIVEN);
         verify(mockObjectFactory).addClass(Steps.class);
         verify(mockObjectFactory).addClass(StepContext1.class);
         verify(mockObjectFactory).addClass(StepContext2.class);
@@ -39,7 +38,7 @@ public class JavaStepDefinitionDependencyInjectionTest {
     @Test
     public void constructor_arguments_get_registered_exactly_once() {
         backend.buildWorld(Collections.<String>emptyList(), new World(null, Collections.<String>emptyList()));
-        backend.addStepDefinition(Pattern.compile("whatever"), OTHER_GIVEN);
+        backend.addStepDefinition(OTHER_GIVEN.getAnnotation(Given.class), OTHER_GIVEN);
         verify(mockObjectFactory, times(1)).addClass(OtherSteps.class);
         verify(mockObjectFactory, times(1)).addClass(StepContext3.class);
         verify(mockObjectFactory, times(1)).addClass(StepContext4.class);

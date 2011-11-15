@@ -11,6 +11,8 @@ import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Step;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 
@@ -27,7 +29,7 @@ public class Runtime {
 
     private final List<Step> undefinedSteps = new ArrayList<Step>();
     private final List<Throwable> errors = new ArrayList<Throwable>();
-    private final List<Backend> backends;
+    private final List<? extends Backend> backends;
     private final List<String> gluePaths;
     private final boolean isDryRun;
 
@@ -43,7 +45,7 @@ public class Runtime {
         this(gluePaths, Resources.instantiateSubclasses(Backend.class, "cucumber.runtime", new Class[0], new Object[0]), isDryRun);
     }
 
-    public Runtime(List<String> gluePaths, List<Backend> backends, boolean isDryRun) {
+    public Runtime(List<String> gluePaths, List<? extends Backend> backends, boolean isDryRun) {
         this.backends = backends;
         this.gluePaths = gluePaths;
         this.isDryRun = isDryRun;
@@ -127,14 +129,18 @@ public class Runtime {
         }
     }
 
-    public void writeMeta(List<String> filesOrDirs, Appendable out) throws IOException {
+    public void writeMeta(List<String> filesOrDirs, File dotCucumber) throws IOException {
         List<CucumberFeature> features = load(filesOrDirs, NO_FILTERS);
         World world = new World(this, NO_TAGS);
         buildWorlds(gluePaths, world);
         List<StepDefinition> stepDefs = world.getStepDefinitions();
         Map<String, List<String>> meta = new Metadata().generate(stepDefs, features);
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        out.append(gson.toJson(meta));
+        String json = gson.toJson(meta);
+
+        FileWriter metaJson = new FileWriter(new File(dotCucumber, "meta.json"));
+        metaJson.append(json);
+        metaJson.close();
     }
 
     public boolean isDryRun() {

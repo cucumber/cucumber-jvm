@@ -10,8 +10,8 @@ import static junit.framework.Assert.assertEquals;
 public class StepDefs {
     private int amount;
 
-    @Given("^I have (\\d+) (.*) in my belly$")
-    public void I_have_apples_in_my_belly(int amount, String what) {
+    @Given(value="^I have (\\d+) (.*) in my belly$")
+    public void I_have_n_things_in_my_belly(int amount, String what) {
         this.amount = amount;
     }
 

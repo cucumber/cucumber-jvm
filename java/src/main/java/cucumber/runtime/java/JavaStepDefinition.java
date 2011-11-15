@@ -3,6 +3,7 @@ package cucumber.runtime.java;
 import cucumber.annotation.DateFormat;
 import cucumber.annotation.Pending;
 import cucumber.runtime.*;
+import gherkin.TagExpression;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 
@@ -10,24 +11,25 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
 
 import static java.util.Arrays.asList;
 
 public class JavaStepDefinition implements StepDefinition {
-    private final MethodFormat methodFormat;
-    private final Method method;
-    private final ObjectFactory objectFactory;
-    private final JdkPatternArgumentMatcher argumentMatcher;
-    private final Pattern pattern;
+    private static final MethodFormat METHOD_FORMAT = new MethodFormat();
 
-    public JavaStepDefinition(Pattern pattern, Method method, ObjectFactory objectFactory) {
+    private final Method method;
+    private final Pattern pattern;
+    private final JdkPatternArgumentMatcher argumentMatcher;
+    private final ObjectFactory objectFactory;
+
+    public JavaStepDefinition(Method method, Pattern pattern, ObjectFactory objectFactory) {
+        this.method = method;
         this.pattern = pattern;
         this.argumentMatcher = new JdkPatternArgumentMatcher(pattern);
-        this.method = method;
         this.objectFactory = objectFactory;
-        this.methodFormat = new MethodFormat();
     }
 
     public void execute(Object[] args) throws Throwable {
@@ -49,7 +51,7 @@ public class JavaStepDefinition implements StepDefinition {
     }
 
     public String getLocation() {
-        return methodFormat.format(method);
+        return METHOD_FORMAT.format(method);
     }
 
     public List<ParameterType> getParameterTypes() {

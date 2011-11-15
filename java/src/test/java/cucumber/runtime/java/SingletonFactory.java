@@ -9,17 +9,14 @@ public class SingletonFactory implements ObjectFactory {
 
     @Override
     public void createInstances() {
-        throw new UnsupportedOperationException();
     }
 
     @Override
     public void disposeInstances() {
-        throw new UnsupportedOperationException();
     }
 
     @Override
     public void addClass(Class<?> clazz) {
-        throw new UnsupportedOperationException();
     }
 
     @Override

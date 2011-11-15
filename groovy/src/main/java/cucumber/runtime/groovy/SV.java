@@ -6,23 +6,23 @@ import java.util.regex.Pattern;
 
 public class SV {
     public static void Givet(Pattern regexp, Closure body) throws Throwable {
-        GroovyBackend.addStepDefinition(regexp, body);
+        GroovyBackend.instance.addStepDefinition(regexp, body);
     }
 
     public static void När(Pattern regexp, Closure body) throws Throwable {
-        GroovyBackend.addStepDefinition(regexp, body);
+        GroovyBackend.instance.addStepDefinition(regexp, body);
     }
 
     public static void Så(Pattern regexp, Closure body) throws Throwable {
-        GroovyBackend.addStepDefinition(regexp, body);
+        GroovyBackend.instance.addStepDefinition(regexp, body);
     }
 
     public static void Och(Pattern regexp, Closure body) throws Throwable {
-        GroovyBackend.addStepDefinition(regexp, body);
+        GroovyBackend.instance.addStepDefinition(regexp, body);
     }
 
     public static void Men(Pattern regexp, Closure body) throws Throwable {
-        GroovyBackend.addStepDefinition(regexp, body);
+        GroovyBackend.instance.addStepDefinition(regexp, body);
     }
 
 }

@@ -5,11 +5,13 @@ import cucumber.annotation.Before;
 import cucumber.annotation.Order;
 import cucumber.resources.Resources;
 import cucumber.runtime.Backend;
+import cucumber.runtime.CucumberException;
 import cucumber.runtime.World;
 import gherkin.formatter.model.Step;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.List;
@@ -49,13 +51,26 @@ public class JavaBackend implements Backend {
         return new JavaSnippetGenerator(step).getSnippet();
     }
 
-    void addStepDefinition(Pattern pattern, Method method) {
-        Class<?> clazz = method.getDeclaringClass();
-        registerClassInObjectFactory(clazz);
-        world.addStepDefinition(new JavaStepDefinition(pattern, method, objectFactory));
+    void addStepDefinition(Annotation annotation, Method method) {
+        try {
+            Method regexpMethod = annotation.getClass().getMethod("value");
+            String regexpString = (String) regexpMethod.invoke(annotation);
+            if (regexpString != null) {
+                Pattern pattern = Pattern.compile(regexpString);
+                Class<?> clazz = method.getDeclaringClass();
+                registerClassInObjectFactory(clazz);
+                world.addStepDefinition(new JavaStepDefinition(method, pattern, objectFactory));
+            }
+        } catch (NoSuchMethodException e) {
+            throw new CucumberException(e);
+        } catch (InvocationTargetException e) {
+            throw new CucumberException(e);
+        } catch (IllegalAccessException e) {
+            throw new CucumberException(e);
+        }
     }
 
-    void registerHook(Annotation annotation, Method method) {
+    void addHook(Annotation annotation, Method method) {
         Class<?> clazz = method.getDeclaringClass();
         registerClassInObjectFactory(clazz);
 
