@@ -23,7 +23,7 @@ public abstract class ConverterWithFormat<T> implements SingleValueConverter {
                 // no worries, let's try the next format.
             }
         }
-        throw new ConversionException("Cannot parse date " + string);
+        throw new ConversionException("Cannot parse " + string);
 
     }
 
