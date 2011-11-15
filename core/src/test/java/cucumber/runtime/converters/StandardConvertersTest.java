@@ -1,6 +1,8 @@
 package cucumber.runtime.converters;
 
 import com.thoughtworks.xstream.converters.ConversionException;
+import com.thoughtworks.xstream.converters.SingleValueConverter;
+
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -53,6 +55,18 @@ public class StandardConvertersTest {
         assertEquals(expected, new IntegerConverter(Locale.US).fromString("1,000"));
         assertEquals(expected, new IntegerConverter(new Locale("pt")).fromString("1.000"));
     }
+    
+    @Test
+    public void shouldThrowCorrectErrorMessage() {
+        
+        try {
+            new IntegerConverter(new Locale("pt")).fromString(null);
+        } catch (ConversionException e) {
+            assertEquals("Cannot parse null",e.getShortMessage());
+        }
+    }
+    
+
 
     @Test
     public void shouldTransformDoubles() {
