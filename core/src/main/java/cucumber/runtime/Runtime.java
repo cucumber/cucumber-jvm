@@ -117,28 +117,28 @@ public class Runtime {
         return cucumberFeatures;
     }
 
-    public void buildWorlds(List<String> gluePaths, World world) {
+    public void buildBackendWorlds(List<String> gluePaths, World world) {
         for (Backend backend : backends) {
             backend.buildWorld(gluePaths, world);
         }
     }
 
-    public void disposeWorlds() {
+    public void disposeBackendWorlds() {
         for (Backend backend : backends) {
             backend.disposeWorld();
         }
     }
 
-    public void writeMeta(List<String> filesOrDirs, File dotCucumber) throws IOException {
+    public void writeStepdefsJson(List<String> filesOrDirs, File dotCucumber) throws IOException {
         List<CucumberFeature> features = load(filesOrDirs, NO_FILTERS);
         World world = new World(this, NO_TAGS);
-        buildWorlds(gluePaths, world);
+        buildBackendWorlds(gluePaths, world);
         List<StepDefinition> stepDefs = world.getStepDefinitions();
         Map<String, List<String>> meta = new Metadata().generate(stepDefs, features);
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         String json = gson.toJson(meta);
 
-        FileWriter metaJson = new FileWriter(new File(dotCucumber, "meta.json"));
+        FileWriter metaJson = new FileWriter(new File(dotCucumber, "stepdefs.json"));
         metaJson.append(json);
         metaJson.close();
     }

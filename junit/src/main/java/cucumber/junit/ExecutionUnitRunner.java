@@ -12,6 +12,9 @@ import org.junit.runners.model.InitializationError;
 
 import java.util.List;
 
+/**
+ * Runs a scenario, or a "synthetic" scenario derived from an Examples row.
+ */
 class ExecutionUnitRunner extends ParentRunner<Step> {
     private final Runtime runtime;
     private final List<String> gluePaths;
@@ -45,7 +48,7 @@ class ExecutionUnitRunner extends ParentRunner<Step> {
     public void run(RunNotifier notifier) {
         jUnitReporter.setStepParentRunner(this, notifier);
         try {
-            cucumberScenario.createWorld(gluePaths, runtime);
+            cucumberScenario.buildWorldAndRunBeforeHooks(gluePaths, runtime);
 
             /*
                We're running the background without reporting the steps as junit children - we don't want them to show up in the
@@ -58,14 +61,14 @@ class ExecutionUnitRunner extends ParentRunner<Step> {
             }
             cucumberScenario.format(jUnitReporter);
         } catch (Throwable e) {
-            // Shouldn't happen, but in case it does....
+            // If a Before hook fails...
             notifier.fireTestFailure(new Failure(getDescription(), e));
         }
         // Run the steps
         super.run(notifier);
         try {
-            cucumberScenario.disposeWorld();
-        } catch (CucumberException e) {
+            cucumberScenario.runAfterHooksAndDisposeWorld();
+        } catch (Throwable e) {
             notifier.fireTestFailure(new Failure(getDescription(), e));
         }
     }

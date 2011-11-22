@@ -6,7 +6,6 @@ import cucumber.runtime.snippets.SummaryPrinter;
 import gherkin.formatter.Formatter;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +41,7 @@ public class Main {
                 filters.add(args.remove(0));
             } else if (arg.equals("--format") || arg.equals("-f")) {
                 format = args.remove(0);
-            } else if (arg.equals("--dotcucumber") || arg.equals("-d")) {
+            } else if (arg.equals("--dotcucumber")) {
                 dotCucumber = args.remove(0);
             } else if (arg.equals("--dry-run") || arg.equals("-d")) {
                 isDryRun = true;
@@ -68,7 +67,7 @@ public class Main {
     private static void writeDotCucumber(List<String> filesOrDirs, String dotCucumberPath, Runtime runtime) throws IOException {
         File dotCucumber = new File(dotCucumberPath);
         dotCucumber.mkdirs();
-        runtime.writeMeta(filesOrDirs, dotCucumber);
+        runtime.writeStepdefsJson(filesOrDirs, dotCucumber);
     }
 
     private static void run(List<String> filesOrDirs, List<Object> filters, String format, Runtime runtime) {

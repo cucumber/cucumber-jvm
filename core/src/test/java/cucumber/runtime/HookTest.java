@@ -28,7 +28,7 @@ public class HookTest {
         World world = new World(runtime, TAGS);
         world.addAfterHook(hook);
 
-        world.dispose();
+        world.runAfterHooksAndDisposeBackendWorlds();
 
         InOrder inOrder = inOrder(hook, backend);
         inOrder.verify(hook).execute(null);

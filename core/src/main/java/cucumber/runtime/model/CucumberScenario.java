@@ -25,9 +25,9 @@ public class CucumberScenario extends CucumberTagStatement {
         this.cucumberBackground = cucumberBackground;
     }
 
-    public void createWorld(List<String> gluePaths, Runtime runtime) {
+    public void buildWorldAndRunBeforeHooks(List<String> gluePaths, Runtime runtime) throws Throwable {
         world = new World(runtime, tags());
-        world.prepare(gluePaths);
+        world.buildBackendWorldsAndRunBeforeHooks(gluePaths);
     }
 
     @Override
@@ -37,7 +37,11 @@ public class CucumberScenario extends CucumberTagStatement {
         // TODO: split up prepareAndFormat so we can run Background in isolation.
         // Or maybe just try to make Background behave like a regular Scenario?? Printing wise at least.
 
-        createWorld(gluePaths, runtime);
+        try {
+            buildWorldAndRunBeforeHooks(gluePaths, runtime);
+        } catch (Throwable e) {
+            // What do we do now???
+        }
 
         runBackground(formatter, reporter);
 
@@ -45,7 +49,7 @@ public class CucumberScenario extends CucumberTagStatement {
         for (Step step : getSteps()) {
             runStep(step, reporter);
         }
-        disposeWorld();
+        runAfterHooksAndDisposeWorld();
     }
 
     public Throwable runBackground(Formatter formatter, Reporter reporter) {
@@ -68,8 +72,8 @@ public class CucumberScenario extends CucumberTagStatement {
         return world.runStep(getUri(), step, reporter, getLocale());
     }
 
-    public void disposeWorld() {
-        world.dispose();
+    public void runAfterHooksAndDisposeWorld() {
+        world.runAfterHooksAndDisposeBackendWorlds();
     }
 
 }

@@ -10,6 +10,7 @@ import gherkin.formatter.model.Step;
 import java.util.*;
 
 public class World {
+    private static final Throwable SKIP_NEXT = new Throwable();
     private static final Object DUMMY_ARG = new Object();
 
     // TODO - it's expensive to create a new LocalizedXStreams for each scenario - reuse a global one.
@@ -21,22 +22,23 @@ public class World {
     private final Runtime runtime;
     private final Collection<String> tags;
 
-    private boolean skipNextStep = false;
     private ScenarioResultImpl scenarioResult;
+    private Throwable error;
 
     public World(Runtime runtime, Collection<String> tags) {
         this.runtime = runtime;
         this.tags = tags;
     }
 
-    public void prepare(List<String> gluePaths) {
-        runtime.buildWorlds(gluePaths, this);
+    public void buildBackendWorldsAndRunBeforeHooks(List<String> gluePaths) {
+        runtime.buildBackendWorlds(gluePaths, this);
 
         scenarioResult = new ScenarioResultImpl();
         Collections.sort(beforeHooks, new HookComparator(true));
-        for (HookDefinition hook : beforeHooks) {
-            // We're passing in null deliberately so Before hooks can't access the result.
-            runHookMaybe(hook, null);
+        try {
+            runHooks(beforeHooks, null);
+        } catch (Throwable throwable) {
+            error = throwable;
         }
     }
 
@@ -51,12 +53,21 @@ public class World {
         return result;
     }
 
-    public void dispose() {
+    public void runAfterHooksAndDisposeBackendWorlds() {
         Collections.sort(afterHooks, new HookComparator(false));
-        for (HookDefinition hook : afterHooks) {
+        try {
+            runHooks(afterHooks, scenarioResult);
+        } catch (Throwable throwable) {
+            error = throwable; // TODO do something with it.
+        } finally {
+            runtime.disposeBackendWorlds();
+        }
+    }
+
+    private void runHooks(List<HookDefinition> hooks, ScenarioResult scenarioResult) {
+        for (HookDefinition hook : hooks) {
             runHookMaybe(hook, scenarioResult);
         }
-        runtime.disposeWorlds();
     }
 
     private void runHookMaybe(HookDefinition hook, ScenarioResult scenarioResult) {
@@ -64,8 +75,7 @@ public class World {
             try {
                 hook.execute(scenarioResult);
             } catch (Throwable t) {
-                skipNextStep = true;
-                throw new CucumberException("Hook execution failed", t);
+                error = t;
             }
         }
     }
@@ -77,16 +87,15 @@ public class World {
         } else {
             reporter.match(Match.UNDEFINED);
             reporter.result(Result.UNDEFINED);
-            skipNextStep = true;
+            error = SKIP_NEXT;
             return null;
         }
 
         if (runtime.isDryRun()) {
-            skipNextStep = true;
+            error = SKIP_NEXT;
         }
 
-        Throwable e = null;
-        if (skipNextStep) {
+        if (error != null) {
             scenarioResult.add(Result.SKIPPED);
             reporter.result(Result.SKIPPED);
         } else {
@@ -94,18 +103,17 @@ public class World {
             try {
                 match.runStep(locale);
             } catch (Throwable t) {
-                skipNextStep = true;
-                e = t;
-                runtime.addError(e);
+                error = t;
+                runtime.addError(error);
             } finally {
                 long duration = System.nanoTime() - start;
-                String status = e == null ? Result.PASSED : Result.FAILED;
-                Result result = new Result(status, duration, e, DUMMY_ARG);
+                String status = error == null ? Result.PASSED : Result.FAILED;
+                Result result = new Result(status, duration, error, DUMMY_ARG);
                 scenarioResult.add(result);
                 reporter.result(result);
             }
         }
-        return e;
+        return error;
     }
 
     private StepDefinitionMatch stepDefinitionMatch(String uri, Step step) {

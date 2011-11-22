@@ -26,7 +26,7 @@ public class HookOrderTest {
             world.addBeforeHook(hook);
         }
 
-        world.prepare(new ArrayList<String>());
+        world.buildBackendWorldsAndRunBeforeHooks(new ArrayList<String>());
 
         InOrder inOrder = inOrder(hooks.toArray());
         inOrder.verify(hooks.get(2)).execute(null);
@@ -41,7 +41,7 @@ public class HookOrderTest {
             world.addAfterHook(hook);
         }
 
-        world.dispose();
+        world.runAfterHooksAndDisposeBackendWorlds();
 
         InOrder inOrder = inOrder(hooks.toArray());
         inOrder.verify(hooks.get(1)).execute(null);
@@ -60,7 +60,7 @@ public class HookOrderTest {
             world.addBeforeHook(hook);
         }
 
-        world.prepare(new ArrayList<String>());
+        world.buildBackendWorldsAndRunBeforeHooks(new ArrayList<String>());
 
         List<HookDefinition> allHooks = new ArrayList<HookDefinition>();
         allHooks.addAll(backend1Hooks);
