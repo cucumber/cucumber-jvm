@@ -1,15 +1,71 @@
-{
-  "^I add (.*)": [],
-  "^I have (\\d+) (.*) in my belly$": [
-    "I have 12 cukes in my belly"
-  ],
-  "^I should be (.*)$": [],
-  "^the (.*) contains (.*)": [],
-  "^the date is (.+)$": [
-    "the date is 2011/10/25"
-  ],
-  "^the date should be (.+)$": [
-    "the date should be Oct 25 2011"
-  ],
-  "^there are (\\d+) cukes in my belly": []
-}
+[
+  {
+    "source": "^I add (.*)",
+    "flags": "",
+    "steps": []
+  },
+  {
+    "source": "^I have (\\d+) (.*) in my belly$",
+    "flags": "",
+    "steps": [
+      {
+        "name": "I have 12 cukes in my belly",
+        "args": [
+          {
+            "offset": 7,
+            "val": "12"
+          },
+          {
+            "offset": 10,
+            "val": "cukes"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "source": "^I should be (.*)$",
+    "flags": "",
+    "steps": []
+  },
+  {
+    "source": "^the (.*) contains (.*)",
+    "flags": "",
+    "steps": []
+  },
+  {
+    "source": "^the date is (.+)$",
+    "flags": "",
+    "steps": [
+      {
+        "name": "the date is 2011/10/25",
+        "args": [
+          {
+            "offset": 12,
+            "val": "2011/10/25"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "source": "^the date should be (.+)$",
+    "flags": "",
+    "steps": [
+      {
+        "name": "the date should be Oct 25 2011",
+        "args": [
+          {
+            "offset": 19,
+            "val": "Oct 25 2011"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "source": "^there are (\\d+) cukes in my belly",
+    "flags": "",
+    "steps": []
+  }
+]

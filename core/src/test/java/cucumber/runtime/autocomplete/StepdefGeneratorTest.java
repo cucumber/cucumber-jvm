@@ -1,9 +1,13 @@
-package cucumber.runtime;
+package cucumber.runtime.autocomplete;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import cucumber.resources.AbstractResource;
 import cucumber.resources.PathWithLines;
+import cucumber.runtime.FeatureBuilder;
+import cucumber.runtime.JdkPatternArgumentMatcher;
+import cucumber.runtime.ParameterType;
+import cucumber.runtime.StepDefinition;
 import cucumber.runtime.model.CucumberFeature;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
@@ -14,31 +18,54 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.junit.Assert.assertEquals;
 
-public class MetadataTest {
+public class StepdefGeneratorTest {
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     @Test
     public void generates_code_completion_metadata() {
-        Metadata meta = new Metadata();
+        StepdefGenerator meta = new StepdefGenerator();
 
         List<StepDefinition> stepDefs = asList(def("I have (\\d+) cukes in my belly"), def("I have (\\d+) apples in my bowl"));
 
-        Map<String, List<String>> metadata = meta.generate(stepDefs, features());
+        List<MetaStepdef> metadata = meta.generate(stepDefs, features());
         assertEquals("" +
-                "{\n" +
-                "  \"I have (\\\\d+) apples in my bowl\": [],\n" +
-                "  \"I have (\\\\d+) cukes in my belly\": [\n" +
-                "    \"I have 4 cukes in my belly\",\n" +
-                "    \"I have 42 cukes in my belly\"\n" +
-                "  ]\n" +
-                "}",
+                "[\n" +
+                "  {\n" +
+                "    \"source\": \"I have (\\\\d+) apples in my bowl\",\n" +
+                "    \"flags\": \"\",\n" +
+                "    \"steps\": []\n" +
+                "  },\n" +
+                "  {\n" +
+                "    \"source\": \"I have (\\\\d+) cukes in my belly\",\n" +
+                "    \"flags\": \"\",\n" +
+                "    \"steps\": [\n" +
+                "      {\n" +
+                "        \"name\": \"I have 4 cukes in my belly\",\n" +
+                "        \"args\": [\n" +
+                "          {\n" +
+                "            \"offset\": 7,\n" +
+                "            \"val\": \"4\"\n" +
+                "          }\n" +
+                "        ]\n" +
+                "      },\n" +
+                "      {\n" +
+                "        \"name\": \"I have 42 cukes in my belly\",\n" +
+                "        \"args\": [\n" +
+                "          {\n" +
+                "            \"offset\": 7,\n" +
+                "            \"val\": \"42\"\n" +
+                "          }\n" +
+                "        ]\n" +
+                "      }\n" +
+                "    ]\n" +
+                "  }\n" +
+                "]",
                 GSON.toJson(metadata));
     }
 

@@ -5,6 +5,8 @@ import com.google.gson.GsonBuilder;
 import cucumber.resources.Consumer;
 import cucumber.resources.Resource;
 import cucumber.resources.Resources;
+import cucumber.runtime.autocomplete.MetaStepdef;
+import cucumber.runtime.autocomplete.StepdefGenerator;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.model.CucumberTagStatement;
 import gherkin.formatter.Formatter;
@@ -134,9 +136,9 @@ public class Runtime {
         World world = new World(this, NO_TAGS);
         buildBackendWorlds(gluePaths, world);
         List<StepDefinition> stepDefs = world.getStepDefinitions();
-        Map<String, List<String>> meta = new Metadata().generate(stepDefs, features);
+        List<MetaStepdef> metaStepdefs = new StepdefGenerator().generate(stepDefs, features);
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        String json = gson.toJson(meta);
+        String json = gson.toJson(metaStepdefs);
 
         FileWriter metaJson = new FileWriter(new File(dotCucumber, "stepdefs.json"));
         metaJson.append(json);
