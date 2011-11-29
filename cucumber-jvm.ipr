@@ -427,15 +427,15 @@
         <root url="jar://$MAVEN_REPOSITORY$/info/cukes/cucumber-html/1.0.0-SNAPSHOT/cucumber-html-1.0.0-SNAPSHOT-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: info.cukes:gherkin:2.6.4">
+    <library name="Maven: info.cukes:gherkin:2.6.8">
       <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/gherkin/2.6.4/gherkin-2.6.4.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/gherkin/2.6.8/gherkin-2.6.8.jar!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/gherkin/2.6.4/gherkin-2.6.4-javadoc.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/gherkin/2.6.8/gherkin-2.6.8-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/gherkin/2.6.4/gherkin-2.6.4-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/gherkin/2.6.8/gherkin-2.6.8-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: javax.annotation:jsr250-api:1.0">
@@ -966,15 +966,15 @@
         <root url="jar://$MAVEN_REPOSITORY$/org/w3c/css/sac/1.3/sac-1.3-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: org.webbitserver:webbit:0.2.14">
+    <library name="Maven: org.webbitserver:webbit:0.2.16">
       <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/webbitserver/webbit/0.2.14/webbit-0.2.14.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/webbitserver/webbit/0.2.16/webbit-0.2.16.jar!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/org/webbitserver/webbit/0.2.14/webbit-0.2.14-javadoc.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/webbitserver/webbit/0.2.16/webbit-0.2.16-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/webbitserver/webbit/0.2.14/webbit-0.2.14-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/webbitserver/webbit/0.2.16/webbit-0.2.16-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: org.yaml:snakeyaml:1.8">
