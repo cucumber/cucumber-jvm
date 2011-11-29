@@ -1,6 +1,5 @@
 package cucumber.table;
 
-import gherkin.formatter.PrettyFormatter;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;
@@ -49,7 +48,7 @@ public class TableDifferTest {
                     "    + | Foo   | schnickens@email.net | 789 |" + EOL +
                     "      | Bryan | bryan@email.org      | 456 |" + EOL +
                     "    - | Ni    | ni@email.com         | 654 |" + EOL;
-            assertEquals(expected, pretty(e.getDiffTable()));
+            assertEquals(expected, TableHelper.pretty(e.getDiffTable()));
             throw e;
         }
     }
@@ -66,16 +65,9 @@ public class TableDifferTest {
                     "      | Ni    | ni@email.com         | 654 |" + EOL +
                     "    + | Doe   | joe@email.com        | 234 |" + EOL +
                     "    + | Foo   | schnickens@email.net | 789 |" + EOL;
-            assertEquals(expected, pretty(e.getDiffTable()));
+            assertEquals(expected, TableHelper.pretty(e.getDiffTable()));
             throw e;
         }
     }
 
-    private String pretty(DataTable table) {
-        StringBuilder result = new StringBuilder();
-        PrettyFormatter pf = new PrettyFormatter(result, true, false);
-        pf.table(table.getGherkinRows());
-        pf.eof();
-        return result.toString();
-    }
 }

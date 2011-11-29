@@ -1,8 +1,11 @@
 package cucumber.table;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.converters.Converter;
+import com.thoughtworks.xstream.converters.SingleValueConverter;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import cucumber.runtime.CucumberException;
+import cucumber.table.xstream.*;
 import gherkin.util.Mapper;
 
 import java.lang.reflect.ParameterizedType;
@@ -23,7 +26,7 @@ public class TableConverter {
         HierarchicalStreamReader reader;
         ensureNotNonGenericMap(itemType);
         if (isMapOfStringToStringAssignable(itemType)) {
-            reader = new XStreamMapReader(attributeNames, attributeValues);
+            reader = new XStreamMapListReader(attributeNames, attributeValues);
         } else {
             final StringConverter mapper = new CamelCaseStringConverter();
             attributeNames = map(attributeNames, new Mapper<String, String>() {
@@ -32,9 +35,21 @@ public class TableConverter {
                     return mapper.map(attributeName);
                 }
             });
-            reader = new XStreamObjectReader(itemType, attributeNames, attributeValues);
+            reader = new XStreamObjectListReader(itemType, attributeNames, attributeValues);
         }
         return (List) xStream.unmarshal(reader);
+    }
+
+    public DataTable convert(List<?> objects) {
+        XStreamTableWriter writer;
+        Converter converter = xStream.getConverterLookup().lookupConverterForType(objects.get(0).getClass());
+        if(converter instanceof SingleValueConverter) {
+            writer = new XStreamSingleValueListWriter(this);
+        } else {
+            writer = new XStreamObjectListWriter(this);
+        }
+        xStream.marshal(objects, writer);
+        return writer.getDataTable();
     }
 
     private void ensureNotNonGenericMap(Type type) {

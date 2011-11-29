@@ -56,7 +56,7 @@ public abstract class ConverterWithFormat<T> implements SingleValueConverter {
 
     @Override
     public String toString(Object obj) {
-        throw new UnsupportedOperationException();
+        return getFormats().get(0).format(obj);
     }
 
     @Override

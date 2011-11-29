@@ -14,6 +14,7 @@ import org.junit.Test;
 import java.lang.reflect.Type;
 import java.util.*;
 
+import static cucumber.table.TableHelper.pretty;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 
@@ -53,6 +54,32 @@ public class TableConverterTest {
         }.getType();
         List<Map<String, String>> users = tc.convert(mapType, headerRow(), bodyRows());
         assertEquals("10/05/1957", users.get(0).get("birthDate"));
+    }
+
+    @Test
+    public void converts_list_of_beans_to_table() {
+        XStream xStream = new LocalizedXStreams().get(Locale.UK);
+        TableConverter tc = new TableConverter(xStream);
+        List<UserPojo> users = tc.convert(UserPojo.class, headerRow(), bodyRows());
+        DataTable table = tc.convert(users);
+        String pretty = pretty(table);
+        assertEquals("" +
+                "      | name        | birthDate | credits |\n" +
+                "      | Sid Vicious | 10/05/57  | 1,000   |\n" +
+                "      | Frank Zappa | 21/12/40  | 3,000   |\n" +
+                "", pretty);
+    }
+
+    @Test
+    public void converts_list_of_single_value_to_table() {
+        XStream xStream = new LocalizedXStreams().get(new Locale("NO"));
+        TableConverter tc = new TableConverter(xStream);
+        DataTable table = tc.convert(asList(0.5, 1000.5));
+        String pretty = pretty(table);
+        assertEquals("" +
+                "      | 0,5     |\n" +
+                "      | 1 000,5 |\n" +
+                "", pretty);
     }
 
     private List<String> headerRow() {
