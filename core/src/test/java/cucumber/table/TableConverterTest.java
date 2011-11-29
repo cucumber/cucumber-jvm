@@ -24,7 +24,7 @@ public class TableConverterTest {
     public void converts_table_to_list_of_pojos() {
         XStream xStream = new LocalizedXStreams().get(Locale.UK);
         TableConverter tc = new TableConverter(xStream);
-        List<UserPojo> users = tc.convert(UserPojo.class, headerRow(), bodyRows());
+        List<UserPojo> users = tc.convert(UserPojo.class, personTable());
         assertEquals(sidsBirthday(), users.get(0).birthDate);
     }
 
@@ -32,7 +32,7 @@ public class TableConverterTest {
     public void converts_table_to_list_of_beans() {
         XStream xStream = new LocalizedXStreams().get(Locale.UK);
         TableConverter tc = new TableConverter(xStream);
-        List<UserBean> users = tc.convert(UserBean.class, headerRow(), bodyRows());
+        List<UserBean> users = tc.convert(UserBean.class, personTable());
         assertEquals(sidsBirthday(), users.get(0).getBirthDate());
     }
 
@@ -40,7 +40,7 @@ public class TableConverterTest {
     public void converts_table_to_list_of_class_with_special_fields() {
         XStream xStream = new LocalizedXStreams().get(Locale.UK);
         TableConverter tc = new TableConverter(xStream);
-        List<UserWithNameField> users = tc.convert(UserWithNameField.class, headerRow(), bodyRows());
+        List<UserWithNameField> users = tc.convert(UserWithNameField.class, personTable());
         assertEquals("Sid", users.get(0).name.first);
         assertEquals("Vicious", users.get(0).name.last);
     }
@@ -52,7 +52,7 @@ public class TableConverterTest {
 
         Type mapType = new TypeReference<Map<String, String>>() {
         }.getType();
-        List<Map<String, String>> users = tc.convert(mapType, headerRow(), bodyRows());
+        List<Map<String, String>> users = tc.convert(mapType, personTable());
         assertEquals("10/05/1957", users.get(0).get("birthDate"));
     }
 
@@ -60,7 +60,7 @@ public class TableConverterTest {
     public void converts_list_of_beans_to_table() {
         XStream xStream = new LocalizedXStreams().get(Locale.UK);
         TableConverter tc = new TableConverter(xStream);
-        List<UserPojo> users = tc.convert(UserPojo.class, headerRow(), bodyRows());
+        List<UserPojo> users = tc.convert(UserPojo.class, personTable());
         DataTable table = tc.convert(users);
         String pretty = pretty(table);
         assertEquals("" +
@@ -68,6 +68,14 @@ public class TableConverterTest {
                 "      | Sid Vicious | 10/05/57  | 1,000   |\n" +
                 "      | Frank Zappa | 21/12/40  | 3,000   |\n" +
                 "", pretty);
+    }
+
+    private DataTable personTable() {
+        return TableParser.parse("" +
+                "| name        | birthDate  | credits |\n" +
+                "| Sid Vicious | 10/05/1957 | 1000    |\n" +
+                "| Frank Zappa | 21/12/1940 | 3000    |\n" +
+                "");
     }
 
     @Test

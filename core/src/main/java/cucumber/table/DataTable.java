@@ -29,12 +29,16 @@ public class DataTable {
     }
 
     public <T> List<T> asList(Type listType) {
-        return tableConverter.convert(listType, gherkinRows.get(0).getCells(), attributeValues());
+        return tableConverter.convert(listType, this);
     }
 
-    private List<List<String>> attributeValues() {
+    List<String> topCells() {
+        return gherkinRows.get(0).getCells();
+    }
+
+    List<List<String>> cells(int firstRow) {
         List<List<String>> attributeValues = new ArrayList<List<String>>();
-        List<DataTableRow> valueRows = gherkinRows.subList(1, gherkinRows.size());
+        List<DataTableRow> valueRows = gherkinRows.subList(firstRow, gherkinRows.size());
         for (Row valueRow : valueRows) {
             attributeValues.add(toStrings(valueRow));
         }

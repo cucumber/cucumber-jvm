@@ -22,34 +22,54 @@ public class TableConverter {
         this.xStream = xStream;
     }
 
-    public <T> List<T> convert(Type itemType, List<String> attributeNames, List<List<String>> attributeValues) {
+    public <T> List<T> convert(Type itemType, DataTable dataTable) {
         HierarchicalStreamReader reader;
         ensureNotNonGenericMap(itemType);
-        if (isMapOfStringToStringAssignable(itemType)) {
-            reader = new XStreamMapListReader(attributeNames, attributeValues);
+        if(isSingleValue(itemType)) {
+            reader = new XStreamSingleValueListReader((Class) itemType, dataTable.cells(0));
+        } else if (isMapOfStringToStringAssignable(itemType)) {
+            reader = new XStreamMapListReader(dataTable.topCells(), dataTable.cells(1));
         } else {
-            final StringConverter mapper = new CamelCaseStringConverter();
-            attributeNames = map(attributeNames, new Mapper<String, String>() {
-                @Override
-                public String map(String attributeName) {
-                    return mapper.map(attributeName);
-                }
-            });
-            reader = new XStreamObjectListReader(itemType, attributeNames, attributeValues);
+            reader = new XStreamObjectListReader(itemType, convertedAttributeNames(dataTable), dataTable.cells(1));
         }
         return (List) xStream.unmarshal(reader);
     }
 
+    // We have to convert attribute names to valid field names.
+    private List<String> convertedAttributeNames(DataTable dataTable) {
+        final StringConverter mapper = new CamelCaseStringConverter();
+        return map(dataTable.topCells(), new Mapper<String, String>() {
+            @Override
+            public String map(String attributeName) {
+                return mapper.map(attributeName);
+            }
+        });
+    }
+
+    /**
+     * Converts a List of objects to a DataTable.
+     * 
+     * @param objects the objects to convers
+     * @return a DataTable
+     */
     public DataTable convert(List<?> objects) {
         XStreamTableWriter writer;
-        Converter converter = xStream.getConverterLookup().lookupConverterForType(objects.get(0).getClass());
-        if(converter instanceof SingleValueConverter) {
+        if(isSingleValue(objects.get(0).getClass())) {
             writer = new XStreamSingleValueListWriter(this);
         } else {
             writer = new XStreamObjectListWriter(this);
         }
         xStream.marshal(objects, writer);
         return writer.getDataTable();
+    }
+
+    private boolean isSingleValue(Type type) {
+        return type instanceof Class && isSingleValue((Class) type);
+    }
+
+    private boolean isSingleValue(Class<?> type) {
+        Converter converter = xStream.getConverterLookup().lookupConverterForType(type);
+        return converter instanceof SingleValueConverter;
     }
 
     private void ensureNotNonGenericMap(Type type) {
