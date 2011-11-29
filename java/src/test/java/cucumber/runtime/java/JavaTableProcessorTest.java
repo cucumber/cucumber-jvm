@@ -34,7 +34,7 @@ public class JavaTableProcessorTest {
     public static class StepDefs {
         public List<UserPojo> listOfPojos;
         public List<UserBean> listOfBeans;
-        public List<Double> listOfDoubles;
+        public List<List<Double>> listOfListOfDoubles;
         public List<Map<String, String>> listOfMapsOfStringToString;
         public List<Map<String, Object>> listOfMapsOfStringToObject;
 
@@ -48,8 +48,8 @@ public class JavaTableProcessorTest {
             this.listOfBeans = listOfBeans;
         }
 
-        public void listOfDoubles(List<Double> listOfDoubles) {
-            this.listOfDoubles = listOfDoubles;
+        public void listOfListOfDoubles(List<List<Double>> listOfListOfDoubles) {
+            this.listOfListOfDoubles = listOfListOfDoubles;
         }
 
         public void listOfMapsOfStringToString(List<Map<String, String>> listOfMapsOfStringToString) {
@@ -90,9 +90,9 @@ public class JavaTableProcessorTest {
 
     @Test
     public void transforms_to_list_of_single_values() throws Throwable {
-        Method m = StepDefs.class.getMethod("listOfDoubles", List.class);
+        Method m = StepDefs.class.getMethod("listOfListOfDoubles", List.class);
         StepDefs stepDefs = runStepDef(m, listOfDoublesWithoutHeader());
-        assertEquals("[[100.5, 99.5], [0.5, -0.5], [1000.0, 999.0]]", stepDefs.listOfDoubles.toString());
+        assertEquals("[[100.5, 99.5], [0.5, -0.5], [1000.0, 999.0]]", stepDefs.listOfListOfDoubles.toString());
     }
 
     @Test

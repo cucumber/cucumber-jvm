@@ -39,7 +39,8 @@ public class TableDifferTest {
     @Test(expected = TableDiffException.class)
     public void shouldFindDifferences() {
         try {
-            new TableDiffer(table(), otherTableWithDeletedAndInserted()).calculateDiffs();
+            DataTable otherTable = otherTableWithDeletedAndInserted();
+            new TableDiffer(table(), otherTable).calculateDiffs();
         } catch (TableDiffException e) {
             String expected =
                     "      | Aslak | aslak@email.com      | 123 |" + EOL +

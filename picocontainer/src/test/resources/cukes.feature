@@ -1,9 +1,14 @@
 Feature: Cucumber Runner Rocks
-  @foo
-  Scenario: Many cukes
-    Given I have 12 cukes in my belly
-    And a big basket with cukes
-    And I have 12 cukes in my belly
+#  @foo
+#  Scenario: Many cukes
+#    Given I have 12 cukes in my belly
+#    And a big basket with cukes
+#    And I have 12 cukes in my belly
+
+  Scenario: Not cukes at all
+    Given I have this in my basket:
+      | a | b |
+      | c | d |
   
 #  Scenario: Few cukes
 #    Given I have 3 cukes in my belly

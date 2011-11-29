@@ -7,19 +7,15 @@
   {
     "source": "^I have (\\d+) (.*) in my belly$",
     "flags": "",
+    "steps": []
+  },
+  {
+    "source": "^I have this in my basket:$",
+    "flags": "",
     "steps": [
       {
-        "name": "I have 12 cukes in my belly",
-        "args": [
-          {
-            "offset": 7,
-            "val": "12"
-          },
-          {
-            "offset": 10,
-            "val": "cukes"
-          }
-        ]
+        "name": "I have this in my basket:",
+        "args": []
       }
     ]
   },

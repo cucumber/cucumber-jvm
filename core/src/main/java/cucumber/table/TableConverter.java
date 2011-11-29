@@ -25,8 +25,10 @@ public class TableConverter {
     public <T> List<T> convert(Type itemType, DataTable dataTable) {
         HierarchicalStreamReader reader;
         ensureNotNonGenericMap(itemType);
-        if(isSingleValue(itemType)) {
-            reader = new XStreamSingleValueListReader((Class) itemType, dataTable.cells(0));
+
+        Class listOfListType = listOfListType(itemType);
+        if (listOfListType != null) {
+            reader = new XStreamSingleValueListReader(listOfListType, dataTable.cells(0));
         } else if (isMapOfStringToStringAssignable(itemType)) {
             reader = new XStreamMapListReader(dataTable.topCells(), dataTable.cells(1));
         } else {
@@ -48,13 +50,13 @@ public class TableConverter {
 
     /**
      * Converts a List of objects to a DataTable.
-     * 
+     *
      * @param objects the objects to convers
      * @return a DataTable
      */
     public DataTable convert(List<?> objects) {
         XStreamTableWriter writer;
-        if(isSingleValue(objects.get(0).getClass())) {
+        if (isSingleValue(objects.get(0).getClass())) {
             writer = new XStreamSingleValueListWriter(this);
         } else {
             writer = new XStreamObjectListWriter(this);
@@ -63,18 +65,25 @@ public class TableConverter {
         return writer.getDataTable();
     }
 
-    private boolean isSingleValue(Type type) {
-        return type instanceof Class && isSingleValue((Class) type);
-    }
-
-    private boolean isSingleValue(Class<?> type) {
-        Converter converter = xStream.getConverterLookup().lookupConverterForType(type);
-        return converter instanceof SingleValueConverter;
-    }
-
     private void ensureNotNonGenericMap(Type type) {
         if (type instanceof Class && Map.class.isAssignableFrom((Class<?>) type)) {
             throw new CucumberException("Tables can only be transformed to List<Map<String,String>> or List<Map<String,Object>>. You have to declare generic types.");
+        }
+    }
+
+    private Class listOfListType(Type type) {
+        if (type instanceof ParameterizedType) {
+            ParameterizedType parameterizedType = (ParameterizedType) type;            Type rawType = parameterizedType.getRawType();
+            if (rawType instanceof Class && List.class.isAssignableFrom((Class) rawType)) {
+                Type listType = parameterizedType.getActualTypeArguments()[0];
+                if(listType instanceof Class) {
+                    return (Class) listType;
+                }
+                return null;
+            }
+            return null;
+        } else {
+            return null;
         }
     }
 
@@ -99,4 +108,14 @@ public class TableConverter {
             return false;
         }
     }
+
+    private boolean isSingleValue(Type type) {
+        return type instanceof Class && isSingleValue((Class) type);
+    }
+
+    private boolean isSingleValue(Class<?> type) {
+        Converter converter = xStream.getConverterLookup().lookupConverterForType(type);
+        return converter instanceof SingleValueConverter;
+    }
+
 }
