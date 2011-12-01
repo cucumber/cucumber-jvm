@@ -40,7 +40,6 @@ public class XStreamObjectListWriter extends XStreamTableWriter {
 
     @Override
     public void addAttribute(String name, String value) {
-        throw new UnsupportedOperationException();
     }
 
     @Override

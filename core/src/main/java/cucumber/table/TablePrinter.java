@@ -2,7 +2,7 @@ package cucumber.table;
 
 import gherkin.formatter.PrettyFormatter;
 
-public class TableHelper {
+public class TablePrinter {
     public static String pretty(DataTable table) {
         StringBuilder result = new StringBuilder();
         PrettyFormatter pf = new PrettyFormatter(result, true, false);

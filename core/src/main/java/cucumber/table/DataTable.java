@@ -53,6 +53,10 @@ public class DataTable {
         return strings;
     }
 
+    public void diff(List<List<String>> other) {
+        diff(tableConverter.convert(other));
+    }
+    
     public void diff(DataTable other) {
         new TableDiffer(this, other).calculateDiffs();
     }

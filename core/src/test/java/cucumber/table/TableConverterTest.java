@@ -14,7 +14,7 @@ import org.junit.Test;
 import java.lang.reflect.Type;
 import java.util.*;
 
-import static cucumber.table.TableHelper.pretty;
+import static cucumber.table.TablePrinter.pretty;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 

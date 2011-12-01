@@ -43,13 +43,14 @@ public class TableDifferTest {
             new TableDiffer(table(), otherTable).calculateDiffs();
         } catch (TableDiffException e) {
             String expected =
+                    "Tables were not identical:\n" +
                     "      | Aslak | aslak@email.com      | 123 |" + EOL +
                     "    - | Joe   | joe@email.com        | 234 |" + EOL +
                     "    + | Doe   | joe@email.com        | 234 |" + EOL +
                     "    + | Foo   | schnickens@email.net | 789 |" + EOL +
                     "      | Bryan | bryan@email.org      | 456 |" + EOL +
                     "    - | Ni    | ni@email.com         | 654 |" + EOL;
-            assertEquals(expected, TableHelper.pretty(e.getDiffTable()));
+            assertEquals(expected, e.getMessage());
             throw e;
         }
     }
@@ -60,15 +61,15 @@ public class TableDifferTest {
             new TableDiffer(table(), otherTableWithInsertedAtEnd()).calculateDiffs();
         } catch (TableDiffException e) {
             String expected =
+                    "Tables were not identical:\n" +
                     "      | Aslak | aslak@email.com      | 123 |" + EOL +
                     "      | Joe   | joe@email.com        | 234 |" + EOL +
                     "      | Bryan | bryan@email.org      | 456 |" + EOL +
                     "      | Ni    | ni@email.com         | 654 |" + EOL +
                     "    + | Doe   | joe@email.com        | 234 |" + EOL +
                     "    + | Foo   | schnickens@email.net | 789 |" + EOL;
-            assertEquals(expected, TableHelper.pretty(e.getDiffTable()));
+            assertEquals(expected, e.getMessage());
             throw e;
         }
     }
-
 }
