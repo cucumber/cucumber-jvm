@@ -19,6 +19,7 @@ import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 
 public class TableConverterTest {
+	private final static String LS = System.getProperty("line.separator");
 
     @Test
     public void converts_table_to_list_of_pojos() {
@@ -64,17 +65,17 @@ public class TableConverterTest {
         DataTable table = tc.convert(users);
         String pretty = pretty(table);
         assertEquals("" +
-                "      | name        | birthDate | credits |\n" +
-                "      | Sid Vicious | 10/05/57  | 1,000   |\n" +
-                "      | Frank Zappa | 21/12/40  | 3,000   |\n" +
+                "      | name        | birthDate | credits |" + LS +
+                "      | Sid Vicious | 10/05/57  | 1,000   |" + LS + 
+                "      | Frank Zappa | 21/12/40  | 3,000   |" + LS + 
                 "", pretty);
     }
 
     private DataTable personTable() {
         return TableParser.parse("" +
-                "| name        | birthDate  | credits |\n" +
-                "| Sid Vicious | 10/05/1957 | 1000    |\n" +
-                "| Frank Zappa | 21/12/1940 | 3000    |\n" +
+                "| name        | birthDate  | credits |" + LS + 
+                "| Sid Vicious | 10/05/1957 | 1000    |" + LS + 
+                "| Frank Zappa | 21/12/1940 | 3000    |" + LS +
                 "");
     }
 
@@ -85,8 +86,8 @@ public class TableConverterTest {
         DataTable table = tc.convert(asList(0.5, 1000.5));
         String pretty = pretty(table);
         assertEquals("" +
-                "      | 0,5     |\n" +
-                "      | 1 000,5 |\n" +
+                "      | 0,5     |" + LS +
+                "      | 1 000,5 |" + LS +
                 "", pretty);
     }
 

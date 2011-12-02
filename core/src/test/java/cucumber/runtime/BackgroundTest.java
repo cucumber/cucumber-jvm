@@ -13,28 +13,30 @@ import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 
 public class BackgroundTest {
+	private final static String LS = System.getProperty("line.separator");
+	
     @Test
     public void should_run_background() {
         Backend backend = new TestBackend();
         Runtime runtime = new Runtime(new ArrayList<String>(), asList(backend), false);
         CucumberFeature feature = feature("test.feature", "" +
-                "Feature:\n" +
-                "  Background:\n" +
-                "    Given b\n" +
-                "  Scenario:\n" +
-                "    When s\n");
+                "Feature:" + LS +
+                "  Background:" + LS +
+                "    Given b" + LS +
+                "  Scenario:" + LS +
+                "    When s" +  LS);
 
         StringBuilder out = new StringBuilder();
         PrettyFormatter pretty = new PrettyFormatter(out, true, true);
         runtime.run(feature, pretty, pretty);
         String expectedOutput = "" +
-                "Feature: \n" +
-                "\n" +
-                "  Background:  # test.feature:2\n" +
-                "    Given b\n" +
-                "\n" +
-                "  Scenario:  # test.feature:4\n" +
-                "    When s\n";
+                "Feature: " + LS +
+                LS +
+                "  Background:  # test.feature:2" + LS +
+                "    Given b" + LS +
+                LS +
+                "  Scenario:  # test.feature:4" + LS +
+                "    When s" + LS;
         assertEquals(expectedOutput, out.toString());
     }
 
