@@ -10,14 +10,14 @@ import java.util.List;
 
 import static java.util.Collections.emptyList;
 
-public class XStreamSingleValueListWriter extends XStreamTableWriter {
+public class ListOfListOfSingleValueWriter extends DataTableWriter {
     private static final List<Comment> NO_COMMENTS = emptyList();
     private final List<DataTableRow> rows = new ArrayList<DataTableRow>();
     private final TableConverter tableConverter;
     private int nodeDepth;
     private List<String> cells;
 
-    public XStreamSingleValueListWriter(TableConverter tableConverter) {
+    public ListOfListOfSingleValueWriter(TableConverter tableConverter) {
         this.tableConverter = tableConverter;
     }
 
@@ -29,7 +29,7 @@ public class XStreamSingleValueListWriter extends XStreamTableWriter {
     @Override
     public void startNode(String name) {
         nodeDepth++;
-        if (nodeDepth == 3) {
+        if (nodeDepth == 2) {
             cells = new ArrayList<String>();
         }
     }
@@ -45,7 +45,7 @@ public class XStreamSingleValueListWriter extends XStreamTableWriter {
 
     @Override
     public void endNode() {
-        if (nodeDepth == 3) {
+        if (nodeDepth == 2) {
             DataTableRow row = new DataTableRow(NO_COMMENTS, cells, 0);
             rows.add(row);
         }

@@ -18,14 +18,14 @@ import java.util.List;
  * </list>
  * </pre>
  */
-public class XStreamSingleValueListReader extends AbstractReader {
+public class ListOfListOfSingleValueReader extends AbstractReader {
     private int depth = 0;
     private Iterator<List<String>> rowIterator;
     private Iterator<String> cellIterator;
     private String cell;
     private final Class elementType;
 
-    public XStreamSingleValueListReader(Class elementType, List<List<String>> rows) {
+    public ListOfListOfSingleValueReader(Class elementType, List<List<String>> rows) {
         this.elementType = elementType;
         rowIterator = rows.iterator();
     }

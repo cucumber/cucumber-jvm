@@ -10,7 +10,7 @@ import java.util.List;
 
 import static java.util.Collections.emptyList;
 
-public class XStreamObjectListWriter extends XStreamTableWriter {
+public class ListOfObjectWriter extends DataTableWriter {
     private static final List<Comment> NO_COMMENTS = emptyList();
     private final List<DataTableRow> rows = new ArrayList<DataTableRow>();
     private final TableConverter tableConverter;
@@ -18,7 +18,7 @@ public class XStreamObjectListWriter extends XStreamTableWriter {
     private List<String> header = new ArrayList<String>();
     private List<String> cells;
 
-    public XStreamObjectListWriter(TableConverter tableConverter) {
+    public ListOfObjectWriter(TableConverter tableConverter) {
         this.tableConverter = tableConverter;
     }
 

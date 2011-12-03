@@ -1,5 +1,6 @@
 package cucumber.table;
 
+import gherkin.formatter.PrettyFormatter;
 import gherkin.formatter.model.DataTableRow;
 import gherkin.formatter.model.Row;
 
@@ -29,7 +30,7 @@ public class DataTable {
     }
 
     public <T> List<T> asList(Type listType) {
-        return tableConverter.convert(listType, this);
+        return tableConverter.toList(listType, this);
     }
 
     List<String> topCells() {
@@ -54,15 +55,24 @@ public class DataTable {
     }
 
     public void diff(List<List<String>> other) {
-        diff(tableConverter.convert(other));
+        diff(tableConverter.toTable(other));
     }
-    
-    public void diff(DataTable other) {
+
+    private void diff(DataTable other) {
         new TableDiffer(this, other).calculateDiffs();
     }
 
     public List<DataTableRow> getGherkinRows() {
         return gherkinRows;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder result = new StringBuilder();
+        PrettyFormatter pf = new PrettyFormatter(result, true, false);
+        pf.table(getGherkinRows());
+        pf.eof();
+        return result.toString();
     }
 
     List<DiffableRow> diffableRows() {

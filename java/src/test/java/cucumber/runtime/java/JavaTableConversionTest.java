@@ -24,7 +24,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static junit.framework.Assert.assertEquals;
 
-public class JavaTableProcessorTest {
+public class JavaTableConversionTest {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 

@@ -26,7 +26,7 @@ import java.util.List;
  * </list>
  * </pre>
  */
-public class XStreamObjectListReader extends AbstractReader {
+public class ListOfObjectReader extends AbstractReader {
     private final Type elementType;
     private final List<String> attributeNames;
     private final Iterator<List<String>> itemIterator;
@@ -38,7 +38,7 @@ public class XStreamObjectListReader extends AbstractReader {
     private Iterator<String> attributeValueIterator;
     private String attributeValue;
 
-    public XStreamObjectListReader(Type elementType, List<String> attributeNames, List<List<String>> items) {
+    public ListOfObjectReader(Type elementType, List<String> attributeNames, List<List<String>> items) {
         this.elementType = elementType;
         this.attributeNames = attributeNames;
         this.itemIterator = items.iterator();

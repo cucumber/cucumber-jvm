@@ -17,8 +17,15 @@ public class TableDiffer {
     private final DataTable other;
 
     public TableDiffer(DataTable origTable, DataTable otherTable) {
+        checkColumns(origTable, otherTable);
         this.orig = origTable;
         this.other = otherTable;
+    }
+
+    private void checkColumns(DataTable a, DataTable b) {
+        if(a.topCells().size() != b.topCells().size()) {
+            throw new IllegalArgumentException("Tables must have equal number of columns:\n" + a + "\n" + b);
+        }
     }
 
     public void calculateDiffs() {

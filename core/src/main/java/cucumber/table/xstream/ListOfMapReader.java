@@ -34,7 +34,7 @@ import java.util.List;
  * </list>
  * </pre>
  */
-public class XStreamMapListReader extends AbstractReader {
+public class ListOfMapReader extends AbstractReader {
     private final List<String> attributeNames;
     private final Iterator<List<String>> itemIterator;
 
@@ -48,7 +48,7 @@ public class XStreamMapListReader extends AbstractReader {
 
     private boolean entryKey = true;
 
-    public XStreamMapListReader(List<String> attributeNames, List<List<String>> items) {
+    public ListOfMapReader(List<String> attributeNames, List<List<String>> items) {
         this.attributeNames = attributeNames;
         this.itemIterator = items.iterator();
     }
