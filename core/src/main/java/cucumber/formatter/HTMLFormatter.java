@@ -47,7 +47,7 @@ public class HTMLFormatter implements Formatter, Reporter {
     public void uri(String uri) {
         if (firstFeature) {
             out.append("$(document).ready(function() {").append("var ")
-                    .append(JS_FORMATTER_VAR).append(" = new CucumberHTML.DOMFormatter($('.cucumber-report'));");
+                    .append(JS_FORMATTER_VAR).append(" = new Cucumber.DOMFormatter($('.cucumber-report'));");
             firstFeature = false;
         }
         writeToJsReport("uri", "'" + uri + "'");
