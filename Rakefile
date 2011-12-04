@@ -1,5 +1,12 @@
 require 'cucumber/rake/task'
 
+desc "Release"
+task :release do
+  sh "mvn release:clean"
+  sh "mvn --batch-mode -P release-sign-artifacts release:prepare"
+  sh "mvn --batch-mode -P release-sign-artifacts release:perform"
+end
+
 desc "Generate code"
 task :generate do
   Dir['*/Rakefile'].each do |rakefile|

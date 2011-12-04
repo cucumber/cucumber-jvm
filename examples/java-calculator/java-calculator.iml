@@ -20,13 +20,13 @@
     <orderEntry type="module" module-name="cucumber-picocontainer" scope="TEST" />
     <orderEntry type="module" module-name="cucumber-java" scope="TEST" />
     <orderEntry type="module" module-name="cucumber-core" scope="TEST" />
-    <orderEntry type="library" scope="TEST" name="Maven: info.cukes:gherkin:2.6.8" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: info.cukes:gherkin:2.6.9" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: com.googlecode.json-simple:json-simple:1.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: net.iharder:base64:2.3.8" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: com.thoughtworks.xstream:xstream:1.4.1" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: com.thoughtworks.xstream:xstream:1.4.2" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: com.googlecode.java-diff-utils:diffutils:1.2.1" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: com.google.code.gson:gson:1.7.2" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: info.cukes:cucumber-html:1.0.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: com.google.code.gson:gson:2.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: info.cukes:cucumber-html:0.2.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.picocontainer:picocontainer:2.14.1" level="project" />
     <orderEntry type="module" module-name="cucumber-junit" scope="TEST" />
     <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.10" level="project" />

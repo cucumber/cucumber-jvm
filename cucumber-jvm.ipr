@@ -295,15 +295,15 @@
         <root url="jar://$MAVEN_REPOSITORY$/com/google/code/findbugs/jsr305/1.3.9/jsr305-1.3.9-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: com.google.code.gson:gson:1.7.2">
+    <library name="Maven: com.google.code.gson:gson:2.0">
       <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/com/google/code/gson/gson/1.7.2/gson-1.7.2.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/com/google/code/gson/gson/2.0/gson-2.0.jar!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/com/google/code/gson/gson/1.7.2/gson-1.7.2-javadoc.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/com/google/code/gson/gson/2.0/gson-2.0-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/com/google/code/gson/gson/1.7.2/gson-1.7.2-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/com/google/code/gson/gson/2.0/gson-2.0-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: com.google.guava:guava:10.0.1">
@@ -350,15 +350,15 @@
         <root url="jar://$MAVEN_REPOSITORY$/com/googlecode/json-simple/json-simple/1.1/json-simple-1.1-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: com.thoughtworks.xstream:xstream:1.4.1">
+    <library name="Maven: com.thoughtworks.xstream:xstream:1.4.2">
       <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/com/thoughtworks/xstream/xstream/1.4.1/xstream-1.4.1.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/com/thoughtworks/xstream/xstream/1.4.2/xstream-1.4.2.jar!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/com/thoughtworks/xstream/xstream/1.4.1/xstream-1.4.1-javadoc.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/com/thoughtworks/xstream/xstream/1.4.2/xstream-1.4.2-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/com/thoughtworks/xstream/xstream/1.4.1/xstream-1.4.1-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/com/thoughtworks/xstream/xstream/1.4.2/xstream-1.4.2-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: commons-codec:commons-codec:1.4">
@@ -416,26 +416,26 @@
         <root url="jar://$MAVEN_REPOSITORY$/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: info.cukes:cucumber-html:1.0.0-SNAPSHOT">
+    <library name="Maven: info.cukes:cucumber-html:0.2.1">
       <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/cucumber-html/1.0.0-SNAPSHOT/cucumber-html-1.0.0-SNAPSHOT.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/cucumber-html/0.2.1/cucumber-html-0.2.1.jar!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/cucumber-html/1.0.0-SNAPSHOT/cucumber-html-1.0.0-SNAPSHOT-javadoc.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/cucumber-html/0.2.1/cucumber-html-0.2.1-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/cucumber-html/1.0.0-SNAPSHOT/cucumber-html-1.0.0-SNAPSHOT-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/cucumber-html/0.2.1/cucumber-html-0.2.1-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: info.cukes:gherkin:2.6.8">
+    <library name="Maven: info.cukes:gherkin:2.6.9">
       <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/gherkin/2.6.8/gherkin-2.6.8.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/gherkin/2.6.9/gherkin-2.6.9.jar!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/gherkin/2.6.8/gherkin-2.6.8-javadoc.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/gherkin/2.6.9/gherkin-2.6.9-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/gherkin/2.6.8/gherkin-2.6.8-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/gherkin/2.6.9/gherkin-2.6.9-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: javax.annotation:jsr250-api:1.0">
@@ -449,15 +449,26 @@
         <root url="jar://$MAVEN_REPOSITORY$/javax/annotation/jsr250-api/1.0/jsr250-api-1.0-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: javax.enterprise:cdi-api:1.0-SP1">
+    <library name="Maven: javax.el:el-api:2.2">
       <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/javax/enterprise/cdi-api/1.0-SP1/cdi-api-1.0-SP1.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/javax/el/el-api/2.2/el-api-2.2.jar!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/javax/enterprise/cdi-api/1.0-SP1/cdi-api-1.0-SP1-javadoc.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/javax/el/el-api/2.2/el-api-2.2-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/javax/enterprise/cdi-api/1.0-SP1/cdi-api-1.0-SP1-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/javax/el/el-api/2.2/el-api-2.2-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: javax.enterprise:cdi-api:1.1.EDR1.1">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/javax/enterprise/cdi-api/1.1.EDR1.1/cdi-api-1.1.EDR1.1.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/javax/enterprise/cdi-api/1.1.EDR1.1/cdi-api-1.1.EDR1.1-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/javax/enterprise/cdi-api/1.1.EDR1.1/cdi-api-1.1.EDR1.1-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: javax.inject:javax.inject:1">
@@ -570,6 +581,17 @@
         <root url="jar://$MAVEN_REPOSITORY$/net/sourceforge/nekohtml/nekohtml/1.9.15/nekohtml-1.9.15-sources.jar!/" />
       </SOURCES>
     </library>
+    <library name="Maven: org.apache.commons:commons-exec:1.1">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/apache/commons/commons-exec/1.1/commons-exec-1.1.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/org/apache/commons/commons-exec/1.1/commons-exec-1.1-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/apache/commons/commons-exec/1.1/commons-exec-1.1-sources.jar!/" />
+      </SOURCES>
+    </library>
     <library name="Maven: org.apache.httpcomponents:httpclient:4.1.2">
       <CLASSES>
         <root url="jar://$MAVEN_REPOSITORY$/org/apache/httpcomponents/httpclient/4.1.2/httpclient-4.1.2.jar!/" />
@@ -614,15 +636,15 @@
         <root url="jar://$MAVEN_REPOSITORY$/org/clojure/clojure/1.4.0-alpha2/clojure-1.4.0-alpha2-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: org.codehaus.groovy:groovy-all:1.9.0-beta-4">
+    <library name="Maven: org.codehaus.groovy:groovy-all:2.0.0-beta-1">
       <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/groovy/groovy-all/1.9.0-beta-4/groovy-all-1.9.0-beta-4.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/groovy/groovy-all/2.0.0-beta-1/groovy-all-2.0.0-beta-1.jar!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/groovy/groovy-all/1.9.0-beta-4/groovy-all-1.9.0-beta-4-javadoc.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/groovy/groovy-all/2.0.0-beta-1/groovy-all-2.0.0-beta-1-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/groovy/groovy-all/1.9.0-beta-4/groovy-all-1.9.0-beta-4-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/groovy/groovy-all/2.0.0-beta-1/groovy-all-2.0.0-beta-1-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: org.hamcrest:hamcrest-core:1.1">
@@ -658,17 +680,6 @@
         <root url="jar://$MAVEN_REPOSITORY$/org/ioke/ioke-lang/P-0.4.0-p11/ioke-lang-P-0.4.0-p11-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: org.jboss.interceptor:jboss-interceptor-api:1.1">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/jboss/interceptor/jboss-interceptor-api/1.1/jboss-interceptor-api-1.1.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/org/jboss/interceptor/jboss-interceptor-api/1.1/jboss-interceptor-api-1.1-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/jboss/interceptor/jboss-interceptor-api/1.1/jboss-interceptor-api-1.1-sources.jar!/" />
-      </SOURCES>
-    </library>
     <library name="Maven: org.jboss.netty:netty:3.2.6.Final">
       <CLASSES>
         <root url="jar://$MAVEN_REPOSITORY$/org/jboss/netty/netty/3.2.6.Final/netty-3.2.6.Final.jar!/" />
@@ -680,15 +691,37 @@
         <root url="jar://$MAVEN_REPOSITORY$/org/jboss/netty/netty/3.2.6.Final/netty-3.2.6.Final-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: org.jboss.weld.se:weld-se:1.1.0.Final">
+    <library name="Maven: org.jboss.spec.javax.interceptor:jboss-interceptors-api_1.1_spec:1.0.0.Beta1">
       <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/jboss/weld/se/weld-se/1.1.0.Final/weld-se-1.1.0.Final.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/jboss/spec/javax/interceptor/jboss-interceptors-api_1.1_spec/1.0.0.Beta1/jboss-interceptors-api_1.1_spec-1.0.0.Beta1.jar!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/org/jboss/weld/se/weld-se/1.1.0.Final/weld-se-1.1.0.Final-javadoc.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/jboss/spec/javax/interceptor/jboss-interceptors-api_1.1_spec/1.0.0.Beta1/jboss-interceptors-api_1.1_spec-1.0.0.Beta1-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/jboss/weld/se/weld-se/1.1.0.Final/weld-se-1.1.0.Final-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/jboss/spec/javax/interceptor/jboss-interceptors-api_1.1_spec/1.0.0.Beta1/jboss-interceptors-api_1.1_spec-1.0.0.Beta1-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.jboss.weld.se:weld-se:1.1.4.Final">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/jboss/weld/se/weld-se/1.1.4.Final/weld-se-1.1.4.Final.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/org/jboss/weld/se/weld-se/1.1.4.Final/weld-se-1.1.4.Final-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/jboss/weld/se/weld-se/1.1.4.Final/weld-se-1.1.4.Final-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.jboss.weld:weld-build-config:1.1.4.Final">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/jboss/weld/weld-build-config/1.1.4.Final/weld-build-config-1.1.4.Final.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/org/jboss/weld/weld-build-config/1.1.4.Final/weld-build-config-1.1.4.Final-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/jboss/weld/weld-build-config/1.1.4.Final/weld-build-config-1.1.4.Final-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: org.jruby:jruby-complete:1.6.5">
@@ -757,125 +790,125 @@
         <root url="jar://$MAVEN_REPOSITORY$/org/python/jython-standalone/2.5.2/jython-standalone-2.5.2-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: org.seleniumhq.selenium:selenium-android-driver:2.12.0">
+    <library name="Maven: org.seleniumhq.selenium:selenium-android-driver:2.14.0">
       <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-android-driver/2.12.0/selenium-android-driver-2.12.0.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-android-driver/2.14.0/selenium-android-driver-2.14.0.jar!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-android-driver/2.12.0/selenium-android-driver-2.12.0-javadoc.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-android-driver/2.14.0/selenium-android-driver-2.14.0-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-android-driver/2.12.0/selenium-android-driver-2.12.0-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-android-driver/2.14.0/selenium-android-driver-2.14.0-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: org.seleniumhq.selenium:selenium-api:2.12.0">
+    <library name="Maven: org.seleniumhq.selenium:selenium-api:2.14.0">
       <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-api/2.12.0/selenium-api-2.12.0.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-api/2.14.0/selenium-api-2.14.0.jar!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-api/2.12.0/selenium-api-2.12.0-javadoc.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-api/2.14.0/selenium-api-2.14.0-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-api/2.12.0/selenium-api-2.12.0-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-api/2.14.0/selenium-api-2.14.0-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: org.seleniumhq.selenium:selenium-chrome-driver:2.12.0">
+    <library name="Maven: org.seleniumhq.selenium:selenium-chrome-driver:2.14.0">
       <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-chrome-driver/2.12.0/selenium-chrome-driver-2.12.0.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-chrome-driver/2.14.0/selenium-chrome-driver-2.14.0.jar!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-chrome-driver/2.12.0/selenium-chrome-driver-2.12.0-javadoc.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-chrome-driver/2.14.0/selenium-chrome-driver-2.14.0-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-chrome-driver/2.12.0/selenium-chrome-driver-2.12.0-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-chrome-driver/2.14.0/selenium-chrome-driver-2.14.0-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: org.seleniumhq.selenium:selenium-firefox-driver:2.12.0">
+    <library name="Maven: org.seleniumhq.selenium:selenium-firefox-driver:2.14.0">
       <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-firefox-driver/2.12.0/selenium-firefox-driver-2.12.0.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-firefox-driver/2.14.0/selenium-firefox-driver-2.14.0.jar!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-firefox-driver/2.12.0/selenium-firefox-driver-2.12.0-javadoc.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-firefox-driver/2.14.0/selenium-firefox-driver-2.14.0-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-firefox-driver/2.12.0/selenium-firefox-driver-2.12.0-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-firefox-driver/2.14.0/selenium-firefox-driver-2.14.0-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: org.seleniumhq.selenium:selenium-htmlunit-driver:2.12.0">
+    <library name="Maven: org.seleniumhq.selenium:selenium-htmlunit-driver:2.14.0">
       <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-htmlunit-driver/2.12.0/selenium-htmlunit-driver-2.12.0.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-htmlunit-driver/2.14.0/selenium-htmlunit-driver-2.14.0.jar!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-htmlunit-driver/2.12.0/selenium-htmlunit-driver-2.12.0-javadoc.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-htmlunit-driver/2.14.0/selenium-htmlunit-driver-2.14.0-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-htmlunit-driver/2.12.0/selenium-htmlunit-driver-2.12.0-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-htmlunit-driver/2.14.0/selenium-htmlunit-driver-2.14.0-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: org.seleniumhq.selenium:selenium-ie-driver:2.12.0">
+    <library name="Maven: org.seleniumhq.selenium:selenium-ie-driver:2.14.0">
       <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-ie-driver/2.12.0/selenium-ie-driver-2.12.0.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-ie-driver/2.14.0/selenium-ie-driver-2.14.0.jar!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-ie-driver/2.12.0/selenium-ie-driver-2.12.0-javadoc.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-ie-driver/2.14.0/selenium-ie-driver-2.14.0-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-ie-driver/2.12.0/selenium-ie-driver-2.12.0-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-ie-driver/2.14.0/selenium-ie-driver-2.14.0-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: org.seleniumhq.selenium:selenium-iphone-driver:2.12.0">
+    <library name="Maven: org.seleniumhq.selenium:selenium-iphone-driver:2.14.0">
       <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-iphone-driver/2.12.0/selenium-iphone-driver-2.12.0.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-iphone-driver/2.14.0/selenium-iphone-driver-2.14.0.jar!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-iphone-driver/2.12.0/selenium-iphone-driver-2.12.0-javadoc.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-iphone-driver/2.14.0/selenium-iphone-driver-2.14.0-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-iphone-driver/2.12.0/selenium-iphone-driver-2.12.0-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-iphone-driver/2.14.0/selenium-iphone-driver-2.14.0-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: org.seleniumhq.selenium:selenium-java:2.12.0">
+    <library name="Maven: org.seleniumhq.selenium:selenium-java:2.14.0">
       <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-java/2.12.0/selenium-java-2.12.0.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-java/2.14.0/selenium-java-2.14.0.jar!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-java/2.12.0/selenium-java-2.12.0-javadoc.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-java/2.14.0/selenium-java-2.14.0-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-java/2.12.0/selenium-java-2.12.0-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-java/2.14.0/selenium-java-2.14.0-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: org.seleniumhq.selenium:selenium-remote-driver:2.12.0">
+    <library name="Maven: org.seleniumhq.selenium:selenium-remote-driver:2.14.0">
       <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-remote-driver/2.12.0/selenium-remote-driver-2.12.0.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-remote-driver/2.14.0/selenium-remote-driver-2.14.0.jar!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-remote-driver/2.12.0/selenium-remote-driver-2.12.0-javadoc.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-remote-driver/2.14.0/selenium-remote-driver-2.14.0-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-remote-driver/2.12.0/selenium-remote-driver-2.12.0-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-remote-driver/2.14.0/selenium-remote-driver-2.14.0-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: org.seleniumhq.selenium:selenium-server:2.12.0">
+    <library name="Maven: org.seleniumhq.selenium:selenium-server:2.14.0">
       <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-server/2.12.0/selenium-server-2.12.0.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-server/2.14.0/selenium-server-2.14.0.jar!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-server/2.12.0/selenium-server-2.12.0-javadoc.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-server/2.14.0/selenium-server-2.14.0-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-server/2.12.0/selenium-server-2.12.0-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-server/2.14.0/selenium-server-2.14.0-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: org.seleniumhq.selenium:selenium-support:2.12.0">
+    <library name="Maven: org.seleniumhq.selenium:selenium-support:2.14.0">
       <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-support/2.12.0/selenium-support-2.12.0.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-support/2.14.0/selenium-support-2.14.0.jar!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-support/2.12.0/selenium-support-2.12.0-javadoc.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-support/2.14.0/selenium-support-2.14.0-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-support/2.12.0/selenium-support-2.12.0-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/seleniumhq/selenium/selenium-support/2.14.0/selenium-support-2.14.0-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: org.springframework:spring-aop:3.0.6.RELEASE">
@@ -966,15 +999,15 @@
         <root url="jar://$MAVEN_REPOSITORY$/org/w3c/css/sac/1.3/sac-1.3-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: org.webbitserver:webbit:0.2.16">
+    <library name="Maven: org.webbitserver:webbit:0.3.0">
       <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/webbitserver/webbit/0.2.16/webbit-0.2.16.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/webbitserver/webbit/0.3.0/webbit-0.3.0.jar!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/org/webbitserver/webbit/0.2.16/webbit-0.2.16-javadoc.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/webbitserver/webbit/0.3.0/webbit-0.3.0-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/webbitserver/webbit/0.2.16/webbit-0.2.16-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/webbitserver/webbit/0.3.0/webbit-0.3.0-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: org.yaml:snakeyaml:1.8">
