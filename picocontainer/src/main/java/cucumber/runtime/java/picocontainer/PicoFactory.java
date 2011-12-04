@@ -4,6 +4,7 @@ import cucumber.runtime.java.ObjectFactory;
 import org.picocontainer.MutablePicoContainer;
 import org.picocontainer.PicoBuilder;
 
+import java.lang.reflect.Modifier;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -14,9 +15,18 @@ public class PicoFactory implements ObjectFactory {
     public void createInstances() {
         pico = new PicoBuilder().withCaching().build();
         for (Class<?> clazz : classes) {
-            pico.addComponent(clazz);
+            if (isInstantiable(clazz)) {
+                pico.addComponent(clazz);
+            }
         }
         pico.start();
+    }
+
+    private boolean isInstantiable(Class<?> clazz) {
+        if (Modifier.isAbstract(clazz.getModifiers())) {
+            return false;
+        }
+        return true;
     }
 
     public void disposeInstances() {
