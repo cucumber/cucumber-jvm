@@ -1,10 +1,14 @@
 require 'cucumber/rake/task'
 
 desc "Release"
-task :release do
+task :release => [:git_clean, :generate] do
   sh "mvn release:clean"
   sh "mvn --batch-mode -P release-sign-artifacts release:prepare"
   sh "mvn --batch-mode -P release-sign-artifacts release:perform"
+end
+
+task :git_clean do
+  sh "git clean -df"
 end
 
 desc "Generate code"
