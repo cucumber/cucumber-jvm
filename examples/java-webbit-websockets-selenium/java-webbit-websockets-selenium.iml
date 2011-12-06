@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
   <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_6" inherit-compiler-output="false">
-    <output url="file://$MODULE_DIR$/target/classes" />
-    <output-test url="file://$MODULE_DIR$/target/test-classes" />
+    <output url="file://$MAVEN_REPOSITORY$/info/cukes/cucumber-jvm/1.0.0.RC1-SNAPSHOT/target/classes" />
+    <output-test url="file://$MAVEN_REPOSITORY$/info/cukes/cucumber-jvm/1.0.0.RC1-SNAPSHOT/target/test-classes" />
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/main/resources" isTestSource="false" />
@@ -20,9 +20,9 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Maven: org.webbitserver:webbit:0.3.0" level="project" />
     <orderEntry type="library" name="Maven: org.jboss.netty:netty:3.2.6.Final" level="project" />
-    <orderEntry type="module" module-name="cucumber-picocontainer" scope="TEST" />
-    <orderEntry type="module" module-name="cucumber-java" scope="TEST" />
-    <orderEntry type="module" module-name="cucumber-core" scope="TEST" />
+    <orderEntry type="library" scope="TEST" name="Maven: info.cukes:cucumber-picocontainer:1.0.0.RC1-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: info.cukes:cucumber-java:1.0.0.RC1-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: info.cukes:cucumber-core:1.0.0.RC1-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: info.cukes:gherkin:2.6.9" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: com.googlecode.json-simple:json-simple:1.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: net.iharder:base64:2.3.8" level="project" />
@@ -31,7 +31,7 @@
     <orderEntry type="library" scope="TEST" name="Maven: com.google.code.gson:gson:2.0" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: info.cukes:cucumber-html:0.2.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.picocontainer:picocontainer:2.14.1" level="project" />
-    <orderEntry type="module" module-name="cucumber-junit" scope="TEST" />
+    <orderEntry type="library" scope="TEST" name="Maven: info.cukes:cucumber-junit:1.0.0.RC1-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.seleniumhq.selenium:selenium-chrome-driver:2.14.0" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.seleniumhq.selenium:selenium-remote-driver:2.14.0" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: cglib:cglib-nodep:2.1_3" level="project" />

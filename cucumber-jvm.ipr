@@ -416,6 +416,28 @@
         <root url="jar://$MAVEN_REPOSITORY$/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1-sources.jar!/" />
       </SOURCES>
     </library>
+    <library name="Maven: info.cukes:cucumber-core:1.0.0.RC1-SNAPSHOT">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/core/pom.xml!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$PROJECT_DIR$/core/pom-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$PROJECT_DIR$/core/pom-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: info.cukes:cucumber-groovy:1.0.0.RC1-SNAPSHOT">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/groovy/pom.xml!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$PROJECT_DIR$/groovy/pom-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$PROJECT_DIR$/groovy/pom-sources.jar!/" />
+      </SOURCES>
+    </library>
     <library name="Maven: info.cukes:cucumber-html:0.2.1">
       <CLASSES>
         <root url="jar://$MAVEN_REPOSITORY$/info/cukes/cucumber-html/0.2.1/cucumber-html-0.2.1.jar!/" />
@@ -425,6 +447,39 @@
       </JAVADOC>
       <SOURCES>
         <root url="jar://$MAVEN_REPOSITORY$/info/cukes/cucumber-html/0.2.1/cucumber-html-0.2.1-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: info.cukes:cucumber-java:1.0.0.RC1-SNAPSHOT">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/java/pom.xml!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$PROJECT_DIR$/java/pom-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$PROJECT_DIR$/java/pom-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: info.cukes:cucumber-junit:1.0.0.RC1-SNAPSHOT">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/junit/pom.xml!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$PROJECT_DIR$/junit/pom-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$PROJECT_DIR$/junit/pom-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: info.cukes:cucumber-picocontainer:1.0.0.RC1-SNAPSHOT">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/picocontainer/pom.xml!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$PROJECT_DIR$/picocontainer/pom-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$PROJECT_DIR$/picocontainer/pom-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: info.cukes:gherkin:2.6.9">
