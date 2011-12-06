@@ -45,8 +45,8 @@ class JUnitReporter implements Reporter, Formatter {
             if (error != null) {
                 stepNotifier.addFailure(error);
             }
+            stepNotifier.fireTestFinished();
         }
-        stepNotifier.fireTestFinished();
         reporter.result(result);
     }
 
