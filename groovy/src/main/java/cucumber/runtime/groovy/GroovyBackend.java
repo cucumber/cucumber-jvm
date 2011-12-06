@@ -40,14 +40,17 @@ public class GroovyBackend implements Backend {
             Resources.scan(gluePath.replace('.', '/'), ".groovy", new Consumer() {
                 public void consume(Resource resource) {
                     Script script = shell.parse(resource.getString(), resource.getPath());
-                    List respondsTo = script.getMetaClass().respondsTo(script, "main");
-                    if (DefaultGroovyMethods.asBoolean(respondsTo)) {
+                    if (isScript(script)) {
                         script.setBinding(context);
                         script.run();
                     }
                 }
             });
         }
+    }
+
+    private boolean isScript(Script script) {
+        return DefaultGroovyMethods.asBoolean(script.getMetaClass().respondsTo(script, "main"));
     }
 
     @Override
