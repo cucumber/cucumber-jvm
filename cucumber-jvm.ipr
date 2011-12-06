@@ -418,24 +418,28 @@
     </library>
     <library name="Maven: info.cukes:cucumber-core:1.0.0.RC1-SNAPSHOT">
       <CLASSES>
-        <root url="jar://$PROJECT_DIR$/core/pom.xml!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/cucumber-core/1.0.0.RC1-SNAPSHOT/cucumber-core-1.0.0.RC1-SNAPSHOT.jar!/" />
       </CLASSES>
       <JAVADOC>
         <root url="jar://$PROJECT_DIR$/core/pom-javadoc.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/cucumber-core/1.0.0.RC1-SNAPSHOT/cucumber-core-1.0.0.RC1-SNAPSHOT-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
         <root url="jar://$PROJECT_DIR$/core/pom-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/cucumber-core/1.0.0.RC1-SNAPSHOT/cucumber-core-1.0.0.RC1-SNAPSHOT-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: info.cukes:cucumber-groovy:1.0.0.RC1-SNAPSHOT">
       <CLASSES>
-        <root url="jar://$PROJECT_DIR$/groovy/pom.xml!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/cucumber-groovy/1.0.0.RC1-SNAPSHOT/cucumber-groovy-1.0.0.RC1-SNAPSHOT.jar!/" />
       </CLASSES>
       <JAVADOC>
         <root url="jar://$PROJECT_DIR$/groovy/pom-javadoc.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/cucumber-groovy/1.0.0.RC1-SNAPSHOT/cucumber-groovy-1.0.0.RC1-SNAPSHOT-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
         <root url="jar://$PROJECT_DIR$/groovy/pom-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/cucumber-groovy/1.0.0.RC1-SNAPSHOT/cucumber-groovy-1.0.0.RC1-SNAPSHOT-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: info.cukes:cucumber-html:0.2.1">
@@ -451,35 +455,41 @@
     </library>
     <library name="Maven: info.cukes:cucumber-java:1.0.0.RC1-SNAPSHOT">
       <CLASSES>
-        <root url="jar://$PROJECT_DIR$/java/pom.xml!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/cucumber-java/1.0.0.RC1-SNAPSHOT/cucumber-java-1.0.0.RC1-SNAPSHOT.jar!/" />
       </CLASSES>
       <JAVADOC>
         <root url="jar://$PROJECT_DIR$/java/pom-javadoc.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/cucumber-java/1.0.0.RC1-SNAPSHOT/cucumber-java-1.0.0.RC1-SNAPSHOT-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
         <root url="jar://$PROJECT_DIR$/java/pom-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/cucumber-java/1.0.0.RC1-SNAPSHOT/cucumber-java-1.0.0.RC1-SNAPSHOT-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: info.cukes:cucumber-junit:1.0.0.RC1-SNAPSHOT">
       <CLASSES>
-        <root url="jar://$PROJECT_DIR$/junit/pom.xml!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/cucumber-junit/1.0.0.RC1-SNAPSHOT/cucumber-junit-1.0.0.RC1-SNAPSHOT.jar!/" />
       </CLASSES>
       <JAVADOC>
         <root url="jar://$PROJECT_DIR$/junit/pom-javadoc.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/cucumber-junit/1.0.0.RC1-SNAPSHOT/cucumber-junit-1.0.0.RC1-SNAPSHOT-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
         <root url="jar://$PROJECT_DIR$/junit/pom-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/cucumber-junit/1.0.0.RC1-SNAPSHOT/cucumber-junit-1.0.0.RC1-SNAPSHOT-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: info.cukes:cucumber-picocontainer:1.0.0.RC1-SNAPSHOT">
       <CLASSES>
-        <root url="jar://$PROJECT_DIR$/picocontainer/pom.xml!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/cucumber-picocontainer/1.0.0.RC1-SNAPSHOT/cucumber-picocontainer-1.0.0.RC1-SNAPSHOT.jar!/" />
       </CLASSES>
       <JAVADOC>
         <root url="jar://$PROJECT_DIR$/picocontainer/pom-javadoc.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/cucumber-picocontainer/1.0.0.RC1-SNAPSHOT/cucumber-picocontainer-1.0.0.RC1-SNAPSHOT-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
         <root url="jar://$PROJECT_DIR$/picocontainer/pom-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/cucumber-picocontainer/1.0.0.RC1-SNAPSHOT/cucumber-picocontainer-1.0.0.RC1-SNAPSHOT-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: info.cukes:gherkin:2.6.9">
