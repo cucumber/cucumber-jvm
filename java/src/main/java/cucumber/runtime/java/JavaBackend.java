@@ -27,10 +27,14 @@ public class JavaBackend implements Backend {
 
     public JavaBackend() {
         ObjectFactory foundOF;
-        try {
-            foundOF = Resources.instantiateExactlyOneSubclass(ObjectFactory.class, "cucumber.runtime", new Class[0], new Object[0]);
-        } catch (CucumberException ce) {
-            foundOF = new DefaultJavaObjectFactory();
+        if (ObjectFactoryHolder.getFactory() != null) {
+            foundOF = ObjectFactoryHolder.getFactory();
+        } else {
+            try {
+                foundOF = Resources.instantiateExactlyOneSubclass(ObjectFactory.class, "cucumber.runtime", new Class[0], new Object[0]);
+            } catch (CucumberException ce) {
+                foundOF = new DefaultJavaObjectFactory();
+            }
         }
         objectFactory = foundOF;
     }
