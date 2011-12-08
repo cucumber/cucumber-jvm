@@ -3,6 +3,7 @@ package cucumber.runtime.java;
 import cucumber.annotation.After;
 import cucumber.annotation.Before;
 import cucumber.annotation.Order;
+import cucumber.fallback.runtime.java.DefaultJavaObjectFactory;
 import cucumber.resources.Resources;
 import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
@@ -25,7 +26,13 @@ public class JavaBackend implements Backend {
     private World world;
 
     public JavaBackend() {
-        this(Resources.instantiateExactlyOneSubclass(ObjectFactory.class, "cucumber.runtime", new Class[0], new Object[0]));
+        ObjectFactory foundOF;
+        try {
+            foundOF = Resources.instantiateExactlyOneSubclass(ObjectFactory.class, "cucumber.runtime", new Class[0], new Object[0]);
+        } catch (CucumberException ce) {
+            foundOF = new DefaultJavaObjectFactory();
+        }
+        objectFactory = foundOF;
     }
 
     public JavaBackend(ObjectFactory objectFactory) {
