@@ -33,11 +33,11 @@ module CucumberJavaMappings
         <groupId>info.cukes</groupId>
         <artifactId>cucumber-jvm</artifactId>
         <relativePath>../../pom.xml</relativePath>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.0.RC2-SNAPSHOT</version>
     </parent>
 
     <artifactId>cucumber-picocontainer-test</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0.RC2-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>Cucumber: PicoContainer Test</name>
 
@@ -45,13 +45,13 @@ module CucumberJavaMappings
         <dependency>
             <groupId>info.cukes</groupId>
             <artifactId>cucumber-picocontainer</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>1.0.0.RC2-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>info.cukes</groupId>
             <artifactId>cucumber-junit</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>1.0.0.RC2-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
         <dependency>

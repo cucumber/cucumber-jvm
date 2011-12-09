@@ -91,6 +91,7 @@ public class World {
                 error = t;
                 status = Result.FAILED;
                 runtime.addError(t);
+                skipNextStep = true;
             } finally {
                 long duration = System.nanoTime() - start;
                 Result result = new Result(status, duration, error, DUMMY_ARG);
