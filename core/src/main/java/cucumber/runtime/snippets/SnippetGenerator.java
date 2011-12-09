@@ -87,11 +87,14 @@ public abstract class SnippetGenerator {
 
     protected String sanitizeFunctionName(String functionName) {
         StringBuilder sanitized = new StringBuilder();
-        sanitized.append(Character.isJavaIdentifierStart(functionName.charAt(0)) ? functionName.charAt(0) : SUBST);
-        for (int i = 1; i < functionName.length(); i++) {
-            if (Character.isJavaIdentifierPart(functionName.charAt(i))) {
-                sanitized.append(functionName.charAt(i));
-            } else if (sanitized.charAt(sanitized.length() - 1) != SUBST && i != functionName.length() - 1) {
+
+        String trimmedFunctionName = functionName.trim();
+
+        sanitized.append(Character.isJavaIdentifierStart(trimmedFunctionName.charAt(0)) ? trimmedFunctionName.charAt(0) : SUBST);
+        for (int i = 1; i < trimmedFunctionName.length(); i++) {
+            if (Character.isJavaIdentifierPart(trimmedFunctionName.charAt(i))) {
+                sanitized.append(trimmedFunctionName.charAt(i));
+            } else if (sanitized.charAt(sanitized.length() - 1) != SUBST && i != trimmedFunctionName.length() - 1) {
                 sanitized.append(SUBST);
             }
         }
@@ -120,14 +123,22 @@ public abstract class SnippetGenerator {
         }
         int pos = 0;
         while (true) {
+            int matchedLength = 1;
+
             for (int i = 0; i < matchers.length; i++) {
                 Matcher m = matchers[i].region(pos, name.length());
                 if (m.lookingAt()) {
                     Class<?> typeForSignature = argumentPatterns()[i].type();
                     argTypes.add(typeForSignature);
+
+                    matchedLength = m.group().length();
+                    break;
                 }
             }
-            if (pos++ == name.length()) {
+
+            pos += matchedLength;
+
+            if (pos == name.length()) {
                 break;
             }
         }
