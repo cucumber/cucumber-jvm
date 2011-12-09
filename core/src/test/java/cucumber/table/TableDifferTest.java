@@ -12,7 +12,7 @@ import static junit.framework.Assert.assertEquals;
 public class TableDifferTest {
 
     private DataTable table() {
-        String source =
+        String source = "" +
                 "| Aslak | aslak@email.com      | 123     |\n" +
                 "| Joe   | joe@email.com        | 234     |\n" +
                 "| Bryan | bryan@email.org      | 456     |\n" +
@@ -21,7 +21,7 @@ public class TableDifferTest {
     }
 
     private DataTable otherTableWithDeletedAndInserted() {
-        String source =
+        String source = "" +
                 "| Aslak | aslak@email.com      | 123 |\n" +
                 "| Doe   | joe@email.com        | 234 |\n" +
                 "| Foo   | schnickens@email.net | 789 |\n" +
@@ -30,7 +30,7 @@ public class TableDifferTest {
     }
 
     private DataTable otherTableWithInsertedAtEnd() {
-        String source =
+        String source = "" +
                 "| Aslak | aslak@email.com      | 123 |\n" +
                 "| Joe   | joe@email.com        | 234 |\n" +
                 "| Bryan | bryan@email.org      | 456 |\n" +
@@ -46,7 +46,7 @@ public class TableDifferTest {
             DataTable otherTable = otherTableWithDeletedAndInserted();
             new TableDiffer(table(), otherTable).calculateDiffs();
         } catch (TableDiffException e) {
-            String expected =
+            String expected = "" +
                     "Tables were not identical:\n" +
                     "      | Aslak | aslak@email.com      | 123 |\n" +
                     "    - | Joe   | joe@email.com        | 234 |\n" +
@@ -64,7 +64,7 @@ public class TableDifferTest {
         try {
             new TableDiffer(table(), otherTableWithInsertedAtEnd()).calculateDiffs();
         } catch (TableDiffException e) {
-            String expected =
+            String expected = "" +
                     "Tables were not identical:\n" +
                     "      | Aslak | aslak@email.com      | 123 |\n" +
                     "      | Joe   | joe@email.com        | 234 |\n" +
@@ -89,7 +89,7 @@ public class TableDifferTest {
             List<List<String>> other = otherTableWithInsertedAtEnd().raw();
             table().diff(other);
         } catch (TableDiffException e) {
-            String expected =
+            String expected = "" +
                     "Tables were not identical:\n" +
                     "      | Aslak | aslak@email.com      | 123 |\n" +
                     "      | Joe   | joe@email.com        | 234 |\n" +
@@ -101,7 +101,7 @@ public class TableDifferTest {
             throw e;
         }
     }
-    
+
     @Ignore
     @Test
     public void should_not_fail_with_out_of_memory() {
@@ -109,7 +109,7 @@ public class TableDifferTest {
                 "| I'm going to work |\n");
 
         List<List<String>> actual = new ArrayList<List<String>>();
-        
+
         // Flipping these does *not* cause OOME
         actual.add(asList("I just woke up"));
         actual.add(asList("I'm going to work"));

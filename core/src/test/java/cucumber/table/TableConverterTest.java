@@ -89,7 +89,8 @@ public class TableConverterTest {
                 "      | 0.5 | 1.5     |\n" +
                 "      | 99  | 1,000.5 |\n" +
                 "", table.toString());
-        Type listOfDoubleType = new TypeReference<List<Double>>(){}.getType();
+        Type listOfDoubleType = new TypeReference<List<Double>>() {
+        }.getType();
         List<List<Double>> actual = tc.toList(listOfDoubleType, table);
         assertEquals(lists, actual);
     }

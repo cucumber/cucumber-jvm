@@ -18,7 +18,7 @@ public abstract class ConverterWithFormat<T> implements SingleValueConverter {
     }
 
     public T fromString(String string) {
-        if(string == null) {
+        if (string == null) {
             return null;
         }
         for (Format format : getFormats()) {

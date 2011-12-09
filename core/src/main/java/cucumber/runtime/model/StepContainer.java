@@ -34,23 +34,14 @@ public class StepContainer {
         }
     }
 
-    // TODO: Do not throw, just report like in a Scenario. In fact, use the same code
-    public void formatAndRunSteps(Formatter formatter, Reporter reporter, World world) throws Throwable {
+    public void formatAndRunSteps(Formatter formatter, Reporter reporter, World world) {
         format(formatter);
-        Throwable e = null;
         for (Step step : getSteps()) {
-            try {
-                runStep(step, reporter, world);
-            } catch (Throwable throwable) {
-                e = throwable;
-            }
-        }
-        if(e != null) {
-            throw e;
+            runStep(step, reporter, world);
         }
     }
 
-    public void runStep(Step step, Reporter reporter, World world) throws Throwable {
+    public void runStep(Step step, Reporter reporter, World world) {
         world.runStep(cucumberFeature.getUri(), step, reporter, cucumberFeature.getLocale());
     }
 }

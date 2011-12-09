@@ -39,25 +39,12 @@ public class CucumberScenario extends CucumberTagStatement {
 
         World world = newWorld(runtime);
         world.buildBackendWorldsAndRunBeforeHooks(gluePaths, reporter);
-
-        try {
-            runBackground(formatter, reporter);
-        } catch (Throwable t) {
-            // TODO What do we do now???
-            t.printStackTrace();
-        }
-
-        try {
-            formatAndRunSteps(formatter, reporter, world);
-        } catch (Throwable t) {
-            // TODO What do we do now???
-            t.printStackTrace();
-        }
-
+        runBackground(formatter, reporter);
+        formatAndRunSteps(formatter, reporter, world);
         world.runAfterHooksAndDisposeBackendWorlds(reporter);
     }
 
-    public void runBackground(Formatter formatter, Reporter reporter) throws Throwable {
+    public void runBackground(Formatter formatter, Reporter reporter) {
         if (cucumberBackground != null) {
             cucumberBackground.formatAndRunSteps(formatter, reporter, world);
         }

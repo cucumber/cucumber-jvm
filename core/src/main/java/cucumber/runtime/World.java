@@ -35,50 +35,35 @@ public class World {
         runHooks(beforeHooks, reporter);
     }
 
-    private List<StepDefinitionMatch> stepDefinitionMatches(String uri, Step step) {
-        List<StepDefinitionMatch> result = new ArrayList<StepDefinitionMatch>();
-        for (StepDefinition stepDefinition : stepDefinitions) {
-            List<Argument> arguments = stepDefinition.matchedArguments(step);
-            if (arguments != null) {
-                result.add(new StepDefinitionMatch(arguments, stepDefinition, uri, step, localizedXStreams));
-            }
-        }
-        return result;
-    }
-
     public void runAfterHooksAndDisposeBackendWorlds(Reporter reporter) {
         Collections.sort(afterHooks, new HookComparator(false));
-        try {
-            runHooks(afterHooks, reporter);
-        } finally {
-            runtime.disposeBackendWorlds();
-        }
+        runHooks(afterHooks, reporter);
+        runtime.disposeBackendWorlds();
     }
 
     private void runHooks(List<HookDefinition> hooks, Reporter reporter) {
-        long start = 0;
-        try {
-            for (HookDefinition hook : hooks) {
-                start = System.nanoTime();
-                runHookMaybe(hook);
-            }
-        } catch (Throwable t) {
-            skipNextStep = true;
-
-            long duration = System.nanoTime() - start;
-            Result result = new Result(Result.FAILED, duration, t, DUMMY_ARG);
-            scenarioResult.add(result);
-            reporter.result(result);
+        for (HookDefinition hook : hooks) {
+            runHookMaybe(hook, reporter);
         }
     }
 
-    private void runHookMaybe(HookDefinition hook) throws Throwable {
+    private void runHookMaybe(HookDefinition hook, Reporter reporter) {
         if (hook.matches(tags)) {
-            hook.execute(scenarioResult);
+            long start = System.nanoTime();
+            try {
+                hook.execute(scenarioResult);
+            } catch (Throwable t) {
+                skipNextStep = true;
+
+                long duration = System.nanoTime() - start;
+                Result result = new Result(Result.FAILED, duration, t, DUMMY_ARG);
+                scenarioResult.add(result);
+                reporter.result(result);
+            }
         }
     }
 
-    public void runStep(String uri, Step step, Reporter reporter, Locale locale) throws Throwable {
+    public void runStep(String uri, Step step, Reporter reporter, Locale locale) {
         StepDefinitionMatch match = stepDefinitionMatch(uri, step);
         if (match != null) {
             reporter.match(match);
@@ -106,7 +91,6 @@ public class World {
                 error = t;
                 status = Result.FAILED;
                 runtime.addError(t);
-                throw t;
             } finally {
                 long duration = System.nanoTime() - start;
                 Result result = new Result(status, duration, error, DUMMY_ARG);
@@ -131,6 +115,17 @@ public class World {
 
     public void addStepDefinition(StepDefinition stepDefinition) {
         stepDefinitions.add(stepDefinition);
+    }
+
+    private List<StepDefinitionMatch> stepDefinitionMatches(String uri, Step step) {
+        List<StepDefinitionMatch> result = new ArrayList<StepDefinitionMatch>();
+        for (StepDefinition stepDefinition : stepDefinitions) {
+            List<Argument> arguments = stepDefinition.matchedArguments(step);
+            if (arguments != null) {
+                result.add(new StepDefinitionMatch(arguments, stepDefinition, uri, step, localizedXStreams));
+            }
+        }
+        return result;
     }
 
     public void addBeforeHook(HookDefinition hookDefinition) {
