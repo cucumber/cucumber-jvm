@@ -13,10 +13,10 @@ public class TableDifferTest {
 
     private DataTable table() {
         String source = "" +
-                "| Aslak | aslak@email.com      | 123     |\n" +
-                "| Joe   | joe@email.com        | 234     |\n" +
-                "| Bryan | bryan@email.org      | 456     |\n" +
-                "| Ni    | ni@email.com         | 654     |\n";
+                "| Aslak | aslak@email.com | 123 |\n" +
+                "| Joe   | joe@email.com   | 234 |\n" +
+                "| Bryan | bryan@email.org | 456 |\n" +
+                "| Ni    | ni@email.com    | 654 |\n";
         return TableParser.parse(source);
     }
 
