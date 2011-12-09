@@ -40,16 +40,11 @@ public class StepDefinitionMatch extends Match {
     }
 
     public void runStep(Locale locale) throws Throwable {
-        if (locale == null) {
-            throw new NullPointerException("null Locale!");
-        }
         try {
             Object[] args = transformedArgs(stepDefinition.getParameterTypes(), step, localizedXStreams.get(locale), locale);
             stepDefinition.execute(args);
         } catch (CucumberException e) {
             throw e;
-        } catch (InvocationTargetException t) {
-            throw filterStacktrace(t.getTargetException(), getStepLocation());
         } catch (Throwable t) {
             throw filterStacktrace(t, getStepLocation());
         }

@@ -8,6 +8,7 @@ import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -43,6 +44,8 @@ public class JavaStepDefinition implements StepDefinition {
         } catch (IllegalArgumentException e) {
             // Can happen if stepdef signature doesn't match args
             throw new CucumberException("Can't invoke " + new MethodFormat().format(method) + " with " + asList(args));
+        } catch (InvocationTargetException t) {
+            throw t.getTargetException();
         }
     }
 

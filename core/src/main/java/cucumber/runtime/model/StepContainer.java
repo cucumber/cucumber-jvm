@@ -1,12 +1,13 @@
 package cucumber.runtime.model;
 
+import cucumber.runtime.World;
 import gherkin.formatter.Formatter;
+import gherkin.formatter.Reporter;
 import gherkin.formatter.model.BasicStatement;
 import gherkin.formatter.model.Step;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 public class StepContainer {
     private final List<Step> steps = new ArrayList<Step>();
@@ -33,11 +34,22 @@ public class StepContainer {
         }
     }
 
-    protected String getUri() {
-        return cucumberFeature.getUri();
+    public void formatAndRunSteps(Formatter formatter, Reporter reporter, World world) throws Throwable {
+        format(formatter);
+        Throwable e = null;
+        for (Step step : getSteps()) {
+            try {
+                runStep(step, reporter, world);
+            } catch (Throwable throwable) {
+                e = throwable;
+            }
+        }
+        if(e != null) {
+            throw e;
+        }
     }
 
-    protected Locale getLocale() {
-        return cucumberFeature.getLocale();
+    public void runStep(Step step, Reporter reporter, World world) throws Throwable {
+        world.runStep(cucumberFeature.getUri(), step, reporter, cucumberFeature.getLocale());
     }
 }

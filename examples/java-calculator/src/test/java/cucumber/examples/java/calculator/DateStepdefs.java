@@ -2,6 +2,7 @@ package cucumber.examples.java.calculator;
 
 import java.util.Date;
 
+import cucumber.annotation.Before;
 import cucumber.annotation.DateFormat;
 import cucumber.annotation.en.Given;
 import cucumber.annotation.en.Then;
@@ -10,6 +11,11 @@ import static org.junit.Assert.*;
 
 public class DateStepdefs {
 
+    @Before
+    public void puke() {
+        throw new RuntimeException("PUKE");
+    }
+    
     private String result;
     private DateCalculator calculator;
 

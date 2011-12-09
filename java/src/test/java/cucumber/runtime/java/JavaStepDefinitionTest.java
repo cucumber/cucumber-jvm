@@ -41,7 +41,7 @@ public class JavaStepDefinitionTest {
     private final World fooWorld = new World(runtime, asList("@foo"));
 
     @Test(expected = AmbiguousStepDefinitionsException.class)
-    public void throws_ambiguous_when_two_matches_are_found() {
+    public void throws_ambiguous_when_two_matches_are_found() throws Throwable {
         backend.buildWorld(new ArrayList<String>(), fooWorld);
         backend.addStepDefinition(FOO.getAnnotation(Given.class), FOO);
         backend.addStepDefinition(BAR.getAnnotation(Given.class), BAR);
@@ -52,13 +52,14 @@ public class JavaStepDefinitionTest {
     }
 
     @Test
-    public void does_not_throw_ambiguous_when_nothing_is_ambiguous() {
+    public void does_not_throw_ambiguous_when_nothing_is_ambiguous() throws Throwable {
         backend.buildWorld(new ArrayList<String>(), fooWorld);
         backend.addStepDefinition(FOO.getAnnotation(Given.class), FOO);
 
         Reporter reporter = mock(Reporter.class);
         fooWorld.buildBackendWorldsAndRunBeforeHooks(NO_PATHS);
-        fooWorld.runStep("uri", new Step(NO_COMMENTS, "Given ", "pattern", 1, null, null), reporter, Locale.US);
+        Step step = new Step(NO_COMMENTS, "Given ", "pattern", 1, null, null);
+        fooWorld.runStep("uri", step, reporter, Locale.US);
         assertTrue(defs.foo);
         assertFalse(defs.bar);
     }

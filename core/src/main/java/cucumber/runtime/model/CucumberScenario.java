@@ -7,7 +7,6 @@ import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Row;
 import gherkin.formatter.model.Scenario;
-import gherkin.formatter.model.Step;
 
 import java.util.List;
 
@@ -25,11 +24,16 @@ public class CucumberScenario extends CucumberTagStatement {
         this.cucumberBackground = cucumberBackground;
     }
 
-    public void buildWorldAndRunBeforeHooks(List<String> gluePaths, Runtime runtime) throws Throwable {
+    public World buildWorldAndRunBeforeHooks(List<String> gluePaths, Runtime runtime) throws Throwable {
         world = new World(runtime, tags());
         world.buildBackendWorldsAndRunBeforeHooks(gluePaths);
+        // TODO: If before hooks fail, we can't return the world, but we need it to run (skipped) steps
+        return world;
     }
 
+    /**
+     * This method is called when Cucumber is run from the CLI, but not when run from JUnit
+     */
     @Override
     public void run(Formatter formatter, Reporter reporter, Runtime runtime, List<? extends Backend> backends, List<String> gluePaths) {
         // TODO: Maybe get extraPaths from scenario
@@ -40,39 +44,35 @@ public class CucumberScenario extends CucumberTagStatement {
         try {
             buildWorldAndRunBeforeHooks(gluePaths, runtime);
         } catch (Throwable e) {
-            // What do we do now???
+            // TODO What do we do now??? #106
         }
 
-        runBackground(formatter, reporter);
-
-        format(formatter);
-        for (Step step : getSteps()) {
-            runStep(step, reporter);
+        try {
+            runBackground(formatter, reporter);
+        } catch (Throwable t) {
+            // TODO What do we do now??? #106
         }
-        runAfterHooksAndDisposeWorld();
+
+        try {
+            formatAndRunSteps(formatter, reporter, world);
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
+
+        try {
+            runAfterHooksAndDisposeWorld();
+        } catch (Throwable t) {
+            // TODO What do we do now??? #106
+        }
     }
 
-    public Throwable runBackground(Formatter formatter, Reporter reporter) {
-        if (cucumberBackground == null) {
-            return null;
+    public void runBackground(Formatter formatter, Reporter reporter) throws Throwable {
+        if (cucumberBackground != null) {
+            cucumberBackground.formatAndRunSteps(formatter, reporter, world);
         }
-        cucumberBackground.format(formatter);
-        List<Step> steps = cucumberBackground.getSteps();
-        Throwable failure = null;
-        for (Step step : steps) {
-            Throwable e = runStep(step, reporter);
-            if (e != null) {
-                failure = e;
-            }
-        }
-        return failure;
     }
 
-    public Throwable runStep(Step step, Reporter reporter) {
-        return world.runStep(getUri(), step, reporter, getLocale());
-    }
-
-    public void runAfterHooksAndDisposeWorld() {
+    public void runAfterHooksAndDisposeWorld() throws Throwable {
         world.runAfterHooksAndDisposeBackendWorlds();
     }
 

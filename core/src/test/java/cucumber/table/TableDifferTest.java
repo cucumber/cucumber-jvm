@@ -1,9 +1,12 @@
 package cucumber.table;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import static java.util.Arrays.asList;
 import static junit.framework.Assert.assertEquals;
 
 public class TableDifferTest {
@@ -97,5 +100,19 @@ public class TableDifferTest {
             assertEquals(expected, e.getMessage());
             throw e;
         }
+    }
+    
+    @Ignore
+    @Test
+    public void should_not_fail_with_out_of_memory() {
+        DataTable expected = TableParser.parse("" +
+                "| I'm going to work |\n");
+
+        List<List<String>> actual = new ArrayList<List<String>>();
+        
+        // Flipping these does *not* cause OOME
+        actual.add(asList("I just woke up"));
+        actual.add(asList("I'm going to work"));
+        expected.diff(actual);
     }
 }

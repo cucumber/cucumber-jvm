@@ -5,6 +5,7 @@ import cucumber.runtime.HookDefinition;
 import cucumber.runtime.ScenarioResult;
 import gherkin.TagExpression;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
 
@@ -30,6 +31,8 @@ public class JavaHookDefinition implements HookDefinition {
 
     @Override
     public void execute(ScenarioResult scenarioResult) throws Throwable {
+        // TODO: There is duplication with JavaStepDefinition
+        
         Object target = objectFactory.getInstance(method.getDeclaringClass());
         if (target == null) {
             throw new IllegalStateException("Bug: No target for " + method);
@@ -44,6 +47,8 @@ public class JavaHookDefinition implements HookDefinition {
             method.invoke(target, args);
         } catch (IllegalArgumentException e) {
             throw new CucumberException("Can't invoke " + new MethodFormat().format(method));
+        } catch (InvocationTargetException e) {
+            throw e.getTargetException();
         }
     }
 

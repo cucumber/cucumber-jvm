@@ -10,7 +10,6 @@ import gherkin.formatter.model.Step;
 import java.util.*;
 
 public class World {
-    private static final Throwable SKIP_NEXT = new Throwable();
     private static final Object DUMMY_ARG = new Object();
 
     // TODO - it's expensive to create a new LocalizedXStreams for each scenario - reuse a global one.
@@ -23,23 +22,18 @@ public class World {
     private final Collection<String> tags;
 
     private ScenarioResultImpl scenarioResult;
-    private Throwable error;
+    private boolean skipNext = false;
 
     public World(Runtime runtime, Collection<String> tags) {
         this.runtime = runtime;
         this.tags = tags;
     }
 
-    public void buildBackendWorldsAndRunBeforeHooks(List<String> gluePaths) {
+    public void buildBackendWorldsAndRunBeforeHooks(List<String> gluePaths) throws Throwable {
         runtime.buildBackendWorlds(gluePaths, this);
-
         scenarioResult = new ScenarioResultImpl();
         Collections.sort(beforeHooks, new HookComparator(true));
-        try {
-            runHooks(beforeHooks, null);
-        } catch (Throwable throwable) {
-            error = throwable;
-        }
+        runHooks(beforeHooks, null);
     }
 
     private List<StepDefinitionMatch> stepDefinitionMatches(String uri, Step step) {
@@ -53,67 +47,63 @@ public class World {
         return result;
     }
 
-    public void runAfterHooksAndDisposeBackendWorlds() {
+    public void runAfterHooksAndDisposeBackendWorlds() throws Throwable {
         Collections.sort(afterHooks, new HookComparator(false));
         try {
             runHooks(afterHooks, scenarioResult);
-        } catch (Throwable throwable) {
-            error = throwable; // TODO do something with it.
         } finally {
             runtime.disposeBackendWorlds();
         }
     }
 
-    private void runHooks(List<HookDefinition> hooks, ScenarioResult scenarioResult) {
+    private void runHooks(List<HookDefinition> hooks, ScenarioResult scenarioResult) throws Throwable {
         for (HookDefinition hook : hooks) {
             runHookMaybe(hook, scenarioResult);
         }
     }
 
-    private void runHookMaybe(HookDefinition hook, ScenarioResult scenarioResult) {
+    private void runHookMaybe(HookDefinition hook, ScenarioResult scenarioResult) throws Throwable {
         if (hook.matches(tags)) {
-            try {
-                hook.execute(scenarioResult);
-            } catch (Throwable t) {
-                error = t;
-            }
+            hook.execute(scenarioResult);
         }
     }
 
-    public Throwable runStep(String uri, Step step, Reporter reporter, Locale locale) {
+    public void runStep(String uri, Step step, Reporter reporter, Locale locale) throws Throwable {
         StepDefinitionMatch match = stepDefinitionMatch(uri, step);
         if (match != null) {
             reporter.match(match);
         } else {
             reporter.match(Match.UNDEFINED);
             reporter.result(Result.UNDEFINED);
-            error = SKIP_NEXT;
-            return null;
+            skipNext = true;
+            return;
         }
 
         if (runtime.isDryRun()) {
-            error = SKIP_NEXT;
+            skipNext = true;
         }
 
-        if (error != null) {
+        if (skipNext) {
             scenarioResult.add(Result.SKIPPED);
             reporter.result(Result.SKIPPED);
         } else {
+            String status = Result.PASSED;
+            Throwable error = null;
             long start = System.nanoTime();
             try {
                 match.runStep(locale);
             } catch (Throwable t) {
                 error = t;
-                runtime.addError(error);
+                status = Result.FAILED;
+                runtime.addError(t);
+                throw t;
             } finally {
                 long duration = System.nanoTime() - start;
-                String status = error == null ? Result.PASSED : Result.FAILED;
                 Result result = new Result(status, duration, error, DUMMY_ARG);
                 scenarioResult.add(result);
                 reporter.result(result);
             }
         }
-        return error;
     }
 
     private StepDefinitionMatch stepDefinitionMatch(String uri, Step step) {
