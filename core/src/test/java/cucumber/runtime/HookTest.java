@@ -1,7 +1,9 @@
 package cucumber.runtime;
 
+import gherkin.formatter.Reporter;
 import org.junit.Test;
 import org.mockito.InOrder;
+import org.mockito.Matchers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,10 +30,10 @@ public class HookTest {
         World world = new World(runtime, TAGS);
         world.addAfterHook(hook);
 
-        world.runAfterHooksAndDisposeBackendWorlds();
+        world.runAfterHooksAndDisposeBackendWorlds(mock(Reporter.class));
 
         InOrder inOrder = inOrder(hook, backend);
-        inOrder.verify(hook).execute(null);
+        inOrder.verify(hook).execute(Matchers.<ScenarioResult>any());
         inOrder.verify(backend).disposeWorld();
     }
 

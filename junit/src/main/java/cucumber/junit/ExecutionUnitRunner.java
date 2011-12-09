@@ -47,31 +47,24 @@ class ExecutionUnitRunner extends ParentRunner<Step> {
 
     @Override
     public void run(RunNotifier notifier) {
-        jUnitReporter.setStepParentRunner(this, notifier);
+        jUnitReporter.startExecutionUnit(this, notifier);
         /*
            We're running the hooks and background without reporting the steps as junit children - we don't want them to show up in the
            junit report. However, if any of the before hooks or background steps fail, we mark the entire scenario as failed. Scenario steps
            will be skipped.
         */
-        try {
-            world = cucumberScenario.buildWorldAndRunBeforeHooks(gluePaths, runtime);
-        } catch (Throwable e) {
-            notifier.fireTestFailure(new Failure(getDescription(), e));
-        }
+        world = cucumberScenario.newWorld(runtime);
+        world.buildBackendWorldsAndRunBeforeHooks(gluePaths, jUnitReporter);
         try {
             cucumberScenario.runBackground(jUnitReporter.getFormatter(), jUnitReporter.getReporter());
         } catch (Throwable e) {
             notifier.fireTestFailure(new Failure(getDescription(), e));
         }
 
-        // Run the steps
         cucumberScenario.format(jUnitReporter);
+        // Run the steps
         super.run(notifier);
-        try {
-            cucumberScenario.runAfterHooksAndDisposeWorld();
-        } catch (Throwable e) {
-            notifier.fireTestFailure(new Failure(getDescription(), e));
-        }
+        world.runAfterHooksAndDisposeBackendWorlds(jUnitReporter);
     }
 
     @Override

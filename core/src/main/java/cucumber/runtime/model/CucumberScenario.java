@@ -24,10 +24,8 @@ public class CucumberScenario extends CucumberTagStatement {
         this.cucumberBackground = cucumberBackground;
     }
 
-    public World buildWorldAndRunBeforeHooks(List<String> gluePaths, Runtime runtime) throws Throwable {
+    public World newWorld(Runtime runtime) {
         world = new World(runtime, tags());
-        world.buildBackendWorldsAndRunBeforeHooks(gluePaths);
-        // TODO: If before hooks fail, we can't return the world, but we need it to run (skipped) steps
         return world;
     }
 
@@ -37,33 +35,26 @@ public class CucumberScenario extends CucumberTagStatement {
     @Override
     public void run(Formatter formatter, Reporter reporter, Runtime runtime, List<? extends Backend> backends, List<String> gluePaths) {
         // TODO: Maybe get extraPaths from scenario
+        // TODO: maybe just try to make Background behave like a regular Scenario?? Printing wise at least.
 
-        // TODO: split up prepareAndFormat so we can run Background in isolation.
-        // Or maybe just try to make Background behave like a regular Scenario?? Printing wise at least.
-
-        try {
-            buildWorldAndRunBeforeHooks(gluePaths, runtime);
-        } catch (Throwable e) {
-            // TODO What do we do now??? #106
-        }
+        World world = newWorld(runtime);
+        world.buildBackendWorldsAndRunBeforeHooks(gluePaths, reporter);
 
         try {
             runBackground(formatter, reporter);
         } catch (Throwable t) {
-            // TODO What do we do now??? #106
+            // TODO What do we do now???
+            t.printStackTrace();
         }
 
         try {
             formatAndRunSteps(formatter, reporter, world);
-        } catch (Throwable throwable) {
-            throwable.printStackTrace();
+        } catch (Throwable t) {
+            // TODO What do we do now???
+            t.printStackTrace();
         }
 
-        try {
-            runAfterHooksAndDisposeWorld();
-        } catch (Throwable t) {
-            // TODO What do we do now??? #106
-        }
+        world.runAfterHooksAndDisposeBackendWorlds(reporter);
     }
 
     public void runBackground(Formatter formatter, Reporter reporter) throws Throwable {
@@ -71,9 +62,4 @@ public class CucumberScenario extends CucumberTagStatement {
             cucumberBackground.formatAndRunSteps(formatter, reporter, world);
         }
     }
-
-    public void runAfterHooksAndDisposeWorld() throws Throwable {
-        world.runAfterHooksAndDisposeBackendWorlds();
-    }
-
 }

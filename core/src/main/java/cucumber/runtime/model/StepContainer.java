@@ -34,6 +34,7 @@ public class StepContainer {
         }
     }
 
+    // TODO: Do not throw, just report like in a Scenario. In fact, use the same code
     public void formatAndRunSteps(Formatter formatter, Reporter reporter, World world) throws Throwable {
         format(formatter);
         Throwable e = null;

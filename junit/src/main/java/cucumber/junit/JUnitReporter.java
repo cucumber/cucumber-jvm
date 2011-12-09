@@ -26,6 +26,15 @@ class JUnitReporter implements Reporter, Formatter {
         this.formatter = formatter;
     }
 
+    public void startExecutionUnit(ExecutionUnitRunner executionUnitRunner, RunNotifier notifier) {
+        this.executionUnitRunner = executionUnitRunner;
+        this.notifier = notifier;
+
+        Description description = executionUnitRunner.getDescription();
+        stepNotifier = new EachTestNotifier(notifier, description);
+        stepNotifier.fireTestStarted();
+    }
+    
     public void match(Match match) {
         Description description = executionUnitRunner.describeChild(steps.remove(0));
         stepNotifier = new EachTestNotifier(notifier, description);
@@ -99,11 +108,6 @@ class JUnitReporter implements Reporter, Formatter {
     @Override
     public void close() {
         formatter.close();
-    }
-
-    public void setStepParentRunner(ExecutionUnitRunner executionUnitRunner, RunNotifier notifier) {
-        this.executionUnitRunner = executionUnitRunner;
-        this.notifier = notifier;
     }
 
     public Formatter getFormatter() {

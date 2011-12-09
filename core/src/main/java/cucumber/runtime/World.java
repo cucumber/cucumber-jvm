@@ -17,23 +17,22 @@ public class World {
     private final List<StepDefinition> stepDefinitions = new ArrayList<StepDefinition>();
     private final List<HookDefinition> beforeHooks = new ArrayList<HookDefinition>();
     private final List<HookDefinition> afterHooks = new ArrayList<HookDefinition>();
+    private final ScenarioResultImpl scenarioResult = new ScenarioResultImpl();
 
     private final Runtime runtime;
     private final Collection<String> tags;
 
-    private ScenarioResultImpl scenarioResult;
-    private boolean skipNext = false;
+    private boolean skipNextStep = false;
 
     public World(Runtime runtime, Collection<String> tags) {
         this.runtime = runtime;
         this.tags = tags;
     }
 
-    public void buildBackendWorldsAndRunBeforeHooks(List<String> gluePaths) throws Throwable {
+    public void buildBackendWorldsAndRunBeforeHooks(List<String> gluePaths, Reporter reporter) {
         runtime.buildBackendWorlds(gluePaths, this);
-        scenarioResult = new ScenarioResultImpl();
         Collections.sort(beforeHooks, new HookComparator(true));
-        runHooks(beforeHooks, null);
+        runHooks(beforeHooks, reporter);
     }
 
     private List<StepDefinitionMatch> stepDefinitionMatches(String uri, Step step) {
@@ -47,22 +46,33 @@ public class World {
         return result;
     }
 
-    public void runAfterHooksAndDisposeBackendWorlds() throws Throwable {
+    public void runAfterHooksAndDisposeBackendWorlds(Reporter reporter) {
         Collections.sort(afterHooks, new HookComparator(false));
         try {
-            runHooks(afterHooks, scenarioResult);
+            runHooks(afterHooks, reporter);
         } finally {
             runtime.disposeBackendWorlds();
         }
     }
 
-    private void runHooks(List<HookDefinition> hooks, ScenarioResult scenarioResult) throws Throwable {
-        for (HookDefinition hook : hooks) {
-            runHookMaybe(hook, scenarioResult);
+    private void runHooks(List<HookDefinition> hooks, Reporter reporter) {
+        long start = 0;
+        try {
+            for (HookDefinition hook : hooks) {
+                start = System.nanoTime();
+                runHookMaybe(hook);
+            }
+        } catch (Throwable t) {
+            skipNextStep = true;
+
+            long duration = System.nanoTime() - start;
+            Result result = new Result(Result.FAILED, duration, t, DUMMY_ARG);
+            scenarioResult.add(result);
+            reporter.result(result);
         }
     }
 
-    private void runHookMaybe(HookDefinition hook, ScenarioResult scenarioResult) throws Throwable {
+    private void runHookMaybe(HookDefinition hook) throws Throwable {
         if (hook.matches(tags)) {
             hook.execute(scenarioResult);
         }
@@ -75,15 +85,15 @@ public class World {
         } else {
             reporter.match(Match.UNDEFINED);
             reporter.result(Result.UNDEFINED);
-            skipNext = true;
+            skipNextStep = true;
             return;
         }
 
         if (runtime.isDryRun()) {
-            skipNext = true;
+            skipNextStep = true;
         }
 
-        if (skipNext) {
+        if (skipNextStep) {
             scenarioResult.add(Result.SKIPPED);
             reporter.result(Result.SKIPPED);
         } else {

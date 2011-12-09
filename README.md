@@ -134,3 +134,7 @@ This can be solved by changing the Compiler settings: `Preferences -> Compiler -
 
 Fork the repository on Github, clone it and send a pull request when you have fixed something. Please commit each feature/bugfix on a separate branch as this makes it easier for us to decide what to merge and what not to merge.
 
+## TODO
+
+* Reports exception when Before hook fails
+* Skips steps when before hook fails

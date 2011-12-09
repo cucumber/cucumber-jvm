@@ -3,7 +3,6 @@ package cucumber.runtime.java;
 import cucumber.annotation.DateFormat;
 import cucumber.annotation.Pending;
 import cucumber.runtime.*;
-import gherkin.TagExpression;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 
@@ -12,7 +11,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
 

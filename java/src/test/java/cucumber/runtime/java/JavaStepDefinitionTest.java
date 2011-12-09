@@ -47,7 +47,7 @@ public class JavaStepDefinitionTest {
         backend.addStepDefinition(BAR.getAnnotation(Given.class), BAR);
 
         Reporter reporter = mock(Reporter.class);
-        fooWorld.buildBackendWorldsAndRunBeforeHooks(NO_PATHS);
+        fooWorld.buildBackendWorldsAndRunBeforeHooks(NO_PATHS, reporter);
         fooWorld.runStep("uri", new Step(NO_COMMENTS, "Given ", "pattern", 1, null, null), reporter, Locale.US);
     }
 
@@ -57,7 +57,7 @@ public class JavaStepDefinitionTest {
         backend.addStepDefinition(FOO.getAnnotation(Given.class), FOO);
 
         Reporter reporter = mock(Reporter.class);
-        fooWorld.buildBackendWorldsAndRunBeforeHooks(NO_PATHS);
+        fooWorld.buildBackendWorldsAndRunBeforeHooks(NO_PATHS, reporter);
         Step step = new Step(NO_COMMENTS, "Given ", "pattern", 1, null, null);
         fooWorld.runStep("uri", step, reporter, Locale.US);
         assertTrue(defs.foo);
