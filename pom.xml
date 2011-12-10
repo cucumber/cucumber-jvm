@@ -315,6 +315,17 @@
                 </plugins>
             </build>
         </profile>
+        <profile>
+            <id>cucumber-jvm-snapshot</id>
+            <activation>
+                <property>
+                    <name>snapshot</name>
+                </property>
+            </activation>
+            <modules>
+                <module>openejb</module>
+            </modules>
+        </profile>
     </profiles>
 
     <build>
