@@ -16,7 +16,7 @@
         <repository>
             <id>apache-snapshot-repo</id>
             <name>Apache snpashot repo</name>
-            <url>https://repository.apache.org/snapshots/</url>
+            <url>https://repository.apache.org/content/groups/snapshots/</url>
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
