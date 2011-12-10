@@ -196,6 +196,11 @@
                 <version>1.1.4.Final</version>
             </dependency>
             <dependency>
+              <groupId>org.apache.openejb</groupId>
+              <artifactId>openejb-core</artifactId>
+              <version>4.0.0-beta-2-SNAPSHOT</version>
+            </dependency>
+            <dependency>
                 <groupId>javax.enterprise</groupId>
                 <artifactId>cdi-api</artifactId>
                 <version>1.1.EDR1.1</version>
@@ -309,6 +314,17 @@
                     </plugin>
                 </plugins>
             </build>
+        </profile>
+        <profile>
+            <id>cucumber-jvm-snapshot</id>
+            <activation>
+                <property>
+                    <name>snapshot</name>
+                </property>
+            </activation>
+            <modules>
+                <module>openejb</module>
+            </modules>
         </profile>
     </profiles>
 
