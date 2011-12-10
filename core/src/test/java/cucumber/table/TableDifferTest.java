@@ -1,6 +1,5 @@
 package cucumber.table;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -82,7 +81,6 @@ public class TableDifferTest {
         table().diff(table().raw());
     }
 
-
     @Test(expected = TableDiffException.class)
     public void shouldFindNewLinesAtEndWhenUsingDiff() {
         try {
@@ -102,17 +100,24 @@ public class TableDifferTest {
         }
     }
 
-    @Ignore
-    @Test
+    @Test(expected = TableDiffException.class)
     public void should_not_fail_with_out_of_memory() {
         DataTable expected = TableParser.parse("" +
                 "| I'm going to work |\n");
 
         List<List<String>> actual = new ArrayList<List<String>>();
 
-        // Flipping these does *not* cause OOME
         actual.add(asList("I just woke up"));
         actual.add(asList("I'm going to work"));
-        expected.diff(actual);
+
+        try {
+            expected.diff(actual);
+        } catch (TableDiffException e) {
+            String expectedDiff = "" +
+                    "Tables were not identical:\n" +
+                    "    + | I just woke up |\n";
+            assertEquals(expectedDiff, e.getMessage());
+            throw e;
+        }
     }
 }

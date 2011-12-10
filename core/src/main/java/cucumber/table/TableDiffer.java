@@ -45,18 +45,18 @@ public class TableDiffer {
             if (delta == null) {
                 diffTableRows.add(orig.getGherkinRows().get(i));
             } else {
-                i += addRowsToTableDiffAndReturnNumberOfRows(diffTableRows, delta);
+                addRowsToTableDiff(diffTableRows, delta);
             }
         }
         // Can have new lines at end
         Delta remainingDelta = deltasByLine.get(rows.size());
         if (remainingDelta != null) {
-            addRowsToTableDiffAndReturnNumberOfRows(diffTableRows, remainingDelta);
+            addRowsToTableDiff(diffTableRows, remainingDelta);
         }
         return new DataTable(diffTableRows, orig.getTableConverter());
     }
 
-    private int addRowsToTableDiffAndReturnNumberOfRows(List<DataTableRow> diffTableRows, Delta delta) {
+    private void addRowsToTableDiff(List<DataTableRow> diffTableRows, Delta delta) {
         if (delta.getType() == Delta.TYPE.CHANGE || delta.getType() == Delta.TYPE.DELETE) {
             List<DataTable.DiffableRow> deletedLines = (List<DataTable.DiffableRow>) delta.getOriginal().getLines();
             for (DataTable.DiffableRow row : deletedLines) {
@@ -67,7 +67,6 @@ public class TableDiffer {
         for (DataTable.DiffableRow row : insertedLines) {
             diffTableRows.add(new DataTableRow(row.row.getComments(), row.row.getCells(), row.row.getLine(), Row.DiffType.INSERT));
         }
-        return delta.getOriginal().getLines().size() - 1;
     }
 
     private Map<Integer, Delta> createDeltasByLine(List<Delta> deltas) {
