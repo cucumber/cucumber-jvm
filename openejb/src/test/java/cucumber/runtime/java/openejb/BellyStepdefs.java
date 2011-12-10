@@ -4,7 +4,6 @@ import cucumber.annotation.en.Given;
 import cucumber.annotation.en.Then;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 import static junit.framework.Assert.assertEquals;
 

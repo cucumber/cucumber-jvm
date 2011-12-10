@@ -32,7 +32,7 @@ public class JavaHookDefinition implements HookDefinition {
     @Override
     public void execute(ScenarioResult scenarioResult) throws Throwable {
         // TODO: There is duplication with JavaStepDefinition
-        
+
         Object target = objectFactory.getInstance(method.getDeclaringClass());
         if (target == null) {
             throw new IllegalStateException("Bug: No target for " + method);

@@ -70,6 +70,7 @@ To hack on Cucumber-JVM you need a JDK, Maven and Git to get the code. You also 
 * 2 Space indent (no tabs)
   * Gherkin
 
+Please do *not* add @author tags - this project embraces collective code ownership. If you want to know who wrote some code, look in git.
 When you are done, send a [pull request](http://help.github.com/send-pull-requests/).
 If we get a pull request where an entire file is changed because of insignificant whitespace changes we cannot see what you have changed, and your contribution might get rejected.
 

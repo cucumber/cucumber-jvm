@@ -4,11 +4,6 @@ import cucumber.runtime.java.ObjectFactory;
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
 
-/**
- * A CDI/Weld implementation of the Cucumber jvm ObjectFactory
- *
- * @author aaronwalker
- */
 public class CDIFactory extends Weld implements ObjectFactory {
 
     private WeldContainer weld;

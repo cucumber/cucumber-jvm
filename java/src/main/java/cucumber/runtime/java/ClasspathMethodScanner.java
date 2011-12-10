@@ -45,7 +45,7 @@ public class ClasspathMethodScanner {
             if (annotation != null && !annotation.annotationType().equals(Order.class)) {
                 if (isHookAnnotation(annotation)) {
                     javaBackend.addHook(annotation, method);
-                } else if(isStepdefAnnotation(annotation)) {
+                } else if (isStepdefAnnotation(annotation)) {
                     javaBackend.addStepDefinition(annotation, method);
                 }
             }

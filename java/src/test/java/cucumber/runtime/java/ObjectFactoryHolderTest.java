@@ -1,16 +1,19 @@
 package cucumber.runtime.java;
 
 import cucumber.fallback.runtime.java.DefaultJavaObjectFactory;
+import org.junit.After;
 import org.junit.Test;
 
 import java.lang.reflect.Field;
 
 import static org.junit.Assert.assertTrue;
 
-/**
- * @author rmannibucau
- */
 public class ObjectFactoryHolderTest {
+    @After
+    public void resetObjectFactory() {
+        ObjectFactoryHolder.setFactory(null);
+    }
+
     @Test
     public void testFactory() throws Exception {
         ObjectFactoryHolder.setFactory(new MockObjectFactory());
@@ -28,12 +31,20 @@ public class ObjectFactoryHolderTest {
 
     public static class MockObjectFactory implements ObjectFactory {
         @Override
-        public void createInstances() { }
+        public void createInstances() {
+        }
+
         @Override
-        public void disposeInstances() { }
+        public void disposeInstances() {
+        }
+
         @Override
-        public void addClass(Class<?> clazz) { }
+        public void addClass(Class<?> clazz) {
+        }
+
         @Override
-        public <T> T getInstance(Class<T> type) { return null; }
+        public <T> T getInstance(Class<T> type) {
+            return null;
+        }
     }
 }

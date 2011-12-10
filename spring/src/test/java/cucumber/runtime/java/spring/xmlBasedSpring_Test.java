@@ -7,8 +7,6 @@ import org.junit.runner.RunWith;
 /**
  * Example of a Spring-injected scenario.
  * Spring configuration in applicationContext.xml
- *
- * @author mmalmeida
  */
 @RunWith(Cucumber.class)
 @Feature("xmlBasedSpring.feature")

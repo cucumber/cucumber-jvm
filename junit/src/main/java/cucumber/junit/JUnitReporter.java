@@ -34,7 +34,7 @@ class JUnitReporter implements Reporter, Formatter {
         stepNotifier = new EachTestNotifier(notifier, description);
         stepNotifier.fireTestStarted();
     }
-    
+
     public void match(Match match) {
         Description description = executionUnitRunner.describeChild(steps.remove(0));
         stepNotifier = new EachTestNotifier(notifier, description);

@@ -1,8 +1,5 @@
 package cucumber.runtime.java;
 
-/**
- * @author rmannibucau
- */
 public final class ObjectFactoryHolder {
     private static ObjectFactory factory;
 

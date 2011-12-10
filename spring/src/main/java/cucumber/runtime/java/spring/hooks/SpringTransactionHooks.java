@@ -22,8 +22,6 @@ import cucumber.annotation.Before;
  * 
  *  NOTE: This class is NOT threadsafe!  It relies on the fact that cucumber-jvm will instantiate an instance of any 
  *        applicable hookdef class per scenario run.
- * 
- * @author patrickmcmichael
  */
 public class SpringTransactionHooks implements BeanFactoryAware {
 
