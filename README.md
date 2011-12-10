@@ -58,7 +58,7 @@ If you are adventurous, check out the examples, read the code and ask specific q
 
 You will find an example in Git under examples/java-calculator. You should be able to run `basic_arithmetic.feature` by running the `cucumber.examples.java.calculator.basic_arithmetic_Test` JUnit test from your IDE. -Or simply by running it with Maven: `mvn clean install -P examples` once to build it all. Then `cd examples/java-calculator` followed by `mvn test` each time you make a change. Try to make the feature fail!
 
-## Hacking
+## Contributing/Hacking
 
 To hack on Cucumber-JVM you need a JDK, Maven and Git to get the code. You also need to set your IDE/text editor to use:
 
@@ -70,7 +70,8 @@ To hack on Cucumber-JVM you need a JDK, Maven and Git to get the code. You also 
 * 2 Space indent (no tabs)
   * Gherkin
 
-If we get a pull request where an entire file is changed because of insignificant whitespace changes we cannot see what you have changed.
+When you are done, send a [pull request](http://help.github.com/send-pull-requests/).
+If we get a pull request where an entire file is changed because of insignificant whitespace changes we cannot see what you have changed, and your contribution might get rejected.
 
 ### Building Cucumber-JVM
 
