@@ -26,7 +26,7 @@ task :generate do
 end
 
 Cucumber::Rake::Task.new(:picocontainer) do |t|
-  t.cucumber_opts = '-r java/src/test/resources/cucumber-features -r cucumber-features cucumber-features'
+  t.cucumber_opts = '-r java/src/test/resources/cucumber-tck -r cucumber-tck cucumber-tck'
 end
 
 task :default => :picocontainer
