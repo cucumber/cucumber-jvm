@@ -75,7 +75,7 @@ public class JavaBackend implements Backend {
         } catch (NoSuchMethodException e) {
             throw new CucumberException(e);
         } catch (InvocationTargetException e) {
-            throw new CucumberException(e);
+            throw new CucumberException(e.getTargetException());
         } catch (IllegalAccessException e) {
             throw new CucumberException(e);
         }

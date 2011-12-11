@@ -7,7 +7,12 @@ import gherkin.formatter.model.Match;
 import gherkin.formatter.model.Result;
 import gherkin.formatter.model.Step;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Locale;
 
 public class World {
     private static final Object DUMMY_ARG = new Object();
@@ -20,6 +25,7 @@ public class World {
     private final ScenarioResultImpl scenarioResult = new ScenarioResultImpl();
 
     private final Runtime runtime;
+
     private final Collection<String> tags;
 
     private boolean skipNextStep = false;
@@ -64,7 +70,7 @@ public class World {
     }
 
     public void runStep(String uri, Step step, Reporter reporter, Locale locale) {
-        StepDefinitionMatch match = stepDefinitionMatch(uri, step);
+        StepDefinitionMatch match = stepDefinitionMatch(uri, step, locale);
         if (match != null) {
             reporter.match(match);
         } else {
@@ -101,16 +107,20 @@ public class World {
         }
     }
 
-    private StepDefinitionMatch stepDefinitionMatch(String uri, Step step) {
+    private StepDefinitionMatch stepDefinitionMatch(String uri, Step step, Locale locale) {
         List<StepDefinitionMatch> matches = stepDefinitionMatches(uri, step);
-        if (matches.size() == 0) {
-            runtime.addUndefinedStep(step);
-            return null;
-        }
-        if (matches.size() == 1) {
-            return matches.get(0);
-        } else {
-            throw new AmbiguousStepDefinitionsException(matches);
+        try {
+            if (matches.size() == 0) {
+                runtime.addUndefinedStep(step, locale);
+                return null;
+            }
+            if (matches.size() == 1) {
+                return matches.get(0);
+            } else {
+                throw new AmbiguousStepDefinitionsException(matches);
+            }
+        } finally {
+            runtime.storeStepKeyword(step, locale);
         }
     }
 

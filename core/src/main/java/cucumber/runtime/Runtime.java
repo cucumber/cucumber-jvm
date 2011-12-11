@@ -16,7 +16,10 @@ import gherkin.formatter.model.Step;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Locale;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
@@ -29,7 +32,7 @@ public class Runtime {
     private static final List<Object> NO_FILTERS = emptyList();
     private static final Collection<String> NO_TAGS = emptyList();
 
-    private final List<Step> undefinedSteps = new ArrayList<Step>();
+    private final UndefinedStepsTracker tracker;
     private final List<Throwable> errors = new ArrayList<Throwable>();
     private final List<? extends Backend> backends;
     private final List<String> gluePaths;
@@ -51,43 +54,11 @@ public class Runtime {
         this.backends = backends;
         this.gluePaths = gluePaths;
         this.isDryRun = isDryRun;
-    }
-
-    /**
-     * @return a list of code snippets that the developer can use to implement undefined steps.
-     *         This should be displayed after a run.
-     */
-    public List<String> getSnippets() {
-        // TODO: Convert "And" and "But" to the Given/When/Then keyword above in the Gherkin source.
-        Collections.sort(undefinedSteps, new Comparator<Step>() {
-            public int compare(Step a, Step b) {
-                int keyword = a.getKeyword().compareTo(b.getKeyword());
-                if (keyword == 0) {
-                    return a.getName().compareTo(b.getName());
-                } else {
-                    return keyword;
-                }
-            }
-        });
-
-        List<String> snippets = new ArrayList<String>();
-        for (Step step : undefinedSteps) {
-            for (Backend backend : backends) {
-                String snippet = backend.getSnippet(step);
-                if (!snippets.contains(snippet)) {
-                    snippets.add(snippet);
-                }
-            }
-        }
-        return snippets;
+        this.tracker = new UndefinedStepsTracker(backends);
     }
 
     public void addError(Throwable error) {
         errors.add(error);
-    }
-
-    public void addUndefinedStep(Step step) {
-        undefinedSteps.add(step);
     }
 
     public void run(List<String> filesOrDirs, final List<Object> filters, gherkin.formatter.Formatter formatter, Reporter reporter) {
@@ -123,6 +94,7 @@ public class Runtime {
         for (Backend backend : backends) {
             backend.buildWorld(gluePaths, world);
         }
+        tracker.reset();
     }
 
     public void disposeBackendWorlds() {
@@ -159,5 +131,17 @@ public class Runtime {
             result |= ERRORS;
         }
         return result;
+    }
+
+    public void storeStepKeyword(Step step, Locale locale) {
+        tracker.storeStepKeyword(step, locale);
+    }
+
+    public void addUndefinedStep(Step step, Locale locale) {
+        tracker.addUndefinedStep(step, locale);
+    }
+
+    public List<String> getSnippets() {
+        return tracker.getSnippets();
     }
 }

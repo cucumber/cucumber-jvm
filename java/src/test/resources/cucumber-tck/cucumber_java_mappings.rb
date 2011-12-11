@@ -523,6 +523,11 @@ EOF
     # We'd have to look inside surefire reports to determine this. Why is Maven so complicated??
   end
 
+  def assert_suggested_step_definition_snippet(stepdef_keyword, stepdef_pattern, parameter_count = 0, doc_string = false, data_table = false)
+    unescaped_stepdef_pattern = stepdef_pattern.gsub(/\\\\/, "\\")
+    assert_partial_output(%{@#{stepdef_keyword}("#{unescaped_stepdef_pattern}")}, all_output)
+  end
+
   def failed_output
     /Errors: [1-9]+/
   end

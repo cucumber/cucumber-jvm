@@ -65,6 +65,8 @@ class ExecutionUnitRunner extends ParentRunner<Step> {
         // Run the steps
         super.run(notifier);
         world.runAfterHooksAndDisposeBackendWorlds(jUnitReporter);
+
+        jUnitReporter.finishExecutionUnit();
     }
 
     @Override
