@@ -594,15 +594,15 @@
         <root url="jar://$MAVEN_REPOSITORY$/info/cukes/cucumber-picocontainer/1.0.0.RC1-SNAPSHOT/cucumber-picocontainer-1.0.0.RC1-SNAPSHOT-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: info.cukes:gherkin:2.6.9">
+    <library name="Maven: info.cukes:gherkin:2.7.1">
       <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/gherkin/2.6.9/gherkin-2.6.9.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/gherkin/2.7.1/gherkin-2.7.1.jar!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/gherkin/2.6.9/gherkin-2.6.9-javadoc.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/gherkin/2.7.1/gherkin-2.7.1-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/gherkin/2.6.9/gherkin-2.6.9-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/info/cukes/gherkin/2.7.1/gherkin-2.7.1-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: javassist:javassist:3.12.0.GA">

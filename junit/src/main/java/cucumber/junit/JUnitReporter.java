@@ -106,8 +106,8 @@ class JUnitReporter implements Reporter, Formatter {
     }
 
     @Override
-    public void close() {
-        formatter.close();
+    public void done() {
+        formatter.done();
     }
 
     public Formatter getFormatter() {

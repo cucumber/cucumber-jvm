@@ -64,7 +64,7 @@ public class FeatureBuilder implements Formatter {
     }
 
     @Override
-    public void close() {
+    public void done() {
     }
 
     public void parse(Resource resource, List<Object> filters) {

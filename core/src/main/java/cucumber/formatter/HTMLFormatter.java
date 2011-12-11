@@ -14,12 +14,6 @@ import java.util.List;
 import java.util.Map;
 
 public class HTMLFormatter implements Formatter, Reporter {
-
-    private final NiceAppendable out;
-    private final String htmlReportDir = getHtmlReportDir();
-    private BufferedWriter bufferedWriter;
-    private boolean firstFeature = true;
-    private int embeddedIndex;
     private static final String JS_FORMATTER_VAR = "formatter";
     private static final String JS_REPORT_FILENAME = "report.js";
     private static final String[] REPORT_ITEMS = new String[]{"formatter.js", "index.html", "jquery-1.6.4.min.js", "style.css"};
@@ -33,9 +27,15 @@ public class HTMLFormatter implements Formatter, Reporter {
         }
     };
 
+    private final NiceAppendable out;
+    private final String htmlReportDir = getHtmlReportDir();
+
+    private boolean firstFeature = true;
+    private int embeddedIndex;
+
     public HTMLFormatter() {
         try {
-            bufferedWriter = new BufferedWriter(new FileWriter(htmlReportDir + JS_REPORT_FILENAME));
+            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(htmlReportDir + JS_REPORT_FILENAME));
             out = new NiceAppendable(bufferedWriter);
         } catch (IOException e) {
             throw new CucumberException("Unable to create javascript report file: " + htmlReportDir
@@ -85,14 +85,6 @@ public class HTMLFormatter implements Formatter, Reporter {
 
     @Override
     public void eof() {
-        try {
-            //TODO should do this stuff only after the last feature.
-            out.append("});");
-            bufferedWriter.close();
-            copyReportFiles();
-        } catch (IOException e) {
-
-        }
     }
 
     @Override
@@ -100,9 +92,10 @@ public class HTMLFormatter implements Formatter, Reporter {
     }
 
     @Override
-    public void close() {
-        // TODO - Close the HTML
+    public void done() {
+        out.append("});");
         out.close();
+        copyReportFiles();
     }
 
     private void writeToJsReport(String functionName, Mappable statement) {

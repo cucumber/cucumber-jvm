@@ -14,7 +14,6 @@ class JUnitReporterFactory {
      * @param reporterString what underlying reporter/formatter to create
      * @return a reporter
      */
-
     static JUnitReporter create(String reporterString) {
         Formatter formatter = null;
         FormatterFactory formatterFactory = new FormatterFactory();
@@ -23,23 +22,7 @@ class JUnitReporterFactory {
             String name = nameAndOut[0];
             Appendable appendable;
             try {
-                if (nameAndOut.length < 2) {
-                    appendable = System.out;
-                } else {
-                    final FileWriter fw = new FileWriter(nameAndOut[1]);
-                    Runtime.getRuntime().addShutdownHook(new Thread() {
-                        @Override
-                        public void run() {
-                            try {
-                                fw.flush();
-                                fw.close();
-                            } catch (IOException ignore) {
-                            }
-                        }
-                    });
-
-                    appendable = fw;
-                }
+                appendable = createAutoClosingOutput(nameAndOut);
             } catch (IOException e) {
                 System.err.println("ERROR: Failed to create file " + nameAndOut[0] + ". Using STDOUT instead.");
                 appendable = System.out;
@@ -50,5 +33,26 @@ class JUnitReporterFactory {
             formatter = new NullReporter();
         }
         return new JUnitReporter(formatterFactory.reporter(formatter), formatter);
+    }
+
+    private static Appendable createAutoClosingOutput(String[] nameAndOut) throws IOException {
+        Appendable appendable;
+        if (nameAndOut.length < 2) {
+            appendable = System.out;
+        } else {
+            final FileWriter fw = new FileWriter(nameAndOut[1]);
+            Runtime.getRuntime().addShutdownHook(new Thread() {
+                @Override
+                public void run() {
+                    try {
+                        fw.flush();
+                        fw.close();
+                    } catch (IOException ignore) {
+                    }
+                }
+            });
+            appendable = fw;
+        }
+        return appendable;
     }
 }
