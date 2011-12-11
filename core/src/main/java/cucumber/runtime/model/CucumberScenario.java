@@ -34,9 +34,6 @@ public class CucumberScenario extends CucumberTagStatement {
      */
     @Override
     public void run(Formatter formatter, Reporter reporter, Runtime runtime, List<? extends Backend> backends, List<String> gluePaths) {
-        // TODO: Maybe get extraPaths from scenario
-        // TODO: maybe just try to make Background behave like a regular Scenario?? Printing wise at least.
-
         World world = newWorld(runtime);
         world.buildBackendWorldsAndRunBeforeHooks(gluePaths, reporter);
         runBackground(formatter, reporter);

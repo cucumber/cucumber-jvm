@@ -17,10 +17,10 @@ class JUnitReporter implements Reporter, Formatter {
     private final Reporter reporter;
     private final Formatter formatter;
 
-    private EachTestNotifier executionUnitNotifier;
     private EachTestNotifier stepNotifier;
     private ExecutionUnitRunner executionUnitRunner;
-    private RunNotifier notifier;
+    private RunNotifier runNotifier;
+    private EachTestNotifier executionUnitNotifier;
 
     public JUnitReporter(Reporter reporter, Formatter formatter) {
         this.reporter = reporter;
@@ -28,22 +28,23 @@ class JUnitReporter implements Reporter, Formatter {
     }
 
     // TODO: Move to scenario
-    public void startExecutionUnit(ExecutionUnitRunner executionUnitRunner, RunNotifier notifier) {
+    public void startExecutionUnit(ExecutionUnitRunner executionUnitRunner, RunNotifier runNotifier) {
         this.executionUnitRunner = executionUnitRunner;
-        this.notifier = notifier;
+        this.runNotifier = runNotifier;
+        this.stepNotifier = null;
 
-        Description description = executionUnitRunner.getDescription();
-        executionUnitNotifier = new EachTestNotifier(notifier, description);
+        executionUnitNotifier = new EachTestNotifier(runNotifier, executionUnitRunner.getDescription());
         executionUnitNotifier.fireTestStarted();
     }
+
 
     public void finishExecutionUnit() {
         executionUnitNotifier.fireTestFinished();
     }
-    
+
     public void match(Match match) {
         Description description = executionUnitRunner.describeChild(steps.remove(0));
-        stepNotifier = new EachTestNotifier(notifier, description);
+        stepNotifier = new EachTestNotifier(runNotifier, description);
         stepNotifier.fireTestStarted();
         reporter.match(match);
     }
@@ -57,10 +58,16 @@ class JUnitReporter implements Reporter, Formatter {
         if (Result.SKIPPED == result || Result.UNDEFINED == result || error instanceof PendingException) {
             stepNotifier.fireTestIgnored();
         } else {
-            if (error != null) {
-                stepNotifier.addFailure(error);
+            if(stepNotifier != null) {
+                if (error != null) {
+                    stepNotifier.addFailure(error);
+                }
+                stepNotifier.fireTestFinished();
+            } else {
+                if (error != null) {
+                    executionUnitNotifier.addFailure(error);
+                }
             }
-            stepNotifier.fireTestFinished();
         }
         reporter.result(result);
     }

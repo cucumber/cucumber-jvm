@@ -10,12 +10,6 @@ import cucumber.annotation.en.When;
 import static org.junit.Assert.*;
 
 public class DateStepdefs {
-
-    @Before
-    public void puke() {
-        throw new RuntimeException("PUKE");
-    }
-    
     private String result;
     private DateCalculator calculator;
 

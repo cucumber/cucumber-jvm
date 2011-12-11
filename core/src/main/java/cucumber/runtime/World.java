@@ -49,11 +49,11 @@ public class World {
 
     private void runHooks(List<HookDefinition> hooks, Reporter reporter) {
         for (HookDefinition hook : hooks) {
-            runHookMaybe(hook, reporter);
+            runHookIfTagsMatch(hook, reporter);
         }
     }
 
-    private void runHookMaybe(HookDefinition hook, Reporter reporter) {
+    private void runHookIfTagsMatch(HookDefinition hook, Reporter reporter) {
         if (hook.matches(tags)) {
             long start = System.nanoTime();
             try {

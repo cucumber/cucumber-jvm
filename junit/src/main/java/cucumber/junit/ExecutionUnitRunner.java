@@ -5,7 +5,6 @@ import cucumber.runtime.World;
 import cucumber.runtime.model.CucumberScenario;
 import gherkin.formatter.model.Step;
 import org.junit.runner.Description;
-import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
@@ -48,21 +47,12 @@ class ExecutionUnitRunner extends ParentRunner<Step> {
     @Override
     public void run(RunNotifier notifier) {
         jUnitReporter.startExecutionUnit(this, notifier);
-        /*
-           We're running the hooks and background without reporting the steps as junit children - we don't want them to show up in the
-           junit report. However, if any of the before hooks or background steps fail, we mark the entire scenario as failed. Scenario steps
-           will be skipped.
-        */
+
         world = cucumberScenario.newWorld(runtime);
         world.buildBackendWorldsAndRunBeforeHooks(gluePaths, jUnitReporter);
-        try {
-            cucumberScenario.runBackground(jUnitReporter.getFormatter(), jUnitReporter.getReporter());
-        } catch (Throwable e) {
-            notifier.fireTestFailure(new Failure(getDescription(), e));
-        }
-
+        cucumberScenario.runBackground(jUnitReporter.getFormatter(), jUnitReporter.getReporter());
         cucumberScenario.format(jUnitReporter);
-        // Run the steps
+        // Run the steps (the children)
         super.run(notifier);
         world.runAfterHooksAndDisposeBackendWorlds(jUnitReporter);
 
@@ -71,10 +61,6 @@ class ExecutionUnitRunner extends ParentRunner<Step> {
 
     @Override
     protected void runChild(Step step, RunNotifier notifier) {
-        try {
-            cucumberScenario.runStep(step, jUnitReporter, world);
-        } catch (Throwable throwable) {
-            throwable.printStackTrace();
-        }
+        cucumberScenario.runStep(step, jUnitReporter, world);
     }
 }
