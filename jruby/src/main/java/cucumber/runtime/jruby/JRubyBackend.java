@@ -28,9 +28,11 @@ public class JRubyBackend implements Backend {
     public void buildWorld(List<String> gluePaths, World world) {
         this.world = world;
         jruby.put("$world", new Object());
-        Iterable<Resource> resources = new ResourceLoader().fileResources(gluePaths, ".rb");
-        for (Resource resource : resources) {
-            runScriptlet(resource);
+
+        for (String gluePath : gluePaths) {
+            for (Resource resource : new ResourceLoader().fileResources(gluePath, ".rb")) {
+                runScriptlet(resource);
+            }
         }
     }
 

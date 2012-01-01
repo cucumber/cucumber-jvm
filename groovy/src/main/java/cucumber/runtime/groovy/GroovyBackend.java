@@ -34,17 +34,18 @@ public class GroovyBackend implements Backend {
     @Override
     public void buildWorld(List<String> gluePaths, World world) {
         this.world = world;
-
         final Binding context = new Binding();
 
-        Iterable<Resource> resources = new ResourceLoader().fileResources(gluePaths, ".groovy");
-        for (Resource resource : resources) {
-            Script script = parse(resource);
-            if (isScript(script)) {
-                script.setBinding(context);
-                script.run();
+        for (String gluePath : gluePaths) {
+            for (Resource resource : new ResourceLoader().fileResources(gluePath, ".groovy")) {
+                Script script = parse(resource);
+                if (isScript(script)) {
+                    script.setBinding(context);
+                    script.run();
+                }
             }
         }
+        
     }
 
     private Script parse(Resource resource) {

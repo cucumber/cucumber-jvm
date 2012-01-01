@@ -41,14 +41,19 @@ public class IokeBackend implements Backend {
     public void buildWorld(List<String> gluePaths, World world) {
         this.world = world;
 
-        Iterable<Resource> resources = resourceLoader.fileResources(gluePaths, ".ik");
-        for (Resource resource : resources) {
-            try {
+        for (String gluePath : gluePaths) {
+            for (Resource resource : resourceLoader.fileResources(gluePath, ".ik")) {
                 currentLocation = resource.getPath();
-                ioke.evaluateString("use(\"" + resource.getPath() + "\")");
-            } catch (ControlFlow controlFlow) {
-                throw new CucumberException("Failed to load " + resource.getPath(), controlFlow);
+                evaluate(resource);
             }
+        }
+    }
+
+    private void evaluate(Resource resource) {
+        try {
+            ioke.evaluateString("use(\"" + resource.getPath() + "\")");
+        } catch (ControlFlow controlFlow) {
+            throw new CucumberException(controlFlow);
         }
     }
 

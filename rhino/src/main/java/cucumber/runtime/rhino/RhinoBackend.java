@@ -37,12 +37,14 @@ public class RhinoBackend implements Backend {
         this.gluePaths = gluePaths;
         this.world = world;
 
-        Iterable<Resource> resources = new ResourceLoader().fileResources(gluePaths, ".js");
-        for (Resource resource : resources) {
-            try {
-                cx.evaluateReader(scope, new InputStreamReader(resource.getInputStream()), resource.getPath(), 1, null);
-            } catch (IOException e) {
-                throw new CucumberException("Failed to evaluate Javascript in " + resource.getPath(), e);
+        for (String gluePath : gluePaths) {
+            Iterable<Resource> resources = new ResourceLoader().fileResources(gluePath, ".js");
+            for (Resource resource : resources) {
+                try {
+                    cx.evaluateReader(scope, new InputStreamReader(resource.getInputStream()), resource.getPath(), 1, null);
+                } catch (IOException e) {
+                    throw new CucumberException("Failed to evaluate Javascript in " + resource.getPath(), e);
+                }
             }
         }
     }

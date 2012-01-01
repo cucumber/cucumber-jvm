@@ -29,9 +29,11 @@ public class JythonBackend implements Backend {
     public void buildWorld(List<String> gluePaths, World world) {
         this.pyWorld = jython.eval("World()");
         this.world = world;
-        Iterable<Resource> resources = new ResourceLoader().fileResources(gluePaths, ".py");
-        for (Resource resource : resources) {
-            execFile(resource);
+
+        for (String gluePath : gluePaths) {
+            for (Resource resource : new ResourceLoader().fileResources(gluePath, ".py")) {
+                execFile(resource);
+            }
         }
     }
 
