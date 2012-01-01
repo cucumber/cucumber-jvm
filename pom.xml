@@ -66,6 +66,11 @@
                 <version>2.7.1</version>
             </dependency>
             <dependency>
+                <groupId>org.reflections</groupId>
+                <artifactId>reflections</artifactId>
+                <version>0.9.5</version>
+            </dependency>
+            <dependency>
                 <groupId>com.googlecode.java-diff-utils</groupId>
                 <artifactId>diffutils</artifactId>
                 <version>1.2.1</version>
@@ -178,7 +183,7 @@
             <dependency>
                 <groupId>asm</groupId>
                 <artifactId>asm</artifactId>
-                <version>3.3</version>
+                <version>3.3.1</version>
             </dependency>
             <dependency>
                 <groupId>cglib</groupId>
@@ -225,7 +230,7 @@
         <module>picocontainer</module>
         <module>spring</module>
         <module>guice</module>
-        <module>weld</module>
+        <!--<module>weld</module>-->
         <module>groovy</module>
         <module>ioke</module>
         <module>rhino</module>

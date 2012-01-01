@@ -1,27 +1,20 @@
 package cucumber.junit;
 
-import cucumber.resources.Consumer;
-import cucumber.resources.Resource;
-import cucumber.resources.Resources;
 import cucumber.runtime.CucumberException;
-import cucumber.runtime.FeatureBuilder;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.model.CucumberFeature;
-import cucumber.runtime.model.CucumberScenario;
-import cucumber.runtime.model.CucumberScenarioOutline;
-import cucumber.runtime.model.CucumberTagStatement;
 import cucumber.runtime.snippets.SummaryPrinter;
-import gherkin.formatter.model.Feature;
-import org.junit.runner.Runner;
+import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
-import org.junit.runners.Suite;
 import org.junit.runners.model.InitializationError;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static cucumber.runtime.Utils.packagePath;
+import static cucumber.runtime.model.CucumberFeature.loadFromClasspath;
 import static java.util.Arrays.asList;
 
 /**
@@ -35,31 +28,51 @@ import static java.util.Arrays.asList;
  *
  * @see cucumber.junit.Feature
  */
-public class Cucumber extends Suite {
-    private static final Runtime runtime = new Runtime();
-    private static JUnitReporter jUnitReporter;
-
-    static {
-        jUnitReporter = JUnitReporterFactory.create(System.getProperty("cucumber.reporter"));
-        java.lang.Runtime.getRuntime().addShutdownHook(new Thread() {
-            @Override
-            public void run() {
-                new SummaryPrinter(System.out).print(runtime);
-            }
-        });
-    }
-
-    private final Feature feature;
-    private final String featurePath;
+public class Cucumber extends ParentRunner<FeatureRunner> {
+    private final JUnitReporter jUnitReporter;
+    private final List<FeatureRunner> children = new ArrayList<FeatureRunner>();
+    private final Runtime runtime;
 
     /**
      * Constructor called by JUnit.
+     *
+     * @param clazz the class with the @RunWith annotation.
+     * @throws java.io.IOException if there is a problem
+     * @throws org.junit.runners.model.InitializationError
+     *                             if there is another problem
      */
     public Cucumber(Class clazz) throws InitializationError, IOException {
-        super(clazz, new ArrayList<Runner>());
+        super(clazz);
         assertNoDeclaredMethods(clazz);
-        featurePath = featurePath(clazz);
-        this.feature = parseFeature(featurePath, filters(clazz));
+        List<String> featurePaths = featurePaths(clazz);
+
+        List<String> gluePaths = gluePaths(clazz);
+        runtime = new Runtime(gluePaths);
+
+        jUnitReporter = JUnitReporterFactory.create(System.getProperty("cucumber.reporter"));
+        addChildren(featurePaths, filters(clazz), gluePaths(clazz));
+    }
+
+    @Override
+    protected List<FeatureRunner> getChildren() {
+        return children;
+    }
+
+    @Override
+    protected Description describeChild(FeatureRunner child) {
+        return child.getDescription();
+    }
+
+    @Override
+    protected void runChild(FeatureRunner child, RunNotifier notifier) {
+        child.run(notifier);
+    }
+
+    @Override
+    public void run(RunNotifier notifier) {
+        super.run(notifier);
+        jUnitReporter.done();
+        new SummaryPrinter(System.out).print(runtime);
     }
 
     private void assertNoDeclaredMethods(Class clazz) {
@@ -75,19 +88,38 @@ public class Cucumber extends Suite {
         }
     }
 
-    private String featurePath(Class clazz) {
-        cucumber.junit.Feature featureAnnotation = (cucumber.junit.Feature) clazz.getAnnotation(cucumber.junit.Feature.class);
-        String pathName;
+    /**
+     * @param clazz the Class used to kick it all off
+     * @return either a path to a single feature, or to a directory or classpath entry containing them
+     */
+    private List<String> featurePaths(Class clazz) {
+        cucumber.junit.Feature featureAnnotation = getFeatureAnnotation(clazz);
+        String featurePath;
         if (featureAnnotation != null) {
-            pathName = featureAnnotation.value();
+            featurePath = featureAnnotation.value();
         } else {
-            pathName = clazz.getName().replace('.', '/') + ".feature";
+            featurePath = packagePath(clazz);
         }
-        return pathName;
+        return asList(featurePath);
+    }
+
+    private List<String> gluePaths(Class clazz) {
+        List<String> gluePaths = new ArrayList<String>();
+
+        gluePaths.add(packagePath(clazz));
+
+        // Add additional ones
+        cucumber.junit.Feature featureAnnotation = getFeatureAnnotation(clazz);
+        if (featureAnnotation != null) {
+            for (String packageName : featureAnnotation.packages()) {
+                gluePaths.add(packagePath(packageName));
+            }
+        }
+        return gluePaths;
     }
 
     private List<Object> filters(Class clazz) {
-        cucumber.junit.Feature featureAnnotation = (cucumber.junit.Feature) clazz.getAnnotation(cucumber.junit.Feature.class);
+        cucumber.junit.Feature featureAnnotation = getFeatureAnnotation(clazz);
         Object[] filters = new Object[0];
         if (featureAnnotation != null) {
             filters = toLong(featureAnnotation.lines());
@@ -98,53 +130,10 @@ public class Cucumber extends Suite {
         return asList(filters);
     }
 
-    @Override
-    public String getName() {
-        return feature != null ? feature.getKeyword() + ": " + feature.getName() : "No matching features - did you use too restrictive filters?";
-    }
-
-    @Override
-    public void run(RunNotifier notifier) {
-        if (feature != null) {
-            jUnitReporter.uri(featurePath);
-            jUnitReporter.feature(feature);
-            super.run(notifier);
-            jUnitReporter.eof();
-        }
-    }
-
-    private Feature parseFeature(String pathName, final List<Object> filters) {
-        List<CucumberFeature> cucumberFeatures = new ArrayList<CucumberFeature>();
-        final FeatureBuilder builder = new FeatureBuilder(cucumberFeatures);
-        Resources.scan(pathName, new Consumer() {
-            public void consume(Resource resource) {
-                builder.parse(resource, filters);
-            }
-        });
-
-        if (cucumberFeatures.isEmpty()) {
-            return null;
-        } else {
-            CucumberFeature cucumberFeature = cucumberFeatures.get(0);
-            buildFeatureElementRunners(cucumberFeature);
-            return cucumberFeature.getFeature();
-        }
-    }
-
-    private void buildFeatureElementRunners(CucumberFeature cucumberFeature) {
-        for (CucumberTagStatement cucumberTagStatement : cucumberFeature.getFeatureElements()) {
-            try {
-                List<String> gluePaths = gluePaths(super.getTestClass().getJavaClass());
-                ParentRunner featureElementRunner;
-                if (cucumberTagStatement instanceof CucumberScenario) {
-                    featureElementRunner = new ExecutionUnitRunner(runtime, gluePaths, (CucumberScenario) cucumberTagStatement, jUnitReporter);
-                } else {
-                    featureElementRunner = new ScenarioOutlineRunner(runtime, gluePaths, (CucumberScenarioOutline) cucumberTagStatement, jUnitReporter);
-                }
-                getChildren().add(featureElementRunner);
-            } catch (InitializationError e) {
-                throw new RuntimeException("Failed to create scenario runner", e);
-            }
+    private void addChildren(List<String> featurePaths, final List<Object> filters, List<String> gluePaths) throws InitializationError {
+        List<CucumberFeature> cucumberFeatures = loadFromClasspath(featurePaths, filters);
+        for (CucumberFeature cucumberFeature : cucumberFeatures) {
+            children.add(new FeatureRunner(cucumberFeature, gluePaths, runtime, jUnitReporter));
         }
     }
 
@@ -156,21 +145,7 @@ public class Cucumber extends Suite {
         return longs;
     }
 
-    private static List<String> gluePaths(Class clazz) {
-        String className = clazz.getName();
-        String packageName = packageName(className);
-        List<String> gluePaths = new ArrayList<String>();
-        gluePaths.add(packageName);
-
-        // Add additional ones
-        cucumber.junit.Feature featureAnnotation = (cucumber.junit.Feature) clazz.getAnnotation(cucumber.junit.Feature.class);
-        if (featureAnnotation != null) {
-            gluePaths.addAll(asList(featureAnnotation.packages()));
-        }
-        return gluePaths;
-    }
-
-    static String packageName(String className) {
-        return className.substring(0, Math.max(0, className.lastIndexOf(".")));
+    private Feature getFeatureAnnotation(Class clazz) {
+        return (Feature) clazz.getAnnotation(Feature.class);
     }
 }

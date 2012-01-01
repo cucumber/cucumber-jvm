@@ -3,40 +3,30 @@ package cucumber.runtime.java;
 import cucumber.annotation.After;
 import cucumber.annotation.Before;
 import cucumber.annotation.Order;
-import cucumber.resources.Resources;
+import cucumber.io.ResourceLoader;
 
-import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.Collection;
+import java.util.List;
 
 public class ClasspathMethodScanner {
-    public void scan(JavaBackend javaBackend, String packagePrefix) {
-        try {
-            Collection<Class<? extends Annotation>> cucumberAnnotations = findCucumberAnnotationClasses();
-            for (Class<?> clazz : Resources.getInstantiableClasses(packagePrefix)) {
-                try {
-                    if (Modifier.isPublic(clazz.getModifiers()) && !Modifier.isAbstract(clazz.getModifiers())) {
-                        // TODO: How do we know what other dependendencies to add?
-                    }
-                    Method[] methods = clazz.getMethods();
-                    for (Method method : methods) {
-                        if (Modifier.isPublic(method.getModifiers())) {
-                            scan(method, cucumberAnnotations, javaBackend);
-                        }
-                    }
-                } catch (NoClassDefFoundError ignore) {
-                } catch (SecurityException ignore) {
+
+    private ResourceLoader resourceLoader = new ResourceLoader();
+
+    public void scan(JavaBackend javaBackend, List<String> gluePaths) {
+        Collection<Class<? extends Annotation>> cucumberAnnotationClasses = findCucumberAnnotationClasses();
+        for (String gluePath : gluePaths) {
+            for (Class<?> candidateClass : resourceLoader.getDescendants(Object.class, gluePath)) {
+                for (Method method : candidateClass.getMethods()) {
+                    scan(method, cucumberAnnotationClasses, javaBackend);
                 }
             }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
     }
 
-    private Collection<Class<? extends Annotation>> findCucumberAnnotationClasses() throws IOException {
-        return Resources.getInstantiableSubclassesOf(Annotation.class, "cucumber.annotation");
+    private Collection<Class<? extends Annotation>> findCucumberAnnotationClasses() {
+        return resourceLoader.getAnnotations("cucumber/annotation");
     }
 
     private void scan(Method method, Collection<Class<? extends Annotation>> cucumberAnnotationClasses, JavaBackend javaBackend) {

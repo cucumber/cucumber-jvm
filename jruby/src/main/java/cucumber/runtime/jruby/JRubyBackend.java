@@ -1,14 +1,15 @@
 package cucumber.runtime.jruby;
 
-import cucumber.resources.Consumer;
-import cucumber.resources.Resource;
-import cucumber.resources.Resources;
+import cucumber.io.Resource;
+import cucumber.io.ResourceLoader;
 import cucumber.runtime.Backend;
+import cucumber.runtime.CucumberException;
 import cucumber.runtime.World;
 import gherkin.formatter.model.Step;
 import org.jruby.RubyObject;
 import org.jruby.embed.ScriptingContainer;
 
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
@@ -27,12 +28,17 @@ public class JRubyBackend implements Backend {
     public void buildWorld(List<String> gluePaths, World world) {
         this.world = world;
         jruby.put("$world", new Object());
-        for (String gluePath : gluePaths) {
-            Resources.scan(gluePath.replace('.', '/'), ".rb", new Consumer() {
-                public void consume(Resource resource) {
-                    jruby.runScriptlet(resource.getReader(), resource.getPath());
-                }
-            });
+        Iterable<Resource> resources = new ResourceLoader().fileResources(gluePaths, ".rb");
+        for (Resource resource : resources) {
+            runScriptlet(resource);
+        }
+    }
+
+    private void runScriptlet(Resource resource) {
+        try {
+            jruby.runScriptlet(new InputStreamReader(resource.getInputStream()), resource.getPath());
+        } catch (IOException e) {
+            throw new CucumberException(e);
         }
     }
 

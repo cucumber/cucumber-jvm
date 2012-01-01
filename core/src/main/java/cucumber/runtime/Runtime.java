@@ -2,9 +2,7 @@ package cucumber.runtime;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import cucumber.resources.Consumer;
-import cucumber.resources.Resource;
-import cucumber.resources.Resources;
+import cucumber.io.ResourceLoader;
 import cucumber.runtime.autocomplete.MetaStepdef;
 import cucumber.runtime.autocomplete.StepdefGenerator;
 import cucumber.runtime.model.CucumberFeature;
@@ -21,7 +19,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
-import static java.util.Arrays.asList;
+import static cucumber.runtime.model.CucumberFeature.loadFromClasspath;
 import static java.util.Collections.emptyList;
 
 /**
@@ -34,25 +32,24 @@ public class Runtime {
 
     private final UndefinedStepsTracker tracker;
     private final List<Throwable> errors = new ArrayList<Throwable>();
-    private final List<? extends Backend> backends;
-    private final List<String> gluePaths;
+    private final Collection<? extends Backend> backends;
     private final boolean isDryRun;
+    private final List<String> gluePaths;
 
-    public Runtime() {
-        this(false);
-    }
-
-    public Runtime(boolean isDryRun) {
-        this(System.getProperty("cucumber.glue") != null ? asList(System.getProperty("cucumber.glue").split(",")) : new ArrayList<String>(), isDryRun);
+    public Runtime(List<String> gluePaths) {
+        this(gluePaths, false);
     }
 
     public Runtime(List<String> gluePaths, boolean isDryRun) {
-        this(gluePaths, Resources.instantiateSubclasses(Backend.class, "cucumber.runtime", new Class[0], new Object[0]), isDryRun);
+        this.gluePaths = gluePaths;
+        this.backends = new ResourceLoader().instantiateSubclasses(Backend.class, "cucumber/runtime", new Class[0], new Object[0]);
+        this.isDryRun = isDryRun;
+        this.tracker = new UndefinedStepsTracker(backends);
     }
 
     public Runtime(List<String> gluePaths, List<? extends Backend> backends, boolean isDryRun) {
-        this.backends = backends;
         this.gluePaths = gluePaths;
+        this.backends = backends;
         this.isDryRun = isDryRun;
         this.tracker = new UndefinedStepsTracker(backends);
     }
@@ -61,8 +58,8 @@ public class Runtime {
         errors.add(error);
     }
 
-    public void run(List<String> filesOrDirs, final List<Object> filters, gherkin.formatter.Formatter formatter, Reporter reporter) {
-        for (CucumberFeature cucumberFeature : load(filesOrDirs, filters)) {
+    public void run(List<String> featurePaths, final List<Object> filters, gherkin.formatter.Formatter formatter, Reporter reporter) {
+        for (CucumberFeature cucumberFeature : loadFromClasspath(featurePaths, filters)) {
             run(cucumberFeature, formatter, reporter);
         }
     }
@@ -71,26 +68,12 @@ public class Runtime {
         formatter.uri(cucumberFeature.getUri());
         formatter.feature(cucumberFeature.getFeature());
         for (CucumberTagStatement cucumberTagStatement : cucumberFeature.getFeatureElements()) {
-            cucumberTagStatement.run(formatter, reporter, this, backends, gluePaths);
+            cucumberTagStatement.run(formatter, reporter, this);
         }
         formatter.eof();
     }
 
-    private List<CucumberFeature> load(List<String> filesOrDirs, final List<Object> filters) {
-        final List<CucumberFeature> cucumberFeatures = new ArrayList<CucumberFeature>();
-        final FeatureBuilder builder = new FeatureBuilder(cucumberFeatures);
-        for (String fileOrDir : filesOrDirs) {
-            Resources.scan(fileOrDir, ".feature", new Consumer() {
-                @Override
-                public void consume(Resource resource) {
-                    builder.parse(resource, filters);
-                }
-            });
-        }
-        return cucumberFeatures;
-    }
-
-    public void buildBackendWorlds(List<String> gluePaths, World world) {
+    public void buildBackendWorlds(World world) {
         for (Backend backend : backends) {
             backend.buildWorld(gluePaths, world);
         }
@@ -103,10 +86,10 @@ public class Runtime {
         }
     }
 
-    public void writeStepdefsJson(List<String> filesOrDirs, File dotCucumber) throws IOException {
-        List<CucumberFeature> features = load(filesOrDirs, NO_FILTERS);
-        World world = new World(this, NO_TAGS);
-        buildBackendWorlds(gluePaths, world);
+    public void writeStepdefsJson(List<String> featurePaths, File dotCucumber) throws IOException {
+        List<CucumberFeature> features = loadFromClasspath(featurePaths, NO_FILTERS);
+        World world = new RuntimeWorld(this, NO_TAGS);
+        buildBackendWorlds(world);
         List<StepDefinition> stepDefs = world.getStepDefinitions();
         List<MetaStepdef> metaStepdefs = new StepdefGenerator().generate(stepDefs, features);
         Gson gson = new GsonBuilder().setPrettyPrinting().create();

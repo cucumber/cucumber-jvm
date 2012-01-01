@@ -2,8 +2,7 @@ package cucumber.runtime.autocomplete;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import cucumber.resources.AbstractResource;
-import cucumber.resources.PathWithLines;
+import cucumber.io.Resource;
 import cucumber.runtime.FeatureBuilder;
 import cucumber.runtime.JdkPatternArgumentMatcher;
 import cucumber.runtime.ParameterType;
@@ -14,6 +13,7 @@ import gherkin.formatter.model.Step;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -28,7 +28,7 @@ public class StepdefGeneratorTest {
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     @Test
-    public void generates_code_completion_metadata() {
+    public void generates_code_completion_metadata() throws IOException {
         StepdefGenerator meta = new StepdefGenerator();
 
         List<StepDefinition> stepDefs = asList(def("I have (\\d+) cukes in my belly"), def("I have (\\d+) apples in my bowl"));
@@ -69,13 +69,13 @@ public class StepdefGeneratorTest {
                 GSON.toJson(metadata));
     }
 
-    private List<CucumberFeature> features() {
+    private List<CucumberFeature> features() throws IOException {
         List<CucumberFeature> features = new ArrayList<CucumberFeature>();
         FeatureBuilder fb = new FeatureBuilder(features);
-        fb.parse(new AbstractResource(new PathWithLines("test.feature")) {
+        fb.parse(new Resource() {
             @Override
             public String getPath() {
-                return pathWithLines.path;
+                return "test.feature";
             }
 
             @Override
