@@ -1,0 +1,3 @@
+<project name="cucumber-guice" default="test">
+  <import file="../build-common.xml" />
+</project>

@@ -10,11 +10,11 @@ import com.google.inject.Module;
 
 import cucumber.runtime.java.guice.loadguicemodule.YourModuleClass;
 
-public class ModuleInstantiator_Test {
+public class ModuleInstantiatorTest {
     private final ModuleInstantiator instantiator = new ModuleInstantiator();
     
     @Test
-    public void instantiatesModuleByFullQualifiedName() throws Exception {
+    public void instantiatesModuleByFullyQualifiedName() throws Exception {
         assertThat(instantiate(YourModuleClass.class), is(instanceOf(YourModuleClass.class)));
     }
 
