@@ -11,3 +11,10 @@ Feature: Cukes
     Given Something
     Then the argument should be nil
 
+  Scenario: A stepdef is defined as pending
+    Given a pending stepdef with reason "FIXME"
+    Then the pending stepdef throws a pending exception with "FIXME"
+
+  Scenario: A stepdef is defined as pending without any reason
+    Given a pending stepdef without an explicit reason
+    Then the pending stepdef throws a pending exception with "TODO"

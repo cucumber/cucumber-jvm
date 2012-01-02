@@ -225,7 +225,6 @@
     </repositories>
 
     <modules>
-        <module>scala</module>
         <module>core</module>
         <module>junit</module>
         <module>picocontainer</module>
@@ -239,6 +238,7 @@
         <module>clojure</module>
         <module>jruby</module>
         <module>jython</module>
+        <module>scala</module>
     </modules>
 
     <profiles>
