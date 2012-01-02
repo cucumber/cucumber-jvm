@@ -3,6 +3,7 @@ package cucumber.io;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -18,6 +19,8 @@ public class ZipResourceIterator implements Iterator<Resource> {
         this.suffix = suffix;
         jarFile = new ZipFile(zipPath);
         entries = jarFile.entries();
+
+        moveToNext();
     }
 
     @Override
@@ -25,7 +28,25 @@ public class ZipResourceIterator implements Iterator<Resource> {
         return next != null;
     }
 
-    private void findNext() {
+    @Override
+    public Resource next() {
+        try {
+            if (next == null) {
+                throw new NoSuchElementException();
+            }
+            return next;
+        } finally {
+            moveToNext();
+        }
+    }
+
+    @Override
+    public void remove() {
+        throw new UnsupportedOperationException();
+    }
+
+    private void moveToNext() {
+        next = null;
         while (entries.hasMoreElements()) {
             ZipEntry jarEntry = entries.nextElement();
             String entryName = jarEntry.getName();
@@ -34,16 +55,5 @@ public class ZipResourceIterator implements Iterator<Resource> {
                 break;
             }
         }
-    }
-
-    @Override
-    public Resource next() {
-        findNext();
-        return next;
-    }
-
-    @Override
-    public void remove() {
-        throw new UnsupportedOperationException();
     }
 }

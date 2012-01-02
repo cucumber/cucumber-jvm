@@ -15,7 +15,7 @@ This is obviously a little convoluted, so we'll try to improve it so you can run
  
 Or even better:
     
-    mvn -Prelease-sign-artifacts clean
+    mvn -Prelease-sign-artifacts clean package
     #gem build cucumber-jvm.gemspec
     #gem install cucumber-jvm
     #cucumber-jvm --glue src/test/resources src/test/resources/cucumber/runtime/jruby/test/cukes.feature
