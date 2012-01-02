@@ -141,18 +141,3 @@ Fork the repository on Github, clone it and send a pull request when you have fi
 
 * Reports exception when Before hook fails
 * Skips steps when before hook fails
-
-Need to sort out path issues:
-
-With Java we typically pick up duplicate features from src/test/resources and target/test-classes. This happens
-because the absence of a @Feature tag defaults to ".", which is the current directory. Maybe the Backend needs
-to tell whether to load features from the CLASSPATH or from the FS? It makes sense to use the CLASSPATH for Java 
-(and not the FS), but for dynamic languages it makes more sense to get them from the FS.
-
-Also need to distinguish properly between gluePaths and featurePaths. This is a problem in the JUnit runner (Cucumber.java),
-which currently picks it up from a system property.
-
-Never use packages
-The Test file's package is the dir
-Can be overridden
-Gluepath overridden separately
