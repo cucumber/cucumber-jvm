@@ -16,11 +16,13 @@ import java.util.List;
 
 public class JythonBackend implements Backend {
     private static final String DSL = "/cucumber/runtime/jython/dsl.py";
+    private final ResourceLoader resourceLoader;
     private final PythonInterpreter jython = new PythonInterpreter();
     private PyObject pyWorld;
     private World world;
 
-    public JythonBackend() {
+    public JythonBackend(ResourceLoader resourceLoader) {
+        this.resourceLoader = resourceLoader;
         jython.set("backend", this);
         jython.execfile(getClass().getResourceAsStream(DSL), DSL);
     }
@@ -31,7 +33,7 @@ public class JythonBackend implements Backend {
         this.world = world;
 
         for (String gluePath : gluePaths) {
-            for (Resource resource : new ResourceLoader().fileResources(gluePath, ".py")) {
+            for (Resource resource : resourceLoader.resources(gluePath, ".py")) {
                 execFile(resource);
             }
         }

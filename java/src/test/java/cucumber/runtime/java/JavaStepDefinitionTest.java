@@ -1,6 +1,7 @@
 package cucumber.runtime.java;
 
 import cucumber.annotation.en.Given;
+import cucumber.io.ClasspathResourceLoader;
 import cucumber.runtime.AmbiguousStepDefinitionsException;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeWorld;
@@ -37,7 +38,7 @@ public class JavaStepDefinitionTest {
 
     private final Defs defs = new Defs();
     private final JavaBackend backend = new JavaBackend(new SingletonFactory(defs));
-    private final Runtime runtime = new Runtime(NO_PATHS, asList(backend), false);
+    private final Runtime runtime = new Runtime(NO_PATHS, new ClasspathResourceLoader(), asList(backend), false);
     private final World fooWorld = new RuntimeWorld(runtime, asList("@foo"));
 
     @Test(expected = AmbiguousStepDefinitionsException.class)

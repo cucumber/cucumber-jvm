@@ -18,8 +18,10 @@ public class JRubyBackend implements Backend {
     private static final String DSL = "/cucumber/runtime/jruby/dsl.rb";
     private final ScriptingContainer jruby = new ScriptingContainer();
     private World world;
+    private ResourceLoader resourceLoader;
 
-    public JRubyBackend() throws UnsupportedEncodingException {
+    public JRubyBackend(ResourceLoader resourceLoader) throws UnsupportedEncodingException {
+        this.resourceLoader = resourceLoader;
         jruby.put("$backend", this);
         jruby.runScriptlet(new InputStreamReader(getClass().getResourceAsStream(DSL), "UTF-8"), DSL);
     }
@@ -30,7 +32,7 @@ public class JRubyBackend implements Backend {
         jruby.put("$world", new Object());
 
         for (String gluePath : gluePaths) {
-            for (Resource resource : new ResourceLoader().fileResources(gluePath, ".rb")) {
+            for (Resource resource : resourceLoader.resources(gluePath, ".rb")) {
                 runScriptlet(resource);
             }
         }

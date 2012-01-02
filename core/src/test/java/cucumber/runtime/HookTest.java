@@ -1,5 +1,6 @@
 package cucumber.runtime;
 
+import cucumber.io.ClasspathResourceLoader;
 import gherkin.formatter.Reporter;
 import org.junit.Test;
 import org.mockito.InOrder;
@@ -28,7 +29,7 @@ public class HookTest {
         HookDefinition hook = mock(HookDefinition.class);
         when(hook.matches(anyListOf(String.class))).thenReturn(true);
 
-        Runtime runtime = new Runtime(CODE_PATHS, asList(backend), false);
+        Runtime runtime = new Runtime(CODE_PATHS, new ClasspathResourceLoader(), asList(backend), false);
         World world = new RuntimeWorld(runtime, TAGS);
         world.addAfterHook(hook);
 

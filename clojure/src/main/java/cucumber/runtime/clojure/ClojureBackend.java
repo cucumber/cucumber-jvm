@@ -15,10 +15,11 @@ import java.util.regex.Pattern;
 
 public class ClojureBackend implements Backend {
     private static ClojureBackend instance;
-    private final ResourceLoader resourceLoader = new ResourceLoader();
+    private final ResourceLoader resourceLoader;
     private World world;
 
-    public ClojureBackend() {
+    public ClojureBackend(ResourceLoader resourceLoader) {
+        this.resourceLoader = resourceLoader;
         instance = this;
         loadScript("cucumber/runtime/clojure/dsl");
     }
@@ -27,7 +28,7 @@ public class ClojureBackend implements Backend {
     public void buildWorld(List<String> gluePaths, World world) {
         this.world = world;
         for (String gluePath : gluePaths) {
-            for (Resource resource : resourceLoader.fileResources(gluePath, ".clj")) {
+            for (Resource resource : resourceLoader.resources(gluePath, ".clj")) {
                 loadScript(resource.getPath());
             }
         }

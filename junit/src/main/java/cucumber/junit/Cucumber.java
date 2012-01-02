@@ -1,5 +1,7 @@
 package cucumber.junit;
 
+import cucumber.io.ClasspathResourceLoader;
+import cucumber.io.ResourceLoader;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.model.CucumberFeature;
@@ -14,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static cucumber.runtime.Utils.packagePath;
-import static cucumber.runtime.model.CucumberFeature.loadFromClasspath;
+import static cucumber.runtime.model.CucumberFeature.load;
 import static java.util.Arrays.asList;
 
 /**
@@ -29,6 +31,7 @@ import static java.util.Arrays.asList;
  * @see cucumber.junit.Feature
  */
 public class Cucumber extends ParentRunner<FeatureRunner> {
+    private final ResourceLoader resourceLoader = new ClasspathResourceLoader();
     private final JUnitReporter jUnitReporter;
     private final List<FeatureRunner> children = new ArrayList<FeatureRunner>();
     private final Runtime runtime;
@@ -47,7 +50,7 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         List<String> featurePaths = featurePaths(clazz);
 
         List<String> gluePaths = gluePaths(clazz);
-        runtime = new Runtime(gluePaths);
+        runtime = new Runtime(gluePaths, resourceLoader);
 
         jUnitReporter = JUnitReporterFactory.create(System.getProperty("cucumber.reporter"));
         addChildren(featurePaths, filters(clazz), gluePaths(clazz));
@@ -131,7 +134,7 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
     }
 
     private void addChildren(List<String> featurePaths, final List<Object> filters, List<String> gluePaths) throws InitializationError {
-        List<CucumberFeature> cucumberFeatures = loadFromClasspath(featurePaths, filters);
+        List<CucumberFeature> cucumberFeatures = load(resourceLoader, featurePaths, filters);
         for (CucumberFeature cucumberFeature : cucumberFeatures) {
             children.add(new FeatureRunner(cucumberFeature, gluePaths, runtime, jUnitReporter));
         }

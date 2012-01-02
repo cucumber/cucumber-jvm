@@ -17,14 +17,15 @@ import java.util.Arrays;
 import java.util.List;
 
 public class IokeBackend implements Backend {
-    private final ResourceLoader resourceLoader = new ResourceLoader();
+    private final ResourceLoader resourceLoader;
     private final Runtime ioke;
     private final List<Runtime.RescueInfo> failureRescues;
     private final List<Runtime.RescueInfo> pendingRescues;
     private String currentLocation;
     private World world;
 
-    public IokeBackend() {
+    public IokeBackend(ResourceLoader resourceLoader) {
+        this.resourceLoader = resourceLoader;
         try {
             ioke = new Runtime();
             ioke.init();
@@ -42,7 +43,7 @@ public class IokeBackend implements Backend {
         this.world = world;
 
         for (String gluePath : gluePaths) {
-            for (Resource resource : resourceLoader.fileResources(gluePath, ".ik")) {
+            for (Resource resource : resourceLoader.resources(gluePath, ".ik")) {
                 currentLocation = resource.getPath();
                 evaluate(resource);
             }

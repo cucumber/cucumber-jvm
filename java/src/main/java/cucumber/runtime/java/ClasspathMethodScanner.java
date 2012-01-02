@@ -3,7 +3,7 @@ package cucumber.runtime.java;
 import cucumber.annotation.After;
 import cucumber.annotation.Before;
 import cucumber.annotation.Order;
-import cucumber.io.ResourceLoader;
+import cucumber.io.ClasspathResourceLoader;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -12,7 +12,7 @@ import java.util.List;
 
 public class ClasspathMethodScanner {
 
-    private ResourceLoader resourceLoader = new ResourceLoader();
+    private ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader();
 
     public void scan(JavaBackend javaBackend, List<String> gluePaths) {
         Collection<Class<? extends Annotation>> cucumberAnnotationClasses = findCucumberAnnotationClasses();

@@ -19,12 +19,14 @@ import java.util.List;
 
 public class RhinoBackend implements Backend {
     private static final String JS_DSL = "/cucumber/runtime/rhino/dsl.js";
+    private final ResourceLoader resourceLoader;
     private final Context cx;
     private final Scriptable scope;
     private List<String> gluePaths;
     private World world;
 
-    public RhinoBackend() throws IOException {
+    public RhinoBackend(ResourceLoader resourceLoader) throws IOException {
+        this.resourceLoader = resourceLoader;
         cx = Context.enter();
         scope = new Global(cx); // This gives us access to global functions like load()
         scope.put("jsBackend", scope, this);
@@ -38,7 +40,7 @@ public class RhinoBackend implements Backend {
         this.world = world;
 
         for (String gluePath : gluePaths) {
-            Iterable<Resource> resources = new ResourceLoader().fileResources(gluePath, ".js");
+            Iterable<Resource> resources = resourceLoader.resources(gluePath, ".js");
             for (Resource resource : resources) {
                 try {
                     cx.evaluateReader(scope, new InputStreamReader(resource.getInputStream()), resource.getPath(), 1, null);

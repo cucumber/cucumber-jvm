@@ -1,6 +1,7 @@
 package cucumber.cli;
 
 import cucumber.formatter.FormatterFactory;
+import cucumber.io.FileResourceLoader;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.snippets.SummaryPrinter;
 import gherkin.formatter.Formatter;
@@ -9,7 +10,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import static java.util.Arrays.asList;
 
@@ -56,7 +56,7 @@ public class Main {
             System.exit(1);
         }
 
-        Runtime runtime = new Runtime(gluePaths, isDryRun);
+        Runtime runtime = new Runtime(gluePaths, new FileResourceLoader(), isDryRun);
 
         if (dotCucumber != null) {
             writeDotCucumber(featurePaths, dotCucumber, runtime);

@@ -21,12 +21,14 @@ import java.util.regex.Pattern;
 
 public class GroovyBackend implements Backend {
     static GroovyBackend instance;
+    private final ResourceLoader resourceLoader;
     private final GroovyShell shell;
     private Closure worldClosure;
     private Object groovyWorld;
     private World world;
 
-    public GroovyBackend() {
+    public GroovyBackend(ResourceLoader resourceLoader) {
+        this.resourceLoader = resourceLoader;
         instance = this;
         shell = new GroovyShell();
     }
@@ -37,7 +39,7 @@ public class GroovyBackend implements Backend {
         final Binding context = new Binding();
 
         for (String gluePath : gluePaths) {
-            for (Resource resource : new ResourceLoader().fileResources(gluePath, ".groovy")) {
+            for (Resource resource : resourceLoader.resources(gluePath, ".groovy")) {
                 Script script = parse(resource);
                 if (isScript(script)) {
                     script.setBinding(context);

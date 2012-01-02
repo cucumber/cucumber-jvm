@@ -11,24 +11,23 @@ import static org.junit.Assert.assertEquals;
 
 public class ResourceLoaderTest {
     private final File dir = new File(getClass().getProtectionDomain().getCodeSource().getLocation().getFile());
-    private ResourceLoader l = new ResourceLoader();
 
     @Test
     public void loads_resources_from_filesystem_dir() {
-        Iterable<Resource> files = l.fileResources(dir.getAbsolutePath(), ".properties");
+        Iterable<Resource> files = new FileResourceLoader().resources(dir.getAbsolutePath(), ".properties");
         assertEquals(3, toList(files).size());
     }
 
     @Test
     public void loads_resource_from_filesystem_file() {
         File file = new File(dir, "cucumber/runtime/bar.properties");
-        Iterable<Resource> files = l.fileResources(file.getPath(), ".doesntmatter");
+        Iterable<Resource> files = new FileResourceLoader().resources(file.getPath(), ".doesntmatter");
         assertEquals(1, toList(files).size());
     }
 
     @Test
     public void loads_resources_from_jar_on_classpath() throws IOException {
-        Iterable<Resource> files = l.classpathResources("cucumber", ".properties");
+        Iterable<Resource> files = new ClasspathResourceLoader().resources("cucumber", ".properties");
         assertEquals(3, toList(files).size());
     }
 
