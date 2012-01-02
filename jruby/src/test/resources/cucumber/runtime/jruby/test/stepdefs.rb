@@ -23,3 +23,15 @@ Then /^the argument should not be nil/ do
   assert_not_nil(@argument, "Argument should not be nil")
 end
 
+Given /^a step called from another$/ do
+  @called ||= 0
+  @called += 1
+end
+
+When /^I call that step$/ do
+  Given "a step called from another"
+end
+
+Then /^the step got called$/ do
+  assert_equal(2, @called)
+end

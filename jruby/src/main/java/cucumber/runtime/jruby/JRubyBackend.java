@@ -26,7 +26,7 @@ public class JRubyBackend implements Backend {
     @Override
     public void buildWorld(List<String> gluePaths, World world) {
         this.world = world;
-        jruby.put("$world", new Object());
+        jruby.put("$world", world);
         for (String gluePath : gluePaths) {
             Resources.scan(gluePath.replace('.', '/'), ".rb", new Consumer() {
                 public void consume(Resource resource) {

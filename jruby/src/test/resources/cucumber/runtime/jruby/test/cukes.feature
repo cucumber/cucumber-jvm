@@ -11,3 +11,7 @@ Feature: Cukes
     Given Something
     Then the argument should be nil
 
+  Scenario: Calling step definition from another step
+    Given a step called from another
+    When I call that step
+    Then the step got called
