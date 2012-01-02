@@ -80,6 +80,16 @@
   <component name="EntryPointsManager">
     <entry_points version="2.0" />
   </component>
+  <component name="FacetAutodetectingManager">
+    <autodetection-disabled>
+      <facet-type id="scala">
+        <modules>
+          <module name="cucumber-scala" />
+          <module name="scala-calculator" />
+        </modules>
+      </facet-type>
+    </autodetection-disabled>
+  </component>
   <component name="InspectionProjectProfileManager">
     <profiles>
       <profile version="1.0" is_locked="false">
@@ -1415,6 +1425,14 @@
       <SOURCES>
         <root url="jar://$MAVEN_REPOSITORY$/org/quartz-scheduler/quartz/1.8.5/quartz-1.8.5-sources.jar!/" />
       </SOURCES>
+    </library>
+    <library name="Maven: org.scala-lang:scala-compiler-bundle:2.9.1">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/scala-lang/scala-compiler/2.9.1/scala-compiler-2.9.1.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/scala-lang/scala-library/2.9.1/scala-library-2.9.1.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
     </library>
     <library name="Maven: org.scala-lang:scala-compiler:2.9.1">
       <CLASSES>

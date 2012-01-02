@@ -4,11 +4,12 @@ package runtime
 import _root_.java.util.{List => JList}
 
 import gherkin.formatter.model.Step
+import io.ResourceLoader
 import io.ClasspathResourceLoader
 
 import scala.collection.JavaConversions._
 
-class ScalaBackend() extends Backend {
+class ScalaBackend(ignore:ResourceLoader) extends Backend {
 
   private var instances:Seq[ScalaDsl] = Nil 
 
