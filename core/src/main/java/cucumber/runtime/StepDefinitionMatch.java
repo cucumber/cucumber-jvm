@@ -9,6 +9,7 @@ import cucumber.runtime.converters.SingleValueConverterWrapperExt;
 import cucumber.table.DataTable;
 import cucumber.table.TableConverter;
 import gherkin.formatter.Argument;
+import gherkin.formatter.Reporter;
 import gherkin.formatter.model.DataTableRow;
 import gherkin.formatter.model.Match;
 import gherkin.formatter.model.Step;
@@ -38,10 +39,10 @@ public class StepDefinitionMatch extends Match {
         this.localizedXStreams = localizedXStreams;
     }
 
-    public void runStep(Locale locale) throws Throwable {
+    public void runStep(Reporter reporter, Locale locale) throws Throwable {
         try {
             Object[] args = transformedArgs(stepDefinition.getParameterTypes(), step, localizedXStreams.get(locale), locale);
-            stepDefinition.execute(args);
+            stepDefinition.execute(reporter, locale, args);
         } catch (CucumberException e) {
             throw e;
         } catch (Throwable t) {

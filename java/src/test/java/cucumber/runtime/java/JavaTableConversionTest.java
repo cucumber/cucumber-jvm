@@ -151,7 +151,7 @@ public class JavaTableConversionTest {
         Step stepWithRows = new Step(NO_COMMENTS, "Given ", "something", 10, rows, null);
 
         StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(NO_ARGS, stepDefinition, "some.feature", stepWithRows, new LocalizedXStreams());
-        stepDefinitionMatch.runStep(Locale.UK);
+        stepDefinitionMatch.runStep(null, Locale.UK);
         return stepDefs;
     }
 

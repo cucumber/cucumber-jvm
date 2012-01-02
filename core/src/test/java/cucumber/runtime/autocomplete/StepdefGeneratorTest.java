@@ -10,6 +10,7 @@ import cucumber.runtime.ParameterType;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.model.CucumberFeature;
 import gherkin.formatter.Argument;
+import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Step;
 import org.junit.Test;
 
@@ -18,6 +19,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 import static java.util.Arrays.asList;
@@ -116,7 +118,7 @@ public class StepdefGeneratorTest {
             }
 
             @Override
-            public void execute(Object[] args) throws Throwable {
+            public void execute(Reporter reporter, Locale locale, Object[] args) throws Throwable {
                 throw new UnsupportedOperationException("TODO");
             }
 

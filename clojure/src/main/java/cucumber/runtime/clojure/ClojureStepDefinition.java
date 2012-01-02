@@ -6,12 +6,13 @@ import cucumber.runtime.ParameterType;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.Utils;
 import gherkin.formatter.Argument;
+import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Step;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 public class ClojureStepDefinition implements StepDefinition {
@@ -42,7 +43,7 @@ public class ClojureStepDefinition implements StepDefinition {
         return null;
     }
 
-    public void execute(Object[] args) throws Throwable {
+    public void execute(Reporter reporter, Locale locale, Object[] args) throws Throwable {
         Method functionInvoke = lookupInvokeMethod(args);
         try {
             functionInvoke.invoke(closure, args);
