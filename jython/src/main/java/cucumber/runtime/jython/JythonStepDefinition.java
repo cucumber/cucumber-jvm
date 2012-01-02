@@ -47,7 +47,7 @@ public class JythonStepDefinition implements StepDefinition {
     }
 
     @Override
-    public void execute(Reporter reporter, Locale locale, Object[] args) throws Throwable {
+    public void execute(String uri, Reporter reporter, Locale locale, Object[] args) throws Throwable {
         jythonBackend.execute(stepdef, args);
     }
 

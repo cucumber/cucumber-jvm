@@ -43,7 +43,7 @@ public class ClojureStepDefinition implements StepDefinition {
         return null;
     }
 
-    public void execute(Reporter reporter, Locale locale, Object[] args) throws Throwable {
+    public void execute(String uri, Reporter reporter, Locale locale, Object[] args) throws Throwable {
         Method functionInvoke = lookupInvokeMethod(args);
         try {
             functionInvoke.invoke(closure, args);

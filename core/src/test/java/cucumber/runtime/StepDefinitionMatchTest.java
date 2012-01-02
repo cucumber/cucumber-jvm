@@ -28,8 +28,8 @@ public class StepDefinitionMatchTest {
         when(stepWithoutDocStringOrTable.getRows()).thenReturn(null);
 
         StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(Arrays.asList(new Argument(0, "5")), stepDefinition, "some.feature", stepWithoutDocStringOrTable, new LocalizedXStreams());
-        stepDefinitionMatch.runStep(reporter, Locale.ENGLISH);
-        verify(stepDefinition).execute(reporter, Locale.ENGLISH, new Object[]{5});
+        stepDefinitionMatch.runStep(null, reporter, Locale.ENGLISH);
+        verify(stepDefinition).execute(null, reporter, Locale.ENGLISH, new Object[]{5});
     }
 
     @Test
@@ -45,8 +45,8 @@ public class StepDefinitionMatchTest {
         when(stepWithDocString.getRows()).thenReturn(null);
 
         StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(new ArrayList<Argument>(), stepDefinition, "some.feature", stepWithDocString, new LocalizedXStreams());
-        stepDefinitionMatch.runStep(reporter, Locale.ENGLISH);
-        verify(stepDefinition).execute(reporter, Locale.ENGLISH, new Object[]{"HELLO"});
+        stepDefinitionMatch.runStep(null, reporter, Locale.ENGLISH);
+        verify(stepDefinition).execute(null, reporter, Locale.ENGLISH, new Object[]{"HELLO"});
     }
 
     @Test
@@ -62,7 +62,7 @@ public class StepDefinitionMatchTest {
         when(stepWithDocString.getRows()).thenReturn(null);
 
         StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(Arrays.asList(new Argument(0, "5")), stepDefinition, "some.feature", stepWithDocString, new LocalizedXStreams());
-        stepDefinitionMatch.runStep(reporter, Locale.ENGLISH);
-        verify(stepDefinition).execute(reporter, Locale.ENGLISH, new Object[]{5, "HELLO"});
+        stepDefinitionMatch.runStep(null, reporter, Locale.ENGLISH);
+        verify(stepDefinition).execute(null, reporter, Locale.ENGLISH, new Object[]{5, "HELLO"});
     }
 }

@@ -92,7 +92,7 @@ public class World {
             Throwable error = null;
             long start = System.nanoTime();
             try {
-                match.runStep(reporter, locale);
+                match.runStep(uri, reporter, locale);
             } catch (Throwable t) {
                 error = t;
                 status = Result.FAILED;

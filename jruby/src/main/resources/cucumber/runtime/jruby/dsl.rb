@@ -28,9 +28,11 @@ module Cucumber
           @proc.arity
         end
 
-        def execute(reporter, locale, *args)
+        def execute(uri, reporter, locale, *args)
           $world.instance_variable_set :@__cucumber_reporter, reporter
           $world.instance_variable_set :@__cucumber_locale, locale
+          $world.instance_variable_set :@__cucumber_uri, uri
+
           $world.instance_exec(*args, &@proc)
         end
 
@@ -86,7 +88,7 @@ def step(regexp, proc)
   if proc
     register(regexp, proc)
   else
-    $backend.runStep(__FILE__, @__cucumber_reporter, @__cucumber_locale, regexp)
+    $backend.runStep(@__cucumber_uri, @__cucumber_reporter, @__cucumber_locale, regexp)
   end
 
 end
