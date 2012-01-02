@@ -48,10 +48,7 @@ public class JRubyBackend implements Backend {
     }
 
     public void runStep(String uri, Reporter reporter, Locale locale, String stepString) {
-        System.out.println("Reporter is : " + reporter);
-        System.out.println("locale is : " + locale);
-        System.out.println("URI is : " + uri);
-        System.out.println("StepString is : " + stepString);
+
         //This is probably wrong
         Step s = new Step(null, null, stepString, 1, null, null);
         world.runStep(uri, s, reporter, locale);

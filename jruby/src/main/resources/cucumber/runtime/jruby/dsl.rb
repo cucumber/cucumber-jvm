@@ -29,7 +29,6 @@ module Cucumber
         end
 
         def execute(reporter, locale, *args)
-
           $world.instance_variable_set :@__cucumber_reporter, reporter
           $world.instance_variable_set :@__cucumber_locale, locale
           $world.instance_exec(*args, &@proc)
