@@ -68,7 +68,7 @@ public class UndefinedStepsTrackerTest {
 
     private class TestSnippetGenerator extends SnippetGenerator {
         protected TestSnippetGenerator(Step step) {
-            super(step, true);
+            super(step);
         }
 
         @Override

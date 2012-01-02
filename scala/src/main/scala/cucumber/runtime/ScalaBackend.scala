@@ -4,7 +4,7 @@ package runtime
 import _root_.java.util.{List => JList}
 
 import gherkin.formatter.model.Step
-import resources.Resources
+import io.ClasspathResourceLoader
 
 import scala.collection.JavaConversions._
 
@@ -25,7 +25,7 @@ class ScalaBackend() extends Backend {
   def getSnippet(step: Step) = new ScalaSnippetGenerator(step).getSnippet
 
   def buildWorld(gluePaths: JList[String], world: World) {
-    instances = gluePaths flatMap { Resources.instantiateSubclasses(classOf[ScalaDsl], _, Array(), Array()) }
+    instances = gluePaths flatMap { new ClasspathResourceLoader().instantiateSubclasses(classOf[ScalaDsl], _, Array(), Array()) }
 
     getStepDefinitions map {world.addStepDefinition(_)}
     getBeforeHooks map {world.addBeforeHook(_)}

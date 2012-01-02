@@ -7,7 +7,7 @@ import java.util.List;
 
 public class JavaScriptSnippetGenerator extends SnippetGenerator {
     public JavaScriptSnippetGenerator(Step step) {
-        super(step, false);
+        super(step);
     }
 
     @Override

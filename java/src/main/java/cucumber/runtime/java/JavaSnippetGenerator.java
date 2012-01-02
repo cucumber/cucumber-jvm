@@ -8,7 +8,7 @@ import java.util.List;
 public class JavaSnippetGenerator extends SnippetGenerator {
 
     public JavaSnippetGenerator(Step step) {
-        super(step, true);
+        super(step);
     }
 
     @Override

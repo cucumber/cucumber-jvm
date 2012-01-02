@@ -7,7 +7,7 @@ import java.util.List;
 
 public class JythonSnippetGenerator extends SnippetGenerator {
     protected JythonSnippetGenerator(Step step) {
-        super(step, false);
+        super(step);
     }
 
     @Override

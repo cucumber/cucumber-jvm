@@ -7,7 +7,7 @@ import java.util.List;
 
 public class GroovySnippetGenerator extends SnippetGenerator {
     public GroovySnippetGenerator(Step step) {
-        super(step, true);
+        super(step);
     }
 
     @Override

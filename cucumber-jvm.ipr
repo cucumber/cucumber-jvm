@@ -299,10 +299,12 @@
       <module fileurl="file://$PROJECT_DIR$/picocontainer/cucumber-picocontainer.iml" filepath="$PROJECT_DIR$/picocontainer/cucumber-picocontainer.iml" />
       <module fileurl="file://$PROJECT_DIR$/tmp/aruba/cucumber-picocontainer-test.iml" filepath="$PROJECT_DIR$/tmp/aruba/cucumber-picocontainer-test.iml" />
       <module fileurl="file://$PROJECT_DIR$/rhino/cucumber-rhino.iml" filepath="$PROJECT_DIR$/rhino/cucumber-rhino.iml" />
+      <module fileurl="file://$PROJECT_DIR$/scala/cucumber-scala.iml" filepath="$PROJECT_DIR$/scala/cucumber-scala.iml" />
       <module fileurl="file://$PROJECT_DIR$/spring/cucumber-spring.iml" filepath="$PROJECT_DIR$/spring/cucumber-spring.iml" />
       <module fileurl="file://$PROJECT_DIR$/examples/groovy-calculator/groovy-calculator.iml" filepath="$PROJECT_DIR$/examples/groovy-calculator/groovy-calculator.iml" />
       <module fileurl="file://$PROJECT_DIR$/examples/java-calculator/java-calculator.iml" filepath="$PROJECT_DIR$/examples/java-calculator/java-calculator.iml" />
       <module fileurl="file://$PROJECT_DIR$/examples/java-webbit-websockets-selenium/java-webbit-websockets-selenium.iml" filepath="$PROJECT_DIR$/examples/java-webbit-websockets-selenium/java-webbit-websockets-selenium.iml" />
+      <module fileurl="file://$PROJECT_DIR$/examples/scala-calculator/scala-calculator.iml" filepath="$PROJECT_DIR$/examples/scala-calculator/scala-calculator.iml" />
     </modules>
   </component>
   <component name="ProjectResources">
@@ -1412,6 +1414,28 @@
       </JAVADOC>
       <SOURCES>
         <root url="jar://$MAVEN_REPOSITORY$/org/quartz-scheduler/quartz/1.8.5/quartz-1.8.5-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.scala-lang:scala-compiler:2.9.1">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/scala-lang/scala-compiler/2.9.1/scala-compiler-2.9.1.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/org/scala-lang/scala-compiler/2.9.1/scala-compiler-2.9.1-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/scala-lang/scala-compiler/2.9.1/scala-compiler-2.9.1-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.scala-lang:scala-library:2.9.1">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/scala-lang/scala-library/2.9.1/scala-library-2.9.1.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/org/scala-lang/scala-library/2.9.1/scala-library-2.9.1-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/scala-lang/scala-library/2.9.1/scala-library-2.9.1-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: org.seleniumhq.selenium:selenium-android-driver:2.15.0">

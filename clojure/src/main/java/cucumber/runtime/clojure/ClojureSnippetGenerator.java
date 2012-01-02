@@ -7,7 +7,7 @@ import java.util.List;
 
 public class ClojureSnippetGenerator extends SnippetGenerator {
     protected ClojureSnippetGenerator(Step step) {
-        super(step, false);
+        super(step);
     }
 
     @Override
