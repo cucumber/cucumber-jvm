@@ -28,7 +28,10 @@ module Cucumber
           @proc.arity
         end
 
-        def execute(*args)
+        def execute(reporter, locale, *args)
+
+          $world.instance_variable_set :@__cucumber_reporter, reporter
+          $world.instance_variable_set :@__cucumber_locale, locale
           $world.instance_exec(*args, &@proc)
         end
 
@@ -69,27 +72,24 @@ def register(regexp, proc)
 end
 
 def Given(regexp, &proc)
-  if block_given?
-    register(regexp, proc)
-  else
-    call_step(regexp)
-  end
+  step(regexp, proc)
 end
 
 def When(regexp, &proc)
-  if block_given?
-    register(regexp, proc)
-  else
-    call_step(regexp)
-  end
+  step(regexp, proc)
 end
 
 def Then(regexp, &proc)
-  if block_given?
+  step(regexp, proc)
+end
+
+def step(regexp, proc)
+  if proc
     register(regexp, proc)
   else
-    call_step(regexp)
+    $backend.runStep(__FILE__, @__cucumber_reporter, @__cucumber_locale, regexp)
   end
+
 end
 
 def Before(&proc)
@@ -98,13 +98,4 @@ end
 
 def After(&proc)
   $backend.addAfterHook(Cucumber::Runtime::JRuby::HookDefinition.new(proc))
-end
-
-def call_step(string)
-  $world.getStepDefinitions().each do |step_def|
-    if step_def.getPattern().match(string)
-      step_def.execute Array.new
-      break
-    end
-  end
 end

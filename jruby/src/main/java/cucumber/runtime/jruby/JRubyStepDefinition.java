@@ -4,13 +4,15 @@ import cucumber.runtime.ParameterType;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.Utils;
 import gherkin.formatter.Argument;
+import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Step;
 import org.jruby.RubyObject;
 import org.jruby.RubyString;
+import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
 
-import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 
 public class JRubyStepDefinition implements StepDefinition {
 
@@ -47,13 +49,17 @@ public class JRubyStepDefinition implements StepDefinition {
     }
 
     @Override
-    public void execute(Object[] args) throws Throwable {
-        IRubyObject[] jrybyArgs = new IRubyObject[args.length];
+    public void execute(Reporter reporter, Locale locale, Object[] args) throws Throwable {
+        IRubyObject[] jrybyArgs = new IRubyObject[args.length + 2];
+
+        jrybyArgs[0] = JavaEmbedUtils.javaToRuby(stepdef.getRuntime(), reporter);
+        jrybyArgs[1] = JavaEmbedUtils.javaToRuby(stepdef.getRuntime(), locale);
+
         for (int i = 0; i < args.length; i++) {
             if (args[i] != null) {
-                jrybyArgs[i] = stepdef.getRuntime().newString((String) args[i]);
+                jrybyArgs[i + 2] = stepdef.getRuntime().newString((String) args[i]);
             } else {
-                jrybyArgs[i] = null;
+                jrybyArgs[i + 2] = null;
             }
         }
         stepdef.callMethod("execute", jrybyArgs);
