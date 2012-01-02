@@ -62,6 +62,11 @@
             </dependency>
             <dependency>
                 <groupId>info.cukes</groupId>
+                <artifactId>cucumber-scala</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>info.cukes</groupId>
                 <artifactId>gherkin</artifactId>
                 <version>2.7.1</version>
             </dependency>
@@ -233,7 +238,7 @@
         <module>clojure</module>
         <module>jruby</module>
         <module>jython</module>
-        <!--module>scala</module-->
+        <module>scala</module>
     </modules>
 
     <profiles>
@@ -249,7 +254,7 @@
             <modules>
                 <module>examples/java-calculator</module>
                 <module>examples/groovy-calculator</module>
-                <!--module>examples/scala-calculator</module-->
+                <module>examples/scala-calculator</module>
                 <module>examples/java-webbit-websockets-selenium</module>
             </modules>
         </profile>
