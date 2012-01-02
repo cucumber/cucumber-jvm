@@ -80,7 +80,7 @@ def Then(regexp, &proc)
   register(regexp, proc)
 end
 
-def pending(reason)
+def pending(reason = nil)
   $backend.pending(reason)
 end
 

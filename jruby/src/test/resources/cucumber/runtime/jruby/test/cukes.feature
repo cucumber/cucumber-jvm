@@ -14,3 +14,7 @@ Feature: Cukes
   Scenario: A step is defined as pending
     Given a pending step
     Then the pending step threw a pending exception
+
+  Scenario: A step is defined as pending without any reason
+    Given a reasonless pending step
+    Then the pending step threw a pending exception without a reason
