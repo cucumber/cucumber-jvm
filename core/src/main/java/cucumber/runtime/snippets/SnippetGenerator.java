@@ -39,8 +39,8 @@ public abstract class SnippetGenerator {
      *
      * @param step the step to generate snippet for.
      */
-    protected SnippetGenerator(Step step) {
-        this(step, null, null);
+    protected SnippetGenerator(Step step, boolean quoteReplacement) {
+        this(step, null, null, quoteReplacement);
     }
 
     /**
@@ -50,7 +50,7 @@ public abstract class SnippetGenerator {
      * @param namedGroupStart beginning of named group, for example "{arg".
      * @param namedGroupEnd   end of named group, for example "}".
      */
-    protected SnippetGenerator(Step step, String namedGroupStart, String namedGroupEnd) {
+    protected SnippetGenerator(Step step, String namedGroupStart, String namedGroupEnd, boolean quoteReplacement) {
         this.step = step;
         this.namedGroupStart = namedGroupStart;
         this.namedGroupEnd = namedGroupEnd;
@@ -152,7 +152,7 @@ public abstract class SnippetGenerator {
     protected String untypedArguments(List<Class<?>> argumentTypes) {
         StringBuilder sb = new StringBuilder();
         for (int n = 0; n < argumentTypes.size(); n++) {
-            if (n > 1) {
+            if (n > 0) {
                 sb.append(", ");
             }
             sb.append("arg").append(n + 1);

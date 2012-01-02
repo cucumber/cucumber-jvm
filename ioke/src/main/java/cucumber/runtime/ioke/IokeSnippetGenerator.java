@@ -7,7 +7,7 @@ import java.util.List;
 
 public class IokeSnippetGenerator extends SnippetGenerator {
     protected IokeSnippetGenerator(Step step) {
-        super(step, "{arg", "}");
+        super(step, "{arg", "}", false);
     }
 
     @Override

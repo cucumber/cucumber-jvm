@@ -7,7 +7,7 @@ import java.util.List;
 
 public class JRubySnippetGenerator extends SnippetGenerator {
     protected JRubySnippetGenerator(Step step) {
-        super(step);
+        super(step, false);
     }
 
     @Override

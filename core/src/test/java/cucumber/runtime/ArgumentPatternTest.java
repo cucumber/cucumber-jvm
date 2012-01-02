@@ -13,13 +13,13 @@ public class ArgumentPatternTest {
     private ArgumentPattern exchanger = new ArgumentPattern(singleDigit, anyType);
 
     @Test
-    public void replacesMatchWithPattern() {
-        assertEquals("(\\\\d)", exchanger.replaceMatchesWithGroups("1"));
+    public void replacesMatchWithoutEscapedNumberClass() {
+        assertEquals("(\\d)", exchanger.replaceMatchesWithGroups("1"));
     }
 
     @Test
     public void replacesMultipleMatchesWithPattern() {
-        assertEquals("(\\\\d)(\\\\d)", exchanger.replaceMatchesWithGroups("13"));
+        assertEquals("(\\d)(\\d)", exchanger.replaceMatchesWithGroups("13"));
     }
 
     @Test

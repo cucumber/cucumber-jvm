@@ -5,7 +5,7 @@ import cucumber.io.ResourceLoader;
 import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.World;
-import cucumber.runtime.javascript.JavascriptSnippetGenerator;
+import cucumber.runtime.javascript.JavaScriptSnippetGenerator;
 import gherkin.formatter.model.Step;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.NativeFunction;
@@ -57,7 +57,7 @@ public class RhinoBackend implements Backend {
 
     @Override
     public String getSnippet(Step step) {
-        return new JavascriptSnippetGenerator(step).getSnippet();
+        return new JavaScriptSnippetGenerator(step).getSnippet();
     }
 
     private StackTraceElement stepDefLocation(String extension) {

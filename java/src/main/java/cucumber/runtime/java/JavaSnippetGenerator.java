@@ -8,12 +8,13 @@ import java.util.List;
 public class JavaSnippetGenerator extends SnippetGenerator {
 
     public JavaSnippetGenerator(Step step) {
-        super(step);
+        super(step, true);
     }
 
     @Override
     protected String patternFor(String stepName) {
-        return super.patternFor(stepName).replaceAll("\"", "\\\\\"");
+        String pattern = super.patternFor(stepName);
+        return pattern.replaceAll("\\\\", "\\\\\\\\").replaceAll("\"", "\\\\\"");
     }
 
     @Override

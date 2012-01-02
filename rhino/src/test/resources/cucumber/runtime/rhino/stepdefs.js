@@ -8,18 +8,12 @@ World(function() {
 
 });
 
-Given(/^I have (\d+) cukes in my belly$/, function(n) {
-    this.cukes = n;
+Given(/^I have (\d+) "([^"]*)" in my belly$/, function(n, what) {
+    this.n = n;
+    this.what = what;
 });
 
-Then(/^there are (\d+) cukes in my belly$/, function(n) {
-    assertEquals(n, this.cukes);
-});
-
-Then(/^the (.*) contains (.*)$/, function(container, ingredient) {
-    assertEquals("glass", container)
-});
-
-When(/^I add (.*)$/, function(liquid) {
-    assertEquals("milk", liquid);
+Then(/^there are (\d+) "([^"]*)" in my belly$/, function(n, what) {
+    assertEquals(n, this.n);
+    assertEquals(what, this.what);
 });

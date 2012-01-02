@@ -45,7 +45,8 @@
                         <phase>package</phase>
                         <configuration>
                             <tasks>
-                                <copy file="${project.build.directory}/${project.build.finalName}-full.jar" tofile="${basedir}/lib/cucumber-jruby-full.jar" failonerror="true" />
+                                <!-- Allow failure, since the jar to copy only exists if we build with -Prelease-sign-artifacts -->
+                                <copy file="${project.build.directory}/${project.build.finalName}-full.jar" tofile="${basedir}/lib/cucumber-jruby-full.jar" failonerror="false" />
                             </tasks>
                         </configuration>
                         <goals>

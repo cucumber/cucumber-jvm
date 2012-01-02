@@ -7,12 +7,7 @@ import java.util.List;
 
 public class ClojureSnippetGenerator extends SnippetGenerator {
     protected ClojureSnippetGenerator(Step step) {
-        super(step);
-    }
-
-    @Override
-    protected String patternFor(String stepName) {
-        return super.patternFor(stepName).replaceAll("\"", "\\\\\"");
+        super(step, false);
     }
 
     @Override

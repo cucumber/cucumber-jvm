@@ -5,9 +5,9 @@ import gherkin.formatter.model.Step;
 
 import java.util.List;
 
-public class JavascriptSnippetGenerator extends SnippetGenerator {
-    public JavascriptSnippetGenerator(Step step) {
-        super(step);
+public class JavaScriptSnippetGenerator extends SnippetGenerator {
+    public JavaScriptSnippetGenerator(Step step) {
+        super(step, false);
     }
 
     @Override
