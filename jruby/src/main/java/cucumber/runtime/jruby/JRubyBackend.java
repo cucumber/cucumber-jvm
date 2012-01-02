@@ -4,6 +4,7 @@ import cucumber.resources.Consumer;
 import cucumber.resources.Resource;
 import cucumber.resources.Resources;
 import cucumber.runtime.Backend;
+import cucumber.runtime.PendingException;
 import cucumber.runtime.World;
 import gherkin.formatter.model.Step;
 import org.jruby.RubyObject;
@@ -20,6 +21,7 @@ public class JRubyBackend implements Backend {
 
     public JRubyBackend() throws UnsupportedEncodingException {
         jruby.put("$backend", this);
+        jruby.setClassLoader(this.getClass().getClassLoader());
         jruby.runScriptlet(new InputStreamReader(getClass().getResourceAsStream(DSL), "UTF-8"), DSL);
     }
 
@@ -43,6 +45,10 @@ public class JRubyBackend implements Backend {
     @Override
     public String getSnippet(Step step) {
         return new JRubySnippetGenerator(step).getSnippet();
+    }
+
+    public void pending(String reason) throws PendingException {
+        throw new PendingException(reason);
     }
 
     public void addStepdef(RubyObject stepdef) {

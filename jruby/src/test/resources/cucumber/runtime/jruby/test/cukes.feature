@@ -11,3 +11,6 @@ Feature: Cukes
     Given Something
     Then the argument should be nil
 
+  Scenario: A step is defined as pending
+    Given a pending step
+    Then the pending step threw a pending exception

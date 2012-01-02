@@ -23,3 +23,14 @@ Then /^the argument should not be nil/ do
   assert_not_nil(@argument, "Argument should not be nil")
 end
 
+Given /^a pending step$/ do
+  begin
+    pending "I'm pending!"
+  rescue Exception => @exception
+  end
+end
+
+Then /^the pending step threw a pending exception$/ do
+  assert_not_nil @exception
+  assert_match /.*PendingException: I'm pending!$/, @exception.message
+end
