@@ -13,6 +13,7 @@ public class JRubySnippetGenerator extends SnippetGenerator {
     @Override
     protected String template() {
         return "{0} '/'{1}'/' do {3}\n" +
+                "pending\n" +
                 "  # {4}\n" +
                 "end\n";
     }
