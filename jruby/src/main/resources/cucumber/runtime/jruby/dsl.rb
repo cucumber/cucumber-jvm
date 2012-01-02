@@ -100,18 +100,6 @@ def After(&proc)
   $backend.addAfterHook(Cucumber::Runtime::JRuby::HookDefinition.new(proc))
 end
 
-#def Given(string)
-#  call_step string
-#end
-#
-#def When(string)
-#  call_step string
-#end
-#
-#def Then(string)
-#  call_step(string)
-#end
-#
 def call_step(string)
   $world.getStepDefinitions().each do |step_def|
     if step_def.getPattern().match(string)
