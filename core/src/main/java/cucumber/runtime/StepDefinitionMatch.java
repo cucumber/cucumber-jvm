@@ -57,12 +57,20 @@ public class StepDefinitionMatch extends Match {
      * @return an Array matching the types or {@code parameterTypes}, or an array of String if {@code parameterTypes} is null
      */
     private Object[] transformedArgs(List<ParameterType> parameterTypes, Step step, XStream xStream, Locale locale) {
+        if(xStream == null) {
+            throw new NullPointerException("xStream");
+        }
         int argumentCount = getArguments().size();
         if (step.getDocString() != null) argumentCount++;
         if (step.getRows() != null) argumentCount++;
-        if (parameterTypes != null && parameterTypes.size() != argumentCount) {
-            List<Argument> arguments = createArgumentsForErrorMessage(step);
-            throw new CucumberException("Arity mismatch. Declared parameters: " + parameterTypes + ". Matched arguments: " + arguments);
+        if (parameterTypes != null) {
+            if(parameterTypes.size() != argumentCount) {
+                List<Argument> arguments = createArgumentsForErrorMessage(step);
+                throw new CucumberException("Arity mismatch. Declared parameters: " + parameterTypes + ". Matched arguments: " + arguments);
+            }
+        } else {
+            // Some backends, like ClojureBackend, don't know the arity and therefore pass in null.
+            parameterTypes = Utils.listOf(argumentCount, new ParameterType(String.class, null));
         }
 
         Object[] result = new Object[argumentCount];

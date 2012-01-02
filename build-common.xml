@@ -4,18 +4,6 @@
     <property name="ivy-jar" location="${ivy-install-dir}/ivy-${ivy-version}.jar"/>
     <available property="ivy-installed" file="${ivy-jar}"/>
 
-    <target name="-init" description="Ivy-independent initialization">
-        <patternset id="metainf-files">
-            <include name="*.txt"/>
-            <exclude name="design-discussion.txt,tech-debt.txt"/>
-        </patternset>
-        <patternset id="test-classes">
-            <include name="**/Test*.class"/>
-            <include name="**/*Tests.class"/>
-            <exclude name="**/*$*.class"/>
-        </patternset>
-    </target>
-
     <target name="-bootstrap-ivy" unless="ivy-installed">
         <mkdir dir="${ivy-install-dir}"/>
         <get src="http://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy-version}/ivy-${ivy-version}.jar"
@@ -26,7 +14,7 @@
         <taskdef uri="antlib:org.apache.ivy.ant" classpath="${ivy-jar}"/>
     </target>
 
-    <target name="-init-ivy" depends="-init,-load-ivy" description="Set up Ivy-related paths">
+    <target name="-init-ivy" depends="-load-ivy" description="Set up Ivy-related paths">
         <dirname property="common-basedir" file="${ant.file.common}"/>
         <!--<ivy:settings file="${common-basedir}/ivy-settings.xml"/>-->
         <ivy:resolve log="quiet"/>
@@ -35,7 +23,7 @@
         <property name="module" value="${ant.project.name}"/>
         <property name="version" value="${ivy.revision}"/>
 
-        <property name="jars-dir" value="target"/>
+        <property name="jars-dir" value="target/artifacts/jars"/>
         <property name="module-jar" location="${jars-dir}/${module}.jar"/>
         <property name="sources-jar" location="${jars-dir}/${module}-sources.jar"/>
         <property name="javadoc-jar" location="${jars-dir}/${module}-javadoc.jar"/>
@@ -59,7 +47,11 @@
                srcdir="src/main/java"
                classpathref="ivy.compile-classpath"
                includeantruntime="false"
+               encoding="UTF-8"
                debug="true"/>
+        <copy todir="target/classes" failonerror="false">
+            <fileset dir="src/main/resources"/>
+        </copy>
     </target>
 
     <target name="compile-test" depends="compile-main" description="compile the tests">
@@ -68,24 +60,45 @@
                srcdir="src/test/java"
                classpathref="test-classpath"
                includeantruntime="false"
+               encoding="UTF-8"
                debug="true"/>
+        <copy todir="target/test-classes" failonerror="false">
+            <fileset dir="src/test/resources"/>
+        </copy>
     </target>
 
     <target name="test" depends="compile-test">
         <mkdir dir="target/reports"/>
         <junit printsummary="yes"
-               haltonfailure="yes"
-               maxmemory="300m">
+               fork="no"
+               maxmemory="300m"
+               failureproperty="junit.failure">
             <classpath>
                 <path refid="test-classpath"/>
                 <pathelement location="target/test-classes"/>
             </classpath>
-            <formatter type="plain"/>
-            <batchtest fork="yes" todir="target/reports">
-                <fileset dir="target/test-classes">
-                    <patternset refid="test-classes"/>
+            <formatter type="brief" usefile="false"/>
+            <batchtest todir="target/reports">
+                <fileset dir="src/test/java">
+                    <include name="**/*Test*.java"/>
                 </fileset>
             </batchtest>
         </junit>
+        <fail if="junit.failure" message="Tests failed"/>
     </target>
+
+    <target name="jar" depends="compile-main,test" description="build the jar">
+        <mkdir dir="${jars-dir}"/>
+        <jar file="${module-jar}" basedir="target/classes">
+        </jar>
+    </target>
+
+    <target name="publish-artifacts" depends="jar,test">
+        <ivy:publish resolver="local" overwrite="true" artifactspattern="target/artifacts/[type]s/[artifact].[ext]"/>
+    </target>
+
+    <target name="clean">
+        <delete dir="target"/>
+    </target>
+
 </project>

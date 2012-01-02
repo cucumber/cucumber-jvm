@@ -34,4 +34,9 @@ public class ParameterType {
     public String getDateFormat() {
         return dateFormat;
     }
+
+    @Override
+    public String toString() {
+        return type.toString();
+    }
 }
