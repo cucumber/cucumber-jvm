@@ -19,7 +19,11 @@ class FileResource implements Resource {
 
     @Override
     public String getPath() {
-        return file.getAbsolutePath().substring(root.getAbsolutePath().length() + 1);
+        if(file.equals(root)) {
+            return file.getAbsolutePath();
+        } else {
+            return file.getAbsolutePath().substring(root.getAbsolutePath().length() + 1);
+        }
     }
 
     @Override

@@ -45,7 +45,7 @@
                         <phase>package</phase>
                         <configuration>
                             <tasks>
-                                <copy file="${project.build.directory}/${project.build.finalName}-full.jar" tofile="${basedir}/lib/cucumber-jruby-full.jar" failonerror="false" />
+                                <copy file="${project.build.directory}/${project.build.finalName}-full.jar" tofile="${basedir}/lib/cucumber-jruby-full.jar" failonerror="true" />
                             </tasks>
                         </configuration>
                         <goals>
