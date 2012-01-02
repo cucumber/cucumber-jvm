@@ -43,7 +43,6 @@
         <dependency>
             <groupId>info.cukes</groupId>
             <artifactId>cucumber-html</artifactId>
-            <version>0.2.1</version>
         </dependency>
     </dependencies>
 

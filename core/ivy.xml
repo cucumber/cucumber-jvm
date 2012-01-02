@@ -1,0 +1,23 @@
+<ivy-module version="2.0">
+    <info organisation="info.cukes" module="cucumber-core" revision="1234"/>
+
+    <configurations defaultconfmapping="*->default">
+        <conf name="default"/>
+        <conf name="test" extends="default"/>
+    </configurations>
+    <publications>
+        <artifact conf="default" name="${ivy.module}"/>
+        <artifact conf="default" name="${ivy.module}-sources"/>
+        <artifact conf="default" name="${ivy.module}-javadoc"/>
+    </publications>
+    <dependencies>
+        <dependency conf="default" org="info.cukes" name="gherkin" rev="2.7.1"/>
+        <dependency conf="default" org="info.cukes" name="cucumber-html" rev="0.2.1"/>
+        <dependency conf="default" org="com.thoughtworks.xstream" name="xstream" rev="1.4.2"/>
+        <dependency conf="default" org="com.googlecode.java-diff-utils" name="diffutils" rev="1.2.1"/>
+        <dependency conf="default" org="com.google.code.gson" name="gson" rev="2.1"/>
+
+        <dependency conf="test" org="junit" name="junit" rev="4.10"/>
+        <dependency conf="test" org="org.mockito" name="mockito-all" rev="1.9.0"/>
+    </dependencies>
+</ivy-module>

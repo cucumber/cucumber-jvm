@@ -1,0 +1,91 @@
+<project name="common" xmlns:ivy="antlib:org.apache.ivy.ant" default="test">
+    <property name="ivy-version" value="2.2.0"/>
+    <property name="ivy-install-dir" location="${user.home}/.ivy2/install"/>
+    <property name="ivy-jar" location="${ivy-install-dir}/ivy-${ivy-version}.jar"/>
+    <available property="ivy-installed" file="${ivy-jar}"/>
+
+    <target name="-init" description="Ivy-independent initialization">
+        <patternset id="metainf-files">
+            <include name="*.txt"/>
+            <exclude name="design-discussion.txt,tech-debt.txt"/>
+        </patternset>
+        <patternset id="test-classes">
+            <include name="**/Test*.class"/>
+            <include name="**/*Tests.class"/>
+            <exclude name="**/*$*.class"/>
+        </patternset>
+    </target>
+
+    <target name="-bootstrap-ivy" unless="ivy-installed">
+        <mkdir dir="${ivy-install-dir}"/>
+        <get src="http://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy-version}/ivy-${ivy-version}.jar"
+             dest="${ivy-jar}" usetimestamp="true" ignoreerrors="false"/>
+    </target>
+
+    <target name="-load-ivy" depends="-bootstrap-ivy">
+        <taskdef uri="antlib:org.apache.ivy.ant" classpath="${ivy-jar}"/>
+    </target>
+
+    <target name="-init-ivy" depends="-init,-load-ivy" description="Set up Ivy-related paths">
+        <dirname property="common-basedir" file="${ant.file.common}"/>
+        <!--<ivy:settings file="${common-basedir}/ivy-settings.xml"/>-->
+        <ivy:resolve log="quiet"/>
+        <ivy:cachepath pathid="ivy.compile-classpath" conf="default"/>
+        <ivy:cachepath pathid="ivy.test-classpath" conf="test"/>
+        <property name="module" value="${ant.project.name}"/>
+        <property name="version" value="${ivy.revision}"/>
+
+        <property name="jars-dir" value="target"/>
+        <property name="module-jar" location="${jars-dir}/${module}.jar"/>
+        <property name="sources-jar" location="${jars-dir}/${module}-sources.jar"/>
+        <property name="javadoc-jar" location="${jars-dir}/${module}-javadoc.jar"/>
+
+        <path id="test-classpath">
+            <path refid="ivy.test-classpath"/>
+            <pathelement location="target/classes"/>
+        </path>
+    </target>
+
+    <target name="debug" depends="-init-ivy">
+        <property name="compile-classpath" refid="ivy.compile-classpath"/>
+        <property name="test-classpath" refid="test-classpath"/>
+        <echoproperties/>
+        <ivy:report/>
+    </target>
+
+    <target name="compile-main" depends="-init-ivy" description="compile the module">
+        <mkdir dir="target/classes"/>
+        <javac destdir="target/classes"
+               srcdir="src/main/java"
+               classpathref="ivy.compile-classpath"
+               includeantruntime="false"
+               debug="true"/>
+    </target>
+
+    <target name="compile-test" depends="compile-main" description="compile the tests">
+        <mkdir dir="target/test-classes"/>
+        <javac destdir="target/test-classes"
+               srcdir="src/test/java"
+               classpathref="test-classpath"
+               includeantruntime="false"
+               debug="true"/>
+    </target>
+
+    <target name="test" depends="compile-test">
+        <mkdir dir="target/reports"/>
+        <junit printsummary="yes"
+               haltonfailure="yes"
+               maxmemory="300m">
+            <classpath>
+                <path refid="test-classpath"/>
+                <pathelement location="target/test-classes"/>
+            </classpath>
+            <formatter type="plain"/>
+            <batchtest fork="yes" todir="target/reports">
+                <fileset dir="target/test-classes">
+                    <patternset refid="test-classes"/>
+                </fileset>
+            </batchtest>
+        </junit>
+    </target>
+</project>

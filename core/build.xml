@@ -1,0 +1,3 @@
+<project xmlns:ivy="antlib:org.apache.ivy.ant" name="cucumber-core" default="test">
+  <import file="../build-common.xml" />
+</project>
