@@ -1,0 +1,3 @@
+<project name="cucumber-jruby" default="test">
+  <import file="../build-common.xml" />
+</project>
