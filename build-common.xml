@@ -17,7 +17,7 @@
     <target name="-init-ivy" depends="-load-ivy" description="Set up Ivy-related paths">
         <dirname property="common-basedir" file="${ant.file.common}"/>
         <!--<ivy:settings file="${common-basedir}/ivy-settings.xml"/>-->
-        <ivy:resolve log="quiet"/>
+        <!--<ivy:resolve log="quiet"/>-->
         <ivy:cachepath pathid="ivy.compile-classpath" conf="default"/>
         <ivy:cachepath pathid="ivy.test-classpath" conf="test"/>
         <property name="module" value="${ant.project.name}"/>
@@ -70,8 +70,9 @@
     <target name="test" depends="compile-test">
         <mkdir dir="target/reports"/>
         <junit printsummary="yes"
-               fork="no"
-               maxmemory="300m"
+               fork="yes"
+               forkmode="once"
+               maxmemory="512m"
                failureproperty="junit.failure">
             <classpath>
                 <path refid="test-classpath"/>

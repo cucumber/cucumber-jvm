@@ -12,7 +12,6 @@
     </publications>
     <dependencies>
         <dependency conf="default" org="info.cukes" name="cucumber-core" rev="latest.integration"/>
-        <dependency conf="default" org="junit" name="junit" rev="4.10"/>
         <dependency conf="default" org="org.ioke" name="ioke-lang" rev="P-0.4.0-p11"/>
         <dependency conf="default" org="org.ioke" name="ioke-lang-lib" rev="P-0.4.0-p11"/>
 

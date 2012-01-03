@@ -12,7 +12,6 @@
     </publications>
     <dependencies>
         <dependency conf="default" org="info.cukes" name="cucumber-java" rev="latest.integration"/>
-        <dependency conf="default" org="junit" name="junit" rev="4.10"/>
         <dependency conf="default" org="com.google.inject" name="guice" rev="3.0"/>
 
         <dependency conf="test" org="info.cukes" name="cucumber-junit" rev="latest.integration"/>

@@ -12,7 +12,6 @@
     </publications>
     <dependencies>
         <dependency conf="default" org="info.cukes" name="cucumber-core" rev="latest.integration"/>
-        <dependency conf="default" org="junit" name="junit" rev="4.10"/>
         <dependency conf="default" org="org.clojure" name="clojure" rev="1.4.0-alpha3"/>
         
         <dependency conf="test" org="info.cukes" name="cucumber-junit" rev="latest.integration"/>
