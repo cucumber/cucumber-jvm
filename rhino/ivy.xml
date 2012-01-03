@@ -1,0 +1,20 @@
+<ivy-module version="2.0">
+    <info organisation="info.cukes" module="cucumber-rhino" revision="1234"/>
+
+    <configurations defaultconfmapping="*->default">
+        <conf name="default"/>
+        <conf name="test" extends="default"/>
+    </configurations>
+    <publications>
+        <artifact conf="default" name="${ivy.module}"/>
+        <!--<artifact conf="default" name="${ivy.module}-sources"/>-->
+        <!--<artifact conf="default" name="${ivy.module}-javadoc"/>-->
+    </publications>
+    <dependencies>
+        <dependency conf="default" org="info.cukes" name="cucumber-core" rev="latest.integration"/>
+        <dependency conf="default" org="rhino" name="js" rev="1.7R2"/>
+
+        <dependency conf="test" org="info.cukes" name="cucumber-junit" rev="latest.integration"/>
+        <dependency conf="test" org="org.mockito" name="mockito-all" rev="1.9.0"/>
+    </dependencies>
+</ivy-module>
