@@ -48,7 +48,7 @@ public class RhinoStepDefinition implements StepDefinition {
         return Utils.listOf(bodyFunc.getArity(), new ParameterType(String.class, null));
     }
 
-    public void execute(String uri, Reporter reporter, Locale locale, Object[] args) throws Throwable {
+    public void execute(Reporter reporter, Locale locale, Object[] args) throws Throwable {
         bodyFunc.call(cx, scope, scope, args);
     }
 

@@ -45,7 +45,7 @@ public class GroovyStepDefinition implements StepDefinition {
         return result;
     }
 
-    public void execute(String uri, Reporter reporter, Locale locale, Object[] args) throws Throwable {
+    public void execute(Reporter reporter, Locale locale, Object[] args) throws Throwable {
         backend.invoke(body, args);
     }
 

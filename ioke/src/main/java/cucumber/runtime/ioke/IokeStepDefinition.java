@@ -65,7 +65,7 @@ public class IokeStepDefinition implements StepDefinition {
         }
     }
 
-    public void execute(String uri, Reporter reporter, Locale locale, Object[] args) throws Throwable {
+    public void execute(Reporter reporter, Locale locale, Object[] args) throws Throwable {
         backend.execute(iokeStepDefObject, args);
     }
 

@@ -49,18 +49,17 @@ public class JRubyStepDefinition implements StepDefinition {
     }
 
     @Override
-    public void execute(String uri, Reporter reporter, Locale locale, Object[] args) throws Throwable {
-        IRubyObject[] jrybyArgs = new IRubyObject[args.length + 3];
-        
-        jrybyArgs[0] = JavaEmbedUtils.javaToRuby(stepdef.getRuntime(), uri);
-        jrybyArgs[1] = JavaEmbedUtils.javaToRuby(stepdef.getRuntime(), reporter);
-        jrybyArgs[2] = JavaEmbedUtils.javaToRuby(stepdef.getRuntime(), locale);
+    public void execute(Reporter reporter, Locale locale, Object[] args) throws Throwable {
+        IRubyObject[] jrybyArgs = new IRubyObject[args.length + 2];
+
+        jrybyArgs[0] = JavaEmbedUtils.javaToRuby(stepdef.getRuntime(), reporter);
+        jrybyArgs[1] = JavaEmbedUtils.javaToRuby(stepdef.getRuntime(), locale);
 
         for (int i = 0; i < args.length; i++) {
             if (args[i] != null) {
-                jrybyArgs[i + 3] = stepdef.getRuntime().newString((String) args[i]);
+                jrybyArgs[i + 2] = stepdef.getRuntime().newString((String) args[i]);
             } else {
-                jrybyArgs[i + 3] = null;
+                jrybyArgs[i + 2] = null;
             }
         }
         stepdef.callMethod("execute", jrybyArgs);
