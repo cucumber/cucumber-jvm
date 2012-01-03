@@ -6,12 +6,14 @@ import cucumber.resources.Resources;
 import cucumber.runtime.Backend;
 import cucumber.runtime.World;
 import gherkin.formatter.Reporter;
+import gherkin.formatter.model.Comment;
 import gherkin.formatter.model.Step;
 import org.jruby.RubyObject;
 import org.jruby.embed.ScriptingContainer;
 
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -48,9 +50,7 @@ public class JRubyBackend implements Backend {
     }
 
     public void runStep(String uri, Reporter reporter, Locale locale, String stepString) {
-
-        //This is probably wrong
-        Step s = new Step(null, null, stepString, 1, null, null);
+        Step s = new Step(Collections.<Comment>emptyList(), "Given ", stepString, 0, null, null);
         world.runStep(uri, s, reporter, locale);
     }
 
