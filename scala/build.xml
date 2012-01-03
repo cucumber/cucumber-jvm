@@ -1,0 +1,31 @@
+<project name="cucumber-scala" default="test">
+    <import file="../build-common.xml"/>
+
+    <target name="compile-main" depends="-init-ivy" description="compile the module">
+        <mkdir dir="target/classes"/>
+
+        <taskdef resource="scala/tools/ant/antlib.xml">
+            <classpath refid="ivy.compile-classpath"/>
+        </taskdef>
+
+        <scalac srcdir="src/main/scala" destdir="target/classes" classpathref="ivy.compile-classpath" deprecation="yes">
+            <include name="**/*.scala"/>
+        </scalac>
+
+        <copy todir="target/classes" failonerror="false">
+            <fileset dir="src/main/resources"/>
+        </copy>
+    </target>
+
+    <target name="compile-test" depends="compile-main" description="compile the tests">
+        <mkdir dir="target/test-classes"/>
+
+        <scalac srcdir="src/test/scala" destdir="target/test-classes" classpathref="test-classpath" deprecation="yes">
+            <include name="**/*.scala"/>
+        </scalac>
+
+        <copy todir="target/test-classes" failonerror="false">
+            <fileset dir="src/test/resources"/>
+        </copy>
+    </target>
+</project>
