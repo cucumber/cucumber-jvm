@@ -5,6 +5,7 @@
     <available property="ivy-installed" file="${ivy-jar}"/>
 
     <target name="-init" description="Ivy-independent initialization">
+        <property environment="env"/>
         <patternset id="test-classes">
             <include name="**/*Test*.class"/>
             <exclude name="**/*$*.class"/>
@@ -27,6 +28,8 @@
         <!--<ivy:resolve log="quiet"/>-->
         <ivy:cachepath pathid="ivy.compile-classpath" conf="default"/>
         <ivy:cachepath pathid="ivy.test-classpath" conf="test"/>
+        <ivy:artifactproperty conf="default" name="[organisation].[artifact]"
+                              value="${ivy.cache.dir}/[organisation]/[artifact]/jars/[artifact]-[revision].[ext]"/>
         <property name="module" value="${ant.project.name}"/>
         <property name="version" value="${ivy.revision}"/>
 

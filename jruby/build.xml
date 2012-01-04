@@ -2,16 +2,26 @@
     <import file="../build-common.xml"/>
 
     <target name="jarjar" depends="compile-main">
-        <ivy:artifactproperty conf="default" name="[organisation].[artifact]" value="${ivy.cache.dir}/[organisation]/[artifact]/jars/[artifact]-[revision].[ext]"/>
         <ivy:cachepath pathid="ivy.build-classpath" conf="build"/>
         <taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask" classpathref="ivy.build-classpath"/>
-        
+
         <jarjar jarfile="lib/cucumber-jruby-full.jar">
             <fileset dir="target/classes"/>
-            <zipfileset src="${info.cukes.cucumber-core}" />
-            <zipfileset src="${info.cukes.gherkin}" />
-            <zipfileset src="${com.thoughtworks.xstream.xstream}" />
+            <zipfileset src="${info.cukes.cucumber-core}"/>
+            <zipfileset src="${info.cukes.gherkin}"/>
+            <zipfileset src="${com.thoughtworks.xstream.xstream}"/>
+            <zipfileset src="${com.googlecode.java-diff-utils.diffutils}"/>
+            <zipfileset src="${com.google.code.gson.gson}"/>
         </jarjar>
     </target>
 
+    <target name="cli-test" depends="jarjar">
+        <exec executable="${env.JRUBY_HOME}/bin/jruby">
+            <arg file="bin/cucumber-jvm"/>
+            <arg value="--glue"/>
+            <arg file="src/test/resources"/>
+            <arg file="src/test/resources"/>
+        </exec>
+    </target>
+    
 </project>

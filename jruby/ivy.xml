@@ -4,7 +4,7 @@
     <configurations defaultconfmapping="*->default">
         <conf name="default"/>
         <conf name="test" extends="default"/>
-        <conf name="build" extends="default"/>
+        <conf name="build"/>
     </configurations>
     <publications>
         <artifact conf="default" name="${ivy.module}"/>
