@@ -1,0 +1,21 @@
+<ivy-module version="2.0">
+    <info organisation="info.cukes" module="cucumber-weld" revision="1234"/>
+
+    <configurations defaultconfmapping="*->default">
+        <conf name="default"/>
+        <conf name="test" extends="default"/>
+    </configurations>
+    <publications>
+        <artifact conf="default" name="${ivy.module}"/>
+        <!--<artifact conf="default" name="${ivy.module}-sources"/>-->
+        <!--<artifact conf="default" name="${ivy.module}-javadoc"/>-->
+    </publications>
+    <dependencies>
+        <dependency conf="default" org="info.cukes" name="cucumber-java" rev="latest.integration"/>
+        <dependency conf="default" org="org.jboss.weld.se" name="weld-se" rev="1.1.4.Final"/>
+        <dependency conf="default" org="javax.enterprise" name="cdi-api" rev="1.1.EDR1.1"/>
+
+        <dependency conf="test" org="info.cukes" name="cucumber-junit" rev="latest.integration"/>
+        <dependency conf="test" org="org.mockito" name="mockito-all" rev="1.9.0"/>
+    </dependencies>
+</ivy-module>

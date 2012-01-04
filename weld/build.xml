@@ -1,0 +1,3 @@
+<project name="cucumber-weld" default="test">
+  <import file="../build-common.xml" />
+</project>
