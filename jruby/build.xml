@@ -1,3 +1,17 @@
-<project name="cucumber-jruby" default="test">
-  <import file="../build-common.xml" />
+<project name="cucumber-jruby" xmlns:ivy="antlib:org.apache.ivy.ant" default="test">
+    <import file="../build-common.xml"/>
+
+    <target name="jarjar" depends="compile-main">
+        <ivy:artifactproperty conf="default" name="[organisation].[artifact]" value="${ivy.cache.dir}/[organisation]/[artifact]/jars/[artifact]-[revision].[ext]"/>
+        <ivy:cachepath pathid="ivy.build-classpath" conf="build"/>
+        <taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask" classpathref="ivy.build-classpath"/>
+        
+        <jarjar jarfile="lib/cucumber-jruby-full.jar">
+            <fileset dir="target/classes"/>
+            <zipfileset src="${info.cukes.cucumber-core}" />
+            <zipfileset src="${info.cukes.gherkin}" />
+            <zipfileset src="${com.thoughtworks.xstream.xstream}" />
+        </jarjar>
+    </target>
+
 </project>

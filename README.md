@@ -84,13 +84,15 @@ You'll need Ant installed
 TODO:
 
 * Set version
-* Build jarjar (like gherkin)
+* Build groovy jarjar
 * Make Ant run CLI as well
 * Sign jars
 * Generate i18n, maybe use mustache instead of rake/erb
 * Upload jars
 * Tag git
 * Fix stepdefs.json (it's empty)
+* Run the integration tests
+* Doc how to set up IDEA
 
 ### Continuous Integration
 

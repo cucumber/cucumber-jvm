@@ -82,6 +82,16 @@
   </component>
   <component name="FacetAutodetectingManager">
     <autodetection-disabled>
+      <facet-type id="IvyIDEA">
+        <modules>
+          <module name="cucumber-jruby">
+            <files>
+              <file url="file://$PROJECT_DIR$/jruby/ivy.xml" />
+              <file url="file://$PROJECT_DIR$/jruby/target/artifacts/ivys/ivy.xml" />
+            </files>
+          </module>
+        </modules>
+      </facet-type>
       <facet-type id="scala">
         <modules>
           <module name="cucumber-scala" />
@@ -156,6 +166,11 @@
         <option value="examples" />
         <option value="cucumber-jvm-snapshot" />
       </list>
+    </option>
+    <option name="ignoredFiles">
+      <set>
+        <option value="$PROJECT_DIR$/jruby/pom.xml" />
+      </set>
     </option>
   </component>
   <component name="Palette2">
@@ -309,7 +324,6 @@
       <module fileurl="file://$PROJECT_DIR$/guice/cucumber-guice.iml" filepath="$PROJECT_DIR$/guice/cucumber-guice.iml" />
       <module fileurl="file://$PROJECT_DIR$/ioke/cucumber-ioke.iml" filepath="$PROJECT_DIR$/ioke/cucumber-ioke.iml" />
       <module fileurl="file://$PROJECT_DIR$/java/cucumber-java.iml" filepath="$PROJECT_DIR$/java/cucumber-java.iml" />
-      <module fileurl="file://$PROJECT_DIR$/jruby/cucumber-jruby.iml" filepath="$PROJECT_DIR$/jruby/cucumber-jruby.iml" />
       <module fileurl="file://$PROJECT_DIR$/junit/cucumber-junit.iml" filepath="$PROJECT_DIR$/junit/cucumber-junit.iml" />
       <module fileurl="file://$PROJECT_DIR$/cucumber-jvm.iml" filepath="$PROJECT_DIR$/cucumber-jvm.iml" />
       <module fileurl="file://$PROJECT_DIR$/jython/cucumber-jython.iml" filepath="$PROJECT_DIR$/jython/cucumber-jython.iml" />

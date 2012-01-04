@@ -88,7 +88,7 @@
             <formatter type="brief" usefile="false"/>
             <batchtest todir="target/reports">
                 <fileset dir="target/test-classes">
-                    <patternset refid="test-classes" />
+                    <patternset refid="test-classes"/>
                 </fileset>
             </batchtest>
         </junit>
@@ -97,7 +97,8 @@
 
     <target name="jar" depends="compile-main,test" description="build the jar">
         <mkdir dir="${jars-dir}"/>
-        <jar file="${module-jar}" basedir="target/classes">
+        <jar file="${module-jar}">
+            <fileset dir="target/classes"/>
         </jar>
     </target>
 
