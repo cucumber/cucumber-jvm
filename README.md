@@ -76,9 +76,21 @@ If we get a pull request where an entire file is changed because of insignifican
 
 ### Building Cucumber-JVM
 
-You'll need Maven to build the Java code (we're happily accepting patches for other build systems). To build and run tests, run:
+You'll need Ant installed
 
-    mvn clean install
+    export ANT_OPTS=-XX:MaxPermSize=128m
+    ant clean publish-artifacts
+
+TODO:
+
+* Set version
+* Build jarjar (like gherkin)
+* Make Ant run CLI as well
+* Sign jars
+* Generate i18n, maybe use mustache instead of rake/erb
+* Upload jars
+* Tag git
+* Fix stepdefs.json (it's empty)
 
 ### Continuous Integration
 

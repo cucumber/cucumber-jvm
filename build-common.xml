@@ -79,7 +79,7 @@
         <junit printsummary="yes"
                fork="yes"
                forkmode="once"
-               maxmemory="512m"
+               maxmemory="1024m"
                failureproperty="junit.failure">
             <classpath>
                 <path refid="test-classpath"/>
