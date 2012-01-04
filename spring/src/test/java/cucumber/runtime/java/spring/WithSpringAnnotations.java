@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
-public class AnnotationTestStepdefs {
+public class WithSpringAnnotations {
 
     private boolean preDestroyCalled;
     private boolean postConstructCalled;
