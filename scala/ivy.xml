@@ -1,5 +1,5 @@
 <ivy-module version="2.0">
-    <info organisation="info.cukes" module="cucumber-scala" revision="1234"/>
+    <info organisation="info.cukes" module="cucumber-scala" revision="${cucumber-jvm-version}"/>
 
     <configurations defaultconfmapping="*->default">
         <conf name="default"/>
