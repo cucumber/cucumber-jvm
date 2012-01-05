@@ -12,11 +12,11 @@
 import groovy.text.SimpleTemplateEngine
 
 def engine = new SimpleTemplateEngine()
-def templateSource = new File('src/main/code_generator/I18n.scala.txt').getText()
+def templateSource = new File("${properties['basedir']}/src/main/code_generator/I18n.scala.txt").getText()
 
 template = engine.createTemplate(templateSource)
 template = template.make(null)
-def file = new File("src/main/scala/cucumber/runtime/I18n.scala")
+def file = new File("${properties['basedir']}/src/main/scala/cucumber/runtime/I18n.scala")
 file.parentFile.mkdirs()
 file.write(template.toString(), "UTF-8")
         ]]></groovy>

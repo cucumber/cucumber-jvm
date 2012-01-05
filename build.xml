@@ -5,6 +5,10 @@
         <subant target="publish-artifacts" buildpath="${modules}"/>
     </target>
 
+    <target name="generate">
+        <subant target="generate" buildpath="${modules}"/>
+    </target>
+
     <target name="clean">
         <subant target="clean" buildpath="${modules}"/>
     </target>

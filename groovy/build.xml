@@ -13,12 +13,12 @@ import groovy.text.SimpleTemplateEngine
 import gherkin.I18n
 
 def engine = new SimpleTemplateEngine()
-def templateSource = new File('src/main/code_generator/I18n.groovy.txt').getText()
+def templateSource = new File("${properties['basedir']}/src/main/code_generator/I18n.groovy.txt").getText()
 
 I18n.all.each { i18n ->
     def binding = ["i18n":i18n]
     template = engine.createTemplate(templateSource).make(binding)
-    def file = new File("src/main/java/cucumber/runtime/groovy/${i18n.underscoredIsoCode.toUpperCase()}.java")
+    def file = new File("${properties['basedir']}/src/main/java/cucumber/runtime/groovy/${i18n.underscoredIsoCode.toUpperCase()}.java")
     file.parentFile.mkdirs()
     file.write(template.toString(), "UTF-8")
 }
