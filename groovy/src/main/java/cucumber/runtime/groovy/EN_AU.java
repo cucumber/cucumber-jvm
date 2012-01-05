@@ -5,7 +5,12 @@ import groovy.lang.Closure;
 import java.util.regex.Pattern;
 
 public class EN_AU {
-    public static void Yaknowhow(Pattern regexp, Closure body) throws Throwable {
+
+    public static void Cept(Pattern regexp, Closure body) throws Throwable {
+        GroovyBackend.instance.addStepDefinition(regexp, body);
+    }
+
+    public static void N(Pattern regexp, Closure body) throws Throwable {
         GroovyBackend.instance.addStepDefinition(regexp, body);
     }
 
@@ -17,11 +22,7 @@ public class EN_AU {
         GroovyBackend.instance.addStepDefinition(regexp, body);
     }
 
-    public static void N(Pattern regexp, Closure body) throws Throwable {
-        GroovyBackend.instance.addStepDefinition(regexp, body);
-    }
-
-    public static void Cept(Pattern regexp, Closure body) throws Throwable {
+    public static void Yaknowhow(Pattern regexp, Closure body) throws Throwable {
         GroovyBackend.instance.addStepDefinition(regexp, body);
     }
 

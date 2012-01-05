@@ -84,7 +84,7 @@ You'll need Ant installed
 TODO:
 
 * Sign jars
-* Generate i18n for groovy and scala (see java)
+* Generate i18n for scala
 * Upload jars
 * Tag git
 * Fix stepdefs.json (it's empty)

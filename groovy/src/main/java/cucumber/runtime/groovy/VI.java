@@ -5,6 +5,7 @@ import groovy.lang.Closure;
 import java.util.regex.Pattern;
 
 public class VI {
+
     public static void Biết(Pattern regexp, Closure body) throws Throwable {
         GroovyBackend.instance.addStepDefinition(regexp, body);
     }
@@ -17,15 +18,15 @@ public class VI {
         GroovyBackend.instance.addStepDefinition(regexp, body);
     }
 
+    public static void Nhưng(Pattern regexp, Closure body) throws Throwable {
+        GroovyBackend.instance.addStepDefinition(regexp, body);
+    }
+
     public static void Thì(Pattern regexp, Closure body) throws Throwable {
         GroovyBackend.instance.addStepDefinition(regexp, body);
     }
 
     public static void Và(Pattern regexp, Closure body) throws Throwable {
-        GroovyBackend.instance.addStepDefinition(regexp, body);
-    }
-
-    public static void Nhưng(Pattern regexp, Closure body) throws Throwable {
         GroovyBackend.instance.addStepDefinition(regexp, body);
     }
 

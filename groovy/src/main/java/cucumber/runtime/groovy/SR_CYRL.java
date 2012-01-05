@@ -5,7 +5,8 @@ import groovy.lang.Closure;
 import java.util.regex.Pattern;
 
 public class SR_CYRL {
-    public static void Задато(Pattern regexp, Closure body) throws Throwable {
+
+    public static void Али(Pattern regexp, Closure body) throws Throwable {
         GroovyBackend.instance.addStepDefinition(regexp, body);
     }
 
@@ -17,15 +18,7 @@ public class SR_CYRL {
         GroovyBackend.instance.addStepDefinition(regexp, body);
     }
 
-    public static void Када(Pattern regexp, Closure body) throws Throwable {
-        GroovyBackend.instance.addStepDefinition(regexp, body);
-    }
-
-    public static void Кад(Pattern regexp, Closure body) throws Throwable {
-        GroovyBackend.instance.addStepDefinition(regexp, body);
-    }
-
-    public static void Онда(Pattern regexp, Closure body) throws Throwable {
+    public static void Задато(Pattern regexp, Closure body) throws Throwable {
         GroovyBackend.instance.addStepDefinition(regexp, body);
     }
 
@@ -33,7 +26,15 @@ public class SR_CYRL {
         GroovyBackend.instance.addStepDefinition(regexp, body);
     }
 
-    public static void Али(Pattern regexp, Closure body) throws Throwable {
+    public static void Кад(Pattern regexp, Closure body) throws Throwable {
+        GroovyBackend.instance.addStepDefinition(regexp, body);
+    }
+
+    public static void Када(Pattern regexp, Closure body) throws Throwable {
+        GroovyBackend.instance.addStepDefinition(regexp, body);
+    }
+
+    public static void Онда(Pattern regexp, Closure body) throws Throwable {
         GroovyBackend.instance.addStepDefinition(regexp, body);
     }
 

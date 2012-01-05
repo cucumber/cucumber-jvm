@@ -1,15 +1,15 @@
 <ivysettings>
-<!-- TODO reintroduce these once we can build from just the ~/.m2 Maven cache -->
-<!--
-    <include url="${ivy.default.settings.dir}/ivysettings-public.xml"/>
-    <include url="${ivy.default.settings.dir}/ivysettings-shared.xml"/>
-    <include url="${ivy.default.settings.dir}/ivysettings-main-chain.xml"/>
-    <include url="${ivy.default.settings.dir}/ivysettings-default-chain.xml"/>
--->
+    <!-- TODO reintroduce these once we can build from just the ~/.m2 Maven cache -->
+    <!--
+        <include url="${ivy.default.settings.dir}/ivysettings-public.xml"/>
+        <include url="${ivy.default.settings.dir}/ivysettings-shared.xml"/>
+        <include url="${ivy.default.settings.dir}/ivysettings-main-chain.xml"/>
+        <include url="${ivy.default.settings.dir}/ivysettings-default-chain.xml"/>
+    -->
     <include url="${ivy.default.settings.dir}/ivysettings-local.xml"/>
 
     <settings defaultResolver="chain"/>
-    <caches useOrigin="true" />
+    <caches useOrigin="true"/>
     <resolvers>
         <ibiblio name="central" m2compatible="true"/>
         <!-- For openejb -->
@@ -17,9 +17,9 @@
                  root="https://repository.apache.org/content/groups/snapshots/"/>
 
         <chain name="chain">
-            <resolver ref="local" />
-            <resolver ref="central" />
-            <resolver ref="apache-snapshots" />
+            <resolver ref="local"/>
+            <resolver ref="central"/>
+            <resolver ref="apache-snapshots"/>
         </chain>
     </resolvers>
 </ivysettings>

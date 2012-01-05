@@ -5,7 +5,16 @@ import groovy.lang.Closure;
 import java.util.regex.Pattern;
 
 public class CS {
-    public static void Pokud(Pattern regexp, Closure body) throws Throwable {
+
+    public static void A(Pattern regexp, Closure body) throws Throwable {
+        GroovyBackend.instance.addStepDefinition(regexp, body);
+    }
+
+    public static void Ataké(Pattern regexp, Closure body) throws Throwable {
+        GroovyBackend.instance.addStepDefinition(regexp, body);
+    }
+
+    public static void Ale(Pattern regexp, Closure body) throws Throwable {
         GroovyBackend.instance.addStepDefinition(regexp, body);
     }
 
@@ -17,15 +26,7 @@ public class CS {
         GroovyBackend.instance.addStepDefinition(regexp, body);
     }
 
-    public static void A(Pattern regexp, Closure body) throws Throwable {
-        GroovyBackend.instance.addStepDefinition(regexp, body);
-    }
-
-    public static void Ataké(Pattern regexp, Closure body) throws Throwable {
-        GroovyBackend.instance.addStepDefinition(regexp, body);
-    }
-
-    public static void Ale(Pattern regexp, Closure body) throws Throwable {
+    public static void Pokud(Pattern regexp, Closure body) throws Throwable {
         GroovyBackend.instance.addStepDefinition(regexp, body);
     }
 

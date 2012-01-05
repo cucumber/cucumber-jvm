@@ -5,6 +5,11 @@ import groovy.lang.Closure;
 import java.util.regex.Pattern;
 
 public class ID {
+
+    public static void Dan(Pattern regexp, Closure body) throws Throwable {
+        GroovyBackend.instance.addStepDefinition(regexp, body);
+    }
+
     public static void Dengan(Pattern regexp, Closure body) throws Throwable {
         GroovyBackend.instance.addStepDefinition(regexp, body);
     }
@@ -14,10 +19,6 @@ public class ID {
     }
 
     public static void Maka(Pattern regexp, Closure body) throws Throwable {
-        GroovyBackend.instance.addStepDefinition(regexp, body);
-    }
-
-    public static void Dan(Pattern regexp, Closure body) throws Throwable {
         GroovyBackend.instance.addStepDefinition(regexp, body);
     }
 

@@ -29,8 +29,8 @@
         <ivy:resolve log="download-only"/>
         <ivy:cachepath pathid="ivy.compile-classpath" conf="default"/>
         <ivy:cachepath pathid="ivy.test-classpath" conf="test"/>
-        <ivy:artifactproperty conf="default" name="[organisation].[artifact]"
-                              value="${ivy.cache.dir}/[organisation]/[artifact]/jars/[artifact]-[revision].[ext]"/>
+        <ivy:artifactproperty conf="default" name="local.[organisation].[artifact]" value="${ivy.local.default.root}/${ivy.local.default.artifact.pattern}"/>
+        <ivy:artifactproperty conf="default" name="cache.[organisation].[artifact]" value="${ivy.cache.dir}/[organisation]/[artifact]/jars/[artifact]-[revision].jar"/>
         <property name="module" value="${ant.project.name}"/>
         <property name="version" value="${ivy.revision}"/>
 
@@ -49,7 +49,6 @@
         <property name="compile-classpath" refid="ivy.compile-classpath"/>
         <property name="test-classpath" refid="test-classpath"/>
         <echoproperties/>
-        <ivy:report/>
     </target>
 
     <target name="compile-main" depends="-init-ivy" description="compile the module">

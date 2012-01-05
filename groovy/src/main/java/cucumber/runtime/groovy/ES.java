@@ -5,7 +5,8 @@ import groovy.lang.Closure;
 import java.util.regex.Pattern;
 
 public class ES {
-    public static void Dado(Pattern regexp, Closure body) throws Throwable {
+
+    public static void Cuando(Pattern regexp, Closure body) throws Throwable {
         GroovyBackend.instance.addStepDefinition(regexp, body);
     }
 
@@ -13,15 +14,15 @@ public class ES {
         GroovyBackend.instance.addStepDefinition(regexp, body);
     }
 
-    public static void Dados(Pattern regexp, Closure body) throws Throwable {
-        GroovyBackend.instance.addStepDefinition(regexp, body);
-    }
-
     public static void Dadas(Pattern regexp, Closure body) throws Throwable {
         GroovyBackend.instance.addStepDefinition(regexp, body);
     }
 
-    public static void Cuando(Pattern regexp, Closure body) throws Throwable {
+    public static void Dado(Pattern regexp, Closure body) throws Throwable {
+        GroovyBackend.instance.addStepDefinition(regexp, body);
+    }
+
+    public static void Dados(Pattern regexp, Closure body) throws Throwable {
         GroovyBackend.instance.addStepDefinition(regexp, body);
     }
 
@@ -29,11 +30,11 @@ public class ES {
         GroovyBackend.instance.addStepDefinition(regexp, body);
     }
 
-    public static void Y(Pattern regexp, Closure body) throws Throwable {
+    public static void Pero(Pattern regexp, Closure body) throws Throwable {
         GroovyBackend.instance.addStepDefinition(regexp, body);
     }
 
-    public static void Pero(Pattern regexp, Closure body) throws Throwable {
+    public static void Y(Pattern regexp, Closure body) throws Throwable {
         GroovyBackend.instance.addStepDefinition(regexp, body);
     }
 

@@ -5,11 +5,24 @@ import groovy.lang.Closure;
 import java.util.regex.Pattern;
 
 public class EN_SCOUSE {
-    public static void Givun(Pattern regexp, Closure body) throws Throwable {
+
+    public static void An(Pattern regexp, Closure body) throws Throwable {
         GroovyBackend.instance.addStepDefinition(regexp, body);
     }
 
-    public static void Youseknowwhenyousegot(Pattern regexp, Closure body) throws Throwable {
+    public static void Buh(Pattern regexp, Closure body) throws Throwable {
+        GroovyBackend.instance.addStepDefinition(regexp, body);
+    }
+
+    public static void Denyousegotta(Pattern regexp, Closure body) throws Throwable {
+        GroovyBackend.instance.addStepDefinition(regexp, body);
+    }
+
+    public static void Dun(Pattern regexp, Closure body) throws Throwable {
+        GroovyBackend.instance.addStepDefinition(regexp, body);
+    }
+
+    public static void Givun(Pattern regexp, Closure body) throws Throwable {
         GroovyBackend.instance.addStepDefinition(regexp, body);
     }
 
@@ -21,19 +34,7 @@ public class EN_SCOUSE {
         GroovyBackend.instance.addStepDefinition(regexp, body);
     }
 
-    public static void Dun(Pattern regexp, Closure body) throws Throwable {
-        GroovyBackend.instance.addStepDefinition(regexp, body);
-    }
-
-    public static void Denyousegotta(Pattern regexp, Closure body) throws Throwable {
-        GroovyBackend.instance.addStepDefinition(regexp, body);
-    }
-
-    public static void An(Pattern regexp, Closure body) throws Throwable {
-        GroovyBackend.instance.addStepDefinition(regexp, body);
-    }
-
-    public static void Buh(Pattern regexp, Closure body) throws Throwable {
+    public static void Youseknowwhenyousegot(Pattern regexp, Closure body) throws Throwable {
         GroovyBackend.instance.addStepDefinition(regexp, body);
     }
 

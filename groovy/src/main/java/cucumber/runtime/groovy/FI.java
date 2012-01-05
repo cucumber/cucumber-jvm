@@ -5,7 +5,8 @@ import groovy.lang.Closure;
 import java.util.regex.Pattern;
 
 public class FI {
-    public static void Oletetaan(Pattern regexp, Closure body) throws Throwable {
+
+    public static void Ja(Pattern regexp, Closure body) throws Throwable {
         GroovyBackend.instance.addStepDefinition(regexp, body);
     }
 
@@ -13,15 +14,15 @@ public class FI {
         GroovyBackend.instance.addStepDefinition(regexp, body);
     }
 
+    public static void Mutta(Pattern regexp, Closure body) throws Throwable {
+        GroovyBackend.instance.addStepDefinition(regexp, body);
+    }
+
     public static void Niin(Pattern regexp, Closure body) throws Throwable {
         GroovyBackend.instance.addStepDefinition(regexp, body);
     }
 
-    public static void Ja(Pattern regexp, Closure body) throws Throwable {
-        GroovyBackend.instance.addStepDefinition(regexp, body);
-    }
-
-    public static void Mutta(Pattern regexp, Closure body) throws Throwable {
+    public static void Oletetaan(Pattern regexp, Closure body) throws Throwable {
         GroovyBackend.instance.addStepDefinition(regexp, body);
     }
 

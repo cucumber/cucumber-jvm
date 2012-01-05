@@ -5,6 +5,15 @@ import groovy.lang.Closure;
 import java.util.regex.Pattern;
 
 public class ZH_TW {
+
+    public static void 並且(Pattern regexp, Closure body) throws Throwable {
+        GroovyBackend.instance.addStepDefinition(regexp, body);
+    }
+
+    public static void 但是(Pattern regexp, Closure body) throws Throwable {
+        GroovyBackend.instance.addStepDefinition(regexp, body);
+    }
+
     public static void 假設(Pattern regexp, Closure body) throws Throwable {
         GroovyBackend.instance.addStepDefinition(regexp, body);
     }
@@ -13,19 +22,11 @@ public class ZH_TW {
         GroovyBackend.instance.addStepDefinition(regexp, body);
     }
 
-    public static void 那麼(Pattern regexp, Closure body) throws Throwable {
-        GroovyBackend.instance.addStepDefinition(regexp, body);
-    }
-
     public static void 而且(Pattern regexp, Closure body) throws Throwable {
         GroovyBackend.instance.addStepDefinition(regexp, body);
     }
 
-    public static void 並且(Pattern regexp, Closure body) throws Throwable {
-        GroovyBackend.instance.addStepDefinition(regexp, body);
-    }
-
-    public static void 但是(Pattern regexp, Closure body) throws Throwable {
+    public static void 那麼(Pattern regexp, Closure body) throws Throwable {
         GroovyBackend.instance.addStepDefinition(regexp, body);
     }
 
