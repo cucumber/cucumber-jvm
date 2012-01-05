@@ -95,10 +95,14 @@ public class GroovyBackend implements Backend {
         Throwable t = new Throwable();
         StackTraceElement[] stackTraceElements = t.getStackTrace();
         for (StackTraceElement stackTraceElement : stackTraceElements) {
-            if (stackTraceElement.getFileName().endsWith(".groovy")) {
+            if (isGroovyFile (stackTraceElement.getFileName ())) {
                 return stackTraceElement;
             }
         }
         throw new RuntimeException("Couldn't find location for step definition");
+    }
+    
+    private static boolean isGroovyFile (String fileName) {
+        return fileName != null && fileName.endsWith (".groovy");
     }
 }
