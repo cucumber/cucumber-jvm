@@ -24,8 +24,8 @@
 
     <target name="-init-ivy" depends="-init,-load-ivy" description="Set up Ivy-related paths">
         <dirname property="common-basedir" file="${ant.file.common}"/>
-        <!--<ivy:settings file="${common-basedir}/ivy-settings.xml"/>-->
-        <!--<ivy:resolve log="quiet"/>-->
+        <ivy:settings file="${common-basedir}/ivy-settings.xml"/>
+        <ivy:resolve log="download-only"/>
         <ivy:cachepath pathid="ivy.compile-classpath" conf="default"/>
         <ivy:cachepath pathid="ivy.test-classpath" conf="test"/>
         <ivy:artifactproperty conf="default" name="[organisation].[artifact]"
@@ -98,17 +98,19 @@
         <fail if="junit.failure" message="Tests failed"/>
     </target>
 
-    <target name="jar" depends="compile-main,test" description="build the jar">
+    <target name="jar" depends="compile-main" description="build the jar">
         <mkdir dir="${jars-dir}"/>
         <jar file="${module-jar}">
             <fileset dir="target/classes"/>
         </jar>
     </target>
 
-    <target name="publish-artifacts" depends="jar,test">
-        <ivy:deliver conf="default" />
+    <target name="publish-only" depends="jar">
+        <!--<ivy:deliver conf="default" />-->
         <ivy:publish resolver="local" update="true" overwrite="true" artifactspattern="target/artifacts/[type]s/[artifact].[ext]"/>
     </target>
+
+    <target name="publish-artifacts" depends="test,publish-only" />
 
     <target name="clean">
         <delete dir="target"/>
