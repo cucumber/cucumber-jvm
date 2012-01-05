@@ -86,7 +86,7 @@ def step(regexp, proc)
   if proc
     register(regexp, proc)
   else
-    $backend.runStep(__FILE__, @__cucumber_reporter, @__cucumber_locale, regexp)
+    $backend.runStep(caller[0].to_s, @__cucumber_reporter, @__cucumber_locale, regexp)
   end
 
 end
