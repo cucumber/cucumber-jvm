@@ -12,4 +12,11 @@
     <target name="clean">
         <subant target="clean" buildpath="${modules}"/>
     </target>
+
+    <target name="git-clean">
+        <exec executable="git">
+            <arg value="clean"/>
+            <arg value="-dfx"/>
+        </exec>
+    </target>
 </project>
