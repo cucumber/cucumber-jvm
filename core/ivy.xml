@@ -1,5 +1,5 @@
 <ivy-module version="2.0">
-    <info organisation="info.cukes" module="cucumber-core" revision="1234"/>
+    <info organisation="info.cukes" module="cucumber-core" revision="1235"/>
 
     <configurations defaultconfmapping="*->default">
         <conf name="default"/>
@@ -11,7 +11,7 @@
         <!--<artifact conf="default" name="${ivy.module}-javadoc"/>-->
     </publications>
     <dependencies>
-        <dependency conf="default" org="info.cukes" name="gherkin" rev="2.7.1"/>
+        <dependency conf="default" org="info.cukes" name="gherkin" rev="2.7.2"/>
         <dependency conf="default" org="info.cukes" name="cucumber-html" rev="0.2.1"/>
         <dependency conf="default" org="com.thoughtworks.xstream" name="xstream" rev="1.4.2"/>
         <dependency conf="default" org="com.googlecode.java-diff-utils" name="diffutils" rev="1.2.1"/>

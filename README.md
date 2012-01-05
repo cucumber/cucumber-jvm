@@ -84,7 +84,6 @@ You'll need Ant installed
 TODO:
 
 * Set version
-* Make Ant run CLI as well
 * Sign jars
 * Generate i18n, maybe use mustache instead of rake/erb
 * Upload jars

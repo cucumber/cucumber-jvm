@@ -1,3 +1,31 @@
-<project name="cucumber-java" default="test">
-  <import file="../build-common.xml" />
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="cucumber-java" xmlns:ivy="antlib:org.apache.ivy.ant" default="test">
+    <import file="../build-common.xml"/>
+
+    <target name="generate" depends="-init-ivy">
+        <ivy:cachepath pathid="ivy.build-classpath" conf="build"/>
+        <taskdef name="groovy"
+                 classname="org.codehaus.groovy.ant.Groovy"
+                 classpathref="ivy.build-classpath"/>
+
+        <groovy><![CDATA[
+import groovy.text.SimpleTemplateEngine
+import gherkin.I18n
+
+def engine = new SimpleTemplateEngine()
+def templateSource = new File('src/main/code_generator/I18n.java.txt').getText()
+
+I18n.all.each { i18n ->
+    i18n.codeKeywords.each { kw ->
+        def binding = ["i18n":i18n, "kw":kw]
+        template = engine.createTemplate(templateSource).make(binding)
+        //println(template.toString())
+        def file = new File("src/main/java/cucumber/annotation/${i18n.underscoredIsoCode}/${kw}.java")
+        file.parentFile.mkdirs()
+        file.write(template.toString(), "UTF-8")
+    }
+}
+        ]]></groovy>
+    </target>
+
 </project>

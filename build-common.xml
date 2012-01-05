@@ -106,7 +106,8 @@
     </target>
 
     <target name="publish-artifacts" depends="jar,test">
-        <ivy:publish resolver="local" overwrite="true" artifactspattern="target/artifacts/[type]s/[artifact].[ext]"/>
+        <ivy:deliver conf="default" />
+        <ivy:publish resolver="local" update="true" overwrite="true" artifactspattern="target/artifacts/[type]s/[artifact].[ext]"/>
     </target>
 
     <target name="clean">

@@ -1,4 +1,4 @@
-package cucumber.annotation.<%= i18n.underscored_iso_code -%>;
+package cucumber.annotation.${i18n.underscoredIsoCode};
 
 import cucumber.runtime.java.StepDefAnnotation;
 
@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 @StepDefAnnotation
-public @interface <%= kw %> {
+public @interface ${kw} {
     /**
      * @return a regular expression
      */
