@@ -16,3 +16,4 @@ tmp/
 /report.js
 /chromedriver.log
 /.scala_dependencies
+/out/
