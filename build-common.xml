@@ -51,7 +51,7 @@
         <echoproperties/>
     </target>
 
-    <target name="compile-main" depends="-init-ivy" description="compile the module">
+    <target name="compile-main" depends="-init-ivy,generate" description="compile the module">
         <mkdir dir="target/classes"/>
         <javac destdir="target/classes"
                srcdir="src/main/java"
@@ -62,6 +62,9 @@
         <copy todir="target/classes" failonerror="false">
             <fileset dir="src/main/resources"/>
         </copy>
+    </target>
+
+    <target name="generate" description="Generate sources">
     </target>
 
     <target name="compile-test" depends="compile-main" description="compile the tests">

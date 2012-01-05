@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project name="cucumber-jruby" xmlns:ivy="antlib:org.apache.ivy.ant" default="test">
     <import file="../build-common.xml"/>
 

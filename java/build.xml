@@ -19,7 +19,6 @@ I18n.all.each { i18n ->
     i18n.codeKeywords.each { kw ->
         def binding = ["i18n":i18n, "kw":kw]
         template = engine.createTemplate(templateSource).make(binding)
-        //println(template.toString())
         def file = new File("src/main/java/cucumber/annotation/${i18n.underscoredIsoCode}/${kw}.java")
         file.parentFile.mkdirs()
         file.write(template.toString(), "UTF-8")

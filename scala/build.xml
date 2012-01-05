@@ -1,7 +1,28 @@
-<project name="cucumber-scala" default="test">
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="cucumber-scala" xmlns:ivy="antlib:org.apache.ivy.ant" default="test">
     <import file="../build-common.xml"/>
 
-    <target name="compile-main" depends="-init-ivy" description="compile the module">
+    <target name="generate" depends="-init-ivy">
+        <ivy:cachepath pathid="ivy.build-classpath" conf="build"/>
+        <taskdef name="groovy"
+                 classname="org.codehaus.groovy.ant.Groovy"
+                 classpathref="ivy.build-classpath"/>
+
+        <groovy><![CDATA[
+import groovy.text.SimpleTemplateEngine
+
+def engine = new SimpleTemplateEngine()
+def templateSource = new File('src/main/code_generator/I18n.scala.txt').getText()
+
+template = engine.createTemplate(templateSource)
+template = template.make(null)
+def file = new File("src/main/scala/cucumber/runtime/I18n.scala")
+file.parentFile.mkdirs()
+file.write(template.toString(), "UTF-8")
+        ]]></groovy>
+    </target>
+
+    <target name="compile-main" depends="-init-ivy,generate" description="compile the module">
         <mkdir dir="target/classes"/>
 
         <taskdef resource="scala/tools/ant/antlib.xml">

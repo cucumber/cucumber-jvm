@@ -1,0 +1,10 @@
+package cucumber.runtime
+
+<% gherkin.I18n.all.each { i18n -> %>
+trait ${i18n.underscoredIsoCode.toUpperCase()} {
+  this: ScalaDsl =>
+<% i18n.codeKeywords.sort().each { kw -> %>
+  val ${kw} = new Step("${kw}")
+<% } %>
+}
+<% } %>

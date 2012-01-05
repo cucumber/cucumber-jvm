@@ -4,6 +4,7 @@
     <configurations defaultconfmapping="*->default">
         <conf name="default"/>
         <conf name="test" extends="default"/>
+        <conf name="build" extends="default"/>
     </configurations>
     <publications>
         <artifact conf="default" name="${ivy.module}"/>
@@ -17,5 +18,6 @@
 
         <dependency name="cucumber-junit" rev="${cucumber-jvm-version}" conf="test"/>
         <dependency name="mockito-all" org="org.mockito" rev="1.9.0" conf="test"/>
+        <dependency name="groovy-all" org="org.codehaus.groovy" rev="2.0.0-beta-2" conf="build"/>
     </dependencies>
 </ivy-module>
