@@ -1,5 +1,5 @@
 <ivy-module version="2.0">
-    <info organisation="info.cukes" module="cucumber-core" revision="1235"/>
+    <info organisation="info.cukes" module="cucumber-core" revision="${cucumber-jvm-version}"/>
 
     <configurations defaultconfmapping="*->default">
         <conf name="default"/>
@@ -11,13 +11,13 @@
         <!--<artifact conf="default" name="${ivy.module}-javadoc"/>-->
     </publications>
     <dependencies>
-        <dependency conf="default" org="info.cukes" name="gherkin" rev="2.7.2"/>
-        <dependency conf="default" org="info.cukes" name="cucumber-html" rev="0.2.1"/>
-        <dependency conf="default" org="com.thoughtworks.xstream" name="xstream" rev="1.4.2"/>
-        <dependency conf="default" org="com.googlecode.java-diff-utils" name="diffutils" rev="1.2.1"/>
-        <dependency conf="default" org="com.google.code.gson" name="gson" rev="2.1"/>
+        <dependency name="gherkin" rev="2.7.2" conf="default"/>
+        <dependency name="cucumber-html" rev="0.2.1" conf="default"/>
+        <dependency name="xstream" org="com.thoughtworks.xstream" rev="1.4.2" conf="default"/>
+        <dependency name="diffutils" org="com.googlecode.java-diff-utils" rev="1.2.1" conf="default"/>
+        <dependency name="gson" org="com.google.code.gson" rev="2.1" conf="default"/>
 
-        <dependency conf="test" org="junit" name="junit" rev="4.10"/>
-        <dependency conf="test" org="org.mockito" name="mockito-all" rev="1.9.0"/>
+        <dependency name="junit" org="junit" rev="4.10" conf="test"/>
+        <dependency name="mockito-all" org="org.mockito" rev="1.9.0" conf="test"/>
     </dependencies>
 </ivy-module>

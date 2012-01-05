@@ -83,13 +83,12 @@ You'll need Ant installed
 
 TODO:
 
-* Set version
 * Sign jars
-* Generate i18n, maybe use mustache instead of rake/erb
+* Generate i18n for groovy and scala (see java)
 * Upload jars
 * Tag git
 * Fix stepdefs.json (it's empty)
-* Run the integration tests
+* Run the cucumber-tck tests (still use ivy, to test it works with maven)
 * Doc how to set up IDEA
 
 ### Continuous Integration

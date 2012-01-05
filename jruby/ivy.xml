@@ -12,12 +12,12 @@
         <!--<artifact conf="default" name="${ivy.module}-javadoc"/>-->
     </publications>
     <dependencies>
-        <dependency conf="default" org="info.cukes" name="cucumber-core" rev="latest.integration"/>
-        <dependency conf="default" org="org.jruby" name="jruby-complete" rev="1.6.5.1"/>
+        <dependency name="cucumber-core" rev="${cucumber-jvm-version}" conf="default"/>
+        <dependency name="jruby-complete" org="org.jruby" rev="1.6.5.1" conf="default"/>
 
-        <dependency conf="test" org="info.cukes" name="cucumber-junit" rev="latest.integration"/>
-        <dependency conf="test" org="org.mockito" name="mockito-all" rev="1.9.0"/>
+        <dependency name="cucumber-junit" rev="${cucumber-jvm-version}" conf="test"/>
+        <dependency name="mockito-all" org="org.mockito" rev="1.9.0" conf="test"/>
 
-        <dependency conf="build" org="com.googlecode.jarjar" name="jarjar" rev="1.1"/>
+        <dependency name="jarjar" org="com.googlecode.jarjar" rev="1.1" conf="build"/>
     </dependencies>
 </ivy-module>
