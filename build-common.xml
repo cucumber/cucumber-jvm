@@ -1,5 +1,5 @@
 <project name="common" xmlns:ivy="antlib:org.apache.ivy.ant" default="test">
-    <property name="cucumber-jvm-version" value="1.0.0-RC3" />
+    <property name="cucumber-jvm-version" value="1.0.0-RC3"/>
     <property name="ivy-version" value="2.2.0"/>
     <property name="ivy-install-dir" location="${user.home}/.ivy2/install"/>
     <property name="ivy-jar" location="${ivy-install-dir}/ivy-${ivy-version}.jar"/>
@@ -108,10 +108,20 @@
 
     <target name="publish-only" depends="jar">
         <!--<ivy:deliver conf="default" />-->
-        <ivy:publish resolver="local" update="true" overwrite="true" artifactspattern="target/artifacts/[type]s/[artifact].[ext]"/>
+        <ivy:publish resolver="local" update="true" overwrite="true"
+                     artifactspattern="target/artifacts/[type]s/[artifact].[ext]"/>
     </target>
 
-    <target name="publish-artifacts" depends="test,publish-only" />
+    <target name="publish-artifacts" depends="test,publish-only"/>
+
+    <!-- More here: http://stackoverflow.com/questions/5111831/how-to-publish-3rdparty-artifacts-with-ivy-and-nexus -->
+    <target name="makepom" depends="-init-ivy" description="Generate POM">
+        <!-- Optional: Intermediate file containing resolved version numbers -->
+        <ivy:deliver deliverpattern="ivy.xml" organisation="info.cukes" module="${module}" pubrevision="${cucumber-jvm-version}" status="release"/>
+
+        <!-- Generate the Maven POM -->
+        <ivy:makepom ivyfile="ivy.xml" pomfile="${module}.pom"/>
+    </target>
 
     <target name="clean">
         <delete dir="target"/>

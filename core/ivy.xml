@@ -1,12 +1,12 @@
 <ivy-module version="2.0">
-    <info organisation="info.cukes" module="cucumber-core" revision="${cucumber-jvm-version}"/>
+    <info organisation="info.cukes" module="cucumber-core" revision="1.0.0-RC3" status="release" publication="20120105135837"/>
 
     <configurations defaultconfmapping="*->default">
         <conf name="default"/>
         <conf name="test" extends="default"/>
     </configurations>
     <publications>
-        <artifact conf="default" name="${ivy.module}"/>
+        <artifact conf="default" name="cucumber-core"/>
         <!--<artifact conf="default" name="${ivy.module}-sources"/>-->
         <!--<artifact conf="default" name="${ivy.module}-javadoc"/>-->
     </publications>
