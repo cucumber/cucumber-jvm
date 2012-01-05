@@ -1,11 +1,18 @@
+# IDE working files
+*.iml
+/*.iws
+/*.ipr
 .settings
 .project
 .classpath
-*.iws
-*.iml
-*.ipr
-target
-chromedriver.log
-Gemfile.lock
-.scala_dependencies
-tmp
+
+
+# Build directories
+distrib/
+target/
+tmp/
+
+# Build & test droppings
+/report.js
+/chromedriver.log
+/.scala_dependencies
