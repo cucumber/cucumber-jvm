@@ -15,3 +15,7 @@ Feature: Cukes
     Given a step called from another
     When I call that step
     Then the step got called
+
+  Scenario: Calling non existent step from another step
+    When I call an undefined step from another
+    Then I get an exception

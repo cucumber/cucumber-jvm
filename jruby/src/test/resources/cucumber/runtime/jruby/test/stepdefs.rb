@@ -35,3 +35,15 @@ end
 Then /^the step got called$/ do
   assert_equal(2, @called)
 end
+
+When /I call an undefined step from another$/ do
+  begin
+    When "HOLY MOLEYS THIS DOESN'T EXIST!"
+  rescue Exception => e
+    @exception = e
+  end
+end
+
+Then /I get an exception$/ do
+  assert_not_nil(@exception, "I should have gotten an exception")
+end

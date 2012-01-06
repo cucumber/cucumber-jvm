@@ -12,7 +12,7 @@ module Cucumber
         # Lifted from regexp_argument_matcher.rb in Cucumber 1.0
         def matched_arguments(step_name)
           match = @regexp.match(step_name)
-          if(match)
+          if (match)
             n = 0
             match.captures.map do |val|
               n += 1
@@ -28,8 +28,7 @@ module Cucumber
           @proc.arity
         end
 
-        def execute(reporter, locale, *args)
-          $world.instance_variable_set :@__cucumber_reporter, reporter
+        def execute(locale, *args)
           $world.instance_variable_set :@__cucumber_locale, locale
           $world.instance_exec(*args, &@proc)
         end
@@ -53,11 +52,11 @@ module Cucumber
       end
 
       class HookDefinition
-      	def initialize(proc)
+        def initialize(proc)
           @proc = proc
         end
 
-      	def execute(*args)
+        def execute(*args)
           $world.instance_exec(*args, &@proc)
         end
       end
@@ -86,9 +85,9 @@ def step(regexp, proc)
   if proc
     register(regexp, proc)
   else
-    $backend.runStep(caller[0].to_s, @__cucumber_reporter, @__cucumber_locale, regexp)
+    # caller[1] gets us to our stepdefs, right before we enter the dsl
+    $backend.runStep(caller[1].to_s, @__cucumber_locale, regexp)
   end
-
 end
 
 def Before(&proc)
