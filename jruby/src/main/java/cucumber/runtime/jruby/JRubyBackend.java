@@ -5,7 +5,6 @@ import cucumber.resources.Resource;
 import cucumber.resources.Resources;
 import cucumber.runtime.Backend;
 import cucumber.runtime.World;
-import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Comment;
 import gherkin.formatter.model.Step;
 import org.jruby.RubyObject;
@@ -49,9 +48,9 @@ public class JRubyBackend implements Backend {
         return new JRubySnippetGenerator(step).getSnippet();
     }
 
-    public void runStep(String uri, Reporter reporter, Locale locale, String stepString) {
+    public void runStep(String uri, Locale locale, String stepString) throws Throwable {
         Step s = new Step(Collections.<Comment>emptyList(), "Given ", stepString, 0, null, null);
-        world.runStep(uri, s, reporter, locale);
+        world.runUnreportedStep(uri, s, locale);
     }
 
     public void addStepdef(RubyObject stepdef) {

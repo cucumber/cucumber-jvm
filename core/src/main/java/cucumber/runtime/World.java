@@ -7,12 +7,7 @@ import gherkin.formatter.model.Match;
 import gherkin.formatter.model.Result;
 import gherkin.formatter.model.Step;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 public class World {
     private static final Object DUMMY_ARG = new Object();
@@ -92,7 +87,7 @@ public class World {
             Throwable error = null;
             long start = System.nanoTime();
             try {
-                match.runStep(reporter, locale);
+                match.runStep(locale);
             } catch (Throwable t) {
                 error = t;
                 status = Result.FAILED;
@@ -105,6 +100,15 @@ public class World {
                 reporter.result(result);
             }
         }
+    }
+
+    public void runUnreportedStep(String uri, Step step, Locale locale) throws Throwable {
+        StepDefinitionMatch match = stepDefinitionMatch(uri, step, locale);
+        if (match == null) {
+            throw new CucumberException("Calling an undefined step from " + uri);
+        }
+
+        match.runStep(locale);
     }
 
     private StepDefinitionMatch stepDefinitionMatch(String uri, Step step, Locale locale) {

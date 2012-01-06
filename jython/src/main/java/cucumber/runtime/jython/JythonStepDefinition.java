@@ -4,7 +4,6 @@ import cucumber.runtime.ParameterType;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.Utils;
 import gherkin.formatter.Argument;
-import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Step;
 import org.python.core.PyInstance;
 import org.python.core.PyList;
@@ -47,7 +46,7 @@ public class JythonStepDefinition implements StepDefinition {
     }
 
     @Override
-    public void execute(Reporter reporter, Locale locale, Object[] args) throws Throwable {
+    public void execute(Locale locale, Object[] args) throws Throwable {
         jythonBackend.execute(stepdef, args);
     }
 

@@ -4,7 +4,6 @@ import cucumber.runtime.ParameterType;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.Utils;
 import gherkin.formatter.Argument;
-import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Step;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.NativeFunction;
@@ -48,7 +47,7 @@ public class RhinoStepDefinition implements StepDefinition {
         return Utils.listOf(bodyFunc.getArity(), new ParameterType(String.class, null));
     }
 
-    public void execute(Reporter reporter, Locale locale, Object[] args) throws Throwable {
+    public void execute(Locale locale, Object[] args) throws Throwable {
         bodyFunc.call(cx, scope, scope, args);
     }
 
