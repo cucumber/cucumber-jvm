@@ -84,11 +84,10 @@ You'll need Ant installed
 TODO:
 
 * Sign jars
-* Generate i18n for scala
 * Upload jars
 * Tag git
 * Fix stepdefs.json (it's empty)
-* Run the cucumber-tck tests (still use ivy, to test it works with maven)
+* Run the cucumber-tck tests (still use maven, to test it works with maven)
 * Doc how to set up IDEA
 
 ### Continuous Integration

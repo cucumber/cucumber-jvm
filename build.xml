@@ -9,6 +9,10 @@
         <subant target="generate" buildpath="${modules}"/>
     </target>
 
+    <target name="test">
+        <subant target="test" buildpath="${modules}"/>
+    </target>
+
     <target name="clean">
         <subant target="clean" buildpath="${modules}"/>
     </target>
