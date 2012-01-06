@@ -83,7 +83,10 @@ You'll need Ant installed
 
 TODO:
 
-* Sign jars
+* Sign jars:
+  * https://github.com/MaliciousMonkey/Ant-PGP  
+  * http://stackoverflow.com/questions/5199571/pgp-decrypt-using-ant
+  * http://www.lockboxlabs.org/content/downloads
 * Upload jars
 * Tag git
 * Fix stepdefs.json (it's empty)
