@@ -117,6 +117,7 @@
     <target name="publish-artifacts" depends="test,publish-only"/>
 
     <!-- More here: http://stackoverflow.com/questions/5111831/how-to-publish-3rdparty-artifacts-with-ivy-and-nexus -->
+    <!-- And here: http://svn.apache.org/repos/asf/ant/antlibs/common/trunk -->
     <target name="makepom" depends="-init-ivy" description="Generate POM">
         <!-- Optional: Intermediate file containing resolved version numbers -->
         <ivy:deliver deliverpattern="ivy.xml" organisation="info.cukes" module="${module}" pubrevision="${cucumber-jvm-version}" status="release"/>
