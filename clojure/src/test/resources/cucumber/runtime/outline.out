@@ -1,0 +1,90 @@
+Feature: Cukes
+
+  Scenario Outline: cooking                     # cucumber/runtime/outline.feature:3
+    Given the <container> contains <ingredient> # cucumber/runtime/outline.feature:4
+    When I add <liquid>                         # cucumber/runtime/outline.feature:5
+    And serve it to my guests                   # cucumber/runtime/outline.feature:6
+    Then they'll be eating "<dish>"             # cucumber/runtime/outline.feature:7
+
+    Examples: 
+      | container | ingredient | liquid    | dish         |
+      | bowl      | oats       | milk      | oatmeal      |
+      | bowl      | oats       | milk      | oatmeal      |
+      java.lang.AssertionError: Assert failed: (= "glass" container)
+      	at clojure.core$eval94$fn__95.invoke(stepdefs.clj:12)
+      	at Cukes.cooking.Given the bowl contains oats(cucumber/runtime/outline.feature:4)
+
+      | bowl      | oats       | milk      | oatmeal      |
+      | bowl      | oats       | milk      | oatmeal      |
+      java.lang.AssertionError: Assert failed: (= "glass" container)
+      	at clojure.core$eval94$fn__95.invoke(stepdefs.clj:12)
+      	at Cukes.cooking.Given the bowl contains oats(cucumber/runtime/outline.feature:4)
+
+      | bowl      | oats       | milk      | oatmeal      |
+      | bowl      | oats       | milk      | oatmeal      |
+      java.lang.AssertionError: Assert failed: (= "glass" container)
+      	at clojure.core$eval94$fn__95.invoke(stepdefs.clj:12)
+      	at Cukes.cooking.Given the bowl contains oats(cucumber/runtime/outline.feature:4)
+
+      | bowl      | oats       | milk      | oatmeal      |
+      | bowl      | oats       | milk      | oatmeal      |
+      java.lang.AssertionError: Assert failed: (= "glass" container)
+      	at clojure.core$eval94$fn__95.invoke(stepdefs.clj:12)
+      	at Cukes.cooking.Given the bowl contains oats(cucumber/runtime/outline.feature:4)
+
+      | glass     | guinness   | champagne | black velvet |
+      | glass     | guinness   | champagne | black velvet |
+      | glass     | guinness   | champagne | black velvet |
+      | glass     | guinness   | champagne | black velvet |
+      java.lang.AssertionError: Assert failed: (= "milk" liquid)
+      	at clojure.core$eval98$fn__99.invoke(stepdefs.clj:16)
+      	at Cukes.cooking.When I add champagne(cucumber/runtime/outline.feature:5)
+
+      | glass     | guinness   | champagne | black velvet |
+      | glass     | guinness   | champagne | black velvet |
+      java.lang.AssertionError: Assert failed: (= "milk" liquid)
+      	at clojure.core$eval98$fn__99.invoke(stepdefs.clj:16)
+      	at Cukes.cooking.When I add champagne(cucumber/runtime/outline.feature:5)
+
+      | glass     | guinness   | champagne | black velvet |
+      | glass     | guinness   | champagne | black velvet |
+      java.lang.AssertionError: Assert failed: (= "milk" liquid)
+      	at clojure.core$eval98$fn__99.invoke(stepdefs.clj:16)
+      	at Cukes.cooking.When I add champagne(cucumber/runtime/outline.feature:5)
+
+
+    Examples: 
+      | container | ingredient | liquid    | dish        |
+      | glass     | oats       | champagne | weird stuff |
+      | glass     | oats       | champagne | weird stuff |
+      | glass     | oats       | champagne | weird stuff |
+      | glass     | oats       | champagne | weird stuff |
+      java.lang.AssertionError: Assert failed: (= "milk" liquid)
+      	at clojure.core$eval98$fn__99.invoke(stepdefs.clj:16)
+      	at Cukes.cooking.When I add champagne(cucumber/runtime/outline.feature:5)
+
+      | glass     | oats       | champagne | weird stuff |
+      | glass     | oats       | champagne | weird stuff |
+      java.lang.AssertionError: Assert failed: (= "milk" liquid)
+      	at clojure.core$eval98$fn__99.invoke(stepdefs.clj:16)
+      	at Cukes.cooking.When I add champagne(cucumber/runtime/outline.feature:5)
+
+      | glass     | oats       | champagne | weird stuff |
+      | glass     | oats       | champagne | weird stuff |
+      java.lang.AssertionError: Assert failed: (= "milk" liquid)
+      	at clojure.core$eval98$fn__99.invoke(stepdefs.clj:16)
+      	at Cukes.cooking.When I add champagne(cucumber/runtime/outline.feature:5)
+
+
+You can implement step definitions for undefined steps with these snippets:
+
+(And #"^serve it to my guests$"
+  (fn []
+    " Express the Regexp above with the code you wish you had
+    ))
+
+(Then #"^they'll be eating \"([^\"]*)\"$"
+  (fn [arg1]
+    " Express the Regexp above with the code you wish you had
+    ))
+

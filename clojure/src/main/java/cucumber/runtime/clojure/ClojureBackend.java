@@ -2,8 +2,9 @@ package cucumber.runtime.clojure;
 
 import clojure.lang.AFunction;
 import clojure.lang.RT;
-import cucumber.io.Resource;
-import cucumber.io.ResourceLoader;
+import cucumber.resources.Consumer;
+import cucumber.resources.Resource;
+import cucumber.resources.Resources;
 import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.World;
@@ -15,32 +16,26 @@ import java.util.regex.Pattern;
 
 public class ClojureBackend implements Backend {
     private static ClojureBackend instance;
-    private final ResourceLoader resourceLoader;
     private World world;
 
-    public ClojureBackend(ResourceLoader resourceLoader) {
-        this.resourceLoader = resourceLoader;
+    public ClojureBackend() throws ClassNotFoundException, IOException {
         instance = this;
-        loadScript("cucumber/runtime/clojure/dsl");
+        RT.load("cucumber/runtime/clojure/dsl");
     }
 
     @Override
     public void buildWorld(List<String> gluePaths, World world) {
         this.world = world;
         for (String gluePath : gluePaths) {
-            for (Resource resource : resourceLoader.resources(gluePath, ".clj")) {
-                loadScript(resource.getPath());
-            }
-        }
-    }
-
-    private void loadScript(String path) {
-        try {
-            RT.load(path.replaceAll(".clj$", ""), true);
-        } catch (IOException e) {
-            throw new CucumberException(e);
-        } catch (ClassNotFoundException e) {
-            throw new CucumberException(e);
+            Resources.scan(gluePath.replace('.', '/'), ".clj", new Consumer() {
+                public void consume(Resource resource) {
+                    try {
+                        RT.load(resource.getPath().replaceAll(".clj$", ""));
+                    } catch (Exception e) {
+                        throw new CucumberException("Failed to parse file " + resource.getPath(), e);
+                    }
+                }
+            });
         }
     }
 

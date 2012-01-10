@@ -1,12 +1,10 @@
 package cucumber.runtime;
 
-import cucumber.io.ClasspathResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
 import gherkin.formatter.PrettyFormatter;
 import gherkin.formatter.model.Step;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,9 +14,9 @@ import static org.junit.Assert.assertEquals;
 
 public class BackgroundTest {
     @Test
-    public void should_run_background() throws IOException {
+    public void should_run_background() {
         Backend backend = new TestBackend();
-        Runtime runtime = new Runtime(new ArrayList<String>(), new ClasspathResourceLoader(), asList(backend), false);
+        Runtime runtime = new Runtime(new ArrayList<String>(), asList(backend), false);
         CucumberFeature feature = feature("test.feature", "" +
                 "Feature:\n" +
                 "  Background:\n" +

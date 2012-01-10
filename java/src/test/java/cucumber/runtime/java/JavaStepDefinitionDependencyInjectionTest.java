@@ -1,12 +1,11 @@
 package cucumber.runtime.java;
 
 import cucumber.annotation.en.Given;
-import cucumber.runtime.RuntimeWorld;
+import cucumber.runtime.World;
 import org.junit.Test;
 
 import java.lang.reflect.Method;
 import java.util.Collections;
-import java.util.List;
 
 import static org.mockito.Mockito.*;
 
@@ -14,8 +13,6 @@ public class JavaStepDefinitionDependencyInjectionTest {
 
     private static final Method GIVEN;
     private static final Method OTHER_GIVEN;
-    private static final List<String> NO_TAGS = Collections.<String>emptyList();
-    private static final List<String> NO_GLUE_PATHS = Collections.<String>emptyList();
 
     static {
         try {
@@ -27,12 +24,11 @@ public class JavaStepDefinitionDependencyInjectionTest {
     }
 
     private ObjectFactory mockObjectFactory = mock(ObjectFactory.class);
-
     private JavaBackend backend = new JavaBackend(mockObjectFactory);
 
     @Test
     public void constructor_arguments_get_registered() {
-        backend.buildWorld(NO_GLUE_PATHS, new RuntimeWorld(null, NO_TAGS));
+        backend.buildWorld(Collections.<String>emptyList(), new World(null, Collections.<String>emptyList()));
         backend.addStepDefinition(GIVEN.getAnnotation(Given.class), GIVEN);
         verify(mockObjectFactory).addClass(Steps.class);
         verify(mockObjectFactory).addClass(StepContext1.class);
@@ -41,7 +37,7 @@ public class JavaStepDefinitionDependencyInjectionTest {
 
     @Test
     public void constructor_arguments_get_registered_exactly_once() {
-        backend.buildWorld(NO_GLUE_PATHS, new RuntimeWorld(null, NO_TAGS));
+        backend.buildWorld(Collections.<String>emptyList(), new World(null, Collections.<String>emptyList()));
         backend.addStepDefinition(OTHER_GIVEN.getAnnotation(Given.class), OTHER_GIVEN);
         verify(mockObjectFactory, times(1)).addClass(OtherSteps.class);
         verify(mockObjectFactory, times(1)).addClass(StepContext3.class);

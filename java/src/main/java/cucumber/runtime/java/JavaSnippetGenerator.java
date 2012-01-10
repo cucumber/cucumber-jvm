@@ -13,8 +13,7 @@ public class JavaSnippetGenerator extends SnippetGenerator {
 
     @Override
     protected String patternFor(String stepName) {
-        String pattern = super.patternFor(stepName);
-        return pattern.replaceAll("\\\\", "\\\\\\\\").replaceAll("\"", "\\\\\"");
+        return super.patternFor(stepName).replaceAll("\"", "\\\\\"");
     }
 
     @Override

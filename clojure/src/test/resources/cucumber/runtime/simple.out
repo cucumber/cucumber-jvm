@@ -1,0 +1,9 @@
+Feature: Cukes
+
+  Scenario: 1 cuke                     # cucumber/runtime/simple.feature:2
+    Given I have 5 cukes in my belly   # stepdefs.clj:3
+    Then there are 4 cukes in my belly # stepdefs.clj:6
+      java.lang.AssertionError: Assert failed: (= (last-meal) (Float. expected))
+      	at clojure.core$eval39$fn__40.invoke(stepdefs.clj:8)
+      	at Cukes.1 cuke.Then there are 4 cukes in my belly(cucumber/runtime/simple.feature:4)
+

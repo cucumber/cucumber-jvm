@@ -11,6 +11,11 @@ public class ClojureSnippetGenerator extends SnippetGenerator {
     }
 
     @Override
+    protected String patternFor(String stepName) {
+        return super.patternFor(stepName).replaceAll("\"", "\\\\\"");
+    }
+
+    @Override
     protected String template() {
         return "({0} #\"{1}\"\n" +
                 "  (fn [{3}]\n" +

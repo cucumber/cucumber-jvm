@@ -1,7 +1,6 @@
 package cucumber.cli;
 
 import cucumber.formatter.FormatterFactory;
-import cucumber.io.FileResourceLoader;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.snippets.SummaryPrinter;
 import gherkin.formatter.Formatter;
@@ -17,8 +16,8 @@ public class Main {
     private static final String USAGE = "HELP";
     private static final String VERSION = "1.0.0"; // TODO: get this from a file
 
-    public static void main(String[] argv) throws Throwable {
-        List<String> featurePaths = new ArrayList<String>();
+    public static void main(String[] argv) throws IOException {
+        List<String> filesOrDirs = new ArrayList<String>();
         List<String> gluePaths = new ArrayList<String>();
         List<Object> filters = new ArrayList<Object>();
         String format = "progress";
@@ -47,8 +46,7 @@ public class Main {
             } else if (arg.equals("--dry-run") || arg.equals("-d")) {
                 isDryRun = true;
             } else {
-                // TODO: Use PathWithLines and add line filter if any
-                featurePaths.add(arg);
+                filesOrDirs.add(arg);
             }
         }
         if (gluePaths.isEmpty()) {
@@ -56,26 +54,26 @@ public class Main {
             System.exit(1);
         }
 
-        Runtime runtime = new Runtime(gluePaths, new FileResourceLoader(), isDryRun);
+        Runtime runtime = new Runtime(gluePaths, isDryRun);
 
         if (dotCucumber != null) {
-            writeDotCucumber(featurePaths, dotCucumber, runtime);
+            writeDotCucumber(filesOrDirs, dotCucumber, runtime);
         }
-        run(featurePaths, filters, format, runtime);
+        run(filesOrDirs, filters, format, runtime);
         printSummary(runtime);
         System.exit(runtime.exitStatus());
     }
 
-    private static void writeDotCucumber(List<String> featurePaths, String dotCucumberPath, Runtime runtime) throws IOException {
+    private static void writeDotCucumber(List<String> filesOrDirs, String dotCucumberPath, Runtime runtime) throws IOException {
         File dotCucumber = new File(dotCucumberPath);
         dotCucumber.mkdirs();
-        runtime.writeStepdefsJson(featurePaths, dotCucumber);
+        runtime.writeStepdefsJson(filesOrDirs, dotCucumber);
     }
 
-    private static void run(List<String> featurePaths, List<Object> filters, String format, Runtime runtime) throws IOException {
+    private static void run(List<String> filesOrDirs, List<Object> filters, String format, Runtime runtime) {
         FormatterFactory formatterFactory = new FormatterFactory();
         Formatter formatter = formatterFactory.createFormatter(format, System.out);
-        runtime.run(featurePaths, filters, formatter, formatterFactory.reporter(formatter));
+        runtime.run(filesOrDirs, filters, formatter, formatterFactory.reporter(formatter));
         formatter.done();
     }
 

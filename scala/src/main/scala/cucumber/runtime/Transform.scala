@@ -1,7 +1,7 @@
 package cucumber
 package runtime
 
-import table.DataTable
+import table.Table
 
 trait Transform[T] {
   def apply(a: Any): T
@@ -15,9 +15,9 @@ object Transform {
     }
   }
 
-  implicit val t2table: Transform[DataTable] = new Transform[DataTable]{
+  implicit val t2table: Transform[Table] = new Transform[Table]{
     def apply(a:Any) = a match {
-      case t:DataTable => t
+      case t:Table => t
     }
   }
 

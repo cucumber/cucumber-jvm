@@ -1,8 +1,5 @@
 package cucumber.formatter;
 
-import org.junit.Ignore;
-
-@Ignore
 public class TestFormatterWithAppendable extends TestFormatter {
     public Appendable appendable;
 

@@ -1,6 +1,5 @@
 package cucumber.resources;
 
-import cucumber.runtime.PathWithLines;
 import org.junit.Test;
 
 import static java.util.Arrays.asList;
