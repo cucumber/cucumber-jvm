@@ -14,7 +14,7 @@ public class IokeSnippetGeneratorTest {
         Step step = new Step(Collections.<Comment>emptyList(), "Given ", "I have 4 cukes in my \"big\" belly", 0, null, null);
         String snippet = new IokeSnippetGenerator(step).getSnippet();
         String expected = "" +
-                "Given(#/^I have ({arg1}\\\\d+) cukes in my \"({arg2}[^\"]*)\" belly$/,\n" +
+                "Given(#/^I have ({arg1}\\d+) cukes in my \"({arg2}[^\"]*)\" belly$/,\n" +
                 "  # Express the Regexp above with the code you wish you had\n" +
                 ")\n";
         assertEquals(expected, snippet);

@@ -1,5 +1,6 @@
 package cucumber.runtime
 
+import cucumber.runtime.snippets.SnippetGenerator
 import gherkin.formatter.model.Step
 import collection.JavaConverters._
 import _root_.java.util.List

@@ -1,6 +1,5 @@
 package cucumber.runtime.model;
 
-import cucumber.runtime.Backend;
 import cucumber.runtime.Runtime;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
@@ -29,13 +28,13 @@ public class CucumberScenarioOutline extends CucumberTagStatement {
     }
 
     @Override
-    public void run(Formatter formatter, Reporter reporter, Runtime runtime, List<? extends Backend> backends, List<String> gluePaths) {
+    public void run(Formatter formatter, Reporter reporter, Runtime runtime) {
         format(formatter);
         for (CucumberExamples cucumberExamples : cucumberExamplesList) {
             cucumberExamples.format(formatter);
             List<CucumberScenario> exampleScenarios = cucumberExamples.createExampleScenarios();
             for (CucumberScenario exampleScenario : exampleScenarios) {
-                exampleScenario.run(formatter, reporter, runtime, backends, gluePaths);
+                exampleScenario.run(formatter, reporter, runtime);
             }
         }
     }

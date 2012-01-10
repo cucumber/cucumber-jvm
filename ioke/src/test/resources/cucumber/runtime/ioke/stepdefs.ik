@@ -1,17 +1,12 @@
-cukes = nil
+_n = nil
+_what = nil
 
-Given(#/^I have ({n}\d+) cukes in my belly$/,
-  cukes = n
+Given(#/^I have ({n}\d+) "({what}[^"]*)" in my belly$/,
+  _n = n
+  _what = what
 )
 
-Then(#/^there are ({n}\d+) cukes in my belly$/,
-  cukes should == n
-)
-
-Given(#/^the ({container}.*) contains ({ingredient}.*)$/,
-  container should == "glass"
-)
-
-When(#/^I add ({liquid}[^"]*)$/,
-  liquid should == "milk"
+Then(#/^there are ({n}\d+) "({what}[^"]*)" in my belly$/,
+  _n should == n
+  _what should == what
 )

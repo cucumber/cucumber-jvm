@@ -90,6 +90,10 @@ def step(regexp, proc)
   end
 end
 
+def pending(reason = "TODO")
+  $backend.pending(reason)
+end
+
 def Before(&proc)
   $backend.addBeforeHook(Cucumber::Runtime::JRuby::HookDefinition.new(proc))
 end

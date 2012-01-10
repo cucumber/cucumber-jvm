@@ -1,9 +1,10 @@
 package cucumber.runtime.jruby;
 
-import cucumber.resources.Consumer;
-import cucumber.resources.Resource;
-import cucumber.resources.Resources;
+import cucumber.io.Resource;
+import cucumber.io.ResourceLoader;
 import cucumber.runtime.Backend;
+import cucumber.runtime.CucumberException;
+import cucumber.runtime.PendingException;
 import cucumber.runtime.World;
 import gherkin.formatter.model.Comment;
 import gherkin.formatter.model.Step;
@@ -24,9 +25,12 @@ public class JRubyBackend implements Backend {
     private static final String DSL = "/cucumber/runtime/jruby/dsl.rb";
     private final ScriptingContainer jruby = new ScriptingContainer();
     private World world;
+    private ResourceLoader resourceLoader;
 
-    public JRubyBackend() throws UnsupportedEncodingException {
+    public JRubyBackend(ResourceLoader resourceLoader) throws UnsupportedEncodingException {
+        this.resourceLoader = resourceLoader;
         jruby.put("$backend", this);
+        jruby.setClassLoader(getClass().getClassLoader());
         //Look for a cucumber-jruby.properties file and load in the things I might care about
         Properties props = new Properties();
         InputStream propsStream = this.getClass().getResourceAsStream("/cucumber-jruby.properties");
@@ -54,12 +58,19 @@ public class JRubyBackend implements Backend {
     public void buildWorld(List<String> gluePaths, World world) {
         this.world = world;
         jruby.put("$world", new Object());
+
         for (String gluePath : gluePaths) {
-            Resources.scan(gluePath.replace('.', '/'), ".rb", new Consumer() {
-                public void consume(Resource resource) {
-                    jruby.runScriptlet(resource.getReader(), resource.getPath());
-                }
-            });
+            for (Resource resource : resourceLoader.resources(gluePath, ".rb")) {
+                runScriptlet(resource);
+            }
+        }
+    }
+
+    private void runScriptlet(Resource resource) {
+        try {
+            jruby.runScriptlet(new InputStreamReader(resource.getInputStream()), resource.getPath());
+        } catch (IOException e) {
+            throw new CucumberException(e);
         }
     }
 
@@ -70,6 +81,10 @@ public class JRubyBackend implements Backend {
     @Override
     public String getSnippet(Step step) {
         return new JRubySnippetGenerator(step).getSnippet();
+    }
+
+    public void pending(String reason) throws PendingException {
+        throw new PendingException(reason);
     }
 
     public void runStep(String uri, Locale locale, String stepString) throws Throwable {

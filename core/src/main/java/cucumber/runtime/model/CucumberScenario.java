@@ -1,14 +1,12 @@
 package cucumber.runtime.model;
 
-import cucumber.runtime.Backend;
 import cucumber.runtime.Runtime;
+import cucumber.runtime.RuntimeWorld;
 import cucumber.runtime.World;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Row;
 import gherkin.formatter.model.Scenario;
-
-import java.util.List;
 
 public class CucumberScenario extends CucumberTagStatement {
     private final CucumberBackground cucumberBackground;
@@ -25,7 +23,7 @@ public class CucumberScenario extends CucumberTagStatement {
     }
 
     public World newWorld(Runtime runtime) {
-        world = new World(runtime, tags());
+        world = new RuntimeWorld(runtime, tags());
         return world;
     }
 
@@ -33,9 +31,9 @@ public class CucumberScenario extends CucumberTagStatement {
      * This method is called when Cucumber is run from the CLI, but not when run from JUnit
      */
     @Override
-    public void run(Formatter formatter, Reporter reporter, Runtime runtime, List<? extends Backend> backends, List<String> gluePaths) {
+    public void run(Formatter formatter, Reporter reporter, Runtime runtime) {
         World world = newWorld(runtime);
-        world.buildBackendWorldsAndRunBeforeHooks(gluePaths, reporter);
+        world.buildBackendWorldsAndRunBeforeHooks(reporter);
         runBackground(formatter, reporter);
         formatAndRunSteps(formatter, reporter, world);
         world.runAfterHooksAndDisposeBackendWorlds(reporter);

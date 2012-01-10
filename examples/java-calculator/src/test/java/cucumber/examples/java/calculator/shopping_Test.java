@@ -5,6 +5,6 @@ import cucumber.junit.Feature;
 import org.junit.runner.RunWith;
 
 @RunWith(Cucumber.class)
-@Feature(value = "shopping.feature")
+@Feature(value = "cucumber/examples/shopping.feature")
 public class shopping_Test {
 }

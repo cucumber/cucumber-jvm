@@ -1,8 +1,10 @@
 package cucumber.runtime.java;
 
 import cucumber.annotation.en.Given;
+import cucumber.io.ClasspathResourceLoader;
 import cucumber.runtime.AmbiguousStepDefinitionsException;
 import cucumber.runtime.Runtime;
+import cucumber.runtime.RuntimeWorld;
 import cucumber.runtime.World;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Comment;
@@ -10,7 +12,6 @@ import gherkin.formatter.model.Step;
 import org.junit.Test;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -37,27 +38,27 @@ public class JavaStepDefinitionTest {
 
     private final Defs defs = new Defs();
     private final JavaBackend backend = new JavaBackend(new SingletonFactory(defs));
-    private final Runtime runtime = new Runtime(NO_PATHS, asList(backend), false);
-    private final World fooWorld = new World(runtime, asList("@foo"));
+    private final Runtime runtime = new Runtime(NO_PATHS, new ClasspathResourceLoader(), asList(backend), false);
+    private final World fooWorld = new RuntimeWorld(runtime, asList("@foo"));
 
     @Test(expected = AmbiguousStepDefinitionsException.class)
     public void throws_ambiguous_when_two_matches_are_found() throws Throwable {
-        backend.buildWorld(new ArrayList<String>(), fooWorld);
+        backend.buildWorld(NO_PATHS, fooWorld);
         backend.addStepDefinition(FOO.getAnnotation(Given.class), FOO);
         backend.addStepDefinition(BAR.getAnnotation(Given.class), BAR);
 
         Reporter reporter = mock(Reporter.class);
-        fooWorld.buildBackendWorldsAndRunBeforeHooks(NO_PATHS, reporter);
+        fooWorld.buildBackendWorldsAndRunBeforeHooks(reporter);
         fooWorld.runStep("uri", new Step(NO_COMMENTS, "Given ", "pattern", 1, null, null), reporter, Locale.US);
     }
 
     @Test
     public void does_not_throw_ambiguous_when_nothing_is_ambiguous() throws Throwable {
-        backend.buildWorld(new ArrayList<String>(), fooWorld);
+        backend.buildWorld(NO_PATHS, fooWorld);
         backend.addStepDefinition(FOO.getAnnotation(Given.class), FOO);
 
         Reporter reporter = mock(Reporter.class);
-        fooWorld.buildBackendWorldsAndRunBeforeHooks(NO_PATHS, reporter);
+        fooWorld.buildBackendWorldsAndRunBeforeHooks(reporter);
         Step step = new Step(NO_COMMENTS, "Given ", "pattern", 1, null, null);
         fooWorld.runStep("uri", step, reporter, Locale.US);
         assertTrue(defs.foo);

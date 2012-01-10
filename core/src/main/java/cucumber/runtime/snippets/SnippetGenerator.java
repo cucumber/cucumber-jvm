@@ -152,7 +152,7 @@ public abstract class SnippetGenerator {
     protected String untypedArguments(List<Class<?>> argumentTypes) {
         StringBuilder sb = new StringBuilder();
         for (int n = 0; n < argumentTypes.size(); n++) {
-            if (n > 1) {
+            if (n > 0) {
                 sb.append(", ");
             }
             sb.append("arg").append(n + 1);
