@@ -1,6 +1,11 @@
 package cucumber.runtime.model;
 
-import gherkin.formatter.model.*;
+import gherkin.formatter.model.Comment;
+import gherkin.formatter.model.Examples;
+import gherkin.formatter.model.ExamplesTableRow;
+import gherkin.formatter.model.ScenarioOutline;
+import gherkin.formatter.model.Step;
+import gherkin.formatter.model.Tag;
 import org.junit.Test;
 
 import java.util.List;

@@ -1,5 +1,6 @@
 package cucumber.runtime;
 
+import cucumber.io.ClasspathResourceLoader;
 import gherkin.formatter.Reporter;
 import org.junit.Test;
 import org.mockito.InOrder;
@@ -10,7 +11,9 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 import static org.mockito.Matchers.anyListOf;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class HookTest {
 
@@ -26,8 +29,8 @@ public class HookTest {
         HookDefinition hook = mock(HookDefinition.class);
         when(hook.matches(anyListOf(String.class))).thenReturn(true);
 
-        Runtime runtime = new Runtime(CODE_PATHS, asList(backend), false);
-        World world = new World(runtime, TAGS);
+        Runtime runtime = new Runtime(CODE_PATHS, new ClasspathResourceLoader(), asList(backend), false);
+        World world = new RuntimeWorld(runtime, TAGS);
         world.addAfterHook(hook);
 
         world.runAfterHooksAndDisposeBackendWorlds(mock(Reporter.class));

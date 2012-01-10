@@ -1,8 +1,7 @@
 package cucumber.runtime.ioke;
 
-import cucumber.resources.Consumer;
-import cucumber.resources.Resource;
-import cucumber.resources.Resources;
+import cucumber.io.Resource;
+import cucumber.io.ResourceLoader;
 import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.World;
@@ -18,13 +17,15 @@ import java.util.Arrays;
 import java.util.List;
 
 public class IokeBackend implements Backend {
+    private final ResourceLoader resourceLoader;
     private final Runtime ioke;
     private final List<Runtime.RescueInfo> failureRescues;
     private final List<Runtime.RescueInfo> pendingRescues;
     private String currentLocation;
     private World world;
 
-    public IokeBackend() {
+    public IokeBackend(ResourceLoader resourceLoader) {
+        this.resourceLoader = resourceLoader;
         try {
             ioke = new Runtime();
             ioke.init();
@@ -40,17 +41,20 @@ public class IokeBackend implements Backend {
     @Override
     public void buildWorld(List<String> gluePaths, World world) {
         this.world = world;
+
         for (String gluePath : gluePaths) {
-            Resources.scan(gluePath.replace('.', '/'), ".ik", new Consumer() {
-                public void consume(Resource resource) {
-                    try {
-                        currentLocation = resource.getPath();
-                        ioke.evaluateString("use(\"" + resource.getPath() + "\")");
-                    } catch (ControlFlow controlFlow) {
-                        throw new CucumberException("Failed to load " + resource.getPath(), controlFlow);
-                    }
-                }
-            });
+            for (Resource resource : resourceLoader.resources(gluePath, ".ik")) {
+                currentLocation = resource.getPath();
+                evaluate(resource);
+            }
+        }
+    }
+
+    private void evaluate(Resource resource) {
+        try {
+            ioke.evaluateString("use(\"" + resource.getPath() + "\")");
+        } catch (ControlFlow controlFlow) {
+            throw new CucumberException(controlFlow);
         }
     }
 

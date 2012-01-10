@@ -16,15 +16,13 @@ import java.util.List;
  */
 class ExecutionUnitRunner extends ParentRunner<Step> {
     private final Runtime runtime;
-    private final List<String> gluePaths;
     private final CucumberScenario cucumberScenario;
     private final JUnitReporter jUnitReporter;
     private World world;
 
-    public ExecutionUnitRunner(Runtime runtime, List<String> gluePaths, CucumberScenario cucumberScenario, JUnitReporter jUnitReporter) throws InitializationError {
+    public ExecutionUnitRunner(Runtime runtime, CucumberScenario cucumberScenario, JUnitReporter jUnitReporter) throws InitializationError {
         super(ExecutionUnitRunner.class);
         this.runtime = runtime;
-        this.gluePaths = gluePaths;
         this.cucumberScenario = cucumberScenario;
         this.jUnitReporter = jUnitReporter;
     }
@@ -49,7 +47,7 @@ class ExecutionUnitRunner extends ParentRunner<Step> {
         jUnitReporter.startExecutionUnit(this, notifier);
 
         world = cucumberScenario.newWorld(runtime);
-        world.buildBackendWorldsAndRunBeforeHooks(gluePaths, jUnitReporter);
+        world.buildBackendWorldsAndRunBeforeHooks(jUnitReporter);
         cucumberScenario.runBackground(jUnitReporter.getFormatter(), jUnitReporter.getReporter());
         cucumberScenario.format(jUnitReporter);
         // Run the steps (the children)

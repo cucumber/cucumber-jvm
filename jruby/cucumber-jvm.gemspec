@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name         = 'cucumber-jvm'
-  s.version      = '2.5.4'
+  s.version      = '1.0.0'
   s.authors      = ['Aslak Hellesøy']
   s.description  = 'Cucumber-JVM for JRuby'
   s.summary      = "#{s.name}-#{s.version}"
@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.homepage     = 'http://github.com/cucumber/cucumber-jvm'
   s.files        = Dir['lib/**/*'] + Dir['bin/**/*']
   s.files       -= Dir['**/.gitignore']
-  s.executables  = Dir['bin/**/*']
+  s.executables  = ['cucumber-jvm']
   s.require_path = 'lib'
   s.platform     = 'java'
 end

@@ -1,13 +1,21 @@
 package cucumber.runtime;
 
-import cucumber.resources.Resource;
+import cucumber.io.Resource;
 import cucumber.runtime.model.CucumberFeature;
 import gherkin.I18n;
 import gherkin.formatter.FilterFormatter;
 import gherkin.formatter.Formatter;
-import gherkin.formatter.model.*;
+import gherkin.formatter.model.Background;
+import gherkin.formatter.model.Examples;
+import gherkin.formatter.model.Feature;
+import gherkin.formatter.model.Scenario;
+import gherkin.formatter.model.ScenarioOutline;
+import gherkin.formatter.model.Step;
 import gherkin.parser.Parser;
+import gherkin.util.FixJava;
 
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.List;
 
 public class FeatureBuilder implements Formatter {
@@ -73,11 +81,21 @@ public class FeatureBuilder implements Formatter {
             formatter = new FilterFormatter(this, filters);
         }
         Parser parser = new Parser(formatter);
-        parser.parse(resource.getString(), resource.getPath(), 0);
+        String gherkin = read(resource);
+        parser.parse(gherkin, resource.getPath(), 0);
         I18n i18n = parser.getI18nLanguage();
         if (currentCucumberFeature != null) {
             // The current feature may be null if we used a very restrictive filter, say a tag that isn't used.
+            // Might also happen if the feature file itself is empty.
             currentCucumberFeature.setLocale(i18n.getLocale());
+        }
+    }
+
+    private String read(Resource resource) {
+        try {
+            return FixJava.readReader(new InputStreamReader(resource.getInputStream(), "UTF-8"));
+        } catch (IOException e) {
+            throw new CucumberException("Failed to read resource:" + resource.getPath(), e);
         }
     }
 }

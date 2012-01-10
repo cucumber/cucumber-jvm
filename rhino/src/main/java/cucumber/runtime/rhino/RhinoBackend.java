@@ -1,12 +1,11 @@
 package cucumber.runtime.rhino;
 
-import cucumber.resources.Consumer;
-import cucumber.resources.Resource;
-import cucumber.resources.Resources;
+import cucumber.io.Resource;
+import cucumber.io.ResourceLoader;
 import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.World;
-import cucumber.runtime.javascript.JavascriptSnippetGenerator;
+import cucumber.runtime.javascript.JavaScriptSnippetGenerator;
 import gherkin.formatter.model.Step;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.NativeFunction;
@@ -16,18 +15,18 @@ import org.mozilla.javascript.tools.shell.Global;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class RhinoBackend implements Backend {
     private static final String JS_DSL = "/cucumber/runtime/rhino/dsl.js";
+    private final ResourceLoader resourceLoader;
     private final Context cx;
     private final Scriptable scope;
-    private final Set<String> gluePaths = new HashSet<String>();
+    private List<String> gluePaths;
     private World world;
 
-    public RhinoBackend() throws IOException {
+    public RhinoBackend(ResourceLoader resourceLoader) throws IOException {
+        this.resourceLoader = resourceLoader;
         cx = Context.enter();
         scope = new Global(cx); // This gives us access to global functions like load()
         scope.put("jsBackend", scope, this);
@@ -37,19 +36,18 @@ public class RhinoBackend implements Backend {
 
     @Override
     public void buildWorld(List<String> gluePaths, World world) {
+        this.gluePaths = gluePaths;
         this.world = world;
+
         for (String gluePath : gluePaths) {
-            gluePath = gluePath.replace('.', '/');
-            gluePaths.add(gluePath);
-            Resources.scan(gluePath, ".js", new Consumer() {
-                public void consume(Resource resource) {
-                    try {
-                        cx.evaluateReader(scope, resource.getReader(), resource.getPath(), 1, null);
-                    } catch (IOException e) {
-                        throw new CucumberException("Failed to evaluate Javascript in " + resource.getPath(), e);
-                    }
+            Iterable<Resource> resources = resourceLoader.resources(gluePath, ".js");
+            for (Resource resource : resources) {
+                try {
+                    cx.evaluateReader(scope, new InputStreamReader(resource.getInputStream()), resource.getPath(), 1, null);
+                } catch (IOException e) {
+                    throw new CucumberException("Failed to evaluate Javascript in " + resource.getPath(), e);
                 }
-            });
+            }
         }
     }
 
@@ -59,7 +57,7 @@ public class RhinoBackend implements Backend {
 
     @Override
     public String getSnippet(Step step) {
-        return new JavascriptSnippetGenerator(step).getSnippet();
+        return new JavaScriptSnippetGenerator(step).getSnippet();
     }
 
     private StackTraceElement stepDefLocation(String extension) {

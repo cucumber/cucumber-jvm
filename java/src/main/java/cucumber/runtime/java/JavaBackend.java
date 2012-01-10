@@ -4,7 +4,8 @@ import cucumber.annotation.After;
 import cucumber.annotation.Before;
 import cucumber.annotation.Order;
 import cucumber.fallback.runtime.java.DefaultJavaObjectFactory;
-import cucumber.resources.Resources;
+import cucumber.io.ClasspathResourceLoader;
+import cucumber.io.ResourceLoader;
 import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.World;
@@ -25,13 +26,13 @@ public class JavaBackend implements Backend {
     private final ClasspathMethodScanner classpathMethodScanner = new ClasspathMethodScanner();
     private World world;
 
-    public JavaBackend() {
+    public JavaBackend(ResourceLoader ignored) {
         ObjectFactory foundOF;
         if (ObjectFactoryHolder.getFactory() != null) {
             foundOF = ObjectFactoryHolder.getFactory();
         } else {
             try {
-                foundOF = Resources.instantiateExactlyOneSubclass(ObjectFactory.class, "cucumber.runtime", new Class[0], new Object[0]);
+                foundOF = new ClasspathResourceLoader().instantiateExactlyOneSubclass(ObjectFactory.class, "cucumber/runtime", new Class[0], new Object[0]);
             } catch (CucumberException ce) {
                 foundOF = new DefaultJavaObjectFactory();
             }
@@ -46,9 +47,7 @@ public class JavaBackend implements Backend {
     @Override
     public void buildWorld(List<String> gluePaths, World world) {
         this.world = world;
-        for (String gluePath : gluePaths) {
-            classpathMethodScanner.scan(this, gluePath);
-        }
+        classpathMethodScanner.scan(this, gluePaths);
         objectFactory.createInstances();
     }
 
