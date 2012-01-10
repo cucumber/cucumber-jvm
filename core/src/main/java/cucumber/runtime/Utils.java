@@ -1,6 +1,8 @@
 package cucumber.runtime;
 
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class Utils {
@@ -10,5 +12,41 @@ public class Utils {
             list.add(obj);
         }
         return list;
+    }
+
+    public static boolean isInstantiable(Class<?> clazz) {
+        return Modifier.isPublic(clazz.getModifiers()) && !Modifier.isAbstract(clazz.getModifiers());
+    }
+
+    public static String packagePath(Class clazz) {
+        return packagePath(packageName(clazz.getName()));
+    }
+    
+    public static String packagePath(String packageName) {
+        return packageName.replace('.', '/');
+    }
+
+    public static String packageName(String className) {
+        return className.substring(0, Math.max(0, className.lastIndexOf(".")));
+    }
+    
+    public static <T> Iterator<T> emptyIterator() {
+        return new Iterator<T>() {
+
+            @Override
+            public boolean hasNext() {
+                return false;
+            }
+
+            @Override
+            public T next() {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public void remove() {
+                throw new UnsupportedOperationException();
+            }
+        };
     }
 }

@@ -6,7 +6,7 @@ import cucumber.junit.Cucumber;
 import cucumber.junit.Feature;
 
 @RunWith(Cucumber.class)
-@Feature(value = "date_calculator.feature")
+@Feature(value = "cucumber/examples/date_calculator.feature")
 public class date_calculator_Test {
 
 }

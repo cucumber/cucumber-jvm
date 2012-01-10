@@ -3,4 +3,8 @@ $:.unshift(File.dirname(__FILE__) + '/../lib') unless $:.include?(File.dirname(_
 
 require 'cucumber-jruby-full.jar'
 
-Java::CucumberCli::Main.main(ARGV)
+begin
+  Java::CucumberCli::Main.main(ARGV)
+rescue NativeException => e
+  e.cause.printStackTrace
+end

@@ -23,6 +23,24 @@ Then /^the argument should not be nil/ do
   assert_not_nil(@argument, "Argument should not be nil")
 end
 
+Given /^a pending stepdef without an explicit reason$/ do 
+  begin
+    pending
+  rescue Exception => @exception
+  end
+end
+
+Given /^a pending stepdef with reason "([^"]*)"$/ do |reason|
+  begin
+    pending reason
+  rescue Exception => @exception
+  end
+end
+
+Then /^the pending stepdef throws a pending exception with "([^"]*)"$/ do |message|
+  assert_match /.*PendingException: #{message}$/, @exception.message
+end
+
 Given /^a step called from another$/ do
   @called ||= 0
   @called += 1

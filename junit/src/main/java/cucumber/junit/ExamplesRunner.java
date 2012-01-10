@@ -20,7 +20,7 @@ class ExamplesRunner extends Suite {
         List<CucumberScenario> exampleScenarios = cucumberExamples.createExampleScenarios();
         for (CucumberScenario scenario : exampleScenarios) {
             try {
-                ExecutionUnitRunner exampleScenarioRunner = new ExecutionUnitRunner(runtime, gluePaths, scenario, jUnitReporter);
+                ExecutionUnitRunner exampleScenarioRunner = new ExecutionUnitRunner(runtime, scenario, jUnitReporter);
                 getChildren().add(exampleScenarioRunner);
             } catch (InitializationError initializationError) {
                 initializationError.printStackTrace();

@@ -1,18 +1,22 @@
 package cucumber.runtime;
 
-import cucumber.resources.AbstractResource;
+import cucumber.io.Resource;
 import cucumber.runtime.model.CucumberFeature;
 
+import org.junit.Ignore;
+
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
+@Ignore
 public class TestHelper {
-    static CucumberFeature feature(final String path, final String source) {
+    static CucumberFeature feature(final String path, final String source) throws IOException {
         ArrayList<CucumberFeature> cucumberFeatures = new ArrayList<CucumberFeature>();
         FeatureBuilder featureBuilder = new FeatureBuilder(cucumberFeatures);
-        featureBuilder.parse(new AbstractResource(null) {
+        featureBuilder.parse(new Resource() {
             @Override
             public String getPath() {
                 return path;

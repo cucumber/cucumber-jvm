@@ -32,6 +32,6 @@ public class ArgumentPattern {
     private String replaceMatchWith(String name, String replacement) {
         Matcher matcher = pattern.matcher(name);
         String quotedReplacement = Matcher.quoteReplacement(replacement);
-        return Matcher.quoteReplacement(matcher.replaceAll(quotedReplacement));
+        return matcher.replaceAll(quotedReplacement);
     }
 }
