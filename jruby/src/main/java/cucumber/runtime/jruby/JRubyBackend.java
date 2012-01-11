@@ -64,9 +64,8 @@ public class JRubyBackend implements Backend {
         throw new PendingException(reason);
     }
 
-    public void runStep(String uri, Locale locale, String stepString) throws Throwable {
-        Step s = new Step(Collections.<Comment>emptyList(), "Given ", stepString, 0, null, null);
-        world.runUnreportedStep(uri, s, locale);
+    public void runStep(String uri, Locale locale, String stepKeyword, String stepName, int line) throws Throwable {
+        world.runUnreportedStep(uri, locale, stepKeyword, stepName, line);
     }
 
     public void addStepdef(RubyObject stepdef) {

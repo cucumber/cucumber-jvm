@@ -69,24 +69,13 @@ def register(regexp, proc)
   $backend.addStepdef(Cucumber::Runtime::JRuby::StepDefinition.new(regexp, proc))
 end
 
-def Given(regexp, &proc)
-  step(regexp, proc)
-end
-
-def When(regexp, &proc)
-  step(regexp, proc)
-end
-
-def Then(regexp, &proc)
-  step(regexp, proc)
-end
-
-def step(regexp, proc)
+def register_or_invoke(keyword, regexp_or_name, proc)
   if proc
-    register(regexp, proc)
+    register(regexp_or_name, proc)
   else
-    # caller[1] gets us to our stepdefs, right before we enter the dsl
-    $backend.runStep(caller[1].to_s, @__cucumber_locale, regexp)
+    # caller[1] gets us to our stepdef, right before we enter the dsl
+    uri, line = *caller[1].to_s.split(/:/)
+    $backend.runStep(uri, @__cucumber_locale, keyword, regexp_or_name, line.to_i)
   end
 end
 
@@ -101,3 +90,18 @@ end
 def After(&proc)
   $backend.addAfterHook(Cucumber::Runtime::JRuby::HookDefinition.new(proc))
 end
+
+# TODO: The code below should be generated, just like I18n for other backends
+
+def Given(regexp_or_name, &proc)
+  register_or_invoke('Given ', regexp_or_name, proc)
+end
+
+def When(regexp_or_name, &proc)
+  register_or_invoke('When ', regexp_or_name, proc)
+end
+
+def Then(regexp_or_name, &proc)
+  register_or_invoke('Then ', regexp_or_name, proc)
+end
+

@@ -11,9 +11,9 @@ public interface World {
 
     void runAfterHooksAndDisposeBackendWorlds(Reporter reporter);
 
-    public void runUnreportedStep(String uri, Step step, Locale locale) throws Throwable;
-
     void runStep(String uri, Step step, Reporter reporter, Locale locale);
+
+    void runUnreportedStep(String file, Locale locale, String stepKeyword, String stepName, int line) throws Throwable;
 
     void addStepDefinition(StepDefinition stepDefinition);
 
@@ -26,4 +26,5 @@ public interface World {
     List<HookDefinition> getAfterHooks();
 
     List<StepDefinition> getStepDefinitions();
+
 }

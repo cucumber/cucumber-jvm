@@ -58,10 +58,12 @@ When /I call an undefined step from another$/ do
   begin
     When "HOLY MOLEYS THIS DOESN'T EXIST!"
   rescue Exception => e
-    @exception = e
+    @exception = e.cause
   end
 end
 
-Then /I get an exception$/ do
-  assert_not_nil(@exception, "I should have gotten an exception")
+Then /I get an exception with "([^"]*)"$/ do |message|
+  assert_match /#{message}$/, @exception.message
+  assert_equal(__FILE__, @exception.stackTrace[0].fileName)
+  assert_equal(59, @exception.stackTrace[0].lineNumber)
 end

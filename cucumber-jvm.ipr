@@ -296,24 +296,41 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/clojure/cucumber-clojure.iml" filepath="$PROJECT_DIR$/clojure/cucumber-clojure.iml" />
+      <module fileurl="file://$PROJECT_DIR$/clojure/cucumber-clojure.iml" filepath="$PROJECT_DIR$/clojure/cucumber-clojure.iml" />
+      <module fileurl="file://$PROJECT_DIR$/core/cucumber-core.iml" filepath="$PROJECT_DIR$/core/cucumber-core.iml" />
       <module fileurl="file://$PROJECT_DIR$/core/cucumber-core.iml" filepath="$PROJECT_DIR$/core/cucumber-core.iml" />
       <module fileurl="file://$PROJECT_DIR$/groovy/cucumber-groovy.iml" filepath="$PROJECT_DIR$/groovy/cucumber-groovy.iml" />
+      <module fileurl="file://$PROJECT_DIR$/groovy/cucumber-groovy.iml" filepath="$PROJECT_DIR$/groovy/cucumber-groovy.iml" />
+      <module fileurl="file://$PROJECT_DIR$/guice/cucumber-guice.iml" filepath="$PROJECT_DIR$/guice/cucumber-guice.iml" />
       <module fileurl="file://$PROJECT_DIR$/guice/cucumber-guice.iml" filepath="$PROJECT_DIR$/guice/cucumber-guice.iml" />
       <module fileurl="file://$PROJECT_DIR$/ioke/cucumber-ioke.iml" filepath="$PROJECT_DIR$/ioke/cucumber-ioke.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ioke/cucumber-ioke.iml" filepath="$PROJECT_DIR$/ioke/cucumber-ioke.iml" />
+      <module fileurl="file://$PROJECT_DIR$/java/cucumber-java.iml" filepath="$PROJECT_DIR$/java/cucumber-java.iml" />
       <module fileurl="file://$PROJECT_DIR$/java/cucumber-java.iml" filepath="$PROJECT_DIR$/java/cucumber-java.iml" />
       <module fileurl="file://$PROJECT_DIR$/jruby/cucumber-jruby.iml" filepath="$PROJECT_DIR$/jruby/cucumber-jruby.iml" />
+      <module fileurl="file://$PROJECT_DIR$/jruby/cucumber-jruby.iml" filepath="$PROJECT_DIR$/jruby/cucumber-jruby.iml" />
+      <module fileurl="file://$PROJECT_DIR$/junit/cucumber-junit.iml" filepath="$PROJECT_DIR$/junit/cucumber-junit.iml" />
       <module fileurl="file://$PROJECT_DIR$/junit/cucumber-junit.iml" filepath="$PROJECT_DIR$/junit/cucumber-junit.iml" />
       <module fileurl="file://$PROJECT_DIR$/cucumber-jvm.iml" filepath="$PROJECT_DIR$/cucumber-jvm.iml" />
+      <module fileurl="file://$PROJECT_DIR$/cucumber-jvm.iml" filepath="$PROJECT_DIR$/cucumber-jvm.iml" />
+      <module fileurl="file://$PROJECT_DIR$/jython/cucumber-jython.iml" filepath="$PROJECT_DIR$/jython/cucumber-jython.iml" />
       <module fileurl="file://$PROJECT_DIR$/jython/cucumber-jython.iml" filepath="$PROJECT_DIR$/jython/cucumber-jython.iml" />
       <module fileurl="file://$PROJECT_DIR$/openejb/cucumber-openejb.iml" filepath="$PROJECT_DIR$/openejb/cucumber-openejb.iml" />
+      <module fileurl="file://$PROJECT_DIR$/openejb/cucumber-openejb.iml" filepath="$PROJECT_DIR$/openejb/cucumber-openejb.iml" />
+      <module fileurl="file://$PROJECT_DIR$/picocontainer/cucumber-picocontainer.iml" filepath="$PROJECT_DIR$/picocontainer/cucumber-picocontainer.iml" />
       <module fileurl="file://$PROJECT_DIR$/picocontainer/cucumber-picocontainer.iml" filepath="$PROJECT_DIR$/picocontainer/cucumber-picocontainer.iml" />
       <module fileurl="file://$PROJECT_DIR$/tmp/aruba/cucumber-picocontainer-test.iml" filepath="$PROJECT_DIR$/tmp/aruba/cucumber-picocontainer-test.iml" />
       <module fileurl="file://$PROJECT_DIR$/rhino/cucumber-rhino.iml" filepath="$PROJECT_DIR$/rhino/cucumber-rhino.iml" />
+      <module fileurl="file://$PROJECT_DIR$/rhino/cucumber-rhino.iml" filepath="$PROJECT_DIR$/rhino/cucumber-rhino.iml" />
+      <module fileurl="file://$PROJECT_DIR$/scala/cucumber-scala.iml" filepath="$PROJECT_DIR$/scala/cucumber-scala.iml" />
       <module fileurl="file://$PROJECT_DIR$/scala/cucumber-scala.iml" filepath="$PROJECT_DIR$/scala/cucumber-scala.iml" />
       <module fileurl="file://$PROJECT_DIR$/spring/cucumber-spring.iml" filepath="$PROJECT_DIR$/spring/cucumber-spring.iml" />
+      <module fileurl="file://$PROJECT_DIR$/spring/cucumber-spring.iml" filepath="$PROJECT_DIR$/spring/cucumber-spring.iml" />
+      <module fileurl="file://$PROJECT_DIR$/examples/groovy-calculator/groovy-calculator.iml" filepath="$PROJECT_DIR$/examples/groovy-calculator/groovy-calculator.iml" />
       <module fileurl="file://$PROJECT_DIR$/examples/groovy-calculator/groovy-calculator.iml" filepath="$PROJECT_DIR$/examples/groovy-calculator/groovy-calculator.iml" />
       <module fileurl="file://$PROJECT_DIR$/examples/java-calculator/java-calculator.iml" filepath="$PROJECT_DIR$/examples/java-calculator/java-calculator.iml" />
       <module fileurl="file://$PROJECT_DIR$/examples/java-webbit-websockets-selenium/java-webbit-websockets-selenium.iml" filepath="$PROJECT_DIR$/examples/java-webbit-websockets-selenium/java-webbit-websockets-selenium.iml" />
+      <module fileurl="file://$PROJECT_DIR$/examples/scala-calculator/scala-calculator.iml" filepath="$PROJECT_DIR$/examples/scala-calculator/scala-calculator.iml" />
       <module fileurl="file://$PROJECT_DIR$/examples/scala-calculator/scala-calculator.iml" filepath="$PROJECT_DIR$/examples/scala-calculator/scala-calculator.iml" />
     </modules>
   </component>
@@ -380,17 +397,6 @@
       </JAVADOC>
       <SOURCES>
         <root url="jar://$MAVEN_REPOSITORY$/com/google/code/findbugs/jsr305/1.3.9/jsr305-1.3.9-sources.jar!/" />
-      </SOURCES>
-    </library>
-    <library name="Maven: com.google.code.gson:gson:1.7.2">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/com/google/code/gson/gson/1.7.2/gson-1.7.2.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/com/google/code/gson/gson/1.7.2/gson-1.7.2-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/com/google/code/gson/gson/1.7.2/gson-1.7.2-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: com.google.code.gson:gson:2.1">
