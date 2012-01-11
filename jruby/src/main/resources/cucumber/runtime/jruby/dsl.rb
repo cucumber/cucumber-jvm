@@ -12,7 +12,7 @@ module Cucumber
         # Lifted from regexp_argument_matcher.rb in Cucumber 1.0
         def matched_arguments(step_name)
           match = @regexp.match(step_name)
-          if(match)
+          if (match)
             n = 0
             match.captures.map do |val|
               n += 1
@@ -28,7 +28,8 @@ module Cucumber
           @proc.arity
         end
 
-        def execute(*args)
+        def execute(locale, *args)
+          $world.instance_variable_set :@__cucumber_locale, locale
           $world.instance_exec(*args, &@proc)
         end
 
@@ -51,15 +52,15 @@ module Cucumber
       end
 
       class HookDefinition
-      	def initialize(proc)
+        def initialize(proc)
           @proc = proc
         end
-      
-      	def execute(*args)
+
+        def execute(*args)
           $world.instance_exec(*args, &@proc)
         end
       end
-      	
+
     end
   end
 end
@@ -69,15 +70,24 @@ def register(regexp, proc)
 end
 
 def Given(regexp, &proc)
-  register(regexp, proc)
+  step(regexp, proc)
 end
 
 def When(regexp, &proc)
-  register(regexp, proc)
+  step(regexp, proc)
 end
 
 def Then(regexp, &proc)
-  register(regexp, proc)
+  step(regexp, proc)
+end
+
+def step(regexp, proc)
+  if proc
+    register(regexp, proc)
+  else
+    # caller[1] gets us to our stepdefs, right before we enter the dsl
+    $backend.runStep(caller[1].to_s, @__cucumber_locale, regexp)
+  end
 end
 
 def pending(reason = "TODO")
@@ -85,7 +95,7 @@ def pending(reason = "TODO")
 end
 
 def Before(&proc)
-  $backend.addBeforeHook(Cucumber::Runtime::JRuby::HookDefinition.new(proc))	
+  $backend.addBeforeHook(Cucumber::Runtime::JRuby::HookDefinition.new(proc))
 end
 
 def After(&proc)
