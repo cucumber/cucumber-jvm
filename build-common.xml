@@ -1,4 +1,5 @@
-<project name="common" xmlns:ivy="antlib:org.apache.ivy.ant" default="test">
+<project name="common" xmlns:ivy="antlib:org.apache.ivy.ant" xmlns:artifact="antlib:org.apache.maven.artifact.ant"
+         default="test">
     <property name="cucumber-jvm-version" value="1.0.0-RC3"/>
     <property name="ivy-version" value="2.2.0"/>
     <property name="ivy-install-dir" location="${user.home}/.ivy2/install"/>
@@ -29,8 +30,10 @@
         <ivy:resolve log="download-only"/>
         <ivy:cachepath pathid="ivy.compile-classpath" conf="default"/>
         <ivy:cachepath pathid="ivy.test-classpath" conf="test"/>
-        <ivy:artifactproperty conf="default" name="local.[organisation].[artifact]" value="${ivy.local.default.root}/${ivy.local.default.artifact.pattern}"/>
-        <ivy:artifactproperty conf="default" name="cache.[organisation].[artifact]" value="${ivy.cache.dir}/[organisation]/[artifact]/jars/[artifact]-[revision].jar"/>
+        <ivy:artifactproperty conf="default" name="local.[organisation].[artifact]"
+                              value="${ivy.local.default.root}/${ivy.local.default.artifact.pattern}"/>
+        <ivy:artifactproperty conf="default" name="cache.[organisation].[artifact]"
+                              value="${ivy.cache.dir}/[organisation]/[artifact]/jars/[artifact]-[revision].jar"/>
         <property name="module" value="${ant.project.name}"/>
         <property name="version" value="${ivy.revision}"/>
 
@@ -120,10 +123,33 @@
     <!-- And here: http://svn.apache.org/repos/asf/ant/antlibs/common/trunk -->
     <target name="makepom" depends="-init-ivy" description="Generate POM">
         <!-- Optional: Intermediate file containing resolved version numbers -->
-        <ivy:deliver deliverpattern="ivy.xml" organisation="info.cukes" module="${module}" pubrevision="${cucumber-jvm-version}" status="release"/>
+        <ivy:deliver deliverpattern="ivy.xml" organisation="info.cukes" module="${module}"
+                     pubrevision="${cucumber-jvm-version}" status="release"/>
 
         <!-- Generate the Maven POM -->
         <ivy:makepom ivyfile="ivy.xml" pomfile="${module}.pom"/>
+    </target>
+
+    <target name="release-artifacts" depends="makepom">
+        <property name="maven-staging-repository-id" value="sonatype-nexus-staging"/>
+        <property name="maven-staging-repository-url"
+                  value="https://oss.sonatype.org/service/local/staging/deploy/maven2/"/>
+
+        <ivy:cachepath pathid="ivy.build-classpath" conf="build"/>
+        
+        <typedef resource="org/apache/maven/artifact/ant/antlib.xml"
+                   uri="antlib:org.apache.maven.artifact.ant"
+                   classpathref="ivy.build-classpath" />
+
+        <!-- sign and deploy the main artifact -->
+        <artifact:mvn>
+            <arg value="org.apache.maven.plugins:maven-gpg-plugin:1.4:sign-and-deploy-file"/>
+            <arg value="-Durl=${maven-staging-repository-url}"/>
+            <arg value="-DrepositoryId=${maven-staging-repository-id}"/>
+            <arg value="-DpomFile=${module}.pom"/>
+            <arg value="-Dfile=${module-jar}"/>
+            <arg value="-Pgpg"/>
+        </artifact:mvn>
     </target>
 
     <target name="clean">

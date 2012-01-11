@@ -88,6 +88,7 @@ TODO:
   * http://stackoverflow.com/questions/5199571/pgp-decrypt-using-ant
   * http://www.lockboxlabs.org/content/downloads
 * Upload jars
+  * https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide#SonatypeOSSMavenRepositoryUsageGuide-8.ReleaseIt
 * Tag git
 * Fix stepdefs.json (it's empty)
 * Run the cucumber-tck tests (still use maven, to test it works with maven)

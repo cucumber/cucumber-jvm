@@ -1,9 +1,10 @@
 <ivy-module version="2.0">
-    <info organisation="info.cukes" module="cucumber-core" revision="1.0.0-RC3" status="release" publication="20120105135837"/>
+    <info organisation="info.cukes" module="cucumber-core" revision="1.0.0-RC3" status="release" publication="20120107141007"/>
 
     <configurations defaultconfmapping="*->default">
         <conf name="default"/>
         <conf name="test" extends="default"/>
+        <conf name="build" extends="default"/>
     </configurations>
     <publications>
         <artifact conf="default" name="cucumber-core"/>
@@ -19,5 +20,8 @@
 
         <dependency name="junit" org="junit" rev="4.10" conf="test"/>
         <dependency name="mockito-all" org="org.mockito" rev="1.9.0" conf="test"/>
+
+        <dependency name="maven-ant-tasks" org="org.apache.maven" rev="2.1.3" conf="build"/>
+        <dependency name="maven-gpg-plugin" org="org.apache.maven.plugins" rev="1.4" conf="build"/>
     </dependencies>
 </ivy-module>
