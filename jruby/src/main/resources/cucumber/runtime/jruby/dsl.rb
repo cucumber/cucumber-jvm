@@ -101,3 +101,7 @@ end
 def After(&proc)
   $backend.addAfterHook(Cucumber::Runtime::JRuby::HookDefinition.new(proc))
 end
+
+def World(&proc)
+  $world.instance_exec(&proc)
+end
