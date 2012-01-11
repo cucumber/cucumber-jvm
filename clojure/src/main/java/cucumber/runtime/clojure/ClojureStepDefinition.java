@@ -1,6 +1,6 @@
 package cucumber.runtime.clojure;
 
-import clojure.lang.AFunction;
+import clojure.lang.IFn;
 import cucumber.runtime.JdkPatternArgumentMatcher;
 import cucumber.runtime.ParameterType;
 import cucumber.runtime.StepDefinition;
@@ -16,10 +16,10 @@ import java.util.regex.Pattern;
 
 public class ClojureStepDefinition implements StepDefinition {
     private final Pattern pattern;
-    private final AFunction closure;
+    private final IFn closure;
     private StackTraceElement location;
 
-    public ClojureStepDefinition(Pattern pattern, AFunction closure, StackTraceElement location) {
+    public ClojureStepDefinition(Pattern pattern, IFn closure, StackTraceElement location) {
         this.pattern = pattern;
         this.closure = closure;
         this.location = location;
@@ -27,7 +27,7 @@ public class ClojureStepDefinition implements StepDefinition {
 
     // Clojure's AFunction.invokeWithArgs doesn't take varargs :-/
     private Method lookupInvokeMethod(Object[] args) throws NoSuchMethodException {
-        return AFunction.class.getMethod("invoke", (Class<?>[]) Utils.listOf(args.length, Object.class).toArray());
+        return IFn.class.getMethod("invoke", (Class<?>[]) Utils.listOf(args.length, Object.class).toArray());
     }
 
     public List<Argument> matchedArguments(Step step) {
