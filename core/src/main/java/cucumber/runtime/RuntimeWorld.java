@@ -3,6 +3,7 @@ package cucumber.runtime;
 import cucumber.runtime.converters.LocalizedXStreams;
 import gherkin.formatter.Argument;
 import gherkin.formatter.Reporter;
+import gherkin.formatter.model.Comment;
 import gherkin.formatter.model.Match;
 import gherkin.formatter.model.Result;
 import gherkin.formatter.model.Step;
@@ -45,12 +46,21 @@ public class RuntimeWorld implements World {
     }
 
     @Override
-    public void runUnreportedStep(String uri, Step step, Locale locale) throws Throwable {
+    public void runUnreportedStep(String uri, Locale locale, String stepKeyword, String stepName, int line) throws Throwable {
+        Step step = new Step(Collections.<Comment>emptyList(), stepKeyword, stepName, line, null, null);
+
         StepDefinitionMatch match = stepDefinitionMatch(uri, step, locale);
         if (match == null) {
-            throw new CucumberException("Calling an undefined step from " + uri);
-        }
+            UndefinedStepException error = new UndefinedStepException(step);
 
+            StackTraceElement[] originalTrace = error.getStackTrace();
+            StackTraceElement[] newTrace = new StackTraceElement[originalTrace.length + 1];
+            newTrace[0] = new StackTraceElement("✽", "StepDefinition", uri, line);
+            System.arraycopy(originalTrace, 0, newTrace, 1, originalTrace.length);
+            error.setStackTrace(newTrace);
+
+            throw error;
+        }
         match.runStep(locale);
     }
 

@@ -9,7 +9,6 @@ import cucumber.runtime.converters.SingleValueConverterWrapperExt;
 import cucumber.table.DataTable;
 import cucumber.table.TableConverter;
 import gherkin.formatter.Argument;
-import gherkin.formatter.Reporter;
 import gherkin.formatter.model.DataTableRow;
 import gherkin.formatter.model.Match;
 import gherkin.formatter.model.Step;
