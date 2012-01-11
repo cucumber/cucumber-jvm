@@ -40,6 +40,11 @@ public class JavaBackendTest {
         }
 
         @Override
+        public void runUnreportedStep(String uri, Step step, Locale locale) throws Throwable {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
         public void runStep(String uri, Step step, Reporter reporter, Locale locale) {
             throw new UnsupportedOperationException();
         }

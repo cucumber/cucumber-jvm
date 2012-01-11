@@ -18,6 +18,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 import static java.util.Arrays.asList;
@@ -116,7 +117,7 @@ public class StepdefGeneratorTest {
             }
 
             @Override
-            public void execute(Object[] args) throws Throwable {
+            public void execute(Locale locale, Object[] args) throws Throwable {
                 throw new UnsupportedOperationException("TODO");
             }
 

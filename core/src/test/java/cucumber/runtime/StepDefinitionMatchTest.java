@@ -2,6 +2,7 @@ package cucumber.runtime;
 
 import cucumber.runtime.converters.LocalizedXStreams;
 import gherkin.formatter.Argument;
+import gherkin.formatter.Reporter;
 import gherkin.formatter.model.DocString;
 import gherkin.formatter.model.Step;
 import org.junit.Test;
@@ -20,6 +21,7 @@ public class StepDefinitionMatchTest {
     @Test
     public void converts_numbers() throws Throwable {
         StepDefinition stepDefinition = mock(StepDefinition.class);
+        Reporter reporter = mock(Reporter.class);
         List<ParameterType> parameterTypes = asList(new ParameterType(Integer.TYPE, null));
         when(stepDefinition.getParameterTypes()).thenReturn(parameterTypes);
 
@@ -29,12 +31,13 @@ public class StepDefinitionMatchTest {
 
         StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(Arrays.asList(new Argument(0, "5")), stepDefinition, "some.feature", stepWithoutDocStringOrTable, new LocalizedXStreams());
         stepDefinitionMatch.runStep(Locale.ENGLISH);
-        verify(stepDefinition).execute(new Object[]{5});
+        verify(stepDefinition).execute(Locale.ENGLISH, new Object[]{5});
     }
 
     @Test
     public void can_have_doc_string_as_only_argument() throws Throwable {
         StepDefinition stepDefinition = mock(StepDefinition.class);
+        Reporter reporter = mock(Reporter.class);
         List<ParameterType> parameterTypes = asList(new ParameterType(String.class, null));
         when(stepDefinition.getParameterTypes()).thenReturn(parameterTypes);
 
@@ -45,12 +48,13 @@ public class StepDefinitionMatchTest {
 
         StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(new ArrayList<Argument>(), stepDefinition, "some.feature", stepWithDocString, new LocalizedXStreams());
         stepDefinitionMatch.runStep(Locale.ENGLISH);
-        verify(stepDefinition).execute(new Object[]{"HELLO"});
+        verify(stepDefinition).execute(Locale.ENGLISH, new Object[]{"HELLO"});
     }
 
     @Test
     public void can_have_doc_string_as_last_argument_among_many() throws Throwable {
         StepDefinition stepDefinition = mock(StepDefinition.class);
+        Reporter reporter = mock(Reporter.class);
         List<ParameterType> parameterTypes = asList(new ParameterType(Integer.TYPE, null), new ParameterType(String.class, null));
         when(stepDefinition.getParameterTypes()).thenReturn(parameterTypes);
 
@@ -61,6 +65,6 @@ public class StepDefinitionMatchTest {
 
         StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(Arrays.asList(new Argument(0, "5")), stepDefinition, "some.feature", stepWithDocString, new LocalizedXStreams());
         stepDefinitionMatch.runStep(Locale.ENGLISH);
-        verify(stepDefinition).execute(new Object[]{5, "HELLO"});
+        verify(stepDefinition).execute(Locale.ENGLISH, new Object[]{5, "HELLO"});
     }
 }

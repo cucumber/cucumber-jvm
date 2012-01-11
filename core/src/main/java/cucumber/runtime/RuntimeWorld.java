@@ -44,6 +44,16 @@ public class RuntimeWorld implements World {
         runtime.disposeBackendWorlds();
     }
 
+    @Override
+    public void runUnreportedStep(String uri, Step step, Locale locale) throws Throwable {
+        StepDefinitionMatch match = stepDefinitionMatch(uri, step, locale);
+        if (match == null) {
+            throw new CucumberException("Calling an undefined step from " + uri);
+        }
+
+        match.runStep(locale);
+    }
+
     private void runHooks(List<HookDefinition> hooks, Reporter reporter) {
         for (HookDefinition hook : hooks) {
             runHookIfTagsMatch(hook, reporter);
