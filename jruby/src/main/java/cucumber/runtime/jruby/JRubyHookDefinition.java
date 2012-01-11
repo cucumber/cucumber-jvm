@@ -4,6 +4,8 @@ import cucumber.runtime.HookDefinition;
 import cucumber.runtime.ScenarioResult;
 import gherkin.TagExpression;
 import org.jruby.RubyObject;
+import org.jruby.ext.jruby.JRubyUtilLibrary;
+import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
 
 import java.util.Collection;
@@ -22,7 +24,8 @@ public class JRubyHookDefinition implements HookDefinition {
 
     @Override
     public void execute(ScenarioResult scenarioResult) throws Throwable {
-        IRubyObject[] jrybyArgs = new IRubyObject[0];
+        IRubyObject[] jrybyArgs = new IRubyObject[1];
+        jrybyArgs[0] = JavaEmbedUtils.javaToRuby(hook.getRuntime(), scenarioResult);
         hook.callMethod("execute", jrybyArgs);
     }
 
