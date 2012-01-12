@@ -4,101 +4,58 @@ import cucumber.runtime.CucumberException;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.JSONFormatter;
 import gherkin.formatter.PrettyFormatter;
-import gherkin.formatter.Reporter;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
+import java.io.File;
+import java.io.FileWriter;
+import java.util.HashMap;
+import java.util.Map;
 
 public class FormatterFactory {
 
-    private static final String CUCUMBER_MONOCHROME_PROPERTY = "cucumber.monochrome";
-    private static final String PROGRESS_FORMATTER = "progress";
-    private static final String HTML_FORMATTER = "html";
-    private static final String JSON_FORMATTER = "json";
-    private static final String PRETTY_FORMATTER = "pretty";
+    private static final Map<String, String> BUILTIN_FORMATTERS = new HashMap<String, String>() {{
+        put("progress", ProgressFormatter.class.getName());
+        put("html", HTMLFormatter.class.getName());
+        put("json", JSONFormatter.class.getName());
+        put("pretty", PrettyFormatter.class.getName());
+    }};
 
-    public Formatter createFormatter(String formatterName, Appendable appendable) {
-        if (PROGRESS_FORMATTER.equals(formatterName)) {
-            return new ProgressFormatter(appendable, isMonochrome());
-        } else if (PRETTY_FORMATTER.equals(formatterName)) {
-            return new PrettyFormatter(appendable, isMonochrome(), true);
-        } else if (JSON_FORMATTER.equals(formatterName)) {
-            return new JSONFormatter(appendable);
-        } else if (HTML_FORMATTER.equals(formatterName)) {
-            return new HTMLFormatter();
-        }
-        return createFormatterFromClassName(formatterName, appendable);
+    public Formatter createFormatter(String formatterName, Object out) {
+        String className = BUILTIN_FORMATTERS.containsKey(formatterName) ? BUILTIN_FORMATTERS.get(formatterName) : formatterName;
+        return createFormatterFromClassName(className, out);
     }
 
-    /**
-     * @param formatter
-     * @return reporter if the formatter also implements Reporter else returns
-     *         {@link NullReporter}
-     */
-    public Reporter reporter(Formatter formatter) {
-        if (formatter instanceof Reporter) {
-            return (Reporter) formatter;
-        } else {
-            return new NullReporter();
-        }
-    }
-
-    private Formatter createFormatterFromClassName(String formatterString, Appendable appendable) {
-        Formatter formatter;
+    private Formatter createFormatterFromClassName(String className, Object out) {
         try {
-            Class<Formatter> formatterClass = getFormatterClass(formatterString);
-            Constructor<Formatter> constructor = getConstructorWithAppendableIfExists(formatterClass);
-            if (constructor == null) {
-                formatter = getDefaultConstructor(formatterClass).newInstance();
-            } else {
-                formatter = constructor.newInstance(appendable);
+            Class ctorArgClass = Appendable.class;
+            if (out instanceof File) {
+                File file = (File) out;
+                if (file.isDirectory()) {
+                    out = file;
+                    ctorArgClass = File.class;
+                } else {
+                    out = new FileWriter(file);
+                }
             }
-        } catch (IllegalArgumentException e) {
-            throw new CucumberException("Error creating instance of: " + formatterString, e);
-        } catch (InstantiationException e) {
-            throw new CucumberException("Error creating instance of: " + formatterString, e);
-        } catch (IllegalAccessException e) {
-            throw new CucumberException("Error creating instance of: " + formatterString, e);
-        } catch (InvocationTargetException e) {
-            throw new CucumberException("Error creating instance of: " + formatterString, e);
-        }
-        return formatter;
-    }
-
-    private Constructor<Formatter> getDefaultConstructor(Class<Formatter> formatterClass) {
-        try {
-            return formatterClass.getDeclaredConstructor();
-        } catch (SecurityException e) {
-            throw new CucumberException("Error while getting default Constructor from formatter class: "
-                    + formatterClass.getName(), e);
-        } catch (NoSuchMethodException e) {
-            throw new CucumberException("Error while getting default Constructor from formatter class: "
-                    + formatterClass.getName(), e);
+            Class<Formatter> formatterClass = getFormatterClass(className);
+            // TODO: Remove these if statements. We should fix PrettyFormatter and ProgressFormatter to only take a single Appendable arg.
+            // Whether or not to use Monochrome is tricky. Maybe always enforce another 2nd argument for that
+            if (PrettyFormatter.class.isAssignableFrom(formatterClass)) {
+                return formatterClass.getConstructor(ctorArgClass, Boolean.TYPE, Boolean.TYPE).newInstance(out, false, true);
+            } else if (ProgressFormatter.class.isAssignableFrom(formatterClass)) {
+                return formatterClass.getConstructor(ctorArgClass, Boolean.TYPE).newInstance(out, false);
+            } else {
+                return formatterClass.getConstructor(ctorArgClass).newInstance(out);
+            }
+        } catch (Exception e) {
+            throw new CucumberException(String.format("Error creating instance of: %s outputting to %s", className, out), e);
         }
     }
 
-    private Constructor<Formatter> getConstructorWithAppendableIfExists(Class<Formatter> formatterClass) {
+    private Class<Formatter> getFormatterClass(String className) {
         try {
-            return formatterClass.getDeclaredConstructor(Appendable.class);
-        } catch (SecurityException e) {
-            throw new CucumberException("Error while getting Appendable Constructor from formatter class: "
-                    + formatterClass.getName(), e);
-        } catch (NoSuchMethodException e) {
-            // No constructor with Appendable
-            return null;
-        }
-    }
-
-    private Class<Formatter> getFormatterClass(String formatterString) {
-        try {
-            return (Class<Formatter>) Class.forName(formatterString);
+            return (Class<Formatter>) Class.forName(className);
         } catch (ClassNotFoundException e) {
-            throw new CucumberException("Formatter class not found: " + formatterString, e);
+            throw new CucumberException("Formatter class not found: " + className, e);
         }
-    }
-
-    private boolean isMonochrome() {
-        String value = System.getProperty(CUCUMBER_MONOCHROME_PROPERTY, "false");
-        return Boolean.valueOf(value);
     }
 }
