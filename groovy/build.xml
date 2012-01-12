@@ -29,7 +29,7 @@ I18n.all.each { i18n ->
         <ivy:cachepath pathid="ivy.build-classpath" conf="build"/>
         <taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask" classpathref="ivy.build-classpath"/>
 
-        <jarjar jarfile="bin/cucumber-groovy-full.jar">
+        <jarjar jarfile="target/artifacts/jars/cucumber-groovy-full.jar">
             <fileset dir="target/classes"/>
             <zipfileset src="${local.info.cukes.cucumber-core}"/>
             <zipfileset src="${cache.info.cukes.gherkin}"/>
@@ -37,8 +37,17 @@ I18n.all.each { i18n ->
             <zipfileset src="${cache.com.googlecode.java-diff-utils.diffutils}"/>
             <zipfileset src="${cache.com.google.code.gson.gson}"/>
         </jarjar>
+
+        <copy file="target/artifacts/jars/cucumber-groovy-full.jar" todir="bin"/>
     </target>
-    
+
+    <target name="zip" depends="jarjar">
+        <mkdir dir="target/artifacts/zips"/>
+        <zip file="target/artifacts/zips/cucumber-groovy-full.zip">
+            <fileset dir="bin"/>
+        </zip>
+    </target>
+
     <target name="cli-test" depends="jarjar">
         <fail unless="env.GROOVY_HOME">You must define GROOVY_HOME in your shell</fail>
         <exec executable="${env.GROOVY_HOME}/bin/groovy">
@@ -48,4 +57,19 @@ I18n.all.each { i18n ->
             <arg file="src/test/resources"/>
         </exec>
     </target>
+
+    <!-- TODO: package a zip/tgz as well, with -full -->
+    <target name="packages" depends="jar,jarjar,zip"/>
+
+    <target name="gpg" depends="-gpg-default,zip,jarjar,cli-test">
+        <exec command="gpg">
+            <arg value="-ab"/>
+            <arg file="target/artifacts/jars/cucumber-groovy-full.jar"/>
+        </exec>
+        <exec command="gpg">
+            <arg value="-ab"/>
+            <arg file="target/artifacts/zips/cucumber-groovy-full.zip"/>
+        </exec>
+    </target>
+
 </project>

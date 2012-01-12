@@ -1,8 +1,15 @@
 <ivysettings>
-    <settings defaultResolver="nexus-central"/>
-    <credentials host="oss.sonatype.org" realm="Sonatype Nexus Repository Manager" username="${nexus.username}" passwd="${nexus.passwd}"/>
+    <settings defaultResolver="default"/>
+    <include url="${ivy.default.settings.dir}/ivysettings-public.xml"/>
+    <include url="${ivy.default.settings.dir}/ivysettings-shared.xml"/>
+    <include url="${ivy.default.settings.dir}/ivysettings-local.xml"/>
+    <include url="${ivy.default.settings.dir}/ivysettings-main-chain.xml"/>
+    <include url="${ivy.default.settings.dir}/ivysettings-default-chain.xml"/>
+
+    <credentials host="oss.sonatype.org" realm="Sonatype Nexus Repository Manager" username="${nexus.username}"
+                 passwd="${nexus.passwd}"/>
     <resolvers>
-        <ibiblio name="nexus-central" root="http://somehost/nexus/content/repositories/central/" m2compatible="true"/>
-        <ibiblio name="nexus-deploy" root="https://oss.sonatype.org/service/local/staging/deploy/maven2" m2compatible="true"/>
+        <ibiblio name="nexus-deploy" root="https://oss.sonatype.org/service/local/staging/deploy/maven2"
+                 m2compatible="true"/>
     </resolvers>
 </ivysettings>

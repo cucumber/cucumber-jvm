@@ -120,7 +120,7 @@
 
     <target name="javadoc" depends="-init-ivy">
         <mkdir dir="target/javadoc"/>
-        <javadoc destdir="target/javadoc" sourcepath="src/main/java" classpathref="ivy.compile-classpath" failonerror="true" windowtitle="${project.name}">
+        <javadoc destdir="target/javadoc" sourcepath="src/main/java" classpathref="ivy.compile-classpath" failonerror="true" windowtitle="${project.name}" encoding="UTF-8">
             <doctitle>${project.name}</doctitle>
         </javadoc>
     </target>
@@ -139,35 +139,40 @@
 
     <target name="publish-artifacts" depends="test,publish-local"/>
 
+    <target name="-gpg-default" depends="jar,jar-javadoc,jar-sources,makepom">
+      <delete>
+          <fileset dir="${jars-dir}" includes="*.asc"/>
+      </delete>
+      <delete>
+          <fileset dir="${poms-dir}" includes="*.asc"/>
+      </delete>
+
+      <exec command="gpg">
+          <arg value="-ab"/>
+          <arg file="${module-jar}"/>
+      </exec>
+      <exec command="gpg">
+          <arg value="-ab"/>
+          <arg file="${javadoc-jar}"/>
+      </exec>
+      <exec command="gpg">
+          <arg value="-ab"/>
+          <arg file="${sources-jar}"/>
+      </exec>
+      <exec command="gpg">
+          <arg value="-ab"/>
+          <arg file="${module-pom}"/>
+      </exec>
+    </target>
+
+    <target name="gpg" depends="-gpg-default" />
+
     <target name="makepom" depends="-init-ivy" description="Generate POM">
         <!--ivy:deliver deliverpattern="ivy.xml" pubrevision="${cucumber-jvm-version}" status="release"/-->
         <ivy:makepom ivyfile="ivy.xml" pomfile="${module-pom}"/>
     </target>
 
-    <target name="publish-nexus" depends="packages,test,jar-javadoc,jar-sources,makepom" description="Upload to Nexus">
-        <delete>
-            <fileset dir="${jars-dir}" includes="*.asc"/>
-        </delete>
-        <delete>
-            <fileset dir="${poms-dir}" includes="*.asc"/>
-        </delete>
-        <exec command="gpg">
-            <arg value="-ab"/>
-            <arg file="${module-jar}"/>
-        </exec>
-        <exec command="gpg">
-            <arg value="-ab"/>
-            <arg file="${javadoc-jar}"/>
-        </exec>
-        <exec command="gpg">
-            <arg value="-ab"/>
-            <arg file="${sources-jar}"/>
-        </exec>
-        <exec command="gpg">
-            <arg value="-ab"/>
-            <arg file="${module-pom}"/>
-        </exec>
-
+    <target name="publish-nexus" depends="packages,test,gpg" description="Upload to Nexus">
         <ivy:publish resolver="nexus-deploy" pubrevision="${cucumber-jvm-version}" overwrite="true" publishivy="false" >
             <artifacts pattern="target/artifacts/[type]s/[artifact].[ext]"/>
         </ivy:publish>
