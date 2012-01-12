@@ -18,3 +18,4 @@ tmp/
 /.scala_dependencies
 /out/
 *.pom
+nexus.properties

@@ -1,10 +1,12 @@
-<project name="common" xmlns:ivy="antlib:org.apache.ivy.ant" xmlns:artifact="antlib:org.apache.maven.artifact.ant"
-         default="test">
+<project name="common" xmlns:ivy="antlib:org.apache.ivy.ant" xmlns:artifact="antlib:org.apache.maven.artifact.ant" default="test">
     <property name="cucumber-jvm-version" value="1.0.0-RC3"/>
+    <property name="gherkin.version" value="2.7.3"/>
+
     <property name="ivy-version" value="2.2.0"/>
     <property name="ivy-install-dir" location="${user.home}/.ivy2/install"/>
     <property name="ivy-jar" location="${ivy-install-dir}/ivy-${ivy-version}.jar"/>
     <available property="ivy-installed" file="${ivy-jar}"/>
+    <dirname property="common-basedir" file="${ant.file.common}"/>
 
     <target name="-init" description="Ivy-independent initialization">
         <property environment="env"/>
@@ -21,11 +23,11 @@
     </target>
 
     <target name="-load-ivy" depends="-bootstrap-ivy">
+        <property file="${common-basedir}/nexus.properties"/>
         <taskdef uri="antlib:org.apache.ivy.ant" classpath="${ivy-jar}"/>
     </target>
 
     <target name="-init-ivy" depends="-init,-load-ivy" description="Set up Ivy-related paths">
-        <dirname property="common-basedir" file="${ant.file.common}"/>
         <ivy:settings file="${common-basedir}/ivy-settings.xml"/>
         <ivy:resolve log="download-only"/>
         <ivy:cachepath pathid="ivy.compile-classpath" conf="default"/>
@@ -41,6 +43,8 @@
         <property name="module-jar" location="${jars-dir}/${module}.jar"/>
         <property name="sources-jar" location="${jars-dir}/${module}-sources.jar"/>
         <property name="javadoc-jar" location="${jars-dir}/${module}-javadoc.jar"/>
+        <property name="poms-dir" location="target/artifacts/poms"/>
+        <property name="module-pom" location="${poms-dir}/${module}.pom"/>
 
         <path id="test-classpath">
             <path refid="ivy.test-classpath"/>
@@ -111,45 +115,62 @@
         </jar>
     </target>
 
-    <target name="publish-only" depends="jar">
-        <!--<ivy:deliver conf="default" />-->
-        <ivy:publish resolver="local" update="true" overwrite="true"
-                     artifactspattern="target/artifacts/[type]s/[artifact].[ext]"/>
+    <!-- Can be overridden in sub projects -->
+    <target name="packages" depends="jar" />
+
+    <target name="javadoc" depends="-init-ivy">
+        <mkdir dir="target/javadoc"/>
+        <javadoc destdir="target/javadoc" sourcepath="src/main/java" classpathref="ivy.compile-classpath" failonerror="true" windowtitle="${project.name}">
+            <doctitle>${project.name}</doctitle>
+        </javadoc>
     </target>
 
-    <target name="publish-artifacts" depends="test,publish-only"/>
+    <target name="jar-javadoc" depends="javadoc">
+        <jar destfile="${javadoc-jar}" basedir="target/javadoc"/>
+    </target>
 
-    <!-- More here: http://stackoverflow.com/questions/5111831/how-to-publish-3rdparty-artifacts-with-ivy-and-nexus -->
-    <!-- And here: http://svn.apache.org/repos/asf/ant/antlibs/common/trunk -->
+    <target name="jar-sources">
+        <jar destfile="${sources-jar}" basedir="src/main/java"/>
+    </target>
+
+    <target name="publish-local" depends="jar">
+        <ivy:publish resolver="local" update="true" overwrite="true" artifactspattern="target/artifacts/[type]s/[artifact].[ext]"/>
+    </target>
+
+    <target name="publish-artifacts" depends="test,publish-local"/>
+
     <target name="makepom" depends="-init-ivy" description="Generate POM">
-        <!-- Optional: Intermediate file containing resolved version numbers -->
-        <ivy:deliver deliverpattern="ivy.xml" organisation="info.cukes" module="${module}"
-                     pubrevision="${cucumber-jvm-version}" status="release"/>
-
-        <!-- Generate the Maven POM -->
-        <ivy:makepom ivyfile="ivy.xml" pomfile="${module}.pom"/>
+        <ivy:deliver deliverpattern="ivy.xml" pubrevision="${cucumber-jvm-version}" status="release"/>
+        <ivy:makepom ivyfile="ivy.xml" pomfile="${module-pom}"/>
     </target>
 
-    <target name="release-artifacts" depends="makepom">
-        <property name="maven-staging-repository-id" value="sonatype-nexus-staging"/>
-        <property name="maven-staging-repository-url"
-                  value="https://oss.sonatype.org/service/local/staging/deploy/maven2/"/>
+    <target name="publish-nexus" depends="packages,test,jar-javadoc,jar-sources,makepom" description="Upload to Nexus">
+        <delete>
+            <fileset dir="${jars-dir}" includes="*.asc"/>
+        </delete>
+        <delete>
+            <fileset dir="${poms-dir}" includes="*.asc"/>
+        </delete>
+        <exec command="gpg">
+            <arg value="-ab"/>
+            <arg file="${module-jar}"/>
+        </exec>
+        <exec command="gpg">
+            <arg value="-ab"/>
+            <arg file="${javadoc-jar}"/>
+        </exec>
+        <exec command="gpg">
+            <arg value="-ab"/>
+            <arg file="${sources-jar}"/>
+        </exec>
+        <exec command="gpg">
+            <arg value="-ab"/>
+            <arg file="${module-pom}"/>
+        </exec>
 
-        <ivy:cachepath pathid="ivy.build-classpath" conf="build"/>
-        
-        <typedef resource="org/apache/maven/artifact/ant/antlib.xml"
-                   uri="antlib:org.apache.maven.artifact.ant"
-                   classpathref="ivy.build-classpath" />
-
-        <!-- sign and deploy the main artifact -->
-        <artifact:mvn>
-            <arg value="org.apache.maven.plugins:maven-gpg-plugin:1.4:sign-and-deploy-file"/>
-            <arg value="-Durl=${maven-staging-repository-url}"/>
-            <arg value="-DrepositoryId=${maven-staging-repository-id}"/>
-            <arg value="-DpomFile=${module}.pom"/>
-            <arg value="-Dfile=${module-jar}"/>
-            <arg value="-Pgpg"/>
-        </artifact:mvn>
+        <ivy:publish resolver="nexus-deploy" pubrevision="${cucumber-jvm-version}" overwrite="true" publishivy="false" >
+            <artifacts pattern="target/artifacts/[type]s/[artifact].[ext]"/>
+        </ivy:publish>
     </target>
 
     <target name="clean">
