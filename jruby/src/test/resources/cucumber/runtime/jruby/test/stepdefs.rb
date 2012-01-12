@@ -40,3 +40,30 @@ end
 Then /^the pending stepdef throws a pending exception with "([^"]*)"$/ do |message|
   assert_match /.*PendingException: #{message}$/, @exception.message
 end
+
+Given /^a step called from another$/ do
+  @called ||= 0
+  @called += 1
+end
+
+When /^I call that step$/ do
+  Given "a step called from another"
+end
+
+Then /^the step got called$/ do
+  assert_equal(2, @called)
+end
+
+When /I call an undefined step from another$/ do
+  begin
+    When "HOLY MOLEYS THIS DOESN'T EXIST!"
+  rescue Exception => e
+    @exception = e.cause
+  end
+end
+
+Then /I get an exception with "([^"]*)"$/ do |message|
+  assert_match /#{message}$/, @exception.message
+  assert_equal(__FILE__, @exception.stackTrace[0].fileName)
+  assert_equal(59, @exception.stackTrace[0].lineNumber)
+end

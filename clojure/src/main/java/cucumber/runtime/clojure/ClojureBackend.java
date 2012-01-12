@@ -1,6 +1,6 @@
 package cucumber.runtime.clojure;
 
-import clojure.lang.AFunction;
+import clojure.lang.IFn;
 import clojure.lang.RT;
 import cucumber.io.Resource;
 import cucumber.io.ResourceLoader;
@@ -65,16 +65,16 @@ public class ClojureBackend implements Backend {
         throw new CucumberException("Couldn't find location for step definition");
     }
 
-    public static void addStepDefinition(Pattern regexp, AFunction body) {
+    public static void addStepDefinition(Pattern regexp, IFn body) {
         StackTraceElement location = instance.stepDefLocation("clojure.lang.Compiler", "eval");
         instance.world.addStepDefinition(new ClojureStepDefinition(regexp, body, location));
     }
 
-    public static void addBeforeHook(AFunction body) {
+    public static void addBeforeHook(IFn body) {
         instance.world.addBeforeHook(new ClojureHookDefinition(new String[0], body));
     }
 
-    public static void addAfterHook(AFunction body) {
+    public static void addAfterHook(IFn body) {
         instance.world.addAfterHook(new ClojureHookDefinition(new String[0], body));
     }
 }

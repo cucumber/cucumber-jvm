@@ -7,10 +7,12 @@ import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 import org.jruby.RubyObject;
 import org.jruby.RubyString;
+import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class JRubyStepDefinition implements StepDefinition {
 
@@ -47,16 +49,20 @@ public class JRubyStepDefinition implements StepDefinition {
     }
 
     @Override
-    public void execute(Object[] args) throws Throwable {
-        IRubyObject[] jrybyArgs = new IRubyObject[args.length];
-        for (int i = 0; i < args.length; i++) {
-            if (args[i] != null) {
-                jrybyArgs[i] = stepdef.getRuntime().newString((String) args[i]);
+    public void execute(Locale locale, Object[] args) throws Throwable {
+        ArrayList<IRubyObject> jrubyArgs = new ArrayList<IRubyObject>();
+
+        jrubyArgs.add(JavaEmbedUtils.javaToRuby(stepdef.getRuntime(), locale));
+
+        for (Object o : args) {
+            if (o == null) {
+                jrubyArgs.add(null);
             } else {
-                jrybyArgs[i] = null;
+                jrubyArgs.add(stepdef.getRuntime().newString((String) o));
             }
         }
-        stepdef.callMethod("execute", jrybyArgs);
+
+        stepdef.callMethod("execute", jrubyArgs.toArray(new IRubyObject[0]));
     }
 
     @Override

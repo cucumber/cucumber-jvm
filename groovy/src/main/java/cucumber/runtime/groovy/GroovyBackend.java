@@ -28,9 +28,13 @@ public class GroovyBackend implements Backend {
     private World world;
 
     public GroovyBackend(ResourceLoader resourceLoader) {
+        this (new GroovyShell(), resourceLoader);
+    }
+
+    public GroovyBackend(GroovyShell shell, ResourceLoader resourceLoader) {
         this.resourceLoader = resourceLoader;
+        this.shell = shell;
         instance = this;
-        shell = new GroovyShell();
     }
 
     @Override

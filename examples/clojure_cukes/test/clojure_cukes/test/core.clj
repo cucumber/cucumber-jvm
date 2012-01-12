@@ -1,4 +1,4 @@
-(ns clojure_cukes.test.core
+(ns clojure-cukes.test.core
   (:use [clojure-cukes.core])
   (:use [clojure.test]))
 

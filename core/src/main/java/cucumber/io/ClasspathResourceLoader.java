@@ -3,6 +3,7 @@ package cucumber.io;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Utils;
 
+import java.io.File;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
@@ -76,7 +77,7 @@ public class ClasspathResourceLoader implements ResourceLoader {
     }
 
     private String className(String pathToClass) {
-        return pathToClass.substring(0, pathToClass.length() - 6).replace("/", ".");
+        return pathToClass.substring(0, pathToClass.length() - 6).replace(File.separatorChar, '.');
     }
 
     private ClassLoader cl() {

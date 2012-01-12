@@ -1,13 +1,13 @@
 package cucumber.runtime.clojure;
 
-import clojure.lang.AFunction;
+import clojure.lang.IFn;
 
 import java.util.List;
 
 public class ClojureHook {
-    private final AFunction closure;
+    private final IFn closure;
 
-    public ClojureHook(List<String> tagExpressions, AFunction closure) {
+    public ClojureHook(List<String> tagExpressions, IFn closure) {
         //super(tagExpressions);
         this.closure = closure;
     }

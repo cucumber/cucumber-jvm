@@ -13,6 +13,7 @@ import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.regexp.NativeRegExp;
 import org.mozilla.javascript.tools.shell.Global;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
@@ -66,7 +67,8 @@ public class RhinoBackend implements Backend {
         for (StackTraceElement stackTraceElement : stackTraceElements) {
             boolean js = stackTraceElement.getFileName().endsWith(extension);
             for (String scriptPath : gluePaths) {
-                boolean inScriptPath = stackTraceElement.getFileName().startsWith(scriptPath);
+                String platformScriptPath = scriptPath.replace('/', File.separatorChar);
+                boolean inScriptPath = stackTraceElement.getFileName().startsWith(platformScriptPath);
                 boolean hasLine = stackTraceElement.getLineNumber() != -1;
                 if (js && inScriptPath && hasLine) {
                     return stackTraceElement;

@@ -8,8 +8,8 @@ import gherkin.formatter.model.Step;
 import groovy.lang.Closure;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 public class GroovyStepDefinition implements StepDefinition {
@@ -44,7 +44,7 @@ public class GroovyStepDefinition implements StepDefinition {
         return result;
     }
 
-    public void execute(Object[] args) throws Throwable {
+    public void execute(Locale locale, Object[] args) throws Throwable {
         backend.invoke(body, args);
     }
 
