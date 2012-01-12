@@ -70,7 +70,9 @@ public class StepDefinitionMatch extends Match {
 
         int n = 0;
         for (Argument a : getArguments()) {
+            if (parameterTypes != null) {
             SingleValueConverter converter;
+
             ParameterType parameterType = parameterTypes.get(n);
             if (parameterType.getDateFormat() != null) {
                 converter = new DateConverter(parameterType.getDateFormat(), locale);
@@ -80,6 +82,9 @@ public class StepDefinitionMatch extends Match {
                 converter = (SingleValueConverter) converterLookup.lookupConverterForType(parameterType.getParameterClass());
             }
             result[n] = converter.fromString(a.getVal());
+            } else {
+                result[n] = a.getVal();
+            }
             n++;
         }
 

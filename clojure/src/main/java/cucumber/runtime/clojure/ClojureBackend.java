@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public class ClojureBackend implements Backend {
+public class ClojureBackend {
     private static ClojureBackend instance;
     private final ResourceLoader resourceLoader;
     private World world;
