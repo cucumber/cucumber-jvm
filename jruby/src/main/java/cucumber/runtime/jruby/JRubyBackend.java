@@ -23,6 +23,14 @@ public class JRubyBackend implements Backend {
     private World world;
     private ResourceLoader resourceLoader;
 
+    //Cache the items, because world is created new each scenario, but the jruby isn't
+    //and reloading the entire jruby each time is slow and ineffecient
+    private Set<String> loadedResources = new HashSet<String>();
+    private Set<RubyObject> stepDefs = new HashSet<RubyObject>();
+    private Set<RubyObject> beforeHooks = new HashSet<RubyObject>();
+    private Set<RubyObject> afterHooks = new HashSet<RubyObject>();
+
+
     public JRubyBackend(ResourceLoader resourceLoader) throws UnsupportedEncodingException {
         this.resourceLoader = resourceLoader;
         jruby.put("$backend", this);
@@ -49,11 +57,24 @@ public class JRubyBackend implements Backend {
     public void buildWorld(List<String> gluePaths, World world) {
         this.world = world;
         jruby.put("$world", new Object());
+        
+        //Inject all the existing step definitions
+        for(RubyObject stepdef : stepDefs) {
+            world.addStepDefinition(new JRubyStepDefinition(stepdef));
+        }
+        for(RubyObject beforeHook : beforeHooks) {
+            world.addBeforeHook(new JRubyHookDefinition(new String[0], beforeHook));
+        }
+        for(RubyObject afterHook : afterHooks) {
+            world.addAfterHook(new JRubyHookDefinition(new String[0], afterHook));
+        }
 
         for (String gluePath : gluePaths) {
             if (gluedPaths.add(gluePath)) {
                 for (Resource resource : resourceLoader.resources(gluePath, ".rb")) {
+                if (loadedResources.add(resource.getPath())) {
                     runScriptlet(resource);
+                }
                 }
             }
         }
@@ -85,15 +106,21 @@ public class JRubyBackend implements Backend {
     }
 
     public void addStepdef(RubyObject stepdef) {
-        world.addStepDefinition(new JRubyStepDefinition(stepdef));
+        if (stepDefs.add(stepdef)) {
+            world.addStepDefinition(new JRubyStepDefinition(stepdef));
+        }
     }
 
     public void addBeforeHook(RubyObject body) {
-        world.addBeforeHook(new JRubyHookDefinition(new String[0], body));
+        if (beforeHooks.add(body)) {
+            world.addBeforeHook(new JRubyHookDefinition(new String[0], body));
+        }
     }
 
     public void addAfterHook(RubyObject body) {
-        world.addAfterHook(new JRubyHookDefinition(new String[0], body));
+        if (afterHooks.add(body)) {
+            world.addAfterHook(new JRubyHookDefinition(new String[0], body));
+        }
     }
 
 }
