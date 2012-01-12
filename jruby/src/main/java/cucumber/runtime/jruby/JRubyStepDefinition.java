@@ -3,6 +3,7 @@ package cucumber.runtime.jruby;
 import cucumber.runtime.ParameterType;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.Utils;
+import cucumber.table.DataTable;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 import org.jruby.RubyObject;
@@ -57,6 +58,10 @@ public class JRubyStepDefinition implements StepDefinition {
         for (Object o : args) {
             if (o == null) {
                 jrubyArgs.add(null);
+            } else if (o instanceof DataTable) {
+                //Add a datatable as it stands...
+                jrubyArgs.add(JavaEmbedUtils.javaToRuby(stepdef.getRuntime(), o));
+
             } else {
                 jrubyArgs.add(stepdef.getRuntime().newString((String) o));
             }

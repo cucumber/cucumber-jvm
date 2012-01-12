@@ -91,6 +91,10 @@ def After(&proc)
   $backend.addAfterHook(Cucumber::Runtime::JRuby::HookDefinition.new(proc))
 end
 
+def World(&proc)
+  $world.instance_exec(&proc)
+end
+
 # TODO: The code below should be generated, just like I18n for other backends
 
 def Given(regexp_or_name, &proc)
@@ -104,4 +108,3 @@ end
 def Then(regexp_or_name, &proc)
   register_or_invoke('Then ', regexp_or_name, proc)
 end
-
