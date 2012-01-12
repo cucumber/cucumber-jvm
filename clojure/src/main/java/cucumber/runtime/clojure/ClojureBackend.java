@@ -2,6 +2,7 @@ package cucumber.runtime.clojure;
 
 import clojure.lang.IFn;
 import clojure.lang.RT;
+import clojure.lang.Compiler;
 import cucumber.io.Resource;
 import cucumber.io.ResourceLoader;
 import cucumber.runtime.Backend;
@@ -10,6 +11,7 @@ import cucumber.runtime.World;
 import gherkin.formatter.model.Step;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -29,7 +31,7 @@ public class ClojureBackend implements Backend {
         this.world = world;
         for (String gluePath : gluePaths) {
             for (Resource resource : resourceLoader.resources(gluePath, ".clj")) {
-                loadScript(resource.getPath());
+                loadScript(resource);
             }
         }
     }
@@ -40,6 +42,14 @@ public class ClojureBackend implements Backend {
         } catch (IOException e) {
             throw new CucumberException(e);
         } catch (ClassNotFoundException e) {
+            throw new CucumberException(e);
+        }
+    }
+
+    private void loadScript(Resource resource) {
+        try {
+            Compiler.load(new InputStreamReader(resource.getInputStream(), "UTF-8"), resource.getPath(), resource.getPath());
+        } catch (IOException e) {
             throw new CucumberException(e);
         }
     }

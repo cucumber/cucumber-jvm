@@ -3,7 +3,13 @@ package cucumber.junit;
 import cucumber.runtime.PendingException;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
-import gherkin.formatter.model.*;
+import gherkin.formatter.model.Background;
+import gherkin.formatter.model.Examples;
+import gherkin.formatter.model.Match;
+import gherkin.formatter.model.Result;
+import gherkin.formatter.model.Scenario;
+import gherkin.formatter.model.ScenarioOutline;
+import gherkin.formatter.model.Step;
 import org.junit.internal.runners.model.EachTestNotifier;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
@@ -58,7 +64,7 @@ class JUnitReporter implements Reporter, Formatter {
         if (Result.SKIPPED == result || Result.UNDEFINED == result || error instanceof PendingException) {
             stepNotifier.fireTestIgnored();
         } else {
-            if(stepNotifier != null) {
+            if (stepNotifier != null) {
                 if (error != null) {
                     stepNotifier.addFailure(error);
                 }

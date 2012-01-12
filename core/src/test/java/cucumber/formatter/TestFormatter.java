@@ -1,13 +1,77 @@
 package cucumber.formatter;
 
-import gherkin.formatter.JSONFormatter;
+import gherkin.formatter.Formatter;
+import gherkin.formatter.model.Background;
+import gherkin.formatter.model.Examples;
+import gherkin.formatter.model.Feature;
+import gherkin.formatter.model.Scenario;
+import gherkin.formatter.model.ScenarioOutline;
+import gherkin.formatter.model.Step;
 import org.junit.Ignore;
 
-@Ignore
-public class TestFormatter extends JSONFormatter {
+import java.io.File;
+import java.util.List;
 
-    public TestFormatter() {
-        super(null);
+@Ignore
+public class TestFormatter implements Formatter {
+    public Appendable appendable;
+    public File dir;
+
+    public TestFormatter(Appendable appendable) {
+        this.appendable = appendable;
     }
 
+    public TestFormatter(File dir) {
+        this.dir = dir;
+    }
+
+    @Override
+    public void uri(String uri) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void feature(Feature feature) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void background(Background background) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void scenario(Scenario scenario) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void scenarioOutline(ScenarioOutline scenarioOutline) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void examples(Examples examples) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void step(Step step) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void eof() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void syntaxError(String state, String event, List<String> legalEvents, String uri, int line) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void done() {
+        throw new UnsupportedOperationException();
+    }
 }
