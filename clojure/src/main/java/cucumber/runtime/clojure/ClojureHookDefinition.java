@@ -1,6 +1,6 @@
 package cucumber.runtime.clojure;
 
-import clojure.lang.AFunction;
+import clojure.lang.IFn;
 import cucumber.runtime.HookDefinition;
 import cucumber.runtime.ScenarioResult;
 import cucumber.runtime.Utils;
@@ -15,16 +15,16 @@ import static java.util.Arrays.asList;
 public class ClojureHookDefinition implements HookDefinition {
 
     private final TagExpression tagExpression;
-    private final AFunction closure;
+    private final IFn closure;
 
-    public ClojureHookDefinition(String[] tagExpressions, AFunction closure) {
+    public ClojureHookDefinition(String[] tagExpressions, IFn closure) {
         tagExpression = new TagExpression(asList(tagExpressions));
         this.closure = closure;
     }
 
     // Clojure's AFunction.invokeWithArgs doesn't take varargs :-/
     private Method lookupInvokeMethod(Object[] args) throws NoSuchMethodException {
-        return AFunction.class.getMethod("invoke", (Class<?>[]) Utils.listOf(args.length, String.class).toArray()  );
+        return IFn.class.getMethod("invoke", (Class<?>[]) Utils.listOf(args.length, String.class).toArray());
     }
 
     @Override

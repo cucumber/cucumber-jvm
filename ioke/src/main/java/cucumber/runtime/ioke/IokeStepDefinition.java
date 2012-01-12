@@ -10,6 +10,7 @@ import ioke.lang.Runtime;
 import ioke.lang.exceptions.ControlFlow;
 
 import java.util.List;
+import java.util.Locale;
 
 import static cucumber.runtime.Utils.listOf;
 
@@ -63,7 +64,7 @@ public class IokeStepDefinition implements StepDefinition {
         }
     }
 
-    public void execute(Object[] args) throws Throwable {
+    public void execute(Locale locale, Object[] args) throws Throwable {
         backend.execute(iokeStepDefObject, args);
     }
 

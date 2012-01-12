@@ -12,6 +12,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 import static java.util.Arrays.asList;
@@ -31,7 +32,7 @@ public class JavaStepDefinition implements StepDefinition {
         this.objectFactory = objectFactory;
     }
 
-    public void execute(Object[] args) throws Throwable {
+    public void execute(Locale locale, Object[] args) throws Throwable {
         if (method.isAnnotationPresent(Pending.class)) {
             throw new PendingException(method.getAnnotation(Pending.class).value());
         }

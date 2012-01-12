@@ -3,6 +3,7 @@ package cucumber.runtime
 import org.junit.{Test, Assert}
 import Assert._
 import collection.JavaConverters._
+import java.util.Locale
 
 class ScalaDslTest {
 
@@ -128,9 +129,9 @@ class ScalaDslTest {
 
     assertEquals(1, Dummy.stepDefinitions.size)
     val step = Dummy.stepDefinitions.head
-    assertEquals("ScalaDslTest.scala:124", step.getLocation) // be careful with formatting or this test will break
+    assertEquals("ScalaDslTest.scala:125", step.getLocation) // be careful with formatting or this test will break
     assertEquals("x", step.getPattern)
-    step.execute(Array())
+    step.execute(Locale.ENGLISH, Array())
     assertTrue(called)
   }
 
@@ -148,7 +149,7 @@ class ScalaDslTest {
 
     assertEquals(1, Dummy.stepDefinitions.size)
     val step = Dummy.stepDefinitions(0)
-    step.execute(Array("5", "green"))
+    step.execute(Locale.ENGLISH, Array("5", "green"))
     assertEquals(5, thenumber)
     assertEquals("green", thecolour)
   }
@@ -168,7 +169,7 @@ class ScalaDslTest {
       }
     }
 
-    Dummy.stepDefinitions(0).execute(Array("Aslak"))
+    Dummy.stepDefinitions(0).execute(Locale.ENGLISH, Array("Aslak"))
     assertEquals(Person("Aslak"), person)
   }
 }

@@ -10,8 +10,8 @@ import org.python.core.PyList;
 import org.python.core.PyObject;
 import org.python.core.PyString;
 
-import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 
 public class JythonStepDefinition implements StepDefinition {
     private final JythonBackend jythonBackend;
@@ -46,7 +46,7 @@ public class JythonStepDefinition implements StepDefinition {
     }
 
     @Override
-    public void execute(Object[] args) throws Throwable {
+    public void execute(Locale locale, Object[] args) throws Throwable {
         jythonBackend.execute(stepdef, args);
     }
 

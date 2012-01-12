@@ -6,6 +6,7 @@ import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.PendingException;
 import cucumber.runtime.World;
+import gherkin.formatter.model.Comment;
 import gherkin.formatter.model.Step;
 import org.jruby.RubyObject;
 import org.jruby.embed.ScriptingContainer;
@@ -13,7 +14,9 @@ import org.jruby.embed.ScriptingContainer;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 public class JRubyBackend implements Backend {
     private static final String DSL = "/cucumber/runtime/jruby/dsl.rb";
@@ -59,6 +62,10 @@ public class JRubyBackend implements Backend {
 
     public void pending(String reason) throws PendingException {
         throw new PendingException(reason);
+    }
+
+    public void runStep(String uri, Locale locale, String stepKeyword, String stepName, int line) throws Throwable {
+        world.runUnreportedStep(uri, locale, stepKeyword, stepName, line);
     }
 
     public void addStepdef(RubyObject stepdef) {

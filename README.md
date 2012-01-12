@@ -45,6 +45,22 @@ Now you can grab jars with the following dependency in your POM:
 
 If you are not using Maven you can download the SNAPSHOT jars manually from https://oss.sonatype.org/content/repositories/snapshots/info/cukes/
 
+If you are using [Ivy](http://ant.apache.org/ivy/), you can download the SNAPSHOTS jars by adding the following [resolver](http://ant.apache.org/ivy/history/latest-milestone/settings/resolvers.html) to your [ivysettings.xml](http://ant.apache.org/ivy/history/latest-milestone/settings.html)
+
+```xml
+<ibiblio name="sonatype-snapshots"
+    m2compatible="true"
+    usepoms="true"
+    pattern="[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]"
+    root="https://oss.sonatype.org/content/repositories/snapshots"/>
+```
+
+Now you can grab jars with the following [dependency](http://ant.apache.org/ivy/history/latest-milestone/ivyfile/dependency.html) in your [ivy.xml](http://ant.apache.org/ivy/history/latest-milestone/ivyfile.html):
+
+```xml
+    <dependency org="info.cukes" name="cucumber-core" rev="1.0.0-SNAPSHOT" changing="true"/>
+```
+
 ## Documentation
 
 There isn't any documentation yet apart from API docs. Documentation will be published when the first release candidate for 1.0.0 is ready.
