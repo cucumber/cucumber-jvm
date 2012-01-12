@@ -1,5 +1,6 @@
 package cucumber.junit;
 
+import cucumber.formatter.NullReporter;
 import cucumber.io.ClasspathResourceLoader;
 import cucumber.io.ResourceLoader;
 import cucumber.runtime.CucumberException;
@@ -52,7 +53,8 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         List<String> gluePaths = gluePaths(clazz);
         runtime = new Runtime(gluePaths, resourceLoader);
 
-        jUnitReporter = JUnitReporterFactory.create(System.getProperty("cucumber.reporter"));
+        // TODO: Create formatter(s) based on Annotations. Use same technique as in cli.Main for MultiFormatter
+        jUnitReporter = new JUnitReporter(new NullReporter(), new NullReporter());
         addChildren(featurePaths, filters(clazz), gluePaths(clazz));
     }
 

@@ -5,6 +5,7 @@ import gherkin.formatter.JSONFormatter;
 import gherkin.formatter.PrettyFormatter;
 import org.junit.Test;
 
+import java.io.File;
 import java.io.StringWriter;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -26,21 +27,29 @@ public class FormatterFactoryTest {
     }
 
     @Test
-    public void shouldInstantiateHtmlFormatter() {
-        assertThat(formatterFactory.createFormatter("html", System.out), is(HTMLFormatter.class));
+    public void shouldInstantiateProgressFormatter() {
+        assertThat(formatterFactory.createFormatter("progress", System.out), is(ProgressFormatter.class));
     }
 
     @Test
-    public void shouldInstantiateCustomFormatterFromClassName() {
-        assertThat(formatterFactory.createFormatter(TestFormatter.class.getName(), System.out), is(TestFormatter.class));
+    public void shouldInstantiateHtmlFormatter() {
+        assertThat(formatterFactory.createFormatter("html", new File(System.getProperty("user.dir"))), is(HTMLFormatter.class));
     }
 
     @Test
     public void shouldInstantiateCustomFormatterFromClassNameWithAppender() {
         StringWriter writer = new StringWriter();
-        Formatter formatter = formatterFactory.createFormatter(TestFormatterWithAppendable.class.getName(), writer);
-        assertThat(formatter, is(TestFormatterWithAppendable.class));
-        assertSame(writer, ((TestFormatterWithAppendable) formatter).appendable);
+        Formatter formatter = formatterFactory.createFormatter(TestFormatter.class.getName(), writer);
+        assertThat(formatter, is(TestFormatter.class));
+        assertSame(writer, ((TestFormatter) formatter).appendable);
+    }
+
+    @Test
+    public void shouldInstantiateCustomFormatterFromClassNameWithDirFile() {
+        File dir = new File(System.getProperty("user.dir"));
+        Formatter formatter = formatterFactory.createFormatter(TestFormatter.class.getName(), dir);
+        assertThat(formatter, is(TestFormatter.class));
+        assertSame(dir, ((TestFormatter) formatter).dir);
     }
 
 }
