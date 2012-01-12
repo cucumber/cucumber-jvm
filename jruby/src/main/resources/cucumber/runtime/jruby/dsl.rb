@@ -92,7 +92,8 @@ def After(&proc)
 end
 
 def World(&proc)
-  $world.instance_exec(&proc)
+  # I can reuse the HookDefinition, because it quacks the same
+  $backend.addWorldBlock(Cucumber::Runtime::JRuby::HookDefinition.new(proc))
 end
 
 # TODO: The code below should be generated, just like I18n for other backends

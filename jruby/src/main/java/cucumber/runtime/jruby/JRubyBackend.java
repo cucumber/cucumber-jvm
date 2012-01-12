@@ -29,6 +29,7 @@ public class JRubyBackend implements Backend {
     private Set<RubyObject> stepDefs = new HashSet<RubyObject>();
     private Set<RubyObject> beforeHooks = new HashSet<RubyObject>();
     private Set<RubyObject> afterHooks = new HashSet<RubyObject>();
+    private Set<RubyObject> worldBlocks = new HashSet<RubyObject>();
 
 
     public JRubyBackend(ResourceLoader resourceLoader) throws UnsupportedEncodingException {
@@ -57,6 +58,11 @@ public class JRubyBackend implements Backend {
     public void buildWorld(List<String> gluePaths, World world) {
         this.world = world;
         jruby.put("$world", new Object());
+
+        //Load all the world preparatory stuff
+        for(RubyObject block : worldBlocks) {
+            new JRubyWorldBlock(block).execute();
+        }
         
         //Inject all the existing step definitions
         for(RubyObject stepdef : stepDefs) {
@@ -123,4 +129,10 @@ public class JRubyBackend implements Backend {
         }
     }
 
+    public void addWorldBlock(RubyObject body) {
+        if(worldBlocks.add(body)) {
+            new JRubyWorldBlock(body).execute();
+        }
+    }
+    
 }
