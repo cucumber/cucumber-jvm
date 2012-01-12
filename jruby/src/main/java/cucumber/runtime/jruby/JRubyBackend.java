@@ -6,7 +6,6 @@ import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.PendingException;
 import cucumber.runtime.World;
-import gherkin.formatter.model.Comment;
 import gherkin.formatter.model.Step;
 import org.jruby.CompatVersion;
 import org.jruby.RubyObject;
@@ -16,14 +15,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Properties;
+import java.util.*;
 
 public class JRubyBackend implements Backend {
     private static final String DSL = "/cucumber/runtime/jruby/dsl.rb";
     private final ScriptingContainer jruby = new ScriptingContainer();
+    private final Set<String> gluedPaths = new HashSet<String>();
     private World world;
     private ResourceLoader resourceLoader;
 
@@ -60,8 +57,10 @@ public class JRubyBackend implements Backend {
         jruby.put("$world", new Object());
 
         for (String gluePath : gluePaths) {
-            for (Resource resource : resourceLoader.resources(gluePath, ".rb")) {
-                runScriptlet(resource);
+            if (gluedPaths.add(gluePath)) {
+                for (Resource resource : resourceLoader.resources(gluePath, ".rb")) {
+                    runScriptlet(resource);
+                }
             }
         }
     }
