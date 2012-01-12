@@ -140,7 +140,7 @@
     <target name="publish-artifacts" depends="test,publish-local"/>
 
     <target name="makepom" depends="-init-ivy" description="Generate POM">
-        <ivy:deliver deliverpattern="ivy.xml" pubrevision="${cucumber-jvm-version}" status="release"/>
+        <!--ivy:deliver deliverpattern="ivy.xml" pubrevision="${cucumber-jvm-version}" status="release"/-->
         <ivy:makepom ivyfile="ivy.xml" pomfile="${module-pom}"/>
     </target>
 

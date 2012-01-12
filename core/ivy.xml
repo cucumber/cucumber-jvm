@@ -1,5 +1,5 @@
 <ivy-module version="2.0">
-    <info organisation="info.cukes" module="cucumber-core" revision="1.0.0-RC3" status="release" publication="20120112202414"/>
+    <info organisation="info.cukes" module="cucumber-core" revision="1.0.0-RC3" status="release" publication="20120112221234"/>
 
     <configurations defaultconfmapping="*->default">
         <conf name="default"/>
@@ -9,10 +9,10 @@
     <publications>
         <artifact conf="default"/>
         <artifact conf="default" ext="jar.asc"/>
-        <artifact conf="default" name="cucumber-core-javadoc"/>
-        <artifact conf="default" name="cucumber-core-javadoc" ext="jar.asc"/>
-        <artifact conf="default" name="cucumber-core-sources"/>
-        <artifact conf="default" name="cucumber-core-sources" ext="jar.asc"/>
+        <artifact conf="default" name="${module}-javadoc"/>
+        <artifact conf="default" name="${module}-javadoc" ext="jar.asc"/>
+        <artifact conf="default" name="${module}-sources"/>
+        <artifact conf="default" name="${module}-sources" ext="jar.asc"/>
         <artifact conf="default" ext="pom" type="pom"/>
         <artifact conf="default" ext="pom.asc" type="pom"/>
     </publications>
