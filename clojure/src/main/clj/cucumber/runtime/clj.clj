@@ -51,7 +51,7 @@
        (str (:file location) ":" (:line location)))
      (getParameterTypes [_]
        nil)
-     (execute [_ args]
+     (execute [_ locale args]
        (apply fun args))
      (isDefinedAt [_ stack-trace-element]
        (and (= (.getLineNumber stack-trace-element)
