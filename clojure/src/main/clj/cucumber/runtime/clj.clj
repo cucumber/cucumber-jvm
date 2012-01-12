@@ -10,10 +10,14 @@
               :init init
               :state state))
 
+;; maybe this should be an atom
 (def world (promise))
 
 (defn load-script [path]
-  (RT/load (.replaceAll path ".clj$" "") true))
+  (try
+    (RT/load (.replaceAll path ".clj$" "") true)
+    (catch Throwable t
+      (throw (CucumberException. t)))))
 
 (defn- -init [resource-loader]
   (load-script "cucumber/runtime/clojure/dsl")
@@ -25,6 +29,7 @@
           resource (.resources (:resource-loader @(.state cljb)) path ".clj")]
     ;; scripts are loaded with this namespace as the current namespace
     ;; to give access to the macros defined below
+    ;; you can still use (ns ...) as normal
     (binding [*ns* (create-ns 'cucumber.runtime.clj)]
       (load-script (.getPath resource)))))
 

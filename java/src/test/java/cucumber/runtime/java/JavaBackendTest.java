@@ -45,6 +45,11 @@ public class JavaBackendTest {
         }
 
         @Override
+        public void runUnreportedStep(String file, Locale locale, String stepKeyword, String stepName, int line) throws Throwable {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
         public void addStepDefinition(StepDefinition stepDefinition) {
             stepDefinitions.add(stepDefinition);
         }

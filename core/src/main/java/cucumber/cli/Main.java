@@ -1,10 +1,12 @@
 package cucumber.cli;
 
 import cucumber.formatter.FormatterFactory;
+import cucumber.formatter.MultiFormatter;
 import cucumber.io.FileResourceLoader;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.snippets.SummaryPrinter;
 import gherkin.formatter.Formatter;
+import gherkin.formatter.Reporter;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,6 +28,9 @@ public class Main {
         String dotCucumber = null;
         boolean isDryRun = false;
 
+        FormatterFactory formatterFactory = new FormatterFactory();
+        MultiFormatter multiFormatter = new MultiFormatter();
+
         while (!args.isEmpty()) {
             String arg = args.remove(0);
 
@@ -42,6 +47,10 @@ public class Main {
                 filters.add(args.remove(0));
             } else if (arg.equals("--format") || arg.equals("-f")) {
                 format = args.remove(0);
+            } else if (arg.equals("--out") || arg.equals("-o")) {
+                File out = new File(args.remove(0));
+                Formatter formatter = formatterFactory.createFormatter(format, out);
+                multiFormatter.add(formatter);
             } else if (arg.equals("--dotcucumber")) {
                 dotCucumber = args.remove(0);
             } else if (arg.equals("--dry-run") || arg.equals("-d")) {
@@ -51,6 +60,11 @@ public class Main {
                 featurePaths.add(arg);
             }
         }
+
+        if (multiFormatter.isEmpty()) {
+            multiFormatter.add(formatterFactory.createFormatter(format, System.out));
+        }
+
         if (gluePaths.isEmpty()) {
             System.out.println("Missing option: --glue");
             System.exit(1);
@@ -61,7 +75,7 @@ public class Main {
         if (dotCucumber != null) {
             writeDotCucumber(featurePaths, dotCucumber, runtime);
         }
-        run(featurePaths, filters, format, runtime);
+        run(featurePaths, filters, multiFormatter, runtime);
         printSummary(runtime);
         System.exit(runtime.exitStatus());
     }
@@ -72,10 +86,10 @@ public class Main {
         runtime.writeStepdefsJson(featurePaths, dotCucumber);
     }
 
-    private static void run(List<String> featurePaths, List<Object> filters, String format, Runtime runtime) throws IOException {
-        FormatterFactory formatterFactory = new FormatterFactory();
-        Formatter formatter = formatterFactory.createFormatter(format, System.out);
-        runtime.run(featurePaths, filters, formatter, formatterFactory.reporter(formatter));
+    private static void run(List<String> featurePaths, List<Object> filters, MultiFormatter multiFormatter, Runtime runtime) throws IOException {
+        Formatter formatter = multiFormatter.formatterProxy();
+        Reporter reporter = multiFormatter.reporterProxy();
+        runtime.run(featurePaths, filters, formatter, reporter);
         formatter.done();
     }
 

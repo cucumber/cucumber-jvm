@@ -5,10 +5,25 @@ import gherkin.formatter.Formatter;
 import gherkin.formatter.Mappable;
 import gherkin.formatter.NiceAppendable;
 import gherkin.formatter.Reporter;
-import gherkin.formatter.model.*;
+import gherkin.formatter.model.Background;
+import gherkin.formatter.model.Examples;
+import gherkin.formatter.model.Feature;
+import gherkin.formatter.model.Match;
+import gherkin.formatter.model.Result;
+import gherkin.formatter.model.Scenario;
+import gherkin.formatter.model.ScenarioOutline;
+import gherkin.formatter.model.Step;
 import org.json.simple.JSONValue;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +32,6 @@ public class HTMLFormatter implements Formatter, Reporter {
     private static final String JS_FORMATTER_VAR = "formatter";
     private static final String JS_REPORT_FILENAME = "report.js";
     private static final String[] REPORT_ITEMS = new String[]{"formatter.js", "index.html", "jquery-1.6.4.min.js", "style.css"};
-    private static final String CUCUMBER_HTMLREPORTERDIR = "cucumber.htmlreporterdir";
     private static final Map<String, String> MIME_TYPES_EXTENSIONS = new HashMap<String, String>() {
         {
             put("image/bmp", "bmp");
@@ -27,26 +41,20 @@ public class HTMLFormatter implements Formatter, Reporter {
         }
     };
 
-    private final NiceAppendable out;
-    private final String htmlReportDir = getHtmlReportDir();
+    private final File htmlReportDir;
+    private NiceAppendable jsOut;
 
     private boolean firstFeature = true;
     private int embeddedIndex;
 
-    public HTMLFormatter() {
-        try {
-            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(htmlReportDir + JS_REPORT_FILENAME));
-            out = new NiceAppendable(bufferedWriter);
-        } catch (IOException e) {
-            throw new CucumberException("Unable to create javascript report file: " + htmlReportDir
-                    + JS_REPORT_FILENAME, e);
-        }
+    public HTMLFormatter(File htmlReportDir) {
+        this.htmlReportDir = htmlReportDir;
     }
 
     @Override
     public void uri(String uri) {
         if (firstFeature) {
-            out.append("$(document).ready(function() {").append("var ")
+            jsOut().append("$(document).ready(function() {").append("var ")
                     .append(JS_FORMATTER_VAR).append(" = new CucumberHTML.DOMFormatter($('.cucumber-report'));");
             firstFeature = false;
         }
@@ -93,8 +101,8 @@ public class HTMLFormatter implements Formatter, Reporter {
 
     @Override
     public void done() {
-        out.append("});");
-        out.close();
+        jsOut().append("});");
+        jsOut().close();
         copyReportFiles();
     }
 
@@ -103,7 +111,7 @@ public class HTMLFormatter implements Formatter, Reporter {
     }
 
     private void writeToJsReport(String functionName, String arg) {
-        out.append(JS_FORMATTER_VAR + ".").append(functionName).append("(").append(arg).append(");").println();
+        jsOut().append(JS_FORMATTER_VAR + ".").append(functionName).append("(").append(arg).append(");").println();
     }
 
     @Override
@@ -121,11 +129,9 @@ public class HTMLFormatter implements Formatter, Reporter {
         // Creating a file instead of using data urls to not clutter the js file
         String extension = MIME_TYPES_EXTENSIONS.get(mimeType);
         if (extension != null) {
-            StringBuilder fileName = new StringBuilder("embedded").append(embeddedIndex++).append(".")
-                    .append(extension);
-            copyResource(new ByteArrayInputStream(data), reportFileOutputStream(fileName.toString()));
-            writeToJsReport("embedding", new StringBuilder("'").append(mimeType).append("','").append(fileName)
-                    .append("'").toString());
+            StringBuilder fileName = new StringBuilder("embedded").append(embeddedIndex++).append(".").append(extension);
+            writeBytes(new ByteArrayInputStream(data), reportFileOutputStream(fileName.toString()));
+            writeToJsReport("embedding", new StringBuilder("'").append(mimeType).append("','").append(fileName).append("'").toString());
         }
     }
 
@@ -134,19 +140,11 @@ public class HTMLFormatter implements Formatter, Reporter {
         InputStream resourceAsStream;
         for (String reportItem : REPORT_ITEMS) {
             resourceAsStream = getClass().getClassLoader().getResourceAsStream(packageName + reportItem);
-            copyResource(resourceAsStream, reportFileOutputStream(reportItem));
+            writeBytes(resourceAsStream, reportFileOutputStream(reportItem));
         }
     }
 
-    protected FileOutputStream reportFileOutputStream(String reportItem) {
-        try {
-            return new FileOutputStream(htmlReportDir + reportItem);
-        } catch (FileNotFoundException e) {
-            throw new CucumberException("Error creating html report file: " + htmlReportDir + reportItem, e);
-        }
-    }
-
-    private void copyResource(InputStream in, FileOutputStream out) {
+    private void writeBytes(InputStream in, OutputStream out) {
         byte[] buffer = new byte[16 * 1024];
         try {
             int len = in.read(buffer);
@@ -160,15 +158,24 @@ public class HTMLFormatter implements Formatter, Reporter {
         }
     }
 
-    private String getHtmlReportDir() {
-        String htmlReportDir = System.getProperty(CUCUMBER_HTMLREPORTERDIR, "");
-        if (!htmlReportDir.isEmpty()) {
-            String fileSeparator = System.getProperty("file.separator");
-            if (!htmlReportDir.endsWith(fileSeparator)) {
-                htmlReportDir = htmlReportDir + fileSeparator;
+    private NiceAppendable jsOut() {
+        if (jsOut == null) {
+            try {
+                jsOut = new NiceAppendable(new OutputStreamWriter(reportFileOutputStream(JS_REPORT_FILENAME), "UTF-8"));
+            } catch (UnsupportedEncodingException e) {
+                throw new CucumberException(e);
             }
         }
-        return htmlReportDir;
+        return jsOut;
+    }
+
+    private OutputStream reportFileOutputStream(String fileName) {
+        File file = new File(htmlReportDir, fileName);
+        try {
+            return new FileOutputStream(file);
+        } catch (FileNotFoundException e) {
+            throw new CucumberException("Error creating file: " + file.getAbsolutePath(), e);
+        }
     }
 
 }

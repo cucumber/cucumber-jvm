@@ -11,4 +11,4 @@
 
 (Then #"^I am \"([^\"]*)\"$"
       (fn [mood-name]
-        (is (= (name (mood)) mood-name))))
+        (assert (= (name (mood)) mood-name))))

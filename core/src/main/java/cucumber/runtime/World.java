@@ -2,9 +2,9 @@ package cucumber.runtime;
 
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Step;
-
-import java.util.List;
 import java.util.Locale;
+import java.util.List;
+
 
 public interface World {
     void buildBackendWorldsAndRunBeforeHooks(Reporter reporter);
@@ -12,6 +12,8 @@ public interface World {
     void runAfterHooksAndDisposeBackendWorlds(Reporter reporter);
 
     void runStep(String uri, Step step, Reporter reporter, Locale locale);
+
+    void runUnreportedStep(String file, Locale locale, String stepKeyword, String stepName, int line) throws Throwable;
 
     void addStepDefinition(StepDefinition stepDefinition);
 
@@ -24,4 +26,5 @@ public interface World {
     List<HookDefinition> getAfterHooks();
 
     List<StepDefinition> getStepDefinitions();
+
 }
