@@ -6,6 +6,8 @@ import cucumber.runtime.StepDefinition;
 import cucumber.runtime.World;
 import cucumber.runtime.java.test.Stepdefs;
 import gherkin.formatter.Reporter;
+import gherkin.formatter.model.DataTableRow;
+import gherkin.formatter.model.DocString;
 import gherkin.formatter.model.Step;
 import org.junit.Test;
 
@@ -45,7 +47,7 @@ public class JavaBackendTest {
         }
 
         @Override
-        public void runUnreportedStep(String file, Locale locale, String stepKeyword, String stepName, int line) throws Throwable {
+        public void runUnreportedStep(String file, Locale locale, String stepKeyword, String stepName, int line, List<DataTableRow> dataTableRows, DocString docString) throws Throwable {
             throw new UnsupportedOperationException();
         }
 

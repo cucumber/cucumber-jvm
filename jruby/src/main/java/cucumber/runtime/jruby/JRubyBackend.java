@@ -6,6 +6,9 @@ import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.PendingException;
 import cucumber.runtime.World;
+import cucumber.table.DataTable;
+import gherkin.formatter.model.DataTableRow;
+import gherkin.formatter.model.DocString;
 import gherkin.formatter.model.Step;
 import org.jruby.CompatVersion;
 import org.jruby.RubyObject;
@@ -107,8 +110,14 @@ public class JRubyBackend implements Backend {
         throw new PendingException(reason);
     }
 
-    public void runStep(String uri, Locale locale, String stepKeyword, String stepName, int line) throws Throwable {
-        world.runUnreportedStep(uri, locale, stepKeyword, stepName, line);
+    public void runStep(String uri, Locale locale, String stepKeyword, String stepName, int line, DataTable dataTable, DocString docString) throws Throwable {
+        //TODO: convert the data table into a list of dataTableRows for this call
+        List<DataTableRow> dataTableRows = null;
+        if(dataTable != null) {
+            dataTableRows = dataTable.getGherkinRows();
+        }
+
+        world.runUnreportedStep(uri, locale, stepKeyword, stepName, line, dataTableRows, docString);
     }
 
     public void addStepdef(RubyObject stepdef) {

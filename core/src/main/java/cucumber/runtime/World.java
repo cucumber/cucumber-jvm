@@ -1,6 +1,8 @@
 package cucumber.runtime;
 
 import gherkin.formatter.Reporter;
+import gherkin.formatter.model.DataTableRow;
+import gherkin.formatter.model.DocString;
 import gherkin.formatter.model.Step;
 import java.util.Locale;
 import java.util.List;
@@ -13,7 +15,7 @@ public interface World {
 
     void runStep(String uri, Step step, Reporter reporter, Locale locale);
 
-    void runUnreportedStep(String file, Locale locale, String stepKeyword, String stepName, int line) throws Throwable;
+    void runUnreportedStep(String file, Locale locale, String stepKeyword, String stepName, int line, List<DataTableRow> dataTableRows, DocString docString) throws Throwable;
 
     void addStepDefinition(StepDefinition stepDefinition);
 

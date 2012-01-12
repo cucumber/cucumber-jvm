@@ -1,3 +1,5 @@
+require 'java'
+
 module Cucumber
   module Runtime
     module JRuby
@@ -69,13 +71,24 @@ def register(regexp, proc)
   $backend.addStepdef(Cucumber::Runtime::JRuby::StepDefinition.new(regexp, proc))
 end
 
-def register_or_invoke(keyword, regexp_or_name, proc)
+def register_or_invoke(keyword, regexp_or_name, arg, proc)
   if proc
     register(regexp_or_name, proc)
   else
     # caller[1] gets us to our stepdef, right before we enter the dsl
     uri, line = *caller[1].to_s.split(/:/)
-    $backend.runStep(uri, @__cucumber_locale, keyword, regexp_or_name, line.to_i)
+    # determine if we got an argument we should pass through to calling things
+    data_table = nil
+    doc_string = nil
+    if arg
+      if arg.kind_of? Java::cucumber.table.DataTable
+        data_table = arg
+      elsif arg.kind_of? Java::gherkin.formatter.model.DocString
+        doc_string = arg
+      end
+    end
+
+    $backend.runStep(uri, @__cucumber_locale, keyword, regexp_or_name, line.to_i, data_table, doc_string)
   end
 end
 
@@ -98,14 +111,14 @@ end
 
 # TODO: The code below should be generated, just like I18n for other backends
 
-def Given(regexp_or_name, &proc)
-  register_or_invoke('Given ', regexp_or_name, proc)
+def Given(regexp_or_name, arg = nil, &proc)
+  register_or_invoke('Given ', regexp_or_name, arg, proc)
 end
 
-def When(regexp_or_name, &proc)
-  register_or_invoke('When ', regexp_or_name, proc)
+def When(regexp_or_name, arg = nil, &proc)
+  register_or_invoke('When ', regexp_or_name, arg, proc)
 end
 
-def Then(regexp_or_name, &proc)
-  register_or_invoke('Then ', regexp_or_name, proc)
+def Then(regexp_or_name, arg = nil, &proc)
+  register_or_invoke('Then ', regexp_or_name, arg, proc)
 end

@@ -3,10 +3,7 @@ package cucumber.runtime;
 import cucumber.runtime.converters.LocalizedXStreams;
 import gherkin.formatter.Argument;
 import gherkin.formatter.Reporter;
-import gherkin.formatter.model.Comment;
-import gherkin.formatter.model.Match;
-import gherkin.formatter.model.Result;
-import gherkin.formatter.model.Step;
+import gherkin.formatter.model.*;
 
 import java.util.*;
 
@@ -46,8 +43,8 @@ public class RuntimeWorld implements World {
     }
 
     @Override
-    public void runUnreportedStep(String uri, Locale locale, String stepKeyword, String stepName, int line) throws Throwable {
-        Step step = new Step(Collections.<Comment>emptyList(), stepKeyword, stepName, line, null, null);
+    public void runUnreportedStep(String uri, Locale locale, String stepKeyword, String stepName, int line, List<DataTableRow> dataTableRows, DocString docString) throws Throwable {
+        Step step = new Step(Collections.<Comment>emptyList(), stepKeyword, stepName, line, dataTableRows, docString);
 
         StepDefinitionMatch match = stepDefinitionMatch(uri, step, locale);
         if (match == null) {
