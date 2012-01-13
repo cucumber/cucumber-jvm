@@ -19,7 +19,7 @@
     <target name="packages" depends="jar,jarjar"/>
 
     <target name="cli-test" depends="jarjar">
-        <fail unless="env.JRUBY_HOME">You must define GROOVY_HOME in your shell</fail>
+        <fail unless="env.JRUBY_HOME">You must define JRUBY_HOME in your shell</fail>
         <exec executable="${env.JRUBY_HOME}/bin/jruby">
             <arg file="bin/cucumber-jvm"/>
             <arg value="--glue"/>
@@ -37,7 +37,7 @@
 
     <target name="publish-internet" depends="publish-nexus,publish-gem" />
 
-    <target name="gpg" depends="jarjar">
+    <target name="publish-gem" depends="jarjar">
         <echo>TODO: Package and push gem</echo>
     </target>
 

@@ -22,12 +22,14 @@ file.write(template.toString(), "UTF-8")
         ]]></groovy>
     </target>
 
-    <target name="compile-main" depends="-init-ivy,generate" description="compile the module">
-        <mkdir dir="target/classes"/>
+    <target name="-scala-tasks">
+      <taskdef resource="scala/tools/ant/antlib.xml">
+          <classpath refid="ivy.compile-classpath"/>
+      </taskdef>
+    </target>
 
-        <taskdef resource="scala/tools/ant/antlib.xml">
-            <classpath refid="ivy.compile-classpath"/>
-        </taskdef>
+    <target name="compile-main" depends="-init-ivy,generate,-scala-tasks" description="compile the module">
+        <mkdir dir="target/classes"/>
 
         <scalac srcdir="src/main/scala" destdir="target/classes" classpathref="ivy.compile-classpath" deprecation="yes">
             <include name="**/*.scala"/>
@@ -49,4 +51,12 @@ file.write(template.toString(), "UTF-8")
             <fileset dir="src/test/resources"/>
         </copy>
     </target>
+
+    <target name="javadoc" depends="-init-ivy,-scala-tasks">
+        <mkdir dir="target/javadoc"/>
+        <scaladoc srcdir="src/main/scala" destdir="target/javadoc" classpathref="test-classpath" deprecation="yes">
+          <include name="**/*.scala"/>
+        </scaladoc>
+    </target>
+
 </project>
