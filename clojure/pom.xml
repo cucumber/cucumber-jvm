@@ -36,9 +36,13 @@
         <artifactId>clojure-maven-plugin</artifactId>
         <version>1.3.6</version>
         <configuration>
+          <namespaces>
+            <namespace>cucumber.*</namespace>
+          </namespaces>
           <sourceDirectories>
             <sourceDirectory>src/main/clj</sourceDirectory>
           </sourceDirectories>
+          <compileDeclaredNamespaceOnly>true</compileDeclaredNamespaceOnly>
         </configuration>
         <executions>
           <execution>
