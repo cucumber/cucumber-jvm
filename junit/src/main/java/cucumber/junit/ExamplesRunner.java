@@ -1,6 +1,7 @@
 package cucumber.junit;
 
 import cucumber.runtime.Runtime;
+import cucumber.runtime.World;
 import cucumber.runtime.model.CucumberExamples;
 import cucumber.runtime.model.CucumberScenario;
 import org.junit.runner.Runner;
@@ -16,8 +17,6 @@ class ExamplesRunner extends Suite {
     protected ExamplesRunner(Runtime runtime, List<String> gluePaths, CucumberExamples cucumberExamples, JUnitReporter jUnitReporter) throws InitializationError {
         super(null, new ArrayList<Runner>());
         this.cucumberExamples = cucumberExamples;
-
-        //TODO: I will have to create a world here, this is the entry point for junit I think
 
         List<CucumberScenario> exampleScenarios = cucumberExamples.createExampleScenarios();
         for (CucumberScenario scenario : exampleScenarios) {

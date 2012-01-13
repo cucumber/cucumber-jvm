@@ -25,6 +25,7 @@ public class RuntimeWorld implements World {
     private Runtime runtime;
 
     public RuntimeWorld(Runtime runtime) {
+        //TODO: does the runtime world need to see the runtime?
         this.runtime = runtime;
     }
 

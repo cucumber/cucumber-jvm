@@ -37,7 +37,7 @@ public class Runtime {
     private final boolean isDryRun;
     private final List<String> gluePaths;
     private final ResourceLoader resourceLoader;
-    
+
     private World world;
 
     public Runtime(List<String> gluePaths, ResourceLoader resourceLoader) {
@@ -54,7 +54,7 @@ public class Runtime {
         this.resourceLoader = resourceLoader;
         this.isDryRun = isDryRun;
         this.tracker = new UndefinedStepsTracker(backends);
-        
+
         this.world = new RuntimeWorld(this);
     }
 
@@ -104,6 +104,7 @@ public class Runtime {
 
     /**
      * This is the second entry to running features
+     *
      * @param featurePaths
      * @param dotCucumber
      * @throws IOException
@@ -149,5 +150,13 @@ public class Runtime {
 
     public List<String> getSnippets() {
         return tracker.getSnippets();
+    }
+
+    public World getWorld() {
+        return world;
+    }
+
+    public void setWorld(World world) {
+        this.world = world;
     }
 }

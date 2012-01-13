@@ -27,6 +27,8 @@ class ExecutionUnitRunner extends ParentRunner<Step> {
         this.runtime = runtime;
         this.cucumberScenario = cucumberScenario;
         this.jUnitReporter = jUnitReporter;
+
+        this.world = runtime.getWorld();
     }
 
     @Override
@@ -48,7 +50,7 @@ class ExecutionUnitRunner extends ParentRunner<Step> {
     public void run(RunNotifier notifier) {
         jUnitReporter.startExecutionUnit(this, notifier);
 
-        world = new RuntimeWorld(runtime);
+
 
         //No tags from the junit side?
         world.buildBackendContextAndRunBeforeHooks(jUnitReporter, new HashSet<String>());
