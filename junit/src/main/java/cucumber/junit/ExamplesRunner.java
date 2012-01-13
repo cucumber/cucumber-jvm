@@ -17,6 +17,8 @@ class ExamplesRunner extends Suite {
         super(null, new ArrayList<Runner>());
         this.cucumberExamples = cucumberExamples;
 
+        //TODO: I will have to create a world here, this is the entry point for junit I think
+
         List<CucumberScenario> exampleScenarios = cucumberExamples.createExampleScenarios();
         for (CucumberScenario scenario : exampleScenarios) {
             try {

@@ -1,6 +1,7 @@
 package cucumber.junit;
 
 import cucumber.runtime.Runtime;
+import cucumber.runtime.RuntimeWorld;
 import cucumber.runtime.World;
 import cucumber.runtime.model.CucumberScenario;
 import gherkin.formatter.model.Step;
@@ -9,6 +10,7 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
 
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -46,13 +48,15 @@ class ExecutionUnitRunner extends ParentRunner<Step> {
     public void run(RunNotifier notifier) {
         jUnitReporter.startExecutionUnit(this, notifier);
 
-        world = cucumberScenario.newWorld(runtime);
-        world.buildBackendWorldsAndRunBeforeHooks(jUnitReporter);
-        cucumberScenario.runBackground(jUnitReporter.getFormatter(), jUnitReporter.getReporter());
+        world = new RuntimeWorld(runtime);
+
+        //No tags from the junit side?
+        world.buildBackendContextAndRunBeforeHooks(jUnitReporter, new HashSet<String>());
+        cucumberScenario.runBackground(jUnitReporter.getFormatter(), jUnitReporter.getReporter(), world);
         cucumberScenario.format(jUnitReporter);
         // Run the steps (the children)
         super.run(notifier);
-        world.runAfterHooksAndDisposeBackendWorlds(jUnitReporter);
+        world.runAfterHooksAndDisposeBackendContext(jUnitReporter, new HashSet<String>());
 
         jUnitReporter.finishExecutionUnit();
     }

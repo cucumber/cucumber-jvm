@@ -12,6 +12,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
@@ -29,13 +30,14 @@ public class JavaBackendTest {
     private class WorldStub implements World {
         public final List<StepDefinition> stepDefinitions = new ArrayList<StepDefinition>();
 
+
         @Override
-        public void buildBackendWorldsAndRunBeforeHooks(Reporter reporter) {
+        public void buildBackendContextAndRunBeforeHooks(Reporter reporter, Set<String> tags) {
             throw new UnsupportedOperationException();
         }
 
         @Override
-        public void runAfterHooksAndDisposeBackendWorlds(Reporter reporter) {
+        public void runAfterHooksAndDisposeBackendContext(Reporter reporter, Set<String> tags) {
             throw new UnsupportedOperationException();
         }
 

@@ -13,35 +13,32 @@ import java.util.*;
 public class RuntimeWorld implements World {
     private static final Object DUMMY_ARG = new Object();
 
-    // TODO - it's expensive to create a new LocalizedXStreams for each scenario - reuse a global one.
+    // TODO - it's expensive to create a new LocalizedXStreams for each scenario - reuse a global one. (heh, except world is being recreated each time!)
     private final LocalizedXStreams localizedXStreams = new LocalizedXStreams();
     private final List<StepDefinition> stepDefinitions = new ArrayList<StepDefinition>();
     private final List<HookDefinition> beforeHooks = new ArrayList<HookDefinition>();
     private final List<HookDefinition> afterHooks = new ArrayList<HookDefinition>();
     private final ScenarioResultImpl scenarioResult = new ScenarioResultImpl();
 
-    private final Runtime runtime;
-
-    private final Collection<String> tags;
 
     private boolean skipNextStep = false;
+    private Runtime runtime;
 
-    public RuntimeWorld(Runtime runtime, Collection<String> tags) {
+    public RuntimeWorld(Runtime runtime) {
         this.runtime = runtime;
-        this.tags = tags;
     }
 
     @Override
-    public void buildBackendWorldsAndRunBeforeHooks(Reporter reporter) {
+    public void buildBackendContextAndRunBeforeHooks(Reporter reporter, Set<String> tags) {
         runtime.buildBackendWorlds(this);
         Collections.sort(beforeHooks, new HookComparator(true));
-        runHooks(beforeHooks, reporter);
+        runHooks(beforeHooks, reporter, tags);
     }
 
     @Override
-    public void runAfterHooksAndDisposeBackendWorlds(Reporter reporter) {
+    public void runAfterHooksAndDisposeBackendContext(Reporter reporter, Set<String> tags) {
         Collections.sort(afterHooks, new HookComparator(false));
-        runHooks(afterHooks, reporter);
+        runHooks(afterHooks, reporter, tags);
         runtime.disposeBackendWorlds();
     }
 
@@ -64,13 +61,13 @@ public class RuntimeWorld implements World {
         match.runStep(locale);
     }
 
-    private void runHooks(List<HookDefinition> hooks, Reporter reporter) {
+    private void runHooks(List<HookDefinition> hooks, Reporter reporter, Set<String> tags) {
         for (HookDefinition hook : hooks) {
-            runHookIfTagsMatch(hook, reporter);
+            runHookIfTagsMatch(hook, reporter, tags);
         }
     }
 
-    private void runHookIfTagsMatch(HookDefinition hook, Reporter reporter) {
+    private void runHookIfTagsMatch(HookDefinition hook, Reporter reporter, Set<String> tags) {
         if (hook.matches(tags)) {
             long start = System.nanoTime();
             try {

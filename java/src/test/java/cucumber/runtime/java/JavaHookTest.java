@@ -30,7 +30,7 @@ public class JavaHookTest {
     }
 
     private final JavaBackend backend = new JavaBackend(mock(ObjectFactory.class));
-    private final World world = new RuntimeWorld(null, new ArrayList<String>());
+    private final World world = new RuntimeWorld(null);
 
     @Test
     public void before_hooks_get_registered() throws Exception {
