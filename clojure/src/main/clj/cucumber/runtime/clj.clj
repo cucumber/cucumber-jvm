@@ -15,12 +15,11 @@
 
 (defn load-script [path]
   (try
-    (RT/load (.replaceAll path ".clj$" "") true)
+    (RT/load (str "cucumber/" (.replaceAll path ".clj$" "")) true)
     (catch Throwable t
       (throw (CucumberException. t)))))
 
 (defn- -init [resource-loader]
-  (load-script "cucumber/runtime/clojure/dsl")
   [[] (atom {:resource-loader resource-loader})])
 
 (defn- -buildWorld [cljb glue-paths a-world]
