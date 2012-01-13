@@ -5,11 +5,18 @@
         <conf name="default"/>
         <conf name="test" extends="default"/>
     </configurations>
+
     <publications>
-        <artifact conf="default" name="${ivy.module}"/>
-        <!--<artifact conf="default" name="${ivy.module}-sources"/>-->
-        <!--<artifact conf="default" name="${ivy.module}-javadoc"/>-->
+        <artifact conf="default"/>
+        <artifact conf="default" ext="jar.asc"/>
+        <artifact conf="default" name="${module}-javadoc"/>
+        <artifact conf="default" name="${module}-javadoc" ext="jar.asc"/>
+        <artifact conf="default" name="${module}-sources"/>
+        <artifact conf="default" name="${module}-sources" ext="jar.asc"/>
+        <artifact conf="default" ext="pom" type="pom"/>
+        <artifact conf="default" ext="pom.asc" type="pom"/>
     </publications>
+
     <dependencies>
         <dependency name="cucumber-core" rev="${cucumber-jvm-version}" conf="default"/>
         <dependency name="ioke-lang" org="org.ioke" rev="P-0.4.0-p11" conf="default"/>

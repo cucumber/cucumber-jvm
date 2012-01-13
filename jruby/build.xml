@@ -16,6 +16,8 @@
         </jarjar>
     </target>
 
+    <target name="packages" depends="jar,jarjar"/>
+
     <target name="cli-test" depends="jarjar">
         <fail unless="env.JRUBY_HOME">You must define GROOVY_HOME in your shell</fail>
         <exec executable="${env.JRUBY_HOME}/bin/jruby">
@@ -25,5 +27,18 @@
             <arg file="src/test/resources"/>
         </exec>
     </target>
-    
+
+    <target name="gpg" depends="-gpg-default,jarjar,cli-test">
+        <exec command="gpg">
+            <arg value="-ab"/>
+            <arg file="target/artifacts/jars/cucumber-jruby-full.jar"/>
+        </exec>
+    </target>
+
+    <target name="publish-internet" depends="publish-nexus,publish-gem" />
+
+    <target name="gpg" depends="jarjar">
+        <echo>TODO: Package and push gem</echo>
+    </target>
+
 </project>

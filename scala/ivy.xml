@@ -6,11 +6,18 @@
         <conf name="test" extends="default"/>
         <conf name="build" extends="default"/>
     </configurations>
+
     <publications>
-        <artifact conf="default" name="${ivy.module}"/>
-        <!--<artifact conf="default" name="${ivy.module}-sources"/>-->
-        <!--<artifact conf="default" name="${ivy.module}-javadoc"/>-->
+        <artifact conf="default"/>
+        <artifact conf="default" ext="jar.asc"/>
+        <artifact conf="default" name="${module}-javadoc"/>
+        <artifact conf="default" name="${module}-javadoc" ext="jar.asc"/>
+        <artifact conf="default" name="${module}-sources"/>
+        <artifact conf="default" name="${module}-sources" ext="jar.asc"/>
+        <artifact conf="default" ext="pom" type="pom"/>
+        <artifact conf="default" ext="pom.asc" type="pom"/>
     </publications>
+
     <dependencies>
         <dependency name="cucumber-core" rev="${cucumber-jvm-version}" conf="default"/>
         <dependency name="scala-library" org="org.scala-lang" rev="2.9.1" conf="default"/>

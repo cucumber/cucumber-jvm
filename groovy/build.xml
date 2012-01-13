@@ -44,7 +44,9 @@ I18n.all.each { i18n ->
     <target name="zip" depends="jarjar">
         <mkdir dir="target/artifacts/zips"/>
         <zip file="target/artifacts/zips/cucumber-groovy-full.zip">
-            <fileset dir="bin"/>
+            <fileset dir="bin">
+                <exclude name=".gitignore"/>
+            </fileset>
         </zip>
     </target>
 
@@ -58,7 +60,6 @@ I18n.all.each { i18n ->
         </exec>
     </target>
 
-    <!-- TODO: package a zip/tgz as well, with -full -->
     <target name="packages" depends="jar,jarjar,zip"/>
 
     <target name="gpg" depends="-gpg-default,zip,jarjar,cli-test">

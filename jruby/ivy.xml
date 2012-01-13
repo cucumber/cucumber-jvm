@@ -6,11 +6,18 @@
         <conf name="test" extends="default"/>
         <conf name="build"/>
     </configurations>
+
     <publications>
-        <artifact conf="default" name="${ivy.module}"/>
-        <!--<artifact conf="default" name="${ivy.module}-sources"/>-->
-        <!--<artifact conf="default" name="${ivy.module}-javadoc"/>-->
+        <artifact conf="default"/>
+        <artifact conf="default" ext="jar.asc"/>
+        <artifact conf="default" name="${module}-javadoc"/>
+        <artifact conf="default" name="${module}-javadoc" ext="jar.asc"/>
+        <artifact conf="default" name="${module}-sources"/>
+        <artifact conf="default" name="${module}-sources" ext="jar.asc"/>
+        <artifact conf="default" ext="pom" type="pom"/>
+        <artifact conf="default" ext="pom.asc" type="pom"/>
     </publications>
+
     <dependencies>
         <dependency name="cucumber-core" rev="${cucumber-jvm-version}" conf="default"/>
         <dependency name="jruby-complete" org="org.jruby" rev="1.6.5.1" conf="default"/>

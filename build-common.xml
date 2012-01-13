@@ -178,6 +178,8 @@
         </ivy:publish>
     </target>
 
+    <target name="publish-internet" depends="publish-nexus" />
+
     <target name="clean">
         <delete dir="target"/>
     </target>

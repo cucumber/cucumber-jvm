@@ -5,11 +5,18 @@
         <conf name="default"/>
         <conf name="test" extends="default"/>
     </configurations>
+
     <publications>
-        <artifact name="${ivy.module}" conf="default"/>
-        <!--<artifact name="${ivy.module}-sources" conf="default"/>-->
-        <!--<artifact name="${ivy.module}-javadoc" conf="default"/>-->
+        <artifact conf="default"/>
+        <artifact conf="default" ext="jar.asc"/>
+        <artifact conf="default" name="${module}-javadoc"/>
+        <artifact conf="default" name="${module}-javadoc" ext="jar.asc"/>
+        <artifact conf="default" name="${module}-sources"/>
+        <artifact conf="default" name="${module}-sources" ext="jar.asc"/>
+        <artifact conf="default" ext="pom" type="pom"/>
+        <artifact conf="default" ext="pom.asc" type="pom"/>
     </publications>
+
     <dependencies>
         <dependency name="cucumber-java" rev="${cucumber-jvm-version}" conf="default"/>
         <dependency name="weld-se" org="org.jboss.weld.se" rev="1.1.4.Final" conf="default"/>

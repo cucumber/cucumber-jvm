@@ -17,8 +17,8 @@
         <subant target="clean" buildpath="${modules}"/>
     </target>
 
-    <target name="publish-nexus" depends="clean">
-        <subant target="publish-nexus" buildpath="${modules}"/>
+    <target name="publish-internet" depends="clean">
+        <subant target="publish-internet" buildpath="${modules}"/>
     </target>
 
     <target name="git-clean">
