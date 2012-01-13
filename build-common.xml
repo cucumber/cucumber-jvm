@@ -1,4 +1,5 @@
-<project name="common" xmlns:ivy="antlib:org.apache.ivy.ant" xmlns:artifact="antlib:org.apache.maven.artifact.ant" default="test">
+<project name="common" xmlns:ivy="antlib:org.apache.ivy.ant"
+         default="test">
     <property name="cucumber-jvm-version" value="1.0.0-RC3"/>
     <property name="gherkin.version" value="2.7.3"/>
 
@@ -29,7 +30,7 @@
 
     <target name="-init-ivy" depends="-init,-load-ivy" description="Set up Ivy-related paths">
         <ivy:settings file="${common-basedir}/ivy-settings.xml"/>
-        <ivy:resolve log="download-only"/>
+        <ivy:resolve log="default"/>
         <ivy:cachepath pathid="ivy.compile-classpath" conf="default"/>
         <ivy:cachepath pathid="ivy.test-classpath" conf="test"/>
         <ivy:artifactproperty conf="default" name="local.[organisation].[artifact]"
@@ -116,11 +117,12 @@
     </target>
 
     <!-- Can be overridden in sub projects -->
-    <target name="packages" depends="jar" />
+    <target name="packages" depends="jar"/>
 
     <target name="javadoc" depends="-init-ivy">
         <mkdir dir="target/javadoc"/>
-        <javadoc destdir="target/javadoc" sourcepath="src/main/java" classpathref="ivy.compile-classpath" failonerror="true" windowtitle="${project.name}" encoding="UTF-8">
+        <javadoc destdir="target/javadoc" sourcepath="src/main/java" classpathref="ivy.compile-classpath"
+                 failonerror="true" windowtitle="${project.name}" encoding="UTF-8">
             <doctitle>${project.name}</doctitle>
         </javadoc>
     </target>
@@ -134,38 +136,39 @@
     </target>
 
     <target name="publish-local" depends="jar">
-        <ivy:publish resolver="local" update="true" overwrite="true" artifactspattern="target/artifacts/[type]s/[artifact].[ext]"/>
+        <ivy:publish resolver="local" update="true" overwrite="true"
+                     artifactspattern="target/artifacts/[type]s/[artifact].[ext]" conf="jar"/>
     </target>
 
     <target name="publish-artifacts" depends="test,publish-local"/>
 
     <target name="-gpg-default" depends="jar,jar-javadoc,jar-sources,makepom">
-      <delete>
-          <fileset dir="${jars-dir}" includes="*.asc"/>
-      </delete>
-      <delete>
-          <fileset dir="${poms-dir}" includes="*.asc"/>
-      </delete>
+        <delete>
+            <fileset dir="${jars-dir}" includes="*.asc"/>
+        </delete>
+        <delete>
+            <fileset dir="${poms-dir}" includes="*.asc"/>
+        </delete>
 
-      <exec command="gpg">
-          <arg value="-ab"/>
-          <arg file="${module-jar}"/>
-      </exec>
-      <exec command="gpg">
-          <arg value="-ab"/>
-          <arg file="${javadoc-jar}"/>
-      </exec>
-      <exec command="gpg">
-          <arg value="-ab"/>
-          <arg file="${sources-jar}"/>
-      </exec>
-      <exec command="gpg">
-          <arg value="-ab"/>
-          <arg file="${module-pom}"/>
-      </exec>
+        <exec command="gpg">
+            <arg value="-ab"/>
+            <arg file="${module-jar}"/>
+        </exec>
+        <exec command="gpg">
+            <arg value="-ab"/>
+            <arg file="${javadoc-jar}"/>
+        </exec>
+        <exec command="gpg">
+            <arg value="-ab"/>
+            <arg file="${sources-jar}"/>
+        </exec>
+        <exec command="gpg">
+            <arg value="-ab"/>
+            <arg file="${module-pom}"/>
+        </exec>
     </target>
 
-    <target name="gpg" depends="-gpg-default" />
+    <target name="gpg" depends="-gpg-default"/>
 
     <target name="makepom" depends="-init-ivy" description="Generate POM">
         <!--ivy:deliver deliverpattern="ivy.xml" pubrevision="${cucumber-jvm-version}" status="release"/-->
@@ -173,12 +176,12 @@
     </target>
 
     <target name="publish-nexus" depends="packages,test,gpg" description="Upload to Nexus">
-        <ivy:publish resolver="nexus-deploy" pubrevision="${cucumber-jvm-version}" overwrite="true" publishivy="false" >
+        <ivy:publish resolver="nexus-deploy" pubrevision="${cucumber-jvm-version}" overwrite="true" publishivy="false">
             <artifacts pattern="target/artifacts/[type]s/[artifact].[ext]"/>
         </ivy:publish>
     </target>
 
-    <target name="publish-internet" depends="publish-nexus" />
+    <target name="publish-internet" depends="publish-nexus"/>
 
     <target name="clean">
         <delete dir="target"/>

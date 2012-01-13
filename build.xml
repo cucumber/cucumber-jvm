@@ -1,8 +1,8 @@
 <project name="cucumber-jvm" default="publish-artifacts">
     <property name="modules" value="core:junit:java:clojure:groovy:guice:ioke:jruby:jython:openejb:picocontainer:rhino:scala:spring:weld"/>
 
-    <target name="publish-artifacts">
-        <subant target="publish-artifacts" buildpath="${modules}"/>
+    <target name="publish-local">
+        <subant target="publish-local" buildpath="${modules}"/>
     </target>
 
     <target name="generate">
