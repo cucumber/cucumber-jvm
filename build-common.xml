@@ -135,9 +135,10 @@
         <jar destfile="${sources-jar}" basedir="src/main/java"/>
     </target>
 
-    <target name="publish-local" depends="jar">
-        <ivy:publish resolver="local" update="true" overwrite="true"
-                     artifactspattern="target/artifacts/[type]s/[artifact].[ext]" conf="jar"/>
+    <target name="publish-local" depends="jar,test">
+        <ivy:publish resolver="local" pubrevision="${cucumber-jvm-version}" update="true" overwrite="true" conf="default">
+            <artifacts pattern="target/artifacts/jars/[artifact].[ext]"/>
+        </ivy:publish>
     </target>
 
     <target name="publish-artifacts" depends="test,publish-local"/>

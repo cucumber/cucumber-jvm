@@ -1,4 +1,4 @@
-<project name="cucumber-jvm" default="publish-artifacts">
+<project name="cucumber-jvm" default="publish-local">
     <property name="modules" value="core:junit:java:clojure:groovy:guice:ioke:jruby:jython:openejb:picocontainer:rhino:scala:spring:weld"/>
 
     <target name="publish-local">
