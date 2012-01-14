@@ -159,7 +159,7 @@
 
     <target name="makepom" depends="-init-ivy" description="Generate POM">
         <!--ivy:deliver deliverpattern="ivy.xml" pubrevision="${cucumber-jvm-version}" status="release"/-->
-        <ivy:makepom ivyfile="ivy.xml" pomfile="${module-pom}"/>
+        <ivy:makepom ivyfile="ivy.xml" pomfile="${module-pom}" templatefile="${common-basedir}/template.pom" artifactName="${module}"/>
     </target>
 
     <target name="publish-nexus" depends="packages,jar-sources,jar-javadoc,makepom,do-publish-nexus" description="Upload to Nexus"/>

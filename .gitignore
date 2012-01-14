@@ -17,5 +17,5 @@ tmp/
 /chromedriver.log
 /.scala_dependencies
 /out/
-*.pom
+/*/*.pom
 nexus.properties
