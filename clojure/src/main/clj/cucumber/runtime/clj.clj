@@ -10,8 +10,7 @@
               :init init
               :state state))
 
-;; maybe this should be an atom
-(def world (promise))
+(def world (atom nil))
 
 (defn load-script [path]
   (try
@@ -23,7 +22,7 @@
   [[] (atom {:resource-loader resource-loader})])
 
 (defn- -buildWorld [cljb glue-paths a-world]
-  (deliver world a-world)
+  (reset! world a-world)
   (doseq [path glue-paths
           resource (.resources (:resource-loader @(.state cljb)) path ".clj")]
     ;; scripts are loaded with this namespace as the current namespace
