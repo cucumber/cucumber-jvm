@@ -6,7 +6,7 @@ import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.PendingException;
 import cucumber.runtime.World;
-import gherkin.formatter.model.Comment;
+import cucumber.runtime.snippets.SnippetGenerator;
 import gherkin.formatter.model.Step;
 import org.jruby.CompatVersion;
 import org.jruby.RubyObject;
@@ -16,13 +16,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 
 public class JRubyBackend implements Backend {
     private static final String DSL = "/cucumber/runtime/jruby/dsl.rb";
+    private final SnippetGenerator snippetGenerator = new SnippetGenerator(new JRubySnippet());
     private final ScriptingContainer jruby = new ScriptingContainer();
     private World world;
     private ResourceLoader resourceLoader;
@@ -80,7 +80,7 @@ public class JRubyBackend implements Backend {
 
     @Override
     public String getSnippet(Step step) {
-        return new JRubySnippetGenerator(step).getSnippet();
+        return snippetGenerator.getSnippet(step);
     }
 
     public void pending(String reason) throws PendingException {

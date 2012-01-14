@@ -1,24 +1,13 @@
 package cucumber.runtime.java;
 
-import cucumber.runtime.snippets.SnippetGenerator;
-import gherkin.formatter.model.Step;
+import cucumber.runtime.snippets.Snippet;
 
 import java.util.List;
 
-public class JavaSnippetGenerator extends SnippetGenerator {
-
-    public JavaSnippetGenerator(Step step) {
-        super(step);
-    }
+public class JavaSnippet implements Snippet {
 
     @Override
-    protected String patternFor(String stepName) {
-        String pattern = super.patternFor(stepName);
-        return pattern.replaceAll("\\\\", "\\\\\\\\").replaceAll("\"", "\\\\\"");
-    }
-
-    @Override
-    protected String arguments(List<Class<?>> argumentTypes) {
+    public String arguments(List<Class<?>> argumentTypes) {
         StringBuilder sb = new StringBuilder();
         int n = 1;
         for (Class<?> argType : argumentTypes) {
@@ -31,11 +20,25 @@ public class JavaSnippetGenerator extends SnippetGenerator {
     }
 
     @Override
-    protected String template() {
+    public String template() {
         return "@{0}(\"{1}\")\n" +
                 "public void {2}({3}) '{'\n" +
                 "    // {4}\n" +
                 "'}'\n";
     }
 
+    @Override
+    public String namedGroupStart() {
+        return null;
+    }
+
+    @Override
+    public String namedGroupEnd() {
+        return null;
+    }
+
+    @Override
+    public String escapePattern(String pattern) {
+        return pattern.replaceAll("\\\\", "\\\\\\\\").replaceAll("\"", "\\\\\"");
+    }
 }

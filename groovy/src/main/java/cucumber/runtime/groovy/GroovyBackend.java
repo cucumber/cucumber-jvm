@@ -5,6 +5,7 @@ import cucumber.io.ResourceLoader;
 import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.World;
+import cucumber.runtime.snippets.SnippetGenerator;
 import gherkin.TagExpression;
 import gherkin.formatter.model.Step;
 import groovy.lang.Binding;
@@ -21,6 +22,7 @@ import java.util.regex.Pattern;
 
 public class GroovyBackend implements Backend {
     static GroovyBackend instance;
+    private final SnippetGenerator snippetGenerator = new SnippetGenerator(new GroovySnippet());
     private final ResourceLoader resourceLoader;
     private final GroovyShell shell;
     private Closure worldClosure;
@@ -73,7 +75,7 @@ public class GroovyBackend implements Backend {
 
     @Override
     public String getSnippet(Step step) {
-        return new GroovySnippetGenerator(step).getSnippet();
+        return snippetGenerator.getSnippet(step);
     }
 
     public void addStepDefinition(Pattern regexp, Closure body) {

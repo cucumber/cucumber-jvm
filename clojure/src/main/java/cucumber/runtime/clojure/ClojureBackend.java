@@ -1,13 +1,14 @@
 package cucumber.runtime.clojure;
 
+import clojure.lang.Compiler;
 import clojure.lang.IFn;
 import clojure.lang.RT;
-import clojure.lang.Compiler;
 import cucumber.io.Resource;
 import cucumber.io.ResourceLoader;
 import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.World;
+import cucumber.runtime.snippets.SnippetGenerator;
 import gherkin.formatter.model.Step;
 
 import java.io.IOException;
@@ -17,6 +18,7 @@ import java.util.regex.Pattern;
 
 public class ClojureBackend implements Backend {
     private static ClojureBackend instance;
+    private final SnippetGenerator snippetGenerator = new SnippetGenerator(new ClojureSnippet());
     private final ResourceLoader resourceLoader;
     private World world;
 
@@ -60,7 +62,7 @@ public class ClojureBackend implements Backend {
 
     @Override
     public String getSnippet(Step step) {
-        return new ClojureSnippetGenerator(step).getSnippet();
+        return snippetGenerator.getSnippet(step);
     }
 
     private StackTraceElement stepDefLocation(String interpreterClassName, String interpreterMethodName) {

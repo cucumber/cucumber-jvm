@@ -1,17 +1,12 @@
 package cucumber.runtime.jruby;
 
-import cucumber.runtime.snippets.SnippetGenerator;
-import gherkin.formatter.model.Step;
+import cucumber.runtime.snippets.Snippet;
 
 import java.util.List;
 
-public class JRubySnippetGenerator extends SnippetGenerator {
-    protected JRubySnippetGenerator(Step step) {
-        super(step);
-    }
-
+public class JRubySnippet implements Snippet {
     @Override
-    protected String template() {
+    public String template() {
         return "{0} '/'{1}'/' do {3}\n" +
                 "  # {4}\n" +
                 "  pending\n" +
@@ -19,7 +14,7 @@ public class JRubySnippetGenerator extends SnippetGenerator {
     }
 
     @Override
-    protected String arguments(List<Class<?>> argumentTypes) {
+    public String arguments(List<Class<?>> argumentTypes) {
         StringBuilder sb = new StringBuilder(argumentTypes.isEmpty() ? "" : "|");
         for (int n = 0; n < argumentTypes.size(); n++) {
             if (n > 1) {
@@ -30,4 +25,20 @@ public class JRubySnippetGenerator extends SnippetGenerator {
         sb.append(argumentTypes.isEmpty() ? "" : "|");
         return sb.toString();
     }
+
+    @Override
+    public String namedGroupStart() {
+        return null;
+    }
+
+    @Override
+    public String namedGroupEnd() {
+        return null;
+    }
+
+    @Override
+    public String escapePattern(String pattern) {
+        return pattern;
+    }
+
 }

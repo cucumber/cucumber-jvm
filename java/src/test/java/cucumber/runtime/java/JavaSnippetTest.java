@@ -1,5 +1,6 @@
 package cucumber.runtime.java;
 
+import cucumber.runtime.snippets.SnippetGenerator;
 import gherkin.formatter.model.Comment;
 import gherkin.formatter.model.Step;
 import org.junit.Test;
@@ -8,7 +9,7 @@ import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
 
-public class JavaSnippetGeneratorTest {
+public class JavaSnippetTest {
 
     @Test
     public void generatesPlainSnippet() {
@@ -54,6 +55,6 @@ public class JavaSnippetGeneratorTest {
 
     private String snippetFor(String name) {
         Step step = new Step(Collections.<Comment>emptyList(), "Given ", name, 0, null, null);
-        return new JavaSnippetGenerator(step).getSnippet();
+        return new SnippetGenerator(new JavaSnippet()).getSnippet(step);
     }
 }
