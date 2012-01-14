@@ -4,19 +4,11 @@
     <configurations defaultconfmapping="*->default">
         <conf name="default"/>
         <conf name="test" extends="default"/>
-        <conf name="release" extends="default"/>
         <conf name="build"/>
     </configurations>
 
     <publications>
-        <artifact conf="default"/>
-        <artifact conf="release" ext="jar.asc"/>
-        <artifact conf="release" name="${module}-javadoc"/>
-        <artifact conf="release" name="${module}-javadoc" ext="jar.asc"/>
-        <artifact conf="release" name="${module}-sources"/>
-        <artifact conf="release" name="${module}-sources" ext="jar.asc"/>
-        <artifact conf="release" ext="pom" type="pom"/>
-        <artifact conf="release" ext="pom.asc" type="pom"/>
+        <artifact type="jar" conf="default"/>
     </publications>
 
     <dependencies>

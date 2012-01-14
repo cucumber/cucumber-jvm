@@ -6,6 +6,8 @@
     <property name="ivy-version" value="2.2.0"/>
     <property name="ivy-install-dir" location="${user.home}/.ivy2/install"/>
     <property name="ivy-jar" location="${ivy-install-dir}/ivy-${ivy-version}.jar"/>
+    <property name="bcpg-jar" location="${ivy-install-dir}/bcpg.jar"/>
+    <property name="bcprov-jar" location="${ivy-install-dir}/bcprov.jar"/>
     <available property="ivy-installed" file="${ivy-jar}"/>
     <dirname property="common-basedir" file="${ant.file.common}"/>
 
@@ -21,11 +23,22 @@
         <mkdir dir="${ivy-install-dir}"/>
         <get src="http://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy-version}/ivy-${ivy-version}.jar"
              dest="${ivy-jar}" usetimestamp="true" ignoreerrors="false"/>
+        <get src="http://www.bouncycastle.org/download/bcpg-jdk16-146.jar"
+             dest="${bcpg-jar}" usetimestamp="true" ignoreerrors="false"/>
+        <get src="http://www.bouncycastle.org/download/bcprov-jdk16-146.jar"
+             dest="${bcprov-jar}" usetimestamp="true" ignoreerrors="false"/>
+
     </target>
 
     <target name="-load-ivy" depends="-bootstrap-ivy">
         <property file="${common-basedir}/nexus.properties"/>
-        <taskdef uri="antlib:org.apache.ivy.ant" classpath="${ivy-jar}"/>
+        <taskdef uri="antlib:org.apache.ivy.ant">
+            <classpath>
+                <pathelement path="${ivy-jar}"/>
+                <pathelement path="${bcpg-jar}"/>
+                <pathelement path="${bcprov-jar}"/>
+            </classpath>
+        </taskdef>
     </target>
 
     <target name="-init-ivy" depends="-init,-load-ivy" description="Set up Ivy-related paths">
@@ -131,54 +144,33 @@
         <jar destfile="${javadoc-jar}" basedir="target/javadoc"/>
     </target>
 
-    <target name="jar-sources">
+    <target name="jar-sources" depends="-init-ivy">
         <jar destfile="${sources-jar}" basedir="src/main/java"/>
     </target>
 
     <target name="publish-local" depends="jar,test">
-        <ivy:publish resolver="local" pubrevision="${cucumber-jvm-version}" update="true" overwrite="true" conf="default">
+        <ivy:publish resolver="local" pubrevision="${cucumber-jvm-version}" update="true" overwrite="true"
+                     conf="default">
             <artifacts pattern="target/artifacts/jars/[artifact].[ext]"/>
         </ivy:publish>
     </target>
 
     <target name="publish-artifacts" depends="test,publish-local"/>
 
-    <target name="-gpg-default" depends="jar,jar-javadoc,jar-sources,makepom">
-        <delete>
-            <fileset dir="${jars-dir}" includes="*.asc"/>
-        </delete>
-        <delete>
-            <fileset dir="${poms-dir}" includes="*.asc"/>
-        </delete>
-
-        <exec command="gpg">
-            <arg value="-ab"/>
-            <arg file="${module-jar}"/>
-        </exec>
-        <exec command="gpg">
-            <arg value="-ab"/>
-            <arg file="${javadoc-jar}"/>
-        </exec>
-        <exec command="gpg">
-            <arg value="-ab"/>
-            <arg file="${sources-jar}"/>
-        </exec>
-        <exec command="gpg">
-            <arg value="-ab"/>
-            <arg file="${module-pom}"/>
-        </exec>
-    </target>
-
-    <target name="gpg" depends="-gpg-default"/>
-
     <target name="makepom" depends="-init-ivy" description="Generate POM">
         <!--ivy:deliver deliverpattern="ivy.xml" pubrevision="${cucumber-jvm-version}" status="release"/-->
         <ivy:makepom ivyfile="ivy.xml" pomfile="${module-pom}"/>
     </target>
 
-    <target name="publish-nexus" depends="packages,test,gpg" description="Upload to Nexus">
-        <ivy:publish resolver="nexus-deploy" pubrevision="${cucumber-jvm-version}" overwrite="true" publishivy="false">
-            <artifacts pattern="target/artifacts/[type]s/[artifact].[ext]"/>
+    <target name="publish-nexus" depends="packages,jar-sources,jar-javadoc,makepom,do-publish-nexus" description="Upload to Nexus"/>
+
+    <target name="do-publish-nexus" depends="-init-ivy" description="Upload to Nexus">
+        <ivy:settings id="upload.settingsId" file="${common-basedir}/ivy-settings-release.xml"/>
+        <ivy:publish resolver="nexus" pubrevision="${cucumber-jvm-version}" overwrite="true" publishivy="false"
+                     artifactspattern="target/artifacts/[type]s/[artifact](-[classifier]).[ext]" settingsRef="upload.settingsId">
+            <artifact name="${module}" ext="pom" type="pom"/>
+            <artifact name="${module}" ext="jar" type="jar" classifier="sources"/>
+            <artifact name="${module}" ext="jar" type="jar" classifier="javadoc"/>
         </ivy:publish>
     </target>
 

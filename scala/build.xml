@@ -59,4 +59,8 @@ file.write(template.toString(), "UTF-8")
         </scaladoc>
     </target>
 
+    <target name="jar-sources" depends="-init-ivy">
+        <jar destfile="${sources-jar}" basedir="src/main/scala"/>
+    </target>
+
 </project>

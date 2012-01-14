@@ -5,23 +5,13 @@
         <conf name="default"/>
         <conf name="test" extends="default"/>
         <conf name="build" extends="default"/>
-        <conf name="release" extends="default"/>
     </configurations>
 
     <publications>
-        <artifact conf="default"/>
-        <artifact conf="release" ext="jar.asc"/>
-        <artifact conf="release" name="${module}-javadoc"/>
-        <artifact conf="release" name="${module}-javadoc" ext="jar.asc"/>
-        <artifact conf="release" name="${module}-sources"/>
-        <artifact conf="release" name="${module}-sources" ext="jar.asc"/>
-        <artifact conf="release" ext="pom" type="pom"/>
-        <artifact conf="release" ext="pom.asc" type="pom"/>
+        <artifact type="jar" conf="default"/>
 
-        <artifact conf="release" name="${module}-full"/>
-        <artifact conf="release" name="${module}-full" ext="jar.asc"/>
-        <artifact conf="release" name="${module}-full" type="zip"/>
-        <artifact conf="release" name="${module}-full" type="zip" ext="zip.asc"/>
+        <artifact type="jar" conf="default" name="${module}-full"/>
+        <artifact type="zip" conf="default" name="${module}-full"/>
     </publications>
 
     <dependencies>

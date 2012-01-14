@@ -28,13 +28,6 @@
         </exec>
     </target>
 
-    <target name="gpg" depends="-gpg-default,jarjar,cli-test">
-        <exec command="gpg">
-            <arg value="-ab"/>
-            <arg file="target/artifacts/jars/cucumber-jruby-full.jar"/>
-        </exec>
-    </target>
-
     <target name="publish-internet" depends="publish-nexus,publish-gem" />
 
     <target name="publish-gem" depends="jarjar">

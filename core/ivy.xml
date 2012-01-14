@@ -8,14 +8,7 @@
     </configurations>
 
     <publications>
-        <artifact conf="default"/>
-        <artifact conf="release" ext="jar.asc" type="asc"/>
-        <artifact conf="release" name="${module}-javadoc"/>
-        <artifact conf="release" name="${module}-javadoc" ext="jar.asc" type="asc"/>
-        <artifact conf="release" name="${module}-sources"/>
-        <artifact conf="release" name="${module}-sources" ext="jar.asc" type="asc"/>
-        <artifact conf="release" ext="pom" type="pom"/>
-        <artifact conf="release" ext="pom.asc" type="asc"/>
+        <artifact type="jar" conf="default"/>
     </publications>
 
     <dependencies>

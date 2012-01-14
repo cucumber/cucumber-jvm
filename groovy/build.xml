@@ -62,15 +62,4 @@ I18n.all.each { i18n ->
 
     <target name="packages" depends="jar,jarjar,zip"/>
 
-    <target name="gpg" depends="-gpg-default,zip,jarjar,cli-test">
-        <exec command="gpg">
-            <arg value="-ab"/>
-            <arg file="target/artifacts/jars/cucumber-groovy-full.jar"/>
-        </exec>
-        <exec command="gpg">
-            <arg value="-ab"/>
-            <arg file="target/artifacts/zips/cucumber-groovy-full.zip"/>
-        </exec>
-    </target>
-
 </project>
