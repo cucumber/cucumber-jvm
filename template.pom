@@ -23,4 +23,11 @@ ${ivy.pom.header}
         <developerConnection>scm:git:git@github.com:cucumber/cucumber-jvm.git</developerConnection>
         <url>git://github.com/cucumber/cucumber-jvm.git</url>
     </scm>
+    <developers>
+        <developer>
+            <id>aslakhellesoy</id>
+            <name>Aslak Hellesøy</name>
+            <email>aslak.hellesoy@gmail.com</email>
+        </developer>
+    </developers>
 </project>
