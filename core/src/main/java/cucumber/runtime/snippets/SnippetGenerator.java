@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
  * <li>{4} : Hint comment</li>
  * </ul>
  */
-public abstract class SnippetGenerator {
+public final class SnippetGenerator {
     private static final ArgumentPattern[] DEFAULT_ARGUMENT_PATTERNS = new ArgumentPattern[]{
             new ArgumentPattern(Pattern.compile("\"([^\"]*)\""), String.class),
             new ArgumentPattern(Pattern.compile("(\\d+)"), Integer.TYPE)
@@ -30,46 +30,22 @@ public abstract class SnippetGenerator {
     private static final String HINT = "Express the Regexp above with the code you wish you had";
     private static final Character SUBST = '_';
 
-    private final Step step;
-    private final String namedGroupStart;
-    private final String namedGroupEnd;
+    private final Snippet snippet;
 
-    /**
-     * Constructor for languages that do not support named capture groups, such as Java.
-     *
-     * @param step the step to generate snippet for.
-     */
-    protected SnippetGenerator(Step step) {
-        this(step, null, null);
+    public SnippetGenerator(Snippet snippet) {
+        this.snippet = snippet;
     }
 
-    /**
-     * Constructor for langauges that support named capture groups, such ash Ioke.
-     *
-     * @param step            the step to generate snippet for.
-     * @param namedGroupStart beginning of named group, for example "{arg".
-     * @param namedGroupEnd   end of named group, for example "}".
-     */
-    protected SnippetGenerator(Step step, String namedGroupStart, String namedGroupEnd) {
-        this.step = step;
-        this.namedGroupStart = namedGroupStart;
-        this.namedGroupEnd = namedGroupEnd;
+    public String getSnippet(Step step) {
+        return MessageFormat.format(snippet.template(), I18n.codeKeywordFor(step.getKeyword()), snippet.escapePattern(patternFor(step.getName())), functionName(step.getName()), snippet.arguments(argumentTypes(step.getName())), HINT);
     }
-
-    public String getSnippet() {
-        return MessageFormat.format(template(), I18n.codeKeywordFor(step.getKeyword()), patternFor(step.getName()), functionName(step.getName()), arguments(argumentTypes(step.getName())), HINT);
-    }
-
-    protected abstract String template();
-
-    protected abstract String arguments(List<Class<?>> argumentTypes);
 
     protected String patternFor(String stepName) {
         String pattern = stepName;
         for (ArgumentPattern argumentPattern : argumentPatterns()) {
             pattern = argumentPattern.replaceMatchesWithGroups(pattern);
         }
-        if (namedGroupStart != null) {
+        if (snippet.namedGroupStart() != null) {
             pattern = withNamedGroups(pattern);
         }
 
@@ -107,7 +83,7 @@ public abstract class SnippetGenerator {
         StringBuffer sb = new StringBuffer();
         int n = 1;
         while (m.find()) {
-            m.appendReplacement(sb, "(" + namedGroupStart + n++ + namedGroupEnd);
+            m.appendReplacement(sb, "(" + snippet.namedGroupStart() + n++ + snippet.namedGroupEnd());
         }
         m.appendTail(sb);
 
@@ -149,7 +125,7 @@ public abstract class SnippetGenerator {
         return DEFAULT_ARGUMENT_PATTERNS;
     }
 
-    protected String untypedArguments(List<Class<?>> argumentTypes) {
+    public static String untypedArguments(List<Class<?>> argumentTypes) {
         StringBuilder sb = new StringBuilder();
         for (int n = 0; n < argumentTypes.size(); n++) {
             if (n > 0) {

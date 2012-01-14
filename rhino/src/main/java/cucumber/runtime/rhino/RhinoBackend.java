@@ -5,7 +5,8 @@ import cucumber.io.ResourceLoader;
 import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.World;
-import cucumber.runtime.javascript.JavaScriptSnippetGenerator;
+import cucumber.runtime.javascript.JavaScriptSnippet;
+import cucumber.runtime.snippets.SnippetGenerator;
 import gherkin.formatter.model.Step;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.NativeFunction;
@@ -20,6 +21,7 @@ import java.util.List;
 
 public class RhinoBackend implements Backend {
     private static final String JS_DSL = "/cucumber/runtime/rhino/dsl.js";
+    private final SnippetGenerator snippetGenerator = new SnippetGenerator(new JavaScriptSnippet());
     private final ResourceLoader resourceLoader;
     private final Context cx;
     private final Scriptable scope;
@@ -58,7 +60,7 @@ public class RhinoBackend implements Backend {
 
     @Override
     public String getSnippet(Step step) {
-        return new JavaScriptSnippetGenerator(step).getSnippet();
+        return snippetGenerator.getSnippet(step);
     }
 
     private StackTraceElement stepDefLocation(String extension) {

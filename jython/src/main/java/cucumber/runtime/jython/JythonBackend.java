@@ -5,6 +5,7 @@ import cucumber.io.ResourceLoader;
 import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.World;
+import cucumber.runtime.snippets.SnippetGenerator;
 import gherkin.formatter.model.Step;
 import org.python.core.PyInstance;
 import org.python.core.PyObject;
@@ -16,6 +17,7 @@ import java.util.List;
 
 public class JythonBackend implements Backend {
     private static final String DSL = "/cucumber/runtime/jython/dsl.py";
+    private final SnippetGenerator snippetGenerator = new SnippetGenerator(new JythonSnippet());
     private final ResourceLoader resourceLoader;
     private final PythonInterpreter jython = new PythonInterpreter();
     private PyObject pyWorld;
@@ -53,7 +55,7 @@ public class JythonBackend implements Backend {
 
     @Override
     public String getSnippet(Step step) {
-        return new JythonSnippetGenerator(step).getSnippet();
+        return snippetGenerator.getSnippet(step);
     }
 
     public void registerStepdef(PyInstance stepdef, int arity) {
