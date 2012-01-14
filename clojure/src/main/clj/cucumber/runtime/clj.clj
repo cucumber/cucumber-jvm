@@ -1,7 +1,9 @@
 (ns cucumber.runtime.clj
   (:import (cucumber.runtime CucumberException
                              JdkPatternArgumentMatcher
-                             StepDefinition)
+                             StepDefinition
+                             HookDefinition)
+           (gherkin TagExpression)
            (clojure.lang RT))
   (:gen-class :name cucumber.runtime.clj.Backend
               :implements [cucumber.runtime.Backend]
@@ -59,6 +61,38 @@
      (getPattern [_]
        pattern))))
 
+(defmulti add-hook-definition (fn [t & _] t))
+
+(defmethod add-hook-definition :before [_ tag-expression hook-fun]
+  (let [te (TagExpression. (list* (seq tag-expression)))]
+    (.addBeforeHook
+     @world
+     (reify
+       HookDefinition
+       (execute [hd scenario-result]
+         (hook-fun))
+       (matches [hd tags]
+         (.eval te tags))
+       (getOrder [hd] 0)))))
+
+(defmethod add-hook-definition :after [_ tag-expression hook-fun]
+  (let [te (TagExpression. (list* (seq tag-expression)))
+        max-parameter-count (->> hook-fun class .getDeclaredMethods
+                                 (filter #(= "invoke" (.getName %)))
+                                 (map #(count (.getParameterTypes %)))
+                                 (apply max))]
+    (.addBeforeHook
+     @world
+     (reify
+       HookDefinition
+       (execute [hd scenario-result]
+         (if (zero? max-parameter-count)
+           (hook-fun)
+           (hook-fun scenario-result)))
+       (matches [hd tags]
+         (.eval te tags))
+       (getOrder [hd] 0)))))
+
 ;; TODO: before and after hooks
 
 (defmacro step-macros [& names]
@@ -70,3 +104,9 @@
                                       :line (:line (meta ~'&form))})))))
 (step-macros
  Given When Then And But)
+
+(defmacro Before [fun]
+  `(add-hook-definition :before [] ~fun))
+
+(defmacro After [fun]
+  `(add-hook-definition :after [] ~fun))
