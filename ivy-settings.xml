@@ -11,5 +11,12 @@
     <resolvers>
         <ibiblio name="nexus-deploy" root="https://oss.sonatype.org/service/local/staging/deploy/maven2"
                  m2compatible="true"/>
+        <ibiblio name="apache-snapshots" root="https://repository.apache.org/content/groups/snapshots" m2compatible="true"/>
     </resolvers>
+
+    <modules>
+        <module organisation="org.apache.openejb" name=".*" resolver="apache-snapshots" />
+        <module organisation="org.apache.openwebbeans" name=".*" resolver="apache-snapshots" />
+        <module organisation="org.apache.bval" name=".*" resolver="apache-snapshots" />
+    </modules>
 </ivysettings>
