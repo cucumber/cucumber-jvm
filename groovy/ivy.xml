@@ -5,13 +5,14 @@
         <conf name="default"/>
         <conf name="test" extends="default"/>
         <conf name="build" extends="default"/>
+        <conf name="release"/>
     </configurations>
 
     <publications>
         <artifact type="jar" conf="default"/>
 
-        <artifact type="jar" conf="default" name="${module}-full"/>
-        <artifact type="zip" conf="default" name="${module}-full"/>
+        <artifact type="jar" conf="release" name="${module}-full"/>
+        <artifact type="zip" conf="release" name="${module}-full"/>
     </publications>
 
     <dependencies>
