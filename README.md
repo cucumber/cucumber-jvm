@@ -76,6 +76,15 @@ TODO: Fix this. The Ivy build doesn't upload them yet.
 
 You will find an example in Git under examples/java-calculator. You should be able to run `basic_arithmetic.feature` by running the `cucumber.examples.java.calculator.basic_arithmetic_Test` JUnit test from your IDE. -Or simply by running it with Maven: `mvn clean install -P examples` once to build it all. Then `cd examples/java-calculator` followed by `mvn test` each time you make a change. Try to make the feature fail!
 
+## IDE Setup
+
+### IntelliJ IDEA
+
+The top level directory has a `cucumber-jvm.ipr` project file that references a `cucumber-*.iml` files.
+Just run ant once (see below) and install the [IvyIDEA](http://code.google.com/p/ivyidea/) plugin. 
+
+Now, open the `cucumber-jvm.ipr` project and you should be good to go.
+
 ## Contributing/Hacking
 
 To hack on Cucumber-JVM you need a JDK, Maven and Git to get the code. You also need to set your IDE/text editor to use:
