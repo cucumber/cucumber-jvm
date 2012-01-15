@@ -1,7 +1,5 @@
 <project name="common" xmlns:ivy="antlib:org.apache.ivy.ant"
          default="test">
-    <property name="cucumber-jvm-version" value="1.0.0.RC3"/>
-    <property name="gherkin.version" value="2.7.3"/>
 
     <property name="ivy-version" value="2.2.0"/>
     <property name="ivy-install-dir" location="${user.home}/.ivy2/install"/>
@@ -11,6 +9,7 @@
     <available property="ivy-installed" file="${ivy-jar}"/>
     <available property="main-sources" file="src/main/java"/>
     <dirname property="common-basedir" file="${ant.file.common}"/>
+    <property file="${common-basedir}/build.properties"/>
     <property environment="env"/>
 
     <target name="-init" description="Ivy-independent initialization">
