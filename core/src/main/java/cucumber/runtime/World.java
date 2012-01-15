@@ -2,14 +2,16 @@ package cucumber.runtime;
 
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Step;
-import java.util.Locale;
+
 import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 
 public interface World {
-    void buildBackendWorldsAndRunBeforeHooks(Reporter reporter);
+    void buildBackendContextAndRunBeforeHooks(Reporter reporter, Set<String> tags);
 
-    void runAfterHooksAndDisposeBackendWorlds(Reporter reporter);
+    void runAfterHooksAndDisposeBackendContext(Reporter reporter, Set<String> tags);
 
     void runStep(String uri, Step step, Reporter reporter, Locale locale);
 

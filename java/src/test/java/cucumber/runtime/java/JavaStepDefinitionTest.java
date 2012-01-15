@@ -12,14 +12,13 @@ import gherkin.formatter.model.Step;
 import org.junit.Test;
 
 import java.lang.reflect.Method;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
+
 
 public class JavaStepDefinitionTest {
     private static final List<Comment> NO_COMMENTS = Collections.emptyList();
@@ -39,7 +38,7 @@ public class JavaStepDefinitionTest {
     private final Defs defs = new Defs();
     private final JavaBackend backend = new JavaBackend(new SingletonFactory(defs));
     private final Runtime runtime = new Runtime(NO_PATHS, new ClasspathResourceLoader(), asList(backend), false);
-    private final World fooWorld = new RuntimeWorld(runtime, asList("@foo"));
+    private final World fooWorld = new RuntimeWorld(runtime); //asList("@foo")
 
     @Test(expected = AmbiguousStepDefinitionsException.class)
     public void throws_ambiguous_when_two_matches_are_found() throws Throwable {
@@ -48,7 +47,7 @@ public class JavaStepDefinitionTest {
         backend.addStepDefinition(BAR.getAnnotation(Given.class), BAR);
 
         Reporter reporter = mock(Reporter.class);
-        fooWorld.buildBackendWorldsAndRunBeforeHooks(reporter);
+        fooWorld.buildBackendContextAndRunBeforeHooks(reporter, asSet("@foo"));
         fooWorld.runStep("uri", new Step(NO_COMMENTS, "Given ", "pattern", 1, null, null), reporter, Locale.US);
     }
 
@@ -58,7 +57,7 @@ public class JavaStepDefinitionTest {
         backend.addStepDefinition(FOO.getAnnotation(Given.class), FOO);
 
         Reporter reporter = mock(Reporter.class);
-        fooWorld.buildBackendWorldsAndRunBeforeHooks(reporter);
+        fooWorld.buildBackendContextAndRunBeforeHooks(reporter, asSet("@foo"));
         Step step = new Step(NO_COMMENTS, "Given ", "pattern", 1, null, null);
         fooWorld.runStep("uri", step, reporter, Locale.US);
         assertTrue(defs.foo);
@@ -78,5 +77,11 @@ public class JavaStepDefinitionTest {
         public void bar() {
             bar = true;
         }
+    }
+
+    private Set<String> asSet(String... items) {
+        Set<String> set = new HashSet<String>();
+        set.addAll(asList(items));
+        return set;
     }
 }

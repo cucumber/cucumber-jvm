@@ -38,6 +38,8 @@ public class Runtime {
     private final List<String> gluePaths;
     private final ResourceLoader resourceLoader;
 
+    private World world;
+
     public Runtime(List<String> gluePaths, ResourceLoader resourceLoader) {
         this(gluePaths, resourceLoader, false);
     }
@@ -52,6 +54,8 @@ public class Runtime {
         this.resourceLoader = resourceLoader;
         this.isDryRun = isDryRun;
         this.tracker = new UndefinedStepsTracker(backends);
+
+        this.world = new RuntimeWorld(this);
     }
 
     private static Collection<? extends Backend> loadBackends(ResourceLoader resourceLoader) {
@@ -62,6 +66,14 @@ public class Runtime {
         errors.add(error);
     }
 
+    /**
+     * This is where the first entry happens. World should be passed along through this through the various scopes
+     *
+     * @param featurePaths
+     * @param filters
+     * @param formatter
+     * @param reporter
+     */
     public void run(List<String> featurePaths, final List<Object> filters, gherkin.formatter.Formatter formatter, Reporter reporter) {
         for (CucumberFeature cucumberFeature : load(resourceLoader, featurePaths, filters)) {
             run(cucumberFeature, formatter, reporter);
@@ -72,7 +84,7 @@ public class Runtime {
         formatter.uri(cucumberFeature.getUri());
         formatter.feature(cucumberFeature.getFeature());
         for (CucumberTagStatement cucumberTagStatement : cucumberFeature.getFeatureElements()) {
-            cucumberTagStatement.run(formatter, reporter, this);
+            cucumberTagStatement.run(formatter, reporter, world);
         }
         formatter.eof();
     }
@@ -90,9 +102,17 @@ public class Runtime {
         }
     }
 
+    /**
+     * This is the second entry to running features
+     *
+     * @param featurePaths
+     * @param dotCucumber
+     * @throws IOException
+     */
     public void writeStepdefsJson(List<String> featurePaths, File dotCucumber) throws IOException {
         List<CucumberFeature> features = load(resourceLoader, featurePaths, NO_FILTERS);
-        World world = new RuntimeWorld(this, NO_TAGS);
+        //TODO: ensure that tagging still works
+        //World world = new RuntimeWorld(this, NO_TAGS);
         buildBackendWorlds(world);
         List<StepDefinition> stepDefs = world.getStepDefinitions();
         List<MetaStepdef> metaStepdefs = new StepdefGenerator().generate(stepDefs, features);
@@ -130,5 +150,9 @@ public class Runtime {
 
     public List<String> getSnippets() {
         return tracker.getSnippets();
+    }
+
+    public World getWorld() {
+        return world;
     }
 }

@@ -3,6 +3,7 @@ package cucumber.runtime.model;
 import cucumber.io.Resource;
 import cucumber.io.ResourceLoader;
 import cucumber.runtime.FeatureBuilder;
+import cucumber.runtime.World;
 import gherkin.formatter.model.Background;
 import gherkin.formatter.model.Examples;
 import gherkin.formatter.model.Feature;
