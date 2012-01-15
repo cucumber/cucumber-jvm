@@ -16,10 +16,9 @@
         </jarjar>
     </target>
 
-    <target name="packages" depends="jar,jarjar"/>
+    <target name="packages" depends="jar,jarjar,gem"/>
 
-    <target name="cli-test" depends="jarjar">
-        <fail unless="env.JRUBY_HOME">You must define JRUBY_HOME in your shell</fail>
+    <target name="cli-test" depends="jarjar,-check-jruby">
         <exec executable="${env.JRUBY_HOME}/bin/jruby">
             <arg file="bin/cucumber-jvm"/>
             <arg value="--glue"/>
@@ -30,8 +29,24 @@
 
     <target name="publish-internet" depends="publish-nexus,publish-gem" />
 
-    <target name="publish-gem" depends="jarjar">
-        <echo>TODO: Package and push gem</echo>
+    <target name="gem" depends="jarjar,-check-jruby">
+        <exec executable="${env.JRUBY_HOME}/bin/jruby" failonerror="true">
+            <arg file="${env.JRUBY_HOME}/bin/gem"/>
+            <arg value="build"/>
+            <arg file="cucumber-jvm.gemspec"/>
+        </exec>
     </target>
 
+    <target name="publish-gem" depends="gem,-check-jruby">
+        <exec executable="${env.JRUBY_HOME}/bin/jruby">
+            <arg file="${env.JRUBY_HOME}/bin/gem"/>
+            <arg value="push"/>
+            <arg file="cucumber-jvm-${cucumber-jvm-version}-java.gem"/>
+        </exec>
+    </target>
+
+    <target name="-check-jruby">
+        <fail unless="env.JRUBY_HOME">You must define JRUBY_HOME in your shell</fail>
+    </target>
+    
 </project>

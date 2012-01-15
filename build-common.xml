@@ -1,6 +1,6 @@
 <project name="common" xmlns:ivy="antlib:org.apache.ivy.ant"
          default="test">
-    <property name="cucumber-jvm-version" value="1.0.0-RC3"/>
+    <property name="cucumber-jvm-version" value="1.0.0.RC3"/>
     <property name="gherkin.version" value="2.7.3"/>
 
     <property name="ivy-version" value="2.2.0"/>
@@ -10,9 +10,9 @@
     <property name="bcprov-jar" location="${ivy-install-dir}/bcprov.jar"/>
     <available property="ivy-installed" file="${ivy-jar}"/>
     <dirname property="common-basedir" file="${ant.file.common}"/>
+    <property environment="env"/>
 
     <target name="-init" description="Ivy-independent initialization">
-        <property environment="env"/>
         <patternset id="test-classes">
             <include name="**/*Test*.class"/>
             <exclude name="**/*$*.class"/>
