@@ -1,0 +1,23 @@
+<ivy-module version="2.0">
+    <info organisation="info.cukes" module="cucumber-jruby" revision="${cucumber-jvm-version}"/>
+
+    <configurations defaultconfmapping="*->default">
+        <conf name="default"/>
+        <conf name="test" extends="default"/>
+        <conf name="build"/>
+    </configurations>
+
+    <publications>
+        <artifact type="jar" conf="default"/>
+    </publications>
+
+    <dependencies>
+        <dependency name="cucumber-core" rev="${cucumber-jvm-version}" conf="default"/>
+        <dependency name="jruby-complete" org="org.jruby" rev="1.6.5.1" conf="default"/>
+
+        <dependency name="cucumber-junit" rev="${cucumber-jvm-version}" conf="test"/>
+        <dependency name="mockito-all" org="org.mockito" rev="1.9.0" conf="test"/>
+
+        <dependency name="jarjar" org="com.googlecode.jarjar" rev="1.1" conf="build"/>
+    </dependencies>
+</ivy-module>

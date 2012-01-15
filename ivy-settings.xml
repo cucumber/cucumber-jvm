@@ -1,0 +1,18 @@
+<ivysettings>
+    <settings defaultResolver="default"/>
+    <include url="${ivy.default.settings.dir}/ivysettings-public.xml"/>
+    <include url="${ivy.default.settings.dir}/ivysettings-shared.xml"/>
+    <include url="${ivy.default.settings.dir}/ivysettings-local.xml"/>
+    <include url="${ivy.default.settings.dir}/ivysettings-main-chain.xml"/>
+    <include url="${ivy.default.settings.dir}/ivysettings-default-chain.xml"/>
+
+    <resolvers>
+        <ibiblio name="apache-snapshots" root="https://repository.apache.org/content/groups/snapshots" m2compatible="true"/>
+    </resolvers>
+
+    <modules>
+        <module organisation="org.apache.openejb" name=".*" resolver="apache-snapshots" />
+        <module organisation="org.apache.openwebbeans" name=".*" resolver="apache-snapshots" />
+        <module organisation="org.apache.bval" name=".*" resolver="apache-snapshots" />
+    </modules>
+</ivysettings>

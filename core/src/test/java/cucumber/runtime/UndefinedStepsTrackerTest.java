@@ -1,5 +1,6 @@
 package cucumber.runtime;
 
+import cucumber.runtime.snippets.Snippet;
 import cucumber.runtime.snippets.SnippetGenerator;
 import gherkin.formatter.model.Step;
 import org.junit.Test;
@@ -62,23 +63,34 @@ public class UndefinedStepsTrackerTest {
 
         @Override
         public String getSnippet(Step step) {
-            return new TestSnippetGenerator(step).getSnippet();
+            return new SnippetGenerator(new TestSnippet()).getSnippet(step);
         }
     }
 
-    private class TestSnippetGenerator extends SnippetGenerator {
-        protected TestSnippetGenerator(Step step) {
-            super(step);
-        }
-
+    private class TestSnippet implements Snippet {
         @Override
-        protected String template() {
+        public String template() {
             return "{0} {1}";
         }
 
         @Override
-        protected String arguments(List<Class<?>> argumentTypes) {
+        public String arguments(List<Class<?>> argumentTypes) {
             return argumentTypes.toString();
+        }
+
+        @Override
+        public String namedGroupStart() {
+            return null;
+        }
+
+        @Override
+        public String namedGroupEnd() {
+            return null;
+        }
+
+        @Override
+        public String escapePattern(String pattern) {
+            return pattern;
         }
     }
 }

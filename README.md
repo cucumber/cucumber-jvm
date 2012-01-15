@@ -23,42 +23,42 @@ Cucumber-JVM also integrates with the following Dependency Injection containers:
 
 ## Downloading / Installation
 
-Final releases will be published in [Maven Central](http://search.maven.org/) when all issues in [Milestone 1](https://github.com/cucumber/cucumber-jvm/issues?milestone=1&state=open) are closed. Until then you can grab 
-SNAPSHOT releases by adding this repo to your POM:
+Releases are published in [Maven Central](http://search.maven.org/)
 
-```xml
-<repository>
-    <id>sonatype-snapshots</id>
-    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-</repository>
-```
+### Getting jars
 
-Now you can grab jars with the following dependency in your POM:
+Jar files can be browsed and downloaded from [Maven Central] or https://oss.sonatype.org/content/repositories/releases/info/cukes/ 
+(New releases will show up here immediately, while it takes a couple of hours to sync to MAven Central).
+
+### Using Maven
+
+Add a dependency in your [POM](http://maven.apache.org/pom.html):
 
 ```xml
 <dependency>
     <groupId>info.cukes</groupId>
     <artifactId>cucumber-core</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0-RC3</version>
 </dependency>
 ```
 
-If you are not using Maven you can download the SNAPSHOT jars manually from https://oss.sonatype.org/content/repositories/snapshots/info/cukes/
+### Using Ivy
 
-If you are using [Ivy](http://ant.apache.org/ivy/), you can download the SNAPSHOTS jars by adding the following [resolver](http://ant.apache.org/ivy/history/latest-milestone/settings/resolvers.html) to your [ivysettings.xml](http://ant.apache.org/ivy/history/latest-milestone/settings.html)
+Add a [dependency](http://ant.apache.org/ivy/history/latest-milestone/ivyfile/dependency.html) in your [ivy.xml](http://ant.apache.org/ivy/history/latest-milestone/ivyfile.html):
 
 ```xml
-<ibiblio name="sonatype-snapshots"
+    <dependency org="info.cukes" name="cucumber-core" rev="1.0.0-RC3"/>
+```
+
+Since the artifacts are released to Maven Central, the default Ivy configuration should pull them down automatically.
+Alternatively you can define your own resolver:
+
+```xml
+<ibiblio name="sonatype"
     m2compatible="true"
     usepoms="true"
     pattern="[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]"
-    root="https://oss.sonatype.org/content/repositories/snapshots"/>
-```
-
-Now you can grab jars with the following [dependency](http://ant.apache.org/ivy/history/latest-milestone/ivyfile/dependency.html) in your [ivy.xml](http://ant.apache.org/ivy/history/latest-milestone/ivyfile.html):
-
-```xml
-    <dependency org="info.cukes" name="cucumber-core" rev="1.0.0-SNAPSHOT" changing="true"/>
+    root="https://oss.sonatype.org/content/repositories/releases/info/cukes/"/>
 ```
 
 ## Documentation
@@ -68,11 +68,22 @@ If you are adventurous, check out the examples, read the code and ask specific q
 
 ### API Docs
 
-* http://cukes.info/cucumber/jvm/api/1.0.0-SNAPSHOT/apidocs/ (URL subject to change)
+TODO: Fix this. The Ivy build doesn't upload them yet.
+
+* http://cukes.info/cucumber/jvm/api/1.0.0-RC3/apidocs/ (URL subject to change)
 
 ## Examples
 
 You will find an example in Git under examples/java-calculator. You should be able to run `basic_arithmetic.feature` by running the `cucumber.examples.java.calculator.basic_arithmetic_Test` JUnit test from your IDE. -Or simply by running it with Maven: `mvn clean install -P examples` once to build it all. Then `cd examples/java-calculator` followed by `mvn test` each time you make a change. Try to make the feature fail!
+
+## IDE Setup
+
+### IntelliJ IDEA
+
+The top level directory has a `cucumber-jvm.ipr` project file that references a `cucumber-*.iml` files.
+Just run ant once (see below) and install the [IvyIDEA](http://code.google.com/p/ivyidea/) plugin. 
+
+Now, open the `cucumber-jvm.ipr` project and you should be good to go.
 
 ## Contributing/Hacking
 
@@ -92,9 +103,10 @@ If we get a pull request where an entire file is changed because of insignifican
 
 ### Building Cucumber-JVM
 
-You'll need Maven to build the Java code (we're happily accepting patches for other build systems). To build and run tests, run:
+You'll need Ant installed
 
-    mvn clean install
+    export ANT_OPTS=-XX:MaxPermSize=128m
+    ant clean publish-artifacts
 
 ### Continuous Integration
 
@@ -112,31 +124,6 @@ Now you can run the cross-platform Cucumber features:
     gem install bundler
     bundle install
     rake
-
-### Code generation
-
-StepDefinition APIs in all of Gherkin's supported i18n languages are generated using Ruby. 
-The i18n Java annotations (except English) are not added to the Git repo because Git on both OS X and Windows handles UTF-8 file names badly.
-In order to compile `cucumber-java` with all I18n annotations, you have to generate them yourself.
-With Ruby installed and on your path, install some gems that are needed for code generation:
-
-#### Using bundler
-
-Try this first
-
-    gem install bundler
-    bundle install
-
-Now you can generate the code:
-
-    rake generate
-
-#### Without bundler
-
-On Windows it might be tricky to install all the gems. (The listed gems are used for both code generation and for running the cross-platform features). If you only want to generate code, you can get away with:
-
-    gem install gherkin
-    rake generate SKIP_BUNDLER=true
 
 ## Troubleshooting
 

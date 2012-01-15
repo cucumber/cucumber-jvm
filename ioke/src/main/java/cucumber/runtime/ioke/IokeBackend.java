@@ -5,6 +5,7 @@ import cucumber.io.ResourceLoader;
 import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.World;
+import cucumber.runtime.snippets.SnippetGenerator;
 import cucumber.table.DataTable;
 import gherkin.formatter.model.Step;
 import ioke.lang.IokeObject;
@@ -17,6 +18,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class IokeBackend implements Backend {
+    private final SnippetGenerator snippetGenerator = new SnippetGenerator(new IokeSnippet());
     private final ResourceLoader resourceLoader;
     private final Runtime ioke;
     private final List<Runtime.RescueInfo> failureRescues;
@@ -65,7 +67,7 @@ public class IokeBackend implements Backend {
 
     @Override
     public String getSnippet(Step step) {
-        return new IokeSnippetGenerator(step).getSnippet();
+        return snippetGenerator.getSnippet(step);
     }
 
     public void addStepDefinition(Object iokeStepDefObject) throws Throwable {

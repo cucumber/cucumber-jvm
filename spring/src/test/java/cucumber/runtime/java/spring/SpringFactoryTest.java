@@ -3,7 +3,10 @@ package cucumber.runtime.java.spring;
 import cucumber.runtime.java.ObjectFactory;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 public class SpringFactoryTest {
 
@@ -49,10 +52,9 @@ public class SpringFactoryTest {
     @Test
     public void shouldRespectCommonAnnotationsInStepDefs() {
         final ObjectFactory factory = new SpringFactory();
-        factory.addClass(AnnotationTestStepdefs.class);
+        factory.addClass(WithSpringAnnotations.class);
         factory.createInstances();
-        final AnnotationTestStepdefs stepdef = factory
-                .getInstance(AnnotationTestStepdefs.class);
+        WithSpringAnnotations stepdef = factory.getInstance(WithSpringAnnotations.class);
         factory.disposeInstances();
 
         assertNotNull(stepdef);

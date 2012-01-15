@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name         = 'cucumber-jvm'
-  s.version      = '1.0.0'
+  s.version      = '1.0.0.RC3'
   s.authors      = ['Aslak Hellesøy']
   s.description  = 'Cucumber-JVM for JRuby'
   s.summary      = "#{s.name}-#{s.version}"

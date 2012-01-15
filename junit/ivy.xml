@@ -1,0 +1,19 @@
+<ivy-module version="2.0">
+    <info organisation="info.cukes" module="cucumber-junit" revision="${cucumber-jvm-version}"/>
+
+    <configurations defaultconfmapping="*->default">
+        <conf name="default"/>
+        <conf name="test" extends="default"/>
+    </configurations>
+
+    <publications>
+        <artifact type="jar" conf="default"/>
+    </publications>
+
+    <dependencies>
+        <dependency name="cucumber-core" rev="${cucumber-jvm-version}" conf="default"/>
+        <dependency name="junit" org="junit" rev="4.10" conf="default"/>
+
+        <dependency name="mockito-all" org="org.mockito" rev="1.9.0" conf="test"/>
+    </dependencies>
+</ivy-module>

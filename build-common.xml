@@ -1,0 +1,183 @@
+<project name="common" xmlns:ivy="antlib:org.apache.ivy.ant"
+         default="test">
+
+    <property name="ivy-version" value="2.2.0"/>
+    <property name="ivy-install-dir" location="${user.home}/.ivy2/install"/>
+    <property name="ivy-jar" location="${ivy-install-dir}/ivy-${ivy-version}.jar"/>
+    <property name="bcpg-jar" location="${ivy-install-dir}/bcpg.jar"/>
+    <property name="bcprov-jar" location="${ivy-install-dir}/bcprov.jar"/>
+    <available property="ivy-installed" file="${ivy-jar}"/>
+    <available property="main-sources" file="src/main/java"/>
+    <dirname property="common-basedir" file="${ant.file.common}"/>
+    <property file="${common-basedir}/build.properties"/>
+    <property environment="env"/>
+
+    <target name="-init" description="Ivy-independent initialization">
+        <patternset id="test-classes">
+            <include name="**/*Test*.class"/>
+            <exclude name="**/*$*.class"/>
+        </patternset>
+    </target>
+
+    <target name="-bootstrap-ivy" unless="ivy-installed">
+        <mkdir dir="${ivy-install-dir}"/>
+        <get src="http://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy-version}/ivy-${ivy-version}.jar"
+             dest="${ivy-jar}" usetimestamp="true" ignoreerrors="false"/>
+        <get src="http://www.bouncycastle.org/download/bcpg-jdk16-146.jar"
+             dest="${bcpg-jar}" usetimestamp="true" ignoreerrors="false"/>
+        <get src="http://www.bouncycastle.org/download/bcprov-jdk16-146.jar"
+             dest="${bcprov-jar}" usetimestamp="true" ignoreerrors="false"/>
+
+    </target>
+
+    <target name="-load-ivy" depends="-bootstrap-ivy">
+        <property file="${common-basedir}/nexus.properties"/>
+        <taskdef uri="antlib:org.apache.ivy.ant">
+            <classpath>
+                <pathelement path="${ivy-jar}"/>
+                <pathelement path="${bcpg-jar}"/>
+                <pathelement path="${bcprov-jar}"/>
+            </classpath>
+        </taskdef>
+    </target>
+
+    <target name="-init-ivy" depends="-init,-load-ivy" description="Set up Ivy-related paths">
+        <ivy:settings file="${common-basedir}/ivy-settings.xml"/>
+        <ivy:resolve log="default"/>
+        <ivy:cachepath pathid="ivy.compile-classpath" conf="default"/>
+        <ivy:cachepath pathid="ivy.test-classpath" conf="test"/>
+        <ivy:artifactproperty conf="default" name="local.[organisation].[artifact]"
+                              value="${ivy.local.default.root}/${ivy.local.default.artifact.pattern}"/>
+        <ivy:artifactproperty conf="default" name="cache.[organisation].[artifact]"
+                              value="${ivy.cache.dir}/[organisation]/[artifact]/jars/[artifact]-[revision].jar"/>
+        <property name="module" value="${ant.project.name}"/>
+        <property name="version" value="${ivy.revision}"/>
+
+        <property name="jars-dir" value="target/artifacts/jars"/>
+        <property name="module-jar" location="${jars-dir}/${module}.jar"/>
+        <property name="sources-jar" location="${jars-dir}/${module}-sources.jar"/>
+        <property name="javadoc-jar" location="${jars-dir}/${module}-javadoc.jar"/>
+        <property name="poms-dir" location="target/artifacts/poms"/>
+        <property name="module-pom" location="${poms-dir}/${module}.pom"/>
+
+        <path id="test-classpath">
+            <path refid="ivy.test-classpath"/>
+            <pathelement location="target/classes"/>
+        </path>
+    </target>
+
+    <target name="debug" depends="-init-ivy">
+        <property name="compile-classpath" refid="ivy.compile-classpath"/>
+        <property name="test-classpath" refid="test-classpath"/>
+        <echoproperties/>
+    </target>
+
+    <target name="compile-main" depends="-init-ivy,generate" description="compile the module" if="main-sources">
+        <mkdir dir="target/classes"/>
+        <javac destdir="target/classes"
+               srcdir="src/main/java"
+               classpathref="ivy.compile-classpath"
+               includeantruntime="false"
+               encoding="UTF-8"
+               debug="true"/>
+        <copy todir="target/classes" failonerror="false">
+            <fileset dir="src/main/resources"/>
+        </copy>
+    </target>
+
+    <target name="generate" description="Generate sources">
+    </target>
+
+    <target name="compile-test" depends="compile-main" description="compile the tests">
+        <mkdir dir="target/test-classes"/>
+        <javac destdir="target/test-classes"
+               srcdir="src/test/java"
+               classpathref="test-classpath"
+               includeantruntime="false"
+               encoding="UTF-8"
+               debug="true"/>
+        <copy todir="target/test-classes" failonerror="false">
+            <fileset dir="src/test/resources"/>
+        </copy>
+    </target>
+
+    <target name="test" depends="compile-test">
+        <mkdir dir="target/reports"/>
+        <junit printsummary="yes"
+               fork="yes"
+               forkmode="once"
+               maxmemory="1024m"
+               failureproperty="junit.failure">
+            <classpath>
+                <path refid="test-classpath"/>
+                <pathelement location="target/test-classes"/>
+            </classpath>
+            <formatter type="brief" usefile="false"/>
+            <batchtest todir="target/reports">
+                <fileset dir="target/test-classes">
+                    <patternset refid="test-classes"/>
+                </fileset>
+            </batchtest>
+        </junit>
+        <fail if="junit.failure" message="Tests failed"/>
+    </target>
+
+    <target name="jar" depends="compile-main" description="build the jar">
+        <mkdir dir="${jars-dir}"/>
+        <jar file="${module-jar}">
+            <fileset dir="target/classes"/>
+        </jar>
+    </target>
+
+    <!-- Can be overridden in sub projects -->
+    <target name="packages" depends="jar"/>
+
+    <target name="javadoc" depends="-init-ivy">
+        <mkdir dir="target/javadoc"/>
+        <javadoc destdir="target/javadoc" sourcepath="src/main/java" classpathref="ivy.compile-classpath"
+                 failonerror="true" windowtitle="${project.name}" encoding="UTF-8">
+            <doctitle>${project.name}</doctitle>
+        </javadoc>
+    </target>
+
+    <target name="jar-javadoc" depends="javadoc">
+        <jar destfile="${javadoc-jar}" basedir="target/javadoc"/>
+    </target>
+
+    <target name="jar-sources" depends="-init-ivy">
+        <jar destfile="${sources-jar}" basedir="src/main/java"/>
+    </target>
+
+    <target name="publish-local" depends="jar,test">
+        <ivy:publish resolver="local" pubrevision="${cucumber-jvm-version}" update="true" overwrite="true"
+                     conf="default">
+            <artifacts pattern="target/artifacts/jars/[artifact].[ext]"/>
+        </ivy:publish>
+    </target>
+
+    <target name="publish-artifacts" depends="test,publish-local"/>
+
+    <target name="makepom" depends="-init-ivy" description="Generate POM">
+        <!--ivy:deliver deliverpattern="ivy.xml" pubrevision="${cucumber-jvm-version}" status="release"/-->
+        <ivy:makepom ivyfile="ivy.xml" pomfile="${module-pom}" templatefile="${common-basedir}/template.pom" artifactName="${module}"/>
+    </target>
+
+    <target name="publish-nexus" depends="packages,jar-sources,jar-javadoc,makepom,do-publish-nexus" description="Upload to Nexus"/>
+
+    <target name="do-publish-nexus" depends="-init-ivy" description="Upload to Nexus">
+        <ivy:settings id="upload.settingsId" file="${common-basedir}/ivy-settings-release.xml"/>
+        <ivy:publish resolver="nexus" pubrevision="${cucumber-jvm-version}" overwrite="true" publishivy="false"
+                     artifactspattern="target/artifacts/[type]s/[artifact](-[classifier]).[ext]" settingsRef="upload.settingsId">
+            <artifact name="${module}" ext="pom" type="pom"/>
+            <artifact name="${module}" ext="jar" type="jar" classifier="sources"/>
+            <artifact name="${module}" ext="jar" type="jar" classifier="javadoc"/>
+        </ivy:publish>
+    </target>
+
+    <target name="publish-internet" depends="publish-nexus"/>
+
+    <target name="clean">
+        <delete dir="target"/>
+    </target>
+
+</project>

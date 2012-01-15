@@ -10,64 +10,43 @@ module CucumberJavaMappings
   end
 
   def run_scenario(scenario_name)
-    write_pom
+    write_build_files
     write_test_unit_classes
-    run_simple "mvn test", false
+    run_simple "ant test", false
   end
 
   def run_feature
-    write_pom
+    write_build_files
     write_test_unit_classes
-    run_simple "mvn test", false
+    run_simple "ant test", false
   end
 
-  def write_pom
-    write_file('pom.xml', <<-EOF)
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-                      http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+  def write_build_files
+    write_file('build.xml', <<-EOF)
+<project name="cucumber-tck" default="test">
+  <import file="../../build-common.xml" />
+</project>
+EOF
 
-    <parent>
-        <groupId>info.cukes</groupId>
-        <artifactId>cucumber-jvm</artifactId>
-        <relativePath>../../pom.xml</relativePath>
-        <version>1.0.0.RC2-SNAPSHOT</version>
-    </parent>
+    write_file('ivy.xml', <<-EOF)
+<ivy-module version="2.0">
+    <info organisation="info.cukes" module="cucumber-tck" revision="${cucumber-jvm-version}"/>
 
-    <artifactId>cucumber-picocontainer-test</artifactId>
-    <version>1.0.0.RC2-SNAPSHOT</version>
-    <packaging>jar</packaging>
-    <name>Cucumber: PicoContainer Test</name>
+    <configurations defaultconfmapping="*->default">
+        <conf name="default"/>
+        <conf name="test" extends="default"/>
+    </configurations>
+
+    <publications>
+        <artifact type="jar" conf="default"/>
+    </publications>
 
     <dependencies>
-        <dependency>
-            <groupId>info.cukes</groupId>
-            <artifactId>cucumber-picocontainer</artifactId>
-            <version>1.0.0.RC2-SNAPSHOT</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>info.cukes</groupId>
-            <artifactId>cucumber-junit</artifactId>
-            <version>1.0.0.RC2-SNAPSHOT</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.10</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>1.7.2</version>
-            <scope>test</scope>
-        </dependency>
+        <dependency name="cucumber-picocontainer" rev="${cucumber-jvm-version}" conf="default"/>
+
+        <dependency name="cucumber-junit" rev="${cucumber-jvm-version}" conf="test"/>
     </dependencies>
-</project>
+</ivy-module>
 EOF
   end
 

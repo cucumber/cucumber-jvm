@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="FacetManager">
+    <facet type="IvyIDEA" name="IvyIDEA">
+      <configuration ivyFile="$MODULE_DIR$/ivy.xml" useProjectSettings="true" useCustomIvySettings="true" ivySettingsFile="" onlyResolveSelectedConfigs="true">
+        <configsToResolve>
+          <config>default</config>
+          <config>test</config>
+        </configsToResolve>
+        <propertiesSettings>
+          <propertiesFiles includeProjectLevelPropertiesFiles="true" />
+        </propertiesSettings>
+      </configuration>
+    </facet>
+  </component>
+  <component name="NewModuleRootManager" inherit-compiler-output="false">
+    <output url="file://$MODULE_DIR$/target/classes" />
+    <output-test url="file://$MODULE_DIR$/target/test-classes" />
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/test/java" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/test/resources" isTestSource="true" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="cucumber-java" />
+    <orderEntry type="module-library">
+      <library name="IvyIDEA">
+        <CLASSES>
+          <root url="jar://$USER_HOME$/.ivy2/cache/org.apache.openejb/openejb-core/jars/openejb-core-4.0.0-beta-2-SNAPSHOT.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/org.apache.openejb/mbean-annotation-api/jars/mbean-annotation-api-4.0.0-beta-2-SNAPSHOT.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/org.apache.openejb/javaee-api/jars/javaee-api-6.0-3-SNAPSHOT.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/commons-lang/commons-lang/jars/commons-lang-2.6.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/org.apache.openejb/openejb-api/jars/openejb-api-4.0.0-beta-2-SNAPSHOT.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/org.apache.openejb/openejb-loader/jars/openejb-loader-4.0.0-beta-2-SNAPSHOT.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/org.apache.openejb/openejb-javaagent/jars/openejb-javaagent-4.0.0-beta-2-SNAPSHOT.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/org.apache.openejb/openejb-jee/jars/openejb-jee-4.0.0-beta-2-SNAPSHOT.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/commons-cli/commons-cli/jars/commons-cli-1.2.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/org.slf4j/slf4j-api/jars/slf4j-api-1.6.1.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/org.apache.geronimo.specs/geronimo-jms_1.1_spec/jars/geronimo-jms_1.1_spec-1.1.1.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/org.apache.geronimo.specs/geronimo-j2ee-management_1.1_spec/jars/geronimo-j2ee-management_1.1_spec-1.0.1.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/commons-net/commons-net/jars/commons-net-2.0.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/org.objectweb.howl/howl/jars/howl-1.0.1-1.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/org.apache.xbean/xbean-finder-shaded/jars/xbean-finder-shaded-3.9.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/org.hsqldb/hsqldb/jars/hsqldb-2.2.4.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/commons-dbcp/commons-dbcp/jars/commons-dbcp-1.4.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/commons-pool/commons-pool/jars/commons-pool-1.5.7.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/org.codehaus.swizzle/swizzle-stream/jars/swizzle-stream-1.0.2.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/wsdl4j/wsdl4j/jars/wsdl4j-1.6.2.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/org.quartz-scheduler/quartz/jars/quartz-1.8.5.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/org.slf4j/slf4j-log4j12/jars/slf4j-log4j12-1.6.1.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/org.apache.openwebbeans/openwebbeans-impl/jars/openwebbeans-impl-1.1.4-SNAPSHOT.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/javassist/javassist/jars/javassist-3.12.1.GA.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/net.sf.scannotation/scannotation/jars/scannotation-1.0.2.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/org.apache.openwebbeans/openwebbeans-spi/jars/openwebbeans-spi-1.1.4-SNAPSHOT.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/org.apache.openwebbeans/openwebbeans-ejb/jars/openwebbeans-ejb-1.1.4-SNAPSHOT.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/org.apache.openwebbeans/openwebbeans-ee/jars/openwebbeans-ee-1.1.4-SNAPSHOT.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/org.apache.openwebbeans/openwebbeans-ee-common/jars/openwebbeans-ee-common-1.1.4-SNAPSHOT.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/org.apache.openwebbeans/openwebbeans-web/jars/openwebbeans-web-1.1.4-SNAPSHOT.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/commons-collections/commons-collections/jars/commons-collections-3.2.1.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/net.sourceforge.serp/serp/jars/serp-1.13.1.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/junit/junit/jars/junit-4.8.1.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/org.apache.bval/bval-core/jars/bval-core-0.4-incubating-SNAPSHOT.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/org.apache.commons/commons-lang3/jars/commons-lang3-3.1.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/commons-beanutils/commons-beanutils-core/jars/commons-beanutils-core-1.8.3.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/org.apache.bval/bval-jsr303/jars/bval-jsr303-0.4-incubating-SNAPSHOT.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/org.mockito/mockito-all/jars/mockito-all-1.9.0.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/info.cukes/gherkin/jars/gherkin-2.7.3.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/com.googlecode.json-simple/json-simple/jars/json-simple-1.1.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/net.iharder/base64/jars/base64-2.3.8.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/info.cukes/cucumber-html/jars/cucumber-html-0.2.1.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/com.thoughtworks.xstream/xstream/jars/xstream-1.4.2.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/xmlpull/xmlpull/jars/xmlpull-1.1.3.1.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/xpp3/xpp3_min/jars/xpp3_min-1.1.4c.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/com.googlecode.java-diff-utils/diffutils/jars/diffutils-1.2.1.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/com.google.code.gson/gson/jars/gson-2.1.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/junit/junit/jars/junit-4.10.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/org.hamcrest/hamcrest-core/jars/hamcrest-core-1.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module" module-name="cucumber-junit" scope="TEST" />
+    <orderEntry type="module" module-name="cucumber-core" />
+  </component>
+</module>
+

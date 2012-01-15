@@ -9,6 +9,7 @@ import cucumber.io.ResourceLoader;
 import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.World;
+import cucumber.runtime.snippets.SnippetGenerator;
 import gherkin.formatter.model.Step;
 
 import java.lang.annotation.Annotation;
@@ -21,6 +22,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 public class JavaBackend implements Backend {
+    private final SnippetGenerator snippetGenerator = new SnippetGenerator(new JavaSnippet());
     private final Set<Class> stepDefinitionClasses = new HashSet<Class>();
     private final ObjectFactory objectFactory;
     private final ClasspathMethodScanner classpathMethodScanner = new ClasspathMethodScanner();
@@ -58,7 +60,7 @@ public class JavaBackend implements Backend {
 
     @Override
     public String getSnippet(Step step) {
-        return new JavaSnippetGenerator(step).getSnippet();
+        return snippetGenerator.getSnippet(step);
     }
 
     void addStepDefinition(Annotation annotation, Method method) {

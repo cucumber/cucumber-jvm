@@ -6,6 +6,7 @@ import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.PendingException;
 import cucumber.runtime.World;
+import cucumber.runtime.snippets.SnippetGenerator;
 import cucumber.table.DataTable;
 import gherkin.formatter.model.DataTableRow;
 import gherkin.formatter.model.DocString;
@@ -21,6 +22,7 @@ import java.util.*;
 
 public class JRubyBackend implements Backend {
     private static final String DSL = "/cucumber/runtime/jruby/dsl.rb";
+    private final SnippetGenerator snippetGenerator = new SnippetGenerator(new JRubySnippet());
     private final ScriptingContainer jruby = new ScriptingContainer();
     private final Set<String> gluedPaths = new HashSet<String>();
     private World world;
@@ -103,7 +105,7 @@ public class JRubyBackend implements Backend {
 
     @Override
     public String getSnippet(Step step) {
-        return new JRubySnippetGenerator(step).getSnippet();
+        return snippetGenerator.getSnippet(step);
     }
 
     public void pending(String reason) throws PendingException {
