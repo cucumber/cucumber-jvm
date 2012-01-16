@@ -38,16 +38,18 @@ Add a dependency in your [POM](http://maven.apache.org/pom.html):
 <dependency>
     <groupId>info.cukes</groupId>
     <artifactId>cucumber-core</artifactId>
-    <version>1.0.0-RC3</version>
+    <version>1.0.0-RC4</version>
 </dependency>
 ```
+
+There are more jars available - add the ones you need. (TODO: A guide on how to pick the right jars needs to be written)
 
 ### Using Ivy
 
 Add a [dependency](http://ant.apache.org/ivy/history/latest-milestone/ivyfile/dependency.html) in your [ivy.xml](http://ant.apache.org/ivy/history/latest-milestone/ivyfile.html):
 
 ```xml
-    <dependency org="info.cukes" name="cucumber-core" rev="1.0.0-RC3"/>
+    <dependency org="info.cukes" name="cucumber-core" rev="1.0.0-RC4"/>
 ```
 
 Since the artifacts are released to Maven Central, the default Ivy configuration should pull them down automatically.
