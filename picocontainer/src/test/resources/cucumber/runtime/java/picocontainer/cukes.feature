@@ -3,7 +3,7 @@ Feature: Cukes
     Given I have this in my basket:
       | a | b |
       | c | d |
-  
+
   Scenario: Few cukes
     Given I have 3 cukes in my belly
     Then there are 3 cukes in my belly
