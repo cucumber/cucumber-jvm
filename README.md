@@ -76,12 +76,22 @@ TODO: Fix this. The Ivy build doesn't upload them yet.
 
 You will find an example in Git under examples/java-calculator. You should be able to run `basic_arithmetic.feature` by running the `cucumber.examples.java.calculator.basic_arithmetic_Test` JUnit test from your IDE. -Or simply by running it with Maven: `mvn clean install -P examples` once to build it all. Then `cd examples/java-calculator` followed by `mvn test` each time you make a change. Try to make the feature fail!
 
+### Building Cucumber-JVM
+
+You'll need Ant installed
+
+    export ANT_OPTS=-XX:MaxPermSize=128m
+    ant clean publish-local
+
+This will compile everything, run JUnit tests and Cucumber scenarios - and finally install all jars in your local Maven repo.
+Yep - that's Ant+Ivy building everything - and dropping it off locally where it can be picked up by Maven (if you are so inclined).
+
 ## IDE Setup
 
 ### IntelliJ IDEA
 
 The top level directory has a `cucumber-jvm.ipr` project file that references a `cucumber-*.iml` files.
-Just run ant once (see below) and install the [IvyIDEA](http://code.google.com/p/ivyidea/) plugin. 
+Just run ant once (see above) and install the [IvyIDEA](http://code.google.com/p/ivyidea/) plugin. 
 
 Now, open the `cucumber-jvm.ipr` project and you should be good to go.
 
@@ -100,13 +110,6 @@ To hack on Cucumber-JVM you need a JDK, Maven and Git to get the code. You also 
 Please do *not* add @author tags - this project embraces collective code ownership. If you want to know who wrote some code, look in git.
 When you are done, send a [pull request](http://help.github.com/send-pull-requests/).
 If we get a pull request where an entire file is changed because of insignificant whitespace changes we cannot see what you have changed, and your contribution might get rejected.
-
-### Building Cucumber-JVM
-
-You'll need Ant installed
-
-    export ANT_OPTS=-XX:MaxPermSize=128m
-    ant clean publish-artifacts
 
 ### Continuous Integration
 
