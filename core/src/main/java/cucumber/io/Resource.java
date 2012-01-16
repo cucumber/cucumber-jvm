@@ -7,4 +7,6 @@ public interface Resource {
     String getPath();
 
     InputStream getInputStream() throws IOException;
+
+    String getClassName();
 }

@@ -3,7 +3,6 @@ package cucumber.io;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Utils;
 
-import java.io.File;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
@@ -22,7 +21,7 @@ public class ClasspathResourceLoader implements ResourceLoader {
     public <T> Collection<Class<? extends T>> getDescendants(Class<T> parentType, String packagePath) {
         Collection<Class<? extends T>> result = new HashSet<Class<? extends T>>();
         for (Resource classResource : resources(packagePath, ".class")) {
-            String className = className(classResource.getPath());
+            String className = classResource.getClassName();
             Class<?> clazz = loadClass(className);
             if (clazz != null && !parentType.equals(clazz) && parentType.isAssignableFrom(clazz)) {
                 result.add(clazz.asSubclass(parentType));
@@ -46,7 +45,10 @@ public class ClasspathResourceLoader implements ResourceLoader {
         Collection<T> result = new HashSet<T>();
         for (Class<? extends T> clazz : getDescendants(parentType, packagePath)) {
             if (Utils.isInstantiable(clazz)) {
-                result.add(newInstance(constructorParams, constructorArgs, clazz));
+                try {
+                    result.add(newInstance(constructorParams, constructorArgs, clazz));
+                } catch (CucumberException ignore) {
+                }
             }
         }
         return result;
@@ -74,10 +76,6 @@ public class ClasspathResourceLoader implements ResourceLoader {
         } catch (NoSuchMethodException e) {
             throw new CucumberException(e);
         }
-    }
-
-    private String className(String pathToClass) {
-        return pathToClass.substring(0, pathToClass.length() - 6).replace(File.separatorChar, '.');
     }
 
     private ClassLoader cl() {

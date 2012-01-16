@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import java.lang.reflect.Field;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
@@ -17,21 +18,21 @@ public class ObjectFactoryHolderTest {
     }
 
     @Test
-    public void testFactory() throws Exception {
-        ObjectFactoryHolder.setFactory(new MockObjectFactory());
+    public void uses_default_java_object_factory_if_none_is_set() throws Exception {
+        ObjectFactoryHolder.setFactory(new StubObjectFactory());
         JavaBackend backend = new JavaBackend(mock(ResourceLoader.class));
 
         // do it by reflection to not change the API
         Field field = JavaBackend.class.getDeclaredField("objectFactory");
         field.setAccessible(true);
-        assertTrue(field.get(backend) instanceof MockObjectFactory);
+        assertEquals(StubObjectFactory.class, field.get(backend).getClass());
 
         ObjectFactoryHolder.setFactory(null);
         backend = new JavaBackend(mock(ResourceLoader.class));
-        assertTrue(field.get(backend) instanceof DefaultJavaObjectFactory);
+        assertEquals(DefaultJavaObjectFactory.class, field.get(backend).getClass());
     }
 
-    public static class MockObjectFactory implements ObjectFactory {
+    private static class StubObjectFactory implements ObjectFactory {
         @Override
         public void createInstances() {
         }

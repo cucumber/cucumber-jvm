@@ -23,4 +23,10 @@ class ZipResource implements Resource {
     public InputStream getInputStream() throws IOException {
         return jarFile.getInputStream(jarEntry);
     }
+
+    @Override
+    public String getClassName() {
+        String path = getPath();
+        return path.substring(0, path.length() - 6).replace('/', '.');
+    }
 }
