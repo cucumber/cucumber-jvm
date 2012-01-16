@@ -28,7 +28,7 @@ public class ResourceLoaderTest {
     @Test
     public void loads_resources_from_jar_on_classpath() throws IOException {
         Iterable<Resource> files = new ClasspathResourceLoader().resources("cucumber", ".properties");
-        assertEquals(3, toList(files).size());
+        assertEquals(4, toList(files).size());
     }
 
     private <T> List<T> toList(Iterable<T> it) {

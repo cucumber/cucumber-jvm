@@ -13,12 +13,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import static java.util.Arrays.asList;
 
 public class Main {
-    private static final String USAGE = "HELP";
-    private static final String VERSION = "1.0.0"; // TODO: get this from a file
+    private static final String USAGE = "TODO - Write the help";
+    static final String VERSION = ResourceBundle.getBundle("cucumber.version").getString("cucumber-jvm.version");
 
     public static void main(String[] argv) throws Throwable {
         List<String> featurePaths = new ArrayList<String>();

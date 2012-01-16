@@ -149,7 +149,7 @@
     </target>
 
     <target name="publish-local" depends="jar,test">
-        <ivy:publish resolver="local" pubrevision="${cucumber-jvm-version}" update="true" overwrite="true"
+        <ivy:publish resolver="local" pubrevision="${cucumber-jvm.version}" update="true" overwrite="true"
                      conf="default">
             <artifacts pattern="target/artifacts/jars/[artifact].[ext]"/>
         </ivy:publish>
@@ -158,15 +158,18 @@
     <target name="publish-artifacts" depends="test,publish-local"/>
 
     <target name="makepom" depends="-init-ivy" description="Generate POM">
-        <!--ivy:deliver deliverpattern="ivy.xml" pubrevision="${cucumber-jvm-version}" status="release"/-->
-        <ivy:makepom ivyfile="ivy.xml" pomfile="${module-pom}" templatefile="${common-basedir}/template.pom" artifactName="${module}"/>
+        <!--ivy:deliver deliverpattern="ivy.xml" pubrevision="${cucumber-jvm.version}" status="release"/-->
+        <ivy:makepom ivyfile="ivy.xml" pomfile="${module-pom}" templatefile="${common-basedir}/template.pom" artifactName="${module}">
+          <mapping conf="default" scope="compile"/>
+          <mapping conf="test" scope="test"/>
+        </ivy:makepom>
     </target>
 
     <target name="publish-nexus" depends="packages,jar-sources,jar-javadoc,makepom,do-publish-nexus" description="Upload to Nexus"/>
 
     <target name="do-publish-nexus" depends="-init-ivy" description="Upload to Nexus">
         <ivy:settings id="upload.settingsId" file="${common-basedir}/ivy-settings-release.xml"/>
-        <ivy:publish resolver="nexus" pubrevision="${cucumber-jvm-version}" overwrite="true" publishivy="false"
+        <ivy:publish resolver="nexus" pubrevision="${cucumber-jvm.version}" overwrite="true" publishivy="false"
                      artifactspattern="target/artifacts/[type]s/[artifact](-[classifier]).[ext]" settingsRef="upload.settingsId">
             <artifact name="${module}" ext="pom" type="pom"/>
             <artifact name="${module}" ext="jar" type="jar" classifier="sources"/>

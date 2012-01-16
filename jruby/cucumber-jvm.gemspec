@@ -1,8 +1,10 @@
 # -*- encoding: utf-8 -*-
 
+version = IO.read(File.dirname(__FILE__) + '/../build.properties').match(/^\s*cucumber-jvm\.version\s*=\s*(.*)$/n)[1].strip
+
 Gem::Specification.new do |s|
   s.name         = 'cucumber-jvm'
-  s.version      = '1.0.0.RC3'
+  s.version      = "#{version}"
   s.authors      = ['Aslak Hellesøy']
   s.description  = 'Cucumber-JVM for JRuby'
   s.summary      = "#{s.name}-#{s.version}"
