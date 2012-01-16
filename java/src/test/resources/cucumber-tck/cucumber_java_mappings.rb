@@ -30,7 +30,7 @@ EOF
 
     write_file('ivy.xml', <<-EOF)
 <ivy-module version="2.0">
-    <info organisation="info.cukes" module="cucumber-tck" revision="${cucumber-jvm-version}"/>
+    <info organisation="info.cukes" module="cucumber-tck" revision="${cucumber-jvm.version}"/>
 
     <configurations defaultconfmapping="*->default">
         <conf name="default"/>
@@ -42,9 +42,9 @@ EOF
     </publications>
 
     <dependencies>
-        <dependency name="cucumber-picocontainer" rev="${cucumber-jvm-version}" conf="default"/>
+        <dependency name="cucumber-picocontainer" rev="${cucumber-jvm.version}" conf="default"/>
 
-        <dependency name="cucumber-junit" rev="${cucumber-jvm-version}" conf="test"/>
+        <dependency name="cucumber-junit" rev="${cucumber-jvm.version}" conf="test"/>
     </dependencies>
 </ivy-module>
 EOF
