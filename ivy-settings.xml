@@ -1,5 +1,11 @@
 <ivysettings>
     <settings defaultResolver="default"/>
+    <caches useOrigin="true"/>
+
+    <property name="ivy.local.default.root"             value="${user.home}/.m2/repository" override="false"/>
+    <property name="ivy.local.default.ivy.pattern"      value="[organisation]/[module]/[revision]/[module]-[revision](-[classifier]).[ext]" override="false"/>
+    <property name="ivy.local.default.artifact.pattern" value="[organisation]/[module]/[revision]/[module]-[revision](-[classifier]).[ext]" override="false"/>
+    
     <include url="${ivy.default.settings.dir}/ivysettings-public.xml"/>
     <include url="${ivy.default.settings.dir}/ivysettings-shared.xml"/>
     <include url="${ivy.default.settings.dir}/ivysettings-local.xml"/>
