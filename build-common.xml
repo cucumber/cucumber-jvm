@@ -43,7 +43,7 @@
 
     <target name="-init-ivy" depends="-init,-load-ivy" description="Set up Ivy-related paths">
         <ivy:settings file="${common-basedir}/ivy-settings.xml"/>
-        <ivy:resolve log="default"/>
+        <ivy:resolve log="default" transitive="true"/>
         <ivy:cachepath pathid="ivy.compile-classpath" conf="default"/>
         <ivy:cachepath pathid="ivy.test-classpath" conf="test"/>
         <ivy:artifactproperty conf="default" name="local.[organisation].[artifact]"

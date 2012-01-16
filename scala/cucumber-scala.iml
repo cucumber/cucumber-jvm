@@ -37,13 +37,11 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="cucumber-core" />
+    <orderEntry type="module" module-name="cucumber-junit" scope="TEST" />
+    <orderEntry type="library" name="scala-compiler-2.9.1" level="application" />
     <orderEntry type="module-library">
       <library name="IvyIDEA">
         <CLASSES>
-          <root url="jar://$USER_HOME$/.ivy2/cache/org.scala-lang/scala-library/jars/scala-library-2.9.1.jar!/" />
-          <root url="jar://$USER_HOME$/.ivy2/cache/org.scala-lang/scala-compiler/jars/scala-compiler-2.9.1.jar!/" />
-          <root url="jar://$USER_HOME$/.ivy2/cache/org.mockito/mockito-all/jars/mockito-all-1.9.0.jar!/" />
-          <root url="jar://$USER_HOME$/.ivy2/cache/org.codehaus.groovy/groovy-all/jars/groovy-all-2.0.0-beta-2.jar!/" />
           <root url="jar://$USER_HOME$/.ivy2/cache/info.cukes/gherkin/jars/gherkin-2.7.3.jar!/" />
           <root url="jar://$USER_HOME$/.ivy2/cache/com.googlecode.json-simple/json-simple/jars/json-simple-1.1.jar!/" />
           <root url="jar://$USER_HOME$/.ivy2/cache/net.iharder/base64/jars/base64-2.3.8.jar!/" />
@@ -53,15 +51,17 @@
           <root url="jar://$USER_HOME$/.ivy2/cache/xpp3/xpp3_min/jars/xpp3_min-1.1.4c.jar!/" />
           <root url="jar://$USER_HOME$/.ivy2/cache/com.googlecode.java-diff-utils/diffutils/jars/diffutils-1.2.1.jar!/" />
           <root url="jar://$USER_HOME$/.ivy2/cache/com.google.code.gson/gson/jars/gson-2.1.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/org.scala-lang/scala-library/jars/scala-library-2.9.1.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/org.scala-lang/scala-compiler/jars/scala-compiler-2.9.1.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/org.codehaus.groovy/groovy-all/jars/groovy-all-2.0.0-beta-2.jar!/" />
           <root url="jar://$USER_HOME$/.ivy2/cache/junit/junit/jars/junit-4.10.jar!/" />
           <root url="jar://$USER_HOME$/.ivy2/cache/org.hamcrest/hamcrest-core/jars/hamcrest-core-1.1.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/org.mockito/mockito-all/jars/mockito-all-1.9.0.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module" module-name="cucumber-junit" scope="TEST" />
-    <orderEntry type="library" name="scala-compiler-2.9.1" level="application" />
   </component>
 </module>
 

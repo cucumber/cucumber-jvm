@@ -25,7 +25,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module-library" exported="">
+    <orderEntry type="module-library">
       <library name="IvyIDEA">
         <CLASSES>
           <root url="jar://$USER_HOME$/.ivy2/cache/info.cukes/gherkin/jars/gherkin-2.7.3.jar!/" />

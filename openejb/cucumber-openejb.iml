@@ -25,9 +25,20 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="cucumber-java" />
+    <orderEntry type="module" module-name="cucumber-junit" scope="TEST" />
+    <orderEntry type="module" module-name="cucumber-core" />
     <orderEntry type="module-library">
       <library name="IvyIDEA">
         <CLASSES>
+          <root url="jar://$USER_HOME$/.ivy2/cache/info.cukes/gherkin/jars/gherkin-2.7.3.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/com.googlecode.json-simple/json-simple/jars/json-simple-1.1.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/net.iharder/base64/jars/base64-2.3.8.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/info.cukes/cucumber-html/jars/cucumber-html-0.2.1.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/com.thoughtworks.xstream/xstream/jars/xstream-1.4.2.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/xmlpull/xmlpull/jars/xmlpull-1.1.3.1.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/xpp3/xpp3_min/jars/xpp3_min-1.1.4c.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/com.googlecode.java-diff-utils/diffutils/jars/diffutils-1.2.1.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/com.google.code.gson/gson/jars/gson-2.1.jar!/" />
           <root url="jar://$USER_HOME$/.ivy2/cache/org.apache.openejb/openejb-core/jars/openejb-core-4.0.0-beta-2-SNAPSHOT.jar!/" />
           <root url="jar://$USER_HOME$/.ivy2/cache/org.apache.openejb/mbean-annotation-api/jars/mbean-annotation-api-4.0.0-beta-2-SNAPSHOT.jar!/" />
           <root url="jar://$USER_HOME$/.ivy2/cache/org.apache.openejb/javaee-api/jars/javaee-api-6.0-3-SNAPSHOT.jar!/" />
@@ -65,25 +76,14 @@
           <root url="jar://$USER_HOME$/.ivy2/cache/org.apache.commons/commons-lang3/jars/commons-lang3-3.1.jar!/" />
           <root url="jar://$USER_HOME$/.ivy2/cache/commons-beanutils/commons-beanutils-core/jars/commons-beanutils-core-1.8.3.jar!/" />
           <root url="jar://$USER_HOME$/.ivy2/cache/org.apache.bval/bval-jsr303/jars/bval-jsr303-0.4-incubating-SNAPSHOT.jar!/" />
-          <root url="jar://$USER_HOME$/.ivy2/cache/org.mockito/mockito-all/jars/mockito-all-1.9.0.jar!/" />
-          <root url="jar://$USER_HOME$/.ivy2/cache/info.cukes/gherkin/jars/gherkin-2.7.3.jar!/" />
-          <root url="jar://$USER_HOME$/.ivy2/cache/com.googlecode.json-simple/json-simple/jars/json-simple-1.1.jar!/" />
-          <root url="jar://$USER_HOME$/.ivy2/cache/net.iharder/base64/jars/base64-2.3.8.jar!/" />
-          <root url="jar://$USER_HOME$/.ivy2/cache/info.cukes/cucumber-html/jars/cucumber-html-0.2.1.jar!/" />
-          <root url="jar://$USER_HOME$/.ivy2/cache/com.thoughtworks.xstream/xstream/jars/xstream-1.4.2.jar!/" />
-          <root url="jar://$USER_HOME$/.ivy2/cache/xmlpull/xmlpull/jars/xmlpull-1.1.3.1.jar!/" />
-          <root url="jar://$USER_HOME$/.ivy2/cache/xpp3/xpp3_min/jars/xpp3_min-1.1.4c.jar!/" />
-          <root url="jar://$USER_HOME$/.ivy2/cache/com.googlecode.java-diff-utils/diffutils/jars/diffutils-1.2.1.jar!/" />
-          <root url="jar://$USER_HOME$/.ivy2/cache/com.google.code.gson/gson/jars/gson-2.1.jar!/" />
           <root url="jar://$USER_HOME$/.ivy2/cache/junit/junit/jars/junit-4.10.jar!/" />
           <root url="jar://$USER_HOME$/.ivy2/cache/org.hamcrest/hamcrest-core/jars/hamcrest-core-1.1.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/org.mockito/mockito-all/jars/mockito-all-1.9.0.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module" module-name="cucumber-junit" scope="TEST" />
-    <orderEntry type="module" module-name="cucumber-core" />
   </component>
 </module>
 
