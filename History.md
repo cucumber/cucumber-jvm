@@ -1,5 +1,6 @@
 ## In Git
 
+* [All] Stepdefs in jars were not loaded correctly on Windows ([#139](https://github.com/cucumber/cucumber-jvm/issues/139))
 * [Build] Fixed repeated Ant builds ([#141](https://github.com/cucumber/cucumber-jvm/issues/141))
 * [Build] Push to local maven repo ([#143](https://github.com/cucumber/cucumber-jvm/issues/143))
 
