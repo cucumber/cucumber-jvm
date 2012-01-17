@@ -38,30 +38,20 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>jarjar-maven-plugin</artifactId>
-                <version>1.5</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>jarjar</goal>
-                        </goals>
-                        <configuration>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>2.4.1</version>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>lib</directory>
                             <includes>
-                                <include>info.cukes:cucumber-core</include>
-                                <include>info.cukes:gherkin</include>
-                                <include>com.google.code.gson:gson</include>
-                                <include>com.googlecode.java-diff-utils:diffutils</include>
-                                <include>com.thoughtworks.xstream:xstream</include>
+                                <include>**/*.*</include>
                             </includes>
-                            <input>target/classes</input>
-                            <output>target/jarjar-out</output>
-                            <rules/>
-                        </configuration>
-                    </execution>
-                </executions>
+                        </fileset>
+                    </filesets>
+                </configuration>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
@@ -71,9 +61,18 @@
                         <phase>package</phase>
                         <configuration>
                             <target>
-                                <!-- build a jar out of the jarjar stuff -->
-                                <jar destfile="target/${project.build.finalName}-full.jar"
-                                     basedir="target/jarjar-out"/>
+                                <taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask"
+                                         classpathref="maven.plugin.classpath"/>
+
+                                <jarjar jarfile="target/${project.build.finalName}-full.jar">
+                                    <fileset dir="target/classes"/>
+                                    <zipfileset src="${maven.dependency.info.cukes.cucumber-core.jar.path}"/>
+                                    <zipfileset src="${maven.dependency.info.cukes.gherkin.jar.path}"/>
+                                    <zipfileset src="${maven.dependency.com.google.code.gson.gson.jar.path}"/>
+                                    <zipfileset
+                                            src="${maven.dependency.com.googlecode.java-diff-utils.diffutils.jar.path}"/>
+                                    <zipfileset src="${maven.dependency.com.thoughtworks.xstream.xstream.jar.path}"/>
+                                </jarjar>
 
                                 <!-- drop it in the lib directory for great justice -->
                                 <copy file="${project.build.directory}/${project.build.finalName}-full.jar"
@@ -86,7 +85,7 @@
                     </execution>
                     <execution>
                         <id>jruby-cli</id>
-                        <phase>test</phase>
+                        <phase>integration-test</phase>
                         <goals>
                             <goal>run</goal>
                         </goals>
@@ -109,6 +108,13 @@
                         </configuration>
                     </execution>
                 </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.googlecode.jarjar</groupId>
+                        <artifactId>jarjar</artifactId>
+                        <version>1.1</version>
+                    </dependency>
+                </dependencies>
             </plugin>
         </plugins>
     </build>
