@@ -40,6 +40,7 @@
           <root url="jar://$USER_HOME$/.ivy2/cache/junit/junit/jars/junit-4.10.jar!/" />
           <root url="jar://$USER_HOME$/.ivy2/cache/org.hamcrest/hamcrest-core/jars/hamcrest-core-1.1.jar!/" />
           <root url="jar://$USER_HOME$/.ivy2/cache/org.mockito/mockito-all/jars/mockito-all-1.9.0.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/rhino/js/jars/js-1.7R2.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

@@ -20,5 +20,6 @@
 
         <dependency name="junit" org="junit" rev="4.10" conf="test"/>
         <dependency name="mockito-all" org="org.mockito" rev="1.9.0" conf="test"/>
+        <dependency name="js" org="rhino" rev="1.7R2" conf="test"/>
     </dependencies>
 </ivy-module>

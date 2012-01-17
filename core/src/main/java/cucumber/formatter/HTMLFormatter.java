@@ -1,5 +1,7 @@
 package cucumber.formatter;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import cucumber.runtime.CucumberException;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Mappable;
@@ -13,7 +15,6 @@ import gherkin.formatter.model.Result;
 import gherkin.formatter.model.Scenario;
 import gherkin.formatter.model.ScenarioOutline;
 import gherkin.formatter.model.Step;
-import org.json.simple.JSONValue;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -29,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 public class HTMLFormatter implements Formatter, Reporter {
+    private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private static final String JS_FORMATTER_VAR = "formatter";
     private static final String JS_REPORT_FILENAME = "report.js";
     private static final String[] REPORT_ITEMS = new String[]{"formatter.js", "index.html", "jquery-1.6.4.min.js", "style.css"};
@@ -107,7 +109,8 @@ public class HTMLFormatter implements Formatter, Reporter {
     }
 
     private void writeToJsReport(String functionName, Mappable statement) {
-        writeToJsReport(functionName, JSONValue.toJSONString(statement.toMap()).replaceAll("\\'", "\\\\'"));
+        String json = gson.toJson(statement.toMap());
+        writeToJsReport(functionName, json);
     }
 
     private void writeToJsReport(String functionName, String arg) {
