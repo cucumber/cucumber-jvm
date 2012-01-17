@@ -20,6 +20,7 @@
                 <artifactId>maven-antrun-plugin</artifactId>
                 <executions>
                     <execution>
+                        <id>generate-i18n-sources</id>
                         <goals>
                             <goal>run</goal>
                         </goals>
