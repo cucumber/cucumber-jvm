@@ -8,7 +8,7 @@
     <artifactId>cucumber-jvm</artifactId>
     <version>1.0.0.RC6</version>
     <packaging>pom</packaging>
-    <name>Cucumber-JVM</name>
+    <name>cucumber-jvm</name>
 
     <modules>
         <module>core</module>
