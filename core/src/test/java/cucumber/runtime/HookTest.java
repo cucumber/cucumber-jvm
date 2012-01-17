@@ -2,11 +2,13 @@ package cucumber.runtime;
 
 import cucumber.io.ClasspathResourceLoader;
 import gherkin.formatter.Reporter;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.InOrder;
 import org.mockito.Matchers;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -30,10 +32,10 @@ public class HookTest {
         when(hook.matches(anyListOf(String.class))).thenReturn(true);
 
         Runtime runtime = new Runtime(CODE_PATHS, new ClasspathResourceLoader(), asList(backend), false);
-        World world = new RuntimeWorld(runtime, TAGS);
-        world.addAfterHook(hook);
+        //TODO: How do I add an after hook in this case?
+        runtime.getWorld().addAfterHook(hook);
 
-        world.runAfterHooksAndDisposeBackendWorlds(mock(Reporter.class));
+        runtime.getWorld().runAfterHooksAndDisposeBackendContext(mock(Reporter.class), new HashSet<String>());
 
         InOrder inOrder = inOrder(hook, backend);
         inOrder.verify(hook).execute(Matchers.<ScenarioResult>any());

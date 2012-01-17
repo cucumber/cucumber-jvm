@@ -3,6 +3,7 @@ package cucumber.formatter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import cucumber.runtime.CucumberException;
+import gherkin.deps.org.json.simple.JSONValue;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Mappable;
 import gherkin.formatter.NiceAppendable;

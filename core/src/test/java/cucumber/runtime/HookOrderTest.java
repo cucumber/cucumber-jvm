@@ -7,6 +7,7 @@ import org.mockito.InOrder;
 import org.mockito.Matchers;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import static org.mockito.Matchers.anyListOf;
@@ -21,7 +22,7 @@ public class HookOrderTest {
 
     @Before
     public void buildMockWorld() {
-        world = new RuntimeWorld(mock(Runtime.class), new ArrayList<String>());
+        world = new RuntimeWorld(mock(Runtime.class));
     }
 
     @Test
@@ -31,7 +32,7 @@ public class HookOrderTest {
             world.addBeforeHook(hook);
         }
 
-        world.buildBackendWorldsAndRunBeforeHooks(mock(Reporter.class));
+        world.buildBackendContextAndRunBeforeHooks(mock(Reporter.class), new HashSet<String>());
 
         InOrder inOrder = inOrder(hooks.toArray());
         inOrder.verify(hooks.get(2)).execute(Matchers.<ScenarioResult>any());
@@ -46,7 +47,7 @@ public class HookOrderTest {
             world.addAfterHook(hook);
         }
 
-        world.runAfterHooksAndDisposeBackendWorlds(mock(Reporter.class));
+        world.runAfterHooksAndDisposeBackendContext(mock(Reporter.class), new HashSet<String>());
 
         InOrder inOrder = inOrder(hooks.toArray());
         inOrder.verify(hooks.get(1)).execute(Matchers.<ScenarioResult>any());
@@ -65,7 +66,7 @@ public class HookOrderTest {
             world.addBeforeHook(hook);
         }
 
-        world.buildBackendWorldsAndRunBeforeHooks(mock(Reporter.class));
+        world.buildBackendContextAndRunBeforeHooks(mock(Reporter.class), new HashSet<String>());
 
         List<HookDefinition> allHooks = new ArrayList<HookDefinition>();
         allHooks.addAll(backend1Hooks);

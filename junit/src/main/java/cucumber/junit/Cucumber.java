@@ -2,6 +2,7 @@ package cucumber.junit;
 
 import cucumber.formatter.NullReporter;
 import cucumber.io.ClasspathResourceLoader;
+import cucumber.io.OneTimeResourceLoader;
 import cucumber.io.ResourceLoader;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Runtime;
@@ -32,7 +33,7 @@ import static java.util.Arrays.asList;
  * @see cucumber.junit.Feature
  */
 public class Cucumber extends ParentRunner<FeatureRunner> {
-    private final ResourceLoader resourceLoader = new ClasspathResourceLoader();
+    private final ResourceLoader resourceLoader = new OneTimeResourceLoader(new ClasspathResourceLoader());
     private final JUnitReporter jUnitReporter;
     private final List<FeatureRunner> children = new ArrayList<FeatureRunner>();
     private final Runtime runtime;
