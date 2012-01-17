@@ -46,10 +46,7 @@
         <ivy:resolve log="default" transitive="true"/>
         <ivy:cachepath pathid="ivy.compile-classpath" conf="default"/>
         <ivy:cachepath pathid="ivy.test-classpath" conf="test"/>
-        <ivy:artifactproperty conf="default" name="local.[organisation].[artifact]"
-                              value="${ivy.local.default.root}/${ivy.local.default.artifact.pattern}"/>
-        <ivy:artifactproperty conf="default" name="cache.[organisation].[artifact]"
-                              value="${ivy.cache.dir}/[organisation]/[artifact]/jars/[artifact]-[revision].jar"/>
+        <ivy:artifactproperty conf="default" name="retrieved.[organisation].[artifact]" value="${ivy.retrieve.pattern}"/>
         <property name="module" value="${ant.project.name}"/>
         <property name="version" value="${ivy.revision}"/>
 
@@ -181,6 +178,7 @@
 
     <target name="clean">
         <delete dir="target"/>
+        <delete dir="lib"/>
     </target>
 
 </project>

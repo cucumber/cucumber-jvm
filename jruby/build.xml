@@ -6,13 +6,15 @@
         <ivy:cachepath pathid="ivy.build-classpath" conf="build"/>
         <taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask" classpathref="ivy.build-classpath"/>
 
+        <ivy:retrieve conf="default"/>
+
         <jarjar jarfile="lib/cucumber-jruby-full.jar">
             <fileset dir="target/classes"/>
-            <zipfileset src="${local.info.cukes.cucumber-core}"/>
-            <zipfileset src="${cache.info.cukes.gherkin}"/>
-            <zipfileset src="${cache.com.thoughtworks.xstream.xstream}"/>
-            <zipfileset src="${cache.com.googlecode.java-diff-utils.diffutils}"/>
-            <zipfileset src="${cache.com.google.code.gson.gson}"/>
+            <zipfileset src="${retrieved.info.cukes.cucumber-core}"/>
+            <zipfileset src="${retrieved.info.cukes.gherkin}"/>
+            <zipfileset src="${retrieved.com.google.code.gson.gson}"/>
+            <zipfileset src="${retrieved.com.googlecode.java-diff-utils.diffutils}"/>
+            <zipfileset src="${retrieved.com.thoughtworks.xstream.xstream}"/>
         </jarjar>
     </target>
 
