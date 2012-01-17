@@ -1,3 +1,7 @@
+## 1.0.0.RC6
+
+* [Build] Maven pom.xml files are back (generated from ivy.xml). Ant+Ivy still needed for bootstrapping. 
+
 ## 1.0.0.RC5
 
 * [Clojure] Snippets use single quote instead of double quote for comments.
