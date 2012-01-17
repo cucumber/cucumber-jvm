@@ -65,7 +65,7 @@ Alternatively you can define your own resolver:
 
 ## Documentation
 
-There isn't any documentation yet apart from API docs. Documentation will be published when the first release candidate for 1.0.0 is ready.
+There isn't any documentation yet apart from API docs. Documentation will be published before the final 1.0.0 release is ready.
 If you are adventurous, check out the examples, read the code and ask specific questions on the Cucumber mailing list.
 
 ### API Docs
@@ -82,7 +82,7 @@ You will find an example in Git under examples/java-calculator. You should be ab
 
 You'll need Ant installed
 
-    export ANT_OPTS=-XX:MaxPermSize=128m
+    export ANT_OPTS=-XX:MaxPermSize=512m
     ant clean publish-local
 
 This will compile everything, run JUnit tests and Cucumber scenarios - and finally install all jars in your local Maven repo.
