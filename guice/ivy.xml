@@ -14,6 +14,8 @@
         <dependency name="cucumber-java" rev="${cucumber-jvm.version}" conf="default"/>
         <dependency name="guice" org="com.google.inject" rev="3.0" conf="default"/>
 
+        <dependency name="aopalliance" org="aopalliance" rev="1.0" conf="test" />
+        <dependency name="javax.inject" org="javax.inject" rev="1" conf="test"/>
         <dependency name="cucumber-junit" rev="${cucumber-jvm.version}" conf="test"/>
         <dependency name="mockito-all" org="org.mockito" rev="1.9.0" conf="test"/>
     </dependencies>
