@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>info.cukes</groupId>
     <artifactId>cucumber-jvm</artifactId>
@@ -201,9 +202,9 @@
                 <version>1.1.4.Final</version>
             </dependency>
             <dependency>
-              <groupId>org.apache.openejb</groupId>
-              <artifactId>openejb-core</artifactId>
-              <version>4.0.0-beta-2-SNAPSHOT</version>
+                <groupId>org.apache.openejb</groupId>
+                <artifactId>openejb-core</artifactId>
+                <version>4.0.0-beta-2-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>javax.enterprise</groupId>
@@ -230,7 +231,7 @@
         <module>picocontainer</module>
         <module>spring</module>
         <module>guice</module>
-        <!--<module>weld</module>-->
+        <module>weld</module>
         <module>groovy</module>
         <module>ioke</module>
         <module>rhino</module>
@@ -239,6 +240,7 @@
         <module>jruby</module>
         <module>jython</module>
         <module>scala</module>
+        <module>openejb</module>
     </modules>
 
     <profiles>
@@ -309,7 +311,8 @@
                                     <shadedArtifactAttached>true</shadedArtifactAttached>
                                     <shadedClassifierName>full</shadedClassifierName>
                                     <transformers>
-                                        <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                        <transformer
+                                                implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                             <mainClass>cucumber.cli.Main</mainClass>
                                         </transformer>
                                     </transformers>
@@ -334,6 +337,28 @@
     </profiles>
 
     <build>
+        <pluginManagement>
+            <!-- To define the plugin version in your parent POM -->
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-antrun-plugin</artifactId>
+                    <version>1.7</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.codehaus.groovy</groupId>
+                            <artifactId>groovy-all</artifactId>
+                            <version>1.8.5</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>info.cukes</groupId>
+                            <artifactId>gherkin</artifactId>
+                            <version>2.7.3</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
