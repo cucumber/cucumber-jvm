@@ -33,6 +33,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="cucumber-core" />
+    <orderEntry type="module" module-name="cucumber-junit" scope="TEST" />
     <orderEntry type="module-library">
       <library name="IvyIDEA">
         <CLASSES>
@@ -54,7 +55,6 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module" module-name="cucumber-junit" scope="TEST" />
   </component>
 </module>
 

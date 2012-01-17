@@ -11,7 +11,7 @@ public class ClojureSnippet implements Snippet {
     public String template() {
         return "({0} #\"{1}\"\n" +
                 "  (fn [{3}]\n" +
-                "    \" {4}\n" + // TODO: The " should be a ', but that causes a propblem with MessageFormat escaping {4}. Need to read up on MessageFormat docs.
+                "    '' {4}\n" +
                 "    ))\n";
     }
 

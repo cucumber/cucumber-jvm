@@ -30,4 +30,10 @@ class FileResource implements Resource {
     public InputStream getInputStream() throws IOException {
         return new FileInputStream(file);
     }
+
+    @Override
+    public String getClassName() {
+        String path = getPath();
+        return path.substring(0, path.length() - 6).replace(File.separatorChar, '.');
+    }
 }
