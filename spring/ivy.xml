@@ -12,8 +12,16 @@
 
     <dependencies>
         <dependency name="cucumber-java" rev="${cucumber-jvm.version}" conf="default"/>
-        <dependency name="spring-tx" org="org.springframework" rev="3.1.0.RELEASE" conf="default"/>
 
+        <dependency name="spring-tx" org="org.springframework" rev="3.1.0.RELEASE" conf="default"/>
+        <dependency name="spring-core" org="org.springframework" rev="3.1.0.RELEASE" conf="default"/>
+        <dependency name="spring-beans" org="org.springframework" rev="3.1.0.RELEASE" conf="default" />
+        <dependency name="spring-context" org="org.springframework" rev="3.1.0.RELEASE" conf="default" />
+
+        <dependency name="spring-asm" org="org.springframework" rev="3.1.0.RELEASE" conf="test" />
+        <dependency name="spring-expression" org="org.springframework" rev="3.1.0.RELEASE" conf="test" />
+        <dependency name="commons-logging" org="commons-logging" rev="1.1.1" conf="test" />
+        <dependency name="aopalliance" org="aopalliance" rev="1.0" conf="test" />
         <dependency name="cucumber-junit" rev="${cucumber-jvm.version}" conf="test"/>
         <dependency name="mockito-all" org="org.mockito" rev="1.9.0" conf="test"/>
     </dependencies>
