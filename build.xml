@@ -5,19 +5,11 @@
         <subant target="publish-local" buildpath="${modules}"/>
     </target>
 
-    <target name="generate">
-        <subant target="generate" buildpath="${modules}"/>
-    </target>
-
-    <target name="test">
-        <subant target="test" buildpath="${modules}"/>
-    </target>
-
     <target name="clean">
         <subant target="clean" buildpath="${modules}"/>
     </target>
 
-    <target name="publish-internet" depends="clean">
+    <target name="publish-internet" depends="git-clean,publish-local">
         <subant target="publish-internet" buildpath="${modules}"/>
     </target>
 
