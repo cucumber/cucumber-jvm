@@ -86,7 +86,6 @@ public class JRubyBackend implements Backend {
     }
 
     public void runStep(String uri, Locale locale, String stepKeyword, String stepName, int line, DataTable dataTable, DocString docString) throws Throwable {
-        //TODO: convert the data table into a list of dataTableRows for this call
         List<DataTableRow> dataTableRows = null;
         if (dataTable != null) {
             dataTableRows = dataTable.getGherkinRows();
