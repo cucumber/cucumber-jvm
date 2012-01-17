@@ -24,7 +24,7 @@
         <module>jruby</module>
         <module>jython</module>
         <module>scala</module>
-        <!--<module>openejb</module>-->
-        <!--<module>weld</module>-->
+        <module>openejb</module>
+        <module>weld</module>
     </modules>
 </project>

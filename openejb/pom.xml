@@ -9,11 +9,11 @@
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>info.cukes</groupId>
-    <artifactId>cucumber-spring</artifactId>
+    <artifactId>cucumber-openejb</artifactId>
     <packaging>jar</packaging>
     <version>1.0.0.RC6</version>
-    <name>cucumber-spring</name>
-    <description>cucumber-spring</description>
+    <name>cucumber-openejb</name>
+    <description>cucumber-openejb</description>
     <url>http://cukes.info</url>
     <licenses>
         <license>
@@ -62,9 +62,9 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-tx</artifactId>
-            <version>3.1.0.RELEASE</version>
+            <groupId>org.apache.openejb</groupId>
+            <artifactId>openejb-core</artifactId>
+            <version>4.0.0-beta-2-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

@@ -31,6 +31,12 @@ ${ivy.pom.header}
             <email>aslak.hellesoy@gmail.com</email>
         </developer>
     </developers>
+    <repositories>
+        <repository>
+            <id>apache-snapshots</id>
+            <url>https://repository.apache.org/content/groups/snapshots</url>
+        </repository>
+    </repositories>
     <build>
         <plugins>
             <plugin>

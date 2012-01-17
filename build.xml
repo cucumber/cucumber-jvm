@@ -1,6 +1,5 @@
 <project name="cucumber-jvm" default="publish-local">
-    <!-- TODO: put openejb and weld back in. Also in pom.xml -->
-    <property name="modules" value="core:junit:java:picocontainer:spring:guice:groovy:ioke:rhino:clojure:jruby:jython:scala"/>
+    <property name="modules" value="core:junit:java:picocontainer:spring:guice:groovy:ioke:rhino:clojure:jruby:jython:scala:openejb:weld"/>
 
     <target name="publish-local">
         <subant target="publish-local" buildpath="${modules}"/>
