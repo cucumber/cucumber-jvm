@@ -28,7 +28,7 @@ Releases are published in [Maven Central](http://search.maven.org/)
 ### Getting jars
 
 Jar files can be browsed and downloaded from [Maven Central] or https://oss.sonatype.org/content/repositories/releases/info/cukes/ 
-(New releases will show up here immediately, while it takes a couple of hours to sync to MAven Central).
+(New releases will show up here immediately, while it takes a couple of hours to sync to Maven Central).
 
 ### Using Maven
 
@@ -38,7 +38,7 @@ Add a dependency in your [POM](http://maven.apache.org/pom.html):
 <dependency>
     <groupId>info.cukes</groupId>
     <artifactId>cucumber-core</artifactId>
-    <version>1.0.0-RC4</version>
+    <version>1.0.0-RC5</version>
 </dependency>
 ```
 
@@ -49,7 +49,7 @@ There are more jars available - add the ones you need. (TODO: A guide on how to 
 Add a [dependency](http://ant.apache.org/ivy/history/latest-milestone/ivyfile/dependency.html) in your [ivy.xml](http://ant.apache.org/ivy/history/latest-milestone/ivyfile.html):
 
 ```xml
-    <dependency org="info.cukes" name="cucumber-core" rev="1.0.0-RC4"/>
+    <dependency org="info.cukes" name="cucumber-core" rev="1.0.0-RC5"/>
 ```
 
 Since the artifacts are released to Maven Central, the default Ivy configuration should pull them down automatically.
