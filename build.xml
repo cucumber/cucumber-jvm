@@ -1,5 +1,6 @@
 <project name="cucumber-jvm" default="publish-local">
-    <property name="modules" value="core:junit:java:clojure:groovy:guice:ioke:jruby:jython:openejb:picocontainer:rhino:scala:spring:weld"/>
+    <!-- TODO: put openejb and weld back in. Also in pom.xml -->
+    <property name="modules" value="core:junit:java:picocontainer:spring:guice:groovy:ioke:rhino:clojure:jruby:jython:scala"/>
 
     <target name="publish-local">
         <subant target="publish-local" buildpath="${modules}"/>
@@ -7,6 +8,10 @@
 
     <target name="clean">
         <subant target="clean" buildpath="${modules}"/>
+    </target>
+
+    <target name="makepom">
+        <subant target="makepom" buildpath="${modules}"/>
     </target>
 
     <target name="publish-internet" depends="git-clean,publish-local">
