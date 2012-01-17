@@ -41,7 +41,7 @@
         <exec executable="${env.JRUBY_HOME}/bin/jruby">
             <arg file="${env.JRUBY_HOME}/bin/gem"/>
             <arg value="push"/>
-            <arg file="cucumber-jvm-${cucumber-jvm-version}-java.gem"/>
+            <arg file="cucumber-jvm-${cucumber-jvm.version}-java.gem"/>
         </exec>
     </target>
 

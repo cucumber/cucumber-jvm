@@ -93,6 +93,11 @@ public class StepdefGeneratorTest {
                     throw new RuntimeException(e);
                 }
             }
+
+            @Override
+            public String getClassName() {
+                throw new UnsupportedOperationException();
+            }
         }, emptyList());
         return features;
     }

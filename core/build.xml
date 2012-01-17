@@ -1,3 +1,7 @@
 <project name="cucumber-core" default="test">
   <import file="../build-common.xml" />
+
+    <target name="generate" description="Generate sources">
+        <echo file="src/main/resources/cucumber/version.properties">cucumber-jvm.version=${cucumber-jvm.version}</echo>
+    </target>
 </project>

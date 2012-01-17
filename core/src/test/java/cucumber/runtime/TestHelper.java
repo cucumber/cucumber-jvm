@@ -30,6 +30,11 @@ public class TestHelper {
                     throw new RuntimeException(e);
                 }
             }
+
+            @Override
+            public String getClassName() {
+                throw new UnsupportedOperationException();
+            }
         }, new ArrayList<Object>());
         return cucumberFeatures.get(0);
     }
