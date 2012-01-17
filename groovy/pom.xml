@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -38,26 +39,47 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.11</version>
-                <configuration>
-                <includes>
-                    <include>**/*.java</include>
-                </includes>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.6</version>
                 <executions>
                     <execution>
+                        <id>generate-i18n-sources</id>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <target>
+                                <taskdef name="groovy"
+                                         classname="org.codehaus.groovy.ant.Groovy"
+                                         classpathref="maven.plugin.classpath"/>
+
+                                <groovy><![CDATA[
+import groovy.text.SimpleTemplateEngine
+import gherkin.I18n
+
+def engine = new SimpleTemplateEngine()
+def templateSource = new File("${basedir}/src/main/code_generator/I18n.groovy.txt").getText()
+
+I18n.all.each { i18n ->
+    def binding = ["i18n":i18n]
+    template = engine.createTemplate(templateSource).make(binding)
+    def file = new File("${basedir}/target/i18n/java/cucumber/runtime/groovy/${i18n.underscoredIsoCode.toUpperCase()}.java")
+    file.parentFile.mkdirs()
+    file.write(template.toString(), "UTF-8")
+}
+        ]]></groovy>
+
+                            </target>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-full-jar</id>
                         <phase>package</phase>
                         <configuration>
                             <tasks>
                                 <!-- Allow failure, since the jar to copy only exists if we build with -Prelease-sign-artifacts -->
-                                <copy file="${project.build.directory}/${project.build.finalName}-full.jar" tofile="${basedir}/bin/cucumber-groovy-full.jar" failonerror="false" />
+                                <copy file="${project.build.directory}/${project.build.finalName}-full.jar"
+                                      tofile="${basedir}/bin/cucumber-groovy-full.jar" failonerror="false"/>
                             </tasks>
                         </configuration>
                         <goals>
@@ -66,6 +88,36 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>1.7</version>
+                <executions>
+                    <execution>
+                        <id>add-source</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${basedir}/target/i18n/java</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.11</version>
+                <configuration>
+                    <includes>
+                        <include>**/*.java</include>
+                    </includes>
+                </configuration>
+            </plugin>
         </plugins>
-  </build>
+    </build>
 </project>
