@@ -8,18 +8,25 @@ import cucumber.io.ClasspathResourceLoader;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class ClasspathMethodScanner {
 
     private ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader();
+    //Blargh, because there's parts used in the ClassPathResourceLoader, I cannot simply use the OneTimeResourceLoader
+    private Set<String> loadedResourcePaths = new HashSet<String>();
+
 
     public void scan(JavaBackend javaBackend, List<String> gluePaths) {
         Collection<Class<? extends Annotation>> cucumberAnnotationClasses = findCucumberAnnotationClasses();
         for (String gluePath : gluePaths) {
-            for (Class<?> candidateClass : resourceLoader.getDescendants(Object.class, gluePath)) {
-                for (Method method : candidateClass.getMethods()) {
-                    scan(method, cucumberAnnotationClasses, javaBackend);
+            if (loadedResourcePaths.add(gluePath)) {
+                for (Class<?> candidateClass : resourceLoader.getDescendants(Object.class, gluePath)) {
+                    for (Method method : candidateClass.getMethods()) {
+                        scan(method, cucumberAnnotationClasses, javaBackend);
+                    }
                 }
             }
         }
