@@ -1,6 +1,7 @@
 package cucumber.formatter;
 
 import cucumber.runtime.CucumberException;
+import gherkin.deps.org.json.simple.JSONValue;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Mappable;
 import gherkin.formatter.NiceAppendable;
@@ -13,7 +14,6 @@ import gherkin.formatter.model.Result;
 import gherkin.formatter.model.Scenario;
 import gherkin.formatter.model.ScenarioOutline;
 import gherkin.formatter.model.Step;
-import org.json.simple.JSONValue;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
