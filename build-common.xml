@@ -31,7 +31,7 @@
     </target>
 
     <target name="-load-ivy" depends="-bootstrap-ivy">
-        <property file="${common-basedir}/nexus.properties"/>
+        <property file="${user.home}/.nexus.properties"/>
         <taskdef uri="antlib:org.apache.ivy.ant">
             <classpath>
                 <pathelement path="${ivy-jar}"/>
