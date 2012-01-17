@@ -4,9 +4,14 @@
                       http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>info.cukes</groupId>
+    <parent>
+        <groupId>info.cukes</groupId>
+        <artifactId>cucumber-jvm</artifactId>
+        <relativePath>../../pom.xml</relativePath>
+        <version>1.0.0.RC2-SNAPSHOT</version>
+    </parent>
+
     <artifactId>java-calculator</artifactId>
-    <version>1.0.0.RC6</version>
     <packaging>jar</packaging>
     <name>Examples: Java Calculator</name>
 
@@ -14,25 +19,21 @@
         <dependency>
             <groupId>info.cukes</groupId>
             <artifactId>cucumber-picocontainer</artifactId>
-            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>info.cukes</groupId>
             <artifactId>cucumber-junit</artifactId>
-            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.picocontainer</groupId>
             <artifactId>picocontainer</artifactId>
-            <version>2.14.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.10</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
