@@ -18,21 +18,21 @@ import static org.mockito.Mockito.when;
 
 public class HookOrderTest {
 
-    private World world;
+    private Glue glue;
 
     @Before
     public void buildMockWorld() {
-        world = new RuntimeWorld(mock(Runtime.class));
+        glue = new RuntimeGlue(mock(Runtime.class));
     }
 
     @Test
     public void before_hooks_execute_in_order() throws Throwable {
         List<HookDefinition> hooks = mockHooks(3, Integer.MAX_VALUE, 1);
         for (HookDefinition hook : hooks) {
-            world.addBeforeHook(hook);
+            glue.addBeforeHook(hook);
         }
 
-        world.buildBackendContextAndRunBeforeHooks(mock(Reporter.class), new HashSet<String>());
+        glue.buildBackendContextAndRunBeforeHooks(mock(Reporter.class), new HashSet<String>());
 
         InOrder inOrder = inOrder(hooks.toArray());
         inOrder.verify(hooks.get(2)).execute(Matchers.<ScenarioResult>any());
@@ -44,10 +44,10 @@ public class HookOrderTest {
     public void after_hooks_execute_in_reverse_order() throws Throwable {
         List<HookDefinition> hooks = mockHooks(2, Integer.MAX_VALUE, 4);
         for (HookDefinition hook : hooks) {
-            world.addAfterHook(hook);
+            glue.addAfterHook(hook);
         }
 
-        world.runAfterHooksAndDisposeBackendContext(mock(Reporter.class), new HashSet<String>());
+        glue.runAfterHooksAndDisposeBackendContext(mock(Reporter.class), new HashSet<String>());
 
         InOrder inOrder = inOrder(hooks.toArray());
         inOrder.verify(hooks.get(1)).execute(Matchers.<ScenarioResult>any());
@@ -59,14 +59,14 @@ public class HookOrderTest {
     public void hooks_order_across_many_backends() throws Throwable {
         List<HookDefinition> backend1Hooks = mockHooks(3, Integer.MAX_VALUE, 1);
         for (HookDefinition hook : backend1Hooks) {
-            world.addBeforeHook(hook);
+            glue.addBeforeHook(hook);
         }
         List<HookDefinition> backend2Hooks = mockHooks(2, Integer.MAX_VALUE, 4);
         for (HookDefinition hook : backend2Hooks) {
-            world.addBeforeHook(hook);
+            glue.addBeforeHook(hook);
         }
 
-        world.buildBackendContextAndRunBeforeHooks(mock(Reporter.class), new HashSet<String>());
+        glue.buildBackendContextAndRunBeforeHooks(mock(Reporter.class), new HashSet<String>());
 
         List<HookDefinition> allHooks = new ArrayList<HookDefinition>();
         allHooks.addAll(backend1Hooks);

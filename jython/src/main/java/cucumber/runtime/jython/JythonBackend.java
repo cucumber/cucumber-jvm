@@ -4,7 +4,7 @@ import cucumber.io.Resource;
 import cucumber.io.ResourceLoader;
 import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
-import cucumber.runtime.World;
+import cucumber.runtime.Glue;
 import cucumber.runtime.snippets.SnippetGenerator;
 import gherkin.formatter.model.Step;
 import org.python.core.PyInstance;
@@ -21,7 +21,7 @@ public class JythonBackend implements Backend {
     private final ResourceLoader resourceLoader;
     private final PythonInterpreter jython = new PythonInterpreter();
     private PyObject pyWorld;
-    private World world;
+    private Glue glue;
 
     public JythonBackend(ResourceLoader resourceLoader) {
         this.resourceLoader = resourceLoader;
@@ -30,8 +30,8 @@ public class JythonBackend implements Backend {
     }
 
     @Override
-    public void loadGlue(World world, List<String> gluePaths) {
-        this.world = world;
+    public void loadGlue(Glue glue, List<String> gluePaths) {
+        this.glue = glue;
 
         for (String gluePath : gluePaths) {
             for (Resource resource : resourceLoader.resources(gluePath, ".py")) {
@@ -63,7 +63,7 @@ public class JythonBackend implements Backend {
     }
 
     public void registerStepdef(PyInstance stepdef, int arity) {
-        world.addStepDefinition(new JythonStepDefinition(this, stepdef, arity));
+        glue.addStepDefinition(new JythonStepDefinition(this, stepdef, arity));
     }
 
     public void execute(PyInstance stepdef, Object[] args) {

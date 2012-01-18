@@ -10,7 +10,7 @@ import gherkin.formatter.model.Step;
 
 import java.util.*;
 
-public class RuntimeWorld implements World {
+public class RuntimeGlue implements Glue {
     private static final Object DUMMY_ARG = new Object();
 
     // TODO - it's expensive to create a new LocalizedXStreams for each scenario - reuse a global one. (heh, except world is being recreated each time!)
@@ -27,7 +27,7 @@ public class RuntimeWorld implements World {
     private boolean skipNextStep = false;
     private Runtime runtime;
 
-    public RuntimeWorld(Runtime runtime) {
+    public RuntimeGlue(Runtime runtime) {
         //TODO: does the runtime world need to see the runtime?
         // AH: No, it shouldn't - it's a cyclic dependency we should get rid of
         this.runtime = runtime;

@@ -1,8 +1,6 @@
 package cucumber.runtime.model;
 
-import cucumber.runtime.Runtime;
-import cucumber.runtime.RuntimeWorld;
-import cucumber.runtime.World;
+import cucumber.runtime.Glue;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Row;
@@ -25,16 +23,17 @@ public class CucumberScenario extends CucumberTagStatement {
      * This method is called when Cucumber is run from the CLI, but not when run from JUnit
      */
     @Override
-    public void run(Formatter formatter, Reporter reporter, World world) {
-        world.buildBackendContextAndRunBeforeHooks(reporter, tags());
-        runBackground(formatter, reporter, world);
-        formatAndRunSteps(formatter, reporter, world);
-        world.runAfterHooksAndDisposeBackendContext(reporter, tags());
+    public void run(Formatter formatter, Reporter reporter, Glue glue) {
+        //TODO: figure out how to get the runtime to this point, so that the context and running happens from there, not glue
+        glue.buildBackendContextAndRunBeforeHooks(reporter, tags());
+        runBackground(formatter, reporter, glue);
+        formatAndRunSteps(formatter, reporter, glue);
+        glue.runAfterHooksAndDisposeBackendContext(reporter, tags());
     }
 
-    public void runBackground(Formatter formatter, Reporter reporter, World world) {
+    public void runBackground(Formatter formatter, Reporter reporter, Glue glue) {
         if (cucumberBackground != null) {
-            cucumberBackground.formatAndRunSteps(formatter, reporter, world);
+            cucumberBackground.formatAndRunSteps(formatter, reporter, glue);
         }
     }
 }

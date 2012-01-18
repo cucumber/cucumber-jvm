@@ -1,6 +1,6 @@
 package cucumber.runtime.model;
 
-import cucumber.runtime.World;
+import cucumber.runtime.Glue;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.*;
@@ -28,13 +28,13 @@ public class CucumberScenarioOutline extends CucumberTagStatement {
     }
 
     @Override
-    public void run(Formatter formatter, Reporter reporter, World world) {
+    public void run(Formatter formatter, Reporter reporter, Glue glue) {
         format(formatter);
         for (CucumberExamples cucumberExamples : cucumberExamplesList) {
             cucumberExamples.format(formatter);
             List<CucumberScenario> exampleScenarios = cucumberExamples.createExampleScenarios();
             for (CucumberScenario exampleScenario : exampleScenarios) {
-                exampleScenario.run(formatter, reporter, world);
+                exampleScenario.run(formatter, reporter, glue);
             }
         }
     }

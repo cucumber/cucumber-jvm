@@ -2,7 +2,6 @@ package cucumber.runtime;
 
 import cucumber.io.ClasspathResourceLoader;
 import gherkin.formatter.Reporter;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.InOrder;
 import org.mockito.Matchers;
@@ -33,9 +32,9 @@ public class HookTest {
 
         Runtime runtime = new Runtime(CODE_PATHS, new ClasspathResourceLoader(), asList(backend), false);
         //TODO: How do I add an after hook in this case?
-        runtime.getWorld().addAfterHook(hook);
+        runtime.getGlue().addAfterHook(hook);
 
-        runtime.getWorld().runAfterHooksAndDisposeBackendContext(mock(Reporter.class), new HashSet<String>());
+        runtime.getGlue().runAfterHooksAndDisposeBackendContext(mock(Reporter.class), new HashSet<String>());
 
         InOrder inOrder = inOrder(hook, backend);
         inOrder.verify(hook).execute(Matchers.<ScenarioResult>any());

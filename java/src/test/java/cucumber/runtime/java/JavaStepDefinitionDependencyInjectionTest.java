@@ -1,8 +1,8 @@
 package cucumber.runtime.java;
 
 import cucumber.annotation.en.Given;
-import cucumber.runtime.RuntimeWorld;
-import cucumber.runtime.World;
+import cucumber.runtime.Glue;
+import cucumber.runtime.RuntimeGlue;
 import org.junit.Test;
 
 import java.lang.reflect.Method;
@@ -29,11 +29,11 @@ public class JavaStepDefinitionDependencyInjectionTest {
 
     private final ObjectFactory mockObjectFactory = mock(ObjectFactory.class);
     private final JavaBackend backend = new JavaBackend(mockObjectFactory);
-    private final World world = new RuntimeWorld(null);
+    private final Glue glue = new RuntimeGlue(null);
 
     @org.junit.Before
     public void loadNoGlue() {
-        backend.loadGlue(world, Collections.<String>emptyList());
+        backend.loadGlue(glue, Collections.<String>emptyList());
     }
 
     @Test

@@ -4,7 +4,7 @@ import cucumber.io.Resource;
 import cucumber.io.ResourceLoader;
 import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
-import cucumber.runtime.World;
+import cucumber.runtime.Glue;
 import cucumber.runtime.snippets.SnippetGenerator;
 import gherkin.TagExpression;
 import gherkin.formatter.model.Step;
@@ -27,7 +27,7 @@ public class GroovyBackend implements Backend {
     private final GroovyShell shell;
     private Closure worldClosure;
     private Object groovyWorld;
-    private World world;
+    private Glue glue;
 
     public GroovyBackend(ResourceLoader resourceLoader) {
         this (new GroovyShell(), resourceLoader);
@@ -40,8 +40,8 @@ public class GroovyBackend implements Backend {
     }
 
     @Override
-    public void loadGlue(World world, List<String> gluePaths) {
-        this.world = world;
+    public void loadGlue(Glue glue, List<String> gluePaths) {
+        this.glue = glue;
         final Binding context = new Binding();
 
         for (String gluePath : gluePaths) {
@@ -82,7 +82,7 @@ public class GroovyBackend implements Backend {
     }
 
     public void addStepDefinition(Pattern regexp, Closure body) {
-        world.addStepDefinition(new GroovyStepDefinition(regexp, body, stepDefLocation(), instance));
+        glue.addStepDefinition(new GroovyStepDefinition(regexp, body, stepDefLocation(), instance));
     }
 
     public void registerWorld(Closure closure) {
@@ -90,11 +90,11 @@ public class GroovyBackend implements Backend {
     }
 
     void addBeforeHook(TagExpression tagExpression, Closure body) {
-        world.addBeforeHook(new GroovyHookDefinition(body, tagExpression, instance));
+        glue.addBeforeHook(new GroovyHookDefinition(body, tagExpression, instance));
     }
 
     public void addAfterHook(TagExpression tagExpression, Closure body) {
-        world.addAfterHook(new GroovyHookDefinition(body, tagExpression, instance));
+        glue.addAfterHook(new GroovyHookDefinition(body, tagExpression, instance));
     }
 
     public void invoke(Closure body, Object[] args) {

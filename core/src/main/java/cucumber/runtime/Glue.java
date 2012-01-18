@@ -8,7 +8,7 @@ import java.util.Locale;
 import java.util.Set;
 
 
-public interface World {
+public interface Glue {
     void buildBackendContextAndRunBeforeHooks(Reporter reporter, Set<String> tags);
 
     void runAfterHooksAndDisposeBackendContext(Reporter reporter, Set<String> tags);

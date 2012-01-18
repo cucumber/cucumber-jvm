@@ -36,7 +36,7 @@ public class Runtime {
     private final boolean isDryRun;
     private final ResourceLoader resourceLoader;
 
-    private World world;
+    private Glue glue;
 
     public Runtime(List<String> gluePaths, ResourceLoader resourceLoader) {
         this(gluePaths, resourceLoader, false);
@@ -52,9 +52,9 @@ public class Runtime {
         this.isDryRun = isDryRun;
         this.tracker = new UndefinedStepsTracker(backends);
 
-        this.world = new RuntimeWorld(this);
+        this.glue = new RuntimeGlue(this);
         for (Backend backend : backends) {
-            backend.loadGlue(world, gluePaths);
+            backend.loadGlue(glue, gluePaths);
         }
     }
 
@@ -67,8 +67,9 @@ public class Runtime {
     }
 
     /**
-     * This is where the first entry happens. World should be passed along through this through the various scopes
-     *
+     * This is where the first entry happens.
+     * Glue shouldn't be passed along, since it's Glue, we should somehow expose the right bits to the various stages
+     * so that the appropriate calls can be made at the appropriate time.
      * @param featurePaths
      * @param filters
      * @param formatter
@@ -80,11 +81,18 @@ public class Runtime {
         }
     }
 
+    /**
+     * Runs an individual feature, not all the features
+     * @param cucumberFeature
+     * @param formatter
+     * @param reporter
+     */
     public void run(CucumberFeature cucumberFeature, Formatter formatter, Reporter reporter) {
         formatter.uri(cucumberFeature.getUri());
         formatter.feature(cucumberFeature.getFeature());
         for (CucumberTagStatement cucumberTagStatement : cucumberFeature.getFeatureElements()) {
-            cucumberTagStatement.run(formatter, reporter, world);
+            //Executes an individual scenario?
+            cucumberTagStatement.run(formatter, reporter, glue);
         }
         formatter.eof();
     }
@@ -112,7 +120,7 @@ public class Runtime {
     public void writeStepdefsJson(List<String> featurePaths, File dotCucumber) throws IOException {
         List<CucumberFeature> features = load(resourceLoader, featurePaths, NO_FILTERS);
         buildBackendWorlds();
-        List<StepDefinition> stepDefs = world.getStepDefinitions();
+        List<StepDefinition> stepDefs = glue.getStepDefinitions();
         List<MetaStepdef> metaStepdefs = new StepdefGenerator().generate(stepDefs, features);
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         String json = gson.toJson(metaStepdefs);
@@ -150,7 +158,7 @@ public class Runtime {
         return tracker.getSnippets();
     }
 
-    public World getWorld() {
-        return world;
+    public Glue getGlue() {
+        return glue;
     }
 }

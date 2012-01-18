@@ -7,7 +7,7 @@ import cucumber.io.Resource;
 import cucumber.io.ResourceLoader;
 import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
-import cucumber.runtime.World;
+import cucumber.runtime.Glue;
 import cucumber.runtime.snippets.SnippetGenerator;
 import gherkin.formatter.model.Step;
 
@@ -20,7 +20,7 @@ public class ClojureBackend implements Backend {
     private static ClojureBackend instance;
     private final SnippetGenerator snippetGenerator = new SnippetGenerator(new ClojureSnippet());
     private final ResourceLoader resourceLoader;
-    private World world;
+    private Glue glue;
 
     public ClojureBackend(ResourceLoader resourceLoader) {
         this.resourceLoader = resourceLoader;
@@ -29,8 +29,8 @@ public class ClojureBackend implements Backend {
     }
 
     @Override
-    public void loadGlue(World world, List<String> gluePaths) {
-        this.world = world;
+    public void loadGlue(Glue glue, List<String> gluePaths) {
+        this.glue = glue;
         for (String gluePath : gluePaths) {
             for (Resource resource : resourceLoader.resources(gluePath, ".clj")) {
                 loadScript(resource);
@@ -84,14 +84,14 @@ public class ClojureBackend implements Backend {
 
     public static void addStepDefinition(Pattern regexp, IFn body) {
         StackTraceElement location = instance.stepDefLocation("clojure.lang.Compiler", "eval");
-        instance.world.addStepDefinition(new ClojureStepDefinition(regexp, body, location));
+        instance.glue.addStepDefinition(new ClojureStepDefinition(regexp, body, location));
     }
 
     public static void addBeforeHook(IFn body) {
-        instance.world.addBeforeHook(new ClojureHookDefinition(new String[0], body));
+        instance.glue.addBeforeHook(new ClojureHookDefinition(new String[0], body));
     }
 
     public static void addAfterHook(IFn body) {
-        instance.world.addAfterHook(new ClojureHookDefinition(new String[0], body));
+        instance.glue.addAfterHook(new ClojureHookDefinition(new String[0], body));
     }
 }

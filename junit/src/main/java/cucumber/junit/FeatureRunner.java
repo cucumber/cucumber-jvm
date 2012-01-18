@@ -1,7 +1,6 @@
 package cucumber.junit;
 
 import cucumber.runtime.Runtime;
-import cucumber.runtime.World;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.model.CucumberScenario;
 import cucumber.runtime.model.CucumberScenarioOutline;

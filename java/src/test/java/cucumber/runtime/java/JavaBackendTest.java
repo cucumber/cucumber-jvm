@@ -1,9 +1,9 @@
 package cucumber.runtime.java;
 
 import cucumber.fallback.runtime.java.DefaultJavaObjectFactory;
+import cucumber.runtime.Glue;
 import cucumber.runtime.HookDefinition;
 import cucumber.runtime.StepDefinition;
-import cucumber.runtime.World;
 import cucumber.runtime.java.test.Stepdefs;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Step;
@@ -22,13 +22,13 @@ public class JavaBackendTest {
     public void finds_step_definitions_by_scanning_for_annotations() {
         ObjectFactory factory = new DefaultJavaObjectFactory();
         JavaBackend backend = new JavaBackend(factory);
-        WorldStub world = new WorldStub();
+        GlueStub world = new GlueStub();
         backend.loadGlue(world, asList("cucumber/runtime/java/test"));
         backend.buildWorld();
         assertEquals(Stepdefs.class, factory.getInstance(Stepdefs.class).getClass());
     }
 
-    private class WorldStub implements World {
+    private class GlueStub implements Glue {
         public final List<StepDefinition> stepDefinitions = new ArrayList<StepDefinition>();
 
 

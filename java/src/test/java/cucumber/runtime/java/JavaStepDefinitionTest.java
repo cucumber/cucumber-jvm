@@ -3,9 +3,9 @@ package cucumber.runtime.java;
 import cucumber.annotation.en.Given;
 import cucumber.io.ClasspathResourceLoader;
 import cucumber.runtime.AmbiguousStepDefinitionsException;
+import cucumber.runtime.Glue;
 import cucumber.runtime.Runtime;
-import cucumber.runtime.RuntimeWorld;
-import cucumber.runtime.World;
+import cucumber.runtime.RuntimeGlue;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Comment;
 import gherkin.formatter.model.Step;
@@ -38,11 +38,11 @@ public class JavaStepDefinitionTest {
     private final Defs defs = new Defs();
     private final JavaBackend backend = new JavaBackend(new SingletonFactory(defs));
     private final Runtime runtime = new Runtime(NO_PATHS, new ClasspathResourceLoader(), asList(backend), false);
-    private final World world = new RuntimeWorld(runtime);
+    private final Glue glue = new RuntimeGlue(runtime);
 
     @org.junit.Before
     public void loadNoGlue() {
-        backend.loadGlue(world, Collections.<String>emptyList());
+        backend.loadGlue(glue, Collections.<String>emptyList());
     }
 
     @Test(expected = AmbiguousStepDefinitionsException.class)
@@ -51,8 +51,8 @@ public class JavaStepDefinitionTest {
         backend.addStepDefinition(BAR.getAnnotation(Given.class), BAR);
 
         Reporter reporter = mock(Reporter.class);
-        world.buildBackendContextAndRunBeforeHooks(reporter, asSet("@foo"));
-        world.runStep("uri", new Step(NO_COMMENTS, "Given ", "pattern", 1, null, null), reporter, Locale.US);
+        glue.buildBackendContextAndRunBeforeHooks(reporter, asSet("@foo"));
+        glue.runStep("uri", new Step(NO_COMMENTS, "Given ", "pattern", 1, null, null), reporter, Locale.US);
     }
 
     @Test
@@ -60,9 +60,9 @@ public class JavaStepDefinitionTest {
         backend.addStepDefinition(FOO.getAnnotation(Given.class), FOO);
 
         Reporter reporter = mock(Reporter.class);
-        world.buildBackendContextAndRunBeforeHooks(reporter, asSet("@foo"));
+        glue.buildBackendContextAndRunBeforeHooks(reporter, asSet("@foo"));
         Step step = new Step(NO_COMMENTS, "Given ", "pattern", 1, null, null);
-        world.runStep("uri", step, reporter, Locale.US);
+        glue.runStep("uri", step, reporter, Locale.US);
         assertTrue(defs.foo);
         assertFalse(defs.bar);
     }

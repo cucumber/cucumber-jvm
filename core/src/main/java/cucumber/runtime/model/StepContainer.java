@@ -1,6 +1,6 @@
 package cucumber.runtime.model;
 
-import cucumber.runtime.World;
+import cucumber.runtime.Glue;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.BasicStatement;
@@ -34,14 +34,14 @@ public class StepContainer {
         }
     }
 
-    public void formatAndRunSteps(Formatter formatter, Reporter reporter, World world) {
+    public void formatAndRunSteps(Formatter formatter, Reporter reporter, Glue glue) {
         format(formatter);
         for (Step step : getSteps()) {
-            runStep(step, reporter, world);
+            runStep(step, reporter, glue);
         }
     }
 
-    public void runStep(Step step, Reporter reporter, World world) {
-        world.runStep(cucumberFeature.getUri(), step, reporter, cucumberFeature.getLocale());
+    public void runStep(Step step, Reporter reporter, Glue glue) {
+        glue.runStep(cucumberFeature.getUri(), step, reporter, cucumberFeature.getLocale());
     }
 }
