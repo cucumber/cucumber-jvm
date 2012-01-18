@@ -6,8 +6,10 @@ import cucumber.io.ClasspathResourceLoader;
 import cucumber.io.ResourceLoader;
 import cucumber.runtime.autocomplete.MetaStepdef;
 import cucumber.runtime.autocomplete.StepdefGenerator;
+import cucumber.runtime.converters.LocalizedXStreams;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.model.CucumberTagStatement;
+import gherkin.formatter.Argument;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Comment;
@@ -27,6 +29,8 @@ import static java.util.Collections.emptyList;
  * This is the main entry point for running Cucumber features.
  */
 public class Runtime {
+
+    private static final Object DUMMY_ARG = new Object();
     private static final byte ERRORS = 0x1;
     private static final List<Object> NO_FILTERS = emptyList();
 
@@ -35,10 +39,17 @@ public class Runtime {
     private final Collection<? extends Backend> backends;
     private final boolean isDryRun;
     private final ResourceLoader resourceLoader;
-
-    private boolean skipNextStep = false;
-
     private Glue glue;
+    //This is a good thing to keep at Runtime, since it's expensive to create
+    private final LocalizedXStreams localizedXStreams = new LocalizedXStreams();
+
+
+    //TODO: These are really state machine variables, and I'm not sure the runtime is the best place for this state machine
+    //They really should be created each time a scenario is run, not in here
+    private boolean skipNextStep = false;
+    private final ScenarioResultImpl scenarioResult = null;
+
+
 
     public Runtime(List<String> gluePaths, ResourceLoader resourceLoader) {
         this(gluePaths, resourceLoader, false);
@@ -59,7 +70,6 @@ public class Runtime {
             backend.loadGlue(glue, gluePaths);
         }
     }
-
     private static Collection<? extends Backend> loadBackends(ResourceLoader resourceLoader) {
         return new ClasspathResourceLoader().instantiateSubclasses(Backend.class, "cucumber/runtime", new Class[]{ResourceLoader.class}, new Object[]{resourceLoader});
     }
@@ -72,6 +82,7 @@ public class Runtime {
      * This is where the first entry happens.
      * Glue shouldn't be passed along, since it's Glue, we should somehow expose the right bits to the various stages
      * so that the appropriate calls can be made at the appropriate time.
+     *
      * @param featurePaths
      * @param filters
      * @param formatter
@@ -85,16 +96,20 @@ public class Runtime {
 
     /**
      * Runs an individual feature, not all the features
+     *
      * @param cucumberFeature
      * @param formatter
      * @param reporter
      */
     public void run(CucumberFeature cucumberFeature, Formatter formatter, Reporter reporter) {
+
+        //For each feature, we need to set up the backend
+
         formatter.uri(cucumberFeature.getUri());
         formatter.feature(cucumberFeature.getFeature());
         for (CucumberTagStatement cucumberTagStatement : cucumberFeature.getFeatureElements()) {
-            //Executes an individual scenario?
-            cucumberTagStatement.run(formatter, reporter, glue);
+            //Run the scenario, it should handle before and after hooks
+            cucumberTagStatement.run(formatter, reporter, this);
         }
         formatter.eof();
     }
@@ -164,4 +179,123 @@ public class Runtime {
     public Glue getGlue() {
         return glue;
     }
+
+    public void runBeforeHooks(Reporter reporter, Set<String> tags) {
+        runHooks(glue.getBeforeHooks(), reporter, tags);
+    }
+
+    public void runAfterHooks(Reporter reporter, Set<String> tags) {
+        runHooks(glue.getAfterHooks(), reporter, tags);
+    }
+
+    private void runHooks(List<HookDefinition> hooks, Reporter reporter, Set<String> tags) {
+        for (HookDefinition hook : hooks) {
+            runHookIfTagsMatch(hook, reporter, tags);
+        }
+    }
+
+    private void runHookIfTagsMatch(HookDefinition hook, Reporter reporter, Set<String> tags) {
+        if (hook.matches(tags)) {
+            long start = System.nanoTime();
+            try {
+                hook.execute(scenarioResult);
+            } catch (Throwable t) {
+                skipNextStep = true;
+
+                long duration = System.nanoTime() - start;
+                Result result = new Result(Result.FAILED, duration, t, DUMMY_ARG);
+                scenarioResult.add(result);
+                reporter.result(result);
+            }
+        }
+    }
+
+
+    //TODO: Maybe this should go into the cucumber step execution model and it should return the result of that execution!
+    public void runUnreportedStep(String uri, Locale locale, String stepKeyword, String stepName, int line) throws Throwable {
+        Step step = new Step(Collections.<Comment>emptyList(), stepKeyword, stepName, line, null, null);
+
+        StepDefinitionMatch match = stepDefinitionMatch(uri, step, locale);
+        if (match == null) {
+            UndefinedStepException error = new UndefinedStepException(step);
+
+            StackTraceElement[] originalTrace = error.getStackTrace();
+            StackTraceElement[] newTrace = new StackTraceElement[originalTrace.length + 1];
+            newTrace[0] = new StackTraceElement("✽", "StepDefinition", uri, line);
+            System.arraycopy(originalTrace, 0, newTrace, 1, originalTrace.length);
+            error.setStackTrace(newTrace);
+
+            throw error;
+        }
+        match.runStep(locale);
+    }
+
+
+    //TODO: should refactor this up into the runtime.
+    public void runStep(String uri, Step step, Reporter reporter, Locale locale) {
+        StepDefinitionMatch match = stepDefinitionMatch(uri, step, locale);
+        if (match != null) {
+            reporter.match(match);
+        } else {
+            reporter.match(Match.UNDEFINED);
+            reporter.result(Result.UNDEFINED);
+            skipNextStep = true;
+            return;
+        }
+
+        if (isDryRun()) {
+            skipNextStep = true;
+        }
+
+        if (skipNextStep) {
+            scenarioResult.add(Result.SKIPPED);
+            reporter.result(Result.SKIPPED);
+        } else {
+            String status = Result.PASSED;
+            Throwable error = null;
+            long start = System.nanoTime();
+            try {
+                match.runStep(locale);
+            } catch (Throwable t) {
+                error = t;
+                status = Result.FAILED;
+                addError(t);
+                skipNextStep = true;
+            } finally {
+                long duration = System.nanoTime() - start;
+                Result result = new Result(status, duration, error, DUMMY_ARG);
+                scenarioResult.add(result);
+                reporter.result(result);
+            }
+        }
+    }
+
+    private StepDefinitionMatch stepDefinitionMatch(String uri, Step step, Locale locale) {
+        List<StepDefinitionMatch> matches = stepDefinitionMatches(uri, step);
+        try {
+            if (matches.size() == 0) {
+                addUndefinedStep(step, locale);
+                return null;
+            }
+            if (matches.size() == 1) {
+                return matches.get(0);
+            } else {
+                throw new AmbiguousStepDefinitionsException(matches);
+            }
+        } finally {
+            storeStepKeyword(step, locale);
+        }
+    }
+
+    private List<StepDefinitionMatch> stepDefinitionMatches(String uri, Step step) {
+        List<StepDefinitionMatch> result = new ArrayList<StepDefinitionMatch>();
+        for (StepDefinition stepDefinition : glue.getStepDefinitions()) {
+            List<Argument> arguments = stepDefinition.matchedArguments(step);
+            if (arguments != null) {
+                result.add(new StepDefinitionMatch(arguments, stepDefinition, uri, step, localizedXStreams));
+            }
+        }
+        return result;
+    }
+
 }

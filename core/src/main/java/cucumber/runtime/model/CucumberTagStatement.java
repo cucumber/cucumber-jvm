@@ -1,6 +1,6 @@
 package cucumber.runtime.model;
 
-import cucumber.runtime.Glue;
+import cucumber.runtime.Runtime;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Row;
@@ -42,6 +42,7 @@ public abstract class CucumberTagStatement extends StepContainer {
     public String getVisualName() {
         return visualName;
     }
-
-    public abstract void run(Formatter formatter, Reporter reporter, Glue glue);
+    
+    
+    public abstract void run(Formatter formatter, Reporter reporter, Runtime runtime);
 }
