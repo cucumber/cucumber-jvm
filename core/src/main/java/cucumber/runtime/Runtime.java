@@ -50,7 +50,6 @@ public class Runtime {
     private final ScenarioResultImpl scenarioResult = null;
 
 
-
     public Runtime(List<String> gluePaths, ResourceLoader resourceLoader) {
         this(gluePaths, resourceLoader, false);
     }
@@ -70,6 +69,7 @@ public class Runtime {
             backend.loadGlue(glue, gluePaths);
         }
     }
+
     private static Collection<? extends Backend> loadBackends(ResourceLoader resourceLoader) {
         return new ClasspathResourceLoader().instantiateSubclasses(Backend.class, "cucumber/runtime", new Class[]{ResourceLoader.class}, new Object[]{resourceLoader});
     }
@@ -119,6 +119,7 @@ public class Runtime {
             backend.buildWorld();
         }
         tracker.reset();
+        skipNextStep = false;
     }
 
     public void disposeBackendWorlds() {
