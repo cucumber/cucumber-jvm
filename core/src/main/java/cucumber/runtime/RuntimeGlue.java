@@ -21,17 +21,10 @@ public class RuntimeGlue implements Glue {
     private final List<StepDefinition> stepDefinitions = new ArrayList<StepDefinition>();
     private final List<HookDefinition> beforeHooks = new ArrayList<HookDefinition>();
     private final List<HookDefinition> afterHooks = new ArrayList<HookDefinition>();
+
+    //TODO: these should rpobably go into runtime
     private final ScenarioResultImpl scenarioResult = new ScenarioResultImpl();
-
-
     private boolean skipNextStep = false;
-    private Runtime runtime;
-
-    public RuntimeGlue(Runtime runtime) {
-        //TODO: does the runtime world need to see the runtime?
-        // AH: No, it shouldn't - it's a cyclic dependency we should get rid of
-        this.runtime = runtime;
-    }
 
     @Override
     public void buildBackendContextAndRunBeforeHooks(Reporter reporter, Set<String> tags) {
@@ -47,6 +40,7 @@ public class RuntimeGlue implements Glue {
         runtime.disposeBackendWorlds();
     }
 
+    //TODO: Maybe this should go into the cucumber step execution model and it should return the result of that execution!
     @Override
     public void runUnreportedStep(String uri, Locale locale, String stepKeyword, String stepName, int line) throws Throwable {
         Step step = new Step(Collections.<Comment>emptyList(), stepKeyword, stepName, line, null, null);
@@ -66,12 +60,14 @@ public class RuntimeGlue implements Glue {
         match.runStep(locale);
     }
 
+    //TODO: this should go up into runtime
     private void runHooks(List<HookDefinition> hooks, Reporter reporter, Set<String> tags) {
         for (HookDefinition hook : hooks) {
             runHookIfTagsMatch(hook, reporter, tags);
         }
     }
 
+    //TODO: this should go up into runtime
     private void runHookIfTagsMatch(HookDefinition hook, Reporter reporter, Set<String> tags) {
         if (hook.matches(tags)) {
             long start = System.nanoTime();
@@ -88,6 +84,7 @@ public class RuntimeGlue implements Glue {
         }
     }
 
+    //TODO: should refactor this up into the runtime.
     @Override
     public void runStep(String uri, Step step, Reporter reporter, Locale locale) {
         StepDefinitionMatch match = stepDefinitionMatch(uri, step, locale);
@@ -185,6 +182,7 @@ public class RuntimeGlue implements Glue {
         return stepDefinitions;
     }
 
+    //TODO: why is this here?
     private final class HookComparator implements Comparator<HookDefinition> {
         final boolean ascending;
 

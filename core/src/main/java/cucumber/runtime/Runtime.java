@@ -10,15 +10,15 @@ import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.model.CucumberTagStatement;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
+import gherkin.formatter.model.Comment;
+import gherkin.formatter.model.Match;
+import gherkin.formatter.model.Result;
 import gherkin.formatter.model.Step;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 import static cucumber.runtime.model.CucumberFeature.load;
 import static java.util.Collections.emptyList;
@@ -36,6 +36,8 @@ public class Runtime {
     private final boolean isDryRun;
     private final ResourceLoader resourceLoader;
 
+    private boolean skipNextStep = false;
+
     private Glue glue;
 
     public Runtime(List<String> gluePaths, ResourceLoader resourceLoader) {
@@ -52,7 +54,7 @@ public class Runtime {
         this.isDryRun = isDryRun;
         this.tracker = new UndefinedStepsTracker(backends);
 
-        this.glue = new RuntimeGlue(this);
+        this.glue = new RuntimeGlue();
         for (Backend backend : backends) {
             backend.loadGlue(glue, gluePaths);
         }
@@ -145,6 +147,7 @@ public class Runtime {
         }
         return result;
     }
+
 
     public void storeStepKeyword(Step step, Locale locale) {
         tracker.storeStepKeyword(step, locale);
