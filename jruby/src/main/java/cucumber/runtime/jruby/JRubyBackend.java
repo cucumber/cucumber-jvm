@@ -2,10 +2,7 @@ package cucumber.runtime.jruby;
 
 import cucumber.io.Resource;
 import cucumber.io.ResourceLoader;
-import cucumber.runtime.Backend;
-import cucumber.runtime.CucumberException;
-import cucumber.runtime.Glue;
-import cucumber.runtime.PendingException;
+import cucumber.runtime.*;
 import cucumber.runtime.snippets.SnippetGenerator;
 import gherkin.formatter.model.Step;
 import org.jruby.CompatVersion;
@@ -26,6 +23,7 @@ public class JRubyBackend implements Backend {
     private final ScriptingContainer jruby = new ScriptingContainer();
     private Glue glue;
     private ResourceLoader resourceLoader;
+    private UnreportedStepExecutor unreportedStepExecutor;
 
     public JRubyBackend(ResourceLoader resourceLoader) throws UnsupportedEncodingException {
         this.resourceLoader = resourceLoader;
@@ -65,6 +63,11 @@ public class JRubyBackend implements Backend {
     }
 
     @Override
+    public void setUnreportedStepExecutor(UnreportedStepExecutor executor) {
+        this.unreportedStepExecutor = executor;
+    }
+
+    @Override
     public void buildWorld() {
         jruby.put("$world", new Object());
     }
@@ -91,7 +94,8 @@ public class JRubyBackend implements Backend {
     }
 
     public void runStep(String uri, Locale locale, String stepKeyword, String stepName, int line) throws Throwable {
-        glue.runUnreportedStep(uri, locale, stepKeyword, stepName, line);
+        //TODO: need a way to request running of an additional step!
+        unreportedStepExecutor.runUnreportedStep(uri, locale, stepKeyword, stepName, line);
     }
 
     public void addStepdef(RubyObject stepdef) {

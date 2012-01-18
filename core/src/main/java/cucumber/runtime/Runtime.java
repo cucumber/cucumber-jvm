@@ -28,7 +28,7 @@ import static java.util.Collections.emptyList;
 /**
  * This is the main entry point for running Cucumber features.
  */
-public class Runtime {
+public class Runtime implements UnreportedStepExecutor {
 
     private static final Object DUMMY_ARG = new Object();
     private static final byte ERRORS = 0x1;
@@ -67,6 +67,7 @@ public class Runtime {
         this.glue = new RuntimeGlue();
         for (Backend backend : backends) {
             backend.loadGlue(glue, gluePaths);
+            backend.setUnreportedStepExecutor(this);
         }
     }
 
@@ -215,6 +216,7 @@ public class Runtime {
 
 
     //TODO: Maybe this should go into the cucumber step execution model and it should return the result of that execution!
+    @Override
     public void runUnreportedStep(String uri, Locale locale, String stepKeyword, String stepName, int line) throws Throwable {
         Step step = new Step(Collections.<Comment>emptyList(), stepKeyword, stepName, line, null, null);
 

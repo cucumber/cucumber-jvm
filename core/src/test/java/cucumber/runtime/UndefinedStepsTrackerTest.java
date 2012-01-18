@@ -57,6 +57,11 @@ public class UndefinedStepsTrackerTest {
         }
 
         @Override
+        public void setUnreportedStepExecutor(UnreportedStepExecutor executor) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
         public void buildWorld() {
             throw new UnsupportedOperationException();
         }

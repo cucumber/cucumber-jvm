@@ -8,6 +8,7 @@ import cucumber.io.ResourceLoader;
 import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Glue;
+import cucumber.runtime.UnreportedStepExecutor;
 import cucumber.runtime.snippets.SnippetGenerator;
 import gherkin.formatter.model.Step;
 
@@ -37,6 +38,11 @@ public class ClojureBackend implements Backend {
             }
         }
 
+    }
+
+    @Override
+    public void setUnreportedStepExecutor(UnreportedStepExecutor executor) {
+        //Not used yet
     }
 
     @Override

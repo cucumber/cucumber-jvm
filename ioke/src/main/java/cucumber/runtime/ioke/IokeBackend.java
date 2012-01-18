@@ -5,6 +5,7 @@ import cucumber.io.ResourceLoader;
 import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Glue;
+import cucumber.runtime.UnreportedStepExecutor;
 import cucumber.runtime.snippets.SnippetGenerator;
 import cucumber.table.DataTable;
 import gherkin.formatter.model.Step;
@@ -50,6 +51,11 @@ public class IokeBackend implements Backend {
                 evaluate(resource);
             }
         }
+    }
+
+    @Override
+    public void setUnreportedStepExecutor(UnreportedStepExecutor executor) {
+        //Not used yet
     }
 
     @Override
