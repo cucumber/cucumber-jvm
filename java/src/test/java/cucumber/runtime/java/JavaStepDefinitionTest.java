@@ -38,7 +38,7 @@ public class JavaStepDefinitionTest {
     private final Defs defs = new Defs();
     private final JavaBackend backend = new JavaBackend(new SingletonFactory(defs));
     private final Runtime runtime = new Runtime(NO_PATHS, new ClasspathResourceLoader(), asList(backend), false);
-    private final Glue glue = new RuntimeGlue(runtime);
+    private final Glue glue = runtime.getGlue();
 
     @org.junit.Before
     public void loadNoGlue() {
@@ -51,8 +51,9 @@ public class JavaStepDefinitionTest {
         backend.addStepDefinition(BAR.getAnnotation(Given.class), BAR);
 
         Reporter reporter = mock(Reporter.class);
-        glue.buildBackendContextAndRunBeforeHooks(reporter, asSet("@foo"));
-        glue.runStep("uri", new Step(NO_COMMENTS, "Given ", "pattern", 1, null, null), reporter, Locale.US);
+        runtime.buildBackendWorlds();
+        runtime.runBeforeHooks(reporter, asSet("@foo"));
+        runtime.runStep("uri", new Step(NO_COMMENTS, "Given ", "pattern", 1, null, null), reporter, Locale.US);
     }
 
     @Test
@@ -60,9 +61,10 @@ public class JavaStepDefinitionTest {
         backend.addStepDefinition(FOO.getAnnotation(Given.class), FOO);
 
         Reporter reporter = mock(Reporter.class);
-        glue.buildBackendContextAndRunBeforeHooks(reporter, asSet("@foo"));
+        runtime.buildBackendWorlds();
+        runtime.runBeforeHooks(reporter,asSet("@foo"));
         Step step = new Step(NO_COMMENTS, "Given ", "pattern", 1, null, null);
-        glue.runStep("uri", step, reporter, Locale.US);
+        runtime.runStep("uri", step, reporter, Locale.US);
         assertTrue(defs.foo);
         assertFalse(defs.bar);
     }

@@ -29,7 +29,7 @@ public class JavaStepDefinitionDependencyInjectionTest {
 
     private final ObjectFactory mockObjectFactory = mock(ObjectFactory.class);
     private final JavaBackend backend = new JavaBackend(mockObjectFactory);
-    private final Glue glue = new RuntimeGlue(null);
+    private final Glue glue = new RuntimeGlue();
 
     @org.junit.Before
     public void loadNoGlue() {

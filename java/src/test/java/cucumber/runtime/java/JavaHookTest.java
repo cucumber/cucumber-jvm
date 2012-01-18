@@ -31,7 +31,7 @@ public class JavaHookTest {
     }
 
     private final JavaBackend backend = new JavaBackend(mock(ObjectFactory.class));
-    private final Glue glue = new RuntimeGlue(null);
+    private final Glue glue = new RuntimeGlue();
 
     @org.junit.Before
     public void loadNoGlue() {
