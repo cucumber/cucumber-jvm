@@ -49,21 +49,23 @@ class ExecutionUnitRunner extends ParentRunner<Step> {
     public void run(RunNotifier notifier) {
         jUnitReporter.startExecutionUnit(this, notifier);
 
-
-
         //No tags from the junit side?
-        glue.buildBackendContextAndRunBeforeHooks(jUnitReporter, new HashSet<String>());
-        cucumberScenario.runBackground(jUnitReporter.getFormatter(), jUnitReporter.getReporter(), glue);
+        runtime.buildBackendWorlds();
+        runtime.runBeforeHooks(jUnitReporter, new HashSet<String>());
+
+        cucumberScenario.runBackground(jUnitReporter.getFormatter(), jUnitReporter.getReporter(), runtime);
         cucumberScenario.format(jUnitReporter);
         // Run the steps (the children)
         super.run(notifier);
-        glue.runAfterHooksAndDisposeBackendContext(jUnitReporter, new HashSet<String>());
+        runtime.runAfterHooks(jUnitReporter,  new HashSet<String>());
+
+        runtime.disposeBackendWorlds();
 
         jUnitReporter.finishExecutionUnit();
     }
 
     @Override
     protected void runChild(Step step, RunNotifier notifier) {
-        cucumberScenario.runStep(step, jUnitReporter, glue);
+        cucumberScenario.runStep(step, jUnitReporter, runtime);
     }
 }
