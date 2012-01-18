@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -36,41 +37,34 @@
 
     <build>
         <plugins>
-            <!-- Don't use JUnit to run cukes -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.10</version>
-                <configuration>
-                    <skipTests>true</skipTests>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>1.2.1</version>
+                <artifactId>maven-antrun-plugin</artifactId>
                 <executions>
-                    <!-- Run with CLI runnner -->
                     <execution>
-                        <phase>test</phase>
+                        <id>CLI-test</id>
+                        <phase>integration-test</phase>
                         <goals>
-                            <goal>exec</goal>
+                            <goal>run</goal>
                         </goals>
                         <configuration>
-                            <executable>java</executable>
-                            <classpathScope>test</classpathScope>
-                            <arguments>
-                                <argument>-classpath</argument>
-                                <classpath />
-                                <argument>cucumber.cli.Main</argument>
-                                <argument>--dotcucumber</argument>
-                                <argument>${basedir}/src/test/resources/.cucumber</argument>
-                                <argument>--format</argument>
-                                <argument>progress</argument>
-                                <argument>--glue</argument>
-                                <argument>cucumber.runtime.java.picocontainer</argument>
-                                <argument>.</argument>
-                            </arguments>
+                            <target>
+                                <echo message="Running CLI test for picocontainer"/>
+                                <java classname="cucumber.cli.Main"
+                                      fork="true"
+                                      failonerror="true"
+                                      newenvironment="true"
+                                      maxmemory="512m"
+                                      classpathref="maven.runtime.classpath">
+                                    <arg value="--dotcucumber"/>
+                                    <arg value="${basedir}/target/.cucumber"/>
+                                    <arg value="--format"/>
+                                    <arg value="progress"/>
+                                    <arg value="--glue"/>
+                                    <arg value="cucumber.runtime.java.picocontainer"/>
+                                    <arg value="${basedir}/src/test/resources/cucumber/runtime/java/picocontainer"/>
+                                </java>
+                            </target>
                         </configuration>
                     </execution>
                 </executions>
