@@ -38,10 +38,9 @@ public class RhinoBackend implements Backend {
     }
 
     @Override
-    public void buildWorld(List<String> gluePaths, World world) {
-        this.gluePaths = gluePaths;
+    public void loadGlue(World world, List<String> gluePaths) {
         this.world = world;
-
+        this.gluePaths = gluePaths;
         for (String gluePath : gluePaths) {
             Iterable<Resource> resources = resourceLoader.resources(gluePath, ".js");
             for (Resource resource : resources) {
@@ -52,6 +51,10 @@ public class RhinoBackend implements Backend {
                 }
             }
         }
+    }
+
+    @Override
+    public void buildWorld() {
     }
 
     @Override

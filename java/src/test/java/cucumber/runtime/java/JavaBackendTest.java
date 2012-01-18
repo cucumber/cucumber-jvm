@@ -23,7 +23,8 @@ public class JavaBackendTest {
         ObjectFactory factory = new DefaultJavaObjectFactory();
         JavaBackend backend = new JavaBackend(factory);
         WorldStub world = new WorldStub();
-        backend.buildWorld(asList("cucumber/runtime/java/test"), world);
+        backend.loadGlue(world, asList("cucumber/runtime/java/test"));
+        backend.buildWorld();
         assertEquals(Stepdefs.class, factory.getInstance(Stepdefs.class).getClass());
     }
 

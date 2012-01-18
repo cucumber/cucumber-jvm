@@ -40,7 +40,7 @@ public class GroovyBackend implements Backend {
     }
 
     @Override
-    public void buildWorld(List<String> gluePaths, World world) {
+    public void loadGlue(World world, List<String> gluePaths) {
         this.world = world;
         final Binding context = new Binding();
 
@@ -53,7 +53,10 @@ public class GroovyBackend implements Backend {
                 }
             }
         }
-        
+    }
+
+    @Override
+    public void buildWorld() {
     }
 
     private Script parse(Resource resource) {

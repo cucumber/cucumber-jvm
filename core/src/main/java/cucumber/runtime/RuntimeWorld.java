@@ -14,6 +14,9 @@ public class RuntimeWorld implements World {
     private static final Object DUMMY_ARG = new Object();
 
     // TODO - it's expensive to create a new LocalizedXStreams for each scenario - reuse a global one. (heh, except world is being recreated each time!)
+    /*
+    In the light of how this class is now used - one instance - purpose is to store glue code - I think we should rename it to RuntimeGlue implements Glue.
+     */
     private final LocalizedXStreams localizedXStreams = new LocalizedXStreams();
     private final List<StepDefinition> stepDefinitions = new ArrayList<StepDefinition>();
     private final List<HookDefinition> beforeHooks = new ArrayList<HookDefinition>();
@@ -26,12 +29,13 @@ public class RuntimeWorld implements World {
 
     public RuntimeWorld(Runtime runtime) {
         //TODO: does the runtime world need to see the runtime?
+        // AH: No, it shouldn't - it's a cyclic dependency we should get rid of
         this.runtime = runtime;
     }
 
     @Override
     public void buildBackendContextAndRunBeforeHooks(Reporter reporter, Set<String> tags) {
-        runtime.buildBackendWorlds(this);
+        runtime.buildBackendWorlds();
         Collections.sort(beforeHooks, new HookComparator(true));
         runHooks(beforeHooks, reporter, tags);
     }

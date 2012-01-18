@@ -9,11 +9,12 @@ import cucumber.runtime.World;
 import org.junit.Test;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Collections;
 
 import static java.util.Arrays.asList;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
 public class JavaHookTest {
@@ -32,9 +33,14 @@ public class JavaHookTest {
     private final JavaBackend backend = new JavaBackend(mock(ObjectFactory.class));
     private final World world = new RuntimeWorld(null);
 
+    @org.junit.Before
+    public void loadNoGlue() {
+        backend.loadGlue(world, Collections.<String>emptyList());
+    }
+
     @Test
     public void before_hooks_get_registered() throws Exception {
-        backend.buildWorld(Collections.<String>emptyList(), world);
+        backend.buildWorld();
         backend.addHook(BEFORE.getAnnotation(Before.class), BEFORE);
         JavaHookDefinition hookDef = (JavaHookDefinition) world.getBeforeHooks().get(0);
         assertEquals(0, world.getAfterHooks().size());
@@ -43,7 +49,7 @@ public class JavaHookTest {
 
     @Test
     public void after_hooks_get_registered() throws Exception {
-        backend.buildWorld(Collections.<String>emptyList(), world);
+        backend.buildWorld();
         backend.addHook(AFTER.getAnnotation(After.class), AFTER);
         JavaHookDefinition hookDef = (JavaHookDefinition) world.getAfterHooks().get(0);
         assertEquals(0, world.getBeforeHooks().size());
@@ -52,7 +58,7 @@ public class JavaHookTest {
 
     @Test
     public void hook_order_gets_registered() {
-        backend.buildWorld(Collections.<String>emptyList(), world);
+        backend.buildWorld();
         backend.addHook(AFTER.getAnnotation(After.class), AFTER);
         HookDefinition hookDef = world.getAfterHooks().get(0);
         assertEquals(1, hookDef.getOrder());
@@ -60,7 +66,7 @@ public class JavaHookTest {
 
     @Test
     public void hook_with_no_order_is_last() {
-        backend.buildWorld(Collections.<String>emptyList(), world);
+        backend.buildWorld();
         backend.addHook(BEFORE.getAnnotation(Before.class), BEFORE);
         HookDefinition hookDef = world.getBeforeHooks().get(0);
         assertEquals(Integer.MAX_VALUE, hookDef.getOrder());
@@ -68,7 +74,7 @@ public class JavaHookTest {
 
     @Test
     public void matches_matching_tags() {
-        backend.buildWorld(Collections.<String>emptyList(), world);
+        backend.buildWorld();
         backend.addHook(BEFORE.getAnnotation(Before.class), BEFORE);
         HookDefinition before = world.getBeforeHooks().get(0);
         assertTrue(before.matches(asList("@bar", "@zap")));
@@ -76,7 +82,7 @@ public class JavaHookTest {
 
     @Test
     public void does_not_match_non_matching_tags() {
-        backend.buildWorld(Collections.<String>emptyList(), world);
+        backend.buildWorld();
         backend.addHook(BEFORE.getAnnotation(Before.class), BEFORE);
         HookDefinition before = world.getBeforeHooks().get(0);
         assertFalse(before.matches(asList("@bar")));

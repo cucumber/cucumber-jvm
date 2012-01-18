@@ -38,28 +38,31 @@ public class JavaStepDefinitionTest {
     private final Defs defs = new Defs();
     private final JavaBackend backend = new JavaBackend(new SingletonFactory(defs));
     private final Runtime runtime = new Runtime(NO_PATHS, new ClasspathResourceLoader(), asList(backend), false);
-    private final World fooWorld = new RuntimeWorld(runtime); //asList("@foo")
+    private final World world = new RuntimeWorld(runtime);
+
+    @org.junit.Before
+    public void loadNoGlue() {
+        backend.loadGlue(world, Collections.<String>emptyList());
+    }
 
     @Test(expected = AmbiguousStepDefinitionsException.class)
     public void throws_ambiguous_when_two_matches_are_found() throws Throwable {
-        backend.buildWorld(NO_PATHS, fooWorld);
         backend.addStepDefinition(FOO.getAnnotation(Given.class), FOO);
         backend.addStepDefinition(BAR.getAnnotation(Given.class), BAR);
 
         Reporter reporter = mock(Reporter.class);
-        fooWorld.buildBackendContextAndRunBeforeHooks(reporter, asSet("@foo"));
-        fooWorld.runStep("uri", new Step(NO_COMMENTS, "Given ", "pattern", 1, null, null), reporter, Locale.US);
+        world.buildBackendContextAndRunBeforeHooks(reporter, asSet("@foo"));
+        world.runStep("uri", new Step(NO_COMMENTS, "Given ", "pattern", 1, null, null), reporter, Locale.US);
     }
 
     @Test
     public void does_not_throw_ambiguous_when_nothing_is_ambiguous() throws Throwable {
-        backend.buildWorld(NO_PATHS, fooWorld);
         backend.addStepDefinition(FOO.getAnnotation(Given.class), FOO);
 
         Reporter reporter = mock(Reporter.class);
-        fooWorld.buildBackendContextAndRunBeforeHooks(reporter, asSet("@foo"));
+        world.buildBackendContextAndRunBeforeHooks(reporter, asSet("@foo"));
         Step step = new Step(NO_COMMENTS, "Given ", "pattern", 1, null, null);
-        fooWorld.runStep("uri", step, reporter, Locale.US);
+        world.runStep("uri", step, reporter, Locale.US);
         assertTrue(defs.foo);
         assertFalse(defs.bar);
     }

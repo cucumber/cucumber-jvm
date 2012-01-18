@@ -52,7 +52,12 @@ public class UndefinedStepsTrackerTest {
 
     private class TestBackend implements Backend {
         @Override
-        public void buildWorld(List<String> gluePaths, World world) {
+        public void loadGlue(World world, List<String> gluePaths) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void buildWorld() {
             throw new UnsupportedOperationException();
         }
 

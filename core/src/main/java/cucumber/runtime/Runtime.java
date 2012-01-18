@@ -29,13 +29,11 @@ import static java.util.Collections.emptyList;
 public class Runtime {
     private static final byte ERRORS = 0x1;
     private static final List<Object> NO_FILTERS = emptyList();
-    private static final Collection<String> NO_TAGS = emptyList();
 
     private final UndefinedStepsTracker tracker;
     private final List<Throwable> errors = new ArrayList<Throwable>();
     private final Collection<? extends Backend> backends;
     private final boolean isDryRun;
-    private final List<String> gluePaths;
     private final ResourceLoader resourceLoader;
 
     private World world;
@@ -49,13 +47,15 @@ public class Runtime {
     }
 
     public Runtime(List<String> gluePaths, ResourceLoader resourceLoader, Collection<? extends Backend> backends, boolean isDryRun) {
-        this.gluePaths = gluePaths;
         this.backends = backends;
         this.resourceLoader = resourceLoader;
         this.isDryRun = isDryRun;
         this.tracker = new UndefinedStepsTracker(backends);
 
         this.world = new RuntimeWorld(this);
+        for (Backend backend : backends) {
+            backend.loadGlue(world, gluePaths);
+        }
     }
 
     private static Collection<? extends Backend> loadBackends(ResourceLoader resourceLoader) {
@@ -89,9 +89,9 @@ public class Runtime {
         formatter.eof();
     }
 
-    public void buildBackendWorlds(World world) {
+    public void buildBackendWorlds() {
         for (Backend backend : backends) {
-            backend.buildWorld(gluePaths, world);
+            backend.buildWorld();
         }
         tracker.reset();
     }
@@ -111,9 +111,7 @@ public class Runtime {
      */
     public void writeStepdefsJson(List<String> featurePaths, File dotCucumber) throws IOException {
         List<CucumberFeature> features = load(resourceLoader, featurePaths, NO_FILTERS);
-        //TODO: ensure that tagging still works
-        //World world = new RuntimeWorld(this, NO_TAGS);
-        buildBackendWorlds(world);
+        buildBackendWorlds();
         List<StepDefinition> stepDefs = world.getStepDefinitions();
         List<MetaStepdef> metaStepdefs = new StepdefGenerator().generate(stepDefs, features);
         Gson gson = new GsonBuilder().setPrettyPrinting().create();

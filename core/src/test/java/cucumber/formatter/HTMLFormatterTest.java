@@ -1,8 +1,8 @@
 package cucumber.formatter;
 
 import cucumber.io.ClasspathResourceLoader;
+import cucumber.runtime.Backend;
 import cucumber.runtime.Runtime;
-import cucumber.runtime.StubBackend;
 import cucumber.runtime.model.CucumberFeature;
 import org.junit.Test;
 import org.mozilla.javascript.Context;
@@ -14,11 +14,11 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
 
-import static gherkin.util.FixJava.readReader;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
 
 public class HTMLFormatterTest {
     @Test
@@ -28,7 +28,7 @@ public class HTMLFormatterTest {
         ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader();
         List<CucumberFeature> features = CucumberFeature.load(resourceLoader, asList("cucumber/formatter/HTMLFormatterTest.feature"), emptyList());
         List<String> gluePaths = emptyList();
-        Runtime runtime = new Runtime(gluePaths, resourceLoader, asList(new StubBackend()), false);
+        Runtime runtime = new Runtime(gluePaths, resourceLoader, asList(mock(Backend.class)), false);
         runtime.run(features.get(0), f, f);
         f.done();
 

@@ -3,7 +3,6 @@ package cucumber.cli;
 import cucumber.formatter.FormatterFactory;
 import cucumber.formatter.MultiFormatter;
 import cucumber.io.FileResourceLoader;
-import cucumber.io.OneTimeResourceLoader;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.snippets.SummaryPrinter;
 import gherkin.formatter.Formatter;
@@ -72,7 +71,7 @@ public class Main {
             System.exit(1);
         }
 
-        Runtime runtime = new Runtime(gluePaths, new OneTimeResourceLoader(new FileResourceLoader()), isDryRun);
+        Runtime runtime = new Runtime(gluePaths, new FileResourceLoader(), isDryRun);
 
         if (dotCucumber != null) {
             writeDotCucumber(featurePaths, dotCucumber, runtime);

@@ -30,8 +30,7 @@ public class JythonBackend implements Backend {
     }
 
     @Override
-    public void buildWorld(List<String> gluePaths, World world) {
-        this.pyWorld = jython.eval("World()");
+    public void loadGlue(World world, List<String> gluePaths) {
         this.world = world;
 
         for (String gluePath : gluePaths) {
@@ -39,6 +38,11 @@ public class JythonBackend implements Backend {
                 execFile(resource);
             }
         }
+    }
+
+    @Override
+    public void buildWorld() {
+        this.pyWorld = jython.eval("World()");
     }
 
     private void execFile(Resource resource) {

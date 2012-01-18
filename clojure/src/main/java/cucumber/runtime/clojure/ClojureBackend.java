@@ -29,13 +29,18 @@ public class ClojureBackend implements Backend {
     }
 
     @Override
-    public void buildWorld(List<String> gluePaths, World world) {
+    public void loadGlue(World world, List<String> gluePaths) {
         this.world = world;
         for (String gluePath : gluePaths) {
             for (Resource resource : resourceLoader.resources(gluePath, ".clj")) {
                 loadScript(resource);
             }
         }
+
+    }
+
+    @Override
+    public void buildWorld() {
     }
 
     private void loadScript(String path) {

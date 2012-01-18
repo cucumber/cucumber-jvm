@@ -47,9 +47,13 @@ public class JavaBackend implements Backend {
     }
 
     @Override
-    public void buildWorld(List<String> gluePaths, World world) {
+    public void loadGlue(World world, List<String> gluePaths) {
         this.world = world;
         classpathMethodScanner.scan(this, gluePaths);
+    }
+
+    @Override
+    public void buildWorld() {
         objectFactory.createInstances();
     }
 

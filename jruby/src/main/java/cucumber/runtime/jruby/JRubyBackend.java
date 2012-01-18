@@ -55,15 +55,18 @@ public class JRubyBackend implements Backend {
     }
 
     @Override
-    public void buildWorld(List<String> gluePaths, World world) {
+    public void loadGlue(World world, List<String> gluePaths) {
         this.world = world;
-        jruby.put("$world", new Object());
-
         for (String gluePath : gluePaths) {
             for (Resource resource : resourceLoader.resources(gluePath, ".rb")) {
                 runScriptlet(resource);
             }
         }
+    }
+
+    @Override
+    public void buildWorld() {
+        jruby.put("$world", new Object());
     }
 
     private void runScriptlet(Resource resource) {

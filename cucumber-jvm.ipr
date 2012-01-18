@@ -21,6 +21,10 @@
       <entry name="?*.tld" />
       <entry name="?*.ftl" />
       <entry name="?*.feature" />
+      <entry name="?*.rb" />
+      <entry name="?*.groovy" />
+      <entry name="?*.py" />
+      <entry name="?*.ik" />
     </wildcardResourcePatterns>
     <annotationProcessing enabled="false" useClasspath="true" />
   </component>
@@ -282,7 +286,6 @@
       <module fileurl="file://$PROJECT_DIR$/openejb/cucumber-openejb.iml" filepath="$PROJECT_DIR$/openejb/cucumber-openejb.iml" />
       <module fileurl="file://$PROJECT_DIR$/picocontainer/cucumber-picocontainer.iml" filepath="$PROJECT_DIR$/picocontainer/cucumber-picocontainer.iml" />
       <module fileurl="file://$PROJECT_DIR$/rhino/cucumber-rhino.iml" filepath="$PROJECT_DIR$/rhino/cucumber-rhino.iml" />
-      <module fileurl="file://$PROJECT_DIR$/scala/cucumber-scala.iml" filepath="$PROJECT_DIR$/scala/cucumber-scala.iml" />
       <module fileurl="file://$PROJECT_DIR$/spring/cucumber-spring.iml" filepath="$PROJECT_DIR$/spring/cucumber-spring.iml" />
       <module fileurl="file://$PROJECT_DIR$/weld/cucumber-weld.iml" filepath="$PROJECT_DIR$/weld/cucumber-weld.iml" />
     </modules>

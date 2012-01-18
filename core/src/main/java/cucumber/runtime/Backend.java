@@ -6,13 +6,15 @@ import java.util.List;
 
 public interface Backend {
     /**
+     * Invoked once before all features. This is where stepdefs and hooks should be loaded.
+     */
+    void loadGlue(World world, List<String> gluePaths);
+
+    /**
      * Invoked before a new scenario starts. Implementations should do any necessary
      * setup of new, isolated state here.
-     *
-     * @param gluePaths where to load from
-     * @param world     into where
      */
-    void buildWorld(List<String> gluePaths, World world);
+    void buildWorld();
 
     void disposeWorld();
 

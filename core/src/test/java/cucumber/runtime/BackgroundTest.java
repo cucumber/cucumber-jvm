@@ -11,12 +11,12 @@ import java.util.ArrayList;
 import static cucumber.runtime.TestHelper.feature;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 
 public class BackgroundTest {
     @Test
     public void should_run_background() throws IOException {
-        Backend backend = new StubBackend();
-        Runtime runtime = new Runtime(new ArrayList<String>(), new ClasspathResourceLoader(), asList(backend), false);
+        Runtime runtime = new Runtime(new ArrayList<String>(), new ClasspathResourceLoader(), asList(mock(Backend.class)), false);
         CucumberFeature feature = feature("test.feature", "" +
                 "Feature:\n" +
                 "  Background:\n" +
