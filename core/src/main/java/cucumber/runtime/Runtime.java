@@ -47,7 +47,7 @@ public class Runtime {
     //TODO: These are really state machine variables, and I'm not sure the runtime is the best place for this state machine
     //They really should be created each time a scenario is run, not in here
     private boolean skipNextStep = false;
-    private final ScenarioResultImpl scenarioResult = null;
+    private ScenarioResultImpl scenarioResult = null;
 
 
     public Runtime(List<String> gluePaths, ResourceLoader resourceLoader) {
@@ -119,7 +119,9 @@ public class Runtime {
             backend.buildWorld();
         }
         tracker.reset();
+        //TODO: this is the initial state of the state machine, it should not go here, but into something else
         skipNextStep = false;
+        scenarioResult = new ScenarioResultImpl();
     }
 
     public void disposeBackendWorlds() {
