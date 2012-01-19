@@ -239,7 +239,7 @@
         <module>clojure</module>
         <module>jruby</module>
         <module>jython</module>
-        <module>scala</module>
+        <!--<module>scala</module>-->
         <module>openejb</module>
     </modules>
 
