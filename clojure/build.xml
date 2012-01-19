@@ -1,3 +1,0 @@
-<project name="cucumber-clojure" default="test">
-  <import file="../build-common.xml" />
-</project>

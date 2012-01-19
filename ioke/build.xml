@@ -1,3 +1,0 @@
-<project name="cucumber-ioke" default="test">
-  <import file="../build-common.xml" />
-</project>
