@@ -80,44 +80,19 @@ You will find an example in Git under examples/java-calculator. You should be ab
 
 ## Building Cucumber-JVM
 
-Cucumber-JVM can be built with both. [Ant](http://ant.apache.org/)+[Ivy](http://ant.apache.org/ivy) and [Maven](http://mvn.apache.org/). 
+Cucumber-JVM is built with [Maven](http://mvn.apache.org/). 
 
-The Ivy build is used primarily for making releases. It builds more artifacts than the Maven build does.
-
-The secondary one is based on [Maven](http://mvn.apache.org/). The Maven `pom.xml` files are generated from the `ivy.xml` files, and the main purpose of having a Maven based build is to make it easier to set up an IDEA or Eclipse project (by pointing to the root `pom.xml` file).
-
-### Ant+Ivy
-
-You have to increase the memory first:
-
-    export ANT_OPTS=-XX:MaxPermSize=512m
-
-Now you can build it:
-
-    ant
-
-This will compile everything, run JUnit tests and Cucumber scenarios - and finally install all jars in your local Maven repo.
-
-### Maven
-
-Before you can build with Maven you need to run the Ant+Ivy build once. This will generate some files that the Maven build is incapable of generating. Once that is done you should be able to build everything with:
-
-    mvn clean test
+    mvn clean install
 
 ## IDE Setup
 
 ### IntelliJ IDEA
 
-The top level directory has a `cucumber-jvm.ipr` project file that references a `cucumber-*.iml` files.
-Just run ant once (see above) and install the [IvyIDEA](http://code.google.com/p/ivyidea/) plugin. 
-
-Now, open the `cucumber-jvm.ipr` project and you should be good to go.
-
-(We might remove the `.ipr` and `.iml` files and recommend that people load the project by pointing to the root `pom.xml` instead)
+    File -> Open Project -> path/to/cucumber-jvm/pom.xml
 
 ### Eclipse
 
-Just load the root `pom.xml`
+    Just load the root `pom.xml`
 
 ## Contributing/Hacking
 

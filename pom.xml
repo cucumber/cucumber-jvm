@@ -240,7 +240,7 @@
         <module>jruby</module>
         <module>jython</module>
         <!--<module>scala</module>-->
-        <module>openejb</module>
+        <!--<module>openejb</module>-->
     </modules>
 
     <profiles>
