@@ -2,10 +2,7 @@ package cucumber.runtime.jruby;
 
 import cucumber.io.Resource;
 import cucumber.io.ResourceLoader;
-import cucumber.runtime.Backend;
-import cucumber.runtime.CucumberException;
-import cucumber.runtime.PendingException;
-import cucumber.runtime.World;
+import cucumber.runtime.*;
 import cucumber.runtime.snippets.SnippetGenerator;
 import gherkin.formatter.model.Step;
 import org.jruby.CompatVersion;
@@ -24,8 +21,9 @@ public class JRubyBackend implements Backend {
     private static final String DSL = "/cucumber/runtime/jruby/dsl.rb";
     private final SnippetGenerator snippetGenerator = new SnippetGenerator(new JRubySnippet());
     private final ScriptingContainer jruby = new ScriptingContainer();
-    private World world;
+    private Glue glue;
     private ResourceLoader resourceLoader;
+    private UnreportedStepExecutor unreportedStepExecutor;
 
     public JRubyBackend(ResourceLoader resourceLoader) throws UnsupportedEncodingException {
         this.resourceLoader = resourceLoader;
@@ -55,15 +53,23 @@ public class JRubyBackend implements Backend {
     }
 
     @Override
-    public void buildWorld(List<String> gluePaths, World world) {
-        this.world = world;
-        jruby.put("$world", new Object());
-
+    public void loadGlue(Glue glue, List<String> gluePaths) {
+        this.glue = glue;
         for (String gluePath : gluePaths) {
             for (Resource resource : resourceLoader.resources(gluePath, ".rb")) {
                 runScriptlet(resource);
             }
         }
+    }
+
+    @Override
+    public void setUnreportedStepExecutor(UnreportedStepExecutor executor) {
+        this.unreportedStepExecutor = executor;
+    }
+
+    @Override
+    public void buildWorld() {
+        jruby.put("$world", new Object());
     }
 
     private void runScriptlet(Resource resource) {
@@ -88,19 +94,20 @@ public class JRubyBackend implements Backend {
     }
 
     public void runStep(String uri, Locale locale, String stepKeyword, String stepName, int line) throws Throwable {
-        world.runUnreportedStep(uri, locale, stepKeyword, stepName, line);
+        //TODO: need a way to request running of an additional step!
+        unreportedStepExecutor.runUnreportedStep(uri, locale, stepKeyword, stepName, line);
     }
 
     public void addStepdef(RubyObject stepdef) {
-        world.addStepDefinition(new JRubyStepDefinition(stepdef));
+        glue.addStepDefinition(new JRubyStepDefinition(stepdef));
     }
 
     public void addBeforeHook(RubyObject body) {
-        world.addBeforeHook(new JRubyHookDefinition(new String[0], body));
+        glue.addBeforeHook(new JRubyHookDefinition(new String[0], body));
     }
 
     public void addAfterHook(RubyObject body) {
-        world.addAfterHook(new JRubyHookDefinition(new String[0], body));
+        glue.addAfterHook(new JRubyHookDefinition(new String[0], body));
     }
 
 }

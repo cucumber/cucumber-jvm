@@ -4,7 +4,8 @@ import cucumber.io.Resource;
 import cucumber.io.ResourceLoader;
 import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
-import cucumber.runtime.World;
+import cucumber.runtime.Glue;
+import cucumber.runtime.UnreportedStepExecutor;
 import cucumber.runtime.snippets.SnippetGenerator;
 import cucumber.table.DataTable;
 import gherkin.formatter.model.Step;
@@ -24,7 +25,7 @@ public class IokeBackend implements Backend {
     private final List<Runtime.RescueInfo> failureRescues;
     private final List<Runtime.RescueInfo> pendingRescues;
     private String currentLocation;
-    private World world;
+    private Glue glue;
 
     public IokeBackend(ResourceLoader resourceLoader) {
         this.resourceLoader = resourceLoader;
@@ -41,8 +42,8 @@ public class IokeBackend implements Backend {
     }
 
     @Override
-    public void buildWorld(List<String> gluePaths, World world) {
-        this.world = world;
+    public void loadGlue(Glue glue, List<String> gluePaths) {
+        this.glue = glue;
 
         for (String gluePath : gluePaths) {
             for (Resource resource : resourceLoader.resources(gluePath, ".ik")) {
@@ -50,6 +51,15 @@ public class IokeBackend implements Backend {
                 evaluate(resource);
             }
         }
+    }
+
+    @Override
+    public void setUnreportedStepExecutor(UnreportedStepExecutor executor) {
+        //Not used yet
+    }
+
+    @Override
+    public void buildWorld() {
     }
 
     private void evaluate(Resource resource) {
@@ -71,7 +81,7 @@ public class IokeBackend implements Backend {
     }
 
     public void addStepDefinition(Object iokeStepDefObject) throws Throwable {
-        world.addStepDefinition(new IokeStepDefinition(this, ioke, (IokeObject) iokeStepDefObject, currentLocation));
+        glue.addStepDefinition(new IokeStepDefinition(this, ioke, (IokeObject) iokeStepDefObject, currentLocation));
     }
 
     private List<Runtime.RescueInfo> createRescues(String... names) throws ControlFlow {
