@@ -1,0 +1,68 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>info.cukes</groupId>
+        <artifactId>cucumber-jvm</artifactId>
+        <relativePath>../pom.xml</relativePath>
+        <version>1.0.1.RC7-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>cucumber-picocontainer</artifactId>
+    <packaging>jar</packaging>
+    <name>Cucumber-JVM: PicoContainer</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>info.cukes</groupId>
+            <artifactId>cucumber-java</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.picocontainer</groupId>
+            <artifactId>picocontainer</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>info.cukes</groupId>
+            <artifactId>cucumber-junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>CLI-test</id>
+                        <phase>integration-test</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <echo message="Running CLI test for picocontainer" />
+                                <java classname="cucumber.cli.Main" fork="true" failonerror="true" newenvironment="true" maxmemory="512m" classpathref="maven.runtime.classpath">
+                                    <arg value="--dotcucumber" />
+                                    <arg value="${basedir}/target/.cucumber" />
+                                    <arg value="--format" />
+                                    <arg value="progress" />
+                                    <arg value="--glue" />
+                                    <arg value="cucumber.runtime.java.picocontainer" />
+                                    <arg value="${basedir}/src/test/resources/cucumber/runtime/java/picocontainer" />
+                                </java>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

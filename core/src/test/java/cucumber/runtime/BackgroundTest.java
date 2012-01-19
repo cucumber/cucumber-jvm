@@ -3,22 +3,20 @@ package cucumber.runtime;
 import cucumber.io.ClasspathResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
 import gherkin.formatter.PrettyFormatter;
-import gherkin.formatter.model.Step;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 import static cucumber.runtime.TestHelper.feature;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 
 public class BackgroundTest {
     @Test
     public void should_run_background() throws IOException {
-        Backend backend = new TestBackend();
-        Runtime runtime = new Runtime(new ArrayList<String>(), new ClasspathResourceLoader(), asList(backend), false);
+        Runtime runtime = new Runtime(new ArrayList<String>(), new ClasspathResourceLoader(), asList(mock(Backend.class)), false);
         CucumberFeature feature = feature("test.feature", "" +
                 "Feature:\n" +
                 "  Background:\n" +
@@ -42,18 +40,4 @@ public class BackgroundTest {
 
     // TODO: Add some negative tests to verify how it behaves with failure
 
-    private class TestBackend implements Backend {
-        @Override
-        public void buildWorld(List<String> gluePaths, World world) {
-        }
-
-        @Override
-        public void disposeWorld() {
-        }
-
-        @Override
-        public String getSnippet(Step step) {
-            return "SNIP";
-        }
-    }
 }

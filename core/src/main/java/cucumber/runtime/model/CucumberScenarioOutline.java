@@ -34,7 +34,7 @@ public class CucumberScenarioOutline extends CucumberTagStatement {
             cucumberExamples.format(formatter);
             List<CucumberScenario> exampleScenarios = cucumberExamples.createExampleScenarios();
             for (CucumberScenario exampleScenario : exampleScenarios) {
-                exampleScenario.run(formatter, reporter, runtime);
+                exampleScenario.run(formatter, reporter, runtime );
             }
         }
     }

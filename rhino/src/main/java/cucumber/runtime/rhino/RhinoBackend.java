@@ -4,7 +4,8 @@ import cucumber.io.Resource;
 import cucumber.io.ResourceLoader;
 import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
-import cucumber.runtime.World;
+import cucumber.runtime.Glue;
+import cucumber.runtime.UnreportedStepExecutor;
 import cucumber.runtime.javascript.JavaScriptSnippet;
 import cucumber.runtime.snippets.SnippetGenerator;
 import gherkin.formatter.model.Step;
@@ -26,7 +27,7 @@ public class RhinoBackend implements Backend {
     private final Context cx;
     private final Scriptable scope;
     private List<String> gluePaths;
-    private World world;
+    private Glue glue;
 
     public RhinoBackend(ResourceLoader resourceLoader) throws IOException {
         this.resourceLoader = resourceLoader;
@@ -38,10 +39,9 @@ public class RhinoBackend implements Backend {
     }
 
     @Override
-    public void buildWorld(List<String> gluePaths, World world) {
+    public void loadGlue(Glue glue, List<String> gluePaths) {
+        this.glue = glue;
         this.gluePaths = gluePaths;
-        this.world = world;
-
         for (String gluePath : gluePaths) {
             Iterable<Resource> resources = resourceLoader.resources(gluePath, ".js");
             for (Resource resource : resources) {
@@ -52,6 +52,15 @@ public class RhinoBackend implements Backend {
                 }
             }
         }
+    }
+
+    @Override
+    public void setUnreportedStepExecutor(UnreportedStepExecutor executor) {
+        //Not used yet
+    }
+
+    @Override
+    public void buildWorld() {
     }
 
     @Override
@@ -83,6 +92,6 @@ public class RhinoBackend implements Backend {
     public void addStepDefinition(Global jsStepDefinition, NativeRegExp regexp, NativeFunction bodyFunc, NativeFunction argumentsFromFunc) throws Throwable {
         StackTraceElement stepDefLocation = stepDefLocation(".js");
         RhinoStepDefinition stepDefinition = new RhinoStepDefinition(cx, scope, jsStepDefinition, regexp, bodyFunc, stepDefLocation, argumentsFromFunc);
-        world.addStepDefinition(stepDefinition);
+        glue.addStepDefinition(stepDefinition);
     }
 }

@@ -8,7 +8,8 @@ import cucumber.io.ClasspathResourceLoader;
 import cucumber.io.ResourceLoader;
 import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
-import cucumber.runtime.World;
+import cucumber.runtime.Glue;
+import cucumber.runtime.UnreportedStepExecutor;
 import cucumber.runtime.snippets.SnippetGenerator;
 import gherkin.formatter.model.Step;
 
@@ -26,7 +27,7 @@ public class JavaBackend implements Backend {
     private final Set<Class> stepDefinitionClasses = new HashSet<Class>();
     private final ObjectFactory objectFactory;
     private final ClasspathMethodScanner classpathMethodScanner = new ClasspathMethodScanner();
-    private World world;
+    private Glue glue;
 
     public JavaBackend(ResourceLoader ignored) {
         ObjectFactory foundOF;
@@ -47,9 +48,18 @@ public class JavaBackend implements Backend {
     }
 
     @Override
-    public void buildWorld(List<String> gluePaths, World world) {
-        this.world = world;
+    public void loadGlue(Glue glue, List<String> gluePaths) {
+        this.glue = glue;
         classpathMethodScanner.scan(this, gluePaths);
+    }
+
+    @Override
+    public void setUnreportedStepExecutor(UnreportedStepExecutor executor) {
+        //Not used here yet
+    }
+
+    @Override
+    public void buildWorld() {
         objectFactory.createInstances();
     }
 
@@ -71,7 +81,7 @@ public class JavaBackend implements Backend {
                 Pattern pattern = Pattern.compile(regexpString);
                 Class<?> clazz = method.getDeclaringClass();
                 registerClassInObjectFactory(clazz);
-                world.addStepDefinition(new JavaStepDefinition(method, pattern, objectFactory));
+                glue.addStepDefinition(new JavaStepDefinition(method, pattern, objectFactory));
             }
         } catch (NoSuchMethodException e) {
             throw new CucumberException(e);
@@ -91,10 +101,10 @@ public class JavaBackend implements Backend {
 
         if (annotation.annotationType().equals(Before.class)) {
             String[] tagExpressions = ((Before) annotation).value();
-            world.addBeforeHook(new JavaHookDefinition(method, tagExpressions, hookOrder, objectFactory));
+            glue.addBeforeHook(new JavaHookDefinition(method, tagExpressions, hookOrder, objectFactory));
         } else {
             String[] tagExpressions = ((After) annotation).value();
-            world.addAfterHook(new JavaHookDefinition(method, tagExpressions, hookOrder, objectFactory));
+            glue.addAfterHook(new JavaHookDefinition(method, tagExpressions, hookOrder, objectFactory));
         }
     }
 

@@ -26,11 +26,17 @@ class ScalaBackend(ignore:ResourceLoader) extends Backend {
 
   def getSnippet(step: Step) = snippetGenerator.getSnippet(step)
 
-  def buildWorld(gluePaths: JList[String], world: World) {
+  def buildWorld() {
+    //I don't believe scala has to do anything to clean out it's world
+  }
+
+  def loadGlue(glue: Glue,  gluePaths: JList[String]) {
     instances = gluePaths flatMap { new ClasspathResourceLoader().instantiateSubclasses(classOf[ScalaDsl], _, Array(), Array()) }
 
-    getStepDefinitions map {world.addStepDefinition(_)}
-    getBeforeHooks map {world.addBeforeHook(_)}
-    getAfterHooks map  {world.addAfterHook(_)}
+    getStepDefinitions map {glue.addStepDefinition(_)}
+    getBeforeHooks map {glue.addBeforeHook(_)}
+    getAfterHooks map  {glue.addAfterHook(_)}
   }
+
+  def setUnreportedStepExecutor(executor:UnreportedStepExecutor) {}
 }

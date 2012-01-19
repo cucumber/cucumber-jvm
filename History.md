@@ -1,4 +1,8 @@
-## In Git
+## 1.0.0.RC6
+
+* [Build] Maven pom.xml files are back (generated from ivy.xml). Ant+Ivy still needed for bootstrapping. 
+
+## 1.0.0.RC5
 
 * [Clojure] Snippets use single quote instead of double quote for comments.
 * [All] Stepdefs in jars were not loaded correctly on Windows. ([#139](https://github.com/cucumber/cucumber-jvm/issues/139))

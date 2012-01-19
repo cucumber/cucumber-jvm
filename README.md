@@ -28,7 +28,7 @@ Releases are published in [Maven Central](http://search.maven.org/)
 ### Getting jars
 
 Jar files can be browsed and downloaded from [Maven Central] or https://oss.sonatype.org/content/repositories/releases/info/cukes/ 
-(New releases will show up here immediately, while it takes a couple of hours to sync to MAven Central).
+(New releases will show up here immediately, while it takes a couple of hours to sync to Maven Central).
 
 ### Using Maven
 
@@ -38,7 +38,7 @@ Add a dependency in your [POM](http://maven.apache.org/pom.html):
 <dependency>
     <groupId>info.cukes</groupId>
     <artifactId>cucumber-core</artifactId>
-    <version>1.0.0-RC4</version>
+    <version>1.0.0.RC6</version>
 </dependency>
 ```
 
@@ -49,7 +49,7 @@ There are more jars available - add the ones you need. (TODO: A guide on how to 
 Add a [dependency](http://ant.apache.org/ivy/history/latest-milestone/ivyfile/dependency.html) in your [ivy.xml](http://ant.apache.org/ivy/history/latest-milestone/ivyfile.html):
 
 ```xml
-    <dependency org="info.cukes" name="cucumber-core" rev="1.0.0-RC4"/>
+    <dependency org="info.cukes" name="cucumber-core" rev="1.0.0.RC6"/>
 ```
 
 Since the artifacts are released to Maven Central, the default Ivy configuration should pull them down automatically.
@@ -65,7 +65,7 @@ Alternatively you can define your own resolver:
 
 ## Documentation
 
-There isn't any documentation yet apart from API docs. Documentation will be published when the first release candidate for 1.0.0 is ready.
+There isn't any documentation yet apart from API docs. Documentation will be published before the final 1.0.0 release is ready.
 If you are adventurous, check out the examples, read the code and ask specific questions on the Cucumber mailing list.
 
 ### API Docs
@@ -78,24 +78,21 @@ TODO: Fix this. The Ivy build doesn't upload them yet.
 
 You will find an example in Git under examples/java-calculator. You should be able to run `basic_arithmetic.feature` by running the `cucumber.examples.java.calculator.basic_arithmetic_Test` JUnit test from your IDE. -Or simply by running it with Maven: `mvn clean install -P examples` once to build it all. Then `cd examples/java-calculator` followed by `mvn test` each time you make a change. Try to make the feature fail!
 
-### Building Cucumber-JVM
+## Building Cucumber-JVM
 
-You'll need Ant installed
+Cucumber-JVM is built with [Maven](http://mvn.apache.org/). 
 
-    export ANT_OPTS=-XX:MaxPermSize=128m
-    ant clean publish-local
-
-This will compile everything, run JUnit tests and Cucumber scenarios - and finally install all jars in your local Maven repo.
-Yep - that's Ant+Ivy building everything - and dropping it off locally where it can be picked up by Maven (if you are so inclined).
+    mvn clean install
 
 ## IDE Setup
 
 ### IntelliJ IDEA
 
-The top level directory has a `cucumber-jvm.ipr` project file that references a `cucumber-*.iml` files.
-Just run ant once (see above) and install the [IvyIDEA](http://code.google.com/p/ivyidea/) plugin. 
+    File -> Open Project -> path/to/cucumber-jvm/pom.xml
 
-Now, open the `cucumber-jvm.ipr` project and you should be good to go.
+### Eclipse
+
+    Just load the root `pom.xml`
 
 ## Contributing/Hacking
 

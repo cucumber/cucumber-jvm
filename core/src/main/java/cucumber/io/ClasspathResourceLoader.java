@@ -45,10 +45,7 @@ public class ClasspathResourceLoader implements ResourceLoader {
         Collection<T> result = new HashSet<T>();
         for (Class<? extends T> clazz : getDescendants(parentType, packagePath)) {
             if (Utils.isInstantiable(clazz)) {
-                try {
-                    result.add(newInstance(constructorParams, constructorArgs, clazz));
-                } catch (CucumberException ignore) {
-                }
+                result.add(newInstance(constructorParams, constructorArgs, clazz));
             }
         }
         return result;

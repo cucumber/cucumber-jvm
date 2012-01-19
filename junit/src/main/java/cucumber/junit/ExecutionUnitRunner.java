@@ -1,7 +1,7 @@
 package cucumber.junit;
 
+import cucumber.runtime.Glue;
 import cucumber.runtime.Runtime;
-import cucumber.runtime.World;
 import cucumber.runtime.model.CucumberScenario;
 import gherkin.formatter.model.Step;
 import org.junit.runner.Description;
@@ -9,6 +9,7 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
 
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -18,13 +19,15 @@ class ExecutionUnitRunner extends ParentRunner<Step> {
     private final Runtime runtime;
     private final CucumberScenario cucumberScenario;
     private final JUnitReporter jUnitReporter;
-    private World world;
+    private Glue glue;
 
     public ExecutionUnitRunner(Runtime runtime, CucumberScenario cucumberScenario, JUnitReporter jUnitReporter) throws InitializationError {
         super(ExecutionUnitRunner.class);
         this.runtime = runtime;
         this.cucumberScenario = cucumberScenario;
         this.jUnitReporter = jUnitReporter;
+
+        this.glue = runtime.getGlue();
     }
 
     @Override
@@ -46,19 +49,23 @@ class ExecutionUnitRunner extends ParentRunner<Step> {
     public void run(RunNotifier notifier) {
         jUnitReporter.startExecutionUnit(this, notifier);
 
-        world = cucumberScenario.newWorld(runtime);
-        world.buildBackendWorldsAndRunBeforeHooks(jUnitReporter);
-        cucumberScenario.runBackground(jUnitReporter.getFormatter(), jUnitReporter.getReporter());
+        //No tags from the junit side?
+        runtime.buildBackendWorlds();
+        runtime.runBeforeHooks(jUnitReporter, new HashSet<String>());
+
+        cucumberScenario.runBackground(jUnitReporter.getFormatter(), jUnitReporter.getReporter(), runtime);
         cucumberScenario.format(jUnitReporter);
         // Run the steps (the children)
         super.run(notifier);
-        world.runAfterHooksAndDisposeBackendWorlds(jUnitReporter);
+        runtime.runAfterHooks(jUnitReporter,  new HashSet<String>());
+
+        runtime.disposeBackendWorlds();
 
         jUnitReporter.finishExecutionUnit();
     }
 
     @Override
     protected void runChild(Step step, RunNotifier notifier) {
-        cucumberScenario.runStep(step, jUnitReporter, world);
+        cucumberScenario.runStep(step, jUnitReporter, runtime);
     }
 }

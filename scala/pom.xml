@@ -1,0 +1,131 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                      http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>info.cukes</groupId>
+        <artifactId>cucumber-jvm</artifactId>
+        <relativePath>../pom.xml</relativePath>
+        <version>1.0.0.RC7-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>cucumber-scala</artifactId>
+    <packaging>jar</packaging>
+    <name>Cucumber-JVM: Scala</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>info.cukes</groupId>
+            <artifactId>cucumber-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-library</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-compiler</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>info.cukes</groupId>
+            <artifactId>cucumber-junit</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.scala-tools</groupId>
+                <artifactId>maven-scala-plugin</artifactId>
+                <version>2.15.2</version>
+                <configuration>
+                    <!--encoding>UTF-8</encoding-->
+                    <excludes>
+                        <exclude>**/*.java</exclude>
+                    </excludes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>regular-source-compilation</id>
+                        <goals>
+                            <goal>add-source</goal>
+                            <goal>compile</goal>
+                            <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sourceDir>${basedir}/target/i18n</sourceDir>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>generate-i18n-sources</id>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <target>
+                                <taskdef name="groovy"
+                                         classname="org.codehaus.groovy.ant.Groovy"
+                                         classpathref="maven.plugin.classpath"/>
+
+                                <groovy><![CDATA[
+import groovy.text.SimpleTemplateEngine
+
+def engine = new SimpleTemplateEngine()
+def templateSource = new File("${basedir}/src/main/code_generator/I18n.scala.txt").getText()
+
+template = engine.createTemplate(templateSource)
+template = template.make(null)
+def file = new File("${basedir}/target/i18n/cucumber/runtime/I18n.scala")
+file.parentFile.mkdirs()
+file.write(template.toString(), "UTF-8")
+        ]]></groovy>
+
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>1.7</version>
+                <executions>
+                    <execution>
+                        <id>add-source</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${basedir}/target/i18n/java</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+        </plugins>
+    </build>
+</project>

@@ -31,7 +31,7 @@
     </target>
 
     <target name="-load-ivy" depends="-bootstrap-ivy">
-        <property file="${common-basedir}/nexus.properties"/>
+        <property file="${user.home}/.nexus.properties"/>
         <taskdef uri="antlib:org.apache.ivy.ant">
             <classpath>
                 <pathelement path="${ivy-jar}"/>
@@ -46,10 +46,7 @@
         <ivy:resolve log="default" transitive="true"/>
         <ivy:cachepath pathid="ivy.compile-classpath" conf="default"/>
         <ivy:cachepath pathid="ivy.test-classpath" conf="test"/>
-        <ivy:artifactproperty conf="default" name="local.[organisation].[artifact]"
-                              value="${ivy.local.default.root}/${ivy.local.default.artifact.pattern}"/>
-        <ivy:artifactproperty conf="default" name="cache.[organisation].[artifact]"
-                              value="${ivy.cache.dir}/[organisation]/[artifact]/jars/[artifact]-[revision].jar"/>
+        <ivy:artifactproperty conf="default" name="retrieved.[organisation].[artifact]" value="${ivy.retrieve.pattern}"/>
         <property name="module" value="${ant.project.name}"/>
         <property name="version" value="${ivy.revision}"/>
 
@@ -148,21 +145,21 @@
         <jar destfile="${sources-jar}" basedir="src/main/java"/>
     </target>
 
-    <target name="publish-local" depends="jar,test">
-        <ivy:publish resolver="local" pubrevision="${cucumber-jvm.version}" update="true" overwrite="true"
-                     conf="default">
-            <artifacts pattern="target/artifacts/jars/[artifact].[ext]"/>
+    <target name="publish-local" depends="jar,test,makepom">
+        <ivy:publish resolver="local" pubrevision="${cucumber-jvm.version}" update="true" overwrite="true" publishivy="true"
+                     artifactspattern="target/artifacts/[type]s/[artifact](-[classifier]).[ext]" conf="default">
+            <artifact name="${module}" ext="pom" type="pom"/>
         </ivy:publish>
     </target>
 
     <target name="publish-artifacts" depends="test,publish-local"/>
 
     <target name="makepom" depends="-init-ivy" description="Generate POM">
-        <!--ivy:deliver deliverpattern="ivy.xml" pubrevision="${cucumber-jvm.version}" status="release"/-->
         <ivy:makepom ivyfile="ivy.xml" pomfile="${module-pom}" templatefile="${common-basedir}/template.pom" artifactName="${module}">
           <mapping conf="default" scope="compile"/>
           <mapping conf="test" scope="test"/>
         </ivy:makepom>
+        <copy file="${module-pom}" tofile="pom.xml"/>
     </target>
 
     <target name="publish-nexus" depends="packages,jar-sources,jar-javadoc,makepom,do-publish-nexus" description="Upload to Nexus"/>
@@ -181,6 +178,7 @@
 
     <target name="clean">
         <delete dir="target"/>
+        <delete dir="lib"/>
     </target>
 
 </project>

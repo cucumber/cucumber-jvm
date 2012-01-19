@@ -1,0 +1,46 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>info.cukes</groupId>
+        <artifactId>cucumber-jvm</artifactId>
+        <relativePath>../pom.xml</relativePath>
+        <version>1.0.0.RC7-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>cucumber-openejb</artifactId>
+    <packaging>jar</packaging>
+    <name>Cucumber-JVM: OpenEJB</name>
+
+    <repositories>
+        <repository>
+            <id>apache-snapshot-repo</id>
+            <name>Apache snpashot repo</name>
+            <url>https://repository.apache.org/content/groups/snapshots/</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>info.cukes</groupId>
+            <artifactId>cucumber-java</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>info.cukes</groupId>
+            <artifactId>cucumber-junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.openejb</groupId>
+            <artifactId>openejb-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>
