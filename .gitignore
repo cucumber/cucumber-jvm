@@ -1,5 +1,7 @@
 # IDE working files
 /*.iws
+/*.ipr
+*.iml
 .settings
 .project
 .classpath
@@ -14,5 +16,4 @@ tmp/
 /report.js
 /chromedriver.log
 /.scala_dependencies
-/*/*.pom
 nexus.properties
