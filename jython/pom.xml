@@ -83,7 +83,7 @@
                     </execution>
                     <execution>
                         <id>package-gem</id>
-                        <phase>package</phase>
+                        <phase>pre-integration-test</phase>
                         <configuration>
                             <target>
                                 <!-- drop it in the lib directory for great justice -->
