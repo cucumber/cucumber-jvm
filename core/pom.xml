@@ -30,6 +30,12 @@
             <artifactId>gson</artifactId>
         </dependency>
         <dependency>
+            <groupId>info.cukes</groupId>
+            <artifactId>cucumber-html</artifactId>
+            <version>0.2.1</version>
+        </dependency>
+
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
@@ -40,14 +46,10 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>info.cukes</groupId>
-            <artifactId>cucumber-html</artifactId>
-            <version>0.2.1</version>
-        </dependency>
-        <dependency>
             <groupId>rhino</groupId>
             <artifactId>js</artifactId>
             <version>1.7R2</version>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>
