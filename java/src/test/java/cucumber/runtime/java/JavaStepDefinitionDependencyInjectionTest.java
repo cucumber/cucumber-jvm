@@ -3,20 +3,20 @@ package cucumber.runtime.java;
 import cucumber.annotation.en.Given;
 import cucumber.runtime.Glue;
 import cucumber.runtime.RuntimeGlue;
+import cucumber.runtime.UndefinedStepsTracker;
 import org.junit.Test;
 
 import java.lang.reflect.Method;
 import java.util.Collections;
-import java.util.List;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 public class JavaStepDefinitionDependencyInjectionTest {
 
     private static final Method GIVEN;
     private static final Method OTHER_GIVEN;
-    private static final List<String> NO_TAGS = Collections.<String>emptyList();
-    private static final List<String> NO_GLUE_PATHS = Collections.<String>emptyList();
 
     static {
         try {
@@ -29,7 +29,7 @@ public class JavaStepDefinitionDependencyInjectionTest {
 
     private final ObjectFactory mockObjectFactory = mock(ObjectFactory.class);
     private final JavaBackend backend = new JavaBackend(mockObjectFactory);
-    private final Glue glue = new RuntimeGlue();
+    private final Glue glue = new RuntimeGlue(new UndefinedStepsTracker());
 
     @org.junit.Before
     public void loadNoGlue() {

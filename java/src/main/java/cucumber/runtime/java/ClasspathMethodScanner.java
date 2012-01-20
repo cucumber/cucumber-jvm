@@ -15,7 +15,6 @@ import java.util.Set;
 public class ClasspathMethodScanner {
 
     private ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader();
-    //Blargh, because there's parts used in the ClassPathResourceLoader, I cannot simply use the OneTimeResourceLoader
     private Set<String> loadedResourcePaths = new HashSet<String>();
 
 

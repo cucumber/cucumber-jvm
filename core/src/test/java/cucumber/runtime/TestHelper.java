@@ -2,7 +2,6 @@ package cucumber.runtime;
 
 import cucumber.io.Resource;
 import cucumber.runtime.model.CucumberFeature;
-
 import org.junit.Ignore;
 
 import java.io.ByteArrayInputStream;

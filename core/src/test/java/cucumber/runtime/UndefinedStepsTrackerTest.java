@@ -15,39 +15,39 @@ public class UndefinedStepsTrackerTest {
     @Test
     public void removes_duplicates() {
         Backend backend = new TestBackend();
-        UndefinedStepsTracker tracker = new UndefinedStepsTracker(asList(backend));
+        UndefinedStepsTracker tracker = new UndefinedStepsTracker();
         tracker.storeStepKeyword(new Step(null, "Given ", "A", 1, null, null), Locale.ENGLISH);
         tracker.addUndefinedStep(new Step(null, "Given ", "B", 1, null, null), Locale.ENGLISH);
         tracker.addUndefinedStep(new Step(null, "Given ", "B", 1, null, null), Locale.ENGLISH);
-        assertEquals("[Given ^B$]", tracker.getSnippets().toString());
+        assertEquals("[Given ^B$]", tracker.getSnippets(asList(backend)).toString());
     }
 
     @Test
     public void converts_and_to_previous_step_keyword() {
         Backend backend = new TestBackend();
-        UndefinedStepsTracker tracker = new UndefinedStepsTracker(asList(backend));
+        UndefinedStepsTracker tracker = new UndefinedStepsTracker();
         tracker.storeStepKeyword(new Step(null, "When ", "A", 1, null, null), Locale.ENGLISH);
         tracker.storeStepKeyword(new Step(null, "And ", "B", 1, null, null), Locale.ENGLISH);
         tracker.addUndefinedStep(new Step(null, "But ", "C", 1, null, null), Locale.ENGLISH);
-        assertEquals("[When ^C$]", tracker.getSnippets().toString());
+        assertEquals("[When ^C$]", tracker.getSnippets(asList(backend)).toString());
     }
 
     @Test
     public void doesnt_try_to_use_star_keyword() {
         Backend backend = new TestBackend();
-        UndefinedStepsTracker tracker = new UndefinedStepsTracker(asList(backend));
+        UndefinedStepsTracker tracker = new UndefinedStepsTracker();
         tracker.storeStepKeyword(new Step(null, "When ", "A", 1, null, null), Locale.ENGLISH);
         tracker.storeStepKeyword(new Step(null, "And ", "B", 1, null, null), Locale.ENGLISH);
         tracker.addUndefinedStep(new Step(null, "* ", "C", 1, null, null), Locale.ENGLISH);
-        assertEquals("[When ^C$]", tracker.getSnippets().toString());
+        assertEquals("[When ^C$]", tracker.getSnippets(asList(backend)).toString());
     }
 
     @Test
     public void star_keyword_becomes_given_when_no_previous_step() {
         Backend backend = new TestBackend();
-        UndefinedStepsTracker tracker = new UndefinedStepsTracker(asList(backend));
+        UndefinedStepsTracker tracker = new UndefinedStepsTracker();
         tracker.addUndefinedStep(new Step(null, "* ", "A", 1, null, null), Locale.ENGLISH);
-        assertEquals("[Given ^A$]", tracker.getSnippets().toString());
+        assertEquals("[Given ^A$]", tracker.getSnippets(asList(backend)).toString());
     }
 
     private class TestBackend implements Backend {

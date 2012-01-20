@@ -1,7 +1,6 @@
 package cucumber.runtime;
 
 import gherkin.formatter.Argument;
-import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Step;
 
 import java.util.List;

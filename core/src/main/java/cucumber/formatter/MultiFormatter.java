@@ -11,7 +11,7 @@ import java.util.List;
 
 public class MultiFormatter {
     private List<Formatter> formatters = new ArrayList<Formatter>();
-    
+
     public void add(Formatter formatter) {
         formatters.add(formatter);
     }
@@ -37,7 +37,7 @@ public class MultiFormatter {
             @Override
             public Object invoke(Object target, Method method, Object[] args) throws Throwable {
                 for (Formatter formatter : formatters) {
-                    if(formatter instanceof Reporter) {
+                    if (formatter instanceof Reporter) {
                         method.invoke(formatter, args);
                     }
                 }

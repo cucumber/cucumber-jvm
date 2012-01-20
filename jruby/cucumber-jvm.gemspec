@@ -1,6 +1,10 @@
 # -*- encoding: utf-8 -*-
 
-version = IO.read(File.dirname(__FILE__) + '/../build.properties').match(/^\s*cucumber-jvm\.version\s*=\s*(.*)$/n)[1].strip
+require 'java'
+version = Java::JavaLang::System.getProperty('cucumber-jvm.version')
+if(version =~ /(.*)-SNAPSHOT$/)
+  version=$1
+end
 
 Gem::Specification.new do |s|
   s.name         = 'cucumber-jvm'
@@ -10,8 +14,7 @@ Gem::Specification.new do |s|
   s.summary      = "#{s.name}-#{s.version}"
   s.email        = 'cukes@googlegroups.com'
   s.homepage     = 'http://github.com/cucumber/cucumber-jvm'
-  s.files        = Dir['lib/**/*'] + Dir['bin/**/*']
-  s.files       -= Dir['**/.gitignore']
+  s.files        = ['bin/cucumber-jvm', 'lib/cucumber-jruby-full.jar']
   s.executables  = ['cucumber-jvm']
   s.require_path = 'lib'
   s.platform     = 'java'

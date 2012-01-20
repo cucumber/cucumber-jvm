@@ -49,13 +49,13 @@
                         <configuration>
                             <target>
                                 <echo message="Running CLI test for picocontainer" />
-                                <java classname="cucumber.cli.Main" fork="true" failonerror="true" newenvironment="true" maxmemory="512m" classpathref="maven.runtime.classpath">
+                                <java classname="cucumber.cli.Main" fork="true" failonerror="true" newenvironment="true" maxmemory="512m" classpathref="maven.test.classpath">
                                     <arg value="--dotcucumber" />
-                                    <arg value="${basedir}/target/.cucumber" />
+                                    <arg value="${basedir}/src/test/resources/.cucumber" />
                                     <arg value="--format" />
                                     <arg value="progress" />
                                     <arg value="--glue" />
-                                    <arg value="cucumber.runtime.java.picocontainer" />
+                                    <arg value="cucumber/runtime/java/picocontainer" />
                                     <arg value="${basedir}/src/test/resources/cucumber/runtime/java/picocontainer" />
                                 </java>
                             </target>

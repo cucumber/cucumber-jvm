@@ -1,7 +1,5 @@
 package cucumber.runtime.snippets;
 
-import cucumber.runtime.UndefinedStepsTracker;
-
 import java.io.PrintStream;
 import java.util.List;
 

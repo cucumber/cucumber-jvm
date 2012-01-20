@@ -42,7 +42,7 @@ public abstract class CucumberTagStatement extends StepContainer {
     public String getVisualName() {
         return visualName;
     }
-    
-    
+
+
     public abstract void run(Formatter formatter, Reporter reporter, Runtime runtime);
 }

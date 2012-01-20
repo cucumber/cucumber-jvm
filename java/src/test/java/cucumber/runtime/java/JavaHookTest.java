@@ -3,9 +3,10 @@ package cucumber.runtime.java;
 import cucumber.annotation.After;
 import cucumber.annotation.Before;
 import cucumber.annotation.Order;
+import cucumber.runtime.Glue;
 import cucumber.runtime.HookDefinition;
 import cucumber.runtime.RuntimeGlue;
-import cucumber.runtime.Glue;
+import cucumber.runtime.UndefinedStepsTracker;
 import org.junit.Test;
 
 import java.lang.reflect.Method;
@@ -31,7 +32,7 @@ public class JavaHookTest {
     }
 
     private final JavaBackend backend = new JavaBackend(mock(ObjectFactory.class));
-    private final Glue glue = new RuntimeGlue();
+    private final Glue glue = new RuntimeGlue(new UndefinedStepsTracker());
 
     @org.junit.Before
     public void loadNoGlue() {
