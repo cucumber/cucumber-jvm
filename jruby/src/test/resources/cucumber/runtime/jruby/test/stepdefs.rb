@@ -23,7 +23,7 @@ Then /^the argument should not be nil/ do
   assert_not_nil(@argument, "Argument should not be nil")
 end
 
-Given /^a pending stepdef without an explicit reason$/ do 
+Given /^a pending stepdef without an explicit reason$/ do
   begin
     pending
   rescue Exception => @exception
@@ -66,4 +66,42 @@ Then /I get an exception with "([^"]*)"$/ do |message|
   assert_match /#{message}$/, @exception.message
   assert_equal(__FILE__, @exception.stackTrace[0].fileName)
   assert_equal(59, @exception.stackTrace[0].lineNumber)
+end
+
+Given /^a data table:$/ do |table|
+  @hashes = build_hashes table.raw
+end
+
+When /^I call that data table from this step:$/ do |table|
+  @old_hashes = @hashes
+  When "a data table:", table
+end
+
+Then /^that data table step got called$/ do
+  assert_not_equal(@old_hashes, @hashes)
+
+  assert_equal("omg", @old_hashes[0]["field"])
+  assert_equal("wtf", @old_hashes[0]["value"])
+
+  assert_equal("omg", @hashes[0]["field"])
+  assert_equal("lol", @hashes[0]["value"])
+end
+
+def build_hashes(raw)
+  output = Array.new
+  keys = Array.new
+  raw.size.times do |x|
+    if x == 0
+      raw[x].each do |header|
+        keys << header.to_s
+      end
+    else
+      hash = Hash.new
+      raw[x].size.times do |y|
+        hash[keys[y]] = raw[x][y]
+      end
+      output << hash
+    end
+  end
+  output
 end
