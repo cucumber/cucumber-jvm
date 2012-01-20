@@ -48,6 +48,12 @@
                                 <include>**/*.*</include>
                             </includes>
                         </fileset>
+                        <fileset>
+                            <directory>.</directory>
+                            <includes>
+                                <include>*.gem</include>
+                            </includes>
+                        </fileset>
                     </filesets>
                 </configuration>
             </plugin>
