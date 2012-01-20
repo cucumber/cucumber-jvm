@@ -39,7 +39,7 @@ I18n.all.each { i18n ->
     i18n.codeKeywords.each { kw ->
         def binding = ["i18n":i18n, "kw":kw]
         template = engine.createTemplate(templateSource).make(binding)
-        def file = new File("${basedir}/target/i18n/java/cucumber/annotation/${i18n.underscoredIsoCode}/${kw}.java")
+        def file = new File("${basedir}/target/generated-sources/i18n/java/cucumber/annotation/${i18n.underscoredIsoCode}/${kw}.java")
         file.parentFile.mkdirs()
         file.write(template.toString(), "UTF-8")
     }
@@ -64,7 +64,7 @@ I18n.all.each { i18n ->
                         </goals>
                         <configuration>
                             <sources>
-                                <source>${basedir}/target/i18n/java</source>
+                                <source>${basedir}/target/generated-sources/i18n/java</source>
                             </sources>
                         </configuration>
                     </execution>
