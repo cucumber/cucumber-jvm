@@ -1,12 +1,11 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>info.cukes</groupId>
         <artifactId>cucumber-jvm</artifactId>
         <relativePath>../pom.xml</relativePath>
-        <version>1.0.0.RC8-SNAPSHOT</version>
+        <version>1.0.0.RC8</version>
     </parent>
 
     <artifactId>cucumber-jruby</artifactId>
@@ -85,14 +84,13 @@
                         <configuration>
                             <target>
                                 <!-- also run the CLI test to ensure that stuff works via the CLI as well -->
-                                <echo message="Running jruby tests via the CLI..."/>
-                                <java jar="${maven.dependency.org.jruby.jruby-complete.jar.path}" fork="true"
-                                      failonerror="true" newenvironment="true" maxmemory="512m">
-                                    <arg value="-S"/>
-                                    <arg value="bin/cucumber-jvm"/>
-                                    <arg value="--glue"/>
-                                    <arg value="src/test/resources"/>
-                                    <arg value="src/test/resources"/>
+                                <echo message="Running jruby tests via the CLI..." />
+                                <java jar="${maven.dependency.org.jruby.jruby-complete.jar.path}" fork="true" failonerror="true" newenvironment="true" maxmemory="512m">
+                                    <arg value="-S" />
+                                    <arg value="bin/cucumber-jvm" />
+                                    <arg value="--glue" />
+                                    <arg value="src/test/resources" />
+                                    <arg value="src/test/resources" />
                                 </java>
                             </target>
                         </configuration>
@@ -103,18 +101,16 @@
                         <configuration>
                             <target>
                                 <!-- drop it in the lib directory for great justice -->
-                                <copy file="${project.build.directory}/${project.build.finalName}-full.jar"
-                                      tofile="${basedir}/lib/cucumber-jruby-full.jar"/>
+                                <copy file="${project.build.directory}/${project.build.finalName}-full.jar" tofile="${basedir}/lib/cucumber-jruby-full.jar" />
 
                                 <!-- build the gem file using jruby -->
-                                <echo message="Building Gem"/>
-                                <java jar="${maven.dependency.org.jruby.jruby-complete.jar.path}" failonerror="true"
-                                      fork="true">
-                                    <sysproperty key="cucumber-jvm.version" value="${project.version}"/>
-                                    <arg value="-S"/>
-                                    <arg value="gem"/>
-                                    <arg value="build"/>
-                                    <arg value="cucumber-jvm.gemspec"/>
+                                <echo message="Building Gem" />
+                                <java jar="${maven.dependency.org.jruby.jruby-complete.jar.path}" failonerror="true" fork="true">
+                                    <sysproperty key="cucumber-jvm.version" value="${project.version}" />
+                                    <arg value="-S" />
+                                    <arg value="gem" />
+                                    <arg value="build" />
+                                    <arg value="cucumber-jvm.gemspec" />
                                 </java>
                             </target>
                         </configuration>
@@ -128,13 +124,12 @@
                         <configuration>
                             <target>
                                 <!-- publish the gem to rubygems.org -->
-                                <echo message="Publishing Gem"/>
-                                <java jar="${maven.dependency.org.jruby.jruby-complete.jar.path}" failonerror="true"
-                                      fork="true">
-                                    <arg value="-S"/>
-                                    <arg value="gem"/>
-                                    <arg value="push"/>
-                                    <arg value="cucumber-jvm${project.parent.version}.gemspec"/>
+                                <echo message="Publishing Gem" />
+                                <java jar="${maven.dependency.org.jruby.jruby-complete.jar.path}" failonerror="true" fork="true">
+                                    <arg value="-S" />
+                                    <arg value="gem" />
+                                    <arg value="push" />
+                                    <arg value="cucumber-jvm${project.parent.version}.gemspec" />
                                 </java>
                             </target>
                         </configuration>

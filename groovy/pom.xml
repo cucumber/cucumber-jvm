@@ -1,12 +1,11 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>info.cukes</groupId>
         <artifactId>cucumber-jvm</artifactId>
         <relativePath>../pom.xml</relativePath>
-        <version>1.0.0.RC8-SNAPSHOT</version>
+        <version>1.0.0.RC8</version>
     </parent>
 
     <artifactId>cucumber-groovy</artifactId>
@@ -77,8 +76,7 @@
                         <phase>generate-sources</phase>
                         <configuration>
                             <target>
-                                <taskdef name="groovy" classname="org.codehaus.groovy.ant.Groovy"
-                                         classpathref="maven.plugin.classpath"/>
+                                <taskdef name="groovy" classname="org.codehaus.groovy.ant.Groovy" classpathref="maven.plugin.classpath" />
 
                                 <groovy><![CDATA[
 import groovy.text.SimpleTemplateEngine
@@ -104,8 +102,7 @@ I18n.all.each { i18n ->
                         <phase>package</phase>
                         <configuration>
                             <target>
-                                <copy file="${project.build.directory}/${project.build.finalName}-full.jar"
-                                      tofile="${basedir}/bin/cucumber-groovy-full.jar"/>
+                                <copy file="${project.build.directory}/${project.build.finalName}-full.jar" tofile="${basedir}/bin/cucumber-groovy-full.jar" />
                             </target>
                         </configuration>
                         <goals>
@@ -125,20 +122,17 @@ I18n.all.each { i18n ->
                                 This isn't exactly the same as running `groovy bin/cucumber-jvm.groovy`
                                 without cucumber-groovy-full.jar on the classpath, but that will work too.
                                 -->
-                                <echo message="Running groovy tests via the CLI..."/>
-                                <java classname="groovy.ui.GroovyMain" fork="true" failonerror="true"
-                                      newenvironment="true" maxmemory="512m">
+                                <echo message="Running groovy tests via the CLI..." />
+                                <java classname="groovy.ui.GroovyMain" fork="true" failonerror="true" newenvironment="true" maxmemory="512m">
                                     <classpath>
-                                        <pathelement
-                                                location="${maven.dependency.org.codehaus.groovy.groovy-all.jar.path}"/>
-                                        <pathelement
-                                                location="${maven.dependency.junit.junit.jar.path}"/>
-                                        <pathelement location="${basedir}/bin/cucumber-groovy-full.jar"/>
+                                        <pathelement location="${maven.dependency.org.codehaus.groovy.groovy-all.jar.path}" />
+                                        <pathelement location="${maven.dependency.junit.junit.jar.path}" />
+                                        <pathelement location="${basedir}/bin/cucumber-groovy-full.jar" />
                                     </classpath>
-                                    <arg value="bin/cucumber-jvm.groovy"/>
-                                    <arg value="--glue"/>
-                                    <arg value="src/test/resources"/>
-                                    <arg value="src/test/resources"/>
+                                    <arg value="bin/cucumber-jvm.groovy" />
+                                    <arg value="--glue" />
+                                    <arg value="src/test/resources" />
+                                    <arg value="src/test/resources" />
                                 </java>
                             </target>
                         </configuration>
