@@ -6,7 +6,7 @@
         <groupId>info.cukes</groupId>
         <artifactId>cucumber-jvm</artifactId>
         <relativePath>../pom.xml</relativePath>
-        <version>1.0.1.RC7-SNAPSHOT</version>
+        <version>1.0.0.RC8-SNAPSHOT</version>
     </parent>
 
     <artifactId>cucumber-jruby</artifactId>
@@ -71,20 +71,6 @@
                 <artifactId>maven-antrun-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>copy-full-jar</id>
-                        <phase>pre-integration-test</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <target>
-                                <!-- drop it in the lib directory for great justice -->
-                                <copy file="${project.build.directory}/${project.build.finalName}-full.jar"
-                                      tofile="${basedir}/lib/cucumber-jruby-full.jar"/>
-                            </target>
-                        </configuration>
-                    </execution>
-                    <execution>
                         <id>jruby-cli-test</id>
                         <phase>integration-test</phase>
                         <goals>
@@ -110,6 +96,10 @@
                         <phase>package</phase>
                         <configuration>
                             <target>
+                                <!-- drop it in the lib directory for great justice -->
+                                <copy file="${project.build.directory}/${project.build.finalName}-full.jar"
+                                      tofile="${basedir}/lib/cucumber-jruby-full.jar"/>
+
                                 <!-- build the gem file using jruby -->
                                 <echo message="Building Gem"/>
                                 <java jar="${maven.dependency.org.jruby.jruby-complete.jar.path}" failonerror="true"
