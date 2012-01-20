@@ -129,7 +129,7 @@
                                     <arg value="-S" />
                                     <arg value="gem" />
                                     <arg value="push" />
-                                    <arg value="cucumber-jvm${project.parent.version}.gemspec" />
+                                    <arg value="cucumber-jvm-${project.parent.version}-java.gem" />
                                 </java>
                             </target>
                         </configuration>
