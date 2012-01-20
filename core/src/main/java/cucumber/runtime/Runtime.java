@@ -1,15 +1,9 @@
 package cucumber.runtime;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import cucumber.io.ClasspathResourceLoader;
 import cucumber.io.ResourceLoader;
-import cucumber.runtime.autocomplete.MetaStepdef;
-import cucumber.runtime.autocomplete.StepdefGenerator;
-import cucumber.runtime.converters.LocalizedXStreams;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.model.CucumberTagStatement;
-import gherkin.formatter.Argument;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Comment;
@@ -18,12 +12,15 @@ import gherkin.formatter.model.Result;
 import gherkin.formatter.model.Step;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 import static cucumber.runtime.model.CucumberFeature.load;
-import static java.util.Collections.emptyList;
 
 /**
  * This is the main entry point for running Cucumber features.
@@ -32,7 +29,6 @@ public class Runtime implements UnreportedStepExecutor {
 
     private static final Object DUMMY_ARG = new Object();
     private static final byte ERRORS = 0x1;
-    private static final List<Object> NO_FILTERS = emptyList();
 
     private final UndefinedStepsTracker tracker;
     private final List<Throwable> errors = new ArrayList<Throwable>();
@@ -40,9 +36,6 @@ public class Runtime implements UnreportedStepExecutor {
     private final boolean isDryRun;
     private final ResourceLoader resourceLoader;
     private Glue glue;
-    //This is a good thing to keep at Runtime, since it's expensive to create
-    private final LocalizedXStreams localizedXStreams = new LocalizedXStreams();
-
 
     //TODO: These are really state machine variables, and I'm not sure the runtime is the best place for this state machine
     //They really should be created each time a scenario is run, not in here
@@ -64,7 +57,7 @@ public class Runtime implements UnreportedStepExecutor {
         this.isDryRun = isDryRun;
         this.tracker = new UndefinedStepsTracker(backends);
 
-        this.glue = new RuntimeGlue();
+        this.glue = new RuntimeGlue(tracker);
         for (Backend backend : backends) {
             backend.loadGlue(glue, gluePaths);
             backend.setUnreportedStepExecutor(this);
@@ -103,9 +96,6 @@ public class Runtime implements UnreportedStepExecutor {
      * @param reporter
      */
     public void run(CucumberFeature cucumberFeature, Formatter formatter, Reporter reporter) {
-
-        //For each feature, we need to set up the backend
-
         formatter.uri(cucumberFeature.getUri());
         formatter.feature(cucumberFeature.getFeature());
         for (CucumberTagStatement cucumberTagStatement : cucumberFeature.getFeatureElements()) {
@@ -131,26 +121,6 @@ public class Runtime implements UnreportedStepExecutor {
         }
     }
 
-    /**
-     * This is the second entry to running features
-     *
-     * @param featurePaths
-     * @param dotCucumber
-     * @throws IOException
-     */
-    public void writeStepdefsJson(List<String> featurePaths, File dotCucumber) throws IOException {
-        List<CucumberFeature> features = load(resourceLoader, featurePaths, NO_FILTERS);
-        buildBackendWorlds();
-        List<StepDefinition> stepDefs = glue.getStepDefinitions();
-        List<MetaStepdef> metaStepdefs = new StepdefGenerator().generate(stepDefs, features);
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        String json = gson.toJson(metaStepdefs);
-
-        FileWriter metaJson = new FileWriter(new File(dotCucumber, "stepdefs.json"));
-        metaJson.append(json);
-        metaJson.close();
-    }
-
     public boolean isDryRun() {
         return isDryRun;
     }
@@ -165,15 +135,6 @@ public class Runtime implements UnreportedStepExecutor {
             result |= ERRORS;
         }
         return result;
-    }
-
-
-    public void storeStepKeyword(Step step, Locale locale) {
-        tracker.storeStepKeyword(step, locale);
-    }
-
-    public void addUndefinedStep(Step step, Locale locale) {
-        tracker.addUndefinedStep(step, locale);
     }
 
     public List<String> getSnippets() {
@@ -220,7 +181,7 @@ public class Runtime implements UnreportedStepExecutor {
     public void runUnreportedStep(String uri, Locale locale, String stepKeyword, String stepName, int line) throws Throwable {
         Step step = new Step(Collections.<Comment>emptyList(), stepKeyword, stepName, line, null, null);
 
-        StepDefinitionMatch match = stepDefinitionMatch(uri, step, locale);
+        StepDefinitionMatch match = glue.stepDefinitionMatch(uri, step, locale);
         if (match == null) {
             UndefinedStepException error = new UndefinedStepException(step);
 
@@ -235,10 +196,8 @@ public class Runtime implements UnreportedStepExecutor {
         match.runStep(locale);
     }
 
-
-    //TODO: should refactor this up into the runtime.
     public void runStep(String uri, Step step, Reporter reporter, Locale locale) {
-        StepDefinitionMatch match = stepDefinitionMatch(uri, step, locale);
+        StepDefinitionMatch match = glue.stepDefinitionMatch(uri, step, locale);
         if (match != null) {
             reporter.match(match);
         } else {
@@ -275,32 +234,7 @@ public class Runtime implements UnreportedStepExecutor {
         }
     }
 
-    private StepDefinitionMatch stepDefinitionMatch(String uri, Step step, Locale locale) {
-        List<StepDefinitionMatch> matches = stepDefinitionMatches(uri, step);
-        try {
-            if (matches.size() == 0) {
-                addUndefinedStep(step, locale);
-                return null;
-            }
-            if (matches.size() == 1) {
-                return matches.get(0);
-            } else {
-                throw new AmbiguousStepDefinitionsException(matches);
-            }
-        } finally {
-            storeStepKeyword(step, locale);
-        }
+    public void writeStepdefsJson(List<String> featurePaths, File dotCucumber) throws IOException {
+        glue.writeStepdefsJson(featurePaths, dotCucumber);
     }
-
-    private List<StepDefinitionMatch> stepDefinitionMatches(String uri, Step step) {
-        List<StepDefinitionMatch> result = new ArrayList<StepDefinitionMatch>();
-        for (StepDefinition stepDefinition : glue.getStepDefinitions()) {
-            List<Argument> arguments = stepDefinition.matchedArguments(step);
-            if (arguments != null) {
-                result.add(new StepDefinitionMatch(arguments, stepDefinition, uri, step, localizedXStreams));
-            }
-        }
-        return result;
-    }
-
 }

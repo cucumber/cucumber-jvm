@@ -5,7 +5,12 @@ import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.SingleValueConverter;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import cucumber.runtime.CucumberException;
-import cucumber.table.xstream.*;
+import cucumber.table.xstream.DataTableWriter;
+import cucumber.table.xstream.ListOfListOfSingleValueReader;
+import cucumber.table.xstream.ListOfListOfSingleValueWriter;
+import cucumber.table.xstream.ListOfMapReader;
+import cucumber.table.xstream.ListOfObjectReader;
+import cucumber.table.xstream.ListOfObjectWriter;
 import gherkin.util.Mapper;
 
 import java.lang.reflect.ParameterizedType;

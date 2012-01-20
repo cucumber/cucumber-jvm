@@ -5,14 +5,17 @@ import cucumber.io.ClasspathResourceLoader;
 import cucumber.runtime.AmbiguousStepDefinitionsException;
 import cucumber.runtime.Glue;
 import cucumber.runtime.Runtime;
-import cucumber.runtime.RuntimeGlue;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Comment;
 import gherkin.formatter.model.Step;
 import org.junit.Test;
 
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertFalse;
@@ -62,7 +65,7 @@ public class JavaStepDefinitionTest {
 
         Reporter reporter = mock(Reporter.class);
         runtime.buildBackendWorlds();
-        runtime.runBeforeHooks(reporter,asSet("@foo"));
+        runtime.runBeforeHooks(reporter, asSet("@foo"));
         Step step = new Step(NO_COMMENTS, "Given ", "pattern", 1, null, null);
         runtime.runStep("uri", step, reporter, Locale.US);
         assertTrue(defs.foo);

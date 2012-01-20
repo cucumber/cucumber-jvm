@@ -4,11 +4,16 @@ import cucumber.fallback.runtime.java.DefaultJavaObjectFactory;
 import cucumber.runtime.Glue;
 import cucumber.runtime.HookDefinition;
 import cucumber.runtime.StepDefinition;
+import cucumber.runtime.StepDefinitionMatch;
 import cucumber.runtime.java.test.Stepdefs;
+import gherkin.formatter.model.Step;
 import org.junit.Test;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
@@ -53,7 +58,12 @@ public class JavaBackendTest {
         }
 
         @Override
-        public List<StepDefinition> getStepDefinitions() {
+        public StepDefinitionMatch stepDefinitionMatch(String uri, Step step, Locale locale) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void writeStepdefsJson(List<String> featurePaths, File dotCucumber) throws IOException {
             throw new UnsupportedOperationException();
         }
     }

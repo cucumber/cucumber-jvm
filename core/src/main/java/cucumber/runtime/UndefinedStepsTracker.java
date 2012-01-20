@@ -22,7 +22,7 @@ public class UndefinedStepsTracker {
     public void reset() {
         lastGivenWhenThenStepKeyword = null;
     }
-    
+
     /**
      * @return a list of code snippets that the developer can use to implement undefined steps.
      *         This should be displayed after a run.
@@ -70,7 +70,7 @@ public class UndefinedStepsTracker {
         if (isGivenWhenThenKeyword(step.getKeyword(), locale)) {
             return step;
         } else {
-            if(lastGivenWhenThenStepKeyword == null) {
+            if (lastGivenWhenThenStepKeyword == null) {
                 I18n i18n = new I18n("en");
                 List<String> givenKeywords = new ArrayList<String>(i18n.keywords("given"));
                 givenKeywords.remove("* ");

@@ -12,14 +12,14 @@ class FileResource implements Resource {
     public FileResource(File root, File file) {
         this.root = root;
         this.file = file;
-        if(!file.getAbsolutePath().startsWith(root.getAbsolutePath())) {
+        if (!file.getAbsolutePath().startsWith(root.getAbsolutePath())) {
             throw new IllegalArgumentException(file.getAbsolutePath() + " is not a parent of " + root.getAbsolutePath());
         }
     }
 
     @Override
     public String getPath() {
-        if(file.equals(root)) {
+        if (file.equals(root)) {
             return file.getAbsolutePath();
         } else {
             return file.getAbsolutePath().substring(root.getAbsolutePath().length() + 1);

@@ -1,7 +1,6 @@
 package cucumber.runtime;
 
 import cucumber.io.ClasspathResourceLoader;
-import cucumber.runtime.model.CucumberBackground;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.model.CucumberScenario;
 import gherkin.formatter.Formatter;
@@ -14,13 +13,13 @@ import org.mockito.InOrder;
 import org.mockito.Matchers;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import static java.util.Arrays.asList;
 import static org.mockito.Matchers.anyListOf;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class HookTest {
 
@@ -39,8 +38,8 @@ public class HookTest {
         when(hook.matches(anyListOf(String.class))).thenReturn(true);
         Scenario gherkinScenario = mock(Scenario.class);
 
-        CucumberFeature feature= mock(CucumberFeature.class);
-        Feature gherkinFeature= mock(Feature.class);
+        CucumberFeature feature = mock(CucumberFeature.class);
+        Feature gherkinFeature = mock(Feature.class);
 
         when(feature.getFeature()).thenReturn(gherkinFeature);
         when(gherkinFeature.getTags()).thenReturn(new ArrayList<Tag>());

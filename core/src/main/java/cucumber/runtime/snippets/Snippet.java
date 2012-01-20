@@ -9,6 +9,7 @@ public interface Snippet {
 
     /**
      * Langauges that don't support named capture groups should return null.
+     *
      * @return the start of a named group
      */
     String namedGroupStart();
