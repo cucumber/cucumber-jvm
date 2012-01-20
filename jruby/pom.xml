@@ -54,35 +54,22 @@
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
+                <artifactId>maven-shade-plugin</artifactId>
                 <executions>
                     <execution>
                         <id>package-full</id>
                         <phase>package</phase>
-                        <configuration>
-                            <target>
-                                <taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask"
-                                         classpathref="maven.plugin.classpath"/>
-
-                                <jarjar jarfile="target/${project.build.finalName}-full.jar">
-                                    <fileset dir="target/classes"/>
-                                    <zipfileset src="${maven.dependency.info.cukes.cucumber-core.jar.path}"/>
-                                    <zipfileset src="${maven.dependency.info.cukes.gherkin.jar.path}"/>
-                                    <zipfileset src="${maven.dependency.com.google.code.gson.gson.jar.path}"/>
-                                    <zipfileset
-                                            src="${maven.dependency.com.googlecode.java-diff-utils.diffutils.jar.path}"/>
-                                    <zipfileset src="${maven.dependency.com.thoughtworks.xstream.xstream.jar.path}"/>
-                                </jarjar>
-
-                                <!-- drop it in the lib directory for great justice -->
-                                <copy file="${project.build.directory}/${project.build.finalName}-full.jar"
-                                      tofile="${basedir}/lib/cucumber-jruby-full.jar"/>
-                            </target>
-                        </configuration>
                         <goals>
-                            <goal>run</goal>
+                            <goal>shade</goal>
                         </goals>
                     </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
                     <execution>
                         <id>jruby-cli-test</id>
                         <phase>integration-test</phase>
@@ -109,9 +96,15 @@
                         <phase>package</phase>
                         <configuration>
                             <target>
+                                <!-- drop it in the lib directory for great justice -->
+                                <copy file="${project.build.directory}/${project.build.finalName}-full.jar"
+                                      tofile="${basedir}/lib/cucumber-jruby-full.jar"/>
+
                                 <!-- build the gem file using jruby -->
                                 <echo message="Building Gem"/>
-                                <java jar="${maven.dependency.org.jruby.jruby-complete.jar.path}" failonerror="true" fork="true">
+                                <java jar="${maven.dependency.org.jruby.jruby-complete.jar.path}" failonerror="true"
+                                      fork="true">
+                                    <sysproperty key="cucumber-jvm.version" value="${project.version}"/>
                                     <arg value="-S"/>
                                     <arg value="gem"/>
                                     <arg value="build"/>
@@ -128,9 +121,10 @@
                         <phase>deploy</phase>
                         <configuration>
                             <target>
-                                <!-- publish the gem to the right spot -->
+                                <!-- publish the gem to rubygems.org -->
                                 <echo message="Publishing Gem"/>
-                                <java jar="${maven.dependency.org.jruby.jruby-complete.jar.path}" failonerror="true" fork="true">
+                                <java jar="${maven.dependency.org.jruby.jruby-complete.jar.path}" failonerror="true"
+                                      fork="true">
                                     <arg value="-S"/>
                                     <arg value="gem"/>
                                     <arg value="push"/>

@@ -229,6 +229,7 @@
     <modules>
         <module>core</module>
         <module>junit</module>
+        <module>jruby</module>
         <module>picocontainer</module>
         <module>spring</module>
         <module>guice</module>
@@ -238,8 +239,8 @@
         <module>rhino</module>
         <module>java</module>
         <module>clojure</module>
-        <module>jruby</module>
         <module>jython</module>
+
         <!--<module>scala</module>-->
         <!--<module>openejb</module>-->
     </modules>
@@ -338,7 +339,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-shade-plugin</artifactId>
-                    <version>1.4</version>
+                    <version>1.5</version>
                     <configuration>
                         <shadedArtifactAttached>true</shadedArtifactAttached>
                         <shadedClassifierName>full</shadedClassifierName>
