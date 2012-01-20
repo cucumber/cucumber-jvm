@@ -30,12 +30,13 @@ public class Runtime implements UnreportedStepExecutor {
     private static final Object DUMMY_ARG = new Object();
     private static final byte ERRORS = 0x1;
 
-    private final UndefinedStepsTracker tracker;
+    private final UndefinedStepsTracker undefinedStepsTracker = new UndefinedStepsTracker();
+    private final Glue glue = new RuntimeGlue(undefinedStepsTracker);
+
     private final List<Throwable> errors = new ArrayList<Throwable>();
     private final Collection<? extends Backend> backends;
     private final boolean isDryRun;
     private final ResourceLoader resourceLoader;
-    private Glue glue;
 
     //TODO: These are really state machine variables, and I'm not sure the runtime is the best place for this state machine
     //They really should be created each time a scenario is run, not in here
@@ -58,9 +59,7 @@ public class Runtime implements UnreportedStepExecutor {
         this.backends = backends;
         this.resourceLoader = resourceLoader;
         this.isDryRun = isDryRun;
-        this.tracker = new UndefinedStepsTracker();
 
-        this.glue = new RuntimeGlue(tracker);
         for (Backend backend : backends) {
             backend.loadGlue(glue, gluePaths);
             backend.setUnreportedStepExecutor(this);
@@ -76,16 +75,14 @@ public class Runtime implements UnreportedStepExecutor {
     }
 
     /**
-     * This is where the first entry happens.
-     * Glue shouldn't be passed along, since it's Glue, we should somehow expose the right bits to the various stages
-     * so that the appropriate calls can be made at the appropriate time.
+     * This is the main entry point.
      *
      * @param featurePaths
      * @param filters
      * @param formatter
      * @param reporter
      */
-    public void run(List<String> featurePaths, final List<Object> filters, gherkin.formatter.Formatter formatter, Reporter reporter) {
+    public void run(List<String> featurePaths, final List<Object> filters, Formatter formatter, Reporter reporter) {
         for (CucumberFeature cucumberFeature : load(resourceLoader, featurePaths, filters)) {
             run(cucumberFeature, formatter, reporter);
         }
@@ -112,7 +109,7 @@ public class Runtime implements UnreportedStepExecutor {
         for (Backend backend : backends) {
             backend.buildWorld();
         }
-        tracker.reset();
+        undefinedStepsTracker.reset();
         //TODO: this is the initial state of the state machine, it should not go here, but into something else
         skipNextStep = false;
         scenarioResult = new ScenarioResultImpl();
@@ -141,7 +138,7 @@ public class Runtime implements UnreportedStepExecutor {
     }
 
     public List<String> getSnippets() {
-        return tracker.getSnippets(backends);
+        return undefinedStepsTracker.getSnippets(backends);
     }
 
     public Glue getGlue() {
