@@ -52,10 +52,13 @@ public class Runtime implements UnreportedStepExecutor {
     }
 
     public Runtime(List<String> gluePaths, ResourceLoader resourceLoader, Collection<? extends Backend> backends, boolean isDryRun) {
+        if(backends.isEmpty()) {
+            throw new CucumberException("No backends were found. Please make sure you have a backend module on your CLASSPATH.");
+        }
         this.backends = backends;
         this.resourceLoader = resourceLoader;
         this.isDryRun = isDryRun;
-        this.tracker = new UndefinedStepsTracker(backends);
+        this.tracker = new UndefinedStepsTracker();
 
         this.glue = new RuntimeGlue(tracker);
         for (Backend backend : backends) {
@@ -138,7 +141,7 @@ public class Runtime implements UnreportedStepExecutor {
     }
 
     public List<String> getSnippets() {
-        return tracker.getSnippets();
+        return tracker.getSnippets(backends);
     }
 
     public Glue getGlue() {

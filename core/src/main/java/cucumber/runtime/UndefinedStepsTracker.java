@@ -11,23 +11,19 @@ import static java.util.Arrays.asList;
 
 public class UndefinedStepsTracker {
     private final List<Step> undefinedSteps = new ArrayList<Step>();
-    private final Iterable<? extends Backend> backends;
 
     private String lastGivenWhenThenStepKeyword;
-
-    public UndefinedStepsTracker(Iterable<? extends Backend> backends) {
-        this.backends = backends;
-    }
 
     public void reset() {
         lastGivenWhenThenStepKeyword = null;
     }
 
     /**
+     * @param backends what backends we want snippets for
      * @return a list of code snippets that the developer can use to implement undefined steps.
      *         This should be displayed after a run.
      */
-    public List<String> getSnippets() {
+    public List<String> getSnippets(Iterable<? extends Backend> backends) {
         // TODO: Convert "And" and "But" to the Given/When/Then keyword above in the Gherkin source.
         List<String> snippets = new ArrayList<String>();
         for (Step step : undefinedSteps) {

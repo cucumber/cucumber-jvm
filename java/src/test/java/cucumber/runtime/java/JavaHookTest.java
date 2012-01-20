@@ -32,7 +32,7 @@ public class JavaHookTest {
     }
 
     private final JavaBackend backend = new JavaBackend(mock(ObjectFactory.class));
-    private final Glue glue = new RuntimeGlue(new UndefinedStepsTracker(asList(backend)));
+    private final Glue glue = new RuntimeGlue(new UndefinedStepsTracker());
 
     @org.junit.Before
     public void loadNoGlue() {
