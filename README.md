@@ -142,7 +142,12 @@ This can be solved by changing the Compiler settings: `Preferences -> Compiler -
 
 Fork the repository on Github, clone it and send a pull request when you have fixed something. Please commit each feature/bugfix on a separate branch as this makes it easier for us to decide what to merge and what not to merge.
 
-## TODO
+## Releasing
 
-* Reports exception when Before hook fails
-* Skips steps when before hook fails
+This is a reminder to the developers:
+
+```
+mvn release:clean
+mvn --batch-mode release:prepare -DautoVersionSubmodules=true -DdevelopmentVersion=1.0.0.RC10-SNAPSHOT
+mvn -P release-sign-artifacts release:perform
+```
