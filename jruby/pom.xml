@@ -138,13 +138,6 @@
                     </execution>
 
                 </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.googlecode.jarjar</groupId>
-                        <artifactId>jarjar</artifactId>
-                        <version>1.1</version>
-                    </dependency>
-                </dependencies>
             </plugin>
         </plugins>
     </build>

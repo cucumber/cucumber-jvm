@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -38,6 +39,20 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>package-full</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <executions>
                     <execution>
@@ -48,7 +63,8 @@
                         <phase>generate-sources</phase>
                         <configuration>
                             <target>
-                                <taskdef name="groovy" classname="org.codehaus.groovy.ant.Groovy" classpathref="maven.plugin.classpath" />
+                                <taskdef name="groovy" classname="org.codehaus.groovy.ant.Groovy"
+                                         classpathref="maven.plugin.classpath"/>
 
                                 <groovy><![CDATA[
 import groovy.text.SimpleTemplateEngine
@@ -60,7 +76,7 @@ def templateSource = new File("${basedir}/src/main/code_generator/I18n.groovy.tx
 I18n.all.each { i18n ->
     def binding = ["i18n":i18n]
     template = engine.createTemplate(templateSource).make(binding)
-    def file = new File("${basedir}/target/i18n/java/cucumber/runtime/groovy/${i18n.underscoredIsoCode.toUpperCase()}.java")
+    def file = new File("${basedir}/target/generated-sources/i18n/java/cucumber/runtime/groovy/${i18n.underscoredIsoCode.toUpperCase()}.java")
     file.parentFile.mkdirs()
     file.write(template.toString(), "UTF-8")
 }
@@ -73,14 +89,45 @@ I18n.all.each { i18n ->
                         <id>copy-full-jar</id>
                         <phase>package</phase>
                         <configuration>
-                            <tasks>
-                                <!-- Allow failure, since the jar to copy only exists if we build with -Prelease-sign-artifacts -->
-                                <copy file="${project.build.directory}/${project.build.finalName}-full.jar" tofile="${basedir}/bin/cucumber-groovy-full.jar" failonerror="false" />
-                            </tasks>
+                            <target>
+                                <copy file="${project.build.directory}/${project.build.finalName}-full.jar"
+                                      tofile="${basedir}/bin/cucumber-groovy-full.jar"/>
+                            </target>
                         </configuration>
                         <goals>
                             <goal>run</goal>
                         </goals>
+                    </execution>
+                    <execution>
+                        <id>groovy-cli-test</id>
+                        <phase>integration-test</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <!--
+                                Also run the CLI test to ensure that stuff works via the CLI as well.
+                                This isn't exactly the same as running `groovy bin/cucumber-jvm.groovy`
+                                without cucumber-groovy-full.jar on the classpath, but that will work too.
+                                -->
+                                <echo message="Running groovy tests via the CLI..."/>
+                                <java classname="groovy.ui.GroovyMain" fork="true" failonerror="true"
+                                      newenvironment="true" maxmemory="512m">
+                                    <classpath>
+                                        <pathelement
+                                                location="${maven.dependency.org.codehaus.groovy.groovy-all.jar.path}"/>
+                                        <pathelement
+                                                location="${maven.dependency.junit.junit.jar.path}"/>
+                                        <pathelement location="${basedir}/bin/cucumber-groovy-full.jar"/>
+                                    </classpath>
+                                    <arg value="bin/cucumber-jvm.groovy"/>
+                                    <arg value="--glue"/>
+                                    <arg value="src/test/resources"/>
+                                    <arg value="src/test/resources"/>
+                                </java>
+                            </target>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -97,7 +144,7 @@ I18n.all.each { i18n ->
                         </goals>
                         <configuration>
                             <sources>
-                                <source>${basedir}/target/i18n/java</source>
+                                <source>${basedir}/target/generated-sources/i18n/java</source>
                             </sources>
                         </configuration>
                     </execution>
