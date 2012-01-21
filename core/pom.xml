@@ -32,7 +32,6 @@
         <dependency>
             <groupId>info.cukes</groupId>
             <artifactId>cucumber-html</artifactId>
-            <version>0.2.1</version>
         </dependency>
 
         <dependency>
@@ -48,7 +47,6 @@
         <dependency>
             <groupId>rhino</groupId>
             <artifactId>js</artifactId>
-            <version>1.7R2</version>
             <scope>test</scope>
         </dependency>
 
