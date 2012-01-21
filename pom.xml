@@ -13,6 +13,7 @@
         <version>6</version>
     </parent>
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <outputDirectory>${project.build.directory}</outputDirectory>
         <gherkin.version>2.7.4</gherkin.version>
         <groovy.version>1.8.5</groovy.version>
