@@ -44,7 +44,7 @@ public class ClasspathResourceLoader implements ResourceLoader {
     public <T> Collection<? extends T> instantiateSubclasses(Class<T> parentType, String packagePath, Class[] constructorParams, Object[] constructorArgs) {
         Collection<T> result = new HashSet<T>();
         for (Class<? extends T> clazz : getDescendants(parentType, packagePath)) {
-            if (Utils.isInstantiable(clazz)) {
+            if (Utils.isInstantiable(clazz) && Utils.hasConstructor(clazz, constructorParams)) {
                 result.add(newInstance(constructorParams, constructorArgs, clazz));
             }
         }
