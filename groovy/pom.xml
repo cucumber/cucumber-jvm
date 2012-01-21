@@ -84,12 +84,12 @@ import gherkin.I18n
 
 def _ = File.separator
 def engine = new SimpleTemplateEngine()
-def templateSource = new File("${basedir}${_}src${_}main${_}code_generator${_}I18n.groovy.txt").getText()
+def templateSource = new File(/${basedir}${_}src${_}main${_}code_generator${_}I18n.groovy.txt/).getText()
 
 I18n.all.each { i18n ->
     def binding = ["i18n":i18n]
     template = engine.createTemplate(templateSource).make(binding)
-    def file = new File("${basedir}${_}target${_}generated-sources${_}i18n${_}java${_}cucumber${_}runtime${_}groovy${_}${i18n.underscoredIsoCode.toUpperCase()}.java")
+    def file = new File(/${basedir}${_}target${_}generated-sources${_}i18n${_}java${_}cucumber${_}runtime${_}groovy${_}${i18n.underscoredIsoCode.toUpperCase()}.java/)
     file.parentFile.mkdirs()
     file.write(template.toString(), "UTF-8")
 }
