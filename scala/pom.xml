@@ -93,10 +93,10 @@ import groovy.text.SimpleTemplateEngine
 
 def _ = File.separator
 def engine = new SimpleTemplateEngine()
-def templateSource = new File("${basedir}${_}src${_}main${_}code_generator${_}I18n.scala.txt").getText()
+def templateSource = new File(project.baseDir, "src${_}main${_}code_generator${_}I18n.scala.txt").getText()
 
 template = engine.createTemplate(templateSource).make(null)
-def file = new File("${basedir}${_}target${_}i18n${_}cucumber${_}runtime${_}I18n.scala")
+def file = new File(project.baseDir, "target${_}i18n${_}cucumber${_}runtime${_}I18n.scala")
 file.parentFile.mkdirs()
 file.write(template.toString(), "UTF-8")
         ]]></groovy>
