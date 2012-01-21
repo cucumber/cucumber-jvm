@@ -148,6 +148,6 @@ This is a reminder to the developers:
 
 ```
 mvn release:clean
-mvn --batch-mode release:prepare -DautoVersionSubmodules=true -DdevelopmentVersion=1.0.0.RC10-SNAPSHOT
+mvn --batch-mode -P release-sign-artifacts release:prepare -DautoVersionSubmodules=true -DdevelopmentVersion=1.0.0.RC10-SNAPSHOT
 mvn -P release-sign-artifacts release:perform
 ```
