@@ -31,7 +31,7 @@ class ScalaBackend(ignore:ResourceLoader) extends Backend {
   }
 
   def loadGlue(glue: Glue,  gluePaths: JList[String]) {
-    instances = gluePaths flatMap { new ClasspathResourceLoader().instantiateSubclasses(classOf[ScalaDsl], _, Array(), Array()) }
+    instances = gluePaths flatMap { new ClasspathResourceLoader(Thread.currentThread().getContextClassLoader).instantiateSubclasses(classOf[ScalaDsl], _, Array(), Array()) }
 
     getStepDefinitions map {glue.addStepDefinition(_)}
     getBeforeHooks map {glue.addBeforeHook(_)}

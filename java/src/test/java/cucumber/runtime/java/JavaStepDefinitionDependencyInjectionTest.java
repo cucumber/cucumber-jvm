@@ -4,6 +4,7 @@ import cucumber.annotation.en.Given;
 import cucumber.runtime.Glue;
 import cucumber.runtime.RuntimeGlue;
 import cucumber.runtime.UndefinedStepsTracker;
+import cucumber.runtime.converters.LocalizedXStreams;
 import org.junit.Test;
 
 import java.lang.reflect.Method;
@@ -29,7 +30,8 @@ public class JavaStepDefinitionDependencyInjectionTest {
 
     private final ObjectFactory mockObjectFactory = mock(ObjectFactory.class);
     private final JavaBackend backend = new JavaBackend(mockObjectFactory);
-    private final Glue glue = new RuntimeGlue(new UndefinedStepsTracker());
+    private final LocalizedXStreams localizedXStreams = new LocalizedXStreams(Thread.currentThread().getContextClassLoader());
+    private final Glue glue = new RuntimeGlue(new UndefinedStepsTracker(), localizedXStreams);
 
     @org.junit.Before
     public void loadNoGlue() {

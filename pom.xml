@@ -254,6 +254,7 @@
     <modules>
         <module>core</module>
         <module>junit</module>
+        <module>scala</module>
         <module>jython</module>
         <module>jruby</module>
         <module>picocontainer</module>
@@ -265,7 +266,6 @@
         <module>rhino</module>
         <module>java</module>
         <module>clojure</module>
-        <module>scala</module>
 
         <!--<module>openejb</module>-->
     </modules>

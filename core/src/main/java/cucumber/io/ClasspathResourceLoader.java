@@ -9,9 +9,15 @@ import java.util.Collection;
 import java.util.HashSet;
 
 public class ClasspathResourceLoader implements ResourceLoader {
+    private final ClassLoader classLoader;
+
+    public ClasspathResourceLoader(ClassLoader classLoader) {
+        this.classLoader = classLoader;
+    }
+
     @Override
     public Iterable<Resource> resources(String path, String suffix) {
-        return new ClasspathIterable(cl(), path, suffix);
+        return new ClasspathIterable(classLoader, path, suffix);
     }
 
     public Collection<Class<? extends Annotation>> getAnnotations(String packagePath) {
@@ -22,7 +28,7 @@ public class ClasspathResourceLoader implements ResourceLoader {
         Collection<Class<? extends T>> result = new HashSet<Class<? extends T>>();
         for (Resource classResource : resources(packagePath, ".class")) {
             String className = classResource.getClassName();
-            Class<?> clazz = loadClass(className);
+            Class<?> clazz = loadClass(className, classLoader);
             if (clazz != null && !parentType.equals(clazz) && parentType.isAssignableFrom(clazz)) {
                 result.add(clazz.asSubclass(parentType));
             }
@@ -51,9 +57,9 @@ public class ClasspathResourceLoader implements ResourceLoader {
         return result;
     }
 
-    private Class<?> loadClass(String className) {
+    private Class<?> loadClass(String className, ClassLoader classLoader) {
         try {
-            return cl().loadClass(className);
+            return classLoader.loadClass(className);
         } catch (ClassNotFoundException ignore) {
             return null;
         } catch (NoClassDefFoundError ignore) {
@@ -73,9 +79,5 @@ public class ClasspathResourceLoader implements ResourceLoader {
         } catch (NoSuchMethodException e) {
             throw new CucumberException(e);
         }
-    }
-
-    private ClassLoader cl() {
-        return Thread.currentThread().getContextClassLoader();
     }
 }

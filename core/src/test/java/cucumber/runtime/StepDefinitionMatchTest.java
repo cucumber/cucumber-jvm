@@ -18,6 +18,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class StepDefinitionMatchTest {
+    private final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+
     @Test
     public void converts_numbers() throws Throwable {
         StepDefinition stepDefinition = mock(StepDefinition.class);
@@ -29,7 +31,7 @@ public class StepDefinitionMatchTest {
         when(stepWithoutDocStringOrTable.getDocString()).thenReturn(null);
         when(stepWithoutDocStringOrTable.getRows()).thenReturn(null);
 
-        StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(Arrays.asList(new Argument(0, "5")), stepDefinition, "some.feature", stepWithoutDocStringOrTable, new LocalizedXStreams());
+        StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(Arrays.asList(new Argument(0, "5")), stepDefinition, "some.feature", stepWithoutDocStringOrTable, new LocalizedXStreams(classLoader));
         stepDefinitionMatch.runStep(Locale.ENGLISH);
         verify(stepDefinition).execute(Locale.ENGLISH, new Object[]{5});
     }
@@ -46,7 +48,7 @@ public class StepDefinitionMatchTest {
         when(stepWithDocString.getDocString()).thenReturn(docString);
         when(stepWithDocString.getRows()).thenReturn(null);
 
-        StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(new ArrayList<Argument>(), stepDefinition, "some.feature", stepWithDocString, new LocalizedXStreams());
+        StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(new ArrayList<Argument>(), stepDefinition, "some.feature", stepWithDocString, new LocalizedXStreams(classLoader));
         stepDefinitionMatch.runStep(Locale.ENGLISH);
         verify(stepDefinition).execute(Locale.ENGLISH, new Object[]{"HELLO"});
     }
@@ -63,7 +65,7 @@ public class StepDefinitionMatchTest {
         when(stepWithDocString.getDocString()).thenReturn(docString);
         when(stepWithDocString.getRows()).thenReturn(null);
 
-        StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(Arrays.asList(new Argument(0, "5")), stepDefinition, "some.feature", stepWithDocString, new LocalizedXStreams());
+        StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(Arrays.asList(new Argument(0, "5")), stepDefinition, "some.feature", stepWithDocString, new LocalizedXStreams(classLoader));
         stepDefinitionMatch.runStep(Locale.ENGLISH);
         verify(stepDefinition).execute(Locale.ENGLISH, new Object[]{5, "HELLO"});
     }

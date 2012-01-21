@@ -26,25 +26,34 @@ public class JavaBackend implements Backend {
     private final SnippetGenerator snippetGenerator = new SnippetGenerator(new JavaSnippet());
     private final Set<Class> stepDefinitionClasses = new HashSet<Class>();
     private final ObjectFactory objectFactory;
-    private final ClasspathMethodScanner classpathMethodScanner = new ClasspathMethodScanner();
+    private final ClasspathResourceLoader classpathResourceLoader;
+    private final ClasspathMethodScanner classpathMethodScanner;
     private Glue glue;
 
     public JavaBackend(ResourceLoader ignored) {
+        classpathResourceLoader = new ClasspathResourceLoader(Thread.currentThread().getContextClassLoader());
+        classpathMethodScanner = new ClasspathMethodScanner(classpathResourceLoader);
+        objectFactory = loadObjectFactory();
+    }
+
+    public JavaBackend(ObjectFactory objectFactory) {
+        classpathResourceLoader = new ClasspathResourceLoader(Thread.currentThread().getContextClassLoader());
+        classpathMethodScanner = new ClasspathMethodScanner(classpathResourceLoader);
+        this.objectFactory = objectFactory;
+    }
+
+    private ObjectFactory loadObjectFactory() {
         ObjectFactory foundOF;
         if (ObjectFactoryHolder.getFactory() != null) {
             foundOF = ObjectFactoryHolder.getFactory();
         } else {
             try {
-                foundOF = new ClasspathResourceLoader().instantiateExactlyOneSubclass(ObjectFactory.class, "cucumber/runtime", new Class[0], new Object[0]);
+                foundOF = classpathResourceLoader.instantiateExactlyOneSubclass(ObjectFactory.class, "cucumber/runtime", new Class[0], new Object[0]);
             } catch (CucumberException ce) {
                 foundOF = new DefaultJavaObjectFactory();
             }
         }
-        objectFactory = foundOF;
-    }
-
-    public JavaBackend(ObjectFactory objectFactory) {
-        this.objectFactory = objectFactory;
+        return foundOF;
     }
 
     @Override

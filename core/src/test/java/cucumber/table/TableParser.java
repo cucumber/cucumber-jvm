@@ -73,6 +73,7 @@ public class TableParser {
             }
         });
         l.scan(source);
-        return new DataTable(rows, new TableConverter(new LocalizedXStreams().get(Locale.UK)));
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        return new DataTable(rows, new TableConverter(new LocalizedXStreams(classLoader).get(Locale.UK)));
     }
 }

@@ -23,7 +23,8 @@ public class DataTableTest {
         List<DataTableRow> simpleRows = new ArrayList<DataTableRow>();
         simpleRows.add(new DataTableRow(new ArrayList<Comment>(), asList("one", "four", "seven"), 1));
         simpleRows.add(new DataTableRow(new ArrayList<Comment>(), asList("4444", "55555", "666666"), 2));
-        XStream xStream = new LocalizedXStreams().get(Locale.UK);
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        XStream xStream = new LocalizedXStreams(classLoader).get(Locale.UK);
         simpleTable = new DataTable(simpleRows, new TableConverter(xStream));
     }
 

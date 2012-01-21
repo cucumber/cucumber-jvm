@@ -32,7 +32,7 @@ import static java.util.Arrays.asList;
  * @see cucumber.junit.Feature
  */
 public class Cucumber extends ParentRunner<FeatureRunner> {
-    private final ResourceLoader resourceLoader = new ClasspathResourceLoader();
+    private final ResourceLoader resourceLoader;
     private final JUnitReporter jUnitReporter;
     private final List<FeatureRunner> children = new ArrayList<FeatureRunner>();
     private final Runtime runtime;
@@ -47,11 +47,13 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
      */
     public Cucumber(Class clazz) throws InitializationError, IOException {
         super(clazz);
+        ClassLoader classLoader = clazz.getClassLoader();
+        resourceLoader = new ClasspathResourceLoader(classLoader);
         assertNoDeclaredMethods(clazz);
         List<String> featurePaths = featurePaths(clazz);
 
         List<String> gluePaths = gluePaths(clazz);
-        runtime = new Runtime(gluePaths, resourceLoader);
+        runtime = new Runtime(resourceLoader, gluePaths, classLoader);
 
         // TODO: Create formatter(s) based on Annotations. Use same technique as in cli.Main for MultiFormatter
         jUnitReporter = new JUnitReporter(new NullReporter(), new NullReporter());

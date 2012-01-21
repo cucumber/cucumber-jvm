@@ -23,7 +23,6 @@ public class CucumberFeature {
     private Locale locale;
     private CucumberScenarioOutline currentScenarioOutline;
 
-    // TODO: Use an iterable here, wrapping around
     public static List<CucumberFeature> load(ResourceLoader resourceLoader, List<String> featurePaths, final List<Object> filters) {
         final List<CucumberFeature> cucumberFeatures = new ArrayList<CucumberFeature>();
         final FeatureBuilder builder = new FeatureBuilder(cucumberFeatures);

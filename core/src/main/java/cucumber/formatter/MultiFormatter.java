@@ -10,7 +10,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MultiFormatter {
-    private List<Formatter> formatters = new ArrayList<Formatter>();
+    private final List<Formatter> formatters = new ArrayList<Formatter>();
+    private final ClassLoader classLoader;
+
+    public MultiFormatter(ClassLoader classLoader) {
+        this.classLoader = classLoader;
+    }
 
     public void add(Formatter formatter) {
         formatters.add(formatter);
@@ -21,7 +26,7 @@ public class MultiFormatter {
     }
 
     public Formatter formatterProxy() {
-        return (Formatter) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class<?>[]{Formatter.class}, new InvocationHandler() {
+        return (Formatter) Proxy.newProxyInstance(classLoader, new Class<?>[]{Formatter.class}, new InvocationHandler() {
             @Override
             public Object invoke(Object target, Method method, Object[] args) throws Throwable {
                 for (Formatter formatter : formatters) {
@@ -33,7 +38,7 @@ public class MultiFormatter {
     }
 
     public Reporter reporterProxy() {
-        return (Reporter) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class<?>[]{Reporter.class}, new InvocationHandler() {
+        return (Reporter) Proxy.newProxyInstance(classLoader, new Class<?>[]{Reporter.class}, new InvocationHandler() {
             @Override
             public Object invoke(Object target, Method method, Object[] args) throws Throwable {
                 for (Formatter formatter : formatters) {

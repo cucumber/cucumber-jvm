@@ -30,7 +30,7 @@ public class TableConverterTest {
 
     @Before
     public void createTableConverterWithDateFormat() {
-        XStream xStream = new LocalizedXStreams().get(Locale.UK);
+        XStream xStream = new LocalizedXStreams(Thread.currentThread().getContextClassLoader()).get(Locale.UK);
         tc = new TableConverter(xStream);
         SingleValueConverterWrapperExt converterWrapper = (SingleValueConverterWrapperExt) xStream.getConverterLookup().lookupConverterForType(Date.class);
         DateConverter dateConverter = (DateConverter) converterWrapper.getConverter();
