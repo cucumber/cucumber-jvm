@@ -60,12 +60,11 @@
                 <artifactId>cucumber-picocontainer</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            <!-- Not cooking scala, should not include it in the depends
             <dependency>
                 <groupId>info.cukes</groupId>
                 <artifactId>cucumber-scala</artifactId>
                 <version>${project.version}</version>
-            </dependency> -->
+            </dependency>
             <dependency>
                 <groupId>info.cukes</groupId>
                 <artifactId>gherkin</artifactId>
@@ -254,8 +253,8 @@
         <module>rhino</module>
         <module>java</module>
         <module>clojure</module>
+        <module>scala</module>
 
-        <!--<module>scala</module>-->
         <!--<module>openejb</module>-->
     </modules>
 
