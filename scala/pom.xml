@@ -64,7 +64,7 @@
                             <goal>add-source</goal>
                         </goals>
                         <configuration>
-                            <sourceDir>${basedir}/target/i18n</sourceDir>
+                            <sourceDir>${basedir}/target/generated-sources/i18n</sourceDir>
                         </configuration>
                     </execution>
                 </executions>
@@ -91,7 +91,7 @@ def engine = new SimpleTemplateEngine()
 def templateSource = new File(project.baseDir, "src${_}main${_}code_generator${_}I18n.scala.txt").getText()
 
 template = engine.createTemplate(templateSource).make(null)
-def file = new File(project.baseDir, "target${_}i18n${_}cucumber${_}runtime${_}I18n.scala")
+def file = new File(project.baseDir, "target${_}generated-sources${_}i18n${_}cucumber${_}runtime${_}I18n.scala")
 file.parentFile.mkdirs()
 file.write(template.toString(), "UTF-8")
         ]]></groovy>
@@ -101,26 +101,6 @@ file.write(template.toString(), "UTF-8")
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <version>1.7</version>
-                <executions>
-                    <execution>
-                        <id>add-source</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>add-source</goal>
-                        </goals>
-                        <configuration>
-                            <sources>
-                                <source>${basedir}/target/i18n/java</source>
-                            </sources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
         </plugins>
     </build>
 </project>
