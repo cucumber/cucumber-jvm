@@ -7,6 +7,7 @@ import gherkin.formatter.PrettyFormatter;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,6 +19,10 @@ public class FormatterFactory {
         put("json", JSONFormatter.class.getName());
         put("pretty", PrettyFormatter.class.getName());
     }};
+    
+    public static Collection<String> getFormats() {
+        return BUILTIN_FORMATTERS.keySet();
+    }
 
     public Formatter createFormatter(String formatterName, Object out) {
         String className = BUILTIN_FORMATTERS.containsKey(formatterName) ? BUILTIN_FORMATTERS.get(formatterName) : formatterName;

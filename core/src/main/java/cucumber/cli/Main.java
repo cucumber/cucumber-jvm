@@ -11,6 +11,7 @@ import gherkin.formatter.Reporter;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -27,7 +28,7 @@ public class Main {
           "\t\t\tA "+File.pathSeparator+" separated list of directories to search for features.\n"+
           "\t--format <format>\n"+
           "\t-f <format>\n"+
-          "\t\t\tOne of: progress, html, json, pretty\n"+
+          "\t\t\tOne of: "+(Arrays.toString(FormatterFactory.getFormats().toArray()))+"\n"+
           "\t--help | -h\n"+
           "\t\t\tprint this help message\n"+
           "\t--out <file>\n"+
