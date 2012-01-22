@@ -1,11 +1,5 @@
 package cucumber.cli;
 
-import cucumber.formatter.FormatterFactory;
-import cucumber.formatter.MultiFormatter;
-import cucumber.runtime.Runtime;
-import gherkin.formatter.Formatter;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -48,7 +42,7 @@ public class RuntimeOptions {
             String arg = iterator.next();
 
             if (flagMatches(arg, "--help", "-h")) {
-                setHelpRequired(true);
+                setHelpRequested(true);
             } else if (flagMatches(arg, "--version", "-v")) {
                 setVersionRequested(true);
             } else if (flagMatches(arg, "--glue", "-g")) {
@@ -123,8 +117,8 @@ public class RuntimeOptions {
         return _helpRequested;
     }
 
-    public void setHelpRequired(boolean $helpRequired) {
-        _helpRequested = $helpRequired;
+    public void setHelpRequested(boolean $helpRequested) {
+        _helpRequested = $helpRequested;
     }
 
     public boolean isVersionRequested() {
