@@ -13,7 +13,8 @@ import static org.junit.Assert.assertTrue;
 public class ConvertersTest {
     @Test
     public void shouldTransformToTheRightType() {
-        LocalizedXStreams transformers = new LocalizedXStreams();
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        LocalizedXStreams transformers = new LocalizedXStreams(classLoader);
 
         ConverterLookup en = transformers.get(Locale.ENGLISH).getConverterLookup();
         assertTrue((Boolean) ((SingleValueConverter) en.lookupConverterForType(Boolean.class)).fromString("true"));

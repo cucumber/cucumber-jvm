@@ -7,6 +7,7 @@ import cucumber.runtime.Glue;
 import cucumber.runtime.HookDefinition;
 import cucumber.runtime.RuntimeGlue;
 import cucumber.runtime.UndefinedStepsTracker;
+import cucumber.runtime.converters.LocalizedXStreams;
 import org.junit.Test;
 
 import java.lang.reflect.Method;
@@ -32,7 +33,8 @@ public class JavaHookTest {
     }
 
     private final JavaBackend backend = new JavaBackend(mock(ObjectFactory.class));
-    private final Glue glue = new RuntimeGlue(new UndefinedStepsTracker());
+    private final LocalizedXStreams localizedXStreams = new LocalizedXStreams(Thread.currentThread().getContextClassLoader());
+    private final Glue glue = new RuntimeGlue(new UndefinedStepsTracker(), localizedXStreams);
 
     @org.junit.Before
     public void loadNoGlue() {

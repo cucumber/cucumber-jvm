@@ -16,7 +16,8 @@ import static org.mockito.Mockito.mock;
 public class BackgroundTest {
     @Test
     public void should_run_background() throws IOException {
-        Runtime runtime = new Runtime(new ArrayList<String>(), new ClasspathResourceLoader(), asList(mock(Backend.class)), false);
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        Runtime runtime = new Runtime(new ClasspathResourceLoader(classLoader), new ArrayList<String>(), classLoader, asList(mock(Backend.class)), false);
         CucumberFeature feature = feature("test.feature", "" +
                 "Feature:\n" +
                 "  Background:\n" +

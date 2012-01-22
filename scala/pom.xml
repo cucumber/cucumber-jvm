@@ -1,14 +1,11 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-                      http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>info.cukes</groupId>
         <artifactId>cucumber-jvm</artifactId>
         <relativePath>../pom.xml</relativePath>
-        <version>1.0.0.RC7-SNAPSHOT</version>
+        <version>1.0.0.RC12-SNAPSHOT</version>
     </parent>
 
     <artifactId>cucumber-scala</artifactId>
@@ -84,19 +81,17 @@
                         <phase>generate-sources</phase>
                         <configuration>
                             <target>
-                                <taskdef name="groovy"
-                                         classname="org.codehaus.groovy.ant.Groovy"
-                                         classpathref="maven.plugin.classpath"/>
+                                <taskdef name="groovy" classname="org.codehaus.groovy.ant.Groovy" classpathref="maven.plugin.classpath" />
 
                                 <groovy><![CDATA[
 import groovy.text.SimpleTemplateEngine
 
+def _ = File.separator
 def engine = new SimpleTemplateEngine()
-def templateSource = new File("${basedir}/src/main/code_generator/I18n.scala.txt").getText()
+def templateSource = new File(project.baseDir, "src${_}main${_}code_generator${_}I18n.scala.txt").getText()
 
-template = engine.createTemplate(templateSource)
-template = template.make(null)
-def file = new File("${basedir}/target/i18n/cucumber/runtime/I18n.scala")
+template = engine.createTemplate(templateSource).make(null)
+def file = new File(project.baseDir, "target${_}i18n${_}cucumber${_}runtime${_}I18n.scala")
 file.parentFile.mkdirs()
 file.write(template.toString(), "UTF-8")
         ]]></groovy>

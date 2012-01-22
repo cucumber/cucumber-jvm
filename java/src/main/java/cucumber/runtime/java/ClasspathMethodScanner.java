@@ -14,9 +14,12 @@ import java.util.Set;
 
 public class ClasspathMethodScanner {
 
-    private ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader();
-    private Set<String> loadedResourcePaths = new HashSet<String>();
+    private final ClasspathResourceLoader resourceLoader;
+    private final Set<String> loadedResourcePaths = new HashSet<String>();
 
+    public ClasspathMethodScanner(ClasspathResourceLoader resourceLoader) {
+        this.resourceLoader = resourceLoader;
+    }
 
     public void scan(JavaBackend javaBackend, List<String> gluePaths) {
         Collection<Class<? extends Annotation>> cucumberAnnotationClasses = findCucumberAnnotationClasses();

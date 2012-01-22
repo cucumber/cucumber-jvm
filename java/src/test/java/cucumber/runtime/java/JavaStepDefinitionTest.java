@@ -40,7 +40,8 @@ public class JavaStepDefinitionTest {
 
     private final Defs defs = new Defs();
     private final JavaBackend backend = new JavaBackend(new SingletonFactory(defs));
-    private final Runtime runtime = new Runtime(NO_PATHS, new ClasspathResourceLoader(), asList(backend), false);
+    private final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+    private final Runtime runtime = new Runtime(new ClasspathResourceLoader(classLoader), NO_PATHS, classLoader, asList(backend), false);
     private final Glue glue = runtime.getGlue();
 
     @org.junit.Before

@@ -23,18 +23,18 @@ import static java.util.Collections.emptyList;
 
 public class RuntimeGlue implements Glue {
     private static final List<Object> NO_FILTERS = emptyList();
-    private final LocalizedXStreams localizedXStreams = new LocalizedXStreams();
 
     private final List<StepDefinition> stepDefinitions = new ArrayList<StepDefinition>();
     private final List<HookDefinition> beforeHooks = new ArrayList<HookDefinition>();
     private final List<HookDefinition> afterHooks = new ArrayList<HookDefinition>();
 
     private final UndefinedStepsTracker tracker;
+    private final LocalizedXStreams localizedXStreams;
 
-    public RuntimeGlue(UndefinedStepsTracker tracker) {
+    public RuntimeGlue(UndefinedStepsTracker tracker, LocalizedXStreams localizedXStreams) {
         this.tracker = tracker;
+        this.localizedXStreams = localizedXStreams;
     }
-
 
     @Override
     public void addStepDefinition(StepDefinition stepDefinition) {

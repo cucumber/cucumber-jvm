@@ -20,14 +20,19 @@ public class JythonBackend implements Backend {
     private static final String DSL = "/cucumber/runtime/jython/dsl.py";
     private final SnippetGenerator snippetGenerator = new SnippetGenerator(new JythonSnippet());
     private final ResourceLoader resourceLoader;
-    private final PythonInterpreter jython = new PythonInterpreter();
+    private final PythonInterpreter jython;
     private PyObject pyWorld;
     private Glue glue;
 
-    public JythonBackend(ResourceLoader resourceLoader) {
+    public JythonBackend(ResourceLoader resourceLoader, PythonInterpreter jython) {
         this.resourceLoader = resourceLoader;
+        this.jython = jython;
         jython.set("backend", this);
         jython.execfile(getClass().getResourceAsStream(DSL), DSL);
+    }
+
+    public JythonBackend(ResourceLoader resourceLoader) {
+        this(resourceLoader, new PythonInterpreter());
     }
 
     @Override

@@ -25,10 +25,11 @@ public class HTMLFormatterTest {
     public void writes_proper_html() throws IOException {
         File dir = createTempDirectory();
         HTMLFormatter f = new HTMLFormatter(dir);
-        ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader();
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
         List<CucumberFeature> features = CucumberFeature.load(resourceLoader, asList("cucumber/formatter/HTMLFormatterTest.feature"), emptyList());
         List<String> gluePaths = emptyList();
-        Runtime runtime = new Runtime(gluePaths, resourceLoader, asList(mock(Backend.class)), false);
+        Runtime runtime = new Runtime(resourceLoader, gluePaths, classLoader, asList(mock(Backend.class)), false);
         runtime.run(features.get(0), f, f);
         f.done();
 

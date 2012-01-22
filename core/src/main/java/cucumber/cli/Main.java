@@ -21,6 +21,10 @@ public class Main {
     static final String VERSION = ResourceBundle.getBundle("cucumber.version").getString("cucumber-jvm.version");
 
     public static void main(String[] argv) throws Throwable {
+        run(argv, Thread.currentThread().getContextClassLoader(), new DefaultRuntimeFactory());
+    }
+
+    public static void run(String[] argv, ClassLoader classLoader, RuntimeFactory runtimeFactory) throws IOException {
         List<String> featurePaths = new ArrayList<String>();
         List<String> gluePaths = new ArrayList<String>();
         List<Object> filters = new ArrayList<Object>();
@@ -30,7 +34,7 @@ public class Main {
         boolean isDryRun = false;
 
         FormatterFactory formatterFactory = new FormatterFactory();
-        MultiFormatter multiFormatter = new MultiFormatter();
+        MultiFormatter multiFormatter = new MultiFormatter(classLoader);
 
         while (!args.isEmpty()) {
             String arg = args.remove(0);
@@ -71,7 +75,7 @@ public class Main {
             System.exit(1);
         }
 
-        Runtime runtime = new Runtime(gluePaths, new FileResourceLoader(), isDryRun);
+        Runtime runtime = runtimeFactory.createRuntime(new FileResourceLoader(), gluePaths, classLoader, isDryRun);
 
         if (dotCucumber != null) {
             writeDotCucumber(featurePaths, dotCucumber, runtime);

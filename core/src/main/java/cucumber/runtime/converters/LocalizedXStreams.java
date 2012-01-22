@@ -10,6 +10,11 @@ import java.util.Map;
 
 public class LocalizedXStreams {
     private final Map<Locale, XStream> xStreams = new HashMap<Locale, XStream>();
+    private final ClassLoader classLoader;
+
+    public LocalizedXStreams(ClassLoader classLoader) {
+        this.classLoader = classLoader;
+    }
 
     public XStream get(Locale locale) {
         XStream xStream = xStreams.get(locale);
@@ -24,7 +29,7 @@ public class LocalizedXStreams {
         DefaultConverterLookup lookup = new DefaultConverterLookup();
 
         // XStream's registers all the default converters.
-        XStream xStream = new XStream(null, null, Thread.currentThread().getContextClassLoader(), null, lookup, lookup);
+        XStream xStream = new XStream(null, null, classLoader, null, lookup, lookup);
         xStream.autodetectAnnotations(true);
 
         // Override with our own Locale-aware converters.

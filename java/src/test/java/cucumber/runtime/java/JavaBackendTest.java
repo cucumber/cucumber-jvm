@@ -7,6 +7,8 @@ import cucumber.runtime.StepDefinition;
 import cucumber.runtime.StepDefinitionMatch;
 import cucumber.runtime.java.test.Stepdefs;
 import gherkin.formatter.model.Step;
+import gherkin.formatter.model.DataTableRow;
+import gherkin.formatter.model.DocString;
 import org.junit.Test;
 
 import java.io.File;
