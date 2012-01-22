@@ -17,7 +17,28 @@ import java.util.ResourceBundle;
 import static java.util.Arrays.asList;
 
 public class Main {
-    private static final String USAGE = "TODO - Write the help";
+     static final String USAGE = "Options:\n"+
+          "\t--dotcucumber <directory>\n"+
+          "\t\t\tWrite out stepdefs.json to <directory>\n"+
+          "\t--dry-run\n"+
+          "\t\t\tPerform a trial run with no steps executed.\n"+
+          "\t--glue <glue paths>\n"+
+          "\t-g <glue paths>\n"+
+          "\t\t\tA "+File.pathSeparator+" separated list of directories to search for features.\n"+
+          "\t--format <format>\n"+
+          "\t-f <format>\n"+
+          "\t\t\tOne of: progress, html, json, pretty\n"+
+          "\t--help | -h\n"+
+          "\t\t\tprint this help message\n"+
+          "\t--out <file>\n"+
+          "\t-o <file>\n"+
+          "\t\t\tWrite results to <file>.\n"+
+          "\t--tags <tags>\n"+
+          "\t-t <tags>\n"+
+          "\t\t\tA comma-separated list of Gherkin tags\n"+
+          "\t--verson | -v\n"+
+          "\t\t\tprint the version and exit\n"+
+          "";
     static final String VERSION = ResourceBundle.getBundle("cucumber.version").getString("cucumber-jvm.version");
 
     public static void main(String[] argv) throws Throwable {
@@ -72,6 +93,7 @@ public class Main {
 
         if (gluePaths.isEmpty()) {
             System.out.println("Missing option: --glue");
+            System.out.println(USAGE);
             System.exit(1);
         }
 
