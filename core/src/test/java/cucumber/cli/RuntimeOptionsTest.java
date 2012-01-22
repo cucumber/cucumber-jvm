@@ -169,6 +169,5 @@ public class RuntimeOptionsTest {
         assertThat("should have 3 formats", _options.getFormats().size(), is(equalTo(3)));
         assertThat("should have 1 output", _options.getOutputPaths().size(), is(equalTo(1)));
         assertThat("json output should match argument", _options.getOutputPath("json"), is(equalTo("target/cucumber.json")));
-
     }
 }

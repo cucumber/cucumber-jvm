@@ -1,7 +1,6 @@
 package cucumber.cli;
 
 import java.util.*;
-
 import static java.util.Arrays.asList;
 
 public class RuntimeOptions {
@@ -127,7 +126,6 @@ public class RuntimeOptions {
         if (_formats.size() - _outputPaths.size() > 1) {
             _errors.add(THERE_CAN_ONLY_BE_ONE);
         }
-
     }
 
     public boolean flagMatches(String $flag, String $long, String $short) {
@@ -142,7 +140,6 @@ public class RuntimeOptions {
         _formats.clear();
         _gluePaths.clear();
         _outputPaths.clear();
-
         _dryRun = false;
         _helpRequested = false;
         _versionRequested = false;
