@@ -38,7 +38,7 @@ Add a dependency in your [POM](http://maven.apache.org/pom.html):
 <dependency>
     <groupId>info.cukes</groupId>
     <artifactId>cucumber-core</artifactId>
-    <version>1.0.0.RC6</version>
+    <version>1.0.0.RC11</version>
 </dependency>
 ```
 
@@ -60,7 +60,7 @@ Alternatively you can define your own resolver:
     m2compatible="true"
     usepoms="true"
     pattern="[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]"
-    root="https://oss.sonatype.org/content/repositories/releases/info/cukes/"/>
+    root="https://oss.sonatype.org/content/repositories/releases"/>
 ```
 
 ## Documentation

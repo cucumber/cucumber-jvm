@@ -186,7 +186,7 @@
             <dependency>
                 <groupId>org.webbitserver</groupId>
                 <artifactId>webbit</artifactId>
-                <version>0.3.0</version>
+                <version>0.3.2</version>
             </dependency>
             <dependency>
                 <groupId>commons-lang</groupId>
