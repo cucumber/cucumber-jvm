@@ -1,0 +1,9 @@
+artifacts:
+  cucumber_html: info.cukes:cucumber-html:jar:0.2.1
+  diffutils: com.googlecode.java-diff-utils:diffutils:jar:1.2.1
+  gherkin: info.cukes:gherkin:jar:2.7.4
+  gson: com.google.code.gson:gson:jar:2.1
+  xstream: com.thoughtworks.xstream:xstream:jar:1.4.2
+# test
+  mockito: org.mockito:mockito-all:jar:1.9.0
+  rhino: rhino:js:jar:1.7R2
