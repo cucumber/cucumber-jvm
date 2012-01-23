@@ -1,4 +1,4 @@
-## In Git
+## [1.0.0.RC12](https://github.com/cucumber/cucumber-jvm/compare/v1.0.0.RC11...v1.0.0.RC12)
 
 * [JUnit] Tagged hooks are executed properly (Aslak Hellesøy)
 * [JRuby] Better support for World blocks ([#166](https://github.com/cucumber/cucumber-jvm/pull/166) David Kowis)
