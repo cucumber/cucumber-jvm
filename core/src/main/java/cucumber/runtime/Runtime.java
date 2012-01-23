@@ -65,7 +65,7 @@ public class Runtime implements UnreportedStepExecutor {
     }
 
     private static Collection<? extends Backend> loadBackends(ResourceLoader resourceLoader, ClassLoader classLoader) {
-        return new ClasspathResourceLoader(classLoader).instantiateSubclasses(Backend.class, "cucumber/runtime", new Class[]{ResourceLoader.class}, new Object[]{resourceLoader});
+        return new ClasspathResourceLoader(classLoader).instantiateSubclasses(Backend.class, "cucumber.runtime", new Class[]{ResourceLoader.class}, new Object[]{resourceLoader});
     }
 
     public void addError(Throwable error) {
@@ -73,7 +73,7 @@ public class Runtime implements UnreportedStepExecutor {
     }
 
     /**
-     * This is the main entry point.
+     * This is the main entry point. Used from CLI, but not from JUnit.
      *
      * @param featurePaths
      * @param filters
@@ -87,7 +87,7 @@ public class Runtime implements UnreportedStepExecutor {
     }
 
     /**
-     * Runs an individual feature, not all the features
+     * Runs an individual feature, not all the features. Used from CLI, but not from JUnit.
      *
      * @param cucumberFeature
      * @param formatter
@@ -98,7 +98,7 @@ public class Runtime implements UnreportedStepExecutor {
         formatter.feature(cucumberFeature.getFeature());
         for (CucumberTagStatement cucumberTagStatement : cucumberFeature.getFeatureElements()) {
             //Run the scenario, it should handle before and after hooks
-            cucumberTagStatement.run(formatter, reporter, this);
+            cucumberTagStatement.run(formatter, reporter, this, cucumberTagStatement);
         }
         formatter.eof();
     }

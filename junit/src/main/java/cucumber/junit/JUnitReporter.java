@@ -33,7 +33,6 @@ class JUnitReporter implements Reporter, Formatter {
         this.formatter = formatter;
     }
 
-    // TODO: Move to scenario
     public void startExecutionUnit(ExecutionUnitRunner executionUnitRunner, RunNotifier runNotifier) {
         this.executionUnitRunner = executionUnitRunner;
         this.runNotifier = runNotifier;

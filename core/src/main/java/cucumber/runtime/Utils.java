@@ -17,14 +17,14 @@ public class Utils {
     public static boolean isInstantiable(Class<?> clazz) {
         return Modifier.isPublic(clazz.getModifiers()) && !Modifier.isAbstract(clazz.getModifiers());
     }
-    
+
     public static boolean hasConstructor(Class<?> clazz, Class[] paramTypes) {
-      try {
-        clazz.getConstructor(paramTypes);
-        return true;
-      } catch (NoSuchMethodException e) {
-        return false;
-      }
+        try {
+            clazz.getConstructor(paramTypes);
+            return true;
+        } catch (NoSuchMethodException e) {
+            return false;
+        }
     }
 
     public static String packagePath(Class clazz) {

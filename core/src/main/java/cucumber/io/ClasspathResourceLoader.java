@@ -3,6 +3,7 @@ package cucumber.io;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Utils;
 
+import java.io.File;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
@@ -20,11 +21,12 @@ public class ClasspathResourceLoader implements ResourceLoader {
         return new ClasspathIterable(classLoader, path, suffix);
     }
 
-    public Collection<Class<? extends Annotation>> getAnnotations(String packagePath) {
-        return getDescendants(Annotation.class, packagePath);
+    public Collection<Class<? extends Annotation>> getAnnotations(String packageName) {
+        return getDescendants(Annotation.class, packageName);
     }
 
-    public <T> Collection<Class<? extends T>> getDescendants(Class<T> parentType, String packagePath) {
+    public <T> Collection<Class<? extends T>> getDescendants(Class<T> parentType, String packageName) {
+        String packagePath = packageName.replace('.', '/').replace(File.separatorChar, '/');
         Collection<Class<? extends T>> result = new HashSet<Class<? extends T>>();
         for (Resource classResource : resources(packagePath, ".class")) {
             String className = classResource.getClassName();
@@ -36,8 +38,8 @@ public class ClasspathResourceLoader implements ResourceLoader {
         return result;
     }
 
-    public <T> T instantiateExactlyOneSubclass(Class<T> parentType, String packagePath, Class[] constructorParams, Object[] constructorArgs) {
-        Collection<? extends T> instances = instantiateSubclasses(parentType, packagePath, constructorParams, constructorArgs);
+    public <T> T instantiateExactlyOneSubclass(Class<T> parentType, String packageName, Class[] constructorParams, Object[] constructorArgs) {
+        Collection<? extends T> instances = instantiateSubclasses(parentType, packageName, constructorParams, constructorArgs);
         if (instances.size() == 1) {
             return instances.iterator().next();
         } else if (instances.size() == 0) {
@@ -47,9 +49,9 @@ public class ClasspathResourceLoader implements ResourceLoader {
         }
     }
 
-    public <T> Collection<? extends T> instantiateSubclasses(Class<T> parentType, String packagePath, Class[] constructorParams, Object[] constructorArgs) {
+    public <T> Collection<? extends T> instantiateSubclasses(Class<T> parentType, String packageName, Class[] constructorParams, Object[] constructorArgs) {
         Collection<T> result = new HashSet<T>();
-        for (Class<? extends T> clazz : getDescendants(parentType, packagePath)) {
+        for (Class<? extends T> clazz : getDescendants(parentType, packageName)) {
             if (Utils.isInstantiable(clazz) && Utils.hasConstructor(clazz, constructorParams)) {
                 result.add(newInstance(constructorParams, constructorArgs, clazz));
             }

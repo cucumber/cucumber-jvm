@@ -44,5 +44,5 @@ public abstract class CucumberTagStatement extends StepContainer {
     }
 
 
-    public abstract void run(Formatter formatter, Reporter reporter, Runtime runtime);
+    public abstract void run(Formatter formatter, Reporter reporter, Runtime runtime, StepRunner stepRunner);
 }

@@ -1,15 +1,15 @@
 package cucumber.junit;
 
-import cucumber.runtime.Glue;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.model.CucumberScenario;
+import cucumber.runtime.model.StepRunner;
+import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Step;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
 
-import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -19,15 +19,12 @@ class ExecutionUnitRunner extends ParentRunner<Step> {
     private final Runtime runtime;
     private final CucumberScenario cucumberScenario;
     private final JUnitReporter jUnitReporter;
-    private Glue glue;
 
     public ExecutionUnitRunner(Runtime runtime, CucumberScenario cucumberScenario, JUnitReporter jUnitReporter) throws InitializationError {
         super(ExecutionUnitRunner.class);
         this.runtime = runtime;
         this.cucumberScenario = cucumberScenario;
         this.jUnitReporter = jUnitReporter;
-
-        this.glue = runtime.getGlue();
     }
 
     @Override
@@ -46,21 +43,14 @@ class ExecutionUnitRunner extends ParentRunner<Step> {
     }
 
     @Override
-    public void run(RunNotifier notifier) {
+    public void run(final RunNotifier notifier) {
         jUnitReporter.startExecutionUnit(this, notifier);
-
-        //No tags from the junit side?
-        runtime.buildBackendWorlds();
-        runtime.runBeforeHooks(jUnitReporter, new HashSet<String>());
-
-        cucumberScenario.runBackground(jUnitReporter.getFormatter(), jUnitReporter.getReporter(), runtime);
-        cucumberScenario.format(jUnitReporter);
-        // Run the steps (the children)
-        super.run(notifier);
-        runtime.runAfterHooks(jUnitReporter,  new HashSet<String>());
-
-        runtime.disposeBackendWorlds();
-
+        cucumberScenario.run(jUnitReporter, jUnitReporter, runtime, new StepRunner() {
+            @Override
+            public void runSteps(Reporter reporter, Runtime runtime) {
+                ExecutionUnitRunner.super.run(notifier);
+            }
+        });
         jUnitReporter.finishExecutionUnit();
     }
 

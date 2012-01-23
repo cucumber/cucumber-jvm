@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>info.cukes</groupId>
     <artifactId>cucumber-jvm</artifactId>
-    <version>1.0.0.RC12-SNAPSHOT</version>
+    <version>1.0.0.RC13-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Cucumber-JVM</name>
     <url>http://cukes.info/</url>
@@ -186,7 +186,7 @@
             <dependency>
                 <groupId>org.webbitserver</groupId>
                 <artifactId>webbit</artifactId>
-                <version>0.3.0</version>
+                <version>0.3.2</version>
             </dependency>
             <dependency>
                 <groupId>commons-lang</groupId>
@@ -255,9 +255,9 @@
     <modules>
         <module>core</module>
         <module>junit</module>
+        <module>jruby</module>
         <module>scala</module>
         <module>jython</module>
-        <module>jruby</module>
         <module>picocontainer</module>
         <module>spring</module>
         <module>guice</module>
