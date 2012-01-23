@@ -255,9 +255,9 @@
     <modules>
         <module>core</module>
         <module>junit</module>
+        <module>jruby</module>
         <module>scala</module>
         <module>jython</module>
-        <module>jruby</module>
         <module>picocontainer</module>
         <module>spring</module>
         <module>guice</module>

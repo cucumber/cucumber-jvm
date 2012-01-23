@@ -5,6 +5,7 @@ import cucumber.runtime.CucumberException;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.Enumeration;
@@ -29,7 +30,7 @@ class ClasspathIterable implements Iterable<Resource> {
             while (resources.hasMoreElements()) {
                 URL url = resources.nextElement();
                 if (url.getProtocol().equals("jar")) {
-                    String jarPath = filePath(url.toExternalForm());
+                    String jarPath = filePath(url);
                     iterator.push(new ZipResourceIterator(jarPath, path, suffix));
                 } else {
                     File file = new File(getPath(url));
@@ -43,12 +44,9 @@ class ClasspathIterable implements Iterable<Resource> {
         }
     }
 
-    static String filePath(String jarUrl) throws UnsupportedEncodingException {
-        String pathWithProtocol = jarUrl.substring(0, jarUrl.indexOf("!/"));
-        String[] segments = pathWithProtocol.split(":");
-        // WINDOWS: jar:file:/C:/Users/ahellesoy/scm/cucumber-jvm/java/target/java-1.0.0-SNAPSHOT.jar
-        // POSIX:   jar:file:/Users/ahellesoy/scm/cucumber-jvm/java/target/java-1.0.0-SNAPSHOT.jar
-        String pathToJar = segments.length == 4 ? segments[2].substring(1) + ":" + segments[3] : segments[2];
+    static String filePath(URL jarUrl) throws UnsupportedEncodingException, MalformedURLException {
+        String path = new File(new URL(jarUrl.getFile()).getFile()).getAbsolutePath();
+        String pathToJar = path.substring(0, path.indexOf("!"));
         return URLDecoder.decode(pathToJar, "UTF-8");
     }
 
