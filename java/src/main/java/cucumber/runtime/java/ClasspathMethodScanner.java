@@ -8,14 +8,11 @@ import cucumber.io.ClasspathResourceLoader;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class ClasspathMethodScanner {
 
     private final ClasspathResourceLoader resourceLoader;
-    private final Set<String> loadedResourcePaths = new HashSet<String>();
 
     public ClasspathMethodScanner(ClasspathResourceLoader resourceLoader) {
         this.resourceLoader = resourceLoader;
@@ -24,11 +21,9 @@ public class ClasspathMethodScanner {
     public void scan(JavaBackend javaBackend, List<String> gluePaths) {
         Collection<Class<? extends Annotation>> cucumberAnnotationClasses = findCucumberAnnotationClasses();
         for (String gluePath : gluePaths) {
-            if (loadedResourcePaths.add(gluePath)) {
-                for (Class<?> candidateClass : resourceLoader.getDescendants(Object.class, gluePath)) {
-                    for (Method method : candidateClass.getMethods()) {
-                        scan(method, cucumberAnnotationClasses, javaBackend);
-                    }
+            for (Class<?> candidateClass : resourceLoader.getDescendants(Object.class, gluePath)) {
+                for (Method method : candidateClass.getMethods()) {
+                    scan(method, cucumberAnnotationClasses, javaBackend);
                 }
             }
         }
