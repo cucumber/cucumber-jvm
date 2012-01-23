@@ -3,7 +3,6 @@ package cucumber.cli;
 import cucumber.formatter.FormatterFactory;
 import cucumber.formatter.MultiFormatter;
 import cucumber.io.FileResourceLoader;
-import cucumber.runtime.*;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.snippets.SummaryPrinter;
 import gherkin.formatter.Formatter;
@@ -37,7 +36,8 @@ public class RuntimeActions {
     private void createFormatters(RuntimeOptions $options) {
         for (String format : $options.getFormats()) {
             if (format == RuntimeOptions.HTML_FORMATTER) {
-                createFormatter(format, new File($options.getOutputPath()));
+                // TOOD: Update output path to match formatter
+                createFormatter(format, new File($options.getOutputPath("html")));
             } else {
                 createFormatter(format, System.out);
             }
