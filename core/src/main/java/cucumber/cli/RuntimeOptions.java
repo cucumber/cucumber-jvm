@@ -1,9 +1,6 @@
 package cucumber.cli;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 
 import static java.util.Arrays.asList;
 
@@ -11,20 +8,23 @@ public class RuntimeOptions {
     // TODO: Should be using the FormatterFactory for these.
     public static final String HTML_FORMATTER = "html";
     public static final String PROGRESS_FORMATTER = "progress";
+    public static final String SEPARATOR = System.getProperty("line.separator");
 
     public static final String GLUE_REQUIRED = "Missing option: --glue";
     public static final String OUTPUT_REQUIRED = "Missing option: --out";
+    public static final String THERE_CAN_ONLY_BE_ONE = "Only one format can be used with stdout, missing option(s): --out";
     public static final String USAGE = "TODO - Write the help"; // not sure if this really belongs here as it's CLI specific
     public static final String VERSION = ResourceBundle.getBundle("cucumber.version").getString("cucumber-jvm.version");
 
     private final List<String> _errors = new ArrayList<String>();
     private final List<String> _featurePaths = new ArrayList<String>();
-    private final List<Object> _filters = new ArrayList<Object>(); // this feels like it should be List<String> and casted at the last moment
+    private final List<Object> _filterTags = new ArrayList<Object>(); // this feels like it should be List<String> and casted at the last moment
     private final List<String> _formats = new ArrayList<String>();
     private final List<String> _gluePaths = new ArrayList<String>();
+    private final Map<String, String> _outputPaths = new HashMap<String, String>();
 
     private String _dotCucumber;
-    private String _outputPath;
+    private String _currentFormat;
 
     private boolean _dryRun;
     private boolean _helpRequested;
@@ -32,6 +32,53 @@ public class RuntimeOptions {
 
     public RuntimeOptions() {
         reset();
+    }
+
+    public interface Formatable {
+        public void each(String $format, String $destination);
+    }
+
+    public interface Filterable {
+        public void each(Object $filterTag);
+    }
+
+    public void applyErrors(Messagable $stringable) {
+        // TODO: Will likely want to rejig this later so individual fields could be h
+        for(String error : _errors) {
+            $stringable.message(error);
+        }
+    }
+
+    public void applyFeaturePaths(Messagable $messagable) {
+        for(String path : _featurePaths) {
+            $messagable.message(path);
+        }
+    }
+    
+    public void applyFilterTags(Filterable $filterable) {
+        for(Object filter : getFilterTags()) {
+            $filterable.each(filter);
+        }
+    }
+    
+    public void applyFormats(Formatable $formatable) {
+        for(String format : getFormats()) {
+            $formatable.each(format, getOutputPath(format));
+        }
+    }
+    
+    public void applyGluePaths(Messagable $messagable) {
+        for(String gluePath : getGluePaths()) {
+            $messagable.message(gluePath);
+        }
+    }
+
+    public void applyHelpRequested(Messagable $messagable) {
+        if(_helpRequested) $messagable.message(USAGE);
+    }
+
+    public void applyVersionRequested(Messagable $messagable) {
+        if(_versionRequested) $messagable.message(VERSION);
     }
 
     public void parse(String[] $argv) {
@@ -52,7 +99,7 @@ public class RuntimeOptions {
             } else if (flagMatches(arg, "--format", "-f")) {
                 addFormat(iterator.next());
             } else if (flagMatches(arg, "--out", "-o")) {
-                setOutputPath(iterator.next());
+                addOutputPath(iterator.next());
             } else if (flagMatches(arg, "--dotcucumber", "-c")) {
                 setDotCucumber(iterator.next());
             } else if (flagMatches(arg, "--dry-run", "-d")) {
@@ -62,35 +109,25 @@ public class RuntimeOptions {
                 addFeaturePath(arg);
             }
         }
+
+        validate();
     }
 
-    public String usage() {
-        return USAGE;
-    }
+    public void validate() {
+        _errors.clear();
 
-    public String version() {
-        return VERSION;
-    }
-
-    public boolean hasErrors() {
-        boolean hasErrors = false;
-        getErrors().clear();
-
-        if (getGluePaths().size() < 1) {
-            hasErrors = true;
-            getErrors().add(GLUE_REQUIRED);
+        if (_gluePaths.size() < 1) {
+            _errors.add(GLUE_REQUIRED);
         }
 
-        if (getFormats().contains(HTML_FORMATTER) && getOutputPath().isEmpty()) {
-            hasErrors = true;
-            getErrors().add(OUTPUT_REQUIRED);
+        if (getFormats().contains(HTML_FORMATTER) && getOutputPath("html") == null) {
+            _errors.add(OUTPUT_REQUIRED);
         }
 
-        return hasErrors;
-    }
+        if (_formats.size() - _outputPaths.size() > 1) {
+            _errors.add(THERE_CAN_ONLY_BE_ONE);
+        }
 
-    public List<String> getErrors() {
-        return _errors;
     }
 
     public boolean flagMatches(String $flag, String $long, String $short) {
@@ -101,28 +138,21 @@ public class RuntimeOptions {
         _errors.clear();
 
         _featurePaths.clear();
-        _filters.clear();
+        _filterTags.clear();
         _formats.clear();
         _gluePaths.clear();
+        _outputPaths.clear();
 
         _dryRun = false;
         _helpRequested = false;
         _versionRequested = false;
 
         _dotCucumber = "";
-        _outputPath = "";
-    }
-
-    public boolean isHelpRequested() {
-        return _helpRequested;
+        _currentFormat = "";
     }
 
     public void setHelpRequested(boolean $helpRequested) {
         _helpRequested = $helpRequested;
-    }
-
-    public boolean isVersionRequested() {
-        return _versionRequested;
     }
 
     public void setVersionRequested(boolean $versionRequested) {
@@ -137,19 +167,11 @@ public class RuntimeOptions {
         return _dryRun;
     }
 
-    public void setOutputPath(String $outputPath) {
-        _outputPath = $outputPath;
-    }
-
-    public String getOutputPath() {
-        return _outputPath;
-    }
-
-    public List<String> getFeaturePaths() {
+    protected List<String> getFeaturePaths() {
         return _featurePaths;
     }
 
-    public List<String> getGluePaths() {
+    protected List<String> getGluePaths() {
         return _gluePaths;
     }
 
@@ -170,18 +192,32 @@ public class RuntimeOptions {
     }
 
     public void addFilterTag(String $filter) {
-        _filters.add($filter);
+        _filterTags.add($filter);
     }
 
-    public List<Object> getFilterTags() {
-        return _filters;
+    protected List<Object> getFilterTags() {
+        return _filterTags;
     }
 
-    public List<String> getFormats() {
+    protected List<String> getFormats() {
         return _formats;
     }
 
     public void addFormat(String $format) {
         _formats.add($format);
+        _currentFormat = $format;
+    }
+
+    public void addOutputPath(String $outputPath) {
+        _outputPaths.put(_currentFormat, $outputPath);
+        _currentFormat = "";
+    }
+
+    public String getOutputPath(String $format) {
+        return _outputPaths.get($format);
+    }
+
+    protected Map<String, String> getOutputPaths() {
+        return _outputPaths;
     }
 }
