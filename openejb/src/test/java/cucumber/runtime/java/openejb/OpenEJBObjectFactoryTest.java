@@ -6,7 +6,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 
-public class CDIFactoryTest {
+public class OpenEJBObjectFactoryTest {
     @Test
     public void shouldGiveUsNewInstancesForEachScenario() {
         ObjectFactory factory = new OpenEJBObjectFactory();

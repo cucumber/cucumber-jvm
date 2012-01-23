@@ -6,10 +6,10 @@ import org.junit.Test;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 
-public class CDIFactoryTest {
+public class WeldFactoryTest {
     @Test
     public void shouldGiveUsNewInstancesForEachScenario() {
-        ObjectFactory factory = new CDIFactory();
+        ObjectFactory factory = new WeldFactory();
         factory.addClass(BellyStepdefs.class);
 
         // Scenario 1

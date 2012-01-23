@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>info.cukes</groupId>
     <artifactId>cucumber-jvm</artifactId>
-    <version>1.0.0.RC12-SNAPSHOT</version>
+    <version>1.0.0.RC13-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Cucumber-JVM</name>
     <url>http://cukes.info/</url>
@@ -216,7 +216,7 @@
             <dependency>
                 <groupId>org.apache.openejb</groupId>
                 <artifactId>openejb-core</artifactId>
-                <version>4.0.0-beta-2-SNAPSHOT</version>
+                <version>4.0.0-beta-2</version>
             </dependency>
             <dependency>
                 <groupId>javax.enterprise</groupId>
@@ -267,8 +267,7 @@
         <module>rhino</module>
         <module>java</module>
         <module>clojure</module>
-
-        <!--<module>openejb</module>-->
+        <module>openejb</module>
     </modules>
 
     <profiles>

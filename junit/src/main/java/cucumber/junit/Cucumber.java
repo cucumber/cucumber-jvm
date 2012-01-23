@@ -57,7 +57,7 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
 
         // TODO: Create formatter(s) based on Annotations. Use same technique as in cli.Main for MultiFormatter
         jUnitReporter = new JUnitReporter(new NullReporter(), new NullReporter());
-        addChildren(featurePaths, filters(clazz), gluePaths(clazz));
+        addChildren(featurePaths, filters(clazz));
     }
 
     @Override
@@ -137,10 +137,10 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         return asList(filters);
     }
 
-    private void addChildren(List<String> featurePaths, final List<Object> filters, List<String> gluePaths) throws InitializationError {
+    private void addChildren(List<String> featurePaths, final List<Object> filters) throws InitializationError {
         List<CucumberFeature> cucumberFeatures = load(resourceLoader, featurePaths, filters);
         for (CucumberFeature cucumberFeature : cucumberFeatures) {
-            children.add(new FeatureRunner(cucumberFeature, gluePaths, runtime, jUnitReporter));
+            children.add(new FeatureRunner(cucumberFeature, runtime, jUnitReporter));
         }
     }
 
