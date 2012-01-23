@@ -8,9 +8,11 @@ public class Main {
 
         options.parse($argv);
 
-        options.applyHelpRequested(new PrintAndExit(0));
-        options.applyVersionRequested(new PrintAndExit(0));
-        options.applyErrors(new PrintAndExit(System.err, 1));
+        PrintMessage printMessage = new PrintMessage(System.err);
+        options.applyVersionRequested(printMessage);
+        options.applyErrors(printMessage);
+        options.applyHelpRequested(printMessage);
+        if(printMessage.lineCount() > 0) System.exit(1);
 
         RuntimeActions runtimeActions = new RuntimeActions();
         System.exit(runtimeActions.apply(options));
