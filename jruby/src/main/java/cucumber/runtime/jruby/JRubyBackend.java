@@ -15,10 +15,7 @@ import org.jruby.embed.ScriptingContainer;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.util.List;
-import java.util.Locale;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class JRubyBackend implements Backend {
     private static final String DSL = "/cucumber/runtime/jruby/dsl.rb";
@@ -27,6 +24,7 @@ public class JRubyBackend implements Backend {
     private Glue glue;
     private ResourceLoader resourceLoader;
     private UnreportedStepExecutor unreportedStepExecutor;
+    private final Set<JRubyWorldBlock> worldBlocks = new HashSet<JRubyWorldBlock>();
 
     public JRubyBackend(ResourceLoader resourceLoader) throws UnsupportedEncodingException {
         this.resourceLoader = resourceLoader;
@@ -68,6 +66,10 @@ public class JRubyBackend implements Backend {
     @Override
     public void buildWorld() {
         jruby.put("$world", new Object());
+
+        for (JRubyWorldBlock block : worldBlocks) {
+            block.execute();
+        }
     }
 
     private void runScriptlet(Resource resource) {
@@ -113,6 +115,6 @@ public class JRubyBackend implements Backend {
     }
 
     public void addWorldBlock(RubyObject body) {
-        new JRubyWorldBlock(body).execute();
+        worldBlocks.add(new JRubyWorldBlock(body));
     }
 }
