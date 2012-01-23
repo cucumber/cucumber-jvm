@@ -1,3 +1,8 @@
+## In Git
+
+* [Build] Fixed subtle path issues on Windows
+* [Build] Fixed Build Failure: Cucumber-JVM: Scala (FAILURE) ([#167](https://github.com/cucumber/cucumber-jvm/issues/167) Aslak Hellesøy)
+
 ## [1.0.0.RC11](https://github.com/cucumber/cucumber-jvm/compare/v1.0.0.RC6...v1.0.0.RC11)
 
 * [Build] The build is Maven-based again. It turned out to be the best choice.

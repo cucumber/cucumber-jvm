@@ -86,12 +86,11 @@
                                 <groovy><![CDATA[
 import groovy.text.SimpleTemplateEngine
 
-def _ = File.separator
 def engine = new SimpleTemplateEngine()
-def templateSource = new File(project.baseDir, "src${_}main${_}code_generator${_}I18n.scala.txt").getText()
+def templateSource = new File(project.baseDir, "src${File.separator}main${File.separator}code_generator${File.separator}I18n.scala.txt").getText()
 
 template = engine.createTemplate(templateSource).make(null)
-def file = new File(project.baseDir, "target${_}generated-sources${_}i18n${_}cucumber${_}runtime${_}I18n.scala")
+def file = new File(project.baseDir, "target${File.separator}generated-sources${File.separator}i18n${File.separator}cucumber${File.separator}runtime${File.separator}I18n.scala")
 file.parentFile.mkdirs()
 file.write(template.toString(), "UTF-8")
         ]]></groovy>
