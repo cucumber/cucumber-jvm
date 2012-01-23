@@ -134,7 +134,7 @@ public class RuntimeOptions {
         return $flag.startsWith("-") && ($flag.equals($short) || $flag.equals($long));
     }
 
-    public void reset() {
+    protected void reset() {
         _errors.clear();
 
         _featurePaths.clear();
@@ -167,6 +167,7 @@ public class RuntimeOptions {
         return _dryRun;
     }
 
+    // TODO: remove the getters as it's bleeding state
     protected List<String> getFeaturePaths() {
         return _featurePaths;
     }
