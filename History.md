@@ -1,5 +1,6 @@
 ## In Git
 
+* [JUnit] Tagged hooks are executed properly (Aslak Hellesøy)
 * [JRuby] Better support for World blocks ([#166](https://github.com/cucumber/cucumber-jvm/pull/166) David Kowis)
 * [Java] GluePath can be a package name ([#164](https://github.com/cucumber/cucumber-jvm/issues/164) Aslak Hellesøy)
 * [Build] Fixed subtle path issues on Windows
