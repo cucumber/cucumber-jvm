@@ -216,7 +216,7 @@
             <dependency>
                 <groupId>org.apache.openejb</groupId>
                 <artifactId>openejb-core</artifactId>
-                <version>4.0.0-beta-2-SNAPSHOT</version>
+                <version>4.0.0-beta-2</version>
             </dependency>
             <dependency>
                 <groupId>javax.enterprise</groupId>
@@ -267,8 +267,7 @@
         <module>rhino</module>
         <module>java</module>
         <module>clojure</module>
-
-        <!--<module>openejb</module>-->
+        <module>openejb</module>
     </modules>
 
     <profiles>
