@@ -105,3 +105,15 @@ def build_hashes(raw)
   end
   output
 end
+
+Given /^I store the value "([^"]*)"$/ do |value|
+  @value = value
+end
+
+When /^I grab another value "([^"]*)"$/ do |value|
+  @another_value = value
+end
+
+Then /^those values are the same$/ do
+  assert_equal(@value, @another_value)
+end

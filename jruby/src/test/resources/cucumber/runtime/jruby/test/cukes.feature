@@ -37,3 +37,12 @@ Feature: Cukes
       | field | value |
       | omg   | lol   |
     Then that data table step got called
+
+  Scenario Outline: Do a scenario outline calling things
+    Given I store the value "<value>"
+    When I grab another value "<otherValue>"
+    Then those values are the same
+  Examples:
+    | value   | otherValue |
+    | 1       | 1          |
+    | awesome | awesome    |
