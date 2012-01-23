@@ -21,7 +21,8 @@ public class ClasspathMethodScanner {
     public void scan(JavaBackend javaBackend, List<String> gluePaths) {
         Collection<Class<? extends Annotation>> cucumberAnnotationClasses = findCucumberAnnotationClasses();
         for (String gluePath : gluePaths) {
-            for (Class<?> candidateClass : resourceLoader.getDescendants(Object.class, gluePath)) {
+            String packageName = gluePath.replace('/', '.').replace('\\', '.'); // Sometimes the gluePath will be a path, not a package
+            for (Class<?> candidateClass : resourceLoader.getDescendants(Object.class, packageName)) {
                 for (Method method : candidateClass.getMethods()) {
                     scan(method, cucumberAnnotationClasses, javaBackend);
                 }
@@ -30,7 +31,7 @@ public class ClasspathMethodScanner {
     }
 
     private Collection<Class<? extends Annotation>> findCucumberAnnotationClasses() {
-        return resourceLoader.getAnnotations("cucumber/annotation");
+        return resourceLoader.getAnnotations("cucumber.annotation");
     }
 
     private void scan(Method method, Collection<Class<? extends Annotation>> cucumberAnnotationClasses, JavaBackend javaBackend) {
