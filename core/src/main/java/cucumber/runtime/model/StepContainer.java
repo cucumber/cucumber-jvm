@@ -9,7 +9,7 @@ import gherkin.formatter.model.Step;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StepContainer implements StepRunner {
+public class StepContainer {
     private final List<Step> steps = new ArrayList<Step>();
     private final BasicStatement statement;
     protected final CucumberFeature cucumberFeature;
@@ -34,7 +34,6 @@ public class StepContainer implements StepRunner {
         }
     }
 
-    @Override
     public void runSteps(Reporter reporter, Runtime runtime) {
         for (Step step : getSteps()) {
             runStep(step, reporter, runtime);

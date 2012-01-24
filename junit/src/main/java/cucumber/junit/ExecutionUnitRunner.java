@@ -2,8 +2,6 @@ package cucumber.junit;
 
 import cucumber.runtime.Runtime;
 import cucumber.runtime.model.CucumberScenario;
-import cucumber.runtime.model.StepRunner;
-import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Step;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
@@ -45,17 +43,16 @@ class ExecutionUnitRunner extends ParentRunner<Step> {
     @Override
     public void run(final RunNotifier notifier) {
         jUnitReporter.startExecutionUnit(this, notifier);
-        cucumberScenario.run(jUnitReporter, jUnitReporter, runtime, new StepRunner() {
-            @Override
-            public void runSteps(Reporter reporter, Runtime runtime) {
-                ExecutionUnitRunner.super.run(notifier);
-            }
-        });
+        // This causes runChild to never be called, which seems OK.
+        cucumberScenario.run(jUnitReporter, jUnitReporter, runtime);
         jUnitReporter.finishExecutionUnit();
     }
 
     @Override
     protected void runChild(Step step, RunNotifier notifier) {
-        cucumberScenario.runStep(step, jUnitReporter, runtime);
+        // The way we override run(RunNotifier) causes this method to never be called.
+        // Instead it happens via cucumberScenario.run(jUnitReporter, jUnitReporter, runtime);
+        throw new UnsupportedOperationException();
+        // cucumberScenario.runStep(step, jUnitReporter, runtime);
     }
 }
