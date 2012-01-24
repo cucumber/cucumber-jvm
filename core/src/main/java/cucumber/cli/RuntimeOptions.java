@@ -10,65 +10,65 @@ public class RuntimeOptions {
     public static final String USAGE = "TODO - Write the help"; // not sure if this really belongs here as it's CLI specific
     public static final String VERSION = ResourceBundle.getBundle("cucumber.version").getString("cucumber-jvm.version");
 
-    private final List<String> _errors = new ArrayList<String>();
-    private final List<String> _featurePaths = new ArrayList<String>();
-    private final List<Object> _filterTags = new ArrayList<Object>(); // this feels like it should be List<String> and casted at the last moment
-    private final List<String> _formats = new ArrayList<String>();
-    private final List<String> _gluePaths = new ArrayList<String>();
-    private final Map<String, String> _outputPaths = new HashMap<String, String>();
+    private final List<String> errors = new ArrayList<String>();
+    private final List<String> featurePaths = new ArrayList<String>();
+    private final List<Object> filterTags = new ArrayList<Object>(); // this feels like it should be List<String> and casted at the last moment
+    private final List<String> formats = new ArrayList<String>();
+    private final List<String> gluePaths = new ArrayList<String>();
+    private final Map<String, String> outputPaths = new HashMap<String, String>();
 
-    private String _dotCucumber;
-    private String _currentFormat;
+    private String dotCucumber;
+    private String currentFormat;
 
-    private boolean _dryRun;
-    private boolean _helpRequested;
-    private boolean _versionRequested;
+    private boolean dryRun;
+    private boolean helpRequested;
+    private boolean versionRequested;
 
     public RuntimeOptions() {
         reset();
     }
 
-    public void applyErrorsTo(Messagable $stringable) {
+    public void applyErrorsTo(Messagable stringable) {
         // TODO: Will likely want to rejig this later so individual fields could be h
-        for(String error : _errors) {
-            $stringable.message(error);
+        for(String error : errors) {
+            stringable.message(error);
         }
     }
 
-    public void applyFeaturePaths(Messagable $messagable) {
-        for(String path : _featurePaths) {
-            $messagable.message(path);
+    public void applyFeaturePaths(Messagable messagable) {
+        for(String path : featurePaths) {
+            messagable.message(path);
         }
     }
     
-    public void applyFilterTags(Filterable $filterable) {
+    public void applyFilterTags(Filterable filterable) {
         for(Object filter : getFilterTags()) {
-            $filterable.each(filter);
+            filterable.each(filter);
         }
     }
     
-    public void applyFormats(Formatable $formatable) {
-        for(String format : _formats) {
-            $formatable.eachWithDestination(format, _outputPaths.get(format));
+    public void applyFormats(Formatable formatable) {
+        for(String format : formats) {
+            formatable.eachWithDestination(format, outputPaths.get(format));
         }
     }
     
-    public void applyGluePaths(Messagable $messagable) {
-        for(String gluePath : _gluePaths) {
-            $messagable.message(gluePath);
+    public void applyGluePaths(Messagable messagable) {
+        for(String gluePath : gluePaths) {
+            messagable.message(gluePath);
         }
     }
 
-    public void applyIfHelpRequestedTo(Messagable $messagable) {
-        if(_helpRequested) $messagable.message(USAGE);
+    public void applyIfHelpRequestedTo(Messagable messagable) {
+        if(helpRequested) messagable.message(USAGE);
     }
 
-    public void applyIfVersionRequestedTo(Messagable $messagable) {
-        if(_versionRequested) $messagable.message(VERSION);
+    public void applyIfVersionRequestedTo(Messagable messagable) {
+        if(versionRequested) messagable.message(VERSION);
     }
 
-    public void parse(String[] $argv) {
-        List<String> args = new ArrayList<String>(asList($argv));
+    public void parse(String[] argv) {
+        List<String> args = new ArrayList<String>(asList(argv));
         Iterator<String> iterator = args.iterator();
 
         while (iterator.hasNext()) {
@@ -100,106 +100,106 @@ public class RuntimeOptions {
     }
 
     public void validate() {
-        _errors.clear();
+        errors.clear();
 
-        if (_gluePaths.size() < 1) {
-            _errors.add(GLUE_REQUIRED);
+        if (gluePaths.size() < 1) {
+            errors.add(GLUE_REQUIRED);
         }
 
-        if (_formats.size() - _outputPaths.size() > 1) {
-            _errors.add(THERE_CAN_ONLY_BE_ONE);
+        if (formats.size() - outputPaths.size() > 1) {
+            errors.add(THERE_CAN_ONLY_BE_ONE);
         }
     }
 
-    public boolean flagMatches(String $flag, String $long, String $short) {
-        return $flag.startsWith("-") && ($flag.equals($short) || $flag.equals($long));
+    public boolean flagMatches(String flag, String longFlag, String shortFlag) {
+        return flag.startsWith("-") && (flag.equals(shortFlag) || flag.equals(longFlag));
     }
 
     protected void reset() {
-        _errors.clear();
+        errors.clear();
 
-        _featurePaths.clear();
-        _filterTags.clear();
-        _formats.clear();
-        _gluePaths.clear();
-        _outputPaths.clear();
+        featurePaths.clear();
+        filterTags.clear();
+        formats.clear();
+        gluePaths.clear();
+        outputPaths.clear();
 
-        _dryRun = false;
-        _helpRequested = false;
-        _versionRequested = false;
+        dryRun = false;
+        helpRequested = false;
+        versionRequested = false;
 
-        _dotCucumber = "";
-        _currentFormat = "";
+        dotCucumber = "";
+        currentFormat = "";
     }
 
-    public void setHelpRequested(boolean $helpRequested) {
-        _helpRequested = $helpRequested;
+    public void setHelpRequested(boolean helpRequested) {
+        this.helpRequested = helpRequested;
     }
 
-    public void setVersionRequested(boolean $versionRequested) {
-        _versionRequested = $versionRequested;
+    public void setVersionRequested(boolean versionRequested) {
+        this.versionRequested = versionRequested;
     }
 
-    public void setDryRun(boolean $dryRun) {
-        _dryRun = $dryRun;
+    public void setDryRun(boolean dryRun) {
+        this.dryRun = dryRun;
     }
 
-    public void setDotCucumber(String $dotCucumber) {
-        _dotCucumber = $dotCucumber;
+    public void setDotCucumber(String dotCucumber) {
+        this.dotCucumber = dotCucumber;
     }
 
-    public void addGluePath(String $gluePath) {
-        _gluePaths.add($gluePath);
+    public void addGluePath(String gluePath) {
+        gluePaths.add(gluePath);
     }
 
-    public void addFeaturePath(String $featurePath) {
-        _featurePaths.add($featurePath);
+    public void addFeaturePath(String featurePath) {
+        featurePaths.add(featurePath);
     }
 
-    public void addFilterTag(String $filter) {
-        _filterTags.add($filter);
+    public void addFilterTag(String filter) {
+        filterTags.add(filter);
     }
 
-    public void addFormat(String $format) {
-        _formats.add($format);
-        _currentFormat = $format;
+    public void addFormat(String format) {
+        formats.add(format);
+        currentFormat = format;
     }
 
-    public void addOutputPath(String $outputPath) {
-        _outputPaths.put(_currentFormat, $outputPath);
-        _currentFormat = "";
+    public void addOutputPath(String outputPath) {
+        outputPaths.put(currentFormat, outputPath);
+        currentFormat = "";
     }
 
     // TODO: remove the getters as it's bleeding state
     protected List<String> getFeaturePaths() {
-        return _featurePaths;
+        return featurePaths;
     }
 
     public boolean isDryRun() {
-        return _dryRun;
+        return dryRun;
     }
 
     protected List<String> getGluePaths() {
-        return _gluePaths;
+        return gluePaths;
     }
 
     protected Map<String, String> getOutputPaths() {
-        return _outputPaths;
+        return outputPaths;
     }
 
-    protected String getOutputPath(String $format) {
-        return _outputPaths.get($format);
+    protected String getOutputPath(String format) {
+        return outputPaths.get(format);
     }
 
     protected List<String> getFormats() {
-        return _formats;
+        return formats;
     }
 
     protected List<Object> getFilterTags() {
-        return _filterTags;
+        return filterTags;
     }
 
     public String getDotCucumber() {
-        return _dotCucumber;
+        return dotCucumber;
     }
 }

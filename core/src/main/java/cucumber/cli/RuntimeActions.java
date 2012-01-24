@@ -15,19 +15,19 @@ import java.util.List;
 // TODO: Give this class a better name.
 public class RuntimeActions {
 
-    private final DefaultRuntimeFactory _runtimeFactory = new DefaultRuntimeFactory();
+    private final DefaultRuntimeFactory runtimeFactory = new DefaultRuntimeFactory();
 
-    public int apply(RuntimeOptions $options) throws IOException {
+    public int apply(RuntimeOptions options) throws IOException {
         FormatCreator formatCreator = new FormatCreator(new FormatterFactory(), new MultiFormatter(Thread.currentThread().getContextClassLoader()));
-        $options.applyFormats(formatCreator);
+        options.applyFormats(formatCreator);
 
-        Runtime runtime = _runtimeFactory.createRuntime(new FileResourceLoader(), $options.getGluePaths(), Thread.currentThread().getContextClassLoader(), $options.isDryRun());
+        Runtime runtime = runtimeFactory.createRuntime(new FileResourceLoader(), options.getGluePaths(), Thread.currentThread().getContextClassLoader(), options.isDryRun());
 
-        if ($options.getDotCucumber() != null) {
-            writeDotCucumber($options.getFeaturePaths(), $options.getDotCucumber(), runtime);
+        if (options.getDotCucumber() != null) {
+            writeDotCucumber(options.getFeaturePaths(), options.getDotCucumber(), runtime);
         }
 
-        run($options.getFeaturePaths(), $options.getFilterTags(), formatCreator.getMultiFormatter(), runtime);
+        run(options.getFeaturePaths(), options.getFilterTags(), formatCreator.getMultiFormatter(), runtime);
         printSummary(runtime);
 
         return runtime.exitStatus();

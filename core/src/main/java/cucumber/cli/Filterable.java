@@ -1,5 +1,5 @@
 package cucumber.cli;
 
 public interface Filterable {
-    public void each(Object $filterTag);
+    public void each(Object filterTag);
 }
