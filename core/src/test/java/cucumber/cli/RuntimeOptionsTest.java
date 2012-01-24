@@ -53,7 +53,7 @@ public class RuntimeOptionsTest {
     private void parseAndReceiveErrors(String[] options) {
         _options.parse(options);
         _receiver.messages.clear();
-        _options.applyErrors(_receiver);
+        _options.applyErrorsTo(_receiver);
     }
 
     @Test
@@ -143,9 +143,9 @@ public class RuntimeOptionsTest {
         assertThat("output path should be empty",  _options.getOutputPath("abc"), is(nullValue()));
 
         assertThat("dry run should be disabled", _options.isDryRun(), is(false));
-        _options.applyHelpRequested(_receiver);
+        _options.applyIfHelpRequestedTo(_receiver);
         assertThat("help should not be requested", _receiver.messages, not(hasItem(RuntimeOptions.USAGE)));
-        _options.applyVersionRequested(_receiver);
+        _options.applyIfVersionRequestedTo(_receiver);
         assertThat("version should not be requested", _receiver.messages, not(hasItem(RuntimeOptions.USAGE)));
 
         assertThat("dot cucumber should be empty", _options.getDotCucumber(), is(equalTo("")));

@@ -4,11 +4,6 @@ import java.util.*;
 import static java.util.Arrays.asList;
 
 public class RuntimeOptions {
-    // TODO: Should be using the FormatterFactory for these.
-    public static final String HTML_FORMATTER = "html";
-    public static final String PROGRESS_FORMATTER = "progress";
-    public static final String SEPARATOR = System.getProperty("line.separator");
-
     public static final String GLUE_REQUIRED = "Missing option: --glue";
     public static final String OUTPUT_REQUIRED = "Missing option: --out";
     public static final String THERE_CAN_ONLY_BE_ONE = "Only one format can be used with stdout, missing option(s): --out";
@@ -33,15 +28,7 @@ public class RuntimeOptions {
         reset();
     }
 
-    public interface Formatable {
-        public void each(String $format, String $destination);
-    }
-
-    public interface Filterable {
-        public void each(Object $filterTag);
-    }
-
-    public void applyErrors(Messagable $stringable) {
+    public void applyErrorsTo(Messagable $stringable) {
         // TODO: Will likely want to rejig this later so individual fields could be h
         for(String error : _errors) {
             $stringable.message(error);
@@ -61,22 +48,22 @@ public class RuntimeOptions {
     }
     
     public void applyFormats(Formatable $formatable) {
-        for(String format : getFormats()) {
-            $formatable.each(format, getOutputPath(format));
+        for(String format : _formats) {
+            $formatable.eachWithDestination(format, _outputPaths.get(format));
         }
     }
     
     public void applyGluePaths(Messagable $messagable) {
-        for(String gluePath : getGluePaths()) {
+        for(String gluePath : _gluePaths) {
             $messagable.message(gluePath);
         }
     }
 
-    public void applyHelpRequested(Messagable $messagable) {
+    public void applyIfHelpRequestedTo(Messagable $messagable) {
         if(_helpRequested) $messagable.message(USAGE);
     }
 
-    public void applyVersionRequested(Messagable $messagable) {
+    public void applyIfVersionRequestedTo(Messagable $messagable) {
         if(_versionRequested) $messagable.message(VERSION);
     }
 
@@ -119,10 +106,6 @@ public class RuntimeOptions {
             _errors.add(GLUE_REQUIRED);
         }
 
-        if (getFormats().contains(HTML_FORMATTER) && getOutputPath("html") == null) {
-            _errors.add(OUTPUT_REQUIRED);
-        }
-
         if (_formats.size() - _outputPaths.size() > 1) {
             _errors.add(THERE_CAN_ONLY_BE_ONE);
         }
@@ -160,19 +143,6 @@ public class RuntimeOptions {
         _dryRun = $dryRun;
     }
 
-    public boolean isDryRun() {
-        return _dryRun;
-    }
-
-    // TODO: remove the getters as it's bleeding state
-    protected List<String> getFeaturePaths() {
-        return _featurePaths;
-    }
-
-    protected List<String> getGluePaths() {
-        return _gluePaths;
-    }
-
     public void setDotCucumber(String $dotCucumber) {
         _dotCucumber = $dotCucumber;
     }
@@ -185,20 +155,8 @@ public class RuntimeOptions {
         _featurePaths.add($featurePath);
     }
 
-    public String getDotCucumber() {
-        return _dotCucumber;
-    }
-
     public void addFilterTag(String $filter) {
         _filterTags.add($filter);
-    }
-
-    protected List<Object> getFilterTags() {
-        return _filterTags;
-    }
-
-    protected List<String> getFormats() {
-        return _formats;
     }
 
     public void addFormat(String $format) {
@@ -211,11 +169,36 @@ public class RuntimeOptions {
         _currentFormat = "";
     }
 
-    public String getOutputPath(String $format) {
-        return _outputPaths.get($format);
+    // TODO: remove the getters as it's bleeding state
+    protected List<String> getFeaturePaths() {
+        return _featurePaths;
+    }
+
+    public boolean isDryRun() {
+        return _dryRun;
+    }
+
+    protected List<String> getGluePaths() {
+        return _gluePaths;
     }
 
     protected Map<String, String> getOutputPaths() {
         return _outputPaths;
+    }
+
+    protected String getOutputPath(String $format) {
+        return _outputPaths.get($format);
+    }
+
+    protected List<String> getFormats() {
+        return _formats;
+    }
+
+    protected List<Object> getFilterTags() {
+        return _filterTags;
+    }
+
+    public String getDotCucumber() {
+        return _dotCucumber;
     }
 }
