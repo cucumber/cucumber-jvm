@@ -74,6 +74,12 @@ class JUnitReporter implements Reporter, Formatter {
                 }
             }
         }
+        if(steps.isEmpty()) {
+            // We have run all of our steps. Set the stepNotifier to null so that
+            // if an error occurs in an After block, it's reported against the scenario
+            // instead (via executionUnitNotifier).
+            stepNotifier = null;
+        }
         reporter.result(result);
     }
 
@@ -126,13 +132,5 @@ class JUnitReporter implements Reporter, Formatter {
     @Override
     public void done() {
         formatter.done();
-    }
-
-    public Formatter getFormatter() {
-        return formatter;
-    }
-
-    public Reporter getReporter() {
-        return reporter;
     }
 }

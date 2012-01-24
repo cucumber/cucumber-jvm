@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Stack;
 
 import static java.util.Arrays.asList;
 
@@ -28,7 +29,7 @@ public class Main {
         List<String> featurePaths = new ArrayList<String>();
         List<String> gluePaths = new ArrayList<String>();
         List<Object> filters = new ArrayList<Object>();
-        String format = "progress";
+        Stack<String> format = new Stack<String>();
         List<String> args = new ArrayList<String>(asList(argv));
         String dotCucumber = null;
         boolean isDryRun = false;
@@ -51,10 +52,10 @@ public class Main {
             } else if (arg.equals("--tags") || arg.equals("-t")) {
                 filters.add(args.remove(0));
             } else if (arg.equals("--format") || arg.equals("-f")) {
-                format = args.remove(0);
+                format.push(args.remove(0));
             } else if (arg.equals("--out") || arg.equals("-o")) {
                 File out = new File(args.remove(0));
-                Formatter formatter = formatterFactory.createFormatter(format, out);
+                Formatter formatter = formatterFactory.createFormatter(format.pop(), out);
                 multiFormatter.add(formatter);
             } else if (arg.equals("--dotcucumber")) {
                 dotCucumber = args.remove(0);
@@ -66,8 +67,14 @@ public class Main {
             }
         }
 
-        if (multiFormatter.isEmpty()) {
-            multiFormatter.add(formatterFactory.createFormatter(format, System.out));
+        //Grab any formatters left on the stack and create a multiformatter for them to stdout
+        // yes this will be ugly, but maybe people are crazy
+        if (!format.isEmpty()) {
+            multiFormatter.add(formatterFactory.createFormatter(format.pop(), System.out));
+        } else {
+            //Default formatter is progress unless otherwise specified or if they have piped all their other formatters
+            // to an output thing
+            multiFormatter.add(formatterFactory.createFormatter("progress", System.out));
         }
 
         if (gluePaths.isEmpty()) {

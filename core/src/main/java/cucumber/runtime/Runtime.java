@@ -98,7 +98,7 @@ public class Runtime implements UnreportedStepExecutor {
         formatter.feature(cucumberFeature.getFeature());
         for (CucumberTagStatement cucumberTagStatement : cucumberFeature.getFeatureElements()) {
             //Run the scenario, it should handle before and after hooks
-            cucumberTagStatement.run(formatter, reporter, this, cucumberTagStatement);
+            cucumberTagStatement.run(formatter, reporter, this);
         }
         formatter.eof();
     }

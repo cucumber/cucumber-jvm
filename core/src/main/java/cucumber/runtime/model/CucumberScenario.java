@@ -23,13 +23,13 @@ public class CucumberScenario extends CucumberTagStatement {
      * This method is called when Cucumber is run from the CLI, but not when run from JUnit
      */
     @Override
-    public void run(Formatter formatter, Reporter reporter, Runtime runtime, StepRunner stepRunner) {
+    public void run(Formatter formatter, Reporter reporter, Runtime runtime) {
         runtime.buildBackendWorlds();
         runtime.runBeforeHooks(reporter, tags());
 
         runBackground(formatter, reporter, runtime);
         format(formatter);
-        stepRunner.runSteps(reporter, runtime);
+        runSteps(reporter, runtime);
 
         runtime.runAfterHooks(reporter, tags());
         runtime.disposeBackendWorlds();

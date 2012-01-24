@@ -4,7 +4,7 @@ import cucumber.runtime.java.ObjectFactory;
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
 
-public class CDIFactory extends Weld implements ObjectFactory {
+public class WeldFactory extends Weld implements ObjectFactory {
 
     private WeldContainer weld;
 
