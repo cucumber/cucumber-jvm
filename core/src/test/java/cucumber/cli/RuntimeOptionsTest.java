@@ -139,7 +139,7 @@ public class RuntimeOptionsTest {
         _options.applyIfHelpRequestedTo(_receiver);
         assertThat("help should not be requested", _receiver.messages, not(hasItem(RuntimeOptions.USAGE)));
         _options.applyIfVersionRequestedTo(_receiver);
-        assertThat("version should not be requested", _receiver.messages, not(hasItem(RuntimeOptions.USAGE)));
+        assertThat("version should not be requested", _receiver.messages, not(hasItem(RuntimeOptions.VERSION)));
 
         assertThat("dot cucumber should be empty", _options.getDotCucumber(), is(equalTo("")));
     }
