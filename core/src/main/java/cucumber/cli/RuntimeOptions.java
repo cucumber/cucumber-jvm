@@ -123,6 +123,7 @@ public class RuntimeOptions {
         _formats.clear();
         _gluePaths.clear();
         _outputPaths.clear();
+
         _dryRun = false;
         _helpRequested = false;
         _versionRequested = false;

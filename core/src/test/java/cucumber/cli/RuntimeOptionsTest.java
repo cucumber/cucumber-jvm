@@ -76,13 +76,6 @@ public class RuntimeOptionsTest {
     }
 
     @Test
-    public void should_be_invalid_when_html_formatter_is_used_without_output_directory() {
-        String [] options = {"--format", "html"};
-        parseAndReceiveErrors(options);
-        assertThatMessageReceived("html without output should have an error", RuntimeOptions.OUTPUT_REQUIRED);
-    }
-    
-    @Test
     public void should_not_contain_output_error_when_html_formatter_is_used_with_output_directory() {
         String [] options = {"-f", "html", "-o", "reports"};
         parseAndReceiveErrors(options);
