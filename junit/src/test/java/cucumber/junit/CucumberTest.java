@@ -33,7 +33,7 @@ public class CucumberTest {
     public void finds_features_based_on_implicit_package() throws IOException, InitializationError {
         Cucumber cucumber = new Cucumber(ImplicitPackage.class);
         assertEquals(1, cucumber.getChildren().size());
-        assertEquals("Feature: In cucumber.junit", cucumber.getChildren().get(0).getName());
+        assertEquals("XFeature: In cucumber.junit", cucumber.getChildren().get(0).getName());
     }
 
     @Test
