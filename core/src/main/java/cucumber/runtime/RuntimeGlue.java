@@ -1,12 +1,12 @@
 package cucumber.runtime;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import cucumber.io.FileResourceLoader;
 import cucumber.runtime.autocomplete.MetaStepdef;
 import cucumber.runtime.autocomplete.StepdefGenerator;
 import cucumber.runtime.converters.LocalizedXStreams;
 import cucumber.runtime.model.CucumberFeature;
+import gherkin.deps.com.google.gson.Gson;
+import gherkin.deps.com.google.gson.GsonBuilder;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 

@@ -75,6 +75,10 @@ public class FeatureBuilder implements Formatter {
     public void done() {
     }
 
+    @Override
+    public void close() {
+    }
+
     public void parse(Resource resource, List<Object> filters) {
         Formatter formatter = this;
         if (!filters.isEmpty()) {

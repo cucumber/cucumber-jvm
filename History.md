@@ -1,5 +1,7 @@
 ## In Git
 
+* [Core] Properly flush and close formatters ([#173](https://github.com/cucumber/cucumber-jvm/pull/173) Aslak Hellesøy, David Kowis)
+* [Core] Use Gherkin's internal Gson (Aslak Hellesøy)
 * [JUnit] Better reporting of BEfore and After blocks (Aslak Hellesøy)
 * [Core] Bugfix: Scenario Outlines failing ([#170](https://github.com/cucumber/cucumber-jvm/issues/170) David Kowis, Aslak Hellesøy)
 * [OpenEJB] It's back (was excluded from previous releases because it depended on unreleased libs). (Aslak Hellesøy)

@@ -55,6 +55,10 @@ public class NullReporter implements Reporter, Formatter {
     }
 
     @Override
+    public void close() {
+    }
+
+    @Override
     public void result(Result result) {
     }
 

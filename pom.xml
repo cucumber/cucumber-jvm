@@ -15,7 +15,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <outputDirectory>${project.build.directory}</outputDirectory>
-        <gherkin.version>2.7.4</gherkin.version>
+        <gherkin.version>2.7.6</gherkin.version>
         <groovy.version>1.8.5</groovy.version>
     </properties>
     <licenses>
@@ -167,11 +167,6 @@
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-all</artifactId>
                 <version>1.9.0</version>
-            </dependency>
-            <dependency>
-                <groupId>com.google.code.gson</groupId>
-                <artifactId>gson</artifactId>
-                <version>2.1</version>
             </dependency>
             <dependency>
                 <groupId>org.seleniumhq.selenium</groupId>

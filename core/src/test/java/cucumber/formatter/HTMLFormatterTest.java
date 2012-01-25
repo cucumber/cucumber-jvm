@@ -32,6 +32,7 @@ public class HTMLFormatterTest {
         Runtime runtime = new Runtime(resourceLoader, gluePaths, classLoader, asList(mock(Backend.class)), false);
         runtime.run(features.get(0), f, f);
         f.done();
+        f.close();
 
         // Let's verify that the JS we wrote parses nicely
 
