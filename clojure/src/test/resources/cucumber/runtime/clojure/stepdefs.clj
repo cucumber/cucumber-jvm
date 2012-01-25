@@ -1,5 +1,8 @@
 (use 'cucumber.runtime.clojure.belly)
 
+(Before)
+(After)
+
 (Given #"^I have (\d+) cukes in my belly$"
   #(eat (Float. %1)))
 

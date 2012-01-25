@@ -9,6 +9,7 @@ import gherkin.TagExpression;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
+import java.util.List;
 
 import static java.util.Arrays.asList;
 
@@ -24,7 +25,9 @@ public class ClojureHookDefinition implements HookDefinition {
 
     // Clojure's AFunction.invokeWithArgs doesn't take varargs :-/
     private Method lookupInvokeMethod(Object[] args) throws NoSuchMethodException {
-        return IFn.class.getMethod("invoke", (Class<?>[]) Utils.listOf(args.length, String.class).toArray());
+        List<Class<Object>> classes = Utils.listOf(args.length, Object.class);
+        Class<?>[] params = classes.toArray(new Class<?>[classes.size()]);
+        return IFn.class.getMethod("invoke", params);
     }
 
     @Override
