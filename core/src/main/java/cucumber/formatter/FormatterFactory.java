@@ -7,6 +7,8 @@ import gherkin.formatter.PrettyFormatter;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,6 +38,24 @@ public class FormatterFactory {
                     out = new FileWriter(file);
                 }
             }
+
+            //Only create a hook if it's a writer that we created.
+            if (out instanceof Writer) {
+                final Object hookable = out;
+                Runtime.getRuntime().addShutdownHook(new Thread() {
+                    @Override
+                    public void run() {
+                        Writer writer = (Writer) hookable;
+                        try {
+                            writer.flush();
+                        } catch (IOException e) {
+                            //Oh well? We're kind of shutting down now
+                        }
+                    }
+                });
+
+            }
+
             Class<Formatter> formatterClass = getFormatterClass(className);
             // TODO: Remove these if statements. We should fix PrettyFormatter and ProgressFormatter to only take a single Appendable arg.
             // Whether or not to use Monochrome is tricky. Maybe always enforce another 2nd argument for that

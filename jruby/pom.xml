@@ -88,6 +88,10 @@
                                 <java jar="${maven.dependency.org.jruby.jruby-complete.jar.path}" fork="true" failonerror="true" newenvironment="true" maxmemory="512m">
                                     <arg value="-S" />
                                     <arg value="bin/cucumber-jvm" />
+                                    <arg value="-f" />
+                                    <arg value="json" />
+                                    <arg value="-o"/>
+                                    <arg value="target/jruby.json"/>
                                     <arg value="--glue" />
                                     <arg value="src/test/resources" />
                                     <arg value="src/test/resources" />
