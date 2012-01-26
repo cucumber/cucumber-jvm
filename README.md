@@ -20,6 +20,7 @@ Cucumber-JVM also integrates with the following Dependency Injection containers:
 * PicoContainer
 * Spring
 * CDI/Weld
+* OpenEJB
 
 ## Downloading / Installation
 
