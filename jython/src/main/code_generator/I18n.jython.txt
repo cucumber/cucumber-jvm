@@ -1,0 +1,12 @@
+class ${i18n.codeKeywords[0]}(object):
+  def __init__(self, regexp):
+    self.regexp = regexp
+    
+  def __call__(self, func):
+    arity = func.func_code.co_argcount - 1
+    backend.registerStepdef(StepDefinition(self.regexp, func), arity)
+    return func
+<% def str = "" %>
+<% i18n.codeKeywords.each { kw -> %><% if (kw != i18n.codeKeywords[0]) str = str + kw + " = " %><% } %>
+<% str = str + i18n.codeKeywords[0] %>
+${str}
