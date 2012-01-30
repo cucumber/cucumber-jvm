@@ -4,13 +4,4 @@ def keywords = i18n.codeKeywords.collect { kw ->
   Normalizer.normalize(kw,  Normalizer.Form.NFD).replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
 }.unique()
 %>
-class ${keywords[0]}(object):
-  def __init__(self, regexp):
-    self.regexp = regexp
-    
-  def __call__(self, func):
-    arity = func.func_code.co_argcount - 1
-    backend.registerStepdef(StepDefinition(self.regexp, func), arity)
-    return func
-
-${keywords.reverse().join(" = ")}
+${keywords.join(" = ")} = I18NKeywordTemplate

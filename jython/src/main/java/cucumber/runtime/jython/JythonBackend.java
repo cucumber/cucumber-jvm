@@ -13,11 +13,15 @@ import org.python.core.PyObject;
 import org.python.core.PyString;
 import org.python.util.PythonInterpreter;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.List;
 
 public class JythonBackend implements Backend {
     private static final String DSL = "/cucumber/runtime/jython/dsl.py";
+    private static final String EN = "/cucumber/runtime/jython/i18n/EN.py"; // temporary
     private final SnippetGenerator snippetGenerator = new SnippetGenerator(new JythonSnippet());
     private final ResourceLoader resourceLoader;
     private final PythonInterpreter jython;
@@ -29,6 +33,7 @@ public class JythonBackend implements Backend {
         this.jython = jython;
         jython.set("backend", this);
         jython.execfile(getClass().getResourceAsStream(DSL), DSL);
+        jython.execfile(getClass().getResourceAsStream(EN), EN);       
     }
 
     public JythonBackend(ResourceLoader resourceLoader) {

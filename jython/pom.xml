@@ -124,11 +124,13 @@ def engine = new SimpleTemplateEngine()
 def templateSource = new File(project.baseDir, "src${File.separator}main${File.separator}code_generator${File.separator}I18n.jython.txt").getText()
 
 I18n.all.each { i18n ->
-  def binding = ["i18n":i18n]
-  template = engine.createTemplate(templateSource).make(binding)
-  def file = new File(project.baseDir, "target${File.separator}generated-sources${File.separator}i18n${File.separator}java${File.separator}cucumber${File.separator}runtime${File.separator}jython${File.separator}${i18n.underscoredIsoCode.toUpperCase()}.py")
-  file.parentFile.mkdirs()
-  file.write(template.toString(), "UTF-8")
+  if (!["ar", "bg", "he", "is", "ja", "ko", "pl", "ru", "sr_cyrl", "uk", "uz", "zh_cn", "zh_tw"].contains(i18n.underscoredIsoCode)) {
+    def binding = ["i18n":i18n]
+    template = engine.createTemplate(templateSource).make(binding)
+    file = new File(project.baseDir, "target${File.separator}generated-sources${File.separator}i18n${File.separator}java${File.separator}cucumber${File.separator}runtime${File.separator}jython${File.separator}i18n${File.separator}${i18n.underscoredIsoCode.toUpperCase()}.py")
+    file.parentFile.mkdirs()
+    file.write(template.toString(), "UTF-8")
+  }
 }
       ]]></groovy>
 
@@ -143,15 +145,17 @@ I18n.all.each { i18n ->
                 <version>1.7</version>
                 <executions>
                     <execution>
-                        <id>add-source</id>
-                        <phase>generate-sources</phase>
+                        <id>add-resource</id>
+                        <phase>generate-resources</phase>
                         <goals>
-                            <goal>add-source</goal>
+                            <goal>add-resource</goal>
                         </goals>
                         <configuration>
-                            <sources>
-                                <source>${basedir}/target/generated-sources/i18n/java</source>
-                            </sources>
+                            <resources>
+                                <resource>
+                                  <directory>${basedir}/target/generated-sources/i18n/java</directory>
+                                </resource>
+                            </resources>
                         </configuration>
                     </execution>
                 </executions>
