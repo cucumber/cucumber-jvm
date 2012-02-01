@@ -50,6 +50,22 @@ public class UndefinedStepsTrackerTest {
         assertEquals("[Given ^A$]", tracker.getSnippets(asList(backend)).toString());
     }
 
+    @Test
+    public void i18n_keyword_do_not_become_given() throws Exception {
+        Backend backend = new TestBackend();
+        UndefinedStepsTracker tracker = new UndefinedStepsTracker();
+        tracker.addUndefinedStep(new Step(null, "Если ", "Б", 1, null, null), new Locale("ru", "RU"));
+        assertEquals("[Если ^Б$]", tracker.getSnippets(asList(backend)).toString());
+    }
+
+    @Test
+    public void accepts_null_locale() throws Exception {
+        Backend backend = new TestBackend();
+        UndefinedStepsTracker tracker = new UndefinedStepsTracker();
+        tracker.addUndefinedStep(new Step(null, "When ", "D", 1, null, null), null);
+        assertEquals("[When ^D$]", tracker.getSnippets(asList(backend)).toString());
+    }
+
     private class TestBackend implements Backend {
         @Override
         public void loadGlue(Glue glue, List<String> gluePaths) {
