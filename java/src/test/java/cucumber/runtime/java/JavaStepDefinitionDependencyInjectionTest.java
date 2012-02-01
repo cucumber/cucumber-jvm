@@ -41,7 +41,7 @@ public class JavaStepDefinitionDependencyInjectionTest {
     @Test
     public void constructor_arguments_get_registered() {
         backend.buildWorld();
-        backend.addStepDefinition(GIVEN.getAnnotation(Given.class), GIVEN);
+        backend.addStepDefinition(GIVEN.getAnnotation(Given.class), Steps.class, GIVEN);
         verify(mockObjectFactory).addClass(Steps.class);
         verify(mockObjectFactory).addClass(StepContext1.class);
         verify(mockObjectFactory).addClass(StepContext2.class);
@@ -50,7 +50,7 @@ public class JavaStepDefinitionDependencyInjectionTest {
     @Test
     public void constructor_arguments_get_registered_exactly_once() {
         backend.buildWorld();
-        backend.addStepDefinition(OTHER_GIVEN.getAnnotation(Given.class), OTHER_GIVEN);
+        backend.addStepDefinition(OTHER_GIVEN.getAnnotation(Given.class), OtherSteps.class, OTHER_GIVEN);
         verify(mockObjectFactory, times(1)).addClass(OtherSteps.class);
         verify(mockObjectFactory, times(1)).addClass(StepContext3.class);
         verify(mockObjectFactory, times(1)).addClass(StepContext4.class);

@@ -51,8 +51,8 @@ public class JavaStepDefinitionTest {
 
     @Test(expected = AmbiguousStepDefinitionsException.class)
     public void throws_ambiguous_when_two_matches_are_found() throws Throwable {
-        backend.addStepDefinition(FOO.getAnnotation(Given.class), FOO);
-        backend.addStepDefinition(BAR.getAnnotation(Given.class), BAR);
+        backend.addStepDefinition(FOO.getAnnotation(Given.class), Defs.class, FOO);
+        backend.addStepDefinition(BAR.getAnnotation(Given.class), Defs.class, BAR);
 
         Reporter reporter = mock(Reporter.class);
         runtime.buildBackendWorlds();
@@ -62,7 +62,7 @@ public class JavaStepDefinitionTest {
 
     @Test
     public void does_not_throw_ambiguous_when_nothing_is_ambiguous() throws Throwable {
-        backend.addStepDefinition(FOO.getAnnotation(Given.class), FOO);
+        backend.addStepDefinition(FOO.getAnnotation(Given.class), Defs.class, FOO);
 
         Reporter reporter = mock(Reporter.class);
         runtime.buildBackendWorlds();
