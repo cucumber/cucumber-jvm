@@ -16,9 +16,6 @@ import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Result;
 
-/**
- * @author Klaus Bayrhammer
- */
 public class JUnitReporterTest
 {
 
