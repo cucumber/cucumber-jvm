@@ -103,8 +103,10 @@ public class HTMLFormatter implements Formatter, Reporter {
 
     @Override
     public void done() {
-        jsOut().append("});");
-        copyReportFiles();
+        if (!firstFeature) {
+            jsOut().append("});");
+            copyReportFiles();
+        }
     }
 
     @Override

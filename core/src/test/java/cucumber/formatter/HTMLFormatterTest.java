@@ -3,7 +3,6 @@ package cucumber.formatter;
 import cucumber.io.ClasspathResourceLoader;
 import cucumber.runtime.Backend;
 import cucumber.runtime.Runtime;
-import cucumber.runtime.model.CucumberFeature;
 import org.junit.Test;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.EcmaError;
@@ -17,34 +16,51 @@ import java.util.List;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 
 public class HTMLFormatterTest {
-    @Test
-    public void writes_proper_html() throws IOException {
-        File dir = createTempDirectory();
-        HTMLFormatter f = new HTMLFormatter(dir);
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
-        List<CucumberFeature> features = CucumberFeature.load(resourceLoader, asList("cucumber/formatter/HTMLFormatterTest.feature"), emptyList());
-        List<String> gluePaths = emptyList();
-        Runtime runtime = new Runtime(resourceLoader, gluePaths, classLoader, asList(mock(Backend.class)), false);
-        runtime.run(features.get(0), f, f);
-        f.done();
-        f.close();
 
-        // Let's verify that the JS we wrote parses nicely
+    @Test
+    public void noFeaturesProduceEmptyReport() throws IOException {
+        final List<String> noFeatures = emptyList();
+        final File report = createFormatterJsReport(noFeatures);
+
+        assertEquals(0, report.length());
+    }
+
+    @Test
+    public void oneFeatureProducesValidJavascript() throws IOException {
+        final File report = createFormatterJsReport(asList("cucumber/formatter/HTMLFormatterTest.feature"));
 
         Context cx = Context.enter();
         Global scope = new Global(cx);
-        File report = new File(dir, "report.js");
         try {
             cx.evaluateReader(scope, new FileReader(report), report.getAbsolutePath(), 1, null);
             fail("Should have failed");
         } catch (EcmaError expected) {
             assertTrue(expected.getMessage().startsWith("ReferenceError: \"document\" is not defined."));
         }
+    }
+
+    private File createFormatterJsReport(final List<String> featurePaths) throws IOException {
+        final File outputDir = runFeaturesWithFormatter(featurePaths);
+        final File report = new File(outputDir, "report.js");
+        return report;
+    }
+
+    private File runFeaturesWithFormatter(final List<String> featurePaths) throws IOException {
+        final File dir = createTempDirectory();
+        final HTMLFormatter f = new HTMLFormatter(dir);
+        final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        final ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
+        final List<String> gluePaths = emptyList();
+        final Runtime runtime = new Runtime(resourceLoader, gluePaths, classLoader, asList(mock(Backend.class)), false);
+        runtime.run(featurePaths, emptyList(), f, f);
+        f.done();
+        f.close();
+        return dir;
     }
 
     private static File createTempDirectory() throws IOException {
@@ -59,15 +75,5 @@ public class HTMLFormatterTest {
         }
 
         return temp;
-    }
-
-    private class CucumberHTML {
-        public void undefined() {
-
-        }
-
-        public void DOMFormatter() {
-
-        }
     }
 }
