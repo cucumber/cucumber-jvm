@@ -15,7 +15,8 @@ public class Utils {
     }
 
     public static boolean isInstantiable(Class<?> clazz) {
-        return Modifier.isPublic(clazz.getModifiers()) && !Modifier.isAbstract(clazz.getModifiers());
+        boolean isNonStaticInnerClass = !Modifier.isStatic(clazz.getModifiers()) && clazz.getEnclosingClass() != null;
+        return Modifier.isPublic(clazz.getModifiers()) && !Modifier.isAbstract(clazz.getModifiers()) && !isNonStaticInnerClass;
     }
 
     public static boolean hasConstructor(Class<?> clazz, Class[] paramTypes) {
