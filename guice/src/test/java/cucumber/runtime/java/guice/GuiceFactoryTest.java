@@ -38,14 +38,4 @@ public class GuiceFactoryTest {
         assertSame(factory.getInstance(Mappings.class), factory.getInstance(Mappings.class));
         factory.disposeInstances();
     }
-
-    // this test it not valid, guice is able to find a default constructor for the Mappings class
-    @Test
-    @Ignore
-    public void missing_guice_module_property_causes_mapping_to_be_null() throws Exception {
-        ObjectFactory factory = new GuiceFactory(new Properties());
-        factory.createInstances();
-        Mappings mappings = factory.getInstance(Mappings.class);
-        assertNull(mappings);
-    }
 }
