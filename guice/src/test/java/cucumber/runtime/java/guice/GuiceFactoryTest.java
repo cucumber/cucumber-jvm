@@ -1,11 +1,9 @@
 package cucumber.runtime.java.guice;
 
 import cucumber.runtime.java.ObjectFactory;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.Properties;
 
 import static org.junit.Assert.*;
 
