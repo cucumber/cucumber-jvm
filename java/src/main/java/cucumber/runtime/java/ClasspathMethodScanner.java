@@ -25,12 +25,8 @@ public class ClasspathMethodScanner {
         for (String gluePath : gluePaths) {
             String packageName = gluePath.replace('/', '.').replace('\\', '.'); // Sometimes the gluePath will be a path, not a package
             for (Class<?> candidateClass : resourceLoader.getDescendants(Object.class, packageName)) {
-                while (candidateClass != Object.class) {
+                while (candidateClass != Object.class && !Utils.isInstantiable(candidateClass)) {
                     // those can't be instantiated without container class present.
-                    boolean nonStaticInnerClass = candidateClass.getEnclosingClass() != null && !Modifier.isStatic(candidateClass.getModifiers());
-                    if (!nonStaticInnerClass && Utils.isInstantiable(candidateClass)) {
-                        break;
-                    }
                     candidateClass = candidateClass.getSuperclass();
                 }
                 for (Method method : candidateClass.getMethods()) {
