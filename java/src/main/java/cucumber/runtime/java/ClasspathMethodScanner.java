@@ -4,6 +4,7 @@ import cucumber.annotation.After;
 import cucumber.annotation.Before;
 import cucumber.annotation.Order;
 import cucumber.io.ClasspathResourceLoader;
+import cucumber.runtime.Utils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -24,9 +25,12 @@ public class ClasspathMethodScanner {
         for (String gluePath : gluePaths) {
             String packageName = gluePath.replace('/', '.').replace('\\', '.'); // Sometimes the gluePath will be a path, not a package
             for (Class<?> candidateClass : resourceLoader.getDescendants(Object.class, packageName)) {
-                while (candidateClass.getEnclosingClass() != null && !Modifier.isStatic(candidateClass.getModifiers())
-                        && candidateClass != Object.class) {
+                while (candidateClass != Object.class) {
                     // those can't be instantiated without container class present.
+                    boolean nonStaticInnerClass = candidateClass.getEnclosingClass() != null && !Modifier.isStatic(candidateClass.getModifiers());
+                    if (!nonStaticInnerClass && Utils.isInstantiable(candidateClass)) {
+                        break;
+                    }
                     candidateClass = candidateClass.getSuperclass();
                 }
                 for (Method method : candidateClass.getMethods()) {
