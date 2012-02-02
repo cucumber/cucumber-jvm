@@ -89,7 +89,7 @@ public class JavaBackend implements Backend {
             if (regexpString != null) {
                 Pattern pattern = Pattern.compile(regexpString);
                 Class<?> clazz = method.getDeclaringClass();
-                registerClassInObjectFactory(clazz);
+                objectFactory.addClass(clazz);
                 glue.addStepDefinition(new JavaStepDefinition(method, pattern, objectFactory));
             }
         } catch (NoSuchMethodException e) {
@@ -103,7 +103,7 @@ public class JavaBackend implements Backend {
 
     void addHook(Annotation annotation, Method method) {
         Class<?> clazz = method.getDeclaringClass();
-        registerClassInObjectFactory(clazz);
+        objectFactory.addClass(clazz);
 
         Order order = method.getAnnotation(Order.class);
         int hookOrder = (order == null) ? Integer.MAX_VALUE : order.value();

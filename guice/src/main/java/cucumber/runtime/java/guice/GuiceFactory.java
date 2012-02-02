@@ -1,6 +1,6 @@
 package cucumber.runtime.java.guice;
 
-import com.google.inject.ConfigurationException;
+import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
@@ -8,14 +8,21 @@ import cucumber.runtime.java.ObjectFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
 
 import static java.util.Collections.emptyList;
 
+/**
+ * Guice implementation of the ObjectFactory. This will register all given step classes as singletons within a scenario
+ * specific Injector.
+ */
 public class GuiceFactory implements ObjectFactory {
     private final List<Module> modules;
     private final Set<Class<?>> classes = new HashSet<Class<?>>();
-    private final Map<Class<?>, Object> instances = new HashMap<Class<?>, Object>();
+    private Injector injector;
 
     public GuiceFactory() throws IOException {
         this(loadCucumberGuiceProperties());
@@ -48,22 +55,39 @@ public class GuiceFactory implements ObjectFactory {
     }
 
     public void createInstances() {
-        Injector injector = Guice.createInjector(modules);
-        for (Class<?> clazz : classes) {
-            try {
-                instances.put(clazz, injector.getInstance(clazz));
-            } catch (ConfigurationException e) {
-                System.err.println("WARNING: Cucumber/Guice could not create instance for " + clazz.getCanonicalName() + ":\n" + e.getLocalizedMessage());
-            }
-        }
+        injector = Guice.createInjector(new CucumberModule(classes, modules));
     }
 
     public void disposeInstances() {
-        instances.clear();
+        injector = null;
     }
 
-    @SuppressWarnings("unchecked")
     public <T> T getInstance(Class<T> clazz) {
-        return (T) instances.get(clazz);
+        return injector.getInstance(clazz);
+    }
+
+    /**
+     * Guice module that configures all added classes to the module as singletons and installs all dynamically loaded
+     * modules.
+     */
+    private static final class CucumberModule extends AbstractModule {
+
+        private final Set<Class<?>> classes;
+        private final List<Module> modules;
+
+        private CucumberModule(Set<Class<?>> classes, List<Module> modules) {
+            this.classes = classes;
+            this.modules = modules;
+        }
+
+        @Override
+        protected void configure() {
+            for (Class<?> aClass : classes) {
+                bind(aClass).in(javax.inject.Singleton.class);
+            }
+            for (Module module : modules) {
+                install(module);
+            }
+        }
     }
 }
