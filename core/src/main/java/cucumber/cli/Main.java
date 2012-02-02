@@ -34,7 +34,7 @@ public class Main {
         String dotCucumber = null;
         boolean isDryRun = false;
 
-        FormatterFactory formatterFactory = new FormatterFactory();
+        FormatterFactory formatterFactory = new FormatterFactory(classLoader);
         MultiFormatter multiFormatter = new MultiFormatter(classLoader);
 
         while (!args.isEmpty()) {
@@ -87,8 +87,12 @@ public class Main {
         if (dotCucumber != null) {
             writeDotCucumber(featurePaths, dotCucumber, runtime);
         }
-        run(featurePaths, filters, multiFormatter, runtime);
+        Formatter formatter = multiFormatter.formatterProxy();
+        Reporter reporter = multiFormatter.reporterProxy();
+        runtime.run(featurePaths, filters, formatter, reporter);
+        formatter.done();
         printSummary(runtime);
+        formatter.close();
         System.exit(runtime.exitStatus());
     }
 
@@ -96,13 +100,6 @@ public class Main {
         File dotCucumber = new File(dotCucumberPath);
         dotCucumber.mkdirs();
         runtime.writeStepdefsJson(featurePaths, dotCucumber);
-    }
-
-    private static void run(List<String> featurePaths, List<Object> filters, MultiFormatter multiFormatter, Runtime runtime) throws IOException {
-        Formatter formatter = multiFormatter.formatterProxy();
-        Reporter reporter = multiFormatter.reporterProxy();
-        runtime.run(featurePaths, filters, formatter, reporter);
-        formatter.done();
     }
 
     private static void printSummary(Runtime runtime) {

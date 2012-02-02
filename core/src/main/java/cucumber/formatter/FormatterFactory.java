@@ -3,6 +3,7 @@ package cucumber.formatter;
 import cucumber.runtime.CucumberException;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.JSONFormatter;
+import gherkin.formatter.JSONPrettyFormatter;
 import gherkin.formatter.PrettyFormatter;
 
 import java.io.File;
@@ -12,12 +13,19 @@ import java.util.Map;
 
 public class FormatterFactory {
 
+    private final ClassLoader classLoader;
+    
     private static final Map<String, String> BUILTIN_FORMATTERS = new HashMap<String, String>() {{
         put("progress", ProgressFormatter.class.getName());
         put("html", HTMLFormatter.class.getName());
         put("json", JSONFormatter.class.getName());
+        put("json-pretty", JSONPrettyFormatter.class.getName());
         put("pretty", PrettyFormatter.class.getName());
     }};
+
+    public FormatterFactory(ClassLoader classLoader) {
+        this.classLoader = classLoader;
+    }
 
     public Formatter createFormatter(String formatterName, Object out) {
         String className = BUILTIN_FORMATTERS.containsKey(formatterName) ? BUILTIN_FORMATTERS.get(formatterName) : formatterName;
@@ -53,7 +61,7 @@ public class FormatterFactory {
 
     private Class<Formatter> getFormatterClass(String className) {
         try {
-            return (Class<Formatter>) Class.forName(className);
+            return (Class<Formatter>) classLoader.loadClass(className);
         } catch (ClassNotFoundException e) {
             throw new CucumberException("Formatter class not found: " + className, e);
         }

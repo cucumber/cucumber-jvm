@@ -2,6 +2,7 @@ package cucumber.formatter;
 
 import gherkin.formatter.Formatter;
 import gherkin.formatter.JSONFormatter;
+import gherkin.formatter.JSONPrettyFormatter;
 import gherkin.formatter.PrettyFormatter;
 import org.junit.Test;
 
@@ -14,11 +15,16 @@ import static org.junit.Assert.assertThat;
 
 public class FormatterFactoryTest {
 
-    private final FormatterFactory formatterFactory = new FormatterFactory();
+    private final FormatterFactory formatterFactory = new FormatterFactory(Thread.currentThread().getContextClassLoader());
 
     @Test
     public void shouldInstantiateJsonFormatter() {
         assertThat(formatterFactory.createFormatter("json", System.out), is(JSONFormatter.class));
+    }
+
+    @Test
+    public void shouldInstantiateJsonPrettyFormatter() {
+        assertThat(formatterFactory.createFormatter("json-pretty", System.out), is(JSONPrettyFormatter.class));
     }
 
     @Test

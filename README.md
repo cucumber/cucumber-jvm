@@ -20,6 +20,7 @@ Cucumber-JVM also integrates with the following Dependency Injection containers:
 * PicoContainer
 * Spring
 * CDI/Weld
+* OpenEJB
 
 ## Downloading / Installation
 
@@ -80,7 +81,7 @@ You will find an example in Git under examples/java-calculator. You should be ab
 
 ## Building Cucumber-JVM
 
-Cucumber-JVM is built with [Maven](http://mvn.apache.org/). 
+Cucumber-JVM is built with [Maven](http://maven.apache.org/). 
 
     mvn clean install
 

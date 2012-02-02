@@ -80,6 +80,7 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         super.run(notifier);
         jUnitReporter.done();
         new SummaryPrinter(System.out).print(runtime);
+        jUnitReporter.close();
     }
 
     private void assertNoDeclaredMethods(Class clazz) {

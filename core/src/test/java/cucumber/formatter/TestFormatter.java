@@ -74,4 +74,9 @@ public class TestFormatter implements Formatter {
     public void done() {
         throw new UnsupportedOperationException();
     }
+
+    @Override
+    public void close() {
+        throw new UnsupportedOperationException();
+    }
 }

@@ -1,13 +1,13 @@
 package cucumber.runtime.autocomplete;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import cucumber.io.Resource;
 import cucumber.runtime.FeatureBuilder;
 import cucumber.runtime.JdkPatternArgumentMatcher;
 import cucumber.runtime.ParameterType;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.model.CucumberFeature;
+import gherkin.deps.com.google.gson.Gson;
+import gherkin.deps.com.google.gson.GsonBuilder;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 import org.junit.Test;

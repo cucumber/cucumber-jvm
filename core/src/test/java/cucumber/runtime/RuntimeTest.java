@@ -2,7 +2,7 @@ package cucumber.runtime;
 
 import cucumber.io.ClasspathResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
-import gherkin.formatter.JSONFormatter;
+import gherkin.formatter.JSONPrettyFormatter;
 import org.junit.Test;
 
 import java.util.Collections;
@@ -23,12 +23,61 @@ public class RuntimeTest {
                 "  Scenario: scenario name\n" +
                 "    When s\n");
         StringBuilder out = new StringBuilder();
-        JSONFormatter jsonFormatter = new JSONFormatter(out);
+        JSONPrettyFormatter jsonFormatter = new JSONPrettyFormatter(out);
         List<Backend> backends = asList(mock(Backend.class));
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         new Runtime(new ClasspathResourceLoader(classLoader), Collections.<String>emptyList(), classLoader, backends, true).run(feature, jsonFormatter, jsonFormatter);
         jsonFormatter.done();
-        String expected = "[{\"id\":\"feature-name\",\"description\":\"\",\"name\":\"feature name\",\"keyword\":\"Feature\",\"line\":1,\"elements\":[{\"description\":\"\",\"name\":\"background name\",\"keyword\":\"Background\",\"line\":2,\"steps\":[{\"result\":{\"status\":\"undefined\"},\"name\":\"b\",\"keyword\":\"Given \",\"line\":3,\"match\":{}}],\"type\":\"background\"},{\"id\":\"feature-name;scenario-name\",\"description\":\"\",\"name\":\"scenario name\",\"keyword\":\"Scenario\",\"line\":4,\"steps\":[{\"result\":{\"status\":\"undefined\"},\"name\":\"s\",\"keyword\":\"When \",\"line\":5,\"match\":{}}],\"type\":\"scenario\"}],\"uri\":\"test.feature\"}]";
+        String expected = "" +
+                "[\n" +
+                "  {\n" +
+                "    \"id\": \"feature-name\",\n" +
+                "    \"description\": \"\",\n" +
+                "    \"name\": \"feature name\",\n" +
+                "    \"keyword\": \"Feature\",\n" +
+                "    \"line\": 1,\n" +
+                "    \"elements\": [\n" +
+                "      {\n" +
+                "        \"description\": \"\",\n" +
+                "        \"name\": \"background name\",\n" +
+                "        \"keyword\": \"Background\",\n" +
+                "        \"line\": 2,\n" +
+                "        \"steps\": [\n" +
+                "          {\n" +
+                "            \"result\": {\n" +
+                "              \"status\": \"undefined\"\n" +
+                "            },\n" +
+                "            \"name\": \"b\",\n" +
+                "            \"keyword\": \"Given \",\n" +
+                "            \"line\": 3,\n" +
+                "            \"match\": {}\n" +
+                "          }\n" +
+                "        ],\n" +
+                "        \"type\": \"background\"\n" +
+                "      },\n" +
+                "      {\n" +
+                "        \"id\": \"feature-name;scenario-name\",\n" +
+                "        \"description\": \"\",\n" +
+                "        \"name\": \"scenario name\",\n" +
+                "        \"keyword\": \"Scenario\",\n" +
+                "        \"line\": 4,\n" +
+                "        \"steps\": [\n" +
+                "          {\n" +
+                "            \"result\": {\n" +
+                "              \"status\": \"undefined\"\n" +
+                "            },\n" +
+                "            \"name\": \"s\",\n" +
+                "            \"keyword\": \"When \",\n" +
+                "            \"line\": 5,\n" +
+                "            \"match\": {}\n" +
+                "          }\n" +
+                "        ],\n" +
+                "        \"type\": \"scenario\"\n" +
+                "      }\n" +
+                "    ],\n" +
+                "    \"uri\": \"test.feature\"\n" +
+                "  }\n" +
+                "]";
         assertEquals(expected, out.toString());
     }
 }

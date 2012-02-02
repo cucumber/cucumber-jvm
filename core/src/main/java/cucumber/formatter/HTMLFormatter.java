@@ -1,8 +1,8 @@
 package cucumber.formatter;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import cucumber.runtime.CucumberException;
+import gherkin.deps.com.google.gson.Gson;
+import gherkin.deps.com.google.gson.GsonBuilder;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Mappable;
 import gherkin.formatter.NiceAppendable;
@@ -104,8 +104,12 @@ public class HTMLFormatter implements Formatter, Reporter {
     @Override
     public void done() {
         jsOut().append("});");
-        jsOut().close();
         copyReportFiles();
+    }
+
+    @Override
+    public void close() {
+        jsOut().close();
     }
 
     private void writeToJsReport(String functionName, Mappable statement) {

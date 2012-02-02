@@ -9,6 +9,9 @@ import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Utility for creating a formatter that delegates to multiple underlying formatters.
+ */
 public class MultiFormatter {
     private final List<Formatter> formatters = new ArrayList<Formatter>();
     private final ClassLoader classLoader;
@@ -19,10 +22,6 @@ public class MultiFormatter {
 
     public void add(Formatter formatter) {
         formatters.add(formatter);
-    }
-
-    public boolean isEmpty() {
-        return formatters.isEmpty();
     }
 
     public Formatter formatterProxy() {
