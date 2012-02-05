@@ -53,6 +53,14 @@ public class UndefinedStepsTrackerTest {
         assertEquals("[Given ^A$]", tracker.getSnippets(asList(backend)).toString());
     }
 
+    @Test
+    public void snippets_are_generated_for_correct_locale() throws Exception {
+        Backend backend = new TestBackend();
+        UndefinedStepsTracker tracker = new UndefinedStepsTracker();
+        tracker.addUndefinedStep(new Step(null, "Если ", "Б", 1, null, null), new I18n("ru"));
+        assertEquals("[Если ^Б$]", tracker.getSnippets(asList(backend)).toString());
+    }
+
     private class TestBackend implements Backend {
         @Override
         public void loadGlue(Glue glue, List<String> gluePaths) {
