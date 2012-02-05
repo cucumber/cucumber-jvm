@@ -52,7 +52,7 @@ public class UndefinedStepsTracker {
     }
 
     private boolean isGivenWhenThenKeyword(String keyword, Locale locale) {
-        I18n i18n = new I18n("en");
+        I18n i18n = new I18n(toIsoCode(locale));
         for (String gwts : asList("given", "when", "then")) {
             List<String> keywords = i18n.keywords(gwts);
             if (keywords.contains(keyword) && !"* ".equals(keyword)) {
@@ -74,5 +74,9 @@ public class UndefinedStepsTracker {
             }
             return new Step(step.getComments(), lastGivenWhenThenStepKeyword, step.getName(), step.getLine(), step.getRows(), step.getDocString());
         }
+    }
+
+    private static String toIsoCode(Locale locale) {
+        return locale != null ? locale.toString().replace("_", "-") : "en";
     }
 }
