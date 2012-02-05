@@ -91,7 +91,7 @@ public class FeatureBuilder implements Formatter {
         if (currentCucumberFeature != null) {
             // The current feature may be null if we used a very restrictive filter, say a tag that isn't used.
             // Might also happen if the feature file itself is empty.
-            currentCucumberFeature.setLocale(i18n.getLocale());
+            currentCucumberFeature.setI18n(i18n);
         }
     }
 

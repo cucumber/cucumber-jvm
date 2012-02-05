@@ -5,9 +5,15 @@ import cucumber.io.ResourceLoader;
 import cucumber.runtime.converters.LocalizedXStreams;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.model.CucumberTagStatement;
+import gherkin.I18n;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
-import gherkin.formatter.model.*;
+import gherkin.formatter.model.Comment;
+import gherkin.formatter.model.DataTableRow;
+import gherkin.formatter.model.DocString;
+import gherkin.formatter.model.Match;
+import gherkin.formatter.model.Result;
+import gherkin.formatter.model.Step;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 
 import static cucumber.runtime.model.CucumberFeature.load;
@@ -48,9 +53,9 @@ public class Runtime implements UnreportedStepExecutor {
     public Runtime(ResourceLoader resourceLoader, List<String> gluePaths, ClassLoader classLoader, boolean isDryRun) {
         this(resourceLoader, gluePaths, classLoader, loadBackends(resourceLoader, classLoader), isDryRun);
     }
-    
+
     public Runtime(ResourceLoader resourceLoader, List<String> gluePaths, ClassLoader classLoader, Collection<? extends Backend> backends, boolean isDryRun) {
-        if(backends.isEmpty()) {
+        if (backends.isEmpty()) {
             throw new CucumberException("No backends were found. Please make sure you have a backend module on your CLASSPATH.");
         }
         this.backends = backends;
@@ -176,10 +181,10 @@ public class Runtime implements UnreportedStepExecutor {
 
     //TODO: Maybe this should go into the cucumber step execution model and it should return the result of that execution!
     @Override
-    public void runUnreportedStep(String uri, Locale locale, String stepKeyword, String stepName, int line, List<DataTableRow> dataTableRows, DocString docString) throws Throwable {
+    public void runUnreportedStep(String uri, I18n i18n, String stepKeyword, String stepName, int line, List<DataTableRow> dataTableRows, DocString docString) throws Throwable {
         Step step = new Step(Collections.<Comment>emptyList(), stepKeyword, stepName, line, dataTableRows, docString);
 
-        StepDefinitionMatch match = glue.stepDefinitionMatch(uri, step, locale);
+        StepDefinitionMatch match = glue.stepDefinitionMatch(uri, step, i18n);
         if (match == null) {
             UndefinedStepException error = new UndefinedStepException(step);
 
@@ -191,11 +196,11 @@ public class Runtime implements UnreportedStepExecutor {
 
             throw error;
         }
-        match.runStep(locale);
+        match.runStep(i18n);
     }
 
-    public void runStep(String uri, Step step, Reporter reporter, Locale locale) {
-        StepDefinitionMatch match = glue.stepDefinitionMatch(uri, step, locale);
+    public void runStep(String uri, Step step, Reporter reporter, I18n i18n) {
+        StepDefinitionMatch match = glue.stepDefinitionMatch(uri, step, i18n);
         if (match != null) {
             reporter.match(match);
         } else {
@@ -217,7 +222,7 @@ public class Runtime implements UnreportedStepExecutor {
             Throwable error = null;
             long start = System.nanoTime();
             try {
-                match.runStep(locale);
+                match.runStep(i18n);
             } catch (Throwable t) {
                 error = t;
                 status = Result.FAILED;

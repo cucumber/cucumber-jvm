@@ -8,6 +8,7 @@ import cucumber.runtime.converters.LocalizedXStreams;
 import cucumber.runtime.converters.SingleValueConverterWrapperExt;
 import cucumber.table.DataTable;
 import cucumber.table.TableConverter;
+import gherkin.I18n;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.DataTableRow;
 import gherkin.formatter.model.Match;
@@ -38,10 +39,10 @@ public class StepDefinitionMatch extends Match {
         this.localizedXStreams = localizedXStreams;
     }
 
-    public void runStep(Locale locale) throws Throwable {
+    public void runStep(I18n i18n) throws Throwable {
         try {
-            Object[] args = transformedArgs(stepDefinition.getParameterTypes(), step, localizedXStreams.get(locale), locale);
-            stepDefinition.execute(locale, args);
+            Object[] args = transformedArgs(stepDefinition.getParameterTypes(), step, localizedXStreams.get(i18n), i18n.getLocale());
+            stepDefinition.execute(i18n, args);
         } catch (CucumberException e) {
             throw e;
         } catch (Throwable t) {

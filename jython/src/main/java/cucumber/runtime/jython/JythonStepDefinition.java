@@ -3,6 +3,7 @@ package cucumber.runtime.jython;
 import cucumber.runtime.ParameterType;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.Utils;
+import gherkin.I18n;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 import org.python.core.PyInstance;
@@ -11,7 +12,6 @@ import org.python.core.PyObject;
 import org.python.core.PyString;
 
 import java.util.List;
-import java.util.Locale;
 
 public class JythonStepDefinition implements StepDefinition {
     private final JythonBackend jythonBackend;
@@ -46,7 +46,7 @@ public class JythonStepDefinition implements StepDefinition {
     }
 
     @Override
-    public void execute(Locale locale, Object[] args) throws Throwable {
+    public void execute(I18n i18n, Object[] args) throws Throwable {
         jythonBackend.execute(stepdef, args);
     }
 

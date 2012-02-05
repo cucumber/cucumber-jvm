@@ -11,6 +11,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import cucumber.runtime.converters.DateConverter;
 import cucumber.runtime.converters.LocalizedXStreams;
 import cucumber.runtime.converters.SingleValueConverterWrapperExt;
+import gherkin.I18n;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -30,7 +31,7 @@ public class TableConverterTest {
 
     @Before
     public void createTableConverterWithDateFormat() {
-        XStream xStream = new LocalizedXStreams(Thread.currentThread().getContextClassLoader()).get(Locale.UK);
+        XStream xStream = new LocalizedXStreams(Thread.currentThread().getContextClassLoader()).get(new I18n("en"));
         tc = new TableConverter(xStream);
         SingleValueConverterWrapperExt converterWrapper = (SingleValueConverterWrapperExt) xStream.getConverterLookup().lookupConverterForType(Date.class);
         DateConverter dateConverter = (DateConverter) converterWrapper.getConverter();

@@ -5,6 +5,7 @@ import cucumber.io.ClasspathResourceLoader;
 import cucumber.runtime.AmbiguousStepDefinitionsException;
 import cucumber.runtime.Glue;
 import cucumber.runtime.Runtime;
+import gherkin.I18n;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Comment;
 import gherkin.formatter.model.Step;
@@ -14,7 +15,6 @@ import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 
 import static java.util.Arrays.asList;
@@ -28,6 +28,7 @@ public class JavaStepDefinitionTest {
     private static final List<String> NO_PATHS = Collections.emptyList();
     private static final Method FOO;
     private static final Method BAR;
+    private static final I18n ENGLISH = new I18n("en");
 
     static {
         try {
@@ -57,7 +58,7 @@ public class JavaStepDefinitionTest {
         Reporter reporter = mock(Reporter.class);
         runtime.buildBackendWorlds();
         runtime.runBeforeHooks(reporter, asSet("@foo"));
-        runtime.runStep("uri", new Step(NO_COMMENTS, "Given ", "pattern", 1, null, null), reporter, Locale.US);
+        runtime.runStep("uri", new Step(NO_COMMENTS, "Given ", "pattern", 1, null, null), reporter, ENGLISH);
     }
 
     @Test
@@ -68,7 +69,7 @@ public class JavaStepDefinitionTest {
         runtime.buildBackendWorlds();
         runtime.runBeforeHooks(reporter, asSet("@foo"));
         Step step = new Step(NO_COMMENTS, "Given ", "pattern", 1, null, null);
-        runtime.runStep("uri", step, reporter, Locale.US);
+        runtime.runStep("uri", step, reporter, ENGLISH);
         assertTrue(defs.foo);
         assertFalse(defs.bar);
     }

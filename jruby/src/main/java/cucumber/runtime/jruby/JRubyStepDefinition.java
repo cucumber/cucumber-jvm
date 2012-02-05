@@ -4,6 +4,7 @@ import cucumber.runtime.ParameterType;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.Utils;
 import cucumber.table.DataTable;
+import gherkin.I18n;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 import org.jruby.RubyObject;
@@ -13,7 +14,6 @@ import org.jruby.runtime.builtin.IRubyObject;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 public class JRubyStepDefinition implements StepDefinition {
 
@@ -50,10 +50,10 @@ public class JRubyStepDefinition implements StepDefinition {
     }
 
     @Override
-    public void execute(Locale locale, Object[] args) throws Throwable {
+    public void execute(I18n i18n, Object[] args) throws Throwable {
         ArrayList<IRubyObject> jrubyArgs = new ArrayList<IRubyObject>();
 
-        jrubyArgs.add(JavaEmbedUtils.javaToRuby(stepdef.getRuntime(), locale));
+        jrubyArgs.add(JavaEmbedUtils.javaToRuby(stepdef.getRuntime(), i18n));
 
         for (Object o : args) {
             if (o == null) {
@@ -67,7 +67,7 @@ public class JRubyStepDefinition implements StepDefinition {
             }
         }
 
-        stepdef.callMethod("execute", jrubyArgs.toArray(new IRubyObject[0]));
+        stepdef.callMethod("execute", jrubyArgs.toArray(new IRubyObject[jrubyArgs.size()]));
     }
 
     @Override

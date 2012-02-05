@@ -41,6 +41,6 @@ public class StepContainer {
     }
 
     public void runStep(Step step, Reporter reporter, Runtime runtime) {
-        runtime.runStep(cucumberFeature.getUri(), step, reporter, cucumberFeature.getLocale());
+        runtime.runStep(cucumberFeature.getUri(), step, reporter, cucumberFeature.getI18n());
     }
 }

@@ -30,8 +30,8 @@ module Cucumber
           @proc.arity
         end
 
-        def execute(locale, *args)
-          $world.instance_variable_set :@__cucumber_locale, locale
+        def execute(i18n, *args)
+          $world.instance_variable_set :@__gherkin_i18n, i18n
           $world.instance_exec(*args, &@proc)
         end
 
@@ -88,7 +88,7 @@ def register_or_invoke(keyword, regexp_or_name, arg, proc)
       end
     end
 
-    $backend.runStep(uri, @__cucumber_locale, keyword, regexp_or_name, line.to_i, data_table, doc_string)
+    $backend.runStep(uri, @__gherkin_i18n, keyword, regexp_or_name, line.to_i, data_table, doc_string)
   end
 end
 

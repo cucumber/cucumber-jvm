@@ -1,5 +1,6 @@
 package cucumber.runtime;
 
+import gherkin.I18n;
 import gherkin.formatter.model.Step;
 
 import java.io.File;
@@ -22,7 +23,7 @@ public interface Glue {
 
     List<HookDefinition> getAfterHooks();
 
-    StepDefinitionMatch stepDefinitionMatch(String uri, Step step, Locale locale);
+    StepDefinitionMatch stepDefinitionMatch(String uri, Step step, I18n i18n);
 
     void writeStepdefsJson(List<String> featurePaths, File dotCucumber) throws IOException;
 }

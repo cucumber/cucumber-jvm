@@ -251,7 +251,6 @@
         <module>core</module>
         <module>junit</module>
         <module>jruby</module>
-        <module>scala</module>
         <module>jython</module>
         <module>picocontainer</module>
         <module>spring</module>
@@ -263,6 +262,7 @@
         <module>java</module>
         <module>clojure</module>
         <module>openejb</module>
+        <module>scala</module>
     </modules>
 
     <profiles>

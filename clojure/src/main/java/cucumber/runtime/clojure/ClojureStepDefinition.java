@@ -5,13 +5,13 @@ import cucumber.runtime.JdkPatternArgumentMatcher;
 import cucumber.runtime.ParameterType;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.Utils;
+import gherkin.I18n;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
-import java.util.Locale;
 import java.util.regex.Pattern;
 
 public class ClojureStepDefinition implements StepDefinition {
@@ -44,7 +44,7 @@ public class ClojureStepDefinition implements StepDefinition {
         return null;
     }
 
-    public void execute(Locale locale, Object[] args) throws Throwable {
+    public void execute(I18n i18n, Object[] args) throws Throwable {
         Method functionInvoke = lookupInvokeMethod(args);
         try {
             functionInvoke.invoke(closure, args);

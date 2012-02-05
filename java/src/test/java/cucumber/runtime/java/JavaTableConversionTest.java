@@ -8,6 +8,7 @@ import cucumber.runtime.StepDefinition;
 import cucumber.runtime.StepDefinitionMatch;
 import cucumber.runtime.converters.LocalizedXStreams;
 import cucumber.table.DataTable;
+import gherkin.I18n;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Comment;
 import gherkin.formatter.model.DataTableRow;
@@ -21,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.regex.Pattern;
@@ -158,7 +158,7 @@ public class JavaTableConversionTest {
 
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(NO_ARGS, stepDefinition, "some.feature", stepWithRows, new LocalizedXStreams(classLoader));
-        stepDefinitionMatch.runStep(Locale.UK);
+        stepDefinitionMatch.runStep(new I18n("en"));
         return stepDefs;
     }
 

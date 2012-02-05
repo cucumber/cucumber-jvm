@@ -5,6 +5,7 @@ import cucumber.runtime.autocomplete.MetaStepdef;
 import cucumber.runtime.autocomplete.StepdefGenerator;
 import cucumber.runtime.converters.LocalizedXStreams;
 import cucumber.runtime.model.CucumberFeature;
+import gherkin.I18n;
 import gherkin.deps.com.google.gson.Gson;
 import gherkin.deps.com.google.gson.GsonBuilder;
 import gherkin.formatter.Argument;
@@ -16,7 +17,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 
 import static cucumber.runtime.model.CucumberFeature.load;
 import static java.util.Collections.emptyList;
@@ -64,11 +64,11 @@ public class RuntimeGlue implements Glue {
     }
 
     @Override
-    public StepDefinitionMatch stepDefinitionMatch(String uri, Step step, Locale locale) {
+    public StepDefinitionMatch stepDefinitionMatch(String uri, Step step, I18n i18n) {
         List<StepDefinitionMatch> matches = stepDefinitionMatches(uri, step);
         try {
             if (matches.size() == 0) {
-                tracker.addUndefinedStep(step, locale);
+                tracker.addUndefinedStep(step, i18n);
                 return null;
             }
             if (matches.size() == 1) {
@@ -77,7 +77,7 @@ public class RuntimeGlue implements Glue {
                 throw new AmbiguousStepDefinitionsException(matches);
             }
         } finally {
-            tracker.storeStepKeyword(step, locale);
+            tracker.storeStepKeyword(step, i18n);
         }
     }
 

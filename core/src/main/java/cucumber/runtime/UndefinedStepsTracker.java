@@ -5,7 +5,6 @@ import gherkin.formatter.model.Step;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import static java.util.Arrays.asList;
 
@@ -37,9 +36,9 @@ public class UndefinedStepsTracker {
         return snippets;
     }
 
-    public void storeStepKeyword(Step step, Locale locale) {
+    public void storeStepKeyword(Step step, I18n i18n) {
         String keyword = step.getKeyword();
-        if (isGivenWhenThenKeyword(keyword, locale)) {
+        if (isGivenWhenThenKeyword(keyword, i18n)) {
             lastGivenWhenThenStepKeyword = keyword;
         }
         if (lastGivenWhenThenStepKeyword == null) {
@@ -47,12 +46,11 @@ public class UndefinedStepsTracker {
         }
     }
 
-    public void addUndefinedStep(Step step, Locale locale) {
-        undefinedSteps.add(givenWhenThenStep(step, locale));
+    public void addUndefinedStep(Step step, I18n i18n) {
+        undefinedSteps.add(givenWhenThenStep(step, i18n));
     }
 
-    private boolean isGivenWhenThenKeyword(String keyword, Locale locale) {
-        I18n i18n = new I18n("en");
+    private boolean isGivenWhenThenKeyword(String keyword, I18n i18n) {
         for (String gwts : asList("given", "when", "then")) {
             List<String> keywords = i18n.keywords(gwts);
             if (keywords.contains(keyword) && !"* ".equals(keyword)) {
@@ -62,12 +60,11 @@ public class UndefinedStepsTracker {
         return false;
     }
 
-    private Step givenWhenThenStep(Step step, Locale locale) {
-        if (isGivenWhenThenKeyword(step.getKeyword(), locale)) {
+    private Step givenWhenThenStep(Step step, I18n i18n) {
+        if (isGivenWhenThenKeyword(step.getKeyword(), i18n)) {
             return step;
         } else {
             if (lastGivenWhenThenStepKeyword == null) {
-                I18n i18n = new I18n("en");
                 List<String> givenKeywords = new ArrayList<String>(i18n.keywords("given"));
                 givenKeywords.remove("* ");
                 lastGivenWhenThenStepKeyword = givenKeywords.get(0);
