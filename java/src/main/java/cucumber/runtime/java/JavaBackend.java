@@ -14,17 +14,13 @@ import cucumber.runtime.snippets.SnippetGenerator;
 import gherkin.formatter.model.Step;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Pattern;
 
 public class JavaBackend implements Backend {
     private final SnippetGenerator snippetGenerator = new SnippetGenerator(new JavaSnippet());
-    private final Set<Class> stepDefinitionClasses = new HashSet<Class>();
     private final ObjectFactory objectFactory;
     private final ClasspathResourceLoader classpathResourceLoader;
     private final ClasspathMethodScanner classpathMethodScanner;
@@ -114,22 +110,6 @@ public class JavaBackend implements Backend {
         } else {
             String[] tagExpressions = ((After) annotation).value();
             glue.addAfterHook(new JavaHookDefinition(method, tagExpressions, hookOrder, objectFactory));
-        }
-    }
-
-    private void registerClassInObjectFactory(Class<?> clazz) {
-        if (!stepDefinitionClasses.contains(clazz)) {
-            objectFactory.addClass(clazz);
-            stepDefinitionClasses.add(clazz);
-            addConstructorDependencies(clazz);
-        }
-    }
-
-    private void addConstructorDependencies(Class<?> clazz) {
-        for (Constructor constructor : clazz.getConstructors()) {
-            for (Class paramClazz : constructor.getParameterTypes()) {
-                registerClassInObjectFactory(paramClazz);
-            }
         }
     }
 }
