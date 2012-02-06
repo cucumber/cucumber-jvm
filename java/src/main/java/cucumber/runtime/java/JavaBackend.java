@@ -78,14 +78,13 @@ public class JavaBackend implements Backend {
         return snippetGenerator.getSnippet(step);
     }
 
-    void addStepDefinition(Annotation annotation, Method method) {
+    void addStepDefinition(Annotation annotation, Class<?> candidateClass, Method method) {
         try {
             Method regexpMethod = annotation.getClass().getMethod("value");
             String regexpString = (String) regexpMethod.invoke(annotation);
             if (regexpString != null) {
                 Pattern pattern = Pattern.compile(regexpString);
-                Class<?> clazz = method.getDeclaringClass();
-                objectFactory.addClass(clazz);
+                objectFactory.addClass(candidateClass);
                 glue.addStepDefinition(new JavaStepDefinition(method, pattern, objectFactory));
             }
         } catch (NoSuchMethodException e) {
@@ -97,9 +96,8 @@ public class JavaBackend implements Backend {
         }
     }
 
-    void addHook(Annotation annotation, Method method) {
-        Class<?> clazz = method.getDeclaringClass();
-        objectFactory.addClass(clazz);
+    void addHook(Annotation annotation, Class<?> candidateClass, Method method) {
+        objectFactory.addClass(candidateClass);
 
         Order order = method.getAnnotation(Order.class);
         int hookOrder = (order == null) ? Integer.MAX_VALUE : order.value();
