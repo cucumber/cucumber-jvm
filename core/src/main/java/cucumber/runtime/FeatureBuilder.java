@@ -16,15 +16,29 @@ import gherkin.util.FixJava;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.math.BigInteger;
+import java.nio.charset.Charset;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class FeatureBuilder implements Formatter {
+    private static final Charset UTF8 = Charset.forName("UTF-8");
     private final List<CucumberFeature> cucumberFeatures;
+    private final MessageDigest md5;
     private CucumberFeature currentCucumberFeature;
     private String uri;
+    private Map<String, String> pathsByChecksum = new HashMap<String, String>();
 
     public FeatureBuilder(List<CucumberFeature> cucumberFeatures) {
         this.cucumberFeatures = cucumberFeatures;
+        try {
+            this.md5 = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+            throw new CucumberException(e);
+        }
     }
 
     @Override
@@ -86,6 +100,14 @@ public class FeatureBuilder implements Formatter {
         }
         Parser parser = new Parser(formatter);
         String gherkin = read(resource);
+
+        String checksum = checksum(gherkin);
+        String path = pathsByChecksum.get(checksum);
+        if(path != null) {
+            throw new CucumberException(String.format("Found the same source in %s and %s", path, resource.getPath()));
+        }
+        pathsByChecksum.put(checksum, resource.getPath());
+
         parser.parse(gherkin, resource.getPath(), 0);
         I18n i18n = parser.getI18nLanguage();
         if (currentCucumberFeature != null) {
@@ -93,6 +115,10 @@ public class FeatureBuilder implements Formatter {
             // Might also happen if the feature file itself is empty.
             currentCucumberFeature.setI18n(i18n);
         }
+    }
+
+    private String checksum(String gherkin) {
+        return new BigInteger(1, md5.digest(gherkin.getBytes(UTF8))).toString(16);
     }
 
     private String read(Resource resource) {
