@@ -16,19 +16,10 @@ import java.util.List;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 
 public class HTMLFormatterTest {
-
-    @Test
-    public void noFeaturesProduceEmptyReport() throws IOException {
-        final List<String> noFeatures = emptyList();
-        final File report = createFormatterJsReport(noFeatures);
-
-        assertEquals(0, report.length());
-    }
 
     @Test
     public void oneFeatureProducesValidJavascript() throws IOException {
@@ -46,8 +37,7 @@ public class HTMLFormatterTest {
 
     private File createFormatterJsReport(final List<String> featurePaths) throws IOException {
         final File outputDir = runFeaturesWithFormatter(featurePaths);
-        final File report = new File(outputDir, "report.js");
-        return report;
+        return new File(outputDir, "report.js");
     }
 
     private File runFeaturesWithFormatter(final List<String> featurePaths) throws IOException {

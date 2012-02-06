@@ -1,5 +1,6 @@
 package cucumber.junit;
 
+import cucumber.runtime.CucumberException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,10 +44,9 @@ public class CucumberTest {
         assertEquals("Feature: In cucumber.junit", cucumber.getChildren().get(0).getName());
     }
 
-    @Test
+    @Test(expected = CucumberException.class)
     public void finds_no_features_when_explicit_package_has_nothnig() throws IOException, InitializationError {
-        Cucumber cucumber = new Cucumber(ExplicitPackageWithNoFeatures.class);
-        assertEquals(0, cucumber.getChildren().size());
+        new Cucumber(ExplicitPackageWithNoFeatures.class);
     }
 
     private class ImplicitPackage {

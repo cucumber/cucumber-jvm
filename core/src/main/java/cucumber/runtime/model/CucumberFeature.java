@@ -2,6 +2,7 @@ package cucumber.runtime.model;
 
 import cucumber.io.Resource;
 import cucumber.io.ResourceLoader;
+import cucumber.runtime.CucumberException;
 import cucumber.runtime.FeatureBuilder;
 import gherkin.I18n;
 import gherkin.formatter.model.Background;
@@ -31,6 +32,9 @@ public class CucumberFeature {
             for (Resource resource : resources) {
                 builder.parse(resource, filters);
             }
+        }
+        if(cucumberFeatures.isEmpty()) {
+            throw new CucumberException(String.format("No features found at %s", featurePaths));
         }
         return cucumberFeatures;
     }
