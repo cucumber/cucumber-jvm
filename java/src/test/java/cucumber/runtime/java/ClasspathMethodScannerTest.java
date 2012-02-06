@@ -17,8 +17,8 @@ public class ClasspathMethodScannerTest {
     @Test
     public void loadGlue_should_not_try_to_instantiate_super_classes() {
 
-        ClasspathMethodScanner classpathMethodScanner = new ClasspathMethodScanner(new ClasspathResourceLoader(Thread.currentThread()
-                .getContextClassLoader()));
+        ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(Thread.currentThread().getContextClassLoader());
+        ClasspathMethodScanner classpathMethodScanner = new ClasspathMethodScanner(resourceLoader);
 
         ObjectFactory factory = Mockito.mock(ObjectFactory.class);
         Glue world = Mockito.mock(Glue.class);

@@ -8,7 +8,6 @@ import cucumber.runtime.Utils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.List;
 
@@ -24,13 +23,13 @@ public class ClasspathMethodScanner {
         Collection<Class<? extends Annotation>> cucumberAnnotationClasses = findCucumberAnnotationClasses();
         for (String gluePath : gluePaths) {
             String packageName = gluePath.replace('/', '.').replace('\\', '.'); // Sometimes the gluePath will be a path, not a package
-            for (Class<?> candidateClass : resourceLoader.getDescendants(Object.class, packageName)) {
-                while (candidateClass != Object.class && !Utils.isInstantiable(candidateClass)) {
+            for (Class<?> glueCodeClass : resourceLoader.getDescendants(Object.class, packageName)) {
+                while (glueCodeClass != Object.class && !Utils.isInstantiable(glueCodeClass)) {
                     // those can't be instantiated without container class present.
-                    candidateClass = candidateClass.getSuperclass();
+                    glueCodeClass = glueCodeClass.getSuperclass();
                 }
-                for (Method method : candidateClass.getMethods()) {
-                    scan(candidateClass, method, cucumberAnnotationClasses, javaBackend);
+                for (Method method : glueCodeClass.getMethods()) {
+                    scan(glueCodeClass, method, cucumberAnnotationClasses, javaBackend);
                 }
             }
         }
@@ -40,15 +39,14 @@ public class ClasspathMethodScanner {
         return resourceLoader.getAnnotations("cucumber.annotation");
     }
 
-    private void scan(Class<?> candidateClass, Method method, Collection<Class<? extends Annotation>> cucumberAnnotationClasses,
-            JavaBackend javaBackend) {
+    private void scan(Class<?> glueCodeClass, Method method, Collection<Class<? extends Annotation>> cucumberAnnotationClasses, JavaBackend javaBackend) {
         for (Class<? extends Annotation> cucumberAnnotationClass : cucumberAnnotationClasses) {
             Annotation annotation = method.getAnnotation(cucumberAnnotationClass);
             if (annotation != null && !annotation.annotationType().equals(Order.class)) {
                 if (isHookAnnotation(annotation)) {
-                    javaBackend.addHook(annotation, candidateClass, method);
+                    javaBackend.addHook(annotation, glueCodeClass, method);
                 } else if (isStepdefAnnotation(annotation)) {
-                    javaBackend.addStepDefinition(annotation, candidateClass, method);
+                    javaBackend.addStepDefinition(annotation, glueCodeClass, method);
                 }
             }
         }

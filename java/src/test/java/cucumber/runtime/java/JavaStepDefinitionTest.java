@@ -1,12 +1,15 @@
 package cucumber.runtime.java;
 
-import static java.util.Arrays.*;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import cucumber.annotation.en.Given;
+import cucumber.io.ClasspathResourceLoader;
+import cucumber.runtime.AmbiguousStepDefinitionsException;
+import cucumber.runtime.Glue;
+import cucumber.runtime.Runtime;
 import gherkin.I18n;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Comment;
 import gherkin.formatter.model.Step;
+import org.junit.Test;
 
 import java.lang.reflect.Method;
 import java.util.Collections;
@@ -14,14 +17,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.junit.Test;
-
-import cucumber.annotation.en.Given;
-import cucumber.io.ClasspathResourceLoader;
-import cucumber.runtime.AmbiguousStepDefinitionsException;
-import cucumber.runtime.Glue;
-import cucumber.runtime.Runtime;
-
+import static java.util.Arrays.asList;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 
 public class JavaStepDefinitionTest {
     private static final List<Comment> NO_COMMENTS = Collections.emptyList();
