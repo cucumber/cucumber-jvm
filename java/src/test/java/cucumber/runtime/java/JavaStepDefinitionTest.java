@@ -1,15 +1,12 @@
 package cucumber.runtime.java;
 
-import cucumber.annotation.en.Given;
-import cucumber.io.ClasspathResourceLoader;
-import cucumber.runtime.AmbiguousStepDefinitionsException;
-import cucumber.runtime.Glue;
-import cucumber.runtime.Runtime;
+import static java.util.Arrays.*;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 import gherkin.I18n;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Comment;
 import gherkin.formatter.model.Step;
-import org.junit.Test;
 
 import java.lang.reflect.Method;
 import java.util.Collections;
@@ -17,10 +14,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static java.util.Arrays.asList;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
+import org.junit.Test;
+
+import cucumber.annotation.en.Given;
+import cucumber.io.ClasspathResourceLoader;
+import cucumber.runtime.AmbiguousStepDefinitionsException;
+import cucumber.runtime.Glue;
+import cucumber.runtime.Runtime;
 
 
 public class JavaStepDefinitionTest {
@@ -52,8 +52,8 @@ public class JavaStepDefinitionTest {
 
     @Test(expected = AmbiguousStepDefinitionsException.class)
     public void throws_ambiguous_when_two_matches_are_found() throws Throwable {
-        backend.addStepDefinition(FOO.getAnnotation(Given.class), FOO);
-        backend.addStepDefinition(BAR.getAnnotation(Given.class), BAR);
+        backend.addStepDefinition(FOO.getAnnotation(Given.class), Defs.class, FOO);
+        backend.addStepDefinition(BAR.getAnnotation(Given.class), Defs.class, BAR);
 
         Reporter reporter = mock(Reporter.class);
         runtime.buildBackendWorlds();
@@ -63,7 +63,7 @@ public class JavaStepDefinitionTest {
 
     @Test
     public void does_not_throw_ambiguous_when_nothing_is_ambiguous() throws Throwable {
-        backend.addStepDefinition(FOO.getAnnotation(Given.class), FOO);
+        backend.addStepDefinition(FOO.getAnnotation(Given.class), Defs.class, FOO);
 
         Reporter reporter = mock(Reporter.class);
         runtime.buildBackendWorlds();
