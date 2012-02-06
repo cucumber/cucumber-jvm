@@ -33,7 +33,7 @@ public class HTMLFormatter implements Formatter, Reporter {
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private static final String JS_FORMATTER_VAR = "formatter";
     private static final String JS_REPORT_FILENAME = "report.js";
-    private static final String[] REPORT_ITEMS = new String[]{"formatter.js", "index.html", "jquery-1.6.4.min.js", "style.css"};
+    private static final String[] TEXT_ASSETS = new String[]{"formatter.js", "index.html", "jquery-1.6.4.min.js", "style.css"};
     private static final Map<String, String> MIME_TYPES_EXTENSIONS = new HashMap<String, String>() {
         {
             put("image/bmp", "bmp");
@@ -145,11 +145,9 @@ public class HTMLFormatter implements Formatter, Reporter {
     }
 
     private void copyReportFiles() {
-        String packageName = getClass().getPackage().getName().replaceAll("\\.", "/") + "/";
-        InputStream resourceAsStream;
-        for (String reportItem : REPORT_ITEMS) {
-            resourceAsStream = getClass().getClassLoader().getResourceAsStream(packageName + reportItem);
-            writeBytes(resourceAsStream, reportFileOutputStream(reportItem));
+        for (String textAsset : TEXT_ASSETS) {
+            InputStream textAssetStream = getClass().getResourceAsStream(textAsset);
+            writeBytes(textAssetStream, reportFileOutputStream(textAsset));
         }
     }
 
