@@ -107,11 +107,11 @@
                         </goals>
                     </execution>
                      <execution>
-                          <id>generate-i18n-sources</id>
+                          <id>generate-i18n-resources</id>
                           <goals>
                               <goal>run</goal>
                           </goals>
-                          <phase>generate-sources</phase>
+                          <phase>generate-resources</phase>
                           <configuration>
                               <target>
                                   <taskdef name="groovy" classname="org.codehaus.groovy.ant.Groovy" classpathref="maven.plugin.classpath" />
@@ -127,7 +127,7 @@ I18n.all.each { i18n ->
   if (!["ar", "bg", "he", "is", "ja", "ko", "pl", "ru", "sr_cyrl", "uk", "uz", "zh_cn", "zh_tw"].contains(i18n.underscoredIsoCode)) {
     def binding = ["i18n":i18n]
     template = engine.createTemplate(templateSource).make(binding)
-    file = new File(project.baseDir, "target${File.separator}generated-sources${File.separator}i18n${File.separator}java${File.separator}cucumber${File.separator}runtime${File.separator}jython${File.separator}i18n${File.separator}${i18n.underscoredIsoCode.toUpperCase()}.py")
+    file = new File(project.baseDir, "target${File.separator}generated-resources${File.separator}i18n${File.separator}cucumber${File.separator}runtime${File.separator}jython${File.separator}i18n${File.separator}${i18n.underscoredIsoCode.toUpperCase()}.py")
     file.parentFile.mkdirs()
     file.write(template.toString(), "UTF-8")
   }
@@ -153,7 +153,7 @@ I18n.all.each { i18n ->
                         <configuration>
                             <resources>
                                 <resource>
-                                  <directory>${basedir}/target/generated-sources/i18n/java</directory>
+                                  <directory>${basedir}/target/generated-resources/i18n</directory>
                                 </resource>
                             </resources>
                         </configuration>

@@ -34,6 +34,7 @@ class StepDefinition:
   def pattern(self):
     return self.regexp
 
+And = But = Given = Then = When = I18NKeywordTemplate
 
 class World:
   """The World"""
