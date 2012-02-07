@@ -1,6 +1,6 @@
 package cucumber.runtime.java;
 
-import cucumber.annotation.DateFormat;
+import cucumber.DateFormat;
 import cucumber.annotation.Pending;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.JdkPatternArgumentMatcher;
@@ -61,20 +61,7 @@ public class JavaStepDefinition implements StepDefinition {
     }
 
     public List<ParameterType> getParameterTypes() {
-        List<ParameterType> result = new ArrayList<ParameterType>();
-        Type[] genericParameterTypes = method.getGenericParameterTypes();
-        Annotation[][] annotations = method.getParameterAnnotations();
-        for (int i = 0; i < genericParameterTypes.length; i++) {
-            String dateFormat = null;
-            for (Annotation annotation : annotations[i]) {
-                if (annotation instanceof DateFormat) {
-                    dateFormat = ((DateFormat) annotation).value();
-                    break;
-                }
-            }
-            result.add(new ParameterType(genericParameterTypes[i], dateFormat));
-        }
-        return result;
+        return ParameterType.fromMethod(method);
     }
 
     public boolean isDefinedAt(StackTraceElement e) {

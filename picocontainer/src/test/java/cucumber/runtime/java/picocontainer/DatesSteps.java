@@ -1,6 +1,6 @@
 package cucumber.runtime.java.picocontainer;
 
-import cucumber.annotation.DateFormat;
+import cucumber.DateFormat;
 import cucumber.annotation.en.Given;
 import cucumber.annotation.en.Then;
 

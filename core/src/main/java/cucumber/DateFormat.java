@@ -1,4 +1,4 @@
-package cucumber.annotation;
+package cucumber;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
