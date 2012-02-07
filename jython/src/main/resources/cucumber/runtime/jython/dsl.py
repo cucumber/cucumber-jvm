@@ -8,12 +8,12 @@ class I18NKeywordTemplate(object):
     arity = func.func_code.co_argcount - 1
     backend.registerStepdef(StepDefinition(self.regexp, func), arity)
     return func
-    
+
 class StepDefinition:
   def __init__(self, regexp, func):
     self.regexp = regexp
     self.func = func
-	
+
   def matched_arguments(self, step_name):
     match = re.match(self.regexp, step_name)
     if(match):
