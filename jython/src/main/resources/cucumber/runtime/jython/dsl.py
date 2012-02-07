@@ -11,8 +11,8 @@ class I18NKeywordTemplate(object):
     
 class StepDefinition:
   def __init__(self, regexp, func):
-	self.regexp = regexp
-	self.func = func
+    self.regexp = regexp
+    self.func = func
 	
   def matched_arguments(self, step_name):
     match = re.match(self.regexp, step_name)
