@@ -1,7 +1,6 @@
 import re
 from gherkin.formatter import Argument
-
-class Given(object):
+class I18NKeywordTemplate(object):
   def __init__(self, regexp):
     self.regexp = regexp
     
@@ -34,6 +33,8 @@ class StepDefinition:
 
   def pattern(self):
     return self.regexp
+
+And = But = Given = Then = When = I18NKeywordTemplate
 
 class World:
   """The World"""
