@@ -77,7 +77,7 @@ TODO: Fix this. The Ivy build doesn't upload them yet.
 
 ## Examples
 
-You will find an example in Git under examples/java-calculator. You should be able to run `basic_arithmetic.feature` by running the `cucumber.examples.java.calculator.basic_arithmetic_Test` JUnit test from your IDE. -Or simply by running it with Maven: `mvn clean install -P examples` once to build it all. Then `cd examples/java-calculator` followed by `mvn test` each time you make a change. Try to make the feature fail!
+You will find an example in Git under examples/java-calculator. You should be able to run `basic_arithmetic.feature` by running the `cucumber.examples.java.calculator.RunCukesTest` JUnit test from your IDE. -Or simply by running it with Maven: `mvn clean install -P examples` once to build it all. Then `cd examples/java-calculator` followed by `mvn test` each time you make a change. Try to make the feature fail!
 
 ## Building Cucumber-JVM
 
@@ -150,6 +150,6 @@ This is a reminder to the developers:
 
 ```
 mvn release:clean
-mvn --batch-mode -P release-sign-artifacts release:prepare -DautoVersionSubmodules=true -DdevelopmentVersion=1.0.0.RC10-SNAPSHOT
+mvn --batch-mode -P examples release:prepare -DautoVersionSubmodules=true -DdevelopmentVersion=1.0.0.RC10-SNAPSHOT
 mvn -P release-sign-artifacts release:perform
 ```
