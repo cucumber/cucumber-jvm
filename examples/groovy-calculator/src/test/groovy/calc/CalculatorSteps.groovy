@@ -1,3 +1,5 @@
+package calc
+
 import calc.Calculator
 
 this.metaClass.mixin(cucumber.runtime.groovy.Hooks)
