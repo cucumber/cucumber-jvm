@@ -1,5 +1,6 @@
 ## In Git
 
+* [Java] Fixed NullPointerException in ClasspathMethodScanner ([#201](https://github.com/cucumber/cucumber-jvm/pull/201) vladimirkl)
 * [Groovy] Compiled Groovy stepdef scripts are found as well as source ones (Aslak Hellesøy)
 * [Jython] I18n translations for most languages. Languages that can't be transformed to ASCII are excluded. ([#176](https://github.com/cucumber/cucumber-jvm/issues/176), [#197](https://github.com/cucumber/cucumber-jvm/pull/197) Stephen Abrams)
 
