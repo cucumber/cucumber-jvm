@@ -56,7 +56,7 @@ public class SpringFactory implements ObjectFactory {
     }
 
     private void createNewStepContext() {
-        stepContext = new ClassPathXmlApplicationContext(new String[]{"classpath*:cucumber-steps.xml"},
+        stepContext = new ClassPathXmlApplicationContext(new String[]{"classpath*:cucumber-glue.xml"},
                 applicationContext);
     }
 
