@@ -24,11 +24,11 @@ public class ClasspathMethodScanner {
         for (String gluePath : gluePaths) {
             String packageName = gluePath.replace('/', '.').replace('\\', '.'); // Sometimes the gluePath will be a path, not a package
             for (Class<?> glueCodeClass : resourceLoader.getDescendants(Object.class, packageName)) {
-                if (!glueCodeClass.isInterface()) {
-                    while (glueCodeClass != Object.class && !Utils.isInstantiable(glueCodeClass)) {
-                        // those can't be instantiated without container class present.
-                        glueCodeClass = glueCodeClass.getSuperclass();
-                    }
+                while (glueCodeClass != null && glueCodeClass != Object.class && !Utils.isInstantiable(glueCodeClass)) {
+                    // those can't be instantiated without container class present.
+                    glueCodeClass = glueCodeClass.getSuperclass();
+                }
+                if(glueCodeClass != null) {
                     for (Method method : glueCodeClass.getMethods()) {
                         scan(glueCodeClass, method, cucumberAnnotationClasses, javaBackend);
                     }
