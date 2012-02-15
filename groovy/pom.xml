@@ -12,6 +12,10 @@
     <packaging>jar</packaging>
     <name>Cucumber-JVM: Groovy</name>
 
+    <properties>
+        <gmaven.runtime>1.8</gmaven.runtime>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>info.cukes</groupId>
@@ -32,10 +36,35 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- These dependencies are required in order to find classes when running in an IDE - they haven't been jar-jarred -->
+        <dependency>
+            <groupId>com.thoughtworks.xstream</groupId>
+            <artifactId>xstream</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.googlecode.java-diff-utils</groupId>
+            <artifactId>diffutils</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.codehaus.gmaven</groupId>
+                <artifactId>gmaven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generateStubs</goal>
+                            <goal>compile</goal>
+                            <goal>generateTestStubs</goal>
+                            <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <artifactId>maven-clean-plugin</artifactId>
                 <version>2.4.1</version>

@@ -1,5 +1,6 @@
 package cucumber.runtime.groovy;
 
+import cucumber.io.ClasspathResourceLoader;
 import cucumber.io.Resource;
 import cucumber.io.ResourceLoader;
 import cucumber.runtime.Backend;
@@ -26,16 +27,20 @@ public class GroovyBackend implements Backend {
     private final SnippetGenerator snippetGenerator = new SnippetGenerator(new GroovySnippet());
     private final ResourceLoader resourceLoader;
     private final GroovyShell shell;
+    private final ClasspathResourceLoader classpathResourceLoader;
+
     private Closure worldClosure;
     private Object groovyWorld;
     private Glue glue;
 
     public GroovyBackend(ResourceLoader resourceLoader) {
-        this (new GroovyShell(), resourceLoader);
+        this(new GroovyShell(), resourceLoader);
     }
 
     public GroovyBackend(GroovyShell shell, ResourceLoader resourceLoader) {
         this.resourceLoader = resourceLoader;
+        classpathResourceLoader = new ClasspathResourceLoader(Thread.currentThread().getContextClassLoader());
+
         this.shell = shell;
         instance = this;
     }
@@ -43,16 +48,31 @@ public class GroovyBackend implements Backend {
     @Override
     public void loadGlue(Glue glue, List<String> gluePaths) {
         this.glue = glue;
-        final Binding context = new Binding();
+        final Binding context = shell.getContext();
 
         for (String gluePath : gluePaths) {
+            // Load sources
             for (Resource resource : resourceLoader.resources(gluePath, ".groovy")) {
                 Script script = parse(resource);
-                if (isScript(script)) {
-                    script.setBinding(context);
-                    script.run();
+                runIfScript(context, script);
+            }
+            // Load compiled scripts
+            String packageName = gluePath.replace('/', '.').replace('\\', '.'); // Sometimes the gluePath will be a path, not a package
+            for (Class<? extends Script> glueClass : classpathResourceLoader.getDescendants(Script.class, packageName)) {
+                try {
+                    Script script = glueClass.getConstructor(Binding.class).newInstance(context);
+                    runIfScript(context, script);
+                } catch (Exception e) {
+                    throw new CucumberException(e);
                 }
             }
+        }
+    }
+
+    private void runIfScript(Binding context, Script script) {
+        if (isScript(script)) {
+            script.setBinding(context);
+            script.run();
         }
     }
 
@@ -119,14 +139,14 @@ public class GroovyBackend implements Backend {
         Throwable t = new Throwable();
         StackTraceElement[] stackTraceElements = t.getStackTrace();
         for (StackTraceElement stackTraceElement : stackTraceElements) {
-            if (isGroovyFile (stackTraceElement.getFileName ())) {
+            if (isGroovyFile(stackTraceElement.getFileName())) {
                 return stackTraceElement;
             }
         }
         throw new RuntimeException("Couldn't find location for step definition");
     }
-    
-    private static boolean isGroovyFile (String fileName) {
-        return fileName != null && fileName.endsWith (".groovy");
+
+    private static boolean isGroovyFile(String fileName) {
+        return fileName != null && fileName.endsWith(".groovy");
     }
 }
