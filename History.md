@@ -1,5 +1,6 @@
 ## In Git
 
+* [Spring] Allowed customization of Spring step definitions context ([#203](https://github.com/cucumber/cucumber-jvm/pull/203) vladimirkl)
 * [Core] Ambiguous step definitions don't cause Cucumber to blow up, they just fail the step. (Aslak Hellesøy)
 * [Java] Fixed NullPointerException in ClasspathMethodScanner ([#201](https://github.com/cucumber/cucumber-jvm/pull/201) vladimirkl)
 * [Groovy] Compiled Groovy stepdef scripts are found as well as source ones (Aslak Hellesøy)
