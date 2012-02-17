@@ -3,8 +3,11 @@ package cucumber.runtime;
 import java.util.List;
 
 public class AmbiguousStepDefinitionsException extends CucumberException {
+    private final List<StepDefinitionMatch> matches;
+
     public AmbiguousStepDefinitionsException(List<StepDefinitionMatch> matches) {
         super(getMessage(matches));
+        this.matches = matches;
     }
 
     private static String getMessage(List<StepDefinitionMatch> matches) {
@@ -14,5 +17,9 @@ public class AmbiguousStepDefinitionsException extends CucumberException {
             msg.append("  ").append(match.getPattern()).append(" in ").append(match.getLocation()).append("\n");
         }
         return msg.toString();
+    }
+
+    public List<StepDefinitionMatch> getMatches() {
+        return matches;
     }
 }

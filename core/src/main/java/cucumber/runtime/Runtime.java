@@ -200,7 +200,18 @@ public class Runtime implements UnreportedStepExecutor {
     }
 
     public void runStep(String uri, Step step, Reporter reporter, I18n i18n) {
-        StepDefinitionMatch match = glue.stepDefinitionMatch(uri, step, i18n);
+        StepDefinitionMatch match = null;
+
+        try {
+            match = glue.stepDefinitionMatch(uri, step, i18n);
+        } catch (AmbiguousStepDefinitionsException e) {
+            reporter.match(e.getMatches().get(0));
+            reporter.result(new Result(Result.FAILED, 0L, e, DUMMY_ARG));
+            addError(e);
+            skipNextStep = true;
+            return;
+        }
+
         if (match != null) {
             reporter.match(match);
         } else {

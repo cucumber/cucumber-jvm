@@ -91,6 +91,12 @@ Cucumber-JVM is built with [Maven](http://maven.apache.org/).
 
     File -> Open Project -> path/to/cucumber-jvm/pom.xml
 
+Your `.feature` files must be in a folder that IDEA recognises as *source* or *test*. You must also tell IDEA to copy your `.feature` files to your output directory:
+
+    Preferences -> Compiler -> Resource Patterns -> Add `;?*.feature`
+
+If you are writing step definitions in a scripting language you must also add the appropriate file extenstion for that language as well.
+
 ### Eclipse
 
     Just load the root `pom.xml`

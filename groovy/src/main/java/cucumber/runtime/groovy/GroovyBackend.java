@@ -18,12 +18,15 @@ import org.codehaus.groovy.runtime.DefaultGroovyMethods;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 
 public class GroovyBackend implements Backend {
     static GroovyBackend instance;
+    private final Set<Class> scripts = new HashSet<Class>();
     private final SnippetGenerator snippetGenerator = new SnippetGenerator(new GroovySnippet());
     private final ResourceLoader resourceLoader;
     private final GroovyShell shell;
@@ -39,10 +42,9 @@ public class GroovyBackend implements Backend {
 
     public GroovyBackend(GroovyShell shell, ResourceLoader resourceLoader) {
         this.resourceLoader = resourceLoader;
-        classpathResourceLoader = new ClasspathResourceLoader(Thread.currentThread().getContextClassLoader());
-
         this.shell = shell;
         instance = this;
+        classpathResourceLoader = new ClasspathResourceLoader(shell.getClassLoader());
     }
 
     @Override
@@ -70,9 +72,11 @@ public class GroovyBackend implements Backend {
     }
 
     private void runIfScript(Binding context, Script script) {
-        if (isScript(script)) {
+        Class scriptClass = script.getMetaClass().getTheClass();
+        if (isScript(script) && !scripts.contains(scriptClass)) {
             script.setBinding(context);
             script.run();
+            scripts.add(scriptClass);
         }
     }
 
@@ -126,6 +130,7 @@ public class GroovyBackend implements Backend {
     public void invoke(Closure body, Object[] args) {
         body.setDelegate(getGroovyWorld());
         body.call(args);
+        System.out.println("DONE");
     }
 
     private Object getGroovyWorld() {
