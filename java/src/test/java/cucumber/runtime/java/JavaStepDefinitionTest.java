@@ -8,8 +8,10 @@ import cucumber.runtime.Runtime;
 import gherkin.I18n;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Comment;
+import gherkin.formatter.model.Result;
 import gherkin.formatter.model.Step;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 
 import java.lang.reflect.Method;
 import java.util.Collections;
@@ -18,9 +20,11 @@ import java.util.List;
 import java.util.Set;
 
 import static java.util.Arrays.asList;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 public class JavaStepDefinitionTest {
     private static final List<Comment> NO_COMMENTS = Collections.emptyList();
@@ -49,7 +53,7 @@ public class JavaStepDefinitionTest {
         backend.loadGlue(glue, Collections.<String>emptyList());
     }
 
-    @Test(expected = AmbiguousStepDefinitionsException.class)
+    @Test
     public void throws_ambiguous_when_two_matches_are_found() throws Throwable {
         backend.addStepDefinition(FOO.getAnnotation(Given.class), Defs.class, FOO);
         backend.addStepDefinition(BAR.getAnnotation(Given.class), Defs.class, BAR);
@@ -58,6 +62,10 @@ public class JavaStepDefinitionTest {
         runtime.buildBackendWorlds();
         runtime.runBeforeHooks(reporter, asSet("@foo"));
         runtime.runStep("uri", new Step(NO_COMMENTS, "Given ", "pattern", 1, null, null), reporter, ENGLISH);
+
+        ArgumentCaptor<Result> result = ArgumentCaptor.forClass(Result.class);
+        verify(reporter).result(result.capture());
+        assertEquals(AmbiguousStepDefinitionsException.class, result.getValue().getError().getClass());
     }
 
     @Test
