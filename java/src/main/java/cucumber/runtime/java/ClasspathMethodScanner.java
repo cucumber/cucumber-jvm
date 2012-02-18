@@ -9,7 +9,9 @@ import cucumber.runtime.Utils;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class ClasspathMethodScanner {
 
@@ -21,8 +23,8 @@ public class ClasspathMethodScanner {
 
     public void scan(JavaBackend javaBackend, List<String> gluePaths) {
         Collection<Class<? extends Annotation>> cucumberAnnotationClasses = findCucumberAnnotationClasses();
-        for (String gluePath : gluePaths) {
-            String packageName = gluePath.replace('/', '.').replace('\\', '.'); // Sometimes the gluePath will be a path, not a package
+        
+        for (String packageName : getGluePackages(gluePaths)) {
             for (Class<?> glueCodeClass : resourceLoader.getDescendants(Object.class, packageName)) {
                 while (glueCodeClass != Object.class && !Utils.isInstantiable(glueCodeClass)) {
                     // those can't be instantiated without container class present.
@@ -35,7 +37,17 @@ public class ClasspathMethodScanner {
         }
     }
 
-    private Collection<Class<? extends Annotation>> findCucumberAnnotationClasses() {
+    
+
+    private Set<String> getGluePackages(List<String> gluePaths) {
+        HashSet<String> packageSet = new HashSet<String>(); // Every package should be loaded just once, even if the same path is given twice.
+        for (String gluePath : gluePaths){
+            String gluePackage = gluePath.replace('/', '.').replace('\\', '.'); // Sometimes the gluePath will be a path, not a package
+            packageSet.add(gluePackage);
+        }
+        return packageSet;
+    }
+    Collection<Class<? extends Annotation>> findCucumberAnnotationClasses() {
         return resourceLoader.getAnnotations("cucumber.annotation");
     }
 
