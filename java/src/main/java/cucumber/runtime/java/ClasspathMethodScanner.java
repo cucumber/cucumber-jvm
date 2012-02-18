@@ -26,12 +26,14 @@ public class ClasspathMethodScanner {
         
         for (String packageName : getGluePackages(gluePaths)) {
             for (Class<?> glueCodeClass : resourceLoader.getDescendants(Object.class, packageName)) {
-                while (glueCodeClass != Object.class && !Utils.isInstantiable(glueCodeClass)) {
+                while (glueCodeClass != null && glueCodeClass != Object.class && !Utils.isInstantiable(glueCodeClass)) {
                     // those can't be instantiated without container class present.
                     glueCodeClass = glueCodeClass.getSuperclass();
                 }
-                for (Method method : glueCodeClass.getMethods()) {
-                    scan(glueCodeClass, method, cucumberAnnotationClasses, javaBackend);
+                if(glueCodeClass != null) {
+                    for (Method method : glueCodeClass.getMethods()) {
+                        scan(glueCodeClass, method, cucumberAnnotationClasses, javaBackend);
+                    }
                 }
             }
         }

@@ -177,7 +177,7 @@
             <dependency>
                 <groupId>org.webbitserver</groupId>
                 <artifactId>webbit</artifactId>
-                <version>0.3.8</version>
+                <version>0.4.0</version>
             </dependency>
             <dependency>
                 <groupId>org.jruby</groupId>
@@ -302,17 +302,6 @@
 
                 </plugins>
             </build>
-        </profile>
-        <profile>
-            <id>cucumber-jvm-snapshot</id>
-            <activation>
-                <property>
-                    <name>snapshot</name>
-                </property>
-            </activation>
-            <modules>
-                <module>openejb</module>
-            </modules>
         </profile>
     </profiles>
 

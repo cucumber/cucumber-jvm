@@ -1,6 +1,6 @@
 # IDE working files
-/*.iws
-/*.ipr
+*.iws
+*.ipr
 *.iml
 .idea/
 .settings
@@ -14,7 +14,7 @@ target/
 tmp/
 
 # Build & test droppings
-/report.js
-/chromedriver.log
-/.scala_dependencies
+report.js
+chromedriver.log
+.scala_dependencies
 nexus.properties

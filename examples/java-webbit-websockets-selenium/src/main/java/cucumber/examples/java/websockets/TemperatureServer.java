@@ -1,9 +1,9 @@
 package cucumber.examples.java.websockets;
 
+import org.webbitserver.BaseWebSocketHandler;
 import org.webbitserver.WebServer;
 import org.webbitserver.WebServers;
 import org.webbitserver.WebSocketConnection;
-import org.webbitserver.WebSocketHandler;
 import org.webbitserver.handler.EmbeddedResourceHandler;
 
 import java.io.IOException;
@@ -14,15 +14,7 @@ public class TemperatureServer {
     public TemperatureServer(int port) {
         webServer = WebServers.createWebServer(port);
         webServer.add(new EmbeddedResourceHandler("web"));
-        webServer.add("/temperature", new WebSocketHandler() {
-            @Override
-            public void onOpen(WebSocketConnection connection) throws Exception {
-            }
-
-            @Override
-            public void onClose(WebSocketConnection connection) throws Exception {
-            }
-
+        webServer.add("/temperature", new BaseWebSocketHandler() {
             @Override
             public void onMessage(WebSocketConnection connection, String msg) throws Throwable {
                 String[] parts = msg.split(":");
@@ -31,14 +23,6 @@ public class TemperatureServer {
                     double f = (9.0 / 5.0) * t + 32;
                     connection.send("fahrenheit:" + f);
                 }
-            }
-
-            @Override
-            public void onMessage(WebSocketConnection connection, byte[] msg) throws Throwable {
-            }
-
-            @Override
-            public void onPong(WebSocketConnection connection, String msg) throws Throwable {
             }
         });
     }

@@ -13,10 +13,10 @@ class CustomWorld {
     }
 
     def lastAte(food) {
-    	lastAte = food
+        lastAte = food
     }
 
     def getMood() {
-    	'cukes'.equals(lastAte) ? 'happy' : 'tired'
+        'cukes'.equals(lastAte) ? 'happy' : 'tired'
     }
 }

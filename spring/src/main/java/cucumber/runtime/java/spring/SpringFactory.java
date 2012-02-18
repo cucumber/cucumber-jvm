@@ -3,11 +3,10 @@ package cucumber.runtime.java.spring;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.java.ObjectFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
-import org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor;
-import org.springframework.context.annotation.CommonAnnotationBeanPostProcessor;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.context.support.StaticApplicationContext;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -34,8 +33,11 @@ public class SpringFactory implements ObjectFactory {
 
     private static AbstractApplicationContext applicationContext;
 
-    private StaticApplicationContext stepContext;
+    private ClassPathXmlApplicationContext stepContext;
     private final Collection<Class<?>> stepClasses = new ArrayList<Class<?>>();
+
+    public SpringFactory() {
+    }
 
     static {
         applicationContext = new ClassPathXmlApplicationContext(new String[]{"cucumber.xml"});
@@ -54,18 +56,16 @@ public class SpringFactory implements ObjectFactory {
     }
 
     private void createNewStepContext() {
-        stepContext = new StaticApplicationContext(applicationContext);
-        AutowiredAnnotationBeanPostProcessor autowirer = new AutowiredAnnotationBeanPostProcessor();
-        autowirer.setBeanFactory(stepContext.getBeanFactory());
-        stepContext.getBeanFactory().addBeanPostProcessor(autowirer);
-        stepContext.getBeanFactory().addBeanPostProcessor(new CommonAnnotationBeanPostProcessor());
+        stepContext = new ClassPathXmlApplicationContext(new String[]{"classpath*:cucumber-glue.xml"},
+                applicationContext);
     }
 
     private void populateStepContext() {
+        BeanDefinitionRegistry registry = (BeanDefinitionRegistry) stepContext.getAutowireCapableBeanFactory();
         for (Class<?> stepClass : stepClasses) {
-            stepContext.registerSingleton(stepClass.getName(), stepClass);
+            registry.registerBeanDefinition(stepClass.getName(),
+                    BeanDefinitionBuilder.genericBeanDefinition(stepClass).getBeanDefinition());
         }
-        stepContext.refresh();
     }
 
     @Override

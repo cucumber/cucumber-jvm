@@ -9,11 +9,6 @@ World {
     new CustomWorld();
 }
 
-Given(~'^I have (\\d+) cukes in my belly') { int cukes ->
-    haveCukes(cukes)
-    lastAte('cukes')
-}
-
 Given(~'^I have (\\d+) apples in my belly') { int apples ->
     lastAte('apples')
 }
