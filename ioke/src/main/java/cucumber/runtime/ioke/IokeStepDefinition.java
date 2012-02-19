@@ -29,7 +29,8 @@ public class IokeStepDefinition implements StepDefinition {
 
     public String getPattern() {
         try {
-            return (String) backend.invoke(iokeStepDefObject, "regexp_source");
+            IokeObject regexp = (IokeObject) backend.invoke(iokeStepDefObject, "regexp_pattern");
+            return regexp.toString();
         } catch (ControlFlow controlFlow) {
             throw new CucumberException("Couldn't get pattern", controlFlow);
         }

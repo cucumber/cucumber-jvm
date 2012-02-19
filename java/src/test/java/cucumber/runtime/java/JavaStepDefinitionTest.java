@@ -30,14 +30,14 @@ import static org.mockito.Mockito.verify;
 public class JavaStepDefinitionTest {
     private static final List<Comment> NO_COMMENTS = Collections.emptyList();
     private static final List<String> NO_PATHS = Collections.emptyList();
-    private static final Method FOO;
-    private static final Method BAR;
+    private static final Method THREE_DISABLED_MICE;
+    private static final Method THREE_BLIND_ANIMALS;
     private static final I18n ENGLISH = new I18n("en");
 
     static {
         try {
-            FOO = Defs.class.getMethod("foo");
-            BAR = Defs.class.getMethod("bar");
+            THREE_DISABLED_MICE = Defs.class.getMethod("threeDisabledMice", String.class);
+            THREE_BLIND_ANIMALS = Defs.class.getMethod("threeBlindAnimals", String.class);
         } catch (NoSuchMethodException e) {
             throw new InternalError("dang");
         }
@@ -56,14 +56,14 @@ public class JavaStepDefinitionTest {
 
     @Test
     public void throws_ambiguous_when_two_matches_are_found() throws Throwable {
-        backend.addStepDefinition(FOO.getAnnotation(Given.class), Defs.class, FOO);
-        backend.addStepDefinition(BAR.getAnnotation(Given.class), Defs.class, BAR);
+        backend.addStepDefinition(THREE_DISABLED_MICE.getAnnotation(Given.class), Defs.class, THREE_DISABLED_MICE);
+        backend.addStepDefinition(THREE_BLIND_ANIMALS.getAnnotation(Given.class), Defs.class, THREE_BLIND_ANIMALS);
 
         Reporter reporter = mock(Reporter.class);
         runtime.buildBackendWorlds();
         Tag tag = new Tag("@foo", 0);
         runtime.runBeforeHooks(reporter, asSet(tag));
-        runtime.runStep("uri", new Step(NO_COMMENTS, "Given ", "pattern", 1, null, null), reporter, ENGLISH);
+        runtime.runStep("uri", new Step(NO_COMMENTS, "Given ", "three blind mice", 1, null, null), reporter, ENGLISH);
 
         ArgumentCaptor<Result> result = ArgumentCaptor.forClass(Result.class);
         verify(reporter).result(result.capture());
@@ -72,14 +72,14 @@ public class JavaStepDefinitionTest {
 
     @Test
     public void does_not_throw_ambiguous_when_nothing_is_ambiguous() throws Throwable {
-        backend.addStepDefinition(FOO.getAnnotation(Given.class), Defs.class, FOO);
+        backend.addStepDefinition(THREE_DISABLED_MICE.getAnnotation(Given.class), Defs.class, THREE_DISABLED_MICE);
 
         Reporter reporter = mock(Reporter.class);
         runtime.buildBackendWorlds();
         Tag tag = new Tag("@foo", 0);
         Set<Tag> tags = asSet(tag);
         runtime.runBeforeHooks(reporter, tags);
-        Step step = new Step(NO_COMMENTS, "Given ", "pattern", 1, null, null);
+        Step step = new Step(NO_COMMENTS, "Given ", "three blind mice", 1, null, null);
         runtime.runStep("uri", step, reporter, ENGLISH);
         assertTrue(defs.foo);
         assertFalse(defs.bar);
@@ -89,13 +89,13 @@ public class JavaStepDefinitionTest {
         public boolean foo;
         public boolean bar;
 
-        @Given(value = "pattern")
-        public void foo() {
+        @Given(value = "three (.*) mice")
+        public void threeDisabledMice(String disability) {
             foo = true;
         }
 
-        @Given(value = "pattern")
-        public void bar() {
+        @Given(value = "three blind (.*)")
+        public void threeBlindAnimals(String animals) {
             bar = true;
         }
     }

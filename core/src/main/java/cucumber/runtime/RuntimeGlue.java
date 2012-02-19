@@ -16,7 +16,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import static cucumber.runtime.model.CucumberFeature.load;
 import static java.util.Collections.emptyList;
@@ -24,7 +28,7 @@ import static java.util.Collections.emptyList;
 public class RuntimeGlue implements Glue {
     private static final List<Object> NO_FILTERS = emptyList();
 
-    private final List<StepDefinition> stepDefinitions = new ArrayList<StepDefinition>();
+    private final Map<String, StepDefinition> stepDefinitionsByPattern = new TreeMap<String, StepDefinition>();
     private final List<HookDefinition> beforeHooks = new ArrayList<HookDefinition>();
     private final List<HookDefinition> afterHooks = new ArrayList<HookDefinition>();
 
@@ -38,7 +42,11 @@ public class RuntimeGlue implements Glue {
 
     @Override
     public void addStepDefinition(StepDefinition stepDefinition) {
-        stepDefinitions.add(stepDefinition);
+        StepDefinition previous = stepDefinitionsByPattern.get(stepDefinition.getPattern());
+        if (previous != null) {
+            throw new DuplicateStepDefinitionException(previous, stepDefinition);
+        }
+        stepDefinitionsByPattern.put(stepDefinition.getPattern(), stepDefinition);
     }
 
     @Override
@@ -83,7 +91,7 @@ public class RuntimeGlue implements Glue {
 
     private List<StepDefinitionMatch> stepDefinitionMatches(String uri, Step step) {
         List<StepDefinitionMatch> result = new ArrayList<StepDefinitionMatch>();
-        for (StepDefinition stepDefinition : stepDefinitions) {
+        for (StepDefinition stepDefinition : stepDefinitionsByPattern.values()) {
             List<Argument> arguments = stepDefinition.matchedArguments(step);
             if (arguments != null) {
                 result.add(new StepDefinitionMatch(arguments, stepDefinition, uri, step, localizedXStreams));
@@ -95,7 +103,7 @@ public class RuntimeGlue implements Glue {
     @Override
     public void writeStepdefsJson(List<String> featurePaths, File dotCucumber) throws IOException {
         List<CucumberFeature> features = load(new FileResourceLoader(), featurePaths, NO_FILTERS);
-        List<MetaStepdef> metaStepdefs = new StepdefGenerator().generate(stepDefinitions, features);
+        List<MetaStepdef> metaStepdefs = new StepdefGenerator().generate(stepDefinitionsByPattern.values(), features);
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         String json = gson.toJson(metaStepdefs);
 

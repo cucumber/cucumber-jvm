@@ -7,6 +7,7 @@ import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -29,11 +30,13 @@ public class StepdefGenerator {
         }
     };
 
-    public List<MetaStepdef> generate(List<StepDefinition> stepDefinitions, List<CucumberFeature> features) {
+    public List<MetaStepdef> generate(Collection<StepDefinition> stepDefinitions, List<CucumberFeature> features) {
         List<MetaStepdef> result = new ArrayList<MetaStepdef>();
 
-        Collections.sort(stepDefinitions, STEP_DEFINITION_COMPARATOR);
-        for (StepDefinition stepDefinition : stepDefinitions) {
+        List<StepDefinition> sortedStepdefs = new ArrayList<StepDefinition>();
+        sortedStepdefs.addAll(stepDefinitions);
+        Collections.sort(sortedStepdefs, STEP_DEFINITION_COMPARATOR);
+        for (StepDefinition stepDefinition : sortedStepdefs) {
             MetaStepdef metaStepdef = new MetaStepdef();
             metaStepdef.source = stepDefinition.getPattern();
             metaStepdef.flags = ""; // TODO = get the flags too
