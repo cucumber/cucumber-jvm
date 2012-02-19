@@ -26,7 +26,7 @@ public class ClasspathMethodScannerTest {
         Whitebox.setInternalState(backend, "glue", world);
 
         // this delegates to classpathMethodScanner.scan which we test
-        classpathMethodScanner.scan(backend, asList("cucumber/runtime/java/test2"));
+        classpathMethodScanner.scan(backend, asList("cucumber/runtime/java/test2","cucumber.runtime.java.test2"));
 
         verify(factory, times(1)).addClass(Stepdefs2.class);
         verifyNoMoreInteractions(factory);
