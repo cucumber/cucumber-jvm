@@ -27,6 +27,14 @@ public final class SnippetGenerator {
             new ArgumentPattern(Pattern.compile("(\\d+)"), Integer.TYPE)
     };
     private static final Pattern GROUP_PATTERN = Pattern.compile("\\(");
+    private static final Pattern[] ESCAPE_PATTERNS = new Pattern[]{
+            Pattern.compile("\\$"),
+            Pattern.compile("\\("),
+            Pattern.compile("\\)"),
+            Pattern.compile("\\["),
+            Pattern.compile("\\]")
+    };
+
     private static final String HINT = "Express the Regexp above with the code you wish you had";
     private static final Character SUBST = '_';
 
@@ -42,6 +50,11 @@ public final class SnippetGenerator {
 
     protected String patternFor(String stepName) {
         String pattern = stepName;
+        for (Pattern escapePattern : ESCAPE_PATTERNS) {
+            Matcher m = escapePattern.matcher(pattern);
+            String replacement = Matcher.quoteReplacement(escapePattern.toString());
+            pattern = m.replaceAll(replacement);
+        }
         for (ArgumentPattern argumentPattern : argumentPatterns()) {
             pattern = argumentPattern.replaceMatchesWithGroups(pattern);
         }
