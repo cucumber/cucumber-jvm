@@ -49,6 +49,7 @@ public class UsageFormatterTest
 
         Step step = mock(Step.class);
         when(step.getName()).thenReturn("step");
+        when(step.getKeyword()).thenReturn("when");
         usageFormatter.step(step);
 
         Match match = mock(Match.class);
@@ -56,11 +57,12 @@ public class UsageFormatterTest
         
         Result result = mock(Result.class);
         when(result.getDuration()).thenReturn(12345L);
+
         usageFormatter.result(result);
 
         Map<String,List<Long>> usageMap = usageFormatter.usageMap;
         assertEquals(usageMap.size(), 1);
-        List<Long> durationEntries = usageMap.get("step");
+        List<Long> durationEntries = usageMap.get("when step");
         assertEquals(durationEntries.size(), 1);
         assertEquals(durationEntries.get(0), Long.valueOf(12));
     }
@@ -73,6 +75,7 @@ public class UsageFormatterTest
 
         Step step = mock(Step.class);
         when(step.getName()).thenReturn("step");
+        when(step.getKeyword()).thenReturn("when");
         usageFormatter.step(step);
 
         Match match = mock(Match.class);
@@ -80,11 +83,12 @@ public class UsageFormatterTest
 
         Result result = mock(Result.class);
         when(result.getDuration()).thenReturn(0L);
+
         usageFormatter.result(result);
 
         Map<String,List<Long>> usageMap = usageFormatter.usageMap;
         assertEquals(usageMap.size(), 1);
-        List<Long> durationEntries = usageMap.get("step");
+        List<Long> durationEntries = usageMap.get("when step");
         assertEquals(durationEntries.size(), 1);
         assertEquals(durationEntries.get(0), Long.valueOf(0));
     }
@@ -97,6 +101,7 @@ public class UsageFormatterTest
 
         Step step = mock(Step.class);
         when(step.getName()).thenReturn("step");
+        when(step.getKeyword()).thenReturn("then");
         usageFormatter.step(step);
 
         Match match = mock(Match.class);
@@ -108,7 +113,7 @@ public class UsageFormatterTest
 
         Map<String,List<Long>> usageMap = usageFormatter.usageMap;
         assertEquals(usageMap.size(), 1);
-        List<Long> durationEntries = usageMap.get("step");
+        List<Long> durationEntries = usageMap.get("then step");
         assertEquals(durationEntries.size(), 1);
         assertEquals(durationEntries.get(0), Long.valueOf(0));
     }

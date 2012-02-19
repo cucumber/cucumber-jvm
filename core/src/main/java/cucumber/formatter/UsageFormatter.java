@@ -155,6 +155,7 @@ public class UsageFormatter implements Formatter, Reporter
     private String formatStepNameWithArgs(Result result, Step step)
     {
         StringBuffer buffer = new StringBuffer();
+        buffer.append(step.getKeyword()).append(" ");
         Format format = getFormat(result.getStatus());
         Format argFormat = getArgFormat(result.getStatus());
         stepPrinter.writeStep(new NiceAppendable(buffer), format, argFormat, step.getName(), match.getArguments());
