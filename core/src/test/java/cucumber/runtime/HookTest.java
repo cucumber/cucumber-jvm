@@ -35,7 +35,7 @@ public class HookTest {
     public void after_hooks_execute_before_objects_are_disposed() throws Throwable {
         Backend backend = mock(Backend.class);
         HookDefinition hook = mock(HookDefinition.class);
-        when(hook.matches(anyListOf(String.class))).thenReturn(true);
+        when(hook.matches(anyListOf(Tag.class))).thenReturn(true);
         Scenario gherkinScenario = mock(Scenario.class);
 
         CucumberFeature feature = mock(CucumberFeature.class);

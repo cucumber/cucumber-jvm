@@ -14,6 +14,7 @@ import gherkin.formatter.model.DocString;
 import gherkin.formatter.model.Match;
 import gherkin.formatter.model.Result;
 import gherkin.formatter.model.Step;
+import gherkin.formatter.model.Tag;
 
 import java.io.File;
 import java.io.IOException;
@@ -148,21 +149,21 @@ public class Runtime implements UnreportedStepExecutor {
         return glue;
     }
 
-    public void runBeforeHooks(Reporter reporter, Set<String> tags) {
+    public void runBeforeHooks(Reporter reporter, Set<Tag> tags) {
         runHooks(glue.getBeforeHooks(), reporter, tags);
     }
 
-    public void runAfterHooks(Reporter reporter, Set<String> tags) {
+    public void runAfterHooks(Reporter reporter, Set<Tag> tags) {
         runHooks(glue.getAfterHooks(), reporter, tags);
     }
 
-    private void runHooks(List<HookDefinition> hooks, Reporter reporter, Set<String> tags) {
+    private void runHooks(List<HookDefinition> hooks, Reporter reporter, Set<Tag> tags) {
         for (HookDefinition hook : hooks) {
             runHookIfTagsMatch(hook, reporter, tags);
         }
     }
 
-    private void runHookIfTagsMatch(HookDefinition hook, Reporter reporter, Set<String> tags) {
+    private void runHookIfTagsMatch(HookDefinition hook, Reporter reporter, Set<Tag> tags) {
         if (hook.matches(tags)) {
             long start = System.nanoTime();
             try {
@@ -200,7 +201,7 @@ public class Runtime implements UnreportedStepExecutor {
     }
 
     public void runStep(String uri, Step step, Reporter reporter, I18n i18n) {
-        StepDefinitionMatch match = null;
+        StepDefinitionMatch match;
 
         try {
             match = glue.stepDefinitionMatch(uri, step, i18n);

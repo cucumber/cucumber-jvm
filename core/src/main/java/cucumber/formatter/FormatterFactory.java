@@ -14,7 +14,7 @@ import java.util.Map;
 public class FormatterFactory {
 
     private final ClassLoader classLoader;
-    
+
     private static final Map<String, String> BUILTIN_FORMATTERS = new HashMap<String, String>() {{
         put("progress", ProgressFormatter.class.getName());
         put("html", HTMLFormatter.class.getName());

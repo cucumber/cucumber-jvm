@@ -103,7 +103,7 @@ public class FeatureBuilder implements Formatter {
 
         String checksum = checksum(gherkin);
         String path = pathsByChecksum.get(checksum);
-        if(path != null) {
+        if (path != null) {
             throw new CucumberException(String.format("Found the same source in %s and %s", path, resource.getPath()));
         }
         pathsByChecksum.put(checksum, resource.getPath());

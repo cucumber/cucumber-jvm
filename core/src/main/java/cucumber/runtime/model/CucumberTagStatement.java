@@ -28,14 +28,10 @@ public abstract class CucumberTagStatement extends StepContainer {
         this.visualName = "| " + join(example.getCells(), " | ") + " |";
     }
 
-    protected Set<String> tags() {
-        Set<String> tags = new HashSet<String>();
-        for (Tag tag : cucumberFeature.getFeature().getTags()) {
-            tags.add(tag.getName());
-        }
-        for (Tag tag : tagStatement.getTags()) {
-            tags.add(tag.getName());
-        }
+    protected Set<Tag> tagsAndInheritedTags() {
+        Set<Tag> tags = new HashSet<Tag>();
+        tags.addAll(cucumberFeature.getFeature().getTags());
+        tags.addAll(tagStatement.getTags());
         return tags;
     }
 

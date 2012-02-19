@@ -47,8 +47,8 @@ public class CucumberScenarioOutline extends CucumberTagStatement {
         }
     }
 
-    CucumberScenario createExampleScenario(ExamplesTableRow header, ExamplesTableRow example, List<Tag> tags) {
-        Scenario exampleScenario = new Scenario(example.getComments(), tags, tagStatement.getKeyword(), tagStatement.getName(), "", example.getLine(), example.getId());
+    CucumberScenario createExampleScenario(ExamplesTableRow header, ExamplesTableRow example, List<Tag> examplesTags) {
+        Scenario exampleScenario = new Scenario(example.getComments(), examplesTags, tagStatement.getKeyword(), tagStatement.getName(), "", example.getLine(), example.getId());
         CucumberScenario cucumberScenario = new CucumberScenario(cucumberFeature, cucumberBackground, exampleScenario, example);
         for (Step step : getSteps()) {
             cucumberScenario.step(createExampleStep(step, header, example));

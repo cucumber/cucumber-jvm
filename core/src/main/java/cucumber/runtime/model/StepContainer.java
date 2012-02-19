@@ -11,12 +11,12 @@ import java.util.List;
 
 public class StepContainer {
     private final List<Step> steps = new ArrayList<Step>();
-    private final BasicStatement statement;
     protected final CucumberFeature cucumberFeature;
+    private final BasicStatement statement;
 
     public StepContainer(CucumberFeature cucumberFeature, BasicStatement statement) {
-        this.statement = statement;
         this.cucumberFeature = cucumberFeature;
+        this.statement = statement;
     }
 
     public List<Step> getSteps() {

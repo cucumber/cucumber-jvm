@@ -3,8 +3,8 @@ package cucumber.runtime.jruby;
 import cucumber.runtime.HookDefinition;
 import cucumber.runtime.ScenarioResult;
 import gherkin.TagExpression;
+import gherkin.formatter.model.Tag;
 import org.jruby.RubyObject;
-import org.jruby.ext.jruby.JRubyUtilLibrary;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
 
@@ -30,7 +30,7 @@ public class JRubyHookDefinition implements HookDefinition {
     }
 
     @Override
-    public boolean matches(Collection<String> tags) {
+    public boolean matches(Collection<Tag> tags) {
         return tagExpression.eval(tags);
     }
 

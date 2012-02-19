@@ -33,7 +33,7 @@ public class CucumberFeature {
                 builder.parse(resource, filters);
             }
         }
-        if(cucumberFeatures.isEmpty()) {
+        if (cucumberFeatures.isEmpty()) {
             throw new CucumberException(String.format("No features found at %s", featurePaths));
         }
         return cucumberFeatures;

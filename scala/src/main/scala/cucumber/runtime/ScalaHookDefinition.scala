@@ -2,6 +2,7 @@ package cucumber
 package runtime
 
 import gherkin.TagExpression
+import gherkin.formatter.model.Tag
 import collection.JavaConverters._
 import _root_.java.util.Collection
 
@@ -10,7 +11,7 @@ class ScalaHookDefinition(f:() => Unit, order:Int, tags:Seq[String]) extends Hoo
 
   def execute(scenarioResult: ScenarioResult) { f() }
 
-  def matches(tags: Collection[String]) = tagExpression.eval(tags)
+  def matches(tags: Collection[Tag]) = tagExpression.eval(tags)
 
   def getOrder = order
 }

@@ -7,7 +7,8 @@ Feature: Cukes
   Scenario: Few cukes
     Given I have 3 cukes in my belly
     Then there are 3 cukes in my belly
-    
+  
+  @gh210
   Scenario Outline: Various things
     Given I have <n> <what> in my belly
     Then I should be <mood>

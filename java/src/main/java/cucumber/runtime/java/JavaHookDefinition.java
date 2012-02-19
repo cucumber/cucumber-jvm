@@ -4,6 +4,7 @@ import cucumber.runtime.CucumberException;
 import cucumber.runtime.HookDefinition;
 import cucumber.runtime.ScenarioResult;
 import gherkin.TagExpression;
+import gherkin.formatter.model.Tag;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -53,7 +54,7 @@ public class JavaHookDefinition implements HookDefinition {
     }
 
     @Override
-    public boolean matches(Collection<String> tags) {
+    public boolean matches(Collection<Tag> tags) {
         return tagExpression.eval(tags);
     }
 

@@ -8,6 +8,7 @@ import cucumber.runtime.HookDefinition;
 import cucumber.runtime.RuntimeGlue;
 import cucumber.runtime.UndefinedStepsTracker;
 import cucumber.runtime.converters.LocalizedXStreams;
+import gherkin.formatter.model.Tag;
 import org.junit.Test;
 
 import java.lang.reflect.Method;
@@ -80,7 +81,7 @@ public class JavaHookTest {
         backend.buildWorld();
         backend.addHook(BEFORE.getAnnotation(Before.class), HasHooks.class, BEFORE);
         HookDefinition before = glue.getBeforeHooks().get(0);
-        assertTrue(before.matches(asList("@bar", "@zap")));
+        assertTrue(before.matches(asList(new Tag("@bar", 0), new Tag("@zap", 0))));
     }
 
     @Test
@@ -88,7 +89,7 @@ public class JavaHookTest {
         backend.buildWorld();
         backend.addHook(BEFORE.getAnnotation(Before.class), HasHooks.class, BEFORE);
         HookDefinition before = glue.getBeforeHooks().get(0);
-        assertFalse(before.matches(asList("@bar")));
+        assertFalse(before.matches(asList(new Tag("@bar", 0))));
     }
 
     public static class HasHooks {

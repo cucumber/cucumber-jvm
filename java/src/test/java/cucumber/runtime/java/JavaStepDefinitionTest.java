@@ -10,6 +10,7 @@ import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Comment;
 import gherkin.formatter.model.Result;
 import gherkin.formatter.model.Step;
+import gherkin.formatter.model.Tag;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
@@ -60,7 +61,8 @@ public class JavaStepDefinitionTest {
 
         Reporter reporter = mock(Reporter.class);
         runtime.buildBackendWorlds();
-        runtime.runBeforeHooks(reporter, asSet("@foo"));
+        Tag tag = new Tag("@foo", 0);
+        runtime.runBeforeHooks(reporter, asSet(tag));
         runtime.runStep("uri", new Step(NO_COMMENTS, "Given ", "pattern", 1, null, null), reporter, ENGLISH);
 
         ArgumentCaptor<Result> result = ArgumentCaptor.forClass(Result.class);
@@ -74,7 +76,9 @@ public class JavaStepDefinitionTest {
 
         Reporter reporter = mock(Reporter.class);
         runtime.buildBackendWorlds();
-        runtime.runBeforeHooks(reporter, asSet("@foo"));
+        Tag tag = new Tag("@foo", 0);
+        Set<Tag> tags = asSet(tag);
+        runtime.runBeforeHooks(reporter, tags);
         Step step = new Step(NO_COMMENTS, "Given ", "pattern", 1, null, null);
         runtime.runStep("uri", step, reporter, ENGLISH);
         assertTrue(defs.foo);
@@ -96,8 +100,8 @@ public class JavaStepDefinitionTest {
         }
     }
 
-    private Set<String> asSet(String... items) {
-        Set<String> set = new HashSet<String>();
+    private <T> Set<T> asSet(T... items) {
+        Set<T> set = new HashSet<T>();
         set.addAll(asList(items));
         return set;
     }

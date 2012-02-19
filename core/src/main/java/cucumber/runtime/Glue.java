@@ -6,7 +6,6 @@ import gherkin.formatter.model.Step;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.Locale;
 
 
 //TODO: now that this is just basically a java bean storing values

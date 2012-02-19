@@ -25,13 +25,13 @@ public class CucumberScenario extends CucumberTagStatement {
     @Override
     public void run(Formatter formatter, Reporter reporter, Runtime runtime) {
         runtime.buildBackendWorlds();
-        runtime.runBeforeHooks(reporter, tags());
+        runtime.runBeforeHooks(reporter, tagsAndInheritedTags());
 
         runBackground(formatter, reporter, runtime);
         format(formatter);
         runSteps(reporter, runtime);
 
-        runtime.runAfterHooks(reporter, tags());
+        runtime.runAfterHooks(reporter, tagsAndInheritedTags());
         runtime.disposeBackendWorlds();
     }
 

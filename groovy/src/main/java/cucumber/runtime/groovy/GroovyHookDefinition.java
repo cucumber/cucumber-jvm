@@ -3,6 +3,7 @@ package cucumber.runtime.groovy;
 import cucumber.runtime.HookDefinition;
 import cucumber.runtime.ScenarioResult;
 import gherkin.TagExpression;
+import gherkin.formatter.model.Tag;
 import groovy.lang.Closure;
 
 import java.util.Collection;
@@ -24,7 +25,7 @@ public class GroovyHookDefinition implements HookDefinition {
     }
 
     @Override
-    public boolean matches(Collection<String> tags) {
+    public boolean matches(Collection<Tag> tags) {
         return tagExpression.eval(tags);
     }
 
