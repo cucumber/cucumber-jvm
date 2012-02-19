@@ -1,5 +1,7 @@
 package cucumber.formatter;
 
+import cucumber.formatter.usage.AverageUsageStatisticStrategy;
+import cucumber.formatter.usage.MedianUsageStatisticStrategy;
 import cucumber.runtime.CucumberException;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.JSONFormatter;
@@ -8,6 +10,7 @@ import gherkin.formatter.PrettyFormatter;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,6 +24,7 @@ public class FormatterFactory {
         put("json", JSONFormatter.class.getName());
         put("json-pretty", JSONPrettyFormatter.class.getName());
         put("pretty", PrettyFormatter.class.getName());
+        put("usage", UsageFormatter.class.getName());
     }};
 
     public FormatterFactory(ClassLoader classLoader) {
@@ -51,6 +55,8 @@ public class FormatterFactory {
                 return formatterClass.getConstructor(ctorArgClass, Boolean.TYPE, Boolean.TYPE).newInstance(out, false, true);
             } else if (ProgressFormatter.class.isAssignableFrom(formatterClass)) {
                 return formatterClass.getConstructor(ctorArgClass, Boolean.TYPE).newInstance(out, false);
+            } else if (UsageFormatter.class.isAssignableFrom(formatterClass)) {
+                return createUsageFormatter(out, ctorArgClass, formatterClass);
             } else {
                 return formatterClass.getConstructor(ctorArgClass).newInstance(out);
             }
@@ -65,5 +71,13 @@ public class FormatterFactory {
         } catch (ClassNotFoundException e) {
             throw new CucumberException("Formatter class not found: " + className, e);
         }
+    }
+
+    private UsageFormatter createUsageFormatter(Object out, Class ctorArgClass, Class<Formatter> formatterClass) throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException
+    {
+        UsageFormatter formatter = (UsageFormatter)formatterClass.getConstructor(ctorArgClass).newInstance(out);
+        formatter.addUsageStatisticStrategy("average", new AverageUsageStatisticStrategy());
+        formatter.addUsageStatisticStrategy("median", new MedianUsageStatisticStrategy());
+        return formatter;
     }
 }
