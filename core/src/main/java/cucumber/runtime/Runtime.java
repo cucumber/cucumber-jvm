@@ -109,14 +109,14 @@ public class Runtime implements UnreportedStepExecutor {
         formatter.eof();
     }
 
-    public void buildBackendWorlds() {
+    public void buildBackendWorlds(Reporter reporter) {
         for (Backend backend : backends) {
             backend.buildWorld();
         }
         undefinedStepsTracker.reset();
         //TODO: this is the initial state of the state machine, it should not go here, but into something else
         skipNextStep = false;
-        scenarioResult = new ScenarioResultImpl();
+        scenarioResult = new ScenarioResultImpl(reporter);
     }
 
     public void disposeBackendWorlds() {

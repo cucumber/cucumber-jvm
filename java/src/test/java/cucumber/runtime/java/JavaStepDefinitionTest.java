@@ -60,7 +60,7 @@ public class JavaStepDefinitionTest {
         backend.addStepDefinition(THREE_BLIND_ANIMALS.getAnnotation(Given.class), Defs.class, THREE_BLIND_ANIMALS);
 
         Reporter reporter = mock(Reporter.class);
-        runtime.buildBackendWorlds();
+        runtime.buildBackendWorlds(reporter);
         Tag tag = new Tag("@foo", 0);
         runtime.runBeforeHooks(reporter, asSet(tag));
         runtime.runStep("uri", new Step(NO_COMMENTS, "Given ", "three blind mice", 1, null, null), reporter, ENGLISH);
@@ -75,7 +75,7 @@ public class JavaStepDefinitionTest {
         backend.addStepDefinition(THREE_DISABLED_MICE.getAnnotation(Given.class), Defs.class, THREE_DISABLED_MICE);
 
         Reporter reporter = mock(Reporter.class);
-        runtime.buildBackendWorlds();
+        runtime.buildBackendWorlds(reporter);
         Tag tag = new Tag("@foo", 0);
         Set<Tag> tags = asSet(tag);
         runtime.runBeforeHooks(reporter, tags);

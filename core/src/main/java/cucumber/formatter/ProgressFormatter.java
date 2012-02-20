@@ -13,6 +13,7 @@ import gherkin.formatter.model.Scenario;
 import gherkin.formatter.model.ScenarioOutline;
 import gherkin.formatter.model.Step;
 
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -103,6 +104,11 @@ public class ProgressFormatter implements Formatter, Reporter {
     }
 
     @Override
-    public void embedding(String mimeType, byte[] data) {
+    public void embedding(String mimeType, InputStream data) {
+
+    }
+
+    @Override
+    public void write(String text) {
     }
 }

@@ -14,6 +14,7 @@ import org.junit.internal.runners.model.EachTestNotifier;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,8 +55,14 @@ class JUnitReporter implements Reporter, Formatter {
         reporter.match(match);
     }
 
-    public void embedding(String mimeType, byte[] data) {
+    @Override
+    public void embedding(String mimeType, InputStream data) {
         reporter.embedding(mimeType, data);
+    }
+
+    @Override
+    public void write(String text) {
+        reporter.write(text);
     }
 
     public void result(Result result) {

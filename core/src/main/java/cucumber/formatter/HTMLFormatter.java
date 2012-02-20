@@ -16,7 +16,6 @@ import gherkin.formatter.model.Scenario;
 import gherkin.formatter.model.ScenarioOutline;
 import gherkin.formatter.model.Step;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -134,14 +133,19 @@ public class HTMLFormatter implements Formatter, Reporter {
     }
 
     @Override
-    public void embedding(String mimeType, byte[] data) {
+    public void embedding(String mimeType, InputStream data) {
         // Creating a file instead of using data urls to not clutter the js file
         String extension = MIME_TYPES_EXTENSIONS.get(mimeType);
         if (extension != null) {
             StringBuilder fileName = new StringBuilder("embedded").append(embeddedIndex++).append(".").append(extension);
-            writeBytes(new ByteArrayInputStream(data), reportFileOutputStream(fileName.toString()));
+            writeBytes(data, reportFileOutputStream(fileName.toString()));
             writeToJsReport("embedding", new StringBuilder("'").append(mimeType).append("','").append(fileName).append("'").toString());
         }
+    }
+
+    @Override
+    public void write(String text) {
+        writeToJsReport("write", text);
     }
 
     private void copyReportFiles() {
