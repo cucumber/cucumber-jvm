@@ -1,8 +1,12 @@
 package cucumber.examples.java.websockets;
 
 import cucumber.annotation.After;
+import cucumber.runtime.ScenarioResult;
+import org.openqa.selenium.OutputType;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
+
+import java.io.ByteArrayInputStream;
 
 /**
  * Example of a WebDriver implementation that automatically closes at the
@@ -14,7 +18,9 @@ public class SharedDriver extends EventFiringWebDriver {
     }
 
     @After
-    public void close() {
+    public void close(ScenarioResult result) {
+        byte[] screenshot = this.getScreenshotAs(OutputType.BYTES);
+        result.embed(new ByteArrayInputStream(screenshot), "image/png");
         super.close();
     }
 }
