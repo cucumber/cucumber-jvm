@@ -266,6 +266,12 @@
 
         <profile>
             <id>release-sign-artifacts</id>
+            <modules>
+                <module>examples/java-calculator</module>
+                <module>examples/groovy-calculator</module>
+                <module>examples/scala-calculator</module>
+                <module>examples/java-webbit-websockets-selenium</module>
+            </modules>
             <activation>
                 <property>
                     <name>performRelease</name>
