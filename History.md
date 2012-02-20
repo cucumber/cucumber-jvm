@@ -1,4 +1,4 @@
-## In Git
+## [1.0.0.RC16](https://github.com/cucumber/cucumber-jvm/compare/v1.0.0.RC15...v1.0.0.RC16)
 
 * [Core] Embed text and images in reports. ([#205](https://github.com/cucumber/cucumber-jvm/issues/205) Aslak Hellesøy)
 * [Core] Detect duplicate step definitions. (Aslak Hellesøy)
