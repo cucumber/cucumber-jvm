@@ -85,6 +85,9 @@ Cucumber-JVM is built with [Maven](http://maven.apache.org/).
 
     mvn clean install
 
+This will generate some code (i18n step definition code for various backends), and you have to build from the command
+line once before you'll be able to compile it in an IDE.
+
 ## IDE Setup
 
 ### IntelliJ IDEA
