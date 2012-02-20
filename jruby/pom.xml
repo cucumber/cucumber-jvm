@@ -5,7 +5,7 @@
         <groupId>info.cukes</groupId>
         <artifactId>cucumber-jvm</artifactId>
         <relativePath>../pom.xml</relativePath>
-        <version>1.0.0.RC16</version>
+        <version>1.0.0.RC17-SNAPSHOT</version>
     </parent>
 
     <artifactId>cucumber-jruby</artifactId>
