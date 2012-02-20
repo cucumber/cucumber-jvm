@@ -50,7 +50,7 @@ public class UsageFormatterTest
 
         Step step = mock(Step.class);
         when(step.getName()).thenReturn("step");
-        when(step.getKeyword()).thenReturn("when");
+        when(step.getKeyword()).thenReturn("when ");
         usageFormatter.step(step);
 
         Match match = mock(Match.class);
@@ -76,7 +76,7 @@ public class UsageFormatterTest
 
         Step step = mock(Step.class);
         when(step.getName()).thenReturn("step");
-        when(step.getKeyword()).thenReturn("when");
+        when(step.getKeyword()).thenReturn("when ");
         usageFormatter.step(step);
 
         Match match = mock(Match.class);
@@ -102,7 +102,7 @@ public class UsageFormatterTest
 
         Step step = mock(Step.class);
         when(step.getName()).thenReturn("step");
-        when(step.getKeyword()).thenReturn("then");
+        when(step.getKeyword()).thenReturn("then ");
         usageFormatter.step(step);
 
         Match match = mock(Match.class);
