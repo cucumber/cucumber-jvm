@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import cucumber.formatter.usage.UsageStatisticStrategy;
+import gherkin.deps.com.google.gson.Gson;
+import gherkin.deps.com.google.gson.GsonBuilder;
 import gherkin.formatter.Format;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.MonochromeFormats;
@@ -97,35 +99,47 @@ public class UsageFormatter implements Formatter, Reporter
     @Override
     public void done()
     {
+        List<StepContainer> stepContainers = new ArrayList<StepContainer>();
+
         for (Map.Entry<String, List<Long>> usageEntry : usageMap.entrySet())
         {
-            printAggregatedResult(usageEntry);
+            StepContainer stepContainer = new StepContainer();
+            stepContainers.add(stepContainer);
             
-            String key = usageEntry.getKey();
-            for (Long duration : usageEntry.getValue())
-            {
-                printSingleDurationEntry(key, duration);
-            }
+            stepContainer.stepName = usageEntry.getKey();
+            stepContainer.durations = formatDurationEntries(usageEntry.getValue());
+
+            stepContainer.aggregatedResults = createAggregatedResults(usageEntry);
         }
+
+        out.append(gson().toJson(stepContainers));
     }
 
-    private void printAggregatedResult(Map.Entry<String, List<Long>> usageEntry)
+    private List<String> formatDurationEntries(List<Long> durationEntries)
     {
-        String stepName = usageEntry.getKey();
+        ArrayList<String> formattedDuration = new ArrayList<String>();
+        for(Long duration : durationEntries)
+        {
+            formattedDuration.add(formatDuration(duration));
+        }
+        return formattedDuration;
+    }
+
+    private List<AggregatedResult> createAggregatedResults(Map.Entry<String, List<Long>> usageEntry)
+    {
+        ArrayList<AggregatedResult> aggregatedResults = new ArrayList<AggregatedResult>();
         for (Map.Entry<String, UsageStatisticStrategy> calculatorEntry : statisticStrategies.entrySet())
         {
-            String calculatorName = calculatorEntry.getKey();
+            AggregatedResult aggregatedResult = new AggregatedResult();
+            aggregatedResults.add(aggregatedResult);
+            
             UsageStatisticStrategy statisticStrategy = calculatorEntry.getValue();
-
             Long calculationResult = statisticStrategy.calculate(usageEntry.getValue());
-            out.println(String.format("%s (%s) : %s", formatDuration(calculationResult), calculatorName, stepName));
-        }
-    }
 
-    private void printSingleDurationEntry(String key, Long duration)
-    {
-        String formattedDuration = formatDuration(duration);
-        out.println("\t" + formattedDuration + " : " + key);
+            aggregatedResult.strategy = calculatorEntry.getKey();
+            aggregatedResult.value = formatDuration(calculationResult);
+        }
+        return aggregatedResults;
     }
 
     private String formatDuration(Long duration)
@@ -133,6 +147,10 @@ public class UsageFormatter implements Formatter, Reporter
         long seconds = TimeUnit.MICROSECONDS.toSeconds(duration);
         long microSeconds = duration - TimeUnit.SECONDS.toMicros(seconds);
         return String.format("%d.%06d", seconds, microSeconds);
+    }
+
+    private Gson gson() {
+        return new GsonBuilder().setPrettyPrinting().create();
     }
 
     @Override
@@ -144,7 +162,7 @@ public class UsageFormatter implements Formatter, Reporter
     @Override
     public void result(Result result)
     {
-        if (steps.size() > 0)
+        if (!steps.isEmpty())
         {
             Step step = steps.remove(0);
             String stepNameWithArgs = formatStepNameWithArgs(result, step);
@@ -215,4 +233,23 @@ public class UsageFormatter implements Formatter, Reporter
     {
         statisticStrategies.put(key, strategy);
     }
+
+    /**
+     * Contains for usage-entries of steps
+     */
+    private static class StepContainer {
+        public String stepName;
+        public List<AggregatedResult> aggregatedResults = new ArrayList<AggregatedResult>();
+        public List<String> durations = new ArrayList<String>();
+    }
+
+    /**
+     * Container for aggregated results, computed by a specific strategy (e.g. average, median, ..)
+     */
+    private static class AggregatedResult {
+        public String strategy;
+        public String value;
+    }
+
+
 }

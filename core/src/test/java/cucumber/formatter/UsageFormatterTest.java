@@ -1,6 +1,7 @@
 package cucumber.formatter;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -121,30 +122,30 @@ public class UsageFormatterTest
     @Test
     public void doneWithoutUsageStatisticStrategies() throws IOException
     {
-        Appendable out = mock(Appendable.class);
+        StringBuffer out = new StringBuffer();
         UsageFormatter usageFormatter = new UsageFormatter(out);
         usageFormatter.usageMap.put("aStep", Arrays.asList(12345678L));
 
         usageFormatter.done();
-        
-        verify(out).append("\t12.345678 : aStep");
+
+        assertTrue(out.toString().contains("12.345678"));
     }
 
     @Test
     public void doneWithUsageStatisticStrategies() throws IOException
     {
-        Appendable out = mock(Appendable.class);
+        StringBuffer out = new StringBuffer();
         UsageFormatter usageFormatter = new UsageFormatter(out);
 
         UsageStatisticStrategy usageStatisticStrategy = mock(UsageStatisticStrategy.class);
         when(usageStatisticStrategy.calculate(Arrays.asList(12345678L))).thenReturn(23456L);
         usageFormatter.addUsageStatisticStrategy("average", usageStatisticStrategy);
-        
+
         usageFormatter.usageMap.put("aStep", Arrays.asList(12345678L));
 
         usageFormatter.done();
-
-        verify(out).append("0.023456 (average) : aStep");
-        verify(out).append("\t12.345678 : aStep");
+        
+        assertTrue(out.toString().contains("0.023456"));
+        assertTrue(out.toString().contains("12.345678"));
     }
 }
