@@ -41,7 +41,7 @@ Add a dependency in your [POM](http://maven.apache.org/pom.html):
 <dependency>
     <groupId>info.cukes</groupId>
     <artifactId>cucumber-core</artifactId>
-    <version>1.0.0.RC11</version>
+    <version>1.0.0.RC16</version>
 </dependency>
 ```
 
@@ -52,7 +52,7 @@ There are more jars available - add the ones you need. (TODO: A guide on how to 
 Add a [dependency](http://ant.apache.org/ivy/history/latest-milestone/ivyfile/dependency.html) in your [ivy.xml](http://ant.apache.org/ivy/history/latest-milestone/ivyfile.html):
 
 ```xml
-    <dependency org="info.cukes" name="cucumber-core" rev="1.0.0.RC6"/>
+    <dependency org="info.cukes" name="cucumber-core" rev="1.0.0.RC16"/>
 ```
 
 Since the artifacts are released to Maven Central, the default Ivy configuration should pull them down automatically.
@@ -75,11 +75,13 @@ If you are adventurous, check out the examples, read the code and ask specific q
 
 TODO: Fix this. The Ivy build doesn't upload them yet.
 
-* http://cukes.info/cucumber/jvm/api/1.0.0-RC3/apidocs/ (URL subject to change)
+* http://cukes.info/cucumber/jvm/api/1.0.0.RC16
 
 ## Examples
 
-You will find an example in Git under examples/java-calculator. You should be able to run `basic_arithmetic.feature` by running the `cucumber.examples.java.calculator.RunCukesTest` JUnit test from your IDE. -Or simply by running it with Maven: `mvn clean install -P examples` once to build it all. Then `cd examples/java-calculator` followed by `mvn test` each time you make a change. Try to make the feature fail!
+You will find an example in Git under `examples`. Before you can run any of them you need to build cucumber-jvm itself (see below).
+
+You should now be able to run any of the examples simply by `cd`ing into a directory and running `mvn clean integration-test`.
 
 ## Building Cucumber-JVM
 
