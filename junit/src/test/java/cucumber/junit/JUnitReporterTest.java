@@ -1,10 +1,8 @@
 package cucumber.junit;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
+import gherkin.formatter.Formatter;
+import gherkin.formatter.Reporter;
+import gherkin.formatter.model.Result;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.Description;
@@ -12,21 +10,20 @@ import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 import org.mockito.ArgumentCaptor;
 
-import gherkin.formatter.Formatter;
-import gherkin.formatter.Reporter;
-import gherkin.formatter.model.Result;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-public class JUnitReporterTest
-{
+public class JUnitReporterTest {
 
     private JUnitReporter jUnitReporter;
 
     @Before
-    public void setUp()
-    {
+    public void setUp() {
         Formatter formatter = mock(Formatter.class);
         Reporter reporter = mock(Reporter.class);
-        
+
         jUnitReporter = new JUnitReporter(reporter, formatter);
     }
 
