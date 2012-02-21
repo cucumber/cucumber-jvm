@@ -1,3 +1,5 @@
+[![Build Status](https://secure.travis-ci.org/cucumber/cucumber-jvm.png)](http://travis-ci.org/cucumber/cucumber-jvm)
+
 Cucumber-JVM is a pure Java implementation of Cucumber that supports the following programming languages:
 
 * Clojure
@@ -123,7 +125,8 @@ If we get a pull request where an entire file is changed because of insignifican
 
 ### Continuous Integration
 
-http://jenkins-01.public.cifoundry.net/job/Cucumber%20JVM/
+* http://travis-ci.org/#!/cucumber/cucumber-jvm
+* http://jenkins-01.public.cifoundry.net/job/Cucumber%20JVM/
 
 ### Running cross-platform Cucumber features
 
