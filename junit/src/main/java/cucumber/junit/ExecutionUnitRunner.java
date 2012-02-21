@@ -37,7 +37,8 @@ class ExecutionUnitRunner extends ParentRunner<Step> {
 
     @Override
     protected Description describeChild(Step step) {
-        return Description.createSuiteDescription(step.getKeyword() + step.getName() + "(" + getName() + ")");
+        int stepNumber = cucumberScenario.getSteps().indexOf(step);
+        return Description.createSuiteDescription(step.getKeyword() + step.getName() + "(" + getName() + ", Step: " + stepNumber + ")");
     }
 
     @Override
