@@ -13,6 +13,10 @@ import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
 
 import java.io.IOException;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,9 +31,9 @@ import static java.util.Arrays.asList;
  * Cucumber will look for a {@code .feature} file on the classpath, using the same resource
  * path as the annotated class ({@code .class} substituted by {@code .feature}).
  * <p/>
- * Additional hints can be given to Cucumber by annotating the class with {@link cucumber.junit.Feature}.
+ * Additional hints can be given to Cucumber by annotating the class with {@link Options}.
  *
- * @see cucumber.junit.Feature
+ * @see Options
  */
 public class Cucumber extends ParentRunner<FeatureRunner> {
     private final ResourceLoader resourceLoader;
@@ -101,10 +105,10 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
      * @return either a path to a single feature, or to a directory or classpath entry containing them
      */
     private List<String> featurePaths(Class clazz) {
-        cucumber.junit.Feature featureAnnotation = getFeatureAnnotation(clazz);
+        Options cucumberOptions = getFeatureAnnotation(clazz);
         String featurePath;
-        if (featureAnnotation != null) {
-            featurePath = featureAnnotation.value();
+        if (cucumberOptions != null) {
+            featurePath = cucumberOptions.value();
         } else {
             featurePath = packagePath(clazz);
         }
@@ -117,9 +121,9 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         gluePaths.add(packagePath(clazz));
 
         // Add additional ones
-        cucumber.junit.Feature featureAnnotation = getFeatureAnnotation(clazz);
-        if (featureAnnotation != null) {
-            for (String packageName : featureAnnotation.packages()) {
+        Options cucumberOptions = getFeatureAnnotation(clazz);
+        if (cucumberOptions != null) {
+            for (String packageName : cucumberOptions.packages()) {
                 gluePaths.add(packagePath(packageName));
             }
         }
@@ -127,12 +131,12 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
     }
 
     private List<Object> filters(Class clazz) {
-        cucumber.junit.Feature featureAnnotation = getFeatureAnnotation(clazz);
+        Options cucumberOptions = getFeatureAnnotation(clazz);
         Object[] filters = new Object[0];
-        if (featureAnnotation != null) {
-            filters = toLong(featureAnnotation.lines());
+        if (cucumberOptions != null) {
+            filters = toLong(cucumberOptions.lines());
             if (filters.length == 0) {
-                filters = featureAnnotation.tags();
+                filters = cucumberOptions.tags();
             }
         }
         return asList(filters);
@@ -153,7 +157,35 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         return longs;
     }
 
-    private Feature getFeatureAnnotation(Class clazz) {
-        return (Feature) clazz.getAnnotation(Feature.class);
+    private Options getFeatureAnnotation(Class clazz) {
+        return (Options) clazz.getAnnotation(Options.class);
+    }
+
+    /**
+     * This annotation can be used to give additional hints to the {@link cucumber.junit.Cucumber} runner
+     * about what to run. It provides similar options to the Cucumber command line used by {@link cucumber.cli.Main}
+     */
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.TYPE})
+    public static @interface Options {
+        /**
+         * @return the path to the feature(s)
+         */
+        String value();
+
+        /**
+         * @return what lines in the feature should be executed
+         */
+        long[] lines() default {};
+
+        /**
+         * @return what tags in the feature should be executed
+         */
+        String[] tags() default {};
+
+        /**
+         * @return where to look for glue code (stepdefs and hooks)
+         */
+        String[] packages() default {};
     }
 }
