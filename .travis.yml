@@ -1,5 +1,5 @@
 language: java
-script: mvn -q clean insta;;
+script: mvn -q clean install
 # whitelist
 branches:
   only:
