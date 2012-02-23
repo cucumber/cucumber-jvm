@@ -12,6 +12,7 @@
         <artifactId>oss-parent</artifactId>
         <version>6</version>
     </parent>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <outputDirectory>${project.build.directory}</outputDirectory>
