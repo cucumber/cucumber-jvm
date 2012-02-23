@@ -22,6 +22,10 @@
             <groupId>info.cukes</groupId>
             <artifactId>cucumber-html</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.beust</groupId>
+            <artifactId>jcommander</artifactId>
+        </dependency>
         <!-- These dependencies are packaged to prevent conflicts with users' own code -->
         <dependency>
             <groupId>com.thoughtworks.xstream</groupId>
