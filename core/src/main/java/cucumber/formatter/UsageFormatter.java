@@ -31,9 +31,6 @@ import gherkin.formatter.model.Step;
  */
 public class UsageFormatter implements Formatter, Reporter
 {
-    private final MonochromeFormats monochromeFormat = new MonochromeFormats();
-    private final StepPrinter stepPrinter = new StepPrinter();
-
     final Map<String,List<StepContainer>> usageMap = new HashMap<String, List<StepContainer>>();
     final Map<String, UsageStatisticStrategy> statisticStrategies = new HashMap<String, UsageStatisticStrategy>();
 
@@ -180,7 +177,7 @@ public class UsageFormatter implements Formatter, Reporter
         if (stepDefinition != null && !steps.isEmpty())
         {
             Step step = steps.remove(0);
-            String stepNameWithArgs = formatStepNameWithArgs(result, step);
+            String stepNameWithArgs = step.getName();
             addUsageEntry(result, stepDefinition, stepNameWithArgs);
         }
     }
@@ -192,16 +189,6 @@ public class UsageFormatter implements Formatter, Reporter
             return ((StepDefinitionMatch) match).getPattern();
         }
         return null;
-    }
-
-    private String formatStepNameWithArgs(Result result, Step step)
-    {
-        StringBuffer buffer = new StringBuffer();
-        Format format = getFormat(result.getStatus());
-        Format argFormat = getArgFormat(result.getStatus());
-        stepPrinter.writeStep(new NiceAppendable(buffer), format, argFormat, step.getName(), match.getArguments());
-
-        return buffer.toString();
     }
 
     private void addUsageEntry(Result result, String stepDefinition, String stepNameWithArgs)
@@ -268,14 +255,6 @@ public class UsageFormatter implements Formatter, Reporter
     @Override
     public void embedding(String mimeType, byte[] data)
     {
-    }
-
-    private Format getFormat(String key) {
-        return monochromeFormat.get(key);
-    }
-
-    private Format getArgFormat(String key) {
-        return monochromeFormat.get(key + "_arg");
     }
 
     /**
