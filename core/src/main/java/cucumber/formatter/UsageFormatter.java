@@ -1,12 +1,13 @@
 package cucumber.formatter;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import cucumber.formatter.usage.UsageStatisticStrategy;
+import cucumber.runtime.StepDefinitionMatch;
 import gherkin.deps.com.google.gson.Gson;
 import gherkin.deps.com.google.gson.GsonBuilder;
 import gherkin.formatter.Format;
@@ -33,7 +34,7 @@ public class UsageFormatter implements Formatter, Reporter
     private final MonochromeFormats monochromeFormat = new MonochromeFormats();
     private final StepPrinter stepPrinter = new StepPrinter();
 
-    final Map<String, List<Long>> usageMap = new HashMap<String, List<Long>>();
+    final Map<String,List<StepContainer>> usageMap = new HashMap<String, List<StepContainer>>();
     final Map<String, UsageStatisticStrategy> statisticStrategies = new HashMap<String, UsageStatisticStrategy>();
 
     private final List<Step> steps = new ArrayList<Step>();
@@ -99,54 +100,66 @@ public class UsageFormatter implements Formatter, Reporter
     @Override
     public void done()
     {
-        List<StepContainer> stepContainers = new ArrayList<StepContainer>();
-
-        for (Map.Entry<String, List<Long>> usageEntry : usageMap.entrySet())
+        List<StepDefContainer> stepDefContainers = new ArrayList<StepDefContainer>();
+        for (Map.Entry<String, List<StepContainer>> usageEntry : usageMap.entrySet())
         {
-            StepContainer stepContainer = new StepContainer();
-            stepContainers.add(stepContainer);
-            
-            stepContainer.stepName = usageEntry.getKey();
-            stepContainer.durations = formatDurationEntries(usageEntry.getValue());
+            StepDefContainer stepDefContainer = new StepDefContainer();
+            stepDefContainers.add(stepDefContainer);
 
-            stepContainer.aggregatedResults = createAggregatedResults(usageEntry);
+            stepDefContainer.source = usageEntry.getKey();
+            stepDefContainer.steps = createStepContainer(usageEntry.getValue());
         }
 
-        out.append(gson().toJson(stepContainers));
+        out.append(gson().toJson(stepDefContainers));
     }
 
-    private List<String> formatDurationEntries(List<Long> durationEntries)
+    private List<StepContainer> createStepContainer(List<StepContainer> stepContainers)
     {
-        ArrayList<String> formattedDuration = new ArrayList<String>();
-        for(Long duration : durationEntries)
+        for (StepContainer stepContainer : stepContainers)
         {
-            formattedDuration.add(formatDuration(duration));
+            stepContainer.aggregatedResults = createAggregatedResults(stepContainer);
+            formatDurationAsSeconds(stepContainer.durations);
         }
-        return formattedDuration;
+        return stepContainers;
     }
 
-    private List<AggregatedResult> createAggregatedResults(Map.Entry<String, List<Long>> usageEntry)
+    private void formatDurationAsSeconds(List<StepDuration> durations)
     {
-        ArrayList<AggregatedResult> aggregatedResults = new ArrayList<AggregatedResult>();
+        for (StepDuration duration : durations)
+        {
+            duration.duration = toSeconds(duration.duration.longValue());
+        }
+    }
+
+    private Map<String, BigDecimal> createAggregatedResults(StepContainer stepContainer)
+    {
+        Map<String, BigDecimal> aggregatedResults = new HashMap<String, BigDecimal>();
         for (Map.Entry<String, UsageStatisticStrategy> calculatorEntry : statisticStrategies.entrySet())
         {
-            AggregatedResult aggregatedResult = new AggregatedResult();
-            aggregatedResults.add(aggregatedResult);
-            
             UsageStatisticStrategy statisticStrategy = calculatorEntry.getValue();
-            Long calculationResult = statisticStrategy.calculate(usageEntry.getValue());
+            List<Long> rawDurations = getRawDurations(stepContainer.durations);
+            Long calculationResult = statisticStrategy.calculate(rawDurations);
 
-            aggregatedResult.strategy = calculatorEntry.getKey();
-            aggregatedResult.value = formatDuration(calculationResult);
+            String strategy = calculatorEntry.getKey();
+            aggregatedResults.put(strategy, toSeconds(calculationResult));
         }
         return aggregatedResults;
     }
 
-    private String formatDuration(Long duration)
+    private BigDecimal toSeconds(Long nanoSeconds)
     {
-        long seconds = TimeUnit.MICROSECONDS.toSeconds(duration);
-        long microSeconds = duration - TimeUnit.SECONDS.toMicros(seconds);
-        return String.format("%d.%06d", seconds, microSeconds);
+        return BigDecimal.valueOf(nanoSeconds).divide(BigDecimal.valueOf(1000000000));
+    }
+
+    private List<Long> getRawDurations(List<StepDuration> stepDurations)
+    {
+        List<Long> rawDurations = new ArrayList<Long>();
+
+        for(StepDuration stepDuration : stepDurations)
+        {
+            rawDurations.add(stepDuration.duration.longValue());
+        }
+        return rawDurations;
     }
 
     private Gson gson() {
@@ -162,18 +175,28 @@ public class UsageFormatter implements Formatter, Reporter
     @Override
     public void result(Result result)
     {
-        if (!steps.isEmpty())
+        String stepDefinition = getStepDefinition();
+
+        if (stepDefinition != null && !steps.isEmpty())
         {
             Step step = steps.remove(0);
             String stepNameWithArgs = formatStepNameWithArgs(result, step);
-            addUsageEntry(result, stepNameWithArgs);
+            addUsageEntry(result, stepDefinition, stepNameWithArgs);
         }
+    }
+
+    private String getStepDefinition()
+    {
+        if (match instanceof StepDefinitionMatch)
+        {
+            return ((StepDefinitionMatch) match).getPattern();
+        }
+        return null;
     }
 
     private String formatStepNameWithArgs(Result result, Step step)
     {
         StringBuffer buffer = new StringBuffer();
-        buffer.append(step.getKeyword());
         Format format = getFormat(result.getStatus());
         Format argFormat = getArgFormat(result.getStatus());
         stepPrinter.writeStep(new NiceAppendable(buffer), format, argFormat, step.getName(), match.getArguments());
@@ -181,28 +204,59 @@ public class UsageFormatter implements Formatter, Reporter
         return buffer.toString();
     }
 
-    private void addUsageEntry(Result result, String stepNameWithArgs)
+    private void addUsageEntry(Result result, String stepDefinition, String stepNameWithArgs)
     {
-        List<Long> durationEntries = usageMap.get(stepNameWithArgs);
-        if (durationEntries == null)
+        List<StepContainer> stepContainers = usageMap.get(stepDefinition);
+        if (stepContainers == null)
         {
-            durationEntries = new ArrayList<Long>();
-            usageMap.put(stepNameWithArgs, durationEntries);
+            stepContainers = new ArrayList<StepContainer>();
+            usageMap.put(stepDefinition, stepContainers);
         }
-        durationEntries.add(durationInMillis(result));
+        StepContainer stepContainer = findOrCreateStepContainer(stepNameWithArgs, stepContainers);
+        
+        String stepLocation = getStepLocation();
+        Long duration = result.getDuration();
+        StepDuration stepDuration = createStepDuration(duration, stepLocation);
+        stepContainer.durations.add(stepDuration);
     }
 
-    private Long durationInMillis(Result result)
+    private String getStepLocation()
     {
-        long duration;
-        if (result.getDuration() == null)
+        if(match instanceof StepDefinitionMatch)
         {
-            duration = 0;
+            StackTraceElement stepLocation = ((StepDefinitionMatch) match).getStepLocation();
+            return stepLocation.getFileName() + ":" + stepLocation.getLineNumber();
+        }
+        return null;
+    }
+
+    private StepDuration createStepDuration(Long duration, String location)
+    {
+        StepDuration stepDuration = new StepDuration();
+        if (duration == null)
+        {
+            stepDuration.duration = BigDecimal.ZERO;
         } else
         {
-            duration = result.getDuration() / 1000;
+            stepDuration.duration = BigDecimal.valueOf(duration);
         }
-        return duration;
+        stepDuration.location = location;
+        return stepDuration;
+    }
+
+    private StepContainer findOrCreateStepContainer(String stepNameWithArgs, List<StepContainer> stepContainers)
+    {
+        for (StepContainer container : stepContainers)
+        {
+            if (stepNameWithArgs.equals(container.name))
+            {
+                return container;
+            }
+        }
+        StepContainer stepContainer = new StepContainer();
+        stepContainer.name = stepNameWithArgs;
+        stepContainers.add(stepContainer);
+        return stepContainer;
     }
 
     @Override
@@ -235,21 +289,32 @@ public class UsageFormatter implements Formatter, Reporter
     }
 
     /**
-     * Contains for usage-entries of steps
+     * Container of Step Definitions (patterns)
      */
-    private static class StepContainer {
-        public String stepName;
-        public List<AggregatedResult> aggregatedResults = new ArrayList<AggregatedResult>();
-        public List<String> durations = new ArrayList<String>();
+    static class StepDefContainer
+    {
+        /**
+         * The StepDefinition (pattern)
+         */
+        public String source;
+        
+        /**
+         * A list of Steps
+         */
+        public List<StepContainer> steps;
     }
 
     /**
-     * Container for aggregated results, computed by a specific strategy (e.g. average, median, ..)
+     * Contains for usage-entries of steps
      */
-    private static class AggregatedResult {
-        public String strategy;
-        public String value;
+    static class StepContainer {
+        public String name;
+        public Map<String, BigDecimal> aggregatedResults = new HashMap<String, BigDecimal>();
+        public List<StepDuration> durations = new ArrayList<StepDuration>();
     }
 
-
+    static class StepDuration {
+        public BigDecimal duration;
+        public String location;
+    }
 }

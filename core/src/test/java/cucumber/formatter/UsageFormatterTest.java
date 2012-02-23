@@ -10,14 +10,16 @@ import static org.mockito.Mockito.withSettings;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import cucumber.formatter.usage.UsageStatisticStrategy;
-import gherkin.formatter.model.Match;
+import cucumber.runtime.StepDefinitionMatch;
 import gherkin.formatter.model.Result;
 import gherkin.formatter.model.Step;
 
@@ -50,10 +52,9 @@ public class UsageFormatterTest
 
         Step step = mock(Step.class);
         when(step.getName()).thenReturn("step");
-        when(step.getKeyword()).thenReturn("when ");
         usageFormatter.step(step);
 
-        Match match = mock(Match.class);
+        StepDefinitionMatch match = mockStepDefinitionMatch();
         usageFormatter.match(match);
         
         Result result = mock(Result.class);
@@ -61,11 +62,21 @@ public class UsageFormatterTest
 
         usageFormatter.result(result);
 
-        Map<String,List<Long>> usageMap = usageFormatter.usageMap;
+        Map<String,List<UsageFormatter.StepContainer>> usageMap = usageFormatter.usageMap;
         assertEquals(usageMap.size(), 1);
-        List<Long> durationEntries = usageMap.get("when step");
+        List<UsageFormatter.StepContainer> durationEntries = usageMap.get("stepDef");
         assertEquals(durationEntries.size(), 1);
-        assertEquals(durationEntries.get(0), Long.valueOf(12));
+        assertEquals(durationEntries.get(0).name, "step");
+        assertEquals(durationEntries.get(0).durations.size(), 1);
+        assertEquals(durationEntries.get(0).durations.get(0).duration, BigDecimal.valueOf(12345));
+    }
+
+    private StepDefinitionMatch mockStepDefinitionMatch()
+    {
+        StepDefinitionMatch match = mock(StepDefinitionMatch.class, Mockito.RETURNS_MOCKS);
+        when(match.getPattern()).thenReturn("stepDef");
+        when(match.getStepLocation()).thenReturn(new StackTraceElement("x", "y", "z", 3));
+        return match;
     }
 
     @Test
@@ -74,12 +85,11 @@ public class UsageFormatterTest
         Appendable out = mock(Appendable.class);
         UsageFormatter usageFormatter = new UsageFormatter(out);
 
-        Step step = mock(Step.class);
+         Step step = mock(Step.class);
         when(step.getName()).thenReturn("step");
-        when(step.getKeyword()).thenReturn("when ");
         usageFormatter.step(step);
 
-        Match match = mock(Match.class);
+        StepDefinitionMatch match = mockStepDefinitionMatch();
         usageFormatter.match(match);
 
         Result result = mock(Result.class);
@@ -87,11 +97,13 @@ public class UsageFormatterTest
 
         usageFormatter.result(result);
 
-        Map<String,List<Long>> usageMap = usageFormatter.usageMap;
+        Map<String,List<UsageFormatter.StepContainer>> usageMap = usageFormatter.usageMap;
         assertEquals(usageMap.size(), 1);
-        List<Long> durationEntries = usageMap.get("when step");
+        List<UsageFormatter.StepContainer> durationEntries = usageMap.get("stepDef");
         assertEquals(durationEntries.size(), 1);
-        assertEquals(durationEntries.get(0), Long.valueOf(0));
+        assertEquals(durationEntries.get(0).name, "step");
+        assertEquals(durationEntries.get(0).durations.size(), 1);
+        assertEquals(durationEntries.get(0).durations.get(0).duration, BigDecimal.ZERO);
     }
 
     @Test
@@ -102,21 +114,22 @@ public class UsageFormatterTest
 
         Step step = mock(Step.class);
         when(step.getName()).thenReturn("step");
-        when(step.getKeyword()).thenReturn("then ");
         usageFormatter.step(step);
 
-        Match match = mock(Match.class);
+        StepDefinitionMatch match = mockStepDefinitionMatch();
         usageFormatter.match(match);
 
         Result result = mock(Result.class);
         when(result.getDuration()).thenReturn(null);
         usageFormatter.result(result);
 
-        Map<String,List<Long>> usageMap = usageFormatter.usageMap;
+        Map<String,List<UsageFormatter.StepContainer>> usageMap = usageFormatter.usageMap;
         assertEquals(usageMap.size(), 1);
-        List<Long> durationEntries = usageMap.get("then step");
+        List<UsageFormatter.StepContainer> durationEntries = usageMap.get("stepDef");
         assertEquals(durationEntries.size(), 1);
-        assertEquals(durationEntries.get(0), Long.valueOf(0));
+        assertEquals(durationEntries.get(0).name, "step");
+        assertEquals(durationEntries.get(0).durations.size(), 1);
+        assertEquals(durationEntries.get(0).durations.get(0).duration, BigDecimal.ZERO);
     }
 
     @Test
@@ -124,11 +137,18 @@ public class UsageFormatterTest
     {
         StringBuffer out = new StringBuffer();
         UsageFormatter usageFormatter = new UsageFormatter(out);
-        usageFormatter.usageMap.put("aStep", Arrays.asList(12345678L));
+
+        UsageFormatter.StepContainer stepContainer = new UsageFormatter.StepContainer();
+        UsageFormatter.StepDuration stepDuration = new UsageFormatter.StepDuration();
+        stepDuration.duration = BigDecimal.valueOf(12345678L);
+        stepDuration.location = "location.feature";
+        stepContainer.durations = Arrays.asList(stepDuration);
+
+        usageFormatter.usageMap.put("aStep", Arrays.asList(stepContainer));
 
         usageFormatter.done();
 
-        assertTrue(out.toString().contains("12.345678"));
+        assertTrue(out.toString().contains("0.012345678"));
     }
 
     @Test
@@ -137,15 +157,21 @@ public class UsageFormatterTest
         StringBuffer out = new StringBuffer();
         UsageFormatter usageFormatter = new UsageFormatter(out);
 
+        UsageFormatter.StepContainer stepContainer = new UsageFormatter.StepContainer();
+        UsageFormatter.StepDuration stepDuration = new UsageFormatter.StepDuration();
+        stepDuration.duration = BigDecimal.valueOf(12345678L);
+        stepDuration.location = "location.feature";
+        stepContainer.durations = Arrays.asList(stepDuration);
+
+        usageFormatter.usageMap.put("aStep", Arrays.asList(stepContainer));
+
         UsageStatisticStrategy usageStatisticStrategy = mock(UsageStatisticStrategy.class);
         when(usageStatisticStrategy.calculate(Arrays.asList(12345678L))).thenReturn(23456L);
         usageFormatter.addUsageStatisticStrategy("average", usageStatisticStrategy);
 
-        usageFormatter.usageMap.put("aStep", Arrays.asList(12345678L));
-
         usageFormatter.done();
         
-        assertTrue(out.toString().contains("0.023456"));
-        assertTrue(out.toString().contains("12.345678"));
+        assertTrue(out.toString().contains("0.000023456"));
+        assertTrue(out.toString().contains("0.012345678"));
     }
 }
