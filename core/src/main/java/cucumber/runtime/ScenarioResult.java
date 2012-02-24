@@ -13,7 +13,7 @@ public interface ScenarioResult {
     String getStatus();
 
     /**
-     * @return true if and only if {@link #getStatus()} returns "false"
+     * @return true if and only if {@link #getStatus()} returns "failed"
      */
     boolean isFailed();
 
