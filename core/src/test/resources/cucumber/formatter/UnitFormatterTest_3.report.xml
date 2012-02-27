@@ -1,0 +1,5 @@
+<testsuite errors="1" failures="0" hostname="hazelnut.osuosl.org" name="net.cars.engine.BougieTest" tests="2"
+           time="0.017" timestamp="2007-11-02T23:13:50">
+    <testcase classname="Feature:Feature_3" name="Scenario:Scenario_1" time="1"/>
+    <testcase classname="Feature:Feature_3" name="Scenario:Scenario_2" time="1"/>
+</testsuite>

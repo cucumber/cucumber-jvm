@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<testsuite tests="2">
+    <testcase classname="Feature:Feature_2" name="Scenario:Scenario_1" time="0">
+        <skipped><![CDATA[Given bg_1.........................undefined
+When bg_2..........................undefined
+Then bg_3..........................undefined
+Given step_1........................undefined
+When step_2.........................undefined
+Then step_3.........................undefined
+]]></skipped>
+    </testcase>
+    <testcase classname="Feature:Feature_2" name="Scenario:Scenario_2" time="0">
+        <skipped><![CDATA[Given bg_1.........................undefined
+When bg_2..........................undefined
+Then bg_3..........................undefined
+Given step_1........................undefined
+When step_2.........................undefined
+Then step_3.........................undefined
+]]></skipped>
+    </testcase>
+</testsuite>

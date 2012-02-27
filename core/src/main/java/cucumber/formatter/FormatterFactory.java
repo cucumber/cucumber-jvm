@@ -21,6 +21,7 @@ public class FormatterFactory {
         put("json", JSONFormatter.class.getName());
         put("json-pretty", JSONPrettyFormatter.class.getName());
         put("pretty", PrettyFormatter.class.getName());
+        put("unit",UnitFormatter.class.getName());
     }};
 
     public FormatterFactory(ClassLoader classLoader) {
