@@ -15,7 +15,10 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.*;
+import java.io.FileWriter;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,20 +28,20 @@ import java.util.List;
  *         Time: 4:02 PM
  */
 public class UnitFormatter implements Formatter, Reporter {
-    private File out;
+    private FileWriter out;
     private Document doc;
     private Element rootElement;
     private TestCase testCase;
 
 
-    public UnitFormatter(File out) {
+    public UnitFormatter(FileWriter out) {
         this.out = out;
         try {
             doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
             rootElement = doc.createElement("testsuite");
             doc.appendChild(rootElement);
         } catch (ParserConfigurationException e) {
-            throw new CucumberException("Error while processing unit report: " + out.getAbsolutePath(), e);
+            throw new CucumberException("Error while processing unit report", e);
         }
     }
 
@@ -82,14 +85,13 @@ public class UnitFormatter implements Formatter, Reporter {
     public void done() {
         try {
             //set up a transformer
+            rootElement.setAttribute("failed",String.valueOf(rootElement.getElementsByTagName("failure").getLength()));
             TransformerFactory transfac = TransformerFactory.newInstance();
             Transformer trans = transfac.newTransformer();
             trans.setOutputProperty(OutputKeys.INDENT, "yes");
-            StreamResult result = new StreamResult(new FileWriter(out));
+            StreamResult result = new StreamResult(out);
             DOMSource source = new DOMSource(doc);
             trans.transform(source, result);
-        } catch (IOException e) {
-            new CucumberException("Error creating file: " + out.getAbsolutePath(), e);
         } catch (TransformerException e) {
             new CucumberException("Error while transforming.", e);
         }
@@ -177,13 +179,13 @@ public class UnitFormatter implements Formatter, Reporter {
                 if ("undefined".equals(result.getStatus()) || "pending".equals(result.getStatus())) skipped = result;
                 sb.append(steps.get(i).getKeyword());
                 sb.append(steps.get(i).getName());
-                for (int j = 0; sb.length() - length + j < 60; j++) sb.append(".");
+                for (int j = 0; sb.length() - length + j < 140; j++) sb.append(".");
                 sb.append(result.getStatus());
                 sb.append("\n");
             }
             Element child;
             if (failed != null) {
-                sb.append("StackTrace:\n");
+                sb.append("\nStackTrace:\n");
                 StringWriter sw = new StringWriter();
                 failed.getError().printStackTrace(new PrintWriter(sw));
                 sb.append(sw.toString());

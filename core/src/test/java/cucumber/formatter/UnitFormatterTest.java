@@ -9,10 +9,7 @@ import org.junit.Test;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -47,8 +44,8 @@ public class UnitFormatterTest {
 
     private void runFeaturesWithFormatter(final List<String> featurePaths) throws IOException {
         File report = new File("report.xml");
-//        report.deleteOnExit();
-        final UnitFormatter f = new UnitFormatter(report);
+        report.deleteOnExit();
+        final UnitFormatter f = new UnitFormatter(new FileWriter(report));
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         final ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
         final List<String> gluePaths = emptyList();
