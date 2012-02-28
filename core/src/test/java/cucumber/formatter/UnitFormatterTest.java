@@ -36,16 +36,16 @@ public class UnitFormatterTest {
         compareXML("cucumber/formatter/UnitFormatterTest_2.report.xml", "report.xml");
     }
 
-//    @Test
-//    public void featureWithOutlineTest() throws Exception {
-//        runFeaturesWithFormatter(asList("cucumber/formatter/UnitFormatterTest_3.feature"));
-//        compareXML("cucumber/formatter/UnitFormatterTest_3.report.xml", "report.xml");
-//    }
+    @Test
+    public void featureWithOutlineTest() throws Exception {
+        runFeaturesWithFormatter(asList("cucumber/formatter/UnitFormatterTest_3.feature"));
+        compareXML("cucumber/formatter/UnitFormatterTest_3.report.xml", "report.xml");
+    }
 
     private void runFeaturesWithFormatter(final List<String> featurePaths) throws IOException {
         File report = new File("report.xml");
-        report.deleteOnExit();
-        final UnitFormatter f = new UnitFormatter(new FileWriter(report));
+//        report.deleteOnExit();
+        final UnitFormatter f = new UnitFormatter(report);
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         final ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
         final List<String> gluePaths = emptyList();

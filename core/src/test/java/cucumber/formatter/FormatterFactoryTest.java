@@ -43,6 +43,11 @@ public class FormatterFactoryTest {
     }
 
     @Test
+    public void shouldInstantiateUnitFormatter() {
+        assertThat(formatterFactory.createFormatter("unit", new File(System.getProperty("user.dir")+"report.xml")), is(UnitFormatter.class));
+    }
+
+    @Test
     public void shouldInstantiateCustomFormatterFromClassNameWithAppender() {
         StringWriter writer = new StringWriter();
         Formatter formatter = formatterFactory.createFormatter(TestFormatter.class.getName(), writer);

@@ -15,7 +15,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.FileWriter;
+import java.io.File;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -28,13 +28,13 @@ import java.util.List;
  *         Time: 4:02 PM
  */
 public class UnitFormatter implements Formatter, Reporter {
-    private FileWriter out;
+    private File out;
     private Document doc;
     private Element rootElement;
     private TestCase testCase;
 
 
-    public UnitFormatter(FileWriter out) {
+    public UnitFormatter(File out) {
         this.out = out;
         try {
             doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
@@ -68,14 +68,6 @@ public class UnitFormatter implements Formatter, Reporter {
     }
 
     @Override
-    public void scenarioOutline(ScenarioOutline scenarioOutline) {
-    }
-
-    @Override
-    public void examples(Examples examples) {
-    }
-
-    @Override
     public void step(Step step) {
         if (testCase != null) testCase.steps.add(step);
     }
@@ -85,7 +77,7 @@ public class UnitFormatter implements Formatter, Reporter {
     public void done() {
         try {
             //set up a transformer
-            rootElement.setAttribute("failed",String.valueOf(rootElement.getElementsByTagName("failure").getLength()));
+            rootElement.setAttribute("failed", String.valueOf(rootElement.getElementsByTagName("failure").getLength()));
             TransformerFactory transfac = TransformerFactory.newInstance();
             Transformer trans = transfac.newTransformer();
             trans.setOutputProperty(OutputKeys.INDENT, "yes");
@@ -114,7 +106,15 @@ public class UnitFormatter implements Formatter, Reporter {
             value = Integer.parseInt(element.getAttribute(attribute));
         }
         element.setAttribute(attribute, String.valueOf(++value));
+    }
 
+    @Override
+    public void scenarioOutline(ScenarioOutline scenarioOutline) {
+    }
+
+    @Override
+    public void examples(Examples examples) {
+        TestCase.examples = examples.getRows().size()-1;
     }
 
     @Override
@@ -156,13 +156,14 @@ public class UnitFormatter implements Formatter, Reporter {
 
         Scenario scenario;
         static Feature feature;
+        static int examples = 0;
         List<Step> steps = new ArrayList<Step>();
         List<Result> results = new ArrayList<Result>();
 
         private Element writeTo(Document doc) {
             Element tc = doc.createElement("testcase");
-            tc.setAttribute("classname", "Feature:" + feature.getName());
-            tc.setAttribute("name", "Scenario:" + scenario.getName());
+            tc.setAttribute("classname", feature.getName());
+            tc.setAttribute("name", examples > 0 ? scenario.getName() + "_" + examples-- : scenario.getName());
             long time = 0;
             for (Result r : results) {
                 time += r.getDuration() != null ? r.getDuration() : 0;

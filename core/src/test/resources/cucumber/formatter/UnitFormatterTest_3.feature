@@ -20,3 +20,8 @@ Feature: Feature_3
     |  12 | 5 | 7  |
     |  20 | 5 | 15 |
 
+  Scenario: Scenario_2
+    Given a
+    Then b
+    When c
+
