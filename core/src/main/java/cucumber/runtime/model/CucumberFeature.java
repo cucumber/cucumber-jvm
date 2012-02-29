@@ -1,4 +1,4 @@
-﻿package cucumber.runtime.model;
+package cucumber.runtime.model;
 
 import cucumber.io.Resource;
 import cucumber.io.ResourceLoader;
@@ -13,9 +13,9 @@ import gherkin.formatter.model.ScenarioOutline;
 import gherkin.formatter.model.Step;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 public class CucumberFeature {
     private final String uri;
@@ -26,7 +26,7 @@ public class CucumberFeature {
     private I18n i18n;
     private CucumberScenarioOutline currentScenarioOutline;
 
-    public static List<CucumberFeature> load(ResourceLoader resourceLoader, List<String> featurePaths, final List <Object> filters) {
+    public static List<CucumberFeature> load(ResourceLoader resourceLoader, List<String> featurePaths, final List<Object> filters) {
         final List<CucumberFeature> cucumberFeatures = new ArrayList<CucumberFeature>();
         final FeatureBuilder builder = new FeatureBuilder(cucumberFeatures);
         for (String featurePath : featurePaths) {
@@ -38,7 +38,7 @@ public class CucumberFeature {
         if (cucumberFeatures.isEmpty()) {
             throw new CucumberException(String.format("No features found at %s", featurePaths));
         }
-		Collections.sort(cucumberFeatures, new CucumberFeatureUriComparator());
+        Collections.sort(cucumberFeatures, new CucumberFeatureUriComparator());
         return cucumberFeatures;
     }
 
@@ -93,8 +93,8 @@ public class CucumberFeature {
     public String getUri() {
         return uri;
     }
-	
-	private static class CucumberFeatureUriComparator implements Comparator<CucumberFeature> {
+
+    private static class CucumberFeatureUriComparator implements Comparator<CucumberFeature> {
         @Override
         public int compare(CucumberFeature a, CucumberFeature b) {
             return a.getUri().compareTo(b.getUri());
