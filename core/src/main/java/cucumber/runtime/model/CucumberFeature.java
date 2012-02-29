@@ -14,6 +14,8 @@ import gherkin.formatter.model.Step;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class CucumberFeature {
     private final String uri;
@@ -36,6 +38,7 @@ public class CucumberFeature {
         if (cucumberFeatures.isEmpty()) {
             throw new CucumberException(String.format("No features found at %s", featurePaths));
         }
+		Collections.sort(cucumberFeatures, new CucumberFeatureUriComparator());
         return cucumberFeatures;
     }
 
@@ -89,5 +92,15 @@ public class CucumberFeature {
 
     public String getUri() {
         return uri;
+    }
+	
+	private static class CucumberFeatureUriComparator implements Comparator<CucumberFeature> {
+        @Override
+        public int compare(CucumberFeature a, CucumberFeature b) {
+            if (a.equals(b)) {
+                return 0;
+            }
+            return a.getUri().compareTo(b.getUri());
+        }
     }
 }
