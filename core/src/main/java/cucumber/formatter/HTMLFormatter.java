@@ -7,23 +7,9 @@ import gherkin.formatter.Formatter;
 import gherkin.formatter.Mappable;
 import gherkin.formatter.NiceAppendable;
 import gherkin.formatter.Reporter;
-import gherkin.formatter.model.Background;
-import gherkin.formatter.model.Examples;
-import gherkin.formatter.model.Feature;
-import gherkin.formatter.model.Match;
-import gherkin.formatter.model.Result;
-import gherkin.formatter.model.Scenario;
-import gherkin.formatter.model.ScenarioOutline;
-import gherkin.formatter.model.Step;
+import gherkin.formatter.model.*;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -181,6 +167,7 @@ public class HTMLFormatter implements Formatter, Reporter {
     }
 
     private OutputStream reportFileOutputStream(String fileName) {
+        htmlReportDir.mkdirs();
         File file = new File(htmlReportDir, fileName);
         try {
             return new FileOutputStream(file);

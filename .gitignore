@@ -18,3 +18,9 @@ report.js
 chromedriver.log
 .scala_dependencies
 nexus.properties
+
+# OS generated files
+.DS_Store*
+ehthumbs.db
+Icon?
+Thumbs.db
