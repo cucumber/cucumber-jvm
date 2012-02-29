@@ -15,12 +15,10 @@ public class StepDefs {
 
     @Before
     public void before() {
-        System.out.println("@Before");
     }
 
     @Before("@gh210")
     public void gh20() {
-        System.out.println("@gh210");
     }
 
     @Given(value = "^I have (\\d+) (.*) in my belly$")

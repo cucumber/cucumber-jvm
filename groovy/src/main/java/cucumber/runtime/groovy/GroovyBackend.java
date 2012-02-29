@@ -130,7 +130,6 @@ public class GroovyBackend implements Backend {
     public void invoke(Closure body, Object[] args) {
         body.setDelegate(getGroovyWorld());
         body.call(args);
-        System.out.println("DONE");
     }
 
     private Object getGroovyWorld() {
