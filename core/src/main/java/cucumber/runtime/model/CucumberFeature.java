@@ -97,9 +97,6 @@ public class CucumberFeature {
 	private static class CucumberFeatureUriComparator implements Comparator<CucumberFeature> {
         @Override
         public int compare(CucumberFeature a, CucumberFeature b) {
-            if (a.equals(b)) {
-                return 0;
-            }
             return a.getUri().compareTo(b.getUri());
         }
     }
