@@ -15,6 +15,7 @@ tmp/
 
 # Build & test droppings
 report.js
+report.xml
 chromedriver.log
 .scala_dependencies
 nexus.properties

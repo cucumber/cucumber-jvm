@@ -1,4 +1,4 @@
-## [1.0.0.RC18](https://github.com/cucumber/cucumber-jvm/compare/v1.0.0.RC16...v1.0.0.RC18)
+## [1.0.0.RC19](https://github.com/cucumber/cucumber-jvm/compare/v1.0.0.RC16...v1.0.0.RC19)
 
 * [JUnit] Improved JUnit runner. ([#107](https://github.com/cucumber/cucumber-jvm/issues/107), [#211](https://github.com/cucumber/cucumber-jvm/issues/211), [#216](https://github.com/cucumber/cucumber-jvm/pull/216) Giso Deutschmann)
 * [Core] Stacktrace filtering filters away too much. ([#228](https://github.com/cucumber/cucumber-jvm/issues/228) Aslak Hellesøy)

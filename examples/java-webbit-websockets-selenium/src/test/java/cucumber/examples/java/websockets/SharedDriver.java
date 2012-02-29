@@ -3,6 +3,7 @@ package cucumber.examples.java.websockets;
 import cucumber.annotation.After;
 import cucumber.runtime.ScenarioResult;
 import org.openqa.selenium.OutputType;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
 
@@ -19,8 +20,13 @@ public class SharedDriver extends EventFiringWebDriver {
 
     @After
     public void close(ScenarioResult result) {
-        byte[] screenshot = this.getScreenshotAs(OutputType.BYTES);
-        result.embed(new ByteArrayInputStream(screenshot), "image/png");
-        super.close();
+        try {
+            byte[] screenshot = this.getScreenshotAs(OutputType.BYTES);
+            result.embed(new ByteArrayInputStream(screenshot), "image/png");
+        } catch (WebDriverException somePlatformsDontSupportScreenshots) {
+            System.err.println(somePlatformsDontSupportScreenshots.getMessage());
+        } finally {
+            super.close();
+        }
     }
 }
