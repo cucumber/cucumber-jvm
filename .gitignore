@@ -19,6 +19,8 @@ report.xml
 chromedriver.log
 .scala_dependencies
 nexus.properties
+pom.xml.releaseBackup
+release.properties
 
 # OS generated files
 .DS_Store*

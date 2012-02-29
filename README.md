@@ -42,7 +42,7 @@ Add a dependency in your [POM](http://maven.apache.org/pom.html):
 <dependency>
     <groupId>info.cukes</groupId>
     <artifactId>cucumber-core</artifactId>
-    <version>1.0.0.RC18</version>
+    <version>1.0.0.RC20</version>
 </dependency>
 ```
 
@@ -76,7 +76,7 @@ If you are adventurous, check out the examples, read the code and ask specific q
 
 TODO: Fix this. The Ivy build doesn't upload them yet.
 
-* http://cukes.info/cucumber/jvm/api/1.0.0.RC18
+* http://cukes.info/cucumber/jvm/api/1.0.0.RC20
 
 ## Examples
 
@@ -126,11 +126,6 @@ Please do *not* add @author tags - this project embraces collective code ownersh
 When you are done, send a [pull request](http://help.github.com/send-pull-requests/).
 If we get a pull request where an entire file is changed because of insignificant whitespace changes we cannot see what you have changed, and your contribution might get rejected.
 
-### Continuous Integration
-
-* http://travis-ci.org/#!/cucumber/cucumber-jvm
-* http://jenkins-01.public.cifoundry.net/job/Cucumber%20JVM/
-
 ### Running cross-platform Cucumber features
 
 All Cucumber implementations (cucumber-ruby, cucumber-jvm, cucumber-js) share a common set of Cucumber features to 
@@ -163,8 +158,35 @@ Fork the repository on Github, clone it and send a pull request when you have fi
 
 This is a reminder to the developers:
 
+First, replace versions in this file. Then make sure you have the proper keys set up - in your `~/.m2/settings.xml` - for example:
+
+```
+<settings>
+  <servers>
+    <server>
+      <id>cukes.info</id>
+      <username>yourcukesinfouser</username>
+      <privateKey>fullkeypath</privateKey>
+    </server>
+    <!-- See https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide -->
+    <server>
+      <id>sonatype-nexus-snapshots</id>
+      <username>yoursonatypeuser</username>
+      <password>TOPSECRET</password>
+    </server>
+    <server>
+      <id>sonatype-nexus-staging</id>
+      <username>yoursonatypeuser</username>
+      <password>TOPSECRET</password>
+    </server>
+  </servers>
+</settings>
+```
+
+Then release everything:
+
 ```
 mvn release:clean
-mvn --batch-mode -P release-sign-artifacts release:prepare -DautoVersionSubmodules=true -DdevelopmentVersion=1.0.0.RC10-SNAPSHOT
+mvn --batch-mode -P release-sign-artifacts release:prepare -DautoVersionSubmodules=true -DdevelopmentVersion=1.0.0.RC21-SNAPSHOT
 mvn -P release-sign-artifacts release:perform
 ```

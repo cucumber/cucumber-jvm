@@ -33,7 +33,7 @@
     </scm>
     <distributionManagement>
         <site>
-            <id>cukes</id>
+            <id>cukes.info</id>
             <url>scp://cukes.info/var/www/cucumber_site/cucumber/jvm/api/${project.version}</url>
         </site>
     </distributionManagement>
