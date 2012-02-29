@@ -46,7 +46,7 @@ public class StepDefinitionMatch extends Match {
         } catch (CucumberException e) {
             throw e;
         } catch (Throwable t) {
-            throw filterStacktrace(t, getStepLocation());
+            throw removeFrameworkFramesAndAppendStepLocation(t, getStepLocation());
         }
     }
 
@@ -147,26 +147,22 @@ public class StepDefinitionMatch extends Match {
         return actualTypeArguments != null && actualTypeArguments.length > 0 ? actualTypeArguments[0] : null;
     }
 
-    public Throwable filterStacktrace(Throwable error, StackTraceElement stepLocation) {
+    public Throwable removeFrameworkFramesAndAppendStepLocation(Throwable error, StackTraceElement stepLocation) {
         StackTraceElement[] stackTraceElements = error.getStackTrace();
-        if (error.getCause() != null && error.getCause() != error) {
-            return filterStacktrace(error.getCause(), stepLocation);
-        }
-        if (stackTraceElements.length == 0) {
+        if (stackTraceElements.length == 0 || stepLocation == null) {
             return error;
         }
-        int stackLength;
-        for (stackLength = 1; stackLength < stackTraceElements.length; ++stackLength) {
-            if (stepDefinition.isDefinedAt(stackTraceElements[stackLength - 1])) {
+
+        int newStackTraceLength;
+        for (newStackTraceLength = 1; newStackTraceLength < stackTraceElements.length; ++newStackTraceLength) {
+            if (stepDefinition.isDefinedAt(stackTraceElements[newStackTraceLength - 1])) {
                 break;
             }
         }
-        if (stepLocation != null) {
-            StackTraceElement[] result = new StackTraceElement[stackLength + 1];
-            System.arraycopy(stackTraceElements, 0, result, 0, stackLength);
-            result[stackLength] = stepLocation;
-            error.setStackTrace(result);
-        }
+        StackTraceElement[] newStackTrace = new StackTraceElement[newStackTraceLength + 1];
+        System.arraycopy(stackTraceElements, 0, newStackTrace, 0, newStackTraceLength);
+        newStackTrace[newStackTraceLength] = stepLocation;
+        error.setStackTrace(newStackTrace);
         return error;
     }
 
