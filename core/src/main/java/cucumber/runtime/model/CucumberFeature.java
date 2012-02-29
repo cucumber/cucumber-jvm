@@ -1,4 +1,4 @@
-package cucumber.runtime.model;
+﻿package cucumber.runtime.model;
 
 import cucumber.io.Resource;
 import cucumber.io.ResourceLoader;
@@ -26,7 +26,7 @@ public class CucumberFeature {
     private I18n i18n;
     private CucumberScenarioOutline currentScenarioOutline;
 
-    public static List<CucumberFeature> load(ResourceLoader resourceLoader, List<String> featurePaths, final List<Object> filters) {
+    public static List<CucumberFeature> load(ResourceLoader resourceLoader, List<String> featurePaths, final List <Object> filters) {
         final List<CucumberFeature> cucumberFeatures = new ArrayList<CucumberFeature>();
         final FeatureBuilder builder = new FeatureBuilder(cucumberFeatures);
         for (String featurePath : featurePaths) {
