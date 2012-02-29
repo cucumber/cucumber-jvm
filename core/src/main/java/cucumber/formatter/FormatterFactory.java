@@ -7,7 +7,6 @@ import gherkin.formatter.JSONPrettyFormatter;
 import gherkin.formatter.PrettyFormatter;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,6 +20,7 @@ public class FormatterFactory {
         put("json", JSONFormatter.class.getName());
         put("json-pretty", JSONPrettyFormatter.class.getName());
         put("pretty", PrettyFormatter.class.getName());
+        put("unit", UnitFormatter.class.getName());
     }};
 
     public FormatterFactory(ClassLoader classLoader) {
@@ -37,13 +37,10 @@ public class FormatterFactory {
             Class ctorArgClass = Appendable.class;
             if (out instanceof File) {
                 File file = (File) out;
-                if (file.isDirectory()) {
-                    out = file;
-                    ctorArgClass = File.class;
-                } else {
-                    out = new FileWriter(file);
-                }
+                out = file;
+                ctorArgClass = File.class;
             }
+
             Class<Formatter> formatterClass = getFormatterClass(className);
             // TODO: Remove these if statements. We should fix PrettyFormatter and ProgressFormatter to only take a single Appendable arg.
             // Whether or not to use Monochrome is tricky. Maybe always enforce another 2nd argument for that
