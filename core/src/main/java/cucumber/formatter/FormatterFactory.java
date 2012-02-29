@@ -1,5 +1,6 @@
 package cucumber.formatter;
 
+import cucumber.runtime.CucumberException;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.JSONFormatter;
 import gherkin.formatter.JSONPrettyFormatter;
@@ -10,13 +11,9 @@ import java.io.FileWriter;
 import java.util.HashMap;
 import java.util.Map;
 
-import cucumber.runtime.CucumberException;
-
 public class FormatterFactory {
 
     private final ClassLoader classLoader;
-
-    private final Boolean monochrome = Boolean.parseBoolean(System.getProperty("cucumber.monochrome"));
 
     private static final Map<String, String> BUILTIN_FORMATTERS = new HashMap<String, String>() {{
         put("progress", ProgressFormatter.class.getName());
@@ -51,7 +48,7 @@ public class FormatterFactory {
             // TODO: Remove these if statements. We should fix PrettyFormatter and ProgressFormatter to only take a single Appendable arg.
             // Whether or not to use Monochrome is tricky. Maybe always enforce another 2nd argument for that
             if (PrettyFormatter.class.isAssignableFrom(formatterClass)) {
-                return formatterClass.getConstructor(ctorArgClass, Boolean.TYPE, Boolean.TYPE).newInstance(out, monochrome, true);
+                return formatterClass.getConstructor(ctorArgClass, Boolean.TYPE, Boolean.TYPE).newInstance(out, false, true);
             } else if (ProgressFormatter.class.isAssignableFrom(formatterClass)) {
                 return formatterClass.getConstructor(ctorArgClass, Boolean.TYPE).newInstance(out, false);
             } else {
