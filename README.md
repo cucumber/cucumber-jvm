@@ -42,7 +42,7 @@ Add a dependency in your [POM](http://maven.apache.org/pom.html):
 <dependency>
     <groupId>info.cukes</groupId>
     <artifactId>cucumber-core</artifactId>
-    <version>1.0.0.RC16</version>
+    <version>1.0.0.RC18</version>
 </dependency>
 ```
 
@@ -76,7 +76,7 @@ If you are adventurous, check out the examples, read the code and ask specific q
 
 TODO: Fix this. The Ivy build doesn't upload them yet.
 
-* http://cukes.info/cucumber/jvm/api/1.0.0.RC16
+* http://cukes.info/cucumber/jvm/api/1.0.0.RC18
 
 ## Examples
 
