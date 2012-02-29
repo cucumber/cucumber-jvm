@@ -22,19 +22,14 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author Uladzimir Mihura
- *         Date: 2/24/12
- *         Time: 4:02 PM
- */
-public class UnitFormatter implements Formatter, Reporter {
-    private File out;
-    private Document doc;
-    private Element rootElement;
+public class JUnitFormatter implements Formatter, Reporter {
+    private final File out;
+    private final Document doc;
+    private final Element rootElement;
+
     private TestCase testCase;
 
-
-    public UnitFormatter(File out) {
+    public JUnitFormatter(File out) {
         this.out = out;
         try {
             doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
@@ -44,7 +39,6 @@ public class UnitFormatter implements Formatter, Reporter {
             throw new CucumberException("Error while processing unit report", e);
         }
     }
-
 
     @Override
     public void feature(Feature feature) {
@@ -72,7 +66,6 @@ public class UnitFormatter implements Formatter, Reporter {
         if (testCase != null) testCase.steps.add(step);
     }
 
-
     @Override
     public void done() {
         try {
@@ -88,7 +81,6 @@ public class UnitFormatter implements Formatter, Reporter {
             new CucumberException("Error while transforming.", e);
         }
     }
-
 
     @Override
     public void result(Result result) {
@@ -135,7 +127,6 @@ public class UnitFormatter implements Formatter, Reporter {
 
     @Override
     public void close() {
-
     }
 
     @Override
@@ -166,7 +157,8 @@ public class UnitFormatter implements Formatter, Reporter {
             tc.setAttribute("name", examples > 0 ? scenario.getName() + "_" + examples-- : scenario.getName());
             long time = 0;
             for (Result r : results) {
-                time += r.getDuration() != null ? r.getDuration() : 0;
+                long durationMillis = r.getDuration() == null ? 0 : r.getDuration() / 1000000; // duration is reported in nanos
+                time += durationMillis;
             }
             tc.setAttribute("time", String.valueOf(time));
 
@@ -174,7 +166,6 @@ public class UnitFormatter implements Formatter, Reporter {
             Result skipped = null, failed = null;
             for (int i = 0; i < steps.size(); i++) {
                 int length = sb.length();
-                Step step = steps.get(i);
                 Result result = results.get(i);
                 if ("failed".equals(result.getStatus())) failed = result;
                 if ("undefined".equals(result.getStatus()) || "pending".equals(result.getStatus())) skipped = result;

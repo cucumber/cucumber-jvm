@@ -22,30 +22,30 @@ import static org.mockito.Mockito.mock;
  *         Date: 2/25/12
  *         Time: 8:39 PM
  */
-public class UnitFormatterTest {
+public class JUnitFormatterTest {
 
     @Test
     public void featureSimpleTest() throws Exception {
-        runFeaturesWithFormatter(asList("cucumber/formatter/UnitFormatterTest_1.feature"));
-        compareXML("cucumber/formatter/UnitFormatterTest_1.report.xml", "report.xml");
+        runFeaturesWithFormatter(asList("cucumber/formatter/JUnitFormatterTest_1.feature"));
+        compareXML("cucumber/formatter/JUnitFormatterTest_1.report.xml", "report.xml");
     }
 
     @Test
     public void featureWithBackgroundTest() throws Exception {
-        runFeaturesWithFormatter(asList("cucumber/formatter/UnitFormatterTest_2.feature"));
-        compareXML("cucumber/formatter/UnitFormatterTest_2.report.xml", "report.xml");
+        runFeaturesWithFormatter(asList("cucumber/formatter/JUnitFormatterTest_2.feature"));
+        compareXML("cucumber/formatter/JUnitFormatterTest_2.report.xml", "report.xml");
     }
 
     @Test
     public void featureWithOutlineTest() throws Exception {
-        runFeaturesWithFormatter(asList("cucumber/formatter/UnitFormatterTest_3.feature"));
-        compareXML("cucumber/formatter/UnitFormatterTest_3.report.xml", "report.xml");
+        runFeaturesWithFormatter(asList("cucumber/formatter/JUnitFormatterTest_3.feature"));
+        compareXML("cucumber/formatter/JUnitFormatterTest_3.report.xml", "report.xml");
     }
 
     private void runFeaturesWithFormatter(final List<String> featurePaths) throws IOException {
         File report = new File("report.xml");
 //        report.deleteOnExit();
-        final UnitFormatter f = new UnitFormatter(report);
+        final JUnitFormatter f = new JUnitFormatter(report);
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         final ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
         final List<String> gluePaths = emptyList();

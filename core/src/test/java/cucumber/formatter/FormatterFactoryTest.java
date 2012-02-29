@@ -7,6 +7,7 @@ import gherkin.formatter.PrettyFormatter;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.StringWriter;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -43,8 +44,8 @@ public class FormatterFactoryTest {
     }
 
     @Test
-    public void shouldInstantiateUnitFormatter() {
-        assertThat(formatterFactory.createFormatter("unit", new File(System.getProperty("user.dir")+"report.xml")), is(UnitFormatter.class));
+    public void shouldInstantiateJUnitFormatter() throws IOException {
+        assertThat(formatterFactory.createFormatter("junit", File.createTempFile("cucumber-jvm", "report.xml")), is(JUnitFormatter.class));
     }
 
     @Test
