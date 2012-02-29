@@ -1,5 +1,8 @@
 package cucumber.formatter;
 
+import cucumber.formatter.usage.AverageUsageStatisticStrategy;
+import cucumber.formatter.usage.MedianUsageStatisticStrategy;
+import cucumber.formatter.usage.UsageStatisticStrategy;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.JSONFormatter;
 import gherkin.formatter.JSONPrettyFormatter;
@@ -8,10 +11,13 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.StringWriter;
+import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
 
 public class FormatterFactoryTest {
 
@@ -42,6 +48,18 @@ public class FormatterFactoryTest {
         assertThat(formatterFactory.createFormatter("html", new File(System.getProperty("user.dir"))), is(HTMLFormatter.class));
     }
 
+
+    @Test
+    public void shouldInstantiateUsageFormatter() {
+        Formatter formatter = formatterFactory.createFormatter("usage", mock(Appendable.class));
+        
+        assertThat(formatter, is(UsageFormatter.class));
+        Map<String,UsageStatisticStrategy> statisticStrategies = ((UsageFormatter) formatter).statisticStrategies;
+        assertEquals(statisticStrategies.size(), 2);
+        assertThat(statisticStrategies.get("average"), is(AverageUsageStatisticStrategy.class));
+        assertThat(statisticStrategies.get("median"), is(MedianUsageStatisticStrategy.class));
+    }
+
     @Test
     public void shouldInstantiateCustomFormatterFromClassNameWithAppender() {
         StringWriter writer = new StringWriter();
@@ -57,5 +75,4 @@ public class FormatterFactoryTest {
         assertThat(formatter, is(TestFormatter.class));
         assertSame(dir, ((TestFormatter) formatter).dir);
     }
-
 }
