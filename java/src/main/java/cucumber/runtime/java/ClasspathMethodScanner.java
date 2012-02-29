@@ -28,7 +28,7 @@ public class ClasspathMethodScanner {
                     // those can't be instantiated without container class present.
                     glueCodeClass = glueCodeClass.getSuperclass();
                 }
-                if(glueCodeClass != null) {
+                if (glueCodeClass != null) {
                     for (Method method : glueCodeClass.getMethods()) {
                         scan(glueCodeClass, method, cucumberAnnotationClasses, javaBackend);
                     }

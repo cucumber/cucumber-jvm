@@ -1,15 +1,14 @@
 package cucumber.runtime.java.guice.loadguicemodule;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import cucumber.annotation.en.Then;
 
 import javax.inject.Inject;
 
-
-import cucumber.annotation.en.Then;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 public class SecondSteps {
-    
+
     private final SharedBetweenSteps shared;
 
     @Inject

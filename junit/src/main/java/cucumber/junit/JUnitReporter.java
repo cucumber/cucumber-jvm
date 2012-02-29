@@ -80,7 +80,7 @@ class JUnitReporter implements Reporter, Formatter {
                 executionUnitNotifier.addFailure(error);
             }
         }
-        if(steps.isEmpty()) {
+        if (steps.isEmpty()) {
             // We have run all of our steps. Set the stepNotifier to null so that
             // if an error occurs in an After block, it's reported against the scenario
             // instead (via executionUnitNotifier).

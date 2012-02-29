@@ -1,6 +1,5 @@
 package cucumber.runtime.java;
 
-import cucumber.DateFormat;
 import cucumber.annotation.Pending;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.JdkPatternArgumentMatcher;
@@ -11,11 +10,8 @@ import gherkin.I18n;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 

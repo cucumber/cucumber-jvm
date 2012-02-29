@@ -1,114 +1,114 @@
 [
-  {
-    "source": "^I add (.*)",
-    "flags": "",
-    "steps": []
-  },
-  {
-    "source": "^I have (\\d+) (.*) in my belly$",
-    "flags": "",
-    "steps": [
-      {
-        "name": "I have 12 cukes in my belly",
-        "args": [
-          {
-            "offset": 7,
-            "val": "12"
-          },
-          {
-            "offset": 10,
-            "val": "cukes"
-          }
+    {
+        "source": "^I add (.*)",
+        "flags": "",
+        "steps": []
+    },
+    {
+        "source": "^I have (\\d+) (.*) in my belly$",
+        "flags": "",
+        "steps": [
+            {
+                "name": "I have 12 cukes in my belly",
+                "args": [
+                    {
+                        "offset": 7,
+                        "val": "12"
+                    },
+                    {
+                        "offset": 10,
+                        "val": "cukes"
+                    }
+                ]
+            },
+            {
+                "name": "I have 3 cukes in my belly",
+                "args": [
+                    {
+                        "offset": 7,
+                        "val": "3"
+                    },
+                    {
+                        "offset": 9,
+                        "val": "cukes"
+                    }
+                ]
+            }
         ]
-      },
-      {
-        "name": "I have 3 cukes in my belly",
-        "args": [
-          {
-            "offset": 7,
-            "val": "3"
-          },
-          {
-            "offset": 9,
-            "val": "cukes"
-          }
+    },
+    {
+        "source": "^I have this in my basket:$",
+        "flags": "",
+        "steps": [
+            {
+                "name": "I have this in my basket:",
+                "args": []
+            }
         ]
-      }
-    ]
-  },
-  {
-    "source": "^I have this in my basket:$",
-    "flags": "",
-    "steps": [
-      {
-        "name": "I have this in my basket:",
-        "args": []
-      }
-    ]
-  },
-  {
-    "source": "^I should be (.*)$",
-    "flags": "",
-    "steps": [
-      {
-        "name": "I should be \u003cmood\u003e",
-        "args": [
-          {
-            "offset": 12,
-            "val": "\u003cmood\u003e"
-          }
+    },
+    {
+        "source": "^I should be (.*)$",
+        "flags": "",
+        "steps": [
+            {
+                "name": "I should be \u003cmood\u003e",
+                "args": [
+                    {
+                        "offset": 12,
+                        "val": "\u003cmood\u003e"
+                    }
+                ]
+            }
         ]
-      }
-    ]
-  },
-  {
-    "source": "^the (.*) contains (.*)",
-    "flags": "",
-    "steps": []
-  },
-  {
-    "source": "^the date is (.+)$",
-    "flags": "",
-    "steps": [
-      {
-        "name": "the date is 2011/10/25",
-        "args": [
-          {
-            "offset": 12,
-            "val": "2011/10/25"
-          }
+    },
+    {
+        "source": "^the (.*) contains (.*)",
+        "flags": "",
+        "steps": []
+    },
+    {
+        "source": "^the date is (.+)$",
+        "flags": "",
+        "steps": [
+            {
+                "name": "the date is 2011/10/25",
+                "args": [
+                    {
+                        "offset": 12,
+                        "val": "2011/10/25"
+                    }
+                ]
+            }
         ]
-      }
-    ]
-  },
-  {
-    "source": "^the date should be (.+)$",
-    "flags": "",
-    "steps": [
-      {
-        "name": "the date should be Oct 25 2011",
-        "args": [
-          {
-            "offset": 19,
-            "val": "Oct 25 2011"
-          }
+    },
+    {
+        "source": "^the date should be (.+)$",
+        "flags": "",
+        "steps": [
+            {
+                "name": "the date should be Oct 25 2011",
+                "args": [
+                    {
+                        "offset": 19,
+                        "val": "Oct 25 2011"
+                    }
+                ]
+            }
         ]
-      }
-    ]
-  },
-  {
-    "source": "^there are (\\d+) cukes in my belly",
-    "flags": "",
-    "steps": [
-      {
-        "name": "there are 3 cukes in my belly",
-        "args": [
-          {
-            "offset": 10,
-            "val": "3"
-          }
+    },
+    {
+        "source": "^there are (\\d+) cukes in my belly",
+        "flags": "",
+        "steps": [
+            {
+                "name": "there are 3 cukes in my belly",
+                "args": [
+                    {
+                        "offset": 10,
+                        "val": "3"
+                    }
+                ]
+            }
         ]
-      }
-    ]
-  }
+    }
 ]

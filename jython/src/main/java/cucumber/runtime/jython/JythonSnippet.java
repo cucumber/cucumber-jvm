@@ -1,8 +1,6 @@
 package cucumber.runtime.jython;
 
 import cucumber.runtime.snippets.Snippet;
-import cucumber.runtime.snippets.SnippetGenerator;
-import gherkin.formatter.model.Step;
 
 import java.util.List;
 

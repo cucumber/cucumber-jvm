@@ -1,11 +1,11 @@
 package cucumber.runtime.java.guice;
 
-import static java.text.MessageFormat.format;
+import com.google.inject.Module;
 
 import java.util.Collections;
 import java.util.List;
 
-import com.google.inject.Module;
+import static java.text.MessageFormat.format;
 
 public class ModuleInstantiator {
     public List<Module> instantiate(String moduleClassName) {

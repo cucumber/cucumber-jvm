@@ -1,16 +1,17 @@
 package cucumber.runtime.java;
 
-import static java.util.Arrays.*;
-import static org.mockito.Mockito.*;
-
-import org.junit.Test;
-import org.mockito.Mockito;
-import org.mockito.internal.util.reflection.Whitebox;
-
 import cucumber.annotation.Before;
 import cucumber.io.ClasspathResourceLoader;
 import cucumber.runtime.Glue;
 import cucumber.runtime.java.test2.Stepdefs2;
+import org.junit.Test;
+import org.mockito.Mockito;
+import org.mockito.internal.util.reflection.Whitebox;
+
+import static java.util.Arrays.asList;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 public class ClasspathMethodScannerTest {
 
