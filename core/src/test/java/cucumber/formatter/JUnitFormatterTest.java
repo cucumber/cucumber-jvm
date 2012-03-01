@@ -1,21 +1,27 @@
 package cucumber.formatter;
 
-import cucumber.io.ClasspathResourceLoader;
-import cucumber.runtime.Backend;
-import cucumber.runtime.Runtime;
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
+import static junit.framework.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.List;
+
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.*;
-import java.util.List;
-
-import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
-import static junit.framework.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
+import cucumber.io.ClasspathResourceLoader;
+import cucumber.runtime.Backend;
+import cucumber.runtime.Runtime;
 
 /**
  * @author Uladzimir Mihura
@@ -43,7 +49,7 @@ public class JUnitFormatterTest {
     }
 
     private void runFeaturesWithFormatter(final List<String> featurePaths) throws IOException {
-        File report = new File("report.xml");
+        FileWriter report = new FileWriter(new File("report.xml"));
 //        report.deleteOnExit();
         final JUnitFormatter f = new JUnitFormatter(report);
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
