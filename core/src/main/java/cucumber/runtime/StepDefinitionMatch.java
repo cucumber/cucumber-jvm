@@ -3,9 +3,7 @@ package cucumber.runtime;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.ConverterLookup;
 import com.thoughtworks.xstream.converters.SingleValueConverter;
-import cucumber.runtime.converters.DateConverter;
 import cucumber.runtime.converters.LocalizedXStreams;
-import cucumber.runtime.converters.SingleValueConverterWrapperExt;
 import cucumber.runtime.converters.TimeConverter;
 import cucumber.table.DataTable;
 import cucumber.table.TableConverter;
@@ -18,7 +16,6 @@ import gherkin.util.Mapper;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -58,7 +55,7 @@ public class StepDefinitionMatch extends Match {
      * @param locale         the feature's locale
      * @return an Array matching the types or {@code parameterTypes}, or an array of String if {@code parameterTypes} is null
      */
-    private Object[] transformedArgs(List<ParameterType> parameterTypes, Step step, XStream xStream, Locale locale) {
+    private Object[] transformedArgs(List<ParameterType> parameterTypes, Step step, LocalizedXStreams.LocalizedXStream xStream, Locale locale) {
         if (xStream == null) {
             throw new NullPointerException("xStream");
         }
@@ -104,18 +101,11 @@ public class StepDefinitionMatch extends Match {
 
         if (step.getRows() != null) {
             ParameterType parameterType = parameterTypes.get(n);
-            TimeConverter timeConverter = null;
-            if (parameterType.getDateFormat() != null) {
-                SingleValueConverterWrapperExt converterWrapper = (SingleValueConverterWrapperExt) xStream.getConverterLookup().lookupConverterForType(Date.class);
-                timeConverter = (TimeConverter) converterWrapper.getConverter();
-                timeConverter.setOnlyFormat(parameterType.getDateFormat(), locale);
-            }
+            xStream.setDateFormat(parameterType.getDateFormat());
             try {
-                result[n] = tableArgument(step, n, xStream);
+                result[n] = tableArgument(step, n, xStream, parameterType.getDateFormat());
             } finally {
-                if (timeConverter != null) {
-                    timeConverter.removeOnlyFormat();
-                }
+                xStream.unsetDateFormat();
             }
         } else if (step.getDocString() != null) {
             result[n] = step.getDocString().getValue();
@@ -140,8 +130,8 @@ public class StepDefinitionMatch extends Match {
         return arguments;
     }
 
-    private Object tableArgument(Step step, int argIndex, XStream xStream) {
-        DataTable table = new DataTable(step.getRows(), new TableConverter(xStream));
+    private Object tableArgument(Step step, int argIndex, XStream xStream, String dateFormat) {
+        DataTable table = new DataTable(step.getRows(), new TableConverter(xStream, dateFormat));
 
         Type listType = getGenericListType(argIndex);
         if (listType != null) {

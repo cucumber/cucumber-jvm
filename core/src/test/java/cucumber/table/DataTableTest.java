@@ -25,7 +25,7 @@ public class DataTableTest {
         simpleRows.add(new DataTableRow(new ArrayList<Comment>(), asList("4444", "55555", "666666"), 2));
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         XStream xStream = new LocalizedXStreams(classLoader).get(new I18n("en"));
-        simpleTable = new DataTable(simpleRows, new TableConverter(xStream));
+        simpleTable = new DataTable(simpleRows, new TableConverter(xStream, null));
     }
 
     @Test

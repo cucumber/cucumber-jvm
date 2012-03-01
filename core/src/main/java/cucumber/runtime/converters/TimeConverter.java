@@ -57,12 +57,19 @@ public abstract class TimeConverter<T> extends ConverterWithFormat<T> {
     }
 
     public static TimeConverter getInstance(ParameterType parameterType, Locale locale) {
-        if(Date.class.isAssignableFrom(parameterType.getParameterClass())) {
+        if (Date.class.isAssignableFrom(parameterType.getParameterClass())) {
             return new DateConverter(locale);
-        } else if(Calendar.class.isAssignableFrom(parameterType.getParameterClass())) {
+        } else if (Calendar.class.isAssignableFrom(parameterType.getParameterClass())) {
             return new CalendarConverter(locale);
         } else {
             throw new CucumberException("Unsupported time type: " + parameterType.getParameterClass());
         }
+    }
+
+    public static List<Class> getTimeClasses() {
+        List<Class> classes = new ArrayList<Class>();
+        classes.add(Date.class);
+        classes.add(Calendar.class);
+        return classes;
     }
 }

@@ -92,8 +92,9 @@ public class FromDataTableTest {
     @Test
     public void transforms_to_list_of_pojos() throws Throwable {
         Method m = StepDefs.class.getMethod("listOfPojos", List.class);
-        StepDefs stepDefs = runStepDef(m, listOfDatesWithHeader());
+        StepDefs stepDefs = runStepDef(m, listOfDatesAndCalWithHeader());
         assertEquals(sidsBirthday(), stepDefs.listOfPojos.get(0).birthDate);
+        assertEquals(sidsDeathcal(), stepDefs.listOfPojos.get(0).deathCal);
     }
 
     @Test
@@ -187,6 +188,13 @@ public class FromDataTableTest {
         return rows;
     }
 
+    private List<DataTableRow> listOfDatesAndCalWithHeader() {
+        List<DataTableRow> rows = new ArrayList<DataTableRow>();
+        rows.add(new DataTableRow(NO_COMMENTS, asList("Birth Date", "Death Cal"), 1));
+        rows.add(new DataTableRow(NO_COMMENTS, asList("1957-05-10", "1979-02-02"), 2));
+        return rows;
+    }
+
     private List<DataTableRow> listOfDatesAndNamesWithHeader() {
         List<DataTableRow> rows = new ArrayList<DataTableRow>();
         rows.add(new DataTableRow(NO_COMMENTS, asList("Birth Date", "Name"), 1));
@@ -203,15 +211,24 @@ public class FromDataTableTest {
     }
 
     private Date sidsBirthday() {
-        Calendar sidsBirthDay = Calendar.getInstance();
-        sidsBirthDay.set(1957, 4, 10, 0, 0, 0);
-        sidsBirthDay.set(Calendar.MILLISECOND, 0);
-        sidsBirthDay.setTimeZone(TimeZone.getTimeZone("UTC"));
-        return sidsBirthDay.getTime();
+        Calendar sidsBirthday = Calendar.getInstance();
+        sidsBirthday.set(1957, 4, 10, 0, 0, 0);
+        sidsBirthday.set(Calendar.MILLISECOND, 0);
+        sidsBirthday.setTimeZone(TimeZone.getTimeZone("UTC"));
+        return sidsBirthday.getTime();
+    }
+
+    private Calendar sidsDeathcal() {
+        Calendar sidsDeathcal = Calendar.getInstance();
+        sidsDeathcal.set(1979, 1, 2, 0, 0, 0);
+        sidsDeathcal.set(Calendar.MILLISECOND, 0);
+        sidsDeathcal.setTimeZone(TimeZone.getTimeZone("UTC"));
+        return sidsDeathcal;
     }
 
     public static class UserPojo {
         private Date birthDate;
+        private Calendar deathCal;
     }
 
     @XStreamConverter(JavaBeanConverter.class)

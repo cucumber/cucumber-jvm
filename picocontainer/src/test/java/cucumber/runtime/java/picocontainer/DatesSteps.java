@@ -24,7 +24,7 @@ public class DatesSteps {
         this.date = toMidnight(date);
     }
 
-    @Given("^the iso calendar is (.+)$")
+    @Given("^the iso calendar is (\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2})$")
     public void the_iso_calendar_is(@DateFormat("yyyy-MM-dd'T'HH:mm:ss") Calendar cal) {
         this.date = toMidnight(cal);
     }
@@ -39,7 +39,7 @@ public class DatesSteps {
         cal.set(Calendar.HOUR_OF_DAY, 0);
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MILLISECOND,0);
+        cal.set(Calendar.MILLISECOND, 0);
         return cal.getTime();
     }
 

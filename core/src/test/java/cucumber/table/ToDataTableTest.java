@@ -22,7 +22,7 @@ public class ToDataTableTest {
     @Before
     public void createTableConverterWithDateFormat() {
         XStream xStream = new LocalizedXStreams(Thread.currentThread().getContextClassLoader()).get(new I18n("en"));
-        tc = new TableConverter(xStream);
+        tc = new TableConverter(xStream, null);
         SingleValueConverterWrapperExt converterWrapper = (SingleValueConverterWrapperExt) xStream.getConverterLookup().lookupConverterForType(Date.class);
         TimeConverter timeConverter = (TimeConverter) converterWrapper.getConverter();
         timeConverter.setOnlyFormat("dd/MM/yyyy", Locale.UK);
