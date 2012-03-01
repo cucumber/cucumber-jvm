@@ -1,18 +1,22 @@
 package cucumber.formatter;
 
-import cucumber.runtime.CucumberException;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.JSONFormatter;
 import gherkin.formatter.JSONPrettyFormatter;
 import gherkin.formatter.PrettyFormatter;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.util.HashMap;
 import java.util.Map;
+
+import cucumber.runtime.CucumberException;
 
 public class FormatterFactory {
 
     private final ClassLoader classLoader;
+
+    private final Boolean monochrome = Boolean.parseBoolean(System.getProperty("cucumber.monochrome"));
 
     private static final Map<String, String> BUILTIN_FORMATTERS = new HashMap<String, String>() {{
         put("progress", ProgressFormatter.class.getName());
@@ -34,20 +38,26 @@ public class FormatterFactory {
 
     private Formatter createFormatterFromClassName(String className, Object out) {
         try {
-            Class ctorArgClass = Appendable.class;
+            Class<?> ctorArgClass = Appendable.class;
             if (out instanceof File) {
                 File file = (File) out;
-                out = file;
-                ctorArgClass = File.class;
+                if (file.isDirectory()) {
+                    file.mkdirs();
+                    out = file;
+                    ctorArgClass = File.class;
+                } else {
+                    file.getParentFile().mkdirs();
+                    out = new FileWriter(file);
+                }
             }
 
             Class<Formatter> formatterClass = getFormatterClass(className);
             // TODO: Remove these if statements. We should fix PrettyFormatter and ProgressFormatter to only take a single Appendable arg.
             // Whether or not to use Monochrome is tricky. Maybe always enforce another 2nd argument for that
             if (PrettyFormatter.class.isAssignableFrom(formatterClass)) {
-                return formatterClass.getConstructor(ctorArgClass, Boolean.TYPE, Boolean.TYPE).newInstance(out, false, true);
+                return formatterClass.getConstructor(ctorArgClass, Boolean.TYPE, Boolean.TYPE).newInstance(out, monochrome, true);
             } else if (ProgressFormatter.class.isAssignableFrom(formatterClass)) {
-                return formatterClass.getConstructor(ctorArgClass, Boolean.TYPE).newInstance(out, false);
+                return formatterClass.getConstructor(ctorArgClass, Boolean.TYPE).newInstance(out, monochrome);
             } else {
                 return formatterClass.getConstructor(ctorArgClass).newInstance(out);
             }

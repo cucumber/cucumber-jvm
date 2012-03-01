@@ -1,11 +1,22 @@
 package cucumber.formatter;
 
-import cucumber.runtime.CucumberException;
 import gherkin.formatter.Formatter;
+import gherkin.formatter.NiceAppendable;
 import gherkin.formatter.Reporter;
-import gherkin.formatter.model.*;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import gherkin.formatter.model.Background;
+import gherkin.formatter.model.Examples;
+import gherkin.formatter.model.Feature;
+import gherkin.formatter.model.Match;
+import gherkin.formatter.model.Result;
+import gherkin.formatter.model.Scenario;
+import gherkin.formatter.model.ScenarioOutline;
+import gherkin.formatter.model.Step;
+
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -15,22 +26,21 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.File;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.List;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import cucumber.runtime.CucumberException;
 
 public class JUnitFormatter implements Formatter, Reporter {
-    private final File out;
+    private final NiceAppendable out;
     private final Document doc;
     private final Element rootElement;
 
     private TestCase testCase;
 
-    public JUnitFormatter(File out) {
-        this.out = out;
+    public JUnitFormatter(Appendable out) {
+        this.out = new NiceAppendable(out);
         try {
             doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
             rootElement = doc.createElement("testsuite");
@@ -74,9 +84,11 @@ public class JUnitFormatter implements Formatter, Reporter {
             TransformerFactory transfac = TransformerFactory.newInstance();
             Transformer trans = transfac.newTransformer();
             trans.setOutputProperty(OutputKeys.INDENT, "yes");
-            StreamResult result = new StreamResult(out);
+            StringWriter output = new StringWriter();
+            StreamResult result = new StreamResult(output);
             DOMSource source = new DOMSource(doc);
             trans.transform(source, result);
+            out.append(output.toString());
         } catch (TransformerException e) {
             new CucumberException("Error while transforming.", e);
         }
@@ -127,6 +139,7 @@ public class JUnitFormatter implements Formatter, Reporter {
 
     @Override
     public void close() {
+        out.close();
     }
 
     @Override
