@@ -1,5 +1,6 @@
 package cucumber.formatter;
 
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,12 +11,9 @@ import cucumber.formatter.usage.UsageStatisticStrategy;
 import cucumber.runtime.StepDefinitionMatch;
 import gherkin.deps.com.google.gson.Gson;
 import gherkin.deps.com.google.gson.GsonBuilder;
-import gherkin.formatter.Format;
 import gherkin.formatter.Formatter;
-import gherkin.formatter.MonochromeFormats;
 import gherkin.formatter.NiceAppendable;
 import gherkin.formatter.Reporter;
-import gherkin.formatter.StepPrinter;
 import gherkin.formatter.model.Background;
 import gherkin.formatter.model.Examples;
 import gherkin.formatter.model.Feature;
@@ -34,7 +32,6 @@ public class UsageFormatter implements Formatter, Reporter
     final Map<String,List<StepContainer>> usageMap = new HashMap<String, List<StepContainer>>();
     final Map<String, UsageStatisticStrategy> statisticStrategies = new HashMap<String, UsageStatisticStrategy>();
 
-    private final List<Step> steps = new ArrayList<Step>();
     private final NiceAppendable out;
 
     private Match match;
@@ -79,9 +76,18 @@ public class UsageFormatter implements Formatter, Reporter
     }
 
     @Override
+    public void embedding(String mimeType, InputStream data)
+    {
+    }
+
+    @Override
+    public void write(String text)
+    {
+    }
+
+    @Override
     public void step(Step step)
     {
-        steps.add(step);
     }
 
     @Override
@@ -173,13 +179,17 @@ public class UsageFormatter implements Formatter, Reporter
     public void result(Result result)
     {
         String stepDefinition = getStepDefinition();
+        String stepName = getStepName();
+        addUsageEntry(result, stepDefinition, stepName);
+    }
 
-        if (stepDefinition != null && !steps.isEmpty())
+    private String getStepName()
+    {
+        if (match instanceof StepDefinitionMatch)
         {
-            Step step = steps.remove(0);
-            String stepNameWithArgs = step.getName();
-            addUsageEntry(result, stepDefinition, stepNameWithArgs);
+            return ((StepDefinitionMatch) match).getStepName();
         }
+        return null;
     }
 
     private String getStepDefinition()
@@ -200,7 +210,7 @@ public class UsageFormatter implements Formatter, Reporter
             usageMap.put(stepDefinition, stepContainers);
         }
         StepContainer stepContainer = findOrCreateStepContainer(stepNameWithArgs, stepContainers);
-        
+
         String stepLocation = getStepLocation();
         Long duration = result.getDuration();
         StepDuration stepDuration = createStepDuration(duration, stepLocation);
@@ -252,11 +262,6 @@ public class UsageFormatter implements Formatter, Reporter
         this.match = match;
     }
 
-    @Override
-    public void embedding(String mimeType, byte[] data)
-    {
-    }
-
     /**
      * Add a {@link UsageStatisticStrategy} to the formatter
      * @param key the key, will be displayed in the output
@@ -276,7 +281,7 @@ public class UsageFormatter implements Formatter, Reporter
          * The StepDefinition (pattern)
          */
         public String source;
-        
+
         /**
          * A list of Steps
          */

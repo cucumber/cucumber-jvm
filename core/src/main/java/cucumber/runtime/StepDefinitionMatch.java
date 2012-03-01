@@ -177,4 +177,9 @@ public class StepDefinitionMatch extends Match {
     public StackTraceElement getStepLocation() {
         return step.getStackTraceElement(uri);
     }
+
+    public String getStepName()
+    {
+        return step.getName();
+    }
 }

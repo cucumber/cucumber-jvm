@@ -21,7 +21,6 @@ import org.mockito.Mockito;
 import cucumber.formatter.usage.UsageStatisticStrategy;
 import cucumber.runtime.StepDefinitionMatch;
 import gherkin.formatter.model.Result;
-import gherkin.formatter.model.Step;
 
 public class UsageFormatterTest
 {
@@ -45,14 +44,10 @@ public class UsageFormatterTest
     }
 
     @Test
-    public void resultWithOneStep()
+    public void resultWithStep()
     {
         Appendable out = mock(Appendable.class);
         UsageFormatter usageFormatter = new UsageFormatter(out);
-
-        Step step = mock(Step.class);
-        when(step.getName()).thenReturn("step");
-        usageFormatter.step(step);
 
         StepDefinitionMatch match = mockStepDefinitionMatch();
         usageFormatter.match(match);
@@ -76,6 +71,7 @@ public class UsageFormatterTest
         StepDefinitionMatch match = mock(StepDefinitionMatch.class, Mockito.RETURNS_MOCKS);
         when(match.getPattern()).thenReturn("stepDef");
         when(match.getStepLocation()).thenReturn(new StackTraceElement("x", "y", "z", 3));
+        when(match.getStepName()).thenReturn("step");
         return match;
     }
 
@@ -84,10 +80,6 @@ public class UsageFormatterTest
     {
         Appendable out = mock(Appendable.class);
         UsageFormatter usageFormatter = new UsageFormatter(out);
-
-         Step step = mock(Step.class);
-        when(step.getName()).thenReturn("step");
-        usageFormatter.step(step);
 
         StepDefinitionMatch match = mockStepDefinitionMatch();
         usageFormatter.match(match);
@@ -111,10 +103,6 @@ public class UsageFormatterTest
     {
         Appendable out = mock(Appendable.class);
         UsageFormatter usageFormatter = new UsageFormatter(out);
-
-        Step step = mock(Step.class);
-        when(step.getName()).thenReturn("step");
-        usageFormatter.step(step);
 
         StepDefinitionMatch match = mockStepDefinitionMatch();
         usageFormatter.match(match);
