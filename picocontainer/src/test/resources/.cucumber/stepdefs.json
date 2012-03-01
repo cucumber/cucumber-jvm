@@ -7,59 +7,17 @@
   {
     "source": "^I have (\\d+) (.*) in my belly$",
     "flags": "",
-    "steps": [
-      {
-        "name": "I have 12 cukes in my belly",
-        "args": [
-          {
-            "offset": 7,
-            "val": "12"
-          },
-          {
-            "offset": 10,
-            "val": "cukes"
-          }
-        ]
-      },
-      {
-        "name": "I have 3 cukes in my belly",
-        "args": [
-          {
-            "offset": 7,
-            "val": "3"
-          },
-          {
-            "offset": 9,
-            "val": "cukes"
-          }
-        ]
-      }
-    ]
+    "steps": []
   },
   {
     "source": "^I have this in my basket:$",
     "flags": "",
-    "steps": [
-      {
-        "name": "I have this in my basket:",
-        "args": []
-      }
-    ]
+    "steps": []
   },
   {
     "source": "^I should be (.*)$",
     "flags": "",
-    "steps": [
-      {
-        "name": "I should be \u003cmood\u003e",
-        "args": [
-          {
-            "offset": 12,
-            "val": "\u003cmood\u003e"
-          }
-        ]
-      }
-    ]
+    "steps": []
   },
   {
     "source": "^the (.*) contains (.*)",
@@ -69,46 +27,46 @@
   {
     "source": "^the date is (.+)$",
     "flags": "",
-    "steps": [
-      {
-        "name": "the date is 2011/10/25",
-        "args": [
-          {
-            "offset": 12,
-            "val": "2011/10/25"
-          }
-        ]
-      }
-    ]
+    "steps": []
   },
   {
     "source": "^the date should be (.+)$",
     "flags": "",
     "steps": [
       {
-        "name": "the date should be Oct 25 2011",
+        "name": "the date should be Mar 1 2012",
         "args": [
           {
             "offset": 19,
-            "val": "Oct 25 2011"
+            "val": "Mar 1 2012"
           }
         ]
       }
     ]
   },
   {
-    "source": "^there are (\\d+) cukes in my belly",
+    "source": "^the iso calendar is (.+)$",
     "flags": "",
     "steps": [
       {
-        "name": "there are 3 cukes in my belly",
+        "name": "the iso calendar is 2012-03-01T06:54:14",
         "args": [
           {
-            "offset": 10,
-            "val": "3"
+            "offset": 20,
+            "val": "2012-03-01T06:54:14"
           }
         ]
       }
     ]
+  },
+  {
+    "source": "^the iso date is (.+)$",
+    "flags": "",
+    "steps": []
+  },
+  {
+    "source": "^there are (\\d+) cukes in my belly",
+    "flags": "",
+    "steps": []
   }
 ]

@@ -6,6 +6,7 @@ import com.thoughtworks.xstream.converters.SingleValueConverter;
 import cucumber.runtime.converters.DateConverter;
 import cucumber.runtime.converters.LocalizedXStreams;
 import cucumber.runtime.converters.SingleValueConverterWrapperExt;
+import cucumber.runtime.converters.TimeConverter;
 import cucumber.table.DataTable;
 import cucumber.table.TableConverter;
 import gherkin.I18n;
@@ -80,31 +81,40 @@ public class StepDefinitionMatch extends Match {
         int n = 0;
         for (Argument a : getArguments()) {
             SingleValueConverter converter;
+            TimeConverter timeConverter = null;
             ParameterType parameterType = parameterTypes.get(n);
             if (parameterType.getDateFormat() != null) {
-                converter = new DateConverter(parameterType.getDateFormat(), locale);
+                timeConverter = TimeConverter.getInstance(parameterType, locale);
+                timeConverter.setOnlyFormat(parameterType.getDateFormat(), locale);
+                converter = timeConverter;
             } else {
                 // TODO: We might get a lookup that doesn't implement SingleValueConverter
                 // Need to throw a more friendly exception in that case.
                 converter = (SingleValueConverter) converterLookup.lookupConverterForType(parameterType.getParameterClass());
             }
-            result[n] = converter.fromString(a.getVal());
+            try {
+                result[n] = converter.fromString(a.getVal());
+            } finally {
+                if (timeConverter != null) {
+                    timeConverter.removeOnlyFormat();
+                }
+            }
             n++;
         }
 
         if (step.getRows() != null) {
             ParameterType parameterType = parameterTypes.get(n);
-            DateConverter dateConverter = null;
+            TimeConverter timeConverter = null;
             if (parameterType.getDateFormat() != null) {
                 SingleValueConverterWrapperExt converterWrapper = (SingleValueConverterWrapperExt) xStream.getConverterLookup().lookupConverterForType(Date.class);
-                dateConverter = (DateConverter) converterWrapper.getConverter();
-                dateConverter.setOnlyFormat(parameterType.getDateFormat(), locale);
+                timeConverter = (TimeConverter) converterWrapper.getConverter();
+                timeConverter.setOnlyFormat(parameterType.getDateFormat(), locale);
             }
             try {
                 result[n] = tableArgument(step, n, xStream);
             } finally {
-                if (dateConverter != null) {
-                    dateConverter.removeOnlyFormat();
+                if (timeConverter != null) {
+                    timeConverter.removeOnlyFormat();
                 }
             }
         } else if (step.getDocString() != null) {

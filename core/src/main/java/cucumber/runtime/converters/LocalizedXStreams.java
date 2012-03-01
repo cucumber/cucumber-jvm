@@ -38,6 +38,7 @@ public class LocalizedXStreams {
         register(lookup, new BigIntegerConverter(locale));
         register(lookup, new ByteConverter(locale));
         register(lookup, new DateConverter(locale));
+        register(lookup, new CalendarConverter(locale));
         register(lookup, new DoubleConverter(locale));
         register(lookup, new FloatConverter(locale));
         register(lookup, new IntegerConverter(locale));
