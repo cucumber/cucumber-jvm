@@ -3,6 +3,7 @@ package cucumber.runtime;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.ConverterLookup;
 import com.thoughtworks.xstream.converters.SingleValueConverter;
+import cucumber.runtime.converters.EnumConverter;
 import cucumber.runtime.converters.LocalizedXStreams;
 import cucumber.runtime.converters.TimeConverter;
 import cucumber.table.DataTable;
@@ -84,6 +85,8 @@ public class StepDefinitionMatch extends Match {
                 timeConverter = TimeConverter.getInstance(parameterType, locale);
                 timeConverter.setOnlyFormat(parameterType.getDateFormat(), locale);
                 converter = timeConverter;
+            } else if (parameterType.getParameterClass().isEnum()) {
+                converter = new EnumConverter(locale, (Class<? extends Enum>) parameterType.getParameterClass());
             } else {
                 // TODO: We might get a lookup that doesn't implement SingleValueConverter
                 // Need to throw a more friendly exception in that case.
