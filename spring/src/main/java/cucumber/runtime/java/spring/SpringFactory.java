@@ -33,7 +33,7 @@ public class SpringFactory implements ObjectFactory {
 
     private static AbstractApplicationContext applicationContext;
 
-    private final Collection<Class<?>> stepClasses = new HashSet<Class<?>> ();
+    private final Collection<Class<?>> stepClasses = new HashSet<Class<?>>();
 
     public SpringFactory() {
     }
@@ -46,15 +46,16 @@ public class SpringFactory implements ObjectFactory {
     }
 
     @Override
-    public void addClass(final Class<?> clazz) {
-        stepClasses.add(clazz);
-        
-        BeanDefinitionRegistry registry = (BeanDefinitionRegistry) applicationContext.getAutowireCapableBeanFactory();
-        for (Class<?> stepClass : stepClasses) {
+    public void addClass(final Class<?> stepClass) {
+        if (!stepClasses.contains(stepClass)) {
+            stepClasses.add(stepClass);
+
+            BeanDefinitionRegistry registry = (BeanDefinitionRegistry) applicationContext.getAutowireCapableBeanFactory();
             registry.registerBeanDefinition(stepClass.getName(),
                     BeanDefinitionBuilder.genericBeanDefinition(stepClass)
                             .setScope(GlueCodeScope.NAME)
                             .getBeanDefinition());
+
         }
     }
 
