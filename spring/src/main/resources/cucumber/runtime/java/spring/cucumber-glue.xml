@@ -6,7 +6,7 @@
     <bean id="glueCodeScope" class="cucumber.runtime.java.spring.GlueCodeScope">
     </bean>
 
-    <bean id="customScopeConfigurer" class="org.springframework.beans.factory.config.CustomScopeConfigurer">
+    <bean id="glueCodeScopeConfigurer" class="org.springframework.beans.factory.config.CustomScopeConfigurer">
         <property name="scopes">
             <map>
                 <entry key="cucumber-glue" value-ref="glueCodeScope"/>
