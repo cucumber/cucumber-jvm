@@ -36,6 +36,6 @@ public class GlueCodeScope implements Scope {
 
     @Override
     public String getConversationId() {
-        return context.getCounter();
+        return context.getId();
     }
 }

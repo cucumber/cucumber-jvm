@@ -17,7 +17,7 @@ public class GlueCodeContext {
         counter++;
     }
 
-    public String getCounter() {
+    public String getId() {
         return "cucumber_glue_"+ counter;
     }
     
