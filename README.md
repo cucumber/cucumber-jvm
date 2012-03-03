@@ -34,15 +34,29 @@ Releases are published in [Maven Central](http://search.maven.org/)
 Jar files can be browsed and downloaded from [Maven Central] or https://oss.sonatype.org/content/repositories/releases/info/cukes/ 
 (New releases will show up here immediately, while it takes a couple of hours to sync to Maven Central).
 
-### Using Maven
+### Using Maven with JUnit
 
-Add a dependency in your [POM](http://maven.apache.org/pom.html):
+If you want to write simple Cucumber tests with JUnit add the following dependencies 
+in your [POM](http://maven.apache.org/pom.html):
 
 ```xml
 <dependency>
     <groupId>info.cukes</groupId>
-    <artifactId>cucumber-core</artifactId>
+    <artifactId>cucumber-java</artifactId>
     <version>1.0.0.RC20</version>
+    <scope>test</scope>
+</dependency>
+<dependency>
+    <groupId>info.cukes</groupId>
+    <artifactId>cucumber-junit</artifactId>
+    <version>1.0.0.RC20</version>
+    <scope>test</scope>
+</dependency>
+<dependency>
+    <groupId>junit</groupId>
+    <artifactId>junit</artifactId>
+    <version>4.10</version>
+    <scope>test</scope>
 </dependency>
 ```
 
