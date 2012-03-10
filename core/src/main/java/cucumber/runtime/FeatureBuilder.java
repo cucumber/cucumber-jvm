@@ -5,12 +5,7 @@ import cucumber.runtime.model.CucumberFeature;
 import gherkin.I18n;
 import gherkin.formatter.FilterFormatter;
 import gherkin.formatter.Formatter;
-import gherkin.formatter.model.Background;
-import gherkin.formatter.model.Examples;
-import gherkin.formatter.model.Feature;
-import gherkin.formatter.model.Scenario;
-import gherkin.formatter.model.ScenarioOutline;
-import gherkin.formatter.model.Step;
+import gherkin.formatter.model.*;
 import gherkin.parser.Parser;
 import gherkin.util.FixJava;
 
@@ -114,6 +109,16 @@ public class FeatureBuilder implements Formatter {
             // The current feature may be null if we used a very restrictive filter, say a tag that isn't used.
             // Might also happen if the feature file itself is empty.
             currentCucumberFeature.setI18n(i18n);
+        } else {
+            // no Filter, then empty Feature
+            if (filters.isEmpty()) {
+                throw new CucumberException("Feature empty");
+
+            } else {
+                // no Feature found for those Tag
+                throw new CucumberException(String.format("No feature found for Tag %s", filters));
+            }
+
         }
     }
 
