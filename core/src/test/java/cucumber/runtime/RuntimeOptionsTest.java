@@ -1,18 +1,24 @@
 package cucumber.runtime;
 
-import com.beust.jcommander.JCommander;
 import cucumber.formatter.HTMLFormatter;
 import org.junit.Test;
 
 import java.io.File;
 
+import static java.util.Arrays.asList;
 import static junit.framework.Assert.assertEquals;
 
 public class RuntimeOptionsTest {
     @Test
+    public void assigns_feature_paths() {
+        RuntimeOptions options = new RuntimeOptions("--glue", "somewhere", "somewhere_else");
+        assertEquals(asList(new File("somewhere_else")), options.featurePaths);
+    }
+
+    @Test
     public void assigns_glue() {
         RuntimeOptions options = new RuntimeOptions("--glue", "somewhere");
-        assertEquals("somewhere", options.glue);
+        assertEquals(asList(new File("somewhere")), options.glue);
     }
 
     @Test

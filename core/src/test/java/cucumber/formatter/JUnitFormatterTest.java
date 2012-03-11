@@ -3,6 +3,7 @@ package cucumber.formatter;
 import cucumber.io.ClasspathResourceLoader;
 import cucumber.runtime.Backend;
 import cucumber.runtime.Runtime;
+import cucumber.runtime.RuntimeOptions;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Test;
@@ -49,7 +50,8 @@ public class JUnitFormatterTest {
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         final ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
         final List<String> gluePaths = emptyList();
-        final cucumber.runtime.Runtime runtime = new Runtime(resourceLoader, gluePaths, classLoader, asList(mock(Backend.class)), false);
+        RuntimeOptions runtimeOptions = new RuntimeOptions();
+        final cucumber.runtime.Runtime runtime = new Runtime(resourceLoader, gluePaths, classLoader, asList(mock(Backend.class)), false, runtimeOptions);
         runtime.run(featurePaths, emptyList(), f, f);
         f.done();
         f.close();

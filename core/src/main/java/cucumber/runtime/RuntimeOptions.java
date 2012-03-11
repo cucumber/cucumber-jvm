@@ -11,14 +11,14 @@ import java.io.File;
 import java.util.List;
 
 public class RuntimeOptions {
-    @Parameter(names = {"-g", "--glue"}, description = "Where cucumber looks for step definitions and hooks.", required = true)
-    public String glue;
+    @Parameter(names = {"-g", "--glue"}, description = "Where cucumber looks for step definitions and hooks.")
+    public List<File> glue;
 
     @Parameter(names = {"--dotcucumber"}, description = "Where to output .cucumber files (for code completion).")
     public File dotCucumber;
 
     @Parameter(names = {"--dry-run"}, description = "Don't run anything, just format the features.")
-    public File dryRun;
+    public boolean dryRun;
 
     @Parameter(names = {"--tags"}, description = "Only execute scenarios matching TAG_EXPRESSION.")
     public List<String> tags;
@@ -29,6 +29,8 @@ public class RuntimeOptions {
     @Parameter(names = {"--format"}, description = "Formatter to use.")
     public List<Formatter> formatters;
 
+    @Parameter(description = "Feature paths")
+    public List<File> featurePaths;
 
     public RuntimeOptions(String... args) {
         JCommander cmd = new JCommander(this);

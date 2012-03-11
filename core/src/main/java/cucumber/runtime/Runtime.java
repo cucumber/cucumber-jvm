@@ -1,6 +1,7 @@
 package cucumber.runtime;
 
 import cucumber.io.ClasspathResourceLoader;
+import cucumber.io.FileResourceLoader;
 import cucumber.io.ResourceLoader;
 import cucumber.runtime.converters.LocalizedXStreams;
 import cucumber.runtime.model.CucumberFeature;
@@ -46,16 +47,21 @@ public class Runtime implements UnreportedStepExecutor {
     //They really should be created each time a scenario is run, not in here
     private boolean skipNextStep = false;
     private ScenarioResultImpl scenarioResult = null;
+    private final RuntimeOptions runtimeOptions;
 
     public Runtime(ResourceLoader resourceLoader, List<String> gluePaths, ClassLoader classLoader) {
         this(resourceLoader, gluePaths, classLoader, false);
     }
 
     public Runtime(ResourceLoader resourceLoader, List<String> gluePaths, ClassLoader classLoader, boolean isDryRun) {
-        this(resourceLoader, gluePaths, classLoader, loadBackends(resourceLoader, classLoader), isDryRun);
+        this(resourceLoader, gluePaths, classLoader, loadBackends(resourceLoader, classLoader), isDryRun, null);
     }
 
-    public Runtime(ResourceLoader resourceLoader, List<String> gluePaths, ClassLoader classLoader, Collection<? extends Backend> backends, boolean isDryRun) {
+    public Runtime(ResourceLoader resourceLoader, List<String> gluePaths, ClassLoader classLoader, RuntimeOptions runtimeOptions) {
+        this(resourceLoader, gluePaths, classLoader, loadBackends(resourceLoader, classLoader), runtimeOptions.dryRun, runtimeOptions);
+    }
+
+    public Runtime(ResourceLoader resourceLoader, List<String> gluePaths, ClassLoader classLoader, Collection<? extends Backend> backends, boolean isDryRun, RuntimeOptions runtimeOptions) {
         if (backends.isEmpty()) {
             throw new CucumberException("No backends were found. Please make sure you have a backend module on your CLASSPATH.");
         }
@@ -68,6 +74,7 @@ public class Runtime implements UnreportedStepExecutor {
             backend.loadGlue(glue, gluePaths);
             backend.setUnreportedStepExecutor(this);
         }
+        this.runtimeOptions = runtimeOptions;
     }
 
     private static Collection<? extends Backend> loadBackends(ResourceLoader resourceLoader, ClassLoader classLoader) {

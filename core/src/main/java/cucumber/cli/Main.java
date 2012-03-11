@@ -4,6 +4,7 @@ import cucumber.formatter.FormatterFactory;
 import cucumber.formatter.MultiFormatter;
 import cucumber.io.FileResourceLoader;
 import cucumber.runtime.Runtime;
+import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.snippets.SummaryPrinter;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
@@ -22,10 +23,12 @@ public class Main {
     static final String VERSION = ResourceBundle.getBundle("cucumber.version").getString("cucumber-jvm.version");
 
     public static void main(String[] argv) throws Throwable {
-        run(argv, Thread.currentThread().getContextClassLoader(), new DefaultRuntimeFactory());
+        run(argv, Thread.currentThread().getContextClassLoader());
     }
 
-    public static void run(String[] argv, ClassLoader classLoader, RuntimeFactory runtimeFactory) throws IOException {
+    public static void run(String[] argv, ClassLoader classLoader) throws IOException {
+        RuntimeOptions runtimeOptions = new RuntimeOptions(argv);
+        
         List<String> featurePaths = new ArrayList<String>();
         List<String> gluePaths = new ArrayList<String>();
         List<Object> filters = new ArrayList<Object>();
@@ -82,7 +85,7 @@ public class Main {
             System.exit(1);
         }
 
-        Runtime runtime = runtimeFactory.createRuntime(new FileResourceLoader(), gluePaths, classLoader, isDryRun);
+        Runtime runtime = new Runtime(new FileResourceLoader(), gluePaths, classLoader, runtimeOptions);
 
         if (dotCucumber != null) {
             writeDotCucumber(featurePaths, dotCucumber, runtime);

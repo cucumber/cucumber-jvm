@@ -5,6 +5,7 @@ import cucumber.io.ClasspathResourceLoader;
 import cucumber.runtime.AmbiguousStepDefinitionsException;
 import cucumber.runtime.Glue;
 import cucumber.runtime.Runtime;
+import cucumber.runtime.RuntimeOptions;
 import gherkin.I18n;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Comment;
@@ -46,7 +47,8 @@ public class JavaStepDefinitionTest {
     private final Defs defs = new Defs();
     private final JavaBackend backend = new JavaBackend(new SingletonFactory(defs));
     private final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-    private final Runtime runtime = new Runtime(new ClasspathResourceLoader(classLoader), NO_PATHS, classLoader, asList(backend), false);
+    private final RuntimeOptions runtimeOptions = new RuntimeOptions();
+    private final Runtime runtime = new Runtime(new ClasspathResourceLoader(classLoader), NO_PATHS, classLoader, asList(backend), false, runtimeOptions);
     private final Glue glue = runtime.getGlue();
 
     @org.junit.Before

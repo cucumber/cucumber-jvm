@@ -3,6 +3,7 @@ package cucumber.formatter;
 import cucumber.io.ClasspathResourceLoader;
 import cucumber.runtime.Backend;
 import cucumber.runtime.Runtime;
+import cucumber.runtime.RuntimeOptions;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -60,7 +61,8 @@ public class HTMLFormatterTest {
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         final ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
         final List<String> gluePaths = emptyList();
-        final Runtime runtime = new Runtime(resourceLoader, gluePaths, classLoader, asList(mock(Backend.class)), false);
+        RuntimeOptions runtimeOptions = new RuntimeOptions();
+        final Runtime runtime = new Runtime(resourceLoader, gluePaths, classLoader, asList(mock(Backend.class)), false, runtimeOptions);
         runtime.run(featurePaths, emptyList(), f, f);
         f.done();
         f.close();

@@ -26,7 +26,8 @@ public class RuntimeTest {
         JSONPrettyFormatter jsonFormatter = new JSONPrettyFormatter(out);
         List<Backend> backends = asList(mock(Backend.class));
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        new Runtime(new ClasspathResourceLoader(classLoader), Collections.<String>emptyList(), classLoader, backends, true).run(feature, jsonFormatter, jsonFormatter);
+        RuntimeOptions runtimeOptions = new RuntimeOptions();
+        new Runtime(new ClasspathResourceLoader(classLoader), Collections.<String>emptyList(), classLoader, backends, true, runtimeOptions).run(feature, jsonFormatter, jsonFormatter);
         jsonFormatter.done();
         String expected = "" +
                 "[\n" +
