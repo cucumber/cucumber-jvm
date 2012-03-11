@@ -51,7 +51,7 @@ public class JUnitFormatterTest {
         final ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
         final List<String> gluePaths = emptyList();
         RuntimeOptions runtimeOptions = new RuntimeOptions();
-        final cucumber.runtime.Runtime runtime = new Runtime(resourceLoader, gluePaths, classLoader, asList(mock(Backend.class)), false, runtimeOptions);
+        final cucumber.runtime.Runtime runtime = new Runtime(resourceLoader, gluePaths, classLoader, asList(mock(Backend.class)), runtimeOptions);
         runtime.run(featurePaths, emptyList(), f, f);
         f.done();
         f.close();

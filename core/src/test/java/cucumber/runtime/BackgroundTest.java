@@ -18,7 +18,7 @@ public class BackgroundTest {
     public void should_run_background() throws IOException {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         RuntimeOptions runtimeOptions = new RuntimeOptions();
-        Runtime runtime = new Runtime(new ClasspathResourceLoader(classLoader), new ArrayList<String>(), classLoader, asList(mock(Backend.class)), false, runtimeOptions);
+        Runtime runtime = new Runtime(new ClasspathResourceLoader(classLoader), new ArrayList<String>(), classLoader, asList(mock(Backend.class)), runtimeOptions);
         CucumberFeature feature = feature("test.feature", "" +
                 "Feature:\n" +
                 "  Background:\n" +

@@ -1,7 +1,6 @@
 package cucumber.runtime;
 
 import cucumber.io.ClasspathResourceLoader;
-import cucumber.io.FileResourceLoader;
 import cucumber.io.ResourceLoader;
 import cucumber.runtime.converters.LocalizedXStreams;
 import cucumber.runtime.model.CucumberFeature;
@@ -40,7 +39,6 @@ public class Runtime implements UnreportedStepExecutor {
 
     private final List<Throwable> errors = new ArrayList<Throwable>();
     private final Collection<? extends Backend> backends;
-    private final boolean isDryRun;
     private final ResourceLoader resourceLoader;
 
     //TODO: These are really state machine variables, and I'm not sure the runtime is the best place for this state machine
@@ -49,25 +47,16 @@ public class Runtime implements UnreportedStepExecutor {
     private ScenarioResultImpl scenarioResult = null;
     private final RuntimeOptions runtimeOptions;
 
-    public Runtime(ResourceLoader resourceLoader, List<String> gluePaths, ClassLoader classLoader) {
-        this(resourceLoader, gluePaths, classLoader, false);
-    }
-
-    public Runtime(ResourceLoader resourceLoader, List<String> gluePaths, ClassLoader classLoader, boolean isDryRun) {
-        this(resourceLoader, gluePaths, classLoader, loadBackends(resourceLoader, classLoader), isDryRun, null);
-    }
-
     public Runtime(ResourceLoader resourceLoader, List<String> gluePaths, ClassLoader classLoader, RuntimeOptions runtimeOptions) {
-        this(resourceLoader, gluePaths, classLoader, loadBackends(resourceLoader, classLoader), runtimeOptions.dryRun, runtimeOptions);
+        this(resourceLoader, gluePaths, classLoader, loadBackends(resourceLoader, classLoader), runtimeOptions);
     }
 
-    public Runtime(ResourceLoader resourceLoader, List<String> gluePaths, ClassLoader classLoader, Collection<? extends Backend> backends, boolean isDryRun, RuntimeOptions runtimeOptions) {
+    public Runtime(ResourceLoader resourceLoader, List<String> gluePaths, ClassLoader classLoader, Collection<? extends Backend> backends, RuntimeOptions runtimeOptions) {
         if (backends.isEmpty()) {
             throw new CucumberException("No backends were found. Please make sure you have a backend module on your CLASSPATH.");
         }
         this.backends = backends;
         this.resourceLoader = resourceLoader;
-        this.isDryRun = isDryRun;
         glue = new RuntimeGlue(undefinedStepsTracker, new LocalizedXStreams(classLoader));
 
         for (Backend backend : backends) {
@@ -130,10 +119,6 @@ public class Runtime implements UnreportedStepExecutor {
         for (Backend backend : backends) {
             backend.disposeWorld();
         }
-    }
-
-    public boolean isDryRun() {
-        return isDryRun;
     }
 
     public List<Throwable> getErrors() {
@@ -229,7 +214,7 @@ public class Runtime implements UnreportedStepExecutor {
             return;
         }
 
-        if (isDryRun()) {
+        if (runtimeOptions.dryRun) {
             skipNextStep = true;
         }
 

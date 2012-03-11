@@ -62,7 +62,7 @@ public class HTMLFormatterTest {
         final ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
         final List<String> gluePaths = emptyList();
         RuntimeOptions runtimeOptions = new RuntimeOptions();
-        final Runtime runtime = new Runtime(resourceLoader, gluePaths, classLoader, asList(mock(Backend.class)), false, runtimeOptions);
+        final Runtime runtime = new Runtime(resourceLoader, gluePaths, classLoader, asList(mock(Backend.class)), runtimeOptions);
         runtime.run(featurePaths, emptyList(), f, f);
         f.done();
         f.close();

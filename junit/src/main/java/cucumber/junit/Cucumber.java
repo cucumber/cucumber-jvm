@@ -5,6 +5,7 @@ import cucumber.io.ClasspathResourceLoader;
 import cucumber.io.ResourceLoader;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Runtime;
+import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.snippets.SummaryPrinter;
 import org.junit.runner.Description;
@@ -55,9 +56,9 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         resourceLoader = new ClasspathResourceLoader(classLoader);
         assertNoDeclaredMethods(clazz);
         List<String> featurePaths = featurePaths(clazz);
-
         List<String> gluePaths = gluePaths(clazz);
-        runtime = new Runtime(resourceLoader, gluePaths, classLoader);
+        RuntimeOptions runtimeOptions = runtimeOptions(clazz);
+        runtime = new Runtime(resourceLoader, gluePaths, classLoader, runtimeOptions);
 
         // TODO: Create formatter(s) based on Annotations. Use same technique as in cli.Main for MultiFormatter
         jUnitReporter = new JUnitReporter(new NullReporter(), new NullReporter());
@@ -98,6 +99,15 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
                             "Offending class: " + clazz + "\n"
             );
         }
+    }
+
+    private RuntimeOptions runtimeOptions(Class clazz) {
+        Options cucumberOptions = getFeatureAnnotation(clazz);
+        
+        List<String> args = new ArrayList<String>();
+        
+        RuntimeOptions runtimeOptions = new RuntimeOptions(args.toArray(new String[args.size()]));
+        return runtimeOptions;
     }
 
     /**
