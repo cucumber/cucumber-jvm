@@ -47,11 +47,11 @@ public class Runtime implements UnreportedStepExecutor {
     private ScenarioResultImpl scenarioResult = null;
     private final RuntimeOptions runtimeOptions;
 
-    public Runtime(ResourceLoader resourceLoader, List<String> gluePaths, ClassLoader classLoader, RuntimeOptions runtimeOptions) {
-        this(resourceLoader, gluePaths, classLoader, loadBackends(resourceLoader, classLoader), runtimeOptions);
+    public Runtime(ResourceLoader resourceLoader, ClassLoader classLoader, RuntimeOptions runtimeOptions) {
+        this(resourceLoader, classLoader, loadBackends(resourceLoader, classLoader), runtimeOptions);
     }
 
-    public Runtime(ResourceLoader resourceLoader, List<String> gluePaths, ClassLoader classLoader, Collection<? extends Backend> backends, RuntimeOptions runtimeOptions) {
+    public Runtime(ResourceLoader resourceLoader, ClassLoader classLoader, Collection<? extends Backend> backends, RuntimeOptions runtimeOptions) {
         if (backends.isEmpty()) {
             throw new CucumberException("No backends were found. Please make sure you have a backend module on your CLASSPATH.");
         }
@@ -60,7 +60,7 @@ public class Runtime implements UnreportedStepExecutor {
         glue = new RuntimeGlue(undefinedStepsTracker, new LocalizedXStreams(classLoader));
 
         for (Backend backend : backends) {
-            backend.loadGlue(glue, gluePaths);
+            backend.loadGlue(glue, runtimeOptions.glue);
             backend.setUnreportedStepExecutor(this);
         }
         this.runtimeOptions = runtimeOptions;

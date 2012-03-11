@@ -6,7 +6,6 @@ import gherkin.formatter.PrettyFormatter;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import static cucumber.runtime.TestHelper.feature;
 import static java.util.Arrays.asList;
@@ -18,7 +17,7 @@ public class BackgroundTest {
     public void should_run_background() throws IOException {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         RuntimeOptions runtimeOptions = new RuntimeOptions();
-        Runtime runtime = new Runtime(new ClasspathResourceLoader(classLoader), new ArrayList<String>(), classLoader, asList(mock(Backend.class)), runtimeOptions);
+        Runtime runtime = new Runtime(new ClasspathResourceLoader(classLoader), classLoader, asList(mock(Backend.class)), runtimeOptions);
         CucumberFeature feature = feature("test.feature", "" +
                 "Feature:\n" +
                 "  Background:\n" +

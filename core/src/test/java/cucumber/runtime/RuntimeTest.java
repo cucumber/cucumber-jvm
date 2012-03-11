@@ -5,7 +5,6 @@ import cucumber.runtime.model.CucumberFeature;
 import gherkin.formatter.JSONPrettyFormatter;
 import org.junit.Test;
 
-import java.util.Collections;
 import java.util.List;
 
 import static cucumber.runtime.TestHelper.feature;
@@ -27,7 +26,7 @@ public class RuntimeTest {
         List<Backend> backends = asList(mock(Backend.class));
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         RuntimeOptions runtimeOptions = new RuntimeOptions();
-        new Runtime(new ClasspathResourceLoader(classLoader), Collections.<String>emptyList(), classLoader, backends, runtimeOptions).run(feature, jsonFormatter, jsonFormatter);
+        new Runtime(new ClasspathResourceLoader(classLoader), classLoader, backends, runtimeOptions).run(feature, jsonFormatter, jsonFormatter);
         jsonFormatter.done();
         String expected = "" +
                 "[\n" +

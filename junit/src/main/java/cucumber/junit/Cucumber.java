@@ -55,10 +55,9 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         ClassLoader classLoader = clazz.getClassLoader();
         resourceLoader = new ClasspathResourceLoader(classLoader);
         assertNoDeclaredMethods(clazz);
-        List<String> featurePaths = featurePaths(clazz);
-        List<String> gluePaths = gluePaths(clazz);
+        List<String> featurePaths = featurePaths(clazz, getFeatureAnnotation(clazz));
         RuntimeOptions runtimeOptions = runtimeOptions(clazz);
-        runtime = new Runtime(resourceLoader, gluePaths, classLoader, runtimeOptions);
+        runtime = new Runtime(resourceLoader, classLoader, runtimeOptions);
 
         // TODO: Create formatter(s) based on Annotations. Use same technique as in cli.Main for MultiFormatter
         jUnitReporter = new JUnitReporter(new NullReporter(), new NullReporter());
@@ -102,20 +101,27 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
     }
 
     private RuntimeOptions runtimeOptions(Class clazz) {
-        Options cucumberOptions = getFeatureAnnotation(clazz);
-        
         List<String> args = new ArrayList<String>();
-        
+        Options cucumberOptions = getFeatureAnnotation(clazz);
+        addGlue(cucumberOptions, clazz, args);
+
         RuntimeOptions runtimeOptions = new RuntimeOptions(args.toArray(new String[args.size()]));
         return runtimeOptions;
     }
 
-    /**
-     * @param clazz the Class used to kick it all off
-     * @return either a path to a single feature, or to a directory or classpath entry containing them
-     */
-    private List<String> featurePaths(Class clazz) {
-        Options cucumberOptions = getFeatureAnnotation(clazz);
+    private void addGlue(Options options, Class clazz, List<String> args) {
+        if(options != null) {
+            for (String glue : options.glue()) {
+                args.add("--glue");
+                args.add(glue);
+            }
+        } else {
+            args.add("--glue");
+            args.add(packagePath(clazz));
+        }
+    }
+
+    private List<String> featurePaths(Class clazz, Options cucumberOptions) {
         String featurePath;
         if (cucumberOptions != null) {
             featurePath = cucumberOptions.value();
@@ -123,21 +129,6 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
             featurePath = packagePath(clazz);
         }
         return asList(featurePath);
-    }
-
-    private List<String> gluePaths(Class clazz) {
-        List<String> gluePaths = new ArrayList<String>();
-
-        gluePaths.add(packagePath(clazz));
-
-        // Add additional ones
-        Options cucumberOptions = getFeatureAnnotation(clazz);
-        if (cucumberOptions != null) {
-            for (String packageName : cucumberOptions.packages()) {
-                gluePaths.add(packagePath(packageName));
-            }
-        }
-        return gluePaths;
     }
 
     private List<Object> filters(Class clazz) {
@@ -196,6 +187,6 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         /**
          * @return where to look for glue code (stepdefs and hooks)
          */
-        String[] packages() default {};
+        String[] glue() default {};
     }
 }

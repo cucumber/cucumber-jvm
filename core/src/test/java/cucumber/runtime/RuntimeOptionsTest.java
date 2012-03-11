@@ -12,13 +12,13 @@ public class RuntimeOptionsTest {
     @Test
     public void assigns_feature_paths() {
         RuntimeOptions options = new RuntimeOptions("--glue", "somewhere", "somewhere_else");
-        assertEquals(asList(new File("somewhere_else")), options.featurePaths);
+        assertEquals(asList("somewhere_else"), options.featurePaths);
     }
 
     @Test
     public void assigns_glue() {
         RuntimeOptions options = new RuntimeOptions("--glue", "somewhere");
-        assertEquals(asList(new File("somewhere")), options.glue);
+        assertEquals(asList("somewhere"), options.glue);
     }
 
     @Test

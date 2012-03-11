@@ -8,11 +8,12 @@ import cucumber.formatter.HTMLFormatter;
 import gherkin.formatter.Formatter;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 public class RuntimeOptions {
     @Parameter(names = {"-g", "--glue"}, description = "Where cucumber looks for step definitions and hooks.")
-    public List<File> glue;
+    public List<String> glue = new ArrayList<String>();
 
     @Parameter(names = {"--dotcucumber"}, description = "Where to output .cucumber files (for code completion).")
     public File dotCucumber;
@@ -30,7 +31,7 @@ public class RuntimeOptions {
     public List<Formatter> formatters;
 
     @Parameter(description = "Feature paths")
-    public List<File> featurePaths;
+    public List<String> featurePaths;
 
     public RuntimeOptions(String... args) {
         JCommander cmd = new JCommander(this);

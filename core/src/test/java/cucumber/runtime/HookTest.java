@@ -48,7 +48,7 @@ public class HookTest {
 
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         RuntimeOptions runtimeOptions = new RuntimeOptions();
-        Runtime runtime = new Runtime(new ClasspathResourceLoader(classLoader), CODE_PATHS, classLoader, asList(backend), runtimeOptions);
+        Runtime runtime = new Runtime(new ClasspathResourceLoader(classLoader), classLoader, asList(backend), runtimeOptions);
         runtime.getGlue().addAfterHook(hook);
 
         scenario.run(mock(Formatter.class), mock(Reporter.class), runtime);

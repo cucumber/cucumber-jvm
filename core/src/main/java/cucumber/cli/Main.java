@@ -85,7 +85,7 @@ public class Main {
             System.exit(1);
         }
 
-        Runtime runtime = new Runtime(new FileResourceLoader(), gluePaths, classLoader, runtimeOptions);
+        Runtime runtime = new Runtime(new FileResourceLoader(), classLoader, runtimeOptions);
 
         if (dotCucumber != null) {
             writeDotCucumber(featurePaths, dotCucumber, runtime);
