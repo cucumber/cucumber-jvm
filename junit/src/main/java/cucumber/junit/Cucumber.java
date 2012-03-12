@@ -19,6 +19,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static cucumber.runtime.Utils.packagePath;
@@ -55,13 +56,12 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         ClassLoader classLoader = clazz.getClassLoader();
         resourceLoader = new ClasspathResourceLoader(classLoader);
         assertNoDeclaredMethods(clazz);
-        List<String> featurePaths = featurePaths(clazz, getFeatureAnnotation(clazz));
         RuntimeOptions runtimeOptions = runtimeOptions(clazz);
         runtime = new Runtime(resourceLoader, classLoader, runtimeOptions);
 
         // TODO: Create formatter(s) based on Annotations. Use same technique as in cli.Main for MultiFormatter
         jUnitReporter = new JUnitReporter(new NullReporter(), new NullReporter());
-        addChildren(featurePaths, filters(clazz));
+        addChildren(runtimeOptions.featurePaths, filters(clazz));
     }
 
     @Override
@@ -103,10 +103,11 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
     private RuntimeOptions runtimeOptions(Class clazz) {
         List<String> args = new ArrayList<String>();
         Options cucumberOptions = getFeatureAnnotation(clazz);
-        addGlue(cucumberOptions, clazz, args);
 
-        RuntimeOptions runtimeOptions = new RuntimeOptions(args.toArray(new String[args.size()]));
-        return runtimeOptions;
+        addGlue(cucumberOptions, clazz, args);
+        addFeaturePaths(cucumberOptions, clazz, args);
+
+        return new RuntimeOptions(args.toArray(new String[args.size()]));
     }
 
     private void addGlue(Options options, Class clazz, List<String> args) {
@@ -121,14 +122,12 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         }
     }
 
-    private List<String> featurePaths(Class clazz, Options cucumberOptions) {
-        String featurePath;
-        if (cucumberOptions != null) {
-            featurePath = cucumberOptions.value();
+    private void addFeaturePaths(Options options, Class clazz, List<String> args) {
+        if(options != null) {
+            Collections.addAll(args, options.features());
         } else {
-            featurePath = packagePath(clazz);
+            args.add(packagePath(clazz));
         }
-        return asList(featurePath);
     }
 
     private List<Object> filters(Class clazz) {
@@ -170,9 +169,9 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
     @Target({ElementType.TYPE})
     public static @interface Options {
         /**
-         * @return the path to the feature(s)
+         * @return the paths to the feature(s)
          */
-        String value();
+        String[] features();
 
         /**
          * @return what lines in the feature should be executed
