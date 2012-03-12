@@ -142,9 +142,16 @@ public class StepDefinitionMatch extends Match {
     }
 
     private Type getGenericListType(int argIndex) {
-        ParameterType parameterType = stepDefinition.getParameterTypes().get(argIndex);
-        Type[] actualTypeArguments = parameterType.getActualTypeArguments();
-        return actualTypeArguments != null && actualTypeArguments.length > 0 ? actualTypeArguments[0] : null;
+        Type result = null;
+        List<ParameterType> parameterTypes = stepDefinition.getParameterTypes();
+        if (parameterTypes != null) {
+            ParameterType parameterType = parameterTypes.get(argIndex);
+            Type[] actualTypeArguments = parameterType.getActualTypeArguments();
+            if (actualTypeArguments != null && actualTypeArguments.length > 0) {
+                result = actualTypeArguments[0];
+            }
+        }
+        return result;
     }
 
     public Throwable removeFrameworkFramesAndAppendStepLocation(Throwable error, StackTraceElement stepLocation) {
