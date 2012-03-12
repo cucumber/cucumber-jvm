@@ -5,11 +5,15 @@ import com.beust.jcommander.IStringConverterFactory;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import cucumber.formatter.HTMLFormatter;
+import cucumber.io.ResourceLoader;
+import cucumber.runtime.model.CucumberFeature;
 import gherkin.formatter.Formatter;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import static cucumber.runtime.model.CucumberFeature.load;
 
 public class RuntimeOptions {
     @Parameter(names = {"-g", "--glue"}, description = "Where cucumber looks for step definitions and hooks.")
@@ -22,7 +26,7 @@ public class RuntimeOptions {
     public boolean dryRun;
 
     @Parameter(names = {"--tags"}, description = "Only execute scenarios matching TAG_EXPRESSION.")
-    public List<String> tags;
+    public List<String> tags= new ArrayList<String>();
 
     @Parameter(names = {"--strict"}, description = "Fail if there are any undefined or pending steps.")
     public boolean strict;
@@ -38,6 +42,17 @@ public class RuntimeOptions {
         cmd.addConverterFactory(new FormatterFactory());
         cmd.setProgramName("cucumber");
         cmd.parse(args);
+    }
+
+    public List<CucumberFeature> cucumberFeatures(ResourceLoader resourceLoader) {
+        return load(resourceLoader, featurePaths, filters());
+    }
+
+    private List<Object> filters() {
+        List<Object> filters = new ArrayList<Object>();
+        filters.addAll(tags);
+        // TODO: Add lines and patterns (names)
+        return filters;
     }
 
     public static class FormatterFactory implements IStringConverterFactory {
