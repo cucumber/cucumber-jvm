@@ -114,7 +114,7 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         /**
          * @return the paths to the feature(s)
          */
-        String[] features();
+        String[] features() default {};
 
         /**
          * @return where to look for glue code (stepdefs and hooks)

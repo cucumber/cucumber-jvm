@@ -43,7 +43,7 @@ public class RuntimeOptionsFactory {
     }
 
     private void addGlue(Cucumber.Options options, Class clazz, List<String> args) {
-        if(options != null) {
+        if(options != null && options.glue().length != 0) {
             for (String glue : options.glue()) {
                 args.add("--glue");
                 args.add(glue);
@@ -55,7 +55,7 @@ public class RuntimeOptionsFactory {
     }
 
     private void addFeatures(Cucumber.Options options, Class clazz, List<String> args) {
-        if(options != null) {
+        if(options != null && options.features().length != 0) {
             Collections.addAll(args, options.features());
         } else {
             args.add(packagePath(clazz));

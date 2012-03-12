@@ -26,7 +26,7 @@ public class RuntimeOptions {
     public boolean dryRun;
 
     @Parameter(names = {"--tags"}, description = "Only execute scenarios matching TAG_EXPRESSION.")
-    public List<String> tags= new ArrayList<String>();
+    public List<String> tags = new ArrayList<String>();
 
     @Parameter(names = {"--strict"}, description = "Fail if there are any undefined or pending steps.")
     public boolean strict;
@@ -35,7 +35,7 @@ public class RuntimeOptions {
     public List<Formatter> formatters;
 
     @Parameter(description = "Feature paths")
-    public List<String> featurePaths;
+    public List<String> featurePaths = new ArrayList<String>();
 
     public RuntimeOptions(String... args) {
         JCommander cmd = new JCommander(this);
