@@ -4,27 +4,14 @@ import cucumber.io.ClasspathResourceLoader;
 import cucumber.io.ResourceLoader;
 import cucumber.runtime.converters.LocalizedXStreams;
 import cucumber.runtime.model.CucumberFeature;
-import cucumber.runtime.model.CucumberTagStatement;
+import cucumber.runtime.snippets.SummaryPrinter;
 import gherkin.I18n;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
-import gherkin.formatter.model.Comment;
-import gherkin.formatter.model.DataTableRow;
-import gherkin.formatter.model.DocString;
-import gherkin.formatter.model.Match;
-import gherkin.formatter.model.Result;
-import gherkin.formatter.model.Step;
-import gherkin.formatter.model.Tag;
+import gherkin.formatter.model.*;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
-import static cucumber.runtime.model.CucumberFeature.load;
+import java.util.*;
 
 /**
  * This is the main entry point for running Cucumber features.
@@ -35,7 +22,9 @@ public class Runtime implements UnreportedStepExecutor {
     private static final byte ERRORS = 0x1;
 
     private final UndefinedStepsTracker undefinedStepsTracker = new UndefinedStepsTracker();
+
     private final Glue glue;
+    private final RuntimeOptions runtimeOptions;
 
     private final List<Throwable> errors = new ArrayList<Throwable>();
     private final Collection<? extends Backend> backends;
@@ -45,18 +34,19 @@ public class Runtime implements UnreportedStepExecutor {
     //They really should be created each time a scenario is run, not in here
     private boolean skipNextStep = false;
     private ScenarioResultImpl scenarioResult = null;
-    private final RuntimeOptions runtimeOptions;
+    private ClassLoader classLoader;
 
     public Runtime(ResourceLoader resourceLoader, ClassLoader classLoader, RuntimeOptions runtimeOptions) {
         this(resourceLoader, classLoader, loadBackends(resourceLoader, classLoader), runtimeOptions);
     }
 
     public Runtime(ResourceLoader resourceLoader, ClassLoader classLoader, Collection<? extends Backend> backends, RuntimeOptions runtimeOptions) {
+        this.resourceLoader = resourceLoader;
+        this.classLoader = classLoader;
         if (backends.isEmpty()) {
             throw new CucumberException("No backends were found. Please make sure you have a backend module on your CLASSPATH.");
         }
         this.backends = backends;
-        this.resourceLoader = resourceLoader;
         glue = new RuntimeGlue(undefinedStepsTracker, new LocalizedXStreams(classLoader));
 
         for (Backend backend : backends) {
@@ -77,32 +67,27 @@ public class Runtime implements UnreportedStepExecutor {
     /**
      * This is the main entry point. Used from CLI, but not from JUnit.
      *
-     * @param featurePaths
-     * @param filters
-     * @param formatter
-     * @param reporter
      */
-    public void run(List<String> featurePaths, final List<Object> filters, Formatter formatter, Reporter reporter) {
-        for (CucumberFeature cucumberFeature : load(resourceLoader, featurePaths, filters)) {
-            run(cucumberFeature, formatter, reporter);
+    public void run() {
+        for (CucumberFeature cucumberFeature : runtimeOptions.cucumberFeatures(resourceLoader)) {
+            run(cucumberFeature);
         }
+        Formatter formatter = runtimeOptions.formatter(classLoader);
+
+        formatter.done();
+        printSummary();
+        formatter.close();
     }
 
-    /**
-     * Runs an individual feature, not all the features. Used from CLI, but not from JUnit.
-     *
-     * @param cucumberFeature
-     * @param formatter
-     * @param reporter
-     */
-    public void run(CucumberFeature cucumberFeature, Formatter formatter, Reporter reporter) {
-        formatter.uri(cucumberFeature.getUri());
-        formatter.feature(cucumberFeature.getFeature());
-        for (CucumberTagStatement cucumberTagStatement : cucumberFeature.getFeatureElements()) {
-            //Run the scenario, it should handle before and after hooks
-            cucumberTagStatement.run(formatter, reporter, this);
-        }
-        formatter.eof();
+    private void run(CucumberFeature cucumberFeature) {
+        Formatter formatter = runtimeOptions.formatter(classLoader);
+        Reporter reporter = runtimeOptions.reporter(classLoader);
+        cucumberFeature.run(formatter, reporter, this);
+    }
+
+    private void printSummary() {
+        // TODO: inject a SummaryPrinter in the ctor
+        new SummaryPrinter(System.out).print(this);
     }
 
     public void buildBackendWorlds(Reporter reporter) {
@@ -241,7 +226,7 @@ public class Runtime implements UnreportedStepExecutor {
         }
     }
 
-    public void writeStepdefsJson(List<String> featurePaths, File dotCucumber) throws IOException {
-        glue.writeStepdefsJson(featurePaths, dotCucumber);
+    public void writeStepdefsJson() throws IOException {
+        glue.writeStepdefsJson(runtimeOptions.featurePaths, runtimeOptions.dotCucumber);
     }
 }

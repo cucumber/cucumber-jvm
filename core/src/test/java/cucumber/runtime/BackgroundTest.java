@@ -27,7 +27,7 @@ public class BackgroundTest {
 
         StringBuilder out = new StringBuilder();
         PrettyFormatter pretty = new PrettyFormatter(out, true, true);
-        runtime.run(feature, pretty, pretty);
+        feature.run(pretty, pretty, runtime);
         String expectedOutput = "" +
                 "Feature: \n" +
                 "\n" +

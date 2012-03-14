@@ -14,11 +14,7 @@ import gherkin.formatter.model.Step;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 import static cucumber.runtime.model.CucumberFeature.load;
 import static java.util.Collections.emptyList;
@@ -100,13 +96,15 @@ public class RuntimeGlue implements Glue {
 
     @Override
     public void writeStepdefsJson(List<String> featurePaths, File dotCucumber) throws IOException {
-        List<CucumberFeature> features = load(new FileResourceLoader(), featurePaths, NO_FILTERS);
-        List<MetaStepdef> metaStepdefs = new StepdefGenerator().generate(stepDefinitionsByPattern.values(), features);
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        String json = gson.toJson(metaStepdefs);
+        if(dotCucumber != null) {
+            List<CucumberFeature> features = load(new FileResourceLoader(), featurePaths, NO_FILTERS);
+            List<MetaStepdef> metaStepdefs = new StepdefGenerator().generate(stepDefinitionsByPattern.values(), features);
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            String json = gson.toJson(metaStepdefs);
 
-        FileWriter stepdefsJson = new FileWriter(new File(dotCucumber, "stepdefs.json"));
-        stepdefsJson.append(json);
-        stepdefsJson.close();
+            FileWriter stepdefsJson = new FileWriter(new File(dotCucumber, "stepdefs.json"));
+            stepdefsJson.append(json);
+            stepdefsJson.close();
+        }
     }
 }

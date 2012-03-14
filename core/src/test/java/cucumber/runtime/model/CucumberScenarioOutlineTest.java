@@ -1,10 +1,6 @@
 package cucumber.runtime.model;
 
-import gherkin.formatter.model.Comment;
-import gherkin.formatter.model.DataTableRow;
-import gherkin.formatter.model.DocString;
-import gherkin.formatter.model.ExamplesTableRow;
-import gherkin.formatter.model.Step;
+import gherkin.formatter.model.*;
 import org.junit.Test;
 
 import java.util.ArrayList;

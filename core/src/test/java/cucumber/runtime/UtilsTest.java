@@ -2,12 +2,8 @@ package cucumber.runtime;
 
 import org.junit.Test;
 
-import static cucumber.runtime.Utils.isInstantiable;
-import static cucumber.runtime.Utils.packageName;
-import static cucumber.runtime.Utils.packagePath;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static cucumber.runtime.Utils.*;
+import static org.junit.Assert.*;
 
 public class UtilsTest {
     @Test

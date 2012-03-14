@@ -5,12 +5,7 @@ import cucumber.runtime.java.ObjectFactory;
 import org.apache.openejb.OpenEjbContainer;
 
 import javax.ejb.embeddable.EJBContainer;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 public class OpenEJBObjectFactory implements ObjectFactory {
     static {

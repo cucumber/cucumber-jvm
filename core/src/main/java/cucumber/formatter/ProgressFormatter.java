@@ -4,14 +4,7 @@ import gherkin.formatter.Formatter;
 import gherkin.formatter.NiceAppendable;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.ansi.AnsiEscapes;
-import gherkin.formatter.model.Background;
-import gherkin.formatter.model.Examples;
-import gherkin.formatter.model.Feature;
-import gherkin.formatter.model.Match;
-import gherkin.formatter.model.Result;
-import gherkin.formatter.model.Scenario;
-import gherkin.formatter.model.ScenarioOutline;
-import gherkin.formatter.model.Step;
+import gherkin.formatter.model.*;
 
 import java.io.InputStream;
 import java.util.HashMap;
@@ -37,8 +30,8 @@ public class ProgressFormatter implements Formatter, Reporter {
     private final NiceAppendable out;
     private final boolean monochrome;
 
-    public ProgressFormatter(Appendable appendable, boolean monochrome) {
-        this.monochrome = monochrome;
+    public ProgressFormatter(Appendable appendable) {
+        this.monochrome = false;
         out = new NiceAppendable(appendable);
     }
 

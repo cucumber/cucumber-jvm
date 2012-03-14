@@ -4,16 +4,22 @@ import com.beust.jcommander.IStringConverter;
 import com.beust.jcommander.IStringConverterFactory;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
-import cucumber.formatter.HTMLFormatter;
+import cucumber.formatter.FormatterConverter;
+import cucumber.formatter.ProgressFormatter;
 import cucumber.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
 import gherkin.formatter.Formatter;
+import gherkin.formatter.Reporter;
 
 import java.io.File;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.List;
 
 import static cucumber.runtime.model.CucumberFeature.load;
+import static java.util.Arrays.asList;
 
 public class RuntimeOptions {
     @Parameter(names = {"-g", "--glue"}, description = "Where cucumber looks for step definitions and hooks.")
@@ -32,7 +38,7 @@ public class RuntimeOptions {
     public boolean strict;
 
     @Parameter(names = {"--format"}, description = "Formatter to use.")
-    public List<Formatter> formatters;
+    public List<Formatter> formatters = new ArrayList<Formatter>();
 
     @Parameter(description = "Feature paths")
     public List<String> featurePaths = new ArrayList<String>();
@@ -42,10 +48,40 @@ public class RuntimeOptions {
         cmd.addConverterFactory(new FormatterFactory());
         cmd.setProgramName("cucumber");
         cmd.parse(args);
+
+        if(formatters.isEmpty()) {
+            formatters.add(new ProgressFormatter(System.out));
+        }
     }
 
     public List<CucumberFeature> cucumberFeatures(ResourceLoader resourceLoader) {
         return load(resourceLoader, featurePaths, filters());
+    }
+
+    public Formatter formatter(ClassLoader classLoader) {
+        return (Formatter) Proxy.newProxyInstance(classLoader, new Class<?>[]{Formatter.class}, new InvocationHandler() {
+            @Override
+            public Object invoke(Object target, Method method, Object[] args) throws Throwable {
+                for (Formatter formatter : formatters) {
+                    method.invoke(formatter, args);
+                }
+                return null;
+            }
+        });
+    }
+
+    public Reporter reporter(ClassLoader classLoader) {
+        return (Reporter) Proxy.newProxyInstance(classLoader, new Class<?>[]{Reporter.class}, new InvocationHandler() {
+            @Override
+            public Object invoke(Object target, Method method, Object[] args) throws Throwable {
+                for (Formatter formatter : formatters) {
+                    if (formatter instanceof Reporter) {
+                        method.invoke(formatter, args);
+                    }
+                }
+                return null;
+            }
+        });
     }
 
     private List<Object> filters() {
@@ -58,15 +94,11 @@ public class RuntimeOptions {
     public static class FormatterFactory implements IStringConverterFactory {
         @Override
         public Class<? extends IStringConverter<?>> getConverter(Class forType) {
-            if (forType.equals(Formatter.class)) return FormatterConverter.class;
+            if (forType.equals(Formatter.class)) {
+                return FormatterConverter.class;
+            }
             else return null;
         }
     }
 
-    public static class FormatterConverter implements IStringConverter<Formatter> {
-        @Override
-        public Formatter convert(String value) {
-            return new HTMLFormatter(new File("target"));
-        }
-    }
 }

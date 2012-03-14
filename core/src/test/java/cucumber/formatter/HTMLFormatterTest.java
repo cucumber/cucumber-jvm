@@ -1,9 +1,5 @@
 package cucumber.formatter;
 
-import cucumber.io.ClasspathResourceLoader;
-import cucumber.runtime.Backend;
-import cucumber.runtime.Runtime;
-import cucumber.runtime.RuntimeOptions;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -16,14 +12,8 @@ import org.mozilla.javascript.tools.shell.Global;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.List;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.mock;
+import static org.junit.Assert.*;
 
 public class HTMLFormatterTest {
 
@@ -31,8 +21,8 @@ public class HTMLFormatterTest {
 
     @Before
     public void writeReport() throws IOException {
-        outputDir = createTempDirectory();
-        runFeaturesWithFormatter(asList("cucumber/formatter/HTMLFormatterTest.feature"), outputDir);
+        outputDir = TempDir.createTempDirectory();
+        runFeaturesWithFormatter(outputDir);
     }
 
     @Test
@@ -56,31 +46,10 @@ public class HTMLFormatterTest {
         }
     }
 
-    private void runFeaturesWithFormatter(final List<String> featurePaths, File outputDir) throws IOException {
+    private void runFeaturesWithFormatter(File outputDir) throws IOException {
         final HTMLFormatter f = new HTMLFormatter(outputDir);
-        final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        final ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
-        final List<String> gluePaths = emptyList();
-        RuntimeOptions runtimeOptions = new RuntimeOptions();
-        final Runtime runtime = new Runtime(resourceLoader, classLoader, asList(mock(Backend.class)), runtimeOptions);
-        runtime.run(featurePaths, emptyList(), f, f);
+        f.uri("some.feature");
         f.done();
         f.close();
-    }
-
-    private static File createTempDirectory() throws IOException {
-        File temp = File.createTempFile("temp", Long.toString(System.nanoTime()));
-
-        if (!(temp.delete())) {
-            throw new IOException("Could not delete temp file: " + temp.getAbsolutePath());
-        }
-
-        if (!(temp.mkdir())) {
-            throw new IOException("Could not create temp directory: " + temp.getAbsolutePath());
-        }
-
-        temp.deleteOnExit();
-
-        return temp;
     }
 }

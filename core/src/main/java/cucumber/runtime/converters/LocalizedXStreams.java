@@ -5,11 +5,7 @@ import com.thoughtworks.xstream.converters.SingleValueConverter;
 import com.thoughtworks.xstream.core.DefaultConverterLookup;
 import gherkin.I18n;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 public class LocalizedXStreams {
     private final Map<I18n, LocalizedXStream> xStreams = new HashMap<I18n, LocalizedXStream>();

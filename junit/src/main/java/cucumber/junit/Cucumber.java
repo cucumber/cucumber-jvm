@@ -1,6 +1,5 @@
 package cucumber.junit;
 
-import cucumber.formatter.NullReporter;
 import cucumber.io.ClasspathResourceLoader;
 import cucumber.io.ResourceLoader;
 import cucumber.runtime.CucumberException;
@@ -14,7 +13,10 @@ import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
 
 import java.io.IOException;
-import java.lang.annotation.*;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,7 +55,7 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         runtime = new Runtime(resourceLoader, classLoader, runtimeOptions);
 
         // TODO: Create formatter(s) based on Annotations. Use same technique as in cli.Main for MultiFormatter
-        jUnitReporter = new JUnitReporter(new NullReporter(), new NullReporter());
+        jUnitReporter = new JUnitReporter(runtimeOptions.reporter(classLoader), runtimeOptions.formatter(classLoader));
         addChildren(runtimeOptions.cucumberFeatures(resourceLoader));
     }
 
