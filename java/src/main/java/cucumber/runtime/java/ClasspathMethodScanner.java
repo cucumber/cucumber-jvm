@@ -11,16 +11,23 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.List;
 
-public class ClasspathMethodScanner {
+class ClasspathMethodScanner {
 
     private final ClasspathResourceLoader resourceLoader;
+    private final Collection<Class<? extends Annotation>> cucumberAnnotationClasses;
 
     public ClasspathMethodScanner(ClasspathResourceLoader resourceLoader) {
         this.resourceLoader = resourceLoader;
+        cucumberAnnotationClasses = findCucumberAnnotationClasses();
     }
 
+    /**
+     * Registers step definitions and hooks.
+     *
+     * @param javaBackend the backend where stepdefs and hooks will be registered
+     * @param gluePaths   where to look
+     */
     public void scan(JavaBackend javaBackend, List<String> gluePaths) {
-        Collection<Class<? extends Annotation>> cucumberAnnotationClasses = findCucumberAnnotationClasses();
         for (String gluePath : gluePaths) {
             String packageName = gluePath.replace('/', '.').replace('\\', '.'); // Sometimes the gluePath will be a path, not a package
             for (Class<?> glueCodeClass : resourceLoader.getDescendants(Object.class, packageName)) {
@@ -30,8 +37,27 @@ public class ClasspathMethodScanner {
                 }
                 if (glueCodeClass != null) {
                     for (Method method : glueCodeClass.getMethods()) {
-                        scan(glueCodeClass, method, cucumberAnnotationClasses, javaBackend);
+                        scan(javaBackend, method);
                     }
+                }
+            }
+        }
+    }
+
+    /**
+     * Registers step definitions and hooks.
+     *
+     * @param javaBackend the backend where stepdefs and hooks will be registered
+     * @param method      a candidate for being a stepdef or hook
+     */
+    public void scan(JavaBackend javaBackend, Method method) {
+        for (Class<? extends Annotation> cucumberAnnotationClass : cucumberAnnotationClasses) {
+            Annotation annotation = method.getAnnotation(cucumberAnnotationClass);
+            if (annotation != null && !annotation.annotationType().equals(Order.class)) {
+                if (isHookAnnotation(annotation)) {
+                    javaBackend.addHook(annotation, method);
+                } else if (isStepdefAnnotation(annotation)) {
+                    javaBackend.addStepDefinition(annotation, method);
                 }
             }
         }
@@ -39,19 +65,6 @@ public class ClasspathMethodScanner {
 
     private Collection<Class<? extends Annotation>> findCucumberAnnotationClasses() {
         return resourceLoader.getAnnotations("cucumber.annotation");
-    }
-
-    private void scan(Class<?> glueCodeClass, Method method, Collection<Class<? extends Annotation>> cucumberAnnotationClasses, JavaBackend javaBackend) {
-        for (Class<? extends Annotation> cucumberAnnotationClass : cucumberAnnotationClasses) {
-            Annotation annotation = method.getAnnotation(cucumberAnnotationClass);
-            if (annotation != null && !annotation.annotationType().equals(Order.class)) {
-                if (isHookAnnotation(annotation)) {
-                    javaBackend.addHook(annotation, glueCodeClass, method);
-                } else if (isStepdefAnnotation(annotation)) {
-                    javaBackend.addStepDefinition(annotation, glueCodeClass, method);
-                }
-            }
-        }
     }
 
     private boolean isHookAnnotation(Annotation annotation) {

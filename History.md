@@ -1,5 +1,7 @@
 ## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.0.0.RC20...master)
 
+* [Java] Open up
+* [Java] Inheritance in glue classes (stepdefs and hooks) is no longer supported - it causes too many problems. (Aslak Hellesøy).
 * [JUnit] `@Cucumber.Options` annotation replaces `@Feature` annotation ([#160](https://github.com/cucumber/cucumber-jvm/issues/160) Aslak Hellesøy)
 * [Spring] Slow Spring context performance ([#241](https://github.com/cucumber/cucumber-jvm/issues/241), [#242](https://github.com/cucumber/cucumber-jvm/pull/242) Vladimir Klyushnikov)
 * [Core] Support for java.util.Calendar arguments in stepdefs. (Aslak Hellesøy)

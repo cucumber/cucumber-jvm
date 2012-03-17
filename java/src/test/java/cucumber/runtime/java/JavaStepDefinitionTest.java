@@ -58,8 +58,8 @@ public class JavaStepDefinitionTest {
 
     @Test
     public void throws_ambiguous_when_two_matches_are_found() throws Throwable {
-        backend.addStepDefinition(THREE_DISABLED_MICE.getAnnotation(Given.class), Defs.class, THREE_DISABLED_MICE);
-        backend.addStepDefinition(THREE_BLIND_ANIMALS.getAnnotation(Given.class), Defs.class, THREE_BLIND_ANIMALS);
+        backend.addStepDefinition(THREE_DISABLED_MICE.getAnnotation(Given.class), THREE_DISABLED_MICE);
+        backend.addStepDefinition(THREE_BLIND_ANIMALS.getAnnotation(Given.class), THREE_BLIND_ANIMALS);
 
         Reporter reporter = mock(Reporter.class);
         runtime.buildBackendWorlds(reporter);
@@ -74,7 +74,7 @@ public class JavaStepDefinitionTest {
 
     @Test
     public void does_not_throw_ambiguous_when_nothing_is_ambiguous() throws Throwable {
-        backend.addStepDefinition(THREE_DISABLED_MICE.getAnnotation(Given.class), Defs.class, THREE_DISABLED_MICE);
+        backend.addStepDefinition(THREE_DISABLED_MICE.getAnnotation(Given.class), THREE_DISABLED_MICE);
 
         Reporter reporter = mock(Reporter.class);
         runtime.buildBackendWorlds(reporter);
