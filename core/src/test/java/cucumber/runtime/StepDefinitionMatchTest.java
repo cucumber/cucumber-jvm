@@ -13,7 +13,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import static java.util.Arrays.asList;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class StepDefinitionMatchTest {
     private final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();

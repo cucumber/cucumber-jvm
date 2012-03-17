@@ -8,10 +8,20 @@ import cucumber.runtime.snippets.SummaryPrinter;
 import gherkin.I18n;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
-import gherkin.formatter.model.*;
+import gherkin.formatter.model.Comment;
+import gherkin.formatter.model.DataTableRow;
+import gherkin.formatter.model.DocString;
+import gherkin.formatter.model.Match;
+import gherkin.formatter.model.Result;
+import gherkin.formatter.model.Step;
+import gherkin.formatter.model.Tag;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 /**
  * This is the main entry point for running Cucumber features.
@@ -66,7 +76,6 @@ public class Runtime implements UnreportedStepExecutor {
 
     /**
      * This is the main entry point. Used from CLI, but not from JUnit.
-     *
      */
     public void run() {
         for (CucumberFeature cucumberFeature : runtimeOptions.cucumberFeatures(resourceLoader)) {

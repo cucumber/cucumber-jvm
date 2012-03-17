@@ -17,7 +17,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <outputDirectory>${project.build.directory}</outputDirectory>
-        <gherkin.version>2.9.0</gherkin.version>
+        <gherkin.version>2.9.1</gherkin.version>
         <groovy.version>2.0.0-beta-2</groovy.version>
     </properties>
     <licenses>

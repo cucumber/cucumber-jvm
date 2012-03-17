@@ -2,7 +2,6 @@ package cucumber.junit;
 
 import cucumber.runtime.RuntimeOptions;
 
-import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -29,21 +28,20 @@ public class RuntimeOptionsFactory {
 
     }
 
-    private Cucumber.Options getFeatureAnnotation(Class clazz) {
-        Annotation annotation = clazz.getAnnotation(Cucumber.Options.class);
-        return Cucumber.Options.class.cast(annotation);
+    private Cucumber.Options getFeatureAnnotation(Class<?> clazz) {
+        return clazz.getAnnotation(Cucumber.Options.class);
     }
 
     private void addDryRun(Cucumber.Options options, List<String> args) {
-        if(options != null) {
-            if(options.dryRun()) {
+        if (options != null) {
+            if (options.dryRun()) {
                 args.add("--dry-run");
             }
         }
     }
 
     private void addGlue(Cucumber.Options options, Class clazz, List<String> args) {
-        if(options != null && options.glue().length != 0) {
+        if (options != null && options.glue().length != 0) {
             for (String glue : options.glue()) {
                 args.add("--glue");
                 args.add(glue);
@@ -55,7 +53,7 @@ public class RuntimeOptionsFactory {
     }
 
     private void addFeatures(Cucumber.Options options, Class clazz, List<String> args) {
-        if(options != null && options.features().length != 0) {
+        if (options != null && options.features().length != 0) {
             Collections.addAll(args, options.features());
         } else {
             args.add(packagePath(clazz));
@@ -63,7 +61,7 @@ public class RuntimeOptionsFactory {
     }
 
     private void addTags(Cucumber.Options options, List<String> args) {
-        if(options != null) {
+        if (options != null) {
             for (String tags : options.tags()) {
                 args.add("--tags");
                 args.add(tags);

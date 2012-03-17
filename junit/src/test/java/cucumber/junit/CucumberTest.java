@@ -52,11 +52,11 @@ public class CucumberTest {
     private class ImplicitPackage {
     }
 
-    @Cucumber.Options(features={"cucumber/junit"})
+    @Cucumber.Options(features = {"cucumber/junit"})
     private class ExplicitPackage {
     }
 
-    @Cucumber.Options(features={"gibber/ish"})
+    @Cucumber.Options(features = {"gibber/ish"})
     private class ExplicitPackageWithNoFeatures {
     }
 }

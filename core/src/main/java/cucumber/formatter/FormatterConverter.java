@@ -20,8 +20,8 @@ import static java.util.Arrays.asList;
 
 public class FormatterConverter implements IStringConverter<Formatter> {
     private Class[] CTOR_ARGS = new Class[]{Appendable.class, File.class};
-    
-    private static final Map<String,Class<? extends Formatter>> FORMATTER_CLASSES = new HashMap<String, Class<? extends Formatter>>() {{
+
+    private static final Map<String, Class<? extends Formatter>> FORMATTER_CLASSES = new HashMap<String, Class<? extends Formatter>>() {{
         put("junit", JUnitFormatter.class);
         put("html", HTMLFormatter.class);
         put("pretty", CucumberPrettyFormatter.class);
@@ -37,7 +37,7 @@ public class FormatterConverter implements IStringConverter<Formatter> {
         Matcher formatterWithFile = FORMATTER_WITH_FILE_PATTERN.matcher(formatterString);
         String formatterName;
         Object ctorArg;
-        if(formatterWithFile.matches()) {
+        if (formatterWithFile.matches()) {
             formatterName = formatterWithFile.group(1);
             ctorArg = new File(formatterWithFile.group(2));
         } else {
@@ -56,10 +56,10 @@ public class FormatterConverter implements IStringConverter<Formatter> {
         Constructor<? extends Formatter> constructor;
 
         for (Class ctorArgClass : CTOR_ARGS) {
-            constructor=findConstructor(formatterClass, ctorArgClass);
-            if(constructor != null) {
+            constructor = findConstructor(formatterClass, ctorArgClass);
+            if (constructor != null) {
                 ctorArg = convert(ctorArg, ctorArgClass);
-                if(ctorArg != null) {
+                if (ctorArg != null) {
                     try {
                         return constructor.newInstance(ctorArg);
                     } catch (InstantiationException e) {
@@ -76,13 +76,13 @@ public class FormatterConverter implements IStringConverter<Formatter> {
     }
 
     private Object convert(Object ctorArg, Class ctorArgClass) throws IOException {
-        if(ctorArgClass.isAssignableFrom(ctorArg.getClass())) {
+        if (ctorArgClass.isAssignableFrom(ctorArg.getClass())) {
             return ctorArg;
         }
-        if(ctorArgClass.equals(File.class) && ctorArg instanceof File) {
+        if (ctorArgClass.equals(File.class) && ctorArg instanceof File) {
             return ctorArg;
         }
-        if(ctorArgClass.equals(Appendable.class) && ctorArg instanceof File) {
+        if (ctorArgClass.equals(Appendable.class) && ctorArg instanceof File) {
             return new FileWriter((File) ctorArg);
         }
         return null;
@@ -98,7 +98,7 @@ public class FormatterConverter implements IStringConverter<Formatter> {
 
     private Class<? extends Formatter> formatterClass(String formatterName) {
         Class<? extends Formatter> formatterClass = FORMATTER_CLASSES.get(formatterName);
-        if(formatterClass == null) {
+        if (formatterClass == null) {
             formatterClass = loadClass(formatterName);
         }
         return formatterClass;
@@ -114,7 +114,7 @@ public class FormatterConverter implements IStringConverter<Formatter> {
 
     private Appendable defaultOutIfAvailable() {
         try {
-            if(defaultOut != null) {
+            if (defaultOut != null) {
                 return defaultOut;
             } else {
                 throw new CucumberException("Only one formatter can use STDOUT. If you use more than one formatter you must specify output path with FORMAT:PATH");

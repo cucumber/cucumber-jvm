@@ -45,7 +45,7 @@ public class JUnitFormatterTest {
         File report = File.createTempFile("cucumber-jvm-junit", "xml");
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         final ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
-        
+
         List<String> args = new ArrayList<String>();
         args.add("--format");
         args.add("junit:" + report.getAbsolutePath());

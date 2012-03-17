@@ -11,7 +11,9 @@ import org.junit.runner.notification.RunNotifier;
 import org.mockito.ArgumentCaptor;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class JUnitReporterTest {
 

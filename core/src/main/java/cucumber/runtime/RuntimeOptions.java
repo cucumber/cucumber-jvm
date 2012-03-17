@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static cucumber.runtime.model.CucumberFeature.load;
-import static java.util.Arrays.asList;
 
 public class RuntimeOptions {
     @Parameter(names = {"-g", "--glue"}, description = "Where cucumber looks for step definitions and hooks.")
@@ -49,7 +48,7 @@ public class RuntimeOptions {
         cmd.setProgramName("cucumber");
         cmd.parse(args);
 
-        if(formatters.isEmpty()) {
+        if (formatters.isEmpty()) {
             formatters.add(new ProgressFormatter(System.out));
         }
     }
@@ -96,8 +95,7 @@ public class RuntimeOptions {
         public Class<? extends IStringConverter<?>> getConverter(Class forType) {
             if (forType.equals(Formatter.class)) {
                 return FormatterConverter.class;
-            }
-            else return null;
+            } else return null;
         }
     }
 
