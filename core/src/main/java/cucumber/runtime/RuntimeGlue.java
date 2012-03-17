@@ -100,13 +100,15 @@ public class RuntimeGlue implements Glue {
 
     @Override
     public void writeStepdefsJson(List<String> featurePaths, File dotCucumber) throws IOException {
-        List<CucumberFeature> features = load(new FileResourceLoader(), featurePaths, NO_FILTERS);
-        List<MetaStepdef> metaStepdefs = new StepdefGenerator().generate(stepDefinitionsByPattern.values(), features);
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        String json = gson.toJson(metaStepdefs);
+        if (dotCucumber != null) {
+            List<CucumberFeature> features = load(new FileResourceLoader(), featurePaths, NO_FILTERS);
+            List<MetaStepdef> metaStepdefs = new StepdefGenerator().generate(stepDefinitionsByPattern.values(), features);
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            String json = gson.toJson(metaStepdefs);
 
-        FileWriter stepdefsJson = new FileWriter(new File(dotCucumber, "stepdefs.json"));
-        stepdefsJson.append(json);
-        stepdefsJson.close();
+            FileWriter stepdefsJson = new FileWriter(new File(dotCucumber, "stepdefs.json"));
+            stepdefsJson.append(json);
+            stepdefsJson.close();
+        }
     }
 }

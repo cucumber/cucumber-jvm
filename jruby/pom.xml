@@ -95,7 +95,7 @@
                         <configuration>
                             <target>
                                 <!-- also run the CLI test to ensure that stuff works via the CLI as well -->
-                                <echo message="Running jruby tests via the CLI..." />
+                                <echo message="Running cucumber via the CLI..." />
                                 <java jar="${maven.dependency.org.jruby.jruby-complete.jar.path}" fork="true" failonerror="true" newenvironment="true" maxmemory="512m">
                                     <arg value="-S" />
                                     <arg value="bin/cucumber-jvm" />

@@ -4,7 +4,10 @@ import cucumber.io.Resource;
 import cucumber.io.ResourceLoader;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.FeatureBuilder;
+import cucumber.runtime.Runtime;
 import gherkin.I18n;
+import gherkin.formatter.Formatter;
+import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Background;
 import gherkin.formatter.model.Examples;
 import gherkin.formatter.model.Feature;
@@ -92,6 +95,18 @@ public class CucumberFeature {
 
     public String getUri() {
         return uri;
+    }
+
+    public void run(Formatter formatter, Reporter reporter, Runtime runtime) {
+        formatter.uri(getUri());
+        formatter.feature(getFeature());
+
+        for (CucumberTagStatement cucumberTagStatement : getFeatureElements()) {
+            //Run the scenario, it should handle before and after hooks
+            cucumberTagStatement.run(formatter, reporter, runtime);
+        }
+        formatter.eof();
+
     }
 
     private static class CucumberFeatureUriComparator implements Comparator<CucumberFeature> {

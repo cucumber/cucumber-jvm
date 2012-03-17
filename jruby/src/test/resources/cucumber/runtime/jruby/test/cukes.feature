@@ -42,7 +42,8 @@ Feature: Cukes
     Given I store the value "<value>"
     When I grab another value "<otherValue>"
     Then those values are the same
-  Examples:
-    | value   | otherValue |
-    | 1       | 1          |
-    | awesome | awesome    |
+
+    Examples:
+      | value   | otherValue |
+      | 1       | 1          |
+      | awesome | awesome    |
