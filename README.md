@@ -43,13 +43,13 @@ in your [POM](http://maven.apache.org/pom.html):
 <dependency>
     <groupId>info.cukes</groupId>
     <artifactId>cucumber-java</artifactId>
-    <version>1.0.0.RC20</version>
+    <version>1.0.0.RC21</version>
     <scope>test</scope>
 </dependency>
 <dependency>
     <groupId>info.cukes</groupId>
     <artifactId>cucumber-junit</artifactId>
-    <version>1.0.0.RC20</version>
+    <version>1.0.0.RC21</version>
     <scope>test</scope>
 </dependency>
 <dependency>
@@ -88,9 +88,7 @@ If you are adventurous, check out the examples, read the code and ask specific q
 
 ### API Docs
 
-TODO: Fix this. The Ivy build doesn't upload them yet.
-
-* http://cukes.info/cucumber/jvm/api/1.0.0.RC20
+* http://cukes.info/cucumber/jvm/api/1.0.0.RC21
 
 ## Examples
 
