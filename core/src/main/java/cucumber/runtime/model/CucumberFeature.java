@@ -32,14 +32,20 @@ public class CucumberFeature {
     public static List<CucumberFeature> load(ResourceLoader resourceLoader, List<String> featurePaths, final List<Object> filters) {
         final List<CucumberFeature> cucumberFeatures = new ArrayList<CucumberFeature>();
         final FeatureBuilder builder = new FeatureBuilder(cucumberFeatures);
+        boolean resourceFound = false;
         for (String featurePath : featurePaths) {
             Iterable<Resource> resources = resourceLoader.resources(featurePath, ".feature");
             for (Resource resource : resources) {
+                resourceFound = true;
                 builder.parse(resource, filters);
             }
         }
         if (cucumberFeatures.isEmpty()) {
-            throw new CucumberException(String.format("No features found at %s", featurePaths));
+            if(resourceFound) {
+                throw new CucumberException(String.format("None of the features at %s matched the filters: %s", featurePaths, filters));
+            } else {
+                throw new CucumberException(String.format("No features found at %s", featurePaths));
+            }
         }
         Collections.sort(cucumberFeatures, new CucumberFeatureUriComparator());
         return cucumberFeatures;
