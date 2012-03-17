@@ -37,11 +37,11 @@ public class ClasspathMethodScanner {
         }
     }
 
-    private Collection<Class<? extends Annotation>> findCucumberAnnotationClasses() {
+    public Collection<Class<? extends Annotation>> findCucumberAnnotationClasses() {
         return resourceLoader.getAnnotations("cucumber.annotation");
     }
 
-    private void scan(Class<?> glueCodeClass, Method method, Collection<Class<? extends Annotation>> cucumberAnnotationClasses, JavaBackend javaBackend) {
+    public void scan(Class<?> glueCodeClass, Method method, Collection<Class<? extends Annotation>> cucumberAnnotationClasses, JavaBackend javaBackend) {
         for (Class<? extends Annotation> cucumberAnnotationClass : cucumberAnnotationClasses) {
             Annotation annotation = method.getAnnotation(cucumberAnnotationClass);
             if (annotation != null && !annotation.annotationType().equals(Order.class)) {

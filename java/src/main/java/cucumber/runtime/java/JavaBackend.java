@@ -78,7 +78,15 @@ public class JavaBackend implements Backend {
         return snippetGenerator.getSnippet(step);
     }
 
-    void addStepDefinition(Annotation annotation, Class<?> glueCodeClass, Method method) {
+    protected ClasspathResourceLoader getClasspathResourceLoader(){
+        return classpathResourceLoader;
+    };
+
+    protected ClasspathMethodScanner getClasspathMethodScanner(){
+        return classpathMethodScanner;
+    };
+
+    protected void addStepDefinition(Annotation annotation, Class<?> glueCodeClass, Method method) {
         try {
             Method regexpMethod = annotation.getClass().getMethod("value");
             String regexpString = (String) regexpMethod.invoke(annotation);
@@ -96,7 +104,7 @@ public class JavaBackend implements Backend {
         }
     }
 
-    void addHook(Annotation annotation, Class<?> glueCodeClass, Method method) {
+    protected void addHook(Annotation annotation, Class<?> glueCodeClass, Method method) {
         objectFactory.addClass(glueCodeClass);
 
         Order order = method.getAnnotation(Order.class);
