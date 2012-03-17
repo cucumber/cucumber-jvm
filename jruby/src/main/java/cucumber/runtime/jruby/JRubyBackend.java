@@ -75,7 +75,7 @@ public class JRubyBackend implements Backend {
 
     private void runScriptlet(Resource resource) {
         try {
-            jruby.runScriptlet(new InputStreamReader(resource.getInputStream()), resource.getPath());
+            jruby.runScriptlet(new InputStreamReader(resource.getInputStream(), "UTF-8"), resource.getPath());
         } catch (IOException e) {
             throw new CucumberException(e);
         }
