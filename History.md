@@ -1,3 +1,7 @@
+## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.0.0.RC21...master)
+
+* [JUnit] Added `format` attribute to `@Cucumber.Options` (Aslak Hellesøy)
+
 ## [1.0.0.RC21](https://github.com/cucumber/cucumber-jvm/compare/v1.0.0.RC20...v1.0.0.RC21)
 
 * [Core] Ignore duplicate features instead of throwing exception. ([#259](https://github.com/cucumber/cucumber-jvm/issues/259) Aslak Hellesøy)

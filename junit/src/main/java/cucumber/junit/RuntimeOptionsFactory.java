@@ -23,6 +23,7 @@ public class RuntimeOptionsFactory {
         addGlue(cucumberOptions, clazz, args);
         addFeatures(cucumberOptions, clazz, args);
         addTags(cucumberOptions, args);
+        addFormats(cucumberOptions, args);
 
         return new RuntimeOptions(args.toArray(new String[args.size()]));
 
@@ -69,4 +70,12 @@ public class RuntimeOptionsFactory {
         }
     }
 
+    private void addFormats(Cucumber.Options options, List<String> args) {
+        if (options != null) {
+            for (String format : options.format()) {
+                args.add("--format");
+                args.add(format);
+            }
+        }
+    }
 }

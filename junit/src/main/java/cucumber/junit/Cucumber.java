@@ -127,5 +127,10 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
          * @return what tags in the feature should be executed
          */
         String[] tags() default {};
+
+        /**
+         * @return what formatter(s) to use
+         */
+        String[] format() default {};
     }
 }

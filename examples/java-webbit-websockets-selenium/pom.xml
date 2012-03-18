@@ -49,37 +49,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>CLI-test</id>
-                        <phase>integration-test</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <target>
-                                <echo>Running cucumber from the command line</echo>
-                                <mkdir dir="target/cukes" />
-                                <java classname="cucumber.cli.Main" fork="true" failonerror="true" newenvironment="true" maxmemory="512m" classpathref="maven.test.classpath">
-                                    <arg value="--dotcucumber" />
-                                    <arg value="${basedir}/src/test/resources/.cucumber" />
-                                    <arg value="--format" />
-                                    <arg value="html:target/cukes" />
-                                    <arg value="--glue" />
-                                    <arg value="cucumber.examples.java.websockets" />
-                                    <arg value="${basedir}/src/test/resources" />
-                                </java>
-                            </target>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
 </project>
