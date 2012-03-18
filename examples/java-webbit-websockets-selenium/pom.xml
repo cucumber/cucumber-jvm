@@ -70,9 +70,7 @@
                                     <arg value="--dotcucumber" />
                                     <arg value="${basedir}/src/test/resources/.cucumber" />
                                     <arg value="--format" />
-                                    <arg value="html" />
-                                    <arg value="--out" />
-                                    <arg value="target/cukes" />
+                                    <arg value="html:target/cukes" />
                                     <arg value="--glue" />
                                     <arg value="cucumber.examples.java.websockets" />
                                     <arg value="${basedir}/src/test/resources" />
