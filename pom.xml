@@ -264,6 +264,7 @@
             <id>examples</id>
             <modules>
                 <module>examples/java-calculator</module>
+                <module>examples/java-helloworld</module>
                 <module>examples/groovy-calculator</module>
                 <module>examples/scala-calculator</module>
                 <module>examples/java-webbit-websockets-selenium</module>

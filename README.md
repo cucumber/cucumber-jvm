@@ -25,6 +25,10 @@ Cucumber-JVM also integrates with the following Dependency Injection containers:
 * CDI/Weld
 * OpenEJB
 
+## Hello World
+
+Check out the simple [Hello World](https://github.com/cucumber/cucumber-jvm/tree/master/examples/java-helloworld) example.
+
 ## Downloading / Installation
 
 Releases are published in [Maven Central](http://search.maven.org/)
@@ -67,7 +71,7 @@ There are more jars available - add the ones you need. (TODO: A guide on how to 
 Add a [dependency](http://ant.apache.org/ivy/history/latest-milestone/ivyfile/dependency.html) in your [ivy.xml](http://ant.apache.org/ivy/history/latest-milestone/ivyfile.html):
 
 ```xml
-    <dependency org="info.cukes" name="cucumber-core" rev="1.0.0.RC16"/>
+    <dependency org="info.cukes" name="cucumber-core" rev="1.0.0.RC21"/>
 ```
 
 Since the artifacts are released to Maven Central, the default Ivy configuration should pull them down automatically.
