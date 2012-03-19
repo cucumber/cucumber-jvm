@@ -13,7 +13,6 @@
              dest="target/lib/cucumber-junit-${cucumber.version}.jar"/>
         <get src="${repo}/info/cukes/gherkin/${gherkin.version}/gherkin-${gherkin.version}.jar"
              dest="target/lib/gherkin-${gherkin.version}.jar"/>
-        <get src="${repo}/com/beust/jcommander/1.23/jcommander-1.23.jar" dest="target/lib/jcommander-1.23.jar"/>
         <get src="${repo}/junit/junit/4.10/junit-4.10.jar" dest="target/lib/junit-4.10.jar"/>
     </target>
 

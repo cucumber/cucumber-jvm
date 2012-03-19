@@ -1,6 +1,5 @@
 package cucumber.formatter;
 
-import com.beust.jcommander.IStringConverter;
 import cucumber.runtime.CucumberException;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.JSONFormatter;
@@ -18,7 +17,7 @@ import java.util.regex.Pattern;
 
 import static java.util.Arrays.asList;
 
-public class FormatterConverter implements IStringConverter<Formatter> {
+public class FormatterConverter {
     private Class[] CTOR_ARGS = new Class[]{Appendable.class, File.class};
 
     private static final Map<String, Class<? extends Formatter>> FORMATTER_CLASSES = new HashMap<String, Class<? extends Formatter>>() {{
@@ -32,7 +31,6 @@ public class FormatterConverter implements IStringConverter<Formatter> {
     private static final Pattern FORMATTER_WITH_FILE_PATTERN = Pattern.compile("([^:]+):(.*)");
     private Appendable defaultOut = System.out;
 
-    @Override
     public Formatter convert(String formatterString) {
         Matcher formatterWithFile = FORMATTER_WITH_FILE_PATTERN.matcher(formatterString);
         String formatterName;
