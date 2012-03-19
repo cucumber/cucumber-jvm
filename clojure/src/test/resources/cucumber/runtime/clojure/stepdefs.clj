@@ -6,6 +6,9 @@
 (Given #"^I have (\d+) cukes in my belly$" [cukes-count]
   (eat (Float. cukes-count)))
 
+(Given #"^I have this many cukes in my belly:$" [cukes-table]
+  (doseq [x (.raw cukes-table)] (eat (Float. (first x)))))
+
 (When #"^there are (\d+) cukes in my belly$" [expected]
   (assert (= (last-meal) (Float. expected))))
 
