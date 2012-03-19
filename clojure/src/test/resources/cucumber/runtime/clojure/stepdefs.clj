@@ -1,7 +1,16 @@
 (use 'cucumber.runtime.clojure.belly)
 
-(Before)
-(After)
+(def some-state (atom "'Before' hasn't run."))
+
+(Before
+ (fn []
+   (do
+     (reset! some-state "'Before' has run.")
+     (println "Executing 'Before'."))))
+
+(After
+ (fn []
+   (println (str "Executing 'After' " @some-state))))
 
 (Given #"^I have (\d+) cukes in my belly$"
   #(eat (Float. %1)))
