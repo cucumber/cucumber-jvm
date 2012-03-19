@@ -119,19 +119,18 @@
 (defmacro step-macros [& names]
   (cons 'do
         (for [name names]
-          `(defmacro ~name [pattern# fun#]
-             `(add-step-definition ~pattern# ~fun#
+          `(defmacro ~name [pattern# binding-form# & body#]
+             `(add-step-definition ~pattern#
+                                   (fn ~binding-form# ~@body#)
                                    '~{:file *file*
                                       :line (:line (meta ~'&form))})))))
 (step-macros
  Given When Then And But)
 
-(defmacro Before [& fun]
-  (when (not (empty? fun))
-    (let [fun (first fun)]
-      `(add-hook-definition :before [] ~fun))))
 
-(defmacro After [& fun]
-  (when (not (empty? fun))
-    (let [fun (first fun)]
-      `(add-hook-definition :after [] ~fun))))
+(defmacro Before [binding-form & body]
+  `(add-hook-definition :before [] (fn ~binding-form ~@body)))
+
+(defmacro After [binding-form & body]
+  `(add-hook-definition :after [] (fn ~binding-form ~@body)))
+
