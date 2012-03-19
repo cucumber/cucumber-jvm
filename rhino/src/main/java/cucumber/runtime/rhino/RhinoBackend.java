@@ -34,7 +34,7 @@ public class RhinoBackend implements Backend {
         cx = Context.enter();
         scope = new Global(cx); // This gives us access to global functions like load()
         scope.put("jsBackend", scope, this);
-        InputStreamReader dsl = new InputStreamReader(getClass().getResourceAsStream(JS_DSL));
+        InputStreamReader dsl = new InputStreamReader(getClass().getResourceAsStream(JS_DSL), "UTF-8");
         cx.evaluateReader(scope, dsl, JS_DSL, 1, null);
     }
 
@@ -46,7 +46,7 @@ public class RhinoBackend implements Backend {
             Iterable<Resource> resources = resourceLoader.resources(gluePath, ".js");
             for (Resource resource : resources) {
                 try {
-                    cx.evaluateReader(scope, new InputStreamReader(resource.getInputStream()), resource.getPath(), 1, null);
+                    cx.evaluateReader(scope, new InputStreamReader(resource.getInputStream(), "UTF-8"), resource.getPath(), 1, null);
                 } catch (IOException e) {
                     throw new CucumberException("Failed to evaluate Javascript in " + resource.getPath(), e);
                 }

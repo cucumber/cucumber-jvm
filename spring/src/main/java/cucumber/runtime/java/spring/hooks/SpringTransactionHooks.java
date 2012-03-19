@@ -13,8 +13,8 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
  * This class defines before and after hooks which provide automatic spring rollback capabilities.
  * These hooks will apply to any element(s) within a <code>.feature</code> file tagged with <code>@txn</code>.
  * <p/>
- * Clients wishing to leverage these hooks should include this class' package in the <code>packages</code> property of the
- * Test class' <code>Feature</code> annotation.
+ * Clients wishing to leverage these hooks should include this class' package in the <code>glue</code> property of the
+ * Test class' {@link Cucumber.Options} annotation.
  * <p/>
  * The BEFORE and AFTER hooks both rely on being able to obtain a <code>PlatformTransactionManager</code> by type, or
  * by an optionally specified bean name, from the runtime <code>BeanFactory</code>.

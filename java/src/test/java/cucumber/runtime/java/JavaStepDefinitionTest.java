@@ -5,6 +5,7 @@ import cucumber.io.ClasspathResourceLoader;
 import cucumber.runtime.AmbiguousStepDefinitionsException;
 import cucumber.runtime.Glue;
 import cucumber.runtime.Runtime;
+import cucumber.runtime.RuntimeOptions;
 import gherkin.I18n;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Comment;
@@ -46,7 +47,8 @@ public class JavaStepDefinitionTest {
     private final Defs defs = new Defs();
     private final JavaBackend backend = new JavaBackend(new SingletonFactory(defs));
     private final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-    private final Runtime runtime = new Runtime(new ClasspathResourceLoader(classLoader), NO_PATHS, classLoader, asList(backend), false);
+    private final RuntimeOptions runtimeOptions = new RuntimeOptions();
+    private final Runtime runtime = new Runtime(new ClasspathResourceLoader(classLoader), classLoader, asList(backend), runtimeOptions);
     private final Glue glue = runtime.getGlue();
 
     @org.junit.Before
@@ -56,8 +58,8 @@ public class JavaStepDefinitionTest {
 
     @Test
     public void throws_ambiguous_when_two_matches_are_found() throws Throwable {
-        backend.addStepDefinition(THREE_DISABLED_MICE.getAnnotation(Given.class), Defs.class, THREE_DISABLED_MICE);
-        backend.addStepDefinition(THREE_BLIND_ANIMALS.getAnnotation(Given.class), Defs.class, THREE_BLIND_ANIMALS);
+        backend.addStepDefinition(THREE_DISABLED_MICE.getAnnotation(Given.class), THREE_DISABLED_MICE);
+        backend.addStepDefinition(THREE_BLIND_ANIMALS.getAnnotation(Given.class), THREE_BLIND_ANIMALS);
 
         Reporter reporter = mock(Reporter.class);
         runtime.buildBackendWorlds(reporter);
@@ -72,7 +74,7 @@ public class JavaStepDefinitionTest {
 
     @Test
     public void does_not_throw_ambiguous_when_nothing_is_ambiguous() throws Throwable {
-        backend.addStepDefinition(THREE_DISABLED_MICE.getAnnotation(Given.class), Defs.class, THREE_DISABLED_MICE);
+        backend.addStepDefinition(THREE_DISABLED_MICE.getAnnotation(Given.class), THREE_DISABLED_MICE);
 
         Reporter reporter = mock(Reporter.class);
         runtime.buildBackendWorlds(reporter);

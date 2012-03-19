@@ -25,6 +25,10 @@ Cucumber-JVM also integrates with the following Dependency Injection containers:
 * CDI/Weld
 * OpenEJB
 
+## Hello World
+
+Check out the simple [Hello World](https://github.com/cucumber/cucumber-jvm/tree/master/examples/java-helloworld) example.
+
 ## Downloading / Installation
 
 Releases are published in [Maven Central](http://search.maven.org/)
@@ -34,15 +38,29 @@ Releases are published in [Maven Central](http://search.maven.org/)
 Jar files can be browsed and downloaded from [Maven Central] or https://oss.sonatype.org/content/repositories/releases/info/cukes/ 
 (New releases will show up here immediately, while it takes a couple of hours to sync to Maven Central).
 
-### Using Maven
+### Using Maven with JUnit
 
-Add a dependency in your [POM](http://maven.apache.org/pom.html):
+If you want to write simple Cucumber tests with JUnit add the following dependencies 
+in your [POM](http://maven.apache.org/pom.html):
 
 ```xml
 <dependency>
     <groupId>info.cukes</groupId>
-    <artifactId>cucumber-core</artifactId>
-    <version>1.0.0.RC20</version>
+    <artifactId>cucumber-java</artifactId>
+    <version>1.0.0.RC21</version>
+    <scope>test</scope>
+</dependency>
+<dependency>
+    <groupId>info.cukes</groupId>
+    <artifactId>cucumber-junit</artifactId>
+    <version>1.0.0.RC21</version>
+    <scope>test</scope>
+</dependency>
+<dependency>
+    <groupId>junit</groupId>
+    <artifactId>junit</artifactId>
+    <version>4.10</version>
+    <scope>test</scope>
 </dependency>
 ```
 
@@ -53,7 +71,7 @@ There are more jars available - add the ones you need. (TODO: A guide on how to 
 Add a [dependency](http://ant.apache.org/ivy/history/latest-milestone/ivyfile/dependency.html) in your [ivy.xml](http://ant.apache.org/ivy/history/latest-milestone/ivyfile.html):
 
 ```xml
-    <dependency org="info.cukes" name="cucumber-core" rev="1.0.0.RC16"/>
+    <dependency org="info.cukes" name="cucumber-core" rev="1.0.0.RC21"/>
 ```
 
 Since the artifacts are released to Maven Central, the default Ivy configuration should pull them down automatically.
@@ -74,9 +92,7 @@ If you are adventurous, check out the examples, read the code and ask specific q
 
 ### API Docs
 
-TODO: Fix this. The Ivy build doesn't upload them yet.
-
-* http://cukes.info/cucumber/jvm/api/1.0.0.RC20
+* http://cukes.info/cucumber/jvm/api/1.0.0.RC21
 
 ## Examples
 
@@ -108,6 +124,28 @@ If you are writing step definitions in a scripting language you must also add th
 ### Eclipse
 
     Just load the root `pom.xml`
+
+## Bugs and Feature requests
+
+You can register bugs and feature requests in the [Github Issue Tracker](https://github.com/cucumber/cucumber-jvm/issues)
+
+You're most likely going to paste code and output, so familiarise yourself with [Github Flavored Markdown](http://github.github.com/github-flavored-markdown/) to make sure it remains readable.
+
+Please consider including the following information if you register a ticket:
+
+* What cucumber-jvm version you're using
+* What modules you're using (`cucumber-java`, `cucumber-spring`, `cucumber-groovy` etc)
+* What command you ran
+* What output you saw
+* How it can be reproduced
+
+### How soon will my ticket be fixed?
+
+The best way to have a bug fixed or feature request implemented is to [fork the cucumber-jvm repo](http://help.github.com/fork-a-repo/) and send a [pull request](http://help.github.com/send-pull-requests/). If the pull request has good tests and follows the coding conventions (see below) it has a good chance of making it into the next release.
+
+If you don't fix the bug yourself (or pay someone to do it for you), the bug might never get fixed. If it is a serious bug, other people than you might care enough to provide a fix.
+
+In other words, there is no guarantee that a bug or feature request gets fixed. Tickets that are more than 6 months old are likely to be closed to keep the backlog manageable.
 
 ## Contributing/Hacking
 

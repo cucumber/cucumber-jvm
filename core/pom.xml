@@ -5,7 +5,7 @@
         <groupId>info.cukes</groupId>
         <artifactId>cucumber-jvm</artifactId>
         <relativePath>../pom.xml</relativePath>
-        <version>1.0.0.RC21-SNAPSHOT</version>
+        <version>1.0.0.RC22-SNAPSHOT</version>
     </parent>
 
     <artifactId>cucumber-core</artifactId>
@@ -21,6 +21,10 @@
         <dependency>
             <groupId>info.cukes</groupId>
             <artifactId>cucumber-html</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.beust</groupId>
+            <artifactId>jcommander</artifactId>
         </dependency>
         <!-- These dependencies are packaged to prevent conflicts with users' own code -->
         <dependency>

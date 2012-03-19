@@ -7,17 +7,59 @@
   {
     "source": "^I have (\\d+) (.*) in my belly$",
     "flags": "",
-    "steps": []
+    "steps": [
+      {
+        "name": "I have 12 cukes in my belly",
+        "args": [
+          {
+            "offset": 7,
+            "val": "12"
+          },
+          {
+            "offset": 10,
+            "val": "cukes"
+          }
+        ]
+      },
+      {
+        "name": "I have 3 cukes in my belly",
+        "args": [
+          {
+            "offset": 7,
+            "val": "3"
+          },
+          {
+            "offset": 9,
+            "val": "cukes"
+          }
+        ]
+      }
+    ]
   },
   {
     "source": "^I have this in my basket:$",
     "flags": "",
-    "steps": []
+    "steps": [
+      {
+        "name": "I have this in my basket:",
+        "args": []
+      }
+    ]
   },
   {
     "source": "^I should be (.*)$",
     "flags": "",
-    "steps": []
+    "steps": [
+      {
+        "name": "I should be \u003cmood\u003e",
+        "args": [
+          {
+            "offset": 12,
+            "val": "\u003cmood\u003e"
+          }
+        ]
+      }
+    ]
   },
   {
     "source": "^the (.*) contains (.*)",
@@ -45,9 +87,19 @@
     ]
   },
   {
-    "source": "^the iso calendar is (\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2})$",
+    "source": "^the iso calendar is (\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2})$",
     "flags": "",
-    "steps": []
+    "steps": [
+      {
+        "name": "the iso calendar is 2012-03-01T06:54:14",
+        "args": [
+          {
+            "offset": 20,
+            "val": "2012-03-01T06:54:14"
+          }
+        ]
+      }
+    ]
   },
   {
     "source": "^the iso date is (.+)$",
@@ -57,6 +109,16 @@
   {
     "source": "^there are (\\d+) cukes in my belly",
     "flags": "",
-    "steps": []
+    "steps": [
+      {
+        "name": "there are 3 cukes in my belly",
+        "args": [
+          {
+            "offset": 10,
+            "val": "3"
+          }
+        ]
+      }
+    ]
   }
 ]

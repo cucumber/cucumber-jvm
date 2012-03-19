@@ -4,7 +4,10 @@ import cucumber.io.Resource;
 import cucumber.io.ResourceLoader;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.FeatureBuilder;
+import cucumber.runtime.Runtime;
 import gherkin.I18n;
+import gherkin.formatter.Formatter;
+import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Background;
 import gherkin.formatter.model.Examples;
 import gherkin.formatter.model.Feature;
@@ -29,14 +32,20 @@ public class CucumberFeature {
     public static List<CucumberFeature> load(ResourceLoader resourceLoader, List<String> featurePaths, final List<Object> filters) {
         final List<CucumberFeature> cucumberFeatures = new ArrayList<CucumberFeature>();
         final FeatureBuilder builder = new FeatureBuilder(cucumberFeatures);
+        boolean resourceFound = false;
         for (String featurePath : featurePaths) {
             Iterable<Resource> resources = resourceLoader.resources(featurePath, ".feature");
             for (Resource resource : resources) {
+                resourceFound = true;
                 builder.parse(resource, filters);
             }
         }
         if (cucumberFeatures.isEmpty()) {
-            throw new CucumberException(String.format("No features found at %s", featurePaths));
+            if(resourceFound) {
+                throw new CucumberException(String.format("None of the features at %s matched the filters: %s", featurePaths, filters));
+            } else {
+                throw new CucumberException(String.format("No features found at %s", featurePaths));
+            }
         }
         Collections.sort(cucumberFeatures, new CucumberFeatureUriComparator());
         return cucumberFeatures;
@@ -92,6 +101,18 @@ public class CucumberFeature {
 
     public String getUri() {
         return uri;
+    }
+
+    public void run(Formatter formatter, Reporter reporter, Runtime runtime) {
+        formatter.uri(getUri());
+        formatter.feature(getFeature());
+
+        for (CucumberTagStatement cucumberTagStatement : getFeatureElements()) {
+            //Run the scenario, it should handle before and after hooks
+            cucumberTagStatement.run(formatter, reporter, runtime);
+        }
+        formatter.eof();
+
     }
 
     private static class CucumberFeatureUriComparator implements Comparator<CucumberFeature> {

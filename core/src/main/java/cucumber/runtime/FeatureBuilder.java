@@ -94,19 +94,20 @@ public class FeatureBuilder implements Formatter {
     }
 
     public void parse(Resource resource, List<Object> filters) {
-        Formatter formatter = this;
-        if (!filters.isEmpty()) {
-            formatter = new FilterFormatter(this, filters);
-        }
-        Parser parser = new Parser(formatter);
         String gherkin = read(resource);
 
         String checksum = checksum(gherkin);
         String path = pathsByChecksum.get(checksum);
         if (path != null) {
-            throw new CucumberException(String.format("Found the same source in %s and %s", path, resource.getPath()));
+            return;
         }
         pathsByChecksum.put(checksum, resource.getPath());
+
+        Formatter formatter = this;
+        if (!filters.isEmpty()) {
+            formatter = new FilterFormatter(this, filters);
+        }
+        Parser parser = new Parser(formatter);
 
         parser.parse(gherkin, resource.getPath(), 0);
         I18n i18n = parser.getI18nLanguage();

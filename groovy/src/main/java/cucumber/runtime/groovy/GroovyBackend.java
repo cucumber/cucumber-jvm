@@ -91,7 +91,7 @@ public class GroovyBackend implements Backend {
 
     private Script parse(Resource resource) {
         try {
-            return shell.parse(new InputStreamReader(resource.getInputStream()), resource.getPath());
+            return shell.parse(new InputStreamReader(resource.getInputStream(), "UTF-8"), resource.getPath());
         } catch (IOException e) {
             throw new CucumberException(e);
         }

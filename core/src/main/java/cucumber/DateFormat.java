@@ -29,7 +29,7 @@ import java.lang.annotation.Target;
  * <pre>
  * &#064;Given("^the date is (\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2})$")
  * public void the_date_is(@DateFormat("yyyy-MM-dd'T'HH:mm:ss") Calendar cal) {
- *     this.date = date;
+ *     this.cal = cal;
  * }
  * </pre>
  * <p>
