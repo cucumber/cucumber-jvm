@@ -21,10 +21,8 @@
     Snippet
     (template [_]
       (str
-       "({0} #\"{1}\"\n"
-       "  (fn [{3}]\n"
-       "    '' {4}\n"
-       "    ))\n"))
+       "({0} #\"{1}\" [{3}]\n"
+       "  (comment  {4}  ))\n"))
     (arguments [_ argumentTypes]
       (SnippetGenerator/untypedArguments argumentTypes))
     (namedGroupStart [_] nil)

@@ -9,10 +9,8 @@ import static cucumber.runtime.snippets.SnippetGenerator.untypedArguments;
 public class ClojureSnippet implements Snippet {
     @Override
     public String template() {
-        return "({0} #\"{1}\"\n" +
-                "  (fn [{3}]\n" +
-                "    '' {4}\n" +
-                "    ))\n";
+        return "({0} #\"{1}\" [{3}]\n" +
+               "  (comment  {4}  ))\n";
     }
 
     @Override
