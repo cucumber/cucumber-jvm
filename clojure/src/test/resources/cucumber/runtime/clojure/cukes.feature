@@ -7,3 +7,6 @@ Feature: Cukes
     Given I have this many cukes in my belly:
     | 13 |
     Then there are 13 cukes in my belly
+
+  Scenario: unimplemented steps
+    Given 5 unimplemented step
