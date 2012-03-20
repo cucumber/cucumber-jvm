@@ -12,6 +12,8 @@ class ScalaSnippetGenerator extends Snippet {
       "  //// {4}\n" +
       "'}'"
 
+  def tableHint() = null
+
   def arguments(argumentTypes: List[Class[_]]) = {
     val indexed = argumentTypes.asScala.zipWithIndex
 

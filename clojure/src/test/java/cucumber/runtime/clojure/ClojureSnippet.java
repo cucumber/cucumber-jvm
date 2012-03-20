@@ -18,6 +18,11 @@ public class ClojureSnippet implements Snippet {
     }
 
     @Override
+    public String tableHint() {
+        return null;
+    }
+
+    @Override
     public String arguments(List<Class<?>> argumentTypes) {
         return untypedArguments(argumentTypes);
     }

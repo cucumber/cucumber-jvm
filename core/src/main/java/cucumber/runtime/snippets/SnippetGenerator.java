@@ -36,7 +36,7 @@ public final class SnippetGenerator {
             Pattern.compile("\\]")
     };
 
-    private static final String HINT = "Express the Regexp above with the code you wish you had";
+    private static final String REGEXP_HINT = "Express the Regexp above with the code you wish you had";
     private static final Character SUBST = '_';
 
     private final Snippet snippet;
@@ -52,7 +52,8 @@ public final class SnippetGenerator {
                 snippet.escapePattern(patternFor(step.getName())),
                 functionName(step.getName()),
                 snippet.arguments(argumentTypes(step)),
-                HINT
+                REGEXP_HINT,
+                step.getRows() == null ? "" : snippet.tableHint()
         );
     }
 

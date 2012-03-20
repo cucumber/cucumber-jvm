@@ -15,6 +15,11 @@ public class JavaScriptSnippet implements Snippet {
     }
 
     @Override
+    public String tableHint() {
+        return null;
+    }
+
+    @Override
     public String arguments(List<Class<?>> argumentTypes) {
         return untypedArguments(argumentTypes);
     }

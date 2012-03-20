@@ -105,6 +105,7 @@ public class JavaSnippetTest {
                 "@Given(\"^I have:$\")\n" +
                 "public void I_have(DataTable arg1) {\n" +
                 "    // Express the Regexp above with the code you wish you had\n" +
+                "    // For automatic conversion, change DataTable to List<YourType>\n" +
                 "}\n";
         List<DataTableRow> dataTable = asList(new DataTableRow(NO_COMMENTS, asList("col1"), 1));
         assertEquals(expected, snippetForDataTable("I have:", dataTable));

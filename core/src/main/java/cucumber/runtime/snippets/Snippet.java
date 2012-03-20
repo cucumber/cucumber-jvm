@@ -5,6 +5,8 @@ import java.util.List;
 public interface Snippet {
     String template();
 
+    String tableHint();
+
     String arguments(List<Class<?>> argumentTypes);
 
     /**

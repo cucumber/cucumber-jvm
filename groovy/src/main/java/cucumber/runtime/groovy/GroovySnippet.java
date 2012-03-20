@@ -13,6 +13,11 @@ public class GroovySnippet implements Snippet {
     }
 
     @Override
+    public String tableHint() {
+        return null;
+    }
+
+    @Override
     public String arguments(List<Class<?>> argumentTypes) {
         StringBuilder sb = new StringBuilder();
         int n = 1;
