@@ -16,6 +16,7 @@
 
 (def glue (atom nil))
 
+;; Make sure ClojureSnippet.java is in sync with this - for testing purposes.
 (defn clojure-snippet []
   (reify
     Snippet

@@ -6,6 +6,10 @@ import java.util.List;
 
 import static cucumber.runtime.snippets.SnippetGenerator.untypedArguments;
 
+/**
+ * This class is only here to test clojure snippets in isolation.
+ * Keep the template in sync with clj.clj
+ */
 public class ClojureSnippet implements Snippet {
     @Override
     public String template() {
