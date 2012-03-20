@@ -1,5 +1,6 @@
 package cucumber.runtime.snippets;
 
+import cucumber.table.DataTable;
 import gherkin.I18n;
 import gherkin.formatter.model.Step;
 
@@ -45,7 +46,14 @@ public final class SnippetGenerator {
     }
 
     public String getSnippet(Step step) {
-        return MessageFormat.format(snippet.template(), I18n.codeKeywordFor(step.getKeyword()), snippet.escapePattern(patternFor(step.getName())), functionName(step.getName()), snippet.arguments(argumentTypes(step.getName())), HINT);
+        return MessageFormat.format(
+                snippet.template(),
+                I18n.codeKeywordFor(step.getKeyword()),
+                snippet.escapePattern(patternFor(step.getName())),
+                functionName(step.getName()),
+                snippet.arguments(argumentTypes(step)),
+                HINT
+        );
     }
 
     protected String patternFor(String stepName) {
@@ -104,7 +112,8 @@ public final class SnippetGenerator {
     }
 
 
-    private List<Class<?>> argumentTypes(String name) {
+    private List<Class<?>> argumentTypes(Step step) {
+        String name = step.getName();
         List<Class<?>> argTypes = new ArrayList<Class<?>>();
         Matcher[] matchers = new Matcher[argumentPatterns().length];
         for (int i = 0; i < argumentPatterns().length; i++) {
@@ -130,6 +139,12 @@ public final class SnippetGenerator {
             if (pos == name.length()) {
                 break;
             }
+        }
+        if(step.getDocString() != null) {
+            argTypes.add(String.class);
+        }
+        if(step.getRows() != null) {
+            argTypes.add(DataTable.class);
         }
         return argTypes;
     }
