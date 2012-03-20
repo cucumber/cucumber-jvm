@@ -1,4 +1,8 @@
-## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.0.0.RC22...master)
+## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.0.0.RC23...master)
+
+* The @Pending annotation no longer exists. Throw a PendingException instead ([#271](https://github.com/cucumber/cucumber-jvm/issues/271) Aslak Hellesøy)
+
+## [1.0.0.RC23](https://github.com/cucumber/cucumber-jvm/compare/v1.0.0.RC22...v1.0.0.RC23)
 
 * [JUnit] CucumberException when running Cucumber with Jacoco code coverage ([#258](https://github.com/cucumber/cucumber-jvm/issues/258) Jan Stamer, Aslak Hellesøy)
 * [Scala] Scala Javadoc problems with build ([#231](https://github.com/cucumber/cucumber-jvm/issues/231) Aslak Hellesøy)
