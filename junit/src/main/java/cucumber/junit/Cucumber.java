@@ -13,10 +13,12 @@ import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
 
 import java.io.IOException;
+import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,7 +50,7 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         super(clazz);
         ClassLoader classLoader = clazz.getClassLoader();
         ResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
-        assertNoDeclaredMethods(clazz);
+        assertNoCucumberAnnotatedMethods(clazz);
 
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(clazz);
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
@@ -82,16 +84,20 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         jUnitReporter.close();
     }
 
-    private void assertNoDeclaredMethods(Class clazz) {
-        if (clazz.getDeclaredMethods().length != 0) {
-            throw new CucumberException(
-                    "\n\n" +
-                            "Classes annotated with @RunWith(Cucumber.class) must not define any methods.\n" +
-                            "Their sole purpose is to serve as an entry point for JUnit.\n" +
-                            "Step Definitions should be defined in their own classes.\n" +
-                            "This allows them to be reused across features.\n" +
-                            "Offending class: " + clazz + "\n"
-            );
+    static void assertNoCucumberAnnotatedMethods(Class clazz) {
+        for (Method method : clazz.getDeclaredMethods()) {
+            for (Annotation annotation : method.getAnnotations()) {
+                if (annotation.annotationType().getName().startsWith("cucumber")) {
+                    throw new CucumberException(
+                            "\n\n" +
+                                    "Classes annotated with @RunWith(Cucumber.class) must not define any\n" +
+                                    "Step Definition or Hook methods. Their sole purpose is to serve as\n" +
+                                    "an entry point for JUnit. Step Definitions and Hooks should be defined\n" +
+                                    "in their own classes. This allows them to be reused across features.\n" +
+                                    "Offending class: " + clazz + "\n"
+                    );
+                }
+            }
         }
     }
 
