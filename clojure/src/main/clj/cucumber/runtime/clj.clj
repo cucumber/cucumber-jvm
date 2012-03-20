@@ -22,8 +22,7 @@
     (template [_]
       (str
        "({0} #\"{1}\" [{3}]\n"
-       "  '' {4}\n"
-       "  )\n"))
+       "  (comment  {4}  ))\n"))
     (arguments [_ argumentTypes]
       (SnippetGenerator/untypedArguments argumentTypes))
     (namedGroupStart [_] nil)

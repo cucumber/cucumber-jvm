@@ -16,8 +16,7 @@ public class ClojureSnippetTest {
         String snippet = new SnippetGenerator(new ClojureSnippet()).getSnippet(step);
         String expected = "" +
                 "(Given #\"^I have (\\d+) cukes in my \"([^\"]*)\" belly$\" [arg1, arg2]\n" +
-                "  ' Express the Regexp above with the code you wish you had\n" +
-                "  )\n";
+                "  (comment  Express the Regexp above with the code you wish you had  ))\n";
         assertEquals(expected, snippet);
     }
 }

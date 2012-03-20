@@ -10,8 +10,7 @@ public class ClojureSnippet implements Snippet {
     @Override
     public String template() {
         return "({0} #\"{1}\" [{3}]\n" +
-                "  '' {4}\n" +
-                "  )\n";
+               "  (comment  {4}  ))\n";
     }
 
     @Override
