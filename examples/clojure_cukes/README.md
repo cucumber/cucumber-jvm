@@ -1,8 +1,8 @@
 # clojure-cukes
 
-Just a little example illustrating how to use Cucumber with Clojure and Leiningen.
-If someone with more Clojure knowledge can improve this it would be great.
+Just a little example illustrating how to use Cucumber with Clojure and Leiningen. Please note that the example uses https://github.com/nilswloka/lein-cucumber, which requires Leiningen 2.
 
 ## Running cukes
 
-    lein test
+lein deps
+lein cucumber
