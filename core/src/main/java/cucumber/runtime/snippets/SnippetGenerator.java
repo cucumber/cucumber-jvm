@@ -10,18 +10,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * Base class for generating snippets.
- * <p/>
- * Subclasses can access common values:
- * <ul>
- * <li>{0} : Keyword</li>
- * <li>{1} : Regexp</li>
- * <li>{2} : Function name</li>
- * <li>{3} : Arguments</li>
- * <li>{4} : Hint comment</li>
- * </ul>
- */
 public final class SnippetGenerator {
     private static final ArgumentPattern[] DEFAULT_ARGUMENT_PATTERNS = new ArgumentPattern[]{
             new ArgumentPattern(Pattern.compile("\"([^\"]*)\""), String.class),
