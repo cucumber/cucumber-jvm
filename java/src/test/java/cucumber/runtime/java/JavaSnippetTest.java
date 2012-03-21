@@ -5,6 +5,7 @@ import gherkin.formatter.model.Comment;
 import gherkin.formatter.model.DataTableRow;
 import gherkin.formatter.model.DocString;
 import gherkin.formatter.model.Step;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Collections;
@@ -97,6 +98,17 @@ public class JavaSnippetTest {
                 "    // Express the Regexp above with the code you wish you had\n" +
                 "}\n";
         assertEquals(expected, snippetForDocString("I have:", new DocString("text/plain", "hello", 1)));
+    }
+
+    @Test
+    @Ignore
+    public void recognisesWordWithNumbers() {
+        String expected = "" +
+                "@Given(\"^Then it responds ([^\\\"]*)$\")\n" +
+                "public void Then_it_responds_UTF(int arg1) {\n" +
+                "    // Express the Regexp above with the code you wish you had\n" +
+                "}\n";
+        assertEquals(expected, snippetFor("Then it responds UTF-8"));
     }
 
     @Test
