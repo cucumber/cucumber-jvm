@@ -21,6 +21,7 @@ public class FormatterConverter {
     private Class[] CTOR_ARGS = new Class[]{Appendable.class, File.class};
 
     private static final Map<String, Class<? extends Formatter>> FORMATTER_CLASSES = new HashMap<String, Class<? extends Formatter>>() {{
+        put("null", NullFormatter.class);
         put("junit", JUnitFormatter.class);
         put("html", HTMLFormatter.class);
         put("pretty", CucumberPrettyFormatter.class);
