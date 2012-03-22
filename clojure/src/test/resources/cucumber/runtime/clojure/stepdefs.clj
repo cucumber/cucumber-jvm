@@ -23,3 +23,7 @@
 
 (When #"^I add (.*)$" [liquid]
   (assert (= "milk" liquid)))
+
+(Given #"^(\d+) unimplemented step$" [arg1]
+  (comment  Express the Regexp above with the code you wish you had  )
+  (throw (cucumber.runtime.PendingException.)))

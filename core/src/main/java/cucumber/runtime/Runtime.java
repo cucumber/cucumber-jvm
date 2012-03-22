@@ -223,7 +223,7 @@ public class Runtime implements UnreportedStepExecutor {
                 match.runStep(i18n);
             } catch (Throwable t) {
                 error = t;
-                status = Result.FAILED;
+                status = (t instanceof PendingException) ? "pending" : Result.FAILED;
                 addError(t);
                 skipNextStep = true;
             } finally {

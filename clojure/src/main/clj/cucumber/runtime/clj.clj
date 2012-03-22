@@ -23,7 +23,8 @@
     (template [_]
       (str
        "({0} #\"{1}\" [{3}]\n"
-       "  (comment  {4}  ))\n"))
+       "  (comment  {4}  )\n"
+       "  (throw (cucumber.runtime.PendingException.)))\n"))
     (arguments [_ argumentTypes]
       (SnippetGenerator/untypedArguments argumentTypes))
     (namedGroupStart [_] nil)
@@ -112,8 +113,6 @@
        (matches [hd tags]
          (.eval te tags))
        (getOrder [hd] 0)))))
-
-;; TODO: before and after hooks
 
 (defmacro step-macros [& names]
   (cons 'do
