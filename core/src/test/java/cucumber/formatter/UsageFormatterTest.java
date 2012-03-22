@@ -34,11 +34,13 @@ public class UsageFormatterTest
     }
 
     @Test
-    public void resultWithoutSteps()
+    public void resultWithoutSkippedSteps()
     {
         Appendable out = mock(Appendable.class);
         UsageFormatter usageFormatter = new UsageFormatter(out);
         Result result = mock(Result.class);
+        when(result.getStatus()).thenReturn(Result.SKIPPED.getStatus());
+        
         usageFormatter.result(result);
         verifyZeroInteractions(out);
     }
@@ -54,6 +56,7 @@ public class UsageFormatterTest
         
         Result result = mock(Result.class);
         when(result.getDuration()).thenReturn(12345L);
+        when(result.getStatus()).thenReturn(Result.PASSED);
 
         usageFormatter.result(result);
 
@@ -86,6 +89,7 @@ public class UsageFormatterTest
 
         Result result = mock(Result.class);
         when(result.getDuration()).thenReturn(0L);
+        when(result.getStatus()).thenReturn(Result.PASSED);
 
         usageFormatter.result(result);
 
@@ -109,6 +113,8 @@ public class UsageFormatterTest
 
         Result result = mock(Result.class);
         when(result.getDuration()).thenReturn(null);
+        when(result.getStatus()).thenReturn(Result.PASSED);
+
         usageFormatter.result(result);
 
         Map<String,List<UsageFormatter.StepContainer>> usageMap = usageFormatter.usageMap;

@@ -180,7 +180,10 @@ public class UsageFormatter implements Formatter, Reporter
     {
         String stepDefinition = getStepDefinition();
         String stepName = getStepName();
-        addUsageEntry(result, stepDefinition, stepName);
+        if (result.getStatus().equals(Result.PASSED))
+        {
+            addUsageEntry(result, stepDefinition, stepName);
+        }
     }
 
     private String getStepName()
