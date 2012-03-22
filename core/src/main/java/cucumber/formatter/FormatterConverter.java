@@ -45,19 +45,17 @@ public class FormatterConverter {
         }
         Class<? extends Formatter> formatterClass = formatterClass(formatterName);
         try {
-            return instantiate(formatterClass, ctorArg);
+            return instantiate(formatterString, formatterClass, ctorArg);
         } catch (IOException e) {
             throw new CucumberException(e);
         }
     }
 
-    private Formatter instantiate(Class<? extends Formatter> formatterClass, Object ctorArg) throws IOException {
-        Constructor<? extends Formatter> constructor;
-
+    private Formatter instantiate(String formatterString, Class<? extends Formatter> formatterClass, Object ctorArg) throws IOException {
         for (Class ctorArgClass : CTOR_ARGS) {
-            constructor = findConstructor(formatterClass, ctorArgClass);
+            Constructor<? extends Formatter> constructor = findConstructor(formatterClass, ctorArgClass);
             if (constructor != null) {
-                ctorArg = convert(ctorArg, ctorArgClass);
+                ctorArg = convertOrNull(ctorArg, ctorArgClass);
                 if (ctorArg != null) {
                     try {
                         return constructor.newInstance(ctorArg);
@@ -71,10 +69,13 @@ public class FormatterConverter {
                 }
             }
         }
+        if (ctorArg == null) {
+            throw new CucumberException(String.format("You must supply an output argument to %s. Like so: %s:output", formatterString, formatterString));
+        }
         throw new CucumberException(String.format("%s must have a single-argument constructor that takes one of the following: %s", formatterClass, asList(CTOR_ARGS)));
     }
 
-    private Object convert(Object ctorArg, Class ctorArgClass) throws IOException {
+    private Object convertOrNull(Object ctorArg, Class ctorArgClass) throws IOException {
         if (ctorArgClass.isAssignableFrom(ctorArg.getClass())) {
             return ctorArg;
         }
