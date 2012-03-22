@@ -6,6 +6,7 @@ import cucumber.runtime.model.CucumberScenario;
 import cucumber.runtime.model.CucumberScenarioOutline;
 import cucumber.runtime.model.CucumberTagStatement;
 import gherkin.formatter.model.Feature;
+import gherkin.formatter.model.Step;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
@@ -33,6 +34,14 @@ public class FeatureRunner extends ParentRunner<ParentRunner> {
     public String getName() {
         Feature feature = cucumberFeature.getFeature();
         return feature.getKeyword() + ": " + feature.getName();
+    }
+
+    @Override
+    public Description getDescription() {
+        Description description = Description.createSuiteDescription(getName(), cucumberFeature);
+        for (ParentRunner child : getChildren())
+            description.addChild(describeChild(child));
+        return description;
     }
 
     @Override

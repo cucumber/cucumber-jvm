@@ -3,6 +3,7 @@ package cucumber.junit;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.model.CucumberExamples;
 import cucumber.runtime.model.CucumberScenario;
+import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runners.Suite;
 import org.junit.runners.model.InitializationError;
@@ -31,5 +32,13 @@ class ExamplesRunner extends Suite {
     @Override
     protected String getName() {
         return cucumberExamples.getExamples().getKeyword() + ": " + cucumberExamples.getExamples().getName();
+    }
+
+    @Override
+    public Description getDescription() {
+        Description description = Description.createSuiteDescription(getName(), cucumberExamples);
+        for (Runner child : getChildren())
+            description.addChild(describeChild(child));
+        return description;
     }
 }

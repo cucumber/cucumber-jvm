@@ -3,6 +3,7 @@ package cucumber.junit;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.model.CucumberExamples;
 import cucumber.runtime.model.CucumberScenarioOutline;
+import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runners.Suite;
 import org.junit.runners.model.InitializationError;
@@ -23,5 +24,13 @@ class ScenarioOutlineRunner extends Suite {
     @Override
     public String getName() {
         return cucumberScenarioOutline.getVisualName();
+    }
+
+    @Override
+    public Description getDescription() {
+        Description description = Description.createSuiteDescription(getName(), cucumberScenarioOutline);
+        for (Runner child : getChildren())
+            description.addChild(describeChild(child));
+        return description;
     }
 }

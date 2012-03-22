@@ -56,7 +56,6 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
         runtime = new Runtime(resourceLoader, classLoader, runtimeOptions);
 
-        // TODO: Create formatter(s) based on Annotations. Use same technique as in cli.Main for MultiFormatter
         jUnitReporter = new JUnitReporter(runtimeOptions.reporter(classLoader), runtimeOptions.formatter(classLoader));
         addChildren(runtimeOptions.cucumberFeatures(resourceLoader));
     }
