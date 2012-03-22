@@ -5,7 +5,7 @@
         <groupId>info.cukes</groupId>
         <artifactId>cucumber-jvm</artifactId>
         <relativePath>../pom.xml</relativePath>
-        <version>1.0.0.RC17-SNAPSHOT</version>
+        <version>1.0.0.RC24-SNAPSHOT</version>
     </parent>
 
     <artifactId>cucumber-jython</artifactId>
@@ -35,6 +35,17 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- These dependencies are required in order to find classes when running in an IDE - they haven't been jar-jarred -->
+        <dependency>
+            <groupId>com.thoughtworks.xstream</groupId>
+            <artifactId>xstream</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.googlecode.java-diff-utils</groupId>
+            <artifactId>diffutils</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -106,16 +117,16 @@
                             <goal>run</goal>
                         </goals>
                     </execution>
-                     <execution>
-                          <id>generate-i18n-resources</id>
-                          <goals>
-                              <goal>run</goal>
-                          </goals>
-                          <phase>generate-resources</phase>
-                          <configuration>
-                              <target>
-                                  <taskdef name="groovy" classname="org.codehaus.groovy.ant.Groovy" classpathref="maven.plugin.classpath" />
-                                  <groovy><![CDATA[
+                    <execution>
+                        <id>generate-i18n-resources</id>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <target>
+                                <taskdef name="groovy" classname="org.codehaus.groovy.ant.Groovy" classpathref="maven.plugin.classpath" />
+                                <groovy><![CDATA[
 import groovy.text.SimpleTemplateEngine
 import gherkin.I18n
 
@@ -134,9 +145,9 @@ I18n.all.each { i18n ->
 }
       ]]></groovy>
 
-                              </target>
-                          </configuration>
-                      </execution>
+                            </target>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
             <plugin>
@@ -153,7 +164,7 @@ I18n.all.each { i18n ->
                         <configuration>
                             <resources>
                                 <resource>
-                                  <directory>${basedir}/target/generated-resources/i18n</directory>
+                                    <directory>${basedir}/target/generated-resources/i18n</directory>
                                 </resource>
                             </resources>
                         </configuration>

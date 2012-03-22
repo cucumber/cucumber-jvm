@@ -1,8 +1,6 @@
 package cucumber.runtime.jython;
 
 import cucumber.runtime.snippets.Snippet;
-import cucumber.runtime.snippets.SnippetGenerator;
-import gherkin.formatter.model.Step;
 
 import java.util.List;
 
@@ -14,7 +12,14 @@ public class JythonSnippet implements Snippet {
     public String template() {
         return "@{0}(''{1}'')\n" +
                 "def {2}({3}):\n" +
-                "  # {4}\n";
+                "  # {4}\n" +
+                "  raise(PendingException())\n" +
+                "";
+    }
+
+    @Override
+    public String tableHint() {
+        return null;
     }
 
     @Override

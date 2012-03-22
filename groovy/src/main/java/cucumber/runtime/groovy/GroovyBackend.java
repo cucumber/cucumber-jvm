@@ -91,7 +91,7 @@ public class GroovyBackend implements Backend {
 
     private Script parse(Resource resource) {
         try {
-            return shell.parse(new InputStreamReader(resource.getInputStream()), resource.getPath());
+            return shell.parse(new InputStreamReader(resource.getInputStream(), "UTF-8"), resource.getPath());
         } catch (IOException e) {
             throw new CucumberException(e);
         }
@@ -130,7 +130,6 @@ public class GroovyBackend implements Backend {
     public void invoke(Closure body, Object[] args) {
         body.setDelegate(getGroovyWorld());
         body.call(args);
-        System.out.println("DONE");
     }
 
     private Object getGroovyWorld() {

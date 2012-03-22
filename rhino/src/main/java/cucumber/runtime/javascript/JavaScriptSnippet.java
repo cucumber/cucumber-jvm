@@ -11,7 +11,13 @@ public class JavaScriptSnippet implements Snippet {
     public String template() {
         return "{0}(/{1}/, function({3}) '{'\n" +
                 "  // {4}\n" +
+                "  throw new Packages.cucumber.runtime.PendingException();\n" +
                 "'}');\n";
+    }
+
+    @Override
+    public String tableHint() {
+        return null;
     }
 
     @Override

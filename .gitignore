@@ -15,6 +15,15 @@ tmp/
 
 # Build & test droppings
 report.js
+report.xml
 chromedriver.log
 .scala_dependencies
 nexus.properties
+pom.xml.releaseBackup
+release.properties
+
+# OS generated files
+.DS_Store*
+ehthumbs.db
+Icon?
+Thumbs.db

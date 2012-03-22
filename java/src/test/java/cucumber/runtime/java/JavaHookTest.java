@@ -45,7 +45,7 @@ public class JavaHookTest {
     @Test
     public void before_hooks_get_registered() throws Exception {
         backend.buildWorld();
-        backend.addHook(BEFORE.getAnnotation(Before.class), HasHooks.class, BEFORE);
+        backend.addHook(BEFORE.getAnnotation(Before.class), BEFORE);
         JavaHookDefinition hookDef = (JavaHookDefinition) glue.getBeforeHooks().get(0);
         assertEquals(0, glue.getAfterHooks().size());
         assertEquals(BEFORE, hookDef.getMethod());
@@ -54,7 +54,7 @@ public class JavaHookTest {
     @Test
     public void after_hooks_get_registered() throws Exception {
         backend.buildWorld();
-        backend.addHook(AFTER.getAnnotation(After.class), HasHooks.class, AFTER);
+        backend.addHook(AFTER.getAnnotation(After.class), AFTER);
         JavaHookDefinition hookDef = (JavaHookDefinition) glue.getAfterHooks().get(0);
         assertEquals(0, glue.getBeforeHooks().size());
         assertEquals(AFTER, hookDef.getMethod());
@@ -63,7 +63,7 @@ public class JavaHookTest {
     @Test
     public void hook_order_gets_registered() {
         backend.buildWorld();
-        backend.addHook(AFTER.getAnnotation(After.class), HasHooks.class, AFTER);
+        backend.addHook(AFTER.getAnnotation(After.class), AFTER);
         HookDefinition hookDef = glue.getAfterHooks().get(0);
         assertEquals(1, hookDef.getOrder());
     }
@@ -71,7 +71,7 @@ public class JavaHookTest {
     @Test
     public void hook_with_no_order_is_last() {
         backend.buildWorld();
-        backend.addHook(BEFORE.getAnnotation(Before.class), HasHooks.class, BEFORE);
+        backend.addHook(BEFORE.getAnnotation(Before.class), BEFORE);
         HookDefinition hookDef = glue.getBeforeHooks().get(0);
         assertEquals(Integer.MAX_VALUE, hookDef.getOrder());
     }
@@ -79,7 +79,7 @@ public class JavaHookTest {
     @Test
     public void matches_matching_tags() {
         backend.buildWorld();
-        backend.addHook(BEFORE.getAnnotation(Before.class), HasHooks.class, BEFORE);
+        backend.addHook(BEFORE.getAnnotation(Before.class), BEFORE);
         HookDefinition before = glue.getBeforeHooks().get(0);
         assertTrue(before.matches(asList(new Tag("@bar", 0), new Tag("@zap", 0))));
     }
@@ -87,7 +87,7 @@ public class JavaHookTest {
     @Test
     public void does_not_match_non_matching_tags() {
         backend.buildWorld();
-        backend.addHook(BEFORE.getAnnotation(Before.class), HasHooks.class, BEFORE);
+        backend.addHook(BEFORE.getAnnotation(Before.class), BEFORE);
         HookDefinition before = glue.getBeforeHooks().get(0);
         assertFalse(before.matches(asList(new Tag("@bar", 0))));
     }

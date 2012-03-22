@@ -1,9 +1,9 @@
 package cucumber.table;
 
 import com.thoughtworks.xstream.XStream;
-import cucumber.runtime.converters.DateConverter;
 import cucumber.runtime.converters.LocalizedXStreams;
 import cucumber.runtime.converters.SingleValueConverterWrapperExt;
+import cucumber.runtime.converters.TimeConverter;
 import gherkin.I18n;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,10 +22,10 @@ public class ToDataTableTest {
     @Before
     public void createTableConverterWithDateFormat() {
         XStream xStream = new LocalizedXStreams(Thread.currentThread().getContextClassLoader()).get(new I18n("en"));
-        tc = new TableConverter(xStream);
+        tc = new TableConverter(xStream, null);
         SingleValueConverterWrapperExt converterWrapper = (SingleValueConverterWrapperExt) xStream.getConverterLookup().lookupConverterForType(Date.class);
-        DateConverter dateConverter = (DateConverter) converterWrapper.getConverter();
-        dateConverter.setOnlyFormat("dd/MM/yyyy", Locale.UK);
+        TimeConverter timeConverter = (TimeConverter) converterWrapper.getConverter();
+        timeConverter.setOnlyFormat("dd/MM/yyyy", Locale.UK);
     }
 
     @Test

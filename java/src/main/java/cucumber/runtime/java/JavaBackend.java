@@ -58,6 +58,18 @@ public class JavaBackend implements Backend {
         classpathMethodScanner.scan(this, gluePaths);
     }
 
+    /**
+     * Convenience method for frameworks that wish to load glue from methods explicitly (possibly
+     * found with a different mechanism than Cucumber's built-in classpath scanning).
+     *
+     * @param glue   where stepdefs and hooks will be added.
+     * @param method a candidate method.
+     */
+    public void loadGlue(Glue glue, Method method) {
+        this.glue = glue;
+        classpathMethodScanner.scan(this, method);
+    }
+
     @Override
     public void setUnreportedStepExecutor(UnreportedStepExecutor executor) {
         //Not used here yet
@@ -78,13 +90,13 @@ public class JavaBackend implements Backend {
         return snippetGenerator.getSnippet(step);
     }
 
-    void addStepDefinition(Annotation annotation, Class<?> glueCodeClass, Method method) {
+    void addStepDefinition(Annotation annotation, Method method) {
         try {
             Method regexpMethod = annotation.getClass().getMethod("value");
             String regexpString = (String) regexpMethod.invoke(annotation);
             if (regexpString != null) {
                 Pattern pattern = Pattern.compile(regexpString);
-                objectFactory.addClass(glueCodeClass);
+                objectFactory.addClass(method.getDeclaringClass());
                 glue.addStepDefinition(new JavaStepDefinition(method, pattern, objectFactory));
             }
         } catch (NoSuchMethodException e) {
@@ -96,8 +108,8 @@ public class JavaBackend implements Backend {
         }
     }
 
-    void addHook(Annotation annotation, Class<?> glueCodeClass, Method method) {
-        objectFactory.addClass(glueCodeClass);
+    void addHook(Annotation annotation, Method method) {
+        objectFactory.addClass(method.getDeclaringClass());
 
         Order order = method.getAnnotation(Order.class);
         int hookOrder = (order == null) ? Integer.MAX_VALUE : order.value();

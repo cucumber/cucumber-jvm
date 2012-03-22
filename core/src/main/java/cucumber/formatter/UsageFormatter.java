@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cucumber.formatter.usage.AverageUsageStatisticStrategy;
+import cucumber.formatter.usage.MedianUsageStatisticStrategy;
 import cucumber.formatter.usage.UsageStatisticStrategy;
 import cucumber.runtime.StepDefinitionMatch;
 import gherkin.deps.com.google.gson.Gson;
@@ -43,6 +45,9 @@ public class UsageFormatter implements Formatter, Reporter
     public UsageFormatter(Appendable out)
     {
         this.out = new NiceAppendable(out);
+        
+        statisticStrategies.put("median", new MedianUsageStatisticStrategy());
+        statisticStrategies.put("average", new AverageUsageStatisticStrategy());
     }
 
     @Override

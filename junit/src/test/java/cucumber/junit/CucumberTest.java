@@ -1,9 +1,11 @@
 package cucumber.junit;
 
+import cucumber.annotation.DummyWhen;
 import cucumber.runtime.CucumberException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.junit.runners.model.InitializationError;
 
 import java.io.File;
@@ -15,7 +17,6 @@ public class CucumberTest {
 
     private String dir;
 
-    // TODO: While on the plain I couldn't look up how to change directory in Java... Fix this.
     @Before
     public void ensureDirectory() {
         dir = System.getProperty("user.dir");
@@ -49,14 +50,42 @@ public class CucumberTest {
         new Cucumber(ExplicitPackageWithNoFeatures.class);
     }
 
+    @RunWith(Cucumber.class)
+    private class RunCukesTestValidEmpty {
+    }
+
+    @RunWith(Cucumber.class)
+    private class RunCukesTestValidIgnored {
+        public void ignoreMe() {
+        }
+    }
+
+    @RunWith(Cucumber.class)
+    private class RunCukesTestInvalid {
+        @DummyWhen
+        public void ignoreMe() {
+        }
+    }
+
+    @Test
+    public void no_stepdefs_in_cucumber_runner_valid() {
+        Cucumber.assertNoCucumberAnnotatedMethods(RunCukesTestValidEmpty.class);
+        Cucumber.assertNoCucumberAnnotatedMethods(RunCukesTestValidIgnored.class);
+    }
+
+    @Test(expected = CucumberException.class)
+    public void no_stepdefs_in_cucumber_runner_invalid() {
+        Cucumber.assertNoCucumberAnnotatedMethods(RunCukesTestInvalid.class);
+    }
+
     private class ImplicitPackage {
     }
 
-    @Feature("cucumber/junit")
+    @Cucumber.Options(features = {"cucumber/junit"})
     private class ExplicitPackage {
     }
 
-    @Feature("gibber/ish")
+    @Cucumber.Options(features = {"gibber/ish"})
     private class ExplicitPackageWithNoFeatures {
     }
 }

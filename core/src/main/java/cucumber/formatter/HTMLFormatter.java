@@ -181,6 +181,7 @@ public class HTMLFormatter implements Formatter, Reporter {
     }
 
     private OutputStream reportFileOutputStream(String fileName) {
+        htmlReportDir.mkdirs();
         File file = new File(htmlReportDir, fileName);
         try {
             return new FileOutputStream(file);

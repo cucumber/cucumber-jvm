@@ -37,8 +37,8 @@ public class ProgressFormatter implements Formatter, Reporter {
     private final NiceAppendable out;
     private final boolean monochrome;
 
-    public ProgressFormatter(Appendable appendable, boolean monochrome) {
-        this.monochrome = monochrome;
+    public ProgressFormatter(Appendable appendable) {
+        this.monochrome = false;
         out = new NiceAppendable(appendable);
     }
 

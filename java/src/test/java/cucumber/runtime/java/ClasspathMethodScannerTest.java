@@ -1,21 +1,20 @@
 package cucumber.runtime.java;
 
-import static java.util.Arrays.*;
-import static org.mockito.Mockito.*;
-
+import cucumber.annotation.Before;
+import cucumber.io.ClasspathResourceLoader;
+import cucumber.runtime.Glue;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.internal.util.reflection.Whitebox;
 
-import cucumber.annotation.Before;
-import cucumber.io.ClasspathResourceLoader;
-import cucumber.runtime.Glue;
-import cucumber.runtime.java.test2.Stepdefs2;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 public class ClasspathMethodScannerTest {
 
     @Test
-    public void loadGlue_should_not_try_to_instantiate_super_classes() {
+    public void loadGlue_registers_the_methods_declaring_class_in_the_object_factory() throws NoSuchMethodException {
 
         ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(Thread.currentThread().getContextClassLoader());
         ClasspathMethodScanner classpathMethodScanner = new ClasspathMethodScanner(resourceLoader);
@@ -26,14 +25,18 @@ public class ClasspathMethodScannerTest {
         Whitebox.setInternalState(backend, "glue", world);
 
         // this delegates to classpathMethodScanner.scan which we test
-        classpathMethodScanner.scan(backend, asList("cucumber/runtime/java/test2"));
+        classpathMethodScanner.scan(backend, BaseStepDefs.class.getMethod("m"));
 
-        verify(factory, times(1)).addClass(Stepdefs2.class);
+        verify(factory, times(1)).addClass(BaseStepDefs.class);
         verifyNoMoreInteractions(factory);
     }
 
-    public static class BaseStepDefs {
+    public static class Stepdefs2 extends BaseStepDefs {
+        public interface Interface1 {
+        }
+    }
 
+    public static class BaseStepDefs {
         @Before
         public void m() {
         }

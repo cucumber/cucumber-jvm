@@ -23,7 +23,7 @@ public abstract class ConverterWithFormat<T> implements SingleValueConverter {
         }
         for (Format format : getFormats()) {
             try {
-                return transform(format, string);
+                return (T) transform(format, string);
             } catch (Exception ignore) {
                 // no worries, let's try the next format.
             }
@@ -45,13 +45,13 @@ public abstract class ConverterWithFormat<T> implements SingleValueConverter {
      * @return The object
      */
     @SuppressWarnings("unchecked")
-    protected T transform(final Format format, final String argument) {
+    protected Object transform(final Format format, final String argument) {
         ParsePosition position = new ParsePosition(0);
         Object result = format.parseObject(argument, position);
         if (position.getErrorIndex() != -1) {
             throw new CucumberException("Can't parse '" + argument + "' using format " + format);
         }
-        return (T) result;
+        return result;
     }
 
     @Override

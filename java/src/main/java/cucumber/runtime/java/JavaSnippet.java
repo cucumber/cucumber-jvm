@@ -24,7 +24,13 @@ public class JavaSnippet implements Snippet {
         return "@{0}(\"{1}\")\n" +
                 "public void {2}({3}) '{'\n" +
                 "    // {4}\n" +
+                "{5}    throw new PendingException();\n" +
                 "'}'\n";
+    }
+
+    @Override
+    public String tableHint() {
+        return "    // For automatic conversion, change DataTable to List<YourType>\n";
     }
 
     @Override

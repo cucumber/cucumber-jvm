@@ -19,18 +19,18 @@ public interface ScenarioResult {
 
     /**
      * Embeds data into the report(s). Some reporters (such as the progress one) don't embed data, but others do (html and json).
-     * 
+     *
+     * @param data     what to embed, for example an image.
+     * @param mimeType what is the data?
      * @see cucumber.formatter.ProgressFormatter
      * @see cucumber.formatter.HTMLFormatter
      * @see gherkin.formatter.JSONFormatter
-     * @param data what to embed, for example an image.
-     * @param mimeType what is the data?
      */
     void embed(InputStream data, String mimeType);
 
     /**
      * Outputs some text into the report.
-     * 
+     *
      * @param text what to put in the report.
      */
     void write(String text);

@@ -1,0 +1,57 @@
+<project name="java-helloworld" basedir="." default="runcukes">
+    <property name="repo" value="https://oss.sonatype.org/content/repositories/releases"/>
+    <property name="cucumber.version" value="1.0.0.RC23"/>
+    <property name="gherkin.version" value="2.9.1"/>
+
+    <target name="download">
+        <mkdir dir="target/lib"/>
+        <get src="${repo}/info/cukes/cucumber-core/${cucumber.version}/cucumber-core-${cucumber.version}.jar"
+             dest="target/lib/cucumber-core-${cucumber.version}.jar"/>
+        <get src="${repo}/info/cukes/cucumber-java/${cucumber.version}/cucumber-java-${cucumber.version}.jar"
+             dest="target/lib/cucumber-java-${cucumber.version}.jar"/>
+        <get src="${repo}/info/cukes/cucumber-junit/${cucumber.version}/cucumber-junit-${cucumber.version}.jar"
+             dest="target/lib/cucumber-junit-${cucumber.version}.jar"/>
+        <get src="${repo}/info/cukes/gherkin/${gherkin.version}/gherkin-${gherkin.version}.jar"
+             dest="target/lib/gherkin-${gherkin.version}.jar"/>
+        <get src="${repo}/junit/junit/4.10/junit-4.10.jar" dest="target/lib/junit-4.10.jar"/>
+    </target>
+
+    <target name="classpath">
+        <path id="classpath">
+            <fileset dir="target/lib">
+                <include name="**/*.jar"/>
+            </fileset>
+            <pathelement location="target/classes"/>
+            <pathelement location="target/test-classes"/>
+        </path>
+    </target>
+
+    <target name="compile" depends="classpath">
+        <mkdir dir="target/classes"/>
+        <javac srcdir="src/main/java" destdir="target/classes" classpathref="classpath"/>
+    </target>
+
+    <target name="compile-test" depends="compile,classpath">
+        <mkdir dir="target/test-classes"/>
+        <javac srcdir="src/test/java" destdir="target/test-classes" classpathref="classpath"/>
+    </target>
+
+    <target name="runcukes" depends="compile-test">
+        <java classname="cucumber.cli.Main" fork="true">
+            <classpath>
+                <fileset dir="target/lib">
+                    <include name="**/*.jar"/>
+                </fileset>
+                <pathelement location="target/classes"/>
+                <pathelement location="target/test-classes"/>
+            </classpath>
+            <arg value="--glue"/>
+            <arg value="cucumber.examples.java.helloworld"/>
+            <arg value="src/test/resources"/>
+        </java>
+    </target>
+
+    <target name="clean">
+        <delete dir="target"/>
+    </target>
+</project>

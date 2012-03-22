@@ -23,9 +23,11 @@ import static gherkin.util.FixJava.map;
 
 public class TableConverter {
     private final XStream xStream;
+    private final String dateFormat;
 
-    public TableConverter(XStream xStream) {
+    public TableConverter(XStream xStream, String dateFormat) {
         this.xStream = xStream;
+        this.dateFormat = dateFormat;
     }
 
     /**

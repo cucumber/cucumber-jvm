@@ -1,8 +1,5 @@
 package cucumber.runtime;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Iterator;

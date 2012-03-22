@@ -8,8 +8,8 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 
 /**
  * Spring based implementation of ObjectFactory.
@@ -33,50 +33,47 @@ public class SpringFactory implements ObjectFactory {
 
     private static AbstractApplicationContext applicationContext;
 
-    private ClassPathXmlApplicationContext stepContext;
-    private final Collection<Class<?>> stepClasses = new ArrayList<Class<?>>();
+    private final Collection<Class<?>> stepClasses = new HashSet<Class<?>>();
 
     public SpringFactory() {
     }
 
     static {
-        applicationContext = new ClassPathXmlApplicationContext(new String[]{"cucumber.xml"});
+        applicationContext = new ClassPathXmlApplicationContext(
+                "cucumber/runtime/java/spring/cucumber-glue.xml",
+                "cucumber.xml");
         applicationContext.registerShutdownHook();
     }
 
     @Override
-    public void addClass(final Class<?> clazz) {
-        stepClasses.add(clazz);
-    }
+    public void addClass(final Class<?> stepClass) {
+        if (!stepClasses.contains(stepClass)) {
+            stepClasses.add(stepClass);
 
-    @Override
-    public void createInstances() {
-        createNewStepContext();
-        populateStepContext();
-    }
-
-    private void createNewStepContext() {
-        stepContext = new ClassPathXmlApplicationContext(new String[]{"classpath*:cucumber-glue.xml"},
-                applicationContext);
-    }
-
-    private void populateStepContext() {
-        BeanDefinitionRegistry registry = (BeanDefinitionRegistry) stepContext.getAutowireCapableBeanFactory();
-        for (Class<?> stepClass : stepClasses) {
+            BeanDefinitionRegistry registry = (BeanDefinitionRegistry) applicationContext.getAutowireCapableBeanFactory();
             registry.registerBeanDefinition(stepClass.getName(),
-                    BeanDefinitionBuilder.genericBeanDefinition(stepClass).getBeanDefinition());
+                    BeanDefinitionBuilder.genericBeanDefinition(stepClass)
+                            .setScope(GlueCodeScope.NAME)
+                            .getBeanDefinition());
+
         }
     }
 
     @Override
-    public void disposeInstances() {
-        stepContext.close();
+    public void createInstances() {
+        GlueCodeContext.INSTANCE.start();
     }
 
     @Override
+    public void disposeInstances() {
+        GlueCodeContext.INSTANCE.stop();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
     public <T> T getInstance(final Class<T> type) {
         try {
-            return stepContext.getBean(type);
+            return applicationContext.getBean(type);
         } catch (NoSuchBeanDefinitionException exception) {
             throw new CucumberException(exception.getMessage(), exception);
         }

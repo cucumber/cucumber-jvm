@@ -1,9 +1,8 @@
 package cucumber.runtime.java.guice.loadguicemodule;
 
+import cucumber.junit.Cucumber;
 import org.junit.runner.RunWith;
 
-import cucumber.junit.Cucumber;
-
-@RunWith(Cucumber.class )
+@RunWith(Cucumber.class)
 public class loadguicemodule {
 }
