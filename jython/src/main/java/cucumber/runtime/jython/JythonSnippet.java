@@ -12,7 +12,9 @@ public class JythonSnippet implements Snippet {
     public String template() {
         return "@{0}(''{1}'')\n" +
                 "def {2}({3}):\n" +
-                "  # {4}\n";
+                "  # {4}\n" +
+                "  raise(PendingException())\n" +
+                "";
     }
 
     @Override

@@ -7,6 +7,7 @@ import gherkin.I18n;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 import org.mozilla.javascript.Context;
+import org.mozilla.javascript.JavaScriptException;
 import org.mozilla.javascript.NativeFunction;
 import org.mozilla.javascript.NativeJavaObject;
 import org.mozilla.javascript.Scriptable;
@@ -48,7 +49,19 @@ public class RhinoStepDefinition implements StepDefinition {
     }
 
     public void execute(I18n i18n, Object[] args) throws Throwable {
-        bodyFunc.call(cx, scope, scope, args);
+        try {
+            bodyFunc.call(cx, scope, scope, args);
+        } catch (JavaScriptException e) {
+            Object value = e.getValue();
+            if (value instanceof NativeJavaObject) {
+                NativeJavaObject njo = (NativeJavaObject) value;
+                Object unwrapped = njo.unwrap();
+                if (unwrapped instanceof Throwable) {
+                    throw (Throwable) unwrapped;
+                }
+            }
+            throw e.getCause() == null ? e : e.getCause();
+        }
     }
 
     public boolean isDefinedAt(StackTraceElement stackTraceElement) {

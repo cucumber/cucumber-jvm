@@ -4,7 +4,6 @@ var registerStepDefinition = function(regexp, bodyFunc) {
         if (match) {
             var arguments = new Packages.java.util.ArrayList();
             var s = match[0];
-            var offset = 0;
             for (i = 1; i < match.length; i++) {
                 var arg = match[i];
                 var offset = s.indexOf(arg, offset);
@@ -25,4 +24,4 @@ var Then = registerStepDefinition;
 var World = function(func) {
     // TODO: do this properly
     func();
-}
+};

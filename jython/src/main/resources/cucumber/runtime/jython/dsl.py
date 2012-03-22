@@ -1,5 +1,7 @@
 import re
 from gherkin.formatter import Argument
+from cucumber.runtime import PendingException
+
 class I18NKeywordTemplate(object):
   def __init__(self, regexp):
     self.regexp = regexp
