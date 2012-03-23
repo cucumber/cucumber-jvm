@@ -51,7 +51,6 @@ class JUnitReporter implements Reporter, Formatter {
     public void match(Match match) {
         Description description = executionUnitRunner.describeChild(steps.remove(0));
         stepNotifier = new EachTestNotifier(runNotifier, description);
-        stepNotifier.fireTestStarted();
         reporter.match(match);
     }
 
@@ -71,6 +70,8 @@ class JUnitReporter implements Reporter, Formatter {
             stepNotifier.fireTestIgnored();
         } else {
             if (stepNotifier != null) {
+                //Should only fireTestStarted if not ignored
+                stepNotifier.fireTestStarted();
                 if (error != null) {
                     stepNotifier.addFailure(error);
                 }
