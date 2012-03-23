@@ -1,4 +1,3 @@
-
 [![Build Status](https://secure.travis-ci.org/cucumber/cucumber-jvm.png)](http://travis-ci.org/cucumber/cucumber-jvm)
 
 Cucumber-JVM is a pure Java implementation of Cucumber that supports the following programming languages:
@@ -119,7 +118,7 @@ Your `.feature` files must be in a folder that IDEA recognises as *source* or *t
 
     Preferences -> Compiler -> Resource Patterns -> Add `;?*.feature`
 
-If you are writing step definitions in a scripting language you must also add the appropriate file extenstion for that language as well.
+If you are writing step definitions in a scripting language you must also add the appropriate file extension for that language as well.
 
 ### Eclipse
 
