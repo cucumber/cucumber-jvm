@@ -1,3 +1,7 @@
+## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.0.0.RC24...master)
+
+* [JUnit] Eclipse JUnit reports inaccurate run count ([#263](https://github.com/cucumber/cucumber-jvm/issues/263), [#274](https://github.com/cucumber/cucumber-jvm/pull/274) dgradl)
+
 ## [1.0.0.RC24](https://github.com/cucumber/cucumber-jvm/compare/v1.0.0.RC23...v1.0.0.RC24)
 
 * [Core] Understandable error message if a formatter needs output location. ([#148](https://github.com/cucumber/cucumber-jvm/issues/148), [#232](https://github.com/cucumber/cucumber-jvm/issues/232), [#269](https://github.com/cucumber/cucumber-jvm/issues/269) Aslak Hellesøy)
