@@ -1,18 +1,13 @@
 ## Using JRuby
 
-To try out cucumber-jruby, first build the full jar. Change directory to the root level and run:
+Run the features:
 
-    ant jarjar
-
-Then, cd to jruby and run the features:
-
-    cd jruby
     jruby bin/cucumber-jvm --glue src/test/resources src/test/resources
 
 ### cucumber-jruby.properties resource bundle
 
 There is a resource bundle available to override a few environment variables for jruby.
-Specifically, the ability to set the GEM_PATH and to specify a version of ruby to build (1.8 or 1.9).
+Specifically, the ability to set the GEM_PATH and to specify whether to run jruby in 1.8 or 1.9 mode.
 
 If the properties file is not present in the root of the classpath, any environment variables will operate
 as intended, otherwise the properties file will override the environment. Makes it much easier to run the features

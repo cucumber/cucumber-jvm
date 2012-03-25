@@ -6,6 +6,7 @@ import cucumber.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
+import gherkin.util.FixJava;
 
 import java.io.File;
 import java.lang.reflect.InvocationHandler;
@@ -13,11 +14,15 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import static cucumber.runtime.model.CucumberFeature.load;
 import static java.util.Arrays.asList;
 
 public class RuntimeOptions {
+    public static final String VERSION = ResourceBundle.getBundle("cucumber.version").getString("cucumber-jvm.version");
+    public static final String USAGE = FixJava.readResource("/cucumber/runtime/USAGE.txt");
+
     public List<String> glue = new ArrayList<String>();
     public File dotCucumber;
     public boolean dryRun;
@@ -40,10 +45,10 @@ public class RuntimeOptions {
             String arg = args.remove(0);
 
             if (arg.equals("--help") || arg.equals("-h")) {
-                System.out.println("USAGE");
+                System.out.println(USAGE);
                 System.exit(0);
             } else if (arg.equals("--version") || arg.equals("-v")) {
-                System.out.println("VERSION");
+                System.out.println(VERSION);
                 System.exit(0);
             } else if (arg.equals("--glue") || arg.equals("-g")) {
                 String gluePath = args.remove(0);

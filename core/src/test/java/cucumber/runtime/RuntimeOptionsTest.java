@@ -7,8 +7,19 @@ import java.io.File;
 
 import static java.util.Arrays.asList;
 import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class RuntimeOptionsTest {
+    @Test
+    public void has_version_from_properties_file() {
+        assertTrue(RuntimeOptions.VERSION.startsWith("1.0"));
+    }
+
+    @Test
+    public void has_usage() {
+        assertTrue(RuntimeOptions.USAGE.startsWith("Usage"));
+    }
+
     @Test
     public void assigns_feature_paths() {
         RuntimeOptions options = new RuntimeOptions("--glue", "somewhere", "somewhere_else");
