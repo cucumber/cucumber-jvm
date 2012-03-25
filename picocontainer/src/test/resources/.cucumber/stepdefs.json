@@ -62,6 +62,41 @@
     ]
   },
   {
+    "source": "^I want to recognize colors as enums$",
+    "flags": "",
+    "steps": [
+      {
+        "name": "I want to recognize colors as enums",
+        "args": []
+      }
+    ]
+  },
+  {
+    "source": "^i use the (.*) in a step$",
+    "flags": "",
+    "steps": [
+      {
+        "name": "i use the \u003ccolor\u003e in a step",
+        "args": [
+          {
+            "offset": 10,
+            "val": "\u003ccolor\u003e"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "source": "^it should be recognized as enum$",
+    "flags": "",
+    "steps": [
+      {
+        "name": "it should be recognized as enum",
+        "args": []
+      }
+    ]
+  },
+  {
     "source": "^the (.*) contains (.*)",
     "flags": "",
     "steps": []
