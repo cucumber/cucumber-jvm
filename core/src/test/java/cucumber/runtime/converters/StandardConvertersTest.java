@@ -115,4 +115,23 @@ public class StandardConvertersTest {
         assertEquals(expected, new BigIntegerConverter(Locale.US).fromString("8589934592"));
         assertEquals(expected, new BigIntegerConverter(Locale.US).fromString("8,589,934,592"));
     }
+
+    @Test
+    public void shouldTransformEnums() {
+        EnumConverter enumConverter = new EnumConverter(Locale.US, Color.class);
+        assertEquals(Color.GREEN, enumConverter.fromString("GREEN"));
+        assertEquals(Color.GREEN, enumConverter.fromString("Green"));
+        assertEquals(Color.GREEN, enumConverter.fromString("GrEeN"));
+        assertEquals(Color.RED, enumConverter.fromString("red"));
+    }
+
+    @Test(expected = ConversionException.class)
+    public void shouldNotTransformEnum() {
+        EnumConverter enumConverter = new EnumConverter(Locale.US, Color.class);
+        enumConverter.fromString("GRIN");
+    }
+
+    public static enum Color {
+        RED, GREEN, BLUE
+    }
 }
