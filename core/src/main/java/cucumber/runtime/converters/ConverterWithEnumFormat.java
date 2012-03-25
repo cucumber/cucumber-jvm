@@ -69,7 +69,7 @@ public class ConverterWithEnumFormat<T extends Enum> extends ConverterWithFormat
         public Object parseObject(String source, ParsePosition pos) {
             String firstLetter = source.substring(0, 1);
             String restOfTheString = source.substring(1, source.length());
-            return source == null ? null : Enum.valueOf(typeClass, firstLetter.toUpperCase(locale) + restOfTheString);
+            return Enum.valueOf(typeClass, firstLetter.toUpperCase(locale) + restOfTheString);
         }
     }
 
