@@ -145,7 +145,7 @@ public class HTMLFormatter implements Formatter, Reporter {
 
     @Override
     public void write(String text) {
-        writeToJsReport("write", text);
+        writeToJsReport("write", gson.toJson(text));
     }
 
     private void copyReportFiles() {
