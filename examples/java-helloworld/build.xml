@@ -1,24 +1,24 @@
 <project name="java-helloworld" basedir="." default="runcukes">
     <property name="repo" value="https://oss.sonatype.org/content/repositories/releases"/>
-    <property name="cucumber.version" value="1.0.0.RC23"/>
+    <property name="cucumber-jvm.version" value="1.0.0.RC24"/>
     <property name="gherkin.version" value="2.9.1"/>
+    <property name="jars" value="target/lib"/>
 
     <target name="download">
-        <mkdir dir="target/lib"/>
-        <get src="${repo}/info/cukes/cucumber-core/${cucumber.version}/cucumber-core-${cucumber.version}.jar"
-             dest="target/lib/cucumber-core-${cucumber.version}.jar"/>
-        <get src="${repo}/info/cukes/cucumber-java/${cucumber.version}/cucumber-java-${cucumber.version}.jar"
-             dest="target/lib/cucumber-java-${cucumber.version}.jar"/>
-        <get src="${repo}/info/cukes/cucumber-junit/${cucumber.version}/cucumber-junit-${cucumber.version}.jar"
-             dest="target/lib/cucumber-junit-${cucumber.version}.jar"/>
+        <mkdir dir="${jars}"/>
+        <get src="${repo}/info/cukes/cucumber-core/${cucumber-jvm.version}/cucumber-core-${cucumber-jvm.version}.jar"
+             dest="${jars}/cucumber-core-${cucumber-jvm.version}.jar"/>
+        <get src="${repo}/info/cukes/cucumber-java/${cucumber-jvm.version}/cucumber-java-${cucumber-jvm.version}.jar"
+             dest="${jars}/cucumber-java-${cucumber-jvm.version}.jar"/>
+        <get src="${repo}/info/cukes/cucumber-junit/${cucumber-jvm.version}/cucumber-junit-${cucumber-jvm.version}.jar"
+             dest="${jars}/cucumber-junit-${cucumber-jvm.version}.jar"/>
         <get src="${repo}/info/cukes/gherkin/${gherkin.version}/gherkin-${gherkin.version}.jar"
-             dest="target/lib/gherkin-${gherkin.version}.jar"/>
-        <get src="${repo}/junit/junit/4.10/junit-4.10.jar" dest="target/lib/junit-4.10.jar"/>
+             dest="${jars}/gherkin-${gherkin.version}.jar"/>
     </target>
 
     <target name="classpath">
         <path id="classpath">
-            <fileset dir="target/lib">
+            <fileset dir="${jars}">
                 <include name="**/*.jar"/>
             </fileset>
             <pathelement location="target/classes"/>
@@ -28,18 +28,18 @@
 
     <target name="compile" depends="classpath">
         <mkdir dir="target/classes"/>
-        <javac srcdir="src/main/java" destdir="target/classes" classpathref="classpath"/>
+        <javac srcdir="src/main/java" destdir="target/classes" classpathref="classpath" includeantruntime="false"/>
     </target>
 
     <target name="compile-test" depends="compile,classpath">
         <mkdir dir="target/test-classes"/>
-        <javac srcdir="src/test/java" destdir="target/test-classes" classpathref="classpath"/>
+        <javac srcdir="src/test/java" destdir="target/test-classes" classpathref="classpath" includeantruntime="false"/>
     </target>
 
     <target name="runcukes" depends="compile-test">
         <java classname="cucumber.cli.Main" fork="true">
             <classpath>
-                <fileset dir="target/lib">
+                <fileset dir="${jars}">
                     <include name="**/*.jar"/>
                 </fileset>
                 <pathelement location="target/classes"/>
