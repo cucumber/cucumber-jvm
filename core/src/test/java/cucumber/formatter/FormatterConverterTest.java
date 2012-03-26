@@ -47,4 +47,16 @@ public class FormatterConverterTest {
         Formatter formatter = fc.convert("pretty");
         assertEquals(CucumberPrettyFormatter.class, formatter.getClass());
     }
+
+    @Test
+    public void instantiates_usage_formatter_without_file_arg() {
+        Formatter formatter = fc.convert("usage");
+        assertEquals(UsageFormatter.class, formatter.getClass());
+    }
+
+    @Test
+    public void instantiates_usage_formatter_with_file_arg() throws IOException {
+        Formatter formatter = fc.convert("usage:" + createTempFile().getAbsolutePath());
+        assertEquals(UsageFormatter.class, formatter.getClass());
+    }
 }
