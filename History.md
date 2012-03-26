@@ -1,5 +1,6 @@
 ## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.0.0.RC24...master)
 
+* [Docs] Added Cuke4Duke migration notes to README ([#239](https://github.com/cucumber/cucumber-jvm/pull/239) coldbloodedtx)
 * [Core] Added --monochrome flag, allowing monochrome output for certain formatters ([#221](https://github.com/cucumber/cucumber-jvm/issues/221) Aslak Hellesøy)
 * [Core] Added a usage formatter ([#207](https://github.com/cucumber/cucumber-jvm/issues/207), [#214](https://github.com/cucumber/cucumber-jvm/pull/214) Klaus Bayrhammer)
 * [Core] JavaScript-Error in HTML-Report when using ScenarioResult.write ((#254)[https://github.com/cucumber/cucumber-jvm/issues/254] Aslak Hellesøy)
