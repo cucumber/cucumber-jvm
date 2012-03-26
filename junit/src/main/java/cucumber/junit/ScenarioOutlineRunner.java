@@ -10,8 +10,11 @@ import org.junit.runners.model.InitializationError;
 
 import java.util.ArrayList;
 
+import static cucumber.junit.DescriptionFactory.createDescription;
+
 class ScenarioOutlineRunner extends Suite {
     private final CucumberScenarioOutline cucumberScenarioOutline;
+    private Description description;
 
     public ScenarioOutlineRunner(Runtime runtime, CucumberScenarioOutline cucumberScenarioOutline, JUnitReporter jUnitReporter) throws InitializationError {
         super(null, new ArrayList<Runner>());
@@ -28,9 +31,12 @@ class ScenarioOutlineRunner extends Suite {
 
     @Override
     public Description getDescription() {
-        Description description = Description.createSuiteDescription(getName(), cucumberScenarioOutline);
-        for (Runner child : getChildren())
-            description.addChild(describeChild(child));
+        if (description == null) {
+            description = createDescription(getName(), cucumberScenarioOutline);
+            for (Runner child : getChildren()) {
+                description.addChild(describeChild(child));
+            }
+        }
         return description;
     }
 }

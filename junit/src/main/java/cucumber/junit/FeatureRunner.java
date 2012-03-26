@@ -1,12 +1,12 @@
 package cucumber.junit;
 
+import cucumber.runtime.CucumberException;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.model.CucumberScenario;
 import cucumber.runtime.model.CucumberScenarioOutline;
 import cucumber.runtime.model.CucumberTagStatement;
 import gherkin.formatter.model.Feature;
-import gherkin.formatter.model.Step;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
@@ -15,12 +15,15 @@ import org.junit.runners.model.InitializationError;
 import java.util.ArrayList;
 import java.util.List;
 
+import static cucumber.junit.DescriptionFactory.createDescription;
+
 public class FeatureRunner extends ParentRunner<ParentRunner> {
     private final List<ParentRunner> children = new ArrayList<ParentRunner>();
 
     private final CucumberFeature cucumberFeature;
     private final Runtime runtime;
     private final JUnitReporter jUnitReporter;
+    private Description description;
 
     protected FeatureRunner(CucumberFeature cucumberFeature, Runtime runtime, JUnitReporter jUnitReporter) throws InitializationError {
         super(null);
@@ -38,9 +41,12 @@ public class FeatureRunner extends ParentRunner<ParentRunner> {
 
     @Override
     public Description getDescription() {
-        Description description = Description.createSuiteDescription(getName(), cucumberFeature);
-        for (ParentRunner child : getChildren())
-            description.addChild(describeChild(child));
+        if (description == null) {
+            description = createDescription(getName(), cucumberFeature);
+            for (ParentRunner child : getChildren()) {
+                description.addChild(describeChild(child));
+            }
+        }
         return description;
     }
 
@@ -78,7 +84,7 @@ public class FeatureRunner extends ParentRunner<ParentRunner> {
                 }
                 children.add(featureElementRunner);
             } catch (InitializationError e) {
-                throw new RuntimeException("Failed to create scenario runner", e);
+                throw new CucumberException("Failed to create scenario runner", e);
             }
         }
     }
