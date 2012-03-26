@@ -39,7 +39,7 @@ public class CucumberFeatureTest {
             when(resource.getInputStream()).thenReturn(new ByteArrayInputStream("Feature: foo".getBytes("UTF-8")));
 
             when(resourceLoader.resources("features", ".feature")).thenReturn(asList(resource));
-            CucumberFeature.load(resourceLoader, asList("features"), asList((Object)"@nowhere"));
+            CucumberFeature.load(resourceLoader, asList("features"), asList((Object) "@nowhere"));
             fail("Should have failed");
         } catch (CucumberException e) {
             assertEquals("None of the features at [features] matched the filters: [@nowhere]", e.getMessage());

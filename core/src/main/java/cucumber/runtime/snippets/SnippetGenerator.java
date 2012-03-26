@@ -129,10 +129,10 @@ public final class SnippetGenerator {
                 break;
             }
         }
-        if(step.getDocString() != null) {
+        if (step.getDocString() != null) {
             argTypes.add(String.class);
         }
-        if(step.getRows() != null) {
+        if (step.getRows() != null) {
             argTypes.add(DataTable.class);
         }
         return argTypes;

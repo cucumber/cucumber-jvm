@@ -5,15 +5,15 @@ import java.util.List;
 public interface Snippet {
     /**
      * @return a {@link java.text.MessageFormat} template used to generate a snippet. The template can access the following variables:
-     *
-     * <ul>
-     * <li>{0} : Step Keyword</li>
-     * <li>{1} : Value of {@link #escapePattern(String)}</li>
-     * <li>{2} : Function name</li>
-     * <li>{3} : Value of {@link #arguments(java.util.List)}</li>
-     * <li>{4} : Regexp hint comment</li>
-     * <li>{5} : value of {@link #tableHint()} if the step has a table</li>
-     * </ul>
+     *         <p/>
+     *         <ul>
+     *         <li>{0} : Step Keyword</li>
+     *         <li>{1} : Value of {@link #escapePattern(String)}</li>
+     *         <li>{2} : Function name</li>
+     *         <li>{3} : Value of {@link #arguments(java.util.List)}</li>
+     *         <li>{4} : Regexp hint comment</li>
+     *         <li>{5} : value of {@link #tableHint()} if the step has a table</li>
+     *         </ul>
      */
     String template();
 

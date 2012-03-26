@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static java.util.Arrays.asList;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -69,5 +70,18 @@ public class StepDefinitionMatchTest {
         StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(Arrays.asList(new Argument(0, "5")), stepDefinition, "some.feature", stepWithDocString, new LocalizedXStreams(classLoader));
         stepDefinitionMatch.runStep(ENGLISH);
         verify(stepDefinition).execute(ENGLISH, new Object[]{5, "HELLO"});
+    }
+
+    @Test
+    public void retrieve_step_name() {
+        String theName = "name";
+
+        Step step = mock(Step.class);
+        when(step.getName()).thenReturn(theName);
+
+        StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(null, mock(StepDefinition.class), null, step, null);
+
+        String stepName = stepDefinitionMatch.getStepName();
+        assertEquals(theName, stepName);
     }
 }

@@ -28,6 +28,7 @@ public class FormatterConverter {
         put("progress", ProgressFormatter.class);
         put("json", JSONFormatter.class);
         put("json-pretty", JSONPrettyFormatter.class);
+        put("usage", UsageFormatter.class);
     }};
     private static final Pattern FORMATTER_WITH_FILE_PATTERN = Pattern.compile("([^:]+):(.*)");
     private Appendable defaultOut = System.out;

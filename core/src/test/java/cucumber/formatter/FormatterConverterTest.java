@@ -30,8 +30,8 @@ public class FormatterConverterTest {
     public void fails_to_instantiate_html_formatter_without_dir_arg() throws IOException {
         try {
             fc.convert("html");
-            fail();            
-        } catch(CucumberException e) {
+            fail();
+        } catch (CucumberException e) {
             assertEquals("You must supply an output argument to html. Like so: html:output", e.getMessage());
         }
     }
@@ -46,5 +46,17 @@ public class FormatterConverterTest {
     public void instantiates_pretty_formatter_without_file_arg() {
         Formatter formatter = fc.convert("pretty");
         assertEquals(CucumberPrettyFormatter.class, formatter.getClass());
+    }
+
+    @Test
+    public void instantiates_usage_formatter_without_file_arg() {
+        Formatter formatter = fc.convert("usage");
+        assertEquals(UsageFormatter.class, formatter.getClass());
+    }
+
+    @Test
+    public void instantiates_usage_formatter_with_file_arg() throws IOException {
+        Formatter formatter = fc.convert("usage:" + createTempFile().getAbsolutePath());
+        assertEquals(UsageFormatter.class, formatter.getClass());
     }
 }
