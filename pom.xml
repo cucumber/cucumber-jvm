@@ -263,6 +263,7 @@
                 <module>examples/groovy-calculator</module>
                 <module>examples/scala-calculator</module>
                 <module>examples/java-webbit-websockets-selenium</module>
+                <module>examples/java-parallel</module>
             </modules>
         </profile>
 
@@ -399,6 +400,7 @@
             </plugin>
         </plugins>
 
+<!-- 
         <extensions>
             <extension>
                 <groupId>org.apache.maven.wagon</groupId>
@@ -406,6 +408,7 @@
                 <version>2.2</version>
             </extension>
         </extensions>
+ -->        
     </build>
 </project>
 

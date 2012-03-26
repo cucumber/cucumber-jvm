@@ -1,0 +1,73 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                      http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>info.cukes</groupId>
+        <artifactId>cucumber-jvm</artifactId>
+        <relativePath>../../pom.xml</relativePath>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>java-parallel</artifactId>
+    <name>Examples: Java Parallel</name>
+
+    <properties>
+        <junit.threadCount>1</junit.threadCount>
+        <junit.parallel></junit.parallel>
+    </properties>
+
+    <profiles>
+
+	<!-- Enable this profile via -Pparallel to enable a parallel run of Cucumber-JVM -->
+        <profile>
+            <id>parallel</id>
+            <properties>
+                <junit.threadCount>2</junit.threadCount>
+                <junit.parallel>classes</junit.parallel>
+            </properties>
+        </profile>
+
+    </profiles>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.10</version>
+                <configuration>
+                    <threadCount>${junit.threadCount}</threadCount>
+                    <parallel>${junit.parallel}</parallel>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>info.cukes</groupId>
+            <artifactId>cucumber-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>info.cukes</groupId>
+            <artifactId>cucumber-picocontainer</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>info.cukes</groupId>
+            <artifactId>cucumber-junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>
