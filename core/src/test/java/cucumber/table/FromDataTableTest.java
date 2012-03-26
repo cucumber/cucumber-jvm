@@ -94,7 +94,7 @@ public class FromDataTableTest {
         Method m = StepDefs.class.getMethod("listOfPojos", List.class);
         StepDefs stepDefs = runStepDef(m, listOfDatesAndCalWithHeader());
         assertEquals(sidsBirthday(), stepDefs.listOfPojos.get(0).birthDate);
-        assertEquals(sidsDeathcal(), stepDefs.listOfPojos.get(0).deathCal);
+        assertEquals(sidsDeathcal().getTime(), stepDefs.listOfPojos.get(0).deathCal.getTime());
     }
 
     @Test
