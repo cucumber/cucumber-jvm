@@ -1,5 +1,6 @@
 package cucumber.runtime;
 
+import cucumber.formatter.ColorAware;
 import cucumber.formatter.FormatterConverter;
 import cucumber.formatter.ProgressFormatter;
 import cucumber.io.ResourceLoader;
@@ -29,12 +30,19 @@ public class RuntimeOptions {
     public List<String> tags = new ArrayList<String>();
     public List<Formatter> formatters = new ArrayList<Formatter>();
     public List<String> featurePaths = new ArrayList<String>();
+    private boolean monochrome = false;
 
     public RuntimeOptions(String... argv) {
         parse(new ArrayList<String>(asList(argv)));
 
         if (formatters.isEmpty()) {
             formatters.add(new ProgressFormatter(System.out));
+        }
+        for (Formatter formatter : formatters) {
+            if(formatter instanceof ColorAware) {
+                ColorAware colorAware = (ColorAware) formatter;
+                colorAware.setMonochrome(monochrome);
+            }
         }
     }
 
@@ -61,6 +69,8 @@ public class RuntimeOptions {
                 dotCucumber = new File(args.remove(0));
             } else if (arg.equals("--dry-run") || arg.equals("-d")) {
                 dryRun = true;
+            } else if (arg.equals("--monochrome") || arg.equals("-m")) {
+                monochrome = true;
             } else {
                 // TODO: Use PathWithLines and add line filter if any
                 featurePaths.add(arg);
