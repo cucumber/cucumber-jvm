@@ -138,5 +138,10 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
          * @return what formatter(s) to use
          */
         String[] format() default {};
+
+        /**
+         * @return whether or not to use monochrome output
+         */
+        boolean monochrome() default false;
     }
 }

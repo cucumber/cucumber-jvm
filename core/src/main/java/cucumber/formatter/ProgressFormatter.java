@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ProgressFormatter implements Formatter, Reporter {
+public class ProgressFormatter implements Formatter, Reporter, ColorAware {
     private static final Map<String, Character> CHARS = new HashMap<String, Character>() {{
         put("passed", '.');
         put("undefined", 'U');
@@ -35,10 +35,9 @@ public class ProgressFormatter implements Formatter, Reporter {
     }};
 
     private final NiceAppendable out;
-    private final boolean monochrome;
+    private boolean monochrome = false;
 
     public ProgressFormatter(Appendable appendable) {
-        this.monochrome = false;
         out = new NiceAppendable(appendable);
     }
 
@@ -110,5 +109,10 @@ public class ProgressFormatter implements Formatter, Reporter {
 
     @Override
     public void write(String text) {
+    }
+
+    @Override
+    public void setMonochrome(boolean monochrome) {
+        this.monochrome = monochrome;
     }
 }

@@ -20,6 +20,7 @@ public class RuntimeOptionsFactory {
         Cucumber.Options options = getOptions(clazz);
 
         addDryRun(options, args);
+        addMonochrome(options, args);
         addGlue(options, clazz, args);
         addTags(options, args);
         addFormats(options, args);
@@ -37,6 +38,14 @@ public class RuntimeOptionsFactory {
         if (options != null) {
             if (options.dryRun()) {
                 args.add("--dry-run");
+            }
+        }
+    }
+
+    private void addMonochrome(Cucumber.Options options, List<String> args) {
+        if (options != null) {
+            if (options.monochrome()) {
+                args.add("--monochrome");
             }
         }
     }
