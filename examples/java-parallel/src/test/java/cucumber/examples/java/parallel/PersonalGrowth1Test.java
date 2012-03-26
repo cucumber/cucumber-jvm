@@ -1,12 +1,10 @@
 package cucumber.examples.java.parallel;
 
+import cucumber.junit.Cucumber;
 import org.junit.runner.RunWith;
 
-import cucumber.junit.Cucumber;
-import cucumber.junit.Feature;
-
 @RunWith(Cucumber.class)
-@Feature("personalGrowth.feature")
+@Cucumber.Options(features = "personalGrowth.feature")
 public class PersonalGrowth1Test {
 
 }
