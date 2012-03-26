@@ -30,8 +30,8 @@ public class FormatterConverterTest {
     public void fails_to_instantiate_html_formatter_without_dir_arg() throws IOException {
         try {
             fc.convert("html");
-            fail();            
-        } catch(CucumberException e) {
+            fail();
+        } catch (CucumberException e) {
             assertEquals("You must supply an output argument to html. Like so: html:output", e.getMessage());
         }
     }

@@ -1,12 +1,9 @@
 package cucumber.formatter;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.withSettings;
+import cucumber.runtime.StepDefinitionMatch;
+import gherkin.formatter.model.Result;
+import org.junit.Test;
+import org.mockito.Mockito;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -15,18 +12,17 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Test;
-import org.mockito.Mockito;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.withSettings;
 
-import cucumber.formatter.usage.UsageStatisticStrategy;
-import cucumber.runtime.StepDefinitionMatch;
-import gherkin.formatter.model.Result;
-
-public class UsageFormatterTest
-{
+public class UsageFormatterTest {
     @Test
-    public void close() throws IOException
-    {
+    public void close() throws IOException {
         Appendable out = mock(Appendable.class, withSettings().extraInterfaces(Closeable.class));
         UsageFormatter usageFormatter = new UsageFormatter(out);
         usageFormatter.close();
@@ -34,33 +30,31 @@ public class UsageFormatterTest
     }
 
     @Test
-    public void resultWithoutSkippedSteps()
-    {
+    public void resultWithoutSkippedSteps() {
         Appendable out = mock(Appendable.class);
         UsageFormatter usageFormatter = new UsageFormatter(out);
         Result result = mock(Result.class);
         when(result.getStatus()).thenReturn(Result.SKIPPED.getStatus());
-        
+
         usageFormatter.result(result);
         verifyZeroInteractions(out);
     }
 
     @Test
-    public void resultWithStep()
-    {
+    public void resultWithStep() {
         Appendable out = mock(Appendable.class);
         UsageFormatter usageFormatter = new UsageFormatter(out);
 
         StepDefinitionMatch match = mockStepDefinitionMatch();
         usageFormatter.match(match);
-        
+
         Result result = mock(Result.class);
         when(result.getDuration()).thenReturn(12345L);
         when(result.getStatus()).thenReturn(Result.PASSED);
 
         usageFormatter.result(result);
 
-        Map<String,List<UsageFormatter.StepContainer>> usageMap = usageFormatter.usageMap;
+        Map<String, List<UsageFormatter.StepContainer>> usageMap = usageFormatter.usageMap;
         assertEquals(usageMap.size(), 1);
         List<UsageFormatter.StepContainer> durationEntries = usageMap.get("stepDef");
         assertEquals(durationEntries.size(), 1);
@@ -69,8 +63,7 @@ public class UsageFormatterTest
         assertEquals(durationEntries.get(0).durations.get(0).duration, BigDecimal.valueOf(12345));
     }
 
-    private StepDefinitionMatch mockStepDefinitionMatch()
-    {
+    private StepDefinitionMatch mockStepDefinitionMatch() {
         StepDefinitionMatch match = mock(StepDefinitionMatch.class, Mockito.RETURNS_MOCKS);
         when(match.getPattern()).thenReturn("stepDef");
         when(match.getStepLocation()).thenReturn(new StackTraceElement("x", "y", "z", 3));
@@ -79,8 +72,7 @@ public class UsageFormatterTest
     }
 
     @Test
-    public void resultWithZeroDuration()
-    {
+    public void resultWithZeroDuration() {
         Appendable out = mock(Appendable.class);
         UsageFormatter usageFormatter = new UsageFormatter(out);
 
@@ -93,7 +85,7 @@ public class UsageFormatterTest
 
         usageFormatter.result(result);
 
-        Map<String,List<UsageFormatter.StepContainer>> usageMap = usageFormatter.usageMap;
+        Map<String, List<UsageFormatter.StepContainer>> usageMap = usageFormatter.usageMap;
         assertEquals(usageMap.size(), 1);
         List<UsageFormatter.StepContainer> durationEntries = usageMap.get("stepDef");
         assertEquals(durationEntries.size(), 1);
@@ -103,8 +95,7 @@ public class UsageFormatterTest
     }
 
     @Test
-    public void resultWithNullDuration()
-    {
+    public void resultWithNullDuration() {
         Appendable out = mock(Appendable.class);
         UsageFormatter usageFormatter = new UsageFormatter(out);
 
@@ -117,7 +108,7 @@ public class UsageFormatterTest
 
         usageFormatter.result(result);
 
-        Map<String,List<UsageFormatter.StepContainer>> usageMap = usageFormatter.usageMap;
+        Map<String, List<UsageFormatter.StepContainer>> usageMap = usageFormatter.usageMap;
         assertEquals(usageMap.size(), 1);
         List<UsageFormatter.StepContainer> durationEntries = usageMap.get("stepDef");
         assertEquals(durationEntries.size(), 1);
@@ -127,8 +118,7 @@ public class UsageFormatterTest
     }
 
     @Test
-    public void doneWithoutUsageStatisticStrategies() throws IOException
-    {
+    public void doneWithoutUsageStatisticStrategies() throws IOException {
         StringBuffer out = new StringBuffer();
         UsageFormatter usageFormatter = new UsageFormatter(out);
 
@@ -146,8 +136,7 @@ public class UsageFormatterTest
     }
 
     @Test
-    public void doneWithUsageStatisticStrategies() throws IOException
-    {
+    public void doneWithUsageStatisticStrategies() throws IOException {
         StringBuffer out = new StringBuffer();
         UsageFormatter usageFormatter = new UsageFormatter(out);
 
@@ -159,12 +148,12 @@ public class UsageFormatterTest
 
         usageFormatter.usageMap.put("aStep", Arrays.asList(stepContainer));
 
-        UsageStatisticStrategy usageStatisticStrategy = mock(UsageStatisticStrategy.class);
+        UsageFormatter.UsageStatisticStrategy usageStatisticStrategy = mock(UsageFormatter.UsageStatisticStrategy.class);
         when(usageStatisticStrategy.calculate(Arrays.asList(12345678L))).thenReturn(23456L);
         usageFormatter.addUsageStatisticStrategy("average", usageStatisticStrategy);
 
         usageFormatter.done();
-        
+
         assertTrue(out.toString().contains("0.000023456"));
         assertTrue(out.toString().contains("0.012345678"));
     }

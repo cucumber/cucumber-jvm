@@ -5,7 +5,6 @@ import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeOptions;
 
 import java.io.IOException;
-import java.util.ResourceBundle;
 
 public class Main {
 

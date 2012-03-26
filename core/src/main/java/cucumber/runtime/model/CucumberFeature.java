@@ -41,7 +41,7 @@ public class CucumberFeature {
             }
         }
         if (cucumberFeatures.isEmpty()) {
-            if(resourceFound) {
+            if (resourceFound) {
                 throw new CucumberException(String.format("None of the features at %s matched the filters: %s", featurePaths, filters));
             } else {
                 throw new CucumberException(String.format("No features found at %s", featurePaths));

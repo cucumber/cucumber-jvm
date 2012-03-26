@@ -73,8 +73,7 @@ public class StepDefinitionMatchTest {
     }
 
     @Test
-    public void retrieve_step_name()
-    {
+    public void retrieve_step_name() {
         String theName = "name";
 
         Step step = mock(Step.class);
