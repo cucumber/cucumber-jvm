@@ -64,12 +64,7 @@
   {
     "source": "^I want to recognize colors as enums$",
     "flags": "",
-    "steps": [
-      {
-        "name": "I want to recognize colors as enums",
-        "args": []
-      }
-    ]
+    "steps": []
   },
   {
     "source": "^i use the (.*) in a step$",
@@ -104,7 +99,17 @@
   {
     "source": "^the date is (.+)$",
     "flags": "",
-    "steps": []
+    "steps": [
+      {
+        "name": "the date is 2011/10/25",
+        "args": [
+          {
+            "offset": 12,
+            "val": "2011/10/25"
+          }
+        ]
+      }
+    ]
   },
   {
     "source": "^the date should be (.+)$",
@@ -116,6 +121,15 @@
           {
             "offset": 19,
             "val": "Mar 1 2012"
+          }
+        ]
+      },
+      {
+        "name": "the date should be Oct 25 2011",
+        "args": [
+          {
+            "offset": 19,
+            "val": "Oct 25 2011"
           }
         ]
       }
@@ -139,7 +153,17 @@
   {
     "source": "^the iso date is (.+)$",
     "flags": "",
-    "steps": []
+    "steps": [
+      {
+        "name": "the iso date is 2012-03-01T06:54:14",
+        "args": [
+          {
+            "offset": 16,
+            "val": "2012-03-01T06:54:14"
+          }
+        ]
+      }
+    ]
   },
   {
     "source": "^there are (\\d+) cukes in my belly",

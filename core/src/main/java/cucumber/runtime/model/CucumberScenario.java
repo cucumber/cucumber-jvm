@@ -19,6 +19,10 @@ public class CucumberScenario extends CucumberTagStatement {
         this.cucumberBackground = cucumberBackground;
     }
 
+    public CucumberBackground getCucumberBackground() {
+        return cucumberBackground;
+    }
+
     /**
      * This method is called when Cucumber is run from the CLI, but not when run from JUnit
      */
