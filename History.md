@@ -1,3 +1,8 @@
+## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.0.0.RC24...master)
+
+* [Guice] Guice in multi module/class loader setup ([#278](https://github.com/cucumber/cucumber-jvm/pull/278) Matt Nathan)
+* [JUnit] Background steps show up correctly in IntelliJ
+
 ## [1.0.0](https://github.com/cucumber/cucumber-jvm/compare/v1.0.0.RC24...1.0.0)
 
 * [Docs] Added Cuke4Duke migration notes to README ([#239](https://github.com/cucumber/cucumber-jvm/pull/239) coldbloodedtx)
