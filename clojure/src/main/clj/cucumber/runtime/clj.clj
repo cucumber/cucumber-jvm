@@ -1,4 +1,5 @@
 (ns cucumber.runtime.clj
+  (:require (clojure [string :as str]))
   (:import (cucumber.runtime CucumberException
                              JdkPatternArgumentMatcher
                              StepDefinition
@@ -26,11 +27,12 @@
        "  (comment  {4}  )\n"
        "  (throw (cucumber.runtime.PendingException.)))\n"))
     (arguments [_ argumentTypes]
-      (SnippetGenerator/untypedArguments argumentTypes))
+      (str/replace (SnippetGenerator/untypedArguments argumentTypes)
+                   "," ""))
     (namedGroupStart [_] nil)
     (namedGroupEnd [_] nil)
     (escapePattern [_ pattern]
-      (str pattern))))
+      (str/replace (str pattern) "\"" "\\\""))))
 
 (def snippet-generator (SnippetGenerator. (clojure-snippet)))
 
