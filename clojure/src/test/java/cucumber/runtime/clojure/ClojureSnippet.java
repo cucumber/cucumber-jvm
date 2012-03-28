@@ -25,7 +25,7 @@ public class ClojureSnippet implements Snippet {
 
     @Override
     public String arguments(List<Class<?>> argumentTypes) {
-        return untypedArguments(argumentTypes);
+        return untypedArguments(argumentTypes).replaceAll(",", "");
     }
 
     @Override
@@ -40,6 +40,6 @@ public class ClojureSnippet implements Snippet {
 
     @Override
     public String escapePattern(String pattern) {
-        return pattern;
+        return pattern.replaceAll("\"", "\\\\\"");
     }
 }
