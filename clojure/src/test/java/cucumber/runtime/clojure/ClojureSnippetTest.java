@@ -20,7 +20,7 @@ public class ClojureSnippetTest {
         Step step = new Step(NO_COMMENTS, "Given ", "I have 4 cukes in my \"big\" belly", 0, null, null);
         String snippet = new SnippetGenerator(new ClojureSnippet()).getSnippet(step);
         String expected = "" +
-                "(Given #\"^I have (\\d+) cukes in my \"([^\"]*)\" belly$\" [arg1, arg2]\n" +
+                "(Given #\"^I have (\\d+) cukes in my \\\"([^\\\"]*)\\\" belly$\" [arg1 arg2]\n" +
                 "  (comment  Express the Regexp above with the code you wish you had  )\n" +
                 "  (throw (cucumber.runtime.PendingException.)))\n";
         assertEquals(expected, snippet);
