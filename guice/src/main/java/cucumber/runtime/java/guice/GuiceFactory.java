@@ -39,7 +39,7 @@ public class GuiceFactory implements ObjectFactory {
 
     private static Properties loadCucumberGuiceProperties() throws IOException {
         Properties properties = new Properties();
-        InputStream inputStream = GuiceFactory.class.getClassLoader().getResourceAsStream("cucumber-guice.properties");
+        InputStream inputStream = GuiceFactory.class.getResourceAsStream("/cucumber-guice.properties");
         if (inputStream != null) {
             try {
                 properties.load(inputStream);
