@@ -11,6 +11,7 @@ import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Comment;
 import gherkin.formatter.model.DataTableRow;
 import gherkin.formatter.model.DocString;
+import gherkin.formatter.model.HookResult;
 import gherkin.formatter.model.Match;
 import gherkin.formatter.model.Result;
 import gherkin.formatter.model.Step;
@@ -136,20 +137,20 @@ public class Runtime implements UnreportedStepExecutor {
     }
 
     public void runBeforeHooks(Reporter reporter, Set<Tag> tags) {
-        runHooks(glue.getBeforeHooks(), reporter, tags);
+        runHooks(glue.getBeforeHooks(), reporter, tags, true);
     }
 
     public void runAfterHooks(Reporter reporter, Set<Tag> tags) {
-        runHooks(glue.getAfterHooks(), reporter, tags);
+        runHooks(glue.getAfterHooks(), reporter, tags, false);
     }
 
-    private void runHooks(List<HookDefinition> hooks, Reporter reporter, Set<Tag> tags) {
+    private void runHooks(List<HookDefinition> hooks, Reporter reporter, Set<Tag> tags, boolean isBefore) {
         for (HookDefinition hook : hooks) {
-            runHookIfTagsMatch(hook, reporter, tags);
+            runHookIfTagsMatch(hook, reporter, tags, isBefore);
         }
     }
 
-    private void runHookIfTagsMatch(HookDefinition hook, Reporter reporter, Set<Tag> tags) {
+    private void runHookIfTagsMatch(HookDefinition hook, Reporter reporter, Set<Tag> tags, boolean isBefore) {
         if (hook.matches(tags)) {
             long start = System.nanoTime();
             try {
@@ -158,9 +159,16 @@ public class Runtime implements UnreportedStepExecutor {
                 skipNextStep = true;
 
                 long duration = System.nanoTime() - start;
-                Result result = new Result(Result.FAILED, duration, t, DUMMY_ARG);
-                scenarioResult.add(result);
-                reporter.result(result);
+
+                //TODO: need to figure out a meaningful LOCATION
+                HookResult result = new HookResult(t.getMessage(), Result.FAILED, duration, t, DUMMY_ARG);
+                //I don't think we want to add scenario results to this
+                //scenarioResult.add(result);
+                if (isBefore) {
+                    reporter.before(result);
+                } else {
+                    reporter.after(result);
+                }
             }
         }
     }

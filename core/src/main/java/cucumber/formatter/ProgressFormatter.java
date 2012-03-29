@@ -7,6 +7,7 @@ import gherkin.formatter.ansi.AnsiEscapes;
 import gherkin.formatter.model.Background;
 import gherkin.formatter.model.Examples;
 import gherkin.formatter.model.Feature;
+import gherkin.formatter.model.HookResult;
 import gherkin.formatter.model.Match;
 import gherkin.formatter.model.Result;
 import gherkin.formatter.model.Scenario;
@@ -95,6 +96,28 @@ public class ProgressFormatter implements Formatter, Reporter, ColorAware {
         out.append(CHARS.get(result.getStatus()));
         if (!monochrome) {
             AnsiEscapes.RESET.appendTo(out);
+        }
+    }
+
+    @Override
+    public void before(HookResult result) {
+        handleHook(result);
+    }
+
+    @Override
+    public void after(HookResult result) {
+        handleHook(result);
+    }
+    
+    private void handleHook(HookResult result){
+        if(result.getStatus().equals(Result.FAILED)) {
+            if(!monochrome){
+                ANSI_ESCAPES.get(result.getStatus()).appendTo(out);
+            }
+            out.append("H"); //TODO: H for hook?
+            if(!monochrome) {
+                AnsiEscapes.RESET.appendTo(out);
+            }
         }
     }
 
