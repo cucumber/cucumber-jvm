@@ -2,7 +2,7 @@
 
 * [Clojure] Fix quoting of generated Clojure snippets ([#277](https://github.com/cucumber/cucumber-jvm/pull/277) Michael van Acken)
 * [Guice] Guice in multi module/class loader setup ([#278](https://github.com/cucumber/cucumber-jvm/pull/278) Matt Nathan)
-* [JUnit] Background steps show up correctly in IntelliJ
+* [JUnit] Background steps show up correctly in IntelliJ ([#276](https://github.com/cucumber/cucumber-jvm/issues/276) Aslak Hellesøy)
 
 ## [1.0.0](https://github.com/cucumber/cucumber-jvm/compare/v1.0.0.RC24...1.0.0)
 
