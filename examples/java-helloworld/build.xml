@@ -2,6 +2,7 @@
     <property name="repo" value="https://oss.sonatype.org/content/repositories/releases"/>
     <property name="cucumber-jvm.version" value="1.0.0"/>
     <property name="gherkin.version" value="2.9.3"/>
+    <property name="junit.version" value="4.10"/>
     <property name="jars" value="target/lib"/>
 
     <target name="download">
@@ -14,6 +15,8 @@
              dest="${jars}/cucumber-junit-${cucumber-jvm.version}.jar"/>
         <get src="${repo}/info/cukes/gherkin/${gherkin.version}/gherkin-${gherkin.version}.jar"
              dest="${jars}/gherkin-${gherkin.version}.jar"/>
+        <get src="${repo}/junit/junit/${junit.version}/junit-${junit.version}.jar"
+             dest="${jars}/junit-${junit.version}.jar"/>
     </target>
 
     <target name="classpath">
