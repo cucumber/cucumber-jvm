@@ -44,10 +44,16 @@ public class RuntimeOptionsFactory {
 
     private void addMonochrome(Cucumber.Options options, List<String> args) {
         if (options != null) {
-            if (options.monochrome()) {
+            if (options.monochrome() || runningInEnvironmentWithoutAnsiSupport()) {
                 args.add("--monochrome");
             }
         }
+    }
+
+    private boolean runningInEnvironmentWithoutAnsiSupport() {
+        boolean intelliJidea = System.getProperty("idea.launcher.bin.path") != null;
+        // TODO: What does Eclipse use?
+        return intelliJidea;
     }
 
     private void addGlue(Cucumber.Options options, Class clazz, List<String> args) {
