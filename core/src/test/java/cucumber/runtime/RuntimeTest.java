@@ -1,16 +1,22 @@
 package cucumber.runtime;
 
 import cucumber.io.ClasspathResourceLoader;
+import cucumber.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
 import gherkin.formatter.JSONPrettyFormatter;
+
 import org.junit.Test;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import static cucumber.runtime.TestHelper.feature;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 public class RuntimeTest {
     @Test
@@ -80,5 +86,78 @@ public class RuntimeTest {
                 "  }\n" +
                 "]";
         assertEquals(expected, out.toString());
+    }
+
+    @Test
+    public void strict_without_pending_steps_or_errors()
+    {
+        Runtime runtime = createRuntime("-g anything", "--strict");
+
+        assertEquals(0x0, runtime.exitStatus());
+    }
+
+    @Test
+    public void non_strict_without_pending_steps_or_errors()
+    {
+        Runtime runtime = createRuntime("-g anything");
+
+        assertEquals(0x0, runtime.exitStatus());
+    }
+
+    @Test
+    public void strict_with_pending_steps_and_no_errors()
+    {
+        Runtime runtime = createRuntime("-g anything", "--strict");
+        Runtime spy = spy(runtime);
+
+        addPendingSteps(spy);
+
+        assertEquals(0x1, spy.exitStatus());
+    }
+
+    @Test
+    public void non_strict_with_pending_steps()
+    {
+        Runtime runtime = createRuntime("-g anything");
+        Runtime spy = spy(runtime);
+
+        addPendingSteps(spy);
+
+        assertEquals(0x0, spy.exitStatus());
+    }
+
+    @Test
+    public void non_strict_with_errors()
+    {
+        Runtime runtime = createRuntime("-g anything");
+        runtime.addError(new RuntimeException());
+
+        assertEquals(0x1, runtime.exitStatus());
+    }
+
+    @Test
+    public void strict_with_errors()
+    {
+        Runtime runtime = createRuntime("-g anything", "--strict");
+        runtime.addError(new RuntimeException());
+
+        assertEquals(0x1, runtime.exitStatus());
+    }
+
+    private Runtime createRuntime(String ... runtimeArgs)
+    {
+        ResourceLoader resourceLoader = mock(ResourceLoader.class);
+        ClassLoader classLoader = mock(ClassLoader.class);
+        RuntimeOptions runtimeOptions = new RuntimeOptions(runtimeArgs);
+        Backend backend = mock(Backend.class);
+        Collection<Backend> backends = Arrays.asList(backend);
+
+        return new Runtime(resourceLoader, classLoader, backends, runtimeOptions);
+    }
+
+    private void addPendingSteps(Runtime spy)
+    {
+        List<String> snippetList = Arrays.asList("snippet");
+        when(spy.getSnippets()).thenReturn(snippetList);
     }
 }

@@ -121,10 +121,25 @@ public class Runtime implements UnreportedStepExecutor {
 
     public byte exitStatus() {
         byte result = 0x0;
-        if (!errors.isEmpty()) {
+        if (hasErrors() || hasPendingStepsAndIsStrict()) {
             result |= ERRORS;
         }
         return result;
+    }
+
+    private boolean hasPendingStepsAndIsStrict()
+    {
+        return runtimeOptions.strict && hasPendingSteps();
+    }
+
+    private boolean hasPendingSteps()
+    {
+        return !getSnippets().isEmpty();
+    }
+
+    private boolean hasErrors()
+    {
+        return !errors.isEmpty();
     }
 
     public List<String> getSnippets() {
