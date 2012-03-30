@@ -1,5 +1,6 @@
 ## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.0.0...master)
 
+* [Scala] Fixed generated Scala snippets ([#282](https://github.com/cucumber/cucumber-jvm/pull/282) pawel-s)
 * [JUnit] Automatically turn off ANSI colours when launched from IDEA. (Aslak Hellesøy)
 
 ## [1.0.1](https://github.com/cucumber/cucumber-jvm/compare/v1.0.0...v1.0.1)
