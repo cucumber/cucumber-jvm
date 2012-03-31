@@ -31,7 +31,7 @@ public class Runtime implements UnreportedStepExecutor {
     private static final Object DUMMY_ARG = new Object();
     private static final byte ERRORS = 0x1;
 
-    private final UndefinedStepsTracker undefinedStepsTracker = new UndefinedStepsTracker();
+    final UndefinedStepsTracker undefinedStepsTracker = new UndefinedStepsTracker();
 
     private final Glue glue;
     private final RuntimeOptions runtimeOptions;
@@ -121,20 +121,15 @@ public class Runtime implements UnreportedStepExecutor {
 
     public byte exitStatus() {
         byte result = 0x0;
-        if (hasErrors() || hasPendingStepsAndIsStrict()) {
+        if (hasErrors() || hasUndefinedStepsAndIsStrict()) {
             result |= ERRORS;
         }
         return result;
     }
 
-    private boolean hasPendingStepsAndIsStrict()
+    private boolean hasUndefinedStepsAndIsStrict()
     {
-        return runtimeOptions.strict && hasPendingSteps();
-    }
-
-    private boolean hasPendingSteps()
-    {
-        return !getSnippets().isEmpty();
+        return runtimeOptions.strict && undefinedStepsTracker.hasUndefinedSteps();
     }
 
     private boolean hasErrors()
