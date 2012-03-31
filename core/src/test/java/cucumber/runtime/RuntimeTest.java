@@ -140,7 +140,7 @@ public class RuntimeTest {
         Runtime runtime = createNonStrictRuntime();
         runtime.addError(new PendingException());
 
-        assertEquals(0x1, runtime.exitStatus());
+        assertEquals(0x0, runtime.exitStatus());
     }
 
     @Test
@@ -180,11 +180,5 @@ public class RuntimeTest {
         Collection<Backend> backends = Arrays.asList(backend);
 
         return new Runtime(resourceLoader, classLoader, backends, runtimeOptions);
-    }
-
-    private void addPendingSteps(Runtime spy)
-    {
-        List<String> snippetList = Arrays.asList("snippet");
-        when(spy.getSnippets()).thenReturn(snippetList);
     }
 }

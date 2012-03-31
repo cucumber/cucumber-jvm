@@ -121,20 +121,42 @@ public class Runtime implements UnreportedStepExecutor {
 
     public byte exitStatus() {
         byte result = 0x0;
-        if (hasErrors() || hasUndefinedStepsAndIsStrict()) {
+        if (hasErrors() || hasUndefinedOrPendingStepsAndIsStrict()) {
             result |= ERRORS;
         }
         return result;
     }
 
-    private boolean hasUndefinedStepsAndIsStrict()
+    private boolean hasUndefinedOrPendingStepsAndIsStrict()
     {
-        return runtimeOptions.strict && undefinedStepsTracker.hasUndefinedSteps();
+        return runtimeOptions.strict && hasUndefinedOrPendingSteps();
+    }
+
+    private boolean hasUndefinedOrPendingSteps()
+    {
+        return hasUndefinedSteps() || hasPendingSteps();
+    }
+
+    private boolean hasUndefinedSteps()
+    {
+        return undefinedStepsTracker.hasUndefinedSteps();
+    }
+
+    private boolean hasPendingSteps()
+    {
+        return !errors.isEmpty() && !hasErrors();
     }
 
     private boolean hasErrors()
     {
-        return !errors.isEmpty();
+        for (Throwable error : errors)
+        {
+            if (!(error instanceof PendingException))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     public List<String> getSnippets() {
