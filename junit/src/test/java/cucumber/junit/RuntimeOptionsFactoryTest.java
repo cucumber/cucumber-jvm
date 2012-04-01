@@ -7,9 +7,6 @@ import org.junit.Test;
 
 import cucumber.runtime.RuntimeOptions;
 
-/**
- * @author Klaus Bayrhammer
- */
 public class RuntimeOptionsFactoryTest
 {
     @Test
