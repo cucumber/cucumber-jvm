@@ -163,7 +163,7 @@ public class Runtime implements UnreportedStepExecutor {
                 //TODO: need to figure out a meaningful LOCATION
                 HookResult result = new HookResult(t.getMessage(), Result.FAILED, duration, t, DUMMY_ARG);
                 //I don't think we want to add scenario results to this
-                //scenarioResult.add(result);
+                scenarioResult.add(result);
                 if (isBefore) {
                     reporter.before(result);
                 } else {
