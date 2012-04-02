@@ -1,3 +1,8 @@
+## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.0.0...master)
+
+* [Scala] Fixed generated Scala snippets ([#282](https://github.com/cucumber/cucumber-jvm/pull/282) pawel-s)
+* [JUnit] Automatically turn off ANSI colours when launched from IDEA. (Aslak Hellesøy)
+
 ## [1.0.1](https://github.com/cucumber/cucumber-jvm/compare/v1.0.0...v1.0.1)
 
 * [Clojure] Fix quoting of generated Clojure snippets ([#277](https://github.com/cucumber/cucumber-jvm/pull/277) Michael van Acken)
@@ -9,7 +14,7 @@
 * [Docs] Added Cuke4Duke migration notes to README ([#239](https://github.com/cucumber/cucumber-jvm/pull/239) coldbloodedtx)
 * [Core] Added --monochrome flag, allowing monochrome output for certain formatters ([#221](https://github.com/cucumber/cucumber-jvm/issues/221) Aslak Hellesøy)
 * [Core] Added a usage formatter ([#207](https://github.com/cucumber/cucumber-jvm/issues/207), [#214](https://github.com/cucumber/cucumber-jvm/pull/214) Klaus Bayrhammer)
-* [Core] JavaScript-Error in HTML-Report when using ScenarioResult.write ((#254)[https://github.com/cucumber/cucumber-jvm/issues/254] Aslak Hellesøy)
+* [Core] JavaScript-Error in HTML-Report when using ScenarioResult.write ([#254](https://github.com/cucumber/cucumber-jvm/issues/254) Aslak Hellesøy)
 * [Java] Add support for enums in stepdefs ([#217](https://github.com/cucumber/cucumber-jvm/issues/217), [#240](https://github.com/cucumber/cucumber-jvm/pull/240) Gilles Philippart)
 * [Core] Help text for CLI. ([#142](https://github.com/cucumber/cucumber-jvm/issues/142) Aslak Hellesøy)
 * [JUnit] Eclipse JUnit reports inaccurate run count ([#263](https://github.com/cucumber/cucumber-jvm/issues/263), [#274](https://github.com/cucumber/cucumber-jvm/pull/274) dgradl)
@@ -53,7 +58,7 @@
 * [Core] Stacktrace filtering filters away too much. ([#228](https://github.com/cucumber/cucumber-jvm/issues/228) Aslak Hellesøy)
 * [Groovy] Fix native Groovy cucumber CLI ([#212](https://github.com/cucumber/cucumber-jvm/issues/212) Martin Hauner)
 * [Core] Indeterministic feature ordering on Unix ([#224](https://github.com/cucumber/cucumber-jvm/issues/224) hutchy2570)
-* [JUnit] New JUnitFormatter (--format junit) that outputs Ant-style JUnit XML. ([#226](https://github.com/cucumber/cucumber-jvm/pull/226), (#171)[https://github.com/cucumber/cucumber-jvm/issues/171] Vladimir Miguro)
+* [JUnit] New JUnitFormatter (--format junit) that outputs Ant-style JUnit XML. ([#226](https://github.com/cucumber/cucumber-jvm/pull/226), [#171](https://github.com/cucumber/cucumber-jvm/issues/171) Vladimir Miguro)
 
 ## [1.0.0.RC16](https://github.com/cucumber/cucumber-jvm/compare/v1.0.0.RC15...v1.0.0.RC16)
 
