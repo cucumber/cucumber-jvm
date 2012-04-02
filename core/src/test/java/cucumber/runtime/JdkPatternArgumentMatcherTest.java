@@ -34,8 +34,8 @@ public class JdkPatternArgumentMatcherTest {
         List<Argument> args = new JdkPatternArgumentMatcher(Pattern.compile(regex)).argumentsFrom(string);
         assertEquals(2, args.size());
         assertEquals(v1, args.get(0).getVal());
-        assertEquals(pos1, args.get(0).getOffset());
+        assertEquals(pos1, (long)args.get(0).getOffset());
         assertEquals(v2, args.get(1).getVal());
-        assertEquals(pos2, args.get(1).getOffset());
+        assertEquals(pos2, (long)args.get(1).getOffset());
     }
 }
