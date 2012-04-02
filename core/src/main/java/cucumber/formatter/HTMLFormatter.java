@@ -98,7 +98,7 @@ public class HTMLFormatter implements Formatter, Reporter {
     }
 
     @Override
-    public void syntaxError(String state, String event, List<String> legalEvents, String uri, int line) {
+    public void syntaxError(String state, String event, List<String> legalEvents, String uri, Integer line) {
     }
 
     @Override
