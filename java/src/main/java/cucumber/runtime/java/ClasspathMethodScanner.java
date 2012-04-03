@@ -4,6 +4,7 @@ import cucumber.annotation.After;
 import cucumber.annotation.Before;
 import cucumber.annotation.Order;
 import cucumber.io.ClasspathResourceLoader;
+import cucumber.runtime.CucumberException;
 import cucumber.runtime.Utils;
 
 import java.lang.annotation.Annotation;
@@ -29,8 +30,11 @@ class ClasspathMethodScanner {
      */
     public void scan(JavaBackend javaBackend, List<String> gluePaths) {
         for (String gluePath : gluePaths) {
-            String packageName = gluePath.replace('/', '.').replace('\\', '.'); // Sometimes the gluePath will be a path, not a package
-            for (Class<?> glueCodeClass : resourceLoader.getDescendants(Object.class, packageName)) {
+            if(gluePath.contains("/") || gluePath.contains("\\")) {
+                throw new CucumberException("Java glue must be a Java package name - not a path: " + gluePath);
+            }
+            // We can be fairly confident that gluePath is a packageName at this point
+            for (Class<?> glueCodeClass : resourceLoader.getDescendants(Object.class, gluePath)) {
                 while (glueCodeClass != null && glueCodeClass != Object.class && !Utils.isInstantiable(glueCodeClass)) {
                     // those can't be instantiated without container class present.
                     glueCodeClass = glueCodeClass.getSuperclass();

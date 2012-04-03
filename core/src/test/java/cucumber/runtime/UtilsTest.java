@@ -19,7 +19,6 @@ public class UtilsTest {
     @Test
     public void finds_path_for_class_in_toplevel_package() {
         assertEquals("", packageName("TopLevelClass"));
-        assertEquals("", packagePath(packageName("TopLevelClass")));
     }
 
     @Test
