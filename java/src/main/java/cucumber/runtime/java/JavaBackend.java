@@ -1,7 +1,18 @@
 package cucumber.runtime.java;
 
+import gherkin.formatter.model.Step;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.List;
+import java.util.regex.Pattern;
+
 import cucumber.annotation.After;
+import cucumber.annotation.AfterClass;
 import cucumber.annotation.Before;
+import cucumber.annotation.BeforeClass;
 import cucumber.annotation.Order;
 import cucumber.fallback.runtime.java.DefaultJavaObjectFactory;
 import cucumber.io.ClasspathResourceLoader;
@@ -11,13 +22,6 @@ import cucumber.runtime.CucumberException;
 import cucumber.runtime.Glue;
 import cucumber.runtime.UnreportedStepExecutor;
 import cucumber.runtime.snippets.SnippetGenerator;
-import gherkin.formatter.model.Step;
-
-import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.regex.Pattern;
 
 public class JavaBackend implements Backend {
     private final SnippetGenerator snippetGenerator = new SnippetGenerator(new JavaSnippet());
@@ -117,9 +121,23 @@ public class JavaBackend implements Backend {
         if (annotation.annotationType().equals(Before.class)) {
             String[] tagExpressions = ((Before) annotation).value();
             glue.addBeforeHook(new JavaHookDefinition(method, tagExpressions, hookOrder, objectFactory));
-        } else {
+        } else if (annotation.annotationType().equals(After.class)) {
             String[] tagExpressions = ((After) annotation).value();
             glue.addAfterHook(new JavaHookDefinition(method, tagExpressions, hookOrder, objectFactory));
+        } else if (annotation.annotationType().equals(BeforeClass.class)) {
+            String[] tagExpressions = ((BeforeClass) annotation).value();
+            if (Modifier.isStatic(method.getModifiers())){
+                glue.addBeforeClassHook(new JavaStaticHookDefinition(method, tagExpressions, hookOrder));
+            } else {
+                throw new CucumberException("Methods annotated with @BeforeClass should be static: "+method.getDeclaringClass().getName()+":"+method.getName());
+            }
+        } else if (annotation.annotationType().equals(AfterClass.class)) {
+            String[] tagExpressions = ((AfterClass) annotation).value();
+            if (Modifier.isStatic(method.getModifiers())){
+                glue.addAfterClassHook(new JavaStaticHookDefinition(method, tagExpressions, hookOrder));
+            } else {
+                throw new CucumberException("Methods annotated with @AfterClass should be static: "+method.getDeclaringClass().getName()+":"+method.getName());
+            }
         }
     }
 }

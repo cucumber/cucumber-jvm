@@ -1,19 +1,17 @@
 package cucumber.runtime.java;
 
-import cucumber.annotation.en.Given;
-import cucumber.io.ClasspathResourceLoader;
-import cucumber.runtime.AmbiguousStepDefinitionsException;
-import cucumber.runtime.Glue;
-import cucumber.runtime.Runtime;
-import cucumber.runtime.RuntimeOptions;
+import static java.util.Arrays.asList;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import gherkin.I18n;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Comment;
 import gherkin.formatter.model.Result;
 import gherkin.formatter.model.Step;
 import gherkin.formatter.model.Tag;
-import org.junit.Test;
-import org.mockito.ArgumentCaptor;
 
 import java.lang.reflect.Method;
 import java.util.Collections;
@@ -21,12 +19,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static java.util.Arrays.asList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+
+import cucumber.annotation.en.Given;
+import cucumber.io.ClasspathResourceLoader;
+import cucumber.runtime.AmbiguousStepDefinitionsException;
+import cucumber.runtime.Glue;
+import cucumber.runtime.Runtime;
+import cucumber.runtime.RuntimeOptions;
 
 public class JavaStepDefinitionTest {
     private static final List<Comment> NO_COMMENTS = Collections.emptyList();
