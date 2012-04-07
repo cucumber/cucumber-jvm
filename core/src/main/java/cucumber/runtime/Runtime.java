@@ -1,10 +1,5 @@
 package cucumber.runtime;
 
-import cucumber.io.ClasspathResourceLoader;
-import cucumber.io.ResourceLoader;
-import cucumber.runtime.converters.LocalizedXStreams;
-import cucumber.runtime.model.CucumberFeature;
-import cucumber.runtime.snippets.SummaryPrinter;
 import gherkin.I18n;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
@@ -20,8 +15,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import cucumber.io.ClasspathResourceLoader;
+import cucumber.io.ResourceLoader;
+import cucumber.runtime.converters.LocalizedXStreams;
+import cucumber.runtime.model.CucumberFeature;
+import cucumber.runtime.snippets.SummaryPrinter;
 
 /**
  * This is the main entry point for running Cucumber features.
@@ -79,7 +81,12 @@ public class Runtime implements UnreportedStepExecutor {
      */
     public void run() {
         for (CucumberFeature cucumberFeature : runtimeOptions.cucumberFeatures(resourceLoader)) {
+            Set<Tag> tags = new HashSet<Tag>();
+            tags.addAll(cucumberFeature.getFeature().getTags());
+
+            runBeforeClassHooks(runtimeOptions.reporter(classLoader), tags);
             run(cucumberFeature);
+            runAfterClassHooks(runtimeOptions.reporter(classLoader), tags);
         }
         Formatter formatter = runtimeOptions.formatter(classLoader);
 
@@ -142,7 +149,15 @@ public class Runtime implements UnreportedStepExecutor {
     public void runAfterHooks(Reporter reporter, Set<Tag> tags) {
         runHooks(glue.getAfterHooks(), reporter, tags);
     }
+    
+    public void runBeforeClassHooks(Reporter reporter, Set<Tag> tags){
+        runStaticHooks(glue.getBeforeClassHooks(), reporter, tags);
+    }
 
+    public void runAfterClassHooks(Reporter reporter, Set<Tag> tags){
+        runStaticHooks(glue.getAfterClassHooks(), reporter, tags);
+    }
+    
     private void runHooks(List<HookDefinition> hooks, Reporter reporter, Set<Tag> tags) {
         for (HookDefinition hook : hooks) {
             runHookIfTagsMatch(hook, reporter, tags);
@@ -166,6 +181,26 @@ public class Runtime implements UnreportedStepExecutor {
     }
 
 
+    private void runStaticHooks(List<StaticHookDefinition> hooks, Reporter reporter, Set<Tag> tags) {
+        for (StaticHookDefinition hook : hooks) {
+            runStaticHookIfTagsMatch(hook, reporter, tags);
+        }
+    }
+
+    private void runStaticHookIfTagsMatch(StaticHookDefinition hook, Reporter reporter, Set<Tag> tags) {
+        if (hook.matches(tags)) {
+            long start = System.nanoTime();
+            try {
+                hook.execute();
+            } catch (Throwable t) {
+                long duration = System.nanoTime() - start;
+                Result result = new Result(Result.FAILED, duration, t, DUMMY_ARG);
+                reporter.result(result);
+            }
+        }
+    }
+
+    
     //TODO: Maybe this should go into the cucumber step execution model and it should return the result of that execution!
     @Override
     public void runUnreportedStep(String uri, I18n i18n, String stepKeyword, String stepName, int line, List<DataTableRow> dataTableRows, DocString docString) throws Throwable {

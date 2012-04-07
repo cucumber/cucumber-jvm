@@ -1,33 +1,46 @@
 package cucumber.runtime.java;
 
+import static java.util.Arrays.asList;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
+import gherkin.formatter.model.Tag;
+
+import java.lang.reflect.Method;
+import java.util.Collections;
+
+import org.junit.Test;
+
 import cucumber.annotation.After;
+import cucumber.annotation.AfterClass;
 import cucumber.annotation.Before;
+import cucumber.annotation.BeforeClass;
 import cucumber.annotation.Order;
+import cucumber.runtime.CucumberException;
 import cucumber.runtime.Glue;
 import cucumber.runtime.HookDefinition;
 import cucumber.runtime.RuntimeGlue;
 import cucumber.runtime.UndefinedStepsTracker;
 import cucumber.runtime.converters.LocalizedXStreams;
-import gherkin.formatter.model.Tag;
-import org.junit.Test;
-
-import java.lang.reflect.Method;
-import java.util.Collections;
-
-import static java.util.Arrays.asList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
 
 public class JavaHookTest {
     private static final Method BEFORE;
     private static final Method AFTER;
+    private static final Method BEFORECLASS;
+    private static final Method AFTERCLASS;
+    private static final Method INVALIDBEFORECLASS;
+    private static final Method INVALIDAFTERCLASS;
 
     static {
         try {
             BEFORE = HasHooks.class.getMethod("before");
             AFTER = HasHooks.class.getMethod("after");
+            BEFORECLASS = HasHooks.class.getMethod("beforeClass");
+            AFTERCLASS = HasHooks.class.getMethod("afterClass");
+            INVALIDBEFORECLASS = HasHooks.class.getMethod("invalidBeforeClass");
+            INVALIDAFTERCLASS = HasHooks.class.getMethod("invalidAfterClass");
         } catch (NoSuchMethodException e) {
             throw new InternalError("dang");
         }
@@ -92,6 +105,44 @@ public class JavaHookTest {
         assertFalse(before.matches(asList(new Tag("@bar", 0))));
     }
 
+    @Test
+    public void before_class_hooks_get_registered() throws Exception {
+        backend.buildWorld();
+        backend.addHook(BEFORECLASS.getAnnotation(BeforeClass.class), BEFORECLASS);
+        JavaStaticHookDefinition hookDef = (JavaStaticHookDefinition) glue.getBeforeClassHooks().get(0);
+        assertEquals(BEFORECLASS, hookDef.getMethod());
+    }
+
+    @Test
+    public void after_class_hooks_get_registered() throws Exception {
+        backend.buildWorld();
+        backend.addHook(AFTERCLASS.getAnnotation(AfterClass.class), AFTERCLASS);
+        JavaStaticHookDefinition hookDef = (JavaStaticHookDefinition) glue.getAfterClassHooks().get(0);
+        assertEquals(AFTERCLASS, hookDef.getMethod());
+    }
+    @Test
+    public void before_class_hooks_throw_exception_if_not_static() throws Exception {
+        backend.buildWorld();
+        try {
+            backend.addHook(INVALIDBEFORECLASS.getAnnotation(BeforeClass.class), INVALIDBEFORECLASS);
+            fail("Should throw CucumberException");
+        } catch (CucumberException ce){
+            //expected
+        }
+    }
+
+    @Test
+    public void after_class_hooks_throw_exception_if_not_static() throws Exception {
+        backend.buildWorld();
+        try {
+            backend.addHook(INVALIDAFTERCLASS.getAnnotation(AfterClass.class), INVALIDAFTERCLASS);
+            fail("Should throw CucumberException");
+        } catch (CucumberException ce){
+            //expected
+        }
+
+    }
+    
     public static class HasHooks {
 
         @Before({"@foo,@bar", "@zap"})
@@ -104,6 +155,16 @@ public class JavaHookTest {
         public void after() {
 
         }
+        
+        @BeforeClass
+        public static void beforeClass() {}
+        @AfterClass
+        public static void afterClass() {}
+        
+        @BeforeClass
+        public void invalidBeforeClass(){}
+        @AfterClass
+        public void invalidAfterClass(){}
     }
 
 }

@@ -1,10 +1,7 @@
 package cucumber.runtime;
 
-import cucumber.io.FileResourceLoader;
-import cucumber.runtime.autocomplete.MetaStepdef;
-import cucumber.runtime.autocomplete.StepdefGenerator;
-import cucumber.runtime.converters.LocalizedXStreams;
-import cucumber.runtime.model.CucumberFeature;
+import static cucumber.runtime.model.CucumberFeature.load;
+import static java.util.Collections.emptyList;
 import gherkin.I18n;
 import gherkin.deps.com.google.gson.Gson;
 import gherkin.deps.com.google.gson.GsonBuilder;
@@ -20,8 +17,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import static cucumber.runtime.model.CucumberFeature.load;
-import static java.util.Collections.emptyList;
+import cucumber.io.FileResourceLoader;
+import cucumber.runtime.autocomplete.MetaStepdef;
+import cucumber.runtime.autocomplete.StepdefGenerator;
+import cucumber.runtime.converters.LocalizedXStreams;
+import cucumber.runtime.model.CucumberFeature;
 
 public class RuntimeGlue implements Glue {
     private static final List<Object> NO_FILTERS = emptyList();
@@ -29,7 +29,9 @@ public class RuntimeGlue implements Glue {
     private final Map<String, StepDefinition> stepDefinitionsByPattern = new TreeMap<String, StepDefinition>();
     private final List<HookDefinition> beforeHooks = new ArrayList<HookDefinition>();
     private final List<HookDefinition> afterHooks = new ArrayList<HookDefinition>();
-
+    private final List<StaticHookDefinition> beforeClassHooks = new ArrayList<StaticHookDefinition>();
+    private final List<StaticHookDefinition> afterClassHooks = new ArrayList<StaticHookDefinition>();
+    
     private final UndefinedStepsTracker tracker;
     private final LocalizedXStreams localizedXStreams;
 
@@ -58,6 +60,18 @@ public class RuntimeGlue implements Glue {
         afterHooks.add(hookDefinition);
         Collections.sort(afterHooks, new HookComparator(false));
     }
+    
+    @Override
+    public void addBeforeClassHook(StaticHookDefinition hookDefinition) {
+        beforeClassHooks.add(hookDefinition);
+        Collections.sort(beforeClassHooks, new StaticHookComparator(false));
+    }
+
+    @Override
+    public void addAfterClassHook(StaticHookDefinition hookDefinition) {
+        afterClassHooks.add(hookDefinition);
+        Collections.sort(afterClassHooks, new StaticHookComparator(false));
+    }
 
     @Override
     public List<HookDefinition> getBeforeHooks() {
@@ -67,6 +81,17 @@ public class RuntimeGlue implements Glue {
     @Override
     public List<HookDefinition> getAfterHooks() {
         return afterHooks;
+    }
+    
+    
+    @Override
+    public List<StaticHookDefinition> getBeforeClassHooks() {
+        return beforeClassHooks;
+    }
+
+    @Override
+    public List<StaticHookDefinition> getAfterClassHooks() {
+        return afterClassHooks;
     }
 
     @Override
