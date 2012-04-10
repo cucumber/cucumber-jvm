@@ -1,3 +1,7 @@
+## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.0.1...master)
+
+* [Core] Added DataTable.toTable(List<?> other) for creating a new table. Handy for printing a table when diffing isn't helpful. (Aslak Hellesøy)
+
 ## [1.0.2](https://github.com/cucumber/cucumber-jvm/compare/v1.0.1...v1.0.2)
 
 * [Java] Snippets using a table have a hint about how to use List<YourClass>. (Aslak Hellesøy)

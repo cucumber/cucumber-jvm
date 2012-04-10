@@ -74,6 +74,6 @@ public class TableParser {
         });
         l.scan(source);
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        return new DataTable(rows, new TableConverter(new LocalizedXStreams(classLoader).get(new I18n("en")), null));
+        return new DataTable(rows, new TableConverter(new LocalizedXStreams(classLoader).get(new I18n("en"))));
     }
 }

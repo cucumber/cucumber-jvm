@@ -134,7 +134,7 @@ public class StepDefinitionMatch extends Match {
     }
 
     private Object tableArgument(Step step, int argIndex, XStream xStream, String dateFormat) {
-        DataTable table = new DataTable(step.getRows(), new TableConverter(xStream, dateFormat));
+        DataTable table = new DataTable(step.getRows(), new TableConverter(xStream));
 
         Type listType = getGenericListType(argIndex);
         if (listType != null) {
