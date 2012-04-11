@@ -15,3 +15,10 @@ Feature: Cucumber Runner Rocks
       |  n | what   | mood  |
       | 13 | cukes  | happy |
       |  4 | apples | tired |
+
+  @focus
+  Scenario: a table
+    Given the following table:
+      | year | name         |
+      | 2008 | Cucumber     |
+      | 2012 | Cucumber-JVM |
