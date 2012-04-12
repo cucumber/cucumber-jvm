@@ -1,16 +1,18 @@
 package cucumber.runtime.java;
 
-import cucumber.annotation.After;
-import cucumber.annotation.Before;
-import cucumber.annotation.Order;
-import cucumber.io.ClasspathResourceLoader;
-import cucumber.runtime.CucumberException;
-import cucumber.runtime.Utils;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.List;
+
+import cucumber.annotation.After;
+import cucumber.annotation.AfterClass;
+import cucumber.annotation.Before;
+import cucumber.annotation.BeforeClass;
+import cucumber.annotation.Order;
+import cucumber.io.ClasspathResourceLoader;
+import cucumber.runtime.CucumberException;
+import cucumber.runtime.Utils;
 
 class ClasspathMethodScanner {
 
@@ -73,7 +75,10 @@ class ClasspathMethodScanner {
 
     private boolean isHookAnnotation(Annotation annotation) {
         Class<? extends Annotation> annotationClass = annotation.annotationType();
-        return annotationClass.equals(Before.class) || annotationClass.equals(After.class);
+        return annotationClass.equals(Before.class) || 
+                annotationClass.equals(After.class) ||
+                annotationClass.equals(BeforeClass.class) ||
+                annotationClass.equals(AfterClass.class);
     }
 
     private boolean isStepdefAnnotation(Annotation annotation) {

@@ -1,23 +1,25 @@
 package cucumber.runtime.java;
 
-import cucumber.fallback.runtime.java.DefaultJavaObjectFactory;
-import cucumber.runtime.CucumberException;
-import cucumber.runtime.Glue;
-import cucumber.runtime.HookDefinition;
-import cucumber.runtime.StepDefinition;
-import cucumber.runtime.StepDefinitionMatch;
-import cucumber.runtime.java.test.Stepdefs;
+import static java.util.Arrays.asList;
+import static org.junit.Assert.assertEquals;
 import gherkin.I18n;
 import gherkin.formatter.model.Step;
-import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.util.Arrays.asList;
-import static org.junit.Assert.assertEquals;
+import org.junit.Test;
+
+import cucumber.fallback.runtime.java.DefaultJavaObjectFactory;
+import cucumber.runtime.CucumberException;
+import cucumber.runtime.Glue;
+import cucumber.runtime.HookDefinition;
+import cucumber.runtime.StaticHookDefinition;
+import cucumber.runtime.StepDefinition;
+import cucumber.runtime.StepDefinitionMatch;
+import cucumber.runtime.java.test.Stepdefs;
 
 public class JavaBackendTest {
     @Test(expected = CucumberException.class)
@@ -53,6 +55,26 @@ public class JavaBackendTest {
 
         @Override
         public void addAfterHook(HookDefinition hookDefinition) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void addBeforeClassHook(StaticHookDefinition hookDefinition) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void addAfterClassHook(StaticHookDefinition hookDefinition) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public List<StaticHookDefinition> getBeforeClassHooks() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public List<StaticHookDefinition> getAfterClassHooks() {
             throw new UnsupportedOperationException();
         }
 

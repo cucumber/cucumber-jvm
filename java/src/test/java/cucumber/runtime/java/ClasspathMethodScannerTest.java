@@ -1,24 +1,33 @@
 package cucumber.runtime.java;
 
-import cucumber.annotation.Before;
-import cucumber.io.ClasspathResourceLoader;
-import cucumber.runtime.Glue;
-import org.junit.Test;
-import org.mockito.Mockito;
-import org.mockito.internal.util.reflection.Whitebox;
-
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
-public class ClasspathMethodScannerTest {
+import org.junit.Test;
+import org.mockito.Matchers;
+import org.mockito.Mockito;
+import org.mockito.internal.util.reflection.Whitebox;
 
+import cucumber.annotation.After;
+import cucumber.annotation.AfterClass;
+import cucumber.annotation.Before;
+import cucumber.annotation.BeforeClass;
+import cucumber.io.ClasspathResourceLoader;
+import cucumber.runtime.Glue;
+
+public class ClasspathMethodScannerTest {
+    private ClasspathMethodScanner classpathMethodScanner;
+    
+    @org.junit.Before
+    public void setUp(){
+        ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(Thread.currentThread().getContextClassLoader());
+        classpathMethodScanner = new ClasspathMethodScanner(resourceLoader);
+    }
+    
+    
     @Test
     public void loadGlue_registers_the_methods_declaring_class_in_the_object_factory() throws NoSuchMethodException {
-
-        ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(Thread.currentThread().getContextClassLoader());
-        ClasspathMethodScanner classpathMethodScanner = new ClasspathMethodScanner(resourceLoader);
-
         ObjectFactory factory = Mockito.mock(ObjectFactory.class);
         Glue world = Mockito.mock(Glue.class);
         JavaBackend backend = new JavaBackend(factory);
@@ -31,9 +40,53 @@ public class ClasspathMethodScannerTest {
         verifyNoMoreInteractions(factory);
     }
 
+    @Test
+    public void scan_should_register_before_hooks() throws NoSuchMethodException, SecurityException {
+        JavaBackend backend=Mockito.mock(JavaBackend.class);
+        
+        classpathMethodScanner.scan(backend, HookedStepdef.class.getMethod("before"));
+        
+        verify(backend).addHook(Matchers.isA(Before.class), Matchers.eq(HookedStepdef.class.getMethod("before")));
+    }
+    @Test
+    public void scan_should_register_after_hooks() throws NoSuchMethodException, SecurityException {
+        JavaBackend backend=Mockito.mock(JavaBackend.class);
+        
+        classpathMethodScanner.scan(backend, HookedStepdef.class.getMethod("after"));
+        
+        verify(backend).addHook(Matchers.isA(After.class), Matchers.eq(HookedStepdef.class.getMethod("after")));
+    }
+    @Test
+    public void scan_should_register_before_class_hooks() throws NoSuchMethodException, SecurityException {
+        JavaBackend backend=Mockito.mock(JavaBackend.class);
+        
+        classpathMethodScanner.scan(backend, HookedStepdef.class.getMethod("beforeClass"));
+        
+        verify(backend).addHook(Matchers.isA(BeforeClass.class), Matchers.eq(HookedStepdef.class.getMethod("beforeClass")));
+    }
+    @Test
+    public void scan_should_register_after_class_hooks() throws NoSuchMethodException, SecurityException {
+        JavaBackend backend=Mockito.mock(JavaBackend.class);
+        
+        classpathMethodScanner.scan(backend, HookedStepdef.class.getMethod("afterClass"));
+        
+        verify(backend).addHook(Matchers.isA(AfterClass.class), Matchers.eq(HookedStepdef.class.getMethod("afterClass")));
+    }
+    
     public static class Stepdefs2 extends BaseStepDefs {
         public interface Interface1 {
         }
+    }
+    
+    public static class HookedStepdef{
+        @Before
+        public void before(){}
+        @After
+        public void after(){}
+        @BeforeClass
+        public static void beforeClass(){}
+        @AfterClass
+        public static void afterClass(){}
     }
 
     public static class BaseStepDefs {
