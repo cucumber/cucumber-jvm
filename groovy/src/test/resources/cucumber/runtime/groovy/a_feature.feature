@@ -16,7 +16,6 @@ Feature: Cucumber Runner Rocks
       | 13 | cukes  | happy |
       |  4 | apples | tired |
 
-  @focus
   Scenario: a table
     Given the following table:
       | year | name         |
