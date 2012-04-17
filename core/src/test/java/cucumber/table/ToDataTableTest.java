@@ -6,6 +6,7 @@ import cucumber.runtime.converters.SingleValueConverterWrapperExt;
 import cucumber.runtime.converters.TimeConverter;
 import gherkin.I18n;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.lang.reflect.Type;
@@ -22,7 +23,7 @@ public class ToDataTableTest {
     @Before
     public void createTableConverterWithDateFormat() {
         XStream xStream = new LocalizedXStreams(Thread.currentThread().getContextClassLoader()).get(new I18n("en"));
-        tc = new TableConverter(xStream, null);
+        tc = new TableConverter(xStream);
         SingleValueConverterWrapperExt converterWrapper = (SingleValueConverterWrapperExt) xStream.getConverterLookup().lookupConverterForType(Date.class);
         TimeConverter timeConverter = (TimeConverter) converterWrapper.getConverter();
         timeConverter.setOnlyFormat("dd/MM/yyyy", Locale.UK);
@@ -33,10 +34,32 @@ public class ToDataTableTest {
         List<UserPojo> users = tc.toList(UserPojo.class, personTable());
         DataTable table = tc.toTable(users);
         assertEquals("" +
+                "      | credits | name        | birthDate  |\n" +
+                "      | 1,000   | Sid Vicious | 10/05/1957 |\n" +
+                "      | 3,000   | Frank Zappa | 21/12/1940 |\n" +
+                "", table.toString());
+    }
+
+    @Test
+    @Ignore
+    public void converts_list_of_beans_to_table_with_explicit_columns() {
+        List<UserPojo> users = tc.toList(UserPojo.class, personTable());
+        DataTable table = tc.toTable(users, "name", "birthDate", "credits");
+        assertEquals("" +
                 "      | name        | birthDate  | credits |\n" +
                 "      | Sid Vicious | 10/05/1957 | 1,000   |\n" +
                 "      | Frank Zappa | 21/12/1940 | 3,000   |\n" +
                 "", table.toString());
+    }
+
+    /**
+     * TODO: To make this pass we have to make sure the columns are the same.
+     */
+    @Test
+    @Ignore
+    public void diffs_round_trip() {
+        List<UserPojo> users = tc.toList(UserPojo.class, personTable());
+        personTable().diff(users);
     }
 
     private DataTable personTable() {
@@ -63,9 +86,9 @@ public class ToDataTableTest {
 
     // No setters
     public static class UserPojo {
+        public Integer credits;
         public String name;
         public Date birthDate;
-        public Integer credits;
 
         public UserPojo(int foo) {
         }

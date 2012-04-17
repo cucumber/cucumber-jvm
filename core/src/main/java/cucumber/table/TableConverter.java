@@ -23,11 +23,9 @@ import static gherkin.util.FixJava.map;
 
 public class TableConverter {
     private final XStream xStream;
-    private final String dateFormat;
 
-    public TableConverter(XStream xStream, String dateFormat) {
+    public TableConverter(XStream xStream) {
         this.xStream = xStream;
-        this.dateFormat = dateFormat;
     }
 
     /**
@@ -51,10 +49,11 @@ public class TableConverter {
     /**
      * Converts a List of objects to a DataTable.
      *
-     * @param objects the objects to convers
+     * @param objects     the objects to convert
+     * @param columnNames an explicit list of column names (currently not used)
      * @return a DataTable
      */
-    public DataTable toTable(List<?> objects) {
+    public DataTable toTable(List<?> objects, String... columnNames) {
         DataTableWriter writer;
         if (isListOfListOfSingleValue(objects)) {
             objects = wrapLists((List<List<?>>) objects);

@@ -36,6 +36,10 @@ public class Utils {
         return packageName.replace('.', '/');
     }
 
+    public static String packageName(Class clazz) {
+        return packageName(clazz.getName());
+    }
+
     public static String packageName(String className) {
         return className.substring(0, Math.max(0, className.lastIndexOf(".")));
     }

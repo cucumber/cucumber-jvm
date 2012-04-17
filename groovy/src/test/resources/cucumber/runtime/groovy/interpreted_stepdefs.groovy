@@ -7,4 +7,3 @@ Given(~'^I have (\\d+) cukes in my belly') { int cukes ->
     haveCukes(cukes)
     lastAte('cukes')
 }
-

@@ -1,5 +1,12 @@
-## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.0.0...master)
+## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.0.1...master)
 
+* [Groovy] Arity mismatch can be avoided by explicitly declaring an empty list of closure parameters. ([#297](https://github.com/cucumber/cucumber-jvm/issues/297) Aslak Hellesøy)
+* [Core] Added DataTable.toTable(List<?> other) for creating a new table. Handy for printing a table when diffing isn't helpful. (Aslak Hellesøy)
+
+## [1.0.2](https://github.com/cucumber/cucumber-jvm/compare/v1.0.1...v1.0.2)
+
+* [Java] Snippets using a table have a hint about how to use List<YourClass>. (Aslak Hellesøy)
+* [Java] Don't convert paths to package names - instead throw an exception. This helps people avoid mistakes. (Aslak Hellesøy)
 * [Scala] Fixed generated Scala snippets ([#282](https://github.com/cucumber/cucumber-jvm/pull/282) pawel-s)
 * [JUnit] Automatically turn off ANSI colours when launched from IDEA. (Aslak Hellesøy)
 

@@ -31,6 +31,7 @@
                    "," ""))
     (namedGroupStart [_] nil)
     (namedGroupEnd [_] nil)
+    (tableHint [_] nil)
     (escapePattern [_ pattern]
       (str/replace (str pattern) "\"" "\\\""))))
 

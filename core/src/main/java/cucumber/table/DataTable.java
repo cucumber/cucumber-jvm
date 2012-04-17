@@ -1,5 +1,7 @@
 package cucumber.table;
 
+import cucumber.runtime.converters.LocalizedXStreams;
+import gherkin.I18n;
 import gherkin.formatter.PrettyFormatter;
 import gherkin.formatter.model.DataTableRow;
 import gherkin.formatter.model.Row;
@@ -13,6 +15,11 @@ public class DataTable {
     private final List<List<String>> raw;
     private final List<DataTableRow> gherkinRows;
     private final TableConverter tableConverter;
+
+    public static DataTable create(List<?> raw) {
+        TableConverter tableConverter = new TableConverter(new LocalizedXStreams(Thread.currentThread().getContextClassLoader()).get(new I18n("en")));
+        return tableConverter.toTable(raw);
+    }
 
     public DataTable(List<DataTableRow> gherkinRows, TableConverter tableConverter) {
         this.gherkinRows = gherkinRows;
@@ -54,11 +61,28 @@ public class DataTable {
         return strings;
     }
 
-    public void diff(List<List<String>> other) {
-        diff(tableConverter.toTable(other));
+    public DataTable toTable(List<?> raw) {
+        return tableConverter.toTable(raw);
     }
 
-    private void diff(DataTable other) {
+    /**
+     * Diffs this table with {@code other}, which can be a {@code List<List<String>>} or a
+     * {@code List<YourType>}.
+     *
+     * @param other the other table to diff with.
+     * @throws TableDiffException if the tables are different.
+     */
+    public void diff(List<?> other) throws TableDiffException {
+        diff(toTable(other));
+    }
+
+    /**
+     * Diffs this table with {@code other}.
+     *
+     * @param other the other table to diff with.
+     * @throws TableDiffException if the tables are different.
+     */
+    public void diff(DataTable other) throws TableDiffException {
         new TableDiffer(this, other).calculateDiffs();
     }
 

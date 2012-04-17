@@ -28,7 +28,7 @@ public class TableDiffer {
         }
     }
 
-    public void calculateDiffs() {
+    public void calculateDiffs() throws TableDiffException {
         Patch patch = DiffUtils.diff(orig.diffableRows(), other.diffableRows());
         List<Delta> deltas = patch.getDeltas();
         if (!deltas.isEmpty()) {

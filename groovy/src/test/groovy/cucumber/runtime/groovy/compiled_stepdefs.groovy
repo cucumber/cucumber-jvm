@@ -13,7 +13,17 @@ Given(~'^I have (\\d+) apples in my belly') { int apples ->
     lastAte('apples')
 }
 
-Given(~'^a big basket with cukes') {->
+Given(~'^a big basket with cukes') { ->
+}
+
+Given(~'^the following table:$') { table ->
+    things = table.asList(Thing)
+    assertEquals("Cucumber-JVM", things[1].name)
+}
+
+class Thing {
+    Integer year
+    String name
 }
 
 Then(~'^there are (\\d+) cukes in my belly') { int cukes ->

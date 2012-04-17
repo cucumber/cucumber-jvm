@@ -9,9 +9,9 @@ import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import cucumber.DateFormat;
 import cucumber.runtime.CucumberException;
-import cucumber.runtime.ParameterType;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.StepDefinitionMatch;
+import cucumber.runtime.StubStepDefinition;
 import cucumber.runtime.converters.LocalizedXStreams;
 import gherkin.I18n;
 import gherkin.formatter.Argument;
@@ -171,7 +171,7 @@ public class FromDataTableTest {
 
     private StepDefs runStepDef(Method method, List<DataTableRow> rows) throws Throwable {
         StepDefs stepDefs = new StepDefs();
-        StepDefinition stepDefinition = new DirectStepDef(stepDefs, method);
+        StepDefinition stepDefinition = new StubStepDefinition(stepDefs, method, "some pattern");
 
         Step stepWithRows = new Step(NO_COMMENTS, "Given ", "something", 10, rows, null);
 
@@ -276,43 +276,4 @@ public class FromDataTableTest {
         }
     }
 
-    private class DirectStepDef implements StepDefinition {
-        private final Object target;
-        private final Method method;
-
-        public DirectStepDef(Object target, Method method) {
-            this.target = target;
-            this.method = method;
-        }
-
-        @Override
-        public List<Argument> matchedArguments(Step step) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public String getLocation() {
-            return getClass().getName();
-        }
-
-        @Override
-        public List<ParameterType> getParameterTypes() {
-            return ParameterType.fromMethod(method);
-        }
-
-        @Override
-        public void execute(I18n i18n, Object[] args) throws Throwable {
-            method.invoke(target, args);
-        }
-
-        @Override
-        public boolean isDefinedAt(StackTraceElement stackTraceElement) {
-            return false;
-        }
-
-        @Override
-        public String getPattern() {
-            throw new UnsupportedOperationException();
-        }
-    }
 }

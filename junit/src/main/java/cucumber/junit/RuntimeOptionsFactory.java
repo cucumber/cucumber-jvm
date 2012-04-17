@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static cucumber.runtime.Utils.packageName;
 import static cucumber.runtime.Utils.packagePath;
 
 public class RuntimeOptionsFactory {
@@ -64,7 +65,7 @@ public class RuntimeOptionsFactory {
             }
         } else {
             args.add("--glue");
-            args.add(packagePath(clazz));
+            args.add(packageName(clazz));
         }
     }
 
