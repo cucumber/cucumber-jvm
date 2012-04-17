@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static cucumber.runtime.Utils.packagePath;
+
 public class IokeBackend implements Backend {
     private final SnippetGenerator snippetGenerator = new SnippetGenerator(new IokeSnippet());
     private final ResourceLoader resourceLoader;
@@ -46,7 +48,7 @@ public class IokeBackend implements Backend {
         this.glue = glue;
 
         for (String gluePath : gluePaths) {
-            for (Resource resource : resourceLoader.resources(gluePath, ".ik")) {
+            for (Resource resource : resourceLoader.resources(packagePath(gluePath), ".ik")) {
                 currentLocation = resource.getPath();
                 evaluate(resource);
             }

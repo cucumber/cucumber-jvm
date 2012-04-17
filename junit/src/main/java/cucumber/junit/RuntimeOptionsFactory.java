@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static cucumber.runtime.Utils.packageName;
 import static cucumber.runtime.Utils.packagePath;
+import static cucumber.runtime.Utils.packageName;
 
 public class RuntimeOptionsFactory {
     private Class clazz;

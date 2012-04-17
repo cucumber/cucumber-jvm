@@ -40,7 +40,11 @@ public class Utils {
         return packageName(clazz.getName());
     }
 
-    public static String packageName(String className) {
+    public static String toPackage(String path) {
+        return path.replace('/', '.').replace('\\', '.');
+    }
+
+    static String packageName(String className) {
         return className.substring(0, Math.max(0, className.lastIndexOf(".")));
     }
 

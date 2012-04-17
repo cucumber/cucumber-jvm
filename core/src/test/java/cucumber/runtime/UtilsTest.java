@@ -12,13 +12,13 @@ import static org.junit.Assert.assertTrue;
 public class UtilsTest {
     @Test
     public void finds_path_for_class_in_package() {
-        assertEquals("java.lang", packageName("java.lang.String"));
+        assertEquals("java.lang", packageName(String.class));
         assertEquals("java/lang", packagePath(String.class));
     }
 
     @Test
     public void finds_path_for_class_in_toplevel_package() {
-        assertEquals("", packageName("TopLevelClass"));
+        assertEquals("", Utils.packageName("TopLevelClass"));
     }
 
     @Test

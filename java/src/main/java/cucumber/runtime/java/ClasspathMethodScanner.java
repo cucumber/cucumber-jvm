@@ -33,7 +33,7 @@ class ClasspathMethodScanner {
             if(gluePath.contains("/") || gluePath.contains("\\")) {
                 throw new CucumberException("Java glue must be a Java package name - not a path: " + gluePath);
             }
-            // We can be fairly confident that gluePath is a packageName at this point
+            // We can be fairly confident that gluePath is a package name at this point
             for (Class<?> glueCodeClass : resourceLoader.getDescendants(Object.class, gluePath)) {
                 while (glueCodeClass != null && glueCodeClass != Object.class && !Utils.isInstantiable(glueCodeClass)) {
                     // those can't be instantiated without container class present.
