@@ -65,8 +65,7 @@ public class StepDefinitionMatch extends Match {
         if (step.getRows() != null) argumentCount++;
         if (parameterTypes != null) {
             if (parameterTypes.size() != argumentCount) {
-                List<Argument> arguments = createArgumentsForErrorMessage(step);
-                throw new CucumberException("Arity mismatch. Declared parameters: " + parameterTypes + ". Matched arguments: " + arguments);
+                throw arityMismatch(parameterTypes, step);
             }
         } else {
             // Some backends, like ClojureBackend, don't know the arity and therefore pass in null.
@@ -114,6 +113,21 @@ public class StepDefinitionMatch extends Match {
             result[n] = step.getDocString().getValue();
         }
         return result;
+    }
+
+    private CucumberException arityMismatch(List<ParameterType> parameterTypes, Step step) {
+        List<Argument> arguments = createArgumentsForErrorMessage(step);
+        return new CucumberException(String.format(
+                "Arity mismatch: Step Definition '%s' with pattern /%s/ is declared with %s parameters%s. However, the gherkin step matched %s arguments%s. \nStep: %s%s",
+                stepDefinition.getLocation(true),
+                stepDefinition.getPattern(),
+                parameterTypes.size(),
+                parameterTypes.isEmpty() ? "" : " " + parameterTypes.toString(),
+                arguments.size(),
+                arguments.isEmpty() ? "" : " " + arguments.toString(),
+                step.getKeyword(),
+                step.getName()
+        ));
     }
 
     private List<Argument> createArgumentsForErrorMessage(Step step) {

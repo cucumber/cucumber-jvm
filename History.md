@@ -1,6 +1,7 @@
 ## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.0.1...master)
 
 * [Java] Show code source for Java step definitions in case of duplicates or ambiguous stepdefs. (Aslak Hellesøy).
+* [Groovy] Arity mismatch can be avoided by explicitly declaring an empty list of closure parameters. ([#297](https://github.com/cucumber/cucumber-jvm/issues/297) Aslak Hellesøy)
 * [Core] Added DataTable.toTable(List<?> other) for creating a new table. Handy for printing a table when diffing isn't helpful. (Aslak Hellesøy)
 
 ## [1.0.2](https://github.com/cucumber/cucumber-jvm/compare/v1.0.1...v1.0.2)
