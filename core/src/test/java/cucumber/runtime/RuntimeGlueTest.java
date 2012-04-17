@@ -15,12 +15,12 @@ public class RuntimeGlueTest {
 
         StepDefinition a = mock(StepDefinition.class);
         when(a.getPattern()).thenReturn("hello");
-        when(a.getLocation()).thenReturn("foo.bf:10");
+        when(a.getLocation(true)).thenReturn("foo.bf:10");
         glue.addStepDefinition(a);
 
         StepDefinition b = mock(StepDefinition.class);
         when(b.getPattern()).thenReturn("hello");
-        when(b.getLocation()).thenReturn("bar.bf:90");
+        when(b.getLocation(true)).thenReturn("bar.bf:90");
         try {
             glue.addStepDefinition(b);
             fail("should have failed");

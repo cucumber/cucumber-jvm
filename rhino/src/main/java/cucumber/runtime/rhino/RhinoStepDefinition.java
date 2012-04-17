@@ -40,7 +40,7 @@ public class RhinoStepDefinition implements StepDefinition {
         return args == null ? null : (List<Argument>) args.unwrap();
     }
 
-    public String getLocation() {
+    public String getLocation(boolean detail) {
         return location.getFileName() + ":" + location.getLineNumber();
     }
 

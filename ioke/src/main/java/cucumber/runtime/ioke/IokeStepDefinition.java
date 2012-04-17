@@ -49,7 +49,7 @@ public class IokeStepDefinition implements StepDefinition {
         }
     }
 
-    public String getLocation() {
+    public String getLocation(boolean detail) {
         return location;
     }
 

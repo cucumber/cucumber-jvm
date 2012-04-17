@@ -31,7 +31,7 @@ public class StepDefinitionMatch extends Match {
     private final LocalizedXStreams localizedXStreams;
 
     public StepDefinitionMatch(List<Argument> arguments, StepDefinition stepDefinition, String uri, Step step, LocalizedXStreams localizedXStreams) {
-        super(arguments, stepDefinition.getLocation());
+        super(arguments, stepDefinition.getLocation(false));
         this.stepDefinition = stepDefinition;
         this.uri = uri;
         this.step = step;

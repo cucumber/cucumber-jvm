@@ -71,7 +71,7 @@
      (matchedArguments [_ step]
        (.argumentsFrom (JdkPatternArgumentMatcher. pattern)
                        (.getName step)))
-     (getLocation [_]
+     (getLocation [_ detail]
        (str (:file location) ":" (:line location)))
      (getParameterTypes [_]
        nil)

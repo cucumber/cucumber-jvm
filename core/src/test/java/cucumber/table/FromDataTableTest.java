@@ -291,7 +291,7 @@ public class FromDataTableTest {
         }
 
         @Override
-        public String getLocation() {
+        public String getLocation(boolean detail) {
             return getClass().getName();
         }
 

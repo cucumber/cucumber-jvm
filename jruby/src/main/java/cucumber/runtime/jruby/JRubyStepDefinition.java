@@ -33,7 +33,7 @@ public class JRubyStepDefinition implements StepDefinition {
     }
 
     @Override
-    public String getLocation() {
+    public String getLocation(boolean detail) {
         if (file == null) {
             List fileAndLine = (List) stepdef.callMethod("file_and_line").toJava(List.class);
             file = (String) fileAndLine.get(0);

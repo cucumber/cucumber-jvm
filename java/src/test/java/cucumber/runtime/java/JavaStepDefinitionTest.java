@@ -3,6 +3,7 @@ package cucumber.runtime.java;
 import cucumber.annotation.en.Given;
 import cucumber.io.ClasspathResourceLoader;
 import cucumber.runtime.AmbiguousStepDefinitionsException;
+import cucumber.runtime.DuplicateStepDefinitionException;
 import cucumber.runtime.Glue;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeOptions;
@@ -54,6 +55,12 @@ public class JavaStepDefinitionTest {
     @org.junit.Before
     public void loadNoGlue() {
         backend.loadGlue(glue, Collections.<String>emptyList());
+    }
+
+    @Test(expected = DuplicateStepDefinitionException.class)
+    public void throws_duplicate_when_two_stepdefs_with_same_regexp_found() throws Throwable {
+        backend.addStepDefinition(THREE_BLIND_ANIMALS.getAnnotation(Given.class), THREE_DISABLED_MICE);
+        backend.addStepDefinition(THREE_BLIND_ANIMALS.getAnnotation(Given.class), THREE_BLIND_ANIMALS);
     }
 
     @Test

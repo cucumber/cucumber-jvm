@@ -16,7 +16,7 @@ class ScalaStepDefinition(frame:StackTraceElement, name:String, pattern:String, 
 
   def getTypeForTableList(argIndex: Int) = null
 
-  def getLocation = frame.getFileName + ":" + frame.getLineNumber
+  def getLocation(detail: Boolean) = frame.getFileName + ":" + frame.getLineNumber
 
   // capture type transformations at compile time instead
   def getParameterTypes = Array.fill(parameterTypes.size)(new ParameterType(classOf[String], null)).toList

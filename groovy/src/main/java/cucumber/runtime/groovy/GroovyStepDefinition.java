@@ -31,7 +31,7 @@ public class GroovyStepDefinition implements StepDefinition {
         return argumentMatcher.argumentsFrom(step.getName());
     }
 
-    public String getLocation() {
+    public String getLocation(boolean detail) {
         return location.getFileName() + ":" + location.getLineNumber();
     }
 

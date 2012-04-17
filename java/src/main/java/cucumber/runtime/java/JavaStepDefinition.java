@@ -47,8 +47,12 @@ public class JavaStepDefinition implements StepDefinition {
         return argumentMatcher.argumentsFrom(step.getName());
     }
 
-    public String getLocation() {
-        return METHOD_FORMAT.format(method);
+    public String getLocation(boolean detail) {
+        return METHOD_FORMAT.format(method) + (detail ? " (" + getCodeSource() + ")" : "");
+    }
+
+    private String getCodeSource() {
+        return method.getDeclaringClass().getProtectionDomain().getCodeSource().getLocation().toExternalForm();
     }
 
     public List<ParameterType> getParameterTypes() {
