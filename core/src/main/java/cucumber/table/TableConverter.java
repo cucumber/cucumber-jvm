@@ -1,6 +1,7 @@
 package cucumber.table;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.converters.ConversionException;
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.SingleValueConverter;
 import com.thoughtworks.xstream.converters.reflection.AbstractReflectionConverter;
@@ -48,6 +49,8 @@ public class TableConverter {
             return (List) xStream.unmarshal(reader);
         } catch (AbstractReflectionConverter.UnknownFieldException e) {
             throw new CucumberException(e.getShortMessage());
+        } catch (ConversionException e){
+            throw new CucumberException(String.format("Can't assign null value to one of the primitive fields in %s. Please use boxed types.", e.get("class")));
         }
     }
 

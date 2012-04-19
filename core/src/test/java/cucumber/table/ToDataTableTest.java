@@ -59,6 +59,21 @@ public class ToDataTableTest {
     }
 
     @Test
+    public void gives_a_nice_error_message_when_primitive_field_is_null() {
+        try {
+            tc.toList(PojoWithInt.class, TableParser.parse("" +
+                    "| credits     |\n" +
+                    "| 5           |\n" +
+                    "|             |\n" +
+                    "")
+            );
+            fail();
+        } catch (CucumberException e) {
+            assertEquals("Can't assign null value to one of the primitive fields in cucumber.table.ToDataTableTest$PojoWithInt. Please use boxed types.", e.getMessage());
+        }
+    }
+
+    @Test
     @Ignore
     public void converts_list_of_beans_to_table_with_explicit_columns() {
         List<UserPojo> users = tc.toList(UserPojo.class, personTable());
@@ -110,5 +125,9 @@ public class ToDataTableTest {
 
         public UserPojo(int foo) {
         }
+    }
+
+    public static class PojoWithInt {
+        public int credits;
     }
 }

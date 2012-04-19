@@ -1,4 +1,8 @@
-## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.0.1...master)
+## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.0.3...master)
+
+* [Core] Friendlier error message when XStream fails to assign null to primitive fields ([#296](https://github.com/cucumber/cucumber-jvm/issues/296) Aslak Hellesøy)
+
+## [1.0.3](https://github.com/cucumber/cucumber-jvm/compare/v1.0.2...1.0.3)
 
 * [Core] Friendlier error message when XStream fails conversion ([#296](https://github.com/cucumber/cucumber-jvm/issues/296) Aslak Hellesøy)
 * [Core] Empty strings from matched steps and table cells are converted to `null`. This means boxed types must be used if you intend to have empty strings. (Aslak Hellesøy)
