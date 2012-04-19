@@ -1,5 +1,6 @@
 ## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.0.1...master)
 
+* [Core] Friendlier error message when XStream fails conversion ([#296](https://github.com/cucumber/cucumber-jvm/issues/296) Aslak Hellesøy)
 * [Core] Empty strings from matched steps and table cells are converted to `null`. This means boxed types must be used if you intend to have empty strings. (Aslak Hellesøy)
 * [Core] ([#196](https://github.com/cucumber/cucumber-jvm/issues/196), [#284](https://github.com/cucumber/cucumber-jvm/pull/284) Klaus Bayrhammer)
 * [Clojure] Cucumber-clojure adding after hook to before ([#294](https://github.com/cucumber/cucumber-jvm/pull/294) Daniel E. Renfer)

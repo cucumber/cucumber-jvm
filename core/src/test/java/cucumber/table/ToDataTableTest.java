@@ -1,6 +1,8 @@
 package cucumber.table;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.converters.reflection.AbstractReflectionConverter;
+import cucumber.runtime.CucumberException;
 import cucumber.runtime.converters.LocalizedXStreams;
 import cucumber.runtime.converters.SingleValueConverterWrapperExt;
 import cucumber.runtime.converters.TimeConverter;
@@ -16,6 +18,7 @@ import java.util.Locale;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 public class ToDataTableTest {
     private TableConverter tc;
@@ -38,6 +41,21 @@ public class ToDataTableTest {
                 "      | 1,000   | Sid Vicious | 10/05/1957 |\n" +
                 "      | 3,000   | Frank Zappa | 21/12/1940 |\n" +
                 "", table.toString());
+    }
+
+    @Test
+    public void gives_a_nice_error_message_when_field_is_missing() {
+        try {
+            tc.toList(UserPojo.class, TableParser.parse("" +
+                    "| name        | birthDate  | crapola  |\n" +
+                    "| Sid Vicious | 10/05/1957 | 1,000    |\n" +
+                    "| Frank Zappa | 21/12/1940 | 3,000    |\n" +
+                    "")
+            );
+            fail();
+        } catch (CucumberException e) {
+            assertEquals("No such field cucumber.table.ToDataTableTest$UserPojo.crapola", e.getMessage());
+        }
     }
 
     @Test
