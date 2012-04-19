@@ -26,6 +26,7 @@ public class RuntimeOptionsFactory {
         addTags(options, args);
         addFormats(options, args);
         addFeatures(options, clazz, args);
+        addStrict(options, args);
 
         return new RuntimeOptions(args.toArray(new String[args.size()]));
 
@@ -95,6 +96,14 @@ public class RuntimeOptionsFactory {
             Collections.addAll(args, options.features());
         } else {
             args.add(packagePath(clazz));
+        }
+    }
+
+    private void addStrict(Cucumber.Options options, List<String> args)
+    {
+        if (options != null && options.strict())
+        {
+            args.add("--strict");
         }
     }
 }
