@@ -105,7 +105,7 @@
                                  (filter #(= "invoke" (.getName %)))
                                  (map #(count (.getParameterTypes %)))
                                  (apply max))]
-    (.addBeforeHook
+    (.addAfterHook
      @glue
      (reify
        HookDefinition
