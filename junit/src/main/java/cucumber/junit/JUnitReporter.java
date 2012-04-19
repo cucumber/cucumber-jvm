@@ -5,6 +5,7 @@ import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Background;
 import gherkin.formatter.model.Examples;
+import gherkin.formatter.model.HookResult;
 import gherkin.formatter.model.Match;
 import gherkin.formatter.model.Result;
 import gherkin.formatter.model.Scenario;
@@ -91,6 +92,22 @@ class JUnitReporter implements Reporter, Formatter {
     }
 
     @Override
+    public void before(HookResult result) {
+        handleHook(result);
+    }
+
+    @Override
+    public void after(HookResult result) {
+        handleHook(result);
+    }
+
+    private void handleHook(HookResult result) {
+        if(result.getStatus().equals(Result.FAILED)) {
+            executionUnitNotifier.addFailure(result.getError());
+        }
+    }
+
+    @Override
     public void uri(String uri) {
         formatter.uri(uri);
     }
@@ -132,7 +149,7 @@ class JUnitReporter implements Reporter, Formatter {
     }
 
     @Override
-    public void syntaxError(String state, String event, List<String> legalEvents, String uri, int line) {
+    public void syntaxError(String state, String event, List<String> legalEvents, String uri, Integer line) {
         formatter.syntaxError(state, event, legalEvents, uri, line);
     }
 

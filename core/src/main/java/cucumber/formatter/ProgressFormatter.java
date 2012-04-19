@@ -74,7 +74,7 @@ public class ProgressFormatter implements Formatter, Reporter, ColorAware {
     }
 
     @Override
-    public void syntaxError(String state, String event, List<String> legalEvents, String uri, int line) {
+    public void syntaxError(String state, String event, List<String> legalEvents, String uri, Integer line) {
     }
 
     @Override
@@ -95,6 +95,32 @@ public class ProgressFormatter implements Formatter, Reporter, ColorAware {
         out.append(CHARS.get(result.getStatus()));
         if (!monochrome) {
             AnsiEscapes.RESET.appendTo(out);
+        }
+    }
+
+    @Override
+    public void before(HookResult result) {
+        handleHook(result, true);
+    }
+
+    @Override
+    public void after(HookResult result) {
+        handleHook(result, false);
+    }
+
+    private void handleHook(HookResult result, boolean before) {
+        if (result.getStatus().equals(Result.FAILED)) {
+            if (!monochrome) {
+                ANSI_ESCAPES.get(result.getStatus()).appendTo(out);
+            }
+            if (before) {
+                out.append("B");
+            } else {
+                out.append("A");
+            }
+            if (!monochrome) {
+                AnsiEscapes.RESET.appendTo(out);
+            }
         }
     }
 
