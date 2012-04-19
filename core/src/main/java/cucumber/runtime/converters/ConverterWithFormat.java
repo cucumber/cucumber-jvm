@@ -18,7 +18,7 @@ public abstract class ConverterWithFormat<T> implements SingleValueConverter {
     }
 
     public T fromString(String string) {
-        if (string == null) {
+        if (string == null || string.length() == 0) {
             return null;
         }
         for (Format format : getFormats()) {
@@ -29,7 +29,6 @@ public abstract class ConverterWithFormat<T> implements SingleValueConverter {
             }
         }
         throw new ConversionException("Couldn't convert \"" + string + "\" to an instance of: " + asList(convertibleTypes));
-
     }
 
     /**
