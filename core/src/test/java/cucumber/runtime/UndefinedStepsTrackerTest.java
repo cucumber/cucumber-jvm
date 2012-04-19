@@ -10,10 +10,27 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class UndefinedStepsTrackerTest {
 
     private static final I18n ENGLISH = new I18n("en");
+
+    @Test
+    public void has_undefined_steps()
+    {
+        UndefinedStepsTracker undefinedStepsTracker = new UndefinedStepsTracker();
+        undefinedStepsTracker.addUndefinedStep(new Step(null, "Given ", "A", 1, null, null), ENGLISH);
+        assertTrue(undefinedStepsTracker.hasUndefinedSteps());
+    }
+
+    @Test
+    public void has_no_undefined_steps()
+    {
+        UndefinedStepsTracker undefinedStepsTracker = new UndefinedStepsTracker();
+        assertFalse(undefinedStepsTracker.hasUndefinedSteps());
+    }
 
     @Test
     public void removes_duplicates() {

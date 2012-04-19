@@ -1,5 +1,13 @@
 package cucumber.junit;
 
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.internal.runners.model.EachTestNotifier;
+import org.junit.runner.Description;
+import org.junit.runner.notification.RunNotifier;
+
 import cucumber.runtime.PendingException;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
@@ -10,28 +18,23 @@ import gherkin.formatter.model.Result;
 import gherkin.formatter.model.Scenario;
 import gherkin.formatter.model.ScenarioOutline;
 import gherkin.formatter.model.Step;
-import org.junit.internal.runners.model.EachTestNotifier;
-import org.junit.runner.Description;
-import org.junit.runner.notification.RunNotifier;
-
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 class JUnitReporter implements Reporter, Formatter {
     private final List<Step> steps = new ArrayList<Step>();
 
     private final Reporter reporter;
     private final Formatter formatter;
+    private final boolean strict;
 
-    private EachTestNotifier stepNotifier;
+    EachTestNotifier stepNotifier;
     private ExecutionUnitRunner executionUnitRunner;
     private RunNotifier runNotifier;
-    private EachTestNotifier executionUnitNotifier;
+    EachTestNotifier executionUnitNotifier;
 
-    public JUnitReporter(Reporter reporter, Formatter formatter) {
+    public JUnitReporter(Reporter reporter, Formatter formatter, boolean strict) {
         this.reporter = reporter;
         this.formatter = formatter;
+        this.strict = strict;
     }
 
     public void startExecutionUnit(ExecutionUnitRunner executionUnitRunner, RunNotifier runNotifier) {
@@ -66,18 +69,23 @@ class JUnitReporter implements Reporter, Formatter {
 
     public void result(Result result) {
         Throwable error = result.getError();
-        if (Result.SKIPPED == result || Result.UNDEFINED == result || error instanceof PendingException) {
+        if (Result.SKIPPED == result) {
             stepNotifier.fireTestIgnored();
+        } else if (isPendingOrUndefined(result)) {
+            addFailureOrIgnoreStep(result);
         } else {
-            if (stepNotifier != null) {
+            if (stepNotifier != null)
+            {
                 //Should only fireTestStarted if not ignored
                 stepNotifier.fireTestStarted();
-                if (error != null) {
+                if (error != null)
+                {
                     stepNotifier.addFailure(error);
                 }
                 stepNotifier.fireTestFinished();
             }
-            if (error != null) {
+            if (error != null)
+            {
                 executionUnitNotifier.addFailure(error);
             }
         }
@@ -88,6 +96,33 @@ class JUnitReporter implements Reporter, Formatter {
             stepNotifier = null;
         }
         reporter.result(result);
+    }
+
+    private boolean isPendingOrUndefined(Result result)
+    {
+        Throwable error = result.getError();
+        return Result.UNDEFINED == result || error instanceof PendingException;
+    }
+
+    private void addFailureOrIgnoreStep(Result result)
+    {
+        if (strict) {
+            addFailure(result);
+        } else {
+            stepNotifier.fireTestIgnored();
+        }
+    }
+
+    private void addFailure(Result result)
+    {
+
+        Throwable error = result.getError();
+        if (error == null)
+        {
+            error = new PendingException();
+        }
+        stepNotifier.addFailure(error);
+        executionUnitNotifier.addFailure(error);
     }
 
     @Override

@@ -27,6 +27,7 @@ public class RuntimeOptions {
     public List<String> glue = new ArrayList<String>();
     public File dotCucumber;
     public boolean dryRun;
+    public boolean strict = false;
     public List<String> tags = new ArrayList<String>();
     public List<Formatter> formatters = new ArrayList<Formatter>();
     public List<String> featurePaths = new ArrayList<String>();
@@ -69,6 +70,8 @@ public class RuntimeOptions {
                 dotCucumber = new File(args.remove(0));
             } else if (arg.equals("--dry-run") || arg.equals("-d")) {
                 dryRun = true;
+            } else if (arg.equals("--strict") || arg.equals("-s")) {
+                strict = true;
             } else if (arg.equals("--monochrome") || arg.equals("-m")) {
                 monochrome = true;
             } else {

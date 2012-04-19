@@ -56,7 +56,8 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
         runtime = new Runtime(resourceLoader, classLoader, runtimeOptions);
 
-        jUnitReporter = new JUnitReporter(runtimeOptions.reporter(classLoader), runtimeOptions.formatter(classLoader));
+        jUnitReporter = new JUnitReporter(runtimeOptions.reporter(classLoader), runtimeOptions.formatter(classLoader)
+            , runtimeOptions.strict);
         addChildren(runtimeOptions.cucumberFeatures(resourceLoader));
     }
 
@@ -119,6 +120,12 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         boolean dryRun() default false;
 
         /**
+         * Scenarios fail if 
+         * @return
+         */
+        boolean strict() default false;
+
+        /**
          * @return the paths to the feature(s)
          */
         String[] features() default {};
@@ -142,5 +149,6 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
          * @return whether or not to use monochrome output
          */
         boolean monochrome() default false;
+
     }
 }

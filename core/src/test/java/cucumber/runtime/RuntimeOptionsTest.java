@@ -7,6 +7,7 @@ import java.io.File;
 
 import static java.util.Arrays.asList;
 import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class RuntimeOptionsTest {
@@ -42,5 +43,23 @@ public class RuntimeOptionsTest {
     public void creates_formatter() {
         RuntimeOptions options = new RuntimeOptions("--format", "html:some/dir", "--glue", "somewhere");
         assertEquals(HTMLFormatter.class, options.formatters.get(0).getClass());
+    }
+
+    @Test
+    public void assigns_strict() {
+        RuntimeOptions options = new RuntimeOptions("--strict", "--glue", "somewhere");
+        assertTrue(options.strict);
+    }
+
+    @Test
+    public void assigns_strict_short() {
+        RuntimeOptions options = new RuntimeOptions("-s", "--glue", "somewhere");
+        assertTrue(options.strict);
+    }
+
+    @Test
+    public void default_strict() {
+        RuntimeOptions options = new RuntimeOptions("--glue", "somewhere");
+        assertFalse(options.strict);
     }
 }
