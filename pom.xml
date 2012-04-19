@@ -132,7 +132,7 @@
             <dependency>
                 <groupId>org.clojure</groupId>
                 <artifactId>clojure</artifactId>
-                <version>1.4.0-beta1</version>
+                <version>1.4.0</version>
             </dependency>
             <dependency>
                 <groupId>rhino</groupId>
@@ -248,18 +248,10 @@
     </modules>
 
     <profiles>
-        <!--profile>
-            <id>aruba</id>
-            <modules>
-                <module>tmp/aruba</module>
-            </modules>
-        </profile-->
-
         <profile>
             <id>examples</id>
             <modules>
                 <module>examples/java-calculator</module>
-                <module>examples/java-helloworld</module>
                 <module>examples/groovy-calculator</module>
                 <module>examples/scala-calculator</module>
                 <module>examples/java-webbit-websockets-selenium</module>

@@ -46,13 +46,13 @@ in your [POM](http://maven.apache.org/pom.html):
 <dependency>
     <groupId>info.cukes</groupId>
     <artifactId>cucumber-java</artifactId>
-    <version>1.0.2</version>
+    <version>1.0.3</version>
     <scope>test</scope>
 </dependency>
 <dependency>
     <groupId>info.cukes</groupId>
     <artifactId>cucumber-junit</artifactId>
-    <version>1.0.2</version>
+    <version>1.0.3</version>
     <scope>test</scope>
 </dependency>
 <dependency>
@@ -218,6 +218,12 @@ First, replace versions in this file. Then make sure you have the proper keys se
   </servers>
 </settings>
 ```
+
+Replace version numbers in:
+
+* examples/java-helloworld/build.xml
+* examples/java-helloworld/pom.xml
+* README.md
 
 Then release everything:
 
