@@ -64,10 +64,11 @@ public class JavaBackend implements Backend {
      *
      * @param glue   where stepdefs and hooks will be added.
      * @param method a candidate method.
+     * @param glueCodeClass the class implementing the method. Must not be a subclass of the class implementing the method.
      */
-    public void loadGlue(Glue glue, Method method) {
+    public void loadGlue(Glue glue, Method method, Class<?> glueCodeClass) {
         this.glue = glue;
-        classpathMethodScanner.scan(this, method);
+        classpathMethodScanner.scan(this, method, glueCodeClass);
     }
 
     @Override

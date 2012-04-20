@@ -41,7 +41,7 @@ class ClasspathMethodScanner {
                 }
                 if (glueCodeClass != null) {
                     for (Method method : glueCodeClass.getMethods()) {
-                        scan(javaBackend, method);
+                        scan(javaBackend, method, glueCodeClass);
                     }
                 }
             }
@@ -53,11 +53,18 @@ class ClasspathMethodScanner {
      *
      * @param javaBackend the backend where stepdefs and hooks will be registered
      * @param method      a candidate for being a stepdef or hook
+     * @param glueCodeClass
      */
-    public void scan(JavaBackend javaBackend, Method method) {
+    public void scan(JavaBackend javaBackend, Method method, Class<?> glueCodeClass) {
         for (Class<? extends Annotation> cucumberAnnotationClass : cucumberAnnotationClasses) {
             Annotation annotation = method.getAnnotation(cucumberAnnotationClass);
             if (annotation != null && !annotation.annotationType().equals(Order.class)) {
+                if(!method.getDeclaringClass().isAssignableFrom(glueCodeClass)) {
+                    throw new CucumberException(String.format("%s isn't assignable from %s", method.getDeclaringClass(), glueCodeClass));
+                }
+                if(!glueCodeClass.equals(method.getDeclaringClass())) {
+                    throw new CucumberException(String.format("You're not allowed to extend classes that define Step Definitions or hooks. %s extends %s", glueCodeClass, method.getDeclaringClass()));
+                }
                 if (isHookAnnotation(annotation)) {
                     javaBackend.addHook(annotation, method);
                 } else if (isStepdefAnnotation(annotation)) {
