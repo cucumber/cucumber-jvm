@@ -18,6 +18,11 @@ public interface Snippet {
     String template();
 
     /**
+     * @return a name suitable for defining a function in the selected programming language (for languages that don't define a function, e.g. JavaScript, this can be null))
+     */
+    String sanitizeFunctionName(String functionName);
+
+    /**
      * @return a hint about alternative ways to declare a table argument
      */
     String tableHint();

@@ -29,6 +29,7 @@
     (arguments [_ argumentTypes]
       (str/replace (SnippetGenerator/untypedArguments argumentTypes)
                    "," ""))
+    (sanitizeFunctionName [_ functionName] nil)
     (namedGroupStart [_] nil)
     (namedGroupEnd [_] nil)
     (tableHint [_] nil)
