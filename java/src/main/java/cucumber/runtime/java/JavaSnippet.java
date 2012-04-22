@@ -6,6 +6,8 @@ import java.util.List;
 
 public class JavaSnippet implements Snippet {
 
+    private static final Character SAFE_START_CHAR = '_';
+
     @Override
     public String arguments(List<Class<?>> argumentTypes) {
         StringBuilder sb = new StringBuilder();
@@ -26,6 +28,28 @@ public class JavaSnippet implements Snippet {
                 "    // {4}\n" +
                 "{5}    throw new PendingException();\n" +
                 "'}'\n";
+    }
+
+    @Override
+    public String sanitizeFunctionName(String functionName) {
+        StringBuilder sanitized = new StringBuilder();
+
+        String trimmedFunctionName = functionName.trim();
+
+        Character startChar = trimmedFunctionName.charAt(0);
+        sanitized.append(Character.isJavaIdentifierStart(startChar) ? startChar.toString().toLowerCase() : SAFE_START_CHAR);
+
+        boolean previousCharEndsWord = false;
+        for (int i = 1; i < trimmedFunctionName.length(); i++) {
+            Character nextChar = trimmedFunctionName.charAt(i);
+            if (Character.isJavaIdentifierPart(nextChar)) {
+                sanitized.append(previousCharEndsWord ? nextChar.toString().toUpperCase() : nextChar.toString().toLowerCase());
+                previousCharEndsWord = false;
+            } else {
+                previousCharEndsWord = true;
+            }
+        }
+        return sanitized.toString();
     }
 
     @Override

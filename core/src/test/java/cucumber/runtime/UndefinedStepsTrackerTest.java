@@ -112,6 +112,11 @@ public class UndefinedStepsTrackerTest {
         }
 
         @Override
+        public String sanitizeFunctionName(String functionName) {
+          return null;
+        }
+
+        @Override
         public String tableHint() {
             return null;
         }

@@ -19,6 +19,11 @@ public class ClojureSnippet implements Snippet {
     }
 
     @Override
+    public String sanitizeFunctionName(String functionName) {
+      return null;
+    }
+
+    @Override
     public String tableHint() {
         return null;
     }

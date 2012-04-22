@@ -13,6 +13,8 @@ class ScalaSnippetGenerator extends Snippet {
       "  throw new PendingException()\n" +
       "'}'"
 
+  def sanitizeFunctionName(functionName: String) = null
+
   def tableHint() = null
 
   def arguments(argumentTypes: List[Class[_]]) = {
