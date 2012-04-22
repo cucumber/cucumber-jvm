@@ -15,7 +15,6 @@ import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.regexp.NativeRegExp;
 import org.mozilla.javascript.tools.shell.Global;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
