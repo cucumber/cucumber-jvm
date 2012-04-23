@@ -56,8 +56,7 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
         runtime = new Runtime(resourceLoader, classLoader, runtimeOptions);
 
-        jUnitReporter = new JUnitReporter(runtimeOptions.reporter(classLoader), runtimeOptions.formatter(classLoader)
-            , runtimeOptions.strict);
+        jUnitReporter = new JUnitReporter(runtimeOptions.reporter(classLoader), runtimeOptions.formatter(classLoader), runtimeOptions.strict);
         addChildren(runtimeOptions.cucumberFeatures(resourceLoader));
     }
 
@@ -120,7 +119,8 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         boolean dryRun() default false;
 
         /**
-         * Scenarios fail if 
+         * Scenarios fail if
+         *
          * @return
          */
         boolean strict() default false;
@@ -136,7 +136,7 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         String[] glue() default {};
 
         /**
-         * @return what tags in the feature should be executed
+         * @return what tags in the features should be executed
          */
         String[] tags() default {};
 
