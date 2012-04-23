@@ -1,4 +1,4 @@
-## [1.0.4](https://github.com/cucumber/cucumber-jvm/compare/v1.0.3...1.0.4)
+## [1.0.4](https://github.com/cucumber/cucumber-jvm/compare/v1.0.3...v1.0.4)
 
 * [Core] Ability to specify line numbers: `@Cucumber.Options(features = "my/nice.feature:2:10")` ([#234](https://github.com/cucumber/cucumber-jvm/issues/234) Aslak Hellesøy)
 * [WebDriver] Improved example that shows how to reuse a driver for the entire JVM. (Aslak Hellesøy)
@@ -7,7 +7,7 @@
 * [Java] Detect subclassing in glue code and report to the user that it's illegal. ([#301](https://github.com/cucumber/cucumber-jvm/issues/301) Aslak Hellesøy)
 * [Core] Friendlier error message when XStream fails to assign null to primitive fields ([#296](https://github.com/cucumber/cucumber-jvm/issues/296) Aslak Hellesøy)
 
-## [1.0.3](https://github.com/cucumber/cucumber-jvm/compare/v1.0.2...1.0.3)
+## [1.0.3](https://github.com/cucumber/cucumber-jvm/compare/v1.0.2...v1.0.3)
 
 * [Core] Friendlier error message when XStream fails conversion ([#296](https://github.com/cucumber/cucumber-jvm/issues/296) Aslak Hellesøy)
 * [Core] Empty strings from matched steps and table cells are converted to `null`. This means boxed types must be used if you intend to have empty strings. (Aslak Hellesøy)
@@ -30,7 +30,7 @@
 * [Guice] Guice in multi module/class loader setup ([#278](https://github.com/cucumber/cucumber-jvm/pull/278) Matt Nathan)
 * [JUnit] Background steps show up correctly in IntelliJ ([#276](https://github.com/cucumber/cucumber-jvm/issues/276) Aslak Hellesøy)
 
-## [1.0.0](https://github.com/cucumber/cucumber-jvm/compare/v1.0.0.RC24...1.0.0)
+## [1.0.0](https://github.com/cucumber/cucumber-jvm/compare/v1.0.0.RC24...v1.0.0)
 
 * [Docs] Added Cuke4Duke migration notes to README ([#239](https://github.com/cucumber/cucumber-jvm/pull/239) coldbloodedtx)
 * [Core] Added --monochrome flag, allowing monochrome output for certain formatters ([#221](https://github.com/cucumber/cucumber-jvm/issues/221) Aslak Hellesøy)
