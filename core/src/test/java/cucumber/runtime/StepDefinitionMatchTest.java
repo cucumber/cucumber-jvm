@@ -1,5 +1,7 @@
 package cucumber.runtime;
 
+import com.thoughtworks.xstream.annotations.XStreamConverter;
+import com.thoughtworks.xstream.converters.basic.AbstractSingleValueConverter;
 import cucumber.runtime.converters.LocalizedXStreams;
 import gherkin.I18n;
 import gherkin.formatter.Argument;
@@ -35,6 +37,90 @@ public class StepDefinitionMatchTest {
         StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(Arrays.asList(new Argument(0, "5")), stepDefinition, "some.feature", stepWithoutDocStringOrTable, new LocalizedXStreams(classLoader));
         stepDefinitionMatch.runStep(ENGLISH);
         verify(stepDefinition).execute(ENGLISH, new Object[]{5});
+    }
+
+    @Test
+    public void converts_with_explicit_converter() throws Throwable {
+        StepDefinition stepDefinition = mock(StepDefinition.class);
+        List<ParameterType> parameterTypes = asList(new ParameterType(Thing.class, null));
+        when(stepDefinition.getParameterTypes()).thenReturn(parameterTypes);
+
+        Step stepWithoutDocStringOrTable = mock(Step.class);
+        when(stepWithoutDocStringOrTable.getDocString()).thenReturn(null);
+        when(stepWithoutDocStringOrTable.getRows()).thenReturn(null);
+
+        StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(Arrays.asList(new Argument(0, "the thing")), stepDefinition, "some.feature", stepWithoutDocStringOrTable, new LocalizedXStreams(classLoader));
+        stepDefinitionMatch.runStep(ENGLISH);
+        verify(stepDefinition).execute(ENGLISH, new Object[]{new Thing("the thing")});
+    }
+
+    @XStreamConverter(ThingConverter.class)
+    public static class Thing {
+        public final String name;
+
+        public Thing(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            Thing thing = (Thing) o;
+
+            if (!name.equals(thing.name)) return false;
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            return name.hashCode();
+        }
+    }
+
+    public static class ThingConverter extends AbstractSingleValueConverter {
+        @Override
+        public boolean canConvert(Class type) {
+            return Thing.class.equals(type);
+        }
+
+        @Override
+        public Object fromString(String str) {
+            return new Thing(str);
+        }
+    }
+
+    @Test
+    public void gives_nice_error_message_when_conversion_fails() throws Throwable {
+        StepDefinition stepDefinition = mock(StepDefinition.class);
+        List<ParameterType> parameterTypes = asList(new ParameterType(Thang.class, null));
+        when(stepDefinition.getParameterTypes()).thenReturn(parameterTypes);
+
+        Step stepWithoutDocStringOrTable = mock(Step.class);
+        when(stepWithoutDocStringOrTable.getDocString()).thenReturn(null);
+        when(stepWithoutDocStringOrTable.getRows()).thenReturn(null);
+
+        StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(Arrays.asList(new Argument(0, "blah")), stepDefinition, "some.feature", stepWithoutDocStringOrTable, new LocalizedXStreams(classLoader));
+        try {
+
+            stepDefinitionMatch.runStep(ENGLISH);
+            fail();
+        } catch (CucumberException expected) {
+            assertEquals(
+                    "Don't know how to convert blah into cucumber.runtime.StepDefinitionMatchTest$Thang.\n" +
+                            "Try writing your own converter:\n" +
+                            "\n" +
+                            "@com.thoughtworks.xstream.annotations.XStreamConverter(ThangConverter.class)\n" +
+                            "public class Thang {}\n",
+                    expected.getMessage()
+            );
+        }
+    }
+
+    public static class Thang {
+
     }
 
     @Test
@@ -78,7 +164,7 @@ public class StepDefinitionMatchTest {
         try {
             stepDefinitionMatch.runStep(new I18n("en"));
             fail();
-        } catch(CucumberException expected) {
+        } catch (CucumberException expected) {
             assertEquals("Arity mismatch: Step Definition 'toString' with pattern /some pattern/ is declared with 0 parameters. However, the gherkin step matched 1 arguments [3]. \n" +
                     "Step: Given I have 4 cukes in my belly", expected.getMessage());
         }

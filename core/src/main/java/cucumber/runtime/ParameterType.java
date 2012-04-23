@@ -1,5 +1,8 @@
 package cucumber.runtime;
 
+import com.thoughtworks.xstream.annotations.XStreamConverter;
+import com.thoughtworks.xstream.converters.ConverterMatcher;
+import com.thoughtworks.xstream.converters.SingleValueConverter;
 import cucumber.DateFormat;
 
 import java.lang.annotation.Annotation;
@@ -26,6 +29,26 @@ public class ParameterType {
             return (Class<?>) ((ParameterizedType) type).getRawType();
         } else {
             return (Class<?>) type;
+        }
+    }
+
+    public SingleValueConverter getSingleValueConverter() {
+        XStreamConverter annotation = getParameterClass().getAnnotation(XStreamConverter.class);
+        if (annotation != null) {
+            try {
+                ConverterMatcher converterMatcher = annotation.value().newInstance();
+                if (converterMatcher instanceof SingleValueConverter) {
+                    return (SingleValueConverter) converterMatcher;
+                } else {
+                    throw new CucumberException(String.format("%s must implement %s", annotation.value(), SingleValueConverter.class));
+                }
+            } catch (InstantiationException e) {
+                throw new CucumberException(e);
+            } catch (IllegalAccessException e) {
+                throw new CucumberException(e);
+            }
+        } else {
+            return null;
         }
     }
 

@@ -1,6 +1,7 @@
 ## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.0.3...master)
 
-* [Groovy] fixed & simplified groovy step snippets ([#303](https://github.com/cucumber/cucumber-jvm/pull/303) Aslak Hellesøy)
+* [Core] Allow custom @XStreamConverter to be used on regular arguments - not just table arguments. (Aslak Hellesøy)
+* [Groovy] fixed & simplified groovy step snippets ([#303](https://github.com/cucumber/cucumber-jvm/pull/303) Martin Hauner)
 * [Java] Detect subclassing in glue code and report to the user that it's illegal. ([#301](https://github.com/cucumber/cucumber-jvm/issues/301) Aslak Hellesøy)
 * [Core] Friendlier error message when XStream fails to assign null to primitive fields ([#296](https://github.com/cucumber/cucumber-jvm/issues/296) Aslak Hellesøy)
 

@@ -1,6 +1,8 @@
 package cucumber.runtime;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.annotations.XStreamConverter;
+import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.ConverterLookup;
 import com.thoughtworks.xstream.converters.SingleValueConverter;
 import cucumber.runtime.converters.EnumConverter;
@@ -77,22 +79,38 @@ public class StepDefinitionMatch extends Match {
 
         int n = 0;
         for (Argument a : getArguments()) {
-            SingleValueConverter converter;
+            SingleValueConverter singleValueConverter;
             TimeConverter timeConverter = null;
             ParameterType parameterType = parameterTypes.get(n);
-            if (parameterType.getDateFormat() != null) {
+            if(parameterType.getSingleValueConverter() != null) {
+                singleValueConverter = parameterType.getSingleValueConverter();
+            } else if (parameterType.getDateFormat() != null) {
                 timeConverter = TimeConverter.getInstance(parameterType, locale);
                 timeConverter.setOnlyFormat(parameterType.getDateFormat(), locale);
-                converter = timeConverter;
+                singleValueConverter = timeConverter;
             } else if (parameterType.getParameterClass().isEnum()) {
-                converter = new EnumConverter(locale, (Class<? extends Enum>) parameterType.getParameterClass());
+                singleValueConverter = new EnumConverter(locale, (Class<? extends Enum>) parameterType.getParameterClass());
             } else {
-                // TODO: We might get a lookup that doesn't implement SingleValueConverter
-                // Need to throw a more friendly exception in that case.
-                converter = (SingleValueConverter) converterLookup.lookupConverterForType(parameterType.getParameterClass());
+                Converter converter = converterLookup.lookupConverterForType(parameterType.getParameterClass());
+                if(converter instanceof SingleValueConverter) {
+                    singleValueConverter = (SingleValueConverter) converter;
+                } else {
+                    throw new CucumberException(String.format(
+                            "Don't know how to convert %s into %s.\n" +
+                                    "Try writing your own converter:\n" +
+                                    "\n" +
+                                    "@%s(%sConverter.class)\n" +
+                                    "public class %s {}\n",
+                            a.getVal(),
+                            parameterType.getParameterClass().getName(),
+                            XStreamConverter.class.getName(),
+                            parameterType.getParameterClass().getSimpleName(),
+                            parameterType.getParameterClass().getSimpleName()
+                    ));
+                }
             }
             try {
-                result[n] = converter.fromString(a.getVal());
+                result[n] = singleValueConverter.fromString(a.getVal());
             } finally {
                 if (timeConverter != null) {
                     timeConverter.removeOnlyFormat();
