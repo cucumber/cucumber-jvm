@@ -66,12 +66,8 @@ public class StepDefinitionMatchTest {
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
-
             Thing thing = (Thing) o;
-
-            if (!name.equals(thing.name)) return false;
-
-            return true;
+            return name.equals(thing.name);
         }
 
         @Override
