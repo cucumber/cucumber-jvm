@@ -15,11 +15,6 @@ public class TemperatureStepdefs {
         this.webDriver = webDriver;
     }
 
-    @Given("^I am on the front page$")
-    public void i_am_on_the_front_page() {
-        webDriver.get("http://localhost:" + ServerHooks.PORT);
-    }
-
     @When("^I enter (.+) Celcius$")
     public void i_enter_Celcius(double celcius) {
         webDriver.findElement(By.id("celcius")).sendKeys(String.valueOf(celcius));
