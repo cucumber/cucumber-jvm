@@ -1,4 +1,4 @@
-## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.0.3...master)
+## [1.0.4](https://github.com/cucumber/cucumber-jvm/compare/v1.0.3...1.0.4)
 
 * [Core] Ability to specify line numbers: `@Cucumber.Options(features = "my/nice.feature:2:10")` ([#234](https://github.com/cucumber/cucumber-jvm/issues/234) Aslak Hellesøy)
 * [WebDriver] Improved example that shows how to reuse a driver for the entire JVM. (Aslak Hellesøy)
