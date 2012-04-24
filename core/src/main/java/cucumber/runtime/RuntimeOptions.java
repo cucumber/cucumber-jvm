@@ -40,7 +40,7 @@ public class RuntimeOptions {
             formatters.add(new ProgressFormatter(System.out));
         }
         for (Formatter formatter : formatters) {
-            if(formatter instanceof ColorAware) {
+            if (formatter instanceof ColorAware) {
                 ColorAware colorAware = (ColorAware) formatter;
                 colorAware.setMonochrome(monochrome);
             }
@@ -91,7 +91,7 @@ public class RuntimeOptions {
             @Override
             public Object invoke(Object target, Method method, Object[] args) throws Throwable {
                 for (Formatter formatter : formatters) {
-                    method.invoke(formatter, args);
+                    Utils.invoke(formatter, method, args);
                 }
                 return null;
             }
@@ -104,7 +104,7 @@ public class RuntimeOptions {
             public Object invoke(Object target, Method method, Object[] args) throws Throwable {
                 for (Formatter formatter : formatters) {
                     if (formatter instanceof Reporter) {
-                        method.invoke(formatter, args);
+                        Utils.invoke(formatter, method, args);
                     }
                 }
                 return null;

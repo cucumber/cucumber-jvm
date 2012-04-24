@@ -1,5 +1,7 @@
 package cucumber.runtime;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -66,5 +68,17 @@ public class Utils {
                 throw new UnsupportedOperationException();
             }
         };
+    }
+
+    public static Object invoke(Object target, Method method, Object... args) {
+        try {
+            return method.invoke(target, args);
+        } catch (IllegalArgumentException e) {
+            throw new CucumberException("Can't invoke " + MethodFormat.FULL.format(method), e);
+        } catch (InvocationTargetException e) {
+            throw new CucumberException("Can't invoke " + MethodFormat.FULL.format(method), e.getTargetException());
+        } catch (IllegalAccessException e) {
+            throw new CucumberException("Can't invoke " + MethodFormat.FULL.format(method), e);
+        }
     }
 }

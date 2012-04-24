@@ -35,7 +35,7 @@ public class StubStepDefinition implements StepDefinition {
 
     @Override
     public void execute(I18n i18n, Object[] args) throws Throwable {
-        method.invoke(target, args);
+        Utils.invoke(target, method, args);
     }
 
     @Override
