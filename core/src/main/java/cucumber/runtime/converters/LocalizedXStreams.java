@@ -1,6 +1,8 @@
 package cucumber.runtime.converters;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.converters.ConverterLookup;
+import com.thoughtworks.xstream.converters.ConverterRegistry;
 import com.thoughtworks.xstream.converters.SingleValueConverter;
 import com.thoughtworks.xstream.core.DefaultConverterLookup;
 import gherkin.I18n;
@@ -30,31 +32,31 @@ public class LocalizedXStreams {
 
     private LocalizedXStream newXStream(Locale locale) {
         DefaultConverterLookup lookup = new DefaultConverterLookup();
-        return new LocalizedXStream(classLoader, lookup, locale);
+        return new LocalizedXStream(classLoader, lookup, lookup, locale);
     }
 
     public static class LocalizedXStream extends XStream {
         private final Locale locale;
         private static List<TimeConverter> timeConverters = new ArrayList<TimeConverter>();
 
-        public LocalizedXStream(ClassLoader classLoader, DefaultConverterLookup lookup, Locale locale) {
-            super(null, null, classLoader, null, lookup, lookup);
+        public LocalizedXStream(ClassLoader classLoader, ConverterLookup converterLookup, ConverterRegistry converterRegistry, Locale locale) {
+            super(null, null, classLoader, null, converterLookup, converterRegistry);
             this.locale = locale;
             autodetectAnnotations(true);
 
             // Override with our own Locale-aware converters.
-            register(lookup, new BigDecimalConverter(locale));
-            register(lookup, new BigIntegerConverter(locale));
-            register(lookup, new ByteConverter(locale));
-            register(lookup, new DateConverter(locale));
-            register(lookup, new CalendarConverter(locale));
-            register(lookup, new DoubleConverter(locale));
-            register(lookup, new FloatConverter(locale));
-            register(lookup, new IntegerConverter(locale));
-            register(lookup, new LongConverter(locale));
+            register(converterRegistry, new BigDecimalConverter(locale));
+            register(converterRegistry, new BigIntegerConverter(locale));
+            register(converterRegistry, new ByteConverter(locale));
+            register(converterRegistry, new DateConverter(locale));
+            register(converterRegistry, new CalendarConverter(locale));
+            register(converterRegistry, new DoubleConverter(locale));
+            register(converterRegistry, new FloatConverter(locale));
+            register(converterRegistry, new IntegerConverter(locale));
+            register(converterRegistry, new LongConverter(locale));
         }
 
-        private void register(DefaultConverterLookup lookup, SingleValueConverter converter) {
+        private void register(ConverterRegistry lookup, SingleValueConverter converter) {
             lookup.registerConverter(new SingleValueConverterWrapperExt(converter), XStream.PRIORITY_VERY_HIGH);
         }
 
