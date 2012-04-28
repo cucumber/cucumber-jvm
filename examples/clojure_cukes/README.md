@@ -4,5 +4,5 @@ Just a little example illustrating how to use Cucumber with Clojure and Leininge
 
 ## Running cukes
 
-lein deps
-lein cucumber
+lein2 deps
+lein2 cucumber
