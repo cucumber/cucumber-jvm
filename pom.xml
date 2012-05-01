@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>info.cukes</groupId>
     <artifactId>cucumber-jvm</artifactId>
@@ -200,6 +201,12 @@
                 <artifactId>openejb-core</artifactId>
                 <version>4.0.0-beta-2</version>
             </dependency>
+
+            <dependency>
+                <groupId>net.sourceforge.cobertura</groupId>
+                <artifactId>cobertura</artifactId>
+                <version>1.9.4.1</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -231,6 +238,7 @@
 
     <modules>
         <module>core</module>
+        <module>clojure</module>
         <module>junit</module>
         <module>jruby</module>
         <module>jython</module>
@@ -242,9 +250,8 @@
         <module>ioke</module>
         <module>rhino</module>
         <module>java</module>
-        <module>clojure</module>
         <module>openejb</module>
-        <module>scala</module>
+        <!--<module>scala</module>-->
     </modules>
 
     <profiles>
@@ -334,7 +341,8 @@
                         <shadedArtifactAttached>true</shadedArtifactAttached>
                         <shadedClassifierName>full</shadedClassifierName>
                         <transformers>
-                            <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                            <transformer
+                                    implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                 <mainClass>cucumber.cli.Main</mainClass>
                             </transformer>
                         </transformers>
@@ -354,6 +362,7 @@
                     <target>1.6</target>
                 </configuration>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
@@ -368,13 +377,28 @@
                 </executions>
             </plugin>
 
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.12</version>
                 <configuration>
                     <argLine>-Duser.language=en</argLine>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>2.4.1</version>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>.</directory>
+                            <includes>
+                                <include>**/*.ser</include>
+                            </includes>
+                        </fileset>
+                    </filesets>
                 </configuration>
             </plugin>
 

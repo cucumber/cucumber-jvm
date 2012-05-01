@@ -234,6 +234,17 @@ mvn --batch-mode -P release-sign-artifacts release:prepare -DautoVersionSubmodul
 mvn -P release-sign-artifacts release:perform
 ```
 
+## Code Coverage
+
+Code coverage is collected mainly to identify code that can be deleted or needs to be tested better.
+To generate a report, run:
+
+```
+COBERTURA_HOME=/some/where ./coverage.sh
+```
+
+This technique to collect coverage for a multi-module Maven project is based on a
+[blog post](http://thomassundberg.wordpress.com/2012/02/18/test-coverage-in-a-multi-module-maven-project/) by Thomas Sundberg.
 
 ## Migration from Cuke4Duke
 
