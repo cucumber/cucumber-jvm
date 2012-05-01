@@ -21,7 +21,7 @@ public class FlatteningIterator implements Iterator {
     }
 
     private void moveToNext() {
-        if ((nextBlank) && !this.iterators.isEmpty()) {
+        if (nextBlank && !this.iterators.isEmpty()) {
             if (!iterators.peek().hasNext()) {
                 iterators.removeFirst();
                 moveToNext();
