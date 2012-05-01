@@ -1,10 +1,11 @@
 package cucumber.io;
 
 import java.lang.reflect.Array;
+import java.util.ArrayDeque;
 import java.util.Arrays;
+import java.util.Deque;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import java.util.Stack;
 
 /**
  * An iterator that 'flattens out' collections, iterators, arrays, etc.
@@ -31,7 +32,7 @@ public class FlatteningIterator implements Iterator {
 
     /* This stack stores all the iterators found so far. The head of the stack is
 * the iterator which we are currently progressing through */
-    private final Stack<Iterator<?>> iterators = new Stack<Iterator<?>>();
+    private final Deque<Iterator<?>> iterators = new ArrayDeque<Iterator<?>>();
 
     // Storage field for the next element to be returned. blank when the next element
     // is currently unknown.
@@ -43,7 +44,7 @@ public class FlatteningIterator implements Iterator {
     }
 
     public void push(Iterator<?> iterator) {
-        iterators.push(iterator);
+        iterators.addFirst(iterator);
     }
 
     public void remove() {
@@ -51,12 +52,12 @@ public class FlatteningIterator implements Iterator {
     }
 
     private void moveToNext() {
-        if ((next == blank) && !this.iterators.empty()) {
+        if ((next == blank) && !this.iterators.isEmpty()) {
             if (!iterators.peek().hasNext()) {
-                iterators.pop();
+                iterators.removeFirst();
                 moveToNext();
             } else {
-                final Object next = iterators.peek().next();
+                final Object next = iterators.peekFirst().next();
                 if (next instanceof Iterator) {
                     push((Iterator<?>) next);
                     moveToNext();
