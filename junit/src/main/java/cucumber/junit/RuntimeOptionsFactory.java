@@ -1,5 +1,6 @@
 package cucumber.junit;
 
+import cucumber.io.MultiLoader;
 import cucumber.runtime.RuntimeOptions;
 
 import java.util.ArrayList;
@@ -95,7 +96,7 @@ public class RuntimeOptionsFactory {
         if (options != null && options.features().length != 0) {
             Collections.addAll(args, options.features());
         } else {
-            args.add(packagePath(clazz));
+            args.add(MultiLoader.CLASSPATH_SCHEME + packagePath(clazz));
         }
     }
 

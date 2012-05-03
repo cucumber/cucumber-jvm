@@ -1,6 +1,7 @@
 package cucumber.runtime;
 
 import cucumber.io.ClasspathResourceLoader;
+import cucumber.io.MultiLoader;
 import cucumber.io.ResourceLoader;
 import cucumber.runtime.converters.LocalizedXStreams;
 import cucumber.runtime.model.CucumberFeature;
