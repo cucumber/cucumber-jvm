@@ -1,4 +1,4 @@
-## [1.0.5](https://github.com/cucumber/cucumber-jvm/compare/v1.0.4...v1.0.5)
+## [1.0.6](https://github.com/cucumber/cucumber-jvm/compare/v1.0.4...v1.0.6)
 
 * [JUnit] Scenarios with skipped, pending or undefined steps show up as yellow in IDEA and Eclipse (They used to be green while the steps were yellow). (Aslak Hellesøy)
 * [Core] Loading features and glue code from the `CLASSPATH` can be done with `classpath:my/path` ([#312](https://github.com/cucumber/cucumber-jvm/issues/312) Aslak Hellesøy)
