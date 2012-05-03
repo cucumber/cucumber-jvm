@@ -1,4 +1,5 @@
 Feature: Dates
+
   Scenario: A pretty date
     Given the date is 2011/10/25
     Then the date should be Oct 25 2011

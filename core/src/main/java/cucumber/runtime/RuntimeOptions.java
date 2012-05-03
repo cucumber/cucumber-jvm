@@ -40,7 +40,7 @@ public class RuntimeOptions {
             formatters.add(new ProgressFormatter(System.out));
         }
         for (Formatter formatter : formatters) {
-            if(formatter instanceof ColorAware) {
+            if (formatter instanceof ColorAware) {
                 ColorAware colorAware = (ColorAware) formatter;
                 colorAware.setMonochrome(monochrome);
             }

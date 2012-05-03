@@ -6,7 +6,6 @@ import cucumber.runtime.model.CucumberFeature;
 import gherkin.I18n;
 import gherkin.formatter.JSONPrettyFormatter;
 import gherkin.formatter.model.Step;
-
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -17,8 +16,6 @@ import static cucumber.runtime.TestHelper.feature;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
 
 public class RuntimeTest {
 
@@ -94,40 +91,35 @@ public class RuntimeTest {
     }
 
     @Test
-    public void strict_without_pending_steps_or_errors()
-    {
+    public void strict_without_pending_steps_or_errors() {
         Runtime runtime = createStrictRuntime();
 
         assertEquals(0x0, runtime.exitStatus());
     }
 
     @Test
-    public void non_strict_without_pending_steps_or_errors()
-    {
+    public void non_strict_without_pending_steps_or_errors() {
         Runtime runtime = createNonStrictRuntime();
 
         assertEquals(0x0, runtime.exitStatus());
     }
 
     @Test
-    public void non_strict_with_undefined_steps()
-    {
+    public void non_strict_with_undefined_steps() {
         Runtime runtime = createNonStrictRuntime();
         runtime.undefinedStepsTracker.addUndefinedStep(new Step(null, "Given ", "A", 1, null, null), ENGLISH);
         assertEquals(0x0, runtime.exitStatus());
     }
 
     @Test
-    public void strict_with_undefined_steps()
-    {
+    public void strict_with_undefined_steps() {
         Runtime runtime = createStrictRuntime();
         runtime.undefinedStepsTracker.addUndefinedStep(new Step(null, "Given ", "A", 1, null, null), ENGLISH);
         assertEquals(0x1, runtime.exitStatus());
     }
 
     @Test
-    public void strict_with_pending_steps_and_no_errors()
-    {
+    public void strict_with_pending_steps_and_no_errors() {
         Runtime runtime = createStrictRuntime();
         runtime.addError(new PendingException());
 
@@ -135,8 +127,7 @@ public class RuntimeTest {
     }
 
     @Test
-    public void non_strict_with_pending_steps()
-    {
+    public void non_strict_with_pending_steps() {
         Runtime runtime = createNonStrictRuntime();
         runtime.addError(new PendingException());
 
@@ -144,8 +135,7 @@ public class RuntimeTest {
     }
 
     @Test
-    public void non_strict_with_errors()
-    {
+    public void non_strict_with_errors() {
         Runtime runtime = createNonStrictRuntime();
         runtime.addError(new RuntimeException());
 
@@ -153,26 +143,22 @@ public class RuntimeTest {
     }
 
     @Test
-    public void strict_with_errors()
-    {
+    public void strict_with_errors() {
         Runtime runtime = createStrictRuntime();
         runtime.addError(new RuntimeException());
 
         assertEquals(0x1, runtime.exitStatus());
     }
 
-    private Runtime createStrictRuntime()
-    {
+    private Runtime createStrictRuntime() {
         return createRuntime("-g anything", "--strict");
     }
 
-    private Runtime createNonStrictRuntime()
-    {
+    private Runtime createNonStrictRuntime() {
         return createRuntime("-g anything");
     }
 
-    private Runtime createRuntime(String ... runtimeArgs)
-    {
+    private Runtime createRuntime(String... runtimeArgs) {
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
         ClassLoader classLoader = mock(ClassLoader.class);
         RuntimeOptions runtimeOptions = new RuntimeOptions(runtimeArgs);

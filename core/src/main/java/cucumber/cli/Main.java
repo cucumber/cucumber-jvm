@@ -1,6 +1,5 @@
 package cucumber.cli;
 
-import cucumber.io.FileResourceLoader;
 import cucumber.io.MultiLoader;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeOptions;

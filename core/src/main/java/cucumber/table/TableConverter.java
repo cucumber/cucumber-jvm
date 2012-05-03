@@ -49,7 +49,7 @@ public class TableConverter {
             return (List) xStream.unmarshal(reader);
         } catch (AbstractReflectionConverter.UnknownFieldException e) {
             throw new CucumberException(e.getShortMessage());
-        } catch (ConversionException e){
+        } catch (ConversionException e) {
             throw new CucumberException(String.format("Can't assign null value to one of the primitive fields in %s. Please use boxed types.", e.get("class")));
         }
     }

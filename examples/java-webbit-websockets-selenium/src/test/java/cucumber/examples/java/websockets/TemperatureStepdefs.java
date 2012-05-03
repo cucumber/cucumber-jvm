@@ -1,6 +1,5 @@
 package cucumber.examples.java.websockets;
 
-import cucumber.annotation.en.Given;
 import cucumber.annotation.en.Then;
 import cucumber.annotation.en.When;
 import org.openqa.selenium.By;

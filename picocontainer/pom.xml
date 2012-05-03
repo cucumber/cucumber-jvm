@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -73,15 +74,16 @@
                         </goals>
                         <configuration>
                             <target>
-                                <echo message="Running CLI test for picocontainer" />
-                                <java classname="cucumber.cli.Main" fork="true" failonerror="true" newenvironment="true" maxmemory="512m" classpathref="maven.test.classpath">
-                                    <arg value="--dotcucumber" />
-                                    <arg value="${basedir}/src/test/resources/.cucumber" />
-                                    <arg value="--format" />
-                                    <arg value="progress" />
-                                    <arg value="--glue" />
-                                    <arg value="cucumber.runtime.java.picocontainer" />
-                                    <arg value="${basedir}/src/test/resources/cucumber/runtime/java/picocontainer" />
+                                <echo message="Running CLI test for picocontainer"/>
+                                <java classname="cucumber.cli.Main" fork="true" failonerror="true" newenvironment="true"
+                                      maxmemory="512m" classpathref="maven.test.classpath">
+                                    <arg value="--dotcucumber"/>
+                                    <arg value="${basedir}/src/test/resources/.cucumber"/>
+                                    <arg value="--format"/>
+                                    <arg value="progress"/>
+                                    <arg value="--glue"/>
+                                    <arg value="cucumber.runtime.java.picocontainer"/>
+                                    <arg value="${basedir}/src/test/resources/cucumber/runtime/java/picocontainer"/>
                                 </java>
                             </target>
                         </configuration>

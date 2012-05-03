@@ -1,13 +1,5 @@
 package cucumber.junit;
 
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.junit.internal.runners.model.EachTestNotifier;
-import org.junit.runner.Description;
-import org.junit.runner.notification.RunNotifier;
-
 import cucumber.runtime.PendingException;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
@@ -18,6 +10,13 @@ import gherkin.formatter.model.Result;
 import gherkin.formatter.model.Scenario;
 import gherkin.formatter.model.ScenarioOutline;
 import gherkin.formatter.model.Step;
+import org.junit.internal.runners.model.EachTestNotifier;
+import org.junit.runner.Description;
+import org.junit.runner.notification.RunNotifier;
+
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 class JUnitReporter implements Reporter, Formatter {
     private final List<Step> steps = new ArrayList<Step>();
@@ -49,7 +48,7 @@ class JUnitReporter implements Reporter, Formatter {
     }
 
     public void finishExecutionUnit() {
-        if(ignoredStep) {
+        if (ignoredStep) {
             executionUnitNotifier.fireTestIgnored();
         } else {
             executionUnitNotifier.fireTestFinished();

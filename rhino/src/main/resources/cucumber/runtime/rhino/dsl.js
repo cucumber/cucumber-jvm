@@ -1,5 +1,5 @@
-var registerStepDefinition = function(regexp, bodyFunc) {
-    var argumentsFromFunc = function(stepName) {
+var registerStepDefinition = function (regexp, bodyFunc) {
+    var argumentsFromFunc = function (stepName) {
         var match = regexp.exec(stepName);
         if (match) {
             var arguments = new Packages.java.util.ArrayList();
@@ -21,7 +21,7 @@ var Given = registerStepDefinition;
 var When = registerStepDefinition;
 var Then = registerStepDefinition;
 
-var World = function(func) {
+var World = function (func) {
     // TODO: do this properly
     func();
 };

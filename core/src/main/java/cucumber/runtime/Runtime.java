@@ -1,7 +1,6 @@
 package cucumber.runtime;
 
 import cucumber.io.ClasspathResourceLoader;
-import cucumber.io.MultiLoader;
 import cucumber.io.ResourceLoader;
 import cucumber.runtime.converters.LocalizedXStreams;
 import cucumber.runtime.model.CucumberFeature;
@@ -128,32 +127,25 @@ public class Runtime implements UnreportedStepExecutor {
         return result;
     }
 
-    private boolean hasUndefinedOrPendingStepsAndIsStrict()
-    {
+    private boolean hasUndefinedOrPendingStepsAndIsStrict() {
         return runtimeOptions.strict && hasUndefinedOrPendingSteps();
     }
 
-    private boolean hasUndefinedOrPendingSteps()
-    {
+    private boolean hasUndefinedOrPendingSteps() {
         return hasUndefinedSteps() || hasPendingSteps();
     }
 
-    private boolean hasUndefinedSteps()
-    {
+    private boolean hasUndefinedSteps() {
         return undefinedStepsTracker.hasUndefinedSteps();
     }
 
-    private boolean hasPendingSteps()
-    {
+    private boolean hasPendingSteps() {
         return !errors.isEmpty() && !hasErrors();
     }
 
-    private boolean hasErrors()
-    {
-        for (Throwable error : errors)
-        {
-            if (!(error instanceof PendingException))
-            {
+    private boolean hasErrors() {
+        for (Throwable error : errors) {
+            if (!(error instanceof PendingException)) {
                 return true;
             }
         }

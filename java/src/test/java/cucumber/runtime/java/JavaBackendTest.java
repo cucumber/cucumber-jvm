@@ -6,7 +6,6 @@ import cucumber.runtime.Glue;
 import cucumber.runtime.HookDefinition;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.StepDefinitionMatch;
-import cucumber.runtime.java.incorrectlysubclassedstepdefs.SubclassesStepdefs;
 import cucumber.runtime.java.stepdefs.Stepdefs;
 import gherkin.I18n;
 import gherkin.formatter.model.Step;

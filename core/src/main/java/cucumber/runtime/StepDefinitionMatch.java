@@ -93,7 +93,7 @@ public class StepDefinitionMatch extends Match {
                 singleValueConverter = new EnumConverter(locale, (Class<? extends Enum>) parameterType.getParameterClass());
             } else {
                 Converter converter = converterLookup.lookupConverterForType(parameterType.getParameterClass());
-                if(converter instanceof SingleValueConverter) {
+                if (converter instanceof SingleValueConverter) {
                     singleValueConverter = (SingleValueConverter) converter;
                 } else {
                     throw new CucumberException(String.format(
