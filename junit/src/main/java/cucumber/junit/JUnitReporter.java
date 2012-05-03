@@ -30,6 +30,7 @@ class JUnitReporter implements Reporter, Formatter {
     private ExecutionUnitRunner executionUnitRunner;
     private RunNotifier runNotifier;
     EachTestNotifier executionUnitNotifier;
+    private boolean ignoredStep;
 
     public JUnitReporter(Reporter reporter, Formatter formatter, boolean strict) {
         this.reporter = reporter;
@@ -41,14 +42,18 @@ class JUnitReporter implements Reporter, Formatter {
         this.executionUnitRunner = executionUnitRunner;
         this.runNotifier = runNotifier;
         this.stepNotifier = null;
+        this.ignoredStep = false;
 
         executionUnitNotifier = new EachTestNotifier(runNotifier, executionUnitRunner.getDescription());
         executionUnitNotifier.fireTestStarted();
     }
 
-
     public void finishExecutionUnit() {
-        executionUnitNotifier.fireTestFinished();
+        if(ignoredStep) {
+            executionUnitNotifier.fireTestIgnored();
+        } else {
+            executionUnitNotifier.fireTestFinished();
+        }
     }
 
     public void match(Match match) {
@@ -74,18 +79,15 @@ class JUnitReporter implements Reporter, Formatter {
         } else if (isPendingOrUndefined(result)) {
             addFailureOrIgnoreStep(result);
         } else {
-            if (stepNotifier != null)
-            {
+            if (stepNotifier != null) {
                 //Should only fireTestStarted if not ignored
                 stepNotifier.fireTestStarted();
-                if (error != null)
-                {
+                if (error != null) {
                     stepNotifier.addFailure(error);
                 }
                 stepNotifier.fireTestFinished();
             }
-            if (error != null)
-            {
+            if (error != null) {
                 executionUnitNotifier.addFailure(error);
             }
         }
@@ -98,27 +100,24 @@ class JUnitReporter implements Reporter, Formatter {
         reporter.result(result);
     }
 
-    private boolean isPendingOrUndefined(Result result)
-    {
+    private boolean isPendingOrUndefined(Result result) {
         Throwable error = result.getError();
         return Result.UNDEFINED == result || error instanceof PendingException;
     }
 
-    private void addFailureOrIgnoreStep(Result result)
-    {
+    private void addFailureOrIgnoreStep(Result result) {
         if (strict) {
             addFailure(result);
         } else {
+            ignoredStep = true;
             stepNotifier.fireTestIgnored();
         }
     }
 
-    private void addFailure(Result result)
-    {
+    private void addFailure(Result result) {
 
         Throwable error = result.getError();
-        if (error == null)
-        {
+        if (error == null) {
             error = new PendingException();
         }
         stepNotifier.addFailure(error);

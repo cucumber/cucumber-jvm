@@ -21,20 +21,22 @@ import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 
 public class JavaBackendTest {
-    @Test(expected = CucumberException.class)
-    public void doesnt_like_path_like_glue() {
+    @Test
+    public void finds_step_definitions_by_classpath_url() {
         ObjectFactory factory = new DefaultJavaObjectFactory();
         JavaBackend backend = new JavaBackend(factory);
-        GlueStub world = new GlueStub();
-        backend.loadGlue(world, asList("cucumber/runtime/java/stepdefs"));
+        GlueStub glue = new GlueStub();
+        backend.loadGlue(glue, asList("classpath:cucumber/runtime/java/stepdefs"));
+        backend.buildWorld();
+        assertEquals(Stepdefs.class, factory.getInstance(Stepdefs.class).getClass());
     }
 
     @Test
-    public void finds_step_definitions_by_scanning_for_annotations() {
+    public void finds_step_definitions_by_package_name() {
         ObjectFactory factory = new DefaultJavaObjectFactory();
         JavaBackend backend = new JavaBackend(factory);
-        GlueStub world = new GlueStub();
-        backend.loadGlue(world, asList("cucumber.runtime.java.stepdefs"));
+        GlueStub glue = new GlueStub();
+        backend.loadGlue(glue, asList("cucumber.runtime.java.stepdefs"));
         backend.buildWorld();
         assertEquals(Stepdefs.class, factory.getInstance(Stepdefs.class).getClass());
     }
@@ -43,8 +45,8 @@ public class JavaBackendTest {
     public void detects_subclassed_glue_and_throws_exception() {
         ObjectFactory factory = new DefaultJavaObjectFactory();
         JavaBackend backend = new JavaBackend(factory);
-        GlueStub world = new GlueStub();
-        backend.loadGlue(world, asList("cucumber.runtime.java.stepdefs", "cucumber.runtime.java.incorrectlysubclassedstepdefs"));
+        GlueStub glue = new GlueStub();
+        backend.loadGlue(glue, asList("cucumber.runtime.java.stepdefs", "cucumber.runtime.java.incorrectlysubclassedstepdefs"));
     }
 
     private class GlueStub implements Glue {

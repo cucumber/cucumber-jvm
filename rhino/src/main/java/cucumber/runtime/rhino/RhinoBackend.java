@@ -19,8 +19,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
 
-import static cucumber.runtime.Utils.packagePath;
-import static cucumber.runtime.Utils.toPackage;
+import static cucumber.io.MultiLoader.packageName;
 
 public class RhinoBackend implements Backend {
     private static final String JS_DSL = "/cucumber/runtime/rhino/dsl.js";
@@ -45,7 +44,7 @@ public class RhinoBackend implements Backend {
         this.glue = glue;
         this.gluePaths = gluePaths;
         for (String gluePath : gluePaths) {
-            for (Resource resource : resourceLoader.resources(packagePath(gluePath), ".js")) {
+            for (Resource resource : resourceLoader.resources(gluePath, ".js")) {
                 try {
                     cx.evaluateReader(scope, new InputStreamReader(resource.getInputStream(), "UTF-8"), resource.getPath(), 1, null);
                 } catch (IOException e) {
@@ -79,7 +78,7 @@ public class RhinoBackend implements Backend {
         for (StackTraceElement stackTraceElement : stackTraceElements) {
             boolean js = stackTraceElement.getFileName().endsWith(".js");
             for (String gluePath : gluePaths) {
-                boolean inScriptPath = toPackage(stackTraceElement.getFileName()).startsWith(toPackage(gluePath));
+                boolean inScriptPath = packageName(stackTraceElement.getFileName()).startsWith(packageName(gluePath));
                 boolean hasLine = stackTraceElement.getLineNumber() != -1;
                 if (js && inScriptPath && hasLine) {
                     return stackTraceElement;

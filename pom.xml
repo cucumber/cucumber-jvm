@@ -238,11 +238,11 @@
 
     <modules>
         <module>core</module>
+        <module>picocontainer</module>
         <module>clojure</module>
         <module>junit</module>
         <module>jruby</module>
         <module>jython</module>
-        <module>picocontainer</module>
         <module>spring</module>
         <module>guice</module>
         <module>weld</module>

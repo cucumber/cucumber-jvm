@@ -1,6 +1,7 @@
 ## [1.0.5](https://github.com/cucumber/cucumber-jvm/compare/v1.0.4...v1.0.5)
 
-* [Core] Loading features from the `CLASSPATH` can be done with `classpath:my/features` ([#312](https://github.com/cucumber/cucumber-jvm/issues/312) Aslak Hellesøy)
+* [JUnit] Scenarios with skipped, pending or undefined steps show up as yellow in IDEA and Eclipse (They used to be green while the steps were yellow). (Aslak Hellesøy)
+* [Core] Loading features and glue code from the `CLASSPATH` can be done with `classpath:my/path` ([#312](https://github.com/cucumber/cucumber-jvm/issues/312) Aslak Hellesøy)
 * [Clojure] Clojure example can't find cuke_steps.clj ([#291](https://github.com/cucumber/cucumber-jvm/issues/291), [#309](https://github.com/cucumber/cucumber-jvm/pull/309) Nils Wloka)
 
 ## [1.0.4](https://github.com/cucumber/cucumber-jvm/compare/v1.0.3...v1.0.4)
