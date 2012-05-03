@@ -46,13 +46,13 @@ in your [POM](http://maven.apache.org/pom.html):
 <dependency>
     <groupId>info.cukes</groupId>
     <artifactId>cucumber-java</artifactId>
-    <version>1.0.4</version>
+    <version>1.0.5</version>
     <scope>test</scope>
 </dependency>
 <dependency>
     <groupId>info.cukes</groupId>
     <artifactId>cucumber-junit</artifactId>
-    <version>1.0.4</version>
+    <version>1.0.5</version>
     <scope>test</scope>
 </dependency>
 <dependency>
@@ -90,7 +90,7 @@ There isn't any online documentation yet. Check out the examples, read the code 
 
 ### API Docs
 
-* http://cukes.info/cucumber/jvm/api/1.0.4
+* http://cukes.info/cucumber/jvm/api/1.0.5
 
 ## Examples
 
