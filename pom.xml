@@ -251,7 +251,7 @@
         <module>rhino</module>
         <module>java</module>
         <module>openejb</module>
-        <!--<module>scala</module>-->
+        <module>scala</module>
     </modules>
 
     <profiles>
