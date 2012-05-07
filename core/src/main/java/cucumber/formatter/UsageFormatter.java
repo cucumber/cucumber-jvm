@@ -9,6 +9,7 @@ import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Background;
 import gherkin.formatter.model.Examples;
 import gherkin.formatter.model.Feature;
+import gherkin.formatter.model.HookResult;
 import gherkin.formatter.model.Match;
 import gherkin.formatter.model.Result;
 import gherkin.formatter.model.Scenario;
@@ -89,7 +90,7 @@ public class UsageFormatter implements Formatter, Reporter {
     }
 
     @Override
-    public void syntaxError(String state, String event, List<String> legalEvents, String uri, int line) {
+    public void syntaxError(String state, String event, List<String> legalEvents, String uri, Integer line) {
     }
 
     @Override
@@ -160,6 +161,23 @@ public class UsageFormatter implements Formatter, Reporter {
         if (result.getStatus().equals(Result.PASSED)) {
             addUsageEntry(result, getStepDefinition(), getStepName());
         }
+    }
+
+    @Override
+    public void before(HookResult result) {
+        addHookStats(result);
+    }
+
+    @Override
+    public void after(HookResult result) {
+        addHookStats(result);
+    }
+    
+    private void addHookStats(HookResult result) {
+        if(result.getStatus().equals(Result.PASSED)) {
+            addUsageEntry(result, "Before Hook", result.getLocation());
+        }
+        
     }
 
     private String getStepName() {
