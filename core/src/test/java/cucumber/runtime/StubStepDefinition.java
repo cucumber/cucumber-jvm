@@ -24,7 +24,7 @@ public class StubStepDefinition implements StepDefinition {
     }
 
     @Override
-    public String getLocation() {
+    public String getLocation(boolean detail) {
         return method.getName();
     }
 

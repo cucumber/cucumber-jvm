@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class MethodFormatTest {
     private Method methodWithArgsAndException;
@@ -29,11 +30,16 @@ public class MethodFormatTest {
 
     @Test
     public void shouldUseSimpleFormatWhenMethodHasException() {
-        assertEquals("MethodFormatTest.methodWithArgsAndException(String,Map)", new MethodFormat("%c.%m(%a)").format(methodWithArgsAndException));
+        assertEquals("MethodFormatTest.methodWithArgsAndException(String,Map)", MethodFormat.SHORT.format(methodWithArgsAndException));
     }
 
     @Test
     public void shouldUseSimpleFormatWhenMethodHasNoException() {
-        assertEquals("MethodFormatTest.methodWithoutArgs()", new MethodFormat("%c.%m(%a)").format(methodWithoutArgs));
+        assertEquals("MethodFormatTest.methodWithoutArgs()", MethodFormat.SHORT.format(methodWithoutArgs));
+    }
+
+    @Test
+    public void prints_code_source() {
+        assertTrue(MethodFormat.FULL.format(methodWithoutArgs).startsWith("cucumber.runtime.java.MethodFormatTest.methodWithoutArgs() in file:"));
     }
 }

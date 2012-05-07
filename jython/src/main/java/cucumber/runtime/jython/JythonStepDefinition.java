@@ -36,7 +36,7 @@ public class JythonStepDefinition implements StepDefinition {
     }
 
     @Override
-    public String getLocation() {
+    public String getLocation(boolean detail) {
         return null;
     }
 

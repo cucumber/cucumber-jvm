@@ -1,10 +1,15 @@
 package cucumber.runtime;
 
 import cucumber.io.ClasspathResourceLoader;
+import cucumber.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
+import gherkin.I18n;
 import gherkin.formatter.JSONPrettyFormatter;
+import gherkin.formatter.model.Step;
 import org.junit.Test;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import static cucumber.runtime.TestHelper.feature;
@@ -13,6 +18,9 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 
 public class RuntimeTest {
+
+    private static final I18n ENGLISH = new I18n("en");
+
     @Test
     public void runs_feature_with_json_formatter() throws Exception {
         CucumberFeature feature = feature("test.feature", "" +
@@ -80,5 +88,83 @@ public class RuntimeTest {
                 "  }\n" +
                 "]";
         assertEquals(expected, out.toString());
+    }
+
+    @Test
+    public void strict_without_pending_steps_or_errors() {
+        Runtime runtime = createStrictRuntime();
+
+        assertEquals(0x0, runtime.exitStatus());
+    }
+
+    @Test
+    public void non_strict_without_pending_steps_or_errors() {
+        Runtime runtime = createNonStrictRuntime();
+
+        assertEquals(0x0, runtime.exitStatus());
+    }
+
+    @Test
+    public void non_strict_with_undefined_steps() {
+        Runtime runtime = createNonStrictRuntime();
+        runtime.undefinedStepsTracker.addUndefinedStep(new Step(null, "Given ", "A", 1, null, null), ENGLISH);
+        assertEquals(0x0, runtime.exitStatus());
+    }
+
+    @Test
+    public void strict_with_undefined_steps() {
+        Runtime runtime = createStrictRuntime();
+        runtime.undefinedStepsTracker.addUndefinedStep(new Step(null, "Given ", "A", 1, null, null), ENGLISH);
+        assertEquals(0x1, runtime.exitStatus());
+    }
+
+    @Test
+    public void strict_with_pending_steps_and_no_errors() {
+        Runtime runtime = createStrictRuntime();
+        runtime.addError(new PendingException());
+
+        assertEquals(0x1, runtime.exitStatus());
+    }
+
+    @Test
+    public void non_strict_with_pending_steps() {
+        Runtime runtime = createNonStrictRuntime();
+        runtime.addError(new PendingException());
+
+        assertEquals(0x0, runtime.exitStatus());
+    }
+
+    @Test
+    public void non_strict_with_errors() {
+        Runtime runtime = createNonStrictRuntime();
+        runtime.addError(new RuntimeException());
+
+        assertEquals(0x1, runtime.exitStatus());
+    }
+
+    @Test
+    public void strict_with_errors() {
+        Runtime runtime = createStrictRuntime();
+        runtime.addError(new RuntimeException());
+
+        assertEquals(0x1, runtime.exitStatus());
+    }
+
+    private Runtime createStrictRuntime() {
+        return createRuntime("-g anything", "--strict");
+    }
+
+    private Runtime createNonStrictRuntime() {
+        return createRuntime("-g anything");
+    }
+
+    private Runtime createRuntime(String... runtimeArgs) {
+        ResourceLoader resourceLoader = mock(ResourceLoader.class);
+        ClassLoader classLoader = mock(ClassLoader.class);
+        RuntimeOptions runtimeOptions = new RuntimeOptions(runtimeArgs);
+        Backend backend = mock(Backend.class);
+        Collection<Backend> backends = Arrays.asList(backend);
+
+        return new Runtime(resourceLoader, classLoader, backends, runtimeOptions);
     }
 }

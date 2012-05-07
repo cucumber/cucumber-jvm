@@ -11,7 +11,7 @@ import java.lang.reflect.Method;
 /**
  * This class attempts to create descriptions with unique ids, if the method is available.
  * Falls back to not using uniqueId if not.
- *
+ * <p/>
  * See <a href="https://github.com/cucumber/cucumber-jvm/issues/225">#225</a> for details.
  */
 class DescriptionFactory {
@@ -35,7 +35,7 @@ class DescriptionFactory {
 
     public static Description createDescription(String name, Object uniqueId) {
         try {
-            if(USE_UNIQUE_ID) {
+            if (USE_UNIQUE_ID) {
                 return (Description) CREATE_SUITE_DESCRIPTION.invoke(null, name, uniqueId, Array.newInstance(Annotation.class, 0));
             } else {
                 UNIQUE_HACK += " ";

@@ -4,16 +4,16 @@ function assertEquals(expected, actual) {
     }
 }
 
-World(function() {
+World(function () {
 
 });
 
-Given(/^I have (\d+) "([^"]*)" in my belly$/, function(n, what) {
+Given(/^I have (\d+) "([^"]*)" in my belly$/, function (n, what) {
     this.n = n;
     this.what = what;
 });
 
-Then(/^there are (\d+) "([^"]*)" in my belly$/, function(n, what) {
+Then(/^there are (\d+) "([^"]*)" in my belly$/, function (n, what) {
     assertEquals(n, this.n);
     assertEquals(what, this.what);
 });

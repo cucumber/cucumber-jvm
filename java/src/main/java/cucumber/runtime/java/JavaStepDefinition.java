@@ -16,8 +16,6 @@ import java.util.regex.Pattern;
 import static java.util.Arrays.asList;
 
 public class JavaStepDefinition implements StepDefinition {
-    private static final MethodFormat METHOD_FORMAT = new MethodFormat();
-
     private final Method method;
     private final Pattern pattern;
     private final JdkPatternArgumentMatcher argumentMatcher;
@@ -37,7 +35,7 @@ public class JavaStepDefinition implements StepDefinition {
             method.invoke(target, args);
         } catch (IllegalArgumentException e) {
             // Can happen if stepdef signature doesn't match args
-            throw new CucumberException("Can't invoke " + new MethodFormat().format(method) + " with " + asList(args));
+            throw new CucumberException("Can't invoke " + MethodFormat.FULL.format(method) + " with " + asList(args));
         } catch (InvocationTargetException t) {
             throw t.getTargetException();
         }
@@ -47,8 +45,9 @@ public class JavaStepDefinition implements StepDefinition {
         return argumentMatcher.argumentsFrom(step.getName());
     }
 
-    public String getLocation() {
-        return METHOD_FORMAT.format(method);
+    public String getLocation(boolean detail) {
+        MethodFormat format = detail ? MethodFormat.FULL : MethodFormat.SHORT;
+        return format.format(method);
     }
 
     public List<ParameterType> getParameterTypes() {

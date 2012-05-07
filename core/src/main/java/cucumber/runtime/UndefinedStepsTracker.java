@@ -72,4 +72,8 @@ public class UndefinedStepsTracker {
             return new Step(step.getComments(), lastGivenWhenThenStepKeyword, step.getName(), step.getLine(), step.getRows(), step.getDocString());
         }
     }
+
+    public boolean hasUndefinedSteps() {
+        return !undefinedSteps.isEmpty();
+    }
 }

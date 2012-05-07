@@ -6,6 +6,6 @@ public class DuplicateStepDefinitionException extends CucumberException {
     }
 
     private static String createMessage(StepDefinition a, StepDefinition b) {
-        return String.format("Duplicate step definitions in %s and %s", a.getLocation(), b.getLocation());
+        return String.format("Duplicate step definitions in %s and %s", a.getLocation(true), b.getLocation(true));
     }
 }

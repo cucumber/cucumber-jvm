@@ -77,6 +77,7 @@ public class StandardConvertersTest {
         assertEquals(expected, new DoubleConverter(Locale.US).fromString("3,000.15"));
         assertEquals(expected, new DoubleConverter(new Locale("pt")).fromString("3.000,15"));
         assertEquals(expected, new DoubleConverter(Locale.FRANCE).fromString("3000,15"));
+        assertEquals(null, new DoubleConverter(Locale.FRANCE).fromString(""));
     }
 
     @Test

@@ -47,7 +47,7 @@ public class JavaHookDefinition implements HookDefinition {
         try {
             method.invoke(target, args);
         } catch (IllegalArgumentException e) {
-            throw new CucumberException("Can't invoke " + new MethodFormat().format(method));
+            throw new CucumberException("Can't invoke " + MethodFormat.FULL.format(method));
         } catch (InvocationTargetException e) {
             throw e.getTargetException();
         }

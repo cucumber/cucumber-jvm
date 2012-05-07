@@ -21,6 +21,7 @@ chromedriver.log
 nexus.properties
 pom.xml.releaseBackup
 release.properties
+*.ser
 
 # OS generated files
 .DS_Store*

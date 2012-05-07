@@ -125,6 +125,15 @@
         ]
       },
       {
+        "name": "the date should be Mar 1 2013",
+        "args": [
+          {
+            "offset": 19,
+            "val": "Mar 1 2013"
+          }
+        ]
+      },
+      {
         "name": "the date should be Oct 25 2011",
         "args": [
           {
@@ -145,6 +154,15 @@
           {
             "offset": 20,
             "val": "2012-03-01T06:54:14"
+          }
+        ]
+      },
+      {
+        "name": "the iso calendar is 2013-03-01T06:54:14",
+        "args": [
+          {
+            "offset": 20,
+            "val": "2013-03-01T06:54:14"
           }
         ]
       }

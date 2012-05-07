@@ -15,12 +15,8 @@ public class MethodFormat {
     private static final String PACKAGE_PATTERN = "[^,]*\\.";
     private final MessageFormat format;
 
-    /**
-     * Creates an instance with default formatting.
-     */
-    public MethodFormat() {
-        this("%c.%m(%a)");
-    }
+    public static final MethodFormat SHORT = new MethodFormat("%c.%m(%a)");
+    public static final MethodFormat FULL = new MethodFormat("%qc.%m(%a) in %s");
 
     /**
      * @param format the format string to use. There are several pattern tokens that can be used:
@@ -35,6 +31,7 @@ public class MethodFormat {
      *               <li><strong>%a</strong>: Unqualified arguments</li>
      *               <li><strong>%qe</strong>: Qualified exceptions</li>
      *               <li><strong>%e</strong>: Unqualified exceptions</li>
+     *               <li><strong>%s</strong>: Code source</li>
      *               </ul>
      */
     public MethodFormat(String format) {
@@ -47,7 +44,8 @@ public class MethodFormat {
                 .replaceAll("%qe", "{5}")
                 .replaceAll("%c", "{6}")
                 .replaceAll("%a", "{7}")
-                .replaceAll("%e", "{8}");
+                .replaceAll("%e", "{8}")
+                .replaceAll("%s", "{9}");
         this.format = new MessageFormat(pattern);
     }
 
@@ -64,6 +62,7 @@ public class MethodFormat {
             String c = qc.replaceAll(PACKAGE_PATTERN, "");
             String a = qa.replaceAll(PACKAGE_PATTERN, "");
             String e = qe.replaceAll(PACKAGE_PATTERN, "");
+            String s = method.getDeclaringClass().getProtectionDomain().getCodeSource().getLocation().toExternalForm();
 
             return format.format(new Object[]{
                     M,
@@ -74,7 +73,8 @@ public class MethodFormat {
                     qe,
                     c,
                     a,
-                    e
+                    e,
+                    s
             });
         } else {
             throw new CucumberException("Cucumber bug: Couldn't format " + signature);

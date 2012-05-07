@@ -28,22 +28,6 @@ public class Utils {
         }
     }
 
-    public static String packagePath(Class clazz) {
-        return packagePath(packageName(clazz.getName()));
-    }
-
-    public static String packagePath(String packageName) {
-        return packageName.replace('.', '/');
-    }
-
-    public static String packageName(Class clazz) {
-        return packageName(clazz.getName());
-    }
-
-    public static String packageName(String className) {
-        return className.substring(0, Math.max(0, className.lastIndexOf(".")));
-    }
-
     public static <T> Iterator<T> emptyIterator() {
         return new Iterator<T>() {
 

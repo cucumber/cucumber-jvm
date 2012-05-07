@@ -3,6 +3,7 @@ package cucumber.runtime.java;
 import cucumber.annotation.en.Given;
 import cucumber.io.ClasspathResourceLoader;
 import cucumber.runtime.AmbiguousStepDefinitionsException;
+import cucumber.runtime.DuplicateStepDefinitionException;
 import cucumber.runtime.Glue;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeOptions;
@@ -30,7 +31,6 @@ import static org.mockito.Mockito.verify;
 
 public class JavaStepDefinitionTest {
     private static final List<Comment> NO_COMMENTS = Collections.emptyList();
-    private static final List<String> NO_PATHS = Collections.emptyList();
     private static final Method THREE_DISABLED_MICE;
     private static final Method THREE_BLIND_ANIMALS;
     private static final I18n ENGLISH = new I18n("en");
@@ -54,6 +54,12 @@ public class JavaStepDefinitionTest {
     @org.junit.Before
     public void loadNoGlue() {
         backend.loadGlue(glue, Collections.<String>emptyList());
+    }
+
+    @Test(expected = DuplicateStepDefinitionException.class)
+    public void throws_duplicate_when_two_stepdefs_with_same_regexp_found() throws Throwable {
+        backend.addStepDefinition(THREE_BLIND_ANIMALS.getAnnotation(Given.class), THREE_DISABLED_MICE);
+        backend.addStepDefinition(THREE_BLIND_ANIMALS.getAnnotation(Given.class), THREE_BLIND_ANIMALS);
     }
 
     @Test

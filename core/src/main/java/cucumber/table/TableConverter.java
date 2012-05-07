@@ -1,8 +1,10 @@
 package cucumber.table;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.converters.ConversionException;
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.SingleValueConverter;
+import com.thoughtworks.xstream.converters.reflection.AbstractReflectionConverter;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import cucumber.runtime.CucumberException;
 import cucumber.table.xstream.DataTableWriter;
@@ -43,7 +45,13 @@ public class TableConverter {
         } else {
             reader = new ListOfObjectReader(itemType, convertedAttributeNames(dataTable), dataTable.cells(1));
         }
-        return (List) xStream.unmarshal(reader);
+        try {
+            return (List) xStream.unmarshal(reader);
+        } catch (AbstractReflectionConverter.UnknownFieldException e) {
+            throw new CucumberException(e.getShortMessage());
+        } catch (ConversionException e) {
+            throw new CucumberException(String.format("Can't assign null value to one of the primitive fields in %s. Please use boxed types.", e.get("class")));
+        }
     }
 
     /**

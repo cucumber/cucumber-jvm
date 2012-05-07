@@ -20,7 +20,7 @@ public class GroovySnippetTest {
     @Test
     public void generatesPlainSnippet() {
         String expected = "" +
-                "Given(~\"^I have (\\d+) cukes in my \\\"([^\\\"]*)\\\" belly$\") { int arg1, String arg2 ->\n" +
+                "Given(~'^I have (\\d+) cukes in my \"([^\"]*)\" belly$') { int arg1, String arg2 ->\n" +
                 "    // Express the Regexp above with the code you wish you had\n" +
                 "    throw new PendingException()\n" +
                 "}\n";
@@ -30,7 +30,7 @@ public class GroovySnippetTest {
     @Test
     public void generatesCopyPasteReadyStepSnippetForNumberParameters() throws Exception {
         String expected = "" +
-                "Given(~\"^before (\\d+) after$\") { int arg1 ->\n" +
+                "Given(~'^before (\\d+) after$') { int arg1 ->\n" +
                 "    // Express the Regexp above with the code you wish you had\n" +
                 "    throw new PendingException()\n" +
                 "}\n";
@@ -41,7 +41,7 @@ public class GroovySnippetTest {
     @Test
     public void generatesCopyPasteReadySnippetWhenStepHasIllegalJavaIdentifierChars() {
         String expected = "" +
-                "Given(~\"^I have (\\d+) cukes in: my \\\"([^\\\"]*)\\\" red-belly!$\") { int arg1, String arg2 ->\n" +
+                "Given(~'^I have (\\d+) cukes in: my \"([^\"]*)\" red-belly!$') { int arg1, String arg2 ->\n" +
                 "    // Express the Regexp above with the code you wish you had\n" +
                 "    throw new PendingException()\n" +
                 "}\n";
@@ -52,7 +52,7 @@ public class GroovySnippetTest {
     @Test
     public void generatesCopyPasteReadySnippetWhenStepHasIntegersInsideStringParameter() {
         String expected = "" +
-                "Given(~\"^the DI system receives a message saying \\\"([^\\\"]*)\\\"$\") { String arg1 ->\n" +
+                "Given(~'^the DI system receives a message saying \"([^\"]*)\"$') { String arg1 ->\n" +
                 "    // Express the Regexp above with the code you wish you had\n" +
                 "    throw new PendingException()\n" +
                 "}\n";
@@ -62,7 +62,7 @@ public class GroovySnippetTest {
     @Test
     public void generatesSnippetWithEscapedDollarSigns() {
         String expected = "" +
-                "Given(~\"^I have \\$(\\d+)$\") { int arg1 ->\n" +
+                "Given(~'^I have \\$(\\d+)$') { int arg1 ->\n" +
                 "    // Express the Regexp above with the code you wish you had\n" +
                 "    throw new PendingException()\n" +
                 "}\n";
@@ -72,7 +72,7 @@ public class GroovySnippetTest {
     @Test
     public void generatesSnippetWithEscapedParentheses() {
         String expected = "" +
-                "Given(~\"^I have (\\d+) cukes \\(maybe more\\)$\") { int arg1 ->\n" +
+                "Given(~'^I have (\\d+) cukes \\(maybe more\\)$') { int arg1 ->\n" +
                 "    // Express the Regexp above with the code you wish you had\n" +
                 "    throw new PendingException()\n" +
                 "}\n";
@@ -82,7 +82,7 @@ public class GroovySnippetTest {
     @Test
     public void generatesSnippetWithEscapedBrackets() {
         String expected = "" +
-                "Given(~\"^I have (\\d+) cukes \\[maybe more\\]$\") { int arg1 ->\n" +
+                "Given(~'^I have (\\d+) cukes \\[maybe more\\]$') { int arg1 ->\n" +
                 "    // Express the Regexp above with the code you wish you had\n" +
                 "    throw new PendingException()\n" +
                 "}\n";
@@ -92,7 +92,7 @@ public class GroovySnippetTest {
     @Test
     public void generatesSnippetWithDocString() {
         String expected = "" +
-                "Given(~\"^I have:$\") { String arg1 ->\n" +
+                "Given(~'^I have:$') { String arg1 ->\n" +
                 "    // Express the Regexp above with the code you wish you had\n" +
                 "    throw new PendingException()\n" +
                 "}\n";
@@ -102,7 +102,7 @@ public class GroovySnippetTest {
     @Test
     public void generatesSnippetWithDataTable() {
         String expected = "" +
-                "Given(~\"^I have:$\") { DataTable arg1 ->\n" +
+                "Given(~'^I have:$') { DataTable arg1 ->\n" +
                 "    // Express the Regexp above with the code you wish you had\n" +
                 "    throw new PendingException()\n" +
                 "}\n";

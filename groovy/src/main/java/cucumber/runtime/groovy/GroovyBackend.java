@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import static cucumber.io.MultiLoader.packageName;
+
 
 public class GroovyBackend implements Backend {
     static GroovyBackend instance;
@@ -59,8 +61,7 @@ public class GroovyBackend implements Backend {
                 runIfScript(context, script);
             }
             // Load compiled scripts
-            String packageName = gluePath.replace('/', '.').replace('\\', '.'); // Sometimes the gluePath will be a path, not a package
-            for (Class<? extends Script> glueClass : classpathResourceLoader.getDescendants(Script.class, packageName)) {
+            for (Class<? extends Script> glueClass : classpathResourceLoader.getDescendants(Script.class, packageName(gluePath))) {
                 try {
                     Script script = glueClass.getConstructor(Binding.class).newInstance(context);
                     runIfScript(context, script);

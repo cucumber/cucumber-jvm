@@ -15,10 +15,11 @@ import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.regexp.NativeRegExp;
 import org.mozilla.javascript.tools.shell.Global;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
+
+import static cucumber.io.MultiLoader.packageName;
 
 public class RhinoBackend implements Backend {
     private static final String JS_DSL = "/cucumber/runtime/rhino/dsl.js";
@@ -43,8 +44,7 @@ public class RhinoBackend implements Backend {
         this.glue = glue;
         this.gluePaths = gluePaths;
         for (String gluePath : gluePaths) {
-            Iterable<Resource> resources = resourceLoader.resources(gluePath, ".js");
-            for (Resource resource : resources) {
+            for (Resource resource : resourceLoader.resources(gluePath, ".js")) {
                 try {
                     cx.evaluateReader(scope, new InputStreamReader(resource.getInputStream(), "UTF-8"), resource.getPath(), 1, null);
                 } catch (IOException e) {
@@ -72,14 +72,13 @@ public class RhinoBackend implements Backend {
         return snippetGenerator.getSnippet(step);
     }
 
-    private StackTraceElement stepDefLocation(String extension) {
+    private StackTraceElement stepDefLocation() {
         Throwable t = new Throwable();
         StackTraceElement[] stackTraceElements = t.getStackTrace();
         for (StackTraceElement stackTraceElement : stackTraceElements) {
-            boolean js = stackTraceElement.getFileName().endsWith(extension);
-            for (String scriptPath : gluePaths) {
-                String platformScriptPath = scriptPath.replace('/', File.separatorChar);
-                boolean inScriptPath = stackTraceElement.getFileName().startsWith(platformScriptPath);
+            boolean js = stackTraceElement.getFileName().endsWith(".js");
+            for (String gluePath : gluePaths) {
+                boolean inScriptPath = packageName(stackTraceElement.getFileName()).startsWith(packageName(gluePath));
                 boolean hasLine = stackTraceElement.getLineNumber() != -1;
                 if (js && inScriptPath && hasLine) {
                     return stackTraceElement;
@@ -90,7 +89,7 @@ public class RhinoBackend implements Backend {
     }
 
     public void addStepDefinition(Global jsStepDefinition, NativeRegExp regexp, NativeFunction bodyFunc, NativeFunction argumentsFromFunc) throws Throwable {
-        StackTraceElement stepDefLocation = stepDefLocation(".js");
+        StackTraceElement stepDefLocation = stepDefLocation();
         RhinoStepDefinition stepDefinition = new RhinoStepDefinition(cx, scope, jsStepDefinition, regexp, bodyFunc, stepDefLocation, argumentsFromFunc);
         glue.addStepDefinition(stepDefinition);
     }

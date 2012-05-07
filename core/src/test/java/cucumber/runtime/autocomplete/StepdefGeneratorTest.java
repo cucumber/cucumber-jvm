@@ -112,7 +112,7 @@ public class StepdefGeneratorTest {
             }
 
             @Override
-            public String getLocation() {
+            public String getLocation(boolean detail) {
                 throw new UnsupportedOperationException("TODO");
             }
 
