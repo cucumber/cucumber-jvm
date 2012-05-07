@@ -66,7 +66,7 @@ public class TestFormatter implements Formatter {
     }
 
     @Override
-    public void syntaxError(String state, String event, List<String> legalEvents, String uri, int line) {
+    public void syntaxError(String state, String event, List<String> legalEvents, String uri, Integer line) {
         throw new UnsupportedOperationException();
     }
 
