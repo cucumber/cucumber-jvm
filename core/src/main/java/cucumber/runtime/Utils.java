@@ -2,7 +2,6 @@ package cucumber.runtime;
 
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public class Utils {
@@ -26,25 +25,5 @@ public class Utils {
         } catch (NoSuchMethodException e) {
             return false;
         }
-    }
-
-    public static <T> Iterator<T> emptyIterator() {
-        return new Iterator<T>() {
-
-            @Override
-            public boolean hasNext() {
-                return false;
-            }
-
-            @Override
-            public T next() {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
-            public void remove() {
-                throw new UnsupportedOperationException();
-            }
-        };
     }
 }

@@ -5,7 +5,6 @@ import java.io.FileFilter;
 import java.util.Iterator;
 
 import static cucumber.io.ClasspathIterable.hasSuffix;
-import static cucumber.runtime.Utils.emptyIterator;
 import static java.util.Arrays.asList;
 
 public class FileResourceIterator implements Iterator<Resource> {
@@ -52,7 +51,7 @@ public class FileResourceIterator implements Iterator<Resource> {
             } else if (file.isFile()) {
                 this.files = asList(file).iterator();
             } else {
-                this.files = emptyIterator();
+                throw new IllegalArgumentException("Not a file or directory: " + file.getAbsolutePath());
             }
             this.filter = filter;
         }

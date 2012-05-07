@@ -240,7 +240,7 @@ Code coverage is collected mainly to identify code that can be deleted or needs 
 To generate a report, run:
 
 ```
-COBERTURA_HOME=/some/where ./coverage.sh
+COBERTURA_HOME=/some/where ./cobertura.sh
 ```
 
 This technique to collect coverage for a multi-module Maven project is based on a
