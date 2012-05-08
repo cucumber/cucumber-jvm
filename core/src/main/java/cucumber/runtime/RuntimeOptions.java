@@ -47,7 +47,7 @@ public class RuntimeOptions {
         }
     }
 
-    private void parse(ArrayList<String> args) {
+    private void parse(List<String> args) {
         FormatterConverter formatterConverter = new FormatterConverter();
 
         while (!args.isEmpty()) {
