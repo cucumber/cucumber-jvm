@@ -1,6 +1,7 @@
 <project name="java-helloworld" basedir="." default="runcukes">
     <property name="repo" value="https://oss.sonatype.org/content/repositories/releases"/>
     <property name="cucumber-jvm.version" value="1.0.6"/>
+    <property name="cucumber-html.version" value="0.2.1"/>
     <property name="gherkin.version" value="2.9.3"/>
     <property name="junit.version" value="4.10"/>
     <property name="jars" value="lib"/>
@@ -9,6 +10,8 @@
         <mkdir dir="${jars}"/>
         <get src="${repo}/info/cukes/cucumber-core/${cucumber-jvm.version}/cucumber-core-${cucumber-jvm.version}.jar"
              dest="${jars}/cucumber-core-${cucumber-jvm.version}.jar"/>
+        <get src="${repo}/info/cukes/cucumber-html/${cucumber-html.version}/cucumber-html-${cucumber-html.version}.jar"
+             dest="${jars}/cucumber-html-${cucumber-html.version}.jar"/>
         <get src="${repo}/info/cukes/cucumber-java/${cucumber-jvm.version}/cucumber-java-${cucumber-jvm.version}.jar"
              dest="${jars}/cucumber-java-${cucumber-jvm.version}.jar"/>
         <get src="${repo}/info/cukes/cucumber-junit/${cucumber-jvm.version}/cucumber-junit-${cucumber-jvm.version}.jar"
@@ -42,17 +45,13 @@
     <target name="runcukes" depends="compile-test">
         <mkdir dir="target/junit-report"/>
         <java classname="cucumber.cli.Main" fork="true" failonerror="false" resultproperty="cucumber.exitstatus">
-            <classpath>
-                <fileset dir="${jars}">
-                    <include name="**/*.jar"/>
-                </fileset>
-                <pathelement location="target/classes"/>
-                <pathelement location="target/test-classes"/>
-            </classpath>
+            <classpath refid="classpath"/>
             <arg value="--format"/>
             <arg value="junit:target/junit-report.xml"/>
             <arg value="--format"/>
             <arg value="pretty"/>
+            <arg value="--format"/>
+            <arg value="html:target/cucumber"/>
             <arg value="--glue"/>
             <arg value="cucumber.examples.java.helloworld"/>
             <arg value="src/test/resources"/>
