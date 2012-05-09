@@ -43,25 +43,25 @@
     </target>
 
     <target name="runcukes" depends="compile-test">
-        <mkdir dir="target/junit-report"/>
+        <mkdir dir="target/cucumber-junit-report"/>
         <java classname="cucumber.cli.Main" fork="true" failonerror="false" resultproperty="cucumber.exitstatus">
             <classpath refid="classpath"/>
             <arg value="--format"/>
-            <arg value="junit:target/junit-report.xml"/>
+            <arg value="junit:target/cucumber-junit-report/allcukes.xml"/>
             <arg value="--format"/>
             <arg value="pretty"/>
             <arg value="--format"/>
-            <arg value="html:target/cucumber"/>
+            <arg value="html:target/cucumber-html-report"/>
             <arg value="--glue"/>
             <arg value="cucumber.examples.java.helloworld"/>
             <arg value="src/test/resources"/>
         </java>
 
-        <junitreport todir="target/junit-report">
-            <fileset dir="target">
-                <include name="junit-report.xml"/>
+        <junitreport todir="target/cucumber-junit-report">
+            <fileset dir="target/cucumber-junit-report">
+                <include name="allcukes.xml"/>
             </fileset>
-            <report format="frames" todir="target/junit-report"/>
+            <report format="frames" todir="target/cucumber-junit-report"/>
         </junitreport>
 
         <fail message="Cucumber failed">
