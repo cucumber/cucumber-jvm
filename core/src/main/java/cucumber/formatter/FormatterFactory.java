@@ -17,7 +17,16 @@ import java.util.regex.Pattern;
 
 import static java.util.Arrays.asList;
 
-public class FormatterConverter {
+/**
+ * This class creates {@link Formatter} instances (that may also implement {@link gherkin.formatter.Reporter} from
+ * a String.
+ *
+ * The String is of the form name[:output] where name is either a fully qualified class name or one of the built-in short names.
+ * output is optional for some formatters (and mandatory for some) and must refer to a path on the file system.
+ *
+ * The formatter class must have a single argument constructor that takes either an {@link Appendable} or a {@link File}.
+ */
+public class FormatterFactory {
     private Class[] CTOR_ARGS = new Class[]{Appendable.class, File.class};
 
     private static final Map<String, Class<? extends Formatter>> FORMATTER_CLASSES = new HashMap<String, Class<? extends Formatter>>() {{
@@ -33,7 +42,7 @@ public class FormatterConverter {
     private static final Pattern FORMATTER_WITH_FILE_PATTERN = Pattern.compile("([^:]+):(.*)");
     private Appendable defaultOut = System.out;
 
-    public Formatter convert(String formatterString) {
+    public Formatter create(String formatterString) {
         Matcher formatterWithFile = FORMATTER_WITH_FILE_PATTERN.matcher(formatterString);
         String formatterName;
         Object ctorArg;

@@ -1,7 +1,7 @@
 package cucumber.runtime;
 
 import cucumber.formatter.ColorAware;
-import cucumber.formatter.FormatterConverter;
+import cucumber.formatter.FormatterFactory;
 import cucumber.formatter.ProgressFormatter;
 import cucumber.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
@@ -48,7 +48,7 @@ public class RuntimeOptions {
     }
 
     private void parse(List<String> args) {
-        FormatterConverter formatterConverter = new FormatterConverter();
+        FormatterFactory formatterFactory = new FormatterFactory();
 
         while (!args.isEmpty()) {
             String arg = args.remove(0);
@@ -65,7 +65,7 @@ public class RuntimeOptions {
             } else if (arg.equals("--tags") || arg.equals("-t")) {
                 filters.add(args.remove(0));
             } else if (arg.equals("--format") || arg.equals("-f")) {
-                formatters.add(formatterConverter.convert(args.remove(0)));
+                formatters.add(formatterFactory.create(args.remove(0)));
             } else if (arg.equals("--dotcucumber")) {
                 dotCucumber = new File(args.remove(0));
             } else if (arg.equals("--dry-run") || arg.equals("-d")) {
