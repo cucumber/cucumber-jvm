@@ -1,4 +1,4 @@
-## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.0.6...master)
+## [1.0.7](https://github.com/cucumber/cucumber-jvm/compare/v1.0.6...v1.0.7)
 
 * [Java] cucumber-java lazily creates instances, just like the other DI containers. (Aslak Hellesøy)
 * [Core] Throw an exception if a glue or feature path doesn't exist (i.e. neither file nor directory) (Aslak Hellesøy)
