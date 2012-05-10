@@ -17,14 +17,14 @@ public class SpringFactoryTest {
         factory.addClass(BellyStepdefs.class);
 
         // Scenario 1
-        factory.createInstances();
+        factory.start();
         final BellyStepdefs o1 = factory.getInstance(BellyStepdefs.class);
-        factory.disposeInstances();
+        factory.stop();
 
         // Scenario 2
-        factory.createInstances();
+        factory.start();
         final BellyStepdefs o2 = factory.getInstance(BellyStepdefs.class);
-        factory.disposeInstances();
+        factory.stop();
 
         assertNotNull(o1);
         assertNotNull(o2);
@@ -35,15 +35,15 @@ public class SpringFactoryTest {
     public void shouldNeverCreateNewApplicationBeanInstances() {
         // Feature 1
         final ObjectFactory factory1 = new SpringFactory();
-        factory1.createInstances();
+        factory1.start();
         final DummyComponent o1 = factory1.getInstance(DummyComponent.class);
-        factory1.disposeInstances();
+        factory1.stop();
 
         // Feature 2
         final ObjectFactory factory2 = new SpringFactory();
-        factory2.createInstances();
+        factory2.start();
         final DummyComponent o2 = factory2.getInstance(DummyComponent.class);
-        factory2.disposeInstances();
+        factory2.stop();
 
         assertNotNull(o1);
         assertNotNull(o2);
@@ -54,9 +54,9 @@ public class SpringFactoryTest {
     public void shouldRespectCommonAnnotationsInStepDefs() {
         final ObjectFactory factory = new SpringFactory();
         factory.addClass(WithSpringAnnotations.class);
-        factory.createInstances();
+        factory.start();
         WithSpringAnnotations stepdef = factory.getInstance(WithSpringAnnotations.class);
-        factory.disposeInstances();
+        factory.stop();
 
         assertNotNull(stepdef);
         assertTrue(stepdef.isAutowired());
@@ -68,9 +68,9 @@ public class SpringFactoryTest {
     public void shouldRespectCustomPropertyPlaceholderConfigurer() {
         final ObjectFactory factory = new SpringFactory();
         factory.addClass(WithSpringAnnotations.class);
-        factory.createInstances();
+        factory.start();
         WithSpringAnnotations stepdef = factory.getInstance(WithSpringAnnotations.class);
-        factory.disposeInstances();
+        factory.stop();
 
         assertEquals("property value", stepdef.getProperty());
     }

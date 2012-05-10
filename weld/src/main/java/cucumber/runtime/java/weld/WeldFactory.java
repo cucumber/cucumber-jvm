@@ -9,12 +9,12 @@ public class WeldFactory extends Weld implements ObjectFactory {
     private WeldContainer weld;
 
     @Override
-    public void createInstances() {
+    public void start() {
         weld = super.initialize();
     }
 
     @Override
-    public void disposeInstances() {
+    public void stop() {
         this.shutdown();
     }
 

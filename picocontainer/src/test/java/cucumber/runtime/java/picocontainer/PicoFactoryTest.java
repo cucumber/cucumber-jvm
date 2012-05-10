@@ -13,14 +13,14 @@ public class PicoFactoryTest {
         factory.addClass(StepDefs.class);
 
         // Scenario 1
-        factory.createInstances();
+        factory.start();
         StepDefs o1 = factory.getInstance(StepDefs.class);
-        factory.disposeInstances();
+        factory.stop();
 
         // Scenario 2
-        factory.createInstances();
+        factory.start();
         StepDefs o2 = factory.getInstance(StepDefs.class);
-        factory.disposeInstances();
+        factory.stop();
 
         assertNotNull(o1);
         assertNotSame(o1, o2);

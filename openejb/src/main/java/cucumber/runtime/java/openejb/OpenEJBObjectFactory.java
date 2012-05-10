@@ -22,7 +22,7 @@ public class OpenEJBObjectFactory implements ObjectFactory {
     private EJBContainer container;
 
     @Override
-    public void createInstances() {
+    public void start() {
         configureLog4J();
 
         final StringBuilder callers = new StringBuilder();
@@ -39,7 +39,7 @@ public class OpenEJBObjectFactory implements ObjectFactory {
     }
 
     @Override
-    public void disposeInstances() {
+    public void stop() {
         container.close();
         instances.clear();
     }
