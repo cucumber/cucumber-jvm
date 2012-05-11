@@ -10,7 +10,7 @@
 
     <artifactId>cucumber-weld</artifactId>
     <packaging>jar</packaging>
-    <name>Cucumber-JVM: Weld/CDI</name>
+    <name>Cucumber-JVM: Weld</name>
 
     <dependencies>
         <dependency>
