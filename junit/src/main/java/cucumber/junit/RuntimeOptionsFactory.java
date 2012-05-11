@@ -26,7 +26,7 @@ class RuntimeOptionsFactory {
         addFeatures(options, clazz, args);
         addStrict(options, args);
 
-        return new RuntimeOptions(args.toArray(new String[args.size()]));
+        return new RuntimeOptions(System.getProperties(), args.toArray(new String[args.size()]));
 
     }
 

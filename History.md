@@ -1,3 +1,7 @@
+## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.0.7...master)
+
+* [Core] Options (Command line or `@Cucumber.Options`) can be overriden with the `cucumber.options` system property. (Aslak Hellesøy)
+
 ## [1.0.7](https://github.com/cucumber/cucumber-jvm/compare/v1.0.6...v1.0.7)
 
 * [Java] cucumber-java lazily creates instances, just like the other DI containers. (Aslak Hellesøy)

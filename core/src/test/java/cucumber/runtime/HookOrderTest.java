@@ -11,6 +11,7 @@ import org.mockito.Matchers;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Properties;
 
 import static java.util.Arrays.asList;
 import static org.mockito.Matchers.anyListOf;
@@ -27,7 +28,7 @@ public class HookOrderTest {
     @Before
     public void buildMockWorld() {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        RuntimeOptions runtimeOptions = new RuntimeOptions();
+        RuntimeOptions runtimeOptions = new RuntimeOptions(new Properties());
         runtime = new Runtime(mock(ResourceLoader.class), classLoader, asList(mock(Backend.class)), runtimeOptions);
         glue = runtime.getGlue();
     }

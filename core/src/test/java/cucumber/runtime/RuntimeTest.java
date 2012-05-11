@@ -11,6 +11,7 @@ import org.junit.Test;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Properties;
 
 import static cucumber.runtime.TestHelper.feature;
 import static java.util.Arrays.asList;
@@ -33,7 +34,7 @@ public class RuntimeTest {
         JSONPrettyFormatter jsonFormatter = new JSONPrettyFormatter(out);
         List<Backend> backends = asList(mock(Backend.class));
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        RuntimeOptions runtimeOptions = new RuntimeOptions();
+        RuntimeOptions runtimeOptions = new RuntimeOptions(new Properties());
         Runtime runtime = new Runtime(new ClasspathResourceLoader(classLoader), classLoader, backends, runtimeOptions);
         feature.run(jsonFormatter, jsonFormatter, runtime);
         jsonFormatter.done();
@@ -161,7 +162,7 @@ public class RuntimeTest {
     private Runtime createRuntime(String... runtimeArgs) {
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
         ClassLoader classLoader = mock(ClassLoader.class);
-        RuntimeOptions runtimeOptions = new RuntimeOptions(runtimeArgs);
+        RuntimeOptions runtimeOptions = new RuntimeOptions(new Properties(), runtimeArgs);
         Backend backend = mock(Backend.class);
         Collection<Backend> backends = Arrays.asList(backend);
 

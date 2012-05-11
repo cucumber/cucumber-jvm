@@ -15,6 +15,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.ResourceBundle;
 
 import static cucumber.runtime.model.CucumberFeature.load;
@@ -33,8 +34,14 @@ public class RuntimeOptions {
     public List<String> featurePaths = new ArrayList<String>();
     private boolean monochrome = false;
 
-    public RuntimeOptions(String... argv) {
-        parse(new ArrayList<String>(asList(argv)));
+    public RuntimeOptions(Properties properties, String... argv) {
+        String[] args;
+        if (properties.containsKey("cucumber.options")) {
+            args = properties.getProperty("cucumber.options").split(" ");
+        } else {
+            args = argv;
+        }
+        parse(new ArrayList<String>(asList(args)));
 
         if (formatters.isEmpty()) {
             formatters.add(new ProgressFormatter(System.out));
