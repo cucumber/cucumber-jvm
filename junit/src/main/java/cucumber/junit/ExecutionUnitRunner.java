@@ -46,7 +46,7 @@ class ExecutionUnitRunner extends ParentRunner<Step> {
         if (description == null) {
             description = createDescription(getName(), cucumberScenario);
 
-            if(cucumberScenario.getCucumberBackground() != null) {
+            if (cucumberScenario.getCucumberBackground() != null) {
                 for (Step backgroundStep : cucumberScenario.getCucumberBackground().getSteps()) {
                     description.addChild(describeChild(backgroundStep));
                 }

@@ -30,7 +30,7 @@ public class JdkPatternArgumentMatcherTest {
         assertVariables("Jæ (.+) ålsker (.+) lændet", "Jæ vø ålsker døtte lændet", "vø", 3, "døtte", 13);
     }
 
-    private void assertVariables(String regex, String string, String v1, int pos1, String v2, int pos2) throws UnsupportedEncodingException {
+    private void assertVariables(String regex, String string, String v1, Integer pos1, String v2, Integer pos2) throws UnsupportedEncodingException {
         List<Argument> args = new JdkPatternArgumentMatcher(Pattern.compile(regex)).argumentsFrom(string);
         assertEquals(2, args.size());
         assertEquals(v1, args.get(0).getVal());

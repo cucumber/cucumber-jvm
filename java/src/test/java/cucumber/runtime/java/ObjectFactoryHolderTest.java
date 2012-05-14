@@ -33,11 +33,11 @@ public class ObjectFactoryHolderTest {
 
     private static class StubObjectFactory implements ObjectFactory {
         @Override
-        public void createInstances() {
+        public void start() {
         }
 
         @Override
-        public void disposeInstances() {
+        public void stop() {
         }
 
         @Override

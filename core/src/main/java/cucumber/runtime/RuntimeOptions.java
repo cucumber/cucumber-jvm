@@ -1,7 +1,7 @@
 package cucumber.runtime;
 
 import cucumber.formatter.ColorAware;
-import cucumber.formatter.FormatterConverter;
+import cucumber.formatter.FormatterFactory;
 import cucumber.formatter.ProgressFormatter;
 import cucumber.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
@@ -15,6 +15,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.ResourceBundle;
 
 import static cucumber.runtime.model.CucumberFeature.load;
@@ -33,8 +34,14 @@ public class RuntimeOptions {
     public List<String> featurePaths = new ArrayList<String>();
     private boolean monochrome = false;
 
-    public RuntimeOptions(String... argv) {
-        parse(new ArrayList<String>(asList(argv)));
+    public RuntimeOptions(Properties properties, String... argv) {
+        String[] args;
+        if (properties.containsKey("cucumber.options")) {
+            args = properties.getProperty("cucumber.options").split(" ");
+        } else {
+            args = argv;
+        }
+        parse(new ArrayList<String>(asList(args)));
 
         if (formatters.isEmpty()) {
             formatters.add(new ProgressFormatter(System.out));
@@ -47,8 +54,8 @@ public class RuntimeOptions {
         }
     }
 
-    private void parse(ArrayList<String> args) {
-        FormatterConverter formatterConverter = new FormatterConverter();
+    private void parse(List<String> args) {
+        FormatterFactory formatterFactory = new FormatterFactory();
 
         while (!args.isEmpty()) {
             String arg = args.remove(0);
@@ -65,7 +72,7 @@ public class RuntimeOptions {
             } else if (arg.equals("--tags") || arg.equals("-t")) {
                 filters.add(args.remove(0));
             } else if (arg.equals("--format") || arg.equals("-f")) {
-                formatters.add(formatterConverter.convert(args.remove(0)));
+                formatters.add(formatterFactory.create(args.remove(0)));
             } else if (arg.equals("--dotcucumber")) {
                 dotCucumber = new File(args.remove(0));
             } else if (arg.equals("--dry-run") || arg.equals("-d")) {

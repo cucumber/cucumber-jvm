@@ -54,11 +54,11 @@ public class GuiceFactory implements ObjectFactory {
         classes.add(clazz);
     }
 
-    public void createInstances() {
+    public void start() {
         injector = Guice.createInjector(new CucumberModule(classes, modules));
     }
 
-    public void disposeInstances() {
+    public void stop() {
         injector = null;
     }
 

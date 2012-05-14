@@ -11,16 +11,16 @@ public class GlueCodeContext {
 
     private GlueCodeContext() {
     }
-    
-    public void start () {
+
+    public void start() {
         cleanUp();
         counter++;
     }
 
     public String getId() {
-        return "cucumber_glue_"+ counter;
+        return "cucumber_glue_" + counter;
     }
-    
+
     public void stop() {
         for (Runnable callback : callbacks.values()) {
             callback.run();
@@ -28,19 +28,18 @@ public class GlueCodeContext {
         cleanUp();
     }
 
-    public Object get(String name){
+    public Object get(String name) {
         return objects.get(name);
     }
 
-    public void put(String name, Object object){
+    public void put(String name, Object object) {
         objects.put(name, object);
     }
 
-    public Object remove (String name){
+    public Object remove(String name) {
         callbacks.remove(name);
         return objects.remove(name);
     }
-
 
 
     private void cleanUp() {

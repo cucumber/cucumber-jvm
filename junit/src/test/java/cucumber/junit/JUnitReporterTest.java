@@ -1,12 +1,9 @@
 package cucumber.junit;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
+import cucumber.runtime.PendingException;
+import gherkin.formatter.Formatter;
+import gherkin.formatter.Reporter;
+import gherkin.formatter.model.Result;
 import org.junit.Test;
 import org.junit.internal.runners.model.EachTestNotifier;
 import org.junit.runner.Description;
@@ -15,10 +12,12 @@ import org.junit.runner.notification.RunNotifier;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Matchers;
 
-import cucumber.runtime.PendingException;
-import gherkin.formatter.Formatter;
-import gherkin.formatter.Reporter;
-import gherkin.formatter.model.Result;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class JUnitReporterTest {
 
@@ -67,7 +66,7 @@ public class JUnitReporterTest {
         jUnitReporter.stepNotifier = stepNotifier;
         EachTestNotifier executionUnitNotifier = mock(EachTestNotifier.class);
         jUnitReporter.executionUnitNotifier = executionUnitNotifier;
-        
+
         jUnitReporter.result(Result.UNDEFINED);
 
         verify(stepNotifier, times(0)).fireTestStarted();
@@ -77,8 +76,7 @@ public class JUnitReporterTest {
         verify(stepNotifier, times(0)).fireTestIgnored();
     }
 
-    private void verifyAddFailureWithPendingException(EachTestNotifier stepNotifier)
-    {
+    private void verifyAddFailureWithPendingException(EachTestNotifier stepNotifier) {
         ArgumentCaptor<Throwable> captor = ArgumentCaptor.forClass(Throwable.class);
         verify(stepNotifier).addFailure(captor.capture());
         Throwable error = captor.getValue();
@@ -113,7 +111,7 @@ public class JUnitReporterTest {
         jUnitReporter.stepNotifier = stepNotifier;
         EachTestNotifier executionUnitNotifier = mock(EachTestNotifier.class);
         jUnitReporter.executionUnitNotifier = executionUnitNotifier;
-        
+
         jUnitReporter.result(result);
 
         verify(stepNotifier, times(0)).fireTestStarted();
@@ -155,26 +153,22 @@ public class JUnitReporterTest {
         verify(stepNotifier, times(0)).fireTestIgnored();
     }
 
-    private void createDefaultRunNotifier()
-    {
+    private void createDefaultRunNotifier() {
         createRunNotifier(mock(Description.class));
     }
 
-    private void createRunNotifier(Description description)
-    {
+    private void createRunNotifier(Description description) {
         runNotifier = mock(RunNotifier.class);
         ExecutionUnitRunner executionUnitRunner = mock(ExecutionUnitRunner.class);
         when(executionUnitRunner.getDescription()).thenReturn(description);
         jUnitReporter.startExecutionUnit(executionUnitRunner, runNotifier);
     }
 
-    private void createStrictReporter()
-    {
+    private void createStrictReporter() {
         createReporter(true);
     }
 
-    private void createNonStrictReporter()
-    {
+    private void createNonStrictReporter() {
         createReporter(false);
     }
 

@@ -30,7 +30,7 @@ public class OpenEJBObjectFactory implements ObjectFactory {
     private EJBContainer container;
 
     @Override
-    public void createInstances() {
+    public void start() {
         final StringBuilder callers = new StringBuilder();
         for (Iterator<String> it = classes.iterator(); it.hasNext(); ) {
             callers.append(it.next());
@@ -45,7 +45,7 @@ public class OpenEJBObjectFactory implements ObjectFactory {
     }
 
     @Override
-    public void disposeInstances() {
+    public void stop() {
         container.close();
         instances.clear();
     }

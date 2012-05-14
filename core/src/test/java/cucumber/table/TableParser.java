@@ -19,52 +19,52 @@ public class TableParser {
         final List<DataTableRow> rows = new ArrayList<DataTableRow>();
         Lexer l = new EN(new Listener() {
             @Override
-            public void comment(String comment, int line) {
+            public void comment(String comment, Integer line) {
                 throw new UnsupportedOperationException();
             }
 
             @Override
-            public void tag(String tag, int line) {
+            public void tag(String tag, Integer line) {
                 throw new UnsupportedOperationException();
             }
 
             @Override
-            public void feature(String keyword, String name, String description, int line) {
+            public void feature(String keyword, String name, String description, Integer line) {
                 throw new UnsupportedOperationException();
             }
 
             @Override
-            public void background(String keyword, String name, String description, int line) {
+            public void background(String keyword, String name, String description, Integer line) {
                 throw new UnsupportedOperationException();
             }
 
             @Override
-            public void scenario(String keyword, String name, String description, int line) {
+            public void scenario(String keyword, String name, String description, Integer line) {
                 throw new UnsupportedOperationException();
             }
 
             @Override
-            public void scenarioOutline(String keyword, String name, String description, int line) {
+            public void scenarioOutline(String keyword, String name, String description, Integer line) {
                 throw new UnsupportedOperationException();
             }
 
             @Override
-            public void examples(String keyword, String name, String description, int line) {
+            public void examples(String keyword, String name, String description, Integer line) {
                 throw new UnsupportedOperationException();
             }
 
             @Override
-            public void step(String keyword, String name, int line) {
+            public void step(String keyword, String name, Integer line) {
                 throw new UnsupportedOperationException();
             }
 
             @Override
-            public void row(List<String> cells, int line) {
+            public void row(List<String> cells, Integer line) {
                 rows.add(new DataTableRow(NO_COMMENTS, cells, line));
             }
 
             @Override
-            public void docString(String contentType, String string, int line) {
+            public void docString(String contentType, String string, Integer line) {
                 throw new UnsupportedOperationException();
             }
 

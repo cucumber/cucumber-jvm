@@ -1,7 +1,6 @@
 package cucumber.table;
 
 import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.converters.reflection.AbstractReflectionConverter;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.converters.LocalizedXStreams;
 import cucumber.runtime.converters.SingleValueConverterWrapperExt;

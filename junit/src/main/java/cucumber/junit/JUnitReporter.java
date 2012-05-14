@@ -1,13 +1,5 @@
 package cucumber.junit;
 
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.junit.internal.runners.model.EachTestNotifier;
-import org.junit.runner.Description;
-import org.junit.runner.notification.RunNotifier;
-
 import cucumber.runtime.PendingException;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
@@ -18,6 +10,13 @@ import gherkin.formatter.model.Result;
 import gherkin.formatter.model.Scenario;
 import gherkin.formatter.model.ScenarioOutline;
 import gherkin.formatter.model.Step;
+import org.junit.internal.runners.model.EachTestNotifier;
+import org.junit.runner.Description;
+import org.junit.runner.notification.RunNotifier;
+
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 class JUnitReporter implements Reporter, Formatter {
     private final List<Step> steps = new ArrayList<Step>();
@@ -30,6 +29,7 @@ class JUnitReporter implements Reporter, Formatter {
     private ExecutionUnitRunner executionUnitRunner;
     private RunNotifier runNotifier;
     EachTestNotifier executionUnitNotifier;
+    private boolean ignoredStep;
 
     public JUnitReporter(Reporter reporter, Formatter formatter, boolean strict) {
         this.reporter = reporter;
@@ -41,14 +41,18 @@ class JUnitReporter implements Reporter, Formatter {
         this.executionUnitRunner = executionUnitRunner;
         this.runNotifier = runNotifier;
         this.stepNotifier = null;
+        this.ignoredStep = false;
 
         executionUnitNotifier = new EachTestNotifier(runNotifier, executionUnitRunner.getDescription());
         executionUnitNotifier.fireTestStarted();
     }
 
-
     public void finishExecutionUnit() {
-        executionUnitNotifier.fireTestFinished();
+        if (ignoredStep) {
+            executionUnitNotifier.fireTestIgnored();
+        } else {
+            executionUnitNotifier.fireTestFinished();
+        }
     }
 
     public void match(Match match) {
@@ -74,18 +78,15 @@ class JUnitReporter implements Reporter, Formatter {
         } else if (isPendingOrUndefined(result)) {
             addFailureOrIgnoreStep(result);
         } else {
-            if (stepNotifier != null)
-            {
+            if (stepNotifier != null) {
                 //Should only fireTestStarted if not ignored
                 stepNotifier.fireTestStarted();
-                if (error != null)
-                {
+                if (error != null) {
                     stepNotifier.addFailure(error);
                 }
                 stepNotifier.fireTestFinished();
             }
-            if (error != null)
-            {
+            if (error != null) {
                 executionUnitNotifier.addFailure(error);
             }
         }
@@ -98,27 +99,24 @@ class JUnitReporter implements Reporter, Formatter {
         reporter.result(result);
     }
 
-    private boolean isPendingOrUndefined(Result result)
-    {
+    private boolean isPendingOrUndefined(Result result) {
         Throwable error = result.getError();
         return Result.UNDEFINED == result || error instanceof PendingException;
     }
 
-    private void addFailureOrIgnoreStep(Result result)
-    {
+    private void addFailureOrIgnoreStep(Result result) {
         if (strict) {
             addFailure(result);
         } else {
+            ignoredStep = true;
             stepNotifier.fireTestIgnored();
         }
     }
 
-    private void addFailure(Result result)
-    {
+    private void addFailure(Result result) {
 
         Throwable error = result.getError();
-        if (error == null)
-        {
+        if (error == null) {
             error = new PendingException();
         }
         stepNotifier.addFailure(error);
@@ -167,7 +165,7 @@ class JUnitReporter implements Reporter, Formatter {
     }
 
     @Override
-    public void syntaxError(String state, String event, List<String> legalEvents, String uri, int line) {
+    public void syntaxError(String state, String event, List<String> legalEvents, String uri, Integer line) {
         formatter.syntaxError(state, event, legalEvents, uri, line);
     }
 

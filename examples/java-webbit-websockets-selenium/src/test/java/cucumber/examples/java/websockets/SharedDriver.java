@@ -15,10 +15,10 @@ import java.io.ByteArrayInputStream;
  * Example of a WebDriver implementation that has an underlying instance that is used for all scenarios and closed
  * when the JVM exits. This saves time. To prevent browser state from leaking between scenarios, cookies are deleted before
  * every scenario.
- *
+ * <p/>
  * As a bonus, screenshots are embedded into the report for each scenario. (This only works
  * if you're also using the HTML formatter).
- *
+ * <p/>
  * This class can be shared across step definitions via dependency injection.
  */
 public class SharedDriver extends EventFiringWebDriver {

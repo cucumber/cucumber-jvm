@@ -12,7 +12,7 @@ public class PicoFactory implements ObjectFactory {
     private MutablePicoContainer pico;
     private final Set<Class<?>> classes = new HashSet<Class<?>>();
 
-    public void createInstances() {
+    public void start() {
         pico = new PicoBuilder().withCaching().build();
         for (Class<?> clazz : classes) {
             pico.addComponent(clazz);
@@ -20,7 +20,7 @@ public class PicoFactory implements ObjectFactory {
         pico.start();
     }
 
-    public void disposeInstances() {
+    public void stop() {
         pico.stop();
         pico.dispose();
     }

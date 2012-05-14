@@ -1,6 +1,6 @@
 package cucumber.cli;
 
-import cucumber.io.FileResourceLoader;
+import cucumber.io.MultiLoader;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeOptions;
 
@@ -13,9 +13,9 @@ public class Main {
     }
 
     public static void run(String[] argv, ClassLoader classLoader) throws IOException {
-        RuntimeOptions runtimeOptions = new RuntimeOptions(argv);
+        RuntimeOptions runtimeOptions = new RuntimeOptions(System.getProperties(), argv);
 
-        Runtime runtime = new Runtime(new FileResourceLoader(), classLoader, runtimeOptions);
+        Runtime runtime = new Runtime(new MultiLoader(classLoader), classLoader, runtimeOptions);
         runtime.writeStepdefsJson();
         runtime.run();
         System.exit(runtime.exitStatus());

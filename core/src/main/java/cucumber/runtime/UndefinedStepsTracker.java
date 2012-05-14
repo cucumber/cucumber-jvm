@@ -73,8 +73,7 @@ public class UndefinedStepsTracker {
         }
     }
 
-    public boolean hasUndefinedSteps()
-    {
+    public boolean hasUndefinedSteps() {
         return !undefinedSteps.isEmpty();
     }
 }

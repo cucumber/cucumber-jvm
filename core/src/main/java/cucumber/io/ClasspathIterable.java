@@ -11,8 +11,6 @@ import java.net.URLDecoder;
 import java.util.Enumeration;
 import java.util.Iterator;
 
-import static cucumber.runtime.Utils.packagePath;
-
 class ClasspathIterable implements Iterable<Resource> {
     private final ClassLoader cl;
     private final String path;

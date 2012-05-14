@@ -23,8 +23,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import static cucumber.runtime.Utils.packagePath;
-import static cucumber.runtime.Utils.toPackage;
+import static cucumber.io.MultiLoader.packageName;
 
 
 public class GroovyBackend implements Backend {
@@ -57,12 +56,12 @@ public class GroovyBackend implements Backend {
 
         for (String gluePath : gluePaths) {
             // Load sources
-            for (Resource resource : resourceLoader.resources(packagePath(gluePath), ".groovy")) {
+            for (Resource resource : resourceLoader.resources(gluePath, ".groovy")) {
                 Script script = parse(resource);
                 runIfScript(context, script);
             }
             // Load compiled scripts
-            for (Class<? extends Script> glueClass : classpathResourceLoader.getDescendants(Script.class, toPackage(gluePath))) {
+            for (Class<? extends Script> glueClass : classpathResourceLoader.getDescendants(Script.class, packageName(gluePath))) {
                 try {
                     Script script = glueClass.getConstructor(Binding.class).newInstance(context);
                     runIfScript(context, script);

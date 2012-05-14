@@ -12,18 +12,7 @@ import org.junit.Ignore;
 import java.io.File;
 import java.util.List;
 
-@Ignore
-public class TestFormatter implements Formatter {
-    public Appendable appendable;
-    public File dir;
-
-    public TestFormatter(Appendable appendable) {
-        this.appendable = appendable;
-    }
-
-    public TestFormatter(File dir) {
-        this.dir = dir;
-    }
+public class StubFormatter implements Formatter {
 
     @Override
     public void uri(String uri) {
@@ -66,7 +55,7 @@ public class TestFormatter implements Formatter {
     }
 
     @Override
-    public void syntaxError(String state, String event, List<String> legalEvents, String uri, int line) {
+    public void syntaxError(String state, String event, List<String> legalEvents, String uri, Integer line) {
         throw new UnsupportedOperationException();
     }
 

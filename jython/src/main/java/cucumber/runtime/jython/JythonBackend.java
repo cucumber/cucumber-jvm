@@ -17,8 +17,6 @@ import org.python.util.PythonInterpreter;
 import java.io.IOException;
 import java.util.List;
 
-import static cucumber.runtime.Utils.packagePath;
-
 public class JythonBackend implements Backend {
     private static final String DSL = "/cucumber/runtime/jython/dsl.py";
     private final SnippetGenerator snippetGenerator = new SnippetGenerator(new JythonSnippet());
@@ -43,7 +41,7 @@ public class JythonBackend implements Backend {
         this.glue = glue;
 
         for (String gluePath : gluePaths) {
-            for (Resource resource : resourceLoader.resources(packagePath(gluePath), ".py")) {
+            for (Resource resource : resourceLoader.resources(gluePath, ".py")) {
                 execFile(resource);
             }
         }

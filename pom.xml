@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>info.cukes</groupId>
     <artifactId>cucumber-jvm</artifactId>
-    <version>1.0.5-SNAPSHOT</version>
+    <version>1.0.8-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Cucumber-JVM</name>
     <url>http://cukes.info/</url>
@@ -16,7 +16,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <outputDirectory>${project.build.directory}</outputDirectory>
-        <gherkin.version>2.9.3</gherkin.version>
+        <gherkin.version>2.10.0</gherkin.version>
         <groovy.version>2.0.0-beta-2</groovy.version>
     </properties>
     <licenses>
@@ -200,6 +200,12 @@
                 <artifactId>openejb-core</artifactId>
                 <version>4.0.0-beta-2</version>
             </dependency>
+
+            <dependency>
+                <groupId>net.sourceforge.cobertura</groupId>
+                <artifactId>cobertura</artifactId>
+                <version>1.9.4.1</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -231,10 +237,11 @@
 
     <modules>
         <module>core</module>
+        <module>picocontainer</module>
+        <module>clojure</module>
         <module>junit</module>
         <module>jruby</module>
         <module>jython</module>
-        <module>picocontainer</module>
         <module>spring</module>
         <module>guice</module>
         <module>weld</module>
@@ -242,7 +249,6 @@
         <module>ioke</module>
         <module>rhino</module>
         <module>java</module>
-        <module>clojure</module>
         <module>openejb</module>
         <module>scala</module>
     </modules>
@@ -354,6 +360,7 @@
                     <target>1.6</target>
                 </configuration>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
@@ -368,13 +375,28 @@
                 </executions>
             </plugin>
 
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.12</version>
                 <configuration>
                     <argLine>-Duser.language=en</argLine>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>2.4.1</version>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>.</directory>
+                            <includes>
+                                <include>**/*.ser</include>
+                            </includes>
+                        </fileset>
+                    </filesets>
                 </configuration>
             </plugin>
 

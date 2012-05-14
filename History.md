@@ -1,3 +1,18 @@
+## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.0.7...master)
+
+* [Core] Options (Command line or `@Cucumber.Options`) can be overriden with the `cucumber.options` system property. (Aslak Hellesøy)
+
+## [1.0.7](https://github.com/cucumber/cucumber-jvm/compare/v1.0.6...v1.0.7)
+
+* [Java] cucumber-java lazily creates instances, just like the other DI containers. (Aslak Hellesøy)
+* [Core] Throw an exception if a glue or feature path doesn't exist (i.e. neither file nor directory) (Aslak Hellesøy)
+
+## [1.0.6](https://github.com/cucumber/cucumber-jvm/compare/v1.0.4...v1.0.6)
+
+* [JUnit] Scenarios with skipped, pending or undefined steps show up as yellow in IDEA and Eclipse (They used to be green while the steps were yellow). (Aslak Hellesøy)
+* [Core] Loading features and glue code from the `CLASSPATH` can be done with `classpath:my/path` ([#312](https://github.com/cucumber/cucumber-jvm/issues/312) Aslak Hellesøy)
+* [Clojure] Clojure example can't find cuke_steps.clj ([#291](https://github.com/cucumber/cucumber-jvm/issues/291), [#309](https://github.com/cucumber/cucumber-jvm/pull/309) Nils Wloka)
+
 ## [1.0.4](https://github.com/cucumber/cucumber-jvm/compare/v1.0.3...v1.0.4)
 
 * [Core] Ability to specify line numbers: `@Cucumber.Options(features = "my/nice.feature:2:10")` ([#234](https://github.com/cucumber/cucumber-jvm/issues/234) Aslak Hellesøy)

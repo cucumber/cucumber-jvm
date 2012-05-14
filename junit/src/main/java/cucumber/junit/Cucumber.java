@@ -1,6 +1,6 @@
 package cucumber.junit;
 
-import cucumber.io.ClasspathResourceLoader;
+import cucumber.io.MultiLoader;
 import cucumber.io.ResourceLoader;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Runtime;
@@ -49,11 +49,12 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
     public Cucumber(Class clazz) throws InitializationError, IOException {
         super(clazz);
         ClassLoader classLoader = clazz.getClassLoader();
-        ResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
         assertNoCucumberAnnotatedMethods(clazz);
 
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(clazz);
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
+
+        ResourceLoader resourceLoader = new MultiLoader(classLoader);
         runtime = new Runtime(resourceLoader, classLoader, runtimeOptions);
 
         jUnitReporter = new JUnitReporter(runtimeOptions.reporter(classLoader), runtimeOptions.formatter(classLoader), runtimeOptions.strict);
@@ -119,9 +120,7 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         boolean dryRun() default false;
 
         /**
-         * Scenarios fail if
-         *
-         * @return
+         * @return true if strict mode is enabled (fail if there are undefined or pending steps)
          */
         boolean strict() default false;
 

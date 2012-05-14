@@ -46,13 +46,13 @@ in your [POM](http://maven.apache.org/pom.html):
 <dependency>
     <groupId>info.cukes</groupId>
     <artifactId>cucumber-java</artifactId>
-    <version>1.0.4</version>
+    <version>1.0.7</version>
     <scope>test</scope>
 </dependency>
 <dependency>
     <groupId>info.cukes</groupId>
     <artifactId>cucumber-junit</artifactId>
-    <version>1.0.4</version>
+    <version>1.0.7</version>
     <scope>test</scope>
 </dependency>
 <dependency>
@@ -70,7 +70,7 @@ There are more jars available - add the ones you need. (TODO: A guide on how to 
 Add a [dependency](http://ant.apache.org/ivy/history/latest-milestone/ivyfile/dependency.html) in your [ivy.xml](http://ant.apache.org/ivy/history/latest-milestone/ivyfile.html):
 
 ```xml
-    <dependency org="info.cukes" name="cucumber-core" rev="1.0.4"/>
+    <dependency org="info.cukes" name="cucumber-core" rev="1.0.7"/>
 ```
 
 Since the artifacts are released to Maven Central, the default Ivy configuration should pull them down automatically.
@@ -90,7 +90,7 @@ There isn't any online documentation yet. Check out the examples, read the code 
 
 ### API Docs
 
-* http://cukes.info/cucumber/jvm/api/1.0.4
+* http://cukes.info/cucumber/jvm/api/1.0.7
 
 ## Examples
 
@@ -226,14 +226,27 @@ Replace version numbers in:
 * README.md
 * History.md
 
-git commit -m "Release X.Y.Z", then release everything:
+Run `git commit -m "Release X.Y.Z"`
+
+Now release everything:
 
 ```
 mvn release:clean
-mvn --batch-mode -P release-sign-artifacts release:prepare -DautoVersionSubmodules=true -DdevelopmentVersion=1.0.3-SNAPSHOT
+mvn --batch-mode -P release-sign-artifacts release:prepare -DautoVersionSubmodules=true -DdevelopmentVersion=1.0.8-SNAPSHOT
 mvn -P release-sign-artifacts release:perform
 ```
 
+## Code Coverage
+
+Code coverage is collected mainly to identify code that can be deleted or needs to be tested better.
+To generate a report, run:
+
+```
+COBERTURA_HOME=/some/where ./cobertura.sh
+```
+
+This technique to collect coverage for a multi-module Maven project is based on a
+[blog post](http://thomassundberg.wordpress.com/2012/02/18/test-coverage-in-a-multi-module-maven-project/) by Thomas Sundberg.
 
 ## Migration from Cuke4Duke
 
