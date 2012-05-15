@@ -11,12 +11,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.TimeZone;
 
 import static java.util.Arrays.asList;
 
 public abstract class TimeConverter<T> extends ConverterWithFormat<T> {
-    private static final TimeZone UTC = TimeZone.getTimeZone("UTC");
     protected final Locale locale;
     private final List<DateFormat> formats = new ArrayList<DateFormat>();
     private SimpleDateFormat onlyFormat;
@@ -38,7 +36,6 @@ public abstract class TimeConverter<T> extends ConverterWithFormat<T> {
 
     protected void add(DateFormat dateFormat) {
         dateFormat.setLenient(false);
-        dateFormat.setTimeZone(UTC);
         formats.add(dateFormat);
     }
 
@@ -49,7 +46,6 @@ public abstract class TimeConverter<T> extends ConverterWithFormat<T> {
     public void setOnlyFormat(String dateFormatString, Locale locale) {
         onlyFormat = new SimpleDateFormat(dateFormatString, locale);
         onlyFormat.setLenient(false);
-        onlyFormat.setTimeZone(UTC);
     }
 
     public void removeOnlyFormat() {
