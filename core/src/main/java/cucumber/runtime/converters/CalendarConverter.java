@@ -4,7 +4,6 @@ import java.text.Format;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
-import java.util.TimeZone;
 
 public class CalendarConverter extends TimeConverter<Calendar> {
     public CalendarConverter(Locale locale) {
@@ -14,7 +13,7 @@ public class CalendarConverter extends TimeConverter<Calendar> {
     @Override
     protected Object transform(Format format, String argument) {
         Date date = (Date) super.transform(format, argument);
-        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"), locale);
+        Calendar cal = Calendar.getInstance(locale);
         cal.setTime(date);
         return cal;
     }
