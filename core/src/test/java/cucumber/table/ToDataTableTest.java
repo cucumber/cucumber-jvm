@@ -43,6 +43,17 @@ public class ToDataTableTest {
     }
 
     @Test
+    public void converts_list_of_beans_with_null_to_table() {
+        List<UserPojo> users = tc.toList(UserPojo.class, personTableWithNull());
+        DataTable table = tc.toTable(users);
+        assertEquals("" +
+                "      | credits | name        | birthDate  |\n" +
+                "      | 1,000   | Sid Vicious |            |\n" +
+                "      | 3,000   | Frank Zappa | 21/12/1940 |\n" +
+                "", table.toString());
+    }
+
+    @Test
     public void gives_a_nice_error_message_when_field_is_missing() {
         try {
             tc.toList(UserPojo.class, TableParser.parse("" +
@@ -98,6 +109,14 @@ public class ToDataTableTest {
         return TableParser.parse("" +
                 "| name        | birthDate  | credits  |\n" +
                 "| Sid Vicious | 10/05/1957 | 1,000    |\n" +
+                "| Frank Zappa | 21/12/1940 | 3,000    |\n" +
+                "");
+    }
+
+    private DataTable personTableWithNull() {
+        return TableParser.parse("" +
+                "| name        | birthDate  | credits  |\n" +
+                "| Sid Vicious |            | 1,000    |\n" +
                 "| Frank Zappa | 21/12/1940 | 3,000    |\n" +
                 "");
     }
