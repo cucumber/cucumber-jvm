@@ -53,7 +53,7 @@ public class StandardConvertersTest {
     }
 
     private Date getDateToTest() {
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance(Locale.US);
         calendar.set(2011, 10, 29, 0, 0, 0);
         calendar.set(Calendar.MILLISECOND, 0);
         return calendar.getTime();
