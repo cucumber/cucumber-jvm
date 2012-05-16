@@ -97,87 +97,50 @@
     "steps": []
   },
   {
-    "source": "^the date is (.+)$",
+    "source": "^the ISO date is (.+)$",
     "flags": "",
     "steps": [
       {
-        "name": "the date is 2011/10/25",
-        "args": [
-          {
-            "offset": 12,
-            "val": "2011/10/25"
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "source": "^the date should be (.+)$",
-    "flags": "",
-    "steps": [
-      {
-        "name": "the date should be Mar 1 2012",
-        "args": [
-          {
-            "offset": 19,
-            "val": "Mar 1 2012"
-          }
-        ]
-      },
-      {
-        "name": "the date should be Mar 1 2013",
-        "args": [
-          {
-            "offset": 19,
-            "val": "Mar 1 2013"
-          }
-        ]
-      },
-      {
-        "name": "the date should be Oct 25 2011",
-        "args": [
-          {
-            "offset": 19,
-            "val": "Oct 25 2011"
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "source": "^the iso calendar is (\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2})$",
-    "flags": "",
-    "steps": [
-      {
-        "name": "the iso calendar is 2012-03-01T06:54:14",
-        "args": [
-          {
-            "offset": 20,
-            "val": "2012-03-01T06:54:14"
-          }
-        ]
-      },
-      {
-        "name": "the iso calendar is 2013-03-01T06:54:14",
-        "args": [
-          {
-            "offset": 20,
-            "val": "2013-03-01T06:54:14"
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "source": "^the iso date is (.+)$",
-    "flags": "",
-    "steps": [
-      {
-        "name": "the iso date is 2012-03-01T06:54:14",
+        "name": "the ISO date is \u003cinput date\u003e",
         "args": [
           {
             "offset": 16,
-            "val": "2012-03-01T06:54:14"
+            "val": "\u003cinput date\u003e"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "source": "^the ISO date with timezone is (.+$)",
+    "flags": "",
+    "steps": [
+      {
+        "name": "the ISO date with timezone is \u003cinput date\u003e",
+        "args": [
+          {
+            "offset": 30,
+            "val": "\u003cinput date\u003e"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "source": "^the date should be viewed in (.+) as (\\d+), (\\d+), (\\d+), (\\d+), (\\d+), (\\d+)$",
+    "flags": "",
+    "steps": []
+  },
+  {
+    "source": "^the simple date is (.+)$",
+    "flags": "",
+    "steps": [
+      {
+        "name": "the simple date is \u003cinput date\u003e",
+        "args": [
+          {
+            "offset": 19,
+            "val": "\u003cinput date\u003e"
           }
         ]
       }
