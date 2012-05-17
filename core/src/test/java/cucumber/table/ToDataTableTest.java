@@ -84,7 +84,6 @@ public class ToDataTableTest {
     }
 
     @Test
-    @Ignore
     public void converts_list_of_beans_to_table_with_explicit_columns() {
         List<UserPojo> users = tc.toList(UserPojo.class, personTable());
         DataTable table = tc.toTable(users, "name", "birthDate", "credits");
