@@ -113,7 +113,7 @@ public class GroovyBackend implements Backend {
     }
 
     public void addStepDefinition(Pattern regexp, Closure body) {
-        glue.addStepDefinition(new GroovyStepDefinition(regexp, body, stepDefLocation(), instance));
+        glue.addStepDefinition(new GroovyStepDefinition(regexp, body, currentLocation(), instance));
     }
 
     public void registerWorld(Closure closure) {
@@ -121,11 +121,11 @@ public class GroovyBackend implements Backend {
     }
 
     void addBeforeHook(TagExpression tagExpression, Closure body) {
-        glue.addBeforeHook(new GroovyHookDefinition(body, tagExpression, instance));
+        glue.addBeforeHook(new GroovyHookDefinition(body, tagExpression, currentLocation(), instance));
     }
 
     public void addAfterHook(TagExpression tagExpression, Closure body) {
-        glue.addAfterHook(new GroovyHookDefinition(body, tagExpression, instance));
+        glue.addAfterHook(new GroovyHookDefinition(body, tagExpression, currentLocation(), instance));
     }
 
     public void invoke(Closure body, Object[] args) {
@@ -140,7 +140,7 @@ public class GroovyBackend implements Backend {
         return groovyWorld;
     }
 
-    private static StackTraceElement stepDefLocation() {
+    private static StackTraceElement currentLocation() {
         Throwable t = new Throwable();
         StackTraceElement[] stackTraceElements = t.getStackTrace();
         for (StackTraceElement stackTraceElement : stackTraceElements) {

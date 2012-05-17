@@ -10,7 +10,6 @@ import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Background;
 import gherkin.formatter.model.Examples;
 import gherkin.formatter.model.Feature;
-import gherkin.formatter.model.HookResult;
 import gherkin.formatter.model.Match;
 import gherkin.formatter.model.Result;
 import gherkin.formatter.model.Scenario;
@@ -129,12 +128,12 @@ public class HTMLFormatter implements Formatter, Reporter {
     }
 
     @Override
-    public void before(HookResult result) {
+    public void before(Match match, Result result) {
         writeToJsReport("before", result);
     }
 
     @Override
-    public void after(HookResult result) {
+    public void after(Match match, Result result) {
         writeToJsReport("after", result);
     }
 

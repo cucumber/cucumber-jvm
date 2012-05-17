@@ -31,6 +31,12 @@ public class JavaHookDefinition implements HookDefinition {
     }
 
     @Override
+    public String getLocation(boolean detail) {
+        MethodFormat format = detail ? MethodFormat.FULL : MethodFormat.SHORT;
+        return format.format(method);
+    }
+
+    @Override
     public void execute(ScenarioResult scenarioResult) throws Throwable {
         // TODO: There is duplication with JavaStepDefinition
 

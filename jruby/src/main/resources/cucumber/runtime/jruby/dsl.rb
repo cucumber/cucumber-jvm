@@ -3,9 +3,26 @@ require 'java'
 module Cucumber
   module Runtime
     module JRuby
-      class StepDefinition
+      module Locatable
         PROC_PATTERN = /[\d\w]+@(.+):(\d+).*>/
         PWD = Dir.pwd
+
+        # Lifted from proc.rb in Cucumber 1.0
+        def file_and_line
+          path, line = *@proc.inspect.match(PROC_PATTERN)[1..2]
+          path = File.expand_path(path)
+          pwd = File.expand_path(PWD)
+          if path.index(pwd)
+            path = path[pwd.length+1..-1]
+          elsif path =~ /.*\/gems\/(.*\.rb)$/
+            path = $1
+          end
+          [path, line.to_i]
+        end
+      end
+
+      class StepDefinition
+        include Locatable
 
         def initialize(regexp, proc)
           @regexp, @proc = regexp, proc
@@ -35,25 +52,14 @@ module Cucumber
           $world.instance_exec(*args, &@proc)
         end
 
-        # Lifted from proc.rb in Cucumber 1.0
-        def file_and_line
-          path, line = *@proc.inspect.match(PROC_PATTERN)[1..2]
-          path = File.expand_path(path)
-          pwd = File.expand_path(PWD)
-          if path.index(pwd)
-            path = path[pwd.length+1..-1]
-          elsif path =~ /.*\/gems\/(.*\.rb)$/
-            path = $1
-          end
-          [path, line.to_i]
-        end
-
         def pattern
           @regexp.inspect
         end
       end
 
       class HookDefinition
+        include Locatable
+
         def initialize(proc)
           @proc = proc
         end

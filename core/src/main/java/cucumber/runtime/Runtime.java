@@ -6,12 +6,12 @@ import cucumber.runtime.converters.LocalizedXStreams;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.snippets.SummaryPrinter;
 import gherkin.I18n;
+import gherkin.formatter.Argument;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Comment;
 import gherkin.formatter.model.DataTableRow;
 import gherkin.formatter.model.DocString;
-import gherkin.formatter.model.HookResult;
 import gherkin.formatter.model.Match;
 import gherkin.formatter.model.Result;
 import gherkin.formatter.model.Step;
@@ -182,18 +182,17 @@ public class Runtime implements UnreportedStepExecutor {
                 hook.execute(scenarioResult);
             } catch (Throwable t) {
                 skipNextStep = true;
-
                 long duration = System.nanoTime() - start;
 
-                //TODO: need to figure out a meaningful LOCATION
-                HookResult result = new HookResult(t.getMessage(), Result.FAILED, duration, t, DUMMY_ARG);
-                //I don't think we want to add scenario results to this
+                Result result = new Result(Result.FAILED, duration, t, DUMMY_ARG);
                 scenarioResult.add(result);
                 addError(t);
+
+                Match match = new Match(Collections.<Argument>emptyList(), hook.getLocation(false));
                 if (isBefore) {
-                    reporter.before(result);
+                    reporter.before(match, result);
                 } else {
-                    reporter.after(result);
+                    reporter.after(match, result);
                 }
             }
         }
