@@ -1,4 +1,4 @@
-## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.0.7...master)
+## [1.0.8](https://github.com/cucumber/cucumber-jvm/compare/v1.0.7...v1.0.8)
 
 * [Core] Ability to create `DataTable` objects from a List of objects while specifying what header columns (fields) to use (Aslak Hellesøy)
 * [Core] `table.diff(listOfPojos)` no longer spuriously fails because of pseudo-random column/field ordering (Aslak Hellesøy)
