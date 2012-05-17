@@ -16,7 +16,7 @@ public class TableDifferTest {
                 "| Joe   | joe@email.com   | 234 |\n" +
                 "| Bryan | bryan@email.org | 456 |\n" +
                 "| Ni    | ni@email.com    | 654 |\n";
-        return TableParser.parse(source);
+        return TableParser.parse(source, null);
     }
 
     private DataTable otherTableWithDeletedAndInserted() {
@@ -25,7 +25,7 @@ public class TableDifferTest {
                 "| Doe   | joe@email.com        | 234 |\n" +
                 "| Foo   | schnickens@email.net | 789 |\n" +
                 "| Bryan | bryan@email.org      | 456 |\n";
-        return TableParser.parse(source);
+        return TableParser.parse(source, null);
     }
 
     private DataTable otherTableWithInsertedAtEnd() {
@@ -36,7 +36,7 @@ public class TableDifferTest {
                 "| Ni    | ni@email.com         | 654 |\n" +
                 "| Doe   | joe@email.com        | 234 |\n" +
                 "| Foo   | schnickens@email.net | 789 |\n";
-        return TableParser.parse(source);
+        return TableParser.parse(source, null);
     }
 
     @Test(expected = TableDiffException.class)
@@ -103,7 +103,7 @@ public class TableDifferTest {
     @Test(expected = TableDiffException.class)
     public void should_not_fail_with_out_of_memory() {
         DataTable expected = TableParser.parse("" +
-                "| I'm going to work |\n");
+                "| I'm going to work |\n", null);
 
         List<List<String>> actual = new ArrayList<List<String>>();
 

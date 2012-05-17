@@ -1,7 +1,6 @@
 package cucumber.table;
 
 import cucumber.runtime.converters.LocalizedXStreams;
-import gherkin.I18n;
 import gherkin.formatter.PrettyFormatter;
 import gherkin.formatter.model.DataTableRow;
 import gherkin.formatter.model.Row;
@@ -9,6 +8,7 @@ import gherkin.formatter.model.Row;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class DataTable {
 
@@ -17,8 +17,20 @@ public class DataTable {
     private final TableConverter tableConverter;
 
     public static DataTable create(List<?> raw) {
-        TableConverter tableConverter = new TableConverter(new LocalizedXStreams(Thread.currentThread().getContextClassLoader()).get(new I18n("en")));
-        return tableConverter.toTable(raw);
+        return create(raw, Locale.getDefault(), null, new String[0]);
+    }
+
+    public static DataTable create(List<?> raw, String dateFormat, String... columnNames) {
+        return create(raw, Locale.getDefault(), dateFormat, columnNames);
+    }
+
+    public static DataTable create(List<?> raw, Locale locale, String... columnNames) {
+        return create(raw, locale, null, columnNames);
+    }
+
+    public static DataTable create(List<?> raw, Locale locale, String dateFormat, String... columnNames) {
+        TableConverter tableConverter = new TableConverter(new LocalizedXStreams(Thread.currentThread().getContextClassLoader()).get(locale), dateFormat);
+        return tableConverter.toTable(raw, columnNames);
     }
 
     public DataTable(List<DataTableRow> gherkinRows, TableConverter tableConverter) {
@@ -41,7 +53,7 @@ public class DataTable {
     }
 
     List<String> topCells() {
-        return gherkinRows.get(0).getCells();
+        return raw.get(0);
     }
 
     List<List<String>> cells(int firstRow) {
@@ -61,8 +73,15 @@ public class DataTable {
         return strings;
     }
 
-    public DataTable toTable(List<?> raw) {
-        return tableConverter.toTable(raw);
+    /**
+     * Creates another table using the same {@link Locale} and {@link cucumber.DateFormat} that was used to create this table.
+     *
+     * @param raw         a list of objects (Pojos)
+     * @param columnNames optional explicit header columns
+     * @return
+     */
+    public DataTable toTable(List<?> raw, String... columnNames) {
+        return tableConverter.toTable(raw, columnNames);
     }
 
     /**
@@ -73,7 +92,9 @@ public class DataTable {
      * @throws TableDiffException if the tables are different.
      */
     public void diff(List<?> other) throws TableDiffException {
-        diff(toTable(other));
+        List<String> topCells = topCells();
+        DataTable otherTable = toTable(other, topCells.toArray(new String[topCells.size()]));
+        diff(otherTable);
     }
 
     /**

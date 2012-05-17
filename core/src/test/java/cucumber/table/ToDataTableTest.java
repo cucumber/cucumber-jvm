@@ -1,13 +1,8 @@
 package cucumber.table;
 
-import com.thoughtworks.xstream.XStream;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.converters.LocalizedXStreams;
-import cucumber.runtime.converters.SingleValueConverterWrapperExt;
-import cucumber.runtime.converters.TimeConverter;
-import gherkin.I18n;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.lang.reflect.Type;
@@ -20,15 +15,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 public class ToDataTableTest {
+    private static final String DD_MM_YYYY = "dd/MM/yyyy";
     private TableConverter tc;
 
     @Before
     public void createTableConverterWithDateFormat() {
-        XStream xStream = new LocalizedXStreams(Thread.currentThread().getContextClassLoader()).get(new I18n("en"));
-        tc = new TableConverter(xStream);
-        SingleValueConverterWrapperExt converterWrapper = (SingleValueConverterWrapperExt) xStream.getConverterLookup().lookupConverterForType(Date.class);
-        TimeConverter timeConverter = (TimeConverter) converterWrapper.getConverter();
-        timeConverter.setOnlyFormat("dd/MM/yyyy", Locale.UK);
+        LocalizedXStreams.LocalizedXStream xStream = new LocalizedXStreams(Thread.currentThread().getContextClassLoader()).get(Locale.US);
+        tc = new TableConverter(xStream, DD_MM_YYYY);
     }
 
     @Test
@@ -60,7 +53,7 @@ public class ToDataTableTest {
                     "| name        | birthDate  | crapola  |\n" +
                     "| Sid Vicious | 10/05/1957 | 1,000    |\n" +
                     "| Frank Zappa | 21/12/1940 | 3,000    |\n" +
-                    "")
+                    "", DD_MM_YYYY)
             );
             fail();
         } catch (CucumberException e) {
@@ -75,7 +68,7 @@ public class ToDataTableTest {
                     "| credits     |\n" +
                     "| 5           |\n" +
                     "|             |\n" +
-                    "")
+                    "", DD_MM_YYYY)
             );
             fail();
         } catch (CucumberException e) {
@@ -94,11 +87,7 @@ public class ToDataTableTest {
                 "", table.toString());
     }
 
-    /**
-     * TODO: To make this pass we have to make sure the columns are the same.
-     */
     @Test
-    @Ignore
     public void diffs_round_trip() {
         List<UserPojo> users = tc.toList(UserPojo.class, personTable());
         personTable().diff(users);
@@ -109,7 +98,7 @@ public class ToDataTableTest {
                 "| name        | birthDate  | credits  |\n" +
                 "| Sid Vicious | 10/05/1957 | 1,000    |\n" +
                 "| Frank Zappa | 21/12/1940 | 3,000    |\n" +
-                "");
+                "", DD_MM_YYYY);
     }
 
     private DataTable personTableWithNull() {
@@ -117,7 +106,7 @@ public class ToDataTableTest {
                 "| name        | birthDate  | credits  |\n" +
                 "| Sid Vicious |            | 1,000    |\n" +
                 "| Frank Zappa | 21/12/1940 | 3,000    |\n" +
-                "");
+                "", DD_MM_YYYY);
     }
 
     @Test

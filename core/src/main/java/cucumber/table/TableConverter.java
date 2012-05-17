@@ -1,12 +1,12 @@
 package cucumber.table;
 
-import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.ConversionException;
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.SingleValueConverter;
 import com.thoughtworks.xstream.converters.reflection.AbstractReflectionConverter;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import cucumber.runtime.CucumberException;
+import cucumber.runtime.converters.LocalizedXStreams;
 import cucumber.table.xstream.DataTableWriter;
 import cucumber.table.xstream.ListOfListOfSingleValueReader;
 import cucumber.table.xstream.ListOfListOfSingleValueWriter;
@@ -25,10 +25,12 @@ import java.util.Map;
 import static gherkin.util.FixJava.map;
 
 public class TableConverter {
-    private final XStream xStream;
+    private final LocalizedXStreams.LocalizedXStream xStream;
+    private final String dateFormat;
 
-    public TableConverter(XStream xStream) {
+    public TableConverter(LocalizedXStreams.LocalizedXStream xStream, String dateFormat) {
         this.xStream = xStream;
+        this.dateFormat = dateFormat;
     }
 
     /**
@@ -47,11 +49,14 @@ public class TableConverter {
             reader = new ListOfObjectReader(itemType, convertedAttributeNames(dataTable), dataTable.cells(1));
         }
         try {
+            xStream.setDateFormat(dateFormat);
             return (List) xStream.unmarshal(reader);
         } catch (AbstractReflectionConverter.UnknownFieldException e) {
             throw new CucumberException(e.getShortMessage());
         } catch (ConversionException e) {
             throw new CucumberException(String.format("Can't assign null value to one of the primitive fields in %s. Please use boxed types.", e.get("class")));
+        } finally {
+            xStream.unsetDateFormat();
         }
     }
 
@@ -74,8 +79,13 @@ public class TableConverter {
             }
             writer = new ListOfObjectWriter(this, columnNames);
         }
-        xStream.marshal(objects, writer);
-        return writer.getDataTable();
+        try {
+            xStream.setDateFormat(dateFormat);
+            xStream.marshal(objects, writer);
+            return writer.getDataTable();
+        } finally {
+            xStream.unsetDateFormat();
+        }
     }
 
     private String[] fieldNames(Class clazz) {
