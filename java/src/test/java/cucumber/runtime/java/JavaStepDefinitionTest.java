@@ -31,7 +31,6 @@ import static org.mockito.Mockito.verify;
 
 public class JavaStepDefinitionTest {
     private static final List<Comment> NO_COMMENTS = Collections.emptyList();
-    private static final List<String> NO_PATHS = Collections.emptyList();
     private static final Method THREE_DISABLED_MICE;
     private static final Method THREE_BLIND_ANIMALS;
     private static final I18n ENGLISH = new I18n("en");

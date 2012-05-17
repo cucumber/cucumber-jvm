@@ -14,8 +14,8 @@ public class ClojureSnippet implements Snippet {
     @Override
     public String template() {
         return "({0} #\"{1}\" [{3}]\n" +
-               "  (comment  {4}  )\n" +
-               "  (throw (cucumber.runtime.PendingException.)))\n";
+                "  (comment  {4}  )\n" +
+                "  (throw (cucumber.runtime.PendingException.)))\n";
     }
 
     @Override

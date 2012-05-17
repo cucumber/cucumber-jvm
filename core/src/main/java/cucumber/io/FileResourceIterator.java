@@ -9,7 +9,7 @@ import static cucumber.runtime.Utils.emptyIterator;
 import static java.util.Arrays.asList;
 
 public class FileResourceIterator implements Iterator<Resource> {
-    private final FlatteningIterator flatteningIterator;
+    private final FlatteningIterator flatteningIterator = new FlatteningIterator();
 
     public FileResourceIterator(File root, File file, final String suffix) {
         FileFilter filter = new FileFilter() {
@@ -18,7 +18,7 @@ public class FileResourceIterator implements Iterator<Resource> {
                 return file.isDirectory() || hasSuffix(suffix, file.getPath());
             }
         };
-        this.flatteningIterator = new FlatteningIterator(new FileIterator(root, file, filter));
+        flatteningIterator.push(new FileIterator(root, file, filter));
     }
 
     @Override

@@ -1,4 +1,4 @@
-package cucumber.runtime.java.test;
+package cucumber.runtime.java.stepdefs;
 
 import cucumber.annotation.en.Given;
 

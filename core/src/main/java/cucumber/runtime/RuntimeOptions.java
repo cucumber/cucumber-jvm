@@ -27,7 +27,8 @@ public class RuntimeOptions {
     public List<String> glue = new ArrayList<String>();
     public File dotCucumber;
     public boolean dryRun;
-    public List<String> tags = new ArrayList<String>();
+    public boolean strict = false;
+    public List<Object> filters = new ArrayList<Object>();
     public List<Formatter> formatters = new ArrayList<Formatter>();
     public List<String> featurePaths = new ArrayList<String>();
     private boolean monochrome = false;
@@ -39,7 +40,7 @@ public class RuntimeOptions {
             formatters.add(new ProgressFormatter(System.out));
         }
         for (Formatter formatter : formatters) {
-            if(formatter instanceof ColorAware) {
+            if (formatter instanceof ColorAware) {
                 ColorAware colorAware = (ColorAware) formatter;
                 colorAware.setMonochrome(monochrome);
             }
@@ -62,24 +63,27 @@ public class RuntimeOptions {
                 String gluePath = args.remove(0);
                 glue.add(gluePath);
             } else if (arg.equals("--tags") || arg.equals("-t")) {
-                tags.add(args.remove(0));
+                filters.add(args.remove(0));
             } else if (arg.equals("--format") || arg.equals("-f")) {
                 formatters.add(formatterConverter.convert(args.remove(0)));
             } else if (arg.equals("--dotcucumber")) {
                 dotCucumber = new File(args.remove(0));
             } else if (arg.equals("--dry-run") || arg.equals("-d")) {
                 dryRun = true;
+            } else if (arg.equals("--strict") || arg.equals("-s")) {
+                strict = true;
             } else if (arg.equals("--monochrome") || arg.equals("-m")) {
                 monochrome = true;
             } else {
-                // TODO: Use PathWithLines and add line filter if any
-                featurePaths.add(arg);
+                PathWithLines pathWithLines = new PathWithLines(arg);
+                featurePaths.add(pathWithLines.path);
+                filters.addAll(pathWithLines.lines);
             }
         }
     }
 
     public List<CucumberFeature> cucumberFeatures(ResourceLoader resourceLoader) {
-        return load(resourceLoader, featurePaths, filters());
+        return load(resourceLoader, featurePaths, filters);
     }
 
     public Formatter formatter(ClassLoader classLoader) {
@@ -106,12 +110,5 @@ public class RuntimeOptions {
                 return null;
             }
         });
-    }
-
-    private List<Object> filters() {
-        List<Object> filters = new ArrayList<Object>();
-        filters.addAll(tags);
-        // TODO: Add lines and patterns (names)
-        return filters;
     }
 }

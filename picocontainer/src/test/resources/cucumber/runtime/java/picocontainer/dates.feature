@@ -1,4 +1,5 @@
 Feature: Dates
+
   Scenario: A pretty date
     Given the date is 2011/10/25
     Then the date should be Oct 25 2011
@@ -10,3 +11,7 @@ Feature: Dates
   Scenario: An ISO 8601 date as Calendar
     Given the iso calendar is 2012-03-01T06:54:14
     Then the date should be Mar 1 2012
+
+  Scenario: Another ISO 8601 date as Calendar
+    Given the iso calendar is 2013-03-01T06:54:14
+    Then the date should be Mar 1 2013

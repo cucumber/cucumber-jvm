@@ -33,6 +33,7 @@ import java.util.TimeZone;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class FromDataTableTest {
     @Rule
@@ -42,6 +43,7 @@ public class FromDataTableTest {
     private static final List<Comment> NO_COMMENTS = emptyList();
 
     public static class StepDefs {
+        public List<PrimitiveContainer> listOfPrimitiveContainers;
         public List<UserPojo> listOfPojos;
         public List<UserBean> listOfBeans;
         public List<UserWithNameField> listOfUsersWithNameField;
@@ -50,6 +52,10 @@ public class FromDataTableTest {
         public List<Map<String, Object>> listOfMapsOfStringToObject;
 
         public DataTable dataTable;
+
+        public void listOfPrimitiveContainers(List<PrimitiveContainer> primitiveContainers) {
+            this.listOfPrimitiveContainers = primitiveContainers;
+        }
 
         public void listOfPojos(@DateFormat("yyyy-MM-dd") List<UserPojo> listOfPojos) {
             this.listOfPojos = listOfPojos;
@@ -95,6 +101,27 @@ public class FromDataTableTest {
         StepDefs stepDefs = runStepDef(m, listOfDatesAndCalWithHeader());
         assertEquals(sidsBirthday(), stepDefs.listOfPojos.get(0).birthDate);
         assertEquals(sidsDeathcal().getTime(), stepDefs.listOfPojos.get(0).deathCal.getTime());
+        assertNull(stepDefs.listOfPojos.get(1).deathCal);
+    }
+
+    @Test
+    public void assigns_null_to_objects_when_empty_except_boolean_special_case() throws Throwable {
+        Method m = StepDefs.class.getMethod("listOfPrimitiveContainers", List.class);
+
+        List<DataTableRow> rows = new ArrayList<DataTableRow>();
+        rows.add(new DataTableRow(NO_COMMENTS, asList("number", "bool", "bool2"), 1));
+        rows.add(new DataTableRow(NO_COMMENTS, asList("1", "false", "true"), 2));
+        rows.add(new DataTableRow(NO_COMMENTS, asList("", "", ""), 3));
+
+        StepDefs stepDefs = runStepDef(m, rows);
+
+        assertEquals(new Integer(1), stepDefs.listOfPrimitiveContainers.get(0).number);
+        assertEquals(new Boolean(false), stepDefs.listOfPrimitiveContainers.get(0).bool);
+        assertEquals(true, stepDefs.listOfPrimitiveContainers.get(0).bool2);
+
+        assertEquals(null, stepDefs.listOfPrimitiveContainers.get(1).number);
+        assertEquals(new Boolean(false), stepDefs.listOfPrimitiveContainers.get(1).bool);
+        assertEquals(false, stepDefs.listOfPrimitiveContainers.get(1).bool2);
     }
 
     @Test
@@ -192,6 +219,7 @@ public class FromDataTableTest {
         List<DataTableRow> rows = new ArrayList<DataTableRow>();
         rows.add(new DataTableRow(NO_COMMENTS, asList("Birth Date", "Death Cal"), 1));
         rows.add(new DataTableRow(NO_COMMENTS, asList("1957-05-10", "1979-02-02"), 2));
+        rows.add(new DataTableRow(NO_COMMENTS, asList("", ""), 3));
         return rows;
     }
 
@@ -247,6 +275,12 @@ public class FromDataTableTest {
     public static class UserWithNameField {
         public Name name;
         public Date birthDate;
+    }
+
+    public static class PrimitiveContainer {
+        public Integer number;
+        public Boolean bool;
+        public boolean bool2;
     }
 
     @XStreamConverter(NameConverter.class)

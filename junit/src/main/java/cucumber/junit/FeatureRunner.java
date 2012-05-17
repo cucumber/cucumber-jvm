@@ -17,7 +17,7 @@ import java.util.List;
 
 import static cucumber.junit.DescriptionFactory.createDescription;
 
-public class FeatureRunner extends ParentRunner<ParentRunner> {
+class FeatureRunner extends ParentRunner<ParentRunner> {
     private final List<ParentRunner> children = new ArrayList<ParentRunner>();
 
     private final CucumberFeature cucumberFeature;

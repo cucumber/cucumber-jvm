@@ -1,15 +1,13 @@
 package cucumber.junit;
 
+import cucumber.io.MultiLoader;
 import cucumber.runtime.RuntimeOptions;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static cucumber.runtime.Utils.packagePath;
-import static cucumber.runtime.Utils.packageName;
-
-public class RuntimeOptionsFactory {
+class RuntimeOptionsFactory {
     private Class clazz;
 
     public RuntimeOptionsFactory(Class clazz) {
@@ -26,6 +24,7 @@ public class RuntimeOptionsFactory {
         addTags(options, args);
         addFormats(options, args);
         addFeatures(options, clazz, args);
+        addStrict(options, args);
 
         return new RuntimeOptions(args.toArray(new String[args.size()]));
 
@@ -65,7 +64,7 @@ public class RuntimeOptionsFactory {
             }
         } else {
             args.add("--glue");
-            args.add(packageName(clazz));
+            args.add(MultiLoader.CLASSPATH_SCHEME + packagePath(clazz));
         }
     }
 
@@ -94,7 +93,26 @@ public class RuntimeOptionsFactory {
         if (options != null && options.features().length != 0) {
             Collections.addAll(args, options.features());
         } else {
-            args.add(packagePath(clazz));
+            args.add(MultiLoader.CLASSPATH_SCHEME + packagePath(clazz));
         }
     }
+
+    private void addStrict(Cucumber.Options options, List<String> args) {
+        if (options != null && options.strict()) {
+            args.add("--strict");
+        }
+    }
+
+    static String packagePath(Class clazz) {
+        return packagePath(packageName(clazz.getName()));
+    }
+
+    static String packagePath(String packageName) {
+        return packageName.replace('.', '/');
+    }
+
+    static String packageName(String className) {
+        return className.substring(0, Math.max(0, className.lastIndexOf(".")));
+    }
+
 }

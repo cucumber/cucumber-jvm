@@ -33,21 +33,21 @@ public class CucumberTest {
 
     @Test
     public void finds_features_based_on_implicit_package() throws IOException, InitializationError {
-        Cucumber cucumber = new Cucumber(ImplicitPackage.class);
+        Cucumber cucumber = new Cucumber(ImplicitFeaturePath.class);
         assertEquals(2, cucumber.getChildren().size());
         assertEquals("Feature: In cucumber.junit", cucumber.getChildren().get(0).getName());
     }
 
     @Test
     public void finds_features_based_on_explicit_root_package() throws IOException, InitializationError {
-        Cucumber cucumber = new Cucumber(ExplicitPackage.class);
+        Cucumber cucumber = new Cucumber(ExplicitFeaturePath.class);
         assertEquals(2, cucumber.getChildren().size());
         assertEquals("Feature: In cucumber.junit", cucumber.getChildren().get(0).getName());
     }
 
     @Test(expected = CucumberException.class)
     public void finds_no_features_when_explicit_package_has_nothnig() throws IOException, InitializationError {
-        new Cucumber(ExplicitPackageWithNoFeatures.class);
+        new Cucumber(ExplicitFeaturePathWithNoFeatures.class);
     }
 
     @RunWith(Cucumber.class)
@@ -78,14 +78,14 @@ public class CucumberTest {
         Cucumber.assertNoCucumberAnnotatedMethods(RunCukesTestInvalid.class);
     }
 
-    private class ImplicitPackage {
+    private class ImplicitFeaturePath {
     }
 
-    @Cucumber.Options(features = {"cucumber/junit"})
-    private class ExplicitPackage {
+    @Cucumber.Options(features = {"classpath:cucumber/junit"})
+    private class ExplicitFeaturePath {
     }
 
-    @Cucumber.Options(features = {"gibber/ish"})
-    private class ExplicitPackageWithNoFeatures {
+    @Cucumber.Options(features = {"classpath:gibber/ish"})
+    private class ExplicitFeaturePathWithNoFeatures {
     }
 }

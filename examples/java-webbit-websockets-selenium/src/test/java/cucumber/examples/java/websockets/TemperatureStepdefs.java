@@ -1,6 +1,5 @@
 package cucumber.examples.java.websockets;
 
-import cucumber.annotation.en.Given;
 import cucumber.annotation.en.Then;
 import cucumber.annotation.en.When;
 import org.openqa.selenium.By;
@@ -13,11 +12,6 @@ public class TemperatureStepdefs {
 
     public TemperatureStepdefs(SharedDriver webDriver) {
         this.webDriver = webDriver;
-    }
-
-    @Given("^I am on the front page$")
-    public void i_am_on_the_front_page() {
-        webDriver.get("http://localhost:" + ServerHooks.PORT);
     }
 
     @When("^I enter (.+) Celcius$")

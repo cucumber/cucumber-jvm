@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>info.cukes</groupId>
     <artifactId>cucumber-jvm</artifactId>
-    <version>1.0.3-SNAPSHOT</version>
+    <version>1.0.7-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Cucumber-JVM</name>
     <url>http://cukes.info/</url>
@@ -132,7 +132,7 @@
             <dependency>
                 <groupId>org.clojure</groupId>
                 <artifactId>clojure</artifactId>
-                <version>1.4.0-beta1</version>
+                <version>1.4.0</version>
             </dependency>
             <dependency>
                 <groupId>rhino</groupId>
@@ -168,12 +168,12 @@
             <dependency>
                 <groupId>org.seleniumhq.selenium</groupId>
                 <artifactId>selenium-chrome-driver</artifactId>
-                <version>2.20.0</version>
+                <version>2.21.0</version>
             </dependency>
             <dependency>
                 <groupId>org.seleniumhq.selenium</groupId>
                 <artifactId>selenium-server</artifactId>
-                <version>2.20.0</version>
+                <version>2.21.0</version>
             </dependency>
             <dependency>
                 <groupId>org.webbitserver</groupId>
@@ -183,7 +183,7 @@
             <dependency>
                 <groupId>org.jruby</groupId>
                 <artifactId>jruby-complete</artifactId>
-                <version>1.6.7</version>
+                <version>1.6.7.1</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.weld.se</groupId>
@@ -199,6 +199,12 @@
                 <groupId>org.apache.openejb</groupId>
                 <artifactId>openejb-core</artifactId>
                 <version>4.0.0-beta-2</version>
+            </dependency>
+
+            <dependency>
+                <groupId>net.sourceforge.cobertura</groupId>
+                <artifactId>cobertura</artifactId>
+                <version>1.9.4.1</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -231,10 +237,11 @@
 
     <modules>
         <module>core</module>
+        <module>picocontainer</module>
+        <module>clojure</module>
         <module>junit</module>
         <module>jruby</module>
         <module>jython</module>
-        <module>picocontainer</module>
         <module>spring</module>
         <module>guice</module>
         <module>weld</module>
@@ -242,24 +249,15 @@
         <module>ioke</module>
         <module>rhino</module>
         <module>java</module>
-        <module>clojure</module>
         <module>openejb</module>
         <module>scala</module>
     </modules>
 
     <profiles>
-        <!--profile>
-            <id>aruba</id>
-            <modules>
-                <module>tmp/aruba</module>
-            </modules>
-        </profile-->
-
         <profile>
             <id>examples</id>
             <modules>
                 <module>examples/java-calculator</module>
-                <module>examples/java-helloworld</module>
                 <module>examples/groovy-calculator</module>
                 <module>examples/scala-calculator</module>
                 <module>examples/java-webbit-websockets-selenium</module>
@@ -362,6 +360,7 @@
                     <target>1.6</target>
                 </configuration>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
@@ -376,13 +375,28 @@
                 </executions>
             </plugin>
 
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.12</version>
                 <configuration>
                     <argLine>-Duser.language=en</argLine>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>2.4.1</version>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>.</directory>
+                            <includes>
+                                <include>**/*.ser</include>
+                            </includes>
+                        </fileset>
+                    </filesets>
                 </configuration>
             </plugin>
 

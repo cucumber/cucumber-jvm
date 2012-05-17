@@ -6,12 +6,12 @@ import org.springframework.beans.factory.config.Scope;
 public class GlueCodeScope implements Scope {
     public static final String NAME = "cucumber-glue";
 
-    private final GlueCodeContext context =  GlueCodeContext.INSTANCE;
+    private final GlueCodeContext context = GlueCodeContext.INSTANCE;
 
     @Override
     public Object get(String name, ObjectFactory<?> objectFactory) {
         Object obj = context.get(name);
-        if (obj == null)  {
+        if (obj == null) {
             obj = objectFactory.getObject();
             context.put(name, obj);
         }

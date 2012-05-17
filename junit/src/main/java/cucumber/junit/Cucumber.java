@@ -1,6 +1,6 @@
 package cucumber.junit;
 
-import cucumber.io.ClasspathResourceLoader;
+import cucumber.io.MultiLoader;
 import cucumber.io.ResourceLoader;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Runtime;
@@ -49,14 +49,15 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
     public Cucumber(Class clazz) throws InitializationError, IOException {
         super(clazz);
         ClassLoader classLoader = clazz.getClassLoader();
-        ResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
         assertNoCucumberAnnotatedMethods(clazz);
 
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(clazz);
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
+
+        ResourceLoader resourceLoader = new MultiLoader(classLoader);
         runtime = new Runtime(resourceLoader, classLoader, runtimeOptions);
 
-        jUnitReporter = new JUnitReporter(runtimeOptions.reporter(classLoader), runtimeOptions.formatter(classLoader));
+        jUnitReporter = new JUnitReporter(runtimeOptions.reporter(classLoader), runtimeOptions.formatter(classLoader), runtimeOptions.strict);
         addChildren(runtimeOptions.cucumberFeatures(resourceLoader));
     }
 
@@ -119,6 +120,11 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         boolean dryRun() default false;
 
         /**
+         * @return true if strict mode is enabled (fail if there are undefined or pending steps)
+         */
+        boolean strict() default false;
+
+        /**
          * @return the paths to the feature(s)
          */
         String[] features() default {};
@@ -129,7 +135,7 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         String[] glue() default {};
 
         /**
-         * @return what tags in the feature should be executed
+         * @return what tags in the features should be executed
          */
         String[] tags() default {};
 
@@ -142,5 +148,6 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
          * @return whether or not to use monochrome output
          */
         boolean monochrome() default false;
+
     }
 }
