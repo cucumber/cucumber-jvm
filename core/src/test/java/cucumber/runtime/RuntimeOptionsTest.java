@@ -70,7 +70,7 @@ public class RuntimeOptionsTest {
         String someName = "someName";
         RuntimeOptions options = new RuntimeOptions(new Properties(), "--name", someName);
         Pattern actualPattern = (Pattern) options.filters.iterator().next();
-        assertEquals(actualPattern.pattern(), someName);
+        assertEquals(someName, actualPattern.pattern());
     }
 
     @Test
@@ -78,7 +78,7 @@ public class RuntimeOptionsTest {
         String someName = "someName";
         RuntimeOptions options = new RuntimeOptions(new Properties(), "-n", someName);
         Pattern actualPattern = (Pattern) options.filters.iterator().next();
-        assertEquals(actualPattern.pattern(), someName);
+        assertEquals(someName, actualPattern.pattern());
     }
 
     @Test
