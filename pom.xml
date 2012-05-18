@@ -211,16 +211,16 @@
 
     <repositories>
         <repository>
+            <id>sonatype.org</id>
+            <url>https://oss.sonatype.org/content/repositories/releases</url>
+        </repository>
+        <repository>
             <id>codehaus</id>
             <url>http://repository.codehaus.org</url>
         </repository>
         <repository>
             <id>jboss.org</id>
             <url>https://repository.jboss.org/nexus/content/groups/public-jboss</url>
-        </repository>
-        <repository>
-            <id>sonatype.org</id>
-            <url>https://oss.sonatype.org/content/repositories/releases</url>
         </repository>
     </repositories>
 
