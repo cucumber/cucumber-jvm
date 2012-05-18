@@ -31,13 +31,10 @@ class RuntimeOptionsFactory {
 
     }
 
-    private void addName(Cucumber.Options options, List<String> args)
-    {
+    private void addName(Cucumber.Options options, List<String> args) {
         if (options != null) {
-            if(options.name().length != 0)
-            {
-                for (String name : options.name())
-                {
+            if (options.name().length != 0) {
+                for (String name : options.name()) {
                     args.add("--name");
                     args.add(name);
                 }

@@ -152,6 +152,7 @@ To hack on Cucumber-JVM you need a JDK, Maven and Git to get the code. You also 
 * UTF-8 file encoding
 * LF (UNIX) line endings
 * No wildcard imports
+* Curly brace on same line as block
 * 4 Space indent (no tabs)
   * Java
   * XML
