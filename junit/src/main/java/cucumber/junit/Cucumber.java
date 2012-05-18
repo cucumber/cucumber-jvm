@@ -149,5 +149,11 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
          */
         boolean monochrome() default false;
 
+        /**
+         * Specify a patternfilter for features or scenarios
+         *
+         * @return a list of patterns
+         */
+        String[] name() default {};
     }
 }
