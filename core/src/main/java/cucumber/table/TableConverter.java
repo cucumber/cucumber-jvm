@@ -19,6 +19,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -50,7 +51,7 @@ public class TableConverter {
         }
         try {
             xStream.setDateFormat(dateFormat);
-            return (List) xStream.unmarshal(reader);
+            return Collections.unmodifiableList((List) xStream.unmarshal(reader));
         } catch (AbstractReflectionConverter.UnknownFieldException e) {
             throw new CucumberException(e.getShortMessage());
         } catch (ConversionException e) {
@@ -68,6 +69,9 @@ public class TableConverter {
      * @return a DataTable
      */
     public DataTable toTable(List<?> objects, String... columnNames) {
+        // Need to wrap the list to be sure xStream behaves well
+        // It doesn't like unmodifiable lists etc.
+        objects = new ArrayList<Object>(objects);
         DataTableWriter writer;
         if (isListOfListOfSingleValue(objects)) {
             objects = wrapLists((List<List<?>>) objects);

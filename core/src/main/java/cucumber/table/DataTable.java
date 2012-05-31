@@ -7,9 +7,15 @@ import gherkin.formatter.model.Row;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
+/**
+ * A DataTable represents the data in a table following a step in Gherkin. Cucumber will convert the table in Gherkin
+ * to a DataTable instance and pass it to a step definition.
+ */
 public class DataTable {
 
     private final List<List<String>> raw;
@@ -33,21 +39,55 @@ public class DataTable {
         return tableConverter.toTable(raw, columnNames);
     }
 
+    /**
+     * Creates a new DataTable. This constructor should not be called by Cucumber users - it's used internally only.
+     *
+     * @param gherkinRows    the underlying rows.
+     * @param tableConverter how to convert the rows.
+     */
     public DataTable(List<DataTableRow> gherkinRows, TableConverter tableConverter) {
         this.gherkinRows = gherkinRows;
         this.tableConverter = tableConverter;
-        this.raw = new ArrayList<List<String>>();
+        List<List<String>> raw = new ArrayList<List<String>>();
         for (Row row : gherkinRows) {
             List<String> list = new ArrayList<String>();
             list.addAll(row.getCells());
-            this.raw.add(list);
+            raw.add(Collections.unmodifiableList(list));
         }
+        this.raw = Collections.unmodifiableList(raw);
     }
 
+    /**
+     * Converts the table to a 2D array.
+     *
+     * @return a List of List of String.
+     */
     public List<List<String>> raw() {
         return this.raw;
     }
 
+    /**
+     * Converts the table to a List of Map. The top row is used as keys in the maps,
+     * and the rows below are used as values.
+     *
+     * @return a List of Map.
+     */
+    public List<Map<String, String>> asMaps() {
+        return asList(new TypeReference<Map<String, String>>() {
+        }.getType());
+    }
+
+    /**
+     * Converts the table to a List of objects. The top row is used to identifies the fields/properties
+     * of the objects.
+     *
+     * Backends that support generic types can declare a parameter as a List of a type, and Cucumber will
+     * do the conversion automatically.
+     *
+     * @param listType the type of each object
+     * @param <T>      the type of each object
+     * @return a list of objects
+     */
     public <T> List<T> asList(Type listType) {
         return tableConverter.toList(listType, this);
     }
@@ -76,7 +116,7 @@ public class DataTable {
     /**
      * Creates another table using the same {@link Locale} and {@link cucumber.DateFormat} that was used to create this table.
      *
-     * @param raw         a list of objects (Pojos)
+     * @param raw         a list of objects
      * @param columnNames optional explicit header columns
      * @return
      */
@@ -107,8 +147,12 @@ public class DataTable {
         new TableDiffer(this, other).calculateDiffs();
     }
 
+    /**
+     * Internal method. Do not use.
+     * @return a list of raw rows.
+     */
     public List<DataTableRow> getGherkinRows() {
-        return gherkinRows;
+        return Collections.unmodifiableList(gherkinRows);
     }
 
     @Override
