@@ -8,14 +8,11 @@ import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
-import java.util.TimeZone;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 public class StandardConvertersTest {
-
-    private static final TimeZone UTC = TimeZone.getTimeZone("UTC");
 
     @Test
     public void shouldThrowInformativeErrorMessageWhenTransformationFails() {
@@ -56,7 +53,7 @@ public class StandardConvertersTest {
     }
 
     private Date getDateToTest() {
-        Calendar calendar = Calendar.getInstance(UTC);
+        Calendar calendar = Calendar.getInstance(Locale.US);
         calendar.set(2011, 10, 29, 0, 0, 0);
         calendar.set(Calendar.MILLISECOND, 0);
         return calendar.getTime();

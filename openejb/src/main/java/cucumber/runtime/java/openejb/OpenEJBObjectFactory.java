@@ -1,10 +1,12 @@
 package cucumber.runtime.java.openejb;
 
 import cucumber.runtime.CucumberException;
+import cucumber.runtime.Utils;
 import cucumber.runtime.java.ObjectFactory;
 import org.apache.openejb.OpenEjbContainer;
 
 import javax.ejb.embeddable.EJBContainer;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -14,7 +16,13 @@ import java.util.Properties;
 
 public class OpenEJBObjectFactory implements ObjectFactory {
     static {
-        configureLog4J();
+        try {
+            configureLog4J();
+        } catch (ClassNotFoundException e) {
+            throw new CucumberException(e);
+        } catch (NoSuchMethodException e) {
+            throw new CucumberException(e);
+        }
     }
 
     private final List<String> classes = new ArrayList<String>();
@@ -23,8 +31,6 @@ public class OpenEJBObjectFactory implements ObjectFactory {
 
     @Override
     public void start() {
-        configureLog4J();
-
         final StringBuilder callers = new StringBuilder();
         for (Iterator<String> it = classes.iterator(); it.hasNext(); ) {
             callers.append(it.next());
@@ -66,7 +72,7 @@ public class OpenEJBObjectFactory implements ObjectFactory {
         return object;
     }
 
-    private static void configureLog4J() {
+    private static void configureLog4J() throws ClassNotFoundException, NoSuchMethodException {
         final ClassLoader cl = Thread.currentThread().getContextClassLoader();
         if (System.getProperty("log4j.configuration") == null && System.getProperty("log4j.configurationClass") == null
                 && cl.getResource("log4j.xml") == null && cl.getResource("log4j.properties") == null) {
@@ -80,13 +86,8 @@ public class OpenEJBObjectFactory implements ObjectFactory {
                 log4jProp.setProperty("log4j.appender.stdout.layout", "org.apache.log4j.SimpleLayout");
             }
 
-            try {
-                cl.loadClass("org.apache.log4j.PropertyConfigurator")
-                        .getDeclaredMethod("configure", Properties.class)
-                        .invoke(null, log4jProp);
-            } catch (Exception notFound) {
-                // ignored
-            }
+            Method configure = cl.loadClass("org.apache.log4j.PropertyConfigurator").getDeclaredMethod("configure", Properties.class);
+            Utils.invoke(null, configure, log4jProp);
         }
     }
 }

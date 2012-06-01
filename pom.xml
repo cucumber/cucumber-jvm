@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>info.cukes</groupId>
     <artifactId>cucumber-jvm</artifactId>
-    <version>1.0.8-SNAPSHOT</version>
+    <version>1.0.9-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Cucumber-JVM</name>
     <url>http://cukes.info/</url>
@@ -10,14 +10,14 @@
     <parent>
         <groupId>org.sonatype.oss</groupId>
         <artifactId>oss-parent</artifactId>
-        <version>6</version>
+        <version>7</version>
     </parent>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <outputDirectory>${project.build.directory}</outputDirectory>
         <gherkin.version>2.10.0</gherkin.version>
-        <groovy.version>2.0.0-beta-2</groovy.version>
+        <groovy.version>2.0.0-beta-3</groovy.version>
     </properties>
     <licenses>
         <license>
@@ -178,17 +178,17 @@
             <dependency>
                 <groupId>org.webbitserver</groupId>
                 <artifactId>webbit</artifactId>
-                <version>0.4.6</version>
+                <version>0.4.7</version>
             </dependency>
             <dependency>
                 <groupId>org.jruby</groupId>
                 <artifactId>jruby-complete</artifactId>
-                <version>1.6.7.1</version>
+                <version>1.6.7.2</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.weld.se</groupId>
                 <artifactId>weld-se</artifactId>
-                <version>2.0.0.Alpha1</version>
+                <version>2.0.0.Alpha2</version>
             </dependency>
             <dependency>
                 <groupId>javax.enterprise</groupId>
@@ -198,7 +198,7 @@
             <dependency>
                 <groupId>org.apache.openejb</groupId>
                 <artifactId>openejb-core</artifactId>
-                <version>4.0.0-beta-2</version>
+                <version>4.0.0</version>
             </dependency>
 
             <dependency>
@@ -217,10 +217,6 @@
         <repository>
             <id>jboss.org</id>
             <url>https://repository.jboss.org/nexus/content/groups/public-jboss</url>
-        </repository>
-        <repository>
-            <id>sonatype.org</id>
-            <url>https://oss.sonatype.org/content/repositories/releases</url>
         </repository>
     </repositories>
 

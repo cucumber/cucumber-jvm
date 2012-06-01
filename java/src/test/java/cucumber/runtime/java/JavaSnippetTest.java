@@ -22,7 +22,7 @@ public class JavaSnippetTest {
     public void generatesPlainSnippet() {
         String expected = "" +
                 "@Given(\"^I have (\\\\d+) cukes in my \\\"([^\\\"]*)\\\" belly$\")\n" +
-                "public void I_have_cukes_in_my_belly(int arg1, String arg2) {\n" +
+                "public void I_have_cukes_in_my_belly(int arg1, String arg2) throws Throwable {\n" +
                 "    // Express the Regexp above with the code you wish you had\n" +
                 "    throw new PendingException();\n" +
                 "}\n";
@@ -33,7 +33,7 @@ public class JavaSnippetTest {
     public void generatesCopyPasteReadyStepSnippetForNumberParameters() throws Exception {
         String expected = "" +
                 "@Given(\"^before (\\\\d+) after$\")\n" +
-                "public void before_after(int arg1) {\n" +
+                "public void before_after(int arg1) throws Throwable {\n" +
                 "    // Express the Regexp above with the code you wish you had\n" +
                 "    throw new PendingException();\n" +
                 "}\n";
@@ -45,7 +45,7 @@ public class JavaSnippetTest {
     public void generatesCopyPasteReadySnippetWhenStepHasIllegalJavaIdentifierChars() {
         String expected = "" +
                 "@Given(\"^I have (\\\\d+) cukes in: my \\\"([^\\\"]*)\\\" red-belly!$\")\n" +
-                "public void I_have_cukes_in_my_red_belly(int arg1, String arg2) {\n" +
+                "public void I_have_cukes_in_my_red_belly(int arg1, String arg2) throws Throwable {\n" +
                 "    // Express the Regexp above with the code you wish you had\n" +
                 "    throw new PendingException();\n" +
                 "}\n";
@@ -57,7 +57,7 @@ public class JavaSnippetTest {
     public void generatesCopyPasteReadySnippetWhenStepHasIntegersInsideStringParameter() {
         String expected = "" +
                 "@Given(\"^the DI system receives a message saying \\\"([^\\\"]*)\\\"$\")\n" +
-                "public void the_DI_system_receives_a_message_saying(String arg1) {\n" +
+                "public void the_DI_system_receives_a_message_saying(String arg1) throws Throwable {\n" +
                 "    // Express the Regexp above with the code you wish you had\n" +
                 "    throw new PendingException();\n" +
                 "}\n";
@@ -68,7 +68,7 @@ public class JavaSnippetTest {
     public void generatesSnippetWithEscapedDollarSigns() {
         String expected = "" +
                 "@Given(\"^I have \\\\$(\\\\d+)$\")\n" +
-                "public void I_have_$(int arg1) {\n" +
+                "public void I_have_$(int arg1) throws Throwable {\n" +
                 "    // Express the Regexp above with the code you wish you had\n" +
                 "    throw new PendingException();\n" +
                 "}\n";
@@ -79,7 +79,7 @@ public class JavaSnippetTest {
     public void generatesSnippetWithEscapedParentheses() {
         String expected = "" +
                 "@Given(\"^I have (\\\\d+) cukes \\\\(maybe more\\\\)$\")\n" +
-                "public void I_have_cukes_maybe_more(int arg1) {\n" +
+                "public void I_have_cukes_maybe_more(int arg1) throws Throwable {\n" +
                 "    // Express the Regexp above with the code you wish you had\n" +
                 "    throw new PendingException();\n" +
                 "}\n";
@@ -90,7 +90,7 @@ public class JavaSnippetTest {
     public void generatesSnippetWithEscapedBrackets() {
         String expected = "" +
                 "@Given(\"^I have (\\\\d+) cukes \\\\[maybe more\\\\]$\")\n" +
-                "public void I_have_cukes_maybe_more(int arg1) {\n" +
+                "public void I_have_cukes_maybe_more(int arg1) throws Throwable {\n" +
                 "    // Express the Regexp above with the code you wish you had\n" +
                 "    throw new PendingException();\n" +
                 "}\n";
@@ -101,7 +101,7 @@ public class JavaSnippetTest {
     public void generatesSnippetWithDocString() {
         String expected = "" +
                 "@Given(\"^I have:$\")\n" +
-                "public void I_have(String arg1) {\n" +
+                "public void I_have(String arg1) throws Throwable {\n" +
                 "    // Express the Regexp above with the code you wish you had\n" +
                 "    throw new PendingException();\n" +
                 "}\n";
@@ -113,7 +113,7 @@ public class JavaSnippetTest {
     public void recognisesWordWithNumbers() {
         String expected = "" +
                 "@Given(\"^Then it responds ([^\\\"]*)$\")\n" +
-                "public void Then_it_responds_UTF(int arg1) {\n" +
+                "public void Then_it_responds_UTF(int arg1) throws Throwable {\n" +
                 "    // Express the Regexp above with the code you wish you had\n" +
                 "}\n";
         assertEquals(expected, snippetFor("Then it responds UTF-8"));
@@ -123,7 +123,7 @@ public class JavaSnippetTest {
     public void generatesSnippetWithDataTable() {
         String expected = "" +
                 "@Given(\"^I have:$\")\n" +
-                "public void I_have(DataTable arg1) {\n" +
+                "public void I_have(DataTable arg1) throws Throwable {\n" +
                 "    // Express the Regexp above with the code you wish you had\n" +
                 "    // For automatic conversion, change DataTable to List<YourType>\n" +
                 "    throw new PendingException();\n" +

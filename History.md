@@ -1,5 +1,18 @@
 ## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.0.7...master)
 
+* [Core] Added `DataTable.asMaps()` and made all returned lists immutable. (Aslak Hellesøy).
+* [Java] The java-helloworld example has a simple example illustrating data tables and doc strings. (Aslak Hellesøy).
+* [Core] Run scenarios/features by name ([#233](https://github.com/cucumber/cucumber-jvm/issues/233), [#323](https://github.com/cucumber/cucumber-jvm/pull/323) Klaus Bayrhammer)
+* [Jython] Added missing `self` argument in Jython snippets. ([#324](https://github.com/cucumber/cucumber-jvm/issues/324) Aslak Hellesøy)
+* [Scala] Fixed regression from v1.0.6 in Scala module - glue code wasn't loaded at all. ([#321](https://github.com/cucumber/cucumber-jvm/issues/321) Aslak Hellesøy)
+
+## [1.0.8](https://github.com/cucumber/cucumber-jvm/compare/v1.0.7...v1.0.8)
+
+* [Core] Ability to create `DataTable` objects from a List of objects while specifying what header columns (fields) to use (Aslak Hellesøy)
+* [Core] `table.diff(listOfPojos)` no longer spuriously fails because of pseudo-random column/field ordering (Aslak Hellesøy)
+* [Core] Tables with empty cells make the column disappear ([#320](https://github.com/cucumber/cucumber-jvm/pull/320) Aslak Hellesøy, Gilles Philippart)
+* [Java] Add 'throws Throwable' to generated Java stepdef snippets ([#318](https://github.com/cucumber/cucumber-jvm/issues/318), [#319](https://github.com/cucumber/cucumber-jvm/pull/319) Petter Måhlén)
+* [Core] Remove forced UTC timezone. ([#317](https://github.com/cucumber/cucumber-jvm/pull/317) Gilles Philippart)
 * [Core] Options (Command line or `@Cucumber.Options`) can be overriden with the `cucumber.options` system property. (Aslak Hellesøy)
 
 ## [1.0.7](https://github.com/cucumber/cucumber-jvm/compare/v1.0.6...v1.0.7)

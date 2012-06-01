@@ -5,6 +5,7 @@ import org.junit.Test;
 
 import java.io.File;
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 import static java.util.Arrays.asList;
 import static junit.framework.Assert.assertEquals;
@@ -62,6 +63,22 @@ public class RuntimeOptionsTest {
     public void default_strict() {
         RuntimeOptions options = new RuntimeOptions(new Properties(), "--glue", "somewhere");
         assertFalse(options.strict);
+    }
+
+    @Test
+    public void name() {
+        String someName = "someName";
+        RuntimeOptions options = new RuntimeOptions(new Properties(), "--name", someName);
+        Pattern actualPattern = (Pattern) options.filters.iterator().next();
+        assertEquals(someName, actualPattern.pattern());
+    }
+
+    @Test
+    public void name_short() {
+        String someName = "someName";
+        RuntimeOptions options = new RuntimeOptions(new Properties(), "-n", someName);
+        Pattern actualPattern = (Pattern) options.filters.iterator().next();
+        assertEquals(someName, actualPattern.pattern());
     }
 
     @Test

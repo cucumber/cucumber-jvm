@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.ResourceBundle;
+import java.util.regex.Pattern;
 
 import static cucumber.runtime.model.CucumberFeature.load;
 import static java.util.Arrays.asList;
@@ -81,6 +82,10 @@ public class RuntimeOptions {
                 strict = true;
             } else if (arg.equals("--monochrome") || arg.equals("-m")) {
                 monochrome = true;
+            } else if (arg.equals("--name") || arg.equals("-n")) {
+                String nextArg = args.remove(0);
+                Pattern patternFilter = Pattern.compile(nextArg);
+                filters.add(patternFilter);
             } else {
                 PathWithLines pathWithLines = new PathWithLines(arg);
                 featurePaths.add(pathWithLines.path);
@@ -98,7 +103,7 @@ public class RuntimeOptions {
             @Override
             public Object invoke(Object target, Method method, Object[] args) throws Throwable {
                 for (Formatter formatter : formatters) {
-                    method.invoke(formatter, args);
+                    Utils.invoke(formatter, method, args);
                 }
                 return null;
             }
@@ -111,7 +116,7 @@ public class RuntimeOptions {
             public Object invoke(Object target, Method method, Object[] args) throws Throwable {
                 for (Formatter formatter : formatters) {
                     if (formatter instanceof Reporter) {
-                        method.invoke(formatter, args);
+                        Utils.invoke(formatter, method, args);
                     }
                 }
                 return null;

@@ -28,7 +28,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
@@ -242,7 +241,6 @@ public class FromDataTableTest {
         Calendar sidsBirthday = Calendar.getInstance();
         sidsBirthday.set(1957, 4, 10, 0, 0, 0);
         sidsBirthday.set(Calendar.MILLISECOND, 0);
-        sidsBirthday.setTimeZone(TimeZone.getTimeZone("UTC"));
         return sidsBirthday.getTime();
     }
 
@@ -250,7 +248,6 @@ public class FromDataTableTest {
         Calendar sidsDeathcal = Calendar.getInstance();
         sidsDeathcal.set(1979, 1, 2, 0, 0, 0);
         sidsDeathcal.set(Calendar.MILLISECOND, 0);
-        sidsDeathcal.setTimeZone(TimeZone.getTimeZone("UTC"));
         return sidsDeathcal;
     }
 

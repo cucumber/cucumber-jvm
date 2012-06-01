@@ -1,4 +1,4 @@
-package cucumber.runtime.java;
+package cucumber.runtime;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -40,6 +40,6 @@ public class MethodFormatTest {
 
     @Test
     public void prints_code_source() {
-        assertTrue(MethodFormat.FULL.format(methodWithoutArgs).startsWith("cucumber.runtime.java.MethodFormatTest.methodWithoutArgs() in file:"));
+        assertTrue(MethodFormat.FULL.format(methodWithoutArgs).startsWith("cucumber.runtime.MethodFormatTest.methodWithoutArgs() in file:"));
     }
 }

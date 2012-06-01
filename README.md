@@ -46,13 +46,13 @@ in your [POM](http://maven.apache.org/pom.html):
 <dependency>
     <groupId>info.cukes</groupId>
     <artifactId>cucumber-java</artifactId>
-    <version>1.0.7</version>
+    <version>1.0.8</version>
     <scope>test</scope>
 </dependency>
 <dependency>
     <groupId>info.cukes</groupId>
     <artifactId>cucumber-junit</artifactId>
-    <version>1.0.7</version>
+    <version>1.0.8</version>
     <scope>test</scope>
 </dependency>
 <dependency>
@@ -70,7 +70,7 @@ There are more jars available - add the ones you need. (TODO: A guide on how to 
 Add a [dependency](http://ant.apache.org/ivy/history/latest-milestone/ivyfile/dependency.html) in your [ivy.xml](http://ant.apache.org/ivy/history/latest-milestone/ivyfile.html):
 
 ```xml
-    <dependency org="info.cukes" name="cucumber-core" rev="1.0.7"/>
+    <dependency org="info.cukes" name="cucumber-core" rev="1.0.8"/>
 ```
 
 Since the artifacts are released to Maven Central, the default Ivy configuration should pull them down automatically.
@@ -90,7 +90,7 @@ There isn't any online documentation yet. Check out the examples, read the code 
 
 ### API Docs
 
-* http://cukes.info/cucumber/jvm/api/1.0.7
+* http://cukes.info/cucumber/jvm/api/1.0.8
 
 ## Examples
 
@@ -152,6 +152,7 @@ To hack on Cucumber-JVM you need a JDK, Maven and Git to get the code. You also 
 * UTF-8 file encoding
 * LF (UNIX) line endings
 * No wildcard imports
+* Curly brace on same line as block
 * 4 Space indent (no tabs)
   * Java
   * XML
@@ -232,7 +233,7 @@ Now release everything:
 
 ```
 mvn release:clean
-mvn --batch-mode -P release-sign-artifacts release:prepare -DautoVersionSubmodules=true -DdevelopmentVersion=1.0.8-SNAPSHOT
+mvn --batch-mode -P release-sign-artifacts release:prepare -DautoVersionSubmodules=true -DdevelopmentVersion=1.0.9-SNAPSHOT
 mvn -P release-sign-artifacts release:perform
 ```
 

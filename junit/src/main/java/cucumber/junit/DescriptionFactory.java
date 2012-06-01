@@ -1,11 +1,11 @@
 package cucumber.junit;
 
 import cucumber.runtime.CucumberException;
+import cucumber.runtime.Utils;
 import org.junit.runner.Description;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
@@ -34,17 +34,11 @@ class DescriptionFactory {
     }
 
     public static Description createDescription(String name, Object uniqueId) {
-        try {
-            if (USE_UNIQUE_ID) {
-                return (Description) CREATE_SUITE_DESCRIPTION.invoke(null, name, uniqueId, Array.newInstance(Annotation.class, 0));
-            } else {
-                UNIQUE_HACK += " ";
-                return (Description) CREATE_SUITE_DESCRIPTION.invoke(null, name + UNIQUE_HACK, Array.newInstance(Annotation.class, 0));
-            }
-        } catch (IllegalAccessException e) {
-            throw new CucumberException("Failed to create a description", e);
-        } catch (InvocationTargetException e) {
-            throw new CucumberException("Failed to create a description", e.getTargetException());
+        if (USE_UNIQUE_ID) {
+            return (Description) Utils.invoke(null, CREATE_SUITE_DESCRIPTION, name, uniqueId, Array.newInstance(Annotation.class, 0));
+        } else {
+            UNIQUE_HACK += " ";
+            return (Description) Utils.invoke(null, CREATE_SUITE_DESCRIPTION, name + UNIQUE_HACK, Array.newInstance(Annotation.class, 0));
         }
     }
 }

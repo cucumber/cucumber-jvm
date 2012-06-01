@@ -25,9 +25,21 @@ class RuntimeOptionsFactory {
         addFormats(options, args);
         addFeatures(options, clazz, args);
         addStrict(options, args);
+        addName(options, args);
 
         return new RuntimeOptions(System.getProperties(), args.toArray(new String[args.size()]));
 
+    }
+
+    private void addName(Cucumber.Options options, List<String> args) {
+        if (options != null) {
+            if (options.name().length != 0) {
+                for (String name : options.name()) {
+                    args.add("--name");
+                    args.add(name);
+                }
+            }
+        }
     }
 
     private Cucumber.Options getOptions(Class<?> clazz) {

@@ -6,6 +6,7 @@ Options:
     -f, --format FORMAT[:OUT]       How to format results. Goes to STDOUT unless OUT is specified.
                                     Available formats: junit, html, pretty, progress, json, json-pretty.
     -t, --tags TAG_EXPRESSION       Only run scenarios tagged with tags matching TAG_EXPRESSION.
+    -n, --name REGEXP               Only run scenarios whose names match REGEXP.
     -d, --dry-run                   Skip execution of glue code.
     -m, --monochrome                Don't colour terminal output.
         --dotcucumber               Where to write out runtime information.
