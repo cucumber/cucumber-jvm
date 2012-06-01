@@ -132,6 +132,7 @@
             <dependency>
                 <groupId>org.clojure</groupId>
                 <artifactId>clojure</artifactId>
+                <!-- Remember to bounce version in examples/clojure_cukes as well -->
                 <version>1.4.0</version>
             </dependency>
             <dependency>
