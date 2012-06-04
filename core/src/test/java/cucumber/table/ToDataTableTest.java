@@ -2,17 +2,21 @@ package cucumber.table;
 
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.converters.LocalizedXStreams;
+import gherkin.formatter.model.DataTableRow;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.lang.reflect.Type;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import static org.junit.Assert.fail;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 public class ToDataTableTest {
     private static final String DD_MM_YYYY = "dd/MM/yyyy";
@@ -93,6 +97,19 @@ public class ToDataTableTest {
         personTable().diff(users);
     }
 
+    @Test
+    public void convert_javabean_to_table() throws ParseException {
+        List<UserJavaBean> list = new ArrayList<UserJavaBean>();
+        UserJavaBean user = new UserJavaBean();
+        user.credits  = 1000;
+        user.name  = "Sid Vicious";
+        user.birthDate = new SimpleDateFormat("dd/MM/yyyy").parse("10/05/1957");
+        list.add(user);
+        DataTable dataTable = DataTable.create(list);
+        System.out.println("dataTable = " + dataTable);
+        assertEquals("1,000", dataTable.raw().get(1).get(1));
+    }
+
     private DataTable personTable() {
         return TableParser.parse("" +
                 "| name        | birthDate  | credits  |\n" +
@@ -132,6 +149,38 @@ public class ToDataTableTest {
         public UserPojo(int foo) {
         }
     }
+
+    /** As a javabean (private fields, public accessors) */
+    public static class UserJavaBean {
+        private Integer credits;
+        private String name;
+        private Date birthDate;
+
+        public Integer getCredits() {
+            return credits;
+        }
+
+        public void setCredits(Integer credits) {
+            this.credits = credits;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public Date getBirthDate() {
+            return birthDate;
+        }
+
+        public void setBirthDate(Date birthDate) {
+            this.birthDate = birthDate;
+        }
+    }
+
 
     public static class PojoWithInt {
         public int credits;

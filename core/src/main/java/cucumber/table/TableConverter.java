@@ -7,14 +7,13 @@ import com.thoughtworks.xstream.converters.reflection.AbstractReflectionConverte
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.converters.LocalizedXStreams;
-import cucumber.table.xstream.DataTableWriter;
-import cucumber.table.xstream.ListOfListOfSingleValueReader;
-import cucumber.table.xstream.ListOfListOfSingleValueWriter;
-import cucumber.table.xstream.ListOfMapReader;
-import cucumber.table.xstream.ListOfObjectReader;
-import cucumber.table.xstream.ListOfObjectWriter;
+import cucumber.table.xstream.*;
 import gherkin.util.Mapper;
 
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -79,7 +78,7 @@ public class TableConverter {
         } else {
             if (columnNames.length == 0) {
                 // Figure out column names by looking at class
-                columnNames = fieldNames(objects.get(0).getClass());
+                columnNames = getColumnNames(objects.get(0).getClass());
             }
             writer = new ListOfObjectWriter(this, columnNames);
         }
@@ -92,7 +91,44 @@ public class TableConverter {
         }
     }
 
-    private String[] fieldNames(Class clazz) {
+    private String[] getColumnNames(Class clazz) {
+        if (isJavaBean(clazz)) {
+            return getPropertyNames(clazz);
+        } else {
+            return getFieldNames(clazz);
+        }
+    }
+
+    private boolean isJavaBean(Class clazz) {
+        try {
+            BeanInfo beanInfo = Introspector.getBeanInfo(clazz);
+            PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
+            // all classes have the 'class' property, so javabeans must have at least 2 props
+            return propertyDescriptors.length > 1;
+        } catch (IntrospectionException e) {
+            return false;
+        }
+    }
+
+    private String[] getPropertyNames(Class clazz) {
+        try {
+            BeanInfo beanInfo = Introspector.getBeanInfo(clazz);
+            PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
+            List<String> fieldNames = new ArrayList<String>();
+            for (PropertyDescriptor desc : propertyDescriptors) {
+                if (!desc.getName().equals("class")) {
+                    fieldNames.add(desc.getName());
+                    System.out.println("pd = " + desc.getName());
+                }
+            }
+            return fieldNames.toArray(new String[fieldNames.size()]);
+        } catch (IntrospectionException e) {
+            throw new CucumberException("Can't read javabean properties for class " + clazz, e);
+        }
+
+    }
+
+    private String[] getFieldNames(Class clazz) {
         Field[] fields = clazz.getFields();
         String[] fieldNames = new String[fields.length];
         int i = 0;
