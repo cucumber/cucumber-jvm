@@ -1,4 +1,4 @@
-## [1.0.8](https://github.com/cucumber/cucumber-jvm/compare/v1.0.7...v1.0.8)
+## [1.0.9](https://github.com/cucumber/cucumber-jvm/compare/v1.0.7...v1.0.8)
 
 * [Core] Exceptions thrown from a step definition are no longer wrapped in CucumberException. (Aslak Hellesøy)
 * [Core] Fixed regression: PendingException was causing steps to fail instead of pending. ([#328](https://github.com/cucumber/cucumber-jvm/issues/328) Aslak Hellesøy)
