@@ -12,18 +12,7 @@ import org.junit.Ignore;
 import java.io.File;
 import java.util.List;
 
-@Ignore
-public class TestFormatter implements Formatter {
-    public Appendable appendable;
-    public File dir;
-
-    public TestFormatter(Appendable appendable) {
-        this.appendable = appendable;
-    }
-
-    public TestFormatter(File dir) {
-        this.dir = dir;
-    }
+public class StubFormatter implements Formatter {
 
     @Override
     public void uri(String uri) {

@@ -10,17 +10,16 @@ import cucumber.runtime.RuntimeOptions;
 import gherkin.I18n;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Comment;
+import gherkin.formatter.model.Match;
 import gherkin.formatter.model.Result;
 import gherkin.formatter.model.Step;
 import gherkin.formatter.model.Tag;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
+import java.io.InputStream;
 import java.lang.reflect.Method;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
@@ -47,7 +46,7 @@ public class JavaStepDefinitionTest {
     private final Defs defs = new Defs();
     private final JavaBackend backend = new JavaBackend(new SingletonFactory(defs));
     private final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-    private final RuntimeOptions runtimeOptions = new RuntimeOptions();
+    private final RuntimeOptions runtimeOptions = new RuntimeOptions(new Properties());
     private final Runtime runtime = new Runtime(new ClasspathResourceLoader(classLoader), classLoader, asList(backend), runtimeOptions);
     private final Glue glue = runtime.getGlue();
 
@@ -82,7 +81,36 @@ public class JavaStepDefinitionTest {
     public void does_not_throw_ambiguous_when_nothing_is_ambiguous() throws Throwable {
         backend.addStepDefinition(THREE_DISABLED_MICE.getAnnotation(Given.class), THREE_DISABLED_MICE);
 
-        Reporter reporter = mock(Reporter.class);
+        Reporter reporter = new Reporter() {
+            @Override
+            public void before(Match match, Result result) {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public void result(Result result) {
+                if(result.getError() != null) {
+                    throw new RuntimeException(result.getError());
+                }
+            }
+
+            @Override
+            public void after(Match match, Result result) {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public void match(Match match) {
+            }
+
+            @Override
+            public void embedding(String mimeType, InputStream data) {
+            }
+
+            @Override
+            public void write(String text) {
+            }
+        };
         runtime.buildBackendWorlds(reporter);
         Tag tag = new Tag("@foo", 0);
         Set<Tag> tags = asSet(tag);
@@ -93,7 +121,7 @@ public class JavaStepDefinitionTest {
         assertFalse(defs.bar);
     }
 
-    private class Defs {
+    public static class Defs {
         public boolean foo;
         public boolean bar;
 

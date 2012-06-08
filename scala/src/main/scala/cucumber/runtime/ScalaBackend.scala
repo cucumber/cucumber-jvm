@@ -31,9 +31,10 @@ class ScalaBackend(ignore:ResourceLoader) extends Backend {
     //I don't believe scala has to do anything to clean out it's world
   }
 
-  def loadGlue(glue: Glue,  gluePaths: JList[String]) {
+  def loadGlue(glue: Glue, gluePaths: JList[String]) {
     val cl = new ClasspathResourceLoader(Thread.currentThread().getContextClassLoader)
-    val dslClasses =  gluePaths flatMap {cl.getDescendants(classOf[ScalaDsl], _) } filter { cls =>
+    val packages = gluePaths map { cucumber.io.MultiLoader.packageName(_) }
+    val dslClasses = packages flatMap { cl.getDescendants(classOf[ScalaDsl], _) } filter { cls =>
       try {
         cls.getDeclaredConstructor()
         true

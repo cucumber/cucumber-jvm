@@ -16,14 +16,14 @@ public class GuiceFactoryTest {
         factory.addClass(Mappings.class);
 
         // Scenario 1
-        factory.createInstances();
+        factory.start();
         Mappings o1 = factory.getInstance(Mappings.class);
-        factory.disposeInstances();
+        factory.stop();
 
         // Scenario 2
-        factory.createInstances();
+        factory.start();
         Mappings o2 = factory.getInstance(Mappings.class);
-        factory.disposeInstances();
+        factory.stop();
 
         assertNotNull(o1);
         assertNotSame(o1, o2);
@@ -34,8 +34,8 @@ public class GuiceFactoryTest {
         ObjectFactory factory = new GuiceFactory();
         factory.addClass(Mappings.class);
 
-        factory.createInstances();
+        factory.start();
         assertSame(factory.getInstance(Mappings.class), factory.getInstance(Mappings.class));
-        factory.disposeInstances();
+        factory.stop();
     }
 }

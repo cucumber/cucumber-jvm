@@ -3,6 +3,7 @@ package cucumber.runtime.java.picocontainer;
 import cucumber.DateFormat;
 import cucumber.annotation.en.Given;
 import cucumber.annotation.en.Then;
+import cucumber.runtime.PendingException;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -14,37 +15,38 @@ import static org.junit.Assert.assertEquals;
 public class DatesSteps {
     private Date date;
 
-    @Given("^the date is (.+)$")
-    public void the_date_is(@DateFormat("yyyy/MM/dd") Date date) {
+    @Given("^the ISO date is (.+)$")
+    public void the_iso_date_is(@DateFormat("yyyy-MM-dd'T'HH:mm:ss") Date date) {
         this.date = date;
     }
 
-    @Given("^the iso date is (.+)$")
-    public void the_iso_date_is(@DateFormat("yyyy-MM-dd'T'HH:mm:ss") Date date) {
-        this.date = toMidnight(date);
+    @Given("^the simple date is (.+)$")
+    public void the_simple_date_is(@DateFormat("yyyy/MM/dd") Date date) {
+        this.date = date;
     }
 
-    @Given("^the iso calendar is (\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2})$")
-    public void the_iso_calendar_is(@DateFormat("yyyy-MM-dd'T'HH:mm:ss") Calendar cal) {
-        this.date = toMidnight(cal);
+    @Given("^the ISO date with timezone is (.+$)")
+    public void the_ISO_date_with_timezone_is(@DateFormat("yyyy-MM-dd'T'HH:mm:ss, z") Date date) {
+        this.date = date;
     }
 
-    private Date toMidnight(Date date) {
-        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.US);
+
+    @Then("^the date should be viewed in (.+) as (\\d+), (\\d+), (\\d+), (\\d+), (\\d+), (\\d+)$")
+    public void the_date_should_be_decomposed_as(String timeZone, int year, int month, int day, int hours,
+                                                 int minutes, int seconds) {
+        Calendar cal;
+        if (timeZone.equals("default")) {
+            cal = Calendar.getInstance(TimeZone.getDefault());
+        } else {
+            cal = Calendar.getInstance(TimeZone.getTimeZone(timeZone));
+        }
+        cal.setLenient(false);
         cal.setTime(date);
-        return toMidnight(cal);
-    }
-
-    private Date toMidnight(Calendar cal) {
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MILLISECOND, 0);
-        return cal.getTime();
-    }
-
-    @Then("^the date should be (.+)$")
-    public void the_date_should_be(@DateFormat("MMM dd yyyy") Date date) {
-        assertEquals(this.date, date);
+        assertEquals(year, cal.get(Calendar.YEAR));
+        assertEquals(month, cal.get(Calendar.MONTH) + 1); //calendar month are 0 based
+        assertEquals(day, cal.get(Calendar.DAY_OF_MONTH));
+        assertEquals(hours, cal.get(Calendar.HOUR_OF_DAY));
+        assertEquals(minutes, cal.get(Calendar.MINUTE));
+        assertEquals(seconds, cal.get(Calendar.SECOND));
     }
 }

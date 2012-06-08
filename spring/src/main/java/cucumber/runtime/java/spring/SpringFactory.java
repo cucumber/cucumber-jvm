@@ -60,12 +60,12 @@ public class SpringFactory implements ObjectFactory {
     }
 
     @Override
-    public void createInstances() {
+    public void start() {
         GlueCodeContext.INSTANCE.start();
     }
 
     @Override
-    public void disposeInstances() {
+    public void stop() {
         GlueCodeContext.INSTANCE.stop();
     }
 

@@ -5,7 +5,7 @@
         <groupId>info.cukes</groupId>
         <artifactId>cucumber-jvm</artifactId>
         <relativePath>../pom.xml</relativePath>
-        <version>1.0.7-SNAPSHOT</version>
+        <version>1.0.9-SNAPSHOT</version>
     </parent>
 
     <artifactId>cucumber-groovy</artifactId>
@@ -162,15 +162,20 @@ I18n.all.each { i18n ->
                                         <pathelement location="target/test-classes" />
                                     </classpath>
                                     <arg value="bin/cucumber-jvm.groovy" />
+                                    <arg value="--strict" />
 
-                                    <!-- find compiled steps -->
-                                    <arg value="--glue" />
-                                    <arg value="cucumber/runtime/groovy" />
-                                    <!-- find interpreted steps -->
-                                    <arg value="--glue" />
-                                    <arg value="src/test/resources" />
+                                    <!--
+                                    target/test-classes/cucumber/runtime/groovy contains:
 
-                                    <arg value="src/test/resources" />
+                                    * compiled groovy stepdefs (compiled_stepdefs$_run_closure1.class etc)
+                                    * source groovy stepdefs (interpreted_stepdefs.groovy etc)
+                                    * feature filkes (a_feature.feature etc)
+
+                                    -->
+                                    <arg value="--glue" />
+                                    <arg value="classpath:cucumber/runtime/groovy" />
+
+                                    <arg value="classpath:cucumber/runtime/groovy" />
                                 </java>
 
                             </target>

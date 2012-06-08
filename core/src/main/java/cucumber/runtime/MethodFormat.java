@@ -1,6 +1,4 @@
-package cucumber.runtime.java;
-
-import cucumber.runtime.CucumberException;
+package cucumber.runtime;
 
 import java.lang.reflect.Method;
 import java.text.MessageFormat;

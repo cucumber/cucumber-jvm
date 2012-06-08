@@ -10,11 +10,11 @@ import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Glue;
 import cucumber.runtime.UnreportedStepExecutor;
+import cucumber.runtime.Utils;
 import cucumber.runtime.snippets.SnippetGenerator;
 import gherkin.formatter.model.Step;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -78,12 +78,12 @@ public class JavaBackend implements Backend {
 
     @Override
     public void buildWorld() {
-        objectFactory.createInstances();
+        objectFactory.start();
     }
 
     @Override
     public void disposeWorld() {
-        objectFactory.disposeInstances();
+        objectFactory.stop();
     }
 
     @Override
@@ -94,17 +94,13 @@ public class JavaBackend implements Backend {
     void addStepDefinition(Annotation annotation, Method method) {
         try {
             Method regexpMethod = annotation.getClass().getMethod("value");
-            String regexpString = (String) regexpMethod.invoke(annotation);
+            String regexpString = (String) Utils.invoke(annotation, regexpMethod);
             if (regexpString != null) {
                 Pattern pattern = Pattern.compile(regexpString);
                 objectFactory.addClass(method.getDeclaringClass());
                 glue.addStepDefinition(new JavaStepDefinition(method, pattern, objectFactory));
             }
         } catch (NoSuchMethodException e) {
-            throw new CucumberException(e);
-        } catch (InvocationTargetException e) {
-            throw new CucumberException(e.getTargetException());
-        } catch (IllegalAccessException e) {
             throw new CucumberException(e);
         }
     }

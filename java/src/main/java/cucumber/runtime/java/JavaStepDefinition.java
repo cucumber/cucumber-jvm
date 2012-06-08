@@ -1,19 +1,17 @@
 package cucumber.runtime.java;
 
-import cucumber.runtime.CucumberException;
 import cucumber.runtime.JdkPatternArgumentMatcher;
+import cucumber.runtime.MethodFormat;
 import cucumber.runtime.ParameterType;
 import cucumber.runtime.StepDefinition;
+import cucumber.runtime.Utils;
 import gherkin.I18n;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.regex.Pattern;
-
-import static java.util.Arrays.asList;
 
 public class JavaStepDefinition implements StepDefinition {
     private final Method method;
@@ -29,16 +27,7 @@ public class JavaStepDefinition implements StepDefinition {
     }
 
     public void execute(I18n i18n, Object[] args) throws Throwable {
-        Class<?> clazz = method.getDeclaringClass();
-        Object target = objectFactory.getInstance(clazz);
-        try {
-            method.invoke(target, args);
-        } catch (IllegalArgumentException e) {
-            // Can happen if stepdef signature doesn't match args
-            throw new CucumberException("Can't invoke " + MethodFormat.FULL.format(method) + " with " + asList(args));
-        } catch (InvocationTargetException t) {
-            throw t.getTargetException();
-        }
+        Utils.invoke(objectFactory.getInstance(method.getDeclaringClass()), method, args);
     }
 
     public List<Argument> matchedArguments(Step step) {

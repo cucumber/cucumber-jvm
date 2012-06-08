@@ -24,7 +24,8 @@ public class JythonSnippet implements Snippet {
 
     @Override
     public String arguments(List<Class<?>> argumentTypes) {
-        return untypedArguments(argumentTypes);
+        String args = untypedArguments(argumentTypes);
+        return args.equals("") ? "self" : "self, " + args;
     }
 
     @Override

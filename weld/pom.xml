@@ -5,12 +5,12 @@
         <groupId>info.cukes</groupId>
         <artifactId>cucumber-jvm</artifactId>
         <relativePath>../pom.xml</relativePath>
-        <version>1.0.7-SNAPSHOT</version>
+        <version>1.0.9-SNAPSHOT</version>
     </parent>
 
     <artifactId>cucumber-weld</artifactId>
     <packaging>jar</packaging>
-    <name>Cucumber-JVM: Weld/CDI</name>
+    <name>Cucumber-JVM: Weld</name>
 
     <dependencies>
         <dependency>
