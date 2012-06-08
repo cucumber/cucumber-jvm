@@ -1,5 +1,6 @@
 ## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.0.7...master)
 
+* [Java] Missing String.format parameters in DefaultJavaObjectFactory ([#336](https://github.com/cucumber/cucumber-jvm/issues/336) paulkrause88, Aslak Hellesøy)
 * [Core] Exceptions being swallowed if reported in a Hook ([#133](https://github.com/cucumber/cucumber-jvm/issues/133) David Kowis, Aslak Hellesøy)
 * [Core] Added `DataTable.asMaps()` and made all returned lists immutable. (Aslak Hellesøy).
 * [Java] The java-helloworld example has a simple example illustrating data tables and doc strings. (Aslak Hellesøy).

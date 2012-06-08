@@ -40,9 +40,9 @@ public class DefaultJavaObjectFactory implements ObjectFactory {
             instances.put(type, instance);
             return instance;
         } catch (NoSuchMethodException e) {
-            throw new CucumberException(String.format("%s doesn't have an empty constructor. If you need DI, put cucumber-picocontainer on the classpath"), e);
+            throw new CucumberException(String.format("%s doesn't have an empty constructor. If you need DI, put cucumber-picocontainer on the classpath", type), e);
         } catch (Exception e) {
-            throw new CucumberException(String.format("Failed to instantiate %s"), e);
+            throw new CucumberException(String.format("Failed to instantiate %s", type), e);
         }
     }
 }
