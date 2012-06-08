@@ -1,8 +1,8 @@
 <project name="java-helloworld" basedir="." default="runcukes">
     <property name="repo" value="https://oss.sonatype.org/content/repositories/releases"/>
-    <property name="cucumber-jvm.version" value="1.0.8"/>
+    <property name="cucumber-jvm.version" value="1.0.9"/>
     <property name="cucumber-html.version" value="0.2.1"/>
-    <property name="gherkin.version" value="2.10.0"/>
+    <property name="gherkin.version" value="2.11.0"/>
     <property name="junit.version" value="4.10"/>
     <property name="jars" value="lib"/>
 

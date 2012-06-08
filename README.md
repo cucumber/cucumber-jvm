@@ -46,13 +46,13 @@ in your [POM](http://maven.apache.org/pom.html):
 <dependency>
     <groupId>info.cukes</groupId>
     <artifactId>cucumber-java</artifactId>
-    <version>1.0.8</version>
+    <version>1.0.9</version>
     <scope>test</scope>
 </dependency>
 <dependency>
     <groupId>info.cukes</groupId>
     <artifactId>cucumber-junit</artifactId>
-    <version>1.0.8</version>
+    <version>1.0.9</version>
     <scope>test</scope>
 </dependency>
 <dependency>
@@ -70,7 +70,7 @@ There are more jars available - add the ones you need. (TODO: A guide on how to 
 Add a [dependency](http://ant.apache.org/ivy/history/latest-milestone/ivyfile/dependency.html) in your [ivy.xml](http://ant.apache.org/ivy/history/latest-milestone/ivyfile.html):
 
 ```xml
-    <dependency org="info.cukes" name="cucumber-core" rev="1.0.8"/>
+    <dependency org="info.cukes" name="cucumber-core" rev="1.0.9"/>
 ```
 
 Since the artifacts are released to Maven Central, the default Ivy configuration should pull them down automatically.
@@ -90,7 +90,7 @@ There isn't any online documentation yet. Check out the examples, read the code 
 
 ### API Docs
 
-* http://cukes.info/cucumber/jvm/api/1.0.8
+* http://cukes.info/cucumber/jvm/api/1.0.9
 
 ## Examples
 
@@ -227,13 +227,13 @@ Replace version numbers in:
 * README.md
 * History.md
 
-Run `git commit -m "Release X.Y.Z"`
+Run `git commit -am "Release X.Y.Z"`
 
 Now release everything:
 
 ```
 mvn release:clean
-mvn --batch-mode -P release-sign-artifacts release:prepare -DautoVersionSubmodules=true -DdevelopmentVersion=1.0.9-SNAPSHOT
+mvn --batch-mode -P release-sign-artifacts release:prepare -DautoVersionSubmodules=true -DdevelopmentVersion=1.0.10-SNAPSHOT
 mvn -P release-sign-artifacts release:perform
 ```
 
