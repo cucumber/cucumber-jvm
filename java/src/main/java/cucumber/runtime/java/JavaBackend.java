@@ -8,6 +8,7 @@ import cucumber.io.ClasspathResourceLoader;
 import cucumber.io.ResourceLoader;
 import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
+import cucumber.runtime.DuplicateStepDefinitionException;
 import cucumber.runtime.Glue;
 import cucumber.runtime.UnreportedStepExecutor;
 import cucumber.runtime.Utils;
@@ -100,7 +101,9 @@ public class JavaBackend implements Backend {
                 objectFactory.addClass(method.getDeclaringClass());
                 glue.addStepDefinition(new JavaStepDefinition(method, pattern, objectFactory));
             }
-        } catch (NoSuchMethodException e) {
+        } catch (DuplicateStepDefinitionException e) {
+            throw e;
+        } catch (Throwable e) {
             throw new CucumberException(e);
         }
     }

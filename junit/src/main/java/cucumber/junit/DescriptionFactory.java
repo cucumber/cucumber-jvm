@@ -35,10 +35,18 @@ class DescriptionFactory {
 
     public static Description createDescription(String name, Object uniqueId) {
         if (USE_UNIQUE_ID) {
-            return (Description) Utils.invoke(null, CREATE_SUITE_DESCRIPTION, name, uniqueId, Array.newInstance(Annotation.class, 0));
+            try {
+                return (Description) Utils.invoke(null, CREATE_SUITE_DESCRIPTION, name, uniqueId, Array.newInstance(Annotation.class, 0));
+            } catch (Throwable t) {
+                throw new CucumberException(t);
+            }
         } else {
             UNIQUE_HACK += " ";
-            return (Description) Utils.invoke(null, CREATE_SUITE_DESCRIPTION, name + UNIQUE_HACK, Array.newInstance(Annotation.class, 0));
+            try {
+                return (Description) Utils.invoke(null, CREATE_SUITE_DESCRIPTION, name + UNIQUE_HACK, Array.newInstance(Annotation.class, 0));
+            } catch (Throwable t) {
+                throw new CucumberException(t);
+            }
         }
     }
 }

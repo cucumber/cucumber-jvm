@@ -12,7 +12,7 @@ import java.util.List;
 // I don't think it needs an interface anymore...
 public interface Glue {
 
-    void addStepDefinition(StepDefinition stepDefinition);
+    void addStepDefinition(StepDefinition stepDefinition) throws DuplicateStepDefinitionException;
 
     void addBeforeHook(HookDefinition hookDefinition);
 
