@@ -33,11 +33,16 @@ public class Utils {
         try {
             return method.invoke(target, args);
         } catch (IllegalArgumentException e) {
-            throw new CucumberException("Can't invoke " + MethodFormat.FULL.format(method), e);
+            throw new CucumberException("Failed to invoke " + MethodFormat.FULL.format(method), e);
         } catch (InvocationTargetException e) {
-            throw new CucumberException("Can't invoke " + MethodFormat.FULL.format(method), e.getTargetException());
+            Throwable targetException = e.getTargetException();
+            if(targetException instanceof PendingException) {
+                throw (PendingException) targetException;
+            } else {
+                throw new CucumberException("Failed to invoke " + MethodFormat.FULL.format(method), targetException);
+            }
         } catch (IllegalAccessException e) {
-            throw new CucumberException("Can't invoke " + MethodFormat.FULL.format(method), e);
+            throw new CucumberException("Failed to invoke " + MethodFormat.FULL.format(method), e);
         }
     }
 }

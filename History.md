@@ -1,5 +1,6 @@
 ## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.0.7...master)
 
+* [Core] Fixed regression: PendingException was causing steps to fail instead of pending. ([#328](https://github.com/cucumber/cucumber-jvm/issues/328) Aslak Hellesøy)
 * [Java] Missing String.format parameters in DefaultJavaObjectFactory ([#336](https://github.com/cucumber/cucumber-jvm/issues/336) paulkrause88, Aslak Hellesøy)
 * [Core] Exceptions being swallowed if reported in a Hook ([#133](https://github.com/cucumber/cucumber-jvm/issues/133) David Kowis, Aslak Hellesøy)
 * [Core] Added `DataTable.asMaps()` and made all returned lists immutable. (Aslak Hellesøy).

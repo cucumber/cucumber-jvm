@@ -162,6 +162,16 @@
     ]
   },
   {
+    "source": "something pending",
+    "flags": "",
+    "steps": [
+      {
+        "name": "something pending",
+        "args": []
+      }
+    ]
+  },
+  {
     "source": "this is not used",
     "flags": "",
     "steps": []

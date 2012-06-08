@@ -1,6 +1,5 @@
 Feature: Dates
 
-
   Scenario Outline: Parsing dates with simple a format (yyyy/MM/dd)
     Given the simple date is <input date>
     Then the date should be viewed in <timezone> as <year>, <month>, <day>, <hours>, <minutes>, <seconds>

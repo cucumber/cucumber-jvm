@@ -26,3 +26,8 @@ Feature: Cukes
     And a big basket with cukes
     And I have 12 cukes in my belly
 
+  Scenario: An undefined step
+    Given something undefined
+
+  Scenario: A pending step
+    Given something pending
