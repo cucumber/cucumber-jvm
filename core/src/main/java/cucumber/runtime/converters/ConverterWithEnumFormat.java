@@ -1,11 +1,15 @@
 package cucumber.runtime.converters;
 
+import com.thoughtworks.xstream.converters.ConversionException;
+
 import java.text.FieldPosition;
 import java.text.Format;
 import java.text.ParsePosition;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
+import static java.util.Arrays.asList;
 
 public class ConverterWithEnumFormat<T extends Enum> extends ConverterWithFormat<T> {
 
@@ -25,8 +29,12 @@ public class ConverterWithEnumFormat<T extends Enum> extends ConverterWithFormat
 
     @Override
     public T fromString(String string) {
-        T s = super.fromString(string);
-        return s == null ? null : s;
+        try {
+            return super.fromString(string);
+        } catch (ConversionException e) {
+            String allowed = asList(typeClass.getEnumConstants()).toString();
+            throw new ConversionException(String.format("Couldn't convert %s to %s. Legal values are %s", string, typeClass.getName(), allowed));
+        }
     }
 
     @Override

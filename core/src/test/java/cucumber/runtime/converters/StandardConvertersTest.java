@@ -123,10 +123,18 @@ public class StandardConvertersTest {
         assertEquals(Color.RED, enumConverter.fromString("red"));
     }
 
-    @Test(expected = ConversionException.class)
-    public void shouldNotTransformEnum() {
+    @Test
+    public void shouldListAllowedEnumsWhenConversionFails() {
         EnumConverter enumConverter = new EnumConverter(Locale.US, Color.class);
-        enumConverter.fromString("GRIN");
+        try {
+            enumConverter.fromString("YELLOW");
+            fail();
+        } catch (ConversionException expected) {
+            String expectedMessage = "Couldn't convert YELLOW to cucumber.runtime.converters.StandardConvertersTest$Color. Legal values are [RED, GREEN, BLUE]";
+            if(!expected.getMessage().startsWith(expectedMessage)) {
+                fail("'" + expected.getMessage() + "' didn't start with '" + expectedMessage + "'");
+            }
+        }
     }
 
     public static enum Color {
