@@ -24,7 +24,7 @@ public class TestRunner {
 		this.formatter = formatter;
 	}
 
-	@Test
+	@Test()
 	public void call() throws Exception {
 		StringBuilder stepText = new StringBuilder();
 		Formatter formatter = new CucumberPrettyFormatter(stepText);

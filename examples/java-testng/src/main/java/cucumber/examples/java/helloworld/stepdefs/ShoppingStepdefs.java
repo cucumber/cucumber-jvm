@@ -1,9 +1,10 @@
-package cucumber.examples.java.helloworld;
+package cucumber.examples.java.helloworld.stepdefs;
 
 import static org.fest.assertions.Assertions.*;
 import cucumber.annotation.en.Given;
 import cucumber.annotation.en.Then;
 import cucumber.annotation.en.When;
+import cucumber.examples.java.helloworld.app.ShoppingList;
 
 import java.util.List;
 
@@ -26,7 +27,7 @@ public class ShoppingStepdefs {
 
     @Then("^it should look like:$")
     public void it_should_look_like(String expected) throws Throwable {
-        assertThat(printedList.toString()).isSameAs(expected);
+        assertThat(printedList.toString()).isEqualTo(expected);
     }
 
     // When converting tables to a List of objects it's usually better to

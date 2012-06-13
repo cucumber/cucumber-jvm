@@ -1,9 +1,10 @@
-package cucumber.examples.java.helloworld;
+package cucumber.examples.java.helloworld.stepdefs;
 
 import static org.fest.assertions.Assertions.*;
 import cucumber.annotation.en.Given;
 import cucumber.annotation.en.Then;
 import cucumber.annotation.en.When;
+import cucumber.examples.java.helloworld.app.Hello;
 
 public class HelloStepdefs {
     private Hello hello;

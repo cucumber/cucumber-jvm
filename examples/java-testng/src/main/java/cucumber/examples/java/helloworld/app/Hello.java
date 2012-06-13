@@ -1,4 +1,4 @@
-package cucumber.examples.java.helloworld;
+package cucumber.examples.java.helloworld.app;
 
 public class Hello {
     private final String greeting;

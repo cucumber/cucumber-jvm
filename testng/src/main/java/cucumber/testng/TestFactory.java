@@ -9,9 +9,6 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.testng.annotations.Factory;
-
-import cucumber.formatter.ColorAware;
 import cucumber.io.ClasspathResourceLoader;
 import cucumber.io.FileResourceLoader;
 import cucumber.io.MultiLoader;
@@ -30,10 +27,9 @@ public class TestFactory {
     private Reporter reporter;
     private Formatter formatter;
     
-    @Factory
-    public Object[] getCucumberTests() throws IOException {
+    public Object[] getCucumberTests(Class clazz) throws IOException {
       List<Object> tests = new ArrayList<Object>();
-      RuntimeOptions options = getOptions(this.getClass());
+      RuntimeOptions options = getOptions(clazz);
       formatter = options.formatter(this.getClass().getClassLoader());
       reporter = options.reporter(this.getClass().getClassLoader());
       Runtime runtime = new Runtime(new FileResourceLoader(), Thread.currentThread().getContextClassLoader(), options);

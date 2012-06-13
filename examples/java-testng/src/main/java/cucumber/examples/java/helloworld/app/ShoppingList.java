@@ -1,4 +1,4 @@
-package cucumber.examples.java.helloworld;
+package cucumber.examples.java.helloworld.app;
 
 import java.io.IOException;
 import java.util.Map;
