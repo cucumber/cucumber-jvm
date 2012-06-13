@@ -1,3 +1,7 @@
+## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.0.9...master)
+
+* [Weld] Added workaround for [WELD-1119](https://issues.jboss.org/browse/WELD-1119) when running on single core machines. (Aslak Hellesøy)
+
 ## [1.0.9](https://github.com/cucumber/cucumber-jvm/compare/v1.0.8...v1.0.9)
 
 * [Core] Exceptions thrown from a step definition are no longer wrapped in CucumberException. (Aslak Hellesøy)
