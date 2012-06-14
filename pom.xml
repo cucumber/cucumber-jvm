@@ -378,6 +378,7 @@
                 <version>2.12</version>
                 <configuration>
                     <argLine>-Duser.language=en</argLine>
+                    <argLine>-Xmx1024m</argLine>
                     <useFile>false</useFile>
                 </configuration>
             </plugin>
