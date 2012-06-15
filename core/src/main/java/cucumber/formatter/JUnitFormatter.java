@@ -26,8 +26,11 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class JUnitFormatter implements Formatter, Reporter {
     private final File out;
@@ -162,6 +165,12 @@ public class JUnitFormatter implements Formatter, Reporter {
     }
 
     private static class TestCase {
+        private static final DecimalFormat NUMBER_FORMAT = (DecimalFormat) NumberFormat.getNumberInstance(Locale.US);
+
+        static {
+            NUMBER_FORMAT.applyPattern("0.######");
+        }
+
         private TestCase(Scenario scenario) {
             this.scenario = scenario;
         }
@@ -179,12 +188,14 @@ public class JUnitFormatter implements Formatter, Reporter {
             Element tc = doc.createElement("testcase");
             tc.setAttribute("classname", feature.getName());
             tc.setAttribute("name", examples > 0 ? scenario.getName() + "_" + examples-- : scenario.getName());
-            long time = 0;
+            long totalDurationNanos = 0;
             for (Result r : results) {
-                long durationMillis = r.getDuration() == null ? 0 : r.getDuration() / 1000000; // duration is reported in nanos
-                time += durationMillis;
+                totalDurationNanos += r.getDuration() == null ? 0 : r.getDuration();
             }
-            tc.setAttribute("time", String.valueOf(time));
+
+            double totalDurationSeconds = ((double) totalDurationNanos) / 1000000000;
+            String time = NUMBER_FORMAT.format(totalDurationSeconds);
+            tc.setAttribute("time", time);
 
             StringBuilder sb = new StringBuilder();
             Result skipped = null, failed = null;
