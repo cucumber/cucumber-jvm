@@ -91,7 +91,7 @@ public class JavaBackend implements Backend {
     void addStepDefinition(Annotation annotation, Method method) {
         try {
             Method regexpMethod = annotation.getClass().getMethod("value");
-            String regexpString = (String) Utils.invoke(annotation, regexpMethod);
+            String regexpString = (String) Utils.invoke(annotation, regexpMethod, 0);
             if (regexpString != null) {
                 Pattern pattern = Pattern.compile(regexpString);
                 objectFactory.addClass(method.getDeclaringClass());

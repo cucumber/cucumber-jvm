@@ -5,6 +5,10 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Utils {
     public static <T> List<T> listOf(int size, T obj) {
@@ -29,9 +33,27 @@ public class Utils {
         }
     }
 
-    public static Object invoke(Object target, Method method, Object... args) throws Throwable {
+    public static Object invoke(final Object target, final Method method, int timeoutMillis, final Object... args) throws Throwable {
         try {
-            return method.invoke(target, args);
+            if (timeoutMillis == 0) {
+                return method.invoke(target, args);
+            } else {
+                final Thread executionThread = Thread.currentThread();
+                final AtomicBoolean done = new AtomicBoolean();
+                Executors.newSingleThreadScheduledExecutor().schedule(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (!done.get()) {
+                            executionThread.interrupt();
+                        }
+                    }
+                }, timeoutMillis, TimeUnit.MILLISECONDS);
+                try {
+                    return invoke(target, method, 0, args);
+                } catch (InterruptedException timeout) {
+                    throw new TimeoutException("Timed out after " + timeoutMillis + "ms.");
+                }
+            }
         } catch (IllegalArgumentException e) {
             throw new CucumberException("Failed to invoke " + MethodFormat.FULL.format(method), e);
         } catch (InvocationTargetException e) {

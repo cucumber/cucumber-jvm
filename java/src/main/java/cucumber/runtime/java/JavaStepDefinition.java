@@ -27,7 +27,7 @@ public class JavaStepDefinition implements StepDefinition {
     }
 
     public void execute(I18n i18n, Object[] args) throws Throwable {
-        Utils.invoke(objectFactory.getInstance(method.getDeclaringClass()), method, args);
+        Utils.invoke(objectFactory.getInstance(method.getDeclaringClass()), method, 0, args);
     }
 
     public List<Argument> matchedArguments(Step step) {
