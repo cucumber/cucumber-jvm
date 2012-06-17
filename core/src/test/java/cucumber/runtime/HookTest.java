@@ -13,7 +13,6 @@ import org.mockito.InOrder;
 import org.mockito.Matchers;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
 
 import static java.util.Arrays.asList;
@@ -23,9 +22,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class HookTest {
-
-    private static final List<String> TAGS = new ArrayList<String>();
-    private static final List<String> CODE_PATHS = new ArrayList<String>();
 
     /**
      * Test for <a href="https://github.com/cucumber/cucumber-jvm/issues/23">#23</a>.

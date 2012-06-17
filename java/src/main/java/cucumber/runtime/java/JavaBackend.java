@@ -40,17 +40,13 @@ public class JavaBackend implements Backend {
     }
 
     private ObjectFactory loadObjectFactory() {
-        ObjectFactory foundOF;
-        if (ObjectFactoryHolder.getFactory() != null) {
-            foundOF = ObjectFactoryHolder.getFactory();
-        } else {
-            try {
-                foundOF = classpathResourceLoader.instantiateExactlyOneSubclass(ObjectFactory.class, "cucumber.runtime", new Class[0], new Object[0]);
-            } catch (CucumberException ce) {
-                foundOF = new DefaultJavaObjectFactory();
-            }
+        ObjectFactory objectFactory;
+        try {
+            objectFactory = classpathResourceLoader.instantiateExactlyOneSubclass(ObjectFactory.class, "cucumber.runtime", new Class[0], new Object[0]);
+        } catch (CucumberException ce) {
+            objectFactory = new DefaultJavaObjectFactory();
         }
-        return foundOF;
+        return objectFactory;
     }
 
     @Override

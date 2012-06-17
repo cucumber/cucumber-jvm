@@ -1,5 +1,6 @@
 package cucumber.runtime.java;
 
+import cucumber.runtime.CucumberException;
 import cucumber.runtime.HookDefinition;
 import cucumber.runtime.MethodFormat;
 import cucumber.runtime.ScenarioResult;
@@ -39,10 +40,18 @@ public class JavaHookDefinition implements HookDefinition {
     @Override
     public void execute(ScenarioResult scenarioResult) throws Throwable {
         Object[] args;
-        if (method.getParameterTypes().length == 1) {
-            args = new Object[]{scenarioResult};
-        } else {
-            args = new Object[0];
+        switch (method.getParameterTypes().length) {
+            case 0:
+                args = new Object[0];
+                break;
+            case 1:
+                if (!ScenarioResult.class.equals(method.getParameterTypes()[0])) {
+                    throw new CucumberException("When a hook declares an argument it must be of type " + ScenarioResult.class.getName() + ". " + method.toString());
+                }
+                args = new Object[]{scenarioResult};
+                break;
+            default:
+                throw new CucumberException("Hooks must declare 0 or 1 arguments. " + method.toString());
         }
 
         Utils.invoke(objectFactory.getInstance(method.getDeclaringClass()), method, args);
