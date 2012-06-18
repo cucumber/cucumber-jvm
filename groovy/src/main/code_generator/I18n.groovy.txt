@@ -7,7 +7,11 @@ import java.util.regex.Pattern;
 public class ${i18n.underscoredIsoCode.toUpperCase()} {
 <% i18n.codeKeywords.each { kw -> %>
     public static void ${kw}(Pattern regexp, Closure body) throws Throwable {
-        GroovyBackend.instance.addStepDefinition(regexp, body);
+        GroovyBackend.instance.addStepDefinition(regexp, 0, body);
+    }
+
+    public static void ${kw}(Pattern regexp, int timeoutMillis, Closure body) throws Throwable {
+        GroovyBackend.instance.addStepDefinition(regexp, timeoutMillis, body);
     }
 <% } %>
 }

@@ -5,11 +5,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Utils {
     public static <T> List<T> listOf(int size, T obj) {
@@ -35,35 +30,19 @@ public class Utils {
     }
 
     public static Object invoke(final Object target, final Method method, int timeoutMillis, final Object... args) throws Throwable {
-        try {
-            if (timeoutMillis == 0) {
-                return method.invoke(target, args);
-            } else {
-                final Thread executionThread = Thread.currentThread();
-                final AtomicBoolean done = new AtomicBoolean();
-                ScheduledFuture<?> timer = Executors.newSingleThreadScheduledExecutor().schedule(new Runnable() {
-                    @Override
-                    public void run() {
-                        System.out.println("done = " + done);
-                        if (!done.get()) {
-                            executionThread.interrupt();
-                        }
-                    }
-                }, timeoutMillis, TimeUnit.MILLISECONDS);
+        return Timeout.timeout(new Timeout.Callback<Object>() {
+            @Override
+            public Object call() throws Throwable {
                 try {
-                    Object result = invoke(target, method, 0, args);
-                    timer.cancel(true);
-                    return result;
-                } catch (InterruptedException timeout) {
-                    throw new TimeoutException("Timed out after " + timeoutMillis + "ms.");
+                    return method.invoke(target, args);
+                } catch (IllegalArgumentException e) {
+                    throw new CucumberException("Failed to invoke " + MethodFormat.FULL.format(method), e);
+                } catch (InvocationTargetException e) {
+                    throw e.getTargetException();
+                } catch (IllegalAccessException e) {
+                    throw new CucumberException("Failed to invoke " + MethodFormat.FULL.format(method), e);
                 }
             }
-        } catch (IllegalArgumentException e) {
-            throw new CucumberException("Failed to invoke " + MethodFormat.FULL.format(method), e);
-        } catch (InvocationTargetException e) {
-            throw e.getTargetException();
-        } catch (IllegalAccessException e) {
-            throw new CucumberException("Failed to invoke " + MethodFormat.FULL.format(method), e);
-        }
+        }, timeoutMillis);
     }
 }
