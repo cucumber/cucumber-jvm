@@ -9,6 +9,7 @@ import static java.lang.Thread.sleep;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class UtilsTest {
     @Test
@@ -37,8 +38,8 @@ public class UtilsTest {
     @Test(expected = TimeoutException.class)
     public void times_out_if_it_takes_too_long() throws Throwable {
         Slow slow = new Slow();
-        Object what = Utils.invoke(slow, Slow.class.getMethod("slower"), 50);
-        assertEquals("slower", what);
+        Utils.invoke(slow, Slow.class.getMethod("slower"), 50);
+        fail();
     }
 
     public static class Slow {
