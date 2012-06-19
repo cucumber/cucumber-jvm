@@ -103,7 +103,7 @@ public class RuntimeOptions {
             @Override
             public Object invoke(Object target, Method method, Object[] args) throws Throwable {
                 for (Formatter formatter : formatters) {
-                    Utils.invoke(formatter, method, args);
+                    Utils.invoke(formatter, method, 0, args);
                 }
                 return null;
             }
@@ -116,7 +116,7 @@ public class RuntimeOptions {
             public Object invoke(Object target, Method method, Object[] args) throws Throwable {
                 for (Formatter formatter : formatters) {
                     if (formatter instanceof Reporter) {
-                        Utils.invoke(formatter, method, args);
+                        Utils.invoke(formatter, method, 0, args);
                     }
                 }
                 return null;

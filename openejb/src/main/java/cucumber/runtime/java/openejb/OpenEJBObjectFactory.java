@@ -85,7 +85,7 @@ public class OpenEJBObjectFactory implements ObjectFactory {
             }
 
             Method configure = cl.loadClass("org.apache.log4j.PropertyConfigurator").getDeclaredMethod("configure", Properties.class);
-            Utils.invoke(null, configure, log4jProp);
+            Utils.invoke(null, configure, 0, log4jProp);
         }
     }
 }
