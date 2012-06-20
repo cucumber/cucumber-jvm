@@ -17,7 +17,7 @@ Given(~'^a big basket with cukes') { ->
 }
 
 Given(~'^the following table:$') { table ->
-    things = table.asList(Thing)
+    things = table.asList()
     assertEquals("Cucumber-JVM", things[1].name)
 }
 

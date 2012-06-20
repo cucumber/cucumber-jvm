@@ -51,6 +51,7 @@ public class StepDefinitionMatch extends Match {
     }
 
     /**
+     *
      * @param parameterTypes types of the stepdefs args. Some backends will pass null if they can't determine types or arity.
      * @param step           the step to run
      * @param xStream        used to convert a string to declared stepdef arguments
@@ -82,16 +83,16 @@ public class StepDefinitionMatch extends Match {
             TimeConverter timeConverter = null;
             ParameterType parameterType = parameterTypes.get(n);
 
-            xStream.processAnnotations(parameterType.getParameterClass());
+            xStream.processAnnotations(parameterType.getRawType());
 
             if (parameterType.getDateFormat() != null) {
                 timeConverter = TimeConverter.getInstance(parameterType, locale);
                 timeConverter.setOnlyFormat(parameterType.getDateFormat(), locale);
                 singleValueConverter = timeConverter;
-            } else if (parameterType.getParameterClass().isEnum()) {
-                singleValueConverter = new EnumConverter(locale, (Class<? extends Enum>) parameterType.getParameterClass());
+            } else if (parameterType.getRawType().isEnum()) {
+                singleValueConverter = new EnumConverter(locale, (Class<? extends Enum>) parameterType.getRawType());
             } else {
-                Converter converter = converterLookup.lookupConverterForType(parameterType.getParameterClass());
+                Converter converter = converterLookup.lookupConverterForType(parameterType.getRawType());
                 if (converter instanceof SingleValueConverter) {
                     singleValueConverter = (SingleValueConverter) converter;
                 } else {
@@ -102,10 +103,10 @@ public class StepDefinitionMatch extends Match {
                                     "@%s(%sConverter.class)\n" +
                                     "public class %s {}\n",
                             a.getVal(),
-                            parameterType.getParameterClass().getName(),
+                            parameterType.getRawType().getName(),
                             XStreamConverter.class.getName(),
-                            parameterType.getParameterClass().getSimpleName(),
-                            parameterType.getParameterClass().getSimpleName()
+                            parameterType.getRawType().getSimpleName(),
+                            parameterType.getRawType().getSimpleName()
                     ));
                 }
             }
@@ -162,26 +163,13 @@ public class StepDefinitionMatch extends Match {
 
     private Object tableArgument(Step step, int argIndex, LocalizedXStreams.LocalizedXStream xStream, String dateFormat) {
         DataTable table = new DataTable(step.getRows(), new TableConverter(xStream, dateFormat));
-
-        Type listType = getGenericListType(argIndex);
-        if (listType != null) {
-            return table.asList(listType);
-        } else {
-            return table;
-        }
+        Type type = getArgumentType(argIndex);
+        return table.convert(type);
     }
 
-    private Type getGenericListType(int argIndex) {
-        Type result = null;
+    private Type getArgumentType(int argIndex) {
         List<ParameterType> parameterTypes = stepDefinition.getParameterTypes();
-        if (parameterTypes != null) {
-            ParameterType parameterType = parameterTypes.get(argIndex);
-            Type[] actualTypeArguments = parameterType.getActualTypeArguments();
-            if (actualTypeArguments != null && actualTypeArguments.length > 0) {
-                result = actualTypeArguments[0];
-            }
-        }
-        return result;
+        return parameterTypes == null ? null : parameterTypes.get(argIndex).getType();
     }
 
     public Throwable removeFrameworkFramesAndAppendStepLocation(Throwable error, StackTraceElement stepLocation) {

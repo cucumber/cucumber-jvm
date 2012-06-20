@@ -168,33 +168,6 @@ public class FromDataTableTest {
         assertEquals("Birth Date", stepDefs.dataTable.raw().get(0).get(0));
     }
 
-    @Test
-    public void does_not_transform_to_list_of_map_of_date_to_string() throws Throwable {
-        thrown.expect(CucumberException.class);
-        thrown.expectMessage("Tables can only be transformed to a List<Map<K,V>> when K is String. It was class java.util.Date.");
-
-        Method listOfBeans = StepDefs.class.getMethod("listOfMapsOfDateToString", List.class);
-        runStepDef(listOfBeans, listOfDatesWithHeader());
-    }
-
-    @Test
-    public void does_not_transform_to_list_of_map_of_string_to_date() throws Throwable {
-        thrown.expect(CucumberException.class);
-        thrown.expectMessage("Tables can only be transformed to a List<Map<K,V>> when V is String or Object. It was class java.util.Date.");
-
-        Method listOfBeans = StepDefs.class.getMethod("listOfMapsOfStringToDate", List.class);
-        runStepDef(listOfBeans, listOfDatesWithHeader());
-    }
-
-    @Test
-    public void does_not_transform_to_list_of_non_generic_map() throws Throwable {
-        thrown.expect(CucumberException.class);
-        thrown.expectMessage("Tables can only be transformed to List<Map<String,String>> or List<Map<String,Object>>. You have to declare generic types.");
-
-        Method listOfBeans = StepDefs.class.getMethod("listOfMaps", List.class);
-        runStepDef(listOfBeans, listOfDatesWithHeader());
-    }
-
     private StepDefs runStepDef(Method method, List<DataTableRow> rows) throws Throwable {
         StepDefs stepDefs = new StepDefs();
         StepDefinition stepDefinition = new StubStepDefinition(stepDefs, method, "some pattern");

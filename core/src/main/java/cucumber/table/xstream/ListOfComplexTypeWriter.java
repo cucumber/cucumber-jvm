@@ -11,7 +11,7 @@ import java.util.List;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 
-public class ListOfObjectWriter extends DataTableWriter {
+public class ListOfComplexTypeWriter extends DataTableWriter {
     private static final List<Comment> NO_COMMENTS = emptyList();
     private final List<DataTableRow> rows = new ArrayList<DataTableRow>();
     private final TableConverter tableConverter;
@@ -21,7 +21,7 @@ public class ListOfObjectWriter extends DataTableWriter {
     private String[] fieldValues;
     private int fieldIndex = -1;
 
-    public ListOfObjectWriter(TableConverter tableConverter, String... columnNames) {
+    public ListOfComplexTypeWriter(TableConverter tableConverter, String... columnNames) {
         this.tableConverter = tableConverter;
         fieldNames = asList(columnNames);
 

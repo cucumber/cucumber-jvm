@@ -46,7 +46,7 @@ public class JRubyStepDefinition implements StepDefinition {
     public List<ParameterType> getParameterTypes() {
         IRubyObject argCountR = stepdef.callMethod("arg_count");
         int argCount = (Integer) argCountR.toJava(Integer.class);
-        return Utils.listOf(Math.max(0, argCount), new ParameterType(String.class, null));
+        return Utils.listOf(Math.max(0, argCount), new ParameterType(null, null));
     }
 
     @Override

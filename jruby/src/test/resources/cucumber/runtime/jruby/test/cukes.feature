@@ -29,6 +29,7 @@ Feature: Cukes
     When I call an undefined step from another
     Then I get an exception with "Undefined Step: When HOLY MOLEYS THIS DOESN'T EXIST!"
 
+  @focus
   Scenario: Calling a step from another that uses tables
     Given a data table:
       | field | value |

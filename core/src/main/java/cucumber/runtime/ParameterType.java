@@ -21,7 +21,7 @@ public class ParameterType {
         this.dateFormat = dateFormat;
     }
 
-    public Class<?> getParameterClass() {
+    public Class<?> getRawType() {
         if (type instanceof ParameterizedType) {
             return (Class<?>) ((ParameterizedType) type).getRawType();
         } else {
@@ -29,12 +29,8 @@ public class ParameterType {
         }
     }
 
-    public Type[] getActualTypeArguments() {
-        if (type instanceof ParameterizedType) {
-            return ((ParameterizedType) type).getActualTypeArguments();
-        } else {
-            return null;
-        }
+    public Type getType() {
+        return type;
     }
 
     public String getDateFormat() {

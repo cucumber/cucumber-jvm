@@ -1,11 +1,13 @@
 package cucumber.runtime.converters;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.ConverterLookup;
 import com.thoughtworks.xstream.converters.ConverterRegistry;
 import com.thoughtworks.xstream.converters.SingleValueConverter;
 import com.thoughtworks.xstream.core.DefaultConverterLookup;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -76,6 +78,22 @@ public class LocalizedXStreams {
                 timeConverter.removeOnlyFormat();
             }
             timeConverters.clear();
+        }
+
+        public SingleValueConverter getSingleValueConverter(Type type) {
+            if(Object.class.equals(type)) {
+                type = String.class;
+            }
+            if (type instanceof Class) {
+                Class clazz = (Class) type;
+                if (clazz.isEnum()) {
+                    return new EnumConverter(locale, clazz);
+                }
+                Converter converter = getConverterLookup().lookupConverterForType((Class) type);
+                return converter instanceof SingleValueConverter ? (SingleValueConverter) converter : null;
+            } else {
+                return null;
+            }
         }
     }
 }
