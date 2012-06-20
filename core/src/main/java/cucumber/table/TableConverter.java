@@ -6,13 +6,14 @@ import com.thoughtworks.xstream.converters.reflection.AbstractReflectionConverte
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.converters.LocalizedXStreams;
-import cucumber.table.xstream.DataTableWriter;
+import cucumber.table.xstream.CellWriter;
+import cucumber.table.xstream.ComplexTypeWriter;
 import cucumber.table.xstream.ListOfComplexTypeReader;
-import cucumber.table.xstream.ListOfComplexTypeWriter;
-import cucumber.table.xstream.ListOfListOfSingleValueWriter;
+import cucumber.table.xstream.ListOfSingleValueWriter;
+import gherkin.formatter.model.Comment;
+import gherkin.formatter.model.DataTableRow;
 import gherkin.util.Mapper;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -25,11 +26,13 @@ import static cucumber.runtime.Utils.listItemType;
 import static cucumber.runtime.Utils.mapKeyType;
 import static cucumber.runtime.Utils.mapValueType;
 import static gherkin.util.FixJava.map;
+import static java.util.Arrays.asList;
 
 /**
  * This class converts a {@link DataTable to various other types}
  */
 public class TableConverter {
+    private static final List<Comment> NO_COMMENTS = Collections.emptyList();
     private final LocalizedXStreams.LocalizedXStream xStream;
     private final String dateFormat;
 
@@ -90,7 +93,7 @@ public class TableConverter {
     }
 
     private <T> List<T> toListOfComplexType(DataTable dataTable, Class<T> itemType) {
-        HierarchicalStreamReader reader = new ListOfComplexTypeReader(itemType, convertedAttributeNames(dataTable), dataTable.cells(1));
+        HierarchicalStreamReader reader = new ListOfComplexTypeReader(itemType, convertTopCellsToFieldNames(dataTable), dataTable.cells(1));
         try {
             return Collections.unmodifiableList((List<T>) xStream.unmarshal(reader));
         } catch (AbstractReflectionConverter.UnknownFieldException e) {
@@ -144,7 +147,7 @@ public class TableConverter {
      * Converts a DataTable to a List of objects.
      */
     public <T> List<T> toList(final Type type, DataTable dataTable) {
-        if(type == null) {
+        if (type == null) {
             return convert(new GenericListType(new GenericListType(String.class)), dataTable);
         }
         return convert(new GenericListType(type), dataTable);
@@ -158,51 +161,49 @@ public class TableConverter {
      * @return a DataTable
      */
     public DataTable toTable(List<?> objects, String... columnNames) {
-        // Need to wrap the list to be sure xStream behaves well
-        // It doesn't like unmodifiable lists etc.
-        objects = new ArrayList<Object>(objects);
-        DataTableWriter writer;
-        if (isListOfListOfSingleValue(objects)) {
-            objects = wrapLists((List<List<?>>) objects);
-            writer = new ListOfListOfSingleValueWriter(this);
-        } else {
-            if (columnNames.length == 0) {
-                // Figure out column names by looking at class
-                columnNames = fieldNames(objects.get(0).getClass());
-            }
-            writer = new ListOfComplexTypeWriter(this, columnNames);
-        }
         try {
             xStream.setDateFormat(dateFormat);
-            xStream.marshal(objects, writer);
-            return writer.getDataTable();
+
+            List<String> header = null;
+            List<List<String>> valuesList = new ArrayList<List<String>>();
+            for (Object object : objects) {
+                CellWriter writer;
+                if (isListOfSingleValue(object)) {
+                    // XStream needs this
+                    object = new ArrayList<Object>((List<Object>) object);
+                    writer = new ListOfSingleValueWriter();
+                } else {
+                    writer = new ComplexTypeWriter(asList(columnNames));
+                }
+                xStream.marshal(object, writer);
+                if(header == null) {
+                    header = writer.getHeader();
+                }
+                List<String> values = writer.getValues();
+                valuesList.add(values);
+            }
+            return createDataTable(header, valuesList);
         } finally {
             xStream.unsetDateFormat();
         }
     }
 
-    private String[] fieldNames(Class clazz) {
-        Field[] fields = clazz.getFields();
-        String[] fieldNames = new String[fields.length];
-        int i = 0;
-        for (Field field : fields) {
-            fieldNames[i++] = field.getName();
+    private DataTable createDataTable(List<String> header, List<List<String>> valuesList) {
+        List<DataTableRow> gherkinRows = new ArrayList<DataTableRow>();
+        if(header != null) {
+            gherkinRows.add(gherkinRow(header));
         }
-        return fieldNames;
+        for (List<String> values : valuesList) {
+            gherkinRows.add(gherkinRow(values));
+        }
+        return new DataTable(gherkinRows, this);
     }
 
-    // This is a hack to prevent XStream from outputting weird-looking "XML" for Arrays.asList() - created lists.
-    private List<List<?>> wrapLists(List<List<?>> lists) {
-        List<List<?>> result = new ArrayList<List<?>>();
-        for (List<?> list : lists) {
-            List<?> resultList = new ArrayList<Object>(list);
-            result.add(resultList);
-        }
-        return result;
+    private DataTableRow gherkinRow(List<String> cells) {
+        return new DataTableRow(NO_COMMENTS, cells, 0);
     }
 
-    // We have to convert attribute names to valid field names.
-    private List<String> convertedAttributeNames(DataTable dataTable) {
+    private List<String> convertTopCellsToFieldNames(DataTable dataTable) {
         final StringConverter mapper = new CamelCaseStringConverter();
         return map(dataTable.topCells(), new Mapper<String, String>() {
             @Override
@@ -212,14 +213,12 @@ public class TableConverter {
         });
     }
 
-    private boolean isListOfListOfSingleValue(List<?> objects) {
-        for (Object object : objects) {
-            if (object instanceof List) {
-                List list = (List) object;
-                boolean isSingleValue = xStream.getSingleValueConverter(list.get(0).getClass()) != null;
-                if (list.size() > 0 && isSingleValue) {
-                    return true;
-                }
+    private boolean isListOfSingleValue(Object object) {
+        if (object instanceof List) {
+            List list = (List) object;
+            boolean isSingleValue = xStream.getSingleValueConverter(list.get(0).getClass()) != null;
+            if (list.size() > 0 && isSingleValue) {
+                return true;
             }
         }
         return false;

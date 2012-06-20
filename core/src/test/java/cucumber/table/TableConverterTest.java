@@ -17,23 +17,26 @@ public class TableConverterTest {
 
     @Test
     public void converts_table_of_single_column_to_list_of_integers() {
-        DataTable table = TableParser.parse("|3|\n|5|\n", null);
-        assertEquals(asList(3, 5), table.<List<Integer>>convert(new TypeReference<List<Integer>>() {
+        DataTable table = TableParser.parse("|3|\n|5|\n|6|\n|7|\n", null);
+        assertEquals(asList(3, 5, 6, 7), table.<List<Integer>>convert(new TypeReference<List<Integer>>() {
         }.getType()));
     }
 
     @Test
     public void converts_table_of_several_columns_to_list_of_integers() {
         DataTable table = TableParser.parse("|3|5|\n|6|7|\n", null);
-        assertEquals(asList(3, 5, 6, 7), table.<List<Integer>>convert(new TypeReference<List<Integer>>() {
-        }.getType()));
+        List<Integer> converted = table.convert(new TypeReference<List<Integer>>() {
+        }.getType());
+        assertEquals(asList(3, 5, 6, 7), converted);
     }
 
     @Test
-    public void converts_table_of_single_column_to_list_of_list_of_integers() {
-        DataTable table = TableParser.parse("|3|\n|5|\n", null);
-        assertEquals(asList(asList(3), asList(5)), table.<List<List<Integer>>>convert(new TypeReference<List<List<Integer>>>() {
-        }.getType()));
+    public void converts_table_of_single_column_to_list_of_list_of_integers_and_back() {
+        DataTable table = TableParser.parse("|3|5|\n|6|7|\n", null);
+        List<List<Integer>> converted = table.convert(new TypeReference<List<List<Integer>>>() {
+        }.getType());
+        assertEquals(asList(asList(3, 5), asList(6, 7)), converted);
+        assertEquals("      | 3 | 5 |\n      | 6 | 7 |\n", table.toTable(converted).toString());
     }
 
     @Test
@@ -64,8 +67,9 @@ public class TableConverterTest {
             put(Color.RED, 8);
             put(Color.BLUE, 9);
         }};
-        assertEquals(asList(map1, map2), table.<Map<Color, Integer>>convert(new TypeReference<List<Map<Color, Integer>>>() {
-        }.getType()));
+        List<Map<Color, Integer>> converted = table.convert(new TypeReference<List<Map<Color, Integer>>>() {
+        }.getType());
+        assertEquals(asList(map1, map2), converted);
     }
 
     public static class UserPojo {
@@ -74,12 +78,13 @@ public class TableConverterTest {
     }
 
     @Test
-    public void converts_table_to_list_of_pojo() {
+    public void converts_table_to_list_of_pojo_and_almost_back() {
         DataTable table = TableParser.parse("|Birth Date|Death Cal|\n|1957-05-10|1979-02-02|\n", "yyyy-MM-dd");
         List<UserPojo> converted = table.convert(new TypeReference<List<UserPojo>>() {
         }.getType());
         assertEquals(sidsBirthday(), converted.get(0).birthDate);
         assertEquals(sidsDeathcal(), converted.get(0).deathCal);
+        assertEquals("      | birthDate  | deathCal   |\n      | 1957-05-10 | 1979-02-02 |\n", table.toTable(converted).toString());
     }
 
     @XStreamConverter(JavaBeanConverter.class)
@@ -105,12 +110,13 @@ public class TableConverterTest {
     }
 
     @Test
-    public void converts_to_list_of_java_bean() {
+    public void converts_to_list_of_java_bean_and_almost_back() {
         DataTable table = TableParser.parse("|Birth Date|Death Cal|\n|1957-05-10|1979-02-02|\n", "yyyy-MM-dd");
         List<UserBean> converted = table.convert(new TypeReference<List<UserBean>>() {
         }.getType());
         assertEquals(sidsBirthday(), converted.get(0).getBirthDate());
         assertEquals(sidsDeathcal(), converted.get(0).getDeathCal());
+        assertEquals("      | birthDate  | deathCal   |\n      | 1957-05-10 | 1979-02-02 |\n", table.toTable(converted).toString());
     }
 
     @Test

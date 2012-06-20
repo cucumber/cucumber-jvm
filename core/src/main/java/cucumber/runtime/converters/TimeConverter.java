@@ -43,6 +43,14 @@ public abstract class TimeConverter<T> extends ConverterWithFormat<T> {
         return onlyFormat == null ? formats : asList(onlyFormat);
     }
 
+    @Override
+    public String toString(Object obj) {
+        if(obj instanceof Calendar) {
+            obj = ((Calendar) obj).getTime();
+        }
+        return super.toString(obj);
+    }
+
     public void setOnlyFormat(String dateFormatString, Locale locale) {
         onlyFormat = new SimpleDateFormat(dateFormatString, locale);
         onlyFormat.setLenient(false);
