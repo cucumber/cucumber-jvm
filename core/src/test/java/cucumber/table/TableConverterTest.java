@@ -1,5 +1,7 @@
 package cucumber.table;
 
+import com.thoughtworks.xstream.annotations.XStreamConverter;
+import com.thoughtworks.xstream.converters.javabean.JavaBeanConverter;
 import org.junit.Test;
 
 import java.util.Calendar;
@@ -72,12 +74,43 @@ public class TableConverterTest {
     }
 
     @Test
-    public void converts_to_list_of_pojo() {
+    public void converts_table_to_list_of_pojo() {
         DataTable table = TableParser.parse("|Birth Date|Death Cal|\n|1957-05-10|1979-02-02|\n", "yyyy-MM-dd");
         List<UserPojo> converted = table.convert(new TypeReference<List<UserPojo>>() {
         }.getType());
         assertEquals(sidsBirthday(), converted.get(0).birthDate);
         assertEquals(sidsDeathcal(), converted.get(0).deathCal);
+    }
+
+    @XStreamConverter(JavaBeanConverter.class)
+    public static class UserBean {
+        private Date birthDateX;
+        private Calendar deathCalX;
+
+        public Date getBirthDate() {
+            return this.birthDateX;
+        }
+
+        public void setBirthDate(Date birthDate) {
+            this.birthDateX = birthDate;
+        }
+
+        public Calendar getDeathCal() {
+            return deathCalX;
+        }
+
+        public void setDeathCal(Calendar deathCal) {
+            this.deathCalX = deathCal;
+        }
+    }
+
+    @Test
+    public void converts_to_list_of_java_bean() {
+        DataTable table = TableParser.parse("|Birth Date|Death Cal|\n|1957-05-10|1979-02-02|\n", "yyyy-MM-dd");
+        List<UserBean> converted = table.convert(new TypeReference<List<UserBean>>() {
+        }.getType());
+        assertEquals(sidsBirthday(), converted.get(0).getBirthDate());
+        assertEquals(sidsDeathcal(), converted.get(0).getDeathCal());
     }
 
     @Test
