@@ -41,7 +41,7 @@ public class TableConverter {
     public <T> T convert(Type type, DataTable dataTable) {
         try {
             xStream.setDateFormat(dateFormat);
-            if (type == null || DataTable.class.equals(type)) {
+            if (type == null || (type instanceof Class && ((Class) type).isAssignableFrom(DataTable.class))) {
                 return (T) dataTable;
             }
 
@@ -144,22 +144,10 @@ public class TableConverter {
      * Converts a DataTable to a List of objects.
      */
     public <T> List<T> toList(final Type type, DataTable dataTable) {
-        return convert(new ParameterizedType() {
-            @Override
-            public Type[] getActualTypeArguments() {
-                return new Type[]{type};
-            }
-
-            @Override
-            public Type getRawType() {
-                return List.class;
-            }
-
-            @Override
-            public Type getOwnerType() {
-                throw new UnsupportedOperationException();
-            }
-        }, dataTable);
+        if(type == null) {
+            return convert(new GenericListType(new GenericListType(String.class)), dataTable);
+        }
+        return convert(new GenericListType(type), dataTable);
     }
 
     /**
@@ -235,5 +223,28 @@ public class TableConverter {
             }
         }
         return false;
+    }
+
+    private static class GenericListType implements ParameterizedType {
+        private final Type type;
+
+        public GenericListType(Type type) {
+            this.type = type;
+        }
+
+        @Override
+        public Type[] getActualTypeArguments() {
+            return new Type[]{type};
+        }
+
+        @Override
+        public Type getRawType() {
+            return List.class;
+        }
+
+        @Override
+        public Type getOwnerType() {
+            throw new UnsupportedOperationException();
+        }
     }
 }

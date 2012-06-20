@@ -17,6 +17,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -113,22 +114,27 @@ public class StepdefGeneratorTest {
 
             @Override
             public String getLocation(boolean detail) {
-                throw new UnsupportedOperationException("TODO");
+                throw new UnsupportedOperationException();
             }
 
             @Override
-            public List<ParameterType> getParameterTypes() {
-                throw new UnsupportedOperationException("TODO");
+            public Integer getParameterCount() {
+                return null;
+            }
+
+            @Override
+            public ParameterType getParameterType(int n, Type argumentType) {
+                return null;
             }
 
             @Override
             public void execute(I18n i18n, Object[] args) throws Throwable {
-                throw new UnsupportedOperationException("TODO");
+                throw new UnsupportedOperationException();
             }
 
             @Override
             public boolean isDefinedAt(StackTraceElement stackTraceElement) {
-                throw new UnsupportedOperationException("TODO");
+                throw new UnsupportedOperationException();
             }
 
             @Override

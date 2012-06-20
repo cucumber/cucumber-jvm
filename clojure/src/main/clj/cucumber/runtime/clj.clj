@@ -73,7 +73,9 @@
                        (.getName step)))
      (getLocation [_ detail]
        (str (:file location) ":" (:line location)))
-     (getParameterTypes [_]
+     (getParameterCount [_]
+       nil)
+     (getParameterType [_ n argumentType]
        nil)
      (execute [_ locale args]
        (apply fun args))

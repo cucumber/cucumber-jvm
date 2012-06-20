@@ -93,7 +93,8 @@ public class DataTable {
      * @return a list of objects
      */
     public <T> List<T> asList(Type type) {
-        return tableConverter.toList(type, this);
+        List<T> result = tableConverter.toList(type, this);
+        return result;
     }
 
     List<String> topCells() {

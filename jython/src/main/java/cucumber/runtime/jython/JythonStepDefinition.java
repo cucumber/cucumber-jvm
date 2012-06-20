@@ -11,6 +11,7 @@ import org.python.core.PyList;
 import org.python.core.PyObject;
 import org.python.core.PyString;
 
+import java.lang.reflect.Type;
 import java.util.List;
 
 public class JythonStepDefinition implements StepDefinition {
@@ -41,8 +42,13 @@ public class JythonStepDefinition implements StepDefinition {
     }
 
     @Override
-    public List<ParameterType> getParameterTypes() {
-        return Utils.listOf(arity, new ParameterType(String.class, null));
+    public Integer getParameterCount() {
+        return arity;
+    }
+
+    @Override
+    public ParameterType getParameterType(int n, Type argumentType) {
+        return new ParameterType(argumentType, null);
     }
 
     @Override

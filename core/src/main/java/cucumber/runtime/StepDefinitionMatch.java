@@ -41,8 +41,7 @@ public class StepDefinitionMatch extends Match {
 
     public void runStep(I18n i18n) throws Throwable {
         try {
-            Object[] args = transformedArgs(stepDefinition.getParameterTypes(), step, localizedXStreams.get(i18n.getLocale()), i18n.getLocale());
-            stepDefinition.execute(i18n, args);
+            stepDefinition.execute(i18n, transformedArgs(step, localizedXStreams.get(i18n.getLocale()), i18n.getLocale()));
         } catch (CucumberException e) {
             throw e;
         } catch (Throwable t) {
@@ -51,37 +50,34 @@ public class StepDefinitionMatch extends Match {
     }
 
     /**
-     *
-     * @param parameterTypes types of the stepdefs args. Some backends will pass null if they can't determine types or arity.
-     * @param step           the step to run
-     * @param xStream        used to convert a string to declared stepdef arguments
-     * @param locale         the feature's locale
+     * @param step    the step to run
+     * @param xStream used to convert a string to declared stepdef arguments
+     * @param locale  the feature's locale
      * @return an Array matching the types or {@code parameterTypes}, or an array of String if {@code parameterTypes} is null
      */
-    private Object[] transformedArgs(List<ParameterType> parameterTypes, Step step, LocalizedXStreams.LocalizedXStream xStream, Locale locale) {
-        if (xStream == null) {
-            throw new NullPointerException("xStream");
-        }
+    private Object[] transformedArgs(Step step, LocalizedXStreams.LocalizedXStream xStream, Locale locale) {
         int argumentCount = getArguments().size();
-        if (step.getDocString() != null) argumentCount++;
-        if (step.getRows() != null) argumentCount++;
-        if (parameterTypes != null) {
-            if (parameterTypes.size() != argumentCount) {
-                throw arityMismatch(parameterTypes, step);
-            }
-        } else {
-            // Some backends, like ClojureBackend, don't know the arity and therefore pass in null.
-            parameterTypes = Utils.listOf(argumentCount, new ParameterType(String.class, null));
+
+        if (step.getRows() != null) {
+            argumentCount++;
+        } else if (step.getDocString() != null) {
+            argumentCount++;
+        }
+        Integer parameterCount = stepDefinition.getParameterCount();
+        if (parameterCount != null && argumentCount != parameterCount) {
+            throw arityMismatch(parameterCount);
         }
 
-        Object[] result = new Object[argumentCount];
+        List<Object> result = new ArrayList<Object>();
         ConverterLookup converterLookup = xStream.getConverterLookup();
 
+        List<ParameterType> parameterTypes = new ArrayList<ParameterType>();
         int n = 0;
         for (Argument a : getArguments()) {
             SingleValueConverter singleValueConverter;
             TimeConverter timeConverter = null;
-            ParameterType parameterType = parameterTypes.get(n);
+            ParameterType parameterType = getParameterType(n, String.class);
+            parameterTypes.add(parameterType);
 
             xStream.processAnnotations(parameterType.getRawType());
 
@@ -111,7 +107,7 @@ public class StepDefinitionMatch extends Match {
                 }
             }
             try {
-                result[n] = singleValueConverter.fromString(a.getVal());
+                result.add(singleValueConverter.fromString(a.getVal()));
             } finally {
                 if (timeConverter != null) {
                     timeConverter.removeOnlyFormat();
@@ -121,24 +117,38 @@ public class StepDefinitionMatch extends Match {
         }
 
         if (step.getRows() != null) {
-            ParameterType parameterType = parameterTypes.get(n);
-            result[n] = tableArgument(step, n, xStream, parameterType.getDateFormat());
+            result.add(tableArgument(step, n, xStream));
         } else if (step.getDocString() != null) {
-            result[n] = step.getDocString().getValue();
+            result.add(step.getDocString().getValue());
         }
-        return result;
+        return result.toArray(new Object[result.size()]);
     }
 
-    private CucumberException arityMismatch(List<ParameterType> parameterTypes, Step step) {
+    private ParameterType getParameterType(int n, Type argumentType) {
+        ParameterType parameterType = stepDefinition.getParameterType(n, argumentType);
+        if(parameterType == null) {
+            // Some backends return null because they don't know
+            parameterType = new ParameterType(argumentType, null);
+        }
+        return parameterType;
+    }
+
+    private Object tableArgument(Step step, int argIndex, LocalizedXStreams.LocalizedXStream xStream) {
+        ParameterType parameterType = getParameterType(argIndex, DataTable.class);
+        DataTable table = new DataTable(step.getRows(), new TableConverter(xStream, parameterType.getDateFormat()));
+        Type type = parameterType.getType();
+        return table.convert(type);
+    }
+
+    private CucumberException arityMismatch(int parameterCount) {
         List<Argument> arguments = createArgumentsForErrorMessage(step);
         return new CucumberException(String.format(
-                "Arity mismatch: Step Definition '%s' with pattern /%s/ is declared with %s parameters%s. However, the gherkin step matched %s arguments%s. \nStep: %s%s",
+                "Arity mismatch: Step Definition '%s' with pattern [%s] is declared with %s parameters. However, the gherkin step has %s arguments %s. \nStep: %s%s",
                 stepDefinition.getLocation(true),
                 stepDefinition.getPattern(),
-                parameterTypes.size(),
-                parameterTypes.isEmpty() ? "" : " " + parameterTypes.toString(),
+                parameterCount,
                 arguments.size(),
-                arguments.isEmpty() ? "" : " " + arguments.toString(),
+                arguments,
                 step.getKeyword(),
                 step.getName()
         ));
@@ -159,17 +169,6 @@ public class StepDefinitionMatch extends Match {
             arguments.add(new Argument(-1, "Table:" + rows.toString()));
         }
         return arguments;
-    }
-
-    private Object tableArgument(Step step, int argIndex, LocalizedXStreams.LocalizedXStream xStream, String dateFormat) {
-        DataTable table = new DataTable(step.getRows(), new TableConverter(xStream, dateFormat));
-        Type type = getArgumentType(argIndex);
-        return table.convert(type);
-    }
-
-    private Type getArgumentType(int argIndex) {
-        List<ParameterType> parameterTypes = stepDefinition.getParameterTypes();
-        return parameterTypes == null ? null : parameterTypes.get(argIndex).getType();
     }
 
     public Throwable removeFrameworkFramesAndAppendStepLocation(Throwable error, StackTraceElement stepLocation) {

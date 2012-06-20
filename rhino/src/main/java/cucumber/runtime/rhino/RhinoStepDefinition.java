@@ -14,6 +14,7 @@ import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.regexp.NativeRegExp;
 import org.mozilla.javascript.tools.shell.Global;
 
+import java.lang.reflect.Type;
 import java.util.List;
 
 public class RhinoStepDefinition implements StepDefinition {
@@ -44,8 +45,14 @@ public class RhinoStepDefinition implements StepDefinition {
         return location.getFileName() + ":" + location.getLineNumber();
     }
 
-    public List<ParameterType> getParameterTypes() {
-        return Utils.listOf(bodyFunc.getArity(), new ParameterType(String.class, null));
+    @Override
+    public Integer getParameterCount() {
+        return bodyFunc.getArity();
+    }
+
+    @Override
+    public ParameterType getParameterType(int n, Type argumentType) {
+        return new ParameterType(argumentType, null);
     }
 
     public void execute(I18n i18n, Object[] args) throws Throwable {

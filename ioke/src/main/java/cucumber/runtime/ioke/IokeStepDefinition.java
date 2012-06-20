@@ -10,6 +10,7 @@ import ioke.lang.IokeObject;
 import ioke.lang.Runtime;
 import ioke.lang.exceptions.ControlFlow;
 
+import java.lang.reflect.Type;
 import java.util.List;
 
 import static cucumber.runtime.Utils.listOf;
@@ -19,12 +20,14 @@ public class IokeStepDefinition implements StepDefinition {
     private final IokeObject iokeStepDefObject;
     private final IokeBackend backend;
     private final String location;
+    private List<ParameterType> parameterTypes;
 
     public IokeStepDefinition(IokeBackend iokeBackend, Runtime ioke, IokeObject iokeStepDefObject, String location) throws Throwable {
         this.ioke = ioke;
         this.iokeStepDefObject = iokeStepDefObject;
         this.backend = iokeBackend;
         this.location = location;
+        this.parameterTypes = getParameterTypes();
     }
 
     public String getPattern() {
@@ -51,6 +54,16 @@ public class IokeStepDefinition implements StepDefinition {
 
     public String getLocation(boolean detail) {
         return location;
+    }
+
+    @Override
+    public Integer getParameterCount() {
+        return parameterTypes.size();
+    }
+
+    @Override
+    public ParameterType getParameterType(int n, Type argumentType) {
+        return parameterTypes.get(n);
     }
 
     public List<ParameterType> getParameterTypes() {

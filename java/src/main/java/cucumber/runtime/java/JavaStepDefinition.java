@@ -10,6 +10,7 @@ import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -19,12 +20,14 @@ public class JavaStepDefinition implements StepDefinition {
     private final int timeout;
     private final JdkPatternArgumentMatcher argumentMatcher;
     private final ObjectFactory objectFactory;
+    private List<ParameterType> parameterTypes;
 
     public JavaStepDefinition(Method method, Pattern pattern, int timeout, ObjectFactory objectFactory) {
         this.method = method;
+        this.parameterTypes = ParameterType.fromMethod(method);
         this.pattern = pattern;
-        this.timeout = timeout;
         this.argumentMatcher = new JdkPatternArgumentMatcher(pattern);
+        this.timeout = timeout;
         this.objectFactory = objectFactory;
     }
 
@@ -41,8 +44,14 @@ public class JavaStepDefinition implements StepDefinition {
         return format.format(method);
     }
 
-    public List<ParameterType> getParameterTypes() {
-        return ParameterType.fromMethod(method);
+    @Override
+    public Integer getParameterCount() {
+        return parameterTypes.size();
+    }
+
+    @Override
+    public ParameterType getParameterType(int n, Type argumentType) {
+        return parameterTypes.get(n);
     }
 
     public boolean isDefinedAt(StackTraceElement e) {
