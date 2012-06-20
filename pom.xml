@@ -17,7 +17,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <outputDirectory>${project.build.directory}</outputDirectory>
         <gherkin.version>2.11.0</gherkin.version>
-        <groovy.version>2.0.0-rc-2</groovy.version>
+        <groovy.version>2.0.0-rc-3</groovy.version>
     </properties>
     <licenses>
         <license>
@@ -122,18 +122,18 @@
             <dependency>
                 <groupId>org.scala-lang</groupId>
                 <artifactId>scala-library</artifactId>
-                <version>2.9.1</version>
+                <version>2.10.0-M4</version>
             </dependency>
             <dependency>
                 <groupId>org.scala-lang</groupId>
                 <artifactId>scala-compiler</artifactId>
-                <version>2.9.1</version>
+                <version>2.10.0-M4</version>
             </dependency>
             <dependency>
                 <groupId>org.clojure</groupId>
                 <artifactId>clojure</artifactId>
-                <!-- Remember to bounce version in examples/clojure_cukes as well -->
-                <version>1.4.0</version>
+                <!-- Remember to bounce version in examples/clojure_cukes/project.clj as well -->
+                <version>1.5.0-alpha2</version>
             </dependency>
             <dependency>
                 <groupId>rhino</groupId>
@@ -169,17 +169,17 @@
             <dependency>
                 <groupId>org.seleniumhq.selenium</groupId>
                 <artifactId>selenium-chrome-driver</artifactId>
-                <version>2.21.0</version>
+                <version>2.24.1</version>
             </dependency>
             <dependency>
                 <groupId>org.seleniumhq.selenium</groupId>
                 <artifactId>selenium-server</artifactId>
-                <version>2.21.0</version>
+                <version>2.24.1</version>
             </dependency>
             <dependency>
                 <groupId>org.webbitserver</groupId>
                 <artifactId>webbit</artifactId>
-                <version>0.4.7</version>
+                <version>0.4.8</version>
             </dependency>
             <dependency>
                 <groupId>org.jruby</groupId>
