@@ -1,5 +1,6 @@
 ## [1.0.10](https://github.com/cucumber/cucumber-jvm/compare/v1.0.9...v1.0.10)
 
+* [Core] Automatically convert data tables to lists of enums just as is done with classes [#346](https://github.com/cucumber/cucumber-jvm/issues/346)
 * [Core] `DataTable.create()` and `TableConverter.toTable()` will omit columns for object fields that are null, *unless columns are explicitly listed*. See [#320](https://github.com/cucumber/cucumber-jvm/pull/320) (Aslak Hellesøy)
 * [Core] Table conversion to `List<Map>` converts to a List of Map of String to String. (Aslak Hellesøy)
 * [Core] Table conversion to `List<Map<KeyType,ValueType>>` works for enums, dates, strings and primitives. (Aslak Hellesøy)
