@@ -14,7 +14,7 @@ import java.lang.reflect.Type;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public class JavaStepDefinition implements StepDefinition {
+class JavaStepDefinition implements StepDefinition {
     private final Method method;
     private final Pattern pattern;
     private final int timeout;
