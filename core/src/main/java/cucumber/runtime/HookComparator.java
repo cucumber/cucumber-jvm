@@ -2,8 +2,8 @@ package cucumber.runtime;
 
 import java.util.Comparator;
 
-public final class HookComparator implements Comparator<HookDefinition> {
-    final boolean ascending;
+class HookComparator implements Comparator<HookDefinition> {
+    private final boolean ascending;
 
     public HookComparator(boolean ascending) {
         this.ascending = ascending;

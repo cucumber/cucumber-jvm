@@ -181,8 +181,8 @@ public class JUnitFormatter implements Formatter, Reporter {
         Scenario scenario;
         static Feature feature;
         static int examples = 0;
-        List<Step> steps = new ArrayList<Step>();
-        List<Result> results = new ArrayList<Result>();
+        final List<Step> steps = new ArrayList<Step>();
+        final List<Result> results = new ArrayList<Result>();
 
         private Element writeTo(Document doc) {
             Element tc = doc.createElement("testcase");

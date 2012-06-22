@@ -7,7 +7,7 @@ import java.util.NoSuchElementException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-public class ZipResourceIterator implements Iterator<Resource> {
+class ZipResourceIterator implements Iterator<Resource> {
     private final String path;
     private final String suffix;
     private final ZipFile jarFile;

@@ -14,10 +14,10 @@ import static java.util.Arrays.asList;
 public class ConverterWithEnumFormat<T extends Enum> extends ConverterWithFormat<T> {
 
     private final List<Format> formats = new ArrayList<Format>();
-    private Locale locale;
-    private Class<? extends Enum> typeClass;
+    private final Locale locale;
+    private final Class<? extends Enum> typeClass;
 
-    public ConverterWithEnumFormat(Locale locale, Class<? extends Enum> enumClass) {
+    ConverterWithEnumFormat(Locale locale, Class<? extends Enum> enumClass) {
         super(new Class[]{enumClass});
         this.locale = locale;
         this.typeClass = enumClass;

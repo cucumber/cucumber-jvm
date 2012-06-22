@@ -6,7 +6,7 @@ import com.thoughtworks.xstream.converters.SingleValueConverterWrapper;
 /**
  * Subclass that exposes the wrapped converter
  */
-public class SingleValueConverterWrapperExt extends SingleValueConverterWrapper {
+class SingleValueConverterWrapperExt extends SingleValueConverterWrapper {
     private final SingleValueConverter converter;
 
     public SingleValueConverterWrapperExt(SingleValueConverter converter) {

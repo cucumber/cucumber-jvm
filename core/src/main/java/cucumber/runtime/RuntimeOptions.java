@@ -26,13 +26,13 @@ public class RuntimeOptions {
     public static final String VERSION = ResourceBundle.getBundle("cucumber.version").getString("cucumber-jvm.version");
     public static final String USAGE = FixJava.readResource("/cucumber/runtime/USAGE.txt");
 
-    public List<String> glue = new ArrayList<String>();
+    public final List<String> glue = new ArrayList<String>();
+    public final List<Object> filters = new ArrayList<Object>();
+    public final List<Formatter> formatters = new ArrayList<Formatter>();
+    public final List<String> featurePaths = new ArrayList<String>();
     public File dotCucumber;
     public boolean dryRun;
     public boolean strict = false;
-    public List<Object> filters = new ArrayList<Object>();
-    public List<Formatter> formatters = new ArrayList<Formatter>();
-    public List<String> featurePaths = new ArrayList<String>();
     private boolean monochrome = false;
 
     public RuntimeOptions(Properties properties, String... argv) {

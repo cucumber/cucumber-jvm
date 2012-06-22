@@ -15,11 +15,11 @@ import java.util.Locale;
 import static java.util.Arrays.asList;
 
 public abstract class TimeConverter<T> extends ConverterWithFormat<T> {
-    protected final Locale locale;
+    final Locale locale;
     private final List<DateFormat> formats = new ArrayList<DateFormat>();
     private SimpleDateFormat onlyFormat;
 
-    public TimeConverter(Locale locale, Class[] convertibleTypes) {
+    TimeConverter(Locale locale, Class[] convertibleTypes) {
         super(convertibleTypes);
         this.locale = locale;
 
@@ -30,11 +30,11 @@ public abstract class TimeConverter<T> extends ConverterWithFormat<T> {
         addFormat(DateFormat.FULL, locale);
     }
 
-    protected void addFormat(int style, Locale locale) {
+    void addFormat(int style, Locale locale) {
         add(DateFormat.getDateInstance(style, locale));
     }
 
-    protected void add(DateFormat dateFormat) {
+    void add(DateFormat dateFormat) {
         dateFormat.setLenient(false);
         formats.add(dateFormat);
     }

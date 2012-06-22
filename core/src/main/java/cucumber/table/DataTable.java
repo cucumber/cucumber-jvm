@@ -34,7 +34,7 @@ public class DataTable {
         return create(raw, locale, null, columnNames);
     }
 
-    public static DataTable create(List<?> raw, Locale locale, String dateFormat, String... columnNames) {
+    private static DataTable create(List<?> raw, Locale locale, String dateFormat, String... columnNames) {
         TableConverter tableConverter = new TableConverter(new LocalizedXStreams(Thread.currentThread().getContextClassLoader()).get(locale), dateFormat);
         return tableConverter.toTable(raw, columnNames);
     }
@@ -117,8 +117,8 @@ public class DataTable {
     }
 
     /**
-     * Diffs this table with {@code other}, which can be a {@code List<List<String>>} or a
-     * {@code List<YourType>}.
+     * Diffs this table with {@code other}, which can be a {@code List&lt;List&lt;String&gt;&gt;} or a
+     * {@code List&lt;YourType&gt;}.
      *
      * @param other the other table to diff with.
      * @throws TableDiffException if the tables are different.
@@ -135,7 +135,7 @@ public class DataTable {
      * @param other the other table to diff with.
      * @throws TableDiffException if the tables are different.
      */
-    public void diff(DataTable other) throws TableDiffException {
+    void diff(DataTable other) throws TableDiffException {
         new TableDiffer(this, other).calculateDiffs();
     }
 

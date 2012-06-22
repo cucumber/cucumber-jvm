@@ -38,7 +38,7 @@ public class LocalizedXStreams {
 
     public static class LocalizedXStream extends XStream {
         private final Locale locale;
-        private static List<TimeConverter> timeConverters = new ArrayList<TimeConverter>();
+        private static final List<TimeConverter> timeConverters = new ArrayList<TimeConverter>();
 
         public LocalizedXStream(ClassLoader classLoader, ConverterLookup converterLookup, ConverterRegistry converterRegistry, Locale locale) {
             super(null, null, classLoader, null, converterLookup, converterRegistry);

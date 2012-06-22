@@ -45,7 +45,7 @@ public final class SnippetGenerator {
         );
     }
 
-    protected String patternFor(String stepName) {
+    String patternFor(String stepName) {
         String pattern = stepName;
         for (Pattern escapePattern : ESCAPE_PATTERNS) {
             Matcher m = escapePattern.matcher(pattern);
@@ -71,7 +71,7 @@ public final class SnippetGenerator {
         return functionName;
     }
 
-    protected String sanitizeFunctionName(String functionName) {
+    String sanitizeFunctionName(String functionName) {
         StringBuilder sanitized = new StringBuilder();
 
         String trimmedFunctionName = functionName.trim();
@@ -138,7 +138,7 @@ public final class SnippetGenerator {
         return argTypes;
     }
 
-    protected ArgumentPattern[] argumentPatterns() {
+    ArgumentPattern[] argumentPatterns() {
         return DEFAULT_ARGUMENT_PATTERNS;
     }
 

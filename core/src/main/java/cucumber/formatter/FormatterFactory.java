@@ -27,7 +27,7 @@ import static java.util.Arrays.asList;
  * The formatter class must have a single argument constructor that takes either an {@link Appendable} or a {@link File}.
  */
 public class FormatterFactory {
-    private Class[] CTOR_ARGS = new Class[]{Appendable.class, File.class};
+    private final Class[] CTOR_ARGS = new Class[]{Appendable.class, File.class};
 
     private static final Map<String, Class<? extends Formatter>> FORMATTER_CLASSES = new HashMap<String, Class<? extends Formatter>>() {{
         put("null", NullFormatter.class);
