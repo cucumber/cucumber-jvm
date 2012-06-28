@@ -21,3 +21,6 @@ Feature: Hello World
       5 Soap
 
       """
+
+  Scenario: Transformation
+    Given I did laundry 2 days ago

@@ -55,6 +55,9 @@ public class LocalizedXStreams {
             register(converterRegistry, new FloatConverter(locale));
             register(converterRegistry, new IntegerConverter(locale));
             register(converterRegistry, new LongConverter(locale));
+
+            // Must be lower priority than the ones above, but higher than xstream's built-in ReflectionConverter
+            converterRegistry.registerConverter(new SingleValueConverterWrapperExt(new ClassWithStringConstructorConverter()), XStream.PRIORITY_LOW);
         }
 
         private void register(ConverterRegistry lookup, SingleValueConverter converter) {
