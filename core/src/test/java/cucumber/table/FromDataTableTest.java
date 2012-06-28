@@ -1,14 +1,10 @@
 package cucumber.table;
 
+import com.sun.xml.internal.bind.api.impl.NameConverter;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
-import com.thoughtworks.xstream.converters.Converter;
-import com.thoughtworks.xstream.converters.MarshallingContext;
-import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.converters.javabean.JavaBeanConverter;
-import com.thoughtworks.xstream.io.HierarchicalStreamReader;
-import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import cucumber.DateFormat;
-import cucumber.runtime.CucumberException;
+import cucumber.api.Transformer;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.StepDefinitionMatch;
 import cucumber.runtime.StubStepDefinition;
@@ -259,24 +255,14 @@ public class FromDataTableTest {
         public String last;
     }
 
-    public static class NameConverter implements Converter {
+    public static class NameConverter extends Transformer<Name> {
         @Override
-        public void marshal(Object source, HierarchicalStreamWriter writer, MarshallingContext context) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
+        public Name transform(String value) {
             Name name = new Name();
-            String[] firstLast = reader.getValue().split(" ");
+            String[] firstLast = value.split(" ");
             name.first = firstLast[0];
             name.last = firstLast[1];
             return name;
-        }
-
-        @Override
-        public boolean canConvert(Class type) {
-            return type.equals(Name.class);
         }
     }
 }
