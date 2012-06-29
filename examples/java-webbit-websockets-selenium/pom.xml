@@ -48,16 +48,5 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- These dependencies are required in order to find classes when running in an IDE - they haven't been jar-jarred -->
-        <dependency>
-            <groupId>cucumber.runtime.xstream</groupId>
-            <artifactId>xstream</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.googlecode.java-diff-utils</groupId>
-            <artifactId>diffutils</artifactId>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 </project>
