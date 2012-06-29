@@ -47,4 +47,20 @@ public class ParameterTypeTest {
         ParameterType pt = ParameterType.fromMethod(getClass().getMethod("withCustomTransform", Uppercased.class)).get(0);
         assertEquals("HELLO", ((Uppercased) pt.convert("hello", X, LOCALE)).value);
     }
+
+    public static class FortyTwoTransformer extends Transformer<Integer> {
+        @Override
+        public Integer transform(String value) {
+            return 42;
+        }
+    }
+
+    public void intWithCustomTransform(@Transform(FortyTwoTransformer.class) int n) {
+    }
+
+    @Test
+    public void converts_int_with_custom_transform() throws NoSuchMethodException {
+        ParameterType pt = ParameterType.fromMethod(getClass().getMethod("intWithCustomTransform", Integer.TYPE)).get(0);
+        assertEquals(42, pt.convert("hello", X, LOCALE));
+    }
 }
