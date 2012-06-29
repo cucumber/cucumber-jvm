@@ -1,6 +1,6 @@
 package cucumber.api;
 
-import com.thoughtworks.xstream.converters.SingleValueConverter;
+import cucumber.runtime.xstream.converters.SingleValueConverter;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;

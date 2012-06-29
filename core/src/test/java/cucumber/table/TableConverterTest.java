@@ -1,7 +1,7 @@
 package cucumber.table;
 
-import com.thoughtworks.xstream.annotations.XStreamConverter;
-import com.thoughtworks.xstream.converters.javabean.JavaBeanConverter;
+import cucumber.runtime.xstream.annotations.XStreamConverter;
+import cucumber.runtime.xstream.converters.javabean.JavaBeanConverter;
 import org.junit.Test;
 
 import java.util.Calendar;

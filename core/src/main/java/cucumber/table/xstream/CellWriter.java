@@ -1,7 +1,6 @@
 package cucumber.table.xstream;
 
-import com.thoughtworks.xstream.io.AbstractWriter;
-import cucumber.table.DataTable;
+import cucumber.runtime.xstream.io.AbstractWriter;
 
 import java.util.List;
 

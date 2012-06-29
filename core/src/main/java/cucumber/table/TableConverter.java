@@ -1,11 +1,11 @@
 package cucumber.table;
 
-import com.thoughtworks.xstream.converters.ConversionException;
-import com.thoughtworks.xstream.converters.SingleValueConverter;
-import com.thoughtworks.xstream.converters.reflection.AbstractReflectionConverter;
-import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.converters.LocalizedXStreams;
+import cucumber.runtime.xstream.converters.ConversionException;
+import cucumber.runtime.xstream.converters.SingleValueConverter;
+import cucumber.runtime.xstream.converters.reflection.AbstractReflectionConverter;
+import cucumber.runtime.xstream.io.HierarchicalStreamReader;
 import cucumber.table.xstream.CellWriter;
 import cucumber.table.xstream.ComplexTypeWriter;
 import cucumber.table.xstream.ListOfComplexTypeReader;

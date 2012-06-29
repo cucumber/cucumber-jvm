@@ -13,7 +13,11 @@
     <name>Cucumber-JVM: Core</name>
 
     <dependencies>
-        <!-- These dependencies are not packaged because conflicts are unlikely -->
+        <dependency>
+            <groupId>info.cukes</groupId>
+            <artifactId>cucumber-deps</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
         <dependency>
             <groupId>info.cukes</groupId>
             <artifactId>gherkin</artifactId>
@@ -21,17 +25,6 @@
         <dependency>
             <groupId>info.cukes</groupId>
             <artifactId>cucumber-html</artifactId>
-        </dependency>
-        <!-- These dependencies are packaged to prevent conflicts with users' own code -->
-        <dependency>
-            <groupId>com.thoughtworks.xstream</groupId>
-            <artifactId>xstream</artifactId>
-            <!--<scope>provided</scope>-->
-        </dependency>
-        <dependency>
-            <groupId>com.googlecode.java-diff-utils</groupId>
-            <artifactId>diffutils</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -87,35 +80,6 @@
                         </manifest>
                     </archive>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>jarjar-maven-plugin</artifactId>
-                <version>1.5</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>jarjar</goal>
-                        </goals>
-                        <configuration>
-                            <includes>
-                                <include>com.thoughtworks.xstream:xstream</include>
-                                <include>com.googlecode.java-diff-utils:diffutils</include>
-                            </includes>
-                            <rules>
-                                <rule>
-                                    <pattern>com.thoughtworks.xstream.**</pattern>
-                                    <result>cucumber.runtime.xstream.@1</result>
-                                </rule>
-                                <rule>
-                                    <pattern>difflib.**</pattern>
-                                    <result>cucumber.difflib.@1</result>
-                                </rule>
-                            </rules>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>

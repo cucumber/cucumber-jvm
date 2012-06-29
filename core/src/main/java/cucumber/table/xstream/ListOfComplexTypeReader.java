@@ -1,7 +1,7 @@
 package cucumber.table.xstream;
 
-import com.thoughtworks.xstream.converters.ErrorWriter;
-import com.thoughtworks.xstream.io.AbstractReader;
+import cucumber.runtime.xstream.converters.ErrorWriter;
+import cucumber.runtime.xstream.io.AbstractReader;
 
 import java.util.Collections;
 import java.util.Iterator;
