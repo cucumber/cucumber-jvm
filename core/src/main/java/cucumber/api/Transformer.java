@@ -1,10 +1,6 @@
 package cucumber.api;
 
-import com.thoughtworks.xstream.converters.Converter;
-import com.thoughtworks.xstream.converters.MarshallingContext;
-import com.thoughtworks.xstream.converters.UnmarshallingContext;
-import com.thoughtworks.xstream.io.HierarchicalStreamReader;
-import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
+import com.thoughtworks.xstream.converters.SingleValueConverter;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -23,10 +19,10 @@ import java.lang.reflect.Type;
  *     public void iDidMyLaundry(HumanTime t) {
  *     }
  * </pre>
- *
+ * <p/>
  * If the <code>HumanTime</code> class has a constructor with a single <code>String</code> argument, then
  * no explicit transformation is needed. If that's not the case you can annotate the class with your own converter:
- *
+ * <p/>
  * <pre>
  *     &#064;XStreamConverter(HumanTimeConverter.class)
  *     public class HumanTime {
@@ -46,7 +42,7 @@ import java.lang.reflect.Type;
  *
  * @param <T>
  */
-public abstract class Transformer<T> implements Converter {
+public abstract class Transformer<T> implements SingleValueConverter {
     private final Type type;
 
     public Transformer() {
@@ -55,19 +51,19 @@ public abstract class Transformer<T> implements Converter {
     }
 
     @Override
-    public void marshal(Object source, HierarchicalStreamWriter writer, MarshallingContext context) {
-        throw new UnsupportedOperationException();
+    public String toString(Object o) {
+        return o.toString();
     }
 
     @Override
-    public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
-        return transform(reader.getValue());
+    public Object fromString(String s) {
+        return transform(s);
     }
-
-    public abstract T transform(String value);
 
     @Override
     public boolean canConvert(Class type) {
         return type.equals(this.type);
     }
+
+    public abstract T transform(String value);
 }

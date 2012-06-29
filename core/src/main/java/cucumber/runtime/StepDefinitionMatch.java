@@ -1,12 +1,6 @@
 package cucumber.runtime;
 
-import com.thoughtworks.xstream.annotations.XStreamConverter;
-import com.thoughtworks.xstream.converters.Converter;
-import com.thoughtworks.xstream.converters.ConverterLookup;
-import com.thoughtworks.xstream.converters.SingleValueConverter;
-import cucumber.runtime.converters.EnumConverter;
 import cucumber.runtime.converters.LocalizedXStreams;
-import cucumber.runtime.converters.TimeConverter;
 import cucumber.table.DataTable;
 import cucumber.table.TableConverter;
 import gherkin.I18n;
@@ -69,50 +63,17 @@ public class StepDefinitionMatch extends Match {
         }
 
         List<Object> result = new ArrayList<Object>();
-        ConverterLookup converterLookup = xStream.getConverterLookup();
 
         List<ParameterType> parameterTypes = new ArrayList<ParameterType>();
         int n = 0;
         for (Argument a : getArguments()) {
-            SingleValueConverter singleValueConverter;
-            TimeConverter timeConverter = null;
+            Object arg;
+
             ParameterType parameterType = getParameterType(n, String.class);
             parameterTypes.add(parameterType);
 
-            xStream.processAnnotations(parameterType.getRawType());
-
-            if (parameterType.getDateFormat() != null) {
-                timeConverter = TimeConverter.getInstance(parameterType, locale);
-                timeConverter.setOnlyFormat(parameterType.getDateFormat(), locale);
-                singleValueConverter = timeConverter;
-            } else if (parameterType.getRawType().isEnum()) {
-                singleValueConverter = new EnumConverter(locale, (Class<? extends Enum>) parameterType.getRawType());
-            } else {
-                Converter converter = converterLookup.lookupConverterForType(parameterType.getRawType());
-                if (converter instanceof SingleValueConverter) {
-                    singleValueConverter = (SingleValueConverter) converter;
-                } else {
-                    throw new CucumberException(String.format(
-                            "Don't know how to convert %s into %s.\n" +
-                                    "Try writing your own converter:\n" +
-                                    "\n" +
-                                    "@%s(%sConverter.class)\n" +
-                                    "public class %s {}\n",
-                            a.getVal(),
-                            parameterType.getRawType().getName(),
-                            XStreamConverter.class.getName(),
-                            parameterType.getRawType().getSimpleName(),
-                            parameterType.getRawType().getSimpleName()
-                    ));
-                }
-            }
-            try {
-                result.add(singleValueConverter.fromString(a.getVal()));
-            } finally {
-                if (timeConverter != null) {
-                    timeConverter.removeOnlyFormat();
-                }
-            }
+            arg = parameterType.convert(a.getVal(), xStream, locale);
+            result.add(arg);
             n++;
         }
 
@@ -126,9 +87,9 @@ public class StepDefinitionMatch extends Match {
 
     private ParameterType getParameterType(int n, Type argumentType) {
         ParameterType parameterType = stepDefinition.getParameterType(n, argumentType);
-        if(parameterType == null) {
+        if (parameterType == null) {
             // Some backends return null because they don't know
-            parameterType = new ParameterType(argumentType, null);
+            parameterType = new ParameterType(argumentType, null, null);
         }
         return parameterType;
     }
