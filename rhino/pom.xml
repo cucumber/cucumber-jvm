@@ -18,8 +18,8 @@
             <artifactId>cucumber-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>rhino</groupId>
-            <artifactId>js</artifactId>
+            <groupId>org.mozilla</groupId>
+            <artifactId>rhino</artifactId>
             <scope>provided</scope>
         </dependency>
 
