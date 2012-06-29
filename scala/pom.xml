@@ -27,11 +27,6 @@
             <artifactId>cucumber-junit</artifactId>
         </dependency>
 
-        <!--<dependency>-->
-            <!--<groupId>cucumber.runtime.xstream</groupId>-->
-            <!--<artifactId>xstream</artifactId>-->
-            <!--<scope>test</scope>-->
-        <!--</dependency>-->
         <dependency>
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>
