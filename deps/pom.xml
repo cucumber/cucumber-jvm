@@ -2,16 +2,15 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.sonatype.oss</groupId>
-        <artifactId>oss-parent</artifactId>
-        <version>7</version>
+        <groupId>info.cukes</groupId>
+        <artifactId>cucumber-jvm</artifactId>
+        <relativePath>../pom.xml</relativePath>
+        <version>1.0.11-SNAPSHOT</version>
     </parent>
 
-    <groupId>info.cukes</groupId>
     <artifactId>cucumber-deps</artifactId>
     <packaging>jar</packaging>
     <name>Cucumber-JVM: Deps</name>
-    <version>1.0.0-SNAPSHOT</version>
 
     <dependencies>
         <!-- These dependencies are packaged into a new package to prevent conflicts with users' own code -->

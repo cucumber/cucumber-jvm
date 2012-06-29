@@ -7,7 +7,7 @@ import java.lang.reflect.Type;
 
 /**
  * Allows transformation of a step definition argument to a custom type, giving you full control
- * over how that type is instantiatd. Consider the following Gherkin step:
+ * over how that type is instantiated. Consider the following Gherkin step:
  * <p/>
  * <pre>Given I did my laundry 3 days ago</pre>
  * <p/>

@@ -16,7 +16,7 @@
         <dependency>
             <groupId>info.cukes</groupId>
             <artifactId>cucumber-deps</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>info.cukes</groupId>
