@@ -1,6 +1,5 @@
 package cucumber.table;
 
-import com.sun.xml.internal.bind.api.impl.NameConverter;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 import com.thoughtworks.xstream.converters.javabean.JavaBeanConverter;
 import cucumber.DateFormat;

@@ -1,6 +1,12 @@
 package cucumber.runtime;
 
+import com.thoughtworks.xstream.annotations.XStreamConverter;
+import com.thoughtworks.xstream.converters.SingleValueConverter;
 import cucumber.DateFormat;
+import cucumber.api.Transform;
+import cucumber.runtime.converters.EnumConverter;
+import cucumber.runtime.converters.LocalizedXStreams;
+import cucumber.runtime.converters.TimeConverter;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -8,6 +14,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * This class composes all interesting parameter information into one object.
@@ -15,10 +22,38 @@ import java.util.List;
 public class ParameterType {
     private final Type type;
     private final String dateFormat;
+    private final SingleValueConverter singleValueConverter;
 
-    public ParameterType(Type type, String dateFormat) {
+    public static List<ParameterType> fromMethod(Method method) {
+        List<ParameterType> result = new ArrayList<ParameterType>();
+        Type[] genericParameterTypes = method.getGenericParameterTypes();
+        Annotation[][] annotations = method.getParameterAnnotations();
+        for (int i = 0; i < genericParameterTypes.length; i++) {
+            String dateFormat = null;
+            SingleValueConverter singleValueConverter = null;
+            for (Annotation annotation : annotations[i]) {
+                if (annotation instanceof DateFormat) {
+                    dateFormat = ((DateFormat) annotation).value();
+                }
+                if (annotation instanceof Transform) {
+                    try {
+                        singleValueConverter = ((Transform) annotation).value().newInstance();
+                    } catch (InstantiationException e) {
+                        throw new CucumberException(e);
+                    } catch (IllegalAccessException e) {
+                        throw new CucumberException(e);
+                    }
+                }
+            }
+            result.add(new ParameterType(genericParameterTypes[i], dateFormat, singleValueConverter));
+        }
+        return result;
+    }
+
+    public ParameterType(Type type, String dateFormat, SingleValueConverter singleValueConverter) {
         this.type = type;
         this.dateFormat = dateFormat;
+        this.singleValueConverter = singleValueConverter;
     }
 
     public Class<?> getRawType() {
@@ -33,29 +68,53 @@ public class ParameterType {
         return type;
     }
 
-    public String getDateFormat() {
-        return dateFormat;
-    }
-
     @Override
     public String toString() {
         return type.toString();
     }
 
-    public static List<ParameterType> fromMethod(Method method) {
-        List<ParameterType> result = new ArrayList<ParameterType>();
-        Type[] genericParameterTypes = method.getGenericParameterTypes();
-        Annotation[][] annotations = method.getParameterAnnotations();
-        for (int i = 0; i < genericParameterTypes.length; i++) {
-            String dateFormat = null;
-            for (Annotation annotation : annotations[i]) {
-                if (annotation instanceof DateFormat) {
-                    dateFormat = ((DateFormat) annotation).value();
-                    break;
+    public Object convert(String value, LocalizedXStreams.LocalizedXStream xStream, Locale locale) {
+        TimeConverter timeConverter = null;
+        try {
+            SingleValueConverter converter;
+            xStream.processAnnotations(getRawType());
+
+            if (singleValueConverter != null) {
+                converter = singleValueConverter;
+            } else {
+                if (dateFormat != null) {
+                    timeConverter = TimeConverter.getInstance(this, locale);
+                    timeConverter.setOnlyFormat(dateFormat, locale);
+                    converter = timeConverter;
+                } else if (getRawType().isEnum()) {
+                    converter = new EnumConverter(locale, (Class<? extends Enum>) getRawType());
+                } else {
+                    converter = xStream.getSingleValueConverter(getRawType());
+                    if (converter == null) {
+                        throw new CucumberException(String.format(
+                                "Don't know how to convert \"%s\" into %s.\n" +
+                                        "Try writing your own converter:\n" +
+                                        "\n" +
+                                        "@%s(%sConverter.class)\n" +
+                                        "public class %s {}\n",
+                                value,
+                                getRawType().getName(),
+                                XStreamConverter.class.getName(),
+                                getRawType().getSimpleName(),
+                                getRawType().getSimpleName()
+                        ));
+                    }
                 }
             }
-            result.add(new ParameterType(genericParameterTypes[i], dateFormat));
+            return converter.fromString(value);
+        } finally {
+            if (timeConverter != null) {
+                timeConverter.removeOnlyFormat();
+            }
         }
-        return result;
+    }
+
+    public String getDateFormat() {
+        return dateFormat;
     }
 }
