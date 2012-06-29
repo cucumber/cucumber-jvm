@@ -16,8 +16,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <outputDirectory>${project.build.directory}</outputDirectory>
-        <gherkin.version>2.11.0</gherkin.version>
-        <groovy.version>2.0.0-rc-3</groovy.version>
+        <gherkin.version>2.11.1</gherkin.version>
+        <groovy.version>2.0.0</groovy.version>
     </properties>
     <licenses>
         <license>
@@ -116,9 +116,9 @@
                 <version>1.5.0-alpha2</version>
             </dependency>
             <dependency>
-                <groupId>rhino</groupId>
-                <artifactId>js</artifactId>
-                <version>1.7R2</version>
+                <groupId>org.mozilla</groupId>
+                <artifactId>rhino</artifactId>
+                <version>1.7R4</version>
             </dependency>
             <dependency>
                 <groupId>org.ioke</groupId>
@@ -144,6 +144,12 @@
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-all</artifactId>
                 <version>1.9.0</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.jsoup</groupId>
+                <artifactId>jsoup</artifactId>
+                <version>1.6.3</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
