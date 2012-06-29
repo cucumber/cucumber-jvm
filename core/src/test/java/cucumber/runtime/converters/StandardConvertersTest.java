@@ -1,6 +1,6 @@
 package cucumber.runtime.converters;
 
-import com.thoughtworks.xstream.converters.ConversionException;
+import cucumber.runtime.xstream.converters.ConversionException;
 import org.junit.Test;
 
 import java.math.BigDecimal;

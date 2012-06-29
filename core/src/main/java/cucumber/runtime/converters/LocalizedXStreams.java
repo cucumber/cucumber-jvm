@@ -1,11 +1,11 @@
 package cucumber.runtime.converters;
 
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.converters.Converter;
-import com.thoughtworks.xstream.converters.ConverterLookup;
-import com.thoughtworks.xstream.converters.ConverterRegistry;
-import com.thoughtworks.xstream.converters.SingleValueConverter;
-import com.thoughtworks.xstream.core.DefaultConverterLookup;
+import cucumber.runtime.xstream.XStream;
+import cucumber.runtime.xstream.converters.Converter;
+import cucumber.runtime.xstream.converters.ConverterLookup;
+import cucumber.runtime.xstream.converters.ConverterRegistry;
+import cucumber.runtime.xstream.converters.SingleValueConverter;
+import cucumber.runtime.xstream.core.DefaultConverterLookup;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;

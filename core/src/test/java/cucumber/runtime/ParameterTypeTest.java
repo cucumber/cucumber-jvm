@@ -26,7 +26,7 @@ public class ParameterTypeTest {
     public void withCustomTransform(@Transform(UppercasedTransformer.class) Uppercased uppercased) {
     }
 
-    private class Uppercased {
+    public static class Uppercased {
         public String value;
 
         public Uppercased(String value) {
@@ -35,7 +35,7 @@ public class ParameterTypeTest {
         }
     }
 
-    private class UppercasedTransformer extends Transformer<Uppercased> {
+    public static class UppercasedTransformer extends Transformer<Uppercased> {
         @Override
         public Uppercased transform(String value) {
             return new Uppercased(value.toUpperCase());

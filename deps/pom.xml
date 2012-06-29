@@ -1,0 +1,75 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.sonatype.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>7</version>
+    </parent>
+
+    <groupId>info.cukes</groupId>
+    <artifactId>cucumber-deps</artifactId>
+    <packaging>jar</packaging>
+    <name>Cucumber-JVM: Deps</name>
+    <version>1.0.0-SNAPSHOT</version>
+
+    <dependencies>
+        <!-- These dependencies are packaged into a new package to prevent conflicts with users' own code -->
+        <dependency>
+            <groupId>cucumber.runtime.xstream</groupId>
+            <artifactId>xstream</artifactId>
+            <version>1.4.2</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>xmlpull</groupId>
+                    <artifactId>xmlpull</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>xpp3</groupId>
+                    <artifactId>xpp3_min</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.googlecode.java-diff-utils</groupId>
+            <artifactId>diffutils</artifactId>
+            <version>1.2.1</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>jarjar-maven-plugin</artifactId>
+                <version>1.5</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jarjar</goal>
+                        </goals>
+                        <configuration>
+                            <includes>
+                                <include>cucumber.runtime.xstream:xstream</include>
+                                <include>com.googlecode.java-diff-utils:diffutils</include>
+                            </includes>
+                            <rules>
+                                <rule>
+                                    <pattern>cucumber.runtime.xstream.**</pattern>
+                                    <result>cucumber.runtime.xstream.@1</result>
+                                </rule>
+                                <rule>
+                                    <pattern>difflib.**</pattern>
+                                    <result>cucumber.difflib.@1</result>
+                                </rule>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

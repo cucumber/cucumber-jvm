@@ -28,11 +28,11 @@
             <scope>provided</scope>
         </dependency>
 
-        <dependency>
-            <groupId>com.thoughtworks.xstream</groupId>
-            <artifactId>xstream</artifactId>
-            <scope>test</scope>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>cucumber.runtime.xstream</groupId>-->
+            <!--<artifactId>xstream</artifactId>-->
+            <!--<scope>test</scope>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>net.sourceforge.cobertura</groupId>
             <artifactId>cobertura</artifactId>

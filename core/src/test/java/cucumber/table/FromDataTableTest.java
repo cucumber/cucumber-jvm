@@ -1,13 +1,13 @@
 package cucumber.table;
 
-import com.thoughtworks.xstream.annotations.XStreamConverter;
-import com.thoughtworks.xstream.converters.javabean.JavaBeanConverter;
 import cucumber.DateFormat;
 import cucumber.api.Transformer;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.StepDefinitionMatch;
 import cucumber.runtime.StubStepDefinition;
 import cucumber.runtime.converters.LocalizedXStreams;
+import cucumber.runtime.xstream.annotations.XStreamConverter;
+import cucumber.runtime.xstream.converters.javabean.JavaBeanConverter;
 import gherkin.I18n;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Comment;

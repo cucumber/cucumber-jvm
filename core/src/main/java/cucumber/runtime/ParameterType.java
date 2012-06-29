@@ -1,12 +1,11 @@
 package cucumber.runtime;
 
-import com.thoughtworks.xstream.annotations.XStreamConverter;
-import com.thoughtworks.xstream.converters.SingleValueConverter;
 import cucumber.DateFormat;
 import cucumber.api.Transform;
 import cucumber.runtime.converters.EnumConverter;
 import cucumber.runtime.converters.LocalizedXStreams;
-import cucumber.runtime.converters.TimeConverter;
+import cucumber.runtime.xstream.annotations.XStreamConverter;
+import cucumber.runtime.xstream.converters.SingleValueConverter;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -74,19 +73,15 @@ public class ParameterType {
     }
 
     public Object convert(String value, LocalizedXStreams.LocalizedXStream xStream, Locale locale) {
-        TimeConverter timeConverter = null;
         try {
+            xStream.setDateFormat(dateFormat);
             SingleValueConverter converter;
             xStream.processAnnotations(getRawType());
 
             if (singleValueConverter != null) {
                 converter = singleValueConverter;
             } else {
-                if (dateFormat != null) {
-                    timeConverter = TimeConverter.getInstance(this, locale);
-                    timeConverter.setOnlyFormat(dateFormat, locale);
-                    converter = timeConverter;
-                } else if (getRawType().isEnum()) {
+                if (getRawType().isEnum()) {
                     converter = new EnumConverter(locale, (Class<? extends Enum>) getRawType());
                 } else {
                     converter = xStream.getSingleValueConverter(getRawType());
@@ -108,9 +103,7 @@ public class ParameterType {
             }
             return converter.fromString(value);
         } finally {
-            if (timeConverter != null) {
-                timeConverter.removeOnlyFormat();
-            }
+            xStream.unsetDateFormat();
         }
     }
 

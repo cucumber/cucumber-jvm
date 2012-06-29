@@ -23,11 +23,11 @@
             <scope>provided</scope>
         </dependency>
 
-        <dependency>
-            <groupId>com.thoughtworks.xstream</groupId>
-            <artifactId>xstream</artifactId>
-            <scope>test</scope>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>cucumber.runtime.xstream</groupId>-->
+            <!--<artifactId>xstream</artifactId>-->
+            <!--<scope>test</scope>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>info.cukes</groupId>
             <artifactId>cucumber-junit</artifactId>

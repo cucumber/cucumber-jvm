@@ -1,7 +1,7 @@
 package cucumber.runtime.converters;
 
-import com.thoughtworks.xstream.converters.SingleValueConverter;
 import cucumber.runtime.CucumberException;
+import cucumber.runtime.xstream.converters.SingleValueConverter;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;

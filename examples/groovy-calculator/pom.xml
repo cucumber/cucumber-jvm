@@ -39,7 +39,7 @@
         </dependency>
         <!-- These dependencies are required in order to find classes when running in an IDE - they haven't been jar-jarred -->
         <dependency>
-            <groupId>com.thoughtworks.xstream</groupId>
+            <groupId>cucumber.runtime.xstream</groupId>
             <artifactId>xstream</artifactId>
             <scope>test</scope>
         </dependency>

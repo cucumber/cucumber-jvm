@@ -1,8 +1,8 @@
 package cucumber.runtime;
 
-import com.thoughtworks.xstream.annotations.XStreamConverter;
-import com.thoughtworks.xstream.converters.basic.AbstractSingleValueConverter;
 import cucumber.runtime.converters.LocalizedXStreams;
+import cucumber.runtime.xstream.annotations.XStreamConverter;
+import cucumber.runtime.xstream.converters.basic.AbstractSingleValueConverter;
 import gherkin.I18n;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.DataTableRow;
@@ -106,10 +106,10 @@ public class StepDefinitionMatchTest {
             fail();
         } catch (CucumberException expected) {
             assertEquals(
-                    "Don't know how to convert blah into cucumber.runtime.StepDefinitionMatchTest$Thang.\n" +
+                    "Don't know how to convert \"blah\" into cucumber.runtime.StepDefinitionMatchTest$Thang.\n" +
                             "Try writing your own converter:\n" +
                             "\n" +
-                            "@com.thoughtworks.xstream.annotations.XStreamConverter(ThangConverter.class)\n" +
+                            "@cucumber.runtime.xstream.annotations.XStreamConverter(ThangConverter.class)\n" +
                             "public class Thang {}\n",
                     expected.getMessage()
             );
