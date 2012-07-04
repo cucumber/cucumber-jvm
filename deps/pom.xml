@@ -4,6 +4,7 @@
     <groupId>info.cukes</groupId>
     <artifactId>cucumber-deps</artifactId>
     <version>1.0.0</version>
+
     <packaging>jar</packaging>
     <name>Cucumber-JVM: Deps</name>
 
