@@ -12,8 +12,13 @@
     <packaging>jar</packaging>
     <name>Cucumber-JVM: Deps</name>
 
+    <version>1.0.11-SNAPSHOT</version>
+
     <dependencies>
-        <!-- These dependencies are packaged into a new package to prevent conflicts with users' own code -->
+        <!--
+        These dependencies are packaged into a new package to prevent conflicts with users' own code
+        or possibly libraries they might be using
+        -->
         <dependency>
             <groupId>com.thoughtworks.xstream</groupId>
             <artifactId>xstream</artifactId>
