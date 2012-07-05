@@ -13,7 +13,10 @@
     <name>Cucumber-JVM: Deps</name>
 
     <dependencies>
-        <!-- These dependencies are packaged into a new package to prevent conflicts with users' own code -->
+        <!--
+        These dependencies are packaged into a new package to prevent conflicts with users' own code
+        or possibly libraries they might be using
+        -->
         <dependency>
             <groupId>com.thoughtworks.xstream</groupId>
             <artifactId>xstream</artifactId>

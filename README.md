@@ -262,7 +262,7 @@ Example Cucumber-JVM + Maven + Groovy CLI
 This configuration will get you the following features:
 
 * Groovy-only: No Junit/Java code will be run
-* Tags: Multiple tags cannot be passed in from a JVM argument at this time, but multiple items can be added to the POM. Note that ~@ignore is in here by default, as an example. In addition, you can provide -DtagArgs="@tagname" to run any tag
+* Tags: Multiple tags cannot be passed in from a JVM argument at this time, but multiple items can be added to the POM. Note that ~@ignore is in here by default, as an example. In addition, you can provide -DtagArg="@tagname" to run any tag
 * Formats: the <format> property can be changed from 'pretty' to 'html', or 'progress'. 
  * If html format is used, the --out parameter must be provided and set to a folder (relative to target) to dump the reports
  * The previous example, with target/reports specified as the output dir: ( http://pastebin.com/GrWN3ULN )
