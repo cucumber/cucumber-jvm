@@ -1,5 +1,6 @@
 package cucumber.runtime.java;
 
+import cucumber.annotation.Advice;
 import cucumber.annotation.After;
 import cucumber.annotation.Before;
 import cucumber.annotation.Order;
@@ -67,6 +68,8 @@ class ClasspathMethodScanner {
                     javaBackend.addHook(annotation, method);
                 } else if (isStepdefAnnotation(annotation)) {
                     javaBackend.addStepDefinition(annotation, method);
+                } else if (isAdviceAnnotation(annotation)) {
+                    javaBackend.addAdviceDefinition(annotation, method);
                 }
             }
         }
@@ -84,5 +87,10 @@ class ClasspathMethodScanner {
     private boolean isStepdefAnnotation(Annotation annotation) {
         Class<? extends Annotation> annotationClass = annotation.annotationType();
         return annotationClass.getAnnotation(StepDefAnnotation.class) != null;
+    }
+
+    private boolean isAdviceAnnotation(Annotation annotation) {
+        Class<? extends Annotation> annotationClass = annotation.annotationType();
+        return annotationClass.equals(Advice.class);
     }
 }
