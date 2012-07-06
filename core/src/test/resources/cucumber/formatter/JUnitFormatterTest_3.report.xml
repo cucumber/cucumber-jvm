@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<testsuite failed="0" tests="4">
+<testsuite failures="0" tests="4">
     <testcase classname="Feature_3" name="Scenario_1" time="0">
         <skipped><![CDATA[Given bg_1.................................................................undefined
 When bg_2..................................................................undefined
