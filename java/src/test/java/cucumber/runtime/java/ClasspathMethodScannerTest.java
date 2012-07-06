@@ -4,12 +4,14 @@ import cucumber.annotation.Before;
 import cucumber.io.ClasspathResourceLoader;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Glue;
+import cucumber.runtime.java.advice.ExampleAdvice;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.internal.util.reflection.Whitebox;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -53,6 +55,24 @@ public class ClasspathMethodScannerTest {
         } catch (CucumberException e) {
             assertEquals("class cucumber.runtime.java.ClasspathMethodScannerTest$BaseStepDefs isn't assignable from class java.lang.String", e.getMessage());
         }
+    }
+
+    @Test
+    public void loadGlue_registers_the_advice_and_declaring_class_in_the_object_factor() throws NoSuchMethodException {
+        ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(Thread.currentThread().getContextClassLoader());
+        ClasspathMethodScanner classpathMethodScanner = new ClasspathMethodScanner(resourceLoader);
+
+        ObjectFactory factory = Mockito.mock(ObjectFactory.class);
+        Glue world = Mockito.mock(Glue.class);
+        JavaBackend backend = new JavaBackend(factory);
+        Whitebox.setInternalState(backend, "glue", world);
+
+        // this delegates to classpathMethodScanner.scan which we test
+        classpathMethodScanner.scan(backend, ExampleAdvice.class.getMethod("timed", Runnable.class, int.class, String.class), ExampleAdvice.class);
+
+        verify(world).addStepDefinition(isA(JavaAdviceDefinition.class));
+        verify(factory, times(1)).addClass(ExampleAdvice.class);
+        verifyNoMoreInteractions(factory);
     }
 
     public static class Stepdefs2 extends BaseStepDefs {

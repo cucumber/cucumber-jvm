@@ -3,20 +3,17 @@ package cucumber.runtime.java;
 import cucumber.annotation.After;
 import cucumber.annotation.Before;
 import cucumber.annotation.Order;
+import cucumber.annotation.Pointcut;
 import cucumber.fallback.runtime.java.DefaultJavaObjectFactory;
 import cucumber.io.ClasspathResourceLoader;
 import cucumber.io.ResourceLoader;
-import cucumber.runtime.Backend;
-import cucumber.runtime.CucumberException;
-import cucumber.runtime.DuplicateStepDefinitionException;
-import cucumber.runtime.Glue;
-import cucumber.runtime.UnreportedStepExecutor;
-import cucumber.runtime.Utils;
+import cucumber.runtime.*;
 import cucumber.runtime.snippets.SnippetGenerator;
 import gherkin.formatter.model.Step;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -99,15 +96,49 @@ public class JavaBackend implements Backend {
         }
     }
 
+    public void addAdviceDefinition(Annotation annotation, Method method) {
+        try {
+            objectFactory.addClass(method.getDeclaringClass());
+            glue.addStepDefinition(new JavaAdviceDefinition(glue, method, pattern(annotation), stepGroup(annotation), pointcuts(annotation), timeout(annotation), objectFactory));
+        } catch (DuplicateStepDefinitionException e) {
+            throw e;
+        } catch (Throwable e) {
+            throw new CucumberException(e);
+        }
+    }
+
     private Pattern pattern(Annotation annotation) throws Throwable {
         Method regexpMethod = annotation.getClass().getMethod("value");
         String regexpString = (String) Utils.invoke(annotation, regexpMethod, 0);
         return Pattern.compile(regexpString);
     }
 
+    private int stepGroup(Annotation annotation) throws Throwable {
+        Method method = annotation.getClass().getMethod("stepGroup");
+        return (Integer) Utils.invoke(annotation, method, 0);
+    }
+
     private int timeout(Annotation annotation) throws Throwable {
         Method regexpMethod = annotation.getClass().getMethod("timeout");
         return (Integer) Utils.invoke(annotation, regexpMethod, 0);
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<Class<? extends Annotation>> pointcuts(Annotation annotation) throws Throwable {
+        Method method = annotation.getClass().getMethod("pointcuts");
+        Class<? extends Annotation>[] pointcuts = (Class<? extends Annotation>[])Utils.invoke(annotation, method, 0);
+
+        enforcePointcutAnnotation(pointcuts);
+
+        return Arrays.asList(pointcuts);
+    }
+
+    private void enforcePointcutAnnotation(Class<? extends Annotation>[] pointcuts) {
+        for (Class<? extends Annotation> pointcut : pointcuts) {
+            if (pointcut.getAnnotation(Pointcut.class) == null) {
+                throw new IllegalArgumentException(pointcut.getCanonicalName() + " is not a pointcut. (Not annotated with @Pointcut)");
+            }
+        }
     }
 
     void addHook(Annotation annotation, Method method) {

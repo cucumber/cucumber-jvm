@@ -9,6 +9,7 @@ import gherkin.I18n;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.List;
@@ -61,5 +62,15 @@ public class JavaStepDefinition implements StepDefinition {
     @Override
     public String getPattern() {
         return pattern.pattern();
+    }
+
+    boolean isAnnotatedWithOneOf(List<Class<? extends Annotation>> advises) {
+        Annotation[] annotations = method.getDeclaredAnnotations();
+        for (Annotation annotation : annotations) {
+            if (advises.contains(annotation.annotationType())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

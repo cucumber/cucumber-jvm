@@ -194,6 +194,10 @@ public class StepDefinitionMatch extends Match {
         return stepDefinition.getPattern();
     }
 
+    public StepDefinition getStepDefinition() {
+        return stepDefinition;
+    }
+
     public StackTraceElement getStepLocation() {
         return step.getStackTraceElement(uri);
     }
