@@ -20,7 +20,7 @@
              dest="${jars}/cucumber-junit-${cucumber-jvm.version}.jar"/>
         <get src="${repo}/info/cukes/gherkin/${gherkin.version}/gherkin-${gherkin.version}.jar"
              dest="${jars}/gherkin-${gherkin.version}.jar"/>
-        <get src="${repo}/com/rubiconproject/oss/${jchronic.version}/jchronic-${jchronic.version}.jar"
+        <get src="${repo}/com/rubiconproject/oss/jchronic/${jchronic.version}/jchronic-${jchronic.version}.jar"
              dest="${jars}/jchronic-${jchronic.version}.jar"/>
         <get src="${repo}/junit/junit/${junit.version}/junit-${junit.version}.jar"
              dest="${jars}/junit-${junit.version}.jar"/>
