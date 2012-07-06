@@ -1,3 +1,7 @@
+## [1.0.11](https://github.com/cucumber/cucumber-jvm/compare/v1.0.10...v1.0.11)
+
+* [Core] Added a new `@Transform` annotation and an abstract `Transformer` class giving full control over argument transforms.
+
 ## [1.0.10](https://github.com/cucumber/cucumber-jvm/compare/v1.0.9...v1.0.10)
 
 * [Core] Automatically convert data tables to lists of enums just as is done with classes [#346](https://github.com/cucumber/cucumber-jvm/issues/346)
