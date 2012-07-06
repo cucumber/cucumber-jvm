@@ -6,30 +6,36 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
 /**
+ * <p>
  * Allows transformation of a step definition argument to a custom type, giving you full control
- * over how that type is instantiated. Consider the following Gherkin step:
- * <p/>
+ * over how that type is instantiated.
+ * </p>
+ * <p>
+ * Consider the following Gherkin step:
+ * </p>
  * <pre>Given I did my laundry 3 days ago</pre>
- * <p/>
- * Now, let's assume we want Cucumber to transform the substring "3 days ago" into an instance of our custom
+ * <p>
+ * Let's assume we want Cucumber to transform the substring "3 days ago" into an instance of our custom
  * <code>HumanTime</code> class:
- * <p/>
+ * </p>
  * <pre>
  *     &#064;Given("I did my laundry (.*)")
  *     public void iDidMyLaundry(HumanTime t) {
  *     }
  * </pre>
- * <p/>
+ * <p>
  * If the <code>HumanTime</code> class has a constructor with a single <code>String</code> argument, then
- * no explicit transformation is needed. If that's not the case you can annotate the class with your own converter:
- * <p/>
+ * Cucumber will instantiate it without any further ado. However, if the class you want to convert to
+ * does <em>not</em> have a <code>String</code> constructor you can annotate your parameter:
+ * </p>
  * <pre>
- *     &#064;XStreamConverter(HumanTimeConverter.class)
- *     public class HumanTime {
+ *     &#064;Given("I did my laundry (.*)")
+ *     public void iDidMyLaundry(&#064;Transform(HumanTimeConverter.class) HumanTime t) {
  *     }
  * </pre>
+ * <p>
  * And then a <code>HumanTimeConverter</code> class:
- * <p/>
+ * </p>
  * <pre>{@code
  *     public static class HumanTimeConverter extends Transformer<HumanTime> {
  *         &#064;Override
@@ -39,8 +45,22 @@ import java.lang.reflect.Type;
  *         }
  *     }
  * }</pre>
+ * <p>
+ * An alternative to annotating parameters with {@link Transform} is to annotate your class with
+ * {@link cucumber.runtime.xstream.annotations.XStreamConverter}:
+ * </p>
+ * <pre>
+ *     &#064;XStreamConverter(HumanTimeConverter.class)
+ *     public class HumanTime {
+ *     }
+ * </pre>
+ * <p>
+ * This will also enable a {@link cucumber.table.DataTable} to be transformed to
+ * a <code>List&lt;YourClass;&gt;</code>
+ * </p>
  *
- * @param <T>
+ * @param <T> the type to be instantiated
+ * @see Transform
  */
 public abstract class Transformer<T> implements SingleValueConverter {
     private final Type type;
