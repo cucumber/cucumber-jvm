@@ -80,7 +80,7 @@ public class JUnitFormatter implements Formatter, Reporter {
     public void done() {
         try {
             //set up a transformer
-            rootElement.setAttribute("failed", String.valueOf(rootElement.getElementsByTagName("failure").getLength()));
+            rootElement.setAttribute("failures", String.valueOf(rootElement.getElementsByTagName("failure").getLength()));
             TransformerFactory transfac = TransformerFactory.newInstance();
             Transformer trans = transfac.newTransformer();
             trans.setOutputProperty(OutputKeys.INDENT, "yes");
