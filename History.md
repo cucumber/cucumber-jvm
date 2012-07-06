@@ -1,6 +1,7 @@
 ## [1.0.11](https://github.com/cucumber/cucumber-jvm/compare/v1.0.10...v1.0.11)
 
 * [Core] Added a new `@Transform` annotation and an abstract `Transformer` class giving full control over argument transforms.
+* [OpenEJB] Remove log4j need for openejb module ([#355](https://github.com/cucumber/cucumber-jvm/pull/355) rmannibucau)
 
 ## [1.0.10](https://github.com/cucumber/cucumber-jvm/compare/v1.0.9...v1.0.10)
 
