@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>info.cukes</groupId>
     <artifactId>cucumber-jvm</artifactId>
-    <version>1.0.11</version>
+    <version>1.0.11-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Cucumber-JVM</name>
     <url>http://cukes.info/</url>
