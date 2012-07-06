@@ -29,6 +29,11 @@
         </dependency>
 
         <dependency>
+            <groupId>info.cukes</groupId>
+            <artifactId>cucumber-deps</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>net.sourceforge.cobertura</groupId>
             <artifactId>cobertura</artifactId>
             <scope>test</scope>
