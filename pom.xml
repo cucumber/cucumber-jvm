@@ -42,7 +42,8 @@
             <dependency>
                 <groupId>info.cukes</groupId>
                 <artifactId>cucumber-deps</artifactId>
-                <version>${project.version}</version>
+                <scope>provided</scope>
+                <version>1.0.0</version>
             </dependency>
             <dependency>
                 <groupId>info.cukes</groupId>
@@ -202,6 +203,10 @@
     </dependencyManagement>
 
     <repositories>
+        <repository>
+            <id>cucumber-deps</id>
+            <url>file://${basedir}/../deps/repository</url>
+        </repository>
         <repository>
             <id>codehaus</id>
             <url>http://repository.codehaus.org</url>

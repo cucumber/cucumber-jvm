@@ -17,8 +17,7 @@
         <dependency>
             <groupId>info.cukes</groupId>
             <artifactId>cucumber-deps</artifactId>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/../deps/lib/cucumber-deps.jar</systemPath>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>info.cukes</groupId>
@@ -84,22 +83,21 @@
             </plugin>
 
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>1.7.1</version>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>jarjar-maven-plugin</artifactId>
+                <version>1.5</version>
                 <executions>
                     <execution>
-                        <id>package-full</id>
                         <phase>package</phase>
                         <goals>
-                            <goal>shade</goal>
+                            <goal>jarjar</goal>
                         </goals>
                         <configuration>
-                            <artifactSet>
-                                <includes>
-                                    <include>info.cukes:cucumber-deps</include>
-                                </includes>
-                            </artifactSet>
+                            <includes>
+                                <include>info.cukes:cucumber-deps</include>
+                            </includes>
+                            <rules>
+                            </rules>
                         </configuration>
                     </execution>
                 </executions>
