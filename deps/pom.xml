@@ -1,0 +1,133 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>info.cukes</groupId>
+    <artifactId>cucumber-deps</artifactId>
+    <version>1.0.0</version>
+
+    <packaging>jar</packaging>
+    <name>Cucumber-JVM: Deps</name>
+
+    <dependencies>
+        <!--
+        These dependencies are packaged into a new package to prevent conflicts with users' own code
+        or possibly libraries they might be using
+        -->
+        <dependency>
+            <groupId>com.thoughtworks.xstream</groupId>
+            <artifactId>xstream</artifactId>
+            <version>1.4.2</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>xmlpull</groupId>
+                    <artifactId>xmlpull</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>xpp3</groupId>
+                    <artifactId>xpp3_min</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.googlecode.java-diff-utils</groupId>
+            <artifactId>diffutils</artifactId>
+            <version>1.2.1</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>jarjar-maven-plugin</artifactId>
+                <version>1.5</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jarjar</goal>
+                        </goals>
+                        <configuration>
+                            <includes>
+                                <include>com.thoughtworks.xstream:xstream</include>
+                                <include>com.googlecode.java-diff-utils:diffutils</include>
+                            </includes>
+                            <rules>
+                                <rule>
+                                    <pattern>com.thoughtworks.xstream.**</pattern>
+                                    <result>cucumber.runtime.xstream.@1</result>
+                                </rule>
+                                <rule>
+                                    <pattern>difflib.**</pattern>
+                                    <result>cucumber.difflib.@1</result>
+                                </rule>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.7</version>
+                <executions>
+                    <execution>
+                        <phase>install</phase>
+                        <configuration>
+                            <target>
+                                <!-- We're creating our own little local repo -->
+                                <copy todir="${basedir}/repository/info/cukes/cucumber-deps">
+                                    <fileset dir="${settings.localRepository}/info/cukes/cucumber-deps">
+                                        <include name="**/*.jar"/>
+                                        <include name="**/*.xml"/>
+                                        <include name="**/*.pom"/>
+                                    </fileset>
+                                </copy>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.2.2</version>
+                <configuration>
+                    <tagNameFormat>deps-v@{project.version}</tagNameFormat>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.4</version>
+                <configuration>
+                    <useAgent>true</useAgent>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <scm>
+        <connection>scm:svn:http://svn.sonatype.org/spice/tags/deps-v1.0.11</connection>
+        <developerConnection>scm:svn:https://svn.sonatype.org/spice/tags/deps-v1.0.11</developerConnection>
+        <url>http://svn.sonatype.org/spice/tags/deps-v1.0.11</url>
+    </scm>
+</project>

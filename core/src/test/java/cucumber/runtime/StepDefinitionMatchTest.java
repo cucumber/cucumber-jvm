@@ -1,8 +1,8 @@
 package cucumber.runtime;
 
-import com.thoughtworks.xstream.annotations.XStreamConverter;
-import com.thoughtworks.xstream.converters.basic.AbstractSingleValueConverter;
 import cucumber.runtime.converters.LocalizedXStreams;
+import cucumber.runtime.xstream.annotations.XStreamConverter;
+import cucumber.runtime.xstream.converters.basic.AbstractSingleValueConverter;
 import gherkin.I18n;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.DataTableRow;
@@ -17,7 +17,6 @@ import java.util.List;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
-import static org.mockito.Matchers.intThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -30,7 +29,7 @@ public class StepDefinitionMatchTest {
     public void converts_numbers() throws Throwable {
         StepDefinition stepDefinition = mock(StepDefinition.class);
         when(stepDefinition.getParameterCount()).thenReturn(1);
-        when(stepDefinition.getParameterType(0, String.class)).thenReturn(new ParameterType(Integer.TYPE, null));
+        when(stepDefinition.getParameterType(0, String.class)).thenReturn(new ParameterType(Integer.TYPE, null, null));
 
         Step stepWithoutDocStringOrTable = mock(Step.class);
         when(stepWithoutDocStringOrTable.getDocString()).thenReturn(null);
@@ -45,7 +44,7 @@ public class StepDefinitionMatchTest {
     public void converts_with_explicit_converter() throws Throwable {
         StepDefinition stepDefinition = mock(StepDefinition.class);
         when(stepDefinition.getParameterCount()).thenReturn(1);
-        when(stepDefinition.getParameterType(0, String.class)).thenReturn(new ParameterType(Thing.class, null));
+        when(stepDefinition.getParameterType(0, String.class)).thenReturn(new ParameterType(Thing.class, null, null));
 
         Step stepWithoutDocStringOrTable = mock(Step.class);
         when(stepWithoutDocStringOrTable.getDocString()).thenReturn(null);
@@ -94,7 +93,7 @@ public class StepDefinitionMatchTest {
     public void gives_nice_error_message_when_conversion_fails() throws Throwable {
         StepDefinition stepDefinition = mock(StepDefinition.class);
         when(stepDefinition.getParameterCount()).thenReturn(1);
-        when(stepDefinition.getParameterType(0, String.class)).thenReturn(new ParameterType(Thang.class, null));
+        when(stepDefinition.getParameterType(0, String.class)).thenReturn(new ParameterType(Thang.class, null, null));
 
         Step stepWithoutDocStringOrTable = mock(Step.class);
         when(stepWithoutDocStringOrTable.getDocString()).thenReturn(null);
@@ -107,10 +106,10 @@ public class StepDefinitionMatchTest {
             fail();
         } catch (CucumberException expected) {
             assertEquals(
-                    "Don't know how to convert blah into cucumber.runtime.StepDefinitionMatchTest$Thang.\n" +
+                    "Don't know how to convert \"blah\" into cucumber.runtime.StepDefinitionMatchTest$Thang.\n" +
                             "Try writing your own converter:\n" +
                             "\n" +
-                            "@com.thoughtworks.xstream.annotations.XStreamConverter(ThangConverter.class)\n" +
+                            "@cucumber.runtime.xstream.annotations.XStreamConverter(ThangConverter.class)\n" +
                             "public class Thang {}\n",
                     expected.getMessage()
             );
@@ -125,7 +124,7 @@ public class StepDefinitionMatchTest {
     public void can_have_doc_string_as_only_argument() throws Throwable {
         StepDefinition stepDefinition = mock(StepDefinition.class);
         when(stepDefinition.getParameterCount()).thenReturn(1);
-        when(stepDefinition.getParameterType(0, String.class)).thenReturn(new ParameterType(String.class, null));
+        when(stepDefinition.getParameterType(0, String.class)).thenReturn(new ParameterType(String.class, null, null));
 
         Step stepWithDocString = mock(Step.class);
         DocString docString = new DocString("text/plain", "HELLO", 999);
@@ -141,8 +140,8 @@ public class StepDefinitionMatchTest {
     public void can_have_doc_string_as_last_argument_among_many() throws Throwable {
         StepDefinition stepDefinition = mock(StepDefinition.class);
         when(stepDefinition.getParameterCount()).thenReturn(2);
-        when(stepDefinition.getParameterType(0, String.class)).thenReturn(new ParameterType(Integer.TYPE, null));
-        when(stepDefinition.getParameterType(1, String.class)).thenReturn(new ParameterType(String.class, null));
+        when(stepDefinition.getParameterType(0, String.class)).thenReturn(new ParameterType(Integer.TYPE, null, null));
+        when(stepDefinition.getParameterType(1, String.class)).thenReturn(new ParameterType(String.class, null, null));
 
         Step stepWithDocString = mock(Step.class);
         DocString docString = new DocString("test", "HELLO", 999);

@@ -3,11 +3,9 @@ package cucumber.runtime.java.picocontainer;
 import cucumber.DateFormat;
 import cucumber.annotation.en.Given;
 import cucumber.annotation.en.Then;
-import cucumber.runtime.PendingException;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 import java.util.TimeZone;
 
 import static org.junit.Assert.assertEquals;

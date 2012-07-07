@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>info.cukes</groupId>
     <artifactId>cucumber-jvm</artifactId>
-    <version>1.0.11-SNAPSHOT</version>
+    <version>1.0.12-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Cucumber-JVM</name>
     <url>http://cukes.info/</url>
@@ -16,8 +16,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <outputDirectory>${project.build.directory}</outputDirectory>
-        <gherkin.version>2.11.0</gherkin.version>
-        <groovy.version>2.0.0-rc-3</groovy.version>
+        <gherkin.version>2.11.1</gherkin.version>
+        <groovy.version>2.0.0</groovy.version>
     </properties>
     <licenses>
         <license>
@@ -39,6 +39,12 @@
     </distributionManagement>
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>info.cukes</groupId>
+                <artifactId>cucumber-deps</artifactId>
+                <scope>provided</scope>
+                <version>1.0.0</version>
+            </dependency>
             <dependency>
                 <groupId>info.cukes</groupId>
                 <artifactId>cucumber-core</artifactId>
@@ -85,26 +91,6 @@
                 <version>${groovy.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.googlecode.java-diff-utils</groupId>
-                <artifactId>diffutils</artifactId>
-                <version>1.2.1</version>
-            </dependency>
-            <dependency>
-                <groupId>com.thoughtworks.xstream</groupId>
-                <artifactId>xstream</artifactId>
-                <version>1.4.2</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>xmlpull</groupId>
-                        <artifactId>xmlpull</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>xpp3</groupId>
-                        <artifactId>xpp3_min</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
                 <groupId>org.picocontainer</groupId>
                 <artifactId>picocontainer</artifactId>
                 <version>2.14.1</version>
@@ -136,9 +122,9 @@
                 <version>1.5.0-alpha2</version>
             </dependency>
             <dependency>
-                <groupId>rhino</groupId>
-                <artifactId>js</artifactId>
-                <version>1.7R2</version>
+                <groupId>org.mozilla</groupId>
+                <artifactId>rhino</artifactId>
+                <version>1.7R4</version>
             </dependency>
             <dependency>
                 <groupId>org.ioke</groupId>
@@ -164,6 +150,12 @@
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-all</artifactId>
                 <version>1.9.0</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.jsoup</groupId>
+                <artifactId>jsoup</artifactId>
+                <version>1.6.3</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -211,6 +203,10 @@
     </dependencyManagement>
 
     <repositories>
+        <repository>
+            <id>cucumber-deps</id>
+            <url>file://${basedir}/../deps/repository</url>
+        </repository>
         <repository>
             <id>codehaus</id>
             <url>http://repository.codehaus.org</url>
@@ -278,6 +274,7 @@
             <build>
                 <plugins>
                     <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-release-plugin</artifactId>
                         <version>2.2.2</version>
                         <configuration>
