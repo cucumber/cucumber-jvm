@@ -14,8 +14,7 @@ import static org.junit.Assert.assertEquals;
 public class ResourceLoaderTest {
     private final File dir;
     
-    public ResourceLoaderTest() throws UnsupportedEncodingException
-    {
+    public ResourceLoaderTest() throws UnsupportedEncodingException {
         dir = new File(URLDecoder.decode(getClass().getProtectionDomain().getCodeSource().getLocation().getFile(), "UTF-8"));
     }
 
