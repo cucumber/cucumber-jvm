@@ -13,11 +13,13 @@ import java.util.Iterator;
 
 class ClasspathIterable implements Iterable<Resource> {
     private final ClassLoader cl;
+    private final ResourceIteratorFactory fallbackResourceIteratorFactory;
     private final String path;
     private final String suffix;
 
     public ClasspathIterable(ClassLoader cl, String path, String suffix) {
         this.cl = cl;
+        this.fallbackResourceIteratorFactory = new FileResourceIteratorFactory();
         this.path = path;
         this.suffix = suffix;
     }
@@ -33,9 +35,7 @@ class ClasspathIterable implements Iterable<Resource> {
                     String jarPath = filePath(url);
                     iterator.push(new ZipResourceIterator(jarPath, path, suffix));
                 } else {
-                    File file = new File(getPath(url));
-                    File rootDir = new File(file.getAbsolutePath().substring(0, file.getAbsolutePath().length() - path.length()));
-                    iterator.push(new FileResourceIterator(rootDir, file, suffix));
+                    iterator.push(fallbackResourceIteratorFactory.createIterator(url, path, suffix));
                 }
             }
             return iterator;
@@ -54,7 +54,7 @@ class ClasspathIterable implements Iterable<Resource> {
         return suffix == null || name.endsWith(suffix);
     }
 
-    private static String getPath(URL url) {
+    static String getPath(URL url) {
         try {
             return URLDecoder.decode(url.getPath(), "UTF-8");
         } catch (UnsupportedEncodingException e) {
