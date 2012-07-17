@@ -7,8 +7,7 @@ import java.util.Iterator;
  * Resource iterator factory implementation which acts as a fallback when no
  * other factories are found.
  */
-public class ZipThenFileResourceIteratorFallback implements ResourceIteratorFactory
-{
+public class ZipThenFileResourceIteratorFallback implements ResourceIteratorFactory {
     /**
      * The file resource iterator factory.
      */

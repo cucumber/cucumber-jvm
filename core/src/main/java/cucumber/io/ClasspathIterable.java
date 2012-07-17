@@ -31,11 +31,7 @@ class ClasspathIterable implements Iterable<Resource> {
             Enumeration<URL> resources = cl.getResources(path);
             while (resources.hasMoreElements()) {
                 URL url = resources.nextElement();
-                if ("jar".equals(url.getProtocol())) {
-                    iterator.push(new ZipResourceIteratorFactory().createIterator(url, path, suffix));
-                } else {
-                    iterator.push(this.resourceIteratorFactory.createIterator(url, path, suffix));
-                }
+                iterator.push(this.resourceIteratorFactory.createIterator(url, path, suffix));
             }
             return iterator;
         } catch (IOException e) {
