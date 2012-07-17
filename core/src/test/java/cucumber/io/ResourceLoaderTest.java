@@ -4,13 +4,20 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
 public class ResourceLoaderTest {
-    private final File dir = new File(getClass().getProtectionDomain().getCodeSource().getLocation().getFile());
+    private final File dir;
+    
+    public ResourceLoaderTest() throws UnsupportedEncodingException
+    {
+        dir = new File(URLDecoder.decode(getClass().getProtectionDomain().getCodeSource().getLocation().getFile(), "UTF-8"));
+    }
 
     @Test
     public void loads_resources_from_filesystem_dir() {
