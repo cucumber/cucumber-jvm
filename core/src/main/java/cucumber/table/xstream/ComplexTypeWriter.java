@@ -1,7 +1,5 @@
 package cucumber.table.xstream;
 
-import cucumber.runtime.CucumberException;
-
 import java.util.ArrayList;
 import java.util.List;
 

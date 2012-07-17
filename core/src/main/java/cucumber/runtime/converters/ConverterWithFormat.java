@@ -1,8 +1,8 @@
 package cucumber.runtime.converters;
 
-import com.thoughtworks.xstream.converters.ConversionException;
-import com.thoughtworks.xstream.converters.SingleValueConverter;
 import cucumber.runtime.CucumberException;
+import cucumber.runtime.xstream.converters.ConversionException;
+import cucumber.runtime.xstream.converters.SingleValueConverter;
 
 import java.text.Format;
 import java.text.ParsePosition;

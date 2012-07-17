@@ -1,3 +1,9 @@
+## [1.0.11](https://github.com/cucumber/cucumber-jvm/compare/v1.0.10...v1.0.11)
+
+* [Core] Added a new `@Transform` annotation and an abstract `Transformer` class giving full control over argument transforms.
+* [OpenEJB] Remove log4j need for openejb module ([#355](https://github.com/cucumber/cucumber-jvm/pull/355) rmannibucau)
+* [JUnit] JUnit report doesn't correctly report errors ([#315](https://github.com/cucumber/cucumber-jvm/issues/315), [#356](https://github.com/cucumber/cucumber-jvm/pull/356) Kevin Cunningham)
+
 ## [1.0.10](https://github.com/cucumber/cucumber-jvm/compare/v1.0.9...v1.0.10)
 
 * [Core] Automatically convert data tables to lists of enums just as is done with classes [#346](https://github.com/cucumber/cucumber-jvm/issues/346)

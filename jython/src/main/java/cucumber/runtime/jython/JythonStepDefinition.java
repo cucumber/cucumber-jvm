@@ -2,7 +2,6 @@ package cucumber.runtime.jython;
 
 import cucumber.runtime.ParameterType;
 import cucumber.runtime.StepDefinition;
-import cucumber.runtime.Utils;
 import gherkin.I18n;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
@@ -48,7 +47,7 @@ public class JythonStepDefinition implements StepDefinition {
 
     @Override
     public ParameterType getParameterType(int n, Type argumentType) {
-        return new ParameterType(argumentType, null);
+        return new ParameterType(argumentType, null, null);
     }
 
     @Override

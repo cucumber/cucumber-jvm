@@ -7,9 +7,7 @@ import gherkin.formatter.model.Feature;
 import gherkin.formatter.model.Scenario;
 import gherkin.formatter.model.ScenarioOutline;
 import gherkin.formatter.model.Step;
-import org.junit.Ignore;
 
-import java.io.File;
 import java.util.List;
 
 public class StubFormatter implements Formatter {
