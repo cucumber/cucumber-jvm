@@ -13,13 +13,13 @@ import java.util.Iterator;
 
 class ClasspathIterable implements Iterable<Resource> {
     private final ClassLoader cl;
-    private final ResourceIteratorFactory fallbackResourceIteratorFactory;
+    private final ResourceIteratorFactory resourceIteratorFactory;
     private final String path;
     private final String suffix;
 
     public ClasspathIterable(ClassLoader cl, String path, String suffix) {
         this.cl = cl;
-        this.fallbackResourceIteratorFactory = new FileResourceIteratorFactory();
+        this.resourceIteratorFactory = new DelegatingResourceIteratorFactory();
         this.path = path;
         this.suffix = suffix;
     }
@@ -31,11 +31,10 @@ class ClasspathIterable implements Iterable<Resource> {
             Enumeration<URL> resources = cl.getResources(path);
             while (resources.hasMoreElements()) {
                 URL url = resources.nextElement();
-                if (url.getProtocol().equals("jar")) {
-                    String jarPath = filePath(url);
-                    iterator.push(new ZipResourceIterator(jarPath, path, suffix));
+                if ("jar".equals(url.getProtocol())) {
+                    iterator.push(new ZipResourceIteratorFactory().createIterator(url, path, suffix));
                 } else {
-                    iterator.push(fallbackResourceIteratorFactory.createIterator(url, path, suffix));
+                    iterator.push(this.resourceIteratorFactory.createIterator(url, path, suffix));
                 }
             }
             return iterator;
