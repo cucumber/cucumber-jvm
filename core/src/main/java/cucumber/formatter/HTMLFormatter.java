@@ -16,7 +16,6 @@ import gherkin.formatter.model.Scenario;
 import gherkin.formatter.model.ScenarioOutline;
 import gherkin.formatter.model.Step;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -33,7 +32,7 @@ public class HTMLFormatter implements Formatter, Reporter {
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private static final String JS_FORMATTER_VAR = "formatter";
     private static final String JS_REPORT_FILENAME = "report.js";
-    private static final String[] REPORT_ITEMS = new String[]{"formatter.js", "index.html", "jquery-1.6.4.min.js", "style.css"};
+    private static final String[] TEXT_ASSETS = new String[]{"formatter.js", "index.html", "jquery-1.6.4.min.js", "style.css"};
     private static final Map<String, String> MIME_TYPES_EXTENSIONS = new HashMap<String, String>() {
         {
             put("image/bmp", "bmp");
@@ -98,13 +97,15 @@ public class HTMLFormatter implements Formatter, Reporter {
     }
 
     @Override
-    public void syntaxError(String state, String event, List<String> legalEvents, String uri, int line) {
+    public void syntaxError(String state, String event, List<String> legalEvents, String uri, Integer line) {
     }
 
     @Override
     public void done() {
-        jsOut().append("});");
-        copyReportFiles();
+        if (!firstFeature) {
+            jsOut().append("});");
+            copyReportFiles();
+        }
     }
 
     @Override
@@ -127,27 +128,40 @@ public class HTMLFormatter implements Formatter, Reporter {
     }
 
     @Override
+    public void before(Match match, Result result) {
+        writeToJsReport("before", result);
+    }
+
+    @Override
+    public void after(Match match, Result result) {
+        writeToJsReport("after", result);
+    }
+
+    @Override
     public void match(Match match) {
         writeToJsReport("match", match);
     }
 
     @Override
-    public void embedding(String mimeType, byte[] data) {
+    public void embedding(String mimeType, InputStream data) {
         // Creating a file instead of using data urls to not clutter the js file
         String extension = MIME_TYPES_EXTENSIONS.get(mimeType);
         if (extension != null) {
             StringBuilder fileName = new StringBuilder("embedded").append(embeddedIndex++).append(".").append(extension);
-            writeBytes(new ByteArrayInputStream(data), reportFileOutputStream(fileName.toString()));
+            writeBytes(data, reportFileOutputStream(fileName.toString()));
             writeToJsReport("embedding", new StringBuilder("'").append(mimeType).append("','").append(fileName).append("'").toString());
         }
     }
 
+    @Override
+    public void write(String text) {
+        writeToJsReport("write", gson.toJson(text));
+    }
+
     private void copyReportFiles() {
-        String packageName = getClass().getPackage().getName().replaceAll("\\.", "/") + "/";
-        InputStream resourceAsStream;
-        for (String reportItem : REPORT_ITEMS) {
-            resourceAsStream = getClass().getClassLoader().getResourceAsStream(packageName + reportItem);
-            writeBytes(resourceAsStream, reportFileOutputStream(reportItem));
+        for (String textAsset : TEXT_ASSETS) {
+            InputStream textAssetStream = getClass().getResourceAsStream(textAsset);
+            writeBytes(textAssetStream, reportFileOutputStream(textAsset));
         }
     }
 
@@ -177,6 +191,7 @@ public class HTMLFormatter implements Formatter, Reporter {
     }
 
     private OutputStream reportFileOutputStream(String fileName) {
+        htmlReportDir.mkdirs();
         File file = new File(htmlReportDir, fileName);
         try {
             return new FileOutputStream(file);

@@ -1,6 +1,6 @@
 package cucumber.runtime.converters;
 
-import com.thoughtworks.xstream.converters.ConversionException;
+import cucumber.runtime.xstream.converters.ConversionException;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -8,14 +8,11 @@ import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
-import java.util.TimeZone;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 public class StandardConvertersTest {
-
-    private static final TimeZone UTC = TimeZone.getTimeZone("UTC");
 
     @Test
     public void shouldThrowInformativeErrorMessageWhenTransformationFails() {
@@ -56,7 +53,7 @@ public class StandardConvertersTest {
     }
 
     private Date getDateToTest() {
-        Calendar calendar = Calendar.getInstance(UTC);
+        Calendar calendar = Calendar.getInstance(Locale.US);
         calendar.set(2011, 10, 29, 0, 0, 0);
         calendar.set(Calendar.MILLISECOND, 0);
         return calendar.getTime();
@@ -77,6 +74,7 @@ public class StandardConvertersTest {
         assertEquals(expected, new DoubleConverter(Locale.US).fromString("3,000.15"));
         assertEquals(expected, new DoubleConverter(new Locale("pt")).fromString("3.000,15"));
         assertEquals(expected, new DoubleConverter(Locale.FRANCE).fromString("3000,15"));
+        assertEquals(null, new DoubleConverter(Locale.FRANCE).fromString(""));
     }
 
     @Test
@@ -114,5 +112,32 @@ public class StandardConvertersTest {
         BigInteger expected = BigInteger.valueOf(8589934592L);
         assertEquals(expected, new BigIntegerConverter(Locale.US).fromString("8589934592"));
         assertEquals(expected, new BigIntegerConverter(Locale.US).fromString("8,589,934,592"));
+    }
+
+    @Test
+    public void shouldTransformEnums() {
+        EnumConverter enumConverter = new EnumConverter(Locale.US, Color.class);
+        assertEquals(Color.GREEN, enumConverter.fromString("GREEN"));
+        assertEquals(Color.GREEN, enumConverter.fromString("Green"));
+        assertEquals(Color.GREEN, enumConverter.fromString("GrEeN"));
+        assertEquals(Color.RED, enumConverter.fromString("red"));
+    }
+
+    @Test
+    public void shouldListAllowedEnumsWhenConversionFails() {
+        EnumConverter enumConverter = new EnumConverter(Locale.US, Color.class);
+        try {
+            enumConverter.fromString("YELLOW");
+            fail();
+        } catch (ConversionException expected) {
+            String expectedMessage = "Couldn't convert YELLOW to cucumber.runtime.converters.StandardConvertersTest$Color. Legal values are [RED, GREEN, BLUE]";
+            if(!expected.getMessage().startsWith(expectedMessage)) {
+                fail("'" + expected.getMessage() + "' didn't start with '" + expectedMessage + "'");
+            }
+        }
+    }
+
+    public static enum Color {
+        RED, GREEN, BLUE
     }
 }

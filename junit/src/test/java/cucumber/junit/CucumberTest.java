@@ -1,8 +1,11 @@
 package cucumber.junit;
 
+import cucumber.annotation.DummyWhen;
+import cucumber.runtime.CucumberException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.junit.runners.model.InitializationError;
 
 import java.io.File;
@@ -14,7 +17,6 @@ public class CucumberTest {
 
     private String dir;
 
-    // TODO: While on the plain I couldn't look up how to change directory in Java... Fix this.
     @Before
     public void ensureDirectory() {
         dir = System.getProperty("user.dir");
@@ -31,32 +33,59 @@ public class CucumberTest {
 
     @Test
     public void finds_features_based_on_implicit_package() throws IOException, InitializationError {
-        Cucumber cucumber = new Cucumber(ImplicitPackage.class);
-        assertEquals(1, cucumber.getChildren().size());
+        Cucumber cucumber = new Cucumber(ImplicitFeaturePath.class);
+        assertEquals(2, cucumber.getChildren().size());
         assertEquals("Feature: In cucumber.junit", cucumber.getChildren().get(0).getName());
     }
 
     @Test
     public void finds_features_based_on_explicit_root_package() throws IOException, InitializationError {
-        Cucumber cucumber = new Cucumber(ExplicitPackage.class);
-        assertEquals(1, cucumber.getChildren().size());
+        Cucumber cucumber = new Cucumber(ExplicitFeaturePath.class);
+        assertEquals(2, cucumber.getChildren().size());
         assertEquals("Feature: In cucumber.junit", cucumber.getChildren().get(0).getName());
     }
 
-    @Test
+    @Test(expected = CucumberException.class)
     public void finds_no_features_when_explicit_package_has_nothnig() throws IOException, InitializationError {
-        Cucumber cucumber = new Cucumber(ExplicitPackageWithNoFeatures.class);
-        assertEquals(0, cucumber.getChildren().size());
+        new Cucumber(ExplicitFeaturePathWithNoFeatures.class);
     }
 
-    private class ImplicitPackage {
+    @RunWith(Cucumber.class)
+    private class RunCukesTestValidEmpty {
     }
 
-    @Feature("cucumber/junit")
-    private class ExplicitPackage {
+    @RunWith(Cucumber.class)
+    private class RunCukesTestValidIgnored {
+        public void ignoreMe() {
+        }
     }
 
-    @Feature("gibber/ish")
-    private class ExplicitPackageWithNoFeatures {
+    @RunWith(Cucumber.class)
+    private class RunCukesTestInvalid {
+        @DummyWhen
+        public void ignoreMe() {
+        }
+    }
+
+    @Test
+    public void no_stepdefs_in_cucumber_runner_valid() {
+        Cucumber.assertNoCucumberAnnotatedMethods(RunCukesTestValidEmpty.class);
+        Cucumber.assertNoCucumberAnnotatedMethods(RunCukesTestValidIgnored.class);
+    }
+
+    @Test(expected = CucumberException.class)
+    public void no_stepdefs_in_cucumber_runner_invalid() {
+        Cucumber.assertNoCucumberAnnotatedMethods(RunCukesTestInvalid.class);
+    }
+
+    private class ImplicitFeaturePath {
+    }
+
+    @Cucumber.Options(features = {"classpath:cucumber/junit"})
+    private class ExplicitFeaturePath {
+    }
+
+    @Cucumber.Options(features = {"classpath:gibber/ish"})
+    private class ExplicitFeaturePathWithNoFeatures {
     }
 }

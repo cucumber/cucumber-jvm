@@ -14,6 +14,11 @@ public class JRubySnippet implements Snippet {
     }
 
     @Override
+    public String tableHint() {
+        return null;
+    }
+
+    @Override
     public String arguments(List<Class<?>> argumentTypes) {
         StringBuilder sb = new StringBuilder(argumentTypes.isEmpty() ? "" : "|");
         for (int n = 0; n < argumentTypes.size(); n++) {

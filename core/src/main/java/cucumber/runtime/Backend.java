@@ -13,8 +13,6 @@ public interface Backend {
     /**
      * invoked once, handing the backend a reference to a step executor
      * in case the backend needs to call steps defined within other steps
-     *
-     * @param executor
      */
     void setUnreportedStepExecutor(UnreportedStepExecutor executor);
 

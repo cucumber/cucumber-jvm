@@ -19,19 +19,23 @@ public class CucumberScenario extends CucumberTagStatement {
         this.cucumberBackground = cucumberBackground;
     }
 
+    public CucumberBackground getCucumberBackground() {
+        return cucumberBackground;
+    }
+
     /**
      * This method is called when Cucumber is run from the CLI, but not when run from JUnit
      */
     @Override
     public void run(Formatter formatter, Reporter reporter, Runtime runtime) {
-        runtime.buildBackendWorlds();
-        runtime.runBeforeHooks(reporter, tags());
+        runtime.buildBackendWorlds(reporter);
+        runtime.runBeforeHooks(reporter, tagsAndInheritedTags());
 
         runBackground(formatter, reporter, runtime);
         format(formatter);
         runSteps(reporter, runtime);
 
-        runtime.runAfterHooks(reporter, tags());
+        runtime.runAfterHooks(reporter, tagsAndInheritedTags());
         runtime.disposeBackendWorlds();
     }
 

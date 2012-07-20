@@ -5,11 +5,10 @@ import java.io.FileFilter;
 import java.util.Iterator;
 
 import static cucumber.io.ClasspathIterable.hasSuffix;
-import static cucumber.runtime.Utils.emptyIterator;
 import static java.util.Arrays.asList;
 
-public class FileResourceIterator implements Iterator<Resource> {
-    private final FlatteningIterator flatteningIterator;
+class FileResourceIterator implements Iterator<Resource> {
+    private final FlatteningIterator flatteningIterator = new FlatteningIterator();
 
     public FileResourceIterator(File root, File file, final String suffix) {
         FileFilter filter = new FileFilter() {
@@ -18,7 +17,7 @@ public class FileResourceIterator implements Iterator<Resource> {
                 return file.isDirectory() || hasSuffix(suffix, file.getPath());
             }
         };
-        this.flatteningIterator = new FlatteningIterator(new FileIterator(root, file, filter));
+        flatteningIterator.push(new FileIterator(root, file, filter));
     }
 
     @Override
@@ -52,7 +51,7 @@ public class FileResourceIterator implements Iterator<Resource> {
             } else if (file.isFile()) {
                 this.files = asList(file).iterator();
             } else {
-                this.files = emptyIterator();
+                throw new IllegalArgumentException("Not a file or directory: " + file.getAbsolutePath());
             }
             this.filter = filter;
         }

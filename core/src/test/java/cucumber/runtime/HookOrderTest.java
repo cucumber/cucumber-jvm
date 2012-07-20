@@ -2,6 +2,7 @@ package cucumber.runtime;
 
 import cucumber.io.ResourceLoader;
 import gherkin.formatter.Reporter;
+import gherkin.formatter.model.Tag;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
@@ -10,6 +11,7 @@ import org.mockito.Matchers;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Properties;
 
 import static java.util.Arrays.asList;
 import static org.mockito.Matchers.anyListOf;
@@ -26,7 +28,8 @@ public class HookOrderTest {
     @Before
     public void buildMockWorld() {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        runtime = new Runtime(mock(ResourceLoader.class), new ArrayList<String>(), classLoader, asList(mock(Backend.class)), false);
+        RuntimeOptions runtimeOptions = new RuntimeOptions(new Properties());
+        runtime = new Runtime(mock(ResourceLoader.class), classLoader, asList(mock(Backend.class)), runtimeOptions);
         glue = runtime.getGlue();
     }
 
@@ -37,7 +40,7 @@ public class HookOrderTest {
             glue.addBeforeHook(hook);
         }
 
-        runtime.runBeforeHooks(mock(Reporter.class), new HashSet<String>());
+        runtime.runBeforeHooks(mock(Reporter.class), new HashSet<Tag>());
 
         InOrder inOrder = inOrder(hooks.toArray());
         inOrder.verify(hooks.get(2)).execute(Matchers.<ScenarioResult>any());
@@ -52,7 +55,7 @@ public class HookOrderTest {
             glue.addAfterHook(hook);
         }
 
-        runtime.runAfterHooks(mock(Reporter.class), new HashSet<String>());
+        runtime.runAfterHooks(mock(Reporter.class), new HashSet<Tag>());
 
         InOrder inOrder = inOrder(hooks.toArray());
         inOrder.verify(hooks.get(1)).execute(Matchers.<ScenarioResult>any());
@@ -71,7 +74,7 @@ public class HookOrderTest {
             glue.addBeforeHook(hook);
         }
 
-        runtime.runBeforeHooks(mock(Reporter.class), new HashSet<String>());
+        runtime.runBeforeHooks(mock(Reporter.class), new HashSet<Tag>());
 
         List<HookDefinition> allHooks = new ArrayList<HookDefinition>();
         allHooks.addAll(backend1Hooks);
@@ -91,7 +94,7 @@ public class HookOrderTest {
         for (int order : ordering) {
             HookDefinition hook = mock(HookDefinition.class, "Mock number " + order);
             when(hook.getOrder()).thenReturn(order);
-            when(hook.matches(anyListOf(String.class))).thenReturn(true);
+            when(hook.matches(anyListOf(Tag.class))).thenReturn(true);
             hooks.add(hook);
         }
         return hooks;

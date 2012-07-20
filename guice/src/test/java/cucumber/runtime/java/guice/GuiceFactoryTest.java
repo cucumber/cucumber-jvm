@@ -4,9 +4,10 @@ import cucumber.runtime.java.ObjectFactory;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.Properties;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertSame;
 
 public class GuiceFactoryTest {
     @Test
@@ -15,24 +16,26 @@ public class GuiceFactoryTest {
         factory.addClass(Mappings.class);
 
         // Scenario 1
-        factory.createInstances();
+        factory.start();
         Mappings o1 = factory.getInstance(Mappings.class);
-        factory.disposeInstances();
+        factory.stop();
 
         // Scenario 2
-        factory.createInstances();
+        factory.start();
         Mappings o2 = factory.getInstance(Mappings.class);
-        factory.disposeInstances();
+        factory.stop();
 
         assertNotNull(o1);
         assertNotSame(o1, o2);
     }
 
     @Test
-    public void missing_guice_module_property_causes_mapping_to_be_null() throws Exception {
-        ObjectFactory factory = new GuiceFactory(new Properties());
-        factory.createInstances();
-        Mappings mappings = factory.getInstance(Mappings.class);
-        assertNull(mappings);
+    public void testShouldGiveTheSameInstanceWithinAScenario() throws Exception {
+        ObjectFactory factory = new GuiceFactory();
+        factory.addClass(Mappings.class);
+
+        factory.start();
+        assertSame(factory.getInstance(Mappings.class), factory.getInstance(Mappings.class));
+        factory.stop();
     }
 }

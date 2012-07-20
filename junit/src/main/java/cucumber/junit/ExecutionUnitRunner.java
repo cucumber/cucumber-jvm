@@ -8,7 +8,11 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static cucumber.junit.DescriptionFactory.createDescription;
 
 /**
  * Runs a scenario, or a "synthetic" scenario derived from an Examples row.
@@ -17,6 +21,8 @@ class ExecutionUnitRunner extends ParentRunner<Step> {
     private final Runtime runtime;
     private final CucumberScenario cucumberScenario;
     private final JUnitReporter jUnitReporter;
+    private Description description;
+    private final Map<Step, Description> stepDescriptions = new HashMap<Step, Description>();
 
     public ExecutionUnitRunner(Runtime runtime, CucumberScenario cucumberScenario, JUnitReporter jUnitReporter) throws InitializationError {
         super(ExecutionUnitRunner.class);
@@ -36,8 +42,31 @@ class ExecutionUnitRunner extends ParentRunner<Step> {
     }
 
     @Override
+    public Description getDescription() {
+        if (description == null) {
+            description = createDescription(getName(), cucumberScenario);
+
+            if (cucumberScenario.getCucumberBackground() != null) {
+                for (Step backgroundStep : cucumberScenario.getCucumberBackground().getSteps()) {
+                    description.addChild(describeChild(backgroundStep));
+                }
+            }
+
+            for (Step step : getChildren()) {
+                description.addChild(describeChild(step));
+            }
+        }
+        return description;
+    }
+
+    @Override
     protected Description describeChild(Step step) {
-        return Description.createSuiteDescription(step.getKeyword() + step.getName() + "(" + getName() + ")");
+        Description description = stepDescriptions.get(step);
+        if (description == null) {
+            description = createDescription(step.getKeyword() + step.getName(), step);
+            stepDescriptions.put(step, description);
+        }
+        return description;
     }
 
     @Override

@@ -1,0 +1,42 @@
+[
+    {
+        "source":"^I am on the front page$",
+        "flags":"",
+        "steps":[
+            {
+                "name":"I am on the front page",
+                "args":[]
+            }
+        ]
+    },
+    {
+        "source":"^I enter (.+) Celcius$",
+        "flags":"",
+        "steps":[
+            {
+                "name":"I enter 0 Celcius",
+                "args":[
+                    {
+                        "offset":8,
+                        "val":"0"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "source":"^I should see (.+) Fahrenheit$",
+        "flags":"",
+        "steps":[
+            {
+                "name":"I should see 32.0 Fahrenheit",
+                "args":[
+                    {
+                        "offset":13,
+                        "val":"32.0"
+                    }
+                ]
+            }
+        ]
+    }
+]

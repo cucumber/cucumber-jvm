@@ -7,9 +7,15 @@ import java.util.List;
 public class GroovySnippet implements Snippet {
     @Override
     public String template() {
-        return "{0}(~\"{1}\") '{' {3}->\n" +
+        return "{0}(~''{1}'') '{' {3}->\n" +
                 "    // {4}\n" +
+                "    throw new PendingException()\n" +
                 "'}'\n";
+    }
+
+    @Override
+    public String tableHint() {
+        return null;
     }
 
     @Override
@@ -40,6 +46,6 @@ public class GroovySnippet implements Snippet {
 
     @Override
     public String escapePattern(String pattern) {
-        return pattern.replaceAll("\"", "\\\\\"");
+        return pattern;
     }
 }

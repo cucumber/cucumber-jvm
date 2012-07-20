@@ -1,13 +1,19 @@
 package cucumber.runtime;
 
+import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Result;
 import org.junit.Test;
 
+import java.io.ByteArrayInputStream;
+
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 public class ScenarioResultTest {
 
-    private ScenarioResultImpl r = new ScenarioResultImpl();
+    private Reporter reporter = mock(Reporter.class);
+    private ScenarioResultImpl r = new ScenarioResultImpl(reporter);
 
     @Test
     public void no_steps_is_passed() throws Exception {
@@ -33,5 +39,18 @@ public class ScenarioResultTest {
         r.add(new Result("undefined", 0L, null, null));
         r.add(new Result("pending", 0L, null, null));
         assertEquals("pending", r.getStatus());
+    }
+
+    @Test
+    public void embeds_data() {
+        ByteArrayInputStream data = new ByteArrayInputStream(new byte[]{1, 2, 3});
+        r.embed(data, "bytes/foo");
+        verify(reporter).embedding("bytes/foo", data);
+    }
+
+    @Test
+    public void prints_output() {
+        r.write("Hi");
+        verify(reporter).write("Hi");
     }
 }

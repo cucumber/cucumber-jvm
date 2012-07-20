@@ -1,5 +1,6 @@
 package cucumber.runtime.snippets;
 
+import cucumber.table.DataTable;
 import gherkin.I18n;
 import gherkin.formatter.model.Step;
 
@@ -9,25 +10,21 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * Base class for generating snippets.
- * <p/>
- * Subclasses can access common values:
- * <ul>
- * <li>{0} : Keyword</li>
- * <li>{1} : Regexp</li>
- * <li>{2} : Function name</li>
- * <li>{3} : Arguments</li>
- * <li>{4} : Hint comment</li>
- * </ul>
- */
 public final class SnippetGenerator {
     private static final ArgumentPattern[] DEFAULT_ARGUMENT_PATTERNS = new ArgumentPattern[]{
             new ArgumentPattern(Pattern.compile("\"([^\"]*)\""), String.class),
             new ArgumentPattern(Pattern.compile("(\\d+)"), Integer.TYPE)
     };
     private static final Pattern GROUP_PATTERN = Pattern.compile("\\(");
-    private static final String HINT = "Express the Regexp above with the code you wish you had";
+    private static final Pattern[] ESCAPE_PATTERNS = new Pattern[]{
+            Pattern.compile("\\$"),
+            Pattern.compile("\\("),
+            Pattern.compile("\\)"),
+            Pattern.compile("\\["),
+            Pattern.compile("\\]")
+    };
+
+    private static final String REGEXP_HINT = "Express the Regexp above with the code you wish you had";
     private static final Character SUBST = '_';
 
     private final Snippet snippet;
@@ -37,11 +34,24 @@ public final class SnippetGenerator {
     }
 
     public String getSnippet(Step step) {
-        return MessageFormat.format(snippet.template(), I18n.codeKeywordFor(step.getKeyword()), snippet.escapePattern(patternFor(step.getName())), functionName(step.getName()), snippet.arguments(argumentTypes(step.getName())), HINT);
+        return MessageFormat.format(
+                snippet.template(),
+                I18n.codeKeywordFor(step.getKeyword()),
+                snippet.escapePattern(patternFor(step.getName())),
+                functionName(step.getName()),
+                snippet.arguments(argumentTypes(step)),
+                REGEXP_HINT,
+                step.getRows() == null ? "" : snippet.tableHint()
+        );
     }
 
-    protected String patternFor(String stepName) {
+    String patternFor(String stepName) {
         String pattern = stepName;
+        for (Pattern escapePattern : ESCAPE_PATTERNS) {
+            Matcher m = escapePattern.matcher(pattern);
+            String replacement = Matcher.quoteReplacement(escapePattern.toString());
+            pattern = m.replaceAll(replacement);
+        }
         for (ArgumentPattern argumentPattern : argumentPatterns()) {
             pattern = argumentPattern.replaceMatchesWithGroups(pattern);
         }
@@ -61,7 +71,7 @@ public final class SnippetGenerator {
         return functionName;
     }
 
-    protected String sanitizeFunctionName(String functionName) {
+    String sanitizeFunctionName(String functionName) {
         StringBuilder sanitized = new StringBuilder();
 
         String trimmedFunctionName = functionName.trim();
@@ -91,7 +101,8 @@ public final class SnippetGenerator {
     }
 
 
-    private List<Class<?>> argumentTypes(String name) {
+    private List<Class<?>> argumentTypes(Step step) {
+        String name = step.getName();
         List<Class<?>> argTypes = new ArrayList<Class<?>>();
         Matcher[] matchers = new Matcher[argumentPatterns().length];
         for (int i = 0; i < argumentPatterns().length; i++) {
@@ -118,10 +129,16 @@ public final class SnippetGenerator {
                 break;
             }
         }
+        if (step.getDocString() != null) {
+            argTypes.add(String.class);
+        }
+        if (step.getRows() != null) {
+            argTypes.add(DataTable.class);
+        }
         return argTypes;
     }
 
-    protected ArgumentPattern[] argumentPatterns() {
+    ArgumentPattern[] argumentPatterns() {
         return DEFAULT_ARGUMENT_PATTERNS;
     }
 

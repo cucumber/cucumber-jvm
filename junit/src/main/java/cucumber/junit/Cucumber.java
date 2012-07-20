@@ -1,10 +1,10 @@
 package cucumber.junit;
 
-import cucumber.formatter.NullReporter;
-import cucumber.io.ClasspathResourceLoader;
+import cucumber.io.MultiLoader;
 import cucumber.io.ResourceLoader;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Runtime;
+import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.snippets.SummaryPrinter;
 import org.junit.runner.Description;
@@ -13,12 +13,14 @@ import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
 
 import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-
-import static cucumber.runtime.Utils.packagePath;
-import static cucumber.runtime.model.CucumberFeature.load;
-import static java.util.Arrays.asList;
 
 /**
  * Classes annotated with {@code @RunWith(Cucumber.class)} will run a Cucumber Feature.
@@ -27,12 +29,11 @@ import static java.util.Arrays.asList;
  * Cucumber will look for a {@code .feature} file on the classpath, using the same resource
  * path as the annotated class ({@code .class} substituted by {@code .feature}).
  * <p/>
- * Additional hints can be given to Cucumber by annotating the class with {@link cucumber.junit.Feature}.
+ * Additional hints can be given to Cucumber by annotating the class with {@link Options}.
  *
- * @see cucumber.junit.Feature
+ * @see Options
  */
 public class Cucumber extends ParentRunner<FeatureRunner> {
-    private final ResourceLoader resourceLoader;
     private final JUnitReporter jUnitReporter;
     private final List<FeatureRunner> children = new ArrayList<FeatureRunner>();
     private final Runtime runtime;
@@ -48,16 +49,16 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
     public Cucumber(Class clazz) throws InitializationError, IOException {
         super(clazz);
         ClassLoader classLoader = clazz.getClassLoader();
-        resourceLoader = new ClasspathResourceLoader(classLoader);
-        assertNoDeclaredMethods(clazz);
-        List<String> featurePaths = featurePaths(clazz);
+        assertNoCucumberAnnotatedMethods(clazz);
 
-        List<String> gluePaths = gluePaths(clazz);
-        runtime = new Runtime(resourceLoader, gluePaths, classLoader);
+        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(clazz);
+        RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
 
-        // TODO: Create formatter(s) based on Annotations. Use same technique as in cli.Main for MultiFormatter
-        jUnitReporter = new JUnitReporter(new NullReporter(), new NullReporter());
-        addChildren(featurePaths, filters(clazz));
+        ResourceLoader resourceLoader = new MultiLoader(classLoader);
+        runtime = new Runtime(resourceLoader, classLoader, runtimeOptions);
+
+        jUnitReporter = new JUnitReporter(runtimeOptions.reporter(classLoader), runtimeOptions.formatter(classLoader), runtimeOptions.strict);
+        addChildren(runtimeOptions.cucumberFeatures(resourceLoader));
     }
 
     @Override
@@ -83,77 +84,76 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         jUnitReporter.close();
     }
 
-    private void assertNoDeclaredMethods(Class clazz) {
-        if (clazz.getDeclaredMethods().length != 0) {
-            throw new CucumberException(
-                    "\n\n" +
-                            "Classes annotated with @RunWith(Cucumber.class) must not define any methods.\n" +
-                            "Their sole purpose is to serve as an entry point for JUnit.\n" +
-                            "Step Definitions should be defined in their own classes.\n" +
-                            "This allows them to be reused across features.\n" +
-                            "Offending class: " + clazz + "\n"
-            );
-        }
-    }
-
-    /**
-     * @param clazz the Class used to kick it all off
-     * @return either a path to a single feature, or to a directory or classpath entry containing them
-     */
-    private List<String> featurePaths(Class clazz) {
-        cucumber.junit.Feature featureAnnotation = getFeatureAnnotation(clazz);
-        String featurePath;
-        if (featureAnnotation != null) {
-            featurePath = featureAnnotation.value();
-        } else {
-            featurePath = packagePath(clazz);
-        }
-        return asList(featurePath);
-    }
-
-    private List<String> gluePaths(Class clazz) {
-        List<String> gluePaths = new ArrayList<String>();
-
-        gluePaths.add(packagePath(clazz));
-
-        // Add additional ones
-        cucumber.junit.Feature featureAnnotation = getFeatureAnnotation(clazz);
-        if (featureAnnotation != null) {
-            for (String packageName : featureAnnotation.packages()) {
-                gluePaths.add(packagePath(packageName));
+    static void assertNoCucumberAnnotatedMethods(Class clazz) {
+        for (Method method : clazz.getDeclaredMethods()) {
+            for (Annotation annotation : method.getAnnotations()) {
+                if (annotation.annotationType().getName().startsWith("cucumber")) {
+                    throw new CucumberException(
+                            "\n\n" +
+                                    "Classes annotated with @RunWith(Cucumber.class) must not define any\n" +
+                                    "Step Definition or Hook methods. Their sole purpose is to serve as\n" +
+                                    "an entry point for JUnit. Step Definitions and Hooks should be defined\n" +
+                                    "in their own classes. This allows them to be reused across features.\n" +
+                                    "Offending class: " + clazz + "\n"
+                    );
+                }
             }
         }
-        return gluePaths;
     }
 
-    private List<Object> filters(Class clazz) {
-        cucumber.junit.Feature featureAnnotation = getFeatureAnnotation(clazz);
-        Object[] filters = new Object[0];
-        if (featureAnnotation != null) {
-            filters = toLong(featureAnnotation.lines());
-            if (filters.length == 0) {
-                filters = featureAnnotation.tags();
-            }
-        }
-        return asList(filters);
-    }
-
-    private void addChildren(List<String> featurePaths, final List<Object> filters) throws InitializationError {
-        List<CucumberFeature> cucumberFeatures = load(resourceLoader, featurePaths, filters);
+    private void addChildren(List<CucumberFeature> cucumberFeatures) throws InitializationError {
         for (CucumberFeature cucumberFeature : cucumberFeatures) {
             children.add(new FeatureRunner(cucumberFeature, runtime, jUnitReporter));
         }
     }
 
-    private Long[] toLong(long[] primitiveLongs) {
-        Long[] longs = new Long[primitiveLongs.length];
-        for (int i = 0; i < primitiveLongs.length; i++) {
-            longs[i] = primitiveLongs[i];
-        }
-        return longs;
-    }
+    /**
+     * This annotation can be used to give additional hints to the {@link cucumber.junit.Cucumber} runner
+     * about what to run. It provides similar options to the Cucumber command line used by {@link cucumber.cli.Main}
+     */
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.TYPE})
+    public static @interface Options {
+        /**
+         * @return true if this is a dry run
+         */
+        boolean dryRun() default false;
 
-    private Feature getFeatureAnnotation(Class clazz) {
-        return (Feature) clazz.getAnnotation(Feature.class);
+        /**
+         * @return true if strict mode is enabled (fail if there are undefined or pending steps)
+         */
+        boolean strict() default false;
+
+        /**
+         * @return the paths to the feature(s)
+         */
+        String[] features() default {};
+
+        /**
+         * @return where to look for glue code (stepdefs and hooks)
+         */
+        String[] glue() default {};
+
+        /**
+         * @return what tags in the features should be executed
+         */
+        String[] tags() default {};
+
+        /**
+         * @return what formatter(s) to use
+         */
+        String[] format() default {};
+
+        /**
+         * @return whether or not to use monochrome output
+         */
+        boolean monochrome() default false;
+
+        /**
+         * Specify a patternfilter for features or scenarios
+         *
+         * @return a list of patterns
+         */
+        String[] name() default {};
     }
 }

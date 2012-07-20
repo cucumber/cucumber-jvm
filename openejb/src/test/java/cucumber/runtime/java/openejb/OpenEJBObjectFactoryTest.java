@@ -13,14 +13,14 @@ public class OpenEJBObjectFactoryTest {
         factory.addClass(BellyStepdefs.class);
 
         // Scenario 1
-        factory.createInstances();
+        factory.start();
         BellyStepdefs o1 = factory.getInstance(BellyStepdefs.class);
-        factory.disposeInstances();
+        factory.stop();
 
         // Scenario 2
-        factory.createInstances();
+        factory.start();
         BellyStepdefs o2 = factory.getInstance(BellyStepdefs.class);
-        factory.disposeInstances();
+        factory.stop();
 
         assertNotNull(o1);
         assertNotSame(o1, o2);

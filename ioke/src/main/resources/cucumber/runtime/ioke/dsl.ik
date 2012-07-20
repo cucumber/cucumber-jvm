@@ -13,8 +13,8 @@ Cucumber StepDefinition = Origin mimic do(
     self
   )
 
-  regexp_source = method(
-    @regexp inspect
+  regexp_pattern = method(
+    @regexp pattern
   )
 
   arguments_from = method(stepName,

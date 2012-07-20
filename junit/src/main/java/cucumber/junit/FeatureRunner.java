@@ -1,5 +1,6 @@
 package cucumber.junit;
 
+import cucumber.runtime.CucumberException;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.model.CucumberScenario;
@@ -14,12 +15,15 @@ import org.junit.runners.model.InitializationError;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FeatureRunner extends ParentRunner<ParentRunner> {
+import static cucumber.junit.DescriptionFactory.createDescription;
+
+class FeatureRunner extends ParentRunner<ParentRunner> {
     private final List<ParentRunner> children = new ArrayList<ParentRunner>();
 
     private final CucumberFeature cucumberFeature;
     private final Runtime runtime;
     private final JUnitReporter jUnitReporter;
+    private Description description;
 
     protected FeatureRunner(CucumberFeature cucumberFeature, Runtime runtime, JUnitReporter jUnitReporter) throws InitializationError {
         super(null);
@@ -33,6 +37,17 @@ public class FeatureRunner extends ParentRunner<ParentRunner> {
     public String getName() {
         Feature feature = cucumberFeature.getFeature();
         return feature.getKeyword() + ": " + feature.getName();
+    }
+
+    @Override
+    public Description getDescription() {
+        if (description == null) {
+            description = createDescription(getName(), cucumberFeature);
+            for (ParentRunner child : getChildren()) {
+                description.addChild(describeChild(child));
+            }
+        }
+        return description;
     }
 
     @Override
@@ -69,7 +84,7 @@ public class FeatureRunner extends ParentRunner<ParentRunner> {
                 }
                 children.add(featureElementRunner);
             } catch (InitializationError e) {
-                throw new RuntimeException("Failed to create scenario runner", e);
+                throw new CucumberException("Failed to create scenario runner", e);
             }
         }
     }

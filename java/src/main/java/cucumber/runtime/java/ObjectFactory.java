@@ -1,9 +1,9 @@
 package cucumber.runtime.java;
 
 public interface ObjectFactory {
-    void createInstances();
+    void start();
 
-    void disposeInstances();
+    void stop();
 
     void addClass(Class<?> clazz);
 

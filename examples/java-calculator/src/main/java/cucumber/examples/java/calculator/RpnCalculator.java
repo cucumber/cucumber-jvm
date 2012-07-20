@@ -1,18 +1,19 @@
 package cucumber.examples.java.calculator;
 
-import java.util.ArrayList;
+import java.util.Deque;
+import java.util.LinkedList;
 import java.util.List;
 
 import static java.util.Arrays.asList;
 
 public class RpnCalculator {
-    private final List<Number> stack = new ArrayList<Number>();
+    private final Deque<Number> stack = new LinkedList<Number>();
     private static final List<String> OPS = asList("-", "+", "*", "/");
 
     public void push(Object arg) {
         if (OPS.contains(arg)) {
-            Number y = stack.remove(stack.size() - 1);
-            Number x = stack.isEmpty() ? 0 : stack.remove(stack.size() - 1);
+            Number y = stack.removeLast();
+            Number x = stack.isEmpty() ? 0 : stack.removeLast();
             Double val = null;
             if (arg.equals("-")) {
                 val = x.doubleValue() - y.doubleValue();
@@ -34,6 +35,6 @@ public class RpnCalculator {
     }
 
     public Number value() {
-        return stack.get(stack.size() - 1);
+        return stack.getLast();
     }
 }

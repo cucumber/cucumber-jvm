@@ -4,21 +4,25 @@ import cucumber.io.ClasspathResourceLoader;
 import cucumber.io.ResourceLoader;
 import cucumber.runtime.converters.LocalizedXStreams;
 import cucumber.runtime.model.CucumberFeature;
-import cucumber.runtime.model.CucumberTagStatement;
+import cucumber.runtime.snippets.SummaryPrinter;
+import gherkin.I18n;
+import gherkin.formatter.Argument;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
-import gherkin.formatter.model.*;
+import gherkin.formatter.model.Comment;
+import gherkin.formatter.model.DataTableRow;
+import gherkin.formatter.model.DocString;
+import gherkin.formatter.model.Match;
+import gherkin.formatter.model.Result;
+import gherkin.formatter.model.Step;
+import gherkin.formatter.model.Tag;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
-
-import static cucumber.runtime.model.CucumberFeature.load;
 
 /**
  * This is the main entry point for running Cucumber features.
@@ -28,40 +32,39 @@ public class Runtime implements UnreportedStepExecutor {
     private static final Object DUMMY_ARG = new Object();
     private static final byte ERRORS = 0x1;
 
-    private final UndefinedStepsTracker undefinedStepsTracker = new UndefinedStepsTracker();
+    final UndefinedStepsTracker undefinedStepsTracker = new UndefinedStepsTracker();
+
     private final Glue glue;
+    private final RuntimeOptions runtimeOptions;
 
     private final List<Throwable> errors = new ArrayList<Throwable>();
     private final Collection<? extends Backend> backends;
-    private final boolean isDryRun;
     private final ResourceLoader resourceLoader;
+    private final ClassLoader classLoader;
 
     //TODO: These are really state machine variables, and I'm not sure the runtime is the best place for this state machine
     //They really should be created each time a scenario is run, not in here
     private boolean skipNextStep = false;
     private ScenarioResultImpl scenarioResult = null;
 
-    public Runtime(ResourceLoader resourceLoader, List<String> gluePaths, ClassLoader classLoader) {
-        this(resourceLoader, gluePaths, classLoader, false);
+    public Runtime(ResourceLoader resourceLoader, ClassLoader classLoader, RuntimeOptions runtimeOptions) {
+        this(resourceLoader, classLoader, loadBackends(resourceLoader, classLoader), runtimeOptions);
     }
 
-    public Runtime(ResourceLoader resourceLoader, List<String> gluePaths, ClassLoader classLoader, boolean isDryRun) {
-        this(resourceLoader, gluePaths, classLoader, loadBackends(resourceLoader, classLoader), isDryRun);
-    }
-    
-    public Runtime(ResourceLoader resourceLoader, List<String> gluePaths, ClassLoader classLoader, Collection<? extends Backend> backends, boolean isDryRun) {
-        if(backends.isEmpty()) {
+    public Runtime(ResourceLoader resourceLoader, ClassLoader classLoader, Collection<? extends Backend> backends, RuntimeOptions runtimeOptions) {
+        this.resourceLoader = resourceLoader;
+        this.classLoader = classLoader;
+        if (backends.isEmpty()) {
             throw new CucumberException("No backends were found. Please make sure you have a backend module on your CLASSPATH.");
         }
         this.backends = backends;
-        this.resourceLoader = resourceLoader;
-        this.isDryRun = isDryRun;
         glue = new RuntimeGlue(undefinedStepsTracker, new LocalizedXStreams(classLoader));
 
         for (Backend backend : backends) {
-            backend.loadGlue(glue, gluePaths);
+            backend.loadGlue(glue, runtimeOptions.glue);
             backend.setUnreportedStepExecutor(this);
         }
+        this.runtimeOptions = runtimeOptions;
     }
 
     private static Collection<? extends Backend> loadBackends(ResourceLoader resourceLoader, ClassLoader classLoader) {
@@ -74,43 +77,37 @@ public class Runtime implements UnreportedStepExecutor {
 
     /**
      * This is the main entry point. Used from CLI, but not from JUnit.
-     *
-     * @param featurePaths
-     * @param filters
-     * @param formatter
-     * @param reporter
      */
-    public void run(List<String> featurePaths, final List<Object> filters, Formatter formatter, Reporter reporter) {
-        for (CucumberFeature cucumberFeature : load(resourceLoader, featurePaths, filters)) {
-            run(cucumberFeature, formatter, reporter);
+    public void run() {
+        for (CucumberFeature cucumberFeature : runtimeOptions.cucumberFeatures(resourceLoader)) {
+            run(cucumberFeature);
         }
+        Formatter formatter = runtimeOptions.formatter(classLoader);
+
+        formatter.done();
+        printSummary();
+        formatter.close();
     }
 
-    /**
-     * Runs an individual feature, not all the features. Used from CLI, but not from JUnit.
-     *
-     * @param cucumberFeature
-     * @param formatter
-     * @param reporter
-     */
-    public void run(CucumberFeature cucumberFeature, Formatter formatter, Reporter reporter) {
-        formatter.uri(cucumberFeature.getUri());
-        formatter.feature(cucumberFeature.getFeature());
-        for (CucumberTagStatement cucumberTagStatement : cucumberFeature.getFeatureElements()) {
-            //Run the scenario, it should handle before and after hooks
-            cucumberTagStatement.run(formatter, reporter, this);
-        }
-        formatter.eof();
+    private void run(CucumberFeature cucumberFeature) {
+        Formatter formatter = runtimeOptions.formatter(classLoader);
+        Reporter reporter = runtimeOptions.reporter(classLoader);
+        cucumberFeature.run(formatter, reporter, this);
     }
 
-    public void buildBackendWorlds() {
+    private void printSummary() {
+        // TODO: inject a SummaryPrinter in the ctor
+        new SummaryPrinter(System.out).print(this);
+    }
+
+    public void buildBackendWorlds(Reporter reporter) {
         for (Backend backend : backends) {
             backend.buildWorld();
         }
         undefinedStepsTracker.reset();
         //TODO: this is the initial state of the state machine, it should not go here, but into something else
         skipNextStep = false;
-        scenarioResult = new ScenarioResultImpl();
+        scenarioResult = new ScenarioResultImpl(reporter);
     }
 
     public void disposeBackendWorlds() {
@@ -119,20 +116,41 @@ public class Runtime implements UnreportedStepExecutor {
         }
     }
 
-    public boolean isDryRun() {
-        return isDryRun;
-    }
-
     public List<Throwable> getErrors() {
         return errors;
     }
 
     public byte exitStatus() {
         byte result = 0x0;
-        if (!errors.isEmpty()) {
+        if (hasErrors() || hasUndefinedOrPendingStepsAndIsStrict()) {
             result |= ERRORS;
         }
         return result;
+    }
+
+    private boolean hasUndefinedOrPendingStepsAndIsStrict() {
+        return runtimeOptions.strict && hasUndefinedOrPendingSteps();
+    }
+
+    private boolean hasUndefinedOrPendingSteps() {
+        return hasUndefinedSteps() || hasPendingSteps();
+    }
+
+    private boolean hasUndefinedSteps() {
+        return undefinedStepsTracker.hasUndefinedSteps();
+    }
+
+    private boolean hasPendingSteps() {
+        return !errors.isEmpty() && !hasErrors();
+    }
+
+    private boolean hasErrors() {
+        for (Throwable error : errors) {
+            if (!(error instanceof PendingException)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public List<String> getSnippets() {
@@ -143,32 +161,39 @@ public class Runtime implements UnreportedStepExecutor {
         return glue;
     }
 
-    public void runBeforeHooks(Reporter reporter, Set<String> tags) {
-        runHooks(glue.getBeforeHooks(), reporter, tags);
+    public void runBeforeHooks(Reporter reporter, Set<Tag> tags) {
+        runHooks(glue.getBeforeHooks(), reporter, tags, true);
     }
 
-    public void runAfterHooks(Reporter reporter, Set<String> tags) {
-        runHooks(glue.getAfterHooks(), reporter, tags);
+    public void runAfterHooks(Reporter reporter, Set<Tag> tags) {
+        runHooks(glue.getAfterHooks(), reporter, tags, false);
     }
 
-    private void runHooks(List<HookDefinition> hooks, Reporter reporter, Set<String> tags) {
+    private void runHooks(List<HookDefinition> hooks, Reporter reporter, Set<Tag> tags, boolean isBefore) {
         for (HookDefinition hook : hooks) {
-            runHookIfTagsMatch(hook, reporter, tags);
+            runHookIfTagsMatch(hook, reporter, tags, isBefore);
         }
     }
 
-    private void runHookIfTagsMatch(HookDefinition hook, Reporter reporter, Set<String> tags) {
+    private void runHookIfTagsMatch(HookDefinition hook, Reporter reporter, Set<Tag> tags, boolean isBefore) {
         if (hook.matches(tags)) {
             long start = System.nanoTime();
             try {
                 hook.execute(scenarioResult);
             } catch (Throwable t) {
                 skipNextStep = true;
-
                 long duration = System.nanoTime() - start;
+
                 Result result = new Result(Result.FAILED, duration, t, DUMMY_ARG);
                 scenarioResult.add(result);
-                reporter.result(result);
+                addError(t);
+
+                Match match = new Match(Collections.<Argument>emptyList(), hook.getLocation(false));
+                if (isBefore) {
+                    reporter.before(match, result);
+                } else {
+                    reporter.after(match, result);
+                }
             }
         }
     }
@@ -176,10 +201,10 @@ public class Runtime implements UnreportedStepExecutor {
 
     //TODO: Maybe this should go into the cucumber step execution model and it should return the result of that execution!
     @Override
-    public void runUnreportedStep(String uri, Locale locale, String stepKeyword, String stepName, int line, List<DataTableRow> dataTableRows, DocString docString) throws Throwable {
+    public void runUnreportedStep(String uri, I18n i18n, String stepKeyword, String stepName, int line, List<DataTableRow> dataTableRows, DocString docString) throws Throwable {
         Step step = new Step(Collections.<Comment>emptyList(), stepKeyword, stepName, line, dataTableRows, docString);
 
-        StepDefinitionMatch match = glue.stepDefinitionMatch(uri, step, locale);
+        StepDefinitionMatch match = glue.stepDefinitionMatch(uri, step, i18n);
         if (match == null) {
             UndefinedStepException error = new UndefinedStepException(step);
 
@@ -191,11 +216,22 @@ public class Runtime implements UnreportedStepExecutor {
 
             throw error;
         }
-        match.runStep(locale);
+        match.runStep(i18n);
     }
 
-    public void runStep(String uri, Step step, Reporter reporter, Locale locale) {
-        StepDefinitionMatch match = glue.stepDefinitionMatch(uri, step, locale);
+    public void runStep(String uri, Step step, Reporter reporter, I18n i18n) {
+        StepDefinitionMatch match;
+
+        try {
+            match = glue.stepDefinitionMatch(uri, step, i18n);
+        } catch (AmbiguousStepDefinitionsException e) {
+            reporter.match(e.getMatches().get(0));
+            reporter.result(new Result(Result.FAILED, 0L, e, DUMMY_ARG));
+            addError(e);
+            skipNextStep = true;
+            return;
+        }
+
         if (match != null) {
             reporter.match(match);
         } else {
@@ -205,7 +241,7 @@ public class Runtime implements UnreportedStepExecutor {
             return;
         }
 
-        if (isDryRun()) {
+        if (runtimeOptions.dryRun) {
             skipNextStep = true;
         }
 
@@ -217,10 +253,10 @@ public class Runtime implements UnreportedStepExecutor {
             Throwable error = null;
             long start = System.nanoTime();
             try {
-                match.runStep(locale);
+                match.runStep(i18n);
             } catch (Throwable t) {
                 error = t;
-                status = Result.FAILED;
+                status = (t instanceof PendingException) ? "pending" : Result.FAILED;
                 addError(t);
                 skipNextStep = true;
             } finally {
@@ -232,7 +268,7 @@ public class Runtime implements UnreportedStepExecutor {
         }
     }
 
-    public void writeStepdefsJson(List<String> featurePaths, File dotCucumber) throws IOException {
-        glue.writeStepdefsJson(featurePaths, dotCucumber);
+    public void writeStepdefsJson() throws IOException {
+        glue.writeStepdefsJson(runtimeOptions.featurePaths, runtimeOptions.dotCucumber);
     }
 }

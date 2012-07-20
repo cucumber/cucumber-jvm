@@ -2,18 +2,19 @@ package cucumber.runtime.rhino;
 
 import cucumber.runtime.ParameterType;
 import cucumber.runtime.StepDefinition;
-import cucumber.runtime.Utils;
+import gherkin.I18n;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 import org.mozilla.javascript.Context;
+import org.mozilla.javascript.JavaScriptException;
 import org.mozilla.javascript.NativeFunction;
 import org.mozilla.javascript.NativeJavaObject;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.regexp.NativeRegExp;
 import org.mozilla.javascript.tools.shell.Global;
 
+import java.lang.reflect.Type;
 import java.util.List;
-import java.util.Locale;
 
 public class RhinoStepDefinition implements StepDefinition {
     private final Context cx;
@@ -39,16 +40,34 @@ public class RhinoStepDefinition implements StepDefinition {
         return args == null ? null : (List<Argument>) args.unwrap();
     }
 
-    public String getLocation() {
+    public String getLocation(boolean detail) {
         return location.getFileName() + ":" + location.getLineNumber();
     }
 
-    public List<ParameterType> getParameterTypes() {
-        return Utils.listOf(bodyFunc.getArity(), new ParameterType(String.class, null));
+    @Override
+    public Integer getParameterCount() {
+        return bodyFunc.getArity();
     }
 
-    public void execute(Locale locale, Object[] args) throws Throwable {
-        bodyFunc.call(cx, scope, scope, args);
+    @Override
+    public ParameterType getParameterType(int n, Type argumentType) {
+        return new ParameterType(argumentType, null, null);
+    }
+
+    public void execute(I18n i18n, Object[] args) throws Throwable {
+        try {
+            bodyFunc.call(cx, scope, scope, args);
+        } catch (JavaScriptException e) {
+            Object value = e.getValue();
+            if (value instanceof NativeJavaObject) {
+                NativeJavaObject njo = (NativeJavaObject) value;
+                Object unwrapped = njo.unwrap();
+                if (unwrapped instanceof Throwable) {
+                    throw (Throwable) unwrapped;
+                }
+            }
+            throw e.getCause() == null ? e : e.getCause();
+        }
     }
 
     public boolean isDefinedAt(StackTraceElement stackTraceElement) {

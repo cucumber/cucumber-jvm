@@ -1,6 +1,6 @@
 # IDE working files
-/*.iws
-/*.ipr
+*.iws
+*.ipr
 *.iml
 .idea/
 .settings
@@ -14,7 +14,17 @@ target/
 tmp/
 
 # Build & test droppings
-/report.js
-/chromedriver.log
-/.scala_dependencies
+report.js
+report.xml
+chromedriver.log
+.scala_dependencies
 nexus.properties
+pom.xml.releaseBackup
+release.properties
+*.ser
+
+# OS generated files
+.DS_Store*
+ehthumbs.db
+Icon?
+Thumbs.db

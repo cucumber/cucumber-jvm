@@ -1,9 +1,13 @@
 package cucumber.runtime;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 public class Utils {
     public static <T> List<T> listOf(int size, T obj) {
@@ -15,7 +19,8 @@ public class Utils {
     }
 
     public static boolean isInstantiable(Class<?> clazz) {
-        return Modifier.isPublic(clazz.getModifiers()) && !Modifier.isAbstract(clazz.getModifiers());
+        boolean isNonStaticInnerClass = !Modifier.isStatic(clazz.getModifiers()) && clazz.getEnclosingClass() != null;
+        return Modifier.isPublic(clazz.getModifiers()) && !Modifier.isAbstract(clazz.getModifiers()) && !isNonStaticInnerClass;
     }
 
     public static boolean hasConstructor(Class<?> clazz, Class[] paramTypes) {
@@ -27,35 +32,46 @@ public class Utils {
         }
     }
 
-    public static String packagePath(Class clazz) {
-        return packagePath(packageName(clazz.getName()));
+    public static Object invoke(final Object target, final Method method, int timeoutMillis, final Object... args) throws Throwable {
+        return Timeout.timeout(new Timeout.Callback<Object>() {
+            @Override
+            public Object call() throws Throwable {
+                try {
+                    return method.invoke(target, args);
+                } catch (IllegalArgumentException e) {
+                    throw new CucumberException("Failed to invoke " + MethodFormat.FULL.format(method), e);
+                } catch (InvocationTargetException e) {
+                    throw e.getTargetException();
+                } catch (IllegalAccessException e) {
+                    throw new CucumberException("Failed to invoke " + MethodFormat.FULL.format(method), e);
+                }
+            }
+        }, timeoutMillis);
     }
 
-    public static String packagePath(String packageName) {
-        return packageName.replace('.', '/');
+    public static Type listItemType(Type type) {
+        return typeArg(type, List.class, 0);
     }
 
-    public static String packageName(String className) {
-        return className.substring(0, Math.max(0, className.lastIndexOf(".")));
+    public static Type mapKeyType(Type type) {
+        return typeArg(type, Map.class, 0);
     }
 
-    public static <T> Iterator<T> emptyIterator() {
-        return new Iterator<T>() {
+    public static Type mapValueType(Type type) {
+        return typeArg(type, Map.class, 1);
+    }
 
-            @Override
-            public boolean hasNext() {
-                return false;
+    private static Type typeArg(Type type, Class<?> wantedRawType, int index) {
+        if(type instanceof ParameterizedType) {
+            ParameterizedType parameterizedType = (ParameterizedType) type;
+            Type rawType = parameterizedType.getRawType();
+            if (rawType instanceof Class && wantedRawType.isAssignableFrom((Class) rawType)) {
+                return parameterizedType.getActualTypeArguments()[index];
+            } else {
+                return null;
             }
-
-            @Override
-            public T next() {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
-            public void remove() {
-                throw new UnsupportedOperationException();
-            }
-        };
+        } else {
+            return null;
+        }
     }
 }

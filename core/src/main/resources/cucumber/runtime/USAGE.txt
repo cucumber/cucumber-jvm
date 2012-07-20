@@ -1,0 +1,14 @@
+Usage: java cucumber.cli.Main [options] [ [FILE|DIR][:LINE[:LINE]*] ]+
+
+Options:
+
+    -g, --glue PATH                 Where glue code (step definitions and hooks) is loaded from.
+    -f, --format FORMAT[:OUT]       How to format results. Goes to STDOUT unless OUT is specified.
+                                    Available formats: junit, html, pretty, progress, json, json-pretty.
+    -t, --tags TAG_EXPRESSION       Only run scenarios tagged with tags matching TAG_EXPRESSION.
+    -n, --name REGEXP               Only run scenarios whose names match REGEXP.
+    -d, --dry-run                   Skip execution of glue code.
+    -m, --monochrome                Don't colour terminal output.
+        --dotcucumber               Where to write out runtime information.
+    -v, --version                   Print version.
+    -h, --help                      You're looking at it.

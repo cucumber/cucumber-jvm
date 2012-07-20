@@ -3,7 +3,8 @@ package cucumber.runtime
 import org.junit.{Test, Assert}
 import Assert._
 import collection.JavaConverters._
-import java.util.Locale
+import _root_.gherkin.I18n
+import gherkin.formatter.model.Tag
 
 class ScalaDslTest {
 
@@ -20,7 +21,7 @@ class ScalaDslTest {
 
     assertEquals(1, Befores.beforeHooks.size)
     val hook = Befores.beforeHooks.head
-    assertTrue(hook.matches(List[String]().asJava))
+    assertTrue(hook.matches(List[Tag]().asJava))
     hook.execute(null)
     assertTrue(called)
     assertEquals(Int.MaxValue, hook.getOrder)
@@ -39,9 +40,9 @@ class ScalaDslTest {
     assertEquals(1, Befores.beforeHooks.size)
 
     val hook = Befores.beforeHooks.head
-    assertFalse(hook.matches(List[String]().asJava))
-    assertTrue(hook.matches(List("@bar", "@zap").asJava))
-    assertFalse(hook.matches(List("@bar").asJava))
+    assertFalse(hook.matches(List[Tag]().asJava))
+    assertTrue(hook.matches(List(new Tag("@bar", 0), new Tag("@zap", 0)).asJava))
+    assertFalse(hook.matches(List(new Tag("@bar", 1)).asJava))
 
     hook.execute(null)
     assertTrue(called)
@@ -91,7 +92,7 @@ class ScalaDslTest {
 
     assertEquals(1, Afters.afterHooks.size)
     val hook = Afters.afterHooks.head
-    assertTrue(hook.matches(List[String]().asJava))
+    assertTrue(hook.matches(List[Tag]().asJava))
     hook.execute(null)
     assertTrue(called)
   }
@@ -109,9 +110,9 @@ class ScalaDslTest {
     assertEquals(1, Afters.afterHooks.size)
 
     val hook = Afters.afterHooks.head
-    assertFalse(hook.matches(List[String]().asJava))
-    assertTrue(hook.matches(List("@bar", "@zap").asJava))
-    assertFalse(hook.matches(List("@bar").asJava))
+    assertFalse(hook.matches(List[Tag]().asJava))
+    assertTrue(hook.matches(List(new Tag("@bar", 0), new Tag("@zap", 0)).asJava))
+    assertFalse(hook.matches(List(new Tag("@bar", 1)).asJava))
 
     hook.execute(null)
     assertTrue(called)
@@ -129,9 +130,9 @@ class ScalaDslTest {
 
     assertEquals(1, Dummy.stepDefinitions.size)
     val step = Dummy.stepDefinitions.head
-    assertEquals("ScalaDslTest.scala:125", step.getLocation) // be careful with formatting or this test will break
+    assertEquals("ScalaDslTest.scala:126", step.getLocation(true)) // be careful with formatting or this test will break
     assertEquals("x", step.getPattern)
-    step.execute(Locale.ENGLISH, Array())
+    step.execute(new I18n("en"), Array())
     assertTrue(called)
   }
 
@@ -149,7 +150,7 @@ class ScalaDslTest {
 
     assertEquals(1, Dummy.stepDefinitions.size)
     val step = Dummy.stepDefinitions(0)
-    step.execute(Locale.ENGLISH, Array("5", "green"))
+    step.execute(new I18n("en"), Array("5", "green"))
     assertEquals(5, thenumber)
     assertEquals("green", thecolour)
   }
@@ -169,7 +170,7 @@ class ScalaDslTest {
       }
     }
 
-    Dummy.stepDefinitions(0).execute(Locale.ENGLISH, Array("Aslak"))
+    Dummy.stepDefinitions(0).execute(new I18n("en"), Array("Aslak"))
     assertEquals(Person("Aslak"), person)
   }
 }

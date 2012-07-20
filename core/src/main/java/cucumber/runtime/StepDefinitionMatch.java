@@ -1,13 +1,9 @@
 package cucumber.runtime;
 
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.converters.ConverterLookup;
-import com.thoughtworks.xstream.converters.SingleValueConverter;
-import cucumber.runtime.converters.DateConverter;
 import cucumber.runtime.converters.LocalizedXStreams;
-import cucumber.runtime.converters.SingleValueConverterWrapperExt;
 import cucumber.table.DataTable;
 import cucumber.table.TableConverter;
+import gherkin.I18n;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.DataTableRow;
 import gherkin.formatter.model.Match;
@@ -16,7 +12,6 @@ import gherkin.util.Mapper;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -31,85 +26,93 @@ public class StepDefinitionMatch extends Match {
     private final LocalizedXStreams localizedXStreams;
 
     public StepDefinitionMatch(List<Argument> arguments, StepDefinition stepDefinition, String uri, Step step, LocalizedXStreams localizedXStreams) {
-        super(arguments, stepDefinition.getLocation());
+        super(arguments, stepDefinition.getLocation(false));
         this.stepDefinition = stepDefinition;
         this.uri = uri;
         this.step = step;
         this.localizedXStreams = localizedXStreams;
     }
 
-    public void runStep(Locale locale) throws Throwable {
+    public void runStep(I18n i18n) throws Throwable {
         try {
-            Object[] args = transformedArgs(stepDefinition.getParameterTypes(), step, localizedXStreams.get(locale), locale);
-            stepDefinition.execute(locale, args);
+            stepDefinition.execute(i18n, transformedArgs(step, localizedXStreams.get(i18n.getLocale()), i18n.getLocale()));
         } catch (CucumberException e) {
             throw e;
         } catch (Throwable t) {
-            throw filterStacktrace(t, getStepLocation());
+            throw removeFrameworkFramesAndAppendStepLocation(t, getStepLocation());
         }
     }
 
     /**
-     * @param parameterTypes types of the stepdefs args. Some backends will pass null if they can't determine types or arity.
-     * @param step           the step to run
-     * @param xStream        used to convert a string to declared stepdef arguments
-     * @param locale         the feature's locale
+     * @param step    the step to run
+     * @param xStream used to convert a string to declared stepdef arguments
+     * @param locale  the feature's locale
      * @return an Array matching the types or {@code parameterTypes}, or an array of String if {@code parameterTypes} is null
      */
-    private Object[] transformedArgs(List<ParameterType> parameterTypes, Step step, XStream xStream, Locale locale) {
-        if (xStream == null) {
-            throw new NullPointerException("xStream");
-        }
+    private Object[] transformedArgs(Step step, LocalizedXStreams.LocalizedXStream xStream, Locale locale) {
         int argumentCount = getArguments().size();
-        if (step.getDocString() != null) argumentCount++;
-        if (step.getRows() != null) argumentCount++;
-        if (parameterTypes != null) {
-            if (parameterTypes.size() != argumentCount) {
-                List<Argument> arguments = createArgumentsForErrorMessage(step);
-                throw new CucumberException("Arity mismatch. Declared parameters: " + parameterTypes + ". Matched arguments: " + arguments);
-            }
-        } else {
-            // Some backends, like ClojureBackend, don't know the arity and therefore pass in null.
-            parameterTypes = Utils.listOf(argumentCount, new ParameterType(String.class, null));
+
+        if (step.getRows() != null) {
+            argumentCount++;
+        } else if (step.getDocString() != null) {
+            argumentCount++;
+        }
+        Integer parameterCount = stepDefinition.getParameterCount();
+        if (parameterCount != null && argumentCount != parameterCount) {
+            throw arityMismatch(parameterCount);
         }
 
-        Object[] result = new Object[argumentCount];
-        ConverterLookup converterLookup = xStream.getConverterLookup();
+        List<Object> result = new ArrayList<Object>();
 
+        List<ParameterType> parameterTypes = new ArrayList<ParameterType>();
         int n = 0;
         for (Argument a : getArguments()) {
-            SingleValueConverter converter;
-            ParameterType parameterType = parameterTypes.get(n);
-            if (parameterType.getDateFormat() != null) {
-                converter = new DateConverter(parameterType.getDateFormat(), locale);
-            } else {
-                // TODO: We might get a lookup that doesn't implement SingleValueConverter
-                // Need to throw a more friendly exception in that case.
-                converter = (SingleValueConverter) converterLookup.lookupConverterForType(parameterType.getParameterClass());
-            }
-            result[n] = converter.fromString(a.getVal());
+            Object arg;
+
+            ParameterType parameterType = getParameterType(n, String.class);
+            parameterTypes.add(parameterType);
+
+            arg = parameterType.convert(a.getVal(), xStream, locale);
+            result.add(arg);
             n++;
         }
 
         if (step.getRows() != null) {
-            ParameterType parameterType = parameterTypes.get(n);
-            DateConverter dateConverter = null;
-            if (parameterType.getDateFormat() != null) {
-                SingleValueConverterWrapperExt converterWrapper = (SingleValueConverterWrapperExt) xStream.getConverterLookup().lookupConverterForType(Date.class);
-                dateConverter = (DateConverter) converterWrapper.getConverter();
-                dateConverter.setOnlyFormat(parameterType.getDateFormat(), locale);
-            }
-            try {
-                result[n] = tableArgument(step, n, xStream);
-            } finally {
-                if (dateConverter != null) {
-                    dateConverter.removeOnlyFormat();
-                }
-            }
+            result.add(tableArgument(step, n, xStream));
         } else if (step.getDocString() != null) {
-            result[n] = step.getDocString().getValue();
+            result.add(step.getDocString().getValue());
         }
-        return result;
+        return result.toArray(new Object[result.size()]);
+    }
+
+    private ParameterType getParameterType(int n, Type argumentType) {
+        ParameterType parameterType = stepDefinition.getParameterType(n, argumentType);
+        if (parameterType == null) {
+            // Some backends return null because they don't know
+            parameterType = new ParameterType(argumentType, null, null);
+        }
+        return parameterType;
+    }
+
+    private Object tableArgument(Step step, int argIndex, LocalizedXStreams.LocalizedXStream xStream) {
+        ParameterType parameterType = getParameterType(argIndex, DataTable.class);
+        DataTable table = new DataTable(step.getRows(), new TableConverter(xStream, parameterType.getDateFormat()));
+        Type type = parameterType.getType();
+        return table.convert(type);
+    }
+
+    private CucumberException arityMismatch(int parameterCount) {
+        List<Argument> arguments = createArgumentsForErrorMessage(step);
+        return new CucumberException(String.format(
+                "Arity mismatch: Step Definition '%s' with pattern [%s] is declared with %s parameters. However, the gherkin step has %s arguments %s. \nStep: %s%s",
+                stepDefinition.getLocation(true),
+                stepDefinition.getPattern(),
+                parameterCount,
+                arguments.size(),
+                arguments,
+                step.getKeyword(),
+                step.getName()
+        ));
     }
 
     private List<Argument> createArgumentsForErrorMessage(Step step) {
@@ -129,43 +132,22 @@ public class StepDefinitionMatch extends Match {
         return arguments;
     }
 
-    private Object tableArgument(Step step, int argIndex, XStream xStream) {
-        DataTable table = new DataTable(step.getRows(), new TableConverter(xStream));
-
-        Type listType = getGenericListType(argIndex);
-        if (listType != null) {
-            return table.asList(listType);
-        } else {
-            return table;
-        }
-    }
-
-    private Type getGenericListType(int argIndex) {
-        ParameterType parameterType = stepDefinition.getParameterTypes().get(argIndex);
-        Type[] actualTypeArguments = parameterType.getActualTypeArguments();
-        return actualTypeArguments != null && actualTypeArguments.length > 0 ? actualTypeArguments[0] : null;
-    }
-
-    public Throwable filterStacktrace(Throwable error, StackTraceElement stepLocation) {
+    Throwable removeFrameworkFramesAndAppendStepLocation(Throwable error, StackTraceElement stepLocation) {
         StackTraceElement[] stackTraceElements = error.getStackTrace();
-        if (error.getCause() != null && error.getCause() != error) {
-            return filterStacktrace(error.getCause(), stepLocation);
-        }
-        if (stackTraceElements.length == 0) {
+        if (stackTraceElements.length == 0 || stepLocation == null) {
             return error;
         }
-        int stackLength;
-        for (stackLength = 1; stackLength < stackTraceElements.length; ++stackLength) {
-            if (stepDefinition.isDefinedAt(stackTraceElements[stackLength - 1])) {
+
+        int newStackTraceLength;
+        for (newStackTraceLength = 1; newStackTraceLength < stackTraceElements.length; ++newStackTraceLength) {
+            if (stepDefinition.isDefinedAt(stackTraceElements[newStackTraceLength - 1])) {
                 break;
             }
         }
-        if (stepLocation != null) {
-            StackTraceElement[] result = new StackTraceElement[stackLength + 1];
-            System.arraycopy(stackTraceElements, 0, result, 0, stackLength);
-            result[stackLength] = stepLocation;
-            error.setStackTrace(result);
-        }
+        StackTraceElement[] newStackTrace = new StackTraceElement[newStackTraceLength + 1];
+        System.arraycopy(stackTraceElements, 0, newStackTrace, 0, newStackTraceLength);
+        newStackTrace[newStackTraceLength] = stepLocation;
+        error.setStackTrace(newStackTrace);
         return error;
     }
 
@@ -175,5 +157,9 @@ public class StepDefinitionMatch extends Match {
 
     public StackTraceElement getStepLocation() {
         return step.getStackTraceElement(uri);
+    }
+
+    public String getStepName() {
+        return step.getName();
     }
 }

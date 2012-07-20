@@ -1,80 +1,57 @@
 package cucumber.runtime.java;
 
-import cucumber.annotation.DateFormat;
-import cucumber.annotation.Pending;
-import cucumber.runtime.CucumberException;
 import cucumber.runtime.JdkPatternArgumentMatcher;
+import cucumber.runtime.MethodFormat;
 import cucumber.runtime.ParameterType;
-import cucumber.runtime.PendingException;
 import cucumber.runtime.StepDefinition;
+import cucumber.runtime.Utils;
+import gherkin.I18n;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.regex.Pattern;
 
-import static java.util.Arrays.asList;
-
-public class JavaStepDefinition implements StepDefinition {
-    private static final MethodFormat METHOD_FORMAT = new MethodFormat();
-
+class JavaStepDefinition implements StepDefinition {
     private final Method method;
     private final Pattern pattern;
+    private final int timeout;
     private final JdkPatternArgumentMatcher argumentMatcher;
     private final ObjectFactory objectFactory;
+    private List<ParameterType> parameterTypes;
 
-    public JavaStepDefinition(Method method, Pattern pattern, ObjectFactory objectFactory) {
+    public JavaStepDefinition(Method method, Pattern pattern, int timeout, ObjectFactory objectFactory) {
         this.method = method;
+        this.parameterTypes = ParameterType.fromMethod(method);
         this.pattern = pattern;
         this.argumentMatcher = new JdkPatternArgumentMatcher(pattern);
+        this.timeout = timeout;
         this.objectFactory = objectFactory;
     }
 
-    public void execute(Locale locale, Object[] args) throws Throwable {
-        if (method.isAnnotationPresent(Pending.class)) {
-            throw new PendingException(method.getAnnotation(Pending.class).value());
-        }
-        Class<?> clazz = method.getDeclaringClass();
-        Object target = objectFactory.getInstance(clazz);
-        try {
-            method.invoke(target, args);
-        } catch (IllegalArgumentException e) {
-            // Can happen if stepdef signature doesn't match args
-            throw new CucumberException("Can't invoke " + new MethodFormat().format(method) + " with " + asList(args));
-        } catch (InvocationTargetException t) {
-            throw t.getTargetException();
-        }
+    public void execute(I18n i18n, Object[] args) throws Throwable {
+        Utils.invoke(objectFactory.getInstance(method.getDeclaringClass()), method, timeout, args);
     }
 
     public List<Argument> matchedArguments(Step step) {
         return argumentMatcher.argumentsFrom(step.getName());
     }
 
-    public String getLocation() {
-        return METHOD_FORMAT.format(method);
+    public String getLocation(boolean detail) {
+        MethodFormat format = detail ? MethodFormat.FULL : MethodFormat.SHORT;
+        return format.format(method);
     }
 
-    public List<ParameterType> getParameterTypes() {
-        List<ParameterType> result = new ArrayList<ParameterType>();
-        Type[] genericParameterTypes = method.getGenericParameterTypes();
-        Annotation[][] annotations = method.getParameterAnnotations();
-        for (int i = 0; i < genericParameterTypes.length; i++) {
-            String dateFormat = null;
-            for (Annotation annotation : annotations[i]) {
-                if (annotation instanceof DateFormat) {
-                    dateFormat = ((DateFormat) annotation).value();
-                    break;
-                }
-            }
-            result.add(new ParameterType(genericParameterTypes[i], dateFormat));
-        }
-        return result;
+    @Override
+    public Integer getParameterCount() {
+        return parameterTypes.size();
+    }
+
+    @Override
+    public ParameterType getParameterType(int n, Type argumentType) {
+        return parameterTypes.get(n);
     }
 
     public boolean isDefinedAt(StackTraceElement e) {

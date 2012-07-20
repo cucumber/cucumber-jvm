@@ -10,7 +10,10 @@ class ScalaSnippetGenerator extends Snippet {
   def template() =
     "{0}(\"\"\"{1}\"\"\")'{' ({3}) =>\n" +
       "  //// {4}\n" +
+      "  throw new PendingException()\n" +
       "'}'"
+
+  def tableHint() = null
 
   def arguments(argumentTypes: List[Class[_]]) = {
     val indexed = argumentTypes.asScala.zipWithIndex

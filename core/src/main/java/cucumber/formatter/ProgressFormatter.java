@@ -13,11 +13,12 @@ import gherkin.formatter.model.Scenario;
 import gherkin.formatter.model.ScenarioOutline;
 import gherkin.formatter.model.Step;
 
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ProgressFormatter implements Formatter, Reporter {
+public class ProgressFormatter implements Formatter, Reporter, ColorAware {
     private static final Map<String, Character> CHARS = new HashMap<String, Character>() {{
         put("passed", '.');
         put("undefined", 'U');
@@ -34,10 +35,9 @@ public class ProgressFormatter implements Formatter, Reporter {
     }};
 
     private final NiceAppendable out;
-    private final boolean monochrome;
+    private boolean monochrome = false;
 
-    public ProgressFormatter(Appendable appendable, boolean monochrome) {
-        this.monochrome = monochrome;
+    public ProgressFormatter(Appendable appendable) {
         out = new NiceAppendable(appendable);
     }
 
@@ -74,7 +74,7 @@ public class ProgressFormatter implements Formatter, Reporter {
     }
 
     @Override
-    public void syntaxError(String state, String event, List<String> legalEvents, String uri, int line) {
+    public void syntaxError(String state, String event, List<String> legalEvents, String uri, Integer line) {
     }
 
     @Override
@@ -99,10 +99,41 @@ public class ProgressFormatter implements Formatter, Reporter {
     }
 
     @Override
+    public void before(Match match, Result result) {
+        handleHook(match, result, "B");
+    }
+
+    @Override
+    public void after(Match match, Result result) {
+        handleHook(match, result, "A");
+    }
+
+    private void handleHook(Match match, Result result, String character) {
+        if (result.getStatus().equals(Result.FAILED)) {
+            if (!monochrome) {
+                ANSI_ESCAPES.get(result.getStatus()).appendTo(out);
+            }
+            out.append(character);
+            if (!monochrome) {
+                AnsiEscapes.RESET.appendTo(out);
+            }
+        }
+    }
+
+    @Override
     public void match(Match match) {
     }
 
     @Override
-    public void embedding(String mimeType, byte[] data) {
+    public void embedding(String mimeType, InputStream data) {
+    }
+
+    @Override
+    public void write(String text) {
+    }
+
+    @Override
+    public void setMonochrome(boolean monochrome) {
+        this.monochrome = monochrome;
     }
 }

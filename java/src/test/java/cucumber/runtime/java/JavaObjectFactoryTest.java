@@ -13,14 +13,14 @@ public class JavaObjectFactoryTest {
         factory.addClass(SteDef.class);
 
         // Scenario 1
-        factory.createInstances();
+        factory.start();
         SteDef o1 = factory.getInstance(SteDef.class);
-        factory.disposeInstances();
+        factory.stop();
 
         // Scenario 2
-        factory.createInstances();
+        factory.start();
         SteDef o2 = factory.getInstance(SteDef.class);
-        factory.disposeInstances();
+        factory.stop();
 
         assertNotNull(o1);
         assertNotSame(o1, o2);

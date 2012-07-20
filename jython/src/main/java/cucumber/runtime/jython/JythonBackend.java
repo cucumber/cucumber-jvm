@@ -5,6 +5,7 @@ import cucumber.io.ResourceLoader;
 import cucumber.runtime.*;
 import cucumber.runtime.snippets.SnippetGenerator;
 import gherkin.formatter.model.Step;
+import org.python.core.PyException;
 import org.python.core.PyInstance;
 import org.python.core.PyObject;
 import org.python.core.PyString;
@@ -88,12 +89,22 @@ public class JythonBackend implements Backend {
         hookDefinition.invoke("execute", pyArgs);
     }
 
-    public void execute(PyInstance stepdef, Object[] args) {
+    public void execute(PyInstance stepdef, Object[] args) throws Throwable {
+
         PyObject[] pyArgs = new PyObject[args.length + 1];
         pyArgs[0] = pyWorld;
         for (int i = 0; i < args.length; i++) {
             pyArgs[i + 1] = new PyString((String) args[i]);
         }
-        stepdef.invoke("execute", pyArgs);
+        try {
+            stepdef.invoke("execute", pyArgs);
+        } catch (PyException t) {
+            Object unwrapped = t.value.__tojava__(Object.class);
+            if (unwrapped instanceof Throwable) {
+                throw (Throwable) unwrapped;
+            } else {
+                throw t.getCause() == null ? t : t.getCause();
+            }
+        }
     }
 }

@@ -3,16 +3,19 @@ package cucumber.junit;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.model.CucumberExamples;
 import cucumber.runtime.model.CucumberScenario;
+import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runners.Suite;
 import org.junit.runners.model.InitializationError;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
+
+import static cucumber.junit.DescriptionFactory.createDescription;
 
 class ExamplesRunner extends Suite {
     private final CucumberExamples cucumberExamples;
+    private Description description;
 
     protected ExamplesRunner(Runtime runtime, CucumberExamples cucumberExamples, JUnitReporter jUnitReporter) throws InitializationError {
         super(ExamplesRunner.class, new ArrayList<Runner>());
@@ -32,5 +35,16 @@ class ExamplesRunner extends Suite {
     @Override
     protected String getName() {
         return cucumberExamples.getExamples().getKeyword() + ": " + cucumberExamples.getExamples().getName();
+    }
+
+    @Override
+    public Description getDescription() {
+        if (description == null) {
+            description = createDescription(getName(), cucumberExamples);
+            for (Runner child : getChildren()) {
+                description.addChild(describeChild(child));
+            }
+        }
+        return description;
     }
 }

@@ -1,7 +1,9 @@
 package cucumber.runtime;
 
+import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Result;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,6 +12,11 @@ import static java.util.Arrays.asList;
 class ScenarioResultImpl implements ScenarioResult {
     private static final List<String> SEVERITY = asList("passed", "undefined", "pending", "skipped", "failed");
     private final List<Result> stepResults = new ArrayList<Result>();
+    private final Reporter reporter;
+
+    public ScenarioResultImpl(Reporter reporter) {
+        this.reporter = reporter;
+    }
 
     void add(Result result) {
         stepResults.add(result);
@@ -27,5 +34,15 @@ class ScenarioResultImpl implements ScenarioResult {
     @Override
     public boolean isFailed() {
         return "failed".equals(getStatus());
+    }
+
+    @Override
+    public void embed(InputStream data, String mimeType) {
+        reporter.embedding(mimeType, data);
+    }
+
+    @Override
+    public void write(String text) {
+        reporter.write(text);
     }
 }

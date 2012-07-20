@@ -3,14 +3,18 @@ package cucumber.junit;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.model.CucumberExamples;
 import cucumber.runtime.model.CucumberScenarioOutline;
+import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runners.Suite;
 import org.junit.runners.model.InitializationError;
 
 import java.util.ArrayList;
 
+import static cucumber.junit.DescriptionFactory.createDescription;
+
 class ScenarioOutlineRunner extends Suite {
     private final CucumberScenarioOutline cucumberScenarioOutline;
+    private Description description;
 
     public ScenarioOutlineRunner(Runtime runtime, CucumberScenarioOutline cucumberScenarioOutline, JUnitReporter jUnitReporter) throws InitializationError {
         super(null, new ArrayList<Runner>());
@@ -23,5 +27,16 @@ class ScenarioOutlineRunner extends Suite {
     @Override
     public String getName() {
         return cucumberScenarioOutline.getVisualName();
+    }
+
+    @Override
+    public Description getDescription() {
+        if (description == null) {
+            description = createDescription(getName(), cucumberScenarioOutline);
+            for (Runner child : getChildren()) {
+                description.addChild(describeChild(child));
+            }
+        }
+        return description;
     }
 }

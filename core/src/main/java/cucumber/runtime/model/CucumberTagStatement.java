@@ -13,29 +13,25 @@ import java.util.Set;
 import static gherkin.util.FixJava.join;
 
 public abstract class CucumberTagStatement extends StepContainer {
-    protected final TagStatement tagStatement;
+    final TagStatement tagStatement;
     private final String visualName;
 
-    public CucumberTagStatement(CucumberFeature cucumberFeature, TagStatement tagStatement) {
+    CucumberTagStatement(CucumberFeature cucumberFeature, TagStatement tagStatement) {
         super(cucumberFeature, tagStatement);
         this.tagStatement = tagStatement;
         this.visualName = tagStatement.getKeyword() + ": " + tagStatement.getName();
     }
 
-    public CucumberTagStatement(CucumberFeature cucumberFeature, TagStatement tagStatement, Row example) {
+    CucumberTagStatement(CucumberFeature cucumberFeature, TagStatement tagStatement, Row example) {
         super(cucumberFeature, tagStatement);
         this.tagStatement = tagStatement;
         this.visualName = "| " + join(example.getCells(), " | ") + " |";
     }
 
-    protected Set<String> tags() {
-        Set<String> tags = new HashSet<String>();
-        for (Tag tag : cucumberFeature.getFeature().getTags()) {
-            tags.add(tag.getName());
-        }
-        for (Tag tag : tagStatement.getTags()) {
-            tags.add(tag.getName());
-        }
+    protected Set<Tag> tagsAndInheritedTags() {
+        Set<Tag> tags = new HashSet<Tag>();
+        tags.addAll(cucumberFeature.getFeature().getTags());
+        tags.addAll(tagStatement.getTags());
         return tags;
     }
 

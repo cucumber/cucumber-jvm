@@ -6,47 +6,56 @@ module CucumberJavaMappings
   DATA_TABLE_LOG_FILE            = "data_table.log"
 
   def features_dir
-    "src/test/resources"
+    "src/test/resources/cucumber/test"
   end
 
   def run_scenario(scenario_name)
     write_build_files
-    write_test_unit_classes
-    run_simple "ant test", false
+    write_test_unit_class
+    run_simple "mvn test", false
   end
 
   def run_feature
     write_build_files
-    write_test_unit_classes
-    run_simple "ant test", false
+    write_test_unit_class
+    run_simple "mvn test", false
+  end
+
+  def run_feature_with_tags(*args)
   end
 
   def write_build_files
-    write_file('build.xml', <<-EOF)
-<project name="cucumber-tck" default="test">
-  <import file="../../build-common.xml" />
-</project>
-EOF
+    write_file('pom.xml', <<-EOF)
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-    write_file('ivy.xml', <<-EOF)
-<ivy-module version="2.0">
-    <info organisation="info.cukes" module="cucumber-tck" revision="${cucumber-jvm.version}"/>
-
-    <configurations defaultconfmapping="*->default">
-        <conf name="default"/>
-        <conf name="test" extends="default"/>
-    </configurations>
-
-    <publications>
-        <artifact type="jar" conf="default"/>
-    </publications>
+    <groupId>info.cukes</groupId>
+    <artifactId>cucumber-tck</artifactId>
+    <version>1.0.0.RC24</version>
+    <packaging>jar</packaging>
+    <name>Cucumber TCK</name>
 
     <dependencies>
-        <dependency name="cucumber-picocontainer" rev="${cucumber-jvm.version}" conf="default"/>
-
-        <dependency name="cucumber-junit" rev="${cucumber-jvm.version}" conf="test"/>
+        <dependency>
+            <groupId>info.cukes</groupId>
+            <artifactId>cucumber-picocontainer</artifactId>
+            <version>1.0.0.RC24</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>info.cukes</groupId>
+            <artifactId>cucumber-junit</artifactId>
+            <version>1.0.0.RC24</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.10</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
-</ivy-module>
+</project>
 EOF
   end
 
@@ -110,19 +119,11 @@ EOF
 package cucumber.test;
 
 import cucumber.annotation.en.Given;
-import cucumber.annotation.Pending;
 
 public class Mappings<%= @@mappings_counter %> {
-    @Pending
     @Given("<%= step_name -%>")
     public void <%= step_name.gsub(/[\s:]/, '_') -%>() {
-        // ARUBA_IGNORE_START
-        try {
-            new java.io.FileWriter("<%= step_file(step_name) %>");
-        } catch(java.io.IOException e) {
-            throw new RuntimeException(e);
-        }
-        // ARUBA_IGNORE_END
+        throw new cucumber.runtime.PendingException();
     }
 }
 
@@ -145,7 +146,7 @@ public class Mappings<%= @@mappings_counter %> {
         // ARUBA_IGNORE_START
         try {
             java.io.Writer w = new java.io.FileWriter("<%= DATA_TABLE_LOG_FILE %>");
-            w.write(new com.google.gson.GsonBuilder().setPrettyPrinting().create().toJson(table.raw()));
+            w.write(new gherkin.deps.com.google.gson.GsonBuilder().setPrettyPrinting().create().toJson(table.raw()));
             w.flush();
             w.close();
         } catch(java.io.IOException e) {
@@ -176,7 +177,7 @@ public class Mappings<%= @@mappings_counter %> {
         // ARUBA_IGNORE_START
         try {
             java.io.Writer w = new java.io.FileWriter("<%= DATA_TABLE_LOG_FILE %>");
-            w.write(new com.google.gson.GsonBuilder().setPrettyPrinting().create().toJson(maps));
+            w.write(new gherkin.deps.com.google.gson.GsonBuilder().setPrettyPrinting().create().toJson(maps));
             w.flush();
             w.close();
         } catch(java.io.IOException e) {
@@ -260,6 +261,43 @@ EOF
     @@mappings_counter += 1
   end
 
+  def write_passing_hook(options = {})
+    erb = ERB.new(<<-EOF, nil, '-')
+package cucumber.test;
+
+import cucumber.annotation.Before;
+
+public class Hook<%= @@mappings_counter %> {
+    @Before
+    public void before() {
+    }
+}
+
+EOF
+    write_file("src/test/java/cucumber/test/Hook#{@@mappings_counter}.java", erb.result(binding))
+    @@mappings_counter += 1
+  end
+
+  def write_scenario options = {}
+    tags = options[:with_tags] || []
+
+    @next_step_count ||= 0
+    step_name = nth_step_name @next_step_count += 1
+    tags_definition = tags.any? ? "\n  #{tags.join(' ')}" : ""
+    append_to_feature <<-EOF
+#{tags_definition}
+  Scenario: scenario #{"tagged with " + tags.join(', ') if tags.any?}
+    Given #{step_name}
+EOF
+  end
+
+  def nth_step_name n
+    "step #{n}"
+  end
+
+  def assert_cycle_sequence *args
+  end
+
   def write_world_function
     erb = ERB.new(<<-EOF, nil, '-')
 package cucumber.test;
@@ -309,6 +347,12 @@ EOF
 
   def assert_world_function_called
     check_file_presence [WORLD_FUNCTION_LOG_FILE], true
+  end
+
+  def assert_executed_scenarios(*args)
+  end
+
+  def assert_cycle_sequence_excluding(*args)
   end
 
   def assert_world_variable_held_value_at_time(value, time)
@@ -446,26 +490,16 @@ EOF
     write_file("src/test/java/cucumber/test/CalculatorSteps.java", code)
   end
 
-  def write_test_unit_classes
-    features = in_current_dir do
-      Dir.chdir(features_dir) do
-        Dir["**/*.feature"]
-      end
-    end
-    features.each do |feature|
-      class_name = File.basename(feature).match(/(.*)\.feature$/)[1] + "_Test"
-      write_file("src/test/java/cucumber/test/#{class_name}.java", <<-EOF)
+  def write_test_unit_class
+      write_file("src/test/java/cucumber/test/RunCukesTest.java", <<-EOF)
 package cucumber.test;
 
 import cucumber.junit.Cucumber;
-import cucumber.junit.Feature;
 import org.junit.runner.RunWith;
 
 @RunWith(Cucumber.class)
-@Feature("#{feature}")
-public class #{class_name} {}
+public class RunCukesTest {}
 EOF
-    end
   end
 
   def assert_passing_scenario

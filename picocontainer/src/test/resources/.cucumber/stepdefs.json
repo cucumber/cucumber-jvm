@@ -1,12 +1,10 @@
 [
   {
+    "steps": [],
     "source": "^I add (.*)",
-    "flags": "",
-    "steps": []
+    "flags": ""
   },
   {
-    "source": "^I have (\\d+) (.*) in my belly$",
-    "flags": "",
     "steps": [
       {
         "name": "I have 12 cukes in my belly",
@@ -34,21 +32,21 @@
           }
         ]
       }
-    ]
+    ],
+    "source": "^I have (\\d+) (.*) in my belly$",
+    "flags": ""
   },
   {
-    "source": "^I have this in my basket:$",
-    "flags": "",
     "steps": [
       {
         "name": "I have this in my basket:",
         "args": []
       }
-    ]
+    ],
+    "source": "^I have this in my basket:$",
+    "flags": ""
   },
   {
-    "source": "^I should be (.*)$",
-    "flags": "",
     "steps": [
       {
         "name": "I should be \u003cmood\u003e",
@@ -59,46 +57,96 @@
           }
         ]
       }
-    ]
+    ],
+    "source": "^I should be (.*)$",
+    "flags": ""
   },
   {
-    "source": "^the (.*) contains (.*)",
-    "flags": "",
-    "steps": []
+    "steps": [],
+    "source": "^I want to recognize colors as enums$",
+    "flags": ""
   },
   {
-    "source": "^the date is (.+)$",
-    "flags": "",
     "steps": [
       {
-        "name": "the date is 2011/10/25",
+        "name": "i use the \u003ccolor\u003e in a step",
         "args": [
           {
-            "offset": 12,
-            "val": "2011/10/25"
+            "offset": 10,
+            "val": "\u003ccolor\u003e"
           }
         ]
       }
-    ]
+    ],
+    "source": "^i use the (.*) in a step$",
+    "flags": ""
   },
   {
-    "source": "^the date should be (.+)$",
-    "flags": "",
     "steps": [
       {
-        "name": "the date should be Oct 25 2011",
+        "name": "it should be recognized as enum",
+        "args": []
+      }
+    ],
+    "source": "^it should be recognized as enum$",
+    "flags": ""
+  },
+  {
+    "steps": [],
+    "source": "^the (.*) contains (.*)",
+    "flags": ""
+  },
+  {
+    "steps": [
+      {
+        "name": "the ISO date is \u003cinput date\u003e",
+        "args": [
+          {
+            "offset": 16,
+            "val": "\u003cinput date\u003e"
+          }
+        ]
+      }
+    ],
+    "source": "^the ISO date is (.+)$",
+    "flags": ""
+  },
+  {
+    "steps": [
+      {
+        "name": "the ISO date with timezone is \u003cinput date\u003e",
+        "args": [
+          {
+            "offset": 30,
+            "val": "\u003cinput date\u003e"
+          }
+        ]
+      }
+    ],
+    "source": "^the ISO date with timezone is (.+$)",
+    "flags": ""
+  },
+  {
+    "steps": [],
+    "source": "^the date should be viewed in (.+) as (\\d+), (\\d+), (\\d+), (\\d+), (\\d+), (\\d+)$",
+    "flags": ""
+  },
+  {
+    "steps": [
+      {
+        "name": "the simple date is \u003cinput date\u003e",
         "args": [
           {
             "offset": 19,
-            "val": "Oct 25 2011"
+            "val": "\u003cinput date\u003e"
           }
         ]
       }
-    ]
+    ],
+    "source": "^the simple date is (.+)$",
+    "flags": ""
   },
   {
-    "source": "^there are (\\d+) cukes in my belly",
-    "flags": "",
     "steps": [
       {
         "name": "there are 3 cukes in my belly",
@@ -109,6 +157,23 @@
           }
         ]
       }
-    ]
+    ],
+    "source": "^there are (\\d+) cukes in my belly",
+    "flags": ""
+  },
+  {
+    "steps": [
+      {
+        "name": "something pending",
+        "args": []
+      }
+    ],
+    "source": "something pending",
+    "flags": ""
+  },
+  {
+    "steps": [],
+    "source": "this is not used",
+    "flags": ""
   }
 ]

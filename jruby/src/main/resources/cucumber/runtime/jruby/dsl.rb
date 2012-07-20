@@ -3,9 +3,26 @@ require 'java'
 module Cucumber
   module Runtime
     module JRuby
-      class StepDefinition
+      module Locatable
         PROC_PATTERN = /[\d\w]+@(.+):(\d+).*>/
         PWD = Dir.pwd
+
+        # Lifted from proc.rb in Cucumber 1.0
+        def file_and_line
+          path, line = *@proc.inspect.match(PROC_PATTERN)[1..2]
+          path = File.expand_path(path)
+          pwd = File.expand_path(PWD)
+          if path.index(pwd)
+            path = path[pwd.length+1..-1]
+          elsif path =~ /.*\/gems\/(.*\.rb)$/
+            path = $1
+          end
+          [path, line.to_i]
+        end
+      end
+
+      class StepDefinition
+        include Locatable
 
         def initialize(regexp, proc)
           @regexp, @proc = regexp, proc
@@ -26,26 +43,13 @@ module Cucumber
           end
         end
 
-        def arg_count
+        def param_count
           @proc.arity
         end
 
-        def execute(locale, *args)
-          $world.instance_variable_set :@__cucumber_locale, locale
+        def execute(i18n, *args)
+          $world.instance_variable_set :@__gherkin_i18n, i18n
           $world.instance_exec(*args, &@proc)
-        end
-
-        # Lifted from proc.rb in Cucumber 1.0
-        def file_and_line
-          path, line = *@proc.inspect.match(PROC_PATTERN)[1..2]
-          path = File.expand_path(path)
-          pwd = File.expand_path(PWD)
-          if path.index(pwd)
-            path = path[pwd.length+1..-1]
-          elsif path =~ /.*\/gems\/(.*\.rb)$/
-            path = $1
-          end
-          [path, line.to_i]
         end
 
         def pattern
@@ -54,6 +58,8 @@ module Cucumber
       end
 
       class HookDefinition
+        include Locatable
+
         def initialize(proc)
           @proc = proc
         end
@@ -88,7 +94,7 @@ def register_or_invoke(keyword, regexp_or_name, arg, proc)
       end
     end
 
-    $backend.runStep(uri, @__cucumber_locale, keyword, regexp_or_name, line.to_i, data_table, doc_string)
+    $backend.runStep(uri, @__gherkin_i18n, keyword, regexp_or_name, line.to_i, data_table, doc_string)
   end
 end
 

@@ -18,4 +18,4 @@ def createRuntime(resourceLoader, gluePaths, classLoader, dryRun):
     jythonBackend = JythonBackend(resourceLoader)
     return Runtime(resourceLoader, gluePaths, classLoader, [jythonBackend], dryRun)
 
-Main.run(sys.argv[1:], cl, createRuntime)
+Main.run(sys.argv[1:], cl)

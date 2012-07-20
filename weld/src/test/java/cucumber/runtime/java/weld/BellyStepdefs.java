@@ -17,7 +17,6 @@ public class BellyStepdefs {
     @Given("^I have (\\d+) cukes in my belly")
     public void haveCukes(int n) {
         belly.setCukes(n);
-        System.out.println("adding cukes:" + n);
     }
 
     @Then("^there are (\\d+) cukes in my belly")

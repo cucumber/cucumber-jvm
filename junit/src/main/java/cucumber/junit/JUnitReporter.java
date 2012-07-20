@@ -14,6 +14,7 @@ import org.junit.internal.runners.model.EachTestNotifier;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,65 +23,120 @@ class JUnitReporter implements Reporter, Formatter {
 
     private final Reporter reporter;
     private final Formatter formatter;
+    private final boolean strict;
 
-    private EachTestNotifier stepNotifier;
+    EachTestNotifier stepNotifier;
     private ExecutionUnitRunner executionUnitRunner;
     private RunNotifier runNotifier;
-    private EachTestNotifier executionUnitNotifier;
+    EachTestNotifier executionUnitNotifier;
+    private boolean ignoredStep;
 
-    public JUnitReporter(Reporter reporter, Formatter formatter) {
+    public JUnitReporter(Reporter reporter, Formatter formatter, boolean strict) {
         this.reporter = reporter;
         this.formatter = formatter;
+        this.strict = strict;
     }
 
     public void startExecutionUnit(ExecutionUnitRunner executionUnitRunner, RunNotifier runNotifier) {
         this.executionUnitRunner = executionUnitRunner;
         this.runNotifier = runNotifier;
         this.stepNotifier = null;
+        this.ignoredStep = false;
 
         executionUnitNotifier = new EachTestNotifier(runNotifier, executionUnitRunner.getDescription());
         executionUnitNotifier.fireTestStarted();
     }
 
-
     public void finishExecutionUnit() {
-        executionUnitNotifier.fireTestFinished();
+        if (ignoredStep) {
+            executionUnitNotifier.fireTestIgnored();
+        } else {
+            executionUnitNotifier.fireTestFinished();
+        }
     }
 
     public void match(Match match) {
         Description description = executionUnitRunner.describeChild(steps.remove(0));
         stepNotifier = new EachTestNotifier(runNotifier, description);
-        stepNotifier.fireTestStarted();
         reporter.match(match);
     }
 
-    public void embedding(String mimeType, byte[] data) {
+    @Override
+    public void embedding(String mimeType, InputStream data) {
         reporter.embedding(mimeType, data);
+    }
+
+    @Override
+    public void write(String text) {
+        reporter.write(text);
     }
 
     public void result(Result result) {
         Throwable error = result.getError();
-        if (Result.SKIPPED == result || Result.UNDEFINED == result || error instanceof PendingException) {
+        if (Result.SKIPPED == result) {
             stepNotifier.fireTestIgnored();
+        } else if (isPendingOrUndefined(result)) {
+            addFailureOrIgnoreStep(result);
         } else {
             if (stepNotifier != null) {
+                //Should only fireTestStarted if not ignored
+                stepNotifier.fireTestStarted();
                 if (error != null) {
                     stepNotifier.addFailure(error);
                 }
                 stepNotifier.fireTestFinished();
-            } else {
-                if (error != null) {
-                    executionUnitNotifier.addFailure(error);
-                }
+            }
+            if (error != null) {
+                executionUnitNotifier.addFailure(error);
             }
         }
-        if(steps.isEmpty()) {
+        if (steps.isEmpty()) {
             // We have run all of our steps. Set the stepNotifier to null so that
             // if an error occurs in an After block, it's reported against the scenario
             // instead (via executionUnitNotifier).
             stepNotifier = null;
         }
         reporter.result(result);
+    }
+
+    private boolean isPendingOrUndefined(Result result) {
+        Throwable error = result.getError();
+        return Result.UNDEFINED == result || error instanceof PendingException;
+    }
+
+    private void addFailureOrIgnoreStep(Result result) {
+        if (strict) {
+            addFailure(result);
+        } else {
+            ignoredStep = true;
+            stepNotifier.fireTestIgnored();
+        }
+    }
+
+    private void addFailure(Result result) {
+
+        Throwable error = result.getError();
+        if (error == null) {
+            error = new PendingException();
+        }
+        stepNotifier.addFailure(error);
+        executionUnitNotifier.addFailure(error);
+    }
+
+    @Override
+    public void before(Match match, Result result) {
+        handleHook(match, result);
+    }
+
+    @Override
+    public void after(Match match, Result result) {
+        handleHook(match, result);
+    }
+
+    private void handleHook(Match match, Result result) {
+        if(result.getStatus().equals(Result.FAILED)) {
+            executionUnitNotifier.addFailure(result.getError());
+        }
     }
 
     @Override
@@ -125,7 +181,7 @@ class JUnitReporter implements Reporter, Formatter {
     }
 
     @Override
-    public void syntaxError(String state, String event, List<String> legalEvents, String uri, int line) {
+    public void syntaxError(String state, String event, List<String> legalEvents, String uri, Integer line) {
         formatter.syntaxError(state, event, legalEvents, uri, line);
     }
 

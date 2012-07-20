@@ -5,6 +5,7 @@ import cucumber.annotation.Before;
 import cucumber.annotation.en.Given;
 import cucumber.annotation.en.Then;
 import cucumber.annotation.en.When;
+import cucumber.runtime.ScenarioResult;
 
 import java.util.List;
 
@@ -41,8 +42,8 @@ public class RpnCalculatorStepdefs {
     }
 
     @After
-    public void after() {
-
+    public void after(ScenarioResult result) {
+        result.write("HELLLLOO");
     }
 
     @Given("^the previous entries:$")

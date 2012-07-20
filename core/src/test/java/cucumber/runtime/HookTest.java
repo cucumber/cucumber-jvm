@@ -13,7 +13,7 @@ import org.mockito.InOrder;
 import org.mockito.Matchers;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Properties;
 
 import static java.util.Arrays.asList;
 import static org.mockito.Matchers.anyListOf;
@@ -22,9 +22,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class HookTest {
-
-    private static final List<String> TAGS = new ArrayList<String>();
-    private static final List<String> CODE_PATHS = new ArrayList<String>();
 
     /**
      * Test for <a href="https://github.com/cucumber/cucumber-jvm/issues/23">#23</a>.
@@ -35,7 +32,7 @@ public class HookTest {
     public void after_hooks_execute_before_objects_are_disposed() throws Throwable {
         Backend backend = mock(Backend.class);
         HookDefinition hook = mock(HookDefinition.class);
-        when(hook.matches(anyListOf(String.class))).thenReturn(true);
+        when(hook.matches(anyListOf(Tag.class))).thenReturn(true);
         Scenario gherkinScenario = mock(Scenario.class);
 
         CucumberFeature feature = mock(CucumberFeature.class);
@@ -47,7 +44,8 @@ public class HookTest {
         CucumberScenario scenario = new CucumberScenario(feature, null, gherkinScenario);
 
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        Runtime runtime = new Runtime(new ClasspathResourceLoader(classLoader), CODE_PATHS, classLoader, asList(backend), false);
+        RuntimeOptions runtimeOptions = new RuntimeOptions(new Properties());
+        Runtime runtime = new Runtime(new ClasspathResourceLoader(classLoader), classLoader, asList(backend), runtimeOptions);
         runtime.getGlue().addAfterHook(hook);
 
         scenario.run(mock(Formatter.class), mock(Reporter.class), runtime);

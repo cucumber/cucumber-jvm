@@ -3,8 +3,10 @@ package cucumber.runtime.jython;
 import cucumber.runtime.HookDefinition;
 import cucumber.runtime.ScenarioResult;
 import gherkin.TagExpression;
+import gherkin.formatter.model.Tag;
 import org.python.core.*;
 import java.util.Collection;
+import java.util.List;
 
 public class JythonHookDefinition implements HookDefinition {
     private final PyInstance hookDefinition;
@@ -24,8 +26,13 @@ public class JythonHookDefinition implements HookDefinition {
     }
 
     @Override
-    public boolean matches(Collection<String> tags) {
+    public boolean matches(Collection<Tag> tags) {
         return tagExpression.eval(tags);
+    }
+
+    @Override
+    public String getLocation(boolean detail) {
+        return null;
     }
 
     @Override
