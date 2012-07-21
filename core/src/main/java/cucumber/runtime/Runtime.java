@@ -19,6 +19,7 @@ import gherkin.formatter.model.Tag;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -47,6 +48,8 @@ public class Runtime implements UnreportedStepExecutor {
     private boolean skipNextStep = false;
     private ScenarioResultImpl scenarioResult = null;
 
+    static final String[] SKIPPING_EXCEPTIONS = new String[]{"org.junit.internal.AssumptionViolatedException"};
+    
     public Runtime(ResourceLoader resourceLoader, ClassLoader classLoader, RuntimeOptions runtimeOptions) {
         this(resourceLoader, classLoader, loadBackends(resourceLoader, classLoader), runtimeOptions);
     }
@@ -181,19 +184,23 @@ public class Runtime implements UnreportedStepExecutor {
             try {
                 hook.execute(scenarioResult);
             } catch (Throwable t) {
-                skipNextStep = true;
-                long duration = System.nanoTime() - start;
-
-                Result result = new Result(Result.FAILED, duration, t, DUMMY_ARG);
-                scenarioResult.add(result);
-                addError(t);
-
-                Match match = new Match(Collections.<Argument>emptyList(), hook.getLocation(false));
-                if (isBefore) {
-                    reporter.before(match, result);
-                } else {
-                    reporter.after(match, result);
-                }
+            	if(Arrays.binarySearch(SKIPPING_EXCEPTIONS, t.getClass().getName()) >= 0){
+            		skipNextStep = true;
+            	} else {
+	            	skipNextStep = true;
+	                long duration = System.nanoTime() - start;
+	
+	                Result result = new Result(Result.FAILED, duration, t, DUMMY_ARG);
+	                scenarioResult.add(result);
+	                addError(t);
+	
+	                Match match = new Match(Collections.<Argument>emptyList(), hook.getLocation(false));
+	                if (isBefore) {
+	                    reporter.before(match, result);
+	                } else {
+	                    reporter.after(match, result);
+	                }
+            	}
             }
         }
     }
