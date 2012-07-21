@@ -6,12 +6,18 @@ import cucumber.runtime.model.CucumberFeature;
 import gherkin.I18n;
 import gherkin.formatter.JSONPrettyFormatter;
 import gherkin.formatter.model.Step;
+import gherkin.formatter.model.Tag;
+
+import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
 import static cucumber.runtime.TestHelper.feature;
 import static java.util.Arrays.asList;
@@ -168,4 +174,30 @@ public class RuntimeTest {
 
         return new Runtime(resourceLoader, classLoader, backends, runtimeOptions);
     }
+    
+    @Test
+    public void assertThrownExceptionInSkippingArrayIsHandled() throws Throwable {
+    	
+    	HookDefinition hookDefinition = Mockito.mock(HookDefinition.class);
+    	Mockito.when(hookDefinition.matches(Mockito.anyListOf(Tag.class))).thenReturn(true);
+    	Mockito.doThrow(new IllegalStateException()).when(hookDefinition).execute(Mockito.any(ScenarioResult.class));
+    	
+		Runtime.SKIPPING_EXCEPTIONS[0] = "java.lang.IllegalStateException";
+		
+		Set<Tag> tags = new HashSet<Tag>();
+		tags.add(new Tag("", null) );
+		
+		Runtime runtime = createNonStrictRuntime();
+    	runtime.getGlue().addBeforeHook(hookDefinition );
+    	runtime.runBeforeHooks(null, tags);
+    	Mockito.verify(hookDefinition).execute(Mockito.any(ScenarioResult.class));	
+    }
+    
+    @Test
+    public void assertSkippingExceptionsArrayIsSorted() {
+    	final String[] arrayCopy = Arrays.copyOf(Runtime.SKIPPING_EXCEPTIONS, Runtime.SKIPPING_EXCEPTIONS.length);
+    	Arrays.sort(arrayCopy);
+    	Assert.assertArrayEquals("Array must be sorted", arrayCopy, Runtime.SKIPPING_EXCEPTIONS);
+    }
+    
 }
