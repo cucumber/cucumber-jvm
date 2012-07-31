@@ -14,6 +14,7 @@ public class SummaryPrinter {
         out.println();
         printErrors(runtime);
         printSnippets(runtime);
+        printExecution(runtime);
     }
 
     private void printErrors(cucumber.runtime.Runtime runtime) {
@@ -33,5 +34,12 @@ public class SummaryPrinter {
                 out.println(snippet);
             }
         }
+    }
+    
+    private void printExecution(cucumber.runtime.Runtime runtime){
+    	out.println(String.format("Total features: %s, Failures: %s, Skipped: %s",
+    			runtime.getfeaturesRun() 
+    	    	,runtime.getErrors().size(),
+    	    	runtime.getSnippets().size()));
     }
 }
