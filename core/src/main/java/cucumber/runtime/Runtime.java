@@ -42,6 +42,8 @@ public class Runtime implements UnreportedStepExecutor {
     private final ResourceLoader resourceLoader;
     private final ClassLoader classLoader;
 
+    private int featuresRun = 0;
+    
     //TODO: These are really state machine variables, and I'm not sure the runtime is the best place for this state machine
     //They really should be created each time a scenario is run, not in here
     private boolean skipNextStep = false;
@@ -79,8 +81,10 @@ public class Runtime implements UnreportedStepExecutor {
      * This is the main entry point. Used from CLI, but not from JUnit.
      */
     public void run() {
-        for (CucumberFeature cucumberFeature : runtimeOptions.cucumberFeatures(resourceLoader)) {
+    	featuresRun = 0;
+    	for (CucumberFeature cucumberFeature : runtimeOptions.cucumberFeatures(resourceLoader)) {
             run(cucumberFeature);
+            featuresRun++;
         }
         Formatter formatter = runtimeOptions.formatter(classLoader);
 
@@ -270,5 +274,9 @@ public class Runtime implements UnreportedStepExecutor {
 
     public void writeStepdefsJson() throws IOException {
         glue.writeStepdefsJson(runtimeOptions.featurePaths, runtimeOptions.dotCucumber);
+    }
+    
+    public int getfeaturesRun(){
+    	return featuresRun;
     }
 }
