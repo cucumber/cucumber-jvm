@@ -5,7 +5,7 @@
         <groupId>info.cukes</groupId>
         <artifactId>cucumber-jvm</artifactId>
         <relativePath>../../pom.xml</relativePath>
-        <version>1.0.10-SNAPSHOT</version>
+        <version>1.0.12-SNAPSHOT</version>
     </parent>
 
     <artifactId>groovy-calculator</artifactId>
@@ -17,6 +17,11 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>info.cukes</groupId>
+            <artifactId>cucumber-deps</artifactId>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>info.cukes</groupId>
             <artifactId>cucumber-groovy</artifactId>
@@ -36,17 +41,6 @@
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
             <scope>provided</scope>
-        </dependency>
-        <!-- These dependencies are required in order to find classes when running in an IDE - they haven't been jar-jarred -->
-        <dependency>
-            <groupId>com.thoughtworks.xstream</groupId>
-            <artifactId>xstream</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.googlecode.java-diff-utils</groupId>
-            <artifactId>diffutils</artifactId>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 

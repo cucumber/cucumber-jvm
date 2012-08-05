@@ -25,7 +25,7 @@ public class CucumberFeature {
     private final Feature feature;
     private CucumberBackground cucumberBackground;
     private StepContainer currentStepContainer;
-    private List<CucumberTagStatement> cucumberTagStatements = new ArrayList<CucumberTagStatement>();
+    private final List<CucumberTagStatement> cucumberTagStatements = new ArrayList<CucumberTagStatement>();
     private I18n i18n;
     private CucumberScenarioOutline currentScenarioOutline;
 

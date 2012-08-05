@@ -40,12 +40,12 @@ public class Runtime implements UnreportedStepExecutor {
     private final List<Throwable> errors = new ArrayList<Throwable>();
     private final Collection<? extends Backend> backends;
     private final ResourceLoader resourceLoader;
+    private final ClassLoader classLoader;
 
     //TODO: These are really state machine variables, and I'm not sure the runtime is the best place for this state machine
     //They really should be created each time a scenario is run, not in here
     private boolean skipNextStep = false;
     private ScenarioResultImpl scenarioResult = null;
-    private ClassLoader classLoader;
 
     public Runtime(ResourceLoader resourceLoader, ClassLoader classLoader, RuntimeOptions runtimeOptions) {
         this(resourceLoader, classLoader, loadBackends(resourceLoader, classLoader), runtimeOptions);

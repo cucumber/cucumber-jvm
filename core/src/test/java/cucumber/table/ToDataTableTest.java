@@ -38,11 +38,11 @@ public class ToDataTableTest {
     @Test
     public void converts_list_of_beans_with_null_to_table() {
         List<UserPojo> users = tc.toList(UserPojo.class, personTableWithNull());
-        DataTable table = tc.toTable(users);
+        DataTable table = tc.toTable(users, "name", "birthDate", "credits");
         assertEquals("" +
-                "      | credits | name        | birthDate  |\n" +
-                "      | 1,000   | Sid Vicious |            |\n" +
-                "      | 3,000   | Frank Zappa | 21/12/1940 |\n" +
+                "      | name        | birthDate  | credits |\n" +
+                "      | Sid Vicious |            | 1,000   |\n" +
+                "      | Frank Zappa | 21/12/1940 | 3,000   |\n" +
                 "", table.toString());
     }
 

@@ -1,3 +1,23 @@
+## [1.0.11](https://github.com/cucumber/cucumber-jvm/compare/v1.0.10...v1.0.11)
+
+* [Core] Added a new `@Transform` annotation and an abstract `Transformer` class giving full control over argument transforms.
+* [OpenEJB] Remove log4j need for openejb module ([#355](https://github.com/cucumber/cucumber-jvm/pull/355) rmannibucau)
+* [JUnit] JUnit report doesn't correctly report errors ([#315](https://github.com/cucumber/cucumber-jvm/issues/315), [#356](https://github.com/cucumber/cucumber-jvm/pull/356) Kevin Cunningham)
+
+## [1.0.10](https://github.com/cucumber/cucumber-jvm/compare/v1.0.9...v1.0.10)
+
+* [Core] Automatically convert data tables to lists of enums just as is done with classes [#346](https://github.com/cucumber/cucumber-jvm/issues/346)
+* [Core] `DataTable.create()` and `TableConverter.toTable()` will omit columns for object fields that are null, *unless columns are explicitly listed*. See [#320](https://github.com/cucumber/cucumber-jvm/pull/320) (Aslak Hellesøy)
+* [Core] Table conversion to `List<Map>` converts to a List of Map of String to String. (Aslak Hellesøy)
+* [Core] Table conversion to `List<Map<KeyType,ValueType>>` works for enums, dates, strings and primitives. (Aslak Hellesøy)
+* [Core] Formatters should report feature paths as relative paths. ([#337](https://github.com/cucumber/cucumber-jvm/issues/337), [#342](https://github.com/cucumber/cucumber-jvm/pull/342) mattharr)
+* [Java/Groovy] Step definitions and hooks can now specify a timeout (milliseconds) after which a `TimeoutException` is thrown if the stepdef/hook has not completed.
+  Please note that for Groovy, `sleep(int)` is not interruptible, so in order for sleeps to work your code must use `Thread.sleep(int)` ([#343](https://github.com/cucumber/cucumber-jvm/issues/343) Aslak Hellesøy)
+* [Java] More explanatary exception if a hook is declared with bad parameter types. (Aslak Hellesøy)
+* [Core/JUnit] JUnit report has time reported as seconds instead of millis. ([#347](https://github.com/cucumber/cucumber-jvm/issues/347) Aslak Hellesøy)
+* [Core] List legal enum values if conversion fails ([#344](https://github.com/cucumber/cucumber-jvm/issues/344) Aslak Hellesøy)
+* [Weld] Added workaround for [WELD-1119](https://issues.jboss.org/browse/WELD-1119) when running on single core machines. (Aslak Hellesøy)
+
 ## [1.0.9](https://github.com/cucumber/cucumber-jvm/compare/v1.0.8...v1.0.9)
 
 * [Core] Exceptions thrown from a step definition are no longer wrapped in CucumberException. (Aslak Hellesøy)

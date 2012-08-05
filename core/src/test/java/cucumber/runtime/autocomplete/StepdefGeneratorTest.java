@@ -6,6 +6,7 @@ import cucumber.runtime.JdkPatternArgumentMatcher;
 import cucumber.runtime.ParameterType;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.model.CucumberFeature;
+import cucumber.table.TypeReference;
 import gherkin.I18n;
 import gherkin.deps.com.google.gson.Gson;
 import gherkin.deps.com.google.gson.GsonBuilder;
@@ -17,6 +18,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -26,7 +28,7 @@ import static java.util.Collections.emptyList;
 import static org.junit.Assert.assertEquals;
 
 public class StepdefGeneratorTest {
-    public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     @Test
     public void generates_code_completion_metadata() throws IOException {
@@ -35,7 +37,7 @@ public class StepdefGeneratorTest {
         List<StepDefinition> stepDefs = asList(def("I have (\\d+) cukes in my belly"), def("I have (\\d+) apples in my bowl"));
 
         List<MetaStepdef> metadata = meta.generate(stepDefs, features());
-        assertEquals("" +
+        String expectedJson = "" +
                 "[\n" +
                 "  {\n" +
                 "    \"source\": \"I have (\\\\d+) apples in my bowl\",\n" +
@@ -66,8 +68,8 @@ public class StepdefGeneratorTest {
                 "      }\n" +
                 "    ]\n" +
                 "  }\n" +
-                "]",
-                GSON.toJson(metadata));
+                "]";
+        assertEquals(GSON.fromJson(expectedJson, new TypeReference<List<MetaStepdef>>(){}.getType()), metadata);
     }
 
     private List<CucumberFeature> features() throws IOException {
@@ -113,22 +115,27 @@ public class StepdefGeneratorTest {
 
             @Override
             public String getLocation(boolean detail) {
-                throw new UnsupportedOperationException("TODO");
+                throw new UnsupportedOperationException();
             }
 
             @Override
-            public List<ParameterType> getParameterTypes() {
-                throw new UnsupportedOperationException("TODO");
+            public Integer getParameterCount() {
+                return null;
+            }
+
+            @Override
+            public ParameterType getParameterType(int n, Type argumentType) {
+                return null;
             }
 
             @Override
             public void execute(I18n i18n, Object[] args) throws Throwable {
-                throw new UnsupportedOperationException("TODO");
+                throw new UnsupportedOperationException();
             }
 
             @Override
             public boolean isDefinedAt(StackTraceElement stackTraceElement) {
-                throw new UnsupportedOperationException("TODO");
+                throw new UnsupportedOperationException();
             }
 
             @Override

@@ -5,7 +5,7 @@
         <groupId>info.cukes</groupId>
         <artifactId>cucumber-jvm</artifactId>
         <relativePath>../pom.xml</relativePath>
-        <version>1.0.10-SNAPSHOT</version>
+        <version>1.0.12-SNAPSHOT</version>
     </parent>
 
     <artifactId>cucumber-openejb</artifactId>
@@ -34,8 +34,8 @@
         </dependency>
 
         <dependency>
-            <groupId>com.thoughtworks.xstream</groupId>
-            <artifactId>xstream</artifactId>
+            <groupId>info.cukes</groupId>
+            <artifactId>cucumber-deps</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

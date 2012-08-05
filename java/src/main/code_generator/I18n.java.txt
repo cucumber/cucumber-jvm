@@ -15,5 +15,10 @@ public @interface ${kw} {
      * @return a regular expression
      */
     String value();
+
+    /**
+     * @return max amount of time this is allowed to run for. 0 (default) means no restriction.
+     */
+    int timeout() default 0;
 }
 

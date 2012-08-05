@@ -12,4 +12,9 @@ public @interface After {
      * @return a tag expression
      */
     String[] value() default {};
+
+    /**
+     * @return max amount of time this is allowed to run for. 0 (default) means no restriction.
+     */
+    int timeout() default 0;
 }

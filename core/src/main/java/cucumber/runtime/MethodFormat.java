@@ -32,7 +32,7 @@ public class MethodFormat {
      *               <li><strong>%s</strong>: Code source</li>
      *               </ul>
      */
-    public MethodFormat(String format) {
+    private MethodFormat(String format) {
         String pattern = format
                 .replaceAll("%M", "{0}")
                 .replaceAll("%r", "{1}")

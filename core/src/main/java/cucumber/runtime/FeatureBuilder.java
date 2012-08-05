@@ -28,9 +28,9 @@ public class FeatureBuilder implements Formatter {
     private static final Charset UTF8 = Charset.forName("UTF-8");
     private final List<CucumberFeature> cucumberFeatures;
     private final MessageDigest md5;
+    private final Map<String, String> pathsByChecksum = new HashMap<String, String>();
     private CucumberFeature currentCucumberFeature;
     private String uri;
-    private Map<String, String> pathsByChecksum = new HashMap<String, String>();
 
     public FeatureBuilder(List<CucumberFeature> cucumberFeatures) {
         this.cucumberFeatures = cucumberFeatures;

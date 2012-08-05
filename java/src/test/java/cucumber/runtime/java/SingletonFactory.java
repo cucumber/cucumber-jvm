@@ -1,7 +1,11 @@
 package cucumber.runtime.java;
 
-public class SingletonFactory implements ObjectFactory {
-    private final Object singleton;
+class SingletonFactory implements ObjectFactory {
+    private Object singleton;
+
+    public SingletonFactory() {
+        this(null);
+    }
 
     public SingletonFactory(Object singleton) {
         this.singleton = singleton;
@@ -21,6 +25,13 @@ public class SingletonFactory implements ObjectFactory {
 
     @Override
     public <T> T getInstance(Class<T> type) {
+        if (singleton == null) {
+            throw new IllegalStateException("No object is set");
+        }
         return (T) singleton;
+    }
+
+    public void setInstance(Object o) {
+        singleton = o;
     }
 }

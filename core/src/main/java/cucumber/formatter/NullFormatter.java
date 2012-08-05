@@ -10,7 +10,7 @@ import gherkin.formatter.model.Step;
 
 import java.util.List;
 
-public class NullFormatter implements Formatter {
+class NullFormatter implements Formatter {
     public NullFormatter(Appendable ignore) {
     }
 

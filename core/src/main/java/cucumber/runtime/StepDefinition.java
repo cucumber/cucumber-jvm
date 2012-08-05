@@ -4,6 +4,7 @@ import gherkin.I18n;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 
+import java.lang.reflect.Type;
 import java.util.List;
 
 public interface StepDefinition {
@@ -23,14 +24,18 @@ public interface StepDefinition {
     String getLocation(boolean detail);
 
     /**
-     * The parameter types this step definition can be invoked with.
-     * This will be used to coerce string values from arguments before
-     * invoking the step definition. The size of the returned array
-     * must be equal to the number of arguments accepted by execute.
-     * <p/>
-     * If the parameter types are unknown at runtime, the result may be null.
+     * How many declared parameters this stepdefinition has. Returns null if unknown.
      */
-    List<ParameterType> getParameterTypes();
+    Integer getParameterCount();
+
+    /**
+     * The parameter type at index n. A hint about the raw parameter type is passed to make
+     * it easier for the implementation to make a guess based on runtime information.
+     *
+     * Statically typed languages will typically ignore the {@code argumentType} while dynamically
+     * typed ones will use it to infer a "good type". It's also ok to return null.
+     */
+    ParameterType getParameterType(int n, Type argumentType) throws IndexOutOfBoundsException;
 
     /**
      * Invokes the step definition. The method should raise a Throwable

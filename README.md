@@ -46,13 +46,13 @@ in your [POM](http://maven.apache.org/pom.html):
 <dependency>
     <groupId>info.cukes</groupId>
     <artifactId>cucumber-java</artifactId>
-    <version>1.0.9</version>
+    <version>1.0.11</version>
     <scope>test</scope>
 </dependency>
 <dependency>
     <groupId>info.cukes</groupId>
     <artifactId>cucumber-junit</artifactId>
-    <version>1.0.9</version>
+    <version>1.0.11</version>
     <scope>test</scope>
 </dependency>
 <dependency>
@@ -70,7 +70,7 @@ There are more jars available - add the ones you need. (TODO: A guide on how to 
 Add a [dependency](http://ant.apache.org/ivy/history/latest-milestone/ivyfile/dependency.html) in your [ivy.xml](http://ant.apache.org/ivy/history/latest-milestone/ivyfile.html):
 
 ```xml
-    <dependency org="info.cukes" name="cucumber-core" rev="1.0.9"/>
+    <dependency org="info.cukes" name="cucumber-core" rev="1.0.11"/>
 ```
 
 Since the artifacts are released to Maven Central, the default Ivy configuration should pull them down automatically.
@@ -90,7 +90,7 @@ There isn't any online documentation yet. Check out the examples, read the code 
 
 ### API Docs
 
-* http://cukes.info/cucumber/jvm/api/1.0.9
+* http://cukes.info/cucumber/jvm/api/1.0.11
 
 ## Examples
 
@@ -224,7 +224,7 @@ Replace version numbers in:
 
 * examples/java-helloworld/build.xml
 * examples/java-helloworld/pom.xml
-* README.md
+* README.md (this file)
 * History.md
 
 Run `git commit -am "Release X.Y.Z"`
@@ -233,7 +233,7 @@ Now release everything:
 
 ```
 mvn release:clean
-mvn --batch-mode -P release-sign-artifacts release:prepare -DautoVersionSubmodules=true -DdevelopmentVersion=1.0.10-SNAPSHOT
+mvn --batch-mode -P release-sign-artifacts release:prepare -DautoVersionSubmodules=true -DdevelopmentVersion=1.0.12-SNAPSHOT
 mvn -P release-sign-artifacts release:perform
 ```
 
@@ -262,7 +262,7 @@ Example Cucumber-JVM + Maven + Groovy CLI
 This configuration will get you the following features:
 
 * Groovy-only: No Junit/Java code will be run
-* Tags: Multiple tags cannot be passed in from a JVM argument at this time, but multiple items can be added to the POM. Note that ~@ignore is in here by default, as an example. In addition, you can provide -DtagArgs="@tagname" to run any tag
+* Tags: Multiple tags cannot be passed in from a JVM argument at this time, but multiple items can be added to the POM. Note that ~@ignore is in here by default, as an example. In addition, you can provide -DtagArg="@tagname" to run any tag
 * Formats: the <format> property can be changed from 'pretty' to 'html', or 'progress'. 
  * If html format is used, the --out parameter must be provided and set to a folder (relative to target) to dump the reports
  * The previous example, with target/reports specified as the output dir: ( http://pastebin.com/GrWN3ULN )

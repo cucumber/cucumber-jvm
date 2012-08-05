@@ -15,11 +15,11 @@ import java.util.Locale;
 import static java.util.Arrays.asList;
 
 public abstract class TimeConverter<T> extends ConverterWithFormat<T> {
-    protected final Locale locale;
+    final Locale locale;
     private final List<DateFormat> formats = new ArrayList<DateFormat>();
     private SimpleDateFormat onlyFormat;
 
-    public TimeConverter(Locale locale, Class[] convertibleTypes) {
+    TimeConverter(Locale locale, Class[] convertibleTypes) {
         super(convertibleTypes);
         this.locale = locale;
 
@@ -30,17 +30,25 @@ public abstract class TimeConverter<T> extends ConverterWithFormat<T> {
         addFormat(DateFormat.FULL, locale);
     }
 
-    protected void addFormat(int style, Locale locale) {
+    void addFormat(int style, Locale locale) {
         add(DateFormat.getDateInstance(style, locale));
     }
 
-    protected void add(DateFormat dateFormat) {
+    void add(DateFormat dateFormat) {
         dateFormat.setLenient(false);
         formats.add(dateFormat);
     }
 
     public List<? extends Format> getFormats() {
         return onlyFormat == null ? formats : asList(onlyFormat);
+    }
+
+    @Override
+    public String toString(Object obj) {
+        if(obj instanceof Calendar) {
+            obj = ((Calendar) obj).getTime();
+        }
+        return super.toString(obj);
     }
 
     public void setOnlyFormat(String dateFormatString, Locale locale) {
@@ -53,12 +61,12 @@ public abstract class TimeConverter<T> extends ConverterWithFormat<T> {
     }
 
     public static TimeConverter getInstance(ParameterType parameterType, Locale locale) {
-        if (Date.class.isAssignableFrom(parameterType.getParameterClass())) {
+        if (Date.class.isAssignableFrom(parameterType.getRawType())) {
             return new DateConverter(locale);
-        } else if (Calendar.class.isAssignableFrom(parameterType.getParameterClass())) {
+        } else if (Calendar.class.isAssignableFrom(parameterType.getRawType())) {
             return new CalendarConverter(locale);
         } else {
-            throw new CucumberException("Unsupported time type: " + parameterType.getParameterClass());
+            throw new CucumberException("Unsupported time type: " + parameterType.getRawType());
         }
     }
 

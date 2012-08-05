@@ -2,7 +2,6 @@ package cucumber.runtime.jruby;
 
 import cucumber.runtime.ParameterType;
 import cucumber.runtime.StepDefinition;
-import cucumber.runtime.Utils;
 import cucumber.table.DataTable;
 import gherkin.I18n;
 import gherkin.formatter.Argument;
@@ -12,6 +11,7 @@ import org.jruby.RubyString;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,10 +43,14 @@ public class JRubyStepDefinition implements StepDefinition {
     }
 
     @Override
-    public List<ParameterType> getParameterTypes() {
-        IRubyObject argCountR = stepdef.callMethod("arg_count");
-        int argCount = (Integer) argCountR.toJava(Integer.class);
-        return Utils.listOf(Math.max(0, argCount), new ParameterType(String.class, null));
+    public Integer getParameterCount() {
+        IRubyObject paramCountR = stepdef.callMethod("param_count");
+        return Math.max(0, (Integer) paramCountR.toJava(Integer.class));
+    }
+
+    @Override
+    public ParameterType getParameterType(int n, Type argumentType) {
+        return new ParameterType(argumentType, null, null);
     }
 
     @Override
@@ -61,7 +65,6 @@ public class JRubyStepDefinition implements StepDefinition {
             } else if (o instanceof DataTable) {
                 //Add a datatable as it stands...
                 jrubyArgs.add(JavaEmbedUtils.javaToRuby(stepdef.getRuntime(), o));
-
             } else {
                 jrubyArgs.add(stepdef.getRuntime().newString((String) o));
             }

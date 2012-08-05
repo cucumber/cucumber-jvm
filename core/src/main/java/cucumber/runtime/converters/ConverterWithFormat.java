@@ -1,8 +1,8 @@
 package cucumber.runtime.converters;
 
-import com.thoughtworks.xstream.converters.ConversionException;
-import com.thoughtworks.xstream.converters.SingleValueConverter;
 import cucumber.runtime.CucumberException;
+import cucumber.runtime.xstream.converters.ConversionException;
+import cucumber.runtime.xstream.converters.SingleValueConverter;
 
 import java.text.Format;
 import java.text.ParsePosition;
@@ -10,10 +10,10 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 
-public abstract class ConverterWithFormat<T> implements SingleValueConverter {
+abstract class ConverterWithFormat<T> implements SingleValueConverter {
     private final Class[] convertibleTypes;
 
-    public ConverterWithFormat(Class[] convertibleTypes) {
+    ConverterWithFormat(Class[] convertibleTypes) {
         this.convertibleTypes = convertibleTypes;
     }
 
@@ -44,7 +44,7 @@ public abstract class ConverterWithFormat<T> implements SingleValueConverter {
      * @return The object
      */
     @SuppressWarnings("unchecked")
-    protected Object transform(final Format format, final String argument) {
+    Object transform(final Format format, final String argument) {
         ParsePosition position = new ParsePosition(0);
         Object result = format.parseObject(argument, position);
         if (position.getErrorIndex() != -1) {

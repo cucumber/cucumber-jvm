@@ -1,54 +1,43 @@
 package cucumber.table.xstream;
 
-import com.thoughtworks.xstream.converters.ErrorWriter;
-import com.thoughtworks.xstream.io.AbstractReader;
+import cucumber.runtime.xstream.converters.ErrorWriter;
+import cucumber.runtime.xstream.io.AbstractReader;
 
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
 /**
- * Generates XStream XML data from table rows that will create a List of maps. Example:
+ * Generates XStream XML data from table rows that will create a List of objects. Example:
  * <pre>
  * <list>
- *     <map>
- *         <entry>
- *             <string>name</string>
- *             <string>Sid Vicious</string>
- *         </entry>
- *         <entry>
- *             <string>birthDate</string>
- *             <string>10/05/1957</string>
- *         </entry>
- *     </map>
- *     <map>
- *         <entry>
- *             <string>name</string>
- *             <string>Frank Zappa</string>
- *         </entry>
- *         <entry>
- *             <string>birthDate</string>
- *             <string>21/12/1940</string>
- *         </entry>
- *     </map>
+ *     <cucumber.table.TableConverterTest_-UserPojo>
+ *         <name>Sid Vicious</name>
+ *         <birthDate>1957-05-10 00:00:00.0 UTC</birthDate>
+ *         <credits>1000</credits>
+ *     </cucumber.table.TableConverterTest_-UserPojo>
+ *     <cucumber.table.TableConverterTest_-UserPojo>
+ *         <name>Frank Zappa</name>
+ *         <birthDate>1940-12-21 00:00:00.0 UTC</birthDate>
+ *         <credits>3000</credits>
+ *     </cucumber.table.TableConverterTest_-UserPojo>
  * </list>
  * </pre>
  */
-public class ListOfMapReader extends AbstractReader {
+public class ListOfComplexTypeReader extends AbstractReader {
+    private final Class elementType;
     private final List<String> attributeNames;
     private final Iterator<List<String>> itemIterator;
 
     private int depth = 0;
-
     private Iterator<String> attributeNameIterator;
     private String attributeName;
 
     private Iterator<String> attributeValueIterator;
     private String attributeValue;
 
-    private boolean entryKey = true;
-
-    public ListOfMapReader(List<String> attributeNames, List<List<String>> items) {
+    public ListOfComplexTypeReader(Class elementType, List<String> attributeNames, List<List<String>> items) {
+        this.elementType = elementType;
         this.attributeNames = attributeNames;
         this.itemIterator = items.iterator();
     }
@@ -61,8 +50,6 @@ public class ListOfMapReader extends AbstractReader {
             case 1:
                 return attributeNameIterator.hasNext();
             case 2:
-                return true;
-            case 3:
                 return false;
             default:
                 throw new IllegalStateException("Depth is " + depth);
@@ -81,8 +68,6 @@ public class ListOfMapReader extends AbstractReader {
                 attributeName = attributeNameIterator.next();
                 attributeValue = attributeValueIterator.next();
                 break;
-            case 3:
-                break;
             default:
                 throw new IllegalStateException("Depth is " + depth);
         }
@@ -99,11 +84,9 @@ public class ListOfMapReader extends AbstractReader {
             case 0:
                 return "list";
             case 1:
-                return "map";
+                return elementType.getName();
             case 2:
-                return "entry";
-            case 3:
-                return "string";
+                return attributeName;
             default:
                 throw new IllegalStateException("Depth is " + depth);
         }
@@ -111,9 +94,7 @@ public class ListOfMapReader extends AbstractReader {
 
     @Override
     public String getValue() {
-        String result = entryKey ? attributeName : attributeValue;
-        entryKey = !entryKey;
-        return result;
+        return attributeValue;
     }
 
     @Override

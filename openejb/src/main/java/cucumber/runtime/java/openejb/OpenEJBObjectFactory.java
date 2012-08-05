@@ -15,14 +15,6 @@ import java.util.Map;
 import java.util.Properties;
 
 public class OpenEJBObjectFactory implements ObjectFactory {
-    static {
-        try {
-            configureLog4J();
-        } catch (Throwable t) {
-            throw new CucumberException(t);
-        }
-    }
-
     private final List<String> classes = new ArrayList<String>();
     private final Map<Class<?>, Object> instances = new HashMap<Class<?>, Object>();
     private EJBContainer container;
@@ -68,25 +60,6 @@ public class OpenEJBObjectFactory implements ObjectFactory {
         }
         instances.put(type, object);
         return object;
-    }
-
-    private static void configureLog4J() throws Throwable {
-        final ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        if (System.getProperty("log4j.configuration") == null && System.getProperty("log4j.configurationClass") == null
-                && cl.getResource("log4j.xml") == null && cl.getResource("log4j.properties") == null) {
-            Properties log4jProp = new Properties();
-            log4jProp.setProperty("log4j.rootLogger", "info, stdout");
-            log4jProp.setProperty("log4j.appender.stdout", "org.apache.log4j.ConsoleAppender");
-            try {
-                cl.loadClass("org.apache.openejb.logging.SimpleJULLikeLayout");
-                log4jProp.setProperty("log4j.appender.stdout.layout", "org.apache.openejb.logging.SimpleJULLikeLayout");
-            } catch (Exception e) {
-                log4jProp.setProperty("log4j.appender.stdout.layout", "org.apache.log4j.SimpleLayout");
-            }
-
-            Method configure = cl.loadClass("org.apache.log4j.PropertyConfigurator").getDeclaredMethod("configure", Properties.class);
-            Utils.invoke(null, configure, log4jProp);
-        }
     }
 }
 

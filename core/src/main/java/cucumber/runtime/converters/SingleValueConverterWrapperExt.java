@@ -1,12 +1,12 @@
 package cucumber.runtime.converters;
 
-import com.thoughtworks.xstream.converters.SingleValueConverter;
-import com.thoughtworks.xstream.converters.SingleValueConverterWrapper;
+import cucumber.runtime.xstream.converters.SingleValueConverter;
+import cucumber.runtime.xstream.converters.SingleValueConverterWrapper;
 
 /**
  * Subclass that exposes the wrapped converter
  */
-public class SingleValueConverterWrapperExt extends SingleValueConverterWrapper {
+class SingleValueConverterWrapperExt extends SingleValueConverterWrapper {
     private final SingleValueConverter converter;
 
     public SingleValueConverterWrapperExt(SingleValueConverter converter) {

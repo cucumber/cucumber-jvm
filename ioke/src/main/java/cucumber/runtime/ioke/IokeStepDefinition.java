@@ -10,6 +10,7 @@ import ioke.lang.IokeObject;
 import ioke.lang.Runtime;
 import ioke.lang.exceptions.ControlFlow;
 
+import java.lang.reflect.Type;
 import java.util.List;
 
 import static cucumber.runtime.Utils.listOf;
@@ -19,12 +20,14 @@ public class IokeStepDefinition implements StepDefinition {
     private final IokeObject iokeStepDefObject;
     private final IokeBackend backend;
     private final String location;
+    private List<ParameterType> parameterTypes;
 
     public IokeStepDefinition(IokeBackend iokeBackend, Runtime ioke, IokeObject iokeStepDefObject, String location) throws Throwable {
         this.ioke = ioke;
         this.iokeStepDefObject = iokeStepDefObject;
         this.backend = iokeBackend;
         this.location = location;
+        this.parameterTypes = getParameterTypes();
     }
 
     public String getPattern() {
@@ -53,13 +56,23 @@ public class IokeStepDefinition implements StepDefinition {
         return location;
     }
 
+    @Override
+    public Integer getParameterCount() {
+        return parameterTypes.size();
+    }
+
+    @Override
+    public ParameterType getParameterType(int n, Type argumentType) {
+        return parameterTypes.get(n);
+    }
+
     public List<ParameterType> getParameterTypes() {
         try {
             IokeObject argNames = (IokeObject) backend.invoke(iokeStepDefObject, "arg_names");
             IokeObject argLength = (IokeObject) backend.invoke(argNames, "length");
             int groupCount = Integer.parseInt(argLength.toString()); // Not sure how to do this properly...
 
-            return listOf(groupCount, new ParameterType(String.class, null));
+            return listOf(groupCount, new ParameterType(String.class, null, null));
         } catch (ControlFlow controlFlow) {
             throw new CucumberException("Couldn't inspect arity of stepdef", controlFlow);
         }

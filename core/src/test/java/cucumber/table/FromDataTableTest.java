@@ -1,18 +1,13 @@
 package cucumber.table;
 
-import com.thoughtworks.xstream.annotations.XStreamConverter;
-import com.thoughtworks.xstream.converters.Converter;
-import com.thoughtworks.xstream.converters.MarshallingContext;
-import com.thoughtworks.xstream.converters.UnmarshallingContext;
-import com.thoughtworks.xstream.converters.javabean.JavaBeanConverter;
-import com.thoughtworks.xstream.io.HierarchicalStreamReader;
-import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import cucumber.DateFormat;
-import cucumber.runtime.CucumberException;
+import cucumber.api.Transformer;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.StepDefinitionMatch;
 import cucumber.runtime.StubStepDefinition;
 import cucumber.runtime.converters.LocalizedXStreams;
+import cucumber.runtime.xstream.annotations.XStreamConverter;
+import cucumber.runtime.xstream.converters.javabean.JavaBeanConverter;
 import gherkin.I18n;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Comment;
@@ -168,33 +163,6 @@ public class FromDataTableTest {
         assertEquals("Birth Date", stepDefs.dataTable.raw().get(0).get(0));
     }
 
-    @Test
-    public void does_not_transform_to_list_of_map_of_date_to_string() throws Throwable {
-        thrown.expect(CucumberException.class);
-        thrown.expectMessage("Tables can only be transformed to a List<Map<K,V>> when K is String. It was class java.util.Date.");
-
-        Method listOfBeans = StepDefs.class.getMethod("listOfMapsOfDateToString", List.class);
-        runStepDef(listOfBeans, listOfDatesWithHeader());
-    }
-
-    @Test
-    public void does_not_transform_to_list_of_map_of_string_to_date() throws Throwable {
-        thrown.expect(CucumberException.class);
-        thrown.expectMessage("Tables can only be transformed to a List<Map<K,V>> when V is String or Object. It was class java.util.Date.");
-
-        Method listOfBeans = StepDefs.class.getMethod("listOfMapsOfStringToDate", List.class);
-        runStepDef(listOfBeans, listOfDatesWithHeader());
-    }
-
-    @Test
-    public void does_not_transform_to_list_of_non_generic_map() throws Throwable {
-        thrown.expect(CucumberException.class);
-        thrown.expectMessage("Tables can only be transformed to List<Map<String,String>> or List<Map<String,Object>>. You have to declare generic types.");
-
-        Method listOfBeans = StepDefs.class.getMethod("listOfMaps", List.class);
-        runStepDef(listOfBeans, listOfDatesWithHeader());
-    }
-
     private StepDefs runStepDef(Method method, List<DataTableRow> rows) throws Throwable {
         StepDefs stepDefs = new StepDefs();
         StepDefinition stepDefinition = new StubStepDefinition(stepDefs, method, "some pattern");
@@ -286,24 +254,14 @@ public class FromDataTableTest {
         public String last;
     }
 
-    public static class NameConverter implements Converter {
+    public static class NameConverter extends Transformer<Name> {
         @Override
-        public void marshal(Object source, HierarchicalStreamWriter writer, MarshallingContext context) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
+        public Name transform(String value) {
             Name name = new Name();
-            String[] firstLast = reader.getValue().split(" ");
+            String[] firstLast = value.split(" ");
             name.first = firstLast[0];
             name.last = firstLast[1];
             return name;
-        }
-
-        @Override
-        public boolean canConvert(Class type) {
-            return type.equals(Name.class);
         }
     }
 }

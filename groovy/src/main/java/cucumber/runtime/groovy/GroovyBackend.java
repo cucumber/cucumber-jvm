@@ -14,7 +14,9 @@ import groovy.lang.Binding;
 import groovy.lang.Closure;
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
+import org.codehaus.groovy.control.CompilerConfiguration;
 import org.codehaus.groovy.runtime.DefaultGroovyMethods;
+import org.codehaus.groovy.runtime.InvokerInvocationException;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -38,8 +40,15 @@ public class GroovyBackend implements Backend {
     private Object groovyWorld;
     private Glue glue;
 
+    private static GroovyShell createShell() {
+        CompilerConfiguration compilerConfig = new CompilerConfiguration();
+        // Probably not needed:
+        // compilerConfig.addCompilationCustomizers(new ASTTransformationCustomizer(ThreadInterrupt.class));
+        return new GroovyShell(Thread.currentThread().getContextClassLoader(), new Binding(), compilerConfig);
+    }
+
     public GroovyBackend(ResourceLoader resourceLoader) {
-        this(new GroovyShell(), resourceLoader);
+        this(createShell(), resourceLoader);
     }
 
     public GroovyBackend(GroovyShell shell, ResourceLoader resourceLoader) {
@@ -112,25 +121,29 @@ public class GroovyBackend implements Backend {
         return snippetGenerator.getSnippet(step);
     }
 
-    public void addStepDefinition(Pattern regexp, Closure body) {
-        glue.addStepDefinition(new GroovyStepDefinition(regexp, body, currentLocation(), instance));
+    public void addStepDefinition(Pattern regexp, int timeoutMillis, Closure body) {
+        glue.addStepDefinition(new GroovyStepDefinition(regexp, timeoutMillis, body, currentLocation(), instance));
     }
 
     public void registerWorld(Closure closure) {
         worldClosure = closure;
     }
 
-    void addBeforeHook(TagExpression tagExpression, Closure body) {
-        glue.addBeforeHook(new GroovyHookDefinition(body, tagExpression, currentLocation(), instance));
+    public void addBeforeHook(TagExpression tagExpression, int timeoutMillis, Closure body) {
+        glue.addBeforeHook(new GroovyHookDefinition(tagExpression, timeoutMillis, body, currentLocation(), instance));
     }
 
-    public void addAfterHook(TagExpression tagExpression, Closure body) {
-        glue.addAfterHook(new GroovyHookDefinition(body, tagExpression, currentLocation(), instance));
+    public void addAfterHook(TagExpression tagExpression, int timeoutMillis, Closure body) {
+        glue.addAfterHook(new GroovyHookDefinition(tagExpression, timeoutMillis, body, currentLocation(), instance));
     }
 
-    public void invoke(Closure body, Object[] args) {
+    public void invoke(Closure body, Object[] args) throws Throwable {
         body.setDelegate(getGroovyWorld());
-        body.call(args);
+        try {
+            body.call(args);
+        } catch(InvokerInvocationException e) {
+            throw e.getCause();
+        }
     }
 
     private Object getGroovyWorld() {

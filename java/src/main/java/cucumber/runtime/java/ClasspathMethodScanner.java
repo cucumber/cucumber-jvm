@@ -49,9 +49,9 @@ class ClasspathMethodScanner {
     /**
      * Registers step definitions and hooks.
      *
-     * @param javaBackend   the backend where stepdefs and hooks will be registered
-     * @param method        a candidate for being a stepdef or hook
-     * @param glueCodeClass
+     * @param javaBackend   the backend where stepdefs and hooks will be registered.
+     * @param method        a candidate for being a stepdef or hook.
+     * @param glueCodeClass the class where the method is declared.
      */
     public void scan(JavaBackend javaBackend, Method method, Class<?> glueCodeClass) {
         for (Class<? extends Annotation> cucumberAnnotationClass : cucumberAnnotationClasses) {

@@ -34,7 +34,7 @@ public class DataTable {
         return create(raw, locale, null, columnNames);
     }
 
-    public static DataTable create(List<?> raw, Locale locale, String dateFormat, String... columnNames) {
+    private static DataTable create(List<?> raw, Locale locale, String dateFormat, String... columnNames) {
         TableConverter tableConverter = new TableConverter(new LocalizedXStreams(Thread.currentThread().getContextClassLoader()).get(locale), dateFormat);
         return tableConverter.toTable(raw, columnNames);
     }
@@ -66,6 +66,10 @@ public class DataTable {
         return this.raw;
     }
 
+    public <T> T convert(Type type) {
+        return tableConverter.convert(type, this);
+    }
+
     /**
      * Converts the table to a List of Map. The top row is used as keys in the maps,
      * and the rows below are used as values.
@@ -84,12 +88,13 @@ public class DataTable {
      * Backends that support generic types can declare a parameter as a List of a type, and Cucumber will
      * do the conversion automatically.
      *
-     * @param listType the type of each object
+     * @param type the type of the result (should be a {@link List} generic type)
      * @param <T>      the type of each object
      * @return a list of objects
      */
-    public <T> List<T> asList(Type listType) {
-        return tableConverter.toList(listType, this);
+    public <T> List<T> asList(Type type) {
+        List<T> result = tableConverter.toList(type, this);
+        return result;
     }
 
     List<String> topCells() {
@@ -97,20 +102,7 @@ public class DataTable {
     }
 
     List<List<String>> cells(int firstRow) {
-        List<List<String>> attributeValues = new ArrayList<List<String>>();
-        List<DataTableRow> valueRows = gherkinRows.subList(firstRow, gherkinRows.size());
-        for (Row valueRow : valueRows) {
-            attributeValues.add(toStrings(valueRow));
-        }
-        return attributeValues;
-    }
-
-    private List<String> toStrings(Row row) {
-        List<String> strings = new ArrayList<String>();
-        for (String string : row.getCells()) {
-            strings.add(string);
-        }
-        return strings;
+        return raw.subList(firstRow, raw.size());
     }
 
     /**
@@ -125,8 +117,8 @@ public class DataTable {
     }
 
     /**
-     * Diffs this table with {@code other}, which can be a {@code List<List<String>>} or a
-     * {@code List<YourType>}.
+     * Diffs this table with {@code other}, which can be a {@code List&lt;List&lt;String&gt;&gt;} or a
+     * {@code List&lt;YourType&gt;}.
      *
      * @param other the other table to diff with.
      * @throws TableDiffException if the tables are different.
@@ -143,7 +135,7 @@ public class DataTable {
      * @param other the other table to diff with.
      * @throws TableDiffException if the tables are different.
      */
-    public void diff(DataTable other) throws TableDiffException {
+    void diff(DataTable other) throws TableDiffException {
         new TableDiffer(this, other).calculateDiffs();
     }
 
@@ -175,6 +167,16 @@ public class DataTable {
 
     TableConverter getTableConverter() {
         return tableConverter;
+    }
+
+    public List<String> flatten() {
+        List<String> result = new ArrayList<String>();
+        for (List<String> rows : raw()) {
+            for (String cell : rows) {
+                result.add(cell);
+            }
+        }
+        return result;
     }
 
     class DiffableRow {

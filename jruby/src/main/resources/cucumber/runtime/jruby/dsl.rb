@@ -43,7 +43,7 @@ module Cucumber
           end
         end
 
-        def arg_count
+        def param_count
           @proc.arity
         end
 

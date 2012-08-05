@@ -1,6 +1,7 @@
 package cucumber
 package runtime
 
+import _root_.java.lang.reflect.Type
 import _root_.gherkin.formatter.model.Step
 import _root_.gherkin.I18n
 
@@ -14,12 +15,14 @@ class ScalaStepDefinition(frame:StackTraceElement, name:String, pattern:String, 
 
   def matchedArguments(step: Step) = argumentMatcher.argumentsFrom(step.getName)
 
-  def getTypeForTableList(argIndex: Int) = null
-
   def getLocation(detail: Boolean) = frame.getFileName + ":" + frame.getLineNumber
 
-  // capture type transformations at compile time instead
-  def getParameterTypes = Array.fill(parameterTypes.size)(new ParameterType(classOf[String], null)).toList
+  def getParameterCount() = parameterTypes.size()
+
+  // TODO: get rid of Transform.scala and leave transformation to be done by core. The correct implementation is commented out
+  // below until this is fixed.
+  // def getParameterType(index: Int, javaType: Type) = new ParameterType(parameterTypes.get(index), null)
+  def getParameterType(index: Int, javaType: Type) = new ParameterType(classOf[String], null, null)
 
   def execute(i18n: I18n, args: Array[AnyRef]) { f(args.toList) }
 

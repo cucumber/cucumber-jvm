@@ -28,9 +28,9 @@ import java.util.Map;
  * by adding {@link UsageStatisticStrategy} to the usageFormatter
  */
 public class UsageFormatter implements Formatter, Reporter {
-    public static final BigDecimal NANOS_PER_SECOND = BigDecimal.valueOf(1000000000);
+    private static final BigDecimal NANOS_PER_SECOND = BigDecimal.valueOf(1000000000);
     final Map<String, List<StepContainer>> usageMap = new HashMap<String, List<StepContainer>>();
-    final Map<String, UsageStatisticStrategy> statisticStrategies = new HashMap<String, UsageStatisticStrategy>();
+    private final Map<String, UsageStatisticStrategy> statisticStrategies = new HashMap<String, UsageStatisticStrategy>();
 
     private final NiceAppendable out;
 

@@ -1,7 +1,7 @@
 package cucumber.runtime.converters;
 
-import com.thoughtworks.xstream.converters.ConverterLookup;
-import com.thoughtworks.xstream.converters.SingleValueConverter;
+import cucumber.runtime.xstream.converters.ConverterLookup;
+import cucumber.runtime.xstream.converters.SingleValueConverter;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -25,5 +25,22 @@ public class ConvertersTest {
 
         ConverterLookup no = transformers.get(new Locale("no")).getConverterLookup();
         assertEquals(3000.15f, (Float) ((SingleValueConverter) no.lookupConverterForType(Float.TYPE)).fromString("3000,15"), 0.000001);
+    }
+
+    @Test
+    public void shouldTransformToTypeWithStringCtor() {
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        LocalizedXStreams transformers = new LocalizedXStreams(classLoader);
+        ConverterLookup en = transformers.get(Locale.US).getConverterLookup();
+        SingleValueConverter c = (SingleValueConverter) en.lookupConverterForType(MyClass.class);
+        assertEquals("X", ((MyClass)c.fromString("X")).s);
+    }
+
+    public static class MyClass {
+        public final String s;
+
+        public MyClass(String s) {
+            this.s = s;
+        }
     }
 }

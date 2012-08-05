@@ -8,7 +8,7 @@ import java.util.Locale;
 public abstract class ConverterWithNumberFormat<T extends Number> extends ConverterWithFormat<T> {
     private final List<NumberFormat> formats = new ArrayList<NumberFormat>();
 
-    public ConverterWithNumberFormat(Locale locale, Class[] convertibleTypes) {
+    ConverterWithNumberFormat(Locale locale, Class[] convertibleTypes) {
         super(convertibleTypes);
         formats.add(NumberFormat.getNumberInstance(locale));
     }

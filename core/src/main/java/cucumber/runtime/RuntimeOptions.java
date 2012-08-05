@@ -29,13 +29,13 @@ public class RuntimeOptions {
     public static final String VERSION = ResourceBundle.getBundle("cucumber.version").getString("cucumber-jvm.version");
     public static final String USAGE = FixJava.readResource("/cucumber/runtime/USAGE.txt");
 
-    public List<String> glue = new ArrayList<String>();
+    public final List<String> glue = new ArrayList<String>();
+    public final List<Object> filters = new ArrayList<Object>();
+    public final List<Formatter> formatters = new ArrayList<Formatter>();
+    public final List<String> featurePaths = new ArrayList<String>();
     public File dotCucumber;
     public boolean dryRun;
     public boolean strict = false;
-    public List<Object> filters = new ArrayList<Object>();
-    public List<Formatter> formatters = new ArrayList<Formatter>();
-    public List<String> featurePaths = new ArrayList<String>();
     private boolean monochrome = false;
 
 	public RuntimeOptions(Properties properties, String... argv) {
@@ -113,7 +113,7 @@ public class RuntimeOptions {
             @Override
             public Object invoke(Object target, Method method, Object[] args) throws Throwable {
                 for (Formatter formatter : formatters) {
-                    Utils.invoke(formatter, method, args);
+                    Utils.invoke(formatter, method, 0, args);
                 }
                 return null;
             }
@@ -126,7 +126,7 @@ public class RuntimeOptions {
             public Object invoke(Object target, Method method, Object[] args) throws Throwable {
                 for (Formatter formatter : formatters) {
                     if (formatter instanceof Reporter) {
-                        Utils.invoke(formatter, method, args);
+                        Utils.invoke(formatter, method, 0, args);
                     }
                 }
                 return null;

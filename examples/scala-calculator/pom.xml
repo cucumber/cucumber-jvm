@@ -5,7 +5,7 @@
         <groupId>info.cukes</groupId>
         <artifactId>cucumber-jvm</artifactId>
         <relativePath>../../pom.xml</relativePath>
-        <version>1.0.10-SNAPSHOT</version>
+        <version>1.0.12-SNAPSHOT</version>
     </parent>
 
     <artifactId>scala-calculator</artifactId>
@@ -13,6 +13,11 @@
     <name>Examples: Scala Calculator</name>
 
     <dependencies>
+        <dependency>
+            <groupId>info.cukes</groupId>
+            <artifactId>cucumber-deps</artifactId>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>info.cukes</groupId>
             <artifactId>cucumber-scala</artifactId>
