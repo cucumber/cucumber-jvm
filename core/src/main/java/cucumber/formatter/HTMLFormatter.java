@@ -143,7 +143,7 @@ public class HTMLFormatter implements Formatter, Reporter {
     }
 
     @Override
-    public void embedding(String mimeType, InputStream data) {
+    public void embedding(String mimeType, byte[] data) {
         // Creating a file instead of using data urls to not clutter the js file
         String extension = MIME_TYPES_EXTENSIONS.get(mimeType);
         if (extension != null) {
@@ -165,6 +165,15 @@ public class HTMLFormatter implements Formatter, Reporter {
         }
     }
 
+    private void writeBytes(byte[] bytes, OutputStream out) {
+        try {
+            out.write(bytes);
+            out.close();
+        } catch (IOException e) {
+            throw new CucumberException("Unable to write to report file item: ", e);
+        }
+    }
+    
     private void writeBytes(InputStream in, OutputStream out) {
         byte[] buffer = new byte[16 * 1024];
         try {
