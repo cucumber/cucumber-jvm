@@ -1,6 +1,7 @@
 package cucumber.runtime;
 
 import cucumber.formatter.ColorAware;
+import cucumber.formatter.ContextAware;
 import cucumber.formatter.FormatterFactory;
 import cucumber.formatter.ProgressFormatter;
 import cucumber.io.ResourceLoader;
@@ -14,7 +15,9 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.regex.Pattern;
@@ -35,7 +38,7 @@ public class RuntimeOptions {
     public boolean strict = false;
     private boolean monochrome = false;
 
-    public RuntimeOptions(Properties properties, String... argv) {
+	public RuntimeOptions(Properties properties, String... argv) {
         String[] args;
         if (properties.containsKey("cucumber.options")) {
             args = properties.getProperty("cucumber.options").split(" ");
@@ -51,6 +54,13 @@ public class RuntimeOptions {
             if (formatter instanceof ColorAware) {
                 ColorAware colorAware = (ColorAware) formatter;
                 colorAware.setMonochrome(monochrome);
+            }
+            if (formatter instanceof ContextAware) {
+                ContextAware contextAware = (ContextAware) formatter;
+                Map<String, Object> context = new HashMap<String, Object>();
+                context.put(this.getClass().getSimpleName(), this);
+           	 	context.put("args", args);
+                contextAware.setContext(context);
             }
         }
     }

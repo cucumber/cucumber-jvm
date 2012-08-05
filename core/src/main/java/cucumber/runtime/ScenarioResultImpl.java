@@ -3,6 +3,8 @@ package cucumber.runtime;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Result;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,9 +38,30 @@ class ScenarioResultImpl implements ScenarioResult {
         return "failed".equals(getStatus());
     }
 
+    private byte[] getBytes(InputStream data) throws IOException {
+    	ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+    	try {
+	    	final byte[] buffer = new byte[16*1024];
+	    	int available = 0;
+	    	while ((available = data.read(buffer)) >= 0)
+	    	{
+	    	    outputStream.write(buffer, 0, available);
+	    	}
+	    	outputStream.close();
+	    	return outputStream.toByteArray();
+    	} finally {
+    		outputStream.close();
+    	}
+    }
+    
     @Override
     public void embed(InputStream data, String mimeType) {
-        reporter.embedding(mimeType, data);
+    	try {
+	        byte[] bytes = getBytes(data);
+	    	reporter.embedding(mimeType, bytes);
+    	} catch (IOException ioe) {
+    		ioe.printStackTrace();//not much else to do here.
+    	}
     }
 
     @Override

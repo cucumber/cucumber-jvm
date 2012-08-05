@@ -45,7 +45,7 @@ public class ScenarioResultTest {
     public void embeds_data() {
         ByteArrayInputStream data = new ByteArrayInputStream(new byte[]{1, 2, 3});
         r.embed(data, "bytes/foo");
-        verify(reporter).embedding("bytes/foo", data);
+        verify(reporter).embedding("bytes/foo", (new byte[]{1, 2, 3}));
     }
 
     @Test

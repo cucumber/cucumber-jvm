@@ -62,7 +62,7 @@ class JUnitReporter implements Reporter, Formatter {
     }
 
     @Override
-    public void embedding(String mimeType, InputStream data) {
+    public void embedding(String mimeType, byte[] data) {
         reporter.embedding(mimeType, data);
     }
 

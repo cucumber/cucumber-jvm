@@ -73,7 +73,7 @@ public class UsageFormatter implements Formatter, Reporter {
     }
 
     @Override
-    public void embedding(String mimeType, InputStream data) {
+    public void embedding(String mimeType, byte[] data) {
     }
 
     @Override

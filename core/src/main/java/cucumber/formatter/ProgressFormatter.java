@@ -125,7 +125,7 @@ public class ProgressFormatter implements Formatter, Reporter, ColorAware {
     }
 
     @Override
-    public void embedding(String mimeType, InputStream data) {
+    public void embedding(String mimeType, byte[] data) {
     }
 
     @Override
