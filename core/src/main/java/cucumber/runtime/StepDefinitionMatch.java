@@ -89,7 +89,7 @@ public class StepDefinitionMatch extends Match {
         ParameterType parameterType = stepDefinition.getParameterType(n, argumentType);
         if (parameterType == null) {
             // Some backends return null because they don't know
-            parameterType = new ParameterType(argumentType, null, null);
+            parameterType = new ParameterType(argumentType, null, null, null);
         }
         return parameterType;
     }
