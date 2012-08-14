@@ -47,6 +47,7 @@ public class GroovyHookDefinition implements HookDefinition {
 
     @Override
     public int getOrder() {
-        return 0;
+        return location.getFileName() == "env.groovy" ? -1 : 0;
     }
 }
+
