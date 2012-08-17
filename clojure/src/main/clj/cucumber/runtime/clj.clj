@@ -150,7 +150,7 @@
    table, for example: reading | \"1\" | 1 | we should intepret 1 as an int
    and \"1\" as a string. This is used by kv-table->map and table->rows."
   [string]
-  (if (re-matches #"[0-9]+\.?[0-9]+" string)
+  (if (re-matches #"^:.*|\d+(\.\d+)?" string)
     (read-string string)
     (str/replace string #"\"" "")))
 
