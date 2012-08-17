@@ -137,3 +137,52 @@
 (defmacro After [binding-form & body]
   `(add-hook-definition :after [] (fn ~binding-form ~@body)))
 
+(defn ^:private update-keys [f m]
+  (reduce-kv #(assoc %1 (f %2) %3) {} m))
+
+(defn ^:private update-values [f m]
+  (reduce-kv #(assoc %1 %2 (f %3)) {} m))
+
+(defn read-cuke-str
+  "Using the clojure reader is often a good way to interpret literal values
+   in feature files. This function makes some cucumber-specific adjustments
+   to basic reader behavior. This is particulary appropriate when reading a
+   table, for example: reading | \"1\" | 1 | we should intepret 1 as an int
+   and \"1\" as a string. This is used by kv-table->map and table->rows."
+  [string]
+  (if (re-matches #"[0-9]+\.?[0-9]+" string)
+    (read-string string)
+    (str/replace string #"\"" "")))
+
+(defn kv-table->map
+  "Reads a table of the form  | key | value |
+   For example, given:
+     | from      | 1293884100000 |
+     | to        | 1293884100000 |
+   It evaluates to the clojure literal:
+     {:from 1293884100000, :to 1293884100000}"
+  [data]
+  (->> (into {} (map vec (.raw data)))
+       (update-values read-cuke-str)
+       (update-keys keyword)))
+
+(defn table->rows
+  "Reads a cucumber table of the form
+     | key-1 | key-2 | ... | key-n |
+     | val-1 | val-2 | ... | val-n |
+   For example, given:
+     | id | name    | created-at    |
+     | 55 | \"foo\" | 1293884100000 |
+     | 56 | \"bar\" | 1293884100000 |
+   It evaluates to the clojure literal:
+     [{:id 55, :name \"foo\", :created-at 1293884100000}
+      {:id 56, :name \"bar\", :created-at 1293884100000}]"
+  [data]
+  (let [data (map seq (.raw data))
+        header-keys (map keyword (first data))
+        remove-blank (fn [m,k,v] (if (seq (str v)) (assoc m k v) m))
+        row->hash (fn [row] (apply hash-map
+                                   (interleave header-keys
+                                               (map read-cuke-str row))))]
+    (map (fn [row-vals] (reduce-kv remove-blank {} (row->hash row-vals)))
+         (next data))))
