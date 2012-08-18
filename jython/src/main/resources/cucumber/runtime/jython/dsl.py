@@ -40,3 +40,26 @@ And = But = Given = Then = When = I18NKeywordTemplate
 
 class World:
   """The World"""
+
+class HookDefinition:
+
+  def __init__(self, tags, func):
+      self.tags = tags
+      self.func = func
+
+  def execute(self, *args):
+    self.func.__call__(*args)
+
+class Before():
+  def __init__(self, *tags):
+    self.tags = tags
+
+  def __call__(self, func):
+    backend.addBeforeHook(HookDefinition(self.tags, func))
+
+class After():
+  def __init__(self, *tags):
+    self.tags = tags
+
+  def __call__(self, func):
+    backend.addAfterHook(HookDefinition(self.tags, func))

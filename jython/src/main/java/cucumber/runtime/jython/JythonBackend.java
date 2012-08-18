@@ -2,10 +2,7 @@ package cucumber.runtime.jython;
 
 import cucumber.io.Resource;
 import cucumber.io.ResourceLoader;
-import cucumber.runtime.Backend;
-import cucumber.runtime.CucumberException;
-import cucumber.runtime.Glue;
-import cucumber.runtime.UnreportedStepExecutor;
+import cucumber.runtime.*;
 import cucumber.runtime.snippets.SnippetGenerator;
 import gherkin.formatter.model.Step;
 import org.python.core.PyException;
@@ -78,7 +75,22 @@ public class JythonBackend implements Backend {
         glue.addStepDefinition(new JythonStepDefinition(this, stepdef, arity));
     }
 
+    public void addBeforeHook(PyInstance hookDefinition) {
+        glue.addBeforeHook(new JythonHookDefinition(this, hookDefinition));
+    }
+
+    public void addAfterHook(PyInstance hookDefinition) {
+        glue.addAfterHook(new JythonHookDefinition(this, hookDefinition));
+    }
+
+    public void executeHook(PyInstance hookDefinition, Object[] scenarioResults) {
+        PyObject[] pyArgs = new PyObject[1];
+        pyArgs[0] = pyWorld;
+        hookDefinition.invoke("execute", pyArgs);
+    }
+
     public void execute(PyInstance stepdef, Object[] args) throws Throwable {
+
         PyObject[] pyArgs = new PyObject[args.length + 1];
         pyArgs[0] = pyWorld;
         for (int i = 0; i < args.length; i++) {
