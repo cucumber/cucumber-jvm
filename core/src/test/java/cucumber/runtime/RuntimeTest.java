@@ -6,6 +6,7 @@ import cucumber.runtime.model.CucumberFeature;
 import gherkin.I18n;
 import gherkin.formatter.JSONPrettyFormatter;
 import gherkin.formatter.model.Step;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -22,6 +23,7 @@ public class RuntimeTest {
 
     private static final I18n ENGLISH = new I18n("en");
 
+    @Ignore
     @Test
     public void runs_feature_with_json_formatter() throws Exception {
         CucumberFeature feature = feature("test.feature", "" +

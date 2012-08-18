@@ -47,7 +47,7 @@ public class JythonStepDefinition implements StepDefinition {
 
     @Override
     public ParameterType getParameterType(int n, Type argumentType) {
-        return new ParameterType(argumentType, null, null);
+        return new ParameterType(argumentType, null, null, null);
     }
 
     @Override

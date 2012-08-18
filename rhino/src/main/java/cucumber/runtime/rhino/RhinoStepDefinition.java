@@ -51,7 +51,7 @@ public class RhinoStepDefinition implements StepDefinition {
 
     @Override
     public ParameterType getParameterType(int n, Type argumentType) {
-        return new ParameterType(argumentType, null, null);
+        return new ParameterType(argumentType, null, null, null);
     }
 
     public void execute(I18n i18n, Object[] args) throws Throwable {

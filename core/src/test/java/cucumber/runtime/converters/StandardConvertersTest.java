@@ -5,12 +5,12 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 public class StandardConvertersTest {
 
@@ -135,6 +135,12 @@ public class StandardConvertersTest {
                 fail("'" + expected.getMessage() + "' didn't start with '" + expectedMessage + "'");
             }
         }
+    }
+
+    @Test
+    public void shouldTransformList() {
+        ListConverter listConverter = new ListConverter(",", new EnumConverter(Locale.US, Color.class));
+        assertEquals(Arrays.asList(Color.GREEN, Color.RED, Color.GREEN), listConverter.fromString("green,red,green"));
     }
 
     public static enum Color {
