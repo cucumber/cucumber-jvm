@@ -1,3 +1,7 @@
+## [master](https://github.com/cucumber/cucumber-jvm/compare/v1.0.11...master)
+
+* [Clojure] Add utilities for reading tables ([#376](https://github.com/cucumber/cucumber-jvm/pull/376) rplevy-draker)
+
 ## [1.0.11](https://github.com/cucumber/cucumber-jvm/compare/v1.0.10...v1.0.11)
 
 * [Core] Added a new `@Transform` annotation and an abstract `Transformer` class giving full control over argument transforms.
