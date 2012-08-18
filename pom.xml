@@ -16,7 +16,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <outputDirectory>${project.build.directory}</outputDirectory>
-        <gherkin.version>2.11.1</gherkin.version>
+        <gherkin.version>2.11.2</gherkin.version>
         <groovy.version>2.0.0</groovy.version>
     </properties>
     <licenses>
@@ -41,9 +41,8 @@
         <dependencies>
             <dependency>
                 <groupId>info.cukes</groupId>
-                <artifactId>cucumber-deps</artifactId>
-                <scope>provided</scope>
-                <version>1.0.0</version>
+                <artifactId>cucumber-jvm-deps</artifactId>
+                <version>1.0.3</version>
             </dependency>
             <dependency>
                 <groupId>info.cukes</groupId>
@@ -204,7 +203,7 @@
 
     <repositories>
         <repository>
-            <id>cucumber-deps</id>
+            <id>cucumber-jvm-deps</id>
             <url>file://${basedir}/../deps/repository</url>
         </repository>
         <repository>

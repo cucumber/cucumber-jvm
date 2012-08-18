@@ -3,7 +3,6 @@ package cucumber.runtime;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Result;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +36,7 @@ class ScenarioResultImpl implements ScenarioResult {
     }
 
     @Override
-    public void embed(InputStream data, String mimeType) {
+    public void embed(byte[] data, String mimeType) {
         reporter.embedding(mimeType, data);
     }
 

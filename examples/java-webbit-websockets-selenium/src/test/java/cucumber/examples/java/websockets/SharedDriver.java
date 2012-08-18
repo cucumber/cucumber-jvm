@@ -9,8 +9,6 @@ import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
 
-import java.io.ByteArrayInputStream;
-
 /**
  * Example of a WebDriver implementation that has an underlying instance that is used for all scenarios and closed
  * when the JVM exits. This saves time. To prevent browser state from leaking between scenarios, cookies are deleted before
@@ -46,7 +44,7 @@ public class SharedDriver extends EventFiringWebDriver {
     public void embedScreenshot(ScenarioResult result) {
         try {
             byte[] screenshot = this.getScreenshotAs(OutputType.BYTES);
-            result.embed(new ByteArrayInputStream(screenshot), "image/png");
+            result.embed(screenshot, "image/png");
         } catch (WebDriverException somePlatformsDontSupportScreenshots) {
             System.err.println(somePlatformsDontSupportScreenshots.getMessage());
         }

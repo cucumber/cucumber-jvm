@@ -1,6 +1,6 @@
 package cucumber.api;
 
-import cucumber.runtime.xstream.converters.SingleValueConverter;
+import cucumber.deps.com.thoughtworks.xstream.converters.SingleValueConverter;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -47,7 +47,7 @@ import java.lang.reflect.Type;
  * }</pre>
  * <p>
  * An alternative to annotating parameters with {@link Transform} is to annotate your class with
- * {@link cucumber.runtime.xstream.annotations.XStreamConverter}:
+ * {@link cucumber.deps.com.thoughtworks.xstream.annotations.XStreamConverter}:
  * </p>
  * <pre>
  *     &#064;XStreamConverter(HumanTimeConverter.class)

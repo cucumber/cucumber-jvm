@@ -2,10 +2,10 @@ package cucumber.runtime;
 
 import cucumber.DateFormat;
 import cucumber.api.Transform;
+import cucumber.deps.com.thoughtworks.xstream.annotations.XStreamConverter;
+import cucumber.deps.com.thoughtworks.xstream.converters.SingleValueConverter;
 import cucumber.runtime.converters.EnumConverter;
 import cucumber.runtime.converters.LocalizedXStreams;
-import cucumber.runtime.xstream.annotations.XStreamConverter;
-import cucumber.runtime.xstream.converters.SingleValueConverter;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;

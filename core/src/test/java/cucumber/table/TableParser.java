@@ -3,9 +3,9 @@ package cucumber.table;
 import cucumber.runtime.converters.LocalizedXStreams;
 import gherkin.formatter.model.Comment;
 import gherkin.formatter.model.DataTableRow;
+import gherkin.lexer.En;
 import gherkin.lexer.Lexer;
 import gherkin.lexer.Listener;
-import gherkin.lexer.i18n.EN;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,7 +17,7 @@ public class TableParser {
 
     public static DataTable parse(String source, String dateFormat) {
         final List<DataTableRow> rows = new ArrayList<DataTableRow>();
-        Lexer l = new EN(new Listener() {
+        Lexer l = new En(new Listener() {
             @Override
             public void comment(String comment, Integer line) {
                 throw new UnsupportedOperationException();

@@ -15,8 +15,17 @@
     <dependencies>
         <dependency>
             <groupId>info.cukes</groupId>
-            <artifactId>cucumber-deps</artifactId>
-            <scope>provided</scope>
+            <artifactId>cucumber-jvm-deps</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.thoughtworks.xstream</groupId>
+                    <artifactId>xstream</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.googlecode.java-diff-utils</groupId>
+                    <artifactId>diffutils</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>info.cukes</groupId>
@@ -79,27 +88,6 @@
                         </manifest>
                     </archive>
                 </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>jarjar-maven-plugin</artifactId>
-                <version>1.5</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>jarjar</goal>
-                        </goals>
-                        <configuration>
-                            <includes>
-                                <include>info.cukes:cucumber-deps</include>
-                            </includes>
-                            <rules>
-                            </rules>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>

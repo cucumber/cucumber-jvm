@@ -1,6 +1,6 @@
 package cucumber.api;
 
-import cucumber.runtime.xstream.converters.SingleValueConverter;
+import cucumber.deps.com.thoughtworks.xstream.converters.SingleValueConverter;
 
 import java.lang.annotation.ElementType;
 

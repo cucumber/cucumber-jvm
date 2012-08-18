@@ -4,8 +4,6 @@ import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Result;
 import org.junit.Test;
 
-import java.io.ByteArrayInputStream;
-
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -43,7 +41,7 @@ public class ScenarioResultTest {
 
     @Test
     public void embeds_data() {
-        ByteArrayInputStream data = new ByteArrayInputStream(new byte[]{1, 2, 3});
+        byte[] data = new byte[]{1, 2, 3};
         r.embed(data, "bytes/foo");
         verify(reporter).embedding("bytes/foo", data);
     }

@@ -1,7 +1,5 @@
 package cucumber.runtime;
 
-import java.io.InputStream;
-
 /**
  * After Hooks that declare a parameter of this type will receive an instance of this class.
  * This allows an After hook to inspect whether or not a Scenario failed.
@@ -26,7 +24,7 @@ public interface ScenarioResult {
      * @see cucumber.formatter.HTMLFormatter
      * @see gherkin.formatter.JSONFormatter
      */
-    void embed(InputStream data, String mimeType);
+    void embed(byte[] data, String mimeType);
 
     /**
      * Outputs some text into the report.

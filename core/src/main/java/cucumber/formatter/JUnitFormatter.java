@@ -23,7 +23,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.File;
-import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.DecimalFormat;
@@ -104,15 +103,15 @@ public class JUnitFormatter implements Formatter, Reporter {
 
     @Override
     public void before(Match match, Result result) {
-        handleHook(match, result);
+        handleHook(result);
     }
 
     @Override
     public void after(Match match, Result result) {
-        handleHook(match, result);
+        handleHook(result);
     }
 
-    private void handleHook(Match match, Result result) {
+    private void handleHook(Result result) {
         if (result.getStatus().equals(Result.FAILED)) {
             testCase.results.add(result);
         }
@@ -141,7 +140,7 @@ public class JUnitFormatter implements Formatter, Reporter {
     }
 
     @Override
-    public void embedding(String mimeType, InputStream data) {
+    public void embedding(String mimeType, byte[] data) {
     }
 
     @Override

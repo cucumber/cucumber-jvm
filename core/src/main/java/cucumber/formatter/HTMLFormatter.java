@@ -143,12 +143,12 @@ public class HTMLFormatter implements Formatter, Reporter {
     }
 
     @Override
-    public void embedding(String mimeType, InputStream data) {
+    public void embedding(String mimeType, byte[] data) {
         // Creating a file instead of using data urls to not clutter the js file
         String extension = MIME_TYPES_EXTENSIONS.get(mimeType);
         if (extension != null) {
             StringBuilder fileName = new StringBuilder("embedded").append(embeddedIndex++).append(".").append(extension);
-            writeBytes(data, reportFileOutputStream(fileName.toString()));
+            writeBytesAndClose(data, reportFileOutputStream(fileName.toString()));
             writeToJsReport("embedding", new StringBuilder("'").append(mimeType).append("','").append(fileName).append("'").toString());
         }
     }
@@ -161,11 +161,11 @@ public class HTMLFormatter implements Formatter, Reporter {
     private void copyReportFiles() {
         for (String textAsset : TEXT_ASSETS) {
             InputStream textAssetStream = getClass().getResourceAsStream(textAsset);
-            writeBytes(textAssetStream, reportFileOutputStream(textAsset));
+            writeStreamAndClose(textAssetStream, reportFileOutputStream(textAsset));
         }
     }
 
-    private void writeBytes(InputStream in, OutputStream out) {
+    private void writeStreamAndClose(InputStream in, OutputStream out) {
         byte[] buffer = new byte[16 * 1024];
         try {
             int len = in.read(buffer);
@@ -174,6 +174,14 @@ public class HTMLFormatter implements Formatter, Reporter {
                 len = in.read(buffer);
             }
             out.close();
+        } catch (IOException e) {
+            throw new CucumberException("Unable to write to report file item: ", e);
+        }
+    }
+
+    private void writeBytesAndClose(byte[] buf, OutputStream out) {
+        try {
+            out.write(buf);
         } catch (IOException e) {
             throw new CucumberException("Unable to write to report file item: ", e);
         }

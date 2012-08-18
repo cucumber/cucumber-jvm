@@ -1,7 +1,7 @@
 package cucumber.runtime.converters;
 
-import cucumber.runtime.xstream.converters.ConverterLookup;
-import cucumber.runtime.xstream.converters.SingleValueConverter;
+import cucumber.deps.com.thoughtworks.xstream.converters.ConverterLookup;
+import cucumber.deps.com.thoughtworks.xstream.converters.SingleValueConverter;
 import org.junit.Test;
 
 import java.math.BigDecimal;

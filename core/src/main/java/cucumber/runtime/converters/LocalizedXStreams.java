@@ -1,11 +1,13 @@
 package cucumber.runtime.converters;
 
-import cucumber.runtime.xstream.XStream;
-import cucumber.runtime.xstream.converters.Converter;
-import cucumber.runtime.xstream.converters.ConverterLookup;
-import cucumber.runtime.xstream.converters.ConverterRegistry;
-import cucumber.runtime.xstream.converters.SingleValueConverter;
-import cucumber.runtime.xstream.core.DefaultConverterLookup;
+import cucumber.deps.com.thoughtworks.xstream.XStream;
+import cucumber.deps.com.thoughtworks.xstream.converters.ConverterLookup;
+import cucumber.deps.com.thoughtworks.xstream.converters.ConverterRegistry;
+import cucumber.deps.com.thoughtworks.xstream.core.DefaultConverterLookup;
+import cucumber.deps.com.thoughtworks.xstream.converters.Converter;
+import cucumber.deps.com.thoughtworks.xstream.converters.ConverterLookup;
+import cucumber.deps.com.thoughtworks.xstream.converters.ConverterRegistry;
+import cucumber.deps.com.thoughtworks.xstream.converters.SingleValueConverter;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -84,7 +86,7 @@ public class LocalizedXStreams {
         }
 
         public SingleValueConverter getSingleValueConverter(Type type) {
-            if(Object.class.equals(type)) {
+            if (Object.class.equals(type)) {
                 type = String.class;
             }
             if (type instanceof Class) {

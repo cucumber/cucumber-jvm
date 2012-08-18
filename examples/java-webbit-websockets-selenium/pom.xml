@@ -20,7 +20,7 @@
 
         <dependency>
             <groupId>info.cukes</groupId>
-            <artifactId>cucumber-deps</artifactId>
+            <artifactId>cucumber-jvm-deps</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
