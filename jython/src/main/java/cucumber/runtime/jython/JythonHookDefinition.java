@@ -4,9 +4,10 @@ import cucumber.runtime.HookDefinition;
 import cucumber.runtime.ScenarioResult;
 import gherkin.TagExpression;
 import gherkin.formatter.model.Tag;
-import org.python.core.*;
+import org.python.core.PyInstance;
+import org.python.core.PyTuple;
+
 import java.util.Collection;
-import java.util.List;
 
 public class JythonHookDefinition implements HookDefinition {
     private final PyInstance hookDefinition;
@@ -16,7 +17,7 @@ public class JythonHookDefinition implements HookDefinition {
     public JythonHookDefinition(JythonBackend backend, PyInstance hookDefinition) {
         this.backend = backend;
         this.hookDefinition = hookDefinition;
-        PyTuple tags = (PyTuple)hookDefinition.__dict__.__finditem__("tags");
+        PyTuple tags = (PyTuple) hookDefinition.__dict__.__finditem__("tags");
         this.tagExpression = new TagExpression(tags);
     }
 
