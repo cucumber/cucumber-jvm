@@ -1,6 +1,6 @@
 package cucumber.runtime.converters;
 
-import cucumber.runtime.xstream.converters.SingleValueConverter;
+import cucumber.deps.com.thoughtworks.xstream.converters.SingleValueConverter;
 
 import java.util.ArrayList;
 import java.util.List;

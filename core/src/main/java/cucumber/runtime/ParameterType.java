@@ -90,15 +90,15 @@ public class ParameterType {
         try {
             xStream.setDateFormat(dateFormat);
             SingleValueConverter converter;
-            xStream.processAnnotations(getRawType(type));
+            xStream.processAnnotations(getRawType());
 
             if (singleValueConverter != null) {
                 converter = singleValueConverter;
             } else {
-                if (List.class.isAssignableFrom(getRawType(type))) {
+                if (List.class.isAssignableFrom(getRawType())) {
                     converter = getListConverter(type, xStream, locale);
                 } else {
-                    converter = getConverter(getRawType(type), xStream, locale);
+                    converter = getConverter(getRawType(), xStream, locale);
                 }
                 if (converter == null) {
                     throw new CucumberException(String.format(
@@ -108,10 +108,10 @@ public class ParameterType {
                                     "@%s(%sConverter.class)\n" +
                                     "public class %s {}\n",
                             value,
-                            getRawType(type).getName(),
+                            getRawType().getName(),
                             XStreamConverter.class.getName(),
-                            getRawType(type).getSimpleName(),
-                            getRawType(type).getSimpleName()
+                            getRawType().getSimpleName(),
+                            getRawType().getSimpleName()
                     ));
                 }
             }
