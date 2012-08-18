@@ -1,10 +1,13 @@
 package cucumber.runtime;
 
+import cucumber.Delimiter;
 import cucumber.api.Transform;
 import cucumber.api.Transformer;
 import cucumber.runtime.converters.LocalizedXStreams;
 import org.junit.Test;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
 import static org.junit.Assert.assertEquals;
@@ -62,5 +65,33 @@ public class ParameterTypeTest {
     public void converts_int_with_custom_transform() throws NoSuchMethodException {
         ParameterType pt = ParameterType.fromMethod(getClass().getMethod("intWithCustomTransform", Integer.TYPE)).get(0);
         assertEquals(42, pt.convert("hello", X, LOCALE));
+    }
+
+    public void listWithNoDelimiter(List<String> list) {
+    }
+
+    @Test
+    public void converts_list_with_default_delimiter() throws NoSuchMethodException {
+        ParameterType pt = ParameterType.fromMethod(getClass().getMethod("listWithNoDelimiter", List.class)).get(0);
+        assertEquals(Arrays.asList("hello", "world"), pt.convert("hello, world", X, LOCALE));
+        assertEquals(Arrays.asList("hello", "world"), pt.convert("hello,world", X, LOCALE));
+    }
+
+    public void listWithCustomDelimiter(@Delimiter("\\|") List<String> list) {
+    }
+
+    @Test
+    public void converts_list_with_custom_delimiter() throws NoSuchMethodException {
+        ParameterType pt = ParameterType.fromMethod(getClass().getMethod("listWithCustomDelimiter", List.class)).get(0);
+        assertEquals(Arrays.asList("hello", "world"), pt.convert("hello|world", X, LOCALE));
+    }
+
+    public void listWithNoTypeArgument(List list) {
+    }
+
+    @Test
+    public void converts_list_with_no_type_argument() throws NoSuchMethodException {
+        ParameterType pt = ParameterType.fromMethod(getClass().getMethod("listWithNoTypeArgument", List.class)).get(0);
+        assertEquals(Arrays.asList("hello", "world"), pt.convert("hello, world", X, LOCALE));
     }
 }
