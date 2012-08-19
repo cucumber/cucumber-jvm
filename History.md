@@ -1,4 +1,4 @@
-## [master](https://github.com/cucumber/cucumber-jvm/compare/v1.0.11...master)
+## [1.0.12](https://github.com/cucumber/cucumber-jvm/compare/v1.0.11...v1.0.12)
 
 * [Core] No img data in embeddings using both json and html reports ([#339](https://github.com/cucumber/cucumber-jvm/issues/339) Aslak Hellesøy)
 * [Core] JUnit assume failures (`AssumptionViolatedException`) behaves in the same way as pending (`cucumber.runtime.PendingException`) ([#359](https://github.com/cucumber/cucumber-jvm/issues/359) Aslak Hellesøy, Kim Saabye Pedersen)

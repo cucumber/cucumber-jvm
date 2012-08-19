@@ -97,7 +97,7 @@
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-tx</artifactId>
-                <version>3.1.1.RELEASE</version>
+                <version>3.1.2.RELEASE</version>
             </dependency>
             <dependency>
                 <groupId>com.google.inject</groupId>
@@ -107,18 +107,18 @@
             <dependency>
                 <groupId>org.scala-lang</groupId>
                 <artifactId>scala-library</artifactId>
-                <version>2.10.0-M4</version>
+                <version>2.10.0-M6</version>
             </dependency>
             <dependency>
                 <groupId>org.scala-lang</groupId>
                 <artifactId>scala-compiler</artifactId>
-                <version>2.10.0-M4</version>
+                <version>2.10.0-M6</version>
             </dependency>
             <dependency>
                 <groupId>org.clojure</groupId>
                 <artifactId>clojure</artifactId>
                 <!-- Remember to bounce version in examples/clojure_cukes/project.clj as well -->
-                <version>1.5.0-alpha2</version>
+                <version>1.5.0-alpha4</version>
             </dependency>
             <dependency>
                 <groupId>org.mozilla</groupId>
@@ -143,12 +143,12 @@
             <dependency>
                 <groupId>org.python</groupId>
                 <artifactId>jython-standalone</artifactId>
-                <version>2.5.2</version>
+                <version>2.5.3</version>
             </dependency>
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-all</artifactId>
-                <version>1.9.0</version>
+                <version>1.9.5-rc1</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -165,12 +165,12 @@
             <dependency>
                 <groupId>org.seleniumhq.selenium</groupId>
                 <artifactId>selenium-server</artifactId>
-                <version>2.24.1</version>
+                <version>2.25.0</version>
             </dependency>
             <dependency>
                 <groupId>org.webbitserver</groupId>
                 <artifactId>webbit</artifactId>
-                <version>0.4.8</version>
+                <version>0.4.14</version>
             </dependency>
             <dependency>
                 <groupId>org.jruby</groupId>
@@ -180,7 +180,7 @@
             <dependency>
                 <groupId>org.jboss.weld.se</groupId>
                 <artifactId>weld-se</artifactId>
-                <version>2.0.0.Alpha2</version>
+                <version>2.0.0.Alpha3</version>
             </dependency>
             <dependency>
                 <groupId>javax.enterprise</groupId>
