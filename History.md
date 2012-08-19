@@ -1,5 +1,6 @@
 ## [master](https://github.com/cucumber/cucumber-jvm/compare/v1.0.11...master)
 
+* [Core] JUnit assume failures (`AssumptionViolatedException`) behaves in the same way as pending (`cucumber.runtime.PendingException`) ([#359](https://github.com/cucumber/cucumber-jvm/issues/359) Aslak Hellesøy, Kim Saabye Pedersen)
 * [Core] Extend url protocols. This makes it possible to load features and glue from within a container such as Arquilian. ([#360](https://github.com/cucumber/cucumber-jvm/issues/360), [#361](https://github.com/cucumber/cucumber-jvm/pull/361) Logan McGrath)
 * [Jython] Jython Before/After Annotations ([#362](https://github.com/cucumber/cucumber-jvm/pull/362) Stephen Abrams)
 * [Java] Support for delimited lists in step parameters ([#364](https://github.com/cucumber/cucumber-jvm/issues/364), [#371](https://github.com/cucumber/cucumber-jvm/pull/371) Marquis Wang)

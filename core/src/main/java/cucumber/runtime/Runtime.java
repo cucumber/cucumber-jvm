@@ -19,6 +19,7 @@ import gherkin.formatter.model.Tag;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -28,6 +29,15 @@ import java.util.Set;
  * This is the main entry point for running Cucumber features.
  */
 public class Runtime implements UnreportedStepExecutor {
+
+    private static final String[] PENDING_EXCEPTIONS = new String[]{
+            PendingException.class.getName(),
+            "org.junit.internal.AssumptionViolatedException"
+    };
+
+    static {
+        Arrays.sort(PENDING_EXCEPTIONS);
+    }
 
     private static final Object DUMMY_ARG = new Object();
     private static final byte ERRORS = 0x1;
@@ -146,7 +156,7 @@ public class Runtime implements UnreportedStepExecutor {
 
     private boolean hasErrors() {
         for (Throwable error : errors) {
-            if (!(error instanceof PendingException)) {
+            if (!isPending(error)) {
                 return true;
             }
         }
@@ -184,7 +194,8 @@ public class Runtime implements UnreportedStepExecutor {
                 skipNextStep = true;
                 long duration = System.nanoTime() - start;
 
-                Result result = new Result(Result.FAILED, duration, t, DUMMY_ARG);
+                String status = isPending(t) ? "pending" : Result.FAILED;
+                Result result = new Result(status, duration, t, DUMMY_ARG);
                 scenarioResult.add(result);
                 addError(t);
 
@@ -256,7 +267,7 @@ public class Runtime implements UnreportedStepExecutor {
                 match.runStep(i18n);
             } catch (Throwable t) {
                 error = t;
-                status = (t instanceof PendingException) ? "pending" : Result.FAILED;
+                status = isPending(t) ? "pending" : Result.FAILED;
                 addError(t);
                 skipNextStep = true;
             } finally {
@@ -266,6 +277,10 @@ public class Runtime implements UnreportedStepExecutor {
                 reporter.result(result);
             }
         }
+    }
+
+    private static boolean isPending(Throwable t) {
+        return Arrays.binarySearch(PENDING_EXCEPTIONS, t.getClass().getName()) >= 0;
     }
 
     public void writeStepdefsJson() throws IOException {
