@@ -13,11 +13,13 @@ import java.util.Iterator;
 
 class ClasspathIterable implements Iterable<Resource> {
     private final ClassLoader cl;
+    private final ResourceIteratorFactory resourceIteratorFactory;
     private final String path;
     private final String suffix;
 
     public ClasspathIterable(ClassLoader cl, String path, String suffix) {
         this.cl = cl;
+        this.resourceIteratorFactory = new DelegatingResourceIteratorFactory();
         this.path = path;
         this.suffix = suffix;
     }
@@ -29,14 +31,7 @@ class ClasspathIterable implements Iterable<Resource> {
             Enumeration<URL> resources = cl.getResources(path);
             while (resources.hasMoreElements()) {
                 URL url = resources.nextElement();
-                if (url.getProtocol().equals("jar")) {
-                    String jarPath = filePath(url);
-                    iterator.push(new ZipResourceIterator(jarPath, path, suffix));
-                } else {
-                    File file = new File(getPath(url));
-                    File rootDir = new File(file.getAbsolutePath().substring(0, file.getAbsolutePath().length() - path.length()));
-                    iterator.push(new FileResourceIterator(rootDir, file, suffix));
-                }
+                iterator.push(this.resourceIteratorFactory.createIterator(url, path, suffix));
             }
             return iterator;
         } catch (IOException e) {
@@ -54,7 +49,7 @@ class ClasspathIterable implements Iterable<Resource> {
         return suffix == null || name.endsWith(suffix);
     }
 
-    private static String getPath(URL url) {
+    static String getPath(URL url) {
         try {
             return URLDecoder.decode(url.getPath(), "UTF-8");
         } catch (UnsupportedEncodingException e) {
