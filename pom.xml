@@ -203,10 +203,6 @@
 
     <repositories>
         <repository>
-            <id>cucumber-jvm-deps</id>
-            <url>file://${basedir}/../deps/repository</url>
-        </repository>
-        <repository>
             <id>codehaus</id>
             <url>http://repository.codehaus.org</url>
         </repository>
