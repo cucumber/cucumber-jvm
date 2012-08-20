@@ -11,10 +11,10 @@
         <mkdir dir="${jars}"/>
         <get src="${repo}/info/cukes/cucumber-core/${cucumber-jvm.version}/cucumber-core-${cucumber-jvm.version}.jar"
              dest="${jars}/cucumber-core-${cucumber-jvm.version}.jar"/>
-        <get src="${repo}/info/cukes/cucumber-html/${cucumber-html.version}/cucumber-html-${cucumber-html.version}.jar"
-             dest="${jars}/cucumber-html-${cucumber-html.version}.jar"/>
         <get src="${repo}/info/cukes/cucumber-java/${cucumber-jvm.version}/cucumber-java-${cucumber-jvm.version}.jar"
              dest="${jars}/cucumber-java-${cucumber-jvm.version}.jar"/>
+        <get src="${repo}/info/cukes/cucumber-html/${cucumber-html.version}/cucumber-html-${cucumber-html.version}.jar"
+             dest="${jars}/cucumber-html-${cucumber-html.version}.jar"/>
         <get src="${repo}/info/cukes/cucumber-junit/${cucumber-jvm.version}/cucumber-junit-${cucumber-jvm.version}.jar"
              dest="${jars}/cucumber-junit-${cucumber-jvm.version}.jar"/>
         <get src="${repo}/com/rubiconproject/oss/jchronic/${jchronic.version}/jchronic-${jchronic.version}.jar"
