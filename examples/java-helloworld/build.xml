@@ -1,8 +1,7 @@
 <project name="java-helloworld" basedir="." default="runcukes">
     <property name="repo" value="https://oss.sonatype.org/content/repositories/releases"/>
-    <property name="cucumber-jvm.version" value="1.0.12"/>
+    <property name="cucumber-jvm.version" value="1.0.13"/>
     <property name="cucumber-html.version" value="0.2.1"/>
-    <property name="gherkin.version" value="2.11.2"/>
     <property name="jchronic.version" value="0.2.6"/>
     <property name="junit.version" value="4.10"/>
 
@@ -18,8 +17,6 @@
              dest="${jars}/cucumber-java-${cucumber-jvm.version}.jar"/>
         <get src="${repo}/info/cukes/cucumber-junit/${cucumber-jvm.version}/cucumber-junit-${cucumber-jvm.version}.jar"
              dest="${jars}/cucumber-junit-${cucumber-jvm.version}.jar"/>
-        <get src="${repo}/info/cukes/gherkin/${gherkin.version}/gherkin-${gherkin.version}.jar"
-             dest="${jars}/gherkin-${gherkin.version}.jar"/>
         <get src="${repo}/com/rubiconproject/oss/jchronic/${jchronic.version}/jchronic-${jchronic.version}.jar"
              dest="${jars}/jchronic-${jchronic.version}.jar"/>
         <get src="${repo}/junit/junit/${junit.version}/junit-${junit.version}.jar"

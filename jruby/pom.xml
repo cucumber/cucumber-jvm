@@ -18,6 +18,16 @@
             <artifactId>cucumber-core</artifactId>
         </dependency>
         <dependency>
+            <groupId>info.cukes</groupId>
+            <artifactId>cucumber-jvm-deps</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>info.cukes</groupId>
+            <artifactId>gherkin</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.jruby</groupId>
             <artifactId>jruby-complete</artifactId>
             <scope>provided</scope>
@@ -43,8 +53,8 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-clean-plugin</artifactId>
-                <version>2.4.1</version>
                 <configuration>
                     <filesets>
                         <fileset>
@@ -66,23 +76,35 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>1.7.1</version>
-                <executions>
-                    <execution>
-                        <id>package-full</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.7</version>
                 <executions>
+                    <execution>
+                        <id>package-gem</id>
+                        <phase>package</phase>
+                        <configuration>
+                            <target>
+                                <!-- drop it in the lib directory for great justice -->
+                                <copy file="${project.build.directory}/${project.build.finalName}.jar" tofile="${basedir}/lib/cucumber-jruby.jar" />
+
+                                <!-- build the gem file using jruby -->
+                                <echo message="Building Gem" />
+                                <java jar="${maven.dependency.org.jruby.jruby-complete.jar.path}" failonerror="true" fork="true">
+                                    <sysproperty key="cucumber-jvm.version" value="${project.version}" />
+                                    <arg value="-S" />
+                                    <arg value="gem" />
+                                    <arg value="build" />
+                                    <arg value="cucumber-jvm.gemspec" />
+                                </java>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
                     <execution>
                         <id>jruby-cli-test</id>
                         <phase>integration-test</phase>
@@ -104,34 +126,10 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>package-gem</id>
-                        <phase>package</phase>
-                        <configuration>
-                            <target>
-                                <!-- drop it in the lib directory for great justice -->
-                                <copy file="${project.build.directory}/${project.build.finalName}-full.jar" tofile="${basedir}/lib/cucumber-jruby-full.jar" />
-
-                                <!-- build the gem file using jruby -->
-                                <echo message="Building Gem" />
-                                <java jar="${maven.dependency.org.jruby.jruby-complete.jar.path}" failonerror="true" fork="true">
-                                    <sysproperty key="cucumber-jvm.version" value="${project.version}" />
-                                    <arg value="-S" />
-                                    <arg value="gem" />
-                                    <arg value="build" />
-                                    <arg value="cucumber-jvm.gemspec" />
-                                </java>
-                            </target>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                    <execution>
                         <id>deploy-gem</id>
                         <phase>deploy</phase>
                         <configuration>
                             <target>
-
                                 <!-- install the jruby-openssl gem first! -->
                                 <echo message="installing jruby-openssl..." />
                                 <java jar="${maven.dependency.org.jruby.jruby-complete.jar.path}" failonerror="true" fork="true">
@@ -144,7 +142,6 @@
                                     <arg value="-i" />
                                     <arg value="${basedir}/target/gems" />
                                 </java>
-
 
                                 <!-- publish the gem to rubygems.org -->
                                 <echo message="Publishing Gem" />
@@ -161,7 +158,6 @@
                             <goal>run</goal>
                         </goals>
                     </execution>
-
                 </executions>
             </plugin>
         </plugins>

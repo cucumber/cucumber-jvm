@@ -1,3 +1,7 @@
+## [1.0.13](https://github.com/cucumber/cucumber-jvm/compare/v1.0.12...v1.0.13)
+
+* [Core] gherkin.jar, gherkin-jvm-deps.jar and cucumber-jvm-deps.jar are embedded inside cucumber-core.jar (to simplify installation) (Aslak Hellesøy)
+
 ## [1.0.12](https://github.com/cucumber/cucumber-jvm/compare/v1.0.11...v1.0.12)
 
 * [Core] No img data in embeddings using both json and html reports ([#339](https://github.com/cucumber/cucumber-jvm/issues/339) Aslak Hellesøy)

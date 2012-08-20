@@ -1,7 +1,7 @@
 #!/usr/bin/env jruby
 $:.unshift(File.dirname(__FILE__) + '/../lib') unless $:.include?(File.dirname(__FILE__) + '/../lib')
 
-require 'cucumber-jruby-full.jar'
+require 'cucumber-jruby.jar'
 
 begin
   Java::CucumberCli::Main.main(ARGV)

@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
   s.summary      = "#{s.name}-#{s.version}"
   s.email        = 'cukes@googlegroups.com'
   s.homepage     = 'http://github.com/cucumber/cucumber-jvm'
-  s.files        = ['bin/cucumber-jvm', 'lib/cucumber-jruby-full.jar']
+  s.files        = ['bin/cucumber-jvm', 'lib/cucumber-jruby.jar']
   s.executables  = ['cucumber-jvm']
   s.require_path = 'lib'
   s.platform     = 'java'

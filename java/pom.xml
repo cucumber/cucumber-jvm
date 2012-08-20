@@ -17,6 +17,16 @@
             <groupId>info.cukes</groupId>
             <artifactId>cucumber-core</artifactId>
         </dependency>
+        <dependency>
+            <groupId>info.cukes</groupId>
+            <artifactId>cucumber-jvm-deps</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>info.cukes</groupId>
+            <artifactId>gherkin</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
         <dependency>
             <groupId>info.cukes</groupId>
@@ -82,7 +92,6 @@ I18n.all.each { i18n ->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
-                <version>1.7</version>
                 <executions>
                     <execution>
                         <id>add-source</id>

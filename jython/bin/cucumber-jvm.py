@@ -1,8 +1,8 @@
 #!/usr/bin/env jython
 import sys, inspect, os
 
-jar_path = os.path.dirname(inspect.getfile(inspect.currentframe())) + "/cucumber-jython-full.jar"
-sys.path.append(jar_path)
+cucumber_jython_path = os.path.dirname(inspect.getfile(inspect.currentframe())) + "/cucumber-jython.jar"
+sys.path.append(cucumber_jython_path)
 
 from java.io import File
 from java.net import URLClassLoader
@@ -10,8 +10,7 @@ from cucumber.cli import Main
 from cucumber.runtime import Runtime
 from cucumber.runtime.jython import JythonBackend
 
-url = File(jar_path).toURL()
-cl = URLClassLoader([url], Main.getClassLoader())
+cl = URLClassLoader([File(cucumber_jython_path).toURL()], Main.getClassLoader())
 
 def createRuntime(resourceLoader, gluePaths, classLoader, dryRun):
     # TODO - pass in current jython runtime - PythonInterpreter

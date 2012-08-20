@@ -22,6 +22,16 @@
             <artifactId>cucumber-core</artifactId>
         </dependency>
         <dependency>
+            <groupId>info.cukes</groupId>
+            <artifactId>cucumber-jvm-deps</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>info.cukes</groupId>
+            <artifactId>gherkin</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
             <scope>provided</scope>
@@ -49,7 +59,6 @@
             <plugin>
                 <groupId>org.codehaus.gmaven</groupId>
                 <artifactId>gmaven-plugin</artifactId>
-                <version>1.4</version>
                 <executions>
                     <execution>
                         <goals>
@@ -62,8 +71,8 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-clean-plugin</artifactId>
-                <version>2.4.1</version>
                 <configuration>
                     <filesets>
                         <fileset>
@@ -78,17 +87,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>package-full</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
@@ -127,7 +126,7 @@ I18n.all.each { i18n ->
                         <phase>package</phase>
                         <configuration>
                             <target>
-                                <copy file="${project.build.directory}/${project.build.finalName}-full.jar" tofile="${basedir}/bin/cucumber-groovy-full.jar" />
+                                <copy file="${project.build.directory}/${project.build.finalName}.jar" tofile="${basedir}/bin/cucumber-groovy.jar" />
                             </target>
                         </configuration>
                         <goals>
@@ -153,7 +152,7 @@ I18n.all.each { i18n ->
                                     <classpath>
                                         <pathelement location="${maven.dependency.org.codehaus.groovy.groovy-all.jar.path}" />
                                         <pathelement location="${maven.dependency.junit.junit.jar.path}" />
-                                        <pathelement location="${basedir}/bin/cucumber-groovy-full.jar" />
+                                        <pathelement location="${basedir}/bin/cucumber-groovy.jar" />
                                         <pathelement location="target/test-classes" />
                                     </classpath>
                                     <arg value="bin/cucumber-jvm.groovy" />
@@ -181,7 +180,6 @@ I18n.all.each { i18n ->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
-                <version>1.7</version>
                 <executions>
                     <execution>
                         <id>add-source</id>
@@ -201,7 +199,6 @@ I18n.all.each { i18n ->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.11</version>
                 <configuration>
                     <includes>
                         <include>**/*.java</include>
