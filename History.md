@@ -1,4 +1,6 @@
-## [1.0.13](https://github.com/cucumber/cucumber-jvm/compare/v1.0.12...v1.0.13)
+## [1.0.14](https://github.com/cucumber/cucumber-jvm/compare/v1.0.12...v1.0.14)
+
+(The 1.0.13 release failed half way through)
 
 * [Core] gherkin.jar, gherkin-jvm-deps.jar and cucumber-jvm-deps.jar are embedded inside cucumber-core.jar (to simplify installation) (Aslak Hellesøy)
 
