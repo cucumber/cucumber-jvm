@@ -3,6 +3,8 @@ package cucumber.table.xstream;
 import java.util.ArrayList;
 import java.util.List;
 
+import cucumber.table.CamelCaseStringConverter;
+
 import static java.util.Arrays.asList;
 
 public class ComplexTypeWriter extends CellWriter {
@@ -23,11 +25,12 @@ public class ComplexTypeWriter extends CellWriter {
 
     @Override
     public List<String> getValues() {
+      CamelCaseStringConverter converter = new CamelCaseStringConverter();
         if (columnNames.size() > 0) {
             String[] explicitFieldValues = new String[columnNames.size()];
             int n = 0;
             for (String columnName : columnNames) {
-                int index = fieldNames.indexOf(columnName);
+                int index = fieldNames.indexOf(converter.map(columnName));
                 if (index == -1) {
                     explicitFieldValues[n] = "";
                 } else {
