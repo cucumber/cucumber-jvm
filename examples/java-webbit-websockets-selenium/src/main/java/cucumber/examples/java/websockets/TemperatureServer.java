@@ -18,13 +18,22 @@ public class TemperatureServer {
             @Override
             public void onMessage(WebSocketConnection connection, String msg) throws Throwable {
                 String[] parts = msg.split(":");
-                double t = Double.parseDouble(parts[1]);
-                if (parts[0].equals("celcius")) {
-                    double f = (9.0 / 5.0) * t + 32;
-                    connection.send("fahrenheit:" + f);
+                String unit = parts[0];
+                double value = Double.parseDouble(parts[1]);
+                if (unit.equals("celcius")) {
+                    double f = (9.0 / 5.0) * value + 32;
+                    connection.send("fahrenheit:" + roundOneDecimal(f));
+                }
+                if (unit.equals("fahrenheit")) {
+                    double c = (value - 32) * (5.0 / 9.0);
+                    connection.send("celcius:" + roundOneDecimal(c));
                 }
             }
         });
+    }
+
+    private double roundOneDecimal(double n) {
+        return (double) Math.round(n * 10) / 10;
     }
 
     public void start() throws IOException {

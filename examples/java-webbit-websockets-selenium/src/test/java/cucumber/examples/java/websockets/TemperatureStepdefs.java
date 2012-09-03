@@ -14,13 +14,13 @@ public class TemperatureStepdefs {
         this.webDriver = webDriver;
     }
 
-    @When("^I enter (.+) Celcius$")
-    public void i_enter_Celcius(double celcius) {
-        webDriver.findElement(By.id("celcius")).sendKeys(String.valueOf(celcius));
+    @When("^I enter (.+) (celcius|fahrenheit)$")
+    public void i_enter_temperature(double value, String unit) {
+        webDriver.findElement(By.id(unit)).sendKeys(String.valueOf(value));
     }
 
-    @Then("^I should see (.+) Fahrenheit$")
-    public void i_should_see_Fahrenheit(double fahrenheit) {
-        assertEquals(String.valueOf(fahrenheit), webDriver.findElement(By.id("fahrenheit")).getAttribute("value"));
+    @Then("^I should see (.+) (celcius|fahrenheit)$")
+    public void i_should_see_temperature(double value, String unit) {
+        assertEquals(String.valueOf(value), webDriver.findElement(By.id(unit)).getAttribute("value"));
     }
 }
