@@ -97,11 +97,6 @@
                 <version>0.2.1</version>
             </dependency>
             <dependency>
-                <groupId>info.cukes</groupId>
-                <artifactId>gherkin</artifactId>
-                <version>${gherkin.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.codehaus.groovy</groupId>
                 <artifactId>groovy-all</artifactId>
                 <version>${groovy.version}</version>
