@@ -8,6 +8,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import static java.util.Arrays.asList;
@@ -136,14 +137,14 @@ public class TableConverterTest {
     }
 
     private Date sidsBirthday() {
-        Calendar sidsBirthday = Calendar.getInstance();
+        Calendar sidsBirthday = Calendar.getInstance(Locale.US);
         sidsBirthday.set(1957, 4, 10, 0, 0, 0);
         sidsBirthday.set(Calendar.MILLISECOND, 0);
         return sidsBirthday.getTime();
     }
 
     private Calendar sidsDeathcal() {
-        Calendar sidsDeathcal = Calendar.getInstance();
+        Calendar sidsDeathcal = Calendar.getInstance(Locale.US);
         sidsDeathcal.set(1979, 1, 2, 0, 0, 0);
         sidsDeathcal.set(Calendar.MILLISECOND, 0);
         return sidsDeathcal;
