@@ -10,9 +10,9 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
 
 /**
- * Example of a WebDriver implementation that has an underlying instance that is used for all scenarios and closed
- * when the JVM exits. This saves time. To prevent browser state from leaking between scenarios, cookies are deleted before
- * every scenario.
+ * Example of a WebDriver implementation that has an underlying instance that is used for all scenarios and only closed
+ * when the JVM exits. This makes scenarios a lot faster since opening and closing a browser for each scenario is pretty slow.
+ * To prevent browser state from leaking between scenarios, cookies are deleted before every scenario.
  * <p/>
  * As a bonus, screenshots are embedded into the report for each scenario. (This only works
  * if you're also using the HTML formatter).
@@ -52,7 +52,7 @@ public class SharedDriver extends EventFiringWebDriver {
     @After
     public void embedScreenshot(ScenarioResult result) {
         try {
-            byte[] screenshot = this.getScreenshotAs(OutputType.BYTES);
+            byte[] screenshot = getScreenshotAs(OutputType.BYTES);
             result.embed(screenshot, "image/png");
         } catch (WebDriverException somePlatformsDontSupportScreenshots) {
             System.err.println(somePlatformsDontSupportScreenshots.getMessage());
