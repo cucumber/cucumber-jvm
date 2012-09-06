@@ -1,6 +1,7 @@
 package cucumber.junit;
 
 import cucumber.runtime.RuntimeOptions;
+import org.junit.After;
 import org.junit.Test;
 
 import java.util.Iterator;
@@ -9,6 +10,7 @@ import java.util.regex.Pattern;
 
 import static cucumber.junit.RuntimeOptionsFactory.packageName;
 import static cucumber.junit.RuntimeOptionsFactory.packagePath;
+import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -67,6 +69,47 @@ public class RuntimeOptionsFactoryTest {
     @Test
     public void finds_path_for_class_in_toplevel_package() {
         assertEquals("", packageName("TopLevelClass"));
+    }
+
+    @Test
+    public void ensure_glue_is_set_with_system_properties() {
+        System.setProperty("cucumber.options", "--tags @foo");
+        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(MultipleNames.class);
+        RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
+
+        assertEquals(asList(String.format("classpath:%s", packagePath(MultipleNames.class))), runtimeOptions.glue);
+    }
+
+    @Test
+    public void ensure_feature_is_set_with_system_properties() {
+        System.setProperty("cucumber.options", "--tags @foo");
+        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(MultipleNames.class);
+        RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
+
+        assertEquals(asList(String.format("classpath:%s", packagePath(MultipleNames.class))), runtimeOptions.featurePaths);
+    }
+
+    @Test
+    public void override_glue_when_system_properties() {
+        System.setProperty("cucumber.options", "--glue someglue");
+        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(MultipleNames.class);
+        RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
+
+        assertEquals(asList("someglue"), runtimeOptions.glue);
+    }
+
+    @Test
+    public void override_feature_path_when_system_properties() {
+        System.setProperty("cucumber.options", "somepath");
+        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(MultipleNames.class);
+        RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
+
+        assertEquals(asList("somepath"), runtimeOptions.featurePaths);
+    }
+
+    @After
+    public void unsetCucumberSystemProperty() {
+        System.clearProperty("cucumber.options");
     }
 
     @Cucumber.Options(strict = true)

@@ -6,6 +6,7 @@ import cucumber.runtime.RuntimeOptions;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Properties;
 
 class RuntimeOptionsFactory {
     private Class clazz;
@@ -27,8 +28,10 @@ class RuntimeOptionsFactory {
         addStrict(options, args);
         addName(options, args);
 
-        return new RuntimeOptions(System.getProperties(), args.toArray(new String[args.size()]));
+        RuntimeOptions runtimeOptions = new RuntimeOptions(System.getProperties(), args.toArray(new String[args.size()]));
+        resetGlueAndPath(runtimeOptions);
 
+        return runtimeOptions;
     }
 
     private void addName(Cucumber.Options options, List<String> args) {
@@ -106,6 +109,16 @@ class RuntimeOptionsFactory {
             Collections.addAll(args, options.features());
         } else {
             args.add(MultiLoader.CLASSPATH_SCHEME + packagePath(clazz));
+        }
+    }
+
+    private void resetGlueAndPath(RuntimeOptions runtimeOptions) {
+        if (runtimeOptions.glue.isEmpty()) {
+            runtimeOptions.glue.add(MultiLoader.CLASSPATH_SCHEME + packagePath(clazz));
+        }
+
+        if (runtimeOptions.featurePaths.isEmpty()) {
+            runtimeOptions.featurePaths.add(MultiLoader.CLASSPATH_SCHEME + packagePath(clazz));
         }
     }
 
