@@ -39,7 +39,7 @@ public class RuntimeOptions {
 
         parse(new ArrayList<String>(asList(argv)));
         if (properties.containsKey("cucumber.options")) {
-            processOverridingProperties(properties);
+            parse(new ArrayList<String>(asList(properties.getProperty("cucumber.options").split(" "))));
         }
 
         if (formatters.isEmpty()) {
@@ -55,8 +55,8 @@ public class RuntimeOptions {
 
     private void parse(List<String> args) {
         FormatterFactory formatterFactory = new FormatterFactory();
-        reset();
 
+        List<Object> parsedFilters = new ArrayList<Object>();
         while (!args.isEmpty()) {
             String arg = args.remove(0);
 
@@ -70,7 +70,7 @@ public class RuntimeOptions {
                 String gluePath = args.remove(0);
                 glue.add(gluePath);
             } else if (arg.equals("--tags") || arg.equals("-t")) {
-                filters.add(args.remove(0));
+                parsedFilters.add(args.remove(0));
             } else if (arg.equals("--format") || arg.equals("-f")) {
                 formatters.add(formatterFactory.create(args.remove(0)));
             } else if (arg.equals("--dotcucumber")) {
@@ -84,24 +84,17 @@ public class RuntimeOptions {
             } else if (arg.equals("--name") || arg.equals("-n")) {
                 String nextArg = args.remove(0);
                 Pattern patternFilter = Pattern.compile(nextArg);
-                filters.add(patternFilter);
+                parsedFilters.add(patternFilter);
             } else {
                 PathWithLines pathWithLines = new PathWithLines(arg);
                 featurePaths.add(pathWithLines.path);
-                filters.addAll(pathWithLines.lines);
+                parsedFilters.addAll(pathWithLines.lines);
             }
         }
-    }
-
-    public void reset() {
-        strict = false;
-        monochrome = false;
-        dryRun = false;
-        dotCucumber = null;
-        filters.clear();
-        featurePaths.clear();
-        glue.clear();
-        formatters.clear();
+        if(!parsedFilters.isEmpty()) {
+            filters.clear();
+            filters.addAll(parsedFilters);
+        }
     }
 
     public List<CucumberFeature> cucumberFeatures(ResourceLoader resourceLoader) {
@@ -132,18 +125,5 @@ public class RuntimeOptions {
                 return null;
             }
         });
-    }
-
-    private void processOverridingProperties(Properties properties) {
-        List<String> originalGlue = new ArrayList<String>(glue);
-        List<String> originalFeaturePaths = new ArrayList<String>(featurePaths);
-        parse(new ArrayList<String>(asList(properties.getProperty("cucumber.options").split(" "))));
-
-        if (glue.isEmpty()) {
-            glue.addAll(originalGlue);
-        }
-        if (featurePaths.isEmpty()) {
-            featurePaths.addAll(originalFeaturePaths);
-        }
     }
 }
