@@ -33,16 +33,14 @@ public class RuntimeOptions {
     public File dotCucumber;
     public boolean dryRun;
     public boolean strict = false;
-    private boolean monochrome = false;
+    public boolean monochrome = false;
 
     public RuntimeOptions(Properties properties, String... argv) {
-        String[] args;
+
+        parse(new ArrayList<String>(asList(argv)));
         if (properties.containsKey("cucumber.options")) {
-            args = properties.getProperty("cucumber.options").split(" ");
-        } else {
-            args = argv;
+            processOverridingProperties(properties);
         }
-        parse(new ArrayList<String>(asList(args)));
 
         if (formatters.isEmpty()) {
             formatters.add(new ProgressFormatter(System.out));
@@ -57,6 +55,7 @@ public class RuntimeOptions {
 
     private void parse(List<String> args) {
         FormatterFactory formatterFactory = new FormatterFactory();
+        reset();
 
         while (!args.isEmpty()) {
             String arg = args.remove(0);
@@ -94,6 +93,17 @@ public class RuntimeOptions {
         }
     }
 
+    public void reset() {
+        strict = false;
+        monochrome = false;
+        dryRun = false;
+        dotCucumber = null;
+        filters.clear();
+        featurePaths.clear();
+        glue.clear();
+        formatters.clear();
+    }
+
     public List<CucumberFeature> cucumberFeatures(ResourceLoader resourceLoader) {
         return load(resourceLoader, featurePaths, filters);
     }
@@ -122,5 +132,18 @@ public class RuntimeOptions {
                 return null;
             }
         });
+    }
+
+    private void processOverridingProperties(Properties properties) {
+        List<String> originalGlue = new ArrayList<String>(glue);
+        List<String> originalFeaturePaths = new ArrayList<String>(featurePaths);
+        parse(new ArrayList<String>(asList(properties.getProperty("cucumber.options").split(" "))));
+
+        if (glue.isEmpty()) {
+            glue.addAll(originalGlue);
+        }
+        if (featurePaths.isEmpty()) {
+            featurePaths.addAll(originalFeaturePaths);
+        }
     }
 }
