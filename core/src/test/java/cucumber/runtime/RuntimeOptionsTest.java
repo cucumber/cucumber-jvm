@@ -11,6 +11,7 @@ import static java.util.Arrays.asList;
 import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNull;
 
 public class RuntimeOptionsTest {
     @Test
@@ -90,4 +91,44 @@ public class RuntimeOptionsTest {
         assertEquals(asList("lookatme"), options.glue);
     }
 
+    @Test
+    public void ensure_glue_is_set_with_system_properties() {
+        Properties properties = new Properties();
+        properties.setProperty("cucumber.options", "--tags @foo");
+        RuntimeOptions runtimeOptions = new RuntimeOptions(properties, "--glue", "somewhere");
+        assertEquals(asList("somewhere"), runtimeOptions.glue);
+    }
+
+    @Test
+    public void ensure_feature_is_set_with_system_properties() {
+        Properties properties = new Properties();
+        properties.setProperty("cucumber.options", "--tags @foo");
+        RuntimeOptions runtimeOptions = new RuntimeOptions(properties, "somewhere");
+        assertEquals(asList("somewhere"), runtimeOptions.featurePaths);
+    }
+
+    @Test
+    public void can_be_reset() {
+        RuntimeOptions runtimeOptions = new RuntimeOptions(new Properties(), 
+                "--format", "pretty",
+                "--glue", "someglue",
+                "--tags", "@foo",
+                "--strict",
+                "--dryRun",
+                "--monochrome",
+                "path");
+
+        runtimeOptions.reset();
+        assertRuntimeOptionsReset(runtimeOptions);
+    }
+
+    private void assertRuntimeOptionsReset(RuntimeOptions runtimeOptions) {
+        assertFalse(runtimeOptions.strict);
+        assertFalse(runtimeOptions.monochrome);
+        assertFalse(runtimeOptions.dryRun);
+        assertTrue(runtimeOptions.filters.isEmpty());
+        assertTrue(runtimeOptions.featurePaths.isEmpty());
+        assertTrue(runtimeOptions.formatters.isEmpty());
+        assertNull(runtimeOptions.dotCucumber);
+    }
 }
