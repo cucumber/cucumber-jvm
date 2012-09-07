@@ -122,4 +122,12 @@ public class RuntimeOptionsTest {
         RuntimeOptions runtimeOptions = new RuntimeOptions(properties, "--tags", "@keep_this");
         assertEquals(asList("@keep_this"), runtimeOptions.filters);
     }
+
+    @Test
+    public void allows_removal_of_strict_in_cucumber_options_property() {
+        Properties properties = new Properties();
+        properties.setProperty("cucumber.options", "--no-strict");
+        RuntimeOptions runtimeOptions = new RuntimeOptions(properties, "--strict");
+        assertFalse(runtimeOptions.strict);
+    }
 }

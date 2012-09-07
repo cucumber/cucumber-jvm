@@ -1,3 +1,10 @@
+## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.0.14...master)
+
+* [Core] The `cucumber.options` System property will no longer completely override all arguments set in `@Cucumber.Options` or
+  on the command line. Instead, it will keep those and only override those that are specified in `cucumber.options`.
+  Special cases are `--tags`, `--name` and `path:line`, which will override previous tags/names/lines. To override a boolean
+  option (options that don't take arguments like `--monochrome`), use the `--no-` counterpart (`--no-monochrome`). ([#388](https://github.com/cucumber/cucumber-jvm/pull/388) Sébastien Le Callonnec, Aslak Hellesøy)
+
 ## [1.0.14](https://github.com/cucumber/cucumber-jvm/compare/v1.0.12...v1.0.14)
 
 (The 1.0.13 release failed half way through)
