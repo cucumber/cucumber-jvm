@@ -10,7 +10,7 @@ public class ${i18n.underscoredIsoCode.toUpperCase()} {
         GroovyBackend.instance.addStepDefinition(regexp, 0, body);
     }
 
-    public static void ${kw}(Pattern regexp, int timeoutMillis, Closure body) throws Throwable {
+    public static void ${java.text.Normalizer.normalize(kw, java.text.Normalizer.Form.NFD)}(Pattern regexp, int timeoutMillis, Closure body) throws Throwable {
         GroovyBackend.instance.addStepDefinition(regexp, timeoutMillis, body);
     }
 <% } %>

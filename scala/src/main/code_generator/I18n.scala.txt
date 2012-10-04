@@ -4,7 +4,7 @@ package cucumber.runtime
 trait ${i18n.underscoredIsoCode.toUpperCase()} {
   this: ScalaDsl =>
 <% i18n.codeKeywords.sort().each { kw -> %>
-  val ${kw} = new Step("${kw}")
+  val ${java.text.Normalizer.normalize(kw, java.text.Normalizer.Form.NFD)} = new Step("${java.text.Normalizer.normalize(kw, java.text.Normalizer.Form.NFD)}")
 <% } %>
 }
 <% } %>
