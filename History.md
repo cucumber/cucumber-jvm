@@ -1,5 +1,6 @@
 ## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.0.14...master)
 
+* [Java] The java module (and all other modules) finally compile on JDK 7 and OS X. (David Kowis, Sébastien Le Callonnec, Aslak Hellesøy)
 * [Core] The `cucumber.options` System property will no longer completely override all arguments set in `@Cucumber.Options` or
   on the command line. Instead, it will keep those and only override those that are specified in `cucumber.options`.
   Special cases are `--tags`, `--name` and `path:line`, which will override previous tags/names/lines. To override a boolean
