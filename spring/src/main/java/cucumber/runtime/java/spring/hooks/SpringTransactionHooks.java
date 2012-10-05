@@ -52,12 +52,12 @@ public class SpringTransactionHooks implements BeanFactoryAware {
     TransactionStatus txStatus;
 
     @Before({"@txn"})
-    public void rollBackBeforeHook() {
+    public void startTransaction() {
         txStatus = obtainPlatformTransactionManager().getTransaction(new DefaultTransactionDefinition());
     }
 
     @After({"@txn"})
-    public void rollBackAfterHook() {
+    public void rollBackTransaction() {
         obtainPlatformTransactionManager().rollback(txStatus);
     }
 
