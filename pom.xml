@@ -15,9 +15,14 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <outputDirectory>${project.build.directory}</outputDirectory>
         <gherkin.version>2.11.2</gherkin.version>
         <groovy.version>2.0.0</groovy.version>
+        <!--
+        TODO: Bump to latest when I get off the plane
+        -->
+        <spring.version>3.1.0.RELEASE</spring.version>
     </properties>
     <licenses>
         <license>
@@ -109,7 +114,7 @@
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-tx</artifactId>
-                <version>3.1.2.RELEASE</version>
+                <version>${spring.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.google.inject</groupId>
@@ -257,6 +262,7 @@
         <profile>
             <id>examples</id>
             <modules>
+                <module>examples/spring-txn</module>
                 <module>examples/java-calculator</module>
                 <module>examples/groovy-calculator</module>
                 <module>examples/scala-calculator</module>
@@ -267,6 +273,7 @@
         <profile>
             <id>release-sign-artifacts</id>
             <modules>
+                <module>examples/spring-txn</module>
                 <module>examples/java-calculator</module>
                 <module>examples/groovy-calculator</module>
                 <module>examples/scala-calculator</module>
