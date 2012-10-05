@@ -1,3 +1,7 @@
+# The @txn tag enables a Transaction open-rollback around each Scenario,
+# Preventing persisted data from leaking between Scenarios.
+# Try removing the @txn tag and see what happens.
+@txn
 Feature: Clean slates
 
   Scenario: Gaia and Aslak have cukes for breakfast
