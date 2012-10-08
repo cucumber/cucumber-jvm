@@ -39,6 +39,7 @@ public class HTMLFormatter implements Formatter, Reporter {
             put("image/gif", "gif");
             put("image/jpeg", "jpg");
             put("image/png", "png");
+            put("video/ogg", "ogg");
         }
     };
 
