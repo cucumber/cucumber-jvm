@@ -40,6 +40,6 @@ public class ClojureSnippet implements Snippet {
 
     @Override
     public String escapePattern(String pattern) {
-        return pattern.replaceAll("\"", "\\\\\"");
+        return pattern.replace("\"", "\\\"");
     }
 }

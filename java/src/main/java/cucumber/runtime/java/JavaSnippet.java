@@ -45,6 +45,6 @@ public class JavaSnippet implements Snippet {
 
     @Override
     public String escapePattern(String pattern) {
-        return pattern.replaceAll("\\\\", "\\\\\\\\").replaceAll("\"", "\\\\\"");
+        return pattern.replace("\\", "\\\\").replace("\"", "\\\"");
     }
 }
