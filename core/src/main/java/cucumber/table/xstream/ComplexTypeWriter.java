@@ -1,9 +1,9 @@
 package cucumber.table.xstream;
 
+import cucumber.table.CamelCaseStringConverter;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import cucumber.table.CamelCaseStringConverter;
 
 import static java.util.Arrays.asList;
 
@@ -25,7 +25,7 @@ public class ComplexTypeWriter extends CellWriter {
 
     @Override
     public List<String> getValues() {
-      CamelCaseStringConverter converter = new CamelCaseStringConverter();
+        CamelCaseStringConverter converter = new CamelCaseStringConverter();
         if (columnNames.size() > 0) {
             String[] explicitFieldValues = new String[columnNames.size()];
             int n = 0;

@@ -2,7 +2,6 @@ package cucumber.table;
 
 import org.junit.Test;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -121,20 +120,21 @@ public class TableDifferTest {
             throw e;
         }
     }
+
     @Test
     public void diff_with_list_of_pojos_and_camelcase_header_mapping() {
         String source = "" +
-          "| id | Given Name |\n" +
-          "| 1  | me   |\n" +
-          "| 2  | you  |\n" +
-          "| 3  | jdoe |\n";
-        
+                "| id | Given Name |\n" +
+                "| 1  | me   |\n" +
+                "| 2  | you  |\n" +
+                "| 3  | jdoe |\n";
+
         DataTable expected = TableParser.parse(source, null);
 
         List<TestPojo> actual = new ArrayList<TestPojo>();
-        actual.add(new TestPojo(1,"me",123));
-        actual.add(new TestPojo(2,"you",222));
-        actual.add(new TestPojo(3,"jdoe",34545));
+        actual.add(new TestPojo(1, "me", 123));
+        actual.add(new TestPojo(2, "you", 222));
+        actual.add(new TestPojo(3, "jdoe", 34545));
         expected.diff(actual);
     }
 }
@@ -142,12 +142,12 @@ public class TableDifferTest {
 class TestPojo {
     Integer id;
     String givenName;
-    int   decisionCriteria;
+    int decisionCriteria;
 
-    public TestPojo(Integer id, String givenName , int decisionCriteria) {
-      this.id = id;
-      this.givenName = givenName;
-      this.decisionCriteria = decisionCriteria;
+    public TestPojo(Integer id, String givenName, int decisionCriteria) {
+        this.id = id;
+        this.givenName = givenName;
+        this.decisionCriteria = decisionCriteria;
     }
 }
 
