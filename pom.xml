@@ -16,7 +16,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <outputDirectory>${project.build.directory}</outputDirectory>
-        <gherkin.version>2.11.2</gherkin.version>
+        <gherkin.version>2.11.4</gherkin.version>
         <groovy.version>2.0.0</groovy.version>
     </properties>
     <licenses>
