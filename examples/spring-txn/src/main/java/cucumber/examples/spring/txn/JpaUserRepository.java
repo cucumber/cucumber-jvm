@@ -8,20 +8,18 @@ import javax.persistence.PersistenceContext;
 import java.util.List;
 
 @Repository
-public class JpaBreakfastRepository implements BreakfastRepository {
+public class JpaUserRepository implements UserRepository {
     @PersistenceContext
     private EntityManager entityManager;
 
     @Transactional
     @Override
-    public void save(List<Breakfast> breakfasts) {
-        for (Breakfast breakfast : breakfasts) {
-            entityManager.persist(breakfast);
-        }
+    public void save(User user) {
+        entityManager.persist(user);
     }
 
     @Override
-    public List<Breakfast> findAll() {
-        return entityManager.createQuery("SELECT b FROM Breakfast b", Breakfast.class).getResultList();
+    public List<User> findAll() {
+        return entityManager.createQuery("SELECT b FROM User b", User.class).getResultList();
     }
 }
