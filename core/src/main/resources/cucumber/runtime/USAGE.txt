@@ -1,4 +1,4 @@
-Usage: java cucumber.cli.Main [options] [ [FILE|DIR][:LINE[:LINE]*] ]+
+Usage: java cucumber.api.cli.Main [options] [ [FILE|DIR][:LINE[:LINE]*] ]+
 
 Options:
 

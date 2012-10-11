@@ -1,6 +1,6 @@
 package cucumber.runtime;
 
-import cucumber.io.Resource;
+import cucumber.runtime.io.Resource;
 import cucumber.runtime.model.CucumberFeature;
 import gherkin.I18n;
 import gherkin.formatter.FilterFormatter;
@@ -11,6 +11,7 @@ import gherkin.formatter.model.Feature;
 import gherkin.formatter.model.Scenario;
 import gherkin.formatter.model.ScenarioOutline;
 import gherkin.formatter.model.Step;
+import gherkin.lexer.Encoding;
 import gherkin.parser.Parser;
 import gherkin.util.FixJava;
 
@@ -124,7 +125,12 @@ public class FeatureBuilder implements Formatter {
 
     private String read(Resource resource) {
         try {
-            return FixJava.readReader(new InputStreamReader(resource.getInputStream(), "UTF-8"));
+            String source = FixJava.readReader(new InputStreamReader(resource.getInputStream(), "UTF-8"));
+            String encoding = new Encoding().encoding(source);
+            if (!"UTF-8".equals(encoding)) {
+                source = FixJava.readReader(new InputStreamReader(resource.getInputStream(), encoding));
+            }
+            return source;
         } catch (IOException e) {
             throw new CucumberException("Failed to read resource:" + resource.getPath(), e);
         }

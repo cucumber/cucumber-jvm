@@ -1,6 +1,6 @@
 package cucumber.runtime;
 
-import cucumber.io.Resource;
+import cucumber.runtime.io.Resource;
 import cucumber.runtime.model.CucumberFeature;
 import org.junit.Ignore;
 

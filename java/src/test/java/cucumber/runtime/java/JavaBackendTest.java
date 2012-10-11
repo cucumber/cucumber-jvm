@@ -1,6 +1,5 @@
 package cucumber.runtime.java;
 
-import cucumber.fallback.runtime.java.DefaultJavaObjectFactory;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Glue;
 import cucumber.runtime.HookDefinition;

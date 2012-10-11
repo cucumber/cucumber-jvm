@@ -1,9 +1,8 @@
 package cucumber.runtime;
 
-import cucumber.formatter.ColorAware;
-import cucumber.formatter.FormatterFactory;
-import cucumber.formatter.ProgressFormatter;
-import cucumber.io.ResourceLoader;
+import cucumber.runtime.formatter.ColorAware;
+import cucumber.runtime.formatter.FormatterFactory;
+import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
@@ -30,6 +29,7 @@ public class RuntimeOptions {
     public final List<Object> filters = new ArrayList<Object>();
     public final List<Formatter> formatters = new ArrayList<Formatter>();
     public final List<String> featurePaths = new ArrayList<String>();
+    private final FormatterFactory formatterFactory = new FormatterFactory();
     public File dotCucumber;
     public boolean dryRun;
     public boolean strict = false;
@@ -44,7 +44,7 @@ public class RuntimeOptions {
         }
 
         if (formatters.isEmpty()) {
-            formatters.add(new ProgressFormatter(System.out));
+            formatters.add(formatterFactory.createDefault());
         }
         for (Formatter formatter : formatters) {
             if (formatter instanceof ColorAware) {
@@ -55,8 +55,6 @@ public class RuntimeOptions {
     }
 
     private void parse(List<String> args) {
-        FormatterFactory formatterFactory = new FormatterFactory();
-
         List<Object> parsedFilters = new ArrayList<Object>();
         while (!args.isEmpty()) {
             String arg = args.remove(0);

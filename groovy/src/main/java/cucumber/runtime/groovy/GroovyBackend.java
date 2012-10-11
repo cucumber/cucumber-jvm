@@ -1,12 +1,12 @@
 package cucumber.runtime.groovy;
 
-import cucumber.io.ClasspathResourceLoader;
-import cucumber.io.Resource;
-import cucumber.io.ResourceLoader;
 import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Glue;
 import cucumber.runtime.UnreportedStepExecutor;
+import cucumber.runtime.io.ClasspathResourceLoader;
+import cucumber.runtime.io.Resource;
+import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.snippets.SnippetGenerator;
 import gherkin.TagExpression;
 import gherkin.formatter.model.Step;
@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import static cucumber.io.MultiLoader.packageName;
+import static cucumber.runtime.io.MultiLoader.packageName;
 
 
 public class GroovyBackend implements Backend {
@@ -141,7 +141,7 @@ public class GroovyBackend implements Backend {
         body.setDelegate(getGroovyWorld());
         try {
             body.call(args);
-        } catch(InvokerInvocationException e) {
+        } catch (InvokerInvocationException e) {
             throw e.getCause();
         }
     }

@@ -1,8 +1,8 @@
 package cucumber.runtime;
 
-import cucumber.runtime.converters.LocalizedXStreams;
 import cucumber.deps.com.thoughtworks.xstream.annotations.XStreamConverter;
 import cucumber.deps.com.thoughtworks.xstream.converters.basic.AbstractSingleValueConverter;
+import cucumber.runtime.xstream.LocalizedXStreams;
 import gherkin.I18n;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.DataTableRow;
@@ -175,7 +175,8 @@ public class StepDefinitionMatchTest {
     }
 
     public static class WithTwoParams {
-        public void withTwoParams(int anInt, short aShort, List<String> strings) {}
+        public void withTwoParams(int anInt, short aShort, List<String> strings) {
+        }
     }
 
     @Test

@@ -137,7 +137,7 @@ EOF
 package cucumber.test;
 
 import cucumber.annotation.en.Given;
-import cucumber.table.DataTable;
+import cucumber.runtime.table.DataTable;
 
 public class Mappings<%= @@mappings_counter %> {
   
@@ -166,7 +166,7 @@ EOF
 package cucumber.test;
 
 import cucumber.annotation.en.Given;
-import cucumber.table.DataTable;
+import cucumber.runtime.table.DataTable;
 import java.util.List;
 import java.util.Map;
 
@@ -265,7 +265,7 @@ EOF
     erb = ERB.new(<<-EOF, nil, '-')
 package cucumber.test;
 
-import cucumber.annotation.Before;
+import cucumber.api.java.Before;
 
 public class Hook<%= @@mappings_counter %> {
     @Before

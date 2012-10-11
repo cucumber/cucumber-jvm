@@ -1,8 +1,8 @@
 package cucumber.runtime.java.picocontainer;
 
-import cucumber.DateFormat;
-import cucumber.annotation.en.Given;
-import cucumber.annotation.en.Then;
+import cucumber.api.DateFormat;
+import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
 
 import java.util.Calendar;
 import java.util.Date;

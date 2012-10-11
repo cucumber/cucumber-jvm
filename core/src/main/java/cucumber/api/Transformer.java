@@ -55,7 +55,7 @@ import java.lang.reflect.Type;
  *     }
  * </pre>
  * <p>
- * This will also enable a {@link cucumber.table.DataTable} to be transformed to
+ * This will also enable a {@link DataTable} to be transformed to
  * a <code>List&lt;YourClass;&gt;</code>
  * </p>
  *

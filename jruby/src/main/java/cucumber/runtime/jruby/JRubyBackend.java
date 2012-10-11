@@ -1,14 +1,14 @@
 package cucumber.runtime.jruby;
 
-import cucumber.io.Resource;
-import cucumber.io.ResourceLoader;
+import cucumber.api.DataTable;
 import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Glue;
 import cucumber.runtime.PendingException;
 import cucumber.runtime.UnreportedStepExecutor;
+import cucumber.runtime.io.Resource;
+import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.snippets.SnippetGenerator;
-import cucumber.table.DataTable;
 import gherkin.I18n;
 import gherkin.formatter.model.DataTableRow;
 import gherkin.formatter.model.DocString;

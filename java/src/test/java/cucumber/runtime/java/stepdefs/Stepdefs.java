@@ -1,6 +1,6 @@
 package cucumber.runtime.java.stepdefs;
 
-import cucumber.annotation.en.Given;
+import cucumber.api.java.en.Given;
 
 public class Stepdefs {
     @Given("test")

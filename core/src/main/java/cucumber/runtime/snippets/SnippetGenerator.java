@@ -1,6 +1,6 @@
 package cucumber.runtime.snippets;
 
-import cucumber.table.DataTable;
+import cucumber.api.DataTable;
 import gherkin.I18n;
 import gherkin.formatter.model.Step;
 

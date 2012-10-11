@@ -1,9 +1,9 @@
 package cucumber.runtime;
 
-import cucumber.Delimiter;
+import cucumber.api.Delimiter;
 import cucumber.api.Transform;
 import cucumber.api.Transformer;
-import cucumber.runtime.converters.LocalizedXStreams;
+import cucumber.runtime.xstream.LocalizedXStreams;
 import org.junit.Test;
 
 import java.util.Arrays;

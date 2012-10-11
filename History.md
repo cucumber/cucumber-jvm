@@ -1,5 +1,10 @@
 ## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.0.14...master)
 
+* [All] Package reorganisation. Only classes under `cucumber.api` are part of the public (stable) API. Classes in other classes are not part of the API and can change.
+* [Core] Scenario Transform header being treated like an object (no bugfix, but added explanation) ([#396](https://github.com/cucumber/cucumber-jvm/issues/396) Aslak Hellesøy)
+* [Core] TableDiff with list of pojos: camelcase convert of column names to field names ([#385](https://github.com/cucumber/cucumber-jvm/pull/385) mbusik)
+* [Core] Added video/ogg mimetype to embedd videos in the HTMLReport ([#390](https://github.com/cucumber/cucumber-jvm/pull/390) Klaus Bayrhammer)
+* [Groovy] Generated Groovy step definitions need backslashes to be escaped ([#391](https://github.com/cucumber/cucumber-jvm/issues/391), [#400](https://github.com/cucumber/cucumber-jvm/pull/400), Martin Hauner)
 * [Java] The java module (and all other modules) finally compile on JDK 7 and OS X. (David Kowis, Sébastien Le Callonnec, Aslak Hellesøy)
 * [Core] The `cucumber.options` System property will no longer completely override all arguments set in `@Cucumber.Options` or
   on the command line. Instead, it will keep those and only override those that are specified in `cucumber.options`.

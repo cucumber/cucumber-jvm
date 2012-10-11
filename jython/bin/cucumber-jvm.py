@@ -6,7 +6,7 @@ sys.path.append(cucumber_jython_path)
 
 from java.io import File
 from java.net import URLClassLoader
-from cucumber.cli import Main
+from cucumber.api.cli import Main
 from cucumber.runtime import Runtime
 from cucumber.runtime.jython import JythonBackend
 

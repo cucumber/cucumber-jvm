@@ -1,6 +1,6 @@
 package cucumber.junit;
 
-import cucumber.io.ClasspathResourceLoader;
+import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.model.CucumberScenario;
 import gherkin.formatter.model.Step;

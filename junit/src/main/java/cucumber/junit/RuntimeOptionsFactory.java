@@ -1,7 +1,7 @@
 package cucumber.junit;
 
-import cucumber.io.MultiLoader;
 import cucumber.runtime.RuntimeOptions;
+import cucumber.runtime.io.MultiLoader;
 
 import java.util.ArrayList;
 import java.util.Collections;

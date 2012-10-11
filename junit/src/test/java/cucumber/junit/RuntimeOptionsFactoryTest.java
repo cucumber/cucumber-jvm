@@ -1,7 +1,6 @@
 package cucumber.junit;
 
 import cucumber.runtime.RuntimeOptions;
-import org.junit.After;
 import org.junit.Test;
 
 import java.util.Iterator;

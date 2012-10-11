@@ -17,7 +17,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <outputDirectory>${project.build.directory}</outputDirectory>
-        <gherkin.version>2.11.2</gherkin.version>
+        <gherkin.version>2.11.4</gherkin.version>
         <groovy.version>2.0.0</groovy.version>
         <!--
         TODO: Bump to latest when I get off the plane

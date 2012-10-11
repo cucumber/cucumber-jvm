@@ -1,10 +1,10 @@
 package cucumber.junit;
 
-import cucumber.io.MultiLoader;
-import cucumber.io.ResourceLoader;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeOptions;
+import cucumber.runtime.io.MultiLoader;
+import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.snippets.SummaryPrinter;
 import org.junit.runner.Description;
@@ -109,7 +109,7 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
 
     /**
      * This annotation can be used to give additional hints to the {@link cucumber.junit.Cucumber} runner
-     * about what to run. It provides similar options to the Cucumber command line used by {@link cucumber.cli.Main}
+     * about what to run. It provides similar options to the Cucumber command line used by {@link cucumber.api.cli.Main}
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.TYPE})

@@ -1,9 +1,9 @@
 package cucumber.runtime.java;
 
-import cucumber.annotation.Before;
-import cucumber.io.ClasspathResourceLoader;
+import cucumber.api.java.Before;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Glue;
+import cucumber.runtime.io.ClasspathResourceLoader;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.internal.util.reflection.Whitebox;

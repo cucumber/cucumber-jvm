@@ -3,4 +3,4 @@
   (:use [clojure.test]))
 
 (deftest run-cukes
-  (. cucumber.cli.Main (main (into-array ["--format" "pretty" "--glue" "test/features/step_definitions" "test/features"]))))
+  (. cucumber.api.cli.Main (main (into-array ["--format" "pretty" "--glue" "test/features/step_definitions" "test/features"]))))

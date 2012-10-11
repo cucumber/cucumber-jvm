@@ -1,6 +1,6 @@
 package cucumber.examples.scalacalculator
 
-import cucumber.runtime.{ScalaDsl, EN}
+import cucumber.api.scala.{ScalaDsl, EN}
 import junit.framework.Assert._
 
 class RpnCalculatorStepDefinitions extends ScalaDsl with EN {

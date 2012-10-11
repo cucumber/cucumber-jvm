@@ -46,6 +46,6 @@ public class GroovySnippet implements Snippet {
 
     @Override
     public String escapePattern(String pattern) {
-        return pattern;
+        return pattern.replace("\\", "\\\\");
     }
 }
