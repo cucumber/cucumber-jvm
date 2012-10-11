@@ -19,10 +19,7 @@
         <outputDirectory>${project.build.directory}</outputDirectory>
         <gherkin.version>2.11.4</gherkin.version>
         <groovy.version>2.0.0</groovy.version>
-        <!--
-        TODO: Bump to latest when I get off the plane
-        -->
-        <spring.version>3.1.0.RELEASE</spring.version>
+        <spring.version>3.1.2.RELEASE</spring.version>
     </properties>
     <licenses>
         <license>

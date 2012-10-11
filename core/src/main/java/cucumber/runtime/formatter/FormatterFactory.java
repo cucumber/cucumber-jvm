@@ -15,8 +15,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static java.util.Arrays.asList;
-
 /**
  * This class creates {@link Formatter} instances (that may also implement {@link gherkin.formatter.Reporter} from
  * a String.
@@ -24,10 +22,10 @@ import static java.util.Arrays.asList;
  * The String is of the form name[:output] where name is either a fully qualified class name or one of the built-in short names.
  * output is optional for some formatters (and mandatory for some) and must refer to a path on the file system.
  * <p/>
- * The formatter class must have a single argument constructor that takes either an {@link Appendable} or a {@link File}.
+ * The formatter class must have a constructor that is either empty or takes a single {@link Appendable} or a {@link File}.
  */
 public class FormatterFactory {
-    private final Class[] CTOR_ARGS = new Class[]{Appendable.class, File.class};
+    private final Class[] CTOR_ARGS = new Class[]{null, Appendable.class, File.class};
 
     private static final Map<String, Class<? extends Formatter>> FORMATTER_CLASSES = new HashMap<String, Class<? extends Formatter>>() {{
         put("null", NullFormatter.class);
@@ -45,62 +43,73 @@ public class FormatterFactory {
     public Formatter create(String formatterString) {
         Matcher formatterWithFile = FORMATTER_WITH_FILE_PATTERN.matcher(formatterString);
         String formatterName;
-        Object ctorArg;
+        String path = null;
         if (formatterWithFile.matches()) {
             formatterName = formatterWithFile.group(1);
-            ctorArg = new File(formatterWithFile.group(2));
+            path = formatterWithFile.group(2);
         } else {
             formatterName = formatterString;
-            ctorArg = defaultOutIfAvailable();
         }
         Class<? extends Formatter> formatterClass = formatterClass(formatterName);
         try {
-            return instantiate(formatterString, formatterClass, ctorArg);
+            return instantiate(formatterString, formatterClass, path);
         } catch (IOException e) {
             throw new CucumberException(e);
         }
     }
 
-    private Formatter instantiate(String formatterString, Class<? extends Formatter> formatterClass, Object ctorArg) throws IOException {
+    private Formatter instantiate(String formatterString, Class<? extends Formatter> formatterClass, String path) throws IOException {
         for (Class ctorArgClass : CTOR_ARGS) {
             Constructor<? extends Formatter> constructor = findConstructor(formatterClass, ctorArgClass);
             if (constructor != null) {
-                ctorArg = convertOrNull(ctorArg, ctorArgClass);
-                if (ctorArg != null) {
-                    try {
+                Object ctorArg = convertOrNull(path, ctorArgClass);
+                try {
+                    if (ctorArgClass == null) {
+                        return constructor.newInstance();
+                    } else {
+                        if(ctorArg == null) {
+                            throw new CucumberException(String.format("You must supply an output argument to %s. Like so: %s:output", formatterString, formatterString));
+                        }
                         return constructor.newInstance(ctorArg);
-                    } catch (InstantiationException e) {
-                        throw new CucumberException(e);
-                    } catch (IllegalAccessException e) {
-                        throw new CucumberException(e);
-                    } catch (InvocationTargetException e) {
-                        throw new CucumberException(e.getTargetException());
                     }
+                } catch (InstantiationException e) {
+                    throw new CucumberException(e);
+                } catch (IllegalAccessException e) {
+                    throw new CucumberException(e);
+                } catch (InvocationTargetException e) {
+                    throw new CucumberException(e.getTargetException());
                 }
             }
         }
-        if (ctorArg == null) {
-            throw new CucumberException(String.format("You must supply an output argument to %s. Like so: %s:output", formatterString, formatterString));
-        }
-        throw new CucumberException(String.format("%s must have a single-argument constructor that takes one of the following: %s", formatterClass, asList(CTOR_ARGS)));
+        throw new CucumberException(String.format("%s must have a constructor that is either empty or takes a %s or %s", formatterClass, Appendable.class.getName(), File.class.getName()));
     }
 
-    private Object convertOrNull(Object ctorArg, Class ctorArgClass) throws IOException {
-        if (ctorArgClass.isAssignableFrom(ctorArg.getClass())) {
-            return ctorArg;
+    private Object convertOrNull(String path, Class ctorArgClass) throws IOException {
+        if (ctorArgClass == null) {
+            return null;
         }
-        if (ctorArgClass.equals(File.class) && ctorArg instanceof File) {
-            return ctorArg;
+        if (ctorArgClass.equals(File.class)) {
+            if (path != null) {
+                return new File(path);
+            }
         }
-        if (ctorArgClass.equals(Appendable.class) && ctorArg instanceof File) {
-            return new FileWriter((File) ctorArg);
+        if (ctorArgClass.equals(Appendable.class)) {
+            if (path != null) {
+                return new FileWriter(path);
+            } else {
+                return defaultOutOrFailIfAlreadyUsed();
+            }
         }
         return null;
     }
 
     private Constructor<? extends Formatter> findConstructor(Class<? extends Formatter> formatterClass, Class<?> ctorArgClass) {
         try {
-            return formatterClass.getConstructor(ctorArgClass);
+            if (ctorArgClass == null) {
+                return formatterClass.getConstructor();
+            } else {
+                return formatterClass.getConstructor(ctorArgClass);
+            }
         } catch (NoSuchMethodException e) {
             return null;
         }
@@ -122,7 +131,7 @@ public class FormatterFactory {
         }
     }
 
-    private Appendable defaultOutIfAvailable() {
+    private Appendable defaultOutOrFailIfAlreadyUsed() {
         try {
             if (defaultOut != null) {
                 return defaultOut;
@@ -132,9 +141,5 @@ public class FormatterFactory {
         } finally {
             defaultOut = null;
         }
-    }
-
-    public Formatter createDefault() {
-        return new ProgressFormatter(System.out);
     }
 }

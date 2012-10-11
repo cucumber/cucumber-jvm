@@ -44,7 +44,7 @@ public class RuntimeOptions {
         }
 
         if (formatters.isEmpty()) {
-            formatters.add(formatterFactory.createDefault());
+            formatters.add(formatterFactory.create("progress"));
         }
         for (Formatter formatter : formatters) {
             if (formatter instanceof ColorAware) {

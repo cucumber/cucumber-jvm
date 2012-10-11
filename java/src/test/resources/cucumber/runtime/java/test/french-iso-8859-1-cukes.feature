@@ -1,5 +1,5 @@
 # language: fr
 # encoding: ISO-8859-1
-Fonctionnalitï¿½: Cukes
-Scï¿½nario: in the belly
-ï¿½tant donnï¿½ I have 5 cukes in the belly
+Fonctionnalité: Cukes
+  Scénario: in the belly
+    Étant donné I have 5 cukes in the belly

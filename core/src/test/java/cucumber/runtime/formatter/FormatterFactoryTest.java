@@ -15,6 +15,12 @@ public class FormatterFactoryTest {
     private FormatterFactory fc = new FormatterFactory();
 
     @Test
+    public void instantiates_null_formatter() {
+        Formatter formatter = fc.create("null");
+        assertEquals(NullFormatter.class, formatter.getClass());
+    }
+
+    @Test
     public void instantiates_junit_formatter_with_file_arg() {
         Formatter formatter = fc.create("junit:some_file.xml");
         assertEquals(JUnitFormatter.class, formatter.getClass());

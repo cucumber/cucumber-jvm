@@ -50,10 +50,10 @@ public class SharedDriver extends EventFiringWebDriver {
     }
 
     @After
-    public void embedScreenshot(Scenario result) {
+    public void embedScreenshot(Scenario scenario) {
         try {
             byte[] screenshot = getScreenshotAs(OutputType.BYTES);
-            result.embed(screenshot, "image/png");
+            scenario.embed(screenshot, "image/png");
         } catch (WebDriverException somePlatformsDontSupportScreenshots) {
             System.err.println(somePlatformsDontSupportScreenshots.getMessage());
         }

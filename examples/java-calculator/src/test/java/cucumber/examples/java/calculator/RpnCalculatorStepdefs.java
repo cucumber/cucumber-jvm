@@ -42,8 +42,8 @@ public class RpnCalculatorStepdefs {
     }
 
     @After
-    public void after(Scenario result) {
-        result.write("HELLLLOO");
+    public void after(Scenario scenario) {
+        // result.write("HELLLLOO");
     }
 
     @Given("^the previous entries:$")

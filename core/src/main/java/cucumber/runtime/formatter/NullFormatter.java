@@ -11,7 +11,7 @@ import gherkin.formatter.model.Step;
 import java.util.List;
 
 class NullFormatter implements Formatter {
-    public NullFormatter(Appendable ignore) {
+    public NullFormatter() {
     }
 
     @Override

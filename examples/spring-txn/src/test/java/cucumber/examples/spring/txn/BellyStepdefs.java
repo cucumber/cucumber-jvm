@@ -1,7 +1,7 @@
 package cucumber.examples.spring.txn;
 
-import cucumber.annotation.en.Given;
-import cucumber.annotation.en.Then;
+import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
