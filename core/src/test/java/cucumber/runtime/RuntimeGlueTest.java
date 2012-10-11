@@ -1,6 +1,6 @@
 package cucumber.runtime;
 
-import cucumber.runtime.converters.LocalizedXStreams;
+import cucumber.runtime.xstream.LocalizedXStreams;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

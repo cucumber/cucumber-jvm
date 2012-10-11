@@ -1,0 +1,20 @@
+package cucumber.runtime.scala
+
+import _root_.gherkin.TagExpression
+import _root_.gherkin.formatter.model.Tag
+import _root_.java.util.Collection
+import _root_.cucumber.api.Scenario
+import _root_.cucumber.runtime.HookDefinition
+import collection.JavaConverters._
+
+class ScalaHookDefinition(f:() => Unit, order:Int, tags:Seq[String]) extends HookDefinition {
+  val tagExpression = new TagExpression(tags.asJava)
+
+  def getLocation(detail: Boolean) = "TODO: Implement getLocation in similar fashion to ScalaStepDefinition"
+
+  def execute(scenario: Scenario) { f() }
+
+  def matches(tags: Collection[Tag]) = tagExpression.eval(tags)
+
+  def getOrder = order
+}

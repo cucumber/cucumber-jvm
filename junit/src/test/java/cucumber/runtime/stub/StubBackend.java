@@ -1,9 +1,9 @@
 package cucumber.runtime.stub;
 
-import cucumber.io.ResourceLoader;
 import cucumber.runtime.Backend;
 import cucumber.runtime.Glue;
 import cucumber.runtime.UnreportedStepExecutor;
+import cucumber.runtime.io.ResourceLoader;
 import gherkin.formatter.model.Step;
 
 import java.util.List;

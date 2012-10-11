@@ -1,7 +1,7 @@
 package cucumber.runtime.jython;
 
+import cucumber.api.Scenario;
 import cucumber.runtime.HookDefinition;
-import cucumber.runtime.ScenarioResult;
 import gherkin.TagExpression;
 import gherkin.formatter.model.Tag;
 import org.python.core.PyInstance;
@@ -22,8 +22,8 @@ public class JythonHookDefinition implements HookDefinition {
     }
 
     @Override
-    public void execute(ScenarioResult scenarioResult) throws Throwable {
-        backend.executeHook(hookDefinition, new Object[]{scenarioResult});
+    public void execute(Scenario scenario) throws Throwable {
+        backend.executeHook(hookDefinition, new Object[]{scenario});
     }
 
     @Override

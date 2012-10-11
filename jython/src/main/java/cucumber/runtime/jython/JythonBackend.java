@@ -1,11 +1,11 @@
 package cucumber.runtime.jython;
 
-import cucumber.io.Resource;
-import cucumber.io.ResourceLoader;
 import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Glue;
 import cucumber.runtime.UnreportedStepExecutor;
+import cucumber.runtime.io.Resource;
+import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.snippets.SnippetGenerator;
 import gherkin.formatter.model.Step;
 import org.python.core.PyException;

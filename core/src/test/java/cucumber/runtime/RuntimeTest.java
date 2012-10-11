@@ -1,7 +1,7 @@
 package cucumber.runtime;
 
-import cucumber.io.ClasspathResourceLoader;
-import cucumber.io.ResourceLoader;
+import cucumber.runtime.io.ClasspathResourceLoader;
+import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
 import gherkin.I18n;
 import gherkin.formatter.JSONPrettyFormatter;

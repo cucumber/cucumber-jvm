@@ -1,8 +1,8 @@
 package cucumber.runtime.jruby;
 
+import cucumber.api.DataTable;
 import cucumber.runtime.ParameterType;
 import cucumber.runtime.StepDefinition;
-import cucumber.table.DataTable;
 import gherkin.I18n;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;

@@ -1,10 +1,10 @@
 package cucumber.runtime;
 
-import cucumber.io.FileResourceLoader;
 import cucumber.runtime.autocomplete.MetaStepdef;
 import cucumber.runtime.autocomplete.StepdefGenerator;
-import cucumber.runtime.converters.LocalizedXStreams;
+import cucumber.runtime.io.FileResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
+import cucumber.runtime.xstream.LocalizedXStreams;
 import gherkin.I18n;
 import gherkin.deps.com.google.gson.Gson;
 import gherkin.deps.com.google.gson.GsonBuilder;

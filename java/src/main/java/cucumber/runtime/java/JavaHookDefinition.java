@@ -1,9 +1,9 @@
 package cucumber.runtime.java;
 
+import cucumber.api.Scenario;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.HookDefinition;
 import cucumber.runtime.MethodFormat;
-import cucumber.runtime.ScenarioResult;
 import cucumber.runtime.Utils;
 import gherkin.TagExpression;
 import gherkin.formatter.model.Tag;
@@ -13,7 +13,7 @@ import java.util.Collection;
 
 import static java.util.Arrays.asList;
 
-public class JavaHookDefinition implements HookDefinition {
+class JavaHookDefinition implements HookDefinition {
 
     private final Method method;
     private final int timeout;
@@ -40,17 +40,17 @@ public class JavaHookDefinition implements HookDefinition {
     }
 
     @Override
-    public void execute(ScenarioResult scenarioResult) throws Throwable {
+    public void execute(Scenario scenario) throws Throwable {
         Object[] args;
         switch (method.getParameterTypes().length) {
             case 0:
                 args = new Object[0];
                 break;
             case 1:
-                if (!ScenarioResult.class.equals(method.getParameterTypes()[0])) {
-                    throw new CucumberException("When a hook declares an argument it must be of type " + ScenarioResult.class.getName() + ". " + method.toString());
+                if (!Scenario.class.equals(method.getParameterTypes()[0])) {
+                    throw new CucumberException("When a hook declares an argument it must be of type " + Scenario.class.getName() + ". " + method.toString());
                 }
-                args = new Object[]{scenarioResult};
+                args = new Object[]{scenario};
                 break;
             default:
                 throw new CucumberException("Hooks must declare 0 or 1 arguments. " + method.toString());

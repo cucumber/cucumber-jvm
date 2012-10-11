@@ -1,7 +1,7 @@
 package cucumber.runtime.java.spring;
 
-import cucumber.annotation.Before;
-import cucumber.annotation.en.Given;
+import cucumber.api.java.Before;
+import cucumber.api.java.en.Given;
 
 public class UnusedGlue {
     public UnusedGlue() {

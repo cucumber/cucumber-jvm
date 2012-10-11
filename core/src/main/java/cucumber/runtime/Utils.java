@@ -62,7 +62,7 @@ public class Utils {
     }
 
     private static Type typeArg(Type type, Class<?> wantedRawType, int index) {
-        if(type instanceof ParameterizedType) {
+        if (type instanceof ParameterizedType) {
             ParameterizedType parameterizedType = (ParameterizedType) type;
             Type rawType = parameterizedType.getRawType();
             if (rawType instanceof Class && wantedRawType.isAssignableFrom((Class) rawType)) {

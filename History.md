@@ -1,5 +1,7 @@
 ## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.0.14...master)
 
+* [All] Package reorganisation. Only classes under `cucumber.api` are part of the public (stable) API. Classes in other classes are not part of the API and can change.
+* [Core] Scenario Transform header being treated like an object (no bugfix, but added explanation) ([#396](https://github.com/cucumber/cucumber-jvm/issues/396) Aslak Hellesøy)
 * [Core] TableDiff with list of pojos: camelcase convert of column names to field names ([#385](https://github.com/cucumber/cucumber-jvm/pull/385) mbusik)
 * [Core] Added video/ogg mimetype to embedd videos in the HTMLReport ([#390](https://github.com/cucumber/cucumber-jvm/pull/390) Klaus Bayrhammer)
 * [Groovy] Generated Groovy step definitions need backslashes to be escaped ([#391](https://github.com/cucumber/cucumber-jvm/issues/391), [#400](https://github.com/cucumber/cucumber-jvm/pull/400), Martin Hauner)

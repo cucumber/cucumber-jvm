@@ -1,6 +1,6 @@
 package cucumber.runtime;
 
-import cucumber.io.Resource;
+import cucumber.runtime.io.Resource;
 import cucumber.runtime.model.CucumberFeature;
 import gherkin.I18n;
 import gherkin.formatter.FilterFormatter;
@@ -127,7 +127,7 @@ public class FeatureBuilder implements Formatter {
         try {
             String source = FixJava.readReader(new InputStreamReader(resource.getInputStream(), "UTF-8"));
             String encoding = new Encoding().encoding(source);
-            if(!"UTF-8".equals(encoding)) {
+            if (!"UTF-8".equals(encoding)) {
                 source = FixJava.readReader(new InputStreamReader(resource.getInputStream(), encoding));
             }
             return source;

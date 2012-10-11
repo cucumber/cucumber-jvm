@@ -1,7 +1,7 @@
 package cucumber.runtime.groovy;
 
+import cucumber.api.Scenario;
 import cucumber.runtime.HookDefinition;
-import cucumber.runtime.ScenarioResult;
 import cucumber.runtime.Timeout;
 import gherkin.TagExpression;
 import gherkin.formatter.model.Tag;
@@ -30,11 +30,11 @@ public class GroovyHookDefinition implements HookDefinition {
     }
 
     @Override
-    public void execute(final ScenarioResult scenarioResult) throws Throwable {
+    public void execute(final Scenario scenario) throws Throwable {
         Timeout.timeout(new Timeout.Callback<Object>() {
             @Override
             public Object call() throws Throwable {
-                backend.invoke(body, new Object[]{scenarioResult});
+                backend.invoke(body, new Object[]{scenario});
                 return null;
             }
         }, timeoutMillis);

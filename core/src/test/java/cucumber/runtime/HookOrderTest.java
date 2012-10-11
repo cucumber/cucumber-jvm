@@ -1,6 +1,7 @@
 package cucumber.runtime;
 
-import cucumber.io.ResourceLoader;
+import cucumber.api.Scenario;
+import cucumber.runtime.io.ResourceLoader;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Tag;
 import org.junit.Before;
@@ -43,9 +44,9 @@ public class HookOrderTest {
         runtime.runBeforeHooks(mock(Reporter.class), new HashSet<Tag>());
 
         InOrder inOrder = inOrder(hooks.toArray());
-        inOrder.verify(hooks.get(2)).execute(Matchers.<ScenarioResult>any());
-        inOrder.verify(hooks.get(0)).execute(Matchers.<ScenarioResult>any());
-        inOrder.verify(hooks.get(1)).execute(Matchers.<ScenarioResult>any());
+        inOrder.verify(hooks.get(2)).execute(Matchers.<Scenario>any());
+        inOrder.verify(hooks.get(0)).execute(Matchers.<Scenario>any());
+        inOrder.verify(hooks.get(1)).execute(Matchers.<Scenario>any());
     }
 
     @Test
@@ -58,9 +59,9 @@ public class HookOrderTest {
         runtime.runAfterHooks(mock(Reporter.class), new HashSet<Tag>());
 
         InOrder inOrder = inOrder(hooks.toArray());
-        inOrder.verify(hooks.get(1)).execute(Matchers.<ScenarioResult>any());
-        inOrder.verify(hooks.get(2)).execute(Matchers.<ScenarioResult>any());
-        inOrder.verify(hooks.get(0)).execute(Matchers.<ScenarioResult>any());
+        inOrder.verify(hooks.get(1)).execute(Matchers.<Scenario>any());
+        inOrder.verify(hooks.get(2)).execute(Matchers.<Scenario>any());
+        inOrder.verify(hooks.get(0)).execute(Matchers.<Scenario>any());
     }
 
     @Test
@@ -81,12 +82,12 @@ public class HookOrderTest {
         allHooks.addAll(backend2Hooks);
 
         InOrder inOrder = inOrder(allHooks.toArray());
-        inOrder.verify(backend1Hooks.get(2)).execute(Matchers.<ScenarioResult>any());
-        inOrder.verify(backend2Hooks.get(0)).execute(Matchers.<ScenarioResult>any());
-        inOrder.verify(backend1Hooks.get(0)).execute(Matchers.<ScenarioResult>any());
-        inOrder.verify(backend2Hooks.get(2)).execute(Matchers.<ScenarioResult>any());
-        verify(backend2Hooks.get(1)).execute(Matchers.<ScenarioResult>any());
-        verify(backend1Hooks.get(1)).execute(Matchers.<ScenarioResult>any());
+        inOrder.verify(backend1Hooks.get(2)).execute(Matchers.<Scenario>any());
+        inOrder.verify(backend2Hooks.get(0)).execute(Matchers.<Scenario>any());
+        inOrder.verify(backend1Hooks.get(0)).execute(Matchers.<Scenario>any());
+        inOrder.verify(backend2Hooks.get(2)).execute(Matchers.<Scenario>any());
+        verify(backend2Hooks.get(1)).execute(Matchers.<Scenario>any());
+        verify(backend1Hooks.get(1)).execute(Matchers.<Scenario>any());
     }
 
     private List<HookDefinition> mockHooks(int... ordering) {

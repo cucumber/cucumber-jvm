@@ -1,13 +1,13 @@
 package cucumber.runtime.ioke;
 
-import cucumber.io.Resource;
-import cucumber.io.ResourceLoader;
+import cucumber.api.DataTable;
 import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Glue;
 import cucumber.runtime.UnreportedStepExecutor;
+import cucumber.runtime.io.Resource;
+import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.snippets.SnippetGenerator;
-import cucumber.table.DataTable;
 import gherkin.formatter.model.Step;
 import ioke.lang.IokeObject;
 import ioke.lang.Message;

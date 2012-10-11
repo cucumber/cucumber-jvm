@@ -11,7 +11,7 @@
   (:gen-class :name cucumber.runtime.clj.Backend
               :implements [cucumber.runtime.Backend]
               :constructors
-              {[cucumber.io.ResourceLoader] []}
+              {[cucumber.runtime.io.ResourceLoader] []}
               :init init
               :state state))
 

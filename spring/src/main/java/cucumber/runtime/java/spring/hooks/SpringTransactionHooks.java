@@ -1,7 +1,7 @@
 package cucumber.runtime.java.spring.hooks;
 
-import cucumber.annotation.After;
-import cucumber.annotation.Before;
+import cucumber.api.java.After;
+import cucumber.api.java.Before;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;

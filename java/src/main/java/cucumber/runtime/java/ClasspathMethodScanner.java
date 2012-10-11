@@ -1,18 +1,18 @@
 package cucumber.runtime.java;
 
-import cucumber.annotation.After;
-import cucumber.annotation.Before;
-import cucumber.annotation.Order;
-import cucumber.io.ClasspathResourceLoader;
+import cucumber.api.java.After;
+import cucumber.api.java.Before;
+import cucumber.api.java.Order;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Utils;
+import cucumber.runtime.io.ClasspathResourceLoader;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.List;
 
-import static cucumber.io.MultiLoader.packageName;
+import static cucumber.runtime.io.MultiLoader.packageName;
 
 class ClasspathMethodScanner {
 
@@ -73,7 +73,7 @@ class ClasspathMethodScanner {
     }
 
     private Collection<Class<? extends Annotation>> findCucumberAnnotationClasses() {
-        return resourceLoader.getAnnotations("cucumber.annotation");
+        return resourceLoader.getAnnotations("cucumber.api");
     }
 
     private boolean isHookAnnotation(Annotation annotation) {

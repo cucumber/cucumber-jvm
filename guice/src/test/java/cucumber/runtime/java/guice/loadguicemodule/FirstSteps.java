@@ -1,7 +1,7 @@
 package cucumber.runtime.java.guice.loadguicemodule;
 
-import cucumber.annotation.en.And;
-import cucumber.annotation.en.When;
+import cucumber.api.java.en.And;
+import cucumber.api.java.en.When;
 
 import javax.inject.Inject;
 

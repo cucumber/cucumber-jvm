@@ -1,12 +1,11 @@
 package cucumber.runtime.rhino;
 
-import cucumber.io.Resource;
-import cucumber.io.ResourceLoader;
 import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Glue;
 import cucumber.runtime.UnreportedStepExecutor;
-import cucumber.runtime.javascript.JavaScriptSnippet;
+import cucumber.runtime.io.Resource;
+import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.snippets.SnippetGenerator;
 import gherkin.formatter.model.Step;
 import org.mozilla.javascript.Context;
@@ -19,7 +18,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
 
-import static cucumber.io.MultiLoader.packageName;
+import static cucumber.runtime.io.MultiLoader.packageName;
 
 public class RhinoBackend implements Backend {
     private static final String JS_DSL = "/cucumber/runtime/rhino/dsl.js";

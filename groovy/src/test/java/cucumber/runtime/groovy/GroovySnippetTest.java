@@ -116,7 +116,7 @@ public class GroovySnippetTest {
                 "Given(~'^I have (\\\\d+) cukes in my belly$') { int arg1 ->\n" +
                 "    // Express the Regexp above with the code you wish you had\n" +
                 "    throw new PendingException()\n" +
-        "}\n";
+                "}\n";
 
         assertEquals(expected, snippetFor("I have 4 cukes in my belly"));
     }

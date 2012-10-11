@@ -11,7 +11,7 @@ import static org.mockito.Mockito.verify;
 public class ScenarioResultTest {
 
     private Reporter reporter = mock(Reporter.class);
-    private ScenarioResultImpl r = new ScenarioResultImpl(reporter);
+    private ScenarioImpl r = new ScenarioImpl(reporter);
 
     @Test
     public void no_steps_is_passed() throws Exception {

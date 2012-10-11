@@ -1,10 +1,10 @@
 package cucumber.runtime.model;
 
-import cucumber.io.Resource;
-import cucumber.io.ResourceLoader;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.FeatureBuilder;
 import cucumber.runtime.Runtime;
+import cucumber.runtime.io.Resource;
+import cucumber.runtime.io.ResourceLoader;
 import gherkin.I18n;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;

@@ -1,8 +1,8 @@
 package cucumber.runtime.model;
 
-import cucumber.io.Resource;
-import cucumber.io.ResourceLoader;
 import cucumber.runtime.CucumberException;
+import cucumber.runtime.io.Resource;
+import cucumber.runtime.io.ResourceLoader;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;

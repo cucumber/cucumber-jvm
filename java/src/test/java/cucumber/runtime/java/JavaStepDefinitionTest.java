@@ -1,12 +1,12 @@
 package cucumber.runtime.java;
 
-import cucumber.annotation.en.Given;
-import cucumber.io.ClasspathResourceLoader;
+import cucumber.api.java.en.Given;
 import cucumber.runtime.AmbiguousStepDefinitionsException;
 import cucumber.runtime.DuplicateStepDefinitionException;
 import cucumber.runtime.Glue;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeOptions;
+import cucumber.runtime.io.ClasspathResourceLoader;
 import gherkin.I18n;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Comment;

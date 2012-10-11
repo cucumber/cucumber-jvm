@@ -1,11 +1,11 @@
 package cucumber.examples.java.calculator;
 
-import cucumber.annotation.After;
-import cucumber.annotation.Before;
-import cucumber.annotation.en.Given;
-import cucumber.annotation.en.Then;
-import cucumber.annotation.en.When;
-import cucumber.runtime.ScenarioResult;
+import cucumber.api.java.After;
+import cucumber.api.java.Before;
+import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
+import cucumber.api.Scenario;
 
 import java.util.List;
 
@@ -42,7 +42,7 @@ public class RpnCalculatorStepdefs {
     }
 
     @After
-    public void after(ScenarioResult result) {
+    public void after(Scenario result) {
         result.write("HELLLLOO");
     }
 

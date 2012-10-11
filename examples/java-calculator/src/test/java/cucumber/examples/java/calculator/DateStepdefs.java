@@ -1,9 +1,9 @@
 package cucumber.examples.java.calculator;
 
-import cucumber.DateFormat;
-import cucumber.annotation.en.Given;
-import cucumber.annotation.en.Then;
-import cucumber.annotation.en.When;
+import cucumber.api.DateFormat;
+import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
 
 import java.util.Date;
 

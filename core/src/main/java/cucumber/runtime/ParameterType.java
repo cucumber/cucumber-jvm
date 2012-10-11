@@ -1,13 +1,11 @@
 package cucumber.runtime;
 
-import cucumber.DateFormat;
-import cucumber.Delimiter;
+import cucumber.api.DateFormat;
+import cucumber.api.Delimiter;
 import cucumber.api.Transform;
 import cucumber.deps.com.thoughtworks.xstream.annotations.XStreamConverter;
 import cucumber.deps.com.thoughtworks.xstream.converters.SingleValueConverter;
-import cucumber.runtime.converters.EnumConverter;
-import cucumber.runtime.converters.ListConverter;
-import cucumber.runtime.converters.LocalizedXStreams;
+import cucumber.runtime.xstream.LocalizedXStreams;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -21,7 +19,7 @@ import java.util.Locale;
  * This class composes all interesting parameter information into one object.
  */
 public class ParameterType {
-    public static final String DEFAULT_DELIMITER = ", ?";
+    public static final String DEFAULT_DELIMITER = ",\\s?";
 
     private final Type type;
     private final String dateFormat;
@@ -123,20 +121,20 @@ public class ParameterType {
 
     private SingleValueConverter getListConverter(Type type, LocalizedXStreams.LocalizedXStream xStream, Locale locale) {
         Class elementType = type instanceof ParameterizedType
-                ? getRawType(((ParameterizedType)type).getActualTypeArguments()[0])
+                ? getRawType(((ParameterizedType) type).getActualTypeArguments()[0])
                 : Object.class;
 
         SingleValueConverter elementConverter = getConverter(elementType, xStream, locale);
         if (elementConverter == null) {
             return null;
         } else {
-            return new ListConverter(delimiter, elementConverter);
+            return xStream.createListConverter(delimiter, elementConverter);
         }
     }
 
     private SingleValueConverter getConverter(Class<?> type, LocalizedXStreams.LocalizedXStream xStream, Locale locale) {
         if (type.isEnum()) {
-            return new EnumConverter(locale, (Class<? extends Enum>) type);
+            return xStream.createEnumConverter(locale, (Class<? extends Enum>) type);
         } else {
             return xStream.getSingleValueConverter(type);
         }

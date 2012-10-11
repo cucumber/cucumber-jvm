@@ -12,9 +12,9 @@ Feature: tables
 
   Scenario: a table
     Given I have a table with its keys in a header row:
-      | id | name    |    created-at |
-      | 55 | "foo"   | 1293884100000 |
-      | 56 | "bar"   | 1293884100000 |
+      | id | name  | created-at    |
+      | 55 | "foo" | 1293884100000 |
+      | 56 | "bar" | 1293884100000 |
     Then the clojure literal equivalent should be:
     """
       [{:id 55, :name "foo", :created-at 1293884100000}

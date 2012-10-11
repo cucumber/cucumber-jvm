@@ -1,6 +1,6 @@
 package cucumber.examples.java.websockets;
 
-import cucumber.annotation.en.Given;
+import cucumber.api.java.en.Given;
 import org.openqa.selenium.WebDriver;
 
 public class NavigationStepdefs {

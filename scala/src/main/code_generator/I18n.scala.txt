@@ -1,4 +1,4 @@
-package cucumber.runtime
+package cucumber.api.scala
 
 <% gherkin.I18n.all.each { i18n -> %>
 trait ${i18n.underscoredIsoCode.toUpperCase()} {

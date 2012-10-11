@@ -1,6 +1,5 @@
 package cucumber.runtime;
 
-import cucumber.formatter.HTMLFormatter;
 import org.junit.Test;
 
 import java.io.File;
@@ -44,7 +43,7 @@ public class RuntimeOptionsTest {
     @Test
     public void creates_formatter() {
         RuntimeOptions options = new RuntimeOptions(new Properties(), "--format", "html:some/dir", "--glue", "somewhere");
-        assertEquals(HTMLFormatter.class, options.formatters.get(0).getClass());
+        assertEquals("cucumber.runtime.formatter.HTMLFormatter", options.formatters.get(0).getClass().getName());
     }
 
     @Test

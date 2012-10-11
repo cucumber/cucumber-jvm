@@ -1,10 +1,10 @@
 package cucumber.runtime;
 
-import cucumber.io.ClasspathResourceLoader;
-import cucumber.io.ResourceLoader;
-import cucumber.runtime.converters.LocalizedXStreams;
+import cucumber.runtime.io.ClasspathResourceLoader;
+import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.snippets.SummaryPrinter;
+import cucumber.runtime.xstream.LocalizedXStreams;
 import gherkin.I18n;
 import gherkin.formatter.Argument;
 import gherkin.formatter.Formatter;
@@ -55,7 +55,7 @@ public class Runtime implements UnreportedStepExecutor {
     //TODO: These are really state machine variables, and I'm not sure the runtime is the best place for this state machine
     //They really should be created each time a scenario is run, not in here
     private boolean skipNextStep = false;
-    private ScenarioResultImpl scenarioResult = null;
+    private ScenarioImpl scenarioResult = null;
 
     public Runtime(ResourceLoader resourceLoader, ClassLoader classLoader, RuntimeOptions runtimeOptions) {
         this(resourceLoader, classLoader, loadBackends(resourceLoader, classLoader), runtimeOptions);
@@ -117,7 +117,7 @@ public class Runtime implements UnreportedStepExecutor {
         undefinedStepsTracker.reset();
         //TODO: this is the initial state of the state machine, it should not go here, but into something else
         skipNextStep = false;
-        scenarioResult = new ScenarioResultImpl(reporter);
+        scenarioResult = new ScenarioImpl(reporter);
     }
 
     public void disposeBackendWorlds() {

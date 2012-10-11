@@ -4,7 +4,7 @@ import cucumber.runtime.snippets.Snippet;
 
 import java.util.List;
 
-public class JavaSnippet implements Snippet {
+class JavaSnippet implements Snippet {
 
     @Override
     public String arguments(List<Class<?>> argumentTypes) {

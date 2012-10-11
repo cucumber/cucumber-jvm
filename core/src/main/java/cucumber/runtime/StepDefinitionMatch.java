@@ -1,8 +1,8 @@
 package cucumber.runtime;
 
-import cucumber.runtime.converters.LocalizedXStreams;
-import cucumber.table.DataTable;
-import cucumber.table.TableConverter;
+import cucumber.api.DataTable;
+import cucumber.runtime.table.TableConverter;
+import cucumber.runtime.xstream.LocalizedXStreams;
 import gherkin.I18n;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.DataTableRow;

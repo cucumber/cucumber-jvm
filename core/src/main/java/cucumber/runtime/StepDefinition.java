@@ -31,7 +31,7 @@ public interface StepDefinition {
     /**
      * The parameter type at index n. A hint about the raw parameter type is passed to make
      * it easier for the implementation to make a guess based on runtime information.
-     *
+     * <p/>
      * Statically typed languages will typically ignore the {@code argumentType} while dynamically
      * typed ones will use it to infer a "good type". It's also ok to return null.
      */

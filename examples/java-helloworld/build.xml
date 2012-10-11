@@ -45,7 +45,7 @@
 
     <target name="runcukes" depends="compile-test">
         <mkdir dir="target/cucumber-junit-report"/>
-        <java classname="cucumber.cli.Main" fork="true" failonerror="false" resultproperty="cucumber.exitstatus">
+        <java classname="cucumber.api.cli.Main" fork="true" failonerror="false" resultproperty="cucumber.exitstatus">
             <classpath refid="classpath"/>
             <arg value="--format"/>
             <arg value="junit:target/cucumber-junit-report/allcukes.xml"/>

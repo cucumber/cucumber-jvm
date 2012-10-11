@@ -1,8 +1,8 @@
 package cucumber.examples.java.websockets;
 
-import cucumber.annotation.After;
-import cucumber.annotation.Before;
-import cucumber.runtime.ScenarioResult;
+import cucumber.api.java.After;
+import cucumber.api.java.Before;
+import cucumber.api.Scenario;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
@@ -50,7 +50,7 @@ public class SharedDriver extends EventFiringWebDriver {
     }
 
     @After
-    public void embedScreenshot(ScenarioResult result) {
+    public void embedScreenshot(Scenario result) {
         try {
             byte[] screenshot = getScreenshotAs(OutputType.BYTES);
             result.embed(screenshot, "image/png");

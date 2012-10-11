@@ -1,15 +1,15 @@
 package cucumber.runtime.java;
 
-import cucumber.annotation.After;
-import cucumber.annotation.Before;
-import cucumber.annotation.Order;
+import cucumber.api.Scenario;
+import cucumber.api.java.After;
+import cucumber.api.java.Before;
+import cucumber.api.java.Order;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Glue;
 import cucumber.runtime.HookDefinition;
 import cucumber.runtime.RuntimeGlue;
-import cucumber.runtime.ScenarioResult;
 import cucumber.runtime.UndefinedStepsTracker;
-import cucumber.runtime.converters.LocalizedXStreams;
+import cucumber.runtime.xstream.LocalizedXStreams;
 import gherkin.formatter.model.Tag;
 import org.junit.Test;
 
@@ -111,10 +111,10 @@ public class JavaHookTest {
         backend.addHook(BAD_AFTER.getAnnotation(After.class), BAD_AFTER);
         HookDefinition bad = glue.getAfterHooks().get(0);
         try {
-            bad.execute(mock(ScenarioResult.class));
+            bad.execute(mock(Scenario.class));
             fail();
-        } catch(CucumberException expected) {
-            assertEquals("When a hook declares an argument it must be of type cucumber.runtime.ScenarioResult. public void cucumber.runtime.java.JavaHookTest$BadHook.after(java.lang.String)", expected.getMessage());
+        } catch (CucumberException expected) {
+            assertEquals("When a hook declares an argument it must be of type cucumber.api.Scenario. public void cucumber.runtime.java.JavaHookTest$BadHook.after(java.lang.String)", expected.getMessage());
         }
     }
 
