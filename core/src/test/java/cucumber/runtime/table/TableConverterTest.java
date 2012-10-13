@@ -3,6 +3,7 @@ package cucumber.runtime.table;
 import cucumber.api.DataTable;
 import cucumber.deps.com.thoughtworks.xstream.annotations.XStreamConverter;
 import cucumber.deps.com.thoughtworks.xstream.converters.javabean.JavaBeanConverter;
+import cucumber.runtime.ParameterInfo;
 import org.junit.Test;
 
 import java.util.Calendar;
@@ -16,6 +17,9 @@ import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 
 public class TableConverterTest {
+
+    private static final String YYYY_MM_DD = "yyyy-MM-dd";
+    private static final ParameterInfo PARAMETER_INFO = new ParameterInfo(null, YYYY_MM_DD, null, null);
 
     @Test
     public void converts_table_of_single_column_to_list_of_integers() {
@@ -134,7 +138,7 @@ public class TableConverterTest {
 
     @Test
     public void converts_table_to_list_of_pojo_and_almost_back() {
-        DataTable table = TableParser.parse("|Birth Date|Death Cal|\n|1957-05-10|1979-02-02|\n", "yyyy-MM-dd");
+        DataTable table = TableParser.parse("|Birth Date|Death Cal|\n|1957-05-10|1979-02-02|\n", PARAMETER_INFO);
         List<UserPojo> converted = table.convert(new TypeReference<List<UserPojo>>() {
         }.getType());
         assertEquals(sidsBirthday(), converted.get(0).birthDate);
@@ -166,7 +170,7 @@ public class TableConverterTest {
 
     @Test
     public void converts_to_list_of_java_bean_and_almost_back() {
-        DataTable table = TableParser.parse("|Birth Date|Death Cal|\n|1957-05-10|1979-02-02|\n", "yyyy-MM-dd");
+        DataTable table = TableParser.parse("|Birth Date|Death Cal|\n|1957-05-10|1979-02-02|\n", PARAMETER_INFO);
         List<UserBean> converted = table.convert(new TypeReference<List<UserBean>>() {
         }.getType());
         assertEquals(sidsBirthday(), converted.get(0).getBirthDate());
@@ -176,7 +180,7 @@ public class TableConverterTest {
 
     @Test
     public void converts_to_list_of_map_of_date() {
-        DataTable table = TableParser.parse("|Birth Date|Death Cal|\n|1957-05-10|1979-02-02|\n", "yyyy-MM-dd");
+        DataTable table = TableParser.parse("|Birth Date|Death Cal|\n|1957-05-10|1979-02-02|\n", PARAMETER_INFO);
         List<Map<String, Date>> converted = table.convert(new TypeReference<List<Map<String, Date>>>() {
         }.getType());
         assertEquals(sidsBirthday(), converted.get(0).get("Birth Date"));

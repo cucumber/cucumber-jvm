@@ -28,9 +28,9 @@ class ConverterWithEnumFormat<T extends Enum> extends ConverterWithFormat<T> {
 
 
     @Override
-    public T fromString(String string) {
+    public T transform(String string) {
         try {
-            return super.fromString(string);
+            return super.transform(string);
         } catch (ConversionException e) {
             String allowed = asList(typeClass.getEnumConstants()).toString();
             throw new ConversionException(String.format("Couldn't convert %s to %s. Legal values are %s", string, typeClass.getName(), allowed));

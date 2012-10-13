@@ -1,5 +1,6 @@
 package cucumber.api;
 
+import cucumber.runtime.ParameterInfo;
 import cucumber.runtime.table.DiffableRow;
 import cucumber.runtime.table.TableConverter;
 import cucumber.runtime.table.TableDiffException;
@@ -40,7 +41,8 @@ public class DataTable {
     }
 
     private static DataTable create(List<?> raw, Locale locale, String dateFormat, String... columnNames) {
-        TableConverter tableConverter = new TableConverter(new LocalizedXStreams(Thread.currentThread().getContextClassLoader()).get(locale), dateFormat);
+        ParameterInfo parameterInfo = new ParameterInfo(null, dateFormat, null, null);
+        TableConverter tableConverter = new TableConverter(new LocalizedXStreams(Thread.currentThread().getContextClassLoader()).get(locale), parameterInfo);
         return tableConverter.toTable(raw, columnNames);
     }
 
@@ -111,7 +113,7 @@ public class DataTable {
     }
 
     /**
-     * Creates another table using the same {@link Locale} and {@link cucumber.api.DateFormat} that was used to create this table.
+     * Creates another table using the same {@link Locale} and {@link Format} that was used to create this table.
      *
      * @param raw         a list of objects
      * @param columnNames optional explicit header columns

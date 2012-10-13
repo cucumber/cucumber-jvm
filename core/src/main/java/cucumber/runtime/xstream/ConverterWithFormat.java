@@ -1,7 +1,7 @@
 package cucumber.runtime.xstream;
 
+import cucumber.api.Transformer;
 import cucumber.deps.com.thoughtworks.xstream.converters.ConversionException;
-import cucumber.deps.com.thoughtworks.xstream.converters.SingleValueConverter;
 import cucumber.runtime.CucumberException;
 
 import java.text.Format;
@@ -10,14 +10,14 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 
-abstract class ConverterWithFormat<T> implements SingleValueConverter {
+abstract class ConverterWithFormat<T> extends Transformer<T> {
     private final Class[] convertibleTypes;
 
     ConverterWithFormat(Class[] convertibleTypes) {
         this.convertibleTypes = convertibleTypes;
     }
 
-    public T fromString(String string) {
+    public T transform(String string) {
         if (string == null || string.length() == 0) {
             return null;
         }

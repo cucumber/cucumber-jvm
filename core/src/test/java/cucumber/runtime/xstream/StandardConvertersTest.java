@@ -32,10 +32,10 @@ public class StandardConvertersTest {
 
     @Test
     public void shouldTransformBigDecimal() {
-        BigDecimal englishBigDecimal = new BigDecimalConverter(Locale.US).fromString("300.15");
-        BigDecimal englishBigDecimal2 = new BigDecimalConverter(Locale.US).fromString("30000000.15");
-        BigDecimal englishInteger = new BigDecimalConverter(Locale.US).fromString("300.15");
-        BigDecimal frenchBigDecimal = new BigDecimalConverter(Locale.FRANCE).fromString("300.0");
+        BigDecimal englishBigDecimal = new BigDecimalConverter(Locale.US).transform("300.15");
+        BigDecimal englishBigDecimal2 = new BigDecimalConverter(Locale.US).transform("30000000.15");
+        BigDecimal englishInteger = new BigDecimalConverter(Locale.US).transform("300.15");
+        BigDecimal frenchBigDecimal = new BigDecimalConverter(Locale.FRANCE).transform("300.0");
         assertEquals(new BigDecimal("300.15"), englishBigDecimal);
         assertEquals(new BigDecimal("30000000.15"), englishBigDecimal2);
         assertEquals(new BigDecimal("300.15"), englishInteger);

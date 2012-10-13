@@ -12,13 +12,13 @@ public class StubStepDefinition implements StepDefinition {
     private final Object target;
     private final Method method;
     private final String pattern;
-    private List<ParameterType> parameterTypes;
+    private List<ParameterInfo> parameterInfos;
 
     public StubStepDefinition(Object target, Method method, String pattern) {
         this.target = target;
         this.method = method;
         this.pattern = pattern;
-        this.parameterTypes = ParameterType.fromMethod(method);
+        this.parameterInfos = ParameterInfo.fromMethod(method);
     }
 
     @Override
@@ -33,12 +33,12 @@ public class StubStepDefinition implements StepDefinition {
 
     @Override
     public Integer getParameterCount() {
-        return parameterTypes.size();
+        return parameterInfos.size();
     }
 
     @Override
-    public ParameterType getParameterType(int n, Type argumentType) {
-        return parameterTypes.get(n);
+    public ParameterInfo getParameterType(int n, Type argumentType) {
+        return parameterInfos.get(n);
     }
 
     @Override

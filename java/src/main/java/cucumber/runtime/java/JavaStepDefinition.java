@@ -2,7 +2,7 @@ package cucumber.runtime.java;
 
 import cucumber.runtime.JdkPatternArgumentMatcher;
 import cucumber.runtime.MethodFormat;
-import cucumber.runtime.ParameterType;
+import cucumber.runtime.ParameterInfo;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.Utils;
 import gherkin.I18n;
@@ -20,11 +20,11 @@ class JavaStepDefinition implements StepDefinition {
     private final int timeout;
     private final JdkPatternArgumentMatcher argumentMatcher;
     private final ObjectFactory objectFactory;
-    private List<ParameterType> parameterTypes;
+    private List<ParameterInfo> parameterInfos;
 
     public JavaStepDefinition(Method method, Pattern pattern, int timeout, ObjectFactory objectFactory) {
         this.method = method;
-        this.parameterTypes = ParameterType.fromMethod(method);
+        this.parameterInfos = ParameterInfo.fromMethod(method);
         this.pattern = pattern;
         this.argumentMatcher = new JdkPatternArgumentMatcher(pattern);
         this.timeout = timeout;
@@ -46,12 +46,12 @@ class JavaStepDefinition implements StepDefinition {
 
     @Override
     public Integer getParameterCount() {
-        return parameterTypes.size();
+        return parameterInfos.size();
     }
 
     @Override
-    public ParameterType getParameterType(int n, Type argumentType) {
-        return parameterTypes.get(n);
+    public ParameterInfo getParameterType(int n, Type argumentType) {
+        return parameterInfos.get(n);
     }
 
     public boolean isDefinedAt(StackTraceElement e) {

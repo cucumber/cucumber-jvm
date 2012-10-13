@@ -1,7 +1,7 @@
 package cucumber.runtime.ioke;
 
 import cucumber.runtime.CucumberException;
-import cucumber.runtime.ParameterType;
+import cucumber.runtime.ParameterInfo;
 import cucumber.runtime.StepDefinition;
 import gherkin.I18n;
 import gherkin.formatter.Argument;
@@ -20,14 +20,14 @@ public class IokeStepDefinition implements StepDefinition {
     private final IokeObject iokeStepDefObject;
     private final IokeBackend backend;
     private final String location;
-    private List<ParameterType> parameterTypes;
+    private List<ParameterInfo> parameterInfos;
 
     public IokeStepDefinition(IokeBackend iokeBackend, Runtime ioke, IokeObject iokeStepDefObject, String location) throws Throwable {
         this.ioke = ioke;
         this.iokeStepDefObject = iokeStepDefObject;
         this.backend = iokeBackend;
         this.location = location;
-        this.parameterTypes = getParameterTypes();
+        this.parameterInfos = getParameterInfos();
     }
 
     public String getPattern() {
@@ -58,21 +58,21 @@ public class IokeStepDefinition implements StepDefinition {
 
     @Override
     public Integer getParameterCount() {
-        return parameterTypes.size();
+        return parameterInfos.size();
     }
 
     @Override
-    public ParameterType getParameterType(int n, Type argumentType) {
-        return parameterTypes.get(n);
+    public ParameterInfo getParameterType(int n, Type argumentType) {
+        return parameterInfos.get(n);
     }
 
-    public List<ParameterType> getParameterTypes() {
+    public List<ParameterInfo> getParameterInfos() {
         try {
             IokeObject argNames = (IokeObject) backend.invoke(iokeStepDefObject, "arg_names");
             IokeObject argLength = (IokeObject) backend.invoke(argNames, "length");
             int groupCount = Integer.parseInt(argLength.toString()); // Not sure how to do this properly...
 
-            return listOf(groupCount, new ParameterType(String.class, null, null, null));
+            return listOf(groupCount, new ParameterInfo(String.class, null, null, null));
         } catch (ControlFlow controlFlow) {
             throw new CucumberException("Couldn't inspect arity of stepdef", controlFlow);
         }

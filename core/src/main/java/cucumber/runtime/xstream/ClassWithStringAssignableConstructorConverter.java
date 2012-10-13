@@ -6,7 +6,7 @@ import cucumber.runtime.CucumberException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-class ClassWithStringConstructorConverter implements SingleValueConverter {
+class ClassWithStringAssignableConstructorConverter implements SingleValueConverter {
     private Constructor ctor;
 
     @Override
@@ -29,12 +29,12 @@ class ClassWithStringConstructorConverter implements SingleValueConverter {
 
     @Override
     public boolean canConvert(Class type) {
-        try {
-            ctor = type.getConstructor(String.class);
-            return true;
-        } catch (NoSuchMethodException e) {
-            ctor = null;
-            return false;
+        for (Constructor constructor : type.getConstructors()) {
+            if (constructor.getParameterTypes().length == 1 && constructor.getParameterTypes()[0].isAssignableFrom(String.class)) {
+                this.ctor = constructor;
+                return true;
+            }
         }
+        return false;
     }
 }

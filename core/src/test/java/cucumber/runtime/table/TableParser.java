@@ -1,6 +1,7 @@
 package cucumber.runtime.table;
 
 import cucumber.api.DataTable;
+import cucumber.runtime.ParameterInfo;
 import cucumber.runtime.xstream.LocalizedXStreams;
 import gherkin.formatter.model.Comment;
 import gherkin.formatter.model.DataTableRow;
@@ -16,7 +17,7 @@ import java.util.Locale;
 public class TableParser {
     private static final List<Comment> NO_COMMENTS = Collections.emptyList();
 
-    public static DataTable parse(String source, String dateFormat) {
+    public static DataTable parse(String source, ParameterInfo parameterInfo) {
         final List<DataTableRow> rows = new ArrayList<DataTableRow>();
         Lexer l = new En(new Listener() {
             @Override
@@ -75,6 +76,6 @@ public class TableParser {
         });
         l.scan(source);
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        return new DataTable(rows, new TableConverter(new LocalizedXStreams(classLoader).get(Locale.US), dateFormat));
+        return new DataTable(rows, new TableConverter(new LocalizedXStreams(classLoader).get(Locale.US), parameterInfo));
     }
 }

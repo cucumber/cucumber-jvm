@@ -1,6 +1,6 @@
 package cucumber.runtime.java.picocontainer;
 
-import cucumber.api.DateFormat;
+import cucumber.api.Format;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 
@@ -14,17 +14,17 @@ public class DatesSteps {
     private Date date;
 
     @Given("^the ISO date is (.+)$")
-    public void the_iso_date_is(@DateFormat("yyyy-MM-dd'T'HH:mm:ss") Date date) {
+    public void the_iso_date_is(@Format("yyyy-MM-dd'T'HH:mm:ss") Date date) {
         this.date = date;
     }
 
     @Given("^the simple date is (.+)$")
-    public void the_simple_date_is(@DateFormat("yyyy/MM/dd") Date date) {
+    public void the_simple_date_is(@Format("yyyy/MM/dd") Date date) {
         this.date = date;
     }
 
     @Given("^the ISO date with timezone is (.+$)")
-    public void the_ISO_date_with_timezone_is(@DateFormat("yyyy-MM-dd'T'HH:mm:ss, z") Date date) {
+    public void the_ISO_date_with_timezone_is(@Format("yyyy-MM-dd'T'HH:mm:ss, z") Date date) {
         this.date = date;
     }
 

@@ -2,7 +2,7 @@ package cucumber.runtime.autocomplete;
 
 import cucumber.runtime.FeatureBuilder;
 import cucumber.runtime.JdkPatternArgumentMatcher;
-import cucumber.runtime.ParameterType;
+import cucumber.runtime.ParameterInfo;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.io.Resource;
 import cucumber.runtime.model.CucumberFeature;
@@ -125,7 +125,7 @@ public class StepdefGeneratorTest {
             }
 
             @Override
-            public ParameterType getParameterType(int n, Type argumentType) {
+            public ParameterInfo getParameterType(int n, Type argumentType) {
                 return null;
             }
 

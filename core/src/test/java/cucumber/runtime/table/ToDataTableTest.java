@@ -2,6 +2,7 @@ package cucumber.runtime.table;
 
 import cucumber.api.DataTable;
 import cucumber.runtime.CucumberException;
+import cucumber.runtime.ParameterInfo;
 import cucumber.runtime.xstream.LocalizedXStreams;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,12 +18,13 @@ import static org.junit.Assert.fail;
 
 public class ToDataTableTest {
     private static final String DD_MM_YYYY = "dd/MM/yyyy";
+    private static final ParameterInfo PARAMETER_INFO = new ParameterInfo(null, DD_MM_YYYY, null, null);
     private TableConverter tc;
 
     @Before
     public void createTableConverterWithDateFormat() {
         LocalizedXStreams.LocalizedXStream xStream = new LocalizedXStreams(Thread.currentThread().getContextClassLoader()).get(Locale.US);
-        tc = new TableConverter(xStream, DD_MM_YYYY);
+        tc = new TableConverter(xStream, new ParameterInfo(null, DD_MM_YYYY, null, null));
     }
 
     @Test
@@ -54,7 +56,7 @@ public class ToDataTableTest {
                     "| name        | birthDate  | crapola  |\n" +
                     "| Sid Vicious | 10/05/1957 | 1,000    |\n" +
                     "| Frank Zappa | 21/12/1940 | 3,000    |\n" +
-                    "", DD_MM_YYYY)
+                    "", PARAMETER_INFO)
             );
             fail();
         } catch (CucumberException e) {
@@ -69,7 +71,7 @@ public class ToDataTableTest {
                     "| credits     |\n" +
                     "| 5           |\n" +
                     "|             |\n" +
-                    "", DD_MM_YYYY)
+                    "", PARAMETER_INFO)
             );
             fail();
         } catch (CucumberException e) {
@@ -99,7 +101,7 @@ public class ToDataTableTest {
                 "| name        | birthDate  | credits  |\n" +
                 "| Sid Vicious | 10/05/1957 | 1,000    |\n" +
                 "| Frank Zappa | 21/12/1940 | 3,000    |\n" +
-                "", DD_MM_YYYY);
+                "", PARAMETER_INFO);
     }
 
     private DataTable personTableWithNull() {
@@ -107,7 +109,7 @@ public class ToDataTableTest {
                 "| name        | birthDate  | credits  |\n" +
                 "| Sid Vicious |            | 1,000    |\n" +
                 "| Frank Zappa | 21/12/1940 | 3,000    |\n" +
-                "", DD_MM_YYYY);
+                "", PARAMETER_INFO);
     }
 
     @Test

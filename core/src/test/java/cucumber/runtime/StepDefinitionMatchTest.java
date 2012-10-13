@@ -29,7 +29,7 @@ public class StepDefinitionMatchTest {
     public void converts_numbers() throws Throwable {
         StepDefinition stepDefinition = mock(StepDefinition.class);
         when(stepDefinition.getParameterCount()).thenReturn(1);
-        when(stepDefinition.getParameterType(0, String.class)).thenReturn(new ParameterType(Integer.TYPE, null, null,
+        when(stepDefinition.getParameterType(0, String.class)).thenReturn(new ParameterInfo(Integer.TYPE, null, null,
                 null));
 
         Step stepWithoutDocStringOrTable = mock(Step.class);
@@ -45,7 +45,7 @@ public class StepDefinitionMatchTest {
     public void converts_with_explicit_converter() throws Throwable {
         StepDefinition stepDefinition = mock(StepDefinition.class);
         when(stepDefinition.getParameterCount()).thenReturn(1);
-        when(stepDefinition.getParameterType(0, String.class)).thenReturn(new ParameterType(Thing.class, null, null,
+        when(stepDefinition.getParameterType(0, String.class)).thenReturn(new ParameterInfo(Thing.class, null, null,
                 null));
 
         Step stepWithoutDocStringOrTable = mock(Step.class);
@@ -95,7 +95,7 @@ public class StepDefinitionMatchTest {
     public void gives_nice_error_message_when_conversion_fails() throws Throwable {
         StepDefinition stepDefinition = mock(StepDefinition.class);
         when(stepDefinition.getParameterCount()).thenReturn(1);
-        when(stepDefinition.getParameterType(0, String.class)).thenReturn(new ParameterType(Thang.class, null, null,
+        when(stepDefinition.getParameterType(0, String.class)).thenReturn(new ParameterInfo(Thang.class, null, null,
                 null));
 
         Step stepWithoutDocStringOrTable = mock(Step.class);
@@ -127,7 +127,7 @@ public class StepDefinitionMatchTest {
     public void can_have_doc_string_as_only_argument() throws Throwable {
         StepDefinition stepDefinition = mock(StepDefinition.class);
         when(stepDefinition.getParameterCount()).thenReturn(1);
-        when(stepDefinition.getParameterType(0, String.class)).thenReturn(new ParameterType(String.class, null, null,
+        when(stepDefinition.getParameterType(0, String.class)).thenReturn(new ParameterInfo(String.class, null, null,
                 null));
 
         Step stepWithDocString = mock(Step.class);
@@ -144,9 +144,9 @@ public class StepDefinitionMatchTest {
     public void can_have_doc_string_as_last_argument_among_many() throws Throwable {
         StepDefinition stepDefinition = mock(StepDefinition.class);
         when(stepDefinition.getParameterCount()).thenReturn(2);
-        when(stepDefinition.getParameterType(0, String.class)).thenReturn(new ParameterType(Integer.TYPE, null, null,
+        when(stepDefinition.getParameterType(0, String.class)).thenReturn(new ParameterInfo(Integer.TYPE, null, null,
                 null));
-        when(stepDefinition.getParameterType(1, String.class)).thenReturn(new ParameterType(String.class, null, null,
+        when(stepDefinition.getParameterType(1, String.class)).thenReturn(new ParameterInfo(String.class, null, null,
                 null));
 
         Step stepWithDocString = mock(Step.class);

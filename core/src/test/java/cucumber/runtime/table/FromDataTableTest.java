@@ -1,7 +1,7 @@
 package cucumber.runtime.table;
 
 import cucumber.api.DataTable;
-import cucumber.api.DateFormat;
+import cucumber.api.Format;
 import cucumber.api.Transformer;
 import cucumber.deps.com.thoughtworks.xstream.annotations.XStreamConverter;
 import cucumber.deps.com.thoughtworks.xstream.converters.javabean.JavaBeanConverter;
@@ -52,15 +52,15 @@ public class FromDataTableTest {
             this.listOfPrimitiveContainers = primitiveContainers;
         }
 
-        public void listOfPojos(@DateFormat("yyyy-MM-dd") List<UserPojo> listOfPojos) {
+        public void listOfPojos(@Format("yyyy-MM-dd") List<UserPojo> listOfPojos) {
             this.listOfPojos = listOfPojos;
         }
 
-        public void listOfBeans(@DateFormat("yyyy-MM-dd") List<UserBean> listOfBeans) {
+        public void listOfBeans(@Format("yyyy-MM-dd") List<UserBean> listOfBeans) {
             this.listOfBeans = listOfBeans;
         }
 
-        public void listOfUsersWithNameField(@DateFormat("yyyy-MM-dd") List<UserWithNameField> listOfUsersWithNameField) {
+        public void listOfUsersWithNameField(@Format("yyyy-MM-dd") List<UserWithNameField> listOfUsersWithNameField) {
             this.listOfUsersWithNameField = listOfUsersWithNameField;
         }
 

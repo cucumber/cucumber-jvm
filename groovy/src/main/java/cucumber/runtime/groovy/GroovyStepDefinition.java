@@ -1,7 +1,7 @@
 package cucumber.runtime.groovy;
 
 import cucumber.runtime.JdkPatternArgumentMatcher;
-import cucumber.runtime.ParameterType;
+import cucumber.runtime.ParameterInfo;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.Timeout;
 import gherkin.I18n;
@@ -21,7 +21,7 @@ public class GroovyStepDefinition implements StepDefinition {
     private final Closure body;
     private final StackTraceElement location;
     private final GroovyBackend backend;
-    private List<ParameterType> parameterTypes;
+    private List<ParameterInfo> parameterInfos;
 
     public GroovyStepDefinition(Pattern pattern, int timeoutMillis, Closure body, StackTraceElement location, GroovyBackend backend) {
         this.pattern = pattern;
@@ -29,7 +29,7 @@ public class GroovyStepDefinition implements StepDefinition {
         this.backend = backend;
         this.argumentMatcher = new JdkPatternArgumentMatcher(pattern);
         this.body = body;
-        this.parameterTypes = getParameterTypes();
+        this.parameterInfos = getParameterInfos();
         this.location = location;
     }
 
@@ -43,19 +43,19 @@ public class GroovyStepDefinition implements StepDefinition {
 
     @Override
     public Integer getParameterCount() {
-        return parameterTypes.size();
+        return parameterInfos.size();
     }
 
     @Override
-    public ParameterType getParameterType(int n, Type argumentType) {
-        return parameterTypes.get(n);
+    public ParameterInfo getParameterType(int n, Type argumentType) {
+        return parameterInfos.get(n);
     }
 
-    private List<ParameterType> getParameterTypes() {
+    private List<ParameterInfo> getParameterInfos() {
         Class[] parameterTypes = body.getParameterTypes();
-        List<ParameterType> result = new ArrayList<ParameterType>(parameterTypes.length);
+        List<ParameterInfo> result = new ArrayList<ParameterInfo>(parameterTypes.length);
         for (Class parameterType : parameterTypes) {
-            result.add(new ParameterType(parameterType, null, null, null));
+            result.add(new ParameterInfo(parameterType, null, null, null));
         }
         return result;
     }

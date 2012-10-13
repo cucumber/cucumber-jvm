@@ -35,7 +35,7 @@ public interface StepDefinition {
      * Statically typed languages will typically ignore the {@code argumentType} while dynamically
      * typed ones will use it to infer a "good type". It's also ok to return null.
      */
-    ParameterType getParameterType(int n, Type argumentType) throws IndexOutOfBoundsException;
+    ParameterInfo getParameterType(int n, Type argumentType) throws IndexOutOfBoundsException;
 
     /**
      * Invokes the step definition. The method should raise a Throwable

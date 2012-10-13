@@ -1,6 +1,6 @@
 package cucumber.runtime.rhino;
 
-import cucumber.runtime.ParameterType;
+import cucumber.runtime.ParameterInfo;
 import cucumber.runtime.StepDefinition;
 import gherkin.I18n;
 import gherkin.formatter.Argument;
@@ -50,8 +50,8 @@ public class RhinoStepDefinition implements StepDefinition {
     }
 
     @Override
-    public ParameterType getParameterType(int n, Type argumentType) {
-        return new ParameterType(argumentType, null, null, null);
+    public ParameterInfo getParameterType(int n, Type argumentType) {
+        return new ParameterInfo(argumentType, null, null, null);
     }
 
     public void execute(I18n i18n, Object[] args) throws Throwable {

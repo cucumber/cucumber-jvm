@@ -1,7 +1,6 @@
 package cucumber.runtime.xstream;
 
-import cucumber.runtime.CucumberException;
-import cucumber.runtime.ParameterType;
+import cucumber.runtime.ParameterInfo;
 
 import java.text.DateFormat;
 import java.text.Format;
@@ -15,13 +14,11 @@ import java.util.Locale;
 import static java.util.Arrays.asList;
 
 abstract class TimeConverter<T> extends ConverterWithFormat<T> {
-    final Locale locale;
     private final List<DateFormat> formats = new ArrayList<DateFormat>();
     private SimpleDateFormat onlyFormat;
 
     TimeConverter(Locale locale, Class[] convertibleTypes) {
         super(convertibleTypes);
-        this.locale = locale;
 
         // TODO - these are expensive to create. Cache by format+string, or use the XStream DF cache util thingy
         addFormat(DateFormat.SHORT, locale);
@@ -51,23 +48,17 @@ abstract class TimeConverter<T> extends ConverterWithFormat<T> {
         return super.toString(obj);
     }
 
-    public void setOnlyFormat(String dateFormatString, Locale locale) {
-        onlyFormat = new SimpleDateFormat(dateFormatString, locale);
-        onlyFormat.setLenient(false);
+    @Override
+    public void setParameterInfoAndLocale(ParameterInfo parameterInfo, Locale locale) {
+        super.setParameterInfoAndLocale(parameterInfo, locale);
+        if(parameterInfo.getFormat() != null) {
+            onlyFormat = new SimpleDateFormat(parameterInfo.getFormat(), locale);
+            onlyFormat.setLenient(false);
+        }
     }
 
     public void removeOnlyFormat() {
         onlyFormat = null;
-    }
-
-    public static TimeConverter getInstance(ParameterType parameterType, Locale locale) {
-        if (Date.class.isAssignableFrom(parameterType.getRawType())) {
-            return new DateConverter(locale);
-        } else if (Calendar.class.isAssignableFrom(parameterType.getRawType())) {
-            return new CalendarConverter(locale);
-        } else {
-            throw new CucumberException("Unsupported time type: " + parameterType.getRawType());
-        }
     }
 
     public static List<Class> getTimeClasses() {

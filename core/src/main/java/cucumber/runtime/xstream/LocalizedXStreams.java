@@ -6,6 +6,7 @@ import cucumber.deps.com.thoughtworks.xstream.converters.ConverterLookup;
 import cucumber.deps.com.thoughtworks.xstream.converters.ConverterRegistry;
 import cucumber.deps.com.thoughtworks.xstream.converters.SingleValueConverter;
 import cucumber.deps.com.thoughtworks.xstream.core.DefaultConverterLookup;
+import cucumber.runtime.ParameterInfo;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -57,26 +58,26 @@ public class LocalizedXStreams {
             register(converterRegistry, new LongConverter(locale));
 
             // Must be lower priority than the ones above, but higher than xstream's built-in ReflectionConverter
-            converterRegistry.registerConverter(new SingleValueConverterWrapperExt(new ClassWithStringConstructorConverter()), XStream.PRIORITY_LOW);
+            converterRegistry.registerConverter(new SingleValueConverterWrapperExt(new ClassWithStringAssignableConstructorConverter()), XStream.PRIORITY_LOW);
         }
 
         private void register(ConverterRegistry lookup, SingleValueConverter converter) {
             lookup.registerConverter(new SingleValueConverterWrapperExt(converter), XStream.PRIORITY_VERY_HIGH);
         }
 
-        public void setDateFormat(String dateFormat) {
-            if (dateFormat != null) {
+        public void setParameterType(ParameterInfo parameterInfo) {
+            if (parameterInfo != null) {
                 List<Class> timeClasses = TimeConverter.getTimeClasses();
                 for (Class timeClass : timeClasses) {
                     SingleValueConverterWrapperExt converterWrapper = (SingleValueConverterWrapperExt) getConverterLookup().lookupConverterForType(timeClass);
                     TimeConverter timeConverter = (TimeConverter) converterWrapper.getConverter();
-                    timeConverter.setOnlyFormat(dateFormat, locale);
+                    timeConverter.setParameterInfoAndLocale(parameterInfo, locale);
                     timeConverters.add(timeConverter);
                 }
             }
         }
 
-        public void unsetDateFormat() {
+        public void unsetParameterInfo() {
             for (TimeConverter timeConverter : timeConverters) {
                 timeConverter.removeOnlyFormat();
             }

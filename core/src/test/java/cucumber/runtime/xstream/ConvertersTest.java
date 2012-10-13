@@ -36,11 +36,28 @@ public class ConvertersTest {
         assertEquals("X", ((MyClass) c.fromString("X")).s);
     }
 
+    @Test
+    public void shouldTransformToTypeWithObjectCtor() {
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        LocalizedXStreams transformers = new LocalizedXStreams(classLoader);
+        ConverterLookup en = transformers.get(Locale.US).getConverterLookup();
+        SingleValueConverter c = (SingleValueConverter) en.lookupConverterForType(MyOtherClass.class);
+        assertEquals("X", ((MyOtherClass) c.fromString("X")).o);
+    }
+
     public static class MyClass {
         public final String s;
 
         public MyClass(String s) {
             this.s = s;
+        }
+    }
+
+    public static class MyOtherClass {
+        public final Object o;
+
+        public MyOtherClass(Object o) {
+            this.o = o;
         }
     }
 }

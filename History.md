@@ -1,6 +1,8 @@
 ## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.0.14...master)
 
-* [All] Package reorganisation. Only classes under `cucumber.api` are part of the public (stable) API. Classes in other classes are not part of the API and can change.
+* [All] Package reorganisation. Only classes under `cucumber.api` are part of the public (stable) API. Classes in other classes are not part of the API and can change. (Aslak Hellesøy)
+* [Core] Improved `Transformer` API (Aslak Hellesøy)
+* [Java] Renamed `@DateFormat` to `@Format` (Aslak Hellesøy)
 * [Core] Fixed a bug where `-Dcucumber.options="--format pretty"` would fail with the JUnit runner. (Aslak Hellesøy).
 * [Core] Scenario Transform header being treated like an object (no bugfix, but added explanation) ([#396](https://github.com/cucumber/cucumber-jvm/issues/396) Aslak Hellesøy)
 * [Core] TableDiff with list of pojos: camelcase convert of column names to field names ([#385](https://github.com/cucumber/cucumber-jvm/pull/385) mbusik)

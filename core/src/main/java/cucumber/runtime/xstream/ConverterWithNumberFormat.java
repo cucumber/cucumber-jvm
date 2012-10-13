@@ -14,8 +14,8 @@ abstract class ConverterWithNumberFormat<T extends Number> extends ConverterWith
     }
 
     @Override
-    public T fromString(String string) {
-        T number = super.fromString(string);
+    public T transform(String string) {
+        T number = super.transform(string);
         return number == null ? null : downcast(number);
     }
 

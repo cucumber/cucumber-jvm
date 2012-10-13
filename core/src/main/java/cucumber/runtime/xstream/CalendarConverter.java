@@ -13,7 +13,7 @@ class CalendarConverter extends TimeConverter<Calendar> {
     @Override
     protected Object transform(Format format, String argument) {
         Date date = (Date) super.transform(format, argument);
-        Calendar cal = Calendar.getInstance(locale);
+        Calendar cal = Calendar.getInstance(getLocale());
         cal.setTime(date);
         return cal;
     }

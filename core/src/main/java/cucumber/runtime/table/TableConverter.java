@@ -6,6 +6,7 @@ import cucumber.deps.com.thoughtworks.xstream.converters.SingleValueConverter;
 import cucumber.deps.com.thoughtworks.xstream.converters.reflection.AbstractReflectionConverter;
 import cucumber.deps.com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import cucumber.runtime.CucumberException;
+import cucumber.runtime.ParameterInfo;
 import cucumber.runtime.xstream.CellWriter;
 import cucumber.runtime.xstream.ComplexTypeWriter;
 import cucumber.runtime.xstream.ListOfComplexTypeReader;
@@ -35,16 +36,16 @@ import static java.util.Arrays.asList;
 public class TableConverter {
     private static final List<Comment> NO_COMMENTS = Collections.emptyList();
     private final LocalizedXStreams.LocalizedXStream xStream;
-    private final String dateFormat;
+    private final ParameterInfo parameterInfo;
 
-    public TableConverter(LocalizedXStreams.LocalizedXStream xStream, String dateFormat) {
+    public TableConverter(LocalizedXStreams.LocalizedXStream xStream, ParameterInfo parameterInfo) {
         this.xStream = xStream;
-        this.dateFormat = dateFormat;
+        this.parameterInfo = parameterInfo;
     }
 
     public <T> T convert(Type type, DataTable dataTable) {
         try {
-            xStream.setDateFormat(dateFormat);
+            xStream.setParameterType(parameterInfo);
             if (type == null || (type instanceof Class && ((Class) type).isAssignableFrom(DataTable.class))) {
                 return (T) dataTable;
             }
@@ -91,7 +92,7 @@ public class TableConverter {
                 }
             }
         } finally {
-            xStream.unsetDateFormat();
+            xStream.unsetParameterInfo();
         }
     }
 
@@ -165,7 +166,7 @@ public class TableConverter {
      */
     public DataTable toTable(List<?> objects, String... columnNames) {
         try {
-            xStream.setDateFormat(dateFormat);
+            xStream.setParameterType(parameterInfo);
 
             List<String> header = null;
             List<List<String>> valuesList = new ArrayList<List<String>>();
@@ -187,7 +188,7 @@ public class TableConverter {
             }
             return createDataTable(header, valuesList);
         } finally {
-            xStream.unsetDateFormat();
+            xStream.unsetParameterInfo();
         }
     }
 

@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 /**
  * <p>
  * This annotation can be specified on step definition method parameters to give Cucumber a hint
- * about how to transform a String to a Date or a Calendar. For example, if you have the following Gherkin step with
+ * about how to transform a String into an objecy such as a Date or a Calendar. For example, if you have the following Gherkin step with
  * a <a href="http://en.wikipedia.org/wiki/ISO_8601">ISO 8601</a> date:
  * </p>
  * <pre>
@@ -19,7 +19,7 @@ import java.lang.annotation.Target;
  * </p>
  * <pre>
  * &#064;Given("^the date is (\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2})$")
- * public void the_date_is(@DateFormat("yyyy-MM-dd'T'HH:mm:ss") Date date) {
+ * public void the_date_is(@Format("yyyy-MM-dd'T'HH:mm:ss") Date date) {
  *     this.date = date;
  * }
  * </pre>
@@ -28,7 +28,7 @@ import java.lang.annotation.Target;
  * </p>
  * <pre>
  * &#064;Given("^the date is (\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2})$")
- * public void the_date_is(@DateFormat("yyyy-MM-dd'T'HH:mm:ss") Calendar cal) {
+ * public void the_date_is(@Format("yyyy-MM-dd'T'HH:mm:ss") Calendar cal) {
  *     this.cal = cal;
  * }
  * </pre>
@@ -38,6 +38,6 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.PARAMETER)
-public @interface DateFormat {
+public @interface Format {
     String value();
 }
