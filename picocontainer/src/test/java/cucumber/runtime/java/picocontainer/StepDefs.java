@@ -33,7 +33,7 @@ public class StepDefs {
 
     @Given("something pending")
     public void throw_pending() {
-        throw new PendingException("This should not fail");
+        throw new PendingException("This should not fail (seeing this output is ok)");
     }
 
     @Then("^there are (\\d+) cukes in my belly")

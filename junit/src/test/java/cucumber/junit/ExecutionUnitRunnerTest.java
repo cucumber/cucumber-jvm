@@ -18,7 +18,7 @@ public class ExecutionUnitRunnerTest {
     public void shouldAssignUnequalDescriptionsToDifferentOccurrencesOfSameStepInAScenario() throws Exception {
         List<CucumberFeature> features = CucumberFeature.load(
                 new ClasspathResourceLoader(this.getClass().getClassLoader()),
-                asList("cucumber/junit/feature_with_same_steps_in_scenario.feature"),
+                asList("cucumber/junit/fb.feature"),
                 Collections.emptyList()
         );
 

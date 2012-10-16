@@ -1,3 +1,4 @@
+@focus
 Feature: Cukes
 
   Scenario: Not cukes at all

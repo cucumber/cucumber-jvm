@@ -34,6 +34,6 @@ public class StubBackend implements Backend {
 
     @Override
     public String getSnippet(Step step) {
-        return null;
+        return "STUB SNIPPET";
     }
 }

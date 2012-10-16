@@ -49,9 +49,8 @@ class JUnitReporter implements Reporter, Formatter {
     public void finishExecutionUnit() {
         if (ignoredStep) {
             executionUnitNotifier.fireTestIgnored();
-        } else {
-            executionUnitNotifier.fireTestFinished();
         }
+        executionUnitNotifier.fireTestFinished();
     }
 
     public void match(Match match) {
@@ -124,15 +123,15 @@ class JUnitReporter implements Reporter, Formatter {
 
     @Override
     public void before(Match match, Result result) {
-        handleHook(match, result);
+        handleHook(result);
     }
 
     @Override
     public void after(Match match, Result result) {
-        handleHook(match, result);
+        handleHook(result);
     }
 
-    private void handleHook(Match match, Result result) {
+    private void handleHook(Result result) {
         if (result.getStatus().equals(Result.FAILED)) {
             executionUnitNotifier.addFailure(result.getError());
         }
