@@ -12,8 +12,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static cucumber.runtime.junit.DescriptionFactory.createDescription;
-
 /**
  * Runs a scenario, or a "synthetic" scenario derived from an Examples row.
  */
@@ -44,7 +42,7 @@ public class ExecutionUnitRunner extends ParentRunner<Step> {
     @Override
     public Description getDescription() {
         if (description == null) {
-            description = createDescription(getName(), cucumberScenario);
+            description = Description.createSuiteDescription(getName(), cucumberScenario.getGherkinModel());
 
             if (cucumberScenario.getCucumberBackground() != null) {
                 for (Step backgroundStep : cucumberScenario.getCucumberBackground().getSteps()) {
@@ -63,7 +61,7 @@ public class ExecutionUnitRunner extends ParentRunner<Step> {
     protected Description describeChild(Step step) {
         Description description = stepDescriptions.get(step);
         if (description == null) {
-            description = createDescription(step.getKeyword() + step.getName(), step);
+            description = Description.createSuiteDescription(step.getKeyword() + step.getName(), step);
             stepDescriptions.put(step, description);
         }
         return description;

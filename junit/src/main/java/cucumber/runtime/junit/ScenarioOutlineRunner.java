@@ -10,9 +10,7 @@ import org.junit.runners.model.InitializationError;
 
 import java.util.ArrayList;
 
-import static cucumber.runtime.junit.DescriptionFactory.createDescription;
-
-public class ScenarioOutlineRunner extends Suite {
+class ScenarioOutlineRunner extends Suite {
     private final CucumberScenarioOutline cucumberScenarioOutline;
     private Description description;
 
@@ -32,7 +30,7 @@ public class ScenarioOutlineRunner extends Suite {
     @Override
     public Description getDescription() {
         if (description == null) {
-            description = createDescription(getName(), cucumberScenarioOutline);
+            description = Description.createSuiteDescription(getName(), cucumberScenarioOutline.getGherkinModel());
             for (Runner child : getChildren()) {
                 description.addChild(describeChild(child));
             }

@@ -13,25 +13,25 @@ import java.util.Set;
 import static gherkin.util.FixJava.join;
 
 public abstract class CucumberTagStatement extends StepContainer {
-    final TagStatement tagStatement;
+    private final TagStatement gherkinModel;
     private final String visualName;
 
-    CucumberTagStatement(CucumberFeature cucumberFeature, TagStatement tagStatement) {
-        super(cucumberFeature, tagStatement);
-        this.tagStatement = tagStatement;
-        this.visualName = tagStatement.getKeyword() + ": " + tagStatement.getName();
+    CucumberTagStatement(CucumberFeature cucumberFeature, TagStatement gherkinModel) {
+        super(cucumberFeature, gherkinModel);
+        this.gherkinModel = gherkinModel;
+        this.visualName = gherkinModel.getKeyword() + ": " + gherkinModel.getName();
     }
 
-    CucumberTagStatement(CucumberFeature cucumberFeature, TagStatement tagStatement, Row example) {
-        super(cucumberFeature, tagStatement);
-        this.tagStatement = tagStatement;
+    CucumberTagStatement(CucumberFeature cucumberFeature, TagStatement gherkinModel, Row example) {
+        super(cucumberFeature, gherkinModel);
+        this.gherkinModel = gherkinModel;
         this.visualName = "| " + join(example.getCells(), " | ") + " |";
     }
 
     protected Set<Tag> tagsAndInheritedTags() {
         Set<Tag> tags = new HashSet<Tag>();
-        tags.addAll(cucumberFeature.getFeature().getTags());
-        tags.addAll(tagStatement.getTags());
+        tags.addAll(cucumberFeature.getGherkinFeature().getTags());
+        tags.addAll(gherkinModel.getTags());
         return tags;
     }
 
@@ -39,6 +39,9 @@ public abstract class CucumberTagStatement extends StepContainer {
         return visualName;
     }
 
+    public TagStatement getGherkinModel() {
+        return gherkinModel;
+    }
 
     public abstract void run(Formatter formatter, Reporter reporter, Runtime runtime);
 }

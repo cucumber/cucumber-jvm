@@ -15,8 +15,6 @@ import org.junit.runners.model.InitializationError;
 import java.util.ArrayList;
 import java.util.List;
 
-import static cucumber.runtime.junit.DescriptionFactory.createDescription;
-
 public class FeatureRunner extends ParentRunner<ParentRunner> {
     private final List<ParentRunner> children = new ArrayList<ParentRunner>();
 
@@ -35,14 +33,14 @@ public class FeatureRunner extends ParentRunner<ParentRunner> {
 
     @Override
     public String getName() {
-        Feature feature = cucumberFeature.getFeature();
+        Feature feature = cucumberFeature.getGherkinFeature();
         return feature.getKeyword() + ": " + feature.getName();
     }
 
     @Override
     public Description getDescription() {
         if (description == null) {
-            description = createDescription(getName(), cucumberFeature);
+            description = Description.createSuiteDescription(getName(), cucumberFeature.getGherkinFeature());
             for (ParentRunner child : getChildren()) {
                 description.addChild(describeChild(child));
             }
@@ -68,7 +66,7 @@ public class FeatureRunner extends ParentRunner<ParentRunner> {
     @Override
     public void run(RunNotifier notifier) {
         jUnitReporter.uri(cucumberFeature.getUri());
-        jUnitReporter.feature(cucumberFeature.getFeature());
+        jUnitReporter.feature(cucumberFeature.getGherkinFeature());
         super.run(notifier);
         jUnitReporter.eof();
     }

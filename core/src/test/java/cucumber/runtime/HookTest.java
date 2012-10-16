@@ -38,7 +38,7 @@ public class HookTest {
         CucumberFeature feature = mock(CucumberFeature.class);
         Feature gherkinFeature = mock(Feature.class);
 
-        when(feature.getFeature()).thenReturn(gherkinFeature);
+        when(feature.getGherkinFeature()).thenReturn(gherkinFeature);
         when(gherkinFeature.getTags()).thenReturn(new ArrayList<Tag>());
 
         CucumberScenario scenario = new CucumberScenario(feature, null, gherkinScenario);

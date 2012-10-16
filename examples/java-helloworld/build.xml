@@ -3,7 +3,7 @@
     <property name="cucumber-jvm.version" value="1.1.1"/>
     <property name="cucumber-html.version" value="0.2.2"/>
     <property name="jchronic.version" value="0.2.6"/>
-    <property name="junit.version" value="4.10"/>
+    <property name="junit.version" value="4.11"/>
 
     <property name="jars" value="lib"/>
 

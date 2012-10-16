@@ -1,4 +1,4 @@
-Feature:
+Feature: Issue 225
 
   Scenario Outline: Outline 1
     When foo

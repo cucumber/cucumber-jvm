@@ -83,7 +83,7 @@ public class CucumberFeature {
         currentStepContainer.step(step);
     }
 
-    public Feature getFeature() {
+    public Feature getGherkinFeature() {
         return feature;
     }
 
@@ -105,7 +105,7 @@ public class CucumberFeature {
 
     public void run(Formatter formatter, Reporter reporter, Runtime runtime) {
         formatter.uri(getUri());
-        formatter.feature(getFeature());
+        formatter.feature(getGherkinFeature());
 
         for (CucumberTagStatement cucumberTagStatement : getFeatureElements()) {
             //Run the scenario, it should handle before and after hooks
