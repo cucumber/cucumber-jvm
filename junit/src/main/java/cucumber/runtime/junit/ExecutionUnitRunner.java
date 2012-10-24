@@ -46,7 +46,16 @@ public class ExecutionUnitRunner extends ParentRunner<Step> {
 
             if (cucumberScenario.getCucumberBackground() != null) {
                 for (Step backgroundStep : cucumberScenario.getCucumberBackground().getSteps()) {
-                    description.addChild(describeChild(backgroundStep));
+                    // We need to make a copy of that step, so we have a unique one per scenario
+                    Step copy = new Step(
+                            backgroundStep.getComments(),
+                            backgroundStep.getKeyword(),
+                            backgroundStep.getName(),
+                            backgroundStep.getLine(),
+                            backgroundStep.getRows(),
+                            backgroundStep.getDocString()
+                    );
+                    description.addChild(describeChild(copy));
                 }
             }
 

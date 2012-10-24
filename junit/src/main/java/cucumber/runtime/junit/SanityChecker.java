@@ -22,6 +22,9 @@ public class SanityChecker implements TestListener {
     private final StringWriter out = new StringWriter();
 
     public static void run(Class<?> testClass) {
+    }
+
+    public static void run(Class<?> testClass, boolean debug) {
         JUnit4TestAdapter testAdapter = new JUnit4TestAdapter(testClass);
         TestResult result = new TestResult();
         SanityChecker listener = new SanityChecker();
@@ -30,6 +33,11 @@ public class SanityChecker implements TestListener {
         String output = listener.getOutput();
         if (output.contains(INSANITY)) {
             throw new RuntimeException("Something went wrong\n" + output);
+        }
+        if(debug) {
+            System.out.println("===== " + testClass.getName());
+            System.out.println(output);
+            System.out.println("=====");
         }
     }
 
