@@ -1,5 +1,6 @@
 ## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.0.14...master)
 
+* [Scala] Up the cucumber-scala Scala dependencies to 2.10.0-RC1 ([#409](https://github.com/cucumber/cucumber-jvm/pull/409) Chris Turner)
 * [JRuby] Upgraded to JRuby 1.7.0 (Aslak Hellesøy)
 * [JRuby] I18n stepdefs. `require 'cucumber/api/jruby/en'` or other language. ([#177](https://github.com/cucumber/cucumber-jvm/issues/177) Aslak Hellesøy)
 * [JRuby] Calling steps from stepefs now uses the `step` method (Aslak Hellesøy)
