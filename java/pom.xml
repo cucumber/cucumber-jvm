@@ -88,7 +88,7 @@ I18n.all.each { i18n ->
         def normalized_kw = normalize(kw)
         def binding = ["i18n":i18n, "kw":normalized_kw]
         template = engine.createTemplate(templateSource).make(binding)
-        def file = new File(project.baseDir, "target${File.separator}generated-sources${File.separator}i18n${File.separator}java${File.separator}cucumber${File.separator}api{File.separator}java{File.separator}${i18n.underscoredIsoCode}${File.separator}${normalized_kw}.java")
+        def file = new File(project.baseDir, "target${File.separator}generated-sources${File.separator}i18n${File.separator}java${File.separator}cucumber${File.separator}api${File.separator}java${File.separator}${i18n.underscoredIsoCode}${File.separator}${normalized_kw}.java")
         file.parentFile.mkdirs()
         file.write(template.toString(), "UTF-8")
     }

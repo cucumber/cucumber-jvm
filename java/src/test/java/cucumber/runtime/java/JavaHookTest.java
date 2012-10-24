@@ -3,7 +3,6 @@ package cucumber.runtime.java;
 import cucumber.api.Scenario;
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
-import cucumber.api.java.Order;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Glue;
 import cucumber.runtime.HookDefinition;
@@ -83,7 +82,7 @@ public class JavaHookTest {
         backend.buildWorld();
         backend.addHook(BEFORE.getAnnotation(Before.class), BEFORE);
         HookDefinition hookDef = glue.getBeforeHooks().get(0);
-        assertEquals(Integer.MAX_VALUE, hookDef.getOrder());
+        assertEquals(10000, hookDef.getOrder());
     }
 
     @Test
@@ -125,8 +124,7 @@ public class JavaHookTest {
 
         }
 
-        @Order(1)
-        @After
+        @After(order = 1)
         public void after() {
 
         }

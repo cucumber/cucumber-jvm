@@ -2,7 +2,6 @@ package cucumber.runtime.java;
 
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
-import cucumber.api.java.Order;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Utils;
 import cucumber.runtime.io.ClasspathResourceLoader;
@@ -56,7 +55,7 @@ class ClasspathMethodScanner {
     public void scan(JavaBackend javaBackend, Method method, Class<?> glueCodeClass) {
         for (Class<? extends Annotation> cucumberAnnotationClass : cucumberAnnotationClasses) {
             Annotation annotation = method.getAnnotation(cucumberAnnotationClass);
-            if (annotation != null && !annotation.annotationType().equals(Order.class)) {
+            if (annotation != null) {
                 if (!method.getDeclaringClass().isAssignableFrom(glueCodeClass)) {
                     throw new CucumberException(String.format("%s isn't assignable from %s", method.getDeclaringClass(), glueCodeClass));
                 }

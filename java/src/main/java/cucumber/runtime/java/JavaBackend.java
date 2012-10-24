@@ -2,7 +2,6 @@ package cucumber.runtime.java;
 
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
-import cucumber.api.java.Order;
 import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.DuplicateStepDefinitionException;
@@ -112,17 +111,14 @@ public class JavaBackend implements Backend {
     void addHook(Annotation annotation, Method method) {
         objectFactory.addClass(method.getDeclaringClass());
 
-        Order order = method.getAnnotation(Order.class);
-        int hookOrder = (order == null) ? Integer.MAX_VALUE : order.value();
-
         if (annotation.annotationType().equals(Before.class)) {
             String[] tagExpressions = ((Before) annotation).value();
             int timeout = ((Before) annotation).timeout();
-            glue.addBeforeHook(new JavaHookDefinition(method, tagExpressions, hookOrder, timeout, objectFactory));
+            glue.addBeforeHook(new JavaHookDefinition(method, tagExpressions, ((Before) annotation).order(), timeout, objectFactory));
         } else {
             String[] tagExpressions = ((After) annotation).value();
             int timeout = ((After) annotation).timeout();
-            glue.addAfterHook(new JavaHookDefinition(method, tagExpressions, hookOrder, timeout, objectFactory));
+            glue.addAfterHook(new JavaHookDefinition(method, tagExpressions, ((After) annotation).order(), timeout, objectFactory));
         }
     }
 }
