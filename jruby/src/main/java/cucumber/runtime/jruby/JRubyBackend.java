@@ -48,8 +48,14 @@ public class JRubyBackend implements Backend {
             }
 
             String rubyVersion = bundle.getString("RUBY_VERSION");
+            if ("1.8".equals(rubyVersion)) {
+                jruby.setCompatVersion(CompatVersion.RUBY1_8);
+            }
             if ("1.9".equals(rubyVersion)) {
-                jruby.setCompatVersion(CompatVersion.RUBY1_9);
+                jruby.setCompatVersion(CompatVersion.RUBY1_8);
+            }
+            if ("2.0".equals(rubyVersion)) {
+                jruby.setCompatVersion(CompatVersion.RUBY2_0);
             }
         } catch (MissingResourceException mre) {
             //Don't actually care

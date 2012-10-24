@@ -25,6 +25,7 @@ Feature: Cukes
     When I call that step
     Then the step got called
 
+  @focus
   Scenario: Calling non existent step from another step
     When I call an undefined step from another
     Then I get an exception with "Undefined Step: When HOLY MOLEYS THIS DOESN'T EXIST!"

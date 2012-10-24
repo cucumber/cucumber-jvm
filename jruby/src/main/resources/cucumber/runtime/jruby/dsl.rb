@@ -89,7 +89,7 @@ def register_or_invoke(keyword, regexp_or_name, arg, proc)
     if arg
       if arg.kind_of? Java::cucumber.api.DataTable
         data_table = arg
-      elsif arg.kind_of? Java::gherkin.formatter.model.DocString
+      else
         doc_string = arg
       end
     end
