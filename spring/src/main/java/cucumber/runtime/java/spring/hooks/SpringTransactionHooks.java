@@ -13,10 +13,9 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
  * This class defines before and after hooks which provide automatic spring rollback capabilities.
  * These hooks will apply to any element(s) within a <code>.feature</code> file tagged with <code>@txn</code>.
  * <p/>
- * Clients wishing to leverage these hooks should include this class' package in the <code>glue</code> property of the
- * Test class' {@link Cucumber.Options} annotation.
+ * Clients wishing to leverage these hooks should include this class' package in the <code>glue</code> code.
  * <p/>
- * The BEFORE and AFTER hooks both rely on being able to obtain a <code>PlatformTransactionManager</code> by type, or
+ * The BEFORE and AFTER hooks (both with hook order 100) rely on being able to obtain a <code>PlatformTransactionManager</code> by type, or
  * by an optionally specified bean name, from the runtime <code>BeanFactory</code>.
  * <p/>
  * NOTE: This class is NOT threadsafe!  It relies on the fact that cucumber-jvm will instantiate an instance of any
@@ -48,15 +47,14 @@ public class SpringTransactionHooks implements BeanFactoryAware {
         this.txnManagerBeanName = txnManagerBeanName;
     }
 
-
     TransactionStatus txStatus;
 
-    @Before({"@txn"})
+    @Before(value = {"@txn"}, order = 100)
     public void startTransaction() {
         txStatus = obtainPlatformTransactionManager().getTransaction(new DefaultTransactionDefinition());
     }
 
-    @After({"@txn"})
+    @After(value = {"@txn"}, order = 100)
     public void rollBackTransaction() {
         obtainPlatformTransactionManager().rollback(txStatus);
     }
