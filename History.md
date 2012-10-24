@@ -1,5 +1,8 @@
 ## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.0.14...master)
 
+* [JRuby] The DSL no longer leaks into global scope (Aslak Hellesøy)
+* [JRuby] Calling steps from stepefs now uses the `step` method (Aslak Hellesøy)
+* [JRuby] World(module) works (Aslak Hellesøy)
 * [Spring] The `@txn` hooks in the `cucumber.runtime.java.spring.hooks` package have order 100. ([398](https://github.com/cucumber/cucumber-jvm/issues/398) Aslak Hellesøy)
 * [Java] The `@Order` annotation is replaced with an `order` property on `@Before` and `@After` (Aslak Hellesøy)
 * [Core] Make sure all report files are written with UTF-8 encoding ([402](https://github.com/cucumber/cucumber-jvm/issues/402) MIC, Aslak Hellesøy)

@@ -1,6 +1,7 @@
 package cucumber.runtime.jruby;
 
 import cucumber.api.DataTable;
+import cucumber.api.Scenario;
 import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Glue;
@@ -14,12 +15,17 @@ import gherkin.formatter.model.DataTableRow;
 import gherkin.formatter.model.DocString;
 import gherkin.formatter.model.Step;
 import org.jruby.CompatVersion;
+import org.jruby.Ruby;
+import org.jruby.RubyModule;
 import org.jruby.RubyObject;
 import org.jruby.embed.ScriptingContainer;
+import org.jruby.javasupport.JavaEmbedUtils;
+import org.jruby.runtime.builtin.IRubyObject;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.MissingResourceException;
@@ -30,10 +36,13 @@ public class JRubyBackend implements Backend {
     private static final String DSL = "/cucumber/runtime/jruby/dsl.rb";
     private final SnippetGenerator snippetGenerator = new SnippetGenerator(new JRubySnippet());
     private final ScriptingContainer jruby = new ScriptingContainer();
+    private final ResourceLoader resourceLoader;
+    private final Set<JRubyWorldDefinition> worldDefinitions = new HashSet<JRubyWorldDefinition>();
+    private final RubyModule CucumberRuntimeJRubyWorld;
+
     private Glue glue;
-    private ResourceLoader resourceLoader;
     private UnreportedStepExecutor unreportedStepExecutor;
-    private final Set<JRubyWorldBlock> worldBlocks = new HashSet<JRubyWorldBlock>();
+    private RubyObject currentWorld;
 
     public JRubyBackend(ResourceLoader resourceLoader) throws UnsupportedEncodingException {
         this.resourceLoader = resourceLoader;
@@ -61,6 +70,13 @@ public class JRubyBackend implements Backend {
             //Don't actually care
         }
         jruby.runScriptlet(new InputStreamReader(getClass().getResourceAsStream(DSL), "UTF-8"), DSL);
+
+        // Let's go through some hoops to look up the Cucumber::Runtime::JRuby::World module. Sheesh!
+        Ruby runtime = jruby.getProvider().getRuntime();
+        RubyModule Cucumber = runtime.getModule("Cucumber");
+        RubyModule CucumberRuntime = (RubyModule) Cucumber.const_get(runtime.newString("Runtime"));
+        RubyModule CucumberRuntimeJRuby = (RubyModule) CucumberRuntime.const_get(runtime.newString("JRuby"));
+        CucumberRuntimeJRubyWorld = (RubyModule) CucumberRuntimeJRuby.const_get(runtime.newString("World"));
     }
 
     @Override
@@ -80,10 +96,11 @@ public class JRubyBackend implements Backend {
 
     @Override
     public void buildWorld() {
-        jruby.put("$world", new Object());
+        currentWorld = (RubyObject) JavaEmbedUtils.javaToRuby(jruby.getProvider().getRuntime(), new World());
+        currentWorld.extend(new IRubyObject[]{CucumberRuntimeJRubyWorld});
 
-        for (JRubyWorldBlock block : worldBlocks) {
-            block.execute();
+        for (JRubyWorldDefinition definition : worldDefinitions) {
+            currentWorld = definition.execute(currentWorld);
         }
     }
 
@@ -104,6 +121,22 @@ public class JRubyBackend implements Backend {
         return snippetGenerator.getSnippet(step);
     }
 
+    public void registerStepdef(RubyObject stepdefRunner) {
+        glue.addStepDefinition(new JRubyStepDefinition(this, stepdefRunner));
+    }
+
+    public void registerBeforeHook(RubyObject procRunner) {
+        glue.addBeforeHook(new JRubyHookDefinition(this, new String[0], procRunner));
+    }
+
+    public void registerAfterHook(RubyObject procRunner) {
+        glue.addAfterHook(new JRubyHookDefinition(this, new String[0], procRunner));
+    }
+
+    public void registerWorldBlock(RubyObject procRunner) {
+        worldDefinitions.add(new JRubyWorldDefinition(procRunner));
+    }
+
     public void pending(String reason) throws PendingException {
         throw new PendingException(reason);
     }
@@ -117,19 +150,33 @@ public class JRubyBackend implements Backend {
         unreportedStepExecutor.runUnreportedStep(uri, i18n, stepKeyword, stepName, line, dataTableRows, docString);
     }
 
-    public void addStepdef(RubyObject stepdef) {
-        glue.addStepDefinition(new JRubyStepDefinition(stepdef));
+    public void executeHook(RubyObject hookRunner, Scenario scenario) {
+        IRubyObject[] jrubyArgs = new IRubyObject[2];
+        jrubyArgs[0] = currentWorld;
+        jrubyArgs[1] = JavaEmbedUtils.javaToRuby(hookRunner.getRuntime(), scenario);
+        hookRunner.callMethod("execute", jrubyArgs);
     }
 
-    public void addBeforeHook(RubyObject body) {
-        glue.addBeforeHook(new JRubyHookDefinition(new String[0], body));
-    }
+    void executeStepdef(RubyObject stepdef, I18n i18n, Object[] args) {
+        ArrayList<IRubyObject> jrubyArgs = new ArrayList<IRubyObject>();
 
-    public void addAfterHook(RubyObject body) {
-        glue.addAfterHook(new JRubyHookDefinition(new String[0], body));
-    }
+        // jrubyWorld.@__gherkin_i18n = i18n
+        RubyObject jrubyI18n = (RubyObject) JavaEmbedUtils.javaToRuby(stepdef.getRuntime(), i18n);
+        currentWorld.callMethod("instance_variable_set", new IRubyObject[]{stepdef.getRuntime().newSymbol("@__gherkin_i18n"), jrubyI18n});
 
-    public void addWorldBlock(RubyObject body) {
-        worldBlocks.add(new JRubyWorldBlock(body));
+        jrubyArgs.add(currentWorld);
+
+        for (Object o : args) {
+            if (o == null) {
+                jrubyArgs.add(null);
+            } else if (o instanceof DataTable) {
+                //Add a datatable as it stands...
+                jrubyArgs.add(JavaEmbedUtils.javaToRuby(stepdef.getRuntime(), o));
+            } else {
+                jrubyArgs.add(stepdef.getRuntime().newString((String) o));
+            }
+        }
+
+        stepdef.callMethod("execute", jrubyArgs.toArray(new IRubyObject[jrubyArgs.size()]));
     }
 }

@@ -16,19 +16,21 @@ import static java.util.Arrays.asList;
 public class JRubyHookDefinition implements HookDefinition {
 
     private final TagExpression tagExpression;
-    private final RubyObject hook;
+    private final RubyObject hookRunner;
     private String file;
     private Long line;
+    private final JRubyBackend jRubyBackend;
 
-    public JRubyHookDefinition(String[] tagExpressions, RubyObject hook) {
-        tagExpression = new TagExpression(asList(tagExpressions));
-        this.hook = hook;
+    public JRubyHookDefinition(JRubyBackend jRubyBackend, String[] tagExpressions, RubyObject hookRunner) {
+        this.jRubyBackend = jRubyBackend;
+        this.tagExpression = new TagExpression(asList(tagExpressions));
+        this.hookRunner = hookRunner;
     }
 
     @Override
     public String getLocation(boolean detail) {
         if (file == null) {
-            List fileAndLine = (List) hook.callMethod("file_and_line").toJava(List.class);
+            List fileAndLine = (List) hookRunner.callMethod("file_and_line").toJava(List.class);
             file = (String) fileAndLine.get(0);
             line = (Long) fileAndLine.get(1);
         }
@@ -37,9 +39,7 @@ public class JRubyHookDefinition implements HookDefinition {
 
     @Override
     public void execute(Scenario scenario) throws Throwable {
-        IRubyObject[] jrybyArgs = new IRubyObject[1];
-        jrybyArgs[0] = JavaEmbedUtils.javaToRuby(hook.getRuntime(), scenario);
-        hook.callMethod("execute", jrybyArgs);
+        jRubyBackend.executeHook(hookRunner, scenario);
     }
 
     @Override

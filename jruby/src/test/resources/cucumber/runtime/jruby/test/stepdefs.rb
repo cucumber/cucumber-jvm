@@ -1,7 +1,14 @@
-require 'test/unit'
-include Test::Unit::Assertions
+require 'minitest/unit'
+
+World(MiniTest::Assertions)
+
+Before do
+  raise "There is a leak" if @before_var
+  @before_var = 10
+end
 
 Given /I have (\d+) "(.?*)" in my belly/ do |n, what|
+  assert_equal(10, @before_var)
   @n = n.to_i
   @what = what
 end
@@ -20,7 +27,7 @@ Then /^the argument should be nil/ do
 end
 
 Then /^the argument should not be nil/ do
-  assert_not_nil(@argument, "Argument should not be nil")
+  refute_nil(@argument, "Argument should not be nil")
 end
 
 Given /^a pending stepdef without an explicit reason$/ do
@@ -47,7 +54,7 @@ Given /^a step called from another$/ do
 end
 
 When /^I call that step$/ do
-  Given "a step called from another"
+  step "a step called from another"
 end
 
 Then /^the step got called$/ do
@@ -56,18 +63,16 @@ end
 
 When /I call an undefined step from another$/ do
   begin
-    When "HOLY MOLEYS THIS DOESN'T EXIST!"
+    step "HOLY MOLEYS THIS DOESN'T EXIST!"
   rescue Exception => e
     @exception = e
   end
 end
 
 Then /I get an exception with "([^"]*)"$/ do |message|
-  puts "EXCEPTION"
-  p @exception
   assert_match /#{message}$/, @exception.message
   assert_equal(__FILE__, @exception.stackTrace[0].fileName)
-  assert_equal(59, @exception.stackTrace[0].lineNumber)
+  assert_equal(66, @exception.stackTrace[0].lineNumber)
 end
 
 Given /^a data table:$/ do |table|
@@ -76,11 +81,11 @@ end
 
 When /^I call that data table from this step:$/ do |table|
   @old_hashes = @hashes
-  When "a data table:", table
+  step "a data table:", table
 end
 
 Then /^that data table step got called$/ do
-  assert_not_equal(@old_hashes, @hashes)
+  refute_equal(@old_hashes, @hashes)
 
   assert_equal("omg", @old_hashes[0]["field"])
   assert_equal("wtf", @old_hashes[0]["value"])
