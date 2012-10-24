@@ -3,6 +3,7 @@ package cucumber.runtime;
 import cucumber.runtime.autocomplete.MetaStepdef;
 import cucumber.runtime.autocomplete.StepdefGenerator;
 import cucumber.runtime.io.FileResourceLoader;
+import cucumber.runtime.io.UTF8FileWriter;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.xstream.LocalizedXStreams;
 import gherkin.I18n;
@@ -12,8 +13,8 @@ import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -106,7 +107,7 @@ public class RuntimeGlue implements Glue {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             String json = gson.toJson(metaStepdefs);
 
-            FileWriter stepdefsJson = new FileWriter(new File(dotCucumber, "stepdefs.json"));
+            Writer stepdefsJson = new UTF8FileWriter(new File(dotCucumber, "stepdefs.json"));
             stepdefsJson.append(json);
             stepdefsJson.close();
         }

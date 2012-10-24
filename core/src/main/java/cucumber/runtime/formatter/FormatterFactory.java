@@ -1,13 +1,16 @@
 package cucumber.runtime.formatter;
 
 import cucumber.runtime.CucumberException;
+import cucumber.runtime.io.UTF8FileWriter;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.JSONFormatter;
 import gherkin.formatter.JSONPrettyFormatter;
 
+import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -67,7 +70,7 @@ public class FormatterFactory {
                     if (ctorArgClass == null) {
                         return constructor.newInstance();
                     } else {
-                        if(ctorArg == null) {
+                        if (ctorArg == null) {
                             throw new CucumberException(String.format("You must supply an output argument to %s. Like so: %s:output", formatterString, formatterString));
                         }
                         return constructor.newInstance(ctorArg);
@@ -95,7 +98,7 @@ public class FormatterFactory {
         }
         if (ctorArgClass.equals(Appendable.class)) {
             if (path != null) {
-                return new FileWriter(path);
+                return new UTF8FileWriter(path);
             } else {
                 return defaultOutOrFailIfAlreadyUsed();
             }

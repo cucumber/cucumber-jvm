@@ -1,5 +1,6 @@
 ## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.0.14...master)
 
+* [Core] Make sure all report files are written with UTF-8 encoding ([402](https://github.com/cucumber/cucumber-jvm/issues/402) MIC, Aslak Hellesøy)
 * [Core] HTMLFormatter improvements ([375](https://github.com/cucumber/cucumber-jvm/issues/375), [404](https://github.com/cucumber/cucumber-jvm/issues/404), [283](https://github.com/cucumber/cucumber-jvm/issues/283) Aslak Hellesøy)
 * [All] Package reorganisation. Only classes under `cucumber.api` are part of the public (stable) API. Classes in other classes are not part of the API and can change. (Aslak Hellesøy)
 * [Core] Improved `Transformer` API (Aslak Hellesøy)
