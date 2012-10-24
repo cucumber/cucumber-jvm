@@ -4,7 +4,6 @@ import cucumber.runtime.CucumberException;
 import gherkin.deps.com.google.gson.Gson;
 import gherkin.deps.com.google.gson.GsonBuilder;
 import gherkin.formatter.Formatter;
-import gherkin.formatter.Mappable;
 import gherkin.formatter.NiceAppendable;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Background;
@@ -32,7 +31,7 @@ class HTMLFormatter implements Formatter, Reporter {
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private static final String JS_FORMATTER_VAR = "formatter";
     private static final String JS_REPORT_FILENAME = "report.js";
-    private static final String[] TEXT_ASSETS = new String[]{"/cucumber/formatter/formatter.js", "/cucumber/formatter/index.html", "/cucumber/formatter/jquery-1.6.4.min.js", "/cucumber/formatter/style.css"};
+    private static final String[] TEXT_ASSETS = new String[]{"/cucumber/formatter/formatter.js", "/cucumber/formatter/index.html", "/cucumber/formatter/jquery-1.8.2.min.js", "/cucumber/formatter/style.css"};
     private static final Map<String, String> MIME_TYPES_EXTENSIONS = new HashMap<String, String>() {
         {
             put("image/bmp", "bmp");
@@ -114,13 +113,9 @@ class HTMLFormatter implements Formatter, Reporter {
         jsOut().close();
     }
 
-    private void writeToJsReport(String functionName, Mappable statement) {
-        String json = gson.toJson(statement.toMap());
-        writeToJsReport(functionName, json);
-    }
-
-    private void writeToJsReport(String functionName, String arg) {
-        jsOut().append(JS_FORMATTER_VAR + ".").append(functionName).append("(").append(arg).append(");").println();
+    private void writeToJsReport(String functionName, Object arg) {
+        String stringArg = gson.toJson(arg);
+        jsOut().append(JS_FORMATTER_VAR + ".").append(functionName).append("(").append(stringArg).append(");").println();
     }
 
     @Override
@@ -156,12 +151,15 @@ class HTMLFormatter implements Formatter, Reporter {
 
     @Override
     public void write(String text) {
-        writeToJsReport("write", gson.toJson(text));
+        writeToJsReport("write", text);
     }
 
     private void copyReportFiles() {
         for (String textAsset : TEXT_ASSETS) {
             InputStream textAssetStream = getClass().getResourceAsStream(textAsset);
+            if(textAssetStream == null) {
+                throw new CucumberException("Couldn't find " + textAsset + ". Is cucumber-html on your classpath? Make sure you have the right version.");
+            }
             String baseName = new File(textAsset).getName();
             writeStreamAndClose(textAssetStream, reportFileOutputStream(baseName));
         }

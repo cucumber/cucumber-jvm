@@ -50,7 +50,7 @@ public class HTMLFormatterTest {
 
     private void runFeaturesWithFormatter(File outputDir) throws IOException {
         final HTMLFormatter f = new HTMLFormatter(outputDir);
-        f.uri("some.feature");
+        f.uri("some\\windows\\path\\some.feature");
         f.done();
         f.close();
     }
