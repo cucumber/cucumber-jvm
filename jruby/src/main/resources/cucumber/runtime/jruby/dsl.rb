@@ -109,20 +109,6 @@ module Cucumber
         def register_stepdef(regexp, proc)
           $backend.registerStepdef(StepDefinitionRunner.new(regexp, proc))
         end
-
-        # TODO: The code below should be generated, just like I18n for other backends
-
-        def Given(regexp, &proc)
-          register_stepdef(regexp, proc)
-        end
-
-        def When(regexp, &proc)
-          register_stepdef(regexp, proc)
-        end
-
-        def Then(regexp, &proc)
-          register_stepdef(regexp, proc)
-        end
       end
 
       module World

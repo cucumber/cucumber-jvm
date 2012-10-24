@@ -84,6 +84,49 @@
                 <artifactId>maven-antrun-plugin</artifactId>
                 <executions>
                     <execution>
+                        <id>generate-i18n-sources</id>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <target>
+                                <taskdef name="groovy" classname="org.codehaus.groovy.ant.Groovy"
+                                         classpathref="maven.plugin.classpath"/>
+
+                                <groovy><![CDATA[
+def template = """\
+module Cucumber
+  module Runtime
+    module JRuby
+      module Dsl
+<% i18n.codeKeywords.each { kw -> %>
+        def \${java.text.Normalizer.normalize(kw, java.text.Normalizer.Form.NFD)}(regexp, &proc)
+          register_stepdef(regexp, proc)
+        end
+<% } %>
+      end
+    end
+  end
+end
+"""
+
+gherkin.I18n.all.each { i18n ->
+    def engine = new groovy.text.SimpleTemplateEngine()
+    def binding = ["i18n":i18n]
+    def source = engine.createTemplate(template).make(binding).toString()
+
+    def file = new File(project.baseDir, "target${File.separator}generated-resources${File.separator}i18n${File.separator}cucumber${File.separator}api${File.separator}jruby${File.separator}${i18n.underscoredIsoCode}.rb")
+    file.parentFile.mkdirs()
+    file.write(source, "UTF-8")
+}
+
+        ]]></groovy>
+
+                            </target>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>package-gem</id>
                         <phase>package</phase>
                         <configuration>
@@ -163,6 +206,27 @@
                         <goals>
                             <goal>run</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>add-resource</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>add-resource</goal>
+                        </goals>
+                        <configuration>
+                            <resources>
+                                <resource>
+                                    <directory>${basedir}/target/generated-resources/i18n</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
