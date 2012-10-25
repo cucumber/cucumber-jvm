@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 /**
  * <p>
  * This annotation can be specified on step definition method parameters to give Cucumber a hint
- * about how to transform a String into an objecy such as a Date or a Calendar. For example, if you have the following Gherkin step with
+ * about how to transform a String into an object such as a Date or a Calendar. For example, if you have the following Gherkin step with
  * a <a href="http://en.wikipedia.org/wiki/ISO_8601">ISO 8601</a> date:
  * </p>
  * <pre>

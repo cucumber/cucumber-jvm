@@ -1,5 +1,6 @@
 package cucumber.runtime.java.spring.hooks;
 
+import cucumber.api.spring.SpringTransactionHooks;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,7 +30,7 @@ public class SpringTransactionHooksTest {
     public void setUp() {
         target = new SpringTransactionHooks() {
             @Override
-            PlatformTransactionManager obtainPlatformTransactionManager() {
+            public PlatformTransactionManager obtainPlatformTransactionManager() {
                 return mockedPlatformTransactionManager;
             }
         };
@@ -69,13 +70,13 @@ public class SpringTransactionHooksTest {
 
         target.startTransaction();
 
-        assertSame(target.txStatus, dummyTxStatus);
+        assertSame(target.getTransactionStatus(), dummyTxStatus);
     }
 
     @Test
     public void shouldTriggerTransactionRollbackInAfterHook() {
         final SimpleTransactionStatus dummyTxStatus = new SimpleTransactionStatus();
-        target.txStatus = dummyTxStatus;
+        target.getTransactionStatus() = dummyTxStatus;
 
         target.rollBackTransaction();
 

@@ -1,6 +1,6 @@
 package cucumber.runtime.java.picocontainer;
 
-import cucumber.junit.SanityChecker;
+import cucumber.runtime.junit.SanityChecker;
 import org.junit.Test;
 
 public class SanityTest {

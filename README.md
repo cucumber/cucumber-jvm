@@ -247,6 +247,32 @@ mvn --batch-mode -P release-sign-artifacts release:prepare -DautoVersionSubmodul
 mvn -P release-sign-artifacts release:perform
 ```
 
+Post release the API docs must be generated for each module and manually copied over to a working copy of the `cucumber.github.com`
+repo. Commands: (we'll have a script later)
+
+```
+mvn javadoc:aggregate
+cp -R target/site/apidocs ${CUCUMBER_JVM_API_DIR}
+
+cd scala
+mvn scala:doc
+cp -R target/site/scaladocs ${CUCUMBER_JVM_API_DIR}/scala
+cd ..
+
+cd ruby
+# ??
+cp -R ??? ${CUCUMBER_JVM_API_DIR}/jruby
+cd ..
+
+cd jython
+# ??
+cd ..
+
+cd rhino
+# ??
+cd ..
+```
+
 ## Code Coverage
 
 Code coverage is collected mainly to identify code that can be deleted or needs to be tested better.

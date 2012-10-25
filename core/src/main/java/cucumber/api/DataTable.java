@@ -19,7 +19,7 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
- * A DataTable represents the data in a table following a step in Gherkin. Cucumber will convert the table in Gherkin
+ * Represents the data from a <a href="http://cucumber.info/gherkin.html#data-tables">Gherkin DataTable</a>. Cucumber will convert the table in Gherkin
  * to a DataTable instance and pass it to a step definition.
  */
 public class DataTable {

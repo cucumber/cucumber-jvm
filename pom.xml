@@ -376,6 +376,16 @@
                             <link>http://docs.oracle.com/javase/6/docs/api/</link>
                             <link>http://junit.org/apidocs/</link>
                         </links>
+                        <groups>
+                            <group>
+                                <title>Main API Packages</title>
+                                <packages>cucumber.api.*</packages>
+                            </group>
+                            <group>
+                                <title>I18n - Java</title>
+                                <packages>cucumber.api.java.*</packages>
+                            </group>
+                        </groups>
                     </configuration>
                 </plugin>
 
