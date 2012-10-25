@@ -243,7 +243,7 @@ Now release everything:
 
 ```
 mvn release:clean
-mvn --batch-mode -P release-sign-artifacts release:prepare -DautoVersionSubmodules=true -DdevelopmentVersion=1.1.0-SNAPSHOT
+mvn --batch-mode -P release-sign-artifacts release:prepare -DautoVersionSubmodules=true -DdevelopmentVersion=1.1.1-SNAPSHOT
 mvn -P release-sign-artifacts release:perform
 ```
 
