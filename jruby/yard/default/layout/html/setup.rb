@@ -1,0 +1,3 @@
+def init
+  super
+end
