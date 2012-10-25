@@ -379,13 +379,14 @@
                         <groups>
                             <group>
                                 <title>Main API Packages</title>
-                                <packages>cucumber.api.*</packages>
+                                <packages>cucumber.api:cucumber.api.*</packages>
                             </group>
                             <group>
                                 <title>I18n - Java</title>
                                 <packages>cucumber.api.java.*</packages>
                             </group>
                         </groups>
+                        <stylesheetfile>${pom.basedir}/doc/javadoc.css</stylesheetfile>
                     </configuration>
                 </plugin>
 

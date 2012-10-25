@@ -273,6 +273,8 @@ cd rhino
 cd ..
 ```
 
+TODO: Use a nicer stylesheet. Starting point: http://sensemaya.org/maya/2009/07/10/making-javadoc-more-legible
+
 ## Code Coverage
 
 Code coverage is collected mainly to identify code that can be deleted or needs to be tested better.
