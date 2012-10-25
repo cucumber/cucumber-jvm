@@ -86,11 +86,11 @@ Alternatively you can define your own resolver:
 
 ## Documentation
 
-There isn't any online documentation yet. Check out the examples, read the code and ask specific questions on the Cucumber mailing list.
+http://cukes.info/install.html
 
 ### API Docs
 
-* http://cukes.info/cucumber/jvm/api/1.1.0
+Currently only available in maven source jars.
 
 ## Examples
 
@@ -127,7 +127,8 @@ If you are writing step definitions in a scripting language you must also add th
 
 You can register bugs and feature requests in the [Github Issue Tracker](https://github.com/cucumber/cucumber-jvm/issues)
 
-You're most likely going to paste code and output, so familiarise yourself with [Github Flavored Markdown](http://github.github.com/github-flavored-markdown/) to make sure it remains readable.
+You're most likely going to paste code and output, so familiarise yourself with
+[Github Flavored Markdown](http://github.github.com/github-flavored-markdown/) to make sure it remains readable.
 
 Please consider including the following information if you register a ticket:
 
@@ -139,11 +140,17 @@ Please consider including the following information if you register a ticket:
 
 ### How soon will my ticket be fixed?
 
-The best way to have a bug fixed or feature request implemented is to [fork the cucumber-jvm repo](http://help.github.com/fork-a-repo/) and send a [pull request](http://help.github.com/send-pull-requests/). If the pull request has good tests and follows the coding conventions (see below) it has a good chance of making it into the next release.
+The best way to have a bug fixed or feature request implemented is to
+[fork the cucumber-jvm repo](http://help.github.com/fork-a-repo/) and send a
+[pull request](http://help.github.com/send-pull-requests/).
+If the pull request has good tests and follows the coding conventions (see below) it has a good chance of
+making it into the next release.
 
-If you don't fix the bug yourself (or pay someone to do it for you), the bug might never get fixed. If it is a serious bug, other people than you might care enough to provide a fix.
+If you don't fix the bug yourself (or pay someone to do it for you), the bug might never get fixed. If it is a serious
+bug, other people than you might care enough to provide a fix.
 
-In other words, there is no guarantee that a bug or feature request gets fixed. Tickets that are more than 6 months old are likely to be closed to keep the backlog manageable.
+In other words, there is no guarantee that a bug or feature request gets fixed. Tickets that are more than 6 months old
+are likely to be closed to keep the backlog manageable.
 
 ## Contributing/Hacking
 
@@ -159,14 +166,16 @@ To hack on Cucumber-JVM you need a JDK, Maven and Git to get the code. You also 
 * 2 Space indent (no tabs)
   * Gherkin
 
-Please do *not* add @author tags - this project embraces collective code ownership. If you want to know who wrote some code, look in git.
-When you are done, send a [pull request](http://help.github.com/send-pull-requests/).
-If we get a pull request where an entire file is changed because of insignificant whitespace changes we cannot see what you have changed, and your contribution might get rejected.
+Please do *not* add @author tags - this project embraces collective code ownership. If you want to know who wrote some
+code, look in git. When you are done, send a [pull request](http://help.github.com/send-pull-requests/).
+If we get a pull request where an entire file is changed because of insignificant whitespace changes we cannot see what
+you have changed, and your contribution might get rejected.
 
 ### Running cross-platform Cucumber features
 
 All Cucumber implementations (cucumber-ruby, cucumber-jvm, cucumber-js) share a common set of Cucumber features to 
-ensure all implementations support the same basic features. To run these you need to clone the cucumber-tck repo into your cucumber-jvm working copy:
+ensure all implementations support the same basic features. To run these you need to clone the cucumber-tck repo into
+your cucumber-jvm working copy:
 
     git submodule update --init
 
@@ -189,7 +198,8 @@ This can be solved by changing the Compiler settings: `Preferences -> Compiler -
 
 ## Contributing fixes
 
-Fork the repository on Github, clone it and send a pull request when you have fixed something. Please commit each feature/bugfix on a separate branch as this makes it easier for us to decide what to merge and what not to merge.
+Fork the repository on Github, clone it and send a pull request when you have fixed something. Please commit each
+feature/bugfix on a separate branch as this makes it easier for us to decide what to merge and what not to merge.
 
 ## Releasing
 
@@ -252,7 +262,9 @@ This technique to collect coverage for a multi-module Maven project is based on 
 ## Migration from Cuke4Duke
 
 ### POM
-For those of you that have run Cuke4Duke via Maven in the past, and perhaps have a bulk of feature files to migrate, here is a quick guide to getting setup.
+
+For those of you that have run Cuke4Duke via Maven in the past, and perhaps have a bulk of feature files to migrate,
+here is a quick guide to getting set up.
 
 The first step is getting the POM.xml in your project configured with the right artifacts. 
 
@@ -261,7 +273,7 @@ Example Cucumber-JVM + Maven + Groovy CLI
 
 This configuration will get you the following features:
 
-* Groovy-only: No Junit/Java code will be run
+* Groovy-only: No JUnit/Java code will be run
 * Tags: Multiple tags cannot be passed in from a JVM argument at this time, but multiple items can be added to the POM. Note that ~@ignore is in here by default, as an example. In addition, you can provide -DtagArg="@tagname" to run any tag
 * Formats: the <format> property can be changed from 'pretty' to 'html', or 'progress'. 
  * If html format is used, the --out parameter must be provided and set to a folder (relative to target) to dump the reports
@@ -272,12 +284,12 @@ This configuration will get you the following features:
 Next you'll want to structure your feature and step definition files according to the Cucumber-JVM hierarchy (quite a bit different than Cuke4Duke in most cases)
 
 ```
-src\
-  test\
-    resources\
+src/
+  test/
+    resources/
       featurefile.feature
-      com\
-        yourcompany\
+      com/
+        yourcompany/
           stepdefinitions.groovy
 ```
 
@@ -288,10 +300,12 @@ The only initial difference that will need to be made is to switch the metaclass
 ```
 this.metaClass.mixin(cuke4duke.GroovyDsl)
 ```
+
 over to the Cucumber-JVM way...
+
 ```
-this.metaclass.mixin(cucumber.runtime.groovy.Hooks)
-this.metaclass.mixin(cucumber.runtime.groovy.EN) // utilize your language here
+this.metaClass.mixin(cucumber.api.groovy.Hooks)
+this.metaClass.mixin(cucumber.api.groovy.EN) // Or any other supported language
 ```
 
 Past that, there may be slight differences in the groovy coding aspects, but nothing too earth shattering
@@ -309,6 +323,6 @@ mvn clean test
 To specify a tag:
 
 ``` 
-mvn clean test -DtagArg="@mytag"
+mvn clean test -Dcucumber.options="--tags @mytag"
 
 ```

@@ -2,8 +2,8 @@ package cucumber.runtime.groovy
 
 import static groovy.util.GroovyTestCase.assertEquals
 
-this.metaClass.mixin(cucumber.runtime.groovy.Hooks)
-this.metaClass.mixin(cucumber.runtime.groovy.EN)
+this.metaClass.mixin(cucumber.api.groovy.EN)
+this.metaClass.mixin(cucumber.api.groovy.Hooks)
 
 World {
     new CustomWorld();

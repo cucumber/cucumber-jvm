@@ -114,7 +114,7 @@ def templateSource = new File(project.baseDir, "src${File.separator}main${File.s
 I18n.all.each { i18n ->
     def binding = ["i18n":i18n]
     template = engine.createTemplate(templateSource).make(binding)
-    def file = new File(project.baseDir, "target${File.separator}generated-sources${File.separator}i18n${File.separator}java${File.separator}cucumber${File.separator}runtime${File.separator}groovy${File.separator}${i18n.underscoredIsoCode.toUpperCase()}.java")
+    def file = new File(project.baseDir, "target${File.separator}generated-sources${File.separator}i18n${File.separator}java${File.separator}cucumber${File.separator}api${File.separator}groovy${File.separator}${i18n.underscoredIsoCode.toUpperCase()}.java")
     file.parentFile.mkdirs()
     file.write(template.toString(), "UTF-8")
 }

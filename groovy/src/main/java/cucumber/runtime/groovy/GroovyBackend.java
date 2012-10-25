@@ -29,7 +29,7 @@ import static cucumber.runtime.io.MultiLoader.packageName;
 
 
 public class GroovyBackend implements Backend {
-    static GroovyBackend instance;
+    public static GroovyBackend instance;
     private final Set<Class> scripts = new HashSet<Class>();
     private final SnippetGenerator snippetGenerator = new SnippetGenerator(new GroovySnippet());
     private final ResourceLoader resourceLoader;

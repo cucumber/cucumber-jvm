@@ -1,5 +1,6 @@
-package cucumber.runtime.groovy;
+package cucumber.api.groovy;
 
+import cucumber.runtime.groovy.GroovyBackend;
 import gherkin.TagExpression;
 import groovy.lang.Closure;
 
