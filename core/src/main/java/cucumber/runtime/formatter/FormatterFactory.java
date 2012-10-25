@@ -93,18 +93,26 @@ public class FormatterFactory {
         }
         if (ctorArgClass.equals(File.class)) {
             if (path != null) {
-                return new File(path);
+				return fileWithPathCreated(path);
             }
         }
         if (ctorArgClass.equals(Appendable.class)) {
             if (path != null) {
-                return new UTF8FileWriter(path);
+                return new UTF8FileWriter(fileWithPathCreated(path));
             } else {
                 return defaultOutOrFailIfAlreadyUsed();
             }
         }
         return null;
     }
+
+	private File fileWithPathCreated(String path) {
+		File file = new File(path);
+		if (file.getParentFile() != null) {
+			file.getParentFile().mkdirs();
+		}
+		return file;
+	}
 
     private Constructor<? extends Formatter> findConstructor(Class<? extends Formatter> formatterClass, Class<?> ctorArgClass) {
         try {

@@ -3,9 +3,11 @@ package cucumber.runtime.formatter;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.io.UTF8FileWriter;
 import gherkin.formatter.Formatter;
+import gherkin.formatter.JSONFormatter;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
@@ -91,6 +93,18 @@ public class FormatterFactoryTest {
     public void instantiates_custom_file_formatter() throws IOException {
         WantsFile formatter = (WantsFile) fc.create("cucumber.runtime.formatter.FormatterFactoryTest$WantsFile:halp.txt");
         assertEquals("halp.txt", formatter.out.getPath());
+    }
+
+	@Test
+    public void instantiates_json_formatter_with_file_with_no_path() {
+        Formatter formatter = fc.create("json:results.json");
+        assertEquals(JSONFormatter.class, formatter.getClass());
+    }
+
+	@Test
+    public void instantiates_json_formatter_with_path_that_should_be_created() {
+        Formatter formatter = fc.create("json:bad/path/results.json");
+        assertEquals(JSONFormatter.class, formatter.getClass());
     }
 
     public static class WantsAppendable extends StubFormatter {
