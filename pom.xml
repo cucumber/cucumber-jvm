@@ -386,7 +386,8 @@
                                 <packages>cucumber.api.java.*</packages>
                             </group>
                         </groups>
-                        <stylesheetfile>${pom.basedir}/doc/javadoc.css</stylesheetfile>
+                        <!-- Won't work for children, but works for top level javadoc:aggregate. Good enough. -->
+                        <stylesheetfile>${basedir}/doc/javadoc.css</stylesheetfile>
                     </configuration>
                 </plugin>
 
