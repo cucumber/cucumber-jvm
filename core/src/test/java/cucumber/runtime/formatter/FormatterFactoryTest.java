@@ -7,7 +7,6 @@ import gherkin.formatter.JSONFormatter;
 import org.junit.Test;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
@@ -97,14 +96,25 @@ public class FormatterFactoryTest {
 
 	@Test
     public void instantiates_json_formatter_with_file_with_no_path() {
-        Formatter formatter = fc.create("json:results.json");
+        Formatter formatter = fc.create("json:no_path.json");
         assertEquals(JSONFormatter.class, formatter.getClass());
     }
 
 	@Test
     public void instantiates_json_formatter_with_path_that_should_be_created() {
-        Formatter formatter = fc.create("json:bad/path/results.json");
+        Formatter formatter = fc.create("json:target/nonexistent/path/created_path.json");
         assertEquals(JSONFormatter.class, formatter.getClass());
+    }
+
+	@Test
+    public void throw_exception_early_when_path_cannot_be_created() {
+		String path = "target/invalid_path_!@#$%^&*()/impossible.json";
+		try {
+			fc.create("json:" + path);
+			fail("Should have thrown exception");
+		} catch (CucumberException expected) {
+            assertEquals("Could not create dirs for formatter output file " + path, expected.getMessage());
+        }
     }
 
     public static class WantsAppendable extends StubFormatter {

@@ -6,11 +6,8 @@ import gherkin.formatter.Formatter;
 import gherkin.formatter.JSONFormatter;
 import gherkin.formatter.JSONPrettyFormatter;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -108,8 +105,11 @@ public class FormatterFactory {
 
 	private File fileWithPathCreated(String path) {
 		File file = new File(path);
-		if (file.getParentFile() != null) {
-			file.getParentFile().mkdirs();
+		if (file.getParentFile() != null && !file.getParentFile().exists()) {
+			// returns false if unable to create path, OR if path already existed and so it did nothing (ambiguous)
+			if (!file.getParentFile().mkdirs()) {
+				throw new CucumberException("Could not create dirs for formatter output file " + path);
+			}
 		}
 		return file;
 	}
