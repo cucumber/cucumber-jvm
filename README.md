@@ -4,7 +4,7 @@ Cucumber-JVM is a pure Java implementation of Cucumber that supports the [most p
 
 You can [run](http://cukes.info/running.html) it with the tool of your choice.
 
-Cucumber-JVM also integrates with all the popular [Dependency Injection containers](http://cukes.info/install-cucumber-jvm.html)
+Cucumber-JVM also integrates with all the popular [Dependency Injection containers](http://cukes.info/install-cucumber-jvm.html).
 
 ## Documentation
 
@@ -20,10 +20,22 @@ Check out the simple [Hello World](https://github.com/cucumber/cucumber-jvm/tree
 
 ## Bugs and Feature requests
 
-You can register bugs and feature requests in the [Github Issue Tracker](https://github.com/cucumber/cucumber-jvm/issues)
+You can register bugs and feature requests in the [Github Issue Tracker](https://github.com/cucumber/cucumber-jvm/issues).
 
 You're most likely going to paste code and output, so familiarise yourself with
 [Github Flavored Markdown](http://github.github.com/github-flavored-markdown/) to make sure it remains readable.
+
+*At the very least - use triple backticks*:
+
+<pre>
+```java
+// Why doesn't this work?
+@Given("I have 3 cukes in my (.*)")
+public void some_cukes(int howMany, String what) {
+    // HALP!
+}
+```
+</pre>
 
 Please consider including the following information if you register a ticket:
 
