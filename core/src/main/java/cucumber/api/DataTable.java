@@ -117,7 +117,7 @@ public class DataTable {
      *
      * @param raw         a list of objects
      * @param columnNames optional explicit header columns
-     * @return
+     * @return a new table
      */
     public DataTable toTable(List<?> raw, String... columnNames) {
         return tableConverter.toTable(raw, columnNames);

@@ -1,4 +1,4 @@
-## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.0.14...1.1.0)
+## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.0.14...1.1.1)
 
 This release bumps the minor version number from 1.0 to 1.1. This is because there are backwards-incompatible changes.
 There shouldn't be anything else that breaks than package renames and a few class renames. The reason for these breaking

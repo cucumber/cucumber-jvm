@@ -20,9 +20,6 @@ public interface Scenario {
      *
      * @param data     what to embed, for example an image.
      * @param mimeType what is the data?
-     * @see cucumber.formatter.ProgressFormatter
-     * @see cucumber.formatter.HTMLFormatter
-     * @see gherkin.formatter.JSONFormatter
      */
     void embed(byte[] data, String mimeType);
 
