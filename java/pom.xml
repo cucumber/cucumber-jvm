@@ -81,6 +81,16 @@ def normalize(s) {
   }
 }
 
+
+// TODO: Need to add i18n.getName() and i18n.getNative() for better names.
+def package_html = """\
+<body>
+<p>
+    \${i18n.getLocale().getDisplayLanguage()}
+</p>
+</body>
+"""
+
 I18n.all.each { i18n ->
     i18n.codeKeywords.each { kw ->
         def normalized_kw = normalize(kw)
@@ -90,7 +100,14 @@ I18n.all.each { i18n ->
         file.parentFile.mkdirs()
         file.write(template.toString(), "UTF-8")
     }
+
+    // html
+    def binding = ["i18n":i18n]
+    def html = engine.createTemplate(package_html).make(binding).toString()
+    def file = new File(project.baseDir, "target${File.separator}generated-sources${File.separator}i18n${File.separator}java${File.separator}cucumber${File.separator}api${File.separator}java${File.separator}${i18n.underscoredIsoCode}${File.separator}package.html")
+    file.write(html, "UTF-8")
 }
+
         ]]></groovy>
 
                             </target>
