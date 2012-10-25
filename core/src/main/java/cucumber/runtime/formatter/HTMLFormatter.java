@@ -4,6 +4,7 @@ import cucumber.runtime.CucumberException;
 import gherkin.deps.com.google.gson.Gson;
 import gherkin.deps.com.google.gson.GsonBuilder;
 import gherkin.formatter.Formatter;
+import gherkin.formatter.Mappable;
 import gherkin.formatter.NiceAppendable;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Background;
@@ -113,8 +114,13 @@ class HTMLFormatter implements Formatter, Reporter {
         jsOut().close();
     }
 
-    private void writeToJsReport(String functionName, Object arg) {
+    private void writeToJsReport(String functionName, String arg) {
         String stringArg = gson.toJson(arg);
+        jsOut().append(JS_FORMATTER_VAR + ".").append(functionName).append("(").append(stringArg).append(");").println();
+    }
+
+    private void writeToJsReport(String functionName, Mappable arg) {
+        String stringArg = gson.toJson(arg.toMap());
         jsOut().append(JS_FORMATTER_VAR + ".").append(functionName).append("(").append(stringArg).append(");").println();
     }
 

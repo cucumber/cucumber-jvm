@@ -18,6 +18,14 @@ public class DateStepdefs {
         calculator = new DateCalculator(date);
     }
 
+    /**
+     * We don't need to use @Format here, since the date string in the step
+     * conforms to <code>SimpleDateFormat.SHORT</code>. Cucumber has built-in support for
+     * <code>SimpleDateFormat.SHORT</code>, <code>SimpleDateFormat.MEDIUM</code>,
+     * <code>SimpleDateFormat.LONG</code> and <code>SimpleDateFormat.FULL</code>.
+     *
+     * @see <a href="http://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html">SimpleDateFormat</a>
+     */
     @When("^I ask if (.+) is in the past$")
     public void I_ask_if_date_is_in_the_past(Date date) {
         result = calculator.isDateInThePast(date);

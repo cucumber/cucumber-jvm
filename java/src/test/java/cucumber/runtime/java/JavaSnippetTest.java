@@ -113,7 +113,7 @@ public class JavaSnippetTest {
     public void recognisesWordWithNumbers() {
         String expected = "" +
                 "@Given(\"^Then it responds ([^\\\"]*)$\")\n" +
-                "public void Then_it_responds_UTF(int arg1) throws Throwable {\n" +
+                "public void Then_it_responds(String arg1) throws Throwable {\n" +
                 "    // Express the Regexp above with the code you wish you had\n" +
                 "}\n";
         assertEquals(expected, snippetFor("Then it responds UTF-8"));

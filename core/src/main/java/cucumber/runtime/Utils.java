@@ -1,5 +1,7 @@
 package cucumber.runtime;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -72,6 +74,15 @@ public class Utils {
             }
         } else {
             return null;
+        }
+    }
+
+    public static void ensureParentDirExists(File file) throws IOException {
+        if(file.getParentFile() != null && !file.getParentFile().isDirectory())  {
+            boolean ok = file.getParentFile().mkdirs();
+            if(!ok) {
+                throw new IOException("Failed to create directory " + file.getParentFile().getAbsolutePath());
+            }
         }
     }
 }

@@ -107,7 +107,9 @@ public class RuntimeGlue implements Glue {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             String json = gson.toJson(metaStepdefs);
 
-            Writer stepdefsJson = new UTF8FileWriter(new File(dotCucumber, "stepdefs.json"));
+            File file = new File(dotCucumber, "stepdefs.json");
+            Utils.ensureParentDirExists(file);
+            Writer stepdefsJson = new UTF8FileWriter(file);
             stepdefsJson.append(json);
             stepdefsJson.close();
         }

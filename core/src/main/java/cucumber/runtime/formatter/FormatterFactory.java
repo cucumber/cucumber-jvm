@@ -1,16 +1,14 @@
 package cucumber.runtime.formatter;
 
 import cucumber.runtime.CucumberException;
+import cucumber.runtime.Utils;
 import cucumber.runtime.io.UTF8FileWriter;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.JSONFormatter;
 import gherkin.formatter.JSONPrettyFormatter;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -93,12 +91,16 @@ public class FormatterFactory {
         }
         if (ctorArgClass.equals(File.class)) {
             if (path != null) {
-                return new File(path);
+                File file = new File(path);
+                Utils.ensureParentDirExists(file);
+                return file;
             }
         }
         if (ctorArgClass.equals(Appendable.class)) {
             if (path != null) {
-                return new UTF8FileWriter(path);
+                File file = new File(path);
+                Utils.ensureParentDirExists(file);
+                return new UTF8FileWriter(file);
             } else {
                 return defaultOutOrFailIfAlreadyUsed();
             }

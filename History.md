@@ -1,4 +1,11 @@
-## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.0.14...master)
+## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.0.14...1.1.0)
+
+This release bumps the minor version number from 1.0 to 1.1. This is because there are backwards-incompatible changes.
+There shouldn't be anything else that breaks than package renames and a few class renames. The reason for these breaking
+changes is to make it more obvious what parts of the API are public and what parts are not. From now on, anything in the
+`cucumber.api` package and below is public. If you're importing *any* `cucumber.*` packages that don't start with
+`cucumber.api` you're using an internal API, and that might still change in future releases. The goal is to have anything
+in `cucumber.api` stable from now on, with proper deprecation warnings in case some APIs still need to change.
 
 * [Scala] Up the cucumber-scala Scala dependencies to 2.10.0-RC1 ([#409](https://github.com/cucumber/cucumber-jvm/pull/409) Chris Turner)
 * [JRuby] Upgraded to JRuby 1.7.0 (Aslak Hellesøy)
