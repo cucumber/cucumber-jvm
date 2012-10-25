@@ -76,7 +76,7 @@ public class SpringTransactionHooksTest {
     @Test
     public void shouldTriggerTransactionRollbackInAfterHook() {
         final SimpleTransactionStatus dummyTxStatus = new SimpleTransactionStatus();
-        target.getTransactionStatus() = dummyTxStatus;
+        target.setTransactionStatus(dummyTxStatus);
 
         target.rollBackTransaction();
 

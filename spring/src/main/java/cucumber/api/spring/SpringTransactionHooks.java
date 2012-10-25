@@ -8,6 +8,7 @@ import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.transaction.support.SimpleTransactionStatus;
 
 /**
  * This class defines before and after hooks which provide automatic spring rollback capabilities.
@@ -69,5 +70,9 @@ public class SpringTransactionHooks implements BeanFactoryAware {
 
     public TransactionStatus getTransactionStatus() {
         return transactionStatus;
+    }
+
+    public void setTransactionStatus(SimpleTransactionStatus transactionStatus) {
+        this.transactionStatus = transactionStatus;
     }
 }

@@ -18,8 +18,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <outputDirectory>${project.build.directory}</outputDirectory>
-        <gherkin.version>2.11.4</gherkin.version>
-        <groovy.version>2.0.0</groovy.version>
+        <gherkin.version>2.11.5</gherkin.version>
+        <groovy.version>2.0.5</groovy.version>
         <spring.version>3.1.2.RELEASE</spring.version>
     </properties>
     <licenses>
@@ -100,7 +100,7 @@
             <dependency>
                 <groupId>org.picocontainer</groupId>
                 <artifactId>picocontainer</artifactId>
-                <version>2.14.1</version>
+                <version>2.14.2</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
@@ -126,7 +126,7 @@
                 <groupId>org.clojure</groupId>
                 <artifactId>clojure</artifactId>
                 <!-- Remember to bounce version in examples/clojure_cukes/project.clj as well -->
-                <version>1.5.0-alpha4</version>
+                <version>1.5.0-beta1</version>
             </dependency>
             <dependency>
                 <groupId>org.mozilla</groupId>
@@ -156,19 +156,19 @@
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-all</artifactId>
-                <version>1.9.5-rc1</version>
+                <version>1.9.5</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.jsoup</groupId>
                 <artifactId>jsoup</artifactId>
-                <version>1.6.3</version>
+                <version>1.7.1</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.seleniumhq.selenium</groupId>
                 <artifactId>selenium-chrome-driver</artifactId>
-                <version>2.24.1</version>
+                <version>2.25.0</version>
             </dependency>
             <dependency>
                 <groupId>org.seleniumhq.selenium</groupId>
@@ -198,7 +198,7 @@
             <dependency>
                 <groupId>org.apache.openejb</groupId>
                 <artifactId>openejb-core</artifactId>
-                <version>4.0.0</version>
+                <version>4.5.0</version>
             </dependency>
 
             <dependency>
