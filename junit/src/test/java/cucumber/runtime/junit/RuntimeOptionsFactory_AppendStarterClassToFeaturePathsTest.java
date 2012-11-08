@@ -16,7 +16,7 @@ public class RuntimeOptionsFactory_AppendStarterClassToFeaturePathsTest {
     public void do_not_alter_feature_path_by_default() throws Exception {
         RuntimeOptionsFactory factory = new RuntimeOptionsFactory(DefaultOptions.class);
         RuntimeOptions runtimeOptions = factory.create();
-        Assert.assertEquals("classpath:cucumber/runtime/junit", runtimeOptions.featurePaths.get(0));
+        Assert.assertEquals("classpath:cucumber/runtime/junit/", runtimeOptions.featurePaths.get(0));
     }
 
     @Cucumber.Options(appendStarterClassToFeaturePaths = true)

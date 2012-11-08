@@ -5,7 +5,7 @@ import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.io.MultiLoader;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 
 public class RuntimeOptionsFactory {
@@ -104,29 +104,29 @@ public class RuntimeOptionsFactory {
     }
 
     private void addFeatures(Cucumber.Options options, Class clazz, List<String> args) {
-        if (options == null) {
-            args.add(MultiLoader.CLASSPATH_SCHEME + packagePath(clazz));
-            return;
+        List<String> allFeaturePaths = determineFeaturePaths(options, clazz);
+        AddFeaturePathStrategy strategy = determineAddStrategy(options, clazz);
+        for (String feature : allFeaturePaths) {
+            strategy.addFeaturePathToArguments(feature, args);
         }
+    }
 
-        if (options.features().length != 0) {
-            if (options.appendStarterClassToFeaturePaths()) {
-                for (String feature : options.features()) {
-                    if (feature.endsWith("/")) {
-                        args.add(feature + clazz.getSimpleName() + ".feature");
-                    } else {
-                        args.add(feature);
-                    }
-                }
-            } else {
-                Collections.addAll(args, options.features());
-            }
-        } else {
-            if (options.appendStarterClassToFeaturePaths()) {
-                args.add(MultiLoader.CLASSPATH_SCHEME + packagePath(clazz) + "/" + clazz.getSimpleName() + ".feature");
-            } else {
-                args.add(MultiLoader.CLASSPATH_SCHEME + packagePath(clazz));
-            }
+    private List<String> determineFeaturePaths(Cucumber.Options options, Class clazz) {
+        List<String> allFeaturePaths = new ArrayList<String>();
+        if (options != null && options.features().length != 0) {
+            allFeaturePaths = Arrays.asList(options.features());
+        }else{
+            String defaultFeaturePath = MultiLoader.CLASSPATH_SCHEME + packagePath(clazz) + "/";
+            allFeaturePaths.add(defaultFeaturePath);
+        }
+        return allFeaturePaths;
+    }
+
+    private AddFeaturePathStrategy determineAddStrategy(Cucumber.Options options, Class clazz) {
+        if (options != null && options.appendStarterClassToFeaturePaths()) {
+            return new AppendStarterClassName(clazz.getSimpleName());
+        }else {
+            return new PassThrough();
         }
     }
 
@@ -146,6 +146,36 @@ public class RuntimeOptionsFactory {
 
     static String packageName(String className) {
         return className.substring(0, Math.max(0, className.lastIndexOf(".")));
+    }
+
+    private static interface AddFeaturePathStrategy {
+        void addFeaturePathToArguments(String featurePath, List<String> arguments);
+    }
+
+    private static class PassThrough implements AddFeaturePathStrategy {
+
+        @Override
+        public void addFeaturePathToArguments(String featurePath, List<String> arguments) {
+            arguments.add(featurePath);
+        }
+    }
+
+    private static class AppendStarterClassName implements AddFeaturePathStrategy {
+
+        private final String className;
+
+        private AppendStarterClassName(String className) {
+            this.className = className;
+        }
+
+        @Override
+        public void addFeaturePathToArguments(String featurePath, List<String> arguments) {
+            if (featurePath.endsWith("/")) {
+                arguments.add(featurePath + className + ".feature");
+            } else {
+                arguments.add(featurePath);
+            }
+        }
     }
 
 }
