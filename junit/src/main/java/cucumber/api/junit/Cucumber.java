@@ -139,5 +139,10 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
          * @return a list of patterns
          */
         String[] name() default {};
+
+        /**
+         * @return whether or not to run all features in the given packages
+         */
+        boolean appendStarterClassToFeaturePaths() default false;
     }
 }

@@ -3,34 +3,15 @@ package cucumber.runtime.junit;
 import cucumber.annotation.DummyWhen;
 import cucumber.api.junit.Cucumber;
 import cucumber.runtime.CucumberException;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.model.InitializationError;
 
-import java.io.File;
 import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 
 public class CucumberTest {
-
-    private String dir;
-
-    @Before
-    public void ensureDirectory() {
-        dir = System.getProperty("user.dir");
-        if (dir.endsWith("cucumber-jvm")) {
-            // Might be the case if we're running in an IDE - at least in IDEA.
-            System.setProperty("user.dir", new File(dir, "junit").getAbsolutePath());
-        }
-    }
-
-    @After
-    public void ensureOriginalDirectory() {
-        System.setProperty("user.dir", dir);
-    }
 
     @Test
     public void finds_features_based_on_implicit_package() throws IOException, InitializationError {
@@ -47,8 +28,20 @@ public class CucumberTest {
     }
 
     @Test(expected = CucumberException.class)
-    public void finds_no_features_when_explicit_package_has_nothnig() throws IOException, InitializationError {
+    public void finds_no_features_when_explicit_package_has_nothing() throws IOException, InitializationError {
         new Cucumber(ExplicitFeaturePathWithNoFeatures.class);
+    }
+
+    @Test
+    public void only_run_the_feature_indicated_by_the_starters_classname() throws Exception {
+        Cucumber cucumber = new Cucumber(fb.class);
+        assertEquals(1, cucumber.getChildren().size());
+        assertEquals("Feature: FB", cucumber.getChildren().get(0).getName());
+    }
+
+    @Cucumber.Options(appendStarterClassToFeaturePaths = true)
+    private class fb {
+
     }
 
     @RunWith(Cucumber.class)
