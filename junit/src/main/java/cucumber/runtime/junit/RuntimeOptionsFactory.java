@@ -104,22 +104,27 @@ public class RuntimeOptionsFactory {
     }
 
     private void addFeatures(Cucumber.Options options, Class clazz, List<String> args) {
-        if (options != null && options.features().length != 0) {
-            if(options.appendStarterClassToFeaturePaths()){
+        if (options == null) {
+            args.add(MultiLoader.CLASSPATH_SCHEME + packagePath(clazz));
+            return;
+        }
+
+        if (options.features().length != 0) {
+            if (options.appendStarterClassToFeaturePaths()) {
                 for (String feature : options.features()) {
-                    if(feature.endsWith("/")) {
+                    if (feature.endsWith("/")) {
                         args.add(feature + clazz.getSimpleName() + ".feature");
-                    }else{
-                       args.add(feature);
+                    } else {
+                        args.add(feature);
                     }
                 }
-            }else{
+            } else {
                 Collections.addAll(args, options.features());
             }
         } else {
-            if(options != null && options.appendStarterClassToFeaturePaths()){
-                args.add(MultiLoader.CLASSPATH_SCHEME + packagePath(clazz)+"/"+clazz.getSimpleName()+".feature");
-            }else{
+            if (options.appendStarterClassToFeaturePaths()) {
+                args.add(MultiLoader.CLASSPATH_SCHEME + packagePath(clazz) + "/" + clazz.getSimpleName() + ".feature");
+            } else {
                 args.add(MultiLoader.CLASSPATH_SCHEME + packagePath(clazz));
             }
         }
