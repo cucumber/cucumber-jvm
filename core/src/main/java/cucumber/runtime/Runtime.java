@@ -31,7 +31,6 @@ import java.util.Set;
 public class Runtime implements UnreportedStepExecutor {
 
     private static final String[] PENDING_EXCEPTIONS = new String[]{
-            PendingException.class.getName(),
             "org.junit.internal.AssumptionViolatedException"
     };
 
@@ -280,6 +279,9 @@ public class Runtime implements UnreportedStepExecutor {
     }
 
     private static boolean isPending(Throwable t) {
+    	if (t.getClass().isAnnotationPresent(Pending.class)) {
+    		return true;
+    	}
         return Arrays.binarySearch(PENDING_EXCEPTIONS, t.getClass().getName()) >= 0;
     }
 
