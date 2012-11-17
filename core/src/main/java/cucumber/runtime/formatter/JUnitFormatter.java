@@ -13,6 +13,7 @@ import gherkin.formatter.model.ScenarioOutline;
 import gherkin.formatter.model.Step;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -37,6 +38,7 @@ class JUnitFormatter implements Formatter, Reporter {
     private final Element rootElement;
 
     private TestCase testCase;
+	private Element root;
 
     public JUnitFormatter(File out) {
         this.out = out;
@@ -57,15 +59,19 @@ class JUnitFormatter implements Formatter, Reporter {
     @Override
     public void background(Background background) {
         testCase = new TestCase();
+        root = testCase.createElement(doc);
     }
 
     @Override
     public void scenario(Scenario scenario) {
-        if (testCase != null) {
+        if (testCase != null && testCase.scenario == null) {
             testCase.scenario = scenario;
         } else {
             testCase = new TestCase(scenario);
+            root = testCase.createElement(doc);
         }
+        testCase.writeElement(doc, root);
+		rootElement.appendChild(root);
 
         increaseAttributeValue(rootElement, "tests");
     }
@@ -95,10 +101,7 @@ class JUnitFormatter implements Formatter, Reporter {
     public void result(Result result) {
         testCase.results.add(result);
 
-        if (testCase.scenario != null && testCase.results.size() == testCase.steps.size()) {
-            rootElement.appendChild(testCase.writeTo(doc));
-            testCase = null;
-        }
+        testCase.updateElement(doc, root);
     }
 
     @Override
@@ -183,10 +186,16 @@ class JUnitFormatter implements Formatter, Reporter {
         final List<Step> steps = new ArrayList<Step>();
         final List<Result> results = new ArrayList<Result>();
 
-        private Element writeTo(Document doc) {
-            Element tc = doc.createElement("testcase");
+        private Element createElement(Document doc) {
+            return doc.createElement("testcase");
+        }
+
+        private void writeElement(Document doc, Element tc) {
             tc.setAttribute("classname", feature.getName());
             tc.setAttribute("name", examples > 0 ? scenario.getName() + "_" + examples-- : scenario.getName());
+        }
+
+        public void updateElement(Document doc, Element tc) {
             long totalDurationNanos = 0;
             for (Result r : results) {
                 totalDurationNanos += r.getDuration() == null ? 0 : r.getDuration();
@@ -225,9 +234,16 @@ class JUnitFormatter implements Formatter, Reporter {
                 child = doc.createElement("system-out");
                 child.appendChild(doc.createCDATASection(sb.toString()));
             }
-            tc.appendChild(child);
-            return tc;
-        }
+            
+            Node existingChild = tc.getFirstChild();
+			if (existingChild == null) {
+				tc.appendChild(child);
+            }
+			else {
+				tc.replaceChild(child, existingChild);
+			}
+		}
+
     }
 
 }
