@@ -1,5 +1,7 @@
 package cucumber.runtime;
 
+import net.sourceforge.cobertura.ant.Regex;
+
 import org.junit.Test;
 
 import java.io.File;
@@ -71,7 +73,37 @@ public class RuntimeOptionsTest {
         Pattern actualPattern = (Pattern) options.filters.iterator().next();
         assertEquals(someName, actualPattern.pattern());
     }
-
+    
+    @Test
+    public void name_with_spaces() {
+        String someName = "some Name";
+        RuntimeOptions options = new RuntimeOptions(new Properties(), "--name", someName);
+        Pattern actualPattern = (Pattern) options.filters.iterator().next();
+        assertEquals(someName, actualPattern.pattern());
+    } 
+    
+    @Test
+    public void ensure_name_with_spaces_works_with_cucumber_options() {
+        String someName = "some Name";
+        Properties properties = new Properties();
+        properties.setProperty("cucumber.options", "--name '" + someName + "'");
+        RuntimeOptions options = new RuntimeOptions(properties);
+        Pattern actualPattern = (Pattern) options.filters.iterator().next();
+        assertEquals(someName, actualPattern.pattern());
+    }
+    
+    @Test
+    public void ensure_multiple_cucumber_options_with_spaces_parse_correctly() {
+        String someName = "some Name";
+        String somePath = "some file\\path";
+        Properties properties = new Properties();
+        properties.setProperty("cucumber.options", "--name '" + someName + "'" + " --dotcucumber '" + somePath + "'");
+        RuntimeOptions options = new RuntimeOptions(properties);
+        Pattern actualPattern = (Pattern) options.filters.iterator().next();
+        assertEquals(someName, actualPattern.pattern());
+        assertEquals(new File(somePath), options.dotCucumber);
+    }
+    
     @Test
     public void name_short() {
         String someName = "someName";

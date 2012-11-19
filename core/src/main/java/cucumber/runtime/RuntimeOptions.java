@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.ResourceBundle;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static cucumber.runtime.model.CucumberFeature.load;
@@ -40,7 +41,7 @@ public class RuntimeOptions {
 
         parse(new ArrayList<String>(asList(argv)));
         if (properties.containsKey("cucumber.options")) {
-            parse(new ArrayList<String>(asList(properties.getProperty("cucumber.options").split(" "))));
+            parse(cucumberOptionsSplit(properties.getProperty("cucumber.options")));
         }
 
         if (formatters.isEmpty()) {
@@ -54,7 +55,20 @@ public class RuntimeOptions {
         }
     }
 
-    private void parse(List<String> args) {
+    private List<String> cucumberOptionsSplit(String property) {
+    	List<String> matchList = new ArrayList<String>();
+    	Pattern regex = Pattern.compile("[^\\s']+|'([^']*)'");
+    	Matcher regexMatcher = regex.matcher(property);
+    	while (regexMatcher.find()) {
+    		if (regexMatcher.group(1) != null)
+      	       matchList.add(regexMatcher.group(1));
+    		else 
+     	       matchList.add(regexMatcher.group());
+    	} 
+    	return matchList;
+	}
+
+	private void parse(List<String> args) {
         List<Object> parsedFilters = new ArrayList<Object>();
         while (!args.isEmpty()) {
             String arg = args.remove(0);
