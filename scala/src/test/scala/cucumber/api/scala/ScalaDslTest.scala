@@ -7,36 +7,43 @@ import _root_.gherkin.formatter.model.Tag
 import collection.JavaConverters._
 
 import _root_.cucumber.runtime.scala.Transform
+import cucumber.api.Scenario
 
 class ScalaDslTest {
+
+  object StubScenario extends Scenario{
+    def getStatus =  ""
+
+    def isFailed = false
+
+    def embed(p1: Array[Byte], p2: String) {}
+
+    def write(p1: String) {}
+  }
 
   @Test
   def emptyBefore {
 
-    var called = false
+    var actualScenario : Scenario = null
 
     object Befores extends ScalaDsl with EN {
-      Before {
-        called = true
-      }
+      Before { actualScenario = _ }
     }
 
     assertEquals(1, Befores.beforeHooks.size)
     val hook = Befores.beforeHooks.head
     assertTrue(hook.matches(List[Tag]().asJava))
-    hook.execute(null)
-    assertTrue(called)
+    hook.execute(StubScenario)
     assertEquals(Int.MaxValue, hook.getOrder)
+    assertEquals(StubScenario, actualScenario)
   }
 
   @Test
   def taggedBefore {
-    var called = false
+    var actualScenario : Scenario = null
 
     object Befores extends ScalaDsl with EN {
-      Before("@foo,@bar", "@zap"){
-        called = true
-      }
+      Before("@foo,@bar", "@zap"){ actualScenario = _ }
     }
 
     assertEquals(1, Befores.beforeHooks.size)
@@ -46,20 +53,16 @@ class ScalaDslTest {
     assertTrue(hook.matches(List(new Tag("@bar", 0), new Tag("@zap", 0)).asJava))
     assertFalse(hook.matches(List(new Tag("@bar", 1)).asJava))
 
-    hook.execute(null)
-    assertTrue(called)
+    hook.execute(StubScenario)
+    assertEquals(StubScenario, actualScenario)
     assertEquals(Int.MaxValue, hook.getOrder)
   }
 
   @Test
   def orderedBefore {
 
-    var called = false
-
     object Befores extends ScalaDsl with EN {
-      Before(10){
-        called = true
-      }
+      Before(10){ scenario : Scenario =>   }
     }
 
     val hook = Befores.beforeHooks(0)
@@ -69,12 +72,8 @@ class ScalaDslTest {
   @Test
   def taggedOrderedBefore {
 
-    var called = false
-
     object Befores extends ScalaDsl with EN {
-      Before(10, "@foo,@bar", "@zap"){
-        called = true
-      }
+      Before(10, "@foo,@bar", "@zap"){  scenario : Scenario => }
     }
 
     val hook = Befores.beforeHooks(0)
@@ -84,29 +83,25 @@ class ScalaDslTest {
   @Test
   def emptyAfter {
 
-    var called = false
+    var actualScenario : Scenario = null
 
     object Afters extends ScalaDsl with EN {
-      After {
-        called = true
-      }
+      After {  actualScenario = _ }
     }
 
     assertEquals(1, Afters.afterHooks.size)
     val hook = Afters.afterHooks.head
     assertTrue(hook.matches(List[Tag]().asJava))
-    hook.execute(null)
-    assertTrue(called)
+    hook.execute(StubScenario)
+    assertEquals(StubScenario, actualScenario)
   }
 
   @Test
   def taggedAfter {
-    var called = false
+    var actualScenario : Scenario = null
 
     object Afters extends ScalaDsl with EN {
-      After("@foo,@bar", "@zap"){
-        called = true
-      }
+      After("@foo,@bar", "@zap"){ actualScenario = _ }
     }
 
     assertEquals(1, Afters.afterHooks.size)
@@ -116,8 +111,8 @@ class ScalaDslTest {
     assertTrue(hook.matches(List(new Tag("@bar", 0), new Tag("@zap", 0)).asJava))
     assertFalse(hook.matches(List(new Tag("@bar", 1)).asJava))
 
-    hook.execute(null)
-    assertTrue(called)
+    hook.execute(StubScenario)
+    assertEquals(StubScenario, actualScenario)
   }
 
   @Test
@@ -132,7 +127,7 @@ class ScalaDslTest {
 
     assertEquals(1, Dummy.stepDefinitions.size)
     val step = Dummy.stepDefinitions.head
-    assertEquals("ScalaDslTest.scala:128", step.getLocation(true)) // be careful with formatting or this test will break
+    assertEquals("ScalaDslTest.scala:123", step.getLocation(true)) // be careful with formatting or this test will break
     assertEquals("x", step.getPattern)
     step.execute(new I18n("en"), Array())
     assertTrue(called)
