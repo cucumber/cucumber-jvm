@@ -1,5 +1,6 @@
 ## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.1.1...master)
 
+* [Core] Embedded data fails to display in HTML reports due to invalid string passed from HTMLFormatter ([#412](https://github.com/cucumber/cucumber-jvm/issues/412) Aslak Hellesøy)
 * [Scala] Downgrade to scala 2.9.2 - we'll only use stable versions from now on. (Aslak Hellesøy)
 * [Scala] Passing Scenario reference in Before and After hooks ([#431](https://github.com/cucumber/cucumber-jvm/pull/431) Anshul Bajpai)
 * [Core] RunCukesTest prevents the execution of other tests ([#304](https://github.com/cucumber/cucumber-jvm/issues/304), [#430](https://github.com/cucumber/cucumber-jvm/pull/430) Mishail)
