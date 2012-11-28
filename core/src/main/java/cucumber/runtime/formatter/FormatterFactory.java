@@ -40,19 +40,13 @@ public class FormatterFactory {
         put("usage", UsageFormatter.class);
     }};
     private static final Pattern FORMATTER_WITH_FILE_PATTERN = Pattern.compile("([^:]+):(.*)");
-    private Appendable defaultOut = new NonCloseableStdoutWriter();
-
-    static class NonCloseableStdoutWriter extends OutputStreamWriter {
-        NonCloseableStdoutWriter() {
-            super(System.out);
-        }
+    private Appendable defaultOut = new OutputStreamWriter(System.out) {
         @Override
         public void close() throws IOException {
             // We have no intention to close System.out
         }
-    }
-    
-    
+    };
+
     public Formatter create(String formatterString) {
         Matcher formatterWithFile = FORMATTER_WITH_FILE_PATTERN.matcher(formatterString);
         String formatterName;
