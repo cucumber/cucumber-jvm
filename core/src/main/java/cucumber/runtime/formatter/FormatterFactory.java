@@ -9,6 +9,7 @@ import gherkin.formatter.JSONPrettyFormatter;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -39,8 +40,19 @@ public class FormatterFactory {
         put("usage", UsageFormatter.class);
     }};
     private static final Pattern FORMATTER_WITH_FILE_PATTERN = Pattern.compile("([^:]+):(.*)");
-    private Appendable defaultOut = System.out;
+    private Appendable defaultOut = new NonCloseableStdoutWriter();
 
+    static class NonCloseableStdoutWriter extends OutputStreamWriter {
+        NonCloseableStdoutWriter() {
+            super(System.out);
+        }
+        @Override
+        public void close() throws IOException {
+            // We have no intention to close System.out
+        }
+    }
+    
+    
     public Formatter create(String formatterString) {
         Matcher formatterWithFile = FORMATTER_WITH_FILE_PATTERN.matcher(formatterString);
         String formatterName;
