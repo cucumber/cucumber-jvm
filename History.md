@@ -1,6 +1,6 @@
-##
+## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.1.1...master)
 
-* [Core] Scenario --name not working for names with quotes and multiple words ([#379](https://github.com/cucumber/cucumber-jvm/issues/379), [#429](https://github.com/cucumber/cucumber-jvm/pull/429) William Powell)
+* [Core] `--name 'name with spaces in single quotes'` is working ([#379](https://github.com/cucumber/cucumber-jvm/issues/379), [#429](https://github.com/cucumber/cucumber-jvm/pull/429) William Powell)
 
 ## [1.1.1](https://github.com/cucumber/cucumber-jvm/compare/v1.0.14...1.1.1)
 
