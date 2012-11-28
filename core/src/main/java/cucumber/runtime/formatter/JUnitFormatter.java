@@ -38,7 +38,7 @@ class JUnitFormatter implements Formatter, Reporter {
     private final Element rootElement;
 
     private TestCase testCase;
-	private Element root;
+    private Element root;
 
     public JUnitFormatter(File out) {
         this.out = out;
@@ -71,7 +71,7 @@ class JUnitFormatter implements Formatter, Reporter {
             root = testCase.createElement(doc);
         }
         testCase.writeElement(doc, root);
-		rootElement.appendChild(root);
+        rootElement.appendChild(root);
 
         increaseAttributeValue(rootElement, "tests");
     }
@@ -236,13 +236,12 @@ class JUnitFormatter implements Formatter, Reporter {
             }
             
             Node existingChild = tc.getFirstChild();
-			if (existingChild == null) {
-				tc.appendChild(child);
+            if (existingChild == null) {
+                tc.appendChild(child);
+            } else {
+                tc.replaceChild(child, existingChild);
             }
-			else {
-				tc.replaceChild(child, existingChild);
-			}
-		}
+        }
 
     }
 
