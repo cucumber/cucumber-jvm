@@ -1,6 +1,6 @@
 package cucumber.api.scala
 
-import _root_.cucumber.runtime._
+import _root_.cucumber.api.Scenario
 import _root_.cucumber.runtime.scala.Transform
 import _root_.cucumber.runtime.scala.ScalaHookDefinition
 import _root_.cucumber.runtime.scala.ScalaStepDefinition
@@ -14,28 +14,28 @@ trait ScalaDsl { self =>
   private [cucumber] val beforeHooks = new ArrayBuffer[HookDefinition]
   private [cucumber] val afterHooks = new ArrayBuffer[HookDefinition]
 
-  def Before(f: => Unit){
+  def Before(f: Scenario => Unit){
     Before()(f)
   }
 
-  def Before(tags: String*)(f: => Unit) {
+  def Before(tags: String*)(f: Scenario => Unit) {
     Before(Int.MaxValue, tags :_*)(f)
   }
 
-  def Before(order:Int, tags:String*)(f: => Unit){
-    beforeHooks += new ScalaHookDefinition(f _, order, tags)
+  def Before(order:Int, tags:String*)(f: Scenario => Unit){
+    beforeHooks += new ScalaHookDefinition(f, order, tags)
   }
 
-  def After(f: => Unit){
+  def After(f: Scenario => Unit){
     After()(f)
   }
 
-  def After(tags: String*)(f: => Unit) {
+  def After(tags: String*)(f: Scenario => Unit) {
     After(Int.MaxValue, tags:_*)(f)
   }
 
-  def After(order:Int, tags: String*)(f: => Unit){
-    afterHooks += new ScalaHookDefinition(f _, order, tags)
+  def After(order:Int, tags: String*)(f: Scenario => Unit){
+    afterHooks += new ScalaHookDefinition(f, order, tags)
   }
 
   final class Step(name: String) {
