@@ -7,9 +7,12 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
+import static org.hamcrest.CoreMatchers.*;
 
 public class FormatterFactoryTest {
     private FormatterFactory fc = new FormatterFactory();
@@ -69,7 +72,7 @@ public class FormatterFactoryTest {
     @Test
     public void instantiates_single_custom_appendable_formatter_with_stdout() {
         WantsAppendable formatter = (WantsAppendable) fc.create("cucumber.runtime.formatter.FormatterFactoryTest$WantsAppendable");
-        assertEquals(System.out, formatter.out);
+        assertThat(formatter.out, is(instanceOf(OutputStreamWriter.class)));
         try {
             fc.create("cucumber.runtime.formatter.FormatterFactoryTest$WantsAppendable");
             fail();
@@ -81,7 +84,7 @@ public class FormatterFactoryTest {
     @Test
     public void instantiates_custom_appendable_formatter_with_stdout_and_file() throws IOException {
         WantsAppendable formatter = (WantsAppendable) fc.create("cucumber.runtime.formatter.FormatterFactoryTest$WantsAppendable");
-        assertEquals(System.out, formatter.out);
+        assertThat(formatter.out, is(instanceOf(OutputStreamWriter.class)));
 
         WantsAppendable formatter2 = (WantsAppendable) fc.create("cucumber.runtime.formatter.FormatterFactoryTest$WantsAppendable:" + TempDir.createTempFile().getAbsolutePath());
         assertEquals(UTF8FileWriter.class, formatter2.out.getClass());
