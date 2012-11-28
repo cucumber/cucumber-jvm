@@ -116,6 +116,7 @@ class HTMLFormatter implements Formatter, Reporter {
 
     private void writeToJsReport(String functionName, String arg) {
         String stringArg = gson.toJson(arg);
+        stringArg = stringArg.replace("\\","");
         jsOut().append(JS_FORMATTER_VAR + ".").append(functionName).append("(").append(stringArg).append(");").println();
     }
 
@@ -151,7 +152,7 @@ class HTMLFormatter implements Formatter, Reporter {
         if (extension != null) {
             StringBuilder fileName = new StringBuilder("embedded").append(embeddedIndex++).append(".").append(extension);
             writeBytesAndClose(data, reportFileOutputStream(fileName.toString()));
-            writeToJsReport("embedding", new StringBuilder("'").append(mimeType).append("','").append(fileName).append("'").toString());
+            writeToJsReport("embedding", new StringBuilder("").append(mimeType).append("\",\"").append(fileName).toString());
         }
     }
 
