@@ -1,5 +1,6 @@
 package cucumber.runtime;
 
+import cucumber.api.PendingException;
 import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;

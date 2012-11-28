@@ -11,7 +11,7 @@ public class JavaScriptSnippet implements Snippet {
     public String template() {
         return "{0}(/{1}/, function({3}) '{'\n" +
                 "  // {4}\n" +
-                "  throw new Packages.cucumber.runtime.PendingException();\n" +
+                "  throw new Packages.cucumber.api.PendingException();\n" +
                 "'}');\n";
     }
 

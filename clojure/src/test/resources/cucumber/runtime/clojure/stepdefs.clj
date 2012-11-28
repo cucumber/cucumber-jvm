@@ -26,7 +26,7 @@
 
 (Given #"^(\d+) unimplemented step$" [arg1]
   (comment  Express the Regexp above with the code you wish you had  )
-  (throw (cucumber.runtime.PendingException. "This is pending. Seeing a stacktrace here is normal.")))
+  (throw (cucumber.api.PendingException. "This is pending. Seeing a stacktrace here is normal.")))
 
 (def most-recent (atom nil))
 

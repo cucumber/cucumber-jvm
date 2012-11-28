@@ -25,7 +25,7 @@
       (str
        "({0} #\"{1}\" [{3}]\n"
        "  (comment  {4}  )\n"
-       "  (throw (cucumber.runtime.PendingException.)))\n"))
+       "  (throw (cucumber.api.PendingException.)))\n"))
     (arguments [_ argumentTypes]
       (str/replace (SnippetGenerator/untypedArguments argumentTypes)
                    "," ""))

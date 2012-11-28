@@ -1,5 +1,6 @@
 package cucumber.runtime;
 
+import cucumber.api.Pending;
 import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
@@ -208,7 +209,6 @@ public class Runtime implements UnreportedStepExecutor {
         }
     }
 
-
     //TODO: Maybe this should go into the cucumber step execution model and it should return the result of that execution!
     @Override
     public void runUnreportedStep(String uri, I18n i18n, String stepKeyword, String stepName, int line, List<DataTableRow> dataTableRows, DocString docString) throws Throwable {
@@ -279,10 +279,7 @@ public class Runtime implements UnreportedStepExecutor {
     }
 
     private static boolean isPending(Throwable t) {
-    	if (t.getClass().isAnnotationPresent(Pending.class)) {
-    		return true;
-    	}
-        return Arrays.binarySearch(PENDING_EXCEPTIONS, t.getClass().getName()) >= 0;
+        return t.getClass().isAnnotationPresent(Pending.class) || Arrays.binarySearch(PENDING_EXCEPTIONS, t.getClass().getName()) >= 0;
     }
 
     public void writeStepdefsJson() throws IOException {

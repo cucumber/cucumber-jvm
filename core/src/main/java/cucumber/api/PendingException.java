@@ -1,12 +1,6 @@
-package cucumber.runtime;
+package cucumber.api;
 
-import cucumber.api.Pending;
-
-/**
- * @see cucumber.api.PendingException
- * @deprecated Use cucumber.api.PendingException
- */
-@Deprecated
+// We're deliberately not extending CucumberException (which is used to signal fatal errors)
 @Pending
 public class PendingException extends RuntimeException {
     public PendingException() {

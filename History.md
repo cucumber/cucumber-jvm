@@ -1,5 +1,7 @@
 ## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.1.1...master)
 
+* [Core] Deprecated `cucumber.runtime.PendingException` in favour of `cucumber.api.PendingException`. (Aslak Hellesøy)
+* [Core] New `@cucumber.api.Pending` annotation for custom `Exception` classes that will cause a scenario to be `pending` instead of `failed`. ([#427](https://github.com/cucumber/cucumber-jvm/pull/427) agattiker)
 * [Core] `--name 'name with spaces in single quotes'` is working ([#379](https://github.com/cucumber/cucumber-jvm/issues/379), [#429](https://github.com/cucumber/cucumber-jvm/pull/429) William Powell)
 
 ## [1.1.1](https://github.com/cucumber/cucumber-jvm/compare/v1.0.14...1.1.1)

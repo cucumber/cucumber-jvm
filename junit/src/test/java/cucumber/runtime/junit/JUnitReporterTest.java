@@ -1,6 +1,6 @@
 package cucumber.runtime.junit;
 
-import cucumber.runtime.PendingException;
+import cucumber.api.PendingException;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Result;
