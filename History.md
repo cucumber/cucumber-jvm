@@ -1,3 +1,7 @@
+##
+
+* [Core] Scenario --name not working for names with quotes and multiple words ([#379](https://github.com/cucumber/cucumber-jvm/issues/379), [#429](https://github.com/cucumber/cucumber-jvm/pull/429) William Powell)
+
 ## [1.1.1](https://github.com/cucumber/cucumber-jvm/compare/v1.0.14...1.1.1)
 
 This release bumps the minor version number from 1.0 to 1.1. This is because there are backwards-incompatible changes.

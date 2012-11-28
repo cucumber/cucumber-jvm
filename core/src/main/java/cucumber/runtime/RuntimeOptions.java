@@ -25,6 +25,7 @@ import static java.util.Arrays.asList;
 public class RuntimeOptions {
     public static final String VERSION = ResourceBundle.getBundle("cucumber.version").getString("cucumber-jvm.version");
     public static final String USAGE = FixJava.readResource("/cucumber/runtime/USAGE.txt");
+    private static final Pattern SHELLWORDS_PATTERN = Pattern.compile("[^\\s']+|'([^']*)'");
 
     public final List<String> glue = new ArrayList<String>();
     public final List<Object> filters = new ArrayList<Object>();
@@ -56,19 +57,19 @@ public class RuntimeOptions {
     }
 
     private List<String> cucumberOptionsSplit(String property) {
-    	List<String> matchList = new ArrayList<String>();
-    	Pattern regex = Pattern.compile("[^\\s']+|'([^']*)'");
-    	Matcher regexMatcher = regex.matcher(property);
-    	while (regexMatcher.find()) {
-    		if (regexMatcher.group(1) != null)
-      	       matchList.add(regexMatcher.group(1));
-    		else 
-     	       matchList.add(regexMatcher.group());
-    	} 
-    	return matchList;
-	}
+        List<String> matchList = new ArrayList<String>();
+        Matcher shellwordsMatcher = SHELLWORDS_PATTERN.matcher(property);
+        while (shellwordsMatcher.find()) {
+            if (shellwordsMatcher.group(1) != null) {
+                matchList.add(shellwordsMatcher.group(1));
+            } else {
+                matchList.add(shellwordsMatcher.group());
+            }
+        }
+        return matchList;
+    }
 
-	private void parse(List<String> args) {
+    private void parse(List<String> args) {
         List<Object> parsedFilters = new ArrayList<Object>();
         while (!args.isEmpty()) {
             String arg = args.remove(0);
