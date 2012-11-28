@@ -7,12 +7,12 @@ import _root_.cucumber.api.Scenario
 import _root_.cucumber.runtime.HookDefinition
 import collection.JavaConverters._
 
-class ScalaHookDefinition(f:() => Unit, order:Int, tags:Seq[String]) extends HookDefinition {
+class ScalaHookDefinition(f:Scenario => Unit, order:Int, tags:Seq[String]) extends HookDefinition {
   val tagExpression = new TagExpression(tags.asJava)
 
   def getLocation(detail: Boolean) = "TODO: Implement getLocation in similar fashion to ScalaStepDefinition"
 
-  def execute(scenario: Scenario) { f() }
+  def execute(scenario: Scenario) { f(scenario) }
 
   def matches(tags: Collection[Tag]) = tagExpression.eval(tags)
 

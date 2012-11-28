@@ -55,6 +55,12 @@
         </dependency>
     </dependencies>
 
+<pluginRepositories>
+    <pluginRepository>
+        <id>maven-idea-plugin-repo</id>
+        <url>http://maven-idea-plugin.googlecode.com/svn/maven-repo</url>
+    </pluginRepository>
+</pluginRepositories>
     <build>
         <plugins>
             <plugin>
@@ -124,6 +130,11 @@ file.write(template.toString(), "UTF-8")
                     </execution>
                 </executions>
             </plugin>
+ <plugin>
+            <groupId>com.googlecode</groupId>
+            <artifactId>maven-idea-plugin</artifactId>
+            <version>1.6</version>
+        </plugin>
         </plugins>
     </build>
 </project>
