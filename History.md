@@ -1,5 +1,6 @@
 ## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.1.1...master)
 
+* [Scala] Downgrade to scala 2.9.2 - we'll only use stable versions from now on. (Aslak Hellesøy)
 * [Scala] Passing Scenario reference in Before and After hooks ([#431](https://github.com/cucumber/cucumber-jvm/pull/431) Anshul Bajpai)
 * [Core] RunCukesTest prevents the execution of other tests ([#304](https://github.com/cucumber/cucumber-jvm/issues/304), [#430](https://github.com/cucumber/cucumber-jvm/pull/430) Mishail)
 * [Core] Deprecated `cucumber.runtime.PendingException` in favour of `cucumber.api.PendingException`. (Aslak Hellesøy)
