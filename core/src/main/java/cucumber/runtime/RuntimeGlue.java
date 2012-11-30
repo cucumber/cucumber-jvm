@@ -3,7 +3,8 @@ package cucumber.runtime;
 import cucumber.runtime.autocomplete.MetaStepdef;
 import cucumber.runtime.autocomplete.StepdefGenerator;
 import cucumber.runtime.io.FileResourceLoader;
-import cucumber.runtime.io.UTF8FileWriter;
+import cucumber.runtime.io.URLOutputStream;
+import cucumber.runtime.io.UTF8OutputStreamWriter;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.xstream.LocalizedXStreams;
 import gherkin.I18n;
@@ -12,9 +13,9 @@ import gherkin.deps.com.google.gson.GsonBuilder;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -100,16 +101,14 @@ public class RuntimeGlue implements Glue {
     }
 
     @Override
-    public void writeStepdefsJson(List<String> featurePaths, File dotCucumber) throws IOException {
+    public void writeStepdefsJson(List<String> featurePaths, URL dotCucumber) throws IOException {
         if (dotCucumber != null) {
             List<CucumberFeature> features = load(new FileResourceLoader(), featurePaths, NO_FILTERS);
             List<MetaStepdef> metaStepdefs = new StepdefGenerator().generate(stepDefinitionsByPattern.values(), features);
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             String json = gson.toJson(metaStepdefs);
 
-            File file = new File(dotCucumber, "stepdefs.json");
-            Utils.ensureParentDirExists(file);
-            Writer stepdefsJson = new UTF8FileWriter(file);
+            Writer stepdefsJson = new UTF8OutputStreamWriter(new URLOutputStream(new URL(dotCucumber, "stepdefs.json")));
             stepdefsJson.append(json);
             stepdefsJson.close();
         }

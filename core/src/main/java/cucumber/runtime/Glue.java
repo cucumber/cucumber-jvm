@@ -5,6 +5,7 @@ import gherkin.formatter.model.Step;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 
 
@@ -24,5 +25,5 @@ public interface Glue {
 
     StepDefinitionMatch stepDefinitionMatch(String uri, Step step, I18n i18n);
 
-    void writeStepdefsJson(List<String> featurePaths, File dotCucumber) throws IOException;
+    void writeStepdefsJson(List<String> featurePaths, URL dotCucumber) throws IOException;
 }

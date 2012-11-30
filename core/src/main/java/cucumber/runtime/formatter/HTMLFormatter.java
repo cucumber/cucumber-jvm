@@ -1,6 +1,7 @@
 package cucumber.runtime.formatter;
 
 import cucumber.runtime.CucumberException;
+import cucumber.runtime.io.URLOutputStream;
 import gherkin.deps.com.google.gson.Gson;
 import gherkin.deps.com.google.gson.GsonBuilder;
 import gherkin.formatter.Formatter;
@@ -17,13 +18,11 @@ import gherkin.formatter.model.ScenarioOutline;
 import gherkin.formatter.model.Step;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,13 +42,13 @@ class HTMLFormatter implements Formatter, Reporter {
         }
     };
 
-    private final File htmlReportDir;
+    private final URL htmlReportDir;
     private NiceAppendable jsOut;
 
     private boolean firstFeature = true;
     private int embeddedIndex;
 
-    public HTMLFormatter(File htmlReportDir) {
+    public HTMLFormatter(URL htmlReportDir) {
         this.htmlReportDir = htmlReportDir;
     }
 
@@ -202,7 +201,7 @@ class HTMLFormatter implements Formatter, Reporter {
         if (jsOut == null) {
             try {
                 jsOut = new NiceAppendable(new OutputStreamWriter(reportFileOutputStream(JS_REPORT_FILENAME), "UTF-8"));
-            } catch (UnsupportedEncodingException e) {
+            } catch (IOException e) {
                 throw new CucumberException(e);
             }
         }
@@ -210,12 +209,10 @@ class HTMLFormatter implements Formatter, Reporter {
     }
 
     private OutputStream reportFileOutputStream(String fileName) {
-        htmlReportDir.mkdirs();
-        File file = new File(htmlReportDir, fileName);
         try {
-            return new FileOutputStream(file);
-        } catch (FileNotFoundException e) {
-            throw new CucumberException("Error creating file: " + file.getAbsolutePath(), e);
+            return new URLOutputStream(new URL(htmlReportDir, fileName));
+        } catch (IOException e) {
+            throw new CucumberException(e);
         }
     }
 

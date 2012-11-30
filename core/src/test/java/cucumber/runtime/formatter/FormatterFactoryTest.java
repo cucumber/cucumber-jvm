@@ -1,18 +1,21 @@
 package cucumber.runtime.formatter;
 
 import cucumber.runtime.CucumberException;
-import cucumber.runtime.io.UTF8FileWriter;
+import cucumber.runtime.Utils;
+import cucumber.runtime.io.UTF8OutputStreamWriter;
 import gherkin.formatter.Formatter;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.net.URL;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
-import static org.hamcrest.CoreMatchers.*;
 
 public class FormatterFactoryTest {
     private FormatterFactory fc = new FormatterFactory();
@@ -47,7 +50,7 @@ public class FormatterFactoryTest {
 
     @Test
     public void instantiates_pretty_formatter_with_file_arg() throws IOException {
-        Formatter formatter = fc.create("pretty:" + TempDir.createTempFile().getAbsolutePath());
+        Formatter formatter = fc.create("pretty:" + Utils.toURL(TempDir.createTempFile().getAbsolutePath()));
         assertEquals(CucumberPrettyFormatter.class, formatter.getClass());
     }
 
@@ -77,7 +80,7 @@ public class FormatterFactoryTest {
             fc.create("cucumber.runtime.formatter.FormatterFactoryTest$WantsAppendable");
             fail();
         } catch (CucumberException expected) {
-            assertEquals("Only one formatter can use STDOUT. If you use more than one formatter you must specify output path with FORMAT:PATH", expected.getMessage());
+            assertEquals("Only one formatter can use STDOUT. If you use more than one formatter you must specify output path with FORMAT:PATH_OR_URL", expected.getMessage());
         }
     }
 
@@ -87,19 +90,39 @@ public class FormatterFactoryTest {
         assertThat(formatter.out, is(instanceOf(OutputStreamWriter.class)));
 
         WantsAppendable formatter2 = (WantsAppendable) fc.create("cucumber.runtime.formatter.FormatterFactoryTest$WantsAppendable:" + TempDir.createTempFile().getAbsolutePath());
-        assertEquals(UTF8FileWriter.class, formatter2.out.getClass());
+        assertEquals(UTF8OutputStreamWriter.class, formatter2.out.getClass());
+    }
+
+    @Test
+    public void instantiates_custom_url_formatter() throws IOException {
+        WantsUrl formatter = (WantsUrl) fc.create("cucumber.runtime.formatter.FormatterFactoryTest$WantsUrl:halp");
+        assertEquals(new URL("file:halp/"), formatter.out);
+    }
+
+    @Test
+    public void instantiates_custom_url_formatter_with_http() throws IOException {
+        WantsUrl formatter = (WantsUrl) fc.create("cucumber.runtime.formatter.FormatterFactoryTest$WantsUrl:http://halp/");
+        assertEquals(new URL("http://halp/"), formatter.out);
     }
 
     @Test
     public void instantiates_custom_file_formatter() throws IOException {
         WantsFile formatter = (WantsFile) fc.create("cucumber.runtime.formatter.FormatterFactoryTest$WantsFile:halp.txt");
-        assertEquals("halp.txt", formatter.out.getPath());
+        assertEquals(new File("halp.txt"), formatter.out);
     }
 
     public static class WantsAppendable extends StubFormatter {
         public final Appendable out;
 
         public WantsAppendable(Appendable out) {
+            this.out = out;
+        }
+    }
+
+    public static class WantsUrl extends StubFormatter {
+        public final URL out;
+
+        public WantsUrl(URL out) {
             this.out = out;
         }
     }

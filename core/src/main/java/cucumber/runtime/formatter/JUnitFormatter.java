@@ -1,6 +1,8 @@
 package cucumber.runtime.formatter;
 
 import cucumber.runtime.CucumberException;
+import cucumber.runtime.io.URLOutputStream;
+import cucumber.runtime.io.UTF8OutputStreamWriter;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Background;
@@ -22,9 +24,11 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.io.Writer;
+import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -32,14 +36,14 @@ import java.util.List;
 import java.util.Locale;
 
 class JUnitFormatter implements Formatter, Reporter {
-    private final File out;
+    private final Writer out;
     private final Document doc;
     private final Element rootElement;
 
     private TestCase testCase;
 
-    public JUnitFormatter(File out) {
-        this.out = out;
+    public JUnitFormatter(URL out) throws IOException {
+        this.out = new UTF8OutputStreamWriter(new URLOutputStream(out));
         try {
             doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
             rootElement = doc.createElement("testsuite");

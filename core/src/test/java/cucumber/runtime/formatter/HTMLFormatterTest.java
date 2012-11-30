@@ -1,5 +1,7 @@
 package cucumber.runtime.formatter;
 
+import com.sun.org.apache.xerces.internal.impl.io.UTF8Reader;
+import cucumber.runtime.Utils;
 import gherkin.formatter.model.Comment;
 import gherkin.formatter.model.Scenario;
 import gherkin.formatter.model.Tag;
@@ -14,9 +16,8 @@ import org.mozilla.javascript.EcmaError;
 import org.mozilla.javascript.tools.shell.Global;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
@@ -25,29 +26,29 @@ import static org.junit.Assert.fail;
 
 public class HTMLFormatterTest {
 
-    private File outputDir;
+    private URL outputDir;
 
     @Before
     public void writeReport() throws IOException {
-        outputDir = TempDir.createTempDirectory();
+        outputDir = Utils.toURL(TempDir.createTempDirectory().getAbsolutePath());
         runFeaturesWithFormatter(outputDir);
     }
 
     @Test
     public void writes_index_html() throws IOException {
-        File indexHtml = new File(outputDir, "index.html");
-        Document document = Jsoup.parse(indexHtml, "UTF-8");
+        URL indexHtml = new URL(outputDir, "index.html");
+        Document document = Jsoup.parse(new File(indexHtml.getFile()), "UTF-8");
         Element reportElement = document.body().getElementsByClass("cucumber-report").first();
         assertEquals("", reportElement.text());
     }
 
     @Test
     public void writes_valid_report_js() throws IOException {
-        File reportJs = new File(outputDir, "report.js");
+        URL reportJs = new URL(outputDir, "report.js");
         Context cx = Context.enter();
         Global scope = new Global(cx);
         try {
-            cx.evaluateReader(scope, new FileReader(reportJs), reportJs.getAbsolutePath(), 1, null);
+            cx.evaluateReader(scope, new UTF8Reader(reportJs.openStream()), reportJs.getFile(), 1, null);
             fail("Should have failed");
         } catch (EcmaError expected) {
             assertTrue(expected.getMessage().startsWith("ReferenceError: \"document\" is not defined."));
@@ -55,14 +56,14 @@ public class HTMLFormatterTest {
     }
 
     @Test
-    public void includes_uri() throws FileNotFoundException {
-        String reportJs = FixJava.readReader(new FileReader(new File(outputDir, "report.js")));
+    public void includes_uri() throws IOException {
+        String reportJs = FixJava.readReader(new UTF8Reader(new URL(outputDir, "report.js").openStream()));
         assertContains("formatter.uri(\"some\\\\windows\\\\path\\\\some.feature\");", reportJs);
     }
 
     @Test
-    public void included_embedding() throws FileNotFoundException {
-        String reportJs = FixJava.readReader(new FileReader(new File(outputDir, "report.js")));
+    public void included_embedding() throws IOException {
+        String reportJs = FixJava.readReader(new UTF8Reader(new URL(outputDir, "report.js").openStream()));
         assertContains("formatter.embedding(\"image/png\", \"embedded0.png\");", reportJs);
     }
 
@@ -72,7 +73,7 @@ public class HTMLFormatterTest {
         }
     }
 
-    private void runFeaturesWithFormatter(File outputDir) throws IOException {
+    private void runFeaturesWithFormatter(URL outputDir) throws IOException {
         final HTMLFormatter f = new HTMLFormatter(outputDir);
         f.uri("some\\windows\\path\\some.feature");
         f.scenario(new Scenario(Collections.<Comment>emptyList(), Collections.<Tag>emptyList(), "Scenario", "some cukes", "", 10, "id"));

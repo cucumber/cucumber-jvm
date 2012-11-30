@@ -8,10 +8,11 @@ import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
 import gherkin.util.FixJava;
 
-import java.io.File;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -32,7 +33,7 @@ public class RuntimeOptions {
     public final List<Formatter> formatters = new ArrayList<Formatter>();
     public final List<String> featurePaths = new ArrayList<String>();
     private final FormatterFactory formatterFactory = new FormatterFactory();
-    public File dotCucumber;
+    public URL dotCucumber;
     public boolean dryRun;
     public boolean strict = false;
     public boolean monochrome = false;
@@ -88,7 +89,8 @@ public class RuntimeOptions {
             } else if (arg.equals("--format") || arg.equals("-f")) {
                 formatters.add(formatterFactory.create(args.remove(0)));
             } else if (arg.equals("--dotcucumber")) {
-                dotCucumber = new File(args.remove(0));
+                String urlOrPath = args.remove(0);
+                dotCucumber = Utils.toURL(urlOrPath);
             } else if (arg.equals("--no-dry-run") || arg.equals("--dry-run") || arg.equals("-d")) {
                 dryRun = !arg.startsWith("--no-");
             } else if (arg.equals("--no-strict") || arg.equals("--strict") || arg.equals("-s")) {
