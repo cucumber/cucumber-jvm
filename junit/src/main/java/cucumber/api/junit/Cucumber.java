@@ -139,5 +139,7 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
          * @return a list of patterns
          */
         String[] name() default {};
+
+        String dotcucumber() default "";
     }
 }

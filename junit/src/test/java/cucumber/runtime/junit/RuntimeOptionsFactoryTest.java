@@ -4,6 +4,7 @@ import cucumber.api.junit.Cucumber;
 import cucumber.runtime.RuntimeOptions;
 import org.junit.Test;
 
+import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -56,6 +57,13 @@ public class RuntimeOptionsFactoryTest {
         assertEquals("name2", getRegexpPattern(iterator.next()));
     }
 
+    @Test
+    public void create_with_dotcucumber() {
+        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(DotCucumber.class);
+        RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
+        assertEquals(new File("somewhere/.cucumber"), runtimeOptions.dotCucumber);
+    }
+
     private String getRegexpPattern(Object pattern) {
         return ((Pattern) pattern).pattern();
     }
@@ -87,6 +95,11 @@ public class RuntimeOptionsFactoryTest {
 
     @Cucumber.Options
     static class NoName {
+        // empty
+    }
+
+    @Cucumber.Options(dotcucumber = "somewhere/.cucumber")
+    static class DotCucumber {
         // empty
     }
 

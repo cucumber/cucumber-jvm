@@ -1,5 +1,6 @@
 ## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.1.1...master)
 
+* [JUnit] Added `@Cucumber.Options.dotcucumber`, allowing metadata to be written from JUnit. Useful for code completion. ([#418](https://github.com/cucumber/cucumber-jvm/issues/418 Aslak Hellesøy)
 * [Core] Embedded data fails to display in HTML reports due to invalid string passed from HTMLFormatter ([#412](https://github.com/cucumber/cucumber-jvm/issues/412) Aslak Hellesøy)
 * [Scala] Downgrade to scala 2.9.2 - we'll only use stable versions from now on. (Aslak Hellesøy)
 * [Scala] Passing Scenario reference in Before and After hooks ([#431](https://github.com/cucumber/cucumber-jvm/pull/431) Anshul Bajpai)
