@@ -22,3 +22,6 @@ The error will be similar to:
 ```
 [ERROR] Failed to execute goal org.codehaus.cargo:cargo-maven2-plugin:1.3.0:start (start-servlet-engine) on project java-wicket-test: Execution start-servlet-engine of goal org.codehaus.cargo:cargo-maven2-plugin:1.3.0:start failed: An API incompatibility was encountered while executing org.codehaus.cargo:cargo-maven2-plugin:1.3.0:start: java.lang.UnsupportedClassVersionError: org/eclipse/jetty/server/Server : Unsupported major.minor version 51.0
 ```
+
+The thing you want to look for is the ```Unsupported major.minor version 51.0``` that indicates that this has been
+compiled using Java 7 and that you are executing it using an older Java version.
