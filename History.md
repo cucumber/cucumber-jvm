@@ -1,5 +1,6 @@
 ## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.1.1...master)
 
+* [Core] Support `DataTable.toTable(List<String[]>) and `DataTable.toTable(List<Map<String,String>>)` ([#433](https://github.com/cucumber/cucumber-jvm/issues/433), [#434](https://github.com/cucumber/cucumber-jvm/pull/434) Nicholas Albion, Aslak Hellesøy)
 * [Core] Formatters and `--dotcucumber` can now write to a file or an URL (via HTTP PUT). This allows easier distribution of reports. (Aslak Hellesøy)
 * [JUnit] Added `@Cucumber.Options.dotcucumber`, allowing metadata to be written from JUnit. Useful for code completion. ([#418](https://github.com/cucumber/cucumber-jvm/issues/418 Aslak Hellesøy)
 * [Core] Embedded data fails to display in HTML reports due to invalid string passed from HTMLFormatter ([#412](https://github.com/cucumber/cucumber-jvm/issues/412) Aslak Hellesøy)

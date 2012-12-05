@@ -162,7 +162,7 @@ public class TableConverter {
      * Converts a List of objects to a DataTable.
      *
      * @param objects     the objects to convert
-     * @param columnNames an explicit list of column names (currently not used)
+     * @param columnNames an explicit list of column names
      * @return a DataTable
      */
     public DataTable toTable(List<?> objects, String... columnNames) {
