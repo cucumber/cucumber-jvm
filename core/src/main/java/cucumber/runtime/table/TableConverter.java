@@ -7,11 +7,13 @@ import cucumber.deps.com.thoughtworks.xstream.converters.reflection.AbstractRefl
 import cucumber.deps.com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.ParameterInfo;
+import cucumber.runtime.xstream.ArrayOfSingleValueWriter;
 import cucumber.runtime.xstream.CellWriter;
 import cucumber.runtime.xstream.ComplexTypeWriter;
 import cucumber.runtime.xstream.ListOfComplexTypeReader;
 import cucumber.runtime.xstream.ListOfSingleValueWriter;
 import cucumber.runtime.xstream.LocalizedXStreams;
+import cucumber.runtime.xstream.MapWriter;
 import gherkin.formatter.model.Comment;
 import gherkin.formatter.model.DataTableRow;
 import gherkin.util.Mapper;
@@ -170,22 +172,34 @@ public class TableConverter {
 
             List<String> header = null;
             List<List<String>> valuesList = new ArrayList<List<String>>();
-            for (Object object : objects) {
-                CellWriter writer;
-                if (isListOfSingleValue(object)) {
-                    // XStream needs this
-                    object = new ArrayList<Object>((List<Object>) object);
-                    writer = new ListOfSingleValueWriter();
-                } else {
-                    writer = new ComplexTypeWriter(asList(columnNames));
-                }
-                xStream.marshal(object, writer);
-                if (header == null) {
-                    header = writer.getHeader();
-                }
-                List<String> values = writer.getValues();
-                valuesList.add(values);
+            boolean firstRow = true;
+  
+           	for (Object object : objects) {
+           		CellWriter writer;
+           		if (isListOfSingleValue(object)) {
+           			// XStream needs this
+           			object = new ArrayList<Object>((List<Object>) object);
+           			writer = new ListOfSingleValueWriter();
+           		} else if( object instanceof Map ) {
+           			writer = new MapWriter(asList(columnNames));
+           		} else if( object.getClass().isArray() ) {
+           			writer = new ArrayOfSingleValueWriter(asList(columnNames));
+           		} else {
+           			writer = new ComplexTypeWriter(asList(columnNames));
+           		}
+           		xStream.marshal(object, writer);
+           		if (header == null) {
+           			header = writer.getHeader();
+           		}
+           		
+           		List<String> values = writer.getValues();
+           		if( !(firstRow && values.equals(header)) ) {
+           			// Don't include the header twice
+           			valuesList.add(values);
+           		}
+           		firstRow = false;
             }
+            
             return createDataTable(header, valuesList);
         } finally {
             xStream.unsetParameterInfo();
