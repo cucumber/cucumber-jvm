@@ -113,7 +113,7 @@ public class ToDataTableTest {
     }
 
     @Test
-    public void converts_list_of_single_value_to_table() {
+    public void converts_list_of_list_of_number_to_table() {
         List<? extends List<? extends Number>> lists = asList(asList(0.5, 1.5), asList(99.0, 1000.5));
         DataTable table = tc.toTable(lists);
         assertEquals("" +
@@ -124,6 +124,21 @@ public class ToDataTableTest {
         }.getType();
         List<List<Double>> actual = tc.toList(listOfDoubleType, table);
         assertEquals(lists, actual);
+    }
+
+    @Test
+    public void converts_list_of_array_of_string_to_table() {
+        List<Object[]> arrays = asList(
+                new Object[]{"name", "birthDate", "credits"},
+                new Object[]{"Sid Vicious", "10/05/1957", "1000"},
+                new Object[]{"Frank Zappa", "21/12/1940", "3000"}
+        );
+        DataTable table = tc.toTable(arrays, "name", "credits", "birthDate");
+        assertEquals("" +
+                "      | name        | birthDate  | credits |\n" +
+                "      | Sid Vicious | 10/05/1957 | 1000    |\n" +
+                "      | Frank Zappa | 21/12/1940 | 3000    |\n" +
+                "", table.toString());
     }
 
     // No setters

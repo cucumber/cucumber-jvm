@@ -173,8 +173,12 @@ public class TableConverter {
             for (Object object : objects) {
                 CellWriter writer;
                 if (isListOfSingleValue(object)) {
-                    // XStream needs this
+                    // XStream needs an instance of ArrayList
                     object = new ArrayList<Object>((List<Object>) object);
+                    writer = new ListOfSingleValueWriter();
+                } else if (isArrayOfSingleValue(object)) {
+                    // XStream needs an instance of ArrayList
+                    object = new ArrayList<Object>(asList((Object[]) object));
                     writer = new ListOfSingleValueWriter();
                 } else {
                     writer = new ComplexTypeWriter(asList(columnNames));
@@ -220,10 +224,15 @@ public class TableConverter {
     private boolean isListOfSingleValue(Object object) {
         if (object instanceof List) {
             List list = (List) object;
-            boolean isSingleValue = xStream.getSingleValueConverter(list.get(0).getClass()) != null;
-            if (list.size() > 0 && isSingleValue) {
-                return true;
-            }
+            return list.size() > 0 && xStream.getSingleValueConverter(list.get(0).getClass()) != null;
+        }
+        return false;
+    }
+
+    private boolean isArrayOfSingleValue(Object object) {
+        if (object.getClass().isArray()) {
+            Object[] array = (Object[]) object;
+            return array.length > 0 && xStream.getSingleValueConverter(array[0].getClass()) != null;
         }
         return false;
     }
