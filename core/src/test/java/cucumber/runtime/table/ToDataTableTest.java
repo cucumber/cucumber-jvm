@@ -9,8 +9,11 @@ import org.junit.Test;
 
 import java.lang.reflect.Type;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
@@ -127,18 +130,43 @@ public class ToDataTableTest {
     }
 
     @Test
-    public void converts_list_of_array_of_string_to_table() {
+    public void converts_list_of_array_of_string_or_number_to_table_with_number_formatting() {
         List<Object[]> arrays = asList(
                 new Object[]{"name", "birthDate", "credits"},
-                new Object[]{"Sid Vicious", "10/05/1957", "1000"},
-                new Object[]{"Frank Zappa", "21/12/1940", "3000"}
+                new Object[]{"Sid Vicious", "10/05/1957", 1000},
+                new Object[]{"Frank Zappa", "21/12/1940", 3000}
         );
-        DataTable table = tc.toTable(arrays, "name", "credits", "birthDate");
+        DataTable table = tc.toTable(arrays);
         assertEquals("" +
                 "      | name        | birthDate  | credits |\n" +
-                "      | Sid Vicious | 10/05/1957 | 1000    |\n" +
-                "      | Frank Zappa | 21/12/1940 | 3000    |\n" +
+                "      | Sid Vicious | 10/05/1957 | 1,000   |\n" +
+                "      | Frank Zappa | 21/12/1940 | 3,000   |\n" +
                 "", table.toString());
+    }
+
+    @Test
+    public void convert_list_of_maps_to_table() {
+        Map<String, Object> vicious = new LinkedHashMap<String, Object>();
+        vicious.put("name", "Sid Vicious");
+        vicious.put("birthDate", "10/05/1957");
+        vicious.put("credits", 1000);
+        Map<String, Object> zappa = new LinkedHashMap<String, Object>();
+        zappa.put("name", "Frank Zappa");
+        zappa.put("birthDate", "21/12/1940");
+        zappa.put("credits", 3000);
+        List<Map<String, Object>> maps = asList(vicious, zappa);
+
+        assertEquals("" +
+                "      | name        | credits | birthDate  |\n" +
+                "      | Sid Vicious | 1,000   | 10/05/1957 |\n" +
+                "      | Frank Zappa | 3,000   | 21/12/1940 |\n" +
+                "", tc.toTable(maps, "name", "credits", "birthDate").toString());
+
+        assertEquals("" +
+                "      | name        | birthDate  | credits |\n" +
+                "      | Sid Vicious | 10/05/1957 | 1,000   |\n" +
+                "      | Frank Zappa | 21/12/1940 | 3,000   |\n" +
+                "", tc.toTable(maps).toString());
     }
 
     // No setters

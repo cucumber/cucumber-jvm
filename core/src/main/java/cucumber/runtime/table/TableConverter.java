@@ -12,6 +12,7 @@ import cucumber.runtime.xstream.ComplexTypeWriter;
 import cucumber.runtime.xstream.ListOfComplexTypeReader;
 import cucumber.runtime.xstream.ListOfSingleValueWriter;
 import cucumber.runtime.xstream.LocalizedXStreams;
+import cucumber.runtime.xstream.MapWriter;
 import gherkin.formatter.model.Comment;
 import gherkin.formatter.model.DataTableRow;
 import gherkin.util.Mapper;
@@ -180,6 +181,8 @@ public class TableConverter {
                     // XStream needs an instance of ArrayList
                     object = new ArrayList<Object>(asList((Object[]) object));
                     writer = new ListOfSingleValueWriter();
+                } else if (object instanceof Map) {
+                    writer = new MapWriter(asList(columnNames));
                 } else {
                     writer = new ComplexTypeWriter(asList(columnNames));
                 }
