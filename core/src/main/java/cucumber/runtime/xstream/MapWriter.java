@@ -7,8 +7,6 @@ import java.util.Map;
 
 /**
  * Supports Map&lt;String, Object> as the List item
- * 
- * @author Nicholas Albion
  */
 public class MapWriter extends CellWriter {
 	private String key;
@@ -22,7 +20,7 @@ public class MapWriter extends CellWriter {
 	
 	@Override
 	public List<String> getHeader() {
-		return columnNames;
+		 return columnNames.isEmpty() ? new ArrayList<String>(values.keySet()) : columnNames;
 	}
 
 	@Override

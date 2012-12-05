@@ -7,7 +7,6 @@ import cucumber.deps.com.thoughtworks.xstream.converters.reflection.AbstractRefl
 import cucumber.deps.com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.ParameterInfo;
-import cucumber.runtime.xstream.ArrayOfSingleValueWriter;
 import cucumber.runtime.xstream.CellWriter;
 import cucumber.runtime.xstream.ComplexTypeWriter;
 import cucumber.runtime.xstream.ListOfComplexTypeReader;
@@ -183,7 +182,7 @@ public class TableConverter {
            		} else if( object instanceof Map ) {
            			writer = new MapWriter(asList(columnNames));
            		} else if( object.getClass().isArray() ) {
-           			writer = new ArrayOfSingleValueWriter(asList(columnNames));
+           			writer = new ListOfSingleValueWriter(asList(columnNames));
            		} else {
            			writer = new ComplexTypeWriter(asList(columnNames));
            		}

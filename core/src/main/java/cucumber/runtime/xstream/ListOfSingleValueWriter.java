@@ -7,13 +7,21 @@ import java.util.List;
 
 public class ListOfSingleValueWriter extends CellWriter {
     private int nodeDepth;
+    private final List<String> columnNames;
     private final List<String> values = new ArrayList<String>();
-
-    @Override
-    public List<String> getHeader() {
-        return null;
+    
+    public ListOfSingleValueWriter() {
+    	columnNames = null;
     }
-
+    
+    public ListOfSingleValueWriter(List<String> columnNames) {
+        this.columnNames = columnNames;
+    }
+	
+	@Override
+	public List<String> getHeader() {
+		return columnNames;
+	}
     @Override
     public List<String> getValues() {
         return values;
