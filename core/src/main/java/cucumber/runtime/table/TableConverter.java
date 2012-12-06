@@ -32,7 +32,7 @@ import static gherkin.util.FixJava.map;
 import static java.util.Arrays.asList;
 
 /**
- * This class converts a {@link cucumber.api.DataTable to various other types}
+ * This class converts a {@link cucumber.api.DataTable} to various other types.
  */
 public class TableConverter {
     private static final List<Comment> NO_COMMENTS = Collections.emptyList();

@@ -188,4 +188,20 @@ public class DataTable {
         return result;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof DataTable)) return false;
+
+        DataTable dataTable = (DataTable) o;
+
+        if (!raw.equals(dataTable.raw)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return raw.hashCode();
+    }
 }

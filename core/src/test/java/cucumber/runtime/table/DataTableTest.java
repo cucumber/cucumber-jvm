@@ -12,6 +12,8 @@ import java.util.Locale;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotSame;
 
 public class DataTableTest {
 
@@ -59,10 +61,27 @@ public class DataTableTest {
         createSimpleTable().asMaps().remove(0);
     }
 
+    @Test
+    public void two_identical_tables_are_considered_equal() {
+        assertEquals(createSimpleTable(), createSimpleTable());
+        assertEquals(createSimpleTable().hashCode(), createSimpleTable().hashCode());
+    }
+
+    @Test
+    public void two_different_tables_are_considered_non_equal() {
+        assertFalse(createSimpleTable().equals(createTable(asList("one"))));
+        assertNotSame(createSimpleTable().hashCode(), createTable(asList("one")).hashCode());
+    }
+
     public DataTable createSimpleTable() {
+        return createTable(asList("one", "four", "seven"), asList("4444", "55555", "666666"));
+    }
+
+    private DataTable createTable(List<String>... rows) {
         List<DataTableRow> simpleRows = new ArrayList<DataTableRow>();
-        simpleRows.add(new DataTableRow(new ArrayList<Comment>(), asList("one", "four", "seven"), 1));
-        simpleRows.add(new DataTableRow(new ArrayList<Comment>(), asList("4444", "55555", "666666"), 2));
+        for (int i = 0; i < rows.length; i++) {
+            simpleRows.add(new DataTableRow(new ArrayList<Comment>(), rows[i], i + 1));
+        }
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         LocalizedXStreams.LocalizedXStream xStream = new LocalizedXStreams(classLoader).get(Locale.US);
         return new DataTable(simpleRows, new TableConverter(xStream, null));
