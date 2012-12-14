@@ -73,7 +73,7 @@ public class RuntimeOptions {
     private void parse(List<String> args) {
         List<Object> parsedFilters = new ArrayList<Object>();
         while (!args.isEmpty()) {
-            String arg = args.remove(0);
+            String arg = args.remove(0).trim();
 
             if (arg.equals("--help") || arg.equals("-h")) {
                 System.out.println(USAGE);

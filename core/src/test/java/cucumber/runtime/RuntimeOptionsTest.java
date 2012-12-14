@@ -31,6 +31,12 @@ public class RuntimeOptionsTest {
     }
 
     @Test
+    public void strips_options() {
+        RuntimeOptions options = new RuntimeOptions(new Properties(), "  --glue ", "somewhere", "somewhere_else");
+        assertEquals(asList("somewhere_else"), options.featurePaths);
+    }
+
+    @Test
     public void assigns_glue() {
         RuntimeOptions options = new RuntimeOptions(new Properties(), "--glue", "somewhere");
         assertEquals(asList("somewhere"), options.glue);
