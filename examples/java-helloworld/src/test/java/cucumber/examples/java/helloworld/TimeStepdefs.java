@@ -28,7 +28,11 @@ public class TimeStepdefs {
 
     @Then("^my laundry day must have been \"([^\"]*)\"$")
     public void my_laundry_day_must_have_been(Calendar day) throws Throwable {
-        assertEquals(day, laundryDate);
+        // Ideally we'd compare the Calendar instances here, but due to Chronic's
+        // use of default Locale and Cucumber's inability to set its Locale to e.g.
+        // en-GB, this would cause failures on machines that don't have Locale.US or Locale.ENGLISH
+        // as the default Locale. For more details see https://github.com/cucumber/cucumber-jvm/issues/440
+        assertEquals(day.getTimeInMillis(), laundryDate.getTimeInMillis());
     }
 
     public static class ChronicConverter extends Transformer<Calendar> {
