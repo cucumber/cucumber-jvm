@@ -1,6 +1,5 @@
 package cucumber.runtime.formatter;
 
-import com.sun.org.apache.xerces.internal.impl.io.UTF8Reader;
 import cucumber.runtime.Utils;
 import gherkin.formatter.model.Comment;
 import gherkin.formatter.model.Scenario;
@@ -17,6 +16,7 @@ import org.mozilla.javascript.tools.shell.Global;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Collections;
 
@@ -48,7 +48,7 @@ public class HTMLFormatterTest {
         Context cx = Context.enter();
         Global scope = new Global(cx);
         try {
-            cx.evaluateReader(scope, new UTF8Reader(reportJs.openStream()), reportJs.getFile(), 1, null);
+            cx.evaluateReader(scope, new InputStreamReader(reportJs.openStream(), "UTF-8"), reportJs.getFile(), 1, null);
             fail("Should have failed");
         } catch (EcmaError expected) {
             assertTrue(expected.getMessage().startsWith("ReferenceError: \"document\" is not defined."));
@@ -57,13 +57,13 @@ public class HTMLFormatterTest {
 
     @Test
     public void includes_uri() throws IOException {
-        String reportJs = FixJava.readReader(new UTF8Reader(new URL(outputDir, "report.js").openStream()));
+        String reportJs = FixJava.readReader(new InputStreamReader(new URL(outputDir, "report.js").openStream(), "UTF-8"));
         assertContains("formatter.uri(\"some\\\\windows\\\\path\\\\some.feature\");", reportJs);
     }
 
     @Test
     public void included_embedding() throws IOException {
-        String reportJs = FixJava.readReader(new UTF8Reader(new URL(outputDir, "report.js").openStream()));
+        String reportJs = FixJava.readReader(new InputStreamReader(new URL(outputDir, "report.js").openStream(), "UTF-8"));
         assertContains("formatter.embedding(\"image/png\", \"embedded0.png\");", reportJs);
     }
 

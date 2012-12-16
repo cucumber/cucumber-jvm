@@ -10,7 +10,7 @@ import org.webbitserver.HttpHandler;
 import org.webbitserver.HttpRequest;
 import org.webbitserver.HttpResponse;
 import org.webbitserver.WebServer;
-import org.webbitserver.WebServers;
+import org.webbitserver.netty.NettyWebServer;
 import org.webbitserver.rest.Rest;
 
 import java.io.File;
@@ -18,9 +18,12 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Writer;
+import java.net.InetSocketAddress;
+import java.net.URI;
 import java.net.URL;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
 
@@ -32,7 +35,7 @@ public class URLOutputStreamTest {
 
     @Before
     public void startWebbit() throws ExecutionException, InterruptedException {
-        webbit = WebServers.createWebServer(9873).start().get();
+        webbit = new NettyWebServer(Executors.newSingleThreadExecutor(), new InetSocketAddress("127.0.0.1", 9873), URI.create("http://127.0.0.1:9873")).start().get();
     }
 
     @After
