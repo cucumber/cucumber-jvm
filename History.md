@@ -1,5 +1,6 @@
 ## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.1.1...master)
 
+* [Spring] Upgrade to 3.2.0.RELEASE (Aslak Hellesøy)
 * [Core] Strip command line arguments in case people accidentally invoke `cucumber.api.cli.Main` with arguments that have spaces left and right. (Aslak Hellesøy)
 * [Core] Implemented `DataTable.equals()` and `DataTable.hashCode()`. (Aslak Hellesøy)
 * [Core] Support `DataTable.toTable(List<String[]>) and `DataTable.toTable(List<Map<String,String>>)` ([#433](https://github.com/cucumber/cucumber-jvm/issues/433), [#434](https://github.com/cucumber/cucumber-jvm/pull/434) Nicholas Albion, Aslak Hellesøy)

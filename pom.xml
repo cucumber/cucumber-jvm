@@ -19,7 +19,7 @@
         <outputDirectory>${project.build.directory}</outputDirectory>
         <gherkin.version>2.11.5</gherkin.version>
         <groovy.version>2.0.5</groovy.version>
-        <spring.version>3.1.2.RELEASE</spring.version>
+        <spring.version>3.2.0.RELEASE</spring.version>
     </properties>
     <licenses>
         <license>
@@ -105,6 +105,11 @@
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-tx</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context-support</artifactId>
                 <version>${spring.version}</version>
             </dependency>
             <dependency>
