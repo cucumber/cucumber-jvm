@@ -1,5 +1,6 @@
 package cucumber.examples.scalacalculator
 
+import cucumber.api.Scenario
 import cucumber.api.scala.{ScalaDsl, EN}
 import junit.framework.Assert._
 
@@ -17,7 +18,7 @@ class RpnCalculatorStepDefinitions extends ScalaDsl with EN {
     assertEquals(expected, calc.value)
   }
 
-  Before("~@foo"){
+  Before("~@foo"){ scenario : Scenario =>
     println("Runs before scenarios *not* tagged with @foo")
   }
 }
