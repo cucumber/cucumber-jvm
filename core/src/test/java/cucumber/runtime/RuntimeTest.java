@@ -153,8 +153,17 @@ public class RuntimeTest {
 
         assertEquals(0x1, runtime.exitStatus());
     }
-
+    
     @Test
+    public void dry_run_set() {
+        Runtime runtime = createDryRunRuntime();
+        runtime.addError(new RuntimeException());
+
+        assertEquals(0x1, runtime.exitStatus());
+    }
+
+
+	@Test
     public void strict_with_errors() {
         Runtime runtime = createStrictRuntime();
         runtime.addError(new RuntimeException());
@@ -162,7 +171,11 @@ public class RuntimeTest {
         assertEquals(0x1, runtime.exitStatus());
     }
 
-    private Runtime createStrictRuntime() {
+	private Runtime createDryRunRuntime() {
+		return createRuntime("--dry-run");
+	}
+
+	private Runtime createStrictRuntime() {
         return createRuntime("-g anything", "--strict");
     }
 

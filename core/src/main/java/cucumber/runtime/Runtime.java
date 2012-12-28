@@ -180,8 +180,10 @@ public class Runtime implements UnreportedStepExecutor {
     }
 
     private void runHooks(List<HookDefinition> hooks, Reporter reporter, Set<Tag> tags, boolean isBefore) {
-        for (HookDefinition hook : hooks) {
-            runHookIfTagsMatch(hook, reporter, tags, isBefore);
+        if (!runtimeOptions.dryRun) {
+	    	for (HookDefinition hook : hooks) {
+	            runHookIfTagsMatch(hook, reporter, tags, isBefore);
+	        }
         }
     }
 
