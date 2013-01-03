@@ -15,12 +15,13 @@ import gherkin.formatter.model.Scenario;
 import gherkin.formatter.model.ScenarioOutline;
 import gherkin.formatter.model.Step;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class CucumberFeature {
+public class CucumberFeature implements Serializable {
     private final String uri;
     private final Feature feature;
     private CucumberBackground cucumberBackground;

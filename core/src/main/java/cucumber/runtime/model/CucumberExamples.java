@@ -5,12 +5,13 @@ import gherkin.formatter.model.Examples;
 import gherkin.formatter.model.ExamplesTableRow;
 import gherkin.formatter.model.Tag;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class CucumberExamples {
+public class CucumberExamples implements Serializable {
     private final CucumberScenarioOutline cucumberScenarioOutline;
     private final Examples examples;
 

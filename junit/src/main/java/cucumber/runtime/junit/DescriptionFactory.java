@@ -4,6 +4,7 @@ import cucumber.runtime.CucumberException;
 import cucumber.runtime.Utils;
 import org.junit.runner.Description;
 
+import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
@@ -21,7 +22,7 @@ public class DescriptionFactory {
 
     static {
         try {
-            CREATE_SUITE_DESCRIPTION = Description.class.getMethod("createSuiteDescription", String.class, Object.class, Array.newInstance(Annotation.class, 0).getClass());
+            CREATE_SUITE_DESCRIPTION = Description.class.getMethod("createSuiteDescription", String.class, Serializable.class, Array.newInstance(Annotation.class, 0).getClass());
             USE_UNIQUE_ID = true;
         } catch (NoSuchMethodException e) {
             try {
@@ -33,7 +34,7 @@ public class DescriptionFactory {
         }
     }
 
-    public static Description createDescription(String name, Object uniqueId) {
+    public static Description createDescription(String name, Serializable uniqueId) {
         if (USE_UNIQUE_ID) {
             try {
                 return (Description) Utils.invoke(null, CREATE_SUITE_DESCRIPTION, 0, name, uniqueId, Array.newInstance(Annotation.class, 0));
