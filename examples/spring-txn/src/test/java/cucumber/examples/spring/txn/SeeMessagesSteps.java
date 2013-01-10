@@ -4,18 +4,24 @@ import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.web.server.MockMvc;
-import org.springframework.test.web.server.ResultActions;
+import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.web.context.WebApplicationContext;
 
-import static org.hamcrest.Matchers.containsString;
-import static org.springframework.test.web.server.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.server.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.server.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.server.setup.MockMvcBuilders.xmlConfigSetup;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
+@WebAppConfiguration
 public class SeeMessagesSteps {
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private WebApplicationContext wac;
 
     @Autowired
     private MessageRepository messageRepository;
@@ -50,8 +56,7 @@ public class SeeMessagesSteps {
     }
 
     private MockMvc getMockMvc() {
-        return xmlConfigSetup(contextLocation)
-                .configureWebAppRootDir(warRootDir, false).build();
+        return webAppContextSetup(wac).build();
     }
 
 }
