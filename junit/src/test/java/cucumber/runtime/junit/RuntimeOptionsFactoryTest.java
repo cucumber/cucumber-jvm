@@ -4,6 +4,8 @@ import cucumber.api.junit.Cucumber;
 import cucumber.runtime.RuntimeOptions;
 import org.junit.Test;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -56,6 +58,20 @@ public class RuntimeOptionsFactoryTest {
         assertEquals("name2", getRegexpPattern(iterator.next()));
     }
 
+    @Test
+    public void create_with_dotcucumber_dir() throws MalformedURLException {
+        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(DotCucumberFile.class);
+        RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
+        assertEquals(new URL("file:somewhere/.cucumber/"), runtimeOptions.dotCucumber);
+    }
+
+    @Test
+    public void create_with_dotcucumber_url() throws MalformedURLException {
+        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(DotCucumberUrl.class);
+        RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
+        assertEquals(new URL("https://some.where/.cucumber/"), runtimeOptions.dotCucumber);
+    }
+
     private String getRegexpPattern(Object pattern) {
         return ((Pattern) pattern).pattern();
     }
@@ -87,6 +103,16 @@ public class RuntimeOptionsFactoryTest {
 
     @Cucumber.Options
     static class NoName {
+        // empty
+    }
+
+    @Cucumber.Options(dotcucumber = "somewhere/.cucumber")
+    static class DotCucumberFile {
+        // empty
+    }
+
+    @Cucumber.Options(dotcucumber = "https://some.where/.cucumber")
+    static class DotCucumberUrl {
         // empty
     }
 

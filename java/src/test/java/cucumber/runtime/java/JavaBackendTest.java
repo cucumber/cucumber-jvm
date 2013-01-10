@@ -10,8 +10,8 @@ import gherkin.I18n;
 import gherkin.formatter.model.Step;
 import org.junit.Test;
 
-import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -81,7 +81,7 @@ public class JavaBackendTest {
         }
 
         @Override
-        public void writeStepdefsJson(List<String> featurePaths, File dotCucumber) throws IOException {
+        public void writeStepdefsJson(List<String> featurePaths, URL dotCucumber) throws IOException {
             throw new UnsupportedOperationException();
         }
     }

@@ -1,6 +1,13 @@
 package cucumber.runtime;
 
-// We're deliberately not extending CucumberException (which is used to signal fatal errors)
+import cucumber.api.Pending;
+
+/**
+ * @see cucumber.api.PendingException
+ * @deprecated Use cucumber.api.PendingException
+ */
+@Deprecated
+@Pending
 public class PendingException extends RuntimeException {
     public PendingException() {
         this("TODO: implement me");

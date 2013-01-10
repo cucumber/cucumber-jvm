@@ -20,13 +20,13 @@ public class ComplexTypeWriter extends CellWriter {
 
     @Override
     public List<String> getHeader() {
-        return columnNames.size() > 0 ? columnNames : fieldNames;
+        return columnNames.isEmpty() ? fieldNames : columnNames;
     }
 
     @Override
     public List<String> getValues() {
         CamelCaseStringConverter converter = new CamelCaseStringConverter();
-        if (columnNames.size() > 0) {
+        if (!columnNames.isEmpty()) {
             String[] explicitFieldValues = new String[columnNames.size()];
             int n = 0;
             for (String columnName : columnNames) {

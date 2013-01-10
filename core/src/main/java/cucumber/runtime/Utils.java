@@ -7,6 +7,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -78,11 +80,26 @@ public class Utils {
     }
 
     public static void ensureParentDirExists(File file) throws IOException {
-        if(file.getParentFile() != null && !file.getParentFile().isDirectory())  {
+        if (file.getParentFile() != null && !file.getParentFile().isDirectory()) {
             boolean ok = file.getParentFile().mkdirs();
-            if(!ok) {
+            if (!ok) {
                 throw new IOException("Failed to create directory " + file.getParentFile().getAbsolutePath());
             }
+        }
+    }
+
+    public static URL toURL(String pathOrUrl) {
+        try {
+            if (!pathOrUrl.endsWith("/")) {
+                pathOrUrl = pathOrUrl + "/";
+            }
+            if (pathOrUrl.matches("^(file|http|https):.*")) {
+                return new URL(pathOrUrl);
+            } else {
+                return new URL("file:" + pathOrUrl);
+            }
+        } catch (MalformedURLException e) {
+            throw new CucumberException("Bad URL:" + pathOrUrl, e);
         }
     }
 }

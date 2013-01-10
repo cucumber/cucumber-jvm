@@ -12,6 +12,7 @@ import cucumber.runtime.xstream.ComplexTypeWriter;
 import cucumber.runtime.xstream.ListOfComplexTypeReader;
 import cucumber.runtime.xstream.ListOfSingleValueWriter;
 import cucumber.runtime.xstream.LocalizedXStreams;
+import cucumber.runtime.xstream.MapWriter;
 import gherkin.formatter.model.Comment;
 import gherkin.formatter.model.DataTableRow;
 import gherkin.util.Mapper;
@@ -31,7 +32,7 @@ import static gherkin.util.FixJava.map;
 import static java.util.Arrays.asList;
 
 /**
- * This class converts a {@link cucumber.api.DataTable to various other types}
+ * This class converts a {@link cucumber.api.DataTable} to various other types.
  */
 public class TableConverter {
     private static final List<Comment> NO_COMMENTS = Collections.emptyList();
@@ -161,7 +162,7 @@ public class TableConverter {
      * Converts a List of objects to a DataTable.
      *
      * @param objects     the objects to convert
-     * @param columnNames an explicit list of column names (currently not used)
+     * @param columnNames an explicit list of column names
      * @return a DataTable
      */
     public DataTable toTable(List<?> objects, String... columnNames) {
@@ -173,9 +174,15 @@ public class TableConverter {
             for (Object object : objects) {
                 CellWriter writer;
                 if (isListOfSingleValue(object)) {
-                    // XStream needs this
+                    // XStream needs an instance of ArrayList
                     object = new ArrayList<Object>((List<Object>) object);
                     writer = new ListOfSingleValueWriter();
+                } else if (isArrayOfSingleValue(object)) {
+                    // XStream needs an instance of ArrayList
+                    object = new ArrayList<Object>(asList((Object[]) object));
+                    writer = new ListOfSingleValueWriter();
+                } else if (object instanceof Map) {
+                    writer = new MapWriter(asList(columnNames));
                 } else {
                     writer = new ComplexTypeWriter(asList(columnNames));
                 }
@@ -220,10 +227,15 @@ public class TableConverter {
     private boolean isListOfSingleValue(Object object) {
         if (object instanceof List) {
             List list = (List) object;
-            boolean isSingleValue = xStream.getSingleValueConverter(list.get(0).getClass()) != null;
-            if (list.size() > 0 && isSingleValue) {
-                return true;
-            }
+            return list.size() > 0 && xStream.getSingleValueConverter(list.get(0).getClass()) != null;
+        }
+        return false;
+    }
+
+    private boolean isArrayOfSingleValue(Object object) {
+        if (object.getClass().isArray()) {
+            Object[] array = (Object[]) object;
+            return array.length > 0 && xStream.getSingleValueConverter(array[0].getClass()) != null;
         }
         return false;
     }

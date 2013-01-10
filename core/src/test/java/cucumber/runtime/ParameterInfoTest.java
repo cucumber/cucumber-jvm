@@ -53,16 +53,6 @@ public class ParameterInfoTest {
     public void withJodaTimeAndFormat(@Transform(JodaTransformer.class) @Format("S-") LocalDate date) {
     }
 
-    public static class JodaFormatTransformer extends Transformer<LocalDate> {
-        @Override
-        public LocalDate transform(String value) {
-            String format = getParameterInfo().getFormat();
-            DateTimeFormatter dateTimeFormatter = DateTimeFormat.forStyle(format);
-            dateTimeFormatter = dateTimeFormatter.withLocale(getLocale());
-            return dateTimeFormatter.parseLocalDate(value);
-        }
-    }
-
     @Test
     public void converts_with_custom_joda_time_transform() throws NoSuchMethodException {
         ParameterInfo parameterInfo = ParameterInfo.fromMethod(getClass().getMethod("withJodaTimeAndFormat", LocalDate.class)).get(0);

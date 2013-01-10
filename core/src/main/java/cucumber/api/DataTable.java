@@ -32,16 +32,16 @@ public class DataTable {
         return create(raw, Locale.getDefault(), null, new String[0]);
     }
 
-    public static DataTable create(List<?> raw, String dateFormat, String... columnNames) {
-        return create(raw, Locale.getDefault(), dateFormat, columnNames);
+    public static DataTable create(List<?> raw, String format, String... columnNames) {
+        return create(raw, Locale.getDefault(), format, columnNames);
     }
 
     public static DataTable create(List<?> raw, Locale locale, String... columnNames) {
         return create(raw, locale, null, columnNames);
     }
 
-    private static DataTable create(List<?> raw, Locale locale, String dateFormat, String... columnNames) {
-        ParameterInfo parameterInfo = new ParameterInfo(null, dateFormat, null, null);
+    private static DataTable create(List<?> raw, Locale locale, String format, String... columnNames) {
+        ParameterInfo parameterInfo = new ParameterInfo(null, format, null, null);
         TableConverter tableConverter = new TableConverter(new LocalizedXStreams(Thread.currentThread().getContextClassLoader()).get(locale), parameterInfo);
         return tableConverter.toTable(raw, columnNames);
     }
@@ -74,7 +74,7 @@ public class DataTable {
     }
 
     public <T> T convert(Type type) {
-        return tableConverter.<T>convert(type, this);
+        return tableConverter.convert(type, this);
     }
 
     /**
@@ -188,4 +188,20 @@ public class DataTable {
         return result;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof DataTable)) return false;
+
+        DataTable dataTable = (DataTable) o;
+
+        if (!raw.equals(dataTable.raw)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return raw.hashCode();
+    }
 }

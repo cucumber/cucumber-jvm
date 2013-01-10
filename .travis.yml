@@ -2,6 +2,7 @@ language: java
 script: mvn -q clean install
 jdk:
   - openjdk6
+  - openjdk6
   - oraclejdk7
 # whitelist
 branches:

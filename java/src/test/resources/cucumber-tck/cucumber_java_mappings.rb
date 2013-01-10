@@ -123,7 +123,7 @@ import cucumber.annotation.en.Given;
 public class Mappings<%= @@mappings_counter %> {
     @Given("<%= step_name -%>")
     public void <%= step_name.gsub(/[\s:]/, '_') -%>() {
-        throw new cucumber.runtime.PendingException();
+        throw new cucumber.api.PendingException();
     }
 }
 

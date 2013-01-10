@@ -9,7 +9,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class RuntimeOptionsFactory {
-    private Class clazz;
+    private final Class clazz;
 
     public RuntimeOptionsFactory(Class clazz) {
         this.clazz = clazz;
@@ -21,16 +21,26 @@ public class RuntimeOptionsFactory {
 
         addDryRun(options, args);
         addMonochrome(options, args);
-        addGlue(options, clazz, args);
+        addGlue(options, args, clazz);
         addTags(options, args);
         addFormats(options, args);
-        addFeatures(options, clazz, args);
+        addFeatures(options, args, clazz);
         addStrict(options, args);
         addName(options, args);
+        addDotCucumber(options, args);
 
         RuntimeOptions runtimeOptions = new RuntimeOptions(System.getProperties(), args.toArray(new String[args.size()]));
 
         return runtimeOptions;
+    }
+
+    private void addDotCucumber(Cucumber.Options options, List<String> args) {
+        if (options != null) {
+            if (!options.dotcucumber().isEmpty()) {
+                args.add("--dotcucumber");
+                args.add(options.dotcucumber());
+            }
+        }
     }
 
     private void addName(Cucumber.Options options, List<String> args) {
@@ -70,7 +80,7 @@ public class RuntimeOptionsFactory {
         return intelliJidea;
     }
 
-    private void addGlue(Cucumber.Options options, Class clazz, List<String> args) {
+    private void addGlue(Cucumber.Options options, List<String> args, Class clazz) {
         if (options != null && options.glue().length != 0) {
             for (String glue : options.glue()) {
                 args.add("--glue");
@@ -103,7 +113,7 @@ public class RuntimeOptionsFactory {
         }
     }
 
-    private void addFeatures(Cucumber.Options options, Class clazz, List<String> args) {
+    private void addFeatures(Cucumber.Options options, List<String> args, Class clazz) {
         if (options != null && options.features().length != 0) {
             Collections.addAll(args, options.features());
         } else {

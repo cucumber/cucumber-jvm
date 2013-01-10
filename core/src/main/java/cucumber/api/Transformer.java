@@ -74,7 +74,6 @@ import java.util.Locale;
  */
 public abstract class Transformer<T> implements SingleValueConverter {
     private final Type type;
-    private ParameterInfo parameterInfo;
     private Locale locale;
 
     public Transformer() {
@@ -100,15 +99,7 @@ public abstract class Transformer<T> implements SingleValueConverter {
     public abstract T transform(String value);
 
     public void setParameterInfoAndLocale(ParameterInfo parameterInfo, Locale locale) {
-        this.parameterInfo = parameterInfo;
         this.locale = locale;
-    }
-
-    /**
-     * @return info about the current parameter
-     */
-    protected ParameterInfo getParameterInfo() {
-        return parameterInfo;
     }
 
     /**

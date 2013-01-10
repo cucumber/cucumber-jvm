@@ -1,20 +1,24 @@
 package cucumber.runtime.formatter;
 
 import cucumber.runtime.CucumberException;
-import cucumber.runtime.Utils;
-import cucumber.runtime.io.UTF8FileWriter;
+import cucumber.runtime.io.URLOutputStream;
+import cucumber.runtime.io.UTF8OutputStreamWriter;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.JSONFormatter;
 import gherkin.formatter.JSONPrettyFormatter;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static cucumber.runtime.Utils.toURL;
 
 /**
  * This class creates {@link Formatter} instances (that may also implement {@link gherkin.formatter.Reporter} from
@@ -26,7 +30,7 @@ import java.util.regex.Pattern;
  * The formatter class must have a constructor that is either empty or takes a single {@link Appendable} or a {@link File}.
  */
 public class FormatterFactory {
-    private final Class[] CTOR_ARGS = new Class[]{null, Appendable.class, File.class};
+    private final Class[] CTOR_ARGS = new Class[]{null, Appendable.class, URL.class, File.class};
 
     private static final Map<String, Class<? extends Formatter>> FORMATTER_CLASSES = new HashMap<String, Class<? extends Formatter>>() {{
         put("null", NullFormatter.class);
@@ -39,7 +43,12 @@ public class FormatterFactory {
         put("usage", UsageFormatter.class);
     }};
     private static final Pattern FORMATTER_WITH_FILE_PATTERN = Pattern.compile("([^:]+):(.*)");
-    private Appendable defaultOut = System.out;
+    private Appendable defaultOut = new OutputStreamWriter(System.out) {
+        @Override
+        public void close() throws IOException {
+            // We have no intention to close System.out
+        }
+    };
 
     public Formatter create(String formatterString) {
         Matcher formatterWithFile = FORMATTER_WITH_FILE_PATTERN.matcher(formatterString);
@@ -59,11 +68,11 @@ public class FormatterFactory {
         }
     }
 
-    private Formatter instantiate(String formatterString, Class<? extends Formatter> formatterClass, String path) throws IOException {
+    private Formatter instantiate(String formatterString, Class<? extends Formatter> formatterClass, String pathOrUrl) throws IOException {
         for (Class ctorArgClass : CTOR_ARGS) {
             Constructor<? extends Formatter> constructor = findConstructor(formatterClass, ctorArgClass);
             if (constructor != null) {
-                Object ctorArg = convertOrNull(path, ctorArgClass);
+                Object ctorArg = convertOrNull(pathOrUrl, ctorArgClass);
                 try {
                     if (ctorArgClass == null) {
                         return constructor.newInstance();
@@ -82,25 +91,26 @@ public class FormatterFactory {
                 }
             }
         }
-        throw new CucumberException(String.format("%s must have a constructor that is either empty or takes a %s or %s", formatterClass, Appendable.class.getName(), File.class.getName()));
+        throw new CucumberException(String.format("%s must have a constructor that is either empty or takes a %s or %s", formatterClass, Appendable.class.getName(), URL.class.getName()));
     }
 
-    private Object convertOrNull(String path, Class ctorArgClass) throws IOException {
+    private Object convertOrNull(String pathOrUrl, Class ctorArgClass) throws IOException {
         if (ctorArgClass == null) {
             return null;
         }
+        if (ctorArgClass.equals(URL.class)) {
+            if (pathOrUrl != null) {
+                return toURL(pathOrUrl);
+            }
+        }
         if (ctorArgClass.equals(File.class)) {
-            if (path != null) {
-                File file = new File(path);
-                Utils.ensureParentDirExists(file);
-                return file;
+            if (pathOrUrl != null) {
+                return new File(pathOrUrl);
             }
         }
         if (ctorArgClass.equals(Appendable.class)) {
-            if (path != null) {
-                File file = new File(path);
-                Utils.ensureParentDirExists(file);
-                return new UTF8FileWriter(file);
+            if (pathOrUrl != null) {
+                return new UTF8OutputStreamWriter(new URLOutputStream(toURL(pathOrUrl)));
             } else {
                 return defaultOutOrFailIfAlreadyUsed();
             }
@@ -141,7 +151,7 @@ public class FormatterFactory {
             if (defaultOut != null) {
                 return defaultOut;
             } else {
-                throw new CucumberException("Only one formatter can use STDOUT. If you use more than one formatter you must specify output path with FORMAT:PATH");
+                throw new CucumberException("Only one formatter can use STDOUT. If you use more than one formatter you must specify output path with FORMAT:PATH_OR_URL");
             }
         } finally {
             defaultOut = null;

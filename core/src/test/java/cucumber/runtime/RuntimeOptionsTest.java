@@ -3,6 +3,8 @@ package cucumber.runtime;
 import org.junit.Test;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
@@ -29,15 +31,21 @@ public class RuntimeOptionsTest {
     }
 
     @Test
+    public void strips_options() {
+        RuntimeOptions options = new RuntimeOptions(new Properties(), "  --glue ", "somewhere", "somewhere_else");
+        assertEquals(asList("somewhere_else"), options.featurePaths);
+    }
+
+    @Test
     public void assigns_glue() {
         RuntimeOptions options = new RuntimeOptions(new Properties(), "--glue", "somewhere");
         assertEquals(asList("somewhere"), options.glue);
     }
 
     @Test
-    public void assigns_dotcucumber() {
+    public void assigns_dotcucumber() throws MalformedURLException {
         RuntimeOptions options = new RuntimeOptions(new Properties(), "--dotcucumber", "somewhere", "--glue", "somewhere");
-        assertEquals(new File("somewhere"), options.dotCucumber);
+        assertEquals(new URL("file:somewhere/"), options.dotCucumber);
     }
 
     @Test
@@ -65,19 +73,36 @@ public class RuntimeOptionsTest {
     }
 
     @Test
-    public void name() {
-        String someName = "someName";
-        RuntimeOptions options = new RuntimeOptions(new Properties(), "--name", someName);
+    public void name_without_spaces_is_preserved() {
+        RuntimeOptions options = new RuntimeOptions(new Properties(), "--name", "someName");
         Pattern actualPattern = (Pattern) options.filters.iterator().next();
-        assertEquals(someName, actualPattern.pattern());
+        assertEquals("someName", actualPattern.pattern());
     }
 
     @Test
-    public void name_short() {
-        String someName = "someName";
-        RuntimeOptions options = new RuntimeOptions(new Properties(), "-n", someName);
+    public void name_with_spaces_is_preserved() {
+        RuntimeOptions options = new RuntimeOptions(new Properties(), "--name", "some Name");
         Pattern actualPattern = (Pattern) options.filters.iterator().next();
-        assertEquals(someName, actualPattern.pattern());
+        assertEquals("some Name", actualPattern.pattern());
+    }
+
+    @Test
+    public void ensure_name_with_spaces_works_with_cucumber_options() {
+        Properties properties = new Properties();
+        properties.setProperty("cucumber.options", "--name 'some Name'");
+        RuntimeOptions options = new RuntimeOptions(properties);
+        Pattern actualPattern = (Pattern) options.filters.iterator().next();
+        assertEquals("some Name", actualPattern.pattern());
+    }
+
+    @Test
+    public void ensure_multiple_cucumber_options_with_spaces_parse_correctly() throws MalformedURLException {
+        Properties properties = new Properties();
+        properties.setProperty("cucumber.options", "--name 'some Name' --dotcucumber 'some file\\path'");
+        RuntimeOptions options = new RuntimeOptions(properties);
+        Pattern actualPattern = (Pattern) options.filters.iterator().next();
+        assertEquals("some Name", actualPattern.pattern());
+        assertEquals(new URL("file:some file\\path/"), options.dotCucumber);
     }
 
     @Test

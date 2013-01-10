@@ -1,6 +1,7 @@
 package cucumber.runtime.formatter;
 
 import cucumber.runtime.CucumberException;
+import cucumber.runtime.io.URLOutputStream;
 import gherkin.deps.com.google.gson.Gson;
 import gherkin.deps.com.google.gson.GsonBuilder;
 import gherkin.formatter.Formatter;
@@ -17,13 +18,11 @@ import gherkin.formatter.model.ScenarioOutline;
 import gherkin.formatter.model.Step;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,13 +42,13 @@ class HTMLFormatter implements Formatter, Reporter {
         }
     };
 
-    private final File htmlReportDir;
+    private final URL htmlReportDir;
     private NiceAppendable jsOut;
 
     private boolean firstFeature = true;
     private int embeddedIndex;
 
-    public HTMLFormatter(File htmlReportDir) {
+    public HTMLFormatter(URL htmlReportDir) {
         this.htmlReportDir = htmlReportDir;
     }
 
@@ -60,37 +59,37 @@ class HTMLFormatter implements Formatter, Reporter {
                     .append(JS_FORMATTER_VAR).append(" = new CucumberHTML.DOMFormatter($('.cucumber-report'));");
             firstFeature = false;
         }
-        writeToJsReport("uri", "'" + uri + "'");
+        jsFunctionCall("uri", uri);
     }
 
     @Override
     public void feature(Feature feature) {
-        writeToJsReport("feature", feature);
+        jsFunctionCall("feature", feature);
     }
 
     @Override
     public void background(Background background) {
-        writeToJsReport("background", background);
+        jsFunctionCall("background", background);
     }
 
     @Override
     public void scenario(Scenario scenario) {
-        writeToJsReport("scenario", scenario);
+        jsFunctionCall("scenario", scenario);
     }
 
     @Override
     public void scenarioOutline(ScenarioOutline scenarioOutline) {
-        writeToJsReport("scenarioOutline", scenarioOutline);
+        jsFunctionCall("scenarioOutline", scenarioOutline);
     }
 
     @Override
     public void examples(Examples examples) {
-        writeToJsReport("examples", examples);
+        jsFunctionCall("examples", examples);
     }
 
     @Override
     public void step(Step step) {
-        writeToJsReport("step", step);
+        jsFunctionCall("step", step);
     }
 
     @Override
@@ -114,34 +113,24 @@ class HTMLFormatter implements Formatter, Reporter {
         jsOut().close();
     }
 
-    private void writeToJsReport(String functionName, String arg) {
-        String stringArg = gson.toJson(arg);
-        jsOut().append(JS_FORMATTER_VAR + ".").append(functionName).append("(").append(stringArg).append(");").println();
-    }
-
-    private void writeToJsReport(String functionName, Mappable arg) {
-        String stringArg = gson.toJson(arg.toMap());
-        jsOut().append(JS_FORMATTER_VAR + ".").append(functionName).append("(").append(stringArg).append(");").println();
-    }
-
     @Override
     public void result(Result result) {
-        writeToJsReport("result", result);
+        jsFunctionCall("result", result);
     }
 
     @Override
     public void before(Match match, Result result) {
-        writeToJsReport("before", result);
+        jsFunctionCall("before", result);
     }
 
     @Override
     public void after(Match match, Result result) {
-        writeToJsReport("after", result);
+        jsFunctionCall("after", result);
     }
 
     @Override
     public void match(Match match) {
-        writeToJsReport("match", match);
+        jsFunctionCall("match", match);
     }
 
     @Override
@@ -151,19 +140,34 @@ class HTMLFormatter implements Formatter, Reporter {
         if (extension != null) {
             StringBuilder fileName = new StringBuilder("embedded").append(embeddedIndex++).append(".").append(extension);
             writeBytesAndClose(data, reportFileOutputStream(fileName.toString()));
-            writeToJsReport("embedding", new StringBuilder("'").append(mimeType).append("','").append(fileName).append("'").toString());
+            jsFunctionCall("embedding", mimeType, fileName);
         }
     }
 
     @Override
     public void write(String text) {
-        writeToJsReport("write", text);
+        jsFunctionCall("write", text);
+    }
+
+    private void jsFunctionCall(String functionName, Object... args) {
+        NiceAppendable out = jsOut().append(JS_FORMATTER_VAR + ".").append(functionName).append("(");
+        boolean comma = false;
+        for (Object arg : args) {
+            if (comma) {
+                out.append(", ");
+            }
+            arg = arg instanceof Mappable ? ((Mappable) arg).toMap() : arg;
+            String stringArg = gson.toJson(arg);
+            out.append(stringArg);
+            comma = true;
+        }
+        out.append(");").println();
     }
 
     private void copyReportFiles() {
         for (String textAsset : TEXT_ASSETS) {
             InputStream textAssetStream = getClass().getResourceAsStream(textAsset);
-            if(textAssetStream == null) {
+            if (textAssetStream == null) {
                 throw new CucumberException("Couldn't find " + textAsset + ". Is cucumber-html on your classpath? Make sure you have the right version.");
             }
             String baseName = new File(textAsset).getName();
@@ -197,7 +201,7 @@ class HTMLFormatter implements Formatter, Reporter {
         if (jsOut == null) {
             try {
                 jsOut = new NiceAppendable(new OutputStreamWriter(reportFileOutputStream(JS_REPORT_FILENAME), "UTF-8"));
-            } catch (UnsupportedEncodingException e) {
+            } catch (IOException e) {
                 throw new CucumberException(e);
             }
         }
@@ -205,12 +209,10 @@ class HTMLFormatter implements Formatter, Reporter {
     }
 
     private OutputStream reportFileOutputStream(String fileName) {
-        htmlReportDir.mkdirs();
-        File file = new File(htmlReportDir, fileName);
         try {
-            return new FileOutputStream(file);
-        } catch (FileNotFoundException e) {
-            throw new CucumberException("Error creating file: " + file.getAbsolutePath(), e);
+            return new URLOutputStream(new URL(htmlReportDir, fileName));
+        } catch (IOException e) {
+            throw new CucumberException(e);
         }
     }
 

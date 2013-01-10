@@ -1,3 +1,19 @@
+## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.1.1...master)
+
+* [Spring] Upgrade to 3.2.0.RELEASE (Aslak Hellesøy)
+* [Core] Strip command line arguments in case people accidentally invoke `cucumber.api.cli.Main` with arguments that have spaces left and right. (Aslak Hellesøy)
+* [Core] Implemented `DataTable.equals()` and `DataTable.hashCode()`. (Aslak Hellesøy)
+* [Core] Support `DataTable.toTable(List<String[]>) and `DataTable.toTable(List<Map<String,String>>)` ([#433](https://github.com/cucumber/cucumber-jvm/issues/433), [#434](https://github.com/cucumber/cucumber-jvm/pull/434) Nicholas Albion, Aslak Hellesøy)
+* [Core] Formatters and `--dotcucumber` can now write to a file or an URL (via HTTP PUT). This allows easier distribution of reports. (Aslak Hellesøy)
+* [JUnit] Added `@Cucumber.Options.dotcucumber`, allowing metadata to be written from JUnit. Useful for code completion. ([#418](https://github.com/cucumber/cucumber-jvm/issues/418 Aslak Hellesøy)
+* [Core] Embedded data fails to display in HTML reports due to invalid string passed from HTMLFormatter ([#412](https://github.com/cucumber/cucumber-jvm/issues/412) Aslak Hellesøy)
+* [Scala] Downgrade to scala 2.9.2 - we'll only use stable versions from now on. (Aslak Hellesøy)
+* [Scala] Passing Scenario reference in Before and After hooks ([#431](https://github.com/cucumber/cucumber-jvm/pull/431) Anshul Bajpai)
+* [Core] RunCukesTest prevents the execution of other tests ([#304](https://github.com/cucumber/cucumber-jvm/issues/304), [#430](https://github.com/cucumber/cucumber-jvm/pull/430) Mishail)
+* [Core] Deprecated `cucumber.runtime.PendingException` in favour of `cucumber.api.PendingException`. (Aslak Hellesøy)
+* [Core] New `@cucumber.api.Pending` annotation for custom `Exception` classes that will cause a scenario to be `pending` instead of `failed`. ([#427](https://github.com/cucumber/cucumber-jvm/pull/427) agattiker)
+* [Core] `--name 'name with spaces in single quotes'` is working ([#379](https://github.com/cucumber/cucumber-jvm/issues/379), [#429](https://github.com/cucumber/cucumber-jvm/pull/429) William Powell)
+
 ## [1.1.1](https://github.com/cucumber/cucumber-jvm/compare/v1.0.14...1.1.1)
 
 This release bumps the minor version number from 1.0 to 1.1. This is because there are backwards-incompatible changes.

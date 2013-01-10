@@ -5,7 +5,7 @@ import cucumber.api.Scenario;
 import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Glue;
-import cucumber.runtime.PendingException;
+import cucumber.api.PendingException;
 import cucumber.runtime.UnreportedStepExecutor;
 import cucumber.runtime.io.Resource;
 import cucumber.runtime.io.ResourceLoader;
