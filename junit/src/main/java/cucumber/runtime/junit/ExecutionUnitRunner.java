@@ -70,7 +70,7 @@ public class ExecutionUnitRunner extends ParentRunner<Step> {
     protected Description describeChild(Step step) {
         Description description = stepDescriptions.get(step);
         if (description == null) {
-            description = Description.createSuiteDescription(step.getKeyword() + step.getName(), step);
+            description = Description.createTestDescription(getName(), step.getKeyword() + step.getName(), step);
             stepDescriptions.put(step, description);
         }
         return description;

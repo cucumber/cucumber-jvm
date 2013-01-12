@@ -1,6 +1,6 @@
 ## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.1.1...master)
 
-* [JUnit] Upgrade to 4.11 (Aslak Hellesøy)
+* [JUnit] Upgrade to 4.11 ([#322](https://github.com/cucumber/cucumber-jvm/issues/322) [#445](https://github.com/cucumber/cucumber-jvm/pull/445) Petter Måhlén, Aslak Hellesøy)
 * [Spring] Upgrade to 3.2.0.RELEASE (Aslak Hellesøy)
 * [Core] Strip command line arguments in case people accidentally invoke `cucumber.api.cli.Main` with arguments that have spaces left and right. (Aslak Hellesøy)
 * [Core] Implemented `DataTable.equals()` and `DataTable.hashCode()`. (Aslak Hellesøy)

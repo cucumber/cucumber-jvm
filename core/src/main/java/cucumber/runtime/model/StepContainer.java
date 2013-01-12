@@ -6,6 +6,7 @@ import gherkin.formatter.Reporter;
 import gherkin.formatter.model.BasicStatement;
 import gherkin.formatter.model.Step;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
