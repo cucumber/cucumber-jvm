@@ -1,9 +1,7 @@
 package cucumber.examples.spring.txn;
 
-import java.util.List;
+import org.springframework.data.repository.CrudRepository;
 
-public interface UserRepository {
-    void save(User user);
+public interface UserRepository extends CrudRepository<User, Long> {
 
-    List<User> findAll();
 }
