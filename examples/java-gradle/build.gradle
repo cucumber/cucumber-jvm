@@ -1,0 +1,29 @@
+apply plugin: 'java'
+
+configurations {
+    cucumberRuntime {
+        extendsFrom testRuntime
+    }
+}
+
+task cucumber() {
+    dependsOn assemble, compileTestJava
+    doLast {
+        javaexec {
+            main = "cucumber.api.cli.Main"
+            classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
+            args = ['-f', 'pretty', '--glue', 'gradle.cucumber', 'src/test/resources']
+        }
+    }
+}
+
+dependencies {
+    testCompile 'info.cukes:cucumber-java:1.1.1'
+    testCompile 'info.cukes:cucumber-junit:1.1.1'
+
+    testCompile 'junit:junit:4.11'
+}
+
+repositories {
+    mavenCentral()
+}
