@@ -1,5 +1,7 @@
 package cucumber.examples.spring.txn;
 
-public interface MessageRepository {
-    void save(Message message);
+import org.springframework.data.repository.CrudRepository;
+
+public interface MessageRepository extends CrudRepository<Message, Long> {
+
 }
