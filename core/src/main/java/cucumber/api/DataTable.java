@@ -143,7 +143,7 @@ public class DataTable {
      * @param other the other table to diff with.
      * @throws TableDiffException if the tables are different.
      */
-    void diff(DataTable other) throws TableDiffException {
+    public void diff(DataTable other) throws TableDiffException {
         new TableDiffer(this, other).calculateDiffs();
     }
 
