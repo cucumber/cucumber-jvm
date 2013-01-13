@@ -1,4 +1,4 @@
-# Running Cucumber-JVM with step definitions in Java using Gradle `javaexec` task
+# Running Cucumber-JVM with step definitions in Java using Gradle's `javaexec` task
 
 ## Credits
 
@@ -10,7 +10,7 @@ There exists [a number of issues](http://gradle.1045684.n5.nabble.com/Gradle-and
 
 ## Solution
 
-One possible solution is to use Cucumber's `Main` class to run your tests. You can do this by using `javaexec` task in Gradle.
+One possible solution is to use Cucumber's `Main` class to run your tests. You can do this by using the `javaexec` task in Gradle.
 
 ## Running
 
@@ -22,13 +22,13 @@ gradle cucumber
 
 ## Caveats
 
-Groovy example by [David Kowis](https://github.com/dkowis) runs perfectly, but it uses Groovy step definitions.
+The Groovy example by [David Kowis](https://github.com/dkowis) runs perfectly, but it uses Groovy step definitions.
 
-If you're writing your step definitions in Java then Gradle script needs to be changed slightly.
+If you're writing your step definitions in Java then the Gradle script needs to be changed slightly.
 
 Here are some caveats:
 
- * `cucumber` task has to depend on `compileTestJava` task in order to compile test sources
+ * The `cucumber` task has to depend on `compileTestJava` task in order to compile test sources
 
  ```groovy
  task cucumber() {
@@ -37,8 +37,7 @@ Here are some caveats:
  }
  ```
 
-
- * `javaexec` classpath should include `main` and `test` output directories.
+ * The `javaexec` classpath should include `main` and `test` output directories.
  Otherwise Cucumber-JVM will not find your production classes/resources and step definitions respectively.
 
  ```groovy
