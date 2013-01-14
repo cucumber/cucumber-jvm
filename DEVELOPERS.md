@@ -105,6 +105,7 @@ Replace version numbers in:
 
 * examples/java-helloworld/build.xml
 * examples/java-helloworld/pom.xml
+* examples/java-gradle/build.gradle
 * README.md (this file)
 * History.md
 

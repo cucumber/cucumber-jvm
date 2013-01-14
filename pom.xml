@@ -20,6 +20,9 @@
         <gherkin.version>2.11.5</gherkin.version>
         <groovy.version>2.0.5</groovy.version>
         <spring.version>3.2.0.RELEASE</spring.version>
+        <spring.data.version>1.1.0.RELEASE</spring.data.version>
+        <hibernate.version>4.1.4.Final</hibernate.version>
+        <hsqldb.version>2.2.8</hsqldb.version>
     </properties>
     <licenses>
         <license>
@@ -69,6 +72,11 @@
             </dependency>
             <dependency>
                 <groupId>info.cukes</groupId>
+                <artifactId>cucumber-spring</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>info.cukes</groupId>
                 <artifactId>cucumber-groovy</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -102,6 +110,8 @@
                 <artifactId>picocontainer</artifactId>
                 <version>2.14.2</version>
             </dependency>
+
+            <!-- Spring stuff -->
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-tx</artifactId>
@@ -112,6 +122,51 @@
                 <artifactId>spring-context-support</artifactId>
                 <version>${spring.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-aop</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-aspects</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-orm</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.data</groupId>
+                <artifactId>spring-data-jpa</artifactId>
+                <version>${spring.data.version}</version>
+                <exclusions>
+                    <!-- Exclude the dependency on junit, which is older and clashes with our 4.11 junit dep -->
+                    <exclusion>
+                        <groupId>junit</groupId>
+                        <artifactId>junit-dep</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-webmvc</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-entitymanager</artifactId>
+                <version>${hibernate.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hsqldb</groupId>
+                <artifactId>hsqldb</artifactId>
+                <version>${hsqldb.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+
             <dependency>
                 <groupId>com.google.inject</groupId>
                 <artifactId>guice</artifactId>

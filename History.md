@@ -1,5 +1,10 @@
 ## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.1.1...master)
 
+* [Examples/Spring] Spring Data JPA based repositories. ([#422](https://github.com/cucumber/cucumber-jvm/pull/422) Dmytro Chyzhykov)
+* [Examples/Gradle] Added a Gradle example. ([#446](https://github.com/cucumber/cucumber-jvm/pull/446) Ivan Yatskevich, David Kowis)
+* [Core] Restore ability to diff with another DataTable ([#413](https://github.com/cucumber/cucumber-jvm/pull/413) Gilles Philippart)
+* [Core] Executing a test with the --dry-run option does not skip the @Before or @After annotations ([#424](https://github.com/cucumber/cucumber-jvm/issues/424), [#444](https://github.com/cucumber/cucumber-jvm/pull/444) William Powell)
+* [Clojure] Updated lein-cucumber version to 1.0.1 ([#414](https://github.com/cucumber/cucumber-jvm/pull/414) Nils Wloka)
 * [JUnit] Upgrade to 4.11 ([#322](https://github.com/cucumber/cucumber-jvm/issues/322) [#445](https://github.com/cucumber/cucumber-jvm/pull/445) Petter Måhlén, Aslak Hellesøy)
 * [Spring] Upgrade to 3.2.0.RELEASE (Aslak Hellesøy)
 * [Core] Strip command line arguments in case people accidentally invoke `cucumber.api.cli.Main` with arguments that have spaces left and right. (Aslak Hellesøy)
