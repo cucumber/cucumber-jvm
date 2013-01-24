@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertThat;
 
+import java.io.IOException;
 import java.util.Properties;
 
 import org.junit.Test;
@@ -34,7 +35,7 @@ public class PicoFactoryTest {
         assertNotNull(o1);
         assertNotSame(o1, o2);
     }
-    
+
     @Test
     public void shouldIgnoreInterfacesAsTheyCanNotBeInstantiated() throws Exception {
         ObjectFactory factory = new PicoFactory();
@@ -53,7 +54,7 @@ public class PicoFactoryTest {
         assertThat(factory.getInstance(GreeterInterface.class),
                 is(GreeterImplementation.class));
     }
-    
+
     @Test
     public void shoudlOnlyRunTheCustomPicoConfigurerOnce() throws Exception {
         ObjectFactory factory = aFactoryConfiguredWith("cucumber.runtime.java.picocontainer.configuration.CallCountingConfigurer");
@@ -63,7 +64,7 @@ public class PicoFactoryTest {
 
         assertThat(CallCountingConfigurer.timesRun, is(1));
     }
-    
+
     @Test
     public void shouldAutowireDependenciesOfCustomConfiguredClass() throws Exception {
         ObjectFactory factory = aFactoryConfiguredWith("cucumber.runtime.java.picocontainer.configuration.ConfiguredClassHasDepdendenciesConfigurer");
@@ -73,11 +74,16 @@ public class PicoFactoryTest {
                 is(GreeterWithCollaborators.class));
     }
 
-    private ObjectFactory aFactoryConfiguredWith(String configurer) {
-        Properties properties = new Properties();
+    private ObjectFactory aFactoryConfiguredWith(String configurer) throws Exception {
+        final Properties properties = new Properties();
         properties.setProperty("picoConfigurer", configurer);
 
-        ObjectFactory factory = new PicoFactory(properties);
+        ObjectFactory factory = new PicoFactory(new CustomPicoConfigurerFactory(new PropertyLoader("unused") {
+            @Override
+            public Properties getProperties() throws IOException {
+                return properties;
+            }
+        }));
         return factory;
     }
 

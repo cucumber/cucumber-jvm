@@ -1,22 +1,18 @@
 package cucumber.runtime.java.picocontainer;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Properties;
 import java.util.Set;
 
 import org.picocontainer.MutablePicoContainer;
 import org.picocontainer.PicoBuilder;
 
 import cucumber.runtime.java.ObjectFactory;
-import cucumber.runtime.java.picocontainer.configuration.NoOpPicoConfigurer;
 import cucumber.runtime.java.picocontainer.configuration.PicoConfigurer;
-import cucumber.runtime.java.picocontainer.configuration.PicoConfigurerInstantiator;
 import cucumber.runtime.java.picocontainer.configuration.PicoMapper;
 
 public class PicoFactory implements ObjectFactory, PicoMapper {
@@ -26,30 +22,12 @@ public class PicoFactory implements ObjectFactory, PicoMapper {
     private final PicoConfigurer customPicoConfigurer;
 
     public PicoFactory() throws IOException {
-        this(loadCucumberPicoProperties());
+        this(new CustomPicoConfigurerFactory(
+                new PropertyLoader("/cucumber-picocontainer.properties")));
     }
-
-    PicoFactory(Properties properties) {
-        String picoConfigurerClassName = properties.getProperty("picoConfigurer");
-        if (picoConfigurerClassName == null) {
-            customPicoConfigurer = new NoOpPicoConfigurer();
-        } else {
-            customPicoConfigurer = new RunOncePicoConfigurer(
-                    new PicoConfigurerInstantiator().instantiate(picoConfigurerClassName));
-        }
-    }
-
-    private static Properties loadCucumberPicoProperties() throws IOException {
-        Properties properties = new Properties();
-        InputStream inputStream = PicoFactory.class.getResourceAsStream("/cucumber-picocontainer.properties");
-        if (inputStream != null) {
-            try {
-                properties.load(inputStream);
-            } finally {
-                inputStream.close();
-            }
-        }
-        return properties;
+    
+    PicoFactory(CustomPicoConfigurerFactory configurerFactory) throws IOException {
+        customPicoConfigurer = configurerFactory.getConfigurer();
     }
 
     public void start() {
