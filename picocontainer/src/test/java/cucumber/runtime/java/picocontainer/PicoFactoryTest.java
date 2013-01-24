@@ -1,5 +1,6 @@
 package cucumber.runtime.java.picocontainer;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
@@ -52,7 +53,7 @@ public class PicoFactoryTest {
         factory.start();
 
         assertThat(factory.getInstance(GreeterInterface.class),
-                is(GreeterImplementation.class));
+                is(instanceOf(GreeterImplementation.class)));
     }
 
     @Test
@@ -71,7 +72,7 @@ public class PicoFactoryTest {
         factory.start();
 
         assertThat(factory.getInstance(GreeterInterface.class),
-                is(GreeterWithCollaborators.class));
+                is(instanceOf(GreeterWithCollaborators.class)));
     }
 
     private ObjectFactory aFactoryConfiguredWith(String configurer) throws Exception {
