@@ -24,7 +24,6 @@ public class PicoFactory implements ObjectFactory, PicoMapper {
     private final Set<Class<?>> classes = new HashSet<Class<?>>();
     private final Map<Class<?>, Class<?>> componentKeyToImplementationClassMapping = new HashMap<Class<?>, Class<?>>();
     private final PicoConfigurer customPicoConfigurer;
-    private boolean picoConfigurerHasRun = false;
 
     public PicoFactory() throws IOException {
         this(loadCucumberPicoProperties());
@@ -35,8 +34,8 @@ public class PicoFactory implements ObjectFactory, PicoMapper {
         if (picoConfigurerClassName == null) {
             customPicoConfigurer = new NoOpPicoConfigurer();
         } else {
-            customPicoConfigurer = new PicoConfigurerInstantiator()
-                    .instantiate(picoConfigurerClassName);
+            customPicoConfigurer = new RunOncePicoConfigurer(
+                    new PicoConfigurerInstantiator().instantiate(picoConfigurerClassName));
         }
     }
 
@@ -54,10 +53,7 @@ public class PicoFactory implements ObjectFactory, PicoMapper {
     }
 
     public void start() {
-        if (!picoConfigurerHasRun) {
-            customPicoConfigurer.configure(this);
-            picoConfigurerHasRun = true;
-        }
+        customPicoConfigurer.configure(this);
         pico = new PicoBuilder().withCaching().build();
         for (Class<?> clazz : classes) {
             pico.addComponent(clazz);
