@@ -7,12 +7,15 @@ import org.webbitserver.WebSocketConnection;
 import org.webbitserver.handler.EmbeddedResourceHandler;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.URI;
+import java.util.concurrent.Executors;
 
 public class TemperatureServer {
     private final WebServer webServer;
 
     public TemperatureServer(int port) {
-        webServer = WebServers.createWebServer(port);
+        webServer = WebServers.createWebServer(Executors.newSingleThreadExecutor(), new InetSocketAddress(port), URI.create("http://localhost:" + port));
         webServer.add(new EmbeddedResourceHandler("web"));
         webServer.add("/temperature", new BaseWebSocketHandler() {
             @Override
