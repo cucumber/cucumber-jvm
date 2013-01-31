@@ -2,10 +2,13 @@ package cucumber.runtime.scala.test
 
 import _root_.cucumber.api.scala._
 
-import _root_.junit.framework.Assert._
+import cucumber.api.DataTable
 
 object RpnCalculatorStepDefinitions extends ScalaDsl with EN {
     Given("""^I have (\d+) "([^"]*)" in my belly$"""){ (howMany:Int, what:String) =>
+    }
+
+    Given("""^I have the following foods :$"""){ (table:DataTable) =>
     }
 }
 
