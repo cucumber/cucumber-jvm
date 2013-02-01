@@ -11,6 +11,8 @@ object Transform {
   def apply[A](f:String => A):Transform[A] = new Transform[A]{
     def apply(a:Any) = a match {
       case s:String => f(s)
+      case s:java.lang.Integer => f(s.toString)
+      case s:java.lang.Double => f(s.toString)
     }
   }
 
