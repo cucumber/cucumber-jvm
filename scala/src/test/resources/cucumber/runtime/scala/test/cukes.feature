@@ -56,3 +56,10 @@ Feature: Cukes
       | fries  |      750 |
     Then I am "definitely happy"
     And have eaten 2250.0 calories today
+
+  Scenario: DataTable with args in the belly
+    Given I have a table the sum of all rows should be 400 :
+      | ROW |
+      |  20 |
+      |  80 |
+      | 300 |

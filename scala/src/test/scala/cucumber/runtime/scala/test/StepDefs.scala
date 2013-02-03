@@ -118,6 +118,10 @@ class CukesStepDefinitions extends ScalaDsl with EN {
   Then("""^I should have truth in my belly$"""){ () =>
     assertEquals(true, boolBelly)
   }
+
+  Given("""^I have a table the sum of all rows should be (\d+) :$"""){ (value:Int, table:DataTable) =>
+    assertEquals(value, table.flatten.drop(1).map(_.toInt).foldLeft(0)(_+_))
+  }
 }
 
 class ThenDefs extends ScalaDsl with EN {
