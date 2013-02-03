@@ -5,7 +5,7 @@
         <groupId>info.cukes</groupId>
         <artifactId>cucumber-jvm</artifactId>
         <relativePath>../pom.xml</relativePath>
-        <version>1.1.2-SNAPSHOT</version>
+        <version>1.1.3-SNAPSHOT</version>
     </parent>
 
     <artifactId>cucumber-jython</artifactId>
@@ -94,12 +94,12 @@
 import groovy.text.SimpleTemplateEngine
 import gherkin.I18n
 
+def unsupported = ["ar", "bg", "fa", "he", "hi", "is", "ja", "ko", "pl", "ru", "sr_cyrl", "tl", "tt", "uk", "uz", "zh_cn", "zh_tw"]
 def engine = new SimpleTemplateEngine()
-
 def templateSource = new File(project.baseDir, "src${File.separator}main${File.separator}code_generator${File.separator}I18n.jython.txt").getText()
 
 I18n.all.each { i18n ->
-  if (!["ar", "bg", "fa", "he", "is", "ja", "ko", "pl", "ru", "sr_cyrl", "uk", "uz", "zh_cn", "zh_tw"].contains(i18n.underscoredIsoCode)) {
+  if (!unsupported.contains(i18n.underscoredIsoCode)) {
     def binding = ["i18n":i18n]
     template = engine.createTemplate(templateSource).make(binding)
     file = new File(project.baseDir, "target${File.separator}generated-resources${File.separator}i18n${File.separator}cucumber${File.separator}runtime${File.separator}jython${File.separator}i18n${File.separator}${i18n.underscoredIsoCode.toUpperCase()}.py")
