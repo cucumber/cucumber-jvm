@@ -147,7 +147,7 @@ class ScalaDslTest {
 
     assertEquals(1, Dummy.stepDefinitions.size)
     val step = Dummy.stepDefinitions(0)
-    step.execute(new I18n("en"), Array("5", "green"))
+    step.execute(new I18n("en"), Array(new java.lang.Integer(5), "green"))
     assertEquals(5, thenumber)
     assertEquals("green", thecolour)
   }
