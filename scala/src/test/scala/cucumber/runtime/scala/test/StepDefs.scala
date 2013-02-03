@@ -85,7 +85,7 @@ class CukesStepDefinitions extends ScalaDsl with EN {
 
   var bigDecimalBelly:BigDecimal = BigDecimal(0)
 
-  Given("""^I have eaten (.*) big decimals$"""){ (arg0:BigDecimal) =>
+  Given("""^I have eaten (.*) big decimals$"""){ (arg0:java.math.BigDecimal) =>
     bigDecimalBelly = arg0
   }
   Then("""^I should have one and a half big decimals in my belly$"""){ () =>
@@ -94,8 +94,8 @@ class CukesStepDefinitions extends ScalaDsl with EN {
 
   var bigIntBelly:BigInt = BigInt(0)
 
-  Given("""^I have eaten (\d+) big int$"""){ (arg0:BigInt) =>
-    bigIntBelly = arg0
+  Given("""^I have eaten (\d+) big int$"""){ (arg0:java.math.BigInteger) =>
+    bigIntBelly = arg0.intValue()
   }
   Then("""^I should have a ten big int in my belly$"""){ () =>
     assertEquals(BigInt(10), bigIntBelly)

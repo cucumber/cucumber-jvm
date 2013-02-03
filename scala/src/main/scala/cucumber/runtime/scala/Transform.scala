@@ -27,8 +27,8 @@ object Transform {
   implicit val t2Float = Transform((f:java.lang.Float) => f.toFloat)
   implicit val t2Short = Transform((s:java.lang.Short) => s.toShort)
   implicit val t2Byte = Transform((b:java.lang.Byte) => b.toByte)
-  implicit val t2BigDecimal = Transform((bd:java.math.BigDecimal) => BigDecimal(bd))
-  implicit val t2BigInt = Transform((bi:java.math.BigInteger) => new BigInt(bi))
+  implicit val t2BigDecimal = Transform((bd:java.math.BigDecimal) => bd)
+  implicit val t2BigInt = Transform((bi:java.math.BigInteger) => bi)
   implicit val t2Char = Transform((c:java.lang.Character) => c:Char)
   implicit val t2Boolean = Transform((b:java.lang.Boolean) => b:Boolean)
 }
