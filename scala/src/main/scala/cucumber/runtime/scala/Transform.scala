@@ -8,11 +8,9 @@ trait Transform[T] {
 
 object Transform {
 
-  def apply[A](f:String => A):Transform[A] = new Transform[A]{
+  def apply[A,B](f:A => B):Transform[B] = new Transform[B]{
     def apply(a:Any) = a match {
-      case s:String => f(s)
-      case s:java.lang.Integer => f(s.toString)
-      case s:java.lang.Double => f(s.toString)
+      case s:A => f(s)
     }
   }
 
@@ -22,15 +20,15 @@ object Transform {
     }
   }
 
-  implicit val t2Int        = Transform(_.toInt)
-  implicit val t2Long       = Transform(_.toLong)
-  implicit val t2String     = Transform(identity)
-  implicit val t2Double     = Transform(_.toDouble)
-  implicit val t2Float      = Transform(_.toFloat)
-  implicit val t2Short      = Transform(_.toShort)
-  implicit val t2Byte       = Transform(_.toByte)
-  implicit val t2BigDecimal = Transform(BigDecimal(_))
-  implicit val t2BigInt     = Transform(BigInt(_))
-  implicit val t2Char       = Transform(_.charAt(0))
-  implicit val t2Boolean    = Transform(_.toBoolean)
+  implicit val t2Int = Transform((i:java.lang.Integer) => i.toInt)
+  implicit val t2Long = Transform((l:java.lang.Long) => l.toLong)
+  implicit val t2String = Transform((s:java.lang.String) => s)
+  implicit val t2Double = Transform((d:java.lang.Double) => d.toDouble)
+  implicit val t2Float = Transform((f:java.lang.Float) => f.toFloat)
+  implicit val t2Short = Transform((s:java.lang.Short) => s.toShort)
+  implicit val t2Byte = Transform((b:java.lang.Byte) => b.toByte)
+  implicit val t2BigDecimal = Transform((bd:java.math.BigDecimal) => BigDecimal(bd))
+  implicit val t2BigInt = Transform((bi:java.math.BigInteger) => new BigInt(bi))
+  implicit val t2Char = Transform((c:java.lang.Character) => c:Char)
+  implicit val t2Boolean = Transform((b:java.lang.Boolean) => b:Boolean)
 }

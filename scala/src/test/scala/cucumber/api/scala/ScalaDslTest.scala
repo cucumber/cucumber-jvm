@@ -160,7 +160,7 @@ class ScalaDslTest {
 
     object Dummy extends ScalaDsl with EN {
 
-      implicit val transformPerson = Transform(Person(_))
+      implicit val transformPerson = Transform((s:String) => Person(s))
 
       Given("Person (\\s+)"){ p:Person =>
         person = p

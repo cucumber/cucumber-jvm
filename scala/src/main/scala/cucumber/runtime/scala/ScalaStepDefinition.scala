@@ -9,6 +9,7 @@ import _root_.cucumber.runtime.JdkPatternArgumentMatcher
 import _root_.cucumber.runtime.ParameterInfo
 import collection.JavaConversions._
 
+
 class ScalaStepDefinition(frame:StackTraceElement, name:String, pattern:String, parameterInfos:List[Class[_]], f:List[Any] => Any) extends StepDefinition {
 
   private val argumentMatcher = new JdkPatternArgumentMatcher(Pattern.compile(pattern))
