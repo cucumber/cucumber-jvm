@@ -5,8 +5,6 @@ import Assert._
 import _root_.gherkin.I18n
 import _root_.gherkin.formatter.model.Tag
 import collection.JavaConverters._
-
-import _root_.cucumber.runtime.scala.Transform
 import cucumber.api.Scenario
 
 class ScalaDslTest {
@@ -152,22 +150,4 @@ class ScalaDslTest {
     assertEquals("green", thecolour)
   }
 
-  @Test
-  def transformation {
-    case class Person(name:String)
-
-    var person:Person = null
-
-    object Dummy extends ScalaDsl with EN {
-
-      implicit val transformPerson = Transform((s:String) => Person(s))
-
-      Given("Person (\\s+)"){ p:Person =>
-        person = p
-      }
-    }
-
-    Dummy.stepDefinitions(0).execute(new I18n("en"), Array("Aslak"))
-    assertEquals(Person("Aslak"), person)
-  }
 }

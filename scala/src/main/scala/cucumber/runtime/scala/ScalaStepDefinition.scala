@@ -9,9 +9,29 @@ import _root_.cucumber.runtime.JdkPatternArgumentMatcher
 import _root_.cucumber.runtime.ParameterInfo
 import collection.JavaConversions._
 
+/**
+ * Implementation of step definition for scala.
+ *
+ * @param frame Representation of a stack frame containing information about the context in which a
+ *              step was defined. Allows retrospective queries about the definition of a step.
+ *
+ * @param name The name of the step definition class, e.g. cucumber.runtime.scala.test.CukesStepDefinitions
+ *
+ * @param pattern The regex matcher that defines the cucumber step, e.g. /I eat (.*) cukes$/
 
-class ScalaStepDefinition(frame:StackTraceElement, name:String, pattern:String, parameterInfos:List[Class[_]], f:List[Any] => Any) extends StepDefinition {
+ * @param parameterInfos
+ *
+ * @param f Function body of a step definition. This is what actually runs the code within the step def.
+ */
+class ScalaStepDefinition(frame:StackTraceElement,
+                          name:String,
+                          pattern:String,
+                          parameterInfos:List[Class[_]],
+                          f:List[Any] => Any) extends StepDefinition {
 
+  /**
+   * Compiled pattern matcher for the cucumber step regex.
+   */
   private val argumentMatcher = new JdkPatternArgumentMatcher(Pattern.compile(pattern))
 
   def matchedArguments(step: Step) = argumentMatcher.argumentsFrom(step.getName)
@@ -20,9 +40,6 @@ class ScalaStepDefinition(frame:StackTraceElement, name:String, pattern:String, 
 
   def getParameterCount() = parameterInfos.size()
 
-  // TODO: get rid of Transform.scala and leave transformation to be done by core. The correct implementation is commented out
-  // below until this is fixed.
-  // def getParameterType(index: Int, javaType: Type) = new ParameterInfo(parameterInfos.get(index), null)
   def getParameterType(index: Int, javaType: Type) = new ParameterInfo(parameterInfos.get(index), null, null, null)
 
   def execute(i18n: I18n, args: Array[AnyRef]) { f(args.toList) }
@@ -30,4 +47,5 @@ class ScalaStepDefinition(frame:StackTraceElement, name:String, pattern:String, 
   def isDefinedAt(stackTraceElement: StackTraceElement) = stackTraceElement == frame
 
   def getPattern = pattern
+
 }
