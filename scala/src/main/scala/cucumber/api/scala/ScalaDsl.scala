@@ -7,10 +7,24 @@ import _root_.cucumber.runtime.HookDefinition
 import _root_.cucumber.runtime.StepDefinition
 import collection.mutable.ArrayBuffer
 
+/**
+ * Base trait for a scala step definition implementation.
+ */
 trait ScalaDsl { self =>
 
+  /**
+   *
+   */
   private [cucumber] val stepDefinitions = new ArrayBuffer[StepDefinition]
+
+  /**
+   *
+   */
   private [cucumber] val beforeHooks = new ArrayBuffer[HookDefinition]
+
+  /**
+   *
+   */
   private [cucumber] val afterHooks = new ArrayBuffer[HookDefinition]
 
   def Before(f: Scenario => Unit){
@@ -50,14 +64,18 @@ trait ScalaDsl { self =>
   final class StepBody(name:String, regex:String) {
 
     def apply[T1](t1 : T1) = {
-      println(self.getClass.getName)
+//      register()
     }
 
     private def register(manifests: List[Manifest[_]])(pf: PartialFunction[List[Any], Any]){
+      val frame: StackTraceElement = obtainFrame
+      stepDefinitions += new ScalaStepDefinition(frame, name, regex, manifests.map(_.runtimeClass), pf)
+    }
+
+    private def obtainFrame: StackTraceElement = {
       val frames = Thread.currentThread().getStackTrace
       val currentClass = self.getClass.getName
-      val frame = frames.find(_.getClassName == currentClass).get
-      stepDefinitions += new ScalaStepDefinition(frame, name, regex, manifests.map(_.erasure), pf)
+      frames.find(_.getClassName == currentClass).get
     }
   }
 }
