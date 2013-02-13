@@ -1,3 +1,7 @@
+## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.1.2...master)
+
+* [Core] Custom Formatter/Reporter's `before` and `after` hook weren't run. (Aslak Hellesøy)
+
 ## [1.1.2](https://github.com/cucumber/cucumber-jvm/compare/v1.1.1...v1.1.2)
 
 * [Core] Restore ability to diff with another DataTable ([#413](https://github.com/cucumber/cucumber-jvm/pull/413) Gilles Philippart)

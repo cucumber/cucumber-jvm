@@ -180,28 +180,30 @@ public class Runtime implements UnreportedStepExecutor {
     }
 
     private void runHooks(List<HookDefinition> hooks, Reporter reporter, Set<Tag> tags, boolean isBefore) {
-    	if (!runtimeOptions.dryRun) {
-	    	for (HookDefinition hook : hooks) {
-	            runHookIfTagsMatch(hook, reporter, tags, isBefore);
-	        }
-    	}
+        if (!runtimeOptions.dryRun) {
+            for (HookDefinition hook : hooks) {
+                runHookIfTagsMatch(hook, reporter, tags, isBefore);
+            }
+        }
     }
 
     private void runHookIfTagsMatch(HookDefinition hook, Reporter reporter, Set<Tag> tags, boolean isBefore) {
         if (hook.matches(tags)) {
+            String status = Result.PASSED;
+            Throwable error = null;
+            Match match = new Match(Collections.<Argument>emptyList(), hook.getLocation(false));
             long start = System.nanoTime();
             try {
                 hook.execute(scenarioResult);
             } catch (Throwable t) {
-                skipNextStep = true;
-                long duration = System.nanoTime() - start;
-
-                String status = isPending(t) ? "pending" : Result.FAILED;
-                Result result = new Result(status, duration, t, DUMMY_ARG);
-                scenarioResult.add(result);
+                error = t;
+                status = isPending(t) ? "pending" : Result.FAILED;
                 addError(t);
-
-                Match match = new Match(Collections.<Argument>emptyList(), hook.getLocation(false));
+                skipNextStep = true;
+            } finally {
+                long duration = System.nanoTime() - start;
+                Result result = new Result(status, duration, error, DUMMY_ARG);
+                scenarioResult.add(result);
                 if (isBefore) {
                     reporter.before(match, result);
                 } else {

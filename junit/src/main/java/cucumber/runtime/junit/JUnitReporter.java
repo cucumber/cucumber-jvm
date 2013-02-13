@@ -124,11 +124,13 @@ public class JUnitReporter implements Reporter, Formatter {
     @Override
     public void before(Match match, Result result) {
         handleHook(result);
+        reporter.before(match, result);
     }
 
     @Override
     public void after(Match match, Result result) {
         handleHook(result);
+        reporter.after(match, result);
     }
 
     private void handleHook(Result result) {
