@@ -69,8 +69,20 @@ Below are some common problems you might encounter while hacking on Cucumber-JVM
 
 This can be solved by changing the Compiler settings: `Preferences -> Compiler -> Java Compiler`:
 
-* *Use compiler:* `Javac in-process (Java6+ only)`
+* *Use compiler:* `Javac`
 * *Additional command line parameters:* `-target 1.6 -source 1.6 -encoding UTF-8`
+
+You should also use JDK 6: `Project Structure... -> Project -> Project SDK`:
+
+* *Use 1.6", not 1.7
+
+If you still have problems, try building the project with Maven, using Java 6:
+
+```
+export JAVA_HOME=/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home
+```
+
+Note that even though development is sometimes easier to do with 1.6, releasing should be done with 1.7.
 
 ## Releasing
 
