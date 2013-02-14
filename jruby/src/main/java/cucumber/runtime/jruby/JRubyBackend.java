@@ -61,7 +61,7 @@ public class JRubyBackend implements Backend {
                 jruby.setCompatVersion(CompatVersion.RUBY1_8);
             }
             if ("1.9".equals(rubyVersion)) {
-                jruby.setCompatVersion(CompatVersion.RUBY1_8);
+                jruby.setCompatVersion(CompatVersion.RUBY1_9);
             }
             if ("2.0".equals(rubyVersion)) {
                 jruby.setCompatVersion(CompatVersion.RUBY2_0);
