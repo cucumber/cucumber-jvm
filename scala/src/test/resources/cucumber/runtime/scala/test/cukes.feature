@@ -4,6 +4,7 @@ Feature: Cukes
     Given I have 4 "cukes" in my belly
     Then I am "happy"
 
+  @SmokeTest
   Scenario: Int in the belly
     Given I have eaten an int 100
     Then I should have one hundred in my belly

@@ -63,8 +63,19 @@ trait ScalaDsl { self =>
 
   final class StepBody(name:String, regex:String) {
 
-    def apply[T1](t1 : T1) = {
-//      register()
+    def apply(f: => Unit){ apply(f _) }
+
+    def apply(fun: Fun0) = register(Nil) {case Nil => fun.f()}
+
+    def apply[T1](f: (T1) => Any)(implicit m1: Manifest[T1]) = {
+      register(List(m1)) {
+        case List(a1:Any) => f(a1:T1)
+        //case List(a1:Any) => throw new MatchError("Expected " + m1.toString() + " but got " + a1.getClass)
+      }
+    }
+
+    def apply[T1, T2](f: (T1, T2) => Any)(implicit m1: Manifest[T1], m2: Manifest[T2]) = {
+      register(List(m1, m2)) { case List(a1:T1, a2:T2) => f(a1, a2) }
     }
 
     private def register(manifests: List[Manifest[_]])(pf: PartialFunction[List[Any], Any]){
