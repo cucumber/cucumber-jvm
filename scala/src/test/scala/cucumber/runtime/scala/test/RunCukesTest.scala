@@ -5,5 +5,5 @@ import _root_.cucumber.api.junit.Cucumber
 import gherkin.formatter.model.Feature
 
 @RunWith(classOf[Cucumber])
-@Cucumber.Options(tags = Array("@SmokeTest"), strict=true)
+@Cucumber.Options(strict=true)
 class RunCukesTest
