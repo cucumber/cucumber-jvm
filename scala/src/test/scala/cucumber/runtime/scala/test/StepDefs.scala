@@ -14,10 +14,10 @@ class CukesStepDefinitions extends ScalaDsl with EN {
   var calorieCount = 0.0
 
   Given("""^I have the following foods :$"""){ (table:DataTable) =>
-    calorieCount = table.asMaps().map(_.values()).map(_.head.toDouble).fold(0.0)(_+_)
+    calorieCount = table.asMaps().map(_.get("CALORIES")).map(_.toDouble).fold(0.0)(_+_)
   }
   And("""^have eaten (.*) calories today""") { (calories:Double) =>
-    assertEquals(calorieCount, calories)
+    assertEquals(calories, calorieCount)
   }
 
   var intBelly:Int = 0
@@ -122,9 +122,32 @@ class CukesStepDefinitions extends ScalaDsl with EN {
   Given("""^I have a table the sum of all rows should be (\d+) :$"""){ (value:Int, table:DataTable) =>
     assertEquals(value, table.flatten.drop(1).map(_.toInt).foldLeft(0)(_+_))
   }
+
+  var rhymeMap:Map[String,String] = null;
+
+  Given("""^I have a map (.*)$"""){ (m:Map[String,String]) =>
+
+  }
+
+  Then("""^(.*) should map to (.*)$"""){ (k:String, v:String) =>
+  //// Express the Regexp above with the code you wish you had
+  }
+
 }
 
 class ThenDefs extends ScalaDsl with EN {
   Then("""^I am "([^"]*)"$"""){ (arg0:String) =>
+  }
+}
+
+class EnglishDefs extends ScalaDsl with EN {
+  Given("""^I have an English number (.*) then it should parse as (\d+)$"""){ (act:Int, exp:Int) =>
+    assertEquals(exp, act)
+  }
+}
+
+class FrenchDefs extends ScalaDsl with FR {
+  Etantdonné("""^I have a French number (.*) that should parse as (\d+)$"""){ (act:Int, exp:Int) =>
+    assertEquals(exp, act)
   }
 }

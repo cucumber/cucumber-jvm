@@ -64,3 +64,8 @@ Feature: Cukes
       |  20 |
       |  80 |
       | 300 |
+
+  Scenario: Custom mapper in the belly
+    Given I have a map { cat => hat, dog => log }
+    Then cat should map to hat
+    And dog should map to log
