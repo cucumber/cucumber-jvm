@@ -2,13 +2,15 @@ package cucumber.runtime.scala.test
 
 import _root_.cucumber.api.scala._
 
-import cucumber.api.DataTable
+import cucumber.api.{Transform, DataTable}
 import junit.framework.Assert._
 import scala.collection.JavaConversions._
+import cucumber.runtime.scala.transform.ScalaMapConverter
 
 class CukesStepDefinitions extends ScalaDsl with EN {
 
   Given("""^I have (\d+) "([^"]*)" in my belly$"""){ (howMany:Int, what:String) =>
+
   }
 
   var calorieCount = 0.0
@@ -125,12 +127,12 @@ class CukesStepDefinitions extends ScalaDsl with EN {
 
   var rhymeMap:Map[String,String] = null;
 
-  Given("""^I have a map (.*)$"""){ (m:Map[String,String]) =>
+  Given("""^I have a map (.*)$"""){ ( m:Map[String,String] @Transform(classOf[ScalaMapConverter])) =>
 
   }
 
   Then("""^(.*) should map to (.*)$"""){ (k:String, v:String) =>
-  //// Express the Regexp above with the code you wish you had
+    assertEquals(rhymeMap.get(k), v)
   }
 
 }

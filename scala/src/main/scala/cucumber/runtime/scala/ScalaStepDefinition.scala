@@ -8,6 +8,7 @@ import _root_.cucumber.runtime.StepDefinition
 import _root_.cucumber.runtime.JdkPatternArgumentMatcher
 import _root_.cucumber.runtime.ParameterInfo
 import collection.JavaConversions._
+import cucumber.api.Transform
 
 /**
  * Implementation of step definition for scala.
@@ -59,7 +60,9 @@ class ScalaStepDefinition(frame:StackTraceElement,
    * it easier for the implementation to make a guess based on runtime information.
    * As Scala is a statically typed language, the javaType parameter is ignored
    */
-  def getParameterType(index: Int, javaType: Type) = new ParameterInfo(parameterInfos.get(index), null, null, null)
+  def getParameterType(index: Int, javaType: Type) = {
+    new ParameterInfo(parameterInfos.get(index), null, null, null)
+  }
 
   /**
    * Invokes the step definition. The method should raise a Throwable

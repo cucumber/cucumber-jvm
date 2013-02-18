@@ -4,7 +4,6 @@ Feature: Cukes
     Given I have 4 "cukes" in my belly
     Then I am "happy"
 
-  @SmokeTest
   Scenario: Int in the belly
     Given I have eaten an int 100
     Then I should have one hundred in my belly
@@ -65,7 +64,8 @@ Feature: Cukes
       |  80 |
       | 300 |
 
-  Scenario: Custom mapper in the belly
-    Given I have a map { cat => hat, dog => log }
-    Then cat should map to hat
-    And dog should map to log
+#  @SmokeTest
+#  Scenario: Custom mapper in the belly
+#    Given I have a map {cat=>hat,dog=>log}
+#    Then cat should map to hat
+#    And dog should map to log
