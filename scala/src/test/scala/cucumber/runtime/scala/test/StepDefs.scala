@@ -6,6 +6,7 @@ import cucumber.api.{Transform, DataTable}
 import junit.framework.Assert._
 import scala.collection.JavaConversions._
 import cucumber.runtime.scala.transform.ScalaMapConverter
+import cucumber.runtime.scala.model.Person
 
 class CukesStepDefinitions extends ScalaDsl with EN {
 
@@ -125,7 +126,7 @@ class CukesStepDefinitions extends ScalaDsl with EN {
     assertEquals(value, table.flatten.drop(1).map(_.toInt).foldLeft(0)(_+_))
   }
 
-  var rhymeMap:Map[String,String] = null;
+  var rhymeMap:Map[String,String] = null
 
   Given("""^I have a map (.*)$"""){ ( m:Map[String,String] @Transform(classOf[ScalaMapConverter])) =>
 
@@ -133,6 +134,16 @@ class CukesStepDefinitions extends ScalaDsl with EN {
 
   Then("""^(.*) should map to (.*)$"""){ (k:String, v:String) =>
     assertEquals(rhymeMap.get(k), v)
+  }
+
+  var person:Person = null
+
+  Given("""^I have a person (.*)""") { (p:Person) =>
+    person = p
+  }
+
+  Then("""^he should say \"(.*)\"""") { s:String =>
+    assertEquals(person.hello, s)
   }
 
 }

@@ -69,3 +69,7 @@ Feature: Cukes
 #    Given I have a map {cat=>hat,dog=>log}
 #    Then cat should map to hat
 #    And dog should map to log
+
+Scenario: Custom object with string constructor
+  Given I have a person Bob
+  Then he should say "Hello, I'm Bob!"
