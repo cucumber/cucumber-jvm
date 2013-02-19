@@ -2,11 +2,10 @@ package cucumber.runtime.scala.test
 
 import _root_.cucumber.api.scala._
 
-import cucumber.api.{Transform, DataTable}
+import cucumber.api.DataTable
 import junit.framework.Assert._
 import scala.collection.JavaConversions._
-import cucumber.runtime.scala.transform.ScalaMapConverter
-import cucumber.runtime.scala.model.Person
+import cucumber.runtime.scala.model.{Snake, Person}
 
 class CukesStepDefinitions extends ScalaDsl with EN {
 
@@ -126,14 +125,14 @@ class CukesStepDefinitions extends ScalaDsl with EN {
     assertEquals(value, table.flatten.drop(1).map(_.toInt).foldLeft(0)(_+_))
   }
 
-  var rhymeMap:Map[String,String] = null
+  var snake:Snake = null
 
-  Given("""^I have a map (.*)$"""){ ( m:Map[String,String] @Transform(classOf[ScalaMapConverter])) =>
-
+  Given("""^I see in the distance ... (.*)$"""){ (s:Snake) =>
+    snake = s
   }
-
-  Then("""^(.*) should map to (.*)$"""){ (k:String, v:String) =>
-    assertEquals(rhymeMap.get(k), v)
+  Then("""^I have a snake of length (\d+) moving (.*)$"""){ (size:Int, dir:String) =>
+    assertEquals(size, snake.length)
+    assertEquals(Symbol(dir), snake.direction)
   }
 
   var person:Person = null

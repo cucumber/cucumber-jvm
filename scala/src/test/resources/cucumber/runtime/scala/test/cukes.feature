@@ -64,12 +64,10 @@ Feature: Cukes
       |  80 |
       | 300 |
 
-#  @SmokeTest
-#  Scenario: Custom mapper in the belly
-#    Given I have a map {cat=>hat,dog=>log}
-#    Then cat should map to hat
-#    And dog should map to log
+  Scenario: Snake in the belly
+    Given I see in the distance ... =====>
+    Then I have a snake of length 6 moving east
 
-Scenario: Custom object with string constructor
-  Given I have a person Bob
-  Then he should say "Hello, I'm Bob!"
+  Scenario: Custom object with string constructor
+    Given I have a person Bob
+    Then he should say "Hello, I'm Bob!"
