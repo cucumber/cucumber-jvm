@@ -7,6 +7,9 @@ import junit.framework.Assert._
 import scala.collection.JavaConversions._
 import cucumber.runtime.scala.model.{Snake, Person}
 
+/**
+ * Test step definitions to exercise Scala cucumber
+ */
 class CukesStepDefinitions extends ScalaDsl with EN {
 
   Given("""^I have (\d+) "([^"]*)" in my belly$"""){ (howMany:Int, what:String) =>
@@ -149,17 +152,5 @@ class CukesStepDefinitions extends ScalaDsl with EN {
 
 class ThenDefs extends ScalaDsl with EN {
   Then("""^I am "([^"]*)"$"""){ (arg0:String) =>
-  }
-}
-
-class EnglishDefs extends ScalaDsl with EN {
-  Given("""^I have an English number (.*) then it should parse as (\d+)$"""){ (act:Int, exp:Int) =>
-    assertEquals(exp, act)
-  }
-}
-
-class FrenchDefs extends ScalaDsl with FR {
-  Etantdonné("""^I have a French number (.*) that should parse as (\d+)$"""){ (act:Int, exp:Int) =>
-    assertEquals(exp, act)
   }
 }

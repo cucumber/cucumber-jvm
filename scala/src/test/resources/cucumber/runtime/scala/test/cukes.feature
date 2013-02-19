@@ -64,9 +64,11 @@ Feature: Cukes
       |  80 |
       | 300 |
 
-  Scenario: Snake in the belly
+  Scenario: Argh! a snake - to be custom mapped
     Given I see in the distance ... =====>
     Then I have a snake of length 6 moving east
+    And I see in the distance ... <====================
+    Then I have a snake of length 21 moving west
 
   Scenario: Custom object with string constructor
     Given I have a person Bob
