@@ -1,5 +1,6 @@
 ## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.1.2...master)
 
+* [JRuby] Wrong CompatVersion passed to JRuby when 1.9 is given ([#415](https://github.com/cucumber/cucumber-jvm/issues/415) David Kowis)
 * [Core] Custom Formatter/Reporter's `before` and `after` hook weren't run. (Aslak Hellesøy)
 
 ## [1.1.2](https://github.com/cucumber/cucumber-jvm/compare/v1.1.1...v1.1.2)
