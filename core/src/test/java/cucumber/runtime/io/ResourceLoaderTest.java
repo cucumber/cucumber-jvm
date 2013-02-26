@@ -21,7 +21,7 @@ public class ResourceLoaderTest {
     @Test
     public void loads_resources_from_filesystem_dir() {
         Iterable<Resource> files = new FileResourceLoader().resources(dir.getAbsolutePath(), ".properties");
-        assertEquals(3, toList(files).size());
+        assertEquals(4, toList(files).size());
     }
 
     @Test

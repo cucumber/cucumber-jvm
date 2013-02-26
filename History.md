@@ -1,5 +1,6 @@
 ## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.1.2...master)
 
+* [JRuby] `GEM_PATH` and `RUBY_VERSION` can be set in env var, system property or `cucumber-jruby.properties` resource bundle. (Aslak Hellesøy).
 * [JRuby] Wrong CompatVersion passed to JRuby when 1.9 is given ([#415](https://github.com/cucumber/cucumber-jvm/issues/415) David Kowis)
 * [Core] Custom Formatter/Reporter's `before` and `after` hook weren't run. (Aslak Hellesøy)
 

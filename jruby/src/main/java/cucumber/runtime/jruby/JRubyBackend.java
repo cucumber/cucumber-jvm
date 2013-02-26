@@ -1,11 +1,12 @@
 package cucumber.runtime.jruby;
 
 import cucumber.api.DataTable;
+import cucumber.api.PendingException;
 import cucumber.api.Scenario;
 import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
+import cucumber.runtime.Env;
 import cucumber.runtime.Glue;
-import cucumber.api.PendingException;
 import cucumber.runtime.UnreportedStepExecutor;
 import cucumber.runtime.io.Resource;
 import cucumber.runtime.io.ResourceLoader;
@@ -28,12 +29,11 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 import java.util.Set;
 
 public class JRubyBackend implements Backend {
     private static final String DSL = "/cucumber/runtime/jruby/dsl.rb";
+    private static final Env env = new Env("cucumber-jruby");
     private final SnippetGenerator snippetGenerator = new SnippetGenerator(new JRubySnippet());
     private final ScriptingContainer jruby = new ScriptingContainer();
     private final ResourceLoader resourceLoader;
@@ -48,26 +48,24 @@ public class JRubyBackend implements Backend {
         this.resourceLoader = resourceLoader;
         jruby.put("$backend", this);
         jruby.setClassLoader(getClass().getClassLoader());
-        try {
-            ResourceBundle bundle = ResourceBundle.getBundle("cucumber-jruby");
+        String gemPath = env.get("GEM_PATH");
+        if (gemPath != null) {
+            jruby.runScriptlet("ENV['GEM_PATH']='" + gemPath + "'");
+        }
 
-            String gemPath = bundle.getString("GEM_PATH");
-            if (gemPath != null && !gemPath.isEmpty()) {
-                jruby.runScriptlet("ENV['GEM_PATH']='" + gemPath + "'");
-            }
-
-            String rubyVersion = bundle.getString("RUBY_VERSION");
-            if ("1.8".equals(rubyVersion)) {
+        String rubyVersion = env.get("RUBY_VERSION");
+        if (rubyVersion != null) {
+            // RVM typically defines env vars like
+            // RUBY_VERSION=ruby-1.9.3-p362
+            if (rubyVersion.matches(".*1\\.8\\.\\d.*") || rubyVersion.matches(".*1\\.8")) {
                 jruby.setCompatVersion(CompatVersion.RUBY1_8);
-            }
-            if ("1.9".equals(rubyVersion)) {
+            } else if (rubyVersion.matches(".*1\\.9\\.\\d.*") || rubyVersion.matches(".*1\\.9.*")) {
                 jruby.setCompatVersion(CompatVersion.RUBY1_9);
-            }
-            if ("2.0".equals(rubyVersion)) {
+            } else if (rubyVersion.matches(".*2\\.0\\.\\d.*") || rubyVersion.matches(".*2\\.0.*")) {
                 jruby.setCompatVersion(CompatVersion.RUBY2_0);
+            } else {
+                throw new CucumberException("Invalid RUBY_VERSION: " + rubyVersion);
             }
-        } catch (MissingResourceException mre) {
-            //Don't actually care
         }
         jruby.runScriptlet(new InputStreamReader(getClass().getResourceAsStream(DSL), "UTF-8"), DSL);
 
