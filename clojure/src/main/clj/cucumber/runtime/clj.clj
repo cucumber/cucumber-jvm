@@ -63,6 +63,9 @@
 (defn- -setUnreportedStepExecutor [cljb executor]
   "executor")
 
+(defn- location-str [{:keys [file line]}]
+  (str file ":" line))
+
 (defn add-step-definition [pattern fun location]
   (.addStepDefinition
    @glue
@@ -72,7 +75,7 @@
        (.argumentsFrom (JdkPatternArgumentMatcher. pattern)
                        (.getName step)))
      (getLocation [_ detail]
-       (str (:file location) ":" (:line location)))
+       (location-str location))
      (getParameterCount [_]
        nil)
      (getParameterType [_ n argumentType]
@@ -89,19 +92,21 @@
 
 (defmulti add-hook-definition (fn [t & _] t))
 
-(defmethod add-hook-definition :before [_ tag-expression hook-fun]
+(defmethod add-hook-definition :before [_ tag-expression hook-fun location]
   (let [te (TagExpression. tag-expression)]
     (.addBeforeHook
      @glue
      (reify
        HookDefinition
+       (getLocation [_ detail?]
+         (location-str location))
        (execute [hd scenario-result]
          (hook-fun))
        (matches [hd tags]
          (.eval te tags))
        (getOrder [hd] 0)))))
 
-(defmethod add-hook-definition :after [_ tag-expression hook-fun]
+(defmethod add-hook-definition :after [_ tag-expression hook-fun location]
   (let [te (TagExpression. tag-expression)
         max-parameter-count (->> hook-fun class .getDeclaredMethods
                                  (filter #(= "invoke" (.getName %)))
@@ -111,6 +116,8 @@
      @glue
      (reify
        HookDefinition
+       (getLocation [_ detail?]
+         (location-str location))
        (execute [hd scenario-result]
          (if (zero? max-parameter-count)
            (hook-fun)
@@ -130,12 +137,15 @@
 (step-macros
  Given When Then And But)
 
+(defn- hook-location [file form]
+  {:file file
+   :line (:line (meta form))})
 
 (defmacro Before [binding-form & body]
-  `(add-hook-definition :before [] (fn ~binding-form ~@body)))
+  `(add-hook-definition :before [] (fn ~binding-form ~@body) ~(hook-location *file* &form)))
 
 (defmacro After [binding-form & body]
-  `(add-hook-definition :after [] (fn ~binding-form ~@body)))
+  `(add-hook-definition :after [] (fn ~binding-form ~@body) ~(hook-location *file* &form)))
 
 (defn ^:private update-keys [f m]
   (reduce-kv #(assoc %1 (f %2) %3) {} m))
