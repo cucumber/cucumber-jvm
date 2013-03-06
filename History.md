@@ -1,10 +1,10 @@
-## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.1.2...master)
+## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.1.2...master) (Not relweased)
 
 * [JRuby] `GEM_PATH` and `RUBY_VERSION` can be set in env var, system property or `cucumber-jruby.properties` resource bundle. (Aslak Hellesøy).
 * [JRuby] Wrong CompatVersion passed to JRuby when 1.9 is given ([#415](https://github.com/cucumber/cucumber-jvm/issues/415) David Kowis)
 * [Core] Custom Formatter/Reporter's `before` and `after` hook weren't run. (Aslak Hellesøy)
 
-## [1.1.2](https://github.com/cucumber/cucumber-jvm/compare/v1.1.1...v1.1.2) 2013-01-30
+## [1.1.2](https://github.com/cucumber/cucumber-jvm/compare/v1.1.1...v1.1.2) (2013-01-30)
 
 * [Core] Restore ability to diff with another DataTable ([#413](https://github.com/cucumber/cucumber-jvm/pull/413) Gilles Philippart)
 * [Core] Executing a test with the --dry-run option does not skip the @Before or @After annotations ([#424](https://github.com/cucumber/cucumber-jvm/issues/424), [#444](https://github.com/cucumber/cucumber-jvm/pull/444) William Powell)
@@ -26,7 +26,7 @@
 * [Examples/Spring] Spring Data JPA based repositories. ([#422](https://github.com/cucumber/cucumber-jvm/pull/422) Dmytro Chyzhykov)
 * [Examples/Gradle] Added a Gradle example. ([#446](https://github.com/cucumber/cucumber-jvm/pull/446) Ivan Yatskevich, David Kowis)
 
-## [1.1.1](https://github.com/cucumber/cucumber-jvm/compare/v1.0.14...1.1.1) 2012-10-25
+## [1.1.1](https://github.com/cucumber/cucumber-jvm/compare/v1.0.14...1.1.1) (2012-10-25)
 
 This release bumps the minor version number from 1.0 to 1.1. This is because there are backwards-incompatible changes.
 There shouldn't be anything else that breaks than package renames and a few class renames. The reason for these breaking
@@ -59,13 +59,13 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
   Special cases are `--tags`, `--name` and `path:line`, which will override previous tags/names/lines. To override a boolean
   option (options that don't take arguments like `--monochrome`), use the `--no-` counterpart (`--no-monochrome`). ([#388](https://github.com/cucumber/cucumber-jvm/pull/388) Sébastien Le Callonnec, Aslak Hellesøy)
 
-## [1.0.14](https://github.com/cucumber/cucumber-jvm/compare/v1.0.12...v1.0.14) 2012-08-20
+## [1.0.14](https://github.com/cucumber/cucumber-jvm/compare/v1.0.12...v1.0.14) (2012-08-20)
 
 (The 1.0.13 release failed half way through)
 
 * [Core] gherkin.jar, gherkin-jvm-deps.jar and cucumber-jvm-deps.jar are embedded inside cucumber-core.jar (to simplify installation) (Aslak Hellesøy)
 
-## [1.0.12](https://github.com/cucumber/cucumber-jvm/compare/v1.0.11...v1.0.12) 2012-08-19
+## [1.0.12](https://github.com/cucumber/cucumber-jvm/compare/v1.0.11...v1.0.12) (2012-08-19)
 
 * [Core] No img data in embeddings using both json and html reports ([#339](https://github.com/cucumber/cucumber-jvm/issues/339) Aslak Hellesøy)
 * [Core] JUnit assume failures (`AssumptionViolatedException`) behaves in the same way as pending (`cucumber.runtime.PendingException`) ([#359](https://github.com/cucumber/cucumber-jvm/issues/359) Aslak Hellesøy, Kim Saabye Pedersen)
@@ -75,13 +75,13 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * [Groovy] Load `env.groovy` before other glue code files. ([#374](https://github.com/cucumber/cucumber-jvm/pull/374) Tomas Bezdek)
 * [Clojure] Add utilities for reading tables ([#376](https://github.com/cucumber/cucumber-jvm/pull/376) rplevy-draker)
 
-## [1.0.11](https://github.com/cucumber/cucumber-jvm/compare/v1.0.10...v1.0.11) 2012-07-06
+## [1.0.11](https://github.com/cucumber/cucumber-jvm/compare/v1.0.10...v1.0.11) (2012-07-06)
 
 * [Core] Added a new `@Transform` annotation and an abstract `Transformer` class giving full control over argument transforms.
 * [OpenEJB] Remove log4j need for openejb module ([#355](https://github.com/cucumber/cucumber-jvm/pull/355) rmannibucau)
 * [JUnit] JUnit report doesn't correctly report errors ([#315](https://github.com/cucumber/cucumber-jvm/issues/315), [#356](https://github.com/cucumber/cucumber-jvm/pull/356) Kevin Cunningham)
 
-## [1.0.10](https://github.com/cucumber/cucumber-jvm/compare/v1.0.9...v1.0.10) 2012-06-20
+## [1.0.10](https://github.com/cucumber/cucumber-jvm/compare/v1.0.9...v1.0.10) (2012-06-20)
 
 * [Core] Automatically convert data tables to lists of enums just as is done with classes [#346](https://github.com/cucumber/cucumber-jvm/issues/346)
 * [Core] `DataTable.create()` and `TableConverter.toTable()` will omit columns for object fields that are null, *unless columns are explicitly listed*. See [#320](https://github.com/cucumber/cucumber-jvm/pull/320) (Aslak Hellesøy)
@@ -95,7 +95,7 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * [Core] List legal enum values if conversion fails ([#344](https://github.com/cucumber/cucumber-jvm/issues/344) Aslak Hellesøy)
 * [Weld] Added workaround for [WELD-1119](https://issues.jboss.org/browse/WELD-1119) when running on single core machines. (Aslak Hellesøy)
 
-## [1.0.9](https://github.com/cucumber/cucumber-jvm/compare/v1.0.8...v1.0.9) 2012-06-08
+## [1.0.9](https://github.com/cucumber/cucumber-jvm/compare/v1.0.8...v1.0.9) (2012-06-08)
 
 * [Core] Exceptions thrown from a step definition are no longer wrapped in CucumberException. (Aslak Hellesøy)
 * [Core] Fixed regression: PendingException was causing steps to fail instead of pending. ([#328](https://github.com/cucumber/cucumber-jvm/issues/328) Aslak Hellesøy)
@@ -107,7 +107,7 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * [Jython] Added missing `self` argument in Jython snippets. ([#324](https://github.com/cucumber/cucumber-jvm/issues/324) Aslak Hellesøy)
 * [Scala] Fixed regression from v1.0.6 in Scala module - glue code wasn't loaded at all. ([#321](https://github.com/cucumber/cucumber-jvm/issues/321) Aslak Hellesøy)
 
-## [1.0.8](https://github.com/cucumber/cucumber-jvm/compare/v1.0.7...v1.0.8) 2012-05-17
+## [1.0.8](https://github.com/cucumber/cucumber-jvm/compare/v1.0.7...v1.0.8) (2012-05-17)
 
 * [Core] Ability to create `DataTable` objects from a List of objects while specifying what header columns (fields) to use (Aslak Hellesøy)
 * [Core] `table.diff(listOfPojos)` no longer spuriously fails because of pseudo-random column/field ordering (Aslak Hellesøy)
@@ -116,18 +116,18 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * [Core] Remove forced UTC timezone. ([#317](https://github.com/cucumber/cucumber-jvm/pull/317) Gilles Philippart)
 * [Core] Options (Command line or `@Cucumber.Options`) can be overriden with the `cucumber.options` system property. (Aslak Hellesøy)
 
-## [1.0.7](https://github.com/cucumber/cucumber-jvm/compare/v1.0.6...v1.0.7) 2012-05-10
+## [1.0.7](https://github.com/cucumber/cucumber-jvm/compare/v1.0.6...v1.0.7) (2012-05-10)
 
 * [Java] cucumber-java lazily creates instances, just like the other DI containers. (Aslak Hellesøy)
 * [Core] Throw an exception if a glue or feature path doesn't exist (i.e. neither file nor directory) (Aslak Hellesøy)
 
-## [1.0.6](https://github.com/cucumber/cucumber-jvm/compare/v1.0.4...v1.0.6) 2012-05-03
+## [1.0.6](https://github.com/cucumber/cucumber-jvm/compare/v1.0.4...v1.0.6) (2012-05-03)
 
 * [JUnit] Scenarios with skipped, pending or undefined steps show up as yellow in IDEA and Eclipse (They used to be green while the steps were yellow). (Aslak Hellesøy)
 * [Core] Loading features and glue code from the `CLASSPATH` can be done with `classpath:my/path` ([#312](https://github.com/cucumber/cucumber-jvm/issues/312) Aslak Hellesøy)
 * [Clojure] Clojure example can't find cuke_steps.clj ([#291](https://github.com/cucumber/cucumber-jvm/issues/291), [#309](https://github.com/cucumber/cucumber-jvm/pull/309) Nils Wloka)
 
-## [1.0.4](https://github.com/cucumber/cucumber-jvm/compare/v1.0.3...v1.0.4) 2012-04-23
+## [1.0.4](https://github.com/cucumber/cucumber-jvm/compare/v1.0.3...v1.0.4) (2012-04-23)
 
 * [Core] Ability to specify line numbers: `@Cucumber.Options(features = "my/nice.feature:2:10")` ([#234](https://github.com/cucumber/cucumber-jvm/issues/234) Aslak Hellesøy)
 * [WebDriver] Improved example that shows how to reuse a driver for the entire JVM. (Aslak Hellesøy)
@@ -136,7 +136,7 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * [Java] Detect subclassing in glue code and report to the user that it's illegal. ([#301](https://github.com/cucumber/cucumber-jvm/issues/301) Aslak Hellesøy)
 * [Core] Friendlier error message when XStream fails to assign null to primitive fields ([#296](https://github.com/cucumber/cucumber-jvm/issues/296) Aslak Hellesøy)
 
-## [1.0.3](https://github.com/cucumber/cucumber-jvm/compare/v1.0.2...v1.0.3) 2012-04-19
+## [1.0.3](https://github.com/cucumber/cucumber-jvm/compare/v1.0.2...v1.0.3) (2012-04-19)
 
 * [Core] Friendlier error message when XStream fails conversion ([#296](https://github.com/cucumber/cucumber-jvm/issues/296) Aslak Hellesøy)
 * [Core] Empty strings from matched steps and table cells are converted to `null`. This means boxed types must be used if you intend to have empty strings. (Aslak Hellesøy)
@@ -146,20 +146,20 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * [Groovy] Arity mismatch can be avoided by explicitly declaring an empty list of closure parameters. ([#297](https://github.com/cucumber/cucumber-jvm/issues/297) Aslak Hellesøy)
 * [Core] Added DataTable.toTable(List<?> other) for creating a new table. Handy for printing a table when diffing isn't helpful. (Aslak Hellesøy)
 
-## [1.0.2](https://github.com/cucumber/cucumber-jvm/compare/v1.0.1...v1.0.2) 2012-04-03
+## [1.0.2](https://github.com/cucumber/cucumber-jvm/compare/v1.0.1...v1.0.2) (2012-04-03)
 
 * [Java] Snippets using a table have a hint about how to use List<YourClass>. (Aslak Hellesøy)
 * [Java] Don't convert paths to package names - instead throw an exception. This helps people avoid mistakes. (Aslak Hellesøy)
 * [Scala] Fixed generated Scala snippets ([#282](https://github.com/cucumber/cucumber-jvm/pull/282) pawel-s)
 * [JUnit] Automatically turn off ANSI colours when launched from IDEA. (Aslak Hellesøy)
 
-## [1.0.1](https://github.com/cucumber/cucumber-jvm/compare/v1.0.0...v1.0.1) 2012-03-29
+## [1.0.1](https://github.com/cucumber/cucumber-jvm/compare/v1.0.0...v1.0.1) (2012-03-29)
 
 * [Clojure] Fix quoting of generated Clojure snippets ([#277](https://github.com/cucumber/cucumber-jvm/pull/277) Michael van Acken)
 * [Guice] Guice in multi module/class loader setup ([#278](https://github.com/cucumber/cucumber-jvm/pull/278) Matt Nathan)
 * [JUnit] Background steps show up correctly in IntelliJ ([#276](https://github.com/cucumber/cucumber-jvm/issues/276) Aslak Hellesøy)
 
-## [1.0.0](https://github.com/cucumber/cucumber-jvm/compare/v1.0.0.RC24...v1.0.0) 2012-03-27
+## [1.0.0](https://github.com/cucumber/cucumber-jvm/compare/v1.0.0.RC24...v1.0.0) (2012-03-27)
 
 * [Docs] Added Cuke4Duke migration notes to README ([#239](https://github.com/cucumber/cucumber-jvm/pull/239) coldbloodedtx)
 * [Core] Added --monochrome flag, allowing monochrome output for certain formatters ([#221](https://github.com/cucumber/cucumber-jvm/issues/221) Aslak Hellesøy)
@@ -169,19 +169,19 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * [Core] Help text for CLI. ([#142](https://github.com/cucumber/cucumber-jvm/issues/142) Aslak Hellesøy)
 * [JUnit] Eclipse JUnit reports inaccurate run count ([#263](https://github.com/cucumber/cucumber-jvm/issues/263), [#274](https://github.com/cucumber/cucumber-jvm/pull/274) dgradl)
 
-## [1.0.0.RC24](https://github.com/cucumber/cucumber-jvm/compare/v1.0.0.RC23...v1.0.0.RC24) 2012-03-22
+## [1.0.0.RC24](https://github.com/cucumber/cucumber-jvm/compare/v1.0.0.RC23...v1.0.0.RC24) (2012-03-22)
 
 * [Core] Understandable error message if a formatter needs output location. ([#148](https://github.com/cucumber/cucumber-jvm/issues/148), [#232](https://github.com/cucumber/cucumber-jvm/issues/232), [#269](https://github.com/cucumber/cucumber-jvm/issues/269) Aslak Hellesøy)
 * [JUnit] Running with JUnit uses a null formatter by default (instead of a progress formatter). (Aslak Hellesøy)
 * [Clojure] Fix release artifacts so cucumber-clojure can be released. ([#270](https://github.com/cucumber/cucumber-jvm/issues/270) Aslak Hellesøy)
 * [Java] The @Pending annotation no longer exists. Throw a PendingException instead ([#271](https://github.com/cucumber/cucumber-jvm/issues/271) Aslak Hellesøy)
 
-## [1.0.0.RC23](https://github.com/cucumber/cucumber-jvm/compare/v1.0.0.RC22...v1.0.0.RC23) 2012-03-20
+## [1.0.0.RC23](https://github.com/cucumber/cucumber-jvm/compare/v1.0.0.RC22...v1.0.0.RC23) (2012-03-20)
 
 * [JUnit] CucumberException when running Cucumber with Jacoco code coverage ([#258](https://github.com/cucumber/cucumber-jvm/issues/258) Jan Stamer, Aslak Hellesøy)
 * [Scala] Scala Javadoc problems with build ([#231](https://github.com/cucumber/cucumber-jvm/issues/231) Aslak Hellesøy)
 
-## [1.0.0.RC22](https://github.com/cucumber/cucumber-jvm/compare/v1.0.0.RC21...v1.0.0.RC22) 2012-03-20
+## [1.0.0.RC22](https://github.com/cucumber/cucumber-jvm/compare/v1.0.0.RC21...v1.0.0.RC22) (2012-03-20)
 
 * [Java] Snippets for DataTable include a hint about using List<YourType>, so people discover this neat technique (Aslak Hellesøy)
 * [Core] Support DocString and DataTable in generated snippets ([#227](https://github.com/cucumber/cucumber-jvm/issues/227) Aslak Hellesøy)
@@ -190,7 +190,7 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * [Clojure] Native Clojure backend ([#138](https://github.com/cucumber/cucumber-jvm/pull/138) [#265](https://github.com/cucumber/cucumber-jvm/pull/265) Kevin Downey, Nils Wloka)
 * [JUnit] Added `format` attribute to `@Cucumber.Options` (Aslak Hellesøy)
 
-## [1.0.0.RC21](https://github.com/cucumber/cucumber-jvm/compare/v1.0.0.RC20...v1.0.0.RC21) 2012-03-18
+## [1.0.0.RC21](https://github.com/cucumber/cucumber-jvm/compare/v1.0.0.RC20...v1.0.0.RC21) (2012-03-18)
 
 * [Core] Ignore duplicate features instead of throwing exception. ([#259](https://github.com/cucumber/cucumber-jvm/issues/259) Aslak Hellesøy)
 * [Core] Wrong message when runner on a non existing tag on feature ([#245](https://github.com/cucumber/cucumber-jvm/issues/245) Aslak Hellesøy, Jérémy Goupil)
@@ -202,7 +202,7 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * [Spring] Slow Spring context performance ([#241](https://github.com/cucumber/cucumber-jvm/issues/241), [#242](https://github.com/cucumber/cucumber-jvm/pull/242) Vladimir Klyushnikov)
 * [Core] Support for java.util.Calendar arguments in stepdefs. (Aslak Hellesøy)
 
-## [1.0.0.RC20](https://github.com/cucumber/cucumber-jvm/compare/v1.0.0.RC16...v1.0.0.RC20) 2012-02-29
+## [1.0.0.RC20](https://github.com/cucumber/cucumber-jvm/compare/v1.0.0.RC16...v1.0.0.RC20) (2012-02-29)
 
 * [JUnit] Improved JUnit runner. ([#107](https://github.com/cucumber/cucumber-jvm/issues/107), [#211](https://github.com/cucumber/cucumber-jvm/issues/211), [#216](https://github.com/cucumber/cucumber-jvm/pull/216) Giso Deutschmann)
 * [Core] Stacktrace filtering filters away too much. ([#228](https://github.com/cucumber/cucumber-jvm/issues/228) Aslak Hellesøy)
@@ -210,7 +210,7 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * [Core] Indeterministic feature ordering on Unix ([#224](https://github.com/cucumber/cucumber-jvm/issues/224) hutchy2570)
 * [JUnit] New JUnitFormatter (--format junit) that outputs Ant-style JUnit XML. ([#226](https://github.com/cucumber/cucumber-jvm/pull/226), [#171](https://github.com/cucumber/cucumber-jvm/issues/171) Vladimir Miguro)
 
-## [1.0.0.RC16](https://github.com/cucumber/cucumber-jvm/compare/v1.0.0.RC15...v1.0.0.RC16) 2012-02-20
+## [1.0.0.RC16](https://github.com/cucumber/cucumber-jvm/compare/v1.0.0.RC15...v1.0.0.RC16) (2012-02-20)
 
 * [Core] Embed text and images in reports. ([#205](https://github.com/cucumber/cucumber-jvm/issues/205) Aslak Hellesøy)
 * [Core] Detect duplicate step definitions. (Aslak Hellesøy)
@@ -222,21 +222,21 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * [Groovy] Compiled Groovy stepdef scripts are found as well as source ones (Aslak Hellesøy)
 * [Jython] I18n translations for most languages. Languages that can't be transformed to ASCII are excluded. ([#176](https://github.com/cucumber/cucumber-jvm/issues/176), [#197](https://github.com/cucumber/cucumber-jvm/pull/197) Stephen Abrams)
 
-## [1.0.0.RC15](https://github.com/cucumber/cucumber-jvm/compare/v1.0.0.RC14...v1.0.0.RC15) 2012-02-07
+## [1.0.0.RC15](https://github.com/cucumber/cucumber-jvm/compare/v1.0.0.RC14...v1.0.0.RC15) (2012-02-07)
 
 * [Java] You must use `cucumber.runtime.xstream` instead of `com.thoughtworks.xstream` for custom converters.
 * [Core] XStream and Diffutils are now packaged inside the cucumber-core jar under new package names. ([#179](https://github.com/cucumber/cucumber-jvm/issues/179) Aslak Hellesøy)
 * [Core] Fail if no features are found ([#163](https://github.com/cucumber/cucumber-jvm/issues/163) Aslak Hellesøy)
 * [Core] Fail if duplicate features are detected ([#165](https://github.com/cucumber/cucumber-jvm/issues/165) Aslak Hellesøy)
 
-## [1.0.0.RC14](https://github.com/cucumber/cucumber-jvm/compare/v1.0.0.RC13...v1.0.0.RC14) 2012-02-06
+## [1.0.0.RC14](https://github.com/cucumber/cucumber-jvm/compare/v1.0.0.RC13...v1.0.0.RC14) (2012-02-06)
 
 * [Core] HTML formatter produces invalid page if no features ([#191](https://github.com/cucumber/cucumber-jvm/issues/191) Paolo Ambrosio)
 * [Core] i18n java snippets for undefined steps are always generated with @Given annotation ([#184](https://github.com/cucumber/cucumber-jvm/issues/184) Vladimir Klyushnikov)
 * [JUnit] Enhanced JUnit Exception Reporting ([#185](https://github.com/cucumber/cucumber-jvm/pull/185) Klaus Bayrhammer)
 * [Guice] Constructor dependency resolution causes errors in GuiceFactory ([#189](https://github.com/cucumber/cucumber-jvm/issues/189) Matt Nathan)
 
-## [1.0.0.RC13](https://github.com/cucumber/cucumber-jvm/compare/v1.0.0.RC12...v1.0.0.RC13) 2012-01-26
+## [1.0.0.RC13](https://github.com/cucumber/cucumber-jvm/compare/v1.0.0.RC12...v1.0.0.RC13) (2012-01-26)
 
 * [Clojure] Fixed hooks ([#175](https://github.com/cucumber/cucumber-jvm/pull/175) Ronaldo M. Ferraz)
 * [Core] Properly flush and close formatters ([#173](https://github.com/cucumber/cucumber-jvm/pull/173) Aslak Hellesøy, David Kowis)
@@ -245,7 +245,7 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * [Core] Bugfix: Scenario Outlines failing ([#170](https://github.com/cucumber/cucumber-jvm/issues/170) David Kowis, Aslak Hellesøy)
 * [OpenEJB] It's back (was excluded from previous releases because it depended on unreleased libs). (Aslak Hellesøy)
 
-## [1.0.0.RC12](https://github.com/cucumber/cucumber-jvm/compare/v1.0.0.RC11...v1.0.0.RC12) 2012-01-23
+## [1.0.0.RC12](https://github.com/cucumber/cucumber-jvm/compare/v1.0.0.RC11...v1.0.0.RC12) (2012-01-23)
 
 * [JUnit] Tagged hooks are executed properly (Aslak Hellesøy)
 * [JRuby] Better support for World blocks ([#166](https://github.com/cucumber/cucumber-jvm/pull/166) David Kowis)
@@ -253,29 +253,29 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * [Build] Fixed subtle path issues on Windows
 * [Build] Fixed Build Failure: Cucumber-JVM: Scala (FAILURE) ([#167](https://github.com/cucumber/cucumber-jvm/issues/167) Aslak Hellesøy)
 
-## [1.0.0.RC11](https://github.com/cucumber/cucumber-jvm/compare/v1.0.0.RC6...v1.0.0.RC11) 2012-01-21
+## [1.0.0.RC11](https://github.com/cucumber/cucumber-jvm/compare/v1.0.0.RC6...v1.0.0.RC11) (2012-01-21)
 
 * [Build] The build is Maven-based again. It turned out to be the best choice.
 * [Scala] The Scala module is back to life. ([#154](https://github.com/cucumber/cucumber-jvm/issues/154) Jon-Anders Teigen)
 * [Build] The build should work on Windows again. ([#154](https://github.com/cucumber/cucumber-jvm/issues/154) Aslak Hellesøy)
 
-## 1.0.0.RC6 2012-01-17 2012-01-17
+## 1.0.0.RC6 (2012-01-17)
 
 * [Build] Maven pom.xml files are back (generated from ivy.xml). Ant+Ivy still needed for bootstrapping. 
 
-## 1.0.0.RC5 2012-01-17
+## 1.0.0.RC5 (2012-01-17)
 
 * [Clojure] Snippets use single quote instead of double quote for comments.
 * [All] Stepdefs in jars were not loaded correctly on Windows. ([#139](https://github.com/cucumber/cucumber-jvm/issues/139))
 * [Build] Fixed repeated Ant builds. ([#141](https://github.com/cucumber/cucumber-jvm/issues/141))
 * [Build] Push to local maven repo. ([#143](https://github.com/cucumber/cucumber-jvm/issues/143))
 
-## 1.0.0.RC4 2012-01-16
+## 1.0.0.RC4 (2012-01-16)
 
 * [Build] Fixed transitive dependencies in POM files. ([#140](https://github.com/cucumber/cucumber-jvm/issues/140))
 * [Build] Use a dot (not a hyphen) in RC version names. Required for JRuby gem.
 * [Build] Started tagging repo after release.
 
-## 1.0.0-RC3 2012-01-14
+## 1.0.0-RC3 (2012-01-14)
 
 * First proper release
