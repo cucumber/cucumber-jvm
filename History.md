@@ -3,6 +3,7 @@
 * [JRuby] `GEM_PATH` and `RUBY_VERSION` can be set in env var, system property or `cucumber-jruby.properties` resource bundle. (Aslak Hellesøy).
 * [JRuby] Wrong CompatVersion passed to JRuby when 1.9 is given ([#415](https://github.com/cucumber/cucumber-jvm/issues/415) David Kowis)
 * [Core] Custom Formatter/Reporter's `before` and `after` hook weren't run. (Aslak Hellesøy)
+* [Clojure] Clojure backend should define HookDefinition.getLocation(boolean detail) ([#461](https://github.com/cucumber/cucumber-jvm/issues/461), [#471](https://github.com/cucumber/cucumber-jvm/pull/471) Nils Wloka)
 
 ## [1.1.2](https://github.com/cucumber/cucumber-jvm/compare/v1.1.1...v1.1.2) (2013-01-30)
 
