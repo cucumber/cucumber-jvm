@@ -1,4 +1,4 @@
-## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.1.2...master) (Not relweased)
+## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.1.2...master) (Not released)
 
 * [JRuby] `GEM_PATH` and `RUBY_VERSION` can be set in env var, system property or `cucumber-jruby.properties` resource bundle. (Aslak Hellesøy).
 * [JRuby] Wrong CompatVersion passed to JRuby when 1.9 is given ([#415](https://github.com/cucumber/cucumber-jvm/issues/415) David Kowis)
