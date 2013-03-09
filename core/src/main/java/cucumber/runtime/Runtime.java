@@ -282,7 +282,10 @@ public class Runtime implements UnreportedStepExecutor {
         }
     }
 
-    private static boolean isPending(Throwable t) {
+    public static boolean isPending(Throwable t) {
+        if (t == null) {
+            return false;
+        }
         return t.getClass().isAnnotationPresent(Pending.class) || Arrays.binarySearch(PENDING_EXCEPTIONS, t.getClass().getName()) >= 0;
     }
 
