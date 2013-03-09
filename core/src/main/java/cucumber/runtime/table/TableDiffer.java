@@ -38,6 +38,14 @@ public class TableDiffer {
         }
     }
 
+    private Map<Integer, Delta> createDeltasByLine(List<Delta> deltas) {
+        Map<Integer, Delta> deltasByLine = new HashMap<Integer, Delta>();
+        for (Delta delta : deltas) {
+            deltasByLine.put(delta.getOriginal().getPosition(), delta);
+        }
+        return deltasByLine;
+    }
+
     private DataTable createTableDiff(Map<Integer, Delta> deltasByLine) {
         List<DataTableRow> diffTableRows = new ArrayList<DataTableRow>();
         List<List<String>> rows = orig.raw();
@@ -47,6 +55,12 @@ public class TableDiffer {
                 diffTableRows.add(orig.getGherkinRows().get(i));
             } else {
                 addRowsToTableDiff(diffTableRows, delta);
+                // skipping lines involved in a delta
+                if (delta.getType() == Delta.TYPE.CHANGE || delta.getType() == Delta.TYPE.DELETE) {
+                    i += delta.getOriginal().getLines().size() - 1;
+                } else {
+                    diffTableRows.add(orig.getGherkinRows().get(i));
+                }
             }
         }
         // Can have new lines at end
@@ -58,23 +72,21 @@ public class TableDiffer {
     }
 
     private void addRowsToTableDiff(List<DataTableRow> diffTableRows, Delta delta) {
-        if (delta.getType() == Delta.TYPE.CHANGE || delta.getType() == Delta.TYPE.DELETE) {
-            List<DiffableRow> deletedLines = (List<DiffableRow>) delta.getOriginal().getLines();
-            for (DiffableRow row : deletedLines) {
-                diffTableRows.add(new DataTableRow(row.row.getComments(), row.row.getCells(), row.row.getLine(), Row.DiffType.DELETE));
-            }
+        markChangedAndDeletedRowsInOriginalAsMissing(diffTableRows, delta);
+        markChangedAndInsertedRowsInRevisedAsNew(diffTableRows, delta);
+    }
+
+    private void markChangedAndDeletedRowsInOriginalAsMissing(List<DataTableRow> diffTableRows, Delta delta) {
+        List<DiffableRow> deletedLines = (List<DiffableRow>) delta.getOriginal().getLines();
+        for (DiffableRow row : deletedLines) {
+            diffTableRows.add(new DataTableRow(row.row.getComments(), row.row.getCells(), row.row.getLine(), Row.DiffType.DELETE));
         }
+    }
+
+    private void markChangedAndInsertedRowsInRevisedAsNew(List<DataTableRow> diffTableRows, Delta delta) {
         List<DiffableRow> insertedLines = (List<DiffableRow>) delta.getRevised().getLines();
         for (DiffableRow row : insertedLines) {
             diffTableRows.add(new DataTableRow(row.row.getComments(), row.row.getCells(), row.row.getLine(), Row.DiffType.INSERT));
         }
-    }
-
-    private Map<Integer, Delta> createDeltasByLine(List<Delta> deltas) {
-        Map<Integer, Delta> deltasByLine = new HashMap<Integer, Delta>();
-        for (Delta delta : deltas) {
-            deltasByLine.put(delta.getOriginal().getPosition(), delta);
-        }
-        return deltasByLine;
     }
 }
