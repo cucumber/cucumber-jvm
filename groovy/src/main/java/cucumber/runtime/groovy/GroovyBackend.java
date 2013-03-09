@@ -37,7 +37,7 @@ public class GroovyBackend implements Backend {
     private final ClasspathResourceLoader classpathResourceLoader;
 
     private Closure worldClosure;
-    private Object groovyWorld;
+    private Object world;
     private Glue glue;
 
     private static GroovyShell createShell() {
@@ -97,6 +97,7 @@ public class GroovyBackend implements Backend {
 
     @Override
     public void buildWorld() {
+        world = worldClosure == null ? new Object() : worldClosure.call();
     }
 
     private Script parse(Resource resource) {
@@ -113,7 +114,7 @@ public class GroovyBackend implements Backend {
 
     @Override
     public void disposeWorld() {
-        this.groovyWorld = null;
+        this.world = null;
     }
 
     @Override
@@ -126,6 +127,7 @@ public class GroovyBackend implements Backend {
     }
 
     public void registerWorld(Closure closure) {
+        if (worldClosure != null) throw new CucumberException("World is already set");
         worldClosure = closure;
     }
 
@@ -138,19 +140,12 @@ public class GroovyBackend implements Backend {
     }
 
     public void invoke(Closure body, Object[] args) throws Throwable {
-        body.setDelegate(getGroovyWorld());
+        body.setDelegate(world);
         try {
             body.call(args);
         } catch (InvokerInvocationException e) {
             throw e.getCause();
         }
-    }
-
-    private Object getGroovyWorld() {
-        if (groovyWorld == null) {
-            groovyWorld = worldClosure == null ? new Object() : worldClosure.call();
-        }
-        return groovyWorld;
     }
 
     private static StackTraceElement currentLocation() {
