@@ -18,31 +18,31 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <outputDirectory>${project.build.directory}</outputDirectory>
         <gherkin.version>2.11.6</gherkin.version>
-        <groovy.version>2.1.0</groovy.version>
+        <groovy.version>2.1.1</groovy.version>
         <spring.version>3.2.1.RELEASE</spring.version>
         <spring.data.version>1.2.0.RELEASE</spring.data.version>
-        <hibernate.version>4.1.9.Final</hibernate.version>
+        <hibernate.version>4.1.10.Final</hibernate.version>
         <hsqldb.version>2.2.9</hsqldb.version>
         <guice.version>3.0</guice.version>
         <scala.version>2.10.0</scala.version>
-        <clojure.version>1.5.0-RC4</clojure.version>
+        <clojure.version>1.5.0</clojure.version>
         <rhino.version>1.7R4</rhino.version>
         <ioke.version>P-0.4.0-p11</ioke.version>
         <jsoup.version>1.7.2</jsoup.version>
         <junit.version>4.11</junit.version>
         <jython.version>2.5.3</jython.version>
         <mockito.version>1.9.5</mockito.version>
-        <selenium.version>2.29.0</selenium.version>
+        <selenium.version>2.31.0</selenium.version>
         <webbit.version>0.4.14</webbit.version>
         <webbit-rest.version>0.2.0</webbit-rest.version>
-        <jruby.version>1.7.2</jruby.version>
-        <weld-se.version>2.0.0.Beta2</weld-se.version>
+        <jruby.version>1.7.3</jruby.version>
+        <weld-se.version>2.0.0.Beta5</weld-se.version>
         <cdi-api.version>1.1-PRD</cdi-api.version>
         <openejb-core.version>4.5.1</openejb-core.version>
         <cobertura.version>1.9.4.1</cobertura.version>
         <dbunit.version>2.4.9</dbunit.version>
         <log4j.version>1.2.17</log4j.version>
-        <slf4j.version>1.7.1</slf4j.version>
+        <slf4j.version>1.7.2</slf4j.version>
         <freemarker.version>2.3.19</freemarker.version>
         <javax.servlet-api.version>3.0.1</javax.servlet-api.version>
     </properties>
