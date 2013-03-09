@@ -23,12 +23,9 @@ public class Env {
         if (value == null) {
             value = System.getProperty(key);
             if (value == null) {
-                value = System.getProperty(key);
-                if (value == null) {
-                    try {
-                        value = ResourceBundle.getBundle(bundleName).getString(key);
-                    } catch (MissingResourceException ignore) {
-                    }
+                try {
+                    value = ResourceBundle.getBundle(bundleName).getString(key);
+                } catch (MissingResourceException ignore) {
                 }
             }
         }
