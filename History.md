@@ -1,5 +1,6 @@
 ## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.1.2...master) (Not released)
 
+* [Scala] Add support for DataTable and locale-aware type transformations. ([#443](https://github.com/cucumber/cucumber-jvm/issues/443), [#455](https://github.com/cucumber/cucumber-jvm/pull/455) Matthew Lucas)
 * [Groovy] Groovy should throw exception if more then one World registred ([#464](https://github.com/cucumber/cucumber-jvm/pull/464), [#458](https://github.com/cucumber/cucumber-jvm/issues/458) Luxor)
 * [Core] Diffing tables doesn't work when delta span multiple lines ([#465](https://github.com/cucumber/cucumber-jvm/pull/465) Gilles Philippart)
 * [JRuby] `GEM_PATH` and `RUBY_VERSION` can be set in env var, system property or `cucumber-jruby.properties` resource bundle. (Aslak Hellesøy)
