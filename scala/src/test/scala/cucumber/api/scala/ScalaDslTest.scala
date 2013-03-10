@@ -5,8 +5,6 @@ import Assert._
 import _root_.gherkin.I18n
 import _root_.gherkin.formatter.model.Tag
 import collection.JavaConverters._
-
-import _root_.cucumber.runtime.scala.Transform
 import cucumber.api.Scenario
 
 class ScalaDslTest {
@@ -127,7 +125,7 @@ class ScalaDslTest {
 
     assertEquals(1, Dummy.stepDefinitions.size)
     val step = Dummy.stepDefinitions.head
-    assertEquals("ScalaDslTest.scala:123", step.getLocation(true)) // be careful with formatting or this test will break
+    assertEquals("ScalaDslTest.scala:121", step.getLocation(true)) // be careful with formatting or this test will break
     assertEquals("x", step.getPattern)
     step.execute(new I18n("en"), Array())
     assertTrue(called)
@@ -147,27 +145,9 @@ class ScalaDslTest {
 
     assertEquals(1, Dummy.stepDefinitions.size)
     val step = Dummy.stepDefinitions(0)
-    step.execute(new I18n("en"), Array("5", "green"))
+    step.execute(new I18n("en"), Array(new java.lang.Integer(5), "green"))
     assertEquals(5, thenumber)
     assertEquals("green", thecolour)
   }
 
-  @Test
-  def transformation {
-    case class Person(name:String)
-
-    var person:Person = null
-
-    object Dummy extends ScalaDsl with EN {
-
-      implicit val transformPerson = Transform(Person(_))
-
-      Given("Person (\\s+)"){ p:Person =>
-        person = p
-      }
-    }
-
-    Dummy.stepDefinitions(0).execute(new I18n("en"), Array("Aslak"))
-    assertEquals(Person("Aslak"), person)
-  }
 }
