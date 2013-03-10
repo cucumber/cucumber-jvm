@@ -1,4 +1,4 @@
-## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.1.2...master) (Not released)
+## [1.1.3](https://github.com/cucumber/cucumber-jvm/compare/v1.1.2...master) (2013-03-10)
 
 * [Core] Added accessors to `TableDiffException`. ([#384](https://github.com/cucumber/cucumber-jvm/issues/384) Aslak Hellesøy)
 * [Core] Fixed use of formatter to list all step results in JSON output ([#426](https://github.com/cucumber/cucumber-jvm/pull/426) agattiker)
