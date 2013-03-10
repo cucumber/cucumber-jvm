@@ -1,5 +1,6 @@
 ## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.1.2...master) (Not released)
 
+* [Core] Added accessors to `TableDiffException`. ([#384](https://github.com/cucumber/cucumber-jvm/issues/384) Aslak Hellesøy)
 * [Core] Fixed use of formatter to list all step results in JSON output ([#426](https://github.com/cucumber/cucumber-jvm/pull/426) agattiker)
 * [Scala] Add support for DataTable and locale-aware type transformations. ([#443](https://github.com/cucumber/cucumber-jvm/issues/443), [#455](https://github.com/cucumber/cucumber-jvm/pull/455) Matthew Lucas)
 * [Groovy] Groovy should throw exception if more then one World registred ([#464](https://github.com/cucumber/cucumber-jvm/pull/464), [#458](https://github.com/cucumber/cucumber-jvm/issues/458) Luxor)

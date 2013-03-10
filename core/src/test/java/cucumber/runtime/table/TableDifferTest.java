@@ -8,6 +8,7 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 
 public class TableDifferTest {
 
@@ -175,7 +176,6 @@ public class TableDifferTest {
             assertEquals(expected, e.getMessage());
             throw e;
         }
-
     }
 
     @Test(expected = TableDiffException.class)
@@ -195,7 +195,27 @@ public class TableDifferTest {
             assertEquals(expected, e.getMessage());
             throw e;
         }
+    }
 
+    @Test(expected = TableDiffException.class)
+    public void should_return_tables() {
+        DataTable from = table();
+        DataTable to = otherTableWithTwoConsecutiveRowsInserted();
+        try {
+            from.diff(to);
+        } catch (TableDiffException e) {
+            String expected = "" +
+                    "      | Aslak | aslak@email.com      | 123 |\n" +
+                    "      | Joe   | joe@email.com        | 234 |\n" +
+                    "    + | Doe   | joe@email.com        | 234 |\n" +
+                    "    + | Foo   | schnickens@email.net | 789 |\n" +
+                    "      | Bryan | bryan@email.org      | 456 |\n" +
+                    "      | Ni    | ni@email.com         | 654 |\n";
+            assertSame(from, e.getFrom());
+            assertSame(to, e.getTo());
+            assertEquals(expected, e.getDiff().toString());
+            throw e;
+        }
     }
 
     public static class TestPojo {
@@ -209,7 +229,6 @@ public class TableDifferTest {
             this.decisionCriteria = decisionCriteria;
         }
     }
-
 
     @Test
     public void diff_with_list_of_pojos_and_camelcase_header_mapping() {
