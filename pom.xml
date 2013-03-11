@@ -500,14 +500,14 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>2.8.1</version>
+                    <version>2.9</version>
                     <configuration>
                         <aggregate>true</aggregate>
                         <use>false</use>
                         <excludePackageNames>cucumber.runtime,cucumber.runtime.*</excludePackageNames>
                         <links>
-                            <link>http://docs.oracle.com/javase/6/docs/api/</link>
-                            <link>http://junit.org/apidocs/</link>
+                            <link>http://docs.oracle.com/javase/7/docs/api/</link>
+                            <link>http://junit.sourceforge.net/javadoc/</link>
                         </links>
                         <groups>
                             <group>
