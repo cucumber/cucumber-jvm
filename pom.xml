@@ -25,7 +25,6 @@
         <hsqldb.version>2.2.9</hsqldb.version>
         <guice.version>3.0</guice.version>
         <clojure.version>1.5.0</clojure.version>
-        <clojure.version>1.5.0-RC4</clojure.version>
         <rhino.version>1.7R4</rhino.version>
         <ioke.version>P-0.4.0-p11</ioke.version>
         <jsoup.version>1.7.2</jsoup.version>
