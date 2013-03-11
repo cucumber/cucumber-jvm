@@ -24,7 +24,6 @@
         <hibernate.version>4.1.10.Final</hibernate.version>
         <hsqldb.version>2.2.9</hsqldb.version>
         <guice.version>3.0</guice.version>
-        <scala.version>2.10.0</scala.version>
         <clojure.version>1.5.0</clojure.version>
         <rhino.version>1.7R4</rhino.version>
         <ioke.version>P-0.4.0-p11</ioke.version>
@@ -114,7 +113,12 @@
             </dependency>
             <dependency>
                 <groupId>info.cukes</groupId>
-                <artifactId>cucumber-scala</artifactId>
+                <artifactId>cucumber-scala_2.10</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>info.cukes</groupId>
+                <artifactId>cucumber-scala_2.9.2</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -241,16 +245,6 @@
                 <groupId>com.google.inject</groupId>
                 <artifactId>guice</artifactId>
                 <version>${guice.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.scala-lang</groupId>
-                <artifactId>scala-library</artifactId>
-                <version>${scala.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.scala-lang</groupId>
-                <artifactId>scala-compiler</artifactId>
-                <version>${scala.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.clojure</groupId>
@@ -380,6 +374,7 @@
         <module>java</module>
         <module>openejb</module>
         <module>scala</module>
+        <module>scala/scala_2.9.2</module>
     </modules>
 
     <profiles>
