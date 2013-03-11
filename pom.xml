@@ -374,7 +374,7 @@
         <module>java</module>
         <module>openejb</module>
         <module>scala</module>
-        <module>scala/scala_2.9.2</module>
+        <module>scala/scala_previous</module>
     </modules>
 
     <profiles>
