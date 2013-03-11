@@ -3,9 +3,11 @@ package cucumber.runtime.formatter;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import gherkin.formatter.model.Step;
+import gherkin.formatter.model.Tag;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,6 +19,7 @@ import java.util.Scanner;
 import org.junit.Test;
 
 import cucumber.runtime.Backend;
+import cucumber.runtime.HookDefinition;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.io.ClasspathResourceLoader;
@@ -34,6 +37,8 @@ public class JSONPrettyFormatterTest {
     }
 
     private File runFeaturesWithJSONPrettyFormatter(final List<String> featurePaths) throws IOException {
+    	HookDefinition hook = mock(HookDefinition.class);
+        when(hook.matches(anyListOf(Tag.class))).thenReturn(true);
         File report = File.createTempFile("cucumber-jvm-junit", ".json");
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         final ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
@@ -47,6 +52,7 @@ public class JSONPrettyFormatterTest {
         Backend backend = mock(Backend.class);
         when(backend.getSnippet(any(Step.class))).thenReturn("TEST SNIPPET");
         final cucumber.runtime.Runtime runtime = new Runtime(resourceLoader, classLoader, asList(backend), runtimeOptions);
+        runtime.getGlue().addBeforeHook(hook);
         runtime.run();
         return report;
     }
