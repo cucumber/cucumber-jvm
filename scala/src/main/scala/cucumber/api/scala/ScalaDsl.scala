@@ -477,7 +477,7 @@ trait ScalaDsl { self =>
 
     private def register(manifests: List[Manifest[_]])(pf: PartialFunction[List[Any], Any]){
       val frame: StackTraceElement = obtainFrame
-      stepDefinitions += new ScalaStepDefinition(frame, name, regex, manifests.map(_.runtimeClass), pf)
+      stepDefinitions += new ScalaStepDefinition(frame, name, regex, manifests.map(_.erasure), pf)
     }
 
     /**
