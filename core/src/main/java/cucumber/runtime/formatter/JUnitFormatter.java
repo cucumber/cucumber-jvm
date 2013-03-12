@@ -16,6 +16,7 @@ import gherkin.formatter.model.Step;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -88,8 +89,11 @@ class JUnitFormatter implements Formatter, Reporter {
     @Override
     public void done() {
         try {
-            //set up a transformer
+            // set up a transformer
+            rootElement.setAttribute("name", JUnitFormatter.class.getName());
             rootElement.setAttribute("failures", String.valueOf(rootElement.getElementsByTagName("failure").getLength()));
+            rootElement.setAttribute("skipped", String.valueOf(rootElement.getElementsByTagName("skipped").getLength()));
+            rootElement.setAttribute("time", sumTimes(rootElement.getElementsByTagName("testcase")));
             TransformerFactory transfac = TransformerFactory.newInstance();
             Transformer trans = transfac.newTransformer();
             trans.setOutputProperty(OutputKeys.INDENT, "yes");
@@ -123,6 +127,24 @@ class JUnitFormatter implements Formatter, Reporter {
             testCase.results.add(result);
         }
 
+    }
+
+    private String sumTimes(NodeList testCaseNodes) {
+        double totalDurationSecondsForAllTimes = 0.0d;
+        for( int i = 0; i < testCaseNodes.getLength(); i++ ) {
+            try {
+                double testCaseTime =
+                        Double.parseDouble(testCaseNodes.item(i).getAttributes().getNamedItem("time").getNodeValue());
+                totalDurationSecondsForAllTimes += testCaseTime;
+            } catch ( NumberFormatException e ) {
+                e.printStackTrace();
+            } catch ( NullPointerException e ) {
+                e.printStackTrace();
+            }
+        }
+        DecimalFormat nfmt = (DecimalFormat) NumberFormat.getNumberInstance(Locale.US);
+        nfmt.applyPattern("0.######");
+        return nfmt.format(totalDurationSecondsForAllTimes);
     }
 
     private void increaseAttributeValue(Element element, String attribute) {
@@ -238,7 +260,7 @@ class JUnitFormatter implements Formatter, Reporter {
                 child = doc.createElement("system-out");
                 child.appendChild(doc.createCDATASection(sb.toString()));
             }
-            
+
             Node existingChild = tc.getFirstChild();
             if (existingChild == null) {
                 tc.appendChild(child);
