@@ -1,11 +1,11 @@
 package cucumber.runtime.formatter;
 
-import static java.util.Arrays.asList;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import cucumber.runtime.Backend;
+import cucumber.runtime.Runtime;
+import cucumber.runtime.RuntimeOptions;
+import cucumber.runtime.io.ClasspathResourceLoader;
 import gherkin.formatter.model.Step;
+import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,12 +14,11 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Scanner;
 
-import org.junit.Test;
-
-import cucumber.runtime.Backend;
-import cucumber.runtime.Runtime;
-import cucumber.runtime.RuntimeOptions;
-import cucumber.runtime.io.ClasspathResourceLoader;
+import static java.util.Arrays.asList;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class JSONPrettyFormatterTest {
 

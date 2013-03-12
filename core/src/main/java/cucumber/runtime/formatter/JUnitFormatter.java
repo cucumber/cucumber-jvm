@@ -238,7 +238,7 @@ class JUnitFormatter implements Formatter, Reporter {
                 child = doc.createElement("system-out");
                 child.appendChild(doc.createCDATASection(sb.toString()));
             }
-            
+
             Node existingChild = tc.getFirstChild();
             if (existingChild == null) {
                 tc.appendChild(child);

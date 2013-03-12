@@ -34,7 +34,7 @@ public class SanityChecker implements TestListener {
         if (output.contains(INSANITY)) {
             throw new RuntimeException("Something went wrong\n" + output);
         }
-        if(debug) {
+        if (debug) {
             System.out.println("===== " + testClass.getName());
             System.out.println(output);
             System.out.println("=====");

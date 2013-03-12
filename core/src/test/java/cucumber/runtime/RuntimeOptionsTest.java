@@ -2,14 +2,13 @@ package cucumber.runtime;
 
 import org.junit.Test;
 
-import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
 import static java.util.Arrays.asList;
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
