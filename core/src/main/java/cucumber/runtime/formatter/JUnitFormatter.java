@@ -137,9 +137,9 @@ class JUnitFormatter implements Formatter, Reporter {
                         Double.parseDouble(testCaseNodes.item(i).getAttributes().getNamedItem("time").getNodeValue());
                 totalDurationSecondsForAllTimes += testCaseTime;
             } catch ( NumberFormatException e ) {
-                e.printStackTrace();
+                throw new CucumberException(e);
             } catch ( NullPointerException e ) {
-                e.printStackTrace();
+                throw new CucumberException(e);
             }
         }
         DecimalFormat nfmt = (DecimalFormat) NumberFormat.getNumberInstance(Locale.US);
