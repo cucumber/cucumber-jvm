@@ -31,12 +31,12 @@ public class ParameterInfo {
         Type[] genericParameterTypes = method.getGenericParameterTypes();
         Annotation[][] annotations = method.getParameterAnnotations();
         for (int i = 0; i < genericParameterTypes.length; i++) {
-            String dateFormat = null;
+            String format = null;
             String delimiter = DEFAULT_DELIMITER;
             Transformer transformer = null;
             for (Annotation annotation : annotations[i]) {
                 if (annotation instanceof Format) {
-                    dateFormat = ((Format) annotation).value();
+                    format = ((Format) annotation).value();
                 }
                 if (annotation instanceof Delimiter) {
                     delimiter = ((Delimiter) annotation).value();
@@ -51,7 +51,7 @@ public class ParameterInfo {
                     }
                 }
             }
-            result.add(new ParameterInfo(genericParameterTypes[i], dateFormat, delimiter, transformer));
+            result.add(new ParameterInfo(genericParameterTypes[i], format, delimiter, transformer));
         }
         return result;
     }
