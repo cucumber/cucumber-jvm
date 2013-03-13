@@ -11,6 +11,7 @@ import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class RuntimeOptionsTest {
     @Test
@@ -153,4 +154,15 @@ public class RuntimeOptionsTest {
         RuntimeOptions runtimeOptions = new RuntimeOptions(properties, "--strict");
         assertFalse(runtimeOptions.strict);
     }
+
+    @Test
+    public void fail_on_unsupported_options() {
+        try {
+            new RuntimeOptions(new Properties(), "-concreteUnsupportedOption", "somewhere", "somewhere_else");
+            fail();
+        } catch (CucumberException e) {
+            assertEquals("Unknown option: -concreteUnsupportedOption", e.getMessage());
+        }
+    }
+
 }
