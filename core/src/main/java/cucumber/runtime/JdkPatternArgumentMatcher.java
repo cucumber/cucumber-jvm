@@ -16,8 +16,8 @@ public class JdkPatternArgumentMatcher {
 
     public List<Argument> argumentsFrom(String stepName) {
         Matcher matcher = pattern.matcher(stepName);
-        if (matcher.matches()) {
-            List<Argument> arguments = new ArrayList<Argument>();
+        if (matcher.lookingAt()) {
+            List<Argument> arguments = new ArrayList<Argument>(matcher.groupCount());
             for (int i = 1; i <= matcher.groupCount(); i++) {
                 arguments.add(new Argument(matcher.start(i), matcher.group(i)));
             }
