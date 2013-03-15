@@ -1,7 +1,9 @@
 package cucumber.runtime.java.spring;
 
 import cucumber.runtime.CucumberException;
+import cucumber.runtime.groovy.GroovyBindingConfiguration;
 import cucumber.runtime.java.ObjectFactory;
+import groovy.lang.Binding;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
@@ -79,4 +81,11 @@ public class SpringFactory implements ObjectFactory {
         }
     }
 
+    public static class BindingConfiguration implements GroovyBindingConfiguration {
+
+    @Override
+    public void configure(Binding context) {
+        context.setVariable("applicationContext", applicationContext);
+    }
+}
 }
