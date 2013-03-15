@@ -20,6 +20,7 @@ import org.codehaus.groovy.runtime.InvokerInvocationException;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -62,6 +63,7 @@ public class GroovyBackend implements Backend {
     public void loadGlue(Glue glue, List<String> gluePaths) {
         this.glue = glue;
         final Binding context = shell.getContext();
+        configureBinding(context);
 
         for (String gluePath : gluePaths) {
             // Load sources
@@ -78,6 +80,15 @@ public class GroovyBackend implements Backend {
                     throw new CucumberException(e);
                 }
             }
+        }
+    }
+
+    private void configureBinding(Binding context) {
+        Collection<? extends GroovyBindingConfiguration> configurations =
+                classpathResourceLoader.instantiateSubclasses(GroovyBindingConfiguration.class, "cucumber.runtime", new Class[0], new Object[0]);
+
+        for (GroovyBindingConfiguration configuration : configurations) {
+            configuration.configure(context);
         }
     }
 
