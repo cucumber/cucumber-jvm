@@ -75,7 +75,7 @@ public class RuntimeOptions {
             String arg = args.remove(0).trim();
 
             if (arg.equals("--help") || arg.equals("-h")) {
-                System.out.println(USAGE);
+                printUsage();
                 System.exit(0);
             } else if (arg.equals("--version") || arg.equals("-v")) {
                 System.out.println(VERSION);
@@ -100,6 +100,9 @@ public class RuntimeOptions {
                 String nextArg = args.remove(0);
                 Pattern patternFilter = Pattern.compile(nextArg);
                 parsedFilters.add(patternFilter);
+            } else if (arg.startsWith("-")) {
+                printUsage();
+                throw new CucumberException("Unknown option: " + arg);
             } else {
                 PathWithLines pathWithLines = new PathWithLines(arg);
                 featurePaths.add(pathWithLines.path);
@@ -110,6 +113,11 @@ public class RuntimeOptions {
             filters.clear();
             filters.addAll(parsedFilters);
         }
+    }
+
+    private void printUsage()
+    {
+        System.out.println(USAGE);
     }
 
     public List<CucumberFeature> cucumberFeatures(ResourceLoader resourceLoader) {
