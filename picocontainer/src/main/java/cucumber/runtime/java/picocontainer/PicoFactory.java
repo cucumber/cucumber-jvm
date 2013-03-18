@@ -35,6 +35,16 @@ public class PicoFactory implements ObjectFactory {
         return pico.getComponent(type);
     }
 
+    @Override
+    public Object getContainer() {
+        return pico;
+    }
+
+    @Override
+    public String getContainerName() {
+        return "container";
+    }
+
     private void addConstructorDependencies(Class<?> clazz) {
         for (Constructor constructor : clazz.getConstructors()) {
             for (Class paramClazz : constructor.getParameterTypes()) {

@@ -4,11 +4,11 @@ class CustomWorld {
     private def cukes
     def lastAte
 
-    def haveCukes(n) {
+    def haveCukes(Integer n) {
         cukes = n
     }
 
-    def checkCukes(n) {
+    def checkCukes(Integer n) {
         assertEquals(cukes, n)
     }
 

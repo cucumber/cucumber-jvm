@@ -7,6 +7,8 @@ import cucumber.runtime.UnreportedStepExecutor;
 import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.io.Resource;
 import cucumber.runtime.io.ResourceLoader;
+import cucumber.runtime.java.JavaBackend;
+import cucumber.runtime.java.ObjectFactory;
 import cucumber.runtime.snippets.SnippetGenerator;
 import gherkin.TagExpression;
 import gherkin.formatter.model.Step;
@@ -20,10 +22,7 @@ import org.codehaus.groovy.runtime.InvokerInvocationException;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import static cucumber.runtime.io.MultiLoader.packageName;
@@ -35,6 +34,7 @@ public class GroovyBackend implements Backend {
     private final SnippetGenerator snippetGenerator = new SnippetGenerator(new GroovySnippet());
     private final ResourceLoader resourceLoader;
     private final GroovyShell shell;
+    private final ObjectFactory objectFactory;
     private final ClasspathResourceLoader classpathResourceLoader;
 
     private Closure worldClosure;
@@ -57,25 +57,39 @@ public class GroovyBackend implements Backend {
         this.shell = shell;
         instance = this;
         classpathResourceLoader = new ClasspathResourceLoader(shell.getClassLoader());
+        this.objectFactory = JavaBackend.loadObjectFactory(classpathResourceLoader);
     }
 
     @Override
     public void loadGlue(Glue glue, List<String> gluePaths) {
         this.glue = glue;
         final Binding context = shell.getContext();
-        configureBinding(context);
-
+        final List<Class<? extends Script>> scriptClasses = new ArrayList<Class<? extends Script>>();
         for (String gluePath : gluePaths) {
             // Load sources
             for (Resource resource : resourceLoader.resources(gluePath, ".groovy")) {
                 Script script = parse(resource);
-                runIfScript(context, script);
+                scriptClasses.add(script.getClass());
             }
+
             // Load compiled scripts
-            for (Class<? extends Script> glueClass : classpathResourceLoader.getDescendants(Script.class, packageName(gluePath))) {
+            scriptClasses.addAll(classpathResourceLoader.getDescendants(Script.class, packageName(gluePath)));
+
+            // Register scripts with object factory
+            for (Class<? extends Script> glueClass : scriptClasses) {
+                objectFactory.addClass(glueClass);
+            }
+
+            for (Class<? extends Script> glueClass : scriptClasses) {
                 try {
-                    Script script = glueClass.getConstructor(Binding.class).newInstance(context);
-                    runIfScript(context, script);
+                    Script script = objectFactory.getInstance(glueClass);
+                    if (objectFactory.getContainer() != null) {
+                        Binding newBinding = new Binding();
+                        newBinding.setVariable(objectFactory.getContainerName(), objectFactory.getContainer());
+                        runIfScript(newBinding, script);
+                    } else {
+                        runIfScript(context, script);
+                    }
                 } catch (Exception e) {
                     throw new CucumberException(e);
                 }
@@ -83,18 +97,10 @@ public class GroovyBackend implements Backend {
         }
     }
 
-    private void configureBinding(Binding context) {
-        Collection<? extends GroovyBindingConfiguration> configurations =
-                classpathResourceLoader.instantiateSubclasses(GroovyBindingConfiguration.class, "cucumber.runtime", new Class[0], new Object[0]);
-
-        for (GroovyBindingConfiguration configuration : configurations) {
-            configuration.configure(context);
-        }
-    }
-
     private void runIfScript(Binding context, Script script) {
         Class scriptClass = script.getMetaClass().getTheClass();
         if (isScript(script) && !scripts.contains(scriptClass)) {
+
             script.setBinding(context);
             script.run();
             scripts.add(scriptClass);

@@ -8,4 +8,8 @@ public interface ObjectFactory {
     void addClass(Class<?> clazz);
 
     <T> T getInstance(Class<T> type);
+
+    Object getContainer();
+
+    String getContainerName();
 }

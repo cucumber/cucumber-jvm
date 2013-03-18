@@ -28,7 +28,7 @@ public class JavaBackend implements Backend {
     public JavaBackend(ResourceLoader ignored) {
         classpathResourceLoader = new ClasspathResourceLoader(Thread.currentThread().getContextClassLoader());
         classpathMethodScanner = new ClasspathMethodScanner(classpathResourceLoader);
-        objectFactory = loadObjectFactory();
+        objectFactory = loadObjectFactory(classpathResourceLoader);
     }
 
     public JavaBackend(ObjectFactory objectFactory) {
@@ -37,7 +37,7 @@ public class JavaBackend implements Backend {
         this.objectFactory = objectFactory;
     }
 
-    private ObjectFactory loadObjectFactory() {
+    public static ObjectFactory loadObjectFactory(ClasspathResourceLoader classpathResourceLoader) {
         ObjectFactory objectFactory;
         try {
             objectFactory = classpathResourceLoader.instantiateExactlyOneSubclass(ObjectFactory.class, "cucumber.runtime", new Class[0], new Object[0]);

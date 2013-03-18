@@ -59,5 +59,15 @@ public class OpenEJBObjectFactory implements ObjectFactory {
         instances.put(type, object);
         return object;
     }
+
+    @Override
+    public Object getContainer() {
+        return container;
+    }
+
+    @Override
+    public String getContainerName() {
+        return "container";
+    }
 }
 

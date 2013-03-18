@@ -50,4 +50,14 @@ public class WeldFactory extends Weld implements ObjectFactory {
     public <T> T getInstance(Class<T> type) {
         return weld.instance().select(type).get();
     }
+
+    @Override
+    public Object getContainer() {
+        return weld;
+    }
+
+    @Override
+    public String getContainerName() {
+        return "container";
+    }
 }
