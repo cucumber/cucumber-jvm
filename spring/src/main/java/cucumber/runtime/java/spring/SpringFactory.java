@@ -79,4 +79,13 @@ public class SpringFactory implements ObjectFactory {
         }
     }
 
+    @Override
+    public Object getContainer() {
+        return applicationContext;
+    }
+
+    @Override
+    public String getContainerName() {
+        return "applicationContext";
+    }
 }

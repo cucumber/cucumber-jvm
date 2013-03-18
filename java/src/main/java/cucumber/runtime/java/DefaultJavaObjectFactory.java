@@ -32,6 +32,16 @@ class DefaultJavaObjectFactory implements ObjectFactory {
         return instance;
     }
 
+    @Override
+    public Object getContainer() {
+        return null;
+    }
+
+    @Override
+    public String getContainerName() {
+        return null;
+    }
+
     private <T> T cacheNewInstance(Class<T> type) {
         try {
             Constructor<T> constructor = type.getConstructor();

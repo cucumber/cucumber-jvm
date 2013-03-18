@@ -23,6 +23,10 @@
         </dependency>
         <dependency>
             <groupId>info.cukes</groupId>
+            <artifactId>cucumber-java</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>info.cukes</groupId>
             <artifactId>cucumber-jvm-deps</artifactId>
             <scope>provided</scope>
         </dependency>

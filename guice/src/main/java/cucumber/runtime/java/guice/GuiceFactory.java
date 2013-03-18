@@ -66,6 +66,16 @@ public class GuiceFactory implements ObjectFactory {
         return injector.getInstance(clazz);
     }
 
+    @Override
+    public Object getContainer() {
+        return injector;
+    }
+
+    @Override
+    public String getContainerName() {
+        return "injector";
+    }
+
     /**
      * Guice module that configures all added classes to the module as singletons and installs all dynamically loaded
      * modules.
