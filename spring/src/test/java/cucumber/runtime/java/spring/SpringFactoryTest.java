@@ -1,13 +1,14 @@
 package cucumber.runtime.java.spring;
 
-import cucumber.runtime.java.ObjectFactory;
-import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
+
+import cucumber.runtime.java.ObjectFactory;
 
 public class SpringFactoryTest {
 
@@ -36,13 +37,13 @@ public class SpringFactoryTest {
         // Feature 1
         final ObjectFactory factory1 = new SpringFactory();
         factory1.start();
-        final DummyComponent o1 = factory1.getInstance(DummyComponent.class);
+        final BellyBean o1 = factory1.getInstance(BellyStepdefs.class).getBellyBean();
         factory1.stop();
 
         // Feature 2
         final ObjectFactory factory2 = new SpringFactory();
         factory2.start();
-        final DummyComponent o2 = factory2.getInstance(DummyComponent.class);
+        final BellyBean o2 = factory2.getInstance(BellyStepdefs.class).getBellyBean();
         factory2.stop();
 
         assertNotNull(o1);

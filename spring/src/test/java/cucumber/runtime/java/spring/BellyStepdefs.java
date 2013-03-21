@@ -1,22 +1,22 @@
 package cucumber.runtime.java.spring;
 
-import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import static org.junit.Assert.assertEquals;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+
+import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
+
+@ContextConfiguration("classpath:cucumber.xml")
 public class BellyStepdefs {
-    private final Belly belly;
+	
+	@Autowired
+    private Belly belly;
 
     @Autowired
     private BellyBean bellyBean;
-
-    @Autowired
-    public BellyStepdefs(final Belly belly) {
-        this.belly = belly;
-    }
-
+    
     @Then("^there are (\\d+) cukes in my belly")
     public void checkCukes(final int n) {
         assertEquals(n, belly.getCukes());
@@ -36,4 +36,9 @@ public class BellyStepdefs {
     public void there_are_beans_in_my_belly(int n) {
         assertEquals(n, bellyBean.getCukes());
     }
+    
+    public BellyBean getBellyBean() {
+		return bellyBean;
+	}
+    
 }

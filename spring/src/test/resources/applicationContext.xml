@@ -5,6 +5,8 @@
 
     <bean id="bellyBean" class="cucumber.runtime.java.spring.BellyBean"/>
 
+	<bean id="testController" class="cucumber.runtime.java.spring.TestController"/>
+
     <bean id="placeholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="properties">
             <props>
