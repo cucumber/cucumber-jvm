@@ -16,11 +16,10 @@ import cucumber.runtime.java.ObjectFactory;
  * Spring based implementation of ObjectFactory.
  * <p/>
  * <p>
- * It uses two Spring contexts:
  * <ul>
- * <li>one which represents the application under test. This is configured by
- * cucumber.xml (in the class path) and is never reloaded.</li>
- * <li>one which contains the step definitions and is reloaded for each
+ * <li>It uses TestContextManager to create and prepare test instances. Configuration via: @ContextConfiguration
+ * </li>
+ * <li>It also uses a context which contains the step definitions and is reloaded for each
  * scenario.</li>
  * </ul>
  * </p>
@@ -73,18 +72,20 @@ public class SpringFactory implements ObjectFactory {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getInstance(final Class<T> type) {
-		T instance = null;
 		if (!applicationContext.getBeanFactory().containsSingleton(type.getName())) {
-			try{
-				instance = createTest(type);
-				TestContextManager contextManager = new TestContextManager(type);
-				contextManager.prepareTestInstance(instance);
-			} catch (Exception e) {
-				new CucumberException(e.getMessage(), e);
-			}
-			applicationContext.getBeanFactory().registerSingleton(type.getName(), instance);
-		} else {
-			instance = applicationContext.getBean(type);
+			applicationContext.getBeanFactory().registerSingleton(type.getName(), getTestInstance(type));
+		}
+		return applicationContext.getBean(type);
+	}
+
+	private <T> T getTestInstance(final Class<T> type) {
+		T instance = null;
+		try {
+			instance = createTest(type);
+			TestContextManager contextManager = new TestContextManager(type);
+			contextManager.prepareTestInstance(instance);
+		} catch (Exception e) {
+			new CucumberException(e.getMessage(), e);
 		}
 		return instance;
 	}
