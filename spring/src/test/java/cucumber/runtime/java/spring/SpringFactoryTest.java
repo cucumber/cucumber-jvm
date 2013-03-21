@@ -61,8 +61,6 @@ public class SpringFactoryTest {
 
         assertNotNull(stepdef);
         assertTrue(stepdef.isAutowired());
-        assertTrue(stepdef.isPostConstructCalled());
-        assertTrue(stepdef.isPreDestroyCalled());
     }
 
     @Test
