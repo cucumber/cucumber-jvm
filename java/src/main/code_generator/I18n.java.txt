@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
  * ${i18n.getLocale().getDisplayLanguage()}
  */
 public class ${i18n.underscoredIsoCode} {
-    private ${i18n.underscoredIsoCode} {}
+    private ${i18n.underscoredIsoCode}() {}
 
 <% i18n.codeKeywords.each { kw -> %>
     @Retention(RetentionPolicy.RUNTIME)
