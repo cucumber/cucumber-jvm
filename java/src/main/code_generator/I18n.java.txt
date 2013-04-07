@@ -1,4 +1,4 @@
-package cucumber.api.java.${i18n.underscoredIsoCode};
+package cucumber.api.java;
 
 import cucumber.runtime.java.StepDefAnnotation;
 
@@ -7,18 +7,26 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-@StepDefAnnotation
-public @interface ${kw} {
-    /**
-     * @return a regular expression
-     */
-    String value();
+/**
+ * ${i18n.getLocale().getDisplayLanguage()}
+ */
+public class ${i18n.underscoredIsoCode} {
+    private ${i18n.underscoredIsoCode} {}
 
-    /**
-     * @return max amount of time this is allowed to run for. 0 (default) means no restriction.
-     */
-    int timeout() default 0;
+<% i18n.codeKeywords.each { kw -> %>
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.METHOD)
+    @StepDefAnnotation
+    public @interface ${kw} {
+        /**
+         * @return a regular expression
+         */
+        String value();
+
+        /**
+         * @return max amount of time this is allowed to run for. 0 (default) means no restriction.
+         */
+        int timeout() default 0;
+    }
+<% } %>
 }
-
