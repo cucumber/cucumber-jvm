@@ -1,7 +1,7 @@
 package cucumber.runtime.java.stepdefs;
 
 import cucumber.api.java.en.Given;
-import cucumber.api.java.sv.Så;
+import cucumber.api.java.sv.*;
 
 public class Stepdefs {
     @Given("test")
