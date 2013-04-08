@@ -5,25 +5,22 @@ import de.akquinet.jbosscc.needle.injection.InjectionTargetInformation;
 
 /**
  * Returns a value provider returning the value given in constructor.
- * 
- * @author Simon Zambrovski
- * 
  */
 public class ValueInjectionProvider implements InjectionProvider<ValueGetter> {
 
     private final String value;
 
-    public ValueInjectionProvider(String value) {
+    public ValueInjectionProvider(final String value) {
         this.value = value;
     }
 
     @Override
-    public boolean verify(InjectionTargetInformation injectionTargetInformation) {
+    public boolean verify(final InjectionTargetInformation injectionTargetInformation) {
         return injectionTargetInformation.getType().isAssignableFrom(ValueGetter.class);
     }
 
     @Override
-    public ValueGetter getInjectedObject(Class<?> injectionPointType) {
+    public ValueGetter getInjectedObject(final Class<?> injectionPointType) {
         return new ValueGetter() {
             @Override
             public String getValue() {
@@ -33,7 +30,7 @@ public class ValueInjectionProvider implements InjectionProvider<ValueGetter> {
     }
 
     @Override
-    public Object getKey(InjectionTargetInformation injectionTargetInformation) {
+    public Object getKey(final InjectionTargetInformation injectionTargetInformation) {
         return ValueGetter.class;
     }
 
