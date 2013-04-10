@@ -17,7 +17,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <outputDirectory>${project.build.directory}</outputDirectory>
-        <gherkin.version>2.11.6</gherkin.version>
+        <gherkin.version>2.11.8</gherkin.version>
         <groovy.version>2.1.2</groovy.version>
         <spring.version>3.2.2.RELEASE</spring.version>
         <spring.data.version>1.3.0.RELEASE</spring.data.version>
