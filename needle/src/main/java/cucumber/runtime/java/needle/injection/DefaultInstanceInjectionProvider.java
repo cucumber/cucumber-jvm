@@ -1,4 +1,7 @@
-package de.akquinet.jbosscc.needle.injection;
+package cucumber.runtime.java.needle.injection;
+
+import de.akquinet.jbosscc.needle.injection.InjectionProvider;
+import de.akquinet.jbosscc.needle.injection.InjectionTargetInformation;
 
 /**
  * InjectionProvider that provides a singleton instance of type T whenever injection is required

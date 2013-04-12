@@ -13,10 +13,10 @@ import org.junit.Test;
 
 import cucumber.api.needle.InjectionProviderInstancesSupplier;
 import cucumber.api.needle.NeedleInjectionProvider;
+import cucumber.runtime.java.needle.injection.NamedInjectionProvider;
 import de.akquinet.jbosscc.needle.NeedleTestcase;
 import de.akquinet.jbosscc.needle.annotation.ObjectUnderTest;
 import de.akquinet.jbosscc.needle.injection.InjectionProvider;
-import de.akquinet.jbosscc.needle.injection.NamedInjectionProvider;
 
 public class CollectInjectionProvidersFromStepsInstanceTest {
 

@@ -1,6 +1,9 @@
-package de.akquinet.jbosscc.needle.injection;
+package cucumber.runtime.java.needle.injection;
 
 import javax.inject.Named;
+
+import de.akquinet.jbosscc.needle.injection.InjectionProvider;
+import de.akquinet.jbosscc.needle.injection.InjectionTargetInformation;
 
 /**
  * Needle Injection Provider for Instance with {@link Named} Annotation.
