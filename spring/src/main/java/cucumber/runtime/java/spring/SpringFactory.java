@@ -2,6 +2,7 @@ package cucumber.runtime.java.spring;
 
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.java.ObjectFactory;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -38,8 +39,7 @@ public class SpringFactory implements ObjectFactory {
     }
 
     static {
-        applicationContext = new GenericXmlApplicationContext(
-                "cucumber/runtime/java/spring/cucumber-glue.xml");
+        applicationContext = new GenericXmlApplicationContext("cucumber/runtime/java/spring/cucumber-glue.xml");
         applicationContext.registerShutdownHook();
     }
 
@@ -49,10 +49,11 @@ public class SpringFactory implements ObjectFactory {
             stepClasses.add(stepClass);
 
             BeanDefinitionRegistry registry = (BeanDefinitionRegistry) applicationContext.getAutowireCapableBeanFactory();
-            registry.registerBeanDefinition(stepClass.getName(),
-                    BeanDefinitionBuilder.genericBeanDefinition(stepClass)
-                            .setScope(GlueCodeScope.NAME)
-                            .getBeanDefinition());
+            BeanDefinition beanDefinition = BeanDefinitionBuilder
+                    .genericBeanDefinition(stepClass)
+                    .setScope(GlueCodeScope.NAME)
+                    .getBeanDefinition();
+            registry.registerBeanDefinition(stepClass.getName(), beanDefinition);
 
         }
     }
@@ -68,7 +69,6 @@ public class SpringFactory implements ObjectFactory {
         applicationContext.getBeanFactory().destroySingletons();
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public <T> T getInstance(final Class<T> type) {
         if (!applicationContext.getBeanFactory().containsSingleton(type.getName())) {
@@ -78,15 +78,14 @@ public class SpringFactory implements ObjectFactory {
     }
 
     private <T> T getTestInstance(final Class<T> type) {
-        T instance = null;
         try {
-            instance = createTest(type);
+            T instance = createTest(type);
             TestContextManager contextManager = new TestContextManager(type);
             contextManager.prepareTestInstance(instance);
+            return instance;
         } catch (Exception e) {
-            new CucumberException(e.getMessage(), e);
+            throw new CucumberException(e.getMessage(), e);
         }
-        return instance;
     }
 
     @SuppressWarnings("unchecked")
