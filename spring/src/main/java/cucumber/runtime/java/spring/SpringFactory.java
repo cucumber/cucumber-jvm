@@ -48,11 +48,11 @@ public class SpringFactory implements ObjectFactory {
         if (!stepClasses.contains(stepClass)) {
             stepClasses.add(stepClass);
 
-            BeanDefinitionRegistry registry = (BeanDefinitionRegistry) applicationContext
-                    .getAutowireCapableBeanFactory();
+            BeanDefinitionRegistry registry = (BeanDefinitionRegistry) applicationContext.getAutowireCapableBeanFactory();
             registry.registerBeanDefinition(stepClass.getName(),
                     BeanDefinitionBuilder.genericBeanDefinition(stepClass)
-                            .setScope(GlueCodeScope.NAME).getBeanDefinition());
+                            .setScope(GlueCodeScope.NAME)
+                            .getBeanDefinition());
 
         }
     }
