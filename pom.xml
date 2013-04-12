@@ -19,6 +19,11 @@
         <outputDirectory>${project.build.directory}</outputDirectory>
         <gherkin.version>2.11.8</gherkin.version>
         <groovy.version>2.1.2</groovy.version>
+        <!-- Keep in sync with scala/pom.xml and scala/scala_previous/pom.xml if minor versions are bumped. -->
+        <scala.current.version>2.10.0</scala.current.version>
+        <scala.previous.version>2.9.2</scala.previous.version>
+        <!-- There is 3.1.3, but it requires at least mvn 3.0.4 which might still not be widely used. -->
+        <scala-maven-plugin.version>3.1.0</scala-maven-plugin.version>
         <spring.version>3.2.2.RELEASE</spring.version>
         <spring.data.version>1.3.0.RELEASE</spring.data.version>
         <hibernate.version>4.2.0.Final</hibernate.version>
@@ -118,7 +123,7 @@
             </dependency>
             <dependency>
                 <groupId>info.cukes</groupId>
-                <artifactId>cucumber-scala_2.9.2</artifactId>
+                <artifactId>cucumber-scala_2.9</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
