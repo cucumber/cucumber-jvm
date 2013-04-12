@@ -1,14 +1,13 @@
 package cucumber.runtime.java.spring;
 
+import cucumber.runtime.java.ObjectFactory;
+import org.junit.Test;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
-
-import org.junit.Test;
-
-import cucumber.runtime.java.ObjectFactory;
 
 public class SpringFactoryTest {
 

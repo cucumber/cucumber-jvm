@@ -1,16 +1,15 @@
 package cucumber.runtime.java.spring;
 
-import java.util.Collection;
-import java.util.HashSet;
-
+import cucumber.runtime.CucumberException;
+import cucumber.runtime.java.ObjectFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;
 import org.springframework.test.context.TestContextManager;
 
-import cucumber.runtime.CucumberException;
-import cucumber.runtime.java.ObjectFactory;
+import java.util.Collection;
+import java.util.HashSet;
 
 /**
  * Spring based implementation of ObjectFactory.
@@ -31,68 +30,68 @@ import cucumber.runtime.java.ObjectFactory;
  */
 public class SpringFactory implements ObjectFactory {
 
-	private static ConfigurableApplicationContext applicationContext;
+    private static ConfigurableApplicationContext applicationContext;
 
-	private final Collection<Class<?>> stepClasses = new HashSet<Class<?>>();
+    private final Collection<Class<?>> stepClasses = new HashSet<Class<?>>();
 
-	public SpringFactory() {
-	}
+    public SpringFactory() {
+    }
 
-	static {
-		applicationContext = new GenericXmlApplicationContext(
-				"cucumber/runtime/java/spring/cucumber-glue.xml");
-		applicationContext.registerShutdownHook();
-	}
+    static {
+        applicationContext = new GenericXmlApplicationContext(
+                "cucumber/runtime/java/spring/cucumber-glue.xml");
+        applicationContext.registerShutdownHook();
+    }
 
-	@Override
-	public void addClass(final Class<?> stepClass) {
-		if (!stepClasses.contains(stepClass)) {
-			stepClasses.add(stepClass);
+    @Override
+    public void addClass(final Class<?> stepClass) {
+        if (!stepClasses.contains(stepClass)) {
+            stepClasses.add(stepClass);
 
-			BeanDefinitionRegistry registry = (BeanDefinitionRegistry) applicationContext
-					.getAutowireCapableBeanFactory();
-			registry.registerBeanDefinition(stepClass.getName(),
-					BeanDefinitionBuilder.genericBeanDefinition(stepClass)
-							.setScope(GlueCodeScope.NAME).getBeanDefinition());
+            BeanDefinitionRegistry registry = (BeanDefinitionRegistry) applicationContext
+                    .getAutowireCapableBeanFactory();
+            registry.registerBeanDefinition(stepClass.getName(),
+                    BeanDefinitionBuilder.genericBeanDefinition(stepClass)
+                            .setScope(GlueCodeScope.NAME).getBeanDefinition());
 
-		}
-	}
+        }
+    }
 
-	@Override
-	public void start() {
-		GlueCodeContext.INSTANCE.start();
-	}
+    @Override
+    public void start() {
+        GlueCodeContext.INSTANCE.start();
+    }
 
-	@Override
-	public void stop() {
-		GlueCodeContext.INSTANCE.stop();
-		applicationContext.getBeanFactory().destroySingletons();
-	}
+    @Override
+    public void stop() {
+        GlueCodeContext.INSTANCE.stop();
+        applicationContext.getBeanFactory().destroySingletons();
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public <T> T getInstance(final Class<T> type) {
-		if (!applicationContext.getBeanFactory().containsSingleton(type.getName())) {
-			applicationContext.getBeanFactory().registerSingleton(type.getName(), getTestInstance(type));
-		}
-		return applicationContext.getBean(type);
-	}
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> T getInstance(final Class<T> type) {
+        if (!applicationContext.getBeanFactory().containsSingleton(type.getName())) {
+            applicationContext.getBeanFactory().registerSingleton(type.getName(), getTestInstance(type));
+        }
+        return applicationContext.getBean(type);
+    }
 
-	private <T> T getTestInstance(final Class<T> type) {
-		T instance = null;
-		try {
-			instance = createTest(type);
-			TestContextManager contextManager = new TestContextManager(type);
-			contextManager.prepareTestInstance(instance);
-		} catch (Exception e) {
-			new CucumberException(e.getMessage(), e);
-		}
-		return instance;
-	}
+    private <T> T getTestInstance(final Class<T> type) {
+        T instance = null;
+        try {
+            instance = createTest(type);
+            TestContextManager contextManager = new TestContextManager(type);
+            contextManager.prepareTestInstance(instance);
+        } catch (Exception e) {
+            new CucumberException(e.getMessage(), e);
+        }
+        return instance;
+    }
 
-	@SuppressWarnings("unchecked")
-	protected <T> T createTest(Class<T> type) throws Exception {
-		return (T) type.getConstructors()[0].newInstance();
-	}
+    @SuppressWarnings("unchecked")
+    protected <T> T createTest(Class<T> type) throws Exception {
+        return (T) type.getConstructors()[0].newInstance();
+    }
 
 }
