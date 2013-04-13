@@ -76,6 +76,28 @@ public class JavaSnippetTest {
     }
 
     @Test
+    public void generatesSnippetWithEscapedQuestionMarks() {
+        String expected = "" +
+                "@Given(\"^is there an error\\\\?:$\")\n" +
+                "public void is_there_an_error_() throws Throwable {\n" +
+                "    // Express the Regexp above with the code you wish you had\n" +
+                "    throw new PendingException();\n" +
+                "}\n";
+        assertEquals(expected, snippetFor("is there an error?:"));
+    }
+
+    @Test
+    public void generatesSnippetWithLotsOfEscapes() {
+        String expected = "" +
+                "@Given(\"^\\\\^\\\\(\\\\[a-z\\\\]\\\\*\\\\)\\\\?\\\\$$\")\n" +
+                "public void _a_z_$() throws Throwable {\n" +
+                "    // Express the Regexp above with the code you wish you had\n" +
+                "    throw new PendingException();\n" +
+                "}\n";
+        assertEquals(expected, snippetFor("^([a-z]*)?$"));
+    }
+
+    @Test
     public void generatesSnippetWithEscapedParentheses() {
         String expected = "" +
                 "@Given(\"^I have (\\\\d+) cukes \\\\(maybe more\\\\)$\")\n" +

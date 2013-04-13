@@ -3,7 +3,7 @@ package cucumber.runtime.java.spring;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.config.Scope;
 
-public class GlueCodeScope implements Scope {
+class GlueCodeScope implements Scope {
     public static final String NAME = "cucumber-glue";
 
     private final GlueCodeContext context = GlueCodeContext.INSTANCE;
