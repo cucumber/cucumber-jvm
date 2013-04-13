@@ -61,8 +61,8 @@
         <connection>scm:git:git://github.com/cucumber/cucumber-jvm.git</connection>
         <developerConnection>scm:git:git@github.com:cucumber/cucumber-jvm.git</developerConnection>
         <url>git://github.com/cucumber/cucumber-jvm.git</url>
-      <tag>HEAD</tag>
-  </scm>
+        <tag>HEAD</tag>
+    </scm>
 
     <dependencyManagement>
         <dependencies>
@@ -386,7 +386,7 @@
         <profile>
             <id>examples</id>
             <modules>
-                <!--<module>examples/spring-txn</module>-->
+                <module>examples/spring-txn</module>
                 <module>examples/java-calculator</module>
                 <module>examples/groovy-calculator</module>
                 <module>examples/scala-calculator</module>
@@ -397,7 +397,7 @@
         <profile>
             <id>release-sign-artifacts</id>
             <modules>
-                <!--<module>examples/spring-txn</module>-->
+                <module>examples/spring-txn</module>
                 <module>examples/java-calculator</module>
                 <module>examples/groovy-calculator</module>
                 <module>examples/scala-calculator</module>
