@@ -51,7 +51,7 @@ abstract class TimeConverter<T> extends ConverterWithFormat<T> {
     @Override
     public void setParameterInfoAndLocale(ParameterInfo parameterInfo, Locale locale) {
         super.setParameterInfoAndLocale(parameterInfo, locale);
-        if(parameterInfo.getFormat() != null) {
+        if (parameterInfo.getFormat() != null) {
             onlyFormat = new SimpleDateFormat(parameterInfo.getFormat(), locale);
             onlyFormat.setLenient(false);
         }

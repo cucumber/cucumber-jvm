@@ -105,8 +105,12 @@ public class LocalizedXStreams {
             return new ListConverter(delimiter, elementConverter);
         }
 
-        public SingleValueConverter createEnumConverter(Locale locale, Class<? extends Enum> type) {
+        public SingleValueConverter createEnumConverter(Class<? extends Enum> type) {
             return new EnumConverter(locale, type);
+        }
+
+        public Locale getLocale() {
+            return locale;
         }
     }
 }

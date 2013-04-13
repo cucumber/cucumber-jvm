@@ -1,4 +1,13 @@
-# Notes for developers
+## About to create a new Github Issue?
+
+We appreciate that. But before you do, please learn our basic rules:
+
+* This is not a support or discussion forum. If you have a question, please ask it on [The Cukes Google Group](http://groups.google.com/group/cukes).
+* Do you have a feature request? Then don't expect it to be implemented unless you or someone else sends a [pull request](https://help.github.com/articles/using-pull-requests).
+* Reporting a bug? We need to know what java/ruby/node.js etc. runtime you have, and what jar/gem/npm package versions you are using. Bugs with [pull requests](https://help.github.com/articles/using-pull-requests) get fixed quicker. Some bugs may never be fixed.
+* You have to tell us how to reproduce a bug. Bonus point for a [pull request](https://help.github.com/articles/using-pull-requests) with a failing test that reproduces the bug.
+* Want to paste some code or output? Put \`\`\` on a line above and below your code/output. See [GFM](https://help.github.com/articles/github-flavored-markdown)'s *Fenced Code Blocks* for details.
+* We love [pull requests](https://help.github.com/articles/using-pull-requests), but if you don't have a test to go with it we probably won't merge it.
 
 ## Building Cucumber-JVM
 
@@ -69,8 +78,20 @@ Below are some common problems you might encounter while hacking on Cucumber-JVM
 
 This can be solved by changing the Compiler settings: `Preferences -> Compiler -> Java Compiler`:
 
-* *Use compiler:* `Javac in-process (Java6+ only)`
+* *Use compiler:* `Javac`
 * *Additional command line parameters:* `-target 1.6 -source 1.6 -encoding UTF-8`
+
+You should also use JDK 6: `Project Structure... -> Project -> Project SDK`:
+
+* *Use 1.6", not 1.7
+
+If you still have problems, try building the project with Maven, using Java 6:
+
+```
+export JAVA_HOME=/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home
+```
+
+Note that even though development is sometimes easier to do with 1.6, releasing should be done with 1.7.
 
 ## Releasing
 
@@ -115,7 +136,7 @@ Now release everything:
 
 ```
 mvn release:clean
-mvn --batch-mode -P release-sign-artifacts release:prepare -DautoVersionSubmodules=true -DdevelopmentVersion=1.1.2-SNAPSHOT
+mvn --batch-mode -P release-sign-artifacts release:prepare -DautoVersionSubmodules=true -DdevelopmentVersion=1.1.4-SNAPSHOT
 mvn -P release-sign-artifacts release:perform
 ```
 

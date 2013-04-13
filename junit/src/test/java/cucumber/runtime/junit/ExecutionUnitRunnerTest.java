@@ -18,15 +18,15 @@ public class ExecutionUnitRunnerTest {
     @Test
     public void shouldAssignUnequalDescriptionsToDifferentOccurrencesOfSameStepInAScenario() throws Exception {
         List<CucumberFeature> features = CucumberFeature.load(
-            new ClasspathResourceLoader(this.getClass().getClassLoader()),
-            asList("cucumber/runtime/junit/fb.feature"),
-            Collections.emptyList()
+                new ClasspathResourceLoader(this.getClass().getClassLoader()),
+                asList("cucumber/runtime/junit/fb.feature"),
+                Collections.emptyList()
         );
 
         ExecutionUnitRunner runner = new ExecutionUnitRunner(
-            null,
-            (CucumberScenario) features.get(0).getFeatureElements().get(0),
-            null
+                null,
+                (CucumberScenario) features.get(0).getFeatureElements().get(0),
+                null
         );
 
         // fish out the two occurrences of the same step and check whether we really got them
@@ -44,19 +44,17 @@ public class ExecutionUnitRunnerTest {
     }
 
     @Test
-    public void shouldIncludeScenarioNameAsClassNameInStepDescriptions()
-        throws Exception {
-
+    public void shouldIncludeScenarioNameAsClassNameInStepDescriptions() throws Exception {
         List<CucumberFeature> features = CucumberFeature.load(
-            new ClasspathResourceLoader(this.getClass().getClassLoader()),
-            asList("cucumber/runtime/junit/feature_with_same_steps_in_different_scenarios.feature"),
-            Collections.emptyList()
+                new ClasspathResourceLoader(this.getClass().getClassLoader()),
+                asList("cucumber/runtime/junit/feature_with_same_steps_in_different_scenarios.feature"),
+                Collections.emptyList()
         );
 
         ExecutionUnitRunner runner = new ExecutionUnitRunner(
-            null,
-            (CucumberScenario) features.get(0).getFeatureElements().get(0),
-            null
+                null,
+                (CucumberScenario) features.get(0).getFeatureElements().get(0),
+                null
         );
 
         // fish out the data from runner

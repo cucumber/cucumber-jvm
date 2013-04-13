@@ -6,7 +6,6 @@ import gherkin.formatter.Reporter;
 import gherkin.formatter.model.BasicStatement;
 import gherkin.formatter.model.Step;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,18 +29,22 @@ public class StepContainer {
 
     void format(Formatter formatter) {
         statement.replay(formatter);
+    }
+
+    void formatSteps(Formatter formatter) {
         for (Step step : getSteps()) {
             formatter.step(step);
         }
     }
 
-    void runSteps(Reporter reporter, Runtime runtime) {
+    void runSteps(Formatter formatter, Reporter reporter, Runtime runtime) {
         for (Step step : getSteps()) {
-            runStep(step, reporter, runtime);
+            runStep(step, formatter, reporter, runtime);
         }
     }
 
-    void runStep(Step step, Reporter reporter, Runtime runtime) {
+    void runStep(Step step, Formatter formatter, Reporter reporter, Runtime runtime) {
+        formatter.step(step);
         runtime.runStep(cucumberFeature.getUri(), step, reporter, cucumberFeature.getI18n());
     }
 }

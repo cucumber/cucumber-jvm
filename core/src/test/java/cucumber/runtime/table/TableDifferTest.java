@@ -7,7 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Arrays.asList;
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 
 public class TableDifferTest {
 
@@ -17,6 +18,34 @@ public class TableDifferTest {
                 "| Joe   | joe@email.com   | 234 |\n" +
                 "| Bryan | bryan@email.org | 456 |\n" +
                 "| Ni    | ni@email.com    | 654 |\n";
+        return TableParser.parse(source, null);
+    }
+
+    private DataTable otherTableWithTwoConsecutiveRowsDeleted() {
+        String source = "" +
+                "| Aslak | aslak@email.com | 123 |\n" +
+                "| Ni    | ni@email.com    | 654 |\n";
+        return TableParser.parse(source, null);
+
+    }
+
+    private DataTable otherTableWithTwoConsecutiveRowsChanged() {
+        String source = "" +
+                "| Aslak | aslak@email.com  | 123 |\n" +
+                "| Joe   | joe@NOSPAM.com   | 234 |\n" +
+                "| Bryan | bryan@NOSPAM.org | 456 |\n" +
+                "| Ni    | ni@email.com     | 654 |\n";
+        return TableParser.parse(source, null);
+    }
+
+    private DataTable otherTableWithTwoConsecutiveRowsInserted() {
+        String source = "" +
+                "| Aslak | aslak@email.com      | 123 |\n" +
+                "| Joe   | joe@email.com        | 234 |\n" +
+                "| Doe   | joe@email.com        | 234 |\n" +
+                "| Foo   | schnickens@email.net | 789 |\n" +
+                "| Bryan | bryan@email.org      | 456 |\n" +
+                "| Ni    | ni@email.com         | 654 |\n";
         return TableParser.parse(source, null);
     }
 
@@ -58,6 +87,7 @@ public class TableDifferTest {
             throw e;
         }
     }
+
 
     @Test(expected = TableDiffException.class)
     public void shouldFindNewLinesAtEnd() {
@@ -105,19 +135,85 @@ public class TableDifferTest {
     public void should_not_fail_with_out_of_memory() {
         DataTable expected = TableParser.parse("" +
                 "| I'm going to work |\n", null);
-
         List<List<String>> actual = new ArrayList<List<String>>();
-
         actual.add(asList("I just woke up"));
         actual.add(asList("I'm going to work"));
+        expected.diff(actual);
+    }
 
+    @Test(expected = TableDiffException.class)
+    public void should_diff_when_consecutive_deleted_lines() {
         try {
-            expected.diff(actual);
+            List<List<String>> other = otherTableWithTwoConsecutiveRowsDeleted().raw();
+            table().diff(other);
         } catch (TableDiffException e) {
-            String expectedDiff = "" +
+            String expected = "" +
                     "Tables were not identical:\n" +
-                    "    + | I just woke up |\n";
-            assertEquals(expectedDiff, e.getMessage());
+                    "      | Aslak | aslak@email.com | 123 |\n" +
+                    "    - | Joe   | joe@email.com   | 234 |\n" +
+                    "    - | Bryan | bryan@email.org | 456 |\n" +
+                    "      | Ni    | ni@email.com    | 654 |\n";
+            assertEquals(expected, e.getMessage());
+            throw e;
+        }
+
+    }
+
+    @Test(expected = TableDiffException.class)
+    public void should_diff_when_consecutive_changed_lines() {
+        try {
+            List<List<String>> other = otherTableWithTwoConsecutiveRowsChanged().raw();
+            table().diff(other);
+        } catch (TableDiffException e) {
+            String expected = "" +
+                    "Tables were not identical:\n" +
+                    "      | Aslak | aslak@email.com  | 123 |\n" +
+                    "    - | Joe   | joe@email.com    | 234 |\n" +
+                    "    - | Bryan | bryan@email.org  | 456 |\n" +
+                    "    + | Joe   | joe@NOSPAM.com   | 234 |\n" +
+                    "    + | Bryan | bryan@NOSPAM.org | 456 |\n" +
+                    "      | Ni    | ni@email.com     | 654 |\n";
+            assertEquals(expected, e.getMessage());
+            throw e;
+        }
+    }
+
+    @Test(expected = TableDiffException.class)
+    public void should_diff_when_consecutive_inserted_lines() {
+        try {
+            List<List<String>> other = otherTableWithTwoConsecutiveRowsInserted().raw();
+            table().diff(other);
+        } catch (TableDiffException e) {
+            String expected = "" +
+                    "Tables were not identical:\n" +
+                    "      | Aslak | aslak@email.com      | 123 |\n" +
+                    "      | Joe   | joe@email.com        | 234 |\n" +
+                    "    + | Doe   | joe@email.com        | 234 |\n" +
+                    "    + | Foo   | schnickens@email.net | 789 |\n" +
+                    "      | Bryan | bryan@email.org      | 456 |\n" +
+                    "      | Ni    | ni@email.com         | 654 |\n";
+            assertEquals(expected, e.getMessage());
+            throw e;
+        }
+    }
+
+    @Test(expected = TableDiffException.class)
+    public void should_return_tables() {
+        DataTable from = table();
+        DataTable to = otherTableWithTwoConsecutiveRowsInserted();
+        try {
+            from.diff(to);
+        } catch (TableDiffException e) {
+            String expected = "" +
+                    "      | Aslak | aslak@email.com      | 123 |\n" +
+                    "      | Joe   | joe@email.com        | 234 |\n" +
+                    "    + | Doe   | joe@email.com        | 234 |\n" +
+                    "    + | Foo   | schnickens@email.net | 789 |\n" +
+                    "      | Bryan | bryan@email.org      | 456 |\n" +
+                    "      | Ni    | ni@email.com         | 654 |\n";
+            assertSame(from, e.getFrom());
+            assertSame(to, e.getTo());
+            assertEquals(expected, e.getDiff().toString());
             throw e;
         }
     }

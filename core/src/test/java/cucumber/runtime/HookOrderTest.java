@@ -31,6 +31,7 @@ public class HookOrderTest {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         RuntimeOptions runtimeOptions = new RuntimeOptions(new Properties());
         runtime = new Runtime(mock(ResourceLoader.class), classLoader, asList(mock(Backend.class)), runtimeOptions);
+        runtime.buildBackendWorlds(null);
         glue = runtime.getGlue();
     }
 

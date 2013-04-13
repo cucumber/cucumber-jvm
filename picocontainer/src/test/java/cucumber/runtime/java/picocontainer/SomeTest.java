@@ -4,11 +4,14 @@ import org.junit.Test;
 
 public class SomeTest {
     @Test
-    public void one() {}
+    public void one() {
+    }
 
     @Test
-    public void two() {}
+    public void two() {
+    }
 
     @Test
-    public void three() {}
+    public void three() {
+    }
 }

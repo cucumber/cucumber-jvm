@@ -164,11 +164,11 @@ public class RuntimeTest {
     }
 
     private Runtime createStrictRuntime() {
-        return createRuntime("-g anything", "--strict");
+        return createRuntime("-g", "anything", "--strict");
     }
 
     private Runtime createNonStrictRuntime() {
-        return createRuntime("-g anything");
+        return createRuntime("-g", "anything");
     }
 
     private Runtime createRuntime(String... runtimeArgs) {
