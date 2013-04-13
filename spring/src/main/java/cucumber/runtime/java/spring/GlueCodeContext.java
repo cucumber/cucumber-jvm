@@ -3,7 +3,7 @@ package cucumber.runtime.java.spring;
 import java.util.HashMap;
 import java.util.Map;
 
-public class GlueCodeContext {
+class GlueCodeContext {
     public static final GlueCodeContext INSTANCE = new GlueCodeContext();
     private final Map<String, Object> objects = new HashMap<String, Object>();
     private final Map<String, Runnable> callbacks = new HashMap<String, Runnable>();
@@ -41,12 +41,10 @@ public class GlueCodeContext {
         return objects.remove(name);
     }
 
-
     private void cleanUp() {
         objects.clear();
         callbacks.clear();
     }
-
 
     public void registerDestructionCallback(String name, Runnable callback) {
         callbacks.put(name, callback);

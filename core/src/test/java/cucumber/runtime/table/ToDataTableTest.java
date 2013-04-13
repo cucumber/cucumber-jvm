@@ -9,7 +9,6 @@ import org.junit.Test;
 
 import java.lang.reflect.Type;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;

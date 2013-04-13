@@ -17,6 +17,8 @@ import org.junit.runner.notification.RunNotifier;
 import java.util.ArrayList;
 import java.util.List;
 
+import static cucumber.runtime.Runtime.isPending;
+
 public class JUnitReporter implements Reporter, Formatter {
     private final List<Step> steps = new ArrayList<Step>();
 
@@ -99,7 +101,7 @@ public class JUnitReporter implements Reporter, Formatter {
 
     private boolean isPendingOrUndefined(Result result) {
         Throwable error = result.getError();
-        return Result.UNDEFINED == result || error instanceof PendingException;
+        return Result.UNDEFINED == result || isPending(error);
     }
 
     private void addFailureOrIgnoreStep(Result result) {
@@ -124,11 +126,13 @@ public class JUnitReporter implements Reporter, Formatter {
     @Override
     public void before(Match match, Result result) {
         handleHook(result);
+        reporter.before(match, result);
     }
 
     @Override
     public void after(Match match, Result result) {
         handleHook(result);
+        reporter.after(match, result);
     }
 
     private void handleHook(Result result) {

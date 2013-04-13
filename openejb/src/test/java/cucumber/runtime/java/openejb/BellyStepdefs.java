@@ -5,7 +5,7 @@ import cucumber.api.java.en.Then;
 
 import javax.inject.Inject;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 public class BellyStepdefs {
 

@@ -64,15 +64,10 @@ public class StepDefinitionMatch extends Match {
 
         List<Object> result = new ArrayList<Object>();
 
-        List<ParameterInfo> parameterInfos = new ArrayList<ParameterInfo>();
         int n = 0;
         for (Argument a : getArguments()) {
-            Object arg;
-
             ParameterInfo parameterInfo = getParameterType(n, String.class);
-            parameterInfos.add(parameterInfo);
-
-            arg = parameterInfo.convert(a.getVal(), xStream, locale);
+            Object arg = parameterInfo.convert(a.getVal(), xStream);
             result.add(arg);
             n++;
         }

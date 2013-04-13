@@ -1,9 +1,8 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>info.cukes</groupId>
     <artifactId>cucumber-jvm</artifactId>
-    <version>1.1.2-SNAPSHOT</version>
+    <version>1.1.4-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Cucumber-JVM</name>
     <url>http://cukes.info/</url>
@@ -18,32 +17,36 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <outputDirectory>${project.build.directory}</outputDirectory>
-        <gherkin.version>2.11.6</gherkin.version>
-        <groovy.version>2.1.0</groovy.version>
-        <spring.version>3.2.1.RELEASE</spring.version>
-        <spring.data.version>1.2.0.RELEASE</spring.data.version>
-        <hibernate.version>4.1.9.Final</hibernate.version>
+        <gherkin.version>2.11.8</gherkin.version>
+        <groovy.version>2.1.2</groovy.version>
+        <!-- Keep in sync with scala/pom.xml and scala/scala_previous/pom.xml if minor versions are bumped. -->
+        <scala.current.version>2.10.0</scala.current.version>
+        <scala.previous.version>2.9.2</scala.previous.version>
+        <!-- There is 3.1.3, but it requires at least mvn 3.0.4 which might still not be widely used. -->
+        <scala-maven-plugin.version>3.1.0</scala-maven-plugin.version>
+        <spring.version>3.2.2.RELEASE</spring.version>
+        <spring.data.version>1.3.0.RELEASE</spring.data.version>
+        <hibernate.version>4.2.0.Final</hibernate.version>
         <hsqldb.version>2.2.9</hsqldb.version>
         <guice.version>3.0</guice.version>
-        <scala.version>2.10.0</scala.version>
-        <clojure.version>1.5.0-RC4</clojure.version>
+        <clojure.version>1.5.1</clojure.version>
         <rhino.version>1.7R4</rhino.version>
         <ioke.version>P-0.4.0-p11</ioke.version>
         <jsoup.version>1.7.2</jsoup.version>
         <junit.version>4.11</junit.version>
         <jython.version>2.5.3</jython.version>
         <mockito.version>1.9.5</mockito.version>
-        <selenium.version>2.29.0</selenium.version>
+        <selenium.version>2.31.0</selenium.version>
         <webbit.version>0.4.14</webbit.version>
         <webbit-rest.version>0.2.0</webbit-rest.version>
-        <jruby.version>1.7.2</jruby.version>
-        <weld-se.version>2.0.0.Beta2</weld-se.version>
+        <jruby.version>1.7.3</jruby.version>
+        <weld-se.version>2.0.0.CR1</weld-se.version>
         <cdi-api.version>1.1-PRD</cdi-api.version>
         <openejb-core.version>4.5.1</openejb-core.version>
         <cobertura.version>1.9.4.1</cobertura.version>
         <dbunit.version>2.4.9</dbunit.version>
         <log4j.version>1.2.17</log4j.version>
-        <slf4j.version>1.7.1</slf4j.version>
+        <slf4j.version>1.7.2</slf4j.version>
         <freemarker.version>2.3.19</freemarker.version>
         <javax.servlet-api.version>3.0.1</javax.servlet-api.version>
     </properties>
@@ -58,7 +61,8 @@
         <connection>scm:git:git://github.com/cucumber/cucumber-jvm.git</connection>
         <developerConnection>scm:git:git@github.com:cucumber/cucumber-jvm.git</developerConnection>
         <url>git://github.com/cucumber/cucumber-jvm.git</url>
-    </scm>
+      <tag>HEAD</tag>
+  </scm>
 
     <dependencyManagement>
         <dependencies>
@@ -114,7 +118,12 @@
             </dependency>
             <dependency>
                 <groupId>info.cukes</groupId>
-                <artifactId>cucumber-scala</artifactId>
+                <artifactId>cucumber-scala_2.10</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>info.cukes</groupId>
+                <artifactId>cucumber-scala_2.9</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -241,16 +250,6 @@
                 <groupId>com.google.inject</groupId>
                 <artifactId>guice</artifactId>
                 <version>${guice.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.scala-lang</groupId>
-                <artifactId>scala-library</artifactId>
-                <version>${scala.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.scala-lang</groupId>
-                <artifactId>scala-compiler</artifactId>
-                <version>${scala.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.clojure</groupId>
@@ -380,6 +379,7 @@
         <module>java</module>
         <module>openejb</module>
         <module>scala</module>
+        <module>scala/scala_previous</module>
     </modules>
 
     <profiles>
@@ -397,7 +397,7 @@
         <profile>
             <id>release-sign-artifacts</id>
             <modules>
-                <module>examples/spring-txn</module>
+                <!--<module>examples/spring-txn</module>-->
                 <module>examples/java-calculator</module>
                 <module>examples/groovy-calculator</module>
                 <module>examples/scala-calculator</module>
@@ -500,14 +500,14 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>2.8.1</version>
+                    <version>2.9</version>
                     <configuration>
                         <aggregate>true</aggregate>
                         <use>false</use>
                         <excludePackageNames>cucumber.runtime,cucumber.runtime.*</excludePackageNames>
                         <links>
-                            <link>http://docs.oracle.com/javase/6/docs/api/</link>
-                            <link>http://junit.org/apidocs/</link>
+                            <link>http://docs.oracle.com/javase/7/docs/api/</link>
+                            <link>http://junit.sourceforge.net/javadoc/</link>
                         </links>
                         <groups>
                             <group>
@@ -627,4 +627,3 @@
         </extensions>
     </build>
 </project>
-

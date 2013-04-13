@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class JdkPatternArgumentMatcherTest {
     @Test
@@ -28,6 +29,22 @@ public class JdkPatternArgumentMatcherTest {
     @Test
     public void shouldDealWithUnicodeEverywhere() throws UnsupportedEncodingException {
         assertVariables("Jæ (.+) ålsker (.+) lændet", "Jæ vø ålsker døtte lændet", "vø", 3, "døtte", 13);
+    }
+
+    @Test
+    public void shouldDealWithUnAnchoredPattern() throws UnsupportedEncodingException {
+        assertVariables("^I wait for (.+) and (.+) seconds",
+                "I wait for 3 and 4 seconds to be sure",
+                "3", 11, "4", 17
+        );
+    }
+
+    @Test
+    public void shouldDealWithAnchoredPattern() {
+        JdkPatternArgumentMatcher matcher = new JdkPatternArgumentMatcher(Pattern.compile("^I wait for (.+) seconds$"));
+
+        assertNull(matcher.argumentsFrom("I wait for 30 seconds to be sure"));
+        assertEquals(1, matcher.argumentsFrom("I wait for 30 seconds").size());
     }
 
     private void assertVariables(String regex, String string, String v1, Integer pos1, String v2, Integer pos2) throws UnsupportedEncodingException {

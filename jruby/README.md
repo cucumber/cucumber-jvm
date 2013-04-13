@@ -2,24 +2,24 @@
 
 Run the features:
 
-    jruby bin/cucumber-jvm --glue src/test/resources src/test/resources
+```
+jruby bin/cucumber-jvm --glue src/test/resources src/test/resources
+```
 
-### cucumber-jruby.properties resource bundle
+### Customizing JRuby
 
-There is a resource bundle available to override a few environment variables for jruby.
-Specifically, the ability to set the GEM_PATH and to specify whether to run jruby in 1.8, 1.9 or 2.0 mode (1.9 is default).
+You can define `GEM_PATH` to tell JRuby where to load gems from.
+You can also define `RUBY_VERSION` to tell JRuby to run in `1.8`, `1.9` or `2.0` mode.
+Consult the JRuby documentation to see what the default mode is.
 
-If the properties file is not present in the root of the classpath, any environment variables will operate
-as intended, otherwise the properties file will override the environment. This makes it much easier to run the features
-from within the IDE, and it encapsulates the settings in the project source tree easily.
+These values can be defined in any of the three places:
 
-Example cucumber-jruby.properties file
+* In an Environment variable
+* In a System property (for example `-DRUBY_VERSION=1.9`
+* In a `cucumber-jruby.properties` resource bundle on your `CLASSPATH`.
 
-    GEM_PATH=${basedir}/src/test/gems
+Sample cucumber-jruby.properties file:
 
-When filtered by the maven properties file, it will set JRuby's GEM_PATH to src/test/gems (expanded out to the full file
-system) so that JRuby can find any Gems you might be using.
-
-The constructor of `JRubyBackend.java` has the currently supported properties.
-
-Handy!
+```
+GEM_PATH=${basedir}/src/test/gems
+```

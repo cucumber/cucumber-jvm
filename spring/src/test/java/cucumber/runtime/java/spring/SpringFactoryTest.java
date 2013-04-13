@@ -36,13 +36,13 @@ public class SpringFactoryTest {
         // Feature 1
         final ObjectFactory factory1 = new SpringFactory();
         factory1.start();
-        final DummyComponent o1 = factory1.getInstance(DummyComponent.class);
+        final BellyBean o1 = factory1.getInstance(BellyStepdefs.class).getBellyBean();
         factory1.stop();
 
         // Feature 2
         final ObjectFactory factory2 = new SpringFactory();
         factory2.start();
-        final DummyComponent o2 = factory2.getInstance(DummyComponent.class);
+        final BellyBean o2 = factory2.getInstance(BellyStepdefs.class).getBellyBean();
         factory2.stop();
 
         assertNotNull(o1);
@@ -60,8 +60,6 @@ public class SpringFactoryTest {
 
         assertNotNull(stepdef);
         assertTrue(stepdef.isAutowired());
-        assertTrue(stepdef.isPostConstructCalled());
-        assertTrue(stepdef.isPreDestroyCalled());
     }
 
     @Test

@@ -22,3 +22,6 @@ Feature: Cucumber Runner Rocks
       | year | name         |
       | 2008 | Cucumber     |
       | 2012 | Cucumber-JVM |
+
+  Scenario: A date
+    Given today's date is "10-03-1971"

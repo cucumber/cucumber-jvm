@@ -18,8 +18,8 @@ import static org.junit.Assert.assertEquals;
 
 public class ParameterInfoTest {
 
-    private static final Locale LOCALE = Locale.US;
-    private static final LocalizedXStreams.LocalizedXStream X = new LocalizedXStreams(Thread.currentThread().getContextClassLoader()).get(LOCALE);
+    private static final LocalizedXStreams.LocalizedXStream US = new LocalizedXStreams(Thread.currentThread().getContextClassLoader()).get(Locale.US);
+    private static final LocalizedXStreams.LocalizedXStream FR = new LocalizedXStreams(Thread.currentThread().getContextClassLoader()).get(Locale.FRANCE);
 
     public void withInt(int i) {
     }
@@ -27,7 +27,7 @@ public class ParameterInfoTest {
     @Test
     public void converts_with_built_in_converter() throws NoSuchMethodException {
         ParameterInfo pt = ParameterInfo.fromMethod(getClass().getMethod("withInt", Integer.TYPE)).get(0);
-        assertEquals(23, pt.convert("23", X, LOCALE));
+        assertEquals(23, pt.convert("23", US));
     }
 
     public void withJodaTime(@Transform(JodaTransformer.class) LocalDate date) {
@@ -45,9 +45,9 @@ public class ParameterInfoTest {
     @Test
     public void converts_with_custom_joda_time_transform_and_format() throws NoSuchMethodException {
         ParameterInfo parameterInfo = ParameterInfo.fromMethod(getClass().getMethod("withJodaTime", LocalDate.class)).get(0);
-        LocalDate aslaksBirthday = new LocalDate(1971,2,28);
-        assertEquals(aslaksBirthday, parameterInfo.convert("28/02/1971", X, Locale.FRANCE));
-        assertEquals(aslaksBirthday, parameterInfo.convert("02/28/1971", X, Locale.US));
+        LocalDate aslaksBirthday = new LocalDate(1971, 2, 28);
+        assertEquals(aslaksBirthday, parameterInfo.convert("28/02/1971", FR));
+        assertEquals(aslaksBirthday, parameterInfo.convert("02/28/1971", US));
     }
 
     public void withJodaTimeAndFormat(@Transform(JodaTransformer.class) @Format("S-") LocalDate date) {
@@ -56,9 +56,9 @@ public class ParameterInfoTest {
     @Test
     public void converts_with_custom_joda_time_transform() throws NoSuchMethodException {
         ParameterInfo parameterInfo = ParameterInfo.fromMethod(getClass().getMethod("withJodaTimeAndFormat", LocalDate.class)).get(0);
-        LocalDate aslaksBirthday = new LocalDate(1971,2,28);
-        assertEquals(aslaksBirthday, parameterInfo.convert("28/02/1971", X, Locale.FRANCE));
-        assertEquals(aslaksBirthday, parameterInfo.convert("02/28/1971", X, Locale.US));
+        LocalDate aslaksBirthday = new LocalDate(1971, 2, 28);
+        assertEquals(aslaksBirthday, parameterInfo.convert("28/02/1971", FR));
+        assertEquals(aslaksBirthday, parameterInfo.convert("02/28/1971", US));
     }
 
     public void withJodaTimeWithoutTransform(LocalDate date) {
@@ -68,7 +68,7 @@ public class ParameterInfoTest {
     public void converts_to_joda_time_using_object_ctor_and_default_locale() throws NoSuchMethodException {
         ParameterInfo parameterInfo = ParameterInfo.fromMethod(getClass().getMethod("withJodaTimeWithoutTransform", LocalDate.class)).get(0);
         LocalDate localDate = new LocalDate("1971");
-        assertEquals(localDate, parameterInfo.convert("1971", X, Locale.FRANCE));
+        assertEquals(localDate, parameterInfo.convert("1971", US));
     }
 
     public static class FortyTwoTransformer extends Transformer<Integer> {
@@ -84,7 +84,7 @@ public class ParameterInfoTest {
     @Test
     public void converts_int_with_custom_transform() throws NoSuchMethodException {
         ParameterInfo pt = ParameterInfo.fromMethod(getClass().getMethod("intWithCustomTransform", Integer.TYPE)).get(0);
-        assertEquals(42, pt.convert("hello", X, LOCALE));
+        assertEquals(42, pt.convert("hello", US));
     }
 
     public void listWithNoDelimiter(List<String> list) {
@@ -93,8 +93,8 @@ public class ParameterInfoTest {
     @Test
     public void converts_list_with_default_delimiter() throws NoSuchMethodException {
         ParameterInfo pt = ParameterInfo.fromMethod(getClass().getMethod("listWithNoDelimiter", List.class)).get(0);
-        assertEquals(Arrays.asList("hello", "world"), pt.convert("hello, world", X, LOCALE));
-        assertEquals(Arrays.asList("hello", "world"), pt.convert("hello,world", X, LOCALE));
+        assertEquals(Arrays.asList("hello", "world"), pt.convert("hello, world", US));
+        assertEquals(Arrays.asList("hello", "world"), pt.convert("hello,world", US));
     }
 
     public void listWithCustomDelimiter(@Delimiter("\\|") List<String> list) {
@@ -103,7 +103,7 @@ public class ParameterInfoTest {
     @Test
     public void converts_list_with_custom_delimiter() throws NoSuchMethodException {
         ParameterInfo pt = ParameterInfo.fromMethod(getClass().getMethod("listWithCustomDelimiter", List.class)).get(0);
-        assertEquals(Arrays.asList("hello", "world"), pt.convert("hello|world", X, LOCALE));
+        assertEquals(Arrays.asList("hello", "world"), pt.convert("hello|world", US));
     }
 
     public void listWithNoTypeArgument(List list) {
@@ -112,6 +112,6 @@ public class ParameterInfoTest {
     @Test
     public void converts_list_with_no_type_argument() throws NoSuchMethodException {
         ParameterInfo pt = ParameterInfo.fromMethod(getClass().getMethod("listWithNoTypeArgument", List.class)).get(0);
-        assertEquals(Arrays.asList("hello", "world"), pt.convert("hello, world", X, LOCALE));
+        assertEquals(Arrays.asList("hello", "world"), pt.convert("hello, world", US));
     }
 }

@@ -5,8 +5,6 @@ import cucumber.runtime.HookDefinition;
 import gherkin.TagExpression;
 import gherkin.formatter.model.Tag;
 import org.jruby.RubyObject;
-import org.jruby.javasupport.JavaEmbedUtils;
-import org.jruby.runtime.builtin.IRubyObject;
 
 import java.util.Collection;
 import java.util.List;
