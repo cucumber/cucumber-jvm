@@ -1,5 +1,12 @@
 Feature: Cukes
 
+  @tag
+  Scenario: running tagged hook
+    Then tagged hook ran
+
+  Scenario: not running tagged hook
+    Then tagged hook didn't run
+
   Scenario: in the belly
     Given I have 4 "cukes" in my belly
     Then I am "happy"
