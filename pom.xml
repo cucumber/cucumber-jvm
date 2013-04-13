@@ -35,12 +35,8 @@
         <webbit.version>0.4.14</webbit.version>
         <webbit-rest.version>0.2.0</webbit-rest.version>
         <jruby.version>1.7.3</jruby.version>
-<<<<<<< HEAD
-        <weld-se.version>2.0.0.Beta5</weld-se.version>
         <needle.version>2.2</needle.version>
-=======
         <weld-se.version>2.0.0.CR1</weld-se.version>
->>>>>>> 1e3259341c980c8c228c2e3d496a450c762eef00
         <cdi-api.version>1.1-PRD</cdi-api.version>
         <openejb-core.version>4.5.1</openejb-core.version>
         <cobertura.version>1.9.4.1</cobertura.version>
@@ -384,12 +380,8 @@
         <module>java</module>
         <module>openejb</module>
         <module>scala</module>
-<<<<<<< HEAD
-        <module>scala/scala_2.9.2</module>
-        <module>needle</module>
-=======
         <module>scala/scala_previous</module>
->>>>>>> 1e3259341c980c8c228c2e3d496a450c762eef00
+        <module>needle</module>
     </modules>
 
     <profiles>
