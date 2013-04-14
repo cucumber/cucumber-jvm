@@ -5,6 +5,9 @@ import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Row;
 import gherkin.formatter.model.Scenario;
+import gherkin.formatter.model.Tag;
+
+import java.util.Set;
 
 public class CucumberScenario extends CucumberTagStatement {
     private final CucumberBackground cucumberBackground;
@@ -28,14 +31,15 @@ public class CucumberScenario extends CucumberTagStatement {
      */
     @Override
     public void run(Formatter formatter, Reporter reporter, Runtime runtime) {
-        runtime.buildBackendWorlds(reporter);
-        runtime.runBeforeHooks(reporter, tagsAndInheritedTags());
+        Set<Tag> tags = tagsAndInheritedTags();
+        runtime.buildBackendWorlds(reporter, tags);
+        runtime.runBeforeHooks(reporter, tags);
 
         runBackground(formatter, reporter, runtime);
         format(formatter);
         runSteps(formatter, reporter, runtime);
 
-        runtime.runAfterHooks(reporter, tagsAndInheritedTags());
+        runtime.runAfterHooks(reporter, tags);
         runtime.disposeBackendWorlds();
     }
 

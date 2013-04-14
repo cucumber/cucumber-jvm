@@ -1,5 +1,6 @@
 ## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.1.3...master) (not released)
 
+* [Core] Added `Scenario.getSourceTagNames()`, which is needed to make Capybara work with Cucumber-JRuby ([#504](https://github.com/cucumber/cucumber-jvm/issues/504) Aslak Hellesøy)
 * [JRuby] Tagged hooks for JRuby ([#467](https://github.com/cucumber/cucumber-jvm/issues/467) Aslak Hellesøy)
 * [Spring] Implementation based on SpringJunit4ClassRunner. ([#448](https://github.com/cucumber/cucumber-jvm/issues/448), [#489](https://github.com/cucumber/cucumber-jvm/pull/489) Pedro Antonio Souza Viegas)
 * [Core] Bugfix: Generated regex for ? character is incorrect. ([#494](https://github.com/cucumber/cucumber-jvm/issues/494) Aslak Hellesøy)

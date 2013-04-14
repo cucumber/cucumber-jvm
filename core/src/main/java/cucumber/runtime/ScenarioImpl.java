@@ -3,9 +3,13 @@ package cucumber.runtime;
 import cucumber.api.Scenario;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Result;
+import gherkin.formatter.model.Tag;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static java.util.Arrays.asList;
 
@@ -13,13 +17,25 @@ public class ScenarioImpl implements Scenario {
     private static final List<String> SEVERITY = asList("passed", "undefined", "pending", "skipped", "failed");
     private final List<Result> stepResults = new ArrayList<Result>();
     private final Reporter reporter;
+    private final Set<Tag> tags;
 
-    public ScenarioImpl(Reporter reporter) {
+    public ScenarioImpl(Reporter reporter, Set<Tag> tags) {
         this.reporter = reporter;
+        this.tags = tags;
     }
 
     void add(Result result) {
         stepResults.add(result);
+    }
+
+    @Override
+    public Collection<String> getSourceTagNames() {
+        Set<String> result = new HashSet<String>();
+        for (Tag tag : tags) {
+            result.add(tag.getName());
+        }
+        // Has to be a List in order for JRuby to convert to Ruby Array.
+        return new ArrayList<String>(result);
     }
 
     @Override

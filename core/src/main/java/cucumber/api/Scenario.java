@@ -1,10 +1,14 @@
 package cucumber.api;
 
+import java.util.Collection;
+
 /**
  * Before or After Hooks that declare a parameter of this type will receive an instance of this class.
  * It allows writing text and embedding media into reports, as well as inspecting results (in an After block).
  */
 public interface Scenario {
+    Collection<String> getSourceTagNames();
+
     /**
      * @return the <em>most severe</em> status of the Scenario's Steps. One of "passed", "undefined", "pending", "skipped", "failed"
      */

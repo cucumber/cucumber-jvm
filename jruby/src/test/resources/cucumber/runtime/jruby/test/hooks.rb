@@ -1,7 +1,8 @@
 require 'cucumber/api/jruby/en'
 
-Before('@tag') do
+Before('@tag') do |scenario|
   @tagged_hook_ran = true
+  raise "Unexpected tags" unless scenario.source_tag_names == ['@tag']
 end
 
 Then /^tagged hook ran$/ do

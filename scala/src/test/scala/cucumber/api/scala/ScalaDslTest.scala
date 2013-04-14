@@ -10,6 +10,8 @@ import cucumber.api.Scenario
 class ScalaDslTest {
 
   object StubScenario extends Scenario{
+    def getSourceTagNames = null
+
     def getStatus =  ""
 
     def isFailed = false
@@ -125,7 +127,7 @@ class ScalaDslTest {
 
     assertEquals(1, Dummy.stepDefinitions.size)
     val step = Dummy.stepDefinitions.head
-    assertEquals("ScalaDslTest.scala:121", step.getLocation(true)) // be careful with formatting or this test will break
+    assertEquals("ScalaDslTest.scala:123", step.getLocation(true)) // be careful with formatting or this test will break
     assertEquals("x", step.getPattern)
     step.execute(new I18n("en"), Array())
     assertTrue(called)
