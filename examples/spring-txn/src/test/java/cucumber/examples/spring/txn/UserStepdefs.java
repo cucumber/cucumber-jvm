@@ -2,9 +2,13 @@ package cucumber.examples.spring.txn;
 
 import cucumber.api.java.en.Given;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.util.List;
 
+@WebAppConfiguration
+@ContextConfiguration("classpath:cucumber.xml")
 public class UserStepdefs {
     @Autowired
     private UserRepository userRepository;

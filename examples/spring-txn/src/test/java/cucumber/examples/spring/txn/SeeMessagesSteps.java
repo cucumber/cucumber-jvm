@@ -4,6 +4,7 @@ import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -16,6 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 @WebAppConfiguration
+@ContextConfiguration("classpath:cucumber.xml")
 public class SeeMessagesSteps {
     @Autowired
     private UserRepository userRepository;
@@ -29,8 +31,6 @@ public class SeeMessagesSteps {
     private User user;
     private Message message;
 
-    private final String contextLocation = "classpath:cucumber.xml";
-    private final String warRootDir = "/src/main/webapp";
     private ResultActions resultActions;
 
     @Given("^there is a User$")
