@@ -2,26 +2,21 @@ package cucumber.runtime.jruby;
 
 import cucumber.api.Scenario;
 import cucumber.runtime.HookDefinition;
-import gherkin.TagExpression;
-import gherkin.formatter.model.Tag;
 import org.jruby.RubyObject;
 
-import java.util.Collection;
 import java.util.List;
-
-import static java.util.Arrays.asList;
 
 public class JRubyHookDefinition implements HookDefinition {
 
-    private final TagExpression tagExpression;
+    private final String tagExpression;
     private final RubyObject hookRunner;
     private String file;
     private Long line;
     private final JRubyBackend jRubyBackend;
 
-    public JRubyHookDefinition(JRubyBackend jRubyBackend, String[] tagExpressions, RubyObject hookRunner) {
+    public JRubyHookDefinition(JRubyBackend jRubyBackend, String tagExpression, RubyObject hookRunner) {
         this.jRubyBackend = jRubyBackend;
-        this.tagExpression = new TagExpression(asList(tagExpressions));
+        this.tagExpression = tagExpression;
         this.hookRunner = hookRunner;
     }
 
@@ -41,8 +36,8 @@ public class JRubyHookDefinition implements HookDefinition {
     }
 
     @Override
-    public boolean matches(Collection<Tag> tags) {
-        return tagExpression.eval(tags);
+    public String getTagExpression() {
+        return tagExpression;
     }
 
     @Override

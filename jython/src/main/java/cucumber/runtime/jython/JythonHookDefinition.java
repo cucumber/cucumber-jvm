@@ -1,24 +1,29 @@
 package cucumber.runtime.jython;
 
 import cucumber.api.Scenario;
+import cucumber.runtime.CucumberException;
 import cucumber.runtime.HookDefinition;
-import gherkin.TagExpression;
-import gherkin.formatter.model.Tag;
 import org.python.core.PyInstance;
-import org.python.core.PyTuple;
-
-import java.util.Collection;
+import org.python.core.PyNone;
+import org.python.core.PyObject;
+import org.python.core.PyString;
 
 public class JythonHookDefinition implements HookDefinition {
     private final PyInstance hookDefinition;
-    private final TagExpression tagExpression;
+    private final String tagExpression;
     private final JythonBackend backend;
 
     public JythonHookDefinition(JythonBackend backend, PyInstance hookDefinition) {
         this.backend = backend;
         this.hookDefinition = hookDefinition;
-        PyTuple tags = (PyTuple) hookDefinition.__dict__.__finditem__("tags");
-        this.tagExpression = new TagExpression(tags);
+        PyObject tagExpression = hookDefinition.__dict__.__finditem__("tagExpression");
+        if (tagExpression instanceof PyString) {
+            this.tagExpression = tagExpression.asString();
+        } else if (tagExpression instanceof PyNone) {
+            this.tagExpression = null;
+        } else {
+            throw new CucumberException("tagExpression must be a String or None");
+        }
     }
 
     @Override
@@ -27,8 +32,8 @@ public class JythonHookDefinition implements HookDefinition {
     }
 
     @Override
-    public boolean matches(Collection<Tag> tags) {
-        return tagExpression.eval(tags);
+    public String getTagExpression() {
+        return tagExpression;
     }
 
     @Override

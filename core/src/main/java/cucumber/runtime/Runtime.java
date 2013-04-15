@@ -1,5 +1,9 @@
 package cucumber.runtime;
 
+import bool.Evaluator;
+import bool.Lexer;
+import bool.Node;
+import bool.Parser;
 import cucumber.api.Pending;
 import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.io.ResourceLoader;
@@ -23,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -180,35 +185,55 @@ public class Runtime implements UnreportedStepExecutor {
     }
 
     private void runHooks(List<HookDefinition> hooks, Reporter reporter, Set<Tag> tags, boolean isBefore) {
+        Set<String> tagNames = new HashSet<String>();
+        for (Tag tag : tags) {
+            tagNames.add(tag.getName());
+        }
+
         if (!runtimeOptions.dryRun) {
             for (HookDefinition hook : hooks) {
-                runHookIfTagsMatch(hook, reporter, tags, isBefore);
+                Node compiledTagExpression = getCompiledTagExpression(hook);
+                if (compiledTagExpression == null || compiledTagExpression.accept(new Evaluator(), tagNames)) {
+                    runHook(hook, reporter, isBefore);
+                }
             }
         }
     }
 
-    private void runHookIfTagsMatch(HookDefinition hook, Reporter reporter, Set<Tag> tags, boolean isBefore) {
-        if (hook.matches(tags)) {
-            String status = Result.PASSED;
-            Throwable error = null;
-            Match match = new Match(Collections.<Argument>emptyList(), hook.getLocation(false));
-            long start = System.nanoTime();
+    private Node getCompiledTagExpression(HookDefinition hook) {
+        String tagExpression = hook.getTagExpression();
+        if (tagExpression != null) {
+            Parser parser = new Parser(new Lexer(tagExpression));
             try {
-                hook.execute(scenarioResult);
-            } catch (Throwable t) {
-                error = t;
-                status = isPending(t) ? "pending" : Result.FAILED;
-                addError(t);
-                skipNextStep = true;
-            } finally {
-                long duration = System.nanoTime() - start;
-                Result result = new Result(status, duration, error, DUMMY_ARG);
-                scenarioResult.add(result);
-                if (isBefore) {
-                    reporter.before(match, result);
-                } else {
-                    reporter.after(match, result);
-                }
+                return parser.buildAst();
+            } catch (IOException e) {
+                throw new CucumberException(e);
+            }
+        } else {
+            return null;
+        }
+    }
+
+    private void runHook(HookDefinition hook, Reporter reporter, boolean isBefore) {
+        String status = Result.PASSED;
+        Throwable error = null;
+        Match match = new Match(Collections.<Argument>emptyList(), hook.getLocation(false));
+        long start = System.nanoTime();
+        try {
+            hook.execute(scenarioResult);
+        } catch (Throwable t) {
+            error = t;
+            status = isPending(t) ? "pending" : Result.FAILED;
+            addError(t);
+            skipNextStep = true;
+        } finally {
+            long duration = System.nanoTime() - start;
+            Result result = new Result(status, duration, error, DUMMY_ARG);
+            scenarioResult.add(result);
+            if (isBefore) {
+                reporter.before(match, result);
+            } else {
+                reporter.after(match, result);
             }
         }
     }

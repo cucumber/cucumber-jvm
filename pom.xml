@@ -18,6 +18,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <outputDirectory>${project.build.directory}</outputDirectory>
         <gherkin.version>2.11.8</gherkin.version>
+        <bool.version>1.0.15</bool.version>
         <groovy.version>2.1.2</groovy.version>
         <!-- Keep in sync with scala/pom.xml and scala/scala_previous/pom.xml if minor versions are bumped. -->
         <scala.current.version>2.10.0</scala.current.version>
@@ -85,6 +86,11 @@
                 <groupId>info.cukes</groupId>
                 <artifactId>gherkin</artifactId>
                 <version>${gherkin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>info.cukes</groupId>
+                <artifactId>bool</artifactId>
+                <version>${bool.version}</version>
             </dependency>
             <dependency>
                 <groupId>info.cukes</groupId>
@@ -366,7 +372,7 @@
     <modules>
         <module>core</module>
         <module>picocontainer</module>
-        <module>clojure</module>
+        <!--<module>clojure</module>-->
         <module>junit</module>
         <module>jruby</module>
         <module>jython</module>
@@ -378,8 +384,8 @@
         <module>rhino</module>
         <module>java</module>
         <module>openejb</module>
-        <module>scala</module>
-        <module>scala/scala_previous</module>
+        <!--<module>scala</module>-->
+        <!--<module>scala/scala_previous</module>-->
     </modules>
 
     <profiles>

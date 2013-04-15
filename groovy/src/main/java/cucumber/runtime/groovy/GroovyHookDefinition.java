@@ -3,20 +3,16 @@ package cucumber.runtime.groovy;
 import cucumber.api.Scenario;
 import cucumber.runtime.HookDefinition;
 import cucumber.runtime.Timeout;
-import gherkin.TagExpression;
-import gherkin.formatter.model.Tag;
 import groovy.lang.Closure;
 
-import java.util.Collection;
-
 public class GroovyHookDefinition implements HookDefinition {
-    private final TagExpression tagExpression;
+    private final String tagExpression;
     private final int timeoutMillis;
     private final Closure body;
     private final GroovyBackend backend;
     private final StackTraceElement location;
 
-    public GroovyHookDefinition(TagExpression tagExpression, int timeoutMillis, Closure body, StackTraceElement location, GroovyBackend backend) {
+    public GroovyHookDefinition(String tagExpression, int timeoutMillis, Closure body, StackTraceElement location, GroovyBackend backend) {
         this.tagExpression = tagExpression;
         this.timeoutMillis = timeoutMillis;
         this.body = body;
@@ -41,8 +37,8 @@ public class GroovyHookDefinition implements HookDefinition {
     }
 
     @Override
-    public boolean matches(Collection<Tag> tags) {
-        return tagExpression.eval(tags);
+    public String getTagExpression() {
+        return tagExpression;
     }
 
     @Override

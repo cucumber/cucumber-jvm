@@ -43,23 +43,23 @@ class World:
 
 class HookDefinition:
 
-  def __init__(self, tags, func):
-      self.tags = tags
+  def __init__(self, tagExpression, func):
+      self.tagExpression = tagExpression
       self.func = func
 
   def execute(self, *args):
     self.func.__call__(*args)
 
 class Before():
-  def __init__(self, *tags):
-    self.tags = tags
+  def __init__(self, tagExpression=None):
+    self.tagExpression = tagExpression
 
   def __call__(self, func):
-    backend.addBeforeHook(HookDefinition(self.tags, func))
+    backend.addBeforeHook(HookDefinition(self.tagExpression, func))
 
 class After():
-  def __init__(self, *tags):
-    self.tags = tags
+  def __init__(self, tagExpression=None):
+    self.tagExpression = tagExpression
 
   def __call__(self, func):
-    backend.addAfterHook(HookDefinition(self.tags, func))
+    backend.addAfterHook(HookDefinition(self.tagExpression, func))

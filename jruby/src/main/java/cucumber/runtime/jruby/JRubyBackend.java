@@ -123,12 +123,12 @@ public class JRubyBackend implements Backend {
         glue.addStepDefinition(new JRubyStepDefinition(this, stepdefRunner));
     }
 
-    public void registerBeforeHook(RubyObject procRunner, String[] tagExpressions) {
-        glue.addBeforeHook(new JRubyHookDefinition(this, tagExpressions, procRunner));
+    public void registerBeforeHook(RubyObject procRunner, String tagExpression) {
+        glue.addBeforeHook(new JRubyHookDefinition(this, tagExpression, procRunner));
     }
 
-    public void registerAfterHook(RubyObject procRunner, String[] tagExpressions) {
-        glue.addAfterHook(new JRubyHookDefinition(this, tagExpressions, procRunner));
+    public void registerAfterHook(RubyObject procRunner, String tagExpression) {
+        glue.addAfterHook(new JRubyHookDefinition(this, tagExpression, procRunner));
     }
 
     public void registerWorldBlock(RubyObject procRunner) {
