@@ -8,13 +8,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.web.context.WebApplicationContext;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 @WebAppConfiguration
 @ContextConfiguration("classpath:cucumber.xml")
@@ -23,10 +21,10 @@ public class SeeMessagesSteps {
     private UserRepository userRepository;
 
     @Autowired
-    private WebApplicationContext wac;
+    private MessageRepository messageRepository;
 
     @Autowired
-    private MessageRepository messageRepository;
+    private MockMvc mockMvc;
 
     private User user;
     private Message message;
@@ -45,7 +43,7 @@ public class SeeMessagesSteps {
 
     @When("^I visit the page for the User$")
     public void I_visit_the_page_for_the_User() throws Throwable {
-        resultActions = getMockMvc()
+        resultActions = mockMvc
                 .perform(get("/users/" + user.getId()))
                 .andExpect(status().isOk());
     }
@@ -53,10 +51,6 @@ public class SeeMessagesSteps {
     @Then("^I should see \"([^\"]*)\"$")
     public void I_should_see(String content) throws Throwable {
         resultActions.andExpect(content().string(containsString(content)));
-    }
-
-    private MockMvc getMockMvc() {
-        return webAppContextSetup(wac).build();
     }
 
 }
