@@ -6,7 +6,6 @@
                              HookDefinition)
            (cucumber.runtime.snippets Snippet
                                       SnippetGenerator)
-           (gherkin TagExpression)
            (clojure.lang RT))
   (:gen-class :name cucumber.runtime.clj.Backend
               :implements [cucumber.runtime.Backend]
@@ -93,22 +92,20 @@
 (defmulti add-hook-definition (fn [t & _] t))
 
 (defmethod add-hook-definition :before [_ tag-expression hook-fun location]
-  (let [te (TagExpression. tag-expression)]
-    (.addBeforeHook
-     @glue
-     (reify
-       HookDefinition
-       (getLocation [_ detail?]
-         (location-str location))
-       (execute [hd scenario-result]
-         (hook-fun))
-       (matches [hd tags]
-         (.eval te tags))
-       (getOrder [hd] 0)))))
+  (.addBeforeHook
+   @glue
+   (reify
+     HookDefinition
+     (getLocation [_ detail?]
+       (location-str location))
+     (execute [hd scenario-result]
+       (hook-fun))
+     (getTagExpression [_]
+       tag-expression)
+     (getOrder [hd] 0))))
 
 (defmethod add-hook-definition :after [_ tag-expression hook-fun location]
-  (let [te (TagExpression. tag-expression)
-        max-parameter-count (->> hook-fun class .getDeclaredMethods
+  (let [max-parameter-count (->> hook-fun class .getDeclaredMethods
                                  (filter #(= "invoke" (.getName %)))
                                  (map #(count (.getParameterTypes %)))
                                  (apply max))]
@@ -122,8 +119,8 @@
          (if (zero? max-parameter-count)
            (hook-fun)
            (hook-fun scenario-result)))
-       (matches [hd tags]
-         (.eval te tags))
+       (getTagExpression [_]
+         tag-expression)
        (getOrder [hd] 0)))))
 
 (defmacro step-macros [& names]
@@ -142,10 +139,10 @@
    :line (:line (meta form))})
 
 (defmacro Before [binding-form & body]
-  `(add-hook-definition :before [] (fn ~binding-form ~@body) ~(hook-location *file* &form)))
+  `(add-hook-definition :before nil (fn ~binding-form ~@body) ~(hook-location *file* &form)))
 
 (defmacro After [binding-form & body]
-  `(add-hook-definition :after [] (fn ~binding-form ~@body) ~(hook-location *file* &form)))
+  `(add-hook-definition :after nil (fn ~binding-form ~@body) ~(hook-location *file* &form)))
 
 (defn ^:private update-keys [f m]
   (reduce-kv #(assoc %1 (f %2) %3) {} m))
