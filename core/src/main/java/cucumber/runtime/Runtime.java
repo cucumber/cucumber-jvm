@@ -193,7 +193,7 @@ public class Runtime implements UnreportedStepExecutor {
         if (!runtimeOptions.dryRun) {
             for (HookDefinition hook : hooks) {
                 Node compiledTagExpression = getCompiledTagExpression(hook);
-                if (compiledTagExpression == null || compiledTagExpression.accept(new Evaluator(), tagNames)) {
+                if (compiledTagExpression == null || new Evaluator().evaluate(compiledTagExpression, tagNames)) {
                     runHook(hook, reporter, isBefore);
                 }
             }
@@ -204,11 +204,7 @@ public class Runtime implements UnreportedStepExecutor {
         String tagExpression = hook.getTagExpression();
         if (tagExpression != null) {
             Parser parser = new Parser(new Lexer(tagExpression));
-            try {
-                return parser.buildAst();
-            } catch (IOException e) {
-                throw new CucumberException(e);
-            }
+            return parser.buildAst();
         } else {
             return null;
         }
