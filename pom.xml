@@ -386,7 +386,7 @@
         <profile>
             <id>examples</id>
             <modules>
-                <!--<module>examples/spring-txn</module>-->
+                <module>examples/spring-txn</module>
                 <module>examples/java-calculator</module>
                 <module>examples/groovy-calculator</module>
                 <module>examples/scala-calculator</module>
@@ -397,7 +397,7 @@
         <profile>
             <id>release-sign-artifacts</id>
             <modules>
-                <!--<module>examples/spring-txn</module>-->
+                <module>examples/spring-txn</module>
                 <module>examples/java-calculator</module>
                 <module>examples/groovy-calculator</module>
                 <module>examples/scala-calculator</module>
