@@ -21,6 +21,15 @@ public interface Scenario {
 
     /**
      * Embeds data into the report(s). Some reporters (such as the progress one) don't embed data, but others do (html and json).
+     * Example:
+     *
+     * <pre>
+     * {@code
+     * // Embed a screenshot. See your UI automation tool's docs for
+     * // details about how to take a screenshot.
+     * scenario.embed(pngBytes, "image/png");
+     * }
+     * </pre>
      *
      * @param data     what to embed, for example an image.
      * @param mimeType what is the data?
