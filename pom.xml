@@ -384,7 +384,7 @@
         <module>rhino</module>
         <module>java</module>
         <module>openejb</module>
-        <!--<module>scala</module>-->
+        <module>scala</module>
         <!--<module>scala/scala_previous</module>-->
     </modules>
 

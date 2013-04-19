@@ -17,24 +17,27 @@ public class Hooks {
         addHook(args, false);
     }
 
-    private static void addHook(Object[] tagsExpressionsAndBody, boolean before) {
+    private static void addHook(Object[] args, boolean before) {
         String tagExpression = null;
         Integer timeoutMillis = null;
         Closure body = null;
 
-        for (Object o : tagsExpressionsAndBody) {
+        for (Object o : args) {
             if (o instanceof String) {
-                if (tagExpression != null) throw new CucumberException("tagExpression already set");
+                if (tagExpression != null) throw new CucumberException(String.format("tagExpression already set to %s. Can't set it to %s", tagExpression, o));
                 tagExpression = (String) o;
             } else if (o instanceof Integer) {
-                if (tagExpression != null) throw new CucumberException("timeoutMillis already set");
+                if (timeoutMillis != null) throw new CucumberException(String.format("timeoutMillis already set to %d. Can't set it to %d", String.valueOf(timeoutMillis), o));
                 timeoutMillis = (Integer) o;
             } else if (o instanceof Closure) {
-                if (tagExpression != null) throw new CucumberException("body already set");
+                if (body != null) throw new CucumberException("body already set");
                 body = (Closure) o;
             }
         }
 
+        if(timeoutMillis == null) {
+            timeoutMillis = 0;
+        }
         if (before) {
             GroovyBackend.instance.addBeforeHook(tagExpression, timeoutMillis, body);
         } else {

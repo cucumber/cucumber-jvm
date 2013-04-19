@@ -1,10 +1,13 @@
 package calc
 
-this.metaClass.mixin(cucumber.api.groovy.Hooks)
-this.metaClass.mixin(cucumber.api.groovy.EN)
+import cucumber.api.groovy.EN
+import cucumber.api.groovy.Hooks
+
+this.metaClass.mixin(Hooks)
+this.metaClass.mixin(EN)
 
 class CustomWorld {
-    String customMethod() {
+    static String customMethod() {
         "foo"
     }
 }
@@ -22,7 +25,7 @@ Before("@notused") {
     throw new RuntimeException("Never happens")
 }
 
-Before("@notused,@important", "@alsonotused") {
+Before("(@notused || @important) && @alsonotused") {
     throw new RuntimeException("Never happens")
 }
 

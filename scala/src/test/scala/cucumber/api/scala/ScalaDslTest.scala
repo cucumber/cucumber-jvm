@@ -32,7 +32,7 @@ class ScalaDslTest {
 
     assertEquals(1, Befores.beforeHooks.size)
     val hook = Befores.beforeHooks.head
-    assertTrue(hook.matches(List[Tag]().asJava))
+    assertNull(hook.getTagExpression)
     hook.execute(StubScenario)
     assertEquals(Int.MaxValue, hook.getOrder)
     assertEquals(StubScenario, actualScenario)
@@ -43,15 +43,13 @@ class ScalaDslTest {
     var actualScenario : Scenario = null
 
     object Befores extends ScalaDsl with EN {
-      Before("@foo,@bar", "@zap"){ actualScenario = _ }
+      Before("(@foo || @bar) && @zap"){ actualScenario = _ }
     }
 
     assertEquals(1, Befores.beforeHooks.size)
 
     val hook = Befores.beforeHooks.head
-    assertFalse(hook.matches(List[Tag]().asJava))
-    assertTrue(hook.matches(List(new Tag("@bar", 0), new Tag("@zap", 0)).asJava))
-    assertFalse(hook.matches(List(new Tag("@bar", 1)).asJava))
+    assertEquals("(@foo || @bar) && @zap", hook.getTagExpression)
 
     hook.execute(StubScenario)
     assertEquals(StubScenario, actualScenario)
@@ -73,7 +71,7 @@ class ScalaDslTest {
   def taggedOrderedBefore {
 
     object Befores extends ScalaDsl with EN {
-      Before(10, "@foo,@bar", "@zap"){  scenario : Scenario => }
+      Before("(@foo || @bar) && @zap", 10){  scenario : Scenario => }
     }
 
     val hook = Befores.beforeHooks(0)
@@ -91,7 +89,6 @@ class ScalaDslTest {
 
     assertEquals(1, Afters.afterHooks.size)
     val hook = Afters.afterHooks.head
-    assertTrue(hook.matches(List[Tag]().asJava))
     hook.execute(StubScenario)
     assertEquals(StubScenario, actualScenario)
   }
@@ -101,15 +98,13 @@ class ScalaDslTest {
     var actualScenario : Scenario = null
 
     object Afters extends ScalaDsl with EN {
-      After("@foo,@bar", "@zap"){ actualScenario = _ }
+      After("(@foo || @bar) && @zap"){ actualScenario = _ }
     }
 
     assertEquals(1, Afters.afterHooks.size)
 
     val hook = Afters.afterHooks.head
-    assertFalse(hook.matches(List[Tag]().asJava))
-    assertTrue(hook.matches(List(new Tag("@bar", 0), new Tag("@zap", 0)).asJava))
-    assertFalse(hook.matches(List(new Tag("@bar", 1)).asJava))
+    assertEquals("(@foo || @bar) && @zap", hook.getTagExpression)
 
     hook.execute(StubScenario)
     assertEquals(StubScenario, actualScenario)
@@ -127,7 +122,7 @@ class ScalaDslTest {
 
     assertEquals(1, Dummy.stepDefinitions.size)
     val step = Dummy.stepDefinitions.head
-    assertEquals("ScalaDslTest.scala:123", step.getLocation(true)) // be careful with formatting or this test will break
+    assertEquals("ScalaDslTest.scala:118", step.getLocation(true)) // be careful with formatting or this test will break
     assertEquals("x", step.getPattern)
     step.execute(new I18n("en"), Array())
     assertTrue(called)
