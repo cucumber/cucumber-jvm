@@ -17,7 +17,7 @@ class ScalaHookDefinition(f:Scenario => Unit,
 
   def execute(scenario: Scenario) { f(scenario) }
 
-  def matches(tags: Collection[Tag]) = tagExpression.eval(tags)
+  def matches(tags: Collection[Tag]) = tagExpression.evaluate(tags)
 
   def getOrder = order
 }

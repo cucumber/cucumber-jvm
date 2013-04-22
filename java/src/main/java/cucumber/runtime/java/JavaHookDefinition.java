@@ -61,7 +61,7 @@ class JavaHookDefinition implements HookDefinition {
 
     @Override
     public boolean matches(Collection<Tag> tags) {
-        return tagExpression.eval(tags);
+        return tagExpression.evaluate(tags);
     }
 
     @Override
