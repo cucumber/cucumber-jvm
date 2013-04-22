@@ -1,5 +1,6 @@
 ## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.1.3...master) (not released)
 
+* [Core] The `json-pretty` formatter is gone, and the `json` formatter is pretty!
 * [Spring] New awesome Spring port of The Cucumber Book's chapter 14. ([#508](https://github.com/cucumber/cucumber-jvm/pull/508), [#489](https://github.com/cucumber/cucumber-jvm/pull/489) Dmytro Chyzhykov, Pedro Antonio Souza Viegas)
 * [Core] Added `Scenario.getSourceTagNames()`, which is needed to make Capybara work with Cucumber-JRuby ([#504](https://github.com/cucumber/cucumber-jvm/issues/504) Aslak Hellesøy)
 * [JRuby] Tagged hooks for JRuby ([#467](https://github.com/cucumber/cucumber-jvm/issues/467) Aslak Hellesøy)
