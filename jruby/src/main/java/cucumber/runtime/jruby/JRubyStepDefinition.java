@@ -28,13 +28,18 @@ public class JRubyStepDefinition implements StepDefinition {
     public List<Argument> matchedArguments(Step step) {
         RubyString stepName = stepdefRunner.getRuntime().newString(step.getName());
         IRubyObject arguments = stepdefRunner.callMethod("matched_arguments", stepName);
+        return toJava(arguments);
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<Argument> toJava(IRubyObject arguments) {
         return (List<Argument>) arguments.toJava(List.class);
     }
 
     @Override
     public String getLocation(boolean detail) {
         if (file == null) {
-            List fileAndLine = (List) stepdefRunner.callMethod("file_and_line").toJava(List.class);
+            List fileAndLine = toJava(stepdefRunner.callMethod("file_and_line"));
             file = (String) fileAndLine.get(0);
             line = (Long) fileAndLine.get(1);
         }

@@ -25,7 +25,7 @@ class DefaultJavaObjectFactory implements ObjectFactory {
     }
 
     public <T> T getInstance(Class<T> type) {
-        T instance = (T) instances.get(type);
+        T instance = type.cast(instances.get(type));
         if (instance == null) {
             instance = cacheNewInstance(type);
         }

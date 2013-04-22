@@ -45,11 +45,16 @@ public class IokeStepDefinition implements StepDefinition {
             if (args.equals(ioke.nil)) {
                 return null;
             } else {
-                return (List<Argument>) args;
+                return ToArgumentsList(args);
             }
         } catch (ControlFlow controlFlow) {
             throw new RuntimeException("Failed to get step args", controlFlow);
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<Argument> ToArgumentsList(Object args) {
+        return (List<Argument>) args;
     }
 
     public String getLocation(boolean detail) {

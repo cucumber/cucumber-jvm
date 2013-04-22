@@ -39,7 +39,7 @@ public class JSONPrettyFormatterTest {
 
         List<String> args = new ArrayList<String>();
         args.add("--format");
-        args.add("json-pretty:" + report.getAbsolutePath());
+        args.add("json:" + report.getAbsolutePath());
         args.addAll(featurePaths);
 
         RuntimeOptions runtimeOptions = new RuntimeOptions(new Properties(), args.toArray(new String[args.size()]));
