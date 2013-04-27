@@ -3,7 +3,7 @@
     <parent>
         <groupId>info.cukes</groupId>
         <artifactId>java-wicket-selenium</artifactId>
-        <version>1.1.2-SNAPSHOT</version>
+        <version>1.1.4-SNAPSHOT</version>
     </parent>
     <artifactId>java-wicket-test</artifactId>
     <name>Examples: A Selenium WebDriver example testing a Wicket application</name>
@@ -12,7 +12,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <version>2.14</version>
                 <executions>
                     <execution>
                         <id>integration-test</id>
@@ -33,7 +32,6 @@
             <plugin>
                 <groupId>org.codehaus.cargo</groupId>
                 <artifactId>cargo-maven2-plugin</artifactId>
-                <version>1.3.0</version>
                 <executions>
                     <execution>
                         <id>start-servlet-engine</id>
@@ -70,7 +68,7 @@
         <dependency>
             <groupId>info.cukes</groupId>
             <artifactId>java-wicket-main</artifactId>
-            <version>1.1.2-SNAPSHOT</version>
+            <version>${project.version}</version>
             <type>war</type>
             <scope>test</scope>
         </dependency>
@@ -92,7 +90,6 @@
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
-            <version>2.31.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

@@ -36,7 +36,7 @@
         <junit.version>4.11</junit.version>
         <jython.version>2.5.3</jython.version>
         <mockito.version>1.9.5</mockito.version>
-        <selenium.version>2.31.0</selenium.version>
+        <selenium.version>2.32.0</selenium.version>
         <webbit.version>0.4.14</webbit.version>
         <webbit-rest.version>0.2.0</webbit-rest.version>
         <jruby.version>1.7.3</jruby.version>
@@ -208,6 +208,13 @@
             </dependency>
 
             <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-servlet</artifactId>
+                <version>9.0.2.v20130417</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-entitymanager</artifactId>
                 <version>${hibernate.version}</version>
@@ -294,6 +301,11 @@
             </dependency>
             <dependency>
                 <groupId>org.seleniumhq.selenium</groupId>
+                <artifactId>selenium-java</artifactId>
+                <version>${selenium.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.seleniumhq.selenium</groupId>
                 <artifactId>selenium-chrome-driver</artifactId>
                 <version>${selenium.version}</version>
             </dependency>
@@ -332,7 +344,11 @@
                 <artifactId>openejb-core</artifactId>
                 <version>${openejb-core.version}</version>
             </dependency>
-
+            <dependency>
+                <groupId>org.apache.wicket</groupId>
+                <artifactId>wicket-core</artifactId>
+                <version>6.7.0</version>
+            </dependency>
             <dependency>
                 <groupId>net.sourceforge.cobertura</groupId>
                 <artifactId>cobertura</artifactId>
@@ -390,6 +406,7 @@
                 <module>examples/java-calculator</module>
                 <module>examples/groovy-calculator</module>
                 <module>examples/scala-calculator</module>
+                <module>examples/java-wicket</module>
                 <module>examples/java-webbit-websockets-selenium</module>
             </modules>
         </profile>
@@ -580,7 +597,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.12.2</version>
+                    <version>2.14.1</version>
                     <configuration>
                         <argLine>-Duser.language=en</argLine>
                         <argLine>-Xmx1024m</argLine>
@@ -590,12 +607,24 @@
                     </configuration>
                 </plugin>
 
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>2.14.1</version>
+                </plugin>
+
                 <!-- Non-standard plugins - alphabetically -->
 
                 <plugin>
                     <groupId>net.alchim31.maven</groupId>
                     <artifactId>scala-maven-plugin</artifactId>
                     <version>3.1.0</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.codehaus.cargo</groupId>
+                    <artifactId>cargo-maven2-plugin</artifactId>
+                    <version>1.3.0</version>
                 </plugin>
 
                 <plugin>
