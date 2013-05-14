@@ -141,6 +141,11 @@
                 <artifactId>picocontainer</artifactId>
                 <version>2.14.2</version>
             </dependency>
+            <dependency>
+                <groupId>info.cukes</groupId>
+                <artifactId>cucumber-android</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
             <!-- Spring stuff -->
             <dependency>
@@ -380,6 +385,7 @@
         <module>openejb</module>
         <module>scala</module>
         <module>scala/scala_previous</module>
+        <module>android</module>
     </modules>
 
     <profiles>
