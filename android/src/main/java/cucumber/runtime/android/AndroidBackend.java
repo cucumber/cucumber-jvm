@@ -25,11 +25,6 @@ public class AndroidBackend implements Backend {
         mObjectFactory = new AndroidObjectFactory(instrumentation);
     }
 
-    public AndroidBackend(Context context, ObjectFactory objectFactory) {
-        mClasspathMethodScanner = new AndroidClasspathMethodScanner(context);
-        mObjectFactory = objectFactory;
-    }
-
     @Override
     public void loadGlue(Glue glue, List<String> gluePaths) {
         mGlue = glue;
