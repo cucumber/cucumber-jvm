@@ -39,12 +39,12 @@ public class CucumberInstrumentation extends Instrumentation {
     public static final int REPORT_VALUE_RESULT_FAILURE = -2;
     public static final String REPORT_KEY_STACK = "stack";
     public static final String TAG = "cucumber-android";
-    RuntimeOptions mRuntimeOptions;
-    ResourceLoader mResourceLoader;
-    ClassLoader mClassLoader;
+    private RuntimeOptions mRuntimeOptions;
+    private ResourceLoader mResourceLoader;
+    private ClassLoader mClassLoader;
     private Runtime mRuntime;
-    String mPackageOfTests;
-    String mFeatures;
+    private String mPackageOfTests;
+    private String mFeatures;
 
     @Override
     public void onCreate(Bundle arguments) {
