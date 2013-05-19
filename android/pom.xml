@@ -30,25 +30,17 @@
         <dependency>
             <groupId>info.cukes</groupId>
             <artifactId>cucumber-core</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>info.cukes</groupId>
             <artifactId>cucumber-java</artifactId>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
     <build>
-        <finalName>${project.artifactId}</finalName>
-        <sourceDirectory>src/main/java</sourceDirectory>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <excludes>
-                    <exclude>**/*.xml</exclude>
-                    <exclude>**/*.properties</exclude>
-                </excludes>
-            </resource>
-        </resources>
+        <sourceDirectory>src</sourceDirectory>
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -68,7 +60,6 @@
                         <!-- api level 8 = platform 2.2.1 -->
                         <platform>8</platform>
                     </sdk>
-                    <androidManifestFile>src/main/resources/AndroidManifest.xml</androidManifestFile>
                 </configuration>
                 <executions>
                     <execution>
