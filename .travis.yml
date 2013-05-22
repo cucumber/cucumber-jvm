@@ -1,9 +1,13 @@
 language: java
 script: mvn -q clean install
 jdk:
-  - openjdk6
-  - openjdk7
-  - oraclejdk7
+- openjdk7
+- oraclejdk7
+matrix:
+  # override script for jdk 6 to push snapshots to sonatype
+  include:
+    jdk: openjdk6
+    script: mvn -q clean deploy --settings .travis-settings.xml
 # whitelist
 branches:
   only:
@@ -15,3 +19,7 @@ notifications:
   irc:
     - "irc.freenode.org#cucumber"
     
+env:
+  global:
+  - secure: 'INSERT OUTPUT FROM [travis encrypt -r cucumber/cucumber-jvm "CI_DEPLOY_USERNAME=<sonatype-username>"] HERE'
+  - secure: 'INSERT OUTPUT FROM [travis encrypt -r cucumber/cucumber-jvm "CI_DEPLOY_PASSWORD=<sonatype-password>"] HERE'
