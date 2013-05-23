@@ -3,6 +3,7 @@ package cucumber.runtime.android;
 import android.app.Instrumentation;
 import android.content.Intent;
 import android.test.ActivityInstrumentationTestCase2;
+import android.test.AndroidTestCase;
 import android.test.InstrumentationTestCase;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.java.ObjectFactory;
@@ -56,6 +57,8 @@ class AndroidObjectFactory implements ObjectFactory {
                 ((ActivityInstrumentationTestCase2) instance).setActivityIntent(intent);
             } else if (instance instanceof InstrumentationTestCase) {
                 ((InstrumentationTestCase) instance).injectInstrumentation(mInstrumentation);
+            } else if (instance instanceof AndroidTestCase) {
+                ((AndroidTestCase) instance).setContext(mInstrumentation.getContext());
             }
             mInstances.put(type, instance);
             return instance;
