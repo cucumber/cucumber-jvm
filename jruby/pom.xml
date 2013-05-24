@@ -171,7 +171,7 @@ gherkin.I18n.all.each { i18n ->
                         <id>deploy-gem</id>
                         <phase>deploy</phase>
                         <configuration>
-                            <target>
+                            <target unless="no.gem.deploy">
                                 <!-- install the jruby-openssl gem first! -->
                                 <echo message="installing jruby-openssl..." />
                                 <java jar="${maven.dependency.org.jruby.jruby-complete.jar.path}" failonerror="true" fork="true">
