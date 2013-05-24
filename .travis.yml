@@ -6,8 +6,9 @@ jdk:
 matrix:
   # override script for jdk 6 to push snapshots to sonatype
   include:
-    jdk: openjdk6
-    script: mvn -q clean deploy --settings .travis-settings.xml
+    - jdk: openjdk6
+      script: mvn -q clean deploy --settings .travis-settings.xml
+
 # whitelist
 branches:
   only:
