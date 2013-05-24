@@ -58,7 +58,7 @@ class AndroidObjectFactory implements ObjectFactory {
             } else if (instance instanceof InstrumentationTestCase) {
                 ((InstrumentationTestCase) instance).injectInstrumentation(mInstrumentation);
             } else if (instance instanceof AndroidTestCase) {
-                ((AndroidTestCase) instance).setContext(mInstrumentation.getContext());
+                ((AndroidTestCase) instance).setContext(mInstrumentation.getTargetContext());
             }
             mInstances.put(type, instance);
             return instance;
