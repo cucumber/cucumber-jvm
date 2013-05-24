@@ -109,8 +109,9 @@ public class CucumberInstrumentation extends Instrumentation {
     private boolean readRunWithCucumberAnnotation(Class<?> clazz) {
         RunWithCucumber annotation = clazz.getAnnotation(RunWithCucumber.class);
         if (annotation != null) {
-            mPackageOfTests = annotation.glue().isEmpty() ? defaultGlue() : annotation.glue();
-            mFeatures = annotation.features().isEmpty() ? defaultFeatures() : annotation.features();
+            // isEmpty() only available in Android API 9+
+            mPackageOfTests = annotation.glue().equals("") ? defaultGlue() : annotation.glue();
+            mFeatures = annotation.features().equals("") ? defaultFeatures() : annotation.features();
             return true;
         }
         return false;
