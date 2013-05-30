@@ -97,7 +97,7 @@ class JUnitFormatter implements Formatter, Reporter {
             DOMSource source = new DOMSource(doc);
             trans.transform(source, result);
         } catch (TransformerException e) {
-            new CucumberException("Error while transforming.", e);
+            throw new CucumberException("Error while transforming.", e);
         }
     }
 
