@@ -42,7 +42,8 @@ public class Runtime implements UnreportedStepExecutor {
     private static final Object DUMMY_ARG = new Object();
     private static final byte ERRORS = 0x1;
 
-    final UndefinedStepsTracker undefinedStepsTracker = new UndefinedStepsTracker();
+    private final SummaryCounter summaryCounter;
+    final UndefinedStepsTracker undefinedStepsTracker;
 
     private final Glue glue;
     private final RuntimeOptions runtimeOptions;
@@ -62,19 +63,29 @@ public class Runtime implements UnreportedStepExecutor {
     }
 
     public Runtime(ResourceLoader resourceLoader, ClassLoader classLoader, Collection<? extends Backend> backends, RuntimeOptions runtimeOptions) {
+        this(resourceLoader, classLoader, backends, runtimeOptions, new UndefinedStepsTracker());
+    }
+
+    public Runtime(ResourceLoader resourceLoader, ClassLoader classLoader, Collection<? extends Backend> backends,
+            RuntimeOptions runtimeOptions, UndefinedStepsTracker undefinedStepsTracker) {
+        this(resourceLoader, classLoader, backends, runtimeOptions, undefinedStepsTracker,
+                new RuntimeGlue(undefinedStepsTracker, new LocalizedXStreams(classLoader)));
+    }
+
+    public Runtime(ResourceLoader resourceLoader, ClassLoader classLoader, Collection<? extends Backend> backends,
+            RuntimeOptions runtimeOptions, UndefinedStepsTracker undefinedStepsTracker, RuntimeGlue glue) {
         this.resourceLoader = resourceLoader;
         this.classLoader = classLoader;
-        if (backends.isEmpty()) {
-            throw new CucumberException("No backends were found. Please make sure you have a backend module on your CLASSPATH.");
-        }
         this.backends = backends;
-        glue = new RuntimeGlue(undefinedStepsTracker, new LocalizedXStreams(classLoader));
+        this.runtimeOptions = runtimeOptions;
+        this.undefinedStepsTracker = undefinedStepsTracker;
+        this.glue = glue;
+        this.summaryCounter = new SummaryCounter(runtimeOptions.monochrome);
 
         for (Backend backend : backends) {
             backend.loadGlue(glue, runtimeOptions.glue);
             backend.setUnreportedStepExecutor(this);
         }
-        this.runtimeOptions = runtimeOptions;
     }
 
     private static Collection<? extends Backend> loadBackends(ResourceLoader resourceLoader, ClassLoader classLoader) {
@@ -95,8 +106,8 @@ public class Runtime implements UnreportedStepExecutor {
         Formatter formatter = runtimeOptions.formatter(classLoader);
 
         formatter.done();
-        printSummary();
         formatter.close();
+        printSummary();
     }
 
     private void run(CucumberFeature cucumberFeature) {
@@ -121,6 +132,7 @@ public class Runtime implements UnreportedStepExecutor {
     }
 
     public void disposeBackendWorlds() {
+        summaryCounter.addScenario(scenarioResult.getStatus());
         for (Backend backend : backends) {
             backend.disposeWorld();
         }
@@ -203,7 +215,7 @@ public class Runtime implements UnreportedStepExecutor {
             } finally {
                 long duration = System.nanoTime() - start;
                 Result result = new Result(status, duration, error, DUMMY_ARG);
-                scenarioResult.add(result);
+                addHookToCounterAndResult(result);
                 if (isBefore) {
                     reporter.before(match, result);
                 } else {
@@ -240,7 +252,9 @@ public class Runtime implements UnreportedStepExecutor {
             match = glue.stepDefinitionMatch(uri, step, i18n);
         } catch (AmbiguousStepDefinitionsException e) {
             reporter.match(e.getMatches().get(0));
-            reporter.result(new Result(Result.FAILED, 0L, e, DUMMY_ARG));
+            Result result = new Result(Result.FAILED, 0L, e, DUMMY_ARG);
+            reporter.result(result);
+            addStepToCounterAndResult(result);
             addError(e);
             skipNextStep = true;
             return;
@@ -251,6 +265,7 @@ public class Runtime implements UnreportedStepExecutor {
         } else {
             reporter.match(Match.UNDEFINED);
             reporter.result(Result.UNDEFINED);
+            addStepToCounterAndResult(Result.UNDEFINED);
             skipNextStep = true;
             return;
         }
@@ -260,7 +275,7 @@ public class Runtime implements UnreportedStepExecutor {
         }
 
         if (skipNextStep) {
-            scenarioResult.add(Result.SKIPPED);
+            addStepToCounterAndResult(Result.SKIPPED);
             reporter.result(Result.SKIPPED);
         } else {
             String status = Result.PASSED;
@@ -276,7 +291,7 @@ public class Runtime implements UnreportedStepExecutor {
             } finally {
                 long duration = System.nanoTime() - start;
                 Result result = new Result(status, duration, error, DUMMY_ARG);
-                scenarioResult.add(result);
+                addStepToCounterAndResult(result);
                 reporter.result(result);
             }
         }
@@ -291,5 +306,19 @@ public class Runtime implements UnreportedStepExecutor {
 
     public void writeStepdefsJson() throws IOException {
         glue.writeStepdefsJson(runtimeOptions.featurePaths, runtimeOptions.dotCucumber);
+    }
+
+    public SummaryCounter getSummaryCounter() {
+        return summaryCounter;
+    }
+
+    private void addStepToCounterAndResult(Result result) {
+        scenarioResult.add(result);
+        summaryCounter.addStep(result);
+    }
+
+    private void addHookToCounterAndResult(Result result) {
+        scenarioResult.add(result);
+        summaryCounter.addHookTime(result.getDuration());
     }
 }
