@@ -40,6 +40,7 @@
         <webbit.version>0.4.14</webbit.version>
         <webbit-rest.version>0.2.0</webbit-rest.version>
         <jruby.version>1.7.3</jruby.version>
+        <needle.version>2.2</needle.version>
         <weld-se.version>2.0.0.CR1</weld-se.version>
         <cdi-api.version>1.1-PRD</cdi-api.version>
         <openejb-core.version>4.5.1</openejb-core.version>
@@ -338,6 +339,11 @@
                 <artifactId>cobertura</artifactId>
                 <version>${cobertura.version}</version>
             </dependency>
+            <dependency>
+            	<groupId>de.akquinet.jbosscc</groupId>
+            	<artifactId>jbosscc-needle</artifactId>
+            	<version>${needle.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -380,6 +386,7 @@
         <module>openejb</module>
         <module>scala</module>
         <module>scala/scala_previous</module>
+        <module>needle</module>
     </modules>
 
     <profiles>
