@@ -189,9 +189,9 @@ public class RuntimeTest {
         runtime.disposeBackendWorlds();
         runtime.getSummaryCounter().printSummary(new PrintStream(baos));
 
-        assertThat(baos.toString(), startsWith(
-                "1 Scenarios (1 passed)" + System.lineSeparator() +
-                "1 Steps (1 passed)" + System.lineSeparator()));
+        assertThat(baos.toString(), startsWith(String.format(
+                "1 Scenarios (1 passed)%n" +
+                "1 Steps (1 passed)%n")));
     }
 
     @Test
@@ -206,9 +206,9 @@ public class RuntimeTest {
         runtime.disposeBackendWorlds();
         runtime.getSummaryCounter().printSummary(new PrintStream(baos));
 
-        assertThat(baos.toString(), startsWith(
-                "1 Scenarios (1 pending)" + System.lineSeparator() +
-                "1 Steps (1 pending)" + System.lineSeparator()));
+        assertThat(baos.toString(), startsWith(String.format(
+                "1 Scenarios (1 pending)%n" +
+                "1 Steps (1 pending)%n")));
     }
 
     @Test
@@ -223,9 +223,9 @@ public class RuntimeTest {
         runtime.disposeBackendWorlds();
         runtime.getSummaryCounter().printSummary(new PrintStream(baos));
 
-        assertThat(baos.toString(), startsWith(
-                "1 Scenarios (1 failed)" + System.lineSeparator() +
-                "1 Steps (1 failed)" + System.lineSeparator()));
+        assertThat(baos.toString(), startsWith(String.format(
+                "1 Scenarios (1 failed)%n" +
+                "1 Steps (1 failed)%n")));
     }
 
     @Test
@@ -239,9 +239,9 @@ public class RuntimeTest {
         runtime.disposeBackendWorlds();
         runtime.getSummaryCounter().printSummary(new PrintStream(baos));
 
-        assertThat(baos.toString(), startsWith(
-                "1 Scenarios (1 failed)" + System.lineSeparator() +
-                "1 Steps (1 failed)" + System.lineSeparator()));
+        assertThat(baos.toString(), startsWith(String.format(
+                "1 Scenarios (1 failed)%n" +
+                "1 Steps (1 failed)%n")));
     }
 
     @Test
@@ -257,9 +257,9 @@ public class RuntimeTest {
         runtime.disposeBackendWorlds();
         runtime.getSummaryCounter().printSummary(new PrintStream(baos));
 
-        assertThat(baos.toString(), startsWith(
-                "1 Scenarios (1 failed)" + System.lineSeparator() +
-                "2 Steps (1 failed, 1 skipped)" + System.lineSeparator()));
+        assertThat(baos.toString(), startsWith(String.format(
+                "1 Scenarios (1 failed)%n" +
+                "2 Steps (1 failed, 1 skipped)%n")));
     }
 
     @Test
@@ -273,9 +273,9 @@ public class RuntimeTest {
         runtime.disposeBackendWorlds();
         runtime.getSummaryCounter().printSummary(new PrintStream(baos));
 
-        assertThat(baos.toString(), startsWith(
-                "1 Scenarios (1 undefined)" + System.lineSeparator() +
-                "1 Steps (1 undefined)" + System.lineSeparator()));
+        assertThat(baos.toString(), startsWith(String.format(
+                "1 Scenarios (1 undefined)%n" +
+                "1 Steps (1 undefined)%n")));
     }
 
     @Test
@@ -292,9 +292,9 @@ public class RuntimeTest {
         runtime.disposeBackendWorlds();
         runtime.getSummaryCounter().printSummary(new PrintStream(baos));
 
-        assertThat(baos.toString(), startsWith(
-                "1 Scenarios (1 failed)" + System.lineSeparator() +
-                "1 Steps (1 skipped)" + System.lineSeparator()));
+        assertThat(baos.toString(), startsWith(String.format(
+                "1 Scenarios (1 failed)%n" +
+                "1 Steps (1 skipped)%n")));
    }
 
     @Test
@@ -311,9 +311,9 @@ public class RuntimeTest {
         runtime.disposeBackendWorlds();
         runtime.getSummaryCounter().printSummary(new PrintStream(baos));
 
-        assertThat(baos.toString(), startsWith(
-                "1 Scenarios (1 failed)" + System.lineSeparator() +
-                "1 Steps (1 passed)" + System.lineSeparator()));
+        assertThat(baos.toString(), startsWith(String.format(
+                "1 Scenarios (1 failed)%n" +
+                "1 Steps (1 passed)%n")));
    }
 
     private StepDefinitionMatch createExceptionThrowingMatch(Exception exception) throws Throwable {

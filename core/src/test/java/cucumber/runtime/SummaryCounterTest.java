@@ -24,9 +24,9 @@ public class SummaryCounterTest {
 
         counter.printSummary(new PrintStream(baos));
 
-        assertThat(baos.toString(), startsWith(
-                "0 Scenarios" + System.lineSeparator() +
-                "0 Steps" + System.lineSeparator()));
+        assertThat(baos.toString(), startsWith(String.format(
+                "0 Scenarios%n" +
+                "0 Steps%n")));
     }
 
     @Test
@@ -41,9 +41,9 @@ public class SummaryCounterTest {
         counter.addScenario(Result.PASSED);
         counter.printSummary(new PrintStream(baos));
 
-        assertThat(baos.toString(), startsWith(
-                "1 Scenarios (1 passed)" + System.lineSeparator() +
-                "3 Steps (3 passed)" + System.lineSeparator()));
+        assertThat(baos.toString(), startsWith(String.format(
+                "1 Scenarios (1 passed)%n" +
+                "3 Steps (3 passed)%n")));
     }
 
     @Test
@@ -58,9 +58,9 @@ public class SummaryCounterTest {
         addOneStepScenario(counter, Result.SKIPPED.getStatus());
         counter.printSummary(new PrintStream(baos));
 
-        assertThat(baos.toString(), startsWith(
-                "5 Scenarios (1 failed, 1 skipped, 1 pending, 1 undefined, 1 passed)" + System.lineSeparator() +
-                "5 Steps (1 failed, 1 skipped, 1 pending, 1 undefined, 1 passed)" + System.lineSeparator()));
+        assertThat(baos.toString(), startsWith(String.format(
+                "5 Scenarios (1 failed, 1 skipped, 1 pending, 1 undefined, 1 passed)%n" +
+                "5 Steps (1 failed, 1 skipped, 1 pending, 1 undefined, 1 passed)%n")));
     }
 
     @Test
@@ -81,9 +81,9 @@ public class SummaryCounterTest {
                 AnsiEscapes.YELLOW + "1 pending" + AnsiEscapes.RESET + ", " +
                 AnsiEscapes.YELLOW + "1 undefined" + AnsiEscapes.RESET + ", " +
                 AnsiEscapes.GREEN + "1 passed" + AnsiEscapes.RESET;
-        assertThat(baos.toString(), startsWith(
-                "5 Scenarios (" + colorSubCounts + ")" + System.lineSeparator() +
-                "5 Steps (" + colorSubCounts + ")" + System.lineSeparator()));
+        assertThat(baos.toString(), startsWith(String.format(
+                "5 Scenarios (" + colorSubCounts + ")%n" +
+                "5 Steps (" + colorSubCounts + ")%n")));
     }
 
     @Test
@@ -93,8 +93,8 @@ public class SummaryCounterTest {
 
         counter.printSummary(new PrintStream(baos));
 
-        assertThat(baos.toString(), endsWith(
-                "0m0.000s" + System.lineSeparator()));
+        assertThat(baos.toString(), endsWith(String.format(
+                "0m0.000s%n")));
     }
 
     @Test
@@ -108,8 +108,8 @@ public class SummaryCounterTest {
         counter.addHookTime(ONE_MILLI_SECOND);
         counter.printSummary(new PrintStream(baos));
 
-        assertThat(baos.toString(), endsWith(
-                "0m0.004s" + System.lineSeparator()));
+        assertThat(baos.toString(), endsWith(String.format(
+                "0m0.004s%n")));
     }
 
     @Test
@@ -122,8 +122,8 @@ public class SummaryCounterTest {
         counter.addStep(new Result(Result.PASSED, ONE_MILLI_SECOND, null));
         counter.printSummary(new PrintStream(baos));
 
-        assertThat(baos.toString(), endsWith(
-                "1m1.001s" + System.lineSeparator()));
+        assertThat(baos.toString(), endsWith(String.format(
+                "1m1.001s%n")));
     }
 
     @Test
@@ -135,8 +135,8 @@ public class SummaryCounterTest {
         counter.addStep(new Result(Result.PASSED, SummaryCounter.ONE_MINUTE, null));
         counter.printSummary(new PrintStream(baos));
 
-        assertThat(baos.toString(), endsWith(
-                "61m0.000s" + System.lineSeparator()));
+        assertThat(baos.toString(), endsWith(String.format(
+                "61m0.000s%n")));
     }
 
     @Test
@@ -149,8 +149,8 @@ public class SummaryCounterTest {
         counter.addStep(new Result(Result.PASSED, ONE_MILLI_SECOND, null));
         counter.printSummary(new PrintStream(baos));
 
-        assertThat(baos.toString(), endsWith(
-                "1m1,001s" + System.lineSeparator()));
+        assertThat(baos.toString(), endsWith(String.format(
+                "1m1,001s%n")));
     }
 
     private void addOneStepScenario(SummaryCounter counter, String status) {
