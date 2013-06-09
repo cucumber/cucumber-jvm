@@ -86,7 +86,20 @@ public final class SnippetGenerator {
                 sanitized.append(SUBST);
             }
         }
-        return sanitized.toString();
+        return sanitized.toString().replaceAll("[ÁÀÂÄÃÅ]", "A")
+                .replaceAll("[Ç]", "C").replaceAll("[Ð]", "D")
+                .replaceAll("[ÉÈÊË]", "E").replaceAll("[ÍÌÎÏ]", "I")
+                .replaceAll("[Ñ]", "N").replaceAll("[ÓÒÔÖÕØ]", "O")
+                .replaceAll("[ÚÙÛÜ]", "U").replaceAll("[ÝŸ]", "Y")
+                .replaceAll("[Æ]", "AE").replaceAll("[Œ]", "OE")
+                .replaceAll("[Š]", "Sh").replaceAll("[Ž]", "Zh")
+                .replaceAll("[áàâäãå]", "a").replaceAll("[ç]", "c")
+                .replaceAll("[ð]", "d").replaceAll("[éèêë]", "e")
+                .replaceAll("[íìîï]", "i").replaceAll("[ñ]", "n")
+                .replaceAll("[óòôöõø]", "o").replaceAll("[úùûü]", "u")
+                .replaceAll("[ýÿ]", "y").replaceAll("[æ]", "ae")
+                .replaceAll("[œ]", "oe").replaceAll("[š]", "sh")
+                .replaceAll("[ž]", "zh");
     }
 
     private String withNamedGroups(String snippetPattern) {
