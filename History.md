@@ -1,5 +1,6 @@
 ## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.1.3...master) (not released)
 
+* [Groovy] Updated examples to be more explanatory and groovier syntax ([#537](https://github.com/cucumber/cucumber-jvm/pull/522) Quantoid)
 * [Core] [Picocontainer] Not shading the artifact any longer. Groovy, Jython, and Jruby are still shading it. ([#522](https://github.com/cucumber/cucumber-jvm/pull/522) Dmytro Chyzhykov)
 * [Core] The `json-pretty` formatter is gone, and the `json` formatter is pretty!
 * [Spring] New awesome Spring port of The Cucumber Book's chapter 14. ([#508](https://github.com/cucumber/cucumber-jvm/pull/508), [#489](https://github.com/cucumber/cucumber-jvm/pull/489) Dmytro Chyzhykov, Pedro Antonio Souza Viegas)
