@@ -20,12 +20,10 @@
         <dependency>
             <groupId>info.cukes</groupId>
             <artifactId>cucumber-jvm-deps</artifactId>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>info.cukes</groupId>
             <artifactId>gherkin</artifactId>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jruby</groupId>
