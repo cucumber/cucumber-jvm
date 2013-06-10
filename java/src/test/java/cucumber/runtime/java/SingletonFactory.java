@@ -28,7 +28,7 @@ class SingletonFactory implements ObjectFactory {
         if (singleton == null) {
             throw new IllegalStateException("No object is set");
         }
-        return (T) singleton;
+        return type.cast(singleton);
     }
 
     public void setInstance(Object o) {

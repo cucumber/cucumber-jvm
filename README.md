@@ -62,7 +62,7 @@ are likely to be closed to keep the backlog manageable.
 
 ## Contributing fixes
 
-See [Contributing](http://cukes.info/contribute.html) as well as (https://github.com/cucumber/cucumber-jvm/blob/master/DEVELOPERS.md)
+See [Contributing](http://cukes.info/contribute.html) as well as [CONTRIBUTING.md](https://github.com/cucumber/cucumber-jvm/blob/master/CONTRIBUTING.md)
 
 ## Coming from Cuke4Duke?
 

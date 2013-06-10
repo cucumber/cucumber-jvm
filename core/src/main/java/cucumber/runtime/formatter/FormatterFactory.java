@@ -5,7 +5,6 @@ import cucumber.runtime.io.URLOutputStream;
 import cucumber.runtime.io.UTF8OutputStreamWriter;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.JSONFormatter;
-import gherkin.formatter.JSONPrettyFormatter;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,7 +38,6 @@ public class FormatterFactory {
         put("pretty", CucumberPrettyFormatter.class);
         put("progress", ProgressFormatter.class);
         put("json", JSONFormatter.class);
-        put("json-pretty", JSONPrettyFormatter.class);
         put("usage", UsageFormatter.class);
     }};
     private static final Pattern FORMATTER_WITH_FILE_PATTERN = Pattern.compile("([^:]+):(.*)");
@@ -138,6 +136,7 @@ public class FormatterFactory {
         return formatterClass;
     }
 
+    @SuppressWarnings("unchecked")
     private Class<? extends Formatter> loadClass(String className) {
         try {
             return (Class<? extends Formatter>) Thread.currentThread().getContextClassLoader().loadClass(className);

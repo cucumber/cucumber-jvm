@@ -46,7 +46,7 @@ public class OpenEJBObjectFactory implements ObjectFactory {
     @Override
     public <T> T getInstance(Class<T> type) {
         if (instances.containsKey(type)) {
-            return (T) instances.get(type);
+            return type.cast(instances.get(type));
         }
 
         T object;

@@ -35,7 +35,6 @@ public class JRubyHookDefinition implements HookDefinition {
         jRubyBackend.executeHook(hookRunner, scenario);
     }
 
-    @Override
     public String getTagExpression() {
         return tagExpression;
     }

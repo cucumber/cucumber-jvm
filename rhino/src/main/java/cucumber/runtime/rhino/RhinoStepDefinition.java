@@ -37,7 +37,12 @@ public class RhinoStepDefinition implements StepDefinition {
 
     public List<Argument> matchedArguments(Step step) {
         NativeJavaObject args = (NativeJavaObject) argumentsFromFunc.call(cx, scope, jsStepDefinition, new Object[]{step.getName(), this});
-        return args == null ? null : (List<Argument>) args.unwrap();
+        return args == null ? null : unwrap(args);
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<Argument> unwrap(NativeJavaObject args) {
+        return (List<Argument>) args.unwrap();
     }
 
     public String getLocation(boolean detail) {

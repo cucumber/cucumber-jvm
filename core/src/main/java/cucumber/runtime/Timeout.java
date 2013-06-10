@@ -22,12 +22,14 @@ public class Timeout {
                 }
             }, timeoutMillis, TimeUnit.MILLISECONDS);
             try {
-                T result = callback.call();
-                timer.cancel(true);
-                return result;
+                return callback.call();
             } catch (InterruptedException timeout) {
                 throw new TimeoutException("Timed out after " + timeoutMillis + "ms.");
+            } finally {
+                done.set(true);
+                timer.cancel(true);
             }
+
         }
     }
 

@@ -5,7 +5,7 @@ import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
 import gherkin.I18n;
-import gherkin.formatter.JSONPrettyFormatter;
+import gherkin.formatter.JSONFormatter;
 import gherkin.formatter.model.Step;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -35,7 +35,7 @@ public class RuntimeTest {
                 "  Scenario: scenario name\n" +
                 "    When s\n");
         StringBuilder out = new StringBuilder();
-        JSONPrettyFormatter jsonFormatter = new JSONPrettyFormatter(out);
+        JSONFormatter jsonFormatter = new JSONFormatter(out);
         List<Backend> backends = asList(mock(Backend.class));
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         RuntimeOptions runtimeOptions = new RuntimeOptions(new Properties());
