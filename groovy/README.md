@@ -16,5 +16,7 @@ The test uses a mix of compiled and interpreted step definitions which makes the
 3. `--glue cucumber/runtime/groovy` or `--glue cucumber.runtime.groovy` is required so that cucumber finds the compiled step definitions
 4. the last parameter provides a feature or a path with features
 
-This demonstrates that the files in the bin directory (`cucumber-jvm.groovy` and `cucumber-groovy-full.jar` are a completely standalone
-execution environment. TODO: Figure out the best way to package and publish this as a "groovy package". Maybe just a zip file?
+This demonstrates that the files in the `bin` directory (`cucumber-jvm.groovy`, `cucumber-groovy.jar` and `cucumber-core.jar` 
+are a completely standalone execution environment. 
+
+TODO: Figure out the best way to package and publish this as a "groovy package". Maybe just a zip file?

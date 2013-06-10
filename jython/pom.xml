@@ -115,7 +115,7 @@ I18n.all.each { i18n ->
                         <phase>package</phase>
                         <configuration>
                             <target>
-                                <copy file="${project.build.directory}/${project.build.finalName}.jar" tofile="${basedir}/bin/cucumber-jython.jar" />
+                                <copy file="${project.build.directory}/${project.build.finalName}-shaded.jar" tofile="${basedir}/bin/cucumber-jython-shaded.jar" />
                                 <!-- todo: make an egg -->
                             </target>
                         </configuration>

@@ -553,6 +553,9 @@
                             <goals>
                                 <goal>shade</goal>
                             </goals>
+                            <configuration>
+                                <shadedArtifactAttached>true</shadedArtifactAttached>
+                            </configuration>
                         </execution>
                     </executions>
                 </plugin>
