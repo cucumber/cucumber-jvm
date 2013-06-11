@@ -2,11 +2,16 @@ package cucumber.runtime.java;
 
 import cucumber.api.java.en.Given;
 import cucumber.runtime.AmbiguousStepDefinitionsException;
+import cucumber.runtime.Backend;
 import cucumber.runtime.DuplicateStepDefinitionException;
 import cucumber.runtime.Glue;
 import cucumber.runtime.Runtime;
+import cucumber.runtime.RuntimeGlue;
 import cucumber.runtime.RuntimeOptions;
+import cucumber.runtime.UndefinedStepsTracker;
 import cucumber.runtime.io.ClasspathResourceLoader;
+import cucumber.runtime.io.ResourceLoader;
+import cucumber.runtime.xstream.LocalizedXStreams;
 import gherkin.I18n;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Comment;
@@ -18,6 +23,7 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -50,7 +56,7 @@ public class JavaStepDefinitionTest {
     private final JavaBackend backend = new JavaBackend(new SingletonFactory(defs));
     private final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
     private final RuntimeOptions runtimeOptions = new RuntimeOptions(new Properties());
-    private final Runtime runtime = new Runtime(new ClasspathResourceLoader(classLoader), classLoader, asList(backend), runtimeOptions);
+    private final Runtime runtime = createRuntime(new ClasspathResourceLoader(classLoader), classLoader, asList(backend), runtimeOptions);
     private final Glue glue = runtime.getGlue();
 
     @org.junit.Before
@@ -143,5 +149,12 @@ public class JavaStepDefinitionTest {
         Set<T> set = new HashSet<T>();
         set.addAll(asList(items));
         return set;
+    }
+
+    private Runtime createRuntime(ResourceLoader resourceLoader, ClassLoader classLoader,
+        Collection<? extends Backend> backends, RuntimeOptions runtimeOptions) {
+      UndefinedStepsTracker undefinedStepsTracker = new UndefinedStepsTracker();
+      return new Runtime(resourceLoader, classLoader, backends, runtimeOptions, undefinedStepsTracker,
+              new RuntimeGlue(undefinedStepsTracker, new LocalizedXStreams(classLoader)));
     }
 }

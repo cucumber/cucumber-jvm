@@ -59,21 +59,13 @@ public class Runtime implements UnreportedStepExecutor {
     private boolean skipNextStep = false;
     private ScenarioImpl scenarioResult = null;
 
-    public Runtime(ResourceLoader resourceLoader, ClassLoader classLoader, RuntimeOptions runtimeOptions) {
-        this(resourceLoader, classLoader, loadBackends(resourceLoader, classLoader), runtimeOptions);
+    public static Runtime createRuntime(ResourceLoader resourceLoader, ClassLoader classLoader, RuntimeOptions runtimeOptions) {
+        UndefinedStepsTracker undefinedStepsTracker = new UndefinedStepsTracker();
+        return new Runtime(resourceLoader, classLoader, loadBackends(resourceLoader, classLoader), runtimeOptions,
+                undefinedStepsTracker, new RuntimeGlue(undefinedStepsTracker, new LocalizedXStreams(classLoader)));
     }
 
-    public Runtime(ResourceLoader resourceLoader, ClassLoader classLoader, Collection<? extends Backend> backends, RuntimeOptions runtimeOptions) {
-        this(resourceLoader, classLoader, backends, runtimeOptions, new UndefinedStepsTracker());
-    }
-
-    private Runtime(ResourceLoader resourceLoader, ClassLoader classLoader, Collection<? extends Backend> backends,
-            RuntimeOptions runtimeOptions, UndefinedStepsTracker undefinedStepsTracker) {
-        this(resourceLoader, classLoader, backends, runtimeOptions, undefinedStepsTracker,
-                new RuntimeGlue(undefinedStepsTracker, new LocalizedXStreams(classLoader)));
-    }
-
-    Runtime(ResourceLoader resourceLoader, ClassLoader classLoader, Collection<? extends Backend> backends,
+    public Runtime(ResourceLoader resourceLoader, ClassLoader classLoader, Collection<? extends Backend> backends,
             RuntimeOptions runtimeOptions, UndefinedStepsTracker undefinedStepsTracker, RuntimeGlue glue) {
         if (backends.isEmpty()) {
             throw new CucumberException("No backends were found. Please make sure you have a backend module on your CLASSPATH.");

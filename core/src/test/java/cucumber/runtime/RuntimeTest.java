@@ -5,6 +5,7 @@ import cucumber.api.Scenario;
 import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
+import cucumber.runtime.xstream.LocalizedXStreams;
 import gherkin.I18n;
 import gherkin.formatter.JSONFormatter;
 import gherkin.formatter.Reporter;
@@ -54,7 +55,7 @@ public class RuntimeTest {
         List<Backend> backends = asList(mock(Backend.class));
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         RuntimeOptions runtimeOptions = new RuntimeOptions(new Properties());
-        Runtime runtime = new Runtime(new ClasspathResourceLoader(classLoader), classLoader, backends, runtimeOptions);
+        Runtime runtime = createRuntime(new ClasspathResourceLoader(classLoader), classLoader, backends, runtimeOptions);
         feature.run(jsonFormatter, jsonFormatter, runtime);
         jsonFormatter.done();
         String expected = "" +
@@ -182,7 +183,7 @@ public class RuntimeTest {
     public void should_throw_cucumer_exception_if_no_backends_are_found() throws Exception {
         try {
             ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-            new Runtime(new ClasspathResourceLoader(classLoader), classLoader, Collections.<Backend>emptyList(),
+            createRuntime(new ClasspathResourceLoader(classLoader), classLoader, Collections.<Backend>emptyList(),
                     new RuntimeOptions(new Properties()));
             fail("A CucumberException should have been thrown");
         } catch (CucumberException e) {
@@ -363,7 +364,19 @@ public class RuntimeTest {
         Backend backend = mock(Backend.class);
         Collection<Backend> backends = Arrays.asList(backend);
 
-        return new Runtime(resourceLoader, classLoader, backends, runtimeOptions);
+        return createRuntime(resourceLoader, classLoader, backends, runtimeOptions);
+    }
+
+    public static Runtime createRuntime(ResourceLoader resourceLoader, ClassLoader classLoader,
+            Collection<? extends Backend> backends, RuntimeOptions runtimeOptions) {
+        UndefinedStepsTracker undefinedStepsTracker = new UndefinedStepsTracker();
+        return new Runtime(resourceLoader, classLoader, backends, runtimeOptions, undefinedStepsTracker,
+                new RuntimeGlue(undefinedStepsTracker, new LocalizedXStreams(classLoader)));
+    }
+
+    public static Runtime createRuntime(ResourceLoader resourceLoader, ClassLoader classLoader,
+            Collection<Backend> backends, RuntimeOptions runtimeOptions, RuntimeGlue glue) {
+        return new Runtime(resourceLoader, classLoader, backends, runtimeOptions, new UndefinedStepsTracker(), glue);
     }
 
     private Runtime createRuntimeWithMockedGlue(StepDefinitionMatch match, String... runtimeArgs) {

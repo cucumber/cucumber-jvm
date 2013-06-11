@@ -1,8 +1,8 @@
 package cucumber.runtime.formatter;
 
 import cucumber.runtime.Backend;
-import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeOptions;
+import cucumber.runtime.RuntimeTest;
 import cucumber.runtime.io.ClasspathResourceLoader;
 import gherkin.formatter.model.Step;
 import org.custommonkey.xmlunit.Diff;
@@ -58,7 +58,7 @@ public class JUnitFormatterTest {
         RuntimeOptions runtimeOptions = new RuntimeOptions(new Properties(), args.toArray(new String[args.size()]));
         Backend backend = mock(Backend.class);
         when(backend.getSnippet(any(Step.class))).thenReturn("TEST SNIPPET");
-        final cucumber.runtime.Runtime runtime = new Runtime(resourceLoader, classLoader, asList(backend), runtimeOptions);
+        final cucumber.runtime.Runtime runtime = RuntimeTest.createRuntime(resourceLoader, classLoader, asList(backend), runtimeOptions);
         runtime.run();
         return report;
     }
