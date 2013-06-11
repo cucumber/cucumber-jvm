@@ -1,5 +1,5 @@
 language: java
-script: mvn -q clean install
+script: mvn -q clean install -P examples
 jdk:
   - openjdk6
   - openjdk7
