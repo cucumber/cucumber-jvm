@@ -28,6 +28,7 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -178,6 +179,18 @@ public class RuntimeTest {
     }
 
     @Test
+    public void should_throw_cucumer_exception_if_no_backends_are_found() throws Exception {
+        try {
+            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+            new Runtime(new ClasspathResourceLoader(classLoader), classLoader, Collections.<Backend>emptyList(),
+                    new RuntimeOptions(new Properties()));
+            fail("A CucumberException should have been thrown");
+        } catch (CucumberException e) {
+            assertEquals("No backends were found. Please make sure you have a backend module on your CLASSPATH.", e.getMessage());
+        }
+    }
+
+    @Test
     public void should_add_passed_result_to_the_summary_counter() throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Reporter reporter = mock(Reporter.class);
@@ -187,7 +200,7 @@ public class RuntimeTest {
         runtime.buildBackendWorlds(reporter, Collections.<Tag>emptySet());
         runStep(reporter, runtime);
         runtime.disposeBackendWorlds();
-        runtime.getSummaryCounter().printSummary(new PrintStream(baos));
+        runtime.printSummary(new PrintStream(baos));
 
         assertThat(baos.toString(), startsWith(String.format(
                 "1 Scenarios (1 passed)%n" +
@@ -204,7 +217,7 @@ public class RuntimeTest {
         runtime.buildBackendWorlds(reporter, Collections.<Tag>emptySet());
         runStep(reporter, runtime);
         runtime.disposeBackendWorlds();
-        runtime.getSummaryCounter().printSummary(new PrintStream(baos));
+        runtime.printSummary(new PrintStream(baos));
 
         assertThat(baos.toString(), startsWith(String.format(
                 "1 Scenarios (1 pending)%n" +
@@ -221,7 +234,7 @@ public class RuntimeTest {
         runtime.buildBackendWorlds(reporter, Collections.<Tag>emptySet());
         runStep(reporter, runtime);
         runtime.disposeBackendWorlds();
-        runtime.getSummaryCounter().printSummary(new PrintStream(baos));
+        runtime.printSummary(new PrintStream(baos));
 
         assertThat(baos.toString(), startsWith(String.format(
                 "1 Scenarios (1 failed)%n" +
@@ -237,7 +250,7 @@ public class RuntimeTest {
         runtime.buildBackendWorlds(reporter, Collections.<Tag>emptySet());
         runStep(reporter, runtime);
         runtime.disposeBackendWorlds();
-        runtime.getSummaryCounter().printSummary(new PrintStream(baos));
+        runtime.printSummary(new PrintStream(baos));
 
         assertThat(baos.toString(), startsWith(String.format(
                 "1 Scenarios (1 failed)%n" +
@@ -255,7 +268,7 @@ public class RuntimeTest {
         runStep(reporter, runtime);
         runStep(reporter, runtime);
         runtime.disposeBackendWorlds();
-        runtime.getSummaryCounter().printSummary(new PrintStream(baos));
+        runtime.printSummary(new PrintStream(baos));
 
         assertThat(baos.toString(), startsWith(String.format(
                 "1 Scenarios (1 failed)%n" +
@@ -271,7 +284,7 @@ public class RuntimeTest {
         runtime.buildBackendWorlds(reporter, Collections.<Tag>emptySet());
         runStep(reporter, runtime);
         runtime.disposeBackendWorlds();
-        runtime.getSummaryCounter().printSummary(new PrintStream(baos));
+        runtime.printSummary(new PrintStream(baos));
 
         assertThat(baos.toString(), startsWith(String.format(
                 "1 Scenarios (1 undefined)%n" +
@@ -290,7 +303,7 @@ public class RuntimeTest {
         runtime.runBeforeHooks(reporter, Collections.<Tag>emptySet());
         runStep(reporter, runtime);
         runtime.disposeBackendWorlds();
-        runtime.getSummaryCounter().printSummary(new PrintStream(baos));
+        runtime.printSummary(new PrintStream(baos));
 
         assertThat(baos.toString(), startsWith(String.format(
                 "1 Scenarios (1 failed)%n" +
@@ -309,7 +322,7 @@ public class RuntimeTest {
         runStep(reporter, runtime);
         runtime.runAfterHooks(reporter, Collections.<Tag>emptySet());
         runtime.disposeBackendWorlds();
-        runtime.getSummaryCounter().printSummary(new PrintStream(baos));
+        runtime.printSummary(new PrintStream(baos));
 
         assertThat(baos.toString(), startsWith(String.format(
                 "1 Scenarios (1 failed)%n" +

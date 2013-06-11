@@ -19,7 +19,7 @@ public class SummaryPrinter {
     }
 
     private void printSummary(cucumber.runtime.Runtime runtime) {
-        runtime.getSummaryCounter().printSummary(out);
+        runtime.printSummary(out);
     }
 
     private void printErrors(cucumber.runtime.Runtime runtime) {

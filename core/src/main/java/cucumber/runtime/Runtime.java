@@ -19,6 +19,7 @@ import gherkin.formatter.model.Step;
 import gherkin.formatter.model.Tag;
 
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -66,14 +67,17 @@ public class Runtime implements UnreportedStepExecutor {
         this(resourceLoader, classLoader, backends, runtimeOptions, new UndefinedStepsTracker());
     }
 
-    public Runtime(ResourceLoader resourceLoader, ClassLoader classLoader, Collection<? extends Backend> backends,
+    private Runtime(ResourceLoader resourceLoader, ClassLoader classLoader, Collection<? extends Backend> backends,
             RuntimeOptions runtimeOptions, UndefinedStepsTracker undefinedStepsTracker) {
         this(resourceLoader, classLoader, backends, runtimeOptions, undefinedStepsTracker,
                 new RuntimeGlue(undefinedStepsTracker, new LocalizedXStreams(classLoader)));
     }
 
-    public Runtime(ResourceLoader resourceLoader, ClassLoader classLoader, Collection<? extends Backend> backends,
+    Runtime(ResourceLoader resourceLoader, ClassLoader classLoader, Collection<? extends Backend> backends,
             RuntimeOptions runtimeOptions, UndefinedStepsTracker undefinedStepsTracker, RuntimeGlue glue) {
+        if (backends.isEmpty()) {
+            throw new CucumberException("No backends were found. Please make sure you have a backend module on your CLASSPATH.");
+        }
         this.resourceLoader = resourceLoader;
         this.classLoader = classLoader;
         this.backends = backends;
@@ -308,8 +312,8 @@ public class Runtime implements UnreportedStepExecutor {
         glue.writeStepdefsJson(runtimeOptions.featurePaths, runtimeOptions.dotCucumber);
     }
 
-    public SummaryCounter getSummaryCounter() {
-        return summaryCounter;
+    public void printSummary(PrintStream out) {
+        summaryCounter.printSummary(out);
     }
 
     private void addStepToCounterAndResult(Result result) {

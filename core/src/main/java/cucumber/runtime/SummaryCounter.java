@@ -88,23 +88,19 @@ public class SummaryCounter {
 
     public void addStep(Result result) {
         addResultToSubCount(stepSubCounts, result.getStatus());
-        // the following constant defined in the Gherkin libaray have duration == null, so calls to getDuration()
-        // will result in a NullPointerException
-        if (!result.equals(Result.SKIPPED) && !result.equals(Result.UNDEFINED)) {
-            addTime(result.getDuration());
-        }
+        addTime(result.getDuration());
     }
 
     public void addScenario(String resultStatus) {
         addResultToSubCount(scenarioSubCounts, resultStatus);
     }
 
-    public void addHookTime(long duration) {
+    public void addHookTime(Long duration) {
         addTime(duration);
     }
 
-    private void addTime(long duration) {
-        totalDuration += duration;
+    private void addTime(Long duration) {
+        totalDuration += duration != null ? duration : 0;
     }
 
     private void addResultToSubCount(SubCounts subCounts, String resultStatus) {
