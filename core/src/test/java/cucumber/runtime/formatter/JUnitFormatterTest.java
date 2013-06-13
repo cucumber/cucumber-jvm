@@ -45,12 +45,26 @@ public class JUnitFormatterTest {
         assertXmlEqual("cucumber/runtime/formatter/JUnitFormatterTest_3.report.xml", report);
     }
 
+    @Test
+    public void featureSimpleStrictTest() throws Exception {
+        boolean strict = true;
+        File report = runFeaturesWithJunitFormatter(asList("cucumber/runtime/formatter/JUnitFormatterTest_1.feature"), strict);
+        assertXmlEqual("cucumber/runtime/formatter/JUnitFormatterTest_1_strict.report.xml", report);
+    }
+
     private File runFeaturesWithJunitFormatter(final List<String> featurePaths) throws IOException {
+        return runFeaturesWithJunitFormatter(featurePaths, false);
+    }
+
+    private File runFeaturesWithJunitFormatter(final List<String> featurePaths, boolean strict) throws IOException {
         File report = File.createTempFile("cucumber-jvm-junit", "xml");
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         final ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
 
         List<String> args = new ArrayList<String>();
+        if (strict) {
+            args.add("--strict");
+        }
         args.add("--format");
         args.add("junit:" + report.getAbsolutePath());
         args.addAll(featurePaths);

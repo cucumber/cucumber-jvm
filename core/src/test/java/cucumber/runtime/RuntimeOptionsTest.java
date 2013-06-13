@@ -2,6 +2,12 @@ package cucumber.runtime;
 
 import org.junit.Test;
 
+import cucumber.runtime.formatter.ColorAware;
+import cucumber.runtime.formatter.FormatterFactory;
+import cucumber.runtime.formatter.StrictAware;
+
+import gherkin.formatter.Formatter;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
@@ -12,6 +18,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.withSettings;
 
 public class RuntimeOptionsTest {
     @Test
@@ -165,4 +175,25 @@ public class RuntimeOptionsTest {
         }
     }
 
+    @Test
+    public void set_monochrome_on_color_aware_formatters() throws Exception {
+        FormatterFactory factory = mock(FormatterFactory.class);
+        Formatter colorAwareFormatter = mock(Formatter.class, withSettings().extraInterfaces(ColorAware.class));
+        when(factory.create("progress")).thenReturn(colorAwareFormatter);
+
+        new RuntimeOptions(new Properties(), factory, "--monochrome", "--format", "progress");
+
+        verify((ColorAware)colorAwareFormatter).setMonochrome(true);
+    }
+
+    @Test
+    public void set_strict_on_strict_aware_formatters() throws Exception {
+        FormatterFactory factory = mock(FormatterFactory.class);
+        Formatter strictAwareFormatter = mock(Formatter.class, withSettings().extraInterfaces(StrictAware.class));
+        when(factory.create("junit:out/dir")).thenReturn(strictAwareFormatter);
+
+        new RuntimeOptions(new Properties(), factory, "--strict", "--format", "junit:out/dir");
+
+        verify((StrictAware)strictAwareFormatter).setStrict(true);
+    }
 }

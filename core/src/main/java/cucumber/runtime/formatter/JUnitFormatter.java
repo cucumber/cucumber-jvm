@@ -36,7 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-class JUnitFormatter implements Formatter, Reporter {
+class JUnitFormatter implements Formatter, Reporter, StrictAware {
     private final Writer out;
     private final Document doc;
     private final Element rootElement;
@@ -170,6 +170,11 @@ class JUnitFormatter implements Formatter, Reporter {
     public void syntaxError(String state, String event, List<String> legalEvents, String uri, Integer line) {
     }
 
+    @Override
+    public void setStrict(boolean strict) {
+        TestCase.treatSkippedAsFailure = strict;
+    }
+
     private static class TestCase {
         private static final DecimalFormat NUMBER_FORMAT = (DecimalFormat) NumberFormat.getNumberInstance(Locale.US);
 
@@ -187,6 +192,7 @@ class JUnitFormatter implements Formatter, Reporter {
         Scenario scenario;
         static Feature feature;
         static int examples = 0;
+        static boolean treatSkippedAsFailure = false;
         final List<Step> steps = new ArrayList<Step>();
         final List<Result> results = new ArrayList<Result>();
 
@@ -232,7 +238,13 @@ class JUnitFormatter implements Formatter, Reporter {
                 child.setAttribute("message", failed.getErrorMessage());
                 child.appendChild(doc.createCDATASection(sb.toString()));
             } else if (skipped != null) {
-                child = doc.createElement("skipped");
+                if (treatSkippedAsFailure) {
+                    child = doc.createElement("failure");
+                    child.setAttribute("message", "The scenario has pending or undefined step(s)");
+                }
+                else {
+                    child = doc.createElement("skipped");
+                }
                 child.appendChild(doc.createCDATASection(sb.toString()));
             } else {
                 child = doc.createElement("system-out");
