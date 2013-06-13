@@ -2,6 +2,7 @@ package cucumber.runtime;
 
 import cucumber.runtime.formatter.ColorAware;
 import cucumber.runtime.formatter.FormatterFactory;
+import cucumber.runtime.formatter.StrictAware;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
 import gherkin.formatter.Formatter;
@@ -31,7 +32,7 @@ public class RuntimeOptions {
     public final List<Object> filters = new ArrayList<Object>();
     public final List<Formatter> formatters = new ArrayList<Formatter>();
     public final List<String> featurePaths = new ArrayList<String>();
-    private final FormatterFactory formatterFactory = new FormatterFactory();
+    private final FormatterFactory formatterFactory;
     public URL dotCucumber;
     public boolean dryRun;
     public boolean strict = false;
@@ -39,6 +40,11 @@ public class RuntimeOptions {
 
     public RuntimeOptions(Properties properties, String... argv) {
         /* IMPORTANT! Make sure USAGE.txt is always uptodate if this class changes */
+        this(properties, new FormatterFactory(), argv);
+    }
+
+    RuntimeOptions(Properties properties, FormatterFactory formatterFactory, String... argv) {
+        this.formatterFactory = formatterFactory;
 
         parse(new ArrayList<String>(asList(argv)));
         if (properties.containsKey("cucumber.options")) {
@@ -48,12 +54,7 @@ public class RuntimeOptions {
         if (formatters.isEmpty()) {
             formatters.add(formatterFactory.create("progress"));
         }
-        for (Formatter formatter : formatters) {
-            if (formatter instanceof ColorAware) {
-                ColorAware colorAware = (ColorAware) formatter;
-                colorAware.setMonochrome(monochrome);
-            }
-        }
+        setFormatterOptions();
     }
 
     private List<String> cucumberOptionsSplit(String property) {
@@ -148,5 +149,26 @@ public class RuntimeOptions {
                 return null;
             }
         });
+    }
+
+    private void setFormatterOptions() {
+        for (Formatter formatter : formatters) {
+            setMonochromeOnColorAwareFormatters(formatter);
+            setStrictOnStrictAwareFormatters(formatter);
+        }
+    }
+
+    private void setMonochromeOnColorAwareFormatters(Formatter formatter) {
+        if (formatter instanceof ColorAware) {
+            ColorAware colorAware = (ColorAware) formatter;
+            colorAware.setMonochrome(monochrome);
+        }
+    }
+
+    private void setStrictOnStrictAwareFormatters(Formatter formatter) {
+        if (formatter instanceof StrictAware) {
+            StrictAware strictAware = (StrictAware) formatter;
+            strictAware.setStrict(strict);
+        }
     }
 }
