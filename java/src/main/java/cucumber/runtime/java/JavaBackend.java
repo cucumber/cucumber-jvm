@@ -112,13 +112,17 @@ public class JavaBackend implements Backend {
         objectFactory.addClass(method.getDeclaringClass());
 
         if (annotation.annotationType().equals(Before.class)) {
-            String[] tagExpressions = ((Before) annotation).value();
+            String tagExpression = nullIfBlank(((Before) annotation).value());
             int timeout = ((Before) annotation).timeout();
-            glue.addBeforeHook(new JavaHookDefinition(method, tagExpressions, ((Before) annotation).order(), timeout, objectFactory));
+            glue.addBeforeHook(new JavaHookDefinition(method, tagExpression, ((Before) annotation).order(), timeout, objectFactory));
         } else {
-            String[] tagExpressions = ((After) annotation).value();
+            String tagExpression = nullIfBlank(((After) annotation).value());
             int timeout = ((After) annotation).timeout();
-            glue.addAfterHook(new JavaHookDefinition(method, tagExpressions, ((After) annotation).order(), timeout, objectFactory));
+            glue.addAfterHook(new JavaHookDefinition(method, tagExpression, ((After) annotation).order(), timeout, objectFactory));
         }
+    }
+
+    private String nullIfBlank(String s) {
+        return s.trim().equals("") ? null : s;
     }
 }

@@ -1,11 +1,8 @@
 package cucumber.api.groovy;
 
+import cucumber.runtime.CucumberException;
 import cucumber.runtime.groovy.GroovyBackend;
-import gherkin.TagExpression;
 import groovy.lang.Closure;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class Hooks {
     public static void World(Closure body) throws Throwable {
@@ -20,22 +17,27 @@ public class Hooks {
         addHook(args, false);
     }
 
-    private static void addHook(Object[] tagsExpressionsAndBody, boolean before) {
-        List<String> tagExpressions = new ArrayList<String>();
-        int timeoutMillis = 0;
+    private static void addHook(Object[] args, boolean before) {
+        String tagExpression = null;
+        Integer timeoutMillis = null;
         Closure body = null;
 
-        for (Object o : tagsExpressionsAndBody) {
+        for (Object o : args) {
             if (o instanceof String) {
-                tagExpressions.add((String) o);
+                if (tagExpression != null) throw new CucumberException(String.format("tagExpression already set to %s. Can't set it to %s", tagExpression, o));
+                tagExpression = (String) o;
             } else if (o instanceof Integer) {
+                if (timeoutMillis != null) throw new CucumberException(String.format("timeoutMillis already set to %d. Can't set it to %d", String.valueOf(timeoutMillis), o));
                 timeoutMillis = (Integer) o;
             } else if (o instanceof Closure) {
+                if (body != null) throw new CucumberException("body already set");
                 body = (Closure) o;
             }
         }
 
-        TagExpression tagExpression = new TagExpression(tagExpressions);
+        if(timeoutMillis == null) {
+            timeoutMillis = 0;
+        }
         if (before) {
             GroovyBackend.instance.addBeforeHook(tagExpression, timeoutMillis, body);
         } else {

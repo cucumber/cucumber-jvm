@@ -5,7 +5,6 @@ Feature: Cukes
 
   @must_have_more_cukes
   @and_then_some
-
   Scenario: more cukes in the belly from tagged and tagless Before annotations
     Given I have "6" cukes in my belly
 

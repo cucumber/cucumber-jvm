@@ -16,7 +16,7 @@ public interface HookDefinition {
 
     void execute(Scenario scenario) throws Throwable;
 
-    boolean matches(Collection<Tag> tags);
+    String getTagExpression();
 
     int getOrder();
 }

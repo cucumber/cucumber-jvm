@@ -8,7 +8,6 @@ import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.io.Resource;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.snippets.SnippetGenerator;
-import gherkin.TagExpression;
 import gherkin.formatter.model.Step;
 import groovy.lang.Binding;
 import groovy.lang.Closure;
@@ -26,7 +25,6 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import static cucumber.runtime.io.MultiLoader.packageName;
-
 
 public class GroovyBackend implements Backend {
     public static GroovyBackend instance;
@@ -131,11 +129,11 @@ public class GroovyBackend implements Backend {
         worldClosure = closure;
     }
 
-    public void addBeforeHook(TagExpression tagExpression, int timeoutMillis, Closure body) {
+    public void addBeforeHook(String tagExpression, int timeoutMillis, Closure body) {
         glue.addBeforeHook(new GroovyHookDefinition(tagExpression, timeoutMillis, body, currentLocation(), instance));
     }
 
-    public void addAfterHook(TagExpression tagExpression, int timeoutMillis, Closure body) {
+    public void addAfterHook(String tagExpression, int timeoutMillis, Closure body) {
         glue.addAfterHook(new GroovyHookDefinition(tagExpression, timeoutMillis, body, currentLocation(), instance));
     }
 

@@ -13,7 +13,7 @@ def default_cukes_in_the_belly(self):
   self.n = 5
   self.what = "cukes"
 
-@Before('@must_have_more_cukes','@and_then_some')
+@Before('@must_have_more_cukes && @and_then_some')
 def more_cukes_in_the_belly(self):
   self.n = self.n + 1
   self.what = "cukes"

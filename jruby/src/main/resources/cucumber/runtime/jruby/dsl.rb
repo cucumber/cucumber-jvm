@@ -93,12 +93,12 @@ module Cucumber
       end
 
       module Dsl
-        def Before(*tag_expressions, &proc)
-          $backend.registerBeforeHook(HookRunner.new(proc), tag_expressions)
+        def Before(tag_expression=nil, &proc)
+          $backend.registerBeforeHook(HookRunner.new(proc), tag_expression)
         end
 
-        def After(*tag_expressions, &proc)
-          $backend.registerAfterHook(HookRunner.new(proc), tag_expressions)
+        def After(tag_expression=nil, &proc)
+          $backend.registerAfterHook(HookRunner.new(proc), tag_expression)
         end
 
         def World(*modules_or_proc)

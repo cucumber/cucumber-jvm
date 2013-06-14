@@ -18,7 +18,7 @@ class RpnCalculatorStepDefinitions extends ScalaDsl with EN {
     assertEquals(expected, calc.value)
   }
 
-  Before("~@foo"){ scenario : Scenario =>
+  Before("!@foo"){ scenario : Scenario =>
     println("Runs before scenarios *not* tagged with @foo")
   }
 }

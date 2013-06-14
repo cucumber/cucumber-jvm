@@ -20,6 +20,7 @@ chromedriver.log
 .scala_dependencies
 nexus.properties
 pom.xml.releaseBackup
+dependency-reduced-pom.xml
 release.properties
 *.ser
 
@@ -28,4 +29,4 @@ release.properties
 ehthumbs.db
 Icon?
 Thumbs.db
-dependency-reduced-pom.xml
+*~

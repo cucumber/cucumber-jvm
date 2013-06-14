@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Properties;
 
 import static java.util.Arrays.asList;
-import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -97,7 +96,7 @@ public class HookOrderTest {
         for (int order : ordering) {
             HookDefinition hook = mock(HookDefinition.class, "Mock number " + order);
             when(hook.getOrder()).thenReturn(order);
-            when(hook.matches(anyListOf(Tag.class))).thenReturn(true);
+            when(hook.getTagExpression()).thenReturn(null);
             hooks.add(hook);
         }
         return hooks;

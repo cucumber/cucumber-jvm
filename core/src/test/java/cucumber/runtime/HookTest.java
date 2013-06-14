@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Properties;
 
 import static java.util.Arrays.asList;
-import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -32,7 +31,7 @@ public class HookTest {
     public void after_hooks_execute_before_objects_are_disposed() throws Throwable {
         Backend backend = mock(Backend.class);
         HookDefinition hook = mock(HookDefinition.class);
-        when(hook.matches(anyListOf(Tag.class))).thenReturn(true);
+        when(hook.getTagExpression()).thenReturn(null);
         gherkin.formatter.model.Scenario gherkinScenario = mock(gherkin.formatter.model.Scenario.class);
 
         CucumberFeature feature = mock(CucumberFeature.class);

@@ -1,6 +1,6 @@
 package cucumber.runtime.java;
 
-import cucumber.api.Scenario;
+ import cucumber.api.Scenario;
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
 import cucumber.runtime.CucumberException;
@@ -9,16 +9,12 @@ import cucumber.runtime.HookDefinition;
 import cucumber.runtime.RuntimeGlue;
 import cucumber.runtime.UndefinedStepsTracker;
 import cucumber.runtime.xstream.LocalizedXStreams;
-import gherkin.formatter.model.Tag;
 import org.junit.Test;
 
 import java.lang.reflect.Method;
 import java.util.Collections;
 
-import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 
@@ -86,21 +82,12 @@ public class JavaHookTest {
     }
 
     @Test
-    public void matches_matching_tags() {
+    public void stores_tag_expression() {
         objectFactory.setInstance(new HasHooks());
         backend.buildWorld();
         backend.addHook(BEFORE.getAnnotation(Before.class), BEFORE);
         HookDefinition before = glue.getBeforeHooks().get(0);
-        assertTrue(before.matches(asList(new Tag("@bar", 0), new Tag("@zap", 0))));
-    }
-
-    @Test
-    public void does_not_match_non_matching_tags() {
-        objectFactory.setInstance(new HasHooks());
-        backend.buildWorld();
-        backend.addHook(BEFORE.getAnnotation(Before.class), BEFORE);
-        HookDefinition before = glue.getBeforeHooks().get(0);
-        assertFalse(before.matches(asList(new Tag("@bar", 0))));
+        assertEquals("(@foo || @bar) && @zap", before.getTagExpression());
     }
 
     @Test
@@ -119,7 +106,7 @@ public class JavaHookTest {
 
     public static class HasHooks {
 
-        @Before({"@foo,@bar", "@zap"})
+        @Before("(@foo || @bar) && @zap")
         public void before() {
 
         }
