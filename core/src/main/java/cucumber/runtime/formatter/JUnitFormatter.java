@@ -46,6 +46,7 @@ class JUnitFormatter implements Formatter, Reporter, StrictAware {
 
     public JUnitFormatter(URL out) throws IOException {
         this.out = new UTF8OutputStreamWriter(new URLOutputStream(out));
+        TestCase.treatSkippedAsFailure = false;
         try {
             doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
             rootElement = doc.createElement("testsuite");
