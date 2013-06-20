@@ -63,13 +63,15 @@ class JUnitFormatter implements Formatter, Reporter, StrictAware {
 
     @Override
     public void background(Background background) {
-        testCase = new TestCase();
-        root = testCase.createElement(doc);
+        if (!isCurrentTestCaseCreatedNameless()) {
+            testCase = new TestCase();
+            root = testCase.createElement(doc);
+        }
     }
 
     @Override
     public void scenario(Scenario scenario) {
-        if (testCase != null && testCase.scenario == null) {
+        if (isCurrentTestCaseCreatedNameless()) {
             testCase.scenario = scenario;
         } else {
             testCase = new TestCase(scenario);
@@ -79,6 +81,10 @@ class JUnitFormatter implements Formatter, Reporter, StrictAware {
         rootElement.appendChild(root);
 
         increaseAttributeValue(rootElement, "tests");
+    }
+
+    private boolean isCurrentTestCaseCreatedNameless() {
+        return testCase != null && testCase.scenario == null;
     }
 
     @Override
@@ -111,6 +117,10 @@ class JUnitFormatter implements Formatter, Reporter, StrictAware {
 
     @Override
     public void before(Match match, Result result) {
+        if (!isCurrentTestCaseCreatedNameless()) {
+            testCase = new TestCase();
+            root = testCase.createElement(doc);
+        }
         handleHook(result);
     }
 
@@ -120,10 +130,8 @@ class JUnitFormatter implements Formatter, Reporter, StrictAware {
     }
 
     private void handleHook(Result result) {
-        if (result.getStatus().equals(Result.FAILED)) {
-            testCase.results.add(result);
-        }
-
+        testCase.hookResults.add(result);
+        testCase.updateElement(doc, root);
     }
 
     private void increaseAttributeValue(Element element, String attribute) {
@@ -136,6 +144,7 @@ class JUnitFormatter implements Formatter, Reporter, StrictAware {
 
     @Override
     public void scenarioOutline(ScenarioOutline scenarioOutline) {
+        testCase = null;
     }
 
     @Override
@@ -196,6 +205,7 @@ class JUnitFormatter implements Formatter, Reporter, StrictAware {
         static boolean treatSkippedAsFailure = false;
         final List<Step> steps = new ArrayList<Step>();
         final List<Result> results = new ArrayList<Result>();
+        final List<Result> hookResults = new ArrayList<Result>();
 
         private Element createElement(Document doc) {
             return doc.createElement("testcase");
@@ -207,51 +217,31 @@ class JUnitFormatter implements Formatter, Reporter, StrictAware {
         }
 
         public void updateElement(Document doc, Element tc) {
-            long totalDurationNanos = 0;
-            for (Result r : results) {
-                totalDurationNanos += r.getDuration() == null ? 0 : r.getDuration();
-            }
-
-            double totalDurationSeconds = ((double) totalDurationNanos) / 1000000000;
-            String time = NUMBER_FORMAT.format(totalDurationSeconds);
-            tc.setAttribute("time", time);
+            tc.setAttribute("time", calculateTotalDurationString());
 
             StringBuilder sb = new StringBuilder();
+            addStepAndResultListing(sb);
             Result skipped = null, failed = null;
-            for (int i = 0; i < steps.size(); i++) {
-                int length = sb.length();
-                Result result = results.get(i);
+            for (Result result : results) {
                 if ("failed".equals(result.getStatus())) failed = result;
                 if ("undefined".equals(result.getStatus()) || "pending".equals(result.getStatus())) skipped = result;
-                sb.append(steps.get(i).getKeyword());
-                sb.append(steps.get(i).getName());
-                do {
-                    sb.append(".");
-                } while (sb.length() - length < 76);
-                sb.append(result.getStatus());
-                sb.append("\n");
+            }
+            for (Result result : hookResults) {
+                if (failed == null && "failed".equals(result.getStatus())) failed = result;
             }
             Element child;
             if (failed != null) {
-                sb.append("\nStackTrace:\n");
-                StringWriter sw = new StringWriter();
-                failed.getError().printStackTrace(new PrintWriter(sw));
-                sb.append(sw.toString());
-                child = doc.createElement("failure");
-                child.setAttribute("message", failed.getErrorMessage());
-                child.appendChild(doc.createCDATASection(sb.toString()));
+                addStackTrace(sb, failed);
+                child = createElementWithMessage(doc, sb, "failure", failed.getErrorMessage());
             } else if (skipped != null) {
                 if (treatSkippedAsFailure) {
-                    child = doc.createElement("failure");
-                    child.setAttribute("message", "The scenario has pending or undefined step(s)");
+                    child = createElementWithMessage(doc, sb, "failure", "The scenario has pending or undefined step(s)");
                 }
                 else {
-                    child = doc.createElement("skipped");
+                    child = createElement(doc, sb, "skipped");
                 }
-                child.appendChild(doc.createCDATASection(sb.toString()));
             } else {
-                child = doc.createElement("system-out");
-                child.appendChild(doc.createCDATASection(sb.toString()));
+                child = createElement(doc, sb, "system-out");
             }
 
             Node existingChild = tc.getFirstChild();
@@ -260,6 +250,54 @@ class JUnitFormatter implements Formatter, Reporter, StrictAware {
             } else {
                 tc.replaceChild(child, existingChild);
             }
+        }
+
+        private String calculateTotalDurationString() {
+            long totalDurationNanos = 0;
+            for (Result r : results) {
+                totalDurationNanos += r.getDuration() == null ? 0 : r.getDuration();
+            }
+            for (Result r : hookResults) {
+                totalDurationNanos += r.getDuration() == null ? 0 : r.getDuration();
+            }
+            double totalDurationSeconds = ((double) totalDurationNanos) / 1000000000;
+            return NUMBER_FORMAT.format(totalDurationSeconds);
+        }
+
+        private void addStepAndResultListing(StringBuilder sb) {
+            for (int i = 0; i < steps.size(); i++) {
+                int length = sb.length();
+                String resultStatus = "not executed";
+                if (i < results.size()) {
+                    resultStatus = results.get(i).getStatus();
+                }
+                sb.append(steps.get(i).getKeyword());
+                sb.append(steps.get(i).getName());
+                do {
+                  sb.append(".");
+                } while (sb.length() - length < 76);
+                sb.append(resultStatus);
+                sb.append("\n");
+            }
+        }
+
+        private void addStackTrace(StringBuilder sb, Result failed) {
+            sb.append("\nStackTrace:\n");
+            StringWriter sw = new StringWriter();
+            failed.getError().printStackTrace(new PrintWriter(sw));
+            sb.append(sw.toString());
+        }
+
+        private Element createElementWithMessage(Document doc, StringBuilder sb, String elementType, String message) {
+            Element child = createElement(doc, sb, elementType);
+            child.setAttribute("message", message);
+            return child;
+        }
+
+        private Element createElement(Document doc, StringBuilder sb, String elementType) {
+            Element child = doc.createElement(elementType);
+            child.appendChild(doc.createCDATASection(sb.toString()));
+            return child;
         }
 
     }
