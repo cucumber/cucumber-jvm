@@ -224,7 +224,9 @@ class JUnitFormatter implements Formatter, Reporter, StrictAware {
                 if ("undefined".equals(result.getStatus()) || "pending".equals(result.getStatus())) skipped = result;
                 sb.append(steps.get(i).getKeyword());
                 sb.append(steps.get(i).getName());
-                for (int j = 0; sb.length() - length + j < 140; j++) sb.append(".");
+                do {
+                    sb.append(".");
+                } while (sb.length() - length < 76);
                 sb.append(result.getStatus());
                 sb.append("\n");
             }
