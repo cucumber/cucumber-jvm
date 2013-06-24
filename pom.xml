@@ -439,6 +439,33 @@
                 </plugins>
             </build>
         </profile>
+
+        <profile>
+            <id>travis-disable-deploy-by-default</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+                <property>
+                    <name>env.TRAVIS</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <properties>
+                <maven.deploy.skip>true</maven.deploy.skip>
+            </properties>
+        </profile>
+        <profile>
+            <id>travis-enable-deploy-if-not-pull-request</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+                <property>
+                    <name>env.TRAVIS_PULL_REQUEST</name>
+                    <value>false</value>
+                </property>
+            </activation>
+            <properties>
+                <maven.deploy.skip>false</maven.deploy.skip>
+            </properties>
+        </profile>
     </profiles>
 
     <build>
