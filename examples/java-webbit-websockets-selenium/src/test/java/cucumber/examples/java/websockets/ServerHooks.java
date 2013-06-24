@@ -2,8 +2,6 @@ package cucumber.examples.java.websockets;
 
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
-import cucumber.api.java.After;
-import cucumber.api.java.Before;
 
 import java.io.IOException;
 

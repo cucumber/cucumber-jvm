@@ -77,9 +77,9 @@ public class JUnitFormatterTest {
         return report;
     }
 
-    private void assertXmlEqual(String expected, File actual) throws IOException, ParserConfigurationException, SAXException {
+    private void assertXmlEqual(String expectedPath, File actual) throws IOException, ParserConfigurationException, SAXException {
         XMLUnit.setIgnoreWhitespace(true);
-        InputStreamReader control = new InputStreamReader(Thread.currentThread().getContextClassLoader().getResourceAsStream(expected), "UTF-8");
+        InputStreamReader control = new InputStreamReader(Thread.currentThread().getContextClassLoader().getResourceAsStream(expectedPath), "UTF-8");
         Diff diff = new Diff(control, new FileReader(actual));
         assertTrue("XML files are similar " + diff, diff.identical());
     }
