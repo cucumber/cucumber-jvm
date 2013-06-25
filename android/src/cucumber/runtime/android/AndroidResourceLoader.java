@@ -10,6 +10,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Loads non-class resources such as .feature files.
+ */
 public class AndroidResourceLoader implements ResourceLoader {
     private Context context;
 
@@ -25,20 +28,20 @@ public class AndroidResourceLoader implements ResourceLoader {
             addResourceRecursive(resources, assetManager, path, suffix);
             return resources;
         } catch (IOException e) {
-            throw new CucumberException("Error loading resources.", e);
+            throw new CucumberException("Error loading resources from " + path + " with suffix " + suffix, e);
         }
     }
 
-    private void addResourceRecursive(List<Resource> res, AssetManager am, String path, String suffix) throws IOException {
+    private void addResourceRecursive(List<Resource> resources, AssetManager assetManager, String path, String suffix) throws IOException {
         if (path.endsWith(suffix)) {
-            res.add(new AndroidResource(context, path));
+            resources.add(new AndroidResource(context, path));
         } else {
-            for (String name : am.list(path)) {
+            for (String name : assetManager.list(path)) {
                 if (name.endsWith(suffix)) {
                     Resource as = new AndroidResource(context, String.format("%s/%s", path, name));
-                    res.add(as);
+                    resources.add(as);
                 } else {
-                    addResourceRecursive(res, am, String.format("%s/%s", path, name), suffix);
+                    addResourceRecursive(resources, assetManager, String.format("%s/%s", path, name), suffix);
                 }
             }
         }

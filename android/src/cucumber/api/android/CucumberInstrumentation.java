@@ -12,17 +12,18 @@ import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.android.AndroidFormatter;
 import cucumber.runtime.android.AndroidObjectFactory;
-import cucumber.runtime.android.AndroidReflections;
 import cucumber.runtime.android.AndroidResourceLoader;
+import cucumber.runtime.android.DexReflections;
 import cucumber.runtime.io.Reflections;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.java.JavaBackend;
 import cucumber.runtime.model.*;
-import ext.android.test.ClassPathPackageInfoSource;
+import dalvik.system.DexFile;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.*;
 
+import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -53,7 +54,7 @@ public class CucumberInstrumentation extends Instrumentation {
     public void onCreate(Bundle arguments) {
         super.onCreate(arguments);
 
-        if(arguments == null) {
+        if (arguments == null) {
             throw new CucumberException("No arguments");
         }
         Log.d(TAG, "************** KEYS **************");
@@ -73,7 +74,6 @@ public class CucumberInstrumentation extends Instrumentation {
         */
 
 
-
         // Maven: [log, coverage, coverageFile, debug]
         // IDEA:  [log, coverage, coverageFile, debug]
 
@@ -81,8 +81,7 @@ public class CucumberInstrumentation extends Instrumentation {
         classLoader = context.getClassLoader();
 
         String apkPath = context.getPackageCodePath();
-        ClassPathPackageInfoSource.setApkPaths(new String[]{apkPath});
-        ClassPathPackageInfoSource source = new ClassPathPackageInfoSource();
+        Reflections reflections = new DexReflections(newDexFile(apkPath));
 
         // For glue and features either use the provided arguments or try to find a RunWithCucumber annotated class.
         // If nothing works, default values will be used instead.
@@ -112,8 +111,7 @@ public class CucumberInstrumentation extends Instrumentation {
                 Log.w(TAG, e.toString());
             }
         } else {
-//            throw new CucumberException("bad args");
-            for (Class<?> clazz : source.getPackageInfo(context.getPackageName()).getTopLevelClassesRecursive()) {
+            for (Class<?> clazz : reflections.getDescendants(Object.class, context.getPackageName())) {
                 if (readRunWithCucumberAnnotation(clazz)) break;
             }
         }
@@ -127,13 +125,19 @@ public class CucumberInstrumentation extends Instrumentation {
 
         resourceLoader = new AndroidResourceLoader(context);
 
-        Reflections androidReflections = new AndroidReflections(source);
-
         List<Backend> backends = new ArrayList<Backend>();
-        backends.add(new JavaBackend(new AndroidObjectFactory(this), androidReflections));
+        backends.add(new JavaBackend(new AndroidObjectFactory(this), reflections));
         runtime = new Runtime(resourceLoader, classLoader, backends, runtimeOptions);
 
         start();
+    }
+
+    private DexFile newDexFile(String apkPath) {
+        try {
+            return new DexFile(apkPath);
+        } catch (IOException e) {
+            throw new CucumberException("Failed to open " + apkPath);
+        }
     }
 
     /**
