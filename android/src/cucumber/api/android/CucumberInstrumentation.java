@@ -6,14 +6,14 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Looper;
 import android.util.Log;
-import cucumber.runtime.android.AndroidBackend;
-import cucumber.runtime.android.AndroidClasspathMethodScanner;
-import cucumber.runtime.android.AndroidFormatter;
-import cucumber.runtime.android.AndroidResourceLoader;
 import cucumber.runtime.Backend;
+import cucumber.runtime.CucumberException;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeOptions;
+import cucumber.runtime.android.*;
+import cucumber.runtime.io.Reflections;
 import cucumber.runtime.io.ResourceLoader;
+import cucumber.runtime.java.JavaBackend;
 import cucumber.runtime.model.*;
 import ext.android.test.ClassPathPackageInfoSource;
 import gherkin.formatter.Formatter;
@@ -39,19 +39,19 @@ public class CucumberInstrumentation extends Instrumentation {
     public static final int REPORT_VALUE_RESULT_FAILURE = -2;
     public static final String REPORT_KEY_STACK = "stack";
     public static final String TAG = "cucumber-android";
-    private RuntimeOptions mRuntimeOptions;
-    private ResourceLoader mResourceLoader;
-    private ClassLoader mClassLoader;
-    private Runtime mRuntime;
-    private String mPackageOfTests;
-    private String mFeatures;
+    private RuntimeOptions runtimeOptions;
+    private ResourceLoader resourceLoader;
+    private ClassLoader classLoader;
+    private Runtime runtime;
+    private String packageOfTests;
+    private String features;
 
     @Override
     public void onCreate(Bundle arguments) {
         super.onCreate(arguments);
 
         Context context = getContext();
-        mClassLoader = context.getClassLoader();
+        classLoader = context.getClassLoader();
 
         // For glue and features either use the provided arguments or try to find a RunWithCucumber annotated class.
         // If nothing works, default values will be used instead.
@@ -60,10 +60,10 @@ public class CucumberInstrumentation extends Instrumentation {
 
             String testClass = arguments.getString(ARGUMENT_TEST_CLASS);
             testClass = testClass != null ? testClass : "null";
-            mPackageOfTests = arguments.getString(ARGUMENT_TEST_PACKAGE);
+            packageOfTests = arguments.getString(ARGUMENT_TEST_PACKAGE);
 
             try {
-                Class<?> clazz = mClassLoader.loadClass(testClass);
+                Class<?> clazz = classLoader.loadClass(testClass);
                 boolean annotationWasPresent = readRunWithCucumberAnnotation(clazz);
 
                 // If the class is not RunWithCucumber annotated, maybe it's Cucumber annotated?
@@ -71,8 +71,8 @@ public class CucumberInstrumentation extends Instrumentation {
                     SEARCH_ANNOTATION:
                     for (Method m : clazz.getMethods()) {
                         for (Annotation a : m.getAnnotations()) {
-                            if (a.annotationType().getName().startsWith("cucumber") && mPackageOfTests == null) {
-                                mPackageOfTests = testClass.substring(0, testClass.lastIndexOf("."));
+                            if (a.annotationType().getName().startsWith("cucumber") && packageOfTests == null) {
+                                packageOfTests = testClass.substring(0, testClass.lastIndexOf("."));
                                 break SEARCH_ANNOTATION;
                             }
                         }
@@ -82,23 +82,32 @@ public class CucumberInstrumentation extends Instrumentation {
                 Log.w(TAG, e.toString());
             }
         } else {
-            ClassPathPackageInfoSource source = AndroidClasspathMethodScanner.classPathPackageInfoSource(context);
-            for (Class<?> clazz : source.getPackageInfo(context.getPackageName()).getTopLevelClassesRecursive()) {
-                if (readRunWithCucumberAnnotation(clazz)) break;
-            }
+            throw new CucumberException("bad args");
+//            ClassPathPackageInfoSource source = AndroidClasspathMethodScanner.classPathPackageInfoSource(context);
+//            for (Class<?> clazz : source.getPackageInfo(context.getPackageName()).getTopLevelClassesRecursive()) {
+//                if (readRunWithCucumberAnnotation(clazz)) break;
+//            }
         }
 
         Properties properties = new Properties();
-        mPackageOfTests = mPackageOfTests != null ? mPackageOfTests : defaultGlue();
-        mFeatures = mFeatures != null ? mFeatures : defaultFeatures();
+        packageOfTests = packageOfTests != null ? packageOfTests : defaultGlue();
+        features = features != null ? features : defaultFeatures();
 
-        properties.setProperty("cucumber.options", String.format("-g %s %s", mPackageOfTests, mFeatures));
-        mRuntimeOptions = new RuntimeOptions(properties);
+        properties.setProperty("cucumber.options", String.format("-g %s %s", packageOfTests, features));
+        runtimeOptions = new RuntimeOptions(properties);
 
-        mResourceLoader = new AndroidResourceLoader(context);
+        resourceLoader = new AndroidResourceLoader(context);
+//        resourceLoader = new ClasspathResourceLoader(classLoader);
         List<Backend> backends = new ArrayList<Backend>();
-        backends.add(new AndroidBackend(this));
-        mRuntime = new Runtime(mResourceLoader, mClassLoader, backends, mRuntimeOptions);
+//        backends.add(new AndroidBackend(this));
+
+        String apkPath = context.getPackageCodePath();
+        ClassPathPackageInfoSource.setApkPaths(new String[]{apkPath});
+        ClassPathPackageInfoSource source = new ClassPathPackageInfoSource();
+
+        Reflections androidReflections = new AndroidReflections(source);
+        backends.add(new JavaBackend(new AndroidObjectFactory(this), androidReflections));
+        runtime = new Runtime(resourceLoader, classLoader, backends, runtimeOptions);
 
         start();
     }
@@ -110,8 +119,8 @@ public class CucumberInstrumentation extends Instrumentation {
         RunWithCucumber annotation = clazz.getAnnotation(RunWithCucumber.class);
         if (annotation != null) {
             // isEmpty() only available in Android API 9+
-            mPackageOfTests = annotation.glue().equals("") ? defaultGlue() : annotation.glue();
-            mFeatures = annotation.features().equals("") ? defaultFeatures() : annotation.features();
+            packageOfTests = annotation.glue().equals("") ? defaultGlue() : annotation.glue();
+            features = annotation.features().equals("") ? defaultFeatures() : annotation.features();
             return true;
         }
         return false;
@@ -129,7 +138,7 @@ public class CucumberInstrumentation extends Instrumentation {
     public void onStart() {
         Looper.prepare();
 
-        List<CucumberFeature> cucumberFeatures = mRuntimeOptions.cucumberFeatures(mResourceLoader);
+        List<CucumberFeature> cucumberFeatures = runtimeOptions.cucumberFeatures(resourceLoader);
         int numScenarios = 0;
 
         for (CucumberFeature feature : cucumberFeatures) {
@@ -148,14 +157,14 @@ public class CucumberInstrumentation extends Instrumentation {
         }
 
         AndroidReporter reporter = new AndroidReporter(numScenarios);
-        mRuntimeOptions.formatters.clear();
-        mRuntimeOptions.formatters.add(reporter);
+        runtimeOptions.formatters.clear();
+        runtimeOptions.formatters.add(reporter);
 
         for (CucumberFeature cucumberFeature : cucumberFeatures) {
-            Formatter formatter = mRuntimeOptions.formatter(mClassLoader);
-            cucumberFeature.run(formatter, reporter, mRuntime);
+            Formatter formatter = runtimeOptions.formatter(classLoader);
+            cucumberFeature.run(formatter, reporter, runtime);
         }
-        Formatter formatter = mRuntimeOptions.formatter(mClassLoader);
+        Formatter formatter = runtimeOptions.formatter(classLoader);
 
         formatter.done();
         printSummary();
@@ -165,10 +174,10 @@ public class CucumberInstrumentation extends Instrumentation {
     }
 
     private void printSummary() {
-        for (Throwable t : mRuntime.getErrors()) {
+        for (Throwable t : runtime.getErrors()) {
             Log.e(TAG, t.toString());
         }
-        for (String s : mRuntime.getSnippets()) {
+        for (String s : runtime.getSnippets()) {
             Log.w(TAG, s);
         }
     }
@@ -298,7 +307,7 @@ public class CucumberInstrumentation extends Instrumentation {
                 mTestResult.putString(Instrumentation.REPORT_KEY_STREAMRESULT, result.getErrorMessage());
             } else if (result.getStatus().equals("undefined")) {
                 // There was a missing step definition, report an error.
-                List<String> snippets = mRuntime.getSnippets();
+                List<String> snippets = runtime.getSnippets();
                 String report = String.format("Missing step-definition\n\n%s\nfor step '%s'",
                         snippets.get(snippets.size() - 1),
                         mStep.getName());

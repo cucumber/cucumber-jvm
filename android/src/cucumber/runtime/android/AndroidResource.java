@@ -8,26 +8,31 @@ import java.io.IOException;
 import java.io.InputStream;
 
 class AndroidResource implements Resource {
-    private final Context mContext;
-    private final String mPath;
+    private final Context context;
+    private final String path;
 
     public AndroidResource(Context context, String path) {
-        mContext = context;
-        mPath = path;
+        this.context = context;
+        this.path = path;
     }
 
     @Override
     public String getPath() {
-        return mPath;
+        return path;
     }
 
     @Override
     public InputStream getInputStream() throws IOException {
-        return mContext.getAssets().open(mPath, AssetManager.ACCESS_UNKNOWN);
+        return context.getAssets().open(path, AssetManager.ACCESS_UNKNOWN);
     }
 
     @Override
     public String getClassName() {
-        return mPath.substring(mPath.lastIndexOf("/"));
+        return path.substring(path.lastIndexOf("/"));
+    }
+
+    @Override
+    public String toString() {
+        return "AndroidResource (" + path + ")";
     }
 }

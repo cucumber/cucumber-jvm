@@ -1,8 +1,8 @@
 package cucumber.runtime;
 
 import cucumber.api.Pending;
-import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.io.ResourceLoader;
+import cucumber.runtime.io.ResourceLoaderReflections;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.snippets.SummaryPrinter;
 import cucumber.runtime.xstream.LocalizedXStreams;
@@ -10,21 +10,10 @@ import gherkin.I18n;
 import gherkin.formatter.Argument;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
-import gherkin.formatter.model.Comment;
-import gherkin.formatter.model.DataTableRow;
-import gherkin.formatter.model.DocString;
-import gherkin.formatter.model.Match;
-import gherkin.formatter.model.Result;
-import gherkin.formatter.model.Step;
-import gherkin.formatter.model.Tag;
+import gherkin.formatter.model.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * This is the main entry point for running Cucumber features.
@@ -78,7 +67,7 @@ public class Runtime implements UnreportedStepExecutor {
     }
 
     private static Collection<? extends Backend> loadBackends(ResourceLoader resourceLoader, ClassLoader classLoader) {
-        return new ClasspathResourceLoader(classLoader).instantiateSubclasses(Backend.class, "cucumber.runtime", new Class[]{ResourceLoader.class}, new Object[]{resourceLoader});
+        return new ResourceLoaderReflections(resourceLoader, classLoader).instantiateSubclasses(Backend.class, "cucumber.runtime", new Class[]{ResourceLoader.class}, new Object[]{resourceLoader});
     }
 
     public void addError(Throwable error) {

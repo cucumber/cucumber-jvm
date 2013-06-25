@@ -375,6 +375,8 @@
     </pluginRepositories>
 
     <modules>
+        <module>android</module>
+        <module>android-test</module>
         <module>core</module>
         <module>picocontainer</module>
         <module>clojure</module>
@@ -391,8 +393,6 @@
         <module>openejb</module>
         <module>scala</module>
         <module>scala/scala_previous</module>
-        <module>android</module>
-        <module>android-test</module>
     </modules>
 
     <profiles>

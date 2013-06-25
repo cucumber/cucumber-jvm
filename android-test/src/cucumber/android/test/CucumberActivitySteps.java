@@ -8,7 +8,7 @@ import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 
 public class CucumberActivitySteps extends ActivityInstrumentationTestCase2<CucumberActivity> {
-    private int mSteps;
+    private int steps;
 
     public CucumberActivitySteps() {
         super(CucumberActivity.class);
@@ -16,26 +16,26 @@ public class CucumberActivitySteps extends ActivityInstrumentationTestCase2<Cucu
 
     @Before
     public void before() {
-        assertEquals(0, mSteps);
+        assertEquals(0, steps);
     }
 
     @After
     public void after() {
-        assertEquals(3, mSteps);
+        assertEquals(3, steps);
     }
 
     @Given("^I have a test$")
     public void I_have_a_test() {
-        assertEquals(1, ++mSteps);
+        assertEquals(1, ++steps);
     }
 
     @When("^I test$")
     public void I_test() {
-        assertEquals(2, ++mSteps);
+        assertEquals(2, ++steps);
     }
 
     @Then("^I succeed$")
     public void I_succeed() {
-        assertEquals(3, ++mSteps);
+        assertEquals(3, ++steps);
     }
 }

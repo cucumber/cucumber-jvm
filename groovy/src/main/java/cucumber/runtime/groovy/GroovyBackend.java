@@ -4,9 +4,10 @@ import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Glue;
 import cucumber.runtime.UnreportedStepExecutor;
-import cucumber.runtime.io.ClasspathResourceLoader;
+import cucumber.runtime.io.Reflections;
 import cucumber.runtime.io.Resource;
 import cucumber.runtime.io.ResourceLoader;
+import cucumber.runtime.io.ResourceLoaderReflections;
 import cucumber.runtime.snippets.SnippetGenerator;
 import gherkin.TagExpression;
 import gherkin.formatter.model.Step;
@@ -27,14 +28,13 @@ import java.util.regex.Pattern;
 
 import static cucumber.runtime.io.MultiLoader.packageName;
 
-
 public class GroovyBackend implements Backend {
     public static GroovyBackend instance;
     private final Set<Class> scripts = new HashSet<Class>();
     private final SnippetGenerator snippetGenerator = new SnippetGenerator(new GroovySnippet());
     private final ResourceLoader resourceLoader;
     private final GroovyShell shell;
-    private final ClasspathResourceLoader classpathResourceLoader;
+    private final Reflections reflections;
 
     private Closure worldClosure;
     private Object world;
@@ -52,10 +52,10 @@ public class GroovyBackend implements Backend {
     }
 
     public GroovyBackend(GroovyShell shell, ResourceLoader resourceLoader) {
-        this.resourceLoader = resourceLoader;
         this.shell = shell;
+        this.resourceLoader = resourceLoader;
         instance = this;
-        classpathResourceLoader = new ClasspathResourceLoader(shell.getClassLoader());
+        reflections = new ResourceLoaderReflections(resourceLoader, shell.getClassLoader());
     }
 
     @Override
@@ -70,7 +70,7 @@ public class GroovyBackend implements Backend {
                 runIfScript(context, script);
             }
             // Load compiled scripts
-            for (Class<? extends Script> glueClass : classpathResourceLoader.getDescendants(Script.class, packageName(gluePath))) {
+            for (Class<? extends Script> glueClass : reflections.getDescendants(Script.class, packageName(gluePath))) {
                 try {
                     Script script = glueClass.getConstructor(Binding.class).newInstance(context);
                     runIfScript(context, script);

@@ -14,7 +14,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-class AndroidObjectFactory implements ObjectFactory {
+public class AndroidObjectFactory implements ObjectFactory {
     private final Instrumentation mInstrumentation;
     private final Set<Class<?>> mClasses = new HashSet<Class<?>>();
     private final Map<Class<?>, Object> mInstances = new HashMap<Class<?>, Object>();
