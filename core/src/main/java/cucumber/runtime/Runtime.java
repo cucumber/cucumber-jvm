@@ -44,7 +44,7 @@ public class Runtime implements UnreportedStepExecutor {
     private static final byte ERRORS = 0x1;
 
     private final SummaryCounter summaryCounter;
-    final UndefinedStepsTracker undefinedStepsTracker;
+    final UndefinedStepsTracker undefinedStepsTracker = new UndefinedStepsTracker();
 
     private final Glue glue;
     private final RuntimeOptions runtimeOptions;
@@ -60,13 +60,11 @@ public class Runtime implements UnreportedStepExecutor {
     private ScenarioImpl scenarioResult = null;
 
     public static Runtime createRuntime(ResourceLoader resourceLoader, ClassLoader classLoader, RuntimeOptions runtimeOptions) {
-        UndefinedStepsTracker undefinedStepsTracker = new UndefinedStepsTracker();
-        return new Runtime(resourceLoader, classLoader, loadBackends(resourceLoader, classLoader), runtimeOptions,
-                undefinedStepsTracker, new RuntimeGlue(undefinedStepsTracker, new LocalizedXStreams(classLoader)));
+        return new Runtime(resourceLoader, classLoader, loadBackends(resourceLoader, classLoader), runtimeOptions, null);
     }
 
     public Runtime(ResourceLoader resourceLoader, ClassLoader classLoader, Collection<? extends Backend> backends,
-            RuntimeOptions runtimeOptions, UndefinedStepsTracker undefinedStepsTracker, RuntimeGlue glue) {
+            RuntimeOptions runtimeOptions, RuntimeGlue optionalGlue) {
         if (backends.isEmpty()) {
             throw new CucumberException("No backends were found. Please make sure you have a backend module on your CLASSPATH.");
         }
@@ -74,8 +72,7 @@ public class Runtime implements UnreportedStepExecutor {
         this.classLoader = classLoader;
         this.backends = backends;
         this.runtimeOptions = runtimeOptions;
-        this.undefinedStepsTracker = undefinedStepsTracker;
-        this.glue = glue;
+        this.glue = optionalGlue != null ? optionalGlue : new RuntimeGlue(undefinedStepsTracker, new LocalizedXStreams(classLoader));
         this.summaryCounter = new SummaryCounter(runtimeOptions.monochrome);
 
         for (Backend backend : backends) {

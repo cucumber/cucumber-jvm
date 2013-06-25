@@ -5,7 +5,6 @@ import cucumber.api.Scenario;
 import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
-import cucumber.runtime.xstream.LocalizedXStreams;
 import gherkin.I18n;
 import gherkin.formatter.JSONFormatter;
 import gherkin.formatter.Reporter;
@@ -369,14 +368,12 @@ public class RuntimeTest {
 
     public static Runtime createRuntime(ResourceLoader resourceLoader, ClassLoader classLoader,
             Collection<? extends Backend> backends, RuntimeOptions runtimeOptions) {
-        UndefinedStepsTracker undefinedStepsTracker = new UndefinedStepsTracker();
-        return new Runtime(resourceLoader, classLoader, backends, runtimeOptions, undefinedStepsTracker,
-                new RuntimeGlue(undefinedStepsTracker, new LocalizedXStreams(classLoader)));
+        return new Runtime(resourceLoader, classLoader, backends, runtimeOptions, null);
     }
 
     public static Runtime createRuntime(ResourceLoader resourceLoader, ClassLoader classLoader,
             Collection<Backend> backends, RuntimeOptions runtimeOptions, RuntimeGlue glue) {
-        return new Runtime(resourceLoader, classLoader, backends, runtimeOptions, new UndefinedStepsTracker(), glue);
+        return new Runtime(resourceLoader, classLoader, backends, runtimeOptions, glue);
     }
 
     private Runtime createRuntimeWithMockedGlue(StepDefinitionMatch match, String... runtimeArgs) {
@@ -403,7 +400,7 @@ public class RuntimeTest {
         mockHook(glue, hook, isBefore);
         Collection<Backend> backends = Arrays.asList(backend);
 
-        return new Runtime(resourceLoader, classLoader, backends, runtimeOptions, new UndefinedStepsTracker(), glue);
+        return createRuntime(resourceLoader, classLoader, backends, runtimeOptions, glue);
     }
 
     private void mockMatch(RuntimeGlue glue, StepDefinitionMatch match, boolean isAmbiguous) {

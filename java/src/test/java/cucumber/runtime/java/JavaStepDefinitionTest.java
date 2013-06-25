@@ -6,12 +6,9 @@ import cucumber.runtime.Backend;
 import cucumber.runtime.DuplicateStepDefinitionException;
 import cucumber.runtime.Glue;
 import cucumber.runtime.Runtime;
-import cucumber.runtime.RuntimeGlue;
 import cucumber.runtime.RuntimeOptions;
-import cucumber.runtime.UndefinedStepsTracker;
 import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.io.ResourceLoader;
-import cucumber.runtime.xstream.LocalizedXStreams;
 import gherkin.I18n;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Comment;
@@ -153,8 +150,6 @@ public class JavaStepDefinitionTest {
 
     private Runtime createRuntime(ResourceLoader resourceLoader, ClassLoader classLoader,
         Collection<? extends Backend> backends, RuntimeOptions runtimeOptions) {
-      UndefinedStepsTracker undefinedStepsTracker = new UndefinedStepsTracker();
-      return new Runtime(resourceLoader, classLoader, backends, runtimeOptions, undefinedStepsTracker,
-              new RuntimeGlue(undefinedStepsTracker, new LocalizedXStreams(classLoader)));
+      return new Runtime(resourceLoader, classLoader, backends, runtimeOptions, null);
     }
 }
