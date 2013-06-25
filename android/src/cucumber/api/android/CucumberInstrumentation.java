@@ -57,26 +57,6 @@ public class CucumberInstrumentation extends Instrumentation {
         if (arguments == null) {
             throw new CucumberException("No arguments");
         }
-        Log.d(TAG, "************** KEYS **************");
-        for (String key : arguments.keySet()) {
-            Log.d(TAG, key + " => " + arguments.get(key));
-        }
-        /*
-        MAVEN:
-        log => false
-        coverage => false
-        coverageFile => expression
-        debug => false
-
-        IDEA:
-        class => cucumber.android.test.CucumberActivitySteps
-        debug => false
-        */
-
-
-        // Maven: [log, coverage, coverageFile, debug]
-        // IDEA:  [log, coverage, coverageFile, debug]
-
         Context context = getContext();
         classLoader = context.getClassLoader();
 
@@ -215,81 +195,81 @@ public class CucumberInstrumentation extends Instrumentation {
      * It also wraps the AndroidFormatter to intercept important callbacks.
      */
     private class AndroidReporter implements Formatter, Reporter {
-        private final AndroidFormatter mFormatter;
-        private final Bundle mResultTemplate;
-        private Bundle mTestResult;
-        private int mScenarioNum;
-        private int mTestResultCode;
-        private Feature mFeature;
-        private Step mStep;
+        private final AndroidFormatter formatter;
+        private final Bundle resultTemplate;
+        private Bundle testResult;
+        private int scenarioCounter;
+        private int resultCode; // aka exit status
+        private Feature currentFeature;
+        private Step currentStep;
 
         public AndroidReporter(int numTests) {
-            mFormatter = new AndroidFormatter(TAG);
-            mResultTemplate = new Bundle();
-            mResultTemplate.putString(Instrumentation.REPORT_KEY_IDENTIFIER, REPORT_VALUE_ID);
-            mResultTemplate.putInt(REPORT_KEY_NUM_TOTAL, numTests);
+            formatter = new AndroidFormatter(TAG);
+            resultTemplate = new Bundle();
+            resultTemplate.putString(Instrumentation.REPORT_KEY_IDENTIFIER, REPORT_VALUE_ID);
+            resultTemplate.putInt(REPORT_KEY_NUM_TOTAL, numTests);
         }
 
         @Override
         public void uri(String uri) {
-            mFormatter.uri(uri);
+            formatter.uri(uri);
         }
 
         @Override
         public void feature(Feature feature) {
-            mFeature = feature;
-            mFormatter.feature(feature);
+            currentFeature = feature;
+            formatter.feature(feature);
         }
 
         @Override
         public void background(Background background) {
-            mFormatter.background(background);
+            formatter.background(background);
         }
 
         @Override
         public void scenario(Scenario scenario) {
             reportLastResult();
-            mFormatter.scenario(scenario);
+            formatter.scenario(scenario);
             beginScenario(scenario);
         }
 
         @Override
         public void scenarioOutline(ScenarioOutline scenarioOutline) {
             reportLastResult();
-            mFormatter.scenarioOutline(scenarioOutline);
+            formatter.scenarioOutline(scenarioOutline);
             beginScenario(scenarioOutline);
         }
 
         @Override
         public void examples(Examples examples) {
-            mFormatter.examples(examples);
+            formatter.examples(examples);
         }
 
         @Override
         public void step(Step step) {
-            mStep = step;
-            mFormatter.step(step);
+            currentStep = step;
+            formatter.step(step);
         }
 
         @Override
         public void syntaxError(String state, String event, List<String> legalEvents, String uri, Integer line) {
-            mFormatter.syntaxError(state, event, legalEvents, uri, line);
+            formatter.syntaxError(state, event, legalEvents, uri, line);
         }
 
         @Override
         public void eof() {
             reportLastResult();
-            mFormatter.eof();
+            formatter.eof();
         }
 
         @Override
         public void done() {
-            mFormatter.done();
+            formatter.done();
         }
 
         @Override
         public void close() {
-            mFormatter.close();
+            formatter.close();
         }
 
         @Override
@@ -313,45 +293,45 @@ public class CucumberInstrumentation extends Instrumentation {
         }
 
         private void beginScenario(TagStatement scenario) {
-            String testClass = String.format("%s %s", mFeature.getKeyword(), mFeature.getName());
+            String testClass = String.format("%s %s", currentFeature.getKeyword(), currentFeature.getName());
             String testName = String.format("%s %s", scenario.getKeyword(), scenario.getName());
-            mTestResult = new Bundle(mResultTemplate);
-            mTestResult.putString(REPORT_KEY_NAME_CLASS, testClass);
-            mTestResult.putString(REPORT_KEY_NAME_TEST, testName);
-            mTestResult.putInt(REPORT_KEY_NUM_CURRENT, ++mScenarioNum);
+            testResult = new Bundle(resultTemplate);
+            testResult.putString(REPORT_KEY_NAME_CLASS, testClass);
+            testResult.putString(REPORT_KEY_NAME_TEST, testName);
+            testResult.putInt(REPORT_KEY_NUM_CURRENT, ++scenarioCounter);
 
-            mTestResult.putString(Instrumentation.REPORT_KEY_STREAMRESULT, String.format("\n%s:", testClass));
+            testResult.putString(Instrumentation.REPORT_KEY_STREAMRESULT, String.format("\n%s:", testClass));
 
-            sendStatus(REPORT_VALUE_RESULT_START, mTestResult);
-            mTestResultCode = 0;
+            sendStatus(REPORT_VALUE_RESULT_START, testResult);
+            resultCode = 0;
         }
 
         @Override
         public void result(Result result) {
             if (result.getError() != null) {
                 // If the result contains an error, report a failure.
-                mTestResult.putString(REPORT_KEY_STACK, result.getErrorMessage());
-                mTestResultCode = REPORT_VALUE_RESULT_FAILURE;
-                mTestResult.putString(Instrumentation.REPORT_KEY_STREAMRESULT, result.getErrorMessage());
+                testResult.putString(REPORT_KEY_STACK, result.getErrorMessage());
+                resultCode = REPORT_VALUE_RESULT_FAILURE;
+                testResult.putString(Instrumentation.REPORT_KEY_STREAMRESULT, result.getErrorMessage());
             } else if (result.getStatus().equals("undefined")) {
                 // There was a missing step definition, report an error.
                 List<String> snippets = runtime.getSnippets();
                 String report = String.format("Missing step-definition\n\n%s\nfor step '%s'",
                         snippets.get(snippets.size() - 1),
-                        mStep.getName());
-                mTestResult.putString(REPORT_KEY_STACK, report);
-                mTestResultCode = REPORT_VALUE_RESULT_ERROR;
-                mTestResult.putString(Instrumentation.REPORT_KEY_STREAMRESULT,
-                        String.format("Missing step-definition: %s", mStep.getName()));
+                        currentStep.getName());
+                testResult.putString(REPORT_KEY_STACK, report);
+                resultCode = REPORT_VALUE_RESULT_ERROR;
+                testResult.putString(Instrumentation.REPORT_KEY_STREAMRESULT,
+                        String.format("Missing step-definition: %s", currentStep.getName()));
             }
         }
 
         private void reportLastResult() {
-            if (mScenarioNum != 0) {
-                if (mTestResultCode == 0) {
-                    mTestResult.putString(Instrumentation.REPORT_KEY_STREAMRESULT, ".");
+            if (scenarioCounter != 0) {
+                if (resultCode == 0) {
+                    testResult.putString(Instrumentation.REPORT_KEY_STREAMRESULT, ".");
                 }
-                sendStatus(mTestResultCode, mTestResult);
+                sendStatus(resultCode, testResult);
             }
         }
     }

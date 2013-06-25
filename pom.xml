@@ -50,6 +50,8 @@
         <slf4j.version>1.7.2</slf4j.version>
         <freemarker.version>2.3.19</freemarker.version>
         <javax.servlet-api.version>3.0.1</javax.servlet-api.version>
+        <android-maven-plugin.version>3.6.0</android-maven-plugin.version>
+        <android.version>2.2.1</android.version>
     </properties>
     <licenses>
         <license>
@@ -348,6 +350,19 @@
                 <groupId>net.sourceforge.cobertura</groupId>
                 <artifactId>cobertura</artifactId>
                 <version>${cobertura.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.google.android</groupId>
+                <artifactId>android</artifactId>
+                <version>${android.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.google.android</groupId>
+                <artifactId>android-test</artifactId>
+                <version>${android.version}</version>
+                <scope>provided</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
