@@ -12,3 +12,11 @@ On OS X: Note that for the path to work on the commandline and in IDE's started 
 The generated target artifacts are an [apklib](https://code.google.com/p/maven-android-plugin/wiki/ApkLib) file and a regular .jar.
 
 Tests are in `../cucumber-test/`.
+
+## Developers
+
+When running the test app, logs can be read with:
+
+```
+adb logcat
+```

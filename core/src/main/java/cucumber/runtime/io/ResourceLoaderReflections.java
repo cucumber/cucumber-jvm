@@ -26,7 +26,7 @@ public class ResourceLoaderReflections implements Reflections {
     @Override
     public <T> Collection<Class<? extends T>> getDescendants(Class<T> parentType, String packageName) {
         Collection<Class<? extends T>> result = new HashSet<Class<? extends T>>();
-        String packagePath = packageName.replace('.', '/').replace(File.separatorChar, '/');
+        String packagePath = "classpath:" + packageName.replace('.', '/').replace(File.separatorChar, '/');
         for (Resource classResource : resourceLoader.resources(packagePath, ".class")) {
             String className = classResource.getClassName();
             Class<?> clazz = loadClass(className, classLoader);

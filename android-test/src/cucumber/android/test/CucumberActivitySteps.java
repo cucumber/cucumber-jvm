@@ -7,6 +7,7 @@ import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 
+// I don't quite get why glue code has to be in a subclass....
 public class CucumberActivitySteps extends ActivityInstrumentationTestCase2<CucumberActivity> {
     private int steps;
 

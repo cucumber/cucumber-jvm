@@ -166,36 +166,6 @@ public class ClassPathPackageInfoSource {
 
     /**
      * Finds all classes and sub packages that are below the packageName and
-     * add them to the respective sets. Searches the package in a single jar file.
-     */
-    private void findClassesInJar(File jarFile, String pathPrefix,
-                                  Set<String> classNames, Set<String> subpackageNames)
-            throws IOException {
-        Set<String> entryNames = getJarEntries(jarFile);
-        // check if the Jar contains the package.
-        if (!entryNames.contains(pathPrefix)) {
-            return;
-        }
-        int prefixLength = pathPrefix.length();
-        for (String entryName : entryNames) {
-            if (entryName.startsWith(pathPrefix)) {
-                if (entryName.endsWith(CLASS_EXTENSION)) {
-                    // check if the class is in the package itself or in one of its
-                    // subpackages.
-                    int index = entryName.indexOf('/', prefixLength);
-                    if (index >= 0) {
-                        String p = entryName.substring(0, index).replace('/', '.');
-                        subpackageNames.add(p);
-                    } else if (isToplevelClass(entryName)) {
-                        classNames.add(getClassName(entryName).replace('/', '.'));
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Finds all classes and sub packages that are below the packageName and
      * add them to the respective sets. Searches the package in a single apk file.
      */
     private void findClassesInApk(String apkPath, String packageName,
@@ -299,9 +269,5 @@ public class ClassPathPackageInfoSource {
         String classPath = System.getProperty("java.class.path");
         String separator = System.getProperty("path.separator", ":");
         return classPath.split(Pattern.quote(separator));
-    }
-
-    public void setClassLoader(ClassLoader classLoader) {
-        this.classLoader = classLoader;
     }
 }

@@ -15,12 +15,12 @@ import java.util.Map;
 import java.util.Set;
 
 public class AndroidObjectFactory implements ObjectFactory {
-    private final Instrumentation mInstrumentation;
-    private final Set<Class<?>> mClasses = new HashSet<Class<?>>();
-    private final Map<Class<?>, Object> mInstances = new HashMap<Class<?>, Object>();
+    private final Instrumentation instrumentation;
+    private final Set<Class<?>> classes = new HashSet<Class<?>>();
+    private final Map<Class<?>, Object> instances = new HashMap<Class<?>, Object>();
 
     public AndroidObjectFactory(Instrumentation instrumentation) {
-        mInstrumentation = instrumentation;
+        this.instrumentation = instrumentation;
     }
 
     public void start() {
@@ -28,16 +28,16 @@ public class AndroidObjectFactory implements ObjectFactory {
     }
 
     public void stop() {
-        mInstances.clear();
+        instances.clear();
     }
 
     public void addClass(Class<?> clazz) {
-        mClasses.add(clazz);
+        classes.add(clazz);
     }
 
     public <T> T getInstance(Class<T> type) {
-        if (mInstances.containsKey(type)) {
-            return type.cast(mInstances.get(type));
+        if (instances.containsKey(type)) {
+            return type.cast(instances.get(type));
         } else {
             return cacheNewInstance(type);
         }
@@ -49,18 +49,18 @@ public class AndroidObjectFactory implements ObjectFactory {
             T instance = constructor.newInstance();
 
             if (instance instanceof ActivityInstrumentationTestCase2) {
-                ((ActivityInstrumentationTestCase2) instance).injectInstrumentation(mInstrumentation);
+                ((ActivityInstrumentationTestCase2) instance).injectInstrumentation(instrumentation);
                 // This Intent prevents the ActivityInstrumentationTestCase2 to stall on
                 // Intent.startActivitySync (when calling getActivity) if the activity is already running.
                 Intent intent = new Intent();
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 ((ActivityInstrumentationTestCase2) instance).setActivityIntent(intent);
             } else if (instance instanceof InstrumentationTestCase) {
-                ((InstrumentationTestCase) instance).injectInstrumentation(mInstrumentation);
+                ((InstrumentationTestCase) instance).injectInstrumentation(instrumentation);
             } else if (instance instanceof AndroidTestCase) {
-                ((AndroidTestCase) instance).setContext(mInstrumentation.getTargetContext());
+                ((AndroidTestCase) instance).setContext(instrumentation.getTargetContext());
             }
-            mInstances.put(type, instance);
+            instances.put(type, instance);
             return instance;
         } catch (NoSuchMethodException e) {
             throw new CucumberException(String.format("%s doesn't have an empty constructor. If you need DI, put cucumber-picocontainer on the classpath", type), e);

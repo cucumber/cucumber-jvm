@@ -3,10 +3,7 @@ package cucumber.runtime.java;
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
 import cucumber.runtime.*;
-import cucumber.runtime.io.ClasspathResourceLoader;
-import cucumber.runtime.io.Reflections;
-import cucumber.runtime.io.ResourceLoader;
-import cucumber.runtime.io.ResourceLoaderReflections;
+import cucumber.runtime.io.*;
 import cucumber.runtime.snippets.SnippetGenerator;
 import gherkin.formatter.model.Step;
 
@@ -36,7 +33,7 @@ public class JavaBackend implements Backend {
 
     public JavaBackend(ObjectFactory objectFactory) {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        ResourceLoader resourceLoader = new  ClasspathResourceLoader(classLoader);
+        ResourceLoader resourceLoader = new MultiLoader(classLoader);
         reflections = new ResourceLoaderReflections(resourceLoader, classLoader);
         methodScanner = new MethodScanner(reflections);
         this.objectFactory = objectFactory;

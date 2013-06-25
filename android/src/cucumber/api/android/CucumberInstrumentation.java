@@ -10,7 +10,10 @@ import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeOptions;
-import cucumber.runtime.android.*;
+import cucumber.runtime.android.AndroidFormatter;
+import cucumber.runtime.android.AndroidObjectFactory;
+import cucumber.runtime.android.AndroidReflections;
+import cucumber.runtime.android.AndroidResourceLoader;
 import cucumber.runtime.io.Reflections;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.java.JavaBackend;
@@ -50,13 +53,40 @@ public class CucumberInstrumentation extends Instrumentation {
     public void onCreate(Bundle arguments) {
         super.onCreate(arguments);
 
+        if(arguments == null) {
+            throw new CucumberException("No arguments");
+        }
+        Log.d(TAG, "************** KEYS **************");
+        for (String key : arguments.keySet()) {
+            Log.d(TAG, key + " => " + arguments.get(key));
+        }
+        /*
+        MAVEN:
+        log => false
+        coverage => false
+        coverageFile => expression
+        debug => false
+
+        IDEA:
+        class => cucumber.android.test.CucumberActivitySteps
+        debug => false
+        */
+
+
+
+        // Maven: [log, coverage, coverageFile, debug]
+        // IDEA:  [log, coverage, coverageFile, debug]
+
         Context context = getContext();
         classLoader = context.getClassLoader();
 
+        String apkPath = context.getPackageCodePath();
+        ClassPathPackageInfoSource.setApkPaths(new String[]{apkPath});
+        ClassPathPackageInfoSource source = new ClassPathPackageInfoSource();
+
         // For glue and features either use the provided arguments or try to find a RunWithCucumber annotated class.
         // If nothing works, default values will be used instead.
-        if (arguments != null &&
-                (arguments.containsKey(ARGUMENT_TEST_CLASS) || arguments.containsKey(ARGUMENT_TEST_PACKAGE))) {
+        if (arguments.containsKey(ARGUMENT_TEST_CLASS) || arguments.containsKey(ARGUMENT_TEST_PACKAGE)) {
 
             String testClass = arguments.getString(ARGUMENT_TEST_CLASS);
             testClass = testClass != null ? testClass : "null";
@@ -82,11 +112,10 @@ public class CucumberInstrumentation extends Instrumentation {
                 Log.w(TAG, e.toString());
             }
         } else {
-            throw new CucumberException("bad args");
-//            ClassPathPackageInfoSource source = AndroidClasspathMethodScanner.classPathPackageInfoSource(context);
-//            for (Class<?> clazz : source.getPackageInfo(context.getPackageName()).getTopLevelClassesRecursive()) {
-//                if (readRunWithCucumberAnnotation(clazz)) break;
-//            }
+//            throw new CucumberException("bad args");
+            for (Class<?> clazz : source.getPackageInfo(context.getPackageName()).getTopLevelClassesRecursive()) {
+                if (readRunWithCucumberAnnotation(clazz)) break;
+            }
         }
 
         Properties properties = new Properties();
@@ -97,15 +126,10 @@ public class CucumberInstrumentation extends Instrumentation {
         runtimeOptions = new RuntimeOptions(properties);
 
         resourceLoader = new AndroidResourceLoader(context);
-//        resourceLoader = new ClasspathResourceLoader(classLoader);
-        List<Backend> backends = new ArrayList<Backend>();
-//        backends.add(new AndroidBackend(this));
-
-        String apkPath = context.getPackageCodePath();
-        ClassPathPackageInfoSource.setApkPaths(new String[]{apkPath});
-        ClassPathPackageInfoSource source = new ClassPathPackageInfoSource();
 
         Reflections androidReflections = new AndroidReflections(source);
+
+        List<Backend> backends = new ArrayList<Backend>();
         backends.add(new JavaBackend(new AndroidObjectFactory(this), androidReflections));
         runtime = new Runtime(resourceLoader, classLoader, backends, runtimeOptions);
 
