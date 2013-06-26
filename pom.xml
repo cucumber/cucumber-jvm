@@ -390,8 +390,6 @@
     </pluginRepositories>
 
     <modules>
-        <module>android</module>
-        <module>android-test</module>
         <module>core</module>
         <module>picocontainer</module>
         <module>clojure</module>
@@ -411,6 +409,14 @@
     </modules>
 
     <profiles>
+        <profile>
+            <id>android</id>
+            <modules>
+                <module>android</module>
+                <module>android-test</module>
+            </modules>
+        </profile>
+
         <profile>
             <id>examples</id>
             <modules>
