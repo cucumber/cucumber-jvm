@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>info.cukes</groupId>
     <artifactId>cucumber-jvm</artifactId>
@@ -49,6 +50,8 @@
         <slf4j.version>1.7.2</slf4j.version>
         <freemarker.version>2.3.19</freemarker.version>
         <javax.servlet-api.version>3.0.1</javax.servlet-api.version>
+        <android-maven-plugin.version>3.6.0</android-maven-plugin.version>
+        <android.version>2.2.1</android.version>
     </properties>
     <licenses>
         <license>
@@ -61,8 +64,8 @@
         <connection>scm:git:git://github.com/cucumber/cucumber-jvm.git</connection>
         <developerConnection>scm:git:git@github.com:cucumber/cucumber-jvm.git</developerConnection>
         <url>git://github.com/cucumber/cucumber-jvm.git</url>
-      <tag>HEAD</tag>
-  </scm>
+        <tag>HEAD</tag>
+    </scm>
 
     <dependencyManagement>
         <dependencies>
@@ -140,6 +143,16 @@
                 <groupId>org.picocontainer</groupId>
                 <artifactId>picocontainer</artifactId>
                 <version>2.14.2</version>
+            </dependency>
+            <dependency>
+                <groupId>info.cukes</groupId>
+                <artifactId>cucumber-android</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>info.cukes</groupId>
+                <artifactId>cucumber-android-test</artifactId>
+                <version>${project.version}</version>
             </dependency>
 
             <!-- Spring stuff -->
@@ -338,6 +351,19 @@
                 <artifactId>cobertura</artifactId>
                 <version>${cobertura.version}</version>
             </dependency>
+
+            <dependency>
+                <groupId>com.google.android</groupId>
+                <artifactId>android</artifactId>
+                <version>${android.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.google.android</groupId>
+                <artifactId>android-test</artifactId>
+                <version>${android.version}</version>
+                <scope>provided</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -383,6 +409,14 @@
     </modules>
 
     <profiles>
+        <profile>
+            <id>android</id>
+            <modules>
+                <module>android</module>
+                <module>android-test</module>
+            </modules>
+        </profile>
+
         <profile>
             <id>examples</id>
             <modules>
