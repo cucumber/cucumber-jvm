@@ -413,7 +413,13 @@
             <id>android</id>
             <modules>
                 <module>android</module>
-                <module>android-test</module>
+            </modules>
+        </profile>
+
+        <profile>
+            <id>android-examples</id>
+            <modules>
+                <module>examples/android-test</module>
             </modules>
         </profile>
 
