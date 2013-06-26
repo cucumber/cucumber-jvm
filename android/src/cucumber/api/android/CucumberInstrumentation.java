@@ -165,8 +165,8 @@ public class CucumberInstrumentation extends Instrumentation {
         }
 
         AndroidReporter reporter = new AndroidReporter(numScenarios);
-        runtimeOptions.formatters.clear();
-        runtimeOptions.formatters.add(reporter);
+        runtimeOptions.getFormatters().clear();
+        runtimeOptions.getFormatters().add(reporter);
 
         for (CucumberFeature cucumberFeature : cucumberFeatures) {
             Formatter formatter = runtimeOptions.formatter(classLoader);

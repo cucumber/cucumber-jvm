@@ -28,15 +28,15 @@ public class RuntimeOptions {
     public static final String USAGE = FixJava.readResource("/cucumber/runtime/USAGE.txt");
     private static final Pattern SHELLWORDS_PATTERN = Pattern.compile("[^\\s']+|'([^']*)'");
 
-    public final List<String> glue = new ArrayList<String>();
-    public final List<Object> filters = new ArrayList<Object>();
-    public final List<Formatter> formatters = new ArrayList<Formatter>();
-    public final List<String> featurePaths = new ArrayList<String>();
+    private final List<String> glue = new ArrayList<String>();
+    private final List<Object> filters = new ArrayList<Object>();
+    private final List<Formatter> formatters = new ArrayList<Formatter>();
+    private final List<String> featurePaths = new ArrayList<String>();
     private final FormatterFactory formatterFactory;
-    public URL dotCucumber;
-    public boolean dryRun;
-    public boolean strict = false;
-    public boolean monochrome = false;
+    private URL dotCucumber;
+    private boolean dryRun;
+    private boolean strict = false;
+    private boolean monochrome = false;
 
     public RuntimeOptions(Properties properties, String... argv) {
         /* IMPORTANT! Make sure USAGE.txt is always uptodate if this class changes */
@@ -48,7 +48,7 @@ public class RuntimeOptions {
 
         parse(new ArrayList<String>(asList(argv)));
         if (properties.containsKey("cucumber.options")) {
-            parse(cucumberOptionsSplit(properties.getProperty("cucumber.options")));
+            parse(shellWords(properties.getProperty("cucumber.options")));
         }
 
         if (formatters.isEmpty()) {
@@ -57,9 +57,9 @@ public class RuntimeOptions {
         setFormatterOptions();
     }
 
-    private List<String> cucumberOptionsSplit(String property) {
+    private List<String> shellWords(String cmdline) {
         List<String> matchList = new ArrayList<String>();
-        Matcher shellwordsMatcher = SHELLWORDS_PATTERN.matcher(property);
+        Matcher shellwordsMatcher = SHELLWORDS_PATTERN.matcher(cmdline);
         while (shellwordsMatcher.find()) {
             if (shellwordsMatcher.group(1) != null) {
                 matchList.add(shellwordsMatcher.group(1));
@@ -116,8 +116,7 @@ public class RuntimeOptions {
         }
     }
 
-    private void printUsage()
-    {
+    private void printUsage() {
         System.out.println(USAGE);
     }
 
@@ -170,5 +169,33 @@ public class RuntimeOptions {
             StrictAware strictAware = (StrictAware) formatter;
             strictAware.setStrict(strict);
         }
+    }
+
+    public List<String> getGlue() {
+        return glue;
+    }
+
+    public boolean isStrict() {
+        return strict;
+    }
+
+    public boolean isDryRun() {
+        return dryRun;
+    }
+
+    public List<String> getFeaturePaths() {
+        return featurePaths;
+    }
+
+    public URL getDotCucumber() {
+        return dotCucumber;
+    }
+
+    public List<Formatter> getFormatters() {
+        return formatters;
+    }
+
+    public List<Object> getFilters() {
+        return filters;
     }
 }

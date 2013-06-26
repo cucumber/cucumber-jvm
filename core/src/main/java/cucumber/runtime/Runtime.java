@@ -60,7 +60,7 @@ public class Runtime implements UnreportedStepExecutor {
         glue = new RuntimeGlue(undefinedStepsTracker, new LocalizedXStreams(classLoader));
 
         for (Backend backend : backends) {
-            backend.loadGlue(glue, runtimeOptions.glue);
+            backend.loadGlue(glue, runtimeOptions.getGlue());
             backend.setUnreportedStepExecutor(this);
         }
         this.runtimeOptions = runtimeOptions;
@@ -128,7 +128,7 @@ public class Runtime implements UnreportedStepExecutor {
     }
 
     private boolean hasUndefinedOrPendingStepsAndIsStrict() {
-        return runtimeOptions.strict && hasUndefinedOrPendingSteps();
+        return runtimeOptions.isStrict() && hasUndefinedOrPendingSteps();
     }
 
     private boolean hasUndefinedOrPendingSteps() {
@@ -169,7 +169,7 @@ public class Runtime implements UnreportedStepExecutor {
     }
 
     private void runHooks(List<HookDefinition> hooks, Reporter reporter, Set<Tag> tags, boolean isBefore) {
-        if (!runtimeOptions.dryRun) {
+        if (!runtimeOptions.isDryRun()) {
             for (HookDefinition hook : hooks) {
                 runHookIfTagsMatch(hook, reporter, tags, isBefore);
             }
@@ -244,7 +244,7 @@ public class Runtime implements UnreportedStepExecutor {
             return;
         }
 
-        if (runtimeOptions.dryRun) {
+        if (runtimeOptions.isDryRun()) {
             skipNextStep = true;
         }
 
@@ -279,6 +279,6 @@ public class Runtime implements UnreportedStepExecutor {
     }
 
     public void writeStepdefsJson() throws IOException {
-        glue.writeStepdefsJson(runtimeOptions.featurePaths, runtimeOptions.dotCucumber);
+        glue.writeStepdefsJson(runtimeOptions.getFeaturePaths(), runtimeOptions.getDotCucumber());
     }
 }
