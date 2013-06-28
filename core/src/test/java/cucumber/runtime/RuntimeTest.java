@@ -54,7 +54,7 @@ public class RuntimeTest {
         List<Backend> backends = asList(mock(Backend.class));
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         RuntimeOptions runtimeOptions = new RuntimeOptions(new Properties());
-        Runtime runtime = createRuntime(new ClasspathResourceLoader(classLoader), classLoader, backends, runtimeOptions);
+        Runtime runtime = new Runtime(new ClasspathResourceLoader(classLoader), classLoader, backends, runtimeOptions);
         feature.run(jsonFormatter, jsonFormatter, runtime);
         jsonFormatter.done();
         String expected = "" +
@@ -182,7 +182,7 @@ public class RuntimeTest {
     public void should_throw_cucumer_exception_if_no_backends_are_found() throws Exception {
         try {
             ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-            createRuntime(new ClasspathResourceLoader(classLoader), classLoader, Collections.<Backend>emptyList(),
+            new Runtime(new ClasspathResourceLoader(classLoader), classLoader, Collections.<Backend>emptyList(),
                     new RuntimeOptions(new Properties()));
             fail("A CucumberException should have been thrown");
         } catch (CucumberException e) {
@@ -363,17 +363,7 @@ public class RuntimeTest {
         Backend backend = mock(Backend.class);
         Collection<Backend> backends = Arrays.asList(backend);
 
-        return createRuntime(resourceLoader, classLoader, backends, runtimeOptions);
-    }
-
-    public static Runtime createRuntime(ResourceLoader resourceLoader, ClassLoader classLoader,
-            Collection<? extends Backend> backends, RuntimeOptions runtimeOptions) {
-        return new Runtime(resourceLoader, classLoader, backends, runtimeOptions, null);
-    }
-
-    public static Runtime createRuntime(ResourceLoader resourceLoader, ClassLoader classLoader,
-            Collection<Backend> backends, RuntimeOptions runtimeOptions, RuntimeGlue glue) {
-        return new Runtime(resourceLoader, classLoader, backends, runtimeOptions, glue);
+        return new Runtime(resourceLoader, classLoader, backends, runtimeOptions);
     }
 
     private Runtime createRuntimeWithMockedGlue(StepDefinitionMatch match, String... runtimeArgs) {
@@ -400,7 +390,7 @@ public class RuntimeTest {
         mockHook(glue, hook, isBefore);
         Collection<Backend> backends = Arrays.asList(backend);
 
-        return createRuntime(resourceLoader, classLoader, backends, runtimeOptions, glue);
+        return new Runtime(resourceLoader, classLoader, backends, runtimeOptions, glue);
     }
 
     private void mockMatch(RuntimeGlue glue, StepDefinitionMatch match, boolean isAmbiguous) {

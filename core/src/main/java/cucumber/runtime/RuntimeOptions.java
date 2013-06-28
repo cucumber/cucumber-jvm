@@ -149,4 +149,8 @@ public class RuntimeOptions {
             }
         });
     }
+
+    public boolean isMonochrome() {
+        return monochrome;
+    }
 }

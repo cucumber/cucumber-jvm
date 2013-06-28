@@ -10,22 +10,11 @@ import gherkin.I18n;
 import gherkin.formatter.Argument;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
-import gherkin.formatter.model.Comment;
-import gherkin.formatter.model.DataTableRow;
-import gherkin.formatter.model.DocString;
-import gherkin.formatter.model.Match;
-import gherkin.formatter.model.Result;
-import gherkin.formatter.model.Step;
-import gherkin.formatter.model.Tag;
+import gherkin.formatter.model.*;
 
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * This is the main entry point for running Cucumber features.
@@ -59,8 +48,12 @@ public class Runtime implements UnreportedStepExecutor {
     private boolean skipNextStep = false;
     private ScenarioImpl scenarioResult = null;
 
-    public static Runtime createRuntime(ResourceLoader resourceLoader, ClassLoader classLoader, RuntimeOptions runtimeOptions) {
-        return new Runtime(resourceLoader, classLoader, loadBackends(resourceLoader, classLoader), runtimeOptions, null);
+    public Runtime(ResourceLoader resourceLoader, ClassLoader classLoader, RuntimeOptions runtimeOptions) {
+        this(resourceLoader, classLoader, loadBackends(resourceLoader, classLoader), runtimeOptions);
+    }
+
+    public Runtime(ResourceLoader resourceLoader, ClassLoader classLoader, Collection<? extends Backend> backends, RuntimeOptions runtimeOptions) {
+        this(resourceLoader, classLoader, backends, runtimeOptions, null);
     }
 
     public Runtime(ResourceLoader resourceLoader, ClassLoader classLoader, Collection<? extends Backend> backends,
@@ -73,7 +66,7 @@ public class Runtime implements UnreportedStepExecutor {
         this.backends = backends;
         this.runtimeOptions = runtimeOptions;
         this.glue = optionalGlue != null ? optionalGlue : new RuntimeGlue(undefinedStepsTracker, new LocalizedXStreams(classLoader));
-        this.summaryCounter = new SummaryCounter(runtimeOptions.monochrome);
+        this.summaryCounter = new SummaryCounter(runtimeOptions.isMonochrome());
 
         for (Backend backend : backends) {
             backend.loadGlue(glue, runtimeOptions.glue);

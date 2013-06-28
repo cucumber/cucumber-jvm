@@ -56,7 +56,7 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
 
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
-        runtime = Runtime.createRuntime(resourceLoader, classLoader, runtimeOptions);
+        runtime = new Runtime(resourceLoader, classLoader, runtimeOptions);
 
         jUnitReporter = new JUnitReporter(runtimeOptions.reporter(classLoader), runtimeOptions.formatter(classLoader), runtimeOptions.strict);
         addChildren(runtimeOptions.cucumberFeatures(resourceLoader));
