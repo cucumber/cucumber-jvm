@@ -7,7 +7,7 @@
 
 On Windows: use `%ANDROID_HOME%\tools` and `%ANDROID_HOME%\platform-tools` instead.
 
-On OS X: Note that for the path to work on the commandline and in IDE's started by launchd you have to set it in `/etc/launchd.conf` and **NOT** in .bashrc or something else.
+On OS X: Note that for the path to work on the commandline and in IDE's started by launchd [you have to set it](http://stackoverflow.com/questions/135688/setting-environment-variables-in-os-x/588442) in `/etc/launchd.conf` and **NOT** in .bashrc or something else.
 
 The generated target artifacts are an [apklib](https://code.google.com/p/maven-android-plugin/wiki/ApkLib) file and a regular .jar.
 
