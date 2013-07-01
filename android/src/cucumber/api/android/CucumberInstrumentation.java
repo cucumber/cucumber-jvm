@@ -223,7 +223,9 @@ public class CucumberInstrumentation extends Instrumentation {
 
         @Override
         public void background(Background background) {
+            reportLastResult();
             formatter.background(background);
+            beginScenario(background);
         }
 
         @Override
@@ -292,18 +294,20 @@ public class CucumberInstrumentation extends Instrumentation {
         public void match(Match match) {
         }
 
-        private void beginScenario(TagStatement scenario) {
-            String testClass = String.format("%s %s", currentFeature.getKeyword(), currentFeature.getName());
-            String testName = String.format("%s %s", scenario.getKeyword(), scenario.getName());
-            testResult = new Bundle(resultTemplate);
-            testResult.putString(REPORT_KEY_NAME_CLASS, testClass);
-            testResult.putString(REPORT_KEY_NAME_TEST, testName);
-            testResult.putInt(REPORT_KEY_NUM_CURRENT, ++scenarioCounter);
+        private void beginScenario(DescribedStatement scenario) {
+            if (testResult == null) {
+                String testClass = String.format("%s %s", currentFeature.getKeyword(), currentFeature.getName());
+                String testName = String.format("%s %s", scenario.getKeyword(), scenario.getName());
+                testResult = new Bundle(resultTemplate);
+                testResult.putString(REPORT_KEY_NAME_CLASS, testClass);
+                testResult.putString(REPORT_KEY_NAME_TEST, testName);
+                testResult.putInt(REPORT_KEY_NUM_CURRENT, ++scenarioCounter);
 
-            testResult.putString(Instrumentation.REPORT_KEY_STREAMRESULT, String.format("\n%s:", testClass));
+                testResult.putString(Instrumentation.REPORT_KEY_STREAMRESULT, String.format("\n%s:", testClass));
 
-            sendStatus(REPORT_VALUE_RESULT_START, testResult);
-            resultCode = 0;
+                sendStatus(REPORT_VALUE_RESULT_START, testResult);
+                resultCode = 0;
+            }
         }
 
         @Override
@@ -327,11 +331,12 @@ public class CucumberInstrumentation extends Instrumentation {
         }
 
         private void reportLastResult() {
-            if (scenarioCounter != 0) {
+            if (testResult != null && !testResult.isEmpty() && scenarioCounter != 0) {
                 if (resultCode == 0) {
                     testResult.putString(Instrumentation.REPORT_KEY_STREAMRESULT, ".");
                 }
                 sendStatus(resultCode, testResult);
+                testResult = null;
             }
         }
     }
