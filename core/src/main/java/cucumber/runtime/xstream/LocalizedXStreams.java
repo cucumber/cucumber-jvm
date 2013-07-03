@@ -77,16 +77,16 @@ public class LocalizedXStreams {
                     SingleValueConverterWrapperExt converterWrapper = (SingleValueConverterWrapperExt) getConverterLookup().lookupConverterForType(timeClass);
                     TimeConverter timeConverter = (TimeConverter) converterWrapper.getConverter();
                     timeConverter.setParameterInfoAndLocale(parameterInfo, locale);
-                    timeConverters.add(timeConverter);
+                    timeConverters.get().add(timeConverter);
                 }
             }
         }
 
         public void unsetParameterInfo() {
-            for (TimeConverter timeConverter : timeConverters) {
+            for (TimeConverter timeConverter : timeConverters.get()) {
                 timeConverter.removeOnlyFormat();
             }
-            timeConverters.clear();
+            timeConverters.get().clear();
         }
 
         public SingleValueConverter getSingleValueConverter(Type type) {
