@@ -26,10 +26,10 @@ public class JSONPrettyFormatterTest {
     public void featureWithOutlineTest() throws Exception {
         File report = runFeaturesWithJSONPrettyFormatter(asList("cucumber/runtime/formatter/JSONPrettyFormatterTest.feature"));
         String expected = new Scanner(getClass().getResourceAsStream("JSONPrettyFormatterTest.json"), "UTF-8").useDelimiter("\\A").next();
-        expected = expected.replace("cucumber/runtime/formatter/JSONPrettyFormatterTest.feature", "cucumber" + File.separator + "runtime"
-                + File.separator + "formatter" + File.separator + "JSONPrettyFormatterTest.feature");
+        expected = expected.replace("cucumber/runtime/formatter/JSONPrettyFormatterTest.feature", "cucumber" + "\\" + File.separator + "runtime"
+                + "\\" + File.separator + "formatter" + "\\" + File.separator + "JSONPrettyFormatterTest.feature"); // convert URI clossplatform using this trick.
         String actual = new Scanner(report, "UTF-8").useDelimiter("\\A").next();
-        assertEquals(expected, actual);
+        assertEquals(expected.replaceAll("\\s", ""), actual.replaceAll("\\s", "")); //remove all whitespaces before comparing.
     }
 
     private File runFeaturesWithJSONPrettyFormatter(final List<String> featurePaths) throws IOException {

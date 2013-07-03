@@ -35,6 +35,6 @@ public class SubstitutionStepdefs {
         String expected = String.format("Dear %s,\n" +
                 "You have been granted %s rights.  You are %s. Please be responsible.\n" +
                 "-The Admins", name, role, details);
-        assertEquals(expected, body);
+        assertEquals(expected.replaceAll("\\s", ""), body.replaceAll("\\s", ""));
     }
 }
