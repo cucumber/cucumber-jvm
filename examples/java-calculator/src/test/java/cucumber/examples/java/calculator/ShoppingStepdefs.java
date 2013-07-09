@@ -16,7 +16,7 @@ public class ShoppingStepdefs {
     @Given("^the following groceries:$")
     public void the_following_groceries(List<Grocery> groceries) {
         for (Grocery grocery : groceries) {
-            calc.push(grocery.price);
+            calc.push(grocery.price.value);
             calc.push("+");
         }
     }
