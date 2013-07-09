@@ -2,7 +2,7 @@
 
 Start with `java-helloworld` - it's the simplest example.
 
-Some example projects depend on the current (unrelesed) Cucumber-JVM modules.
+Some example projects depend on the current (unreleased) Cucumber-JVM modules.
 If any of the examples fail to build, just build cucumber-jvm itself once first:
 
 ```
