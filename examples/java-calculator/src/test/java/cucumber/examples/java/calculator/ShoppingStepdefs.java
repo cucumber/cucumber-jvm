@@ -1,8 +1,10 @@
 package cucumber.examples.java.calculator;
 
+import cucumber.api.Transformer;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import cucumber.deps.com.thoughtworks.xstream.annotations.XStreamConverter;
 
 import java.util.List;
 
@@ -32,6 +34,26 @@ public class ShoppingStepdefs {
 
     public static class Grocery {
         public String name;
-        public int price;
+        public Price price;
+
+        public Grocery() {
+            super();
+        }
+    }
+
+    @XStreamConverter(Price.Converter.class)
+    public static class Price {
+        public int value;
+
+        public Price(int value) {
+            this.value = value;
+        }
+
+        public static class Converter extends Transformer<Price> {
+            @Override
+            public Price transform(String value) {
+                return new Price(Integer.parseInt(value));
+            }
+        }
     }
 }
