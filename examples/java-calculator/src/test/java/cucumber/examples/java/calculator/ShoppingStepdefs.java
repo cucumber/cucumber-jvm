@@ -34,6 +34,7 @@ public class ShoppingStepdefs {
 
     public static class Grocery {
         public String name;
+        @XStreamConverter(Price.Converter.class)
         public Price price;
 
         public Grocery() {
@@ -41,7 +42,6 @@ public class ShoppingStepdefs {
         }
     }
 
-    @XStreamConverter(Price.Converter.class)
     public static class Price {
         public int value;
 
