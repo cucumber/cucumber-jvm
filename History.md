@@ -4,7 +4,7 @@
 * [Android] New Cucumber-Android module ([#525](https://github.com/cucumber/cucumber-jvm/pull/525) Maximilian Fellner).
 * [Build] Deploy maven SNAPSHOT versions from Travis ([#517](https://github.com/cucumber/cucumber-jvm/issues/517), [#528](https://github.com/cucumber/cucumber-jvm/pull/528) Tom Dunstan)
 * [Core] JUnitFormatter to mark skipped tests as failures in strict mode ([#543](https://github.com/cucumber/cucumber-jvm/pull/543) brasmusson)
-* [Core] Always cancel tomeout at the end of a stepdef, even when it fails. ([#540](https://github.com/cucumber/cucumber-jvm/issues/540) irb1s)
+* [Core] Always cancel timeout at the end of a stepdef, even when it fails. ([#540](https://github.com/cucumber/cucumber-jvm/issues/540) irb1s)
 * [Groovy] Updated examples to be more explanatory and groovier syntax ([#537](https://github.com/cucumber/cucumber-jvm/pull/522) Quantoid)
 * [PicoContainer,Groovy,JRuby,Jython] Not shading maven artifacts any longer. Gem has a shaded jar though. ([#522](https://github.com/cucumber/cucumber-jvm/pull/522) [#518](https://github.com/cucumber/cucumber-jvm/issues/518) Dmytro Chyzhykov, Aslak Hellesøy)
 * [Core] The `json-pretty` formatter is gone, and the `json` formatter is pretty!
@@ -15,7 +15,7 @@
 * [Core] Bugfix: Generated regex for ? character is incorrect. ([#494](https://github.com/cucumber/cucumber-jvm/issues/494) Aslak Hellesøy)
 * [Core] Improve readability with unanchored regular expressions ([#485](https://github.com/cucumber/cucumber-jvm/pull/485), [#466](https://github.com/cucumber/cucumber-jvm/issues/466) Anton)
 * [Core] Throw exception when unsupported command line options are used. ([#482](https://github.com/cucumber/cucumber-jvm/pull/482), [#463](https://github.com/cucumber/cucumber-jvm/issues/463) Klaus Bayrhammer)
-* [Scala] Release cucumber-scala for the two most recent minro releases (currently 2.9.2 and 2.9.0) ([#432](https://github.com/cucumber/cucumber-jvm/issues/432), [#462](https://github.com/cucumber/cucumber-jvm/pull/462) Chris Turner)
+* [Scala] Release cucumber-scala for the two most recent minor releases (currently 2.10.2 and 2.9.3) ([#432](https://github.com/cucumber/cucumber-jvm/issues/432), [#462](https://github.com/cucumber/cucumber-jvm/pull/462) Chris Turner)
 
 ## [1.1.3](https://github.com/cucumber/cucumber-jvm/compare/v1.1.2...v1.1.3) (2013-03-10)
 
