@@ -1,6 +1,7 @@
 package cucumber.runtime;
 
 import java.lang.reflect.Method;
+import java.security.ProtectionDomain;
 import java.text.MessageFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -60,7 +61,7 @@ public class MethodFormat {
             String c = qc.replaceAll(PACKAGE_PATTERN, "");
             String a = qa.replaceAll(PACKAGE_PATTERN, "");
             String e = qe.replaceAll(PACKAGE_PATTERN, "");
-            String s = method.getDeclaringClass().getProtectionDomain().getCodeSource().getLocation().toExternalForm();
+            String s = getCodeSource(method);
 
             return format.format(new Object[]{
                     M,
@@ -76,6 +77,16 @@ public class MethodFormat {
             });
         } else {
             throw new CucumberException("Cucumber bug: Couldn't format " + signature);
+        }
+    }
+
+    private String getCodeSource(Method method) {
+        ProtectionDomain protectionDomain = method.getDeclaringClass().getProtectionDomain();
+        if(protectionDomain != null) {
+            return protectionDomain.getCodeSource().getLocation().toExternalForm();
+        } else {
+            // getProtectionDomain() returns null on some platforms (for example on Android)
+            return method.getDeclaringClass().getName();
         }
     }
 }

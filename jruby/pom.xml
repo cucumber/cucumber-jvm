@@ -20,12 +20,10 @@
         <dependency>
             <groupId>info.cukes</groupId>
             <artifactId>cucumber-jvm-deps</artifactId>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>info.cukes</groupId>
             <artifactId>gherkin</artifactId>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jruby</groupId>
@@ -129,8 +127,8 @@ gherkin.I18n.all.each { i18n ->
                         <phase>package</phase>
                         <configuration>
                             <target>
-                                <!-- drop it in the lib directory for great justice -->
-                                <copy file="${project.build.directory}/${project.build.finalName}.jar" tofile="${basedir}/lib/cucumber-jruby.jar" />
+                                <!-- add jars to lib -->
+                                <copy file="${project.build.directory}/${project.build.finalName}-shaded.jar" tofile="${basedir}/lib/cucumber-jruby-shaded.jar" />
 
                                 <!-- build the gem file using jruby -->
                                 <echo message="Building Gem" />
@@ -171,7 +169,7 @@ gherkin.I18n.all.each { i18n ->
                         <id>deploy-gem</id>
                         <phase>deploy</phase>
                         <configuration>
-                            <target>
+                            <target unless="no.gem.deploy">
                                 <!-- install the jruby-openssl gem first! -->
                                 <echo message="installing jruby-openssl..." />
                                 <java jar="${maven.dependency.org.jruby.jruby-complete.jar.path}" failonerror="true" fork="true">

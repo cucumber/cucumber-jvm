@@ -1,8 +1,8 @@
 package cucumber.runtime;
 
 import cucumber.api.Pending;
-import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.io.ResourceLoader;
+import cucumber.runtime.io.ResourceLoaderReflections;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.snippets.SummaryPrinter;
 import cucumber.runtime.xstream.LocalizedXStreams;
@@ -69,13 +69,13 @@ public class Runtime implements UnreportedStepExecutor {
         this.summaryCounter = new SummaryCounter(runtimeOptions.isMonochrome());
 
         for (Backend backend : backends) {
-            backend.loadGlue(glue, runtimeOptions.glue);
+            backend.loadGlue(glue, runtimeOptions.getGlue());
             backend.setUnreportedStepExecutor(this);
         }
     }
 
     private static Collection<? extends Backend> loadBackends(ResourceLoader resourceLoader, ClassLoader classLoader) {
-        return new ClasspathResourceLoader(classLoader).instantiateSubclasses(Backend.class, "cucumber.runtime", new Class[]{ResourceLoader.class}, new Object[]{resourceLoader});
+        return new ResourceLoaderReflections(resourceLoader, classLoader).instantiateSubclasses(Backend.class, "cucumber.runtime", new Class[]{ResourceLoader.class}, new Object[]{resourceLoader});
     }
 
     public void addError(Throwable error) {
@@ -137,7 +137,7 @@ public class Runtime implements UnreportedStepExecutor {
     }
 
     private boolean hasUndefinedOrPendingStepsAndIsStrict() {
-        return runtimeOptions.strict && hasUndefinedOrPendingSteps();
+        return runtimeOptions.isStrict() && hasUndefinedOrPendingSteps();
     }
 
     private boolean hasUndefinedOrPendingSteps() {
@@ -178,7 +178,7 @@ public class Runtime implements UnreportedStepExecutor {
     }
 
     private void runHooks(List<HookDefinition> hooks, Reporter reporter, Set<Tag> tags, boolean isBefore) {
-        if (!runtimeOptions.dryRun) {
+        if (!runtimeOptions.isDryRun()) {
             for (HookDefinition hook : hooks) {
                 runHookIfTagsMatch(hook, reporter, tags, isBefore);
             }
@@ -256,7 +256,7 @@ public class Runtime implements UnreportedStepExecutor {
             return;
         }
 
-        if (runtimeOptions.dryRun) {
+        if (runtimeOptions.isDryRun()) {
             skipNextStep = true;
         }
 
@@ -291,7 +291,7 @@ public class Runtime implements UnreportedStepExecutor {
     }
 
     public void writeStepdefsJson() throws IOException {
-        glue.writeStepdefsJson(runtimeOptions.featurePaths, runtimeOptions.dotCucumber);
+        glue.writeStepdefsJson(runtimeOptions.getFeaturePaths(), runtimeOptions.getDotCucumber());
     }
 
     public void printSummary(PrintStream out) {

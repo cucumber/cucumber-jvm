@@ -113,7 +113,8 @@ public class URLOutputStreamTest {
             w.close();
             fail();
         } catch (IOException expected) {
-            assertEquals("something went wrong", expected.getMessage());
+            assertEquals("PUT http://localhost:9873/.cucumber/stepdefs.json\n" +
+                    "HTTP 500\nsomething went wrong", expected.getMessage());
         }
     }
 }

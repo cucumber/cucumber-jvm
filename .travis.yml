@@ -1,17 +1,49 @@
+---
 language: java
-script: mvn -q clean install
+script: mvn -q install -P examples
 jdk:
-  - openjdk6
-  - openjdk7
-  - oraclejdk7
-# whitelist
+- openjdk6
+- openjdk7
+matrix:
+  include:
+  - jdk: oraclejdk7
+    script: mvn -q deploy -P android --settings .travis-settings.xml -Dno.gem.deploy=true -Dandroid.device=test
+    before_install:
+      # Install base Android SDK
+      - sudo apt-get update -qq
+      - if [ `uname -m` = x86_64 ]; then sudo apt-get install -qq --force-yes libgd2-xpm ia32-libs ia32-libs-multiarch > /dev/null; fi
+      - wget http://dl.google.com/android/android-sdk_r21.1-linux.tgz
+      - tar xzf android-sdk_r21.1-linux.tgz
+      - export ANDROID_HOME=$PWD/android-sdk-linux
+      - export PATH=${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools
+
+      # Install required components.
+      # For a full list, run `android list sdk -a --extended`
+      # Note that sysimg-16 downloads the ARM, x86 and MIPS images (we should optimize this).
+      # Other relevant APIs:
+      #  addon-google_apis-google-16
+      - android update sdk --filter platform-tools,extra-android-support,android-8 --no-ui --force > /dev/null
+
+      # Create and start emulator
+      - echo no | android create avd --force -n test -t android-8 --abi armeabi
+      - emulator -avd test -no-skin -no-audio -no-window &
+    before_script:
+      - ./android/wait_for_emulator
 branches:
   only:
-    - master
-
+  - master
 notifications:
   email:
-    - cukes-devs@googlegroups.com
+  - cukes-devs@googlegroups.com
   irc:
-    - "irc.freenode.org#cucumber"
-    
+  - irc.freenode.org#cucumber
+env:
+  global:
+  - secure: |-
+      rEtPzPG3bMKzx00AwDJq5tsp8LSCds5ePV6ZP+wgECP2BVIoD16zP8F6T0fY
+      QK/2etRW6pcernOGP8S3SQE4e5ZBT5sqYY0mhKlq2aiem3i3gAwEzZvdLjWV
+      1C6KyQplzdjKdaYWOre8YSXv5vxS3ZVS6NJc+0EQM3olTKV3flQ=
+  - secure: |-
+      BEsHVhETHrO8vR/7huN3MUMQQKZycZgJ+sWszwQPnwaGJEm6ptssJn/LsiUJ
+      K/qQhjdpmPiKZIoTruG4E3vc+adT/B2VcHD0897jNeUBoDd7Vj4vzOH6ePID
+      969vCnA+6hpQuIM02R+4OJIBPXVtr1Ix/ye+KxS69cJ5N8QyTfY=

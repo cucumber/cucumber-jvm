@@ -3,6 +3,7 @@
 # Try removing the @txn tag and see what happens.
 @txn
 Feature: Search
+
   Scenario: Find messages by content
     Given a User has posted the following messages:
       | content            |

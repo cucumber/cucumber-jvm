@@ -10,7 +10,6 @@ import gherkin.formatter.JSONFormatter;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Step;
 import gherkin.formatter.model.Tag;
-
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.internal.AssumptionViolatedException;

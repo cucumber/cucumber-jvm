@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -25,6 +26,42 @@ public class ConvertersTest {
 
         ConverterLookup no = transformers.get(new Locale("no")).getConverterLookup();
         assertEquals(3000.15f, (Float) ((SingleValueConverter) no.lookupConverterForType(Float.TYPE)).fromString("3000,15"), 0.000001);
+    }
+
+    @Test
+    public void shouldTransformPatternWithFlags() {
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        LocalizedXStreams transformers = new LocalizedXStreams(classLoader);
+
+        ConverterLookup en = transformers.get(Locale.US).getConverterLookup();
+        Pattern expected = Pattern.compile("hello", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+        Pattern actual = (Pattern) ((SingleValueConverter) en.lookupConverterForType(Pattern.class)).fromString("/hello/im");
+        assertEquals(expected.pattern(), actual.pattern());
+        assertEquals(expected.flags(), actual.flags());
+    }
+
+    @Test
+    public void shouldTransformPatternWithoutFlags() {
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        LocalizedXStreams transformers = new LocalizedXStreams(classLoader);
+
+        ConverterLookup en = transformers.get(Locale.US).getConverterLookup();
+        Pattern expected = Pattern.compile("hello");
+        Pattern actual = (Pattern) ((SingleValueConverter) en.lookupConverterForType(Pattern.class)).fromString("hello");
+        assertEquals(expected.pattern(), actual.pattern());
+        assertEquals(expected.flags(), actual.flags());
+    }
+
+    @Test
+    public void shouldIncludeSlashesInPatternWhenThereAreNoFlags() {
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        LocalizedXStreams transformers = new LocalizedXStreams(classLoader);
+
+        ConverterLookup en = transformers.get(Locale.US).getConverterLookup();
+        Pattern expected = Pattern.compile("/hello/");
+        Pattern actual = (Pattern) ((SingleValueConverter) en.lookupConverterForType(Pattern.class)).fromString("/hello/");
+        assertEquals(expected.pattern(), actual.pattern());
+        assertEquals(expected.flags(), actual.flags());
     }
 
     @Test

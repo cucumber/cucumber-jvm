@@ -21,28 +21,28 @@ public class RuntimeOptionsFactoryTest {
     public void create_strict() throws Exception {
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(Strict.class);
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
-        assertTrue(runtimeOptions.strict);
+        assertTrue(runtimeOptions.isStrict());
     }
 
     @Test
     public void create_non_strict() throws Exception {
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(NotStrict.class);
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
-        assertFalse(runtimeOptions.strict);
+        assertFalse(runtimeOptions.isStrict());
     }
 
     @Test
     public void create_without_options() throws Exception {
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(WithoutOptions.class);
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
-        assertFalse(runtimeOptions.strict);
+        assertFalse(runtimeOptions.isStrict());
     }
 
     @Test
     public void create_with_no_name() throws Exception {
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(NoName.class);
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
-        assertTrue(runtimeOptions.filters.isEmpty());
+        assertTrue(runtimeOptions.getFilters().isEmpty());
     }
 
     @Test
@@ -51,7 +51,7 @@ public class RuntimeOptionsFactoryTest {
 
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
 
-        List<Object> filters = runtimeOptions.filters;
+        List<Object> filters = runtimeOptions.getFilters();
         assertEquals(2, filters.size());
         Iterator<Object> iterator = filters.iterator();
         assertEquals("name1", getRegexpPattern(iterator.next()));
@@ -62,14 +62,14 @@ public class RuntimeOptionsFactoryTest {
     public void create_with_dotcucumber_dir() throws MalformedURLException {
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(DotCucumberFile.class);
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
-        assertEquals(new URL("file:somewhere/.cucumber/"), runtimeOptions.dotCucumber);
+        assertEquals(new URL("file:somewhere/.cucumber/"), runtimeOptions.getDotCucumber());
     }
 
     @Test
     public void create_with_dotcucumber_url() throws MalformedURLException {
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(DotCucumberUrl.class);
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
-        assertEquals(new URL("https://some.where/.cucumber/"), runtimeOptions.dotCucumber);
+        assertEquals(new URL("https://some.where/.cucumber/"), runtimeOptions.getDotCucumber());
     }
 
     private String getRegexpPattern(Object pattern) {

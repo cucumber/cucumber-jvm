@@ -24,12 +24,10 @@
         <dependency>
             <groupId>info.cukes</groupId>
             <artifactId>cucumber-jvm-deps</artifactId>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>info.cukes</groupId>
             <artifactId>gherkin</artifactId>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
@@ -131,7 +129,7 @@ I18n.all.each { i18n ->
                         <phase>package</phase>
                         <configuration>
                             <target>
-                                <copy file="${project.build.directory}/${project.build.finalName}.jar" tofile="${basedir}/bin/cucumber-groovy.jar" />
+                                <copy file="${project.build.directory}/${project.build.finalName}-shaded.jar" tofile="${basedir}/bin/cucumber-groovy-shaded.jar" />
                             </target>
                         </configuration>
                         <goals>
@@ -157,7 +155,7 @@ I18n.all.each { i18n ->
                                     <classpath>
                                         <pathelement location="${maven.dependency.org.codehaus.groovy.groovy-all.jar.path}" />
                                         <pathelement location="${maven.dependency.junit.junit.jar.path}" />
-                                        <pathelement location="${basedir}/bin/cucumber-groovy.jar" />
+                                        <pathelement location="${basedir}/bin/cucumber-groovy-shaded.jar" />
                                         <pathelement location="target/test-classes" />
                                     </classpath>
                                     <arg value="bin/cucumber-jvm.groovy" />

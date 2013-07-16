@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -11,6 +12,22 @@
     <artifactId>java-webbit-websockets-selenium</artifactId>
     <packaging>jar</packaging>
     <name>Examples: Webbit WebSockets tested with Selenium</name>
+
+    <!-- skipTests -->
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <!-- we don't want to run these tests on travis TRAVIS will be set to true in the travis CI
+                    They WILL be compiled -->
+                    <!-- TODO: there's PhantomJS, and xvfb, so we could maybe re-enable these -->
+                    <skipTests>${env.TRAVIS}</skipTests>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
     <dependencies>
         <dependency>

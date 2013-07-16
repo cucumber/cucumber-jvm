@@ -79,15 +79,6 @@ public class Utils {
         }
     }
 
-    public static void ensureParentDirExists(File file) throws IOException {
-        if (file.getParentFile() != null && !file.getParentFile().isDirectory()) {
-            boolean ok = file.getParentFile().mkdirs();
-            if (!ok) {
-                throw new IOException("Failed to create directory " + file.getParentFile().getAbsolutePath());
-            }
-        }
-    }
-
     public static URL toURL(String pathOrUrl) {
         try {
             if (!pathOrUrl.endsWith("/")) {

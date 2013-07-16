@@ -7,7 +7,6 @@ import cucumber.runtime.Glue;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.io.ClasspathResourceLoader;
-import cucumber.runtime.io.ResourceLoader;
 import gherkin.I18n;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Comment;
