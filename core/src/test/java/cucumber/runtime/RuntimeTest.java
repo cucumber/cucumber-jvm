@@ -13,12 +13,14 @@ import org.junit.internal.AssumptionViolatedException;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
 import static cucumber.runtime.TestHelper.feature;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 
 public class RuntimeTest {
@@ -161,6 +163,18 @@ public class RuntimeTest {
         runtime.addError(new RuntimeException());
 
         assertEquals(0x1, runtime.exitStatus());
+    }
+
+    @Test
+    public void should_throw_cucumer_exception_if_no_backends_are_found() throws Exception {
+        try {
+            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+            new Runtime(new ClasspathResourceLoader(classLoader), classLoader, Collections.<Backend>emptyList(),
+                    new RuntimeOptions(new Properties()));
+            fail("A CucumberException should have been thrown");
+        } catch (CucumberException e) {
+            assertEquals("No backends were found. Please make sure you have a backend module on your CLASSPATH.", e.getMessage());
+        }
     }
 
     private Runtime createStrictRuntime() {
