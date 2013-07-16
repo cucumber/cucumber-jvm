@@ -198,4 +198,8 @@ public class RuntimeOptions {
     public List<Object> getFilters() {
         return filters;
     }
+
+    public boolean isMonochrome() {
+        return monochrome;
+    }
 }

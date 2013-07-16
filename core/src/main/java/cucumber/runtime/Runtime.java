@@ -13,6 +13,7 @@ import gherkin.formatter.Reporter;
 import gherkin.formatter.model.*;
 
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.*;
 
 /**
@@ -31,6 +32,7 @@ public class Runtime implements UnreportedStepExecutor {
     private static final Object DUMMY_ARG = new Object();
     private static final byte ERRORS = 0x1;
 
+    private final SummaryCounter summaryCounter;
     final UndefinedStepsTracker undefinedStepsTracker = new UndefinedStepsTracker();
 
     private final Glue glue;
@@ -64,6 +66,7 @@ public class Runtime implements UnreportedStepExecutor {
         this.backends = backends;
         this.runtimeOptions = runtimeOptions;
         this.glue = optionalGlue != null ? optionalGlue : new RuntimeGlue(undefinedStepsTracker, new LocalizedXStreams(classLoader));
+        this.summaryCounter = new SummaryCounter(runtimeOptions.isMonochrome());
 
         for (Backend backend : backends) {
             backend.loadGlue(glue, runtimeOptions.getGlue());
@@ -89,8 +92,8 @@ public class Runtime implements UnreportedStepExecutor {
         Formatter formatter = runtimeOptions.formatter(classLoader);
 
         formatter.done();
-        printSummary();
         formatter.close();
+        printSummary();
     }
 
     private void run(CucumberFeature cucumberFeature) {
@@ -115,6 +118,7 @@ public class Runtime implements UnreportedStepExecutor {
     }
 
     public void disposeBackendWorlds() {
+        summaryCounter.addScenario(scenarioResult.getStatus());
         for (Backend backend : backends) {
             backend.disposeWorld();
         }
@@ -197,7 +201,7 @@ public class Runtime implements UnreportedStepExecutor {
             } finally {
                 long duration = System.nanoTime() - start;
                 Result result = new Result(status, duration, error, DUMMY_ARG);
-                scenarioResult.add(result);
+                addHookToCounterAndResult(result);
                 if (isBefore) {
                     reporter.before(match, result);
                 } else {
@@ -234,7 +238,9 @@ public class Runtime implements UnreportedStepExecutor {
             match = glue.stepDefinitionMatch(uri, step, i18n);
         } catch (AmbiguousStepDefinitionsException e) {
             reporter.match(e.getMatches().get(0));
-            reporter.result(new Result(Result.FAILED, 0L, e, DUMMY_ARG));
+            Result result = new Result(Result.FAILED, 0L, e, DUMMY_ARG);
+            reporter.result(result);
+            addStepToCounterAndResult(result);
             addError(e);
             skipNextStep = true;
             return;
@@ -245,6 +251,7 @@ public class Runtime implements UnreportedStepExecutor {
         } else {
             reporter.match(Match.UNDEFINED);
             reporter.result(Result.UNDEFINED);
+            addStepToCounterAndResult(Result.UNDEFINED);
             skipNextStep = true;
             return;
         }
@@ -254,7 +261,7 @@ public class Runtime implements UnreportedStepExecutor {
         }
 
         if (skipNextStep) {
-            scenarioResult.add(Result.SKIPPED);
+            addStepToCounterAndResult(Result.SKIPPED);
             reporter.result(Result.SKIPPED);
         } else {
             String status = Result.PASSED;
@@ -270,7 +277,7 @@ public class Runtime implements UnreportedStepExecutor {
             } finally {
                 long duration = System.nanoTime() - start;
                 Result result = new Result(status, duration, error, DUMMY_ARG);
-                scenarioResult.add(result);
+                addStepToCounterAndResult(result);
                 reporter.result(result);
             }
         }
@@ -285,5 +292,19 @@ public class Runtime implements UnreportedStepExecutor {
 
     public void writeStepdefsJson() throws IOException {
         glue.writeStepdefsJson(runtimeOptions.getFeaturePaths(), runtimeOptions.getDotCucumber());
+    }
+
+    public void printSummary(PrintStream out) {
+        summaryCounter.printSummary(out);
+    }
+
+    private void addStepToCounterAndResult(Result result) {
+        scenarioResult.add(result);
+        summaryCounter.addStep(result);
+    }
+
+    private void addHookToCounterAndResult(Result result) {
+        scenarioResult.add(result);
+        summaryCounter.addHookTime(result.getDuration());
     }
 }

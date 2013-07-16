@@ -22,9 +22,12 @@ public class ScenarioResultTest {
     }
 
     @Test
-    public void passed_and_failed_is_passed() throws Exception {
+    public void passed_failed_pending_undefined_skipped_is_failed() throws Exception {
         s.add(new Result("passed", 0L, null, null));
         s.add(new Result("failed", 0L, null, null));
+        s.add(new Result("pending", 0L, null, null));
+        s.add(new Result("undefined", 0L, null, null));
+        s.add(new Result("skipped", 0L, null, null));
         assertEquals("failed", s.getStatus());
     }
 
@@ -36,10 +39,20 @@ public class ScenarioResultTest {
     }
 
     @Test
-    public void undefined_and_pending_is_pending() throws Exception {
-        s.add(new Result("undefined", 0L, null, null));
+    public void passed_pending_undefined_skipped_is_pending() throws Exception {
+        s.add(new Result("passed", 0L, null, null));
         s.add(new Result("pending", 0L, null, null));
+        s.add(new Result("undefined", 0L, null, null));
+        s.add(new Result("skipped", 0L, null, null));
         assertEquals("pending", s.getStatus());
+    }
+
+    @Test
+    public void passed_undefined_skipped_is_undefined() throws Exception {
+        s.add(new Result("passed", 0L, null, null));
+        s.add(new Result("undefined", 0L, null, null));
+        s.add(new Result("skipped", 0L, null, null));
+        assertEquals("undefined", s.getStatus());
     }
 
     @Test
