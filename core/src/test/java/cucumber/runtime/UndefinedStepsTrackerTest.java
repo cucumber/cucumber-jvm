@@ -5,13 +5,12 @@ import cucumber.runtime.snippets.SnippetGenerator;
 import gherkin.I18n;
 import gherkin.formatter.model.Step;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import java.util.List;
 
 import static java.util.Arrays.asList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class UndefinedStepsTrackerTest {
 
@@ -75,6 +74,19 @@ public class UndefinedStepsTrackerTest {
         tracker.addUndefinedStep(new Step(null, "Если ", "Б", 1, null, null), new I18n("ru"));
         assertEquals("[Если ^Б$]", tracker.getSnippets(asList(backend)).toString());
     }
+
+    @Test
+    public void set_snippet_type_on_capable_backends() {
+        Backend backend = Mockito.mock(SnippetTypeAwareBackend.class);
+        Mockito.when(backend.getSnippet(Mockito.any(Step.class))).thenReturn("");
+
+        UndefinedStepsTracker undefinedStepsTracker = new UndefinedStepsTracker();
+        undefinedStepsTracker.addUndefinedStep(new Step(null, "Given ", "A", 1, null, null), ENGLISH);
+        undefinedStepsTracker.getSnippets(asList(backend));
+        Mockito.verify((SnippetTypeAwareBackend) backend, Mockito.atLeastOnce()).setSnippetType(SnippetType.getDefault());
+
+    }
+
 
     private class TestBackend implements Backend {
         @Override
