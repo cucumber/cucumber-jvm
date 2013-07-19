@@ -1,6 +1,7 @@
 package cucumber.runtime.snippets;
 
 import cucumber.api.DataTable;
+import cucumber.runtime.SnippetType;
 import gherkin.I18n;
 import gherkin.formatter.model.Step;
 
@@ -10,7 +11,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public final class SnippetGenerator {
+public class SnippetGenerator {
     private static final ArgumentPattern[] DEFAULT_ARGUMENT_PATTERNS = new ArgumentPattern[]{
             new ArgumentPattern(Pattern.compile("\"([^\"]*)\""), String.class),
             new ArgumentPattern(Pattern.compile("(\\d+)"), Integer.TYPE)
@@ -73,7 +74,7 @@ public final class SnippetGenerator {
         return functionName;
     }
 
-    String sanitizeFunctionName(String functionName) {
+    protected String sanitizeFunctionName(String functionName) {
         StringBuilder sanitized = new StringBuilder();
 
         String trimmedFunctionName = functionName.trim();
