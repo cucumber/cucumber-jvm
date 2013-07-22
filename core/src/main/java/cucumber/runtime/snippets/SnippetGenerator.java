@@ -28,12 +28,19 @@ public class SnippetGenerator {
             Pattern.compile("\\^"),};
 
     private static final String REGEXP_HINT = "Express the Regexp above with the code you wish you had";
-    private static final Character SUBST = '_';
+
 
     private final Snippet snippet;
 
+    private FunctionNameSanitizer sanitizer;
+
     public SnippetGenerator(Snippet snippet) {
+        this(snippet, new UnderscoreFunctionNameSanitizer());
+    }
+
+    public SnippetGenerator(Snippet snippet, FunctionNameSanitizer sanitizer) {
         this.snippet = snippet;
+        this.sanitizer = sanitizer;
     }
 
     public String getSnippet(Step step) {
@@ -70,25 +77,10 @@ public class SnippetGenerator {
         for (ArgumentPattern argumentPattern : argumentPatterns()) {
             functionName = argumentPattern.replaceMatchesWithSpace(functionName);
         }
-        functionName = sanitizeFunctionName(functionName);
+        functionName = sanitizer.sanitizeFunctionName(functionName);
         return functionName;
     }
 
-    protected String sanitizeFunctionName(String functionName) {
-        StringBuilder sanitized = new StringBuilder();
-
-        String trimmedFunctionName = functionName.trim();
-
-        sanitized.append(Character.isJavaIdentifierStart(trimmedFunctionName.charAt(0)) ? trimmedFunctionName.charAt(0) : SUBST);
-        for (int i = 1; i < trimmedFunctionName.length(); i++) {
-            if (Character.isJavaIdentifierPart(trimmedFunctionName.charAt(i))) {
-                sanitized.append(trimmedFunctionName.charAt(i));
-            } else if (sanitized.charAt(sanitized.length() - 1) != SUBST && i != trimmedFunctionName.length() - 1) {
-                sanitized.append(SUBST);
-            }
-        }
-        return sanitized.toString();
-    }
 
     private String withNamedGroups(String snippetPattern) {
         Matcher m = GROUP_PATTERN.matcher(snippetPattern);

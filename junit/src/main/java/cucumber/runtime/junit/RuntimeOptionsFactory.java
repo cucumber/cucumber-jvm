@@ -57,10 +57,8 @@ public class RuntimeOptionsFactory {
 
     private void addSnippets(Cucumber.Options options, List<String> args) {
         if (options != null) {
-            if (!options.snippets().isEmpty()) {
-                    args.add("--snippets");
-                    args.add(options.snippets());
-            }
+            args.add("--snippets");
+            args.add(options.snippets().toString());
         }
     }
 

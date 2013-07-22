@@ -94,7 +94,7 @@ public class RuntimeOptionsFactoryTest {
         assertEquals("", packageName("TopLevelClass"));
     }
 
-    @Cucumber.Options(snippets = "camelcase")
+    @Cucumber.Options(snippets = SnippetType.CAMELCASE)
     static class Snippets {
         // empty
     }

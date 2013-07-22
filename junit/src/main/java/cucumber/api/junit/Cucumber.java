@@ -146,6 +146,6 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         /**
          * @return what format should the snippets use. underscore, camelcase
          */
-        String snippets() default "underscore";
+        SnippetType snippets() default SnippetType.UNDERSCORE;
     }
 }

@@ -5,6 +5,7 @@ import cucumber.api.java.Before;
 import cucumber.runtime.*;
 import cucumber.runtime.io.*;
 import cucumber.runtime.snippets.SnippetGenerator;
+import cucumber.runtime.snippets.UnderscoreFunctionNameSanitizer;
 import gherkin.formatter.model.Step;
 
 import java.lang.annotation.Annotation;
@@ -13,13 +14,12 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public class JavaBackend implements SnippetTypeAwareBackend {
-    private SnippetGenerator snippetGenerator = new SnippetGenerator(new JavaSnippet());
+    private SnippetGenerator snippetGenerator = new SnippetGenerator(new JavaSnippet(), new UnderscoreFunctionNameSanitizer());
     private final ObjectFactory objectFactory;
     private final Reflections reflections;
 
     private final MethodScanner methodScanner;
     private Glue glue;
-    private SnippetType snippetType = SnippetType.getDefault();
 
     /**
      * The constructor called by reflection by default.
@@ -135,13 +135,14 @@ public class JavaBackend implements SnippetTypeAwareBackend {
     public void setSnippetType(SnippetType type) {
         switch (type) {
             case CAMELCASE:
-                snippetGenerator = new CamelCaseSnippetGenerator(new JavaSnippet());
+                snippetGenerator = new SnippetGenerator(new JavaSnippet(), new CamelCaseFunctionNameSanitizer());
+                break;
+            case UNDERSCORE:
+                snippetGenerator = new SnippetGenerator(new JavaSnippet(), new UnderscoreFunctionNameSanitizer());
                 break;
             default:
-                snippetGenerator = new SnippetGenerator(new JavaSnippet());
-                break;
+                throw new CucumberException(String.format("Unsupported Snippet Type: %s", type.toString()));
 
         }
-        this.snippetType = type;
     }
 }
