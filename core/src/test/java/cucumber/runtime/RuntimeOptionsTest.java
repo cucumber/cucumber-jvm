@@ -198,7 +198,7 @@ public class RuntimeOptionsTest {
     }
 
     @Test
-    public void default_snippet_type() {
+    public void ensure_default_snippet_type_is_underscore() {
         Properties properties = new Properties();
         RuntimeOptions runtimeOptions = new RuntimeOptions(properties);
         assertEquals(SnippetType.UNDERSCORE, runtimeOptions.getSnippetType());
