@@ -2,6 +2,7 @@ package cucumber.runtime.junit;
 
 import cucumber.api.junit.Cucumber;
 import cucumber.runtime.RuntimeOptions;
+import cucumber.runtime.SnippetType;
 import org.junit.Test;
 
 import java.net.MalformedURLException;
@@ -72,6 +73,13 @@ public class RuntimeOptionsFactoryTest {
         assertEquals(new URL("https://some.where/.cucumber/"), runtimeOptions.getDotCucumber());
     }
 
+    @Test
+    public void create_with_snippets() {
+        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(Snippets.class);
+        RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
+        assertEquals(SnippetType.CAMELCASE, runtimeOptions.getSnippetType());
+    }
+
     private String getRegexpPattern(Object pattern) {
         return ((Pattern) pattern).pattern();
     }
@@ -84,6 +92,11 @@ public class RuntimeOptionsFactoryTest {
     @Test
     public void finds_path_for_class_in_toplevel_package() {
         assertEquals("", packageName("TopLevelClass"));
+    }
+
+    @Cucumber.Options(snippets = "camelcase")
+    static class Snippets {
+        // empty
     }
 
     @Cucumber.Options(strict = true)

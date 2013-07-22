@@ -37,6 +37,7 @@ public class RuntimeOptions {
     private boolean dryRun;
     private boolean strict = false;
     private boolean monochrome = false;
+    private SnippetType snippet = SnippetType.getDefault();
 
     public RuntimeOptions(Properties properties, String... argv) {
         /* IMPORTANT! Make sure USAGE.txt is always uptodate if this class changes */
@@ -97,6 +98,9 @@ public class RuntimeOptions {
                 strict = !arg.startsWith("--no-");
             } else if (arg.equals("--no-monochrome") || arg.equals("--monochrome") || arg.equals("-m")) {
                 monochrome = !arg.startsWith("--no-");
+            } else if (arg.equals("--snippets")) {
+                String nextArg = args.remove(0);
+                snippet = SnippetType.fromString(nextArg);
             } else if (arg.equals("--name") || arg.equals("-n")) {
                 String nextArg = args.remove(0);
                 Pattern patternFilter = Pattern.compile(nextArg);
@@ -201,5 +205,9 @@ public class RuntimeOptions {
 
     public boolean isMonochrome() {
         return monochrome;
+    }
+
+    public SnippetType getSnippetType() {
+        return snippet;
     }
 }
