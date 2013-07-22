@@ -12,13 +12,14 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public class JavaBackend implements Backend {
-    private final SnippetGenerator snippetGenerator = new SnippetGenerator(new JavaSnippet());
+public class JavaBackend implements SnippetTypeAwareBackend {
+    private SnippetGenerator snippetGenerator = new SnippetGenerator(new JavaSnippet());
     private final ObjectFactory objectFactory;
     private final Reflections reflections;
 
     private final MethodScanner methodScanner;
     private Glue glue;
+    private SnippetType snippetType = SnippetType.getDefault();
 
     /**
      * The constructor called by reflection by default.
@@ -128,5 +129,19 @@ public class JavaBackend implements Backend {
             int timeout = ((After) annotation).timeout();
             glue.addAfterHook(new JavaHookDefinition(method, tagExpressions, ((After) annotation).order(), timeout, objectFactory));
         }
+    }
+
+    @Override
+    public void setSnippetType(SnippetType type) {
+        switch (type) {
+            case CAMELCASE:
+                snippetGenerator = new CamelCaseSnippetGenerator(new JavaSnippet());
+                break;
+            default:
+                snippetGenerator = new SnippetGenerator(new JavaSnippet());
+                break;
+
+        }
+        this.snippetType = type;
     }
 }
