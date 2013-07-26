@@ -1,5 +1,6 @@
 package cucumber.api.testng;
 
+import cucumber.runtime.CucumberException;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.io.MultiLoader;
@@ -11,10 +12,10 @@ import org.testng.ITestResult;
 import org.testng.annotations.Test;
 
 public abstract class AbstractTestNGCucumberTests implements IHookable {
-    private TestNgReporter reporter;
-    private Runtime runtime;
-    private ClassLoader classLoader;
-    private ResourceLoader resourceLoader;
+    private final TestNgReporter reporter;
+    private final Runtime runtime;
+    private final ClassLoader classLoader;
+    private final ResourceLoader resourceLoader;
 
     public AbstractTestNGCucumberTests() {
         classLoader = getClass().getClassLoader();
@@ -24,7 +25,7 @@ public abstract class AbstractTestNGCucumberTests implements IHookable {
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
 
         reporter = new TestNgReporter(System.out);
-        runtimeOptions.formatters.add(reporter);
+        runtimeOptions.getFormatters().add(reporter);
         runtime = new Runtime(resourceLoader, classLoader, runtimeOptions);
     }
 
@@ -33,7 +34,7 @@ public abstract class AbstractTestNGCucumberTests implements IHookable {
         runtime.run();
 
         if (!runtime.getErrors().isEmpty()) {
-            throw new RuntimeException(runtime.getErrors().get(0));
+            throw new CucumberException(runtime.getErrors().get(0));
         }
     }
 

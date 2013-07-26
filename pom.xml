@@ -33,6 +33,7 @@
         <rhino.version>1.7R4</rhino.version>
         <ioke.version>P-0.4.0-p11</ioke.version>
         <jsoup.version>1.7.2</jsoup.version>
+        <testng.version>6.8.5</testng.version>
         <junit.version>4.11</junit.version>
         <jython.version>2.5.3</jython.version>
         <mockito.version>1.9.5</mockito.version>
@@ -278,6 +279,11 @@
                 <version>${junit.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.testng</groupId>
+                <artifactId>testng</artifactId>
+                <version>${testng.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.python</groupId>
                 <artifactId>jython-standalone</artifactId>
                 <version>${jython.version}</version>
@@ -380,6 +386,7 @@
         <module>openejb</module>
         <module>scala</module>
         <module>scala/scala_previous</module>
+        <module>testng</module>
     </modules>
 
     <profiles>

@@ -15,20 +15,13 @@ import org.testng.ITestResult;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.testng.Reporter.getCurrentTestResult;
 import static org.testng.Reporter.log;
 
 public class TestNgReporter implements Formatter, Reporter {
-
     private final NiceAppendable out;
-
-    private AtomicInteger failureCount = new AtomicInteger(0);
-    private AtomicInteger skipCount = new AtomicInteger(0);
-    private AtomicInteger passCount = new AtomicInteger(0);
-
-    private LinkedList<Step> steps = new LinkedList<Step>();
+    private final LinkedList<Step> steps = new LinkedList<Step>();
 
     public TestNgReporter(Appendable appendable) {
         out = new NiceAppendable(appendable);
@@ -36,12 +29,14 @@ public class TestNgReporter implements Formatter, Reporter {
 
     @Override
     public void uri(String uri) {
-        logDiv("Feature File: " + uri, "featureFile");
+        // TODO: find an appropriate keyword
+        String keyword = "Feature File";
+        logDiv(keyword, uri, "featureFile");
     }
 
     @Override
     public void feature(Feature feature) {
-        logDiv("Feature: " + feature.getName(), "feature");
+        logDiv(feature.getKeyword(), feature.getName(), "feature");
     }
 
     @Override
@@ -50,12 +45,12 @@ public class TestNgReporter implements Formatter, Reporter {
 
     @Override
     public void scenario(Scenario scenario) {
-        logDiv("Scenario: " + scenario.getName(), "scenario");
+        logDiv(scenario.getKeyword(), scenario.getName(), "scenario");
     }
 
     @Override
     public void scenarioOutline(ScenarioOutline scenarioOutline) {
-        logDiv("Scenario Outline: " + scenarioOutline.getName(), "scenarioOutline");
+        logDiv(scenarioOutline.getKeyword(), scenarioOutline.getName(), "scenarioOutline");
     }
 
     @Override
@@ -97,19 +92,14 @@ public class TestNgReporter implements Formatter, Reporter {
             ITestResult tr = getCurrentTestResult();
             tr.setThrowable(result.getError());
             tr.setStatus(ITestResult.FAILURE);
-            failureCount.incrementAndGet();
         } else if (Result.SKIPPED.equals(result)) {
             ITestResult tr = getCurrentTestResult();
             tr.setThrowable(result.getError());
             tr.setStatus(ITestResult.SKIP);
-            skipCount.incrementAndGet();
         } else if (Result.UNDEFINED.equals(result)) {
             ITestResult tr = getCurrentTestResult();
             tr.setThrowable(result.getError());
             tr.setStatus(ITestResult.FAILURE);
-            failureCount.incrementAndGet();
-        } else {
-            passCount.incrementAndGet();
         }
     }
 
@@ -163,6 +153,10 @@ public class TestNgReporter implements Formatter, Reporter {
         String output = String.format(format, cssClassName, message);
 
         log(output);
+    }
+
+    private void logDiv(String message, String message2, String cssClassName) {
+        logDiv(message + ": " + message2, cssClassName);
     }
 
 }
