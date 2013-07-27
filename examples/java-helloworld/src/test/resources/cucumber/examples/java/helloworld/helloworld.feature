@@ -17,7 +17,7 @@ Feature: Hello World
       | Soap  | 5     |
     When I print that list
     Then it should look like:
-    """
+      """
       1 Cocoa
       2 Milk
       5 Soap
