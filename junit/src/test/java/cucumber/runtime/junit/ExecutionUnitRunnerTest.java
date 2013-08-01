@@ -20,7 +20,8 @@ public class ExecutionUnitRunnerTest {
         List<CucumberFeature> features = CucumberFeature.load(
                 new ClasspathResourceLoader(this.getClass().getClassLoader()),
                 asList("cucumber/runtime/junit/fb.feature"),
-                Collections.emptyList()
+                Collections.emptyList(),
+                null
         );
 
         ExecutionUnitRunner runner = new ExecutionUnitRunner(
@@ -48,7 +49,8 @@ public class ExecutionUnitRunnerTest {
         List<CucumberFeature> features = CucumberFeature.load(
                 new ClasspathResourceLoader(this.getClass().getClassLoader()),
                 asList("cucumber/runtime/junit/feature_with_same_steps_in_different_scenarios.feature"),
-                Collections.emptyList()
+                Collections.emptyList(),
+                null
         );
 
         ExecutionUnitRunner runner = new ExecutionUnitRunner(

@@ -3,6 +3,7 @@ package cucumber.runtime;
 import cucumber.api.PendingException;
 import cucumber.api.Scenario;
 import cucumber.runtime.io.ClasspathResourceLoader;
+import cucumber.runtime.io.Resource;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
 import gherkin.I18n;
@@ -34,6 +35,7 @@ import static org.mockito.Mockito.when;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyCollectionOf;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 
 public class RuntimeTest {
 
@@ -175,6 +177,16 @@ public class RuntimeTest {
         runtime.addError(new RuntimeException());
 
         assertEquals(0x1, runtime.exitStatus());
+    }
+
+    @Test
+    public void should_pass_if_no_features_are_found() {
+        ResourceLoader resourceLoader = createResourceLoaderThatFindsNoFeatures();
+        Runtime runtime = createStrictRuntime(resourceLoader);
+
+        runtime.run();
+
+        assertEquals(0x0, runtime.exitStatus());
     }
 
     @Test
@@ -347,6 +359,12 @@ public class RuntimeTest {
         runtime.runStep("<uri>", step, reporter, i18n);
     }
 
+    private ResourceLoader createResourceLoaderThatFindsNoFeatures() {
+        ResourceLoader resourceLoader = mock(ResourceLoader.class);
+        when(resourceLoader.resources(anyString(), eq(".feature"))).thenReturn(Collections.<Resource>emptyList());
+        return resourceLoader;
+    }
+
     private Runtime createStrictRuntime() {
         return createRuntime("-g", "anything", "--strict");
     }
@@ -355,9 +373,17 @@ public class RuntimeTest {
         return createRuntime("-g", "anything");
     }
 
+    private Runtime createStrictRuntime(ResourceLoader resourceLoader) {
+        return createRuntime(resourceLoader, Thread.currentThread().getContextClassLoader(), "-g", "anything", "--strict");
+    }
+
     private Runtime createRuntime(String... runtimeArgs) {
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
         ClassLoader classLoader = mock(ClassLoader.class);
+        return createRuntime(resourceLoader, classLoader, runtimeArgs);
+    }
+
+    private Runtime createRuntime(ResourceLoader resourceLoader, ClassLoader classLoader, String... runtimeArgs) {
         RuntimeOptions runtimeOptions = new RuntimeOptions(new Properties(), runtimeArgs);
         Backend backend = mock(Backend.class);
         Collection<Backend> backends = Arrays.asList(backend);

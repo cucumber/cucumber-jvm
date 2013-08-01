@@ -1,6 +1,5 @@
 package cucumber.runtime.model;
 
-import cucumber.runtime.CucumberException;
 import cucumber.runtime.FeatureBuilder;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.io.Resource;
@@ -15,6 +14,7 @@ import gherkin.formatter.model.Scenario;
 import gherkin.formatter.model.ScenarioOutline;
 import gherkin.formatter.model.Step;
 
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -29,7 +29,7 @@ public class CucumberFeature {
     private I18n i18n;
     private CucumberScenarioOutline currentScenarioOutline;
 
-    public static List<CucumberFeature> load(ResourceLoader resourceLoader, List<String> featurePaths, final List<Object> filters) {
+    public static List<CucumberFeature> load(ResourceLoader resourceLoader, List<String> featurePaths, final List<Object> filters, PrintStream optionalOut) {
         final List<CucumberFeature> cucumberFeatures = new ArrayList<CucumberFeature>();
         final FeatureBuilder builder = new FeatureBuilder(cucumberFeatures);
         boolean resourceFound = false;
@@ -40,11 +40,11 @@ public class CucumberFeature {
                 builder.parse(resource, filters);
             }
         }
-        if (cucumberFeatures.isEmpty()) {
+        if (cucumberFeatures.isEmpty() && optionalOut != null) {
             if (resourceFound) {
-                throw new CucumberException(String.format("None of the features at %s matched the filters: %s", featurePaths, filters));
+                optionalOut.println(String.format("None of the features at %s matched the filters: %s", featurePaths, filters));
             } else {
-                throw new CucumberException(String.format("No features found at %s", featurePaths));
+                optionalOut.println(String.format("No features found at %s", featurePaths));
             }
         }
         Collections.sort(cucumberFeatures, new CucumberFeatureUriComparator());
