@@ -22,7 +22,7 @@ public class CucumberFeatureTest {
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
         when(resourceLoader.resources("does/not/exist", ".feature")).thenReturn(Collections.<Resource>emptyList());
 
-        CucumberFeature.load(resourceLoader, asList("does/not/exist"), emptyList(), null);
+        CucumberFeature.load(resourceLoader, asList("does/not/exist"), emptyList(), new PrintStream(new ByteArrayOutputStream()));
     }
 
     @Test
@@ -49,4 +49,15 @@ public class CucumberFeatureTest {
 
         assertEquals(String.format("None of the features at [features] matched the filters: [@nowhere]%n"), baos.toString());
     }
+
+    @Test
+    public void logs_message_if_no_feature_paths_are_given() {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ResourceLoader resourceLoader = mock(ResourceLoader.class);
+
+        CucumberFeature.load(resourceLoader, Collections.<String>emptyList(), emptyList(), new PrintStream(baos));
+
+        assertEquals(String.format("Got no path to feature directory or feature file%n"), baos.toString());
+    }
+
 }
