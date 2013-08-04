@@ -97,6 +97,9 @@ class JUnitFormatter implements Formatter, Reporter, StrictAware {
         try {
             //set up a transformer
             rootElement.setAttribute("failures", String.valueOf(rootElement.getElementsByTagName("failure").getLength()));
+            if (rootElement.getElementsByTagName("testcase").getLength() == 0) {
+                addDummyTestCase(); // to avoid failed Jenkins jobs
+            }
             TransformerFactory transfac = TransformerFactory.newInstance();
             Transformer trans = transfac.newTransformer();
             trans.setOutputProperty(OutputKeys.INDENT, "yes");
@@ -106,6 +109,16 @@ class JUnitFormatter implements Formatter, Reporter, StrictAware {
         } catch (TransformerException e) {
             throw new CucumberException("Error while transforming.", e);
         }
+    }
+
+    private void addDummyTestCase() {
+        Element dummy = doc.createElement("testcase");
+        dummy.setAttribute("classname", "dummy");
+        dummy.setAttribute("name", "dummy");
+        rootElement.appendChild(dummy);
+        Element skipped = doc.createElement("skipped");
+        skipped.setAttribute("message", "No features found");
+        dummy.appendChild(skipped);
     }
 
     @Override

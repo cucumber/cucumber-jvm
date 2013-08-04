@@ -367,6 +367,24 @@ public class JUnitFormatterTest {
         assertXmlEqual(expected, replaceTimeWithZeroTime(actual));
     }
 
+    @Test
+    public void should_add_dummy_testcase_if_no_features_are_found_to_aviod_failed_jenkins_jobs() throws Exception {
+        final File report = File.createTempFile("cucumber-jvm-junit", ".xml");
+        final JUnitFormatter junitFormatter = createJUnitFormatter(report);
+
+        junitFormatter.done();
+        junitFormatter.close();
+
+        String actual = new Scanner(new FileInputStream(report), "UTF-8").useDelimiter("\\A").next();
+        String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
+                "<testsuite failures=\"0\">\n" +
+                "    <testcase classname=\"dummy\" name=\"dummy\">\n" +
+                "        <skipped message=\"No features found\" />\n" +
+                "    </testcase>\n" +
+                "</testsuite>\n";
+        assertXmlEqual(expected, replaceTimeWithZeroTime(actual));
+    }
+
     private File runFeaturesWithJunitFormatter(final List<String> featurePaths) throws IOException {
         return runFeaturesWithJunitFormatter(featurePaths, false);
     }
