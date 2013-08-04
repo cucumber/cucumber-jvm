@@ -121,7 +121,7 @@ public class RuntimeOptions {
     }
 
     public List<CucumberFeature> cucumberFeatures(ResourceLoader resourceLoader) {
-        return load(resourceLoader, featurePaths, filters);
+        return load(resourceLoader, featurePaths, filters, System.out);
     }
 
     public Formatter formatter(ClassLoader classLoader) {
