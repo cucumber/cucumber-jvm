@@ -1,6 +1,6 @@
 # java-no-features
 
-If wonder what would Cucumber JVM do when there are no feature files found at all.
+If you wonder what would Cucumber JVM do when there are no feature files found at all.
 Just run these cukes by
 
     mvn clean test
