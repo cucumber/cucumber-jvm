@@ -21,16 +21,18 @@ import java.util.Map;
 public class URLOutputStream extends OutputStream {
     private final URL url;
     private final String method;
+    private final int expectedResponseCode;
     private final OutputStream out;
     private final HttpURLConnection urlConnection;
 
     public URLOutputStream(URL url) throws IOException {
-        this(url, "PUT", Collections.<String, String>emptyMap());
+        this(url, "PUT", Collections.<String, String>emptyMap(), 200);
     }
 
-    public URLOutputStream(URL url, String method, Map<String, String> headers) throws IOException {
+    public URLOutputStream(URL url, String method, Map<String, String> headers, int expectedResponseCode) throws IOException {
         this.url = url;
         this.method = method;
+        this.expectedResponseCode = expectedResponseCode;
         if (url.getProtocol().equals("file")) {
             File file = new File(url.getFile());
             ensureParentDirExists(file);
@@ -73,9 +75,10 @@ public class URLOutputStream extends OutputStream {
         try {
             if (urlConnection != null) {
                 int responseCode = urlConnection.getResponseCode();
-                if (responseCode >= 400) {
+                if (responseCode != expectedResponseCode) {
                     try {
                         urlConnection.getInputStream().close();
+                        throw new IOException(String.format("Expected response code: %d. Got: %d", expectedResponseCode, responseCode));
                     } catch (IOException expected) {
                         InputStream errorStream = urlConnection.getErrorStream();
                         if (errorStream != null) {
