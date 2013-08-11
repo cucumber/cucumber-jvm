@@ -439,6 +439,7 @@
         <profile>
             <id>release-sign-artifacts</id>
             <modules>
+                <module>android</module>
                 <module>examples/spring-txn</module>
                 <module>examples/java-calculator</module>
                 <module>examples/groovy-calculator</module>
