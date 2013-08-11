@@ -73,39 +73,12 @@ import gherkin.I18n
 def engine = new SimpleTemplateEngine()
 def templateSource = new File(project.baseDir, "src${File.separator}main${File.separator}code_generator${File.separator}I18n.java.txt").getText()
 
-def normalize(s) {
-  if(System.getProperty("java.version").startsWith("1.6")) {
-    return s
-  } else {
-    return java.text.Normalizer.normalize(s, java.text.Normalizer.Form.NFD)
-  }
-}
-
-
-// TODO: Need to add i18n.getName() and i18n.getNative() for better names.
-def package_html = """\
-<body>
-<p>
-    \${i18n.getLocale().getDisplayLanguage()}
-</p>
-</body>
-"""
-
 I18n.all.each { i18n ->
-    i18n.codeKeywords.each { kw ->
-        def normalized_kw = normalize(kw)
-        def binding = ["i18n":i18n, "kw":normalized_kw]
-        template = engine.createTemplate(templateSource).make(binding)
-        def file = new File(project.baseDir, "target${File.separator}generated-sources${File.separator}i18n${File.separator}java${File.separator}cucumber${File.separator}api${File.separator}java${File.separator}${i18n.underscoredIsoCode}${File.separator}${normalized_kw}.java")
-        file.parentFile.mkdirs()
-        file.write(template.toString(), "UTF-8")
-    }
-
-    // html
     def binding = ["i18n":i18n]
-    def html = engine.createTemplate(package_html).make(binding).toString()
-    def file = new File(project.baseDir, "target${File.separator}generated-sources${File.separator}i18n${File.separator}java${File.separator}cucumber${File.separator}api${File.separator}java${File.separator}${i18n.underscoredIsoCode}${File.separator}package.html")
-    file.write(html, "UTF-8")
+    template = engine.createTemplate(templateSource).make(binding)
+    def file = new File(project.baseDir, "target${File.separator}generated-sources${File.separator}i18n${File.separator}java${File.separator}cucumber${File.separator}api${File.separator}java${File.separator}${i18n.underscoredIsoCode}.java")
+    file.parentFile.mkdirs()
+    file.write(template.toString(), "UTF-8")
 }
 
         ]]></groovy>
