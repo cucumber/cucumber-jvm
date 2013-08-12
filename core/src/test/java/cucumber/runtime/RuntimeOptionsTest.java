@@ -196,4 +196,20 @@ public class RuntimeOptionsTest {
 
         verify((StrictAware)strictAwareFormatter).setStrict(true);
     }
+
+    @Test
+    public void ensure_default_snippet_type_is_underscore() {
+        Properties properties = new Properties();
+        RuntimeOptions runtimeOptions = new RuntimeOptions(properties);
+        assertEquals(SnippetType.UNDERSCORE, runtimeOptions.getSnippetType());
+    }
+
+    @Test
+    public void set_snippet_type() {
+        Properties properties = new Properties();
+        properties.setProperty("cucumber.options", "--snippets camelcase");
+        RuntimeOptions runtimeOptions = new RuntimeOptions(properties);
+        assertEquals(SnippetType.CAMELCASE, runtimeOptions.getSnippetType());
+    }
+
 }
