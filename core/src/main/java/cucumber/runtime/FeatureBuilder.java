@@ -15,6 +15,7 @@ import gherkin.lexer.Encoding;
 import gherkin.parser.Parser;
 import gherkin.util.FixJava;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.math.BigInteger;
@@ -28,13 +29,19 @@ import java.util.Map;
 public class FeatureBuilder implements Formatter {
     private static final Charset UTF8 = Charset.forName("UTF-8");
     private final List<CucumberFeature> cucumberFeatures;
+    private final char fileSeparatorChar;
     private final MessageDigest md5;
     private final Map<String, String> pathsByChecksum = new HashMap<String, String>();
     private CucumberFeature currentCucumberFeature;
     private String uri;
 
     public FeatureBuilder(List<CucumberFeature> cucumberFeatures) {
+        this(cucumberFeatures, File.separatorChar);
+    }
+
+    FeatureBuilder(List<CucumberFeature> cucumberFeatures, char fileSeparatorChar) {
         this.cucumberFeatures = cucumberFeatures;
+        this.fileSeparatorChar = fileSeparatorChar;
         try {
             this.md5 = MessageDigest.getInstance("MD5");
         } catch (NoSuchAlgorithmException e) {
@@ -110,13 +117,17 @@ public class FeatureBuilder implements Formatter {
         }
         Parser parser = new Parser(formatter);
 
-        parser.parse(gherkin, resource.getPath(), 0);
+        parser.parse(gherkin, convertPathToUri(resource.getPath()), 0);
         I18n i18n = parser.getI18nLanguage();
         if (currentCucumberFeature != null) {
             // The current feature may be null if we used a very restrictive filter, say a tag that isn't used.
             // Might also happen if the feature file itself is empty.
             currentCucumberFeature.setI18n(i18n);
         }
+    }
+
+    private String convertPathToUri(String path) {
+        return path.replace(fileSeparatorChar, '/');
     }
 
     private String checksum(String gherkin) {

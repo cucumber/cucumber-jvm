@@ -22,14 +22,50 @@ public class FeatureBuilderTest {
     public void ignores_duplicate_features() throws IOException {
         List<CucumberFeature> features = new ArrayList<CucumberFeature>();
         FeatureBuilder builder = new FeatureBuilder(features);
-        Resource resource = mock(Resource.class);
-        when(resource.getPath()).thenReturn("foo.feature");
-        ByteArrayInputStream firstFeature = new ByteArrayInputStream("Feature: foo".getBytes("UTF-8"));
-        ByteArrayInputStream secondFeature = new ByteArrayInputStream("Feature: foo".getBytes("UTF-8"));
-        when(resource.getInputStream()).thenReturn(firstFeature, secondFeature);
-        builder.parse(resource, NO_FILTERS);
-        builder.parse(resource, NO_FILTERS);
+        String featurePath = "foo.feature";
+        Resource resource1 = createResourceMock(featurePath);
+        Resource resource2 = createResourceMock(featurePath);
+
+        builder.parse(resource1, NO_FILTERS);
+        builder.parse(resource2, NO_FILTERS);
+
         assertEquals(1, features.size());
+    }
+
+    @Test
+    public void works_when_path_and_uri_are_the_same() throws IOException {
+        char fileSeparatorChar = '/';
+        String featurePath = "path" + fileSeparatorChar + "foo.feature";
+        Resource resource = createResourceMock(featurePath);
+        List<CucumberFeature> features = new ArrayList<CucumberFeature>();
+        FeatureBuilder builder = new FeatureBuilder(features, fileSeparatorChar);
+
+        builder.parse(resource, NO_FILTERS);
+
+        assertEquals(1, features.size());
+        assertEquals(featurePath, features.get(0).getUri());
+    }
+
+    @Test
+    public void converts_windows_path_to_uri() throws IOException {
+        char fileSeparatorChar = '\\';
+        String featurePath = "path" + fileSeparatorChar + "foo.feature";
+        Resource resource = createResourceMock(featurePath);
+        List<CucumberFeature> features = new ArrayList<CucumberFeature>();
+        FeatureBuilder builder = new FeatureBuilder(features, fileSeparatorChar);
+
+        builder.parse(resource, NO_FILTERS);
+
+        assertEquals(1, features.size());
+        assertEquals("path/foo.feature", features.get(0).getUri());
+    }
+
+    private Resource createResourceMock(String featurePath) throws IOException {
+        Resource resource = mock(Resource.class);
+        when(resource.getPath()).thenReturn(featurePath);
+        ByteArrayInputStream feature = new ByteArrayInputStream("Feature: foo".getBytes("UTF-8"));
+        when(resource.getInputStream()).thenReturn(feature);
+        return resource;
     }
 
 }
