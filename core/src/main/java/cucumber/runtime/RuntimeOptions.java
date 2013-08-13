@@ -1,10 +1,12 @@
 package cucumber.runtime;
 
+import cucumber.api.SnippetType;
 import cucumber.runtime.formatter.ColorAware;
 import cucumber.runtime.formatter.FormatterFactory;
 import cucumber.runtime.formatter.StrictAware;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
+import cucumber.runtime.snippets.FunctionNameSanitizer;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
 import gherkin.util.FixJava;
@@ -37,7 +39,7 @@ public class RuntimeOptions {
     private boolean dryRun;
     private boolean strict = false;
     private boolean monochrome = false;
-    private SnippetType snippet = SnippetType.getDefault();
+    private SnippetType snippetType = SnippetType.UNDERSCORE;
 
     public RuntimeOptions(Properties properties, String... argv) {
         /* IMPORTANT! Make sure USAGE.txt is always uptodate if this class changes */
@@ -100,7 +102,7 @@ public class RuntimeOptions {
                 monochrome = !arg.startsWith("--no-");
             } else if (arg.equals("--snippets")) {
                 String nextArg = args.remove(0);
-                snippet = SnippetType.fromString(nextArg);
+                snippetType = SnippetType.fromString(nextArg);
             } else if (arg.equals("--name") || arg.equals("-n")) {
                 String nextArg = args.remove(0);
                 Pattern patternFilter = Pattern.compile(nextArg);
@@ -208,6 +210,6 @@ public class RuntimeOptions {
     }
 
     public SnippetType getSnippetType() {
-        return snippet;
+        return snippetType;
     }
 }

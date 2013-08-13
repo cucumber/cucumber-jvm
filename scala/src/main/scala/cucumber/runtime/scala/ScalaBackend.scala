@@ -4,6 +4,7 @@ import _root_.java.util.{List => JList}
 import _root_.gherkin.formatter.model.Step
 import _root_.java.lang.reflect.Modifier
 import _root_.cucumber.runtime.snippets.SnippetGenerator
+import _root_.cucumber.runtime.snippets.FunctionNameSanitizer
 import _root_.cucumber.api.scala.ScalaDsl
 import _root_.cucumber.runtime.io.Reflections
 import _root_.cucumber.runtime.io.ResourceLoaderReflections
@@ -28,7 +29,7 @@ class ScalaBackend(resourceLoader:ResourceLoader) extends Backend {
     instances = Nil
   }
 
-  def getSnippet(step: Step) = snippetGenerator.getSnippet(step)
+  def getSnippet(step: Step, functionNameSanitizer: FunctionNameSanitizer) = snippetGenerator.getSnippet(step, functionNameSanitizer)
 
   def buildWorld() {
     //I don't believe scala has to do anything to clean out it's world
@@ -43,14 +44,14 @@ class ScalaBackend(resourceLoader:ResourceLoader) extends Backend {
         cls.getDeclaredConstructor()
         true
       } catch {
-        case e => false
+        case e : Throwable => false
       }
     }
     val (clsClasses, objClasses) = dslClasses partition { cls =>
       try {
         Modifier.isPublic (cls.getConstructor().getModifiers)
       } catch {
-        case e => false
+        case e : Throwable  => false
       }
     }
     val objInstances = objClasses map {cls =>

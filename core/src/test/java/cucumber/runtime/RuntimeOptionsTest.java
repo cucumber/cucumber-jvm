@@ -1,5 +1,6 @@
 package cucumber.runtime;
 
+import cucumber.api.SnippetType;
 import org.junit.Test;
 
 import cucumber.runtime.formatter.ColorAware;

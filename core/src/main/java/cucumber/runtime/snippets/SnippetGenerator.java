@@ -1,7 +1,6 @@
 package cucumber.runtime.snippets;
 
 import cucumber.api.DataTable;
-import cucumber.runtime.SnippetType;
 import gherkin.I18n;
 import gherkin.formatter.model.Step;
 
@@ -32,23 +31,16 @@ public class SnippetGenerator {
 
     private final Snippet snippet;
 
-    private FunctionNameSanitizer sanitizer;
-
     public SnippetGenerator(Snippet snippet) {
-        this(snippet, new UnderscoreFunctionNameSanitizer());
-    }
-
-    public SnippetGenerator(Snippet snippet, FunctionNameSanitizer sanitizer) {
         this.snippet = snippet;
-        this.sanitizer = sanitizer;
     }
 
-    public String getSnippet(Step step) {
+    public String getSnippet(Step step, FunctionNameSanitizer functionNameSanitizer) {
         return MessageFormat.format(
                 snippet.template(),
                 I18n.codeKeywordFor(step.getKeyword()),
                 snippet.escapePattern(patternFor(step.getName())),
-                functionName(step.getName()),
+                functionName(step.getName(), functionNameSanitizer),
                 snippet.arguments(argumentTypes(step)),
                 REGEXP_HINT,
                 step.getRows() == null ? "" : snippet.tableHint()
@@ -72,12 +64,15 @@ public class SnippetGenerator {
         return "^" + pattern + "$";
     }
 
-    private String functionName(String name) {
+    private String functionName(String name, FunctionNameSanitizer functionNameSanitizer) {
+        if(functionNameSanitizer == null) {
+            return null;
+        }
         String functionName = name;
         for (ArgumentPattern argumentPattern : argumentPatterns()) {
             functionName = argumentPattern.replaceMatchesWithSpace(functionName);
         }
-        functionName = sanitizer.sanitizeFunctionName(functionName);
+        functionName = functionNameSanitizer.sanitizeFunctionName(functionName);
         return functionName;
     }
 

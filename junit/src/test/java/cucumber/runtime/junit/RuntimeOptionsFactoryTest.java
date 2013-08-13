@@ -2,7 +2,7 @@ package cucumber.runtime.junit;
 
 import cucumber.api.junit.Cucumber;
 import cucumber.runtime.RuntimeOptions;
-import cucumber.runtime.SnippetType;
+import cucumber.api.SnippetType;
 import org.junit.Test;
 
 import java.net.MalformedURLException;

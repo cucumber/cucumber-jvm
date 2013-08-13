@@ -4,6 +4,7 @@ import cucumber.runtime.Backend;
 import cucumber.runtime.Glue;
 import cucumber.runtime.UnreportedStepExecutor;
 import cucumber.runtime.io.ResourceLoader;
+import cucumber.runtime.snippets.FunctionNameSanitizer;
 import gherkin.formatter.model.Step;
 
 import java.util.List;
@@ -33,7 +34,7 @@ public class StubBackend implements Backend {
     }
 
     @Override
-    public String getSnippet(Step step) {
+    public String getSnippet(Step step, FunctionNameSanitizer functionNameSanitizer) {
         return "STUB SNIPPET";
     }
 }

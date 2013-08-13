@@ -10,11 +10,22 @@ import gherkin.I18n;
 import gherkin.formatter.Argument;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
-import gherkin.formatter.model.*;
+import gherkin.formatter.model.Comment;
+import gherkin.formatter.model.DataTableRow;
+import gherkin.formatter.model.DocString;
+import gherkin.formatter.model.Match;
+import gherkin.formatter.model.Result;
+import gherkin.formatter.model.Step;
+import gherkin.formatter.model.Tag;
 
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 /**
  * This is the main entry point for running Cucumber features.
@@ -57,7 +68,7 @@ public class Runtime implements UnreportedStepExecutor {
     }
 
     public Runtime(ResourceLoader resourceLoader, ClassLoader classLoader, Collection<? extends Backend> backends,
-            RuntimeOptions runtimeOptions, RuntimeGlue optionalGlue) {
+                   RuntimeOptions runtimeOptions, RuntimeGlue optionalGlue) {
         if (backends.isEmpty()) {
             throw new CucumberException("No backends were found. Please make sure you have a backend module on your CLASSPATH.");
         }
@@ -162,7 +173,7 @@ public class Runtime implements UnreportedStepExecutor {
     }
 
     public List<String> getSnippets() {
-        return undefinedStepsTracker.getSnippets(backends, runtimeOptions.getSnippetType());
+        return undefinedStepsTracker.getSnippets(backends, runtimeOptions.getSnippetType().getFunctionNameSanitizer());
     }
 
     public Glue getGlue() {

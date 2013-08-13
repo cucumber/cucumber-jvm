@@ -1,6 +1,7 @@
 package cucumber.runtime.java;
 
 import cucumber.runtime.snippets.SnippetGenerator;
+import cucumber.runtime.snippets.UnderscoreFunctionNameSanitizer;
 import gherkin.formatter.model.Comment;
 import gherkin.formatter.model.DataTableRow;
 import gherkin.formatter.model.DocString;
@@ -156,16 +157,16 @@ public class JavaSnippetTest {
 
     private String snippetFor(String name) {
         Step step = new Step(NO_COMMENTS, "Given ", name, 0, null, null);
-        return new SnippetGenerator(new JavaSnippet()).getSnippet(step);
+        return new SnippetGenerator(new JavaSnippet()).getSnippet(step, new UnderscoreFunctionNameSanitizer());
     }
 
     private String snippetForDocString(String name, DocString docString) {
         Step step = new Step(NO_COMMENTS, "Given ", name, 0, null, docString);
-        return new SnippetGenerator(new JavaSnippet()).getSnippet(step);
+        return new SnippetGenerator(new JavaSnippet()).getSnippet(step, new UnderscoreFunctionNameSanitizer());
     }
 
     private String snippetForDataTable(String name, List<DataTableRow> dataTable) {
         Step step = new Step(NO_COMMENTS, "Given ", name, 0, dataTable, null);
-        return new SnippetGenerator(new JavaSnippet()).getSnippet(step);
+        return new SnippetGenerator(new JavaSnippet()).getSnippet(step, new UnderscoreFunctionNameSanitizer());
     }
 }

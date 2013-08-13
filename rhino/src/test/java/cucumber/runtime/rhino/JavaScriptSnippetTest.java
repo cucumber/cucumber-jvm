@@ -23,6 +23,6 @@ public class JavaScriptSnippetTest {
 
     private String snippetFor(String name) {
         Step step = new Step(Collections.<Comment>emptyList(), "Given ", name, 0, null, null);
-        return new SnippetGenerator(new JavaScriptSnippet()).getSnippet(step);
+        return new SnippetGenerator(new JavaScriptSnippet()).getSnippet(step, null);
     }
 }

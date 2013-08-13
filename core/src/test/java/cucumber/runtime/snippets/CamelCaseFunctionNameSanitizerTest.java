@@ -1,4 +1,4 @@
-package cucumber.runtime.java;
+package cucumber.runtime.snippets;
 
 import org.junit.Test;
 

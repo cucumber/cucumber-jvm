@@ -6,6 +6,7 @@ import cucumber.runtime.Glue;
 import cucumber.runtime.UnreportedStepExecutor;
 import cucumber.runtime.io.Resource;
 import cucumber.runtime.io.ResourceLoader;
+import cucumber.runtime.snippets.FunctionNameSanitizer;
 import cucumber.runtime.snippets.SnippetGenerator;
 import gherkin.formatter.model.Step;
 import org.python.core.PyException;
@@ -70,8 +71,8 @@ public class JythonBackend implements Backend {
     }
 
     @Override
-    public String getSnippet(Step step) {
-        return snippetGenerator.getSnippet(step);
+    public String getSnippet(Step step, FunctionNameSanitizer functionNameSanitizer) {
+        return snippetGenerator.getSnippet(step, functionNameSanitizer);
     }
 
     public void registerStepdef(PyInstance stepdef, int arity) {

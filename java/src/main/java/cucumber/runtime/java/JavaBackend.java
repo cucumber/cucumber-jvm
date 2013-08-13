@@ -4,8 +4,8 @@ import cucumber.api.java.After;
 import cucumber.api.java.Before;
 import cucumber.runtime.*;
 import cucumber.runtime.io.*;
+import cucumber.runtime.snippets.FunctionNameSanitizer;
 import cucumber.runtime.snippets.SnippetGenerator;
-import cucumber.runtime.snippets.UnderscoreFunctionNameSanitizer;
 import gherkin.formatter.model.Step;
 
 import java.lang.annotation.Annotation;
@@ -13,8 +13,8 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public class JavaBackend implements SnippetTypeAwareBackend {
-    private SnippetGenerator snippetGenerator = new SnippetGenerator(new JavaSnippet(), new UnderscoreFunctionNameSanitizer());
+public class JavaBackend implements Backend {
+    private SnippetGenerator snippetGenerator = new SnippetGenerator(new JavaSnippet());
     private final ObjectFactory objectFactory;
     private final Reflections reflections;
 
@@ -91,8 +91,8 @@ public class JavaBackend implements SnippetTypeAwareBackend {
     }
 
     @Override
-    public String getSnippet(Step step) {
-        return snippetGenerator.getSnippet(step);
+    public String getSnippet(Step step, FunctionNameSanitizer functionNameSanitizer) {
+        return snippetGenerator.getSnippet(step, functionNameSanitizer);
     }
 
     void addStepDefinition(Annotation annotation, Method method) {
@@ -128,21 +128,6 @@ public class JavaBackend implements SnippetTypeAwareBackend {
             String[] tagExpressions = ((After) annotation).value();
             int timeout = ((After) annotation).timeout();
             glue.addAfterHook(new JavaHookDefinition(method, tagExpressions, ((After) annotation).order(), timeout, objectFactory));
-        }
-    }
-
-    @Override
-    public void setSnippetType(SnippetType type) {
-        switch (type) {
-            case CAMELCASE:
-                snippetGenerator = new SnippetGenerator(new JavaSnippet(), new CamelCaseFunctionNameSanitizer());
-                break;
-            case UNDERSCORE:
-                snippetGenerator = new SnippetGenerator(new JavaSnippet(), new UnderscoreFunctionNameSanitizer());
-                break;
-            default:
-                throw new CucumberException(String.format("Unsupported Snippet Type: %s", type.toString()));
-
         }
     }
 }

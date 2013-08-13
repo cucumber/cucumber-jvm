@@ -1,5 +1,6 @@
 package cucumber.runtime;
 
+import cucumber.runtime.snippets.FunctionNameSanitizer;
 import gherkin.I18n;
 import gherkin.formatter.model.Step;
 
@@ -18,19 +19,17 @@ public class UndefinedStepsTracker {
     }
 
     /**
-     * @param backends what backends we want snippets for
+     * @param backends              what backends we want snippets for
+     * @param functionNameSanitizer responsible for generating method name
      * @return a list of code snippets that the developer can use to implement undefined steps.
      *         This should be displayed after a run.
      */
-    public List<String> getSnippets(Iterable<? extends Backend> backends, SnippetType type) {
+    public List<String> getSnippets(Iterable<? extends Backend> backends, FunctionNameSanitizer functionNameSanitizer) {
         // TODO: Convert "And" and "But" to the Given/When/Then keyword above in the Gherkin source.
         List<String> snippets = new ArrayList<String>();
         for (Step step : undefinedSteps) {
             for (Backend backend : backends) {
-                if(backend instanceof SnippetTypeAwareBackend) {
-                    ((SnippetTypeAwareBackend) backend).setSnippetType(type);
-                }
-                String snippet = backend.getSnippet(step);
+                String snippet = backend.getSnippet(step, functionNameSanitizer);
                 if (snippet == null) {
                     throw new NullPointerException("null snippet");
                 }
@@ -40,15 +39,6 @@ public class UndefinedStepsTracker {
             }
         }
         return snippets;
-    }
-
-    /**
-     * @param backends what backends we want snippets for
-     * @return a list of code snippets that the developer can use to implement undefined steps.
-     *         This should be displayed after a run.
-     */
-    public List<String> getSnippets(Iterable<? extends Backend> backends) {
-        return getSnippets(backends, SnippetType.getDefault());
     }
 
     public void storeStepKeyword(Step step, I18n i18n) {

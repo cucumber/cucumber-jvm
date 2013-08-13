@@ -1,6 +1,4 @@
-package cucumber.runtime.java;
-
-import cucumber.runtime.snippets.FunctionNameSanitizer;
+package cucumber.runtime.snippets;
 
 public class CamelCaseFunctionNameSanitizer implements FunctionNameSanitizer {
 

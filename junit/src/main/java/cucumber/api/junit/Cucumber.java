@@ -2,7 +2,7 @@ package cucumber.api.junit;
 
 import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeOptions;
-import cucumber.runtime.SnippetType;
+import cucumber.api.SnippetType;
 import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.junit.Assertions;

@@ -1,18 +1,19 @@
 package cucumber.runtime;
 
+import cucumber.runtime.snippets.FunctionNameSanitizer;
 import cucumber.runtime.snippets.Snippet;
 import cucumber.runtime.snippets.SnippetGenerator;
+import cucumber.runtime.snippets.UnderscoreFunctionNameSanitizer;
 import gherkin.I18n;
 import gherkin.formatter.model.Step;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import java.util.List;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class UndefinedStepsTrackerTest {
 
@@ -38,7 +39,7 @@ public class UndefinedStepsTrackerTest {
         tracker.storeStepKeyword(new Step(null, "Given ", "A", 1, null, null), ENGLISH);
         tracker.addUndefinedStep(new Step(null, "Given ", "B", 1, null, null), ENGLISH);
         tracker.addUndefinedStep(new Step(null, "Given ", "B", 1, null, null), ENGLISH);
-        assertEquals("[Given ^B$]", tracker.getSnippets(asList(backend)).toString());
+        assertEquals("[Given ^B$]", tracker.getSnippets(asList(backend), new UnderscoreFunctionNameSanitizer()).toString());
     }
 
     @Test
@@ -48,7 +49,7 @@ public class UndefinedStepsTrackerTest {
         tracker.storeStepKeyword(new Step(null, "When ", "A", 1, null, null), ENGLISH);
         tracker.storeStepKeyword(new Step(null, "And ", "B", 1, null, null), ENGLISH);
         tracker.addUndefinedStep(new Step(null, "But ", "C", 1, null, null), ENGLISH);
-        assertEquals("[When ^C$]", tracker.getSnippets(asList(backend)).toString());
+        assertEquals("[When ^C$]", tracker.getSnippets(asList(backend), new UnderscoreFunctionNameSanitizer()).toString());
     }
 
     @Test
@@ -58,7 +59,7 @@ public class UndefinedStepsTrackerTest {
         tracker.storeStepKeyword(new Step(null, "When ", "A", 1, null, null), ENGLISH);
         tracker.storeStepKeyword(new Step(null, "And ", "B", 1, null, null), ENGLISH);
         tracker.addUndefinedStep(new Step(null, "* ", "C", 1, null, null), ENGLISH);
-        assertEquals("[When ^C$]", tracker.getSnippets(asList(backend)).toString());
+        assertEquals("[When ^C$]", tracker.getSnippets(asList(backend), new UnderscoreFunctionNameSanitizer()).toString());
     }
 
     @Test
@@ -66,7 +67,7 @@ public class UndefinedStepsTrackerTest {
         Backend backend = new TestBackend();
         UndefinedStepsTracker tracker = new UndefinedStepsTracker();
         tracker.addUndefinedStep(new Step(null, "* ", "A", 1, null, null), ENGLISH);
-        assertEquals("[Given ^A$]", tracker.getSnippets(asList(backend)).toString());
+        assertEquals("[Given ^A$]", tracker.getSnippets(asList(backend), new UnderscoreFunctionNameSanitizer()).toString());
     }
 
     @Test
@@ -74,21 +75,8 @@ public class UndefinedStepsTrackerTest {
         Backend backend = new TestBackend();
         UndefinedStepsTracker tracker = new UndefinedStepsTracker();
         tracker.addUndefinedStep(new Step(null, "Если ", "Б", 1, null, null), new I18n("ru"));
-        assertEquals("[Если ^Б$]", tracker.getSnippets(asList(backend)).toString());
+        assertEquals("[Если ^Б$]", tracker.getSnippets(asList(backend), new UnderscoreFunctionNameSanitizer()).toString());
     }
-
-    @Test
-    public void set_snippet_type_on_capable_backends() {
-        Backend backend = Mockito.mock(SnippetTypeAwareBackend.class);
-        Mockito.when(backend.getSnippet(Mockito.any(Step.class))).thenReturn("");
-
-        UndefinedStepsTracker undefinedStepsTracker = new UndefinedStepsTracker();
-        undefinedStepsTracker.addUndefinedStep(new Step(null, "Given ", "A", 1, null, null), ENGLISH);
-        undefinedStepsTracker.getSnippets(asList(backend));
-        Mockito.verify((SnippetTypeAwareBackend) backend, Mockito.atLeastOnce()).setSnippetType(SnippetType.getDefault());
-
-    }
-
 
     private class TestBackend implements Backend {
         @Override
@@ -112,8 +100,8 @@ public class UndefinedStepsTrackerTest {
         }
 
         @Override
-        public String getSnippet(Step step) {
-            return new SnippetGenerator(new TestSnippet()).getSnippet(step);
+        public String getSnippet(Step step, FunctionNameSanitizer functionNameSanitizer) {
+            return new SnippetGenerator(new TestSnippet()).getSnippet(step, new UnderscoreFunctionNameSanitizer());
         }
     }
 
