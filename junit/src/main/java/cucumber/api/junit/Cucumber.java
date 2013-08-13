@@ -58,7 +58,7 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
         runtime = new Runtime(resourceLoader, classLoader, runtimeOptions);
 
-        jUnitReporter = new JUnitReporter(runtimeOptions.reporter(classLoader), runtimeOptions.formatter(classLoader), runtimeOptions.strict);
+        jUnitReporter = new JUnitReporter(runtimeOptions.reporter(classLoader), runtimeOptions.formatter(classLoader), runtimeOptions.isStrict());
         addChildren(runtimeOptions.cucumberFeatures(resourceLoader));
     }
 
@@ -81,8 +81,8 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
     public void run(RunNotifier notifier) {
         super.run(notifier);
         jUnitReporter.done();
-        new SummaryPrinter(System.out).print(runtime);
         jUnitReporter.close();
+        new SummaryPrinter(System.out).print(runtime);
     }
 
     private void addChildren(List<CucumberFeature> cucumberFeatures) throws InitializationError {

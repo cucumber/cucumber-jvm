@@ -1,5 +1,12 @@
-## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.1.3...master) (not released)
+## [1.1.4](https://github.com/cucumber/cucumber-jvm/compare/v1.1.3...v1.1.4) (2013-08-11)
 
+* [Core] Fixed a bug where `@XStreamConverter` annotations were ignored (Aslak Hellesøy)
+* [Android] New Cucumber-Android module ([#525](https://github.com/cucumber/cucumber-jvm/pull/525) Maximilian Fellner).
+* [Build] Deploy maven SNAPSHOT versions from Travis ([#517](https://github.com/cucumber/cucumber-jvm/issues/517), [#528](https://github.com/cucumber/cucumber-jvm/pull/528) Tom Dunstan)
+* [Core] JUnitFormatter to mark skipped tests as failures in strict mode ([#543](https://github.com/cucumber/cucumber-jvm/pull/543) brasmusson)
+* [Core] Always cancel timeout at the end of a stepdef, even when it fails. ([#540](https://github.com/cucumber/cucumber-jvm/issues/540) irb1s)
+* [Groovy] Updated examples to be more explanatory and groovier syntax ([#537](https://github.com/cucumber/cucumber-jvm/pull/522) Quantoid)
+* [PicoContainer,Groovy,JRuby,Jython] Not shading maven artifacts any longer. Gem has a shaded jar though. ([#522](https://github.com/cucumber/cucumber-jvm/pull/522) [#518](https://github.com/cucumber/cucumber-jvm/issues/518) Dmytro Chyzhykov, Aslak Hellesøy)
 * [Core] The `json-pretty` formatter is gone, and the `json` formatter is pretty!
 * [Spring] New awesome Spring port of The Cucumber Book's chapter 14. ([#508](https://github.com/cucumber/cucumber-jvm/pull/508), [#489](https://github.com/cucumber/cucumber-jvm/pull/489) Dmytro Chyzhykov, Pedro Antonio Souza Viegas)
 * [Core] Added `Scenario.getSourceTagNames()`, which is needed to make Capybara work with Cucumber-JRuby ([#504](https://github.com/cucumber/cucumber-jvm/issues/504) Aslak Hellesøy)
@@ -8,7 +15,12 @@
 * [Core] Bugfix: Generated regex for ? character is incorrect. ([#494](https://github.com/cucumber/cucumber-jvm/issues/494) Aslak Hellesøy)
 * [Core] Improve readability with unanchored regular expressions ([#485](https://github.com/cucumber/cucumber-jvm/pull/485), [#466](https://github.com/cucumber/cucumber-jvm/issues/466) Anton)
 * [Core] Throw exception when unsupported command line options are used. ([#482](https://github.com/cucumber/cucumber-jvm/pull/482), [#463](https://github.com/cucumber/cucumber-jvm/issues/463) Klaus Bayrhammer)
-* [Scala] Release cucumber-scala for the two most recent minro releases (currently 2.9.2 and 2.9.0) ([#432](https://github.com/cucumber/cucumber-jvm/issues/432), [#462](https://github.com/cucumber/cucumber-jvm/pull/462) Chris Turner)
+* [Scala] Release cucumber-scala for the two most recent minor releases (currently 2.10.2 and 2.9.3) ([#432](https://github.com/cucumber/cucumber-jvm/issues/432), [#462](https://github.com/cucumber/cucumber-jvm/pull/462) Chris Turner)
+* [Core] JUnitFormatter: Fix indentation, hook handling and support all-steps-first execution ([#556](https://github.com/cucumber/cucumber-jvm/pull/556) Björn Rasmusson)
+* [Core] Make the PrettyFormatter work by revering to all-steps-first execution ([#491](https://github.com/cucumber/cucumber-jvm/issues/491), [#557](https://github.com/cucumber/cucumber-jvm/pull/557) Björn Rasmusson)
+* [Core] Test case for the PrettyFormatter. ([#544](https://github.com/cucumber/cucumber-jvm/pull/544) Björn Rasmusson)
+* [Core/Junit] Print summary at the end of the run. ([#195](https://github.com/cucumber/cucumber-jvm/issues/195), [#536](https://github.com/cucumber/cucumber-jvm/pull/536) Björn Rasmusson)
+* [Core/Examples] Return exit code 0 when no features are found, add example java-no-features. ([#567](https://github.com/cucumber/cucumber-jvm/pull/567) Björn Rasmusson, Dmytro Chyzhykov)
 
 ## [1.1.3](https://github.com/cucumber/cucumber-jvm/compare/v1.1.2...v1.1.3) (2013-03-10)
 

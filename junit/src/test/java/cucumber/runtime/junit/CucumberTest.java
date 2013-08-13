@@ -46,9 +46,10 @@ public class CucumberTest {
         assertEquals("Feature: FA", cucumber.getChildren().get(0).getName());
     }
 
-    @Test(expected = CucumberException.class)
+    @Test
     public void finds_no_features_when_explicit_package_has_nothnig() throws IOException, InitializationError {
-        new Cucumber(ExplicitFeaturePathWithNoFeatures.class);
+    	Cucumber cucumber = new Cucumber(ExplicitFeaturePathWithNoFeatures.class);
+    	assertEquals(0, cucumber.getChildren().size());
     }
 
     @RunWith(Cucumber.class)

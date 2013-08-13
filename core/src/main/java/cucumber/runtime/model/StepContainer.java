@@ -29,22 +29,18 @@ public class StepContainer {
 
     void format(Formatter formatter) {
         statement.replay(formatter);
-    }
-
-    void formatSteps(Formatter formatter) {
         for (Step step : getSteps()) {
             formatter.step(step);
         }
     }
 
-    void runSteps(Formatter formatter, Reporter reporter, Runtime runtime) {
+    void runSteps(Reporter reporter, Runtime runtime) {
         for (Step step : getSteps()) {
-            runStep(step, formatter, reporter, runtime);
+            runStep(step, reporter, runtime);
         }
     }
 
-    void runStep(Step step, Formatter formatter, Reporter reporter, Runtime runtime) {
-        formatter.step(step);
+    void runStep(Step step, Reporter reporter, Runtime runtime) {
         runtime.runStep(cucumberFeature.getUri(), step, reporter, cucumberFeature.getI18n());
     }
 }

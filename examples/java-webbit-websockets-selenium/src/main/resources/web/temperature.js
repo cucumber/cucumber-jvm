@@ -13,6 +13,7 @@ window.onload = function () {
             }, 0);
         };
     }
+
     setupEvent('celcius');
     setupEvent('fahrenheit');
 };

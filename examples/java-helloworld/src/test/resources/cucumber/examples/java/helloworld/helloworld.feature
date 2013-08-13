@@ -1,18 +1,20 @@
 Feature: Hello World
 
+  @bar
   Scenario: Say hello
     Given I have a hello app with "Howdy"
     When I ask it to say hi
     Then it should answer with "Howdy World"
 
+  @foo
   Scenario: Print my shopping list
-    The list should be printed in alphabetical order of the item names
+  The list should be printed in alphabetical order of the item names
 
     Given a shopping list:
       | name  | count |
-      | Milk  |     2 |
-      | Cocoa |     1 |
-      | Soap  |     5 |
+      | Milk  | 2     |
+      | Cocoa | 1     |
+      | Soap  | 5     |
     When I print that list
     Then it should look like:
       """
@@ -22,6 +24,7 @@ Feature: Hello World
 
       """
 
+  @bar
   Scenario: Transformation
     Given today is "Dec 6, 2012"
     And I did laundry 2 days ago

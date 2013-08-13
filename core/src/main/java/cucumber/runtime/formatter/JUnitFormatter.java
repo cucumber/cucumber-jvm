@@ -36,7 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-class JUnitFormatter implements Formatter, Reporter {
+class JUnitFormatter implements Formatter, Reporter, StrictAware {
     private final Writer out;
     private final Document doc;
     private final Element rootElement;
@@ -46,6 +46,7 @@ class JUnitFormatter implements Formatter, Reporter {
 
     public JUnitFormatter(URL out) throws IOException {
         this.out = new UTF8OutputStreamWriter(new URLOutputStream(out));
+        TestCase.treatSkippedAsFailure = false;
         try {
             doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
             rootElement = doc.createElement("testsuite");
@@ -62,13 +63,15 @@ class JUnitFormatter implements Formatter, Reporter {
 
     @Override
     public void background(Background background) {
-        testCase = new TestCase();
-        root = testCase.createElement(doc);
+        if (!isCurrentTestCaseCreatedNameless()) {
+            testCase = new TestCase();
+            root = testCase.createElement(doc);
+        }
     }
 
     @Override
     public void scenario(Scenario scenario) {
-        if (testCase != null && testCase.scenario == null) {
+        if (isCurrentTestCaseCreatedNameless()) {
             testCase.scenario = scenario;
         } else {
             testCase = new TestCase(scenario);
@@ -78,6 +81,10 @@ class JUnitFormatter implements Formatter, Reporter {
         rootElement.appendChild(root);
 
         increaseAttributeValue(rootElement, "tests");
+    }
+
+    private boolean isCurrentTestCaseCreatedNameless() {
+        return testCase != null && testCase.scenario == null;
     }
 
     @Override
@@ -90,6 +97,9 @@ class JUnitFormatter implements Formatter, Reporter {
         try {
             //set up a transformer
             rootElement.setAttribute("failures", String.valueOf(rootElement.getElementsByTagName("failure").getLength()));
+            if (rootElement.getElementsByTagName("testcase").getLength() == 0) {
+                addDummyTestCase(); // to avoid failed Jenkins jobs
+            }
             TransformerFactory transfac = TransformerFactory.newInstance();
             Transformer trans = transfac.newTransformer();
             trans.setOutputProperty(OutputKeys.INDENT, "yes");
@@ -97,8 +107,18 @@ class JUnitFormatter implements Formatter, Reporter {
             DOMSource source = new DOMSource(doc);
             trans.transform(source, result);
         } catch (TransformerException e) {
-            new CucumberException("Error while transforming.", e);
+            throw new CucumberException("Error while transforming.", e);
         }
+    }
+
+    private void addDummyTestCase() {
+        Element dummy = doc.createElement("testcase");
+        dummy.setAttribute("classname", "dummy");
+        dummy.setAttribute("name", "dummy");
+        rootElement.appendChild(dummy);
+        Element skipped = doc.createElement("skipped");
+        skipped.setAttribute("message", "No features found");
+        dummy.appendChild(skipped);
     }
 
     @Override
@@ -110,6 +130,10 @@ class JUnitFormatter implements Formatter, Reporter {
 
     @Override
     public void before(Match match, Result result) {
+        if (!isCurrentTestCaseCreatedNameless()) {
+            testCase = new TestCase();
+            root = testCase.createElement(doc);
+        }
         handleHook(result);
     }
 
@@ -119,10 +143,8 @@ class JUnitFormatter implements Formatter, Reporter {
     }
 
     private void handleHook(Result result) {
-        if (result.getStatus().equals(Result.FAILED)) {
-            testCase.results.add(result);
-        }
-
+        testCase.hookResults.add(result);
+        testCase.updateElement(doc, root);
     }
 
     private void increaseAttributeValue(Element element, String attribute) {
@@ -135,6 +157,7 @@ class JUnitFormatter implements Formatter, Reporter {
 
     @Override
     public void scenarioOutline(ScenarioOutline scenarioOutline) {
+        testCase = null;
     }
 
     @Override
@@ -170,6 +193,11 @@ class JUnitFormatter implements Formatter, Reporter {
     public void syntaxError(String state, String event, List<String> legalEvents, String uri, Integer line) {
     }
 
+    @Override
+    public void setStrict(boolean strict) {
+        TestCase.treatSkippedAsFailure = strict;
+    }
+
     private static class TestCase {
         private static final DecimalFormat NUMBER_FORMAT = (DecimalFormat) NumberFormat.getNumberInstance(Locale.US);
 
@@ -187,8 +215,10 @@ class JUnitFormatter implements Formatter, Reporter {
         Scenario scenario;
         static Feature feature;
         static int examples = 0;
+        static boolean treatSkippedAsFailure = false;
         final List<Step> steps = new ArrayList<Step>();
         final List<Result> results = new ArrayList<Result>();
+        final List<Result> hookResults = new ArrayList<Result>();
 
         private Element createElement(Document doc) {
             return doc.createElement("testcase");
@@ -200,43 +230,31 @@ class JUnitFormatter implements Formatter, Reporter {
         }
 
         public void updateElement(Document doc, Element tc) {
-            long totalDurationNanos = 0;
-            for (Result r : results) {
-                totalDurationNanos += r.getDuration() == null ? 0 : r.getDuration();
-            }
-
-            double totalDurationSeconds = ((double) totalDurationNanos) / 1000000000;
-            String time = NUMBER_FORMAT.format(totalDurationSeconds);
-            tc.setAttribute("time", time);
+            tc.setAttribute("time", calculateTotalDurationString());
 
             StringBuilder sb = new StringBuilder();
+            addStepAndResultListing(sb);
             Result skipped = null, failed = null;
-            for (int i = 0; i < steps.size(); i++) {
-                int length = sb.length();
-                Result result = results.get(i);
+            for (Result result : results) {
                 if ("failed".equals(result.getStatus())) failed = result;
                 if ("undefined".equals(result.getStatus()) || "pending".equals(result.getStatus())) skipped = result;
-                sb.append(steps.get(i).getKeyword());
-                sb.append(steps.get(i).getName());
-                for (int j = 0; sb.length() - length + j < 140; j++) sb.append(".");
-                sb.append(result.getStatus());
-                sb.append("\n");
+            }
+            for (Result result : hookResults) {
+                if (failed == null && "failed".equals(result.getStatus())) failed = result;
             }
             Element child;
             if (failed != null) {
-                sb.append("\nStackTrace:\n");
-                StringWriter sw = new StringWriter();
-                failed.getError().printStackTrace(new PrintWriter(sw));
-                sb.append(sw.toString());
-                child = doc.createElement("failure");
-                child.setAttribute("message", failed.getErrorMessage());
-                child.appendChild(doc.createCDATASection(sb.toString()));
+                addStackTrace(sb, failed);
+                child = createElementWithMessage(doc, sb, "failure", failed.getErrorMessage());
             } else if (skipped != null) {
-                child = doc.createElement("skipped");
-                child.appendChild(doc.createCDATASection(sb.toString()));
+                if (treatSkippedAsFailure) {
+                    child = createElementWithMessage(doc, sb, "failure", "The scenario has pending or undefined step(s)");
+                }
+                else {
+                    child = createElement(doc, sb, "skipped");
+                }
             } else {
-                child = doc.createElement("system-out");
-                child.appendChild(doc.createCDATASection(sb.toString()));
+                child = createElement(doc, sb, "system-out");
             }
 
             Node existingChild = tc.getFirstChild();
@@ -245,6 +263,54 @@ class JUnitFormatter implements Formatter, Reporter {
             } else {
                 tc.replaceChild(child, existingChild);
             }
+        }
+
+        private String calculateTotalDurationString() {
+            long totalDurationNanos = 0;
+            for (Result r : results) {
+                totalDurationNanos += r.getDuration() == null ? 0 : r.getDuration();
+            }
+            for (Result r : hookResults) {
+                totalDurationNanos += r.getDuration() == null ? 0 : r.getDuration();
+            }
+            double totalDurationSeconds = ((double) totalDurationNanos) / 1000000000;
+            return NUMBER_FORMAT.format(totalDurationSeconds);
+        }
+
+        private void addStepAndResultListing(StringBuilder sb) {
+            for (int i = 0; i < steps.size(); i++) {
+                int length = sb.length();
+                String resultStatus = "not executed";
+                if (i < results.size()) {
+                    resultStatus = results.get(i).getStatus();
+                }
+                sb.append(steps.get(i).getKeyword());
+                sb.append(steps.get(i).getName());
+                do {
+                  sb.append(".");
+                } while (sb.length() - length < 76);
+                sb.append(resultStatus);
+                sb.append("\n");
+            }
+        }
+
+        private void addStackTrace(StringBuilder sb, Result failed) {
+            sb.append("\nStackTrace:\n");
+            StringWriter sw = new StringWriter();
+            failed.getError().printStackTrace(new PrintWriter(sw));
+            sb.append(sw.toString());
+        }
+
+        private Element createElementWithMessage(Document doc, StringBuilder sb, String elementType, String message) {
+            Element child = createElement(doc, sb, elementType);
+            child.setAttribute("message", message);
+            return child;
+        }
+
+        private Element createElement(Document doc, StringBuilder sb, String elementType) {
+            Element child = doc.createElement(elementType);
+            child.appendChild(doc.createCDATASection(sb.toString()));
+            return child;
         }
 
     }

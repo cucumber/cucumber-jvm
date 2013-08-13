@@ -4,7 +4,8 @@ Options:
 
     -g, --glue PATH                    Where glue code (step definitions and hooks) is loaded from.
     -f, --format FORMAT[:PATH_OR_URL]  How to format results. Goes to STDOUT unless PATH_OR_URL is specified.
-                                       Available formats: junit, html, pretty, progress, json, json-pretty.
+                                       Built-in FORMAT types: junit, html, pretty, progress, json.
+                                       FORMAT can also be a fully qualified class name.
     -t, --tags TAG_EXPRESSION          Only run scenarios tagged with tags matching TAG_EXPRESSION.
     -n, --name REGEXP                  Only run scenarios whose names match REGEXP.
     -d, --[no-]-dry-run                Skip execution of glue code.

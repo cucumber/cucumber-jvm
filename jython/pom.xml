@@ -5,7 +5,7 @@
         <groupId>info.cukes</groupId>
         <artifactId>cucumber-jvm</artifactId>
         <relativePath>../pom.xml</relativePath>
-        <version>1.1.4-SNAPSHOT</version>
+        <version>1.1.5-SNAPSHOT</version>
     </parent>
 
     <artifactId>cucumber-jython</artifactId>
@@ -20,12 +20,10 @@
         <dependency>
             <groupId>info.cukes</groupId>
             <artifactId>cucumber-jvm-deps</artifactId>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>info.cukes</groupId>
             <artifactId>gherkin</artifactId>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.python</groupId>
@@ -94,7 +92,7 @@
 import groovy.text.SimpleTemplateEngine
 import gherkin.I18n
 
-def unsupported = ["ar", "bg", "el", "en_old", "fa", "he", "hi", "is", "ja", "ko", "pl", "ru", "sr_cyrl", "tl", "tt", "uk", "uz", "zh_cn", "zh_tw"]
+def unsupported = ["ar", "bg", "el", "en_old", "fa", "he", "hi", "is", "ja", "ko", "pa", "pl", "ru", "sr_cyrl", "th", "tl", "tt", "uk", "uz", "zh_cn", "zh_tw"]
 def engine = new SimpleTemplateEngine()
 def templateSource = new File(project.baseDir, "src${File.separator}main${File.separator}code_generator${File.separator}I18n.jython.txt").getText()
 
@@ -117,7 +115,7 @@ I18n.all.each { i18n ->
                         <phase>package</phase>
                         <configuration>
                             <target>
-                                <copy file="${project.build.directory}/${project.build.finalName}.jar" tofile="${basedir}/bin/cucumber-jython.jar" />
+                                <copy file="${project.build.directory}/${project.build.finalName}-shaded.jar" tofile="${basedir}/bin/cucumber-jython-shaded.jar" />
                                 <!-- todo: make an egg -->
                             </target>
                         </configuration>

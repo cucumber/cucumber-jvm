@@ -1,6 +1,5 @@
 package cucumber.runtime.model;
 
-import cucumber.runtime.CucumberException;
 import cucumber.runtime.FeatureBuilder;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.io.Resource;
@@ -15,6 +14,7 @@ import gherkin.formatter.model.Scenario;
 import gherkin.formatter.model.ScenarioOutline;
 import gherkin.formatter.model.Step;
 
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -29,28 +29,32 @@ public class CucumberFeature {
     private I18n i18n;
     private CucumberScenarioOutline currentScenarioOutline;
 
+    public static List<CucumberFeature> load(ResourceLoader resourceLoader, List<String> featurePaths, final List<Object> filters, PrintStream out) {
+        final List<CucumberFeature> cucumberFeatures = load(resourceLoader, featurePaths, filters);
+        if (cucumberFeatures.isEmpty()) {
+            if (featurePaths.isEmpty()) {
+                out.println(String.format("Got no path to feature directory or feature file"));
+            } else if (filters.isEmpty()) {
+                out.println(String.format("No features found at %s", featurePaths));
+            } else {
+                out.println(String.format("None of the features at %s matched the filters: %s", featurePaths, filters));
+            }
+        }
+        return cucumberFeatures;
+    }
+
     public static List<CucumberFeature> load(ResourceLoader resourceLoader, List<String> featurePaths, final List<Object> filters) {
         final List<CucumberFeature> cucumberFeatures = new ArrayList<CucumberFeature>();
         final FeatureBuilder builder = new FeatureBuilder(cucumberFeatures);
-        boolean resourceFound = false;
         for (String featurePath : featurePaths) {
             Iterable<Resource> resources = resourceLoader.resources(featurePath, ".feature");
             for (Resource resource : resources) {
-                resourceFound = true;
                 builder.parse(resource, filters);
-            }
-        }
-        if (cucumberFeatures.isEmpty()) {
-            if (resourceFound) {
-                throw new CucumberException(String.format("None of the features at %s matched the filters: %s", featurePaths, filters));
-            } else {
-                throw new CucumberException(String.format("No features found at %s", featurePaths));
             }
         }
         Collections.sort(cucumberFeatures, new CucumberFeatureUriComparator());
         return cucumberFeatures;
     }
-
 
     public CucumberFeature(Feature feature, String uri) {
         this.feature = feature;

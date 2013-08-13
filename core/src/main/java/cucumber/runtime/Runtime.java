@@ -1,8 +1,8 @@
 package cucumber.runtime;
 
 import cucumber.api.Pending;
-import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.io.ResourceLoader;
+import cucumber.runtime.io.ResourceLoaderReflections;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.snippets.SummaryPrinter;
 import cucumber.runtime.xstream.LocalizedXStreams;
@@ -10,21 +10,11 @@ import gherkin.I18n;
 import gherkin.formatter.Argument;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
-import gherkin.formatter.model.Comment;
-import gherkin.formatter.model.DataTableRow;
-import gherkin.formatter.model.DocString;
-import gherkin.formatter.model.Match;
-import gherkin.formatter.model.Result;
-import gherkin.formatter.model.Step;
-import gherkin.formatter.model.Tag;
+import gherkin.formatter.model.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.io.PrintStream;
+import java.util.*;
 
 /**
  * This is the main entry point for running Cucumber features.
@@ -42,6 +32,7 @@ public class Runtime implements UnreportedStepExecutor {
     private static final Object DUMMY_ARG = new Object();
     private static final byte ERRORS = 0x1;
 
+    private final SummaryCounter summaryCounter;
     final UndefinedStepsTracker undefinedStepsTracker = new UndefinedStepsTracker();
 
     private final Glue glue;
@@ -62,23 +53,29 @@ public class Runtime implements UnreportedStepExecutor {
     }
 
     public Runtime(ResourceLoader resourceLoader, ClassLoader classLoader, Collection<? extends Backend> backends, RuntimeOptions runtimeOptions) {
-        this.resourceLoader = resourceLoader;
-        this.classLoader = classLoader;
+        this(resourceLoader, classLoader, backends, runtimeOptions, null);
+    }
+
+    public Runtime(ResourceLoader resourceLoader, ClassLoader classLoader, Collection<? extends Backend> backends,
+            RuntimeOptions runtimeOptions, RuntimeGlue optionalGlue) {
         if (backends.isEmpty()) {
             throw new CucumberException("No backends were found. Please make sure you have a backend module on your CLASSPATH.");
         }
+        this.resourceLoader = resourceLoader;
+        this.classLoader = classLoader;
         this.backends = backends;
-        glue = new RuntimeGlue(undefinedStepsTracker, new LocalizedXStreams(classLoader));
+        this.runtimeOptions = runtimeOptions;
+        this.glue = optionalGlue != null ? optionalGlue : new RuntimeGlue(undefinedStepsTracker, new LocalizedXStreams(classLoader));
+        this.summaryCounter = new SummaryCounter(runtimeOptions.isMonochrome());
 
         for (Backend backend : backends) {
-            backend.loadGlue(glue, runtimeOptions.glue);
+            backend.loadGlue(glue, runtimeOptions.getGlue());
             backend.setUnreportedStepExecutor(this);
         }
-        this.runtimeOptions = runtimeOptions;
     }
 
     private static Collection<? extends Backend> loadBackends(ResourceLoader resourceLoader, ClassLoader classLoader) {
-        return new ClasspathResourceLoader(classLoader).instantiateSubclasses(Backend.class, "cucumber.runtime", new Class[]{ResourceLoader.class}, new Object[]{resourceLoader});
+        return new ResourceLoaderReflections(resourceLoader, classLoader).instantiateSubclasses(Backend.class, "cucumber.runtime", new Class[]{ResourceLoader.class}, new Object[]{resourceLoader});
     }
 
     public void addError(Throwable error) {
@@ -95,8 +92,8 @@ public class Runtime implements UnreportedStepExecutor {
         Formatter formatter = runtimeOptions.formatter(classLoader);
 
         formatter.done();
-        printSummary();
         formatter.close();
+        printSummary();
     }
 
     private void run(CucumberFeature cucumberFeature) {
@@ -121,6 +118,7 @@ public class Runtime implements UnreportedStepExecutor {
     }
 
     public void disposeBackendWorlds() {
+        summaryCounter.addScenario(scenarioResult.getStatus());
         for (Backend backend : backends) {
             backend.disposeWorld();
         }
@@ -139,7 +137,7 @@ public class Runtime implements UnreportedStepExecutor {
     }
 
     private boolean hasUndefinedOrPendingStepsAndIsStrict() {
-        return runtimeOptions.strict && hasUndefinedOrPendingSteps();
+        return runtimeOptions.isStrict() && hasUndefinedOrPendingSteps();
     }
 
     private boolean hasUndefinedOrPendingSteps() {
@@ -180,7 +178,7 @@ public class Runtime implements UnreportedStepExecutor {
     }
 
     private void runHooks(List<HookDefinition> hooks, Reporter reporter, Set<Tag> tags, boolean isBefore) {
-        if (!runtimeOptions.dryRun) {
+        if (!runtimeOptions.isDryRun()) {
             for (HookDefinition hook : hooks) {
                 runHookIfTagsMatch(hook, reporter, tags, isBefore);
             }
@@ -203,7 +201,7 @@ public class Runtime implements UnreportedStepExecutor {
             } finally {
                 long duration = System.nanoTime() - start;
                 Result result = new Result(status, duration, error, DUMMY_ARG);
-                scenarioResult.add(result);
+                addHookToCounterAndResult(result);
                 if (isBefore) {
                     reporter.before(match, result);
                 } else {
@@ -240,7 +238,9 @@ public class Runtime implements UnreportedStepExecutor {
             match = glue.stepDefinitionMatch(uri, step, i18n);
         } catch (AmbiguousStepDefinitionsException e) {
             reporter.match(e.getMatches().get(0));
-            reporter.result(new Result(Result.FAILED, 0L, e, DUMMY_ARG));
+            Result result = new Result(Result.FAILED, 0L, e, DUMMY_ARG);
+            reporter.result(result);
+            addStepToCounterAndResult(result);
             addError(e);
             skipNextStep = true;
             return;
@@ -251,16 +251,17 @@ public class Runtime implements UnreportedStepExecutor {
         } else {
             reporter.match(Match.UNDEFINED);
             reporter.result(Result.UNDEFINED);
+            addStepToCounterAndResult(Result.UNDEFINED);
             skipNextStep = true;
             return;
         }
 
-        if (runtimeOptions.dryRun) {
+        if (runtimeOptions.isDryRun()) {
             skipNextStep = true;
         }
 
         if (skipNextStep) {
-            scenarioResult.add(Result.SKIPPED);
+            addStepToCounterAndResult(Result.SKIPPED);
             reporter.result(Result.SKIPPED);
         } else {
             String status = Result.PASSED;
@@ -276,7 +277,7 @@ public class Runtime implements UnreportedStepExecutor {
             } finally {
                 long duration = System.nanoTime() - start;
                 Result result = new Result(status, duration, error, DUMMY_ARG);
-                scenarioResult.add(result);
+                addStepToCounterAndResult(result);
                 reporter.result(result);
             }
         }
@@ -290,6 +291,20 @@ public class Runtime implements UnreportedStepExecutor {
     }
 
     public void writeStepdefsJson() throws IOException {
-        glue.writeStepdefsJson(runtimeOptions.featurePaths, runtimeOptions.dotCucumber);
+        glue.writeStepdefsJson(runtimeOptions.getFeaturePaths(), runtimeOptions.getDotCucumber());
+    }
+
+    public void printSummary(PrintStream out) {
+        summaryCounter.printSummary(out);
+    }
+
+    private void addStepToCounterAndResult(Result result) {
+        scenarioResult.add(result);
+        summaryCounter.addStep(result);
+    }
+
+    private void addHookToCounterAndResult(Result result) {
+        scenarioResult.add(result);
+        summaryCounter.addHookTime(result.getDuration());
     }
 }

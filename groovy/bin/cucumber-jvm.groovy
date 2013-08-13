@@ -1,3 +1,4 @@
-scriptDir = new File(getClass().protectionDomain.codeSource.location.path).getParent();
-if (this.class.classLoader.rootLoader) this.class.classLoader.rootLoader.addURL(new File(scriptDir, "cucumber-groovy.jar").toURL())
+#!/usr/bin/env groovy
+__directory = new File(getClass().getProtectionDomain().getCodeSource().getLocation().getPath()).getParent();
+this.class.classLoader.addURL(new File(__directory, "cucumber-groovy-shaded.jar").toURL())
 this.class.classLoader.loadClass("cucumber.api.cli.Main").main(args)
