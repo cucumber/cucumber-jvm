@@ -1,5 +1,6 @@
 ## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.1.4...master)
 
+* [Core] Bugfix: StringIndexOutOfBoundsException when optional argument not present. ([#394](https://github.com/cucumber/cucumber-jvm/issues/394), [#558](https://github.com/cucumber/cucumber-jvm/pull/558) Guy Burton)
 * [Java, Jython] New `--snippet [underscore|camelcase]` option for more control over snippet style. ([#561](https://github.com/cucumber/cucumber-jvm/pull/561), [302](https://github.com/cucumber/cucumber-jvm/pull/302) Márton Mészáros, Aslak Hellesøy)
 * [Windows] Use uri instead of path in CucumberFeature ([#562](https://github.com/cucumber/cucumber-jvm/pull/562) Björn Rasmusson)
 
