@@ -22,11 +22,14 @@ public class UndefinedStepsTracker {
      * @return a list of code snippets that the developer can use to implement undefined steps.
      *         This should be displayed after a run.
      */
-    public List<String> getSnippets(Iterable<? extends Backend> backends) {
+    public List<String> getSnippets(Iterable<? extends Backend> backends, SnippetType type) {
         // TODO: Convert "And" and "But" to the Given/When/Then keyword above in the Gherkin source.
         List<String> snippets = new ArrayList<String>();
         for (Step step : undefinedSteps) {
             for (Backend backend : backends) {
+                if(backend instanceof SnippetTypeAwareBackend) {
+                    ((SnippetTypeAwareBackend) backend).setSnippetType(type);
+                }
                 String snippet = backend.getSnippet(step);
                 if (snippet == null) {
                     throw new NullPointerException("null snippet");
@@ -37,6 +40,15 @@ public class UndefinedStepsTracker {
             }
         }
         return snippets;
+    }
+
+    /**
+     * @param backends what backends we want snippets for
+     * @return a list of code snippets that the developer can use to implement undefined steps.
+     *         This should be displayed after a run.
+     */
+    public List<String> getSnippets(Iterable<? extends Backend> backends) {
+        return getSnippets(backends, SnippetType.getDefault());
     }
 
     public void storeStepKeyword(Step step, I18n i18n) {

@@ -28,6 +28,7 @@ public class RuntimeOptionsFactory {
         addStrict(options, args);
         addName(options, args);
         addDotCucumber(options, args);
+        addSnippets(options, args);
 
         RuntimeOptions runtimeOptions = new RuntimeOptions(System.getProperties(), args.toArray(new String[args.size()]));
 
@@ -51,6 +52,13 @@ public class RuntimeOptionsFactory {
                     args.add(name);
                 }
             }
+        }
+    }
+
+    private void addSnippets(Cucumber.Options options, List<String> args) {
+        if (options != null) {
+            args.add("--snippets");
+            args.add(options.snippets().toString());
         }
     }
 

@@ -162,7 +162,7 @@ public class Runtime implements UnreportedStepExecutor {
     }
 
     public List<String> getSnippets() {
-        return undefinedStepsTracker.getSnippets(backends);
+        return undefinedStepsTracker.getSnippets(backends, runtimeOptions.getSnippetType());
     }
 
     public Glue getGlue() {
