@@ -19,7 +19,8 @@ public class JdkPatternArgumentMatcher {
         if (matcher.lookingAt()) {
             List<Argument> arguments = new ArrayList<Argument>(matcher.groupCount());
             for (int i = 1; i <= matcher.groupCount(); i++) {
-                arguments.add(new Argument(matcher.start(i), matcher.group(i)));
+                int startIndex = matcher.start(i);
+                arguments.add(new Argument(startIndex == -1 ? null : startIndex, matcher.group(i)));
             }
             return arguments;
         } else {

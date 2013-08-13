@@ -47,6 +47,19 @@ public class JdkPatternArgumentMatcherTest {
         assertEquals(1, matcher.argumentsFrom("I wait for 30 seconds").size());
     }
 
+    @Test
+    public void canHandleVariableNumberOfArguments() {
+        JdkPatternArgumentMatcher matcher = new JdkPatternArgumentMatcher(Pattern.compile("I wait for (.+) seconds|I wait for some time"));
+
+        List<Argument> arguments = matcher.argumentsFrom("I wait for 30 seconds to be sure");
+        List<Argument> optionalArguments = matcher.argumentsFrom("I wait for some time");
+
+        assertEquals(1, arguments.size());
+        assertEquals(1, optionalArguments.size());
+        assertNull(matcher.argumentsFrom("I wait for some time").get(0).getOffset());
+        assertNull(matcher.argumentsFrom("I wait for some time").get(0).getVal());
+    }
+
     private void assertVariables(String regex, String string, String v1, Integer pos1, String v2, Integer pos2) throws UnsupportedEncodingException {
         List<Argument> args = new JdkPatternArgumentMatcher(Pattern.compile(regex)).argumentsFrom(string);
         assertEquals(2, args.size());
