@@ -22,12 +22,12 @@ nexus.properties
 pom.xml.releaseBackup
 release.properties
 *.ser
+dependency-reduced-pom.xml
+*~
+libpeerconnection.log
 
 # OS generated files
 .DS_Store*
 ehthumbs.db
 Icon?
 Thumbs.db
-dependency-reduced-pom.xml
-*~
-libpeerconnection.log
