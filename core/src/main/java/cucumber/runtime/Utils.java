@@ -1,7 +1,5 @@
 package cucumber.runtime;
 
-import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -92,5 +90,16 @@ public class Utils {
         } catch (MalformedURLException e) {
             throw new CucumberException("Bad URL:" + pathOrUrl, e);
         }
+    }
+
+    public static String htmlEscape(String s) {
+        // https://www.owasp.org/index.php/XSS_%28Cross_Site_Scripting%29_Prevention_Cheat_Sheet
+        return s
+                .replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;")
+                .replace("\"", "&quot;")
+                .replace("'", "&#x27;")
+                .replace("/", "&#x2F;");
     }
 }

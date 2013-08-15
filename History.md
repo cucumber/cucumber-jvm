@@ -1,5 +1,6 @@
 ## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.1.4...master)
 
+* [TestNG] New TestNG integration. ([#441](https://github.com/cucumber/cucumber-jvm/issues/441), [#526](https://github.com/cucumber/cucumber-jvm/pull/526) Dmytro Chyzhykov)
 * [Core] Implemented rerun formatter. ([#495](https://github.com/cucumber/cucumber-jvm/issues/495), [#524](https://github.com/cucumber/cucumber-jvm/pull/524) Alpar Gal)
 * [Java,Needle] New DI engine: Needle. ([#496](https://github.com/cucumber/cucumber-jvm/issues/496), [#500](https://github.com/cucumber/cucumber-jvm/pull/500) Jan Galinski)
 * [Core] Bugfix: StringIndexOutOfBoundsException when optional argument not present. ([#394](https://github.com/cucumber/cucumber-jvm/issues/394), [#558](https://github.com/cucumber/cucumber-jvm/pull/558) Guy Burton)
