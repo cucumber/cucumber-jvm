@@ -99,15 +99,6 @@
       },
       {
         "id": "feature-3;scenariooutline-1",
-        "before": [
-          {
-            "result": {
-              "duration": 1234,
-              "status": "passed"
-            },
-            "match": {}
-          }
-        ],
         "description": "",
         "name": "ScenarioOutline_1",
         "keyword": "Scenario Outline",
@@ -389,6 +380,15 @@
       },
       {
         "id": "feature-3;scenario-2",
+        "before": [
+          {
+            "result": {
+              "duration": 1234,
+              "status": "passed"
+            },
+            "match": {}
+          }
+        ],
         "description": "",
         "name": "Scenario_2",
         "keyword": "Scenario",
