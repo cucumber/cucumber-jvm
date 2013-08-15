@@ -135,12 +135,17 @@ class HTMLFormatter implements Formatter, Reporter {
 
     @Override
     public void embedding(String mimeType, byte[] data) {
-        // Creating a file instead of using data urls to not clutter the js file
-        String extension = MIME_TYPES_EXTENSIONS.get(mimeType);
-        if (extension != null) {
-            StringBuilder fileName = new StringBuilder("embedded").append(embeddedIndex++).append(".").append(extension);
-            writeBytesAndClose(data, reportFileOutputStream(fileName.toString()));
-            jsFunctionCall("embedding", mimeType, fileName);
+        if(mimeType.startsWith("text/")) {
+            // just pass straight to the formatter to output in the html
+            jsFunctionCall("embedding", mimeType, new String(data));
+        } else {
+            // Creating a file instead of using data urls to not clutter the js file
+            String extension = MIME_TYPES_EXTENSIONS.get(mimeType);
+            if (extension != null) {
+                StringBuilder fileName = new StringBuilder("embedded").append(embeddedIndex++).append(".").append(extension);
+                writeBytesAndClose(data, reportFileOutputStream(fileName.toString()));
+                jsFunctionCall("embedding", mimeType, fileName);
+            }
         }
     }
 
