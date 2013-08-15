@@ -1,5 +1,6 @@
 ## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.1.4...master)
 
+* [Core] Output embedded text in HTML report ([#501](https://github.com/cucumber/cucumber-jvm/pull/501) Tom Dunstan)
 * [Core] Fix for Lexing Error message not useful ([#519](https://github.com/cucumber/cucumber-jvm/issues/519), [#523](https://github.com/cucumber/cucumber-jvm/pull/523) Alpar Gal)
 * [TestNG] New TestNG integration. ([#441](https://github.com/cucumber/cucumber-jvm/issues/441), [#526](https://github.com/cucumber/cucumber-jvm/pull/526) Dmytro Chyzhykov)
 * [Core] Implemented rerun formatter. ([#495](https://github.com/cucumber/cucumber-jvm/issues/495), [#524](https://github.com/cucumber/cucumber-jvm/pull/524) Alpar Gal)
