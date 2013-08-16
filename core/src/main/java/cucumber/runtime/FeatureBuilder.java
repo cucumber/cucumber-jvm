@@ -120,7 +120,7 @@ public class FeatureBuilder implements Formatter {
         try {
             parser.parse(gherkin, convertPathToUri(resource.getPath()), 0);
         } catch (Exception e) {
-            throw new CucumberException(String.format("Error parsing feature file %s", resource.getPath()), e);
+            throw new CucumberException(String.format("Error parsing feature file %s", convertPathToUri(resource.getPath())), e);
         }
         I18n i18n = parser.getI18nLanguage();
         if (currentCucumberFeature != null) {

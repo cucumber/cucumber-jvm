@@ -9,6 +9,7 @@ import org.junit.runner.notification.RunNotifier;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -32,10 +33,12 @@ public class RerunFormatterTest {
         assertOnOutput("cucumber/runtime/java/formatter/exaple-table.feature:6 cucumber/runtime/java/formatter/rerun_failure.feature:8:14:20 cucumber/runtime/java/formatter/rerun_failure2.feature:11");
     }
 
-    private void assertOnOutput(String expectedMessage) {
+    private void assertOnOutput(String expectedMessage) throws IOException {
 
         try {
-            String output = FixJava.readReader(new FileReader(TARGET_SAMPLE_OUTPUT));
+            final FileReader fileReader = new FileReader(TARGET_SAMPLE_OUTPUT);
+            String output = FixJava.readReader(fileReader);
+            fileReader.close();
             assertEquals(expectedMessage, output);
         } catch (FileNotFoundException e) {
             fail("Rerun formatter output not available " + e.getMessage());
