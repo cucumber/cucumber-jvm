@@ -70,6 +70,13 @@ public class SpringFactory implements ObjectFactory {
     @Override
     public void stop() {
         //notify all associated TestContextManager instances that we've finished a test class
+        processTestContextManagers();
+
+        GlueCodeContext.INSTANCE.stop();
+        applicationContext.getBeanFactory().destroySingletons();
+    }
+
+    private void processTestContextManagers() {
         for (TestContextManager contextManager : contextManagerMap.values()) {
             try {
                 contextManager.afterTestClass();
@@ -78,9 +85,6 @@ public class SpringFactory implements ObjectFactory {
             }
         }
         contextManagerMap.clear();
-
-        GlueCodeContext.INSTANCE.stop();
-        applicationContext.getBeanFactory().destroySingletons();
     }
 
     @Override
