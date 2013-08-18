@@ -1,7 +1,8 @@
 package cucumber.runtime.java.spring;
 
-import cucumber.runtime.java.ObjectFactory;
 import org.junit.Test;
+
+import cucumber.runtime.java.ObjectFactory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -60,6 +61,38 @@ public class SpringFactoryTest {
 
         assertNotNull(stepdef);
         assertTrue(stepdef.isAutowired());
+    }
+
+    @Test
+    public void shouldRespectDirtiesContextAnnotationsInStepDefs() {
+        final ObjectFactory factory = new SpringFactory();
+        factory.addClass(DirtiesContextBellyStepdefs.class);
+
+        // Scenario 1
+        factory.start();
+        final BellyBean o1 = factory.getInstance(DirtiesContextBellyStepdefs.class).getBellyBean();
+
+        factory.stop();
+
+        // Scenario 2
+        factory.start();
+        final BellyBean o2 = factory.getInstance(DirtiesContextBellyStepdefs.class).getBellyBean();
+        factory.stop();
+
+        assertNotNull(o1);
+        assertNotNull(o2);
+        assertNotSame(o1, o2);
+    }
+
+    @Test
+    public void shouldNotFailOnNonSpringStepDefs() {
+        final ObjectFactory factory = new SpringFactory();
+        factory.addClass(UnusedGlue.class);
+        factory.start();
+        NonSpringGlue stepdef = factory.getInstance(NonSpringGlue.class);
+        factory.stop();
+
+        assertNotNull(stepdef);
     }
 
     @Test

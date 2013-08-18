@@ -1,16 +1,20 @@
 package cucumber.runtime.java.spring;
 
-import cucumber.runtime.CucumberException;
-import cucumber.runtime.java.ObjectFactory;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestContextManager;
 
-import java.util.Collection;
-import java.util.HashSet;
+import cucumber.runtime.CucumberException;
+import cucumber.runtime.java.ObjectFactory;
 
 /**
  * Spring based implementation of ObjectFactory.
@@ -34,6 +38,7 @@ public class SpringFactory implements ObjectFactory {
     private static ConfigurableApplicationContext applicationContext;
 
     private final Collection<Class<?>> stepClasses = new HashSet<Class<?>>();
+    private final Map<Class<?>, TestContextManager> contextManagerMap = new HashMap<Class<?>, TestContextManager>();
 
     public SpringFactory() {
     }
@@ -54,7 +59,6 @@ public class SpringFactory implements ObjectFactory {
                     .setScope(GlueCodeScope.NAME)
                     .getBeanDefinition();
             registry.registerBeanDefinition(stepClass.getName(), beanDefinition);
-
         }
     }
 
@@ -65,6 +69,16 @@ public class SpringFactory implements ObjectFactory {
 
     @Override
     public void stop() {
+        //notify all associated TestContextManager instances that we've finished a test class
+        for (TestContextManager contextManager : contextManagerMap.values()) {
+            try {
+                contextManager.afterTestClass();
+            } catch (Exception e) {
+                throw new CucumberException(e.getMessage(), e);
+            }
+        }
+        contextManagerMap.clear();
+
         GlueCodeContext.INSTANCE.stop();
         applicationContext.getBeanFactory().destroySingletons();
     }
@@ -80,8 +94,15 @@ public class SpringFactory implements ObjectFactory {
     private <T> T getTestInstance(final Class<T> type) {
         try {
             T instance = createTest(type);
-            TestContextManager contextManager = new TestContextManager(type);
-            contextManager.prepareTestInstance(instance);
+
+            if (dependsOnSpringContext(type)) {
+                TestContextManager contextManager = new TestContextManager(type);
+                contextManager.prepareTestInstance(instance);
+                contextManager.beforeTestClass();
+
+                contextManagerMap.put(type, contextManager);
+            }
+
             return instance;
         } catch (Exception e) {
             throw new CucumberException(e.getMessage(), e);
@@ -93,4 +114,7 @@ public class SpringFactory implements ObjectFactory {
         return (T) type.getConstructors()[0].newInstance();
     }
 
+    private boolean dependsOnSpringContext(Class<?> type) {
+        return type.isAnnotationPresent(ContextConfiguration.class);
+    }
 }
