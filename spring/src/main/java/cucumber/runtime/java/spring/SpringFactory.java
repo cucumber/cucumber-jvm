@@ -1,5 +1,7 @@
 package cucumber.runtime.java.spring;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -38,7 +40,7 @@ public class SpringFactory implements ObjectFactory {
     private static ConfigurableApplicationContext applicationContext;
 
     private final Collection<Class<?>> stepClasses = new HashSet<Class<?>>();
-    private final Map<Class<?>, TestContextManager> contextManagerMap = new HashMap<Class<?>, TestContextManager>();
+    private final Map<Class<?>, TestContextManager> contextManagersByClass = new HashMap<Class<?>, TestContextManager>();
 
     public SpringFactory() {
     }
@@ -69,22 +71,58 @@ public class SpringFactory implements ObjectFactory {
 
     @Override
     public void stop() {
-        //notify all associated TestContextManager instances that we've finished a test class
-        processTestContextManagers();
+        notifyContextManagersAboutTestClassFinished();
 
         GlueCodeContext.INSTANCE.stop();
         applicationContext.getBeanFactory().destroySingletons();
     }
 
-    private void processTestContextManagers() {
-        for (TestContextManager contextManager : contextManagerMap.values()) {
+    private void notifyContextManagersAboutTestClassFinished() {
+        Map<Class<?>, Exception> exceptionsThrown = new HashMap<Class<?>, Exception>();
+
+        for (Map.Entry<Class<?>, TestContextManager> classTestContextManagerEntry : contextManagersByClass
+                .entrySet()) {
             try {
-                contextManager.afterTestClass();
+                classTestContextManagerEntry.getValue().afterTestClass();
             } catch (Exception e) {
-                throw new CucumberException(e.getMessage(), e);
+                exceptionsThrown.put(classTestContextManagerEntry.getKey(), e);
+
+
             }
         }
-        contextManagerMap.clear();
+        contextManagersByClass.clear();
+
+        if (exceptionsThrown.size() == 1) {
+            //ony one exception, throw an exception with the correct cause
+            Exception e = exceptionsThrown.values().iterator().next();
+            throw new CucumberException(e.getMessage(), e);
+        } else if (exceptionsThrown.size() > 1) {
+            //multiple exceptions but we can only have one cause, put relevant info in the exception message
+            //to not lose the interesting data
+            throw new CucumberException(getMultipleExceptionMessage(exceptionsThrown));
+        }
+    }
+
+    private String getMultipleExceptionMessage(Map<Class<?>, Exception> exceptionsThrow) {
+        StringBuilder exceptionsThrown = new StringBuilder(1000);
+        exceptionsThrown.append("Multiple exceptions occurred during processing of the TestExecutionListeners\n\n");
+
+        for (Map.Entry<Class<?>, Exception> classExceptionEntry : exceptionsThrow.entrySet()) {
+
+            exceptionsThrown.append("Exception during processing of TestExecutionListeners of ");
+            exceptionsThrown.append(classExceptionEntry.getKey());
+            exceptionsThrown.append('\n');
+            exceptionsThrown.append(classExceptionEntry.getValue().toString());
+            exceptionsThrown.append('\n');
+
+            StringWriter stackTraceStringWriter = new StringWriter();
+            PrintWriter stackTracePrintWriter = new PrintWriter(stackTraceStringWriter);
+            classExceptionEntry.getValue().printStackTrace(stackTracePrintWriter);
+            exceptionsThrown.append(stackTraceStringWriter.toString());
+            exceptionsThrown.append('\n');
+
+        }
+        return exceptionsThrown.toString();
     }
 
     @Override
@@ -104,7 +142,7 @@ public class SpringFactory implements ObjectFactory {
                 contextManager.prepareTestInstance(instance);
                 contextManager.beforeTestClass();
 
-                contextManagerMap.put(type, contextManager);
+                contextManagersByClass.put(type, contextManager);
             }
 
             return instance;

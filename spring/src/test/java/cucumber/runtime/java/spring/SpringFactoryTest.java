@@ -66,17 +66,17 @@ public class SpringFactoryTest {
     @Test
     public void shouldRespectDirtiesContextAnnotationsInStepDefs() {
         final ObjectFactory factory = new SpringFactory();
-        factory.addClass(DirtiesContextBellyStepdefs.class);
+        factory.addClass(DirtiesContextBellyStepDefs.class);
 
         // Scenario 1
         factory.start();
-        final BellyBean o1 = factory.getInstance(DirtiesContextBellyStepdefs.class).getBellyBean();
+        final BellyBean o1 = factory.getInstance(DirtiesContextBellyStepDefs.class).getBellyBean();
 
         factory.stop();
 
         // Scenario 2
         factory.start();
-        final BellyBean o2 = factory.getInstance(DirtiesContextBellyStepdefs.class).getBellyBean();
+        final BellyBean o2 = factory.getInstance(DirtiesContextBellyStepDefs.class).getBellyBean();
         factory.stop();
 
         assertNotNull(o1);
