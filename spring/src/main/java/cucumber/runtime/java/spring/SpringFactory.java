@@ -1,16 +1,23 @@
 package cucumber.runtime.java.spring;
 
-import cucumber.runtime.CucumberException;
-import cucumber.runtime.java.ObjectFactory;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestContextManager;
 
-import java.util.Collection;
-import java.util.HashSet;
+import cucumber.runtime.CucumberException;
+import cucumber.runtime.java.ObjectFactory;
 
 /**
  * Spring based implementation of ObjectFactory.
@@ -32,8 +39,10 @@ import java.util.HashSet;
 public class SpringFactory implements ObjectFactory {
 
     private static ConfigurableApplicationContext applicationContext;
+    private static ConfigurableListableBeanFactory beanFactory;
 
     private final Collection<Class<?>> stepClasses = new HashSet<Class<?>>();
+    private final Map<Class<?>, TestContextManager> contextManagersByClass = new HashMap<Class<?>, TestContextManager>();
 
     public SpringFactory() {
     }
@@ -41,6 +50,7 @@ public class SpringFactory implements ObjectFactory {
     static {
         applicationContext = new GenericXmlApplicationContext("cucumber/runtime/java/spring/cucumber-glue.xml");
         applicationContext.registerShutdownHook();
+        beanFactory = applicationContext.getBeanFactory();
     }
 
     @Override
@@ -54,7 +64,6 @@ public class SpringFactory implements ObjectFactory {
                     .setScope(GlueCodeScope.NAME)
                     .getBeanDefinition();
             registry.registerBeanDefinition(stepClass.getName(), beanDefinition);
-
         }
     }
 
@@ -65,23 +74,89 @@ public class SpringFactory implements ObjectFactory {
 
     @Override
     public void stop() {
+        notifyContextManagersAboutTestClassFinished();
+
         GlueCodeContext.INSTANCE.stop();
-        applicationContext.getBeanFactory().destroySingletons();
+        beanFactory.destroySingletons();
+    }
+
+    private void notifyContextManagersAboutTestClassFinished() {
+        Map<Class<?>, Exception> exceptionsThrown = new HashMap<Class<?>, Exception>();
+
+        for (Map.Entry<Class<?>, TestContextManager> classTestContextManagerEntry : contextManagersByClass
+                .entrySet()) {
+            try {
+                classTestContextManagerEntry.getValue().afterTestClass();
+            } catch (Exception e) {
+                exceptionsThrown.put(classTestContextManagerEntry.getKey(), e);
+            }
+        }
+
+        contextManagersByClass.clear();
+
+        rethrowExceptionsIfAny(exceptionsThrown);
+    }
+
+    private void rethrowExceptionsIfAny(Map<Class<?>, Exception> exceptionsThrown) {
+        if (exceptionsThrown.isEmpty()) {
+            return;
+        }
+
+        if (exceptionsThrown.size() == 1) {
+            //ony one exception, throw an exception with the correct cause
+            Exception e = exceptionsThrown.values().iterator().next();
+            throw new CucumberException(e.getMessage(), e);
+        }
+
+        //multiple exceptions but we can only have one cause, put relevant info in the exception message
+        //to not lose the interesting data
+        throw new CucumberException(getMultipleExceptionMessage(exceptionsThrown));
+    }
+
+    private String getMultipleExceptionMessage(Map<Class<?>, Exception> exceptionsThrow) {
+        StringBuilder exceptionsThrown = new StringBuilder(1000);
+        exceptionsThrown.append("Multiple exceptions occurred during processing of the TestExecutionListeners\n\n");
+
+        for (Map.Entry<Class<?>, Exception> classExceptionEntry : exceptionsThrow.entrySet()) {
+
+            exceptionsThrown.append("Exception during processing of TestExecutionListeners of ");
+            exceptionsThrown.append(classExceptionEntry.getKey());
+            exceptionsThrown.append('\n');
+            exceptionsThrown.append(classExceptionEntry.getValue().toString());
+            exceptionsThrown.append('\n');
+
+            StringWriter stackTraceStringWriter = new StringWriter();
+            PrintWriter stackTracePrintWriter = new PrintWriter(stackTraceStringWriter);
+            classExceptionEntry.getValue().printStackTrace(stackTracePrintWriter);
+            exceptionsThrown.append(stackTraceStringWriter.toString());
+            exceptionsThrown.append('\n');
+
+        }
+
+        return exceptionsThrown.toString();
     }
 
     @Override
     public <T> T getInstance(final Class<T> type) {
-        if (!applicationContext.getBeanFactory().containsSingleton(type.getName())) {
-            applicationContext.getBeanFactory().registerSingleton(type.getName(), getTestInstance(type));
+        if (!beanFactory.containsSingleton(type.getName())) {
+            beanFactory.registerSingleton(type.getName(), getTestInstance(type));
         }
+
         return applicationContext.getBean(type);
     }
 
     private <T> T getTestInstance(final Class<T> type) {
         try {
             T instance = createTest(type);
-            TestContextManager contextManager = new TestContextManager(type);
-            contextManager.prepareTestInstance(instance);
+
+            if (dependsOnSpringContext(type)) {
+                TestContextManager contextManager = new TestContextManager(type);
+                contextManager.prepareTestInstance(instance);
+                contextManager.beforeTestClass();
+
+                contextManagersByClass.put(type, contextManager);
+            }
+
             return instance;
         } catch (Exception e) {
             throw new CucumberException(e.getMessage(), e);
@@ -93,4 +168,7 @@ public class SpringFactory implements ObjectFactory {
         return (T) type.getConstructors()[0].newInstance();
     }
 
+    private boolean dependsOnSpringContext(Class<?> type) {
+        return type.isAnnotationPresent(ContextConfiguration.class);
+    }
 }
