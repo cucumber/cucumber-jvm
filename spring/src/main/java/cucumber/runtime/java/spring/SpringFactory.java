@@ -118,7 +118,6 @@ public class SpringFactory implements ObjectFactory {
         exceptionsThrown.append("Multiple exceptions occurred during processing of the TestExecutionListeners\n\n");
 
         for (Map.Entry<Class<?>, Exception> classExceptionEntry : exceptionsThrow.entrySet()) {
-
             exceptionsThrown.append("Exception during processing of TestExecutionListeners of ");
             exceptionsThrown.append(classExceptionEntry.getKey());
             exceptionsThrown.append('\n');
