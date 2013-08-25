@@ -7,6 +7,7 @@ import cucumber.runtime.Glue;
 import cucumber.runtime.UnreportedStepExecutor;
 import cucumber.runtime.io.Resource;
 import cucumber.runtime.io.ResourceLoader;
+import cucumber.runtime.snippets.FunctionNameSanitizer;
 import cucumber.runtime.snippets.SnippetGenerator;
 import gherkin.formatter.model.Step;
 import ioke.lang.IokeObject;
@@ -76,8 +77,8 @@ public class IokeBackend implements Backend {
     }
 
     @Override
-    public String getSnippet(Step step) {
-        return snippetGenerator.getSnippet(step);
+    public String getSnippet(Step step, FunctionNameSanitizer functionNameSanitizer) {
+        return snippetGenerator.getSnippet(step, functionNameSanitizer);
     }
 
     public void addStepDefinition(Object iokeStepDefObject) throws Throwable {

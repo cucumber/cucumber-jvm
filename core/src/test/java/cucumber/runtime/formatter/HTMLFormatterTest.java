@@ -65,6 +65,7 @@ public class HTMLFormatterTest {
     public void included_embedding() throws IOException {
         String reportJs = FixJava.readReader(new InputStreamReader(new URL(outputDir, "report.js").openStream(), "UTF-8"));
         assertContains("formatter.embedding(\"image/png\", \"embedded0.png\");", reportJs);
+        assertContains("formatter.embedding(\"text/plain\", \"dodgy stack trace here\");", reportJs);
     }
 
     private void assertContains(String substring, String string) {
@@ -78,6 +79,7 @@ public class HTMLFormatterTest {
         f.uri("some\\windows\\path\\some.feature");
         f.scenario(new Scenario(Collections.<Comment>emptyList(), Collections.<Tag>emptyList(), "Scenario", "some cukes", "", 10, "id"));
         f.embedding("image/png", "fakedata".getBytes("US-ASCII"));
+        f.embedding("text/plain", "dodgy stack trace here".getBytes("US-ASCII"));
         f.done();
         f.close();
     }

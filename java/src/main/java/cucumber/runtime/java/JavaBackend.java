@@ -4,6 +4,7 @@ import cucumber.api.java.After;
 import cucumber.api.java.Before;
 import cucumber.runtime.*;
 import cucumber.runtime.io.*;
+import cucumber.runtime.snippets.FunctionNameSanitizer;
 import cucumber.runtime.snippets.SnippetGenerator;
 import gherkin.formatter.model.Step;
 
@@ -13,7 +14,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public class JavaBackend implements Backend {
-    private final SnippetGenerator snippetGenerator = new SnippetGenerator(new JavaSnippet());
+    private SnippetGenerator snippetGenerator = new SnippetGenerator(new JavaSnippet());
     private final ObjectFactory objectFactory;
     private final Reflections reflections;
 
@@ -90,8 +91,8 @@ public class JavaBackend implements Backend {
     }
 
     @Override
-    public String getSnippet(Step step) {
-        return snippetGenerator.getSnippet(step);
+    public String getSnippet(Step step, FunctionNameSanitizer functionNameSanitizer) {
+        return snippetGenerator.getSnippet(step, functionNameSanitizer);
     }
 
     void addStepDefinition(Annotation annotation, Method method) {

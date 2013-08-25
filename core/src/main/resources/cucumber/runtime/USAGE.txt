@@ -11,6 +11,7 @@ Options:
     -d, --[no-]-dry-run                Skip execution of glue code.
     -m, --[no-]-monochrome             Don't colour terminal output.
     -s, --[no-]-strict                 Treat undefined and pending steps as errors.
+        --snippets                     Snippet name: underscore, camelcase
         --dotcucumber PATH_OR_URL      Where to write out runtime information. PATH_OR_URL can be a file system
                                        path or a URL.
     -v, --version                      Print version.

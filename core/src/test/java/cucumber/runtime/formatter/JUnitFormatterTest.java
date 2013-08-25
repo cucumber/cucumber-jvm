@@ -11,6 +11,7 @@ import cucumber.runtime.TestHelper;
 import cucumber.runtime.Utils;
 import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
+import cucumber.runtime.snippets.FunctionNameSanitizer;
 import gherkin.I18n;
 import gherkin.formatter.model.Feature;
 import gherkin.formatter.model.Match;
@@ -18,7 +19,7 @@ import gherkin.formatter.model.Result;
 import gherkin.formatter.model.Scenario;
 import gherkin.formatter.model.Step;
 import gherkin.formatter.model.Tag;
-
+import junit.framework.AssertionFailedError;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Test;
@@ -43,8 +44,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.Set;
-
-import junit.framework.AssertionFailedError;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertTrue;
@@ -89,10 +88,10 @@ public class JUnitFormatterTest {
     public void should_format_passed_scenario() throws Throwable {
         CucumberFeature feature = TestHelper.feature("path/test.feature",
                 "Feature: feature name\n" +
-                "  Scenario: scenario name\n" +
-                "    Given first step\n" +
-                "    When second step\n" +
-                "    Then third step\n");
+                        "  Scenario: scenario name\n" +
+                        "    Given first step\n" +
+                        "    When second step\n" +
+                        "    Then third step\n");
         Map<String, String> stepsToResult = new HashMap<String, String>();
         stepsToResult.put("first step", "passed");
         stepsToResult.put("second step", "passed");
@@ -101,7 +100,7 @@ public class JUnitFormatterTest {
         String formatterOutput = runFeatureWithJUnitFormatter(feature, stepsToResult);
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
-                "<testsuite tests=\"1\" failures=\"0\">\n" +
+                "<testsuite failures=\"0\" name=\"cucumber.runtime.formatter.JUnitFormatter\" skipped=\"0\" tests=\"1\" time=\"0.0\">\n" +
                 "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0.0\">\n" +
                 "        <system-out><![CDATA[" +
                 "Given first step............................................................passed\n" +
@@ -117,10 +116,10 @@ public class JUnitFormatterTest {
     public void should_format_pending_scenario() throws Throwable {
         CucumberFeature feature = TestHelper.feature("path/test.feature",
                 "Feature: feature name\n" +
-                "  Scenario: scenario name\n" +
-                "    Given first step\n" +
-                "    When second step\n" +
-                "    Then third step\n");
+                        "  Scenario: scenario name\n" +
+                        "    Given first step\n" +
+                        "    When second step\n" +
+                        "    Then third step\n");
         Map<String, String> stepsToResult = new HashMap<String, String>();
         stepsToResult.put("first step", "pending");
         stepsToResult.put("second step", "skipped");
@@ -129,7 +128,7 @@ public class JUnitFormatterTest {
         String formatterOutput = runFeatureWithJUnitFormatter(feature, stepsToResult);
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
-                "<testsuite tests=\"1\" failures=\"0\">\n" +
+                "<testsuite failures=\"0\" name=\"cucumber.runtime.formatter.JUnitFormatter\" skipped=\"1\" tests=\"1\" time=\"0.0\">\n" +
                 "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0.0\">\n" +
                 "        <skipped><![CDATA[" +
                 "Given first step............................................................pending\n" +
@@ -145,10 +144,10 @@ public class JUnitFormatterTest {
     public void should_format_failed_scenario() throws Throwable {
         CucumberFeature feature = TestHelper.feature("path/test.feature",
                 "Feature: feature name\n" +
-                "  Scenario: scenario name\n" +
-                "    Given first step\n" +
-                "    When second step\n" +
-                "    Then third step\n");
+                        "  Scenario: scenario name\n" +
+                        "    Given first step\n" +
+                        "    When second step\n" +
+                        "    Then third step\n");
         Map<String, String> stepsToResult = new HashMap<String, String>();
         stepsToResult.put("first step", "passed");
         stepsToResult.put("second step", "passed");
@@ -157,7 +156,7 @@ public class JUnitFormatterTest {
         String formatterOutput = runFeatureWithJUnitFormatter(feature, stepsToResult);
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
-                "<testsuite tests=\"1\" failures=\"1\">\n" +
+                "<testsuite failures=\"1\" name=\"cucumber.runtime.formatter.JUnitFormatter\" skipped=\"0\" tests=\"1\" time=\"0.0\">\n" +
                 "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0.0\">\n" +
                 "        <failure message=\"the stack trace\"><![CDATA[" +
                 "Given first step............................................................passed\n" +
@@ -176,10 +175,10 @@ public class JUnitFormatterTest {
     public void should_handle_failure_in_before_hook() throws Throwable {
         CucumberFeature feature = TestHelper.feature("path/test.feature",
                 "Feature: feature name\n" +
-                "  Scenario: scenario name\n" +
-                "    Given first step\n" +
-                "    When second step\n" +
-                "    Then third step\n");
+                        "  Scenario: scenario name\n" +
+                        "    Given first step\n" +
+                        "    When second step\n" +
+                        "    Then third step\n");
         Map<String, String> stepsToResult = new HashMap<String, String>();
         stepsToResult.put("first step", "passed");
         stepsToResult.put("second step", "passed");
@@ -190,7 +189,7 @@ public class JUnitFormatterTest {
         String formatterOutput = runFeatureWithJUnitFormatter(feature, stepsToResult, hooksFailures);
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
-                "<testsuite tests=\"1\" failures=\"1\">\n" +
+                "<testsuite failures=\"1\" name=\"cucumber.runtime.formatter.JUnitFormatter\" skipped=\"0\" tests=\"1\" time=\"0.0\">\n" +
                 "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0.0\">\n" +
                 "        <failure message=\"the stack trace\"><![CDATA[" +
                 "Given first step............................................................skipped\n" +
@@ -209,11 +208,11 @@ public class JUnitFormatterTest {
     public void should_handle_failure_in_before_hook_with_background() throws Throwable {
         CucumberFeature feature = TestHelper.feature("path/test.feature",
                 "Feature: feature name\n" +
-                "  Background: background name\n" +
-                "    Given first step\n" +
-                "  Scenario: scenario name\n" +
-                "    When second step\n" +
-                "    Then third step\n");
+                        "  Background: background name\n" +
+                        "    Given first step\n" +
+                        "  Scenario: scenario name\n" +
+                        "    When second step\n" +
+                        "    Then third step\n");
         Map<String, String> stepsToResult = new HashMap<String, String>();
         stepsToResult.put("first step", "passed");
         stepsToResult.put("second step", "passed");
@@ -224,7 +223,7 @@ public class JUnitFormatterTest {
         String formatterOutput = runFeatureWithJUnitFormatter(feature, stepsToResult, hooksFailures);
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
-                "<testsuite tests=\"1\" failures=\"1\">\n" +
+                "<testsuite failures=\"1\" name=\"cucumber.runtime.formatter.JUnitFormatter\" skipped=\"0\" tests=\"1\" time=\"0.0\">\n" +
                 "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0.0\">\n" +
                 "        <failure message=\"the stack trace\"><![CDATA[" +
                 "Given first step............................................................skipped\n" +
@@ -243,10 +242,10 @@ public class JUnitFormatterTest {
     public void should_handle_failure_in_after_hook() throws Throwable {
         CucumberFeature feature = TestHelper.feature("path/test.feature",
                 "Feature: feature name\n" +
-                "  Scenario: scenario name\n" +
-                "    Given first step\n" +
-                "    When second step\n" +
-                "    Then third step\n");
+                        "  Scenario: scenario name\n" +
+                        "    Given first step\n" +
+                        "    When second step\n" +
+                        "    Then third step\n");
         Map<String, String> stepsToResult = new HashMap<String, String>();
         stepsToResult.put("first step", "passed");
         stepsToResult.put("second step", "passed");
@@ -257,7 +256,7 @@ public class JUnitFormatterTest {
         String formatterOutput = runFeatureWithJUnitFormatter(feature, stepsToResult, hooksFailures);
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
-                "<testsuite tests=\"1\" failures=\"1\">\n" +
+                "<testsuite failures=\"1\" name=\"cucumber.runtime.formatter.JUnitFormatter\" skipped=\"0\" tests=\"1\" time=\"0.0\">\n" +
                 "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0.0\">\n" +
                 "        <failure message=\"the stack trace\"><![CDATA[" +
                 "Given first step............................................................passed\n" +
@@ -294,7 +293,7 @@ public class JUnitFormatterTest {
 
         String actual = new Scanner(new FileInputStream(report), "UTF-8").useDelimiter("\\A").next();
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
-                "<testsuite failures=\"0\" tests=\"1\">\n" +
+                "<testsuite failures=\"0\" name=\"cucumber.runtime.formatter.JUnitFormatter\" skipped=\"0\" tests=\"1\" time=\"0.004\">\n" +
                 "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0.004\">\n" +
                 "        <system-out><![CDATA[" +
                 "keyword step name...........................................................passed\n" +
@@ -325,7 +324,7 @@ public class JUnitFormatterTest {
 
         String actual = new Scanner(new FileInputStream(report), "UTF-8").useDelimiter("\\A").next();
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
-                "<testsuite failures=\"0\" tests=\"1\">\n" +
+                "<testsuite failures=\"0\" tests=\"1\" name=\"cucumber.runtime.formatter.JUnitFormatter\" skipped=\"0\" time=\"0.0\">\n" +
                 "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0.0\">\n" +
                 "        <system-out><![CDATA[" +
                 "keyword step name...........................................................passed\n" +
@@ -333,6 +332,7 @@ public class JUnitFormatterTest {
                 "]]></system-out>\n" +
                 "    </testcase>\n" +
                 "</testsuite>\n";
+        System.out.println("actial = " + actual);
         assertXmlEqual(expected, replaceTimeWithZeroTime(actual));
     }
 
@@ -356,7 +356,7 @@ public class JUnitFormatterTest {
 
         String actual = new Scanner(new FileInputStream(report), "UTF-8").useDelimiter("\\A").next();
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
-                "<testsuite failures=\"0\" tests=\"1\">\n" +
+                "<testsuite failures=\"0\" name=\"cucumber.runtime.formatter.JUnitFormatter\" skipped=\"0\" tests=\"1\" time=\"0.0\">\n" +
                 "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0.0\">\n" +
                 "        <system-out><![CDATA[" +
                 "keyword step name...........................................................passed\n" +
@@ -377,7 +377,7 @@ public class JUnitFormatterTest {
 
         String actual = new Scanner(new FileInputStream(report), "UTF-8").useDelimiter("\\A").next();
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
-                "<testsuite failures=\"0\">\n" +
+                "<testsuite failures=\"0\" name=\"cucumber.runtime.formatter.JUnitFormatter\" skipped=\"0\" time=\"0.0\">\n" +
                 "    <testcase classname=\"dummy\" name=\"dummy\">\n" +
                 "        <skipped message=\"No features found\" />\n" +
                 "    </testcase>\n" +
@@ -404,7 +404,7 @@ public class JUnitFormatterTest {
 
         RuntimeOptions runtimeOptions = new RuntimeOptions(new Properties(), args.toArray(new String[args.size()]));
         Backend backend = mock(Backend.class);
-        when(backend.getSnippet(any(Step.class))).thenReturn("TEST SNIPPET");
+        when(backend.getSnippet(any(Step.class), any(FunctionNameSanitizer.class))).thenReturn("TEST SNIPPET");
         final cucumber.runtime.Runtime runtime = new Runtime(resourceLoader, classLoader, asList(backend), runtimeOptions);
         runtime.run();
         return report;
@@ -416,7 +416,7 @@ public class JUnitFormatterTest {
     }
 
     private String runFeatureWithJUnitFormatter(final CucumberFeature feature, final Map<String, String> stepsToResult,
-            final Set<String> hookFailures) throws Throwable {
+                                                final Set<String> hookFailures) throws Throwable {
         final RuntimeOptions runtimeOptions = new RuntimeOptions(new Properties());
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         final ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
@@ -436,9 +436,11 @@ public class JUnitFormatterTest {
         XMLUnit.setIgnoreWhitespace(true);
         InputStreamReader control = new InputStreamReader(Thread.currentThread().getContextClassLoader().getResourceAsStream(expectedPath), "UTF-8");
         Diff diff = new Diff(control, new FileReader(actual));
-        assertTrue("XML files are similar " + diff, diff.identical());    }
+        assertTrue("XML files are similar " + diff, diff.identical());
+    }
 
     private void assertXmlEqual(String expected, String actual) throws SAXException, IOException {
+        System.out.println("formatterOutput = " + actual);
         XMLUnit.setIgnoreWhitespace(true);
         Diff diff = new Diff(expected, actual);
         assertTrue("XML files are similar " + diff, diff.identical());
@@ -449,7 +451,7 @@ public class JUnitFormatterTest {
     }
 
     private RuntimeGlue createMockedRuntimeGlueThatMatchesTheSteps(Map<String, String> stepsToResult,
-            final Set<String> hookFailures) throws Throwable {
+                                                                   final Set<String> hookFailures) throws Throwable {
         RuntimeGlue glue = mock(RuntimeGlue.class);
         mockSteps(glue, stepsToResult);
         mockHooks(glue, hookFailures);
@@ -460,12 +462,12 @@ public class JUnitFormatterTest {
         for (String stepName : stepsToResult.keySet()) {
             if (!"undefined".equals(stepsToResult.get(stepName))) {
                 StepDefinitionMatch matchStep = mock(StepDefinitionMatch.class);
-                when(glue.stepDefinitionMatch(anyString(), stepWithName(stepName), (I18n)any())).thenReturn(matchStep);
+                when(glue.stepDefinitionMatch(anyString(), stepWithName(stepName), (I18n) any())).thenReturn(matchStep);
                 if ("pending".equals(stepsToResult.get(stepName))) {
-                    doThrow(new PendingException()).when(matchStep).runStep((I18n)any());
+                    doThrow(new PendingException()).when(matchStep).runStep((I18n) any());
                 } else if ("failed".equals(stepsToResult.get(stepName))) {
                     AssertionFailedError error = mockAssertionFailedError();
-                    doThrow(error).when(matchStep).runStep((I18n)any());
+                    doThrow(error).when(matchStep).runStep((I18n) any());
                 } else if (!"passed".equals(stepsToResult.get(stepName)) &&
                         !"skipped".equals(stepsToResult.get(stepName))) {
                     fail("Cannot mock step to the result: " + stepsToResult.get(stepName));
@@ -479,7 +481,7 @@ public class JUnitFormatterTest {
             HookDefinition hook = mock(HookDefinition.class);
             when(hook.matches(anyCollectionOf(Tag.class))).thenReturn(true);
             AssertionFailedError error = mockAssertionFailedError();
-            doThrow(error).when(hook).execute((cucumber.api.Scenario)any());
+            doThrow(error).when(hook).execute((cucumber.api.Scenario) any());
             if ("before".equals(hookType)) {
                 when(glue.getBeforeHooks()).thenReturn(Arrays.asList(hook));
             } else if ("after".equals(hookType)) {
@@ -504,7 +506,7 @@ public class JUnitFormatterTest {
                 return null;
             }
         };
-        doAnswer(printStackTraceHandler).when(error).printStackTrace((PrintWriter)any());
+        doAnswer(printStackTraceHandler).when(error).printStackTrace((PrintWriter) any());
         return error;
     }
 

@@ -39,6 +39,7 @@ public class FormatterFactory {
         put("progress", ProgressFormatter.class);
         put("json", JSONFormatter.class);
         put("usage", UsageFormatter.class);
+        put("rerun", RerunFormatter.class);
     }};
     private static final Pattern FORMATTER_WITH_FILE_PATTERN = Pattern.compile("([^:]+):(.*)");
     private Appendable defaultOut = new OutputStreamWriter(System.out) {

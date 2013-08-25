@@ -1,5 +1,21 @@
 package cucumber.runtime.formatter;
 
+import cucumber.runtime.Backend;
+import cucumber.runtime.Runtime;
+import cucumber.runtime.RuntimeGlue;
+import cucumber.runtime.RuntimeOptions;
+import cucumber.runtime.StepDefinitionMatch;
+import cucumber.runtime.io.ClasspathResourceLoader;
+import cucumber.runtime.model.CucumberFeature;
+import gherkin.I18n;
+import gherkin.formatter.model.Step;
+import org.junit.Test;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+
 import static cucumber.runtime.TestHelper.feature;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.containsString;
@@ -9,23 +25,6 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import gherkin.I18n;
-import gherkin.formatter.model.Step;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
-
-import org.junit.Test;
-
-import cucumber.runtime.Backend;
-import cucumber.runtime.Runtime;
-import cucumber.runtime.RuntimeGlue;
-import cucumber.runtime.RuntimeOptions;
-import cucumber.runtime.StepDefinitionMatch;
-import cucumber.runtime.io.ClasspathResourceLoader;
-import cucumber.runtime.model.CucumberFeature;
 
 public class CucumberPrettyFormatterTest {
 
@@ -33,10 +32,10 @@ public class CucumberPrettyFormatterTest {
     public void should_align_the_indentation_of_location_strings() throws IOException {
         CucumberFeature feature = feature("path/test.feature",
                 "Feature: feature name\n" +
-                "  Scenario: scenario name\n" +
-                "    Given first step\n" +
-                "    When second step\n" +
-                "    Then third step\n");
+                        "  Scenario: scenario name\n" +
+                        "    Given first step\n" +
+                        "    When second step\n" +
+                        "    Then third step\n");
         Map<String, String> stepsToLocation = new HashMap<String, String>();
         stepsToLocation.put("first step", "path/step_definitions.java:3");
         stepsToLocation.put("second step", "path/step_definitions.java:7");
@@ -46,9 +45,9 @@ public class CucumberPrettyFormatterTest {
 
         assertThat(formatterOutput, containsString(
                 "  Scenario: scenario name # path/test.feature:2\n" +
-                "    Given first step      # path/step_definitions.java:3\n" +
-                "    When second step      # path/step_definitions.java:7\n" +
-                "    Then third step       # path/step_definitions.java:11\n"));
+                        "    Given first step      # path/step_definitions.java:3\n" +
+                        "    When second step      # path/step_definitions.java:7\n" +
+                        "    Then third step       # path/step_definitions.java:11\n"));
     }
 
     private String runFeatureWithPrettyFormatter(final CucumberFeature feature, final Map<String, String> stepsToLocation) throws IOException {
@@ -71,7 +70,7 @@ public class CucumberPrettyFormatterTest {
         for (String stepName : stepsToLocation.keySet()) {
             StepDefinitionMatch matchStep = mock(StepDefinitionMatch.class);
             when(matchStep.getLocation()).thenReturn(stepsToLocation.get(stepName));
-            when(glue.stepDefinitionMatch(anyString(), stepWithName(stepName), (I18n)any())).thenReturn(matchStep);
+            when(glue.stepDefinitionMatch(anyString(), stepWithName(stepName), (I18n) any())).thenReturn(matchStep);
         }
         return glue;
     }

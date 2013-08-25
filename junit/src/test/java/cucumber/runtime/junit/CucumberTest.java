@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 public class CucumberTest {
 
@@ -47,9 +48,19 @@ public class CucumberTest {
     }
 
     @Test
+    public void testThatParsingErrorsIsNicelyReported() throws Exception {
+        try {
+            new Cucumber(LexerErrorFeature.class);
+            fail("Expecting error");
+        } catch (CucumberException e) {
+            assertEquals("Error parsing feature file cucumber/runtime/error/lexer_error.feature", e.getMessage());
+        }
+    }
+
+    @Test
     public void finds_no_features_when_explicit_package_has_nothnig() throws IOException, InitializationError {
-    	Cucumber cucumber = new Cucumber(ExplicitFeaturePathWithNoFeatures.class);
-    	assertEquals(0, cucumber.getChildren().size());
+        Cucumber cucumber = new Cucumber(ExplicitFeaturePathWithNoFeatures.class);
+        assertEquals(0, cucumber.getChildren().size());
     }
 
     @RunWith(Cucumber.class)
@@ -89,5 +100,10 @@ public class CucumberTest {
 
     @Cucumber.Options(features = {"classpath:gibber/ish"})
     private class ExplicitFeaturePathWithNoFeatures {
+    }
+
+    @Cucumber.Options(features = {"classpath:cucumber/runtime/error/lexer_error.feature"})
+    private class LexerErrorFeature {
+
     }
 }

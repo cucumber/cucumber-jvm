@@ -1,5 +1,6 @@
 package cucumber.api.junit;
 
+import cucumber.api.SnippetType;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.io.MultiLoader;
@@ -141,5 +142,10 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         String[] name() default {};
 
         String dotcucumber() default "";
+
+        /**
+         * @return what format should the snippets use. underscore, camelcase
+         */
+        SnippetType snippets() default SnippetType.UNDERSCORE;
     }
 }

@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public final class SnippetGenerator {
+public class SnippetGenerator {
     private static final ArgumentPattern[] DEFAULT_ARGUMENT_PATTERNS = new ArgumentPattern[]{
             new ArgumentPattern(Pattern.compile("\"([^\"]*)\""), String.class),
             new ArgumentPattern(Pattern.compile("(\\d+)"), Integer.TYPE)
@@ -27,7 +27,7 @@ public final class SnippetGenerator {
             Pattern.compile("\\^"),};
 
     private static final String REGEXP_HINT = "Express the Regexp above with the code you wish you had";
-    private static final Character SUBST = '_';
+
 
     private final Snippet snippet;
 
@@ -35,12 +35,12 @@ public final class SnippetGenerator {
         this.snippet = snippet;
     }
 
-    public String getSnippet(Step step) {
+    public String getSnippet(Step step, FunctionNameSanitizer functionNameSanitizer) {
         return MessageFormat.format(
                 snippet.template(),
                 I18n.codeKeywordFor(step.getKeyword()),
                 snippet.escapePattern(patternFor(step.getName())),
-                functionName(step.getName()),
+                functionName(step.getName(), functionNameSanitizer),
                 snippet.arguments(argumentTypes(step)),
                 REGEXP_HINT,
                 step.getRows() == null ? "" : snippet.tableHint()
@@ -64,30 +64,18 @@ public final class SnippetGenerator {
         return "^" + pattern + "$";
     }
 
-    private String functionName(String name) {
+    private String functionName(String name, FunctionNameSanitizer functionNameSanitizer) {
+        if(functionNameSanitizer == null) {
+            return null;
+        }
         String functionName = name;
         for (ArgumentPattern argumentPattern : argumentPatterns()) {
             functionName = argumentPattern.replaceMatchesWithSpace(functionName);
         }
-        functionName = sanitizeFunctionName(functionName);
+        functionName = functionNameSanitizer.sanitizeFunctionName(functionName);
         return functionName;
     }
 
-    String sanitizeFunctionName(String functionName) {
-        StringBuilder sanitized = new StringBuilder();
-
-        String trimmedFunctionName = functionName.trim();
-
-        sanitized.append(Character.isJavaIdentifierStart(trimmedFunctionName.charAt(0)) ? trimmedFunctionName.charAt(0) : SUBST);
-        for (int i = 1; i < trimmedFunctionName.length(); i++) {
-            if (Character.isJavaIdentifierPart(trimmedFunctionName.charAt(i))) {
-                sanitized.append(trimmedFunctionName.charAt(i));
-            } else if (sanitized.charAt(sanitized.length() - 1) != SUBST && i != trimmedFunctionName.length() - 1) {
-                sanitized.append(SUBST);
-            }
-        }
-        return sanitized.toString();
-    }
 
     private String withNamedGroups(String snippetPattern) {
         Matcher m = GROUP_PATTERN.matcher(snippetPattern);
