@@ -1,13 +1,17 @@
 package cucumber.android.test;
 
+import android.app.Instrumentation;
 import android.test.ActivityInstrumentationTestCase2;
+import android.util.Log;
+import cucumber.api.android.CucumberInstrumentation;
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 
-// I don't quite get why glue code has to be in a subclass....
+// Glue code classes need to extend Android test classes
+// in order to have access to Context and Instrumentation.
 public class CucumberActivitySteps extends ActivityInstrumentationTestCase2<CucumberActivity> {
     private int steps;
 
@@ -17,11 +21,19 @@ public class CucumberActivitySteps extends ActivityInstrumentationTestCase2<Cucu
 
     @Before
     public void before() {
+        Log.d(CucumberInstrumentation.TAG, "android-test before");
         assertEquals(0, steps);
+        Instrumentation instrumentation = getInstrumentation();
+        assertNotNull(instrumentation);
+        assertNotNull(getActivity());
+        String testPackageName = instrumentation.getContext().getPackageName();
+        String targetPackageName = instrumentation.getContext().getPackageName();
+        assertEquals(testPackageName, targetPackageName);
     }
 
     @After
     public void after() {
+        Log.d(CucumberInstrumentation.TAG, "android-test after");
         assertEquals(3, steps);
     }
 
