@@ -284,7 +284,7 @@ public class Runtime implements UnreportedStepExecutor {
         } else {
             String status = Result.PASSED;
             Throwable error = null;
-            long start = System.nanoTime();
+            stopWatch.start();
             try {
                 match.runStep(i18n);
             } catch (Throwable t) {
@@ -293,7 +293,7 @@ public class Runtime implements UnreportedStepExecutor {
                 addError(t);
                 skipNextStep = true;
             } finally {
-                long duration = System.nanoTime() - start;
+                long duration = stopWatch.stop();
                 Result result = new Result(status, duration, error, DUMMY_ARG);
                 addStepToCounterAndResult(result);
                 reporter.result(result);
