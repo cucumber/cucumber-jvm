@@ -56,7 +56,8 @@
         <freemarker.version>2.3.20</freemarker.version>
         <!-- Bumping to 3.1.0 or above requires JDK 7 or else we'll get Unsupported major.minor version 51.0 -->
         <javax.servlet-api.version>3.0.1</javax.servlet-api.version>
-        <android-maven-plugin.version>3.6.0</android-maven-plugin.version>
+        <android-maven-plugin.version>3.6.1</android-maven-plugin.version>
+        <!-- Minimum android sdk api level 8 = platform 2.2.1 -->
         <android.version>2.2.1</android.version>
     </properties>
     <licenses>
