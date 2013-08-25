@@ -1,6 +1,7 @@
 package cucumber.runtime.jython;
 
 import cucumber.runtime.snippets.SnippetGenerator;
+import cucumber.runtime.snippets.UnderscoreFunctionNameSanitizer;
 import gherkin.formatter.model.Comment;
 import gherkin.formatter.model.Step;
 import org.junit.Test;
@@ -35,6 +36,6 @@ public class JythonSnippetTest {
 
     private String snippetFor(String name) {
         Step step = new Step(Collections.<Comment>emptyList(), "Given ", name, 0, null, null);
-        return new SnippetGenerator(new JythonSnippet()).getSnippet(step);
+        return new SnippetGenerator(new JythonSnippet()).getSnippet(step, new UnderscoreFunctionNameSanitizer());
     }
 }

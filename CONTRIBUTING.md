@@ -95,9 +95,11 @@ Note that even though development is sometimes easier to do with 1.6, releasing 
 
 ## Releasing
 
+First, make sure everything builds. Including Android.
+
 This is a reminder to the developers:
 
-First, make sure you have the proper keys set up - in your `~/.m2/settings.xml` - for example:
+Then, make sure you have the proper keys set up - in your `~/.m2/settings.xml` - for example:
 
 ```
 <settings>
@@ -136,7 +138,7 @@ Now release everything:
 
 ```
 mvn release:clean
-mvn --batch-mode -P release-sign-artifacts release:prepare -DautoVersionSubmodules=true -DdevelopmentVersion=1.1.4-SNAPSHOT
+mvn --batch-mode -P release-sign-artifacts release:prepare -DautoVersionSubmodules=true -DdevelopmentVersion=1.1.5-SNAPSHOT
 mvn -P release-sign-artifacts release:perform
 ```
 

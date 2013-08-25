@@ -89,6 +89,7 @@ public class ParameterInfo {
             xStream.setParameterType(this);
             SingleValueConverter converter;
             xStream.processAnnotations(getRawType());
+            xStream.autodetectAnnotations(true); // Needed to unlock annotation processing
 
             if (transformer != null) {
                 transformer.setParameterInfoAndLocale(this, xStream.getLocale());

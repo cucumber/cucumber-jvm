@@ -40,6 +40,7 @@ public class MethodFormatTest {
 
     @Test
     public void prints_code_source() {
-        assertTrue(MethodFormat.FULL.format(methodWithoutArgs).startsWith("cucumber.runtime.MethodFormatTest.methodWithoutArgs() in file:"));
+        String format = MethodFormat.FULL.format(methodWithoutArgs);
+        assertTrue(format.startsWith("cucumber.runtime.MethodFormatTest.methodWithoutArgs() in file:"));
     }
 }

@@ -1,8 +1,8 @@
 package cucumber.examples.java.websockets;
 
+import cucumber.api.Scenario;
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
-import cucumber.api.Scenario;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
@@ -11,8 +11,8 @@ import org.openqa.selenium.support.events.EventFiringWebDriver;
 
 /**
  * <p>
- * Example of a WebDriver implementation that has delegates all methods to a static instance (REAL_DRIVER) that is only 
- * created once for the duration of the JVM. The REAL_DRIVER is automatically closed when the JVM exits. This makes 
+ * Example of a WebDriver implementation that has delegates all methods to a static instance (REAL_DRIVER) that is only
+ * created once for the duration of the JVM. The REAL_DRIVER is automatically closed when the JVM exits. This makes
  * scenarios a lot faster since opening and closing a browser for each scenario is pretty slow.
  * To prevent browser state from leaking between scenarios, cookies are automatically deleted before every scenario.
  * </p>
@@ -48,7 +48,7 @@ public class SharedDriver extends EventFiringWebDriver {
 
     @Override
     public void close() {
-        if(Thread.currentThread() != CLOSE_THREAD) {
+        if (Thread.currentThread() != CLOSE_THREAD) {
             throw new UnsupportedOperationException("You shouldn't close this WebDriver. It's shared and will close when the JVM exits.");
         }
         super.close();

@@ -1,7 +1,9 @@
 package cucumber.runtime;
 
+import cucumber.runtime.snippets.FunctionNameSanitizer;
 import cucumber.runtime.snippets.Snippet;
 import cucumber.runtime.snippets.SnippetGenerator;
+import cucumber.runtime.snippets.UnderscoreFunctionNameSanitizer;
 import gherkin.I18n;
 import gherkin.formatter.model.Step;
 import org.junit.Test;
@@ -37,7 +39,7 @@ public class UndefinedStepsTrackerTest {
         tracker.storeStepKeyword(new Step(null, "Given ", "A", 1, null, null), ENGLISH);
         tracker.addUndefinedStep(new Step(null, "Given ", "B", 1, null, null), ENGLISH);
         tracker.addUndefinedStep(new Step(null, "Given ", "B", 1, null, null), ENGLISH);
-        assertEquals("[Given ^B$]", tracker.getSnippets(asList(backend)).toString());
+        assertEquals("[Given ^B$]", tracker.getSnippets(asList(backend), new UnderscoreFunctionNameSanitizer()).toString());
     }
 
     @Test
@@ -47,7 +49,7 @@ public class UndefinedStepsTrackerTest {
         tracker.storeStepKeyword(new Step(null, "When ", "A", 1, null, null), ENGLISH);
         tracker.storeStepKeyword(new Step(null, "And ", "B", 1, null, null), ENGLISH);
         tracker.addUndefinedStep(new Step(null, "But ", "C", 1, null, null), ENGLISH);
-        assertEquals("[When ^C$]", tracker.getSnippets(asList(backend)).toString());
+        assertEquals("[When ^C$]", tracker.getSnippets(asList(backend), new UnderscoreFunctionNameSanitizer()).toString());
     }
 
     @Test
@@ -57,7 +59,7 @@ public class UndefinedStepsTrackerTest {
         tracker.storeStepKeyword(new Step(null, "When ", "A", 1, null, null), ENGLISH);
         tracker.storeStepKeyword(new Step(null, "And ", "B", 1, null, null), ENGLISH);
         tracker.addUndefinedStep(new Step(null, "* ", "C", 1, null, null), ENGLISH);
-        assertEquals("[When ^C$]", tracker.getSnippets(asList(backend)).toString());
+        assertEquals("[When ^C$]", tracker.getSnippets(asList(backend), new UnderscoreFunctionNameSanitizer()).toString());
     }
 
     @Test
@@ -65,7 +67,7 @@ public class UndefinedStepsTrackerTest {
         Backend backend = new TestBackend();
         UndefinedStepsTracker tracker = new UndefinedStepsTracker();
         tracker.addUndefinedStep(new Step(null, "* ", "A", 1, null, null), ENGLISH);
-        assertEquals("[Given ^A$]", tracker.getSnippets(asList(backend)).toString());
+        assertEquals("[Given ^A$]", tracker.getSnippets(asList(backend), new UnderscoreFunctionNameSanitizer()).toString());
     }
 
     @Test
@@ -73,7 +75,7 @@ public class UndefinedStepsTrackerTest {
         Backend backend = new TestBackend();
         UndefinedStepsTracker tracker = new UndefinedStepsTracker();
         tracker.addUndefinedStep(new Step(null, "Если ", "Б", 1, null, null), new I18n("ru"));
-        assertEquals("[Если ^Б$]", tracker.getSnippets(asList(backend)).toString());
+        assertEquals("[Если ^Б$]", tracker.getSnippets(asList(backend), new UnderscoreFunctionNameSanitizer()).toString());
     }
 
     private class TestBackend implements Backend {
@@ -98,8 +100,8 @@ public class UndefinedStepsTrackerTest {
         }
 
         @Override
-        public String getSnippet(Step step) {
-            return new SnippetGenerator(new TestSnippet()).getSnippet(step);
+        public String getSnippet(Step step, FunctionNameSanitizer functionNameSanitizer) {
+            return new SnippetGenerator(new TestSnippet()).getSnippet(step, new UnderscoreFunctionNameSanitizer());
         }
     }
 

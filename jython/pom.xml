@@ -5,7 +5,7 @@
         <groupId>info.cukes</groupId>
         <artifactId>cucumber-jvm</artifactId>
         <relativePath>../pom.xml</relativePath>
-        <version>1.1.4-SNAPSHOT</version>
+        <version>1.1.5-SNAPSHOT</version>
     </parent>
 
     <artifactId>cucumber-jython</artifactId>
@@ -92,7 +92,7 @@
 import groovy.text.SimpleTemplateEngine
 import gherkin.I18n
 
-def unsupported = ["ar", "bg", "el", "en_old", "fa", "he", "hi", "is", "ja", "ko", "pl", "ru", "sr_cyrl", "tl", "tt", "uk", "uz", "zh_cn", "zh_tw"]
+def unsupported = ["ar", "bg", "el", "en_old", "fa", "he", "hi", "is", "ja", "ko", "pa", "pl", "ru", "sr_cyrl", "th", "tl", "tt", "uk", "uz", "zh_cn", "zh_tw"]
 def engine = new SimpleTemplateEngine()
 def templateSource = new File(project.baseDir, "src${File.separator}main${File.separator}code_generator${File.separator}I18n.jython.txt").getText()
 

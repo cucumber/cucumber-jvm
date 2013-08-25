@@ -123,16 +123,16 @@ public class GroovySnippetTest {
 
     private String snippetFor(String name) {
         Step step = new Step(NO_COMMENTS, "Given ", name, 0, null, null);
-        return new SnippetGenerator(new GroovySnippet()).getSnippet(step);
+        return new SnippetGenerator(new GroovySnippet()).getSnippet(step, null);
     }
 
     private String snippetForDocString(String name, DocString docString) {
         Step step = new Step(NO_COMMENTS, "Given ", name, 0, null, docString);
-        return new SnippetGenerator(new GroovySnippet()).getSnippet(step);
+        return new SnippetGenerator(new GroovySnippet()).getSnippet(step, null);
     }
 
     private String snippetForDataTable(String name, List<DataTableRow> dataTable) {
         Step step = new Step(NO_COMMENTS, "Given ", name, 0, dataTable, null);
-        return new SnippetGenerator(new GroovySnippet()).getSnippet(step);
+        return new SnippetGenerator(new GroovySnippet()).getSnippet(step, null);
     }
 }

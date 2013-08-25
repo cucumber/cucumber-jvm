@@ -14,7 +14,7 @@ import java.util.List;
  * Loads non-class resources such as .feature files.
  */
 public class AndroidResourceLoader implements ResourceLoader {
-    private Context context;
+    private final Context context;
 
     public AndroidResourceLoader(Context context) {
         this.context = context;

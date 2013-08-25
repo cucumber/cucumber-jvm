@@ -9,6 +9,7 @@ this.metaClass.mixin(cucumber.api.groovy.EN)
 // can change its state, e.g. store values used by later steps.
 class CustomWorld {
     def result
+
     String customMethod() {
         "foo"
     }
