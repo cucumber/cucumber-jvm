@@ -4,7 +4,7 @@
     <parent>
         <groupId>info.cukes</groupId>
         <artifactId>java-wicket-selenium</artifactId>
-        <version>1.1.2-SNAPSHOT</version>
+        <version>1.1.5-SNAPSHOT</version>
     </parent>
     <artifactId>java-wicket-main</artifactId>
     <name>Examples: A Wicket application that can be tested with Selenium WebDriver</name>
@@ -16,7 +16,6 @@
         <dependency>
             <groupId>org.apache.wicket</groupId>
             <artifactId>wicket-core</artifactId>
-            <version>6.2.0</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -26,7 +25,6 @@
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-servlet</artifactId>
-            <version>9.0.0.M2</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
