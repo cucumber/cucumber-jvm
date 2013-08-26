@@ -59,6 +59,8 @@
         <android-maven-plugin.version>3.6.1</android-maven-plugin.version>
         <!-- Minimum android sdk api level 8 = platform 2.2.1 -->
         <android.version>2.2.1</android.version>
+        <wicket.version>6.9.1</wicket.version>
+        <jetty.version>9.0.5.v20130815</jetty.version>
     </properties>
     <licenses>
         <license>
@@ -327,6 +329,12 @@
                 <artifactId>selenium-server</artifactId>
                 <version>${selenium.version}</version>
             </dependency>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-java</artifactId>
+            <version>${selenium.version}</version>
+            <scope>test</scope>
+        </dependency>
             <dependency>
                 <groupId>org.webbitserver</groupId>
                 <artifactId>webbit</artifactId>
@@ -397,6 +405,16 @@
                 <scope>provided</scope>
             </dependency>
 
+            <dependency>
+                <groupId>org.apache.wicket</groupId>
+                <artifactId>wicket-core</artifactId>
+                <version>${wicket.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-servlet</artifactId>
+                <version>${jetty.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
