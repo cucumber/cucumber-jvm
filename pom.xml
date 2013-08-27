@@ -161,7 +161,7 @@
             </dependency>
             <dependency>
                 <groupId>info.cukes</groupId>
-                <artifactId>cucumber-android-test</artifactId>
+                <artifactId>android-examples</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
@@ -473,7 +473,7 @@
         <profile>
             <id>android-examples</id>
             <modules>
-                <module>examples/android-test</module>
+                <module>examples/android</module>
             </modules>
         </profile>
 

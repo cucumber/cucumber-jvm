@@ -10,12 +10,19 @@
         <version>1.1.5-SNAPSHOT</version>
     </parent>
 
-    <artifactId>cucumber-android-test</artifactId>
-    <packaging>apk</packaging>
-    <name>Examples: Android-Test</name>
+    <groupId>info.cukes.android-examples</groupId>
+    <artifactId>android-examples</artifactId>
+    <version>1.1.5-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>Examples: Android</name>
+
+    <modules>
+        <module>android-test</module>
+    </modules>
 
     <properties>
         <android.device>emulator</android.device>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <dependencies>
@@ -46,29 +53,22 @@
     </dependencies>
 
     <build>
-        <sourceDirectory>src</sourceDirectory>
         <pluginManagement>
             <plugins>
                 <plugin>
                     <groupId>com.jayway.maven.plugins.android.generation2</groupId>
                     <artifactId>android-maven-plugin</artifactId>
                     <version>${android-maven-plugin.version}</version>
-                    <extensions>true</extensions>
+                    <configuration>
+                        <sdk>
+                            <!-- api level 8 = platform 2.2.1 -->
+                            <platform>8</platform>
+                        </sdk>
+                        <undeployBeforeDeploy>true</undeployBeforeDeploy>
+                    </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>
-        <plugins>
-            <plugin>
-                <groupId>com.jayway.maven.plugins.android.generation2</groupId>
-                <artifactId>android-maven-plugin</artifactId>
-                <configuration>
-                    <sdk>
-                        <!-- api level 8 = platform 2.2.1 -->
-                        <platform>8</platform>
-                    </sdk>
-                    <undeployBeforeDeploy>true</undeployBeforeDeploy>
-                </configuration>
-            </plugin>
-        </plugins>
     </build>
+
 </project>
