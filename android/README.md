@@ -1,5 +1,6 @@
-### Prerequisites *(taken from the [maven-android-plugin](https://code.google.com/p/maven-android-plugin) documentation)*
+## Developers
 
+### Prerequisites *(taken from the [maven-android-plugin](https://code.google.com/p/maven-android-plugin) documentation)*
 1. JDK 1.6+ installed as required for Android development
 2. [Android SDK](http://developer.android.com/sdk/index.html) (r17 or later, latest is best supported) installed, preferably with all platforms.
 3. [Maven 3.0.3+](http://maven.apache.org/download.html) installed
@@ -11,12 +12,7 @@ On OS X: Note that for the path to work on the commandline and in IDE's started 
 
 The generated target artifacts are an [apklib](https://code.google.com/p/maven-android-plugin/wiki/ApkLib) file and a regular .jar.
 
-Tests are in `../cucumber-test/`.
+Integration-tests are in `examples/android/android-test/cucumber-test/`.
 
-## Developers
-
-When running the test app, logs can be read with:
-
-```
-adb logcat
-```
+### Debugging
+Please read [the Android documentation on debugging](https://developer.android.com/tools/debugging/index.html).

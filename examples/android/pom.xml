@@ -18,12 +18,40 @@
 
     <modules>
         <module>android-test</module>
+        <module>cukeulator</module>
     </modules>
 
     <properties>
         <android.device>emulator</android.device>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
+    <!--<dependencies>-->
+        <!--<dependency>-->
+            <!--<groupId>com.google.android</groupId>-->
+            <!--<artifactId>android</artifactId>-->
+            <!--<scope>provided</scope>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>com.google.android</groupId>-->
+            <!--<artifactId>android-test</artifactId>-->
+            <!--<scope>provided</scope>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>info.cukes</groupId>-->
+            <!--<artifactId>cucumber-android</artifactId>-->
+            <!--<version>${project.version}</version>-->
+            <!--<type>apklib</type>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>info.cukes</groupId>-->
+            <!--<artifactId>cucumber-core</artifactId>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>info.cukes</groupId>-->
+            <!--<artifactId>cucumber-java</artifactId>-->
+        <!--</dependency>-->
+    <!--</dependencies>-->
 
     <dependencies>
         <dependency>
@@ -36,20 +64,6 @@
             <artifactId>android-test</artifactId>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>info.cukes</groupId>
-            <artifactId>cucumber-android</artifactId>
-            <version>${project.version}</version>
-            <type>apklib</type>
-        </dependency>
-        <dependency>
-            <groupId>info.cukes</groupId>
-            <artifactId>cucumber-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>info.cukes</groupId>
-            <artifactId>cucumber-java</artifactId>
-        </dependency>
     </dependencies>
 
     <build>
@@ -61,8 +75,8 @@
                     <version>${android-maven-plugin.version}</version>
                     <configuration>
                         <sdk>
-                            <!-- api level 8 = platform 2.2.1 -->
-                            <platform>8</platform>
+                            <!-- api level 14 = platform 4.1.1.4 -->
+                            <platform>14</platform>
                         </sdk>
                         <undeployBeforeDeploy>true</undeployBeforeDeploy>
                     </configuration>

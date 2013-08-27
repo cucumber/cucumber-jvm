@@ -57,8 +57,8 @@
         <!-- Bumping to 3.1.0 or above requires JDK 7 or else we'll get Unsupported major.minor version 51.0 -->
         <javax.servlet-api.version>3.0.1</javax.servlet-api.version>
         <android-maven-plugin.version>3.6.1</android-maven-plugin.version>
-        <!-- Minimum android sdk api level 8 = platform 2.2.1 -->
-        <android.version>2.2.1</android.version>
+        <!-- Target android sdk api level 14 = 4.1.1.4 -->
+        <android.version>4.1.1.4</android.version>
         <wicket.version>6.9.1</wicket.version>
         <!-- We need a version that works with Java 6 awnd Java 7: http://www.eclipse.org/jetty/documentation/current/what-jetty-version.html -->
         <jetty.version>8.1.12.v20130726</jetty.version>
