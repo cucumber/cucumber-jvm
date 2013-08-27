@@ -1,11 +1,12 @@
 package cucumber.api.testng;
 
+import cucumber.api.CucumberOptions;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
-import cucumber.runtime.junit.RuntimeOptionsFactory;
+import cucumber.runtime.RuntimeOptionsFactory;
 import org.testng.IHookCallBack;
 import org.testng.IHookable;
 import org.testng.ITestResult;
@@ -21,7 +22,7 @@ public abstract class AbstractTestNGCucumberTests implements IHookable {
         classLoader = getClass().getClassLoader();
         resourceLoader = new MultiLoader(classLoader);
 
-        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(getClass());
+        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(getClass(), new Class[]{CucumberOptions.class});
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
 
         reporter = new TestNgReporter(System.out);

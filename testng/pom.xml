@@ -15,7 +15,7 @@
     <dependencies>
         <dependency>
             <groupId>info.cukes</groupId>
-            <artifactId>cucumber-junit</artifactId>
+            <artifactId>cucumber-core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.testng</groupId>
