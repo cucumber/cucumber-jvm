@@ -13,6 +13,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
+                <version>2.16</version>
                 <executions>
                     <execution>
                         <id>integration-test</id>
@@ -33,6 +34,7 @@
             <plugin>
                 <groupId>org.codehaus.cargo</groupId>
                 <artifactId>cargo-maven2-plugin</artifactId>
+                <version>1.4.3</version>
                 <executions>
                     <execution>
                         <id>start-servlet-engine</id>
@@ -51,9 +53,14 @@
                 </executions>
                 <configuration>
                     <container>
-                        <containerId>jetty9x</containerId>
+                        <containerId>jetty8x</containerId>
                         <type>embedded</type>
                     </container>
+                    <configuration>
+                        <properties>
+                            <cargo.servlet.port>9878</cargo.servlet.port>
+                        </properties>
+                    </configuration>
                     <deployables>
                         <deployable>
                             <groupId>info.cukes</groupId>

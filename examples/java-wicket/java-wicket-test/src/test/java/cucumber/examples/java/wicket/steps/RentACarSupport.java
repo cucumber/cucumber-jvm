@@ -9,7 +9,7 @@ public class RentACarSupport {
     public void createCars(int availableCars) {
         WebDriver driver = new FirefoxDriver();
         try {
-            driver.get("http://localhost:8080/rentit/create");
+            driver.get("http://localhost:9878/rentit/create");
 
             WebElement numberOfCarsToCreate = driver.findElement(By.id("numberOfCars"));
             numberOfCarsToCreate.clear();
@@ -25,7 +25,7 @@ public class RentACarSupport {
     public void rentACar() {
         WebDriver driver = new FirefoxDriver();
         try {
-            driver.get("http://localhost:8080/rentit/rent");
+            driver.get("http://localhost:9878/rentit/rent");
 
             WebElement rentButton = driver.findElement(By.id("rentButton"));
             rentButton.click();
@@ -37,7 +37,7 @@ public class RentACarSupport {
     public int getAvailableNumberOfCars() {
         WebDriver driver = new FirefoxDriver();
         try {
-            driver.get("http://localhost:8080/rentit/available");
+            driver.get("http://localhost:9878/rentit/available");
 
             WebElement availableCars = driver.findElement(By.id("availableCars"));
             String availableCarsString = availableCars.getText();

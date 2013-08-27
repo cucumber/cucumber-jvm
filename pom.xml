@@ -60,7 +60,8 @@
         <!-- Minimum android sdk api level 8 = platform 2.2.1 -->
         <android.version>2.2.1</android.version>
         <wicket.version>6.9.1</wicket.version>
-        <jetty.version>9.0.5.v20130815</jetty.version>
+        <!-- We need a version that works with Java 6 awnd Java 7: http://www.eclipse.org/jetty/documentation/current/what-jetty-version.html -->
+        <jetty.version>8.1.12.v20130726</jetty.version>
     </properties>
     <licenses>
         <license>
