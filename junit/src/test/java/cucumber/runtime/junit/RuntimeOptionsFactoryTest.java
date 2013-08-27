@@ -113,7 +113,7 @@ public class RuntimeOptionsFactoryTest {
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(SubClassWithMonoChromeTrue.class);
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
 
-        assertFalse(runtimeOptions.isMonochrome());
+        assertTrue(runtimeOptions.isMonochrome());
     }
 
 
@@ -166,12 +166,12 @@ public class RuntimeOptionsFactoryTest {
         // empty
     }
 
-    @Cucumber.Options(monochrome = false)
+    @Cucumber.Options(monochrome = true)
     static class SubClassWithMonoChromeTrue extends BaseClassWithMonoChromeFalse {
         // empty
     }
 
-    @Cucumber.Options(monochrome = true)
+    @Cucumber.Options(monochrome = false)
     static class BaseClassWithMonoChromeFalse {
         // empty
     }
