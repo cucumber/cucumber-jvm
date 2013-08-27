@@ -16,23 +16,33 @@ public class RuntimeOptionsFactory {
     }
 
     public RuntimeOptions create() {
+        List<String> args = buildArgsFromOptions();
+
+        return new RuntimeOptions(System.getProperties(), args.toArray(new String[args.size()]));
+    }
+
+    private List<String> buildArgsFromOptions() {
         List<String> args = new ArrayList<String>();
-        Cucumber.Options options = getOptions(clazz);
 
-        addDryRun(options, args);
-        addMonochrome(options, args);
-        addGlue(options, args, clazz);
-        addTags(options, args);
-        addFormats(options, args);
-        addFeatures(options, args, clazz);
-        addStrict(options, args);
-        addName(options, args);
-        addDotCucumber(options, args);
-        addSnippets(options, args);
+        for (Class classWithOptions = clazz; hasSuperClass(classWithOptions); classWithOptions = classWithOptions.getSuperclass()) {
+            Cucumber.Options options = getOptions(classWithOptions);
 
-        RuntimeOptions runtimeOptions = new RuntimeOptions(System.getProperties(), args.toArray(new String[args.size()]));
+            addDryRun(options, args);
+            addMonochrome(options, args);
+            addGlue(options, args, classWithOptions);
+            addTags(options, args);
+            addFormats(options, args);
+            addFeatures(options, args, classWithOptions);
+            addStrict(options, args);
+            addName(options, args);
+            addDotCucumber(options, args);
+            addSnippets(options, args);
+        }
+        return args;
+    }
 
-        return runtimeOptions;
+    private boolean hasSuperClass(Class classWithOptions) {
+        return classWithOptions != Object.class;
     }
 
     private void addDotCucumber(Cucumber.Options options, List<String> args) {
