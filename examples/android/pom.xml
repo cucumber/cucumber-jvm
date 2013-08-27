@@ -19,39 +19,13 @@
     <modules>
         <module>android-test</module>
         <module>cukeulator</module>
+        <module>cukeulator-test</module>
     </modules>
 
     <properties>
         <android.device>emulator</android.device>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-
-    <!--<dependencies>-->
-        <!--<dependency>-->
-            <!--<groupId>com.google.android</groupId>-->
-            <!--<artifactId>android</artifactId>-->
-            <!--<scope>provided</scope>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>com.google.android</groupId>-->
-            <!--<artifactId>android-test</artifactId>-->
-            <!--<scope>provided</scope>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>info.cukes</groupId>-->
-            <!--<artifactId>cucumber-android</artifactId>-->
-            <!--<version>${project.version}</version>-->
-            <!--<type>apklib</type>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>info.cukes</groupId>-->
-            <!--<artifactId>cucumber-core</artifactId>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>info.cukes</groupId>-->
-            <!--<artifactId>cucumber-java</artifactId>-->
-        <!--</dependency>-->
-    <!--</dependencies>-->
 
     <dependencies>
         <dependency>

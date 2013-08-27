@@ -22,21 +22,3 @@ Please read [the Android documentation on debugging](https://developer.android.c
 **Using Maven:**
 
 `mvn install -pl examples/android/android-test -am -P android,android-examples`
-
-**Using [adb](https://developer.android.com/tools/testing/testing_otheride.html#AMSyntax) on the commandline:**
-
-`adb install -r examples/android/android-test/target/cucumber-android-test-*.apk`
-
-`adb shell am instrument -w -r cucumber.android.test/cucumber.api.android.CucumberInstrumentation`
-
-**Using Ant:**
-
-Please read ["Testing from Other IDEs"](https://developer.android.com/tools/testing/testing_otheride.html).
-
-`TODO: provide standard ant buildfile and custom script for dependency downloading`
-
-**Using an IDE:**
-
-[Set up your IDE](https://developer.android.com/sdk/installing/index.html) and import this directory as a
-new Android test-project. You will also need to create a new run-configuration with `CucumberInstrumentation`.
-Please also refer to ["Testing from Eclipse with ADT"](https://developer.android.com/tools/testing/testing_eclipse.html).

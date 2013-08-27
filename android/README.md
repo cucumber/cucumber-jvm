@@ -14,5 +14,8 @@ The generated target artifacts are an [apklib](https://code.google.com/p/maven-a
 
 Integration-tests are in `examples/android/android-test/cucumber-test/`.
 
+### Building
+`mvn package -pl android -am -P android`
+
 ### Debugging
 Please read [the Android documentation on debugging](https://developer.android.com/tools/debugging/index.html).

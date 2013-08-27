@@ -4,4 +4,4 @@ To *build* all android example modules with maven:
 
 To *clean* all android example modules with maven:
 
-`mvn clean -pl examples/android -P android,android-examples`
+`mvn clean -pl examples/android -amd -P android,android-examples`
