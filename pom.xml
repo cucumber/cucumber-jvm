@@ -481,7 +481,6 @@
         <profile>
             <id>examples</id>
             <modules>
-                <module>examples/java-wicket</module>
                 <module>examples/spring-txn</module>
                 <module>examples/java-calculator</module>
                 <module>examples/groovy-calculator</module>
