@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>info.cukes</groupId>
     <artifactId>cucumber-jvm</artifactId>
@@ -330,12 +331,12 @@
                 <artifactId>selenium-server</artifactId>
                 <version>${selenium.version}</version>
             </dependency>
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-java</artifactId>
-            <version>${selenium.version}</version>
-            <scope>test</scope>
-        </dependency>
+            <dependency>
+                <groupId>org.seleniumhq.selenium</groupId>
+                <artifactId>selenium-java</artifactId>
+                <version>${selenium.version}</version>
+                <scope>test</scope>
+            </dependency>
             <dependency>
                 <groupId>org.webbitserver</groupId>
                 <artifactId>webbit</artifactId>
@@ -388,9 +389,9 @@
             </dependency>
 
             <dependency>
-            	<groupId>de.akquinet.jbosscc</groupId>
-            	<artifactId>jbosscc-needle</artifactId>
-            	<version>${needle.version}</version>
+                <groupId>de.akquinet.jbosscc</groupId>
+                <artifactId>jbosscc-needle</artifactId>
+                <version>${needle.version}</version>
             </dependency>
 
             <dependency>
@@ -480,6 +481,7 @@
         <profile>
             <id>examples</id>
             <modules>
+                <module>examples/java-wicket</module>
                 <module>examples/spring-txn</module>
                 <module>examples/java-calculator</module>
                 <module>examples/groovy-calculator</module>
