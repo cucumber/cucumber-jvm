@@ -1,8 +1,11 @@
 package cucumber.runtime.junit;
 
+import cucumber.api.SnippetType;
 import cucumber.api.junit.Cucumber;
 import cucumber.runtime.RuntimeOptions;
-import cucumber.api.SnippetType;
+import gherkin.formatter.Formatter;
+import gherkin.formatter.JSONFormatter;
+import gherkin.formatter.PrettyFormatter;
 import org.junit.Test;
 
 import java.net.MalformedURLException;
@@ -94,6 +97,26 @@ public class RuntimeOptionsFactoryTest {
         assertEquals("", packageName("TopLevelClass"));
     }
 
+    @Test
+    public void inherit_formatter_from_baseclass() {
+        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(SubClassWithFormatter.class);
+        RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
+
+        List<Formatter> formatters = runtimeOptions.getFormatters();
+        assertEquals(2, formatters.size());
+        assertTrue(formatters.get(0) instanceof PrettyFormatter);
+        assertTrue(formatters.get(1) instanceof JSONFormatter);
+    }
+
+    @Test
+    public void override_monochrome_flag_from_baseclass() {
+        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(SubClassWithMonoChromeTrue.class);
+        RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
+
+        assertTrue(runtimeOptions.isMonochrome());
+    }
+
+
     @Cucumber.Options(snippets = SnippetType.CAMELCASE)
     static class Snippets {
         // empty
@@ -130,6 +153,26 @@ public class RuntimeOptionsFactoryTest {
     }
 
     static class WithoutOptions {
+        // empty
+    }
+
+    @Cucumber.Options(format = "pretty")
+    static class SubClassWithFormatter extends BaseClassWithFormatter {
+        // empty
+    }
+
+    @Cucumber.Options(format = "json:outFile")
+    static class BaseClassWithFormatter {
+        // empty
+    }
+
+    @Cucumber.Options(monochrome = true)
+    static class SubClassWithMonoChromeTrue extends BaseClassWithMonoChromeFalse {
+        // empty
+    }
+
+    @Cucumber.Options(monochrome = false)
+    static class BaseClassWithMonoChromeFalse {
         // empty
     }
 }

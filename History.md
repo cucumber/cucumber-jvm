@@ -1,5 +1,6 @@
 ## [Git master](https://github.com/cucumber/cucumber-jvm/compare/v1.1.4...master)
 
+* [JUnit] Inherit Information of @Cucumber.Options ([#568](https://github.com/cucumber/cucumber-jvm/issues/568) Klaus Bayrhammer)
 * [JUnit] JUnitFormatter does not put required name attribute in testsuite root element ([#480](https://github.com/cucumber/cucumber-jvm/pull/480), [#477](https://github.com/cucumber/cucumber-jvm/issues/477) ericmaxwell2003)
 * [Core] Output embedded text in HTML report ([#501](https://github.com/cucumber/cucumber-jvm/pull/501) Tom Dunstan)
 * [Core] Fix for Lexing Error message not useful ([#519](https://github.com/cucumber/cucumber-jvm/issues/519), [#523](https://github.com/cucumber/cucumber-jvm/pull/523) Alpar Gal)
