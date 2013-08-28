@@ -3,11 +3,11 @@ package cucumber.examples.java.wicket.steps;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
 public class RentACarSupport {
     public void createCars(int availableCars) {
-        WebDriver driver = new FirefoxDriver();
+        WebDriver driver = new HtmlUnitDriver();
         try {
             driver.get("http://localhost:9878/rentit/create");
 
@@ -23,7 +23,7 @@ public class RentACarSupport {
     }
 
     public void rentACar() {
-        WebDriver driver = new FirefoxDriver();
+        WebDriver driver = new HtmlUnitDriver();
         try {
             driver.get("http://localhost:9878/rentit/rent");
 
@@ -35,7 +35,7 @@ public class RentACarSupport {
     }
 
     public int getAvailableNumberOfCars() {
-        WebDriver driver = new FirefoxDriver();
+        WebDriver driver = new HtmlUnitDriver();
         try {
             driver.get("http://localhost:9878/rentit/available");
 
