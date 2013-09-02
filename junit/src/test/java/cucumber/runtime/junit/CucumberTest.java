@@ -1,6 +1,7 @@
 package cucumber.runtime.junit;
 
 import cucumber.annotation.DummyWhen;
+import cucumber.api.CucumberOptions;
 import cucumber.api.junit.Cucumber;
 import cucumber.runtime.CucumberException;
 import org.junit.After;
@@ -97,15 +98,15 @@ public class CucumberTest {
     private class ImplicitFeatureAndGluePath {
     }
 
-    @Cucumber.Options(features = {"classpath:cucumber/runtime/junit"})
+    @CucumberOptions(features = {"classpath:cucumber/runtime/junit"})
     private class ExplicitFeaturePath {
     }
 
-    @Cucumber.Options(features = {"classpath:gibber/ish"})
+    @CucumberOptions(features = {"classpath:gibber/ish"})
     private class ExplicitFeaturePathWithNoFeatures {
     }
 
-    @Cucumber.Options(features = {"classpath:cucumber/runtime/error/lexer_error.feature"})
+    @CucumberOptions(features = {"classpath:cucumber/runtime/error/lexer_error.feature"})
     private class LexerErrorFeature {
 
     }

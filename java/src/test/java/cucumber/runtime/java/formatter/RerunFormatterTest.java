@@ -62,7 +62,7 @@ public class RerunFormatterTest {
 
     }
 
-    @Cucumber.Options(format = "rerun:target/sample.txt", features = {"classpath:cucumber/runtime/java/formatter/passing.feature"})
+    @CucumberOptions(format = "rerun:target/sample.txt", features = {"classpath:cucumber/runtime/java/formatter/passing.feature"})
     private class RerunFormatterPassingFeature {
 
     }
