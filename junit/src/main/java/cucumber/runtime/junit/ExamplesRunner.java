@@ -13,17 +13,18 @@ import java.util.List;
 
 class ExamplesRunner extends Suite {
     private final CucumberExamples cucumberExamples;
-    private Description description;
+    private final Description description;
 
-    protected ExamplesRunner(Class<?> testClass, Runtime runtime, CucumberExamples cucumberExamples, JUnitReporter jUnitReporter) throws InitializationError {
+    protected ExamplesRunner(Class<?> testClass, Runtime runtime, CucumberExamples cucumberExamples, JUnitReporter jUnitReporter, String uri) throws InitializationError {
         super(testClass, new ArrayList<Runner>());
         this.cucumberExamples = cucumberExamples;
-
+        this.description = Description.createSuiteDescription(getName(), uri);
         List<CucumberScenario> exampleScenarios = cucumberExamples.createExampleScenarios();
         for (CucumberScenario scenario : exampleScenarios) {
             try {
-                ExecutionUnitRunner exampleScenarioRunner = new ExecutionUnitRunner(testClass, runtime, scenario, jUnitReporter);
+                ExecutionUnitRunner exampleScenarioRunner = new ExecutionUnitRunner(testClass, runtime, scenario, jUnitReporter, uri);
                 getChildren().add(exampleScenarioRunner);
+                description.addChild(describeChild(exampleScenarioRunner));
             } catch (InitializationError initializationError) {
                 initializationError.printStackTrace();
             }
@@ -37,12 +38,6 @@ class ExamplesRunner extends Suite {
 
     @Override
     public Description getDescription() {
-        if (description == null) {
-            description = Description.createSuiteDescription(getName(), cucumberExamples.getExamples());
-            for (Runner child : getChildren()) {
-                description.addChild(describeChild(child));
-            }
-        }
         return description;
     }
 }

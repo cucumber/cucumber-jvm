@@ -61,9 +61,7 @@ public class JUnitReporter implements Reporter, Formatter {
 
     public void result(Result result) {
         Throwable error = result.getError();
-        if (Result.SKIPPED == result) {
-            notifier.fireTestIgnored();
-        } else if (isPendingOrUndefined(result)) {
+        if (isPendingOrUndefined(result)) {
             addFailureOrIgnoreStep(result);
         } else if (error != null) {
             notifier.addFailure(error);

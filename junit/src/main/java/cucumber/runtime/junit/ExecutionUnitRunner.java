@@ -12,24 +12,22 @@ import cucumber.runtime.model.CucumberScenario;
  * Runs a scenario, or a "synthetic" scenario derived from an Examples row.
  */
 public class ExecutionUnitRunner extends Runner {
+    
     private final Runtime runtime;
     private final CucumberScenario cucumberScenario;
     private final JUnitReporter jUnitReporter;
-    private Description description;
-    private final Class<?> testClass;
+    private final Description description;
 
-    public ExecutionUnitRunner(Class<?> testClass, Runtime runtime, CucumberScenario cucumberScenario, JUnitReporter jUnitReporter) throws InitializationError {
+    public ExecutionUnitRunner(Class<?> testClass, Runtime runtime, CucumberScenario cucumberScenario, JUnitReporter jUnitReporter, String uri) throws InitializationError {
         this.runtime = runtime;
         this.cucumberScenario = cucumberScenario;
         this.jUnitReporter = jUnitReporter;
-        this.testClass = testClass;
+        String uniqueId = uri + ":" + cucumberScenario.getGherkinModel().getLineRange().getFirst() + "-" + cucumberScenario.getGherkinModel().getLineRange().getLast();
+        this.description = Description.createTestDescription(testClass.getName(), cucumberScenario.getVisualName(), uniqueId);
     }
 
     @Override
     public Description getDescription() {
-        if (description == null) {
-            description = Description.createTestDescription(testClass, cucumberScenario.getVisualName());
-        }
         return description;
     }
 

@@ -13,13 +13,16 @@ import cucumber.runtime.model.CucumberScenarioOutline;
 
 class ScenarioOutlineRunner extends Suite {
     private final CucumberScenarioOutline cucumberScenarioOutline;
-    private Description description;
+    private final Description description;
 
-    public ScenarioOutlineRunner(Class<?> testClass, Runtime runtime, CucumberScenarioOutline cucumberScenarioOutline, JUnitReporter jUnitReporter) throws InitializationError {
+    public ScenarioOutlineRunner(Class<?> testClass, Runtime runtime, CucumberScenarioOutline cucumberScenarioOutline, JUnitReporter jUnitReporter, String uri) throws InitializationError {
         super(testClass, new ArrayList<Runner>());
         this.cucumberScenarioOutline = cucumberScenarioOutline;
+        this.description = Description.createSuiteDescription(getName(), uri);
         for (CucumberExamples cucumberExamples : cucumberScenarioOutline.getCucumberExamplesList()) {
-            getChildren().add(new ExamplesRunner(testClass, runtime, cucumberExamples, jUnitReporter));
+            ExamplesRunner child = new ExamplesRunner(testClass, runtime, cucumberExamples, jUnitReporter, uri);
+            getChildren().add(child);
+            description.addChild(describeChild(child));
         }
     }
 
@@ -30,12 +33,6 @@ class ScenarioOutlineRunner extends Suite {
 
     @Override
     public Description getDescription() {
-        if (description == null) {
-            description = Description.createSuiteDescription(getName(), cucumberScenarioOutline.getGherkinModel());
-            for (Runner child : getChildren()) {
-                description.addChild(describeChild(child));
-            }
-        }
         return description;
     }
     

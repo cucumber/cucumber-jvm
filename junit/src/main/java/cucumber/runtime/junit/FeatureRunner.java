@@ -22,13 +22,14 @@ public class FeatureRunner extends ParentRunner<Runner> {
     private final CucumberFeature cucumberFeature;
     private final Runtime runtime;
     private final JUnitReporter jUnitReporter;
-    private Description description;
+    private final Description description;
 
     public FeatureRunner(Class<?> testClass, CucumberFeature cucumberFeature, Runtime runtime, JUnitReporter jUnitReporter) throws InitializationError {
         super(testClass);
         this.cucumberFeature = cucumberFeature;
         this.runtime = runtime;
         this.jUnitReporter = jUnitReporter;
+        this.description = Description.createSuiteDescription(getName(), cucumberFeature.getUri());
         buildFeatureElementRunners();
     }
 
@@ -40,12 +41,6 @@ public class FeatureRunner extends ParentRunner<Runner> {
 
     @Override
     public Description getDescription() {
-        if (description == null) {
-            description = Description.createSuiteDescription(getName(), cucumberFeature.getGherkinFeature());
-            for (Runner child : getChildren()) {
-                description.addChild(describeChild(child));
-            }
-        }
         return description;
     }
 
@@ -77,11 +72,12 @@ public class FeatureRunner extends ParentRunner<Runner> {
             try {
                 Runner featureElementRunner;
                 if (cucumberTagStatement instanceof CucumberScenario) {
-                    featureElementRunner = new ExecutionUnitRunner(getTestClass().getJavaClass(), runtime, (CucumberScenario) cucumberTagStatement, jUnitReporter);
+                    featureElementRunner = new ExecutionUnitRunner(getTestClass().getJavaClass(), runtime, (CucumberScenario) cucumberTagStatement, jUnitReporter, cucumberFeature.getUri());
                 } else {
-                    featureElementRunner = new ScenarioOutlineRunner(getTestClass().getJavaClass(), runtime, (CucumberScenarioOutline) cucumberTagStatement, jUnitReporter);
+                    featureElementRunner = new ScenarioOutlineRunner(getTestClass().getJavaClass(), runtime, (CucumberScenarioOutline) cucumberTagStatement, jUnitReporter, cucumberFeature.getUri());
                 }
                 children.add(featureElementRunner);
+                description.addChild(describeChild(featureElementRunner));
             } catch (InitializationError e) {
                 throw new CucumberException("Failed to create scenario runner", e);
             }
