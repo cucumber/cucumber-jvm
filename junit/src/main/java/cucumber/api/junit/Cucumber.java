@@ -47,7 +47,7 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
      * @throws org.junit.runners.model.InitializationError
      *                             if there is another problem
      */
-    public Cucumber(Class clazz) throws InitializationError, IOException {
+    public Cucumber(Class<?> clazz) throws InitializationError, IOException {
         super(clazz);
         ClassLoader classLoader = clazz.getClassLoader();
         Assertions.assertNoCucumberAnnotatedMethods(clazz);
@@ -87,7 +87,7 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
 
     private void addChildren(List<CucumberFeature> cucumberFeatures) throws InitializationError {
         for (CucumberFeature cucumberFeature : cucumberFeatures) {
-            children.add(new FeatureRunner(cucumberFeature, runtime, jUnitReporter));
+            children.add(new FeatureRunner(getTestClass().getJavaClass(), cucumberFeature, runtime, jUnitReporter));
         }
     }
 

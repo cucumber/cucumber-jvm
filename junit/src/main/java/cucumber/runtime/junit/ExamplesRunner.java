@@ -15,14 +15,14 @@ class ExamplesRunner extends Suite {
     private final CucumberExamples cucumberExamples;
     private Description description;
 
-    protected ExamplesRunner(Runtime runtime, CucumberExamples cucumberExamples, JUnitReporter jUnitReporter) throws InitializationError {
-        super(ExamplesRunner.class, new ArrayList<Runner>());
+    protected ExamplesRunner(Class<?> testClass, Runtime runtime, CucumberExamples cucumberExamples, JUnitReporter jUnitReporter) throws InitializationError {
+        super(testClass, new ArrayList<Runner>());
         this.cucumberExamples = cucumberExamples;
 
         List<CucumberScenario> exampleScenarios = cucumberExamples.createExampleScenarios();
         for (CucumberScenario scenario : exampleScenarios) {
             try {
-                ExecutionUnitRunner exampleScenarioRunner = new ExecutionUnitRunner(runtime, scenario, jUnitReporter);
+                ExecutionUnitRunner exampleScenarioRunner = new ExecutionUnitRunner(testClass, runtime, scenario, jUnitReporter);
                 getChildren().add(exampleScenarioRunner);
             } catch (InitializationError initializationError) {
                 initializationError.printStackTrace();

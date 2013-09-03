@@ -1,24 +1,25 @@
 package cucumber.runtime.junit;
 
-import cucumber.runtime.Runtime;
-import cucumber.runtime.model.CucumberExamples;
-import cucumber.runtime.model.CucumberScenarioOutline;
+import java.util.ArrayList;
+
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runners.Suite;
 import org.junit.runners.model.InitializationError;
 
-import java.util.ArrayList;
+import cucumber.runtime.Runtime;
+import cucumber.runtime.model.CucumberExamples;
+import cucumber.runtime.model.CucumberScenarioOutline;
 
 class ScenarioOutlineRunner extends Suite {
     private final CucumberScenarioOutline cucumberScenarioOutline;
     private Description description;
 
-    public ScenarioOutlineRunner(Runtime runtime, CucumberScenarioOutline cucumberScenarioOutline, JUnitReporter jUnitReporter) throws InitializationError {
-        super(null, new ArrayList<Runner>());
+    public ScenarioOutlineRunner(Class<?> testClass, Runtime runtime, CucumberScenarioOutline cucumberScenarioOutline, JUnitReporter jUnitReporter) throws InitializationError {
+        super(testClass, new ArrayList<Runner>());
         this.cucumberScenarioOutline = cucumberScenarioOutline;
         for (CucumberExamples cucumberExamples : cucumberScenarioOutline.getCucumberExamplesList()) {
-            getChildren().add(new ExamplesRunner(runtime, cucumberExamples, jUnitReporter));
+            getChildren().add(new ExamplesRunner(testClass, runtime, cucumberExamples, jUnitReporter));
         }
     }
 
@@ -37,4 +38,5 @@ class ScenarioOutlineRunner extends Suite {
         }
         return description;
     }
+    
 }

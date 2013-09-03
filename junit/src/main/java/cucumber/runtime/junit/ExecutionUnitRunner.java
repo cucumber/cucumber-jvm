@@ -1,77 +1,34 @@
 package cucumber.runtime.junit;
 
-import cucumber.runtime.Runtime;
-import cucumber.runtime.model.CucumberScenario;
-import gherkin.formatter.model.Step;
 import org.junit.runner.Description;
+import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
-import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import cucumber.runtime.Runtime;
+import cucumber.runtime.model.CucumberScenario;
 
 /**
  * Runs a scenario, or a "synthetic" scenario derived from an Examples row.
  */
-public class ExecutionUnitRunner extends ParentRunner<Step> {
+public class ExecutionUnitRunner extends Runner {
     private final Runtime runtime;
     private final CucumberScenario cucumberScenario;
     private final JUnitReporter jUnitReporter;
     private Description description;
-    private final Map<Step, Description> stepDescriptions = new HashMap<Step, Description>();
+    private final Class<?> testClass;
 
-    public ExecutionUnitRunner(Runtime runtime, CucumberScenario cucumberScenario, JUnitReporter jUnitReporter) throws InitializationError {
-        super(ExecutionUnitRunner.class);
+    public ExecutionUnitRunner(Class<?> testClass, Runtime runtime, CucumberScenario cucumberScenario, JUnitReporter jUnitReporter) throws InitializationError {
         this.runtime = runtime;
         this.cucumberScenario = cucumberScenario;
         this.jUnitReporter = jUnitReporter;
-    }
-
-    @Override
-    protected List<Step> getChildren() {
-        return cucumberScenario.getSteps();
-    }
-
-    @Override
-    public String getName() {
-        return cucumberScenario.getVisualName();
+        this.testClass = testClass;
     }
 
     @Override
     public Description getDescription() {
         if (description == null) {
-            description = Description.createSuiteDescription(getName(), cucumberScenario.getGherkinModel());
-
-            if (cucumberScenario.getCucumberBackground() != null) {
-                for (Step backgroundStep : cucumberScenario.getCucumberBackground().getSteps()) {
-                    // We need to make a copy of that step, so we have a unique one per scenario
-                    Step copy = new Step(
-                            backgroundStep.getComments(),
-                            backgroundStep.getKeyword(),
-                            backgroundStep.getName(),
-                            backgroundStep.getLine(),
-                            backgroundStep.getRows(),
-                            backgroundStep.getDocString()
-                    );
-                    description.addChild(describeChild(copy));
-                }
-            }
-
-            for (Step step : getChildren()) {
-                description.addChild(describeChild(step));
-            }
-        }
-        return description;
-    }
-
-    @Override
-    protected Description describeChild(Step step) {
-        Description description = stepDescriptions.get(step);
-        if (description == null) {
-            description = Description.createTestDescription(getName(), step.getKeyword() + step.getName(), step);
-            stepDescriptions.put(step, description);
+            description = Description.createTestDescription(testClass, cucumberScenario.getVisualName());
         }
         return description;
     }
@@ -84,11 +41,4 @@ public class ExecutionUnitRunner extends ParentRunner<Step> {
         jUnitReporter.finishExecutionUnit();
     }
 
-    @Override
-    protected void runChild(Step step, RunNotifier notifier) {
-        // The way we override run(RunNotifier) causes this method to never be called.
-        // Instead it happens via cucumberScenario.run(jUnitReporter, jUnitReporter, runtime);
-        throw new UnsupportedOperationException();
-        // cucumberScenario.runStep(step, jUnitReporter, runtime);
-    }
 }
