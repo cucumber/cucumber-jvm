@@ -29,7 +29,7 @@ public class FeatureRunner extends ParentRunner<Runner> {
         this.cucumberFeature = cucumberFeature;
         this.runtime = runtime;
         this.jUnitReporter = jUnitReporter;
-        this.description = Description.createSuiteDescription(getName(), cucumberFeature.getUri());
+        this.description = Description.createSuiteDescription(getName());
         buildFeatureElementRunners();
     }
 

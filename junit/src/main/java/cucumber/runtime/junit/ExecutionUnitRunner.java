@@ -22,8 +22,8 @@ public class ExecutionUnitRunner extends Runner {
         this.runtime = runtime;
         this.cucumberScenario = cucumberScenario;
         this.jUnitReporter = jUnitReporter;
-        String uniqueId = uri + ":" + cucumberScenario.getGherkinModel().getLineRange().getFirst() + "-" + cucumberScenario.getGherkinModel().getLineRange().getLast();
-        this.description = Description.createTestDescription(testClass.getName(), cucumberScenario.getVisualName(), uniqueId);
+        String uniqueId = uri + ":" + cucumberScenario.getGherkinModel().getLine();
+        this.description = Description.createTestDescription(testClass, cucumberScenario.getVisualName() + " -- " + uniqueId);
     }
 
     @Override

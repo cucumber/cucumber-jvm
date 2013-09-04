@@ -12,13 +12,14 @@ import cucumber.runtime.model.CucumberExamples;
 import cucumber.runtime.model.CucumberScenarioOutline;
 
 class ScenarioOutlineRunner extends Suite {
-    private final CucumberScenarioOutline cucumberScenarioOutline;
     private final Description description;
 
     public ScenarioOutlineRunner(Class<?> testClass, Runtime runtime, CucumberScenarioOutline cucumberScenarioOutline, JUnitReporter jUnitReporter, String uri) throws InitializationError {
         super(testClass, new ArrayList<Runner>());
-        this.cucumberScenarioOutline = cucumberScenarioOutline;
-        this.description = Description.createSuiteDescription(getName(), uri);
+        // In order for the eclipse integration to work properly, the name of the description has to be unique
+        // using the uniqueId of the Description will not work because when running a single test a new description is
+        // created based on the the name of the selected description.
+        this.description = Description.createSuiteDescription(cucumberScenarioOutline.getVisualName() + " -- " + uri + ":" + cucumberScenarioOutline.getGherkinModel().getLine());
         for (CucumberExamples cucumberExamples : cucumberScenarioOutline.getCucumberExamplesList()) {
             ExamplesRunner child = new ExamplesRunner(testClass, runtime, cucumberExamples, jUnitReporter, uri);
             getChildren().add(child);
@@ -28,7 +29,7 @@ class ScenarioOutlineRunner extends Suite {
 
     @Override
     public String getName() {
-        return cucumberScenarioOutline.getVisualName();
+        return description.getDisplayName();
     }
 
     @Override

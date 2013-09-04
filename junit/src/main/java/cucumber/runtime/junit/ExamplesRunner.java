@@ -12,13 +12,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 class ExamplesRunner extends Suite {
-    private final CucumberExamples cucumberExamples;
     private final Description description;
 
     protected ExamplesRunner(Class<?> testClass, Runtime runtime, CucumberExamples cucumberExamples, JUnitReporter jUnitReporter, String uri) throws InitializationError {
         super(testClass, new ArrayList<Runner>());
-        this.cucumberExamples = cucumberExamples;
-        this.description = Description.createSuiteDescription(getName(), uri);
+        this.description = Description.createSuiteDescription(uniqueName(cucumberExamples, uri));
         List<CucumberScenario> exampleScenarios = cucumberExamples.createExampleScenarios();
         for (CucumberScenario scenario : exampleScenarios) {
             try {
@@ -31,9 +29,13 @@ class ExamplesRunner extends Suite {
         }
     }
 
+    private String uniqueName(CucumberExamples cucumberExamples, String uri) {
+        return cucumberExamples.getExamples().getKeyword() + ": " + cucumberExamples.getExamples().getName() + " -- " + uri + ":" + cucumberExamples.getExamples().getLine();
+    }
+
     @Override
     protected String getName() {
-        return cucumberExamples.getExamples().getKeyword() + ": " + cucumberExamples.getExamples().getName();
+        return description.getDisplayName();
     }
 
     @Override
