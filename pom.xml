@@ -127,6 +127,11 @@
             </dependency>
             <dependency>
                 <groupId>info.cukes</groupId>
+                <artifactId>cucumber-testng</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>info.cukes</groupId>
                 <artifactId>cucumber-picocontainer</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -484,6 +489,7 @@
                 <module>examples/java-wicket</module>
                 <module>examples/spring-txn</module>
                 <module>examples/java-calculator</module>
+                <module>examples/java-calculator-testng</module>
                 <module>examples/groovy-calculator</module>
                 <module>examples/scala-calculator</module>
                 <module>examples/java-webbit-websockets-selenium</module>
