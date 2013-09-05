@@ -24,4 +24,8 @@ def I_have_cukes_in_my_belly(self, arg1):
   if (self.n != val):
     raise(Exception("Default cukes were %d, not %d" % (self.n, val)))
 
+@After()
+def we_can_get_the_scenario(self, scenario):
+  if(scenario.getStatus() != 'passed'):
+    print("Oh no!")
 

@@ -1,5 +1,6 @@
 ## [1-1-5-SNAPSHOT (Git master)](https://github.com/cucumber/cucumber-jvm/compare/v1.1.4...master)
 
+* [Jython] Access to scenario in Before and After hooks ([#582](https://github.com/cucumber/cucumber-jvm/issues/582) Aslak Hellesøy)
 * [Core] Replace placeholders in the Scenario Outline title ([#580](https://github.com/cucumber/cucumber-jvm/pull/580), [#510](https://github.com/cucumber/cucumber-jvm/issues/510) Jamie W. Astin)
 * [JUnit/Core] `@cucumber.junit.api.Cucumber.Options` is deprecated in favour of `@cucumber.api.Options` ([#549](https://github.com/cucumber/cucumber-jvm/issues/549) Aslak Hellesøy)
 * [JUnit] Inherit Information of @Cucumber.Options ([#568](https://github.com/cucumber/cucumber-jvm/issues/568) Klaus Bayrhammer)
