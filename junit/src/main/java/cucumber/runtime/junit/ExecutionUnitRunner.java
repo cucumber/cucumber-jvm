@@ -18,12 +18,16 @@ public class ExecutionUnitRunner extends Runner {
     private final JUnitReporter jUnitReporter;
     private final Description description;
 
-    public ExecutionUnitRunner(Class<?> testClass, Runtime runtime, CucumberScenario cucumberScenario, JUnitReporter jUnitReporter, String uri) throws InitializationError {
+    public ExecutionUnitRunner(Class<?> testClass, Runtime runtime, String name, CucumberScenario cucumberScenario, JUnitReporter jUnitReporter) throws InitializationError {
         this.runtime = runtime;
         this.cucumberScenario = cucumberScenario;
         this.jUnitReporter = jUnitReporter;
-        String uniqueId = uri + ":" + cucumberScenario.getGherkinModel().getLine();
-        this.description = Description.createTestDescription(testClass, cucumberScenario.getVisualName() + " -- " + uniqueId);
+        this.description = Description.createTestDescription(testClass, replaceParenthesis(name));
+    }
+
+    // eclipse implementation can't live with parenthesis in descriptions
+    private static String replaceParenthesis(String name) {
+        return name.replace('(', '<').replace(')','>');
     }
 
     @Override

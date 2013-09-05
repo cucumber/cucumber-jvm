@@ -36,14 +36,14 @@ public class CucumberTest {
     public void finds_features_based_on_implicit_package() throws IOException, InitializationError {
         Cucumber cucumber = new Cucumber(ImplicitFeaturePath.class);
         assertEquals(3, cucumber.getChildren().size());
-        assertEquals("Feature: FA", cucumber.getChildren().get(0).getName());
+        assertEquals("FA", cucumber.getChildren().get(0).getName());
     }
 
     @Test
     public void finds_features_based_on_explicit_root_package() throws IOException, InitializationError {
         Cucumber cucumber = new Cucumber(ExplicitFeaturePath.class);
         assertEquals(3, cucumber.getChildren().size());
-        assertEquals("Feature: FA", cucumber.getChildren().get(0).getName());
+        assertEquals("FA", cucumber.getChildren().get(0).getName());
     }
 
     @Test

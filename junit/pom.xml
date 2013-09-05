@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>cucumber-junit</artifactId>
-    <version>1.1.4.issue_577_bert_1</version>
+    <version>1.1.4.issue_577_bert_2</version>
     <packaging>jar</packaging>
     <name>Cucumber-JVM: JUnit</name>
 
