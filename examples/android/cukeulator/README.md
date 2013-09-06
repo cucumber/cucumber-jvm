@@ -20,6 +20,6 @@ To run:
 
 `mvn android:run -pl examples/android/cukeulator -P android-examples`
 
-View all available goals:
+View [all available goals](http://maven-android-plugin-m2site.googlecode.com/svn/plugin-info.html):
 
 `mvn android:help -pl examples/android/cukeulator -P android-examples`

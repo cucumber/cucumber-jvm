@@ -4,7 +4,7 @@ This is the manifest for the android-test project, an Android project
 that is both an Android app-project and a test-project.
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="cucumber.android.test"
+          package="cucumber.example.android.test"
           android:versionCode="1"
           android:versionName="1.0">
 
@@ -36,5 +36,5 @@ that is both an Android app-project and a test-project.
     -->
     <instrumentation
             android:name="cucumber.api.android.CucumberInstrumentation"
-            android:targetPackage="cucumber.android.test"/>
+            android:targetPackage="cucumber.example.android.test"/>
 </manifest>

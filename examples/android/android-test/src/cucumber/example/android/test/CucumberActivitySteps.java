@@ -1,4 +1,4 @@
-package cucumber.android.test;
+package cucumber.example.android.test;
 
 import android.app.Instrumentation;
 import android.test.ActivityInstrumentationTestCase2;

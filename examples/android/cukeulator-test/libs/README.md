@@ -8,7 +8,7 @@ you will need to place the required jars inside this directory.
 
 Run `./init.sh`
 
-**TODO:** Ant file for the same job.
+**TODO:** Ant file for downloading jars from sonatype (when building with Ant, Maven should not be required).
 
 *Note: For each Android project, Ant and Eclipse will automatically include all .jars from the libs/ directory.*
 

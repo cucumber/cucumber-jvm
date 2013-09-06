@@ -35,6 +35,14 @@
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
+        <!-- declare apk dependency for android:deploy-dependencies target -->
+        <dependency>
+            <groupId>info.cukes.android-examples</groupId>
+            <artifactId>android-example</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+            <type>apk</type>
+        </dependency>
     </dependencies>
 
     <build>

@@ -22,15 +22,15 @@ To build:
 
 `mvn package -pl examples/android/cukeulator-test -am -P android,android-examples`
 
-To intall:
+To intall and run:
 
-`mvn android:deploy-dependencies android:deploy -pl examples/android/cukeulator-test -P android-examples`
+`mvn install -pl examples/android/cukeulator-test -P android-examples`
 
-To run instrumentation:
+To re-run already installed package:
 
 `mvn android:instrument -pl examples/android/cukeulator-test -P android-examples`
 
-View all available goals:
+View [all available goals](http://maven-android-plugin-m2site.googlecode.com/svn/plugin-info.html):
 
 `mvn android:help -pl examples/android/cukeulator-test -P android-examples`
 

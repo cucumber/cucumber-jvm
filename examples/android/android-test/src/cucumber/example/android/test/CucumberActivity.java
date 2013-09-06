@@ -1,7 +1,8 @@
-package cucumber.android.test;
+package cucumber.example.android.test;
 
 import android.app.Activity;
 import android.os.Bundle;
+import cucumber.android.test.R;
 
 public class CucumberActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
