@@ -7,7 +7,7 @@
         <version>1.1.5-SNAPSHOT</version>
     </parent>
     <artifactId>java-wicket-main</artifactId>
-    <name>Examples: A Wicket application that can be tested with Selenium WebDriver</name>
+    <name>Examples: Wicket application</name>
     <packaging>war</packaging>
     <build>
         <finalName>rentit</finalName>

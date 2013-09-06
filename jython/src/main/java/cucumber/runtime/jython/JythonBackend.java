@@ -1,5 +1,6 @@
 package cucumber.runtime.jython;
 
+import cucumber.api.Scenario;
 import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Glue;
@@ -9,13 +10,12 @@ import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.snippets.FunctionNameSanitizer;
 import cucumber.runtime.snippets.SnippetGenerator;
 import gherkin.formatter.model.Step;
-import org.python.core.PyException;
-import org.python.core.PyInstance;
-import org.python.core.PyObject;
-import org.python.core.PyString;
+import org.python.core.*;
 import org.python.util.PythonInterpreter;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.List;
 
 public class JythonBackend implements Backend {
@@ -87,10 +87,26 @@ public class JythonBackend implements Backend {
         glue.addAfterHook(new JythonHookDefinition(this, hookDefinition));
     }
 
-    public void executeHook(PyInstance hookDefinition, Object[] scenarioResults) {
-        PyObject[] pyArgs = new PyObject[1];
-        pyArgs[0] = pyWorld;
-        hookDefinition.invoke("execute", pyArgs);
+    public void executeHook(PyInstance hookDefinition, Scenario scenario) {
+        try {
+            // Try to pass the scenario
+            hookDefinition.invoke("execute", pyWorld, Py.java2py(scenario));
+        } catch (PyException e) {
+            if (getStacktrace(e).contains("takes exactly 1 argument (2 given)")) {
+                // The stepdef doesn't want the scenario
+                hookDefinition.invoke("execute", pyWorld);
+            } else {
+                // Some other error. Just rethrow.
+                throw e;
+            }
+        }
+    }
+
+    private String getStacktrace(PyException e) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        e.printStackTrace(pw);
+        return sw.getBuffer().toString();
     }
 
     public void execute(PyInstance stepdef, Object[] args) throws Throwable {

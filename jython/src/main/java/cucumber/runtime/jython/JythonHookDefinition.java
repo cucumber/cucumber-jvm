@@ -23,7 +23,7 @@ public class JythonHookDefinition implements HookDefinition {
 
     @Override
     public void execute(Scenario scenario) throws Throwable {
-        backend.executeHook(hookDefinition, new Object[]{scenario});
+        backend.executeHook(hookDefinition, scenario);
     }
 
     @Override

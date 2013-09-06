@@ -1,6 +1,7 @@
 package cucumber.runtime.junit;
 
 import cucumber.annotation.DummyWhen;
+import cucumber.api.CucumberOptions;
 import cucumber.api.junit.Cucumber;
 import cucumber.runtime.CucumberException;
 import org.junit.After;
@@ -11,7 +12,9 @@ import org.junit.runners.model.InitializationError;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
+import static java.util.Collections.emptyList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
@@ -35,7 +38,7 @@ public class CucumberTest {
 
     @Test
     public void finds_features_based_on_implicit_package() throws IOException, InitializationError {
-        Cucumber cucumber = new Cucumber(ImplicitFeaturePath.class);
+        Cucumber cucumber = new Cucumber(ImplicitFeatureAndGluePath.class);
         assertEquals(3, cucumber.getChildren().size());
         assertEquals("Feature: FA", cucumber.getChildren().get(0).getName());
     }
@@ -58,9 +61,10 @@ public class CucumberTest {
     }
 
     @Test
-    public void finds_no_features_when_explicit_package_has_nothnig() throws IOException, InitializationError {
+    public void finds_no_features_when_explicit_feature_path_has_no_features() throws IOException, InitializationError {
         Cucumber cucumber = new Cucumber(ExplicitFeaturePathWithNoFeatures.class);
-        assertEquals(0, cucumber.getChildren().size());
+        List<FeatureRunner> children = cucumber.getChildren();
+        assertEquals(emptyList(), children);
     }
 
     @RunWith(Cucumber.class)
@@ -91,18 +95,18 @@ public class CucumberTest {
         Assertions.assertNoCucumberAnnotatedMethods(RunCukesTestInvalid.class);
     }
 
-    private class ImplicitFeaturePath {
+    private class ImplicitFeatureAndGluePath {
     }
 
-    @Cucumber.Options(features = {"classpath:cucumber/runtime/junit"})
+    @CucumberOptions(features = {"classpath:cucumber/runtime/junit"})
     private class ExplicitFeaturePath {
     }
 
-    @Cucumber.Options(features = {"classpath:gibber/ish"})
+    @CucumberOptions(features = {"classpath:gibber/ish"})
     private class ExplicitFeaturePathWithNoFeatures {
     }
 
-    @Cucumber.Options(features = {"classpath:cucumber/runtime/error/lexer_error.feature"})
+    @CucumberOptions(features = {"classpath:cucumber/runtime/error/lexer_error.feature"})
     private class LexerErrorFeature {
 
     }

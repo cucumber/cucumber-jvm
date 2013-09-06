@@ -9,7 +9,7 @@
     </parent>
     <artifactId>java-wicket-selenium</artifactId>
     <packaging>pom</packaging>
-    <name>Examples: A Wicket application tested with Selenium WebDriver</name>
+    <name>Examples: Wicket</name>
     <modules>
         <module>java-wicket-main</module>
         <module>java-wicket-test</module>

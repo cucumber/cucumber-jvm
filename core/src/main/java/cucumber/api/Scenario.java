@@ -7,6 +7,9 @@ import java.util.Collection;
  * It allows writing text and embedding media into reports, as well as inspecting results (in an After block).
  */
 public interface Scenario {
+    /**
+     * @return source_tag_names. Needed for compatibility with Capybara.
+     */
     Collection<String> getSourceTagNames();
 
     /**

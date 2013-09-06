@@ -1,14 +1,15 @@
 package cucumber.api.junit;
 
+import cucumber.api.CucumberOptions;
 import cucumber.api.SnippetType;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeOptions;
+import cucumber.runtime.RuntimeOptionsFactory;
 import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.junit.Assertions;
 import cucumber.runtime.junit.FeatureRunner;
 import cucumber.runtime.junit.JUnitReporter;
-import cucumber.runtime.junit.RuntimeOptionsFactory;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.snippets.SummaryPrinter;
 import org.junit.runner.Description;
@@ -53,7 +54,7 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         ClassLoader classLoader = clazz.getClassLoader();
         Assertions.assertNoCucumberAnnotatedMethods(clazz);
 
-        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(clazz);
+        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(clazz, new Class[]{CucumberOptions.class, Options.class});
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
 
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
@@ -92,12 +93,17 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         }
     }
 
+    // TODO: When Options is removed we should remove reflection from RuntimeOptionsFactory.
+
     /**
      * This annotation can be used to give additional hints to the {@link Cucumber} runner
      * about what to run. It provides similar options to the Cucumber command line used by {@link cucumber.api.cli.Main}
+     *
+     * @deprecated use {@link cucumber.api.CucumberOptions} instead.
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.TYPE})
+    @Deprecated
     public static @interface Options {
         /**
          * @return true if this is a dry run

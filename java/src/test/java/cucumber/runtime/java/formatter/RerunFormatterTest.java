@@ -1,5 +1,6 @@
 package cucumber.runtime.java.formatter;
 
+import cucumber.api.CucumberOptions;
 import cucumber.api.junit.Cucumber;
 import gherkin.util.FixJava;
 import org.junit.Before;
@@ -56,12 +57,12 @@ public class RerunFormatterTest {
         assertEquals(0, new File(TARGET_SAMPLE_OUTPUT).length());
     }
 
-    @Cucumber.Options(format = "rerun:target/sample.txt", features = {"classpath:cucumber/runtime/java/formatter"})
+    @CucumberOptions(format = "rerun:target/sample.txt", features = {"classpath:cucumber/runtime/java/formatter"})
     private class RerunFormatterSampleFeatures {
 
     }
 
-    @Cucumber.Options(format = "rerun:target/sample.txt", features = {"classpath:cucumber/runtime/java/formatter/passing.feature"})
+    @CucumberOptions(format = "rerun:target/sample.txt", features = {"classpath:cucumber/runtime/java/formatter/passing.feature"})
     private class RerunFormatterPassingFeature {
 
     }
