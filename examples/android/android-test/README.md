@@ -11,14 +11,11 @@ On Windows: use `%ANDROID_HOME%\tools` and `%ANDROID_HOME%\platform-tools` inste
 
 On OS X: Note that for the path to work on the commandline and in IDE's started by launchd [you have to set it](http://stackoverflow.com/questions/135688/setting-environment-variables-in-os-x/588442) in `/etc/launchd.conf` and **NOT** in .bashrc or something else.
 
-### Building
-**Using Maven:**
+### Building using Maven
 
 `mvn package -pl examples/android/android-test -am -P android,android-examples`
 
-### Debugging
+### Debugging using Maven
 Please read [the Android documentation on debugging](https://developer.android.com/tools/debugging/index.html).
-
-**Using Maven:**
 
 `mvn install -pl examples/android/android-test -am -P android,android-examples`

@@ -6,10 +6,9 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Looper;
 import android.util.Log;
-import cucumber.runtime.Backend;
-import cucumber.runtime.CucumberException;
+import cucumber.api.CucumberOptions;
+import cucumber.runtime.*;
 import cucumber.runtime.Runtime;
-import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.android.AndroidFormatter;
 import cucumber.runtime.android.AndroidObjectFactory;
 import cucumber.runtime.android.AndroidResourceLoader;
@@ -24,15 +23,10 @@ import gherkin.formatter.Reporter;
 import gherkin.formatter.model.*;
 
 import java.io.IOException;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 public class CucumberInstrumentation extends Instrumentation {
-    public static final String ARGUMENT_TEST_CLASS = "class";
-    public static final String ARGUMENT_TEST_PACKAGE = "package";
     public static final String REPORT_VALUE_ID = "InstrumentationTestRunner";
     public static final String REPORT_KEY_NUM_TOTAL = "numtests";
     public static final String REPORT_KEY_NUM_CURRENT = "current";
@@ -47,8 +41,6 @@ public class CucumberInstrumentation extends Instrumentation {
     private ResourceLoader resourceLoader;
     private ClassLoader classLoader;
     private Runtime runtime;
-    private String packageOfTests;
-    private String features;
 
     @Override
     public void onCreate(Bundle arguments) {
@@ -63,46 +55,21 @@ public class CucumberInstrumentation extends Instrumentation {
         String apkPath = context.getPackageCodePath();
         Reflections reflections = new DexReflections(newDexFile(apkPath));
 
-        // For glue and features either use the provided arguments or try to find a RunWithCucumber annotated class.
-        // If nothing works, default values will be used instead.
-        if (arguments.containsKey(ARGUMENT_TEST_CLASS) || arguments.containsKey(ARGUMENT_TEST_PACKAGE)) {
-
-            String testClass = arguments.getString(ARGUMENT_TEST_CLASS);
-            testClass = testClass != null ? testClass : "null";
-            packageOfTests = arguments.getString(ARGUMENT_TEST_PACKAGE);
-
-            try {
-                Class<?> clazz = classLoader.loadClass(testClass);
-                boolean annotationWasPresent = readRunWithCucumberAnnotation(clazz);
-
-                // If the class is not RunWithCucumber annotated, maybe it's Cucumber annotated?
-                if (!annotationWasPresent) {
-                    SEARCH_ANNOTATION:
-                    for (Method m : clazz.getMethods()) {
-                        for (Annotation a : m.getAnnotations()) {
-                            if (a.annotationType().getName().startsWith("cucumber") && packageOfTests == null) {
-                                packageOfTests = testClass.substring(0, testClass.lastIndexOf("."));
-                                break SEARCH_ANNOTATION;
-                            }
-                        }
-                    }
-                }
-            } catch (ClassNotFoundException e) {
-                Log.w(TAG, e.toString());
-            }
-        } else {
-            for (Class<?> clazz : reflections.getDescendants(Object.class, context.getPackageName())) {
-                if (readRunWithCucumberAnnotation(clazz)) break;
+        Class<?> optionsAnnotatedClass = null;
+        for (Class<?> clazz : reflections.getDescendants(Object.class, context.getPackageName())) {
+            if (clazz.isAnnotationPresent(CucumberOptions.class)) {
+                Log.d(TAG, "Found CucumberOptions in class " + clazz.getName());
+                optionsAnnotatedClass = clazz;
+                break; // We assume there is only one CucumberOptions annotated class.
             }
         }
+        if (optionsAnnotatedClass == null) {
+            throw new CucumberException("No CucumberOptions annotation");
+        }
 
-        Properties properties = new Properties();
-        packageOfTests = packageOfTests != null ? packageOfTests : defaultGlue();
-        features = features != null ? features : defaultFeatures();
-
-        properties.setProperty("cucumber.options", String.format("-g %s %s", packageOfTests, features));
-        runtimeOptions = new RuntimeOptions(properties);
-
+        @SuppressWarnings("unchecked")
+        RuntimeOptionsFactory factory = new RuntimeOptionsFactory(optionsAnnotatedClass, new Class[]{CucumberOptions.class});
+        runtimeOptions = factory.create();
         resourceLoader = new AndroidResourceLoader(context);
 
         List<Backend> backends = new ArrayList<Backend>();
@@ -120,28 +87,6 @@ public class CucumberInstrumentation extends Instrumentation {
         }
     }
 
-    /**
-     * @return true if the class is RunWithCucumber annotated, false otherwise
-     */
-    private boolean readRunWithCucumberAnnotation(Class<?> clazz) {
-        RunWithCucumber annotation = clazz.getAnnotation(RunWithCucumber.class);
-        if (annotation != null) {
-            // isEmpty() only available in Android API 9+
-            packageOfTests = annotation.glue().equals("") ? defaultGlue() : annotation.glue();
-            features = annotation.features().equals("") ? defaultFeatures() : annotation.features();
-            return true;
-        }
-        return false;
-    }
-
-    private String defaultFeatures() {
-        return "features";
-    }
-
-    private String defaultGlue() {
-        return getContext().getPackageName();
-    }
-
     @Override
     public void onStart() {
         Looper.prepare();
@@ -149,6 +94,9 @@ public class CucumberInstrumentation extends Instrumentation {
         List<CucumberFeature> cucumberFeatures = runtimeOptions.cucumberFeatures(resourceLoader);
         int numScenarios = 0;
 
+        // How many individual scenarios (test cases) exist - is there a better way to do this?
+        // This is only relevant for reporting back to the Instrumentation and does not affect
+        // execution.
         for (CucumberFeature feature : cucumberFeatures) {
             for (CucumberTagStatement statement : feature.getFeatureElements()) {
                 if (statement instanceof CucumberScenario) {
