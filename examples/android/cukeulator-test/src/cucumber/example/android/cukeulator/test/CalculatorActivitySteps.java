@@ -3,8 +3,6 @@ package cucumber.example.android.cukeulator.test;
 import android.test.ActivityInstrumentationTestCase2;
 import android.widget.TextView;
 import cucumber.api.CucumberOptions;
-import cucumber.api.java.After;
-import cucumber.api.java.Before;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -32,8 +30,9 @@ import static cucumber.example.android.cukeulator.test.Utils.clickOnView;
 @CucumberOptions(features = "features")
 public class CalculatorActivitySteps extends ActivityInstrumentationTestCase2<CalculatorActivity> {
 
-    public CalculatorActivitySteps() {
+    public CalculatorActivitySteps(SomeDependency dependency) {
         super(CalculatorActivity.class);
+        assertNotNull(dependency);
     }
 
     @Given("^I have a CalculatorActivity$")

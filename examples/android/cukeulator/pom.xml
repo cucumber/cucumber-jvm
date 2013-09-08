@@ -10,7 +10,7 @@
         <version>1.1.5-SNAPSHOT</version>
     </parent>
 
-    <artifactId>android-example</artifactId>
+    <artifactId>cukelator</artifactId>
     <packaging>apk</packaging>
     <name>Examples: Android Cukeulator</name>
 

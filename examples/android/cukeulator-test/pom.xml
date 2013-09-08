@@ -10,7 +10,7 @@
         <version>1.1.5-SNAPSHOT</version>
     </parent>
 
-    <artifactId>android-example-test</artifactId>
+    <artifactId>cukelator-test</artifactId>
     <packaging>apk</packaging>
     <name>Examples: Android Cukeulator Test</name>
 
@@ -27,18 +27,18 @@
         </dependency>
         <dependency>
             <groupId>info.cukes</groupId>
-            <artifactId>cucumber-java</artifactId>
+            <artifactId>cucumber-picocontainer</artifactId>
         </dependency>
         <dependency>
             <groupId>info.cukes.android-examples</groupId>
-            <artifactId>android-example</artifactId>
+            <artifactId>cukelator</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
         <!-- declare apk dependency for android:deploy-dependencies target -->
         <dependency>
             <groupId>info.cukes.android-examples</groupId>
-            <artifactId>android-example</artifactId>
+            <artifactId>cukelator</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
             <type>apk</type>
