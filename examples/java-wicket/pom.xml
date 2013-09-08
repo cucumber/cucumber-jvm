@@ -7,7 +7,7 @@
         <relativePath>../../pom.xml</relativePath>
         <version>1.1.5-SNAPSHOT</version>
     </parent>
-    <artifactId>java-wicket-selenium</artifactId>
+    <artifactId>java-wicket</artifactId>
     <packaging>pom</packaging>
     <name>Examples: Wicket</name>
     <modules>
