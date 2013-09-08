@@ -32,8 +32,9 @@ import cucumber.api.java.en.When;
 public class CucumberActivitySteps extends ActivityInstrumentationTestCase2<CucumberActivity> {
     private int steps;
 
-    public CucumberActivitySteps() {
+    public CucumberActivitySteps(SomeDependency dependency) {
         super(CucumberActivity.class);
+        assertNotNull(dependency);
     }
 
     @Before
