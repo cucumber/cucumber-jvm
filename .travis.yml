@@ -7,7 +7,10 @@ jdk:
 matrix:
   include:
   - jdk: oraclejdk7
-    script: mvn -q deploy -P android --settings .travis-settings.xml -Dno.gem.deploy=true -Dandroid.device=test
+    script: mvn -q deploy --settings .travis-settings.xml -Dno.gem.deploy=true
+  - jdk: oraclejdk7
+    env: ANDROID=true
+    script: mvn -q deploy -P android -pl android --settings .travis-settings.xml -Dno.gem.deploy=true -Dandroid.device=test
     before_install:
       # Install base Android SDK
       - sudo apt-get update -qq

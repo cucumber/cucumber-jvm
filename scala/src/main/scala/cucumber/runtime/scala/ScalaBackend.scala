@@ -6,8 +6,8 @@ import _root_.java.lang.reflect.Modifier
 import _root_.cucumber.runtime.snippets.SnippetGenerator
 import _root_.cucumber.runtime.snippets.FunctionNameSanitizer
 import _root_.cucumber.api.scala.ScalaDsl
-import _root_.cucumber.runtime.io.Reflections
-import _root_.cucumber.runtime.io.ResourceLoaderReflections
+import _root_.cucumber.runtime.ClassFinder
+import _root_.cucumber.runtime.io.ResourceLoaderClassFinder
 import _root_.cucumber.runtime.io.ResourceLoader
 import _root_.cucumber.runtime.io.MultiLoader
 import _root_.cucumber.runtime.Backend
@@ -32,14 +32,14 @@ class ScalaBackend(resourceLoader:ResourceLoader) extends Backend {
   def getSnippet(step: Step, functionNameSanitizer: FunctionNameSanitizer) = snippetGenerator.getSnippet(step, functionNameSanitizer)
 
   def buildWorld() {
-    //I don't believe scala has to do anything to clean out it's world
+    //I don't believe scala has to do anything to clean out its world
   }
 
   def loadGlue(glue: Glue, gluePaths: JList[String]) {
     val cl = Thread.currentThread().getContextClassLoader
-    val reflections = new ResourceLoaderReflections(resourceLoader, cl)
+    val classFinder = new ResourceLoaderClassFinder(resourceLoader, cl)
     val packages = gluePaths map { cucumber.runtime.io.MultiLoader.packageName(_) }
-    val dslClasses = packages flatMap { reflections.getDescendants(classOf[ScalaDsl], _) } filter { cls =>
+    val dslClasses = packages flatMap { classFinder.getDescendants(classOf[ScalaDsl], _) } filter { cls =>
       try {
         cls.getDeclaredConstructor()
         true

@@ -8,6 +8,8 @@ import java.lang.reflect.Type;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -23,15 +25,6 @@ public class Utils {
     public static boolean isInstantiable(Class<?> clazz) {
         boolean isNonStaticInnerClass = !Modifier.isStatic(clazz.getModifiers()) && clazz.getEnclosingClass() != null;
         return Modifier.isPublic(clazz.getModifiers()) && !Modifier.isAbstract(clazz.getModifiers()) && !isNonStaticInnerClass;
-    }
-
-    public static boolean hasConstructor(Class<?> clazz, Class[] paramTypes) {
-        try {
-            clazz.getConstructor(paramTypes);
-            return true;
-        } catch (NoSuchMethodException e) {
-            return false;
-        }
     }
 
     public static Object invoke(final Object target, final Method method, int timeoutMillis, final Object... args) throws Throwable {

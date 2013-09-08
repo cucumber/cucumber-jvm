@@ -4,7 +4,7 @@ import cucumber.api.java.After;
 import cucumber.api.java.Before;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Utils;
-import cucumber.runtime.io.Reflections;
+import cucumber.runtime.ClassFinder;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -16,10 +16,10 @@ import static cucumber.runtime.io.MultiLoader.packageName;
 class MethodScanner {
     private final Collection<Class<? extends Annotation>> cucumberAnnotationClasses;
 
-    private final Reflections reflections;
+    private final ClassFinder classFinder;
 
-    public MethodScanner(Reflections reflections) {
-        this.reflections = reflections;
+    public MethodScanner(ClassFinder classFinder) {
+        this.classFinder = classFinder;
         cucumberAnnotationClasses = findCucumberAnnotationClasses();
     }
 
@@ -31,7 +31,7 @@ class MethodScanner {
      */
     public void scan(JavaBackend javaBackend, List<String> gluePaths) {
         for (String gluePath : gluePaths) {
-            for (Class<?> glueCodeClass : reflections.getDescendants(Object.class, packageName(gluePath))) {
+            for (Class<?> glueCodeClass : classFinder.getDescendants(Object.class, packageName(gluePath))) {
                 while (glueCodeClass != null && glueCodeClass != Object.class && !Utils.isInstantiable(glueCodeClass)) {
                     // those can't be instantiated without container class present.
                     glueCodeClass = glueCodeClass.getSuperclass();
@@ -72,7 +72,7 @@ class MethodScanner {
     }
 
     private Collection<Class<? extends Annotation>> findCucumberAnnotationClasses() {
-        return reflections.getAnnotations("cucumber.api");
+        return classFinder.getDescendants(Annotation.class, "cucumber.api");
     }
 
     private boolean isHookAnnotation(Annotation annotation) {

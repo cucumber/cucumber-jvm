@@ -1,5 +1,6 @@
 ## [1-1-5-SNAPSHOT (Git master)](https://github.com/cucumber/cucumber-jvm/compare/v1.1.4...master)
 
+* [Android] Separate CI job for Android. ([#581](https://github.com/cucumber/cucumber-jvm/issues/581), [#584](https://github.com/cucumber/cucumber-jvm/pull/584) Björn Rasmusson)
 * [Android] Add support for Dependency Injection via cucumber-picocontainer, cucumber-guice, cucumber-spring etx. (Aslak Hellesøy)
 * [TestNG] Java Calculator TestNG example project ([#579](https://github.com/cucumber/cucumber-jvm/pull/579) Dmytro Chyzhykov)
 * [Jython] Access to scenario in Before and After hooks ([#582](https://github.com/cucumber/cucumber-jvm/issues/582) Aslak Hellesøy)

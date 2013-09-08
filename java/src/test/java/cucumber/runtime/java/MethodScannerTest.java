@@ -5,7 +5,7 @@ import cucumber.runtime.CucumberException;
 import cucumber.runtime.Glue;
 import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
-import cucumber.runtime.io.ResourceLoaderReflections;
+import cucumber.runtime.io.ResourceLoaderClassFinder;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.internal.util.reflection.Whitebox;
@@ -20,7 +20,7 @@ public class MethodScannerTest {
     public void loadGlue_registers_the_methods_declaring_class_in_the_object_factory() throws NoSuchMethodException {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
-        MethodScanner methodScanner = new MethodScanner(new ResourceLoaderReflections(resourceLoader, classLoader));
+        MethodScanner methodScanner = new MethodScanner(new ResourceLoaderClassFinder(resourceLoader, classLoader));
 
         ObjectFactory factory = Mockito.mock(ObjectFactory.class);
         Glue world = Mockito.mock(Glue.class);
