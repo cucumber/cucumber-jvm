@@ -1,26 +1,20 @@
 package cucumber.runtime.android;
 
 import cucumber.runtime.CucumberException;
-import cucumber.runtime.io.Reflections;
+import cucumber.runtime.ClassFinder;
 import dalvik.system.DexFile;
 
-import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.List;
 
-public class DexReflections implements Reflections {
-    private static final ClassLoader CLASS_LOADER = DexReflections.class.getClassLoader();
+public class DexClassFinder implements ClassFinder {
+    private static final ClassLoader CLASS_LOADER = DexClassFinder.class.getClassLoader();
     private final DexFile dexFile;
 
-    public DexReflections(DexFile dexFile) {
+    public DexClassFinder(DexFile dexFile) {
         this.dexFile = dexFile;
-    }
-
-    @Override
-    public Collection<Class<? extends Annotation>> getAnnotations(String packageName) {
-        return getDescendants(Annotation.class, packageName);
     }
 
     @Override
@@ -59,16 +53,5 @@ public class DexReflections implements Reflections {
         int lastDotIndex = className.lastIndexOf(".");
         String shortName = lastDotIndex == -1 ? className : className.substring(lastDotIndex + 1);
         return shortName.equals("Manifest") || shortName.equals("R") || shortName.startsWith("R$");
-    }
-
-
-    @Override
-    public <T> T instantiateExactlyOneSubclass(Class<T> parentType, String packageName, Class[] constructorParams, Object[] constructorArgs) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public <T> Collection<? extends T> instantiateSubclasses(Class<T> parentType, String packageName, Class[] constructorParams, Object[] constructorArgs) {
-        throw new UnsupportedOperationException();
     }
 }

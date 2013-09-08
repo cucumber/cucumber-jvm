@@ -12,8 +12,8 @@ import cucumber.runtime.Runtime;
 import cucumber.runtime.android.AndroidFormatter;
 import cucumber.runtime.android.AndroidObjectFactory;
 import cucumber.runtime.android.AndroidResourceLoader;
-import cucumber.runtime.android.DexReflections;
-import cucumber.runtime.io.Reflections;
+import cucumber.runtime.android.DexClassFinder;
+import cucumber.runtime.ClassFinder;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.java.JavaBackend;
 import cucumber.runtime.java.ObjectFactory;
@@ -54,10 +54,10 @@ public class CucumberInstrumentation extends Instrumentation {
         classLoader = context.getClassLoader();
 
         String apkPath = context.getPackageCodePath();
-        Reflections reflections = new DexReflections(newDexFile(apkPath));
+        ClassFinder classFinder = new DexClassFinder(newDexFile(apkPath));
 
         Class<?> optionsAnnotatedClass = null;
-        for (Class<?> clazz : reflections.getDescendants(Object.class, context.getPackageName())) {
+        for (Class<?> clazz : classFinder.getDescendants(Object.class, context.getPackageName())) {
             if (clazz.isAnnotationPresent(CucumberOptions.class)) {
                 Log.d(TAG, "Found CucumberOptions in class " + clazz.getName());
                 optionsAnnotatedClass = clazz;
@@ -74,9 +74,9 @@ public class CucumberInstrumentation extends Instrumentation {
         resourceLoader = new AndroidResourceLoader(context);
 
         List<Backend> backends = new ArrayList<Backend>();
-        ObjectFactory delegateObjectFactory = JavaBackend.loadObjectFactory(reflections);
+        ObjectFactory delegateObjectFactory = JavaBackend.loadObjectFactory(classFinder);
         AndroidObjectFactory objectFactory = new AndroidObjectFactory(delegateObjectFactory, this);
-        backends.add(new JavaBackend(objectFactory, reflections));
+        backends.add(new JavaBackend(objectFactory, classFinder));
         runtime = new Runtime(resourceLoader, classLoader, backends, runtimeOptions);
 
         start();

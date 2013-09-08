@@ -2,8 +2,17 @@ package cucumber.runtime.java;
 
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
-import cucumber.runtime.*;
-import cucumber.runtime.io.*;
+import cucumber.runtime.Backend;
+import cucumber.runtime.ClassFinder;
+import cucumber.runtime.CucumberException;
+import cucumber.runtime.DuplicateStepDefinitionException;
+import cucumber.runtime.Glue;
+import cucumber.runtime.Reflections;
+import cucumber.runtime.UnreportedStepExecutor;
+import cucumber.runtime.Utils;
+import cucumber.runtime.io.MultiLoader;
+import cucumber.runtime.io.ResourceLoader;
+import cucumber.runtime.io.ResourceLoaderClassFinder;
 import cucumber.runtime.snippets.FunctionNameSanitizer;
 import cucumber.runtime.snippets.SnippetGenerator;
 import gherkin.formatter.model.Step;
@@ -16,39 +25,41 @@ import java.util.regex.Pattern;
 public class JavaBackend implements Backend {
     private SnippetGenerator snippetGenerator = new SnippetGenerator(new JavaSnippet());
     private final ObjectFactory objectFactory;
-    private final Reflections reflections;
+    private final ClassFinder classFinder;
 
     private final MethodScanner methodScanner;
     private Glue glue;
 
     /**
      * The constructor called by reflection by default.
+     *
      * @param resourceLoader
      */
     public JavaBackend(ResourceLoader resourceLoader) {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        reflections = new ResourceLoaderReflections(resourceLoader, classLoader);
-        methodScanner = new MethodScanner(reflections);
-        objectFactory = loadObjectFactory(reflections);
+        classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
+        methodScanner = new MethodScanner(classFinder);
+        objectFactory = loadObjectFactory(classFinder);
     }
 
     public JavaBackend(ObjectFactory objectFactory) {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
-        reflections = new ResourceLoaderReflections(resourceLoader, classLoader);
-        methodScanner = new MethodScanner(reflections);
+        classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
+        methodScanner = new MethodScanner(classFinder);
         this.objectFactory = objectFactory;
     }
 
-    public JavaBackend(ObjectFactory objectFactory, Reflections reflections) {
+    public JavaBackend(ObjectFactory objectFactory, ClassFinder classFinder) {
         this.objectFactory = objectFactory;
-        this.reflections = reflections;
-        methodScanner = new MethodScanner(reflections);
+        this.classFinder = classFinder;
+        methodScanner = new MethodScanner(classFinder);
     }
 
-    public static ObjectFactory loadObjectFactory(Reflections reflections) {
+    public static ObjectFactory loadObjectFactory(ClassFinder classFinder) {
         ObjectFactory objectFactory;
         try {
+            Reflections reflections = new Reflections(classFinder);
             objectFactory = reflections.instantiateExactlyOneSubclass(ObjectFactory.class, "cucumber.runtime", new Class[0], new Object[0]);
         } catch (CucumberException ce) {
             objectFactory = new DefaultJavaObjectFactory();

@@ -2,11 +2,13 @@ package cucumber.api.junit;
 
 import cucumber.api.CucumberOptions;
 import cucumber.api.SnippetType;
+import cucumber.runtime.ClassFinder;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.RuntimeOptionsFactory;
 import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
+import cucumber.runtime.io.ResourceLoaderClassFinder;
 import cucumber.runtime.junit.Assertions;
 import cucumber.runtime.junit.FeatureRunner;
 import cucumber.runtime.junit.JUnitReporter;
@@ -58,7 +60,8 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
 
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
-        runtime = new Runtime(resourceLoader, classLoader, runtimeOptions);
+        ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
+        runtime = new Runtime(resourceLoader, classFinder, classLoader, runtimeOptions);
 
         jUnitReporter = new JUnitReporter(runtimeOptions.reporter(classLoader), runtimeOptions.formatter(classLoader), runtimeOptions.isStrict());
         addChildren(runtimeOptions.cucumberFeatures(resourceLoader));

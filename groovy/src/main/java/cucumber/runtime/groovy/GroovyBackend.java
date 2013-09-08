@@ -4,10 +4,10 @@ import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Glue;
 import cucumber.runtime.UnreportedStepExecutor;
-import cucumber.runtime.io.Reflections;
+import cucumber.runtime.ClassFinder;
 import cucumber.runtime.io.Resource;
 import cucumber.runtime.io.ResourceLoader;
-import cucumber.runtime.io.ResourceLoaderReflections;
+import cucumber.runtime.io.ResourceLoaderClassFinder;
 import cucumber.runtime.snippets.FunctionNameSanitizer;
 import cucumber.runtime.snippets.SnippetGenerator;
 import gherkin.TagExpression;
@@ -35,7 +35,7 @@ public class GroovyBackend implements Backend {
     private final SnippetGenerator snippetGenerator = new SnippetGenerator(new GroovySnippet());
     private final ResourceLoader resourceLoader;
     private final GroovyShell shell;
-    private final Reflections reflections;
+    private final ClassFinder classFinder;
 
     private Closure worldClosure;
     private Object world;
@@ -56,7 +56,7 @@ public class GroovyBackend implements Backend {
         this.shell = shell;
         this.resourceLoader = resourceLoader;
         instance = this;
-        reflections = new ResourceLoaderReflections(resourceLoader, shell.getClassLoader());
+        classFinder = new ResourceLoaderClassFinder(resourceLoader, shell.getClassLoader());
     }
 
     @Override
@@ -71,7 +71,7 @@ public class GroovyBackend implements Backend {
                 runIfScript(context, script);
             }
             // Load compiled scripts
-            for (Class<? extends Script> glueClass : reflections.getDescendants(Script.class, packageName(gluePath))) {
+            for (Class<? extends Script> glueClass : classFinder.getDescendants(Script.class, packageName(gluePath))) {
                 try {
                     Script script = glueClass.getConstructor(Binding.class).newInstance(context);
                     runIfScript(context, script);

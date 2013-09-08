@@ -2,7 +2,6 @@ package cucumber.runtime;
 
 import cucumber.api.Pending;
 import cucumber.runtime.io.ResourceLoader;
-import cucumber.runtime.io.ResourceLoaderReflections;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.snippets.SummaryPrinter;
 import cucumber.runtime.xstream.LocalizedXStreams;
@@ -60,8 +59,8 @@ public class Runtime implements UnreportedStepExecutor {
     private boolean skipNextStep = false;
     private ScenarioImpl scenarioResult = null;
 
-    public Runtime(ResourceLoader resourceLoader, ClassLoader classLoader, RuntimeOptions runtimeOptions) {
-        this(resourceLoader, classLoader, loadBackends(resourceLoader, classLoader), runtimeOptions);
+    public Runtime(ResourceLoader resourceLoader, ClassFinder classFinder, ClassLoader classLoader, RuntimeOptions runtimeOptions) {
+        this(resourceLoader, classLoader, loadBackends(resourceLoader, classFinder), runtimeOptions);
     }
 
     public Runtime(ResourceLoader resourceLoader, ClassLoader classLoader, Collection<? extends Backend> backends, RuntimeOptions runtimeOptions) {
@@ -92,8 +91,9 @@ public class Runtime implements UnreportedStepExecutor {
         }
     }
 
-    private static Collection<? extends Backend> loadBackends(ResourceLoader resourceLoader, ClassLoader classLoader) {
-        return new ResourceLoaderReflections(resourceLoader, classLoader).instantiateSubclasses(Backend.class, "cucumber.runtime", new Class[]{ResourceLoader.class}, new Object[]{resourceLoader});
+    private static Collection<? extends Backend> loadBackends(ResourceLoader resourceLoader, ClassFinder classFinder) {
+        Reflections reflections = new Reflections(classFinder);
+        return reflections.instantiateSubclasses(Backend.class, "cucumber.runtime", new Class[]{ResourceLoader.class}, new Object[]{resourceLoader});
     }
 
     public void addError(Throwable error) {
