@@ -20,19 +20,27 @@ Read `libs/README.md` for details on dependencies.
 ### Using Maven
 To build:
 
-`mvn package -pl examples/android/cukeulator-test -am -P android,android-examples`
+````
+mvn install -pl examples/android/cukeulator-test -am -P android,android-examples
+```
 
 To intall and run:
 
-`mvn install -pl examples/android/cukeulator-test -P android-examples`
+```
+mvn install -pl examples/android/cukeulator-test -P android-examples
+```
 
 To re-run already installed package:
 
-`mvn android:instrument -pl examples/android/cukeulator-test -P android-examples`
+```
+mvn android:instrument -pl examples/android/cukeulator-test -P android-examples
+```
 
 View [all available goals](http://maven-android-plugin-m2site.googlecode.com/svn/plugin-info.html):
 
-`mvn android:help -pl examples/android/cukeulator-test -P android-examples`
+```
+mvn android:help -pl examples/android/cukeulator-test -P android-examples
+```
 
 ### Output
 Filter for the logcat tag `cucumber-android` in [DDMS](https://developer.android.com/tools/debugging/ddms.html).

@@ -10,16 +10,24 @@ See ["Building and Running from Eclipse with ADT"](https://developer.android.com
 ### Build with Maven
 To build:
 
-`mvn package -pl examples/android/cukeulator -am -P android-examples`
+```
+mvn package -pl examples/android/cukeulator -am -P android-examples
+```
 
-To intall:
+To install:
 
-`mvn android:deploy -pl examples/android/cukeulator -P android-examples`
+```
+mvn android:deploy -pl examples/android/cukeulator -P android-examples
+```
 
 To run:
 
-`mvn android:run -pl examples/android/cukeulator -P android-examples`
+```
+mvn android:run -pl examples/android/cukeulator -P android-examples
+```
 
 View [all available goals](http://maven-android-plugin-m2site.googlecode.com/svn/plugin-info.html):
 
-`mvn android:help -pl examples/android/cukeulator -P android-examples`
+```
+mvn android:help -pl examples/android/cukeulator -P android-examples
+```
