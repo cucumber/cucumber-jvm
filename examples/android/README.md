@@ -16,3 +16,9 @@ If any of the examples fail to build, just build the android module and its depe
 ```
 mvn clean install -pl android -am -P android
 ```
+
+To create a virtual device and start an [Android emulator](https://developer.android.com/tools/devices/index.html):
+
+```
+$ANDROID_HOME/tools/android avd
+```
