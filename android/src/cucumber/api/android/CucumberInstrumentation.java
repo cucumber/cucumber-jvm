@@ -16,6 +16,7 @@ import cucumber.runtime.android.DexReflections;
 import cucumber.runtime.io.Reflections;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.java.JavaBackend;
+import cucumber.runtime.java.ObjectFactory;
 import cucumber.runtime.model.*;
 import dalvik.system.DexFile;
 import gherkin.formatter.Formatter;
@@ -73,7 +74,9 @@ public class CucumberInstrumentation extends Instrumentation {
         resourceLoader = new AndroidResourceLoader(context);
 
         List<Backend> backends = new ArrayList<Backend>();
-        backends.add(new JavaBackend(new AndroidObjectFactory(this), reflections));
+        ObjectFactory delegateObjectFactory = JavaBackend.loadObjectFactory(reflections);
+        AndroidObjectFactory objectFactory = new AndroidObjectFactory(delegateObjectFactory, this);
+        backends.add(new JavaBackend(objectFactory, reflections));
         runtime = new Runtime(resourceLoader, classLoader, backends, runtimeOptions);
 
         start();

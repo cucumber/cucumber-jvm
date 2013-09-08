@@ -29,7 +29,7 @@ public class JavaBackend implements Backend {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         reflections = new ResourceLoaderReflections(resourceLoader, classLoader);
         methodScanner = new MethodScanner(reflections);
-        objectFactory = loadObjectFactory();
+        objectFactory = loadObjectFactory(reflections);
     }
 
     public JavaBackend(ObjectFactory objectFactory) {
@@ -46,7 +46,7 @@ public class JavaBackend implements Backend {
         methodScanner = new MethodScanner(reflections);
     }
 
-    private ObjectFactory loadObjectFactory() {
+    public static ObjectFactory loadObjectFactory(Reflections reflections) {
         ObjectFactory objectFactory;
         try {
             objectFactory = reflections.instantiateExactlyOneSubclass(ObjectFactory.class, "cucumber.runtime", new Class[0], new Object[0]);
