@@ -21,13 +21,13 @@ Read `libs/README.md` for details on dependencies.
 To build:
 
 ````
-mvn install -pl examples/android/cukeulator-test -am -P android,android-examples
+mvn package -pl examples/android/cukeulator-test -am -P android,android-examples
 ```
 
 To intall and run:
 
 ```
-mvn install -pl examples/android/cukeulator-test -P android-examples
+mvn install -pl examples/android/cukeulator-test -am -P android-examples
 ```
 
 To re-run already installed package:
