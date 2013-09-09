@@ -82,7 +82,7 @@
                         <configuration>
                             <packaging>jar</packaging>
                             <generatePom>true</generatePom>
-                            <url>${project.distributionManagement.repository.url}</url>
+                            <url>${project.distributionManagement.snapshotRepository}</url>
                             <artifactId>${project.artifactId}</artifactId>
                             <groupId>${project.groupId}</groupId>
                             <version>${project.version}</version>
