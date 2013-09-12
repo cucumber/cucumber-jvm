@@ -16,7 +16,7 @@ World(function() {
 });
 
 // Hooks
-Before(function() {s
+Before(function() {
     this.belliesMissing = [];
 });
 
