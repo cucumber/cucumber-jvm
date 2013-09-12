@@ -123,7 +123,7 @@ public class GroovyBackend implements Backend {
         return snippetGenerator.getSnippet(step, null);
     }
 
-    public void addStepDefinition(Pattern regexp, int timeoutMillis, Closure body) {
+    public void addStepDefinition(Pattern regexp, long timeoutMillis, Closure body) {
         glue.addStepDefinition(new GroovyStepDefinition(regexp, timeoutMillis, body, currentLocation(), instance));
     }
 
@@ -132,11 +132,11 @@ public class GroovyBackend implements Backend {
         worldClosure = closure;
     }
 
-    public void addBeforeHook(TagExpression tagExpression, int timeoutMillis, Closure body) {
+    public void addBeforeHook(TagExpression tagExpression, long timeoutMillis, Closure body) {
         glue.addBeforeHook(new GroovyHookDefinition(tagExpression, timeoutMillis, body, currentLocation(), instance));
     }
 
-    public void addAfterHook(TagExpression tagExpression, int timeoutMillis, Closure body) {
+    public void addAfterHook(TagExpression tagExpression, long timeoutMillis, Closure body) {
         glue.addAfterHook(new GroovyHookDefinition(tagExpression, timeoutMillis, body, currentLocation(), instance));
     }
 

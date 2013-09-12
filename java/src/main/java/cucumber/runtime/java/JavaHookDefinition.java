@@ -16,14 +16,14 @@ import static java.util.Arrays.asList;
 class JavaHookDefinition implements HookDefinition {
 
     private final Method method;
-    private final int timeout;
+    private final long timeoutMillis;
     private final TagExpression tagExpression;
     private final int order;
     private final ObjectFactory objectFactory;
 
-    public JavaHookDefinition(Method method, String[] tagExpressions, int order, int timeout, ObjectFactory objectFactory) {
+    public JavaHookDefinition(Method method, String[] tagExpressions, int order, long timeoutMillis, ObjectFactory objectFactory) {
         this.method = method;
-        this.timeout = timeout;
+        this.timeoutMillis = timeoutMillis;
         tagExpression = new TagExpression(asList(tagExpressions));
         this.order = order;
         this.objectFactory = objectFactory;
@@ -56,7 +56,7 @@ class JavaHookDefinition implements HookDefinition {
                 throw new CucumberException("Hooks must declare 0 or 1 arguments. " + method.toString());
         }
 
-        Utils.invoke(objectFactory.getInstance(method.getDeclaringClass()), method, timeout, args);
+        Utils.invoke(objectFactory.getInstance(method.getDeclaringClass()), method, timeoutMillis, args);
     }
 
     @Override
