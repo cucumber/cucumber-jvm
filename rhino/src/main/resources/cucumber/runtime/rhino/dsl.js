@@ -17,6 +17,32 @@ var registerStepDefinition = function (regexp, bodyFunc) {
     jsBackend.addStepDefinition(this, regexp, bodyFunc, argumentsFromFunc);
 };
 
+var registerHookDefinition = function(addHookFn, fn, tags, opts) {
+	if (tags) {
+		// if tags is a string, convert it into an array
+		if (typeof tags === "string") {
+			tags = [ tags ];
+		}
+	} else {
+		tags = [];
+	}
+	
+	tags = tags instanceof Array ? tags : [];
+	opts = opts || {};
+	
+	var order = opts.order || 1000;
+	var timeout = opts.timeout || 0;
+	addHookFn.call(jsBackend, fn, tags, order, timeout);
+}
+
+Before = function (fn, tags, opts) {
+	registerHookDefinition(jsBackend.addBeforeHook, fn, tags, opts);
+};
+
+After = function (fn, tags, opts) {
+	registerHookDefinition(jsBackend.addAfterHook, fn, tags, opts);
+};
+
 var Given = registerStepDefinition;
 var When = registerStepDefinition;
 var Then = registerStepDefinition;
