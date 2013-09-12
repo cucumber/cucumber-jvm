@@ -1,5 +1,19 @@
 package cucumber.runtime.rhino;
 
+import static cucumber.runtime.io.MultiLoader.packageName;
+import gherkin.formatter.model.Step;
+
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.List;
+
+import org.mozilla.javascript.Context;
+import org.mozilla.javascript.Function;
+import org.mozilla.javascript.NativeFunction;
+import org.mozilla.javascript.Scriptable;
+import org.mozilla.javascript.regexp.NativeRegExp;
+import org.mozilla.javascript.tools.shell.Global;
+
 import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Glue;
@@ -8,18 +22,6 @@ import cucumber.runtime.io.Resource;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.snippets.FunctionNameSanitizer;
 import cucumber.runtime.snippets.SnippetGenerator;
-import gherkin.formatter.model.Step;
-import org.mozilla.javascript.Context;
-import org.mozilla.javascript.NativeFunction;
-import org.mozilla.javascript.Scriptable;
-import org.mozilla.javascript.regexp.NativeRegExp;
-import org.mozilla.javascript.tools.shell.Global;
-
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.List;
-
-import static cucumber.runtime.io.MultiLoader.packageName;
 
 public class RhinoBackend implements Backend {
     private static final String JS_DSL = "/cucumber/runtime/rhino/dsl.js";
@@ -56,7 +58,7 @@ public class RhinoBackend implements Backend {
 
     @Override
     public void setUnreportedStepExecutor(UnreportedStepExecutor executor) {
-        //Not used yet
+        // Not used yet
     }
 
     @Override
@@ -72,7 +74,7 @@ public class RhinoBackend implements Backend {
         return snippetGenerator.getSnippet(step, functionNameSanitizer);
     }
 
-    private StackTraceElement stepDefLocation() {
+    private StackTraceElement jsLocation() {
         Throwable t = new Throwable();
         StackTraceElement[] stackTraceElements = t.getStackTrace();
         for (StackTraceElement stackTraceElement : stackTraceElements) {
@@ -89,8 +91,20 @@ public class RhinoBackend implements Backend {
     }
 
     public void addStepDefinition(Global jsStepDefinition, NativeRegExp regexp, NativeFunction bodyFunc, NativeFunction argumentsFromFunc) throws Throwable {
-        StackTraceElement stepDefLocation = stepDefLocation();
+        StackTraceElement stepDefLocation = jsLocation();
         RhinoStepDefinition stepDefinition = new RhinoStepDefinition(cx, scope, jsStepDefinition, regexp, bodyFunc, stepDefLocation, argumentsFromFunc);
         glue.addStepDefinition(stepDefinition);
+    }
+
+    public void addBeforeHook(Function fn, String[] tags, int order, int timeout) {
+        StackTraceElement stepDefLocation = jsLocation();
+        RhinoHookDefinition hookDefinition = new RhinoHookDefinition(cx, scope, fn, tags, order, timeout, stepDefLocation);
+        glue.addBeforeHook(hookDefinition);
+    }
+
+    public void addAfterHook(Function fn, String[] tags, int order, int timeout) {
+        StackTraceElement stepDefLocation = jsLocation();
+        RhinoHookDefinition hookDefinition = new RhinoHookDefinition(cx, scope, fn, tags, order, timeout, stepDefLocation);
+        glue.addAfterHook(hookDefinition);
     }
 }
