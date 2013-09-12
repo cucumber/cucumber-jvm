@@ -16,18 +16,18 @@ import cucumber.runtime.Timeout;
 
 public class RhinoHookDefinition implements HookDefinition {
 
-	private Context cx;
-	private Scriptable scope;
-	private Function fn;
-	private final TagExpression tagExpression;
+    private Context cx;
+    private Scriptable scope;
+    private Function fn;
+    private final TagExpression tagExpression;
     private final int order;
     private final int timeoutMillis;
-	private StackTraceElement location;
+    private StackTraceElement location;
 
     public RhinoHookDefinition(Context cx, Scriptable scope, Function fn, String[] tagExpressions, int order, int timeout, StackTraceElement location) {
         this.cx = cx;
-		this.scope = scope;
-		this.fn = fn;
+        this.scope = scope;
+        this.fn = fn;
         tagExpression = new TagExpression(asList(tagExpressions));
         this.order = order;
         this.timeoutMillis = timeout;
@@ -49,7 +49,7 @@ public class RhinoHookDefinition implements HookDefinition {
         Timeout.timeout(new Timeout.Callback<Object>() {
             @Override
             public Object call() throws Throwable {
-            	return fn.call(cx, scope, scope, args);
+                return fn.call(cx, scope, scope, args);
             }
         }, timeoutMillis);
     }
@@ -65,11 +65,11 @@ public class RhinoHookDefinition implements HookDefinition {
     }
 
     TagExpression getTagExpression() {
-    	return tagExpression;
+        return tagExpression;
     }
-    
+
     int getTimeout() {
-    	return timeoutMillis;
+        return timeoutMillis;
     }
 
 }

@@ -58,7 +58,7 @@ public class RhinoBackend implements Backend {
 
     @Override
     public void setUnreportedStepExecutor(UnreportedStepExecutor executor) {
-        //Not used yet
+        // Not used yet
     }
 
     @Override
@@ -95,16 +95,16 @@ public class RhinoBackend implements Backend {
         RhinoStepDefinition stepDefinition = new RhinoStepDefinition(cx, scope, jsStepDefinition, regexp, bodyFunc, stepDefLocation, argumentsFromFunc);
         glue.addStepDefinition(stepDefinition);
     }
-    
+
     public void addBeforeHook(Function fn, String[] tags, int order, int timeout) {
         StackTraceElement stepDefLocation = jsLocation();
         RhinoHookDefinition hookDefinition = new RhinoHookDefinition(cx, scope, fn, tags, order, timeout, stepDefLocation);
-    	glue.addBeforeHook(hookDefinition);
+        glue.addBeforeHook(hookDefinition);
     }
-    
+
     public void addAfterHook(Function fn, String[] tags, int order, int timeout) {
-    	StackTraceElement stepDefLocation = jsLocation();
-    	RhinoHookDefinition hookDefinition = new RhinoHookDefinition(cx, scope, fn, tags, order, timeout, stepDefLocation);
-		glue.addAfterHook(hookDefinition);
+        StackTraceElement stepDefLocation = jsLocation();
+        RhinoHookDefinition hookDefinition = new RhinoHookDefinition(cx, scope, fn, tags, order, timeout, stepDefLocation);
+        glue.addAfterHook(hookDefinition);
     }
 }

@@ -1,7 +1,7 @@
 // Hooks
 var defineHooks = function(fn, tags, opts) {
-	Before(fn, tags, opts);
-	After(fn, tags, opts);
+    Before(fn, tags, opts);
+    After(fn, tags, opts);
 };
 
 defineHooks(function() { });
