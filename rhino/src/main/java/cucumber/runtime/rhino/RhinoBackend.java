@@ -96,15 +96,15 @@ public class RhinoBackend implements Backend {
         glue.addStepDefinition(stepDefinition);
     }
 
-    public void addBeforeHook(Function fn, String[] tags, int order, int timeout) {
+    public void addBeforeHook(Function fn, String[] tags, int order, long timeoutMillis) {
         StackTraceElement stepDefLocation = jsLocation();
-        RhinoHookDefinition hookDefinition = new RhinoHookDefinition(cx, scope, fn, tags, order, timeout, stepDefLocation);
+        RhinoHookDefinition hookDefinition = new RhinoHookDefinition(cx, scope, fn, tags, order, timeoutMillis, stepDefLocation);
         glue.addBeforeHook(hookDefinition);
     }
 
-    public void addAfterHook(Function fn, String[] tags, int order, int timeout) {
+    public void addAfterHook(Function fn, String[] tags, int order, long timeoutMillis) {
         StackTraceElement stepDefLocation = jsLocation();
-        RhinoHookDefinition hookDefinition = new RhinoHookDefinition(cx, scope, fn, tags, order, timeout, stepDefLocation);
+        RhinoHookDefinition hookDefinition = new RhinoHookDefinition(cx, scope, fn, tags, order, timeoutMillis, stepDefLocation);
         glue.addAfterHook(hookDefinition);
     }
 }

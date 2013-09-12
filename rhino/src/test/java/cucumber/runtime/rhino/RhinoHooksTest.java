@@ -88,12 +88,12 @@ public class RhinoHooksTest {
         fail(InterruptedException.class.getSimpleName() + " expected");
     }
 
-    private void assertHooks(HookDefinition beforeHook, HookDefinition afterHook, String[] tags, int order, int timeout) {
-        assertHook(beforeHook, tags, order, timeout);
-        assertHook(afterHook, tags, order, timeout);
+    private void assertHooks(HookDefinition beforeHook, HookDefinition afterHook, String[] tags, int order, long timeoutMillis) {
+        assertHook(beforeHook, tags, order, timeoutMillis);
+        assertHook(afterHook, tags, order, timeoutMillis);
     }
 
-    private void assertHook(HookDefinition hookDefinition, String[] tagExprs, int order, int timeout) {
+    private void assertHook(HookDefinition hookDefinition, String[] tagExprs, int order, long timeoutMillis) {
         assertThat(hookDefinition, instanceOf(RhinoHookDefinition.class));
 
         RhinoHookDefinition rhinoHook = (RhinoHookDefinition) hookDefinition;
@@ -106,7 +106,7 @@ public class RhinoHooksTest {
 
         assertTrue(rhinoHook.getTagExpression().evaluate(tags));
         assertThat(rhinoHook.getOrder(), equalTo(order));
-        assertThat(rhinoHook.getTimeout(), equalTo(timeout));
+        assertThat(rhinoHook.getTimeout(), equalTo(timeoutMillis));
     }
 
 }

@@ -11,12 +11,12 @@ import java.util.Collection;
 
 public class GroovyHookDefinition implements HookDefinition {
     private final TagExpression tagExpression;
-    private final int timeoutMillis;
+    private final long timeoutMillis;
     private final Closure body;
     private final GroovyBackend backend;
     private final StackTraceElement location;
 
-    public GroovyHookDefinition(TagExpression tagExpression, int timeoutMillis, Closure body, StackTraceElement location, GroovyBackend backend) {
+    public GroovyHookDefinition(TagExpression tagExpression, long timeoutMillis, Closure body, StackTraceElement location, GroovyBackend backend) {
         this.tagExpression = tagExpression;
         this.timeoutMillis = timeoutMillis;
         this.body = body;

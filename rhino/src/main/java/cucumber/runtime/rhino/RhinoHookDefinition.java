@@ -21,16 +21,16 @@ public class RhinoHookDefinition implements HookDefinition {
     private Function fn;
     private final TagExpression tagExpression;
     private final int order;
-    private final int timeoutMillis;
+    private final long timeoutMillis;
     private StackTraceElement location;
 
-    public RhinoHookDefinition(Context cx, Scriptable scope, Function fn, String[] tagExpressions, int order, int timeout, StackTraceElement location) {
+    public RhinoHookDefinition(Context cx, Scriptable scope, Function fn, String[] tagExpressions, int order, long timeoutMillis, StackTraceElement location) {
         this.cx = cx;
         this.scope = scope;
         this.fn = fn;
         tagExpression = new TagExpression(asList(tagExpressions));
         this.order = order;
-        this.timeoutMillis = timeout;
+        this.timeoutMillis = timeoutMillis;
         this.location = location;
     }
 
@@ -64,7 +64,7 @@ public class RhinoHookDefinition implements HookDefinition {
         return tagExpression;
     }
 
-    int getTimeout() {
+    long getTimeout() {
         return timeoutMillis;
     }
 

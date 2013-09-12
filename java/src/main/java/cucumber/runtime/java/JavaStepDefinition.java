@@ -17,17 +17,17 @@ import java.util.regex.Pattern;
 class JavaStepDefinition implements StepDefinition {
     private final Method method;
     private final Pattern pattern;
-    private final int timeout;
+    private final long timeout;
     private final JdkPatternArgumentMatcher argumentMatcher;
     private final ObjectFactory objectFactory;
     private List<ParameterInfo> parameterInfos;
 
-    public JavaStepDefinition(Method method, Pattern pattern, int timeout, ObjectFactory objectFactory) {
+    public JavaStepDefinition(Method method, Pattern pattern, long timeoutMillis, ObjectFactory objectFactory) {
         this.method = method;
         this.parameterInfos = ParameterInfo.fromMethod(method);
         this.pattern = pattern;
         this.argumentMatcher = new JdkPatternArgumentMatcher(pattern);
-        this.timeout = timeout;
+        this.timeout = timeoutMillis;
         this.objectFactory = objectFactory;
     }
 
