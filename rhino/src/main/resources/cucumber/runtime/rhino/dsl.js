@@ -47,7 +47,6 @@ var Given = registerStepDefinition;
 var When = registerStepDefinition;
 var Then = registerStepDefinition;
 
-var World = function(func) {
-    // TODO: do this properly
-    func();
+var World = function(fn) {
+    jsBackend.registerWorld(fn);
 };

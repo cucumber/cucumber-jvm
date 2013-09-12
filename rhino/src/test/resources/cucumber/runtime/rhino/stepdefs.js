@@ -11,8 +11,9 @@ function assertContains(expectedVal, array) {
     throw "Expected array containing " + expectedVal + ", but got " + array;
 }
 
+this.worldCounter = 0;
 World(function() {
-
+    this.worldCounter++;
 });
 
 // Hooks
@@ -33,6 +34,14 @@ After(function() {
 }, "@bellies");
 
 // Steps
+Given(/^the world was created$/, function() {
+    // nothing to do
+});
+
+Then(/^the world counter is (\d)$/, function(counter) {
+    assertEquals(counter, this.worldCounter);
+});
+
 Given(/^I have (\d+) "([^"]*)" in my belly$/, function(n, what) {
     this.n = n;
     this.what = what;
@@ -45,10 +54,7 @@ Then(/^there are (\d+) "([^"]*)" in my belly$/, function(n, what) {
 
 Given(/^(\w+) has (\d+) "([^"]*)" in his belly$/, function(bellyOwner, n, what) {
     if (this.bellies) {
-        this.bellies[bellyOwner] = {
-            n : n,
-            what : what
-        };
+        this.bellies[bellyOwner] = { n : n, what : what };
     } else {
         this.belliesMissing.push(bellyOwner);
     }

@@ -1,5 +1,13 @@
 Feature: Cukes
 
+  Scenario: world creation
+    Given the world was created
+    Then the world counter is 1
+
+  Scenario: world already created, not created twice
+    Given the world was created
+    Then the world counter is 1
+
   Scenario: in the belly
     Given I have 4 "cukes" in my belly
     Then there are 4 "cukes" in my belly
