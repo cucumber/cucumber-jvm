@@ -9,6 +9,7 @@
     </parent>
 
     <artifactId>cucumber-junit</artifactId>
+    <version>1.1.4.issue_577_bert_2</version>
     <packaging>jar</packaging>
     <name>Cucumber-JVM: JUnit</name>
 
@@ -16,6 +17,7 @@
         <dependency>
             <groupId>info.cukes</groupId>
             <artifactId>cucumber-core</artifactId>
+	        <version>1.1.4</version>
         </dependency>
         <dependency>
             <groupId>info.cukes</groupId>
@@ -43,4 +45,22 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+    
+    <build>
+    	<plugins>
+    		<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.2.1</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>    	
+    	</plugins>
+    </build>
 </project>
