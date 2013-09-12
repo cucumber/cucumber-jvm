@@ -34,10 +34,6 @@ public class RhinoHookDefinition implements HookDefinition {
         this.location = location;
     }
 
-    Function getFunction() {
-        return fn;
-    }
-
     @Override
     public String getLocation(boolean detail) {
         return location.getFileName() + ":" + location.getLineNumber();
