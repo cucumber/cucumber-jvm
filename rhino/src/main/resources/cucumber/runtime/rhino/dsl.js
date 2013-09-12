@@ -4,7 +4,7 @@ var registerStepDefinition = function(regexp, bodyFunc) {
         if (match) {
             var arguments = new Packages.java.util.ArrayList();
             var s = match[0];
-            for (i = 1; i < match.length; i++) {
+            for (var i = 1; i < match.length; i++) {
                 var arg = match[i];
                 var offset = s.indexOf(arg, offset);
                 arguments.add(new Packages.gherkin.formatter.Argument(offset, arg));
@@ -33,7 +33,7 @@ var registerHookDefinition = function(addHookFn, fn, tags, opts) {
     var order = opts.order || 1000;
     var timeout = opts.timeout || 0;
     addHookFn.call(jsBackend, fn, tags, order, timeout);
-}
+};
 
 Before = function(fn, tags, opts) {
     registerHookDefinition(jsBackend.addBeforeHook, fn, tags, opts);
