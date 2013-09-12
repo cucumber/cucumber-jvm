@@ -24,15 +24,16 @@ import java.util.Set;
  * Failed means: (failed, undefined, pending) test result
  */
 class RerunFormatter implements Formatter, Reporter {
-
     private final NiceAppendable out;
-
     private String featureLocation;
-
-    private Step step;
-
+    private Scenario scenario;
+    private ScenarioState state = ScenarioState.None;
+    private boolean isTestFailed = false;
     private Map<String, LinkedHashSet<Integer>> featureAndFailedLinesMapping = new HashMap<String, LinkedHashSet<Integer>>();
 
+    enum ScenarioState {
+        None, In_Background_Or_Before, In_Scenario
+    }
 
     public RerunFormatter(Appendable out) {
         this.out = new NiceAppendable(out);
@@ -49,14 +50,28 @@ class RerunFormatter implements Formatter, Reporter {
 
     @Override
     public void background(Background background) {
+        recordPreviousScenarioIfFailed();
+        state = ScenarioState.In_Background_Or_Before;
     }
 
     @Override
     public void scenario(Scenario scenario) {
+        recordPreviousScenarioIfFailed();
+        state = ScenarioState.In_Scenario;
+        this.scenario = scenario;
+    }
+
+    private void recordPreviousScenarioIfFailed() {
+        if (state == ScenarioState.In_Scenario && isTestFailed) {
+            recordTestFailed();
+            isTestFailed = false;
+        }
     }
 
     @Override
     public void scenarioOutline(ScenarioOutline scenarioOutline) {
+        recordPreviousScenarioIfFailed();
+        state = ScenarioState.None;
     }
 
     @Override
@@ -65,11 +80,12 @@ class RerunFormatter implements Formatter, Reporter {
 
     @Override
     public void step(Step step) {
-        this.step = step;
     }
 
     @Override
     public void eof() {
+        recordPreviousScenarioIfFailed();
+        state = ScenarioState.None;
     }
 
     @Override
@@ -78,10 +94,10 @@ class RerunFormatter implements Formatter, Reporter {
 
     @Override
     public void done() {
-        reportFailedSteps();
+        reportFailedScenarios();
     }
 
-    private void reportFailedSteps() {
+    private void reportFailedScenarios() {
         Set<Map.Entry<String, LinkedHashSet<Integer>>> entries = featureAndFailedLinesMapping.entrySet();
         boolean firstFeature = true;
         for (Map.Entry<String, LinkedHashSet<Integer>> entry : entries) {
@@ -115,13 +131,17 @@ class RerunFormatter implements Formatter, Reporter {
 
     @Override
     public void before(Match match, Result result) {
-
+        recordPreviousScenarioIfFailed();
+        state = ScenarioState.In_Background_Or_Before;
+        if (isTestFailed(result)) {
+            isTestFailed = true;
+        }
     }
 
     @Override
     public void result(Result result) {
         if (isTestFailed(result)) {
-            recordTestFailed();
+            isTestFailed = true;
         }
     }
 
@@ -131,17 +151,20 @@ class RerunFormatter implements Formatter, Reporter {
     }
 
     private void recordTestFailed() {
-        LinkedHashSet<Integer> failedSteps = this.featureAndFailedLinesMapping.get(featureLocation);
-        if (failedSteps == null) {
-            failedSteps = new LinkedHashSet<Integer>();
-            this.featureAndFailedLinesMapping.put(featureLocation, failedSteps);
+        LinkedHashSet<Integer> failedScenarios = this.featureAndFailedLinesMapping.get(featureLocation);
+        if (failedScenarios == null) {
+            failedScenarios = new LinkedHashSet<Integer>();
+            this.featureAndFailedLinesMapping.put(featureLocation, failedScenarios);
         }
 
-        failedSteps.add(step.getLine());
+        failedScenarios.add(scenario.getLine());
     }
 
     @Override
     public void after(Match match, Result result) {
+        if (isTestFailed(result)) {
+            isTestFailed = true;
+        }
     }
 
     @Override

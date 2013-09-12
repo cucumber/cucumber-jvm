@@ -24,6 +24,7 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -68,13 +69,20 @@ public class TestHelper {
 
     public static void runFeatureWithFormatter(final CucumberFeature feature, final Map<String, String> stepsToResult, final List<SimpleEntry<String, String>> hooks,
             final long stepHookDuration, final Formatter formatter, final Reporter reporter) throws Throwable, FileNotFoundException {
+        runFeaturesWithFormatter(Arrays.asList(feature), stepsToResult, hooks, stepHookDuration, formatter, reporter);
+    }
+
+    public static void runFeaturesWithFormatter(final List<CucumberFeature> features, final Map<String, String> stepsToResult, final List<SimpleEntry<String, String>> hooks,
+            final long stepHookDuration, final Formatter formatter, final Reporter reporter) throws Throwable {
         final RuntimeOptions runtimeOptions = new RuntimeOptions(new Env());
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         final ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
         final RuntimeGlue glue = createMockedRuntimeGlueThatMatchesTheSteps(stepsToResult, hooks);
         final Runtime runtime = new Runtime(resourceLoader, classLoader, asList(mock(Backend.class)), runtimeOptions, new StopWatch.Stub(stepHookDuration), glue);
 
-        feature.run(formatter, reporter, runtime);
+        for (CucumberFeature feature : features) {
+            feature.run(formatter, reporter, runtime);
+        }
         formatter.done();
         formatter.close();
     }
