@@ -2,9 +2,7 @@ package cucumber.runtime.rhino;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.doNothing;
 import gherkin.formatter.model.Tag;
 
@@ -24,6 +22,7 @@ import cucumber.runtime.HookDefinition;
 import cucumber.runtime.RuntimeGlue;
 import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.io.ResourceLoader;
+import org.mozilla.javascript.WrappedException;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RhinoHooksTest {
@@ -70,7 +69,7 @@ public class RhinoHooksTest {
         assertHooks(beforeHooks.get(5), afterHooks.get(5), TAGS, 20, 600);
     }
 
-    @Test
+    @Test(expected = InterruptedException.class)
     public void shouldFailWithTimeout() throws Throwable {
         // when
         RhinoBackend jsBackend = new RhinoBackend(resourceLoader);
@@ -79,13 +78,10 @@ public class RhinoHooksTest {
 
         try {
             beforeHooks.get(0).execute(null);
-        } catch (Exception e) {
-            // then
-            assertThat(e.getCause(), instanceOf(InterruptedException.class));
-            return;
+            fail();
+        } catch(WrappedException expected) {
+            throw expected.getWrappedException();
         }
-
-        fail(InterruptedException.class.getSimpleName() + " expected");
     }
 
     private void assertHooks(HookDefinition beforeHook, HookDefinition afterHook, String[] tags, int order, long timeoutMillis) {
