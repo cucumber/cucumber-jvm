@@ -6,7 +6,6 @@ import cucumber.runtime.formatter.FormatterFactory;
 import cucumber.runtime.formatter.StrictAware;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
-import cucumber.runtime.snippets.FunctionNameSanitizer;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
 import gherkin.util.FixJava;
@@ -25,6 +24,7 @@ import java.util.regex.Pattern;
 import static cucumber.runtime.model.CucumberFeature.load;
 import static java.util.Arrays.asList;
 
+// IMPORTANT! Make sure USAGE.txt is always uptodate if this class changes.
 public class RuntimeOptions {
     public static final String VERSION = ResourceBundle.getBundle("cucumber.version").getString("cucumber-jvm.version");
     public static final String USAGE = FixJava.readResource("/cucumber/runtime/USAGE.txt");
@@ -42,16 +42,15 @@ public class RuntimeOptions {
     private SnippetType snippetType = SnippetType.UNDERSCORE;
 
     public RuntimeOptions(Properties properties, String... argv) {
-        /* IMPORTANT! Make sure USAGE.txt is always uptodate if this class changes */
         this(properties, new FormatterFactory(), argv);
     }
 
     RuntimeOptions(Properties properties, FormatterFactory formatterFactory, String... argv) {
         this.formatterFactory = formatterFactory;
 
-        parse(new ArrayList<String>(asList(argv)));
+        parse(new ArrayList<String>(asList(argv)), false);
         if (properties.containsKey("cucumber.options")) {
-            parse(shellWords(properties.getProperty("cucumber.options")));
+            parse(shellWords(properties.getProperty("cucumber.options")), true);
         }
 
         if (formatters.isEmpty()) {
@@ -73,8 +72,15 @@ public class RuntimeOptions {
         return matchList;
     }
 
-    private void parse(List<String> args) {
+    private void parse(List<String> args, boolean clobberFeaturePathsAndGlue) {
         List<Object> parsedFilters = new ArrayList<Object>();
+
+        List<String> oldFeaturePaths = new ArrayList<String>(featurePaths);
+        List<String> oldGlue = new ArrayList<String>(glue);
+        if (clobberFeaturePathsAndGlue) {
+            featurePaths.clear();
+            glue.clear();
+        }
         while (!args.isEmpty()) {
             String arg = args.remove(0).trim();
 
@@ -119,6 +125,12 @@ public class RuntimeOptions {
         if (!parsedFilters.isEmpty()) {
             filters.clear();
             filters.addAll(parsedFilters);
+        }
+        if (featurePaths.isEmpty()) {
+            featurePaths.addAll(oldFeaturePaths);
+        }
+        if (glue.isEmpty()) {
+            glue.addAll(oldGlue);
         }
     }
 

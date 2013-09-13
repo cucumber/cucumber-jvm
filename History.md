@@ -1,5 +1,6 @@
 ## [1-1-5-SNAPSHOT (Git master)](https://github.com/cucumber/cucumber-jvm/compare/v1.1.4...master)
 
+* [Core] Feature paths and `--glue` in `cucumber.options` clobber defaults rather than appending to them. (Aslak Hellesøy)
 * [Core] Step Definition and Hook timeout is now a `long` instead of an `int`. (Aslak Hellesøy)
 * [Rhino] Before and After hooks support ([#587](https://github.com/cucumber/cucumber-jvm/pull/587) Rui Figueira)
 * [Android] Separate CI job for Android. ([#581](https://github.com/cucumber/cucumber-jvm/issues/581), [#584](https://github.com/cucumber/cucumber-jvm/pull/584) Björn Rasmusson)
