@@ -1,4 +1,4 @@
-## [1-1-5-SNAPSHOT (Git master)](https://github.com/cucumber/cucumber-jvm/compare/v1.1.4...master)
+## [1.1.5](https://github.com/cucumber/cucumber-jvm/compare/v1.1.4...v1.1.5)
 
 * [Core] There are now three ways to override Cucumber Options. (Aslak Hellesøy)
   * `cucumber.options="..."` passed to the JVM with `-Dcucumber.options="..."`.
