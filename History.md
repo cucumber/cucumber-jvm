@@ -1,6 +1,11 @@
 ## [1-1-5-SNAPSHOT (Git master)](https://github.com/cucumber/cucumber-jvm/compare/v1.1.4...master)
 
+* [Core] There are now three ways to override Cucumber Options. (Aslak Hellesøy)
+  * `cucumber.options="..."` passed to the JVM with `-Dcucumber.options="..."`.
+  * The environment variable `CUCUMBER_OPTIONS="..."`.
+  * A `cucumber-jvm.properties` on the `CLASSPATH` with a `cucumber.options="..."` property.
 * [Core] Feature paths and `--glue` in `cucumber.options` clobber defaults rather than appending to them. (Aslak Hellesøy)
+* [JRuby] The `GEM_PATH` and `RUBY_VERSION` values will be picked up from `cucumber-jvm.properties` instead of `cucumber-jruby.properties` (Aslak Hellesøy).
 * [Core] Step Definition and Hook timeout is now a `long` instead of an `int`. (Aslak Hellesøy)
 * [Rhino] Before and After hooks support ([#587](https://github.com/cucumber/cucumber-jvm/pull/587) Rui Figueira)
 * [Android] Separate CI job for Android. ([#581](https://github.com/cucumber/cucumber-jvm/issues/581), [#584](https://github.com/cucumber/cucumber-jvm/pull/584) Björn Rasmusson)

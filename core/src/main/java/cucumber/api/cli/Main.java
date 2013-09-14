@@ -1,6 +1,7 @@
 package cucumber.api.cli;
 
 import cucumber.runtime.ClassFinder;
+import cucumber.runtime.Env;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.io.MultiLoader;
@@ -16,7 +17,7 @@ public class Main {
     }
 
     public static void run(String[] argv, ClassLoader classLoader) throws IOException {
-        RuntimeOptions runtimeOptions = new RuntimeOptions(System.getProperties(), argv);
+        RuntimeOptions runtimeOptions = new RuntimeOptions(new Env("cucumber-jvm"), argv);
 
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);

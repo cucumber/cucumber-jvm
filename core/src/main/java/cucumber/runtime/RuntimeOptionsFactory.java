@@ -22,7 +22,7 @@ public class RuntimeOptionsFactory {
     public RuntimeOptions create() {
         List<String> args = buildArgsFromOptions();
 
-        return new RuntimeOptions(System.getProperties(), args.toArray(new String[args.size()]));
+        return new RuntimeOptions(new Env("cucumber-jvm"), args.toArray(new String[args.size()]));
     }
 
     private List<String> buildArgsFromOptions() {

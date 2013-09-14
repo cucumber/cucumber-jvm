@@ -13,7 +13,6 @@ import org.mockito.InOrder;
 import org.mockito.Matchers;
 
 import java.util.ArrayList;
-import java.util.Properties;
 
 import static java.util.Arrays.asList;
 import static org.mockito.Matchers.anyListOf;
@@ -44,7 +43,7 @@ public class HookTest {
         CucumberScenario scenario = new CucumberScenario(feature, null, gherkinScenario);
 
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        RuntimeOptions runtimeOptions = new RuntimeOptions(new Properties());
+        RuntimeOptions runtimeOptions = new RuntimeOptions(new Env());
         Runtime runtime = new Runtime(new ClasspathResourceLoader(classLoader), classLoader, asList(backend), runtimeOptions);
         runtime.getGlue().addAfterHook(hook);
 

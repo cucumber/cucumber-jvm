@@ -3,6 +3,7 @@ package cucumber.runtime.java;
 import cucumber.api.java.en.Given;
 import cucumber.runtime.AmbiguousStepDefinitionsException;
 import cucumber.runtime.DuplicateStepDefinitionException;
+import cucumber.runtime.Env;
 import cucumber.runtime.Glue;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeOptions;
@@ -21,7 +22,6 @@ import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Properties;
 import java.util.Set;
 
 import static java.util.Arrays.asList;
@@ -49,7 +49,7 @@ public class JavaStepDefinitionTest {
     private final Defs defs = new Defs();
     private final JavaBackend backend = new JavaBackend(new SingletonFactory(defs));
     private final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-    private final RuntimeOptions runtimeOptions = new RuntimeOptions(new Properties());
+    private final RuntimeOptions runtimeOptions = new RuntimeOptions(new Env());
     private final Runtime runtime = new Runtime(new ClasspathResourceLoader(classLoader), classLoader, asList(backend), runtimeOptions);
     private final Glue glue = runtime.getGlue();
 

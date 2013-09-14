@@ -16,7 +16,6 @@ import java.lang.reflect.Proxy;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -41,16 +40,18 @@ public class RuntimeOptions {
     private boolean monochrome = false;
     private SnippetType snippetType = SnippetType.UNDERSCORE;
 
-    public RuntimeOptions(Properties properties, String... argv) {
-        this(properties, new FormatterFactory(), argv);
+    public RuntimeOptions(Env env, String... argv) {
+        this(env, new FormatterFactory(), argv);
     }
 
-    RuntimeOptions(Properties properties, FormatterFactory formatterFactory, String... argv) {
+    RuntimeOptions(Env env, FormatterFactory formatterFactory, String... argv) {
         this.formatterFactory = formatterFactory;
 
         parse(new ArrayList<String>(asList(argv)), false);
-        if (properties.containsKey("cucumber.options")) {
-            parse(shellWords(properties.getProperty("cucumber.options")), true);
+
+        String cucumberOptionsFromEnv = env.get("cucumber.options");
+        if (cucumberOptionsFromEnv != null) {
+            parse(shellWords(cucumberOptionsFromEnv), true);
         }
 
         if (formatters.isEmpty()) {
