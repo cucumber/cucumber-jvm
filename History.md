@@ -26,7 +26,7 @@
 * [Windows] Use uri instead of path in CucumberFeature ([#562](https://github.com/cucumber/cucumber-jvm/pull/562) Björn Rasmusson)
 * [Android] Better example for Cucumber-Android. ([#547](https://github.com/cucumber/cucumber-jvm/issues/547), [#574](https://github.com/cucumber/cucumber-jvm/issues/574) Maximilian Fellner)
 * [Android] Use @CucumberOptions instead of @RunWithCucumber. ([#576](https://github.com/cucumber/cucumber-jvm/issues/576) Maximilian Fellner)
-* [Android] Deploy a jar for cucumber-android. ([#573](https://github.com/cucumber/cucumber-jvm/issues/573) Maximilian Fellner)
+* [Android] Deploy a jar for cucumber-android. ([#573](https://github.com/cucumber/cucumber-jvm/issues/573) Maximilian Fellner, Aslak Hellesøy)
 
 ## [1.1.4](https://github.com/cucumber/cucumber-jvm/compare/v1.1.3...v1.1.4) (2013-08-11)
 
