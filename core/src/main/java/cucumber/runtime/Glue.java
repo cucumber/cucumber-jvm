@@ -1,5 +1,6 @@
 package cucumber.runtime;
 
+import cucumber.runtime.io.ResourceLoader;
 import gherkin.I18n;
 import gherkin.formatter.model.Step;
 
@@ -24,5 +25,5 @@ public interface Glue {
 
     StepDefinitionMatch stepDefinitionMatch(String uri, Step step, I18n i18n);
 
-    void writeStepdefsJson(List<String> featurePaths, URL dotCucumber) throws IOException;
+    void writeStepdefsJson(ResourceLoader resourceLoader, List<String> featurePaths, URL dotCucumber);
 }

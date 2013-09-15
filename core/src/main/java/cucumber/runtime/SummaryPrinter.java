@@ -1,4 +1,4 @@
-package cucumber.runtime.snippets;
+package cucumber.runtime;
 
 import java.io.PrintStream;
 import java.util.List;
@@ -12,14 +12,14 @@ public class SummaryPrinter {
 
     public void print(cucumber.runtime.Runtime runtime) {
         out.println();
-        printSummary(runtime);
+        printStats(runtime);
         out.println();
         printErrors(runtime);
         printSnippets(runtime);
     }
 
-    private void printSummary(cucumber.runtime.Runtime runtime) {
-        runtime.printSummary(out);
+    private void printStats(cucumber.runtime.Runtime runtime) {
+        runtime.printStats(out);
     }
 
     private void printErrors(cucumber.runtime.Runtime runtime) {

@@ -16,12 +16,12 @@ import org.junit.Test;
 import org.junit.internal.AssumptionViolatedException;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Properties;
 
 import static cucumber.runtime.TestHelper.feature;
 import static java.util.Arrays.asList;
@@ -180,7 +180,7 @@ public class RuntimeTest {
     }
 
     @Test
-    public void should_pass_if_no_features_are_found() {
+    public void should_pass_if_no_features_are_found() throws IOException {
         ResourceLoader resourceLoader = createResourceLoaderThatFindsNoFeatures();
         Runtime runtime = createStrictRuntime(resourceLoader);
 
@@ -211,7 +211,7 @@ public class RuntimeTest {
         runtime.buildBackendWorlds(reporter, Collections.<Tag>emptySet());
         runStep(reporter, runtime);
         runtime.disposeBackendWorlds();
-        runtime.printSummary(new PrintStream(baos));
+        runtime.printStats(new PrintStream(baos));
 
         assertThat(baos.toString(), startsWith(String.format(
                 "1 Scenarios (1 passed)%n" +
@@ -228,7 +228,7 @@ public class RuntimeTest {
         runtime.buildBackendWorlds(reporter, Collections.<Tag>emptySet());
         runStep(reporter, runtime);
         runtime.disposeBackendWorlds();
-        runtime.printSummary(new PrintStream(baos));
+        runtime.printStats(new PrintStream(baos));
 
         assertThat(baos.toString(), startsWith(String.format(
                 "1 Scenarios (1 pending)%n" +
@@ -245,7 +245,7 @@ public class RuntimeTest {
         runtime.buildBackendWorlds(reporter, Collections.<Tag>emptySet());
         runStep(reporter, runtime);
         runtime.disposeBackendWorlds();
-        runtime.printSummary(new PrintStream(baos));
+        runtime.printStats(new PrintStream(baos));
 
         assertThat(baos.toString(), startsWith(String.format(
                 "1 Scenarios (1 failed)%n" +
@@ -261,7 +261,7 @@ public class RuntimeTest {
         runtime.buildBackendWorlds(reporter, Collections.<Tag>emptySet());
         runStep(reporter, runtime);
         runtime.disposeBackendWorlds();
-        runtime.printSummary(new PrintStream(baos));
+        runtime.printStats(new PrintStream(baos));
 
         assertThat(baos.toString(), startsWith(String.format(
                 "1 Scenarios (1 failed)%n" +
@@ -279,7 +279,7 @@ public class RuntimeTest {
         runStep(reporter, runtime);
         runStep(reporter, runtime);
         runtime.disposeBackendWorlds();
-        runtime.printSummary(new PrintStream(baos));
+        runtime.printStats(new PrintStream(baos));
 
         assertThat(baos.toString(), startsWith(String.format(
                 "1 Scenarios (1 failed)%n" +
@@ -295,7 +295,7 @@ public class RuntimeTest {
         runtime.buildBackendWorlds(reporter, Collections.<Tag>emptySet());
         runStep(reporter, runtime);
         runtime.disposeBackendWorlds();
-        runtime.printSummary(new PrintStream(baos));
+        runtime.printStats(new PrintStream(baos));
 
         assertThat(baos.toString(), startsWith(String.format(
                 "1 Scenarios (1 undefined)%n" +
@@ -314,7 +314,7 @@ public class RuntimeTest {
         runtime.runBeforeHooks(reporter, Collections.<Tag>emptySet());
         runStep(reporter, runtime);
         runtime.disposeBackendWorlds();
-        runtime.printSummary(new PrintStream(baos));
+        runtime.printStats(new PrintStream(baos));
 
         assertThat(baos.toString(), startsWith(String.format(
                 "1 Scenarios (1 failed)%n" +
@@ -333,7 +333,7 @@ public class RuntimeTest {
         runStep(reporter, runtime);
         runtime.runAfterHooks(reporter, Collections.<Tag>emptySet());
         runtime.disposeBackendWorlds();
-        runtime.printSummary(new PrintStream(baos));
+        runtime.printStats(new PrintStream(baos));
 
         assertThat(baos.toString(), startsWith(String.format(
                 "1 Scenarios (1 failed)%n" +

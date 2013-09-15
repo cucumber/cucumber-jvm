@@ -1,0 +1,173 @@
+[
+  {
+    "steps": [
+      {
+        "name": "I add 4 and 5",
+        "args": [
+          {
+            "offset": 6,
+            "val": "4"
+          },
+          {
+            "offset": 12,
+            "val": "5"
+          }
+        ]
+      },
+      {
+        "name": "I add 4 and 7",
+        "args": [
+          {
+            "offset": 6,
+            "val": "4"
+          },
+          {
+            "offset": 12,
+            "val": "7"
+          }
+        ]
+      }
+    ],
+    "source": "^I add (\\d+) and (\\d+)$",
+    "flags": ""
+  },
+  {
+    "steps": [
+      {
+        "name": "I ask if Jan 19, 2011 is in the past",
+        "args": [
+          {
+            "offset": 9,
+            "val": "Jan 19, 2011"
+          }
+        ]
+      }
+    ],
+    "source": "^I ask if (.+) is in the past$",
+    "flags": ""
+  },
+  {
+    "steps": [
+      {
+        "name": "I pay 25",
+        "args": [
+          {
+            "offset": 6,
+            "val": "25"
+          }
+        ]
+      }
+    ],
+    "source": "^I pay (\\d+)$",
+    "flags": ""
+  },
+  {
+    "steps": [
+      {
+        "name": "I press +",
+        "args": [
+          {
+            "offset": 8,
+            "val": "+"
+          }
+        ]
+      }
+    ],
+    "source": "^I press (.+)$",
+    "flags": ""
+  },
+  {
+    "steps": [],
+    "source": "^a calculator I just turned on$",
+    "flags": ""
+  },
+  {
+    "steps": [
+      {
+        "name": "my change should be 4",
+        "args": [
+          {
+            "offset": 20,
+            "val": "4"
+          }
+        ]
+      }
+    ],
+    "source": "^my change should be (\\d+)$",
+    "flags": ""
+  },
+  {
+    "steps": [
+      {
+        "name": "the following groceries:",
+        "args": []
+      }
+    ],
+    "source": "^the following groceries:$",
+    "flags": ""
+  },
+  {
+    "steps": [
+      {
+        "name": "the previous entries:",
+        "args": []
+      }
+    ],
+    "source": "^the previous entries:$",
+    "flags": ""
+  },
+  {
+    "steps": [
+      {
+        "name": "the result is 11",
+        "args": [
+          {
+            "offset": 14,
+            "val": "11"
+          }
+        ]
+      },
+      {
+        "name": "the result is 9",
+        "args": [
+          {
+            "offset": 14,
+            "val": "9"
+          }
+        ]
+      }
+    ],
+    "source": "^the result is (\\d+)$",
+    "flags": ""
+  },
+  {
+    "steps": [
+      {
+        "name": "the result should be yes",
+        "args": [
+          {
+            "offset": 21,
+            "val": "yes"
+          }
+        ]
+      }
+    ],
+    "source": "^the result should be (.+)$",
+    "flags": ""
+  },
+  {
+    "steps": [
+      {
+        "name": "today is 2011-01-20",
+        "args": [
+          {
+            "offset": 9,
+            "val": "2011-01-20"
+          }
+        ]
+      }
+    ],
+    "source": "^today is (.+)$",
+    "flags": ""
+  }
+]

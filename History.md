@@ -1,6 +1,7 @@
 ## [1-1-6-SNAPSHOT (Git master)](https://github.com/cucumber/cucumber-jvm/compare/v1.1.5...master)
 
 * [Core, Java] Log a warning when more than one IoC dependency is found in the classpath ([#594](https://github.com/cucumber/cucumber-jvm/pull/594) Ariel Kogan)
+* [JUnit,TestNG] Report summaries and `.cucumber/stepdefs.json` in the same way as the CLI (Aslak Hellesøy)
 
 ## [1.1.5](https://github.com/cucumber/cucumber-jvm/compare/v1.1.4...v1.1.5) (2013-09-14)
 

@@ -2,7 +2,7 @@ package cucumber.runtime;
 
 import cucumber.runtime.autocomplete.MetaStepdef;
 import cucumber.runtime.autocomplete.StepdefGenerator;
-import cucumber.runtime.io.FileResourceLoader;
+import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.URLOutputStream;
 import cucumber.runtime.io.UTF8OutputStreamWriter;
 import cucumber.runtime.model.CucumberFeature;
@@ -101,16 +101,21 @@ public class RuntimeGlue implements Glue {
     }
 
     @Override
-    public void writeStepdefsJson(List<String> featurePaths, URL dotCucumber) throws IOException {
+    public void writeStepdefsJson(ResourceLoader resourceLoader, List<String> featurePaths, URL dotCucumber) {
         if (dotCucumber != null) {
-            List<CucumberFeature> features = load(new FileResourceLoader(), featurePaths, NO_FILTERS);
+            List<CucumberFeature> features = load(resourceLoader, featurePaths, NO_FILTERS);
             List<MetaStepdef> metaStepdefs = new StepdefGenerator().generate(stepDefinitionsByPattern.values(), features);
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             String json = gson.toJson(metaStepdefs);
 
-            Writer stepdefsJson = new UTF8OutputStreamWriter(new URLOutputStream(new URL(dotCucumber, "stepdefs.json")));
-            stepdefsJson.append(json);
-            stepdefsJson.close();
+            try {
+                URL stepdefsUrl = new URL(dotCucumber, "stepdefs.json");
+                Writer stepdefsJson = new UTF8OutputStreamWriter(new URLOutputStream(stepdefsUrl));
+                stepdefsJson.append(json);
+                stepdefsJson.close();
+            } catch (IOException e) {
+                throw new CucumberException("Failed to write stepdefs.json", e);
+            }
         }
     }
 }

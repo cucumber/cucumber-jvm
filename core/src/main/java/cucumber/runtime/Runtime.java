@@ -3,7 +3,6 @@ package cucumber.runtime;
 import cucumber.api.Pending;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
-import cucumber.runtime.snippets.SummaryPrinter;
 import cucumber.runtime.xstream.LocalizedXStreams;
 import gherkin.I18n;
 import gherkin.formatter.Argument;
@@ -42,7 +41,7 @@ public class Runtime implements UnreportedStepExecutor {
     private static final Object DUMMY_ARG = new Object();
     private static final byte ERRORS = 0x1;
 
-    private final SummaryCounter summaryCounter;
+    private final Stats stats;
     final UndefinedStepsTracker undefinedStepsTracker = new UndefinedStepsTracker();
 
     private final Glue glue;
@@ -83,7 +82,7 @@ public class Runtime implements UnreportedStepExecutor {
         this.runtimeOptions = runtimeOptions;
         this.stopWatch = stopWatch;
         this.glue = optionalGlue != null ? optionalGlue : new RuntimeGlue(undefinedStepsTracker, new LocalizedXStreams(classLoader));
-        this.summaryCounter = new SummaryCounter(runtimeOptions.isMonochrome());
+        this.stats = new Stats(runtimeOptions.isMonochrome());
 
         for (Backend backend : backends) {
             backend.loadGlue(glue, runtimeOptions.getGlue());
@@ -103,7 +102,7 @@ public class Runtime implements UnreportedStepExecutor {
     /**
      * This is the main entry point. Used from CLI, but not from JUnit.
      */
-    public void run() {
+    public void run() throws IOException {
         for (CucumberFeature cucumberFeature : runtimeOptions.cucumberFeatures(resourceLoader)) {
             run(cucumberFeature);
         }
@@ -120,9 +119,18 @@ public class Runtime implements UnreportedStepExecutor {
         cucumberFeature.run(formatter, reporter, this);
     }
 
-    private void printSummary() {
+    public void printSummary() {
         // TODO: inject a SummaryPrinter in the ctor
         new SummaryPrinter(System.out).print(this);
+        writeStepdefsJson();
+    }
+
+    void printStats(PrintStream out) {
+        stats.printStats(out);
+    }
+
+    private void writeStepdefsJson() {
+        glue.writeStepdefsJson(resourceLoader, runtimeOptions.getFeaturePaths(), runtimeOptions.getDotCucumber());
     }
 
     public void buildBackendWorlds(Reporter reporter, Set<Tag> tags) {
@@ -136,7 +144,7 @@ public class Runtime implements UnreportedStepExecutor {
     }
 
     public void disposeBackendWorlds() {
-        summaryCounter.addScenario(scenarioResult.getStatus());
+        stats.addScenario(scenarioResult.getStatus());
         for (Backend backend : backends) {
             backend.disposeWorld();
         }
@@ -308,21 +316,13 @@ public class Runtime implements UnreportedStepExecutor {
         return t.getClass().isAnnotationPresent(Pending.class) || Arrays.binarySearch(PENDING_EXCEPTIONS, t.getClass().getName()) >= 0;
     }
 
-    public void writeStepdefsJson() throws IOException {
-        glue.writeStepdefsJson(runtimeOptions.getFeaturePaths(), runtimeOptions.getDotCucumber());
-    }
-
-    public void printSummary(PrintStream out) {
-        summaryCounter.printSummary(out);
-    }
-
     private void addStepToCounterAndResult(Result result) {
         scenarioResult.add(result);
-        summaryCounter.addStep(result);
+        stats.addStep(result);
     }
 
     private void addHookToCounterAndResult(Result result) {
         scenarioResult.add(result);
-        summaryCounter.addHookTime(result.getDuration());
+        stats.addHookTime(result.getDuration());
     }
 }

@@ -13,7 +13,6 @@ import cucumber.runtime.junit.Assertions;
 import cucumber.runtime.junit.FeatureRunner;
 import cucumber.runtime.junit.JUnitReporter;
 import cucumber.runtime.model.CucumberFeature;
-import cucumber.runtime.snippets.SummaryPrinter;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
@@ -87,7 +86,7 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         super.run(notifier);
         jUnitReporter.done();
         jUnitReporter.close();
-        new SummaryPrinter(System.out).print(runtime);
+        runtime.printSummary();
     }
 
     private void addChildren(List<CucumberFeature> cucumberFeatures) throws InitializationError {
