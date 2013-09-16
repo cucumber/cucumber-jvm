@@ -1,15 +1,18 @@
 If you intend to build this project with Ant or with an IDE,
-you will need to place the required jars inside this directory.
+you will need to have the required jars inside this directory.
+
+If you're building this project with **Ant,** just run ../build.xml
+and the required jars will **automatically be downloaded.**
 
 ### Required jars for Cukeulator Test App
 * cucumber-core
 * cucumber-java
 * cucumber-android
 
-Run `./init.sh`
 
-**TODO:** Ant file for downloading jars from sonatype (when building with Ant, Maven should not be required).
+* To download the release versions run `ant -f init.xml`.
+* Or run `./init.sh` to build snaphsots with Maven.
 
-*Note: For each Android project, Ant and Eclipse will automatically include all .jars from the libs/ directory.*
+*Note for Eclipse users: The IDE should automatically include all .jars from the libs/ directory.*
 
 *Note for IDEA users: You need to manually include jars from /libs for your module.*
