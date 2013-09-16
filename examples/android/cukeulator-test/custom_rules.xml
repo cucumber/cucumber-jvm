@@ -11,7 +11,9 @@
             -post-build
             -pre-clean
     -->
+    <import file="./libs/init.xml"/>
+
     <target name="-pre-build">
-        <!-- TODO: see libs/README.md -->
+        <antcall target="libs.init"/>
     </target>
 </project>
