@@ -16,5 +16,11 @@ public class CamelCaseFunctionNameSanitizerTest {
         String actual = generator.sanitizeFunctionName(functionName);
 
         assertEquals(expected, actual);
+
+        functionName = "Function name with multiple  spaces";
+        expected = "functionNameWithMultipleSpaces";
+        actual = generator.sanitizeFunctionName(functionName);
+
+        assertEquals(expected, actual);
     }
 }
