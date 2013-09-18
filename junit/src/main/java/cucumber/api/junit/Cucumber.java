@@ -10,7 +10,7 @@ import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
 import cucumber.runtime.junit.Assertions;
-import cucumber.runtime.junit.FeatureRunner;
+import cucumber.runtime.junit.FeatureSuite;
 import cucumber.runtime.junit.JUnitReporter;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.snippets.SummaryPrinter;
@@ -38,9 +38,9 @@ import java.util.List;
  *
  * @see Options
  */
-public class Cucumber extends ParentRunner<FeatureRunner> {
+public class Cucumber extends ParentRunner<FeatureSuite> {
     private final JUnitReporter jUnitReporter;
-    private final List<FeatureRunner> children = new ArrayList<FeatureRunner>();
+    private final List<FeatureSuite> children = new ArrayList<FeatureSuite>();
     private final Runtime runtime;
 
     /**
@@ -51,7 +51,7 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
      * @throws org.junit.runners.model.InitializationError
      *                             if there is another problem
      */
-    public Cucumber(Class clazz) throws InitializationError, IOException {
+    public Cucumber(Class<?> clazz) throws InitializationError, IOException {
         super(clazz);
         ClassLoader classLoader = clazz.getClassLoader();
         Assertions.assertNoCucumberAnnotatedMethods(clazz);
@@ -68,17 +68,17 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
     }
 
     @Override
-    public List<FeatureRunner> getChildren() {
+    public List<FeatureSuite> getChildren() {
         return children;
     }
 
     @Override
-    protected Description describeChild(FeatureRunner child) {
+    protected Description describeChild(FeatureSuite child) {
         return child.getDescription();
     }
 
     @Override
-    protected void runChild(FeatureRunner child, RunNotifier notifier) {
+    protected void runChild(FeatureSuite child, RunNotifier notifier) {
         child.run(notifier);
     }
 
@@ -92,7 +92,7 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
 
     private void addChildren(List<CucumberFeature> cucumberFeatures) throws InitializationError {
         for (CucumberFeature cucumberFeature : cucumberFeatures) {
-            children.add(new FeatureRunner(cucumberFeature, runtime, jUnitReporter));
+            children.add(new FeatureSuite(getTestClass().getJavaClass(), cucumberFeature, runtime, jUnitReporter));
         }
     }
 

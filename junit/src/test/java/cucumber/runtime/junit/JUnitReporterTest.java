@@ -1,23 +1,22 @@
 package cucumber.runtime.junit;
 
-import cucumber.api.PendingException;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Result;
+
 import org.junit.Test;
-import org.junit.internal.runners.model.EachTestNotifier;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Matchers;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import cucumber.api.PendingException;
 
 public class JUnitReporterTest {
 
@@ -35,6 +34,7 @@ public class JUnitReporterTest {
         createRunNotifier(description);
 
         jUnitReporter.result(result);
+        jUnitReporter.finishExecutionUnit();
 
         ArgumentCaptor<Failure> failureArgumentCaptor = ArgumentCaptor.forClass(Failure.class);
         verify(runNotifier).fireTestFailure(failureArgumentCaptor.capture());
@@ -47,57 +47,46 @@ public class JUnitReporterTest {
     @Test
     public void result_with_undefined_step_non_strict() {
         createNonStrictReporter();
-        EachTestNotifier stepNotifier = mock(EachTestNotifier.class);
-        jUnitReporter.stepNotifier = stepNotifier;
-
+        createDefaultRunNotifier();
         jUnitReporter.result(Result.UNDEFINED);
+        jUnitReporter.finishExecutionUnit();
 
-        verify(stepNotifier, times(0)).fireTestStarted();
-        verify(stepNotifier, times(0)).fireTestFinished();
-        verify(stepNotifier, times(0)).addFailure(Matchers.<Throwable>any(Throwable.class));
-        verify(stepNotifier).fireTestIgnored();
+        verify(runNotifier, never()).fireTestStarted(any(Description.class));
+        verify(runNotifier, never()).fireTestFinished(any(Description.class));
+        verify(runNotifier, never()).fireTestFailure(any(Failure.class));
+        verify(runNotifier).fireTestIgnored(any(Description.class));
     }
 
     @Test
     public void result_with_undefined_step_strict() {
         createStrictReporter();
         createDefaultRunNotifier();
-        EachTestNotifier stepNotifier = mock(EachTestNotifier.class);
-        jUnitReporter.stepNotifier = stepNotifier;
-        EachTestNotifier executionUnitNotifier = mock(EachTestNotifier.class);
-        jUnitReporter.executionUnitNotifier = executionUnitNotifier;
 
         jUnitReporter.result(Result.UNDEFINED);
+        jUnitReporter.finishExecutionUnit();
 
-        verify(stepNotifier, times(0)).fireTestStarted();
-        verify(stepNotifier, times(0)).fireTestFinished();
-        verifyAddFailureWithPendingException(stepNotifier);
-        verifyAddFailureWithPendingException(executionUnitNotifier);
-        verify(stepNotifier, times(0)).fireTestIgnored();
-    }
+        verify(runNotifier).fireTestStarted(any(Description.class));
+        verify(runNotifier).fireTestFinished(any(Description.class));
+        verify(runNotifier).fireTestFailure(any(Failure.class));
+        verify(runNotifier, never()).fireTestIgnored(any(Description.class));
 
-    private void verifyAddFailureWithPendingException(EachTestNotifier stepNotifier) {
-        ArgumentCaptor<Throwable> captor = ArgumentCaptor.forClass(Throwable.class);
-        verify(stepNotifier).addFailure(captor.capture());
-        Throwable error = captor.getValue();
-        assertTrue(error instanceof PendingException);
     }
 
     @Test
     public void result_with_pending_step_non_strict() {
         createNonStrictReporter();
+        createDefaultRunNotifier();
         Result result = mock(Result.class);
         when(result.getError()).thenReturn(new PendingException());
 
-        EachTestNotifier stepNotifier = mock(EachTestNotifier.class);
-        jUnitReporter.stepNotifier = stepNotifier;
-
+        
         jUnitReporter.result(result);
+        jUnitReporter.finishExecutionUnit();
 
-        verify(stepNotifier, times(0)).fireTestStarted();
-        verify(stepNotifier, times(0)).fireTestFinished();
-        verify(stepNotifier, times(0)).addFailure(Matchers.<Throwable>any(Throwable.class));
-        verify(stepNotifier).fireTestIgnored();
+        verify(runNotifier, never()).fireTestStarted(any(Description.class));
+        verify(runNotifier, never()).fireTestFinished(any(Description.class));
+        verify(runNotifier, never()).fireTestFailure(any(Failure.class));
+        verify(runNotifier).fireTestIgnored(any(Description.class));
     }
 
     @Test
@@ -107,50 +96,43 @@ public class JUnitReporterTest {
         Result result = mock(Result.class);
         when(result.getError()).thenReturn(new PendingException());
 
-        EachTestNotifier stepNotifier = mock(EachTestNotifier.class);
-        jUnitReporter.stepNotifier = stepNotifier;
-        EachTestNotifier executionUnitNotifier = mock(EachTestNotifier.class);
-        jUnitReporter.executionUnitNotifier = executionUnitNotifier;
-
         jUnitReporter.result(result);
+        jUnitReporter.finishExecutionUnit();
 
-        verify(stepNotifier, times(0)).fireTestStarted();
-        verify(stepNotifier, times(0)).fireTestFinished();
-        verifyAddFailureWithPendingException(stepNotifier);
-        verifyAddFailureWithPendingException(executionUnitNotifier);
-        verify(stepNotifier, times(0)).fireTestIgnored();
+        verify(runNotifier).fireTestStarted(any(Description.class));
+        verify(runNotifier).fireTestFinished(any(Description.class));
+        verify(runNotifier).fireTestFailure(any(Failure.class));
+        verify(runNotifier, never()).fireTestIgnored(any(Description.class));
     }
 
     @Test
     public void result_without_error_non_strict() {
         createNonStrictReporter();
+        createDefaultRunNotifier();
         Result result = mock(Result.class);
 
-        EachTestNotifier stepNotifier = mock(EachTestNotifier.class);
-        jUnitReporter.stepNotifier = stepNotifier;
-
         jUnitReporter.result(result);
+        jUnitReporter.finishExecutionUnit();
 
-        verify(stepNotifier).fireTestStarted();
-        verify(stepNotifier).fireTestFinished();
-        verify(stepNotifier, times(0)).addFailure(Matchers.<Throwable>any(Throwable.class));
-        verify(stepNotifier, times(0)).fireTestIgnored();
+        verify(runNotifier).fireTestStarted(any(Description.class));
+        verify(runNotifier).fireTestFinished(any(Description.class));
+        verify(runNotifier, never()).fireTestFailure(any(Failure.class));
+        verify(runNotifier, never()).fireTestIgnored(any(Description.class));
     }
 
     @Test
     public void result_without_error_strict() {
         createStrictReporter();
+        createDefaultRunNotifier();
         Result result = mock(Result.class);
 
-        EachTestNotifier stepNotifier = mock(EachTestNotifier.class);
-        jUnitReporter.stepNotifier = stepNotifier;
-
         jUnitReporter.result(result);
+        jUnitReporter.finishExecutionUnit();
 
-        verify(stepNotifier).fireTestStarted();
-        verify(stepNotifier).fireTestFinished();
-        verify(stepNotifier, times(0)).addFailure(Matchers.<Throwable>any(Throwable.class));
-        verify(stepNotifier, times(0)).fireTestIgnored();
+        verify(runNotifier).fireTestStarted(any(Description.class));
+        verify(runNotifier).fireTestFinished(any(Description.class));
+        verify(runNotifier, never()).fireTestFailure(any(Failure.class));
+        verify(runNotifier, never()).fireTestIgnored(any(Description.class));
     }
 
     private void createDefaultRunNotifier() {
