@@ -24,6 +24,6 @@ public class CamelCaseFunctionNameSanitizer implements FunctionNameSanitizer {
     }
 
     private String capitalize(String line) {
-        return Character.toUpperCase(line.charAt(0)) + line.substring(1);
+        return line.length() > 0 ? Character.toUpperCase(line.charAt(0)) + line.substring(1) : "";
     }
 }
