@@ -7,6 +7,9 @@ import java.util.HashSet;
 public class Reflections {
     private final ClassFinder classFinder;
 
+    public static final String NO_INSTANCES_MSG = "Couldn't find a single implementation of ";
+    public static final String TOO_MANY_INSTANCES_MSG = "Expected only one instance, but found too many";
+
     public Reflections(ClassFinder classFinder) {
         this.classFinder = classFinder;
     }
@@ -16,9 +19,9 @@ public class Reflections {
         if (instances.size() == 1) {
             return instances.iterator().next();
         } else if (instances.size() == 0) {
-            throw new CucumberException("Couldn't find a single implementation of " + parentType);
+            throw new CucumberException(NO_INSTANCES_MSG + parentType);
         } else {
-            throw new CucumberException("Expected only one instance, but found too many: " + instances);
+            throw new CucumberException(TOO_MANY_INSTANCES_MSG + ": " + instances);
         }
     }
 

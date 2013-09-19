@@ -16,8 +16,6 @@ import cucumber.runtime.io.ResourceLoaderClassFinder;
 import cucumber.runtime.snippets.FunctionNameSanitizer;
 import cucumber.runtime.snippets.SnippetGenerator;
 import gherkin.formatter.model.Step;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -31,8 +29,6 @@ public class JavaBackend implements Backend {
 
     private final MethodScanner methodScanner;
     private Glue glue;
-
-    private static final Logger logger = LoggerFactory.getLogger(JavaBackend.class);
 
     /**
      * The constructor called by reflection by default.
@@ -66,7 +62,9 @@ public class JavaBackend implements Backend {
             Reflections reflections = new Reflections(classFinder);
             objectFactory = reflections.instantiateExactlyOneSubclass(ObjectFactory.class, "cucumber.runtime", new Class[0], new Object[0]);
         } catch (CucumberException ce) {
-            logger.warn(getMultipleObjectFactoryLogMessage());
+            if (ce.getMessage().contains(Reflections.TOO_MANY_INSTANCES_MSG)) {
+                System.out.println(getMultipleObjectFactoryLogMessage());
+            }
             objectFactory = new DefaultJavaObjectFactory();
         }
         return objectFactory;
