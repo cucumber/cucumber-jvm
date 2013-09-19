@@ -2,14 +2,7 @@ package cucumber.runtime.java;
 
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
-import cucumber.runtime.Backend;
-import cucumber.runtime.ClassFinder;
-import cucumber.runtime.CucumberException;
-import cucumber.runtime.DuplicateStepDefinitionException;
-import cucumber.runtime.Glue;
-import cucumber.runtime.Reflections;
-import cucumber.runtime.UnreportedStepExecutor;
-import cucumber.runtime.Utils;
+import cucumber.runtime.*;
 import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
@@ -61,10 +54,10 @@ public class JavaBackend implements Backend {
         try {
             Reflections reflections = new Reflections(classFinder);
             objectFactory = reflections.instantiateExactlyOneSubclass(ObjectFactory.class, "cucumber.runtime", new Class[0], new Object[0]);
-        } catch (CucumberException ce) {
-            if (ce.getMessage().contains(Reflections.TOO_MANY_INSTANCES_MSG)) {
-                System.out.println(getMultipleObjectFactoryLogMessage());
-            }
+        } catch (TooManyInstancesException e) {
+            System.out.println(getMultipleObjectFactoryLogMessage());
+            objectFactory = new DefaultJavaObjectFactory();
+        } catch (NoInstancesException e) {
             objectFactory = new DefaultJavaObjectFactory();
         }
         return objectFactory;
