@@ -16,6 +16,8 @@ import cucumber.runtime.io.ResourceLoaderClassFinder;
 import cucumber.runtime.snippets.FunctionNameSanitizer;
 import cucumber.runtime.snippets.SnippetGenerator;
 import gherkin.formatter.model.Step;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -29,6 +31,8 @@ public class JavaBackend implements Backend {
 
     private final MethodScanner methodScanner;
     private Glue glue;
+
+    private static final Logger logger = LoggerFactory.getLogger(JavaBackend.class);
 
     /**
      * The constructor called by reflection by default.
@@ -62,6 +66,7 @@ public class JavaBackend implements Backend {
             Reflections reflections = new Reflections(classFinder);
             objectFactory = reflections.instantiateExactlyOneSubclass(ObjectFactory.class, "cucumber.runtime", new Class[0], new Object[0]);
         } catch (CucumberException ce) {
+            logger.warn(getMultipleObjectFactoryLogMessage());
             objectFactory = new DefaultJavaObjectFactory();
         }
         return objectFactory;
@@ -140,5 +145,15 @@ public class JavaBackend implements Backend {
             long timeout = ((After) annotation).timeout();
             glue.addAfterHook(new JavaHookDefinition(method, tagExpressions, ((After) annotation).order(), timeout, objectFactory));
         }
+    }
+
+    private static String getMultipleObjectFactoryLogMessage() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("More than one Cucumber ObjectFactory was found in the classpath\n\n");
+        sb.append("You probably may have included, for instance, cucumber-spring AND cucumber-guice as part of\n");
+        sb.append("your dependencies. When this happens, Cucumber falls back to instantiating the\n");
+        sb.append("DefaultJavaObjectFactory implementation which doesn't provide IoC.\n");
+        sb.append("In order to enjoy IoC features, please remove the unnecessary dependencies from your classpath.\n");
+        return sb.toString();
     }
 }
