@@ -12,6 +12,8 @@
 distrib/
 target/
 tmp/
+gen-external-apklibs/
+out/
 
 # Build & test droppings
 report.js
