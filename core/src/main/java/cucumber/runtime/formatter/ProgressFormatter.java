@@ -77,6 +77,16 @@ class ProgressFormatter implements Formatter, Reporter, ColorAware {
     }
 
     @Override
+    public void startOfScenarioLifeCycle(Scenario scenario) {
+        // NoOp
+    }
+
+    @Override
+    public void endOfScenarioLifeCycle(Scenario scenario) {
+        // NoOp
+    }
+
+    @Override
     public void done() {
         out.println();
     }

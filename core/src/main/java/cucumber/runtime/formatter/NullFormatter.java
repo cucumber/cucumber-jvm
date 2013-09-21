@@ -57,4 +57,14 @@ class NullFormatter implements Formatter {
     @Override
     public void close() {
     }
+
+    @Override
+    public void startOfScenarioLifeCycle(Scenario scenario) {
+        // NoOp
+    }
+
+    @Override
+    public void endOfScenarioLifeCycle(Scenario scenario) {
+        // NoOp
+    }
 }
