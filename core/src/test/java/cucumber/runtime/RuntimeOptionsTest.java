@@ -2,15 +2,14 @@ package cucumber.runtime;
 
 import cucumber.api.SnippetType;
 import org.junit.Test;
-
 import cucumber.runtime.formatter.ColorAware;
 import cucumber.runtime.formatter.FormatterFactory;
 import cucumber.runtime.formatter.StrictAware;
-
 import gherkin.formatter.Formatter;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
@@ -39,6 +38,20 @@ public class RuntimeOptionsTest {
     public void assigns_feature_paths() {
         RuntimeOptions options = new RuntimeOptions(new Env(), "--glue", "somewhere", "somewhere_else");
         assertEquals(asList("somewhere_else"), options.getFeaturePaths());
+    }
+
+    @Test
+    public void assigns_line_filters_from_feature_paths() {
+        RuntimeOptions options = new RuntimeOptions(new Env(), "--glue", "somewhere", "somewhere_else:3");
+        assertEquals(asList("somewhere_else"), options.getFeaturePaths());
+        assertEquals(asList(3L), options.getFilters());
+    }
+
+    @Test
+    public void assigns_filters_and_line_filters_from_feature_paths() {
+        RuntimeOptions options = new RuntimeOptions(new Env(), "--tags", "@keep_this", "somewhere_else:3");
+        assertEquals(asList("somewhere_else"), options.getFeaturePaths());
+        assertEquals(Arrays.<Object>asList("@keep_this", 3L), options.getFilters());
     }
 
     @Test
@@ -164,6 +177,15 @@ public class RuntimeOptionsTest {
         properties.setProperty("cucumber.options", "--format pretty");
         RuntimeOptions runtimeOptions = new RuntimeOptions(new Env(properties), "old", "older");
         assertEquals(asList("old", "older"), runtimeOptions.getFeaturePaths());
+    }
+
+    @Test
+    public void clobbers_line_filters_from_cli_if_features_specified_in_cucumber_options_property() {
+        Properties properties = new Properties();
+        properties.setProperty("cucumber.options", "new newer");
+        RuntimeOptions runtimeOptions = new RuntimeOptions(new Env(properties), "--tags", "@keep_this", "path/file1.feature:1");
+        assertEquals(asList("new", "newer"), runtimeOptions.getFeaturePaths());
+        assertEquals(asList("@keep_this"), runtimeOptions.getFilters());
     }
 
     @Test

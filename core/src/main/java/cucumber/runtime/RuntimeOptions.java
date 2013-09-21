@@ -31,6 +31,7 @@ public class RuntimeOptions {
 
     private final List<String> glue = new ArrayList<String>();
     private final List<Object> filters = new ArrayList<Object>();
+    private final List<Object> lineFilters = new ArrayList<Object>();
     private final List<Formatter> formatters = new ArrayList<Formatter>();
     private final List<String> featurePaths = new ArrayList<String>();
     private final FormatterFactory formatterFactory;
@@ -47,12 +48,13 @@ public class RuntimeOptions {
     RuntimeOptions(Env env, FormatterFactory formatterFactory, String... argv) {
         this.formatterFactory = formatterFactory;
 
-        parse(new ArrayList<String>(asList(argv)), false);
+        parse(new ArrayList<String>(asList(argv)));
 
         String cucumberOptionsFromEnv = env.get("cucumber.options");
         if (cucumberOptionsFromEnv != null) {
-            parse(shellWords(cucumberOptionsFromEnv), true);
+            parse(shellWords(cucumberOptionsFromEnv));
         }
+        filters.addAll(lineFilters);
 
         if (formatters.isEmpty()) {
             formatters.add(formatterFactory.create("progress"));
@@ -73,15 +75,12 @@ public class RuntimeOptions {
         return matchList;
     }
 
-    private void parse(List<String> args, boolean clobberFeaturePathsAndGlue) {
+    private void parse(List<String> args) {
         List<Object> parsedFilters = new ArrayList<Object>();
+        List<Object> parsedLineFilters = new ArrayList<Object>();
+        List<String> parsedFeaturePaths = new ArrayList<String>();
+        List<String> parsedGlue = new ArrayList<String>();
 
-        List<String> oldFeaturePaths = new ArrayList<String>(featurePaths);
-        List<String> oldGlue = new ArrayList<String>(glue);
-        if (clobberFeaturePathsAndGlue) {
-            featurePaths.clear();
-            glue.clear();
-        }
         while (!args.isEmpty()) {
             String arg = args.remove(0).trim();
 
@@ -93,7 +92,7 @@ public class RuntimeOptions {
                 System.exit(0);
             } else if (arg.equals("--glue") || arg.equals("-g")) {
                 String gluePath = args.remove(0);
-                glue.add(gluePath);
+                parsedGlue.add(gluePath);
             } else if (arg.equals("--tags") || arg.equals("-t")) {
                 parsedFilters.add(args.remove(0));
             } else if (arg.equals("--format") || arg.equals("-f")) {
@@ -119,19 +118,23 @@ public class RuntimeOptions {
                 throw new CucumberException("Unknown option: " + arg);
             } else {
                 PathWithLines pathWithLines = new PathWithLines(arg);
-                featurePaths.add(pathWithLines.path);
-                parsedFilters.addAll(pathWithLines.lines);
+                parsedFeaturePaths.add(pathWithLines.path);
+                parsedLineFilters.addAll(pathWithLines.lines);
             }
         }
         if (!parsedFilters.isEmpty()) {
             filters.clear();
             filters.addAll(parsedFilters);
         }
-        if (featurePaths.isEmpty()) {
-            featurePaths.addAll(oldFeaturePaths);
+        if (!parsedFeaturePaths.isEmpty()) {
+            featurePaths.clear();
+            lineFilters.clear();
+            featurePaths.addAll(parsedFeaturePaths);
+            lineFilters.addAll(parsedLineFilters);
         }
-        if (glue.isEmpty()) {
-            glue.addAll(oldGlue);
+        if (!parsedGlue.isEmpty()) {
+            glue.clear();
+            glue.addAll(parsedGlue);
         }
     }
 
