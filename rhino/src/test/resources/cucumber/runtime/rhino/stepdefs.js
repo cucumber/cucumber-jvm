@@ -5,7 +5,7 @@ function assertEquals(expected, actual) {
 }
 
 function assertContains(expectedVal, array) {
-    for ( var i = 0; i < array.length; i++) {
+    for (var i = 0; i < array.length; i++) {
         if (array[i] == expectedVal) return;
     }
     throw "Expected array containing " + expectedVal + ", but got " + array;

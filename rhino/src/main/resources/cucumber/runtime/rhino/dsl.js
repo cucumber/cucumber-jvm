@@ -47,6 +47,6 @@ var Given = registerStepDefinition;
 var When = registerStepDefinition;
 var Then = registerStepDefinition;
 
-var World = function(fn) {
-    jsBackend.registerWorld(fn);
+var World = function(buildFn, disposeFn) {
+    jsBackend.registerWorld(buildFn, disposeFn || null);
 };
