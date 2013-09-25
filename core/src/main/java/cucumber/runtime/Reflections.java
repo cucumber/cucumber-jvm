@@ -16,9 +16,9 @@ public class Reflections {
         if (instances.size() == 1) {
             return instances.iterator().next();
         } else if (instances.size() == 0) {
-            throw new CucumberException("Couldn't find a single implementation of " + parentType);
+            throw new NoInstancesException(parentType);
         } else {
-            throw new CucumberException("Expected only one instance, but found too many: " + instances);
+            throw new TooManyInstancesException(instances);
         }
     }
 
