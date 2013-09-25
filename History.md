@@ -1,5 +1,13 @@
-## [1-1-5-SNAPSHOT (Git master)](https://github.com/cucumber/cucumber-jvm/compare/v1.1.4...master)
+## [1.1.5](https://github.com/cucumber/cucumber-jvm/compare/v1.1.4...v1.1.5)
 
+* [Core] There are now three ways to override Cucumber Options. (Aslak Hellesøy)
+  * `cucumber.options="..."` passed to the JVM with `-Dcucumber.options="..."`.
+  * The environment variable `CUCUMBER_OPTIONS="..."`.
+  * A `cucumber-jvm.properties` on the `CLASSPATH` with a `cucumber.options="..."` property.
+* [Core] Feature paths and `--glue` in `cucumber.options` clobber defaults rather than appending to them. (Aslak Hellesøy)
+* [JRuby] The `GEM_PATH` and `RUBY_VERSION` values will be picked up from `cucumber-jvm.properties` instead of `cucumber-jruby.properties` (Aslak Hellesøy).
+* [Core] Step Definition and Hook timeout is now a `long` instead of an `int`. (Aslak Hellesøy)
+* [Rhino] Before and After hooks support ([#587](https://github.com/cucumber/cucumber-jvm/pull/587) Rui Figueira)
 * [Android] Separate CI job for Android. ([#581](https://github.com/cucumber/cucumber-jvm/issues/581), [#584](https://github.com/cucumber/cucumber-jvm/pull/584) Björn Rasmusson)
 * [Android] Add support for Dependency Injection via cucumber-picocontainer, cucumber-guice, cucumber-spring etx. (Aslak Hellesøy)
 * [TestNG] Java Calculator TestNG example project ([#579](https://github.com/cucumber/cucumber-jvm/pull/579) Dmytro Chyzhykov)
@@ -16,8 +24,9 @@
 * [Core] Bugfix: StringIndexOutOfBoundsException when optional argument not present. ([#394](https://github.com/cucumber/cucumber-jvm/issues/394), [#558](https://github.com/cucumber/cucumber-jvm/pull/558) Guy Burton)
 * [Java, Jython] New `--snippet [underscore|camelcase]` option for more control over snippet style. ([#561](https://github.com/cucumber/cucumber-jvm/pull/561), [302](https://github.com/cucumber/cucumber-jvm/pull/302) Márton Mészáros, Aslak Hellesøy)
 * [Windows] Use uri instead of path in CucumberFeature ([#562](https://github.com/cucumber/cucumber-jvm/pull/562) Björn Rasmusson)
-* [Android] Better example for Cucumber-Android. ([#547](https://github.com/cucumber/cucumber-jvm/issues/547), [#574](https://github.com/cucumber/cucumber-jvm/issues/574))
-* [Android] Use @CucumberOptions instead of @RunWithCucumber. ([#576](https://github.com/cucumber/cucumber-jvm/issues/576))
+* [Android] Better example for Cucumber-Android. ([#547](https://github.com/cucumber/cucumber-jvm/issues/547), [#574](https://github.com/cucumber/cucumber-jvm/issues/574) Maximilian Fellner)
+* [Android] Use @CucumberOptions instead of @RunWithCucumber. ([#576](https://github.com/cucumber/cucumber-jvm/issues/576) Maximilian Fellner)
+* [Android] Deploy a jar for cucumber-android. ([#573](https://github.com/cucumber/cucumber-jvm/issues/573) Maximilian Fellner, Aslak Hellesøy)
 
 ## [1.1.4](https://github.com/cucumber/cucumber-jvm/compare/v1.1.3...v1.1.4) (2013-08-11)
 

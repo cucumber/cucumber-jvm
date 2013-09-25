@@ -109,7 +109,7 @@ public class JavaBackend implements Backend {
     void addStepDefinition(Annotation annotation, Method method) {
         try {
             objectFactory.addClass(method.getDeclaringClass());
-            glue.addStepDefinition(new JavaStepDefinition(method, pattern(annotation), timeout(annotation), objectFactory));
+            glue.addStepDefinition(new JavaStepDefinition(method, pattern(annotation), timeoutMillis(annotation), objectFactory));
         } catch (DuplicateStepDefinitionException e) {
             throw e;
         } catch (Throwable e) {
@@ -123,9 +123,9 @@ public class JavaBackend implements Backend {
         return Pattern.compile(regexpString);
     }
 
-    private int timeout(Annotation annotation) throws Throwable {
+    private long timeoutMillis(Annotation annotation) throws Throwable {
         Method regexpMethod = annotation.getClass().getMethod("timeout");
-        return (Integer) Utils.invoke(annotation, regexpMethod, 0);
+        return (Long) Utils.invoke(annotation, regexpMethod, 0);
     }
 
     void addHook(Annotation annotation, Method method) {
@@ -133,11 +133,11 @@ public class JavaBackend implements Backend {
 
         if (annotation.annotationType().equals(Before.class)) {
             String[] tagExpressions = ((Before) annotation).value();
-            int timeout = ((Before) annotation).timeout();
+            long timeout = ((Before) annotation).timeout();
             glue.addBeforeHook(new JavaHookDefinition(method, tagExpressions, ((Before) annotation).order(), timeout, objectFactory));
         } else {
             String[] tagExpressions = ((After) annotation).value();
-            int timeout = ((After) annotation).timeout();
+            long timeout = ((After) annotation).timeout();
             glue.addAfterHook(new JavaHookDefinition(method, tagExpressions, ((After) annotation).order(), timeout, objectFactory));
         }
     }

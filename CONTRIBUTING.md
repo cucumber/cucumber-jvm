@@ -97,6 +97,12 @@ Note that even though development is sometimes easier to do with 1.6, releasing 
 
 First, make sure everything builds. Including Android.
 
+Then, see if you can upgrade any dependencies:
+
+```
+mvn versions:display-dependency-updates
+```
+
 This is a reminder to the developers:
 
 Then, make sure you have the proper keys set up - in your `~/.m2/settings.xml` - for example:
@@ -129,7 +135,7 @@ Replace version numbers in:
 * examples/java-helloworld/build.xml
 * examples/java-helloworld/pom.xml
 * examples/java-gradle/build.gradle
-* README.md (this file)
+* README.md
 * History.md
 
 Run `git commit -am "Release X.Y.Z"`

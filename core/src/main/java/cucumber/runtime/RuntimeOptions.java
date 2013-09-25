@@ -6,7 +6,6 @@ import cucumber.runtime.formatter.FormatterFactory;
 import cucumber.runtime.formatter.StrictAware;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
-import cucumber.runtime.snippets.FunctionNameSanitizer;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
 import gherkin.util.FixJava;
@@ -17,7 +16,6 @@ import java.lang.reflect.Proxy;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -25,6 +23,7 @@ import java.util.regex.Pattern;
 import static cucumber.runtime.model.CucumberFeature.load;
 import static java.util.Arrays.asList;
 
+// IMPORTANT! Make sure USAGE.txt is always uptodate if this class changes.
 public class RuntimeOptions {
     public static final String VERSION = ResourceBundle.getBundle("cucumber.version").getString("cucumber-jvm.version");
     public static final String USAGE = FixJava.readResource("/cucumber/runtime/USAGE.txt");
@@ -32,6 +31,7 @@ public class RuntimeOptions {
 
     private final List<String> glue = new ArrayList<String>();
     private final List<Object> filters = new ArrayList<Object>();
+    private final List<Object> lineFilters = new ArrayList<Object>();
     private final List<Formatter> formatters = new ArrayList<Formatter>();
     private final List<String> featurePaths = new ArrayList<String>();
     private final FormatterFactory formatterFactory;
@@ -41,18 +41,20 @@ public class RuntimeOptions {
     private boolean monochrome = false;
     private SnippetType snippetType = SnippetType.UNDERSCORE;
 
-    public RuntimeOptions(Properties properties, String... argv) {
-        /* IMPORTANT! Make sure USAGE.txt is always uptodate if this class changes */
-        this(properties, new FormatterFactory(), argv);
+    public RuntimeOptions(Env env, String... argv) {
+        this(env, new FormatterFactory(), argv);
     }
 
-    RuntimeOptions(Properties properties, FormatterFactory formatterFactory, String... argv) {
+    RuntimeOptions(Env env, FormatterFactory formatterFactory, String... argv) {
         this.formatterFactory = formatterFactory;
 
         parse(new ArrayList<String>(asList(argv)));
-        if (properties.containsKey("cucumber.options")) {
-            parse(shellWords(properties.getProperty("cucumber.options")));
+
+        String cucumberOptionsFromEnv = env.get("cucumber.options");
+        if (cucumberOptionsFromEnv != null) {
+            parse(shellWords(cucumberOptionsFromEnv));
         }
+        filters.addAll(lineFilters);
 
         if (formatters.isEmpty()) {
             formatters.add(formatterFactory.create("progress"));
@@ -75,6 +77,10 @@ public class RuntimeOptions {
 
     private void parse(List<String> args) {
         List<Object> parsedFilters = new ArrayList<Object>();
+        List<Object> parsedLineFilters = new ArrayList<Object>();
+        List<String> parsedFeaturePaths = new ArrayList<String>();
+        List<String> parsedGlue = new ArrayList<String>();
+
         while (!args.isEmpty()) {
             String arg = args.remove(0).trim();
 
@@ -86,7 +92,7 @@ public class RuntimeOptions {
                 System.exit(0);
             } else if (arg.equals("--glue") || arg.equals("-g")) {
                 String gluePath = args.remove(0);
-                glue.add(gluePath);
+                parsedGlue.add(gluePath);
             } else if (arg.equals("--tags") || arg.equals("-t")) {
                 parsedFilters.add(args.remove(0));
             } else if (arg.equals("--format") || arg.equals("-f")) {
@@ -112,13 +118,23 @@ public class RuntimeOptions {
                 throw new CucumberException("Unknown option: " + arg);
             } else {
                 PathWithLines pathWithLines = new PathWithLines(arg);
-                featurePaths.add(pathWithLines.path);
-                parsedFilters.addAll(pathWithLines.lines);
+                parsedFeaturePaths.add(pathWithLines.path);
+                parsedLineFilters.addAll(pathWithLines.lines);
             }
         }
         if (!parsedFilters.isEmpty()) {
             filters.clear();
             filters.addAll(parsedFilters);
+        }
+        if (!parsedFeaturePaths.isEmpty()) {
+            featurePaths.clear();
+            lineFilters.clear();
+            featurePaths.addAll(parsedFeaturePaths);
+            lineFilters.addAll(parsedLineFilters);
+        }
+        if (!parsedGlue.isEmpty()) {
+            glue.clear();
+            glue.addAll(parsedGlue);
         }
     }
 

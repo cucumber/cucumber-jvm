@@ -6,7 +6,7 @@
         <groupId>info.cukes</groupId>
         <artifactId>cucumber-jvm</artifactId>
         <relativePath>../pom.xml</relativePath>
-        <version>1.1.5-SNAPSHOT</version>
+        <version>1.1.6-SNAPSHOT</version>
     </parent>
 
     <artifactId>cucumber-android</artifactId>
@@ -64,6 +64,28 @@
                                 <versionName>${project.version}</versionName>
                                 <versionCode>${parent.parent.version}</versionCode>
                             </manifest>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- additionally deploy the jar -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-artifacts</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>attach-artifact</goal>
+                        </goals>
+                        <configuration>
+                            <artifacts>
+                                <artifact>
+                                    <file>${project.build.directory}/${project.artifactId}-${project.version}.jar</file>
+                                    <type>jar</type>
+                                </artifact>
+                            </artifacts>
                         </configuration>
                     </execution>
                 </executions>

@@ -2,6 +2,7 @@ package cucumber.runtime.formatter;
 
 import cucumber.api.PendingException;
 import cucumber.runtime.Backend;
+import cucumber.runtime.Env;
 import cucumber.runtime.HookDefinition;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeGlue;
@@ -41,7 +42,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Scanner;
 
 import static java.util.Arrays.asList;
@@ -255,7 +255,7 @@ public class JUnitFormatterTest {
         stepsToResult.put("second step", "passed");
         stepsToResult.put("third step", "passed");
         List<SimpleEntry<String, String>> hooks = new ArrayList<SimpleEntry<String, String>>();
-        hooks.add(hookEntry("after","failed"));
+        hooks.add(hookEntry("after", "failed"));
         long stepHookDuration = milliSeconds(1);
 
         String formatterOutput = runFeatureWithJUnitFormatter(feature, stepsToResult, hooks, stepHookDuration);
@@ -287,8 +287,8 @@ public class JUnitFormatterTest {
         stepsToResult.put("first step", "passed");
         stepsToResult.put("second step", "passed");
         List<SimpleEntry<String, String>> hooks = new ArrayList<SimpleEntry<String, String>>();
-        hooks.add(hookEntry("before","passed"));
-        hooks.add(hookEntry("after","passed"));
+        hooks.add(hookEntry("before", "passed"));
+        hooks.add(hookEntry("after", "passed"));
         long stepHookDuration = milliSeconds(1);
 
         String formatterOutput = runFeatureWithJUnitFormatter(feature, stepsToResult, hooks, stepHookDuration);
@@ -400,7 +400,7 @@ public class JUnitFormatterTest {
         args.add("junit:" + report.getAbsolutePath());
         args.addAll(featurePaths);
 
-        RuntimeOptions runtimeOptions = new RuntimeOptions(new Properties(), args.toArray(new String[args.size()]));
+        RuntimeOptions runtimeOptions = new RuntimeOptions(new Env(), args.toArray(new String[args.size()]));
         Backend backend = mock(Backend.class);
         when(backend.getSnippet(any(Step.class), any(FunctionNameSanitizer.class))).thenReturn("TEST SNIPPET");
         final cucumber.runtime.Runtime runtime = new Runtime(resourceLoader, classLoader, asList(backend), runtimeOptions);
@@ -419,7 +419,7 @@ public class JUnitFormatterTest {
 
     private String runFeatureWithJUnitFormatter(final CucumberFeature feature, final Map<String, String> stepsToResult,
                                                 final List<SimpleEntry<String, String>> hooks, final long stepHookDuration) throws Throwable {
-        final RuntimeOptions runtimeOptions = new RuntimeOptions(new Properties());
+        final RuntimeOptions runtimeOptions = new RuntimeOptions(new Env());
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         final ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
         final RuntimeGlue glue = createMockedRuntimeGlueThatMatchesTheSteps(stepsToResult, hooks);
@@ -492,7 +492,7 @@ public class JUnitFormatterTest {
     }
 
     private void mockHook(SimpleEntry<String, String> hookEntry, List<HookDefinition> beforeHooks,
-            List<HookDefinition> afterHooks) throws Throwable {
+                          List<HookDefinition> afterHooks) throws Throwable {
         HookDefinition hook = mock(HookDefinition.class);
         when(hook.matches(anyCollectionOf(Tag.class))).thenReturn(true);
         if (hookEntry.getValue().equals("failed")) {

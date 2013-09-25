@@ -2,7 +2,7 @@
     <property name="repo" value="https://oss.sonatype.org/content/repositories/releases"/>
 
     <!-- To figure out compatible combinations of versions, you should examine dependencies in the Maven POM files -->
-    <property name="cucumber-jvm.version" value="1.1.4"/>
+    <property name="cucumber-jvm.version" value="1.1.5"/>
     <property name="cucumber-jvm-deps.version" value="1.0.3"/>
     <property name="gherkin.version" value="2.12.1"/>
     <property name="cucumber-html.version" value="0.2.3"/>

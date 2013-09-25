@@ -34,7 +34,7 @@ import java.util.Set;
 
 public class JRubyBackend implements Backend {
     private static final String DSL = "/cucumber/runtime/jruby/dsl.rb";
-    private static final Env env = new Env("cucumber-jruby");
+    private static final Env env = new Env("cucumber-jvm");
     private final SnippetGenerator snippetGenerator = new SnippetGenerator(new JRubySnippet());
     private final ScriptingContainer jruby = new ScriptingContainer();
     private final ResourceLoader resourceLoader;

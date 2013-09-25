@@ -16,9 +16,9 @@ These values can be defined in any of the three places:
 
 * In an Environment variable
 * In a System property (for example `-DRUBY_VERSION=1.9`
-* In a `cucumber-jruby.properties` resource bundle on your `CLASSPATH`.
+* In a `cucumber-jvm.properties` properties file on your `CLASSPATH`.
 
-Sample cucumber-jruby.properties file:
+Sample cucumber-jvm.properties file:
 
 ```
 GEM_PATH=${basedir}/src/test/gems

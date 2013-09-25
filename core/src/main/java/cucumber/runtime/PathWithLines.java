@@ -6,7 +6,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class PathWithLines {
-    // TODO: Keep this nugget
     private static final Pattern FILE_COLON_LINE_PATTERN = Pattern.compile("^([\\w\\W]*?):([\\d:]+)$");
 
     public final String path;

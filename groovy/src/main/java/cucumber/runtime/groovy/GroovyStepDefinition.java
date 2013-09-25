@@ -17,13 +17,13 @@ import java.util.regex.Pattern;
 public class GroovyStepDefinition implements StepDefinition {
     private final Pattern pattern;
     private final JdkPatternArgumentMatcher argumentMatcher;
-    private final int timeoutMillis;
+    private final long timeoutMillis;
     private final Closure body;
     private final StackTraceElement location;
     private final GroovyBackend backend;
     private List<ParameterInfo> parameterInfos;
 
-    public GroovyStepDefinition(Pattern pattern, int timeoutMillis, Closure body, StackTraceElement location, GroovyBackend backend) {
+    public GroovyStepDefinition(Pattern pattern, long timeoutMillis, Closure body, StackTraceElement location, GroovyBackend backend) {
         this.pattern = pattern;
         this.timeoutMillis = timeoutMillis;
         this.backend = backend;
