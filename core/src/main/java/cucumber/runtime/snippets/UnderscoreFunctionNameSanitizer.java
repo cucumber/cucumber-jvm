@@ -7,6 +7,9 @@ public class UnderscoreFunctionNameSanitizer implements FunctionNameSanitizer {
         StringBuilder sanitized = new StringBuilder();
 
         String trimmedFunctionName = functionName.trim();
+        if (trimmedFunctionName.isEmpty()) {
+            throw new IllegalArgumentException("Cannot have empty function name");
+        }
 
         sanitized.append(Character.isJavaIdentifierStart(trimmedFunctionName.charAt(0)) ? trimmedFunctionName.charAt(0) : SUBST);
         for (int i = 1; i < trimmedFunctionName.length(); i++) {
