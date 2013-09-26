@@ -90,12 +90,12 @@ public class JavaSnippetTest {
     @Test
     public void generatesSnippetWithLotsOfEscapes() {
         String expected = "" +
-                "@Given(\"^\\\\^\\\\(\\\\[a-z\\\\]\\\\*\\\\)\\\\?\\\\$$\")\n" +
+                "@Given(\"^\\\\^\\\\(\\\\[a-z\\\\]\\\\*\\\\)\\\\?\\\\.\\\\+\\\\$$\")\n" +
                 "public void _a_z_$() throws Throwable {\n" +
                 "    // Express the Regexp above with the code you wish you had\n" +
                 "    throw new PendingException();\n" +
                 "}\n";
-        assertEquals(expected, snippetFor("^([a-z]*)?$"));
+        assertEquals(expected, snippetFor("^([a-z]*)?.+$"));
     }
 
     @Test

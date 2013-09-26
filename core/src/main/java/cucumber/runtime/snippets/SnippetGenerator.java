@@ -24,6 +24,8 @@ public class SnippetGenerator {
             Pattern.compile("\\]"),
             Pattern.compile("\\?"),
             Pattern.compile("\\*"),
+            Pattern.compile("\\+"),
+            Pattern.compile("\\."),
             Pattern.compile("\\^"),};
 
     private static final String REGEXP_HINT = "Express the Regexp above with the code you wish you had";
