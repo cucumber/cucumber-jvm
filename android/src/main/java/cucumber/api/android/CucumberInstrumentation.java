@@ -18,6 +18,7 @@ import cucumber.runtime.android.AndroidInstrumentationReporter;
 import cucumber.runtime.android.AndroidLogcatReporter;
 import cucumber.runtime.android.AndroidObjectFactory;
 import cucumber.runtime.android.AndroidResourceLoader;
+import cucumber.runtime.android.InstrumentationArguments;
 import cucumber.runtime.android.DexClassFinder;
 import cucumber.runtime.android.TestCaseCounter;
 import cucumber.runtime.io.ResourceLoader;
@@ -50,6 +51,8 @@ public class CucumberInstrumentation extends Instrumentation {
 
         debug = getBooleanArgument(arguments, "debug");
 
+        InstrumentationArguments instrumentationArguments = new InstrumentationArguments(arguments);
+
         Context context = getContext();
         classLoader = context.getClassLoader();
 
@@ -60,12 +63,19 @@ public class CucumberInstrumentation extends Instrumentation {
         for (Class<?> clazz : classFinder.getDescendants(Object.class, context.getPackageName())) {
             if (clazz.isAnnotationPresent(CucumberOptions.class)) {
                 Log.d(TAG, "Found CucumberOptions in class " + clazz.getName());
+                Log.d(TAG, clazz.getAnnotations()[0].toString());
                 optionsAnnotatedClass = clazz;
                 break; // We assume there is only one CucumberOptions annotated class.
             }
         }
         if (optionsAnnotatedClass == null) {
             throw new CucumberException("No CucumberOptions annotation");
+        }
+
+        String cucumberOptions = instrumentationArguments.getCucumberOptionsString();
+        if (!cucumberOptions.isEmpty()) {
+            Log.d(TAG, "Setting cucumber.options from arguments: '" + cucumberOptions + "'");
+            System.setProperty("cucumber.options", cucumberOptions);
         }
 
         @SuppressWarnings("unchecked")
