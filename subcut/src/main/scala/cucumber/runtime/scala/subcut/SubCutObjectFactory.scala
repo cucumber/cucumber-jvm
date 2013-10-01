@@ -1,7 +1,6 @@
 package cucumber.runtime.scala.subcut
 
 import scala.reflect.runtime.{ universe => ru }
-import scala.reflect.runtime.{ universe => ru }
 import cucumber.runtime.scala.ObjectFactory
 import com.escalatesoft.subcut.inject.BindingModule
 import com.escalatesoft.subcut.inject.NewBindingModule
