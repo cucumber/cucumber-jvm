@@ -137,12 +137,12 @@
             </dependency>
             <dependency>
                 <groupId>info.cukes</groupId>
-                <artifactId>cucumber-scala-mod_2.10</artifactId>
+                <artifactId>cucumber-scala_2.10</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>info.cukes</groupId>
-                <artifactId>cucumber-scala-mod_2.9</artifactId>
+                <artifactId>cucumber-scala_2.9</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -464,6 +464,7 @@
         <module>openejb</module>
         <module>scala</module>
         <module>scala/scala_previous</module>
+        <module>subcut</module>
         <module>needle</module>
         <module>testng</module>
     </modules>
