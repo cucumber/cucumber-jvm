@@ -77,7 +77,7 @@ class ScalaBackend(resourceLoader: ResourceLoader) extends Backend {
       instField.setAccessible(true)
       instField.get(null).asInstanceOf[ScalaDsl]
     }
-    val clsInstances = (clsClasses map { objectFactory.getInstance(_) }) //_.newInstance()
+    val clsInstances = (clsClasses map { objectFactory.getInstance(_) }) 
 
     instances = objInstances ++ clsInstances
 
