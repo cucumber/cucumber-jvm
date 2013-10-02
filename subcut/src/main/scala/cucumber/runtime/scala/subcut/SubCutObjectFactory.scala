@@ -16,22 +16,24 @@ import cucumber.runtime.Utils
 class SubCutObjectFactory extends ObjectFactory {
   val mirror = ru.runtimeMirror(getClass.getClassLoader)
   
-  override def start() = { println("SubCutObjectFactory START") }
+  override def start() = {}
 
-  override def stop() = { println("SubCutObjectFactory STOP") }
+  override def stop() = { }
 
-  override def addClass(clazz: Class[_]) = { println("SubCutObjectFactory addClass " + clazz.getName()) }
+  override def addClass(clazz: Class[_]) = { }
 
   override def getInstance[T](typ: Class[T]): T = {
     println("SubCutObjectFactory getInstance " + typ.getName())
-    val bmName = (classOf[BindingModule]).getClass().getName
+    
     val hasBindingModuleConstructor = typ.getDeclaredConstructors().exists{
       c => 
+        val bmName = (classOf[BindingModule]).getClass().getName
         c.getParameterTypes().toList.map(_.getName()) match{
           case bmName::Nil => true
           case _ => false
         }
     }
+    
     if(hasBindingModuleConstructor){
       instantiateWithSubCutModule(typ)
     }else{
@@ -56,8 +58,9 @@ class SubCutObjectFactory extends ObjectFactory {
 
     // TODO load all binding modules and merge them together!
     val bindingModules = classFinder.getDescendants(classOf[BindingModule], "")
-    if(bindingModules.isEmpty()) throw new Exception("Missing SubCut Module definition.")
-//    val modules = bindingModules.map(m=>mirror.staticModule(m.getName())).map(a=>mirror.reflectModule(a).instance)
+    
+    if(bindingModules.isEmpty()) throw new CucumberSubCutException("Missing SubCut Module definition.")
+    if(bindingModules.size() > 1) throw new CucumberSubCutException("Found more than one BindingModule.")
     
     val module = mirror.staticModule(bindingModules.head.getName())
     val obj = mirror.reflectModule(module).instance
