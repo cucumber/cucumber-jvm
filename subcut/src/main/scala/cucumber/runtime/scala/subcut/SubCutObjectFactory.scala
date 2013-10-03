@@ -56,7 +56,7 @@ class SubCutObjectFactory extends ObjectFactory {
     val classFinder: ClassFinder = new ResourceLoaderClassFinder(resourceLoader, this.getClass().getClassLoader())
     val reflections: Reflections = new Reflections(classFinder)
 
-    // TODO load all binding modules and merge them together!
+    // TODO find somehow the glue path and use it to lookup the binding modules.
     val bindingModules = classFinder.getDescendants(classOf[BindingModule], "")
     
     if(bindingModules.isEmpty()) throw new CucumberSubCutException("Missing SubCut Module definition.")
