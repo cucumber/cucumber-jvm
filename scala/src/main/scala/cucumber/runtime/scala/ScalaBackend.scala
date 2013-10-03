@@ -68,7 +68,6 @@ class ScalaBackend(resourceLoader: ResourceLoader) extends Backend {
         cls.getDeclaredField("MODULE$")
         false
       } catch {
-        // avoid exception
         case e: Throwable => true
       }
     }

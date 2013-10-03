@@ -7,9 +7,9 @@ import cucumber.runtime.scala.ObjectFactory
 class DefaultScalaObjectFactory extends ObjectFactory {
   var instances = Map[Class[_], Object]()
   
-  override def start() = { /* nix*/ }
-  override def stop() = { /* nix*/ }
-  override def addClass(clazz: Class[_]) = { /* vorerst nicht*/ }
+  override def start() = { }
+  override def stop() = { }
+  override def addClass(clazz: Class[_]) = { }
   
   override def getInstance[T](typ: Class[T]): T = {
     instances.get(typ).getOrElse(cacheNewInstance(typ)).asInstanceOf[T]
@@ -17,7 +17,7 @@ class DefaultScalaObjectFactory extends ObjectFactory {
   
   private def cacheNewInstance[T](typ:Class[T]):T={
     try{
-      val instance = typ.newInstance//.getConstructor().newInstance(Array[Object]()).asInstanceOf[T]
+      val instance = typ.newInstance
       instances = instances + (typ -> instance.asInstanceOf[Object]) 
       instance
     } catch{
