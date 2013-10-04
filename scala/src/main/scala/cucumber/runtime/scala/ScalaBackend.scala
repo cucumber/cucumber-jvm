@@ -20,13 +20,14 @@ import _root_.cucumber.runtime.Reflections;
 import _root_.cucumber.runtime.io.ResourceLoaderClassFinder;
 import _root_.cucumber.hiddenruntime.scala.DefaultScalaObjectFactory
 
-class ScalaBackend(resourceLoader: ResourceLoader) extends Backend {
-  private var snippetGenerator = new SnippetGenerator(new ScalaSnippetGenerator())
-  private var instances: Seq[ScalaDsl] = Nil
-  private var objectFactory: ObjectFactory = loadObjectFactory()
-
+class ScalaBackend(resourceLoader:ResourceLoader) extends Backend {
   private val classFinder: ClassFinder = new ResourceLoaderClassFinder(resourceLoader, Thread.currentThread().getContextClassLoader())
   private val reflections: Reflections = new Reflections(classFinder)
+  
+  private var snippetGenerator = new SnippetGenerator(new ScalaSnippetGenerator())
+  private var instances:Seq[ScalaDsl] = Nil
+  private var objectFactory: ObjectFactory = loadObjectFactory()
+
 
   def getStepDefinitions = instances.flatMap(_.stepDefinitions)
 
@@ -35,8 +36,8 @@ class ScalaBackend(resourceLoader: ResourceLoader) extends Backend {
   def getAfterHooks = instances.flatMap(_.afterHooks)
 
   def disposeWorld() {
-	  instances = Nil
-			  objectFactory.stop();
+      instances = Nil
+	  objectFactory.stop();
   }
 
   def loadObjectFactory(): ObjectFactory = {
@@ -67,7 +68,7 @@ class ScalaBackend(resourceLoader: ResourceLoader) extends Backend {
         cls.getDeclaredField("MODULE$")
         false
       } catch {
-        case e : Throwable => true
+        case e : Throwable  => true
       }
     }
     val objInstances = objClasses map {cls =>
@@ -81,7 +82,7 @@ class ScalaBackend(resourceLoader: ResourceLoader) extends Backend {
 
     getStepDefinitions map {glue.addStepDefinition(_)}
     getBeforeHooks map {glue.addBeforeHook(_)}
-    getAfterHooks map {glue.addAfterHook(_)}
+    getAfterHooks map  {glue.addAfterHook(_)}
   }
 
   def setUnreportedStepExecutor(executor:UnreportedStepExecutor) {}
