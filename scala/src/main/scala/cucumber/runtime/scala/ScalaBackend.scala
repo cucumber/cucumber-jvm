@@ -1,6 +1,6 @@
 package cucumber.runtime.scala
 
-import _root_.java.util.{ List => JList }
+import _root_.java.util.{List => JList}
 import _root_.gherkin.formatter.model.Step
 import _root_.java.lang.reflect.Modifier
 import _root_.cucumber.runtime.snippets.SnippetGenerator
@@ -13,20 +13,20 @@ import _root_.cucumber.runtime.io.MultiLoader
 import _root_.cucumber.runtime.Backend
 import _root_.cucumber.runtime.UnreportedStepExecutor
 import _root_.cucumber.runtime.Glue
-import _root_.scala.collection.JavaConversions._
+import collection.JavaConversions._
 import _root_.scala.collection.Map
 import _root_.cucumber.runtime.CucumberException;
-import cucumber.runtime.Reflections;
-import cucumber.runtime.io.ResourceLoaderClassFinder;
-import cucumber.hiddenruntime.scala.DefaultScalaObjectFactory
+import _root_.cucumber.runtime.Reflections;
+import _root_.cucumber.runtime.io.ResourceLoaderClassFinder;
+import _root_.cucumber.hiddenruntime.scala.DefaultScalaObjectFactory
 
 class ScalaBackend(resourceLoader: ResourceLoader) extends Backend {
-  val classFinder: ClassFinder = new ResourceLoaderClassFinder(resourceLoader, Thread.currentThread().getContextClassLoader())
-  val reflections: Reflections = new Reflections(classFinder)
-
   private var snippetGenerator = new SnippetGenerator(new ScalaSnippetGenerator())
   private var instances: Seq[ScalaDsl] = Nil
   private var objectFactory: ObjectFactory = loadObjectFactory()
+
+  private val classFinder: ClassFinder = new ResourceLoaderClassFinder(resourceLoader, Thread.currentThread().getContextClassLoader())
+  private val reflections: Reflections = new Reflections(classFinder)
 
   def getStepDefinitions = instances.flatMap(_.stepDefinitions)
 
@@ -34,6 +34,10 @@ class ScalaBackend(resourceLoader: ResourceLoader) extends Backend {
 
   def getAfterHooks = instances.flatMap(_.afterHooks)
 
+  def disposeWorld() {
+	  instances = Nil
+			  objectFactory.stop();
+  }
 
   def loadObjectFactory(): ObjectFactory = {
     try {
@@ -47,11 +51,6 @@ class ScalaBackend(resourceLoader: ResourceLoader) extends Backend {
 
   def buildWorld() {
     objectFactory.start();
-  }
-
-  def disposeWorld() {
-	instances = Nil
-	objectFactory.stop();
   }
 
   def loadGlue(glue: Glue, gluePaths: JList[String]) {
@@ -68,22 +67,22 @@ class ScalaBackend(resourceLoader: ResourceLoader) extends Backend {
         cls.getDeclaredField("MODULE$")
         false
       } catch {
-        case e: Throwable => true
+        case e : Throwable => true
       }
     }
-    val objInstances = objClasses map { cls =>
+    val objInstances = objClasses map {cls =>
       val instField = cls.getDeclaredField("MODULE$")
       instField.setAccessible(true)
       instField.get(null).asInstanceOf[ScalaDsl]
     }
-    val clsInstances = (clsClasses map { objectFactory.getInstance(_) }) 
+    val clsInstances = (clsClasses map {objectFactory.getInstance(_)}) 
 
     instances = objInstances ++ clsInstances
 
-    getStepDefinitions map { glue.addStepDefinition(_) }
-    getBeforeHooks map { glue.addBeforeHook(_) }
-    getAfterHooks map { glue.addAfterHook(_) }
+    getStepDefinitions map {glue.addStepDefinition(_)}
+    getBeforeHooks map {glue.addBeforeHook(_)}
+    getAfterHooks map {glue.addAfterHook(_)}
   }
 
-  def setUnreportedStepExecutor(executor: UnreportedStepExecutor) {}
+  def setUnreportedStepExecutor(executor:UnreportedStepExecutor) {}
 }

@@ -41,10 +41,6 @@ class SubCutObjectFactory extends ObjectFactory {
     }
   }
 
-  /**
-   * http://docs.scala-lang.org/overviews/reflection/overview.html
-   * http://www.veebsbraindump.com/2013/03/scala-2-10-runtime-reflection-from-a-class-name/
-   */
   def instantiateWithSubCutModule[T](cls: Class[T]): T = {
     val clsSym = mirror.classSymbol(cls)
     val clsReflect = mirror.reflectClass(clsSym)
