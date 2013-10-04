@@ -36,8 +36,8 @@ class ScalaBackend(resourceLoader:ResourceLoader) extends Backend {
   def getAfterHooks = instances.flatMap(_.afterHooks)
 
   def disposeWorld() {
-      instances = Nil
-	  objectFactory.stop();
+    instances = Nil
+    objectFactory.stop();
   }
 
   def loadObjectFactory(): ObjectFactory = {
@@ -64,7 +64,7 @@ class ScalaBackend(resourceLoader:ResourceLoader) extends Backend {
     }
     val (clsClasses, objClasses) = dslClasses partition { cls =>
       try {
-//        has Module? - is Object
+//        has Module? - is Object!
         cls.getDeclaredField("MODULE$")
         false
       } catch {
