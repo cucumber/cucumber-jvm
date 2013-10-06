@@ -7,7 +7,9 @@ import cucumber.runtime.ClassFinder;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.DuplicateStepDefinitionException;
 import cucumber.runtime.Glue;
+import cucumber.runtime.NoInstancesException;
 import cucumber.runtime.Reflections;
+import cucumber.runtime.TooManyInstancesException;
 import cucumber.runtime.UnreportedStepExecutor;
 import cucumber.runtime.Utils;
 import cucumber.runtime.io.MultiLoader;
@@ -61,7 +63,10 @@ public class JavaBackend implements Backend {
         try {
             Reflections reflections = new Reflections(classFinder);
             objectFactory = reflections.instantiateExactlyOneSubclass(ObjectFactory.class, "cucumber.runtime", new Class[0], new Object[0]);
-        } catch (CucumberException ce) {
+        } catch (TooManyInstancesException e) {
+            System.out.println(getMultipleObjectFactoryLogMessage());
+            objectFactory = new DefaultJavaObjectFactory();
+        } catch (NoInstancesException e) {
             objectFactory = new DefaultJavaObjectFactory();
         }
         return objectFactory;
@@ -140,5 +145,15 @@ public class JavaBackend implements Backend {
             long timeout = ((After) annotation).timeout();
             glue.addAfterHook(new JavaHookDefinition(method, tagExpressions, ((After) annotation).order(), timeout, objectFactory));
         }
+    }
+
+    private static String getMultipleObjectFactoryLogMessage() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("More than one Cucumber ObjectFactory was found in the classpath\n\n");
+        sb.append("You probably may have included, for instance, cucumber-spring AND cucumber-guice as part of\n");
+        sb.append("your dependencies. When this happens, Cucumber falls back to instantiating the\n");
+        sb.append("DefaultJavaObjectFactory implementation which doesn't provide IoC.\n");
+        sb.append("In order to enjoy IoC features, please remove the unnecessary dependencies from your classpath.\n");
+        return sb.toString();
     }
 }
