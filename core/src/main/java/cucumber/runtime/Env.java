@@ -47,6 +47,11 @@ public class Env {
         return value;
     }
 
+    public String get(String key, String defaultValue) {
+        String result = get(key);
+        return result != null ? result : defaultValue;
+    }
+
     private static String asEnvKey(String key) {
         return key.replace('.', '_').toUpperCase();
     }
