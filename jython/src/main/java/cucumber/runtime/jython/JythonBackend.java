@@ -1,6 +1,7 @@
 package cucumber.runtime.jython;
 
 import cucumber.api.Scenario;
+import cucumber.api.DataTable;
 import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Glue;
@@ -108,13 +109,36 @@ public class JythonBackend implements Backend {
         e.printStackTrace(pw);
         return sw.getBuffer().toString();
     }
-
+	
+	private PyObject argToPyObject(Object arg){
+		if (arg instanceof DataTable)
+			return dataTableToPyArray((DataTable)arg);
+		
+		return new PyString((String)arg);
+		
+	}
+	
+	private PyArray dataTableToPyArray(DataTable table){
+		List<List<String>> rawTable = table.raw();
+		PyArray pyDataTable = new PyArray( PyArray.class , 0);
+		PyArray pyDataRow ;
+		
+		for(List<String> row : rawTable){
+			pyDataRow = new PyArray ( PyString.class , 0 );
+			for(String cell : row){
+				pyDataRow.append(new PyString(cell));
+			}
+			pyDataTable.append(pyDataRow);
+		}
+		return pyDataTable;
+	}
+	
     public void execute(PyInstance stepdef, Object[] args) throws Throwable {
 
         PyObject[] pyArgs = new PyObject[args.length + 1];
         pyArgs[0] = pyWorld;
         for (int i = 0; i < args.length; i++) {
-            pyArgs[i + 1] = new PyString((String) args[i]);
+            pyArgs[i + 1] = argToPyObject(args[i]);
         }
         try {
             stepdef.invoke("execute", pyArgs);
