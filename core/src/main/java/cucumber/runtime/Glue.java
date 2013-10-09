@@ -23,7 +23,7 @@ public interface Glue {
 
     List<HookDefinition> getAfterHooks();
 
-    StepDefinitionMatch stepDefinitionMatch(String uri, Step step, I18n i18n);
+    StepDefinitionMatch stepDefinitionMatch(String featurePath, Step step, I18n i18n);
 
     void writeStepdefsJson(ResourceLoader resourceLoader, List<String> featurePaths, URL dotCucumber);
 }

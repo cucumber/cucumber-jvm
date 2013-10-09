@@ -21,7 +21,7 @@ import java.util.Comparator;
 import java.util.List;
 
 public class CucumberFeature {
-    private final String uri;
+    private final String path;
     private final Feature feature;
     private CucumberBackground cucumberBackground;
     private StepContainer currentStepContainer;
@@ -56,9 +56,9 @@ public class CucumberFeature {
         return cucumberFeatures;
     }
 
-    public CucumberFeature(Feature feature, String uri) {
+    public CucumberFeature(Feature feature, String path) {
         this.feature = feature;
-        this.uri = uri;
+        this.path = path;
     }
 
     public void background(Background background) {
@@ -103,12 +103,12 @@ public class CucumberFeature {
         return i18n;
     }
 
-    public String getUri() {
-        return uri;
+    public String getPath() {
+        return path;
     }
 
     public void run(Formatter formatter, Reporter reporter, Runtime runtime) {
-        formatter.uri(getUri());
+        formatter.uri(getPath());
         formatter.feature(getGherkinFeature());
 
         for (CucumberTagStatement cucumberTagStatement : getFeatureElements()) {
@@ -122,7 +122,7 @@ public class CucumberFeature {
     private static class CucumberFeatureUriComparator implements Comparator<CucumberFeature> {
         @Override
         public int compare(CucumberFeature a, CucumberFeature b) {
-            return a.getUri().compareTo(b.getUri());
+            return a.getPath().compareTo(b.getPath());
         }
     }
 }

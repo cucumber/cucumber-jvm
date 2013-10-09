@@ -72,8 +72,8 @@ public class RuntimeGlue implements Glue {
     }
 
     @Override
-    public StepDefinitionMatch stepDefinitionMatch(String uri, Step step, I18n i18n) {
-        List<StepDefinitionMatch> matches = stepDefinitionMatches(uri, step);
+    public StepDefinitionMatch stepDefinitionMatch(String featurePath, Step step, I18n i18n) {
+        List<StepDefinitionMatch> matches = stepDefinitionMatches(featurePath, step);
         try {
             if (matches.size() == 0) {
                 tracker.addUndefinedStep(step, i18n);
@@ -89,12 +89,12 @@ public class RuntimeGlue implements Glue {
         }
     }
 
-    private List<StepDefinitionMatch> stepDefinitionMatches(String uri, Step step) {
+    private List<StepDefinitionMatch> stepDefinitionMatches(String featurePath, Step step) {
         List<StepDefinitionMatch> result = new ArrayList<StepDefinitionMatch>();
         for (StepDefinition stepDefinition : stepDefinitionsByPattern.values()) {
             List<Argument> arguments = stepDefinition.matchedArguments(step);
             if (arguments != null) {
-                result.add(new StepDefinitionMatch(arguments, stepDefinition, uri, step, localizedXStreams));
+                result.add(new StepDefinitionMatch(arguments, stepDefinition, featurePath, step, localizedXStreams));
             }
         }
         return result;

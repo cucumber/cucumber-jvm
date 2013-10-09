@@ -356,7 +356,7 @@ public class RuntimeTest {
     public void runStep(Reporter reporter, Runtime runtime) {
         Step step = mock(Step.class);
         I18n i18n = mock(I18n.class);
-        runtime.runStep("<uri>", step, reporter, i18n);
+        runtime.runStep("<featurePath>", step, reporter, i18n);
     }
 
     private ResourceLoader createResourceLoaderThatFindsNoFeatures() {

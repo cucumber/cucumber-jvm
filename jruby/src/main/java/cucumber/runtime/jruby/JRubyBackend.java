@@ -140,13 +140,13 @@ public class JRubyBackend implements Backend {
         throw new PendingException(reason);
     }
 
-    public void runStep(String uri, I18n i18n, String stepKeyword, String stepName, int line, DataTable dataTable, DocString docString) throws Throwable {
+    public void runStep(String featurePath, I18n i18n, String stepKeyword, String stepName, int line, DataTable dataTable, DocString docString) throws Throwable {
         List<DataTableRow> dataTableRows = null;
         if (dataTable != null) {
             dataTableRows = dataTable.getGherkinRows();
         }
 
-        unreportedStepExecutor.runUnreportedStep(uri, i18n, stepKeyword, stepName, line, dataTableRows, docString);
+        unreportedStepExecutor.runUnreportedStep(featurePath, i18n, stepKeyword, stepName, line, dataTableRows, docString);
     }
 
     public void executeHook(RubyObject hookRunner, Scenario scenario) {

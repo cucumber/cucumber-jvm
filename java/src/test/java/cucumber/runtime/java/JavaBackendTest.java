@@ -76,7 +76,7 @@ public class JavaBackendTest {
         }
 
         @Override
-        public StepDefinitionMatch stepDefinitionMatch(String uri, Step step, I18n i18n) {
+        public StepDefinitionMatch stepDefinitionMatch(String featurePath, Step step, I18n i18n) {
             throw new UnsupportedOperationException();
         }
 

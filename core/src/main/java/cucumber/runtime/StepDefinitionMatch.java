@@ -13,29 +13,28 @@ import gherkin.util.Mapper;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import static gherkin.util.FixJava.map;
 
 public class StepDefinitionMatch extends Match {
     private final StepDefinition stepDefinition;
-    private final transient String uri;
+    private final transient String featurePath;
     // The official JSON gherkin format doesn't have a step attribute, so we're marking this as transient
     // to prevent it from ending up in the JSON.
     private final transient Step step;
     private final LocalizedXStreams localizedXStreams;
 
-    public StepDefinitionMatch(List<Argument> arguments, StepDefinition stepDefinition, String uri, Step step, LocalizedXStreams localizedXStreams) {
+    public StepDefinitionMatch(List<Argument> arguments, StepDefinition stepDefinition, String featurePath, Step step, LocalizedXStreams localizedXStreams) {
         super(arguments, stepDefinition.getLocation(false));
         this.stepDefinition = stepDefinition;
-        this.uri = uri;
+        this.featurePath = featurePath;
         this.step = step;
         this.localizedXStreams = localizedXStreams;
     }
 
     public void runStep(I18n i18n) throws Throwable {
         try {
-            stepDefinition.execute(i18n, transformedArgs(step, localizedXStreams.get(i18n.getLocale()), i18n.getLocale()));
+            stepDefinition.execute(i18n, transformedArgs(step, localizedXStreams.get(i18n.getLocale())));
         } catch (CucumberException e) {
             throw e;
         } catch (Throwable t) {
@@ -46,10 +45,9 @@ public class StepDefinitionMatch extends Match {
     /**
      * @param step    the step to run
      * @param xStream used to convert a string to declared stepdef arguments
-     * @param locale  the feature's locale
      * @return an Array matching the types or {@code parameterTypes}, or an array of String if {@code parameterTypes} is null
      */
-    private Object[] transformedArgs(Step step, LocalizedXStreams.LocalizedXStream xStream, Locale locale) {
+    private Object[] transformedArgs(Step step, LocalizedXStreams.LocalizedXStream xStream) {
         int argumentCount = getArguments().size();
 
         if (step.getRows() != null) {
@@ -151,7 +149,7 @@ public class StepDefinitionMatch extends Match {
     }
 
     public StackTraceElement getStepLocation() {
-        return step.getStackTraceElement(uri);
+        return step.getStackTraceElement(featurePath);
     }
 
     public String getStepName() {

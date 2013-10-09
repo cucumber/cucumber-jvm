@@ -65,7 +65,7 @@ public class FeatureRunner extends ParentRunner<ParentRunner> {
 
     @Override
     public void run(RunNotifier notifier) {
-        jUnitReporter.uri(cucumberFeature.getUri());
+        jUnitReporter.uri(cucumberFeature.getPath());
         jUnitReporter.feature(cucumberFeature.getGherkinFeature());
         super.run(notifier);
         jUnitReporter.eof();

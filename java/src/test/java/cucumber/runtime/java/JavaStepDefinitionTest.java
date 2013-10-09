@@ -73,7 +73,7 @@ public class JavaStepDefinitionTest {
         runtime.buildBackendWorlds(reporter, Collections.<Tag>emptySet());
         Tag tag = new Tag("@foo", 0);
         runtime.runBeforeHooks(reporter, asSet(tag));
-        runtime.runStep("uri", new Step(NO_COMMENTS, "Given ", "three blind mice", 1, null, null), reporter, ENGLISH);
+        runtime.runStep("some.feature", new Step(NO_COMMENTS, "Given ", "three blind mice", 1, null, null), reporter, ENGLISH);
 
         ArgumentCaptor<Result> result = ArgumentCaptor.forClass(Result.class);
         verify(reporter).result(result.capture());
@@ -119,7 +119,7 @@ public class JavaStepDefinitionTest {
         Set<Tag> tags = asSet(tag);
         runtime.runBeforeHooks(reporter, tags);
         Step step = new Step(NO_COMMENTS, "Given ", "three blind mice", 1, null, null);
-        runtime.runStep("uri", step, reporter, ENGLISH);
+        runtime.runStep("some.feature", step, reporter, ENGLISH);
         assertTrue(defs.foo);
         assertFalse(defs.bar);
     }

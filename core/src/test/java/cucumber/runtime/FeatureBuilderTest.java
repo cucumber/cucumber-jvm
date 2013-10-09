@@ -43,11 +43,11 @@ public class FeatureBuilderTest {
         builder.parse(resource, NO_FILTERS);
 
         assertEquals(1, features.size());
-        assertEquals(featurePath, features.get(0).getUri());
+        assertEquals(featurePath, features.get(0).getPath());
     }
 
     @Test
-    public void converts_windows_path_to_uri() throws IOException {
+    public void converts_windows_path_to_forward_slash() throws IOException {
         char fileSeparatorChar = '\\';
         String featurePath = "path" + fileSeparatorChar + "foo.feature";
         Resource resource = createResourceMock(featurePath);
@@ -57,7 +57,7 @@ public class FeatureBuilderTest {
         builder.parse(resource, NO_FILTERS);
 
         assertEquals(1, features.size());
-        assertEquals("path/foo.feature", features.get(0).getUri());
+        assertEquals("path/foo.feature", features.get(0).getPath());
     }
 
     private Resource createResourceMock(String featurePath) throws IOException {

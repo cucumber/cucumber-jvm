@@ -33,7 +33,7 @@ public class FeatureBuilder implements Formatter {
     private final MessageDigest md5;
     private final Map<String, String> pathsByChecksum = new HashMap<String, String>();
     private CucumberFeature currentCucumberFeature;
-    private String uri;
+    private String featurePath;
 
     public FeatureBuilder(List<CucumberFeature> cucumberFeatures) {
         this(cucumberFeatures, File.separatorChar);
@@ -51,12 +51,12 @@ public class FeatureBuilder implements Formatter {
 
     @Override
     public void uri(String uri) {
-        this.uri = uri;
+        this.featurePath = uri;
     }
 
     @Override
     public void feature(Feature feature) {
-        currentCucumberFeature = new CucumberFeature(feature, uri);
+        currentCucumberFeature = new CucumberFeature(feature, featurePath);
         cucumberFeatures.add(currentCucumberFeature);
     }
 
@@ -118,9 +118,9 @@ public class FeatureBuilder implements Formatter {
         Parser parser = new Parser(formatter);
 
         try {
-            parser.parse(gherkin, convertPathToUri(resource.getPath()), 0);
+            parser.parse(gherkin, convertFileSeparatorToForwardSlash(resource.getPath()), 0);
         } catch (Exception e) {
-            throw new CucumberException(String.format("Error parsing feature file %s", convertPathToUri(resource.getPath())), e);
+            throw new CucumberException(String.format("Error parsing feature file %s", convertFileSeparatorToForwardSlash(resource.getPath())), e);
         }
         I18n i18n = parser.getI18nLanguage();
         if (currentCucumberFeature != null) {
@@ -130,7 +130,7 @@ public class FeatureBuilder implements Formatter {
         }
     }
 
-    private String convertPathToUri(String path) {
+    private String convertFileSeparatorToForwardSlash(String path) {
         return path.replace(fileSeparatorChar, '/');
     }
 

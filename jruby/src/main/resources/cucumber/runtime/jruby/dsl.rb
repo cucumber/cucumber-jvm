@@ -118,7 +118,7 @@ module Cucumber
 
         def step(name, arg=nil) # TODO: pass in an entire gherkin text instead of a step
           # caller[0] gets us to our stepdef, right before we enter the dsl
-          uri, line = *caller[0].to_s.split(/:/)
+          feature_path, line = *caller[0].to_s.split(/:/)
           # determine if we got an argument we should pass through to calling things
           data_table = nil
           doc_string = nil
@@ -130,7 +130,7 @@ module Cucumber
             end
           end
 
-          $backend.runStep(uri, @__gherkin_i18n, 'When ', name, line.to_i, data_table, doc_string)
+          $backend.runStep(feature_path, @__gherkin_i18n, 'When ', name, line.to_i, data_table, doc_string)
         end
       end
 

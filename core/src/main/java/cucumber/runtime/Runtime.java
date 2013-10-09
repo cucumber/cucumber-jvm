@@ -239,16 +239,16 @@ public class Runtime implements UnreportedStepExecutor {
 
     //TODO: Maybe this should go into the cucumber step execution model and it should return the result of that execution!
     @Override
-    public void runUnreportedStep(String uri, I18n i18n, String stepKeyword, String stepName, int line, List<DataTableRow> dataTableRows, DocString docString) throws Throwable {
+    public void runUnreportedStep(String featurePath, I18n i18n, String stepKeyword, String stepName, int line, List<DataTableRow> dataTableRows, DocString docString) throws Throwable {
         Step step = new Step(Collections.<Comment>emptyList(), stepKeyword, stepName, line, dataTableRows, docString);
 
-        StepDefinitionMatch match = glue.stepDefinitionMatch(uri, step, i18n);
+        StepDefinitionMatch match = glue.stepDefinitionMatch(featurePath, step, i18n);
         if (match == null) {
             UndefinedStepException error = new UndefinedStepException(step);
 
             StackTraceElement[] originalTrace = error.getStackTrace();
             StackTraceElement[] newTrace = new StackTraceElement[originalTrace.length + 1];
-            newTrace[0] = new StackTraceElement("✽", "StepDefinition", uri, line);
+            newTrace[0] = new StackTraceElement("✽", "StepDefinition", featurePath, line);
             System.arraycopy(originalTrace, 0, newTrace, 1, originalTrace.length);
             error.setStackTrace(newTrace);
 
@@ -257,11 +257,11 @@ public class Runtime implements UnreportedStepExecutor {
         match.runStep(i18n);
     }
 
-    public void runStep(String uri, Step step, Reporter reporter, I18n i18n) {
+    public void runStep(String featurePath, Step step, Reporter reporter, I18n i18n) {
         StepDefinitionMatch match;
 
         try {
-            match = glue.stepDefinitionMatch(uri, step, i18n);
+            match = glue.stepDefinitionMatch(featurePath, step, i18n);
         } catch (AmbiguousStepDefinitionsException e) {
             reporter.match(e.getMatches().get(0));
             Result result = new Result(Result.FAILED, 0L, e, DUMMY_ARG);
