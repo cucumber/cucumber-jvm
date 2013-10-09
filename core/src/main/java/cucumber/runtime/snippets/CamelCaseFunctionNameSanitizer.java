@@ -17,13 +17,37 @@ public class CamelCaseFunctionNameSanitizer implements FunctionNameSanitizer {
         sanitized.append(words[0].toLowerCase());
 
         for (int i = 1; i < words.length; i++) {
-            sanitized.append(capitalize(words[i].toLowerCase()));
+            sanitized.append(sanitizeWord(words[i]));
         }
 
         return sanitized.toString();
     }
 
     private String capitalize(String line) {
-        return Character.toUpperCase(line.charAt(0)) + line.substring(1);
+        return line.length() > 0 ? Character.toUpperCase(line.charAt(0)) + line.substring(1) : "";
+    }
+
+    private boolean isUpperCaseAcronym(String word) {
+        if (word == null || word.length() < 2) {
+            return false;
+        }
+
+        for (char c : word.toCharArray()) {
+            if (Character.isLowerCase(c)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private String sanitizeWord(String word) {
+        if (word == null) {
+            return "";
+        } else if (word.length() == 2 && isUpperCaseAcronym(word)) {
+            return word;
+        } else {
+            return capitalize(isUpperCaseAcronym(word) ? word.toLowerCase() : word);
+        }
     }
 }
