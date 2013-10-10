@@ -8,7 +8,7 @@ Read `libs/README.md` for details on dependencies.
 
 ### Using Ant
 1. Please read ["Building and Running from the Command Line"](https://developer.android.com/tools/building/building-cmdline.html).
-2. Run `ant test`.
+2. Run `ant clean debug install test`.
 
 ### Using an IDE
 1. Please read ["Building and Running from Eclipse with ADT"](https://developer.android.com/tools/building/building-eclipse.html).
