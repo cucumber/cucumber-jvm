@@ -27,7 +27,7 @@ public class JythonBackend implements Backend {
     private PyObject pyWorld;
     private Glue glue;
 
-    public JythonBackend(ResourceLoader resourceLoader, PythonInterpreter jython) {
+	public JythonBackend(ResourceLoader resourceLoader, PythonInterpreter jython) {
         this.resourceLoader = resourceLoader;
         this.jython = jython;
         jython.set("backend", this);
@@ -110,28 +110,25 @@ public class JythonBackend implements Backend {
         return sw.getBuffer().toString();
     }
 	
-	private PyObject argToPyObject(Object arg){
-		if (arg instanceof DataTable)
-			return dataTableToPyArray((DataTable)arg);
-		
-		return new PyString((String)arg);
-		
-	}
+    private PyObject argToPyObject(Object arg){
+        if (arg instanceof DataTable)
+            return dataTableToPyArray((DataTable)arg);	
+        return new PyString((String)arg);	
+    }
 	
-	private PyArray dataTableToPyArray(DataTable table){
-		List<List<String>> rawTable = table.raw();
-		PyArray pyDataTable = new PyArray( PyArray.class , 0);
-		PyArray pyDataRow ;
-		
-		for(List<String> row : rawTable){
-			pyDataRow = new PyArray ( PyString.class , 0 );
-			for(String cell : row){
-				pyDataRow.append(new PyString(cell));
-			}
-			pyDataTable.append(pyDataRow);
-		}
-		return pyDataTable;
-	}
+    private PyArray dataTableToPyArray(DataTable table){
+        List<List<String>> rawTable = table.raw();
+        PyArray pyDataTable = new PyArray( PyArray.class , 0);
+        PyArray pyDataRow ;
+        for(List<String> row : rawTable){
+            pyDataRow = new PyArray ( PyString.class , 0 );
+            for(String cell : row){
+                pyDataRow.append(new PyString(cell));
+            }
+            pyDataTable.append(pyDataRow);
+        }
+        return pyDataTable;
+    }
 	
     public void execute(PyInstance stepdef, Object[] args) throws Throwable {
 
