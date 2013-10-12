@@ -28,4 +28,9 @@ def I_have_cukes_in_my_belly(self, arg1):
 def we_can_get_the_scenario(self, scenario):
   if(scenario.getStatus() != 'passed'):
     print("Oh no!")
-
+    
+@Given('^the following users exist:$')
+def the_following_users_exit(self,dataTable):
+  for row in dataTable:
+    for cell in row:
+      print("Checking if cell: "+cell+" exists")
