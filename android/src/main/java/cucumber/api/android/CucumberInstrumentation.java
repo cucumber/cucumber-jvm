@@ -36,9 +36,11 @@ import java.util.List;
 public class CucumberInstrumentation extends Instrumentation {
     public static final String REPORT_VALUE_ID = "CucumberInstrumentation";
     public static final String REPORT_KEY_NUM_TOTAL = "numtests";
+    public static final int DEFAULT_DEBUGGER_TIMEOUT = 10000;
     public static final String TAG = "cucumber-android";
 
     private final Bundle results = new Bundle();
+    private int debuggerTimeout;
     private boolean justCount;
     private int testCount;
 
@@ -54,6 +56,16 @@ public class CucumberInstrumentation extends Instrumentation {
         super.onCreate(arguments);
 
         if (arguments != null) {
+            String debug = arguments.getString("debug");
+            if (debug != null) {
+                try {
+                    debuggerTimeout = Integer.parseInt(debug);
+                } catch (NumberFormatException e) {
+                    if (Boolean.parseBoolean(debug)) {
+                        debuggerTimeout = DEFAULT_DEBUGGER_TIMEOUT;
+                    }
+                }
+            }
             justCount = getBooleanArgument(arguments, "count");
         }
 
@@ -123,6 +135,10 @@ public class CucumberInstrumentation extends Instrumentation {
             results.putInt(REPORT_KEY_NUM_TOTAL, testCount);
             finish(Activity.RESULT_OK, results);
         } else {
+            if (debuggerTimeout != 0) {
+                waitForDebugger(debuggerTimeout);
+            }
+
             runtimeOptions.getFormatters().add(new AndroidInstrumentationReporter(runtime, this, testCount));
             runtimeOptions.getFormatters().add(new AndroidLogcatReporter(TAG));
 
@@ -139,6 +155,37 @@ public class CucumberInstrumentation extends Instrumentation {
             printSummary();
 
             finish(Activity.RESULT_OK, results);
+        }
+    }
+
+    /**
+     * Waits the specified time for a debugger to attach.
+     * <p />
+     * For some reason {@link Debug#waitForDebugger()} is not blocking and thinks a debugger is
+     * attached when there isn't.
+     *
+     * @param timeout the time in milliseconds to wait
+     */
+    private void waitForDebugger(int timeout) {
+        System.out.println("waiting " + timeout + "ms for debugger to attach.");
+        long elapsed = 0;
+        while (!Debug.isDebuggerConnected() && elapsed < timeout) {
+            try {
+                System.out.println("waiting for debugger to attach...");
+                Thread.sleep(1000);
+                elapsed += 1000;
+            } catch (InterruptedException ie) {
+            }
+        }
+        if (Debug.isDebuggerConnected()) {
+            System.out.println("waiting for debugger to settle...");
+            try {
+                Thread.sleep(1300);
+            } catch (InterruptedException e) {
+            }
+            System.out.println("debugger connected.");
+        } else {
+            System.out.println("no debugger connected.");
         }
     }
 
