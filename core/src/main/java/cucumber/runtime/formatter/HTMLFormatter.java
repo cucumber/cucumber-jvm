@@ -114,6 +114,16 @@ class HTMLFormatter implements Formatter, Reporter {
     }
 
     @Override
+    public void startOfScenarioLifeCycle(Scenario scenario) {
+        // NoOp
+    }
+
+    @Override
+    public void endOfScenarioLifeCycle(Scenario scenario) {
+        // NoOp
+    }
+
+    @Override
     public void result(Result result) {
         jsFunctionCall("result", result);
     }

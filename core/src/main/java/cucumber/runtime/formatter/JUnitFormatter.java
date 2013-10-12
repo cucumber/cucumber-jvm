@@ -115,6 +115,16 @@ class JUnitFormatter implements Formatter, Reporter, StrictAware {
         }
     }
 
+    @Override
+    public void startOfScenarioLifeCycle(Scenario scenario) {
+        // NoOp
+    }
+
+    @Override
+    public void endOfScenarioLifeCycle(Scenario scenario) {
+        // NoOp
+    }
+
     private void addDummyTestCase() {
         Element dummy = doc.createElement("testcase");
         dummy.setAttribute("classname", "dummy");

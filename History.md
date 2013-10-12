@@ -2,6 +2,8 @@
 
 * [Jython] Fix for DataTable as parameter in Jython steps ([#602](https://github.com/cucumber/cucumber-jvm/pull/602) lggroapa, Aslak Hellesøy)
 * [Core] Fix and improve CamelCaseFunctionNameSanitizer ([#603](https://github.com/cucumber/cucumber-jvm/pull/603) Frieder Bluemle)
+* [Android] improve test reports for cucumber-android ([#598](https://github.com/cucumber/cucumber-jvm/pull/598) Sebastian Gröbler)
+* [Core] The JSONFormatter should record before hooks in the next scenario ([#570](https://github.com/cucumber/cucumber-jvm/pull/570) Björn Rasmusson)
 * [Core, Java] Log a warning when more than one IoC dependency is found in the classpath ([#594](https://github.com/cucumber/cucumber-jvm/pull/594) Ariel Kogan)
 * [JUnit,TestNG] Report summaries and `.cucumber/stepdefs.json` in the same way as the CLI (Aslak Hellesøy)
 
