@@ -27,10 +27,15 @@ def I_have_cukes_in_my_belly(self, arg1):
 @After()
 def we_can_get_the_scenario(self, scenario):
   if(scenario.getStatus() != 'passed'):
-    print("Oh no!")
+    print(Exception("Oh no!"))
     
 @Given('^the following users exist:$')
-def the_following_users_exit(self,dataTable):
-  for row in dataTable:
-    for cell in row:
-      print("Checking if cell: "+cell+" exists")
+def the_following_users_exit(self, dataTable):
+  expected = [
+    ["name",  "email",           "phone"],
+    ["Aslak", "aslak@email.com", "123"],
+    ["Matt",  "matt@email.com",  "234"],
+    ["Joe",   "joe@email.org",   "456"]
+  ]
+  if (expected != dataTable):
+    raise(Exception("Oh no!"))

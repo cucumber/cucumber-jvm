@@ -1,7 +1,7 @@
 package cucumber.runtime.jython;
 
-import cucumber.api.Scenario;
 import cucumber.api.DataTable;
+import cucumber.api.Scenario;
 import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Glue;
@@ -11,7 +11,12 @@ import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.snippets.FunctionNameSanitizer;
 import cucumber.runtime.snippets.SnippetGenerator;
 import gherkin.formatter.model.Step;
-import org.python.core.*;
+import org.python.core.Py;
+import org.python.core.PyException;
+import org.python.core.PyInstance;
+import org.python.core.PyList;
+import org.python.core.PyObject;
+import org.python.core.PyString;
 import org.python.util.PythonInterpreter;
 
 import java.io.IOException;
@@ -27,7 +32,7 @@ public class JythonBackend implements Backend {
     private PyObject pyWorld;
     private Glue glue;
 
-	public JythonBackend(ResourceLoader resourceLoader, PythonInterpreter jython) {
+    public JythonBackend(ResourceLoader resourceLoader, PythonInterpreter jython) {
         this.resourceLoader = resourceLoader;
         this.jython = jython;
         jython.set("backend", this);
@@ -109,27 +114,26 @@ public class JythonBackend implements Backend {
         e.printStackTrace(pw);
         return sw.getBuffer().toString();
     }
-	
-    private PyObject argToPyObject(Object arg){
-        if (arg instanceof DataTable)
-            return dataTableToPyArray((DataTable)arg);	
-        return new PyString((String)arg);	
-    }
-	
-    private PyArray dataTableToPyArray(DataTable table){
-        List<List<String>> rawTable = table.raw();
-        PyArray pyDataTable = new PyArray( PyArray.class , 0);
-        PyArray pyDataRow ;
-        for(List<String> row : rawTable){
-            pyDataRow = new PyArray ( PyString.class , 0 );
-            for(String cell : row){
-                pyDataRow.append(new PyString(cell));
-            }
-            pyDataTable.append(pyDataRow);
+
+    private PyObject argToPyObject(Object arg) {
+        if (arg instanceof DataTable) {
+            return dataTableToPyArray((DataTable) arg);
         }
-        return pyDataTable;
+        return new PyString((String) arg);
     }
-	
+
+    private PyObject dataTableToPyArray(DataTable table) {
+        PyList pyTable = new PyList();
+        for (List<String> row : table.raw()) {
+            PyList pyRow = new PyList();
+            for (String cell : row) {
+                pyRow.append(new PyString(cell));
+            }
+            pyTable.append(pyRow);
+        }
+        return pyTable;
+    }
+
     public void execute(PyInstance stepdef, Object[] args) throws Throwable {
 
         PyObject[] pyArgs = new PyObject[args.length + 1];
