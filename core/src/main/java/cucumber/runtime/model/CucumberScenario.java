@@ -33,6 +33,7 @@ public class CucumberScenario extends CucumberTagStatement {
     public void run(Formatter formatter, Reporter reporter, Runtime runtime) {
         Set<Tag> tags = tagsAndInheritedTags();
         runtime.buildBackendWorlds(reporter, tags);
+        formatter.startOfScenarioLifeCycle((Scenario) getGherkinModel());
         runtime.runBeforeHooks(reporter, tags);
 
         runBackground(formatter, reporter, runtime);
@@ -40,6 +41,7 @@ public class CucumberScenario extends CucumberTagStatement {
         runSteps(reporter, runtime);
 
         runtime.runAfterHooks(reporter, tags);
+        formatter.endOfScenarioLifeCycle((Scenario) getGherkinModel());
         runtime.disposeBackendWorlds();
     }
 

@@ -1,16 +1,20 @@
 package cucumber.runtime.android;
 
 import android.util.Log;
-import gherkin.formatter.Formatter;
-import gherkin.formatter.model.*;
+import gherkin.formatter.model.Background;
+import gherkin.formatter.model.Examples;
+import gherkin.formatter.model.Feature;
+import gherkin.formatter.model.Scenario;
+import gherkin.formatter.model.ScenarioOutline;
+import gherkin.formatter.model.Step;
 
 import java.util.List;
 
-public class AndroidFormatter implements Formatter {
+public class AndroidLogcatReporter extends NoOpFormattingReporter {
     private final String logtag;
     private String uri;
 
-    public AndroidFormatter(String logtag) {
+    public AndroidLogcatReporter(String logtag) {
         this.logtag = logtag;
     }
 
@@ -52,17 +56,5 @@ public class AndroidFormatter implements Formatter {
     @Override
     public void syntaxError(String state, String event, List<String> legalEvents, String uri, Integer line) {
         Log.e(logtag, String.format("syntax error '%s' %s:%d", event, uri, line));
-    }
-
-    @Override
-    public void eof() {
-    }
-
-    @Override
-    public void done() {
-    }
-
-    @Override
-    public void close() {
     }
 }

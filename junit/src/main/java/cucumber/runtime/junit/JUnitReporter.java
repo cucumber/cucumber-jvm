@@ -196,4 +196,14 @@ public class JUnitReporter implements Reporter, Formatter {
     public void close() {
         formatter.close();
     }
+
+    @Override
+    public void startOfScenarioLifeCycle(Scenario scenario) {
+        // NoOp
+    }
+
+    @Override
+    public void endOfScenarioLifeCycle(Scenario scenario) {
+        // NoOp
+    }
 }

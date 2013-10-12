@@ -66,4 +66,14 @@ public class StubFormatter implements Formatter {
     public void close() {
         throw new UnsupportedOperationException();
     }
+
+    @Override
+    public void startOfScenarioLifeCycle(Scenario scenario) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void endOfScenarioLifeCycle(Scenario scenario) {
+        throw new UnsupportedOperationException();
+    }
 }

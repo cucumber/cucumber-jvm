@@ -92,6 +92,16 @@ class UsageFormatter implements Formatter, Reporter {
     }
 
     @Override
+    public void startOfScenarioLifeCycle(Scenario scenario) {
+        // NoOp
+    }
+
+    @Override
+    public void endOfScenarioLifeCycle(Scenario scenario) {
+        // NoOp
+    }
+
+    @Override
     public void done() {
         List<StepDefContainer> stepDefContainers = new ArrayList<StepDefContainer>();
         for (Map.Entry<String, List<StepContainer>> usageEntry : usageMap.entrySet()) {
