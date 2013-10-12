@@ -6,39 +6,37 @@ import static org.junit.Assert.assertEquals;
 
 public class CamelCaseFunctionNameSanitizerTest {
 
+    private void assertSanitized(String expected, String functionName) {
+        assertEquals(expected, new CamelCaseFunctionNameSanitizer().sanitizeFunctionName(functionName));
+    }
+
     @Test
-    public void testSanitizeFunctionName() {
+    public void sanitizes_simple_sentence() {
+        assertSanitized("iAmAFunctionName", "I am a function name");
+    }
 
-        CamelCaseFunctionNameSanitizer generator = new CamelCaseFunctionNameSanitizer();
+    @Test
+    public void sanitizes_sentence_with_multiple_spaces() {
+        assertSanitized("iAmAFunctionName", "I am a function name");
+    }
 
-        String functionName = "I am a function name";
-        String expected = "iAmAFunctionName";
-        String actual = generator.sanitizeFunctionName(functionName);
-        assertEquals(expected, actual);
+    @Test
+    public void sanitizes_pascal_case_word() {
+        assertSanitized("functionNameWithPascalCaseWord", "Function name with pascalCase word");
+    }
 
-        functionName = "Function name with multiple  spaces";
-        expected = "functionNameWithMultipleSpaces";
-        actual = generator.sanitizeFunctionName(functionName);
-        assertEquals(expected, actual);
+    @Test
+    public void sanitizes_camel_case_word() {
+        assertSanitized("functionNameWithCamelCaseWord", "Function name with CamelCase word");
+    }
 
-        functionName = "Function name with pascalCase word";
-        expected = "functionNameWithPascalCaseWord";
-        actual = generator.sanitizeFunctionName(functionName);
-        assertEquals(expected, actual);
+    @Test
+    public void sanitizes_acronyms() {
+        assertSanitized("functionNameWithMultiCharAcronymHttpServer", "Function name with multi char acronym HTTP Server");
+    }
 
-        functionName = "Function name with CamelCase word";
-        expected = "functionNameWithCamelCaseWord";
-        actual = generator.sanitizeFunctionName(functionName);
-        assertEquals(expected, actual);
-
-        functionName = "Function name with multi char acronym HTTP Server";
-        expected = "functionNameWithMultiCharAcronymHttpServer";
-        actual = generator.sanitizeFunctionName(functionName);
-        assertEquals(expected, actual);
-
-        functionName = "Function name with two char acronym US";
-        expected = "functionNameWithTwoCharAcronymUS";
-        actual = generator.sanitizeFunctionName(functionName);
-        assertEquals(expected, actual);
+    @Test
+    public void sanitizes_two_char_acronym() {
+        assertSanitized("functionNameWithTwoCharAcronymUS", "Function name with two char acronym US");
     }
 }
