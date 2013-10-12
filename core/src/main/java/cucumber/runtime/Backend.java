@@ -1,6 +1,6 @@
 package cucumber.runtime;
 
-import cucumber.runtime.snippets.FunctionNameSanitizer;
+import cucumber.runtime.snippets.FunctionNameGenerator;
 import gherkin.formatter.model.Step;
 
 import java.util.List;
@@ -28,5 +28,5 @@ public interface Backend {
      */
     void disposeWorld();
 
-    String getSnippet(Step step, FunctionNameSanitizer functionNameSanitizer);
+    String getSnippet(Step step, FunctionNameGenerator functionNameGenerator);
 }

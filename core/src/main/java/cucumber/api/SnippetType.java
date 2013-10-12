@@ -1,20 +1,21 @@
 package cucumber.api;
 
 import cucumber.runtime.CucumberException;
-import cucumber.runtime.snippets.CamelCaseFunctionNameSanitizer;
-import cucumber.runtime.snippets.FunctionNameSanitizer;
-import cucumber.runtime.snippets.UnderscoreFunctionNameSanitizer;
+import cucumber.runtime.snippets.CamelCaseConcatenator;
+import cucumber.runtime.snippets.Concatenator;
+import cucumber.runtime.snippets.FunctionNameGenerator;
+import cucumber.runtime.snippets.UnderscoreConcatenator;
 
 public enum SnippetType {
-    UNDERSCORE("underscore", new UnderscoreFunctionNameSanitizer()),
-    CAMELCASE("camelcase", new CamelCaseFunctionNameSanitizer());
+    UNDERSCORE("underscore", new UnderscoreConcatenator()),
+    CAMELCASE("camelcase", new CamelCaseConcatenator());
 
     private final String name;
-    private final FunctionNameSanitizer functionNameSanitizer;
+    private final Concatenator concatenator;
 
-    SnippetType(String name, FunctionNameSanitizer functionNameSanitizer) {
+    SnippetType(String name, Concatenator concatenator) {
         this.name = name;
-        this.functionNameSanitizer = functionNameSanitizer;
+        this.concatenator = concatenator;
     }
 
     public static SnippetType fromString(String name) {
@@ -26,7 +27,7 @@ public enum SnippetType {
         throw new CucumberException(String.format("Unrecognized SnippetType %s", name));
     }
 
-    public FunctionNameSanitizer getFunctionNameSanitizer() {
-        return functionNameSanitizer;
+    public FunctionNameGenerator getFunctionNameGenerator() {
+        return new FunctionNameGenerator(concatenator);
     }
 }

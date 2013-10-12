@@ -1,7 +1,8 @@
 package cucumber.runtime.java;
 
+import cucumber.runtime.snippets.FunctionNameGenerator;
 import cucumber.runtime.snippets.SnippetGenerator;
-import cucumber.runtime.snippets.UnderscoreFunctionNameSanitizer;
+import cucumber.runtime.snippets.UnderscoreConcatenator;
 import gherkin.formatter.model.Comment;
 import gherkin.formatter.model.DataTableRow;
 import gherkin.formatter.model.DocString;
@@ -18,12 +19,13 @@ import static org.junit.Assert.assertEquals;
 public class JavaSnippetTest {
 
     private static final List<Comment> NO_COMMENTS = Collections.emptyList();
+    private final FunctionNameGenerator functionNameGenerator = new FunctionNameGenerator(new UnderscoreConcatenator());
 
     @Test
     public void generatesPlainSnippet() {
         String expected = "" +
                 "@Given(\"^I have (\\\\d+) cukes in my \\\"([^\\\"]*)\\\" belly$\")\n" +
-                "public void I_have_cukes_in_my_belly(int arg1, String arg2) throws Throwable {\n" +
+                "public void i_have_cukes_in_my_belly(int arg1, String arg2) throws Throwable {\n" +
                 "    // Express the Regexp above with the code you wish you had\n" +
                 "    throw new PendingException();\n" +
                 "}\n";
@@ -46,7 +48,7 @@ public class JavaSnippetTest {
     public void generatesCopyPasteReadySnippetWhenStepHasIllegalJavaIdentifierChars() {
         String expected = "" +
                 "@Given(\"^I have (\\\\d+) cukes in: my \\\"([^\\\"]*)\\\" red-belly!$\")\n" +
-                "public void I_have_cukes_in_my_red_belly(int arg1, String arg2) throws Throwable {\n" +
+                "public void i_have_cukes_in_my_red_belly(int arg1, String arg2) throws Throwable {\n" +
                 "    // Express the Regexp above with the code you wish you had\n" +
                 "    throw new PendingException();\n" +
                 "}\n";
@@ -69,7 +71,7 @@ public class JavaSnippetTest {
     public void generatesSnippetWithEscapedDollarSigns() {
         String expected = "" +
                 "@Given(\"^I have \\\\$(\\\\d+)$\")\n" +
-                "public void I_have_$(int arg1) throws Throwable {\n" +
+                "public void i_have_$(int arg1) throws Throwable {\n" +
                 "    // Express the Regexp above with the code you wish you had\n" +
                 "    throw new PendingException();\n" +
                 "}\n";
@@ -80,7 +82,7 @@ public class JavaSnippetTest {
     public void generatesSnippetWithEscapedQuestionMarks() {
         String expected = "" +
                 "@Given(\"^is there an error\\\\?:$\")\n" +
-                "public void is_there_an_error_() throws Throwable {\n" +
+                "public void is_there_an_error() throws Throwable {\n" +
                 "    // Express the Regexp above with the code you wish you had\n" +
                 "    throw new PendingException();\n" +
                 "}\n";
@@ -91,7 +93,7 @@ public class JavaSnippetTest {
     public void generatesSnippetWithLotsOfEscapes() {
         String expected = "" +
                 "@Given(\"^\\\\^\\\\(\\\\[a-z\\\\]\\\\*\\\\)\\\\?\\\\.\\\\+\\\\$$\")\n" +
-                "public void _a_z_$() throws Throwable {\n" +
+                "public void a_z_$() throws Throwable {\n" +
                 "    // Express the Regexp above with the code you wish you had\n" +
                 "    throw new PendingException();\n" +
                 "}\n";
@@ -102,7 +104,7 @@ public class JavaSnippetTest {
     public void generatesSnippetWithEscapedParentheses() {
         String expected = "" +
                 "@Given(\"^I have (\\\\d+) cukes \\\\(maybe more\\\\)$\")\n" +
-                "public void I_have_cukes_maybe_more(int arg1) throws Throwable {\n" +
+                "public void i_have_cukes_maybe_more(int arg1) throws Throwable {\n" +
                 "    // Express the Regexp above with the code you wish you had\n" +
                 "    throw new PendingException();\n" +
                 "}\n";
@@ -113,7 +115,7 @@ public class JavaSnippetTest {
     public void generatesSnippetWithEscapedBrackets() {
         String expected = "" +
                 "@Given(\"^I have (\\\\d+) cukes \\\\[maybe more\\\\]$\")\n" +
-                "public void I_have_cukes_maybe_more(int arg1) throws Throwable {\n" +
+                "public void i_have_cukes_maybe_more(int arg1) throws Throwable {\n" +
                 "    // Express the Regexp above with the code you wish you had\n" +
                 "    throw new PendingException();\n" +
                 "}\n";
@@ -124,7 +126,7 @@ public class JavaSnippetTest {
     public void generatesSnippetWithDocString() {
         String expected = "" +
                 "@Given(\"^I have:$\")\n" +
-                "public void I_have(String arg1) throws Throwable {\n" +
+                "public void i_have(String arg1) throws Throwable {\n" +
                 "    // Express the Regexp above with the code you wish you had\n" +
                 "    throw new PendingException();\n" +
                 "}\n";
@@ -146,7 +148,7 @@ public class JavaSnippetTest {
     public void generatesSnippetWithDataTable() {
         String expected = "" +
                 "@Given(\"^I have:$\")\n" +
-                "public void I_have(DataTable arg1) throws Throwable {\n" +
+                "public void i_have(DataTable arg1) throws Throwable {\n" +
                 "    // Express the Regexp above with the code you wish you had\n" +
                 "    // For automatic conversion, change DataTable to List<YourType>\n" +
                 "    throw new PendingException();\n" +
@@ -157,16 +159,16 @@ public class JavaSnippetTest {
 
     private String snippetFor(String name) {
         Step step = new Step(NO_COMMENTS, "Given ", name, 0, null, null);
-        return new SnippetGenerator(new JavaSnippet()).getSnippet(step, new UnderscoreFunctionNameSanitizer());
+        return new SnippetGenerator(new JavaSnippet()).getSnippet(step, functionNameGenerator);
     }
 
     private String snippetForDocString(String name, DocString docString) {
         Step step = new Step(NO_COMMENTS, "Given ", name, 0, null, docString);
-        return new SnippetGenerator(new JavaSnippet()).getSnippet(step, new UnderscoreFunctionNameSanitizer());
+        return new SnippetGenerator(new JavaSnippet()).getSnippet(step, functionNameGenerator);
     }
 
     private String snippetForDataTable(String name, List<DataTableRow> dataTable) {
         Step step = new Step(NO_COMMENTS, "Given ", name, 0, dataTable, null);
-        return new SnippetGenerator(new JavaSnippet()).getSnippet(step, new UnderscoreFunctionNameSanitizer());
+        return new SnippetGenerator(new JavaSnippet()).getSnippet(step, functionNameGenerator);
     }
 }

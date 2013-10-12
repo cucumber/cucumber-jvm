@@ -8,7 +8,7 @@ import cucumber.runtime.ClassFinder;
 import cucumber.runtime.io.Resource;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
-import cucumber.runtime.snippets.FunctionNameSanitizer;
+import cucumber.runtime.snippets.FunctionNameGenerator;
 import cucumber.runtime.snippets.SnippetGenerator;
 import gherkin.TagExpression;
 import gherkin.formatter.model.Step;
@@ -119,7 +119,7 @@ public class GroovyBackend implements Backend {
     }
 
     @Override
-    public String getSnippet(Step step, FunctionNameSanitizer functionNameSanitizer) {
+    public String getSnippet(Step step, FunctionNameGenerator functionNameGenerator) {
         return snippetGenerator.getSnippet(step, null);
     }
 

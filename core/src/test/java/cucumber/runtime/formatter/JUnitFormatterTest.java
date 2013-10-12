@@ -13,7 +13,7 @@ import cucumber.runtime.TestHelper;
 import cucumber.runtime.Utils;
 import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
-import cucumber.runtime.snippets.FunctionNameSanitizer;
+import cucumber.runtime.snippets.FunctionNameGenerator;
 import gherkin.I18n;
 import gherkin.formatter.model.Feature;
 import gherkin.formatter.model.Match;
@@ -402,7 +402,7 @@ public class JUnitFormatterTest {
 
         RuntimeOptions runtimeOptions = new RuntimeOptions(new Env(), args.toArray(new String[args.size()]));
         Backend backend = mock(Backend.class);
-        when(backend.getSnippet(any(Step.class), any(FunctionNameSanitizer.class))).thenReturn("TEST SNIPPET");
+        when(backend.getSnippet(any(Step.class), any(FunctionNameGenerator.class))).thenReturn("TEST SNIPPET");
         final cucumber.runtime.Runtime runtime = new Runtime(resourceLoader, classLoader, asList(backend), runtimeOptions);
         runtime.run();
         return report;

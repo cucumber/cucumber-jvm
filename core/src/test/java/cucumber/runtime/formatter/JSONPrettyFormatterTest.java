@@ -7,7 +7,7 @@ import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.StopWatch;
 import cucumber.runtime.io.ClasspathResourceLoader;
-import cucumber.runtime.snippets.FunctionNameSanitizer;
+import cucumber.runtime.snippets.FunctionNameGenerator;
 import gherkin.formatter.model.Step;
 import gherkin.formatter.model.Tag;
 import org.junit.Test;
@@ -49,7 +49,7 @@ public class JSONPrettyFormatterTest {
 
         RuntimeOptions runtimeOptions = new RuntimeOptions(new Env(), args.toArray(new String[args.size()]));
         Backend backend = mock(Backend.class);
-        when(backend.getSnippet(any(Step.class), any(FunctionNameSanitizer.class))).thenReturn("TEST SNIPPET");
+        when(backend.getSnippet(any(Step.class), any(FunctionNameGenerator.class))).thenReturn("TEST SNIPPET");
         final Runtime runtime = new Runtime(resourceLoader, classLoader, asList(backend), runtimeOptions, new StopWatch.Stub(1234), null);
         runtime.getGlue().addBeforeHook(hook);
         runtime.run();

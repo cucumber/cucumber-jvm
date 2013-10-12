@@ -1,6 +1,5 @@
-package cucumber.runtime;
+package cucumber.runtime.snippets;
 
-import cucumber.runtime.snippets.ArgumentPattern;
 import org.junit.Test;
 
 import java.util.regex.Pattern;
@@ -8,22 +7,22 @@ import java.util.regex.Pattern;
 import static org.junit.Assert.assertEquals;
 
 public class ArgumentPatternTest {
-    private Class<?> anyType = Integer.TYPE;
+    private Class<?> intType = Integer.TYPE;
     private Pattern singleDigit = Pattern.compile("(\\d)");
-    private ArgumentPattern exchanger = new ArgumentPattern(singleDigit, anyType);
+    private ArgumentPattern argumentPattern = new ArgumentPattern(singleDigit, intType);
 
     @Test
     public void replacesMatchWithoutEscapedNumberClass() {
-        assertEquals("(\\d)", exchanger.replaceMatchesWithGroups("1"));
+        assertEquals("(\\d)", argumentPattern.replaceMatchesWithGroups("1"));
     }
 
     @Test
     public void replacesMultipleMatchesWithPattern() {
-        assertEquals("(\\d)(\\d)", exchanger.replaceMatchesWithGroups("13"));
+        assertEquals("(\\d)(\\d)", argumentPattern.replaceMatchesWithGroups("13"));
     }
 
     @Test
     public void replaceMatchWithSpace() throws Exception {
-        assertEquals(" ", exchanger.replaceMatchesWithSpace("4"));
+        assertEquals(" ", argumentPattern.replaceMatchesWithSpace("4"));
     }
 }

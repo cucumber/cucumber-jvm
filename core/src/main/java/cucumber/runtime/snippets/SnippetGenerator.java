@@ -26,10 +26,10 @@ public class SnippetGenerator {
             Pattern.compile("\\*"),
             Pattern.compile("\\+"),
             Pattern.compile("\\."),
-            Pattern.compile("\\^"),};
+            Pattern.compile("\\^")
+    };
 
     private static final String REGEXP_HINT = "Express the Regexp above with the code you wish you had";
-
 
     private final Snippet snippet;
 
@@ -37,12 +37,12 @@ public class SnippetGenerator {
         this.snippet = snippet;
     }
 
-    public String getSnippet(Step step, FunctionNameSanitizer functionNameSanitizer) {
+    public String getSnippet(Step step, FunctionNameGenerator functionNameGenerator) {
         return MessageFormat.format(
                 snippet.template(),
                 I18n.codeKeywordFor(step.getKeyword()),
                 snippet.escapePattern(patternFor(step.getName())),
-                functionName(step.getName(), functionNameSanitizer),
+                functionName(step.getName(), functionNameGenerator),
                 snippet.arguments(argumentTypes(step)),
                 REGEXP_HINT,
                 step.getRows() == null ? "" : snippet.tableHint()
@@ -66,16 +66,14 @@ public class SnippetGenerator {
         return "^" + pattern + "$";
     }
 
-    private String functionName(String name, FunctionNameSanitizer functionNameSanitizer) {
-        if(functionNameSanitizer == null) {
+    private String functionName(String sentence, FunctionNameGenerator functionNameGenerator) {
+        if(functionNameGenerator == null) {
             return null;
         }
-        String functionName = name;
         for (ArgumentPattern argumentPattern : argumentPatterns()) {
-            functionName = argumentPattern.replaceMatchesWithSpace(functionName);
+            sentence = argumentPattern.replaceMatchesWithSpace(sentence);
         }
-        functionName = functionNameSanitizer.sanitizeFunctionName(functionName);
-        return functionName;
+        return functionNameGenerator.generateFunctionName(sentence);
     }
 
 

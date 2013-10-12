@@ -15,7 +15,7 @@ import cucumber.runtime.Utils;
 import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
-import cucumber.runtime.snippets.FunctionNameSanitizer;
+import cucumber.runtime.snippets.FunctionNameGenerator;
 import cucumber.runtime.snippets.SnippetGenerator;
 import gherkin.formatter.model.Step;
 
@@ -107,8 +107,8 @@ public class JavaBackend implements Backend {
     }
 
     @Override
-    public String getSnippet(Step step, FunctionNameSanitizer functionNameSanitizer) {
-        return snippetGenerator.getSnippet(step, functionNameSanitizer);
+    public String getSnippet(Step step, FunctionNameGenerator functionNameGenerator) {
+        return snippetGenerator.getSnippet(step, functionNameGenerator);
     }
 
     void addStepDefinition(Annotation annotation, Method method) {

@@ -188,7 +188,7 @@ public class Runtime implements UnreportedStepExecutor {
     }
 
     public List<String> getSnippets() {
-        return undefinedStepsTracker.getSnippets(backends, runtimeOptions.getSnippetType().getFunctionNameSanitizer());
+        return undefinedStepsTracker.getSnippets(backends, runtimeOptions.getSnippetType().getFunctionNameGenerator());
     }
 
     public Glue getGlue() {

@@ -20,7 +20,7 @@ import cucumber.runtime.Glue;
 import cucumber.runtime.UnreportedStepExecutor;
 import cucumber.runtime.io.Resource;
 import cucumber.runtime.io.ResourceLoader;
-import cucumber.runtime.snippets.FunctionNameSanitizer;
+import cucumber.runtime.snippets.FunctionNameGenerator;
 import cucumber.runtime.snippets.SnippetGenerator;
 
 public class RhinoBackend implements Backend {
@@ -88,8 +88,8 @@ public class RhinoBackend implements Backend {
     }
 
     @Override
-    public String getSnippet(Step step, FunctionNameSanitizer functionNameSanitizer) {
-        return snippetGenerator.getSnippet(step, functionNameSanitizer);
+    public String getSnippet(Step step, FunctionNameGenerator functionNameGenerator) {
+        return snippetGenerator.getSnippet(step, functionNameGenerator);
     }
 
     private StackTraceElement jsLocation() {
