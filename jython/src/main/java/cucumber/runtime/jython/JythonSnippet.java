@@ -13,13 +13,13 @@ public class JythonSnippet implements Snippet {
         return "@{0}(''{1}'')\n" +
                 "def {2}({3}):\n" +
                 "  # {4}\n" +
-                "  raise(PendingException())\n" +
+                "{5}  raise(PendingException())\n" +
                 "";
     }
 
     @Override
     public String tableHint() {
-        return null;
+        return "  # The last argument is a List of List of String\n";
     }
 
     @Override
