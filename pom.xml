@@ -17,7 +17,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <outputDirectory>${project.build.directory}</outputDirectory>
-        <gherkin.version>2.12.1</gherkin.version>
+        <gherkin.version>2.12.2-SNAPSHOT</gherkin.version>
         <groovy.version>2.1.7</groovy.version>
         <picocontainer.version>2.14.3</picocontainer.version>
         <!-- Keep in sync with scala/pom.xml and scala/scala_previous/pom.xml if minor versions are bumped. -->

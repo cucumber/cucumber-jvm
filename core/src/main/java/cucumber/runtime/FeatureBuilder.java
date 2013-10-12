@@ -101,6 +101,16 @@ public class FeatureBuilder implements Formatter {
     public void close() {
     }
 
+    @Override
+    public void startOfScenarioLifeCycle(Scenario scenario) {
+        // NoOp
+    }
+
+    @Override
+    public void endOfScenarioLifeCycle(Scenario scenario) {
+        // NoOp
+    }
+
     public void parse(Resource resource, List<Object> filters) {
         String gherkin = read(resource);
 

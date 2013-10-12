@@ -82,6 +82,16 @@ public class TestNgReporter implements Formatter, Reporter {
     }
 
     @Override
+    public void startOfScenarioLifeCycle(Scenario scenario) {
+        // NoOp
+    }
+
+    @Override
+    public void endOfScenarioLifeCycle(Scenario scenario) {
+        // NoOp
+    }
+
+    @Override
     public void before(Match match, Result result) {
     }
 
