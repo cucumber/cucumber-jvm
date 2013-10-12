@@ -1,5 +1,6 @@
 package cucumber.runtime.model;
 
+import cucumber.runtime.CucumberException;
 import cucumber.runtime.Runtime;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
@@ -103,13 +104,17 @@ public class CucumberScenarioOutline extends CucumberTagStatement {
     }
 
     private static String replaceTokens(Set<Integer> matchedColumns, List<String> headerCells, List<String> exampleCells, String text) {
-        for (int i = 0; i < headerCells.size(); i++) {
-            String headerCell = headerCells.get(i);
-            String value = exampleCells.get(i);
+        for (int col = 0; col < headerCells.size(); col++) {
+            String headerCell = headerCells.get(col);
+            String value = exampleCells.get(col);
             String token = "<" + headerCell + ">";
+
             if (text.contains(token)) {
                 text = text.replace(token, value);
-                matchedColumns.add(i);
+                if (text.isEmpty()) {
+                    throw new CucumberException("Step generated from scenario outline '" + token + "' is empty");
+                }
+                matchedColumns.add(col);
             }
         }
         return text;
