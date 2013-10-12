@@ -31,6 +31,8 @@ public class RhinoBackend implements Backend {
     private final Scriptable scope;
     private List<String> gluePaths;
     private Glue glue;
+    private Function buildWorldFn;
+    private Function disposeWorldFn;
 
     public RhinoBackend(ResourceLoader resourceLoader) throws IOException {
         this.resourceLoader = resourceLoader;
@@ -63,10 +65,26 @@ public class RhinoBackend implements Backend {
 
     @Override
     public void buildWorld() {
+        if (buildWorldFn != null) buildWorldFn.call(cx, scope, scope, new Object[0]);
     }
 
     @Override
     public void disposeWorld() {
+        try {
+            if (disposeWorldFn != null) disposeWorldFn.call(cx, scope, scope, new Object[0]);
+        }
+        finally {
+            buildWorldFn = null;
+            disposeWorldFn = null;
+        }
+    }
+    
+    public void registerWorld(Function buildWorldFn, Function disposeWorldFn) {
+        if (this.buildWorldFn != null) throw new CucumberException("World is already set");
+        if (buildWorldFn == null) throw new CucumberException("World requires at least a build function");
+        
+        this.buildWorldFn = buildWorldFn;
+        this.disposeWorldFn = disposeWorldFn;
     }
 
     @Override
