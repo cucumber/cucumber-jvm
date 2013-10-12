@@ -1,5 +1,6 @@
 ## [1-1-6-SNAPSHOT (Git master)](https://github.com/cucumber/cucumber-jvm/compare/v1.1.5...master)
 
+* [Core] Add error check to scenario outline, add java snippet escaping for `+` and `.` ([#596](https://github.com/cucumber/cucumber-jvm/pull/596) Guy Burton)
 * [Rhino] World build and disposal support added to Rhino ([#595](https://github.com/cucumber/cucumber-jvm/pull/595) Rui Figueira)
 * [Jython] Fix for DataTable as parameter in Jython steps ([#602](https://github.com/cucumber/cucumber-jvm/pull/602) lggroapa, Aslak Hellesøy)
 * [Core] Fix and improve CamelCaseFunctionNameSanitizer ([#603](https://github.com/cucumber/cucumber-jvm/pull/603) Frieder Bluemle)
