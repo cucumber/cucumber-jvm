@@ -12,6 +12,7 @@ and the required jars will **automatically be downloaded.**
 * cucumber-picocontainer (shouldn't be necessary)
 * picocontainer-2.14.3 (shouldn't be necessary)
 * gherkin-2.12.1 (shouldn't be necessary)
+* cucumber-html (only required for HTML reports)
 
 
 * To download the release versions run `ant -f init.xml`.

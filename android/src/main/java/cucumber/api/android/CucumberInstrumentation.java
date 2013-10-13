@@ -92,7 +92,6 @@ public class CucumberInstrumentation extends Instrumentation {
         final List<CucumberFeature> cucumberFeatures = runtimeOptions.cucumberFeatures(resourceLoader);
         final int numberOfTests = TestCaseCounter.countTestCasesOf(cucumberFeatures);
 
-        runtimeOptions.getFormatters().clear();
         runtimeOptions.getFormatters().add(new AndroidInstrumentationReporter(runtime, this, numberOfTests));
         runtimeOptions.getFormatters().add(new AndroidLogcatReporter(TAG));
 
