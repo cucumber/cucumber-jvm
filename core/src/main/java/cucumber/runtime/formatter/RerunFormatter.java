@@ -27,13 +27,8 @@ class RerunFormatter implements Formatter, Reporter {
     private final NiceAppendable out;
     private String featureLocation;
     private Scenario scenario;
-    private ScenarioState state = ScenarioState.None;
     private boolean isTestFailed = false;
     private Map<String, LinkedHashSet<Integer>> featureAndFailedLinesMapping = new HashMap<String, LinkedHashSet<Integer>>();
-
-    enum ScenarioState {
-        None, In_Background_Or_Before, In_Scenario
-    }
 
     public RerunFormatter(Appendable out) {
         this.out = new NiceAppendable(out);
@@ -50,28 +45,15 @@ class RerunFormatter implements Formatter, Reporter {
 
     @Override
     public void background(Background background) {
-        recordPreviousScenarioIfFailed();
-        state = ScenarioState.In_Background_Or_Before;
     }
 
     @Override
     public void scenario(Scenario scenario) {
-        recordPreviousScenarioIfFailed();
-        state = ScenarioState.In_Scenario;
         this.scenario = scenario;
-    }
-
-    private void recordPreviousScenarioIfFailed() {
-        if (state == ScenarioState.In_Scenario && isTestFailed) {
-            recordTestFailed();
-            isTestFailed = false;
-        }
     }
 
     @Override
     public void scenarioOutline(ScenarioOutline scenarioOutline) {
-        recordPreviousScenarioIfFailed();
-        state = ScenarioState.None;
     }
 
     @Override
@@ -84,8 +66,6 @@ class RerunFormatter implements Formatter, Reporter {
 
     @Override
     public void eof() {
-        recordPreviousScenarioIfFailed();
-        state = ScenarioState.None;
     }
 
     @Override
@@ -121,18 +101,18 @@ class RerunFormatter implements Formatter, Reporter {
 
     @Override
     public void startOfScenarioLifeCycle(Scenario scenario) {
-        // NoOp
+        isTestFailed = false;
     }
 
     @Override
     public void endOfScenarioLifeCycle(Scenario scenario) {
-        // NoOp
+        if (isTestFailed) {
+            recordTestFailed();
+        }
     }
 
     @Override
     public void before(Match match, Result result) {
-        recordPreviousScenarioIfFailed();
-        state = ScenarioState.In_Background_Or_Before;
         if (isTestFailed(result)) {
             isTestFailed = true;
         }
