@@ -8,10 +8,11 @@ import android.test.InstrumentationTestCase;
 import cucumber.runtime.java.ObjectFactory;
 
 public class AndroidObjectFactory implements ObjectFactory {
+
     private final ObjectFactory delegate;
     private final Instrumentation instrumentation;
 
-    public AndroidObjectFactory(ObjectFactory delegate, Instrumentation instrumentation) {
+    public AndroidObjectFactory(final ObjectFactory delegate, final Instrumentation instrumentation) {
         this.delegate = delegate;
         this.instrumentation = instrumentation;
     }
@@ -24,11 +25,11 @@ public class AndroidObjectFactory implements ObjectFactory {
         delegate.stop();
     }
 
-    public void addClass(Class<?> clazz) {
+    public void addClass(final Class<?> clazz) {
         delegate.addClass(clazz);
     }
 
-    public <T> T getInstance(Class<T> type) {
+    public <T> T getInstance(final Class<T> type) {
         T instance = delegate.getInstance(type);
         decorate(instance);
         return instance;
@@ -36,12 +37,11 @@ public class AndroidObjectFactory implements ObjectFactory {
 
     private void decorate(Object instance) {
         if (instance instanceof ActivityInstrumentationTestCase2) {
-            ((ActivityInstrumentationTestCase2) instance).injectInstrumentation(instrumentation);
-            // This Intent prevents the ActivityInstrumentationTestCase2 to stall on
-            // Intent.startActivitySync (when calling getActivity) if the activity is already running.
-            Intent intent = new Intent();
+            final ActivityInstrumentationTestCase2 activityInstrumentationTestCase2 = (ActivityInstrumentationTestCase2) instance;
+            activityInstrumentationTestCase2.injectInstrumentation(instrumentation);
+            final Intent intent = new Intent();
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            ((ActivityInstrumentationTestCase2) instance).setActivityIntent(intent);
+            activityInstrumentationTestCase2.setActivityIntent(intent);
         } else if (instance instanceof InstrumentationTestCase) {
             ((InstrumentationTestCase) instance).injectInstrumentation(instrumentation);
         } else if (instance instanceof AndroidTestCase) {

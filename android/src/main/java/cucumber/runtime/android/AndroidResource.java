@@ -11,7 +11,7 @@ class AndroidResource implements Resource {
     private final Context context;
     private final String path;
 
-    public AndroidResource(Context context, String path) {
+    public AndroidResource(final Context context, final String path) {
         this.context = context;
         this.path = path;
     }
@@ -32,7 +32,7 @@ class AndroidResource implements Resource {
     }
 
     @Override
-    public String getClassName(String extension) {
+    public String getClassName(final String extension) {
         return path.substring(0, path.length() - extension.length()).replace('/', '.');
     }
 

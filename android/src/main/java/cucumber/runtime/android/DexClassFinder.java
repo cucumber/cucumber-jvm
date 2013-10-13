@@ -9,23 +9,33 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.List;
 
+/**
+ * Loads classes contained in the provided {@link dalvik.system.DexFile}.
+ */
 public class DexClassFinder implements ClassFinder {
+
+    private static final String MANIFEST_CLASS_NAME = "Manifest";
+    private static final String R_CLASS_NAME = "R";
+    private static final String R_INNER_CLASS_NAME = "R$";
+    private static final String FILE_NAME_SEPARATOR = ".";
     private static final ClassLoader CLASS_LOADER = DexClassFinder.class.getClassLoader();
+    private static final String DEFAULT_PACKAGE = "";
+
     private final DexFile dexFile;
 
-    public DexClassFinder(DexFile dexFile) {
+    public DexClassFinder(final DexFile dexFile) {
         this.dexFile = dexFile;
     }
 
     @Override
-    public <T> Collection<Class<? extends T>> getDescendants(Class<T> parentType, String packageName) {
-        List<Class<? extends T>> result = new ArrayList<Class<? extends T>>();
+    public <T> Collection<Class<? extends T>> getDescendants(final Class<T> parentType, final String packageName) {
+        final List<Class<? extends T>> result = new ArrayList<Class<? extends T>>();
 
-        Enumeration<String> entries = dexFile.entries();
+        final Enumeration<String> entries = dexFile.entries();
         while (entries.hasMoreElements()) {
-            String className = entries.nextElement();
+            final String className = entries.nextElement();
             if (isInPackage(className, packageName) && !isGenerated(className)) {
-                Class<? extends T> clazz = loadClass(className);
+                final Class<? extends T> clazz = loadClass(className);
                 if (clazz != null && !parentType.equals(clazz) && parentType.isAssignableFrom(clazz)) {
                     result.add(clazz.asSubclass(parentType));
                 }
@@ -35,23 +45,23 @@ public class DexClassFinder implements ClassFinder {
     }
 
     @SuppressWarnings("unchecked")
-    private <T> Class<? extends T> loadClass(String className) {
+    private <T> Class<? extends T> loadClass(final String className) {
         try {
             return (Class<? extends T>) Class.forName(className, false, CLASS_LOADER);
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             throw new CucumberException(e);
         }
     }
 
-    private boolean isInPackage(String className, String packageName) {
-        int lastDotIndex = className.lastIndexOf(".");
-        String classPackage = lastDotIndex == -1 ? "" : className.substring(0, lastDotIndex);
+    private boolean isInPackage(final String className, final String packageName) {
+        final int lastDotIndex = className.lastIndexOf(FILE_NAME_SEPARATOR);
+        final String classPackage = lastDotIndex == -1 ? DEFAULT_PACKAGE : className.substring(0, lastDotIndex);
         return classPackage.startsWith(packageName);
     }
 
-    private boolean isGenerated(String className) {
-        int lastDotIndex = className.lastIndexOf(".");
-        String shortName = lastDotIndex == -1 ? className : className.substring(lastDotIndex + 1);
-        return shortName.equals("Manifest") || shortName.equals("R") || shortName.startsWith("R$");
+    private boolean isGenerated(final String className) {
+        final int lastDotIndex = className.lastIndexOf(FILE_NAME_SEPARATOR);
+        final String shortName = lastDotIndex == -1 ? className : className.substring(lastDotIndex + 1);
+        return shortName.equals(MANIFEST_CLASS_NAME) || shortName.equals(R_CLASS_NAME) || shortName.startsWith(R_INNER_CLASS_NAME);
     }
 }
