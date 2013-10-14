@@ -2,7 +2,6 @@ package cucumber.runtime.formatter;
 
 import cucumber.api.PendingException;
 import cucumber.runtime.Backend;
-import cucumber.runtime.Env;
 import cucumber.runtime.HookDefinition;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeGlue;
@@ -400,7 +399,7 @@ public class JUnitFormatterTest {
         args.add("junit:" + report.getAbsolutePath());
         args.addAll(featurePaths);
 
-        RuntimeOptions runtimeOptions = new RuntimeOptions(new Env(), args.toArray(new String[args.size()]));
+        RuntimeOptions runtimeOptions = new RuntimeOptions(args);
         Backend backend = mock(Backend.class);
         when(backend.getSnippet(any(Step.class), any(FunctionNameGenerator.class))).thenReturn("TEST SNIPPET");
         final cucumber.runtime.Runtime runtime = new Runtime(resourceLoader, classLoader, asList(backend), runtimeOptions);
@@ -419,7 +418,7 @@ public class JUnitFormatterTest {
 
     private String runFeatureWithJUnitFormatter(final CucumberFeature feature, final Map<String, String> stepsToResult,
                                                 final List<SimpleEntry<String, String>> hooks, final long stepHookDuration) throws Throwable {
-        final RuntimeOptions runtimeOptions = new RuntimeOptions(new Env());
+        final RuntimeOptions runtimeOptions = new RuntimeOptions(Collections.<String>emptyList());
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         final ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
         final RuntimeGlue glue = createMockedRuntimeGlueThatMatchesTheSteps(stepsToResult, hooks);

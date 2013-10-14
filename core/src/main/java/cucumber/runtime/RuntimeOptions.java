@@ -21,7 +21,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static cucumber.runtime.model.CucumberFeature.load;
-import static java.util.Arrays.asList;
 
 // IMPORTANT! Make sure USAGE.txt is always uptodate if this class changes.
 public class RuntimeOptions {
@@ -41,14 +40,41 @@ public class RuntimeOptions {
     private boolean monochrome = false;
     private SnippetType snippetType = SnippetType.UNDERSCORE;
 
-    public RuntimeOptions(Env env, String... argv) {
+    /**
+     * Create a new instance from a string of options, for example:
+     *
+     * <pre<{@code "--name 'the fox' --format pretty --strict"}</pre>
+     *
+     * @param argv the arguments
+     */
+    public RuntimeOptions(String argv) {
+        this(new FormatterFactory(), shellWords(argv));
+    }
+
+    /**
+     * Create a new instance from a list of options, for example:
+     *
+     * <pre<{@code Arrays.asList("--name", "the fox", "--format", "pretty", "--strict");}</pre>
+     *
+     * @param argv the arguments
+     */
+    public RuntimeOptions(List<String> argv) {
+        this(new FormatterFactory(), argv);
+    }
+
+    public RuntimeOptions(Env env, List<String> argv) {
         this(env, new FormatterFactory(), argv);
     }
 
-    RuntimeOptions(Env env, FormatterFactory formatterFactory, String... argv) {
+    public RuntimeOptions(FormatterFactory formatterFactory, List<String> argv) {
+        this(new Env("cucumber-jvm"), formatterFactory, argv);
+    }
+
+    public RuntimeOptions(Env env, FormatterFactory formatterFactory, List<String> argv) {
         this.formatterFactory = formatterFactory;
 
-        parse(new ArrayList<String>(asList(argv)));
+        argv = new ArrayList<String>(argv); // in case the one passed in is unmodifiable.
+        parse(argv);
 
         String cucumberOptionsFromEnv = env.get("cucumber.options");
         if (cucumberOptionsFromEnv != null) {
@@ -62,7 +88,7 @@ public class RuntimeOptions {
         setFormatterOptions();
     }
 
-    private List<String> shellWords(String cmdline) {
+    private static List<String> shellWords(String cmdline) {
         List<String> matchList = new ArrayList<String>();
         Matcher shellwordsMatcher = SHELLWORDS_PATTERN.matcher(cmdline);
         while (shellwordsMatcher.find()) {

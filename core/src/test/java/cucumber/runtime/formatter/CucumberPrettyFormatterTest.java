@@ -1,7 +1,6 @@
 package cucumber.runtime.formatter;
 
 import cucumber.runtime.Backend;
-import cucumber.runtime.Env;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeGlue;
 import cucumber.runtime.RuntimeOptions;
@@ -51,7 +50,7 @@ public class CucumberPrettyFormatterTest {
     }
 
     private String runFeatureWithPrettyFormatter(final CucumberFeature feature, final Map<String, String> stepsToLocation) throws IOException {
-        final RuntimeOptions runtimeOptions = new RuntimeOptions(new Env());
+        final RuntimeOptions runtimeOptions = new RuntimeOptions("");
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         final ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
         final RuntimeGlue glue = createMockedRuntimeGlueThatMatchesTheSteps(stepsToLocation);

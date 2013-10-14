@@ -1,7 +1,6 @@
 package cucumber.runtime.formatter;
 
 import cucumber.runtime.Backend;
-import cucumber.runtime.Env;
 import cucumber.runtime.HookDefinition;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeOptions;
@@ -47,7 +46,7 @@ public class JSONPrettyFormatterTest {
         args.add("json:" + report.getAbsolutePath());
         args.addAll(featurePaths);
 
-        RuntimeOptions runtimeOptions = new RuntimeOptions(new Env(), args.toArray(new String[args.size()]));
+        RuntimeOptions runtimeOptions = new RuntimeOptions(args);
         Backend backend = mock(Backend.class);
         when(backend.getSnippet(any(Step.class), any(FunctionNameGenerator.class))).thenReturn("TEST SNIPPET");
         final Runtime runtime = new Runtime(resourceLoader, classLoader, asList(backend), runtimeOptions, new StopWatch.Stub(1234), null);

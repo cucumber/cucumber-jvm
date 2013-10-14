@@ -43,7 +43,7 @@ public class HookTest {
         CucumberScenario scenario = new CucumberScenario(feature, null, gherkinScenario);
 
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        RuntimeOptions runtimeOptions = new RuntimeOptions(new Env());
+        RuntimeOptions runtimeOptions = new RuntimeOptions("");
         Runtime runtime = new Runtime(new ClasspathResourceLoader(classLoader), classLoader, asList(backend), runtimeOptions);
         runtime.getGlue().addAfterHook(hook);
 

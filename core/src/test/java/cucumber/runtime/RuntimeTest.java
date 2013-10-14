@@ -54,7 +54,7 @@ public class RuntimeTest {
         JSONFormatter jsonFormatter = new JSONFormatter(out);
         List<Backend> backends = asList(mock(Backend.class));
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        RuntimeOptions runtimeOptions = new RuntimeOptions(new Env());
+        RuntimeOptions runtimeOptions = new RuntimeOptions("");
         Runtime runtime = new Runtime(new ClasspathResourceLoader(classLoader), classLoader, backends, runtimeOptions);
         feature.run(jsonFormatter, jsonFormatter, runtime);
         jsonFormatter.done();
@@ -194,7 +194,7 @@ public class RuntimeTest {
         try {
             ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
             new Runtime(new ClasspathResourceLoader(classLoader), classLoader, Collections.<Backend>emptyList(),
-                    new RuntimeOptions(new Env()));
+                    new RuntimeOptions(""));
             fail("A CucumberException should have been thrown");
         } catch (CucumberException e) {
             assertEquals("No backends were found. Please make sure you have a backend module on your CLASSPATH.", e.getMessage());
@@ -384,7 +384,7 @@ public class RuntimeTest {
     }
 
     private Runtime createRuntime(ResourceLoader resourceLoader, ClassLoader classLoader, String... runtimeArgs) {
-        RuntimeOptions runtimeOptions = new RuntimeOptions(new Env(), runtimeArgs);
+        RuntimeOptions runtimeOptions = new RuntimeOptions(asList(runtimeArgs));
         Backend backend = mock(Backend.class);
         Collection<Backend> backends = Arrays.asList(backend);
 
@@ -408,7 +408,7 @@ public class RuntimeTest {
             boolean isBefore, String... runtimeArgs) {
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
         ClassLoader classLoader = mock(ClassLoader.class);
-        RuntimeOptions runtimeOptions = new RuntimeOptions(new Env(), runtimeArgs);
+        RuntimeOptions runtimeOptions = new RuntimeOptions(asList(runtimeArgs));
         Backend backend = mock(Backend.class);
         RuntimeGlue glue = mock(RuntimeGlue.class);
         mockMatch(glue, match, isAmbiguous);
