@@ -14,6 +14,7 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.ContextHierarchy;
 import org.springframework.test.context.TestContextManager;
 
 import cucumber.runtime.CucumberException;
@@ -168,6 +169,7 @@ public class SpringFactory implements ObjectFactory {
     }
 
     private boolean dependsOnSpringContext(Class<?> type) {
-        return type.isAnnotationPresent(ContextConfiguration.class);
+        return type.isAnnotationPresent(ContextConfiguration.class)
+            || type.isAnnotationPresent(ContextHierarchy.class);
     }
 }

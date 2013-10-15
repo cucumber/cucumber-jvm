@@ -64,6 +64,18 @@ public class SpringFactoryTest {
     }
 
     @Test
+    public void shouldRespectContextHierarchyInStepDefs() {
+        final ObjectFactory factory = new SpringFactory();
+        factory.addClass(WithContextHierarchyAnnotation.class);
+        factory.start();
+        WithContextHierarchyAnnotation stepdef = factory.getInstance(WithContextHierarchyAnnotation.class);
+        factory.stop();
+
+        assertNotNull(stepdef);
+        assertTrue(stepdef.isAutowired());
+    }
+
+    @Test
     public void shouldRespectDirtiesContextAnnotationsInStepDefs() {
         final ObjectFactory factory = new SpringFactory();
         factory.addClass(DirtiesContextBellyStepDefs.class);
