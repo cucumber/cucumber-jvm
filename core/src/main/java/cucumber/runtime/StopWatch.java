@@ -9,17 +9,17 @@ public interface StopWatch {
     long stop();
 
     StopWatch SYSTEM = new StopWatch() {
-        public Long start;
+        public ThreadLocal<Long> start = new ThreadLocal<Long>();
 
         @Override
         public void start() {
-            start = System.nanoTime();
+            start.set(System.nanoTime());
         }
 
         @Override
         public long stop() {
-            Long duration = System.nanoTime() - start;
-            start = null;
+            Long duration = System.nanoTime() - start.get();
+            start.set(null);
             return duration;
         }
     };
