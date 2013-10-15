@@ -17,7 +17,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static cucumber.runtime.model.CucumberFeature.load;
@@ -26,7 +25,6 @@ import static cucumber.runtime.model.CucumberFeature.load;
 public class RuntimeOptions {
     public static final String VERSION = ResourceBundle.getBundle("cucumber.version").getString("cucumber-jvm.version");
     public static final String USAGE = FixJava.readResource("/cucumber/runtime/USAGE.txt");
-    private static final Pattern SHELLWORDS_PATTERN = Pattern.compile("[^\\s']+|'([^']*)'");
 
     private final List<String> glue = new ArrayList<String>();
     private final List<Object> filters = new ArrayList<Object>();
@@ -48,7 +46,7 @@ public class RuntimeOptions {
      * @param argv the arguments
      */
     public RuntimeOptions(String argv) {
-        this(new FormatterFactory(), shellWords(argv));
+        this(new FormatterFactory(), Shellwords.parse(argv));
     }
 
     /**
@@ -78,7 +76,7 @@ public class RuntimeOptions {
 
         String cucumberOptionsFromEnv = env.get("cucumber.options");
         if (cucumberOptionsFromEnv != null) {
-            parse(shellWords(cucumberOptionsFromEnv));
+            parse(Shellwords.parse(cucumberOptionsFromEnv));
         }
         filters.addAll(lineFilters);
 
@@ -86,19 +84,6 @@ public class RuntimeOptions {
             formatters.add(formatterFactory.create("progress"));
         }
         setFormatterOptions();
-    }
-
-    private static List<String> shellWords(String cmdline) {
-        List<String> matchList = new ArrayList<String>();
-        Matcher shellwordsMatcher = SHELLWORDS_PATTERN.matcher(cmdline);
-        while (shellwordsMatcher.find()) {
-            if (shellwordsMatcher.group(1) != null) {
-                matchList.add(shellwordsMatcher.group(1));
-            } else {
-                matchList.add(shellwordsMatcher.group());
-            }
-        }
-        return matchList;
     }
 
     private void parse(List<String> args) {
