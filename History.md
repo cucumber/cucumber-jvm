@@ -1,5 +1,6 @@
 ## [1-1-6-SNAPSHOT (Git master)](https://github.com/cucumber/cucumber-jvm/compare/v1.1.5...master)
 
+* [Core] Fix stop watch thread safety ([#606](https://github.com/cucumber/cucumber-jvm/pull/606) Dave Bassan)
 * [Android] Fix Cucumber reports for cucumber-android ([#605](https://github.com/cucumber/cucumber-jvm/pull/605) Frieder Bluemle)
 * [Spring] Fix for tests annotated with @ContextHierarchy ([#590](https://github.com/cucumber/cucumber-jvm/pull/590) Martin Lau)
 * [Core] Add error check to scenario outline, add java snippet escaping for `+` and `.` ([#596](https://github.com/cucumber/cucumber-jvm/pull/596) Guy Burton)
