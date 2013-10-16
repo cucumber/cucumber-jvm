@@ -1,40 +1,30 @@
 package cucumber.runtime.formatter;
 
-import cucumber.api.PendingException;
 import cucumber.runtime.Backend;
-import cucumber.runtime.HookDefinition;
 import cucumber.runtime.Runtime;
-import cucumber.runtime.RuntimeGlue;
 import cucumber.runtime.RuntimeOptions;
-import cucumber.runtime.StepDefinitionMatch;
-import cucumber.runtime.StopWatch;
 import cucumber.runtime.TestHelper;
 import cucumber.runtime.Utils;
 import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.snippets.FunctionNameGenerator;
-import gherkin.I18n;
 import gherkin.formatter.model.Feature;
 import gherkin.formatter.model.Match;
 import gherkin.formatter.model.Result;
 import gherkin.formatter.model.Scenario;
 import gherkin.formatter.model.Step;
-import gherkin.formatter.model.Tag;
-import junit.framework.AssertionFailedError;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Test;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -45,13 +35,7 @@ import java.util.Scanner;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyCollectionOf;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.argThat;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -185,7 +169,7 @@ public class JUnitFormatterTest {
         stepsToResult.put("second step", "passed");
         stepsToResult.put("third step", "passed");
         List<SimpleEntry<String, String>> hooks = new ArrayList<SimpleEntry<String, String>>();
-        hooks.add(hookEntry("before", "failed"));
+        hooks.add(TestHelper.hookEntry("before", "failed"));
         long stepHookDuration = milliSeconds(1);
 
         String formatterOutput = runFeatureWithJUnitFormatter(feature, stepsToResult, hooks, stepHookDuration);
@@ -220,7 +204,7 @@ public class JUnitFormatterTest {
         stepsToResult.put("second step", "passed");
         stepsToResult.put("third step", "passed");
         List<SimpleEntry<String, String>> hooks = new ArrayList<SimpleEntry<String, String>>();
-        hooks.add(hookEntry("before", "failed"));
+        hooks.add(TestHelper.hookEntry("before", "failed"));
         long stepHookDuration = milliSeconds(1);
 
         String formatterOutput = runFeatureWithJUnitFormatter(feature, stepsToResult, hooks, stepHookDuration);
@@ -254,7 +238,7 @@ public class JUnitFormatterTest {
         stepsToResult.put("second step", "passed");
         stepsToResult.put("third step", "passed");
         List<SimpleEntry<String, String>> hooks = new ArrayList<SimpleEntry<String, String>>();
-        hooks.add(hookEntry("after", "failed"));
+        hooks.add(TestHelper.hookEntry("after","failed"));
         long stepHookDuration = milliSeconds(1);
 
         String formatterOutput = runFeatureWithJUnitFormatter(feature, stepsToResult, hooks, stepHookDuration);
@@ -286,8 +270,8 @@ public class JUnitFormatterTest {
         stepsToResult.put("first step", "passed");
         stepsToResult.put("second step", "passed");
         List<SimpleEntry<String, String>> hooks = new ArrayList<SimpleEntry<String, String>>();
-        hooks.add(hookEntry("before", "passed"));
-        hooks.add(hookEntry("after", "passed"));
+        hooks.add(TestHelper.hookEntry("before","passed"));
+        hooks.add(TestHelper.hookEntry("after","passed"));
         long stepHookDuration = milliSeconds(1);
 
         String formatterOutput = runFeatureWithJUnitFormatter(feature, stepsToResult, hooks, stepHookDuration);
@@ -407,10 +391,6 @@ public class JUnitFormatterTest {
         return report;
     }
 
-    private SimpleEntry<String, String> hookEntry(String type, String result) {
-        return new SimpleEntry<String, String>(type, result);
-    }
-
     private String runFeatureWithJUnitFormatter(final CucumberFeature feature, final Map<String, String> stepsToResult, final long stepHookDuration)
             throws Throwable {
         return runFeatureWithJUnitFormatter(feature, stepsToResult, Collections.<SimpleEntry<String, String>>emptyList(), stepHookDuration);
@@ -418,18 +398,9 @@ public class JUnitFormatterTest {
 
     private String runFeatureWithJUnitFormatter(final CucumberFeature feature, final Map<String, String> stepsToResult,
                                                 final List<SimpleEntry<String, String>> hooks, final long stepHookDuration) throws Throwable {
-        final RuntimeOptions runtimeOptions = new RuntimeOptions(Collections.<String>emptyList());
-        final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        final ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
-        final RuntimeGlue glue = createMockedRuntimeGlueThatMatchesTheSteps(stepsToResult, hooks);
-        final Runtime runtime = new Runtime(resourceLoader, classLoader, asList(mock(Backend.class)), runtimeOptions, new StopWatch.Stub(stepHookDuration), glue);
         final File report = File.createTempFile("cucumber-jvm-junit", ".xml");
         final JUnitFormatter junitFormatter = createJUnitFormatter(report);
-
-        feature.run(junitFormatter, junitFormatter, runtime);
-        junitFormatter.done();
-        junitFormatter.close();
-
+        TestHelper.runFeatureWithFormatter(feature, stepsToResult, hooks, stepHookDuration, junitFormatter, junitFormatter);
         return new Scanner(new FileInputStream(report), "UTF-8").useDelimiter("\\A").next();
     }
 
@@ -448,81 +419,6 @@ public class JUnitFormatterTest {
 
     private JUnitFormatter createJUnitFormatter(final File report) throws IOException {
         return new JUnitFormatter(Utils.toURL(report.getAbsolutePath()));
-    }
-
-    private RuntimeGlue createMockedRuntimeGlueThatMatchesTheSteps(Map<String, String> stepsToResult,
-                                                                   final List<SimpleEntry<String, String>> hooks) throws Throwable {
-        RuntimeGlue glue = mock(RuntimeGlue.class);
-        mockSteps(glue, stepsToResult);
-        mockHooks(glue, hooks);
-        return glue;
-    }
-
-    private void mockSteps(RuntimeGlue glue, Map<String, String> stepsToResult) throws Throwable {
-        for (String stepName : stepsToResult.keySet()) {
-            if (!"undefined".equals(stepsToResult.get(stepName))) {
-                StepDefinitionMatch matchStep = mock(StepDefinitionMatch.class);
-                when(glue.stepDefinitionMatch(anyString(), stepWithName(stepName), (I18n) any())).thenReturn(matchStep);
-                if ("pending".equals(stepsToResult.get(stepName))) {
-                    doThrow(new PendingException()).when(matchStep).runStep((I18n) any());
-                } else if ("failed".equals(stepsToResult.get(stepName))) {
-                    AssertionFailedError error = mockAssertionFailedError();
-                    doThrow(error).when(matchStep).runStep((I18n) any());
-                } else if (!"passed".equals(stepsToResult.get(stepName)) &&
-                        !"skipped".equals(stepsToResult.get(stepName))) {
-                    fail("Cannot mock step to the result: " + stepsToResult.get(stepName));
-                }
-            }
-        }
-    }
-
-    private void mockHooks(RuntimeGlue glue, final List<SimpleEntry<String, String>> hooks) throws Throwable {
-        List<HookDefinition> beforeHooks = new ArrayList<HookDefinition>();
-        List<HookDefinition> afterHooks = new ArrayList<HookDefinition>();
-        for (SimpleEntry<String, String> hookEntry : hooks) {
-            mockHook(hookEntry, beforeHooks, afterHooks);
-        }
-        if (beforeHooks.size() != 0) {
-            when(glue.getBeforeHooks()).thenReturn(beforeHooks);
-        }
-        if (afterHooks.size() != 0) {
-            when(glue.getAfterHooks()).thenReturn(afterHooks);
-        }
-    }
-
-    private void mockHook(SimpleEntry<String, String> hookEntry, List<HookDefinition> beforeHooks,
-                          List<HookDefinition> afterHooks) throws Throwable {
-        HookDefinition hook = mock(HookDefinition.class);
-        when(hook.matches(anyCollectionOf(Tag.class))).thenReturn(true);
-        if (hookEntry.getValue().equals("failed")) {
-            AssertionFailedError error = mockAssertionFailedError();
-            doThrow(error).when(hook).execute((cucumber.api.Scenario) any());
-        }
-        if ("before".equals(hookEntry.getKey())) {
-            beforeHooks.add(hook);
-        } else if ("after".equals(hookEntry.getKey())) {
-            afterHooks.add(hook);
-        } else {
-            fail("Only before and after hooks are allowed, hook type found was: " + hookEntry.getKey());
-        }
-    }
-
-    private Step stepWithName(String name) {
-        return argThat(new StepMatcher(name));
-    }
-
-    private AssertionFailedError mockAssertionFailedError() {
-        AssertionFailedError error = mock(AssertionFailedError.class);
-        Answer<Object> printStackTraceHandler = new Answer<Object>() {
-            @Override
-            public Object answer(InvocationOnMock invocation) throws Throwable {
-                PrintWriter writer = (PrintWriter) invocation.getArguments()[0];
-                writer.print("the stack trace");
-                return null;
-            }
-        };
-        doAnswer(printStackTraceHandler).when(error).printStackTrace((PrintWriter) any());
-        return error;
     }
 
     private String uri() {

@@ -24,15 +24,11 @@ import java.util.Set;
  * Failed means: (failed, undefined, pending) test result
  */
 class RerunFormatter implements Formatter, Reporter {
-
     private final NiceAppendable out;
-
     private String featureLocation;
-
-    private Step step;
-
+    private Scenario scenario;
+    private boolean isTestFailed = false;
     private Map<String, LinkedHashSet<Integer>> featureAndFailedLinesMapping = new HashMap<String, LinkedHashSet<Integer>>();
-
 
     public RerunFormatter(Appendable out) {
         this.out = new NiceAppendable(out);
@@ -53,6 +49,7 @@ class RerunFormatter implements Formatter, Reporter {
 
     @Override
     public void scenario(Scenario scenario) {
+        this.scenario = scenario;
     }
 
     @Override
@@ -65,7 +62,6 @@ class RerunFormatter implements Formatter, Reporter {
 
     @Override
     public void step(Step step) {
-        this.step = step;
     }
 
     @Override
@@ -78,10 +74,10 @@ class RerunFormatter implements Formatter, Reporter {
 
     @Override
     public void done() {
-        reportFailedSteps();
+        reportFailedScenarios();
     }
 
-    private void reportFailedSteps() {
+    private void reportFailedScenarios() {
         Set<Map.Entry<String, LinkedHashSet<Integer>>> entries = featureAndFailedLinesMapping.entrySet();
         boolean firstFeature = true;
         for (Map.Entry<String, LinkedHashSet<Integer>> entry : entries) {
@@ -105,23 +101,27 @@ class RerunFormatter implements Formatter, Reporter {
 
     @Override
     public void startOfScenarioLifeCycle(Scenario scenario) {
-        // NoOp
+        isTestFailed = false;
     }
 
     @Override
     public void endOfScenarioLifeCycle(Scenario scenario) {
-        // NoOp
+        if (isTestFailed) {
+            recordTestFailed();
+        }
     }
 
     @Override
     public void before(Match match, Result result) {
-
+        if (isTestFailed(result)) {
+            isTestFailed = true;
+        }
     }
 
     @Override
     public void result(Result result) {
         if (isTestFailed(result)) {
-            recordTestFailed();
+            isTestFailed = true;
         }
     }
 
@@ -131,17 +131,20 @@ class RerunFormatter implements Formatter, Reporter {
     }
 
     private void recordTestFailed() {
-        LinkedHashSet<Integer> failedSteps = this.featureAndFailedLinesMapping.get(featureLocation);
-        if (failedSteps == null) {
-            failedSteps = new LinkedHashSet<Integer>();
-            this.featureAndFailedLinesMapping.put(featureLocation, failedSteps);
+        LinkedHashSet<Integer> failedScenarios = this.featureAndFailedLinesMapping.get(featureLocation);
+        if (failedScenarios == null) {
+            failedScenarios = new LinkedHashSet<Integer>();
+            this.featureAndFailedLinesMapping.put(featureLocation, failedScenarios);
         }
 
-        failedSteps.add(step.getLine());
+        failedScenarios.add(scenario.getLine());
     }
 
     @Override
     public void after(Match match, Result result) {
+        if (isTestFailed(result)) {
+            isTestFailed = true;
+        }
     }
 
     @Override
