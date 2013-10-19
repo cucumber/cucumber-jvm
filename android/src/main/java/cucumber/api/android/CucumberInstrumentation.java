@@ -38,7 +38,7 @@ public class CucumberInstrumentation extends Instrumentation {
     private ResourceLoader resourceLoader;
     private ClassLoader classLoader;
     private Runtime runtime;
-	private boolean mDebug;
+    private boolean debug;
 
     @Override
     public void onCreate(Bundle arguments) {
@@ -48,7 +48,7 @@ public class CucumberInstrumentation extends Instrumentation {
             throw new CucumberException("No arguments");
         }
         
-        mDebug = getBooleanArgument(arguments, "debug");
+        debug = getBooleanArgument(arguments, "debug");
         
         Context context = getContext();
         classLoader = context.getClassLoader();
@@ -94,9 +94,9 @@ public class CucumberInstrumentation extends Instrumentation {
     public void onStart() {
         Looper.prepare();
         
-        if (mDebug) {
-            Debug.waitForDebugger();
-        }
+		if (debug) {
+		    Debug.waitForDebugger();
+		}
 
         final List<CucumberFeature> cucumberFeatures = runtimeOptions.cucumberFeatures(resourceLoader);
         final int numberOfTests = TestCaseCounter.countTestCasesOf(cucumberFeatures);
