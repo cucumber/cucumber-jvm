@@ -7,7 +7,7 @@ import cucumber.api.java.en.When;
 
 import java.util.Date;
 
-import static org.junit.Assert.assertEquals;
+import static org.testng.Assert.assertEquals;
 
 public class DateStepdefs {
     private String result;

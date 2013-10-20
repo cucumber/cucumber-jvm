@@ -8,7 +8,7 @@ import cucumber.deps.com.thoughtworks.xstream.annotations.XStreamConverter;
 
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.testng.Assert.assertEquals;
 
 public class ShoppingStepdefs {
     private RpnCalculator calc = new RpnCalculator();
