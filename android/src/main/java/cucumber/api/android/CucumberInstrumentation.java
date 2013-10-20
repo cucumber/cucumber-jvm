@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Instrumentation;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Debug;
 import android.os.Looper;
 import android.util.Log;
 import cucumber.api.CucumberOptions;
@@ -37,6 +38,7 @@ public class CucumberInstrumentation extends Instrumentation {
     private ResourceLoader resourceLoader;
     private ClassLoader classLoader;
     private Runtime runtime;
+    private boolean debug;
 
     @Override
     public void onCreate(Bundle arguments) {
@@ -45,6 +47,9 @@ public class CucumberInstrumentation extends Instrumentation {
         if (arguments == null) {
             throw new CucumberException("No arguments");
         }
+        
+        debug = getBooleanArgument(arguments, "debug");
+        
         Context context = getContext();
         classLoader = context.getClassLoader();
 
@@ -88,6 +93,10 @@ public class CucumberInstrumentation extends Instrumentation {
     @Override
     public void onStart() {
         Looper.prepare();
+        
+        if (debug) {
+            Debug.waitForDebugger();
+        }
 
         final List<CucumberFeature> cucumberFeatures = runtimeOptions.cucumberFeatures(resourceLoader);
         final int numberOfTests = TestCaseCounter.countTestCasesOf(cucumberFeatures);
@@ -118,5 +127,10 @@ public class CucumberInstrumentation extends Instrumentation {
         for (String s : runtime.getSnippets()) {
             Log.w(TAG, s);
         }
+    }
+    
+    private boolean getBooleanArgument(Bundle arguments, String tag) {
+        String tagString = arguments.getString(tag);
+        return tagString != null && Boolean.parseBoolean(tagString);
     }
 }
