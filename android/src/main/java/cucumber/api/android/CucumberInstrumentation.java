@@ -44,34 +44,20 @@ public class CucumberInstrumentation extends Instrumentation {
     public static final String TAG = "cucumber-android";
 
     private final Bundle results = new Bundle();
-    private boolean justCount;
     private int testCount;
-    private boolean coverage;
-    private String coverageFilePath;
 
     private RuntimeOptions runtimeOptions;
     private ResourceLoader resourceLoader;
     private ClassLoader classLoader;
     private Runtime runtime;
-    private boolean debug;
     private List<CucumberFeature> cucumberFeatures;
+    InstrumentationArguments instrumentationArguments;
 
     @Override
     public void onCreate(Bundle arguments) {
         super.onCreate(arguments);
 
-        if (arguments != null) {
-            debug = getBooleanArgument(arguments, "debug");
-            boolean logOnly = getBooleanArgument(arguments, "log");
-            if (logOnly && arguments.getString("dryRun") == null) {
-                arguments.putString("dryRun", "true");
-            }
-            justCount = getBooleanArgument(arguments, "count");
-            coverage = getBooleanArgument(arguments, "coverage");
-            coverageFilePath = arguments.getString("coverageFile");
-        }
-
-        InstrumentationArguments instrumentationArguments = new InstrumentationArguments(arguments);
+        instrumentationArguments = new InstrumentationArguments(arguments);
 
         Context context = getContext();
         classLoader = context.getClassLoader();
@@ -126,12 +112,12 @@ public class CucumberInstrumentation extends Instrumentation {
     public void onStart() {
         Looper.prepare();
 
-        if (justCount) {
+        if (instrumentationArguments.isCountEnabled()) {
             results.putString(Instrumentation.REPORT_KEY_IDENTIFIER, REPORT_VALUE_ID);
             results.putInt(REPORT_KEY_NUM_TOTAL, testCount);
             finish(Activity.RESULT_OK, results);
         } else {
-            if (debug) {
+            if (instrumentationArguments.isDebugEnabled()) {
                 Debug.waitForDebugger();
             }
 
@@ -150,7 +136,7 @@ public class CucumberInstrumentation extends Instrumentation {
 
             printSummary();
 
-            if (coverage) {
+            if (instrumentationArguments.isCoverageEnabled()) {
                 generateCoverageReport();
             }
 
@@ -166,11 +152,6 @@ public class CucumberInstrumentation extends Instrumentation {
         for (String s : runtime.getSnippets()) {
             Log.w(TAG, s);
         }
-    }
-
-    private boolean getBooleanArgument(Bundle arguments, String tag) {
-        String tagString = arguments.getString(tag);
-        return tagString != null && Boolean.parseBoolean(tagString);
     }
 
     private void generateCoverageReport() {
@@ -209,6 +190,7 @@ public class CucumberInstrumentation extends Instrumentation {
     }
 
     private String getCoverageFilePath() {
+        String coverageFilePath = instrumentationArguments.getCoverageFilePath();
         if (coverageFilePath == null) {
             return getTargetContext().getFilesDir().getAbsolutePath() + File.separator +
                    DEFAULT_COVERAGE_FILE_NAME;

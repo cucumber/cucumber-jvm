@@ -7,6 +7,11 @@ import android.os.Bundle;
  * when the instrumentation was started.
  */
 public final class InstrumentationArguments {
+    private static final String KEY_DEBUG = "debug";
+    private static final String KEY_LOG = "log";
+    private static final String KEY_COUNT = "count";
+    private static final String KEY_COVERAGE = "coverage";
+    private static final String KEY_COVERAGE_FILE_PATH = "coverageFile";
     private static final String VALUE_SEPARATOR = "--";
 
     private Bundle arguments;
@@ -56,6 +61,8 @@ public final class InstrumentationArguments {
                 appendOption(sb, "--name", arguments.getString(key));
             } else if ("dryRun".equals(key) && getBooleanArgument(key)) {
                 appendOption(sb, "--dry-run", "");
+            } else if ("log".equals(key) && getBooleanArgument(key)) {
+                appendOption(sb, "--dry-run", "");
             } else if ("noDryRun".equals(key) && getBooleanArgument(key)) {
                 appendOption(sb, "--no-dry-run", "");
             } else if ("monochrome".equals(key) && getBooleanArgument(key)) {
@@ -78,5 +85,25 @@ public final class InstrumentationArguments {
         // has been added before adding any feature references
         appendOption(sb, "", features);
         return sb.toString();
+    }
+
+    public boolean isDebugEnabled() {
+        return getBooleanArgument(KEY_DEBUG);
+    }
+
+    public boolean isLogEnabled() {
+        return getBooleanArgument(KEY_LOG);
+    }
+
+    public boolean isCountEnabled() {
+        return getBooleanArgument(KEY_COUNT);
+    }
+
+    public boolean isCoverageEnabled() {
+        return getBooleanArgument(KEY_COVERAGE);
+    }
+
+    public String getCoverageFilePath() {
+        return arguments.getString(KEY_COVERAGE_FILE_PATH);
     }
 }
