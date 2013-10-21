@@ -3,6 +3,7 @@ package cucumber.runtime.android;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
+import org.apache.tools.ant.taskdefs.condition.IsTrue;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -98,5 +99,47 @@ public class InstrumentationArgumentsTest {
         InstrumentationArguments parser = new InstrumentationArguments(arguments);
         String cucumberOptions = parser.getCucumberOptionsString();
         assertThat(cucumberOptions, is("--name 'Name with spaces'"));
+    }
+
+    @Test
+    public void debugOptionEnabled() {
+        Bundle arguments = new Bundle();
+        arguments.putString("debug", "true");
+        InstrumentationArguments args = new InstrumentationArguments(arguments);
+        assertThat(args.isDebugEnabled(), is(true));
+    }
+
+    @Test
+    public void logOptionEnabled() {
+        Bundle arguments = new Bundle();
+        arguments.putString("log", "true");
+        InstrumentationArguments args = new InstrumentationArguments(arguments);
+        String cucumberOptions = args.getCucumberOptionsString();
+        assertThat(args.isLogEnabled(), is(true));
+        assertThat(cucumberOptions, is("--dry-run"));
+    }
+
+    @Test
+    public void countOptionEnabled() {
+        Bundle arguments = new Bundle();
+        arguments.putString("count", "true");
+        InstrumentationArguments args = new InstrumentationArguments(arguments);
+        assertThat(args.isCountEnabled(), is(true));
+    }
+
+    @Test
+    public void coverageOptionEnabled() {
+        Bundle arguments = new Bundle();
+        arguments.putString("coverage", "true");
+        InstrumentationArguments args = new InstrumentationArguments(arguments);
+        assertThat(args.isCoverageEnabled(), is(true));
+    }
+
+    @Test
+    public void coverageFilePath() {
+        Bundle arguments = new Bundle();
+        arguments.putString("coverageFile", "some-coverage-file.ec");
+        InstrumentationArguments args = new InstrumentationArguments(arguments);
+        assertThat(args.getCoverageFilePath(), is("some-coverage-file.ec"));
     }
 }
