@@ -47,9 +47,9 @@ public class CucumberInstrumentation extends Instrumentation {
         if (arguments == null) {
             throw new CucumberException("No arguments");
         }
-        
+
         debug = getBooleanArgument(arguments, "debug");
-        
+
         Context context = getContext();
         classLoader = context.getClassLoader();
 
@@ -93,7 +93,7 @@ public class CucumberInstrumentation extends Instrumentation {
     @Override
     public void onStart() {
         Looper.prepare();
-        
+
         if (debug) {
             Debug.waitForDebugger();
         }
@@ -128,7 +128,7 @@ public class CucumberInstrumentation extends Instrumentation {
             Log.w(TAG, s);
         }
     }
-    
+
     private boolean getBooleanArgument(Bundle arguments, String tag) {
         String tagString = arguments.getString(tag);
         return tagString != null && Boolean.parseBoolean(tagString);
