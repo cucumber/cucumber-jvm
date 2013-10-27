@@ -2,6 +2,7 @@ package cucumber.runtime.xstream;
 
 import cucumber.deps.com.thoughtworks.xstream.converters.ConverterLookup;
 import cucumber.deps.com.thoughtworks.xstream.converters.SingleValueConverter;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -12,12 +13,19 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class ConvertersTest {
+    private ClassLoader classLoader;
+    private LocalizedXStreams transformers;
+    private ConverterLookup en;
+
+    @Before
+    public void setUp() throws Exception {
+        classLoader = Thread.currentThread().getContextClassLoader();
+        transformers = new LocalizedXStreams(classLoader);
+        en = transformers.get(Locale.US).getConverterLookup();
+    }
+
     @Test
     public void shouldTransformToTheRightType() {
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        LocalizedXStreams transformers = new LocalizedXStreams(classLoader);
-
-        ConverterLookup en = transformers.get(Locale.US).getConverterLookup();
         assertTrue((Boolean) ((SingleValueConverter) en.lookupConverterForType(Boolean.class)).fromString("true"));
         assertTrue((Boolean) ((SingleValueConverter) en.lookupConverterForType(Boolean.TYPE)).fromString("true"));
         assertEquals(3000.15f, (Float) ((SingleValueConverter) en.lookupConverterForType(Float.class)).fromString("3000.15"), 0.000001);
@@ -30,10 +38,6 @@ public class ConvertersTest {
 
     @Test
     public void shouldTransformPatternWithFlags() {
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        LocalizedXStreams transformers = new LocalizedXStreams(classLoader);
-
-        ConverterLookup en = transformers.get(Locale.US).getConverterLookup();
         Pattern expected = Pattern.compile("hello", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
         Pattern actual = (Pattern) ((SingleValueConverter) en.lookupConverterForType(Pattern.class)).fromString("/hello/im");
         assertEquals(expected.pattern(), actual.pattern());
@@ -42,10 +46,6 @@ public class ConvertersTest {
 
     @Test
     public void shouldTransformPatternWithoutFlags() {
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        LocalizedXStreams transformers = new LocalizedXStreams(classLoader);
-
-        ConverterLookup en = transformers.get(Locale.US).getConverterLookup();
         Pattern expected = Pattern.compile("hello");
         Pattern actual = (Pattern) ((SingleValueConverter) en.lookupConverterForType(Pattern.class)).fromString("hello");
         assertEquals(expected.pattern(), actual.pattern());
@@ -54,10 +54,6 @@ public class ConvertersTest {
 
     @Test
     public void shouldIncludeSlashesInPatternWhenThereAreNoFlags() {
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        LocalizedXStreams transformers = new LocalizedXStreams(classLoader);
-
-        ConverterLookup en = transformers.get(Locale.US).getConverterLookup();
         Pattern expected = Pattern.compile("/hello/");
         Pattern actual = (Pattern) ((SingleValueConverter) en.lookupConverterForType(Pattern.class)).fromString("/hello/");
         assertEquals(expected.pattern(), actual.pattern());
@@ -66,18 +62,12 @@ public class ConvertersTest {
 
     @Test
     public void shouldTransformToTypeWithStringCtor() {
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        LocalizedXStreams transformers = new LocalizedXStreams(classLoader);
-        ConverterLookup en = transformers.get(Locale.US).getConverterLookup();
         SingleValueConverter c = (SingleValueConverter) en.lookupConverterForType(MyClass.class);
         assertEquals("X", ((MyClass) c.fromString("X")).s);
     }
 
     @Test
     public void shouldTransformToTypeWithObjectCtor() {
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        LocalizedXStreams transformers = new LocalizedXStreams(classLoader);
-        ConverterLookup en = transformers.get(Locale.US).getConverterLookup();
         SingleValueConverter c = (SingleValueConverter) en.lookupConverterForType(MyOtherClass.class);
         assertEquals("X", ((MyOtherClass) c.fromString("X")).o);
     }
