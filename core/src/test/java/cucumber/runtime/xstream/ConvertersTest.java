@@ -13,13 +13,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class ConvertersTest {
-    private ClassLoader classLoader;
     private LocalizedXStreams transformers;
     private ConverterLookup en;
 
     @Before
     public void setUp() throws Exception {
-        classLoader = Thread.currentThread().getContextClassLoader();
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         transformers = new LocalizedXStreams(classLoader);
         en = transformers.get(Locale.US).getConverterLookup();
     }
