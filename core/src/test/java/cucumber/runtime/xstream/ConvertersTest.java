@@ -13,14 +13,15 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class ConvertersTest {
-    private LocalizedXStreams transformers;
     private ConverterLookup en;
+    private ConverterLookup no;
 
     @Before
     public void setUp() throws Exception {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        transformers = new LocalizedXStreams(classLoader);
+        LocalizedXStreams transformers = new LocalizedXStreams(classLoader);
         en = transformers.get(Locale.US).getConverterLookup();
+        no = transformers.get(new Locale("no")).getConverterLookup();
     }
 
     @Test
@@ -31,7 +32,6 @@ public class ConvertersTest {
         assertEquals(3000.15f, (Float) ((SingleValueConverter) en.lookupConverterForType(Float.TYPE)).fromString("3000.15"), 0.000001);
         assertEquals(new BigDecimal("3000.15"), ((SingleValueConverter) en.lookupConverterForType(BigDecimal.class)).fromString("3000.15"));
 
-        ConverterLookup no = transformers.get(new Locale("no")).getConverterLookup();
         assertEquals(3000.15f, (Float) ((SingleValueConverter) no.lookupConverterForType(Float.TYPE)).fromString("3000,15"), 0.000001);
     }
 
