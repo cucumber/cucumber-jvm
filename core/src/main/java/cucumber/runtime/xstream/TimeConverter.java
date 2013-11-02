@@ -15,7 +15,7 @@ import static java.util.Arrays.asList;
 
 abstract class TimeConverter<T> extends ConverterWithFormat<T> {
     private final List<DateFormat> formats = new ArrayList<DateFormat>();
-    private SimpleDateFormat onlyFormat;
+    private String format;
 
     TimeConverter(Locale locale, Class[] convertibleTypes) {
         super(convertibleTypes);
@@ -37,7 +37,14 @@ abstract class TimeConverter<T> extends ConverterWithFormat<T> {
     }
 
     public List<? extends Format> getFormats() {
-        return onlyFormat == null ? formats : asList(onlyFormat);
+        return format == null ? formats : asList(getOnlyFormat());
+    }
+
+    private Format getOnlyFormat() {
+        DateFormat dateFormat = new SimpleDateFormat(format, getLocale());
+        dateFormat.setLenient(false);
+
+        return dateFormat;
     }
 
     @Override
@@ -51,14 +58,14 @@ abstract class TimeConverter<T> extends ConverterWithFormat<T> {
     @Override
     public void setParameterInfoAndLocale(ParameterInfo parameterInfo, Locale locale) {
         super.setParameterInfoAndLocale(parameterInfo, locale);
+
         if (parameterInfo.getFormat() != null) {
-            onlyFormat = new SimpleDateFormat(parameterInfo.getFormat(), locale);
-            onlyFormat.setLenient(false);
+            format = parameterInfo.getFormat();
         }
     }
 
     public void removeOnlyFormat() {
-        onlyFormat = null;
+        format = null;
     }
 
     public static List<Class> getTimeClasses() {

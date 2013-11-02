@@ -1,5 +1,6 @@
 ## [1-1-6-SNAPSHOT (Git master)](https://github.com/cucumber/cucumber-jvm/compare/v1.1.5...master)
 
+* [Android] Add command line option support for Android ([#597](https://github.com/cucumber/cucumber-jvm/pull/597), Frieder Bluemle)
 * [Android] Add debug support for eclipse ([#613](https://github.com/cucumber/cucumber-jvm/pull/613) Ian Warwick)
 * [Core] Make the RerunFormatter handle failures in background and scenario outline examples correctly ([#589](https://github.com/cucumber/cucumber-jvm/pull/589) Björn Rasmusson)
 * [Core] Fix stop watch thread safety ([#606](https://github.com/cucumber/cucumber-jvm/pull/606) Dave Bassan)
