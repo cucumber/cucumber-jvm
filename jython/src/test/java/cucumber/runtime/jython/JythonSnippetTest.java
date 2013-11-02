@@ -22,7 +22,7 @@ public class JythonSnippetTest {
         String expected = "" +
                 "@Given('^I have (\\d+) cukes in my \"([^\"]*)\" belly$')\n" +
                 "def i_have_cukes_in_my_belly(self, arg1, arg2):\n" +
-                "  # Express the Regexp above with the code you wish you had\n" +
+                "  # Write code here that turns the phrase above into concrete actions\n" +
                 "  raise(PendingException())\n" +
                 "";
         assertEquals(expected, snippetFor("I have 4 cukes in my \"big\" belly"));
@@ -33,7 +33,7 @@ public class JythonSnippetTest {
         String expected = "" +
                 "@Given('^I have no cukes belly$')\n" +
                 "def i_have_no_cukes_belly(self):\n" +
-                "  # Express the Regexp above with the code you wish you had\n" +
+                "  # Write code here that turns the phrase above into concrete actions\n" +
                 "  raise(PendingException())\n" +
                 "";
         assertEquals(expected, snippetFor("I have no cukes belly"));
@@ -44,7 +44,7 @@ public class JythonSnippetTest {
         String expected = "" +
                 "@Given('^I have:$')\n" +
                 "def i_have(self, arg1):\n" +
-                "  # Express the Regexp above with the code you wish you had\n" +
+                "  # Write code here that turns the phrase above into concrete actions\n" +
                 "  # The last argument is a List of List of String\n" +
                 "  raise(PendingException())\n" +
                 "";

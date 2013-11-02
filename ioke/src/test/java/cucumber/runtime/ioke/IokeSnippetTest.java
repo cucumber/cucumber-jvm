@@ -16,7 +16,7 @@ public class IokeSnippetTest {
         String snippet = new SnippetGenerator(new IokeSnippet()).getSnippet(step, null);
         String expected = "" +
                 "Given(#/^I have ({arg1}\\d+) cukes in my \"({arg2}[^\"]*)\" belly$/,\n" +
-                "  # Express the Regexp above with the code you wish you had\n" +
+                "  # Write code here that turns the phrase above into concrete actions\n" +
                 ")\n";
         assertEquals(expected, snippet);
     }

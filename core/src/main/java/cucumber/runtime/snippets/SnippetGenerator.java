@@ -29,7 +29,7 @@ public class SnippetGenerator {
             Pattern.compile("\\^")
     };
 
-    private static final String REGEXP_HINT = "Express the Regexp above with the code you wish you had";
+    private static final String REGEXP_HINT = "Write code here that turns the phrase above into concrete actions";
 
     private final Snippet snippet;
 

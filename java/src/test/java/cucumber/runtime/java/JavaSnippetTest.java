@@ -26,7 +26,7 @@ public class JavaSnippetTest {
         String expected = "" +
                 "@Given(\"^I have (\\\\d+) cukes in my \\\"([^\\\"]*)\\\" belly$\")\n" +
                 "public void i_have_cukes_in_my_belly(int arg1, String arg2) throws Throwable {\n" +
-                "    // Express the Regexp above with the code you wish you had\n" +
+                "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException();\n" +
                 "}\n";
         assertEquals(expected, snippetFor("I have 4 cukes in my \"big\" belly"));
@@ -37,7 +37,7 @@ public class JavaSnippetTest {
         String expected = "" +
                 "@Given(\"^before (\\\\d+) after$\")\n" +
                 "public void before_after(int arg1) throws Throwable {\n" +
-                "    // Express the Regexp above with the code you wish you had\n" +
+                "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException();\n" +
                 "}\n";
         String snippet = snippetFor("before 5 after");
@@ -49,7 +49,7 @@ public class JavaSnippetTest {
         String expected = "" +
                 "@Given(\"^I have (\\\\d+) cukes in: my \\\"([^\\\"]*)\\\" red-belly!$\")\n" +
                 "public void i_have_cukes_in_my_red_belly(int arg1, String arg2) throws Throwable {\n" +
-                "    // Express the Regexp above with the code you wish you had\n" +
+                "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException();\n" +
                 "}\n";
         assertEquals(expected, snippetFor("I have 4 cukes in: my \"big\" red-belly!"));
@@ -61,7 +61,7 @@ public class JavaSnippetTest {
         String expected = "" +
                 "@Given(\"^the DI system receives a message saying \\\"([^\\\"]*)\\\"$\")\n" +
                 "public void the_DI_system_receives_a_message_saying(String arg1) throws Throwable {\n" +
-                "    // Express the Regexp above with the code you wish you had\n" +
+                "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException();\n" +
                 "}\n";
         assertEquals(expected, snippetFor("the DI system receives a message saying \"{ dataIngestion: { feeds: [ feed: { merchantId: 666, feedId: 1, feedFileLocation: feed.csv } ] }\""));
@@ -72,7 +72,7 @@ public class JavaSnippetTest {
         String expected = "" +
                 "@Given(\"^I have \\\\$(\\\\d+)$\")\n" +
                 "public void i_have_$(int arg1) throws Throwable {\n" +
-                "    // Express the Regexp above with the code you wish you had\n" +
+                "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException();\n" +
                 "}\n";
         assertEquals(expected, snippetFor("I have $5"));
@@ -83,7 +83,7 @@ public class JavaSnippetTest {
         String expected = "" +
                 "@Given(\"^is there an error\\\\?:$\")\n" +
                 "public void is_there_an_error() throws Throwable {\n" +
-                "    // Express the Regexp above with the code you wish you had\n" +
+                "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException();\n" +
                 "}\n";
         assertEquals(expected, snippetFor("is there an error?:"));
@@ -94,7 +94,7 @@ public class JavaSnippetTest {
         String expected = "" +
                 "@Given(\"^\\\\^\\\\(\\\\[a-z\\\\]\\\\*\\\\)\\\\?\\\\.\\\\+\\\\$$\")\n" +
                 "public void a_z_$() throws Throwable {\n" +
-                "    // Express the Regexp above with the code you wish you had\n" +
+                "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException();\n" +
                 "}\n";
         assertEquals(expected, snippetFor("^([a-z]*)?.+$"));
@@ -105,7 +105,7 @@ public class JavaSnippetTest {
         String expected = "" +
                 "@Given(\"^I have (\\\\d+) cukes \\\\(maybe more\\\\)$\")\n" +
                 "public void i_have_cukes_maybe_more(int arg1) throws Throwable {\n" +
-                "    // Express the Regexp above with the code you wish you had\n" +
+                "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException();\n" +
                 "}\n";
         assertEquals(expected, snippetFor("I have 5 cukes (maybe more)"));
@@ -116,7 +116,7 @@ public class JavaSnippetTest {
         String expected = "" +
                 "@Given(\"^I have (\\\\d+) cukes \\\\[maybe more\\\\]$\")\n" +
                 "public void i_have_cukes_maybe_more(int arg1) throws Throwable {\n" +
-                "    // Express the Regexp above with the code you wish you had\n" +
+                "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException();\n" +
                 "}\n";
         assertEquals(expected, snippetFor("I have 5 cukes [maybe more]"));
@@ -127,7 +127,7 @@ public class JavaSnippetTest {
         String expected = "" +
                 "@Given(\"^I have:$\")\n" +
                 "public void i_have(String arg1) throws Throwable {\n" +
-                "    // Express the Regexp above with the code you wish you had\n" +
+                "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException();\n" +
                 "}\n";
         assertEquals(expected, snippetForDocString("I have:", new DocString("text/plain", "hello", 1)));
@@ -139,7 +139,7 @@ public class JavaSnippetTest {
         String expected = "" +
                 "@Given(\"^Then it responds ([^\\\"]*)$\")\n" +
                 "public void Then_it_responds(String arg1) throws Throwable {\n" +
-                "    // Express the Regexp above with the code you wish you had\n" +
+                "    // Write code here that turns the phrase above into concrete actions\n" +
                 "}\n";
         assertEquals(expected, snippetFor("Then it responds UTF-8"));
     }
@@ -149,7 +149,7 @@ public class JavaSnippetTest {
         String expected = "" +
                 "@Given(\"^I have:$\")\n" +
                 "public void i_have(DataTable arg1) throws Throwable {\n" +
-                "    // Express the Regexp above with the code you wish you had\n" +
+                "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    // For automatic conversion, change DataTable to List<YourType>\n" +
                 "    throw new PendingException();\n" +
                 "}\n";

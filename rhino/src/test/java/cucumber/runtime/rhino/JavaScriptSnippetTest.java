@@ -15,7 +15,7 @@ public class JavaScriptSnippetTest {
     public void generatesPlainSnippet() {
         String expected = "" +
                 "Given(/^I have (\\d+) cukes in my \"([^\"]*)\" belly$/, function(arg1, arg2) {\n" +
-                "  // Express the Regexp above with the code you wish you had\n" +
+                "  // Write code here that turns the phrase above into concrete actions\n" +
                 "  throw new Packages.cucumber.api.PendingException();\n" +
                 "});\n";
         assertEquals(expected, snippetFor("I have 4 cukes in my \"big\" belly"));

@@ -21,7 +21,7 @@ public class GroovySnippetTest {
     public void generatesPlainSnippet() {
         String expected = "" +
                 "Given(~'^I have (\\\\d+) cukes in my \"([^\"]*)\" belly$') { int arg1, String arg2 ->\n" +
-                "    // Express the Regexp above with the code you wish you had\n" +
+                "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException()\n" +
                 "}\n";
         assertEquals(expected, snippetFor("I have 4 cukes in my \"big\" belly"));
@@ -31,7 +31,7 @@ public class GroovySnippetTest {
     public void generatesCopyPasteReadyStepSnippetForNumberParameters() throws Exception {
         String expected = "" +
                 "Given(~'^before (\\\\d+) after$') { int arg1 ->\n" +
-                "    // Express the Regexp above with the code you wish you had\n" +
+                "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException()\n" +
                 "}\n";
         String snippet = snippetFor("before 5 after");
@@ -42,7 +42,7 @@ public class GroovySnippetTest {
     public void generatesCopyPasteReadySnippetWhenStepHasIllegalJavaIdentifierChars() {
         String expected = "" +
                 "Given(~'^I have (\\\\d+) cukes in: my \"([^\"]*)\" red-belly!$') { int arg1, String arg2 ->\n" +
-                "    // Express the Regexp above with the code you wish you had\n" +
+                "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException()\n" +
                 "}\n";
         assertEquals(expected, snippetFor("I have 4 cukes in: my \"big\" red-belly!"));
@@ -53,7 +53,7 @@ public class GroovySnippetTest {
     public void generatesCopyPasteReadySnippetWhenStepHasIntegersInsideStringParameter() {
         String expected = "" +
                 "Given(~'^the DI system receives a message saying \"([^\"]*)\"$') { String arg1 ->\n" +
-                "    // Express the Regexp above with the code you wish you had\n" +
+                "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException()\n" +
                 "}\n";
         assertEquals(expected, snippetFor("the DI system receives a message saying \"{ dataIngestion: { feeds: [ feed: { merchantId: 666, feedId: 1, feedFileLocation: feed.csv } ] }\""));
@@ -63,7 +63,7 @@ public class GroovySnippetTest {
     public void generatesSnippetWithEscapedDollarSigns() {
         String expected = "" +
                 "Given(~'^I have \\\\$(\\\\d+)$') { int arg1 ->\n" +
-                "    // Express the Regexp above with the code you wish you had\n" +
+                "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException()\n" +
                 "}\n";
         assertEquals(expected, snippetFor("I have $5"));
@@ -73,7 +73,7 @@ public class GroovySnippetTest {
     public void generatesSnippetWithEscapedParentheses() {
         String expected = "" +
                 "Given(~'^I have (\\\\d+) cukes \\\\(maybe more\\\\)$') { int arg1 ->\n" +
-                "    // Express the Regexp above with the code you wish you had\n" +
+                "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException()\n" +
                 "}\n";
         assertEquals(expected, snippetFor("I have 5 cukes (maybe more)"));
@@ -83,7 +83,7 @@ public class GroovySnippetTest {
     public void generatesSnippetWithEscapedBrackets() {
         String expected = "" +
                 "Given(~'^I have (\\\\d+) cukes \\\\[maybe more\\\\]$') { int arg1 ->\n" +
-                "    // Express the Regexp above with the code you wish you had\n" +
+                "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException()\n" +
                 "}\n";
         assertEquals(expected, snippetFor("I have 5 cukes [maybe more]"));
@@ -93,7 +93,7 @@ public class GroovySnippetTest {
     public void generatesSnippetWithDocString() {
         String expected = "" +
                 "Given(~'^I have:$') { String arg1 ->\n" +
-                "    // Express the Regexp above with the code you wish you had\n" +
+                "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException()\n" +
                 "}\n";
         assertEquals(expected, snippetForDocString("I have:", new DocString("text/plain", "hello", 1)));
@@ -103,7 +103,7 @@ public class GroovySnippetTest {
     public void generatesSnippetWithDataTable() {
         String expected = "" +
                 "Given(~'^I have:$') { DataTable arg1 ->\n" +
-                "    // Express the Regexp above with the code you wish you had\n" +
+                "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException()\n" +
                 "}\n";
         List<DataTableRow> dataTable = asList(new DataTableRow(NO_COMMENTS, asList("col1"), 1));
@@ -114,7 +114,7 @@ public class GroovySnippetTest {
     public void generateSnippetWithEscapedEscapeCharacter() {
         String expected = "" +
                 "Given(~'^I have (\\\\d+) cukes in my belly$') { int arg1 ->\n" +
-                "    // Express the Regexp above with the code you wish you had\n" +
+                "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException()\n" +
                 "}\n";
 
