@@ -17,28 +17,10 @@ import org.testng.annotations.Test;
 import java.io.IOException;
 
 public abstract class AbstractTestNGCucumberTests implements IHookable {
-    private final Runtime runtime;
-
-    public AbstractTestNGCucumberTests() {
-        ClassLoader classLoader = getClass().getClassLoader();
-        ResourceLoader resourceLoader = new MultiLoader(classLoader);
-
-        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(getClass(), new Class[]{CucumberOptions.class});
-        RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
-
-        TestNgReporter reporter = new TestNgReporter(System.out);
-        runtimeOptions.getFormatters().add(reporter);
-        ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
-        runtime = new Runtime(resourceLoader, classFinder, classLoader, runtimeOptions);
-    }
 
     @Test(groups = "cucumber", description = "Runs Cucumber Features")
     public void run_cukes() throws IOException {
-        runtime.run();
-        runtime.printSummary();
-        if (!runtime.getErrors().isEmpty()) {
-            throw new CucumberException(runtime.getErrors().get(0));
-        }
+        new TestNGCucumberRunner(getClass()).runCukes();
     }
 
     @Override
