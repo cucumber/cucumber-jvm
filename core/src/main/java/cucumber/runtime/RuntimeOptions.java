@@ -31,6 +31,7 @@ public class RuntimeOptions {
     private final List<Object> lineFilters = new ArrayList<Object>();
     private final List<Formatter> formatters = new ArrayList<Formatter>();
     private final List<String> featurePaths = new ArrayList<String>();
+    private final List<String> skipTags = new ArrayList<String>();
     private final FormatterFactory formatterFactory;
     private URL dotCucumber;
     private boolean dryRun;
@@ -106,6 +107,8 @@ public class RuntimeOptions {
                 parsedGlue.add(gluePath);
             } else if (arg.equals("--tags") || arg.equals("-t")) {
                 parsedFilters.add(args.remove(0));
+            } else if (arg.equals("--skip-tags") || arg.equals("-k")) {
+                skipTags.add(args.remove(0));
             } else if (arg.equals("--format") || arg.equals("-f")) {
                 formatters.add(formatterFactory.create(args.remove(0)));
             } else if (arg.equals("--dotcucumber")) {
@@ -230,6 +233,10 @@ public class RuntimeOptions {
 
     public List<Object> getFilters() {
         return filters;
+    }
+
+    public List<String> getSkipTags() {
+        return skipTags;
     }
 
     public boolean isMonochrome() {

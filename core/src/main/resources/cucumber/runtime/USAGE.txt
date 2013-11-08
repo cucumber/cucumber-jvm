@@ -7,6 +7,7 @@ Options:
                                        Built-in FORMAT types: junit, html, pretty, progress, json.
                                        FORMAT can also be a fully qualified class name.
     -t, --tags TAG_EXPRESSION          Only run scenarios tagged with tags matching TAG_EXPRESSION.
+    -k, --skip-tags TAG_EXPRESSION     Skip execution of scenarios tagged with tags matching TAG_EXPRESSION.
     -n, --name REGEXP                  Only run scenarios whose names match REGEXP.
     -d, --[no-]-dry-run                Skip execution of glue code.
     -m, --[no-]-monochrome             Don't colour terminal output.

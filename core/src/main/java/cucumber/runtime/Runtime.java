@@ -140,6 +140,13 @@ public class Runtime implements UnreportedStepExecutor {
         undefinedStepsTracker.reset();
         //TODO: this is the initial state of the state machine, it should not go here, but into something else
         skipNextStep = false;
+
+        for (Tag tag : tags) {
+            if (runtimeOptions.getSkipTags().contains(tag.getName())) {
+                skipNextStep = true;
+                break;
+            }
+        }
         scenarioResult = new ScenarioImpl(reporter, tags);
     }
 

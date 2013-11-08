@@ -34,6 +34,7 @@ public class RuntimeOptionsFactory {
                     addDryRun(options, args);
                     addMonochrome(options, args);
                     addTags(options, args);
+                    addSkipTags(options, args);
                     addFormats(options, args);
                     addStrict(options, args);
                     addName(options, args);
@@ -83,6 +84,13 @@ public class RuntimeOptionsFactory {
         for (String tags : this.<String[]>invoke(options, "tags")) {
             args.add("--tags");
             args.add(tags);
+        }
+    }
+
+    private void addSkipTags(Annotation options, List<String> args) {
+        for (String skipTag : this.<String[]>invoke(options, "skipTags")) {
+            args.add("--skip-tags");
+            args.add(skipTag);
         }
     }
 
