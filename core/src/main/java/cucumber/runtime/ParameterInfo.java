@@ -24,7 +24,7 @@ public class ParameterInfo {
     private final Type type;
     private final String format;
     private final String delimiter;
-    private final Transformer transformer;
+    private final Transformer<?> transformer;
 
     public static List<ParameterInfo> fromMethod(Method method) {
         List<ParameterInfo> result = new ArrayList<ParameterInfo>();
@@ -33,23 +33,37 @@ public class ParameterInfo {
         for (int i = 0; i < genericParameterTypes.length; i++) {
             String format = null;
             String delimiter = DEFAULT_DELIMITER;
-            Transformer transformer = null;
+            Transformer<?> transformer = null;
             for (Annotation annotation : annotations[i]) {
                 if (annotation instanceof Format) {
                     format = ((Format) annotation).value();
+                } else if(isAnnotatedWith(annotation,Format.class)){
+                    format = getAnnotationForAnnotation(annotation, Format.class).value();
                 }
+                
                 if (annotation instanceof Delimiter) {
                     delimiter = ((Delimiter) annotation).value();
+                } else if(isAnnotatedWith(annotation,Delimiter.class)){
+                    delimiter = getAnnotationForAnnotation(annotation, Delimiter.class).value();
                 }
+                
                 if (annotation instanceof Transform) {
                     transformer = getTransformer(annotation);
-                } else if(isAnnotatedAsTransformer(annotation)){
-                    transformer = getTransformer(annotation.annotationType().getAnnotation(Transform.class));
+                } else if(isAnnotatedWith(annotation,Transform.class)){
+                    transformer = getTransformer(getAnnotationForAnnotation(annotation, Transform.class));
                 }
             }
             result.add(new ParameterInfo(genericParameterTypes[i], format, delimiter, transformer));
         }
         return result;
+    }
+
+    private static boolean isAnnotatedWith(Annotation source, Class<? extends Annotation> requiredAnnotation) {
+        return getAnnotationForAnnotation(source, requiredAnnotation) != null;
+    }
+    
+    private static <T extends Annotation> T getAnnotationForAnnotation(Annotation source, Class<T> requiredAnnotation) {
+        return source.annotationType().getAnnotation(requiredAnnotation);
     }
     
     private static Transformer<?> getTransformer(Annotation annotation) {
@@ -62,9 +76,6 @@ public class ParameterInfo {
         }
     }
 
-    private static boolean isAnnotatedAsTransformer(Annotation annotation) {
-        return annotation.annotationType().getAnnotation(Transform.class) != null;
-    }
     public ParameterInfo(Type type, String format, String delimiter, Transformer transformer) {
         this.type = type;
         this.format = format;

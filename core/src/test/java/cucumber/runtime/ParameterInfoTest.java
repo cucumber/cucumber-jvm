@@ -2,7 +2,10 @@ package cucumber.runtime;
 
 import static org.junit.Assert.assertEquals;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -15,6 +18,8 @@ import cucumber.api.Delimiter;
 import cucumber.api.Format;
 import cucumber.api.Transform;
 import cucumber.api.Transformer;
+import cucumber.runtime.annotations.CustomDelimiter;
+import cucumber.runtime.annotations.SampleDateFormat;
 import cucumber.runtime.annotations.TransformToFortyTwo;
 import cucumber.runtime.xstream.LocalizedXStreams;
 
@@ -124,5 +129,24 @@ public class ParameterInfoTest {
     public void converts_int_with_custom_annotation() throws NoSuchMethodException{
             ParameterInfo pt = ParameterInfo.fromMethod(getClass().getMethod("intWithCustomTransformAnnotation", Integer.TYPE)).get(0);
             assertEquals(42, pt.convert("hello", US));
+    }
+    
+    public void listWithCustomAnnotationDelimiter(@CustomDelimiter List<String> list) {
+    }
+    
+    @Test
+    public void converts_list_with_custom_annotation_delimiter() throws NoSuchMethodException {
+        ParameterInfo pt = ParameterInfo.fromMethod(getClass().getMethod("listWithCustomAnnotationDelimiter", List.class)).get(0);
+        assertEquals(Arrays.asList("hello", "world"), pt.convert("hello,!,world", US));
+    }
+    
+    public void withDateAndAnnotationFormat(@SampleDateFormat Date date) {
+    }
+
+    @Test
+    public void converts_with_custom_format_annotation() throws NoSuchMethodException, ParseException {
+        ParameterInfo parameterInfo = ParameterInfo.fromMethod(getClass().getMethod("withDateAndAnnotationFormat", Date.class)).get(0);
+        Date sampleDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.ENGLISH).parse("1985-02-12T16:05:12");
+        assertEquals(sampleDate, parameterInfo.convert("1985-02-12T16:05:12", US));
     }
 }

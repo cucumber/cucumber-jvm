@@ -6,13 +6,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import cucumber.api.Transform;
-import cucumber.runtime.ParameterInfoTest.FortyTwoTransformer;
-
+import cucumber.api.Format;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.PARAMETER})
 @Documented
-@Transform(FortyTwoTransformer.class)
-public @interface TransformToFortyTwo {
+@Format("yyyy-MM-dd'T'HH:mm:ss")
+public @interface SampleDateFormat {
 
 }
