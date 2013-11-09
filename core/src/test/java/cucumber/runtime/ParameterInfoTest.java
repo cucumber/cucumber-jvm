@@ -1,20 +1,22 @@
 package cucumber.runtime;
 
-import cucumber.api.Delimiter;
-import cucumber.api.Format;
-import cucumber.api.Transform;
-import cucumber.api.Transformer;
-import cucumber.runtime.xstream.LocalizedXStreams;
-import org.joda.time.LocalDate;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
-import static org.junit.Assert.assertEquals;
+import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.junit.Test;
+
+import cucumber.api.Delimiter;
+import cucumber.api.Format;
+import cucumber.api.Transform;
+import cucumber.api.Transformer;
+import cucumber.runtime.annotations.TransformToFortyTwo;
+import cucumber.runtime.xstream.LocalizedXStreams;
 
 public class ParameterInfoTest {
 
@@ -113,5 +115,14 @@ public class ParameterInfoTest {
     public void converts_list_with_no_type_argument() throws NoSuchMethodException {
         ParameterInfo pt = ParameterInfo.fromMethod(getClass().getMethod("listWithNoTypeArgument", List.class)).get(0);
         assertEquals(Arrays.asList("hello", "world"), pt.convert("hello, world", US));
+    }
+    
+    public void intWithCustomTransformAnnotation(@TransformToFortyTwo int n) {
+    }
+    
+    @Test
+    public void converts_int_with_custom_annotation() throws NoSuchMethodException{
+            ParameterInfo pt = ParameterInfo.fromMethod(getClass().getMethod("intWithCustomTransformAnnotation", Integer.TYPE)).get(0);
+            assertEquals(42, pt.convert("hello", US));
     }
 }

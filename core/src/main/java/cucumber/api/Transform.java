@@ -9,7 +9,7 @@ import java.lang.annotation.RetentionPolicy;
  * @see Transformer
  */
 @java.lang.annotation.Retention(RetentionPolicy.RUNTIME)
-@java.lang.annotation.Target({ElementType.PARAMETER})
+@java.lang.annotation.Target({ElementType.PARAMETER, ElementType.ANNOTATION_TYPE})
 @java.lang.annotation.Documented
 public @interface Transform {
     Class<? extends Transformer> value();

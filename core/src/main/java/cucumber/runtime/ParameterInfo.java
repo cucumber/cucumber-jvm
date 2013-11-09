@@ -1,5 +1,12 @@
 package cucumber.runtime;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
+
 import cucumber.api.Delimiter;
 import cucumber.api.Format;
 import cucumber.api.Transform;
@@ -7,13 +14,6 @@ import cucumber.api.Transformer;
 import cucumber.deps.com.thoughtworks.xstream.annotations.XStreamConverter;
 import cucumber.deps.com.thoughtworks.xstream.converters.SingleValueConverter;
 import cucumber.runtime.xstream.LocalizedXStreams;
-
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This class composes all interesting parameter information into one object.
@@ -42,20 +42,29 @@ public class ParameterInfo {
                     delimiter = ((Delimiter) annotation).value();
                 }
                 if (annotation instanceof Transform) {
-                    try {
-                        transformer = ((Transform) annotation).value().newInstance();
-                    } catch (InstantiationException e) {
-                        throw new CucumberException(e);
-                    } catch (IllegalAccessException e) {
-                        throw new CucumberException(e);
-                    }
+                    transformer = getTransformer(annotation);
+                } else if(isAnnotatedAsTransformer(annotation)){
+                    transformer = getTransformer(annotation.annotationType().getAnnotation(Transform.class));
                 }
             }
             result.add(new ParameterInfo(genericParameterTypes[i], format, delimiter, transformer));
         }
         return result;
     }
+    
+    private static Transformer<?> getTransformer(Annotation annotation) {
+        try {
+            return ((Transform) annotation).value().newInstance();
+        } catch (InstantiationException e) {
+            throw new CucumberException(e);
+        } catch (IllegalAccessException e) {
+            throw new CucumberException(e);
+        }
+    }
 
+    private static boolean isAnnotatedAsTransformer(Annotation annotation) {
+        return annotation.annotationType().getAnnotation(Transform.class) != null;
+    }
     public ParameterInfo(Type type, String format, String delimiter, Transformer transformer) {
         this.type = type;
         this.format = format;
