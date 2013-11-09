@@ -31,6 +31,11 @@ class ExamplesRunner extends Suite {
     }
 
     @Override
+    protected List<Runner> getChildren() {
+        return super.getChildren();
+    }
+
+    @Override
     protected String getName() {
         return cucumberExamples.getExamples().getKeyword() + ": " + cucumberExamples.getExamples().getName();
     }

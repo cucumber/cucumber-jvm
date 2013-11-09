@@ -3,12 +3,14 @@ package cucumber.runtime.junit;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.model.CucumberExamples;
 import cucumber.runtime.model.CucumberScenarioOutline;
+
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runners.Suite;
 import org.junit.runners.model.InitializationError;
 
 import java.util.ArrayList;
+import java.util.List;
 
 class ScenarioOutlineRunner extends Suite {
     private final CucumberScenarioOutline cucumberScenarioOutline;
@@ -20,6 +22,11 @@ class ScenarioOutlineRunner extends Suite {
         for (CucumberExamples cucumberExamples : cucumberScenarioOutline.getCucumberExamplesList()) {
             getChildren().add(new ExamplesRunner(runtime, cucumberExamples, jUnitReporter));
         }
+    }
+
+    @Override
+    protected List<Runner> getChildren() {
+        return super.getChildren();
     }
 
     @Override
