@@ -62,7 +62,7 @@ public class ExecutionUnitRunnerTest {
         Description runnerDescription = runner.getDescription();
         Description stepDescription = runnerDescription.getChildren().get(0);
 
-        assertEquals("description includes scenario name as class name", runner.getName(), stepDescription.getClassName());
+        assertEquals("description includes scenario keyword and name as class name", runner.getDescription().getDisplayName(), stepDescription.getClassName());
         assertEquals("description includes step keyword and name as method name", step.getKeyword() + step.getName(), stepDescription.getMethodName());
     }
 }
