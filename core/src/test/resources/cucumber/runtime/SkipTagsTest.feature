@@ -1,5 +1,6 @@
 Feature: Skip Tags
 
+  @NeverSkip
   Scenario: Ok
     Given skip_tag_step_1
     When skip_tag_step_2
@@ -16,11 +17,13 @@ Feature: Skip Tags
     When skip_tag_step_2 <skip>
     Then skip_tag_step_3 <skip>
 
+  @AlsoNeverSkip
   Examples:
-    | skip |
-    | Ok   |
+    | skip    |
+    | Ok      |
+    | Also Ok |
 
-  @Skip
+  @SkipAlso
   Examples:
     | skip    |
     | Skipped |

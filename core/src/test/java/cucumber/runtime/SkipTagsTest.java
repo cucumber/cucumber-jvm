@@ -24,7 +24,51 @@ import static org.mockito.Mockito.when;
 public class SkipTagsTest {
 
     @Test
-    public void skipTagsTest() throws Exception {
+    public void noSkipTagsTest() throws Exception {
+        String stats = runSkipTagsTest();
+
+        assertThat(stats, startsWith(String.format(
+                "5 Scenarios (5 passed)%n" +
+                        "15 Steps (15 passed)%n")));
+    }
+
+    @Test
+    public void singleSkipTagsTest() throws Exception {
+        String stats = runSkipTagsTest("@Skip");
+
+        assertThat(stats, startsWith(String.format(
+                "5 Scenarios (1 skipped, 4 passed)%n" +
+                        "15 Steps (3 skipped, 12 passed)%n")));
+    }
+
+    @Test
+    public void multipleSkipTagsTest() throws Exception {
+        String stats = runSkipTagsTest("@Skip", "@SkipAlso");
+
+        assertThat(stats, startsWith(String.format(
+                "5 Scenarios (2 skipped, 3 passed)%n" +
+                        "15 Steps (6 skipped, 9 passed)%n")));
+    }
+
+    @Test
+    public void negatedSkipTagsTest() throws Exception {
+        String stats = runSkipTagsTest("~@NeverSkip");
+
+        assertThat(stats, startsWith(String.format(
+                "5 Scenarios (4 skipped, 1 passed)%n" +
+                        "15 Steps (12 skipped, 3 passed)%n")));
+    }
+
+    @Test
+    public void multipleNegatedSkipTagsTest() throws Exception {
+        String stats = runSkipTagsTest("~@NeverSkip", "~@AlsoNeverSkip");
+
+        assertThat(stats, startsWith(String.format(
+                "5 Scenarios (2 skipped, 3 passed)%n" +
+                        "15 Steps (6 skipped, 9 passed)%n")));
+    }
+
+    public String runSkipTagsTest(String...skipTags) throws Exception {
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         final ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
         RuntimeGlue runtimeGlue = new RuntimeGlue(mock(UndefinedStepsTracker.class), mock(LocalizedXStreams.class));
@@ -32,8 +76,12 @@ public class SkipTagsTest {
 
         List<String> args = new ArrayList<String>();
         args.add("--monochrome");
-        args.add("--skip-tags");
-        args.add("@Skip");
+
+        for (String skipTag : skipTags) {
+            args.add("--skip-tags");
+            args.add(skipTag);
+        }
+
         args.add("cucumber/runtime/SkipTagsTest.feature");
 
         RuntimeOptions runtimeOptions = new RuntimeOptions(args);
@@ -46,10 +94,9 @@ public class SkipTagsTest {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         runtime.printStats(new PrintStream(baos));
 
-        assertThat(baos.toString(), startsWith(String.format(
-                "4 Scenarios (2 skipped, 2 passed)%n" +
-                        "12 Steps (6 skipped, 6 passed)%n")));
+        return baos.toString();
     }
+
 
     private static class ArgumentMatchingStubStepDefinition extends StubStepDefinition {
         public ArgumentMatchingStubStepDefinition(String pattern) throws NoSuchMethodException {

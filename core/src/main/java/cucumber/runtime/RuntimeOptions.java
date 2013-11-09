@@ -6,8 +6,10 @@ import cucumber.runtime.formatter.FormatterFactory;
 import cucumber.runtime.formatter.StrictAware;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
+import gherkin.TagExpression;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
+import gherkin.formatter.model.Tag;
 import gherkin.util.FixJava;
 
 import java.lang.reflect.InvocationHandler;
@@ -15,6 +17,9 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.regex.Pattern;
@@ -38,6 +43,7 @@ public class RuntimeOptions {
     private boolean strict = false;
     private boolean monochrome = false;
     private SnippetType snippetType = SnippetType.UNDERSCORE;
+    private TagExpression skipTagExpression;
 
     /**
      * Create a new instance from a string of options, for example:
@@ -150,6 +156,35 @@ public class RuntimeOptions {
             glue.clear();
             glue.addAll(parsedGlue);
         }
+
+        if (skipTags.isEmpty()) {
+            skipTagExpression = new TagExpression(Collections.EMPTY_LIST) {
+                @Override
+                public boolean evaluate(Collection<Tag> tags) {
+                    return false;
+                }
+            };
+        } else {
+            //Create a tag expression where normal tags are considered and 'OR' match
+            //And negated tags are 'AND' matched
+            List<String> tags = new ArrayList<String>();
+            StringBuilder sb = new StringBuilder();
+            for (Iterator<String> iter = skipTags.iterator(); iter.hasNext();) {
+                final String tag = iter.next();
+                if (tag.startsWith("~")) {
+                    tags.add(tag);
+                } else {
+                    if (sb.length() != 0) {
+                        sb.append(',');
+                    }
+                    sb.append(tag);
+                }
+            }
+            if (sb.length() > 0) {
+                tags.add(sb.toString());
+            }
+            skipTagExpression = new TagExpression(tags);
+        }
     }
 
     private void printUsage() {
@@ -235,15 +270,19 @@ public class RuntimeOptions {
         return filters;
     }
 
-    public List<String> getSkipTags() {
-        return skipTags;
-    }
-
     public boolean isMonochrome() {
         return monochrome;
     }
 
     public SnippetType getSnippetType() {
         return snippetType;
+    }
+
+    public TagExpression getSkipTagsExpression() {
+        return skipTagExpression;
+    }
+
+    public List<String> getSkipTags() {
+        return skipTags;
     }
 }
