@@ -26,7 +26,6 @@ public class TestNGCucumberRunner {
      * @param clazz Which has has the Cucumber and TestNG @Test annotations
      */
     public TestNGCucumberRunner(Class clazz) {
-
         ClassLoader classLoader = clazz.getClassLoader();
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
 
@@ -48,7 +47,6 @@ public class TestNGCucumberRunner {
      * Run the Cucumber features
      */
     public void runCukes() {
-        
         try {
             runtime.run();
         } catch (IOException ex) {
