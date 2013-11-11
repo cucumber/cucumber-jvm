@@ -23,7 +23,7 @@ public class TestNGCucumberRunner {
     /**
      * Bootstrap the cucumber runtime
      *
-     * @param clazz Which has has the Cucumber and TestNG @Test annotations
+     * @param clazz Which has the cucumber.api.CucumberOptions and org.testng.annotations.Test annotations
      */
     public TestNGCucumberRunner(Class clazz) {
         ClassLoader classLoader = clazz.getClassLoader();
