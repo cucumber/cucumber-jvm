@@ -1,5 +1,6 @@
 ## [1-1-6-SNAPSHOT (Git master)](https://github.com/cucumber/cucumber-jvm/compare/v1.1.5...master)
 
+* [TestNG] Allow TestNG Cucumber runner to use composition instead of inheritance. ([#622](https://github.com/cucumber/cucumber-jvm/pull/622) Marty Kube)
 * [Core] New Snippet text. ([#618](https://github.com/cucumber/cucumber-jvm/issues/618) Jeff Nyman, Matt Wynne, Aslak Hellesøy)
 * [Android] Add command line option support for Android ([#597](https://github.com/cucumber/cucumber-jvm/pull/597), Frieder Bluemle)
 * [Android] Add debug support for eclipse ([#613](https://github.com/cucumber/cucumber-jvm/pull/613) Ian Warwick)
