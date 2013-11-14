@@ -20,13 +20,15 @@ import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 
 import static cucumber.runtime.model.CucumberFeature.load;
+import java.util.HashSet;
+import java.util.Set;
 
 // IMPORTANT! Make sure USAGE.txt is always uptodate if this class changes.
 public class RuntimeOptions {
     public static final String VERSION = ResourceBundle.getBundle("cucumber.version").getString("cucumber-jvm.version");
     public static final String USAGE = FixJava.readResource("/cucumber/runtime/USAGE.txt");
 
-    private final List<String> glue = new ArrayList<String>();
+    private final Set<String> glue = new HashSet<String>();
     private final List<Object> filters = new ArrayList<Object>();
     private final List<Object> lineFilters = new ArrayList<Object>();
     private final List<Formatter> formatters = new ArrayList<Formatter>();
@@ -204,7 +206,7 @@ public class RuntimeOptions {
         }
     }
 
-    public List<String> getGlue() {
+    public Set<String> getGlue() {
         return glue;
     }
 

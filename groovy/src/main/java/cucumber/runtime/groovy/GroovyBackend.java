@@ -23,7 +23,6 @@ import org.codehaus.groovy.runtime.InvokerInvocationException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -60,7 +59,7 @@ public class GroovyBackend implements Backend {
     }
 
     @Override
-    public void loadGlue(Glue glue, List<String> gluePaths) {
+    public void loadGlue(Glue glue, Set<String> gluePaths) {
         this.glue = glue;
         final Binding context = shell.getContext();
 

@@ -79,7 +79,7 @@ public class JRubyBackend implements Backend {
     }
 
     @Override
-    public void loadGlue(Glue glue, List<String> gluePaths) {
+    public void loadGlue(Glue glue, Set<String> gluePaths) {
         this.glue = glue;
         for (String gluePath : gluePaths) {
             for (Resource resource : resourceLoader.resources(gluePath, ".rb")) {

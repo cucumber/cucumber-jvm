@@ -54,7 +54,7 @@ public class JavaStepDefinitionTest {
 
     @org.junit.Before
     public void loadNoGlue() {
-        backend.loadGlue(glue, Collections.<String>emptyList());
+        backend.loadGlue(glue, Collections.<String>emptySet());
     }
 
     @Test(expected = DuplicateStepDefinitionException.class)

@@ -9,9 +9,9 @@ import cucumber.runtime.ClassFinder;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Collection;
-import java.util.List;
 
 import static cucumber.runtime.io.MultiLoader.packageName;
+import java.util.Set;
 
 class MethodScanner {
     private final Collection<Class<? extends Annotation>> cucumberAnnotationClasses;
@@ -29,7 +29,7 @@ class MethodScanner {
      * @param javaBackend the backend where stepdefs and hooks will be registered
      * @param gluePaths   where to look
      */
-    public void scan(JavaBackend javaBackend, List<String> gluePaths) {
+    public void scan(JavaBackend javaBackend, Set<String> gluePaths) {
         for (String gluePath : gluePaths) {
             for (Class<?> glueCodeClass : classFinder.getDescendants(Object.class, packageName(gluePath))) {
                 while (glueCodeClass != null && glueCodeClass != Object.class && !Utils.isInstantiable(glueCodeClass)) {

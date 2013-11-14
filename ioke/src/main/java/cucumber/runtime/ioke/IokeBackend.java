@@ -18,6 +18,7 @@ import ioke.lang.exceptions.ControlFlow;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 public class IokeBackend implements Backend {
     private final SnippetGenerator snippetGenerator = new SnippetGenerator(new IokeSnippet());
@@ -43,7 +44,7 @@ public class IokeBackend implements Backend {
     }
 
     @Override
-    public void loadGlue(Glue glue, List<String> gluePaths) {
+    public void loadGlue(Glue glue, Set<String> gluePaths) {
         this.glue = glue;
 
         for (String gluePath : gluePaths) {

@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.List;
+import java.util.Set;
 
 public class JythonBackend implements Backend {
     private static final String DSL = "/cucumber/runtime/jython/dsl.py";
@@ -44,7 +45,7 @@ public class JythonBackend implements Backend {
     }
 
     @Override
-    public void loadGlue(Glue glue, List<String> gluePaths) {
+    public void loadGlue(Glue glue, Set<String> gluePaths) {
         this.glue = glue;
 
         for (String gluePath : gluePaths) {

@@ -11,6 +11,7 @@ import org.junit.Test;
 import java.util.List;
 
 import static java.util.Arrays.asList;
+import java.util.Set;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -81,7 +82,7 @@ public class UndefinedStepsTrackerTest {
 
     private class TestBackend implements Backend {
         @Override
-        public void loadGlue(Glue glue, List<String> gluePaths) {
+        public void loadGlue(Glue glue, Set<String> gluePaths) {
             throw new UnsupportedOperationException();
         }
 

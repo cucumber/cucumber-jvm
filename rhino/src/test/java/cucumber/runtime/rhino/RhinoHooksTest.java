@@ -8,7 +8,6 @@ import gherkin.formatter.model.Tag;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.junit.Before;
@@ -22,6 +21,8 @@ import cucumber.runtime.HookDefinition;
 import cucumber.runtime.RuntimeGlue;
 import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.io.ResourceLoader;
+import java.util.Arrays;
+import java.util.HashSet;
 import org.mozilla.javascript.WrappedException;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -56,7 +57,7 @@ public class RhinoHooksTest {
     public void shouldCallAddBeforeAndAfterHook() throws IOException {
         // when
         RhinoBackend jsBackend = new RhinoBackend(resourceLoader);
-        jsBackend.loadGlue(glue, Collections.singletonList("cucumber/runtime/rhino_hooks"));
+        jsBackend.loadGlue(glue, new HashSet(Arrays.asList("cucumber/runtime/rhino_hooks")));
         List<HookDefinition> beforeHooks = beforeHookCaptor.getAllValues();
         List<HookDefinition> afterHooks = afterHookCaptor.getAllValues();
 
@@ -73,7 +74,7 @@ public class RhinoHooksTest {
     public void shouldFailWithTimeout() throws Throwable {
         // when
         RhinoBackend jsBackend = new RhinoBackend(resourceLoader);
-        jsBackend.loadGlue(glue, Collections.singletonList("cucumber/runtime/rhino_hooks_timeout"));
+        jsBackend.loadGlue(glue, new HashSet(Arrays.asList("cucumber/runtime/rhino_hooks_timeout")));
         List<HookDefinition> beforeHooks = beforeHookCaptor.getAllValues();
 
         try {

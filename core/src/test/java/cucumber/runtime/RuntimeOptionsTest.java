@@ -15,6 +15,7 @@ import java.util.Properties;
 import java.util.regex.Pattern;
 
 import static java.util.Arrays.asList;
+import java.util.HashSet;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -64,7 +65,7 @@ public class RuntimeOptionsTest {
     @Test
     public void assigns_glue() {
         RuntimeOptions options = new RuntimeOptions("--glue somewhere");
-        assertEquals(asList("somewhere"), options.getGlue());
+        assertEquals(new HashSet(asList("somewhere")), options.getGlue());
     }
 
     @Test
@@ -141,7 +142,7 @@ public class RuntimeOptionsTest {
         properties.setProperty("cucumber.options", "--glue lookatme this_clobbers_feature_paths");
         RuntimeOptions options = new RuntimeOptions(new Env(properties), asList("--strict", "--glue", "somewhere", "somewhere_else"));
         assertEquals(asList("this_clobbers_feature_paths"), options.getFeaturePaths());
-        assertEquals(asList("lookatme"), options.getGlue());
+        assertEquals(new HashSet(asList("lookatme")), options.getGlue());
         assertTrue(options.isStrict());
     }
 
@@ -150,7 +151,7 @@ public class RuntimeOptionsTest {
         Properties properties = new Properties();
         properties.setProperty("cucumber.options", "--tags @foo");
         RuntimeOptions runtimeOptions = new RuntimeOptions(new Env(properties), asList("--glue", "somewhere"));
-        assertEquals(asList("somewhere"), runtimeOptions.getGlue());
+        assertEquals(new HashSet(asList("somewhere")), runtimeOptions.getGlue());
     }
 
     @Test

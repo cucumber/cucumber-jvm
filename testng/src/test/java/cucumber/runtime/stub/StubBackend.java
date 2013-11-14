@@ -7,7 +7,7 @@ import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.snippets.FunctionNameGenerator;
 import gherkin.formatter.model.Step;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  * We need an implementation of Backend to prevent Runtime from blowing up.
@@ -18,7 +18,7 @@ public class StubBackend implements Backend {
     }
 
     @Override
-    public void loadGlue(Glue glue, List<String> gluePaths) {
+    public void loadGlue(Glue glue, Set<String> gluePaths) {
     }
 
     @Override

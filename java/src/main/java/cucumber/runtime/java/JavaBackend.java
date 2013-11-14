@@ -21,7 +21,7 @@ import gherkin.formatter.model.Step;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 public class JavaBackend implements Backend {
@@ -73,7 +73,7 @@ public class JavaBackend implements Backend {
     }
 
     @Override
-    public void loadGlue(Glue glue, List<String> gluePaths) {
+    public void loadGlue(Glue glue, Set<String> gluePaths) {
         this.glue = glue;
         methodScanner.scan(this, gluePaths);
     }

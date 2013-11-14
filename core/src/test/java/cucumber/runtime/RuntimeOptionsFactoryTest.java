@@ -16,6 +16,7 @@ import java.util.regex.Pattern;
 import static cucumber.runtime.RuntimeOptionsFactory.packageName;
 import static cucumber.runtime.RuntimeOptionsFactory.packagePath;
 import static java.util.Arrays.asList;
+import java.util.HashSet;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -41,7 +42,7 @@ public class RuntimeOptionsFactoryTest {
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
         assertFalse(runtimeOptions.isStrict());
         assertEquals(asList("classpath:cucumber/runtime"), runtimeOptions.getFeaturePaths());
-        assertEquals(asList("classpath:cucumber/runtime"), runtimeOptions.getGlue());
+        assertEquals(new HashSet(asList("classpath:cucumber/runtime")), runtimeOptions.getGlue());
     }
 
     @Test
