@@ -249,5 +249,14 @@ public class RuntimeOptionsTest {
         RuntimeOptions runtimeOptions = new RuntimeOptions(new Env(properties), Collections.<String>emptyList());
         assertEquals(SnippetType.CAMELCASE, runtimeOptions.getSnippetType());
     }
+    
+    @Test
+    public void prevent_duplicate_glue_paths() {
+        String gluePath = "/src/test/java/cucumber";
+        RuntimeOptions runtimeOptions = new RuntimeOptions(Collections.<String>emptyList());
+        runtimeOptions.getGlue().add(gluePath);
+        runtimeOptions.getGlue().add(gluePath);
+        assertEquals(1, runtimeOptions.getGlue().size());
+    }
 
 }
