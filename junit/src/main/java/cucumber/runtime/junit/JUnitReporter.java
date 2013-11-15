@@ -44,7 +44,10 @@ public class JUnitReporter implements Reporter, Formatter {
         this.stepNotifier = null;
         this.ignoredStep = false;
 
-        executionUnitNotifier = new EachTestNotifier(runNotifier, executionUnitRunner.getDescription());
+        //We don't want the scenario itself visible in the JUnit results as it is redundant, only its steps
+        //Provide the executionUnitNotifier with a new (non-null) RunNotifier to effectively
+        //ignore its notifications
+        executionUnitNotifier = new EachTestNotifier(new RunNotifier(), executionUnitRunner.getDescription());
         executionUnitNotifier.fireTestStarted();
     }
 

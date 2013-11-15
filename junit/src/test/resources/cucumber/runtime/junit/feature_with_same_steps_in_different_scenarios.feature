@@ -6,3 +6,11 @@ Feature: In cucumber.junit
   Scenario: second
     When step
     Then another step
+
+  Scenario Outline: third
+    When <example> (step)
+    Then another step
+
+  Examples:
+    | example       |
+    | (example) 1.2 |

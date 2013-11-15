@@ -19,13 +19,13 @@ public abstract class CucumberTagStatement extends StepContainer {
     CucumberTagStatement(CucumberFeature cucumberFeature, TagStatement gherkinModel) {
         super(cucumberFeature, gherkinModel);
         this.gherkinModel = gherkinModel;
-        this.visualName = gherkinModel.getKeyword() + ": " + gherkinModel.getName();
+        this.visualName = gherkinModel.getKeyword() + ": " + gherkinModel.getName() + "."+ gherkinModel.getKeyword();
     }
 
     CucumberTagStatement(CucumberFeature cucumberFeature, TagStatement gherkinModel, Row example) {
         super(cucumberFeature, gherkinModel);
         this.gherkinModel = gherkinModel;
-        this.visualName = "| " + join(example.getCells(), " | ") + " |";
+        this.visualName = gherkinModel.getKeyword() + ": " + gherkinModel.getName() +"."+"| " + join(example.getCells(), " | ") + " |";
     }
 
     protected Set<Tag> tagsAndInheritedTags() {

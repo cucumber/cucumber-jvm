@@ -3,7 +3,10 @@ package cucumber.runtime.junit;
 import cucumber.api.PendingException;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
+import gherkin.formatter.model.Match;
 import gherkin.formatter.model.Result;
+import gherkin.formatter.model.Step;
+
 import org.junit.Test;
 import org.junit.internal.runners.model.EachTestNotifier;
 import org.junit.runner.Description;
@@ -14,6 +17,7 @@ import org.mockito.Matchers;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -23,6 +27,7 @@ public class JUnitReporterTest {
 
     private JUnitReporter jUnitReporter;
     private RunNotifier runNotifier;
+    private ExecutionUnitRunner executionUnitRunner;
 
     @Test
     public void resultWithError() {
@@ -33,6 +38,10 @@ public class JUnitReporterTest {
 
         Description description = mock(Description.class);
         createRunNotifier(description);
+
+        when(executionUnitRunner.describeChild(any(Step.class))).thenReturn(description);
+        jUnitReporter.step(mock(Step.class));
+        jUnitReporter.match(mock(Match.class));
 
         jUnitReporter.result(result);
 
@@ -159,7 +168,7 @@ public class JUnitReporterTest {
 
     private void createRunNotifier(Description description) {
         runNotifier = mock(RunNotifier.class);
-        ExecutionUnitRunner executionUnitRunner = mock(ExecutionUnitRunner.class);
+        executionUnitRunner = mock(ExecutionUnitRunner.class);
         when(executionUnitRunner.getDescription()).thenReturn(description);
         jUnitReporter.startExecutionUnit(executionUnitRunner, runNotifier);
     }

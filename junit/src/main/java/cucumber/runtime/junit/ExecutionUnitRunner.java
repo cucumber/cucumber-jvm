@@ -8,6 +8,7 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,13 +37,14 @@ public class ExecutionUnitRunner extends ParentRunner<Step> {
 
     @Override
     public String getName() {
-        return cucumberScenario.getVisualName();
+        return cucumberScenario.getVisualName().substring(cucumberScenario.getVisualName().lastIndexOf('.')+1);
     }
 
     @Override
     public Description getDescription() {
         if (description == null) {
-            description = Description.createSuiteDescription(getName(), cucumberScenario.getGherkinModel());
+            //description = createDescription(cucumberScenario.getVisualName(), getName(), cucumberScenario.getGherkinModel());
+            description = Description.createSuiteDescription(cucumberScenario.getVisualName(), cucumberScenario.getGherkinModel());
 
             if (cucumberScenario.getCucumberBackground() != null) {
                 for (Step backgroundStep : cucumberScenario.getCucumberBackground().getSteps()) {
@@ -70,10 +72,30 @@ public class ExecutionUnitRunner extends ParentRunner<Step> {
     protected Description describeChild(Step step) {
         Description description = stepDescriptions.get(step);
         if (description == null) {
-            description = Description.createTestDescription(getName(), step.getKeyword() + step.getName(), step);
+            description = createDescription(cucumberScenario.getVisualName(), step.getKeyword() + step.getName(), step);
             stepDescriptions.put(step, description);
         }
         return description;
+    }
+
+    private static Description createDescription(String className, String name, Serializable uniqueId) {
+        return Description.createTestDescription(makeClassNameSafe(className), makeNameSafe(name), uniqueId);
+    }
+
+    private static String makeClassNameSafe(String className) {
+        String parenthesisSafe = className.replaceAll("\\(","{").replaceAll("\\)","}");
+        int indexOfExampleStart = parenthesisSafe.indexOf(".|");
+        if (indexOfExampleStart == -1) {
+            return parenthesisSafe;
+        } else {
+            String scenarioPart = parenthesisSafe.substring(0, indexOfExampleStart+1);
+            String examplePart = parenthesisSafe.substring(indexOfExampleStart+1);
+            return scenarioPart + examplePart.replaceAll("\\.",",");
+        }
+    }
+
+    private static String makeNameSafe(String name) {
+        return name.replaceAll("\\(","{").replaceAll("\\)","}").replaceAll("\\.",",");
     }
 
     @Override
