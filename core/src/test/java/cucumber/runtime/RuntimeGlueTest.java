@@ -1,6 +1,7 @@
 package cucumber.runtime;
 
 import cucumber.runtime.xstream.LocalizedXStreams;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -9,10 +10,17 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class RuntimeGlueTest {
+
+    private RuntimeGlue glue;
+
+    @Before
+    public void setUpGlue() throws Exception {
+        glue = new RuntimeGlue(new UndefinedStepsTracker(),
+                new LocalizedXStreams(Thread.currentThread().getContextClassLoader()));
+    }
+
     @Test
     public void throws_duplicate_error_on_dupe_stepdefs() {
-        RuntimeGlue glue = new RuntimeGlue(new UndefinedStepsTracker(), new LocalizedXStreams(Thread.currentThread().getContextClassLoader()));
-
         StepDefinition a = mockStepDefinition("hello", "foo.bf:10");
         glue.addStepDefinition(a);
 
@@ -27,13 +35,14 @@ public class RuntimeGlueTest {
 
     @Test
     public void does_not_throw_duplicate_error_on_dupe_stepdefs_with_identical_locations() {
-        RuntimeGlue glue = new RuntimeGlue(new UndefinedStepsTracker(), new LocalizedXStreams(Thread.currentThread().getContextClassLoader()));
-
         StepDefinition a = mockStepDefinition("hello", "foo.bf:10");
         glue.addStepDefinition(a);
 
         StepDefinition b = mockStepDefinition("hello", "foo.bf:10");
         glue.addStepDefinition(b);
+
+        // It would be great to write an assertion here to match
+        // the exact count of step definition added in the glue
     }
 
     private StepDefinition mockStepDefinition(String pattern, String location) {
