@@ -199,11 +199,11 @@ public class JUnitReporter implements Reporter, Formatter {
 
     @Override
     public void startOfScenarioLifeCycle(Scenario scenario) {
-        // NoOp
+        formatter.startOfScenarioLifeCycle(scenario);
     }
 
     @Override
     public void endOfScenarioLifeCycle(Scenario scenario) {
-        // NoOp
+        formatter.endOfScenarioLifeCycle(scenario);
     }
 }

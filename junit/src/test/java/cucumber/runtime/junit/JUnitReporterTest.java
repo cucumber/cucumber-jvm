@@ -3,7 +3,14 @@ package cucumber.runtime.junit;
 import cucumber.api.PendingException;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
+import gherkin.formatter.model.Background;
+import gherkin.formatter.model.Examples;
+import gherkin.formatter.model.Feature;
+import gherkin.formatter.model.Match;
 import gherkin.formatter.model.Result;
+import gherkin.formatter.model.Scenario;
+import gherkin.formatter.model.ScenarioOutline;
+import gherkin.formatter.model.Step;
 import org.junit.Test;
 import org.junit.internal.runners.model.EachTestNotifier;
 import org.junit.runner.Description;
@@ -151,6 +158,85 @@ public class JUnitReporterTest {
         verify(stepNotifier).fireTestFinished();
         verify(stepNotifier, times(0)).addFailure(Matchers.<Throwable>any(Throwable.class));
         verify(stepNotifier, times(0)).fireTestIgnored();
+    }
+
+    @Test
+    public void forward_calls_to_formatter_interface_methods() throws Exception {
+        String uri = "uri";
+        Feature feature = mock(Feature.class);
+        Background background = mock(Background.class);
+        ScenarioOutline scenarioOutline = mock(ScenarioOutline.class);
+        Examples examples = mock(Examples.class);
+        Scenario scenario = mock(Scenario.class);
+        Step step = mock(Step.class);
+        Formatter formatter = mock(Formatter.class);
+        jUnitReporter = new JUnitReporter(mock(Reporter.class), formatter, false);
+
+        jUnitReporter.uri(uri);
+        jUnitReporter.feature(feature);
+        jUnitReporter.scenarioOutline(scenarioOutline);
+        jUnitReporter.examples(examples);
+        jUnitReporter.startOfScenarioLifeCycle(scenario);
+        jUnitReporter.background(background);
+        jUnitReporter.scenario(scenario);
+        jUnitReporter.step(step);
+        jUnitReporter.endOfScenarioLifeCycle(scenario);
+        jUnitReporter.eof();
+        jUnitReporter.done();
+        jUnitReporter.close();
+
+        verify(formatter).uri(uri);
+        verify(formatter).feature(feature);
+        verify(formatter).scenarioOutline(scenarioOutline);
+        verify(formatter).examples(examples);
+        verify(formatter).startOfScenarioLifeCycle(scenario);;
+        verify(formatter).background(background);
+        verify(formatter).scenario(scenario);
+        verify(formatter).step(step);
+        verify(formatter).endOfScenarioLifeCycle(scenario);
+        verify(formatter).eof();
+        verify(formatter).done();
+        verify(formatter).close();
+    }
+
+    @Test
+    public void forward_calls_to_reporter_interface_methods() throws Exception {
+        Match match = mock(Match.class);
+        Result result = mockResult();
+        ExecutionUnitRunner executionUnitRunner = mockExecutionUnitRunner();
+        String mimeType = "mimeType";
+        byte data[] = new byte[] {1};
+        String text = "text";
+        Reporter reporter = mock(Reporter.class);
+        jUnitReporter = new JUnitReporter(reporter, mock(Formatter.class), false);
+
+        jUnitReporter.startExecutionUnit(executionUnitRunner, mock(RunNotifier.class));
+        jUnitReporter.before(match, result);
+        jUnitReporter.step(mock(Step.class));
+        jUnitReporter.match(match);
+        jUnitReporter.embedding(mimeType, data);
+        jUnitReporter.write(text);
+        jUnitReporter.result(result);
+        jUnitReporter.after(match, result);
+
+        verify(reporter).before(match, result);
+        verify(reporter).match(match);
+        verify(reporter).embedding(mimeType, data);
+        verify(reporter).write(text);
+        verify(reporter).result(result);
+        verify(reporter).after(match, result);
+    }
+
+    private Result mockResult() {
+        Result result = mock(Result.class);
+        when(result.getStatus()).thenReturn("passed");
+        return result;
+    }
+
+    private ExecutionUnitRunner mockExecutionUnitRunner() {
+        ExecutionUnitRunner executionUnitRunner = mock(ExecutionUnitRunner.class);
+        when(executionUnitRunner.getDescription()).thenReturn(mock(Description.class));
+        return executionUnitRunner;
     }
 
     private void createDefaultRunNotifier() {
