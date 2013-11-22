@@ -4,6 +4,7 @@ import cucumber.api.Delimiter;
 import cucumber.api.Format;
 import cucumber.api.Transform;
 import cucumber.api.Transformer;
+import cucumber.api.Transpose;
 import cucumber.deps.com.thoughtworks.xstream.annotations.XStreamConverter;
 import cucumber.deps.com.thoughtworks.xstream.converters.SingleValueConverter;
 import cucumber.runtime.xstream.LocalizedXStreams;
@@ -24,6 +25,7 @@ public class ParameterInfo {
     private final Type type;
     private final String format;
     private final String delimiter;
+    private final boolean transposed;
     private final Transformer transformer;
 
     public static List<ParameterInfo> fromMethod(Method method) {
@@ -33,6 +35,7 @@ public class ParameterInfo {
         for (int i = 0; i < genericParameterTypes.length; i++) {
             String format = null;
             String delimiter = DEFAULT_DELIMITER;
+            boolean transposed = false;
             Transformer transformer = null;
             for (Annotation annotation : annotations[i]) {
                 if (annotation instanceof Format) {
@@ -40,6 +43,9 @@ public class ParameterInfo {
                 }
                 if (annotation instanceof Delimiter) {
                     delimiter = ((Delimiter) annotation).value();
+                }
+                if (annotation instanceof Transpose) {
+                    transposed = ((Transpose) annotation).value();
                 }
                 if (annotation instanceof Transform) {
                     try {
@@ -51,15 +57,20 @@ public class ParameterInfo {
                     }
                 }
             }
-            result.add(new ParameterInfo(genericParameterTypes[i], format, delimiter, transformer));
+            result.add(new ParameterInfo(genericParameterTypes[i], format, delimiter, transposed, transformer));
         }
         return result;
     }
 
     public ParameterInfo(Type type, String format, String delimiter, Transformer transformer) {
+    	this(type, format, delimiter, false, transformer);
+    }
+    
+    public ParameterInfo(Type type, String format, String delimiter, boolean transposed, Transformer transformer) {
         this.type = type;
         this.format = format;
         this.delimiter = delimiter;
+        this.transposed = transposed;
         this.transformer = transformer;
     }
 
@@ -77,6 +88,10 @@ public class ParameterInfo {
 
     public Type getType() {
         return type;
+    }
+    
+    public boolean isTransposed() {
+        return transposed;
     }
 
     @Override
