@@ -187,6 +187,29 @@ public class DataTable {
         }
         return result;
     }
+    
+    public DataTable transpose() {
+    	List<List<String>> transposed = new ArrayList<List<String>>();
+        for (int i = 0; i < gherkinRows.size(); i++) {
+	        Row gherkinRow = gherkinRows.get(i);
+	        for (int j = 0; j < gherkinRow.getCells().size(); j++) {
+	            List<String> row = null;
+	            if (j < transposed.size()) {
+	                row = transposed.get(j);
+	            }
+	            if (row == null) {
+	                row = new ArrayList<String>();
+	                transposed.add(row);
+	            }
+	            // fixes non rectangular tables
+	            while (i > row.size()) {
+	                row.add(new String());
+	            }
+	            row.add(gherkinRow.getCells().get(j));
+	        }
+	    }
+	    return DataTable.create(transposed);
+    }
 
     @Override
     public boolean equals(Object o) {
