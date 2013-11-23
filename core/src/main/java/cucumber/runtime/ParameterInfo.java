@@ -63,9 +63,9 @@ public class ParameterInfo {
     }
 
     public ParameterInfo(Type type, String format, String delimiter, Transformer transformer) {
-    	this(type, format, delimiter, false, transformer);
+        this(type, format, delimiter, false, transformer);
     }
-    
+
     public ParameterInfo(Type type, String format, String delimiter, boolean transposed, Transformer transformer) {
         this.type = type;
         this.format = format;
@@ -89,7 +89,7 @@ public class ParameterInfo {
     public Type getType() {
         return type;
     }
-    
+
     public boolean isTransposed() {
         return transposed;
     }

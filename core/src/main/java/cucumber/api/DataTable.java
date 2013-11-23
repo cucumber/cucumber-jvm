@@ -65,7 +65,7 @@ public class DataTable {
     }
     
     private DataTable(List<DataTableRow> gherkinRows, List<List<String>> raw, TableConverter tableConverter) {
-    	this.gherkinRows = gherkinRows;
+        this.gherkinRows = gherkinRows;
         this.tableConverter = tableConverter;
         this.raw = Collections.unmodifiableList(raw);
     }
@@ -111,22 +111,6 @@ public class DataTable {
      */
     public <T> List<T> asList(Type type) {
         List<T> result = tableConverter.toList(type, this, false);
-        return result;
-    }
-    
-    /**
-     * Converts the table to a List of objects. The first column is used to identifies the fields/properties
-     * of the objects.
-     * <p/>
-     * Backends that support generic types can declare a parameter as a List of a type, and Cucumber will
-     * do the conversion automatically.
-     *
-     * @param type the type of the result (should be a {@link List} generic type)
-     * @param <T>  the type of each object
-     * @return a list of objects
-     */
-    public <T> List<T> asTransposedList(Type type) {
-        List<T> result = tableConverter.toList(type, this, true);
         return result;
     }
 
@@ -213,9 +197,9 @@ public class DataTable {
         }
         return result;
     }
-    
+
     public DataTable transpose() {
-    	List<List<String>> transposed = new ArrayList<List<String>>();
+        List<List<String>> transposed = new ArrayList<List<String>>();
         for (int i = 0; i < gherkinRows.size(); i++) {
 	        Row gherkinRow = gherkinRows.get(i);
 	        for (int j = 0; j < gherkinRow.getCells().size(); j++) {

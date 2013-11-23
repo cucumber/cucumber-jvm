@@ -55,9 +55,9 @@ public class TableConverter {
             if (itemType == null) {
                 throw new CucumberException("Not a List type: " + type);
             }
-            
+
             if (transposed) {
-            	dataTable = dataTable.transpose();
+                dataTable = dataTable.transpose();
             }
 
             Type listItemType = listItemType(itemType);

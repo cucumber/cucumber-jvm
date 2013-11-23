@@ -25,7 +25,7 @@ public class DataTableTest {
             assertEquals("Cols size: " + list, 3, list.size());
         }
     }
-    
+
     @Test
     public void transposedRawShouldHaveTwoColumnsAndThreeRows() {
         List<List<String>> raw = createSimpleTable().transpose().raw();
@@ -34,7 +34,7 @@ public class DataTableTest {
             assertEquals("Cols size: " + list, 2, list.size());
         }
     }
-    
+
     @Test
     public void canTransposeNonRectangularTables() {
         List<List<String>> raw = createNonRectangularTable().transpose().raw();
@@ -107,12 +107,12 @@ public class DataTableTest {
     public DataTable createSimpleTable() {
         return createTable(asList("one", "four", "seven"), asList("4444", "55555", "666666"));
     }
-    
+
     public DataTable createNonRectangularTable() {
         return createTable(asList("one", "four", "seven"), 
-        		asList("a1", "a4444", "a7777777", "zero"),
-        		asList("b1"),
-        		asList("c1", "c4444"));
+                asList("a1", "a4444", "a7777777", "zero"),
+                asList("b1"),
+                asList("c1", "c4444"));
     }
 
     private DataTable createTable(List<String>... rows) {

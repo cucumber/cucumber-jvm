@@ -56,7 +56,7 @@ public class FromDataTableTest {
         public void listOfPojos(@Format("yyyy-MM-dd") List<UserPojo> listOfPojos) {
             this.listOfPojos = listOfPojos;
         }
-        
+
         public void listOfPojosTransposed(@Transpose @Format("yyyy-MM-dd") List<UserPojo> listOfPojos) {
             this.listOfPojos = listOfPojos;
         }
@@ -64,7 +64,7 @@ public class FromDataTableTest {
         public void listOfBeans(@Format("yyyy-MM-dd") List<UserBean> listOfBeans) {
             this.listOfBeans = listOfBeans;
         }
-        
+
         public void listOfBeansTransposed(@Transpose @Format("yyyy-MM-dd") List<UserBean> listOfBeans) {
             this.listOfBeans = listOfBeans;
         }
@@ -72,7 +72,7 @@ public class FromDataTableTest {
         public void listOfUsersWithNameField(@Format("yyyy-MM-dd") List<UserWithNameField> listOfUsersWithNameField) {
             this.listOfUsersWithNameField = listOfUsersWithNameField;
         }
-        
+
         public void listOfUsersTransposedWithNameField(@Transpose @Format("yyyy-MM-dd") List<UserWithNameField> listOfUsersWithNameField) {
             this.listOfUsersWithNameField = listOfUsersWithNameField;
         }
@@ -151,7 +151,7 @@ public class FromDataTableTest {
         StepDefs stepDefs = runStepDef(m, listOfDatesWithHeader());
         assertEquals(sidsBirthday(), stepDefs.listOfBeans.get(0).getBirthDate());
     }
-    
+
     @Test
     public void transforms_to_list_of_beans_transposed() throws Throwable {
         Method m = StepDefs.class.getMethod("listOfBeansTransposed", List.class);
@@ -167,7 +167,7 @@ public class FromDataTableTest {
         assertEquals("Sid", stepDefs.listOfUsersWithNameField.get(0).name.first);
         assertEquals("Vicious", stepDefs.listOfUsersWithNameField.get(0).name.last);
     }
-    
+
     @Test
     public void converts_table_to_list_of_class_with_special_fields_transposed() throws Throwable {
         Method m = StepDefs.class.getMethod("listOfUsersTransposedWithNameField", List.class);
@@ -254,7 +254,7 @@ public class FromDataTableTest {
         rows.add(new DataTableRow(NO_COMMENTS, asList("1000", "999"), 2));
         return rows;
     }
-    
+
     private List<DataTableRow> transposedListOfDatesWithHeader() {
         List<DataTableRow> rows = new ArrayList<DataTableRow>();
         rows.add(new DataTableRow(NO_COMMENTS, asList("Birth Date", "1957-05-10"), 1));
