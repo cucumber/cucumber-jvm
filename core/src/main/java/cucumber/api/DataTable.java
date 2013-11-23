@@ -68,7 +68,7 @@ public class DataTable {
         }
         this.raw = Collections.unmodifiableList(raw);
     }
-    
+
     private DataTable(List<DataTableRow> gherkinRows, List<List<String>> raw, TableConverter tableConverter) {
         this.gherkinRows = gherkinRows;
         this.tableConverter = tableConverter;
