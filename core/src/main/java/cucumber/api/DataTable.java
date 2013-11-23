@@ -1,5 +1,6 @@
 package cucumber.api;
 
+import cucumber.runtime.CucumberException;
 import cucumber.runtime.ParameterInfo;
 import cucumber.runtime.table.DiffableRow;
 import cucumber.runtime.table.TableConverter;
@@ -55,10 +56,14 @@ public class DataTable {
     public DataTable(List<DataTableRow> gherkinRows, TableConverter tableConverter) {
         this.gherkinRows = gherkinRows;
         this.tableConverter = tableConverter;
+        int columns = gherkinRows.get(0).getCells().size();
         List<List<String>> raw = new ArrayList<List<String>>();
         for (Row row : gherkinRows) {
             List<String> list = new ArrayList<String>();
             list.addAll(row.getCells());
+            if (columns != row.getCells().size()) {
+                throw new CucumberException(String.format("Table is unbalanced: expected %s column(s) but found %s.", columns, row.getCells().size()));
+            }
             raw.add(Collections.unmodifiableList(list));
         }
         this.raw = Collections.unmodifiableList(raw);
@@ -201,24 +206,20 @@ public class DataTable {
     public DataTable transpose() {
         List<List<String>> transposed = new ArrayList<List<String>>();
         for (int i = 0; i < gherkinRows.size(); i++) {
-	        Row gherkinRow = gherkinRows.get(i);
-	        for (int j = 0; j < gherkinRow.getCells().size(); j++) {
-	            List<String> row = null;
-	            if (j < transposed.size()) {
-	                row = transposed.get(j);
-	            }
-	            if (row == null) {
-	                row = new ArrayList<String>();
-	                transposed.add(row);
-	            }
-	            // fixes non rectangular tables
-	            while (i > row.size()) {
-	                row.add(new String());
-	            }
-	            row.add(gherkinRow.getCells().get(j));
-	        }
-	    }
-	    return new DataTable(this.gherkinRows, transposed, this.tableConverter);
+            Row gherkinRow = gherkinRows.get(i);
+            for (int j = 0; j < gherkinRow.getCells().size(); j++) {
+                List<String> row = null;
+                if (j < transposed.size()) {
+                    row = transposed.get(j);
+                }
+                if (row == null) {
+                    row = new ArrayList<String>();
+                    transposed.add(row);
+                }
+                row.add(gherkinRow.getCells().get(j));
+            }
+        }
+        return new DataTable(this.gherkinRows, transposed, this.tableConverter);
     }
 
     @Override

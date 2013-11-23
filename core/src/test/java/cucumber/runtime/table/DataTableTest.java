@@ -1,6 +1,7 @@
 package cucumber.runtime.table;
 
 import cucumber.api.DataTable;
+import cucumber.runtime.CucumberException;
 import cucumber.runtime.xstream.LocalizedXStreams;
 import gherkin.formatter.model.Comment;
 import gherkin.formatter.model.DataTableRow;
@@ -35,15 +36,15 @@ public class DataTableTest {
         }
     }
 
-    @Test
-    public void canTransposeNonRectangularTables() {
-        List<List<String>> raw = createNonRectangularTable().transpose().raw();
-        assertEquals("Rows size", 4, raw.size());
-        assertEquals("Cols size: " + raw.get(0), 4, raw.get(0).size());
-        assertEquals("Cols size: " + raw.get(1), 4, raw.get(1).size());
-        assertEquals("Cols size: " + raw.get(2), 2, raw.get(2).size());
-        assertEquals("Cols size: " + raw.get(3), 2, raw.get(3).size());
-        }
+    @Test(expected=CucumberException.class)
+    public void canNotSupportNonRectangularTablesMissingColumn() {
+        List<List<String>> raw = createNonRectangularTableMissingColumn().raw();
+    }
+
+    @Test(expected=CucumberException.class)
+    public void canNotSupportNonRectangularTablesExceedingColumn() {
+        List<List<String>> raw = createNonRectangularTableExceedingColumn().raw();
+    }
 
     @Test
     public void canCreateTableFromListOfListOfString() {
@@ -108,11 +109,15 @@ public class DataTableTest {
         return createTable(asList("one", "four", "seven"), asList("4444", "55555", "666666"));
     }
 
-    public DataTable createNonRectangularTable() {
+    public DataTable createNonRectangularTableMissingColumn() {
         return createTable(asList("one", "four", "seven"), 
-                asList("a1", "a4444", "a7777777", "zero"),
-                asList("b1"),
-                asList("c1", "c4444"));
+                asList("a1", "a4444"),
+                asList("b1"));
+    }
+
+    public DataTable createNonRectangularTableExceedingColumn() {
+        return createTable(asList("one", "four", "seven"), 
+                asList("a1", "a4444", "b7777777", "zero"));
     }
 
     private DataTable createTable(List<String>... rows) {
