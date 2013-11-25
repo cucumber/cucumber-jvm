@@ -13,6 +13,9 @@ import java.util.List;
 public class RuntimeOptionsFactory {
     private final Class clazz;
     private final Class<? extends Annotation>[] annotationClasses;
+    private boolean featuresSpecified = false;
+    private boolean glueSpecified = false;
+    private boolean formatSpecified = false;
 
     public RuntimeOptionsFactory(Class clazz, Class<? extends Annotation>[] annotationClasses) {
         this.clazz = clazz;
@@ -39,11 +42,14 @@ public class RuntimeOptionsFactory {
                     addName(options, args);
                     addDotCucumber(options, args);
                     addSnippets(options, args);
+                    addGlue(optionsArray, args);
+                    addFeatures(optionsArray, args);
                 }
             }
-            addGlue(optionsArray, args, classWithOptions);
-            addFeatures(optionsArray, args, classWithOptions);
         }
+        addDefaultFeaturePathIfNoFeaturePathIsSpecified(args, clazz);
+        addDefaultGlueIfNoGlueIsSpecified(args, clazz);
+        addDefaultFormatIfNoFormatIsSpecified(args);
         return args;
     }
 
@@ -92,37 +98,46 @@ public class RuntimeOptionsFactory {
                 args.add("--format");
                 args.add(format);
             }
-        } else {
+            formatSpecified = true;
+        }
+    }
+
+    private void addDefaultFormatIfNoFormatIsSpecified(List<String> args) {
+        if (!formatSpecified) {
             args.add("--format");
             args.add("null");
         }
     }
 
-    private void addFeatures(Annotation[] optionsArray, List<String> args, Class clazz) {
-        boolean specified = false;
+    private void addFeatures(Annotation[] optionsArray, List<String> args) {
         for (Annotation options : optionsArray) {
             if (options != null && this.<String[]>invoke(options, "features").length != 0) {
                 Collections.addAll(args, this.<String[]>invoke(options, "features"));
-                specified = true;
+                featuresSpecified = true;
             }
         }
-        if (!specified) {
+    }
+
+    private void addDefaultFeaturePathIfNoFeaturePathIsSpecified(List<String> args, Class clazz) {
+        if (!featuresSpecified) {
             args.add(MultiLoader.CLASSPATH_SCHEME + packagePath(clazz));
         }
     }
 
-    private void addGlue(Annotation[] optionsArray, List<String> args, Class clazz) {
-        boolean specified = false;
+    private void addGlue(Annotation[] optionsArray, List<String> args) {
         for (Annotation options : optionsArray) {
             if (options != null && this.<String[]>invoke(options, "glue").length != 0) {
                 for (String glue : this.<String[]>invoke(options, "glue")) {
                     args.add("--glue");
                     args.add(glue);
                 }
-                specified = true;
+                glueSpecified = true;
             }
         }
-        if (!specified) {
+    }
+
+    private void addDefaultGlueIfNoGlueIsSpecified(List<String> args, Class clazz) {
+        if (!glueSpecified) {
             args.add("--glue");
             args.add(MultiLoader.CLASSPATH_SCHEME + packagePath(clazz));
         }
