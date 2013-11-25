@@ -32,11 +32,6 @@ public class TestNGCucumberRunner {
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(clazz, new Class[]{CucumberOptions.class});
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
 
-        // remove duplicates from glue path.
-        List<String> uniqueGlue = new ArrayList<String>(new HashSet<String>(runtimeOptions.getGlue()));
-        runtimeOptions.getGlue().clear();
-        runtimeOptions.getGlue().addAll(uniqueGlue);
-        
         TestNgReporter reporter = new TestNgReporter(System.out);
         runtimeOptions.getFormatters().add(reporter);
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
