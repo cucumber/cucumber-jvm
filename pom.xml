@@ -57,7 +57,7 @@
         <freemarker.version>2.3.20</freemarker.version>
         <!-- Bumping to 3.1.0 or above requires JDK 7 or else we'll get Unsupported major.minor version 51.0 -->
         <javax.servlet-api.version>3.0.1</javax.servlet-api.version>
-        <android-maven-plugin.version>3.6.1</android-maven-plugin.version>
+        <android-maven-plugin.version>3.8.0</android-maven-plugin.version>
         <!-- Target android sdk api level 14 = 4.1.1.4 -->
         <android.version>4.1.1.4</android.version>
         <wicket.version>6.10.0</wicket.version>
