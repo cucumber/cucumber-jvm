@@ -2,6 +2,7 @@ package cucumber.runtime;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -13,7 +14,9 @@ public class Timeout {
         } else {
             final Thread executionThread = Thread.currentThread();
             final AtomicBoolean done = new AtomicBoolean();
-            ScheduledFuture<?> timer = Executors.newSingleThreadScheduledExecutor().schedule(new Runnable() {
+
+            ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+            ScheduledFuture<?> timer = executorService.schedule(new Runnable() {
                 @Override
                 public void run() {
                     if (!done.get()) {
@@ -28,6 +31,7 @@ public class Timeout {
             } finally {
                 done.set(true);
                 timer.cancel(true);
+                executorService.shutdownNow();
             }
 
         }
