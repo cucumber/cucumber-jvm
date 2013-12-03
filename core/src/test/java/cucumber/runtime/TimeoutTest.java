@@ -5,9 +5,7 @@ import org.junit.Test;
 import java.util.concurrent.TimeoutException;
 
 import static java.lang.Thread.sleep;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 public class TimeoutTest {
     @Test
@@ -34,28 +32,6 @@ public class TimeoutTest {
         fail();
     }
 
-    @Test
-    public void no_thread_leak() throws Throwable{
-
-        final long startNumberOfThreads = Thread.getAllStackTraces().size();
-
-        for(int i = 0; i < 1000; i++){
-            Timeout.timeout(new Timeout.Callback<String>() {
-                @Override
-                public String call() throws Throwable {
-                    return null;
-                }
-            }, 10);
-        }
-        Thread.sleep(10);
-
-        final long finishNumberOfThreads = Thread.getAllStackTraces().size();
-
-        assertTrue("The number of threads have grown significantly. start: " + startNumberOfThreads + ",  end:" + finishNumberOfThreads,
-                Math.abs(finishNumberOfThreads - startNumberOfThreads) < 5);
-
-    }
-
     @Test(expected = TimeoutException.class)
     public void times_out_infinite_loop_if_it_takes_too_long() throws Throwable {
         final Slow slow = new Slow();
@@ -69,8 +45,28 @@ public class TimeoutTest {
         fail();
     }
 
+    @Test
+    public void doesnt_leak_threads() throws Throwable {
 
+        long initialNumberOfThreads = Thread.getAllStackTraces().size();
 
+        boolean cleanedUp = false;
+        for (int i = 0; i < 1000; i++) {
+            Timeout.timeout(new Timeout.Callback<String>() {
+                @Override
+                public String call() throws Throwable {
+                    return null;
+                }
+            }, 10);
+            Thread.sleep(5);
+            long currentNumberOfThreads = Thread.getAllStackTraces().size();
+            if (i > 20 && currentNumberOfThreads == initialNumberOfThreads) {
+                cleanedUp = true;
+                break;
+            }
+        }
+        assertTrue("Threads weren't cleaned up", cleanedUp);
+    }
 
     public static class Slow {
         public String slow() throws InterruptedException {
