@@ -9,7 +9,7 @@ public interface StopWatch {
     long stop();
 
     StopWatch SYSTEM = new StopWatch() {
-        public ThreadLocal<Long> start = new ThreadLocal<Long>();
+        private final ThreadLocal<Long> start = new ThreadLocal<Long>();
 
         @Override
         public void start() {
