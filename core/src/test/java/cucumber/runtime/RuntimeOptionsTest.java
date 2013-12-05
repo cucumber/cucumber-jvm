@@ -186,6 +186,24 @@ public class RuntimeOptionsTest {
     }
 
     @Test
+    public void clobbers_formatters_from_cli_if_formatters_specified_in_cucumber_options_property() {
+        Properties properties = new Properties();
+        properties.setProperty("cucumber.options", "--format pretty");
+        RuntimeOptions runtimeOptions = new RuntimeOptions(new Env(properties), asList("--format", "progress"));
+        assertEquals(1, runtimeOptions.getFormatters().size());
+        assertEquals("cucumber.runtime.formatter.CucumberPrettyFormatter", runtimeOptions.getFormatters().get(0).getClass().getName());
+    }
+
+    @Test
+    public void preserves_formatters_from_cli_if_formatters_not_specified_in_cucumber_options_property() {
+        Properties properties = new Properties();
+        properties.setProperty("cucumber.options", "featurePath");
+        RuntimeOptions runtimeOptions = new RuntimeOptions(new Env(properties), asList("--format", "pretty"));
+        assertEquals(1, runtimeOptions.getFormatters().size());
+        assertEquals("cucumber.runtime.formatter.CucumberPrettyFormatter", runtimeOptions.getFormatters().get(0).getClass().getName());
+    }
+
+    @Test
     public void clobbers_line_filters_from_cli_if_features_specified_in_cucumber_options_property() {
         Properties properties = new Properties();
         properties.setProperty("cucumber.options", "new newer");
