@@ -1,10 +1,24 @@
 package cucumber.runtime.groovy;
 
+import static cucumber.runtime.io.MultiLoader.*;
+
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.regex.Pattern;
+
+import org.codehaus.groovy.control.CompilerConfiguration;
+import org.codehaus.groovy.runtime.DefaultGroovyMethods;
+import org.codehaus.groovy.runtime.InvokerInvocationException;
+import org.codehaus.groovy.runtime.metaclass.MissingMethodExceptionNoStack;
+
 import cucumber.runtime.Backend;
+import cucumber.runtime.ClassFinder;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Glue;
 import cucumber.runtime.UnreportedStepExecutor;
-import cucumber.runtime.ClassFinder;
 import cucumber.runtime.io.Resource;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
@@ -16,18 +30,6 @@ import groovy.lang.Binding;
 import groovy.lang.Closure;
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
-import org.codehaus.groovy.control.CompilerConfiguration;
-import org.codehaus.groovy.runtime.DefaultGroovyMethods;
-import org.codehaus.groovy.runtime.InvokerInvocationException;
-
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.regex.Pattern;
-
-import static cucumber.runtime.io.MultiLoader.packageName;
 
 public class GroovyBackend implements Backend {
     public static GroovyBackend instance;
@@ -86,12 +88,24 @@ public class GroovyBackend implements Backend {
         Class scriptClass = script.getMetaClass().getTheClass();
         if (isScript(script) && !scripts.contains(scriptClass)) {
             script.setBinding(context);
-            script.run();
+
+	        invokeSetupMethodOn(script);
+
+	        script.run();
             scripts.add(scriptClass);
         }
     }
 
-    @Override
+	private void invokeSetupMethodOn(Script script) {
+		try {
+			script.invokeMethod("setup", null);
+		} catch (MissingMethodExceptionNoStack e) {
+			String scriptName = script.getMetaClass().getTheClass().getSimpleName();
+			System.out.print("No setup() method defined in script '" + scriptName + "'");
+		}
+	}
+
+	@Override
     public void setUnreportedStepExecutor(UnreportedStepExecutor executor) {
         //Not used yet
     }
