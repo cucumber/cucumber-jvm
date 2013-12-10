@@ -9,6 +9,7 @@ import org.webbitserver.handler.EmbeddedResourceHandler;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.URI;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 
 public class TemperatureServer {
@@ -39,15 +40,15 @@ public class TemperatureServer {
         return (double) Math.round(n * 10) / 10;
     }
 
-    public void start() throws IOException {
-        webServer.start();
+    public void start() throws IOException, ExecutionException, InterruptedException {
+        webServer.start().get();
     }
 
-    public void stop() throws IOException {
-        webServer.stop();
+    public void stop() throws IOException, ExecutionException, InterruptedException {
+        webServer.stop().get();
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, ExecutionException, InterruptedException {
         new TemperatureServer(9988).start();
     }
 }

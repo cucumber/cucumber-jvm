@@ -38,7 +38,7 @@
         <junit.version>4.11</junit.version>
         <jython.version>2.7-b1</jython.version>
         <mockito.version>1.9.5</mockito.version>
-        <selenium.version>2.35.0</selenium.version>
+        <selenium.version>2.38.0</selenium.version>
         <webbit.version>0.4.15</webbit.version>
         <webbit-rest.version>0.3.0</webbit-rest.version>
         <jruby.version>1.7.4</jruby.version>
@@ -328,7 +328,7 @@
             </dependency>
             <dependency>
                 <groupId>org.seleniumhq.selenium</groupId>
-                <artifactId>selenium-chrome-driver</artifactId>
+                <artifactId>selenium-firefox-driver</artifactId>
                 <version>${selenium.version}</version>
             </dependency>
             <dependency>
@@ -340,7 +340,6 @@
                 <groupId>org.seleniumhq.selenium</groupId>
                 <artifactId>selenium-java</artifactId>
                 <version>${selenium.version}</version>
-                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.webbitserver</groupId>
