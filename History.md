@@ -1,5 +1,6 @@
 ## [1-1-6-SNAPSHOT (Git master)](https://github.com/cucumber/cucumber-jvm/compare/v1.1.5...master)
 
+* [Core] Add support for transposed tables. ([#382](https://github.com/cucumber/cucumber-jvm/issues/382), [#635](https://github.com/cucumber/cucumber-jvm/pull/635), Roberto Lo Giacco)
 * [Examples] Fixed concurrency bugs in Webbit Selenium example (Aslak Hellesøy)
 * [Core] Fixed thread leak in timeout implementation. ([#639](https://github.com/cucumber/cucumber-jvm/issues/639), [#640](https://github.com/cucumber/cucumber-jvm/pull/640), Nikolay Volnov)
 * [TestNG] Allow TestNG Cucumber runner to use composition instead of inheritance. ([#622](https://github.com/cucumber/cucumber-jvm/pull/622) Marty Kube)

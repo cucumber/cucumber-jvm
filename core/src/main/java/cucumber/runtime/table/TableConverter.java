@@ -44,7 +44,7 @@ public class TableConverter {
         this.parameterInfo = parameterInfo;
     }
 
-    public <T> T convert(Type type, DataTable dataTable) {
+    public <T> T convert(Type type, DataTable dataTable, boolean transposed) {
         try {
             xStream.setParameterType(parameterInfo);
             if (type == null || (type instanceof Class && ((Class) type).isAssignableFrom(DataTable.class))) {
@@ -54,6 +54,10 @@ public class TableConverter {
             Type itemType = listItemType(type);
             if (itemType == null) {
                 throw new CucumberException("Not a List type: " + type);
+            }
+
+            if (transposed) {
+                dataTable = dataTable.transpose();
             }
 
             Type listItemType = listItemType(itemType);
@@ -153,9 +157,16 @@ public class TableConverter {
      */
     public <T> List<T> toList(final Type type, DataTable dataTable) {
         if (type == null) {
-            return convert(new GenericListType(new GenericListType(String.class)), dataTable);
+            return convert(new GenericListType(new GenericListType(String.class)), dataTable, false);
         }
-        return convert(new GenericListType(type), dataTable);
+        return convert(new GenericListType(type), dataTable, false);
+    }
+    
+    public <T> List<T> toList(final Type type, DataTable dataTable, boolean transposed) {
+        if (type == null) {
+            return convert(new GenericListType(new GenericListType(String.class)), dataTable, transposed);
+        }
+        return convert(new GenericListType(type), dataTable, transposed);
     }
 
     /**

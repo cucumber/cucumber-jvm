@@ -82,7 +82,7 @@ public class StepDefinitionMatch extends Match {
         ParameterInfo parameterInfo = stepDefinition.getParameterType(n, argumentType);
         if (parameterInfo == null) {
             // Some backends return null because they don't know
-            parameterInfo = new ParameterInfo(argumentType, null, null, null);
+            parameterInfo = new ParameterInfo(argumentType, null, null, false, null);
         }
         return parameterInfo;
     }
@@ -91,7 +91,7 @@ public class StepDefinitionMatch extends Match {
         ParameterInfo parameterInfo = getParameterType(argIndex, DataTable.class);
         DataTable table = new DataTable(step.getRows(), new TableConverter(xStream, parameterInfo));
         Type type = parameterInfo.getType();
-        return table.convert(type);
+        return table.convert(type, parameterInfo.isTransposed());
     }
 
     private CucumberException arityMismatch(int parameterCount) {
