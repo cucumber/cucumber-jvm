@@ -1,6 +1,7 @@
 package cucumber.runtime.table;
 
 import cucumber.api.DataTable;
+import cucumber.runtime.CucumberException;
 import cucumber.runtime.xstream.LocalizedXStreams;
 import gherkin.formatter.model.Comment;
 import gherkin.formatter.model.DataTableRow;
@@ -24,6 +25,25 @@ public class DataTableTest {
         for (List<String> list : raw) {
             assertEquals("Cols size: " + list, 3, list.size());
         }
+    }
+
+    @Test
+    public void transposedRawShouldHaveTwoColumnsAndThreeRows() {
+        List<List<String>> raw = createSimpleTable().transpose().raw();
+        assertEquals("Rows size", 3, raw.size());
+        for (List<String> list : raw) {
+            assertEquals("Cols size: " + list, 2, list.size());
+        }
+    }
+
+    @Test(expected=CucumberException.class)
+    public void canNotSupportNonRectangularTablesMissingColumn() {
+        List<List<String>> raw = createNonRectangularTableMissingColumn().raw();
+    }
+
+    @Test(expected=CucumberException.class)
+    public void canNotSupportNonRectangularTablesExceedingColumn() {
+        List<List<String>> raw = createNonRectangularTableExceedingColumn().raw();
     }
 
     @Test
@@ -68,13 +88,36 @@ public class DataTableTest {
     }
 
     @Test
+    public void two_identical_transposed_tables_are_considered_equal() {
+        assertEquals(createSimpleTable().transpose(), createSimpleTable().transpose());
+        assertEquals(createSimpleTable().transpose().hashCode(), createSimpleTable().transpose().hashCode());
+    }
+
+    @Test
     public void two_different_tables_are_considered_non_equal() {
         assertFalse(createSimpleTable().equals(createTable(asList("one"))));
         assertNotSame(createSimpleTable().hashCode(), createTable(asList("one")).hashCode());
     }
 
+    @Test
+    public void two_different_transposed_tables_are_considered_non_equal() {
+        assertFalse(createSimpleTable().transpose().equals(createTable(asList("one")).transpose()));
+        assertNotSame(createSimpleTable().transpose().hashCode(), createTable(asList("one")).transpose().hashCode());
+    }
+
     public DataTable createSimpleTable() {
         return createTable(asList("one", "four", "seven"), asList("4444", "55555", "666666"));
+    }
+
+    public DataTable createNonRectangularTableMissingColumn() {
+        return createTable(asList("one", "four", "seven"), 
+                asList("a1", "a4444"),
+                asList("b1"));
+    }
+
+    public DataTable createNonRectangularTableExceedingColumn() {
+        return createTable(asList("one", "four", "seven"), 
+                asList("a1", "a4444", "b7777777", "zero"));
     }
 
     private DataTable createTable(List<String>... rows) {

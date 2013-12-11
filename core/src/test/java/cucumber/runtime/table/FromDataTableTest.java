@@ -3,6 +3,7 @@ package cucumber.runtime.table;
 import cucumber.api.DataTable;
 import cucumber.api.Format;
 import cucumber.api.Transformer;
+import cucumber.api.Transpose;
 import cucumber.deps.com.thoughtworks.xstream.annotations.XStreamConverter;
 import cucumber.deps.com.thoughtworks.xstream.converters.javabean.JavaBeanConverter;
 import cucumber.runtime.StepDefinition;
@@ -56,7 +57,15 @@ public class FromDataTableTest {
             this.listOfPojos = listOfPojos;
         }
 
+        public void listOfPojosTransposed(@Transpose @Format("yyyy-MM-dd") List<UserPojo> listOfPojos) {
+            this.listOfPojos = listOfPojos;
+        }
+
         public void listOfBeans(@Format("yyyy-MM-dd") List<UserBean> listOfBeans) {
+            this.listOfBeans = listOfBeans;
+        }
+
+        public void listOfBeansTransposed(@Transpose @Format("yyyy-MM-dd") List<UserBean> listOfBeans) {
             this.listOfBeans = listOfBeans;
         }
 
@@ -64,7 +73,15 @@ public class FromDataTableTest {
             this.listOfUsersWithNameField = listOfUsersWithNameField;
         }
 
+        public void listOfUsersTransposedWithNameField(@Transpose @Format("yyyy-MM-dd") List<UserWithNameField> listOfUsersWithNameField) {
+            this.listOfUsersWithNameField = listOfUsersWithNameField;
+        }
+
         public void listOfListOfDoubles(List<List<Double>> listOfListOfDoubles) {
+            this.listOfListOfDoubles = listOfListOfDoubles;
+        }
+
+        public void listOfListOfDoublesTransposed(@Transpose List<List<Double>> listOfListOfDoubles) {
             this.listOfListOfDoubles = listOfListOfDoubles;
         }
 
@@ -98,6 +115,15 @@ public class FromDataTableTest {
         assertEquals(sidsDeathcal().getTime(), stepDefs.listOfPojos.get(0).deathCal.getTime());
         assertNull(stepDefs.listOfPojos.get(1).deathCal);
     }
+    
+    @Test
+    public void transforms_to_list_of_pojos_transposed() throws Throwable {
+        Method m = StepDefs.class.getMethod("listOfPojosTransposed", List.class);
+        StepDefs stepDefs = runStepDef(m, transposedListOfDatesAndCalWithHeader());
+        assertEquals(sidsBirthday(), stepDefs.listOfPojos.get(0).birthDate);
+        assertEquals(sidsDeathcal().getTime(), stepDefs.listOfPojos.get(0).deathCal.getTime());
+        assertNull(stepDefs.listOfPojos.get(1).deathCal);
+    }
 
     @Test
     public void assigns_null_to_objects_when_empty_except_boolean_special_case() throws Throwable {
@@ -127,6 +153,13 @@ public class FromDataTableTest {
     }
 
     @Test
+    public void transforms_to_list_of_beans_transposed() throws Throwable {
+        Method m = StepDefs.class.getMethod("listOfBeansTransposed", List.class);
+        StepDefs stepDefs = runStepDef(m, transposedListOfDatesWithHeader());
+        assertEquals(sidsBirthday(), stepDefs.listOfBeans.get(0).getBirthDate());
+    }
+
+    @Test
     public void converts_table_to_list_of_class_with_special_fields() throws Throwable {
         Method m = StepDefs.class.getMethod("listOfUsersWithNameField", List.class);
         StepDefs stepDefs = runStepDef(m, listOfDatesAndNamesWithHeader());
@@ -136,9 +169,25 @@ public class FromDataTableTest {
     }
 
     @Test
+    public void converts_table_to_list_of_class_with_special_fields_transposed() throws Throwable {
+        Method m = StepDefs.class.getMethod("listOfUsersTransposedWithNameField", List.class);
+        StepDefs stepDefs = runStepDef(m, transposedListOfDatesAndNamesWithHeader());
+        assertEquals(sidsBirthday(), stepDefs.listOfUsersWithNameField.get(0).birthDate);
+        assertEquals("Sid", stepDefs.listOfUsersWithNameField.get(0).name.first);
+        assertEquals("Vicious", stepDefs.listOfUsersWithNameField.get(0).name.last);
+    }
+
+    @Test
     public void transforms_to_list_of_single_values() throws Throwable {
         Method m = StepDefs.class.getMethod("listOfListOfDoubles", List.class);
         StepDefs stepDefs = runStepDef(m, listOfDoublesWithoutHeader());
+        assertEquals("[[100.5, 99.5], [0.5, -0.5], [1000.0, 999.0]]", stepDefs.listOfListOfDoubles.toString());
+    }
+
+    @Test
+    public void transforms_to_list_of_single_values_transposed() throws Throwable {
+        Method m = StepDefs.class.getMethod("listOfListOfDoublesTransposed", List.class);
+        StepDefs stepDefs = runStepDef(m, transposedListOfDoublesWithoutHeader());
         assertEquals("[[100.5, 99.5], [0.5, -0.5], [1000.0, 999.0]]", stepDefs.listOfListOfDoubles.toString());
     }
 
@@ -203,6 +252,33 @@ public class FromDataTableTest {
         rows.add(new DataTableRow(NO_COMMENTS, asList("100.5", "99.5"), 2));
         rows.add(new DataTableRow(NO_COMMENTS, asList("0.5", "-0.5"), 2));
         rows.add(new DataTableRow(NO_COMMENTS, asList("1000", "999"), 2));
+        return rows;
+    }
+
+    private List<DataTableRow> transposedListOfDatesWithHeader() {
+        List<DataTableRow> rows = new ArrayList<DataTableRow>();
+        rows.add(new DataTableRow(NO_COMMENTS, asList("Birth Date", "1957-05-10"), 1));
+        return rows;
+    }
+
+    private List<DataTableRow> transposedListOfDatesAndCalWithHeader() {
+        List<DataTableRow> rows = new ArrayList<DataTableRow>();
+        rows.add(new DataTableRow(NO_COMMENTS, asList("Birth Date", "1957-05-10", ""), 1));
+        rows.add(new DataTableRow(NO_COMMENTS, asList("Death Cal", "1979-02-02", ""), 2));
+        return rows;
+    }
+
+    private List<DataTableRow> transposedListOfDatesAndNamesWithHeader() {
+        List<DataTableRow> rows = new ArrayList<DataTableRow>();
+        rows.add(new DataTableRow(NO_COMMENTS, asList("Birth Date", "1957-05-10"), 1));
+        rows.add(new DataTableRow(NO_COMMENTS, asList("Name", "Sid Vicious"), 2));
+        return rows;
+    }
+
+    private List<DataTableRow> transposedListOfDoublesWithoutHeader() {
+        List<DataTableRow> rows = new ArrayList<DataTableRow>();
+        rows.add(new DataTableRow(NO_COMMENTS, asList("100.5", "0.5", "1000"), 1));
+        rows.add(new DataTableRow(NO_COMMENTS, asList("99.5", "-0.5", "999"), 2));
         return rows;
     }
 
