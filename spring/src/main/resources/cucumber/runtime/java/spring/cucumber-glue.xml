@@ -15,4 +15,6 @@
     </bean>
     <context:annotation-config/>
 
+    <bean class="cucumber.api.spring.SpringTransactionHooks"/>
+
 </beans>
