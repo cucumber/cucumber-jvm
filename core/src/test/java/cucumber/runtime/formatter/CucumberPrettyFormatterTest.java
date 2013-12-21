@@ -4,7 +4,6 @@ import cucumber.runtime.TestHelper;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.model.InvalidCucumberFeature;
 
-import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -12,8 +11,7 @@ import java.util.Map;
 
 import static cucumber.runtime.TestHelper.feature;
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.startsWith;;
-import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.assertThat;
 
 public class CucumberPrettyFormatterTest {
