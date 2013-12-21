@@ -51,16 +51,6 @@ public class CucumberTest {
     }
 
     @Test
-    public void testThatParsingErrorsIsNicelyReported() throws Exception {
-        try {
-            new Cucumber(LexerErrorFeature.class);
-            fail("Expecting error");
-        } catch (CucumberException e) {
-            assertEquals("Error parsing feature file cucumber/runtime/error/lexer_error.feature", e.getMessage());
-        }
-    }
-
-    @Test
     public void finds_no_features_when_explicit_feature_path_has_no_features() throws IOException, InitializationError {
         Cucumber cucumber = new Cucumber(ExplicitFeaturePathWithNoFeatures.class);
         List<FeatureRunner> children = cucumber.getChildren();

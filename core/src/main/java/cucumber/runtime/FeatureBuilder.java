@@ -2,6 +2,7 @@ package cucumber.runtime;
 
 import cucumber.runtime.io.Resource;
 import cucumber.runtime.model.CucumberFeature;
+import cucumber.runtime.model.InvalidCucumberFeature;
 import gherkin.I18n;
 import gherkin.formatter.FilterFormatter;
 import gherkin.formatter.Formatter;
@@ -130,7 +131,7 @@ public class FeatureBuilder implements Formatter {
         try {
             parser.parse(gherkin, convertFileSeparatorToForwardSlash(resource.getPath()), 0);
         } catch (Exception e) {
-            throw new CucumberException(String.format("Error parsing feature file %s", convertFileSeparatorToForwardSlash(resource.getPath())), e);
+            cucumberFeatures.add(createFeature("Error parsing feature file", resource, e));
         }
         I18n i18n = parser.getI18nLanguage();
         if (currentCucumberFeature != null) {
@@ -138,6 +139,10 @@ public class FeatureBuilder implements Formatter {
             // Might also happen if the feature file itself is empty.
             currentCucumberFeature.setI18n(i18n);
         }
+    }
+
+    private CucumberFeature createFeature(String reason, Resource resource, Exception error) {
+        return new InvalidCucumberFeature(reason, resource.getPath(), error);
     }
 
     private String convertFileSeparatorToForwardSlash(String path) {
