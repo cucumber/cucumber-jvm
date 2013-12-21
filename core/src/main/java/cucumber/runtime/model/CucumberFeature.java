@@ -67,9 +67,18 @@ public class CucumberFeature {
     }
 
     public void scenario(Scenario scenario) {
-        CucumberTagStatement cucumberTagStatement = new CucumberScenario(this, cucumberBackground, scenario);
+        CucumberTagStatement cucumberTagStatement = createCucumberScenario(scenario);
         currentStepContainer = cucumberTagStatement;
         cucumberTagStatements.add(cucumberTagStatement);
+    }
+
+    /**
+     * Creates an appropriate scenario based on this feature
+     * @param scenario
+     * @return
+     */
+    protected CucumberScenario createCucumberScenario(Scenario scenario) {
+        return new CucumberScenario(this, cucumberBackground, scenario);
     }
 
     public void scenarioOutline(ScenarioOutline scenarioOutline) {
