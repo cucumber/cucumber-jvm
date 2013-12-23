@@ -16,6 +16,7 @@ import java.util.List;
 
 import static java.util.Collections.emptyList;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 
 public class CucumberTest {
@@ -57,6 +58,16 @@ public class CucumberTest {
             fail("Expecting error");
         } catch (CucumberException e) {
             assertEquals("Error parsing feature file cucumber/runtime/error/lexer_error.feature", e.getMessage());
+        }
+    }
+    
+    @Test
+    public void testThatFileIsNotCreatedOnParsingError() throws Exception {
+        try {
+            new Cucumber(FormatterWithLexerErrorFeature.class);
+            fail("Expecting error");
+        } catch (CucumberException e){
+            assertFalse("File is created despite Lexor Error", new File("lexor_error_feature.json").exists());
         }
     }
 
@@ -110,4 +121,10 @@ public class CucumberTest {
     private class LexerErrorFeature {
 
     }
+    
+    @CucumberOptions(features = {"classpath:cucumber/runtime/error/lexer_error.feature"}, format = {"json:lexor_error_feature.json"})
+    private class FormatterWithLexerErrorFeature {
+
+    }
+
 }
