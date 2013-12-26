@@ -1,8 +1,9 @@
 package cucumber.api.testng;
 
 import cucumber.runtime.model.CucumberFeature;
-import gherkin.formatter.model.Feature;
-import org.testng.annotations.*;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +25,7 @@ public abstract class AbstractTestNGCucumberTests {
     }
 
     /**
-     * @return returns two dimensional array of {@link AbstractTestNGCucumberTests.CucumberFeatureWrapper} objects.
+     * @return returns two dimensional array of {@link CucumberFeatureWrapper} objects.
      */
     @DataProvider
     public Object[][] features() {
@@ -36,24 +37,4 @@ public abstract class AbstractTestNGCucumberTests {
         return featuresList.toArray(new Object[][]{});
     }
 
-    /**
-     * The only purpose of this class is to provide custom {@linkplain #toString()},
-     * making TestNG reports look more descriptive.
-     */
-    public static class CucumberFeatureWrapper {
-        private final CucumberFeature cucumberFeature;
-
-        public CucumberFeatureWrapper(CucumberFeature cucumberFeature) {
-            this.cucumberFeature = cucumberFeature;
-        }
-
-        public CucumberFeature getCucumberFeature() {
-            return cucumberFeature;
-        }
-
-        @Override
-        public String toString() {
-            return cucumberFeature.getGherkinFeature().getName();
-        }
-    }
 }
