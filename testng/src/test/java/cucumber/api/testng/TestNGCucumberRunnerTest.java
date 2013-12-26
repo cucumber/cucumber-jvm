@@ -3,11 +3,13 @@ package cucumber.api.testng;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.testng.RunCukesStrict;
-import cucumber.runtime.testng.RunCukesTest;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.io.File;
+import java.io.FilenameFilter;
+import java.net.URL;
 import java.util.List;
 
 public class TestNGCucumberRunnerTest {
@@ -15,7 +17,7 @@ public class TestNGCucumberRunnerTest {
 
     @BeforeMethod
     public void setUp() throws Exception {
-        testNGCucumberRunner = new TestNGCucumberRunner(RunCukesTest.class);
+        testNGCucumberRunner = new TestNGCucumberRunner(BatmanTest.class);
     }
 
     @Test(expectedExceptions = CucumberException.class)
@@ -28,7 +30,23 @@ public class TestNGCucumberRunnerTest {
     public void getFeatures() throws Exception {
         List<CucumberFeature> features = testNGCucumberRunner.getFeatures();
 
-        Assert.assertFalse(features.isEmpty());
-        Assert.assertEquals(features.size(), 3, "All features associated with RunCukesTest are loaded");
+        int numberOfFeatures = getNumberOfFeatures();
+
+        Assert.assertEquals(features.size(), numberOfFeatures,
+                "Not all features associated with " + BatmanTest.class.getSimpleName() + " were loaded. ");
+    }
+
+    /**
+     * @return number of feature files in "cucumber/api/testng/batman" folder
+     */
+    private int getNumberOfFeatures() {
+        URL fileURL = this.getClass().getClassLoader().getResource("cucumber/api/testng/batman");
+        assert fileURL != null;
+        return new File(fileURL.getFile()).listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return name.endsWith(".feature");
+            }
+        }).length;
     }
 }
