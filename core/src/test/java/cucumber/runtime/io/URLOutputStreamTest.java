@@ -94,12 +94,10 @@ public class URLOutputStreamTest {
 
     @Test
     public void throws_ioe_if_http_response_is_500() throws IOException, ExecutionException, InterruptedException {
-        final BlockingQueue<String> data = new LinkedBlockingDeque<String>();
         Rest r = new Rest(webbit);
         r.PUT("/.cucumber/stepdefs.json", new HttpHandler() {
             @Override
             public void handleHttpRequest(HttpRequest req, HttpResponse res, HttpControl ctl) throws Exception {
-                data.offer(req.body());
                 res.status(500);
                 res.content("something went wrong");
                 res.end();
