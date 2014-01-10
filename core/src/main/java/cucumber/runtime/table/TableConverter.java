@@ -110,7 +110,11 @@ public class TableConverter {
         } catch (AbstractReflectionConverter.DuplicateFieldException e) {
             throw new CucumberException(e.getShortMessage());
         } catch (ConversionException e) {
-            throw new CucumberException(String.format("Can't assign null value to one of the primitive fields in %s. Please use boxed types.", e.get("class")));
+            if (e.getCause() instanceof NullPointerException) {
+                throw new CucumberException(String.format("Can't assign null value to one of the primitive fields in %s. Please use boxed types.", e.get("class")));
+            } else {
+                throw e;
+            }
         }
     }
 
