@@ -106,7 +106,9 @@ public class JUnitReporter implements Reporter, Formatter {
 
     private void addFailureOrIgnoreStep(Result result) {
         if (strict) {
+            stepNotifier.fireTestStarted();
             addFailure(result);
+            stepNotifier.fireTestFinished();
         } else {
             ignoredStep = true;
             stepNotifier.fireTestIgnored();
