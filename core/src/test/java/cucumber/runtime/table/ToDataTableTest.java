@@ -82,6 +82,20 @@ public class ToDataTableTest {
     }
 
     @Test
+    public void gives_a_meaningfull_error_message_when_field_is_repeated() {
+        try {
+            tc.toList(UserPojo.class, TableParser.parse("" +
+                    "| credits     | credits     |\n" +
+                    "| 5           | 5           |\n" +
+                    "", PARAMETER_INFO)
+            );
+            fail();
+        } catch (CucumberException e) {
+            assertEquals("Duplicate field credits", e.getMessage());
+        }
+    }
+
+    @Test
     public void converts_list_of_beans_to_table_with_explicit_columns() {
         List<UserPojo> users = tc.toList(UserPojo.class, personTable());
         DataTable table = tc.toTable(users, "name", "birthDate", "credits");
