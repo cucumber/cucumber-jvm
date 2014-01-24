@@ -1,5 +1,6 @@
 ## [1-1-6-SNAPSHOT (Git master)](https://github.com/cucumber/cucumber-jvm/compare/v1.1.5...master)
 
+* [Core] More precise handling of the XStream errors. ([#657](https://github.com/cucumber/cucumber-jvm/issues/657), [#658](https://github.com/cucumber/cucumber-jvm/pull/658) Mykola Gurov)
 * [Core] Performance improvement: URLOutputStream can write several bytes, not just one-by-one. ([#654](https://github.com/cucumber/cucumber-jvm/issues/654) Aslak Hellesøy)
 * [Core] Add support for transposed tables. ([#382](https://github.com/cucumber/cucumber-jvm/issues/382), [#635](https://github.com/cucumber/cucumber-jvm/pull/635), Roberto Lo Giacco)
 * [Examples] Fixed concurrency bugs in Webbit Selenium example (Aslak Hellesøy)
