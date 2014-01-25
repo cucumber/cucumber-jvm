@@ -57,8 +57,8 @@
 
 (defn- -disposeWorld [cljb])
 
-(defn- -getSnippet [cljb step]
-  (.getSnippet snippet-generator step))
+(defn- -getSnippet [cljb step _]
+  (.getSnippet snippet-generator step nil))
 
 (defn- -setUnreportedStepExecutor [cljb executor]
   "executor")
