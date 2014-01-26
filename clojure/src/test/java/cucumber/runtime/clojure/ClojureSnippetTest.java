@@ -1,6 +1,6 @@
 package cucumber.runtime.clojure;
 
-import cucumber.runtime.snippets.SnippetGenerator;
+import cucumber.runtime.clj.Backend;
 import gherkin.formatter.model.Comment;
 import gherkin.formatter.model.DataTableRow;
 import gherkin.formatter.model.Step;
@@ -18,7 +18,7 @@ public class ClojureSnippetTest {
     @Test
     public void generatesPlainSnippet() {
         Step step = new Step(NO_COMMENTS, "Given ", "I have 4 cukes in my \"big\" belly", 0, null, null);
-        String snippet = new SnippetGenerator(new ClojureSnippet()).getSnippet(step, null);
+        String snippet = (new Backend(null)).getSnippet(step, null);
         String expected = "" +
                 "(Given #\"^I have (\\d+) cukes in my \\\"([^\\\"]*)\\\" belly$\" [arg1 arg2]\n" +
                 "  (comment  Write code here that turns the phrase above into concrete actions  )\n" +
@@ -30,7 +30,7 @@ public class ClojureSnippetTest {
     public void generatesSnippetWithDataTable() {
         List<DataTableRow> dataTable = asList(new DataTableRow(NO_COMMENTS, asList("col1"), 1));
         Step step = new Step(NO_COMMENTS, "Given ", "I have:", 0, dataTable, null);
-        String snippet = new SnippetGenerator(new ClojureSnippet()).getSnippet(step, null);
+        String snippet = (new Backend(null)).getSnippet(step, null);
         String expected = "" +
                 "(Given #\"^I have:$\" [arg1]\n" +
                 "  (comment  Write code here that turns the phrase above into concrete actions  )\n" +

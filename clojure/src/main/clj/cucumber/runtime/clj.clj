@@ -17,7 +17,6 @@
 
 (def glue (atom nil))
 
-;; Make sure ClojureSnippet.java is in sync with this - for testing purposes.
 (defn clojure-snippet []
   (reify
     Snippet
@@ -57,8 +56,8 @@
 
 (defn- -disposeWorld [cljb])
 
-(defn- -getSnippet [cljb step]
-  (.getSnippet snippet-generator step))
+(defn- -getSnippet [cljb step _]
+  (.getSnippet snippet-generator step nil))
 
 (defn- -setUnreportedStepExecutor [cljb executor]
   "executor")
