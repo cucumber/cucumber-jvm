@@ -44,12 +44,12 @@ Before("@notused,@important", "@alsonotused") {
 // Register step definition using Groovy syntax for regex patterns.
 // If you use slashes to quote your regexes, you don't have to escape backslashes. 
 // Any Given/When/Then function can be used, the name is just to indicate the kind of step.
-Given(~/I have entered (\d+) into (.*) calculator/) { int number, String ignore ->
+Given(~/I have entered (\d+) into .* calculator/) { int number ->
     calc.push number
 }
 
 // Remember to still include "->" if there are no parameters.
-Given(~/(\d+) into the/) {->
+Given(~/\d+ into the/) {->
     throw new RuntimeException("should never get here since we're running with --guess")
 }
 
