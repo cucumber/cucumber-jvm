@@ -2,7 +2,8 @@ package cucumber.runtime.scala.test
 
 import _root_.org.junit.runner.RunWith
 import _root_.cucumber.api.junit.Cucumber
+import cucumber.api.CucumberOptions
 
 @RunWith(classOf[Cucumber])
-@Cucumber.Options(strict=true)
+@CucumberOptions(strict=true)
 class RunCukesTest
