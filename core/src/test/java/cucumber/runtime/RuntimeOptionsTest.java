@@ -56,6 +56,12 @@ public class RuntimeOptionsTest {
     }
 
     @Test
+    public void assigns_skip_tags() {
+        RuntimeOptions options = new RuntimeOptions("--skip-tags @keep_this");
+        assertEquals(Arrays.<Object>asList("@keep_this"), options.getSkipTags());
+    }
+
+    @Test
     public void strips_options() {
         RuntimeOptions options = new RuntimeOptions("  --glue  somewhere   somewhere_else");
         assertEquals(asList("somewhere_else"), options.getFeaturePaths());

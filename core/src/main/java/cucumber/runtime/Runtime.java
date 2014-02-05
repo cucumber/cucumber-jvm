@@ -5,6 +5,7 @@ import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.xstream.LocalizedXStreams;
 import gherkin.I18n;
+import gherkin.TagExpression;
 import gherkin.formatter.Argument;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
@@ -139,7 +140,8 @@ public class Runtime implements UnreportedStepExecutor {
         }
         undefinedStepsTracker.reset();
         //TODO: this is the initial state of the state machine, it should not go here, but into something else
-        skipNextStep = false;
+        skipNextStep = runtimeOptions.getSkipTagsExpression().evaluate(tags);
+
         scenarioResult = new ScenarioImpl(reporter, tags);
     }
 

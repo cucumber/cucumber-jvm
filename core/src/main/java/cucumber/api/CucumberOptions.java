@@ -37,6 +37,11 @@ public @interface CucumberOptions {
     String[] tags() default {};
 
     /**
+     * @return what tags in the features should be skipped explicitly
+     */
+    String[] skipTags() default {};
+
+    /**
      * @return what formatter(s) to use
      */
     String[] format() default {};
