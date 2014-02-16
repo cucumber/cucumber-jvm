@@ -36,7 +36,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CucumberInstrumentationHelper {
+public class CucumberInstrumentationCore {
     public static final String REPORT_VALUE_ID = "CucumberInstrumentation";
     public static final String REPORT_KEY_NUM_TOTAL = "numtests";
     public static final String TAG = "cucumber-android";
@@ -54,7 +54,7 @@ public class CucumberInstrumentationHelper {
     InstrumentationArguments instrumentationArguments;
     private Instrumentation instrumentation;
 
-    public CucumberInstrumentationHelper(Instrumentation instrumentation) {
+    public CucumberInstrumentationCore(Instrumentation instrumentation) {
         this.instrumentation = instrumentation;
     }
 
