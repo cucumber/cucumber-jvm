@@ -27,7 +27,7 @@ import cucumber.api.Transform
 class ScalaStepDefinition(frame:StackTraceElement,
                           name:String,
                           pattern:String,
-                          parameterInfos:List[Class[_]],
+                          parameterInfos:Array[Type],
                           f:List[Any] => Any) extends StepDefinition {
 
   /**
@@ -53,7 +53,7 @@ class ScalaStepDefinition(frame:StackTraceElement,
   /**
    * How many declared parameters this stepdefinition has. Returns null if unknown.
    */
-  def getParameterCount() = parameterInfos.size()
+  def getParameterCount() = parameterInfos.size
 
   /**
    * The parameter type at index n. A hint about the raw parameter type is passed to make
@@ -61,7 +61,7 @@ class ScalaStepDefinition(frame:StackTraceElement,
    * As Scala is a statically typed language, the javaType parameter is ignored
    */
   def getParameterType(index: Int, javaType: Type) = {
-    new ParameterInfo(parameterInfos.get(index), null, null, null)
+    new ParameterInfo(parameterInfos(index), null, null, null)
   }
 
   /**
@@ -80,5 +80,4 @@ class ScalaStepDefinition(frame:StackTraceElement,
    * @return the pattern associated with this instance. Used for error reporting only.
    */
   def getPattern = pattern
-
 }

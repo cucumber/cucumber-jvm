@@ -73,3 +73,12 @@ Feature: Cukes
   Scenario: Custom object with string constructor
     Given I have a person Bob
     Then he should say "Hello, I'm Bob!"
+
+  Scenario: Custom objects in the belly
+    Given I have eaten the following cukes
+      | Color | Number |
+      | Green |      1 |
+      | Red   |      3 |
+      | Blue  |      2 |
+    Then I should have eaten 6 cukes
+    And they should have been Green, Red, Blue
