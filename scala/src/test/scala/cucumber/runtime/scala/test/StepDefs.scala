@@ -5,7 +5,8 @@ import _root_.cucumber.api.scala._
 import cucumber.api.DataTable
 import junit.framework.Assert._
 import scala.collection.JavaConversions._
-import cucumber.runtime.scala.model.{Snake, Person}
+import cucumber.runtime.scala.model.{Cukes, Person, Snake}
+import java.util.{List => JList}
 
 /**
  * Test step definitions to exercise Scala cucumber
@@ -148,6 +149,19 @@ class CukesStepDefinitions extends ScalaDsl with EN {
     assertEquals(person.hello, s)
   }
 
+  var cukes: JList[Cukes] = null
+
+  Given("^I have eaten the following cukes$") { cs: JList[Cukes] =>
+    cukes = cs
+  }
+
+  Then("""^I should have eaten (\d) cukes$""") { total: Int =>
+    assertEquals(total, cukes.map(_.number).sum)
+  }
+
+  And("^they should have been (.*)$") { colors: String =>
+    assertEquals(colors, cukes.map(_.color).mkString(", "))
+  }
 }
 
 class ThenDefs extends ScalaDsl with EN {
