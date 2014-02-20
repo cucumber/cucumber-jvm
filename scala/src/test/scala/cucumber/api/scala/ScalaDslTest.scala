@@ -19,6 +19,8 @@ class ScalaDslTest {
     def embed(p1: Array[Byte], p2: String) {}
 
     def write(p1: String) {}
+
+    def getName = ""
   }
 
   @Test
