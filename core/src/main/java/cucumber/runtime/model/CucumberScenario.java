@@ -34,14 +34,13 @@ public class CucumberScenario extends CucumberTagStatement {
     @Override
     public void run(Formatter formatter, Reporter reporter, Runtime runtime) {
         Set<Tag> tags = tagsAndInheritedTags();
-        runtime.buildBackendWorlds(reporter, tags);
+        runtime.buildBackendWorlds(reporter, tags, scenario.getName());
         try {
             formatter.startOfScenarioLifeCycle((Scenario) getGherkinModel());
         } catch (Throwable ignore) {
             // IntelliJ has its own formatter which doesn't yet implement this.
         }
 
-        runtime.setScenario(scenario);
         runtime.runBeforeHooks(reporter, tags);
 
         runBackground(formatter, reporter, runtime);
@@ -54,7 +53,6 @@ public class CucumberScenario extends CucumberTagStatement {
         } catch (Throwable ignore) {
             // IntelliJ has its own formatter which doesn't yet implement this.
         }
-        runtime.clearScenario();
         runtime.disposeBackendWorlds();
     }
 

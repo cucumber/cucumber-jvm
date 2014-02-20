@@ -3,7 +3,6 @@ package cucumber.runtime;
 import cucumber.api.Pending;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
-import cucumber.runtime.model.CurrentScenario;
 import cucumber.runtime.xstream.LocalizedXStreams;
 import gherkin.I18n;
 import gherkin.formatter.Argument;
@@ -128,14 +127,14 @@ public class Runtime implements UnreportedStepExecutor {
         glue.writeStepdefsJson(resourceLoader, runtimeOptions.getFeaturePaths(), runtimeOptions.getDotCucumber());
     }
 
-    public void buildBackendWorlds(Reporter reporter, Set<Tag> tags) {
+    public void buildBackendWorlds(Reporter reporter, Set<Tag> tags, String scenarioName) {
         for (Backend backend : backends) {
             backend.buildWorld();
         }
         undefinedStepsTracker.reset();
         //TODO: this is the initial state of the state machine, it should not go here, but into something else
         skipNextStep = false;
-        scenarioResult = new ScenarioImpl(reporter, tags);
+        scenarioResult = new ScenarioImpl(reporter, tags, scenarioName);
     }
 
     public void disposeBackendWorlds() {
@@ -319,13 +318,5 @@ public class Runtime implements UnreportedStepExecutor {
     private void addHookToCounterAndResult(Result result) {
         scenarioResult.add(result);
         stats.addHookTime(result.getDuration());
-    }
-
-    public void setScenario(Scenario scenario) {
-        CurrentScenario.set(scenario);
-    }
-
-    public void clearScenario() {
-        CurrentScenario.set(null);
     }
 }
