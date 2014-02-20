@@ -11,15 +11,17 @@ import java.util.Set;
 
 public class CucumberScenario extends CucumberTagStatement {
     private final CucumberBackground cucumberBackground;
-
+    private final Scenario scenario;
     public CucumberScenario(CucumberFeature cucumberFeature, CucumberBackground cucumberBackground, Scenario scenario) {
         super(cucumberFeature, scenario);
         this.cucumberBackground = cucumberBackground;
+        this.scenario = scenario;
     }
 
     public CucumberScenario(CucumberFeature cucumberFeature, CucumberBackground cucumberBackground, Scenario exampleScenario, Row example) {
         super(cucumberFeature, exampleScenario, example);
         this.cucumberBackground = cucumberBackground;
+        this.scenario = exampleScenario;
     }
 
     public CucumberBackground getCucumberBackground() {
@@ -38,6 +40,8 @@ public class CucumberScenario extends CucumberTagStatement {
         } catch (Throwable ignore) {
             // IntelliJ has its own formatter which doesn't yet implement this.
         }
+
+        runtime.setScenario(scenario);
         runtime.runBeforeHooks(reporter, tags);
 
         runBackground(formatter, reporter, runtime);
@@ -50,6 +54,7 @@ public class CucumberScenario extends CucumberTagStatement {
         } catch (Throwable ignore) {
             // IntelliJ has its own formatter which doesn't yet implement this.
         }
+        runtime.clearScenario();
         runtime.disposeBackendWorlds();
     }
 

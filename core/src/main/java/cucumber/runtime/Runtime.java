@@ -3,18 +3,13 @@ package cucumber.runtime;
 import cucumber.api.Pending;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
+import cucumber.runtime.model.CurrentScenario;
 import cucumber.runtime.xstream.LocalizedXStreams;
 import gherkin.I18n;
 import gherkin.formatter.Argument;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
-import gherkin.formatter.model.Comment;
-import gherkin.formatter.model.DataTableRow;
-import gherkin.formatter.model.DocString;
-import gherkin.formatter.model.Match;
-import gherkin.formatter.model.Result;
-import gherkin.formatter.model.Step;
-import gherkin.formatter.model.Tag;
+import gherkin.formatter.model.*;
 
 import java.io.IOException;
 import java.io.PrintStream;
@@ -324,5 +319,13 @@ public class Runtime implements UnreportedStepExecutor {
     private void addHookToCounterAndResult(Result result) {
         scenarioResult.add(result);
         stats.addHookTime(result.getDuration());
+    }
+
+    public void setScenario(Scenario scenario) {
+        CurrentScenario.set(scenario);
+    }
+
+    public void clearScenario() {
+        CurrentScenario.set(null);
     }
 }
