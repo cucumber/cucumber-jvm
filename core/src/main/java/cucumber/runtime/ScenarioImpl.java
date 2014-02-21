@@ -18,10 +18,12 @@ public class ScenarioImpl implements Scenario {
     private final List<Result> stepResults = new ArrayList<Result>();
     private final Reporter reporter;
     private final Set<Tag> tags;
+    private final String scenarioName;
 
-    public ScenarioImpl(Reporter reporter, Set<Tag> tags) {
+    public ScenarioImpl(Reporter reporter, Set<Tag> tags, String scenarioName) {
         this.reporter = reporter;
         this.tags = tags;
+        this.scenarioName = scenarioName;
     }
 
     void add(Result result) {
@@ -60,5 +62,10 @@ public class ScenarioImpl implements Scenario {
     @Override
     public void write(String text) {
         reporter.write(text);
+    }
+
+    @Override
+    public String getName() {
+        return scenarioName;
     }
 }

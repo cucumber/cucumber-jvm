@@ -45,4 +45,6 @@ public interface Scenario {
      * @param text what to put in the report.
      */
     void write(String text);
+
+    String getName();
 }

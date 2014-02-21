@@ -208,7 +208,7 @@ public class RuntimeTest {
         StepDefinitionMatch match = mock(StepDefinitionMatch.class);
 
         Runtime runtime = createRuntimeWithMockedGlue(match, "--monochrome");
-        runtime.buildBackendWorlds(reporter, Collections.<Tag>emptySet());
+        runtime.buildBackendWorlds(reporter, Collections.<Tag>emptySet(), "test scenario");
         runStep(reporter, runtime);
         runtime.disposeBackendWorlds();
         runtime.printStats(new PrintStream(baos));
@@ -225,7 +225,7 @@ public class RuntimeTest {
         StepDefinitionMatch match = createExceptionThrowingMatch(new PendingException());
 
         Runtime runtime = createRuntimeWithMockedGlue(match, "--monochrome");
-        runtime.buildBackendWorlds(reporter, Collections.<Tag>emptySet());
+        runtime.buildBackendWorlds(reporter, Collections.<Tag>emptySet(), "test scenario");
         runStep(reporter, runtime);
         runtime.disposeBackendWorlds();
         runtime.printStats(new PrintStream(baos));
@@ -242,7 +242,7 @@ public class RuntimeTest {
         StepDefinitionMatch match = createExceptionThrowingMatch(new Exception());
 
         Runtime runtime = createRuntimeWithMockedGlue(match, "--monochrome");
-        runtime.buildBackendWorlds(reporter, Collections.<Tag>emptySet());
+        runtime.buildBackendWorlds(reporter, Collections.<Tag>emptySet(), "test scenario");
         runStep(reporter, runtime);
         runtime.disposeBackendWorlds();
         runtime.printStats(new PrintStream(baos));
@@ -258,7 +258,7 @@ public class RuntimeTest {
         Reporter reporter = mock(Reporter.class);
 
         Runtime runtime = createRuntimeWithMockedGlueWithAmbiguousMatch("--monochrome");
-        runtime.buildBackendWorlds(reporter, Collections.<Tag>emptySet());
+        runtime.buildBackendWorlds(reporter, Collections.<Tag>emptySet(), "test scenario");
         runStep(reporter, runtime);
         runtime.disposeBackendWorlds();
         runtime.printStats(new PrintStream(baos));
@@ -275,7 +275,7 @@ public class RuntimeTest {
         StepDefinitionMatch match = createExceptionThrowingMatch(new Exception());
 
         Runtime runtime = createRuntimeWithMockedGlue(match, "--monochrome");
-        runtime.buildBackendWorlds(reporter, Collections.<Tag>emptySet());
+        runtime.buildBackendWorlds(reporter, Collections.<Tag>emptySet(), "test scenario");
         runStep(reporter, runtime);
         runStep(reporter, runtime);
         runtime.disposeBackendWorlds();
@@ -292,7 +292,7 @@ public class RuntimeTest {
         Reporter reporter = mock(Reporter.class);
 
         Runtime runtime = createRuntimeWithMockedGlue(null, "--monochrome");
-        runtime.buildBackendWorlds(reporter, Collections.<Tag>emptySet());
+        runtime.buildBackendWorlds(reporter, Collections.<Tag>emptySet(), "test scenario");
         runStep(reporter, runtime);
         runtime.disposeBackendWorlds();
         runtime.printStats(new PrintStream(baos));
@@ -310,7 +310,7 @@ public class RuntimeTest {
         HookDefinition hook = createExceptionThrowingHook();
 
         Runtime runtime = createRuntimeWithMockedGlue(match, hook, true, "--monochrome");
-        runtime.buildBackendWorlds(reporter, Collections.<Tag>emptySet());
+        runtime.buildBackendWorlds(reporter, Collections.<Tag>emptySet(), "test scenario");
         runtime.runBeforeHooks(reporter, Collections.<Tag>emptySet());
         runStep(reporter, runtime);
         runtime.disposeBackendWorlds();
@@ -329,7 +329,7 @@ public class RuntimeTest {
         HookDefinition hook = createExceptionThrowingHook();
 
         Runtime runtime = createRuntimeWithMockedGlue(match, hook, false, "--monochrome");
-        runtime.buildBackendWorlds(reporter, Collections.<Tag>emptySet());
+        runtime.buildBackendWorlds(reporter, Collections.<Tag>emptySet(), "test scenario");
         runStep(reporter, runtime);
         runtime.runAfterHooks(reporter, Collections.<Tag>emptySet());
         runtime.disposeBackendWorlds();

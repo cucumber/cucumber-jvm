@@ -133,14 +133,14 @@ public class Runtime implements UnreportedStepExecutor {
         glue.writeStepdefsJson(resourceLoader, runtimeOptions.getFeaturePaths(), runtimeOptions.getDotCucumber());
     }
 
-    public void buildBackendWorlds(Reporter reporter, Set<Tag> tags) {
+    public void buildBackendWorlds(Reporter reporter, Set<Tag> tags, String scenarioName) {
         for (Backend backend : backends) {
             backend.buildWorld();
         }
         undefinedStepsTracker.reset();
         //TODO: this is the initial state of the state machine, it should not go here, but into something else
         skipNextStep = false;
-        scenarioResult = new ScenarioImpl(reporter, tags);
+        scenarioResult = new ScenarioImpl(reporter, tags, scenarioName);
     }
 
     public void disposeBackendWorlds() {
