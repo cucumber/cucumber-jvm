@@ -1,5 +1,6 @@
 ## [1-1-6-SNAPSHOT (Git master)](https://github.com/cucumber/cucumber-jvm/compare/v1.1.5...master)
 
+* [Andriod] Enable custom test runners to run Cucumber features (to enable usage of the Espresso framework). ([#662](https://github.com/cucumber/cucumber-jvm/issues/662), [#667](https://github.com/cucumber/cucumber-jvm/pull/667) Björn Rasmusson)
 * [Core] Expose Scenario name to step definitions. ([#671](https://github.com/cucumber/cucumber-jvm/pull/671) Dominic Fox)
 * [Clojure] Fixed bug in the snippet generation that caused an exception. ([#650](https://github.com/cucumber/cucumber-jvm/pull/650) shaolang)
 * [Core] More precise handling of the XStream errors. ([#657](https://github.com/cucumber/cucumber-jvm/issues/657), [#658](https://github.com/cucumber/cucumber-jvm/pull/658) Mykola Gurov)
