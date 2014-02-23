@@ -19,11 +19,13 @@ public class ScenarioImpl implements Scenario {
     private final Reporter reporter;
     private final Set<Tag> tags;
     private final String scenarioName;
+    private final String scenarioId;
 
-    public ScenarioImpl(Reporter reporter, Set<Tag> tags, String scenarioName) {
+    public ScenarioImpl(Reporter reporter, Set<Tag> tags, gherkin.formatter.model.Scenario gherkinScenario) {
         this.reporter = reporter;
         this.tags = tags;
-        this.scenarioName = scenarioName;
+        this.scenarioName = gherkinScenario.getName();
+        this.scenarioId = gherkinScenario.getId();
     }
 
     void add(Result result) {
@@ -67,5 +69,10 @@ public class ScenarioImpl implements Scenario {
     @Override
     public String getName() {
         return scenarioName;
+    }
+
+    @Override
+    public String getId() {
+        return scenarioId;
     }
 }

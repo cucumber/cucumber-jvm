@@ -46,5 +46,13 @@ public interface Scenario {
      */
     void write(String text);
 
+    /**
+     * @return the name of the Scenario.
+     */
     String getName();
+
+    /**
+     * @return the id of the Scenario.
+     */
+    String getId();
 }

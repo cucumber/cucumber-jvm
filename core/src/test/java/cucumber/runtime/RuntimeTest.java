@@ -7,6 +7,7 @@ import cucumber.runtime.io.Resource;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
 import gherkin.I18n;
+import gherkin.formatter.Formatter;
 import gherkin.formatter.JSONFormatter;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Step;
@@ -14,6 +15,7 @@ import gherkin.formatter.model.Tag;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.internal.AssumptionViolatedException;
+import org.mockito.ArgumentCaptor;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -29,13 +31,14 @@ import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyCollectionOf;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class RuntimeTest {
 
@@ -208,9 +211,7 @@ public class RuntimeTest {
         StepDefinitionMatch match = mock(StepDefinitionMatch.class);
 
         Runtime runtime = createRuntimeWithMockedGlue(match, "--monochrome");
-        runtime.buildBackendWorlds(reporter, Collections.<Tag>emptySet(), "test scenario");
-        runStep(reporter, runtime);
-        runtime.disposeBackendWorlds();
+        runScenario(reporter, runtime, stepCount(1));
         runtime.printStats(new PrintStream(baos));
 
         assertThat(baos.toString(), startsWith(String.format(
@@ -225,9 +226,7 @@ public class RuntimeTest {
         StepDefinitionMatch match = createExceptionThrowingMatch(new PendingException());
 
         Runtime runtime = createRuntimeWithMockedGlue(match, "--monochrome");
-        runtime.buildBackendWorlds(reporter, Collections.<Tag>emptySet(), "test scenario");
-        runStep(reporter, runtime);
-        runtime.disposeBackendWorlds();
+        runScenario(reporter, runtime, stepCount(1));
         runtime.printStats(new PrintStream(baos));
 
         assertThat(baos.toString(), startsWith(String.format(
@@ -242,9 +241,7 @@ public class RuntimeTest {
         StepDefinitionMatch match = createExceptionThrowingMatch(new Exception());
 
         Runtime runtime = createRuntimeWithMockedGlue(match, "--monochrome");
-        runtime.buildBackendWorlds(reporter, Collections.<Tag>emptySet(), "test scenario");
-        runStep(reporter, runtime);
-        runtime.disposeBackendWorlds();
+        runScenario(reporter, runtime, stepCount(1));
         runtime.printStats(new PrintStream(baos));
 
         assertThat(baos.toString(), startsWith(String.format(
@@ -258,9 +255,7 @@ public class RuntimeTest {
         Reporter reporter = mock(Reporter.class);
 
         Runtime runtime = createRuntimeWithMockedGlueWithAmbiguousMatch("--monochrome");
-        runtime.buildBackendWorlds(reporter, Collections.<Tag>emptySet(), "test scenario");
-        runStep(reporter, runtime);
-        runtime.disposeBackendWorlds();
+        runScenario(reporter, runtime, stepCount(1));
         runtime.printStats(new PrintStream(baos));
 
         assertThat(baos.toString(), startsWith(String.format(
@@ -275,10 +270,7 @@ public class RuntimeTest {
         StepDefinitionMatch match = createExceptionThrowingMatch(new Exception());
 
         Runtime runtime = createRuntimeWithMockedGlue(match, "--monochrome");
-        runtime.buildBackendWorlds(reporter, Collections.<Tag>emptySet(), "test scenario");
-        runStep(reporter, runtime);
-        runStep(reporter, runtime);
-        runtime.disposeBackendWorlds();
+        runScenario(reporter, runtime, stepCount(2));
         runtime.printStats(new PrintStream(baos));
 
         assertThat(baos.toString(), startsWith(String.format(
@@ -292,9 +284,7 @@ public class RuntimeTest {
         Reporter reporter = mock(Reporter.class);
 
         Runtime runtime = createRuntimeWithMockedGlue(null, "--monochrome");
-        runtime.buildBackendWorlds(reporter, Collections.<Tag>emptySet(), "test scenario");
-        runStep(reporter, runtime);
-        runtime.disposeBackendWorlds();
+        runScenario(reporter, runtime, stepCount(1));
         runtime.printStats(new PrintStream(baos));
 
         assertThat(baos.toString(), startsWith(String.format(
@@ -310,10 +300,7 @@ public class RuntimeTest {
         HookDefinition hook = createExceptionThrowingHook();
 
         Runtime runtime = createRuntimeWithMockedGlue(match, hook, true, "--monochrome");
-        runtime.buildBackendWorlds(reporter, Collections.<Tag>emptySet(), "test scenario");
-        runtime.runBeforeHooks(reporter, Collections.<Tag>emptySet());
-        runStep(reporter, runtime);
-        runtime.disposeBackendWorlds();
+        runScenario(reporter, runtime, stepCount(1));
         runtime.printStats(new PrintStream(baos));
 
         assertThat(baos.toString(), startsWith(String.format(
@@ -329,16 +316,51 @@ public class RuntimeTest {
         HookDefinition hook = createExceptionThrowingHook();
 
         Runtime runtime = createRuntimeWithMockedGlue(match, hook, false, "--monochrome");
-        runtime.buildBackendWorlds(reporter, Collections.<Tag>emptySet(), "test scenario");
-        runStep(reporter, runtime);
-        runtime.runAfterHooks(reporter, Collections.<Tag>emptySet());
-        runtime.disposeBackendWorlds();
+        runScenario(reporter, runtime, stepCount(1));
         runtime.printStats(new PrintStream(baos));
 
         assertThat(baos.toString(), startsWith(String.format(
                 "1 Scenarios (1 failed)%n" +
                 "1 Steps (1 passed)%n")));
    }
+
+    @Test
+    public void should_make_scenario_name_available_to_hooks() throws Throwable {
+        CucumberFeature feature = TestHelper.feature("path/test.feature",
+                "Feature: feature name\n" +
+                        "  Scenario: scenario name\n" +
+                        "    Given first step\n" +
+                        "    When second step\n" +
+                        "    Then third step\n");
+        HookDefinition beforeHook = mock(HookDefinition.class);
+        when(beforeHook.matches(anyCollectionOf(Tag.class))).thenReturn(true);
+
+        Runtime runtime = createRuntimeWithMockedGlue(mock(StepDefinitionMatch.class), beforeHook, true);
+        feature.run(mock(Formatter.class), mock(Reporter.class), runtime);
+
+        ArgumentCaptor<Scenario> capturedScenario = ArgumentCaptor.forClass(Scenario.class);
+        verify(beforeHook).execute(capturedScenario.capture());
+        assertEquals("scenario name", capturedScenario.getValue().getName());
+    }
+
+    @Test
+    public void should_make_scenario_id_available_to_hooks() throws Throwable {
+        CucumberFeature feature = TestHelper.feature("path/test.feature",
+                "Feature: feature name\n" +
+                        "  Scenario: scenario name\n" +
+                        "    Given first step\n" +
+                        "    When second step\n" +
+                        "    Then third step\n");
+        HookDefinition beforeHook = mock(HookDefinition.class);
+        when(beforeHook.matches(anyCollectionOf(Tag.class))).thenReturn(true);
+
+        Runtime runtime = createRuntimeWithMockedGlue(mock(StepDefinitionMatch.class), beforeHook, true);
+        feature.run(mock(Formatter.class), mock(Reporter.class), runtime);
+
+        ArgumentCaptor<Scenario> capturedScenario = ArgumentCaptor.forClass(Scenario.class);
+        verify(beforeHook).execute(capturedScenario.capture());
+        assertEquals("feature-name;scenario-name", capturedScenario.getValue().getId());
+    }
 
     private StepDefinitionMatch createExceptionThrowingMatch(Exception exception) throws Throwable {
         StepDefinitionMatch match = mock(StepDefinitionMatch.class);
@@ -392,7 +414,7 @@ public class RuntimeTest {
     }
 
     private Runtime createRuntimeWithMockedGlue(StepDefinitionMatch match, String... runtimeArgs) {
-        return createRuntimeWithMockedGlue(match, false, null, false, runtimeArgs);
+        return createRuntimeWithMockedGlue(match, false, mock(HookDefinition.class), false, runtimeArgs);
     }
 
     private Runtime createRuntimeWithMockedGlue(StepDefinitionMatch match, HookDefinition hook, boolean isBefore,
@@ -401,7 +423,7 @@ public class RuntimeTest {
     }
 
     private Runtime createRuntimeWithMockedGlueWithAmbiguousMatch(String... runtimeArgs) {
-        return createRuntimeWithMockedGlue(mock(StepDefinitionMatch.class), true, null, false, runtimeArgs);
+        return createRuntimeWithMockedGlue(mock(StepDefinitionMatch.class), true, mock(HookDefinition.class), false, runtimeArgs);
     }
 
     private Runtime createRuntimeWithMockedGlue(StepDefinitionMatch match, boolean isAmbiguous, HookDefinition hook,
@@ -433,5 +455,20 @@ public class RuntimeTest {
         } else {
             when(glue.getAfterHooks()).thenReturn(Arrays.asList(hook));
         }
+    }
+
+    private void runScenario(Reporter reporter, Runtime runtime, int stepCount) {
+        gherkin.formatter.model.Scenario gherkinScenario = mock(gherkin.formatter.model.Scenario.class);
+        runtime.buildBackendWorlds(reporter, Collections.<Tag>emptySet(), gherkinScenario);
+        runtime.runBeforeHooks(reporter, Collections.<Tag>emptySet());
+        for (int i = 0; i < stepCount; ++i) {
+            runStep(reporter, runtime);
+        }
+        runtime.runAfterHooks(reporter, Collections.<Tag>emptySet());
+        runtime.disposeBackendWorlds();
+    }
+
+    private int stepCount(int stepCount) {
+        return stepCount;
     }
 }
