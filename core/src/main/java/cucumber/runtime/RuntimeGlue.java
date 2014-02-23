@@ -17,20 +17,26 @@ import java.io.IOException;
 import java.io.Writer;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import static cucumber.runtime.HookComparator.ASCENDING;
+import static cucumber.runtime.HookComparator.DESCENDING;
 import static cucumber.runtime.model.CucumberFeature.load;
 import static java.util.Collections.emptyList;
+import static java.util.Collections.sort;
 
 public class RuntimeGlue implements Glue {
     private static final List<Object> NO_FILTERS = emptyList();
 
     private final Map<String, StepDefinition> stepDefinitionsByPattern = new TreeMap<String, StepDefinition>();
+    private final List<HookDefinition> beforeTestsHooks = new ArrayList<HookDefinition>();
+    private final List<HookDefinition> beforeFeatureHooks = new ArrayList<HookDefinition>();
     private final List<HookDefinition> beforeHooks = new ArrayList<HookDefinition>();
     private final List<HookDefinition> afterHooks = new ArrayList<HookDefinition>();
+    private final List<HookDefinition> afterFeatureHooks = new ArrayList<HookDefinition>();
+    private final List<HookDefinition> afterTestsHooks = new ArrayList<HookDefinition>();
 
     private final UndefinedStepsTracker tracker;
     private final LocalizedXStreams localizedXStreams;
@@ -50,15 +56,49 @@ public class RuntimeGlue implements Glue {
     }
 
     @Override
+    public void addBeforeTestsHook(HookDefinition hookDefinition) {
+        addNewHookAndSort(beforeTestsHooks, hookDefinition, true);
+    }
+
+    @Override
+    public void addBeforeFeatureHook(HookDefinition hookDefinition) {
+        addNewHookAndSort(beforeFeatureHooks, hookDefinition, true);
+    }
+
+    @Override
     public void addBeforeHook(HookDefinition hookDefinition) {
-        beforeHooks.add(hookDefinition);
-        Collections.sort(beforeHooks, new HookComparator(true));
+        addNewHookAndSort(beforeHooks, hookDefinition, true);
     }
 
     @Override
     public void addAfterHook(HookDefinition hookDefinition) {
-        afterHooks.add(hookDefinition);
-        Collections.sort(afterHooks, new HookComparator(false));
+        addNewHookAndSort(afterHooks, hookDefinition, false);
+    }
+
+    @Override
+    public void addAfterFeatureHook(HookDefinition hookDefinition) {
+        addNewHookAndSort(afterFeatureHooks, hookDefinition, false);
+    }
+
+    @Override
+    public void addAfterTestsHook(HookDefinition hookDefinition) {
+        addNewHookAndSort(afterTestsHooks, hookDefinition, false);
+    }
+
+    private void addNewHookAndSort(List<HookDefinition> hooks, HookDefinition hookToAdd, boolean ascending) {
+        hooks.add(hookToAdd);
+        if (ascending) sort(hooks, ASCENDING);
+        else sort(hooks, DESCENDING);
+    }
+
+    @Override
+    public List<HookDefinition> getBeforeTestsHooks() {
+        return beforeTestsHooks;
+    }
+
+    @Override
+    public List<HookDefinition> getBeforeFeatureHooks() {
+        return beforeFeatureHooks;
     }
 
     @Override
@@ -69,6 +109,16 @@ public class RuntimeGlue implements Glue {
     @Override
     public List<HookDefinition> getAfterHooks() {
         return afterHooks;
+    }
+
+    @Override
+    public List<HookDefinition> getAfterFeatureHooks() {
+        return afterFeatureHooks;
+    }
+
+    @Override
+    public List<HookDefinition> getAfterTestsHooks() {
+        return afterTestsHooks;
     }
 
     @Override
