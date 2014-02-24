@@ -42,12 +42,11 @@ public class FormatterFactory {
         put("rerun", RerunFormatter.class);
     }};
     private static final Pattern FORMATTER_WITH_FILE_PATTERN = Pattern.compile("([^:]+):(.*)");
-    private Appendable defaultOut = new OutputStreamWriter(System.out) {
-        @Override
-        public void close() throws IOException {
-            // We have no intention to close System.out
-        }
-    };
+    private Appendable defaultOut = createDefaultOut();
+
+    public void reset() {
+        defaultOut = createDefaultOut();
+    }
 
     public Formatter create(String formatterString) {
         Matcher formatterWithFile = FORMATTER_WITH_FILE_PATTERN.matcher(formatterString);
@@ -156,5 +155,14 @@ public class FormatterFactory {
         } finally {
             defaultOut = null;
         }
+    }
+
+    private OutputStreamWriter createDefaultOut() {
+        return new OutputStreamWriter(System.out) {
+            @Override
+            public void close() throws IOException {
+                // We have no intention to close System.out
+            }
+        };
     }
 }

@@ -91,6 +91,8 @@ public class RuntimeOptions {
         List<Object> parsedLineFilters = new ArrayList<Object>();
         List<String> parsedFeaturePaths = new ArrayList<String>();
         List<String> parsedGlue = new ArrayList<String>();
+        List<Formatter> parsedFormatters = new ArrayList<Formatter>();
+        formatterFactory.reset();
 
         while (!args.isEmpty()) {
             String arg = args.remove(0).trim();
@@ -107,7 +109,7 @@ public class RuntimeOptions {
             } else if (arg.equals("--tags") || arg.equals("-t")) {
                 parsedFilters.add(args.remove(0));
             } else if (arg.equals("--format") || arg.equals("-f")) {
-                formatters.add(formatterFactory.create(args.remove(0)));
+                parsedFormatters.add(formatterFactory.create(args.remove(0)));
             } else if (arg.equals("--dotcucumber")) {
                 String urlOrPath = args.remove(0);
                 dotCucumber = Utils.toURL(urlOrPath);
@@ -146,6 +148,10 @@ public class RuntimeOptions {
         if (!parsedGlue.isEmpty()) {
             glue.clear();
             glue.addAll(parsedGlue);
+        }
+        if (!parsedFormatters.isEmpty()) {
+            formatters.clear();
+            formatters.addAll(parsedFormatters);
         }
     }
 
