@@ -83,8 +83,8 @@ public class CucumberTest {
         Whitebox.setInternalState(cucumber, "runtime", runtime);
         RunNotifier runNotifier = new RunNotifier();
         cucumber.run(runNotifier);
-        verify(runtime, times(1)).runBeforeTestsHooks(any(Reporter.class));
-        verify(runtime, times(1)).runAfterTestsHooks(any(Reporter.class));
+        verify(runtime, times(1)).runBeforeAllHooks(any(Reporter.class));
+        verify(runtime, times(1)).runAfterAllHooks(any(Reporter.class));
         verify(runtime, times(1)).printSummary();
         verifyNoMoreInteractions(runtime);
     }

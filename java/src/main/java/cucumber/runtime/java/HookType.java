@@ -5,8 +5,8 @@ import cucumber.api.java.*;
 import java.lang.annotation.Annotation;
 
 enum HookType {
-    BEFORE_TESTS(BeforeTests.class),
-    AFTER_TESTS(AfterTests.class),
+    BEFORE_ALL(BeforeAll.class),
+    AFTER_ALL(AfterAll.class),
 
     BEFORE_FEATURE(BeforeFeature.class),
     AFTER_FEATURE(AfterFeature.class),

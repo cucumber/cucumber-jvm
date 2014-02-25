@@ -4,8 +4,8 @@ import cucumber.api.java.Before;
 import cucumber.api.java.After;
 import cucumber.api.java.BeforeFeature;
 import cucumber.api.java.AfterFeature;
-import cucumber.api.java.BeforeTests;
-import cucumber.api.java.AfterTests;
+import cucumber.api.java.BeforeAll;
+import cucumber.api.java.AfterAll;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Glue;
 import cucumber.runtime.io.MultiLoader;
@@ -44,12 +44,12 @@ public class MethodScannerTest {
         methodScanner.scan(backend, BaseStepDefs.class.getMethod("m4"), BaseStepDefs.class);
         methodScanner.scan(backend, BaseStepDefs.class.getMethod("m5"), BaseStepDefs.class);
 
-        verify(world, times(1)).addBeforeTestsHook(any(JavaHookDefinition.class));
+        verify(world, times(1)).addBeforeAllHook(any(JavaHookDefinition.class));
         verify(world, times(1)).addBeforeFeatureHook(any(JavaHookDefinition.class));
         verify(world, times(1)).addBeforeHook(any(JavaHookDefinition.class));
         verify(world, times(1)).addAfterHook(any(JavaHookDefinition.class));
         verify(world, times(1)).addAfterFeatureHook(any(JavaHookDefinition.class));
-        verify(world, times(1)).addAfterTestsHook(any(JavaHookDefinition.class));
+        verify(world, times(1)).addAfterAllHook(any(JavaHookDefinition.class));
         verify(factory, times(6)).addClass(BaseStepDefs.class);
         verifyNoMoreInteractions(factory, world);
     }
@@ -82,7 +82,7 @@ public class MethodScannerTest {
     }
 
     public static class BaseStepDefs {
-        @BeforeTests
+        @BeforeAll
         public void m0(){
         }
 
@@ -102,7 +102,7 @@ public class MethodScannerTest {
         public void m4() {
         }
 
-        @AfterTests
+        @AfterAll
         public void m5() {
         }
     }

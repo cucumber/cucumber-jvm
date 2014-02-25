@@ -105,14 +105,14 @@ public class Runtime implements UnreportedStepExecutor {
      */
     public void run() throws IOException {
         Reporter reporter = runtimeOptions.reporter(classLoader);
-        runBeforeTestsHooks(reporter);
+        runBeforeAllHooks(reporter);
         for (CucumberFeature cucumberFeature : runtimeOptions.cucumberFeatures(resourceLoader)) {
             Set<Tag> tags = new HashSet<Tag>(cucumberFeature.getGherkinFeature().getTags());
             runBeforeFeatureHooks(reporter, tags);
             run(cucumberFeature, reporter);
             runAfterFeatureHooks(reporter, tags);
         }
-        runAfterTestsHooks(reporter);
+        runAfterAllHooks(reporter);
 
         Formatter formatter = runtimeOptions.formatter(classLoader);
         formatter.done();
@@ -217,12 +217,12 @@ public class Runtime implements UnreportedStepExecutor {
         runHooks(glue.getAfterFeatureHooks(), reporter, tags, false);
     }
 
-    public void runBeforeTestsHooks(Reporter reporter) {
-        runHooks(glue.getBeforeTestsHooks(), reporter, Collections.<Tag>emptySet(), true);
+    public void runBeforeAllHooks(Reporter reporter) {
+        runHooks(glue.getBeforeAllHooks(), reporter, Collections.<Tag>emptySet(), true);
     }
 
-    public void runAfterTestsHooks(Reporter reporter) {
-        runHooks(glue.getAfterTestsHooks(), reporter, Collections.<Tag>emptySet(), false);
+    public void runAfterAllHooks(Reporter reporter) {
+        runHooks(glue.getAfterAllHooks(), reporter, Collections.<Tag>emptySet(), false);
     }
 
     private void runHooks(List<HookDefinition> hooks, Reporter reporter, Set<Tag> tags, boolean isBefore) {
@@ -339,7 +339,7 @@ public class Runtime implements UnreportedStepExecutor {
     }
 
     private void addStepToCounterAndResult(Result result) {
-        // global hooks (@PreTests, @PostTests, @BeforeFeature and @AfterFeature) are not part af a scenario
+        // global hooks (@BeforeAll, @AfterAll, @BeforeFeature and @AfterFeature) are not part af a scenario
         // so in those cases will be no scenarioResult
         if (scenarioResult != null)
             scenarioResult.add(result);
@@ -347,7 +347,7 @@ public class Runtime implements UnreportedStepExecutor {
     }
 
     private void addHookToCounterAndResult(Result result) {
-        // global hooks (@PreTests, @PostTests, @BeforeFeature and @AfterFeature) are not part af a scenario
+        // global hooks (@BeforeAll, @AfterAll, @BeforeFeature and @AfterFeature) are not part af a scenario
         // so in those cases will be no scenarioResult
         if (scenarioResult != null)
             scenarioResult.add(result);

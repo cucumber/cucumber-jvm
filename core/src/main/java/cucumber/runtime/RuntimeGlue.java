@@ -31,12 +31,12 @@ public class RuntimeGlue implements Glue {
     private static final List<Object> NO_FILTERS = emptyList();
 
     private final Map<String, StepDefinition> stepDefinitionsByPattern = new TreeMap<String, StepDefinition>();
-    private final List<HookDefinition> beforeTestsHooks = new ArrayList<HookDefinition>();
+    private final List<HookDefinition> beforeAllHooks = new ArrayList<HookDefinition>();
     private final List<HookDefinition> beforeFeatureHooks = new ArrayList<HookDefinition>();
     private final List<HookDefinition> beforeHooks = new ArrayList<HookDefinition>();
     private final List<HookDefinition> afterHooks = new ArrayList<HookDefinition>();
     private final List<HookDefinition> afterFeatureHooks = new ArrayList<HookDefinition>();
-    private final List<HookDefinition> afterTestsHooks = new ArrayList<HookDefinition>();
+    private final List<HookDefinition> afterAllHooks = new ArrayList<HookDefinition>();
 
     private final UndefinedStepsTracker tracker;
     private final LocalizedXStreams localizedXStreams;
@@ -56,8 +56,8 @@ public class RuntimeGlue implements Glue {
     }
 
     @Override
-    public void addBeforeTestsHook(HookDefinition hookDefinition) {
-        addNewHookAndSort(beforeTestsHooks, hookDefinition, true);
+    public void addBeforeAllHook(HookDefinition hookDefinition) {
+        addNewHookAndSort(beforeAllHooks, hookDefinition, true);
     }
 
     @Override
@@ -81,8 +81,8 @@ public class RuntimeGlue implements Glue {
     }
 
     @Override
-    public void addAfterTestsHook(HookDefinition hookDefinition) {
-        addNewHookAndSort(afterTestsHooks, hookDefinition, false);
+    public void addAfterAllHook(HookDefinition hookDefinition) {
+        addNewHookAndSort(afterAllHooks, hookDefinition, false);
     }
 
     private void addNewHookAndSort(List<HookDefinition> hooks, HookDefinition hookToAdd, boolean ascending) {
@@ -92,8 +92,8 @@ public class RuntimeGlue implements Glue {
     }
 
     @Override
-    public List<HookDefinition> getBeforeTestsHooks() {
-        return beforeTestsHooks;
+    public List<HookDefinition> getBeforeAllHooks() {
+        return beforeAllHooks;
     }
 
     @Override
@@ -117,8 +117,8 @@ public class RuntimeGlue implements Glue {
     }
 
     @Override
-    public List<HookDefinition> getAfterTestsHooks() {
-        return afterTestsHooks;
+    public List<HookDefinition> getAfterAllHooks() {
+        return afterAllHooks;
     }
 
     @Override

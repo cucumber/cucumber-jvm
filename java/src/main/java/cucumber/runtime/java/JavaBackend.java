@@ -4,8 +4,8 @@ import cucumber.api.java.After;
 import cucumber.api.java.Before;
 import cucumber.api.java.AfterFeature;
 import cucumber.api.java.BeforeFeature;
-import cucumber.api.java.AfterTests;
-import cucumber.api.java.BeforeTests;
+import cucumber.api.java.AfterAll;
+import cucumber.api.java.BeforeAll;
 import cucumber.runtime.Backend;
 import cucumber.runtime.ClassFinder;
 import cucumber.runtime.CucumberException;
@@ -143,15 +143,15 @@ public class JavaBackend implements Backend {
         HookType hookType = HookType.fromAnnotation(annotation);
         HookOptions hookOptions;
         switch (hookType) {
-            case BEFORE_TESTS:
-                BeforeTests beforeTestsHook = (BeforeTests) annotation;
-                hookOptions = new HookOptions(beforeTestsHook.order(), beforeTestsHook.timeout());
-                glue.addBeforeTestsHook(createJavaHook(hookOptions, method));
+            case BEFORE_ALL:
+                BeforeAll beforeAllHook = (BeforeAll) annotation;
+                hookOptions = new HookOptions(beforeAllHook.order(), beforeAllHook.timeout());
+                glue.addBeforeAllHook(createJavaHook(hookOptions, method));
                 break;
-            case AFTER_TESTS:
-                AfterTests afterTestsHook = (AfterTests) annotation;
-                hookOptions = new HookOptions(afterTestsHook.order(), afterTestsHook.timeout());
-                glue.addAfterTestsHook(createJavaHook(hookOptions, method));
+            case AFTER_ALL:
+                AfterAll afterAllHook = (AfterAll) annotation;
+                hookOptions = new HookOptions(afterAllHook.order(), afterAllHook.timeout());
+                glue.addAfterAllHook(createJavaHook(hookOptions, method));
                 break;
             case BEFORE_FEATURE:
                 BeforeFeature beforeFeatureHook = (BeforeFeature) annotation;

@@ -14,7 +14,7 @@ public interface Glue {
 
     void addStepDefinition(StepDefinition stepDefinition) throws DuplicateStepDefinitionException;
 
-    void addBeforeTestsHook(HookDefinition hookDefinition);
+    void addBeforeAllHook(HookDefinition hookDefinition);
 
     void addBeforeFeatureHook(HookDefinition hookDefinition);
 
@@ -24,9 +24,9 @@ public interface Glue {
 
     void addAfterFeatureHook(HookDefinition hookDefinition);
 
-    void addAfterTestsHook(HookDefinition hookDefinition);
+    void addAfterAllHook(HookDefinition hookDefinition);
 
-    List<HookDefinition> getBeforeTestsHooks();
+    List<HookDefinition> getBeforeAllHooks();
 
     List<HookDefinition> getBeforeFeatureHooks();
 
@@ -36,7 +36,7 @@ public interface Glue {
 
     List<HookDefinition> getAfterFeatureHooks();
 
-    List<HookDefinition> getAfterTestsHooks();
+    List<HookDefinition> getAfterAllHooks();
 
     StepDefinitionMatch stepDefinitionMatch(String featurePath, Step step, I18n i18n);
 

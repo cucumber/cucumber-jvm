@@ -26,7 +26,7 @@ public class HooksStepDefs {
         // the second feature has tags for custom feature hooks - BeforeFeature(@...) and AfterFeature(@...)
 
         // global hook before tests
-        hooksOrder.add("@BeforeTests");
+        hooksOrder.add("@BeforeAll");
 
         // first feature expected hooks in order
         hooksOrder.add("@BeforeFeature(order = 10)");
@@ -47,20 +47,20 @@ public class HooksStepDefs {
         hooksOrder.add("@AfterFeature(order = 10)");
 
         // global hook after tests
-        hooksOrder.add("@AfterTests");
+        hooksOrder.add("@AfterAll");
     }
 
-    @BeforeTests
+    @BeforeAll
     public void startServer() {
-        ensureHooksOrder("@BeforeTests");
+        ensureHooksOrder("@BeforeAll");
         httpServer = new HttpServerStub();
         httpServer.start();
         assertThat("The server should be started", httpServer.isStarted(), is(true));
     }
 
-    @AfterTests
+    @AfterAll
     public void stopServer() {
-        ensureHooksOrder("@AfterTests");
+        ensureHooksOrder("@AfterAll");
         assertThat("The server should be started",httpServer.isStarted(), is(true));
         httpServer.stop();
         assertThat("The server should be stopped",httpServer.isStarted(), is(false));
