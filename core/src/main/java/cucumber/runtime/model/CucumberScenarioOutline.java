@@ -21,11 +21,9 @@ import java.util.Set;
 
 public class CucumberScenarioOutline extends CucumberTagStatement {
     private final List<CucumberExamples> cucumberExamplesList = new ArrayList<CucumberExamples>();
-    private final CucumberBackground cucumberBackground;
 
     public CucumberScenarioOutline(CucumberFeature cucumberFeature, CucumberBackground cucumberBackground, ScenarioOutline scenarioOutline) {
-        super(cucumberFeature, scenarioOutline);
-        this.cucumberBackground = cucumberBackground;
+        super(cucumberBackground, cucumberFeature, scenarioOutline);
     }
 
     public void examples(Examples examples) {
@@ -53,7 +51,7 @@ public class CucumberScenarioOutline extends CucumberTagStatement {
         String exampleScenarioName = replaceTokens(new HashSet<Integer>(), header.getCells(), example.getCells(), getGherkinModel().getName());
 
         Scenario exampleScenario = new Scenario(example.getComments(), examplesTags, getGherkinModel().getKeyword(), exampleScenarioName, "", example.getLine(), example.getId());
-        CucumberScenario cucumberScenario = new CucumberScenario(cucumberFeature, cucumberBackground, exampleScenario, example);
+        CucumberScenario cucumberScenario = new CucumberScenario(getCucumberFeature(), getCucumberBackground(), exampleScenario, example);
         for (Step step : getSteps()) {
             cucumberScenario.step(createExampleStep(step, header, example));
         }
