@@ -10,23 +10,16 @@ import gherkin.formatter.model.Tag;
 import java.util.Set;
 
 public class CucumberScenario extends CucumberTagStatement {
-    private final CucumberBackground cucumberBackground;
     private final Scenario scenario;
 
     public CucumberScenario(CucumberFeature cucumberFeature, CucumberBackground cucumberBackground, Scenario scenario) {
-        super(cucumberFeature, scenario);
-        this.cucumberBackground = cucumberBackground;
+        super(cucumberBackground, cucumberFeature, scenario);
         this.scenario = scenario;
     }
 
     public CucumberScenario(CucumberFeature cucumberFeature, CucumberBackground cucumberBackground, Scenario exampleScenario, Row example) {
-        super(cucumberFeature, exampleScenario, example);
-        this.cucumberBackground = cucumberBackground;
+        super(cucumberBackground, cucumberFeature, exampleScenario, example);
         this.scenario = exampleScenario;
-    }
-
-    public CucumberBackground getCucumberBackground() {
-        return cucumberBackground;
     }
 
     /**
@@ -57,6 +50,7 @@ public class CucumberScenario extends CucumberTagStatement {
     }
 
     private void runBackground(Formatter formatter, Reporter reporter, Runtime runtime) {
+        final CucumberBackground cucumberBackground = getCucumberBackground();
         if (cucumberBackground != null) {
             cucumberBackground.format(formatter);
             cucumberBackground.runSteps(reporter, runtime);
