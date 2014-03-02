@@ -25,7 +25,7 @@ public class JavaSnippetTest {
     public void generatesPlainSnippet() {
         String expected = "" +
                 "@Given(\"^I have (\\\\d+) cukes in my \\\"([^\\\"]*)\\\" belly$\")\n" +
-                "public void i_have_cukes_in_my_belly(int arg1, String arg2) throws Throwable {\n" +
+                "public void i_have_cukes_in_my_belly(Integer arg1, String arg2) throws Throwable {\n" +
                 "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException();\n" +
                 "}\n";
@@ -36,7 +36,7 @@ public class JavaSnippetTest {
     public void generatesCopyPasteReadyStepSnippetForNumberParameters() throws Exception {
         String expected = "" +
                 "@Given(\"^before (\\\\d+) after$\")\n" +
-                "public void before_after(int arg1) throws Throwable {\n" +
+                "public void before_after(Integer arg1) throws Throwable {\n" +
                 "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException();\n" +
                 "}\n";
@@ -48,7 +48,7 @@ public class JavaSnippetTest {
     public void generatesCopyPasteReadySnippetWhenStepHasIllegalJavaIdentifierChars() {
         String expected = "" +
                 "@Given(\"^I have (\\\\d+) cukes in: my \\\"([^\\\"]*)\\\" red-belly!$\")\n" +
-                "public void i_have_cukes_in_my_red_belly(int arg1, String arg2) throws Throwable {\n" +
+                "public void i_have_cukes_in_my_red_belly(Integer arg1, String arg2) throws Throwable {\n" +
                 "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException();\n" +
                 "}\n";
@@ -71,7 +71,7 @@ public class JavaSnippetTest {
     public void generatesSnippetWithEscapedDollarSigns() {
         String expected = "" +
                 "@Given(\"^I have \\\\$(\\\\d+)$\")\n" +
-                "public void i_have_$(int arg1) throws Throwable {\n" +
+                "public void i_have_$(Integer arg1) throws Throwable {\n" +
                 "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException();\n" +
                 "}\n";
@@ -104,7 +104,7 @@ public class JavaSnippetTest {
     public void generatesSnippetWithEscapedParentheses() {
         String expected = "" +
                 "@Given(\"^I have (\\\\d+) cukes \\\\(maybe more\\\\)$\")\n" +
-                "public void i_have_cukes_maybe_more(int arg1) throws Throwable {\n" +
+                "public void i_have_cukes_maybe_more(Integer arg1) throws Throwable {\n" +
                 "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException();\n" +
                 "}\n";
@@ -115,7 +115,7 @@ public class JavaSnippetTest {
     public void generatesSnippetWithEscapedBrackets() {
         String expected = "" +
                 "@Given(\"^I have (\\\\d+) cukes \\\\[maybe more\\\\]$\")\n" +
-                "public void i_have_cukes_maybe_more(int arg1) throws Throwable {\n" +
+                "public void i_have_cukes_maybe_more(Integer arg1) throws Throwable {\n" +
                 "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException();\n" +
                 "}\n";
