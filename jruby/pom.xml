@@ -133,6 +133,8 @@ gherkin.I18n.all.each { i18n ->
                                 <!-- build the gem file using jruby -->
                                 <echo message="Building Gem" />
                                 <java jar="${maven.dependency.org.jruby.jruby-complete.jar.path}" failonerror="true" fork="true">
+                                    <!-- clobber PATH to prevent `gem` on the PATH from being picked up -->
+                                    <env key="PATH" value=""/>
                                     <sysproperty key="cucumber-jvm.version" value="${project.version}" />
                                     <arg value="-S" />
                                     <arg value="gem" />
@@ -156,6 +158,7 @@ gherkin.I18n.all.each { i18n ->
                                 <!-- also run the CLI test to ensure that stuff works via the CLI as well -->
                                 <echo message="Running cucumber via the CLI..." />
                                 <java jar="${maven.dependency.org.jruby.jruby-complete.jar.path}" fork="true" failonerror="true" newenvironment="true" maxmemory="512m">
+                                    <env key="PATH" value=""/>
                                     <arg value="-S" />
                                     <arg value="bin/cucumber-jvm" />
                                     <arg value="--glue" />
@@ -173,6 +176,7 @@ gherkin.I18n.all.each { i18n ->
                                 <!-- install the jruby-openssl gem first! -->
                                 <echo message="installing jruby-openssl..." />
                                 <java jar="${maven.dependency.org.jruby.jruby-complete.jar.path}" failonerror="true" fork="true">
+                                    <env key="PATH" value=""/>
                                     <arg value="-S" />
                                     <arg value="gem" />
                                     <arg value="install" />
@@ -186,6 +190,7 @@ gherkin.I18n.all.each { i18n ->
                                 <!-- publish the gem to rubygems.org -->
                                 <echo message="Publishing Gem" />
                                 <java jar="${maven.dependency.org.jruby.jruby-complete.jar.path}" failonerror="true" fork="true">
+                                    <env key="PATH" value=""/>
                                     <env key="GEM_PATH" value="${basedir}/target/gems" />
                                     <arg value="-S" />
                                     <arg value="gem" />
