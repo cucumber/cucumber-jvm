@@ -4,11 +4,15 @@ import cucumber.annotation.DummyWhen;
 import cucumber.api.CucumberOptions;
 import cucumber.api.junit.Cucumber;
 import cucumber.runtime.CucumberException;
+import cucumber.runtime.Runtime;
+import gherkin.formatter.Reporter;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;
+import org.mockito.internal.util.reflection.Whitebox;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,6 +21,11 @@ import java.util.List;
 import static java.util.Collections.emptyList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 
 public class CucumberTest {
 
@@ -65,6 +74,19 @@ public class CucumberTest {
         Cucumber cucumber = new Cucumber(ExplicitFeaturePathWithNoFeatures.class);
         List<FeatureRunner> children = cucumber.getChildren();
         assertEquals(emptyList(), children);
+    }
+
+    @Test
+    public void testRun_verify_that_preTests_and_postTests_hooks_are_executed() throws Exception {
+        Cucumber cucumber = new Cucumber(ImplicitFeatureAndGluePath.class);
+        Runtime runtime = mock(Runtime.class);
+        Whitebox.setInternalState(cucumber, "runtime", runtime);
+        RunNotifier runNotifier = new RunNotifier();
+        cucumber.run(runNotifier);
+        verify(runtime, times(1)).runBeforeAllHooks(any(Reporter.class));
+        verify(runtime, times(1)).runAfterAllHooks(any(Reporter.class));
+        verify(runtime, times(1)).printSummary();
+        verifyNoMoreInteractions(runtime);
     }
 
     @RunWith(Cucumber.class)
