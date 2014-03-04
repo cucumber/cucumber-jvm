@@ -2,7 +2,6 @@
 language: java
 script: mvn -q install -P examples
 jdk:
-- openjdk6
 - openjdk7
 matrix:
   include:

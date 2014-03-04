@@ -1,6 +1,7 @@
 ## [1-1-6-SNAPSHOT (Git master)](https://github.com/cucumber/cucumber-jvm/compare/v1.1.5...master)
 
-* [Core] Fix compilation on JDK7 on OS X. ([#499](https://github.com/cucumber/cucumber-jvm/pull/499), [#487](https://github.com/cucumber/cucumber-jvm/issues/487))
+* [Build] JDK7 is required to build everything. Built jars should still work on JDK6 (Aslak Hellesøy)
+* [Core] Fix compilation on JDK7 on OS X. ([#499](https://github.com/cucumber/cucumber-jvm/pull/499), [#487](https://github.com/cucumber/cucumber-jvm/issues/487) Aslak Hellesøy)
 * [Andriod] Enable custom test runners to run Cucumber features (to enable usage of the Espresso framework). ([#662](https://github.com/cucumber/cucumber-jvm/issues/662), [#667](https://github.com/cucumber/cucumber-jvm/pull/667) Björn Rasmusson)
 * [Core] Expose Scenario name to step definitions. ([#671](https://github.com/cucumber/cucumber-jvm/pull/671) Dominic Fox)
 * [Clojure] Fixed bug in the snippet generation that caused an exception. ([#650](https://github.com/cucumber/cucumber-jvm/pull/650) shaolang)
