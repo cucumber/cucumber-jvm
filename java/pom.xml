@@ -114,6 +114,7 @@ I18n.all.each { i18n ->
 
         ]]></groovy>
 
+                                <exec executable="${project.basedir}/compile-and-delete-generated-i18n-code.sh" os="Mac OS X"/>
                             </target>
                         </configuration>
                     </execution>
