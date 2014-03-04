@@ -8,9 +8,6 @@ enum HookType {
     BEFORE_ALL(BeforeAll.class),
     AFTER_ALL(AfterAll.class),
 
-    BEFORE_FEATURE(BeforeFeature.class),
-    AFTER_FEATURE(AfterFeature.class),
-
     BEFORE(Before.class),
     AFTER(After.class);
 

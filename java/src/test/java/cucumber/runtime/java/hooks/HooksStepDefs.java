@@ -72,7 +72,8 @@ public class HooksStepDefs {
 
     @Given("^that we have a http server up and running and no data on it$")
     public void that_we_have_a_http_server_up_and_running_and_no_data_on_it() throws Throwable {
-        assertThat(httpServer.receive(), is(nullValue()));
+        httpServer.clean();
+        assertThat(httpServer.retrieve(), is(nullValue()));
     }
 
     @Given("^that we have a http server up and running$")
@@ -87,7 +88,7 @@ public class HooksStepDefs {
 
     @When("^I send a request to get the existing data on http server$")
     public void i_send_a_request_to_get_the_existing_data_on_http_server() throws Throwable {
-        data = httpServer.receive();
+        data = httpServer.retrieve();
     }
 
     @Then("^I expect a success response code of (\\d+)$")

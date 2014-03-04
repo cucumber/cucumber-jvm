@@ -44,7 +44,7 @@ public class MethodScannerTest {
         verify(world, times(1)).addBeforeHook(any(JavaHookDefinition.class));
         verify(world, times(1)).addAfterHook(any(JavaHookDefinition.class));
         verify(world, times(1)).addAfterAllHook(any(JavaHookDefinition.class));
-        verify(factory, times(6)).addClass(BaseStepDefs.class);
+        verify(factory, times(4)).addClass(BaseStepDefs.class);
         verifyNoMoreInteractions(factory, world);
     }
 
