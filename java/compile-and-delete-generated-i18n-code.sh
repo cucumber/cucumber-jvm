@@ -8,4 +8,10 @@
 set -e
 mkdir -p target/classes
 javac -classpath src/main/java -d target/classes `find target/generated-sources -name *.java`
-rm -rf target/generated-sources/i18n/java
+
+# Back up the bare minimum (English)
+mv target/generated-sources/i18n/java/cucumber/api/java/en target/java-en
+# Delete everything else
+rm -rf target/generated-sources/i18n/java/cucumber/api/java/*
+# Restore the backup
+mv target/java-en target/generated-sources/i18n/java/cucumber/api/java/en
