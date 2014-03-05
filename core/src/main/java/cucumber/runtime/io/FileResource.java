@@ -36,4 +36,8 @@ public class FileResource implements Resource {
         String path = getPath();
         return path.substring(0, path.length() - 6).replace(File.separatorChar, '.');
     }
+
+    public File getFile() {
+        return file;
+    }
 }

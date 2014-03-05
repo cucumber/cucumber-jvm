@@ -1,0 +1,95 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>info.cukes</groupId>
+        <artifactId>cucumber-jvm</artifactId>
+        <relativePath>../pom.xml</relativePath>
+        <version>1.1.6-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>cucumber-gosu</artifactId>
+    <packaging>jar</packaging>
+    <name>Cucumber-JVM: Gosu</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>info.cukes</groupId>
+            <artifactId>cucumber-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>info.cukes</groupId>
+            <artifactId>cucumber-jvm-deps</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>info.cukes</groupId>
+            <artifactId>gherkin</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.gosu-lang.gosu</groupId>
+            <artifactId>gosu-core</artifactId>
+            <version>0.10.3</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/gosu-0.10.3/lib/gosu-core-0.10.3.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>org.gosu-lang.gosu</groupId>
+            <artifactId>gosu-core-api</artifactId>
+            <version>0.10.3</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/gosu-0.10.3/lib/gosu-core-api-0.10.3.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>org.gosu-lang.gosu</groupId>
+            <artifactId>gosu-interactive</artifactId>
+            <version>0.10.3</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/gosu-0.10.3/lib/gosu-interactive-0.10.3.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>org.gosu-lang.gosu</groupId>
+            <artifactId>gosu-launcher-aether</artifactId>
+            <version>2.1</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/gosu-0.10.3/lib/gosu-launcher-aether-2.1.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>org.gosu-lang.gosu</groupId>
+            <artifactId>gosu-launcher-api</artifactId>
+            <version>2</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/gosu-0.10.3/lib/gosu-launcher-api-2.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>org.gosu-lang.gosu</groupId>
+            <artifactId>gosu-launcher-impl</artifactId>
+            <version>2.1</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/gosu-0.10.3/lib/gosu-launcher-impl-2.1.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>info.cukes</groupId>
+            <artifactId>cucumber-junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.sourceforge.cobertura</groupId>
+            <artifactId>cobertura</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>

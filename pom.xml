@@ -443,6 +443,7 @@
 
     <modules>
         <module>core</module>
+        <module>gosu</module>
         <module>picocontainer</module>
         <module>clojure</module>
         <module>junit</module>
