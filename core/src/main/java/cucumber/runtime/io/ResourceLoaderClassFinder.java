@@ -20,7 +20,7 @@ public class ResourceLoaderClassFinder implements ClassFinder {
         Collection<Class<? extends T>> result = new HashSet<Class<? extends T>>();
         String packagePath = "classpath:" + packageName.replace('.', '/').replace(File.separatorChar, '/');
         for (Resource classResource : resourceLoader.resources(packagePath, ".class")) {
-            String className = classResource.getClassName();
+            String className = classResource.getClassName(".class");
             Class<?> clazz = loadClass(className, classLoader);
             if (clazz != null && !parentType.equals(clazz) && parentType.isAssignableFrom(clazz)) {
                 result.add(clazz.asSubclass(parentType));

@@ -8,5 +8,5 @@ public interface Resource {
 
     InputStream getInputStream() throws IOException;
 
-    String getClassName();
+    String getClassName(String extension);
 }

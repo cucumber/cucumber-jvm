@@ -3,21 +3,17 @@ package cucumber.runtime.gosu;
 import cucumber.runtime.Backend;
 import cucumber.runtime.Glue;
 import cucumber.runtime.UnreportedStepExecutor;
-import cucumber.runtime.io.FileResource;
 import cucumber.runtime.io.Resource;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.snippets.FunctionNameGenerator;
 import gherkin.formatter.model.Step;
 import gw.lang.Gosu;
 import gw.lang.function.AbstractBlock;
-import gw.lang.reflect.ReflectUtil;
+import gw.lang.launch.IArgInfo;
 
-import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-// http://ddebowczyk.github.io/programming/gosu/2013/11/04/gosu-java-interop.html
 public class GosuBackend implements Backend {
     private final ResourceLoader resourceLoader;
 
@@ -27,22 +23,16 @@ public class GosuBackend implements Backend {
 
     @Override
     public void loadGlue(Glue glue, List<String> gluePaths) {
-        List<File> gosuPath = new ArrayList<File>();
+        GlueSource source = new GlueSource();
+
         for (String gluePath : gluePaths) {
-            for (Resource resource : resourceLoader.resources(gluePath, ".gs")) {
-                if (resource instanceof FileResource) {
-                    FileResource fr = (FileResource) resource;
-                    gosuPath.add(fr.getFile());
-                }
+            for (Resource glueScript : resourceLoader.resources(gluePath, ".gsp")) {
+                source.addGlueScript(glueScript);
             }
         }
-        Gosu.init(gosuPath);
 
-        // TODO: figure out how to avoid using classes.
-        // If we have to use classes - how do we figure out what the class name is? Look
-        // at the file name?
-        Stepdefs stepdefs = ReflectUtil.construct("cucumber.runtime.gosu.test.MyStepdefs");
-        stepdefs.define(this);
+        Gosu gosu = new Gosu();
+        gosu.start(source.toArgInfo());
     }
 
     @Override

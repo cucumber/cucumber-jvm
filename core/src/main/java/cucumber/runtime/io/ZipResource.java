@@ -25,8 +25,8 @@ public class ZipResource implements Resource {
     }
 
     @Override
-    public String getClassName() {
+    public String getClassName(String extension) {
         String path = getPath();
-        return path.substring(0, path.length() - 6).replace('/', '.');
+        return path.substring(0, path.length() - extension.length()).replace('/', '.');
     }
 }

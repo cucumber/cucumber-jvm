@@ -70,6 +70,13 @@
             <scope>system</scope>
             <systemPath>${basedir}/gosu-0.10.3/lib/gosu-launcher-impl-2.1.jar</systemPath>
         </dependency>
+        <dependency>
+            <groupId>org.gosu-lang.gosu</groupId>
+            <artifactId>jline</artifactId>
+            <version>0.9.94</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/gosu-0.10.3/lib/jline-0.9.94.jar</systemPath>
+        </dependency>
 
         <dependency>
             <groupId>info.cukes</groupId>

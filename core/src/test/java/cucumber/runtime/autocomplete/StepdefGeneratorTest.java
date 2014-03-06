@@ -98,7 +98,7 @@ public class StepdefGeneratorTest {
             }
 
             @Override
-            public String getClassName() {
+            public String getClassName(String extension) {
                 throw new UnsupportedOperationException();
             }
         }, emptyList());
