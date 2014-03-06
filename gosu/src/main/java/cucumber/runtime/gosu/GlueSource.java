@@ -34,7 +34,9 @@ class GlueSource implements IProgramSource {
 
     @Override
     public InputStream openInputStream() throws IOException {
+        // While we're exploring - print the generated Gosu code...
         System.out.println(sourceBuilder.toString());
+
         return new ByteArrayInputStream(sourceBuilder.toString().getBytes("UTF-8"));
     }
 
