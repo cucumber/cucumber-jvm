@@ -54,15 +54,4 @@ public class GosuBackend implements Backend {
     public String getSnippet(Step step, FunctionNameGenerator functionNameGenerator) {
         return null;
     }
-
-    public void Given(String patternString, Object body) {
-        Pattern pattern = Pattern.compile(patternString);
-        AbstractBlock block = (AbstractBlock) body;
-
-        // TODO: Store pattern and block in a GosuStepDefinition.
-        // For now while we're kicking the tyres of Gosu, just invoke it immediately
-
-        System.out.println(pattern);
-        block.invokeWithArgs("YO");
-    }
 }
