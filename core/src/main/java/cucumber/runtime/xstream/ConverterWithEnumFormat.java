@@ -21,6 +21,7 @@ class ConverterWithEnumFormat<T extends Enum> extends ConverterWithFormat<T> {
         super(new Class[]{enumClass});
         this.locale = locale;
         this.typeClass = enumClass;
+        formats.add(new OriginalFormat());
         formats.add(new LowercaseFormat());
         formats.add(new UppercaseFormat());
         formats.add(new CapitalizeFormat());
@@ -40,6 +41,19 @@ class ConverterWithEnumFormat<T extends Enum> extends ConverterWithFormat<T> {
     @Override
     public List<Format> getFormats() {
         return formats;
+    }
+
+    private class OriginalFormat extends Format {
+
+        @Override
+        public StringBuffer format(Object obj, StringBuffer toAppendTo, FieldPosition pos) {
+            return toAppendTo.append(String.valueOf(obj));
+        }
+
+        @Override
+        public Object parseObject(String source, ParsePosition pos) {
+            return source == null ? null : Enum.valueOf(typeClass, source);
+        }
     }
 
     private class LowercaseFormat extends Format {
