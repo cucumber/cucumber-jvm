@@ -16,7 +16,7 @@ public class TimeStepdefs {
     private static Options options = new Options();
     private Calendar laundryDate;
 
-    @Given("^today is \"([^\"]*)\"$")
+    @Given("^today is \"(.*?)\"$")
     public void today_is(Calendar today) throws Throwable {
         options.setNow(today);
     }
@@ -26,7 +26,7 @@ public class TimeStepdefs {
         this.laundryDate = laundryDate;
     }
 
-    @Then("^my laundry day must have been \"([^\"]*)\"$")
+    @Then("^my laundry day must have been \"(.*?)\"$")
     public void my_laundry_day_must_have_been(Calendar day) throws Throwable {
         // Ideally we'd compare the Calendar instances here, but due to Chronic's
         // use of default Locale and Cucumber's inability to set its Locale to e.g.

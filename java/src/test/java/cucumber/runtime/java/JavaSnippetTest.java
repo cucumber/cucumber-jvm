@@ -24,7 +24,7 @@ public class JavaSnippetTest {
     @Test
     public void generatesPlainSnippet() {
         String expected = "" +
-                "@Given(\"^I have (\\\\d+) cukes in my \\\"([^\\\"]*)\\\" belly$\")\n" +
+                "@Given(\"^I have (\\\\d+) cukes in my \\\"(.*?)\\\" belly$\")\n" +
                 "public void i_have_cukes_in_my_belly(int arg1, String arg2) throws Throwable {\n" +
                 "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException();\n" +
@@ -47,7 +47,7 @@ public class JavaSnippetTest {
     @Test
     public void generatesCopyPasteReadySnippetWhenStepHasIllegalJavaIdentifierChars() {
         String expected = "" +
-                "@Given(\"^I have (\\\\d+) cukes in: my \\\"([^\\\"]*)\\\" red-belly!$\")\n" +
+                "@Given(\"^I have (\\\\d+) cukes in: my \\\"(.*?)\\\" red-belly!$\")\n" +
                 "public void i_have_cukes_in_my_red_belly(int arg1, String arg2) throws Throwable {\n" +
                 "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException();\n" +
@@ -59,7 +59,7 @@ public class JavaSnippetTest {
     @Test
     public void generatesCopyPasteReadySnippetWhenStepHasIntegersInsideStringParameter() {
         String expected = "" +
-                "@Given(\"^the DI system receives a message saying \\\"([^\\\"]*)\\\"$\")\n" +
+                "@Given(\"^the DI system receives a message saying \\\"(.*?)\\\"$\")\n" +
                 "public void the_DI_system_receives_a_message_saying(String arg1) throws Throwable {\n" +
                 "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException();\n" +

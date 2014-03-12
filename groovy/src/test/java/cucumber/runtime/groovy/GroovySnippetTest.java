@@ -20,7 +20,7 @@ public class GroovySnippetTest {
     @Test
     public void generatesPlainSnippet() {
         String expected = "" +
-                "Given(~'^I have (\\\\d+) cukes in my \"([^\"]*)\" belly$') { int arg1, String arg2 ->\n" +
+                "Given(~'^I have (\\\\d+) cukes in my \"(.*?)\" belly$') { int arg1, String arg2 ->\n" +
                 "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException()\n" +
                 "}\n";
@@ -41,7 +41,7 @@ public class GroovySnippetTest {
     @Test
     public void generatesCopyPasteReadySnippetWhenStepHasIllegalJavaIdentifierChars() {
         String expected = "" +
-                "Given(~'^I have (\\\\d+) cukes in: my \"([^\"]*)\" red-belly!$') { int arg1, String arg2 ->\n" +
+                "Given(~'^I have (\\\\d+) cukes in: my \"(.*?)\" red-belly!$') { int arg1, String arg2 ->\n" +
                 "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException()\n" +
                 "}\n";
@@ -52,7 +52,7 @@ public class GroovySnippetTest {
     @Test
     public void generatesCopyPasteReadySnippetWhenStepHasIntegersInsideStringParameter() {
         String expected = "" +
-                "Given(~'^the DI system receives a message saying \"([^\"]*)\"$') { String arg1 ->\n" +
+                "Given(~'^the DI system receives a message saying \"(.*?)\"$') { String arg1 ->\n" +
                 "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException()\n" +
                 "}\n";

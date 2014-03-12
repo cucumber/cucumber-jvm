@@ -10,7 +10,7 @@ public class HelloStepdefs {
     private Hello hello;
     private String hi;
 
-    @Given("^I have a hello app with \"([^\"]*)\"$")
+    @Given("^I have a hello app with \"(.*?)\"$")
     public void I_have_a_hello_app_with(String greeting) {
         hello = new Hello(greeting);
     }
@@ -20,7 +20,7 @@ public class HelloStepdefs {
         hi = hello.sayHi();
     }
 
-    @Then("^it should answer with \"([^\"]*)\"$")
+    @Then("^it should answer with \"(.*?)\"$")
     public void it_should_answer_with(String expectedHi) {
         assertEquals(expectedHi, hi);
     }

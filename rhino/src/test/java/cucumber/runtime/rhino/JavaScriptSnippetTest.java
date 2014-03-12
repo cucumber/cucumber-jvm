@@ -14,7 +14,7 @@ public class JavaScriptSnippetTest {
     @Test
     public void generatesPlainSnippet() {
         String expected = "" +
-                "Given(/^I have (\\d+) cukes in my \"([^\"]*)\" belly$/, function(arg1, arg2) {\n" +
+                "Given(/^I have (\\d+) cukes in my \"(.*?)\" belly$/, function(arg1, arg2) {\n" +
                 "  // Write code here that turns the phrase above into concrete actions\n" +
                 "  throw new Packages.cucumber.api.PendingException();\n" +
                 "});\n";

@@ -19,7 +19,7 @@ public class SubstitutionStepdefs {
     private String role;
     private String details;
 
-    @Given("^I have a user account with my name \"([^\"]*)\"$")
+    @Given("^I have a user account with my name \"(.*?)\"$")
     public void I_have_a_user_account_with_my_name(String name) throws Throwable {
         this.name = name;
     }
