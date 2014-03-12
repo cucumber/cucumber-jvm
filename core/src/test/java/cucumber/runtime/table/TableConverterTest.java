@@ -28,6 +28,19 @@ public class TableConverterTest {
         }.getType()));
     }
 
+    @Test
+    public void converts_table_of_two_columns_to_map() {
+        DataTable table = TableParser.parse("|3|c|\n|5|e|\n|6|f|\n", null);
+        Map<Integer, String> expected = new HashMap<Integer, String>() {{
+            put(3, "c");
+            put(5, "e");
+            put(6, "f");
+        }};
+
+        assertEquals(expected, table.<List<Integer>>convert(new TypeReference<Map<Integer, String>>() {
+        }.getType()));
+    }
+
     public static class WithoutStringConstructor {
         public String count;
 
@@ -111,7 +124,7 @@ public class TableConverterTest {
     @Test
     public void converts_table_of_single_column_to_enums() {
         DataTable table = TableParser.parse("|RED|\n|GREEN|\n", null);
-        assertEquals(asList(Color.RED, Color.GREEN), table.<List<Integer>>convert(new TypeReference<List<Color>>() {
+        assertEquals(asList(Color.RED, Color.GREEN), table.<List<Color>>convert(new TypeReference<List<Color>>() {
         }.getType()));
     }
 

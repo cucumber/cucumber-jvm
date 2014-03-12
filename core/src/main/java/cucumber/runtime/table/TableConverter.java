@@ -51,9 +51,15 @@ public class TableConverter {
                 return (T) dataTable;
             }
 
+            Type mapKeyType = mapKeyType(type);
+            if (mapKeyType != null) {
+                Type mapValueType = mapValueType(type);
+                return toMap(dataTable, mapKeyType, mapValueType);
+            }
+
             Type itemType = listItemType(type);
             if (itemType == null) {
-                throw new CucumberException("Not a List type: " + type);
+                throw new CucumberException("Not a Map or List type: " + type);
             }
 
             if (transposed) {
@@ -99,6 +105,22 @@ public class TableConverter {
         } finally {
             xStream.unsetParameterInfo();
         }
+    }
+
+    private <T> T toMap(DataTable dataTable, Type mapKeyType, Type mapValueType) {
+        SingleValueConverter keyConverter = xStream.getSingleValueConverter(mapKeyType);
+        SingleValueConverter valueConverter = xStream.getSingleValueConverter(mapValueType);
+
+        Map<Object, Object> result = new HashMap<Object, Object>();
+        for (List<String> row : dataTable.raw()) {
+            if (row.size() != 2) {
+                throw new CucumberException("A DataTable can only be converted to a Map when there are 2 columns");
+            }
+            Object key = keyConverter.fromString(row.get(0));
+            Object value = valueConverter.fromString(row.get(1));
+            result.put(key, value);
+        }
+        return (T) Collections.unmodifiableMap(result);
     }
 
     private <T> List<T> toListOfComplexType(DataTable dataTable, Class<T> itemType) {
@@ -167,7 +189,7 @@ public class TableConverter {
         }
         return convert(new GenericListType(type), dataTable, false);
     }
-    
+
     public <T> List<T> toList(final Type type, DataTable dataTable, boolean transposed) {
         if (type == null) {
             return convert(new GenericListType(new GenericListType(String.class)), dataTable, transposed);

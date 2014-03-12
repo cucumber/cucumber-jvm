@@ -1,5 +1,6 @@
 ## [1-1-6-SNAPSHOT (Git master)](https://github.com/cucumber/cucumber-jvm/compare/v1.1.5...master)
 
+* [Core] A DataTable of 2 columns can be turned into a Map excplicitly via `DataTable.asMap()` or by declaring a generic parameter type. Similar to Cucumber-Ruby's Table#rows_hash (Aslak Hellesøy)
 * [Core] Snippets for quoted arguments changed from from `([^\"]*)` to `(.*?)` to be aligned with Cucumber-Ruby (Aslak Hellesøy)
 * [Build] JDK7 is required to build everything. Built jars should still work on JDK6 (Aslak Hellesøy)
 * [Core] Fix compilation on JDK7 on OS X. ([#499](https://github.com/cucumber/cucumber-jvm/pull/499), [#487](https://github.com/cucumber/cucumber-jvm/issues/487) Aslak Hellesøy)

@@ -87,7 +87,7 @@ public class DataTable {
     public <T> T convert(Type type) {
         return tableConverter.convert(type, this, false);
     }
-    
+
     public <T> T convert(Type type, boolean transposed) {
         return tableConverter.convert(type, this, transposed);
     }
@@ -98,9 +98,19 @@ public class DataTable {
      *
      * @return a List of Map.
      */
-    public List<Map<String, String>> asMaps() {
+    public <K, V> List<Map<K, V>> asMaps() {
         return asList(new TypeReference<Map<String, String>>() {
         }.getType());
+    }
+
+    /**
+     * Converts the table to a single Map. The left column is used as keys, the right column as values.
+     *
+     * @return a Map.
+     */
+    public <K, V> Map<K, V> asMap() {
+        return tableConverter.convert(new TypeReference<Map<String, String>>() {
+        }.getType(), this, false);
     }
 
     /**
@@ -115,8 +125,7 @@ public class DataTable {
      * @return a list of objects
      */
     public <T> List<T> asList(Type type) {
-        List<T> result = tableConverter.toList(type, this, false);
-        return result;
+        return tableConverter.toList(type, this, false);
     }
 
     public List<String> topCells() {
@@ -143,8 +152,7 @@ public class DataTable {
      * {@code List&lt;YourType&gt;}.
      *
      * @param other the other table to diff with.
-     * @throws cucumber.runtime.table.TableDiffException
-     *          if the tables are different.
+     * @throws cucumber.runtime.table.TableDiffException if the tables are different.
      */
     public void diff(List<?> other) throws TableDiffException {
         List<String> topCells = topCells();

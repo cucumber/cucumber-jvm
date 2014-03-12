@@ -36,12 +36,12 @@ public class DataTableTest {
         }
     }
 
-    @Test(expected=CucumberException.class)
+    @Test(expected = CucumberException.class)
     public void canNotSupportNonRectangularTablesMissingColumn() {
         List<List<String>> raw = createNonRectangularTableMissingColumn().raw();
     }
 
-    @Test(expected=CucumberException.class)
+    @Test(expected = CucumberException.class)
     public void canNotSupportNonRectangularTablesExceedingColumn() {
         List<List<String>> raw = createNonRectangularTableExceedingColumn().raw();
     }
@@ -81,6 +81,11 @@ public class DataTableTest {
         createSimpleTable().asMaps().remove(0);
     }
 
+    @Test(expected = UnsupportedOperationException.class)
+    public void asMap_is_immutable() {
+        createTable(asList("one", "four"), asList("4444", "55555")).asMap().remove("4444");
+    }
+
     @Test
     public void two_identical_tables_are_considered_equal() {
         assertEquals(createSimpleTable(), createSimpleTable());
@@ -110,13 +115,13 @@ public class DataTableTest {
     }
 
     public DataTable createNonRectangularTableMissingColumn() {
-        return createTable(asList("one", "four", "seven"), 
+        return createTable(asList("one", "four", "seven"),
                 asList("a1", "a4444"),
                 asList("b1"));
     }
 
     public DataTable createNonRectangularTableExceedingColumn() {
-        return createTable(asList("one", "four", "seven"), 
+        return createTable(asList("one", "four", "seven"),
                 asList("a1", "a4444", "b7777777", "zero"));
     }
 
