@@ -1,7 +1,6 @@
 package cucumber.runtime.gosu;
 
 import cucumber.runtime.io.Resource;
-import gherkin.util.FixJava;
 import gw.lang.launch.IArgInfo;
 import gw.lang.launch.IBooleanArgKey;
 import gw.lang.launch.IProgramSource;
@@ -16,11 +15,6 @@ import java.util.List;
 class GlueSource implements IProgramSource {
     private final StringBuilder sourceBuilder = new StringBuilder();
 
-    public GlueSource() {
-        // Write the DSL to the top of the source
-        sourceBuilder.append(FixJava.readResource("/cucumber/runtime/gosu/dsl.gsp"));
-    }
-
     @Override
     public String getRawPath() {
         // This file doesn't really exist, but we have to say something I guess!
@@ -34,9 +28,6 @@ class GlueSource implements IProgramSource {
 
     @Override
     public InputStream openInputStream() throws IOException {
-        // While we're exploring - print the generated Gosu code...
-        System.out.println(sourceBuilder.toString());
-
         return new ByteArrayInputStream(sourceBuilder.toString().getBytes("UTF-8"));
     }
 

@@ -9,20 +9,23 @@ import cucumber.runtime.snippets.FunctionNameGenerator;
 import gherkin.formatter.model.Step;
 import gw.lang.Gosu;
 import gw.lang.function.AbstractBlock;
-import gw.lang.launch.IArgInfo;
 
 import java.util.List;
 import java.util.regex.Pattern;
 
 public class GosuBackend implements Backend {
     private final ResourceLoader resourceLoader;
+    public static GosuBackend instance;
+    private Glue glue;
 
     public GosuBackend(ResourceLoader resourceLoader) {
         this.resourceLoader = resourceLoader;
+        instance = this;
     }
 
     @Override
     public void loadGlue(Glue glue, List<String> gluePaths) {
+        this.glue = glue;
         GlueSource source = new GlueSource();
 
         for (String gluePath : gluePaths) {
@@ -53,5 +56,25 @@ public class GosuBackend implements Backend {
     @Override
     public String getSnippet(Step step, FunctionNameGenerator functionNameGenerator) {
         return null;
+    }
+
+    public void addStepDefinition(String regexp, Object body) {
+        AbstractBlock block = (AbstractBlock) body;
+        glue.addStepDefinition(new GosuStepDefinition(Pattern.compile(regexp), block, currentLocation()));
+    }
+
+    private static StackTraceElement currentLocation() {
+        Throwable t = new Throwable();
+        StackTraceElement[] stackTraceElements = t.getStackTrace();
+        for (StackTraceElement stackTraceElement : stackTraceElements) {
+            if (isGosuFile(stackTraceElement.getFileName())) {
+                return stackTraceElement;
+            }
+        }
+        throw new RuntimeException("Couldn't find location for step definition");
+    }
+
+    private static boolean isGosuFile(String fileName) {
+        return fileName != null && fileName.endsWith(".gsp");
     }
 }
