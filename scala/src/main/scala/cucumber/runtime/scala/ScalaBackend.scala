@@ -1,6 +1,8 @@
 package cucumber.runtime.scala
 
 import _root_.java.util.{List => JList}
+import _root_.java.util.{ArrayList => JArrayList}
+import _root_.java.util.{Set => JSet}
 import _root_.gherkin.formatter.model.Step
 import _root_.java.lang.reflect.Modifier
 import _root_.cucumber.runtime.snippets.SnippetGenerator
@@ -35,7 +37,7 @@ class ScalaBackend(resourceLoader:ResourceLoader) extends Backend {
     //I don't believe scala has to do anything to clean out its world
   }
 
-  def loadGlue(glue: Glue, gluePaths: JList[String]) {
+  def loadGlue(glue: Glue, gluePaths: JSet[String]) {
     val cl = Thread.currentThread().getContextClassLoader
     val classFinder = new ResourceLoaderClassFinder(resourceLoader, cl)
     val packages = gluePaths map { cucumber.runtime.io.MultiLoader.packageName(_) }
@@ -61,7 +63,7 @@ class ScalaBackend(resourceLoader:ResourceLoader) extends Backend {
     }
     val clsInstances = (clsClasses map {_.newInstance()})
 
-    instances = objInstances ++ clsInstances
+    instances = new JArrayList(objInstances) ++ clsInstances
 
     getStepDefinitions map {glue.addStepDefinition(_)}
     getBeforeHooks map {glue.addBeforeHook(_)}

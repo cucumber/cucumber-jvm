@@ -3,13 +3,13 @@ package cucumber.runtime;
 import cucumber.runtime.snippets.FunctionNameGenerator;
 import gherkin.formatter.model.Step;
 
-import java.util.List;
+import java.util.Set;
 
 public interface Backend {
     /**
      * Invoked once before all features. This is where stepdefs and hooks should be loaded.
      */
-    void loadGlue(Glue glue, List<String> gluePaths);
+    void loadGlue(Glue glue, Set<String> gluePaths);
 
     /**
      * invoked once, handing the backend a reference to a step executor

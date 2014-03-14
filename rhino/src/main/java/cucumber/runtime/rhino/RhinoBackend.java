@@ -22,6 +22,7 @@ import cucumber.runtime.io.Resource;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.snippets.FunctionNameGenerator;
 import cucumber.runtime.snippets.SnippetGenerator;
+import java.util.Set;
 
 public class RhinoBackend implements Backend {
     private static final String JS_DSL = "/cucumber/runtime/rhino/dsl.js";
@@ -29,7 +30,7 @@ public class RhinoBackend implements Backend {
     private final ResourceLoader resourceLoader;
     private final Context cx;
     private final Scriptable scope;
-    private List<String> gluePaths;
+    private Set<String> gluePaths;
     private Glue glue;
     private Function buildWorldFn;
     private Function disposeWorldFn;
@@ -44,7 +45,7 @@ public class RhinoBackend implements Backend {
     }
 
     @Override
-    public void loadGlue(Glue glue, List<String> gluePaths) {
+    public void loadGlue(Glue glue, Set<String> gluePaths) {
         this.glue = glue;
         this.gluePaths = gluePaths;
         for (String gluePath : gluePaths) {

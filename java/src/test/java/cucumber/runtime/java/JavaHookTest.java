@@ -44,7 +44,7 @@ public class JavaHookTest {
 
     @org.junit.Before
     public void loadNoGlue() {
-        backend.loadGlue(glue, Collections.<String>emptyList());
+        backend.loadGlue(glue, Collections.<String>emptySet());
     }
 
     @Test

@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Arrays.asList;
+import java.util.HashSet;
 import static org.junit.Assert.assertEquals;
 
 public class JavaBackendTest {
@@ -24,7 +25,7 @@ public class JavaBackendTest {
         ObjectFactory factory = new DefaultJavaObjectFactory();
         JavaBackend backend = new JavaBackend(factory);
         GlueStub glue = new GlueStub();
-        backend.loadGlue(glue, asList("classpath:cucumber/runtime/java/stepdefs"));
+        backend.loadGlue(glue, new HashSet(asList("classpath:cucumber/runtime/java/stepdefs")));
         backend.buildWorld();
         assertEquals(Stepdefs.class, factory.getInstance(Stepdefs.class).getClass());
     }
@@ -34,7 +35,7 @@ public class JavaBackendTest {
         ObjectFactory factory = new DefaultJavaObjectFactory();
         JavaBackend backend = new JavaBackend(factory);
         GlueStub glue = new GlueStub();
-        backend.loadGlue(glue, asList("cucumber.runtime.java.stepdefs"));
+        backend.loadGlue(glue, new HashSet(asList("cucumber.runtime.java.stepdefs")));
         backend.buildWorld();
         assertEquals(Stepdefs.class, factory.getInstance(Stepdefs.class).getClass());
     }
@@ -44,7 +45,7 @@ public class JavaBackendTest {
         ObjectFactory factory = new DefaultJavaObjectFactory();
         JavaBackend backend = new JavaBackend(factory);
         GlueStub glue = new GlueStub();
-        backend.loadGlue(glue, asList("cucumber.runtime.java.stepdefs", "cucumber.runtime.java.incorrectlysubclassedstepdefs"));
+        backend.loadGlue(glue, new HashSet(asList("cucumber.runtime.java.stepdefs", "cucumber.runtime.java.incorrectlysubclassedstepdefs")));
     }
 
     private class GlueStub implements Glue {
