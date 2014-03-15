@@ -1,5 +1,6 @@
 ## [1-1-6-SNAPSHOT (Git master)](https://github.com/cucumber/cucumber-jvm/compare/v1.1.5...master)
 
+* [Clojure] Add tagged Before/After hook support ([#676](https://github.com/cucumber/cucumber-jvm/pull/676) Jeremy Anderson)
 * [Core] POJO with nullable enum fields support in tables ([#684](https://github.com/cucumber/cucumber-jvm/pull/684) Mykola Gurov)
 * [Core] `DataTable.flatten()` is gone. Use `DataTable.asList(String.class)` instead (Aslak Hellesøy)
 * [Core] A DataTable of 2 columns can be turned into a Map excplicitly via `DataTable.asMap()` or by declaring a generic parameter type. Similar to Cucumber-Ruby's Table#rows_hash (Aslak Hellesøy)
