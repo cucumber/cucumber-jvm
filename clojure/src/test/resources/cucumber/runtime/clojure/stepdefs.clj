@@ -6,6 +6,9 @@
   (reset! some-state "'Before' has run.")
   (println "Executing 'Before'."))
 
+(Before ["@foo"]
+  (println "Executing 'Tagged Before'"))
+
 (After []
   (println (str "Executing 'After' " @some-state)))
 
