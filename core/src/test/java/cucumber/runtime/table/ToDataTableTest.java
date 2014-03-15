@@ -8,11 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.lang.reflect.Type;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
@@ -182,6 +178,37 @@ public class ToDataTableTest {
                 "", tc.toTable(maps).toString());
     }
 
+    @Test
+    public void enum_value_should_be_null_when_text_omitted_for_pojo() {
+        final List<PojoWithEnum> actual = tc.toList(PojoWithEnum.class, TableParser.parse("" +
+                "| agree | \n" +
+                "|  yes  | \n" +
+                "|       | \n" +
+                "", PARAMETER_INFO)
+        );
+        assertEquals("[PojoWithEnum{yes}, PojoWithEnum{null}]", actual.toString());
+    }
+
+    @Test
+    public void mixed_case_enum_members_shall_still_work_even_when_starts_from_lower_case() {
+        final List<PojoWithEnum> actual = tc.toList(PojoWithEnum.class, TableParser.parse("" +
+                "| agree            | \n" +
+                "| mayBeMixedCase  | \n" +
+                "", PARAMETER_INFO)
+        );
+        assertEquals("[PojoWithEnum{mayBeMixedCase}]", actual.toString());
+    }
+
+    @Test
+    public void enum_value_should_be_null_when_text_omitted_for_plain_enum() {
+        final List<AnEnum> actual = tc.toList(AnEnum.class, TableParser.parse("" +
+                "| yes | \n" +
+                "|     | \n" +
+                "", PARAMETER_INFO)
+        );
+        assertEquals("[yes, null]", actual.toString());
+    }
+
     // No setters
     public static class UserPojo {
         public Integer credits;
@@ -194,5 +221,22 @@ public class ToDataTableTest {
 
     public static class PojoWithInt {
         public int credits;
+    }
+
+    public enum AnEnum {
+        yes, no, mayBeMixedCase
+    }
+
+    public static class PojoWithEnum {
+        public AnEnum agree;
+
+        public PojoWithEnum(AnEnum agree) {
+            this.agree = agree;
+        }
+
+        @Override
+        public String toString() {
+            return "PojoWithEnum{" + agree + '}';
+        }
     }
 }
