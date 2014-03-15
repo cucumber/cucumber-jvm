@@ -10,6 +10,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
@@ -38,28 +39,22 @@ public class DataTableTest {
 
     @Test(expected = CucumberException.class)
     public void canNotSupportNonRectangularTablesMissingColumn() {
-        List<List<String>> raw = createNonRectangularTableMissingColumn().raw();
+        createTable(asList("one", "four", "seven"),
+                asList("a1", "a4444"),
+                asList("b1")).raw();
     }
 
     @Test(expected = CucumberException.class)
     public void canNotSupportNonRectangularTablesExceedingColumn() {
-        List<List<String>> raw = createNonRectangularTableExceedingColumn().raw();
+        createTable(asList("one", "four", "seven"),
+                asList("a1", "a4444", "b7777777", "zero")).raw();
     }
 
     @Test
     public void canCreateTableFromListOfListOfString() {
         DataTable dataTable = createSimpleTable();
-        DataTable other = dataTable.toTable(dataTable.raw());
-        assertEquals("" +
-                "      | one  | four  | seven  |\n" +
-                "      | 4444 | 55555 | 666666 |\n",
-                other.toString());
-    }
-
-    @Test
-    public void canCreateTableFromListOfListOfStringWithoutOtherTable() {
-        DataTable dataTable = createSimpleTable();
-        DataTable other = DataTable.create(dataTable.raw());
+        List<List<String>> listOfListOfString = dataTable.raw();
+        DataTable other = dataTable.toTable(listOfListOfString);
         assertEquals("" +
                 "      | one  | four  | seven  |\n" +
                 "      | 4444 | 55555 | 666666 |\n",
@@ -78,12 +73,15 @@ public class DataTableTest {
 
     @Test(expected = UnsupportedOperationException.class)
     public void asMaps_is_immutable() {
-        createSimpleTable().asMaps().remove(0);
+        List<Map<String, String>> maps = createSimpleTable().asMaps(String.class, String.class);
+        maps.remove(0);
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public void asMap_is_immutable() {
-        createTable(asList("one", "four"), asList("4444", "55555")).asMap().remove("4444");
+        Map<String, Long> map = createTable(asList("hundred", "100"), asList("thousand", "1000")).asMap(String.class, Long.class);
+        assertEquals(new Long(1000L), map.get("thousand"));
+        map.remove("hundred");
     }
 
     @Test
@@ -112,17 +110,6 @@ public class DataTableTest {
 
     public DataTable createSimpleTable() {
         return createTable(asList("one", "four", "seven"), asList("4444", "55555", "666666"));
-    }
-
-    public DataTable createNonRectangularTableMissingColumn() {
-        return createTable(asList("one", "four", "seven"),
-                asList("a1", "a4444"),
-                asList("b1"));
-    }
-
-    public DataTable createNonRectangularTableExceedingColumn() {
-        return createTable(asList("one", "four", "seven"),
-                asList("a1", "a4444", "b7777777", "zero"));
     }
 
     private DataTable createTable(List<String>... rows) {

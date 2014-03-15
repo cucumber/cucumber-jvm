@@ -66,7 +66,7 @@ public class LocalizedXStreams {
             lookup.registerConverter(new SingleValueConverterWrapperExt(converter), XStream.PRIORITY_VERY_HIGH);
         }
 
-        public void setParameterType(ParameterInfo parameterInfo) {
+        public void setParameterInfo(ParameterInfo parameterInfo) {
             if (parameterInfo != null) {
                 List<Class> timeClasses = TimeConverter.getTimeClasses();
                 for (Class timeClass : timeClasses) {
@@ -92,7 +92,7 @@ public class LocalizedXStreams {
             if (type instanceof Class) {
                 Class clazz = (Class) type;
                 if (clazz.isEnum()) {
-                    return new EnumConverter(locale, clazz);
+                    return createEnumConverter(clazz);
                 }
                 ConverterLookup converterLookup = getConverterLookup();
                 Converter converter = converterLookup.lookupConverterForType((Class) type);

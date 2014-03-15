@@ -89,9 +89,10 @@ public class StepDefinitionMatch extends Match {
 
     private Object tableArgument(Step step, int argIndex, LocalizedXStreams.LocalizedXStream xStream) {
         ParameterInfo parameterInfo = getParameterType(argIndex, DataTable.class);
-        DataTable table = new DataTable(step.getRows(), new TableConverter(xStream, parameterInfo));
+        TableConverter tableConverter = new TableConverter(xStream, parameterInfo);
+        DataTable table = new DataTable(step.getRows(), tableConverter);
         Type type = parameterInfo.getType();
-        return table.convert(type, parameterInfo.isTransposed());
+        return tableConverter.convert(table, type, parameterInfo.isTransposed());
     }
 
     private CucumberException arityMismatch(int parameterCount) {

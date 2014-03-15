@@ -101,7 +101,7 @@ public class ParameterInfo {
 
     public Object convert(String value, LocalizedXStreams.LocalizedXStream xStream) {
         try {
-            xStream.setParameterType(this);
+            xStream.setParameterInfo(this);
             SingleValueConverter converter;
             xStream.processAnnotations(getRawType());
             xStream.autodetectAnnotations(true); // Needed to unlock annotation processing
