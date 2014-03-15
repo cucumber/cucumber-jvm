@@ -116,6 +116,13 @@ public class TableConverterTest {
     }
 
     @Test
+    public void converts_table_of_single_column_to_nullable_enums() {
+        DataTable table = TableParser.parse("|RED|\n||\n", null);
+        assertEquals(asList(Color.RED, null), table.<List<Integer>>convert(new TypeReference<List<Color>>() {
+        }.getType()));
+    }
+
+    @Test
     public void converts_to_map_of_enum_to_int() {
         DataTable table = TableParser.parse("|RED|BLUE|\n|6|7|\n|8|9|\n", null);
         HashMap<Color, Integer> map1 = new HashMap<Color, Integer>() {{
