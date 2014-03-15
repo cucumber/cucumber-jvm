@@ -140,11 +140,11 @@
   {:file file
    :line (:line (meta form))})
 
-(defmacro Before [binding-form & body]
-  `(add-hook-definition :before [] (fn ~binding-form ~@body) ~(hook-location *file* &form)))
+(defmacro Before [tags & body]
+  `(add-hook-definition :before ~tags (fn [] ~@body) ~(hook-location *file* &form)))
 
-(defmacro After [binding-form & body]
-  `(add-hook-definition :after [] (fn ~binding-form ~@body) ~(hook-location *file* &form)))
+(defmacro After [tags & body]
+  `(add-hook-definition :after ~tags (fn [] ~@body) ~(hook-location *file* &form)))
 
 (defn ^:private update-keys [f m]
   (reduce-kv #(assoc %1 (f %2) %3) {} m))
