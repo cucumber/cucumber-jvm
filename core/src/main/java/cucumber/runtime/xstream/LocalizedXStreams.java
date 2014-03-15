@@ -1,10 +1,7 @@
 package cucumber.runtime.xstream;
 
 import cucumber.deps.com.thoughtworks.xstream.XStream;
-import cucumber.deps.com.thoughtworks.xstream.converters.Converter;
-import cucumber.deps.com.thoughtworks.xstream.converters.ConverterLookup;
-import cucumber.deps.com.thoughtworks.xstream.converters.ConverterRegistry;
-import cucumber.deps.com.thoughtworks.xstream.converters.SingleValueConverter;
+import cucumber.deps.com.thoughtworks.xstream.converters.*;
 import cucumber.deps.com.thoughtworks.xstream.core.DefaultConverterLookup;
 import cucumber.runtime.ParameterInfo;
 
@@ -57,6 +54,7 @@ public class LocalizedXStreams {
             register(converterRegistry, new IntegerConverter(locale));
             register(converterRegistry, new LongConverter(locale));
             register(converterRegistry, new PatternConverter());
+            converterRegistry.registerConverter(new DynamicEnumConverter(locale), XStream.PRIORITY_VERY_HIGH);
 
             // Must be lower priority than the ones above, but higher than xstream's built-in ReflectionConverter
             converterRegistry.registerConverter(new SingleValueConverterWrapperExt(new ClassWithStringAssignableConstructorConverter()), XStream.PRIORITY_LOW);

@@ -21,6 +21,7 @@ class ConverterWithEnumFormat<T extends Enum> extends ConverterWithFormat<T> {
         super(new Class[]{enumClass});
         this.locale = locale;
         this.typeClass = enumClass;
+        formats.add(new OriginalFormat());
         formats.add(new LowercaseFormat());
         formats.add(new UppercaseFormat());
         formats.add(new CapitalizeFormat());
@@ -42,43 +43,49 @@ class ConverterWithEnumFormat<T extends Enum> extends ConverterWithFormat<T> {
         return formats;
     }
 
-    private class LowercaseFormat extends Format {
-
+    private class OriginalFormat extends AbstractEnumFormat {
         @Override
-        public StringBuffer format(Object obj, StringBuffer toAppendTo, FieldPosition pos) {
-            return toAppendTo.append(String.valueOf(obj));
-        }
-
-        @Override
-        public Object parseObject(String source, ParsePosition pos) {
-            return source == null ? null : Enum.valueOf(typeClass, source.toLowerCase(locale));
+        protected String transformSource(String source) {
+            return source;
         }
     }
 
-    private class UppercaseFormat extends Format {
+    private class LowercaseFormat extends AbstractEnumFormat {
         @Override
-        public StringBuffer format(Object obj, StringBuffer toAppendTo, FieldPosition pos) {
-            return toAppendTo.append(String.valueOf(obj));
-        }
-
-        @Override
-        public Object parseObject(String source, ParsePosition pos) {
-            return source == null ? null : Enum.valueOf(typeClass, source.toUpperCase(locale));
+        protected String transformSource(String source) {
+            return source.toLowerCase(locale);
         }
     }
 
-    private class CapitalizeFormat extends Format {
+    private class UppercaseFormat extends AbstractEnumFormat {
         @Override
-        public StringBuffer format(Object obj, StringBuffer toAppendTo, FieldPosition pos) {
-            return toAppendTo.append(String.valueOf(obj));
+        protected String transformSource(String source) {
+            return source.toUpperCase(locale);
         }
+    }
 
+    private class CapitalizeFormat extends AbstractEnumFormat {
         @Override
-        public Object parseObject(String source, ParsePosition pos) {
+        protected String transformSource(String source) {
             String firstLetter = source.substring(0, 1);
             String restOfTheString = source.substring(1, source.length());
-            return Enum.valueOf(typeClass, firstLetter.toUpperCase(locale) + restOfTheString);
+            return firstLetter.toUpperCase(locale) + restOfTheString;
         }
+    }
+
+    private abstract class AbstractEnumFormat extends Format {
+        @Override
+        public StringBuffer format(Object obj, StringBuffer toAppendTo, FieldPosition pos) {
+            return toAppendTo.append(String.valueOf(obj));
+        }
+
+        @Override
+        public Object parseObject(String source, ParsePosition pos) {
+            return source == null ? null : Enum.valueOf(typeClass, transformSource(source));
+        }
+
+        protected abstract String transformSource(String source);
+
     }
 
 }
