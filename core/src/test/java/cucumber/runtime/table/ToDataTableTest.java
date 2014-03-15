@@ -190,6 +190,16 @@ public class ToDataTableTest {
     }
 
     @Test
+    public void mixed_case_enum_members_shall_still_work_even_when_starts_from_lower_case() {
+        final List<PojoWithEnum> actual = tc.toList(PojoWithEnum.class, TableParser.parse("" +
+                "| agree            | \n" +
+                "| mayBeMixedCase  | \n" +
+                "", PARAMETER_INFO)
+        );
+        assertEquals("[PojoWithEnum{mayBeMixedCase}]", actual.toString());
+    }
+
+    @Test
     public void enum_value_should_be_null_when_text_omitted_for_plain_enum() {
         final List<AnEnum> actual = tc.toList(AnEnum.class, TableParser.parse("" +
                 "| yes | \n" +
@@ -214,7 +224,7 @@ public class ToDataTableTest {
     }
 
     public enum AnEnum {
-        yes, no
+        yes, no, mayBeMixedCase
     }
 
     public static class PojoWithEnum {
