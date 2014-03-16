@@ -32,12 +32,10 @@ public class GosuStepDefinition implements StepDefinition {
     }
 
     private List<ParameterInfo> getParameterInfos() {
-        System.out.println("block = " + block);
         IType[] parameterTypes = block.getFunctionType().getParameterTypes();
         List<ParameterInfo> result = new ArrayList<ParameterInfo>(parameterTypes.length);
         for (IType parameterType : parameterTypes) {
-            System.out.println("parameterType = " + parameterType);
-            // TODO: Can we get more from the parameterType?
+            // TODO: Can we get more info from the parameterType?
             result.add(new ParameterInfo(String.class, null, null, null));
         }
         return result;

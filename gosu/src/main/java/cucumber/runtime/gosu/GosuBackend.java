@@ -6,6 +6,7 @@ import cucumber.runtime.UnreportedStepExecutor;
 import cucumber.runtime.io.Resource;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.snippets.FunctionNameGenerator;
+import cucumber.runtime.snippets.SnippetGenerator;
 import gherkin.formatter.model.Step;
 import gw.lang.Gosu;
 import gw.lang.function.AbstractBlock;
@@ -14,8 +15,10 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public class GosuBackend implements Backend {
-    private final ResourceLoader resourceLoader;
     public static GosuBackend instance;
+
+    private final ResourceLoader resourceLoader;
+    private final SnippetGenerator snippetGenerator = new SnippetGenerator(new GosuSnippet());
     private Glue glue;
 
     public GosuBackend(ResourceLoader resourceLoader) {
@@ -55,8 +58,7 @@ public class GosuBackend implements Backend {
 
     @Override
     public String getSnippet(Step step, FunctionNameGenerator functionNameGenerator) {
-        return null;
-    }
+        return snippetGenerator.getSnippet(step, null);    }
 
     public void addStepDefinition(String regexp, Object body) {
         AbstractBlock block = (AbstractBlock) body;
