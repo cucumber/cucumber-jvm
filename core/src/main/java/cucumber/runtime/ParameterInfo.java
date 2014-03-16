@@ -26,7 +26,7 @@ public class ParameterInfo {
     private final String format;
     private final String delimiter;
     private final boolean transposed;
-    private final Transformer transformer;
+    private final Transformer<?> transformer;
 
     public static List<ParameterInfo> fromMethod(Method method) {
         List<ParameterInfo> result = new ArrayList<ParameterInfo>();
@@ -36,30 +36,49 @@ public class ParameterInfo {
             String format = null;
             String delimiter = DEFAULT_DELIMITER;
             boolean transposed = false;
-            Transformer transformer = null;
+            Transformer<?> transformer = null;
             for (Annotation annotation : annotations[i]) {
                 if (annotation instanceof Format) {
                     format = ((Format) annotation).value();
+                } else if (isAnnotatedWith(annotation, Format.class)) {
+                    format = getAnnotationForAnnotation(annotation, Format.class).value();
                 }
+
                 if (annotation instanceof Delimiter) {
                     delimiter = ((Delimiter) annotation).value();
+                } else if (isAnnotatedWith(annotation, Delimiter.class)) {
+                    delimiter = getAnnotationForAnnotation(annotation, Delimiter.class).value();
                 }
                 if (annotation instanceof Transpose) {
                     transposed = ((Transpose) annotation).value();
                 }
                 if (annotation instanceof Transform) {
-                    try {
-                        transformer = ((Transform) annotation).value().newInstance();
-                    } catch (InstantiationException e) {
-                        throw new CucumberException(e);
-                    } catch (IllegalAccessException e) {
-                        throw new CucumberException(e);
-                    }
+                    transformer = getTransformer(annotation);
+                } else if (isAnnotatedWith(annotation, Transform.class)) {
+                    transformer = getTransformer(getAnnotationForAnnotation(annotation, Transform.class));
                 }
             }
             result.add(new ParameterInfo(genericParameterTypes[i], format, delimiter, transposed, transformer));
         }
         return result;
+    }
+
+    private static boolean isAnnotatedWith(Annotation source, Class<? extends Annotation> requiredAnnotation) {
+        return getAnnotationForAnnotation(source, requiredAnnotation) != null;
+    }
+
+    private static <T extends Annotation> T getAnnotationForAnnotation(Annotation source, Class<T> requiredAnnotation) {
+        return source.annotationType().getAnnotation(requiredAnnotation);
+    }
+
+    private static Transformer<?> getTransformer(Annotation annotation) {
+        try {
+            return ((Transform) annotation).value().newInstance();
+        } catch (InstantiationException e) {
+            throw new CucumberException(e);
+        } catch (IllegalAccessException e) {
+            throw new CucumberException(e);
+        }
     }
 
     public ParameterInfo(Type type, String format, String delimiter, Transformer transformer) {
