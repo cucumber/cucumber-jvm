@@ -8,6 +8,7 @@ import cucumber.runtime.RuntimeOptionsFactory;
 import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -36,9 +37,9 @@ public class TestNGCucumberRunner {
         List<String> uniqueGlue = new ArrayList<String>(new HashSet<String>(runtimeOptions.getGlue()));
         runtimeOptions.getGlue().clear();
         runtimeOptions.getGlue().addAll(uniqueGlue);
-        
+
         TestNgReporter reporter = new TestNgReporter(System.out);
-        runtimeOptions.getFormatters().add(reporter);
+        runtimeOptions.addFormatter(reporter);
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         runtime = new cucumber.runtime.Runtime(resourceLoader, classFinder, classLoader, runtimeOptions);
     }

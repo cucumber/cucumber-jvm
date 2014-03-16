@@ -30,7 +30,9 @@ class JavaSnippet implements Snippet {
 
     @Override
     public String tableHint() {
-        return "    // For automatic conversion, change DataTable to List<YourType>\n";
+        return "    // For automatic transformation, change DataTable to one of\n" +
+                "    // List<YourType>, List<List<E>>, List<Map<K,V>> or Map<K,V>.\n" +
+                "    // E,K,V must be a scalar (String, Integer, Date, enum etc)\n";
     }
 
     @Override

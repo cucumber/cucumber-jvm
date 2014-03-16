@@ -18,7 +18,7 @@ public class JRubySnippetTest {
     @Test
     public void generatesPlainSnippet() {
         String expected = "" +
-                "Given /^I have (\\d+) cukes in my \"([^\"]*)\" belly$/ do |arg1, arg2|\n" +
+                "Given /^I have (\\d+) cukes in my \"(.*?)\" belly$/ do |arg1, arg2|\n" +
                 "  # Write code here that turns the phrase above into concrete actions\n" +
                 "  pending\n" +
                 "end\n";

@@ -6,7 +6,6 @@ import cucumber.runtime.ParameterInfo;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.io.Resource;
 import cucumber.runtime.model.CucumberFeature;
-import cucumber.runtime.table.TypeReference;
 import gherkin.I18n;
 import gherkin.deps.com.google.gson.Gson;
 import gherkin.deps.com.google.gson.GsonBuilder;
@@ -18,6 +17,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -146,4 +146,19 @@ public class StepdefGeneratorTest {
         };
     }
 
+    public abstract static class TypeReference<T> {
+        private final Type type;
+
+        protected TypeReference() {
+            Type superclass = getClass().getGenericSuperclass();
+            if (superclass instanceof Class) {
+                throw new RuntimeException("Missing type parameter.");
+            }
+            this.type = ((ParameterizedType) superclass).getActualTypeArguments()[0];
+        }
+
+        public Type getType() {
+            return this.type;
+        }
+    }
 }

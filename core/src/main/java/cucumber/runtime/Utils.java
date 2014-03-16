@@ -5,11 +5,10 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -61,7 +60,11 @@ public class Utils {
             ParameterizedType parameterizedType = (ParameterizedType) type;
             Type rawType = parameterizedType.getRawType();
             if (rawType instanceof Class && wantedRawType.isAssignableFrom((Class) rawType)) {
-                return parameterizedType.getActualTypeArguments()[index];
+                Type result = parameterizedType.getActualTypeArguments()[index];
+                if(result instanceof TypeVariable) {
+                    throw new CucumberException("Generic types must be explicit");
+                }
+                return result;
             } else {
                 return null;
             }

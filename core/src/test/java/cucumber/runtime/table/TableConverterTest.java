@@ -24,8 +24,19 @@ public class TableConverterTest {
     @Test
     public void converts_table_of_single_column_to_list_of_integers() {
         DataTable table = TableParser.parse("|3|\n|5|\n|6|\n|7|\n", null);
-        assertEquals(asList(3, 5, 6, 7), table.<List<Integer>>convert(new TypeReference<List<Integer>>() {
-        }.getType()));
+        assertEquals(asList(3, 5, 6, 7), table.asList(Integer.class));
+    }
+
+    @Test
+    public void converts_table_of_two_columns_to_map() {
+        DataTable table = TableParser.parse("|3|c|\n|5|e|\n|6|f|\n", null);
+        Map<Integer, String> expected = new HashMap<Integer, String>() {{
+            put(3, "c");
+            put(5, "e");
+            put(6, "f");
+        }};
+
+        assertEquals(expected, table.asMap(Integer.class, String.class));
     }
 
     public static class WithoutStringConstructor {
@@ -64,8 +75,8 @@ public class TableConverterTest {
     @Test
     public void converts_table_of_single_column_to_list_of_without_string_constructor() {
         DataTable table = TableParser.parse("|count|\n|5|\n|6|\n|7|\n", null);
-        assertEquals(asList(new WithoutStringConstructor().val("5"), new WithoutStringConstructor().val("6"), new WithoutStringConstructor().val("7")), table.<List<Integer>>convert(new TypeReference<List<WithoutStringConstructor>>() {
-        }.getType()));
+        List<WithoutStringConstructor> expected = asList(new WithoutStringConstructor().val("5"), new WithoutStringConstructor().val("6"), new WithoutStringConstructor().val("7"));
+        assertEquals(expected, table.asList(WithoutStringConstructor.class));
     }
 
     public static class WithStringConstructor extends WithoutStringConstructor {
@@ -77,31 +88,23 @@ public class TableConverterTest {
     @Test
     public void converts_table_of_single_column_to_list_of_with_string_constructor() {
         DataTable table = TableParser.parse("|count|\n|5|\n|6|\n|7|\n", null);
-        assertEquals(asList(new WithStringConstructor("count"), new WithStringConstructor("5"), new WithStringConstructor("6"), new WithStringConstructor("7")), table.<List<Integer>>convert(new TypeReference<List<WithStringConstructor>>() {
-        }.getType()));
+        List<WithStringConstructor> expected = asList(new WithStringConstructor("count"), new WithStringConstructor("5"), new WithStringConstructor("6"), new WithStringConstructor("7"));
+        assertEquals(expected, table.asList(WithStringConstructor.class));
     }
 
     @Test
     public void converts_table_of_several_columns_to_list_of_integers() {
         DataTable table = TableParser.parse("|3|5|\n|6|7|\n", null);
-        List<Integer> converted = table.convert(new TypeReference<List<Integer>>() {
-        }.getType());
+        List<Integer> converted = table.asList(Integer.class);
         assertEquals(asList(3, 5, 6, 7), converted);
     }
 
     @Test
     public void converts_table_to_list_of_list_of_integers_and_back() {
         DataTable table = TableParser.parse("|3|5|\n|6|7|\n", null);
-        List<List<Integer>> converted = table.convert(new TypeReference<List<List<Integer>>>() {
-        }.getType());
+        List<List<Integer>> converted = table.asLists(Integer.class);
         assertEquals(asList(asList(3, 5), asList(6, 7)), converted);
         assertEquals("      | 3 | 5 |\n      | 6 | 7 |\n", table.toTable(converted).toString());
-    }
-
-    @Test
-    public void does_not_convert_when_type_is_unspecified() {
-        DataTable table = TableParser.parse("|3|5|\n|6|7|\n", null);
-        assertEquals(table, table.<DataTable>convert(null));
     }
 
     public static enum Color {
@@ -111,8 +114,13 @@ public class TableConverterTest {
     @Test
     public void converts_table_of_single_column_to_enums() {
         DataTable table = TableParser.parse("|RED|\n|GREEN|\n", null);
-        assertEquals(asList(Color.RED, Color.GREEN), table.<List<Integer>>convert(new TypeReference<List<Color>>() {
-        }.getType()));
+        assertEquals(asList(Color.RED, Color.GREEN), table.asList(Color.class));
+    }
+
+    @Test
+    public void converts_table_of_single_column_to_nullable_enums() {
+        DataTable table = TableParser.parse("|RED|\n||\n", null);
+        assertEquals(asList(Color.RED, null), table.asList(Color.class));
     }
 
     @Test
@@ -126,8 +134,7 @@ public class TableConverterTest {
             put(Color.RED, 8);
             put(Color.BLUE, 9);
         }};
-        List<Map<Color, Integer>> converted = table.convert(new TypeReference<List<Map<Color, Integer>>>() {
-        }.getType());
+        List<Map<Color, Integer>> converted = table.asMaps(Color.class, Integer.class);
         assertEquals(asList(map1, map2), converted);
     }
 
@@ -139,8 +146,7 @@ public class TableConverterTest {
     @Test
     public void converts_table_to_list_of_pojo_and_almost_back() {
         DataTable table = TableParser.parse("|Birth Date|Death Cal|\n|1957-05-10|1979-02-02|\n", PARAMETER_INFO);
-        List<UserPojo> converted = table.convert(new TypeReference<List<UserPojo>>() {
-        }.getType());
+        List<UserPojo> converted = table.asList(UserPojo.class);
         assertEquals(sidsBirthday(), converted.get(0).birthDate);
         assertEquals(sidsDeathcal(), converted.get(0).deathCal);
         assertEquals("      | birthDate  | deathCal   |\n      | 1957-05-10 | 1979-02-02 |\n", table.toTable(converted).toString());
@@ -171,8 +177,7 @@ public class TableConverterTest {
     @Test
     public void converts_to_list_of_java_bean_and_almost_back() {
         DataTable table = TableParser.parse("|Birth Date|Death Cal|\n|1957-05-10|1979-02-02|\n", PARAMETER_INFO);
-        List<UserBean> converted = table.convert(new TypeReference<List<UserBean>>() {
-        }.getType());
+        List<UserBean> converted = table.asList(UserBean.class);
         assertEquals(sidsBirthday(), converted.get(0).getBirthDate());
         assertEquals(sidsDeathcal(), converted.get(0).getDeathCal());
         assertEquals("      | birthDate  | deathCal   |\n      | 1957-05-10 | 1979-02-02 |\n", table.toTable(converted).toString());
@@ -181,16 +186,14 @@ public class TableConverterTest {
     @Test
     public void converts_to_list_of_map_of_date() {
         DataTable table = TableParser.parse("|Birth Date|Death Cal|\n|1957-05-10|1979-02-02|\n", PARAMETER_INFO);
-        List<Map<String, Date>> converted = table.convert(new TypeReference<List<Map<String, Date>>>() {
-        }.getType());
+        List<Map<String, Date>> converted = table.asMaps(String.class, Date.class);
         assertEquals(sidsBirthday(), converted.get(0).get("Birth Date"));
     }
 
     @Test
-    public void converts_to_non_generic_map() {
+    public void converts_to_list_of_map_of_string() {
         DataTable table = TableParser.parse("|Birth Date|Death Cal|\n|1957-05-10|1979-02-02|\n", null);
-        List<Map> converted = table.convert(new TypeReference<List<Map>>() {
-        }.getType());
+        List<Map<String, String>> converted = table.asMaps(String.class, String.class);
         assertEquals("1957-05-10", converted.get(0).get("Birth Date"));
     }
 

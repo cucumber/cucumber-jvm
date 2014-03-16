@@ -44,8 +44,9 @@ public class FromDataTableTest {
         public List<UserBean> listOfBeans;
         public List<UserWithNameField> listOfUsersWithNameField;
         public List<List<Double>> listOfListOfDoubles;
-        public List<Map<String, String>> listOfMapsOfStringToString;
+        public List<Map<String, Date>> listOfMapsOfStringToDate;
         public List<Map<String, Object>> listOfMapsOfStringToObject;
+        public Map<Double, Double> mapOfDoubleToDouble;
 
         public DataTable dataTable;
 
@@ -85,8 +86,8 @@ public class FromDataTableTest {
             this.listOfListOfDoubles = listOfListOfDoubles;
         }
 
-        public void listOfMapsOfStringToString(List<Map<String, String>> listOfMapsOfStringToString) {
-            this.listOfMapsOfStringToString = listOfMapsOfStringToString;
+        public void listOfMapsOfStringToDate(@Format("yyyy-MM-dd") List<Map<String, Date>> listOfMapsOfStringToDate) {
+            this.listOfMapsOfStringToDate = listOfMapsOfStringToDate;
         }
 
         public void listOfMapsOfStringToObject(List<Map<String, Object>> listOfMapsOfStringToObject) {
@@ -100,10 +101,11 @@ public class FromDataTableTest {
         public void listOfMapsOfDateToString(List<Map<Date, String>> mapsOfDateToString) {
         }
 
-        public void listOfMapsOfStringToDate(List<Map<String, Date>> mapsOfStringToDate) {
+        public void listOfMaps(List<Map> maps) {
         }
 
-        public void listOfMaps(List<Map> maps) {
+        public void mapOfDoubleToDouble(Map<Double,Double> mapOfDoubleToDouble) {
+            this.mapOfDoubleToDouble = mapOfDoubleToDouble;
         }
     }
 
@@ -178,6 +180,13 @@ public class FromDataTableTest {
     }
 
     @Test
+    public void transforms_to_map_of_double_to_double() throws Throwable {
+        Method m = StepDefs.class.getMethod("mapOfDoubleToDouble", Map.class);
+        StepDefs stepDefs = runStepDef(m, listOfDoublesWithoutHeader());
+        assertEquals("{1000.0=999.0, 0.5=-0.5, 100.5=99.5}", stepDefs.mapOfDoubleToDouble.toString());
+    }
+
+    @Test
     public void transforms_to_list_of_single_values() throws Throwable {
         Method m = StepDefs.class.getMethod("listOfListOfDoubles", List.class);
         StepDefs stepDefs = runStepDef(m, listOfDoublesWithoutHeader());
@@ -192,10 +201,10 @@ public class FromDataTableTest {
     }
 
     @Test
-    public void transforms_to_list_of_map_of_string_to_string() throws Throwable {
-        Method m = StepDefs.class.getMethod("listOfMapsOfStringToString", List.class);
+    public void transforms_to_list_of_map_of_string_to_date() throws Throwable {
+        Method m = StepDefs.class.getMethod("listOfMapsOfStringToDate", List.class);
         StepDefs stepDefs = runStepDef(m, listOfDatesWithHeader());
-        assertEquals("1957-05-10", stepDefs.listOfMapsOfStringToString.get(0).get("Birth Date"));
+        assertEquals(sidsBirthday(), stepDefs.listOfMapsOfStringToDate.get(0).get("Birth Date"));
     }
 
     @Test

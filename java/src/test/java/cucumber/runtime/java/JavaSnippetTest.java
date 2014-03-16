@@ -24,7 +24,7 @@ public class JavaSnippetTest {
     @Test
     public void generatesPlainSnippet() {
         String expected = "" +
-                "@Given(\"^I have (\\\\d+) cukes in my \\\"([^\\\"]*)\\\" belly$\")\n" +
+                "@Given(\"^I have (\\\\d+) cukes in my \\\"(.*?)\\\" belly$\")\n" +
                 "public void i_have_cukes_in_my_belly(int arg1, String arg2) throws Throwable {\n" +
                 "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException();\n" +
@@ -47,7 +47,7 @@ public class JavaSnippetTest {
     @Test
     public void generatesCopyPasteReadySnippetWhenStepHasIllegalJavaIdentifierChars() {
         String expected = "" +
-                "@Given(\"^I have (\\\\d+) cukes in: my \\\"([^\\\"]*)\\\" red-belly!$\")\n" +
+                "@Given(\"^I have (\\\\d+) cukes in: my \\\"(.*?)\\\" red-belly!$\")\n" +
                 "public void i_have_cukes_in_my_red_belly(int arg1, String arg2) throws Throwable {\n" +
                 "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException();\n" +
@@ -55,11 +55,10 @@ public class JavaSnippetTest {
         assertEquals(expected, snippetFor("I have 4 cukes in: my \"big\" red-belly!"));
     }
 
-
     @Test
     public void generatesCopyPasteReadySnippetWhenStepHasIntegersInsideStringParameter() {
         String expected = "" +
-                "@Given(\"^the DI system receives a message saying \\\"([^\\\"]*)\\\"$\")\n" +
+                "@Given(\"^the DI system receives a message saying \\\"(.*?)\\\"$\")\n" +
                 "public void the_DI_system_receives_a_message_saying(String arg1) throws Throwable {\n" +
                 "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException();\n" +
@@ -150,7 +149,9 @@ public class JavaSnippetTest {
                 "@Given(\"^I have:$\")\n" +
                 "public void i_have(DataTable arg1) throws Throwable {\n" +
                 "    // Write code here that turns the phrase above into concrete actions\n" +
-                "    // For automatic conversion, change DataTable to List<YourType>\n" +
+                "    // For automatic transformation, change DataTable to one of\n" +
+                "    // List<YourType>, List<List<E>>, List<Map<K,V>> or Map<K,V>.\n" +
+                "    // E,K,V must be a scalar (String, Integer, Date, enum etc)\n" +
                 "    throw new PendingException();\n" +
                 "}\n";
         List<DataTableRow> dataTable = asList(new DataTableRow(NO_COMMENTS, asList("col1"), 1));

@@ -124,7 +124,7 @@ public class GroovyBackend implements Backend {
     }
 
     public void addStepDefinition(Pattern regexp, long timeoutMillis, Closure body) {
-        glue.addStepDefinition(new GroovyStepDefinition(regexp, timeoutMillis, body, currentLocation(), instance));
+        glue.addStepDefinition(new GroovyStepDefinition(regexp, timeoutMillis, body, currentLocation(), this));
     }
 
     public void registerWorld(Closure closure) {
@@ -133,11 +133,11 @@ public class GroovyBackend implements Backend {
     }
 
     public void addBeforeHook(TagExpression tagExpression, long timeoutMillis, Closure body) {
-        glue.addBeforeHook(new GroovyHookDefinition(tagExpression, timeoutMillis, body, currentLocation(), instance));
+        glue.addBeforeHook(new GroovyHookDefinition(tagExpression, timeoutMillis, body, currentLocation(), this));
     }
 
     public void addAfterHook(TagExpression tagExpression, long timeoutMillis, Closure body) {
-        glue.addAfterHook(new GroovyHookDefinition(tagExpression, timeoutMillis, body, currentLocation(), instance));
+        glue.addAfterHook(new GroovyHookDefinition(tagExpression, timeoutMillis, body, currentLocation(), this));
     }
 
     public void invoke(Closure body, Object[] args) throws Throwable {

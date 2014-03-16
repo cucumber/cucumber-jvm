@@ -218,7 +218,8 @@ public class RuntimeOptionsTest {
         Formatter colorAwareFormatter = mock(Formatter.class, withSettings().extraInterfaces(ColorAware.class));
         when(factory.create("progress")).thenReturn(colorAwareFormatter);
 
-        new RuntimeOptions(new Env(), factory, asList("--monochrome", "--format", "progress"));
+        RuntimeOptions options = new RuntimeOptions(new Env(), factory, asList("--monochrome", "--format", "progress"));
+        options.getFormatters();
 
         verify((ColorAware) colorAwareFormatter).setMonochrome(true);
     }
@@ -229,7 +230,8 @@ public class RuntimeOptionsTest {
         Formatter strictAwareFormatter = mock(Formatter.class, withSettings().extraInterfaces(StrictAware.class));
         when(factory.create("junit:out/dir")).thenReturn(strictAwareFormatter);
 
-        new RuntimeOptions(new Env(), factory, asList("--strict", "--format", "junit:out/dir"));
+        RuntimeOptions options = new RuntimeOptions(new Env(), factory, asList("--strict", "--format", "junit:out/dir"));
+        options.getFormatters();
 
         verify((StrictAware) strictAwareFormatter).setStrict(true);
     }

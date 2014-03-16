@@ -27,7 +27,7 @@ public class ScenarioStepDefs {
 
     }
 
-    @Then("^The scenario name is \"([^\"]*)\"$")
+    @Then("^The scenario name is \"(.*?)\"$")
     public void the_scenario_name_is(String scenarioName) {
         assertEquals(this.scenarioName, scenarioName);
     }

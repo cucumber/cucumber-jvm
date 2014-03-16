@@ -25,7 +25,7 @@ import java.util.List;
  * </pre>
  */
 public class ListOfComplexTypeReader extends AbstractReader {
-    private final Class elementType;
+    private final Class itemType;
     private final List<String> attributeNames;
     private final Iterator<List<String>> itemIterator;
 
@@ -36,8 +36,8 @@ public class ListOfComplexTypeReader extends AbstractReader {
     private Iterator<String> attributeValueIterator;
     private String attributeValue;
 
-    public ListOfComplexTypeReader(Class elementType, List<String> attributeNames, List<List<String>> items) {
-        this.elementType = elementType;
+    public ListOfComplexTypeReader(Class itemType, List<String> attributeNames, List<List<String>> items) {
+        this.itemType = itemType;
         this.attributeNames = attributeNames;
         this.itemIterator = items.iterator();
     }
@@ -84,7 +84,7 @@ public class ListOfComplexTypeReader extends AbstractReader {
             case 0:
                 return "list";
             case 1:
-                return elementType.getName();
+                return itemType.getName();
             case 2:
                 return attributeName;
             default:
