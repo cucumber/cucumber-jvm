@@ -48,7 +48,7 @@ public class TestHelper {
             }
 
             @Override
-            public String getClassName() {
+            public String getClassName(String extension) {
                 throw new UnsupportedOperationException();
             }
         }, new ArrayList<Object>());

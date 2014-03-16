@@ -1,5 +1,6 @@
 ## [1-1-6-SNAPSHOT (Git master)](https://github.com/cucumber/cucumber-jvm/compare/v1.1.5...master)
 
+* [Gosu] Support for [Gosu](http://gosu-lang.org/) (Aslak Hellesøy)
 * [Core] Ensuring features are parsed before formatters are initialised ([#652](https://github.com/cucumber/cucumber-jvm/pull/652) Tim Mullender)
 * [Java] Added ability to define custom annotations. ([#628](https://github.com/cucumber/cucumber-jvm/pull/628) slowikps)
 * [Core] Added support for SVG images in HTML output ([#624](https://github.com/cucumber/cucumber-jvm/pull/624) agattiker)
