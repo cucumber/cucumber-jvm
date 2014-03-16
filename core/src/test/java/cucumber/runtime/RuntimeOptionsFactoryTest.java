@@ -7,7 +7,6 @@ import gherkin.formatter.JSONFormatter;
 import gherkin.formatter.PrettyFormatter;
 import org.junit.Test;
 
-import java.lang.annotation.Annotation;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Iterator;
@@ -105,7 +104,7 @@ public class RuntimeOptionsFactoryTest {
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(SubClassWithFormatter.class, new Class[]{CucumberOptions.class});
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
 
-        List<Formatter> formatters = runtimeOptions.formatters();
+        List<Formatter> formatters = runtimeOptions.getFormatters();
         assertEquals(2, formatters.size());
         assertTrue(formatters.get(0) instanceof PrettyFormatter);
         assertTrue(formatters.get(1) instanceof JSONFormatter);

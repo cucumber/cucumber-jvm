@@ -18,8 +18,8 @@ import cucumber.runtime.android.AndroidInstrumentationReporter;
 import cucumber.runtime.android.AndroidLogcatReporter;
 import cucumber.runtime.android.AndroidObjectFactory;
 import cucumber.runtime.android.AndroidResourceLoader;
-import cucumber.runtime.android.InstrumentationArguments;
 import cucumber.runtime.android.DexClassFinder;
+import cucumber.runtime.android.InstrumentationArguments;
 import cucumber.runtime.android.TestCaseCounter;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.java.JavaBackend;
@@ -121,8 +121,8 @@ public class CucumberInstrumentationCore {
                 Debug.waitForDebugger();
             }
 
-            runtimeOptions.getFormatters().add(new AndroidInstrumentationReporter(runtime, instrumentation, testCount));
-            runtimeOptions.getFormatters().add(new AndroidLogcatReporter(TAG));
+            runtimeOptions.addFormatter(new AndroidInstrumentationReporter(runtime, instrumentation, testCount));
+            runtimeOptions.addFormatter(new AndroidLogcatReporter(TAG));
 
             final Reporter reporter = runtimeOptions.reporter(classLoader);
             final Formatter formatter = runtimeOptions.formatter(classLoader);
@@ -172,8 +172,8 @@ public class CucumberInstrumentationCore {
             final String currentStream = results.getString(
                     Instrumentation.REPORT_KEY_STREAMRESULT);
             results.putString(Instrumentation.REPORT_KEY_STREAMRESULT,
-                String.format("%s\nGenerated code coverage data to %s", currentStream,
-                coverageFilePath));
+                    String.format("%s\nGenerated code coverage data to %s", currentStream,
+                            coverageFilePath));
         } catch (ClassNotFoundException e) {
             reportEmmaError("Is emma jar on classpath?", e);
         } catch (SecurityException e) {
@@ -193,7 +193,7 @@ public class CucumberInstrumentationCore {
         String coverageFilePath = instrumentationArguments.getCoverageFilePath();
         if (coverageFilePath == null) {
             return instrumentation.getTargetContext().getFilesDir().getAbsolutePath() + File.separator +
-                   DEFAULT_COVERAGE_FILE_NAME;
+                    DEFAULT_COVERAGE_FILE_NAME;
         } else {
             return coverageFilePath;
         }

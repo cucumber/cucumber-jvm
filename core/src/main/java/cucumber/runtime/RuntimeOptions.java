@@ -38,6 +38,7 @@ public class RuntimeOptions {
     private boolean strict = false;
     private boolean monochrome = false;
     private SnippetType snippetType = SnippetType.UNDERSCORE;
+    private boolean formattersCreated = false;
 
     /**
      * Create a new instance from a string of options, for example:
@@ -157,14 +158,15 @@ public class RuntimeOptions {
         return load(resourceLoader, featurePaths, filters, System.out);
     }
     
-    protected List<Formatter> formatters() {
-        if (formatters.isEmpty()){
+    List<Formatter> getFormatters() {
+        if(!formattersCreated) {
             for (String formatterName : formatterNames){
-                final Formatter formatter = formatterFactory.create(formatterName);
+                Formatter formatter = formatterFactory.create(formatterName);
                 formatters.add(formatter);
                 setMonochromeOnColorAwareFormatters(formatter);
                 setStrictOnStrictAwareFormatters(formatter);
             }
+            formattersCreated = true;
         }
         return formatters;
     }
@@ -173,7 +175,7 @@ public class RuntimeOptions {
         return (Formatter) Proxy.newProxyInstance(classLoader, new Class<?>[]{Formatter.class}, new InvocationHandler() {
             @Override
             public Object invoke(Object target, Method method, Object[] args) throws Throwable {
-                for (Formatter formatter : formatters()) {
+                for (Formatter formatter : getFormatters()) {
                     Utils.invoke(formatter, method, 0, args);
                 }
                 return null;
@@ -229,8 +231,8 @@ public class RuntimeOptions {
         return dotCucumber;
     }
 
-    public List<Formatter> getFormatters() {
-        return formatters;
+    public void addFormatter(Formatter formatter) {
+        formatters.add(formatter);
     }
 
     public List<Object> getFilters() {

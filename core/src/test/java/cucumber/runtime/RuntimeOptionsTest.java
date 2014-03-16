@@ -76,7 +76,7 @@ public class RuntimeOptionsTest {
     @Test
     public void creates_formatter() {
         RuntimeOptions options = new RuntimeOptions(asList("--format", "html:some/dir", "--glue", "somewhere"));
-        assertEquals("cucumber.runtime.formatter.HTMLFormatter", options.formatters().get(0).getClass().getName());
+        assertEquals("cucumber.runtime.formatter.HTMLFormatter", options.getFormatters().get(0).getClass().getName());
     }
 
     @Test
@@ -219,7 +219,7 @@ public class RuntimeOptionsTest {
         when(factory.create("progress")).thenReturn(colorAwareFormatter);
 
         RuntimeOptions options = new RuntimeOptions(new Env(), factory, asList("--monochrome", "--format", "progress"));
-        options.formatters();
+        options.getFormatters();
 
         verify((ColorAware) colorAwareFormatter).setMonochrome(true);
     }
@@ -231,7 +231,7 @@ public class RuntimeOptionsTest {
         when(factory.create("junit:out/dir")).thenReturn(strictAwareFormatter);
 
         RuntimeOptions options = new RuntimeOptions(new Env(), factory, asList("--strict", "--format", "junit:out/dir"));
-        options.formatters();
+        options.getFormatters();
 
         verify((StrictAware) strictAwareFormatter).setStrict(true);
     }
