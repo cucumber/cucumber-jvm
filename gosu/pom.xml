@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -30,52 +31,15 @@
 
         <dependency>
             <groupId>org.gosu-lang.gosu</groupId>
-            <artifactId>gosu-core</artifactId>
-            <version>0.10.3</version>
-            <scope>system</scope>
-            <systemPath>${basedir}/gosu-0.10.3/lib/gosu-core-0.10.3.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>org.gosu-lang.gosu</groupId>
             <artifactId>gosu-core-api</artifactId>
-            <version>0.10.3</version>
-            <scope>system</scope>
-            <systemPath>${basedir}/gosu-0.10.3/lib/gosu-core-api-0.10.3.jar</systemPath>
+            <version>${gosu.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.gosu-lang.gosu</groupId>
-            <artifactId>gosu-interactive</artifactId>
-            <version>0.10.3</version>
-            <scope>system</scope>
-            <systemPath>${basedir}/gosu-0.10.3/lib/gosu-interactive-0.10.3.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>org.gosu-lang.gosu</groupId>
-            <artifactId>gosu-launcher-aether</artifactId>
-            <version>2.1</version>
-            <scope>system</scope>
-            <systemPath>${basedir}/gosu-0.10.3/lib/gosu-launcher-aether-2.1.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>org.gosu-lang.gosu</groupId>
-            <artifactId>gosu-launcher-api</artifactId>
-            <version>2</version>
-            <scope>system</scope>
-            <systemPath>${basedir}/gosu-0.10.3/lib/gosu-launcher-api-2.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>org.gosu-lang.gosu</groupId>
-            <artifactId>gosu-launcher-impl</artifactId>
-            <version>2.1</version>
-            <scope>system</scope>
-            <systemPath>${basedir}/gosu-0.10.3/lib/gosu-launcher-impl-2.1.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>org.gosu-lang.gosu</groupId>
-            <artifactId>jline</artifactId>
-            <version>0.9.94</version>
-            <scope>system</scope>
-            <systemPath>${basedir}/gosu-0.10.3/lib/jline-0.9.94.jar</systemPath>
+            <artifactId>gosu-core</artifactId>
+            <version>${gosu.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
