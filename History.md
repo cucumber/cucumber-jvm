@@ -1,5 +1,6 @@
 ## [1-1-6-SNAPSHOT (Git master)](https://github.com/cucumber/cucumber-jvm/compare/v1.1.5...master)
 
+* [Core] Added support for SVG images in HTML output ([#624](https://github.com/cucumber/cucumber-jvm/pull/624) agattiker)
 * [Scala] Transforming Gherkin tables into java.util.List<T> broken in Scala DSL ([#668](https://github.com/cucumber/cucumber-jvm/issues/668), [#669](https://github.com/cucumber/cucumber-jvm/pull/669) chriswhelan)
 * [Clojure] Add tagged Before/After hook support ([#676](https://github.com/cucumber/cucumber-jvm/pull/676) Jeremy Anderson)
 * [Core] POJO with nullable enum fields support in tables ([#684](https://github.com/cucumber/cucumber-jvm/pull/684) Mykola Gurov)
