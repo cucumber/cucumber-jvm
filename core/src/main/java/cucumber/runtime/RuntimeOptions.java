@@ -31,6 +31,7 @@ public class RuntimeOptions {
     private final List<Object> lineFilters = new ArrayList<Object>();
     private final List<Formatter> formatters = new ArrayList<Formatter>();
     private final List<String> featurePaths = new ArrayList<String>();
+    private final List<String> formatterNames = new ArrayList<String>();
     private final FormatterFactory formatterFactory;
     private URL dotCucumber;
     private boolean dryRun;
@@ -80,10 +81,9 @@ public class RuntimeOptions {
         }
         filters.addAll(lineFilters);
 
-        if (formatters.isEmpty()) {
-            formatters.add(formatterFactory.create("progress"));
+        if (formatterNames.isEmpty()) {
+            formatterNames.add("progress");
         }
-        setFormatterOptions();
     }
 
     private void parse(List<String> args) {
@@ -107,7 +107,7 @@ public class RuntimeOptions {
             } else if (arg.equals("--tags") || arg.equals("-t")) {
                 parsedFilters.add(args.remove(0));
             } else if (arg.equals("--format") || arg.equals("-f")) {
-                formatters.add(formatterFactory.create(args.remove(0)));
+                formatterNames.add(args.remove(0));
             } else if (arg.equals("--dotcucumber")) {
                 String urlOrPath = args.remove(0);
                 dotCucumber = Utils.toURL(urlOrPath);
@@ -156,12 +156,24 @@ public class RuntimeOptions {
     public List<CucumberFeature> cucumberFeatures(ResourceLoader resourceLoader) {
         return load(resourceLoader, featurePaths, filters, System.out);
     }
+    
+    protected List<Formatter> formatters() {
+        if (formatters.isEmpty()){
+            for (String formatterName : formatterNames){
+                final Formatter formatter = formatterFactory.create(formatterName);
+                formatters.add(formatter);
+                setMonochromeOnColorAwareFormatters(formatter);
+                setStrictOnStrictAwareFormatters(formatter);
+            }
+        }
+        return formatters;
+    }
 
     public Formatter formatter(ClassLoader classLoader) {
         return (Formatter) Proxy.newProxyInstance(classLoader, new Class<?>[]{Formatter.class}, new InvocationHandler() {
             @Override
             public Object invoke(Object target, Method method, Object[] args) throws Throwable {
-                for (Formatter formatter : formatters) {
+                for (Formatter formatter : formatters()) {
                     Utils.invoke(formatter, method, 0, args);
                 }
                 return null;
@@ -181,13 +193,6 @@ public class RuntimeOptions {
                 return null;
             }
         });
-    }
-
-    private void setFormatterOptions() {
-        for (Formatter formatter : formatters) {
-            setMonochromeOnColorAwareFormatters(formatter);
-            setStrictOnStrictAwareFormatters(formatter);
-        }
     }
 
     private void setMonochromeOnColorAwareFormatters(Formatter formatter) {

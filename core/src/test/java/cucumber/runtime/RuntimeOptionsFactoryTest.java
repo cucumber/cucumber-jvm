@@ -105,7 +105,7 @@ public class RuntimeOptionsFactoryTest {
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(SubClassWithFormatter.class, new Class[]{CucumberOptions.class});
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
 
-        List<Formatter> formatters = runtimeOptions.getFormatters();
+        List<Formatter> formatters = runtimeOptions.formatters();
         assertEquals(2, formatters.size());
         assertTrue(formatters.get(0) instanceof PrettyFormatter);
         assertTrue(formatters.get(1) instanceof JSONFormatter);
