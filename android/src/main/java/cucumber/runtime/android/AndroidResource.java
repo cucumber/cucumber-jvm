@@ -27,8 +27,8 @@ class AndroidResource implements Resource {
     }
 
     @Override
-    public String getClassName() {
-        return path.substring(path.lastIndexOf("/"));
+    public String getClassName(String extension) {
+        return path.substring(0, path.length() - extension.length()).replace('/', '.');
     }
 
     @Override
