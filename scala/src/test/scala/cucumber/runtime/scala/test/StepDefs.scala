@@ -5,8 +5,8 @@ import _root_.cucumber.api.scala._
 import cucumber.api.DataTable
 import junit.framework.Assert._
 import scala.collection.JavaConversions._
-import cucumber.runtime.scala.model.{Snake, Person}
-import java.util
+import cucumber.runtime.scala.model.{Cukes, Person, Snake}
+import java.util.{List => JList, Map => JMap}
 
 /**
  * Test step definitions to exercise Scala cucumber
@@ -20,7 +20,7 @@ class CukesStepDefinitions extends ScalaDsl with EN {
   var calorieCount = 0.0
 
   Given("""^I have the following foods :$"""){ (table:DataTable) =>
-    val maps: util.List[util.Map[String, String]] = table.asMaps(classOf[String], classOf[String])
+    val maps: JList[JMap[String, String]] = table.asMaps(classOf[String], classOf[String])
     calorieCount = maps.map(_.get("CALORIES")).map(_.toDouble).fold(0.0)(_+_)
   }
   And("""^have eaten (.*) calories today""") { (calories:Double) =>
@@ -150,6 +150,19 @@ class CukesStepDefinitions extends ScalaDsl with EN {
     assertEquals(person.hello, s)
   }
 
+  var cukes: JList[Cukes] = null
+
+  Given("^I have eaten the following cukes$") { cs: JList[Cukes] =>
+    cukes = cs
+  }
+
+  Then("""^I should have eaten (\d) cukes$""") { total: Int =>
+    assertEquals(total, cukes.map(_.number).sum)
+  }
+
+  And("^they should have been (.*)$") { colors: String =>
+    assertEquals(colors, cukes.map(_.color).mkString(", "))
+  }
 }
 
 class ThenDefs extends ScalaDsl with EN {

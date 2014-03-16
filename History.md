@@ -1,5 +1,6 @@
 ## [1-1-6-SNAPSHOT (Git master)](https://github.com/cucumber/cucumber-jvm/compare/v1.1.5...master)
 
+* [Scala] Transforming Gherkin tables into java.util.List<T> broken in Scala DSL ([#668](https://github.com/cucumber/cucumber-jvm/issues/668), [#669](https://github.com/cucumber/cucumber-jvm/pull/669) chriswhelan)
 * [Clojure] Add tagged Before/After hook support ([#676](https://github.com/cucumber/cucumber-jvm/pull/676) Jeremy Anderson)
 * [Core] POJO with nullable enum fields support in tables ([#684](https://github.com/cucumber/cucumber-jvm/pull/684) Mykola Gurov)
 * [Core] `DataTable.flatten()` is gone. Use `DataTable.asList(String.class)` instead (Aslak Hellesøy)
