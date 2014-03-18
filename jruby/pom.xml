@@ -97,7 +97,7 @@ module Cucumber
     module JRuby
       module Dsl
 <% i18n.codeKeywords.each { kw -> %>
-        def \${java.text.Normalizer.normalize(kw, java.text.Normalizer.Form.NFD)}(regexp, &proc)
+        def \${java.text.Normalizer.normalize(kw, java.text.Normalizer.Form.NFC)}(regexp, &proc)
           register_stepdef(regexp, proc)
         end
 <% } %>

@@ -77,7 +77,7 @@ def normalize(s) {
   if(System.getProperty("java.version").startsWith("1.6")) {
     return s
   } else {
-    return java.text.Normalizer.normalize(s, java.text.Normalizer.Form.NFD)
+    return java.text.Normalizer.normalize(s, java.text.Normalizer.Form.NFC)
   }
 }
 
@@ -114,7 +114,6 @@ I18n.all.each { i18n ->
 
         ]]></groovy>
 
-                                <exec executable="${project.basedir}/compile-and-delete-generated-i18n-code.sh" os="Mac OS X"/>
                             </target>
                         </configuration>
                     </execution>
