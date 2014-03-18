@@ -64,6 +64,10 @@
                 <artifactId>scala-maven-plugin</artifactId>
                 <version>${scala-maven-plugin.version}</version>
                 <configuration>
+                    <args>
+                      <arg>-feature</arg>
+                      <arg>-deprecation</arg>
+                    </args>
                     <!--encoding>UTF-8</encoding-->
                     <excludes>
                         <exclude>**/*.java</exclude>
