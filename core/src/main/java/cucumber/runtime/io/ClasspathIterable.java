@@ -41,7 +41,7 @@ public class ClasspathIterable implements Iterable<Resource> {
 
     static String filePath(URL jarUrl) throws UnsupportedEncodingException, MalformedURLException {
         String path = new File(new URL(jarUrl.getFile()).getFile()).getAbsolutePath();
-        String pathToJar = path.substring(0, path.indexOf("!"));
+        String pathToJar = path.substring(0, path.lastIndexOf("!"));
         return URLDecoder.decode(pathToJar, "UTF-8");
     }
 
