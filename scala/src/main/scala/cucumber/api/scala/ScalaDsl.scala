@@ -7,7 +7,6 @@ import _root_.cucumber.runtime.HookDefinition
 import _root_.cucumber.runtime.StepDefinition
 import collection.mutable.ArrayBuffer
 import java.lang.reflect.Type
-import scala.language.implicitConversions
 
 /**
  * Base trait for a scala step definition implementation.
