@@ -64,7 +64,12 @@
                 <artifactId>scala-maven-plugin</artifactId>
                 <version>${scala-maven-plugin.version}</version>
                 <configuration>
-                    <!--encoding>UTF-8</encoding-->
+                    <args>
+                      <arg>-feature</arg>
+                      <arg>-deprecation</arg>
+                      <!-- This can be moved to an import in the ScalaDsl class once Scala 2.9 is no longer supported -->
+                      <arg>-language:implicitConversions</arg>
+                    </args>
                     <excludes>
                         <exclude>**/*.java</exclude>
                     </excludes>
