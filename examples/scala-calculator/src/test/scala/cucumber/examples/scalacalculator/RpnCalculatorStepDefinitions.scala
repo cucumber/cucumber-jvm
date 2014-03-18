@@ -15,7 +15,7 @@ class RpnCalculatorStepDefinitions extends ScalaDsl with EN {
   }
 
   Then("^the result is (\\d+)$") { expected: Double =>
-    assertEquals(expected, calc.value)
+    assertEquals(expected, calc.value, 0.001)
   }
 
   Before("~@foo"){ scenario : Scenario =>
