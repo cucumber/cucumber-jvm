@@ -1,5 +1,6 @@
 ## [1-1-6-SNAPSHOT (Git master)](https://github.com/cucumber/cucumber-jvm/compare/v1.1.5...master)
 
+* [Scala] Fixed scala warnings ([#689](https://github.com/cucumber/cucumber-jvm/pull/689) Nayan Hajratwala)
 * [Core] Cannot run cucumber test if path to jar files contains exclamation character. ([#685](https://github.com/cucumber/cucumber-jvm/issues/685) Ruslan, Aslak Hellesøy)
 * [Gosu] Support for [Gosu](http://gosu-lang.org/) (Aslak Hellesøy)
 * [Core] Ensuring features are parsed before formatters are initialised ([#652](https://github.com/cucumber/cucumber-jvm/pull/652) Tim Mullender)
