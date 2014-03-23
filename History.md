@@ -1,5 +1,6 @@
 ## [1-1-6-SNAPSHOT (Git master)](https://github.com/cucumber/cucumber-jvm/compare/v1.1.5...master)
 
+* [Guice] Add new scenario scope ([#683](https://github.com/cucumber/cucumber-jvm/pull/683) jakecollins)
 * [Build] Set minimum maven version to 3.0.4 and updated plugin versions ([#691](https://github.com/cucumber/cucumber-jvm/pull/691) Nayan Hajratwala)
 * [Scala] Fixed scala warnings ([#689](https://github.com/cucumber/cucumber-jvm/pull/689) Nayan Hajratwala)
 * [Core] Cannot run cucumber test if path to jar files contains exclamation character. ([#685](https://github.com/cucumber/cucumber-jvm/issues/685) Ruslan, Aslak Hellesøy)
