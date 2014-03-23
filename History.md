@@ -37,7 +37,7 @@
 * [Spring] Fix for tests annotated with @ContextHierarchy ([#590](https://github.com/cucumber/cucumber-jvm/pull/590) Martin Lau)
 * [Core] Add error check to scenario outline, add java snippet escaping for `+` and `.` ([#596](https://github.com/cucumber/cucumber-jvm/pull/596) Guy Burton)
 * [Rhino] World build and disposal support added to Rhino ([#595](https://github.com/cucumber/cucumber-jvm/pull/595) Rui Figueira)
-* [Jython] Fix for DataTable as parameter in Jython steps ([#602](https://github.com/cucumber/cucumber-jvm/pull/602) lggroapa, Aslak Hellesøy)
+* [Jython] Fix for DataTable as parameter in Jython steps ([#599](https://github.com/cucumber/cucumber-jvm/issues/599), [#602](https://github.com/cucumber/cucumber-jvm/pull/602) lggroapa, Aslak Hellesøy)
 * [Core] Fix and improve CamelCaseFunctionNameSanitizer ([#603](https://github.com/cucumber/cucumber-jvm/pull/603) Frieder Bluemle)
 * [Android] improve test reports for cucumber-android ([#598](https://github.com/cucumber/cucumber-jvm/pull/598) Sebastian Gröbler)
 * [Core] The JSONFormatter should record before hooks in the next scenario ([#570](https://github.com/cucumber/cucumber-jvm/pull/570) Björn Rasmusson)
