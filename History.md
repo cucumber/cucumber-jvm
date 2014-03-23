@@ -1,5 +1,6 @@
 ## [1-1-6-SNAPSHOT (Git master)](https://github.com/cucumber/cucumber-jvm/compare/v1.1.5...master)
 
+* [Groovy] Use ~/.../ syntax in Groovy snippets ([#663](https://github.com/cucumber/cucumber-jvm/pull/663) Harald Albers, Aslak Hellesøy)
 * [Guice] Add new scenario scope ([#683](https://github.com/cucumber/cucumber-jvm/pull/683) jakecollins)
 * [Build] Set minimum maven version to 3.0.4 and updated plugin versions ([#691](https://github.com/cucumber/cucumber-jvm/pull/691) Nayan Hajratwala)
 * [Scala] Fixed scala warnings ([#689](https://github.com/cucumber/cucumber-jvm/pull/689) Nayan Hajratwala)
