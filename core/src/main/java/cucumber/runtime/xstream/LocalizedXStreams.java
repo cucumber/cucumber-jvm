@@ -1,7 +1,10 @@
 package cucumber.runtime.xstream;
 
 import cucumber.deps.com.thoughtworks.xstream.XStream;
-import cucumber.deps.com.thoughtworks.xstream.converters.*;
+import cucumber.deps.com.thoughtworks.xstream.converters.Converter;
+import cucumber.deps.com.thoughtworks.xstream.converters.ConverterLookup;
+import cucumber.deps.com.thoughtworks.xstream.converters.ConverterRegistry;
+import cucumber.deps.com.thoughtworks.xstream.converters.SingleValueConverter;
 import cucumber.deps.com.thoughtworks.xstream.core.DefaultConverterLookup;
 import cucumber.runtime.ParameterInfo;
 
@@ -42,7 +45,7 @@ public class LocalizedXStreams {
                 return new ArrayList<TimeConverter>();
             }
         };
-        
+
         public LocalizedXStream(ClassLoader classLoader, ConverterLookup converterLookup, ConverterRegistry converterRegistry, Locale locale) {
             super(null, null, classLoader, null, converterLookup, converterRegistry);
             this.locale = locale;
