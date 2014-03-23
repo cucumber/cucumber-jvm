@@ -16,11 +16,13 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.Arrays;
+import java.util.Scanner;
 
 import static cucumber.runtime.Utils.toURL;
 import static org.junit.Assert.assertTrue;
@@ -133,20 +135,32 @@ public final class TestNGFormatterTest {
         formatter.step(step("keyword ", "outline"));
         formatter.step(step("keyword ", "outline"));
         formatter.examples(examples(3));
-        formatter.startOfScenarioLifeCycle(scenario("scenario"));
+        formatter.startOfScenarioLifeCycle(scenario("scenario", "Scenario Outline"));
         formatter.step(step("keyword ", "step"));
         formatter.step(step("keyword ", "step"));
         formatter.result(result("undefined"));
         formatter.result(result("undefined"));
-        formatter.endOfScenarioLifeCycle(scenario("scenario"));
-        formatter.startOfScenarioLifeCycle(scenario("scenario"));
+        formatter.endOfScenarioLifeCycle(scenario("scenario", "Scenario Outline"));
+        formatter.startOfScenarioLifeCycle(scenario("scenario", "Scenario Outline"));
         formatter.step(step("keyword ", "step"));
         formatter.step(step("keyword ", "step"));
         formatter.result(result("undefined"));
         formatter.result(result("undefined"));
-        formatter.endOfScenarioLifeCycle(scenario("scenario"));
+        formatter.endOfScenarioLifeCycle(scenario("scenario", "Scenario Outline"));
         formatter.done();
-        assertXmlEqual("cucumber/runtime/formatter/TestNGFormatterTest_testScenarioOutlineWithExamples.xml", tempFile);
+        String actual = new Scanner(new FileInputStream(tempFile), "UTF-8").useDelimiter("\\A").next();
+        assertXmlEqual("" +
+                    "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" +
+                    "<testng-results total=\"2\" passed=\"0\" failed=\"0\" skipped=\"2\">" +
+                    "    <suite name=\"cucumber.runtime.formatter.TestNGFormatter\" duration-ms=\"0\">" +
+                    "        <test name=\"cucumber.runtime.formatter.TestNGFormatter\" duration-ms=\"0\">" +
+                    "            <class name=\"feature\">" +
+                    "                <test-method name=\"scenario\" status=\"SKIP\" duration-ms=\"0\" started-at=\"yyyy-MM-ddTHH:mm:ssZ\" finished-at=\"yyyy-MM-ddTHH:mm:ssZ\"/>" +
+                    "                <test-method name=\"scenario_2\" status=\"SKIP\" duration-ms=\"0\" started-at=\"yyyy-MM-ddTHH:mm:ssZ\" finished-at=\"yyyy-MM-ddTHH:mm:ssZ\"/>" +
+                    "            </class>" +
+                    "        </test>" +
+                    "    </suite>" +
+                    "</testng-results>", actual);
     }
 
     @Test
@@ -226,6 +240,20 @@ public final class TestNGFormatterTest {
         assertTrue("XML files are similar " + diff.toString(), diff.identical());
     }
 
+    private void assertXmlEqual(String expected, String actual) throws SAXException, IOException {
+        XMLUnit.setIgnoreWhitespace(true);
+        Diff diff = new Diff(expected, actual) {
+            @Override
+            public int differenceFound(Difference difference) {
+                if (difference.getControlNodeDetail().getNode().getNodeName().matches("started-at|finished-at")) {
+                    return 0;
+                }
+                return super.differenceFound(difference);
+            }
+        };
+        assertTrue("XML files are similar " + diff + "\nFormatterOutput = " + actual, diff.identical());
+    }
+
     private Feature feature(String featureName) {
         Feature feature = mock(Feature.class);
         when(feature.getName()).thenReturn(featureName);
@@ -243,7 +271,12 @@ public final class TestNGFormatterTest {
     }
 
     private Scenario scenario(String scenarioName) {
+        return scenario(scenarioName, "Scenario");
+    }
+
+    private Scenario scenario(String scenarioName, String keyword) {
         Scenario scenario = mock(Scenario.class);
+        when(scenario.getKeyword()).thenReturn(keyword);
         when(scenario.getName()).thenReturn(scenarioName);
         return scenario;
     }

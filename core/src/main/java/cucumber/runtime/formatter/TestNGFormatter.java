@@ -81,6 +81,8 @@ class TestNGFormatter implements Formatter, Reporter, StrictAware {
     @Override
     public void feature(Feature feature) {
         TestMethod.feature = feature;
+        TestMethod.previousScenarioOutlineName = "";
+        TestMethod.exampleNumber = 1;
         clazz = document.createElement("class");
         clazz.setAttribute("name", feature.getName());
         test.appendChild(clazz);
@@ -93,7 +95,6 @@ class TestNGFormatter implements Formatter, Reporter, StrictAware {
 
     @Override
     public void examples(Examples examples) {
-        TestMethod.examples = examples.getRows().size() - 1;
     }
 
     @Override
@@ -215,8 +216,9 @@ class TestNGFormatter implements Formatter, Reporter, StrictAware {
     private static class TestMethod {
 
         static Feature feature;
-        static int examples = 0;
         static boolean treatSkippedAsFailure = false;
+        static String previousScenarioOutlineName;
+        static int exampleNumber;
         final List<Step> steps = new ArrayList<Step>();
         final List<Result> results = new ArrayList<Result>();
         final List<Result> hooks = new ArrayList<Result>();
@@ -227,9 +229,20 @@ class TestNGFormatter implements Formatter, Reporter, StrictAware {
         }
 
         private void start(Element element) {
-            element.setAttribute("name", examples > 0 ? scenario.getName() + "_" + examples-- : scenario.getName());
+            element.setAttribute("name", calculateElementName(scenario));
             element.setAttribute("started-at", DATE_FORMAT.format(new Date()));
         }
+
+        private String calculateElementName(Scenario scenario) {
+            String scenarioName = scenario.getName();
+            if (scenario.getKeyword().equals("Scenario Outline") && scenarioName.equals(previousScenarioOutlineName)) {
+                return scenarioName + "_" + ++exampleNumber;
+            } else {
+                previousScenarioOutlineName = scenario.getKeyword().equals("Scenario Outline") ? scenarioName : "";
+                exampleNumber = 1;
+                return scenarioName;
+            }
+         }
 
         public void finish(Document doc, Element element) {
             element.setAttribute("duration-ms", calculateTotalDurationString());

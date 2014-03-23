@@ -5,8 +5,8 @@ Options:
     -g, --glue PATH                        Where glue code (step definitions and hooks) is loaded from.
     -p, --plugin PLUGIN[:PATH_OR_URL]      Register a plugin.
                                            Built-in PLUGIN types: junit, html, pretty, progress, json, usage,
-                                           rerun. PLUGIN can also be a fully qualified class name, allowing
-                                           registration of 3rd party plugins.
+                                           rerun, testng. PLUGIN can also be a fully qualified class name,
+                                           allowing registration of 3rd party plugins.
     -f, --format FORMAT[:PATH_OR_URL]      Deprecated. Use --plugin instead.
     -t, --tags TAG_EXPRESSION              Only run scenarios tagged with tags matching TAG_EXPRESSION.
     -n, --name REGEXP                      Only run scenarios whose names match REGEXP.
