@@ -43,7 +43,9 @@ public class GuiceFactoryTest {
         factory.stop();
     }
 
-    /** Testing a use case of {@link GuiceFactory#createInjector */
+    /**
+     * Testing a use case of {@link GuiceFactory#createInjector
+     */
     @Test
     public void subclassCanProvideParentInjector() throws Exception {
         // injector can come from anywhere
@@ -71,5 +73,6 @@ public class GuiceFactoryTest {
         factory.stop();
     }
 
-    private static class DependencyFromParent {}
+    private static class DependencyFromParent {
+    }
 }

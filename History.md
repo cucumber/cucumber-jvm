@@ -1,5 +1,6 @@
 ## [1-1-6-SNAPSHOT (Git master)](https://github.com/cucumber/cucumber-jvm/compare/v1.1.5...master)
 
+* [Guice] Add hookpoints in Cucumber and GuiceFactory ([#634](https://github.com/cucumber/cucumber-jvm/pull/634) Wouter Coekaerts)
 * [Core] Fixed concurrency issue ([#333](https://github.com/cucumber/cucumber-jvm/issues/333), [#554](https://github.com/cucumber/cucumber-jvm/pull/554), [#591](https://github.com/cucumber/cucumber-jvm/issues/591), [#661](https://github.com/cucumber/cucumber-jvm/pull/661) Maxime Meriouma-Caron, Limin)
 * [Groovy] Use ~/.../ syntax in Groovy snippets ([#663](https://github.com/cucumber/cucumber-jvm/pull/663) Harald Albers, Aslak Hellesøy)
 * [Guice] Add new scenario scope ([#683](https://github.com/cucumber/cucumber-jvm/pull/683) jakecollins)

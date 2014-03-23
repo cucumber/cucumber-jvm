@@ -58,9 +58,11 @@ public class GuiceFactory implements ObjectFactory {
         injector = createInjector(new CucumberModule(classes, modules));
     }
 
-    /** Create the injector. May be overriden to e.g. create an injector with a parent */
+    /**
+     * Create the injector. May be overriden to e.g. create an injector with a parent
+     */
     protected Injector createInjector(Module cucumberModule) {
-      return Guice.createInjector(cucumberModule);
+        return Guice.createInjector(cucumberModule);
     }
 
     public void stop() {
