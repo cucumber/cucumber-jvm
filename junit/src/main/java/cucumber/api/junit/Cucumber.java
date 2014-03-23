@@ -33,9 +33,9 @@ import java.util.List;
  * Cucumber will look for a {@code .feature} file on the classpath, using the same resource
  * path as the annotated class ({@code .class} substituted by {@code .feature}).
  * <p/>
- * Additional hints can be given to Cucumber by annotating the class with {@link Options}.
+ * Additional hints can be given to Cucumber by annotating the class with {@link CucumberOptions}.
  *
- * @see Options
+ * @see CucumberOptions
  */
 public class Cucumber extends ParentRunner<FeatureRunner> {
     private final JUnitReporter jUnitReporter;
@@ -46,9 +46,8 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
      * Constructor called by JUnit.
      *
      * @param clazz the class with the @RunWith annotation.
-     * @throws java.io.IOException if there is a problem
-     * @throws org.junit.runners.model.InitializationError
-     *                             if there is another problem
+     * @throws java.io.IOException                         if there is a problem
+     * @throws org.junit.runners.model.InitializationError if there is another problem
      */
     public Cucumber(Class clazz) throws InitializationError, IOException {
         super(clazz);
@@ -70,9 +69,9 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
      * Create the Runtime. Can be overridden to customize the runtime or backend.
      */
     protected Runtime createRuntime(ResourceLoader resourceLoader, ClassLoader classLoader,
-        RuntimeOptions runtimeOptions) throws InitializationError, IOException {
-      ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
-      return new Runtime(resourceLoader, classFinder, classLoader, runtimeOptions);
+                                    RuntimeOptions runtimeOptions) throws InitializationError, IOException {
+        ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
+        return new Runtime(resourceLoader, classFinder, classLoader, runtimeOptions);
     }
 
     @Override
