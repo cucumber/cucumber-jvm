@@ -59,12 +59,20 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
 
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
-        ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
-        runtime = new Runtime(resourceLoader, classFinder, classLoader, runtimeOptions);
+        runtime = createRuntime(resourceLoader, classLoader, runtimeOptions);
 
         final List<CucumberFeature> cucumberFeatures = runtimeOptions.cucumberFeatures(resourceLoader);
         jUnitReporter = new JUnitReporter(runtimeOptions.reporter(classLoader), runtimeOptions.formatter(classLoader), runtimeOptions.isStrict());
         addChildren(cucumberFeatures);
+    }
+
+    /**
+     * Create the Runtime. Can be overridden to customize the runtime or backend.
+     */
+    protected Runtime createRuntime(ResourceLoader resourceLoader, ClassLoader classLoader,
+        RuntimeOptions runtimeOptions) throws InitializationError, IOException {
+      ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
+      return new Runtime(resourceLoader, classFinder, classLoader, runtimeOptions);
     }
 
     @Override
