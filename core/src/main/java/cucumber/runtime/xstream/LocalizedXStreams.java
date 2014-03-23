@@ -36,8 +36,13 @@ public class LocalizedXStreams {
 
     public static class LocalizedXStream extends XStream {
         private final Locale locale;
-        private static final List<TimeConverter> timeConverters = new ArrayList<TimeConverter>();
-
+        private final ThreadLocal<List<TimeConverter>> timeConverters = new ThreadLocal<List<TimeConverter>>() {
+            @Override
+            protected List<TimeConverter> initialValue() {
+                return new ArrayList<TimeConverter>();
+            }
+        };
+        
         public LocalizedXStream(ClassLoader classLoader, ConverterLookup converterLookup, ConverterRegistry converterRegistry, Locale locale) {
             super(null, null, classLoader, null, converterLookup, converterRegistry);
             this.locale = locale;
@@ -71,16 +76,16 @@ public class LocalizedXStreams {
                     SingleValueConverterWrapperExt converterWrapper = (SingleValueConverterWrapperExt) getConverterLookup().lookupConverterForType(timeClass);
                     TimeConverter timeConverter = (TimeConverter) converterWrapper.getConverter();
                     timeConverter.setParameterInfoAndLocale(parameterInfo, locale);
-                    timeConverters.add(timeConverter);
+                    timeConverters.get().add(timeConverter);
                 }
             }
         }
 
         public void unsetParameterInfo() {
-            for (TimeConverter timeConverter : timeConverters) {
+            for (TimeConverter timeConverter : timeConverters.get()) {
                 timeConverter.removeOnlyFormat();
             }
-            timeConverters.clear();
+            timeConverters.get().clear();
         }
 
         public SingleValueConverter getSingleValueConverter(Type type) {
