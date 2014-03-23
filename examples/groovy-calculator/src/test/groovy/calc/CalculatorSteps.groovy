@@ -42,24 +42,25 @@ Before("@notused,@important", "@alsonotused") {
 }
 
 // Register step definition using Groovy syntax for regex patterns.
+// If you use slashes to quote your regexes, you don't have to escape backslashes. 
 // Any Given/When/Then function can be used, the name is just to indicate the kind of step.
-Given(~"I have entered (\\d+) into (.*) calculator") { int number, String ignore ->
+Given(~/I have entered (\d+) into .* calculator/) { int number ->
     calc.push number
 }
 
 // Remember to still include "->" if there are no parameters.
-Given(~"(\\d+) into the") {->
+Given(~/\d+ into the/) {->
     throw new RuntimeException("should never get here since we're running with --guess")
 }
 
 // This step calls a Calculator function specified in the step
 // and saves the result in the current world object.
-When(~"I press (\\w+)") { String opname ->
+When(~/I press (\w+)/) { String opname ->
     result = calc."$opname"()
 }
 
 // Use the world object to get any result from a previous step.
 // The expected value in the step is converted to the required type.
-Then(~"the stored result should be (.*)") { double expected ->
+Then(~/the stored result should be (.*)/) { double expected ->
     assert expected == result
 }
