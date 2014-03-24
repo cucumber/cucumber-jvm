@@ -46,5 +46,9 @@ public interface Scenario {
      */
     void write(String text);
 
+    /**
+     *
+     * @return the remainder of the line following a gerkin scenario definition.
+     */
     String getName();
 }
