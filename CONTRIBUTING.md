@@ -11,7 +11,7 @@ We appreciate that. But before you do, please learn our basic rules:
 
 ## Building Cucumber-JVM
 
-Cucumber-JVM is built with [Maven](http://maven.apache.org/). 
+Cucumber-JVM is built with [Maven](http://maven.apache.org/).
 
 ```
 mvn clean install
@@ -58,7 +58,7 @@ you have changed, and your contribution might get rejected.
 
 ### Running cross-platform Cucumber features
 
-All Cucumber implementations (cucumber-ruby, cucumber-jvm, cucumber-js) share a common set of Cucumber features to 
+All Cucumber implementations (cucumber-ruby, cucumber-jvm, cucumber-js) share a common set of Cucumber features to
 ensure all implementations support the same basic features. To run these you need to clone the cucumber-tck repo into
 your cucumber-jvm working copy:
 
@@ -80,16 +80,6 @@ This can be solved by changing the Compiler settings: `Preferences -> Compiler -
 
 * *Use compiler:* `Javac`
 * *Additional command line parameters:* `-target 1.6 -source 1.6 -encoding UTF-8`
-
-You should also use JDK 6: `Project Structure... -> Project -> Project SDK`:
-
-* *Use 1.6", not 1.7
-
-If you still have problems, try building the project with Maven, using Java 6:
-
-```
-export JAVA_HOME=/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home
-```
 
 Note that even though development is sometimes easier to do with 1.6, releasing should be done with 1.7.
 
