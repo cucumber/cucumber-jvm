@@ -48,7 +48,7 @@ public interface Scenario {
 
     /**
      *
-     * @return the remainder of the line following a gerkin scenario definition.
+     * @return the name of the Scenario
      */
     String getName();
 }
