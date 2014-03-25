@@ -122,8 +122,6 @@ Then, make sure you have the proper keys set up - in your `~/.m2/settings.xml` -
 
 Replace version numbers in:
 
-* examples/java-helloworld/build.xml
-* examples/java-helloworld/pom.xml
 * examples/java-gradle/build.gradle
 * README.md
 * History.md

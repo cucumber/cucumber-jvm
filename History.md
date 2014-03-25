@@ -1,4 +1,4 @@
-## [1-1-6-SNAPSHOT (Git master)](https://github.com/cucumber/cucumber-jvm/compare/v1.1.5...master)
+## [1.1.6](https://github.com/cucumber/cucumber-jvm/compare/v1.1.5...v1.1.6) (2014-03-24)
 
 * [Guice] Add hookpoints in Cucumber and GuiceFactory ([#634](https://github.com/cucumber/cucumber-jvm/pull/634) Wouter Coekaerts)
 * [Core] Fixed concurrency issue ([#333](https://github.com/cucumber/cucumber-jvm/issues/333), [#554](https://github.com/cucumber/cucumber-jvm/pull/554), [#591](https://github.com/cucumber/cucumber-jvm/issues/591), [#661](https://github.com/cucumber/cucumber-jvm/pull/661) Maxime Meriouma-Caron, Limin)
@@ -367,7 +367,7 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 
 ## 1.0.0.RC6 (2012-01-17)
 
-* [Build] Maven pom.xml files are back (generated from ivy.xml). Ant+Ivy still needed for bootstrapping. 
+* [Build] Maven pom.xml files are back (generated from ivy.xml). Ant+Ivy still needed for bootstrapping.
 
 ## 1.0.0.RC5 (2012-01-17)
 
