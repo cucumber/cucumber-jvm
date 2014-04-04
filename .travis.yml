@@ -14,8 +14,8 @@ matrix:
       # Install base Android SDK
       - sudo apt-get update -qq
       - if [ `uname -m` = x86_64 ]; then sudo apt-get install -qq --force-yes libgd2-xpm ia32-libs ia32-libs-multiarch > /dev/null; fi
-      - wget http://dl.google.com/android/android-sdk_r21.1-linux.tgz
-      - tar xzf android-sdk_r21.1-linux.tgz
+      - wget http://dl.google.com/android/android-sdk_r22.6.2-linux.tgz
+      - tar xzf android-sdk_r22.6.2-linux.tgz
       - export ANDROID_HOME=$PWD/android-sdk-linux
       - export PATH=${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools
 
@@ -24,7 +24,7 @@ matrix:
       # Note that sysimg-16 downloads the ARM, x86 and MIPS images (we should optimize this).
       # Other relevant APIs:
       #  addon-google_apis-google-16
-      - android update sdk --filter platform-tools,extra-android-support,android-8 --no-ui --force --all > /dev/null
+      - echo y | android update sdk --filter build-tools-19.0.1,platform-tools,extra-android-support,android-8 --no-ui --force --all > /dev/null
 
       # Create and start emulator
       - echo no | android create avd --force -n test -t android-8 --abi armeabi
