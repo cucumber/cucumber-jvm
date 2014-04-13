@@ -9,7 +9,7 @@ When step_2.................................................................unde
 Then step_3.................................................................undefined
 ]]></skipped>
     </testcase>
-    <testcase classname="Feature_3" name="ScenarioOutline_1_2" time="0">
+    <testcase classname="Feature_3" name="ScenarioOutline_1" time="0">
         <skipped><![CDATA[Given bg_1..................................................................undefined
 When bg_2...................................................................undefined
 Then bg_3...................................................................undefined
@@ -18,7 +18,7 @@ When so_2 7 cucumbers.......................................................unde
 Then 5 so_3.................................................................undefined
 ]]></skipped>
     </testcase>
-    <testcase classname="Feature_3" name="ScenarioOutline_1_1" time="0">
+    <testcase classname="Feature_3" name="ScenarioOutline_1_2" time="0">
         <skipped><![CDATA[Given bg_1..................................................................undefined
 When bg_2...................................................................undefined
 Then bg_3...................................................................undefined
