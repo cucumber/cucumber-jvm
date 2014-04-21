@@ -24,7 +24,7 @@ import static cucumber.runtime.model.CucumberFeature.load;
 // IMPORTANT! Make sure USAGE.txt is always uptodate if this class changes.
 public class RuntimeOptions {
     public static final String VERSION = ResourceBundle.getBundle("cucumber.version").getString("cucumber-jvm.version");
-    public static final String USAGE = FixJava.readResource("/cucumber/runtime/USAGE.txt");
+    public static final String USAGE = FixJava.readResource("/cucumber/api/cli/USAGE.txt");
 
     private final List<String> glue = new ArrayList<String>();
     private final List<Object> filters = new ArrayList<Object>();

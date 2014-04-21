@@ -1,3 +1,7 @@
+## [1.1.7](https://github.com/cucumber/cucumber-jvm/compare/v1.1.6...master) (Git master)
+
+* [Core] `cucumber.api.cli.Main.run` no longer calls `System.exit`, allowing embedding in other tools (Aslak Hellesøy)
+
 ## [1.1.6](https://github.com/cucumber/cucumber-jvm/compare/v1.1.5...v1.1.6) (2014-03-24)
 
 * [Guice] Add hookpoints in Cucumber and GuiceFactory ([#634](https://github.com/cucumber/cucumber-jvm/pull/634) Wouter Coekaerts)
