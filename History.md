@@ -1,5 +1,6 @@
 ## [1.1.7](https://github.com/cucumber/cucumber-jvm/compare/v1.1.6...master) (Git master)
 
+* [Scala] Support Scala 2.10 and 2.11. Drop support for Scala 2.9. (Aslak Hellesøy).
 * [Core] `cucumber.api.cli.Main.run` no longer calls `System.exit`, allowing embedding in other tools (Aslak Hellesøy)
 
 ## [1.1.6](https://github.com/cucumber/cucumber-jvm/compare/v1.1.5...v1.1.6) (2014-03-24)
