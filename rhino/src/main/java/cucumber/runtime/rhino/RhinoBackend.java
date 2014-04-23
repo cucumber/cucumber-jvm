@@ -1,19 +1,5 @@
 package cucumber.runtime.rhino;
 
-import static cucumber.runtime.io.MultiLoader.packageName;
-import gherkin.formatter.model.Step;
-
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.List;
-
-import org.mozilla.javascript.Context;
-import org.mozilla.javascript.Function;
-import org.mozilla.javascript.NativeFunction;
-import org.mozilla.javascript.Scriptable;
-import org.mozilla.javascript.regexp.NativeRegExp;
-import org.mozilla.javascript.tools.shell.Global;
-
 import cucumber.runtime.Backend;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Glue;
@@ -22,6 +8,17 @@ import cucumber.runtime.io.Resource;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.snippets.FunctionNameGenerator;
 import cucumber.runtime.snippets.SnippetGenerator;
+import gherkin.formatter.model.Step;
+import org.mozilla.javascript.Context;
+import org.mozilla.javascript.Function;
+import org.mozilla.javascript.NativeFunction;
+import org.mozilla.javascript.Scriptable;
+import org.mozilla.javascript.regexp.NativeRegExp;
+import org.mozilla.javascript.tools.shell.Global;
+
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.List;
 
 public class RhinoBackend implements Backend {
     private static final String JS_DSL = "/cucumber/runtime/rhino/dsl.js";
@@ -39,8 +36,10 @@ public class RhinoBackend implements Backend {
         cx = Context.enter();
         scope = new Global(cx); // This gives us access to global functions like load()
         scope.put("jsBackend", scope, this);
-        InputStreamReader dsl = new InputStreamReader(getClass().getResourceAsStream(JS_DSL), "UTF-8");
-        cx.evaluateReader(scope, dsl, JS_DSL, 1, null);
+
+        for (Resource resource : resourceLoader.resources("classpath:cucumber/runtime/rhino", ".js")) {
+            runScript(resource);
+        }
     }
 
     @Override
@@ -49,12 +48,16 @@ public class RhinoBackend implements Backend {
         this.gluePaths = gluePaths;
         for (String gluePath : gluePaths) {
             for (Resource resource : resourceLoader.resources(gluePath, ".js")) {
-                try {
-                    cx.evaluateReader(scope, new InputStreamReader(resource.getInputStream(), "UTF-8"), resource.getPath(), 1, null);
-                } catch (IOException e) {
-                    throw new CucumberException("Failed to evaluate Javascript in " + resource.getPath(), e);
-                }
+                runScript(resource);
             }
+        }
+    }
+
+    private void runScript(Resource resource) {
+        try {
+            cx.evaluateReader(scope, new InputStreamReader(resource.getInputStream(), "UTF-8"), resource.getAbsolutePath(), 1, null);
+        } catch (IOException e) {
+            throw new CucumberException("Failed to evaluate JavaScript in " + resource.getAbsolutePath(), e);
         }
     }
 
@@ -72,17 +75,16 @@ public class RhinoBackend implements Backend {
     public void disposeWorld() {
         try {
             if (disposeWorldFn != null) disposeWorldFn.call(cx, scope, scope, new Object[0]);
-        }
-        finally {
+        } finally {
             buildWorldFn = null;
             disposeWorldFn = null;
         }
     }
-    
+
     public void registerWorld(Function buildWorldFn, Function disposeWorldFn) {
         if (this.buildWorldFn != null) throw new CucumberException("World is already set");
         if (buildWorldFn == null) throw new CucumberException("World requires at least a build function");
-        
+
         this.buildWorldFn = buildWorldFn;
         this.disposeWorldFn = disposeWorldFn;
     }
@@ -97,12 +99,20 @@ public class RhinoBackend implements Backend {
         StackTraceElement[] stackTraceElements = t.getStackTrace();
         for (StackTraceElement stackTraceElement : stackTraceElements) {
             boolean js = stackTraceElement.getFileName().endsWith(".js");
-            for (String gluePath : gluePaths) {
-                boolean inScriptPath = packageName(stackTraceElement.getFileName()).startsWith(packageName(gluePath));
+            if (js) {
+                boolean isDsl = stackTraceElement.getFileName().endsWith(JS_DSL);
                 boolean hasLine = stackTraceElement.getLineNumber() != -1;
-                if (js && inScriptPath && hasLine) {
+                if (!isDsl && hasLine) {
                     return stackTraceElement;
                 }
+//                System.out.println("stackTraceElement.getFileName() = " + stackTraceElement.getFileName() + ":" + stackTraceElement.getLineNumber());
+//                for (String gluePath : gluePaths) {
+//                    boolean inScriptPath = packageName(stackTraceElement.getFileName()).startsWith(packageName(gluePath));
+//                    boolean hasLine = stackTraceElement.getLineNumber() != -1;
+//                    if (inScriptPath && hasLine) {
+//                        return stackTraceElement;
+//                    }
+//                }
             }
         }
         throw new RuntimeException("Couldn't find location for step definition");

@@ -39,6 +39,11 @@ public class TestHelper {
             }
 
             @Override
+            public String getAbsolutePath() {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
             public InputStream getInputStream() {
                 try {
                     return new ByteArrayInputStream(source.getBytes("UTF-8"));

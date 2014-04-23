@@ -33,7 +33,6 @@ import java.util.List;
 import java.util.Set;
 
 public class JRubyBackend implements Backend {
-    private static final String DSL = "/cucumber/runtime/jruby/dsl.rb";
     private static final Env env = new Env("cucumber-jvm");
     private final SnippetGenerator snippetGenerator = new SnippetGenerator(new JRubySnippet());
     private final ScriptingContainer jruby = new ScriptingContainer();
@@ -68,7 +67,9 @@ public class JRubyBackend implements Backend {
                 throw new CucumberException("Invalid RUBY_VERSION: " + rubyVersion);
             }
         }
-        jruby.runScriptlet(new InputStreamReader(getClass().getResourceAsStream(DSL), "UTF-8"), DSL);
+        for (Resource resource : resourceLoader.resources("classpath:cucumber/runtime/jruby", ".rb")) {
+            runScript(resource);
+        }
 
         // Let's go through some hoops to look up the Cucumber::Runtime::JRuby::World module. Sheesh!
         Ruby runtime = jruby.getProvider().getRuntime();
@@ -82,8 +83,17 @@ public class JRubyBackend implements Backend {
     public void loadGlue(Glue glue, List<String> gluePaths) {
         this.glue = glue;
         for (String gluePath : gluePaths) {
-            for (Resource resource : resourceLoader.resources(gluePath, ".rb")) {
-                runScriptlet(resource);
+            Iterable<Resource> resources = resourceLoader.resources(gluePath, ".rb");
+            List<Resource> resourcesWithEnvFirst = new ArrayList<Resource>();
+            for (Resource resource : resources) {
+                if (resource.getAbsolutePath().endsWith("env.rb")) {
+                    resourcesWithEnvFirst.add(0, resource);
+                } else {
+                    resourcesWithEnvFirst.add(resource);
+                }
+            }
+            for (Resource resource : resourcesWithEnvFirst) {
+                runScript(resource);
             }
         }
     }
@@ -103,9 +113,9 @@ public class JRubyBackend implements Backend {
         }
     }
 
-    private void runScriptlet(Resource resource) {
+    private void runScript(Resource resource) {
         try {
-            jruby.runScriptlet(new InputStreamReader(resource.getInputStream(), "UTF-8"), resource.getPath());
+            jruby.runScriptlet(new InputStreamReader(resource.getInputStream(), "UTF-8"), resource.getAbsolutePath());
         } catch (IOException e) {
             throw new CucumberException(e);
         }
