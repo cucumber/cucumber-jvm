@@ -1,6 +1,7 @@
 package cucumber.runtime;
 
-import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Constructor;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -33,14 +34,15 @@ public class Reflections {
     }
 
     public <T> T newInstance(Class[] constructorParams, Object[] constructorArgs, Class<? extends T> clazz) {
+        Constructor<? extends T> constructor = null;
         try {
-            return clazz.getConstructor(constructorParams).newInstance(constructorArgs);
-        } catch (InstantiationException e) {
-            throw new CucumberException(e);
-        } catch (IllegalAccessException e) {
-            throw new CucumberException(e);
-        } catch (InvocationTargetException e) {
-            throw new CucumberException(e);
+            constructor = clazz.getConstructor(constructorParams);
+            try {
+                return constructor.newInstance(constructorArgs);
+            } catch (Exception e) {
+                String message = String.format("Failed to instantiate %s with %s", constructor.toGenericString(), Arrays.asList(constructorArgs));
+                throw new CucumberException(message, e);
+            }
         } catch (NoSuchMethodException e) {
             throw new CucumberException(e);
         }
