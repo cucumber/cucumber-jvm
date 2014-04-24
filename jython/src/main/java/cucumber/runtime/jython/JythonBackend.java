@@ -36,7 +36,7 @@ public class JythonBackend implements Backend {
         this.jython = jython;
         jython.set("backend", this);
 
-        for (Resource resource : resourceLoader.resources("classpath:cucumber/runtime/jython", ".py")) {
+        for (Resource resource : resourceLoader.resources("classpath:cucumber/runtime/jython", "dsl.py")) {
             runScript(resource);
         }
     }
