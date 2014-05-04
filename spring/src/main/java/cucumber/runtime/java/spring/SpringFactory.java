@@ -11,12 +11,12 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.ContextHierarchy;
 import org.springframework.test.context.TestContextManager;
-
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.java.ObjectFactory;
 
@@ -150,7 +150,8 @@ public class SpringFactory implements ObjectFactory {
             T instance = createTest(type);
 
             if (dependsOnSpringContext(type)) {
-                TestContextManager contextManager = new TestContextManager(type);
+                CucumberTestContextManager contextManager = new CucumberTestContextManager(type);
+                contextManager.setParentOnApplicationContext(applicationContext);
                 contextManager.prepareTestInstance(instance);
                 contextManager.beforeTestClass();
 
@@ -171,5 +172,24 @@ public class SpringFactory implements ObjectFactory {
     private boolean dependsOnSpringContext(Class<?> type) {
         return type.isAnnotationPresent(ContextConfiguration.class)
             || type.isAnnotationPresent(ContextHierarchy.class);
+    }
+}
+
+class CucumberTestContextManager extends TestContextManager {
+
+    public CucumberTestContextManager(Class<?> testClass) {
+        super(testClass);
+    }
+
+    @SuppressWarnings("resource")
+    public void setParentOnApplicationContext(ApplicationContext parentContext) {
+        ConfigurableApplicationContext context =
+                (ConfigurableApplicationContext)getTestContext().getApplicationContext();
+        while (context.getParent() != null && !context.getParent().equals(parentContext)) {
+            context = (ConfigurableApplicationContext)context.getParent();
+        }
+        if (context.getParent() == null) {
+            context.setParent(parentContext);
+        }
     }
 }
