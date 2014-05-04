@@ -67,6 +67,9 @@ public class CucumberScenarioOutline extends CucumberTagStatement {
 
         // Create a step with replaced tokens
         String name = replaceTokens(matchedColumns, headerCells, exampleCells, step.getName());
+        if (name.isEmpty()) {
+            throw new CucumberException("Step generated from scenario outline '" + step.getName() + "' is empty");
+        }
 
         return new ExampleStep(
                 step.getComments(),
@@ -111,9 +114,6 @@ public class CucumberScenarioOutline extends CucumberTagStatement {
 
             if (text.contains(token)) {
                 text = text.replace(token, value);
-                if (text.isEmpty()) {
-                    throw new CucumberException("Step generated from scenario outline '" + token + "' is empty");
-                }
                 matchedColumns.add(col);
             }
         }
