@@ -15,4 +15,6 @@
         </property>
     </bean>
 
+	<bean id="transactionManager" class="cucumber.runtime.java.spring.PlatformTransactionManagerImpl"/>
+
 </beans>
