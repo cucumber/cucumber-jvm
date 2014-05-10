@@ -19,6 +19,7 @@ public class BellyStepdefs {
     @Then("^there are (\\d+) cukes in my belly")
     public void checkCukes(final int n) {
         assertEquals(n, belly.getCukes());
+        belly.setCukes(0);
     }
 
     @Given("^I have (\\d+) cukes in my belly")
@@ -34,6 +35,7 @@ public class BellyStepdefs {
     @Then("^there are (\\d+) beans in my belly$")
     public void there_are_beans_in_my_belly(int n) {
         assertEquals(n, bellyBean.getCukes());
+        bellyBean.setCukes(0);
     }
 
     public BellyBean getBellyBean() {

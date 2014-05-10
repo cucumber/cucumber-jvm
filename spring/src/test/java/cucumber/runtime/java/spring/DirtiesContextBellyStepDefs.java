@@ -26,11 +26,13 @@ public class DirtiesContextBellyStepDefs {
 
     @Given("^I have (\\d+) dirty cukes in my belly")
     public void haveCukes(final int n) {
+        assertEquals(0, belly.getCukes());
         belly.setCukes(n);
     }
 
     @Given("^I have (\\d+) dirty beans in my belly$")
     public void I_have_beans_in_my_belly(int n) {
+        assertEquals(0, bellyBean.getCukes());
         bellyBean.setCukes(n);
     }
 
