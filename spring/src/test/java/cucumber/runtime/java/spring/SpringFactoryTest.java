@@ -1,8 +1,11 @@
 package cucumber.runtime.java.spring;
 
-import org.junit.Test;
-
 import cucumber.runtime.java.ObjectFactory;
+import cucumber.runtime.java.spring_contextconfig.BellyStepdefs;
+import cucumber.runtime.java.spring_contextconfig.WithSpringAnnotations;
+import cucumber.runtime.java.spring_contexthierarchyconfig.WithContextHierarchyAnnotation;
+import cucumber.runtime.java.spring_dirtiescontextconfig.DirtiesContextBellyStepDefs;
+import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -36,12 +39,14 @@ public class SpringFactoryTest {
     public void shouldNeverCreateNewApplicationBeanInstances() {
         // Feature 1
         final ObjectFactory factory1 = new SpringFactory();
+        factory1.addClass(BellyStepdefs.class);
         factory1.start();
         final BellyBean o1 = factory1.getInstance(BellyStepdefs.class).getBellyBean();
         factory1.stop();
 
         // Feature 2
         final ObjectFactory factory2 = new SpringFactory();
+        factory2.addClass(BellyStepdefs.class);
         factory2.start();
         final BellyBean o2 = factory2.getInstance(BellyStepdefs.class).getBellyBean();
         factory2.stop();

@@ -2,11 +2,9 @@ package cucumber.runtime.java.spring;
 
 import cucumber.api.java.en.Then;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
 
 import static org.junit.Assert.assertEquals;
 
-@ContextConfiguration("classpath:cucumber.xml")
 public class AnotherStepDef {
 
     @Autowired

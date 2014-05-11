@@ -2,9 +2,7 @@ package cucumber.runtime.java.spring;
 
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.When;
-import org.springframework.test.context.ContextConfiguration;
 
-@ContextConfiguration("classpath:cucumber.xml")
 public class OneStepDef {
     int cucumbers;
 

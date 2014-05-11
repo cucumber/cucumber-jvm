@@ -154,15 +154,7 @@ public class SpringFactory implements ObjectFactory {
         try {
             T instance = createTest(type);
 
-            if (dependsOnSpringContext(type)) {
-                CucumberTestContextManager contextManager = new CucumberTestContextManager(type);
-                contextManager.setParentOnApplicationContext(applicationContext);
-                contextManager.prepareTestInstance(instance);
-                contextManager.beforeTestClass();
-
-                contextManagersByClass.put(type, contextManager);
-            } else if (type.getName().equals("cucumber.api.spring.SpringTransactionHooks") &&
-                    stepClassWithSpringContext != null) {
+            if (stepClassWithSpringContext != null) {
                 CucumberTestContextManager contextManager = new CucumberTestContextManager(stepClassWithSpringContext);
                 contextManager.setParentOnApplicationContext(applicationContext);
                 contextManager.prepareTestInstance(instance);

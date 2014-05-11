@@ -1,5 +1,6 @@
-package cucumber.runtime.java.spring;
+package cucumber.runtime.java.spring_contextconfig;
 
+import cucumber.runtime.java.spring.DummyComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
@@ -24,4 +25,5 @@ public class WithSpringAnnotations {
     public String getProperty() {
         return property;
     }
+
 }

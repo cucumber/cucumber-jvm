@@ -1,4 +1,4 @@
-package cucumber.runtime.java.spring;
+package cucumber.runtime.java.spring_webappconfig;
 
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
