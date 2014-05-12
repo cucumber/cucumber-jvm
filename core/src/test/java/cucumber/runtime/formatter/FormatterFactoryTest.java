@@ -9,6 +9,8 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -106,6 +108,12 @@ public class FormatterFactoryTest {
     }
 
     @Test
+    public void instantiates_custom_uri_formatter_with_ws() throws IOException, URISyntaxException {
+        WantsUri formatter = (WantsUri) fc.create("cucumber.runtime.formatter.FormatterFactoryTest$WantsUri:ws://halp/");
+        assertEquals(new URI("ws://halp/"), formatter.out);
+    }
+
+    @Test
     public void instantiates_custom_file_formatter() throws IOException {
         WantsFile formatter = (WantsFile) fc.create("cucumber.runtime.formatter.FormatterFactoryTest$WantsFile:halp.txt");
         assertEquals(new File("halp.txt"), formatter.out);
@@ -123,6 +131,14 @@ public class FormatterFactoryTest {
         public final URL out;
 
         public WantsUrl(URL out) {
+            this.out = out;
+        }
+    }
+
+    public static class WantsUri extends StubFormatter {
+        public final URI out;
+
+        public WantsUri(URI out) {
             this.out = out;
         }
     }
