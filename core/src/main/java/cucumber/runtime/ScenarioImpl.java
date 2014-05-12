@@ -14,7 +14,7 @@ import java.util.Set;
 import static java.util.Arrays.asList;
 
 public class ScenarioImpl implements Scenario {
-    private static final List<String> SEVERITY = asList("passed", "skipped", "undefined", "pending", "failed");
+    private static final List<String> SEVERITY = asList("passed", "skipped", "pending", "undefined", "failed");
     private final List<Result> stepResults = new ArrayList<Result>();
     private final Reporter reporter;
     private final Set<Tag> tags;

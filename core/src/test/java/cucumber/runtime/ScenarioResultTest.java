@@ -41,10 +41,10 @@ public class ScenarioResultTest {
     @Test
     public void passed_pending_undefined_skipped_is_pending() throws Exception {
         s.add(new Result("passed", 0L, null, null));
-        s.add(new Result("pending", 0L, null, null));
         s.add(new Result("undefined", 0L, null, null));
+        s.add(new Result("pending", 0L, null, null));
         s.add(new Result("skipped", 0L, null, null));
-        assertEquals("pending", s.getStatus());
+        assertEquals("undefined", s.getStatus());
     }
 
     @Test
