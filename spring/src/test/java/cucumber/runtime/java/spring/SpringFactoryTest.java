@@ -5,6 +5,7 @@ import cucumber.runtime.java.ObjectFactory;
 import cucumber.runtime.java.spring_contextconfig.BellyStepdefs;
 import cucumber.runtime.java.spring_contextconfig.WithSpringAnnotations;
 import cucumber.runtime.java.spring_contexthierarchyconfig.WithContextHierarchyAnnotation;
+import cucumber.runtime.java.spring_contexthierarchyconfig.WithDifferentContextHierarchyAnnotation;
 import cucumber.runtime.java.spring_dirtiescontextconfig.DirtiesContextBellyStepDefs;
 import org.junit.Test;
 
@@ -129,5 +130,19 @@ public class SpringFactoryTest {
         final ObjectFactory factory = new SpringFactory();
         factory.addClass(UnusedGlue.class);
         factory.start();
+    }
+
+    @Test
+    public void shouldAllowClassesWithSameSpringAnnotations() {
+        final ObjectFactory factory = new SpringFactory();
+        factory.addClass(WithSpringAnnotations.class);
+        factory.addClass(BellyStepdefs.class);
+    }
+
+    @Test(expected=CucumberException.class)
+    public void shouldFailIfClassesWithDifferentSpringAnnotationsAreFound() {
+        final ObjectFactory factory = new SpringFactory();
+        factory.addClass(WithContextHierarchyAnnotation.class);
+        factory.addClass(WithDifferentContextHierarchyAnnotation.class);
     }
 }

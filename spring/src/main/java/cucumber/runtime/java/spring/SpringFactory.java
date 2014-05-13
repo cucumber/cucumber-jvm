@@ -2,6 +2,7 @@ package cucumber.runtime.java.spring;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -59,8 +60,12 @@ public class SpringFactory implements ObjectFactory {
     @Override
     public void addClass(final Class<?> stepClass) {
         if (!stepClasses.contains(stepClass)) {
-            if (stepClassWithSpringContext == null && dependsOnSpringContext(stepClass)) {
-                stepClassWithSpringContext = stepClass;
+            if (dependsOnSpringContext(stepClass)) {
+                if (stepClassWithSpringContext == null) {
+                    stepClassWithSpringContext = stepClass;
+                } else {
+                    checkAnnotationsEqual(stepClassWithSpringContext, stepClass);
+                }
             }
             stepClasses.add(stepClass);
 
@@ -71,6 +76,32 @@ public class SpringFactory implements ObjectFactory {
                     .getBeanDefinition();
             registry.registerBeanDefinition(stepClass.getName(), beanDefinition);
         }
+    }
+
+    private void checkAnnotationsEqual(Class<?> stepClassWithSpringContext, Class<?> stepClass) {
+        Annotation[] annotations1 = stepClassWithSpringContext.getAnnotations();
+        Annotation[] annotations2 = stepClass.getAnnotations();
+        if (annotations1.length != annotations2.length) {
+            throw new CucumberException("Annotations differs on glue classes found: " +
+                    stepClassWithSpringContext.getName() + ", " +
+                    stepClass.getName());
+        }
+        for (Annotation annotation : annotations1) {
+            if (!isAnnotationInArray(annotation, annotations2)) {
+                throw new CucumberException("Annotations differs on glue classes found: " +
+                        stepClassWithSpringContext.getName() + ", " +
+                        stepClass.getName());
+            }
+        }
+    }
+
+    private boolean isAnnotationInArray(Annotation annotation, Annotation[] annotations) {
+        for (Annotation annotationFromArray: annotations) {
+            if (annotation.equals(annotationFromArray)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
