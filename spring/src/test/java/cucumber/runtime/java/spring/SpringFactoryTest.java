@@ -1,5 +1,6 @@
 package cucumber.runtime.java.spring;
 
+import cucumber.runtime.CucumberException;
 import cucumber.runtime.java.ObjectFactory;
 import cucumber.runtime.java.spring_contextconfig.BellyStepdefs;
 import cucumber.runtime.java.spring_contextconfig.WithSpringAnnotations;
@@ -104,7 +105,7 @@ public class SpringFactoryTest {
     @Test
     public void shouldNotFailOnNonSpringStepDefs() {
         final ObjectFactory factory = new SpringFactory();
-        factory.addClass(UnusedGlue.class);
+        factory.addClass(WithSpringAnnotations.class);
         factory.start();
         NonSpringGlue stepdef = factory.getInstance(NonSpringGlue.class);
         factory.stop();
@@ -121,5 +122,12 @@ public class SpringFactoryTest {
         factory.stop();
 
         assertEquals("property value", stepdef.getProperty());
+    }
+
+    @Test(expected=CucumberException.class)
+    public void shouldFailIfNoGlueClassWithSpringAnnotationIsFound() {
+        final ObjectFactory factory = new SpringFactory();
+        factory.addClass(UnusedGlue.class);
+        factory.start();
     }
 }

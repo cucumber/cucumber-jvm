@@ -75,6 +75,9 @@ public class SpringFactory implements ObjectFactory {
 
     @Override
     public void start() {
+        if (stepClassWithSpringContext == null) {
+            throw new CucumberException("No glue class with spring annotation found");
+        }
         GlueCodeContext.INSTANCE.start();
     }
 
