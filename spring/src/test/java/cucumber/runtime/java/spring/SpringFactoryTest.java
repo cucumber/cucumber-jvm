@@ -8,6 +8,7 @@ import cucumber.runtime.java.spring_contexthierarchyconfig.WithContextHierarchyA
 import cucumber.runtime.java.spring_contexthierarchyconfig.WithDifferentContextHierarchyAnnotation;
 import cucumber.runtime.java.spring_dirtiescontextconfig.DirtiesContextBellyStepDefs;
 import org.junit.Test;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -38,6 +39,29 @@ public class SpringFactoryTest {
     }
 
     @Test
+    public void shouldGiveUsNewInstancesOfGlueScopeClassesForEachScenario() {
+        final ObjectFactory factory = new SpringFactory();
+        factory.addClass(BellyStepdefs.class);
+        factory.addClass(AutowiresPlatformTransactionManager.class);
+
+        // Scenario 1
+        factory.start();
+        final PlatformTransactionManager o1 =
+                factory.getInstance(AutowiresPlatformTransactionManager.class).getTransactionManager();
+        factory.stop();
+
+        // Scenario 2
+        factory.start();
+        final PlatformTransactionManager o2 =
+                factory.getInstance(AutowiresPlatformTransactionManager.class).getTransactionManager();
+        factory.stop();
+
+        assertNotNull(o1);
+        assertNotNull(o2);
+        assertNotSame(o1, o2);
+    }
+
+    @Test
     public void shouldNeverCreateNewApplicationBeanInstances() {
         // Feature 1
         final ObjectFactory factory1 = new SpringFactory();
@@ -56,6 +80,40 @@ public class SpringFactoryTest {
         assertNotNull(o1);
         assertNotNull(o2);
         assertSame(o1, o2);
+    }
+
+    @Test
+    public void shouldFindStepDefsCreatedImplicitlyForAutowiring() {
+        final ObjectFactory factory1 = new SpringFactory();
+        factory1.addClass(WithSpringAnnotations.class);
+        factory1.addClass(OneStepDef.class);
+        factory1.addClass(ThirdStepDef.class);
+        factory1.addClass(AutowiresThirdStepDef.class);
+        factory1.start();
+        final OneStepDef o1 = factory1.getInstance(OneStepDef.class);
+        final ThirdStepDef o2 = factory1.getInstance(ThirdStepDef.class);
+        factory1.stop();
+
+        assertNotNull(o1.getThirdStepDef());
+        assertNotNull(o2);
+        assertSame(o1.getThirdStepDef(), o2);
+    }
+
+    @Test
+    public void shouldReuseStepDefsCreatedImplicitlyForAutowiring() {
+        final ObjectFactory factory1 = new SpringFactory();
+        factory1.addClass(WithSpringAnnotations.class);
+        factory1.addClass(OneStepDef.class);
+        factory1.addClass(ThirdStepDef.class);
+        factory1.addClass(AutowiresThirdStepDef.class);
+        factory1.start();
+        final OneStepDef o1 = factory1.getInstance(OneStepDef.class);
+        final AutowiresThirdStepDef o3 = factory1.getInstance(AutowiresThirdStepDef.class);
+        factory1.stop();
+
+        assertNotNull(o1.getThirdStepDef());
+        assertNotNull(o3.getThirdStepDef());
+        assertSame(o1.getThirdStepDef(), o3.getThirdStepDef());
     }
 
     @Test
@@ -101,17 +159,6 @@ public class SpringFactoryTest {
         assertNotNull(o1);
         assertNotNull(o2);
         assertNotSame(o1, o2);
-    }
-
-    @Test
-    public void shouldNotFailOnNonSpringStepDefs() {
-        final ObjectFactory factory = new SpringFactory();
-        factory.addClass(WithSpringAnnotations.class);
-        factory.start();
-        NonSpringGlue stepdef = factory.getInstance(NonSpringGlue.class);
-        factory.stop();
-
-        assertNotNull(stepdef);
     }
 
     @Test

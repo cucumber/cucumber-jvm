@@ -9,7 +9,11 @@ public class OneStepDef {
     int cucumbers;
 
     @Autowired
-    ThirdStepDef thirdStepDef;
+    private ThirdStepDef thirdStepDef;
+
+    public ThirdStepDef getThirdStepDef() {
+        return thirdStepDef;
+    }
 
     @Given("^the StepDef injection works$")
     public void the_StepDef_injection_works() throws Throwable {
