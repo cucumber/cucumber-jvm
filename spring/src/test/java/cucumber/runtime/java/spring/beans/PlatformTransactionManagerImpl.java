@@ -1,4 +1,4 @@
-package cucumber.runtime.java.spring;
+package cucumber.runtime.java.spring.beans;
 
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.transaction.PlatformTransactionManager;

@@ -1,6 +1,6 @@
-package cucumber.runtime.java.spring_contextconfig;
+package cucumber.runtime.java.spring.contextconfig;
 
-import cucumber.runtime.java.spring.DummyComponent;
+import cucumber.runtime.java.spring.beans.DummyComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;

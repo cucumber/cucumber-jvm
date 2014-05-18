@@ -1,4 +1,4 @@
-package cucumber.runtime.java.spring;
+package cucumber.runtime.java.spring.beans;
 
 
 public class BellyBean {

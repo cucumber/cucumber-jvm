@@ -1,6 +1,6 @@
-package cucumber.runtime.java.spring_contexthierarchyconfig;
+package cucumber.runtime.java.spring.contexthierarchyconfig;
 
-import cucumber.runtime.java.spring.DummyComponent;
+import cucumber.runtime.java.spring.beans.DummyComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.ContextHierarchy;

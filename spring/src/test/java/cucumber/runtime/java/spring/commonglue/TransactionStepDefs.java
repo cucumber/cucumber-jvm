@@ -1,4 +1,4 @@
-package cucumber.runtime.java.spring;
+package cucumber.runtime.java.spring.commonglue;
 
 import cucumber.api.java.After;
 import cucumber.api.java.Before;

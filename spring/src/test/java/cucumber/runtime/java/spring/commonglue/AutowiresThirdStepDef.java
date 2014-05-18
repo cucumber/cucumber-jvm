@@ -1,4 +1,4 @@
-package cucumber.runtime.java.spring;
+package cucumber.runtime.java.spring.commonglue;
 
 import org.springframework.beans.factory.annotation.Autowired;
 

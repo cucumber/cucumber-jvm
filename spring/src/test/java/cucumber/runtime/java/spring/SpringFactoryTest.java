@@ -2,11 +2,17 @@ package cucumber.runtime.java.spring;
 
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.java.ObjectFactory;
-import cucumber.runtime.java.spring_contextconfig.BellyStepdefs;
-import cucumber.runtime.java.spring_contextconfig.WithSpringAnnotations;
-import cucumber.runtime.java.spring_contexthierarchyconfig.WithContextHierarchyAnnotation;
-import cucumber.runtime.java.spring_contexthierarchyconfig.WithDifferentContextHierarchyAnnotation;
-import cucumber.runtime.java.spring_dirtiescontextconfig.DirtiesContextBellyStepDefs;
+import cucumber.runtime.java.spring.beans.BellyBean;
+import cucumber.runtime.java.spring.commonglue.AutowiresPlatformTransactionManager;
+import cucumber.runtime.java.spring.commonglue.AutowiresThirdStepDef;
+import cucumber.runtime.java.spring.commonglue.OneStepDef;
+import cucumber.runtime.java.spring.commonglue.ThirdStepDef;
+import cucumber.runtime.java.spring.commonglue.UnusedGlue;
+import cucumber.runtime.java.spring.contextconfig.BellyStepdefs;
+import cucumber.runtime.java.spring.contextconfig.WithSpringAnnotations;
+import cucumber.runtime.java.spring.contexthierarchyconfig.WithContextHierarchyAnnotation;
+import cucumber.runtime.java.spring.contexthierarchyconfig.WithDifferentContextHierarchyAnnotation;
+import cucumber.runtime.java.spring.dirtiescontextconfig.DirtiesContextBellyStepDefs;
 import org.junit.Test;
 import org.springframework.transaction.PlatformTransactionManager;
 

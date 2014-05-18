@@ -1,9 +1,9 @@
-package cucumber.runtime.java.spring_dirtiescontextconfig;
+package cucumber.runtime.java.spring.dirtiescontextconfig;
 
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
-import cucumber.runtime.java.spring.Belly;
-import cucumber.runtime.java.spring.BellyBean;
+import cucumber.runtime.java.spring.beans.Belly;
+import cucumber.runtime.java.spring.beans.BellyBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
