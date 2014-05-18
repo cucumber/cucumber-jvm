@@ -95,9 +95,8 @@ public class SpringFactory implements ObjectFactory {
     @Override
     public void start() {
         if (stepClassWithSpringContext == null) {
-            throw new CucumberException("No glue class with spring annotation found. " +
-                    "One glue class with @ContextConfiguration or " +
-                    "@ContextHierarcy annotation is needed.");
+            throw new CucumberException("No glue class with @ContextConfiguration or " +
+                    "@ContextHierarcy annotation found in: " + stepClasses.toString());
         }
         testContextManager = new CucumberTestContextManager(stepClassWithSpringContext);
         notifyContextManagerAboutTestClassStarted();
