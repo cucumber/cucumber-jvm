@@ -1,4 +1,3 @@
-@txn
 Feature: See Messages
 
   Scenario: See another user's messages

@@ -45,6 +45,8 @@ public class SpringFactory implements ObjectFactory {
     private final Collection<Class<?>> stepClasses = new HashSet<Class<?>>();
     private final Map<Class<?>, TestContextManager> contextManagersByClass = new HashMap<Class<?>, TestContextManager>();
 
+    private Class<?> stepClassWithSpringContext = null;
+
     public SpringFactory() {
     }
 
@@ -57,6 +59,9 @@ public class SpringFactory implements ObjectFactory {
     @Override
     public void addClass(final Class<?> stepClass) {
         if (!stepClasses.contains(stepClass)) {
+	    if (stepClassWithSpringContext == null && dependsOnSpringContext(stepClass)) {
+		stepClassWithSpringContext = stepClass;
+	    }
             stepClasses.add(stepClass);
 
             BeanDefinitionRegistry registry = (BeanDefinitionRegistry) applicationContext.getAutowireCapableBeanFactory();
@@ -156,6 +161,14 @@ public class SpringFactory implements ObjectFactory {
 
                 contextManagersByClass.put(type, contextManager);
             }
+	    else if (type.getName().equals("cucumber.api.spring.SpringTransactionHooks") &&
+		     stepClassWithSpringContext != null) {
+                TestContextManager contextManager = new TestContextManager(stepClassWithSpringContext);
+                contextManager.prepareTestInstance(instance);
+                contextManager.beforeTestClass();
+
+                contextManagersByClass.put(type, contextManager);
+	    }
 
             return instance;
         } catch (Exception e) {
@@ -165,7 +178,7 @@ public class SpringFactory implements ObjectFactory {
 
     @SuppressWarnings("unchecked")
     protected <T> T createTest(Class<T> type) throws Exception {
-        return (T) type.getConstructors()[0].newInstance();
+        return (T) type.getConstructor().newInstance();
     }
 
     private boolean dependsOnSpringContext(Class<?> type) {
