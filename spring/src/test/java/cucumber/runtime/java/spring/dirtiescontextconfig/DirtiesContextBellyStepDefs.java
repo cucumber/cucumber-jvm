@@ -1,11 +1,12 @@
-package cucumber.runtime.java.spring;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
+package cucumber.runtime.java.spring.dirtiescontextconfig;
 
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
+import cucumber.runtime.java.spring.beans.Belly;
+import cucumber.runtime.java.spring.beans.BellyBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ContextConfiguration;
 
 import static org.junit.Assert.assertEquals;
 
@@ -26,11 +27,13 @@ public class DirtiesContextBellyStepDefs {
 
     @Given("^I have (\\d+) dirty cukes in my belly")
     public void haveCukes(final int n) {
+        assertEquals(0, belly.getCukes());
         belly.setCukes(n);
     }
 
     @Given("^I have (\\d+) dirty beans in my belly$")
     public void I_have_beans_in_my_belly(int n) {
+        assertEquals(0, bellyBean.getCukes());
         bellyBean.setCukes(n);
     }
 
