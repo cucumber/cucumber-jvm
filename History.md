@@ -1,4 +1,4 @@
-## [1.1.7](https://github.com/cucumber/cucumber-jvm/compare/v1.1.6...master) (Git master)
+## [1.1.7](https://github.com/cucumber/cucumber-jvm/compare/v1.1.6...v1.1.7) (2014-05-19)
 
 * [Core] Custom formatters can be instantiated with `java.net.URI`. (Aslak Hellesøy)
 * [JRuby,Jython,Rhino,Groovy] Load scripts by absolute path rather than relative so that relative require/import from those scripts works (Aslak Hellesøy)

@@ -123,7 +123,6 @@ Then, make sure you have the proper keys set up - in your `~/.m2/settings.xml` -
 Replace version numbers in:
 
 * examples/java-gradle/build.gradle
-* README.md
 * History.md
 
 Run `git commit -am "Release X.Y.Z"`
