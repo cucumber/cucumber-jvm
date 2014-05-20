@@ -1,3 +1,6 @@
+## [1.1.8](https://github.com/cucumber/cucumber-jvm/compare/v1.1.7..v1.1.8) (2014-05-20)
+* [Guice] New scenario scope for Guice. Non-backwards compatible ([#683](https://github.com/cucumber/cucumber-jvm/pull/683) jakecollins)
+
 ## [1.1.7](https://github.com/cucumber/cucumber-jvm/compare/v1.1.6...v1.1.7) (2014-05-19)
 
 * [Core] Custom formatters can be instantiated with `java.net.URI`. (Aslak Hellesøy)
