@@ -7,7 +7,6 @@ import cucumber.runtime.java.spring.commonglue.AutowiresPlatformTransactionManag
 import cucumber.runtime.java.spring.commonglue.AutowiresThirdStepDef;
 import cucumber.runtime.java.spring.commonglue.OneStepDef;
 import cucumber.runtime.java.spring.commonglue.ThirdStepDef;
-import cucumber.runtime.java.spring.commonglue.UnusedGlue;
 import cucumber.runtime.java.spring.contextconfig.BellyStepdefs;
 import cucumber.runtime.java.spring.contextconfig.WithSpringAnnotations;
 import cucumber.runtime.java.spring.contexthierarchyconfig.WithContextHierarchyAnnotation;
@@ -178,11 +177,17 @@ public class SpringFactoryTest {
         assertEquals("property value", stepdef.getProperty());
     }
 
-    @Test(expected=CucumberException.class)
-    public void shouldFailIfNoGlueClassWithSpringAnnotationIsFound() {
+    @Test
+    public void shouldUseCucumberXmlIfNoClassWithSpringAnnotationIsFound() {
         final ObjectFactory factory = new SpringFactory();
-        factory.addClass(UnusedGlue.class);
+        factory.addClass(AutowiresPlatformTransactionManager.class);
         factory.start();
+        final AutowiresPlatformTransactionManager o1 =
+                factory.getInstance(AutowiresPlatformTransactionManager.class);
+        factory.stop();
+
+        assertNotNull(o1);
+        assertNotNull(o1.getTransactionManager());
     }
 
     @Test
