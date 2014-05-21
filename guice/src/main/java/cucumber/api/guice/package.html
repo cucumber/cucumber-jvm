@@ -10,10 +10,10 @@
     It's important to realise the differences in how this module functions when compared with earlier versions. The
     changes are as follows.
 
-    <= 1.1.6    A Guice injector is created at the start of each test scenario and is destroyed at the end of each test
+    <= 1.1.7    A Guice injector is created at the start of each test scenario and is destroyed at the end of each test
                 scenario. There is no scenario scope, just singleton and 'no scope'.
 
-    > 1.1.6     A Guice injector is created once before any tests are run and is destroyed after the last test has run.
+    > 1.1.7     A Guice injector is created once before any tests are run and is destroyed after the last test has run.
                 Before each test scenario a new scenario scope is created. At the end of the test scenario the scenario
                 scope is destroyed. Singleton scope exists throughout all test scenarios.
 
