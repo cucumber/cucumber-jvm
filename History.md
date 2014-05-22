@@ -13,7 +13,7 @@
 * [Guice] Add hookpoints in Cucumber and GuiceFactory ([#634](https://github.com/cucumber/cucumber-jvm/pull/634) Wouter Coekaerts)
 * [Core] Fixed concurrency issue ([#333](https://github.com/cucumber/cucumber-jvm/issues/333), [#554](https://github.com/cucumber/cucumber-jvm/pull/554), [#591](https://github.com/cucumber/cucumber-jvm/issues/591), [#661](https://github.com/cucumber/cucumber-jvm/pull/661) Maxime Meriouma-Caron, Limin)
 * [Groovy] Use ~/.../ syntax in Groovy snippets ([#663](https://github.com/cucumber/cucumber-jvm/pull/663) Harald Albers, Aslak Hellesøy)
-* [Build] Enforce minimum maven version 3.1.1, update plugin and dependency versions ([#690](https://github.com/cucumber/cucumber-jvm/pull/690, [#691](https://github.com/cucumber/cucumber-jvm/pull/691, [#692](https://github.com/cucumber/cucumber-jvm/pull/692) Nayan Hajratwala)
+* [Build] Enforce minimum maven version 3.1.1, update plugin and dependency versions ([#690](https://github.com/cucumber/cucumber-jvm/pull/690), [#691](https://github.com/cucumber/cucumber-jvm/pull/691), [#692](https://github.com/cucumber/cucumber-jvm/pull/692) Nayan Hajratwala)
 * [Scala] Fixed scala warnings ([#689](https://github.com/cucumber/cucumber-jvm/pull/689) Nayan Hajratwala)
 * [Core] Cannot run cucumber test if path to jar files contains exclamation character. ([#685](https://github.com/cucumber/cucumber-jvm/issues/685) Ruslan, Aslak Hellesøy)
 * [Gosu] Support for [Gosu](http://gosu-lang.org/) (Aslak Hellesøy)
