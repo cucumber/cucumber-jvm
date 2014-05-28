@@ -4,17 +4,21 @@ import cucumber.runtime.CucumberException;
 import cucumber.runtime.Utils;
 import cucumber.runtime.io.UTF8OutputStreamWriter;
 import gherkin.formatter.Formatter;
+import gherkin.formatter.model.Result;
 
 import org.junit.Test;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.URL;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -73,6 +77,27 @@ public class FormatterFactoryTest {
     public void instantiates_usage_formatter_with_file_arg() throws IOException {
         Formatter formatter = fc.create("usage:" + TempDir.createTempFile().getAbsolutePath());
         assertEquals(UsageFormatter.class, formatter.getClass());
+    }
+    
+    @Test
+    public void formatter_does_not_buffer_its_output() throws IOException {
+        PrintStream previousSystemOut = System.out;
+        OutputStream mockSystemOut = new ByteArrayOutputStream();
+        
+        try {
+            System.setOut(new PrintStream(mockSystemOut));
+            
+            // Need to create a new formatter factory here since we need it to pick up the new value of System.out
+            fc = new FormatterFactory();
+            
+            ProgressFormatter formatter = (ProgressFormatter) fc.create("progress");
+            
+            formatter.result(new Result("passed", null, null));
+            
+            assertThat(mockSystemOut.toString(), is(not("")));
+        } finally {
+            System.setOut(previousSystemOut);
+        }
     }
 
     @Test
