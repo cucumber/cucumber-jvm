@@ -4,13 +4,14 @@ import cucumber.runtime.CucumberException;
 import cucumber.runtime.Utils;
 import cucumber.runtime.io.UTF8OutputStreamWriter;
 import gherkin.formatter.Formatter;
+
 import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.io.PrintStream;
 import java.net.URL;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -77,7 +78,7 @@ public class FormatterFactoryTest {
     @Test
     public void instantiates_single_custom_appendable_formatter_with_stdout() {
         WantsAppendable formatter = (WantsAppendable) fc.create("cucumber.runtime.formatter.FormatterFactoryTest$WantsAppendable");
-        assertThat(formatter.out, is(instanceOf(OutputStreamWriter.class)));
+        assertThat(formatter.out, is(instanceOf(PrintStream.class)));
         try {
             fc.create("cucumber.runtime.formatter.FormatterFactoryTest$WantsAppendable");
             fail();
@@ -89,7 +90,7 @@ public class FormatterFactoryTest {
     @Test
     public void instantiates_custom_appendable_formatter_with_stdout_and_file() throws IOException {
         WantsAppendable formatter = (WantsAppendable) fc.create("cucumber.runtime.formatter.FormatterFactoryTest$WantsAppendable");
-        assertThat(formatter.out, is(instanceOf(OutputStreamWriter.class)));
+        assertThat(formatter.out, is(instanceOf(PrintStream.class)));
 
         WantsAppendable formatter2 = (WantsAppendable) fc.create("cucumber.runtime.formatter.FormatterFactoryTest$WantsAppendable:" + TempDir.createTempFile().getAbsolutePath());
         assertEquals(UTF8OutputStreamWriter.class, formatter2.out.getClass());

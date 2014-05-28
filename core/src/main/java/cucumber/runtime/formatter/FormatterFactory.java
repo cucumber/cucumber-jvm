@@ -8,7 +8,7 @@ import gherkin.formatter.JSONFormatter;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
+import java.io.PrintStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
@@ -51,9 +51,9 @@ public class FormatterFactory {
         put("rerun", RerunFormatter.class);
     }};
     private static final Pattern FORMATTER_WITH_FILE_PATTERN = Pattern.compile("([^:]+):(.*)");
-    private Appendable defaultOut = new OutputStreamWriter(System.out) {
+    private Appendable defaultOut = new PrintStream(System.out) {
         @Override
-        public void close() throws IOException {
+        public void close() {
             // We have no intention to close System.out
         }
     };
