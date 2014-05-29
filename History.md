@@ -1,4 +1,5 @@
-## [1.1.8](https://github.com/cucumber/cucumber-jvm/compare/v1.1.7..v1.1.8) (2014-05-20)
+## [1.1.8-SNAPSHOT (Git master)](https://github.com/cucumber/cucumber-jvm/compare/v1.1.7...master)
+* [Core] Allow empty doc string and data table entries after token replacement from scenario outlines ([#712](https://github.com/cucumber/cucumber-jvm/issues/712), [#709](https://github.com/cucumber/cucumber-jvm/pull/709), [#713](https://github.com/cucumber/cucumber-jvm/pull/713) Leon Poon, Björn Rasmusson)
 * [Guice] New scenario scope for Guice. Non-backwards compatible ([#683](https://github.com/cucumber/cucumber-jvm/pull/683) jakecollins)
 
 ## [1.1.7](https://github.com/cucumber/cucumber-jvm/compare/v1.1.6...v1.1.7) (2014-05-19)
