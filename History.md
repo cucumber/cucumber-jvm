@@ -1,4 +1,5 @@
 ## [1.1.8-SNAPSHOT (Git master)](https://github.com/cucumber/cucumber-jvm/compare/v1.1.7...master)
+* [Core] Make standrd out non-buffered ([#721](https://github.com/cucumber/cucumber-jvm/pull/721) danielhodder)
 * [Core] Allow empty doc string and data table entries after token replacement from scenario outlines ([#712](https://github.com/cucumber/cucumber-jvm/issues/712), [#709](https://github.com/cucumber/cucumber-jvm/pull/709), [#713](https://github.com/cucumber/cucumber-jvm/pull/713) Leon Poon, Björn Rasmusson)
 * [Guice] New scenario scope for Guice. Non-backwards compatible ([#683](https://github.com/cucumber/cucumber-jvm/pull/683) jakecollins)
 
