@@ -1,7 +1,6 @@
 package cucumber.runtime.model;
 
 import cucumber.runtime.FeatureBuilder;
-import cucumber.runtime.PathWithLines;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.io.Resource;
 import cucumber.runtime.io.ResourceLoader;

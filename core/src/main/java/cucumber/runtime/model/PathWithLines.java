@@ -1,4 +1,4 @@
-package cucumber.runtime;
+package cucumber.runtime.model;
 
 import java.util.ArrayList;
 import java.util.List;
