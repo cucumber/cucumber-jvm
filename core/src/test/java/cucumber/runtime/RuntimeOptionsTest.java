@@ -49,17 +49,17 @@ public class RuntimeOptionsTest {
     }
 
     @Test
-    public void assigns_line_filters_from_feature_paths() {
+    public void keep_line_filters_on_feature_paths() {
         RuntimeOptions options = new RuntimeOptions("--glue somewhere somewhere_else:3");
-        assertEquals(asList("somewhere_else"), options.getFeaturePaths());
-        assertEquals(asList(3L), options.getFilters());
+        assertEquals(asList("somewhere_else:3"), options.getFeaturePaths());
+        assertEquals(Collections.<Object>emptyList(), options.getFilters());
     }
 
     @Test
-    public void assigns_filters_and_line_filters_from_feature_paths() {
+    public void assigns_filters_from_tags() {
         RuntimeOptions options = new RuntimeOptions("--tags @keep_this somewhere_else:3");
-        assertEquals(asList("somewhere_else"), options.getFeaturePaths());
-        assertEquals(Arrays.<Object>asList("@keep_this", 3L), options.getFilters());
+        assertEquals(asList("somewhere_else:3"), options.getFeaturePaths());
+        assertEquals(Arrays.<Object>asList("@keep_this"), options.getFilters());
     }
 
     @Test

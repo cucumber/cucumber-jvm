@@ -1,6 +1,7 @@
 package cucumber.runtime.model;
 
 import cucumber.runtime.FeatureBuilder;
+import cucumber.runtime.PathWithLines;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.io.Resource;
 import cucumber.runtime.io.ResourceLoader;
@@ -47,9 +48,12 @@ public class CucumberFeature {
         final List<CucumberFeature> cucumberFeatures = new ArrayList<CucumberFeature>();
         final FeatureBuilder builder = new FeatureBuilder(cucumberFeatures);
         for (String featurePath : featurePaths) {
-            Iterable<Resource> resources = resourceLoader.resources(featurePath, ".feature");
+            PathWithLines pathWithLines = new PathWithLines(featurePath);
+            ArrayList<Object> filtersForPath = new ArrayList<Object>(filters);
+            filtersForPath.addAll(pathWithLines.lines);
+            Iterable<Resource> resources = resourceLoader.resources(pathWithLines.path, ".feature");
             for (Resource resource : resources) {
-                builder.parse(resource, filters);
+                builder.parse(resource, filtersForPath);
             }
         }
         Collections.sort(cucumberFeatures, new CucumberFeatureUriComparator());
