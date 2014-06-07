@@ -148,7 +148,7 @@ public class FeatureBuilder implements Formatter {
         return new BigInteger(1, md5.digest(gherkin.getBytes(UTF8))).toString(16);
     }
 
-    private String read(Resource resource) {
+    public String read(Resource resource) {
         try {
             String source = FixJava.readReader(new InputStreamReader(resource.getInputStream(), "UTF-8"));
             String encoding = new Encoding().encoding(source);
