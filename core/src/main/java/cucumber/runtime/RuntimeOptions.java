@@ -67,7 +67,7 @@ public class RuntimeOptions {
     }
 
     public RuntimeOptions(FormatterFactory formatterFactory, List<String> argv) {
-        this(new Env("cucumber-jvm"), formatterFactory, argv);
+        this(new Env("cucumber"), formatterFactory, argv);
     }
 
     public RuntimeOptions(Env env, FormatterFactory formatterFactory, List<String> argv) {
