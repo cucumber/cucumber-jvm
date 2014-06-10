@@ -170,6 +170,29 @@ public class DataTable {
     }
 
     /**
+     * Diffs this table with {@code other}.
+     * The order is not important. A set-difference is applied.
+     * @param other the other table to diff with.
+     * @throws TableDiffException if the tables are different.
+     */
+    public void diffSet(DataTable other) throws TableDiffException {
+        new TableDiffer(this, other).calculateDiffsSet();
+    }
+
+    /**
+     * Diffs this table with {@code other}, which can be a {@code List&lt;List&lt;String&gt;&gt;} or a
+     * {@code List&lt;YourType&gt;}.
+     *
+     * @param other the other table to diff with.
+     * @throws cucumber.runtime.table.TableDiffException if the tables are different.
+     */
+    public void diffSet(List<?> other) throws TableDiffException {
+        List<String> topCells = topCells();
+        DataTable otherTable = toTable(other, topCells.toArray(new String[topCells.size()]));
+        diffSet(otherTable);
+    }
+
+    /**
      * Internal method. Do not use.
      *
      * @return a list of raw rows.

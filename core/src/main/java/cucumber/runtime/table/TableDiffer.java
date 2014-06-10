@@ -1,5 +1,6 @@
 package cucumber.runtime.table;
 
+import com.google.common.collect.Sets;
 import cucumber.api.DataTable;
 import cucumber.deps.difflib.Delta;
 import cucumber.deps.difflib.DiffUtils;
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class TableDiffer {
 
@@ -35,6 +37,22 @@ public class TableDiffer {
         if (!deltas.isEmpty()) {
             Map<Integer, Delta> deltasByLine = createDeltasByLine(deltas);
             throw new TableDiffException(from, to, createTableDiff(deltasByLine));
+        }
+    }
+
+    public void calculateDiffsSet() throws TableDiffException {
+        Set<List<String>> rowsSet = Sets.newHashSet(from.raw());
+        Set<List<String>> otherRowsSet = Sets.newHashSet(to.raw());
+
+        // missing rows from origin
+        Set<List<String>> missingRows = Sets.difference(rowsSet, otherRowsSet);
+
+        // missing rows
+        Set<List<String>> extraRows = Sets.difference(otherRowsSet, rowsSet);
+
+
+        if (!missingRows.isEmpty() || !extraRows.isEmpty()){
+            throw new TableDiffException(from, to, createTableDiffSet(missingRows, extraRows));
         }
     }
 
@@ -88,5 +106,36 @@ public class TableDiffer {
         for (DiffableRow row : insertedLines) {
             diffTableRows.add(new DataTableRow(row.row.getComments(), row.row.getCells(), row.row.getLine(), Row.DiffType.INSERT));
         }
+    }
+
+    private DataTable createTableDiffSet(Set<List<String>> rowDiffOther, Set<List<String>> extraRows) {
+        List<DataTableRow> diffTableRows = new ArrayList<DataTableRow>();
+
+        // iterate over from to detect missing rows
+        for (int i = 0; i < from.raw().size(); i++) {
+            DataTableRow currentGerkinRow = from.getGherkinRows().get(i);
+            if (rowDiffOther.contains(from.raw().get(i))) {
+                diffTableRows.add(
+                        new DataTableRow(currentGerkinRow.getComments(),
+                                currentGerkinRow.getCells(),
+                                currentGerkinRow.getLine(),
+                                Row.DiffType.DELETE));
+            } else {
+                diffTableRows.add(from.getGherkinRows().get(i));
+            }
+        }
+
+        // iterate over to, to detect extra rows
+        for (int i = 0; i < to.raw().size(); i++) {
+            DataTableRow currentGerkinRow = to.getGherkinRows().get(i);
+            if (extraRows.contains(to.raw().get(i))) {
+                diffTableRows.add(
+                        new DataTableRow(currentGerkinRow.getComments(),
+                                currentGerkinRow.getCells(),
+                                currentGerkinRow.getLine(),
+                                Row.DiffType.INSERT));
+            }
+        }
+        return new DataTable(diffTableRows, from.getTableConverter());
     }
 }

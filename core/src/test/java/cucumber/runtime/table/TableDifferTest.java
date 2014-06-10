@@ -69,6 +69,24 @@ public class TableDifferTest {
         return TableParser.parse(source, null);
     }
 
+    private DataTable otherTableWithDifferentOrder() {
+        String source = "" +
+                "| Joe   | joe@email.com   | 234 |\n" +
+                "| Aslak | aslak@email.com | 123 |\n" +
+                "| Bryan | bryan@email.org | 456 |\n" +
+                "| Ni    | ni@email.com    | 654 |\n";
+        return TableParser.parse(source, null);
+    }
+
+    private DataTable otherTableWithDeletedAndInsertedDifferentOrder() {
+        String source = "" +
+                "| Doe   | joe@email.com        | 234 |\n" +
+                "| Foo   | schnickens@email.net | 789 |\n" +
+                "| Aslak | aslak@email.com      | 123 |\n" +
+                "| Bryan | bryan@email.org      | 456 |\n";
+        return TableParser.parse(source, null);
+    }
+
     @Test(expected = TableDiffException.class)
     public void shouldFindDifferences() {
         try {
@@ -245,5 +263,88 @@ public class TableDifferTest {
         actual.add(new TestPojo(2, "you", 222));
         actual.add(new TestPojo(3, "jdoe", 34545));
         expected.diff(actual);
+    }
+
+    @Test
+    public void diff_set_with_itself() {
+        table().diffSet(table());
+    }
+
+    @Test
+    public void diff_set_with_itself_in_different_order() {
+        DataTable other = otherTableWithDifferentOrder();
+        table().diffSet(other);
+    }
+
+    @Test(expected = TableDiffException.class)
+    public void diff_set_with_less_lines_in_other() {
+        DataTable other = otherTableWithTwoConsecutiveRowsDeleted();
+        try {
+            table().diffSet(other);
+        } catch (TableDiffException e) {
+            String expected = "" +
+                    "Tables were not identical:\n" +
+                    "      | Aslak | aslak@email.com | 123 |\n" +
+                    "    - | Joe   | joe@email.com   | 234 |\n" +
+                    "    - | Bryan | bryan@email.org | 456 |\n" +
+                    "      | Ni    | ni@email.com    | 654 |\n";
+            assertEquals(expected, e.getMessage());
+            throw e;
+        }
+    }
+
+    @Test(expected = TableDiffException.class)
+    public void diff_set_with_more_lines_in_other() {
+        DataTable other = otherTableWithTwoConsecutiveRowsInserted();
+        try {
+            table().diffSet(other);
+        } catch (TableDiffException e) {
+            String expected = "" +
+                    "Tables were not identical:\n" +
+                    "      | Aslak | aslak@email.com      | 123 |\n" +
+                    "      | Joe   | joe@email.com        | 234 |\n" +
+                    "      | Bryan | bryan@email.org      | 456 |\n" +
+                    "      | Ni    | ni@email.com         | 654 |\n" +
+                    "    + | Doe   | joe@email.com        | 234 |\n" +
+                    "    + | Foo   | schnickens@email.net | 789 |\n";
+            assertEquals(expected, e.getMessage());
+            throw e;
+        }
+    }
+
+    @Test(expected = TableDiffException.class)
+    public void diff_set_with_added_and_deleted_rows_in_other() {
+        DataTable other = otherTableWithDeletedAndInsertedDifferentOrder();
+        try {
+            table().diffSet(other);
+        } catch (TableDiffException e) {
+            String expected = "" +
+                    "Tables were not identical:\n" +
+                    "      | Aslak | aslak@email.com      | 123 |\n" +
+                    "    - | Joe   | joe@email.com        | 234 |\n" +
+                    "      | Bryan | bryan@email.org      | 456 |\n" +
+                    "    - | Ni    | ni@email.com         | 654 |\n" +
+                    "    + | Doe   | joe@email.com        | 234 |\n" +
+                    "    + | Foo   | schnickens@email.net | 789 |\n";
+            assertEquals(expected, e.getMessage());
+            throw e;
+        }
+    }
+
+    @Test
+    public void diff_set_with_list_of_pojos_and_camelcase_header_mapping() {
+        String source = "" +
+                "| id | Given Name |\n" +
+                "| 1  | me   |\n" +
+                "| 2  | you  |\n" +
+                "| 3  | jdoe |\n";
+
+        DataTable expected = TableParser.parse(source, null);
+
+        List<TestPojo> actual = new ArrayList<TestPojo>();
+        actual.add(new TestPojo(2, "you", 222));
+        actual.add(new TestPojo(3, "jdoe", 34545));
+        actual.add(new TestPojo(1, "me", 123));
+        expected.diffSet(actual);
     }
 }
