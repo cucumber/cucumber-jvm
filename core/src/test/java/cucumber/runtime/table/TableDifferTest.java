@@ -267,20 +267,20 @@ public class TableDifferTest {
 
     @Test
     public void diff_set_with_itself() {
-        table().diffSet(table());
+        table().unorderedDiff(table());
     }
 
     @Test
     public void diff_set_with_itself_in_different_order() {
         DataTable other = otherTableWithDifferentOrder();
-        table().diffSet(other);
+        table().unorderedDiff(other);
     }
 
     @Test(expected = TableDiffException.class)
     public void diff_set_with_less_lines_in_other() {
         DataTable other = otherTableWithTwoConsecutiveRowsDeleted();
         try {
-            table().diffSet(other);
+            table().unorderedDiff(other);
         } catch (TableDiffException e) {
             String expected = "" +
                     "Tables were not identical:\n" +
@@ -294,10 +294,10 @@ public class TableDifferTest {
     }
 
     @Test(expected = TableDiffException.class)
-    public void diff_set_with_more_lines_in_other() {
+    public void unordered_diff_with_more_lines_in_other() {
         DataTable other = otherTableWithTwoConsecutiveRowsInserted();
         try {
-            table().diffSet(other);
+            table().unorderedDiff(other);
         } catch (TableDiffException e) {
             String expected = "" +
                     "Tables were not identical:\n" +
@@ -313,10 +313,10 @@ public class TableDifferTest {
     }
 
     @Test(expected = TableDiffException.class)
-    public void diff_set_with_added_and_deleted_rows_in_other() {
+    public void unordered_diff_with_added_and_deleted_rows_in_other() {
         DataTable other = otherTableWithDeletedAndInsertedDifferentOrder();
         try {
-            table().diffSet(other);
+            table().unorderedDiff(other);
         } catch (TableDiffException e) {
             String expected = "" +
                     "Tables were not identical:\n" +
@@ -332,7 +332,7 @@ public class TableDifferTest {
     }
 
     @Test
-    public void diff_set_with_list_of_pojos_and_camelcase_header_mapping() {
+    public void unordered_diff_with_list_of_pojos_and_camelcase_header_mapping() {
         String source = "" +
                 "| id | Given Name |\n" +
                 "| 1  | me   |\n" +
@@ -345,6 +345,6 @@ public class TableDifferTest {
         actual.add(new TestPojo(2, "you", 222));
         actual.add(new TestPojo(3, "jdoe", 34545));
         actual.add(new TestPojo(1, "me", 123));
-        expected.diffSet(actual);
+        expected.unorderedDiff(actual);
     }
 }

@@ -40,7 +40,7 @@ public class TableDiffer {
         }
     }
 
-    public void calculateDiffsSet() throws TableDiffException {
+    public void calculateUnorderedDiffs() throws TableDiffException {
         Set<List<String>> rowsSet = Sets.newHashSet(from.raw());
         Set<List<String>> otherRowsSet = Sets.newHashSet(to.raw());
 

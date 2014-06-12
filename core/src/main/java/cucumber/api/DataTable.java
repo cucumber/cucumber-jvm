@@ -175,8 +175,8 @@ public class DataTable {
      * @param other the other table to diff with.
      * @throws TableDiffException if the tables are different.
      */
-    public void diffSet(DataTable other) throws TableDiffException {
-        new TableDiffer(this, other).calculateDiffsSet();
+    public void unorderedDiff(DataTable other) throws TableDiffException {
+        new TableDiffer(this, other).calculateUnorderedDiffs();
     }
 
     /**
@@ -186,10 +186,10 @@ public class DataTable {
      * @param other the other table to diff with.
      * @throws cucumber.runtime.table.TableDiffException if the tables are different.
      */
-    public void diffSet(List<?> other) throws TableDiffException {
+    public void unorderedDiff(List<?> other) throws TableDiffException {
         List<String> topCells = topCells();
         DataTable otherTable = toTable(other, topCells.toArray(new String[topCells.size()]));
-        diffSet(otherTable);
+        unorderedDiff(otherTable);
     }
 
     /**
