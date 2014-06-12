@@ -1,6 +1,5 @@
 package cucumber.runtime.table;
 
-import com.google.common.collect.Sets;
 import cucumber.api.DataTable;
 import cucumber.deps.difflib.Delta;
 import cucumber.deps.difflib.DiffUtils;
@@ -9,10 +8,10 @@ import gherkin.formatter.model.DataTableRow;
 import gherkin.formatter.model.Row;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class TableDiffer {
 
@@ -41,18 +40,46 @@ public class TableDiffer {
     }
 
     public void calculateUnorderedDiffs() throws TableDiffException {
-        Set<List<String>> rowsSet = Sets.newHashSet(from.raw());
-        Set<List<String>> otherRowsSet = Sets.newHashSet(to.raw());
+        boolean isDifferent = false;
+        List<DataTableRow> diffTableRows = new ArrayList<DataTableRow>();
+        List<List<String>> missingRow    = new ArrayList<List<String>>();
 
-        // missing rows from origin
-        Set<List<String>> missingRows = Sets.difference(rowsSet, otherRowsSet);
+        ArrayList<List<String>> extraRows = new ArrayList<List<String>>();
 
-        // missing rows
-        Set<List<String>> extraRows = Sets.difference(otherRowsSet, rowsSet);
+        // 1. add all "to" row in extra table
+        // 2. iterate over "from", when a common row occurs, remove it from extraRows
+        // finally, only extra rows are kept and in same order that in "to".
+        extraRows.addAll(to.raw());
 
+        int i = 1;
+        for (DataTableRow r : from.getGherkinRows()) {
+            if (!to.raw().contains(r.getCells())) {
+                missingRow.add(r.getCells());
+                diffTableRows.add(
+                        new DataTableRow(r.getComments(),
+                                r.getCells(),
+                                i,
+                                Row.DiffType.DELETE));
+                isDifferent = true;
+            } else {
+                diffTableRows.add(
+                        new DataTableRow(r.getComments(),
+                                r.getCells(),
+                                i++));
+                extraRows.remove(r.getCells());
+            }
+        }
 
-        if (!missingRows.isEmpty() || !extraRows.isEmpty()){
-            throw new TableDiffException(from, to, createTableDiffSet(missingRows, extraRows));
+        for (List<String> e : extraRows) {
+            diffTableRows.add(new DataTableRow(Collections.EMPTY_LIST,
+                    e,
+                    i++,
+                    Row.DiffType.INSERT));
+            isDifferent = true;
+        }
+
+        if (isDifferent) {
+            throw new TableDiffException(from, to, new DataTable(diffTableRows, from.getTableConverter()));
         }
     }
 
@@ -106,36 +133,5 @@ public class TableDiffer {
         for (DiffableRow row : insertedLines) {
             diffTableRows.add(new DataTableRow(row.row.getComments(), row.row.getCells(), row.row.getLine(), Row.DiffType.INSERT));
         }
-    }
-
-    private DataTable createTableDiffSet(Set<List<String>> rowDiffOther, Set<List<String>> extraRows) {
-        List<DataTableRow> diffTableRows = new ArrayList<DataTableRow>();
-
-        // iterate over from to detect missing rows
-        for (int i = 0; i < from.raw().size(); i++) {
-            DataTableRow currentGerkinRow = from.getGherkinRows().get(i);
-            if (rowDiffOther.contains(from.raw().get(i))) {
-                diffTableRows.add(
-                        new DataTableRow(currentGerkinRow.getComments(),
-                                currentGerkinRow.getCells(),
-                                currentGerkinRow.getLine(),
-                                Row.DiffType.DELETE));
-            } else {
-                diffTableRows.add(from.getGherkinRows().get(i));
-            }
-        }
-
-        // iterate over to, to detect extra rows
-        for (int i = 0; i < to.raw().size(); i++) {
-            DataTableRow currentGerkinRow = to.getGherkinRows().get(i);
-            if (extraRows.contains(to.raw().get(i))) {
-                diffTableRows.add(
-                        new DataTableRow(currentGerkinRow.getComments(),
-                                currentGerkinRow.getCells(),
-                                currentGerkinRow.getLine(),
-                                Row.DiffType.INSERT));
-            }
-        }
-        return new DataTable(diffTableRows, from.getTableConverter());
     }
 }
