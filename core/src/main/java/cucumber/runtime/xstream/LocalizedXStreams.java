@@ -97,11 +97,11 @@ public class LocalizedXStreams {
             }
             if (type instanceof Class) {
                 Class clazz = (Class) type;
-                if (clazz.isEnum()) {
-                    return createEnumConverter(clazz);
-                }
                 ConverterLookup converterLookup = getConverterLookup();
-                Converter converter = converterLookup.lookupConverterForType((Class) type);
+                Converter converter = converterLookup.lookupConverterForType(clazz);
+                if (converter instanceof DynamicClassBasedSingleValueConverter) {
+                    return ((DynamicClassBasedSingleValueConverter) converter).converterForClass(clazz);
+                }
                 return converter instanceof SingleValueConverter ? (SingleValueConverter) converter : null;
             } else {
                 return null;
