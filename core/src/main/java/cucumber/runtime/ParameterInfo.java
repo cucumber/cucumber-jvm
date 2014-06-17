@@ -132,7 +132,7 @@ public class ParameterInfo {
                 if (List.class.isAssignableFrom(getRawType())) {
                     converter = getListConverter(type, xStream);
                 } else {
-                    converter = getConverter(getRawType(), xStream);
+                    converter = xStream.getSingleValueConverter(getRawType());
                 }
                 if (converter == null) {
                     throw new CucumberException(String.format(
@@ -160,19 +160,11 @@ public class ParameterInfo {
                 ? getRawType(((ParameterizedType) type).getActualTypeArguments()[0])
                 : Object.class;
 
-        SingleValueConverter elementConverter = getConverter(elementType, xStream);
+        SingleValueConverter elementConverter = xStream.getSingleValueConverter(elementType);
         if (elementConverter == null) {
             return null;
         } else {
             return xStream.createListConverter(delimiter, elementConverter);
-        }
-    }
-
-    private SingleValueConverter getConverter(Class<?> type, LocalizedXStreams.LocalizedXStream xStream) {
-        if (type.isEnum()) {
-            return xStream.createEnumConverter((Class<? extends Enum>) type);
-        } else {
-            return xStream.getSingleValueConverter(type);
         }
     }
 
