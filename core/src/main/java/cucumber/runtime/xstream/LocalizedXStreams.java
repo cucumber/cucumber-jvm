@@ -65,7 +65,7 @@ public class LocalizedXStreams {
             converterRegistry.registerConverter(new DynamicEnumConverter(locale), XStream.PRIORITY_VERY_HIGH);
 
             // Must be lower priority than the ones above, but higher than xstream's built-in ReflectionConverter
-            converterRegistry.registerConverter(new SingleValueConverterWrapperExt(new ClassWithStringAssignableConstructorConverter()), XStream.PRIORITY_LOW);
+            converterRegistry.registerConverter(new DynamicClassWithStringAssignableConverter(), XStream.PRIORITY_LOW);
         }
 
         private void register(ConverterRegistry lookup, SingleValueConverter converter) {
