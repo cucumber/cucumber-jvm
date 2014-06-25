@@ -9,7 +9,7 @@ import java.util.List;
 
 public class Hooks {
     public static void World(Closure body) throws Throwable {
-        GroovyBackend.instance.registerWorld(body);
+        GroovyBackend.getInstance().registerWorld(body);
     }
 
     public static void Before(Object... args) throws Throwable {
@@ -37,9 +37,9 @@ public class Hooks {
 
         TagExpression tagExpression = new TagExpression(tagExpressions);
         if (before) {
-            GroovyBackend.instance.addBeforeHook(tagExpression, timeoutMillis, body);
+            GroovyBackend.getInstance().addBeforeHook(tagExpression, timeoutMillis, body);
         } else {
-            GroovyBackend.instance.addAfterHook(tagExpression, timeoutMillis, body);
+            GroovyBackend.getInstance().addAfterHook(tagExpression, timeoutMillis, body);
         }
     }
 }
