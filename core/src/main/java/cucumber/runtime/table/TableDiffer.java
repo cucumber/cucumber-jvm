@@ -8,6 +8,7 @@ import gherkin.formatter.model.DataTableRow;
 import gherkin.formatter.model.Row;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +36,50 @@ public class TableDiffer {
         if (!deltas.isEmpty()) {
             Map<Integer, Delta> deltasByLine = createDeltasByLine(deltas);
             throw new TableDiffException(from, to, createTableDiff(deltasByLine));
+        }
+    }
+
+    public void calculateUnorderedDiffs() throws TableDiffException {
+        boolean isDifferent = false;
+        List<DataTableRow> diffTableRows = new ArrayList<DataTableRow>();
+        List<List<String>> missingRow    = new ArrayList<List<String>>();
+
+        ArrayList<List<String>> extraRows = new ArrayList<List<String>>();
+
+        // 1. add all "to" row in extra table
+        // 2. iterate over "from", when a common row occurs, remove it from extraRows
+        // finally, only extra rows are kept and in same order that in "to".
+        extraRows.addAll(to.raw());
+
+        int i = 1;
+        for (DataTableRow r : from.getGherkinRows()) {
+            if (!to.raw().contains(r.getCells())) {
+                missingRow.add(r.getCells());
+                diffTableRows.add(
+                        new DataTableRow(r.getComments(),
+                                r.getCells(),
+                                i,
+                                Row.DiffType.DELETE));
+                isDifferent = true;
+            } else {
+                diffTableRows.add(
+                        new DataTableRow(r.getComments(),
+                                r.getCells(),
+                                i++));
+                extraRows.remove(r.getCells());
+            }
+        }
+
+        for (List<String> e : extraRows) {
+            diffTableRows.add(new DataTableRow(Collections.EMPTY_LIST,
+                    e,
+                    i++,
+                    Row.DiffType.INSERT));
+            isDifferent = true;
+        }
+
+        if (isDifferent) {
+            throw new TableDiffException(from, to, new DataTable(diffTableRows, from.getTableConverter()));
         }
     }
 
