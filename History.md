@@ -1,5 +1,6 @@
 ## [1.1.8-SNAPSHOT (Git master)](https://github.com/cucumber/cucumber-jvm/compare/v1.1.7...master)
 
+* [Core] Dynamically constructed converter for class with constructor assignable from String ([#735](https://github.com/cucumber/cucumber-jvm/issues/735), [#736](https://github.com/cucumber/cucumber-jvm/pull/736))
 * [Core] Disregard order of HashMap entries in unit tests ([#739](https://github.com/cucumber/cucumber-jvm/pull/739) mchenryc)
 * [Core] Environment variables/properties are aliased. Example: `HELLO_THERE` == `hello.there` (Aslak Hellesøy)
 * [Core] The `cucumber-jvm.properties` file is no longer picked up. Use `cucumber.properties` instead (Aslak Hellesøy)
