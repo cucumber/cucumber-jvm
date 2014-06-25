@@ -1,5 +1,6 @@
 ## [1.1.8-SNAPSHOT (Git master)](https://github.com/cucumber/cucumber-jvm/compare/v1.1.7...master)
 
+* [Groovy] Allow tests to run multi-threaded in the same JVM ([#723](https://github.com/cucumber/cucumber-jvm/issues/723), [#727](https://github.com/cucumber/cucumber-jvm/pull/727) Bradley Hart)
 * [Core] New `DataTable.unorderedDiff` method ([#731](https://github.com/cucumber/cucumber-jvm/pull/731), [#732](https://github.com/cucumber/cucumber-jvm/issues/732) yoelb)
 * [Core] Dynamically constructed converter for class with constructor assignable from String ([#735](https://github.com/cucumber/cucumber-jvm/issues/735), [#736](https://github.com/cucumber/cucumber-jvm/pull/736))
 * [Core] Disregard order of HashMap entries in unit tests ([#739](https://github.com/cucumber/cucumber-jvm/pull/739) mchenryc)
@@ -32,7 +33,7 @@
 * [Clojure] Add tagged Before/After hook support ([#676](https://github.com/cucumber/cucumber-jvm/pull/676) Jeremy Anderson)
 * [Core] POJO with nullable enum fields support in tables ([#684](https://github.com/cucumber/cucumber-jvm/pull/684) Mykola Gurov)
 * [Core] `DataTable.flatten()` is gone. Use `DataTable.asList(String.class)` instead (Aslak Hellesøy)
-* [Core] A DataTable of 2 columns can be turned into a Map excplicitly via `DataTable.asMap()` or by declaring a generic parameter type. Similar to Cucumber-Ruby's Table#rows_hash (Aslak Hellesøy)
+* [Core] A DataTable of 2 columns can be turned into a Map excplicitly via `DataTable.asMap()` or by declaring a generic parameter type. Similar to Cucumber-Ruby's `Table#rows_hash` (Aslak Hellesøy)
 * [Core] Snippets for quoted arguments changed from from `([^\"]*)` to `(.*?)` to be aligned with Cucumber-Ruby (Aslak Hellesøy)
 * [Build] JDK7 is required to build everything. Built jars should still work on JDK6 (Aslak Hellesøy)
 * [Core] Fix compilation on JDK7 on OS X. ([#499](https://github.com/cucumber/cucumber-jvm/pull/499), [#487](https://github.com/cucumber/cucumber-jvm/issues/487) Aslak Hellesøy)
