@@ -4,13 +4,20 @@ import cucumber.api.SnippetType;
 import cucumber.runtime.formatter.ColorAware;
 import cucumber.runtime.formatter.FormatterFactory;
 import cucumber.runtime.formatter.StrictAware;
+import cucumber.runtime.io.Resource;
+import cucumber.runtime.io.ResourceLoader;
+import cucumber.runtime.model.CucumberFeature;
 import gherkin.formatter.Formatter;
 import org.junit.Test;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
@@ -42,17 +49,17 @@ public class RuntimeOptionsTest {
     }
 
     @Test
-    public void assigns_line_filters_from_feature_paths() {
+    public void keep_line_filters_on_feature_paths() {
         RuntimeOptions options = new RuntimeOptions("--glue somewhere somewhere_else:3");
-        assertEquals(asList("somewhere_else"), options.getFeaturePaths());
-        assertEquals(asList(3L), options.getFilters());
+        assertEquals(asList("somewhere_else:3"), options.getFeaturePaths());
+        assertEquals(Collections.<Object>emptyList(), options.getFilters());
     }
 
     @Test
-    public void assigns_filters_and_line_filters_from_feature_paths() {
+    public void assigns_filters_from_tags() {
         RuntimeOptions options = new RuntimeOptions("--tags @keep_this somewhere_else:3");
-        assertEquals(asList("somewhere_else"), options.getFeaturePaths());
-        assertEquals(Arrays.<Object>asList("@keep_this", 3L), options.getFilters());
+        assertEquals(asList("somewhere_else:3"), options.getFeaturePaths());
+        assertEquals(Arrays.<Object>asList("@keep_this"), options.getFilters());
     }
 
     @Test
@@ -251,4 +258,44 @@ public class RuntimeOptionsTest {
         assertEquals(SnippetType.CAMELCASE, runtimeOptions.getSnippetType());
     }
 
+    @Test
+    public void applies_line_filters_only_to_own_feature() throws Exception {
+        String featurePath1 = "path/bar.feature";
+        String feature1 = "" +
+                "Feature: bar\n" +
+                "  Scenario: scenario_1_1\n" +
+                "    * step\n" +
+                "  Scenario: scenario_1_2\n" +
+                "    * step\n";
+        String featurePath2 = "path/foo.feature";
+        String feature2 = "" +
+                "Feature: foo\n" +
+                "  Scenario: scenario_2_1\n" +
+                "    * step\n" +
+                "  Scenario: scenario_2_2\n" +
+                "    * step\n";
+        ResourceLoader resourceLoader = mock(ResourceLoader.class);
+        mockResource(resourceLoader, featurePath1, feature1);
+        mockResource(resourceLoader, featurePath2, feature2);
+        RuntimeOptions options = new RuntimeOptions(featurePath1 + ":2 " + featurePath2 + ":4");
+
+        List<CucumberFeature> features = options.cucumberFeatures(resourceLoader);
+
+        assertEquals(2, features.size());
+        assertOnlyScenarioName(features.get(0), "scenario_1_1");
+        assertOnlyScenarioName(features.get(1), "scenario_2_2");
+    }
+
+    private void assertOnlyScenarioName(CucumberFeature feature, String scenarioName) {
+        assertEquals("Wrong number of scenarios loaded for feature", 1, feature.getFeatureElements().size());
+        assertEquals("Scenario: " + scenarioName, feature.getFeatureElements().get(0).getVisualName());
+    }
+
+    private void mockResource(ResourceLoader resourceLoader, String featurePath, String feature)
+            throws IOException, UnsupportedEncodingException {
+        Resource resource1 = mock(Resource.class);
+        when(resource1.getPath()).thenReturn(featurePath);
+        when(resource1.getInputStream()).thenReturn(new ByteArrayInputStream(feature.getBytes("UTF-8")));
+        when(resourceLoader.resources(featurePath, ".feature")).thenReturn(asList(resource1));
+    }
 }

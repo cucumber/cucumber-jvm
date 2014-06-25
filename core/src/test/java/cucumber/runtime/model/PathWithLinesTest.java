@@ -1,4 +1,4 @@
-package cucumber.runtime;
+package cucumber.runtime.model;
 
 import org.junit.Test;
 
