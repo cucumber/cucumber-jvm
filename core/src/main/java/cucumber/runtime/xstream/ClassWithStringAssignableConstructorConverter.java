@@ -7,7 +7,11 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 class ClassWithStringAssignableConstructorConverter implements SingleValueConverter {
-    private Constructor ctor;
+    private final Constructor ctor;
+
+    ClassWithStringAssignableConstructorConverter(Constructor constructor) {
+        this.ctor = constructor;
+    }
 
     @Override
     public String toString(Object obj) {
@@ -29,12 +33,7 @@ class ClassWithStringAssignableConstructorConverter implements SingleValueConver
 
     @Override
     public boolean canConvert(Class type) {
-        for (Constructor constructor : type.getConstructors()) {
-            if (constructor.getParameterTypes().length == 1 && constructor.getParameterTypes()[0].isAssignableFrom(String.class)) {
-                this.ctor = constructor;
-                return true;
-            }
-        }
-        return false;
+        return ctor.getDeclaringClass().equals(type);
     }
+
 }
