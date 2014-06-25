@@ -81,13 +81,88 @@ public class CucumberFeatureTest {
         assertEquals("Scenario: scenario 1", features.get(0).getFeatureElements().get(0).getVisualName());
     }
 
+    @Test
+    public void loads_features_specified_in_rerun_file() throws Exception {
+        String featurePath1 = "path/bar.feature";
+        String feature1 = "" +
+                "Feature: bar\n" +
+                "  Scenario: scenario bar\n" +
+                "    * step\n";
+        String featurePath2 = "path/foo.feature";
+        String feature2 = "" +
+                "Feature: foo\n" +
+                "  Scenario: scenario 1\n" +
+                "    * step\n" +
+                "  Scenario: scenario 2\n" +
+                "    * step\n";
+        String rerunPath = "path/rerun.txt";
+        String rerunFile = featurePath1 + ":2 " + featurePath2 + ":4";
+        ResourceLoader resourceLoader = mockFeatureFileResource(featurePath1, feature1);
+        mockFeatureFileResource(resourceLoader, featurePath2, feature2);
+        mockFileResource(resourceLoader, rerunPath, null, rerunFile);
+
+        List<CucumberFeature> features = CucumberFeature.load(
+                resourceLoader,
+                asList("@" + rerunPath),
+                new ArrayList<Object>(),
+                new PrintStream(new ByteArrayOutputStream()));
+
+        assertEquals(2, features.size());
+        assertEquals(1, features.get(0).getFeatureElements().size());
+        assertEquals("Scenario: scenario bar", features.get(0).getFeatureElements().get(0).getVisualName());
+        assertEquals(1, features.get(1).getFeatureElements().size());
+        assertEquals("Scenario: scenario 2", features.get(1).getFeatureElements().get(0).getVisualName());
+    }
+
+    @Test
+    public void loads_features_specified_in_rerun_file_from_classpath_when_not_in_file_system() throws Exception {
+        String featurePath = "path/bar.feature";
+        String feature = "" +
+                "Feature: bar\n" +
+                "  Scenario: scenario bar\n" +
+                "    * step\n";
+        String rerunPath = "path/rerun.txt";
+        String rerunFile = featurePath + ":2";
+        ResourceLoader resourceLoader = mockFeatureFileResource("classpath:" + featurePath, feature);
+        mockFeaturePathToNotExist(resourceLoader, featurePath);
+        mockFileResource(resourceLoader, rerunPath, suffix(null), rerunFile);
+
+        List<CucumberFeature> features = CucumberFeature.load(
+                resourceLoader,
+                asList("@" + rerunPath),
+                new ArrayList<Object>(),
+                new PrintStream(new ByteArrayOutputStream()));
+
+        assertEquals(1, features.size());
+        assertEquals(1, features.get(0).getFeatureElements().size());
+        assertEquals("Scenario: scenario bar", features.get(0).getFeatureElements().get(0).getVisualName());
+    }
+
     private ResourceLoader mockFeatureFileResource(String featurePath, String feature)
             throws IOException, UnsupportedEncodingException {
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
+        mockFeatureFileResource(resourceLoader, featurePath, feature);
+        return resourceLoader;
+    }
+
+    private void mockFeatureFileResource(ResourceLoader resourceLoader, String featurePath, String feature)
+            throws IOException, UnsupportedEncodingException {
+        mockFileResource(resourceLoader, featurePath, ".feature", feature);
+    }
+
+    private void mockFileResource(ResourceLoader resourceLoader, String featurePath, String extension, String feature)
+            throws IOException, UnsupportedEncodingException {
         Resource resource = mock(Resource.class);
         when(resource.getPath()).thenReturn(featurePath);
         when(resource.getInputStream()).thenReturn(new ByteArrayInputStream(feature.getBytes("UTF-8")));
-        when(resourceLoader.resources(featurePath, ".feature")).thenReturn(asList(resource));
-        return resourceLoader;
+        when(resourceLoader.resources(featurePath, extension)).thenReturn(asList(resource));
+    }
+
+    private void mockFeaturePathToNotExist(ResourceLoader resourceLoader, String featurePath) {
+        when(resourceLoader.resources(featurePath, ".feature")).thenThrow(new IllegalArgumentException("Not a file or directory"));
+    }
+
+    private String suffix(String suffix) {
+        return suffix;
     }
 }
