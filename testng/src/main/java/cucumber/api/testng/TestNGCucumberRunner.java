@@ -53,9 +53,10 @@ public class TestNGCucumberRunner {
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
-        runtime.printSummary();
         if (!runtime.getErrors().isEmpty()) {
             throw new CucumberException(runtime.getErrors().get(0));
+        } else if (runtime.exitStatus() != 0x00) {
+            throw new CucumberException("There are pending or undefined steps.");
         }
     }
 
