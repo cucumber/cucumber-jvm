@@ -115,6 +115,11 @@ public class ExecutionUnitRunnerTest {
             }
 
             @Override
+            public String getAbsolutePath() {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
             public InputStream getInputStream() {
                 try {
                     return new ByteArrayInputStream(source.getBytes("UTF-8"));
@@ -124,7 +129,7 @@ public class ExecutionUnitRunnerTest {
             }
 
             @Override
-            public String getClassName() {
+            public String getClassName(String extension) {
                 throw new UnsupportedOperationException();
             }
         }, new ArrayList<Object>());
