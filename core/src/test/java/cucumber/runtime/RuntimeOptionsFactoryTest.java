@@ -42,6 +42,18 @@ public class RuntimeOptionsFactoryTest {
         assertFalse(runtimeOptions.isStrict());
         assertEquals(asList("classpath:cucumber/runtime"), runtimeOptions.getFeaturePaths());
         assertEquals(asList("classpath:cucumber/runtime"), runtimeOptions.getGlue());
+        assertEquals(1, runtimeOptions.getFormatters().size());
+        assertEquals("cucumber.runtime.formatter.NullFormatter", runtimeOptions.getFormatters().get(0).getClass().getName());
+    }
+
+    @Test
+    public void create_without_options_with_base_class_without_options() throws Exception {
+        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(WithoutOptionsWithBaseClassWithoutOptions.class, new Class[]{CucumberOptions.class});
+        RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
+        assertEquals(asList("classpath:cucumber/runtime"), runtimeOptions.getFeaturePaths());
+        assertEquals(asList("classpath:cucumber/runtime"), runtimeOptions.getGlue());
+        assertEquals(1, runtimeOptions.getFormatters().size());
+        assertEquals("cucumber.runtime.formatter.NullFormatter", runtimeOptions.getFormatters().get(0).getClass().getName());
     }
 
     @Test
@@ -155,6 +167,10 @@ public class RuntimeOptionsFactoryTest {
     }
 
     static class WithoutOptions {
+        // empty
+    }
+
+    static class WithoutOptionsWithBaseClassWithoutOptions extends WithoutOptions {
         // empty
     }
 

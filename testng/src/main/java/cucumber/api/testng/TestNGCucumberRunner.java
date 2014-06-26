@@ -10,9 +10,6 @@ import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
 
 /**
  * Glue code for running Cucumber via TestNG.
@@ -33,11 +30,6 @@ public class TestNGCucumberRunner {
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(clazz, new Class[]{CucumberOptions.class});
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
 
-        // remove duplicates from glue path.
-        List<String> uniqueGlue = new ArrayList<String>(new HashSet<String>(runtimeOptions.getGlue()));
-        runtimeOptions.getGlue().clear();
-        runtimeOptions.getGlue().addAll(uniqueGlue);
-
         TestNgReporter reporter = new TestNgReporter(System.out);
         runtimeOptions.addFormatter(reporter);
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
@@ -53,9 +45,10 @@ public class TestNGCucumberRunner {
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
-        runtime.printSummary();
         if (!runtime.getErrors().isEmpty()) {
             throw new CucumberException(runtime.getErrors().get(0));
+        } else if (runtime.exitStatus() != 0x00) {
+            throw new CucumberException("There are pending or undefined steps.");
         }
     }
 

@@ -14,16 +14,18 @@ import java.util.Set;
 import static java.util.Arrays.asList;
 
 public class ScenarioImpl implements Scenario {
-    private static final List<String> SEVERITY = asList("passed", "skipped", "undefined", "pending", "failed");
+    private static final List<String> SEVERITY = asList("passed", "skipped", "pending", "undefined", "failed");
     private final List<Result> stepResults = new ArrayList<Result>();
     private final Reporter reporter;
     private final Set<Tag> tags;
     private final String scenarioName;
+    private final String scenarioId;
 
-    public ScenarioImpl(Reporter reporter, Set<Tag> tags, String scenarioName) {
+    public ScenarioImpl(Reporter reporter, Set<Tag> tags, gherkin.formatter.model.Scenario gherkinScenario) {
         this.reporter = reporter;
         this.tags = tags;
-        this.scenarioName = scenarioName;
+        this.scenarioName = gherkinScenario.getName();
+        this.scenarioId = gherkinScenario.getId();
     }
 
     void add(Result result) {
@@ -67,5 +69,10 @@ public class ScenarioImpl implements Scenario {
     @Override
     public String getName() {
         return scenarioName;
+    }
+
+    @Override
+    public String getId() {
+        return scenarioId;
     }
 }

@@ -5,12 +5,12 @@
         <groupId>info.cukes</groupId>
         <artifactId>cucumber-jvm</artifactId>
         <relativePath>../../pom.xml</relativePath>
-        <version>1.1.7-SNAPSHOT</version>
+        <version>1.1.8-SNAPSHOT</version>
     </parent>
 
-    <artifactId>cucumber-scala_2.9</artifactId>
+    <artifactId>cucumber-scala_2.10</artifactId>
     <packaging>jar</packaging>
-    <name>Cucumber-JVM: Scala (2.9)</name>
+    <name>Cucumber-JVM: Scala (2.10)</name>
 
     <dependencies>
         <dependency>

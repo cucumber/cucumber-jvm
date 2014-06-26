@@ -20,6 +20,11 @@ public class ZipResource implements Resource {
     }
 
     @Override
+    public String getAbsolutePath() {
+        return jarFile.getName() + "!/" + getPath();
+    }
+
+    @Override
     public InputStream getInputStream() throws IOException {
         return jarFile.getInputStream(jarEntry);
     }

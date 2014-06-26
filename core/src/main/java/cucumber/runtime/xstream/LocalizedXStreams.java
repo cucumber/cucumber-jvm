@@ -65,7 +65,7 @@ public class LocalizedXStreams {
             converterRegistry.registerConverter(new DynamicEnumConverter(locale), XStream.PRIORITY_VERY_HIGH);
 
             // Must be lower priority than the ones above, but higher than xstream's built-in ReflectionConverter
-            converterRegistry.registerConverter(new SingleValueConverterWrapperExt(new ClassWithStringAssignableConstructorConverter()), XStream.PRIORITY_LOW);
+            converterRegistry.registerConverter(new DynamicClassWithStringAssignableConverter(), XStream.PRIORITY_LOW);
         }
 
         private void register(ConverterRegistry lookup, SingleValueConverter converter) {
@@ -97,11 +97,11 @@ public class LocalizedXStreams {
             }
             if (type instanceof Class) {
                 Class clazz = (Class) type;
-                if (clazz.isEnum()) {
-                    return createEnumConverter(clazz);
-                }
                 ConverterLookup converterLookup = getConverterLookup();
-                Converter converter = converterLookup.lookupConverterForType((Class) type);
+                Converter converter = converterLookup.lookupConverterForType(clazz);
+                if (converter instanceof DynamicClassBasedSingleValueConverter) {
+                    return ((DynamicClassBasedSingleValueConverter) converter).converterForClass(clazz);
+                }
                 return converter instanceof SingleValueConverter ? (SingleValueConverter) converter : null;
             } else {
                 return null;
@@ -110,10 +110,6 @@ public class LocalizedXStreams {
 
         public SingleValueConverter createListConverter(String delimiter, SingleValueConverter elementConverter) {
             return new ListConverter(delimiter, elementConverter);
-        }
-
-        public SingleValueConverter createEnumConverter(Class<? extends Enum> type) {
-            return new EnumConverter(locale, type);
         }
 
         public Locale getLocale() {

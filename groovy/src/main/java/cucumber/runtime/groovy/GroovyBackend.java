@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 import static cucumber.runtime.io.MultiLoader.packageName;
 
 public class GroovyBackend implements Backend {
-    public static GroovyBackend instance;
+    public static ThreadLocal<GroovyBackend> instanceThreadLocal = new ThreadLocal<GroovyBackend>();
     private final Set<Class> scripts = new HashSet<Class>();
     private final SnippetGenerator snippetGenerator = new SnippetGenerator(new GroovySnippet());
     private final ResourceLoader resourceLoader;
@@ -40,6 +40,10 @@ public class GroovyBackend implements Backend {
     private Closure worldClosure;
     private Object world;
     private Glue glue;
+
+    public static GroovyBackend getInstance(){
+        return instanceThreadLocal.get();
+    }
 
     private static GroovyShell createShell() {
         CompilerConfiguration compilerConfig = new CompilerConfiguration();
@@ -55,7 +59,7 @@ public class GroovyBackend implements Backend {
     public GroovyBackend(GroovyShell shell, ResourceLoader resourceLoader) {
         this.shell = shell;
         this.resourceLoader = resourceLoader;
-        instance = this;
+        instanceThreadLocal.set(this);
         classFinder = new ResourceLoaderClassFinder(resourceLoader, shell.getClassLoader());
     }
 
@@ -103,7 +107,7 @@ public class GroovyBackend implements Backend {
 
     private Script parse(Resource resource) {
         try {
-            return shell.parse(new InputStreamReader(resource.getInputStream(), "UTF-8"), resource.getPath());
+            return shell.parse(new InputStreamReader(resource.getInputStream(), "UTF-8"), resource.getAbsolutePath());
         } catch (IOException e) {
             throw new CucumberException(e);
         }

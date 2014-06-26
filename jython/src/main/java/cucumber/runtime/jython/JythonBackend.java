@@ -25,7 +25,6 @@ import java.io.StringWriter;
 import java.util.List;
 
 public class JythonBackend implements Backend {
-    private static final String DSL = "/cucumber/runtime/jython/dsl.py";
     private final SnippetGenerator snippetGenerator = new SnippetGenerator(new JythonSnippet());
     private final ResourceLoader resourceLoader;
     private final PythonInterpreter jython;
@@ -36,7 +35,10 @@ public class JythonBackend implements Backend {
         this.resourceLoader = resourceLoader;
         this.jython = jython;
         jython.set("backend", this);
-        jython.execfile(getClass().getResourceAsStream(DSL), DSL);
+
+        for (Resource resource : resourceLoader.resources("classpath:cucumber/runtime/jython", "dsl.py")) {
+            runScript(resource);
+        }
     }
 
     public JythonBackend(ResourceLoader resourceLoader) {
@@ -49,7 +51,7 @@ public class JythonBackend implements Backend {
 
         for (String gluePath : gluePaths) {
             for (Resource resource : resourceLoader.resources(gluePath, ".py")) {
-                execFile(resource);
+                runScript(resource);
             }
         }
     }
@@ -64,9 +66,9 @@ public class JythonBackend implements Backend {
         this.pyWorld = jython.eval("World()");
     }
 
-    private void execFile(Resource resource) {
+    private void runScript(Resource resource) {
         try {
-            jython.execfile(resource.getInputStream(), resource.getPath());
+            jython.execfile(resource.getInputStream(), resource.getAbsolutePath());
         } catch (IOException e) {
             throw new CucumberException(e);
         }

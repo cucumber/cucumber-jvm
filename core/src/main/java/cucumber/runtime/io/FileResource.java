@@ -27,6 +27,11 @@ public class FileResource implements Resource {
     }
 
     @Override
+    public String getAbsolutePath() {
+        return file.getAbsolutePath();
+    }
+
+    @Override
     public InputStream getInputStream() throws IOException {
         return new FileInputStream(file);
     }

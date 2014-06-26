@@ -60,6 +60,8 @@ class JUnitFormatter implements Formatter, Reporter, StrictAware {
     @Override
     public void feature(Feature feature) {
         TestCase.feature = feature;
+        TestCase.previousScenarioOutlineName = "";
+        TestCase.exampleNumber = 1;
     }
 
     @Override
@@ -194,7 +196,6 @@ class JUnitFormatter implements Formatter, Reporter, StrictAware {
 
     @Override
     public void examples(Examples examples) {
-        TestCase.examples = examples.getRows().size() - 1;
     }
 
     @Override
@@ -246,7 +247,8 @@ class JUnitFormatter implements Formatter, Reporter, StrictAware {
 
         Scenario scenario;
         static Feature feature;
-        static int examples = 0;
+        static String previousScenarioOutlineName;
+        static int exampleNumber;
         static boolean treatSkippedAsFailure = false;
         final List<Step> steps = new ArrayList<Step>();
         final List<Result> results = new ArrayList<Result>();
@@ -258,7 +260,22 @@ class JUnitFormatter implements Formatter, Reporter, StrictAware {
 
         private void writeElement(Document doc, Element tc) {
             tc.setAttribute("classname", feature.getName());
-            tc.setAttribute("name", examples > 0 ? scenario.getName() + "_" + examples-- : scenario.getName());
+            tc.setAttribute("name", calculateElementName(scenario));
+        }
+
+        private String calculateElementName(Scenario scenario) {
+            String scenarioName = scenario.getName();
+            if (scenario.getKeyword().equals("Scenario Outline") && scenarioName.equals(previousScenarioOutlineName)) {
+                return scenarioName + (includesBlank(scenarioName) ? " " : "_") + ++exampleNumber;
+            } else {
+                previousScenarioOutlineName = scenario.getKeyword().equals("Scenario Outline") ? scenarioName : "";
+                exampleNumber = 1;
+                return scenarioName;
+            }
+        }
+
+        private boolean includesBlank(String scenarioName) {
+            return scenarioName.indexOf(' ') != -1;
         }
 
         public void updateElement(Document doc, Element tc) {

@@ -23,15 +23,17 @@ public class EnvTest {
     @Test
     public void looks_up_value_from_system_properties() {
         try {
-            System.setProperty("EnvTest", "from-props");
-            assertEquals("from-props", env.get("EnvTest"));
+            System.setProperty("env.test", "from-props");
+            assertEquals("from-props", env.get("env.test"));
+            assertEquals("from-props", env.get("ENV_TEST"));
         } finally {
-            System.getProperties().remove("EnvTest");
+            System.getProperties().remove("env.test");
         }
     }
 
     @Test
     public void looks_up_value_from_resource_bundle() {
-        assertEquals("from-bundle", env.get("EnvTest"));
+        assertEquals("from-bundle", env.get("env.test"));
+        assertEquals("from-bundle", env.get("ENV_TEST"));
     }
 }

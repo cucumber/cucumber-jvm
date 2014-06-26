@@ -61,13 +61,13 @@ public class ConvertersTest {
 
     @Test
     public void shouldTransformToTypeWithStringCtor() {
-        SingleValueConverter c = (SingleValueConverter) en.lookupConverterForType(MyClass.class);
+        SingleValueConverter c = ((DynamicClassBasedSingleValueConverter) en.lookupConverterForType(MyClass.class)).converterForClass(MyClass.class);
         assertEquals("X", ((MyClass) c.fromString("X")).s);
     }
 
     @Test
     public void shouldTransformToTypeWithObjectCtor() {
-        SingleValueConverter c = (SingleValueConverter) en.lookupConverterForType(MyOtherClass.class);
+        SingleValueConverter c = ((DynamicClassBasedSingleValueConverter) en.lookupConverterForType(MyOtherClass.class)).converterForClass(MyOtherClass.class);
         assertEquals("X", ((MyOtherClass) c.fromString("X")).o);
     }
 

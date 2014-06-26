@@ -2,6 +2,7 @@ package cucumber.runtime;
 
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Result;
+import gherkin.formatter.model.Scenario;
 import gherkin.formatter.model.Tag;
 import org.junit.Test;
 
@@ -14,7 +15,7 @@ import static org.mockito.Mockito.verify;
 public class ScenarioResultTest {
 
     private Reporter reporter = mock(Reporter.class);
-    private ScenarioImpl s = new ScenarioImpl(reporter, Collections.<Tag>emptySet(), "test scenario");
+    private ScenarioImpl s = new ScenarioImpl(reporter, Collections.<Tag>emptySet(), mock(Scenario.class));
 
     @Test
     public void no_steps_is_passed() throws Exception {
@@ -41,10 +42,10 @@ public class ScenarioResultTest {
     @Test
     public void passed_pending_undefined_skipped_is_pending() throws Exception {
         s.add(new Result("passed", 0L, null, null));
-        s.add(new Result("pending", 0L, null, null));
         s.add(new Result("undefined", 0L, null, null));
+        s.add(new Result("pending", 0L, null, null));
         s.add(new Result("skipped", 0L, null, null));
-        assertEquals("pending", s.getStatus());
+        assertEquals("undefined", s.getStatus());
     }
 
     @Test

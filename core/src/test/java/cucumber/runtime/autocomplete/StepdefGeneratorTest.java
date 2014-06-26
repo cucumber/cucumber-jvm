@@ -83,6 +83,11 @@ public class StepdefGeneratorTest {
             }
 
             @Override
+            public String getAbsolutePath() {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
             public InputStream getInputStream() {
                 try {
                     return new ByteArrayInputStream(("" +

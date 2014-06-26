@@ -65,7 +65,7 @@ public class IokeBackend implements Backend {
 
     private void evaluate(Resource resource) {
         try {
-            String path = resource.getPath().replace('\\', '/'); // Need forward paths, even when on Windows
+            String path = resource.getAbsolutePath().replace('\\', '/'); // Need forward paths, even when on Windows
             ioke.evaluateString("use(\"" + path + "\")");
         } catch (ControlFlow controlFlow) {
             throw new CucumberException(controlFlow);

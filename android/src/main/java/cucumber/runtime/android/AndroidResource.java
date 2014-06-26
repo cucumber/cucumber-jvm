@@ -22,6 +22,11 @@ class AndroidResource implements Resource {
     }
 
     @Override
+    public String getAbsolutePath() {
+        return getPath();
+    }
+
+    @Override
     public InputStream getInputStream() throws IOException {
         return context.getAssets().open(path, AssetManager.ACCESS_UNKNOWN);
     }

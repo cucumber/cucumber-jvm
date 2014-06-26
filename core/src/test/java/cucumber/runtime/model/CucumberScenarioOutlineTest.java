@@ -1,5 +1,6 @@
 package cucumber.runtime.model;
 
+import cucumber.runtime.CucumberException;
 import gherkin.formatter.model.Comment;
 import gherkin.formatter.model.DataTableRow;
 import gherkin.formatter.model.DocString;
@@ -43,6 +44,32 @@ public class CucumberScenarioOutlineTest {
         Step exampleStep = CucumberScenarioOutline.createExampleStep(outlineStep, new ExamplesTableRow(C, asList("n"), 1, ""), new ExamplesTableRow(C, asList("10"), 1, ""));
         assertEquals(asList("I", "have 10 cukes"), exampleStep.getRows().get(0).getCells());
     }  
+
+    @Test(expected=CucumberException.class)
+    public void does_not_allow_the_step_to_be_empty_after_replacement() {
+        Step outlineStep = new Step(C, null, "<step>", 0, null, null);
+
+        CucumberScenarioOutline.createExampleStep(outlineStep, new ExamplesTableRow(C, asList("step"), 1, ""), new ExamplesTableRow(C, asList(""), 1, ""));
+    }
+
+    @Test
+    public void allows_doc_strings_to_be_empty_after_replacement() {
+        Step outlineStep = new Step(C, null, "Some step", 0, null, new DocString(null, "<doc string>", 1));
+
+        Step exampleStep = CucumberScenarioOutline.createExampleStep(outlineStep, new ExamplesTableRow(C, asList("doc string"), 1, ""), new ExamplesTableRow(C, asList(""), 1, ""));
+
+        assertEquals("", exampleStep.getDocString().getValue());
+    }
+
+    @Test
+    public void allows_data_table_entries_to_be_empty_after_replacement() {
+        List<DataTableRow> rows = asList(new DataTableRow(C, asList("<entry>"), 1));
+        Step outlineStep = new Step(C, null, "Some step", 0, rows, null);
+
+        Step exampleStep = CucumberScenarioOutline.createExampleStep(outlineStep, new ExamplesTableRow(C, asList("entry"), 1, ""), new ExamplesTableRow(C, asList(""), 1, ""));
+
+        assertEquals(asList(""), exampleStep.getRows().get(0).getCells());
+    }
 
     /***
      * From a scenario outline, we create one or more "Example Scenario"s. This is composed

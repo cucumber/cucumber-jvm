@@ -4,14 +4,21 @@ import cucumber.runtime.CucumberException;
 import cucumber.runtime.Utils;
 import cucumber.runtime.io.UTF8OutputStreamWriter;
 import gherkin.formatter.Formatter;
+import gherkin.formatter.model.Result;
+
 import org.junit.Test;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.net.URL;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -71,11 +78,32 @@ public class FormatterFactoryTest {
         Formatter formatter = fc.create("usage:" + TempDir.createTempFile().getAbsolutePath());
         assertEquals(UsageFormatter.class, formatter.getClass());
     }
+    
+    @Test
+    public void formatter_does_not_buffer_its_output() throws IOException {
+        PrintStream previousSystemOut = System.out;
+        OutputStream mockSystemOut = new ByteArrayOutputStream();
+        
+        try {
+            System.setOut(new PrintStream(mockSystemOut));
+            
+            // Need to create a new formatter factory here since we need it to pick up the new value of System.out
+            fc = new FormatterFactory();
+            
+            ProgressFormatter formatter = (ProgressFormatter) fc.create("progress");
+            
+            formatter.result(new Result("passed", null, null));
+            
+            assertThat(mockSystemOut.toString(), is(not("")));
+        } finally {
+            System.setOut(previousSystemOut);
+        }
+    }
 
     @Test
     public void instantiates_single_custom_appendable_formatter_with_stdout() {
         WantsAppendable formatter = (WantsAppendable) fc.create("cucumber.runtime.formatter.FormatterFactoryTest$WantsAppendable");
-        assertThat(formatter.out, is(instanceOf(OutputStreamWriter.class)));
+        assertThat(formatter.out, is(instanceOf(PrintStream.class)));
         try {
             fc.create("cucumber.runtime.formatter.FormatterFactoryTest$WantsAppendable");
             fail();
@@ -87,7 +115,7 @@ public class FormatterFactoryTest {
     @Test
     public void instantiates_custom_appendable_formatter_with_stdout_and_file() throws IOException {
         WantsAppendable formatter = (WantsAppendable) fc.create("cucumber.runtime.formatter.FormatterFactoryTest$WantsAppendable");
-        assertThat(formatter.out, is(instanceOf(OutputStreamWriter.class)));
+        assertThat(formatter.out, is(instanceOf(PrintStream.class)));
 
         WantsAppendable formatter2 = (WantsAppendable) fc.create("cucumber.runtime.formatter.FormatterFactoryTest$WantsAppendable:" + TempDir.createTempFile().getAbsolutePath());
         assertEquals(UTF8OutputStreamWriter.class, formatter2.out.getClass());
@@ -103,6 +131,12 @@ public class FormatterFactoryTest {
     public void instantiates_custom_url_formatter_with_http() throws IOException {
         WantsUrl formatter = (WantsUrl) fc.create("cucumber.runtime.formatter.FormatterFactoryTest$WantsUrl:http://halp/");
         assertEquals(new URL("http://halp/"), formatter.out);
+    }
+
+    @Test
+    public void instantiates_custom_uri_formatter_with_ws() throws IOException, URISyntaxException {
+        WantsUri formatter = (WantsUri) fc.create("cucumber.runtime.formatter.FormatterFactoryTest$WantsUri:ws://halp/");
+        assertEquals(new URI("ws://halp/"), formatter.out);
     }
 
     @Test
@@ -123,6 +157,14 @@ public class FormatterFactoryTest {
         public final URL out;
 
         public WantsUrl(URL out) {
+            this.out = out;
+        }
+    }
+
+    public static class WantsUri extends StubFormatter {
+        public final URI out;
+
+        public WantsUri(URI out) {
             this.out = out;
         }
     }

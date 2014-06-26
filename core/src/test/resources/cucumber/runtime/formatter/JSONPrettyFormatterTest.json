@@ -98,69 +98,6 @@
         "type": "scenario"
       },
       {
-        "id": "feature-3;scenariooutline-1",
-        "description": "",
-        "name": "ScenarioOutline_1",
-        "keyword": "Scenario Outline",
-        "line": 14,
-        "steps": [
-          {
-            "name": "so_1 \u003ca\u003e",
-            "keyword": "Given ",
-            "line": 15
-          },
-          {
-            "name": "so_2 \u003cc\u003e cucumbers",
-            "keyword": "When ",
-            "line": 16
-          },
-          {
-            "name": "\u003cb\u003e so_3",
-            "keyword": "Then ",
-            "line": 17
-          }
-        ],
-        "examples": [
-          {
-            "id": "feature-3;scenariooutline-1;",
-            "description": "",
-            "name": "",
-            "keyword": "Examples",
-            "line": 19,
-            "rows": [
-              {
-                "id": "feature-3;scenariooutline-1;;1",
-                "cells": [
-                  "a",
-                  "b",
-                  "c"
-                ],
-                "line": 20
-              },
-              {
-                "id": "feature-3;scenariooutline-1;;2",
-                "cells": [
-                  "12",
-                  "5",
-                  "7"
-                ],
-                "line": 21
-              },
-              {
-                "id": "feature-3;scenariooutline-1;;3",
-                "cells": [
-                  "20",
-                  "5",
-                  "15"
-                ],
-                "line": 22
-              }
-            ]
-          }
-        ],
-        "type": "scenario_outline"
-      },
-      {
         "description": "",
         "name": "",
         "keyword": "Background",
