@@ -47,10 +47,18 @@ public class RuntimeGlue implements Glue {
     @Override
     public void addStepDefinition(StepDefinition stepDefinition) {
         StepDefinition previous = stepDefinitionsByPattern.get(stepDefinition.getPattern());
-        if (previous != null) {
+        if (previous == null) {
+            stepDefinitionsByPattern.put(stepDefinition.getPattern(), stepDefinition);
+        } else if (!haveSameLocation(previous, stepDefinition)) {
             throw new DuplicateStepDefinitionException(previous, stepDefinition);
         }
-        stepDefinitionsByPattern.put(stepDefinition.getPattern(), stepDefinition);
+    }
+
+    private boolean haveSameLocation(StepDefinition previous, StepDefinition current) {
+        String previousLocation = previous.getLocation(true);
+        String currentLocation = current.getLocation(true);
+
+        return previousLocation.equals(currentLocation);
     }
 
     @Override
