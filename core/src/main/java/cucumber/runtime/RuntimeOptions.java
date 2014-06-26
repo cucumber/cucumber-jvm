@@ -28,7 +28,6 @@ public class RuntimeOptions {
 
     private final List<String> glue = new ArrayList<String>();
     private final List<Object> filters = new ArrayList<Object>();
-    private final List<Object> lineFilters = new ArrayList<Object>();
     private final List<Formatter> formatters = new ArrayList<Formatter>();
     private final List<String> featurePaths = new ArrayList<String>();
     private final List<String> formatterNames = new ArrayList<String>();
@@ -67,7 +66,7 @@ public class RuntimeOptions {
     }
 
     public RuntimeOptions(FormatterFactory formatterFactory, List<String> argv) {
-        this(new Env("cucumber-jvm"), formatterFactory, argv);
+        this(new Env("cucumber"), formatterFactory, argv);
     }
 
     public RuntimeOptions(Env env, FormatterFactory formatterFactory, List<String> argv) {
@@ -80,7 +79,6 @@ public class RuntimeOptions {
         if (cucumberOptionsFromEnv != null) {
             parse(Shellwords.parse(cucumberOptionsFromEnv));
         }
-        filters.addAll(lineFilters);
 
         if (formatterNames.isEmpty()) {
             formatterNames.add("progress");
@@ -89,7 +87,6 @@ public class RuntimeOptions {
 
     private void parse(List<String> args) {
         List<Object> parsedFilters = new ArrayList<Object>();
-        List<Object> parsedLineFilters = new ArrayList<Object>();
         List<String> parsedFeaturePaths = new ArrayList<String>();
         List<String> parsedGlue = new ArrayList<String>();
 
@@ -129,9 +126,7 @@ public class RuntimeOptions {
                 printUsage();
                 throw new CucumberException("Unknown option: " + arg);
             } else {
-                PathWithLines pathWithLines = new PathWithLines(arg);
-                parsedFeaturePaths.add(pathWithLines.path);
-                parsedLineFilters.addAll(pathWithLines.lines);
+                parsedFeaturePaths.add(arg);
             }
         }
         if (!parsedFilters.isEmpty()) {
@@ -140,9 +135,7 @@ public class RuntimeOptions {
         }
         if (!parsedFeaturePaths.isEmpty()) {
             featurePaths.clear();
-            lineFilters.clear();
             featurePaths.addAll(parsedFeaturePaths);
-            lineFilters.addAll(parsedLineFilters);
         }
         if (!parsedGlue.isEmpty()) {
             glue.clear();
@@ -157,7 +150,7 @@ public class RuntimeOptions {
     public List<CucumberFeature> cucumberFeatures(ResourceLoader resourceLoader) {
         return load(resourceLoader, featurePaths, filters, System.out);
     }
-    
+
     List<Formatter> getFormatters() {
         if(!formattersCreated) {
             for (String formatterName : formatterNames){

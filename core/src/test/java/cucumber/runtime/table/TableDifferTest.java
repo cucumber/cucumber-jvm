@@ -21,6 +21,17 @@ public class TableDifferTest {
         return TableParser.parse(source, null);
     }
 
+    private DataTable tableWithDuplicate() {
+        String source = "" +
+                "| Aslak | aslak@email.com | 123 |\n" +
+                "| Joe   | joe@email.com   | 234 |\n" +
+                "| Bryan | bryan@email.org | 456 |\n" +
+                "| Joe   | joe@email.com   | 234 |\n" +
+                "| Ni    | ni@email.com    | 654 |\n" +
+                "| Ni    | ni@email.com    | 654 |\n" ;
+        return TableParser.parse(source, null);
+    }
+
     private DataTable otherTableWithTwoConsecutiveRowsDeleted() {
         String source = "" +
                 "| Aslak | aslak@email.com | 123 |\n" +
@@ -66,6 +77,49 @@ public class TableDifferTest {
                 "| Ni    | ni@email.com         | 654 |\n" +
                 "| Doe   | joe@email.com        | 234 |\n" +
                 "| Foo   | schnickens@email.net | 789 |\n";
+        return TableParser.parse(source, null);
+    }
+
+    private DataTable otherTableWithDifferentOrder() {
+        String source = "" +
+                "| Joe   | joe@email.com   | 234 |\n" +
+                "| Aslak | aslak@email.com | 123 |\n" +
+                "| Bryan | bryan@email.org | 456 |\n" +
+                "| Ni    | ni@email.com    | 654 |\n";
+        return TableParser.parse(source, null);
+    }
+
+    private DataTable otherTableWithDifferentOrderAndDuplicate() {
+        String source = "" +
+                "| Joe   | joe@email.com   | 234 |\n" +
+                "| Aslak | aslak@email.com | 123 |\n" +
+                "| Bryan | bryan@email.org | 456 |\n" +
+                "| Ni    | ni@email.com    | 654 |\n"+
+                "| Ni    | ni@email.com    | 654 |\n" +
+                "| Joe   | joe@email.com   | 234 |\n" ;
+        return TableParser.parse(source, null);
+    }
+
+    private DataTable  otherTableWithDifferentOrderDuplicateAndDeleted() {
+        String source = "" +
+                "| Joe   | joe@email.com   | 234 |\n" +
+                "| Bryan | bryan@email.org | 456 |\n" +
+                "| Bryan | bryan@email.org | 456 |\n" +
+                "| Ni    | ni@email.com    | 654 |\n" +
+                "| Bob   | bob.email.com   | 555 |\n" +
+                "| Bryan | bryan@email.org | 456 |\n" +
+                "| Ni    | ni@email.com    | 654 |\n" +
+                "| Joe   | joe@email.com   | 234 |\n" ;
+
+        return TableParser.parse(source, null);
+    }
+
+    private DataTable otherTableWithDeletedAndInsertedDifferentOrder() {
+        String source = "" +
+                "| Doe   | joe@email.com        | 234 |\n" +
+                "| Foo   | schnickens@email.net | 789 |\n" +
+                "| Aslak | aslak@email.com      | 123 |\n" +
+                "| Bryan | bryan@email.org      | 456 |\n";
         return TableParser.parse(source, null);
     }
 
@@ -245,5 +299,130 @@ public class TableDifferTest {
         actual.add(new TestPojo(2, "you", 222));
         actual.add(new TestPojo(3, "jdoe", 34545));
         expected.diff(actual);
+    }
+
+    @Test
+    public void diff_set_with_itself() {
+        table().unorderedDiff(table());
+    }
+
+    @Test
+    public void diff_set_with_itself_in_different_order() {
+        DataTable other = otherTableWithDifferentOrder();
+        table().unorderedDiff(other);
+    }
+
+    @Test(expected = TableDiffException.class)
+    public void diff_set_with_less_lines_in_other() {
+        DataTable other = otherTableWithTwoConsecutiveRowsDeleted();
+        try {
+            table().unorderedDiff(other);
+        } catch (TableDiffException e) {
+            String expected = "" +
+                    "Tables were not identical:\n" +
+                    "      | Aslak | aslak@email.com | 123 |\n" +
+                    "    - | Joe   | joe@email.com   | 234 |\n" +
+                    "    - | Bryan | bryan@email.org | 456 |\n" +
+                    "      | Ni    | ni@email.com    | 654 |\n";
+            assertEquals(expected, e.getMessage());
+            throw e;
+        }
+    }
+
+    @Test(expected = TableDiffException.class)
+    public void unordered_diff_with_more_lines_in_other() {
+        DataTable other = otherTableWithTwoConsecutiveRowsInserted();
+        try {
+            table().unorderedDiff(other);
+        } catch (TableDiffException e) {
+            String expected = "" +
+                    "Tables were not identical:\n" +
+                    "      | Aslak | aslak@email.com      | 123 |\n" +
+                    "      | Joe   | joe@email.com        | 234 |\n" +
+                    "      | Bryan | bryan@email.org      | 456 |\n" +
+                    "      | Ni    | ni@email.com         | 654 |\n" +
+                    "    + | Doe   | joe@email.com        | 234 |\n" +
+                    "    + | Foo   | schnickens@email.net | 789 |\n";
+            assertEquals(expected, e.getMessage());
+            throw e;
+        }
+    }
+
+    @Test(expected = TableDiffException.class)
+    public void unordered_diff_with_added_and_deleted_rows_in_other() {
+        DataTable other = otherTableWithDeletedAndInsertedDifferentOrder();
+        try {
+            table().unorderedDiff(other);
+        } catch (TableDiffException e) {
+            String expected = "" +
+                    "Tables were not identical:\n" +
+                    "      | Aslak | aslak@email.com      | 123 |\n" +
+                    "    - | Joe   | joe@email.com        | 234 |\n" +
+                    "      | Bryan | bryan@email.org      | 456 |\n" +
+                    "    - | Ni    | ni@email.com         | 654 |\n" +
+                    "    + | Doe   | joe@email.com        | 234 |\n" +
+                    "    + | Foo   | schnickens@email.net | 789 |\n";
+            assertEquals(expected, e.getMessage());
+            throw e;
+        }
+    }
+
+    @Test
+    public void unordered_diff_with_list_of_pojos_and_camelcase_header_mapping() {
+        String source = "" +
+                "| id | Given Name |\n" +
+                "| 1  | me   |\n" +
+                "| 2  | you  |\n" +
+                "| 3  | jdoe |\n";
+
+        DataTable expected = TableParser.parse(source, null);
+
+        List<TestPojo> actual = new ArrayList<TestPojo>();
+        actual.add(new TestPojo(2, "you", 222));
+        actual.add(new TestPojo(3, "jdoe", 34545));
+        actual.add(new TestPojo(1, "me", 123));
+        expected.unorderedDiff(actual);
+    }
+
+    @Test(expected = TableDiffException.class)
+    public void unordered_diff_with_added_duplicate_in_other() {
+        DataTable other = otherTableWithDifferentOrderAndDuplicate();
+        try {
+            table().unorderedDiff(other);
+        } catch (TableDiffException e) {
+            System.out.println(e.getMessage());
+            String expected = "" +
+                    "Tables were not identical:\n" +
+                    "      | Aslak | aslak@email.com | 123 |\n" +
+                    "      | Joe   | joe@email.com   | 234 |\n" +
+                    "      | Bryan | bryan@email.org | 456 |\n" +
+                    "      | Ni    | ni@email.com    | 654 |\n" +
+                    "    + | Ni    | ni@email.com    | 654 |\n" +
+                    "    + | Joe   | joe@email.com   | 234 |\n" ;
+            assertEquals(expected, e.getMessage());
+            throw e;
+        }
+    }
+
+    @Test(expected = TableDiffException.class)
+    public void unordered_diff_with_added_duplicate_and_deleted_in_other() {
+        DataTable other = otherTableWithDifferentOrderDuplicateAndDeleted();
+        try {
+            tableWithDuplicate().unorderedDiff(other);
+        } catch (TableDiffException e) {
+            String expected = "" +
+                    "Tables were not identical:\n" +
+                    "    - | Aslak | aslak@email.com | 123 |\n" +
+                    "      | Joe   | joe@email.com   | 234 |\n" +
+                    "      | Bryan | bryan@email.org | 456 |\n" +
+                    "      | Joe   | joe@email.com   | 234 |\n" +
+                    "      | Ni    | ni@email.com    | 654 |\n" +
+                    "      | Ni    | ni@email.com    | 654 |\n" +
+                    "    + | Bryan | bryan@email.org | 456 |\n" +
+                    "    + | Bob   | bob.email.com   | 555 |\n" +
+                    "    + | Bryan | bryan@email.org | 456 |\n" ;
+            assertEquals(expected, e.getMessage());
+            throw e;
+        }
     }
 }

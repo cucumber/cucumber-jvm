@@ -1,6 +1,7 @@
 package cucumber.runtime.junit;
 
 import cucumber.api.PendingException;
+import cucumber.runtime.CucumberException;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Background;
@@ -56,9 +57,19 @@ public class JUnitReporter implements Reporter, Formatter {
     }
 
     public void match(Match match) {
-        Description description = executionUnitRunner.describeChild(steps.remove(0));
+        Step runnerStep = fetchAndCheckRunnerStep();
+        Description description = executionUnitRunner.describeChild(runnerStep);
         stepNotifier = new EachTestNotifier(runNotifier, description);
         reporter.match(match);
+    }
+
+    private Step fetchAndCheckRunnerStep() {
+        Step scenarioStep = steps.remove(0);
+        Step runnerStep = executionUnitRunner.getRunnerSteps().remove(0);
+        if (!scenarioStep.getName().equals(runnerStep.getName())) {
+            throw new CucumberException("Expected step: \"" + scenarioStep.getName() + "\" got step: \"" + runnerStep.getName() + "\"");
+        }
+        return runnerStep;
     }
 
     @Override
@@ -106,7 +117,9 @@ public class JUnitReporter implements Reporter, Formatter {
 
     private void addFailureOrIgnoreStep(Result result) {
         if (strict) {
+            stepNotifier.fireTestStarted();
             addFailure(result);
+            stepNotifier.fireTestFinished();
         } else {
             ignoredStep = true;
             stepNotifier.fireTestIgnored();

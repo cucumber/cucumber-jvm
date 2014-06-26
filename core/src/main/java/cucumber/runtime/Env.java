@@ -34,7 +34,15 @@ public class Env {
     }
 
     public String get(String key) {
-        String value = System.getenv(asEnvKey(key));
+        String result = get0(asEnvKey(key));
+        if (result == null) {
+            result = get0(asPropertyKey(key));
+        }
+        return result;
+    }
+
+    private String get0(String key) {
+        String value = System.getenv(key);
         if (value == null) {
             value = properties.getProperty(key);
             if (value == null && bundleName != null) {
@@ -54,5 +62,9 @@ public class Env {
 
     private static String asEnvKey(String key) {
         return key.replace('.', '_').toUpperCase();
+    }
+
+    private static String asPropertyKey(String key) {
+        return key.replace('_', '.').toLowerCase();
     }
 }

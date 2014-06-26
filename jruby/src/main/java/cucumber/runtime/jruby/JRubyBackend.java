@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Set;
 
 public class JRubyBackend implements Backend {
-    private static final Env env = new Env("cucumber-jvm");
+    private static final Env env = new Env("cucumber");
     private final SnippetGenerator snippetGenerator = new SnippetGenerator(new JRubySnippet());
     private final ScriptingContainer jruby = new ScriptingContainer();
     private final ResourceLoader resourceLoader;

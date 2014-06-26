@@ -2,6 +2,7 @@ package cucumber.runtime.model;
 
 import cucumber.runtime.FeatureBuilder;
 import cucumber.runtime.Runtime;
+import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.Resource;
 import cucumber.runtime.io.ResourceLoader;
 import gherkin.I18n;
@@ -47,13 +48,50 @@ public class CucumberFeature {
         final List<CucumberFeature> cucumberFeatures = new ArrayList<CucumberFeature>();
         final FeatureBuilder builder = new FeatureBuilder(cucumberFeatures);
         for (String featurePath : featurePaths) {
-            Iterable<Resource> resources = resourceLoader.resources(featurePath, ".feature");
-            for (Resource resource : resources) {
-                builder.parse(resource, filters);
+            if (featurePath.startsWith("@")) {
+                loadFromRerunFile(builder, resourceLoader, featurePath.substring(1), filters);
+            } else {
+                loadFromFeaturePath(builder, resourceLoader, featurePath, filters);
             }
         }
         Collections.sort(cucumberFeatures, new CucumberFeatureUriComparator());
         return cucumberFeatures;
+    }
+
+    private static void loadFromRerunFile(FeatureBuilder builder, ResourceLoader resourceLoader, String rerunPath, final List<Object> filters) {
+        Iterable<Resource> resources = resourceLoader.resources(rerunPath, null);
+        for (Resource resource : resources) {
+            String source = builder.read(resource);
+            for (String featurePath : source.split(" ")) {
+                loadFromFileSystemOrClasspath(builder, resourceLoader, featurePath, filters);
+            }
+        }
+    }
+
+    private static void loadFromFileSystemOrClasspath(FeatureBuilder builder, ResourceLoader resourceLoader, String featurePath, final List<Object> filters) {
+        try {
+            loadFromFeaturePath(builder, resourceLoader, featurePath, filters);
+        } catch (IllegalArgumentException originalException) {
+            if (!featurePath.startsWith(MultiLoader.CLASSPATH_SCHEME)) {
+                try {
+                    loadFromFeaturePath(builder, resourceLoader, MultiLoader.CLASSPATH_SCHEME + featurePath, filters);
+                } catch (IllegalArgumentException secondException) {
+                    throw originalException;
+                }
+            } else {
+                throw originalException;
+            }
+        }
+    }
+
+    private static void loadFromFeaturePath(FeatureBuilder builder, ResourceLoader resourceLoader, String featurePath, final List<Object> filters) {
+        PathWithLines pathWithLines = new PathWithLines(featurePath);
+        ArrayList<Object> filtersForPath = new ArrayList<Object>(filters);
+        filtersForPath.addAll(pathWithLines.lines);
+        Iterable<Resource> resources = resourceLoader.resources(pathWithLines.path, ".feature");
+        for (Resource resource : resources) {
+            builder.parse(resource, filtersForPath);
+        }
     }
 
     public CucumberFeature(Feature feature, String path) {

@@ -183,7 +183,9 @@ public class FromDataTableTest {
     public void transforms_to_map_of_double_to_double() throws Throwable {
         Method m = StepDefs.class.getMethod("mapOfDoubleToDouble", Map.class);
         StepDefs stepDefs = runStepDef(m, listOfDoublesWithoutHeader());
-        assertEquals("{1000.0=999.0, 0.5=-0.5, 100.5=99.5}", stepDefs.mapOfDoubleToDouble.toString());
+        assertEquals(Double.valueOf(999.0), stepDefs.mapOfDoubleToDouble.get(1000.0));
+        assertEquals(Double.valueOf(-0.5), stepDefs.mapOfDoubleToDouble.get(0.5));
+        assertEquals(Double.valueOf(99.5), stepDefs.mapOfDoubleToDouble.get(100.5));
     }
 
     @Test

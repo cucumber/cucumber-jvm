@@ -4,6 +4,7 @@ import cucumber.runtime.io.ResourceLoader;
 import gherkin.I18n;
 import gherkin.formatter.model.Step;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 

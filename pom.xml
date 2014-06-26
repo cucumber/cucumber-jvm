@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>info.cukes</groupId>
     <artifactId>cucumber-jvm</artifactId>
-    <version>1.1.7-SNAPSHOT</version>
+    <version>1.1.9-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Cucumber-JVM</name>
     <url>http://cukes.info/</url>
@@ -23,35 +23,35 @@
         <minimum.maven.version>3.1.1</minimum.maven.version>
         <outputDirectory>${project.build.directory}</outputDirectory>
         <gherkin.version>2.12.2</gherkin.version>
-        <groovy.version>2.2.2</groovy.version>
+        <groovy.version>2.3.3</groovy.version>
         <picocontainer.version>2.14.3</picocontainer.version>
         <!-- Keep in sync with scala/pom.xml and scala/scala_previous/pom.xml if minor versions are bumped. -->
-        <scala.current.version>2.11.0</scala.current.version>
+        <scala.current.version>2.11.1</scala.current.version>
         <scala.previous.version>2.10.4</scala.previous.version>
         <!-- There is 3.1.3, but it requires at least mvn 3.0.4 which might still not be widely used. -->
         <scala-maven-plugin.version>3.1.6</scala-maven-plugin.version>
-        <spring.version>4.0.2.RELEASE</spring.version>
-        <spring.data.version>1.5.1.RELEASE</spring.data.version>
-        <hibernate.version>4.3.4.Final</hibernate.version>
+        <spring.version>4.0.5.RELEASE</spring.version>
+        <spring.data.version>1.6.0.RELEASE</spring.data.version>
+        <hibernate.version>4.3.5.Final</hibernate.version>
         <hsqldb.version>2.3.2</hsqldb.version>
         <guice.version>3.0</guice.version>
         <!-- Remember to bounce version in examples/clojure_cukes/project.clj as well -->
-        <clojure.version>1.5.1</clojure.version>
+        <clojure.version>1.6.0</clojure.version>
         <gosu.version>0.10.3</gosu.version>
         <rhino.version>1.7R4</rhino.version>
         <ioke.version>P-0.4.0-p11</ioke.version>
         <jsoup.version>1.7.3</jsoup.version>
         <testng.version>6.8.8</testng.version>
         <junit.version>4.11</junit.version>
-        <jython.version>2.7-b1</jython.version>
+        <jython.version>2.7-b2</jython.version>
         <mockito.version>1.9.5</mockito.version>
-        <selenium.version>2.40.0</selenium.version>
+        <selenium.version>2.42.2</selenium.version>
         <webbit.version>0.4.15</webbit.version>
         <webbit-rest.version>0.3.0</webbit-rest.version>
-        <jruby.version>1.7.11</jruby.version>
-        <weld-se.version>2.1.2.Final</weld-se.version>
-        <cdi-api.version>1.1</cdi-api.version>
-        <openejb-core.version>4.6.0</openejb-core.version>
+        <jruby.version>1.7.13</jruby.version>
+        <weld-se.version>2.2.2.Final</weld-se.version>
+        <cdi-api.version>1.2</cdi-api.version>
+        <openejb-core.version>4.6.0.2</openejb-core.version>
         <needle.version>2.2</needle.version>
         <!-- Bumping to 7.0 or newer causes NPE in needle -->
         <javaee-api.version>6.0</javaee-api.version>
@@ -60,15 +60,17 @@
         <cobertura.version>1.9.4.1</cobertura.version>
         <dbunit.version>2.4.9</dbunit.version>
         <log4j.version>1.2.17</log4j.version>
-        <slf4j.version>1.7.6</slf4j.version>
+        <slf4j.version>1.7.7</slf4j.version>
         <freemarker.version>2.3.20</freemarker.version>
         <javax.servlet-api.version>3.1.0</javax.servlet-api.version>
         <android-maven-plugin.version>3.9.0-rc.1</android-maven-plugin.version>
         <!-- Target android sdk api level 14 = 4.1.1.4 -->
         <android.version>4.1.1.4</android.version>
-        <wicket.version>6.14.0</wicket.version>
+        <wicket.version>7.0.0-M2</wicket.version>
         <!-- We need a version that works with Java 6 and Java 7: http://www.eclipse.org/jetty/documentation/current/what-jetty-version.html -->
         <jetty.version>8.1.12.v20130726</jetty.version>
+        <xmlunit.version>1.5</xmlunit.version>
+        <joda-time.version>2.3</joda-time.version>
     </properties>
     <licenses>
         <license>
@@ -430,6 +432,17 @@
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-servlet</artifactId>
                 <version>${jetty.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>xmlunit</groupId>
+                <artifactId>xmlunit</artifactId>
+                <version>${xmlunit.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>joda-time</groupId>
+                <artifactId>joda-time</artifactId>
+                <version>${joda-time.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -123,7 +123,6 @@ Then, make sure you have the proper keys set up - in your `~/.m2/settings.xml` -
 Replace version numbers in:
 
 * examples/java-gradle/build.gradle
-* README.md
 * History.md
 
 Run `git commit -am "Release X.Y.Z"`
@@ -143,6 +142,10 @@ Post release the API docs must be generated for each module and manually copied 
 ```
 
 After that's done, commit and push `cucumber.github.com`
+
+Now, update the dependency in example projects:
+
+* https://github.com/cucumber/cucumber-java-skeleton
 
 ## Code Coverage
 
