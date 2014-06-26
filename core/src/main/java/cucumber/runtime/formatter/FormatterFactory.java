@@ -4,7 +4,6 @@ import cucumber.runtime.CucumberException;
 import cucumber.runtime.io.URLOutputStream;
 import cucumber.runtime.io.UTF8OutputStreamWriter;
 import gherkin.formatter.Formatter;
-import gherkin.formatter.JSONFormatter;
 
 import java.io.File;
 import java.io.IOException;
@@ -46,7 +45,7 @@ public class FormatterFactory {
         put("html", HTMLFormatter.class);
         put("pretty", CucumberPrettyFormatter.class);
         put("progress", ProgressFormatter.class);
-        put("json", JSONFormatter.class);
+        put("json", CucumberJSONFormatter.class);
         put("usage", UsageFormatter.class);
         put("rerun", RerunFormatter.class);
     }};

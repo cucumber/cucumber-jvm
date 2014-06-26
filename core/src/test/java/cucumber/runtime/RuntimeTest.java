@@ -2,6 +2,7 @@ package cucumber.runtime;
 
 import cucumber.api.PendingException;
 import cucumber.api.Scenario;
+import cucumber.runtime.formatter.CucumberJSONFormatter;
 import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.io.Resource;
 import cucumber.runtime.io.ResourceLoader;
@@ -51,7 +52,7 @@ public class RuntimeTest {
                 "  Scenario: scenario name\n" +
                 "    When s\n");
         StringBuilder out = new StringBuilder();
-        JSONFormatter jsonFormatter = new JSONFormatter(out);
+        JSONFormatter jsonFormatter = new CucumberJSONFormatter(out);
         List<Backend> backends = asList(mock(Backend.class));
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         RuntimeOptions runtimeOptions = new RuntimeOptions("");
