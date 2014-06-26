@@ -1,3 +1,7 @@
+## [1.1.9-SNAPSHOT (Git master)](https://github.com/cucumber/cucumber-jvm/compare/v1.1.8...master) (Not released)
+
+* [Groovy] Support more then one `World {}` definition ([#716](https://github.com/cucumber/cucumber-jvm/pull/716) Anton)
+
 ## [1.1.8](https://github.com/cucumber/cucumber-jvm/compare/v1.1.7...v1.1.8) (2014-06-26)
 
 * [JUnit] Let JUnitReporter fire event(s) on the step notifier for every step ([#656](https://github.com/cucumber/cucumber-jvm/pull/656) Björn Rasmusson)
