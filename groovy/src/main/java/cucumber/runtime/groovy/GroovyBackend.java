@@ -1,6 +1,10 @@
 package cucumber.runtime.groovy;
 
-import cucumber.runtime.*;
+import cucumber.runtime.Backend;
+import cucumber.runtime.ClassFinder;
+import cucumber.runtime.CucumberException;
+import cucumber.runtime.Glue;
+import cucumber.runtime.UnreportedStepExecutor;
 import cucumber.runtime.io.Resource;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
@@ -18,7 +22,11 @@ import org.codehaus.groovy.runtime.InvokerInvocationException;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import static cucumber.runtime.io.MultiLoader.packageName;
@@ -148,6 +156,10 @@ public class GroovyBackend implements Backend {
         } catch (InvokerInvocationException e) {
             throw e.getCause();
         }
+    }
+
+    GroovyWorld getGroovyWorld() {
+        return world;
     }
 
     private static StackTraceElement currentLocation() {

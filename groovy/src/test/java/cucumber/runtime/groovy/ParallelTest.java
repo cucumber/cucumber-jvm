@@ -15,13 +15,6 @@ public class ParallelTest {
     @Mock
     Closure closure;
 
-    @Test(expected = RuntimeException.class)
-    public void exception_throw_when_world_already_set_on_same_thread() {
-        GroovyBackend groovyBackend = new GroovyBackend(resourceLoader);
-        groovyBackend.registerWorld(closure);
-        groovyBackend.registerWorld(closure);
-    }
-
     @Test
     public void can_have_a_new_backend_on_a_different_thread() {
         new GroovyBackend(resourceLoader);

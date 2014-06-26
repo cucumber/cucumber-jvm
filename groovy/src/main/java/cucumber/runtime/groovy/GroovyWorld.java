@@ -1,6 +1,10 @@
 package cucumber.runtime.groovy;
 
-import groovy.lang.*;
+import groovy.lang.GroovyObject;
+import groovy.lang.GroovyObjectSupport;
+import groovy.lang.MissingMethodException;
+import groovy.lang.MissingPropertyException;
+import groovy.lang.Tuple;
 import org.codehaus.groovy.runtime.MetaClassHelper;
 
 import java.util.LinkedList;
@@ -32,6 +36,10 @@ class GroovyWorld extends GroovyObjectSupport {
 
     public Object invokeMethod(String name, Object args) {
         return findWorldWithMethod(name, args).invokeMethod(name, args);
+    }
+
+    int worldsCount() {
+        return worlds.size();
     }
 
     private GroovyObject findWorldWithProperty(String property) {
