@@ -46,9 +46,6 @@ public interface Scenario {
      */
     void write(String text);
 
-    /**
-     * @return the name of the Scenario.
-     */
     String getName();
 
     /**
