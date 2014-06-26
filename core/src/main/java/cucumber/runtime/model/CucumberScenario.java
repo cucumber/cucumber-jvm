@@ -35,7 +35,7 @@ public class CucumberScenario extends CucumberTagStatement {
     @Override
     public void run(Formatter formatter, Reporter reporter, Runtime runtime) {
         Set<Tag> tags = tagsAndInheritedTags();
-        runtime.buildBackendWorlds(reporter, tags, scenario.getName());
+        runtime.buildBackendWorlds(reporter, tags, scenario);
         try {
             formatter.startOfScenarioLifeCycle((Scenario) getGherkinModel());
         } catch (Throwable ignore) {
