@@ -1,6 +1,7 @@
 package cucumber.runtime.junit;
 
 import cucumber.api.PendingException;
+import cucumber.runtime.CucumberException;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Background;
@@ -19,8 +20,12 @@ import org.junit.runner.notification.RunNotifier;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Matchers;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -212,7 +217,7 @@ public class JUnitReporterTest {
 
         jUnitReporter.startExecutionUnit(executionUnitRunner, mock(RunNotifier.class));
         jUnitReporter.before(match, result);
-        jUnitReporter.step(mock(Step.class));
+        jUnitReporter.step(mockStep());
         jUnitReporter.match(match);
         jUnitReporter.embedding(mimeType, data);
         jUnitReporter.write(text);
@@ -227,6 +232,41 @@ public class JUnitReporterTest {
         verify(reporter).after(match, result);
     }
 
+    @Test
+    public void creates_step_notifier_with_step_from_execution_unit_runner() throws Exception {
+        Step runnerStep = mockStep("Step Name");
+        Description runnerStepDescription = stepDescription(runnerStep);
+        ExecutionUnitRunner executionUnitRunner = mockExecutionUnitRunner(runnerSteps(runnerStep));
+        when(executionUnitRunner.describeChild(runnerStep)).thenReturn(runnerStepDescription);
+        RunNotifier notifier = mock(RunNotifier.class);
+        jUnitReporter = new JUnitReporter(mock(Reporter.class), mock(Formatter.class), false);
+
+        jUnitReporter.startExecutionUnit(executionUnitRunner, notifier);
+        jUnitReporter.step(mockStep("Step Name"));
+        jUnitReporter.match(mock(Match.class));
+        jUnitReporter.result(mockResult());
+
+        verify(notifier).fireTestFinished(runnerStepDescription);
+    }
+
+    @Test
+    public void throws_exception_when_runner_step_name_do_no_match_scenario_step_name() throws Exception {
+        Step runnerStep = mockStep("Runner Step Name");
+        ExecutionUnitRunner executionUnitRunner = mockExecutionUnitRunner(runnerSteps(runnerStep));
+        jUnitReporter = new JUnitReporter(mock(Reporter.class), mock(Formatter.class), false);
+
+        jUnitReporter.startExecutionUnit(executionUnitRunner, mock(RunNotifier.class));
+        jUnitReporter.step(mockStep("Scenario Step Name"));
+        try {
+            jUnitReporter.match(mock(Match.class));
+            fail("CucumberException not thrown");
+        } catch (CucumberException e) {
+            assertEquals("Expected step: \"Scenario Step Name\" got step: \"Runner Step Name\"", e.getMessage());
+        } catch (Exception e) {
+            fail("CucumberException not thrown");
+        }
+    }
+
     private Result mockResult() {
         Result result = mock(Result.class);
         when(result.getStatus()).thenReturn("passed");
@@ -234,9 +274,36 @@ public class JUnitReporterTest {
     }
 
     private ExecutionUnitRunner mockExecutionUnitRunner() {
+        List<Step> runnerSteps = runnerSteps(mockStep());
+        return mockExecutionUnitRunner(runnerSteps);
+    }
+
+    private ExecutionUnitRunner mockExecutionUnitRunner(List<Step> runnerSteps) {
         ExecutionUnitRunner executionUnitRunner = mock(ExecutionUnitRunner.class);
         when(executionUnitRunner.getDescription()).thenReturn(mock(Description.class));
+        when(executionUnitRunner.getRunnerSteps()).thenReturn(runnerSteps);
         return executionUnitRunner;
+    }
+
+    private List<Step> runnerSteps(Step step) {
+        List<Step> runnerSteps = new ArrayList<Step>();
+        runnerSteps.add(step);
+        return runnerSteps;
+    }
+
+    private Description stepDescription(Step runnerStep) {
+        return Description.createTestDescription("", "", runnerStep);
+    }
+
+    private Step mockStep() {
+        String stepName = "step name";
+        return mockStep(stepName);
+    }
+
+    private Step mockStep(String stepName) {
+        Step step = mock(Step.class);
+        when(step.getName()).thenReturn(stepName);
+        return step;
     }
 
     private void createDefaultRunNotifier() {
