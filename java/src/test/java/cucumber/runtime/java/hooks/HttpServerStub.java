@@ -36,7 +36,7 @@ public class HttpServerStub {
         return 200;
     }
 
-    public String retrieve() {
+    public String receive() {
         if (!isStarted) {
             throw new IllegalStateException("server is not running");
         }
