@@ -1,5 +1,6 @@
 ## [1.1.8-SNAPSHOT (Git master)](https://github.com/cucumber/cucumber-jvm/compare/v1.1.7...master)
 
+* [Core] Disregard order of JSON properties in PrettyPrint unit tests ([#740](https://github.com/cucumber/cucumber-jvm/pull/740) mchenryc)
 * [Core] Support reading feature paths from the rerun formatter file ([#726](https://github.com/cucumber/cucumber-jvm/pull/726) Björn Rasmusson)
 * [Core] Apply line filters only to the feature path that they are defined on ([#725](https://github.com/cucumber/cucumber-jvm/pull/725) Björn Rasmusson)
 * [Groovy] Allow tests to run multi-threaded in the same JVM ([#723](https://github.com/cucumber/cucumber-jvm/issues/723), [#727](https://github.com/cucumber/cucumber-jvm/pull/727) Bradley Hart)
