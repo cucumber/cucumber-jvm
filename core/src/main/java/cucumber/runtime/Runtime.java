@@ -103,14 +103,11 @@ public class Runtime implements UnreportedStepExecutor {
      * This is the main entry point. Used from CLI, but not from JUnit.
      */
     public void run() throws IOException {
-        Reporter reporter = runtimeOptions.reporter(classLoader);
-        runBeforeAllHooks(reporter);
         for (CucumberFeature cucumberFeature : runtimeOptions.cucumberFeatures(resourceLoader)) {
             run(cucumberFeature);
         }
-        runAfterAllHooks(reporter);
-
         Formatter formatter = runtimeOptions.formatter(classLoader);
+
         formatter.done();
         formatter.close();
         printSummary();
@@ -204,14 +201,6 @@ public class Runtime implements UnreportedStepExecutor {
 
     public void runAfterHooks(Reporter reporter, Set<Tag> tags) {
         runHooks(glue.getAfterHooks(), reporter, tags, false);
-    }
-
-    public void runBeforeAllHooks(Reporter reporter) {
-        runHooks(glue.getBeforeAllHooks(), reporter, Collections.<Tag>emptySet(), true);
-    }
-
-    public void runAfterAllHooks(Reporter reporter) {
-        runHooks(glue.getAfterAllHooks(), reporter, Collections.<Tag>emptySet(), false);
     }
 
     private void runHooks(List<HookDefinition> hooks, Reporter reporter, Set<Tag> tags, boolean isBefore) {
@@ -328,18 +317,12 @@ public class Runtime implements UnreportedStepExecutor {
     }
 
     private void addStepToCounterAndResult(Result result) {
-        // global hooks (@BeforeAll, @AfterAll) are not part af a scenario
-        // so in those cases will be no scenarioResult
-        if (scenarioResult != null)
-            scenarioResult.add(result);
+        scenarioResult.add(result);
         stats.addStep(result);
     }
 
     private void addHookToCounterAndResult(Result result) {
-        // global hooks (@BeforeAll, @AfterAll) are not part af a scenario
-        // so in those cases will be no scenarioResult
-        if (scenarioResult != null)
-            scenarioResult.add(result);
+        scenarioResult.add(result);
         stats.addHookTime(result.getDuration());
     }
 }

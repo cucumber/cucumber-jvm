@@ -91,9 +91,7 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
 
     @Override
     public void run(RunNotifier notifier) {
-        runtime.runBeforeAllHooks(jUnitReporter);
         super.run(notifier);
-        runtime.runAfterAllHooks(jUnitReporter);
         jUnitReporter.done();
         jUnitReporter.close();
         runtime.printSummary();

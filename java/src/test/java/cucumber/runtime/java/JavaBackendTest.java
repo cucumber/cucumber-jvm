@@ -56,11 +56,6 @@ public class JavaBackendTest {
         }
 
         @Override
-        public void addBeforeAllHook(HookDefinition hookDefinition) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
         public void addBeforeHook(HookDefinition hookDefinition) {
             throw new UnsupportedOperationException();
         }
@@ -71,27 +66,12 @@ public class JavaBackendTest {
         }
 
         @Override
-        public void addAfterAllHook(HookDefinition hookDefinition) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public List<HookDefinition> getBeforeAllHooks() {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
         public List<HookDefinition> getBeforeHooks() {
             throw new UnsupportedOperationException();
         }
 
         @Override
         public List<HookDefinition> getAfterHooks() {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public List<HookDefinition> getAfterAllHooks() {
             throw new UnsupportedOperationException();
         }
 

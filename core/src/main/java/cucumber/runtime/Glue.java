@@ -4,6 +4,7 @@ import cucumber.runtime.io.ResourceLoader;
 import gherkin.I18n;
 import gherkin.formatter.model.Step;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 
@@ -14,21 +15,13 @@ public interface Glue {
 
     void addStepDefinition(StepDefinition stepDefinition) throws DuplicateStepDefinitionException;
 
-    void addBeforeAllHook(HookDefinition hookDefinition);
-
     void addBeforeHook(HookDefinition hookDefinition);
 
     void addAfterHook(HookDefinition hookDefinition);
 
-    void addAfterAllHook(HookDefinition hookDefinition);
-
-    List<HookDefinition> getBeforeAllHooks();
-
     List<HookDefinition> getBeforeHooks();
 
     List<HookDefinition> getAfterHooks();
-
-    List<HookDefinition> getAfterAllHooks();
 
     StepDefinitionMatch stepDefinitionMatch(String featurePath, Step step, I18n i18n);
 
