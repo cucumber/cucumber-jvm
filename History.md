@@ -1,5 +1,6 @@
 ## [1.1.8-SNAPSHOT (Git master)](https://github.com/cucumber/cucumber-jvm/compare/v1.1.7...master)
 
+* [Clojure] Update clojure version to 1.6.0 ([#698](https://github.com/cucumber/cucumber-jvm/pull/698) Jeremy Anderson)
 * [Core] Only include executed scenarios and steps from outlines in the JSON output ([#704](https://github.com/cucumber/cucumber-jvm/pull/704) Björn Rasmusson)
 * [JUnit] JUnitFormatter: use ascending numbering of outline scenarios ([#706](https://github.com/cucumber/cucumber-jvm/pull/706) Björn Rasmusson)
 * [TestNG] Let the TestNG runner handle strict mode correctly ([#719](https://github.com/cucumber/cucumber-jvm/pull/719) Björn Rasmusson)
