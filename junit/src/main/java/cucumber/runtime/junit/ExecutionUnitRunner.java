@@ -8,6 +8,7 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,12 +22,17 @@ public class ExecutionUnitRunner extends ParentRunner<Step> {
     private final JUnitReporter jUnitReporter;
     private Description description;
     private final Map<Step, Description> stepDescriptions = new HashMap<Step, Description>();
+    private final List<Step> runnerSteps = new ArrayList<Step>();
 
     public ExecutionUnitRunner(Runtime runtime, CucumberScenario cucumberScenario, JUnitReporter jUnitReporter) throws InitializationError {
         super(ExecutionUnitRunner.class);
         this.runtime = runtime;
         this.cucumberScenario = cucumberScenario;
         this.jUnitReporter = jUnitReporter;
+    }
+
+    public List<Step> getRunnerSteps() {
+    	return runnerSteps;
     }
 
     @Override
@@ -56,11 +62,13 @@ public class ExecutionUnitRunner extends ParentRunner<Step> {
                             backgroundStep.getDocString()
                     );
                     description.addChild(describeChild(copy));
+                    runnerSteps.add(copy);
                 }
             }
 
             for (Step step : getChildren()) {
                 description.addChild(describeChild(step));
+                runnerSteps.add(step);
             }
         }
         return description;
