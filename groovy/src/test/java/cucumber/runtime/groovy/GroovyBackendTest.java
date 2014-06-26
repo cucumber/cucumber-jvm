@@ -1,23 +1,20 @@
 package cucumber.runtime.groovy;
 
-import cucumber.runtime.CucumberException;
 import cucumber.runtime.io.ResourceLoader;
-import groovy.lang.Closure;
+import org.codehaus.groovy.runtime.MethodClosure;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static org.mockito.Mockito.verify;
-
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNull;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GroovyBackendTest {
     @Mock
     ResourceLoader resourceLoader;
-    @Mock
-    Closure closure;
 
     GroovyBackend backend;
 
@@ -27,21 +24,35 @@ public class GroovyBackendTest {
     }
 
     @Test
-    public void builds_world_by_calling_closure() {
-        backend.registerWorld(closure);
+    public void should_build_world_by_calling_the_closure() {
+        backend.registerWorld(new MethodClosure(this, "worldClosureCall"));
         backend.buildWorld();
 
-        verify(closure).call();
+        GroovyWorld groovyWorld = backend.getGroovyWorld();
+        assertEquals(1, groovyWorld.worldsCount());
     }
 
     @Test
-    public void builds_default_wold_if_wold_closer_does_not_set() {
+    public void should_build_world_object_even_if_closure_world_was_not_added() {
+        assertNull(backend.getGroovyWorld());
+
         backend.buildWorld();
+
+        assertEquals(0, backend.getGroovyWorld().worldsCount());
     }
 
-    @Test(expected = CucumberException.class)
-    public void raises_exception_for_two_wolds() {
-        backend.registerWorld(closure);
-        backend.registerWorld(closure);
+    @Test
+    public void should_clean_up_worlds_after_dispose() {
+        backend.registerWorld(new MethodClosure(this, "worldClosureCall"));
+        backend.buildWorld();
+
+        backend.disposeWorld();
+
+        assertNull(backend.getGroovyWorld());
+    }
+
+    @SuppressWarnings("UnusedDeclaration")
+    private AnotherCustomWorld worldClosureCall() {
+        return new AnotherCustomWorld();
     }
 }

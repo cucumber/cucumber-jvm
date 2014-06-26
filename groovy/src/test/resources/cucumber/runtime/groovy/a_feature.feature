@@ -25,3 +25,18 @@ Feature: Cucumber Runner Rocks
 
   Scenario: A date
     Given today's date is "10-03-1971"
+
+
+  Scenario: Call a method or property from second world
+    When set world property "Hello"
+    Then world property is "Hello"
+    When world method call
+    And world method call:
+      | 1 |
+      | 2 |
+      | 3 |
+    Then world method call is:
+      | 1 |
+      | 2 |
+      | 3 |
+    And properties visibility is ok
