@@ -1,4 +1,4 @@
-## [1.1.8-SNAPSHOT (Git master)](https://github.com/cucumber/cucumber-jvm/compare/v1.1.7...master)
+## [1.1.8](https://github.com/cucumber/cucumber-jvm/compare/v1.1.7...v1.1.8) (2014-06-26)
 
 * [JUnit] Let JUnitReporter fire event(s) on the step notifier for every step ([#656](https://github.com/cucumber/cucumber-jvm/pull/656) Björn Rasmusson)
 * [JUnit] Correct JUnit notification for background steps. ([#660](https://github.com/cucumber/cucumber-jvm/pull/660), [#659](https://github.com/cucumber/cucumber-jvm/issues/659) Björn Rasmusson)
