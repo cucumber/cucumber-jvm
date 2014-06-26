@@ -51,4 +51,9 @@ public interface Scenario {
      * @return the name of the Scenario
      */
     String getName();
+
+    /**
+     * @return the id of the Scenario.
+     */
+    String getId();
 }

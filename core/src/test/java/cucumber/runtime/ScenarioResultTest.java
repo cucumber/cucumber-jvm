@@ -2,6 +2,7 @@ package cucumber.runtime;
 
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Result;
+import gherkin.formatter.model.Scenario;
 import gherkin.formatter.model.Tag;
 import org.junit.Test;
 
@@ -14,7 +15,7 @@ import static org.mockito.Mockito.verify;
 public class ScenarioResultTest {
 
     private Reporter reporter = mock(Reporter.class);
-    private ScenarioImpl s = new ScenarioImpl(reporter, Collections.<Tag>emptySet(), "test scenario");
+    private ScenarioImpl s = new ScenarioImpl(reporter, Collections.<Tag>emptySet(), mock(Scenario.class));
 
     @Test
     public void no_steps_is_passed() throws Exception {
