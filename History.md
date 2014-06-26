@@ -1,5 +1,6 @@
 ## [1.1.8-SNAPSHOT (Git master)](https://github.com/cucumber/cucumber-jvm/compare/v1.1.7...master)
 
+* [JUnit] JUnitFormatter: use ascending numbering of outline scenarios ([#706](https://github.com/cucumber/cucumber-jvm/pull/706) Björn Rasmusson)
 * [TestNG] Let the TestNG runner handle strict mode correctly ([#719](https://github.com/cucumber/cucumber-jvm/pull/719) Björn Rasmusson)
 * [Core] Disregard order of JSON properties in PrettyPrint unit tests ([#740](https://github.com/cucumber/cucumber-jvm/pull/740) mchenryc)
 * [Core] Support reading feature paths from the rerun formatter file ([#726](https://github.com/cucumber/cucumber-jvm/pull/726) Björn Rasmusson)
