@@ -1,10 +1,10 @@
 package cucumber.runtime.groovy;
 
 import cucumber.runtime.Backend;
+import cucumber.runtime.ClassFinder;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Glue;
 import cucumber.runtime.UnreportedStepExecutor;
-import cucumber.runtime.ClassFinder;
 import cucumber.runtime.io.Resource;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
@@ -22,7 +22,9 @@ import org.codehaus.groovy.runtime.InvokerInvocationException;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -37,8 +39,8 @@ public class GroovyBackend implements Backend {
     private final GroovyShell shell;
     private final ClassFinder classFinder;
 
-    private Closure worldClosure;
-    private Object world;
+    private Collection<Closure> worldClosures = new LinkedList<Closure>();
+    private GroovyWorld world;
     private Glue glue;
 
     public static GroovyBackend getInstance(){
@@ -102,7 +104,10 @@ public class GroovyBackend implements Backend {
 
     @Override
     public void buildWorld() {
-        world = worldClosure == null ? new Object() : worldClosure.call();
+        world = new GroovyWorld();
+        for (Closure closure : worldClosures) {
+            world.registerWorld(closure.call());
+        }
     }
 
     private Script parse(Resource resource) {
@@ -132,8 +137,7 @@ public class GroovyBackend implements Backend {
     }
 
     public void registerWorld(Closure closure) {
-        if (worldClosure != null) throw new CucumberException("World is already set");
-        worldClosure = closure;
+        worldClosures.add(closure);
     }
 
     public void addBeforeHook(TagExpression tagExpression, long timeoutMillis, Closure body) {
@@ -145,12 +149,17 @@ public class GroovyBackend implements Backend {
     }
 
     public void invoke(Closure body, Object[] args) throws Throwable {
+        body.setResolveStrategy(Closure.DELEGATE_FIRST);
         body.setDelegate(world);
         try {
             body.call(args);
         } catch (InvokerInvocationException e) {
             throw e.getCause();
         }
+    }
+
+    GroovyWorld getGroovyWorld() {
+        return world;
     }
 
     private static StackTraceElement currentLocation() {
