@@ -7,13 +7,16 @@ import cucumber.runtime.model.CucumberScenario;
 import cucumber.runtime.model.CucumberScenarioOutline;
 import cucumber.runtime.model.CucumberTagStatement;
 import gherkin.formatter.model.Feature;
+import gherkin.formatter.model.Tag;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class FeatureRunner extends ParentRunner<ParentRunner> {
     private final List<ParentRunner> children = new ArrayList<ParentRunner>();
@@ -67,7 +70,10 @@ public class FeatureRunner extends ParentRunner<ParentRunner> {
     public void run(RunNotifier notifier) {
         jUnitReporter.uri(cucumberFeature.getPath());
         jUnitReporter.feature(cucumberFeature.getGherkinFeature());
+        Set<Tag> tags = new HashSet<Tag>(cucumberFeature.getGherkinFeature().getTags());
+        runtime.runBeforeFeatureHooks(jUnitReporter, tags);
         super.run(notifier);
+        runtime.runAfterFeatureHooks(jUnitReporter, tags);
         jUnitReporter.eof();
     }
 
