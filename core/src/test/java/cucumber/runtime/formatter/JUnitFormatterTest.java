@@ -289,6 +289,181 @@ public class JUnitFormatterTest {
     }
 
     @Test
+    public void should_format_scenario_outlines() throws Throwable {
+        CucumberFeature feature = TestHelper.feature("path/test.feature",
+                "Feature: feature name\n" +
+                        "  Scenario Outline: outline_name\n" +
+                        "    Given first step \"<arg>\"\n" +
+                        "    When second step\n" +
+                        "    Then third step\n\n" +
+                        "  Examples: examples\n" +
+                        "    | arg |\n" +
+                        "    |  a  |\n" +
+                        "    |  b  |\n");
+        Map<String, String> stepsToResult = new HashMap<String, String>();
+        stepsToResult.put("first step", "passed");
+        stepsToResult.put("second step", "passed");
+        stepsToResult.put("third step", "passed");
+        long stepDuration = milliSeconds(1);
+
+        String formatterOutput = runFeatureWithJUnitFormatter(feature, stepsToResult, stepDuration);
+
+        String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
+                "<testsuite failures=\"0\" name=\"cucumber.runtime.formatter.JUnitFormatter\" skipped=\"0\" tests=\"2\" time=\"0.006\">\n" +
+                "    <testcase classname=\"feature name\" name=\"outline_name\" time=\"0.003\">\n" +
+                "        <system-out><![CDATA[" +
+                "Given first step \"a\"........................................................passed\n" +
+                "When second step............................................................passed\n" +
+                "Then third step.............................................................passed\n" +
+                "]]></system-out>\n" +
+                "    </testcase>\n" +
+                "    <testcase classname=\"feature name\" name=\"outline_name_2\" time=\"0.003\">\n" +
+                "        <system-out><![CDATA[" +
+                "Given first step \"b\"........................................................passed\n" +
+                "When second step............................................................passed\n" +
+                "Then third step.............................................................passed\n" +
+                "]]></system-out>\n" +
+                "    </testcase>\n" +
+                "</testsuite>\n";
+        assertXmlEqual(expected, formatterOutput);
+    }
+
+    @Test
+    public void should_format_scenario_outlines_with_multiple_examples() throws Throwable {
+        CucumberFeature feature = TestHelper.feature("path/test.feature",
+                "Feature: feature name\n" +
+                        "  Scenario Outline: outline name\n" +
+                        "    Given first step \"<arg>\"\n" +
+                        "    When second step\n" +
+                        "    Then third step\n\n" +
+                        "  Examples: examples 1\n" +
+                        "    | arg |\n" +
+                        "    |  a  |\n" +
+                        "    |  b  |\n\n" +
+                        "  Examples: examples 2\n" +
+                        "    | arg |\n" +
+                        "    |  c  |\n" +
+                        "    |  d  |\n");
+        Map<String, String> stepsToResult = new HashMap<String, String>();
+        stepsToResult.put("first step", "passed");
+        stepsToResult.put("second step", "passed");
+        stepsToResult.put("third step", "passed");
+        long stepDuration = milliSeconds(1);
+
+        String formatterOutput = runFeatureWithJUnitFormatter(feature, stepsToResult, stepDuration);
+
+        String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
+                "<testsuite failures=\"0\" name=\"cucumber.runtime.formatter.JUnitFormatter\" skipped=\"0\" tests=\"4\" time=\"0.012\">\n" +
+                "    <testcase classname=\"feature name\" name=\"outline name\" time=\"0.003\">\n" +
+                "        <system-out><![CDATA[" +
+                "Given first step \"a\"........................................................passed\n" +
+                "When second step............................................................passed\n" +
+                "Then third step.............................................................passed\n" +
+                "]]></system-out>\n" +
+                "    </testcase>\n" +
+                "    <testcase classname=\"feature name\" name=\"outline name 2\" time=\"0.003\">\n" +
+                "        <system-out><![CDATA[" +
+                "Given first step \"b\"........................................................passed\n" +
+                "When second step............................................................passed\n" +
+                "Then third step.............................................................passed\n" +
+                "]]></system-out>\n" +
+                "    </testcase>\n" +
+                "    <testcase classname=\"feature name\" name=\"outline name 3\" time=\"0.003\">\n" +
+                "        <system-out><![CDATA[" +
+                "Given first step \"c\"........................................................passed\n" +
+                "When second step............................................................passed\n" +
+                "Then third step.............................................................passed\n" +
+                "]]></system-out>\n" +
+                "    </testcase>\n" +
+                "    <testcase classname=\"feature name\" name=\"outline name 4\" time=\"0.003\">\n" +
+                "        <system-out><![CDATA[" +
+                "Given first step \"d\"........................................................passed\n" +
+                "When second step............................................................passed\n" +
+                "Then third step.............................................................passed\n" +
+                "]]></system-out>\n" +
+                "    </testcase>\n" +
+                "</testsuite>\n";
+        assertXmlEqual(expected, formatterOutput);
+    }
+
+    @Test
+    public void should_format_scenario_outlines_with_arguments_in_name() throws Throwable {
+        CucumberFeature feature = TestHelper.feature("path/test.feature",
+                "Feature: feature name\n" +
+                        "  Scenario Outline: outline name <arg>\n" +
+                        "    Given first step \"<arg>\"\n" +
+                        "    When second step\n" +
+                        "    Then third step\n\n" +
+                        "  Examples: examples 1\n" +
+                        "    | arg |\n" +
+                        "    |  a  |\n" +
+                        "    |  b  |\n");
+        Map<String, String> stepsToResult = new HashMap<String, String>();
+        stepsToResult.put("first step", "passed");
+        stepsToResult.put("second step", "passed");
+        stepsToResult.put("third step", "passed");
+        long stepDuration = milliSeconds(1);
+
+        String formatterOutput = runFeatureWithJUnitFormatter(feature, stepsToResult, stepDuration);
+
+        String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
+                "<testsuite failures=\"0\" name=\"cucumber.runtime.formatter.JUnitFormatter\" skipped=\"0\" tests=\"2\" time=\"0.006\">\n" +
+                "    <testcase classname=\"feature name\" name=\"outline name a\" time=\"0.003\">\n" +
+                "        <system-out><![CDATA[" +
+                "Given first step \"a\"........................................................passed\n" +
+                "When second step............................................................passed\n" +
+                "Then third step.............................................................passed\n" +
+                "]]></system-out>\n" +
+                "    </testcase>\n" +
+                "    <testcase classname=\"feature name\" name=\"outline name b\" time=\"0.003\">\n" +
+                "        <system-out><![CDATA[" +
+                "Given first step \"b\"........................................................passed\n" +
+                "When second step............................................................passed\n" +
+                "Then third step.............................................................passed\n" +
+                "]]></system-out>\n" +
+                "    </testcase>\n" +
+                "</testsuite>\n";
+        assertXmlEqual(expected, formatterOutput);
+    }
+
+    @Test
+    public void should_format_scenario_outlines_with_the_junit_runner() throws Exception {
+        final File report = File.createTempFile("cucumber-jvm-junit", ".xml");
+        final JUnitFormatter junitFormatter = createJUnitFormatter(report);
+
+        // The JUnit runner will not call scenarioOutline() and examples() before executing the examples scenarios
+        junitFormatter.uri(uri());
+        junitFormatter.feature(feature("feature name"));
+        junitFormatter.scenario(scenario("Scenario Outline", "outline name"));
+        junitFormatter.step(step("keyword ", "step name \"arg1\""));
+        junitFormatter.match(match());
+        junitFormatter.result(result("passed"));
+        junitFormatter.scenario(scenario("Scenario Outline", "outline name"));
+        junitFormatter.step(step("keyword ", "step name \"arg2\""));
+        junitFormatter.match(match());
+        junitFormatter.result(result("passed"));
+        junitFormatter.eof();
+        junitFormatter.done();
+        junitFormatter.close();
+
+        String actual = new Scanner(new FileInputStream(report), "UTF-8").useDelimiter("\\A").next();
+        String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
+                "<testsuite failures=\"0\" tests=\"2\" name=\"cucumber.runtime.formatter.JUnitFormatter\" skipped=\"0\" time=\"0\">\n" +
+                "    <testcase classname=\"feature name\" name=\"outline name\" time=\"0\">\n" +
+                "        <system-out><![CDATA[" +
+                "keyword step name \"arg1\"....................................................passed\n" +
+                "]]></system-out>\n" +
+                "    </testcase>\n" +
+                "    <testcase classname=\"feature name\" name=\"outline name 2\" time=\"0\">\n" +
+                "        <system-out><![CDATA[" +
+                "keyword step name \"arg2\"....................................................passed\n" +
+                "]]></system-out>\n" +
+                "    </testcase>\n" +
+                "</testsuite>\n";
+        assertXmlEqual(expected, actual);
+    }
+
+    @Test
     public void should_handle_all_step_calls_first_execution() throws Exception {
         final File report = File.createTempFile("cucumber-jvm-junit", ".xml");
         final JUnitFormatter junitFormatter = createJUnitFormatter(report);
@@ -432,8 +607,13 @@ public class JUnitFormatterTest {
     }
 
     private Scenario scenario(String scenarioName) {
+        return scenario("Scenario", scenarioName);
+    }
+
+    private Scenario scenario(String keyword, String scenarioName) {
         Scenario scenario = mock(Scenario.class);
         when(scenario.getName()).thenReturn(scenarioName);
+        when(scenario.getKeyword()).thenReturn(keyword);
         return scenario;
     }
 

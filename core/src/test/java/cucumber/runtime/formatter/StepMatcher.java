@@ -13,6 +13,6 @@ public class StepMatcher extends ArgumentMatcher<Step> {
 
     @Override
     public boolean matches(Object argument) {
-        return argument instanceof Step && nameToMatch.endsWith(((Step)argument).getName());
+        return argument instanceof Step && (((Step)argument).getName().contains(nameToMatch));
     }
 }
