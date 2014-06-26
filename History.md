@@ -1,5 +1,7 @@
-## [1.1.8-SNAPSHOT (Git master)](https://github.com/cucumber/cucumber-jvm/compare/v1.1.7...master)
+## [1.1.8](https://github.com/cucumber/cucumber-jvm/compare/v1.1.7...v1.1.8) (2014-06-26)
 
+* [JUnit] Let JUnitReporter fire event(s) on the step notifier for every step ([#656](https://github.com/cucumber/cucumber-jvm/pull/656) Björn Rasmusson)
+* [JUnit] Correct JUnit notification for background steps. ([#660](https://github.com/cucumber/cucumber-jvm/pull/660), [#659](https://github.com/cucumber/cucumber-jvm/issues/659) Björn Rasmusson)
 * [Core] Expose Scenario id to step definitions ([#673](https://github.com/cucumber/cucumber-jvm/pull/673), [#715](https://github.com/cucumber/cucumber-jvm/issues/715) Björn Rasmusson)
 * [Core] The RuntimeOptionsFactory should add default feature path, glue path and formatter once. ([#636](https://github.com/cucumber/cucumber-jvm/pull/636), [#632](https://github.com/cucumber/cucumber-jvm/pull/632), [#633](https://github.com/cucumber/cucumber-jvm/pull/633) Björn Rasmusson)
 * [Clojure] Update clojure version to 1.6.0 ([#698](https://github.com/cucumber/cucumber-jvm/pull/698) Jeremy Anderson)

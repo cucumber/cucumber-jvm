@@ -143,6 +143,10 @@ Post release the API docs must be generated for each module and manually copied 
 
 After that's done, commit and push `cucumber.github.com`
 
+Now, update the dependency in example projects:
+
+* https://github.com/cucumber/cucumber-java-skeleton
+
 ## Code Coverage
 
 Code coverage is collected mainly to identify code that can be deleted or needs to be tested better.
