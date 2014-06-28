@@ -14,13 +14,16 @@ import org.webbitserver.netty.NettyWebServer;
 import org.webbitserver.rest.Rest;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.io.Writer;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
@@ -49,7 +52,7 @@ public class URLOutputStreamTest {
         Writer w = new UTF8OutputStreamWriter(new URLOutputStream(tmp.toURI().toURL()));
         w.write("Hellesøy");
         w.close();
-        assertEquals("Hellesøy", FixJava.readReader(new FileReader(tmp)));
+        assertEquals("Hellesøy", FixJava.readReader(openUTF8FileReader(tmp)));
     }
 
     @Test
@@ -58,7 +61,7 @@ public class URLOutputStreamTest {
         Writer w = new UTF8OutputStreamWriter(new URLOutputStream(tmp.toURI().toURL()));
         w.write("Hellesøy");
         w.close();
-        assertEquals("Hellesøy", FixJava.readReader(new FileReader(tmp)));
+        assertEquals("Hellesøy", FixJava.readReader(openUTF8FileReader(tmp)));
     }
 
     @Test
@@ -114,5 +117,9 @@ public class URLOutputStreamTest {
             assertEquals("PUT http://localhost:9873/.cucumber/stepdefs.json\n" +
                     "HTTP 500\nsomething went wrong", expected.getMessage());
         }
+    }
+
+    private Reader openUTF8FileReader(final File file) throws IOException {
+        return new InputStreamReader(new FileInputStream(file), Charset.forName("UTF-8"));
     }
 }
