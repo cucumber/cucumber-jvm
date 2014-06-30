@@ -1,6 +1,7 @@
 ## [1.1.9-SNAPSHOT (Git master)](https://github.com/cucumber/cucumber-jvm/compare/v1.1.8...master) (Not released)
 
 * [Groovy] Support more then one `World {}` definition ([#716](https://github.com/cucumber/cucumber-jvm/pull/716) Anton)
+* [Spring] Fix the glue class autowiring, transaction and cucumber-glue scope issues ([#711](https://github.com/cucumber/cucumber-jvm/pull/711) Björn Rasmusson)
 
 ## [1.1.8](https://github.com/cucumber/cucumber-jvm/compare/v1.1.7...v1.1.8) (2014-06-26)
 
