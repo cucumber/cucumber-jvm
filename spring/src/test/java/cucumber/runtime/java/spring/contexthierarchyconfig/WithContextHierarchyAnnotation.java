@@ -1,11 +1,14 @@
-package cucumber.runtime.java.spring;
+package cucumber.runtime.java.spring.contexthierarchyconfig;
 
+import cucumber.runtime.java.spring.beans.DummyComponent;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.ContextHierarchy;
 
-@ContextHierarchy(@ContextConfiguration("classpath:cucumber.xml"))
+@ContextHierarchy({
+    @ContextConfiguration("classpath:cucumber2.xml"),
+    @ContextConfiguration("classpath:cucumber.xml")
+    })
 public class WithContextHierarchyAnnotation {
 
     private boolean autowired;

@@ -1,10 +1,10 @@
-package cucumber.runtime.java.spring;
+package cucumber.runtime.java.spring.beans;
 
 import org.springframework.stereotype.Component;
 
 @Component
 public class Belly {
-    private int cukes;
+    private int cukes = 0;
 
     public void setCukes(int cukes) {
         this.cukes = cukes;
