@@ -1,4 +1,4 @@
-package cucumber.runtime.java.spring;
+package cucumber.runtime.java.spring.beans;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMapping;

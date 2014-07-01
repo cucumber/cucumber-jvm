@@ -1,34 +1,41 @@
 package cucumber.runtime.java.spring;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-
+import cucumber.runtime.CucumberException;
+import cucumber.runtime.java.ObjectFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.support.GenericXmlApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.ContextHierarchy;
 import org.springframework.test.context.TestContextManager;
 
-import cucumber.runtime.CucumberException;
-import cucumber.runtime.java.ObjectFactory;
+import java.lang.annotation.Annotation;
+import java.util.Collection;
+import java.util.HashSet;
 
 /**
  * Spring based implementation of ObjectFactory.
  * <p/>
  * <p>
  * <ul>
- * <li>It uses TestContextManager to create and prepare test instances. Configuration via: @ContextConfiguration
+ * <li>It uses TestContextManager to manage the spring context.
+ * Configuration via: @ContextConfiguration or @ContextHierarcy
+ * At least on step definition class needs to have a @ContextConfiguration or
+ * @ContextHierarchy annotation. If more that one step definition class has such
+ * an annotation, the annotations must be equal on the different step definition
+ * classes. If no step definition class with @ContextConfiguration or
+ * @ContextHierarcy is found, it will try to load cucumber.xml from the classpath.
  * </li>
- * <li>It also uses a context which contains the step definitions and is reloaded for each
- * scenario.</li>
+ * <li>The step definitions class with @ContextConfiguration or @ContextHierarchy
+ * annotation, may also have a @WebAppConfiguration or @DirtiesContext annotation.
+ * </li>
+ * <li>The step definitions added to the TestContextManagers context and
+ * is reloaded for each scenario.</li>
  * </ul>
  * </p>
  * <p/>
@@ -39,137 +46,168 @@ import cucumber.runtime.java.ObjectFactory;
  */
 public class SpringFactory implements ObjectFactory {
 
-    private static ConfigurableApplicationContext applicationContext;
-    private static ConfigurableListableBeanFactory beanFactory;
+    private ConfigurableListableBeanFactory beanFactory;
+    private CucumberTestContextManager testContextManager;
 
     private final Collection<Class<?>> stepClasses = new HashSet<Class<?>>();
-    private final Map<Class<?>, TestContextManager> contextManagersByClass = new HashMap<Class<?>, TestContextManager>();
+    private Class<?> stepClassWithSpringContext = null;
 
     public SpringFactory() {
-    }
-
-    static {
-        applicationContext = new GenericXmlApplicationContext("cucumber/runtime/java/spring/cucumber-glue.xml");
-        applicationContext.registerShutdownHook();
-        beanFactory = applicationContext.getBeanFactory();
     }
 
     @Override
     public void addClass(final Class<?> stepClass) {
         if (!stepClasses.contains(stepClass)) {
+            if (dependsOnSpringContext(stepClass)) {
+                if (stepClassWithSpringContext == null) {
+                    stepClassWithSpringContext = stepClass;
+                } else {
+                    checkAnnotationsEqual(stepClassWithSpringContext, stepClass);
+                }
+            }
             stepClasses.add(stepClass);
 
-            BeanDefinitionRegistry registry = (BeanDefinitionRegistry) applicationContext.getAutowireCapableBeanFactory();
-            BeanDefinition beanDefinition = BeanDefinitionBuilder
-                    .genericBeanDefinition(stepClass)
-                    .setScope(GlueCodeScope.NAME)
-                    .getBeanDefinition();
-            registry.registerBeanDefinition(stepClass.getName(), beanDefinition);
         }
+    }
+
+    private void checkAnnotationsEqual(Class<?> stepClassWithSpringContext, Class<?> stepClass) {
+        Annotation[] annotations1 = stepClassWithSpringContext.getAnnotations();
+        Annotation[] annotations2 = stepClass.getAnnotations();
+        if (annotations1.length != annotations2.length) {
+            throw new CucumberException("Annotations differs on glue classes found: " +
+                    stepClassWithSpringContext.getName() + ", " +
+                    stepClass.getName());
+        }
+        for (Annotation annotation : annotations1) {
+            if (!isAnnotationInArray(annotation, annotations2)) {
+                throw new CucumberException("Annotations differs on glue classes found: " +
+                        stepClassWithSpringContext.getName() + ", " +
+                        stepClass.getName());
+            }
+        }
+    }
+
+    private boolean isAnnotationInArray(Annotation annotation, Annotation[] annotations) {
+        for (Annotation annotationFromArray: annotations) {
+            if (annotation.equals(annotationFromArray)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
     public void start() {
+        if (stepClassWithSpringContext != null) {
+            testContextManager = new CucumberTestContextManager(stepClassWithSpringContext);
+        } else {
+            if (beanFactory == null) {
+                beanFactory = createFallbackContext();
+            }
+        }
+        notifyContextManagerAboutTestClassStarted();
+        if (beanFactory == null || isNewContextCreated()) {
+            beanFactory = testContextManager.getBeanFactory();
+            for (Class<?> stepClass : stepClasses) {
+                registerStepClassBeanDefinition(beanFactory, stepClass);
+            }
+        }
         GlueCodeContext.INSTANCE.start();
+    }
+
+    @SuppressWarnings("resource")
+    private ConfigurableListableBeanFactory createFallbackContext() {
+        ConfigurableApplicationContext applicationContext;
+        if (getClass().getClassLoader().getResource("cucumber.xml") != null) {
+            applicationContext = new ClassPathXmlApplicationContext("cucumber.xml");
+        } else {
+            applicationContext = new GenericApplicationContext();
+        }
+        applicationContext.registerShutdownHook();
+        ConfigurableListableBeanFactory beanFactory = applicationContext.getBeanFactory();
+        beanFactory.registerScope(GlueCodeScope.NAME, new GlueCodeScope());
+        for (Class<?> stepClass : stepClasses) {
+            registerStepClassBeanDefinition(beanFactory, stepClass);
+        }
+        return beanFactory;
+    }
+
+    private void notifyContextManagerAboutTestClassStarted() {
+        if (testContextManager != null) {
+            try {
+                testContextManager.beforeTestClass();
+            } catch (Exception e) {
+                throw new CucumberException(e.getMessage(), e);
+            }
+        }
+    }
+
+    private boolean isNewContextCreated() {
+        if (testContextManager == null) {
+            return false;
+        }
+        return !beanFactory.equals(testContextManager.getBeanFactory());
+    }
+
+    private void registerStepClassBeanDefinition(ConfigurableListableBeanFactory beanFactory, Class<?> stepClass) {
+        BeanDefinitionRegistry registry = (BeanDefinitionRegistry) beanFactory;
+        BeanDefinition beanDefinition = BeanDefinitionBuilder
+                .genericBeanDefinition(stepClass)
+                .setScope(GlueCodeScope.NAME)
+                .getBeanDefinition();
+        registry.registerBeanDefinition(stepClass.getName(), beanDefinition);
     }
 
     @Override
     public void stop() {
-        notifyContextManagersAboutTestClassFinished();
-
+        notifyContextManagerAboutTestClassFinished();
         GlueCodeContext.INSTANCE.stop();
-        beanFactory.destroySingletons();
     }
 
-    private void notifyContextManagersAboutTestClassFinished() {
-        Map<Class<?>, Exception> exceptionsThrown = new HashMap<Class<?>, Exception>();
-
-        for (Map.Entry<Class<?>, TestContextManager> classTestContextManagerEntry : contextManagersByClass
-                .entrySet()) {
+    private void notifyContextManagerAboutTestClassFinished() {
+        if (testContextManager != null) {
             try {
-                classTestContextManagerEntry.getValue().afterTestClass();
+                testContextManager.afterTestClass();
             } catch (Exception e) {
-                exceptionsThrown.put(classTestContextManagerEntry.getKey(), e);
+                throw new CucumberException(e.getMessage(), e);
             }
         }
-
-        contextManagersByClass.clear();
-
-        rethrowExceptionsIfAny(exceptionsThrown);
-    }
-
-    private void rethrowExceptionsIfAny(Map<Class<?>, Exception> exceptionsThrown) {
-        if (exceptionsThrown.isEmpty()) {
-            return;
-        }
-
-        if (exceptionsThrown.size() == 1) {
-            //ony one exception, throw an exception with the correct cause
-            Exception e = exceptionsThrown.values().iterator().next();
-            throw new CucumberException(e.getMessage(), e);
-        }
-
-        //multiple exceptions but we can only have one cause, put relevant info in the exception message
-        //to not lose the interesting data
-        throw new CucumberException(getMultipleExceptionMessage(exceptionsThrown));
-    }
-
-    private String getMultipleExceptionMessage(Map<Class<?>, Exception> exceptionsThrow) {
-        StringBuilder exceptionsThrown = new StringBuilder(1000);
-        exceptionsThrown.append("Multiple exceptions occurred during processing of the TestExecutionListeners\n\n");
-
-        for (Map.Entry<Class<?>, Exception> classExceptionEntry : exceptionsThrow.entrySet()) {
-            exceptionsThrown.append("Exception during processing of TestExecutionListeners of ");
-            exceptionsThrown.append(classExceptionEntry.getKey());
-            exceptionsThrown.append('\n');
-            exceptionsThrown.append(classExceptionEntry.getValue().toString());
-            exceptionsThrown.append('\n');
-
-            StringWriter stackTraceStringWriter = new StringWriter();
-            PrintWriter stackTracePrintWriter = new PrintWriter(stackTraceStringWriter);
-            classExceptionEntry.getValue().printStackTrace(stackTracePrintWriter);
-            exceptionsThrown.append(stackTraceStringWriter.toString());
-            exceptionsThrown.append('\n');
-
-        }
-
-        return exceptionsThrown.toString();
     }
 
     @Override
     public <T> T getInstance(final Class<T> type) {
-        if (!beanFactory.containsSingleton(type.getName())) {
-            beanFactory.registerSingleton(type.getName(), getTestInstance(type));
-        }
-
-        return applicationContext.getBean(type);
-    }
-
-    private <T> T getTestInstance(final Class<T> type) {
         try {
-            T instance = createTest(type);
-
-            if (dependsOnSpringContext(type)) {
-                TestContextManager contextManager = new TestContextManager(type);
-                contextManager.prepareTestInstance(instance);
-                contextManager.beforeTestClass();
-
-                contextManagersByClass.put(type, contextManager);
-            }
-
-            return instance;
-        } catch (Exception e) {
+            return beanFactory.getBean(type);
+        } catch (BeansException e) {
             throw new CucumberException(e.getMessage(), e);
         }
-    }
-
-    @SuppressWarnings("unchecked")
-    protected <T> T createTest(Class<T> type) throws Exception {
-        return (T) type.getConstructors()[0].newInstance();
     }
 
     private boolean dependsOnSpringContext(Class<?> type) {
         return type.isAnnotationPresent(ContextConfiguration.class)
             || type.isAnnotationPresent(ContextHierarchy.class);
+    }
+}
+
+class CucumberTestContextManager extends TestContextManager {
+
+    public CucumberTestContextManager(Class<?> testClass) {
+        super(testClass);
+        registerGlueCodeScope(getContext());
+    }
+
+    public ConfigurableListableBeanFactory getBeanFactory() {
+        return getContext().getBeanFactory();
+    }
+
+    private ConfigurableApplicationContext getContext() {
+        return (ConfigurableApplicationContext)getTestContext().getApplicationContext();
+    }
+
+    private void registerGlueCodeScope(ConfigurableApplicationContext context) {
+        do {
+            context.getBeanFactory().registerScope(GlueCodeScope.NAME, new GlueCodeScope());
+            context = (ConfigurableApplicationContext)context.getParent();
+        } while (context != null);
     }
 }
