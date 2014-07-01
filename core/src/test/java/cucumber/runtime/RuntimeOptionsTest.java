@@ -201,6 +201,14 @@ public class RuntimeOptionsTest {
     }
 
     @Test
+    public void strips_lines_from_features_from_cli_if_filters_are_specified_in_cucumber_options_property() {
+        Properties properties = new Properties();
+        properties.setProperty("cucumber.options", "--tags @Tag");
+        RuntimeOptions runtimeOptions = new RuntimeOptions(new Env(properties), asList("path/file.feature:3"));
+        assertEquals(asList("path/file.feature"), runtimeOptions.getFeaturePaths());
+    }
+
+    @Test
     public void preserves_features_from_cli_if_features_not_specified_in_cucumber_options_property() {
         Properties properties = new Properties();
         properties.setProperty("cucumber.options", "--format pretty");

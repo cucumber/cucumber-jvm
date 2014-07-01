@@ -133,6 +133,9 @@ public class RuntimeOptions {
         if (!parsedFilters.isEmpty() || haveLineFilters(parsedFeaturePaths)) {
             filters.clear();
             filters.addAll(parsedFilters);
+            if (parsedFeaturePaths.isEmpty() && !featurePaths.isEmpty()) {
+                stripLinesFromFeaturePaths(featurePaths);
+            }
         }
         if (!parsedFeaturePaths.isEmpty()) {
             featurePaths.clear();
@@ -151,6 +154,15 @@ public class RuntimeOptions {
             }
         }
         return false;
+    }
+
+    private void stripLinesFromFeaturePaths(List<String> featurePaths) {
+       List<String> newPaths = new ArrayList<String>();
+       for (String pathName : featurePaths) {
+           newPaths.add(PathWithLines.stripLineFilters(pathName));
+       }
+       featurePaths.clear();
+       featurePaths.addAll(newPaths);
     }
 
     private void printUsage() {

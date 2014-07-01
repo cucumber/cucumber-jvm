@@ -15,6 +15,15 @@ public class PathWithLines {
         return FILE_COLON_LINE_PATTERN.matcher(pathName).matches();
     }
 
+    public static String stripLineFilters(String pathName) {
+        Matcher matcher = FILE_COLON_LINE_PATTERN.matcher(pathName);
+        if (matcher.matches()) {
+            return matcher.group(1);
+        } else {
+            return pathName;
+        }
+    }
+
     public PathWithLines(String pathName) {
         Matcher matcher = FILE_COLON_LINE_PATTERN.matcher(pathName);
         if (matcher.matches()) {
