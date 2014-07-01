@@ -10,12 +10,14 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -138,6 +140,73 @@ public class CucumberFeatureTest {
         assertEquals("Scenario: scenario bar", features.get(0).getFeatureElements().get(0).getVisualName());
     }
 
+    @Test
+    public void gives_error_message_if_path_from_rerun_file_does_not_exist() throws Exception {
+        String featurePath = "path/bar.feature";
+        String rerunPath = "path/rerun.txt";
+        String rerunFile = featurePath + ":2";
+        ResourceLoader resourceLoader = mock(ResourceLoader.class);
+        mockFeaturePathToNotExist(resourceLoader, featurePath);
+        mockFeaturePathToNotExist(resourceLoader, "classpath:" + featurePath);
+        mockFileResource(resourceLoader, rerunPath, suffix(null), rerunFile);
+
+        try {
+            CucumberFeature.load(
+                    resourceLoader,
+                    asList("@" + rerunPath),
+                    new ArrayList<Object>(),
+                    new PrintStream(new ByteArrayOutputStream()));
+            fail("IllegalArgumentException was expected");
+        } catch (IllegalArgumentException exception) {
+            assertEquals("Neither found on file system or on classpath: " +
+                    "Not a file or directory: path/bar.feature, No resource found for: classpath:path/bar.feature",
+                    exception.getMessage());
+        }
+    }
+
+    @Test
+    public void gives_error_message_if_filters_conflicts_with_path_from_rerun_file_on_file_system() throws Exception {
+        String featurePath = "path/bar.feature";
+        String rerunPath = "path/rerun.txt";
+        String rerunFile = featurePath + ":2";
+        ResourceLoader resourceLoader = mockFeatureFileResource(featurePath, "");
+        mockFileResource(resourceLoader, rerunPath, suffix(null), rerunFile);
+
+        try {
+            CucumberFeature.load(
+                    resourceLoader,
+                    asList("@" + rerunPath),
+                    Arrays.<Object>asList("@Tag"),
+                    new PrintStream(new ByteArrayOutputStream()));
+            fail("IllegalArgumentException was expected");
+        } catch (IllegalArgumentException exception) {
+            assertEquals("Inconsistent filters: [@Tag, 2]. Only one type [line,name,tag] can be used at once.",
+                    exception.getMessage());
+        }
+    }
+
+    @Test
+    public void gives_error_message_if_filters_conflicts_with_path_from_rerun_file_on_classpath() throws Exception {
+        String featurePath = "path/bar.feature";
+        String rerunPath = "path/rerun.txt";
+        String rerunFile = featurePath + ":2";
+        ResourceLoader resourceLoader = mockFeatureFileResource("classpath:" + featurePath, "");
+        mockFeaturePathToNotExist(resourceLoader, featurePath);
+        mockFileResource(resourceLoader, rerunPath, suffix(null), rerunFile);
+
+        try {
+            CucumberFeature.load(
+                    resourceLoader,
+                    asList("@" + rerunPath),
+                    Arrays.<Object>asList("@Tag"),
+                    new PrintStream(new ByteArrayOutputStream()));
+            fail("IllegalArgumentException was expected");
+        } catch (IllegalArgumentException exception) {
+            assertEquals("Inconsistent filters: [@Tag, 2]. Only one type [line,name,tag] can be used at once.",
+                    exception.getMessage());
+        }
+    }
+
     private ResourceLoader mockFeatureFileResource(String featurePath, String feature)
             throws IOException, UnsupportedEncodingException {
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
@@ -159,7 +228,11 @@ public class CucumberFeatureTest {
     }
 
     private void mockFeaturePathToNotExist(ResourceLoader resourceLoader, String featurePath) {
-        when(resourceLoader.resources(featurePath, ".feature")).thenThrow(new IllegalArgumentException("Not a file or directory"));
+        if (featurePath.startsWith("classpath")) {
+            when(resourceLoader.resources(featurePath, ".feature")).thenReturn(new ArrayList<Resource>());
+        } else {
+            when(resourceLoader.resources(featurePath, ".feature")).thenThrow(new IllegalArgumentException("Not a file or directory: " + featurePath));
+        }
     }
 
     private String suffix(String suffix) {
