@@ -6,6 +6,7 @@ import cucumber.runtime.formatter.FormatterFactory;
 import cucumber.runtime.formatter.StrictAware;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
+import cucumber.runtime.model.PathWithLines;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
 import gherkin.util.FixJava;
@@ -129,7 +130,7 @@ public class RuntimeOptions {
                 parsedFeaturePaths.add(arg);
             }
         }
-        if (!parsedFilters.isEmpty()) {
+        if (!parsedFilters.isEmpty() || haveLineFilters(parsedFeaturePaths)) {
             filters.clear();
             filters.addAll(parsedFilters);
         }
@@ -141,6 +142,15 @@ public class RuntimeOptions {
             glue.clear();
             glue.addAll(parsedGlue);
         }
+    }
+
+    private boolean haveLineFilters(List<String> parsedFeaturePaths) {
+        for (String pathName : parsedFeaturePaths) {
+            if (pathName.startsWith("@") || PathWithLines.hasLineFilters(pathName)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void printUsage() {

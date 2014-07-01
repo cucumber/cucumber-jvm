@@ -11,6 +11,10 @@ public class PathWithLines {
     public final String path;
     public final List<Long> lines = new ArrayList<Long>();
 
+    public static boolean hasLineFilters(String pathName) {
+        return FILE_COLON_LINE_PATTERN.matcher(pathName).matches();
+    }
+
     public PathWithLines(String pathName) {
         Matcher matcher = FILE_COLON_LINE_PATTERN.matcher(pathName);
         if (matcher.matches()) {
