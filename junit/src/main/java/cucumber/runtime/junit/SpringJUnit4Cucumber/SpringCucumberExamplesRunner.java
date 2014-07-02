@@ -25,6 +25,7 @@ class SpringCucumberExamplesRunner extends Suite{
 	        List<CucumberScenario> exampleScenarios = cucumberExamples.createExampleScenarios();
 	        for (CucumberScenario scenario : exampleScenarios) {
 	            try {
+	            	//Sprin
 	                ExecutionUnitRunner exampleScenarioRunner = new ExecutionUnitRunner(runtime, scenario, jUnitReporter);
 	                getChildren().add(exampleScenarioRunner);
 	            } catch (InitializationError initializationError) {
