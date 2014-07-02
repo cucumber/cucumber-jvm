@@ -17,7 +17,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import cucumber.api.CucumberOptions;
 import cucumber.api.SnippetType;
 import cucumber.api.junit.Cucumber;
-import cucumber.api.junit.Cucumber.Options;
 import cucumber.runtime.ClassFinder;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeOptions;
@@ -26,7 +25,6 @@ import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
 import cucumber.runtime.junit.Assertions;
-import cucumber.runtime.junit.FeatureRunner;
 import cucumber.runtime.junit.JUnitReporter;
 import cucumber.runtime.model.CucumberFeature;
 
@@ -43,7 +41,7 @@ public class SpringJUnit4CucumberClassRunner extends ParentRunner<SpringCucumber
      * @throws java.io.IOException                         if there is a problem
      * @throws org.junit.runners.model.InitializationError if there is another problem
      */
-    public SpringJUnit4CucumberClassRunner(Class clazz) throws InitializationError, IOException {
+    public SpringJUnit4CucumberClassRunner(Class<SpringCucumberFeatureRunner<SpringJUnit4ClassRunner>> clazz) throws InitializationError, IOException {
         super(clazz);
         ClassLoader classLoader = clazz.getClassLoader();
         Assertions.assertNoCucumberAnnotatedMethods(clazz);
@@ -93,7 +91,7 @@ public class SpringJUnit4CucumberClassRunner extends ParentRunner<SpringCucumber
 
     private void addChildren(List<CucumberFeature> cucumberFeatures) throws InitializationError {
         for (CucumberFeature cucumberFeature : cucumberFeatures) {
-            children.add(new SpringCucumberFeatureRunner(cucumberFeature, runtime, jUnitReporter));
+            children.add(new SpringCucumberFeatureRunner<SpringJUnit4ClassRunner>(cucumberFeature, runtime, jUnitReporter));
         }
     }
 

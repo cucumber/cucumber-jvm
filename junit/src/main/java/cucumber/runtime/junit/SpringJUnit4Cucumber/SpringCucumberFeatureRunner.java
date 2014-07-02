@@ -1,13 +1,11 @@
 package com.txtr.automater.tests.helper.SpringJUnit4Cucumber;
 
-import gherkin.formatter.model.DescribedStatement;
 import gherkin.formatter.model.Feature;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.runner.Description;
-import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
