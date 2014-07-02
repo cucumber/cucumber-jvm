@@ -44,7 +44,7 @@ public class SpringJUnit4CucumberClassRunner extends ParentRunner<SpringCucumber
     public SpringJUnit4CucumberClassRunner(Class<SpringCucumberFeatureRunner<SpringJUnit4ClassRunner>> clazz) throws InitializationError, IOException {
         super(clazz);
         ClassLoader classLoader = clazz.getClassLoader();
-        Assertions.assertNoCucumberAnnotatedMethods(clazz);
+       // Assertions.assertNoCucumberAnnotatedMethods(clazz);
 
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(clazz, new Class[]{CucumberOptions.class, Options.class});
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
