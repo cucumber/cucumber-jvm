@@ -12,10 +12,12 @@ import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import cucumber.api.CucumberOptions;
 import cucumber.api.SnippetType;
 import cucumber.api.junit.Cucumber;
+import cucumber.api.junit.Cucumber.Options;
 import cucumber.runtime.ClassFinder;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeOptions;
@@ -24,16 +26,16 @@ import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
 import cucumber.runtime.junit.Assertions;
+import cucumber.runtime.junit.FeatureRunner;
 import cucumber.runtime.junit.JUnitReporter;
 import cucumber.runtime.model.CucumberFeature;
 
 
 
-public class SpringJUnit4CucumberClassRunner extends ParentRunner<SpringCucumberFeatureRunner>{
+public class SpringJUnit4CucumberClassRunner extends ParentRunner<SpringCucumberFeatureRunner<SpringJUnit4ClassRunner>>{
     private final JUnitReporter jUnitReporter;
-    private final List<SpringCucumberFeatureRunner> children = new ArrayList<SpringCucumberFeatureRunner>();
+    private final List<SpringCucumberFeatureRunner<SpringJUnit4ClassRunner>> children = new ArrayList<SpringCucumberFeatureRunner<SpringJUnit4ClassRunner>>();
     private final Runtime runtime;
-
     /**
      * Constructor called by JUnit.
      *
@@ -67,17 +69,17 @@ public class SpringJUnit4CucumberClassRunner extends ParentRunner<SpringCucumber
     }
 
     @Override
-    public List<SpringCucumberFeatureRunner> getChildren() {
+    public List<SpringCucumberFeatureRunner<SpringJUnit4ClassRunner>> getChildren() {
         return children;
     }
 
     @Override
-    protected Description describeChild(SpringCucumberFeatureRunner child) {
+    protected Description describeChild(SpringCucumberFeatureRunner<SpringJUnit4ClassRunner> child) {
         return child.getDescription();
     }
 
     @Override
-    protected void runChild(SpringCucumberFeatureRunner child, RunNotifier notifier) {
+    protected void runChild(SpringCucumberFeatureRunner<SpringJUnit4ClassRunner> child, RunNotifier notifier) {
         child.run(notifier);
     }
 

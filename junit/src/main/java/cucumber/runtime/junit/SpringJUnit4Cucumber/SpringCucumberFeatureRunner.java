@@ -1,11 +1,13 @@
 package com.txtr.automater.tests.helper.SpringJUnit4Cucumber;
 
+import gherkin.formatter.model.DescribedStatement;
 import gherkin.formatter.model.Feature;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.runner.Description;
+import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
@@ -19,10 +21,9 @@ import cucumber.runtime.model.CucumberScenario;
 import cucumber.runtime.model.CucumberScenarioOutline;
 import cucumber.runtime.model.CucumberTagStatement;
 
-public class SpringCucumberFeatureRunner extends ParentRunner<ParentRunner>{
-	 private final List<ParentRunner> children = new ArrayList<ParentRunner>();
-
-	    private final CucumberFeature cucumberFeature;
+public class SpringCucumberFeatureRunner<T> extends ParentRunner<T>{
+	 private final List<ParentRunner<T>> children = new ArrayList<ParentRunner<T>>();
+	  private final CucumberFeature cucumberFeature;
 	    private final Runtime runtime;
 	    private final JUnitReporter jUnitReporter;
 	    private Description description;
@@ -45,7 +46,7 @@ public class SpringCucumberFeatureRunner extends ParentRunner<ParentRunner>{
 	    public Description getDescription() {
 	        if (description == null) {
 	            description = Description.createSuiteDescription(getName(), cucumberFeature.getGherkinFeature());
-	            for (ParentRunner child : getChildren()) {
+	            for (T child : getChildren()) {
 	                description.addChild(describeChild(child));
 	            }
 	        }
@@ -53,18 +54,18 @@ public class SpringCucumberFeatureRunner extends ParentRunner<ParentRunner>{
 	    }
 
 	    @Override
-	    protected List<ParentRunner> getChildren() {
-	        return children;
+	    protected List<T> getChildren() {
+	        return (List<T>) children;
 	    }
 
 	    @Override
-	    protected Description describeChild(ParentRunner child) {
-	        return child.getDescription();
+	    protected Description describeChild(T child) {
+	        return ((ParentRunner<T>) child).getDescription();
 	    }
 
 	    @Override
-	    protected void runChild(ParentRunner child, RunNotifier notifier) {
-	        child.run(notifier);
+	    protected void runChild(T child, RunNotifier notifier) {
+	        ((ParentRunner<T>) child).run(notifier);
 	    }
 
 	    @Override
@@ -78,11 +79,11 @@ public class SpringCucumberFeatureRunner extends ParentRunner<ParentRunner>{
 	    private void buildFeatureElementRunners() {
 	        for (CucumberTagStatement cucumberTagStatement : cucumberFeature.getFeatureElements()) {
 	            try {
-	                ParentRunner featureElementRunner;
+	            	ParentRunner<T> featureElementRunner;
 	                if (cucumberTagStatement instanceof CucumberScenario) {
-	                    featureElementRunner = new ExecutionUnitRunner(runtime, (CucumberScenario) cucumberTagStatement, jUnitReporter);
+	                    featureElementRunner = (ParentRunner<T>) new ExecutionUnitRunner(runtime, (CucumberScenario) cucumberTagStatement, jUnitReporter);
 	                } else {
-	                    featureElementRunner = new SpringCucumberScenarioOutlineRunner(runtime, (CucumberScenarioOutline) cucumberTagStatement, jUnitReporter);
+	                    featureElementRunner = (ParentRunner<T>) new SpringCucumberScenarioOutlineRunner(runtime, (CucumberScenarioOutline) cucumberTagStatement, jUnitReporter);
 	                }
 	                children.add(featureElementRunner);
 	            } catch (InitializationError e) {
@@ -90,7 +91,4 @@ public class SpringCucumberFeatureRunner extends ParentRunner<ParentRunner>{
 	            }
 	        }
 	    }
-
-}
-	
-	
+	}
