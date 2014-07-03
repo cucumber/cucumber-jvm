@@ -1,0 +1,11 @@
+#!/usr/bin/env expect
+
+set timeout 120 
+spawn android update sdk --filter build-tools-19.0.1,platform-tools,extra-android-support,android-8 --no-ui --force --all
+while {1} {
+  expect {
+    eof               {break}
+    "Do you accept"   {send "y\r"}
+  }
+}
+wait
