@@ -1,8 +1,9 @@
 ## [1.1.9-SNAPSHOT (Git master)](https://github.com/cucumber/cucumber-jvm/compare/v1.1.8...master) (Not released)
 
+* [Core] Correct lookup environment variable - system property - resource bundle ([#754](https://github.com/cucumber/cucumber-jvm/pull/754) Björn Rasmusson)
 * [Android,Spring,Needle,Examples] Remove commons-logging & log4j and redirect all logging to slf4j & logback ([#742](https://github.com/cucumber/cucumber-jvm/pull/742) Nayan Hajratwala)
+* [Spring] Fix the glue class autowiring, transaction and cucumber-glue scope issues ([#711](https://github.com/cucumber/cucumber-jvm/pull/711), [#600](https://github.com/cucumber/cucumber-jvm/issues/600), [#637](https://github.com/cucumber/cucumber-jvm/issues/637) Björn Rasmusson)
 * [Groovy] Support more then one `World {}` definition ([#716](https://github.com/cucumber/cucumber-jvm/pull/716) Anton)
-* [Spring] Fix the glue class autowiring, transaction and cucumber-glue scope issues ([#711](https://github.com/cucumber/cucumber-jvm/pull/711) Björn Rasmusson)
 
 ## [1.1.8](https://github.com/cucumber/cucumber-jvm/compare/v1.1.7...v1.1.8) (2014-06-26)
 
