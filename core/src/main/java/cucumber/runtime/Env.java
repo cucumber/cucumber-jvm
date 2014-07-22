@@ -34,25 +34,42 @@ public class Env {
     }
 
     public String get(String key) {
-        String result = get0(asEnvKey(key));
+        String result = getFromEnvironment(key);
         if (result == null) {
-            result = get0(asPropertyKey(key));
+            result = getFromProperty(key);
+            if (result == null && bundleName != null) {
+                result = getFromBundle(key);
+            }
         }
         return result;
     }
 
-    private String get0(String key) {
-        String value = System.getenv(key);
+    private String getFromEnvironment(String key) {
+        String value = System.getenv(asEnvKey(key));
         if (value == null) {
-            value = properties.getProperty(key);
-            if (value == null && bundleName != null) {
-                try {
-                    value = ResourceBundle.getBundle(bundleName).getString(key);
-                } catch (MissingResourceException ignore) {
-                }
-            }
+            value = System.getenv(asPropertyKey(key));
         }
         return value;
+    }
+
+    private String getFromProperty(String key) {
+        String value = properties.getProperty(asEnvKey(key));
+        if (value == null) {
+            value = properties.getProperty(asPropertyKey(key));
+        }
+        return value;
+    }
+
+    private String getFromBundle(String key) {
+        try {
+            String value = ResourceBundle.getBundle(bundleName).getString(asEnvKey(key));
+            if (value == null) {
+                value = ResourceBundle.getBundle(bundleName).getString(asPropertyKey(key));
+            }
+            return value;
+        } catch (MissingResourceException ignore) {
+        }
+        return null;
     }
 
     public String get(String key, String defaultValue) {
