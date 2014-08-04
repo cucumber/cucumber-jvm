@@ -81,12 +81,12 @@ public class MethodFormat {
     }
 
     private String getCodeSource(Method method) {
-        ProtectionDomain protectionDomain = method.getDeclaringClass().getProtectionDomain();
-        if(protectionDomain != null) {
-            return protectionDomain.getCodeSource().getLocation().toExternalForm();
-        } else {
-            // getProtectionDomain() returns null on some platforms (for example on Android)
-            return method.getDeclaringClass().getName();
+        try {
+          ProtectionDomain protectionDomain = method.getDeclaringClass().getProtectionDomain();
+          return protectionDomain.getCodeSource().getLocation().toExternalForm();
+        } catch (Exception e) {
+           // getProtectionDomain() returns null on some platforms (for example on Android)
+           return method.getDeclaringClass().getName();
         }
     }
 }
