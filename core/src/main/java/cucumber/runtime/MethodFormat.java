@@ -1,6 +1,7 @@
 package cucumber.runtime;
 
 import java.lang.reflect.Method;
+import java.net.URL;
 import java.security.ProtectionDomain;
 import java.text.MessageFormat;
 import java.util.regex.Matcher;
@@ -82,8 +83,9 @@ public class MethodFormat {
 
     private String getCodeSource(Method method) {
         ProtectionDomain protectionDomain = method.getDeclaringClass().getProtectionDomain();
-        if(protectionDomain != null) {
-            return protectionDomain.getCodeSource().getLocation().toExternalForm();
+        URL locationURL;
+        if(protectionDomain != null && (locationURL = protectionDomain.getCodeSource().getLocation()) != null ) {
+            return locationURL.toExternalForm();
         } else {
             // getProtectionDomain() returns null on some platforms (for example on Android)
             return method.getDeclaringClass().getName();
