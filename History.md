@@ -1,5 +1,6 @@
 ## [1.1.9-SNAPSHOT (Git master)](https://github.com/cucumber/cucumber-jvm/compare/v1.1.8...master) (Not released)
 
+* [Android] Fix the Android build on Travis ([#750](https://github.com/cucumber/cucumber-jvm/pull/750) Björn Rasmusson)
 * [Core] Handle NullPointerExceptions in MethodFormat.getCodeSource ([#757](https://github.com/cucumber/cucumber-jvm/pull/757), [#751](https://github.com/cucumber/cucumber-jvm/pull/751) bySabi)
 * [Core] Correct lookup environment variable - system property - resource bundle ([#754](https://github.com/cucumber/cucumber-jvm/pull/754) Björn Rasmusson)
 * [Android,Spring,Needle,Examples] Remove commons-logging & log4j and redirect all logging to slf4j & logback ([#742](https://github.com/cucumber/cucumber-jvm/pull/742) Nayan Hajratwala)
