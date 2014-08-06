@@ -7,6 +7,16 @@
   {
     "steps": [
       {
+        "name": "I am greeted",
+        "args": []
+      }
+    ],
+    "source": "^I am greeted$",
+    "flags": ""
+  },
+  {
+    "steps": [
+      {
         "name": "I have 12 cukes in my belly",
         "args": [
           {
@@ -129,6 +139,16 @@
   {
     "steps": [],
     "source": "^the date should be viewed in (.+) as (\\d+), (\\d+), (\\d+), (\\d+), (\\d+), (\\d+)$",
+    "flags": ""
+  },
+  {
+    "steps": [
+      {
+        "name": "the greeter configured in my custom PicoConfigurer is used",
+        "args": []
+      }
+    ],
+    "source": "^the greeter configured in my custom PicoConfigurer is used$",
     "flags": ""
   },
   {
