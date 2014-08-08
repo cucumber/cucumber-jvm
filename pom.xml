@@ -37,7 +37,6 @@
         <guice.version>3.0</guice.version>
         <!-- Remember to bounce version in examples/clojure_cukes/project.clj as well -->
         <clojure.version>1.6.0</clojure.version>
-        <gosu.version>0.10.3</gosu.version>
         <rhino.version>1.7R4</rhino.version>
         <ioke.version>P-0.4.0-p11</ioke.version>
         <jsoup.version>1.7.3</jsoup.version>
@@ -487,12 +486,6 @@
             <id>codehaus</id>
             <url>http://repository.codehaus.org</url>
         </repository>
-
-        <repository>
-            <id>gosu-lang.org-releases</id>
-            <name>Official Gosu website (releases)</name>
-            <url>http://gosu-lang.org/repositories/m2/releases</url>
-        </repository>
     </repositories>
 
     <!--
@@ -518,14 +511,12 @@
         <module>guice</module>
         <module>weld</module>
         <module>groovy</module>
-        <module>ioke</module>
         <module>rhino</module>
         <module>java</module>
         <module>openejb</module>
         <module>scala</module>
         <module>scala/scala_previous</module>
         <module>needle</module>
-        <module>gosu</module>
     </modules>
 
     <profiles>
