@@ -554,7 +554,7 @@ public class JUnitFormatterTest {
         if (strict) {
             args.add("--strict");
         }
-        args.add("--format");
+        args.add("--plugin");
         args.add("junit:" + report.getAbsolutePath());
         args.addAll(featurePaths);
 

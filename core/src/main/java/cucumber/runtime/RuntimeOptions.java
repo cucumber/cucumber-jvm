@@ -1,8 +1,9 @@
 package cucumber.runtime;
 
 import cucumber.api.SnippetType;
+import cucumber.api.StepDefinitionReporter;
 import cucumber.runtime.formatter.ColorAware;
-import cucumber.runtime.formatter.FormatterFactory;
+import cucumber.runtime.formatter.PluginFactory;
 import cucumber.runtime.formatter.StrictAware;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
@@ -13,7 +14,6 @@ import gherkin.util.FixJava;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -28,49 +28,48 @@ public class RuntimeOptions {
 
     private final List<String> glue = new ArrayList<String>();
     private final List<Object> filters = new ArrayList<Object>();
-    private final List<Formatter> formatters = new ArrayList<Formatter>();
     private final List<String> featurePaths = new ArrayList<String>();
-    private final List<String> formatterNames = new ArrayList<String>();
-    private final FormatterFactory formatterFactory;
-    private URL dotCucumber;
+    private final List<String> pluginNames = new ArrayList<String>();
+    private final PluginFactory pluginFactory;
+    private final List<Object> plugins = new ArrayList<Object>();
     private boolean dryRun;
     private boolean strict = false;
     private boolean monochrome = false;
     private SnippetType snippetType = SnippetType.UNDERSCORE;
-    private boolean formattersCreated = false;
+    private boolean pluginNamesInstantiated;
 
     /**
      * Create a new instance from a string of options, for example:
-     *
-     * <pre<{@code "--name 'the fox' --format pretty --strict"}</pre>
+     * <p/>
+     * <pre<{@code "--name 'the fox' --plugin pretty --strict"}</pre>
      *
      * @param argv the arguments
      */
     public RuntimeOptions(String argv) {
-        this(new FormatterFactory(), Shellwords.parse(argv));
+        this(new PluginFactory(), Shellwords.parse(argv));
     }
 
     /**
      * Create a new instance from a list of options, for example:
-     *
-     * <pre<{@code Arrays.asList("--name", "the fox", "--format", "pretty", "--strict");}</pre>
+     * <p/>
+     * <pre<{@code Arrays.asList("--name", "the fox", "--plugin", "pretty", "--strict");}</pre>
      *
      * @param argv the arguments
      */
     public RuntimeOptions(List<String> argv) {
-        this(new FormatterFactory(), argv);
+        this(new PluginFactory(), argv);
     }
 
     public RuntimeOptions(Env env, List<String> argv) {
-        this(env, new FormatterFactory(), argv);
+        this(env, new PluginFactory(), argv);
     }
 
-    public RuntimeOptions(FormatterFactory formatterFactory, List<String> argv) {
-        this(new Env("cucumber"), formatterFactory, argv);
+    public RuntimeOptions(PluginFactory pluginFactory, List<String> argv) {
+        this(new Env("cucumber"), pluginFactory, argv);
     }
 
-    public RuntimeOptions(Env env, FormatterFactory formatterFactory, List<String> argv) {
-        this.formatterFactory = formatterFactory;
+    public RuntimeOptions(Env env, PluginFactory pluginFactory, List<String> argv) {
+        this.pluginFactory = pluginFactory;
 
         argv = new ArrayList<String>(argv); // in case the one passed in is unmodifiable.
         parse(argv);
@@ -80,8 +79,8 @@ public class RuntimeOptions {
             parse(Shellwords.parse(cucumberOptionsFromEnv));
         }
 
-        if (formatterNames.isEmpty()) {
-            formatterNames.add("progress");
+        if (pluginNames.isEmpty()) {
+            pluginNames.add("progress");
         }
     }
 
@@ -104,11 +103,11 @@ public class RuntimeOptions {
                 parsedGlue.add(gluePath);
             } else if (arg.equals("--tags") || arg.equals("-t")) {
                 parsedFilters.add(args.remove(0));
+            } else if (arg.equals("--plugin") || arg.equals("-p")) {
+                pluginNames.add(args.remove(0));
             } else if (arg.equals("--format") || arg.equals("-f")) {
-                formatterNames.add(args.remove(0));
-            } else if (arg.equals("--dotcucumber")) {
-                String urlOrPath = args.remove(0);
-                dotCucumber = Utils.toURL(urlOrPath);
+                System.err.println("WARNING: Cucumber-JVM's --format option is deprecated. Please use --plugin instead.");
+                pluginNames.add(args.remove(0));
             } else if (arg.equals("--no-dry-run") || arg.equals("--dry-run") || arg.equals("-d")) {
                 dryRun = !arg.startsWith("--no-");
             } else if (arg.equals("--no-strict") || arg.equals("--strict") || arg.equals("-s")) {
@@ -151,55 +150,64 @@ public class RuntimeOptions {
         return load(resourceLoader, featurePaths, filters, System.out);
     }
 
-    List<Formatter> getFormatters() {
-        if(!formattersCreated) {
-            for (String formatterName : formatterNames){
-                Formatter formatter = formatterFactory.create(formatterName);
-                formatters.add(formatter);
-                setMonochromeOnColorAwareFormatters(formatter);
-                setStrictOnStrictAwareFormatters(formatter);
+    List<Object> getPlugins() {
+        if (!pluginNamesInstantiated) {
+            for (String pluginName : pluginNames) {
+                Object plugin = pluginFactory.create(pluginName);
+                plugins.add(plugin);
+                setMonochromeOnColorAwarePlugins(plugin);
+                setStrictOnStrictAwarePlugins(plugin);
             }
-            formattersCreated = true;
+            pluginNamesInstantiated = true;
         }
-        return formatters;
+        return plugins;
     }
 
     public Formatter formatter(ClassLoader classLoader) {
-        return (Formatter) Proxy.newProxyInstance(classLoader, new Class<?>[]{Formatter.class}, new InvocationHandler() {
-            @Override
-            public Object invoke(Object target, Method method, Object[] args) throws Throwable {
-                for (Formatter formatter : getFormatters()) {
-                    Utils.invoke(formatter, method, 0, args);
-                }
-                return null;
-            }
-        });
+        return pluginProxy(classLoader, Formatter.class);
     }
 
     public Reporter reporter(ClassLoader classLoader) {
-        return (Reporter) Proxy.newProxyInstance(classLoader, new Class<?>[]{Reporter.class}, new InvocationHandler() {
+        return pluginProxy(classLoader, Reporter.class);
+    }
+
+    public StepDefinitionReporter stepDefinitionReporter(ClassLoader classLoader) {
+        return pluginProxy(classLoader, StepDefinitionReporter.class);
+    }
+
+    /**
+     * Creates a dynamic proxy that multiplexes method invocations to all plugins of the same type.
+     *
+     * @param classLoader used to create the proxy
+     * @param type        proxy type
+     * @param <T>         generic proxy type
+     * @return a proxy
+     */
+    public <T> T pluginProxy(ClassLoader classLoader, final Class<T> type) {
+        Object proxy = Proxy.newProxyInstance(classLoader, new Class<?>[]{type}, new InvocationHandler() {
             @Override
             public Object invoke(Object target, Method method, Object[] args) throws Throwable {
-                for (Formatter formatter : formatters) {
-                    if (formatter instanceof Reporter) {
-                        Utils.invoke(formatter, method, 0, args);
+                for (Object plugin : getPlugins()) {
+                    if (type.isInstance(plugin)) {
+                        Utils.invoke(plugin, method, 0, args);
                     }
                 }
                 return null;
             }
         });
+        return type.cast(proxy);
     }
 
-    private void setMonochromeOnColorAwareFormatters(Formatter formatter) {
-        if (formatter instanceof ColorAware) {
-            ColorAware colorAware = (ColorAware) formatter;
+    private void setMonochromeOnColorAwarePlugins(Object plugin) {
+        if (plugin instanceof ColorAware) {
+            ColorAware colorAware = (ColorAware) plugin;
             colorAware.setMonochrome(monochrome);
         }
     }
 
-    private void setStrictOnStrictAwareFormatters(Formatter formatter) {
-        if (formatter instanceof StrictAware) {
-            StrictAware strictAware = (StrictAware) formatter;
+    private void setStrictOnStrictAwarePlugins(Object plugin) {
+        if (plugin instanceof StrictAware) {
+            StrictAware strictAware = (StrictAware) plugin;
             strictAware.setStrict(strict);
         }
     }
@@ -220,12 +228,8 @@ public class RuntimeOptions {
         return featurePaths;
     }
 
-    public URL getDotCucumber() {
-        return dotCucumber;
-    }
-
-    public void addFormatter(Formatter formatter) {
-        formatters.add(formatter);
+    public void addPlugin(Object plugin) {
+        plugins.add(plugin);
     }
 
     public List<Object> getFilters() {

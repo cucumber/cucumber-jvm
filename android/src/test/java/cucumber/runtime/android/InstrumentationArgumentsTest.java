@@ -55,7 +55,7 @@ public class InstrumentationArgumentsTest {
 
     @Test
     public void cucumberOptionsSingleString() {
-        String cucumberOptions = "--tags @mytag --monochrome --name MyFeature --dry-run --glue com.someglue.Glue --format pretty --snippets underscore --strict --dotcucumber test features";
+        String cucumberOptions = "--tags @mytag --monochrome --name MyFeature --dry-run --glue com.someglue.Glue --plugin pretty --snippets underscore --strict features";
         Bundle arguments = new Bundle();
         arguments.putString("cucumberOptions", cucumberOptions);
         InstrumentationArguments parser = new InstrumentationArguments(arguments);
@@ -76,20 +76,19 @@ public class InstrumentationArgumentsTest {
     public void allArguments() {
         Bundle arguments = new Bundle();
         arguments.putString("glue", "com.package.Glue");
-        arguments.putString("format", "pretty");
+        arguments.putString("plugin", "pretty");
         arguments.putString("tags", "@mytag");
         arguments.putString("name", "MyFeature");
         arguments.putString("dryRun", "true");
         arguments.putString("monochrome", "true");
         arguments.putString("strict", "true");
         arguments.putString("snippets", "underscore");
-        arguments.putString("dotcucumber", "test");
         arguments.putString("features", "features");
         InstrumentationArguments parser = new InstrumentationArguments(arguments);
 
         String cucumberOptions = parser.getCucumberOptionsString();
 
-        assertThat(cucumberOptions, is("--tags @mytag --monochrome --name MyFeature --dry-run --glue com.package.Glue --format pretty --snippets underscore --strict --dotcucumber test features"));
+        assertThat(cucumberOptions, is("--dry-run --glue com.package.Glue --monochrome --name MyFeature --plugin pretty --snippets underscore --strict --tags @mytag features"));
     }
 
     @Test

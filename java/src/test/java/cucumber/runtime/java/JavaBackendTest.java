@@ -1,5 +1,6 @@
 package cucumber.runtime.java;
 
+import cucumber.api.StepDefinitionReporter;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Glue;
 import cucumber.runtime.HookDefinition;
@@ -81,7 +82,7 @@ public class JavaBackendTest {
         }
 
         @Override
-        public void writeStepdefsJson(ResourceLoader resourceLoader, List<String> featurePaths, URL dotCucumber) {
+        public void reportStepDefinitions(StepDefinitionReporter stepDefinitionReporter) {
             throw new UnsupportedOperationException();
         }
     }

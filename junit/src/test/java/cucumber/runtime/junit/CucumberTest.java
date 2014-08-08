@@ -122,7 +122,7 @@ public class CucumberTest {
 
     }
     
-    @CucumberOptions(features = {"classpath:cucumber/runtime/error/lexer_error.feature"}, format = {"json:lexor_error_feature.json"})
+    @CucumberOptions(features = {"classpath:cucumber/runtime/error/lexer_error.feature"}, plugin = {"json:lexor_error_feature.json"})
     private class FormatterWithLexerErrorFeature {
 
     }

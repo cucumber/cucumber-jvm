@@ -1,11 +1,9 @@
 package cucumber.runtime;
 
-import cucumber.runtime.io.ResourceLoader;
+import cucumber.api.StepDefinitionReporter;
 import gherkin.I18n;
 import gherkin.formatter.model.Step;
 
-import java.io.IOException;
-import java.net.URL;
 import java.util.List;
 
 
@@ -25,5 +23,5 @@ public interface Glue {
 
     StepDefinitionMatch stepDefinitionMatch(String featurePath, Step step, I18n i18n);
 
-    void writeStepdefsJson(ResourceLoader resourceLoader, List<String> featurePaths, URL dotCucumber);
+    void reportStepDefinitions(StepDefinitionReporter stepDefinitionReporter);
 }

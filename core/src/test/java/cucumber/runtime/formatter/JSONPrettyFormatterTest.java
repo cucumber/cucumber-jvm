@@ -67,7 +67,7 @@ public class JSONPrettyFormatterTest {
         final ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
 
         List<String> args = new ArrayList<String>();
-        args.add("--format");
+        args.add("--plugin");
         args.add("json:" + report.getAbsolutePath());
         args.addAll(featurePaths);
 

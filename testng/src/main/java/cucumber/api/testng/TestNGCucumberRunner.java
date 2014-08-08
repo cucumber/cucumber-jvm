@@ -1,6 +1,5 @@
 package cucumber.api.testng;
 
-import cucumber.api.CucumberOptions;
 import cucumber.runtime.ClassFinder;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.RuntimeOptions;
@@ -27,11 +26,11 @@ public class TestNGCucumberRunner {
         ClassLoader classLoader = clazz.getClassLoader();
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
 
-        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(clazz, new Class[]{CucumberOptions.class});
+        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(clazz);
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
 
         TestNgReporter reporter = new TestNgReporter(System.out);
-        runtimeOptions.addFormatter(reporter);
+        runtimeOptions.addPlugin(reporter);
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         runtime = new cucumber.runtime.Runtime(resourceLoader, classFinder, classLoader, runtimeOptions);
     }

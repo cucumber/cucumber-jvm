@@ -8,7 +8,7 @@ import org.testng.annotations.Test;
  * An example of using TestNG when the test class does not inherit from 
  * AbstractTestNGCucumberTests.
  */
-@CucumberOptions(format = "json:target/cucumber-report-composite.json")
+@CucumberOptions(plugin = "json:target/cucumber-report-composite.json")
 public class RunCukesByCompositionTest extends RunCukesByCompositionBase {
 
     /**

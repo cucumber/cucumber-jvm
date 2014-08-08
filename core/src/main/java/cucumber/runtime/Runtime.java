@@ -1,6 +1,7 @@
 package cucumber.runtime;
 
 import cucumber.api.Pending;
+import cucumber.api.StepDefinitionReporter;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.xstream.LocalizedXStreams;
@@ -104,34 +105,33 @@ public class Runtime implements UnreportedStepExecutor {
      * This is the main entry point. Used from CLI, but not from JUnit.
      */
     public void run() throws IOException {
-        for (CucumberFeature cucumberFeature : runtimeOptions.cucumberFeatures(resourceLoader)) {
-            run(cucumberFeature);
-        }
+        // Make sure all features parse before initialising any reporters/formatters
+        List<CucumberFeature> features = runtimeOptions.cucumberFeatures(resourceLoader);
+
+        // TODO: This is duplicated in cucumber.api.android.CucumberInstrumentationCore - refactor or keep uptodate
+
         Formatter formatter = runtimeOptions.formatter(classLoader);
+        Reporter reporter = runtimeOptions.reporter(classLoader);
+        StepDefinitionReporter stepDefinitionReporter = runtimeOptions.stepDefinitionReporter(classLoader);
+
+        glue.reportStepDefinitions(stepDefinitionReporter);
+
+        for (CucumberFeature cucumberFeature : features) {
+            cucumberFeature.run(formatter, reporter, this);
+        }
 
         formatter.done();
         formatter.close();
         printSummary();
     }
 
-    private void run(CucumberFeature cucumberFeature) {
-        Formatter formatter = runtimeOptions.formatter(classLoader);
-        Reporter reporter = runtimeOptions.reporter(classLoader);
-        cucumberFeature.run(formatter, reporter, this);
-    }
-
     public void printSummary() {
         // TODO: inject a SummaryPrinter in the ctor
         new SummaryPrinter(System.out).print(this);
-        writeStepdefsJson();
     }
 
     void printStats(PrintStream out) {
         stats.printStats(out);
-    }
-
-    private void writeStepdefsJson() {
-        glue.writeStepdefsJson(resourceLoader, runtimeOptions.getFeaturePaths(), runtimeOptions.getDotCucumber());
     }
 
     public void buildBackendWorlds(Reporter reporter, Set<Tag> tags, Scenario gherkinScenario) {

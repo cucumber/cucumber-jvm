@@ -8,6 +8,7 @@ import android.os.Debug;
 import android.os.Looper;
 import android.util.Log;
 import cucumber.api.CucumberOptions;
+import cucumber.api.StepDefinitionReporter;
 import cucumber.runtime.Backend;
 import cucumber.runtime.ClassFinder;
 import cucumber.runtime.CucumberException;
@@ -88,7 +89,7 @@ public class CucumberInstrumentationCore {
         }
 
         @SuppressWarnings("unchecked")
-        RuntimeOptionsFactory factory = new RuntimeOptionsFactory(optionsAnnotatedClass, new Class[]{CucumberOptions.class});
+        RuntimeOptionsFactory factory = new RuntimeOptionsFactory(optionsAnnotatedClass);
         runtimeOptions = factory.create();
         resourceLoader = new AndroidResourceLoader(context);
 
@@ -121,11 +122,16 @@ public class CucumberInstrumentationCore {
                 Debug.waitForDebugger();
             }
 
-            runtimeOptions.addFormatter(new AndroidInstrumentationReporter(runtime, instrumentation, testCount));
-            runtimeOptions.addFormatter(new AndroidLogcatReporter(TAG));
+            runtimeOptions.addPlugin(new AndroidInstrumentationReporter(runtime, instrumentation, testCount));
+            runtimeOptions.addPlugin(new AndroidLogcatReporter(TAG));
+
+            // TODO: This is duplicated in info.cucumber.Runtime.
 
             final Reporter reporter = runtimeOptions.reporter(classLoader);
             final Formatter formatter = runtimeOptions.formatter(classLoader);
+            StepDefinitionReporter stepDefinitionReporter = runtimeOptions.stepDefinitionReporter(classLoader);
+
+            runtime.getGlue().reportStepDefinitions(stepDefinitionReporter);
 
             for (final CucumberFeature cucumberFeature : cucumberFeatures) {
                 cucumberFeature.run(formatter, reporter, runtime);

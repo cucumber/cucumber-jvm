@@ -3,17 +3,17 @@ Usage: java cucumber.api.cli.Main [options] [[[FILE|DIR][:LINE[:LINE]*] ]+ | @FI
 Options:
 
     -g, --glue PATH                        Where glue code (step definitions and hooks) is loaded from.
-    -f, --format FORMAT[:PATH_OR_URL]      How to format results. Goes to STDOUT unless PATH_OR_URL is specified.
-                                           Built-in FORMAT types: junit, html, pretty, progress, json, usage,
-                                           rerun. FORMAT can also be a fully qualified class name.
+    -p, --plugin PLUGIN[:PATH_OR_URL]      Register a plugin.
+                                           Built-in PLUGIN types: junit, html, pretty, progress, json, usage,
+                                           rerun. PLUGIN can also be a fully qualified class name, allowing
+                                           registration of 3rd party plugins.
+    -f, --format FORMAT[:PATH_OR_URL]      Deprecated. Use --plugin instead.
     -t, --tags TAG_EXPRESSION              Only run scenarios tagged with tags matching TAG_EXPRESSION.
     -n, --name REGEXP                      Only run scenarios whose names match REGEXP.
     -d, --[no-]-dry-run                    Skip execution of glue code.
     -m, --[no-]-monochrome                 Don't colour terminal output.
     -s, --[no-]-strict                     Treat undefined and pending steps as errors.
         --snippets [underscore|camelcase]  Naming convention for generated snippets. Defaults to underscore.
-        --dotcucumber PATH_OR_URL          Where to write out runtime information. PATH_OR_URL can be a file system
-                                           path or a URL.
     -v, --version                          Print version.
     -h, --help                             You're looking at it.
 

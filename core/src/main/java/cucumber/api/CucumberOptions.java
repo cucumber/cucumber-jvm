@@ -38,8 +38,15 @@ public @interface CucumberOptions {
 
     /**
      * @return what formatter(s) to use
+     * @deprecated use {@link #plugin()}
      */
+    @Deprecated
     String[] format() default {};
+
+    /**
+     * @return what plugins(s) to use
+     */
+    String[] plugin() default {};
 
     /**
      * @return whether or not to use monochrome output
@@ -52,8 +59,6 @@ public @interface CucumberOptions {
      * @return a list of patterns
      */
     String[] name() default {};
-
-    String dotcucumber() default "";
 
     /**
      * @return what format should the snippets use. underscore, camelcase

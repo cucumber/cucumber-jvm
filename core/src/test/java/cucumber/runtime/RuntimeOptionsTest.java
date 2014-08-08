@@ -2,7 +2,7 @@ package cucumber.runtime;
 
 import cucumber.api.SnippetType;
 import cucumber.runtime.formatter.ColorAware;
-import cucumber.runtime.formatter.FormatterFactory;
+import cucumber.runtime.formatter.PluginFactory;
 import cucumber.runtime.formatter.StrictAware;
 import cucumber.runtime.io.Resource;
 import cucumber.runtime.io.ResourceLoader;
@@ -34,7 +34,7 @@ import static org.mockito.Mockito.withSettings;
 public class RuntimeOptionsTest {
     @Test
     public void has_version_from_properties_file() {
-        assertTrue(RuntimeOptions.VERSION.startsWith("1.1"));
+        assertTrue(RuntimeOptions.VERSION.startsWith("1.2"));
     }
 
     @Test
@@ -75,15 +75,9 @@ public class RuntimeOptionsTest {
     }
 
     @Test
-    public void assigns_dotcucumber() throws MalformedURLException {
-        RuntimeOptions options = new RuntimeOptions(asList("--dotcucumber", "somewhere", "--glue", "somewhere"));
-        assertEquals(new URL("file:somewhere/"), options.getDotCucumber());
-    }
-
-    @Test
-    public void creates_formatter() {
-        RuntimeOptions options = new RuntimeOptions(asList("--format", "html:some/dir", "--glue", "somewhere"));
-        assertEquals("cucumber.runtime.formatter.HTMLFormatter", options.getFormatters().get(0).getClass().getName());
+    public void creates_html_formatter() {
+        RuntimeOptions options = new RuntimeOptions(asList("--plugin", "html:some/dir", "--glue", "somewhere"));
+        assertEquals("cucumber.runtime.formatter.HTMLFormatter", options.getPlugins().get(0).getClass().getName());
     }
 
     @Test
@@ -135,14 +129,6 @@ public class RuntimeOptionsTest {
     }
 
     @Test
-    public void ensure_multiple_cucumber_options_with_spaces_parse_correctly() throws MalformedURLException {
-        RuntimeOptions options = new RuntimeOptions("--name 'some Name' --dotcucumber 'some file\\path'");
-        Pattern actualPattern = (Pattern) options.getFilters().iterator().next();
-        assertEquals("some Name", actualPattern.pattern());
-        assertEquals(new URL("file:some file\\path/"), options.getDotCucumber());
-    }
-
-    @Test
     public void overrides_options_with_system_properties_without_clobbering_non_overridden_ones() {
         Properties properties = new Properties();
         properties.setProperty("cucumber.options", "--glue lookatme this_clobbers_feature_paths");
@@ -187,7 +173,7 @@ public class RuntimeOptionsTest {
     @Test
     public void preserves_features_from_cli_if_features_not_specified_in_cucumber_options_property() {
         Properties properties = new Properties();
-        properties.setProperty("cucumber.options", "--format pretty");
+        properties.setProperty("cucumber.options", "--plugin pretty");
         RuntimeOptions runtimeOptions = new RuntimeOptions(new Env(properties), asList("old", "older"));
         assertEquals(asList("old", "older"), runtimeOptions.getFeaturePaths());
     }
@@ -221,24 +207,24 @@ public class RuntimeOptionsTest {
 
     @Test
     public void set_monochrome_on_color_aware_formatters() throws Exception {
-        FormatterFactory factory = mock(FormatterFactory.class);
+        PluginFactory factory = mock(PluginFactory.class);
         Formatter colorAwareFormatter = mock(Formatter.class, withSettings().extraInterfaces(ColorAware.class));
         when(factory.create("progress")).thenReturn(colorAwareFormatter);
 
-        RuntimeOptions options = new RuntimeOptions(new Env(), factory, asList("--monochrome", "--format", "progress"));
-        options.getFormatters();
+        RuntimeOptions options = new RuntimeOptions(new Env(), factory, asList("--monochrome", "--plugin", "progress"));
+        options.getPlugins();
 
         verify((ColorAware) colorAwareFormatter).setMonochrome(true);
     }
 
     @Test
     public void set_strict_on_strict_aware_formatters() throws Exception {
-        FormatterFactory factory = mock(FormatterFactory.class);
+        PluginFactory factory = mock(PluginFactory.class);
         Formatter strictAwareFormatter = mock(Formatter.class, withSettings().extraInterfaces(StrictAware.class));
         when(factory.create("junit:out/dir")).thenReturn(strictAwareFormatter);
 
-        RuntimeOptions options = new RuntimeOptions(new Env(), factory, asList("--strict", "--format", "junit:out/dir"));
-        options.getFormatters();
+        RuntimeOptions options = new RuntimeOptions(new Env(), factory, asList("--strict", "--plugin", "junit:out/dir"));
+        options.getPlugins();
 
         verify((StrictAware) strictAwareFormatter).setStrict(true);
     }

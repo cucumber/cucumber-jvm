@@ -3,7 +3,6 @@ package cucumber.runtime.formatter;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.io.URLOutputStream;
 import cucumber.runtime.io.UTF8OutputStreamWriter;
-import gherkin.formatter.Formatter;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,24 +21,29 @@ import static cucumber.runtime.Utils.toURL;
 import static java.util.Arrays.asList;
 
 /**
- * This class creates {@link Formatter} instances (that may also implement {@link gherkin.formatter.Reporter} from
- * a String.
+ * This class creates plugin instances from a String.
  * <p/>
  * The String is of the form name[:output] where name is either a fully qualified class name or one of the built-in short names.
- * output is optional for some formatters (and mandatory for some) and must refer to a path on the file system.
+ * output is optional for some plugin (and mandatory for some) and must refer to a path on the file system.
  * <p/>
- * The formatter class must have a constructor that is either empty or takes a single argument of one of the following types:
+ * The plugin class must have a constructor that is either empty or takes a single argument of one of the following types:
  * <ul>
  * <li>{@link Appendable}</li>
  * <li>{@link File}</li>
  * <li>{@link URL}</li>
  * <li>{@link URI}</li>
  * </ul>
+ * Plugins must implement one of the following interfaces:
+ * <ul>
+ * <li>{@link gherkin.formatter.Formatter}</li>
+ * <li>{@link gherkin.formatter.Reporter}</li>
+ * <li>{@link cucumber.api.StepDefinitionReporter}</li>
+ * </ul>
  */
-public class FormatterFactory {
+public class PluginFactory {
     private final Class[] CTOR_ARGS = new Class[]{null, Appendable.class, URI.class, URL.class, File.class};
 
-    private static final Map<String, Class<? extends Formatter>> FORMATTER_CLASSES = new HashMap<String, Class<? extends Formatter>>() {{
+    private static final Map<String, Class> PLUGIN_CLASSES = new HashMap<String, Class>() {{
         put("null", NullFormatter.class);
         put("junit", JUnitFormatter.class);
         put("html", HTMLFormatter.class);
@@ -49,7 +53,7 @@ public class FormatterFactory {
         put("usage", UsageFormatter.class);
         put("rerun", RerunFormatter.class);
     }};
-    private static final Pattern FORMATTER_WITH_FILE_PATTERN = Pattern.compile("([^:]+):(.*)");
+    private static final Pattern PLUGIN_WITH_FILE_PATTERN = Pattern.compile("([^:]+):(.*)");
     private Appendable defaultOut = new PrintStream(System.out) {
         @Override
         public void close() {
@@ -57,19 +61,19 @@ public class FormatterFactory {
         }
     };
 
-    public Formatter create(String formatterString) {
-        Matcher formatterWithFile = FORMATTER_WITH_FILE_PATTERN.matcher(formatterString);
-        String formatterName;
+    public Object create(String pluginString) {
+        Matcher pluginWithFile = PLUGIN_WITH_FILE_PATTERN.matcher(pluginString);
+        String pluginName;
         String path = null;
-        if (formatterWithFile.matches()) {
-            formatterName = formatterWithFile.group(1);
-            path = formatterWithFile.group(2);
+        if (pluginWithFile.matches()) {
+            pluginName = pluginWithFile.group(1);
+            path = pluginWithFile.group(2);
         } else {
-            formatterName = formatterString;
+            pluginName = pluginString;
         }
-        Class<? extends Formatter> formatterClass = formatterClass(formatterName);
+        Class pluginClass = pluginClass(pluginName);
         try {
-            return instantiate(formatterString, formatterClass, path);
+            return instantiate(pluginString, pluginClass, path);
         } catch (IOException e) {
             throw new CucumberException(e);
         } catch (URISyntaxException e) {
@@ -77,9 +81,9 @@ public class FormatterFactory {
         }
     }
 
-    private Formatter instantiate(String formatterString, Class<? extends Formatter> formatterClass, String pathOrUrl) throws IOException, URISyntaxException {
+    private <T> T instantiate(String pluginString, Class<T> pluginClass, String pathOrUrl) throws IOException, URISyntaxException {
         for (Class ctorArgClass : CTOR_ARGS) {
-            Constructor<? extends Formatter> constructor = findConstructor(formatterClass, ctorArgClass);
+            Constructor<T> constructor = findConstructor(pluginClass, ctorArgClass);
             if (constructor != null) {
                 Object ctorArg = convertOrNull(pathOrUrl, ctorArgClass);
                 try {
@@ -87,7 +91,7 @@ public class FormatterFactory {
                         return constructor.newInstance();
                     } else {
                         if (ctorArg == null) {
-                            throw new CucumberException(String.format("You must supply an output argument to %s. Like so: %s:output", formatterString, formatterString));
+                            throw new CucumberException(String.format("You must supply an output argument to %s. Like so: %s:output", pluginString, pluginString));
                         }
                         return constructor.newInstance(ctorArg);
                     }
@@ -100,7 +104,7 @@ public class FormatterFactory {
                 }
             }
         }
-        throw new CucumberException(String.format("%s must have a constructor that is either empty or a single arg of one of: %s", formatterClass, asList(CTOR_ARGS)));
+        throw new CucumberException(String.format("%s must have a constructor that is either empty or a single arg of one of: %s", pluginClass, asList(CTOR_ARGS)));
     }
 
     private Object convertOrNull(String pathOrUrl, Class ctorArgClass) throws IOException, URISyntaxException {
@@ -132,32 +136,32 @@ public class FormatterFactory {
         return null;
     }
 
-    private Constructor<? extends Formatter> findConstructor(Class<? extends Formatter> formatterClass, Class<?> ctorArgClass) {
+    private <T> Constructor<T> findConstructor(Class<T> pluginClass, Class<?> ctorArgClass) {
         try {
             if (ctorArgClass == null) {
-                return formatterClass.getConstructor();
+                return pluginClass.getConstructor();
             } else {
-                return formatterClass.getConstructor(ctorArgClass);
+                return pluginClass.getConstructor(ctorArgClass);
             }
         } catch (NoSuchMethodException e) {
             return null;
         }
     }
 
-    private Class<? extends Formatter> formatterClass(String formatterName) {
-        Class<? extends Formatter> formatterClass = FORMATTER_CLASSES.get(formatterName);
-        if (formatterClass == null) {
-            formatterClass = loadClass(formatterName);
+    private <T> Class<T> pluginClass(String pluginName) {
+        Class<T> pluginClass = (Class<T>) PLUGIN_CLASSES.get(pluginName);
+        if (pluginClass == null) {
+            pluginClass = loadClass(pluginName);
         }
-        return formatterClass;
+        return pluginClass;
     }
 
     @SuppressWarnings("unchecked")
-    private Class<? extends Formatter> loadClass(String className) {
+    private <T> Class<T> loadClass(String className) {
         try {
-            return (Class<? extends Formatter>) Thread.currentThread().getContextClassLoader().loadClass(className);
+            return (Class<T>) Thread.currentThread().getContextClassLoader().loadClass(className);
         } catch (ClassNotFoundException e) {
-            throw new CucumberException("Couldn't load formatter class: " + className, e);
+            throw new CucumberException("Couldn't load plugin class: " + className, e);
         }
     }
 
@@ -166,7 +170,7 @@ public class FormatterFactory {
             if (defaultOut != null) {
                 return defaultOut;
             } else {
-                throw new CucumberException("Only one formatter can use STDOUT. If you use more than one formatter you must specify output path with FORMAT:PATH_OR_URL");
+                throw new CucumberException("Only one plugin can use STDOUT. If you use more than one plugin you must specify output path with FORMAT:PATH_OR_URL");
             }
         } finally {
             defaultOut = null;

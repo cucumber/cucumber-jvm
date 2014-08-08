@@ -2,6 +2,7 @@ package cucumber.runtime;
 
 import cucumber.api.PendingException;
 import cucumber.api.Scenario;
+import cucumber.api.StepDefinitionReporter;
 import cucumber.runtime.formatter.CucumberJSONFormatter;
 import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.io.Resource;
@@ -30,6 +31,7 @@ import static cucumber.runtime.TestHelper.feature;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
@@ -194,6 +196,32 @@ public class RuntimeTest {
     }
 
     @Test
+    public void reports_step_definitions_to_plugin() throws IOException, NoSuchMethodException {
+        Runtime runtime = createRuntime("--plugin", "cucumber.runtime.RuntimeTest$StepdefsPrinter");
+
+        StubStepDefinition stepDefinition = new StubStepDefinition(this, getClass().getMethod("reports_step_definitions_to_plugin"), "some pattern");
+        runtime.getGlue().addStepDefinition(stepDefinition);
+        runtime.run();
+
+        assertSame(stepDefinition, StepdefsPrinter.instance.stepDefinition);
+    }
+
+    public static class StepdefsPrinter implements StepDefinitionReporter {
+        public static StepdefsPrinter instance;
+        public StepDefinition stepDefinition;
+
+        public StepdefsPrinter() {
+            instance = this;
+        }
+
+        @Override
+        public void stepDefinition(StepDefinition stepDefinition) {
+            this.stepDefinition = stepDefinition;
+        }
+    }
+
+
+    @Test
     public void should_throw_cucumer_exception_if_no_backends_are_found() throws Exception {
         try {
             ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
@@ -217,7 +245,7 @@ public class RuntimeTest {
 
         assertThat(baos.toString(), startsWith(String.format(
                 "1 Scenarios (1 passed)%n" +
-                "1 Steps (1 passed)%n")));
+                        "1 Steps (1 passed)%n")));
     }
 
     @Test
@@ -232,7 +260,7 @@ public class RuntimeTest {
 
         assertThat(baos.toString(), startsWith(String.format(
                 "1 Scenarios (1 pending)%n" +
-                "1 Steps (1 pending)%n")));
+                        "1 Steps (1 pending)%n")));
     }
 
     @Test
@@ -247,7 +275,7 @@ public class RuntimeTest {
 
         assertThat(baos.toString(), startsWith(String.format(
                 "1 Scenarios (1 failed)%n" +
-                "1 Steps (1 failed)%n")));
+                        "1 Steps (1 failed)%n")));
     }
 
     @Test
@@ -261,7 +289,7 @@ public class RuntimeTest {
 
         assertThat(baos.toString(), startsWith(String.format(
                 "1 Scenarios (1 failed)%n" +
-                "1 Steps (1 failed)%n")));
+                        "1 Steps (1 failed)%n")));
     }
 
     @Test
@@ -276,7 +304,7 @@ public class RuntimeTest {
 
         assertThat(baos.toString(), startsWith(String.format(
                 "1 Scenarios (1 failed)%n" +
-                "2 Steps (1 failed, 1 skipped)%n")));
+                        "2 Steps (1 failed, 1 skipped)%n")));
     }
 
     @Test
@@ -290,7 +318,7 @@ public class RuntimeTest {
 
         assertThat(baos.toString(), startsWith(String.format(
                 "1 Scenarios (1 undefined)%n" +
-                "1 Steps (1 undefined)%n")));
+                        "1 Steps (1 undefined)%n")));
     }
 
     @Test
@@ -306,8 +334,8 @@ public class RuntimeTest {
 
         assertThat(baos.toString(), startsWith(String.format(
                 "1 Scenarios (1 failed)%n" +
-                "1 Steps (1 skipped)%n")));
-   }
+                        "1 Steps (1 skipped)%n")));
+    }
 
     @Test
     public void should_fail_the_scenario_if_after_fails() throws Throwable {
@@ -322,8 +350,8 @@ public class RuntimeTest {
 
         assertThat(baos.toString(), startsWith(String.format(
                 "1 Scenarios (1 failed)%n" +
-                "1 Steps (1 passed)%n")));
-   }
+                        "1 Steps (1 passed)%n")));
+    }
 
     @Test
     public void should_make_scenario_name_available_to_hooks() throws Throwable {
@@ -365,14 +393,14 @@ public class RuntimeTest {
 
     private StepDefinitionMatch createExceptionThrowingMatch(Exception exception) throws Throwable {
         StepDefinitionMatch match = mock(StepDefinitionMatch.class);
-        doThrow(exception).when(match).runStep((I18n)any());
+        doThrow(exception).when(match).runStep((I18n) any());
         return match;
     }
 
     private HookDefinition createExceptionThrowingHook() throws Throwable {
         HookDefinition hook = mock(HookDefinition.class);
         when(hook.matches(anyCollectionOf(Tag.class))).thenReturn(true);
-        doThrow(new Exception()).when(hook).execute((Scenario)any());
+        doThrow(new Exception()).when(hook).execute((Scenario) any());
         return hook;
     }
 
@@ -402,7 +430,7 @@ public class RuntimeTest {
 
     private Runtime createRuntime(String... runtimeArgs) {
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
-        ClassLoader classLoader = mock(ClassLoader.class);
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         return createRuntime(resourceLoader, classLoader, runtimeArgs);
     }
 
@@ -419,7 +447,7 @@ public class RuntimeTest {
     }
 
     private Runtime createRuntimeWithMockedGlue(StepDefinitionMatch match, HookDefinition hook, boolean isBefore,
-            String... runtimeArgs){
+                                                String... runtimeArgs) {
         return createRuntimeWithMockedGlue(match, false, hook, isBefore, runtimeArgs);
     }
 
@@ -428,7 +456,7 @@ public class RuntimeTest {
     }
 
     private Runtime createRuntimeWithMockedGlue(StepDefinitionMatch match, boolean isAmbiguous, HookDefinition hook,
-            boolean isBefore, String... runtimeArgs) {
+                                                boolean isBefore, String... runtimeArgs) {
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
         ClassLoader classLoader = mock(ClassLoader.class);
         RuntimeOptions runtimeOptions = new RuntimeOptions(asList(runtimeArgs));
@@ -444,9 +472,9 @@ public class RuntimeTest {
     private void mockMatch(RuntimeGlue glue, StepDefinitionMatch match, boolean isAmbiguous) {
         if (isAmbiguous) {
             Exception exception = new AmbiguousStepDefinitionsException(Arrays.asList(match, match));
-            doThrow(exception).when(glue).stepDefinitionMatch(anyString(), (Step)any(), (I18n)any());
+            doThrow(exception).when(glue).stepDefinitionMatch(anyString(), (Step) any(), (I18n) any());
         } else {
-            when(glue.stepDefinitionMatch(anyString(), (Step)any(), (I18n)any())).thenReturn(match);
+            when(glue.stepDefinitionMatch(anyString(), (Step) any(), (I18n) any())).thenReturn(match);
         }
     }
 

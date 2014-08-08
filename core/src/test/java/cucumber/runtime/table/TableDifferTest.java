@@ -390,7 +390,6 @@ public class TableDifferTest {
         try {
             table().unorderedDiff(other);
         } catch (TableDiffException e) {
-            System.out.println(e.getMessage());
             String expected = "" +
                     "Tables were not identical:\n" +
                     "      | Aslak | aslak@email.com | 123 |\n" +

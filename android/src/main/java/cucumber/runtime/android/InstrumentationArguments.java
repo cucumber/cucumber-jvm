@@ -2,6 +2,11 @@ package cucumber.runtime.android;
 
 import android.os.Bundle;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+
 /**
  * This is a wrapper class around the command line arguments that were supplied
  * when the instrumentation was started.
@@ -50,11 +55,16 @@ public final class InstrumentationArguments {
 
         StringBuilder sb = new StringBuilder();
         String features = "";
-        for (String key : arguments.keySet()) {
+        Set<String> unsortedKeys = arguments.keySet();
+        List<String> sortedKeys = new ArrayList<String>(unsortedKeys);
+        Collections.sort(sortedKeys);
+        for (String key : sortedKeys) {
             if ("glue".equals(key)) {
                 appendOption(sb, "--glue", arguments.getString(key));
             } else if ("format".equals(key)) {
                 appendOption(sb, "--format", arguments.getString(key));
+            } else if ("plugin".equals(key)) {
+                appendOption(sb, "--plugin", arguments.getString(key));
             } else if ("tags".equals(key)) {
                 appendOption(sb, "--tags", arguments.getString(key));
             } else if ("name".equals(key)) {
@@ -75,8 +85,6 @@ public final class InstrumentationArguments {
                 appendOption(sb, "--no-strict", "");
             } else if ("snippets".equals(key)) {
                 appendOption(sb, "--snippets", arguments.getString(key));
-            } else if ("dotcucumber".equals(key)) {
-                appendOption(sb, "--dotcucumber", arguments.getString(key));
             } else if ("features".equals(key)) {
                 features = arguments.getString(key);
             }

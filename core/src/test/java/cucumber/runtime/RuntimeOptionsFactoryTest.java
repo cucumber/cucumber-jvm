@@ -2,13 +2,10 @@ package cucumber.runtime;
 
 import cucumber.api.CucumberOptions;
 import cucumber.api.SnippetType;
-import gherkin.formatter.Formatter;
 import gherkin.formatter.JSONFormatter;
 import gherkin.formatter.PrettyFormatter;
 import org.junit.Test;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -23,49 +20,49 @@ import static org.junit.Assert.assertTrue;
 public class RuntimeOptionsFactoryTest {
     @Test
     public void create_strict() throws Exception {
-        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(Strict.class, new Class[]{CucumberOptions.class});
+        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(Strict.class);
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
         assertTrue(runtimeOptions.isStrict());
     }
 
     @Test
     public void create_non_strict() throws Exception {
-        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(NotStrict.class, new Class[]{CucumberOptions.class});
+        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(NotStrict.class);
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
         assertFalse(runtimeOptions.isStrict());
     }
 
     @Test
     public void create_without_options() throws Exception {
-        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(WithoutOptions.class, new Class[]{CucumberOptions.class});
+        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(WithoutOptions.class);
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
         assertFalse(runtimeOptions.isStrict());
         assertEquals(asList("classpath:cucumber/runtime"), runtimeOptions.getFeaturePaths());
         assertEquals(asList("classpath:cucumber/runtime"), runtimeOptions.getGlue());
-        assertEquals(1, runtimeOptions.getFormatters().size());
-        assertEquals("cucumber.runtime.formatter.NullFormatter", runtimeOptions.getFormatters().get(0).getClass().getName());
+        assertEquals(1, runtimeOptions.getPlugins().size());
+        assertEquals("cucumber.runtime.formatter.NullFormatter", runtimeOptions.getPlugins().get(0).getClass().getName());
     }
 
     @Test
     public void create_without_options_with_base_class_without_options() throws Exception {
-        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(WithoutOptionsWithBaseClassWithoutOptions.class, new Class[]{CucumberOptions.class});
+        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(WithoutOptionsWithBaseClassWithoutOptions.class);
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
         assertEquals(asList("classpath:cucumber/runtime"), runtimeOptions.getFeaturePaths());
         assertEquals(asList("classpath:cucumber/runtime"), runtimeOptions.getGlue());
-        assertEquals(1, runtimeOptions.getFormatters().size());
-        assertEquals("cucumber.runtime.formatter.NullFormatter", runtimeOptions.getFormatters().get(0).getClass().getName());
+        assertEquals(1, runtimeOptions.getPlugins().size());
+        assertEquals("cucumber.runtime.formatter.NullFormatter", runtimeOptions.getPlugins().get(0).getClass().getName());
     }
 
     @Test
     public void create_with_no_name() throws Exception {
-        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(NoName.class, new Class[]{CucumberOptions.class});
+        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(NoName.class);
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
         assertTrue(runtimeOptions.getFilters().isEmpty());
     }
 
     @Test
     public void create_with_multiple_names() throws Exception {
-        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(MultipleNames.class, new Class[]{CucumberOptions.class});
+        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(MultipleNames.class);
 
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
 
@@ -77,22 +74,8 @@ public class RuntimeOptionsFactoryTest {
     }
 
     @Test
-    public void create_with_dotcucumber_dir() throws MalformedURLException {
-        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(DotCucumberFile.class, new Class[]{CucumberOptions.class});
-        RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
-        assertEquals(new URL("file:somewhere/.cucumber/"), runtimeOptions.getDotCucumber());
-    }
-
-    @Test
-    public void create_with_dotcucumber_url() throws MalformedURLException {
-        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(DotCucumberUrl.class, new Class[]{CucumberOptions.class});
-        RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
-        assertEquals(new URL("https://some.where/.cucumber/"), runtimeOptions.getDotCucumber());
-    }
-
-    @Test
     public void create_with_snippets() {
-        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(Snippets.class, new Class[]{CucumberOptions.class});
+        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(Snippets.class);
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
         assertEquals(SnippetType.CAMELCASE, runtimeOptions.getSnippetType());
     }
@@ -112,19 +95,19 @@ public class RuntimeOptionsFactoryTest {
     }
 
     @Test
-    public void inherit_formatter_from_baseclass() {
-        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(SubClassWithFormatter.class, new Class[]{CucumberOptions.class});
+    public void inherit_plugin_from_baseclass() {
+        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(SubClassWithFormatter.class);
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
 
-        List<Formatter> formatters = runtimeOptions.getFormatters();
-        assertEquals(2, formatters.size());
-        assertTrue(formatters.get(0) instanceof PrettyFormatter);
-        assertTrue(formatters.get(1) instanceof JSONFormatter);
+        List<Object> plugins = runtimeOptions.getPlugins();
+        assertEquals(2, plugins.size());
+        assertTrue(plugins.get(0) instanceof PrettyFormatter);
+        assertTrue(plugins.get(1) instanceof JSONFormatter);
     }
 
     @Test
     public void override_monochrome_flag_from_baseclass() {
-        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(SubClassWithMonoChromeTrue.class, new Class[]{CucumberOptions.class});
+        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(SubClassWithMonoChromeTrue.class);
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
 
         assertTrue(runtimeOptions.isMonochrome());
@@ -155,17 +138,6 @@ public class RuntimeOptionsFactoryTest {
     static class NoName {
         // empty
     }
-
-    @CucumberOptions(dotcucumber = "somewhere/.cucumber")
-    static class DotCucumberFile {
-        // empty
-    }
-
-    @CucumberOptions(dotcucumber = "https://some.where/.cucumber")
-    static class DotCucumberUrl {
-        // empty
-    }
-
     static class WithoutOptions {
         // empty
     }
@@ -174,12 +146,12 @@ public class RuntimeOptionsFactoryTest {
         // empty
     }
 
-    @CucumberOptions(format = "pretty")
+    @CucumberOptions(plugin = "pretty")
     static class SubClassWithFormatter extends BaseClassWithFormatter {
         // empty
     }
 
-    @CucumberOptions(format = "json:test-json-report.json")
+    @CucumberOptions(plugin = "json:test-json-report.json")
     static class BaseClassWithFormatter {
         // empty
     }
