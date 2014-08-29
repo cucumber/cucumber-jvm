@@ -1,5 +1,6 @@
 ## [1.2.0-SNAPSHOT (Git master)](https://github.com/cucumber/cucumber-jvm/compare/v1.1.8...master) (Not released)
 
+* [Core] `DataTable.asMap()` returns a `LinkedHashMap`, ensuring key iteration order is the same as in the gherkin table ([#764](https://github.com/cucumber/cucumber-jvm/issues/764) Aslak Hellesøy).
 * [Core] Spring dirty cukes test fix ([#708](https://github.com/cucumber/cucumber-jvm/pull/708) Mykola Gurov)
 * [Core] Improve error message for multiple formatters using STDOUT ([#744](https://github.com/cucumber/cucumber-jvm/pull/744) Björn Rasmusson)
 * [Core] Better error messages when loading features from rerun file ([#749](https://github.com/cucumber/cucumber-jvm/pull/749) Björn Rasmusson)

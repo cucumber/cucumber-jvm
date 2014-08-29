@@ -7,8 +7,6 @@ import cucumber.deps.com.thoughtworks.xstream.converters.reflection.AbstractRefl
 import cucumber.deps.com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.ParameterInfo;
-import cucumber.runtime.table.CamelCaseStringConverter;
-import cucumber.runtime.table.StringConverter;
 import cucumber.runtime.xstream.CellWriter;
 import cucumber.runtime.xstream.ComplexTypeWriter;
 import cucumber.runtime.xstream.ListOfComplexTypeReader;
@@ -22,7 +20,7 @@ import gherkin.util.Mapper;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -175,7 +173,7 @@ public class TableConverter {
                 throw new CucumberException(String.format("Can't convert DataTable to Map<%s,%s>", keyType, valueType));
             }
 
-            Map<K, V> result = new HashMap<K, V>();
+            Map<K, V> result = new LinkedHashMap<K, V>();
             for (List<String> row : dataTable.raw()) {
                 if (row.size() != 2) {
                     throw new CucumberException("A DataTable can only be converted to a Map when there are 2 columns");
@@ -208,7 +206,7 @@ public class TableConverter {
             }
             List<List<String>> valueRows = dataTable.cells(1);
             for (List<String> valueRow : valueRows) {
-                Map<K, V> map = new HashMap<K, V>();
+                Map<K, V> map = new LinkedHashMap<K, V>();
                 int i = 0;
                 for (String cell : valueRow) {
                     map.put(keys.get(i), (V) valueConverter.fromString(cell));
