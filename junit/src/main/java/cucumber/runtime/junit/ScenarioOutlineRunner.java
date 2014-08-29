@@ -3,7 +3,6 @@ package cucumber.runtime.junit;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.model.CucumberExamples;
 import cucumber.runtime.model.CucumberScenarioOutline;
-import gherkin.formatter.model.ScenarioOutline;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runners.Suite;
@@ -18,7 +17,7 @@ class ScenarioOutlineRunner extends Suite {
     public ScenarioOutlineRunner(Runtime runtime, CucumberScenarioOutline cucumberScenarioOutline, JUnitReporter jUnitReporter) throws InitializationError {
         super(null, new ArrayList<Runner>());
         this.cucumberScenarioOutline = cucumberScenarioOutline;
-        jUnitReporter.scenarioOutline((ScenarioOutline)cucumberScenarioOutline.getGherkinModel());
+        jUnitReporter.scenarioOutline(cucumberScenarioOutline.getScenarioOutline());
         for (CucumberExamples cucumberExamples : cucumberScenarioOutline.getCucumberExamplesList()) {
             getChildren().add(new ExamplesRunner(runtime, cucumberExamples, jUnitReporter));
             jUnitReporter.examples(cucumberExamples.getExamples());
