@@ -2,7 +2,7 @@ package cucumber.api.guice;
 
 
 /**
- * Please see documentation in package.html
+ * Please see package documentation in package.html
  */
 public class README {
 }
