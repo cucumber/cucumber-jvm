@@ -1,5 +1,9 @@
 ## [1.2.0-SNAPSHOT (Git master)](https://github.com/cucumber/cucumber-jvm/compare/v1.1.8...master) (Not released)
 
+* [Core] Better error messages when loading features from rerun file ([#749](https://github.com/cucumber/cucumber-jvm/pull/749) Björn Rasmusson)
+* [Core] Handle "" properly in ListConverter. ([#756](https://github.com/cucumber/cucumber-jvm/pull/756) Clément MATHIEU)
+* [Guice] Update links and fix formatting in Cucumber Guice docs ([#763](https://github.com/cucumber/cucumber-jvm/pull/763) Jake Collins)
+* [Groovy] Clean up groovy stack traces ([#758](https://github.com/cucumber/cucumber-jvm/pull/758) Tom Dunstan)
 * [Gosu] Removed this module. It causes build problems and is too esoteric.
 * [Ioke] Removed this module. It slows down the build and is too esoteric.
 * [Core] Richer plugin API. The `--plugin` option can specify a class that implements one or more of `gherkin.formatter.Formatter,gherkin.formatter.Reporter,cucumber.api.StepDefinitionReporter` (Aslak Hellesøy)
