@@ -18,4 +18,5 @@ Gem::Specification.new do |s|
   s.executables  = ['cucumber-jvm']
   s.require_path = 'lib'
   s.platform     = 'java'
+  s.license      = 'MIT'
 end

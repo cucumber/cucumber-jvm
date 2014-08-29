@@ -47,7 +47,7 @@
         <selenium.version>2.42.2</selenium.version>
         <webbit.version>0.4.15</webbit.version>
         <webbit-rest.version>0.3.0</webbit-rest.version>
-        <jruby.version>1.7.13</jruby.version>
+        <jruby.version>1.7.14</jruby.version>
         <weld-se.version>2.2.2.Final</weld-se.version>
         <cdi-api.version>1.2</cdi-api.version>
         <openejb-core.version>4.6.0.2</openejb-core.version>
