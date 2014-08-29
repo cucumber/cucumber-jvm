@@ -51,7 +51,7 @@ public class CucumberFeature {
             if (featurePath.startsWith("@")) {
                 loadFromRerunFile(builder, resourceLoader, featurePath.substring(1), filters);
             } else {
-                loadFromFeaturePath(builder, resourceLoader, featurePath, filters);
+                loadFromFeaturePath(builder, resourceLoader, featurePath, filters, false);
             }
         }
         Collections.sort(cucumberFeatures, new CucumberFeatureUriComparator());
@@ -70,13 +70,19 @@ public class CucumberFeature {
 
     private static void loadFromFileSystemOrClasspath(FeatureBuilder builder, ResourceLoader resourceLoader, String featurePath, final List<Object> filters) {
         try {
-            loadFromFeaturePath(builder, resourceLoader, featurePath, filters);
+            loadFromFeaturePath(builder, resourceLoader, featurePath, filters, false);
         } catch (IllegalArgumentException originalException) {
-            if (!featurePath.startsWith(MultiLoader.CLASSPATH_SCHEME)) {
+            if (!featurePath.startsWith(MultiLoader.CLASSPATH_SCHEME) &&
+                    originalException.getMessage().contains("Not a file or directory")) {
                 try {
-                    loadFromFeaturePath(builder, resourceLoader, MultiLoader.CLASSPATH_SCHEME + featurePath, filters);
+                    loadFromFeaturePath(builder, resourceLoader, MultiLoader.CLASSPATH_SCHEME + featurePath, filters, true);
                 } catch (IllegalArgumentException secondException) {
-                    throw originalException;
+                    if (secondException.getMessage().contains("No resource found for")) {
+                        throw new IllegalArgumentException("Neither found on file system or on classpath: " +
+                                originalException.getMessage() + ", " + secondException.getMessage());
+                    } else {
+                        throw secondException;
+                    }
                 }
             } else {
                 throw originalException;
@@ -84,11 +90,14 @@ public class CucumberFeature {
         }
     }
 
-    private static void loadFromFeaturePath(FeatureBuilder builder, ResourceLoader resourceLoader, String featurePath, final List<Object> filters) {
+    private static void loadFromFeaturePath(FeatureBuilder builder, ResourceLoader resourceLoader, String featurePath, final List<Object> filters, boolean failOnNoResource) {
         PathWithLines pathWithLines = new PathWithLines(featurePath);
         ArrayList<Object> filtersForPath = new ArrayList<Object>(filters);
         filtersForPath.addAll(pathWithLines.lines);
         Iterable<Resource> resources = resourceLoader.resources(pathWithLines.path, ".feature");
+        if (failOnNoResource && !resources.iterator().hasNext()) {
+            throw new IllegalArgumentException("No resource found for: " + pathWithLines.path);
+        }
         for (Resource resource : resources) {
             builder.parse(resource, filtersForPath);
         }
