@@ -8,6 +8,7 @@ import gherkin.I18n;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 import groovy.lang.Closure;
+import org.codehaus.groovy.runtime.StackTraceUtils;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -63,13 +64,17 @@ public class GroovyStepDefinition implements StepDefinition {
     }
 
     public void execute(I18n i18n, final Object[] args) throws Throwable {
-        Timeout.timeout(new Timeout.Callback<Object>() {
-            @Override
-            public Object call() throws Throwable {
-                backend.invoke(body, args);
-                return null;
-            }
-        }, timeoutMillis);
+        try {
+            Timeout.timeout(new Timeout.Callback<Object>() {
+                @Override
+                public Object call() throws Throwable {
+                    backend.invoke(body, args);
+                    return null;
+                }
+            }, timeoutMillis);
+        } catch(Throwable e) {
+            throw StackTraceUtils.deepSanitize(e);
+        }
     }
 
     public boolean isDefinedAt(StackTraceElement stackTraceElement) {
