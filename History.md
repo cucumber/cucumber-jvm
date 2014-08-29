@@ -1,5 +1,6 @@
 ## [1.2.0-SNAPSHOT (Git master)](https://github.com/cucumber/cucumber-jvm/compare/v1.1.8...master) (Not released)
 
+* [Core] Improve error message for multiple formatters using STDOUT ([#744](https://github.com/cucumber/cucumber-jvm/pull/744) Björn Rasmusson)
 * [Core] Better error messages when loading features from rerun file ([#749](https://github.com/cucumber/cucumber-jvm/pull/749) Björn Rasmusson)
 * [Core] Handle "" properly in ListConverter. ([#756](https://github.com/cucumber/cucumber-jvm/pull/756) Clément MATHIEU)
 * [Guice] Update links and fix formatting in Cucumber Guice docs ([#763](https://github.com/cucumber/cucumber-jvm/pull/763) Jake Collins)

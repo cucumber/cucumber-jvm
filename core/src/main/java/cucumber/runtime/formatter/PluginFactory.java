@@ -54,6 +54,8 @@ public class PluginFactory {
         put("rerun", RerunFormatter.class);
     }};
     private static final Pattern PLUGIN_WITH_FILE_PATTERN = Pattern.compile("([^:]+):(.*)");
+    private String defaultOutFormatter = null;
+
     private Appendable defaultOut = new PrintStream(System.out) {
         @Override
         public void close() {
@@ -85,7 +87,7 @@ public class PluginFactory {
         for (Class ctorArgClass : CTOR_ARGS) {
             Constructor<T> constructor = findConstructor(pluginClass, ctorArgClass);
             if (constructor != null) {
-                Object ctorArg = convertOrNull(pathOrUrl, ctorArgClass);
+                Object ctorArg = convertOrNull(pathOrUrl, ctorArgClass, pluginString);
                 try {
                     if (ctorArgClass == null) {
                         return constructor.newInstance();
@@ -107,7 +109,7 @@ public class PluginFactory {
         throw new CucumberException(String.format("%s must have a constructor that is either empty or a single arg of one of: %s", pluginClass, asList(CTOR_ARGS)));
     }
 
-    private Object convertOrNull(String pathOrUrl, Class ctorArgClass) throws IOException, URISyntaxException {
+    private Object convertOrNull(String pathOrUrl, Class ctorArgClass, String formatterString) throws IOException, URISyntaxException {
         if (ctorArgClass == null) {
             return null;
         }
@@ -130,7 +132,7 @@ public class PluginFactory {
             if (pathOrUrl != null) {
                 return new UTF8OutputStreamWriter(new URLOutputStream(toURL(pathOrUrl)));
             } else {
-                return defaultOutOrFailIfAlreadyUsed();
+                return defaultOutOrFailIfAlreadyUsed(formatterString);
             }
         }
         return null;
@@ -165,12 +167,15 @@ public class PluginFactory {
         }
     }
 
-    private Appendable defaultOutOrFailIfAlreadyUsed() {
+    private Appendable defaultOutOrFailIfAlreadyUsed(String formatterString) {
         try {
             if (defaultOut != null) {
+                defaultOutFormatter = formatterString;
                 return defaultOut;
             } else {
-                throw new CucumberException("Only one plugin can use STDOUT. If you use more than one plugin you must specify output path with FORMAT:PATH_OR_URL");
+                throw new CucumberException("Only one formatter can use STDOUT, now both " +
+                        defaultOutFormatter + " and " + formatterString + " use it. " +
+                        "If you use more than one formatter you must specify output path with PLUGIN:PATH_OR_URL");
             }
         } finally {
             defaultOut = null;

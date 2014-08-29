@@ -106,7 +106,9 @@ public class PluginFactoryTest {
             fc.create("cucumber.runtime.formatter.PluginFactoryTest$WantsAppendable");
             fail();
         } catch (CucumberException expected) {
-            assertEquals("Only one plugin can use STDOUT. If you use more than one plugin you must specify output path with FORMAT:PATH_OR_URL", expected.getMessage());
+            assertEquals("Only one formatter can use STDOUT, now both cucumber.runtime.formatter.PluginFactoryTest$WantsAppendable " +
+                    "and cucumber.runtime.formatter.PluginFactoryTest$WantsAppendable use it. " +
+                    "If you use more than one formatter you must specify output path with PLUGIN:PATH_OR_URL", expected.getMessage());
         }
     }
 
