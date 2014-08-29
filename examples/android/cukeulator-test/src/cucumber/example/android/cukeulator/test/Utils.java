@@ -43,6 +43,7 @@ public final class Utils {
             lock.acquire();
         } catch (InterruptedException e) {
             Log.e("cucumber-android", e.toString());
+            Thread.currentThread().interrupt();
         }
     }
 }
