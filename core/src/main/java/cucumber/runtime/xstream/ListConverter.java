@@ -34,6 +34,10 @@ class ListConverter implements SingleValueConverter {
 
     @Override
     public Object fromString(String s) {
+        if (s.isEmpty()) {
+            return new ArrayList<String>(0);
+        }
+
         final String[] strings = s.split(delimiter);
         List<Object> list = new ArrayList<Object>(strings.length);
         for (String elem : strings) {
