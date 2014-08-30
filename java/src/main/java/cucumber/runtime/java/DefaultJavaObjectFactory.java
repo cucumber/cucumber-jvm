@@ -4,12 +4,9 @@ import cucumber.runtime.CucumberException;
 
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 class DefaultJavaObjectFactory implements ObjectFactory {
-    private final Set<Class<?>> classes = new HashSet<Class<?>>();
     private final Map<Class<?>, Object> instances = new HashMap<Class<?>, Object>();
 
     public void start() {
@@ -21,7 +18,6 @@ class DefaultJavaObjectFactory implements ObjectFactory {
     }
 
     public void addClass(Class<?> clazz) {
-        classes.add(clazz);
     }
 
     public <T> T getInstance(Class<T> type) {
