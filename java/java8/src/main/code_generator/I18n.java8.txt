@@ -1,0 +1,57 @@
+package cucumber.api.java8;
+
+import cucumber.runtime.java.JavaBackend;
+
+public interface ${className} extends Language {
+<% i18n.codeKeywords.each { kw -> %>
+    default ${className} ${java.text.Normalizer.normalize(kw, java.text.Normalizer.Form.NFC)}(final String regexp, final StepdefBody body) {
+        JavaBackend.INSTANCE.get().addStepDefinition(regexp, 0, body);
+        return this;
+    }
+
+    default ${className} ${java.text.Normalizer.normalize(kw, java.text.Normalizer.Form.NFC)}(final String regexp, final long timeoutMillis, final StepdefBody body) {
+        JavaBackend.INSTANCE.get().addStepDefinition(regexp, timeoutMillis, body);
+        return this;
+    }
+<% } %>
+
+    default ${className} Before(final long timeoutMillis, final HookBody body) {
+        JavaBackend.INSTANCE.get().addBeforeHookDefinition(timeoutMillis, body);
+        return this;
+    }
+
+    default ${className} Before(final HookBody body) {
+        JavaBackend.INSTANCE.get().addBeforeHookDefinition(0, body);
+        return this;
+    }
+
+    default ${className} After(final long timeoutMillis, final HookBody body) {
+        JavaBackend.INSTANCE.get().addAfterHookDefinition(timeoutMillis, body);
+        return this;
+    }
+
+    default ${className} After(final HookBody body) {
+        JavaBackend.INSTANCE.get().addAfterHookDefinition(0, body);
+        return this;
+    }
+
+    default ${className} Before(final long timeoutMillis, final HookNoArgsBody body) {
+        JavaBackend.INSTANCE.get().addBeforeHookDefinition(timeoutMillis, body);
+        return this;
+    }
+
+    default ${className} Before(final HookNoArgsBody body) {
+        JavaBackend.INSTANCE.get().addBeforeHookDefinition(0, body);
+        return this;
+    }
+
+    default ${className} After(final long timeoutMillis, final HookNoArgsBody body) {
+        JavaBackend.INSTANCE.get().addAfterHookDefinition(timeoutMillis, body);
+        return this;
+    }
+
+    default ${className} After(final HookNoArgsBody body) {
+        JavaBackend.INSTANCE.get().addAfterHookDefinition(0, body);
+        return this;
+    }
+}

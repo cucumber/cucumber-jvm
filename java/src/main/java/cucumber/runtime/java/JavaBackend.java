@@ -2,6 +2,9 @@ package cucumber.runtime.java;
 
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
+import cucumber.api.java8.HookBody;
+import cucumber.api.java8.HookNoArgsBody;
+import cucumber.api.java8.StepdefBody;
 import cucumber.runtime.Backend;
 import cucumber.runtime.ClassFinder;
 import cucumber.runtime.CucumberException;
@@ -25,6 +28,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public class JavaBackend implements Backend {
+    public static final ThreadLocal<JavaBackend> INSTANCE = new ThreadLocal<JavaBackend>();
     private SnippetGenerator snippetGenerator = new SnippetGenerator(new JavaSnippet());
     private final ObjectFactory objectFactory;
     private final ClassFinder classFinder;
@@ -122,15 +126,8 @@ public class JavaBackend implements Backend {
         }
     }
 
-    private Pattern pattern(Annotation annotation) throws Throwable {
-        Method regexpMethod = annotation.getClass().getMethod("value");
-        String regexpString = (String) Utils.invoke(annotation, regexpMethod, 0);
-        return Pattern.compile(regexpString);
-    }
-
-    private long timeoutMillis(Annotation annotation) throws Throwable {
-        Method regexpMethod = annotation.getClass().getMethod("timeout");
-        return (Long) Utils.invoke(annotation, regexpMethod, 0);
+    public void addStepDefinition(String regexp, long timeoutMillis, StepdefBody body) {
+        glue.addStepDefinition(new Java8StepDefinition(Pattern.compile(regexp), timeoutMillis, body, objectFactory));
     }
 
     void addHook(Annotation annotation, Method method) {
@@ -145,6 +142,33 @@ public class JavaBackend implements Backend {
             long timeout = ((After) annotation).timeout();
             glue.addAfterHook(new JavaHookDefinition(method, tagExpressions, ((After) annotation).order(), timeout, objectFactory));
         }
+    }
+
+    public void addBeforeHookDefinition(long timeoutMillis, HookBody body) {
+        glue.addBeforeHook(new Java8HookDefinition(body, new String[0], 0, timeoutMillis, objectFactory));
+    }
+
+    public void addAfterHookDefinition(long timeoutMillis, HookBody body) {
+        glue.addAfterHook(new Java8HookDefinition(body, new String[0], 10000, timeoutMillis, objectFactory));
+    }
+
+    public void addBeforeHookDefinition(long timeoutMillis, HookNoArgsBody body) {
+        glue.addBeforeHook(new Java8HookDefinition(body, new String[0], 0, timeoutMillis, objectFactory));
+    }
+
+    public void addAfterHookDefinition(long timeoutMillis, HookNoArgsBody body) {
+        glue.addAfterHook(new Java8HookDefinition(body, new String[0], 10000, timeoutMillis, objectFactory));
+    }
+
+    private Pattern pattern(Annotation annotation) throws Throwable {
+        Method regexpMethod = annotation.getClass().getMethod("value");
+        String regexpString = (String) Utils.invoke(annotation, regexpMethod, 0);
+        return Pattern.compile(regexpString);
+    }
+
+    private long timeoutMillis(Annotation annotation) throws Throwable {
+        Method regexpMethod = annotation.getClass().getMethod("timeout");
+        return (Long) Utils.invoke(annotation, regexpMethod, 0);
     }
 
     private static String getMultipleObjectFactoryLogMessage() {

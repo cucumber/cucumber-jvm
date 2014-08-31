@@ -4,28 +4,18 @@
     <parent>
         <groupId>info.cukes</groupId>
         <artifactId>cucumber-jvm</artifactId>
-        <relativePath>../pom.xml</relativePath>
+        <relativePath>../../pom.xml</relativePath>
         <version>1.2.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>cucumber-java</artifactId>
+    <artifactId>cucumber-java8</artifactId>
     <packaging>jar</packaging>
-    <name>Cucumber-JVM: Java</name>
+    <name>Cucumber-JVM: Java8</name>
 
     <dependencies>
         <dependency>
             <groupId>info.cukes</groupId>
-            <artifactId>cucumber-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>info.cukes</groupId>
-            <artifactId>cucumber-jvm-deps</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>info.cukes</groupId>
-            <artifactId>gherkin</artifactId>
-            <scope>provided</scope>
+            <artifactId>cucumber-java</artifactId>
         </dependency>
 
         <dependency>
@@ -51,6 +41,14 @@
     </dependencies>
 
     <build>
+        <sourceDirectory>../src/main/java</sourceDirectory>
+        <testSourceDirectory>src/test/java</testSourceDirectory>
+        <testResources>
+            <testResource>
+                <directory>../src/test/resources</directory>
+            </testResource>
+        </testResources>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -71,7 +69,6 @@ import groovy.text.SimpleTemplateEngine
 import gherkin.I18n
 
 def engine = new SimpleTemplateEngine()
-def templateSource = new File(project.baseDir, "src${File.separator}main${File.separator}code_generator${File.separator}I18n.java.txt").getText()
 
 def normalize(s) {
   if(System.getProperty("java.version").startsWith("1.6")) {
@@ -81,35 +78,14 @@ def normalize(s) {
   }
 }
 
-
-// TODO: Need to add i18n.getName() and i18n.getNative() for better names.
-def package_html = """\
-<body>
-<p>
-    \${i18n.getLocale().getDisplayLanguage()}
-</p>
-</body>
-"""
-
-def unsupported = [] // We used to have problems with "kn", but it seems ok now.
-
 I18n.all.each { i18n ->
-  if (!unsupported.contains(i18n.underscoredIsoCode)) {
-    i18n.codeKeywords.each { kw ->
-      def normalized_kw = normalize(kw)
-      def binding = ["i18n":i18n, "kw":normalized_kw]
-      def template = engine.createTemplate(templateSource).make(binding)
-      def file = new File(project.baseDir, "target${File.separator}generated-sources${File.separator}i18n${File.separator}java${File.separator}cucumber${File.separator}api${File.separator}java${File.separator}${i18n.underscoredIsoCode}${File.separator}${normalized_kw}.java")
-      file.parentFile.mkdirs()
-      file.write(template.toString(), "UTF-8")
-    }
-
-    // html
-    def binding = ["i18n":i18n]
-    def html = engine.createTemplate(package_html).make(binding).toString()
-    def file = new File(project.baseDir, "target${File.separator}generated-sources${File.separator}i18n${File.separator}java${File.separator}cucumber${File.separator}api${File.separator}java${File.separator}${i18n.underscoredIsoCode}${File.separator}package.html")
-    file.write(html, "UTF-8")
-  }
+  def templateSource = new File(project.baseDir, "src${File.separator}main${File.separator}code_generator${File.separator}I18n.java8.txt").getText()
+  def className = "${i18n.underscoredIsoCode}".capitalize()
+  def binding = [ "i18n":i18n, "className":className ]
+  def template = engine.createTemplate(templateSource).make(binding)
+  def file = new File("target${File.separator}generated-sources${File.separator}i18n${File.separator}java8${File.separator}cucumber${File.separator}api${File.separator}java8${File.separator}${className}.java")
+  file.parentFile.mkdirs()
+  file.write(template.toString(), "UTF-8")
 }
 
         ]]></groovy>
@@ -119,6 +95,18 @@ I18n.all.each { i18n ->
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <compilerArgument>-Werror</compilerArgument>
+                </configuration>
+            </plugin>
+
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
@@ -131,7 +119,7 @@ I18n.all.each { i18n ->
                         </goals>
                         <configuration>
                             <sources>
-                                <source>${basedir}/target/generated-sources/i18n/java</source>
+                                <source>${basedir}/target/generated-sources/i18n/java8</source>
                             </sources>
                         </configuration>
                     </execution>
