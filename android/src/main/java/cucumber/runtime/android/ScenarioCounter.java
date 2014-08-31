@@ -9,11 +9,11 @@ import cucumber.runtime.model.CucumberTagStatement;
 import java.util.List;
 
 /**
- * Utility class to count tests.
+ * Utility class to count scenarios, including outlined.
  */
-public final class TestCaseCounter {
+public final class ScenarioCounter {
 
-    private TestCaseCounter() {
+    private ScenarioCounter() {
         // disallow public instantiation
     }
 
@@ -23,7 +23,7 @@ public final class TestCaseCounter {
      * @param cucumberFeatures the list of {@link CucumberFeature} to count the test cases for
      * @return the number of test cases
      */
-    public static int countTestCasesOf(final List<CucumberFeature> cucumberFeatures) {
+    public static int countScenarios(final List<CucumberFeature> cucumberFeatures) {
         int numberOfTestCases = 0;
         for (final CucumberFeature cucumberFeature : cucumberFeatures) {
             for (final CucumberTagStatement cucumberTagStatement : cucumberFeature.getFeatureElements()) {

@@ -58,9 +58,11 @@ public class CoverageDumper {
     }
 
     /**
-     * Dumps the coverage data into the given file.
+     * Dumps the coverage data into the given file, if code coverage is enabled.
+     *
+     * @param bundle the {@link Bundle} to put coverage information into
      */
-    public void requestDump(final Bundle results) {
+    public void requestDump(final Bundle bundle) {
 
         if (!arguments.isCoverageEnabled()) {
             return;
@@ -74,18 +76,18 @@ public class CoverageDumper {
             final Method dumperMethod = dumperClass.getMethod(IMPLEMENTATION_METHOD, coverageFile.getClass(), boolean.class, boolean.class);
             dumperMethod.invoke(null, coverageFile, false, false);
 
-            results.putString(RESULT_KEY_COVERAGE_PATH, coverageDateFilePath);
-            appendNewLineToResultStream(results, String.format(RESULT_STREAM_SUCCESS_OUTPUT_FORMAT, coverageDateFilePath));
+            bundle.putString(RESULT_KEY_COVERAGE_PATH, coverageDateFilePath);
+            appendNewLineToResultStream(bundle, String.format(RESULT_STREAM_SUCCESS_OUTPUT_FORMAT, coverageDateFilePath));
         } catch (final ClassNotFoundException e) {
-            reportError(results, e);
+            reportError(bundle, e);
         } catch (final SecurityException e) {
-            reportError(results, e);
+            reportError(bundle, e);
         } catch (final NoSuchMethodException e) {
-            reportError(results, e);
+            reportError(bundle, e);
         } catch (final IllegalAccessException e) {
-            reportError(results, e);
+            reportError(bundle, e);
         } catch (final InvocationTargetException e) {
-            reportError(results, e);
+            reportError(bundle, e);
         }
     }
 

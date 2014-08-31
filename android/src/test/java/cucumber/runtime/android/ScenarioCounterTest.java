@@ -17,7 +17,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class TestCaseCounterTest {
+public class ScenarioCounterTest {
 
     @Test
     public void calculates_number_of_tests_for_regular_scenarios() {
@@ -26,7 +26,7 @@ public class TestCaseCounterTest {
         final List<CucumberFeature> cucumberFeatures = createCucumberFeaturesWithScenarios(1, 2);
 
         // when
-        final int result = TestCaseCounter.countTestCasesOf(cucumberFeatures);
+        final int result = ScenarioCounter.countScenarios(cucumberFeatures);
 
         // then
         assertThat(result, is(2));
@@ -39,7 +39,7 @@ public class TestCaseCounterTest {
         final List<CucumberFeature> cucumberFeatures = createCucumberFeaturesWithScenarioOutlines(1, 2, 2, 2);
 
         // when
-        final int result = TestCaseCounter.countTestCasesOf(cucumberFeatures);
+        final int result = ScenarioCounter.countScenarios(cucumberFeatures);
 
         // then
         assertThat(result, is(8));

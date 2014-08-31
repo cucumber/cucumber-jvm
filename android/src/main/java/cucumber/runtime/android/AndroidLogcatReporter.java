@@ -14,10 +14,28 @@ import java.util.List;
  * Logs information about the currently executed statements to androids logcat.
  */
 public class  AndroidLogcatReporter extends NoOpFormattingReporter {
+
+    /**
+     * The {@link cucumber.runtime.Runtime} to get the errors and snippets from for writing them to the logcat at the end of the execution.
+     */
     private final Runtime runtime;
+
+    /**
+     * The log tag to be used when logging to logcat.
+     */
     private final String logTag;
+
+    /**
+     * Holds the feature's uri.
+     */
     private String uri;
 
+    /**
+     * Creates a new instance for the given parameters.
+     *
+     * @param runtime the {@link cucumber.runtime.Runtime} to get the errors and snippets from
+     * @param logTag the tag to use for logging to logcat
+     */
     public AndroidLogcatReporter(final Runtime runtime, final String logTag) {
         this.runtime = runtime;
         this.logTag = logTag;

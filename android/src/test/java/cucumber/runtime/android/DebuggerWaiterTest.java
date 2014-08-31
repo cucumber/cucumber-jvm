@@ -25,7 +25,7 @@ public class DebuggerWaiterTest {
 
         mockStatic(Debug.class);
 
-        final Waiter waiter = new Waiter(arguments);
+        final DebuggerWaiter waiter = new DebuggerWaiter(arguments);
 
         // when
         waiter.requestWaitForDebugger();
@@ -43,7 +43,7 @@ public class DebuggerWaiterTest {
 
         mockStatic(Debug.class);
 
-        final Waiter waiter = new Waiter(arguments);
+        final DebuggerWaiter waiter = new DebuggerWaiter(arguments);
 
         // when
         waiter.requestWaitForDebugger();

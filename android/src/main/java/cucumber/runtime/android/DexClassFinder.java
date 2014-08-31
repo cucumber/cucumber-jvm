@@ -3,26 +3,56 @@ package cucumber.runtime.android;
 import cucumber.runtime.ClassFinder;
 import cucumber.runtime.CucumberException;
 import dalvik.system.DexFile;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.List;
 
 /**
- * Loads classes contained in the provided {@link dalvik.system.DexFile}.
+ * Android specific implementation of {@link cucumber.runtime.ClassFinder} which loads classes contained in the provided {@link dalvik.system.DexFile}.
  */
 public class DexClassFinder implements ClassFinder {
 
+    /**
+     * Symbol name of the manifest class.
+     */
     private static final String MANIFEST_CLASS_NAME = "Manifest";
-    private static final String R_CLASS_NAME = "R";
-    private static final String R_INNER_CLASS_NAME = "R$";
+
+    /**
+     * Symbol name of the resource class.
+     */
+    private static final String RESOURCE_CLASS_NAME = "R";
+
+    /**
+     * Symbol name prefix of any inner class of the resource class.
+     */
+    private static final String RESOURCE_INNER_CLASS_NAME_PREFIX = "R$";
+
+    /**
+     * The file name separator.
+     */
     private static final String FILE_NAME_SEPARATOR = ".";
+
+    /**
+     * The class loader to actually load the classes specified by the {@link dalvik.system.DexFile}.
+     */
     private static final ClassLoader CLASS_LOADER = DexClassFinder.class.getClassLoader();
+
+    /**
+     * The "symbol" representing the default package.
+     */
     private static final String DEFAULT_PACKAGE = "";
 
+    /**
+     * The {@link dalvik.system.DexFile} to load classes from
+     */
     private final DexFile dexFile;
 
+    /**
+     * Creates a new instance for the given parameter.
+     *
+     * @param dexFile the {@link dalvik.system.DexFile} to load classes from
+     */
     public DexClassFinder(final DexFile dexFile) {
         this.dexFile = dexFile;
     }
@@ -62,6 +92,6 @@ public class DexClassFinder implements ClassFinder {
     private boolean isGenerated(final String className) {
         final int lastDotIndex = className.lastIndexOf(FILE_NAME_SEPARATOR);
         final String shortName = lastDotIndex == -1 ? className : className.substring(lastDotIndex + 1);
-        return shortName.equals(MANIFEST_CLASS_NAME) || shortName.equals(R_CLASS_NAME) || shortName.startsWith(R_INNER_CLASS_NAME);
+        return shortName.equals(MANIFEST_CLASS_NAME) || shortName.equals(RESOURCE_CLASS_NAME) || shortName.startsWith(RESOURCE_INNER_CLASS_NAME_PREFIX);
     }
 }
