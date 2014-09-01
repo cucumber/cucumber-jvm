@@ -501,6 +501,8 @@
 
     <modules>
         <module>core</module>
+        <module>java</module>
+        <module>java/java8</module>
         <module>testng</module>
         <module>picocontainer</module>
         <module>clojure</module>
@@ -512,8 +514,6 @@
         <module>weld</module>
         <module>groovy</module>
         <module>rhino</module>
-        <module>java</module>
-        <module>java/java8</module>
         <module>openejb</module>
         <module>scala</module>
         <module>scala/scala_previous</module>

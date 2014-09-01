@@ -1,4 +1,4 @@
-package cucumber.runtime.java.test;
+package cucumber.runtime.java.java8test;
 
 import cucumber.api.CucumberOptions;
 import cucumber.api.junit.Cucumber;
