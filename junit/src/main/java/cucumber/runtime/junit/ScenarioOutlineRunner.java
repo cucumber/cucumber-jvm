@@ -17,10 +17,8 @@ class ScenarioOutlineRunner extends Suite {
     public ScenarioOutlineRunner(Runtime runtime, CucumberScenarioOutline cucumberScenarioOutline, JUnitReporter jUnitReporter) throws InitializationError {
         super(null, new ArrayList<Runner>());
         this.cucumberScenarioOutline = cucumberScenarioOutline;
-        jUnitReporter.scenarioOutline(cucumberScenarioOutline.getScenarioOutline());
         for (CucumberExamples cucumberExamples : cucumberScenarioOutline.getCucumberExamplesList()) {
             getChildren().add(new ExamplesRunner(runtime, cucumberExamples, jUnitReporter));
-            jUnitReporter.examples(cucumberExamples.getExamples());
         }
     }
 

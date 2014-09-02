@@ -22,12 +22,10 @@ import java.util.Set;
 public class CucumberScenarioOutline extends CucumberTagStatement {
     private final List<CucumberExamples> cucumberExamplesList = new ArrayList<CucumberExamples>();
     private final CucumberBackground cucumberBackground;
-    private final ScenarioOutline scenarioOutline;
 
     public CucumberScenarioOutline(CucumberFeature cucumberFeature, CucumberBackground cucumberBackground, ScenarioOutline scenarioOutline) {
         super(cucumberFeature, scenarioOutline);
         this.cucumberBackground = cucumberBackground;
-        this.scenarioOutline = scenarioOutline;
     }
 
     public void examples(Examples examples) {
@@ -120,9 +118,5 @@ public class CucumberScenarioOutline extends CucumberTagStatement {
             }
         }
         return text;
-    }
-
-    public ScenarioOutline getScenarioOutline() {
-        return scenarioOutline;
     }
 }
