@@ -4,7 +4,7 @@
     <parent>
         <groupId>info.cukes</groupId>
         <artifactId>cucumber-jvm</artifactId>
-        <relativePath>../../pom.xml</relativePath>
+        <relativePath>../pom.xml</relativePath>
         <version>1.2.0-SNAPSHOT</version>
     </parent>
 
@@ -75,7 +75,7 @@ I18n.all.each { i18n ->
   def className = "${i18n.underscoredIsoCode}".capitalize()
   def binding = [ "i18n":i18n, "className":className ]
   def template = engine.createTemplate(templateSource).make(binding)
-  def file = new File("target${File.separator}generated-sources${File.separator}i18n${File.separator}java8${File.separator}cucumber${File.separator}api${File.separator}java8${File.separator}${className}.java")
+  def file = new File(project.baseDir, "target${File.separator}generated-sources${File.separator}i18n${File.separator}java8${File.separator}cucumber${File.separator}api${File.separator}java8${File.separator}${className}.java")
   file.parentFile.mkdirs()
   file.write(template.toString(), "UTF-8")
 }
@@ -92,10 +92,11 @@ I18n.all.each { i18n ->
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.1</version>
                 <configuration>
+                    <fork>true</fork>
                     <encoding>UTF-8</encoding>
                     <source>1.8</source>
                     <target>1.8</target>
-                    <compilerArgument>-Werror</compilerArgument>
+                    <compilerArgument>-XDignore.symbol.file=true</compilerArgument>
                 </configuration>
             </plugin>
 

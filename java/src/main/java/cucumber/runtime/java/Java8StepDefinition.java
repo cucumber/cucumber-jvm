@@ -10,43 +10,47 @@ import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.regex.Pattern;
 
 public class Java8StepDefinition implements StepDefinition {
-    private final JavaBackend backend;
+
     private final Pattern pattern;
     private final long timeoutMillis;
     private final StepdefBody body;
-    private final ObjectFactory objectFactory;
 
     private final JdkPatternArgumentMatcher argumentMatcher;
     private final StackTraceElement location;
 
-    private Method method;
     private final List<ParameterInfo> parameterInfos;
+    private final Method method;
 
-    public Java8StepDefinition(JavaBackend backend, Pattern pattern, long timeoutMillis, StepdefBody body, ObjectFactory objectFactory) {
-        this.backend = backend;
+    public Java8StepDefinition(Pattern pattern, long timeoutMillis, StepdefBody body, TypeIntrospector typeIntrospector) throws Exception {
         this.pattern = pattern;
         this.timeoutMillis = timeoutMillis;
         this.body = body;
-        this.objectFactory = objectFactory;
 
         this.argumentMatcher = new JdkPatternArgumentMatcher(pattern);
         this.location = new Exception().getStackTrace()[3];
 
-        Class<? extends StepdefBody> clazz = body.getClass();
-        Method[] methods = clazz.getDeclaredMethods();
-        for (Method method : methods) {
-            if(method.getName().equals("accept")) {
-                // TODO: Sort or reject the one with Object params.
-                this.method = method;
-                break;
-            }
+        Class<? extends StepdefBody> bodyClass = body.getClass();
+
+        Type genericInterface = bodyClass.getGenericInterfaces()[0];
+        Type[] typeArguments;
+        if (genericInterface instanceof ParameterizedType) {
+            typeArguments = ((ParameterizedType) genericInterface).getActualTypeArguments();
+        } else {
+            typeArguments = typeIntrospector.getGenericTypes(bodyClass);
         }
-        this.parameterInfos = ParameterInfo.fromMethod(method);
+        this.parameterInfos = ParameterInfo.fromTypes(typeArguments);
+
+        Class[] parameterTypes = new Class[parameterInfos.size()];
+        for (int i = 0; i < parameterInfos.size(); i++) {
+            parameterTypes[i] = Object.class;
+        }
+        this.method = bodyClass.getDeclaredMethod("accept", parameterTypes);
     }
 
     @Override

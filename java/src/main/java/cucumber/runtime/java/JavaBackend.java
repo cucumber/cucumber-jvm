@@ -21,11 +21,11 @@ import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
 import cucumber.runtime.snippets.FunctionNameGenerator;
 import cucumber.runtime.snippets.SnippetGenerator;
-import gherkin.I18n;
 import gherkin.formatter.model.Step;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -88,22 +88,25 @@ public class JavaBackend implements Backend {
 
         // Scan for Java8 style glue (lambdas)
         for (final String gluePath : gluePaths) {
-            for (final Class<? extends Language> glueClass : classFinder.getDescendants(Language.class, packageName(gluePath))) {
+            Collection<Class<? extends Language>> glueDefinerClasses = classFinder.getDescendants(Language.class, packageName(gluePath));
+            for (final Class<? extends Language> glueClass : glueDefinerClasses) {
                 if (glueClass.isInterface()) {
                     continue;
                 }
 
                 objectFactory.addClass(glueClass);
-
-                INSTANCE.set(this);
-                try {
-                    glueClass.newInstance().defineGlue();
-                } catch (Exception e) {
-                    throw new CucumberException("Failed to instantiate Java8 glue", e);
-                } finally {
-                    INSTANCE.remove();
-                }
             }
+            INSTANCE.set(this);
+            try {
+                for (Class<? extends Language> glueDefinerClass : glueDefinerClasses) {
+                    objectFactory.getInstance(glueDefinerClass).defineGlue();
+                }
+            } catch (Exception e) {
+                throw new CucumberException("Failed to instantiate Java8 glue", e);
+            } finally {
+                INSTANCE.remove();
+            }
+
         }
     }
 
@@ -151,8 +154,12 @@ public class JavaBackend implements Backend {
         }
     }
 
-    public void addStepDefinition(String regexp, long timeoutMillis, StepdefBody body) {
-        glue.addStepDefinition(new Java8StepDefinition(this, Pattern.compile(regexp), timeoutMillis, body, objectFactory));
+    public void addStepDefinition(String regexp, long timeoutMillis, StepdefBody body, TypeIntrospector typeIntrospector) {
+        try {
+            glue.addStepDefinition(new Java8StepDefinition(Pattern.compile(regexp), timeoutMillis, body, typeIntrospector));
+        } catch (Exception e) {
+            throw new CucumberException(e);
+        }
     }
 
     void addHook(Annotation annotation, Method method) {
@@ -205,14 +212,4 @@ public class JavaBackend implements Backend {
         sb.append("In order to enjoy IoC features, please remove the unnecessary dependencies from your classpath.\n");
         return sb.toString();
     }
-
-//    public void invoke(StepdefBody body, I18n i18n, Object[] args) {
-//        if (body instanceof StepdefBody.A1) {
-//            ((StepdefBody.A1) body).accept(args[0]);
-//        } else if (body instanceof StepdefBody.A2) {
-//            ((StepdefBody.A2) body).accept(args[0], args[1]);
-//        } else {
-//            throw new CucumberException("Too many arguments: " + body);
-//        }
-//    }
 }

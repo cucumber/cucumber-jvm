@@ -502,7 +502,7 @@
     <modules>
         <module>core</module>
         <module>java</module>
-        <module>java/java8</module>
+        <module>java8</module>
         <module>testng</module>
         <module>picocontainer</module>
         <module>clojure</module>
