@@ -75,7 +75,7 @@ public class ExecutionUnitRunnerTest {
 
     @Test
     public void shouldPopulateRunnerStepsWithStepsUsedInStepDescriptions() throws Exception {
-        CucumberFeature cucumberFeature = feature("featurePath", "" +
+        CucumberFeature cucumberFeature = TestFeatureBuilder.feature("featurePath", "" +
                 "Feature: feature name\n" +
                 "  Background:\n" +
                 "    Given background step\n" +
@@ -104,38 +104,5 @@ public class ExecutionUnitRunnerTest {
         // as the unique id when comparing Descriptions
         assertEquals(stepDescription, Description.createTestDescription("", "", step));
     }
-
-    private CucumberFeature feature(final String path, final String source) throws IOException {
-        ArrayList<CucumberFeature> cucumberFeatures = new ArrayList<CucumberFeature>();
-        FeatureBuilder featureBuilder = new FeatureBuilder(cucumberFeatures);
-        featureBuilder.parse(new Resource() {
-            @Override
-            public String getPath() {
-                return path;
-            }
-
-            @Override
-            public String getAbsolutePath() {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
-            public InputStream getInputStream() {
-                try {
-                    return new ByteArrayInputStream(source.getBytes("UTF-8"));
-                } catch (UnsupportedEncodingException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-
-            @Override
-            public String getClassName(String extension) {
-                throw new UnsupportedOperationException();
-            }
-        }, new ArrayList<Object>());
-        featureBuilder.close();
-        return cucumberFeatures.get(0);
-    }
-
 
 }
