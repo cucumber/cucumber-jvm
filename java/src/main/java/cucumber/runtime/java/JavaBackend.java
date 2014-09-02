@@ -2,9 +2,9 @@ package cucumber.runtime.java;
 
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
+import cucumber.api.java8.GlueBase;
 import cucumber.api.java8.HookBody;
 import cucumber.api.java8.HookNoArgsBody;
-import cucumber.api.java8.Language;
 import cucumber.api.java8.StepdefBody;
 import cucumber.runtime.Backend;
 import cucumber.runtime.ClassFinder;
@@ -88,8 +88,8 @@ public class JavaBackend implements Backend {
 
         // Scan for Java8 style glue (lambdas)
         for (final String gluePath : gluePaths) {
-            Collection<Class<? extends Language>> glueDefinerClasses = classFinder.getDescendants(Language.class, packageName(gluePath));
-            for (final Class<? extends Language> glueClass : glueDefinerClasses) {
+            Collection<Class<? extends GlueBase>> glueDefinerClasses = classFinder.getDescendants(GlueBase.class, packageName(gluePath));
+            for (final Class<? extends GlueBase> glueClass : glueDefinerClasses) {
                 if (glueClass.isInterface()) {
                     continue;
                 }
@@ -98,7 +98,7 @@ public class JavaBackend implements Backend {
             }
             INSTANCE.set(this);
             try {
-                for (Class<? extends Language> glueDefinerClass : glueDefinerClasses) {
+                for (Class<? extends GlueBase> glueDefinerClass : glueDefinerClasses) {
                     objectFactory.getInstance(glueDefinerClass).defineGlue();
                 }
             } catch (Exception e) {
@@ -176,20 +176,20 @@ public class JavaBackend implements Backend {
         }
     }
 
-    public void addBeforeHookDefinition(long timeoutMillis, HookBody body) {
-        glue.addBeforeHook(new Java8HookDefinition(body, new String[0], 0, timeoutMillis, objectFactory));
+    public void addBeforeHookDefinition(HookBody body, String[] tagExpressions, long timeoutMillis, int order) {
+        glue.addBeforeHook(new Java8HookDefinition(body, tagExpressions, order, timeoutMillis));
     }
 
-    public void addAfterHookDefinition(long timeoutMillis, HookBody body) {
-        glue.addAfterHook(new Java8HookDefinition(body, new String[0], 10000, timeoutMillis, objectFactory));
+    public void addAfterHookDefinition(HookBody body, String[] tagExpressions, long timeoutMillis, int order) {
+        glue.addAfterHook(new Java8HookDefinition(body, tagExpressions, order, timeoutMillis));
     }
 
-    public void addBeforeHookDefinition(long timeoutMillis, HookNoArgsBody body) {
-        glue.addBeforeHook(new Java8HookDefinition(body, new String[0], 0, timeoutMillis, objectFactory));
+    public void addBeforeHookDefinition(HookNoArgsBody body, String[] tagExpressions, long timeoutMillis, int order) {
+        glue.addBeforeHook(new Java8HookDefinition(body, tagExpressions, order, timeoutMillis));
     }
 
-    public void addAfterHookDefinition(long timeoutMillis, HookNoArgsBody body) {
-        glue.addAfterHook(new Java8HookDefinition(body, new String[0], 10000, timeoutMillis, objectFactory));
+    public void addAfterHookDefinition(HookNoArgsBody body, String[] tagExpressions, long timeoutMillis, int order) {
+        glue.addAfterHook(new Java8HookDefinition(body, tagExpressions, order, timeoutMillis));
     }
 
     private Pattern pattern(Annotation annotation) throws Throwable {
