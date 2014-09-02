@@ -4,6 +4,7 @@ import cucumber.api.PendingException;
 import cucumber.api.Scenario;
 import cucumber.api.StepDefinitionReporter;
 import cucumber.runtime.formatter.CucumberJSONFormatter;
+import cucumber.runtime.formatter.FormatterSpy;
 import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.io.Resource;
 import cucumber.runtime.io.ResourceLoader;
@@ -22,10 +23,13 @@ import org.mockito.ArgumentCaptor;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static cucumber.runtime.TestHelper.feature;
 import static java.util.Arrays.asList;
@@ -389,6 +393,136 @@ public class RuntimeTest {
         ArgumentCaptor<Scenario> capturedScenario = ArgumentCaptor.forClass(Scenario.class);
         verify(beforeHook).execute(capturedScenario.capture());
         assertEquals("feature-name;scenario-name", capturedScenario.getValue().getId());
+    }
+
+    @Test
+    public void should_call_formatter_for_two_scenarios_with_background() throws Throwable {
+        CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
+                "Feature: feature name\n" +
+                "  Background: background\n" +
+                "    Given first step\n" +
+                "  Scenario: scenario_1 name\n" +
+                "    When second step\n" +
+                "    Then third step\n" +
+                "  Scenario: scenario_2 name\n" +
+                "    Then second step\n");
+        Map<String, String> stepsToResult = new HashMap<String, String>();
+        stepsToResult.put("first step", "passed");
+        stepsToResult.put("second step", "passed");
+        stepsToResult.put("third step", "passed");
+
+        String formatterOutput = runFeatureWithFormatterSpy(feature, stepsToResult);
+
+        assertEquals("" +
+                "uri\n" +
+                "feature\n" +
+                "  startOfScenarioLifeCycle\n" +
+                "  background\n" +
+                "    step\n" +
+                "    match\n" +
+                "    result\n" +
+                "  scenario\n" +
+                "    step\n" +
+                "    step\n" +
+                "    match\n" +
+                "    result\n" +
+                "    match\n" +
+                "    result\n" +
+                "  endOfScenarioLifeCycle\n" +
+                "  startOfScenarioLifeCycle\n" +
+                "  background\n" +
+                "    step\n" +
+                "    match\n" +
+                "    result\n" +
+                "  scenario\n" +
+                "    step\n" +
+                "    match\n" +
+                "    result\n" +
+                "  endOfScenarioLifeCycle\n" +
+                "eof\n" +
+                "done\n" +
+                "close\n", formatterOutput);
+    }
+
+    @Test
+    public void should_call_formatter_for_scenario_outline_with_two_examples_table_and_background() throws Throwable {
+        CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
+                "Feature: feature name\n" +
+                "  Background: background\n" +
+                "    Given first step\n" +
+                "  Scenario Outline: scenario outline name\n" +
+                "    When <x> step\n" +
+                "    Then <y> step\n" +
+                "    Examples: examples 1 name\n" +
+                "      |   x    |   y   |\n" +
+                "      | second | third |\n" +
+                "      | second | third |\n" +
+                "    Examples: examples 2 name\n" +
+                "      |   x    |   y   |\n" +
+                "      | second | third |\n");
+        Map<String, String> stepsToResult = new HashMap<String, String>();
+        stepsToResult.put("first step", "passed");
+        stepsToResult.put("second step", "passed");
+        stepsToResult.put("third step", "passed");
+
+        String formatterOutput = runFeatureWithFormatterSpy(feature, stepsToResult);
+
+        assertEquals("" +
+                "uri\n" +
+                "feature\n" +
+                "  scenarioOutline\n" +
+                "    step\n" +
+                "    step\n" +
+                "  examples\n" +
+                "  startOfScenarioLifeCycle\n" +
+                "  background\n" +
+                "    step\n" +
+                "    match\n" +
+                "    result\n" +
+                "  scenario\n" +
+                "    step\n" +
+                "    step\n" +
+                "    match\n" +
+                "    result\n" +
+                "    match\n" +
+                "    result\n" +
+                "  endOfScenarioLifeCycle\n" +
+                "  startOfScenarioLifeCycle\n" +
+                "  background\n" +
+                "    step\n" +
+                "    match\n" +
+                "    result\n" +
+                "  scenario\n" +
+                "    step\n" +
+                "    step\n" +
+                "    match\n" +
+                "    result\n" +
+                "    match\n" +
+                "    result\n" +
+                "  endOfScenarioLifeCycle\n" +
+                "  examples\n" +
+                "  startOfScenarioLifeCycle\n" +
+                "  background\n" +
+                "    step\n" +
+                "    match\n" +
+                "    result\n" +
+                "  scenario\n" +
+                "    step\n" +
+                "    step\n" +
+                "    match\n" +
+                "    result\n" +
+                "    match\n" +
+                "    result\n" +
+                "  endOfScenarioLifeCycle\n" +
+                "eof\n" +
+                "done\n" +
+                "close\n", formatterOutput);
+    }
+
+    private String runFeatureWithFormatterSpy(CucumberFeature feature, Map<String, String> stepsToResult) throws Throwable {
+        FormatterSpy formatterSpy = new FormatterSpy();
+        TestHelper.runFeatureWithFormatter(feature, stepsToResult, Collections.<SimpleEntry<String, String>>emptyList(), 0L, formatterSpy, formatterSpy);
+        return formatterSpy.toString();
     }
 
     private StepDefinitionMatch createExceptionThrowingMatch(Exception exception) throws Throwable {
