@@ -492,6 +492,6 @@ trait ScalaDsl { self =>
     }
 
     private def functionParams(f: Any) =
-      f.getClass.getDeclaredMethods.filterNot(_.isBridge).head.getGenericParameterTypes
+      f.getClass.getDeclaredMethods.filter(m => "apply".equals(m.getName) && !m.isBridge).head.getGenericParameterTypes
   }
 }
