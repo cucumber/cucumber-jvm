@@ -22,7 +22,7 @@ public class MyTests extends TestCase
 }
 ```
 glue is the path to step definitions, format is the path for report outputs, tags is the tags you want cucumber-android to run or not run, features is the path to the feature files.               
-You can also use command line to provide these options to cucumber-android. Here is the detailed documentation on how to use command line to provide these options: [Command Line Options for Cucumber Android](https://github.com/cucumber/cucumber-jvm/pull/597)
+You can also use command line to provide these options to cucumber-android. Here is the detailed documentation on how to use command line to provide these options: [Command Line Options for Cucumber Android](https://github.com/cucumber/cucumber-jvm/pull/597)                                 
 3. Write your .feature files under your test project's assets/<features-folder> folder. If you specify features = "features" like the example above then it's assets/features.
 
 4. Write your step definitions under the package name specified in glue. For example, if you specified glue = "com.mytest.steps", then create a new package under your src folder named "com.mytest.steps" and put your step definitions under it. Note that all subpackages will also be included, so you can also put in "com.mytest.steps.mycomponent".
