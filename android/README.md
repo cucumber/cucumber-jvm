@@ -16,7 +16,7 @@ mvn package -pl android -am -P android
 1. Include the following jars into your Android project either through Maven or directly copy into libs folder: cucumber-android.jar, cucumber-core.jar, cucumber-html.jar, cucumber-java.jar, cucumber-junit.jar, cucumber-jvm-deps.jar, gherkin.jar. Also cucumber-picocontainer.jar and picocontainer.jar if you want to use picocontainer. You can download the jar files from the [public maven repo](http://repo1.maven.org/maven2/info/cukes/)
 2. Create a class that extends TestCase or any of its subclasses, and add @CucumberOptions annotation to that class. This class doesn't need to have anything in it, but you can also put some codes in it if you want. The purpose of doing this is to provide cucumber options. A simple example can be found at cucumber-jvm / examples / android / android-test / src / cucumber / example / android / test / CucumberActivitySteps.java. Or a more complicated example here:
     ```
-    @CucumberOptions(glue = "com.mytest.steps", format = {""junit:/data/data/com.mytest/JUnitReport    .xml", "json:/data/data/com.mytest/JSONReport.json"}, tags = { "~@wip" }, features = "features")
+    @CucumberOptions(glue = "com.mytest.steps", format = {""junit:/data/data/com.mytest/JUnitReport.xml", "json:/data/data/com.mytest/JSONReport.json"}, tags = { "~@wip" }, features = "features")
     public class MyTests extends TestCase
     {
     }
