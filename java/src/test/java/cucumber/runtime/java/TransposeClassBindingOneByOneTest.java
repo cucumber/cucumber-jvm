@@ -1,0 +1,90 @@
+package cucumber.runtime.java;
+
+import cucumber.api.CucumberOptions;
+import cucumber.api.Transpose;
+import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
+import cucumber.api.junit.Cucumber;
+import org.junit.runner.RunWith;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+@RunWith(Cucumber.class)
+@CucumberOptions(
+        glue = "cucumber.runtime.java.TransposeClassBindingOneByOneTest$Steps",
+        features = "classpath:cucumber/runtime/java/test/javabinding-list.feature"
+)
+public class TransposeClassBindingOneByOneTest {
+    public static class Steps {
+        private int count;
+
+        @Given("^I do something$")
+        public void i_do_something() throws Throwable {
+            assertTrue(true);
+        }
+
+        @Then("^I should get$")
+        public void i_should_get(final @Transpose BindClass value) throws Throwable {
+            assertEquals(value.amount == 1 ? new BindClass("foo", 1) : new BindClass("bar", 2), value);
+            count++;
+        }
+
+        @Then("^I should have gotten \"(.*?)\" items$")
+        public void i_should_have_gotten_items(final int number) throws Throwable {
+            assertEquals(number, count);
+        }
+
+    }
+
+    public static class BindClass {
+        private String name;
+        private int amount;
+
+        public BindClass() {
+            // no-ôp
+        }
+
+        public BindClass(final String name, final int amount) {
+            this.name = name;
+            this.amount = amount;
+        }
+
+        public void setName(final String name) {
+            this.name = name;
+        }
+
+        public void setAmount(final int amount) {
+            this.amount = amount;
+        }
+
+        @Override
+        public boolean equals(final Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+
+            final BindClass bindClass = BindClass.class.cast(o);
+            return amount == bindClass.amount && name.equals(bindClass.name);
+
+        }
+
+        @Override
+        public int hashCode() {
+            int result = name.hashCode();
+            result = 31 * result + amount;
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "BindClass{" +
+                    "name='" + name + '\'' +
+                    ", amount=" + amount +
+                    '}';
+        }
+    }
+}

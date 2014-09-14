@@ -29,9 +29,19 @@ public class ClasspathIterable implements Iterable<Resource> {
         try {
             FlatteningIterator iterator = new FlatteningIterator();
             Enumeration<URL> resources = cl.getResources(path);
+            boolean somethingFound = false;
             while (resources.hasMoreElements()) {
+                somethingFound = true;
                 URL url = resources.nextElement();
                 iterator.push(this.resourceIteratorFactory.createIterator(url, path, suffix));
+            }
+            if (!somethingFound) { // maybe not a folder but directly the resource
+                final String newPath = path + suffix;
+                Enumeration<URL> directResources = cl.getResources(newPath);
+                while (directResources.hasMoreElements()) {
+                    final URL url = directResources.nextElement();
+                    iterator.push(this.resourceIteratorFactory.createIterator(url, newPath, suffix));
+                }
             }
             return iterator;
         } catch (IOException e) {

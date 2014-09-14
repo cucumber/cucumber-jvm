@@ -72,6 +72,9 @@ public class TableConverter {
 
         Type itemType = listItemType(type);
         if (itemType == null) {
+            if (Class.class.isInstance(type)) {
+                return (T) toListOfComplexType(dataTable, Class.class.cast(type));
+            }
             throw new CucumberException("Not a Map or List type: " + type);
         }
 
