@@ -124,7 +124,9 @@ class JUnitFormatter implements Formatter, Reporter, StrictAware {
 
     @Override
     public void endOfScenarioLifeCycle(Scenario scenario) {
-        // NoOp
+        if (testCase != null && testCase.steps.isEmpty()) {
+            testCase.handleEmptyTestCase(doc, root);
+        }
     }
 
     private void addDummyTestCase() {
@@ -140,7 +142,6 @@ class JUnitFormatter implements Formatter, Reporter, StrictAware {
     @Override
     public void result(Result result) {
         testCase.results.add(result);
-
         testCase.updateElement(doc, root);
     }
 
@@ -312,6 +313,15 @@ class JUnitFormatter implements Formatter, Reporter, StrictAware {
             } else {
                 tc.replaceChild(child, existingChild);
             }
+        }
+
+        public void handleEmptyTestCase(Document doc, Element tc) {
+            tc.setAttribute("time", calculateTotalDurationString());
+
+            String resultType = treatSkippedAsFailure ? "failure" : "skipped";
+            Element child = createElementWithMessage(doc, new StringBuilder(), resultType, "The scenario has no steps");
+
+            tc.appendChild(child);
         }
 
         private String calculateTotalDurationString() {
