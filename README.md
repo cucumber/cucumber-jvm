@@ -14,7 +14,7 @@ Look [here](http://cukes.info/api/cucumber/jvm/) for API docs.
 
 ## Hello World
 
-Check out the simple [Hello World](https://github.com/cucumber/cucumber-jvm/tree/master/examples/java-helloworld) example.
+Check out the simple [Hello World](https://github.com/cucumber/cucumber-java-skeleton) example.
 
 ## Downloading / Installation
 
