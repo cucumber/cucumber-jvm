@@ -1,6 +1,6 @@
 ## [1.2.0-SNAPSHOT (Git master)](https://github.com/cucumber/cucumber-jvm/compare/v1.1.8...master) (Not released)
 
-* [Gosu] Removed this module. It causes build problems and is too esoteric.
+* [Gosu] Modified When Expression to use a void block. (Mark Sayewich)
 * [Ioke] Removed this module. It slows down the build and is too esoteric.
 * [Core] Richer plugin API. The `--plugin` option can specify a class that implements one or more of `gherkin.formatter.Formatter,gherkin.formatter.Reporter,cucumber.api.StepDefinitionReporter` (Aslak Hellesøy)
 * [Core] Removed support for `--dotcucumber` and `stepdefs.json`. The new plugin API replaces this with `cucumber.api.StepDefinitionReporter` (Aslak Hellesøy)
