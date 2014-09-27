@@ -13,7 +13,7 @@
 * [Core] Handle "" properly in ListConverter. ([#756](https://github.com/cucumber/cucumber-jvm/pull/756) Clément MATHIEU)
 * [Guice] Update links and fix formatting in Cucumber Guice docs ([#763](https://github.com/cucumber/cucumber-jvm/pull/763) Jake Collins)
 * [Groovy] Clean up groovy stack traces ([#758](https://github.com/cucumber/cucumber-jvm/pull/758) Tom Dunstan)
-* [Gosu] Removed this module. It causes build problems and is too esoteric.
+* [Gosu] Modified When Expression to use a void block. (Mark Sayewich)
 * [Ioke] Removed this module. It slows down the build and is too esoteric.
 * [Core] Richer plugin API. The `--plugin` option can specify a class that implements one or more of `gherkin.formatter.Formatter,gherkin.formatter.Reporter,cucumber.api.StepDefinitionReporter` (Aslak Hellesøy)
 * [Core] Removed support for `--dotcucumber` and `stepdefs.json`. The new plugin API replaces this with `cucumber.api.StepDefinitionReporter` (Aslak Hellesøy)

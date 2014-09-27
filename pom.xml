@@ -37,8 +37,8 @@
         <guice.version>3.0</guice.version>
         <!-- Remember to bounce version in examples/clojure_cukes/project.clj as well -->
         <clojure.version>1.6.0</clojure.version>
+        <gosu.version>1.2</gosu.version>
         <rhino.version>1.7R4</rhino.version>
-        <ioke.version>P-0.4.0-p11</ioke.version>
         <jsoup.version>1.7.3</jsoup.version>
         <testng.version>6.8.8</testng.version>
         <junit.version>4.11</junit.version>
@@ -302,16 +302,6 @@
                 <version>${rhino.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.ioke</groupId>
-                <artifactId>ioke-lang</artifactId>
-                <version>${ioke.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.ioke</groupId>
-                <artifactId>ioke-lang-lib</artifactId>
-                <version>${ioke.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
                 <version>${junit.version}</version>
@@ -485,6 +475,12 @@
             <id>codehaus</id>
             <url>http://repository.codehaus.org</url>
         </repository>
+
+        <repository>
+            <id>gosu-lang.org-releases</id>
+            <name>Official Gosu website (releases)</name>
+            <url>http://gosu-lang.org/repositories/m2/releases</url>
+        </repository>
     </repositories>
 
     <!--
@@ -504,7 +500,7 @@
         <module>picocontainer</module>
         <module>clojure</module>
         <module>junit</module>
-        <module>jruby</module>
+   <!--       <module>jruby</module> -->
         <module>jython</module>
         <module>spring</module>
         <module>guice</module>
@@ -516,6 +512,7 @@
         <module>scala</module>
         <module>scala/scala_previous</module>
         <module>needle</module>
+        <module>gosu</module>
     </modules>
 
     <profiles>
