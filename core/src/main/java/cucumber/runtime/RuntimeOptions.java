@@ -7,6 +7,7 @@ import cucumber.runtime.formatter.PluginFactory;
 import cucumber.runtime.formatter.StrictAware;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
+import gherkin.I18n;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
 import gherkin.util.FixJava;
@@ -98,6 +99,10 @@ public class RuntimeOptions {
             } else if (arg.equals("--version") || arg.equals("-v")) {
                 System.out.println(VERSION);
                 System.exit(0);
+            } else if (arg.equals("--i18n")) {
+                String nextArg = args.remove(0);
+                printI18n(nextArg);
+                System.exit(0);
             } else if (arg.equals("--glue") || arg.equals("-g")) {
                 String gluePath = args.remove(0);
                 parsedGlue.add(gluePath);
@@ -144,6 +149,29 @@ public class RuntimeOptions {
 
     private void printUsage() {
         System.out.println(USAGE);
+    }
+    
+    private void printI18n(String language) {
+        List<I18n> all = I18n.getAll();
+
+        if (language.equalsIgnoreCase("help")) {
+            for (I18n i18n : all) {
+                System.out.println(i18n.getIsoCode());
+            }
+        } else {
+            printKeywordsFor(language, all);
+        }
+    }
+
+    private void printKeywordsFor(String language, List<I18n> all) {
+        for (I18n i18n : all){
+            if (i18n.getIsoCode().equalsIgnoreCase(language)) {
+                System.out.println(i18n.getKeywordTable());
+                return;
+            }
+        }
+
+        System.out.println("Unrecognised ISO language code");
     }
 
     public List<CucumberFeature> cucumberFeatures(ResourceLoader resourceLoader) {
