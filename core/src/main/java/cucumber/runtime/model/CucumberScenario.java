@@ -53,7 +53,12 @@ public class CucumberScenario extends CucumberTagStatement {
         } catch (Throwable ignore) {
             // IntelliJ has its own formatter which doesn't yet implement this.
         }
-        runtime.disposeBackendWorlds();
+        runtime.disposeBackendWorlds(createScenarioDesignation());
+    }
+
+    private String createScenarioDesignation() {
+        return cucumberFeature.getPath() + ":" + Integer.toString(scenario.getLine()) + " # " +
+                scenario.getKeyword() + ": " + scenario.getName();
     }
 
     private void runBackground(Formatter formatter, Reporter reporter, Runtime runtime) {
