@@ -30,7 +30,7 @@ public class CucumberScenario extends CucumberTagStatement {
     }
 
     /**
-     * This method is called when Cucumber is run from the CLI, but not when run from JUnit
+     * This method is called when Cucumber is run from the CLI or JUnit
      */
     @Override
     public void run(Formatter formatter, Reporter reporter, Runtime runtime) {
