@@ -3,7 +3,7 @@ package com.vladium.emma.rt;
 import java.io.File;
 
 /**
- * This is just a mock class to test the code coverage logic, it should not be used in multi threaded tests.
+ * This is just a stub implementation to test the code coverage logic, it should not be used in multi threaded tests.
  */
 public class RT {
 
