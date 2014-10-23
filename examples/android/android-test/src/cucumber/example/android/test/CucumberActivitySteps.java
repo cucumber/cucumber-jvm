@@ -2,9 +2,7 @@ package cucumber.example.android.test;
 
 import android.app.Instrumentation;
 import android.test.ActivityInstrumentationTestCase2;
-import android.util.Log;
 import cucumber.api.CucumberOptions;
-import cucumber.api.android.CucumberInstrumentation;
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
 import cucumber.api.java.en.Given;
@@ -39,7 +37,6 @@ public class CucumberActivitySteps extends ActivityInstrumentationTestCase2<Cucu
 
     @Before
     public void before() {
-        Log.d(CucumberInstrumentation.TAG, "android-test before");
         assertEquals(0, steps);
         Instrumentation instrumentation = getInstrumentation();
         assertNotNull(instrumentation);
@@ -51,7 +48,6 @@ public class CucumberActivitySteps extends ActivityInstrumentationTestCase2<Cucu
 
     @After
     public void after() {
-        Log.d(CucumberInstrumentation.TAG, "android-test after");
         assertEquals(3, steps);
     }
 
