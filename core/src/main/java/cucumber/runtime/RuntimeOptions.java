@@ -101,8 +101,7 @@ public class RuntimeOptions {
                 System.exit(0);
             } else if (arg.equals("--i18n")) {
                 String nextArg = args.remove(0);
-                printI18n(nextArg);
-                System.exit(0);
+                System.exit(printI18n(nextArg));
             } else if (arg.equals("--glue") || arg.equals("-g")) {
                 String gluePath = args.remove(0);
                 parsedGlue.add(gluePath);
@@ -150,28 +149,30 @@ public class RuntimeOptions {
     private void printUsage() {
         System.out.println(USAGE);
     }
-    
-    private void printI18n(String language) {
+
+    private int printI18n(String language) {
         List<I18n> all = I18n.getAll();
 
         if (language.equalsIgnoreCase("help")) {
             for (I18n i18n : all) {
                 System.out.println(i18n.getIsoCode());
             }
+            return 0;
         } else {
-            printKeywordsFor(language, all);
+            return printKeywordsFor(language, all);
         }
     }
 
-    private void printKeywordsFor(String language, List<I18n> all) {
-        for (I18n i18n : all){
+    private int printKeywordsFor(String language, List<I18n> all) {
+        for (I18n i18n : all) {
             if (i18n.getIsoCode().equalsIgnoreCase(language)) {
                 System.out.println(i18n.getKeywordTable());
-                return;
+                return 0;
             }
         }
 
-        System.out.println("Unrecognised ISO language code");
+        System.err.println("Unrecognised ISO language code");
+        return 1;
     }
 
     public List<CucumberFeature> cucumberFeatures(ResourceLoader resourceLoader) {
