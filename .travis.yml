@@ -28,7 +28,7 @@ matrix:
       - ./.travis_android_update > /dev/null
 
       # Create and start emulator
-      - echo no | android create avd --force -n test -t android-21 --abi default/x86
+      - echo no | android create avd --force -n test -t android-21
       - emulator -avd test -no-skin -no-audio -no-window &
     before_script:
       - ./android/wait_for_emulator
