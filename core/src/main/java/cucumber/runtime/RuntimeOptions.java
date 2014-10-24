@@ -8,6 +8,7 @@ import cucumber.runtime.formatter.StrictAware;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
 import gherkin.I18n;
+import cucumber.runtime.model.PathWithLines;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
 import gherkin.util.FixJava;
@@ -132,9 +133,12 @@ public class RuntimeOptions {
                 parsedFeaturePaths.add(arg);
             }
         }
-        if (!parsedFilters.isEmpty()) {
+        if (!parsedFilters.isEmpty() || haveLineFilters(parsedFeaturePaths)) {
             filters.clear();
             filters.addAll(parsedFilters);
+            if (parsedFeaturePaths.isEmpty() && !featurePaths.isEmpty()) {
+                stripLinesFromFeaturePaths(featurePaths);
+            }
         }
         if (!parsedFeaturePaths.isEmpty()) {
             featurePaths.clear();
@@ -144,6 +148,24 @@ public class RuntimeOptions {
             glue.clear();
             glue.addAll(parsedGlue);
         }
+    }
+
+    private boolean haveLineFilters(List<String> parsedFeaturePaths) {
+        for (String pathName : parsedFeaturePaths) {
+            if (pathName.startsWith("@") || PathWithLines.hasLineFilters(pathName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void stripLinesFromFeaturePaths(List<String> featurePaths) {
+        List<String> newPaths = new ArrayList<String>();
+        for (String pathName : featurePaths) {
+            newPaths.add(PathWithLines.stripLineFilters(pathName));
+        }
+        featurePaths.clear();
+        featurePaths.addAll(newPaths);
     }
 
     private void printUsage() {

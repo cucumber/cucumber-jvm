@@ -1,9 +1,10 @@
 ## [1.2.0-SNAPSHOT (Git master)](https://github.com/cucumber/cucumber-jvm/compare/v1.1.8...master) (Not released)
 
+* [Core] Clobber all filter types when override one filter type in the environment options ([#748](https://github.com/cucumber/cucumber-jvm/pull/748) Björn Rasmusson)
 * [Android] Big refactoring ([#766](https://github.com/cucumber/cucumber-jvm/pull/766) Sebastian Gröbler)
 * [Android] Improve documentation ([#772](https://github.com/cucumber/cucumber-jvm/pull/772) K76154)
 * [Core] New --i18n option for printing keywords ([#785](https://github.com/cucumber/cucumber-jvm/pull/785) Seb Rose)
-* [Core] Make the JUnit formatter handle empty scenarios ([#774](https://github.com/cucumber/cucumber-jvm/issues/774) Björn Rasmusson).
+* [Core] Make the JUnit formatter handle empty scenarios ([#774](https://github.com/cucumber/cucumber-jvm/issues/774) Björn Rasmusson)
 * [Scala] Fixing randomly failing tests in the Scala module ([#768](https://github.com/cucumber/cucumber-jvm/pull/768), [#761](https://github.com/cucumber/cucumber-jvm/issues/761) Manuel Bernhardt)
 * [JRuby] cucumber-jruby backend fails to build when `RUBY_VERSION` is present in environment ([#718](https://github.com/cucumber/cucumber-jvm/issues/718) Aslak Hellesøy)
 * [Core] `DataTable.asMap()` returns a `LinkedHashMap`, ensuring key iteration order is the same as in the gherkin table ([#764](https://github.com/cucumber/cucumber-jvm/issues/764) Aslak Hellesøy).
