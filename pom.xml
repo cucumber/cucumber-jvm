@@ -500,7 +500,7 @@
         <module>picocontainer</module>
         <module>clojure</module>
         <module>junit</module>
-   <!--       <module>jruby</module> -->
+        <module>jruby</module>
         <module>jython</module>
         <module>spring</module>
         <module>guice</module>
