@@ -82,6 +82,9 @@ public class FeatureRunnerTest {
         assertEquals("" +
                 "uri\n" +
                 "feature\n" +
+                "  scenarioOutline\n" +
+                "    step\n" +
+                "    step\n" +
                 "  examples\n" +
                 "  startOfScenarioLifeCycle\n" +
                 "  background\n" +
