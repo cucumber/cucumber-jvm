@@ -84,6 +84,11 @@ public class DataTable {
      * Converts the table to a List of Map. The top row is used as keys in the maps,
      * and the rows below are used as values.
      *
+     * @param <K> key type
+     * @param <V> value type
+     * @param keyType key type
+     * @param valueType value type
+     *
      * @return a List of Map.
      */
     public <K, V> List<Map<K, V>> asMaps(Class<K> keyType, Class<V> valueType) {
@@ -93,6 +98,10 @@ public class DataTable {
     /**
      * Converts the table to a single Map. The left column is used as keys, the right column as values.
      *
+     * @param <K> key type
+     * @param <V> value type
+     * @param keyType key type
+     * @param valueType value type
      * @return a Map.
      * @throws cucumber.runtime.CucumberException if the table doesn't have 2 columns.
      */
