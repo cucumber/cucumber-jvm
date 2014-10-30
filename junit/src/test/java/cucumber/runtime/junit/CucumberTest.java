@@ -106,24 +106,24 @@ public class CucumberTest {
         Assertions.assertNoCucumberAnnotatedMethods(RunCukesTestInvalid.class);
     }
 
-    private class ImplicitFeatureAndGluePath {
+    public class ImplicitFeatureAndGluePath {
     }
 
     @CucumberOptions(features = {"classpath:cucumber/runtime/junit"})
-    private class ExplicitFeaturePath {
+    public class ExplicitFeaturePath {
     }
 
     @CucumberOptions(features = {"classpath:gibber/ish"})
-    private class ExplicitFeaturePathWithNoFeatures {
+    public class ExplicitFeaturePathWithNoFeatures {
     }
 
     @CucumberOptions(features = {"classpath:cucumber/runtime/error/lexer_error.feature"})
-    private class LexerErrorFeature {
+    public class LexerErrorFeature {
 
     }
     
     @CucumberOptions(features = {"classpath:cucumber/runtime/error/lexer_error.feature"}, plugin = {"json:lexor_error_feature.json"})
-    private class FormatterWithLexerErrorFeature {
+    public class FormatterWithLexerErrorFeature {
 
     }
 
