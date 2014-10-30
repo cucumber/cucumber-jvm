@@ -32,6 +32,7 @@ public class JUnitReporter implements Reporter, Formatter {
     private RunNotifier runNotifier;
     EachTestNotifier executionUnitNotifier;
     private boolean ignoredStep;
+    private boolean inScenarioLifeCycle;
 
     public JUnitReporter(Reporter reporter, Formatter formatter, boolean strict) {
         this.reporter = reporter;
@@ -186,7 +187,9 @@ public class JUnitReporter implements Reporter, Formatter {
 
     @Override
     public void step(Step step) {
-        steps.add(step);
+        if (inScenarioLifeCycle) {
+            steps.add(step);
+        }
         formatter.step(step);
     }
 
@@ -212,11 +215,13 @@ public class JUnitReporter implements Reporter, Formatter {
 
     @Override
     public void startOfScenarioLifeCycle(Scenario scenario) {
+        inScenarioLifeCycle = true;
         formatter.startOfScenarioLifeCycle(scenario);
     }
 
     @Override
     public void endOfScenarioLifeCycle(Scenario scenario) {
         formatter.endOfScenarioLifeCycle(scenario);
+        inScenarioLifeCycle = false;
     }
 }

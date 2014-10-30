@@ -3,22 +3,27 @@ package cucumber.api.android;
 import android.app.Instrumentation;
 import android.os.Bundle;
 
+/**
+ * A simple extension of the {@link android.app.Instrumentation} utilizing the {@link cucumber.api.android.CucumberInstrumentationCore}.
+ */
 public class CucumberInstrumentation extends Instrumentation {
-    public static final String REPORT_VALUE_ID = CucumberInstrumentationCore.REPORT_VALUE_ID;
-    public static final String REPORT_KEY_NUM_TOTAL = CucumberInstrumentationCore.REPORT_KEY_NUM_TOTAL;
-    public static final String TAG = CucumberInstrumentationCore.TAG;
-    private CucumberInstrumentationCore instrumentationCore = new CucumberInstrumentationCore(this);
+
+    /**
+     * The {@link cucumber.api.android.CucumberInstrumentationCore} which will run the actual logic using this {@link android.app.Instrumentation}
+     * implementation.
+     */
+    private CucumberInstrumentationCore cucumberInstrumentationCore = new CucumberInstrumentationCore(this);
 
     @Override
-    public void onCreate(Bundle arguments) {
-        super.onCreate(arguments);
-        instrumentationCore.onCreate(arguments);
+    public void onCreate(final Bundle bundle) {
+        super.onCreate(bundle);
+        cucumberInstrumentationCore.create(bundle);
         start();
     }
 
     @Override
     public void onStart() {
-        instrumentationCore.onStart();
+        cucumberInstrumentationCore.start();
     }
 
 }

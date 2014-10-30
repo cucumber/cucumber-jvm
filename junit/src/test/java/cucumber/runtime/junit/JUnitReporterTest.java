@@ -216,6 +216,7 @@ public class JUnitReporterTest {
         jUnitReporter = new JUnitReporter(reporter, mock(Formatter.class), false);
 
         jUnitReporter.startExecutionUnit(executionUnitRunner, mock(RunNotifier.class));
+        jUnitReporter.startOfScenarioLifeCycle(mock(Scenario.class));
         jUnitReporter.before(match, result);
         jUnitReporter.step(mockStep());
         jUnitReporter.match(match);
@@ -242,6 +243,7 @@ public class JUnitReporterTest {
         jUnitReporter = new JUnitReporter(mock(Reporter.class), mock(Formatter.class), false);
 
         jUnitReporter.startExecutionUnit(executionUnitRunner, notifier);
+        jUnitReporter.startOfScenarioLifeCycle(mock(Scenario.class));
         jUnitReporter.step(mockStep("Step Name"));
         jUnitReporter.match(mock(Match.class));
         jUnitReporter.result(mockResult());
@@ -256,6 +258,7 @@ public class JUnitReporterTest {
         jUnitReporter = new JUnitReporter(mock(Reporter.class), mock(Formatter.class), false);
 
         jUnitReporter.startExecutionUnit(executionUnitRunner, mock(RunNotifier.class));
+        jUnitReporter.startOfScenarioLifeCycle(mock(Scenario.class));
         jUnitReporter.step(mockStep("Scenario Step Name"));
         try {
             jUnitReporter.match(mock(Match.class));

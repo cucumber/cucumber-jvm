@@ -17,29 +17,29 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class TestCounterTest {
+public class ScenarioCounterTest {
 
     @Test
-    public void start_signal_contains_number_of_test_scenarios() {
+    public void calculates_number_of_tests_for_regular_scenarios() {
 
         // given
         final List<CucumberFeature> cucumberFeatures = createCucumberFeaturesWithScenarios(1, 2);
 
         // when
-        final int result = TestCaseCounter.countTestCasesOf(cucumberFeatures);
+        final int result = ScenarioCounter.countScenarios(cucumberFeatures);
 
         // then
         assertThat(result, is(2));
     }
 
     @Test
-    public void start_signal_contains_number_of_test_scenario_examples() {
+    public void calculates_number_of_tests_for_scenarios_with_examples() {
 
         // given 2 scenario outlines with 2 examples each and 2 rows (excluding the header row) each
         final List<CucumberFeature> cucumberFeatures = createCucumberFeaturesWithScenarioOutlines(1, 2, 2, 2);
 
         // when
-        final int result = TestCaseCounter.countTestCasesOf(cucumberFeatures);
+        final int result = ScenarioCounter.countScenarios(cucumberFeatures);
 
         // then
         assertThat(result, is(8));

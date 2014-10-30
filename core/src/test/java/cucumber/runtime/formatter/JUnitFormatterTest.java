@@ -526,11 +526,28 @@ public class JUnitFormatterTest {
     }
 
     @Test
+    public void should_handle_empty_scenarios() throws Throwable {
+        CucumberFeature feature = TestHelper.feature("path/test.feature",
+                "Feature: feature name\n" +
+                        "  Scenario: scenario name\n");
+
+        String formatterOutput = runFeatureWithJUnitFormatter(feature);
+
+        String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
+                "<testsuite failures=\"0\" name=\"cucumber.runtime.formatter.JUnitFormatter\" skipped=\"1\" tests=\"1\" time=\"0\">\n" +
+                "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0\">\n" +
+                "        <skipped message=\"The scenario has no steps\" />\n" +
+                "    </testcase>\n" +
+                "</testsuite>\n";
+        assertXmlEqual(expected, formatterOutput);
+    }
+
+    @Test
     public void should_add_dummy_testcase_if_no_scenarios_are_run_to_aviod_failed_jenkins_jobs() throws Throwable {
         CucumberFeature feature = TestHelper.feature("path/test.feature",
                 "Feature: feature name\n");
 
-        String formatterOutput = runFeatureWithJUnitFormatter(feature, Collections.<String, String>emptyMap(), Collections.<SimpleEntry<String, String>>emptyList(), milliSeconds(1));
+        String formatterOutput = runFeatureWithJUnitFormatter(feature);
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
                 "<testsuite failures=\"0\" name=\"cucumber.runtime.formatter.JUnitFormatter\" skipped=\"0\" time=\"0\">\n" +
@@ -564,6 +581,10 @@ public class JUnitFormatterTest {
         final cucumber.runtime.Runtime runtime = new Runtime(resourceLoader, classLoader, asList(backend), runtimeOptions);
         runtime.run();
         return report;
+    }
+
+    private String runFeatureWithJUnitFormatter(final CucumberFeature feature) throws Throwable {
+        return runFeatureWithJUnitFormatter(feature, new HashMap<String, String>(), 0L);
     }
 
     private String runFeatureWithJUnitFormatter(final CucumberFeature feature, final Map<String, String> stepsToResult, final long stepHookDuration)

@@ -155,6 +155,22 @@ public class RuntimeOptionsTest {
     }
 
     @Test
+    public void clobbers_tag_and_name_filters_from_cli_if_line_filters_specified_in_cucumber_options_property() {
+        Properties properties = new Properties();
+        properties.setProperty("cucumber.options", "path/file.feature:3");
+        RuntimeOptions runtimeOptions = new RuntimeOptions(new Env(properties), asList("--tags", "@should_be_clobbered", "--name", "should_be_clobbered"));
+        assertEquals(Collections.<Object>emptyList(), runtimeOptions.getFilters());
+    }
+
+    @Test
+    public void clobbers_tag_and_name_filters_from_cli_if_rerun_file_specified_in_cucumber_options_property() {
+        Properties properties = new Properties();
+        properties.setProperty("cucumber.options", "@rerun.txt");
+        RuntimeOptions runtimeOptions = new RuntimeOptions(new Env(properties), asList("--tags", "@should_be_clobbered", "--name", "should_be_clobbered"));
+        assertEquals(Collections.<Object>emptyList(), runtimeOptions.getFilters());
+    }
+
+    @Test
     public void preserves_filters_from_cli_if_filters_not_specified_in_cucumber_options_property() {
         Properties properties = new Properties();
         properties.setProperty("cucumber.options", "--strict");
@@ -168,6 +184,14 @@ public class RuntimeOptionsTest {
         properties.setProperty("cucumber.options", "new newer");
         RuntimeOptions runtimeOptions = new RuntimeOptions(new Env(properties), asList("old", "older"));
         assertEquals(asList("new", "newer"), runtimeOptions.getFeaturePaths());
+    }
+
+    @Test
+    public void strips_lines_from_features_from_cli_if_filters_are_specified_in_cucumber_options_property() {
+        Properties properties = new Properties();
+        properties.setProperty("cucumber.options", "--tags @Tag");
+        RuntimeOptions runtimeOptions = new RuntimeOptions(new Env(properties), asList("path/file.feature:3"));
+        assertEquals(asList("path/file.feature"), runtimeOptions.getFeaturePaths());
     }
 
     @Test

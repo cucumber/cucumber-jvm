@@ -7,11 +7,13 @@ import cucumber.runtime.java.spring.commonglue.AutowiresPlatformTransactionManag
 import cucumber.runtime.java.spring.commonglue.AutowiresThirdStepDef;
 import cucumber.runtime.java.spring.commonglue.OneStepDef;
 import cucumber.runtime.java.spring.commonglue.ThirdStepDef;
+import cucumber.runtime.java.spring.metaconfig.BellyMetaStepdefs;
 import cucumber.runtime.java.spring.contextconfig.BellyStepdefs;
 import cucumber.runtime.java.spring.contextconfig.WithSpringAnnotations;
 import cucumber.runtime.java.spring.contexthierarchyconfig.WithContextHierarchyAnnotation;
 import cucumber.runtime.java.spring.contexthierarchyconfig.WithDifferentContextHierarchyAnnotation;
 import cucumber.runtime.java.spring.dirtiescontextconfig.DirtiesContextBellyStepDefs;
+import cucumber.runtime.java.spring.metaconfig.dirties.DirtiesContextBellyMetaStepDefs;
 import org.junit.Test;
 import org.springframework.transaction.PlatformTransactionManager;
 
@@ -80,6 +82,27 @@ public class SpringFactoryTest {
         factory2.addClass(BellyStepdefs.class);
         factory2.start();
         final BellyBean o2 = factory2.getInstance(BellyStepdefs.class).getBellyBean();
+        factory2.stop();
+
+        assertNotNull(o1);
+        assertNotNull(o2);
+        assertSame(o1, o2);
+    }
+
+    @Test
+    public void shouldNeverCreateNewApplicationBeanInstancesUsingMetaConfiguration() {
+        // Feature 1
+        final ObjectFactory factory1 = new SpringFactory();
+        factory1.addClass(BellyMetaStepdefs.class);
+        factory1.start();
+        final BellyBean o1 = factory1.getInstance(BellyMetaStepdefs.class).getBellyBean();
+        factory1.stop();
+
+        // Feature 2
+        final ObjectFactory factory2 = new SpringFactory();
+        factory2.addClass(BellyMetaStepdefs.class);
+        factory2.start();
+        final BellyBean o2 = factory2.getInstance(BellyMetaStepdefs.class).getBellyBean();
         factory2.stop();
 
         assertNotNull(o1);
@@ -159,6 +182,27 @@ public class SpringFactoryTest {
         // Scenario 2
         factory.start();
         final BellyBean o2 = factory.getInstance(DirtiesContextBellyStepDefs.class).getBellyBean();
+        factory.stop();
+
+        assertNotNull(o1);
+        assertNotNull(o2);
+        assertNotSame(o1, o2);
+    }
+
+    @Test
+    public void shouldRespectDirtiesContextAnnotationsInStepDefsUsingMetaConfiguration() {
+        final ObjectFactory factory = new SpringFactory();
+        factory.addClass(DirtiesContextBellyMetaStepDefs.class);
+
+        // Scenario 1
+        factory.start();
+        final BellyBean o1 = factory.getInstance(DirtiesContextBellyMetaStepDefs.class).getBellyBean();
+
+        factory.stop();
+
+        // Scenario 2
+        factory.start();
+        final BellyBean o2 = factory.getInstance(DirtiesContextBellyMetaStepDefs.class).getBellyBean();
         factory.stop();
 
         assertNotNull(o1);

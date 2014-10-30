@@ -16,6 +16,8 @@ Options:
         --snippets [underscore|camelcase]  Naming convention for generated snippets. Defaults to underscore.
     -v, --version                          Print version.
     -h, --help                             You're looking at it.
+    --i18n LANG                            List keywords for in a particular language
+                                           Run with "--i18n help" to see all languages
 
 Feature path examples:
     <path>                                 Load the files with the extension ".feature" for the directory <path>

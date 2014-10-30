@@ -112,13 +112,15 @@ module Cucumber
       end
 
       module World
+        STEPDEF_PATTERN = /(.+):(\d+):in.*/
         def pending(reason = "TODO")
           $backend.pending(reason)
         end
 
         def step(name, arg=nil) # TODO: pass in an entire gherkin text instead of a step
           # caller[0] gets us to our stepdef, right before we enter the dsl
-          feature_path, line = *caller[0].to_s.split(/:/)
+          # <path>:<line>:in <module>, on Windows also path can contain ":" (C:\path)
+          feature_path, line = *caller[0].to_s.match(STEPDEF_PATTERN)[1..2]
           # determine if we got an argument we should pass through to calling things
           data_table = nil
           doc_string = nil

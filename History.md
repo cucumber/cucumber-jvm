@@ -1,5 +1,14 @@
 ## [1.2.0-SNAPSHOT (Git master)](https://github.com/cucumber/cucumber-jvm/compare/v1.1.8...master) (Not released)
 
+* [Clojure] Added clojure_cukes example to the maven build ([#790](https://github.com/cucumber/cucumber-jvm/pull/790) Jestine Paul)
+* [Spring] Added Spring meta-annotation support ([#791](https://github.com/cucumber/cucumber-jvm/pull/791) Georgios Andrianakis)
+* [JUnit] Improve consistency between JUnit and Command Line Runners ([#765](https://github.com/cucumber/cucumber-jvm/pull/765) cliviu)
+* [Core] Clobber all filter types when override one filter type in the environment options ([#748](https://github.com/cucumber/cucumber-jvm/pull/748) Björn Rasmusson)
+* [Android] Big refactoring ([#766](https://github.com/cucumber/cucumber-jvm/pull/766) Sebastian Gröbler)
+* [Android] Improve documentation ([#772](https://github.com/cucumber/cucumber-jvm/pull/772) K76154)
+* [Core] New --i18n option for printing keywords ([#785](https://github.com/cucumber/cucumber-jvm/pull/785) Seb Rose)
+* [Core] Make the JUnit formatter handle empty scenarios ([#774](https://github.com/cucumber/cucumber-jvm/issues/774) Björn Rasmusson)
+* [Scala] Fixing randomly failing tests in the Scala module ([#768](https://github.com/cucumber/cucumber-jvm/pull/768), [#761](https://github.com/cucumber/cucumber-jvm/issues/761) Manuel Bernhardt)
 * [JRuby] cucumber-jruby backend fails to build when `RUBY_VERSION` is present in environment ([#718](https://github.com/cucumber/cucumber-jvm/issues/718) Aslak Hellesøy)
 * [Core] `DataTable.asMap()` returns a `LinkedHashMap`, ensuring key iteration order is the same as in the gherkin table ([#764](https://github.com/cucumber/cucumber-jvm/issues/764) Aslak Hellesøy).
 * [Core] Spring dirty cukes test fix ([#708](https://github.com/cucumber/cucumber-jvm/pull/708) Mykola Gurov)
@@ -8,7 +17,7 @@
 * [Core] Handle "" properly in ListConverter. ([#756](https://github.com/cucumber/cucumber-jvm/pull/756) Clément MATHIEU)
 * [Guice] Update links and fix formatting in Cucumber Guice docs ([#763](https://github.com/cucumber/cucumber-jvm/pull/763) Jake Collins)
 * [Groovy] Clean up groovy stack traces ([#758](https://github.com/cucumber/cucumber-jvm/pull/758) Tom Dunstan)
-* [Gosu] Removed this module. It causes build problems and is too esoteric.
+* [Gosu] Modified When Expression to use a void block. (Mark Sayewich)
 * [Ioke] Removed this module. It slows down the build and is too esoteric.
 * [Core] Richer plugin API. The `--plugin` option can specify a class that implements one or more of `gherkin.formatter.Formatter,gherkin.formatter.Reporter,cucumber.api.StepDefinitionReporter` (Aslak Hellesøy)
 * [Core] Removed support for `--dotcucumber` and `stepdefs.json`. The new plugin API replaces this with `cucumber.api.StepDefinitionReporter` (Aslak Hellesøy)

@@ -48,8 +48,7 @@
                     <version>${android-maven-plugin.version}</version>
                     <configuration>
                         <sdk>
-                            <!-- api level 14 = platform 4.1.1.4 -->
-                            <platform>14</platform>
+                            <platform>21</platform>
                         </sdk>
                         <undeployBeforeDeploy>true</undeployBeforeDeploy>
                     </configuration>

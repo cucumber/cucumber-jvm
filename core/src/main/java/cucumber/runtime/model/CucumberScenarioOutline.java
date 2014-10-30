@@ -38,7 +38,7 @@ public class CucumberScenarioOutline extends CucumberTagStatement {
 
     @Override
     public void run(Formatter formatter, Reporter reporter, Runtime runtime) {
-        format(formatter);
+        formatOutlineScenario(formatter);
         for (CucumberExamples cucumberExamples : cucumberExamplesList) {
             cucumberExamples.format(formatter);
             List<CucumberScenario> exampleScenarios = cucumberExamples.createExampleScenarios();
@@ -46,6 +46,10 @@ public class CucumberScenarioOutline extends CucumberTagStatement {
                 exampleScenario.run(formatter, reporter, runtime);
             }
         }
+    }
+
+    public void formatOutlineScenario(Formatter formatter) {
+        format(formatter);
     }
 
     CucumberScenario createExampleScenario(ExamplesTableRow header, ExamplesTableRow example, List<Tag> examplesTags) {

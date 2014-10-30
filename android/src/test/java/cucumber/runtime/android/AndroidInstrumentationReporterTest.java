@@ -3,7 +3,6 @@ package cucumber.runtime.android;
 import android.app.Instrumentation;
 import android.os.Bundle;
 import cucumber.runtime.Runtime;
-import cucumber.runtime.model.CucumberFeature;
 import edu.emory.mathcs.backport.java.util.Collections;
 import gherkin.formatter.model.Feature;
 import gherkin.formatter.model.Match;
@@ -18,10 +17,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import static cucumber.runtime.android.AndroidInstrumentationReporter.StatusCodes;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertThat;
@@ -40,7 +35,6 @@ public class AndroidInstrumentationReporterTest {
     public final ExpectedException expectedException = ExpectedException.none();
 
     private final Runtime runtime = mock(Runtime.class);
-    private final List<CucumberFeature> cucumberFeatures = new ArrayList<CucumberFeature>();
     private final Instrumentation instrumentation = mock(Instrumentation.class);
 
     private final Feature feature = mock(Feature.class);

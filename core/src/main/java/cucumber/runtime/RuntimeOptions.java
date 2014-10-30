@@ -7,6 +7,8 @@ import cucumber.runtime.formatter.PluginFactory;
 import cucumber.runtime.formatter.StrictAware;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
+import gherkin.I18n;
+import cucumber.runtime.model.PathWithLines;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
 import gherkin.util.FixJava;
@@ -98,6 +100,9 @@ public class RuntimeOptions {
             } else if (arg.equals("--version") || arg.equals("-v")) {
                 System.out.println(VERSION);
                 System.exit(0);
+            } else if (arg.equals("--i18n")) {
+                String nextArg = args.remove(0);
+                System.exit(printI18n(nextArg));
             } else if (arg.equals("--glue") || arg.equals("-g")) {
                 String gluePath = args.remove(0);
                 parsedGlue.add(gluePath);
@@ -128,9 +133,12 @@ public class RuntimeOptions {
                 parsedFeaturePaths.add(arg);
             }
         }
-        if (!parsedFilters.isEmpty()) {
+        if (!parsedFilters.isEmpty() || haveLineFilters(parsedFeaturePaths)) {
             filters.clear();
             filters.addAll(parsedFilters);
+            if (parsedFeaturePaths.isEmpty() && !featurePaths.isEmpty()) {
+                stripLinesFromFeaturePaths(featurePaths);
+            }
         }
         if (!parsedFeaturePaths.isEmpty()) {
             featurePaths.clear();
@@ -142,8 +150,51 @@ public class RuntimeOptions {
         }
     }
 
+    private boolean haveLineFilters(List<String> parsedFeaturePaths) {
+        for (String pathName : parsedFeaturePaths) {
+            if (pathName.startsWith("@") || PathWithLines.hasLineFilters(pathName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void stripLinesFromFeaturePaths(List<String> featurePaths) {
+        List<String> newPaths = new ArrayList<String>();
+        for (String pathName : featurePaths) {
+            newPaths.add(PathWithLines.stripLineFilters(pathName));
+        }
+        featurePaths.clear();
+        featurePaths.addAll(newPaths);
+    }
+
     private void printUsage() {
         System.out.println(USAGE);
+    }
+
+    private int printI18n(String language) {
+        List<I18n> all = I18n.getAll();
+
+        if (language.equalsIgnoreCase("help")) {
+            for (I18n i18n : all) {
+                System.out.println(i18n.getIsoCode());
+            }
+            return 0;
+        } else {
+            return printKeywordsFor(language, all);
+        }
+    }
+
+    private int printKeywordsFor(String language, List<I18n> all) {
+        for (I18n i18n : all) {
+            if (i18n.getIsoCode().equalsIgnoreCase(language)) {
+                System.out.println(i18n.getKeywordTable());
+                return 0;
+            }
+        }
+
+        System.err.println("Unrecognised ISO language code");
+        return 1;
     }
 
     public List<CucumberFeature> cucumberFeatures(ResourceLoader resourceLoader) {

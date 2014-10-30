@@ -78,6 +78,13 @@ public class AndroidInstrumentationReporter extends NoOpFormattingReporter {
      */
     private Feature currentFeature;
 
+    /**
+     * Creates a new instance for the given parameters
+     *
+     * @param runtime the {@link cucumber.runtime.Runtime} to use
+     * @param instrumentation the {@link android.app.Instrumentation} to report statuses to
+     * @param numberOfTests the total number of tests to be executed, this is expected to include all scenario outline runs
+     */
     public AndroidInstrumentationReporter(
             final Runtime runtime,
             final Instrumentation instrumentation,

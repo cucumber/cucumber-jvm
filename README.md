@@ -1,4 +1,3 @@
-[![Stories in Ready](https://badge.waffle.io/cucumber/cucumber-jvm.png?label=ready)](https://waffle.io/cucumber/cucumber-jvm)
 [![Build Status](https://secure.travis-ci.org/cucumber/cucumber-jvm.png)](http://travis-ci.org/cucumber/cucumber-jvm)
 
 Cucumber-JVM is a pure Java implementation of Cucumber that supports the [most popular](http://cukes.info/platforms.html) programming languages for the JVM.
@@ -14,7 +13,7 @@ Look [here](http://cukes.info/api/cucumber/jvm/) for API docs.
 
 ## Hello World
 
-Check out the simple [Hello World](https://github.com/cucumber/cucumber-jvm/tree/master/examples/java-helloworld) example.
+Check out the simple [Hello World](https://github.com/cucumber/cucumber-java-skeleton) example.
 
 ## Downloading / Installation
 
