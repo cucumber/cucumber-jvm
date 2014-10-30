@@ -56,20 +56,6 @@ code, look in git. When you are done, send a [pull request](http://help.github.c
 If we get a pull request where an entire file is changed because of insignificant whitespace changes we cannot see what
 you have changed, and your contribution might get rejected.
 
-### Running cross-platform Cucumber features
-
-All Cucumber implementations (cucumber-ruby, cucumber-jvm, cucumber-js) share a common set of Cucumber features to
-ensure all implementations support the same basic features. To run these you need to clone the cucumber-tck repo into
-your cucumber-jvm working copy:
-
-    git submodule update --init
-
-Now you can run the cross-platform Cucumber features:
-
-    gem install bundler
-    bundle install
-    rake
-
 ## Troubleshooting
 
 Below are some common problems you might encounter while hacking on Cucumber-JVM - and solutions.

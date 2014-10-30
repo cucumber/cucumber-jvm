@@ -1,4 +1,4 @@
-## [1.2.0-SNAPSHOT (Git master)](https://github.com/cucumber/cucumber-jvm/compare/v1.1.8...master) (Not released)
+## [1.2.0](https://github.com/cucumber/cucumber-jvm/compare/v1.1.8...v1.2.0) (2014-10-30)
 
 * [Clojure] Added clojure_cukes example to the maven build ([#790](https://github.com/cucumber/cucumber-jvm/pull/790) Jestine Paul)
 * [Spring] Added Spring meta-annotation support ([#791](https://github.com/cucumber/cucumber-jvm/pull/791) Georgios Andrianakis)
@@ -17,6 +17,7 @@
 * [Core] Handle "" properly in ListConverter. ([#756](https://github.com/cucumber/cucumber-jvm/pull/756) Clément MATHIEU)
 * [Guice] Update links and fix formatting in Cucumber Guice docs ([#763](https://github.com/cucumber/cucumber-jvm/pull/763) Jake Collins)
 * [Groovy] Clean up groovy stack traces ([#758](https://github.com/cucumber/cucumber-jvm/pull/758) Tom Dunstan)
+* [Gosu] New module. (Aslak Hellesøy)
 * [Gosu] Modified When Expression to use a void block. (Mark Sayewich)
 * [Ioke] Removed this module. It slows down the build and is too esoteric.
 * [Core] Richer plugin API. The `--plugin` option can specify a class that implements one or more of `gherkin.formatter.Formatter,gherkin.formatter.Reporter,cucumber.api.StepDefinitionReporter` (Aslak Hellesøy)

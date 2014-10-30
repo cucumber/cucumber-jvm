@@ -13,7 +13,7 @@
     <groupId>clojure_cukes</groupId>
     <artifactId>clojure_cukes</artifactId>
     <packaging>clojure</packaging>
-    <name>clojure_cukes</name>
+    <name>Examples: Clojure</name>
     <description>A demo of Cucumber with Clojure</description>
     <build>
         <testSourceDirectory>test/java</testSourceDirectory>
