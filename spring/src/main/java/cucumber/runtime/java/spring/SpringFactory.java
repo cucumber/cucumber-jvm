@@ -184,6 +184,17 @@ public class SpringFactory implements ObjectFactory {
     }
 
     private boolean dependsOnSpringContext(Class<?> type) {
+        boolean hasStandardAnnotations = annotatedWithSupportedSpringRootTestAnnotations(type);
+
+        if(hasStandardAnnotations) {
+            return true;
+        }
+
+        final Annotation[] annotations = type.getDeclaredAnnotations();
+        return (annotations.length == 1) && annotatedWithSupportedSpringRootTestAnnotations(annotations[0].annotationType());
+    }
+
+    private boolean annotatedWithSupportedSpringRootTestAnnotations(Class<?> type) {
         return type.isAnnotationPresent(ContextConfiguration.class)
             || type.isAnnotationPresent(ContextHierarchy.class);
     }
