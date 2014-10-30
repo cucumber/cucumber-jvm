@@ -18,7 +18,7 @@ import java.lang.annotation.Target;
  * </p>
  * <pre>
  * &#064;Given("^the users ([a-z](?:, [a-z]+))$")
- * public void the_users(@Delimiter(", ") List<String> users) {
+ * public void the_users(&#064;Delimiter(", ") List&lt;String&gt; users) {
  *     this.users = users;
  * }
  * </pre>

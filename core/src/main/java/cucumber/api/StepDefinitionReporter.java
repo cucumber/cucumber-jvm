@@ -6,7 +6,7 @@ public interface StepDefinitionReporter {
     /**
      * Called when a step definition is defined
      *
-     * @param stepDefinition
+     * @param stepDefinition the step definition
      */
     void stepDefinition(StepDefinition stepDefinition);
 }

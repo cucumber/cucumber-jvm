@@ -22,12 +22,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * <p>
  * Classes annotated with {@code @RunWith(Cucumber.class)} will run a Cucumber Feature.
  * The class should be empty without any fields or methods.
- * <p/>
+ * </p>
+ * <p>
  * Cucumber will look for a {@code .feature} file on the classpath, using the same resource
  * path as the annotated class ({@code .class} substituted by {@code .feature}).
- * <p/>
+ * </p>
  * Additional hints can be given to Cucumber by annotating the class with {@link CucumberOptions}.
  *
  * @see CucumberOptions
@@ -62,6 +64,13 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
 
     /**
      * Create the Runtime. Can be overridden to customize the runtime or backend.
+     *
+     * @param resourceLoader used to load resources
+     * @param classLoader    used to load classes
+     * @param runtimeOptions configuration
+     * @return a new runtime
+     * @throws InitializationError if a JUnit error occurred
+     * @throws IOException if a class or resource could not be loaded
      */
     protected Runtime createRuntime(ResourceLoader resourceLoader, ClassLoader classLoader,
                                     RuntimeOptions runtimeOptions) throws InitializationError, IOException {
