@@ -1,5 +1,6 @@
 ## [1.2.0-SNAPSHOT (Git master)](https://github.com/cucumber/cucumber-jvm/compare/v1.1.8...master) (Not released)
 
+* [Spring] Added Spring meta-annotation support ([#791](https://github.com/cucumber/cucumber-jvm/pull/791) Georgios Andrianakis)
 * [JUnit] Improve consistency between JUnit and Command Line Runners ([#765](https://github.com/cucumber/cucumber-jvm/pull/765) cliviu)
 * [Core] Clobber all filter types when override one filter type in the environment options ([#748](https://github.com/cucumber/cucumber-jvm/pull/748) Björn Rasmusson)
 * [Android] Big refactoring ([#766](https://github.com/cucumber/cucumber-jvm/pull/766) Sebastian Gröbler)
