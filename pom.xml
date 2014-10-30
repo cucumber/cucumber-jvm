@@ -528,6 +528,13 @@
                 <module>examples/android</module>
             </modules>
         </profile>
+        
+        <profile>
+        	<id>junit-4.12</id>
+        	<properties>
+        		<junit.version>4.12-beta-2</junit.version>
+        	</properties>
+        </profile>
 
         <profile>
             <id>examples</id>
