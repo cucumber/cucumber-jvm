@@ -26,6 +26,8 @@ matrix:
       # Other relevant APIs:
       #  addon-google_apis-google-16
       - ./.travis_android_update > /dev/null
+  - jdk: oraclejdk8
+    script: mvn -q deploy -P java8 -pl java8 --settings .travis-settings.xml -Dno.gem.deploy=true
 
 branches:
   only:

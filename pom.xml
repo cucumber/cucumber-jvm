@@ -502,7 +502,6 @@
     <modules>
         <module>core</module>
         <module>java</module>
-        <module>java8</module>
         <module>testng</module>
         <module>picocontainer</module>
         <module>clojure</module>
@@ -526,6 +525,16 @@
             <id>android</id>
             <modules>
                 <module>android</module>
+            </modules>
+        </profile>
+
+        <profile>
+            <id>java8</id>
+            <activation>
+                <jdk>1.8</jdk>
+            </activation>
+            <modules>
+                <module>java8</module>
             </modules>
         </profile>
 
