@@ -9,7 +9,7 @@ matrix:
     script: mvn -q deploy --settings .travis-settings.xml -Dno.gem.deploy=true
   - jdk: oraclejdk7
     env: ANDROID=true
-    script: mvn -q deploy -P android -pl android --settings .travis-settings.xml -Dno.gem.deploy=true -Dandroid.device=test
+    script: mvn package -P android,android-examples -pl android,examples/android -amd --settings .travis-settings.xml -Dno.gem.deploy=true -Dandroid.device=test && mvn -q deploy -P android -pl android --settings .travis-settings.xml -Dno.gem.deploy=true -Dandroid.device=test
     before_install:
       # Install base Android SDK
       - sudo apt-get update -qq

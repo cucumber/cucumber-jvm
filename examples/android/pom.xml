@@ -51,6 +51,10 @@
                             <platform>21</platform>
                         </sdk>
                         <undeployBeforeDeploy>true</undeployBeforeDeploy>
+			<androidManifestFile>${project.basedir}/AndroidManifest.xml</androidManifestFile>
+			<resourceDirectory>${project.basedir}/res</resourceDirectory>
+			<assetsDirectory>${project.basedir}/assets</assetsDirectory>
+			<nativeLibrariesDirectory>${project.basedir}/libs</nativeLibrariesDirectory>
                     </configuration>
                 </plugin>
             </plugins>
