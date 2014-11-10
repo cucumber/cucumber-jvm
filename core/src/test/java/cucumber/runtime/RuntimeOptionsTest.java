@@ -13,8 +13,6 @@ import org.junit.Test;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -39,7 +37,8 @@ public class RuntimeOptionsTest {
 
     @Test
     public void has_usage() {
-        assertTrue(RuntimeOptions.USAGE.startsWith("Usage"));
+        RuntimeOptions.loadUsageTextIfNeeded();
+        assertTrue(RuntimeOptions.usageText.startsWith("Usage"));
     }
 
     @Test
