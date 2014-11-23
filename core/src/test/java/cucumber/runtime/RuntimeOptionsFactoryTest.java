@@ -39,8 +39,7 @@ public class RuntimeOptionsFactoryTest {
         assertFalse(runtimeOptions.isStrict());
         assertEquals(asList("classpath:cucumber/runtime"), runtimeOptions.getFeaturePaths());
         assertEquals(asList("classpath:cucumber/runtime"), runtimeOptions.getGlue());
-        assertEquals(1, runtimeOptions.getPlugins().size());
-        assertEquals("cucumber.runtime.formatter.NullFormatter", runtimeOptions.getPlugins().get(0).getClass().getName());
+        assertPluginExists(runtimeOptions.getPlugins(), "cucumber.runtime.formatter.NullFormatter");
     }
 
     @Test
@@ -49,8 +48,7 @@ public class RuntimeOptionsFactoryTest {
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
         assertEquals(asList("classpath:cucumber/runtime"), runtimeOptions.getFeaturePaths());
         assertEquals(asList("classpath:cucumber/runtime"), runtimeOptions.getGlue());
-        assertEquals(1, runtimeOptions.getPlugins().size());
-        assertEquals("cucumber.runtime.formatter.NullFormatter", runtimeOptions.getPlugins().get(0).getClass().getName());
+        assertPluginExists(runtimeOptions.getPlugins(), "cucumber.runtime.formatter.NullFormatter");
     }
 
     @Test
@@ -98,15 +96,14 @@ public class RuntimeOptionsFactoryTest {
     public void create_null_formatter_when_no_formatter_plugin_is_defined() {
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(ClassWithNoFormatterPlugin.class);
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
+        assertPluginExists(runtimeOptions.getPlugins(), "cucumber.runtime.formatter.NullFormatter");
+    }
 
-        List<Object> plugins = runtimeOptions.getPlugins();
-        boolean found = false;
-        for (Object plugin : plugins) {
-            if ("cucumber.runtime.formatter.NullFormatter".equals(plugin.getClass().getName())) {
-                found = true;
-            }
-        }
-        assertTrue("NullFormatter not found among plugins", found);
+    @Test
+    public void create_default_summary_printer_when_no_summary_printer_plugin_is_defined() {
+        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(ClassWithNoSummaryPrinterPlugin.class);
+        RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
+        assertPluginExists(runtimeOptions.getPlugins(), "cucumber.runtime.DefaultSummaryPrinter");
     }
 
     @Test
@@ -115,9 +112,8 @@ public class RuntimeOptionsFactoryTest {
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
 
         List<Object> plugins = runtimeOptions.getPlugins();
-        assertEquals(2, plugins.size());
-        assertTrue(plugins.get(0) instanceof PrettyFormatter);
-        assertTrue(plugins.get(1) instanceof JSONFormatter);
+        assertPluginExists(plugins, "cucumber.runtime.formatter.CucumberJSONFormatter");
+        assertPluginExists(plugins, "cucumber.runtime.formatter.CucumberPrettyFormatter");
     }
 
     @Test
@@ -126,6 +122,16 @@ public class RuntimeOptionsFactoryTest {
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
 
         assertTrue(runtimeOptions.isMonochrome());
+    }
+
+    private void assertPluginExists(List<Object> plugins, String pluginName) {
+        boolean found = false;
+        for (Object plugin : plugins) {
+            if (plugin.getClass().getName() == pluginName) {
+                found = true;
+            }
+        }
+        assertTrue(pluginName + " not found among the plugins", found);
     }
 
 
@@ -183,6 +189,11 @@ public class RuntimeOptionsFactoryTest {
 
     @CucumberOptions(plugin = "cucumber.runtime.formatter.AnyStepDefinitionReporter")
     static class ClassWithNoFormatterPlugin {
+        // empty
+    }
+
+    @CucumberOptions(plugin = "pretty")
+    static class ClassWithNoSummaryPrinterPlugin {
         // empty
     }
 }

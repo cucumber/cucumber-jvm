@@ -2,13 +2,14 @@ package cucumber.runtime;
 
 import cucumber.api.SnippetType;
 import cucumber.api.StepDefinitionReporter;
+import cucumber.api.SummaryPrinter;
 import cucumber.runtime.formatter.ColorAware;
 import cucumber.runtime.formatter.PluginFactory;
 import cucumber.runtime.formatter.StrictAware;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
-import gherkin.I18n;
 import cucumber.runtime.model.PathWithLines;
+import gherkin.I18n;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
 import gherkin.util.FixJava;
@@ -33,6 +34,7 @@ public class RuntimeOptions {
     private final List<String> featurePaths = new ArrayList<String>();
     private final List<String> pluginFormatterNames = new ArrayList<String>();
     private final List<String> pluginStepDefinitionReporterNames = new ArrayList<String>();
+    private final List<String> pluginSummaryPrinterNames = new ArrayList<String>();
     private final PluginFactory pluginFactory;
     private final List<Object> plugins = new ArrayList<Object>();
     private boolean dryRun;
@@ -84,6 +86,9 @@ public class RuntimeOptions {
 
         if (pluginFormatterNames.isEmpty()) {
             pluginFormatterNames.add("progress");
+        }
+        if (pluginSummaryPrinterNames.isEmpty()) {
+            pluginSummaryPrinterNames.add("cucumber.runtime.DefaultSummaryPrinter");
         }
     }
 
@@ -152,10 +157,12 @@ public class RuntimeOptions {
     }
 
     private void addPluginName(String name) {
-        if (pluginFactory.isFormatterName(name)) {
+        if (PluginFactory.isFormatterName(name)) {
             pluginFormatterNames.add(name);
-        } else if (pluginFactory.isStepDefinitionResporterName(name)) {
+        } else if (PluginFactory.isStepDefinitionResporterName(name)) {
             pluginStepDefinitionReporterNames.add(name);
+        } else if (PluginFactory.isSummaryPrinterName(name)) {
+            pluginSummaryPrinterNames.add(name);
         } else {
             throw new CucumberException("Unrecognized plugin: " + name);
         }
@@ -224,6 +231,10 @@ public class RuntimeOptions {
                 Object plugin = pluginFactory.create(pluginName);
                 plugins.add(plugin);
             }
+            for (String pluginName : pluginSummaryPrinterNames) {
+                Object plugin = pluginFactory.create(pluginName);
+                plugins.add(plugin);
+            }
             pluginNamesInstantiated = true;
         }
         return plugins;
@@ -239,6 +250,10 @@ public class RuntimeOptions {
 
     public StepDefinitionReporter stepDefinitionReporter(ClassLoader classLoader) {
         return pluginProxy(classLoader, StepDefinitionReporter.class);
+    }
+
+    public SummaryPrinter summaryPrinter(ClassLoader classLoader) {
+        return pluginProxy(classLoader, SummaryPrinter.class);
     }
 
     /**

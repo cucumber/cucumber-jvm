@@ -2,6 +2,7 @@ package cucumber.runtime;
 
 import cucumber.api.Pending;
 import cucumber.api.StepDefinitionReporter;
+import cucumber.api.SummaryPrinter;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.xstream.LocalizedXStreams;
@@ -126,8 +127,8 @@ public class Runtime implements UnreportedStepExecutor {
     }
 
     public void printSummary() {
-        // TODO: inject a SummaryPrinter in the ctor
-        new SummaryPrinter(System.out).print(this);
+        SummaryPrinter summaryPrinter = runtimeOptions.summaryPrinter(classLoader);
+        summaryPrinter.print(this);
     }
 
     void printStats(PrintStream out) {

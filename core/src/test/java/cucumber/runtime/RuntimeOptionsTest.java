@@ -87,15 +87,22 @@ public class RuntimeOptionsTest {
     }
 
     @Test
-    public void creates_progress_formatter_when_non_formatter_plugin_is_specified() {
+    public void creates_progress_formatter_when_no_formatter_plugin_is_specified() {
         RuntimeOptions options = new RuntimeOptions(asList("--plugin", "cucumber.runtime.formatter.AnyStepDefinitionReporter", "--glue", "somewhere"));
-        boolean found = false;
-        for (Object plugin : options.getPlugins()) {
-            if (plugin.getClass().getName() == "cucumber.runtime.formatter.ProgressFormatter") {
-                found = true;
-            }
-        }
-        assertTrue("ProgressFormatter not found among the plugins", found);
+        assertPluginExists(options.getPlugins(), "cucumber.runtime.formatter.ProgressFormatter");
+    }
+
+    @Test
+    public void creates_default_summary_printer_when_no_summary_printer_plugin_is_specified() {
+        RuntimeOptions options = new RuntimeOptions(asList("--plugin", "pretty", "--glue", "somewhere"));
+        assertPluginExists(options.getPlugins(), "cucumber.runtime.DefaultSummaryPrinter");
+    }
+
+    @Test
+    public void creates_null_summary_printer() {
+        RuntimeOptions options = new RuntimeOptions(asList("--plugin", "cucumber.runtime.NullSummaryPrinter", "--glue", "somewhere"));
+        assertPluginExists(options.getPlugins(), "cucumber.runtime.NullSummaryPrinter");
+        assertPluginNotExists(options.getPlugins(), "cucumber.runtime.DefaultSummaryPrinter");
     }
 
     @Test
@@ -325,6 +332,24 @@ public class RuntimeOptionsTest {
         when(resource1.getPath()).thenReturn(featurePath);
         when(resource1.getInputStream()).thenReturn(new ByteArrayInputStream(feature.getBytes("UTF-8")));
         when(resourceLoader.resources(featurePath, ".feature")).thenReturn(asList(resource1));
+    }
+
+    private void assertPluginExists(List<Object> plugins, String pluginName) {
+        assertTrue(pluginName + " not found among the plugins", pluginExists(plugins, pluginName));
+    }
+
+    private void assertPluginNotExists(List<Object> plugins, String pluginName) {
+        assertFalse(pluginName + " found among the plugins", pluginExists(plugins, pluginName));
+    }
+
+    private boolean pluginExists(List<Object> plugins, String pluginName) {
+        boolean found = false;
+        for (Object plugin : plugins) {
+            if (plugin.getClass().getName() == pluginName) {
+                found = true;
+            }
+        }
+        return found;
     }
 }
 

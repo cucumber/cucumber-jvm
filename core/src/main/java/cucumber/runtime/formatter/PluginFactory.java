@@ -1,6 +1,7 @@
 package cucumber.runtime.formatter;
 
 import cucumber.api.StepDefinitionReporter;
+import cucumber.api.SummaryPrinter;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.io.URLOutputStream;
 import cucumber.runtime.io.UTF8OutputStreamWriter;
@@ -196,6 +197,14 @@ public class PluginFactory {
     public static boolean isStepDefinitionResporterName(String name) {
         Class pluginClass = getPluginClass(name);
         if (StepDefinitionReporter.class.isAssignableFrom(pluginClass)) {
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean isSummaryPrinterName(String name) {
+        Class pluginClass = getPluginClass(name);
+        if (SummaryPrinter.class.isAssignableFrom(pluginClass)) {
             return true;
         }
         return false;
