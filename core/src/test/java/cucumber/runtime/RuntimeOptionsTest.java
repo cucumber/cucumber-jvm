@@ -81,6 +81,24 @@ public class RuntimeOptionsTest {
     }
 
     @Test
+    public void creates_progress_formatter_as_default() {
+        RuntimeOptions options = new RuntimeOptions(asList("--glue", "somewhere"));
+        assertEquals("cucumber.runtime.formatter.ProgressFormatter", options.getPlugins().get(0).getClass().getName());
+    }
+
+    @Test
+    public void creates_progress_formatter_when_non_formatter_plugin_is_specified() {
+        RuntimeOptions options = new RuntimeOptions(asList("--plugin", "cucumber.runtime.formatter.AnyStepDefinitionReporter", "--glue", "somewhere"));
+        boolean found = false;
+        for (Object plugin : options.getPlugins()) {
+            if (plugin.getClass().getName() == "cucumber.runtime.formatter.ProgressFormatter") {
+                found = true;
+            }
+        }
+        assertTrue("ProgressFormatter not found among the plugins", found);
+    }
+
+    @Test
     public void assigns_strict() {
         RuntimeOptions options = new RuntimeOptions(asList("--strict", "--glue", "somewhere"));
         assertTrue(options.isStrict());
@@ -309,3 +327,4 @@ public class RuntimeOptionsTest {
         when(resourceLoader.resources(featurePath, ".feature")).thenReturn(asList(resource1));
     }
 }
+

@@ -1,8 +1,11 @@
 package cucumber.runtime.formatter;
 
+import cucumber.api.StepDefinitionReporter;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.io.URLOutputStream;
 import cucumber.runtime.io.UTF8OutputStreamWriter;
+import gherkin.formatter.Formatter;
+import gherkin.formatter.Reporter;
 
 import java.io.File;
 import java.io.IOException;
@@ -150,7 +153,7 @@ public class PluginFactory {
         }
     }
 
-    private <T> Class<T> pluginClass(String pluginName) {
+    private static <T> Class<T> pluginClass(String pluginName) {
         Class<T> pluginClass = (Class<T>) PLUGIN_CLASSES.get(pluginName);
         if (pluginClass == null) {
             pluginClass = loadClass(pluginName);
@@ -159,7 +162,7 @@ public class PluginFactory {
     }
 
     @SuppressWarnings("unchecked")
-    private <T> Class<T> loadClass(String className) {
+    private static <T> Class<T> loadClass(String className) {
         try {
             return (Class<T>) Thread.currentThread().getContextClassLoader().loadClass(className);
         } catch (ClassNotFoundException e) {
@@ -180,5 +183,32 @@ public class PluginFactory {
         } finally {
             defaultOut = null;
         }
+    }
+
+    public static boolean isFormatterName(String name) {
+        Class pluginClass = getPluginClass(name);
+        if (Formatter.class.isAssignableFrom(pluginClass) || Reporter.class.isAssignableFrom(pluginClass)) {
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean isStepDefinitionResporterName(String name) {
+        Class pluginClass = getPluginClass(name);
+        if (StepDefinitionReporter.class.isAssignableFrom(pluginClass)) {
+            return true;
+        }
+        return false;
+    }
+
+    private static Class getPluginClass(String name) {
+        Matcher pluginWithFile = PLUGIN_WITH_FILE_PATTERN.matcher(name);
+        String pluginName;
+        if (pluginWithFile.matches()) {
+            pluginName = pluginWithFile.group(1);
+        } else {
+            pluginName = name;
+        }
+        return pluginClass(pluginName);
     }
 }

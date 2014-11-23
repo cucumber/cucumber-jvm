@@ -95,6 +95,21 @@ public class RuntimeOptionsFactoryTest {
     }
 
     @Test
+    public void create_null_formatter_when_no_formatter_plugin_is_defined() {
+        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(ClassWithNoFormatterPlugin.class);
+        RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
+
+        List<Object> plugins = runtimeOptions.getPlugins();
+        boolean found = false;
+        for (Object plugin : plugins) {
+            if ("cucumber.runtime.formatter.NullFormatter".equals(plugin.getClass().getName())) {
+                found = true;
+            }
+        }
+        assertTrue("NullFormatter not found among plugins", found);
+    }
+
+    @Test
     public void inherit_plugin_from_baseclass() {
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(SubClassWithFormatter.class);
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
@@ -163,6 +178,11 @@ public class RuntimeOptionsFactoryTest {
 
     @CucumberOptions(monochrome = false)
     static class BaseClassWithMonoChromeFalse {
+        // empty
+    }
+
+    @CucumberOptions(plugin = "cucumber.runtime.formatter.AnyStepDefinitionReporter")
+    static class ClassWithNoFormatterPlugin {
         // empty
     }
 }
