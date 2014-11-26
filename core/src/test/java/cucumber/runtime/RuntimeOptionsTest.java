@@ -100,7 +100,7 @@ public class RuntimeOptionsTest {
 
     @Test
     public void creates_null_summary_printer() {
-        RuntimeOptions options = new RuntimeOptions(asList("--plugin", "cucumber.runtime.NullSummaryPrinter", "--glue", "somewhere"));
+        RuntimeOptions options = new RuntimeOptions(asList("--plugin", "null_summary", "--glue", "somewhere"));
         assertPluginExists(options.getPlugins(), "cucumber.runtime.NullSummaryPrinter");
         assertPluginNotExists(options.getPlugins(), "cucumber.runtime.DefaultSummaryPrinter");
     }

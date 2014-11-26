@@ -88,7 +88,7 @@ public class RuntimeOptions {
             pluginFormatterNames.add("progress");
         }
         if (pluginSummaryPrinterNames.isEmpty()) {
-            pluginSummaryPrinterNames.add("cucumber.runtime.DefaultSummaryPrinter");
+            pluginSummaryPrinterNames.add("default_summary");
         }
     }
 
