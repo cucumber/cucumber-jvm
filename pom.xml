@@ -70,6 +70,10 @@
         <jetty.version>8.1.12.v20130726</jetty.version>
         <xmlunit.version>1.6</xmlunit.version>
         <joda-time.version>2.7</joda-time.version>
+        <osgi.version>4.3.1</osgi.version>
+        <pax-exam.version>4.3.0</pax-exam.version>
+        <pax-url.version>2.2.0</pax-url.version>
+        <felix.version>4.0.3</felix.version>
     </properties>
     <licenses>
         <license>
@@ -90,7 +94,7 @@
             <dependency>
                 <groupId>info.cukes</groupId>
                 <artifactId>cucumber-jvm-deps</artifactId>
-                <version>1.0.3</version>
+                <version>1.0.4-SNAPSHOT</version>
                 <exclusions>
                     <exclusion>
                         <groupId>com.thoughtworks.xstream</groupId>
@@ -120,6 +124,11 @@
             <dependency>
                 <groupId>info.cukes</groupId>
                 <artifactId>cucumber-spring</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>info.cukes</groupId>
+                <artifactId>cucumber-osgi</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -273,12 +282,22 @@
 
             <dependency>
                 <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
                 <artifactId>jcl-over-slf4j</artifactId>
                 <version>${slf4j.version}</version>
             </dependency>
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
+                <version>${logback.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-core</artifactId>
                 <version>${logback.version}</version>
             </dependency>
             <dependency>
@@ -468,6 +487,42 @@
                 <artifactId>joda-time</artifactId>
                 <version>${joda-time.version}</version>
             </dependency>
+
+            <dependency>
+                <groupId>org.osgi</groupId>
+                <artifactId>org.osgi.core</artifactId>
+                <version>${osgi.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.ops4j.pax.exam</groupId>
+                <artifactId>pax-exam</artifactId>
+                <version>${pax-exam.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.ops4j.pax.exam</groupId>
+                <artifactId>pax-exam-container-native</artifactId>
+                <version>${pax-exam.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.ops4j.pax.exam</groupId>
+                <artifactId>pax-exam-junit4</artifactId>
+                <version>${pax-exam.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.ops4j.pax.exam</groupId>
+                <artifactId>pax-exam-link-mvn</artifactId>
+                <version>${pax-exam.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.ops4j.pax.url</groupId>
+                <artifactId>pax-url-aether</artifactId>
+                <version>${pax-url.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>org.apache.felix.framework</artifactId>
+                <version>${felix.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -506,6 +561,7 @@
         <module>jruby</module>
         <module>jython</module>
         <module>spring</module>
+        <module>osgi</module>
         <module>guice</module>
         <module>weld</module>
         <module>groovy</module>
@@ -552,6 +608,7 @@
                 <module>examples/groovy-calculator</module>
                 <module>examples/scala-calculator</module>
                 <module>examples/java-webbit-websockets-selenium</module>
+                <module>examples/pax-exam</module>
             </modules>
         </profile>
 
