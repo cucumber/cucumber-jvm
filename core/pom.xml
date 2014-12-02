@@ -109,12 +109,7 @@
                     <instructions>
                         <Bundle-Description></Bundle-Description>
                         <Export-Package>cucumber.*</Export-Package>
-                        <Import-Package>
-                            *,
-                            cucumber.deps.com.thoughtworks.xstream.converters.extended,
-                            cucumber.deps.com.thoughtworks.xstream.converters.enums,
-                            cucumber.deps.com.thoughtworks.xstream.converters.basic
-                        </Import-Package>
+                        <DynamicImport-Package>*</DynamicImport-Package>
                     </instructions>
                 </configuration>
             </plugin>
