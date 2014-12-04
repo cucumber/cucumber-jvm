@@ -13,4 +13,4 @@ Feature: Cukes
     When I eat 1 "cukes"
     Then I am "sad"
     When I eat 1 "cukes"
-    Then I am "meh"
+    Then I am "happy"
