@@ -1,7 +1,6 @@
 Feature: Cukes
-  An example of testing Clojure with cucumber. The last 'Then' of
-  'eat 1 cuke' is failing. Change the "happy" to "meh" to make
-  it pass.
+  An example of testing Clojure with cucumber. To see a failure try changing
+  the last 'Then' of 'eat 1 cuke' "meh" to "happy".
 
   Scenario: in the belly
     Given I have 4 big "cukes" in my belly
@@ -13,4 +12,4 @@ Feature: Cukes
     When I eat 1 "cukes"
     Then I am "sad"
     When I eat 1 "cukes"
-    Then I am "happy"
+    Then I am "meh"
