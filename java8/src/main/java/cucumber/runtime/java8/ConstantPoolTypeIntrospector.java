@@ -1,6 +1,5 @@
 package cucumber.runtime.java8;
 
-import cucumber.runtime.CucumberException;
 import cucumber.runtime.java.TypeIntrospector;
 import sun.reflect.ConstantPool;
 
@@ -35,16 +34,8 @@ public class ConstantPoolTypeIntrospector implements TypeIntrospector {
     }
 
     private String getTypeString(ConstantPool constantPool) {
-        for (int i = 0; i < 100; i++) {
-            try {
-                String[] memberRef = constantPool.getMemberRefInfoAt(i);
-                if (memberRef[1].contains("$defineGlue$")) {
-                    return memberRef[2];
-                }
-            } catch (Exception ignore) {
-            }
-        }
-        throw new CucumberException("method ref not found");
+        String[] memberRef = constantPool.getMemberRefInfoAt(constantPool.getSize() - 2);
+        return memberRef[2];
     }
 
 }
