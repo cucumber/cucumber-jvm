@@ -4,16 +4,11 @@ import java.net.URL;
 import java.util.Iterator;
 
 public class TestResourceIteratorFactory implements ResourceIteratorFactory {
-    /**
-     * Initializes a new instance of the TestResourceIteratorFactory class.
-     */
-    public TestResourceIteratorFactory() {
-        // intentionally empty
-    }
+    public static final String TEST_URL = "file:/this/is/only/a/test";
 
     @Override
     public boolean isFactoryFor(URL url) {
-        return "file".equals(url.getProtocol()) && url.getPath().endsWith("test");
+        return url.toExternalForm().equals(TEST_URL);
     }
 
     @Override
