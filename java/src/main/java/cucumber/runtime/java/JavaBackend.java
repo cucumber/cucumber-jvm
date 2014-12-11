@@ -176,20 +176,20 @@ public class JavaBackend implements Backend {
         }
     }
 
-    public void addBeforeHookDefinition(HookBody body, String[] tagExpressions, long timeoutMillis, int order) {
-        glue.addBeforeHook(new Java8HookDefinition(body, tagExpressions, order, timeoutMillis));
+    public void addBeforeHookDefinition(String[] tagExpressions, long timeoutMillis, int order, HookBody body) {
+        glue.addBeforeHook(new Java8HookDefinition(tagExpressions, order, timeoutMillis, body));
     }
 
-    public void addAfterHookDefinition(HookBody body, String[] tagExpressions, long timeoutMillis, int order) {
-        glue.addAfterHook(new Java8HookDefinition(body, tagExpressions, order, timeoutMillis));
+    public void addAfterHookDefinition(String[] tagExpressions, long timeoutMillis, int order, HookBody body) {
+        glue.addAfterHook(new Java8HookDefinition(tagExpressions, order, timeoutMillis, body));
     }
 
-    public void addBeforeHookDefinition(HookNoArgsBody body, String[] tagExpressions, long timeoutMillis, int order) {
-        glue.addBeforeHook(new Java8HookDefinition(body, tagExpressions, order, timeoutMillis));
+    public void addBeforeHookDefinition(String[] tagExpressions, long timeoutMillis, int order, HookNoArgsBody body) {
+        glue.addBeforeHook(new Java8HookDefinition(tagExpressions, order, timeoutMillis, body));
     }
 
-    public void addAfterHookDefinition(HookNoArgsBody body, String[] tagExpressions, long timeoutMillis, int order) {
-        glue.addAfterHook(new Java8HookDefinition(body, tagExpressions, order, timeoutMillis));
+    public void addAfterHookDefinition(String[] tagExpressions, long timeoutMillis, int order, HookNoArgsBody body) {
+        glue.addAfterHook(new Java8HookDefinition(tagExpressions, order, timeoutMillis, body));
     }
 
     private Pattern pattern(Annotation annotation) throws Throwable {

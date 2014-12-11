@@ -29,11 +29,11 @@ public class Java8HookDefinition implements HookDefinition {
         this.location = new Exception().getStackTrace()[3];
     }
 
-    public Java8HookDefinition(HookBody hookBody, String[] tagExpressions, int order, long timeoutMillis) {
+    public Java8HookDefinition(String[] tagExpressions, int order, long timeoutMillis, HookBody hookBody) {
         this(tagExpressions, order, timeoutMillis, hookBody, null);
     }
 
-    public Java8HookDefinition(HookNoArgsBody hookNoArgsBody, String[] tagExpressions, int order, long timeoutMillis) {
+    public Java8HookDefinition(String[] tagExpressions, int order, long timeoutMillis, HookNoArgsBody hookNoArgsBody) {
         this(tagExpressions, order, timeoutMillis, null, hookNoArgsBody);
     }
 
