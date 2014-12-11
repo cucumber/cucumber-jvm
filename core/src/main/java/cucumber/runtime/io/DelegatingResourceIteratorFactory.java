@@ -13,34 +13,19 @@ import java.util.ServiceLoader;
  */
 public class DelegatingResourceIteratorFactory implements ResourceIteratorFactory {
 
-    /**
-     * The delegates.
-     */
-    private final Iterable<ResourceIteratorFactory> delegates;
+    private final Iterable<ResourceIteratorFactory> delegates = ServiceLoader.load(ResourceIteratorFactory.class);
 
-    /**
-     * The fallback resource iterator factory.
-     */
-    private final ResourceIteratorFactory fallback;
-
-    /**
-     * Initializes a new instance of the DelegatingResourceIteratorFactory
-     * class.
-     */
-    public DelegatingResourceIteratorFactory() {
-        this(new ZipThenFileResourceIteratorFallback());
-    }
+    private final ResourceIteratorFactory fallbackResourceIteratorFactory;
 
     /**
      * Initializes a new instance of the DelegatingResourceIteratorFactory
      * class with a fallback factory.
      *
-     * @param fallback The fallback resource iterator factory to use when an
-     *                 appropriate one couldn't be found otherwise.
+     * @param fallbackResourceIteratorFactory The factory to use when an
+     *                                        appropriate one couldn't be found otherwise.
      */
-    public DelegatingResourceIteratorFactory(ResourceIteratorFactory fallback) {
-        delegates = ServiceLoader.load(ResourceIteratorFactory.class);
-        this.fallback = fallback;
+    public DelegatingResourceIteratorFactory(ResourceIteratorFactory fallbackResourceIteratorFactory) {
+        this.fallbackResourceIteratorFactory = fallbackResourceIteratorFactory;
     }
 
     @Override
@@ -50,7 +35,7 @@ public class DelegatingResourceIteratorFactory implements ResourceIteratorFactor
                 return true;
             }
         }
-        return fallback.isFactoryFor(url);
+        return fallbackResourceIteratorFactory.isFactoryFor(url);
     }
 
     @Override
@@ -60,8 +45,8 @@ public class DelegatingResourceIteratorFactory implements ResourceIteratorFactor
                 return delegate.createIterator(url, path, suffix);
             }
         }
-        if (fallback.isFactoryFor(url)) {
-            return fallback.createIterator(url, path, suffix);
+        if (fallbackResourceIteratorFactory.isFactoryFor(url)) {
+            return fallbackResourceIteratorFactory.createIterator(url, path, suffix);
         } else {
             throw new CucumberException("Fallback factory cannot handle URL: " + url);
         }

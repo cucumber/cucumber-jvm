@@ -1,4 +1,4 @@
-package cucumber.runtime.java.test;
+package cucumber.runtime.java8.test;
 
 import cucumber.api.Scenario;
 import cucumber.api.java8.En;
@@ -9,6 +9,7 @@ public class LambdaStepdefs implements En {
     @Override
     public void defineGlue() {
         Before((Scenario scenario) -> {
+            System.out.println("scenario = " + scenario);
         });
 
         Given("I have (\\d+) cukes in my (.*)", (Integer cukes, String what) -> {

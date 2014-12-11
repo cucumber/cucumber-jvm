@@ -7,10 +7,10 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import static cucumber.runtime.io.ClasspathIterable.filePath;
+import static cucumber.runtime.io.ZipResourceIteratorFactory.filePath;
 import static org.junit.Assert.assertEquals;
 
-public class ClasspathIterableTest {
+public class ClasspathResourceIterableTest {
     @Test
     public void computes_file_path_for_windows_path() throws UnsupportedEncodingException, MalformedURLException {
         if (File.separatorChar == '\\') {

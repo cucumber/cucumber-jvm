@@ -24,7 +24,7 @@ public interface ResourceIteratorFactory {
      * @param path   The path.
      * @param suffix The suffix.
      * @return The iterator over the resources designated by the URL, path, and
-     *         suffix.
+     * suffix.
      */
     Iterator<Resource> createIterator(URL url, String path, String suffix);
 }

@@ -8,6 +8,7 @@ import static org.junit.Assert.assertEquals;
 
 public class AnonInnerClassStepdefs implements GlueBase {
 
+    @Override
     public void defineGlue() {
         JavaBackend.INSTANCE.get().addStepDefinition("^I have (\\d+) cukes in my (.*)", 0, new StepdefBody.A2<Integer, String>() {
             public void accept(Integer cukes, String what) {

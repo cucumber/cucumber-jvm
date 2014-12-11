@@ -9,6 +9,6 @@ public class ClasspathResourceLoader implements ResourceLoader {
 
     @Override
     public Iterable<Resource> resources(String path, String suffix) {
-        return new ClasspathIterable(classLoader, path, suffix);
+        return new ClasspathResourceIterable(classLoader, path, suffix);
     }
 }

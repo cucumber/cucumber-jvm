@@ -12,8 +12,9 @@ public class DelegatingResourceIteratorFactoryTest {
 
     @Test
     public void should_load_test_resource_iterator() throws MalformedURLException {
-        ResourceIteratorFactory factory = new DelegatingResourceIteratorFactory();
-        URL url = new URL("file:///this/is/only/a/test");
+        ResourceIteratorFactory factory =
+                new DelegatingResourceIteratorFactory(new ZipThenFileResourceIteratorFactory());
+        URL url = new URL(TestResourceIteratorFactory.TEST_URL);
 
         assertTrue(factory.isFactoryFor(url));
 
