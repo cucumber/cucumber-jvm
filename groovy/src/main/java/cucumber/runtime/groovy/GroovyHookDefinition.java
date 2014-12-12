@@ -12,13 +12,22 @@ import java.util.Collection;
 public class GroovyHookDefinition implements HookDefinition {
     private final TagExpression tagExpression;
     private final long timeoutMillis;
+    private final int order;
     private final Closure body;
     private final GroovyBackend backend;
     private final StackTraceElement location;
 
-    public GroovyHookDefinition(TagExpression tagExpression, long timeoutMillis, Closure body, StackTraceElement location, GroovyBackend backend) {
+    public GroovyHookDefinition(
+            TagExpression tagExpression,
+            long timeoutMillis,
+            int order,
+            Closure body,
+            StackTraceElement location,
+            GroovyBackend backend) {
+
         this.tagExpression = tagExpression;
         this.timeoutMillis = timeoutMillis;
+        this.order = order;
         this.body = body;
         this.location = location;
         this.backend = backend;
@@ -47,7 +56,7 @@ public class GroovyHookDefinition implements HookDefinition {
 
     @Override
     public int getOrder() {
-        return location.getFileName() == "env.groovy" ? -1 : 0;
+        return order;
     }
 }
 
