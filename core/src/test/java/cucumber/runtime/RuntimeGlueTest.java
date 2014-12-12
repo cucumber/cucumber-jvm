@@ -29,4 +29,35 @@ public class RuntimeGlueTest {
         }
     }
 
+    @Test
+    public void removes_glue_that_is_scenario_scoped() {
+        // This test is a bit fragile - it is testing state, not behaviour.
+        // But it was too much hassle creating a better test without refactoring RuntimeGlue
+        // and probably some of its immediate collaborators... Aslak.
+
+        RuntimeGlue glue = new RuntimeGlue(new UndefinedStepsTracker(), new LocalizedXStreams(Thread.currentThread().getContextClassLoader()));
+
+        StepDefinition sd = mock(StepDefinition.class);
+        when(sd.isScenarioScoped()).thenReturn(true);
+        when(sd.getPattern()).thenReturn("pattern");
+        glue.addStepDefinition(sd);
+
+        HookDefinition bh = mock(HookDefinition.class);
+        when(bh.isScenarioScoped()).thenReturn(true);
+        glue.addBeforeHook(bh);
+
+        HookDefinition ah = mock(HookDefinition.class);
+        when(ah.isScenarioScoped()).thenReturn(true);
+        glue.addAfterHook(ah);
+
+        assertEquals(1, glue.stepDefinitionsByPattern.size());
+        assertEquals(1, glue.beforeHooks.size());
+        assertEquals(1, glue.afterHooks.size());
+
+        glue.removeScenarioScopedGlue();
+
+        assertEquals(0, glue.stepDefinitionsByPattern.size());
+        assertEquals(0, glue.beforeHooks.size());
+        assertEquals(0, glue.afterHooks.size());
+    }
 }

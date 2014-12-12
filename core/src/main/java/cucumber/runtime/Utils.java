@@ -30,7 +30,9 @@ public class Utils {
         return Timeout.timeout(new Timeout.Callback<Object>() {
             @Override
             public Object call() throws Throwable {
+                boolean accessible = method.isAccessible();
                 try {
+                    method.setAccessible(true);
                     return method.invoke(target, args);
                 } catch (IllegalArgumentException e) {
                     throw new CucumberException("Failed to invoke " + MethodFormat.FULL.format(method), e);
@@ -38,6 +40,8 @@ public class Utils {
                     throw e.getTargetException();
                 } catch (IllegalAccessException e) {
                     throw new CucumberException("Failed to invoke " + MethodFormat.FULL.format(method), e);
+                } finally {
+                    method.setAccessible(accessible);
                 }
             }
         }, timeoutMillis);

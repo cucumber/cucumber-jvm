@@ -40,4 +40,9 @@ public class JythonHookDefinition implements HookDefinition {
     public int getOrder() {
         return 0;
     }
+
+    @Override
+    public boolean isScenarioScoped() {
+        return false;
+    }
 }

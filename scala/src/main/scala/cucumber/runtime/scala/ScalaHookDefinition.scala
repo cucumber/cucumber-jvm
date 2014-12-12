@@ -20,4 +20,6 @@ class ScalaHookDefinition(f:Scenario => Unit,
   def matches(tags: Collection[Tag]) = tagExpression.evaluate(tags)
 
   def getOrder = order
+
+  def isScenarioScoped = false
 }

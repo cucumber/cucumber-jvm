@@ -91,14 +91,14 @@ def package_html = """\
 </body>
 """
 
-def unsupported = ["kn"]
+def unsupported = [] // We used to have problems with "kn", but it seems ok now.
 
 I18n.all.each { i18n ->
   if (!unsupported.contains(i18n.underscoredIsoCode)) {
     i18n.codeKeywords.each { kw ->
       def normalized_kw = normalize(kw)
       def binding = ["i18n":i18n, "kw":normalized_kw]
-      template = engine.createTemplate(templateSource).make(binding)
+      def template = engine.createTemplate(templateSource).make(binding)
       def file = new File(project.baseDir, "target${File.separator}generated-sources${File.separator}i18n${File.separator}java${File.separator}cucumber${File.separator}api${File.separator}java${File.separator}${i18n.underscoredIsoCode}${File.separator}${normalized_kw}.java")
       file.parentFile.mkdirs()
       file.write(template.toString(), "UTF-8")

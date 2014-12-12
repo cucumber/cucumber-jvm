@@ -148,6 +148,11 @@ public class StepdefGeneratorTest {
             public String getPattern() {
                 return pattern;
             }
+
+            @Override
+            public boolean isScenarioScoped() {
+                return false;
+            }
         };
     }
 

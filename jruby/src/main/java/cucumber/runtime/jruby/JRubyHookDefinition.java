@@ -50,4 +50,8 @@ public class JRubyHookDefinition implements HookDefinition {
         return 0;
     }
 
+    @Override
+    public boolean isScenarioScoped() {
+        return false;
+    }
 }

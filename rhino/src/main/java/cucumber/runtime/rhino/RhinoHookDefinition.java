@@ -68,4 +68,8 @@ public class RhinoHookDefinition implements HookDefinition {
         return timeoutMillis;
     }
 
+    @Override
+    public boolean isScenarioScoped() {
+        return false;
+    }
 }

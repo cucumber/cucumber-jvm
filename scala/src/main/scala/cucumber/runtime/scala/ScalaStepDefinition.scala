@@ -80,4 +80,6 @@ class ScalaStepDefinition(frame:StackTraceElement,
    * @return the pattern associated with this instance. Used for error reporting only.
    */
   def getPattern = pattern
+
+  def isScenarioScoped = false
 }
