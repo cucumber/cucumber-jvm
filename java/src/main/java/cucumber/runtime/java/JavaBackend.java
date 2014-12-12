@@ -130,8 +130,7 @@ public class JavaBackend implements Backend {
             INSTANCE.set(this);
             glue.removeScenarioScopedGlue();
             for (Class<? extends GlueBase> glueBaseClass : glueBaseClasses) {
-                GlueBase instance = objectFactory.getInstance(glueBaseClass);
-                System.out.println("instance = " + instance);
+                objectFactory.getInstance(glueBaseClass);
             }
         } finally {
             INSTANCE.remove();
