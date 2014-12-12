@@ -68,7 +68,7 @@ public class JavaBackend implements Backend {
         methodScanner = new MethodScanner(classFinder);
     }
 
-    private static ObjectFactory loadObjectFactory(ClassFinder classFinder) {
+    public static ObjectFactory loadObjectFactory(ClassFinder classFinder) {
         ObjectFactory objectFactory;
         try {
             Reflections reflections = new Reflections(classFinder);
