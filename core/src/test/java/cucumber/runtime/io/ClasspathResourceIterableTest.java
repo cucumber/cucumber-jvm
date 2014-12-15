@@ -1,6 +1,6 @@
 package cucumber.runtime.io;
 
-import static cucumber.runtime.io.ClasspathIterable.filePath;
+import static cucumber.runtime.io.ClasspathResourceIterable.filePath;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
@@ -10,7 +10,7 @@ import java.net.URL;
 
 import org.junit.Test;
 
-public class ClasspathIterableTest {
+public class ClasspathResourceIterableTest {
     @Test
     public void computes_file_path_for_windows_path() throws UnsupportedEncodingException, MalformedURLException {
         if (File.separatorChar == '\\') {

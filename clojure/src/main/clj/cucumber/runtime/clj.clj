@@ -103,7 +103,8 @@
          (hook-fun))
        (matches [hd tags]
          (.evaluate te tags))
-       (getOrder [hd] 0)))))
+       (getOrder [hd] 0)
+       (isScenarioScoped [hd] false)))))
 
 (defmethod add-hook-definition :after [_ tag-expression hook-fun location]
   (let [te (TagExpression. tag-expression)
@@ -123,7 +124,8 @@
            (hook-fun scenario-result)))
        (matches [hd tags]
          (.evaluate te tags))
-       (getOrder [hd] 0)))))
+       (getOrder [hd] 0)
+       (isScenarioScoped [hd] false)))))
 
 (defmacro step-macros [& names]
   (cons 'do

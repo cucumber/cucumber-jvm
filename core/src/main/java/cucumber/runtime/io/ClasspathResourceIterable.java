@@ -11,15 +11,16 @@ import java.util.Iterator;
 
 import cucumber.runtime.CucumberException;
 
-public class ClasspathIterable implements Iterable<Resource> {
-    private final ClassLoader cl;
-    private final ResourceIteratorFactory resourceIteratorFactory;
+public class ClasspathResourceIterable implements Iterable<Resource> {
+    private final ResourceIteratorFactory resourceIteratorFactory =
+            new DelegatingResourceIteratorFactory(new ZipThenFileResourceIteratorFactory());
+
+    private final ClassLoader classLoader;
     private final String path;
     private final String suffix;
 
-    public ClasspathIterable(ClassLoader cl, String path, String suffix) {
-        this.cl = cl;
-        this.resourceIteratorFactory = new DelegatingResourceIteratorFactory();
+    public ClasspathResourceIterable(ClassLoader classLoader, String path, String suffix) {
+        this.classLoader = classLoader;
         this.path = path;
         this.suffix = suffix;
     }
@@ -27,11 +28,12 @@ public class ClasspathIterable implements Iterable<Resource> {
     @Override
     public Iterator<Resource> iterator() {
         try {
-            FlatteningIterator iterator = new FlatteningIterator();
-            Enumeration<URL> resources = cl.getResources(path);
+            FlatteningIterator<Resource> iterator = new FlatteningIterator<Resource>();
+            Enumeration<URL> resources = classLoader.getResources(path);
             while (resources.hasMoreElements()) {
                 URL url = resources.nextElement();
-                iterator.push(this.resourceIteratorFactory.createIterator(url, path, suffix));
+                Iterator<Resource> resourceIterator = resourceIteratorFactory.createIterator(url, path, suffix);
+                iterator.push(resourceIterator);
             }
             return iterator;
         } catch (IOException e) {

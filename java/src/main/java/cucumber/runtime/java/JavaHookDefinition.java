@@ -24,7 +24,7 @@ class JavaHookDefinition implements HookDefinition {
     public JavaHookDefinition(Method method, String[] tagExpressions, int order, long timeoutMillis, ObjectFactory objectFactory) {
         this.method = method;
         this.timeoutMillis = timeoutMillis;
-        tagExpression = new TagExpression(asList(tagExpressions));
+        this.tagExpression = new TagExpression(asList(tagExpressions));
         this.order = order;
         this.objectFactory = objectFactory;
     }
@@ -69,4 +69,8 @@ class JavaHookDefinition implements HookDefinition {
         return order;
     }
 
+    @Override
+    public boolean isScenarioScoped() {
+        return false;
+    }
 }

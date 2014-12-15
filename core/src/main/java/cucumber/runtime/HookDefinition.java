@@ -19,4 +19,9 @@ public interface HookDefinition {
     boolean matches(Collection<Tag> tags);
 
     int getOrder();
+
+    /**
+     * @return true if this instance is scoped to a single scenario, or false if it can be reused across scenarios.
+     */
+    boolean isScenarioScoped();
 }

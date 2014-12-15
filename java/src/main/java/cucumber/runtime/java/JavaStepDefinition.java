@@ -17,22 +17,24 @@ import java.util.regex.Pattern;
 class JavaStepDefinition implements StepDefinition {
     private final Method method;
     private final Pattern pattern;
-    private final long timeout;
-    private final JdkPatternArgumentMatcher argumentMatcher;
+    private final long timeoutMillis;
     private final ObjectFactory objectFactory;
-    private List<ParameterInfo> parameterInfos;
+
+    private final JdkPatternArgumentMatcher argumentMatcher;
+    private final List<ParameterInfo> parameterInfos;
 
     public JavaStepDefinition(Method method, Pattern pattern, long timeoutMillis, ObjectFactory objectFactory) {
         this.method = method;
-        this.parameterInfos = ParameterInfo.fromMethod(method);
         this.pattern = pattern;
-        this.argumentMatcher = new JdkPatternArgumentMatcher(pattern);
-        this.timeout = timeoutMillis;
+        this.timeoutMillis = timeoutMillis;
         this.objectFactory = objectFactory;
+
+        this.argumentMatcher = new JdkPatternArgumentMatcher(pattern);
+        this.parameterInfos = ParameterInfo.fromMethod(method);
     }
 
     public void execute(I18n i18n, Object[] args) throws Throwable {
-        Utils.invoke(objectFactory.getInstance(method.getDeclaringClass()), method, timeout, args);
+        Utils.invoke(objectFactory.getInstance(method.getDeclaringClass()), method, timeoutMillis, args);
     }
 
     public List<Argument> matchedArguments(Step step) {
@@ -61,5 +63,10 @@ class JavaStepDefinition implements StepDefinition {
     @Override
     public String getPattern() {
         return pattern.pattern();
+    }
+
+    @Override
+    public boolean isScenarioScoped() {
+        return false;
     }
 }

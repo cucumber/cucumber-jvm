@@ -24,4 +24,6 @@ public interface Glue {
     StepDefinitionMatch stepDefinitionMatch(String featurePath, Step step, I18n i18n);
 
     void reportStepDefinitions(StepDefinitionReporter stepDefinitionReporter);
+
+    void removeScenarioScopedGlue();
 }

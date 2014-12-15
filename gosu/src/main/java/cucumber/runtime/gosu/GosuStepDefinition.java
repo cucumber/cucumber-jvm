@@ -75,4 +75,9 @@ public class GosuStepDefinition implements StepDefinition {
     public String getPattern() {
         return pattern.pattern();
     }
+
+    @Override
+    public boolean isScenarioScoped() {
+        return false;
+    }
 }

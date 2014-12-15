@@ -126,7 +126,7 @@ public class StepDefinitionMatch extends Match {
         return arguments;
     }
 
-    Throwable removeFrameworkFramesAndAppendStepLocation(Throwable error, StackTraceElement stepLocation) {
+    private Throwable removeFrameworkFramesAndAppendStepLocation(Throwable error, StackTraceElement stepLocation) {
         StackTraceElement[] stackTraceElements = error.getStackTrace();
         if (stackTraceElements.length == 0 || stepLocation == null) {
             return error;
