@@ -1,14 +1,14 @@
 package cucumber.runtime.io;
 
-import org.junit.Test;
+import static cucumber.runtime.io.ClasspathIterable.filePath;
+import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import static cucumber.runtime.io.ClasspathIterable.filePath;
-import static org.junit.Assert.assertEquals;
+import org.junit.Test;
 
 public class ClasspathIterableTest {
     @Test
@@ -35,5 +35,20 @@ public class ClasspathIterableTest {
             URL url = new URL("jar:file:/src/cucumber-jvm/jruby/bin/../lib/cucumber-jruby-full.jar!/cucumber/runtime");
             assertEquals(new File("/src/cucumber-jvm/jruby/bin/../lib/cucumber-jruby-full.jar").getAbsolutePath(), filePath(url));
         }
+    }
+
+    // based on org.springframework.util#testExtractJarFileURL()
+    // https://github.com/spring-projects/spring-framework/blob/v4.1.3.RELEASE/spring-core/src/test/java/org/springframework/util/ResourceUtilsTests.java
+    @Test
+    public void computes_file_path_for_jar_protocols() throws Exception {
+        assertEquals("myjar.jar",  filePath(new URL("jar:file:myjar.jar!/mypath")));
+        assertEquals("myjar.jar",  filePath(new URL(null, "zip:file:myjar.jar!/mypath", new DummyURLStreamHandler())));
+        assertEquals("myjar.jar",  filePath(new URL(null, "wsjar:file:myjar.jar!/mypath", new DummyURLStreamHandler())));
+        assertEquals("myjar.jar",  filePath(new URL("jar:file:myjar.jar!/")));
+        assertEquals("myjar.jar",  filePath(new URL(null, "zip:file:myjar.jar!/", new DummyURLStreamHandler())));
+        assertEquals("myjar.jar",  filePath(new URL(null, "wsjar:file:myjar.jar!/", new DummyURLStreamHandler())));
+        assertEquals("myjar.jar",  filePath(new URL("file:myjar.jar")));
+
+        assertEquals(File.separatorChar + "myjar.jar", filePath(new URL(null, "jar:myjar.jar!/mypath", new DummyURLStreamHandler())));
     }
 }

@@ -1,8 +1,6 @@
 package cucumber.runtime.io;
 
-import cucumber.runtime.CucumberException;
-
-import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
@@ -10,6 +8,8 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.util.Enumeration;
 import java.util.Iterator;
+
+import cucumber.runtime.CucumberException;
 
 public class ClasspathIterable implements Iterable<Resource> {
     private final ClassLoader cl;
@@ -39,10 +39,16 @@ public class ClasspathIterable implements Iterable<Resource> {
         }
     }
 
-    static String filePath(URL jarUrl) throws UnsupportedEncodingException, MalformedURLException {
-        String path = new File(new URL(jarUrl.getFile()).getFile()).getAbsolutePath();
-        String pathToJar = path.substring(0, path.lastIndexOf("!"));
-        return URLDecoder.decode(pathToJar, "UTF-8");
+    static String filePath(URL url) throws UnsupportedEncodingException, MalformedURLException {
+        try {
+            if (ResourceUtils.isJarURL(url)) {
+                URL actualUrl = ResourceUtils.extractJarFileURL(url);
+                return ResourceUtils.getFile(actualUrl, "Jar URL").getPath();
+            }
+        } catch (FileNotFoundException e) {
+            // just fallback
+        }
+        return url.getFile();
     }
 
     static boolean hasSuffix(String suffix, String name) {
