@@ -5,19 +5,21 @@ import org.junit.Test;
 import java.util.concurrent.TimeoutException;
 
 import static java.lang.Thread.sleep;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class TimeoutTest {
     @Test
-    public void doesnt_time_out_if_it_takes_too_long() throws Throwable {
+    public void doesnt_time_out_if_it_doesnt_take_too_long() throws Throwable {
         final Slow slow = new Slow();
         String what = Timeout.timeout(new Timeout.Callback<String>() {
             @Override
             public String call() throws Throwable {
-                return slow.slow();
+                return slow.slow(10);
             }
         }, 50);
-        assertEquals("slow", what);
+        assertEquals("slept 10ms", what);
     }
 
     @Test(expected = TimeoutException.class)
@@ -26,7 +28,7 @@ public class TimeoutTest {
         Timeout.timeout(new Timeout.Callback<String>() {
             @Override
             public String call() throws Throwable {
-                return slow.slower();
+                return slow.slow(100);
             }
         }, 50);
         fail();
@@ -67,19 +69,14 @@ public class TimeoutTest {
             }
         }
         assertTrue(String.format("Threads weren't cleaned up, initial count: %d current count: %d",
-                                 initialNumberOfThreads, currentNumberOfThreads),
-                   cleanedUp);
+                        initialNumberOfThreads, currentNumberOfThreads),
+                cleanedUp);
     }
 
     public static class Slow {
-        public String slow() throws InterruptedException {
-            sleep(10);
-            return "slow";
-        }
-
-        public String slower() throws InterruptedException {
-            sleep(100);
-            return "slower";
+        public String slow(int millis) throws InterruptedException {
+            sleep(millis);
+            return String.format("slept %sms", millis);
         }
 
         public void infinite() throws InterruptedException {
