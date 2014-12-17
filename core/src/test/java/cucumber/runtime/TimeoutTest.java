@@ -2,6 +2,7 @@ package cucumber.runtime;
 
 import org.junit.Test;
 
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeoutException;
 
 import static java.lang.Thread.sleep;
@@ -47,6 +48,19 @@ public class TimeoutTest {
         fail();
     }
 
+    @Test(expected = TimeoutException.class)
+    public void times_out_infinite_latch_wait_if_it_takes_too_long() throws Throwable {
+        final Slow slow = new Slow();
+        Timeout.timeout(new Timeout.Callback<Void>() {
+            @Override
+            public Void call() throws Throwable {
+                slow.infiniteLatchWait();
+                return null;
+            }
+        }, 10);
+        fail();
+    }
+
     @Test
     public void doesnt_leak_threads() throws Throwable {
 
@@ -83,6 +97,10 @@ public class TimeoutTest {
             while (true) {
                 sleep(1);
             }
+        }
+
+        public void infiniteLatchWait() throws InterruptedException {
+            new CountDownLatch(1).await();
         }
     }
 }
