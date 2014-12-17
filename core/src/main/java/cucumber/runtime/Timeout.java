@@ -1,8 +1,8 @@
 package cucumber.runtime;
 
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -16,7 +16,7 @@ public class Timeout {
             final AtomicBoolean done = new AtomicBoolean();
 
             ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-            ScheduledFuture<?> timer = executorService.schedule(new Runnable() {
+            ScheduledFuture<?> interruptTimer = executorService.schedule(new Runnable() {
                 @Override
                 public void run() {
                     if (!done.get()) {
@@ -24,13 +24,27 @@ public class Timeout {
                     }
                 }
             }, timeoutMillis, TimeUnit.MILLISECONDS);
+
+            // We'll start a second timer that will stop() the thread in case interrupt()
+            // doesn't do it. This can happen for *uninterruptible threads*.
+            ScheduledFuture<?> stopTimer = executorService.schedule(new Runnable() {
+                @Override
+                public void run() {
+                    if (!done.get()) {
+                        executionThread.stop();
+                    }
+                }
+            }, timeoutMillis * 2, TimeUnit.MILLISECONDS);
             try {
                 return callback.call();
             } catch (InterruptedException timeout) {
                 throw new TimeoutException("Timed out after " + timeoutMillis + "ms.");
+            } catch (ThreadDeath threadDeath) {
+                throw new TimeoutException("Timed out after " + timeoutMillis + "ms. (Stopped the thread was uninterruptible).");
             } finally {
                 done.set(true);
-                timer.cancel(true);
+                interruptTimer.cancel(true);
+                stopTimer.cancel(true);
                 executorService.shutdownNow();
             }
 
