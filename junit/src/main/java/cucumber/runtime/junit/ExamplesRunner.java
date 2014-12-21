@@ -12,25 +12,29 @@ import org.junit.runners.model.InitializationError;
 import java.util.ArrayList;
 import java.util.List;
 
-class ExamplesRunner extends Suite {
+public class ExamplesRunner extends Suite {
     private final CucumberExamples cucumberExamples;
     private Description description;
     private JUnitReporter jUnitReporter;
 
     protected ExamplesRunner(Runtime runtime, CucumberExamples cucumberExamples, JUnitReporter jUnitReporter) throws InitializationError {
-        super(ExamplesRunner.class, new ArrayList<Runner>());
+        super(ExamplesRunner.class, buildRunners(runtime, cucumberExamples, jUnitReporter));
         this.cucumberExamples = cucumberExamples;
         this.jUnitReporter = jUnitReporter;
+    }
 
+    private static List<Runner> buildRunners(Runtime runtime, CucumberExamples cucumberExamples, JUnitReporter jUnitReporter) {
+        List<Runner> runners = new ArrayList<Runner>();
         List<CucumberScenario> exampleScenarios = cucumberExamples.createExampleScenarios();
         for (CucumberScenario scenario : exampleScenarios) {
             try {
                 ExecutionUnitRunner exampleScenarioRunner = new ExecutionUnitRunner(runtime, scenario, jUnitReporter);
-                getChildren().add(exampleScenarioRunner);
+                runners.add(exampleScenarioRunner);
             } catch (InitializationError initializationError) {
                 initializationError.printStackTrace();
             }
         }
+        return runners;
     }
 
     @Override

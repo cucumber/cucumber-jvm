@@ -1,5 +1,6 @@
 ## [1.2.1-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v1.2.0...master) (In Git)
 
+* [JUnit] JUnit 4.12 compatibility ([#794](https://github.com/cucumber/cucumber-jvm/pull/794), [#792](https://github.com/cucumber/cucumber-jvm/issues/792) Johann Vanackere)
 * [Java] Java 8 lambda step definitions. ([#738](https://github.com/cucumber/cucumber-jvm/issues/738), [#767](https://github.com/cucumber/cucumber-jvm/pull/767) Romain Manni-Bucau, Aslak Hellesøy with help from Dan Bodart).
 
 ## [1.2.0](https://github.com/cucumber/cucumber-jvm/compare/v1.1.8...v1.2.0) (2014-10-30)

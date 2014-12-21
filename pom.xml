@@ -540,6 +540,13 @@
         </profile>
 
         <profile>
+            <id>junit-4.12</id>
+            <properties>
+                <junit.version>4.12</junit.version>
+            </properties>
+        </profile>
+
+        <profile>
             <id>examples</id>
             <modules>
                 <module>examples/java-wicket</module>
