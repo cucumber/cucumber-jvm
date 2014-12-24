@@ -27,24 +27,53 @@ public class Utils {
     }
 
     public static Object invoke(final Object target, final Method method, long timeoutMillis, final Object... args) throws Throwable {
+        final Method targetMethod = targetMethod(target, method);
         return Timeout.timeout(new Timeout.Callback<Object>() {
             @Override
             public Object call() throws Throwable {
-                boolean accessible = method.isAccessible();
+                boolean accessible = targetMethod.isAccessible();
                 try {
-                    method.setAccessible(true);
-                    return method.invoke(target, args);
+                    targetMethod.setAccessible(true);
+                    return targetMethod.invoke(target, args);
                 } catch (IllegalArgumentException e) {
-                    throw new CucumberException("Failed to invoke " + MethodFormat.FULL.format(method), e);
+                    throw new CucumberException("Failed to invoke " + MethodFormat.FULL.format(targetMethod), e);
                 } catch (InvocationTargetException e) {
                     throw e.getTargetException();
                 } catch (IllegalAccessException e) {
-                    throw new CucumberException("Failed to invoke " + MethodFormat.FULL.format(method), e);
+                    throw new CucumberException("Failed to invoke " + MethodFormat.FULL.format(targetMethod), e);
                 } finally {
-                    method.setAccessible(accessible);
+                    targetMethod.setAccessible(accessible);
                 }
             }
         }, timeoutMillis);
+    }
+
+    private static Method targetMethod(final Object target, final Method method) throws NoSuchMethodException {
+        final Class<?> targetClass = target.getClass();
+        final Class<?> declaringClass = method.getDeclaringClass();
+
+        // Immediately return the provided method if the class loaders are the same.
+        if (targetClass.getClassLoader().equals(declaringClass.getClassLoader())) {
+            return method;
+        } else {
+            // Check if the method is publicly accessible. Note that methods from interfaces are always public.
+            if (Modifier.isPublic(method.getModifiers())) {
+                return targetClass.getMethod(method.getName(), method.getParameterTypes());
+            }
+
+            // Loop through all the super classes until the declared method is found.
+            Class<?> currentClass = targetClass;
+            while (currentClass != Object.class) {
+                try {
+                    return currentClass.getDeclaredMethod(method.getName(), method.getParameterTypes());
+                } catch (NoSuchMethodException e) {
+                    currentClass = currentClass.getSuperclass();
+                }
+            }
+
+            // The method does not exist in the class hierarchy.
+            throw new NoSuchMethodException(String.valueOf(method));
+        }
     }
 
     public static Type listItemType(Type type) {
