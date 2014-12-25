@@ -1,14 +1,11 @@
 package cucumber.runtime.io;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLDecoder;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
 
 import cucumber.runtime.CucumberException;
 
@@ -18,28 +15,21 @@ import cucumber.runtime.CucumberException;
  */
 public class ZipResourceIteratorFactory implements ResourceIteratorFactory {
 
-    // weblogic uses zip as protocol for classpath resources inside jars,and webshpere uses wsjar, so
-    // those protocols must be handled too
-    private static final Set<String> SUPPORTED_PROTOCOLS
-        = new HashSet<String>(Arrays.asList("jar", "zip", "wsjar"));
-
     static String filePath(URL jarUrl) throws UnsupportedEncodingException, MalformedURLException {
         String urlFile = jarUrl.getFile();
-        if (urlFile.startsWith("file:")) {
-            urlFile = urlFile.substring("file:".length());
-        }
 
         int separatorIndex = urlFile.indexOf("!/");
         if (separatorIndex != -1) {
             urlFile = urlFile.substring(0, separatorIndex);
         }
 
-        return URLDecoder.decode(urlFile, "UTF-8");
+        URL url = new URL(urlFile);
+        return new File(url.getFile()).getPath();
     }
 
     @Override
     public boolean isFactoryFor(URL url) {
-        return SUPPORTED_PROTOCOLS.contains(url.getProtocol().toLowerCase());
+        return url.getFile().indexOf("!/") != -1;
     }
 
     @Override

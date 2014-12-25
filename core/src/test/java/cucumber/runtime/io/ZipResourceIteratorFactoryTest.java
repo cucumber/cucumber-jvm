@@ -41,6 +41,5 @@ public class ZipResourceIteratorFactoryTest {
         assertEquals("cucumber-core.jar", filePath(new URL("jar:file:cucumber-core.jar!/")));
         assertEquals("cucumber-core.jar", filePath(new URL(null, "zip:file:cucumber-core.jar!/", NULL_URL_STREAM_HANDLER)));
         assertEquals("cucumber-core.jar", filePath(new URL(null, "wsjar:file:cucumber-core.jar!/", NULL_URL_STREAM_HANDLER)));
-        assertEquals("cucumber-core.jar", filePath(new URL("file:cucumber-core.jar")));
     }
 }
