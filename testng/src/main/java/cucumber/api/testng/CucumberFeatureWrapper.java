@@ -8,7 +8,7 @@ import cucumber.runtime.model.CucumberFeature;
  *
  * @see AbstractTestNGCucumberTests#feature(cucumber.api.testng.CucumberFeatureWrapper)
  */
-class CucumberFeatureWrapper {
+public class CucumberFeatureWrapper {
     private final CucumberFeature cucumberFeature;
 
     public CucumberFeatureWrapper(CucumberFeature cucumberFeature) {

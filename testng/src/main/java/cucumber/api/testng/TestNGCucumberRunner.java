@@ -9,17 +9,20 @@ import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
 import cucumber.runtime.model.CucumberFeature;
+import gherkin.formatter.Formatter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Glue code for running Cucumber via TestNG.
  */
 public class TestNGCucumberRunner {
+    private Runtime runtime;
     private RuntimeOptions runtimeOptions;
     private ResourceLoader resourceLoader;
+    private FeatureResultListener resultListener;
     private ClassLoader classLoader;
-    private ClassFinder classFinder;
 
     /**
      * Bootstrap the cucumber runtime
@@ -34,8 +37,9 @@ public class TestNGCucumberRunner {
         runtimeOptions = runtimeOptionsFactory.create();
 
         TestNgReporter reporter = new TestNgReporter(System.out);
-        runtimeOptions.addPlugin(reporter);
-        classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
+        ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
+        resultListener = new FeatureResultListener(runtimeOptions.reporter(classLoader), runtimeOptions.isStrict());
+        runtime = new Runtime(resourceLoader, classFinder, classLoader, runtimeOptions);
     }
 
     /**
@@ -43,36 +47,35 @@ public class TestNGCucumberRunner {
      */
     public void runCukes() {
         for (CucumberFeature cucumberFeature : getFeatures()) {
-            runCucumber(cucumberFeature);
+            cucumberFeature.run(
+                    runtimeOptions.formatter(classLoader),
+                    resultListener,
+                    runtime);
+        }
+        finish();
+        if (!resultListener.isPassed()) {
+            throw new CucumberException(resultListener.getFirstError());
         }
     }
 
     public void runCucumber(CucumberFeature cucumberFeature) {
-        //Runtime is recreated every time to ensure that runtime.getErrors() is empty
-        Runtime runtime = createRuntime();
-
+        resultListener.startFeature();
         cucumberFeature.run(
                 runtimeOptions.formatter(classLoader),
-                runtimeOptions.reporter(classLoader),
+                resultListener,
                 runtime);
 
-        if (!runtime.getErrors().isEmpty()) {
-            throw new CucumberException(runtime.getErrors().get(0));
-        } else if (runtime.exitStatus() != 0x00) {
-            throw new CucumberException("There are pending or undefined steps.");
-        }
-        // If there is an undefined step, checking for exit status is the only way to conform CucumberOptions.strict contract
-        if (runtime.exitStatus() != 0) {
-            //runtime.getSnippets()
-            throw new CucumberException("There are undefined steps");
+        if (!resultListener.isPassed()) {
+            throw new CucumberException(resultListener.getFirstError());
         }
     }
 
-    /**
-     * Creates new cucumber runtime
-     */
-    private cucumber.runtime.Runtime createRuntime() {
-        return new cucumber.runtime.Runtime(resourceLoader, classFinder, classLoader, runtimeOptions);
+    public void finish() {
+        Formatter formatter = runtimeOptions.formatter(classLoader);
+
+        formatter.done();
+        formatter.close();
+        runtime.printSummary();
     }
 
     /**
@@ -80,6 +83,19 @@ public class TestNGCucumberRunner {
      */
     public List<CucumberFeature> getFeatures() {
         return runtimeOptions.cucumberFeatures(resourceLoader);
+    }
+
+    /**
+     * @return returns the cucumber features as a two dimensional array of
+     * {@link CucumberFeatureWrapper} objects.
+     */
+    public Object[][] provideFeatures() {
+        List<CucumberFeature> features = getFeatures();
+        List<Object[]> featuresList = new ArrayList<Object[]>(features.size());
+        for (CucumberFeature feature : features) {
+            featuresList.add(new Object[]{new CucumberFeatureWrapper(feature)});
+        }
+        return featuresList.toArray(new Object[][]{});
     }
 
 }
