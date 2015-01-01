@@ -4,11 +4,11 @@ import java.io.File;
 import java.io.FileFilter;
 import java.util.Iterator;
 
-import static cucumber.runtime.io.ClasspathIterable.hasSuffix;
+import static cucumber.runtime.io.ClasspathResourceIterable.hasSuffix;
 import static java.util.Arrays.asList;
 
 public class FileResourceIterator implements Iterator<Resource> {
-    private final FlatteningIterator flatteningIterator = new FlatteningIterator();
+    private final FlatteningIterator<Resource> flatteningIterator = new FlatteningIterator<Resource>();
 
     public FileResourceIterator(File root, File file, final String suffix) {
         FileFilter filter = new FileFilter() {
@@ -27,7 +27,7 @@ public class FileResourceIterator implements Iterator<Resource> {
 
     @Override
     public Resource next() {
-        return (Resource) flatteningIterator.next();
+        return flatteningIterator.next();
     }
 
     @Override

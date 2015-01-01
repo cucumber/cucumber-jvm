@@ -72,4 +72,9 @@ public class JRubyStepDefinition implements StepDefinition {
     public String getPattern() {
         return (String) stepdefRunner.callMethod("pattern").toJava(String.class);
     }
+
+    @Override
+    public boolean isScenarioScoped() {
+        return false;
+    }
 }

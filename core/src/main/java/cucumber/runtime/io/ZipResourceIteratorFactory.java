@@ -2,23 +2,23 @@ package cucumber.runtime.io;
 
 import cucumber.runtime.CucumberException;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.Iterator;
-
-import static cucumber.runtime.io.ClasspathIterable.filePath;
 
 /**
  * Factory which creates {@link ZipResourceIterator}s for URL's with the "jar"
  * protocol.
  */
 public class ZipResourceIteratorFactory implements ResourceIteratorFactory {
-
-    /**
-     * Initializes a new instance of the ZipResourceIteratorFactory class.
-     */
-    public ZipResourceIteratorFactory() {
-        // intentionally empty
+    static String filePath(URL jarUrl) throws UnsupportedEncodingException, MalformedURLException {
+        String path = new File(new URL(jarUrl.getFile()).getFile()).getAbsolutePath();
+        String pathToJar = path.substring(0, path.lastIndexOf("!"));
+        return URLDecoder.decode(pathToJar, "UTF-8");
     }
 
     @Override

@@ -63,6 +63,18 @@ public class ParameterInfo {
         return result;
     }
 
+    public static List<ParameterInfo> fromTypes(Type[] genericParameterTypes) {
+        List<ParameterInfo> result = new ArrayList<ParameterInfo>();
+        for (int i = 0; i < genericParameterTypes.length; i++) {
+            String format = null;
+            String delimiter = DEFAULT_DELIMITER;
+            boolean transposed = false;
+            Transformer<?> transformer = null;
+            result.add(new ParameterInfo(genericParameterTypes[i], format, delimiter, transposed, transformer));
+        }
+        return result;
+    }
+
     private static boolean isAnnotatedWith(Annotation source, Class<? extends Annotation> requiredAnnotation) {
         return getAnnotationForAnnotation(source, requiredAnnotation) != null;
     }

@@ -5,10 +5,10 @@ import java.util.Deque;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public class FlatteningIterator implements Iterator {
+public class FlatteningIterator<T> implements Iterator<T> {
     private final Deque<Iterator<?>> iterators = new ArrayDeque<Iterator<?>>();
 
-    private Object next;
+    private T next;
     private boolean nextBlank = true;
 
     public void push(Iterator<?> iterator) {
@@ -31,7 +31,7 @@ public class FlatteningIterator implements Iterator {
                     push((Iterator<?>) next);
                     moveToNext();
                 } else {
-                    this.next = next;
+                    this.next = (T) next;
                     nextBlank = false;
                 }
             }
@@ -39,13 +39,13 @@ public class FlatteningIterator implements Iterator {
     }
 
     @Override
-    public Object next() {
+    public T next() {
         moveToNext();
 
         if (nextBlank) {
             throw new NoSuchElementException();
         } else {
-            Object next = this.next;
+            T next = this.next;
             this.next = null;
             nextBlank = true;
             return next;

@@ -18,6 +18,7 @@ import cucumber.runtime.model.CucumberFeature;
 import dalvik.system.DexFile;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -54,11 +55,6 @@ public class CucumberExecutor {
     private final ClassFinder classFinder;
 
     /**
-     * The {@link cucumber.runtime.io.ResourceLoader} to load resource files like .feature files.
-     */
-    private final ResourceLoader resourceLoader;
-
-    /**
      * The {@link cucumber.runtime.RuntimeOptions} to get the {@link CucumberFeature}s from.
      */
     private final RuntimeOptions runtimeOptions;
@@ -76,7 +72,7 @@ public class CucumberExecutor {
     /**
      * Creates a new instance for the given parameters.
      *
-     * @param arguments the {@link cucumber.runtime.android.Arguments} which configure this execution
+     * @param arguments       the {@link cucumber.runtime.android.Arguments} which configure this execution
      * @param instrumentation the {@link android.app.Instrumentation} to report to
      */
     public CucumberExecutor(final Arguments arguments, final Instrumentation instrumentation) {
@@ -87,8 +83,9 @@ public class CucumberExecutor {
         this.instrumentation = instrumentation;
         this.classLoader = context.getClassLoader();
         this.classFinder = createDexClassFinder(context);
-        this.resourceLoader = new AndroidResourceLoader(context);
         this.runtimeOptions = createRuntimeOptions(context);
+
+        ResourceLoader resourceLoader = new AndroidResourceLoader(context);
         this.runtime = new Runtime(resourceLoader, classLoader, createBackends(), runtimeOptions);
         this.cucumberFeatures = runtimeOptions.cucumberFeatures(resourceLoader);
     }
@@ -149,8 +146,7 @@ public class CucumberExecutor {
         for (final Class<?> clazz : classFinder.getDescendants(Object.class, context.getPackageName())) {
             if (clazz.isAnnotationPresent(CucumberOptions.class)) {
                 Log.d(TAG, "Found CucumberOptions in class " + clazz.getName());
-                final Class<?> optionsAnnotatedClass = clazz;
-                final RuntimeOptionsFactory factory = new RuntimeOptionsFactory(optionsAnnotatedClass);
+                final RuntimeOptionsFactory factory = new RuntimeOptionsFactory(clazz);
                 return factory.create();
             }
         }

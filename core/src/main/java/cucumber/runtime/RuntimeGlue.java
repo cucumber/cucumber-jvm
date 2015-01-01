@@ -8,14 +8,15 @@ import gherkin.formatter.model.Step;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
 public class RuntimeGlue implements Glue {
-    private final Map<String, StepDefinition> stepDefinitionsByPattern = new TreeMap<String, StepDefinition>();
-    private final List<HookDefinition> beforeHooks = new ArrayList<HookDefinition>();
-    private final List<HookDefinition> afterHooks = new ArrayList<HookDefinition>();
+    final Map<String, StepDefinition> stepDefinitionsByPattern = new TreeMap<String, StepDefinition>();
+    final List<HookDefinition> beforeHooks = new ArrayList<HookDefinition>();
+    final List<HookDefinition> afterHooks = new ArrayList<HookDefinition>();
 
     private final UndefinedStepsTracker tracker;
     private final LocalizedXStreams localizedXStreams;
@@ -89,6 +90,33 @@ public class RuntimeGlue implements Glue {
     public void reportStepDefinitions(StepDefinitionReporter stepDefinitionReporter) {
         for (StepDefinition stepDefinition : stepDefinitionsByPattern.values()) {
             stepDefinitionReporter.stepDefinition(stepDefinition);
+        }
+    }
+
+    @Override
+    public void removeScenarioScopedGlue() {
+        removeScenarioScopedHooks(beforeHooks);
+        removeScenarioScopedHooks(afterHooks);
+        removeScenarioScopedStepdefs();
+    }
+
+    private void removeScenarioScopedHooks(List<HookDefinition> beforeHooks1) {
+        Iterator<HookDefinition> hookIterator = beforeHooks1.iterator();
+        while(hookIterator.hasNext()) {
+            HookDefinition hook = hookIterator.next();
+            if(hook.isScenarioScoped()) {
+                hookIterator.remove();
+            }
+        }
+    }
+
+    private void removeScenarioScopedStepdefs() {
+        Iterator<Map.Entry<String, StepDefinition>> stepdefs = stepDefinitionsByPattern.entrySet().iterator();
+        while(stepdefs.hasNext()) {
+            StepDefinition stepDefinition = stepdefs.next().getValue();
+            if(stepDefinition.isScenarioScoped()) {
+                stepdefs.remove();
+            }
         }
     }
 }

@@ -8,14 +8,12 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import static java.util.Arrays.asList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 public class FlatteningIteratorTest {
     @Test
     public void flattens_iterators() {
-        final FlatteningIterator fi = new FlatteningIterator();
+        final FlatteningIterator<Integer> fi = new FlatteningIterator<Integer>();
         fi.push(asList(3, 4).iterator());
         fi.push(asList(1, 2).iterator());
 
@@ -29,16 +27,16 @@ public class FlatteningIteratorTest {
         }
     }
 
-    private List toList(final Iterator fi) {
-        Iterable i = new Iterable() {
+    private <T> List<T> toList(final Iterator<T> fi) {
+        Iterable<T> i = new Iterable<T>() {
             @Override
-            public Iterator iterator() {
+            public Iterator<T> iterator() {
                 return fi;
             }
         };
 
-        List l = new ArrayList();
-        for (Object o : i) {
+        List<T> l = new ArrayList<T>();
+        for (T o : i) {
             l.add(o);
         }
         return l;
