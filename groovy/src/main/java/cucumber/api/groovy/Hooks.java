@@ -1,5 +1,6 @@
 package cucumber.api.groovy;
 
+import cucumber.runtime.CucumberException;
 import cucumber.runtime.groovy.GroovyBackend;
 import gherkin.TagExpression;
 import groovy.lang.Closure;
@@ -48,6 +49,8 @@ public class Hooks {
     private static void addHook(Object[] tagsExpressionsAndBody, boolean before) {
         long timeoutMillis = DEFAULT_TIMEOUT;
         int order = DEFAULT_ORDER;
+        boolean timeoutSet = false;
+        boolean orderSet = false;
         Closure body = null;
         List<String> tagExpressions = new ArrayList<String>();
 
@@ -55,11 +58,27 @@ public class Hooks {
             if (o instanceof String) {
                 tagExpressions.add((String) o);
             } else if (o instanceof Long) {
+                if (timeoutSet) {
+                    throw new CucumberException("Two timeout (Long) arguments found; " +
+                                                Long.toString(timeoutMillis) + ", and; " +
+                                                Long.toString((Long) o));
+                }
                 timeoutMillis = (Long) o;
+                timeoutSet = true;
             } else if (o instanceof Integer) {
+                if (orderSet) {
+                    throw new CucumberException("Two order (Integer) arguments found; " +
+                                                Integer.toString(order) + ", and; " +
+                                                Integer.toString((Integer) o));
+                }
                 order = (Integer) o;
+                orderSet = true;
             } else if (o instanceof Closure) {
                 body = (Closure) o;
+            } else {
+                throw new CucumberException("An argument of the type " + o.getClass().getName() + " found, " +
+                                            (before ? "Before" : "After") + " only allows the argument types " +
+                                            "String - Tag, Long - timeout, Integer - order, and Closure");
             }
         }
 
