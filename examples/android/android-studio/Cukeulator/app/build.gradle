@@ -28,7 +28,8 @@ android {
 }
 
 dependencies {
-    androidTestCompile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestCompile 'info.cukes:cucumber-android:1.2.0@jar'
     androidTestCompile 'info.cukes:cucumber-core:1.2.0'
     androidTestCompile 'info.cukes:cucumber-html:0.2.3'
     androidTestCompile 'info.cukes:cucumber-java:1.2.0'

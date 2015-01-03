@@ -4,11 +4,15 @@ This is the example test-project for the Cukeulator app for Android Studio (Beta
 ### Setup
 Features must be placed in `assets/features/`. Subdirectories are allowed.
 
-The `app/libs` should contain `cucumber-android-*.jar`. Please build it following [cucumber-jvm/android]
-(https://github.com/cucumber/cucumber-jvm/tree/master/android) instructions and copy to `app/libs` folder.
-
 The rest of the dependencies are added automatically in `app/build.gradle`.
 
+The cucumber-android dependency is added as:
+
+```
+androidTestCompile 'info.cukes:cucumber-android:1.2.0@jar'
+```
+
+Note, the `@jar` suffix is required in order to use the embedded jar file.
 
 ### Using gradle
 
@@ -16,6 +20,7 @@ To build the test apk:
 
 ```
 cd cucumber-jvm/examples/android/android-studio/Cukeulator
+
 ./gradlew --parallel :app:assembleDebugTest
 ```
 
@@ -40,6 +45,13 @@ instrumentation:cukeulator.android.example.cucumber.cukeulator.test/cucumber.api
 ```
 
 To run the test:
+
+```
+cd cucumber-jvm/examples/android/android-studio/Cukeulator;
+./gradlew connectedCheck
+```
+
+As an alternative option, the test can be run with adb:
 
 ```
 adb shell am instrument -w cukeulator.android.example.cucumber.cukeulator.test/cucumber.api.android.CucumberInstrumentation
