@@ -9,7 +9,6 @@
     </parent>
 
     <artifactId>cucumber-android</artifactId>
-    <packaging>apklib</packaging>
     <name>Cucumber-JVM: Android</name>
 
     <dependencies>
@@ -122,28 +121,6 @@
                                 <versionName>${project.version}</versionName>
                                 <versionCode>${parent.parent.version}</versionCode>
                             </manifest>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <!-- additionally deploy the jar -->
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>attach-artifacts</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>attach-artifact</goal>
-                        </goals>
-                        <configuration>
-                            <artifacts>
-                                <artifact>
-                                    <file>${project.build.directory}/${project.artifactId}-${project.version}.jar</file>
-                                    <type>jar</type>
-                                </artifact>
-                            </artifacts>
                         </configuration>
                     </execution>
                 </executions>
