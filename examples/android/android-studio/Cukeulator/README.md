@@ -1,5 +1,5 @@
 ## Cukeulator Example Test
-This is the example test-project for the Cukeulator app for Android Studio (Beta) 0.8.14.
+This is the example test-project for the Cukeulator app for Android Studio 1.0.2.
 
 ### Setup
 Features must be placed in `assets/features/`. Subdirectories are allowed.
