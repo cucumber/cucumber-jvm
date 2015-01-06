@@ -1,4 +1,4 @@
-package cukeulator.android.example.cucumber.cukeulator;
+package cucumber.cukeulator;
 
 import android.app.Activity;
 import android.os.Bundle;

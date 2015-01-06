@@ -2,18 +2,23 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 21
-    buildToolsVersion "21.1.1"
+    buildToolsVersion "21.1.2"
 
     defaultConfig {
-        applicationId "cukeulator.android.example.cucumber.cukeulator"
-        minSdkVersion 19
+        applicationId "cucumber.cukeulator"
+        minSdkVersion 16
         targetSdkVersion 21
         versionCode 1
         versionName "1.0"
 
-        testApplicationId "cukeulator.android.example.cucumber.cukeulator.test"
-        testInstrumentationRunner "cucumber.api.android.CucumberInstrumentation"
+        testApplicationId "cucumber.cukeulator.test"
+        testInstrumentationRunner "cucumber.cukeulator.test.Instrumentation"
     }
+
+    packagingOptions {
+        exclude 'LICENSE.txt'
+    }
+
     sourceSets {
         androidTest {
             assets.srcDirs = ['src/androidTest/assets']
@@ -28,14 +33,10 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.0'
+    androidTestCompile 'com.android.support.test:testing-support-lib:0.1'
     androidTestCompile 'info.cukes:cucumber-android:1.2.0@jar'
     androidTestCompile 'info.cukes:cucumber-core:1.2.0'
-    androidTestCompile 'info.cukes:cucumber-html:0.2.3'
     androidTestCompile 'info.cukes:cucumber-java:1.2.0'
-    androidTestCompile 'info.cukes:cucumber-junit:1.2.0'
-    androidTestCompile 'info.cukes:cucumber-jvm-deps:1.0.3'
     androidTestCompile 'info.cukes:cucumber-picocontainer:1.2.0'
-    androidTestCompile 'info.cukes:gherkin:2.12.2'
-    androidTestCompile 'junit:junit:4.12'
 }
