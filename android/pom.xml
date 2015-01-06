@@ -89,42 +89,4 @@
             </exclusions>
         </dependency>
     </dependencies>
-
-    <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>com.jayway.maven.plugins.android.generation2</groupId>
-                    <artifactId>android-maven-plugin</artifactId>
-                    <version>${android-maven-plugin.version}</version>
-                    <extensions>true</extensions>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-        <plugins>
-            <plugin>
-                <groupId>com.jayway.maven.plugins.android.generation2</groupId>
-                <artifactId>android-maven-plugin</artifactId>
-                <configuration>
-                    <sdk>
-                        <platform>21</platform>
-                    </sdk>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>update-manifest</id>
-                        <goals>
-                            <goal>manifest-update</goal>
-                        </goals>
-                        <configuration>
-                            <manifest>
-                                <versionName>${project.version}</versionName>
-                                <versionCode>${parent.parent.version}</versionCode>
-                            </manifest>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
 </project>
