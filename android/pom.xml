@@ -110,20 +110,6 @@
                         <platform>21</platform>
                     </sdk>
                 </configuration>
-                <executions>
-                    <execution>
-                        <id>update-manifest</id>
-                        <goals>
-                            <goal>manifest-update</goal>
-                        </goals>
-                        <configuration>
-                            <manifest>
-                                <versionName>${project.version}</versionName>
-                                <versionCode>${parent.parent.version}</versionCode>
-                            </manifest>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>
