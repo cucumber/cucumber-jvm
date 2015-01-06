@@ -60,7 +60,7 @@ adb shell am instrument -w cukeulator.android.example.cucumber.cukeulator.test/c
 ### Using an Android Studio IDE
 1. Import the example to Android Studio: `File > Import Project`.
 2. Make sure you have the cucumber-android jar dependencies in `app/libs/`.
-3. Create a test run confiruation:
+3. Create a test run configuration:
     1.  Run > Edit Configurations
     2. Click `+` button and select Android Tests
     3. Specify test name: `CalculatorTest`

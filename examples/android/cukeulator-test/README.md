@@ -1,5 +1,9 @@
 ## Cukeulator Example Test
-This is the example test-project for the Cukeulator app.
+This is the example test-project for the Cukeulator app. Running the test assumes that the application itself has been install in your local repository like so:
+
+```
+mvn install -pl examples/android/cukeulator -P android-examples
+```
 
 ### Setup
 Features must be placed in `assets/features/`. Subdirectories are allowed.
@@ -23,7 +27,7 @@ To build:
 mvn package -pl examples/android/cukeulator-test -am -P android,android-examples
 ```
 
-To intall and run:
+To install and run:
 
 ```
 mvn install -pl examples/android/cukeulator-test -am -P android-examples
