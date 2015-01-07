@@ -9,7 +9,7 @@ matrix:
     script: mvn -q deploy --settings .travis-settings.xml -Dno.gem.deploy=true
   - jdk: oraclejdk7
     env: ANDROID=true
-    script: mvn -q deploy -P android -pl android --settings .travis-settings.xml -Dno.gem.deploy=true -Dandroid.device=test
+    script: mvn install -P android-examples -pl examples/android -amd --settings .travis-settings.xml -Dno.gem.deploy=true -Dandroid.device=test
     before_install:
       # Install base Android SDK
       - sudo apt-get update -qq
@@ -26,6 +26,13 @@ matrix:
       # Other relevant APIs:
       #  addon-google_apis-google-16
       - ./.travis_android_update > /dev/null
+      # Create emulator
+      - echo no | android create avd --force -n test -t android-19 --abi armeabi-v7a
+    install: mvn install -pl android,examples/android -am -amd -Pandroid-examples -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+    before_script:
+      # Start emulator
+      - emulator -avd test -no-skin -no-audio -no-window &
+      - ./android/wait_for_emulator
   - jdk: oraclejdk8
     script: mvn -q deploy -P java8 -pl java8 --settings .travis-settings.xml -Dno.gem.deploy=true
 

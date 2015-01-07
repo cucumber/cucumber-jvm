@@ -45,12 +45,16 @@
                 <plugin>
                     <groupId>com.jayway.maven.plugins.android.generation2</groupId>
                     <artifactId>android-maven-plugin</artifactId>
-                    <version>${android-maven-plugin.version}</version>
+                    <version>3.9.0-rc.1</version>
                     <configuration>
                         <sdk>
                             <platform>21</platform>
                         </sdk>
                         <undeployBeforeDeploy>true</undeployBeforeDeploy>
+			<androidManifestFile>${project.basedir}/AndroidManifest.xml</androidManifestFile>
+			<resourceDirectory>${project.basedir}/res</resourceDirectory>
+			<assetsDirectory>${project.basedir}/assets</assetsDirectory>
+			<nativeLibrariesDirectory>${project.basedir}/libs</nativeLibrariesDirectory>
                     </configuration>
                 </plugin>
             </plugins>

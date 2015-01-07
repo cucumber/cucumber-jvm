@@ -19,7 +19,6 @@
             <groupId>info.cukes</groupId>
             <artifactId>cucumber-android</artifactId>
             <version>${project.version}</version>
-            <type>apklib</type>
         </dependency>
         <dependency>
             <groupId>info.cukes</groupId>
