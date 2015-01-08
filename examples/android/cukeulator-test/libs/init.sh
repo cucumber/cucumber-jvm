@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Build required jars
-mvn package -pl android -am -P android -f ../../../../pom.xml
+mvn package -pl android -am -f ../../../../pom.xml
 
 # Copy jars to this location
 cp ../../../../core/target/cucumber-core-*.jar ./

@@ -7,25 +7,6 @@ matrix:
   include:
   - jdk: oraclejdk7
     script: mvn -q deploy --settings .travis-settings.xml -Dno.gem.deploy=true
-  - jdk: oraclejdk7
-    env: ANDROID=true
-    script: mvn -q deploy -P android -pl android --settings .travis-settings.xml -Dno.gem.deploy=true -Dandroid.device=test
-    before_install:
-      # Install base Android SDK
-      - sudo apt-get update -qq
-      - if [ `uname -m` = x86_64 ]; then sudo apt-get install -qq --force-yes libgd2-xpm ia32-libs ia32-libs-multiarch > /dev/null; fi
-      - sudo apt-get install -qq --force-yes expect > /dev/null
-      - wget http://dl.google.com/android/android-sdk_r23.0.2-linux.tgz
-      - tar xzf android-sdk_r23.0.2-linux.tgz
-      - export ANDROID_HOME=$PWD/android-sdk-linux
-      - export PATH=${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools
-
-      # Install required components.
-      # For a full list, run `android list sdk -a --extended`
-      # Note that sysimg-16 downloads the ARM, x86 and MIPS images (we should optimize this).
-      # Other relevant APIs:
-      #  addon-google_apis-google-16
-      - ./.travis_android_update > /dev/null
   - jdk: oraclejdk8
     script: mvn -q deploy -P java8 -pl java8 --settings .travis-settings.xml -Dno.gem.deploy=true
 

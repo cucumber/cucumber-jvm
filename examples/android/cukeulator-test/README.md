@@ -24,7 +24,7 @@ Read `libs/README.md` for details on dependencies.
 To build:
 
 ```
-mvn package -pl examples/android/cukeulator-test -am -P android,android-examples
+mvn package -pl examples/android/cukeulator-test -am -P android-examples
 ```
 
 To install and run:

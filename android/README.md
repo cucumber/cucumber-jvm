@@ -12,7 +12,7 @@ Integration-tests are in `examples/android/android-test/cucumber-test/`.
 ### Building
 
 ```sh
-mvn package -pl android -am -P android
+mvn package -pl android -am
 ```
 
 ### Using Cucumber-Android

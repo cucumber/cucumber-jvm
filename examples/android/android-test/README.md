@@ -14,12 +14,12 @@ On OS X: Note that for the path to work on the commandline and in IDE's started 
 ### Building using Maven
 
 ```
-mvn package -pl examples/android/android-test -am -P android,android-examples
+mvn package -pl examples/android/android-test -am -P android-examples
 ```
 
 ### Debugging using Maven
 Please read [the Android documentation on debugging](https://developer.android.com/tools/debugging/index.html).
 
 ```
-mvn install -pl examples/android/android-test -am -P android,android-examples
+mvn install -pl examples/android/android-test -am -P android-examples
 ```
