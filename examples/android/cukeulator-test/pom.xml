@@ -19,7 +19,6 @@
             <groupId>info.cukes</groupId>
             <artifactId>cucumber-android</artifactId>
             <version>${project.version}</version>
-            <type>apklib</type>
         </dependency>
         <dependency>
             <groupId>info.cukes</groupId>
@@ -46,12 +45,16 @@
     </dependencies>
 
     <build>
-        <sourceDirectory>src</sourceDirectory>
         <plugins>
             <plugin>
-                <groupId>com.jayway.maven.plugins.android.generation2</groupId>
+                <groupId>com.simpligility.maven.plugins</groupId>
                 <artifactId>android-maven-plugin</artifactId>
                 <extensions>true</extensions>
+                <configuration>
+                    <!-- hack to workaround https://github.com/simpligility/android-maven-plugin/issues/548 -->
+                    <testCoverageFile>foo</testCoverageFile>
+                    <failOnNonStandardStructure>false</failOnNonStandardStructure>
+                </configuration>
             </plugin>
         </plugins>
     </build>

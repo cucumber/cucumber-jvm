@@ -61,7 +61,7 @@
         <slf4j.version>1.7.7</slf4j.version>
         <freemarker.version>2.3.21</freemarker.version>
         <javax.servlet-api.version>3.1.0</javax.servlet-api.version>
-        <android-maven-plugin.version>4.0.0-rc.1</android-maven-plugin.version>
+        <android-maven-plugin.version>4.0.0</android-maven-plugin.version>
         <android.version>4.1.1.4</android.version>
         <wicket.version>7.0.0-M3</wicket.version>
         <!-- We need a version that works with Java 6 and Java 7: http://www.eclipse.org/jetty/documentation/current/what-jetty-version.html -->
@@ -794,12 +794,6 @@
                 </plugin>
 
                 <!-- Non-standard plugins -->
-
-                <plugin>
-                    <groupId>com.jayway.maven.plugins.android.generation2</groupId>
-                    <artifactId>android-maven-plugin</artifactId>
-                    <version>3.9.0-rc.3</version>
-                </plugin>
 
                 <plugin>
                     <groupId>net.alchim31.maven</groupId>
