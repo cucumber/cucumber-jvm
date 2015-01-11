@@ -512,16 +512,10 @@
         <module>scala/scala_previous</module>
         <module>needle</module>
         <module>gosu</module>
+        <module>android</module>
     </modules>
 
     <profiles>
-        <profile>
-            <id>android</id>
-            <modules>
-                <module>android</module>
-            </modules>
-        </profile>
-
         <profile>
             <id>java8</id>
             <activation>
