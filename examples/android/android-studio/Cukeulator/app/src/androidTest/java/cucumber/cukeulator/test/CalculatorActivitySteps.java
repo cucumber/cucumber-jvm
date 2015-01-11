@@ -1,15 +1,17 @@
-package cukeulator.android.example.cucumber.cukeulator.test;
+package cucumber.cukeulator.test;
 
 import android.test.ActivityInstrumentationTestCase2;
-import android.widget.TextView;
 import cucumber.api.CucumberOptions;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
-import cukeulator.android.example.cucumber.cukeulator.CalculatorActivity;
-import cukeulator.android.example.cucumber.cukeulator.R;
-
-import static cukeulator.android.example.cucumber.cukeulator.test.Utils.clickOnView;
+import cucumber.cukeulator.CalculatorActivity;
+import cucumber.cukeulator.R;
+import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 /**
  * We extend ActivityInstrumentationTestCase2 in order to have access to methods like getActivity
@@ -41,70 +43,64 @@ public class CalculatorActivitySteps extends ActivityInstrumentationTestCase2<Ca
     }
 
     @When("^I press (\\d)$")
-    public void I_press_d(int d) {
-        CalculatorActivity activity = getActivity();
-
+    public void I_press_d(final int d) {
         switch (d) {
             case 0:
-                clickOnView(activity, R.id.btn_d_0);
+                onView(withId(R.id.btn_d_0)).perform(click());
                 break;
             case 1:
-                clickOnView(activity, R.id.btn_d_1);
+                onView(withId(R.id.btn_d_1)).perform(click());
                 break;
             case 2:
-                clickOnView(activity, R.id.btn_d_2);
+                onView(withId(R.id.btn_d_2)).perform(click());
                 break;
             case 3:
-                clickOnView(activity, R.id.btn_d_3);
+                onView(withId(R.id.btn_d_3)).perform(click());
                 break;
             case 4:
-                clickOnView(activity, R.id.btn_d_4);
+                onView(withId(R.id.btn_d_4)).perform(click());
                 break;
             case 5:
-                clickOnView(activity, R.id.btn_d_5);
+                onView(withId(R.id.btn_d_5)).perform(click());
                 break;
             case 6:
-                clickOnView(activity, R.id.btn_d_6);
+                onView(withId(R.id.btn_d_6)).perform(click());
                 break;
             case 7:
-                clickOnView(activity, R.id.btn_d_7);
+                onView(withId(R.id.btn_d_7)).perform(click());
                 break;
             case 8:
-                clickOnView(activity, R.id.btn_d_8);
+                onView(withId(R.id.btn_d_8)).perform(click());
                 break;
             case 9:
-                clickOnView(activity, R.id.btn_d_9);
+                onView(withId(R.id.btn_d_9)).perform(click());
                 break;
         }
     }
 
     @When("^I press ([+–x\\/=])$")
-    public void I_press_op(char op) {
-        CalculatorActivity activity = getActivity();
-
+    public void I_press_op(final char op) {
         switch (op) {
             case '+':
-                clickOnView(activity, R.id.btn_op_add);
+                onView(withId(R.id.btn_op_add)).perform(click());
                 break;
             case '–':
-                clickOnView(activity, R.id.btn_op_subtract);
+                onView(withId(R.id.btn_op_subtract)).perform(click());
                 break;
             case 'x':
-                clickOnView(activity, R.id.btn_op_multiply);
+                onView(withId(R.id.btn_op_multiply)).perform(click());
                 break;
             case '/':
-                clickOnView(activity, R.id.btn_op_divide);
+                onView(withId(R.id.btn_op_divide)).perform(click());
                 break;
             case '=':
-                clickOnView(activity, R.id.btn_op_equals);
+                onView(withId(R.id.btn_op_equals)).perform(click());
                 break;
         }
     }
 
     @Then("^I should see (\\S+) on the display$")
-    public void I_should_see_s_on_the_display(String s) {
-        TextView display = (TextView) getActivity().findViewById(R.id.txt_calc_display);
-        String displayed_result = display.getText().toString();
-        assertEquals(s, displayed_result);
+    public void I_should_see_s_on_the_display(final String s) {
+        onView(withId(R.id.txt_calc_display)).check(matches(withText(s)));
     }
 }

@@ -41,7 +41,7 @@ adb shell pm list instrumentation
 The command output should display;
 
 ```
-instrumentation:cukeulator.android.example.cucumber.cukeulator.test/cucumber.api.android.CucumberInstrumentation (target=cukeulator.android.example.cucumber.cukeulator)
+instrumentation:cucumber.cukeulator.test/cucumber.api.android.CucumberInstrumentation (target=cucumber.cukeulator)
 ```
 
 To run the test:
@@ -54,18 +54,17 @@ cd cucumber-jvm/examples/android/android-studio/Cukeulator;
 As an alternative option, the test can be run with adb:
 
 ```
-adb shell am instrument -w cukeulator.android.example.cucumber.cukeulator.test/cucumber.api.android.CucumberInstrumentation
+adb shell am instrument -w cucumber.cukeulator.test/cucumber.cukeulator.test.Instrumentation
 ```
 
 ### Using an Android Studio IDE
 1. Import the example to Android Studio: `File > Import Project`.
-2. Make sure you have the cucumber-android jar dependencies in `app/libs/`.
-3. Create a test run configuration:
+2. Create a test run configuration:
     1.  Run > Edit Configurations
     2. Click `+` button and select Android Tests
     3. Specify test name: `CalculatorTest`
     4. Select module: `app`
-    5. Enter a Specific instrumentation runner: `cucumber.api.android.CucumberInstrumentation`
+    5. Enter a Specific instrumentation runner: `cucumber.cukeulator.test.Instrumentation`
     6. Click Ok
 
 ### Output
