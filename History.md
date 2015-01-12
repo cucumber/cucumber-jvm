@@ -1,8 +1,8 @@
 ## [1.2.1-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v1.2.0...master) (In Git)
 
-* [Android] put android project into default profile ([#821](https://github.com/cucumber/cucumber-jvm/pull/821))
-* [Android] made android studio example use espresso 2 ([#820](https://github.com/cucumber/cucumber-jvm/pull/820))
-* [Android] removed apklib generation from android project, fixed and cleaned up android examples ([#819](https://github.com/cucumber/cucumber-jvm/pull/819))
+* [Android] put android project into default profile ([#821](https://github.com/cucumber/cucumber-jvm/pull/821) Sebastian Gröbler, Björn Rasmusson)
+* [Android] made android studio example use espresso 2 ([#820](https://github.com/cucumber/cucumber-jvm/pull/820) Sebastian Gröbler)
+* [Android] removed apklib generation from android project, fixed and cleaned up android examples ([#819](https://github.com/cucumber/cucumber-jvm/pull/819) Sebastian Gröbler, Björn Rasmusson)
 * [Groovy] Add support for execution order for Groovy hooks ([#809](https://github.com/cucumber/cucumber-jvm/pull/809), [#807](https://github.com/cucumber/cucumber-jvm/issues/807) Mohammad Shamsi)
 * [JUnit] JUnit 4.12 compatibility ([#794](https://github.com/cucumber/cucumber-jvm/pull/794), [#792](https://github.com/cucumber/cucumber-jvm/issues/792) Johann Vanackere)
 * [Java] Java 8 lambda step definitions. ([#738](https://github.com/cucumber/cucumber-jvm/issues/738), [#767](https://github.com/cucumber/cucumber-jvm/pull/767) Romain Manni-Bucau, Aslak Hellesøy with help from Dan Bodart).
