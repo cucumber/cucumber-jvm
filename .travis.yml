@@ -16,8 +16,14 @@ matrix:
         - platform-tools
         - extra-android-support
         - android-21
-    script: mvn install -P android-examples -pl examples/android,examples/android/android-test -am -amd -DskipTests=true -Dno.gem.deploy=true -Dandroid.device=test
+        - sys-img-armeabi-v7a-android-21
+    script: mvn install -P android-examples -pl examples/android,examples/android/android-test -am -amd -Dno.gem.deploy=true -Dandroid.device=test
     install: mvn install -P android-examples -pl examples/android,examples/android/android-test -am -amd -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+    # Emulator Management: Create, Start and Wait
+    before_script:
+      - echo no | android create avd --force -n test -t android-21 --abi armeabi-v7a
+      - emulator -avd test -no-skin -no-audio -no-window &
+      - android-wait-for-emulator
   - jdk: oraclejdk8
     script: mvn -q deploy -P java8 -pl java8 --settings .travis-settings.xml -Dno.gem.deploy=true
 
