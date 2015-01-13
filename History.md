@@ -1,4 +1,4 @@
-## [1.2.1](https://github.com/cucumber/cucumber-jvm/compare/v1.2.0...1.2.1) (2015-01-13)
+## [1.2.1](https://github.com/cucumber/cucumber-jvm/compare/v1.2.0...v1.2.1) (2015-01-13)
 
 * [Core] Look up `cucumber.options` from `cucumber.properties` (Previously only `CUCUMBER_OPTIONS` was working). (Aslak Hellesøy)
 * [Android] put android project into default profile ([#821](https://github.com/cucumber/cucumber-jvm/pull/821) Sebastian Gröbler, Björn Rasmusson)
