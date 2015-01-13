@@ -7,6 +7,10 @@ matrix:
   include:
   - jdk: oraclejdk7
     script: mvn -q deploy --settings .travis-settings.xml -Dno.gem.deploy=true
+  - jdk: oraclejdk7
+    env: ANDROID_EXAMPLES=true
+    script: mvn install -pl android -am -Dno.gem.deploy=true -Dandroid.device=test
+    install: mvn install -pl android -am -DskipTests=true -Dmaven.javadoc.skip=true -B -V
   - jdk: oraclejdk8
     script: mvn -q deploy -P java8 -pl java8 --settings .travis-settings.xml -Dno.gem.deploy=true
 
