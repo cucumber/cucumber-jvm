@@ -18,7 +18,7 @@ public class Hooks {
 
     /**
      * Registers a before hook, which is executed before specific, or all, scenarios.
-     * <p/>
+     *
      * Following values are expected as hook parameters.
      * - Long timeoutMillis: max amount of milliseconds this is allowed to run for. The default is 0 which means no restriction.
      * - Integer order: the order in which this hook should run. Lower numbers are run first. The default is 10000.
@@ -33,7 +33,7 @@ public class Hooks {
 
     /**
      * Registers an after hook, which is executed after specific, or all, scenarios.
-     * <p/>
+     *
      * Following values are expected as hook parameters.
      * - Long timeoutMillis: max amount of milliseconds this is allowed to run for. The default is 0 which means no restriction.
      * - Integer order: the order in which this hook should run. Higher numbers are run first. The default is 10000.
