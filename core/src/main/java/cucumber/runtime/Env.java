@@ -62,14 +62,19 @@ public class Env {
 
     private String getFromBundle(String key) {
         try {
-            String value = ResourceBundle.getBundle(bundleName).getString(asEnvKey(key));
-            if (value == null) {
-                value = ResourceBundle.getBundle(bundleName).getString(asPropertyKey(key));
+            ResourceBundle bundle = ResourceBundle.getBundle(bundleName);
+            try {
+                return bundle.getString(asEnvKey(key));
+            } catch (MissingResourceException stringNotFound) {
+                try {
+                    return bundle.getString(asPropertyKey(key));
+                } catch (MissingResourceException ignoreStringNotFound) {
+                    return bundle.getString(asPropertyKey(key));
+                }
             }
-            return value;
-        } catch (MissingResourceException ignore) {
+        } catch (MissingResourceException ignoreBundleNotFound) {
+            return null;
         }
-        return null;
     }
 
     public String get(String key, String defaultValue) {

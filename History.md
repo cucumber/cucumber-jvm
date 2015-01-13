@@ -1,5 +1,6 @@
 ## [1.2.1-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v1.2.0...master) (In Git)
 
+* [Core] Look up `cucumber.options` from `cucumber.properties` (Previously only `CUCUMBER_OPTIONS` was working). (Aslak Hellesøy)
 * [Android] put android project into default profile ([#821](https://github.com/cucumber/cucumber-jvm/pull/821) Sebastian Gröbler, Björn Rasmusson)
 * [Android] made android studio example use espresso 2 ([#820](https://github.com/cucumber/cucumber-jvm/pull/820) Sebastian Gröbler)
 * [Android] removed apklib generation from android project, fixed and cleaned up android examples ([#819](https://github.com/cucumber/cucumber-jvm/pull/819) Sebastian Gröbler, Björn Rasmusson)

@@ -32,8 +32,22 @@ public class EnvTest {
     }
 
     @Test
-    public void looks_up_value_from_resource_bundle() {
-        assertEquals("from-bundle", env.get("env.test"));
-        assertEquals("from-bundle", env.get("ENV_TEST"));
+    public void looks_up_dotted_value_from_resource_bundle_with_dots() {
+        assertEquals("a.b", env.get("a.b"));
+    }
+
+    @Test
+    public void looks_up_dotted_value_from_resource_bundle_with_underscores() {
+        assertEquals("a.b", env.get("A_B"));
+    }
+
+    @Test
+    public void looks_up_underscored_value_from_resource_bundle_with_dots() {
+        assertEquals("B_C", env.get("b.c"));
+    }
+
+    @Test
+    public void looks_up_underscored_value_from_resource_bundle_with_underscores() {
+        assertEquals("B_C", env.get("B_C"));
     }
 }
