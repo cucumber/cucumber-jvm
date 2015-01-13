@@ -64,7 +64,6 @@ public class JUnitReporterTest {
 
         jUnitReporter.result(Result.UNDEFINED);
 
-        verify(stepNotifier, times(0)).fireTestStarted();
         verify(stepNotifier, times(0)).fireTestFinished();
         verify(stepNotifier, times(0)).addFailure(Matchers.<Throwable>any(Throwable.class));
         verify(stepNotifier).fireTestIgnored();
@@ -81,7 +80,6 @@ public class JUnitReporterTest {
 
         jUnitReporter.result(Result.UNDEFINED);
 
-        verify(stepNotifier, times(1)).fireTestStarted();
         verify(stepNotifier, times(1)).fireTestFinished();
         verifyAddFailureWithPendingException(stepNotifier);
         verifyAddFailureWithPendingException(executionUnitNotifier);
@@ -106,7 +104,6 @@ public class JUnitReporterTest {
 
         jUnitReporter.result(result);
 
-        verify(stepNotifier, times(0)).fireTestStarted();
         verify(stepNotifier, times(0)).fireTestFinished();
         verify(stepNotifier, times(0)).addFailure(Matchers.<Throwable>any(Throwable.class));
         verify(stepNotifier).fireTestIgnored();
@@ -126,7 +123,6 @@ public class JUnitReporterTest {
 
         jUnitReporter.result(result);
 
-        verify(stepNotifier, times(1)).fireTestStarted();
         verify(stepNotifier, times(1)).fireTestFinished();
         verifyAddFailureWithPendingException(stepNotifier);
         verifyAddFailureWithPendingException(executionUnitNotifier);
@@ -143,7 +139,6 @@ public class JUnitReporterTest {
 
         jUnitReporter.result(result);
 
-        verify(stepNotifier).fireTestStarted();
         verify(stepNotifier).fireTestFinished();
         verify(stepNotifier, times(0)).addFailure(Matchers.<Throwable>any(Throwable.class));
         verify(stepNotifier, times(0)).fireTestIgnored();
@@ -159,7 +154,6 @@ public class JUnitReporterTest {
 
         jUnitReporter.result(result);
 
-        verify(stepNotifier).fireTestStarted();
         verify(stepNotifier).fireTestFinished();
         verify(stepNotifier, times(0)).addFailure(Matchers.<Throwable>any(Throwable.class));
         verify(stepNotifier, times(0)).fireTestIgnored();
