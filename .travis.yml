@@ -23,8 +23,8 @@ matrix:
     before_install:
       - echo no | android create avd --force -n test -t android-15 --abi armeabi-v7a
       - emulator -avd test -no-skin -no-audio -no-window &
-    # Download the maven plugins and project dependencies before the script runs
-    install: mvn verify -P android-examples -pl examples/android,examples/android/android-test -am -amd dependency:go-offline
+    # Build the Android example dependencies, without test, to install dependencies
+    install: mvn verify -pl android,picocontainer -am -DskipTests=true -Dmaven.javadoc.skip=true -B -V
     # Emulator Management: Wait until the emulator is ready
     before_script:
       - android-wait-for-emulator
