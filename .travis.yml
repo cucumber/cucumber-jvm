@@ -1,16 +1,18 @@
 ---
 language: java
+# skip the default install (mvn install -DskipTests=true) to speed up the build
+install: true
 script: mvn -q install -P examples
 jdk:
 - openjdk7
 matrix:
   include:
   - jdk: oraclejdk7
-    script: mvn verify
-    after_success: mvn deploy --settings .travis-settings.xml -Dno.gem.deploy=true -DskipTests=true -Dmaven.javadoc.skip=true
+    script: mvn -q install
+    after_success: mvn -q deploy --settings .travis-settings.xml -Dno.gem.deploy=true -DskipTests=true -Dmaven.javadoc.skip=true
   - jdk: oraclejdk8
-    script: mvn verify -P java8
-    after_success: mvn deploy -P java8 -pl java8 --settings .travis-settings.xml -DskipTests=true -Dmaven.javadoc.skip=true
+    script: mvn -q install -P java8
+    after_success: mvn -q deploy -P java8 -pl java8 --settings .travis-settings.xml -DskipTests=true -Dmaven.javadoc.skip=true
 
 branches:
   only:
