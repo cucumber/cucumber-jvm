@@ -9,7 +9,11 @@ import junit.framework.TestResult;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
+import junit.framework.JUnit4TestCaseFacade;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * Listener that makes sure Cucumber fires events in the right order
@@ -62,6 +66,17 @@ public class SanityChecker implements TestListener {
             Test lastStarted = tests.remove(tests.size() - 1);
             spaces();
             out.append("END   " + ended.toString()).append("\n");
+            //Handle skipped tests
+            if (!(lastStarted instanceof TestSuite) && ended instanceof TestSuite) {
+                Enumeration<Test> endedTests = ((TestSuite) ended).tests();
+                while (endedTests.hasMoreElements()) {
+                    Test test = endedTests.nextElement();
+                    //If test in stest suite - all ok
+                    if (test.equals(lastStarted)) {
+                        return;
+                    }
+                }
+            }            
             if (!lastStarted.toString().equals(ended.toString())) {
                 out.append(INSANITY).append("\n");
                 String errorMessage = String.format("Started : %s\nEnded   : %s\n", lastStarted, ended);
