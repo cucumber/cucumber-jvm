@@ -22,6 +22,7 @@ public class SanityChecker implements TestListener {
     private final StringWriter out = new StringWriter();
 
     public static void run(Class<?> testClass) {
+        run(testClass, false);
     }
 
     public static void run(Class<?> testClass, boolean debug) {
