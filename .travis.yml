@@ -8,8 +8,7 @@ jdk:
 matrix:
   include:
   - jdk: oraclejdk7
-    script: mvn -q install
-    after_success: mvn -q deploy --settings .travis-settings.xml -Dno.gem.deploy=true -DskipTests=true -Dmaven.javadoc.skip=true
+    script: mvn -q deploy --settings .travis-settings.xml -Dno.gem.deploy=true -DdeployAtEnd=true
   - jdk: oraclejdk8
     script: mvn -q install -P java8
     after_success: mvn -q deploy -P java8 -pl java8 --settings .travis-settings.xml -DskipTests=true -Dmaven.javadoc.skip=true
