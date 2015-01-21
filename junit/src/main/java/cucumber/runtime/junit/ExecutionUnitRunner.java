@@ -89,7 +89,7 @@ public class ExecutionUnitRunner extends ParentRunner<Step> {
         jUnitReporter.startExecutionUnit(this, notifier);
         // This causes runChild to never be called, which seems OK.
         cucumberScenario.run(jUnitReporter, jUnitReporter, runtime);
-        jUnitReporter.finishExecutionUnit();
+        jUnitReporter.skipExecutionUnitIfIgnored();
     }
 
     @Override

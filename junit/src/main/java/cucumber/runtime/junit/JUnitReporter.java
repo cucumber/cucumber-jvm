@@ -50,11 +50,10 @@ public class JUnitReporter implements Reporter, Formatter {
         executionUnitNotifier.fireTestStarted();
     }
 
-    public void finishExecutionUnit() {
+    public void skipExecutionUnitIfIgnored() {
         if (ignoredStep) {
             executionUnitNotifier.fireTestIgnored();
         }
-        executionUnitNotifier.fireTestFinished();
     }
 
     public void match(Match match) {
