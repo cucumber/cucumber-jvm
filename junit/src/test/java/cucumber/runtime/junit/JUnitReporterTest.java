@@ -264,6 +264,23 @@ public class JUnitReporterTest {
         }
     }
 
+    @Test
+    public void match_fires_test_started_for_the_step() {
+        Step runnerStep = mockStep("Step Name");
+        Description runnerStepDescription = stepDescription(runnerStep);
+        ExecutionUnitRunner executionUnitRunner = mockExecutionUnitRunner(runnerSteps(runnerStep));
+        when(executionUnitRunner.describeChild(runnerStep)).thenReturn(runnerStepDescription);
+        createNonStrictReporter();
+        runNotifier = mock(RunNotifier.class);
+
+        jUnitReporter.startExecutionUnit(executionUnitRunner, runNotifier);
+        jUnitReporter.startOfScenarioLifeCycle(mock(Scenario.class));
+        jUnitReporter.step(runnerStep);
+        jUnitReporter.match(mock(Match.class));
+
+        verify(runNotifier).fireTestStarted(runnerStepDescription);
+    }
+
     private Result mockResult() {
         Result result = mock(Result.class);
         when(result.getStatus()).thenReturn("passed");
