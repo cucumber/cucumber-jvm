@@ -1,7 +1,5 @@
-package cucumber.runtime.model;
+package cucumber.runtime;
 
-import cucumber.runtime.CucumberException;
-import cucumber.runtime.Runtime;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.DataTableRow;
@@ -19,6 +17,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@Deprecated
 public class CucumberScenarioOutline extends CucumberTagStatement {
     private final List<CucumberExamples> cucumberExamplesList = new ArrayList<CucumberExamples>();
     private final CucumberBackground cucumberBackground;

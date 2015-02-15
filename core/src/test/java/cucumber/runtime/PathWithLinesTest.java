@@ -1,5 +1,6 @@
-package cucumber.runtime.model;
+package cucumber.runtime;
 
+import cucumber.runtime.PathWithLines;
 import org.junit.Test;
 
 import static java.util.Arrays.asList;

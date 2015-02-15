@@ -1,6 +1,8 @@
-package cucumber.runtime.model;
+package cucumber.runtime;
 
 import cucumber.runtime.CucumberException;
+import cucumber.runtime.CucumberScenario;
+import cucumber.runtime.CucumberScenarioOutline;
 import gherkin.formatter.model.Comment;
 import gherkin.formatter.model.DataTableRow;
 import gherkin.formatter.model.DocString;

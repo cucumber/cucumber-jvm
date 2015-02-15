@@ -1,4 +1,4 @@
-package cucumber.runtime.model;
+package cucumber.runtime;
 
 import gherkin.formatter.model.Comment;
 import gherkin.formatter.model.DataTableRow;
@@ -8,6 +8,7 @@ import gherkin.formatter.model.Step;
 import java.util.List;
 import java.util.Set;
 
+@Deprecated
 class ExampleStep extends Step {
     // TODO: Use this to colour columns in associated Example row with our associated status.
     private final Set<Integer> matchedColumns;

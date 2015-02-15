@@ -1,6 +1,5 @@
-package cucumber.runtime.model;
+package cucumber.runtime;
 
-import cucumber.runtime.Runtime;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Row;
@@ -12,6 +11,7 @@ import java.util.Set;
 
 import static gherkin.util.FixJava.join;
 
+@Deprecated
 public abstract class CucumberTagStatement extends StepContainer {
     private final TagStatement gherkinModel;
     private final String visualName;

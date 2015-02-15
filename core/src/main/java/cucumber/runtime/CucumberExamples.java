@@ -1,4 +1,4 @@
-package cucumber.runtime.model;
+package cucumber.runtime;
 
 import gherkin.formatter.Formatter;
 import gherkin.formatter.model.Examples;
@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@Deprecated
 public class CucumberExamples {
     private final CucumberScenarioOutline cucumberScenarioOutline;
     private final Examples examples;

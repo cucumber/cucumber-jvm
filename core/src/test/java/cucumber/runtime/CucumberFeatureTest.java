@@ -1,5 +1,6 @@
-package cucumber.runtime.model;
+package cucumber.runtime;
 
+import cucumber.runtime.CucumberFeature;
 import cucumber.runtime.io.Resource;
 import cucumber.runtime.io.ResourceLoader;
 import org.junit.Test;

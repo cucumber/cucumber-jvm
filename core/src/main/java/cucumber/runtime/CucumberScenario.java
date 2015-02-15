@@ -1,6 +1,5 @@
-package cucumber.runtime.model;
+package cucumber.runtime;
 
-import cucumber.runtime.Runtime;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Row;
@@ -9,6 +8,7 @@ import gherkin.formatter.model.Tag;
 
 import java.util.Set;
 
+@Deprecated
 public class CucumberScenario extends CucumberTagStatement {
     private final CucumberBackground cucumberBackground;
     private final Scenario scenario;

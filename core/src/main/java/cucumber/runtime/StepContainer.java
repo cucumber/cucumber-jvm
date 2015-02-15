@@ -1,6 +1,5 @@
-package cucumber.runtime.model;
+package cucumber.runtime;
 
-import cucumber.runtime.Runtime;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.BasicStatement;
@@ -9,6 +8,7 @@ import gherkin.formatter.model.Step;
 import java.util.ArrayList;
 import java.util.List;
 
+@Deprecated
 public class StepContainer {
     private final List<Step> steps = new ArrayList<Step>();
     final CucumberFeature cucumberFeature;

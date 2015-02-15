@@ -1,5 +1,9 @@
-package cucumber.runtime.model;
+package cucumber.runtime;
 
+import cucumber.runtime.CucumberExamples;
+import cucumber.runtime.CucumberFeature;
+import cucumber.runtime.CucumberScenario;
+import cucumber.runtime.CucumberScenarioOutline;
 import gherkin.formatter.model.Comment;
 import gherkin.formatter.model.Examples;
 import gherkin.formatter.model.ExamplesTableRow;

@@ -1,7 +1,5 @@
-package cucumber.runtime.model;
+package cucumber.runtime;
 
-import cucumber.runtime.FeatureBuilder;
-import cucumber.runtime.Runtime;
 import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.Resource;
 import cucumber.runtime.io.ResourceLoader;
@@ -21,6 +19,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+@Deprecated
 public class CucumberFeature {
     private final String path;
     private final Feature feature;
