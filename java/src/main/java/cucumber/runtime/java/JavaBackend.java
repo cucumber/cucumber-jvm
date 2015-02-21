@@ -1,21 +1,14 @@
 package cucumber.runtime.java;
 
 import cucumber.api.java.After;
+import cucumber.api.java.AfterStep;
 import cucumber.api.java.Before;
+import cucumber.api.java.BeforeStep;
 import cucumber.api.java8.GlueBase;
 import cucumber.api.java8.HookBody;
 import cucumber.api.java8.HookNoArgsBody;
 import cucumber.api.java8.StepdefBody;
-import cucumber.runtime.Backend;
-import cucumber.runtime.ClassFinder;
-import cucumber.runtime.CucumberException;
-import cucumber.runtime.DuplicateStepDefinitionException;
-import cucumber.runtime.Glue;
-import cucumber.runtime.NoInstancesException;
-import cucumber.runtime.Reflections;
-import cucumber.runtime.TooManyInstancesException;
-import cucumber.runtime.UnreportedStepExecutor;
-import cucumber.runtime.Utils;
+import cucumber.runtime.*;
 import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
@@ -173,10 +166,16 @@ public class JavaBackend implements Backend {
             String[] tagExpressions = ((Before) annotation).value();
             long timeout = ((Before) annotation).timeout();
             glue.addBeforeHook(new JavaHookDefinition(method, tagExpressions, ((Before) annotation).order(), timeout, objectFactory));
-        } else {
+        } else if (annotation.annotationType().equals(After.class)) {
             String[] tagExpressions = ((After) annotation).value();
             long timeout = ((After) annotation).timeout();
             glue.addAfterHook(new JavaHookDefinition(method, tagExpressions, ((After) annotation).order(), timeout, objectFactory));
+        } else if (annotation.annotationType().equals(BeforeStep.class)) {
+            long timeout = ((BeforeStep) annotation).timeout();
+            glue.addBeforeStepHook(new JavaStepHookDefinition(method, ((BeforeStep) annotation).order(), timeout, objectFactory));
+        } else if (annotation.annotationType().equals(AfterStep.class)) {
+            long timeout = ((AfterStep) annotation).timeout();
+            glue.addAfterStepHook(new JavaStepHookDefinition(method, ((AfterStep) annotation).order(), timeout, objectFactory));
         }
     }
 

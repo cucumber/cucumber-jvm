@@ -1,11 +1,7 @@
 package cucumber.runtime.java;
 
 import cucumber.api.StepDefinitionReporter;
-import cucumber.runtime.CucumberException;
-import cucumber.runtime.Glue;
-import cucumber.runtime.HookDefinition;
-import cucumber.runtime.StepDefinition;
-import cucumber.runtime.StepDefinitionMatch;
+import cucumber.runtime.*;
 import cucumber.runtime.java.stepdefs.Stepdefs;
 import gherkin.I18n;
 import gherkin.formatter.model.Step;
@@ -71,6 +67,26 @@ public class JavaBackendTest {
 
         @Override
         public List<HookDefinition> getAfterHooks() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void addBeforeStepHook(StepHookDefinition hookDefinition) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void addAfterStepHook(StepHookDefinition hookDefinition) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public List<StepHookDefinition> getBeforeStepHooks() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public List<StepHookDefinition> getAfterStepHooks() {
             throw new UnsupportedOperationException();
         }
 

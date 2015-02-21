@@ -9,23 +9,11 @@ import gherkin.I18n;
 import gherkin.formatter.Argument;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
-import gherkin.formatter.model.Comment;
-import gherkin.formatter.model.DataTableRow;
-import gherkin.formatter.model.DocString;
-import gherkin.formatter.model.Match;
-import gherkin.formatter.model.Result;
-import gherkin.formatter.model.Scenario;
-import gherkin.formatter.model.Step;
-import gherkin.formatter.model.Tag;
+import gherkin.formatter.model.*;
 
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * This is the main entry point for running Cucumber features.
@@ -204,6 +192,14 @@ public class Runtime implements UnreportedStepExecutor {
         runHooks(glue.getAfterHooks(), reporter, tags, false);
     }
 
+    public void runBeforeStepHooks(Reporter reporter, Step step) {
+        runStepHooks(step, glue.getBeforeStepHooks(), reporter, true);
+    }
+
+    public void runAfterStepHooks(Reporter reporter, Step step) {
+        runStepHooks(step, glue.getAfterStepHooks(), reporter, false);
+    }
+
     private void runHooks(List<HookDefinition> hooks, Reporter reporter, Set<Tag> tags, boolean isBefore) {
         if (!runtimeOptions.isDryRun()) {
             for (HookDefinition hook : hooks) {
@@ -234,6 +230,38 @@ public class Runtime implements UnreportedStepExecutor {
                 } else {
                     reporter.after(match, result);
                 }
+            }
+        }
+    }
+
+    private void runStepHooks(Step step, List<StepHookDefinition> hooks, Reporter reporter, boolean isBefore) {
+        if (!runtimeOptions.isDryRun()) {
+            for (StepHookDefinition hook : hooks) {
+                runStepHook(step, hook, reporter, isBefore);
+            }
+        }
+    }
+
+    private void runStepHook(Step step, StepHookDefinition hook, Reporter reporter, boolean isBefore) {
+        String status = Result.PASSED;
+        Throwable error = null;
+        Match match = new Match(Collections.<Argument>emptyList(), hook.getLocation(false));
+        stopWatch.start();
+        try {
+            hook.execute(step);
+        } catch (Throwable t) {
+            error = t;
+            status = isPending(t) ? "pending" : Result.FAILED;
+            addError(t);
+            skipNextStep = true;
+        } finally {
+            long duration = stopWatch.stop();
+            Result result = new Result(status, duration, error, DUMMY_ARG);
+            addHookToCounterAndResult(result);
+            if (isBefore) {
+                reporter.before(match, result);
+            } else {
+                reporter.after(match, result);
             }
         }
     }

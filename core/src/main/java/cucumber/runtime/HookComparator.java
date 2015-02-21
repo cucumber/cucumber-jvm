@@ -2,7 +2,7 @@ package cucumber.runtime;
 
 import java.util.Comparator;
 
-class HookComparator implements Comparator<HookDefinition> {
+class HookComparator implements Comparator<Hook> {
     private final boolean ascending;
 
     public HookComparator(boolean ascending) {
@@ -10,7 +10,7 @@ class HookComparator implements Comparator<HookDefinition> {
     }
 
     @Override
-    public int compare(HookDefinition hook1, HookDefinition hook2) {
+    public int compare(Hook hook1, Hook hook2) {
         int comparison = hook1.getOrder() - hook2.getOrder();
         return ascending ? comparison : -comparison;
     }

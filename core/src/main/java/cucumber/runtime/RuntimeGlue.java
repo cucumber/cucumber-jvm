@@ -17,6 +17,8 @@ public class RuntimeGlue implements Glue {
     final Map<String, StepDefinition> stepDefinitionsByPattern = new TreeMap<String, StepDefinition>();
     final List<HookDefinition> beforeHooks = new ArrayList<HookDefinition>();
     final List<HookDefinition> afterHooks = new ArrayList<HookDefinition>();
+    final List<StepHookDefinition> beforeStepHooks = new ArrayList<StepHookDefinition>();
+    final List<StepHookDefinition> afterStepHooks = new ArrayList<StepHookDefinition>();
 
     private final UndefinedStepsTracker tracker;
     private final LocalizedXStreams localizedXStreams;
@@ -55,6 +57,28 @@ public class RuntimeGlue implements Glue {
     @Override
     public List<HookDefinition> getAfterHooks() {
         return afterHooks;
+    }
+
+    @Override
+    public void addBeforeStepHook(StepHookDefinition hookDefinition) {
+        beforeStepHooks.add(hookDefinition);
+        Collections.sort(beforeHooks, new HookComparator(false));
+    }
+
+    @Override
+    public void addAfterStepHook(StepHookDefinition hookDefinition) {
+        afterStepHooks.add(hookDefinition);
+        Collections.sort(afterStepHooks, new HookComparator(false));
+    }
+
+    @Override
+    public List<StepHookDefinition> getBeforeStepHooks() {
+        return beforeStepHooks;
+    }
+
+    @Override
+    public List<StepHookDefinition> getAfterStepHooks() {
+        return afterStepHooks;
     }
 
     @Override
@@ -97,6 +121,8 @@ public class RuntimeGlue implements Glue {
     public void removeScenarioScopedGlue() {
         removeScenarioScopedHooks(beforeHooks);
         removeScenarioScopedHooks(afterHooks);
+        removeScenarioScopedStepHooks(beforeStepHooks);
+        removeScenarioScopedStepHooks(afterStepHooks);
         removeScenarioScopedStepdefs();
     }
 
@@ -106,6 +132,16 @@ public class RuntimeGlue implements Glue {
             HookDefinition hook = hookIterator.next();
             if(hook.isScenarioScoped()) {
                 hookIterator.remove();
+            }
+        }
+    }
+    
+    private void removeScenarioScopedStepHooks(List<StepHookDefinition> hooks) {
+        Iterator<StepHookDefinition> hookIt = hooks.iterator();
+        while (hookIt.hasNext()) {
+            StepHookDefinition hook = hookIt.next();
+            if(hook.isScenarioScoped()) {
+                hookIt.remove();
             }
         }
     }
