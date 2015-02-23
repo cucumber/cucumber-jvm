@@ -12,14 +12,14 @@ task cucumber() {
         javaexec {
             main = "cucumber.api.cli.Main"
             classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
-            args = ['-f', 'pretty', '--glue', 'gradle.cucumber', 'src/test/resources']
+            args = ['--plugin', 'pretty', '--glue', 'gradle.cucumber', 'src/test/resources']
         }
     }
 }
 
 dependencies {
-    testCompile 'info.cukes:cucumber-java:1.2.1'
-    testCompile 'info.cukes:cucumber-junit:1.2.1'
+    testCompile 'info.cukes:cucumber-java:1.2.2'
+    testCompile 'info.cukes:cucumber-junit:1.2.2'
 
     testCompile 'junit:junit:4.11'
 }
