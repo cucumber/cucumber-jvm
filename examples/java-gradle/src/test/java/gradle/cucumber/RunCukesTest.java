@@ -2,9 +2,10 @@ package gradle.cucumber;
 
 import cucumber.api.junit.Cucumber;
 import org.junit.runner.RunWith;
+import cucumber.api.CucumberOptions;
 
 @RunWith(Cucumber.class)
-@Cucumber.Options(format = {"pretty", "html:build/cucumber-html-report", "json-pretty:build/cucumber-report.json"})
+@CucumberOptions(plugin = {"pretty"})
 public class RunCukesTest {
 
 }
