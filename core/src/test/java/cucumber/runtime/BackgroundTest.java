@@ -1,7 +1,6 @@
 package cucumber.runtime;
 
 import cucumber.runtime.io.ClasspathResourceLoader;
-import cucumber.runtime.model.CucumberFeature;
 import gherkin.formatter.PrettyFormatter;
 import org.junit.Test;
 
@@ -17,7 +16,7 @@ public class BackgroundTest {
     public void should_run_background() throws IOException {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         RuntimeOptions runtimeOptions = new RuntimeOptions("");
-        Runtime runtime = new Runtime(new ClasspathResourceLoader(classLoader), classLoader, asList(mock(Backend.class)), runtimeOptions);
+        LegacyRuntime runtime = new LegacyRuntime(new ClasspathResourceLoader(classLoader), classLoader, asList(mock(Backend.class)), runtimeOptions);
         CucumberFeature feature = feature("test.feature", "" +
                 "Feature:\n" +
                 "  Background:\n" +

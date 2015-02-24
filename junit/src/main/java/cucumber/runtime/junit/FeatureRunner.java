@@ -1,11 +1,11 @@
 package cucumber.runtime.junit;
 
 import cucumber.runtime.CucumberException;
-import cucumber.runtime.Runtime;
-import cucumber.runtime.model.CucumberFeature;
-import cucumber.runtime.model.CucumberScenario;
-import cucumber.runtime.model.CucumberScenarioOutline;
-import cucumber.runtime.model.CucumberTagStatement;
+import cucumber.runtime.LegacyRuntime;
+import cucumber.runtime.CucumberFeature;
+import cucumber.runtime.CucumberScenario;
+import cucumber.runtime.CucumberScenarioOutline;
+import cucumber.runtime.CucumberTagStatement;
 import gherkin.formatter.model.Feature;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
@@ -19,11 +19,11 @@ public class FeatureRunner extends ParentRunner<ParentRunner> {
     private final List<ParentRunner> children = new ArrayList<ParentRunner>();
 
     private final CucumberFeature cucumberFeature;
-    private final Runtime runtime;
+    private final LegacyRuntime runtime;
     private final JUnitReporter jUnitReporter;
     private Description description;
 
-    public FeatureRunner(CucumberFeature cucumberFeature, Runtime runtime, JUnitReporter jUnitReporter) throws InitializationError {
+    public FeatureRunner(CucumberFeature cucumberFeature, LegacyRuntime runtime, JUnitReporter jUnitReporter) throws InitializationError {
         super(null);
         this.cucumberFeature = cucumberFeature;
         this.runtime = runtime;

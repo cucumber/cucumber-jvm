@@ -1,10 +1,10 @@
 package cucumber.runtime.android;
 
-import cucumber.runtime.model.CucumberExamples;
-import cucumber.runtime.model.CucumberFeature;
-import cucumber.runtime.model.CucumberScenario;
-import cucumber.runtime.model.CucumberScenarioOutline;
-import cucumber.runtime.model.CucumberTagStatement;
+import cucumber.runtime.CucumberExamples;
+import cucumber.runtime.CucumberFeature;
+import cucumber.runtime.CucumberScenario;
+import cucumber.runtime.CucumberScenarioOutline;
+import cucumber.runtime.CucumberTagStatement;
 
 import java.util.List;
 

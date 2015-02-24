@@ -2,8 +2,6 @@ package cucumber.runtime;
 
 import cucumber.api.Scenario;
 import cucumber.runtime.io.ClasspathResourceLoader;
-import cucumber.runtime.model.CucumberFeature;
-import cucumber.runtime.model.CucumberScenario;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Feature;
@@ -44,7 +42,7 @@ public class HookTest {
 
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         RuntimeOptions runtimeOptions = new RuntimeOptions("");
-        Runtime runtime = new Runtime(new ClasspathResourceLoader(classLoader), classLoader, asList(backend), runtimeOptions);
+        LegacyRuntime runtime = new LegacyRuntime(new ClasspathResourceLoader(classLoader), classLoader, asList(backend), runtimeOptions);
         runtime.getGlue().addAfterHook(hook);
 
         scenario.run(mock(Formatter.class), mock(Reporter.class), runtime);

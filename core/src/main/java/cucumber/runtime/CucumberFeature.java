@@ -153,7 +153,7 @@ public class CucumberFeature {
         return path;
     }
 
-    public void run(Formatter formatter, Reporter reporter, Runtime runtime) {
+    public void run(Formatter formatter, Reporter reporter, LegacyRuntime runtime) {
         formatter.uri(getPath());
         formatter.feature(getGherkinFeature());
 

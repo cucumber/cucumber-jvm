@@ -5,7 +5,7 @@ import cucumber.runtime.JdkPatternArgumentMatcher;
 import cucumber.runtime.ParameterInfo;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.io.Resource;
-import cucumber.runtime.model.CucumberFeature;
+import cucumber.runtime.CucumberFeature;
 import gherkin.I18n;
 import gherkin.deps.com.google.gson.Gson;
 import gherkin.deps.com.google.gson.GsonBuilder;

@@ -1,8 +1,8 @@
 package cucumber.runtime.junit;
 
-import cucumber.runtime.Runtime;
-import cucumber.runtime.model.CucumberExamples;
-import cucumber.runtime.model.CucumberScenario;
+import cucumber.runtime.LegacyRuntime;
+import cucumber.runtime.CucumberExamples;
+import cucumber.runtime.CucumberScenario;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
@@ -17,13 +17,13 @@ public class ExamplesRunner extends Suite {
     private Description description;
     private JUnitReporter jUnitReporter;
 
-    protected ExamplesRunner(Runtime runtime, CucumberExamples cucumberExamples, JUnitReporter jUnitReporter) throws InitializationError {
+    protected ExamplesRunner(LegacyRuntime runtime, CucumberExamples cucumberExamples, JUnitReporter jUnitReporter) throws InitializationError {
         super(ExamplesRunner.class, buildRunners(runtime, cucumberExamples, jUnitReporter));
         this.cucumberExamples = cucumberExamples;
         this.jUnitReporter = jUnitReporter;
     }
 
-    private static List<Runner> buildRunners(Runtime runtime, CucumberExamples cucumberExamples, JUnitReporter jUnitReporter) {
+    private static List<Runner> buildRunners(LegacyRuntime runtime, CucumberExamples cucumberExamples, JUnitReporter jUnitReporter) {
         List<Runner> runners = new ArrayList<Runner>();
         List<CucumberScenario> exampleScenarios = cucumberExamples.createExampleScenarios();
         for (CucumberScenario scenario : exampleScenarios) {

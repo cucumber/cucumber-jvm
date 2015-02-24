@@ -2,7 +2,7 @@ package cucumber.runtime.junit;
 
 import cucumber.runtime.FeatureBuilder;
 import cucumber.runtime.io.Resource;
-import cucumber.runtime.model.CucumberFeature;
+import cucumber.runtime.CucumberFeature;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

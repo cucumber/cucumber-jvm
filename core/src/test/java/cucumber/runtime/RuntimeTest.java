@@ -8,7 +8,6 @@ import cucumber.runtime.formatter.FormatterSpy;
 import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.io.Resource;
 import cucumber.runtime.io.ResourceLoader;
-import cucumber.runtime.model.CucumberFeature;
 import gherkin.I18n;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.JSONFormatter;
@@ -65,7 +64,7 @@ public class RuntimeTest {
         List<Backend> backends = asList(mock(Backend.class));
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         RuntimeOptions runtimeOptions = new RuntimeOptions("");
-        Runtime runtime = new Runtime(new ClasspathResourceLoader(classLoader), classLoader, backends, runtimeOptions);
+        LegacyRuntime runtime = new LegacyRuntime(new ClasspathResourceLoader(classLoader), classLoader, backends, runtimeOptions);
         feature.run(jsonFormatter, jsonFormatter, runtime);
         jsonFormatter.done();
         String expected = "" +
@@ -137,21 +136,21 @@ public class RuntimeTest {
 
     @Test
     public void non_strict_with_undefined_steps() {
-        Runtime runtime = createNonStrictRuntime();
+        LegacyRuntime runtime = createNonStrictRuntime();
         runtime.undefinedStepsTracker.addUndefinedStep(new Step(null, "Given ", "A", 1, null, null), ENGLISH);
         assertEquals(0x0, runtime.exitStatus());
     }
 
     @Test
     public void strict_with_undefined_steps() {
-        Runtime runtime = createStrictRuntime();
+        LegacyRuntime runtime = createStrictRuntime();
         runtime.undefinedStepsTracker.addUndefinedStep(new Step(null, "Given ", "A", 1, null, null), ENGLISH);
         assertEquals(0x1, runtime.exitStatus());
     }
 
     @Test
     public void strict_with_pending_steps_and_no_errors() {
-        Runtime runtime = createStrictRuntime();
+        LegacyRuntime runtime = createStrictRuntime();
         runtime.addError(new PendingException());
 
         assertEquals(0x1, runtime.exitStatus());
@@ -159,7 +158,7 @@ public class RuntimeTest {
 
     @Test
     public void non_strict_with_pending_steps() {
-        Runtime runtime = createNonStrictRuntime();
+        LegacyRuntime runtime = createNonStrictRuntime();
         runtime.addError(new PendingException());
 
         assertEquals(0x0, runtime.exitStatus());
@@ -167,7 +166,7 @@ public class RuntimeTest {
 
     @Test
     public void non_strict_with_failed_junit_assumption() {
-        Runtime runtime = createNonStrictRuntime();
+        LegacyRuntime runtime = createNonStrictRuntime();
         runtime.addError(new AssumptionViolatedException("should be treated like pending"));
 
         assertEquals(0x0, runtime.exitStatus());
@@ -175,7 +174,7 @@ public class RuntimeTest {
 
     @Test
     public void non_strict_with_errors() {
-        Runtime runtime = createNonStrictRuntime();
+        LegacyRuntime runtime = createNonStrictRuntime();
         runtime.addError(new RuntimeException());
 
         assertEquals(0x1, runtime.exitStatus());
@@ -183,7 +182,7 @@ public class RuntimeTest {
 
     @Test
     public void strict_with_errors() {
-        Runtime runtime = createStrictRuntime();
+        LegacyRuntime runtime = createStrictRuntime();
         runtime.addError(new RuntimeException());
 
         assertEquals(0x1, runtime.exitStatus());
@@ -229,7 +228,7 @@ public class RuntimeTest {
     public void should_throw_cucumer_exception_if_no_backends_are_found() throws Exception {
         try {
             ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-            new Runtime(new ClasspathResourceLoader(classLoader), classLoader, Collections.<Backend>emptyList(),
+            new LegacyRuntime(new ClasspathResourceLoader(classLoader), classLoader, Collections.<Backend>emptyList(),
                     new RuntimeOptions(""));
             fail("A CucumberException should have been thrown");
         } catch (CucumberException e) {
@@ -243,7 +242,7 @@ public class RuntimeTest {
         Reporter reporter = mock(Reporter.class);
         StepDefinitionMatch match = mock(StepDefinitionMatch.class);
 
-        Runtime runtime = createRuntimeWithMockedGlue(match, "--monochrome");
+        LegacyRuntime runtime = createRuntimeWithMockedGlue(match, "--monochrome");
         runScenario(reporter, runtime, stepCount(1));
         runtime.printStats(new PrintStream(baos));
 
@@ -258,7 +257,7 @@ public class RuntimeTest {
         Reporter reporter = mock(Reporter.class);
         StepDefinitionMatch match = createExceptionThrowingMatch(new PendingException());
 
-        Runtime runtime = createRuntimeWithMockedGlue(match, "--monochrome");
+        LegacyRuntime runtime = createRuntimeWithMockedGlue(match, "--monochrome");
         runScenario(reporter, runtime, stepCount(1));
         runtime.printStats(new PrintStream(baos));
 
@@ -273,7 +272,7 @@ public class RuntimeTest {
         Reporter reporter = mock(Reporter.class);
         StepDefinitionMatch match = createExceptionThrowingMatch(new Exception());
 
-        Runtime runtime = createRuntimeWithMockedGlue(match, "--monochrome");
+        LegacyRuntime runtime = createRuntimeWithMockedGlue(match, "--monochrome");
         runScenario(reporter, runtime, stepCount(1));
         runtime.printStats(new PrintStream(baos));
 
@@ -287,7 +286,7 @@ public class RuntimeTest {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Reporter reporter = mock(Reporter.class);
 
-        Runtime runtime = createRuntimeWithMockedGlueWithAmbiguousMatch("--monochrome");
+        LegacyRuntime runtime = createRuntimeWithMockedGlueWithAmbiguousMatch("--monochrome");
         runScenario(reporter, runtime, stepCount(1));
         runtime.printStats(new PrintStream(baos));
 
@@ -302,7 +301,7 @@ public class RuntimeTest {
         Reporter reporter = mock(Reporter.class);
         StepDefinitionMatch match = createExceptionThrowingMatch(new Exception());
 
-        Runtime runtime = createRuntimeWithMockedGlue(match, "--monochrome");
+        LegacyRuntime runtime = createRuntimeWithMockedGlue(match, "--monochrome");
         runScenario(reporter, runtime, stepCount(2));
         runtime.printStats(new PrintStream(baos));
 
@@ -316,7 +315,7 @@ public class RuntimeTest {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Reporter reporter = mock(Reporter.class);
 
-        Runtime runtime = createRuntimeWithMockedGlue(null, "--monochrome");
+        LegacyRuntime runtime = createRuntimeWithMockedGlue(null, "--monochrome");
         runScenario(reporter, runtime, stepCount(1));
         runtime.printStats(new PrintStream(baos));
 
@@ -332,7 +331,7 @@ public class RuntimeTest {
         StepDefinitionMatch match = mock(StepDefinitionMatch.class);
         HookDefinition hook = createExceptionThrowingHook();
 
-        Runtime runtime = createRuntimeWithMockedGlue(match, hook, true, "--monochrome");
+        LegacyRuntime runtime = createRuntimeWithMockedGlue(match, hook, true, "--monochrome");
         runScenario(reporter, runtime, stepCount(1));
         runtime.printStats(new PrintStream(baos));
 
@@ -348,7 +347,7 @@ public class RuntimeTest {
         StepDefinitionMatch match = mock(StepDefinitionMatch.class);
         HookDefinition hook = createExceptionThrowingHook();
 
-        Runtime runtime = createRuntimeWithMockedGlue(match, hook, false, "--monochrome");
+        LegacyRuntime runtime = createRuntimeWithMockedGlue(match, hook, false, "--monochrome");
         runScenario(reporter, runtime, stepCount(1));
         runtime.printStats(new PrintStream(baos));
 
@@ -368,7 +367,7 @@ public class RuntimeTest {
         HookDefinition beforeHook = mock(HookDefinition.class);
         when(beforeHook.matches(anyCollectionOf(Tag.class))).thenReturn(true);
 
-        Runtime runtime = createRuntimeWithMockedGlue(mock(StepDefinitionMatch.class), beforeHook, true);
+        LegacyRuntime runtime = createRuntimeWithMockedGlue(mock(StepDefinitionMatch.class), beforeHook, true);
         feature.run(mock(Formatter.class), mock(Reporter.class), runtime);
 
         ArgumentCaptor<Scenario> capturedScenario = ArgumentCaptor.forClass(Scenario.class);
@@ -387,7 +386,7 @@ public class RuntimeTest {
         HookDefinition beforeHook = mock(HookDefinition.class);
         when(beforeHook.matches(anyCollectionOf(Tag.class))).thenReturn(true);
 
-        Runtime runtime = createRuntimeWithMockedGlue(mock(StepDefinitionMatch.class), beforeHook, true);
+        LegacyRuntime runtime = createRuntimeWithMockedGlue(mock(StepDefinitionMatch.class), beforeHook, true);
         feature.run(mock(Formatter.class), mock(Reporter.class), runtime);
 
         ArgumentCaptor<Scenario> capturedScenario = ArgumentCaptor.forClass(Scenario.class);
@@ -538,7 +537,7 @@ public class RuntimeTest {
         return hook;
     }
 
-    public void runStep(Reporter reporter, Runtime runtime) {
+    public void runStep(Reporter reporter, LegacyRuntime runtime) {
         Step step = mock(Step.class);
         I18n i18n = mock(I18n.class);
         runtime.runStep("<featurePath>", step, reporter, i18n);
@@ -550,11 +549,11 @@ public class RuntimeTest {
         return resourceLoader;
     }
 
-    private Runtime createStrictRuntime() {
+    private LegacyRuntime createStrictRuntime() {
         return createRuntime("-g", "anything", "--strict");
     }
 
-    private Runtime createNonStrictRuntime() {
+    private LegacyRuntime createNonStrictRuntime() {
         return createRuntime("-g", "anything");
     }
 
@@ -562,34 +561,34 @@ public class RuntimeTest {
         return createRuntime(resourceLoader, Thread.currentThread().getContextClassLoader(), "-g", "anything", "--strict");
     }
 
-    private Runtime createRuntime(String... runtimeArgs) {
+    private LegacyRuntime createRuntime(String... runtimeArgs) {
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         return createRuntime(resourceLoader, classLoader, runtimeArgs);
     }
 
-    private Runtime createRuntime(ResourceLoader resourceLoader, ClassLoader classLoader, String... runtimeArgs) {
+    private LegacyRuntime createRuntime(ResourceLoader resourceLoader, ClassLoader classLoader, String... runtimeArgs) {
         RuntimeOptions runtimeOptions = new RuntimeOptions(asList(runtimeArgs));
         Backend backend = mock(Backend.class);
         Collection<Backend> backends = Arrays.asList(backend);
 
-        return new Runtime(resourceLoader, classLoader, backends, runtimeOptions);
+        return new LegacyRuntime(resourceLoader, classLoader, backends, runtimeOptions);
     }
 
-    private Runtime createRuntimeWithMockedGlue(StepDefinitionMatch match, String... runtimeArgs) {
+    private LegacyRuntime createRuntimeWithMockedGlue(StepDefinitionMatch match, String... runtimeArgs) {
         return createRuntimeWithMockedGlue(match, false, mock(HookDefinition.class), false, runtimeArgs);
     }
 
-    private Runtime createRuntimeWithMockedGlue(StepDefinitionMatch match, HookDefinition hook, boolean isBefore,
+    private LegacyRuntime createRuntimeWithMockedGlue(StepDefinitionMatch match, HookDefinition hook, boolean isBefore,
                                                 String... runtimeArgs) {
         return createRuntimeWithMockedGlue(match, false, hook, isBefore, runtimeArgs);
     }
 
-    private Runtime createRuntimeWithMockedGlueWithAmbiguousMatch(String... runtimeArgs) {
+    private LegacyRuntime createRuntimeWithMockedGlueWithAmbiguousMatch(String... runtimeArgs) {
         return createRuntimeWithMockedGlue(mock(StepDefinitionMatch.class), true, mock(HookDefinition.class), false, runtimeArgs);
     }
 
-    private Runtime createRuntimeWithMockedGlue(StepDefinitionMatch match, boolean isAmbiguous, HookDefinition hook,
+    private LegacyRuntime createRuntimeWithMockedGlue(StepDefinitionMatch match, boolean isAmbiguous, HookDefinition hook,
                                                 boolean isBefore, String... runtimeArgs) {
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
         ClassLoader classLoader = mock(ClassLoader.class);
@@ -600,7 +599,7 @@ public class RuntimeTest {
         mockHook(glue, hook, isBefore);
         Collection<Backend> backends = Arrays.asList(backend);
 
-        return new Runtime(resourceLoader, classLoader, backends, runtimeOptions, glue);
+        return new LegacyRuntime(resourceLoader, classLoader, backends, runtimeOptions, glue);
     }
 
     private void mockMatch(RuntimeGlue glue, StepDefinitionMatch match, boolean isAmbiguous) {
@@ -620,7 +619,7 @@ public class RuntimeTest {
         }
     }
 
-    private void runScenario(Reporter reporter, Runtime runtime, int stepCount) {
+    private void runScenario(Reporter reporter, LegacyRuntime runtime, int stepCount) {
         gherkin.formatter.model.Scenario gherkinScenario = mock(gherkin.formatter.model.Scenario.class);
         runtime.buildBackendWorlds(reporter, Collections.<Tag>emptySet(), gherkinScenario);
         runtime.runBeforeHooks(reporter, Collections.<Tag>emptySet());

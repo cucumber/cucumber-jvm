@@ -2,6 +2,7 @@ package cucumber.runtime.android;
 
 import android.app.Instrumentation;
 import android.os.Bundle;
+import cucumber.runtime.LegacyRuntime;
 import cucumber.runtime.Runtime;
 import edu.emory.mathcs.backport.java.util.Collections;
 import gherkin.formatter.model.Feature;

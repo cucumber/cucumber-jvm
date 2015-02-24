@@ -1,6 +1,7 @@
 package cucumber.api.cli;
 
 import cucumber.runtime.ClassFinder;
+import cucumber.runtime.LegacyRuntime;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.io.MultiLoader;
@@ -32,7 +33,7 @@ public class Main {
 
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
-        Runtime runtime = new Runtime(resourceLoader, classFinder, classLoader, runtimeOptions);
+        Runtime runtime = new LegacyRuntime(resourceLoader, classFinder, classLoader, runtimeOptions);
         runtime.run();
         return runtime.exitStatus();
     }

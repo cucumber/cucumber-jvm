@@ -1,8 +1,8 @@
 package cucumber.runtime.autocomplete;
 
 import cucumber.runtime.StepDefinition;
-import cucumber.runtime.model.CucumberFeature;
-import cucumber.runtime.model.CucumberTagStatement;
+import cucumber.runtime.CucumberFeature;
+import cucumber.runtime.CucumberTagStatement;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 

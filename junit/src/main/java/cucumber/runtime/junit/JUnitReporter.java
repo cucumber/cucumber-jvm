@@ -18,7 +18,7 @@ import org.junit.runner.notification.RunNotifier;
 import java.util.ArrayList;
 import java.util.List;
 
-import static cucumber.runtime.Runtime.isPending;
+import static cucumber.runtime.LegacyRuntime.isPending;
 
 public class JUnitReporter implements Reporter, Formatter {
     private final List<Step> steps = new ArrayList<Step>();

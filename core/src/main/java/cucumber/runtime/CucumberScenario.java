@@ -33,7 +33,7 @@ public class CucumberScenario extends CucumberTagStatement {
      * This method is called when Cucumber is run from the CLI or JUnit
      */
     @Override
-    public void run(Formatter formatter, Reporter reporter, Runtime runtime) {
+    public void run(Formatter formatter, Reporter reporter, LegacyRuntime runtime) {
         Set<Tag> tags = tagsAndInheritedTags();
         runtime.buildBackendWorlds(reporter, tags, scenario);
         try {
@@ -56,7 +56,7 @@ public class CucumberScenario extends CucumberTagStatement {
         runtime.disposeBackendWorlds();
     }
 
-    private void runBackground(Formatter formatter, Reporter reporter, Runtime runtime) {
+    private void runBackground(Formatter formatter, Reporter reporter, LegacyRuntime runtime) {
         if (cucumberBackground != null) {
             cucumberBackground.format(formatter);
             cucumberBackground.runSteps(reporter, runtime);

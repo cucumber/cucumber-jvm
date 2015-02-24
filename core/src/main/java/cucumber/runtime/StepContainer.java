@@ -34,13 +34,13 @@ public class StepContainer {
         }
     }
 
-    void runSteps(Reporter reporter, Runtime runtime) {
+    void runSteps(Reporter reporter, LegacyRuntime runtime) {
         for (Step step : getSteps()) {
             runStep(step, reporter, runtime);
         }
     }
 
-    void runStep(Step step, Reporter reporter, Runtime runtime) {
+    void runStep(Step step, Reporter reporter, LegacyRuntime runtime) {
         runtime.runStep(cucumberFeature.getPath(), step, reporter, cucumberFeature.getI18n());
     }
 }

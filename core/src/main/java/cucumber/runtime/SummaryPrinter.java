@@ -10,7 +10,7 @@ public class SummaryPrinter {
         this.out = out;
     }
 
-    public void print(cucumber.runtime.Runtime runtime) {
+    public void print(LegacyRuntime runtime) {
         out.println();
         printStats(runtime);
         out.println();
@@ -18,7 +18,7 @@ public class SummaryPrinter {
         printSnippets(runtime);
     }
 
-    private void printStats(cucumber.runtime.Runtime runtime) {
+    private void printStats(LegacyRuntime runtime) {
         runtime.printStats(out);
     }
 

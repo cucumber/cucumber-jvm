@@ -8,13 +8,13 @@ import cucumber.api.StepDefinitionReporter;
 import cucumber.runtime.Backend;
 import cucumber.runtime.ClassFinder;
 import cucumber.runtime.CucumberException;
-import cucumber.runtime.Runtime;
+import cucumber.runtime.LegacyRuntime;
 import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.RuntimeOptionsFactory;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.java.JavaBackend;
 import cucumber.runtime.java.ObjectFactory;
-import cucumber.runtime.model.CucumberFeature;
+import cucumber.runtime.CucumberFeature;
 import dalvik.system.DexFile;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
@@ -62,7 +62,7 @@ public class CucumberExecutor {
     /**
      * The {@link cucumber.runtime.Runtime} to run with.
      */
-    private final Runtime runtime;
+    private final LegacyRuntime runtime;
 
     /**
      * The actual {@link CucumberFeature}s to run.
@@ -86,7 +86,7 @@ public class CucumberExecutor {
         this.runtimeOptions = createRuntimeOptions(context);
 
         ResourceLoader resourceLoader = new AndroidResourceLoader(context);
-        this.runtime = new Runtime(resourceLoader, classLoader, createBackends(), runtimeOptions);
+        this.runtime = new LegacyRuntime(resourceLoader, classLoader, createBackends(), runtimeOptions);
         this.cucumberFeatures = runtimeOptions.cucumberFeatures(resourceLoader);
     }
 

@@ -1,7 +1,7 @@
 package cucumber.runtime.formatter;
 
 import cucumber.runtime.TestHelper;
-import cucumber.runtime.model.CucumberFeature;
+import cucumber.runtime.CucumberFeature;
 import org.junit.Test;
 
 import java.util.HashMap;

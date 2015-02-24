@@ -1,12 +1,12 @@
 package cucumber.runtime.formatter;
 
 import cucumber.runtime.Backend;
-import cucumber.runtime.Runtime;
+import cucumber.runtime.LegacyRuntime;
 import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.TestHelper;
 import cucumber.runtime.Utils;
 import cucumber.runtime.io.ClasspathResourceLoader;
-import cucumber.runtime.model.CucumberFeature;
+import cucumber.runtime.CucumberFeature;
 import cucumber.runtime.snippets.FunctionNameGenerator;
 import gherkin.formatter.model.Feature;
 import gherkin.formatter.model.Match;
@@ -578,7 +578,7 @@ public class JUnitFormatterTest {
         RuntimeOptions runtimeOptions = new RuntimeOptions(args);
         Backend backend = mock(Backend.class);
         when(backend.getSnippet(any(Step.class), any(FunctionNameGenerator.class))).thenReturn("TEST SNIPPET");
-        final cucumber.runtime.Runtime runtime = new Runtime(resourceLoader, classLoader, asList(backend), runtimeOptions);
+        final cucumber.runtime.Runtime runtime = new LegacyRuntime(resourceLoader, classLoader, asList(backend), runtimeOptions);
         runtime.run();
         return report;
     }

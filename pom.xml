@@ -497,12 +497,12 @@
 
     <modules>
         <module>core</module>
+        <module>jruby</module>
         <module>java</module>
         <module>testng</module>
         <module>picocontainer</module>
         <module>clojure</module>
         <module>junit</module>
-        <module>jruby</module>
         <module>jython</module>
         <module>spring</module>
         <module>guice</module>

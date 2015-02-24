@@ -1,7 +1,7 @@
 package cucumber.runtime.junit;
 
-import cucumber.runtime.Runtime;
-import cucumber.runtime.model.CucumberScenario;
+import cucumber.runtime.LegacyRuntime;
+import cucumber.runtime.CucumberScenario;
 import gherkin.formatter.model.Step;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
@@ -17,14 +17,14 @@ import java.util.Map;
  * Runs a scenario, or a "synthetic" scenario derived from an Examples row.
  */
 public class ExecutionUnitRunner extends ParentRunner<Step> {
-    private final Runtime runtime;
+    private final LegacyRuntime runtime;
     private final CucumberScenario cucumberScenario;
     private final JUnitReporter jUnitReporter;
     private Description description;
     private final Map<Step, Description> stepDescriptions = new HashMap<Step, Description>();
     private final List<Step> runnerSteps = new ArrayList<Step>();
 
-    public ExecutionUnitRunner(Runtime runtime, CucumberScenario cucumberScenario, JUnitReporter jUnitReporter) throws InitializationError {
+    public ExecutionUnitRunner(LegacyRuntime runtime, CucumberScenario cucumberScenario, JUnitReporter jUnitReporter) throws InitializationError {
         super(ExecutionUnitRunner.class);
         this.runtime = runtime;
         this.cucumberScenario = cucumberScenario;

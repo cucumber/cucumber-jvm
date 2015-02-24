@@ -2,7 +2,7 @@ package cucumber.api.junit;
 
 import cucumber.api.CucumberOptions;
 import cucumber.runtime.ClassFinder;
-import cucumber.runtime.Runtime;
+import cucumber.runtime.LegacyRuntime;
 import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.RuntimeOptionsFactory;
 import cucumber.runtime.io.MultiLoader;
@@ -11,7 +11,7 @@ import cucumber.runtime.io.ResourceLoaderClassFinder;
 import cucumber.runtime.junit.Assertions;
 import cucumber.runtime.junit.FeatureRunner;
 import cucumber.runtime.junit.JUnitReporter;
-import cucumber.runtime.model.CucumberFeature;
+import cucumber.runtime.CucumberFeature;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
@@ -37,7 +37,7 @@ import java.util.List;
 public class Cucumber extends ParentRunner<FeatureRunner> {
     private final JUnitReporter jUnitReporter;
     private final List<FeatureRunner> children = new ArrayList<FeatureRunner>();
-    private final Runtime runtime;
+    private final LegacyRuntime runtime;
 
     /**
      * Constructor called by JUnit.
@@ -72,10 +72,10 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
      * @throws InitializationError if a JUnit error occurred
      * @throws IOException if a class or resource could not be loaded
      */
-    protected Runtime createRuntime(ResourceLoader resourceLoader, ClassLoader classLoader,
+    protected LegacyRuntime createRuntime(ResourceLoader resourceLoader, ClassLoader classLoader,
                                     RuntimeOptions runtimeOptions) throws InitializationError, IOException {
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
-        return new Runtime(resourceLoader, classFinder, classLoader, runtimeOptions);
+        return new LegacyRuntime(resourceLoader, classFinder, classLoader, runtimeOptions);
     }
 
     @Override

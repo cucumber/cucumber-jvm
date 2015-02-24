@@ -1,7 +1,6 @@
 package cucumber.runtime;
 
 import cucumber.runtime.io.Resource;
-import cucumber.runtime.model.CucumberFeature;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;

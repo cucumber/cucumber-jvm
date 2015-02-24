@@ -2,6 +2,7 @@ package cucumber.api.testng;
 
 import cucumber.runtime.ClassFinder;
 import cucumber.runtime.CucumberException;
+import cucumber.runtime.LegacyRuntime;
 import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.RuntimeOptionsFactory;
 import cucumber.runtime.io.MultiLoader;
@@ -32,7 +33,7 @@ public class TestNGCucumberRunner {
         TestNgReporter reporter = new TestNgReporter(System.out);
         runtimeOptions.addPlugin(reporter);
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
-        runtime = new cucumber.runtime.Runtime(resourceLoader, classFinder, classLoader, runtimeOptions);
+        runtime = new LegacyRuntime(resourceLoader, classFinder, classLoader, runtimeOptions);
     }
 
     /**
