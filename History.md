@@ -1,3 +1,7 @@
+## [1.2.3](https://github.com/cucumber/cucumber-jvm/compare/v1.2.2...master) (In Git)
+
+* Fix non running gradle example ([#839](https://github.com/cucumber/cucumber-jvm/pull/839) Ole Christian Langfjæran)
+
 ## [1.2.2](https://github.com/cucumber/cucumber-jvm/compare/v1.2.0...v1.2.2) (2015-01-13)
 
 (There is no 1.2.1 release)
