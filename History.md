@@ -1,5 +1,6 @@
-## [1.2.3](https://github.com/cucumber/cucumber-jvm/compare/v1.2.2...master) (In Git)
+## [1.2.3-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v1.2.2...master) (In Git)
 
+* Snippets for quoted arguments changed from `(.*?)` to `([^\"]*)` (which is how it was before 1.1.6). See [cucumber/cucumber#63](https://github.com/cucumber/cucumber/pull/663) (Aslak Hellesøy)
 * Fix non running gradle example ([#839](https://github.com/cucumber/cucumber-jvm/pull/839) Ole Christian Langfjæran)
 
 ## [1.2.2](https://github.com/cucumber/cucumber-jvm/compare/v1.2.0...v1.2.2) (2015-01-13)

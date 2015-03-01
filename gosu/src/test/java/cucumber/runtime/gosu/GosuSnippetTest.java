@@ -20,7 +20,7 @@ public class GosuSnippetTest {
     @Test
     public void generatesPlainSnippet() {
         String expected = "" +
-                "Dsl.Given('^I have (\\\\d+) cukes in my \"(.*?)\" belly$', \\ arg1 : int , arg2 : String  -> {\n" +
+                "Dsl.Given('^I have (\\\\d+) cukes in my \"([^\"]*)\" belly$', \\ arg1 : int , arg2 : String  -> {\n" +
                 "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException()\n" +
                 "})\n";
@@ -41,7 +41,7 @@ public class GosuSnippetTest {
     @Test
     public void generatesCopyPasteReadySnippetWhenStepHasIllegalJavaIdentifierChars() {
         String expected = "" +
-                "Dsl.Given('^I have (\\\\d+) cukes in: my \"(.*?)\" red-belly!$', \\ arg1 : int , arg2 : String  -> {\n" +
+                "Dsl.Given('^I have (\\\\d+) cukes in: my \"([^\"]*)\" red-belly!$', \\ arg1 : int , arg2 : String  -> {\n" +
                 "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException()\n" +
                 "})\n";
@@ -52,7 +52,7 @@ public class GosuSnippetTest {
     @Test
     public void generatesCopyPasteReadySnippetWhenStepHasIntegersInsideStringParameter() {
         String expected = "" +
-                "Dsl.Given('^the DI system receives a message saying \"(.*?)\"$', \\ arg1 : String  -> {\n" +
+                "Dsl.Given('^the DI system receives a message saying \"([^\"]*)\"$', \\ arg1 : String  -> {\n" +
                 "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException()\n" +
                 "})\n";

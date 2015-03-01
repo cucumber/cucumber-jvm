@@ -21,7 +21,7 @@ public class ClojureSnippetTest {
         Step step = new Step(NO_COMMENTS, "Given ", "I have 4 cukes in my \"big\" belly", 0, null, null);
         String snippet = newBackend().getSnippet(step, null);
         String expected = "" +
-                "(Given #\"^I have (\\d+) cukes in my \\\"(.*?)\\\" belly$\" [arg1 arg2]\n" +
+                "(Given #\"^I have (\\d+) cukes in my \\\"([^\\\"]*)\\\" belly$\" [arg1 arg2]\n" +
                 "  (comment  Write code here that turns the phrase above into concrete actions  )\n" +
                 "  (throw (cucumber.api.PendingException.)))\n";
         assertEquals(expected, snippet);
