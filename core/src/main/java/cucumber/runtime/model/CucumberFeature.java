@@ -62,8 +62,10 @@ public class CucumberFeature {
         Iterable<Resource> resources = resourceLoader.resources(rerunPath, null);
         for (Resource resource : resources) {
             String source = builder.read(resource);
-            for (String featurePath : source.split(" ")) {
-                loadFromFileSystemOrClasspath(builder, resourceLoader, featurePath, filters);
+            if (!source.isEmpty()) {
+                for (String featurePath : source.split(" ")) {
+                    loadFromFileSystemOrClasspath(builder, resourceLoader, featurePath, filters);
+                }
             }
         }
     }

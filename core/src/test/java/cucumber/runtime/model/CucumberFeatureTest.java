@@ -18,6 +18,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -117,6 +118,26 @@ public class CucumberFeatureTest {
     }
 
     @Test
+    public void loads_no_features_when_rerun_file_is_empty() throws Exception {
+        String feature = "" +
+                "Feature: bar\n" +
+                "  Scenario: scenario bar\n" +
+                "    * step\n";
+        String rerunPath = "path/rerun.txt";
+        String rerunFile = "";
+        ResourceLoader resourceLoader = mockFeatureFileResourceForAnyFeaturePath(feature);
+        mockFileResource(resourceLoader, rerunPath, null, rerunFile);
+
+        List<CucumberFeature> features = CucumberFeature.load(
+                resourceLoader,
+                asList("@" + rerunPath),
+                new ArrayList<Object>(),
+                new PrintStream(new ByteArrayOutputStream()));
+
+        assertEquals(0, features.size());
+    }
+
+    @Test
     public void loads_features_specified_in_rerun_file_from_classpath_when_not_in_file_system() throws Exception {
         String featurePath = "path/bar.feature";
         String feature = "" +
@@ -211,6 +232,16 @@ public class CucumberFeatureTest {
             throws IOException, UnsupportedEncodingException {
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
         mockFeatureFileResource(resourceLoader, featurePath, feature);
+        return resourceLoader;
+    }
+
+    private ResourceLoader mockFeatureFileResourceForAnyFeaturePath(String feature)
+            throws IOException, UnsupportedEncodingException {
+        ResourceLoader resourceLoader = mock(ResourceLoader.class);
+        Resource resource = mock(Resource.class);
+        when(resource.getPath()).thenReturn("");
+        when(resource.getInputStream()).thenReturn(new ByteArrayInputStream(feature.getBytes("UTF-8")));
+        when(resourceLoader.resources(anyString(), anyString())).thenReturn(asList(resource));
         return resourceLoader;
     }
 
