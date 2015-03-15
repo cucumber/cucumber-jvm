@@ -102,7 +102,7 @@ public class CucumberScenarioOutlineTest {
 
         // ... then the Cukes implementation
         CucumberScenarioOutline cukeOutline = new CucumberScenarioOutline(null, null, outline);
-        CucumberScenario exampleScenario = cukeOutline.createExampleScenario(new ExamplesTableRow(C, asList("LOCATION_NAME"), 1, ""), new ExamplesTableRow(C, asList("London"), 1, ""), T);
+        CucumberScenario exampleScenario = cukeOutline.createExampleScenario(new ExamplesTableRow(C, asList("LOCATION_NAME"), 1, ""), new ExamplesTableRow(C, asList("London"), 1, ""), T, "");
 
         assertEquals("Time offset check for London", exampleScenario.getGherkinModel().getName());
     }  
