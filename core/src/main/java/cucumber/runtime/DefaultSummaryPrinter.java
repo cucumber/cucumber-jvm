@@ -1,15 +1,18 @@
 package cucumber.runtime;
 
+import cucumber.api.SummaryPrinter;
+
 import java.io.PrintStream;
 import java.util.List;
 
-public class SummaryPrinter {
+public class DefaultSummaryPrinter implements SummaryPrinter {
     private final PrintStream out;
 
-    public SummaryPrinter(PrintStream out) {
-        this.out = out;
+    public DefaultSummaryPrinter() {
+        this.out = System.out;
     }
 
+    @Override
     public void print(cucumber.runtime.Runtime runtime) {
         out.println();
         printStats(runtime);

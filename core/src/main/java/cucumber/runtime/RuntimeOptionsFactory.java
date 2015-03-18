@@ -1,6 +1,7 @@
 package cucumber.runtime;
 
 import cucumber.api.CucumberOptions;
+import cucumber.runtime.formatter.PluginFactory;
 import cucumber.runtime.io.MultiLoader;
 
 import java.util.ArrayList;
@@ -85,7 +86,9 @@ public class RuntimeOptionsFactory {
         for (String plugin : plugins) {
             args.add("--plugin");
             args.add(plugin);
-            pluginSpecified = true;
+            if (PluginFactory.isFormatterName(plugin)) {
+                pluginSpecified = true;
+            }
         }
     }
 

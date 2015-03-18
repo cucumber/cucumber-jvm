@@ -45,7 +45,12 @@ public class CucumberScenario extends CucumberTagStatement {
 
         runtime.runAfterHooks(reporter, tags);
         formatter.endOfScenarioLifeCycle((Scenario) getGherkinModel());
-        runtime.disposeBackendWorlds();
+        runtime.disposeBackendWorlds(createScenarioDesignation());
+    }
+
+    private String createScenarioDesignation() {
+        return cucumberFeature.getPath() + ":" + Integer.toString(scenario.getLine()) + " # " +
+                scenario.getKeyword() + ": " + scenario.getName();
     }
 
     private void runBackground(Formatter formatter, Reporter reporter, Runtime runtime) {

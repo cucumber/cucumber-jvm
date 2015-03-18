@@ -2,6 +2,7 @@ package cucumber.runtime;
 
 import cucumber.api.Pending;
 import cucumber.api.StepDefinitionReporter;
+import cucumber.api.SummaryPrinter;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.xstream.LocalizedXStreams;
@@ -126,12 +127,12 @@ public class Runtime implements UnreportedStepExecutor {
     }
 
     public void printSummary() {
-        // TODO: inject a SummaryPrinter in the ctor
-        new SummaryPrinter(System.out).print(this);
+        SummaryPrinter summaryPrinter = runtimeOptions.summaryPrinter(classLoader);
+        summaryPrinter.print(this);
     }
 
     void printStats(PrintStream out) {
-        stats.printStats(out);
+        stats.printStats(out, runtimeOptions.isStrict());
     }
 
     public void buildBackendWorlds(Reporter reporter, Set<Tag> tags, Scenario gherkinScenario) {
@@ -144,8 +145,8 @@ public class Runtime implements UnreportedStepExecutor {
         scenarioResult = new ScenarioImpl(reporter, tags, gherkinScenario);
     }
 
-    public void disposeBackendWorlds() {
-        stats.addScenario(scenarioResult.getStatus());
+    public void disposeBackendWorlds(String scenarioDesignation) {
+        stats.addScenario(scenarioResult.getStatus(), scenarioDesignation);
         for (Backend backend : backends) {
             backend.disposeWorld();
         }

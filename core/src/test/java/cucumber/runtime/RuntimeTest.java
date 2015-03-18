@@ -35,6 +35,7 @@ import java.util.Map;
 import static cucumber.runtime.TestHelper.feature;
 import static cucumber.runtime.TestHelper.result;
 import static java.util.Arrays.asList;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
@@ -264,9 +265,9 @@ public class RuntimeTest {
         runScenario(reporter, runtime, stepCount(1));
         runtime.printStats(new PrintStream(baos));
 
-        assertThat(baos.toString(), startsWith(String.format(
+        assertThat(baos.toString(), containsString(String.format("" +
                 "1 Scenarios (1 pending)%n" +
-                        "1 Steps (1 pending)%n")));
+                "1 Steps (1 pending)%n")));
     }
 
     @Test
@@ -279,9 +280,9 @@ public class RuntimeTest {
         runScenario(reporter, runtime, stepCount(1));
         runtime.printStats(new PrintStream(baos));
 
-        assertThat(baos.toString(), startsWith(String.format(
+        assertThat(baos.toString(), containsString(String.format("" +
                 "1 Scenarios (1 failed)%n" +
-                        "1 Steps (1 failed)%n")));
+                "1 Steps (1 failed)%n")));
     }
 
     @Test
@@ -293,9 +294,9 @@ public class RuntimeTest {
         runScenario(reporter, runtime, stepCount(1));
         runtime.printStats(new PrintStream(baos));
 
-        assertThat(baos.toString(), startsWith(String.format(
+        assertThat(baos.toString(), containsString(String.format(""+
                 "1 Scenarios (1 failed)%n" +
-                        "1 Steps (1 failed)%n")));
+                "1 Steps (1 failed)%n")));
     }
 
     @Test
@@ -308,9 +309,9 @@ public class RuntimeTest {
         runScenario(reporter, runtime, stepCount(2));
         runtime.printStats(new PrintStream(baos));
 
-        assertThat(baos.toString(), startsWith(String.format(
+        assertThat(baos.toString(), containsString(String.format("" +
                 "1 Scenarios (1 failed)%n" +
-                        "2 Steps (1 failed, 1 skipped)%n")));
+                "2 Steps (1 failed, 1 skipped)%n")));
     }
 
     @Test
@@ -322,9 +323,9 @@ public class RuntimeTest {
         runScenario(reporter, runtime, stepCount(1));
         runtime.printStats(new PrintStream(baos));
 
-        assertThat(baos.toString(), startsWith(String.format(
+        assertThat(baos.toString(), containsString(String.format("" +
                 "1 Scenarios (1 undefined)%n" +
-                        "1 Steps (1 undefined)%n")));
+                "1 Steps (1 undefined)%n")));
     }
 
     @Test
@@ -338,9 +339,9 @@ public class RuntimeTest {
         runScenario(reporter, runtime, stepCount(1));
         runtime.printStats(new PrintStream(baos));
 
-        assertThat(baos.toString(), startsWith(String.format(
+        assertThat(baos.toString(), containsString(String.format("" +
                 "1 Scenarios (1 failed)%n" +
-                        "1 Steps (1 skipped)%n")));
+                "1 Steps (1 skipped)%n")));
     }
 
     @Test
@@ -354,9 +355,9 @@ public class RuntimeTest {
         runScenario(reporter, runtime, stepCount(1));
         runtime.printStats(new PrintStream(baos));
 
-        assertThat(baos.toString(), startsWith(String.format(
+        assertThat(baos.toString(), containsString(String.format("" +
                 "1 Scenarios (1 failed)%n" +
-                        "1 Steps (1 passed)%n")));
+                "1 Steps (1 passed)%n")));
     }
 
     @Test
@@ -630,7 +631,7 @@ public class RuntimeTest {
             runStep(reporter, runtime);
         }
         runtime.runAfterHooks(reporter, Collections.<Tag>emptySet());
-        runtime.disposeBackendWorlds();
+        runtime.disposeBackendWorlds("scenario designation");
     }
 
     private int stepCount(int stepCount) {
