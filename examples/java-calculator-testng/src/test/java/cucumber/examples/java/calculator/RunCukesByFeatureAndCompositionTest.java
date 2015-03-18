@@ -1,14 +1,20 @@
-package cucumber.api.testng;
+package cucumber.examples.java.calculator;
 
+import cucumber.api.CucumberOptions;
+import cucumber.api.testng.TestNGCucumberRunner;
+import cucumber.api.testng.CucumberFeatureWrapper;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 /**
- * Runs cucumber every detected feature as separated test
+ * An example of using TestNG when the test class does not inherit from 
+ * AbstractTestNGCucumberTests but still executes each feature as a separate
+ * TestNG test.
  */
-public abstract class AbstractTestNGCucumberTests {
+@CucumberOptions(format = "json:target/cucumber-report-feature-composite.json")
+public class RunCukesByFeatureAndCompositionTest extends RunCukesByCompositionBase {
     private TestNGCucumberRunner testNGCucumberRunner;
 
     @BeforeClass(alwaysRun = true)
@@ -21,9 +27,6 @@ public abstract class AbstractTestNGCucumberTests {
         testNGCucumberRunner.runCucumber(cucumberFeature.getCucumberFeature());
     }
 
-    /**
-     * @return returns two dimensional array of {@link CucumberFeatureWrapper} objects.
-     */
     @DataProvider
     public Object[][] features() {
         return testNGCucumberRunner.provideFeatures();
