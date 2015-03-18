@@ -20,6 +20,7 @@ import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
 import cucumber.runtime.snippets.FunctionNameGenerator;
+import cucumber.runtime.snippets.Snippet;
 import cucumber.runtime.snippets.SnippetGenerator;
 import gherkin.formatter.model.Step;
 
@@ -34,7 +35,18 @@ import static cucumber.runtime.io.MultiLoader.packageName;
 
 public class JavaBackend implements Backend {
     public static final ThreadLocal<JavaBackend> INSTANCE = new ThreadLocal<JavaBackend>();
-    private SnippetGenerator snippetGenerator = new SnippetGenerator(new JavaSnippet());
+    private final SnippetGenerator snippetGenerator = new SnippetGenerator(createSnippet());
+
+    private Snippet createSnippet() {
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        try {
+            classLoader.loadClass("cucumber.runtime.java8.LambdaGlueBase");
+            return new Java8Snippet();
+        } catch (ClassNotFoundException thatsOk) {
+            return new JavaSnippet();
+        }
+    }
+
     private final ObjectFactory objectFactory;
     private final ClassFinder classFinder;
 
