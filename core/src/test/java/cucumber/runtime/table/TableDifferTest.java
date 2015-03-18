@@ -167,7 +167,7 @@ public class TableDifferTest {
     }
 
     @Test(expected = TableDiffException.class)
-    public void shouldFindNewLinesAtEndWhenUsingDiff() {
+    public void should_find_new_lines_at_end_when_using_diff() {
         try {
             List<List<String>> other = otherTableWithInsertedAtEnd().raw();
             table().diff(other);
