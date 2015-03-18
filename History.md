@@ -1,8 +1,9 @@
 ## [1.2.3-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v1.2.2...master) (In Git)
 
+* [Core] Set a description for Scenario Outline scenarios ([#841](https://github.com/cucumber/cucumber-jvm/pull/841), [#837](https://github.com/cucumber/cucumber-jvm/issues/837) Björn Rasmusson)
 * [Core] Call all formatters, also in case of unimplemented methods ([#842](https://github.com/cucumber/cucumber-jvm/pull/842), [#803](https://github.com/cucumber/cucumber-jvm/issues/803) Björn Rasmusson)
 * [TestNG] Run each feature as separate TestNG test ([#817](https://github.com/cucumber/cucumber-jvm/pull/817), [#653](https://github.com/cucumber/cucumber-jvm/pull/653) Dmitry Sidorenko, Björn Rasmusson)
-* [Core] Implement TestNG-compatible XML formatter ([#818](https://github.com/cucumber/cucumber-jvm/pull/818), [#621](https://github.com/cucumber/cucumber-jvm/pull/621) Dimitry Berezhony, Björn Rasmusson)
+* [Core] Implement TestNG-compatible XML formatter ([#818](https://github.com/cucumber/cucumber-jvm/pull/818), [#621](https://github.com/cucumber/cucumber-jvm/pull/621) Dmitry Berezhony, Björn Rasmusson)
 * `DataTable.diff(List)` gives proper error message when the `List` argument is empty (Aslak Hellesøy)
 * Execute no scenarios when the rerun file is empty ([#840](https://github.com/cucumber/cucumber-jvm/issues/840) Björn Rasmusson)
 * Snippets for quoted arguments changed from `(.*?)` to `([^\"]*)` (which is how it was before 1.1.6). See [cucumber/cucumber#663](https://github.com/cucumber/cucumber/pull/663) (Aslak Hellesøy)

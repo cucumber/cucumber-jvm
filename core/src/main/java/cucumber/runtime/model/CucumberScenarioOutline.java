@@ -52,11 +52,12 @@ public class CucumberScenarioOutline extends CucumberTagStatement {
         format(formatter);
     }
 
-    CucumberScenario createExampleScenario(ExamplesTableRow header, ExamplesTableRow example, List<Tag> examplesTags) {
+    CucumberScenario createExampleScenario(ExamplesTableRow header, ExamplesTableRow example, List<Tag> examplesTags, String examplesDescription) {
         // Make sure we replace the tokens in the name of the scenario
         String exampleScenarioName = replaceTokens(new HashSet<Integer>(), header.getCells(), example.getCells(), getGherkinModel().getName());
+        String exampleScenarioDescription = createExampleScenarioDescription(getGherkinModel().getDescription(), examplesDescription);
 
-        Scenario exampleScenario = new Scenario(example.getComments(), examplesTags, getGherkinModel().getKeyword(), exampleScenarioName, "", example.getLine(), example.getId());
+        Scenario exampleScenario = new Scenario(example.getComments(), examplesTags, getGherkinModel().getKeyword(), exampleScenarioName, exampleScenarioDescription, example.getLine(), example.getId());
         CucumberScenario cucumberScenario = new CucumberScenario(cucumberFeature, cucumberBackground, exampleScenario, example);
         for (Step step : getSteps()) {
             cucumberScenario.step(createExampleStep(step, header, example));
@@ -122,5 +123,17 @@ public class CucumberScenarioOutline extends CucumberTagStatement {
             }
         }
         return text;
+    }
+
+    private String createExampleScenarioDescription(String scenarioOutlineDescription, String examplesDescription) {
+        if (!examplesDescription.isEmpty()) {
+            if (!scenarioOutlineDescription.isEmpty()) {
+                return scenarioOutlineDescription + ", " + examplesDescription;
+            } else {
+                return examplesDescription;
+            }
+        } else {
+            return scenarioOutlineDescription;
+        }
     }
 }
