@@ -240,7 +240,14 @@ public class RuntimeOptions {
             public Object invoke(Object target, Method method, Object[] args) throws Throwable {
                 for (Object plugin : getPlugins()) {
                     if (type.isInstance(plugin)) {
-                        Utils.invoke(plugin, method, 0, args);
+                        try {
+                            Utils.invoke(plugin, method, 0, args);
+                        } catch (Throwable t) {
+                            if (!method.getName().equals("startOfScenarioLifeCycle") && !method.getName().equals("endOfScenarioLifeCycle")) {
+                                // IntelliJ has its own formatter which doesn't yet implement these methods.
+                                throw t;
+                            }
+                        }
                     }
                 }
                 return null;

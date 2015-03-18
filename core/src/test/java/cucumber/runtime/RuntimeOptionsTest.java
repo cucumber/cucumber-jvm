@@ -1,5 +1,14 @@
 package cucumber.runtime;
 
+import gherkin.formatter.Reporter;
+import gherkin.formatter.model.Background;
+import gherkin.formatter.model.Examples;
+import gherkin.formatter.model.Feature;
+import gherkin.formatter.model.Match;
+import gherkin.formatter.model.Result;
+import gherkin.formatter.model.ScenarioOutline;
+import gherkin.formatter.model.Step;
+import cucumber.runtime.formatter.FormatterSpy;
 import cucumber.api.SnippetType;
 import cucumber.runtime.formatter.ColorAware;
 import cucumber.runtime.formatter.PluginFactory;
@@ -13,10 +22,9 @@ import org.junit.Test;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 import java.util.regex.Pattern;
@@ -296,6 +304,35 @@ public class RuntimeOptionsTest {
         assertOnlyScenarioName(features.get(1), "scenario_2_2");
     }
 
+    @Test
+    public void handles_formatters_missing_startOfScenarioLifeCycle_endOfScenarioLifeCycle() throws Throwable {
+        CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
+                "Feature: feature name\n" +
+                "  Scenario: scenario name\n" +
+                "    Given step\n");
+
+        FormatterSpy formatterSpy = new FormatterSpy();
+        RuntimeOptions runtimeOptions = new RuntimeOptions("");
+        runtimeOptions.addPlugin(new FormatterMissingLifecycleMethods());
+        runtimeOptions.addPlugin(formatterSpy);
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        TestHelper.runFeatureWithFormatter(feature, new HashMap<String, String>(),
+                                           runtimeOptions.formatter(classLoader), runtimeOptions.reporter(classLoader));
+
+        assertEquals("" +
+                "uri\n" +
+                "feature\n" +
+                "  startOfScenarioLifeCycle\n" +
+                "  scenario\n" +
+                "    step\n" +
+                "    match\n" +
+                "    result\n" +
+                "  endOfScenarioLifeCycle\n" +
+                "eof\n" +
+                "done\n" +
+                "close\n", formatterSpy.toString());
+    }
+
     private void assertOnlyScenarioName(CucumberFeature feature, String scenarioName) {
         assertEquals("Wrong number of scenarios loaded for feature", 1, feature.getFeatureElements().size());
         assertEquals("Scenario: " + scenarioName, feature.getFeatureElements().get(0).getVisualName());
@@ -308,4 +345,87 @@ public class RuntimeOptionsTest {
         when(resource1.getInputStream()).thenReturn(new ByteArrayInputStream(feature.getBytes("UTF-8")));
         when(resourceLoader.resources(featurePath, ".feature")).thenReturn(asList(resource1));
     }
+}
+
+class FormatterMissingLifecycleMethods implements Formatter, Reporter {
+    @Override
+    public void startOfScenarioLifeCycle(gherkin.formatter.model.Scenario arg0) {
+        throw new NoSuchMethodError(); // simulate that this method is not implemented
+    }
+
+    @Override
+    public void endOfScenarioLifeCycle(gherkin.formatter.model.Scenario arg0) {
+        throw new NoSuchMethodError(); // simulate that this method is not implemented
+    }
+
+    @Override
+    public void after(Match arg0, Result arg1) {
+    }
+
+    @Override
+    public void before(Match arg0, Result arg1) {
+    }
+
+    @Override
+    public void embedding(String arg0, byte[] arg1) {
+    }
+
+    @Override
+    public void match(Match arg0) {
+    }
+
+    @Override
+    public void result(Result arg0) {
+    }
+
+    @Override
+    public void write(String arg0) {
+    }
+
+    @Override
+    public void background(Background arg0) {
+    }
+
+    @Override
+    public void close() {
+    }
+
+    @Override
+    public void done() {
+    }
+
+    @Override
+    public void eof() {
+    }
+
+    @Override
+    public void examples(Examples arg0) {
+    }
+
+    @Override
+    public void feature(Feature arg0) {
+
+    }
+
+    @Override
+    public void scenario(gherkin.formatter.model.Scenario arg0) {
+
+    }
+
+    @Override
+    public void scenarioOutline(ScenarioOutline arg0) {
+    }
+
+    @Override
+    public void step(Step arg0) {
+    }
+
+    @Override
+    public void syntaxError(String arg0, String arg1, List<String> arg2, String arg3, Integer arg4) {
+    }
+
+    @Override
+    public void uri(String arg0) {
+    }
+
 }
