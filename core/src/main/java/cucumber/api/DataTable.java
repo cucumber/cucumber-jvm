@@ -54,7 +54,7 @@ public class DataTable {
     public DataTable(List<DataTableRow> gherkinRows, TableConverter tableConverter) {
         this.gherkinRows = gherkinRows;
         this.tableConverter = tableConverter;
-        int columns = gherkinRows.get(0).getCells().size();
+        int columns = gherkinRows.isEmpty() ? 0 : gherkinRows.get(0).getCells().size();
         List<List<String>> raw = new ArrayList<List<String>>();
         for (Row row : gherkinRows) {
             List<String> list = new ArrayList<String>();
@@ -137,7 +137,7 @@ public class DataTable {
     }
 
     public List<String> topCells() {
-        return raw.get(0);
+        return raw.isEmpty() ? Collections.<String>emptyList() : raw.get(0);
     }
 
     public List<List<String>> cells(int firstRow) {

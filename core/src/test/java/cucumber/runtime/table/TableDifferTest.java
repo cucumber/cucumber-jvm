@@ -142,7 +142,6 @@ public class TableDifferTest {
         }
     }
 
-
     @Test(expected = TableDiffException.class)
     public void shouldFindNewLinesAtEnd() {
         try {
@@ -210,7 +209,23 @@ public class TableDifferTest {
             assertEquals(expected, e.getMessage());
             throw e;
         }
+    }
 
+    @Test(expected = TableDiffException.class)
+    public void should_diff_with_empty_list() {
+        try {
+            List<List<String>> other = new ArrayList<List<String>>();
+            table().diff(other);
+        } catch (TableDiffException e) {
+            String expected = "" +
+                    "Tables were not identical:\n" +
+                    "    - | Aslak | aslak@email.com | 123 |\n" +
+                    "    - | Joe   | joe@email.com   | 234 |\n" +
+                    "    - | Bryan | bryan@email.org | 456 |\n" +
+                    "    - | Ni    | ni@email.com    | 654 |\n";
+            assertEquals(expected, e.getMessage());
+            throw e;
+        }
     }
 
     @Test(expected = TableDiffException.class)
