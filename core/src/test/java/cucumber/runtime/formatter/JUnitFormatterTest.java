@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
+import static cucumber.runtime.TestHelper.result;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -74,10 +75,10 @@ public class JUnitFormatterTest {
                         "    Given first step\n" +
                         "    When second step\n" +
                         "    Then third step\n");
-        Map<String, String> stepsToResult = new HashMap<String, String>();
-        stepsToResult.put("first step", "passed");
-        stepsToResult.put("second step", "passed");
-        stepsToResult.put("third step", "passed");
+        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        stepsToResult.put("first step", result("passed"));
+        stepsToResult.put("second step", result("passed"));
+        stepsToResult.put("third step", result("passed"));
         long stepDuration = milliSeconds(1);
 
         String formatterOutput = runFeatureWithJUnitFormatter(feature, stepsToResult, stepDuration);
@@ -103,10 +104,10 @@ public class JUnitFormatterTest {
                         "    Given first step\n" +
                         "    When second step\n" +
                         "    Then third step\n");
-        Map<String, String> stepsToResult = new HashMap<String, String>();
-        stepsToResult.put("first step", "pending");
-        stepsToResult.put("second step", "skipped");
-        stepsToResult.put("third step", "undefined");
+        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        stepsToResult.put("first step", result("pending"));
+        stepsToResult.put("second step", result("skipped"));
+        stepsToResult.put("third step", result("undefined"));
         long stepDuration = milliSeconds(1);
 
         String formatterOutput = runFeatureWithJUnitFormatter(feature, stepsToResult, stepDuration);
@@ -132,10 +133,10 @@ public class JUnitFormatterTest {
                         "    Given first step\n" +
                         "    When second step\n" +
                         "    Then third step\n");
-        Map<String, String> stepsToResult = new HashMap<String, String>();
-        stepsToResult.put("first step", "passed");
-        stepsToResult.put("second step", "passed");
-        stepsToResult.put("third step", "failed");
+        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        stepsToResult.put("first step", result("passed"));
+        stepsToResult.put("second step", result("passed"));
+        stepsToResult.put("third step", result("failed"));
         long stepDuration = milliSeconds(1);
 
         String formatterOutput = runFeatureWithJUnitFormatter(feature, stepsToResult, stepDuration);
@@ -164,12 +165,12 @@ public class JUnitFormatterTest {
                         "    Given first step\n" +
                         "    When second step\n" +
                         "    Then third step\n");
-        Map<String, String> stepsToResult = new HashMap<String, String>();
-        stepsToResult.put("first step", "passed");
-        stepsToResult.put("second step", "passed");
-        stepsToResult.put("third step", "passed");
-        List<SimpleEntry<String, String>> hooks = new ArrayList<SimpleEntry<String, String>>();
-        hooks.add(TestHelper.hookEntry("before", "failed"));
+        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        stepsToResult.put("first step", result("passed"));
+        stepsToResult.put("second step", result("passed"));
+        stepsToResult.put("third step", result("passed"));
+        List<SimpleEntry<String, Result>> hooks = new ArrayList<SimpleEntry<String, Result>>();
+        hooks.add(TestHelper.hookEntry("before", result("failed")));
         long stepHookDuration = milliSeconds(1);
 
         String formatterOutput = runFeatureWithJUnitFormatter(feature, stepsToResult, hooks, stepHookDuration);
@@ -199,12 +200,12 @@ public class JUnitFormatterTest {
                         "  Scenario: scenario name\n" +
                         "    When second step\n" +
                         "    Then third step\n");
-        Map<String, String> stepsToResult = new HashMap<String, String>();
-        stepsToResult.put("first step", "passed");
-        stepsToResult.put("second step", "passed");
-        stepsToResult.put("third step", "passed");
-        List<SimpleEntry<String, String>> hooks = new ArrayList<SimpleEntry<String, String>>();
-        hooks.add(TestHelper.hookEntry("before", "failed"));
+        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        stepsToResult.put("first step", result("passed"));
+        stepsToResult.put("second step", result("passed"));
+        stepsToResult.put("third step", result("passed"));
+        List<SimpleEntry<String, Result>> hooks = new ArrayList<SimpleEntry<String, Result>>();
+        hooks.add(TestHelper.hookEntry("before", result("failed")));
         long stepHookDuration = milliSeconds(1);
 
         String formatterOutput = runFeatureWithJUnitFormatter(feature, stepsToResult, hooks, stepHookDuration);
@@ -233,12 +234,12 @@ public class JUnitFormatterTest {
                         "    Given first step\n" +
                         "    When second step\n" +
                         "    Then third step\n");
-        Map<String, String> stepsToResult = new HashMap<String, String>();
-        stepsToResult.put("first step", "passed");
-        stepsToResult.put("second step", "passed");
-        stepsToResult.put("third step", "passed");
-        List<SimpleEntry<String, String>> hooks = new ArrayList<SimpleEntry<String, String>>();
-        hooks.add(TestHelper.hookEntry("after","failed"));
+        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        stepsToResult.put("first step", result("passed"));
+        stepsToResult.put("second step", result("passed"));
+        stepsToResult.put("third step", result("passed"));
+        List<SimpleEntry<String, Result>> hooks = new ArrayList<SimpleEntry<String, Result>>();
+        hooks.add(TestHelper.hookEntry("after", result("failed")));
         long stepHookDuration = milliSeconds(1);
 
         String formatterOutput = runFeatureWithJUnitFormatter(feature, stepsToResult, hooks, stepHookDuration);
@@ -266,12 +267,12 @@ public class JUnitFormatterTest {
                         "  Scenario: scenario name\n" +
                         "    * first step\n" +
                         "    * second step\n");
-        Map<String, String> stepsToResult = new HashMap<String, String>();
-        stepsToResult.put("first step", "passed");
-        stepsToResult.put("second step", "passed");
-        List<SimpleEntry<String, String>> hooks = new ArrayList<SimpleEntry<String, String>>();
-        hooks.add(TestHelper.hookEntry("before","passed"));
-        hooks.add(TestHelper.hookEntry("after","passed"));
+        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        stepsToResult.put("first step", result("passed"));
+        stepsToResult.put("second step", result("passed"));
+        List<SimpleEntry<String, Result>> hooks = new ArrayList<SimpleEntry<String, Result>>();
+        hooks.add(TestHelper.hookEntry("before", result("passed")));
+        hooks.add(TestHelper.hookEntry("after", result("passed")));
         long stepHookDuration = milliSeconds(1);
 
         String formatterOutput = runFeatureWithJUnitFormatter(feature, stepsToResult, hooks, stepHookDuration);
@@ -300,10 +301,10 @@ public class JUnitFormatterTest {
                         "    | arg |\n" +
                         "    |  a  |\n" +
                         "    |  b  |\n");
-        Map<String, String> stepsToResult = new HashMap<String, String>();
-        stepsToResult.put("first step", "passed");
-        stepsToResult.put("second step", "passed");
-        stepsToResult.put("third step", "passed");
+        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        stepsToResult.put("first step", result("passed"));
+        stepsToResult.put("second step", result("passed"));
+        stepsToResult.put("third step", result("passed"));
         long stepDuration = milliSeconds(1);
 
         String formatterOutput = runFeatureWithJUnitFormatter(feature, stepsToResult, stepDuration);
@@ -344,10 +345,10 @@ public class JUnitFormatterTest {
                         "    | arg |\n" +
                         "    |  c  |\n" +
                         "    |  d  |\n");
-        Map<String, String> stepsToResult = new HashMap<String, String>();
-        stepsToResult.put("first step", "passed");
-        stepsToResult.put("second step", "passed");
-        stepsToResult.put("third step", "passed");
+        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        stepsToResult.put("first step", result("passed"));
+        stepsToResult.put("second step", result("passed"));
+        stepsToResult.put("third step", result("passed"));
         long stepDuration = milliSeconds(1);
 
         String formatterOutput = runFeatureWithJUnitFormatter(feature, stepsToResult, stepDuration);
@@ -398,10 +399,10 @@ public class JUnitFormatterTest {
                         "    | arg |\n" +
                         "    |  a  |\n" +
                         "    |  b  |\n");
-        Map<String, String> stepsToResult = new HashMap<String, String>();
-        stepsToResult.put("first step", "passed");
-        stepsToResult.put("second step", "passed");
-        stepsToResult.put("third step", "passed");
+        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        stepsToResult.put("first step", result("passed"));
+        stepsToResult.put("second step", result("passed"));
+        stepsToResult.put("third step", result("passed"));
         long stepDuration = milliSeconds(1);
 
         String formatterOutput = runFeatureWithJUnitFormatter(feature, stepsToResult, stepDuration);
@@ -584,16 +585,16 @@ public class JUnitFormatterTest {
     }
 
     private String runFeatureWithJUnitFormatter(final CucumberFeature feature) throws Throwable {
-        return runFeatureWithJUnitFormatter(feature, new HashMap<String, String>(), 0L);
+        return runFeatureWithJUnitFormatter(feature, new HashMap<String, Result>(), 0L);
     }
 
-    private String runFeatureWithJUnitFormatter(final CucumberFeature feature, final Map<String, String> stepsToResult, final long stepHookDuration)
+    private String runFeatureWithJUnitFormatter(final CucumberFeature feature, final Map<String, Result> stepsToResult, final long stepHookDuration)
             throws Throwable {
-        return runFeatureWithJUnitFormatter(feature, stepsToResult, Collections.<SimpleEntry<String, String>>emptyList(), stepHookDuration);
+        return runFeatureWithJUnitFormatter(feature, stepsToResult, Collections.<SimpleEntry<String, Result>>emptyList(), stepHookDuration);
     }
 
-    private String runFeatureWithJUnitFormatter(final CucumberFeature feature, final Map<String, String> stepsToResult,
-                                                final List<SimpleEntry<String, String>> hooks, final long stepHookDuration) throws Throwable {
+    private String runFeatureWithJUnitFormatter(final CucumberFeature feature, final Map<String, Result> stepsToResult,
+            final List<SimpleEntry<String, Result>> hooks, final long stepHookDuration) throws Throwable {
         final File report = File.createTempFile("cucumber-jvm-junit", ".xml");
         final JUnitFormatter junitFormatter = createJUnitFormatter(report);
         TestHelper.runFeatureWithFormatter(feature, stepsToResult, hooks, stepHookDuration, junitFormatter, junitFormatter);
@@ -647,14 +648,6 @@ public class JUnitFormatterTest {
 
     private Match match() {
         return mock(Match.class);
-    }
-
-    private Result result(String status) {
-        return result(status, null);
-    }
-
-    private Result result(String status, Long duration) {
-        return new Result(status, duration, null);
     }
 
     private Long milliSeconds(int milliSeconds) {

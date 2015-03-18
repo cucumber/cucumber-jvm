@@ -8,6 +8,7 @@ import cucumber.runtime.model.CucumberFeature;
 import gherkin.I18n;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
+import gherkin.formatter.model.Result;
 import gherkin.formatter.model.Step;
 import gherkin.formatter.model.Tag;
 import junit.framework.AssertionFailedError;
@@ -60,24 +61,38 @@ public class TestHelper {
         return cucumberFeatures.get(0);
     }
 
-    public static void runFeatureWithFormatter(final CucumberFeature feature, final Map<String, String> stepsToResult, final List<SimpleEntry<String, String>> hooks,
-                                               final long stepHookDuration, final Formatter formatter, final Reporter reporter) throws Throwable {
-        runFeaturesWithFormatter(Arrays.asList(feature), stepsToResult, Collections.<String, String>emptyMap(), hooks, stepHookDuration, formatter, reporter);
+    public static Result result(String status) {
+        if (status.equals(Result.FAILED)) {
+            return result(status, mockAssertionFailedError());
+        } else if (status.equals("pending")){
+            return result(status, new PendingException());
+        } else {
+            return new Result(status, 0L, null);
+        }
     }
 
-    public static void runFeaturesWithFormatter(final List<CucumberFeature> features, final Map<String, String> stepsToResult,
-                                                final List<SimpleEntry<String, String>> hooks, final long stepHookDuration, final Formatter formatter, final Reporter reporter) throws Throwable {
-        runFeaturesWithFormatter(features, stepsToResult, Collections.<String, String>emptyMap(), hooks, stepHookDuration, formatter, reporter);
+    public static Result result(String status, Throwable error) {
+        return new Result(status, 0L, error, null);
+    }
+
+    public static void runFeatureWithFormatter(final CucumberFeature feature, final Map<String, Result> stepsToResult, final List<SimpleEntry<String, Result>> hooks,
+            final long stepHookDuration, final Formatter formatter, final Reporter reporter) throws Throwable, FileNotFoundException {
+        runFeaturesWithFormatter(Arrays.asList(feature), stepsToResult, Collections.<String,String>emptyMap(), hooks, stepHookDuration, formatter, reporter);
+    }
+
+    public static void runFeaturesWithFormatter(final List<CucumberFeature> features, final Map<String, Result> stepsToResult,
+            final List<SimpleEntry<String, Result>> hooks, final long stepHookDuration, final Formatter formatter, final Reporter reporter) throws Throwable {
+        runFeaturesWithFormatter(features, stepsToResult, Collections.<String,String>emptyMap(), hooks, stepHookDuration, formatter, reporter);
     }
 
     public static void runFeatureWithFormatter(final CucumberFeature feature, final Map<String, String> stepsToLocation,
-                                               final Formatter formatter, final Reporter reporter) throws Throwable {
-        runFeaturesWithFormatter(Arrays.asList(feature), Collections.<String, String>emptyMap(), stepsToLocation,
-                Collections.<SimpleEntry<String, String>>emptyList(), 0L, formatter, reporter);
+                                               final Formatter formatter, final Reporter reporter) throws Throwable {        runFeaturesWithFormatter(Arrays.asList(feature), Collections.<String, Result>emptyMap(), stepsToLocation,
+                Collections.<SimpleEntry<String, Result>>emptyList(), 0L, formatter, reporter);
     }
 
-    private static void runFeaturesWithFormatter(final List<CucumberFeature> features, final Map<String, String> stepsToResult, final Map<String, String> stepsToLocation,
-                                                 final List<SimpleEntry<String, String>> hooks, final long stepHookDuration, final Formatter formatter, final Reporter reporter) throws Throwable {
+    private static void runFeaturesWithFormatter(final List<CucumberFeature> features, final Map<String, Result> stepsToResult, final Map<String, String> stepsToLocation,
+                                                  final List<SimpleEntry<String, Result>> hooks, final long stepHookDuration, final Formatter formatter,
+                                                  final Reporter reporter) throws Throwable {
         final RuntimeOptions runtimeOptions = new RuntimeOptions("");
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         final ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
@@ -91,18 +106,18 @@ public class TestHelper {
         formatter.close();
     }
 
-    private static RuntimeGlue createMockedRuntimeGlueThatMatchesTheSteps(Map<String, String> stepsToResult, Map<String, String> stepsToLocation,
-                                                                          final List<SimpleEntry<String, String>> hooks) throws Throwable {
+    private static RuntimeGlue createMockedRuntimeGlueThatMatchesTheSteps(Map<String, Result> stepsToResult, Map<String, String> stepsToLocation,
+                                                                          final List<SimpleEntry<String, Result>> hooks) throws Throwable {
         RuntimeGlue glue = mock(RuntimeGlue.class);
         TestHelper.mockSteps(glue, stepsToResult, stepsToLocation);
         TestHelper.mockHooks(glue, hooks);
         return glue;
     }
 
-    private static void mockSteps(RuntimeGlue glue, Map<String, String> stepsToResult, Map<String, String> stepsToLocation) throws Throwable {
+    private static void mockSteps(RuntimeGlue glue, Map<String, Result> stepsToResult, Map<String, String> stepsToLocation) throws Throwable {
         for (String stepName : mergeStepSets(stepsToResult, stepsToLocation)) {
-            String stepResult = getResultWithDefaultPassed(stepsToResult, stepName);
-            if (!"undefined".equals(stepResult)) {
+            Result stepResult = getResultWithDefaultPassed(stepsToResult, stepName);
+            if (!"undefined".equals(stepResult.getStatus())) {
                 StepDefinitionMatch matchStep = mock(StepDefinitionMatch.class);
                 when(glue.stepDefinitionMatch(anyString(), TestHelper.stepWithName(stepName), (I18n) any())).thenReturn(matchStep);
                 mockStepResult(stepResult, matchStep);
@@ -111,15 +126,14 @@ public class TestHelper {
         }
     }
 
-    private static void mockStepResult(String stepResult, StepDefinitionMatch matchStep) throws Throwable {
-        if ("pending".equals(stepResult)) {
+    private static void mockStepResult(Result stepResult, StepDefinitionMatch matchStep) throws Throwable {
+        if ("pending".equals(stepResult.getStatus())) {
             doThrow(new PendingException()).when(matchStep).runStep((I18n) any());
-        } else if ("failed".equals(stepResult)) {
-            AssertionFailedError error = TestHelper.mockAssertionFailedError();
-            doThrow(error).when(matchStep).runStep((I18n) any());
-        } else if (!"passed".equals(stepResult) &&
-                !"skipped".equals(stepResult)) {
-            fail("Cannot mock step to the result: " + stepResult);
+        } else if (Result.FAILED.equals(stepResult.getStatus())) {
+            doThrow(stepResult.getError()).when(matchStep).runStep((I18n) any());
+        } else if (!Result.PASSED.equals(stepResult.getStatus()) &&
+                   !"skipped".equals(stepResult.getStatus())) {
+            fail("Cannot mock step to the result: " + stepResult.getStatus());
         }
     }
 
@@ -127,10 +141,10 @@ public class TestHelper {
         when(matchStep.getLocation()).thenReturn(stepLocation);
     }
 
-    private static void mockHooks(RuntimeGlue glue, final List<SimpleEntry<String, String>> hooks) throws Throwable {
+    private static void mockHooks(RuntimeGlue glue, final List<SimpleEntry<String, Result>> hooks) throws Throwable {
         List<HookDefinition> beforeHooks = new ArrayList<HookDefinition>();
         List<HookDefinition> afterHooks = new ArrayList<HookDefinition>();
-        for (SimpleEntry<String, String> hookEntry : hooks) {
+        for (SimpleEntry<String, Result> hookEntry : hooks) {
             TestHelper.mockHook(hookEntry, beforeHooks, afterHooks);
         }
         if (beforeHooks.size() != 0) {
@@ -141,13 +155,12 @@ public class TestHelper {
         }
     }
 
-    private static void mockHook(SimpleEntry<String, String> hookEntry, List<HookDefinition> beforeHooks,
+    private static void mockHook(SimpleEntry<String, Result> hookEntry, List<HookDefinition> beforeHooks,
                                  List<HookDefinition> afterHooks) throws Throwable {
         HookDefinition hook = mock(HookDefinition.class);
         when(hook.matches(anyCollectionOf(Tag.class))).thenReturn(true);
-        if (hookEntry.getValue().equals("failed")) {
-            AssertionFailedError error = TestHelper.mockAssertionFailedError();
-            doThrow(error).when(hook).execute((cucumber.api.Scenario) any());
+        if (hookEntry.getValue().getStatus().equals("failed")) {
+            doThrow(hookEntry.getValue().getError()).when(hook).execute((cucumber.api.Scenario) any());
         }
         if ("before".equals(hookEntry.getKey())) {
             beforeHooks.add(hook);
@@ -176,18 +189,18 @@ public class TestHelper {
         return error;
     }
 
-    public static SimpleEntry<String, String> hookEntry(String type, String result) {
-        return new SimpleEntry<String, String>(type, result);
+    public static SimpleEntry<String, Result> hookEntry(String type, Result result) {
+        return new SimpleEntry<String, Result>(type, result);
     }
 
-    private static Set<String> mergeStepSets(Map<String, String> stepsToResult, Map<String, String> stepsToLocation) {
+    private static Set<String> mergeStepSets(Map<String, Result> stepsToResult, Map<String, String> stepsToLocation) {
         Set<String> steps = new HashSet<String>(stepsToResult.keySet());
         steps.addAll(stepsToLocation.keySet());
         return steps;
     }
 
-    private static String getResultWithDefaultPassed(Map<String, String> stepsToResult, String step) {
-        return stepsToResult.containsKey(step) ? stepsToResult.get(step) : "passed";
+    private static Result getResultWithDefaultPassed(Map<String, Result> stepsToResult, String step) {
+        return stepsToResult.containsKey(step) ? stepsToResult.get(step) : new Result(Result.PASSED, 0L, null);
     }
 
     private static String getLocationWithDefaultEmptyString(Map<String, String> stepsToLocation, String step) {

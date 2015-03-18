@@ -1,5 +1,6 @@
 ## [1.2.3-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v1.2.2...master) (In Git)
 
+* [Core] Implement TestNG-compatible XML formatter ([#818](https://github.com/cucumber/cucumber-jvm/pull/818), [#621](https://github.com/cucumber/cucumber-jvm/pull/621) Dimitry Berezhony, Björn Rasmusson)
 * `DataTable.diff(List)` gives proper error message when the `List` argument is empty (Aslak Hellesøy)
 * Execute no scenarios when the rerun file is empty ([#840](https://github.com/cucumber/cucumber-jvm/issues/840) Björn Rasmusson)
 * Snippets for quoted arguments changed from `(.*?)` to `([^\"]*)` (which is how it was before 1.1.6). See [cucumber/cucumber#663](https://github.com/cucumber/cucumber/pull/663) (Aslak Hellesøy)

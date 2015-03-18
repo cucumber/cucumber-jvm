@@ -46,6 +46,7 @@ public class PluginFactory {
     private static final Map<String, Class> PLUGIN_CLASSES = new HashMap<String, Class>() {{
         put("null", NullFormatter.class);
         put("junit", JUnitFormatter.class);
+        put("testng", TestNGFormatter.class);
         put("html", HTMLFormatter.class);
         put("pretty", CucumberPrettyFormatter.class);
         put("progress", ProgressFormatter.class);
