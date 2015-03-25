@@ -6,19 +6,14 @@ import gherkin.I18n;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 public class RuntimeGlue implements Glue {
     final Map<String, StepDefinition> stepDefinitionsByPattern = new TreeMap<String, StepDefinition>();
-    final List<HookDefinition> beforeHooks = new ArrayList<HookDefinition>();
-    final List<HookDefinition> afterHooks = new ArrayList<HookDefinition>();
-    final List<StepHookDefinition> beforeStepHooks = new ArrayList<StepHookDefinition>();
-    final List<StepHookDefinition> afterStepHooks = new ArrayList<StepHookDefinition>();
+    final List<HookDefinition> beforeHookDefinitions = new ArrayList<HookDefinition>();
+    final List<HookDefinition> afterHookDefinitions = new ArrayList<HookDefinition>();
+    final List<HookDefinition> beforeStepHookDefinitions = new ArrayList<HookDefinition>();
+    final List<HookDefinition> afterStepHookDefinitions = new ArrayList<HookDefinition>();
 
     private final UndefinedStepsTracker tracker;
     private final LocalizedXStreams localizedXStreams;
@@ -39,46 +34,80 @@ public class RuntimeGlue implements Glue {
 
     @Override
     public void addBeforeHook(HookDefinition hookDefinition) {
-        beforeHooks.add(hookDefinition);
-        Collections.sort(beforeHooks, new HookComparator(true));
+        addBeforeHook(hookDefinition, HookScope.SCENARIO);
     }
 
     @Override
     public void addAfterHook(HookDefinition hookDefinition) {
-        afterHooks.add(hookDefinition);
-        Collections.sort(afterHooks, new HookComparator(false));
+        addAfterHook(hookDefinition, HookScope.SCENARIO);
     }
 
     @Override
     public List<HookDefinition> getBeforeHooks() {
-        return beforeHooks;
+        return getBeforeHooks(HookScope.SCENARIO);
     }
 
     @Override
     public List<HookDefinition> getAfterHooks() {
-        return afterHooks;
+        return getAfterHooks(HookScope.SCENARIO);
     }
 
     @Override
-    public void addBeforeStepHook(StepHookDefinition hookDefinition) {
-        beforeStepHooks.add(hookDefinition);
-        Collections.sort(beforeHooks, new HookComparator(false));
+    public void addBeforeHook(HookDefinition hookDefinition, HookScope scope) {
+        switch (scope) {
+            case STEP:
+                beforeStepHookDefinitions.add(hookDefinition);
+                Collections.sort(beforeStepHookDefinitions, new HookComparator(true));
+                break;
+
+            case SCENARIO:
+            default:
+                beforeHookDefinitions.add(hookDefinition);
+                Collections.sort(beforeHookDefinitions, new HookComparator(true));
+                break;
+        }
+        
     }
 
     @Override
-    public void addAfterStepHook(StepHookDefinition hookDefinition) {
-        afterStepHooks.add(hookDefinition);
-        Collections.sort(afterStepHooks, new HookComparator(false));
+    public void addAfterHook(HookDefinition hookDefinition, HookScope scope) {
+        switch (scope) {
+            case STEP:
+                afterStepHookDefinitions.add(hookDefinition);
+                Collections.sort(afterStepHookDefinitions, new HookComparator(false));
+                break;
+
+            case SCENARIO:
+            default:
+                afterHookDefinitions.add(hookDefinition);
+                Collections.sort(afterHookDefinitions, new HookComparator(false));
+                break;
+        }
+        
     }
 
     @Override
-    public List<StepHookDefinition> getBeforeStepHooks() {
-        return beforeStepHooks;
+    public List<HookDefinition> getBeforeHooks(HookScope scope) {
+        switch (scope) {
+            case STEP:
+                return beforeStepHookDefinitions;
+
+            case SCENARIO:
+            default:
+                return beforeHookDefinitions;
+        }
     }
 
     @Override
-    public List<StepHookDefinition> getAfterStepHooks() {
-        return afterStepHooks;
+    public List<HookDefinition> getAfterHooks(HookScope scope) {
+        switch (scope) {
+            case STEP:
+                return afterStepHookDefinitions;
+
+            case SCENARIO:
+            default:
+                return afterHookDefinitions;
+        }
     }
 
     @Override
@@ -119,38 +148,28 @@ public class RuntimeGlue implements Glue {
 
     @Override
     public void removeScenarioScopedGlue() {
-        removeScenarioScopedHooks(beforeHooks);
-        removeScenarioScopedHooks(afterHooks);
-        removeScenarioScopedStepHooks(beforeStepHooks);
-        removeScenarioScopedStepHooks(afterStepHooks);
+        removeScenarioScopedHooks(beforeHookDefinitions);
+        removeScenarioScopedHooks(afterHookDefinitions);
+        removeScenarioScopedHooks(beforeStepHookDefinitions);
+        removeScenarioScopedHooks(afterStepHookDefinitions);
         removeScenarioScopedStepdefs();
     }
 
     private void removeScenarioScopedHooks(List<HookDefinition> beforeHooks1) {
         Iterator<HookDefinition> hookIterator = beforeHooks1.iterator();
-        while(hookIterator.hasNext()) {
-            HookDefinition hook = hookIterator.next();
-            if(hook.isScenarioScoped()) {
+        while (hookIterator.hasNext()) {
+            HookDefinition hookDefinition = hookIterator.next();
+            if (hookDefinition.isScenarioScoped()) {
                 hookIterator.remove();
-            }
-        }
-    }
-    
-    private void removeScenarioScopedStepHooks(List<StepHookDefinition> hooks) {
-        Iterator<StepHookDefinition> hookIt = hooks.iterator();
-        while (hookIt.hasNext()) {
-            StepHookDefinition hook = hookIt.next();
-            if(hook.isScenarioScoped()) {
-                hookIt.remove();
             }
         }
     }
 
     private void removeScenarioScopedStepdefs() {
         Iterator<Map.Entry<String, StepDefinition>> stepdefs = stepDefinitionsByPattern.entrySet().iterator();
-        while(stepdefs.hasNext()) {
+        while (stepdefs.hasNext()) {
             StepDefinition stepDefinition = stepdefs.next().getValue();
-            if(stepDefinition.isScenarioScoped()) {
+            if (stepDefinition.isScenarioScoped()) {
                 stepdefs.remove();
             }
         }

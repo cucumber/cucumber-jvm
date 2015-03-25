@@ -614,9 +614,9 @@ public class RuntimeTest {
 
     private void mockHook(RuntimeGlue glue, HookDefinition hook, boolean isBefore) {
         if (isBefore) {
-            when(glue.getBeforeHooks()).thenReturn(Arrays.asList(hook));
+            when(glue.getBeforeHooks(HookScope.SCENARIO)).thenReturn(Arrays.asList(hook));
         } else {
-            when(glue.getAfterHooks()).thenReturn(Arrays.asList(hook));
+            when(glue.getAfterHooks(HookScope.SCENARIO)).thenReturn(Arrays.asList(hook));
         }
     }
 

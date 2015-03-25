@@ -19,7 +19,6 @@ import java.util.*;
  * This is the main entry point for running Cucumber features.
  */
 public class Runtime implements UnreportedStepExecutor {
-
     private static final String[] PENDING_EXCEPTIONS = new String[]{
             "org.junit.internal.AssumptionViolatedException"
     };
@@ -185,70 +184,46 @@ public class Runtime implements UnreportedStepExecutor {
     }
 
     public void runBeforeHooks(Reporter reporter, Set<Tag> tags) {
-        runHooks(glue.getBeforeHooks(), reporter, tags, true);
+        runHooks(glue.getBeforeHooks(HookScope.SCENARIO), reporter, tags, true);
     }
 
     public void runAfterHooks(Reporter reporter, Set<Tag> tags) {
-        runHooks(glue.getAfterHooks(), reporter, tags, false);
+        runHooks(glue.getAfterHooks(HookScope.SCENARIO), reporter, tags, false);
     }
 
     public void runBeforeStepHooks(Reporter reporter, Step step) {
-        runStepHooks(step, glue.getBeforeStepHooks(), reporter, true);
+        runStepHooks(step, glue.getBeforeHooks(HookScope.STEP), reporter, true);
     }
 
     public void runAfterStepHooks(Reporter reporter, Step step) {
-        runStepHooks(step, glue.getAfterStepHooks(), reporter, false);
+        runStepHooks(step, glue.getAfterHooks(HookScope.STEP), reporter, false);
     }
 
-    private void runHooks(List<HookDefinition> hooks, Reporter reporter, Set<Tag> tags, boolean isBefore) {
+    private void runHooks(List<HookDefinition> hookDefinitions, Reporter reporter, Set<Tag> tags, boolean isBefore) {
         if (!runtimeOptions.isDryRun()) {
-            for (HookDefinition hook : hooks) {
-                runHookIfTagsMatch(hook, reporter, tags, isBefore);
-            }
-        }
-    }
-
-    private void runHookIfTagsMatch(HookDefinition hook, Reporter reporter, Set<Tag> tags, boolean isBefore) {
-        if (hook.matches(tags)) {
-            String status = Result.PASSED;
-            Throwable error = null;
-            Match match = new Match(Collections.<Argument>emptyList(), hook.getLocation(false));
-            stopWatch.start();
-            try {
-                hook.execute(scenarioResult);
-            } catch (Throwable t) {
-                error = t;
-                status = isPending(t) ? "pending" : Result.FAILED;
-                addError(t);
-                skipNextStep = true;
-            } finally {
-                long duration = stopWatch.stop();
-                Result result = new Result(status, duration, error, DUMMY_ARG);
-                addHookToCounterAndResult(result);
-                if (isBefore) {
-                    reporter.before(match, result);
-                } else {
-                    reporter.after(match, result);
+            for (HookDefinition hookDefinition : hookDefinitions) {
+                if (hookDefinition.matches(tags)) {
+                    runHook(scenarioResult, hookDefinition, reporter, isBefore);
                 }
             }
         }
     }
 
-    private void runStepHooks(Step step, List<StepHookDefinition> hooks, Reporter reporter, boolean isBefore) {
+    private void runStepHooks(Step step, List<HookDefinition> hookDefinitions, Reporter reporter, boolean isBefore) {
         if (!runtimeOptions.isDryRun()) {
-            for (StepHookDefinition hook : hooks) {
-                runStepHook(step, hook, reporter, isBefore);
+            for (HookDefinition hookDefinition : hookDefinitions) {
+                runHook(step, hookDefinition, reporter, isBefore);
             }
         }
     }
 
-    private void runStepHook(Step step, StepHookDefinition hook, Reporter reporter, boolean isBefore) {
+    private <T> void runHook(T arg, HookDefinition<T> hookDefinition, Reporter reporter, boolean isBefore) {
         String status = Result.PASSED;
         Throwable error = null;
-        Match match = new Match(Collections.<Argument>emptyList(), hook.getLocation(false));
+        Match match = new Match(Collections.<Argument>emptyList(), hookDefinition.getLocation(false));
         stopWatch.start();
         try {
-            hook.execute(step);
+            hookDefinition.execute(arg);
         } catch (Throwable t) {
             error = t;
             status = isPending(t) ? "pending" : Result.FAILED;

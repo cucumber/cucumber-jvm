@@ -9,7 +9,7 @@ import collection.JavaConverters._
 
 class ScalaHookDefinition(f:Scenario => Unit,
                           order:Int,
-                          tags:Seq[String]) extends HookDefinition {
+                          tags:Seq[String]) extends HookDefinition[Scenario] {
 
   val tagExpression = new TagExpression(tags.asJava)
 

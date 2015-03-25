@@ -1,10 +1,7 @@
 package cucumber.runtime.formatter;
 
-import cucumber.runtime.Backend;
-import cucumber.runtime.HookDefinition;
+import cucumber.runtime.*;
 import cucumber.runtime.Runtime;
-import cucumber.runtime.RuntimeOptions;
-import cucumber.runtime.StopWatch;
 import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.snippets.FunctionNameGenerator;
 import gherkin.formatter.model.Step;
@@ -75,7 +72,7 @@ public class JSONPrettyFormatterTest {
         Backend backend = mock(Backend.class);
         when(backend.getSnippet(any(Step.class), any(FunctionNameGenerator.class))).thenReturn("TEST SNIPPET");
         final Runtime runtime = new Runtime(resourceLoader, classLoader, asList(backend), runtimeOptions, new StopWatch.Stub(1234), null);
-        runtime.getGlue().addBeforeHook(hook);
+        runtime.getGlue().addBeforeHook(hook, HookScope.SCENARIO);
         runtime.run();
         return report;
     }

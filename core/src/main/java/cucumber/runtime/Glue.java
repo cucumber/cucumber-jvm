@@ -10,24 +10,27 @@ import java.util.List;
 //TODO: now that this is just basically a java bean storing values
 // I don't think it needs an interface anymore...
 public interface Glue {
-
     void addStepDefinition(StepDefinition stepDefinition) throws DuplicateStepDefinitionException;
 
+    @Deprecated
     void addBeforeHook(HookDefinition hookDefinition);
 
+    @Deprecated
     void addAfterHook(HookDefinition hookDefinition);
-    
-    void addBeforeStepHook(StepHookDefinition hookDefinition);
-    
-    void addAfterStepHook(StepHookDefinition hookDefinition);
 
+    @Deprecated
     List<HookDefinition> getBeforeHooks();
 
+    @Deprecated
     List<HookDefinition> getAfterHooks();
     
-    List<StepHookDefinition> getBeforeStepHooks();
-    
-    List<StepHookDefinition> getAfterStepHooks();
+    void addBeforeHook(HookDefinition hookDefinition, HookScope scope);
+
+    void addAfterHook(HookDefinition hookDefinition, HookScope scope);
+
+    List<HookDefinition> getBeforeHooks(HookScope scope);
+
+    List<HookDefinition> getAfterHooks(HookScope scope);
 
     StepDefinitionMatch stepDefinitionMatch(String featurePath, Step step, I18n i18n);
 

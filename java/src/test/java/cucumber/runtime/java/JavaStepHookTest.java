@@ -44,8 +44,8 @@ public class JavaStepHookTest {
         objectFactory.setInstance(new HasStepHooks());
         backend.buildWorld();
         backend.addHook(BEFORE_STEP.getAnnotation(BeforeStep.class), BEFORE_STEP);
-        JavaStepHookDefinition hookDef = (JavaStepHookDefinition) glue.getBeforeStepHooks().get(0);
-        assertEquals(0, glue.getAfterStepHooks().size());
+        JavaStepHookDefinition hookDef = (JavaStepHookDefinition) glue.getBeforeHooks(HookScope.STEP).get(0);
+        assertEquals(0, glue.getAfterHooks(HookScope.STEP).size());
         assertEquals(BEFORE_STEP, hookDef.getMethod());
     }
 
@@ -54,8 +54,8 @@ public class JavaStepHookTest {
         objectFactory.setInstance(new HasStepHooks());
         backend.buildWorld();
         backend.addHook(AFTER_STEP.getAnnotation(AfterStep.class), AFTER_STEP);
-        JavaStepHookDefinition hookDef = (JavaStepHookDefinition) glue.getAfterStepHooks().get(0);
-        assertEquals(0, glue.getBeforeStepHooks().size());
+        JavaStepHookDefinition hookDef = (JavaStepHookDefinition) glue.getAfterHooks(HookScope.STEP).get(0);
+        assertEquals(0, glue.getBeforeHooks(HookScope.STEP).size());
         assertEquals(AFTER_STEP, hookDef.getMethod());
     }
 
@@ -64,7 +64,7 @@ public class JavaStepHookTest {
         objectFactory.setInstance(new HasStepHooks());
         backend.buildWorld();
         backend.addHook(AFTER_STEP.getAnnotation(AfterStep.class), AFTER_STEP);
-        StepHookDefinition hookDef = glue.getAfterStepHooks().get(0);
+        JavaStepHookDefinition hookDef = (JavaStepHookDefinition) glue.getAfterHooks(HookScope.STEP).get(0);
         assertEquals(1, hookDef.getOrder());
     }
 
@@ -73,7 +73,7 @@ public class JavaStepHookTest {
         objectFactory.setInstance(new HasStepHooks());
         backend.buildWorld();
         backend.addHook(BEFORE_STEP.getAnnotation(BeforeStep.class), BEFORE_STEP);
-        StepHookDefinition hookDef = glue.getBeforeStepHooks().get(0);
+        JavaStepHookDefinition hookDef = (JavaStepHookDefinition) glue.getBeforeHooks(HookScope.STEP).get(0);
         assertEquals(10000, hookDef.getOrder());
     }
 
@@ -82,12 +82,12 @@ public class JavaStepHookTest {
         objectFactory.setInstance(new HasInvalidHooks());
         backend.buildWorld();
         backend.addHook(BAD_BEFORE_STEP.getAnnotation(BeforeStep.class), BAD_BEFORE_STEP);
-        StepHookDefinition bad = glue.getBeforeStepHooks().get(0);
+        JavaStepHookDefinition bad = (JavaStepHookDefinition) glue.getBeforeHooks(HookScope.STEP).get(0);
         try {
             bad.execute(mock(Step.class));
             fail();
         } catch (CucumberException expected) {
-            assertEquals("When a step hook declares an argument it must be of type gherkin.formatter.model.Step. public void cucumber.runtime.java.JavaStepHookTest$HasInvalidHooks.beforeStep(java.lang.String)", expected.getMessage());
+            assertEquals("When a hook declares an argument it must be of type gherkin.formatter.model.Step. public void cucumber.runtime.java.JavaStepHookTest$HasInvalidHooks.beforeStep(java.lang.String)", expected.getMessage());
         }
     }
 
@@ -105,6 +105,5 @@ public class JavaStepHookTest {
         @BeforeStep
         public void beforeStep(String badType) {
         }
-
     }
 }

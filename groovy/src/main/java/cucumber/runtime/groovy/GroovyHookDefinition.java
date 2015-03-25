@@ -9,7 +9,7 @@ import groovy.lang.Closure;
 
 import java.util.Collection;
 
-public class GroovyHookDefinition implements HookDefinition {
+public class GroovyHookDefinition implements HookDefinition<Scenario> {
     private final TagExpression tagExpression;
     private final long timeoutMillis;
     private final int order;

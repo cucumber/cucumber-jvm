@@ -71,22 +71,22 @@ public class JavaBackendTest {
         }
 
         @Override
-        public void addBeforeStepHook(StepHookDefinition hookDefinition) {
+        public void addBeforeHook(HookDefinition hookDefinition, HookScope scope) {
             throw new UnsupportedOperationException();
         }
 
         @Override
-        public void addAfterStepHook(StepHookDefinition hookDefinition) {
+        public void addAfterHook(HookDefinition hookDefinition, HookScope scope) {
             throw new UnsupportedOperationException();
         }
 
         @Override
-        public List<StepHookDefinition> getBeforeStepHooks() {
+        public List<HookDefinition> getBeforeHooks(HookScope scope) {
             throw new UnsupportedOperationException();
         }
 
         @Override
-        public List<StepHookDefinition> getAfterStepHooks() {
+        public List<HookDefinition> getAfterHooks(HookScope scope) {
             throw new UnsupportedOperationException();
         }
 

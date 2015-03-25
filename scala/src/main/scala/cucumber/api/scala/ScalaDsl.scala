@@ -15,9 +15,9 @@ trait ScalaDsl { self =>
 
   private [cucumber] val stepDefinitions = new ArrayBuffer[StepDefinition]
 
-  private [cucumber] val beforeHooks = new ArrayBuffer[HookDefinition]
+  private [cucumber] val beforeHooks = new ArrayBuffer[HookDefinition[Scenario]]
 
-  private [cucumber] val afterHooks = new ArrayBuffer[HookDefinition]
+  private [cucumber] val afterHooks = new ArrayBuffer[HookDefinition[Scenario]]
 
   def Before(f: Scenario => Unit){
     Before()(f)

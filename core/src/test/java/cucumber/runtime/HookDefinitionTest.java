@@ -20,7 +20,7 @@ import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class HookTest {
+public class HookDefinitionTest {
 
     /**
      * Test for <a href="https://github.com/cucumber/cucumber-jvm/issues/23">#23</a>.
@@ -45,7 +45,7 @@ public class HookTest {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         RuntimeOptions runtimeOptions = new RuntimeOptions("");
         Runtime runtime = new Runtime(new ClasspathResourceLoader(classLoader), classLoader, asList(backend), runtimeOptions);
-        runtime.getGlue().addAfterHook(hook);
+        runtime.getGlue().addAfterHook(hook, HookScope.SCENARIO);
 
         scenario.run(mock(Formatter.class), mock(Reporter.class), runtime);
 

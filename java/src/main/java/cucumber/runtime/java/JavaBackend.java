@@ -165,34 +165,34 @@ public class JavaBackend implements Backend {
         if (annotation.annotationType().equals(Before.class)) {
             String[] tagExpressions = ((Before) annotation).value();
             long timeout = ((Before) annotation).timeout();
-            glue.addBeforeHook(new JavaHookDefinition(method, tagExpressions, ((Before) annotation).order(), timeout, objectFactory));
+            glue.addBeforeHook(new JavaHookDefinition(method, tagExpressions, ((Before) annotation).order(), timeout, objectFactory), HookScope.SCENARIO);
         } else if (annotation.annotationType().equals(After.class)) {
             String[] tagExpressions = ((After) annotation).value();
             long timeout = ((After) annotation).timeout();
-            glue.addAfterHook(new JavaHookDefinition(method, tagExpressions, ((After) annotation).order(), timeout, objectFactory));
+            glue.addAfterHook(new JavaHookDefinition(method, tagExpressions, ((After) annotation).order(), timeout, objectFactory), HookScope.SCENARIO);
         } else if (annotation.annotationType().equals(BeforeStep.class)) {
             long timeout = ((BeforeStep) annotation).timeout();
-            glue.addBeforeStepHook(new JavaStepHookDefinition(method, ((BeforeStep) annotation).order(), timeout, objectFactory));
+            glue.addBeforeHook(new JavaStepHookDefinition(method, ((BeforeStep) annotation).order(), timeout, objectFactory), HookScope.STEP);
         } else if (annotation.annotationType().equals(AfterStep.class)) {
             long timeout = ((AfterStep) annotation).timeout();
-            glue.addAfterStepHook(new JavaStepHookDefinition(method, ((AfterStep) annotation).order(), timeout, objectFactory));
+            glue.addAfterHook(new JavaStepHookDefinition(method, ((AfterStep) annotation).order(), timeout, objectFactory), HookScope.STEP);
         }
     }
 
     public void addBeforeHookDefinition(String[] tagExpressions, long timeoutMillis, int order, HookBody body) {
-        glue.addBeforeHook(new Java8HookDefinition(tagExpressions, order, timeoutMillis, body));
+        glue.addBeforeHook(new Java8HookDefinition(tagExpressions, order, timeoutMillis, body), HookScope.SCENARIO);
     }
 
     public void addAfterHookDefinition(String[] tagExpressions, long timeoutMillis, int order, HookBody body) {
-        glue.addAfterHook(new Java8HookDefinition(tagExpressions, order, timeoutMillis, body));
+        glue.addAfterHook(new Java8HookDefinition(tagExpressions, order, timeoutMillis, body), HookScope.SCENARIO);
     }
 
     public void addBeforeHookDefinition(String[] tagExpressions, long timeoutMillis, int order, HookNoArgsBody body) {
-        glue.addBeforeHook(new Java8HookDefinition(tagExpressions, order, timeoutMillis, body));
+        glue.addBeforeHook(new Java8HookDefinition(tagExpressions, order, timeoutMillis, body), HookScope.SCENARIO);
     }
 
     public void addAfterHookDefinition(String[] tagExpressions, long timeoutMillis, int order, HookNoArgsBody body) {
-        glue.addAfterHook(new Java8HookDefinition(tagExpressions, order, timeoutMillis, body));
+        glue.addAfterHook(new Java8HookDefinition(tagExpressions, order, timeoutMillis, body), HookScope.SCENARIO);
     }
 
     private Pattern pattern(Annotation annotation) throws Throwable {

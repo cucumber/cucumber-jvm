@@ -14,7 +14,7 @@ import cucumber.api.Scenario;
 import cucumber.runtime.HookDefinition;
 import cucumber.runtime.Timeout;
 
-public class RhinoHookDefinition implements HookDefinition {
+public class RhinoHookDefinition implements HookDefinition<Scenario> {
 
     private Context cx;
     private Scriptable scope;

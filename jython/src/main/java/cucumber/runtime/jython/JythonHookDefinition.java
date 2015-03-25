@@ -9,7 +9,7 @@ import org.python.core.PyTuple;
 
 import java.util.Collection;
 
-public class JythonHookDefinition implements HookDefinition {
+public class JythonHookDefinition implements HookDefinition<Scenario> {
     private final PyInstance hookDefinition;
     private final TagExpression tagExpression;
     private final JythonBackend backend;
