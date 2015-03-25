@@ -26,14 +26,14 @@ Options:
                                          Run with "--i18n help" to see all languages
 
 Feature path examples:
-    <path>                               Load the files with the extension ".feature"
+  <path>                                 Load the files with the extension ".feature"
                                          for the directory <path>
                                          and its sub directories.
-    <path>/<name>.feature                Load the feature file <path>/<name>.feature
+  <path>/<name>.feature                  Load the feature file <path>/<name>.feature
                                          from the file system.
-    classpath:<path>/<name>.feature      Load the feature file <path>/<name>.feature
+  classpath:<path>/<name>.feature        Load the feature file <path>/<name>.feature
                                          from the classpath.
-    <path>/<name>.feature:3:9            Load the scenarios on line 3 and line 9 in
+  <path>/<name>.feature:3:9              Load the scenarios on line 3 and line 9 in
                                          the file <path>/<name>.feature.
-    @<path>/<file>                       Parse <path>/<file> for feature paths generated
+  @<path>/<file>                         Parse <path>/<file> for feature paths generated
                                          by the rerun formatter.
