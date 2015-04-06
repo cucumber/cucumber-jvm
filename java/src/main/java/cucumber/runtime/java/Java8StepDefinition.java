@@ -65,7 +65,7 @@ public class Java8StepDefinition implements StepDefinition {
 
     @Override
     public Integer getParameterCount() {
-        return pattern.matcher("").groupCount();
+        return parameterInfos.size();
     }
 
     @Override
