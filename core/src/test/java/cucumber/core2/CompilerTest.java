@@ -30,9 +30,9 @@ public class CompilerTest {
         Pickle pickle = new Pickle("Scenario: test", steps, NO_TAGS);
 
         TestCase testCase = compiler.compile(pickle);
-//        testCase.run();
+        testCase.run();
 
-        //assertEquals(4, cukes);
+        assertEquals(4, cukes);
     }
 
     public void some_cukes(int cukes) {

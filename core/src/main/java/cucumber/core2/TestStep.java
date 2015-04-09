@@ -1,4 +1,5 @@
 package cucumber.core2;
 
-public class TestStep {
+public interface TestStep {
+    void run();
 }
