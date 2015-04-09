@@ -1,10 +1,9 @@
 package cucumber.runtime.rhino;
 
+import cucumber.runtime.Argument;
 import cucumber.runtime.ParameterInfo;
 import cucumber.runtime.StepDefinition;
 import gherkin.I18n;
-import gherkin.formatter.Argument;
-import gherkin.formatter.model.Step;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.JavaScriptException;
 import org.mozilla.javascript.NativeFunction;
@@ -35,8 +34,8 @@ public class RhinoStepDefinition implements StepDefinition {
         this.argumentsFromFunc = argumentsFromFunc;
     }
 
-    public List<Argument> matchedArguments(Step step) {
-        NativeJavaObject args = (NativeJavaObject) argumentsFromFunc.call(cx, scope, jsStepDefinition, new Object[]{step.getName(), this});
+    public List<Argument> matchedArguments(String text) {
+        NativeJavaObject args = (NativeJavaObject) argumentsFromFunc.call(cx, scope, jsStepDefinition, new Object[]{text, this});
         return args == null ? null : unwrap(args);
     }
 

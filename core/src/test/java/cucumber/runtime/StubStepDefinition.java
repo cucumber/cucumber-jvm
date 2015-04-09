@@ -1,12 +1,11 @@
 package cucumber.runtime;
 
 import gherkin.I18n;
-import gherkin.formatter.Argument;
-import gherkin.formatter.model.Step;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class StubStepDefinition implements StepDefinition {
     private final Object target;
@@ -22,8 +21,9 @@ public class StubStepDefinition implements StepDefinition {
     }
 
     @Override
-    public List<Argument> matchedArguments(Step step) {
-        throw new UnsupportedOperationException();
+    public List<Argument> matchedArguments(String text) {
+        Pattern regexp = Pattern.compile(pattern);
+        return new JdkPatternArgumentMatcher(regexp).argumentsFrom(text);
     }
 
     @Override

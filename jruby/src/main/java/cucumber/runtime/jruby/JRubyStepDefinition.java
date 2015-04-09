@@ -1,10 +1,9 @@
 package cucumber.runtime.jruby;
 
+import cucumber.runtime.Argument;
 import cucumber.runtime.ParameterInfo;
 import cucumber.runtime.StepDefinition;
 import gherkin.I18n;
-import gherkin.formatter.Argument;
-import gherkin.formatter.model.Step;
 import org.jruby.RubyObject;
 import org.jruby.RubyString;
 import org.jruby.runtime.builtin.IRubyObject;
@@ -25,9 +24,9 @@ public class JRubyStepDefinition implements StepDefinition {
     }
 
     @Override
-    public List<Argument> matchedArguments(Step step) {
-        RubyString stepName = stepdefRunner.getRuntime().newString(step.getName());
-        IRubyObject arguments = stepdefRunner.callMethod("matched_arguments", stepName);
+    public List<Argument> matchedArguments(String text) {
+        RubyString stepText = stepdefRunner.getRuntime().newString(text);
+        IRubyObject arguments = stepdefRunner.callMethod("matched_arguments", stepText);
         return toJava(arguments);
     }
 

@@ -1,13 +1,12 @@
 package cucumber.runtime.java;
 
+import cucumber.runtime.Argument;
 import cucumber.runtime.JdkPatternArgumentMatcher;
 import cucumber.runtime.MethodFormat;
 import cucumber.runtime.ParameterInfo;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.Utils;
 import gherkin.I18n;
-import gherkin.formatter.Argument;
-import gherkin.formatter.model.Step;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -37,8 +36,8 @@ class JavaStepDefinition implements StepDefinition {
         Utils.invoke(objectFactory.getInstance(method.getDeclaringClass()), method, timeoutMillis, args);
     }
 
-    public List<Argument> matchedArguments(Step step) {
-        return argumentMatcher.argumentsFrom(step.getName());
+    public List<Argument> matchedArguments(String text) {
+        return argumentMatcher.argumentsFrom(text);
     }
 
     public String getLocation(boolean detail) {

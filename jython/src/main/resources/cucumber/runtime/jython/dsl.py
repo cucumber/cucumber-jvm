@@ -1,5 +1,5 @@
 import re
-from gherkin.formatter import Argument
+from cucumber.runtime import Argument
 from cucumber.api import PendingException
 
 class I18NKeywordTemplate(object):
@@ -16,8 +16,8 @@ class StepDefinition:
     self.regexp = regexp
     self.func = func
 
-  def matched_arguments(self, step_name):
-    match = re.match(self.regexp, step_name)
+  def matched_arguments(self, step_text):
+    match = re.match(self.regexp, step_text)
     if(match):
       n = 1
       arguments = []

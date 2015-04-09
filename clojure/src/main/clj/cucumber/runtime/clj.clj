@@ -70,9 +70,9 @@
    @glue
    (reify
      StepDefinition
-     (matchedArguments [_ step]
+     (matchedArguments [_ stepText]
        (.argumentsFrom (JdkPatternArgumentMatcher. pattern)
-                       (.getName step)))
+                       stepText))
      (getLocation [_ detail]
        (location-str location))
      (getParameterCount [_]

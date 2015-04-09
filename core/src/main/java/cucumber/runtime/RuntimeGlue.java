@@ -3,7 +3,6 @@ package cucumber.runtime;
 import cucumber.api.StepDefinitionReporter;
 import cucumber.runtime.xstream.LocalizedXStreams;
 import gherkin.I18n;
-import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 
 import java.util.ArrayList;
@@ -78,9 +77,14 @@ public class RuntimeGlue implements Glue {
     private List<StepDefinitionMatch> stepDefinitionMatches(String featurePath, Step step) {
         List<StepDefinitionMatch> result = new ArrayList<StepDefinitionMatch>();
         for (StepDefinition stepDefinition : stepDefinitionsByPattern.values()) {
-            List<Argument> arguments = stepDefinition.matchedArguments(step);
+            List<Argument> arguments = stepDefinition.matchedArguments(step.getName());
             if (arguments != null) {
-                result.add(new StepDefinitionMatch(arguments, stepDefinition, featurePath, step, localizedXStreams));
+                // Adapt to legacy Gherkin2 API
+                List<gherkin.formatter.Argument> gherkinArguments = new ArrayList<gherkin.formatter.Argument>(arguments.size());
+                for (Argument argument : arguments) {
+                    gherkinArguments.add(new gherkin.formatter.Argument(argument.getOffset(), argument.getVal()));
+                }
+                result.add(new StepDefinitionMatch(gherkinArguments, stepDefinition, featurePath, step, localizedXStreams));
             }
         }
         return result;

@@ -1,11 +1,11 @@
 package cucumber.runtime.groovy;
 
+import cucumber.runtime.Argument;
 import cucumber.runtime.JdkPatternArgumentMatcher;
 import cucumber.runtime.ParameterInfo;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.Timeout;
 import gherkin.I18n;
-import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 import groovy.lang.Closure;
 import org.codehaus.groovy.runtime.StackTraceUtils;
@@ -36,8 +36,8 @@ public class GroovyStepDefinition implements StepDefinition {
         this.parameterInfos = getParameterInfos();
     }
 
-    public List<Argument> matchedArguments(Step step) {
-        return argumentMatcher.argumentsFrom(step.getName());
+    public List<Argument> matchedArguments(String text) {
+        return argumentMatcher.argumentsFrom(text);
     }
 
     public String getLocation(boolean detail) {

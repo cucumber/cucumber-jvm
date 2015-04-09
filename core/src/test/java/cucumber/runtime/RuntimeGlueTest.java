@@ -2,7 +2,6 @@ package cucumber.runtime;
 
 import cucumber.runtime.xstream.LocalizedXStreams;
 import gherkin.I18n;
-import gherkin.formatter.Argument;
 import gherkin.formatter.model.Comment;
 import gherkin.formatter.model.Step;
 import org.junit.Test;
@@ -47,11 +46,11 @@ public class RuntimeGlueTest {
 
         StepDefinition a = mock(StepDefinition.class);
         when(a.getPattern()).thenReturn("foo");
-        when(a.matchedArguments(step)).thenReturn(new ArrayList<Argument>());
+        when(a.matchedArguments("three blind mice")).thenReturn(new ArrayList<Argument>());
 
         StepDefinition b = mock(StepDefinition.class);
         when(b.getPattern()).thenReturn("bar");
-        when(b.matchedArguments(step)).thenReturn(new ArrayList<Argument>());
+        when(b.matchedArguments("three blind mice")).thenReturn(new ArrayList<Argument>());
 
         glue.addStepDefinition(a);
         glue.addStepDefinition(b);
@@ -66,7 +65,7 @@ public class RuntimeGlueTest {
 
         StepDefinition a = mock(StepDefinition.class);
         when(a.getPattern()).thenReturn("foo");
-        when(a.matchedArguments(step)).thenReturn(new ArrayList<Argument>());
+        when(a.matchedArguments("three blind mice")).thenReturn(new ArrayList<Argument>());
 
         glue.addStepDefinition(a);
 

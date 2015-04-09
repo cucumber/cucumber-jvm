@@ -69,14 +69,14 @@ module Cucumber
         end
 
         # Lifted from regexp_argument_matcher.rb in Cucumber 1.0
-        def matched_arguments(step_name)
-          match = @regexp.match(step_name)
+        def matched_arguments(step_text)
+          match = @regexp.match(step_text)
           if (match)
             n = 0
             match.captures.map do |val|
               n += 1
               start = match.offset(n)[0]
-              Java::GherkinFormatter::Argument.new(start, val)
+              Java::CucumberRuntime::Argument.new(start, val)
             end
           else
             nil

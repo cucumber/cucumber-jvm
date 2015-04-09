@@ -25,6 +25,11 @@
             <groupId>info.cukes</groupId>
             <artifactId>gherkin</artifactId>
         </dependency>
+        <dependency>
+            <groupId>info.cukes</groupId>
+            <artifactId>gherkin3</artifactId>
+            <version>3.0.0-SNAPSHOT</version>
+        </dependency>
 
         <dependency>
             <groupId>junit</groupId>
