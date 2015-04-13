@@ -1,5 +1,6 @@
 ## [1.2.3-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v1.2.2...master) (In Git)
 
+* [Java] Arity mismatch Java8 Step Definition error ([#852](https://github.com/cucumber/cucumber-jvm/issues/852), [#847](https://github.com/cucumber/cucumber-jvm/pull/847) David Coelho)
 * [Java] Print Java 8 lambda snippets when `cucumber-java8` is active (Aslak Hellesøy)
 * [Core] Make the Summary Printer into a plugin ([#828](https://github.com/cucumber/cucumber-jvm/pull/828) Björn Rasmusson)
 * [Core] Additional unit-tests for [#789](https://github.com/cucumber/cucumber-jvm/issues/789) ([#815](https://github.com/cucumber/cucumber-jvm/pull/815) Klaus Bayrhammer)
