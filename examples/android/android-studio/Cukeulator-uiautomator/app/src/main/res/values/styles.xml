@@ -1,0 +1,10 @@
+<resources>
+    <style name="AppTheme" parent="android:Theme.Holo.Light.DarkActionBar">
+        <item name="android:buttonStyle">@style/Button</item>
+    </style>
+
+    <style name="Button" parent="android:Widget.Button">
+        <item name="android:minWidth">60dp</item>
+        <item name="android:textSize">32sp</item>
+    </style>
+</resources>
