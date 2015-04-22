@@ -1,30 +1,26 @@
 ---
-language: java
-script: mvn -q install -P examples
-jdk:
-- openjdk7
-matrix:
-  include:
-  - jdk: oraclejdk7
-    script: mvn -q deploy --settings .travis-settings.xml -Dno.gem.deploy=true
-  - jdk: oraclejdk8
-    script: mvn -q deploy -P java8 -pl java8 --settings .travis-settings.xml -Dno.gem.deploy=true
+language: android
+android:
+  components:
+    - build-tools-20.0.0
+    - android-22
+    - sys-img-armeabi-v7a-android-22
+
+# Emulator Management: Create, Start and Wait
+before_script:
+  - echo no | android create avd --force -n test -t android-22 --abi armeabi-v7a
+  - emulator -avd test -no-skin -no-audio -no-window &
+  - android-wait-for-emulator
+  - adb shell input keyevent 82 &
+  - cd examples/android/android-studio
+
+script: for subdir in $(ls -d */); do cd $subdir && ./gradlew connectedCheck && cd .. || cd .. && gradle_failed=1; done && expr ${gradle_failed?0} = 0
 
 branches:
   only:
-  - master
+  - android-gradle
 notifications:
   email:
   - cukes-devs@googlegroups.com
   irc:
   - irc.freenode.org#cucumber
-env:
-  global:
-  - secure: |-
-      rEtPzPG3bMKzx00AwDJq5tsp8LSCds5ePV6ZP+wgECP2BVIoD16zP8F6T0fY
-      QK/2etRW6pcernOGP8S3SQE4e5ZBT5sqYY0mhKlq2aiem3i3gAwEzZvdLjWV
-      1C6KyQplzdjKdaYWOre8YSXv5vxS3ZVS6NJc+0EQM3olTKV3flQ=
-  - secure: |-
-      BEsHVhETHrO8vR/7huN3MUMQQKZycZgJ+sWszwQPnwaGJEm6ptssJn/LsiUJ
-      K/qQhjdpmPiKZIoTruG4E3vc+adT/B2VcHD0897jNeUBoDd7Vj4vzOH6ePID
-      969vCnA+6hpQuIM02R+4OJIBPXVtr1Ix/ye+KxS69cJ5N8QyTfY=
