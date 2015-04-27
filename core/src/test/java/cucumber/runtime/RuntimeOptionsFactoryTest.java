@@ -134,6 +134,19 @@ public class RuntimeOptionsFactoryTest {
         assertTrue(pluginName + " not found among the plugins", found);
     }
 
+    @Test
+    public void create_with_retry_scenario() throws Exception {
+        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(retryScenario.class);
+        RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
+        assertTrue(runtimeOptions.getRetryScenario().equals("2"));
+    }
+
+    @Test
+    public void create_with_retry_scenario() throws Exception {
+        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(emptyRetryScenario.class);
+        RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
+        assertTrue(runtimeOptions.getRetryScenario().isEmpty());
+    }
 
     @CucumberOptions(snippets = SnippetType.CAMELCASE)
     static class Snippets {
@@ -196,4 +209,14 @@ public class RuntimeOptionsFactoryTest {
     static class ClassWithNoSummaryPrinterPlugin {
         // empty
     }
+
+    @CucumberOptions(retry = {"2"})
+    static class retryScenario {
+        // empty
+    }
+
+    static class emptyRetryScenario {
+        // empty
+    }
+
 }

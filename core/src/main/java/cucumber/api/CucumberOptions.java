@@ -64,4 +64,9 @@ public @interface CucumberOptions {
      * @return what format should the snippets use. underscore, camelcase
      */
     SnippetType snippets() default SnippetType.UNDERSCORE;
+
+    /**
+     * @return the number of times a scenario should be retried
+     */
+    String[] retryScenario() default {};
 }
