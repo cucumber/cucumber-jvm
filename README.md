@@ -1,23 +1,22 @@
 [![Build Status](https://secure.travis-ci.org/cucumber/cucumber-jvm.png)](http://travis-ci.org/cucumber/cucumber-jvm)
 
-Cucumber-JVM is a pure Java implementation of Cucumber that supports the [most popular](http://cukes.info/platforms.html) programming languages for the JVM.
+Cucumber-JVM is a pure Java implementation of Cucumber that supports the [most popular programming languages](https://cukes.info/docs/reference/jvm#running) for the JVM.
 
-You can [run](http://cukes.info/running.html) it with the tool of your choice.
+You can [run](https://cukes.info/docs/reference/jvm#running) it with the tool of your choice.
 
-Cucumber-JVM also integrates with all the popular [Dependency Injection containers](http://cukes.info/install-cucumber-jvm.html).
+Cucumber-JVM also integrates with all the popular [Dependency Injection containers](https://cukes.info/docs/reference/java-di).
 
 ## Documentation
 
-[Start Here](http://cukes.info/platforms.html). This page also links to examples.
-Look [here](http://cukes.info/api/cucumber/jvm/) for API docs.
+[Start Here](https://cukes.info/docs).
 
 ## Hello World
 
-Check out the simple [Hello World](https://github.com/cucumber/cucumber-java-skeleton) example.
+Check out the simple [cucumber-java-skeleton](https://github.com/cucumber/cucumber-java-skeleton) starter project.
 
 ## Downloading / Installation
 
-[Install](http://cukes.info/install-cucumber-jvm.html)
+[Install](https://cukes.info/docs/reference/jvm#installation)
 
 ## Bugs and Feature requests
 
@@ -62,9 +61,4 @@ are likely to be closed to keep the backlog manageable.
 
 ## Contributing fixes
 
-See [Contributing](http://cukes.info/contribute.html) as well as [CONTRIBUTING.md](https://github.com/cucumber/cucumber-jvm/blob/master/CONTRIBUTING.md)
-
-## Coming from Cuke4Duke?
-
-See [Migration from Cuke4Duke](https://github.com/cucumber/cucumber-jvm/blob/master/Cuke4Duke.md)
-
+See [CONTRIBUTING.md](https://github.com/cucumber/cucumber-jvm/blob/master/CONTRIBUTING.md)

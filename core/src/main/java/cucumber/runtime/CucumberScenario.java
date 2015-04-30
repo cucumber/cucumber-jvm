@@ -36,11 +36,7 @@ public class CucumberScenario extends CucumberTagStatement {
     public void run(Formatter formatter, Reporter reporter, LegacyRuntime runtime) {
         Set<Tag> tags = tagsAndInheritedTags();
         runtime.buildBackendWorlds(reporter, tags, scenario);
-        try {
-            formatter.startOfScenarioLifeCycle((Scenario) getGherkinModel());
-        } catch (Throwable ignore) {
-            // IntelliJ has its own formatter which doesn't yet implement this.
-        }
+        formatter.startOfScenarioLifeCycle((Scenario) getGherkinModel());
         runtime.runBeforeHooks(reporter, tags);
 
         runBackground(formatter, reporter, runtime);
@@ -48,12 +44,13 @@ public class CucumberScenario extends CucumberTagStatement {
         runSteps(reporter, runtime);
 
         runtime.runAfterHooks(reporter, tags);
-        try {
-            formatter.endOfScenarioLifeCycle((Scenario) getGherkinModel());
-        } catch (Throwable ignore) {
-            // IntelliJ has its own formatter which doesn't yet implement this.
-        }
-        runtime.disposeBackendWorlds();
+        formatter.endOfScenarioLifeCycle((Scenario) getGherkinModel());
+        runtime.disposeBackendWorlds(createScenarioDesignation());
+    }
+
+    private String createScenarioDesignation() {
+        return cucumberFeature.getPath() + ":" + Integer.toString(scenario.getLine()) + " # " +
+                scenario.getKeyword() + ": " + scenario.getName();
     }
 
     private void runBackground(Formatter formatter, Reporter reporter, LegacyRuntime runtime) {

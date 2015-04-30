@@ -22,8 +22,11 @@ import java.io.Reader;
 import java.io.Writer;
 import java.net.InetSocketAddress;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
@@ -47,16 +50,21 @@ public class URLOutputStreamTest {
     }
 
     @Test
-    public void can_write_to_file() throws IOException {
-        File tmp = File.createTempFile("cucumber-jvm", "tmp");
-        Writer w = new UTF8OutputStreamWriter(new URLOutputStream(tmp.toURI().toURL()));
+    public void write_to_file_without_existing_parent_directory() throws IOException, URISyntaxException {
+        Path filesWithoutParent = Files.createTempDirectory("filesWithoutParent");
+        String baseURL = filesWithoutParent.toUri().toURL().toString();
+        URL urlWithoutParentDirectory = new URL(baseURL + "/non/existing/directory");
+
+        Writer w = new UTF8OutputStreamWriter(new URLOutputStream(urlWithoutParentDirectory));
         w.write("Hellesøy");
         w.close();
-        assertEquals("Hellesøy", FixJava.readReader(openUTF8FileReader(tmp)));
+
+        File testFile = new File(urlWithoutParentDirectory.toURI());
+        assertEquals("Hellesøy", FixJava.readReader(openUTF8FileReader(testFile)));
     }
 
     @Test
-    public void can_write_to_file_using_path() throws IOException {
+    public void can_write_to_file() throws IOException {
         File tmp = File.createTempFile("cucumber-jvm", "tmp");
         Writer w = new UTF8OutputStreamWriter(new URLOutputStream(tmp.toURI().toURL()));
         w.write("Hellesøy");

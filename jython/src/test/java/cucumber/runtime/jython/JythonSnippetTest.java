@@ -20,7 +20,7 @@ public class JythonSnippetTest {
     @Test
     public void generatesSnippetWithTwoArgs() {
         String expected = "" +
-                "@Given('^I have (\\d+) cukes in my \"(.*?)\" belly$')\n" +
+                "@Given('^I have (\\d+) cukes in my \"([^\"]*)\" belly$')\n" +
                 "def i_have_cukes_in_my_belly(self, arg1, arg2):\n" +
                 "  # Write code here that turns the phrase above into concrete actions\n" +
                 "  raise(PendingException())\n" +

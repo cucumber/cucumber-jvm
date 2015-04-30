@@ -4,3 +4,4 @@ Feature: Java8
 
   Scenario: another scenario which should have isloated state
     Given I have 42 cukes in my belly
+    And something that isn't defined

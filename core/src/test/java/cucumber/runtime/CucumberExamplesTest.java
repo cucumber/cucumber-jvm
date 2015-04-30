@@ -1,9 +1,5 @@
 package cucumber.runtime;
 
-import cucumber.runtime.CucumberExamples;
-import cucumber.runtime.CucumberFeature;
-import cucumber.runtime.CucumberScenario;
-import cucumber.runtime.CucumberScenarioOutline;
 import gherkin.formatter.model.Comment;
 import gherkin.formatter.model.Examples;
 import gherkin.formatter.model.ExamplesTableRow;
@@ -13,6 +9,7 @@ import gherkin.formatter.model.Step;
 import gherkin.formatter.model.Tag;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -53,4 +50,58 @@ public class CucumberExamplesTest {
         assertEquals("I have 5 cukes in my belly", step.getName());
     }
 
+    @Test
+    public void should_concatenate_outline_description_and_examples_description() throws IOException {
+        CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
+                "Feature: feature name\n" +
+                "  Scenario Outline: outline name\n" +
+                "  outline description\n" +
+                "    Given first step\n" +
+                "    Examples: examples name\n "+
+                "    examples description\n" +
+                "      | dummy |\n" +
+                "      |   1   |\n");
+        CucumberScenarioOutline cso = (CucumberScenarioOutline) feature.getFeatureElements().get(0);
+        CucumberExamples cucumberExamples = cso.getCucumberExamplesList().get(0);
+
+        List<CucumberScenario> exampleScenarios = cucumberExamples.createExampleScenarios();
+
+        assertEquals("outline description, examples description", exampleScenarios.get(0).getGherkinModel().getDescription());
+    }
+
+    @Test
+    public void should_use_outline_description_when_examples_description_is_empty() throws IOException {
+        CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
+                "Feature: feature name\n" +
+                "  Scenario Outline: outline name\n" +
+                "  outline description\n" +
+                "    Given first step\n" +
+                "    Examples: examples name\n "+
+                "      | dummy |\n" +
+                "      |   1   |\n");
+        CucumberScenarioOutline cso = (CucumberScenarioOutline) feature.getFeatureElements().get(0);
+        CucumberExamples cucumberExamples = cso.getCucumberExamplesList().get(0);
+
+        List<CucumberScenario> exampleScenarios = cucumberExamples.createExampleScenarios();
+
+        assertEquals("outline description", exampleScenarios.get(0).getGherkinModel().getDescription());
+    }
+
+    @Test
+    public void should_use_examples_description_when_outline_description_is_empty() throws IOException {
+        CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
+                "Feature: feature name\n" +
+                "  Scenario Outline: outline name\n" +
+                "    Given first step\n" +
+                "    Examples: examples name\n "+
+                "    examples description\n" +
+                "      | dummy |\n" +
+                "      |   1   |\n");
+        CucumberScenarioOutline cso = (CucumberScenarioOutline) feature.getFeatureElements().get(0);
+        CucumberExamples cucumberExamples = cso.getCucumberExamplesList().get(0);
+
+        List<CucumberScenario> exampleScenarios = cucumberExamples.createExampleScenarios();
+
+        assertEquals("examples description", exampleScenarios.get(0).getGherkinModel().getDescription());
+    }
 }

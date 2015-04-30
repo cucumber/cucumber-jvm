@@ -35,7 +35,7 @@ public class SeeMessagesStepdefs {
         user = userRepository.save(new User("John Doe"));
     }
 
-    @Given("^the User has posted the message \"(.*?)\"$")
+    @Given("^the User has posted the message \"([^\"]*)\"$")
     public void the_User_has_posted_the_message(String content) {
         messageRepository.save(new Message(user, content));
     }
@@ -47,7 +47,7 @@ public class SeeMessagesStepdefs {
                 .andExpect(status().isOk());
     }
 
-    @Then("^I should see \"(.*?)\"$")
+    @Then("^I should see \"([^\"]*)\"$")
     public void I_should_see(String content) throws Exception {
         resultActions.andExpect(content().string(containsString(content)));
     }

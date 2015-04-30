@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 
 public class SnippetGenerator {
     private static final ArgumentPattern[] DEFAULT_ARGUMENT_PATTERNS = new ArgumentPattern[]{
-            new ArgumentPattern(Pattern.compile("\"(.*?)\""), String.class),
+            new ArgumentPattern(Pattern.compile("\"([^\"]*)\""), String.class),
             new ArgumentPattern(Pattern.compile("(\\d+)"), Integer.TYPE)
     };
     private static final Pattern GROUP_PATTERN = Pattern.compile("\\(");

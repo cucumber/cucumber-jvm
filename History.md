@@ -1,3 +1,19 @@
+## [1.2.3-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v1.2.2...master) (In Git)
+
+* [Java] Arity mismatch Java8 Step Definition error ([#852](https://github.com/cucumber/cucumber-jvm/issues/852), [#847](https://github.com/cucumber/cucumber-jvm/pull/847) David Coelho)
+* [Java] Print Java 8 lambda snippets when `cucumber-java8` is active (Aslak Hellesøy)
+* [Core] Make the Summary Printer into a plugin ([#828](https://github.com/cucumber/cucumber-jvm/pull/828) Björn Rasmusson)
+* [Core] Additional unit-tests for [#789](https://github.com/cucumber/cucumber-jvm/issues/789) ([#815](https://github.com/cucumber/cucumber-jvm/pull/815) Klaus Bayrhammer)
+* [Java] Added @Documented to all step annotations ([#834](https://github.com/cucumber/cucumber-jvm/pull/834), [#833](https://github.com/cucumber/cucumber-jvm/issues/833) Peter Oxenham)
+* [Core] Set a description for Scenario Outline scenarios ([#841](https://github.com/cucumber/cucumber-jvm/pull/841), [#837](https://github.com/cucumber/cucumber-jvm/issues/837) Björn Rasmusson)
+* [Core] Call all formatters, also in case of unimplemented methods ([#842](https://github.com/cucumber/cucumber-jvm/pull/842), [#803](https://github.com/cucumber/cucumber-jvm/issues/803) Björn Rasmusson)
+* [TestNG] Run each feature as separate TestNG test ([#817](https://github.com/cucumber/cucumber-jvm/pull/817), [#653](https://github.com/cucumber/cucumber-jvm/pull/653) Dmitry Sidorenko, Björn Rasmusson)
+* [Core] Implement TestNG-compatible XML formatter ([#818](https://github.com/cucumber/cucumber-jvm/pull/818), [#621](https://github.com/cucumber/cucumber-jvm/pull/621) Dmitry Berezhony, Björn Rasmusson)
+* `DataTable.diff(List)` gives proper error message when the `List` argument is empty (Aslak Hellesøy)
+* Execute no scenarios when the rerun file is empty ([#840](https://github.com/cucumber/cucumber-jvm/issues/840) Björn Rasmusson)
+* Snippets for quoted arguments changed from `(.*?)` to `([^\"]*)` (which is how it was before 1.1.6). See [cucumber/cucumber#663](https://github.com/cucumber/cucumber/pull/663) (Aslak Hellesøy)
+* Fix non running gradle example ([#839](https://github.com/cucumber/cucumber-jvm/pull/839) Ole Christian Langfjæran)
+
 ## [1.2.2](https://github.com/cucumber/cucumber-jvm/compare/v1.2.0...v1.2.2) (2015-01-13)
 
 (There is no 1.2.1 release)

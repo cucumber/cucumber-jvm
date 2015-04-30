@@ -29,7 +29,7 @@ public class SpringInjectionStepDefs {
         assertNotNull(wac);
     }
 
-    @When("^I call the url \"(.*?)\"$")
+    @When("^I call the url \"([^\"]*)\"$")
     public void I_call_the_url(String url) throws Throwable {
         MockMvc mock = MockMvcBuilders.webAppContextSetup(wac).build();
         callUrl = mock.perform(get(url));

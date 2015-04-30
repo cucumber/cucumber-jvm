@@ -12,6 +12,7 @@ import gherkin.I18n;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.JSONFormatter;
 import gherkin.formatter.Reporter;
+import gherkin.formatter.model.Result;
 import gherkin.formatter.model.Step;
 import gherkin.formatter.model.Tag;
 import org.junit.Ignore;
@@ -31,7 +32,9 @@ import java.util.List;
 import java.util.Map;
 
 import static cucumber.runtime.TestHelper.feature;
+import static cucumber.runtime.TestHelper.result;
 import static java.util.Arrays.asList;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
@@ -261,9 +264,9 @@ public class RuntimeTest {
         runScenario(reporter, runtime, stepCount(1));
         runtime.printStats(new PrintStream(baos));
 
-        assertThat(baos.toString(), startsWith(String.format(
+        assertThat(baos.toString(), containsString(String.format("" +
                 "1 Scenarios (1 pending)%n" +
-                        "1 Steps (1 pending)%n")));
+                "1 Steps (1 pending)%n")));
     }
 
     @Test
@@ -276,9 +279,9 @@ public class RuntimeTest {
         runScenario(reporter, runtime, stepCount(1));
         runtime.printStats(new PrintStream(baos));
 
-        assertThat(baos.toString(), startsWith(String.format(
+        assertThat(baos.toString(), containsString(String.format("" +
                 "1 Scenarios (1 failed)%n" +
-                        "1 Steps (1 failed)%n")));
+                "1 Steps (1 failed)%n")));
     }
 
     @Test
@@ -290,9 +293,9 @@ public class RuntimeTest {
         runScenario(reporter, runtime, stepCount(1));
         runtime.printStats(new PrintStream(baos));
 
-        assertThat(baos.toString(), startsWith(String.format(
+        assertThat(baos.toString(), containsString(String.format(""+
                 "1 Scenarios (1 failed)%n" +
-                        "1 Steps (1 failed)%n")));
+                "1 Steps (1 failed)%n")));
     }
 
     @Test
@@ -305,9 +308,9 @@ public class RuntimeTest {
         runScenario(reporter, runtime, stepCount(2));
         runtime.printStats(new PrintStream(baos));
 
-        assertThat(baos.toString(), startsWith(String.format(
+        assertThat(baos.toString(), containsString(String.format("" +
                 "1 Scenarios (1 failed)%n" +
-                        "2 Steps (1 failed, 1 skipped)%n")));
+                "2 Steps (1 failed, 1 skipped)%n")));
     }
 
     @Test
@@ -319,9 +322,9 @@ public class RuntimeTest {
         runScenario(reporter, runtime, stepCount(1));
         runtime.printStats(new PrintStream(baos));
 
-        assertThat(baos.toString(), startsWith(String.format(
+        assertThat(baos.toString(), containsString(String.format("" +
                 "1 Scenarios (1 undefined)%n" +
-                        "1 Steps (1 undefined)%n")));
+                "1 Steps (1 undefined)%n")));
     }
 
     @Test
@@ -335,9 +338,9 @@ public class RuntimeTest {
         runScenario(reporter, runtime, stepCount(1));
         runtime.printStats(new PrintStream(baos));
 
-        assertThat(baos.toString(), startsWith(String.format(
+        assertThat(baos.toString(), containsString(String.format("" +
                 "1 Scenarios (1 failed)%n" +
-                        "1 Steps (1 skipped)%n")));
+                "1 Steps (1 skipped)%n")));
     }
 
     @Test
@@ -351,9 +354,9 @@ public class RuntimeTest {
         runScenario(reporter, runtime, stepCount(1));
         runtime.printStats(new PrintStream(baos));
 
-        assertThat(baos.toString(), startsWith(String.format(
+        assertThat(baos.toString(), containsString(String.format("" +
                 "1 Scenarios (1 failed)%n" +
-                        "1 Steps (1 passed)%n")));
+                "1 Steps (1 passed)%n")));
     }
 
     @Test
@@ -405,10 +408,10 @@ public class RuntimeTest {
                 "    Then third step\n" +
                 "  Scenario: scenario_2 name\n" +
                 "    Then second step\n");
-        Map<String, String> stepsToResult = new HashMap<String, String>();
-        stepsToResult.put("first step", "passed");
-        stepsToResult.put("second step", "passed");
-        stepsToResult.put("third step", "passed");
+        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        stepsToResult.put("first step", result("passed"));
+        stepsToResult.put("second step", result("passed"));
+        stepsToResult.put("third step", result("passed"));
 
         String formatterOutput = runFeatureWithFormatterSpy(feature, stepsToResult);
 
@@ -459,10 +462,10 @@ public class RuntimeTest {
                 "    Examples: examples 2 name\n" +
                 "      |   x    |   y   |\n" +
                 "      | second | third |\n");
-        Map<String, String> stepsToResult = new HashMap<String, String>();
-        stepsToResult.put("first step", "passed");
-        stepsToResult.put("second step", "passed");
-        stepsToResult.put("third step", "passed");
+        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        stepsToResult.put("first step", result("passed"));
+        stepsToResult.put("second step", result("passed"));
+        stepsToResult.put("third step", result("passed"));
 
         String formatterOutput = runFeatureWithFormatterSpy(feature, stepsToResult);
 
@@ -518,9 +521,9 @@ public class RuntimeTest {
                 "close\n", formatterOutput);
     }
 
-    private String runFeatureWithFormatterSpy(CucumberFeature feature, Map<String, String> stepsToResult) throws Throwable {
+    private String runFeatureWithFormatterSpy(CucumberFeature feature, Map<String, Result> stepsToResult) throws Throwable {
         FormatterSpy formatterSpy = new FormatterSpy();
-        TestHelper.runFeatureWithFormatter(feature, stepsToResult, Collections.<SimpleEntry<String, String>>emptyList(), 0L, formatterSpy, formatterSpy);
+        TestHelper.runFeatureWithFormatter(feature, stepsToResult, Collections.<SimpleEntry<String, Result>>emptyList(), 0L, formatterSpy, formatterSpy);
         return formatterSpy.toString();
     }
 
@@ -627,7 +630,7 @@ public class RuntimeTest {
             runStep(reporter, runtime);
         }
         runtime.runAfterHooks(reporter, Collections.<Tag>emptySet());
-        runtime.disposeBackendWorlds();
+        runtime.disposeBackendWorlds("scenario designation");
     }
 
     private int stepCount(int stepCount) {
