@@ -9,10 +9,8 @@ The rest of the dependencies are added automatically in `app/build.gradle`.
 The cucumber-android dependency is added as:
 
 ```
-androidTestCompile 'info.cukes:cucumber-android:1.2.0@jar'
+androidTestCompile 'info.cukes:cucumber-android:1.2.2'
 ```
-
-Note, the `@jar` suffix is required in order to use the embedded jar file.
 
 ### Using gradle
 
