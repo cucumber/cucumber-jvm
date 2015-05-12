@@ -8,6 +8,8 @@ Cucumber-JVM also integrates with all the popular [Dependency Injection containe
 
 ## Documentation
 
+[![Join the chat at https://gitter.im/cucumber/cucumber-jvm](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/cucumber/cucumber-jvm?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 [Start Here](https://cukes.info/docs).
 
 ## Hello World
