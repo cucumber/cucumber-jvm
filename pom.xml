@@ -497,6 +497,7 @@
     </pluginRepositories>
 
     <modules>
+        <module>gosu</module>
         <module>core</module>
         <module>java</module>
         <module>testng</module>
@@ -514,7 +515,6 @@
         <module>scala</module>
         <module>scala/scala_previous</module>
         <module>needle</module>
-        <module>gosu</module>
         <module>android</module>
     </modules>
 
