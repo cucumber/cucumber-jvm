@@ -38,7 +38,7 @@
         <guice.version>4.0</guice.version>
         <!-- Remember to bounce version in examples/clojure_cukes/project.clj as well -->
         <clojure.version>1.6.0</clojure.version>
-        <gosu.version>1.2.1</gosu.version>
+        <gosu.version>1.2</gosu.version>
         <rhino.version>1.7.6</rhino.version>
         <jsoup.version>1.8.2</jsoup.version>
         <testng.version>6.9.4</testng.version>
