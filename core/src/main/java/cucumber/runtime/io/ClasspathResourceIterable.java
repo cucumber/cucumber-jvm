@@ -39,15 +39,4 @@ public class ClasspathResourceIterable implements Iterable<Resource> {
         }
     }
 
-    static boolean hasSuffix(String suffix, String name) {
-        return suffix == null || name.endsWith(suffix);
-    }
-
-    static String getPath(URL url) {
-        try {
-            return URLDecoder.decode(url.getPath(), "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new CucumberException("Encoding problem", e);
-        }
-    }
 }

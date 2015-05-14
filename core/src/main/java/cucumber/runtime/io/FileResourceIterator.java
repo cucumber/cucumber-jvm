@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.FileFilter;
 import java.util.Iterator;
 
-import static cucumber.runtime.io.ClasspathResourceIterable.hasSuffix;
+import static cucumber.runtime.io.Helpers.hasSuffix;
 import static java.util.Arrays.asList;
 
 public class FileResourceIterator implements Iterator<Resource> {

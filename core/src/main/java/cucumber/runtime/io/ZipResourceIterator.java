@@ -50,7 +50,7 @@ public class ZipResourceIterator implements Iterator<Resource> {
         while (entries.hasMoreElements()) {
             ZipEntry jarEntry = entries.nextElement();
             String entryName = jarEntry.getName();
-            if (entryName.startsWith(path) && ClasspathResourceIterable.hasSuffix(suffix, entryName)) {
+            if (entryName.startsWith(path) && Helpers.hasSuffix(suffix, entryName)) {
                 next = new ZipResource(jarFile, jarEntry);
                 break;
             }

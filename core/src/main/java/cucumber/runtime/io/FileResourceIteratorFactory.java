@@ -4,7 +4,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.Iterator;
 
-import static cucumber.runtime.io.ClasspathResourceIterable.getPath;
+import static cucumber.runtime.io.Helpers.filePath;
 
 /**
  * Factory which creates {@link FileResourceIterator}s.
@@ -25,7 +25,7 @@ public class FileResourceIteratorFactory implements ResourceIteratorFactory {
 
     @Override
     public Iterator<Resource> createIterator(URL url, String path, String suffix) {
-        File file = new File(getPath(url));
+        File file = new File(filePath(url));
         File rootDir = new File(file.getAbsolutePath().substring(0, file.getAbsolutePath().length() - path.length()));
         return new FileResourceIterator(rootDir, file, suffix);
     }
