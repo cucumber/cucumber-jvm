@@ -5,6 +5,7 @@ import cucumber.deps.com.thoughtworks.xstream.converters.basic.AbstractSingleVal
 import cucumber.runtime.xstream.LocalizedXStreams;
 import gherkin.I18n;
 import gherkin.formatter.Argument;
+import gherkin.formatter.model.Comment;
 import gherkin.formatter.model.DataTableRow;
 import gherkin.formatter.model.DocString;
 import gherkin.formatter.model.Step;
@@ -16,6 +17,7 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -192,5 +194,27 @@ public class StepDefinitionMatchTest {
             assertEquals("Arity mismatch: Step Definition 'withTwoParams' with pattern [some pattern] is declared with 3 parameters. However, the gherkin step has 2 arguments [4, Table:[]]. \n" +
                     "Step: Given I have 4 cukes in my belly", expected.getMessage());
         }
+    }
+
+    public static class TableAndDocString {
+        public boolean called = false;
+        public void method(int aInt, List<String> table, String doc) {
+            called = true;
+        }
+    }
+
+    @Test
+    public void should_handle_doc_strings_and_row_together() throws Throwable {
+        DataTableRow row1 = new DataTableRow( Arrays.<Comment>asList(), Arrays.asList( "cell" ), 5 );
+        DataTableRow row2 = new DataTableRow( Arrays.<Comment>asList(), Arrays.asList( "a" ), 5 );
+        Step step = new Step(null, "Given ", "I have 4 cukes in my belly", 1, Arrays.asList( row1, row2 ), new DocString( "string", "blabla", 7 ));
+
+        TableAndDocString target = new TableAndDocString();
+        StepDefinition stepDefinition = new StubStepDefinition( target, TableAndDocString.class.getMethod("method", Integer.TYPE, List.class, String.class), "some pattern");
+        StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(asList(new Argument(7, "4")), stepDefinition, null, step, new LocalizedXStreams(getClass().getClassLoader()));
+
+        stepDefinitionMatch.runStep(new I18n("en"));
+
+        assertTrue( target.called );
     }
 }

@@ -52,7 +52,9 @@ public class StepDefinitionMatch extends Match {
 
         if (step.getRows() != null) {
             argumentCount++;
-        } else if (step.getDocString() != null) {
+        }
+
+        if (step.getDocString() != null) {
             argumentCount++;
         }
         Integer parameterCount = stepDefinition.getParameterCount();
@@ -72,7 +74,9 @@ public class StepDefinitionMatch extends Match {
 
         if (step.getRows() != null) {
             result.add(tableArgument(step, n, xStream));
-        } else if (step.getDocString() != null) {
+        }
+
+        if (step.getDocString() != null) {
             result.add(step.getDocString().getValue());
         }
         return result.toArray(new Object[result.size()]);
