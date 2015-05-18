@@ -52,9 +52,12 @@ public class StepDefinitionMatch extends Match {
 
         if (step.getRows() != null) {
             argumentCount++;
-        } else if (step.getDocString() != null) {
+        }
+
+        if (step.getDocString() != null) {
             argumentCount++;
         }
+
         Integer parameterCount = stepDefinition.getParameterCount();
         if (parameterCount != null && argumentCount != parameterCount) {
             throw arityMismatch(parameterCount);
@@ -72,11 +75,14 @@ public class StepDefinitionMatch extends Match {
 
         if (step.getRows() != null) {
             result.add(tableArgument(step, n, xStream));
-        } else if (step.getDocString() != null) {
+        }
+
+        if (step.getDocString() != null) {
             ParameterInfo parameterInfo = getParameterType(n, String.class);
             Object arg = parameterInfo.convert(step.getDocString().getValue(), xStream);
             result.add(arg);
         }
+
         return result.toArray(new Object[result.size()]);
     }
 
