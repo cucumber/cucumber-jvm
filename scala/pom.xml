@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -8,9 +9,22 @@
         <version>1.2.3-SNAPSHOT</version>
     </parent>
 
-    <artifactId>cucumber-scala_2.11</artifactId>
-    <packaging>jar</packaging>
-    <name>Cucumber-JVM: Scala (2.11)</name>
+    <artifactId>cucumber-scala-aggregator</artifactId>
+    <packaging>pom</packaging>
+    <name>Cucumber-JVM: Scala Aggregator</name>
+
+    <properties>
+        <!-- Keep in sync with scala/pom.xml and scala/scala_previous/pom.xml if minor versions are bumped. -->
+        <scala_2.11.version>2.11.6</scala_2.11.version>
+        <scala_2.10.version>2.10.5</scala_2.10.version>
+        <scala_2.12.version>2.12.0-M1</scala_2.12.version>
+    </properties>
+
+    <modules>
+        <module>scala_2.11</module>
+        <module>scala_2.10</module>
+        <module>scala_2.12</module>
+    </modules>
 
     <dependencies>
         <dependency>
@@ -28,21 +42,8 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.scala-lang</groupId>
-            <artifactId>scala-compiler</artifactId>
-            <version>${scala.current.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
             <groupId>info.cukes</groupId>
             <artifactId>cucumber-junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.scala-lang</groupId>
-            <artifactId>scala-library</artifactId>
-            <version>${scala.current.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -58,67 +59,69 @@
     </dependencies>
 
     <build>
-        <plugins>
-            <plugin>
-                <groupId>net.alchim31.maven</groupId>
-                <artifactId>scala-maven-plugin</artifactId>
-                <version>${scala-maven-plugin.version}</version>
-                <configuration>
-                    <args>
-                      <arg>-feature</arg>
-                      <arg>-deprecation</arg>
-                      <!-- This can be moved to an import in the ScalaDsl class once Scala 2.9 is no longer supported -->
-                      <arg>-language:implicitConversions</arg>
-                    </args>
-                    <excludes>
-                        <exclude>**/*.java</exclude>
-                    </excludes>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>regular-source-compilation</id>
-                        <goals>
-                            <goal>add-source</goal>
-                            <goal>compile</goal>
-                            <goal>testCompile</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <goals>
-                            <goal>add-source</goal>
-                        </goals>
-                        <configuration>
-                            <sourceDir>${basedir}/target/generated-sources/i18n</sourceDir>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>doc-jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>net.alchim31.maven</groupId>
+                    <artifactId>scala-maven-plugin</artifactId>
+                    <version>${scala-maven-plugin.version}</version>
+                    <configuration>
+                        <args>
+                            <arg>-feature</arg>
+                            <arg>-deprecation</arg>
+                            <!-- This can be moved to an import in the ScalaDsl class once Scala 2.9 is no longer supported -->
+                            <arg>-language:implicitConversions</arg>
+                        </args>
+                        <excludes>
+                            <exclude>**/*.java</exclude>
+                        </excludes>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>regular-source-compilation</id>
+                            <goals>
+                                <goal>add-source</goal>
+                                <goal>compile</goal>
+                                <goal>testCompile</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <goals>
+                                <goal>add-source</goal>
+                            </goals>
+                            <configuration>
+                                <sourceDir>${basedir}/target/generated-sources/i18n</sourceDir>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>attach-javadocs</id>
+                            <goals>
+                                <goal>doc-jar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>generate-i18n-sources</id>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <phase>generate-sources</phase>
-                        <configuration>
-                            <target>
-                                <taskdef name="groovy" classname="org.codehaus.groovy.ant.Groovy" classpathref="maven.plugin.classpath" />
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-antrun-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <id>generate-i18n-sources</id>
+                            <goals>
+                                <goal>run</goal>
+                            </goals>
+                            <phase>generate-sources</phase>
+                            <configuration>
+                                <target>
+                                    <taskdef name="groovy" classname="org.codehaus.groovy.ant.Groovy"
+                                             classpathref="maven.plugin.classpath"/>
 
-                                <groovy><![CDATA[
+                                    <groovy><![CDATA[
 import groovy.text.SimpleTemplateEngine
 
 def engine = new SimpleTemplateEngine()
-def templateSource = new File(project.baseDir, "src${File.separator}main${File.separator}code_generator${File.separator}I18n.scala.txt").getText()
+def templateSource = new File(project.baseDir, "..${File.separator}sources${File.separator}src${File.separator}main${File.separator}code_generator${File.separator}I18n.scala.txt").getText()
 
 template = engine.createTemplate(templateSource).make(null)
 def file = new File(project.baseDir, "target${File.separator}generated-sources${File.separator}i18n${File.separator}cucumber${File.separator}api${File.separator}scala${File.separator}I18n.scala")
@@ -126,11 +129,12 @@ file.parentFile.mkdirs()
 file.write(template.toString(), "UTF-8")
         ]]></groovy>
 
-                            </target>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
+                                </target>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
 </project>

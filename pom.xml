@@ -26,9 +26,6 @@
         <gherkin.version>2.12.2</gherkin.version>
         <groovy.version>2.4.3</groovy.version>
         <picocontainer.version>2.15</picocontainer.version>
-        <!-- Keep in sync with scala/pom.xml and scala/scala_previous/pom.xml if minor versions are bumped. -->
-        <scala.current.version>2.11.6</scala.current.version>
-        <scala.previous.version>2.10.5</scala.previous.version>
         <!-- There is 3.1.3, but it requires at least mvn 3.0.4 which might still not be widely used. -->
         <scala-maven-plugin.version>3.2.0</scala-maven-plugin.version>
         <spring.version>4.1.6.RELEASE</spring.version>
