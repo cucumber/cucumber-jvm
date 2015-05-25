@@ -69,8 +69,6 @@
                         <args>
                             <arg>-feature</arg>
                             <arg>-deprecation</arg>
-                            <!-- This can be moved to an import in the ScalaDsl class once Scala 2.9 is no longer supported -->
-                            <arg>-language:implicitConversions</arg>
                         </args>
                         <excludes>
                             <exclude>**/*.java</exclude>
