@@ -510,7 +510,6 @@
         <module>rhino</module>
         <module>openejb</module>
         <module>scala</module>
-        <module>scala/scala_previous</module>
         <module>needle</module>
         <module>android</module>
     </modules>
