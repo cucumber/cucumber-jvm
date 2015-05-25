@@ -14,10 +14,20 @@ import _root_.cucumber.runtime.Backend
 import _root_.cucumber.runtime.UnreportedStepExecutor
 import _root_.cucumber.runtime.Glue
 import collection.JavaConversions._
+import _root_.scala.collection.Map
+import _root_.cucumber.runtime.CucumberException;
+import _root_.cucumber.runtime.Reflections;
+import _root_.cucumber.runtime.io.ResourceLoaderClassFinder;
+import _root_.cucumber.hiddenruntime.scala.DefaultScalaObjectFactory
 
 class ScalaBackend(resourceLoader:ResourceLoader) extends Backend {
+  private val classFinder: ClassFinder = new ResourceLoaderClassFinder(resourceLoader, Thread.currentThread().getContextClassLoader())
+  private val reflections: Reflections = new Reflections(classFinder)
+  
   private var snippetGenerator = new SnippetGenerator(new ScalaSnippetGenerator())
   private var instances:Seq[ScalaDsl] = Nil
+  private var objectFactory: ObjectFactory = loadObjectFactory()
+
 
   def getStepDefinitions = instances.flatMap(_.stepDefinitions)
 
@@ -27,12 +37,21 @@ class ScalaBackend(resourceLoader:ResourceLoader) extends Backend {
 
   def disposeWorld() {
     instances = Nil
+    objectFactory.stop();
+  }
+
+  def loadObjectFactory(): ObjectFactory = {
+    try {
+      reflections.instantiateExactlyOneSubclass(classOf[ObjectFactory], "cucumber.runtime", Array[Class[_]](), Array[Object]())
+    } catch {
+      case x: CucumberException => new DefaultScalaObjectFactory();
+    }
   }
 
   def getSnippet(step: Step, functionNameGenerator: FunctionNameGenerator) = snippetGenerator.getSnippet(step, functionNameGenerator)
 
   def buildWorld() {
-    //I don't believe scala has to do anything to clean out its world
+    objectFactory.start();
   }
 
   def loadGlue(glue: Glue, gluePaths: JList[String]) {
@@ -40,18 +59,16 @@ class ScalaBackend(resourceLoader:ResourceLoader) extends Backend {
     val classFinder = new ResourceLoaderClassFinder(resourceLoader, cl)
     val packages = gluePaths map { cucumber.runtime.io.MultiLoader.packageName(_) }
     val dslClasses = packages flatMap { classFinder.getDescendants(classOf[ScalaDsl], _) } filter { cls =>
-      try {
-        cls.getDeclaredConstructor()
-        true
-      } catch {
-        case e : Throwable => false
-      }
+      // all descendants of ScalaDSL are selected 
+      true
     }
     val (clsClasses, objClasses) = dslClasses partition { cls =>
       try {
-        Modifier.isPublic (cls.getConstructor().getModifiers)
+//        has Module? - is Object!
+        cls.getDeclaredField("MODULE$")
+        false
       } catch {
-        case e : Throwable  => false
+        case e : Throwable  => true
       }
     }
     val objInstances = objClasses map {cls =>
@@ -59,7 +76,7 @@ class ScalaBackend(resourceLoader:ResourceLoader) extends Backend {
       instField.setAccessible(true)
       instField.get(null).asInstanceOf[ScalaDsl]
     }
-    val clsInstances = (clsClasses map {_.newInstance()})
+    val clsInstances = (clsClasses map {objectFactory.getInstance(_)}) 
 
     instances = objInstances ++ clsInstances
 

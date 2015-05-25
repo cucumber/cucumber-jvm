@@ -514,6 +514,7 @@
         <module>openejb</module>
         <module>scala</module>
         <module>scala/scala_previous</module>
+        <module>subcut</module>
         <module>needle</module>
         <module>android</module>
     </modules>

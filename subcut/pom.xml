@@ -1,0 +1,97 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>info.cukes</groupId>
+		<artifactId>cucumber-jvm</artifactId>
+		<relativePath>../pom.xml</relativePath>
+		<version>1.1.6-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>cucumber-subcut_2.10</artifactId>
+	<packaging>jar</packaging>
+	<name>Cucumber-JVM: SubCut</name>
+
+	<dependencies>
+		<dependency>
+			<groupId>info.cukes</groupId>
+			<artifactId>cucumber-scala_2.10</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>info.cukes</groupId>
+			<artifactId>cucumber-jvm-deps</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.escalatesoft.subcut</groupId>
+			<artifactId>subcut_2.10</artifactId>
+			<version>2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>info.cukes</groupId>
+			<artifactId>gherkin</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>info.cukes</groupId>
+			<artifactId>cucumber-junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.sourceforge.cobertura</groupId>
+			<artifactId>cobertura</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>net.alchim31.maven</groupId>
+				<artifactId>scala-maven-plugin</artifactId>
+				<version>${scala-maven-plugin.version}</version>
+				<configuration>
+					<!--encoding>UTF-8</encoding -->
+					<excludes>
+						<exclude>**/*.java</exclude>
+					</excludes>
+				</configuration>
+				<executions>
+					<execution>
+						<id>regular-source-compilation</id>
+						<goals>
+							<goal>add-source</goal>
+							<goal>compile</goal>
+							<goal>testCompile</goal>
+						</goals>
+					</execution>
+					<execution>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sourceDir>${basedir}/target/generated-sources/i18n</sourceDir>
+						</configuration>
+					</execution>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>doc-jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>
