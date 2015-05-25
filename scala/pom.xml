@@ -13,13 +13,6 @@
     <packaging>pom</packaging>
     <name>Cucumber-JVM: Scala Aggregator</name>
 
-    <properties>
-        <!-- Keep in sync with scala/pom.xml and scala/scala_previous/pom.xml if minor versions are bumped. -->
-        <scala_2.11.version>2.11.6</scala_2.11.version>
-        <scala_2.10.version>2.10.5</scala_2.10.version>
-        <scala_2.12.version>2.12.0-M1</scala_2.12.version>
-    </properties>
-
     <modules>
         <module>scala_2.11</module>
         <module>scala_2.10</module>

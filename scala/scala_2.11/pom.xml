@@ -13,18 +13,22 @@
     <packaging>jar</packaging>
     <name>Cucumber-JVM: Scala (2.11)</name>
 
+    <properties>
+        <scala.version>2.11.6</scala.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-compiler</artifactId>
-            <version>${scala_2.11.version}</version>
+            <version>${scala.version}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>
-            <version>${scala_2.11.version}</version>
+            <version>${scala.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
