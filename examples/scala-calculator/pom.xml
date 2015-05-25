@@ -36,13 +36,13 @@
         <dependency>
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>
-            <version>${scala.current.version}</version>
+            <version>${scala.latest.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-compiler</artifactId>
-            <version>${scala.current.version}</version>
+            <version>${scala.latest.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
