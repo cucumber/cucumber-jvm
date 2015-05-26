@@ -44,20 +44,20 @@ public class RuntimeGlueTest {
 
         HookDefinition bh = mock(HookDefinition.class);
         when(bh.isScenarioScoped()).thenReturn(true);
-        glue.addBeforeHook(bh);
+        glue.addBeforeHook(bh, HookScope.SCENARIO);
 
         HookDefinition ah = mock(HookDefinition.class);
         when(ah.isScenarioScoped()).thenReturn(true);
-        glue.addAfterHook(ah);
+        glue.addAfterHook(ah, HookScope.SCENARIO);
 
         assertEquals(1, glue.stepDefinitionsByPattern.size());
-        assertEquals(1, glue.beforeHooks.size());
-        assertEquals(1, glue.afterHooks.size());
+        assertEquals(1, glue.beforeHookDefinitions.size());
+        assertEquals(1, glue.afterHookDefinitions.size());
 
         glue.removeScenarioScopedGlue();
 
         assertEquals(0, glue.stepDefinitionsByPattern.size());
-        assertEquals(0, glue.beforeHooks.size());
-        assertEquals(0, glue.afterHooks.size());
+        assertEquals(0, glue.beforeHookDefinitions.size());
+        assertEquals(0, glue.afterHookDefinitions.size());
     }
 }

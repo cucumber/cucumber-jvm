@@ -11,7 +11,7 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 
-public class JRubyHookDefinition implements HookDefinition {
+public class JRubyHookDefinition implements HookDefinition<Scenario> {
 
     private final TagExpression tagExpression;
     private final RubyObject hookRunner;

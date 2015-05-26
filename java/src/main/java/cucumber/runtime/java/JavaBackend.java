@@ -1,21 +1,14 @@
 package cucumber.runtime.java;
 
 import cucumber.api.java.After;
+import cucumber.api.java.AfterStep;
 import cucumber.api.java.Before;
+import cucumber.api.java.BeforeStep;
 import cucumber.api.java8.GlueBase;
 import cucumber.api.java8.HookBody;
 import cucumber.api.java8.HookNoArgsBody;
 import cucumber.api.java8.StepdefBody;
-import cucumber.runtime.Backend;
-import cucumber.runtime.ClassFinder;
-import cucumber.runtime.CucumberException;
-import cucumber.runtime.DuplicateStepDefinitionException;
-import cucumber.runtime.Glue;
-import cucumber.runtime.NoInstancesException;
-import cucumber.runtime.Reflections;
-import cucumber.runtime.TooManyInstancesException;
-import cucumber.runtime.UnreportedStepExecutor;
-import cucumber.runtime.Utils;
+import cucumber.runtime.*;
 import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
@@ -184,28 +177,34 @@ public class JavaBackend implements Backend {
         if (annotation.annotationType().equals(Before.class)) {
             String[] tagExpressions = ((Before) annotation).value();
             long timeout = ((Before) annotation).timeout();
-            glue.addBeforeHook(new JavaHookDefinition(method, tagExpressions, ((Before) annotation).order(), timeout, objectFactory));
-        } else {
+            glue.addBeforeHook(new JavaHookDefinition(method, tagExpressions, ((Before) annotation).order(), timeout, objectFactory), HookScope.SCENARIO);
+        } else if (annotation.annotationType().equals(After.class)) {
             String[] tagExpressions = ((After) annotation).value();
             long timeout = ((After) annotation).timeout();
-            glue.addAfterHook(new JavaHookDefinition(method, tagExpressions, ((After) annotation).order(), timeout, objectFactory));
+            glue.addAfterHook(new JavaHookDefinition(method, tagExpressions, ((After) annotation).order(), timeout, objectFactory), HookScope.SCENARIO);
+        } else if (annotation.annotationType().equals(BeforeStep.class)) {
+            long timeout = ((BeforeStep) annotation).timeout();
+            glue.addBeforeHook(new JavaStepHookDefinition(method, ((BeforeStep) annotation).order(), timeout, objectFactory), HookScope.STEP);
+        } else if (annotation.annotationType().equals(AfterStep.class)) {
+            long timeout = ((AfterStep) annotation).timeout();
+            glue.addAfterHook(new JavaStepHookDefinition(method, ((AfterStep) annotation).order(), timeout, objectFactory), HookScope.STEP);
         }
     }
 
     public void addBeforeHookDefinition(String[] tagExpressions, long timeoutMillis, int order, HookBody body) {
-        glue.addBeforeHook(new Java8HookDefinition(tagExpressions, order, timeoutMillis, body));
+        glue.addBeforeHook(new Java8HookDefinition(tagExpressions, order, timeoutMillis, body), HookScope.SCENARIO);
     }
 
     public void addAfterHookDefinition(String[] tagExpressions, long timeoutMillis, int order, HookBody body) {
-        glue.addAfterHook(new Java8HookDefinition(tagExpressions, order, timeoutMillis, body));
+        glue.addAfterHook(new Java8HookDefinition(tagExpressions, order, timeoutMillis, body), HookScope.SCENARIO);
     }
 
     public void addBeforeHookDefinition(String[] tagExpressions, long timeoutMillis, int order, HookNoArgsBody body) {
-        glue.addBeforeHook(new Java8HookDefinition(tagExpressions, order, timeoutMillis, body));
+        glue.addBeforeHook(new Java8HookDefinition(tagExpressions, order, timeoutMillis, body), HookScope.SCENARIO);
     }
 
     public void addAfterHookDefinition(String[] tagExpressions, long timeoutMillis, int order, HookNoArgsBody body) {
-        glue.addAfterHook(new Java8HookDefinition(tagExpressions, order, timeoutMillis, body));
+        glue.addAfterHook(new Java8HookDefinition(tagExpressions, order, timeoutMillis, body), HookScope.SCENARIO);
     }
 
     private Pattern pattern(Annotation annotation) throws Throwable {

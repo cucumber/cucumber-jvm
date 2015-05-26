@@ -41,6 +41,8 @@ public class StepContainer {
     }
 
     void runStep(Step step, Reporter reporter, Runtime runtime) {
+        runtime.runBeforeStepHooks(reporter, step);
         runtime.runStep(cucumberFeature.getPath(), step, reporter, cucumberFeature.getI18n());
+        runtime.runAfterStepHooks(reporter, step);
     }
 }

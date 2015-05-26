@@ -10,8 +10,8 @@ class HookComparator implements Comparator<HookDefinition> {
     }
 
     @Override
-    public int compare(HookDefinition hook1, HookDefinition hook2) {
-        int comparison = hook1.getOrder() - hook2.getOrder();
+    public int compare(HookDefinition hookDefinition1, HookDefinition hookDefinition2) {
+        int comparison = hookDefinition1.getOrder() - hookDefinition2.getOrder();
         return ascending ? comparison : -comparison;
     }
 }

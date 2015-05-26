@@ -148,10 +148,10 @@ public class TestHelper {
             TestHelper.mockHook(hookEntry, beforeHooks, afterHooks);
         }
         if (beforeHooks.size() != 0) {
-            when(glue.getBeforeHooks()).thenReturn(beforeHooks);
+            when(glue.getBeforeHooks(HookScope.SCENARIO)).thenReturn(beforeHooks);
         }
         if (afterHooks.size() != 0) {
-            when(glue.getAfterHooks()).thenReturn(afterHooks);
+            when(glue.getAfterHooks(HookScope.SCENARIO)).thenReturn(afterHooks);
         }
     }
 

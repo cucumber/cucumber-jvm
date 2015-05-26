@@ -3,11 +3,7 @@ package cucumber.runtime.java;
 import cucumber.api.Scenario;
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
-import cucumber.runtime.CucumberException;
-import cucumber.runtime.Glue;
-import cucumber.runtime.HookDefinition;
-import cucumber.runtime.RuntimeGlue;
-import cucumber.runtime.UndefinedStepsTracker;
+import cucumber.runtime.*;
 import cucumber.runtime.xstream.LocalizedXStreams;
 import gherkin.formatter.model.Tag;
 import org.junit.Test;
@@ -52,8 +48,8 @@ public class JavaHookTest {
         objectFactory.setInstance(new HasHooks());
         backend.buildWorld();
         backend.addHook(BEFORE.getAnnotation(Before.class), BEFORE);
-        JavaHookDefinition hookDef = (JavaHookDefinition) glue.getBeforeHooks().get(0);
-        assertEquals(0, glue.getAfterHooks().size());
+        JavaHookDefinition hookDef = (JavaHookDefinition) glue.getBeforeHooks(HookScope.SCENARIO).get(0);
+        assertEquals(0, glue.getAfterHooks(HookScope.SCENARIO).size());
         assertEquals(BEFORE, hookDef.getMethod());
     }
 
@@ -62,8 +58,8 @@ public class JavaHookTest {
         objectFactory.setInstance(new HasHooks());
         backend.buildWorld();
         backend.addHook(AFTER.getAnnotation(After.class), AFTER);
-        JavaHookDefinition hookDef = (JavaHookDefinition) glue.getAfterHooks().get(0);
-        assertEquals(0, glue.getBeforeHooks().size());
+        JavaHookDefinition hookDef = (JavaHookDefinition) glue.getAfterHooks(HookScope.SCENARIO).get(0);
+        assertEquals(0, glue.getBeforeHooks(HookScope.SCENARIO).size());
         assertEquals(AFTER, hookDef.getMethod());
     }
 
@@ -72,7 +68,7 @@ public class JavaHookTest {
         objectFactory.setInstance(new HasHooks());
         backend.buildWorld();
         backend.addHook(AFTER.getAnnotation(After.class), AFTER);
-        HookDefinition hookDef = glue.getAfterHooks().get(0);
+        HookDefinition hookDef = glue.getAfterHooks(HookScope.SCENARIO).get(0);
         assertEquals(1, hookDef.getOrder());
     }
 
@@ -81,7 +77,7 @@ public class JavaHookTest {
         objectFactory.setInstance(new HasHooks());
         backend.buildWorld();
         backend.addHook(BEFORE.getAnnotation(Before.class), BEFORE);
-        HookDefinition hookDef = glue.getBeforeHooks().get(0);
+        HookDefinition hookDef = glue.getBeforeHooks(HookScope.SCENARIO).get(0);
         assertEquals(10000, hookDef.getOrder());
     }
 
@@ -90,7 +86,7 @@ public class JavaHookTest {
         objectFactory.setInstance(new HasHooks());
         backend.buildWorld();
         backend.addHook(BEFORE.getAnnotation(Before.class), BEFORE);
-        HookDefinition before = glue.getBeforeHooks().get(0);
+        HookDefinition before = glue.getBeforeHooks(HookScope.SCENARIO).get(0);
         assertTrue(before.matches(asList(new Tag("@bar", 0), new Tag("@zap", 0))));
     }
 
@@ -99,7 +95,7 @@ public class JavaHookTest {
         objectFactory.setInstance(new HasHooks());
         backend.buildWorld();
         backend.addHook(BEFORE.getAnnotation(Before.class), BEFORE);
-        HookDefinition before = glue.getBeforeHooks().get(0);
+        HookDefinition before = glue.getBeforeHooks(HookScope.SCENARIO).get(0);
         assertFalse(before.matches(asList(new Tag("@bar", 0))));
     }
 
@@ -108,7 +104,7 @@ public class JavaHookTest {
         objectFactory.setInstance(new BadHook());
         backend.buildWorld();
         backend.addHook(BAD_AFTER.getAnnotation(After.class), BAD_AFTER);
-        HookDefinition bad = glue.getAfterHooks().get(0);
+        HookDefinition bad = glue.getAfterHooks(HookScope.SCENARIO).get(0);
         try {
             bad.execute(mock(Scenario.class));
             fail();

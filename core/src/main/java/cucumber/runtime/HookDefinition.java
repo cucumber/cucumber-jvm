@@ -1,11 +1,10 @@
 package cucumber.runtime;
 
-import cucumber.api.Scenario;
 import gherkin.formatter.model.Tag;
 
 import java.util.Collection;
 
-public interface HookDefinition {
+public interface HookDefinition<T> {
     /**
      * The source line where the step definition is defined.
      * Example: foo/bar/Zap.brainfuck:42
@@ -14,14 +13,21 @@ public interface HookDefinition {
      */
     String getLocation(boolean detail);
 
-    void execute(Scenario scenario) throws Throwable;
-
-    boolean matches(Collection<Tag> tags);
-
+    /**
+     * @return order in which this hook should be run.
+     */
     int getOrder();
+
+    /**
+     * @param tags collection of the tag to run search against.
+     * @return if hook has on of the tags.
+     */
+    boolean matches(Collection<Tag> tags);
 
     /**
      * @return true if this instance is scoped to a single scenario, or false if it can be reused across scenarios.
      */
     boolean isScenarioScoped();
+
+    void execute(T type) throws Throwable;
 }

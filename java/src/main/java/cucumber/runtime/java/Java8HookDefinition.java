@@ -12,7 +12,7 @@ import java.util.Collection;
 
 import static java.util.Arrays.asList;
 
-public class Java8HookDefinition implements HookDefinition {
+public class Java8HookDefinition implements HookDefinition<Scenario> {
     private final TagExpression tagExpression;
     private final int order;
     private final long timeoutMillis;
