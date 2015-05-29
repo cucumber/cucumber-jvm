@@ -12,6 +12,7 @@ import java.lang.reflect.Type
  * Base trait for a scala step definition implementation.
  */
 trait ScalaDsl { self =>
+  import scala.language.implicitConversions
 
   private [cucumber] val stepDefinitions = new ArrayBuffer[StepDefinition]
 

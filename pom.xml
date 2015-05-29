@@ -26,9 +26,6 @@
         <gherkin.version>2.12.2</gherkin.version>
         <groovy.version>2.4.3</groovy.version>
         <picocontainer.version>2.15</picocontainer.version>
-        <!-- Keep in sync with scala/pom.xml and scala/scala_previous/pom.xml if minor versions are bumped. -->
-        <scala.current.version>2.11.6</scala.current.version>
-        <scala.previous.version>2.10.5</scala.previous.version>
         <!-- There is 3.1.3, but it requires at least mvn 3.0.4 which might still not be widely used. -->
         <scala-maven-plugin.version>3.2.0</scala-maven-plugin.version>
         <spring.version>4.1.6.RELEASE</spring.version>
@@ -38,6 +35,8 @@
         <guice.version>4.0</guice.version>
         <!-- Remember to bounce version in examples/clojure_cukes/project.clj as well -->
         <clojure.version>1.6.0</clojure.version>
+        <!-- This is only here for the example project to use, the 3 scala projects maintain their own versions -->
+        <scala.latest.version>2.11.6</scala.latest.version>
         <gosu.version>1.2</gosu.version>
         <rhino.version>1.7.6</rhino.version>
         <jsoup.version>1.8.2</jsoup.version>
@@ -513,7 +512,6 @@
         <module>rhino</module>
         <module>openejb</module>
         <module>scala</module>
-        <module>scala/scala_previous</module>
         <module>needle</module>
         <module>android</module>
     </modules>

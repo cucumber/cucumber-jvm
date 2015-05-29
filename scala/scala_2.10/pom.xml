@@ -1,0 +1,54 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>info.cukes</groupId>
+        <artifactId>cucumber-scala-aggregator</artifactId>
+        <relativePath>../pom.xml</relativePath>
+        <version>1.2.3-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>cucumber-scala_2.10</artifactId>
+    <packaging>jar</packaging>
+    <name>Cucumber-JVM: Scala (2.10)</name>
+
+    <properties>
+        <scala.version>2.10.5</scala.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-compiler</artifactId>
+            <version>${scala.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-library</artifactId>
+            <version>${scala.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <sourceDirectory>../sources/src/main/scala</sourceDirectory>
+        <testSourceDirectory>../sources/src/test/scala</testSourceDirectory>
+        <testResources>
+          <testResource>
+            <directory>../sources/src/test/resources</directory>
+          </testResource>
+        </testResources>
+        <plugins>
+            <plugin>
+                <groupId>net.alchim31.maven</groupId>
+                <artifactId>scala-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>
