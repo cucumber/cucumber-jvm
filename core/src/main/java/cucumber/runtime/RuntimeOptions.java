@@ -14,6 +14,8 @@ import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
 import gherkin.util.FixJava;
 
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -27,7 +29,9 @@ import static cucumber.runtime.model.CucumberFeature.load;
 // IMPORTANT! Make sure USAGE.txt is always uptodate if this class changes.
 public class RuntimeOptions {
     public static final String VERSION = ResourceBundle.getBundle("cucumber.version").getString("cucumber-jvm.version");
-    public static final String USAGE = FixJava.readResource("/cucumber/api/cli/USAGE.txt");
+    public static final String USAGE_RESOURCE = "/cucumber/api/cli/USAGE.txt";
+
+    static String usageText;
 
     private final List<String> glue = new ArrayList<String>();
     private final List<Object> filters = new ArrayList<Object>();
@@ -187,7 +191,19 @@ public class RuntimeOptions {
     }
 
     private void printUsage() {
-        System.out.println(USAGE);
+        loadUsageTextIfNeeded();
+        System.out.println(usageText);
+    }
+
+    static void loadUsageTextIfNeeded() {
+        if (usageText == null) {
+            try {
+                Reader reader = new InputStreamReader(FixJava.class.getResourceAsStream(USAGE_RESOURCE), "UTF-8");
+                usageText = FixJava.readReader(reader);
+            } catch (Exception e) {
+                usageText = "Could not load usage text: " + e.toString();
+            }
+        }
     }
 
     private int printI18n(String language) {
