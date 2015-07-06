@@ -74,6 +74,11 @@ public class DexClassFinder implements ClassFinder {
         return result;
     }
 
+    @Override
+    public ClassLoader getClassLoader() {
+        return CLASS_LOADER;
+    }
+
     @SuppressWarnings("unchecked")
     private <T> Class<? extends T> loadClass(final String className) {
         try {

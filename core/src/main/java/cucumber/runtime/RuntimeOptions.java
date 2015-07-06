@@ -70,7 +70,7 @@ public class RuntimeOptions {
     }
 
     public RuntimeOptions(PluginFactory pluginFactory, List<String> argv) {
-        this(new Env("cucumber"), pluginFactory, argv);
+        this(Env.INSTANCE, pluginFactory, argv);
     }
 
     public RuntimeOptions(Env env, PluginFactory pluginFactory, List<String> argv) {

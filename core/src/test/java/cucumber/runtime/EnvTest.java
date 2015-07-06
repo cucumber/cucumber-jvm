@@ -21,17 +21,6 @@ public class EnvTest {
     }
 
     @Test
-    public void looks_up_value_from_system_properties() {
-        try {
-            System.setProperty("env.test", "from-props");
-            assertEquals("from-props", env.get("env.test"));
-            assertEquals("from-props", env.get("ENV_TEST"));
-        } finally {
-            System.getProperties().remove("env.test");
-        }
-    }
-
-    @Test
     public void looks_up_dotted_value_from_resource_bundle_with_dots() {
         assertEquals("a.b", env.get("a.b"));
     }
@@ -49,5 +38,10 @@ public class EnvTest {
     @Test
     public void looks_up_underscored_value_from_resource_bundle_with_underscores() {
         assertEquals("B_C", env.get("B_C"));
+    }
+
+    @Test
+    public void looks_up_value_by_exact_case_keuy() {
+        assertEquals("C_D", env.get("c.D"));
     }
 }

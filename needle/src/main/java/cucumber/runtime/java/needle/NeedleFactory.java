@@ -1,6 +1,6 @@
 package cucumber.runtime.java.needle;
 
-import cucumber.runtime.java.ObjectFactory;
+import cucumber.api.java.ObjectFactory;
 import cucumber.runtime.java.needle.config.CollectInjectionProvidersFromStepsInstance;
 import cucumber.runtime.java.needle.config.CreateInstanceByDefaultConstructor;
 import cucumber.runtime.java.needle.config.CucumberNeedleConfiguration;

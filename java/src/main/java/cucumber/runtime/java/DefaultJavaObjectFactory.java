@@ -1,11 +1,16 @@
 package cucumber.runtime.java;
 
+import cucumber.api.java.ObjectFactory;
 import cucumber.runtime.CucumberException;
 
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This class has package scope so it doesn't get loaded by reflection,
+ * thereby colliding with other DI implementations.
+ */
 class DefaultJavaObjectFactory implements ObjectFactory {
     private final Map<Class<?>, Object> instances = new HashMap<Class<?>, Object>();
 

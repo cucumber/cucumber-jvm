@@ -1,6 +1,7 @@
 package cucumber.runtime.java;
 
 import cucumber.api.java.Before;
+import cucumber.api.java.ObjectFactory;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Glue;
 import cucumber.runtime.io.MultiLoader;

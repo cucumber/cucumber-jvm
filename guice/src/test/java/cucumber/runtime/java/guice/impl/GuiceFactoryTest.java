@@ -3,7 +3,7 @@ package cucumber.runtime.java.guice.impl;
 import com.google.inject.*;
 import cucumber.api.guice.CucumberModules;
 import cucumber.api.guice.CucumberScopes;
-import cucumber.runtime.java.ObjectFactory;
+import cucumber.api.java.ObjectFactory;
 import cucumber.runtime.java.guice.ScenarioScoped;
 import org.junit.After;
 import org.junit.Test;
