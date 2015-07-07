@@ -1,4 +1,4 @@
-## [1.2.3-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v1.2.2...master) (In Git)
+## [1.2.3](https://github.com/cucumber/cucumber-jvm/compare/v1.2.2...v1.2.3) (2015-07-07)
 
 * [Core] Make the Rerun Formatter consistent with the exit code ([#871](https://github.com/cucumber/cucumber-jvm/pull/871) Björn Rasmusson)
 * [OSGi] Cucumber is ready to run in OSGi containers ([#873](https://github.com/cucumber/cucumber-jvm/pull/873), [#799](https://github.com/cucumber/cucumber-jvm/pull/799) @HendrikSP)
