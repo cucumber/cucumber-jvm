@@ -12,8 +12,8 @@ import gherkin.formatter.model.Scenario;
 import gherkin.formatter.model.ScenarioOutline;
 import gherkin.formatter.model.Step;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -23,12 +23,13 @@ import java.util.Set;
  * Formatter for reporting all failed features and print their locations
  * Failed means: (failed, undefined, pending) test result
  */
-class RerunFormatter implements Formatter, Reporter {
+class RerunFormatter implements Formatter, Reporter, StrictAware {
     private final NiceAppendable out;
     private String featureLocation;
     private Scenario scenario;
     private boolean isTestFailed = false;
-    private Map<String, LinkedHashSet<Integer>> featureAndFailedLinesMapping = new HashMap<String, LinkedHashSet<Integer>>();
+    private Map<String, ArrayList<Integer>> featureAndFailedLinesMapping = new HashMap<String, ArrayList<Integer>>();
+    private boolean isStrict = false;
 
     public RerunFormatter(Appendable out) {
         this.out = new NiceAppendable(out);
@@ -78,9 +79,9 @@ class RerunFormatter implements Formatter, Reporter {
     }
 
     private void reportFailedScenarios() {
-        Set<Map.Entry<String, LinkedHashSet<Integer>>> entries = featureAndFailedLinesMapping.entrySet();
+        Set<Map.Entry<String, ArrayList<Integer>>> entries = featureAndFailedLinesMapping.entrySet();
         boolean firstFeature = true;
-        for (Map.Entry<String, LinkedHashSet<Integer>> entry : entries) {
+        for (Map.Entry<String, ArrayList<Integer>> entry : entries) {
             if (entry.getValue().size() > 0) {
                 if (!firstFeature) {
                     out.append(" ");
@@ -127,13 +128,13 @@ class RerunFormatter implements Formatter, Reporter {
 
     private boolean isTestFailed(Result result) {
         String status = result.getStatus();
-        return Result.FAILED.equals(status) || Result.UNDEFINED.getStatus().equals(status) || "pending".equals(status);
+        return Result.FAILED.equals(status) || isStrict && (Result.UNDEFINED.getStatus().equals(status) || "pending".equals(status));
     }
 
     private void recordTestFailed() {
-        LinkedHashSet<Integer> failedScenarios = this.featureAndFailedLinesMapping.get(featureLocation);
+        ArrayList<Integer> failedScenarios = this.featureAndFailedLinesMapping.get(featureLocation);
         if (failedScenarios == null) {
-            failedScenarios = new LinkedHashSet<Integer>();
+            failedScenarios = new ArrayList<Integer>();
             this.featureAndFailedLinesMapping.put(featureLocation, failedScenarios);
         }
 
@@ -157,5 +158,10 @@ class RerunFormatter implements Formatter, Reporter {
 
     @Override
     public void write(String text) {
+    }
+
+    @Override
+    public void setStrict(boolean strict) {
+        isStrict = strict;
     }
 }
