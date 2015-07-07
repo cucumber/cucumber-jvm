@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Set;
 
 public class JRubyBackend implements Backend {
-    private static final Env env = new Env("cucumber");
+    private static final Env ENV = Env.INSTANCE;
     private final SnippetGenerator snippetGenerator = new SnippetGenerator(new JRubySnippet());
     private final ScriptingContainer jruby = new ScriptingContainer();
     private final ResourceLoader resourceLoader;
@@ -48,12 +48,12 @@ public class JRubyBackend implements Backend {
         this.resourceLoader = resourceLoader;
         jruby.put("$backend", this);
         jruby.setClassLoader(getClass().getClassLoader());
-        String gemPath = env.get("GEM_PATH");
+        String gemPath = ENV.get("GEM_PATH");
         if (gemPath != null) {
             jruby.runScriptlet("ENV['GEM_PATH']='" + gemPath + "'");
         }
 
-        String rubyVersion = env.get("RUBY_VERSION");
+        String rubyVersion = ENV.get("RUBY_VERSION");
         if (rubyVersion != null) {
             // RVM typically defines env vars like
             // RUBY_VERSION=ruby-1.9.3-p362

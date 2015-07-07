@@ -21,21 +21,20 @@ public class ResourceLoaderClassFinder implements ClassFinder {
         String packagePath = "classpath:" + packageName.replace('.', '/').replace(File.separatorChar, '/');
         for (Resource classResource : resourceLoader.resources(packagePath, ".class")) {
             String className = classResource.getClassName(".class");
-            Class<?> clazz = loadClass(className, classLoader);
-            if (clazz != null && !parentType.equals(clazz) && parentType.isAssignableFrom(clazz)) {
-                result.add(clazz.asSubclass(parentType));
+
+            try {
+                Class<?> clazz = loadClass(className);
+                if (clazz != null && !parentType.equals(clazz) && parentType.isAssignableFrom(clazz)) {
+                    result.add(clazz.asSubclass(parentType));
+                }
+            } catch (ClassNotFoundException ignore) {
+            } catch (NoClassDefFoundError ignore) {
             }
         }
         return result;
     }
 
-    private Class<?> loadClass(String className, ClassLoader classLoader) {
-        try {
-            return classLoader.loadClass(className);
-        } catch (ClassNotFoundException ignore) {
-            return null;
-        } catch (NoClassDefFoundError ignore) {
-            return null;
-        }
+    public <T> Class<? extends T> loadClass(String className) throws ClassNotFoundException {
+        return (Class<? extends T>) classLoader.loadClass(className);
     }
 }

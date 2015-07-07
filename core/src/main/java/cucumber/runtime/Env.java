@@ -1,5 +1,7 @@
 package cucumber.runtime;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.Properties;
 import java.util.ResourceBundle;
@@ -13,8 +15,8 @@ import java.util.ResourceBundle;
  * </ol>
  */
 public class Env {
-    private final String bundleName;
-    private final Properties properties;
+    public static final Env INSTANCE = new Env("cucumber");
+    private final Map<String, String> map = new HashMap<String, String>();
 
     public Env() {
         this(null, System.getProperties());
@@ -29,64 +31,41 @@ public class Env {
     }
 
     public Env(String bundleName, Properties properties) {
-        this.bundleName = bundleName;
-        this.properties = properties;
+        if (bundleName != null) {
+            try {
+                ResourceBundle bundle = ResourceBundle.getBundle(bundleName);
+                for (String key : bundle.keySet()) {
+                    put(key, bundle.getString(key));
+                }
+            } catch (MissingResourceException ignore) {
+            }
+        }
+
+        if (properties != null) {
+            for (String key : properties.stringPropertyNames()) {
+                put(key, properties.getProperty(key));
+            }
+        }
+
+        Map<String, String> env = System.getenv();
+        for (String key : env.keySet()) {
+            put(key, env.get(key));
+        }
+    }
+
+    private void put(String key, String string) {
+        map.put(key, string);
+        // Support old skool
+        map.put(key.replace('.', '_').toUpperCase(), string);
+        map.put(key.replace('_', '.').toLowerCase(), string);
     }
 
     public String get(String key) {
-        String result = getFromEnvironment(key);
-        if (result == null) {
-            result = getFromProperty(key);
-            if (result == null && bundleName != null) {
-                result = getFromBundle(key);
-            }
-        }
-        return result;
-    }
-
-    private String getFromEnvironment(String key) {
-        String value = System.getenv(asEnvKey(key));
-        if (value == null) {
-            value = System.getenv(asPropertyKey(key));
-        }
-        return value;
-    }
-
-    private String getFromProperty(String key) {
-        String value = properties.getProperty(asEnvKey(key));
-        if (value == null) {
-            value = properties.getProperty(asPropertyKey(key));
-        }
-        return value;
-    }
-
-    private String getFromBundle(String key) {
-        try {
-            ResourceBundle bundle = ResourceBundle.getBundle(bundleName);
-            try {
-                return bundle.getString(asEnvKey(key));
-            } catch (MissingResourceException stringNotFound) {
-                try {
-                    return bundle.getString(asPropertyKey(key));
-                } catch (MissingResourceException ignoreStringNotFound) {
-                    return bundle.getString(asPropertyKey(key));
-                }
-            }
-        } catch (MissingResourceException ignoreBundleNotFound) {
-            return null;
-        }
+        return map.get(key);
     }
 
     public String get(String key, String defaultValue) {
         String result = get(key);
         return result != null ? result : defaultValue;
-    }
-
-    private static String asEnvKey(String key) {
-        return key.replace('.', '_').toUpperCase();
-    }
-
-    private static String asPropertyKey(String key) {
-        return key.replace('_', '.').toLowerCase();
     }
 }

@@ -65,22 +65,22 @@ public class DexClassFinder implements ClassFinder {
         while (entries.hasMoreElements()) {
             final String className = entries.nextElement();
             if (isInPackage(className, packageName) && !isGenerated(className)) {
-                final Class<? extends T> clazz = loadClass(className);
-                if (clazz != null && !parentType.equals(clazz) && parentType.isAssignableFrom(clazz)) {
-                    result.add(clazz.asSubclass(parentType));
+                try {
+                    final Class<? extends T> clazz = loadClass(className);
+                    if (clazz != null && !parentType.equals(clazz) && parentType.isAssignableFrom(clazz)) {
+                        result.add(clazz.asSubclass(parentType));
+                    }
+                } catch (ClassNotFoundException e) {
+                    throw new CucumberException(e);
                 }
             }
         }
         return result;
     }
 
-    @SuppressWarnings("unchecked")
-    private <T> Class<? extends T> loadClass(final String className) {
-        try {
-            return (Class<? extends T>) Class.forName(className, false, CLASS_LOADER);
-        } catch (final ClassNotFoundException e) {
-            throw new CucumberException(e);
-        }
+    @Override
+    public <T> Class<? extends T> loadClass(final String className) throws ClassNotFoundException {
+        return (Class<? extends T>) Class.forName(className, false, CLASS_LOADER);
     }
 
     private boolean isInPackage(final String className, final String packageName) {

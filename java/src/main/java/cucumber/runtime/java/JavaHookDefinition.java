@@ -1,6 +1,7 @@
 package cucumber.runtime.java;
 
 import cucumber.api.Scenario;
+import cucumber.api.java.ObjectFactory;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.HookDefinition;
 import cucumber.runtime.MethodFormat;

@@ -5,17 +5,17 @@ import android.content.Intent;
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.AndroidTestCase;
 import android.test.InstrumentationTestCase;
-import cucumber.runtime.java.ObjectFactory;
+import cucumber.api.java.ObjectFactory;
 
 /**
- * Android specific implementation of {@link cucumber.runtime.java.ObjectFactory} which will
+ * Android specific implementation of {@link ObjectFactory} which will
  * make sure that created test classes have all necessary references to the executing {@link android.app.Instrumentation}
  * and the associated {@link android.content.Context}.
  */
 public class AndroidObjectFactory implements ObjectFactory {
 
     /**
-     * The actual {@link cucumber.runtime.java.ObjectFactory} responsible for creating instances.
+     * The actual {@link ObjectFactory} responsible for creating instances.
      */
     private final ObjectFactory delegate;
 
@@ -25,11 +25,11 @@ public class AndroidObjectFactory implements ObjectFactory {
     private final Instrumentation instrumentation;
 
     /**
-     * Creates a new instance using the given delegate {@link cucumber.runtime.java.ObjectFactory} to
+     * Creates a new instance using the given delegate {@link ObjectFactory} to
      * forward all calls to and using the given {@link android.app.Instrumentation} to set to the instantiated
      * android test classes.
      *
-     * @param delegate the {@link cucumber.runtime.java.ObjectFactory} to delegate to
+     * @param delegate the {@link ObjectFactory} to delegate to
      * @param instrumentation the {@link android.app.Instrumentation} to set to the tests
      */
     public AndroidObjectFactory(final ObjectFactory delegate, final Instrumentation instrumentation) {

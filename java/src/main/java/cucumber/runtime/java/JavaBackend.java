@@ -2,6 +2,7 @@ package cucumber.runtime.java;
 
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
+import cucumber.api.java.ObjectFactory;
 import cucumber.api.java8.GlueBase;
 import cucumber.api.java8.HookBody;
 import cucumber.api.java8.HookNoArgsBody;
@@ -10,10 +11,8 @@ import cucumber.runtime.Backend;
 import cucumber.runtime.ClassFinder;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.DuplicateStepDefinitionException;
+import cucumber.runtime.Env;
 import cucumber.runtime.Glue;
-import cucumber.runtime.NoInstancesException;
-import cucumber.runtime.Reflections;
-import cucumber.runtime.TooManyInstancesException;
 import cucumber.runtime.UnreportedStepExecutor;
 import cucumber.runtime.Utils;
 import cucumber.runtime.io.MultiLoader;
@@ -63,7 +62,7 @@ public class JavaBackend implements Backend {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         methodScanner = new MethodScanner(classFinder);
-        objectFactory = loadObjectFactory(classFinder);
+        objectFactory = ObjectFactoryLoader.loadObjectFactory(classFinder, Env.INSTANCE.get(ObjectFactory.class.getName()));
     }
 
     public JavaBackend(ObjectFactory objectFactory) {
@@ -78,20 +77,6 @@ public class JavaBackend implements Backend {
         this.objectFactory = objectFactory;
         this.classFinder = classFinder;
         methodScanner = new MethodScanner(classFinder);
-    }
-
-    public static ObjectFactory loadObjectFactory(ClassFinder classFinder) {
-        ObjectFactory objectFactory;
-        try {
-            Reflections reflections = new Reflections(classFinder);
-            objectFactory = reflections.instantiateExactlyOneSubclass(ObjectFactory.class, "cucumber.runtime", new Class[0], new Object[0]);
-        } catch (TooManyInstancesException e) {
-            System.out.println(getMultipleObjectFactoryLogMessage());
-            objectFactory = new DefaultJavaObjectFactory();
-        } catch (NoInstancesException e) {
-            objectFactory = new DefaultJavaObjectFactory();
-        }
-        return objectFactory;
     }
 
     @Override
@@ -219,13 +204,4 @@ public class JavaBackend implements Backend {
         return (Long) Utils.invoke(annotation, regexpMethod, 0);
     }
 
-    private static String getMultipleObjectFactoryLogMessage() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("More than one Cucumber ObjectFactory was found in the classpath\n\n");
-        sb.append("You probably may have included, for instance, cucumber-spring AND cucumber-guice as part of\n");
-        sb.append("your dependencies. When this happens, Cucumber falls back to instantiating the\n");
-        sb.append("DefaultJavaObjectFactory implementation which doesn't provide IoC.\n");
-        sb.append("In order to enjoy IoC features, please remove the unnecessary dependencies from your classpath.\n");
-        return sb.toString();
-    }
 }

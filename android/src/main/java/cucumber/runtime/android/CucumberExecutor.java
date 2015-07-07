@@ -8,12 +8,14 @@ import cucumber.api.StepDefinitionReporter;
 import cucumber.runtime.Backend;
 import cucumber.runtime.ClassFinder;
 import cucumber.runtime.CucumberException;
+import cucumber.runtime.Env;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.RuntimeOptionsFactory;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.java.JavaBackend;
-import cucumber.runtime.java.ObjectFactory;
+import cucumber.api.java.ObjectFactory;
+import cucumber.runtime.java.ObjectFactoryLoader;
 import cucumber.runtime.model.CucumberFeature;
 import dalvik.system.DexFile;
 import gherkin.formatter.Formatter;
@@ -155,7 +157,7 @@ public class CucumberExecutor {
     }
 
     private Collection<? extends Backend> createBackends() {
-        final ObjectFactory delegateObjectFactory = JavaBackend.loadObjectFactory(classFinder);
+        final ObjectFactory delegateObjectFactory = ObjectFactoryLoader.loadObjectFactory(classFinder, Env.INSTANCE.get(ObjectFactory.class.getName()));
         final AndroidObjectFactory objectFactory = new AndroidObjectFactory(delegateObjectFactory, instrumentation);
         final List<Backend> backends = new ArrayList<Backend>();
         backends.add(new JavaBackend(objectFactory, classFinder));

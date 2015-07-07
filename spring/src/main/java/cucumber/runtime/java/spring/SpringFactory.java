@@ -1,7 +1,7 @@
 package cucumber.runtime.java.spring;
 
 import cucumber.runtime.CucumberException;
-import cucumber.runtime.java.ObjectFactory;
+import cucumber.api.java.ObjectFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;

@@ -1,4 +1,4 @@
-package cucumber.runtime.java;
+package cucumber.api.java;
 
 /**
  * Minimal facade for Dependency Injection containers

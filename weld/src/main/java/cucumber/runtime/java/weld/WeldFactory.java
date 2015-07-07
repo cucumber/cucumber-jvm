@@ -1,7 +1,7 @@
 package cucumber.runtime.java.weld;
 
 import cucumber.runtime.CucumberException;
-import cucumber.runtime.java.ObjectFactory;
+import cucumber.api.java.ObjectFactory;
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
 

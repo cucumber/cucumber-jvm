@@ -1,5 +1,8 @@
 ## [1.2.3-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v1.2.2...master) (In Git)
 
+* [OSGi] Cucumber is ready to run in OSGi containers ([#873](https://github.com/cucumber/cucumber-jvm/pull/873), [#799](https://github.com/cucumber/cucumber-jvm/pull/799) @HendrikSP)
+* [Core] `cucumber.runtime.java.ObjectFactory` moved to `cucumber.api.java.ObjectFactory`. Custom implementation can
+  be specified in `cucumber.properties` with `cucumber.api.java.ObjectFactory=my.special.KindOfObjectFactory`. (Closes [#290](https://github.com/cucumber/cucumber-jvm/issues/290) Aslak Hellesøy)
 * [Core] Properly decode jar URLs with spaces (%20) - ([#866](https://github.com/cucumber/cucumber-jvm/issues/866) Aslak Hellesøy)
 * [Java] Arity mismatch Java8 Step Definition error ([#852](https://github.com/cucumber/cucumber-jvm/issues/852), [#847](https://github.com/cucumber/cucumber-jvm/pull/847) David Coelho)
 * [Java] Print Java 8 lambda snippets when `cucumber-java8` is active (Aslak Hellesøy)
