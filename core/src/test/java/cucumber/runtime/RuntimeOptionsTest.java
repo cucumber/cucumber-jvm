@@ -47,7 +47,8 @@ public class RuntimeOptionsTest {
 
     @Test
     public void has_usage() {
-        assertTrue(RuntimeOptions.USAGE.startsWith("Usage"));
+        RuntimeOptions.loadUsageTextIfNeeded();
+        assertTrue(RuntimeOptions.usageText.startsWith("Usage"));
     }
 
     @Test
