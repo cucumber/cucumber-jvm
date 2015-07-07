@@ -111,6 +111,13 @@ Replace version numbers in:
 * examples/java-gradle/build.gradle
 * History.md
 
+Make sure you can generate Javadocs for all modules, or else the
+release will fail:
+
+```
+mvn javadoc:javadoc
+```
+
 Run `git commit -am "Release X.Y.Z"`
 
 Now release everything:
