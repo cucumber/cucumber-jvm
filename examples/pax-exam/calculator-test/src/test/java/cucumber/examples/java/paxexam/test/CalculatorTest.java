@@ -53,7 +53,7 @@ public class CalculatorTest {
             mavenBundle("info.cukes", "pax-exam-calculator-service"),
 
             mavenBundle("info.cukes", "gherkin"),
-            mavenBundle("info.cukes", "cucumber-jvm-deps", "1.0.4-SNAPSHOT"),
+            mavenBundle("info.cukes", "cucumber-jvm-deps"),
             mavenBundle("info.cukes", "cucumber-core"),
             mavenBundle("info.cukes", "cucumber-java"),
             mavenBundle("info.cukes", "cucumber-osgi"),
