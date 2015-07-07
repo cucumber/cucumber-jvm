@@ -10,6 +10,7 @@ import java.util.Collections;
 
 import javax.inject.Inject;
 
+import cucumber.api.java.ObjectFactory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Configuration;
@@ -32,7 +33,6 @@ import cucumber.runtime.RuntimeOptionsFactory;
 import cucumber.runtime.io.FileResourceLoader;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.java.JavaBackend;
-import cucumber.runtime.java.ObjectFactory;
 
 @RunWith(PaxExam.class)
 @ExamReactorStrategy(PerMethod.class)
