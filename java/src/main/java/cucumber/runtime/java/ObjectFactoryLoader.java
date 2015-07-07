@@ -22,7 +22,7 @@ public class ObjectFactoryLoader {
             Reflections reflections = new Reflections(classFinder);
 
             if(objectFactoryClassName != null) {
-                Class<ObjectFactory> objectFactoryClass = (Class<ObjectFactory>) classFinder.getClassLoader().loadClass(objectFactoryClassName);
+                Class<ObjectFactory> objectFactoryClass = (Class<ObjectFactory>) classFinder.loadClass(objectFactoryClassName);
                 objectFactory = reflections.newInstance(new Class[0], new Object[0], objectFactoryClass);
             } else {
                 objectFactory = reflections.instantiateExactlyOneSubclass(ObjectFactory.class, "cucumber.runtime", new Class[0], new Object[0]);

@@ -8,14 +8,14 @@
         <version>1.2.3-SNAPSHOT</version>
     </parent>
 
-    <artifactId>cucumber-junit</artifactId>
+    <artifactId>cucumber-osgi</artifactId>
     <packaging>jar</packaging>
-    <name>Cucumber-JVM: JUnit</name>
+    <name>Cucumber-JVM: OSGi</name>
 
     <dependencies>
         <dependency>
             <groupId>info.cukes</groupId>
-            <artifactId>cucumber-core</artifactId>
+            <artifactId>cucumber-java</artifactId>
         </dependency>
         <dependency>
             <groupId>info.cukes</groupId>
@@ -27,11 +27,17 @@
             <artifactId>gherkin</artifactId>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>info.cukes</groupId>
+            <artifactId>cucumber-junit</artifactId>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+            <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
@@ -42,7 +48,26 @@
             <artifactId>cobertura</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.ops4j.pax.exam</groupId>
+            <artifactId>pax-exam</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
     </dependencies>
+
     <build>
         <plugins>
             <plugin>
