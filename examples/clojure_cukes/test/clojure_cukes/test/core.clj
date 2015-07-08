@@ -1,6 +1,8 @@
 (ns clojure-cukes.test.core
   (:use [clojure-cukes.core])
-  (:use [clojure.test]))
+  (:use [clojure.test])
+  (:use [leiningen.cucumber])
+  (:import [cucumber.api.cli Main]))
 
 (deftest run-cukes
-  (. cucumber.api.cli.Main (main (into-array ["--plugin" "pretty" "--glue" "test/features/step_definitions" "test/features"]))))
+  (. cucumber.api.cli.Main (main (into-array ["--format" "pretty" "--glue" "test" "test/features"]))))

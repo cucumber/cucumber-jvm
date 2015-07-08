@@ -1,5 +1,7 @@
 ## [1.2.4-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v1.2.3...master) (In Git)
 
+* [examples] Fix to allow lein test to to run successfully ([#805](https://github.com/cucumber/cucumber-jvm/pull/805) Chris Howe-Jones)
+
 ## [1.2.3](https://github.com/cucumber/cucumber-jvm/compare/v1.2.2...v1.2.3) (2015-07-07)
 
 * [Core] Make the Rerun Formatter consistent with the exit code ([#871](https://github.com/cucumber/cucumber-jvm/pull/871) Björn Rasmusson)
