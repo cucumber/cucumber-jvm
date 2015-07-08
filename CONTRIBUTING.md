@@ -109,6 +109,8 @@ Then, make sure you have the proper keys set up - in your `~/.m2/settings.xml` -
 Replace version numbers in:
 
 * examples/java-gradle/build.gradle
+* examples/android/android-studio/Cukeulator/app/build.gradle
+* examples/clojure_cukes/project.clj
 * History.md
 
 Make sure you can generate Javadocs for all modules, or else the
