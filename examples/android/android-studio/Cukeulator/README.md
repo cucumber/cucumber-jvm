@@ -6,10 +6,10 @@ Features must be placed in `assets/features/`. Subdirectories are allowed.
 
 The rest of the dependencies are added automatically in `app/build.gradle`.
 
-The cucumber-android dependency is added as:
+The cucumber-android dependency is added as (see `app/build.gradle`):
 
 ```
-androidTestCompile 'info.cukes:cucumber-android:1.2.2'
+androidTestCompile 'info.cukes:cucumber-android:<version>'
 ```
 
 ### Using gradle
