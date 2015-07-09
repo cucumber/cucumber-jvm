@@ -31,7 +31,9 @@ public class GuiceFactory implements ObjectFactory {
         this.injector = injector;
     }
 
-    public void addClass(Class<?> clazz) {}
+    public boolean addClass(Class<?> clazz) {
+        return true;
+    }
 
     public void start() {
         injector.getInstance(ScenarioScope.class).enterScope();

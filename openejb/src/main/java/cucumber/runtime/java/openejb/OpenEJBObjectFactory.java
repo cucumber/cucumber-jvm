@@ -39,8 +39,9 @@ public class OpenEJBObjectFactory implements ObjectFactory {
     }
 
     @Override
-    public void addClass(Class<?> clazz) {
+    public boolean addClass(Class<?> clazz) {
         classes.add(clazz.getName());
+        return true;
     }
 
     @Override

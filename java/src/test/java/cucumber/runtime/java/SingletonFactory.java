@@ -22,7 +22,8 @@ class SingletonFactory implements ObjectFactory {
     }
 
     @Override
-    public void addClass(Class<?> clazz) {
+    public boolean addClass(Class<?> clazz) {
+        return true;
     }
 
     @Override

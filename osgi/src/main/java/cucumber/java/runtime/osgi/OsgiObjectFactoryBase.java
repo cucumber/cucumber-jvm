@@ -21,7 +21,8 @@ public abstract class OsgiObjectFactoryBase implements ObjectFactory {
     }
 
     @Override
-    public void addClass(Class<?> glueClass) {
+    public boolean addClass(Class<?> glueClass) {
+        return true;
     }
 
     @Override

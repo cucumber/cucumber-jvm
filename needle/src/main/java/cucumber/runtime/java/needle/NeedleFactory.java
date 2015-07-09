@@ -53,13 +53,14 @@ public class NeedleFactory extends NeedleTestcase implements ObjectFactory {
     }
 
     @Override
-    public void addClass(final Class<?> type) {
+    public boolean addClass(final Class<?> type) {
         logger.trace("addClass(): " + type.getCanonicalName());
 
         // build up cache keys ...
         if (!cachedStepsInstances.containsKey(type)) {
             cachedStepsInstances.put(type, null);
         }
+        return true;
     }
 
     private void assertTypeHasBeenAdded(final Class<?> type) {

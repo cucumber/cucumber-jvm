@@ -1,12 +1,13 @@
 ## [1.2.4-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v1.2.3...master) (In Git)
 
+* [Java] `ObjectFactory.addClass` returns a boolean indicating whether or not stepdefs/hooks for that class should be registered. (Aslak Hellesøy)
 * [examples] Fix to allow lein test to to run successfully ([#805](https://github.com/cucumber/cucumber-jvm/pull/805) Chris Howe-Jones)
 
 ## [1.2.3](https://github.com/cucumber/cucumber-jvm/compare/v1.2.2...v1.2.3) (2015-07-07)
 
 * [Core] Make the Rerun Formatter consistent with the exit code ([#871](https://github.com/cucumber/cucumber-jvm/pull/871) Björn Rasmusson)
 * [OSGi] Cucumber is ready to run in OSGi containers ([#873](https://github.com/cucumber/cucumber-jvm/pull/873), [#799](https://github.com/cucumber/cucumber-jvm/pull/799) @HendrikSP)
-* [Core] `cucumber.runtime.java.ObjectFactory` moved to `cucumber.api.java.ObjectFactory`. Custom implementation can
+* [Java] `cucumber.runtime.java.ObjectFactory` moved to `cucumber.api.java.ObjectFactory`. Custom implementation can
   be specified in `cucumber.properties` with `cucumber.api.java.ObjectFactory=my.special.KindOfObjectFactory`. (Closes [#290](https://github.com/cucumber/cucumber-jvm/issues/290) Aslak Hellesøy)
 * [Core] Properly decode jar URLs with spaces (%20) - ([#866](https://github.com/cucumber/cucumber-jvm/issues/866) Aslak Hellesøy)
 * [Java] Arity mismatch Java8 Step Definition error ([#852](https://github.com/cucumber/cucumber-jvm/issues/852), [#847](https://github.com/cucumber/cucumber-jvm/pull/847) David Coelho)
@@ -18,10 +19,10 @@
 * [Core] Call all formatters, also in case of unimplemented methods ([#842](https://github.com/cucumber/cucumber-jvm/pull/842), [#803](https://github.com/cucumber/cucumber-jvm/issues/803) Björn Rasmusson)
 * [TestNG] Run each feature as separate TestNG test ([#817](https://github.com/cucumber/cucumber-jvm/pull/817), [#653](https://github.com/cucumber/cucumber-jvm/pull/653) Dmitry Sidorenko, Björn Rasmusson)
 * [Core] Implement TestNG-compatible XML formatter ([#818](https://github.com/cucumber/cucumber-jvm/pull/818), [#621](https://github.com/cucumber/cucumber-jvm/pull/621) Dmitry Berezhony, Björn Rasmusson)
-* `DataTable.diff(List)` gives proper error message when the `List` argument is empty (Aslak Hellesøy)
-* Execute no scenarios when the rerun file is empty ([#840](https://github.com/cucumber/cucumber-jvm/issues/840) Björn Rasmusson)
-* Snippets for quoted arguments changed from `(.*?)` to `([^\"]*)` (which is how it was before 1.1.6). See [cucumber/cucumber#663](https://github.com/cucumber/cucumber/pull/663) (Aslak Hellesøy)
-* Fix non running gradle example ([#839](https://github.com/cucumber/cucumber-jvm/pull/839) Ole Christian Langfjæran)
+* [Core] `DataTable.diff(List)` gives proper error message when the `List` argument is empty (Aslak Hellesøy)
+* [Core] Execute no scenarios when the rerun file is empty ([#840](https://github.com/cucumber/cucumber-jvm/issues/840) Björn Rasmusson)
+* [Core] Snippets for quoted arguments changed from `(.*?)` to `([^\"]*)` (which is how it was before 1.1.6). See [cucumber/cucumber#663](https://github.com/cucumber/cucumber/pull/663) (Aslak Hellesøy)
+* [Core] Fix non running gradle example ([#839](https://github.com/cucumber/cucumber-jvm/pull/839) Ole Christian Langfjæran)
 * [Clojure] Improved documentation for the clojure module ([#864](https://github.com/cucumber/cucumber-jvm/pull/864) Paul Doran)
 
 ## [1.2.2](https://github.com/cucumber/cucumber-jvm/compare/v1.2.0...v1.2.2) (2015-01-13)

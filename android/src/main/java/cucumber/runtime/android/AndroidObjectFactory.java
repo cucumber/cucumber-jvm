@@ -48,8 +48,8 @@ public class AndroidObjectFactory implements ObjectFactory {
     }
 
     @Override
-    public void addClass(final Class<?> clazz) {
-        delegate.addClass(clazz);
+    public boolean addClass(final Class<?> clazz) {
+        return delegate.addClass(clazz);
     }
 
     @Override

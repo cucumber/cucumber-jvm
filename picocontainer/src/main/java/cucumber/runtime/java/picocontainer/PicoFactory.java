@@ -26,10 +26,11 @@ public class PicoFactory implements ObjectFactory {
         pico.dispose();
     }
 
-    public void addClass(Class<?> clazz) {
+    public boolean addClass(Class<?> clazz) {
         if (Utils.isInstantiable(clazz) && classes.add(clazz)) {
             addConstructorDependencies(clazz);
         }
+        return true;
     }
 
     public <T> T getInstance(Class<T> type) {

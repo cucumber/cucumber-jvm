@@ -93,8 +93,9 @@ public class JavaBackend implements Backend {
                     continue;
                 }
 
-                objectFactory.addClass(glueClass);
-                glueBaseClasses.add(glueClass);
+                if (objectFactory.addClass(glueClass)) {
+                    glueBaseClasses.add(glueClass);
+                }
             }
         }
     }
@@ -146,8 +147,9 @@ public class JavaBackend implements Backend {
 
     void addStepDefinition(Annotation annotation, Method method) {
         try {
-            objectFactory.addClass(method.getDeclaringClass());
-            glue.addStepDefinition(new JavaStepDefinition(method, pattern(annotation), timeoutMillis(annotation), objectFactory));
+            if (objectFactory.addClass(method.getDeclaringClass())) {
+                glue.addStepDefinition(new JavaStepDefinition(method, pattern(annotation), timeoutMillis(annotation), objectFactory));
+            }
         } catch (DuplicateStepDefinitionException e) {
             throw e;
         } catch (Throwable e) {
@@ -164,16 +166,16 @@ public class JavaBackend implements Backend {
     }
 
     void addHook(Annotation annotation, Method method) {
-        objectFactory.addClass(method.getDeclaringClass());
-
-        if (annotation.annotationType().equals(Before.class)) {
-            String[] tagExpressions = ((Before) annotation).value();
-            long timeout = ((Before) annotation).timeout();
-            glue.addBeforeHook(new JavaHookDefinition(method, tagExpressions, ((Before) annotation).order(), timeout, objectFactory));
-        } else {
-            String[] tagExpressions = ((After) annotation).value();
-            long timeout = ((After) annotation).timeout();
-            glue.addAfterHook(new JavaHookDefinition(method, tagExpressions, ((After) annotation).order(), timeout, objectFactory));
+        if (objectFactory.addClass(method.getDeclaringClass())) {
+            if (annotation.annotationType().equals(Before.class)) {
+                String[] tagExpressions = ((Before) annotation).value();
+                long timeout = ((Before) annotation).timeout();
+                glue.addBeforeHook(new JavaHookDefinition(method, tagExpressions, ((Before) annotation).order(), timeout, objectFactory));
+            } else {
+                String[] tagExpressions = ((After) annotation).value();
+                long timeout = ((After) annotation).timeout();
+                glue.addAfterHook(new JavaHookDefinition(method, tagExpressions, ((After) annotation).order(), timeout, objectFactory));
+            }
         }
     }
 

@@ -56,7 +56,7 @@ public class SpringFactory implements ObjectFactory {
     }
 
     @Override
-    public void addClass(final Class<?> stepClass) {
+    public boolean addClass(final Class<?> stepClass) {
         if (!stepClasses.contains(stepClass)) {
             if (dependsOnSpringContext(stepClass)) {
                 if (stepClassWithSpringContext == null) {
@@ -66,8 +66,8 @@ public class SpringFactory implements ObjectFactory {
                 }
             }
             stepClasses.add(stepClass);
-
         }
+        return true;
     }
 
     private void checkAnnotationsEqual(Class<?> stepClassWithSpringContext, Class<?> stepClass) {

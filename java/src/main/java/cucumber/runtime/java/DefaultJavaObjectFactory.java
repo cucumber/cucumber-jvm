@@ -22,7 +22,8 @@ class DefaultJavaObjectFactory implements ObjectFactory {
         instances.clear();
     }
 
-    public void addClass(Class<?> clazz) {
+    public boolean addClass(Class<?> clazz) {
+        return true;
     }
 
     public <T> T getInstance(Class<T> type) {
