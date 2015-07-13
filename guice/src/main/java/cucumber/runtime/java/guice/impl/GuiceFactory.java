@@ -2,9 +2,8 @@ package cucumber.runtime.java.guice.impl;
 
 import com.google.inject.Injector;
 import cucumber.api.java.ObjectFactory;
+import cucumber.runtime.Env;
 import cucumber.runtime.java.guice.ScenarioScope;
-
-import java.io.IOException;
 
 /**
  * Guice implementation of the <code>cucumber.api.java.ObjectFactory</code>.
@@ -13,18 +12,14 @@ public class GuiceFactory implements ObjectFactory {
 
     private final Injector injector;
 
-    /**
-     * This constructor is called reflectively by cucumber.runtime.Refections.
-     * @throws IOException if a <code>cucumber-guice.properties</code> file is in the root of the classpath and it
-     * cannot be loaded.
-     */
-    public GuiceFactory() throws IOException {
-        this(new InjectorSourceFactory(PropertiesLoader.loadGuiceProperties()).create().getInjector());
+    public GuiceFactory() {
+        this(new InjectorSourceFactory(Env.INSTANCE).create().getInjector());
     }
 
     /**
      * Package private constructor that is called by the public constructor at runtime and is also called directly by
      * tests.
+     *
      * @param injector an injector configured with a binding for <code>cucumber.runtime.java.guice.ScenarioScope</code>.
      */
     GuiceFactory(Injector injector) {

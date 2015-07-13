@@ -1,6 +1,8 @@
 package cucumber.runtime.java.guice.impl;
 
-public class InjectorSourceInstantiationFailed extends RuntimeException {
+import cucumber.runtime.CucumberException;
+
+public class InjectorSourceInstantiationFailed extends CucumberException {
 
     public InjectorSourceInstantiationFailed(String message, Throwable cause) {
         super(message, cause);

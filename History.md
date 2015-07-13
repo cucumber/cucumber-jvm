@@ -1,5 +1,7 @@
 ## [1.2.4-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v1.2.3...master) (In Git)
 
+* [Guice] The `cucumber-guice.properties` file is no longer used. Use `cucumber.properties` instead.
+* [Guice] The `guice.injector-source` property can be overridden as a System property or environment variable ([#881](https://github.com/cucumber/cucumber-jvm/issues/881) Aslak Hellesøy)
 * [Java] `ObjectFactory.addClass` returns a boolean indicating whether or not stepdefs/hooks for that class should be registered. (Aslak Hellesøy)
 * [examples] Fix to allow lein test to to run successfully ([#805](https://github.com/cucumber/cucumber-jvm/pull/805) Chris Howe-Jones)
 
