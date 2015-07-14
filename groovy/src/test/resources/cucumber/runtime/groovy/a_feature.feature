@@ -24,7 +24,10 @@ Feature: Cucumber Runner Rocks
       | 2012 | Cucumber-JVM |
 
   Scenario: A date
-    Given today's date is "10-03-1971"
+    Given today's date is "1971-10-03" and tomorrow is:
+      """
+      1971-10-04
+      """
 
 
   Scenario: Call a method or property from second world

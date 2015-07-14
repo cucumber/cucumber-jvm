@@ -57,6 +57,23 @@ public class StepDefinitionMatchTest {
         verify(stepDefinition).execute(ENGLISH, new Object[]{new Thing("the thing")});
     }
 
+    @Test
+    public void converts_doc_string_with_explicit_converter() throws Throwable {
+        StepDefinition stepDefinition = mock(StepDefinition.class);
+        when(stepDefinition.getParameterCount()).thenReturn(1);
+        when(stepDefinition.getParameterType(0, String.class)).thenReturn(new ParameterInfo(Thing.class, null, null,
+                null));
+
+        Step stepWithDocString = mock(Step.class);
+        DocString docString = new DocString("test", "the thing", 999);
+        when(stepWithDocString.getDocString()).thenReturn(docString);
+        when(stepWithDocString.getRows()).thenReturn(null);
+
+        StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(new ArrayList<Argument>(), stepDefinition, "some.feature", stepWithDocString, new LocalizedXStreams(classLoader));
+        stepDefinitionMatch.runStep(ENGLISH);
+        verify(stepDefinition).execute(ENGLISH, new Object[]{new Thing("the thing")});
+    }
+
     @XStreamConverter(ThingConverter.class)
     public static class Thing {
         public final String name;

@@ -16,11 +16,12 @@ class DateWrapper {
 
 class DateWrapperConverter extends Transformer<DateWrapper> {
   def DateWrapper transform(String string) {
-    def df = new SimpleDateFormat("dd-MM-yyyy")
+    def df = new SimpleDateFormat("yyyy-MM-dd")
     return new DateWrapper(date:df.parse(string));
   }
 }
 
-Given(~'^today\'s date is "(.*)"') { DateWrapper dw ->
-    assertEquals(71, dw.date.year)
+Given(~'^today\'s date is "(.*)" and tomorrow is:') { DateWrapper today, DateWrapper tomorrow ->
+    assertEquals(3, today.date.date)
+    assertEquals(4, tomorrow.date.date)
 }

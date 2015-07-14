@@ -73,7 +73,9 @@ public class StepDefinitionMatch extends Match {
         if (step.getRows() != null) {
             result.add(tableArgument(step, n, xStream));
         } else if (step.getDocString() != null) {
-            result.add(step.getDocString().getValue());
+            ParameterInfo parameterInfo = getParameterType(n, String.class);
+            Object arg = parameterInfo.convert(step.getDocString().getValue(), xStream);
+            result.add(arg);
         }
         return result.toArray(new Object[result.size()]);
     }
