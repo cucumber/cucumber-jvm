@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>info.cukes</groupId>
     <artifactId>cucumber-jvm</artifactId>
-    <version>1.2.4-SNAPSHOT</version>
+    <version>1.2.4</version>
     <packaging>pom</packaging>
     <name>Cucumber-JVM</name>
     <url>http://cukes.info/</url>
@@ -85,7 +85,7 @@
         <connection>scm:git:git://github.com/cucumber/cucumber-jvm.git</connection>
         <developerConnection>scm:git:git@github.com:cucumber/cucumber-jvm.git</developerConnection>
         <url>git://github.com/cucumber/cucumber-jvm.git</url>
-        <tag>HEAD</tag>
+        <tag>v1.2.4</tag>
     </scm>
 
     <dependencyManagement>
