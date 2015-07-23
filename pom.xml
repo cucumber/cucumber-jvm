@@ -613,26 +613,6 @@
 
         <profile>
             <id>release-sign-artifacts</id>
-            <modules>
-                <module>examples/java-wicket</module>
-                <module>examples/java-wicket/java-wicket-main</module>
-                <module>examples/java-wicket/java-wicket-test</module>
-                <module>examples/spring-txn</module>
-                <module>examples/clojure_cukes</module>
-                <module>examples/java-calculator</module>
-                <module>examples/java-calculator-testng</module>
-                <module>examples/groovy-calculator</module>
-                <module>examples/scala-calculator</module>
-                <module>examples/java-webbit-websockets-selenium</module>
-                <module>examples/pax-exam</module>
-                <module>examples/pax-exam/calculator-api</module>
-                <module>examples/pax-exam/calculator-service</module>
-                <module>examples/pax-exam/calculator-test</module>
-                <module>examples/android</module>
-                <module>examples/android/android-test</module>
-                <module>examples/android/cukeulator</module>
-                <module>examples/android/cukeulator-test</module>
-            </modules>
             <activation>
                 <property>
                     <name>performRelease</name>
