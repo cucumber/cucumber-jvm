@@ -1,4 +1,4 @@
-## [1.2.4-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v1.2.3...master) (In Git)
+## [1.2.4](https://github.com/cucumber/cucumber-jvm/compare/v1.2.3...v1.2.3) (2015-07-23)
 
 * [Core] DocString arguments can be converted to scalar types just like capture group arguments (Aslak Hellesøy)
 * [Guice] The `cucumber-guice.properties` file is no longer used. Use `cucumber.properties` instead.

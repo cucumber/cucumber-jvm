@@ -6,5 +6,5 @@
   :profiles
   {:dev
    {:dependencies [[lein-cucumber "1.0.2"]
-                   [info.cukes/cucumber-core "1.2.3"]]}}
+                   [info.cukes/cucumber-core "1.2.4"]]}}
 )
