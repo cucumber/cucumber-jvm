@@ -5,7 +5,7 @@
         <groupId>info.cukes</groupId>
         <artifactId>pax-exam</artifactId>
         <relativePath>../pom.xml</relativePath>
-        <version>1.2.4-SNAPSHOT</version>
+        <version>1.2.5-SNAPSHOT</version>
     </parent>
 
     <artifactId>pax-exam-calculator-api</artifactId>
