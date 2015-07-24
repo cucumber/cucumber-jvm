@@ -34,7 +34,8 @@ import java.util.Set;
 public class Runtime implements UnreportedStepExecutor {
 
     private static final String[] PENDING_EXCEPTIONS = new String[]{
-            "org.junit.internal.AssumptionViolatedException"
+            "org.junit.internal.AssumptionViolatedException",
+            "org.junit.AssumptionViolatedException"
     };
 
     static {
