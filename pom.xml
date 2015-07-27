@@ -40,11 +40,9 @@
         <rhino.version>1.7.6</rhino.version>
         <jsoup.version>1.8.2</jsoup.version>
         <testng.version>6.9.4</testng.version>
-        <!-- Upgrading to 4.12 breaks Android -->
-        <junit.version>4.11</junit.version>
+        <junit.version>4.12</junit.version>
         <jython.version>2.7.0</jython.version>
-        <!-- Upgrading to 1.10.19 breaks Android -->
-        <mockito.version>1.10.8</mockito.version>
+        <mockito.version>1.10.19</mockito.version>
         <selenium.version>2.45.0</selenium.version>
         <webbit.version>0.4.15</webbit.version>
         <webbit-rest.version>0.3.0</webbit-rest.version>
