@@ -58,7 +58,7 @@ public class DataTable {
         List<List<String>> raw = new ArrayList<List<String>>();
         for (Row row : gherkinRows) {
             List<String> list = new ArrayList<String>();
-            list.addAll(row.getCells());
+            list.addAll(tableConverter.preConvert(row.getCells()));
             if (columns != row.getCells().size()) {
                 throw new CucumberException(String.format("Table is unbalanced: expected %s column(s) but found %s.", columns, row.getCells().size()));
             }

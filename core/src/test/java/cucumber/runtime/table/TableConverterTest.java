@@ -1,9 +1,12 @@
 package cucumber.runtime.table;
 
 import cucumber.api.DataTable;
+import cucumber.api.Transform;
+import cucumber.api.Transformer;
 import cucumber.deps.com.thoughtworks.xstream.annotations.XStreamConverter;
 import cucumber.deps.com.thoughtworks.xstream.converters.javabean.JavaBeanConverter;
 import cucumber.runtime.ParameterInfo;
+
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -303,5 +306,45 @@ public class TableConverterTest {
         public int hashCode() {
             return value != null ? value.hashCode() : 0;
         }
+    }
+    
+    public static class HexTransformer extends Transformer<String> {
+        @Override
+        public String transform(String value) {
+            return String.valueOf(Integer.parseInt(value, 16));
+        }
+    }
+
+    public void intWithHexTransform(@Transform(HexTransformer.class) int n) {
+    }
+    
+    public static class NullTransformer extends Transformer<String> {
+        @Override
+        public String transform(String value) {
+            return value.equalsIgnoreCase("null")? null : value;
+        }
+    }
+    
+    public void stringWithNullTransform(@Transform(NullTransformer.class) String s) {
+    }
+
+    @Test
+    public void pre_converts_table_of_single_columns_to_list_of_hex_number() throws NoSuchMethodException, SecurityException {
+        ParameterInfo parameterInfo = ParameterInfo.fromMethod(getClass().getMethod("intWithHexTransform", Integer.TYPE)).get(0);
+        DataTable table = TableParser.parse("|33|\n|55|\n|77|\n", parameterInfo);
+        assertEquals(asList(51, 85, 119), table.asList(Integer.class));
+    }
+
+    @Test
+    public void pre_converts_table_of_two_columns_to_map() throws NoSuchMethodException, SecurityException {
+        ParameterInfo parameterInfo = ParameterInfo.fromMethod(getClass().getMethod("stringWithNullTransform", String.class)).get(0);
+        DataTable table = TableParser.parse("|3|Null|\n|5|null|\n|null|f|\n", parameterInfo);
+        
+        Map<Integer, String> expected = new HashMap<Integer, String>() {{
+            put(3, null);
+            put(5, null);
+            put(null, "f");
+        }};
+        assertEquals(expected, table.asMap(Integer.class, String.class));
     }
 }
