@@ -27,6 +27,7 @@ release.properties
 dependency-reduced-pom.xml
 *~
 libpeerconnection.log
+**/felix-cache
 
 # OS generated files
 .DS_Store*
