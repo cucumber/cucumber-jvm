@@ -25,6 +25,11 @@
             <groupId>info.cukes</groupId>
             <artifactId>gherkin</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+            <version>6.0.0</version>
+        </dependency>
 
         <dependency>
             <groupId>junit</groupId>
