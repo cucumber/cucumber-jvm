@@ -10,6 +10,9 @@ matrix:
   - jdk: oraclejdk8
     script: mvn -q deploy -P java8 -pl java8 --settings .travis-settings.xml -Dno.gem.deploy=true
 
+# get us on the new container based builds, we're not using any fancyness
+sudo: false
+
 branches:
   only:
   - master
