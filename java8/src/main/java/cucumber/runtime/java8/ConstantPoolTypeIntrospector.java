@@ -25,7 +25,8 @@ public class ConstantPoolTypeIntrospector implements TypeIntrospector {
         Type[] typeArguments;
         ConstantPool constantPool = (ConstantPool) Class_getConstantPool.invoke(clazz);
         String typeString = getTypeString(constantPool);
-        jdk.internal.org.objectweb.asm.Type[] argumentTypes = jdk.internal.org.objectweb.asm.Type.getArgumentTypes(typeString);
+        jdk.internal.org.objectweb.asm.Type[] argumentTypes = jdk.internal.org.objectweb.asm.Type
+                .getArgumentTypes(typeString);
         typeArguments = new Type[argumentTypes.length];
         for (int i = 0; i < argumentTypes.length; i++) {
             typeArguments[i] = Class.forName(argumentTypes[i].getClassName());
@@ -34,21 +35,21 @@ public class ConstantPoolTypeIntrospector implements TypeIntrospector {
     }
 
     private String getTypeString(ConstantPool constantPool) {
-    	int size = constantPool.getSize();
-		String[] memberRef = null;
+        int size = constantPool.getSize();
+        String[] memberRef = null;
 
-    	// find last element in constantpool with valid memberRef
-		//   - previously always at size-2 index but changed with 1.8.0_60
-		for (int i=size-1; i>-1; i--) {
-			try {
-				memberRef = constantPool.getMemberRefInfoAt(i);
-				break;
-			} catch (IllegalArgumentException e) {
-				// eat error; null entry at ConstantPool index?
-			}
-		}
-    		
-		return memberRef[2];
+        // find last element in constantpool with valid memberRef
+        // - previously always at size-2 index but changed with JDK 1.8.0_60
+        for (int i = size - 1; i > -1; i--) {
+            try {
+                memberRef = constantPool.getMemberRefInfoAt(i);
+                break;
+            } catch (IllegalArgumentException e) {
+                // eat error; null entry at ConstantPool index?
+            }
+        }
+
+        return memberRef[2];
     }
 
 }
