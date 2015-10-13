@@ -1,6 +1,7 @@
 package cucumber.runtime.java;
 
 import cucumber.api.java8.StepdefBody;
+import cucumber.runtime.CucumberException;
 import cucumber.runtime.JdkPatternArgumentMatcher;
 import cucumber.runtime.ParameterInfo;
 import cucumber.runtime.StepDefinition;
@@ -13,6 +14,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 public class Java8StepDefinition implements StepDefinition {
@@ -38,19 +40,36 @@ public class Java8StepDefinition implements StepDefinition {
         Class<? extends StepdefBody> bodyClass = body.getClass();
 
         Type genericInterface = bodyClass.getGenericInterfaces()[0];
-        Type[] typeArguments;
+        Type[] argumentTypes;
         if (genericInterface instanceof ParameterizedType) {
-            typeArguments = ((ParameterizedType) genericInterface).getActualTypeArguments();
+            argumentTypes = ((ParameterizedType) genericInterface).getActualTypeArguments();
         } else {
-            typeArguments = typeIntrospector.getGenericTypes(bodyClass);
+            argumentTypes = typeIntrospector.getGenericTypes(bodyClass);
         }
-        this.parameterInfos = ParameterInfo.fromTypes(typeArguments);
+        verifyNotListOrMap(argumentTypes);
+        this.parameterInfos = ParameterInfo.fromTypes(argumentTypes);
 
         Class[] parameterTypes = new Class[parameterInfos.size()];
         for (int i = 0; i < parameterInfos.size(); i++) {
             parameterTypes[i] = Object.class;
         }
         this.method = bodyClass.getDeclaredMethod("accept", parameterTypes);
+    }
+
+    private void verifyNotListOrMap(Type[] argumentTypes) {
+        for (Type argumentType : argumentTypes) {
+            if(argumentType instanceof Class) {
+                Class<?> argumentClass = (Class<?>) argumentType;
+                if(List.class.isAssignableFrom(argumentClass) || Map.class.isAssignableFrom(argumentClass)) {
+                    throw withLocation(new CucumberException("Can't use " + argumentClass.getName() + " in lambda step definition. Declare a DataTable argument instead and convert manually with asList/asLists/asMap/asMaps"));
+                }
+            }
+        }
+    }
+
+    private CucumberException withLocation(CucumberException exception) {
+        exception.setStackTrace(new StackTraceElement[] {this.location});
+        return exception;
     }
 
     @Override

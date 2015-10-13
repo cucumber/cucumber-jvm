@@ -8,14 +8,12 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.anyString;
@@ -28,7 +26,7 @@ public class CucumberFeatureTest {
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
         when(resourceLoader.resources("does/not/exist", ".feature")).thenReturn(Collections.<Resource>emptyList());
 
-        CucumberFeature.load(resourceLoader, asList("does/not/exist"), emptyList(), new PrintStream(new ByteArrayOutputStream()));
+        CucumberFeature.load(resourceLoader, singletonList("does/not/exist"), emptyList(), new PrintStream(new ByteArrayOutputStream()));
     }
 
     @Test
@@ -37,7 +35,7 @@ public class CucumberFeatureTest {
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
         when(resourceLoader.resources("does/not/exist", ".feature")).thenReturn(Collections.<Resource>emptyList());
 
-        CucumberFeature.load(resourceLoader, asList("does/not/exist"), emptyList(), new PrintStream(baos));
+        CucumberFeature.load(resourceLoader, singletonList("does/not/exist"), emptyList(), new PrintStream(baos));
 
         assertEquals(String.format("No features found at [does/not/exist]%n"), baos.toString());
     }
@@ -47,7 +45,7 @@ public class CucumberFeatureTest {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ResourceLoader resourceLoader = mockFeatureFileResource("features", "Feature: foo");
 
-        CucumberFeature.load(resourceLoader, asList("features"), asList((Object) "@nowhere"), new PrintStream(baos));
+        CucumberFeature.load(resourceLoader, singletonList("features"), singletonList((Object) "@nowhere"), new PrintStream(baos));
 
         assertEquals(String.format("None of the features at [features] matched the filters: [@nowhere]%n"), baos.toString());
     }
@@ -75,7 +73,7 @@ public class CucumberFeatureTest {
 
         List<CucumberFeature> features = CucumberFeature.load(
                 resourceLoader,
-                asList(featurePath + ":2"),
+                singletonList(featurePath + ":2"),
                 new ArrayList<Object>(),
                 new PrintStream(new ByteArrayOutputStream()));
 
@@ -106,7 +104,7 @@ public class CucumberFeatureTest {
 
         List<CucumberFeature> features = CucumberFeature.load(
                 resourceLoader,
-                asList("@" + rerunPath),
+                singletonList("@" + rerunPath),
                 new ArrayList<Object>(),
                 new PrintStream(new ByteArrayOutputStream()));
 
@@ -130,7 +128,7 @@ public class CucumberFeatureTest {
 
         List<CucumberFeature> features = CucumberFeature.load(
                 resourceLoader,
-                asList("@" + rerunPath),
+                singletonList("@" + rerunPath),
                 new ArrayList<Object>(),
                 new PrintStream(new ByteArrayOutputStream()));
 
@@ -152,7 +150,7 @@ public class CucumberFeatureTest {
 
         List<CucumberFeature> features = CucumberFeature.load(
                 resourceLoader,
-                asList("@" + rerunPath),
+                singletonList("@" + rerunPath),
                 new ArrayList<Object>(),
                 new PrintStream(new ByteArrayOutputStream()));
 
@@ -174,13 +172,13 @@ public class CucumberFeatureTest {
         try {
             CucumberFeature.load(
                     resourceLoader,
-                    asList("@" + rerunPath),
+                    singletonList("@" + rerunPath),
                     new ArrayList<Object>(),
                     new PrintStream(new ByteArrayOutputStream()));
             fail("IllegalArgumentException was expected");
         } catch (IllegalArgumentException exception) {
             assertEquals("Neither found on file system or on classpath: " +
-                    "Not a file or directory: path/bar.feature, No resource found for: classpath:path/bar.feature",
+                            "Not a file or directory: path/bar.feature, No resource found for: classpath:path/bar.feature",
                     exception.getMessage());
         }
     }
@@ -196,8 +194,8 @@ public class CucumberFeatureTest {
         try {
             CucumberFeature.load(
                     resourceLoader,
-                    asList("@" + rerunPath),
-                    Arrays.<Object>asList("@Tag"),
+                    singletonList("@" + rerunPath),
+                    Collections.<Object>singletonList("@Tag"),
                     new PrintStream(new ByteArrayOutputStream()));
             fail("IllegalArgumentException was expected");
         } catch (IllegalArgumentException exception) {
@@ -218,8 +216,8 @@ public class CucumberFeatureTest {
         try {
             CucumberFeature.load(
                     resourceLoader,
-                    asList("@" + rerunPath),
-                    Arrays.<Object>asList("@Tag"),
+                    singletonList("@" + rerunPath),
+                    Collections.<Object>singletonList("@Tag"),
                     new PrintStream(new ByteArrayOutputStream()));
             fail("IllegalArgumentException was expected");
         } catch (IllegalArgumentException exception) {
@@ -229,33 +227,33 @@ public class CucumberFeatureTest {
     }
 
     private ResourceLoader mockFeatureFileResource(String featurePath, String feature)
-            throws IOException, UnsupportedEncodingException {
+            throws IOException {
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
         mockFeatureFileResource(resourceLoader, featurePath, feature);
         return resourceLoader;
     }
 
     private ResourceLoader mockFeatureFileResourceForAnyFeaturePath(String feature)
-            throws IOException, UnsupportedEncodingException {
+            throws IOException {
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
         Resource resource = mock(Resource.class);
         when(resource.getPath()).thenReturn("");
         when(resource.getInputStream()).thenReturn(new ByteArrayInputStream(feature.getBytes("UTF-8")));
-        when(resourceLoader.resources(anyString(), anyString())).thenReturn(asList(resource));
+        when(resourceLoader.resources(anyString(), anyString())).thenReturn(singletonList(resource));
         return resourceLoader;
     }
 
     private void mockFeatureFileResource(ResourceLoader resourceLoader, String featurePath, String feature)
-            throws IOException, UnsupportedEncodingException {
+            throws IOException {
         mockFileResource(resourceLoader, featurePath, ".feature", feature);
     }
 
     private void mockFileResource(ResourceLoader resourceLoader, String featurePath, String extension, String feature)
-            throws IOException, UnsupportedEncodingException {
+            throws IOException {
         Resource resource = mock(Resource.class);
         when(resource.getPath()).thenReturn(featurePath);
         when(resource.getInputStream()).thenReturn(new ByteArrayInputStream(feature.getBytes("UTF-8")));
-        when(resourceLoader.resources(featurePath, extension)).thenReturn(asList(resource));
+        when(resourceLoader.resources(featurePath, extension)).thenReturn(singletonList(resource));
     }
 
     private void mockFeaturePathToNotExist(ResourceLoader resourceLoader, String featurePath) {

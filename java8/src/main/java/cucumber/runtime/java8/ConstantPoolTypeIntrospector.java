@@ -1,10 +1,12 @@
 package cucumber.runtime.java8;
 
+import cucumber.runtime.CucumberException;
 import cucumber.runtime.java.TypeIntrospector;
 import sun.reflect.ConstantPool;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.util.List;
 
 public class ConstantPoolTypeIntrospector implements TypeIntrospector {
     private static final Method Class_getConstantPool;

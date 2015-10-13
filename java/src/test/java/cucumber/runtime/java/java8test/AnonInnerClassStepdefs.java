@@ -10,6 +10,7 @@ public class AnonInnerClassStepdefs implements GlueBase {
 
     public AnonInnerClassStepdefs() {
         JavaBackend.INSTANCE.get().addStepDefinition("^I have (\\d+) cukes in my (.*)", 0, new StepdefBody.A2<Integer, String>() {
+            @Override
             public void accept(Integer cukes, String what) {
                 assertEquals(42, cukes.intValue());
                 assertEquals("belly", what);
