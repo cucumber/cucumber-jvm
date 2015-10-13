@@ -14,12 +14,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>net.jodah</groupId>
-            <artifactId>typetools</artifactId>
-            <version>0.4.3-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
             <groupId>info.cukes</groupId>
             <artifactId>cucumber-java</artifactId>
         </dependency>
