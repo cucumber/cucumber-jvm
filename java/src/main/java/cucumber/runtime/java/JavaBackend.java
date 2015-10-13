@@ -1,11 +1,10 @@
 package cucumber.runtime.java;
 
+import cucumber.api.Scenario;
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
 import cucumber.api.java.ObjectFactory;
 import cucumber.api.java8.GlueBase;
-import cucumber.api.java8.HookBody;
-import cucumber.api.java8.HookNoArgsBody;
 import cucumber.api.java8.StepdefBody;
 import cucumber.runtime.Backend;
 import cucumber.runtime.ClassFinder;
@@ -28,6 +27,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
 import static cucumber.runtime.io.MultiLoader.packageName;
@@ -181,19 +181,19 @@ public class JavaBackend implements Backend {
         }
     }
 
-    public void addBeforeHookDefinition(String[] tagExpressions, long timeoutMillis, int order, HookBody body) {
+    public void addBeforeHookDefinition(String[] tagExpressions, long timeoutMillis, int order, Consumer<Scenario> body) {
         glue.addBeforeHook(new Java8HookDefinition(tagExpressions, order, timeoutMillis, body));
     }
 
-    public void addAfterHookDefinition(String[] tagExpressions, long timeoutMillis, int order, HookBody body) {
+    public void addAfterHookDefinition(String[] tagExpressions, long timeoutMillis, int order, Consumer<Scenario> body) {
         glue.addAfterHook(new Java8HookDefinition(tagExpressions, order, timeoutMillis, body));
     }
 
-    public void addBeforeHookDefinition(String[] tagExpressions, long timeoutMillis, int order, HookNoArgsBody body) {
+    public void addBeforeHookDefinition(String[] tagExpressions, long timeoutMillis, int order, Runnable body) {
         glue.addBeforeHook(new Java8HookDefinition(tagExpressions, order, timeoutMillis, body));
     }
 
-    public void addAfterHookDefinition(String[] tagExpressions, long timeoutMillis, int order, HookNoArgsBody body) {
+    public void addAfterHookDefinition(String[] tagExpressions, long timeoutMillis, int order, Runnable body) {
         glue.addAfterHook(new Java8HookDefinition(tagExpressions, order, timeoutMillis, body));
     }
 
