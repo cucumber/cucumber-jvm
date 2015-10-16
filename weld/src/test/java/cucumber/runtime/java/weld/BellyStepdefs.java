@@ -12,6 +12,10 @@ import static org.junit.Assert.assertTrue;
 @Singleton
 public class BellyStepdefs {
 
+    // For injecting classes from src/test/java, your beans.xml has to be
+    // located in src/test/resources.
+    // If you want to inject classes from src/main/java, you will need an
+    // additional beans.xml in src/main/resources.
     @Inject
     private Belly belly;
 
