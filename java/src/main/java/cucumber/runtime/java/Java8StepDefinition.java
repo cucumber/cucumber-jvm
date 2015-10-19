@@ -1,26 +1,17 @@
 package cucumber.runtime.java;
 
 import cucumber.api.java8.StepdefBody;
-import cucumber.runtime.CucumberException;
-import cucumber.runtime.JdkPatternArgumentMatcher;
-import cucumber.runtime.ParameterInfo;
-import cucumber.runtime.StepDefinition;
-import cucumber.runtime.Utils;
+import cucumber.runtime.*;
 import gherkin.I18n;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.toList;
 
 public class Java8StepDefinition implements StepDefinition {
 
