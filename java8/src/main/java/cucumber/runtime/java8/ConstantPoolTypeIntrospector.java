@@ -30,7 +30,7 @@ public class ConstantPoolTypeIntrospector implements TypeIntrospector {
         int typeParameterCount = interfac3.getTypeParameters().length;
         jdk.internal.org.objectweb.asm.Type[] argumentTypes = jdk.internal.org.objectweb.asm.Type.getArgumentTypes(typeString);
         // Only look at the N last arguments to the lambda static method, since the first ones might be variables
-        // who only pass in the stated of closed variables
+        // who only pass in the states of closed variables
         List<jdk.internal.org.objectweb.asm.Type> interestingArgumentTypes = Arrays.asList(argumentTypes)
                 .subList(argumentTypes.length - typeParameterCount, argumentTypes.length);
 
