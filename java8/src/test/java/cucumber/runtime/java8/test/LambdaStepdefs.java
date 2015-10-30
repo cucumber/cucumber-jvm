@@ -22,6 +22,15 @@ public class LambdaStepdefs implements En {
             List<Person> people = peopleTable.asList(Person.class);
             assertEquals("Hellesøy", people.get(0).last);
         });
+        String localState = "hello";
+        Given("^I have (\\d+) cukes in my belly", (Integer i) -> {
+            assertEquals((Integer) 42, i);
+            assertEquals("hello", localState);
+        });
+        int localInt = 1;
+        Given("^A statement with a simple match$", () -> {
+            assertEquals(2, localInt+1);
+        });
     }
 
     public static class Person {
