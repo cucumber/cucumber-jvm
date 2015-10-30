@@ -29,6 +29,26 @@ public class LambdaStepdefs implements En {
             assertEquals((Integer) 1, alreadyHadThisManyCukes);
             assertEquals((Long) 42L, n);
         });
+
+        String localState = "hello";
+        Then("^I really have (\\d+) cukes in my belly", (Integer i) -> {
+            assertEquals((Integer) 42, i);
+            assertEquals("hello", localState);
+        });
+
+        int localInt = 1;
+        Given("^A statement with a simple match$", () -> {
+            assertEquals(2, localInt+1);
+        });
+
+        Given("^I will give you (\\d+) and ([\\d\\.]+) and (\\w+) and (\\d+)$", (Integer a, Float b, String c,
+                                                                                 Integer d)
+                -> {
+            assertEquals((Integer) 1, a);
+            assertEquals((Float) 2.2f, b);
+            assertEquals("threed", c);
+            assertEquals((Integer) 4, d);
+        });
     }
 
     public static class Person {

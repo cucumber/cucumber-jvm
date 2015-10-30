@@ -50,7 +50,8 @@ public class Java8StepDefinition implements StepDefinition {
         if (genericInterface instanceof ParameterizedType) {
             argumentTypes = ((ParameterizedType) genericInterface).getActualTypeArguments();
         } else {
-            argumentTypes = typeIntrospector.getGenericTypes(bodyClass);
+            Class<? extends StepdefBody> interfac3 = (Class<? extends StepdefBody>) bodyClass.getInterfaces()[0];
+            argumentTypes = typeIntrospector.getGenericTypes(bodyClass, interfac3);
         }
         Type[] argumentTypesOfCorrectLength = new Type[parameterCount];
         System.arraycopy(argumentTypes, argumentTypes.length - parameterCount, argumentTypesOfCorrectLength, 0, parameterCount);
