@@ -11,6 +11,7 @@ import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +40,27 @@ public class Java8StepDefinition implements StepDefinition {
 
         Class<? extends StepdefBody> bodyClass = body.getClass();
 
-        ArrayList<Method> acceptMethods = new ArrayList<Method>();
+        this.method = getAcceptMethod(bodyClass);
+        this.parameterInfos = getParameterInfos(bodyClass, typeIntrospector, method.getParameterTypes().length);
+    }
+
+    private List<ParameterInfo> getParameterInfos(Class<? extends StepdefBody> bodyClass, TypeIntrospector typeIntrospector, int parameterCount) throws Exception {
+        Type genericInterface = bodyClass.getGenericInterfaces()[0];
+        Type[] argumentTypes;
+        if (genericInterface instanceof ParameterizedType) {
+            argumentTypes = ((ParameterizedType) genericInterface).getActualTypeArguments();
+        } else {
+            argumentTypes = typeIntrospector.getGenericTypes(bodyClass);
+        }
+        Type[] argumentTypesOfCorrectLength = new Type[parameterCount];
+        System.arraycopy(argumentTypes, argumentTypes.length - parameterCount, argumentTypesOfCorrectLength, 0, parameterCount);
+        verifyNotListOrMap(argumentTypesOfCorrectLength);
+
+        return ParameterInfo.fromTypes(argumentTypesOfCorrectLength);
+    }
+
+    private Method getAcceptMethod(Class<? extends StepdefBody> bodyClass) {
+        List<Method> acceptMethods = new ArrayList<Method>();
         for (Method method : bodyClass.getDeclaredMethods()) {
             if (!method.isBridge() && !method.isSynthetic() && "accept".equals(method.getName())) {
                 acceptMethods.add(method);
@@ -49,17 +70,14 @@ public class Java8StepDefinition implements StepDefinition {
             throw new IllegalStateException(String.format("Expected single 'accept' method on body class, found " +
                     "'%s'", acceptMethods));
         }
-        this.method = acceptMethods.get(0);
-        Type[] argumentTypes = method.getGenericParameterTypes();
-        verifyNotListOrMap(argumentTypes);
-        this.parameterInfos = ParameterInfo.fromTypes(argumentTypes);
+        return acceptMethods.get(0);
     }
 
     private void verifyNotListOrMap(Type[] argumentTypes) {
         for (Type argumentType : argumentTypes) {
-            if(argumentType instanceof Class) {
+            if (argumentType instanceof Class) {
                 Class<?> argumentClass = (Class<?>) argumentType;
-                if(List.class.isAssignableFrom(argumentClass) || Map.class.isAssignableFrom(argumentClass)) {
+                if (List.class.isAssignableFrom(argumentClass) || Map.class.isAssignableFrom(argumentClass)) {
                     throw withLocation(new CucumberException("Can't use " + argumentClass.getName() + " in lambda step definition. Declare a DataTable argument instead and convert manually with asList/asLists/asMap/asMaps"));
                 }
             }
@@ -67,7 +85,7 @@ public class Java8StepDefinition implements StepDefinition {
     }
 
     private CucumberException withLocation(CucumberException exception) {
-        exception.setStackTrace(new StackTraceElement[] {this.location});
+        exception.setStackTrace(new StackTraceElement[]{this.location});
         return exception;
     }
 

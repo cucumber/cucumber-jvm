@@ -1,5 +1,6 @@
 ## [1.2.5-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v1.2.4...master) (In Git)
 
+* [Java8] 
 * [Java8] Fix IllegalArgumentException on JDK 1.8.0_60 ([#912](https://github.com/cucumber/cucumber-jvm/issues/912), [#914](https://github.com/cucumber/cucumber-jvm/pull/914) Michael Wilkerson)
 * [Core] Double-check for directory exists in the ensureParentDirExists(File) ([#978](https://github.com/cucumber/cucumber-jvm/pull/978) Pavel Ordenko)
 * [picocontainer] Picocontainer lifecycle support([#994](https://github.com/cucumber/cucumber-jvm/pull/994), [#993](https://github.com/cucumber/cucumber-jvm/issues/993), [#992](https://github.com/cucumber/cucumber-jvm/pull/992) Richard Bradley)
