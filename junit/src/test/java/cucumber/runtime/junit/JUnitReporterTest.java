@@ -223,6 +223,7 @@ public class JUnitReporterTest {
         jUnitReporter.embedding(mimeType, data);
         jUnitReporter.write(text);
         jUnitReporter.result(result);
+        jUnitReporter.afterStep(match, result);
         jUnitReporter.after(match, result);
 
         verify(reporter).before(match, result);
@@ -230,6 +231,7 @@ public class JUnitReporterTest {
         verify(reporter).embedding(mimeType, data);
         verify(reporter).write(text);
         verify(reporter).result(result);
+        verify(reporter).afterStep(match, result);
         verify(reporter).after(match, result);
     }
 

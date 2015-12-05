@@ -205,6 +205,27 @@ public class AndroidInstrumentationReporterTest {
     }
 
     @Test
+    public void any_afterStep_hook_exception_causes_test_error() {
+
+        // given
+        final AndroidInstrumentationReporter formatter = new AndroidInstrumentationReporter(runtime, instrumentation, 1);
+        when(firstResult.getStatus()).thenReturn(Result.FAILED);
+        when(firstResult.getError()).thenReturn(new RuntimeException("some random runtime exception"));
+
+        // when
+        formatter.feature(feature);
+        formatter.afterStep(match, firstResult);
+        formatter.endOfScenarioLifeCycle(scenario);
+
+        // then
+        final ArgumentCaptor<Bundle> captor = ArgumentCaptor.forClass(Bundle.class);
+        verify(instrumentation).sendStatus(eq(StatusCodes.ERROR), captor.capture());
+
+        final Bundle actualBundle = captor.getValue();
+        assertThat(actualBundle.getString(AndroidInstrumentationReporter.StatusKeys.STACK), containsString("some random runtime exception"));
+    }
+
+    @Test
     public void any_failing_step_causes_test_failure() {
 
         // given
@@ -347,6 +368,31 @@ public class AndroidInstrumentationReporterTest {
         formatter.feature(feature);
         formatter.after(match, firstResult);
         formatter.after(match, secondResult);
+        formatter.endOfScenarioLifeCycle(scenario);
+
+        // then
+        final ArgumentCaptor<Bundle> captor = ArgumentCaptor.forClass(Bundle.class);
+        verify(instrumentation).sendStatus(eq(StatusCodes.ERROR), captor.capture());
+
+        final Bundle actualBundle = captor.getValue();
+        assertThat(actualBundle.getString(AndroidInstrumentationReporter.StatusKeys.STACK), containsString("first exception"));
+    }
+
+    @Test
+    public void first_afterStep_exception_is_reported() {
+
+        // given
+        final AndroidInstrumentationReporter formatter = new AndroidInstrumentationReporter(runtime, instrumentation, 2);
+        when(firstResult.getStatus()).thenReturn(Result.FAILED);
+        when(firstResult.getError()).thenReturn(new RuntimeException("first exception"));
+
+        when(secondResult.getStatus()).thenReturn(Result.FAILED);
+        when(secondResult.getError()).thenReturn(new RuntimeException("second exception"));
+
+        // when
+        formatter.feature(feature);
+        formatter.afterStep(match, firstResult);
+        formatter.afterStep(match, secondResult);
         formatter.endOfScenarioLifeCycle(scenario);
 
         // then

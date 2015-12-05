@@ -159,6 +159,11 @@ class JUnitFormatter implements Formatter, Reporter, StrictAware {
         handleHook(result);
     }
 
+    @Override
+    public void afterStep(Match match, Result result) {
+        handleHook(result);
+    }
+
     private void handleHook(Result result) {
         testCase.hookResults.add(result);
         testCase.updateElement(doc, root);

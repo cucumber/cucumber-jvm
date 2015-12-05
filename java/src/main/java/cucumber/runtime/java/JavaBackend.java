@@ -1,6 +1,7 @@
 package cucumber.runtime.java;
 
 import cucumber.api.java.After;
+import cucumber.api.java.AfterStep;
 import cucumber.api.java.Before;
 import cucumber.api.java.ObjectFactory;
 import cucumber.api.java8.GlueBase;
@@ -80,7 +81,7 @@ public class JavaBackend implements Backend {
     }
 
     @Override
-    public void loadGlue(Glue glue, List<String> gluePaths) {
+    public void  loadGlue(Glue glue, List<String> gluePaths) {
         this.glue = glue;
         // Scan for Java7 style glue (annotated methods)
         methodScanner.scan(this, gluePaths);
@@ -173,6 +174,10 @@ public class JavaBackend implements Backend {
                 String[] tagExpressions = ((Before) annotation).value();
                 long timeout = ((Before) annotation).timeout();
                 glue.addBeforeHook(new JavaHookDefinition(method, tagExpressions, ((Before) annotation).order(), timeout, objectFactory));
+            } else if (annotation.annotationType().equals(AfterStep.class)) {
+                String[] tagExpressions = ((AfterStep) annotation).value();
+                long timeout = ((AfterStep) annotation).timeout();
+                glue.addAfterStepHook(new JavaHookDefinition(method, tagExpressions, ((AfterStep) annotation).order(), timeout, objectFactory));
             } else {
                 String[] tagExpressions = ((After) annotation).value();
                 long timeout = ((After) annotation).timeout();

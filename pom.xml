@@ -22,7 +22,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <minimum.maven.version>3.1.1</minimum.maven.version>
         <outputDirectory>${project.build.directory}</outputDirectory>
-        <gherkin.version>2.12.2</gherkin.version>
+        <gherkin.version>2.12.2-SNAPSHOT</gherkin.version>
         <groovy.version>2.4.3</groovy.version>
         <picocontainer.version>2.15</picocontainer.version>
         <!-- There is 3.1.3, but it requires at least mvn 3.0.4 which might still not be widely used. -->
@@ -161,7 +161,7 @@
             <dependency>
                 <groupId>info.cukes</groupId>
                 <artifactId>cucumber-html</artifactId>
-                <version>0.2.3</version>
+                <version>0.2.4-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.codehaus.groovy</groupId>

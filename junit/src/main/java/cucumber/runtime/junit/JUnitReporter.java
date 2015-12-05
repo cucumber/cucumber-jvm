@@ -149,6 +149,12 @@ public class JUnitReporter implements Reporter, Formatter {
         reporter.after(match, result);
     }
 
+    @Override
+    public void afterStep(Match match, Result result) {
+        handleHook(result);
+        reporter.afterStep(match, result);
+    }
+
     private void handleHook(Result result) {
         if (result.getStatus().equals(Result.FAILED)) {
             executionUnitNotifier.addFailure(result.getError());

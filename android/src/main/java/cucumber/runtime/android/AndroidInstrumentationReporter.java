@@ -123,6 +123,11 @@ public class AndroidInstrumentationReporter extends NoOpFormattingReporter {
     }
 
     @Override
+    public void afterStep(final Match match, final Result result) {
+        checkAndSetSeverestStepResult(result);
+    }
+
+    @Override
     public void endOfScenarioLifeCycle(final Scenario scenario) {
 
         final Bundle testResult = createBundle(currentFeature, scenario);

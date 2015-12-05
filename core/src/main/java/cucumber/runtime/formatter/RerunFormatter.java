@@ -149,6 +149,13 @@ class RerunFormatter implements Formatter, Reporter, StrictAware {
     }
 
     @Override
+    public void afterStep(Match match, Result result) {
+        if (isTestFailed(result)) {
+            isTestFailed = true;
+        }
+    }
+
+    @Override
     public void match(Match match) {
     }
 

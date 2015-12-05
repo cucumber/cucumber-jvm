@@ -148,6 +148,10 @@ public class TestNgReporter implements Formatter, Reporter {
     }
 
     @Override
+    public void afterStep(Match match, Result result) {
+    }
+
+    @Override
     public void write(String s) {
     }
 

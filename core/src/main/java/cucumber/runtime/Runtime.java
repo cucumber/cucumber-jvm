@@ -198,22 +198,28 @@ public class Runtime implements UnreportedStepExecutor {
     }
 
     public void runBeforeHooks(Reporter reporter, Set<Tag> tags) {
-        runHooks(glue.getBeforeHooks(), reporter, tags, true);
+        runHooks(glue.getBeforeHooks(), reporter, tags, "before");
     }
 
     public void runAfterHooks(Reporter reporter, Set<Tag> tags) {
-        runHooks(glue.getAfterHooks(), reporter, tags, false);
+        runHooks(glue.getAfterHooks(), reporter, tags, "after");
     }
 
-    private void runHooks(List<HookDefinition> hooks, Reporter reporter, Set<Tag> tags, boolean isBefore) {
+    public void runAfterStepHooks(Reporter reporter, Set<Tag> tags, String stepResult) {
+        if (wasRun(stepResult)) {
+            runHooks(glue.getAfterStepHooks(), reporter, tags, "afterStep");
+        }
+    }
+
+    private void runHooks(List<HookDefinition> hooks, Reporter reporter, Set<Tag> tags, String hookType) {
         if (!runtimeOptions.isDryRun()) {
             for (HookDefinition hook : hooks) {
-                runHookIfTagsMatch(hook, reporter, tags, isBefore);
+                runHookIfTagsMatch(hook, reporter, tags, hookType);
             }
         }
     }
 
-    private void runHookIfTagsMatch(HookDefinition hook, Reporter reporter, Set<Tag> tags, boolean isBefore) {
+    private void runHookIfTagsMatch(HookDefinition hook, Reporter reporter, Set<Tag> tags, String hookType) {
         if (hook.matches(tags)) {
             String status = Result.PASSED;
             Throwable error = null;
@@ -230,10 +236,14 @@ public class Runtime implements UnreportedStepExecutor {
                 long duration = stopWatch.stop();
                 Result result = new Result(status, duration, error, DUMMY_ARG);
                 addHookToCounterAndResult(result);
-                if (isBefore) {
+                if ("before".equals(hookType)) {
                     reporter.before(match, result);
-                } else {
+                } else if ("after".equals(hookType)) {
                     reporter.after(match, result);
+                } else if ("afterStep".equals(hookType)) {
+                    reporter.afterStep(match, result);
+                } else {
+                    throw new CucumberException("Wrong hook type");
                 }
             }
         }
@@ -259,7 +269,7 @@ public class Runtime implements UnreportedStepExecutor {
         match.runStep(i18n);
     }
 
-    public void runStep(String featurePath, Step step, Reporter reporter, I18n i18n) {
+    public String runStep(String featurePath, Step step, Reporter reporter, I18n i18n) {
         StepDefinitionMatch match;
 
         try {
@@ -271,7 +281,7 @@ public class Runtime implements UnreportedStepExecutor {
             addStepToCounterAndResult(result);
             addError(e);
             skipNextStep = true;
-            return;
+            return result.getStatus();
         }
 
         if (match != null) {
@@ -281,16 +291,16 @@ public class Runtime implements UnreportedStepExecutor {
             reporter.result(Result.UNDEFINED);
             addStepToCounterAndResult(Result.UNDEFINED);
             skipNextStep = true;
-            return;
+            return Result.UNDEFINED.getStatus();
         }
 
         if (runtimeOptions.isDryRun()) {
             skipNextStep = true;
         }
 
+        Result result;
         if (skipNextStep) {
-            addStepToCounterAndResult(Result.SKIPPED);
-            reporter.result(Result.SKIPPED);
+            result = Result.SKIPPED;
         } else {
             String status = Result.PASSED;
             Throwable error = null;
@@ -304,11 +314,13 @@ public class Runtime implements UnreportedStepExecutor {
                 skipNextStep = true;
             } finally {
                 long duration = stopWatch.stop();
-                Result result = new Result(status, duration, error, DUMMY_ARG);
-                addStepToCounterAndResult(result);
-                reporter.result(result);
+                result = new Result(status, duration, error, DUMMY_ARG);
             }
         }
+        addStepToCounterAndResult(result);
+        reporter.result(result);
+
+        return result.getStatus();
     }
 
     public static boolean isPending(Throwable t) {
@@ -327,4 +339,10 @@ public class Runtime implements UnreportedStepExecutor {
         scenarioResult.add(result);
         stats.addHookTime(result.getDuration());
     }
+
+    private boolean wasRun(String stepResult) {
+        return ! stepResult.equals(Result.UNDEFINED.getStatus())
+                && ! stepResult.equals(Result.SKIPPED.getStatus());
+    }
+
 }

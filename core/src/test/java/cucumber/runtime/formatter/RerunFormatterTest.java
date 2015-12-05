@@ -157,6 +157,25 @@ public class RerunFormatterTest {
     }
 
     @Test
+    public void should_use_scenario_location_when_afterStep_hook_fails() throws Throwable {
+        CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
+                "Feature: feature name\n" +
+                "  Scenario: scenario name\n" +
+                "    Given first step\n" +
+                "    When second step\n" +
+                "    Then third step\n");
+        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        stepsToResult.put("first step", result("passed"));
+        stepsToResult.put("second step", result("passed"));
+        List<SimpleEntry<String, Result>> hooks = new ArrayList<SimpleEntry<String, Result>>();
+        hooks.add(TestHelper.hookEntry("afterStep", result("failed")));
+
+        String formatterOutput = runFeatureWithRerunFormatter(feature, stepsToResult, hooks);
+
+        assertEquals("path/test.feature:2", formatterOutput);
+    }
+
+    @Test
     public void should_one_entry_for_feature_with_many_failing_scenarios() throws Throwable {
         CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
                 "Feature: feature name\n" +

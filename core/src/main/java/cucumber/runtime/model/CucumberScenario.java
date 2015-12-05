@@ -39,9 +39,9 @@ public class CucumberScenario extends CucumberTagStatement {
         formatter.startOfScenarioLifeCycle((Scenario) getGherkinModel());
         runtime.runBeforeHooks(reporter, tags);
 
-        runBackground(formatter, reporter, runtime);
+        runBackground(formatter, reporter, runtime, tags);
         format(formatter);
-        runSteps(reporter, runtime);
+        runSteps(reporter, runtime, tags);
 
         runtime.runAfterHooks(reporter, tags);
         formatter.endOfScenarioLifeCycle((Scenario) getGherkinModel());
@@ -53,10 +53,10 @@ public class CucumberScenario extends CucumberTagStatement {
                 scenario.getKeyword() + ": " + scenario.getName();
     }
 
-    private void runBackground(Formatter formatter, Reporter reporter, Runtime runtime) {
+    private void runBackground(Formatter formatter, Reporter reporter, Runtime runtime, Set<Tag> tags) {
         if (cucumberBackground != null) {
             cucumberBackground.format(formatter);
-            cucumberBackground.runSteps(reporter, runtime);
+            cucumberBackground.runSteps(reporter, runtime, tags);
         }
     }
 }

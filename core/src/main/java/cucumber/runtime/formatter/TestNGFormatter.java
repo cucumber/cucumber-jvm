@@ -146,6 +146,11 @@ class TestNGFormatter implements Formatter, Reporter, StrictAware {
     }
 
     @Override
+    public void afterStep(Match match, Result result) {
+        testMethod.hooks.add(result);
+    }
+
+    @Override
     public void endOfScenarioLifeCycle(Scenario scenario) {
         testMethod.finish(document, root);
     }

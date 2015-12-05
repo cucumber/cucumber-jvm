@@ -335,7 +335,7 @@ public class RuntimeTest {
         StepDefinitionMatch match = mock(StepDefinitionMatch.class);
         HookDefinition hook = createExceptionThrowingHook();
 
-        Runtime runtime = createRuntimeWithMockedGlue(match, hook, true, "--monochrome");
+        Runtime runtime = createRuntimeWithMockedGlue(match, hook, "before", "--monochrome");
         runScenario(reporter, runtime, stepCount(1));
         runtime.printStats(new PrintStream(baos));
 
@@ -351,7 +351,23 @@ public class RuntimeTest {
         StepDefinitionMatch match = mock(StepDefinitionMatch.class);
         HookDefinition hook = createExceptionThrowingHook();
 
-        Runtime runtime = createRuntimeWithMockedGlue(match, hook, false, "--monochrome");
+        Runtime runtime = createRuntimeWithMockedGlue(match, hook, "after", "--monochrome");
+        runScenario(reporter, runtime, stepCount(1));
+        runtime.printStats(new PrintStream(baos));
+
+        assertThat(baos.toString(), containsString(String.format("" +
+                "1 Scenarios (1 failed)%n" +
+                "1 Steps (1 passed)%n")));
+    }
+
+    @Test
+    public void should_fail_the_scenario_if_afterStep_fails() throws Throwable {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        Reporter reporter = mock(Reporter.class);
+        StepDefinitionMatch match = mock(StepDefinitionMatch.class);
+        HookDefinition hook = createExceptionThrowingHook();
+
+        Runtime runtime = createRuntimeWithMockedGlue(match, hook, "afterStep", "--monochrome");
         runScenario(reporter, runtime, stepCount(1));
         runtime.printStats(new PrintStream(baos));
 
@@ -371,7 +387,7 @@ public class RuntimeTest {
         HookDefinition beforeHook = mock(HookDefinition.class);
         when(beforeHook.matches(anyCollectionOf(Tag.class))).thenReturn(true);
 
-        Runtime runtime = createRuntimeWithMockedGlue(mock(StepDefinitionMatch.class), beforeHook, true);
+        Runtime runtime = createRuntimeWithMockedGlue(mock(StepDefinitionMatch.class), beforeHook, "before");
         feature.run(mock(Formatter.class), mock(Reporter.class), runtime);
 
         ArgumentCaptor<Scenario> capturedScenario = ArgumentCaptor.forClass(Scenario.class);
@@ -390,7 +406,7 @@ public class RuntimeTest {
         HookDefinition beforeHook = mock(HookDefinition.class);
         when(beforeHook.matches(anyCollectionOf(Tag.class))).thenReturn(true);
 
-        Runtime runtime = createRuntimeWithMockedGlue(mock(StepDefinitionMatch.class), beforeHook, true);
+        Runtime runtime = createRuntimeWithMockedGlue(mock(StepDefinitionMatch.class), beforeHook, "before");
         feature.run(mock(Formatter.class), mock(Reporter.class), runtime);
 
         ArgumentCaptor<Scenario> capturedScenario = ArgumentCaptor.forClass(Scenario.class);
@@ -541,10 +557,10 @@ public class RuntimeTest {
         return hook;
     }
 
-    public void runStep(Reporter reporter, Runtime runtime) {
+    public String runStep(Reporter reporter, Runtime runtime) {
         Step step = mock(Step.class);
         I18n i18n = mock(I18n.class);
-        runtime.runStep("<featurePath>", step, reporter, i18n);
+        return runtime.runStep("<featurePath>", step, reporter, i18n);
     }
 
     private ResourceLoader createResourceLoaderThatFindsNoFeatures() {
@@ -580,27 +596,27 @@ public class RuntimeTest {
     }
 
     private Runtime createRuntimeWithMockedGlue(StepDefinitionMatch match, String... runtimeArgs) {
-        return createRuntimeWithMockedGlue(match, false, mock(HookDefinition.class), false, runtimeArgs);
+        return createRuntimeWithMockedGlue(match, false, mock(HookDefinition.class), "after", runtimeArgs);
     }
 
-    private Runtime createRuntimeWithMockedGlue(StepDefinitionMatch match, HookDefinition hook, boolean isBefore,
+    private Runtime createRuntimeWithMockedGlue(StepDefinitionMatch match, HookDefinition hook, String hookType,
                                                 String... runtimeArgs) {
-        return createRuntimeWithMockedGlue(match, false, hook, isBefore, runtimeArgs);
+        return createRuntimeWithMockedGlue(match, false, hook, hookType, runtimeArgs);
     }
 
     private Runtime createRuntimeWithMockedGlueWithAmbiguousMatch(String... runtimeArgs) {
-        return createRuntimeWithMockedGlue(mock(StepDefinitionMatch.class), true, mock(HookDefinition.class), false, runtimeArgs);
+        return createRuntimeWithMockedGlue(mock(StepDefinitionMatch.class), true, mock(HookDefinition.class), "after", runtimeArgs);
     }
 
     private Runtime createRuntimeWithMockedGlue(StepDefinitionMatch match, boolean isAmbiguous, HookDefinition hook,
-                                                boolean isBefore, String... runtimeArgs) {
+                                                String hookType, String... runtimeArgs) {
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
         ClassLoader classLoader = mock(ClassLoader.class);
         RuntimeOptions runtimeOptions = new RuntimeOptions(asList(runtimeArgs));
         Backend backend = mock(Backend.class);
         RuntimeGlue glue = mock(RuntimeGlue.class);
         mockMatch(glue, match, isAmbiguous);
-        mockHook(glue, hook, isBefore);
+        mockHook(glue, hook, hookType);
         Collection<Backend> backends = Arrays.asList(backend);
 
         return new Runtime(resourceLoader, classLoader, backends, runtimeOptions, glue);
@@ -615,11 +631,15 @@ public class RuntimeTest {
         }
     }
 
-    private void mockHook(RuntimeGlue glue, HookDefinition hook, boolean isBefore) {
-        if (isBefore) {
+    private void mockHook(RuntimeGlue glue, HookDefinition hook, String hookType) {
+        if ("before".equals(hookType)) {
             when(glue.getBeforeHooks()).thenReturn(Arrays.asList(hook));
-        } else {
+        } else if ("after".equals(hookType)) {
             when(glue.getAfterHooks()).thenReturn(Arrays.asList(hook));
+        } else if ("afterStep".equals(hookType)) {
+            when(glue.getAfterStepHooks()).thenReturn(Arrays.asList(hook));
+        } else {
+            throw new IllegalArgumentException("Wrong hook type " + hookType);
         }
     }
 
@@ -628,7 +648,8 @@ public class RuntimeTest {
         runtime.buildBackendWorlds(reporter, Collections.<Tag>emptySet(), gherkinScenario);
         runtime.runBeforeHooks(reporter, Collections.<Tag>emptySet());
         for (int i = 0; i < stepCount; ++i) {
-            runStep(reporter, runtime);
+            String stepResult = runStep(reporter, runtime);
+            runtime.runAfterStepHooks(reporter, Collections.<Tag>emptySet(), stepResult);
         }
         runtime.runAfterHooks(reporter, Collections.<Tag>emptySet());
         runtime.disposeBackendWorlds("scenario designation");

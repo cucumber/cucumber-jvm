@@ -145,6 +145,18 @@ public class FeatureResultListenerTest {
     }
 
     @Test
+    public void should_not_be_passed_for_failed_afterStep_hook() throws Exception {
+        Result result = mockFailedResult();
+        FeatureResultListener resultListener = new FeatureResultListener(mock(Reporter.class), false);
+
+        resultListener.result(mockPassedResult());
+        resultListener.afterStep(mock(Match.class), result);
+
+        assertFalse(resultListener.isPassed());
+        assertEquals(resultListener.getFirstError(), result.getError());
+    }
+
+    @Test
     public void should_reset_errors() throws Exception {
         FeatureResultListener resultListener = new FeatureResultListener(mock(Reporter.class), false);
         resultListener.result(mockFailedResult());
@@ -170,6 +182,7 @@ public class FeatureResultListenerTest {
         resultListener.embedding(mimeType, data);
         resultListener.write(text);
         resultListener.result(result);
+        resultListener.afterStep(match, result);
         resultListener.after(match, result);
 
         verify(reporter).before(match, result);
@@ -177,6 +190,7 @@ public class FeatureResultListenerTest {
         verify(reporter).embedding(mimeType, data);
         verify(reporter).write(text);
         verify(reporter).result(result);
+        verify(reporter).afterStep(match, result);
         verify(reporter).after(match, result);
     }
 
