@@ -36,7 +36,8 @@ class MethodScanner {
                     // those can't be instantiated without container class present.
                     glueCodeClass = glueCodeClass.getSuperclass();
                 }
-                if (glueCodeClass != null) {
+                //prevent unnecessary checking of Object methods
+                if (glueCodeClass != null && glueCodeClass != Object.class) {
                     for (Method method : glueCodeClass.getMethods()) {
                         scan(javaBackend, method, glueCodeClass);
                     }
