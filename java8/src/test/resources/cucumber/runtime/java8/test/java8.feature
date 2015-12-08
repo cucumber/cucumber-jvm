@@ -10,6 +10,10 @@ Feature: Java8
   Scenario: Parameterless lambdas
     Given: A statement with a simple match
 
+  Scenario: Multi-param lambdas
+    Given: I will give you 1 and 2.2 and three and 4
+    And: Do I need this to not match
+
   Scenario: use a table
     Given this data table:
       | first  | last     |
