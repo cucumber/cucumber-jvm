@@ -39,7 +39,9 @@ class MethodScanner {
                 //prevent unnecessary checking of Object methods
                 if (glueCodeClass != null && glueCodeClass != Object.class) {
                     for (Method method : glueCodeClass.getMethods()) {
-                        scan(javaBackend, method, glueCodeClass);
+                        if (method.getDeclaringClass() != Object.class) {
+                            scan(javaBackend, method, glueCodeClass);
+                        }
                     }
                 }
             }
