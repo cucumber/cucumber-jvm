@@ -10,6 +10,9 @@ public class RT {
     private static File lastFile;
     private static Throwable throwable;
 
+    private RT() {
+    }
+
     public static void dumpCoverageData(final File file, final boolean merge, final boolean stopDataCollection) throws Throwable {
 
         if (throwable != null) {

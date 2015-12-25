@@ -13,6 +13,9 @@ import java.util.List;
 import java.util.Map;
 
 public class Utils {
+    private Utils() {
+    }
+
     public static <T> List<T> listOf(int size, T obj) {
         List<T> list = new ArrayList<T>();
         for (int i = 0; i < size; i++) {

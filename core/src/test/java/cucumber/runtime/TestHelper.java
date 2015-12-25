@@ -30,6 +30,9 @@ import static org.mockito.Mockito.*;
 
 @Ignore
 public class TestHelper {
+    private TestHelper() {
+    }
+
     public static CucumberFeature feature(final String path, final String source) throws IOException {
         ArrayList<CucumberFeature> cucumberFeatures = new ArrayList<CucumberFeature>();
         FeatureBuilder featureBuilder = new FeatureBuilder(cucumberFeatures);

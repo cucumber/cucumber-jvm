@@ -17,6 +17,9 @@ import java.util.Locale;
 public class TableParser {
     private static final List<Comment> NO_COMMENTS = Collections.emptyList();
 
+    private TableParser() {
+    }
+
     public static DataTable parse(String source, ParameterInfo parameterInfo) {
         final List<DataTableRow> rows = new ArrayList<DataTableRow>();
         Lexer l = new En(new Listener() {
