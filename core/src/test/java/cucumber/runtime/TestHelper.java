@@ -147,10 +147,10 @@ public class TestHelper {
         for (SimpleEntry<String, Result> hookEntry : hooks) {
             TestHelper.mockHook(hookEntry, beforeHooks, afterHooks);
         }
-        if (beforeHooks.size() != 0) {
+        if (!beforeHooks.isEmpty()) {
             when(glue.getBeforeHooks()).thenReturn(beforeHooks);
         }
-        if (afterHooks.size() != 0) {
+        if (!afterHooks.isEmpty()) {
             when(glue.getAfterHooks()).thenReturn(afterHooks);
         }
     }
