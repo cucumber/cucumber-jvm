@@ -99,7 +99,8 @@ public class TestNgReporter implements Formatter, Reporter {
     public void result(Result result) {
         logResult(result);
 
-        if (Result.FAILED.equals(result.getStatus())) {
+        if (Result.FAILED.equals(result.getStatus())
+                || Result.UNDEFINED.equals(result)) {
             ITestResult tr = getCurrentTestResult();
             tr.setThrowable(result.getError());
             tr.setStatus(ITestResult.FAILURE);
@@ -107,10 +108,6 @@ public class TestNgReporter implements Formatter, Reporter {
             ITestResult tr = getCurrentTestResult();
             tr.setThrowable(result.getError());
             tr.setStatus(ITestResult.SKIP);
-        } else if (Result.UNDEFINED.equals(result)) {
-            ITestResult tr = getCurrentTestResult();
-            tr.setThrowable(result.getError());
-            tr.setStatus(ITestResult.FAILURE);
         }
     }
 

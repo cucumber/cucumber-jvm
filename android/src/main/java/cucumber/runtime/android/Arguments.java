@@ -167,9 +167,8 @@ public class Arguments {
                 appendOption(sb, "--tags", bundle.getString(key));
             } else if ("name".equals(key)) {
                 appendOption(sb, "--name", bundle.getString(key));
-            } else if ("dryRun".equals(key) && getBooleanArgument(bundle, key)) {
-                appendOption(sb, "--dry-run", "");
-            } else if ("log".equals(key) && getBooleanArgument(bundle, key)) {
+            } else if (("dryRun".equals(key) && getBooleanArgument(bundle, key))
+                    || ("log".equals(key) && getBooleanArgument(bundle, key))) {
                 appendOption(sb, "--dry-run", "");
             } else if ("noDryRun".equals(key) && getBooleanArgument(bundle, key)) {
                 appendOption(sb, "--no-dry-run", "");
