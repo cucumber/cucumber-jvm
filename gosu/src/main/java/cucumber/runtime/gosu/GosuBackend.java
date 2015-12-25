@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public class GosuBackend implements Backend {
-    public static GosuBackend instance;
+    public static volatile GosuBackend instance;
 
     private final ResourceLoader resourceLoader;
     private final SnippetGenerator snippetGenerator = new SnippetGenerator(new GosuSnippet());

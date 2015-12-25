@@ -214,7 +214,7 @@ public class RuntimeTest {
     }
 
     public static class StepdefsPrinter implements StepDefinitionReporter {
-        public static StepdefsPrinter instance;
+        public static volatile StepdefsPrinter instance;
         public StepDefinition stepDefinition;
 
         public StepdefsPrinter() {

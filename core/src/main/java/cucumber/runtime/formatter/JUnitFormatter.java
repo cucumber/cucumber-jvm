@@ -264,7 +264,7 @@ class JUnitFormatter implements Formatter, Reporter, StrictAware {
             tc.setAttribute("name", calculateElementName(scenario));
         }
 
-        private String calculateElementName(Scenario scenario) {
+        private synchronized String calculateElementName(Scenario scenario) {
             String scenarioName = scenario.getName();
             if (scenario.getKeyword().equals("Scenario Outline") && scenarioName.equals(previousScenarioOutlineName)) {
                 return scenarioName + (includesBlank(scenarioName) ? " " : "_") + ++exampleNumber;

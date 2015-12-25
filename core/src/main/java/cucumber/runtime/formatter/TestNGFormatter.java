@@ -233,7 +233,7 @@ class TestNGFormatter implements Formatter, Reporter, StrictAware {
             element.setAttribute("started-at", DATE_FORMAT.format(new Date()));
         }
 
-        private String calculateElementName(Scenario scenario) {
+        private synchronized String calculateElementName(Scenario scenario) {
             String scenarioName = scenario.getName();
             if (scenario.getKeyword().equals("Scenario Outline") && scenarioName.equals(previousScenarioOutlineName)) {
                 return scenarioName + "_" + ++exampleNumber;

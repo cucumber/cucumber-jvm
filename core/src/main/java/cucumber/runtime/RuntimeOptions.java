@@ -195,7 +195,7 @@ public class RuntimeOptions {
         System.out.println(usageText);
     }
 
-    static void loadUsageTextIfNeeded() {
+    static synchronized void loadUsageTextIfNeeded() {
         if (usageText == null) {
             try {
                 Reader reader = new InputStreamReader(FixJava.class.getResourceAsStream(USAGE_RESOURCE), "UTF-8");
