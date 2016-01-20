@@ -7,7 +7,7 @@ import cucumber.runtime.java.spring.commonglue.AutowiresPlatformTransactionManag
 import cucumber.runtime.java.spring.commonglue.AutowiresThirdStepDef;
 import cucumber.runtime.java.spring.commonglue.OneStepDef;
 import cucumber.runtime.java.spring.commonglue.ThirdStepDef;
-import cucumber.runtime.java.spring.metaconfig.BellyMetaStepdefs;
+import cucumber.runtime.java.spring.metaconfig.general.BellyMetaStepdefs;
 import cucumber.runtime.java.spring.contextconfig.BellyStepdefs;
 import cucumber.runtime.java.spring.contextconfig.WithSpringAnnotations;
 import cucumber.runtime.java.spring.contexthierarchyconfig.WithContextHierarchyAnnotation;
