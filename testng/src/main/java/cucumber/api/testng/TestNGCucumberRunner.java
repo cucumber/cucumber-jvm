@@ -90,12 +90,16 @@ public class TestNGCucumberRunner {
      * {@link CucumberFeatureWrapper} objects.
      */
     public Object[][] provideFeatures() {
-        List<CucumberFeature> features = getFeatures();
-        List<Object[]> featuresList = new ArrayList<Object[]>(features.size());
-        for (CucumberFeature feature : features) {
-            featuresList.add(new Object[]{new CucumberFeatureWrapper(feature)});
+        try {
+            List<CucumberFeature> features = getFeatures();
+            List<Object[]> featuresList = new ArrayList<Object[]>(features.size());
+            for (CucumberFeature feature : features) {
+                featuresList.add(new Object[]{new CucumberFeatureWrapperImpl(feature)});
+            }
+            return featuresList.toArray(new Object[][]{});
+        } catch (CucumberException e) {
+            return new Object[][]{new Object[]{new CucumberExceptionWrapper(e)}};
         }
-        return featuresList.toArray(new Object[][]{});
     }
 
 }

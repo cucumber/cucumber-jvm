@@ -28,6 +28,18 @@ public class TestNGCucumberRunnerTest {
     }
 
     @Test
+    public void parse_error_propagated_to_testng_test_execution() throws Exception {
+        testNGCucumberRunner = new ParseErrorCucumberRunner(RunCukesTest.class);
+        Object[][] features = testNGCucumberRunner.provideFeatures(); // provideFeatures() throws CucumberException
+        try {
+            ((CucumberFeatureWrapper)features[0][0]).getCucumberFeature();
+            Assert.fail("CucumberException not thrown");
+        } catch (CucumberException e) {
+            Assert.assertEquals(e.getMessage(), "parse error");
+        }
+    }
+
+    @Test
     public void getFeatures() throws Exception {
         List<CucumberFeature> features = testNGCucumberRunner.getFeatures();
 
@@ -50,5 +62,16 @@ public class TestNGCucumberRunnerTest {
                 return name.endsWith(".feature");
             }
         }).length;
+    }
+}
+
+class ParseErrorCucumberRunner extends TestNGCucumberRunner {
+    public ParseErrorCucumberRunner(Class clazz) {
+        super(clazz);
+    }
+
+    @Override
+    public List<CucumberFeature> getFeatures() {
+        throw new CucumberException("parse error");
     }
 }
