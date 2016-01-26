@@ -32,7 +32,7 @@ public class RunCukesByFeatureAndCompositionTest extends RunCukesByCompositionBa
         return testNGCucumberRunner.provideFeatures();
     }
 
-    @AfterClass
+    @AfterClass(alwaysRun = true)
     public void tearDownClass() throws Exception {
         testNGCucumberRunner.finish();
     }
