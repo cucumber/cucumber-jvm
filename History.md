@@ -1,5 +1,6 @@
 ## [1.2.5-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v1.2.4...master) (In Git)
 
+* [TestNG] Always tear down TestNG cucumber tests ([#955](https://github.com/cucumber/cucumber-jvm/issues/955), [#956](https://github.com/cucumber/cucumber-jvm/pull/956) Sven-Torben Janus)
 * [TestNG] Make TestNG to fail on unparseable feature files ([#953](https://github.com/cucumber/cucumber-jvm/issues/953) Björn Rasmusson)
 * [Java8] Throw better exception when lambda stepdefs use generic list arguments (unsupported) (Aslak Hellesøy)
 

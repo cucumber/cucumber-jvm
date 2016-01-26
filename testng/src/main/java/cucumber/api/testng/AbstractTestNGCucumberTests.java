@@ -29,7 +29,7 @@ public abstract class AbstractTestNGCucumberTests {
         return testNGCucumberRunner.provideFeatures();
     }
 
-    @AfterClass
+    @AfterClass(alwaysRun = true)
     public void tearDownClass() throws Exception {
         testNGCucumberRunner.finish();
     }
