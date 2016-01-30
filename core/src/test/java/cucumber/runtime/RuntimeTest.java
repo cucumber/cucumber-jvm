@@ -18,7 +18,6 @@ import gherkin.formatter.model.Step;
 import gherkin.formatter.model.Tag;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.internal.AssumptionViolatedException;
 import org.mockito.ArgumentCaptor;
 
 import java.io.ByteArrayOutputStream;
@@ -169,9 +168,17 @@ public class RuntimeTest {
     }
 
     @Test
+    public void non_strict_with_failed_junit_internal_assumption() {
+        Runtime runtime = createNonStrictRuntime();
+        runtime.addError(new org.junit.internal.AssumptionViolatedException("should be treated like pending"));
+
+        assertEquals(0x0, runtime.exitStatus());
+    }
+    
+    @Test
     public void non_strict_with_failed_junit_assumption() {
         Runtime runtime = createNonStrictRuntime();
-        runtime.addError(new AssumptionViolatedException("should be treated like pending"));
+        runtime.addError(new org.junit.AssumptionViolatedException("should be treated like pending"));
 
         assertEquals(0x0, runtime.exitStatus());
     }
