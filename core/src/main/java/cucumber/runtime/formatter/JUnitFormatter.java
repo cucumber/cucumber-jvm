@@ -291,6 +291,7 @@ class JUnitFormatter implements Formatter, Reporter, StrictAware {
             }
             for (Result result : hookResults) {
                 if (failed == null && "failed".equals(result.getStatus())) failed = result;
+                if (skipped == null && "pending".equals(result.getStatus())) skipped = result;
             }
             Element child;
             if (failed != null) {
