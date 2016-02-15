@@ -1,5 +1,6 @@
 ## [1.2.5-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v1.2.4...master) (In Git)
 
+* [Junit] Let JUnitReporter treat Pending results in hooks as failures in strict mode, and as ignored tests otherwise (Björn Rasmusson)
 * [Core] Mark scenario as skipped in JUnitFormatter if PendingException is thrown in a hook ([#964](https://github.com/cucumber/cucumber-jvm/pull/964), [#962](https://github.com/cucumber/cucumber-jvm/issues/962) Felix Martin Martin)
 * [Core] Support assume feature also with JUnit 4.12 ([#961](https://github.com/cucumber/cucumber-jvm/pull/961) Stefan Birkner)
 * [TestNG] Always tear down TestNG cucumber tests ([#955](https://github.com/cucumber/cucumber-jvm/issues/955), [#956](https://github.com/cucumber/cucumber-jvm/pull/956) Sven-Torben Janus)

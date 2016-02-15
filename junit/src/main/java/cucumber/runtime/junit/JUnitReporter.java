@@ -31,6 +31,7 @@ public class JUnitReporter implements Reporter, Formatter {
     private ExecutionUnitRunner executionUnitRunner;
     private RunNotifier runNotifier;
     EachTestNotifier executionUnitNotifier;
+    private boolean failedStep;
     private boolean ignoredStep;
     private boolean inScenarioLifeCycle;
 
@@ -44,6 +45,7 @@ public class JUnitReporter implements Reporter, Formatter {
         this.executionUnitRunner = executionUnitRunner;
         this.runNotifier = runNotifier;
         this.stepNotifier = null;
+        this.failedStep = false;
         this.ignoredStep = false;
 
         executionUnitNotifier = new EachTestNotifier(runNotifier, executionUnitRunner.getDescription());
@@ -51,7 +53,7 @@ public class JUnitReporter implements Reporter, Formatter {
     }
 
     public void finishExecutionUnit() {
-        if (ignoredStep) {
+        if (ignoredStep && !failedStep) {
             executionUnitNotifier.fireTestIgnored();
         }
         executionUnitNotifier.fireTestFinished();
@@ -99,6 +101,7 @@ public class JUnitReporter implements Reporter, Formatter {
                 stepNotifier.fireTestFinished();
             }
             if (error != null) {
+                failedStep = true;
                 executionUnitNotifier.addFailure(error);
             }
         }
@@ -133,6 +136,7 @@ public class JUnitReporter implements Reporter, Formatter {
         if (error == null) {
             error = new PendingException();
         }
+        failedStep = true;
         stepNotifier.addFailure(error);
         executionUnitNotifier.addFailure(error);
     }
@@ -150,8 +154,10 @@ public class JUnitReporter implements Reporter, Formatter {
     }
 
     private void handleHook(Result result) {
-        if (result.getStatus().equals(Result.FAILED)) {
+        if (result.getStatus().equals(Result.FAILED) || (strict && isPending(result.getError()))) {
             executionUnitNotifier.addFailure(result.getError());
+        } else if (isPending(result.getError())) {
+            ignoredStep = true;
         }
     }
 

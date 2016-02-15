@@ -166,6 +166,63 @@ public class JUnitReporterTest {
     }
 
     @Test
+    public void before_with_pending_exception_strict() {
+        createStrictReporter();
+        createDefaultRunNotifier();
+        Result result = mock(Result.class);
+        Match match = mock(Match.class);
+        when(result.getStatus()).thenReturn("Pending");
+        when(result.getError()).thenReturn(new PendingException());
+
+        EachTestNotifier executionUnitNotifier = mock(EachTestNotifier.class);
+        jUnitReporter.executionUnitNotifier = executionUnitNotifier;
+
+        jUnitReporter.before(match, result);
+
+        verifyAddFailureWithPendingException(executionUnitNotifier);
+    }
+
+    @Test
+    public void after_with_pending_exception_non_strict() {
+        createNonStrictReporter();
+        createDefaultRunNotifier();
+        Result result = mock(Result.class);
+        Match match = mock(Match.class);
+        when(result.getStatus()).thenReturn("Pending");
+        when(result.getError()).thenReturn(new PendingException());
+
+        EachTestNotifier executionUnitNotifier = mock(EachTestNotifier.class);
+        jUnitReporter.executionUnitNotifier = executionUnitNotifier;
+
+        jUnitReporter.after(match, result);
+        jUnitReporter.finishExecutionUnit();
+
+        verify(executionUnitNotifier).fireTestIgnored();
+    }
+
+    @Test
+    public void failed_step_and_after_with_pending_exception_non_strict() {
+        createNonStrictReporter();
+        createDefaultRunNotifier();
+        Result stepResult = mock(Result.class);
+        Throwable exception = mock(Throwable.class);
+        when(stepResult.getError()).thenReturn(exception);
+        Result hookResult = mock(Result.class);
+        Match match = mock(Match.class);
+        when(hookResult.getStatus()).thenReturn("Pending");
+        when(hookResult.getError()).thenReturn(new PendingException());
+
+        EachTestNotifier executionUnitNotifier = mock(EachTestNotifier.class);
+        jUnitReporter.executionUnitNotifier = executionUnitNotifier;
+
+        jUnitReporter.result(stepResult);
+        jUnitReporter.after(match, hookResult);
+        jUnitReporter.finishExecutionUnit();
+
+        verify(executionUnitNotifier, times(0)).fireTestIgnored();
+    }
+
+    @Test
     public void forward_calls_to_formatter_interface_methods() throws Exception {
         String uri = "uri";
         Feature feature = mock(Feature.class);
