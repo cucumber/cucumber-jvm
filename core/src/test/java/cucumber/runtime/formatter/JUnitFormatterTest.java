@@ -190,6 +190,37 @@ public class JUnitFormatterTest {
                 "</testsuite>\n";
         assertXmlEqual(expected, formatterOutput);
     }
+    
+    @Test
+    public void should_handle_pending_in_before_hook() throws Throwable {
+        CucumberFeature feature = TestHelper.feature("path/test.feature",
+                "Feature: feature name\n" +
+                        "  Scenario: scenario name\n" +
+                        "    Given first step\n" +
+                        "    When second step\n" +
+                        "    Then third step\n");
+        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        stepsToResult.put("first step", result("skipped"));
+        stepsToResult.put("second step", result("skipped"));
+        stepsToResult.put("third step", result("skipped"));
+        List<SimpleEntry<String, Result>> hooks = new ArrayList<SimpleEntry<String, Result>>();
+        hooks.add(TestHelper.hookEntry("before", result("pending")));
+        long stepHookDuration = milliSeconds(1);
+
+        String formatterOutput = runFeatureWithJUnitFormatter(feature, stepsToResult, hooks, stepHookDuration);
+
+        String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
+                "<testsuite failures=\"0\" name=\"cucumber.runtime.formatter.JUnitFormatter\" skipped=\"1\" tests=\"1\" time=\"0.001\">\n" +
+                "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0.001\">\n" +
+                "        <skipped><![CDATA[" +
+                "Given first step............................................................skipped\n" +
+                "When second step............................................................skipped\n" +
+                "Then third step.............................................................skipped\n" +
+                "]]></skipped>\n" +
+                "    </testcase>\n" +
+                "</testsuite>\n";
+        assertXmlEqual(expected, formatterOutput);
+    }
 
     @Test
     public void should_handle_failure_in_before_hook_with_background() throws Throwable {

@@ -161,6 +161,8 @@ public class TestHelper {
         when(hook.matches(anyCollectionOf(Tag.class))).thenReturn(true);
         if (hookEntry.getValue().getStatus().equals("failed")) {
             doThrow(hookEntry.getValue().getError()).when(hook).execute((cucumber.api.Scenario) any());
+        } else if (hookEntry.getValue().getStatus().equals("pending")) {
+            doThrow(new PendingException()).when(hook).execute((cucumber.api.Scenario) any());
         }
         if ("before".equals(hookEntry.getKey())) {
             beforeHooks.add(hook);
