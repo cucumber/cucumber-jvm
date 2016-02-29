@@ -13,8 +13,8 @@ public class AnnotationBasedSpringConfig {
 
 	@Bean
 	@Scope("cucumber-glue")
-	public ToInject1 toInject1(){
-		return Mockito.mock(ToInject1.class);
+	public ToInject toInject1(){
+		return Mockito.mock(ToInject.class);
 	}
 	
 	

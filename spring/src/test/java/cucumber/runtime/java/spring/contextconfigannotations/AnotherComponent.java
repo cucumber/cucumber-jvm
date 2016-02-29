@@ -7,5 +7,5 @@ import org.springframework.stereotype.Component;
 public class AnotherComponent {
 
 	@Autowired
-	private ToInject1 toInject;
+	private ToInject toInject;
 }

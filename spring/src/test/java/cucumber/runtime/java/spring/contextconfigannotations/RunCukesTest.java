@@ -8,7 +8,7 @@ import cucumber.api.junit.Cucumber;
 
 import cucumber.api.junit.Cucumber;
 
-//@RunWith(Cucumber.class)
+@RunWith(Cucumber.class)
 @CucumberOptions(features={"classpath:cucumber/runtime/java/spring/springAnnotationBasedConfiguration.feature"})
 public class RunCukesTest {
 

@@ -1,5 +1,5 @@
 package cucumber.runtime.java.spring.contextconfigannotations;
 
-public interface ToInject1 {
+public interface ToInject {
 
 }
