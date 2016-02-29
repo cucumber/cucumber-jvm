@@ -8,7 +8,7 @@ import org.springframework.test.context.ContextConfiguration;
 
 import static org.junit.Assert.assertNotNull;
 
-@ContextConfiguration("classpath:cucumber.xml")
+@ContextConfiguration(value="classpath:cucumber.xml")
 public class BellyStepdefs {
 
     @Autowired
