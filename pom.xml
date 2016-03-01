@@ -524,11 +524,6 @@
     </dependencyManagement>
 
     <repositories>
-        <repository>
-            <id>codehaus</id>
-            <url>http://repository.codehaus.org</url>
-        </repository>
-
         <!--<repository>-->
             <!--<id>gosu-lang.org-releases</id>-->
             <!--<name>Official Gosu website (releases)</name>-->
