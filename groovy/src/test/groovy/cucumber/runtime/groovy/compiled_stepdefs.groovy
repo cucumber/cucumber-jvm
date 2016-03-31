@@ -21,6 +21,12 @@ Given(~'^the following table:$') { table ->
     assertEquals("Cucumber-JVM", things[1].name)
 }
 
+Given(~'^this should be converted to a list:(.+)$') { List list ->
+    assertEquals(3, list.size())
+    assertEquals("Cucumber-JVM", list.get(0))
+    assertEquals("Cucumber", list.get(1))
+}
+
 class Thing {
     Integer year
     String name

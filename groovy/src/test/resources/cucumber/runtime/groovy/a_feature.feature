@@ -23,6 +23,9 @@ Feature: Cucumber Runner Rocks
       | 2008 | Cucumber     |
       | 2012 | Cucumber-JVM |
 
+    Scenario: Test list conversion
+      Given this should be converted to a list:Cucumber-JVM, Cucumber, Nice
+
   Scenario: A date
     Given today's date is "1971-10-03" and tomorrow is:
       """
