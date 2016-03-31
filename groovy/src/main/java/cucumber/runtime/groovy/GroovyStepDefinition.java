@@ -56,11 +56,7 @@ public class GroovyStepDefinition implements StepDefinition {
 
     private List<ParameterInfo> getParameterInfos() {
         Class[] parameterTypes = body.getParameterTypes();
-        List<ParameterInfo> result = new ArrayList<ParameterInfo>(parameterTypes.length);
-        for (Class parameterType : parameterTypes) {
-            result.add(new ParameterInfo(parameterType, null, null, null));
-        }
-        return result;
+        return ParameterInfo.fromTypes(parameterTypes);
     }
 
     public void execute(I18n i18n, final Object[] args) throws Throwable {
