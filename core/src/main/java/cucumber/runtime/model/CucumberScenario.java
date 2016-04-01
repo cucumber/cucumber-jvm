@@ -3,6 +3,7 @@ package cucumber.runtime.model;
 import cucumber.runtime.Runtime;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
+import gherkin.formatter.model.Feature;
 import gherkin.formatter.model.Row;
 import gherkin.formatter.model.Scenario;
 import gherkin.formatter.model.Tag;
@@ -12,15 +13,18 @@ import java.util.Set;
 public class CucumberScenario extends CucumberTagStatement {
     private final CucumberBackground cucumberBackground;
     private final Scenario scenario;
+    private final CucumberFeature cucumberFeature;
 
     public CucumberScenario(CucumberFeature cucumberFeature, CucumberBackground cucumberBackground, Scenario scenario) {
         super(cucumberFeature, scenario);
+        this.cucumberFeature = cucumberFeature;
         this.cucumberBackground = cucumberBackground;
         this.scenario = scenario;
     }
 
     public CucumberScenario(CucumberFeature cucumberFeature, CucumberBackground cucumberBackground, Scenario exampleScenario, Row example) {
         super(cucumberFeature, exampleScenario, example);
+        this.cucumberFeature = cucumberFeature;
         this.cucumberBackground = cucumberBackground;
         this.scenario = exampleScenario;
     }
@@ -35,7 +39,7 @@ public class CucumberScenario extends CucumberTagStatement {
     @Override
     public void run(Formatter formatter, Reporter reporter, Runtime runtime) {
         Set<Tag> tags = tagsAndInheritedTags();
-        runtime.buildBackendWorlds(reporter, tags, scenario);
+        runtime.buildBackendWorlds(reporter, tags, cucumberFeature.getGherkinFeature(), scenario);
         formatter.startOfScenarioLifeCycle((Scenario) getGherkinModel());
         runtime.runBeforeHooks(reporter, tags);
 

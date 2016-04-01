@@ -10,14 +10,7 @@ import gherkin.I18n;
 import gherkin.formatter.Argument;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
-import gherkin.formatter.model.Comment;
-import gherkin.formatter.model.DataTableRow;
-import gherkin.formatter.model.DocString;
-import gherkin.formatter.model.Match;
-import gherkin.formatter.model.Result;
-import gherkin.formatter.model.Scenario;
-import gherkin.formatter.model.Step;
-import gherkin.formatter.model.Tag;
+import gherkin.formatter.model.*;
 
 import java.io.IOException;
 import java.io.PrintStream;
@@ -61,6 +54,7 @@ public class Runtime implements UnreportedStepExecutor {
     //They really should be created each time a scenario is run, not in here
     private boolean skipNextStep = false;
     private ScenarioImpl scenarioResult = null;
+    private FeatureImpl featureResult = null;
 
     public Runtime(ResourceLoader resourceLoader, ClassFinder classFinder, ClassLoader classLoader, RuntimeOptions runtimeOptions) {
         this(resourceLoader, classLoader, loadBackends(resourceLoader, classFinder), runtimeOptions);
@@ -143,7 +137,21 @@ public class Runtime implements UnreportedStepExecutor {
         undefinedStepsTracker.reset();
         //TODO: this is the initial state of the state machine, it should not go here, but into something else
         skipNextStep = false;
-        scenarioResult = new ScenarioImpl(reporter, tags, gherkinScenario);
+        featureResult = null;
+        scenarioResult = new ScenarioImpl(reporter, tags, gherkinScenario, featureResult);
+
+    }
+
+    public void buildBackendWorlds(Reporter reporter, Set<Tag> tags, Feature gherkinFeature, Scenario gherkinScenario) {
+        for (Backend backend : backends) {
+            backend.buildWorld();
+        }
+        undefinedStepsTracker.reset();
+        //TODO: this is the initial state of the state machine, it should not go here, but into something else
+        skipNextStep = false;
+        featureResult = new FeatureImpl(reporter, tags, gherkinFeature);
+        scenarioResult = new ScenarioImpl(reporter, tags, gherkinScenario, featureResult);
+
     }
 
     public void disposeBackendWorlds(String scenarioDesignation) {

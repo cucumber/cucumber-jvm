@@ -6,7 +6,7 @@ import java.util.Collection;
  * Before or After Hooks that declare a parameter of this type will receive an instance of this class.
  * It allows writing text and embedding media into reports, as well as inspecting results (in an After block).
  */
-public interface Scenario {
+public interface Feature {
     /**
      * @return source_tag_names. Needed for compatibility with Capybara.
      */
@@ -58,5 +58,4 @@ public interface Scenario {
     String getId();
 
 
-    Feature getFeature();
 }
