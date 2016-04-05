@@ -23,6 +23,8 @@ class ScalaDslTest {
     def getName = ""
 
     def getId = ""
+
+    def getFeature = ""
   }
 
   @Test
