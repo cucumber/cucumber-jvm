@@ -31,14 +31,6 @@ public class ScenarioImpl implements Scenario {
         this.feature=feature;
     }
 
-    public ScenarioImpl(Reporter reporter, Set<Tag> tags, gherkin.formatter.model.Scenario gherkinScenario) {
-        this.reporter = reporter;
-        this.tags = tags;
-        this.scenarioName = gherkinScenario.getName();
-        this.scenarioId = gherkinScenario.getId();
-        this.feature=null;
-    }
-
     void add(Result result) {
         stepResults.add(result);
     }

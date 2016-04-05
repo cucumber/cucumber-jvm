@@ -10,16 +10,19 @@ import gherkin.I18n;
 import gherkin.formatter.Argument;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
-import gherkin.formatter.model.*;
+import gherkin.formatter.model.Comment;
+import gherkin.formatter.model.DataTableRow;
+import gherkin.formatter.model.DocString;
+import gherkin.formatter.model.Match;
+import gherkin.formatter.model.Result;
+import gherkin.formatter.model.Scenario;
+import gherkin.formatter.model.Step;
+import gherkin.formatter.model.Tag;
+import gherkin.formatter.model.Feature;
 
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * This is the main entry point for running Cucumber features.
@@ -128,18 +131,6 @@ public class Runtime implements UnreportedStepExecutor {
 
     void printStats(PrintStream out) {
         stats.printStats(out, runtimeOptions.isStrict());
-    }
-
-    public void buildBackendWorlds(Reporter reporter, Set<Tag> tags, Scenario gherkinScenario) {
-        for (Backend backend : backends) {
-            backend.buildWorld();
-        }
-        undefinedStepsTracker.reset();
-        //TODO: this is the initial state of the state machine, it should not go here, but into something else
-        skipNextStep = false;
-        featureResult = null;
-        scenarioResult = new ScenarioImpl(reporter, tags, gherkinScenario, featureResult);
-
     }
 
     public void buildBackendWorlds(Reporter reporter, Set<Tag> tags, Feature gherkinFeature, Scenario gherkinScenario) {

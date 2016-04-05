@@ -1,5 +1,6 @@
 package cucumber.runtime.java.test;
 
+import cucumber.api.Feature;
 import cucumber.api.Scenario;
 import cucumber.api.java.Before;
 import cucumber.api.java.en.Given;
@@ -20,8 +21,9 @@ public class FeatureStepDefs {
 
     @Before
     public void get_feature_name(Scenario scenario) {
-        featureName = scenario.getFeature().getName();
-        tags = scenario.getFeature().getSourceTagNames();
+        Feature feature = scenario.getFeature();
+        featureName = feature.getName();
+        tags = feature.getSourceTagNames();
     }
 
     @Given("^I am running a feature")

@@ -7,6 +7,7 @@ Feature: Feature information is available during step execution
     Then The feature name is "Feature information is available during step execution"
     And The scenario name is "Feature Name"
 
+  @scenario
   Scenario: Feature Name - negative
     Given I am running a feature
     When I try to get the feature name

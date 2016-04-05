@@ -1,7 +1,6 @@
 package cucumber.runtime;
 
 import cucumber.api.Feature;
-import cucumber.api.Feature;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Result;
 import gherkin.formatter.model.Tag;

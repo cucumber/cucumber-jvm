@@ -57,6 +57,9 @@ public interface Scenario {
      */
     String getId();
 
-
+    /**
+     * Get information of the feature that this scenario is part of
+     * @return The Feature
+     */
     Feature getFeature();
 }
