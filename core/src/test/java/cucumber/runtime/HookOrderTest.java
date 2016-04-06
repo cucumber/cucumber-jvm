@@ -37,7 +37,7 @@ public class HookOrderTest {
 
     @Test
     public void before_hooks_execute_in_order() throws Throwable {
-        List<HookDefinition> hooks = mockHooks(3, Integer.MAX_VALUE, 1);
+        List<HookDefinition> hooks = mockHooks(3, Integer.MAX_VALUE, 1, -1, 0, 10000, Integer.MIN_VALUE);
         for (HookDefinition hook : hooks) {
             glue.addBeforeHook(hook);
         }
@@ -45,14 +45,18 @@ public class HookOrderTest {
         runtime.runBeforeHooks(mock(Reporter.class), new HashSet<Tag>());
 
         InOrder inOrder = inOrder(hooks.toArray());
+        inOrder.verify(hooks.get(6)).execute(Matchers.<Scenario>any());
+        inOrder.verify(hooks.get(3)).execute(Matchers.<Scenario>any());
+        inOrder.verify(hooks.get(4)).execute(Matchers.<Scenario>any());
         inOrder.verify(hooks.get(2)).execute(Matchers.<Scenario>any());
         inOrder.verify(hooks.get(0)).execute(Matchers.<Scenario>any());
+        inOrder.verify(hooks.get(5)).execute(Matchers.<Scenario>any());
         inOrder.verify(hooks.get(1)).execute(Matchers.<Scenario>any());
     }
 
     @Test
     public void after_hooks_execute_in_reverse_order() throws Throwable {
-        List<HookDefinition> hooks = mockHooks(2, Integer.MAX_VALUE, 4);
+        List<HookDefinition> hooks = mockHooks(Integer.MIN_VALUE, 2, Integer.MAX_VALUE, 4, -1, 0, 10000);
         for (HookDefinition hook : hooks) {
             glue.addAfterHook(hook);
         }
@@ -60,8 +64,12 @@ public class HookOrderTest {
         runtime.runAfterHooks(mock(Reporter.class), new HashSet<Tag>());
 
         InOrder inOrder = inOrder(hooks.toArray());
-        inOrder.verify(hooks.get(1)).execute(Matchers.<Scenario>any());
         inOrder.verify(hooks.get(2)).execute(Matchers.<Scenario>any());
+        inOrder.verify(hooks.get(6)).execute(Matchers.<Scenario>any());
+        inOrder.verify(hooks.get(3)).execute(Matchers.<Scenario>any());
+        inOrder.verify(hooks.get(1)).execute(Matchers.<Scenario>any());
+        inOrder.verify(hooks.get(5)).execute(Matchers.<Scenario>any());
+        inOrder.verify(hooks.get(4)).execute(Matchers.<Scenario>any());
         inOrder.verify(hooks.get(0)).execute(Matchers.<Scenario>any());
     }
 
