@@ -45,4 +45,8 @@ public class FileResource implements Resource {
     public File getFile() {
         return file;
     }
+
+    public String toString(){
+        return file.getName();
+    }
 }

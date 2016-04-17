@@ -6,8 +6,10 @@ import cucumber.api.SummaryPrinter;
 import cucumber.runtime.formatter.ColorAware;
 import cucumber.runtime.formatter.PluginFactory;
 import cucumber.runtime.formatter.StrictAware;
+import cucumber.runtime.io.Resource;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
+import cucumber.runtime.model.CucumberFeaturesLoader;
 import cucumber.runtime.model.PathWithLines;
 import gherkin.I18n;
 import gherkin.formatter.Formatter;
@@ -19,12 +21,8 @@ import java.io.Reader;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.regex.Pattern;
-
-import static cucumber.runtime.model.CucumberFeature.load;
 
 // IMPORTANT! Make sure USAGE.txt is always uptodate if this class changes.
 public class RuntimeOptions {
@@ -232,7 +230,13 @@ public class RuntimeOptions {
     }
 
     public List<CucumberFeature> cucumberFeatures(ResourceLoader resourceLoader) {
-        return load(resourceLoader, featurePaths, filters, System.out);
+        return new CucumberFeaturesLoader<CucumberFeature>(featurePaths, filters, CucumberFeature.class)
+                .load(resourceLoader, System.out);
+    }
+
+    public List<Resource> getCucumberFeaturesAsResources (ResourceLoader resourceLoader) {
+        return new CucumberFeaturesLoader<Resource>(featurePaths, filters, Resource.class)
+                .load(resourceLoader, System.out);
     }
 
     List<Object> getPlugins() {
