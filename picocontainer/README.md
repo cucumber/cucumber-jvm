@@ -8,4 +8,5 @@ All step classes and their dependencies will be recreated fresh for each scenari
 
 If any step classes or dependencies use expensive resources (such as database connections), you should create them lazily on-demand, rather than eagerly, to improve performance.
 
-The pico container created by `cucumber-jvm` uses a `NullLifecycleStrategy` (see http://picocontainer.com/lifecycle.html ) so the Startable or Disposeable interfaces will be ignored. You should use cucumber.api.java.After annotations to do any necessary cleanup.
+Step classes or their dependencies which own resources which need cleanup should implement org.picocontainer.Disposable as described at http://picocontainer.com/lifecycle.html . These callbacks will run after any cucumber.api.java.After callbacks.
+
