@@ -1,4 +1,5 @@
-[![Build Status](https://secure.travis-ci.org/cucumber/cucumber-jvm.png)](http://travis-ci.org/cucumber/cucumber-jvm)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/info.cukes/cucumber-jvm/badge.svg)](https://maven-badges.herokuapp.com/maven-central/info.cukes/cucumber-jvm)
+[![Build Status](https://secure.travis-ci.org/cucumber/cucumber-jvm.svg)](http://travis-ci.org/cucumber/cucumber-jvm)
 [![Join the chat at https://gitter.im/cucumber/cucumber-jvm](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/cucumber/cucumber-jvm?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 Cucumber-JVM is a pure Java implementation of Cucumber that supports the [most popular programming languages](https://cukes.info/docs/reference/jvm#running) for the JVM.
