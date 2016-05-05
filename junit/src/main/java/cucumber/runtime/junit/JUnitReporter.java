@@ -66,6 +66,9 @@ public class JUnitReporter implements Reporter, Formatter {
         Description description = executionUnitRunner.describeChild(runnerStep);
         stepNotifier = new EachTestNotifier(runNotifier, description);
         reporter.match(match);
+        if (junitOptions.allowStartedIgnored()) {
+            stepNotifier.fireTestStarted();
+        }
     }
 
     private Step fetchAndCheckRunnerStep() {
@@ -96,7 +99,9 @@ public class JUnitReporter implements Reporter, Formatter {
         } else {
             if (stepNotifier != null) {
                 //Should only fireTestStarted if not ignored
-                stepNotifier.fireTestStarted();
+                if (!junitOptions.allowStartedIgnored()) {
+                    stepNotifier.fireTestStarted();
+                }
                 if (error != null) {
                     stepNotifier.addFailure(error);
                 }
@@ -123,7 +128,9 @@ public class JUnitReporter implements Reporter, Formatter {
 
     private void addFailureOrIgnoreStep(Result result) {
         if (strict) {
-            stepNotifier.fireTestStarted();
+            if (!junitOptions.allowStartedIgnored()) {
+                stepNotifier.fireTestStarted();
+            }
             addFailure(result);
             stepNotifier.fireTestFinished();
         } else {
