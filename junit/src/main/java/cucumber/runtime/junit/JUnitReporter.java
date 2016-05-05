@@ -26,6 +26,7 @@ public class JUnitReporter implements Reporter, Formatter {
     private final Reporter reporter;
     private final Formatter formatter;
     private final boolean strict;
+    private final JUnitOptions junitOptions;
 
     EachTestNotifier stepNotifier;
     private ExecutionUnitRunner executionUnitRunner;
@@ -35,10 +36,11 @@ public class JUnitReporter implements Reporter, Formatter {
     private boolean ignoredStep;
     private boolean inScenarioLifeCycle;
 
-    public JUnitReporter(Reporter reporter, Formatter formatter, boolean strict) {
+    public JUnitReporter(Reporter reporter, Formatter formatter, boolean strict, JUnitOptions junitOption) {
         this.reporter = reporter;
         this.formatter = formatter;
         this.strict = strict;
+        this.junitOptions = junitOption;
     }
 
     public void startExecutionUnit(ExecutionUnitRunner executionUnitRunner, RunNotifier runNotifier) {

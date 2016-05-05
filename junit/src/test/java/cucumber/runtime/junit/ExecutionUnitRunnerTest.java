@@ -33,7 +33,7 @@ public class ExecutionUnitRunnerTest {
         ExecutionUnitRunner runner = new ExecutionUnitRunner(
                 null,
                 (CucumberScenario) features.get(0).getFeatureElements().get(0),
-                null
+                createStandardJUnitReporter()
         );
 
         // fish out the two occurrences of the same step and check whether we really got them
@@ -61,7 +61,7 @@ public class ExecutionUnitRunnerTest {
         ExecutionUnitRunner runner = new ExecutionUnitRunner(
                 null,
                 (CucumberScenario) features.get(0).getFeatureElements().get(0),
-                null
+                createStandardJUnitReporter()
         );
 
         // fish out the data from runner
@@ -85,7 +85,7 @@ public class ExecutionUnitRunnerTest {
         ExecutionUnitRunner runner = new ExecutionUnitRunner(
                 null,
                 (CucumberScenario) cucumberFeature.getFeatureElements().get(0),
-                null
+                createStandardJUnitReporter()
         );
 
         // fish out the data from runner
@@ -105,4 +105,7 @@ public class ExecutionUnitRunnerTest {
         assertEquals(stepDescription, Description.createTestDescription("", "", step));
     }
 
+    private JUnitReporter createStandardJUnitReporter() {
+        return new JUnitReporter(null, null, false, new JUnitOptions(Collections.<String>emptyList()));
+    }
 }

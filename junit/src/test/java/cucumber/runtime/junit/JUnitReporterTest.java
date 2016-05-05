@@ -21,6 +21,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Matchers;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -232,7 +233,7 @@ public class JUnitReporterTest {
         Scenario scenario = mock(Scenario.class);
         Step step = mock(Step.class);
         Formatter formatter = mock(Formatter.class);
-        jUnitReporter = new JUnitReporter(mock(Reporter.class), formatter, false);
+        jUnitReporter = new JUnitReporter(mock(Reporter.class), formatter, false, new JUnitOptions(Collections.<String>emptyList()));
 
         jUnitReporter.uri(uri);
         jUnitReporter.feature(feature);
@@ -270,7 +271,7 @@ public class JUnitReporterTest {
         byte data[] = new byte[] {1};
         String text = "text";
         Reporter reporter = mock(Reporter.class);
-        jUnitReporter = new JUnitReporter(reporter, mock(Formatter.class), false);
+        jUnitReporter = new JUnitReporter(reporter, mock(Formatter.class), false, new JUnitOptions(Collections.<String>emptyList()));
 
         jUnitReporter.startExecutionUnit(executionUnitRunner, mock(RunNotifier.class));
         jUnitReporter.startOfScenarioLifeCycle(mock(Scenario.class));
@@ -297,7 +298,7 @@ public class JUnitReporterTest {
         ExecutionUnitRunner executionUnitRunner = mockExecutionUnitRunner(runnerSteps(runnerStep));
         when(executionUnitRunner.describeChild(runnerStep)).thenReturn(runnerStepDescription);
         RunNotifier notifier = mock(RunNotifier.class);
-        jUnitReporter = new JUnitReporter(mock(Reporter.class), mock(Formatter.class), false);
+        jUnitReporter = new JUnitReporter(mock(Reporter.class), mock(Formatter.class), false, new JUnitOptions(Collections.<String>emptyList()));
 
         jUnitReporter.startExecutionUnit(executionUnitRunner, notifier);
         jUnitReporter.startOfScenarioLifeCycle(mock(Scenario.class));
@@ -312,7 +313,7 @@ public class JUnitReporterTest {
     public void throws_exception_when_runner_step_name_do_no_match_scenario_step_name() throws Exception {
         Step runnerStep = mockStep("Runner Step Name");
         ExecutionUnitRunner executionUnitRunner = mockExecutionUnitRunner(runnerSteps(runnerStep));
-        jUnitReporter = new JUnitReporter(mock(Reporter.class), mock(Formatter.class), false);
+        jUnitReporter = new JUnitReporter(mock(Reporter.class), mock(Formatter.class), false, new JUnitOptions(Collections.<String>emptyList()));
 
         jUnitReporter.startExecutionUnit(executionUnitRunner, mock(RunNotifier.class));
         jUnitReporter.startOfScenarioLifeCycle(mock(Scenario.class));
@@ -389,7 +390,7 @@ public class JUnitReporterTest {
         Formatter formatter = mock(Formatter.class);
         Reporter reporter = mock(Reporter.class);
 
-        jUnitReporter = new JUnitReporter(reporter, formatter, strict);
+        jUnitReporter = new JUnitReporter(reporter, formatter, strict, new JUnitOptions(Collections.<String>emptyList()));
     }
 
 }

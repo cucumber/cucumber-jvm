@@ -124,6 +124,14 @@ public class RuntimeOptionsFactoryTest {
         assertTrue(runtimeOptions.isMonochrome());
     }
 
+    @Test
+    public void create_with_junit_options() {
+        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(ClassWithJunitOption.class);
+        RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
+
+        assertEquals(asList("option1", "option2=value"), runtimeOptions.getJunitOptions());
+    }
+
     private void assertPluginExists(List<Object> plugins, String pluginName) {
         boolean found = false;
         for (Object plugin : plugins) {
@@ -194,6 +202,11 @@ public class RuntimeOptionsFactoryTest {
 
     @CucumberOptions(plugin = "pretty")
     static class ClassWithNoSummaryPrinterPlugin {
+        // empty
+    }
+
+    @CucumberOptions(junit = {"option1", "option2=value"})
+    static class ClassWithJunitOption {
         // empty
     }
 }

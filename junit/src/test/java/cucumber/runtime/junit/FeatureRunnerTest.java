@@ -11,6 +11,8 @@ import org.junit.Test;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;
 
+import java.util.Collections;
+
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -136,7 +138,7 @@ public class FeatureRunnerTest {
         final RuntimeGlue glue = mock(RuntimeGlue.class);
         final Runtime runtime = new Runtime(resourceLoader, classLoader, asList(mock(Backend.class)), runtimeOptions, new StopWatch.Stub(0l), glue);
         FormatterSpy formatterSpy = new FormatterSpy();
-        FeatureRunner runner = new FeatureRunner(cucumberFeature, runtime, new JUnitReporter(formatterSpy, formatterSpy, false));
+        FeatureRunner runner = new FeatureRunner(cucumberFeature, runtime, new JUnitReporter(formatterSpy, formatterSpy, false, new JUnitOptions(Collections.<String>emptyList())));
         runner.run(mock(RunNotifier.class));
         return formatterSpy.toString();
     }

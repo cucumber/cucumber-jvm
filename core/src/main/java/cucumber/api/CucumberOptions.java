@@ -64,4 +64,10 @@ public @interface CucumberOptions {
      * @return what format should the snippets use. underscore, camelcase
      */
     SnippetType snippets() default SnippetType.UNDERSCORE;
+
+    /**
+     * @return the options for the JUnit runner
+     */
+    String[] junit() default {};
+
 }
