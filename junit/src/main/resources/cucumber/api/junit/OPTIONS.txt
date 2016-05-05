@@ -8,4 +8,9 @@ JUnit Options:
                                          If the step is pending the test started will
                                          be followed by a test ignored, which can
                                          confuse some listeners.
+  --[no-]filename-compatible-names       Make sure that the names of the test cases
+                                         only is made up of [A-Za-Z0-9_] so that the
+                                         names for certain can be used as file names.
+                                         For instance gradle will use these names in 
+                                         the file names of the JUnit xml report files.
 
