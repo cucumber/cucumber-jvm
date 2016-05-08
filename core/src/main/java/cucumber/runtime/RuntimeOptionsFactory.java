@@ -7,6 +7,7 @@ import cucumber.runtime.io.MultiLoader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.lang.Integer;
 
 import static java.util.Arrays.asList;
 
@@ -15,6 +16,8 @@ public class RuntimeOptionsFactory {
     private boolean featuresSpecified = false;
     private boolean glueSpecified = false;
     private boolean pluginSpecified = false;
+    private int retry;
+
 
     public RuntimeOptionsFactory(Class clazz) {
         this.clazz = clazz;
@@ -40,6 +43,7 @@ public class RuntimeOptionsFactory {
                 addSnippets(options, args);
                 addGlue(options, args);
                 addFeatures(options, args);
+                addRetryScenario(options);
             }
         }
         addDefaultFeaturePathIfNoFeaturePathIsSpecified(args, clazz);
@@ -127,13 +131,18 @@ public class RuntimeOptionsFactory {
         }
     }
 
-
     private void addStrict(CucumberOptions options, List<String> args) {
         if (options.strict()) {
             args.add("--strict");
         }
     }
-
+   
+    private void addRetryScenario(CucumberOptions options) {
+        for (String retry : options.retryScenario()) {
+            this.retry = Integer.parseInt(retry);
+        }
+    }
+ 
     static String packagePath(Class clazz) {
         return packagePath(packageName(clazz.getName()));
     }
@@ -158,5 +167,9 @@ public class RuntimeOptionsFactory {
 
     private CucumberOptions getOptions(Class<?> clazz) {
         return clazz.getAnnotation(CucumberOptions.class);
+    }
+  
+    public int getRetry() {
+        return retry;
     }
 }

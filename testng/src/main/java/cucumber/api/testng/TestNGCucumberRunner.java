@@ -20,9 +20,11 @@ import java.util.List;
 public class TestNGCucumberRunner {
     private Runtime runtime;
     private RuntimeOptions runtimeOptions;
+    private RuntimeOptionsFactory runtimeOptionsFactory;
     private ResourceLoader resourceLoader;
     private FeatureResultListener resultListener;
     private ClassLoader classLoader;
+    private int retry;
 
     /**
      * Bootstrap the cucumber runtime
@@ -35,6 +37,7 @@ public class TestNGCucumberRunner {
 
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(clazz);
         runtimeOptions = runtimeOptionsFactory.create();
+        retry = runtimeOptionsFactory.getRetry();
 
         TestNgReporter reporter = new TestNgReporter(System.out);
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
@@ -60,10 +63,17 @@ public class TestNGCucumberRunner {
 
     public void runCucumber(CucumberFeature cucumberFeature) {
         resultListener.startFeature();
-        cucumberFeature.run(
-                runtimeOptions.formatter(classLoader),
-                resultListener,
-                runtime);
+        if (retry > 0) {
+            cucumberFeature.run(
+                    runtimeOptions.formatter(classLoader),
+                    resultListener,
+                    runtime, retry);
+        } else { 
+            cucumberFeature.run(
+                    runtimeOptions.formatter(classLoader),
+                    resultListener,
+                    runtime);
+        }
 
         if (!resultListener.isPassed()) {
             throw new CucumberException(resultListener.getFirstError());

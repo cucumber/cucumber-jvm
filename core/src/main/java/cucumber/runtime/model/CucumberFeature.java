@@ -2,6 +2,7 @@ package cucumber.runtime.model;
 
 import cucumber.runtime.FeatureBuilder;
 import cucumber.runtime.Runtime;
+import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.Resource;
 import cucumber.runtime.io.ResourceLoader;
@@ -29,6 +30,8 @@ public class CucumberFeature {
     private final List<CucumberTagStatement> cucumberTagStatements = new ArrayList<CucumberTagStatement>();
     private I18n i18n;
     private CucumberScenarioOutline currentScenarioOutline;
+    private FeatureResultListener resultListener;
+    private int retryCnt;
 
     public static List<CucumberFeature> load(ResourceLoader resourceLoader, List<String> featurePaths, final List<Object> filters, PrintStream out) {
         final List<CucumberFeature> cucumberFeatures = load(resourceLoader, featurePaths, filters);
@@ -155,8 +158,30 @@ public class CucumberFeature {
     public String getPath() {
         return path;
     }
+   
+    // use FeatureResultListener and retry to immediately retry failed scenarios
+    public void run(Formatter formatter, FeatureResultListener listener, Runtime runtime, int retry) {
+        formatter.uri(getPath());
+        formatter.feature(getGherkinFeature());
+        resultListener = listener;
+      
+        for (CucumberTagStatement cucumberTagStatement : getFeatureElements()) {
+            //Run the scenario, it should handle before and after hooks
+            listener.startFeature();
+                cucumberTagStatement.run(formatter, resultListener, runtime);
+            if (!resultListener.isPassed()) {
+                retryCnt = 0;
+                while (!resultListener.isPassed() && retryCnt < retry) {
+                    cucumberTagStatement.run(formatter, resultListener, runtime);
+                    retryCnt++;
+                }
+            }
+        }
+        formatter.eof();
 
-    public void run(Formatter formatter, Reporter reporter, Runtime runtime) {
+    }
+
+     public void run(Formatter formatter, Reporter reporter, Runtime runtime) {
         formatter.uri(getPath());
         formatter.feature(getGherkinFeature());
 
