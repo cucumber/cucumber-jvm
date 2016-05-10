@@ -7,6 +7,29 @@ matrix:
   include:
   - jdk: oraclejdk7
     script: mvn -q deploy --settings .travis-settings.xml -Dno.gem.deploy=true
+  - jdk: oraclejdk7
+    env: ANDROID_EXAMPLES=true
+    language: android
+    android:
+      components:
+        - build-tools-21.1.1
+        - platform-tools
+        - extra-android-support
+        - android-21
+        - android-15
+        - sys-img-armeabi-v7a-android-15
+    # Emulator Management: Create and start up in parallel with the install
+    # An old emulator is used to use less resources
+    before_install:
+      - echo no | android create avd --force -n test -t android-15 --abi armeabi-v7a
+      - emulator -avd test -no-skin -no-audio -no-window &
+    # Build the Android example dependencies, without test, to install dependencies
+    install: mvn verify -pl android,picocontainer -am -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+    # Emulator Management: Wait until the emulator is ready
+    before_script:
+      - android-wait-for-emulator
+    # Build and test the Android examples
+    script: mvn verify -P android-examples -pl examples/android,examples/android/android-test -am -amd -Dandroid.device=test
   - jdk: oraclejdk8
     script: mvn -q deploy -P java8 -pl java8 --settings .travis-settings.xml -Dno.gem.deploy=true
 
