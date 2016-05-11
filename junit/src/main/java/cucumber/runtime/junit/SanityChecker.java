@@ -1,10 +1,8 @@
 package cucumber.runtime.junit;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.JUnit4TestAdapter;
-import junit.framework.Test;
-import junit.framework.TestListener;
-import junit.framework.TestResult;
+import org.junit.runner.Description;
+import org.junit.runner.JUnitCore;
+import org.junit.runner.notification.RunListener;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -14,11 +12,11 @@ import java.util.List;
 /**
  * Listener that makes sure Cucumber fires events in the right order
  */
-public class SanityChecker implements TestListener {
+public class SanityChecker extends RunListener {
     private static final String INDENT = "  ";
     public static final String INSANITY = "INSANITY";
 
-    private List<Test> tests = new ArrayList<Test>();
+    private List<Description> testDescriptions = new ArrayList<Description>();
     private final StringWriter out = new StringWriter();
 
     public static void run(Class<?> testClass) {
@@ -26,11 +24,10 @@ public class SanityChecker implements TestListener {
     }
 
     public static void run(Class<?> testClass, boolean debug) {
-        JUnit4TestAdapter testAdapter = new JUnit4TestAdapter(testClass);
-        TestResult result = new TestResult();
+        JUnitCore runner = new JUnitCore();
         SanityChecker listener = new SanityChecker();
-        result.addListener(listener);
-        testAdapter.run(result);
+        runner.addListener(listener);
+        runner.run(testClass);
         String output = listener.getOutput();
         if (output.contains(INSANITY)) {
             throw new RuntimeException("Something went wrong\n" + output);
@@ -43,26 +40,18 @@ public class SanityChecker implements TestListener {
     }
 
     @Override
-    public void addError(Test test, Throwable t) {
-    }
-
-    @Override
-    public void addFailure(Test test, AssertionFailedError t) {
-    }
-
-    @Override
-    public void startTest(Test started) {
+    public void testStarted(Description started) {
         spaces();
-        out.append("START " + started.toString()).append("\n");
-        tests.add(started);
+        out.append("START  " + started.toString()).append("\n");
+        testDescriptions.add(started);
     }
 
     @Override
-    public void endTest(Test ended) {
+    public void testFinished(Description ended) {
         try {
-            Test lastStarted = tests.remove(tests.size() - 1);
+            Description lastStarted = testDescriptions.remove(testDescriptions.size() - 1);
             spaces();
-            out.append("END   " + ended.toString()).append("\n");
+            out.append("END    " + ended.toString()).append("\n");
             if (!lastStarted.toString().equals(ended.toString())) {
                 out.append(INSANITY).append("\n");
                 String errorMessage = String.format("Started : %s\nEnded   : %s\n", lastStarted, ended);
@@ -74,8 +63,29 @@ public class SanityChecker implements TestListener {
         }
     }
 
+    @Override
+    public void testIgnored(Description ignored) {
+        try {
+            Description lastStarted = testDescriptions.remove(testDescriptions.size() - 1);
+            spaces();
+            out.append("IGNORE " + ignored.toString()).append("\n");
+            // For suites both a testIgnored and a testFinished is sent
+            if (ignored.isSuite()) {
+                testDescriptions.add(lastStarted);
+            }
+            if (!lastStarted.toString().equals(ignored.toString())) {
+                out.append(INSANITY).append("\n");
+                String errorMessage = String.format("Started : %s\nIgnored : %s\n", lastStarted, ignored);
+                out.append(errorMessage).append("\n");
+            }
+        } catch (Exception e) {
+            out.append(INSANITY).append("\n");
+            e.printStackTrace(new PrintWriter(out));
+        }
+    }
+
     private void spaces() {
-        for (int i = 0; i < tests.size(); i++) {
+        for (int i = 0; i < testDescriptions.size(); i++) {
             out.append(INDENT);
         }
     }

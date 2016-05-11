@@ -64,7 +64,6 @@ public class JUnitReporterTest {
 
         jUnitReporter.result(Result.UNDEFINED);
 
-        verify(stepNotifier, times(0)).fireTestStarted();
         verify(stepNotifier, times(0)).fireTestFinished();
         verify(stepNotifier, times(0)).addFailure(Matchers.<Throwable>any(Throwable.class));
         verify(stepNotifier).fireTestIgnored();
@@ -81,7 +80,6 @@ public class JUnitReporterTest {
 
         jUnitReporter.result(Result.UNDEFINED);
 
-        verify(stepNotifier, times(1)).fireTestStarted();
         verify(stepNotifier, times(1)).fireTestFinished();
         verifyAddFailureWithPendingException(stepNotifier);
         verifyAddFailureWithPendingException(executionUnitNotifier);
@@ -106,7 +104,6 @@ public class JUnitReporterTest {
 
         jUnitReporter.result(result);
 
-        verify(stepNotifier, times(0)).fireTestStarted();
         verify(stepNotifier, times(0)).fireTestFinished();
         verify(stepNotifier, times(0)).addFailure(Matchers.<Throwable>any(Throwable.class));
         verify(stepNotifier).fireTestIgnored();
@@ -126,7 +123,6 @@ public class JUnitReporterTest {
 
         jUnitReporter.result(result);
 
-        verify(stepNotifier, times(1)).fireTestStarted();
         verify(stepNotifier, times(1)).fireTestFinished();
         verifyAddFailureWithPendingException(stepNotifier);
         verifyAddFailureWithPendingException(executionUnitNotifier);
@@ -143,7 +139,6 @@ public class JUnitReporterTest {
 
         jUnitReporter.result(result);
 
-        verify(stepNotifier).fireTestStarted();
         verify(stepNotifier).fireTestFinished();
         verify(stepNotifier, times(0)).addFailure(Matchers.<Throwable>any(Throwable.class));
         verify(stepNotifier, times(0)).fireTestIgnored();
@@ -159,7 +154,6 @@ public class JUnitReporterTest {
 
         jUnitReporter.result(result);
 
-        verify(stepNotifier).fireTestStarted();
         verify(stepNotifier).fireTestFinished();
         verify(stepNotifier, times(0)).addFailure(Matchers.<Throwable>any(Throwable.class));
         verify(stepNotifier, times(0)).fireTestIgnored();
@@ -325,6 +319,23 @@ public class JUnitReporterTest {
         } catch (Exception e) {
             fail("CucumberException not thrown");
         }
+    }
+
+    @Test
+    public void match_fires_test_started_for_the_step() {
+        Step runnerStep = mockStep("Step Name");
+        Description runnerStepDescription = stepDescription(runnerStep);
+        ExecutionUnitRunner executionUnitRunner = mockExecutionUnitRunner(runnerSteps(runnerStep));
+        when(executionUnitRunner.describeChild(runnerStep)).thenReturn(runnerStepDescription);
+        createNonStrictReporter();
+        runNotifier = mock(RunNotifier.class);
+
+        jUnitReporter.startExecutionUnit(executionUnitRunner, runNotifier);
+        jUnitReporter.startOfScenarioLifeCycle(mock(Scenario.class));
+        jUnitReporter.step(runnerStep);
+        jUnitReporter.match(mock(Match.class));
+
+        verify(runNotifier).fireTestStarted(runnerStepDescription);
     }
 
     private Result mockResult() {
