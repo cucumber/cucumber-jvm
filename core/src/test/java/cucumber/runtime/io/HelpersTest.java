@@ -25,7 +25,9 @@ public class HelpersTest {
     @Test
     public void computes_file_path_for_file_url() throws UnsupportedEncodingException, MalformedURLException {
         URL url = new URL("file:/Users/First%20Last/.m2/repository/info/cukes/cucumber-java/1.2.2/cucumber-java-1.2.2.jar");
-        assertEquals(new File("/Users/First Last/.m2/repository/info/cukes/cucumber-java/1.2.2/cucumber-java-1.2.2.jar").getAbsolutePath(), filePath(url));
+        File fileFromFilePath = new File(filePath(url));
+        File expectedFile = new File("/Users/First Last/.m2/repository/info/cukes/cucumber-java/1.2.2/cucumber-java-1.2.2.jar");
+        assertEquals(expectedFile, fileFromFilePath);
     }
 
     @Test
