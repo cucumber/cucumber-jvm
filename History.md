@@ -1,5 +1,6 @@
 ## [1.2.5-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v1.2.4...master) (In Git)
 
+* [Core, Junit] Passthrough options for the JUnit Module ([#1002](https://github.com/cucumber/cucumber-jvm/pull/1002) Also resolves [#825](https://github.com/cucumber/cucumber-jvm/pull/825) and [#972](https://github.com/cucumber/cucumber-jvm/issues/972) Björn Rasmusson)
 * [Android, Core, Guice, Junit] Improve code quality ensuring Utility Classes cannot be instantiated ([#945](https://github.com/cucumber/cucumber-jvm/pull/945) Kirill Vlasov)
 * [Core, Guice, Testng] Improve code quality using isEmpty instead of size comparison ([#942](https://github.com/cucumber/cucumber-jvm/pull/942) Kirill Vlasov)
 * [Clojure] Don't depend on cucumber-core in the clojure example ([#947](https://github.com/cucumber/cucumber-jvm/pull/947 Joe Corneli)
