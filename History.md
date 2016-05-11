@@ -1,5 +1,6 @@
 ## [1.2.5-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v1.2.4...master) (In Git)
 
+* [Groovy] Fix Null Pointer Exeption whe using List as parameter type in step defs ([#980](https://github.com/cucumber/cucumber-jvm/pull/980) Steffen Jacobs)
 * [Readme] Use SVG badges! ([#941](https://github.com/cucumber/cucumber-jvm/pull/941) Kevin Goslar)
 * [TestNG] Ignore the testng directory ([#990](https://github.com/cucumber/cucumber-jvm/pull/990) Jan Molak)
 * [Core] Use Integer.compare() in HookComparator in order to guard against possible underflow ([#986](https://github.com/cucumber/cucumber-jvm/pull/986), [#985](https://github.com/cucumber/cucumber-jvm/issues/985) Mikael Auno)
