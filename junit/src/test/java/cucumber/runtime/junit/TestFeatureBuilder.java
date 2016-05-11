@@ -12,6 +12,9 @@ import java.util.ArrayList;
 
 public class TestFeatureBuilder {
 
+    private TestFeatureBuilder() {
+    }
+
     static CucumberFeature feature(final String path, final String source) throws IOException {
         ArrayList<CucumberFeature> cucumberFeatures = new ArrayList<CucumberFeature>();
         FeatureBuilder featureBuilder = new FeatureBuilder(cucumberFeatures);

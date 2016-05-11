@@ -7,6 +7,9 @@ import java.net.URISyntaxException;
 import java.net.URL;
 
 public class Helpers {
+    private Helpers() {
+    }
+
     static boolean hasSuffix(String suffix, String name) {
         return suffix == null || name.endsWith(suffix);
     }

@@ -8,6 +8,9 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Timeout {
+    private Timeout() {
+    }
+
     public static <T> T timeout(Callback<T> callback, long timeoutMillis) throws Throwable {
         if (timeoutMillis == 0) {
             return callback.call();
