@@ -4,6 +4,9 @@ import java.util.List;
 
 public class CollectionUtil {
 
+    private CollectionUtil() {
+    }
+
     /**
      * Removes all elements in the supplied list except the first element.
      * @param list the list to be modified
@@ -14,7 +17,7 @@ public class CollectionUtil {
         if (list == null) {
             throw new NullPointerException("List must not be null.");
         }
-        if (list.size() < 1) {
+        if (list.isEmpty()) {
             throw new IllegalArgumentException("List must contain at least one element.");
         }
         while (list.size() > 1) {

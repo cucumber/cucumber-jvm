@@ -16,7 +16,7 @@ public class Reflections {
         Collection<? extends T> instances = instantiateSubclasses(parentType, packageName, constructorParams, constructorArgs);
         if (instances.size() == 1) {
             return instances.iterator().next();
-        } else if (instances.size() == 0) {
+        } else if (instances.isEmpty()) {
             throw new NoInstancesException(parentType);
         } else {
             throw new TooManyInstancesException(instances);

@@ -6,6 +6,9 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
 public class Assertions {
+    private Assertions() {
+    }
+
     public static void assertNoCucumberAnnotatedMethods(Class clazz) {
         for (Method method : clazz.getDeclaredMethods()) {
             for (Annotation annotation : method.getAnnotations()) {

@@ -5,6 +5,5 @@
   :cucumber-feature-paths ["test/features/"]
   :profiles
   {:dev
-   {:dependencies [[lein-cucumber "1.0.2"]
-                   [info.cukes/cucumber-core "1.2.4"]]}}
+   {:dependencies [[lein-cucumber "1.0.2"]]}}
 )

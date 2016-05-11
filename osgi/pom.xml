@@ -87,6 +87,7 @@
                     <instructions>
                         <Bundle-Description />
                         <Export-Package>cucumber.*</Export-Package>
+                        <Import-Package>org.ops4j.pax.exam.util;resolution:=optional,*</Import-Package>
                     </instructions>
                 </configuration>
             </plugin>

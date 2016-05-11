@@ -1,5 +1,13 @@
 ## [1.2.5-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v1.2.4...master) (In Git)
 
+* [Android, Core, Guice, Junit] Improve code quality ensuring Utility Classes cannot be instantiated ([#945](https://github.com/cucumber/cucumber-jvm/pull/945) Kirill Vlasov)
+* [Core, Guice, Testng] Improve code quality using isEmpty instead of size comparison ([#942](https://github.com/cucumber/cucumber-jvm/pull/942) Kirill Vlasov)
+* [Clojure] Don't depend on cucumber-core in the clojure example ([#947](https://github.com/cucumber/cucumber-jvm/pull/947 Joe Corneli)
+* [Spring] Some spring tests were not being run ([#952](https://github.com/cucumber/cucumber-jvm/pull/952) Lee Wan Geun)
+* [OSGI] Pax-exam is optional ([#1000](https://github.com/cucumber/cucumber-jvm/pull/1000) HendrikSP)
+* [Groovy] Fix Null Pointer Exeption whe using List as parameter type in step defs ([#980](https://github.com/cucumber/cucumber-jvm/pull/980) Steffen Jacobs)
+* [Readme] Use SVG badges! ([#941](https://github.com/cucumber/cucumber-jvm/pull/941) Kevin Goslar)
+* [TestNG] Ignore the testng directory ([#990](https://github.com/cucumber/cucumber-jvm/pull/990) Jan Molak)
 * [Core] Use Integer.compare() in HookComparator in order to guard against possible underflow ([#986](https://github.com/cucumber/cucumber-jvm/pull/986), [#985](https://github.com/cucumber/cucumber-jvm/issues/985) Mikael Auno)
 * [Junit] Let JUnitReporter treat Pending results in hooks as failures in strict mode, and as ignored tests otherwise (Björn Rasmusson)
 * [Core] Mark scenario as skipped in JUnitFormatter if PendingException is thrown in a hook ([#964](https://github.com/cucumber/cucumber-jvm/pull/964), [#962](https://github.com/cucumber/cucumber-jvm/issues/962) Felix Martin Martin)

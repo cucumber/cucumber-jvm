@@ -30,6 +30,9 @@ import static org.mockito.Mockito.*;
 
 @Ignore
 public class TestHelper {
+    private TestHelper() {
+    }
+
     public static CucumberFeature feature(final String path, final String source) throws IOException {
         ArrayList<CucumberFeature> cucumberFeatures = new ArrayList<CucumberFeature>();
         FeatureBuilder featureBuilder = new FeatureBuilder(cucumberFeatures);
@@ -147,10 +150,10 @@ public class TestHelper {
         for (SimpleEntry<String, Result> hookEntry : hooks) {
             TestHelper.mockHook(hookEntry, beforeHooks, afterHooks);
         }
-        if (beforeHooks.size() != 0) {
+        if (!beforeHooks.isEmpty()) {
             when(glue.getBeforeHooks()).thenReturn(beforeHooks);
         }
-        if (afterHooks.size() != 0) {
+        if (!afterHooks.isEmpty()) {
             when(glue.getAfterHooks()).thenReturn(afterHooks);
         }
     }

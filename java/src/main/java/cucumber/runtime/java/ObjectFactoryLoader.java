@@ -8,6 +8,9 @@ import cucumber.runtime.Reflections;
 import cucumber.runtime.TooManyInstancesException;
 
 public class ObjectFactoryLoader {
+    private ObjectFactoryLoader() {
+    }
+
     /**
      * Loads an instance of {@link ObjectFactory}. The class name can be explicit, or it can be null.
      * When it's null, the implementation is searched for in the <pre>cucumber.runtime</pre> packahe.
