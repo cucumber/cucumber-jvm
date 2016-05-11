@@ -82,7 +82,7 @@ class RerunFormatter implements Formatter, Reporter, StrictAware {
         Set<Map.Entry<String, ArrayList<Integer>>> entries = featureAndFailedLinesMapping.entrySet();
         boolean firstFeature = true;
         for (Map.Entry<String, ArrayList<Integer>> entry : entries) {
-            if (entry.getValue().size() > 0) {
+            if (!entry.getValue().isEmpty()) {
                 if (!firstFeature) {
                     out.append(" ");
                 }
