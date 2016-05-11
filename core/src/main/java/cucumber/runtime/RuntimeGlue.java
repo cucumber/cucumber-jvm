@@ -61,7 +61,7 @@ public class RuntimeGlue implements Glue {
     public StepDefinitionMatch stepDefinitionMatch(String featurePath, Step step, I18n i18n) {
         List<StepDefinitionMatch> matches = stepDefinitionMatches(featurePath, step);
         try {
-            if (matches.size() == 0) {
+            if (matches.isEmpty()) {
                 tracker.addUndefinedStep(step, i18n);
                 return null;
             }

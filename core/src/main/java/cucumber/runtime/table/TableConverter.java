@@ -289,7 +289,7 @@ public class TableConverter {
     private boolean isListOfSingleValue(Object object) {
         if (object instanceof List) {
             List list = (List) object;
-            return list.size() > 0 && xStream.getSingleValueConverter(list.get(0).getClass()) != null;
+            return !list.isEmpty() && xStream.getSingleValueConverter(list.get(0).getClass()) != null;
         }
         return false;
     }

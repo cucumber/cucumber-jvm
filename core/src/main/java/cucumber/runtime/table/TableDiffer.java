@@ -25,7 +25,7 @@ public class TableDiffer {
     }
 
     private void checkColumns(DataTable a, DataTable b) {
-        if (a.topCells().size() != b.topCells().size() && b.topCells().size() != 0) {
+        if (a.topCells().size() != b.topCells().size() && !b.topCells().isEmpty()) {
             throw new IllegalArgumentException("Tables must have equal number of columns:\n" + a + "\n" + b);
         }
     }

@@ -47,7 +47,7 @@ public class TestNGCucumberRunnerTest {
 
         Assert.assertEquals(features.size(), numberOfFeatures,
                 "Not all features associated with " + RunCukesTest.class.getSimpleName() + " were loaded. ");
-        Assert.assertTrue(features.size() > 0, "Feature files need to exist in the cucumber/runtime/testng/ folder for this test");
+        Assert.assertTrue(!features.isEmpty(), "Feature files need to exist in the cucumber/runtime/testng/ folder for this test");
     }
 
     /**

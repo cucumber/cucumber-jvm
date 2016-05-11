@@ -18,7 +18,7 @@ abstract class ConverterWithFormat<T> extends Transformer<T> {
     }
 
     public T transform(String string) {
-        if (string == null || string.length() == 0) {
+        if (string == null || string.isEmpty()) {
             return null;
         }
         for (Format format : getFormats()) {
