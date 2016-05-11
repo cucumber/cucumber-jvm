@@ -1,5 +1,6 @@
 ## [1.2.5-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v1.2.4...master) (In Git)
 
+* [Core] Specifying plugins on the command line via `--plugin` clobbers settings in the code ([#860](https://github.com/cucumber/cucumber-jvm/pull/860) Björn Rasmusson)
 * [Core] Make test assertion OS agnostic ([#897](https://github.com/cucumber/cucumber-jvm/pull/897/files) sid)
 * [Travis] Improve the travis build ([#829](https://github.com/cucumber/cucumber-jvm/pull/829) Björn Rasmusson)
 * [Core, Junit] Passthrough options for the JUnit Module ([#1002](https://github.com/cucumber/cucumber-jvm/pull/1002) Also resolves [#825](https://github.com/cucumber/cucumber-jvm/pull/825) and [#972](https://github.com/cucumber/cucumber-jvm/issues/972) Björn Rasmusson)
