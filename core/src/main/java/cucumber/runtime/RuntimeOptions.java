@@ -39,6 +39,7 @@ public class RuntimeOptions {
     private final List<String> pluginFormatterNames = new ArrayList<String>();
     private final List<String> pluginStepDefinitionReporterNames = new ArrayList<String>();
     private final List<String> pluginSummaryPrinterNames = new ArrayList<String>();
+    private final List<String> junitOptions = new ArrayList<String>();
     private final PluginFactory pluginFactory;
     private final List<Object> plugins = new ArrayList<Object>();
     private boolean dryRun;
@@ -100,6 +101,7 @@ public class RuntimeOptions {
         List<Object> parsedFilters = new ArrayList<Object>();
         List<String> parsedFeaturePaths = new ArrayList<String>();
         List<String> parsedGlue = new ArrayList<String>();
+        List<String> parsedJunitOptions = new ArrayList<String>();
 
         while (!args.isEmpty()) {
             String arg = args.remove(0).trim();
@@ -136,6 +138,10 @@ public class RuntimeOptions {
                 String nextArg = args.remove(0);
                 Pattern patternFilter = Pattern.compile(nextArg);
                 parsedFilters.add(patternFilter);
+            } else if (arg.startsWith("--junit,")) {
+                for (String option : arg.substring("--junit,".length()).split(",")) {
+                    parsedJunitOptions.add(option);
+                }
             } else if (arg.startsWith("-")) {
                 printUsage();
                 throw new CucumberException("Unknown option: " + arg);
@@ -157,6 +163,10 @@ public class RuntimeOptions {
         if (!parsedGlue.isEmpty()) {
             glue.clear();
             glue.addAll(parsedGlue);
+        }
+        if (!parsedJunitOptions.isEmpty()) {
+            junitOptions.clear();
+            junitOptions.addAll(parsedJunitOptions);
         }
     }
 
@@ -346,5 +356,9 @@ public class RuntimeOptions {
 
     public SnippetType getSnippetType() {
         return snippetType;
+    }
+
+    public List<String> getJunitOptions() {
+        return junitOptions;
     }
 }

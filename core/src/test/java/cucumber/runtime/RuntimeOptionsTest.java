@@ -163,6 +163,26 @@ public class RuntimeOptionsTest {
     }
 
     @Test
+    public void assigns_single_junit_option() {
+        RuntimeOptions options = new RuntimeOptions(asList("--junit,option"));
+        assertEquals(asList("option"), options.getJunitOptions());
+    }
+
+    @Test
+    public void assigns_multiple_junit_options() {
+        RuntimeOptions options = new RuntimeOptions(asList("--junit,option1,option2=value"));
+        assertEquals(asList("option1", "option2=value"), options.getJunitOptions());
+    }
+
+    @Test
+    public void clobbers_junit_options_from_cli_if_junit_options_specified_in_cucumber_options_property() {
+        Properties properties = new Properties();
+        properties.setProperty("cucumber.options", "--junit,option_from_property");
+        RuntimeOptions runtimeOptions = new RuntimeOptions(new Env(properties), asList("--junit,option_to_be_clobbered"));
+        assertEquals(asList("option_from_property"), runtimeOptions.getJunitOptions());
+    }
+
+    @Test
     public void overrides_options_with_system_properties_without_clobbering_non_overridden_ones() {
         Properties properties = new Properties();
         properties.setProperty("cucumber.options", "--glue lookatme this_clobbers_feature_paths");

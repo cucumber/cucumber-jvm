@@ -40,6 +40,7 @@ public class RuntimeOptionsFactory {
                 addSnippets(options, args);
                 addGlue(options, args);
                 addFeatures(options, args);
+                addJunitOptions(options, args);
             }
         }
         addDefaultFeaturePathIfNoFeaturePathIsSpecified(args, clazz);
@@ -131,6 +132,12 @@ public class RuntimeOptionsFactory {
     private void addStrict(CucumberOptions options, List<String> args) {
         if (options.strict()) {
             args.add("--strict");
+        }
+    }
+
+    private void addJunitOptions(CucumberOptions options, List<String> args) {
+        for (String junitOption : options.junit()) {
+            args.add("--junit," + junitOption);
         }
     }
 

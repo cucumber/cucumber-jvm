@@ -26,6 +26,7 @@ public class JUnitReporter implements Reporter, Formatter {
     private final Reporter reporter;
     private final Formatter formatter;
     private final boolean strict;
+    private final JUnitOptions junitOptions;
 
     EachTestNotifier stepNotifier;
     private ExecutionUnitRunner executionUnitRunner;
@@ -35,10 +36,11 @@ public class JUnitReporter implements Reporter, Formatter {
     private boolean ignoredStep;
     private boolean inScenarioLifeCycle;
 
-    public JUnitReporter(Reporter reporter, Formatter formatter, boolean strict) {
+    public JUnitReporter(Reporter reporter, Formatter formatter, boolean strict, JUnitOptions junitOption) {
         this.reporter = reporter;
         this.formatter = formatter;
         this.strict = strict;
+        this.junitOptions = junitOption;
     }
 
     public void startExecutionUnit(ExecutionUnitRunner executionUnitRunner, RunNotifier runNotifier) {
@@ -64,6 +66,9 @@ public class JUnitReporter implements Reporter, Formatter {
         Description description = executionUnitRunner.describeChild(runnerStep);
         stepNotifier = new EachTestNotifier(runNotifier, description);
         reporter.match(match);
+        if (junitOptions.allowStartedIgnored()) {
+            stepNotifier.fireTestStarted();
+        }
     }
 
     private Step fetchAndCheckRunnerStep() {
@@ -94,7 +99,9 @@ public class JUnitReporter implements Reporter, Formatter {
         } else {
             if (stepNotifier != null) {
                 //Should only fireTestStarted if not ignored
-                stepNotifier.fireTestStarted();
+                if (!junitOptions.allowStartedIgnored()) {
+                    stepNotifier.fireTestStarted();
+                }
                 if (error != null) {
                     stepNotifier.addFailure(error);
                 }
@@ -114,6 +121,10 @@ public class JUnitReporter implements Reporter, Formatter {
         reporter.result(result);
     }
 
+    public boolean useFilenameCompatibleNames() {
+        return junitOptions.filenameCompatibleNames();
+    }
+
     private boolean isPendingOrUndefined(Result result) {
         Throwable error = result.getError();
         return Result.UNDEFINED == result || isPending(error);
@@ -121,7 +132,9 @@ public class JUnitReporter implements Reporter, Formatter {
 
     private void addFailureOrIgnoreStep(Result result) {
         if (strict) {
-            stepNotifier.fireTestStarted();
+            if (!junitOptions.allowStartedIgnored()) {
+                stepNotifier.fireTestStarted();
+            }
             addFailure(result);
             stepNotifier.fireTestFinished();
         } else {

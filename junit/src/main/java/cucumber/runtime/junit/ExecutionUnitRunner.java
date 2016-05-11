@@ -42,7 +42,12 @@ public class ExecutionUnitRunner extends ParentRunner<Step> {
 
     @Override
     public String getName() {
-        return cucumberScenario.getVisualName();
+        String name = cucumberScenario.getVisualName();
+        if (jUnitReporter.useFilenameCompatibleNames()) {
+            return makeNameFilenameCompatible(name);
+        } else {
+            return name;
+        }
     }
 
     @Override
@@ -78,7 +83,13 @@ public class ExecutionUnitRunner extends ParentRunner<Step> {
     protected Description describeChild(Step step) {
         Description description = stepDescriptions.get(step);
         if (description == null) {
-            description = Description.createTestDescription(getName(), step.getKeyword() + step.getName(), step);
+            String testName;
+            if (jUnitReporter.useFilenameCompatibleNames()) {
+                testName = makeNameFilenameCompatible(step.getKeyword() + step.getName());
+            } else {
+                testName = step.getKeyword() + step.getName();
+            }
+            description = Description.createTestDescription(getName(), testName, step);
             stepDescriptions.put(step, description);
         }
         return description;
@@ -98,5 +109,9 @@ public class ExecutionUnitRunner extends ParentRunner<Step> {
         // Instead it happens via cucumberScenario.run(jUnitReporter, jUnitReporter, runtime);
         throw new UnsupportedOperationException();
         // cucumberScenario.runStep(step, jUnitReporter, runtime);
+    }
+
+    private String makeNameFilenameCompatible(String name) {
+        return name.replaceAll("[^A-Za-z0-9_]", "_");
     }
 }

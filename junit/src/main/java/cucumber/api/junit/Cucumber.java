@@ -10,6 +10,7 @@ import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
 import cucumber.runtime.junit.Assertions;
 import cucumber.runtime.junit.FeatureRunner;
+import cucumber.runtime.junit.JUnitOptions;
 import cucumber.runtime.junit.JUnitReporter;
 import cucumber.runtime.model.CucumberFeature;
 import org.junit.runner.Description;
@@ -57,8 +58,9 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
         runtime = createRuntime(resourceLoader, classLoader, runtimeOptions);
 
+        final JUnitOptions junitOptions = new JUnitOptions(runtimeOptions.getJunitOptions());
         final List<CucumberFeature> cucumberFeatures = runtimeOptions.cucumberFeatures(resourceLoader);
-        jUnitReporter = new JUnitReporter(runtimeOptions.reporter(classLoader), runtimeOptions.formatter(classLoader), runtimeOptions.isStrict());
+        jUnitReporter = new JUnitReporter(runtimeOptions.reporter(classLoader), runtimeOptions.formatter(classLoader), runtimeOptions.isStrict(), junitOptions);
         addChildren(cucumberFeatures);
     }
 

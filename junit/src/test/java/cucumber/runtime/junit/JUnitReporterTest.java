@@ -21,8 +21,10 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Matchers;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -35,6 +37,24 @@ public class JUnitReporterTest {
 
     private JUnitReporter jUnitReporter;
     private RunNotifier runNotifier;
+
+    @Test
+    public void match_allow_stared_ignored() {
+        createAllowStartedIgnoredReporter();
+        Step runnerStep = mockStep();
+        Description runnerStepDescription = stepDescription(runnerStep);
+        ExecutionUnitRunner executionUnitRunner = mockExecutionUnitRunner(runnerSteps(runnerStep));
+        when(executionUnitRunner.describeChild(runnerStep)).thenReturn(runnerStepDescription);
+        runNotifier = mock(RunNotifier.class);
+
+        jUnitReporter.startExecutionUnit(executionUnitRunner, runNotifier);
+        jUnitReporter.startOfScenarioLifeCycle(mock(Scenario.class));
+        jUnitReporter.step(runnerStep);
+        jUnitReporter.match(mock(Match.class));
+
+        verify(runNotifier).fireTestStarted(executionUnitRunner.getDescription());
+        verify(runNotifier).fireTestStarted(runnerStepDescription);
+    }
 
     @Test
     public void resultWithError() {
@@ -166,6 +186,22 @@ public class JUnitReporterTest {
     }
 
     @Test
+    public void result_without_error_allow_stared_ignored() {
+        createAllowStartedIgnoredReporter();
+        Result result = mock(Result.class);
+
+        EachTestNotifier stepNotifier = mock(EachTestNotifier.class);
+        jUnitReporter.stepNotifier = stepNotifier;
+
+        jUnitReporter.result(result);
+
+        verify(stepNotifier, times(0)).fireTestStarted();
+        verify(stepNotifier).fireTestFinished();
+        verify(stepNotifier, times(0)).addFailure(Matchers.<Throwable>any(Throwable.class));
+        verify(stepNotifier, times(0)).fireTestIgnored();
+    }
+
+    @Test
     public void before_with_pending_exception_strict() {
         createStrictReporter();
         createDefaultRunNotifier();
@@ -232,7 +268,7 @@ public class JUnitReporterTest {
         Scenario scenario = mock(Scenario.class);
         Step step = mock(Step.class);
         Formatter formatter = mock(Formatter.class);
-        jUnitReporter = new JUnitReporter(mock(Reporter.class), formatter, false);
+        jUnitReporter = new JUnitReporter(mock(Reporter.class), formatter, false, new JUnitOptions(Collections.<String>emptyList()));
 
         jUnitReporter.uri(uri);
         jUnitReporter.feature(feature);
@@ -270,7 +306,7 @@ public class JUnitReporterTest {
         byte data[] = new byte[] {1};
         String text = "text";
         Reporter reporter = mock(Reporter.class);
-        jUnitReporter = new JUnitReporter(reporter, mock(Formatter.class), false);
+        jUnitReporter = new JUnitReporter(reporter, mock(Formatter.class), false, new JUnitOptions(Collections.<String>emptyList()));
 
         jUnitReporter.startExecutionUnit(executionUnitRunner, mock(RunNotifier.class));
         jUnitReporter.startOfScenarioLifeCycle(mock(Scenario.class));
@@ -297,7 +333,7 @@ public class JUnitReporterTest {
         ExecutionUnitRunner executionUnitRunner = mockExecutionUnitRunner(runnerSteps(runnerStep));
         when(executionUnitRunner.describeChild(runnerStep)).thenReturn(runnerStepDescription);
         RunNotifier notifier = mock(RunNotifier.class);
-        jUnitReporter = new JUnitReporter(mock(Reporter.class), mock(Formatter.class), false);
+        jUnitReporter = new JUnitReporter(mock(Reporter.class), mock(Formatter.class), false, new JUnitOptions(Collections.<String>emptyList()));
 
         jUnitReporter.startExecutionUnit(executionUnitRunner, notifier);
         jUnitReporter.startOfScenarioLifeCycle(mock(Scenario.class));
@@ -312,7 +348,7 @@ public class JUnitReporterTest {
     public void throws_exception_when_runner_step_name_do_no_match_scenario_step_name() throws Exception {
         Step runnerStep = mockStep("Runner Step Name");
         ExecutionUnitRunner executionUnitRunner = mockExecutionUnitRunner(runnerSteps(runnerStep));
-        jUnitReporter = new JUnitReporter(mock(Reporter.class), mock(Formatter.class), false);
+        jUnitReporter = new JUnitReporter(mock(Reporter.class), mock(Formatter.class), false, new JUnitOptions(Collections.<String>emptyList()));
 
         jUnitReporter.startExecutionUnit(executionUnitRunner, mock(RunNotifier.class));
         jUnitReporter.startOfScenarioLifeCycle(mock(Scenario.class));
@@ -378,18 +414,23 @@ public class JUnitReporterTest {
     }
 
     private void createStrictReporter() {
-        createReporter(true);
+        createReporter(true, false);
     }
 
     private void createNonStrictReporter() {
-        createReporter(false);
+        createReporter(false, false);
     }
 
-    private void createReporter(boolean strict) {
+    private void createAllowStartedIgnoredReporter() {
+        createReporter(false, true);
+    }
+
+    private void createReporter(boolean strict, boolean allowStartedIgnored) {
         Formatter formatter = mock(Formatter.class);
         Reporter reporter = mock(Reporter.class);
 
-        jUnitReporter = new JUnitReporter(reporter, formatter, strict);
+        String allowStartedIgnoredOption = allowStartedIgnored ? "--allow-started-ignored" : "--no-allow-started-ignored";
+        jUnitReporter = new JUnitReporter(reporter, formatter, strict, new JUnitOptions(asList(allowStartedIgnoredOption)));
     }
 
 }
