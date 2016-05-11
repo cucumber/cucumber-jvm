@@ -1,4 +1,4 @@
-package cucumber.runtime.java.spring.metaconfig;
+package cucumber.runtime.java.spring.metaconfig.general;
 
 import org.springframework.test.context.ContextConfiguration;
 

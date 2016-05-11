@@ -1,5 +1,6 @@
 ## [1.2.5-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v1.2.4...master) (In Git)
 
+* [Spring] Some spring tests were not being run ([#952](https://github.com/cucumber/cucumber-jvm/pull/952) Lee Wan Geun)
 * [OSGI] Pax-exam is optional ([#1000](https://github.com/cucumber/cucumber-jvm/pull/1000) HendrikSP)
 * [Groovy] Fix Null Pointer Exeption whe using List as parameter type in step defs ([#980](https://github.com/cucumber/cucumber-jvm/pull/980) Steffen Jacobs)
 * [Readme] Use SVG badges! ([#941](https://github.com/cucumber/cucumber-jvm/pull/941) Kevin Goslar)

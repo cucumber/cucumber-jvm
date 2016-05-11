@@ -1,4 +1,4 @@
-package cucumber.runtime.java.spring.metaconfig;
+package cucumber.runtime.java.spring.metaconfig.general;
 
 import cucumber.api.java.en.Then;
 import cucumber.runtime.java.spring.beans.Belly;
