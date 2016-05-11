@@ -4,6 +4,9 @@ import java.util.List;
 
 public class CollectionUtil {
 
+    private CollectionUtil() {
+    }
+
     /**
      * Removes all elements in the supplied list except the first element.
      * @param list the list to be modified

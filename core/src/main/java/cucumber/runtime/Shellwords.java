@@ -8,6 +8,9 @@ import java.util.regex.Pattern;
 public class Shellwords {
     private static final Pattern SHELLWORDS_PATTERN = Pattern.compile("[^\\s']+|'([^']*)'");
 
+    private Shellwords() {
+    }
+
     public static List<String> parse(String cmdline) {
         List<String> matchList = new ArrayList<String>();
         Matcher shellwordsMatcher = SHELLWORDS_PATTERN.matcher(cmdline);

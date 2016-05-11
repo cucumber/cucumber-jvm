@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.IOException;
 
 public class TempDir {
+    private TempDir() {
+    }
+
     public static File createTempDirectory() throws IOException {
         File temp = createTempFile();
 
