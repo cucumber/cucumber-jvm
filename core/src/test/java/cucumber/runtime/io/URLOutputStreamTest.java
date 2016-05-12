@@ -29,8 +29,8 @@ public class URLOutputStreamTest {
     private WebServer webbit;
     private final int threadsCount = 100;
     private final long waitTimeoutMillis = 30000L;
-    private final List<File> tmpFiles = new ArrayList<>();
-    private final List<String> threadErrors = new ArrayList<>();
+    private final List<File> tmpFiles = new ArrayList<File>();
+    private final List<String> threadErrors = new ArrayList<String>();
 
     @Rule
     public TemporaryFolder tempFolder = new TemporaryFolder();
@@ -139,7 +139,7 @@ public class URLOutputStreamTest {
     }
 
     private List<Thread> getThreadsWithLatchForFile(final CountDownLatch countDownLatch, int threadsCount) {
-        List<Thread> result = new ArrayList<>();
+        List<Thread> result = new ArrayList<Thread>();
         String ballast = "" + System.currentTimeMillis();
         for (int i = 0; i < threadsCount; i++) {
             final int curThreadNo = i;
