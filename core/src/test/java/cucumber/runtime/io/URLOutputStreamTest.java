@@ -4,22 +4,14 @@ import cucumber.runtime.Utils;
 import gherkin.util.FixJava;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
-import org.webbitserver.HttpControl;
-import org.webbitserver.HttpHandler;
-import org.webbitserver.HttpRequest;
-import org.webbitserver.HttpResponse;
-import org.webbitserver.WebServer;
+import org.junit.rules.TemporaryFolder;
+import org.webbitserver.*;
 import org.webbitserver.netty.NettyWebServer;
 import org.webbitserver.rest.Rest;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.Writer;
+import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -27,17 +19,21 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.TimeUnit;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 public class URLOutputStreamTest {
     private WebServer webbit;
+    private final int threadsCount = 100;
+    private final long waitTimeoutMillis = 30000L;
+    private final List<File> tmpFiles = new ArrayList<>();
+    private final List<String> threadErrors = new ArrayList<>();
+
+    @Rule
+    public TemporaryFolder tempFolder = new TemporaryFolder();
 
     @Before
     public void startWebbit() throws ExecutionException, InterruptedException {
@@ -127,7 +123,80 @@ public class URLOutputStreamTest {
         }
     }
 
+    @Test
+    public void do_not_throw_ioe_if_parent_dir_created_by_another_thread() {
+        final CountDownLatch countDownLatch = new CountDownLatch(1);
+        List<Thread> testThreads = getThreadsWithLatchForFile(countDownLatch, threadsCount);
+        startThreadsFromList(testThreads);
+        countDownLatch.countDown();
+        waitAllThreadsFromList(testThreads);
+        assertTrue("Not all parent folders were created for tmp file or tmp file was not created", isAllFilesCreated());
+        assertTrue("Some thread get error during work. Error list:" + threadErrors.toString(), threadErrors.isEmpty());
+    }
+
     private Reader openUTF8FileReader(final File file) throws IOException {
         return new InputStreamReader(new FileInputStream(file), Charset.forName("UTF-8"));
+    }
+
+    private List<Thread> getThreadsWithLatchForFile(final CountDownLatch countDownLatch, int threadsCount) {
+        List<Thread> result = new ArrayList<>();
+        String ballast = "" + System.currentTimeMillis();
+        for (int i = 0; i < threadsCount; i++) {
+            final int curThreadNo = i;
+            // It useful when 2-3 threads (not more) tries to create the same directory for the report
+            final File tmp = (i % 3 == 0 || i % 3 == 2) ?
+                    new File(tempFolder.getRoot().getAbsolutePath() + "/cuce" + ballast + i + "/tmpFile.tmp") :
+                    new File(tempFolder.getRoot().getAbsolutePath() + "/cuce" + ballast + (i - 1) + "/tmpFile.tmp");
+            tmpFiles.add(tmp);
+            result.add(new Thread() {
+                @Override
+                public void run() {
+                    try {
+                        // Every thread should wait command to run
+                        countDownLatch.await();
+                        new URLOutputStream(tmp.toURI().toURL());
+                    } catch (IOException e) {
+                        threadErrors.add("Thread" + curThreadNo + ": parent dir not created. " + e.getMessage());
+                    } catch (InterruptedException e) {
+                        threadErrors.add("Thread" + curThreadNo + ": not started on time. " + e.getMessage());
+                    }
+                }
+            });
+        }
+        return result;
+    }
+
+    private void startThreadsFromList(List<Thread> threads) {
+        for (Thread thread : threads) {
+            thread.start();
+        }
+    }
+
+    private void waitAllThreadsFromList(List<Thread> threads) {
+        long timeStart = System.currentTimeMillis();
+        do {
+            // Protection from forever loop
+            if (System.currentTimeMillis() - timeStart > waitTimeoutMillis) {
+                assertTrue("Some threads are still alive", false);
+            }
+        } while (hasListAliveThreads(threads));
+    }
+
+    private boolean hasListAliveThreads(List<Thread> threads) {
+        for (Thread thread : threads) {
+            if (thread.isAlive()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isAllFilesCreated() {
+        for (File tmpFile : tmpFiles) {
+            if (tmpFile.getParentFile() == null || !tmpFile.getParentFile().isDirectory() || !tmpFile.exists()) {
+                return false;
+            }
+        }
+        return true;
     }
 }
