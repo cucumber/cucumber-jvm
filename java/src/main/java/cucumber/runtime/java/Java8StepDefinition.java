@@ -11,8 +11,8 @@ import gherkin.formatter.Argument;
 import gherkin.formatter.model.Step;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -39,21 +39,20 @@ public class Java8StepDefinition implements StepDefinition {
 
         Class<? extends StepdefBody> bodyClass = body.getClass();
 
-        Type genericInterface = bodyClass.getGenericInterfaces()[0];
-        Type[] argumentTypes;
-        if (genericInterface instanceof ParameterizedType) {
-            argumentTypes = ((ParameterizedType) genericInterface).getActualTypeArguments();
-        } else {
-            argumentTypes = typeIntrospector.getGenericTypes(bodyClass);
+        ArrayList<Method> acceptMethods = new ArrayList<Method>();
+        for (Method method : bodyClass.getDeclaredMethods()) {
+            if (!method.isBridge() && !method.isSynthetic() && "accept".equals(method.getName())) {
+                acceptMethods.add(method);
+            }
         }
+        if (acceptMethods.size() != 1) {
+            throw new IllegalStateException(String.format("Expected single 'accept' method on body class, found " +
+                    "'%s'", acceptMethods));
+        }
+        this.method = acceptMethods.get(0);
+        Type[] argumentTypes = method.getGenericParameterTypes();
         verifyNotListOrMap(argumentTypes);
         this.parameterInfos = ParameterInfo.fromTypes(argumentTypes);
-
-        Class[] parameterTypes = new Class[parameterInfos.size()];
-        for (int i = 0; i < parameterInfos.size(); i++) {
-            parameterTypes[i] = Object.class;
-        }
-        this.method = bodyClass.getDeclaredMethod("accept", parameterTypes);
     }
 
     private void verifyNotListOrMap(Type[] argumentTypes) {
