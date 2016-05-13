@@ -1,14 +1,13 @@
 package cucumber.runtime.java;
 
 import cucumber.api.Scenario;
-import cucumber.api.java8.HookBody;
-import cucumber.api.java8.HookNoArgsBody;
 import cucumber.runtime.HookDefinition;
 import cucumber.runtime.Timeout;
 import gherkin.TagExpression;
 import gherkin.formatter.model.Tag;
 
 import java.util.Collection;
+import java.util.function.Consumer;
 
 import static java.util.Arrays.asList;
 
@@ -16,11 +15,11 @@ public class Java8HookDefinition implements HookDefinition {
     private final TagExpression tagExpression;
     private final int order;
     private final long timeoutMillis;
-    private final HookNoArgsBody hookNoArgsBody;
-    private final HookBody hookBody;
+    private final Runnable hookNoArgsBody;
+    private final Consumer<Scenario> hookBody;
     private final StackTraceElement location;
 
-    private Java8HookDefinition(String[] tagExpressions, int order, long timeoutMillis, HookBody hookBody, HookNoArgsBody hookNoArgsBody) {
+    private Java8HookDefinition(String[] tagExpressions, int order, long timeoutMillis, Consumer<Scenario> hookBody, Runnable hookNoArgsBody) {
         this.order = order;
         this.timeoutMillis = timeoutMillis;
         this.tagExpression = new TagExpression(asList(tagExpressions));
@@ -29,11 +28,11 @@ public class Java8HookDefinition implements HookDefinition {
         this.location = new Exception().getStackTrace()[3];
     }
 
-    public Java8HookDefinition(String[] tagExpressions, int order, long timeoutMillis, HookBody hookBody) {
+    public Java8HookDefinition(String[] tagExpressions, int order, long timeoutMillis, Consumer<Scenario> hookBody) {
         this(tagExpressions, order, timeoutMillis, hookBody, null);
     }
 
-    public Java8HookDefinition(String[] tagExpressions, int order, long timeoutMillis, HookNoArgsBody hookNoArgsBody) {
+    public Java8HookDefinition(String[] tagExpressions, int order, long timeoutMillis, Runnable hookNoArgsBody) {
         this(tagExpressions, order, timeoutMillis, null, hookNoArgsBody);
     }
 
@@ -50,7 +49,7 @@ public class Java8HookDefinition implements HookDefinition {
                 if (hookBody != null) {
                     hookBody.accept(scenario);
                 } else {
-                    hookNoArgsBody.accept();
+                    hookNoArgsBody.run();
                 }
                 return null;
 
