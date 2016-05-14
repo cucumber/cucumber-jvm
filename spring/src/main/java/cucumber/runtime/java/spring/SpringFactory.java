@@ -1,18 +1,20 @@
 package cucumber.runtime.java.spring;
 
-import cucumber.runtime.CucumberException;
 import cucumber.api.java.ObjectFactory;
+import cucumber.runtime.CucumberException;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.ContextHierarchy;
 import org.springframework.test.context.TestContextManager;
+import org.springframework.util.ClassUtils;
 
 import java.lang.annotation.Annotation;
 import java.util.Collection;
@@ -196,7 +198,15 @@ public class SpringFactory implements ObjectFactory {
 
     private boolean annotatedWithSupportedSpringRootTestAnnotations(Class<?> type) {
         return type.isAnnotationPresent(ContextConfiguration.class)
-            || type.isAnnotationPresent(ContextHierarchy.class);
+                || type.isAnnotationPresent(ContextHierarchy.class)
+                || isSpringApplicationConfigurationPresent(type);
+    }
+
+    private boolean isSpringApplicationConfigurationPresent(Class<?> type) {
+        if (ClassUtils.isPresent("org.springframework.boot.test.SpringApplicationConfiguration", null)) {
+            return type.isAnnotationPresent(SpringApplicationConfiguration.class);
+        }
+        return false;
     }
 }
 
