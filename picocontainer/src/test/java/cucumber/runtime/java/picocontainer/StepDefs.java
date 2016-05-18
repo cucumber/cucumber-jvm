@@ -7,12 +7,22 @@ import cucumber.api.java.Before;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
 public class StepDefs {
-    private int amount;
+
+    private final DisposableCucumberBelly belly;
+
+    public StepDefs(DisposableCucumberBelly belly) {
+        this.belly = belly;
+    }
+
+    DisposableCucumberBelly getBelly() {
+        return belly;
+    }
 
     @Before
     public void before() {
@@ -22,9 +32,15 @@ public class StepDefs {
     public void gh20() {
     }
 
+    @After
+    public void after() {
+        // We might need to clean up the belly here, if it represented an external resource.
+        assert !belly.isDisposed();
+    }
+
     @Given("^I have (\\d+) (.*) in my belly$")
-    public void I_have_n_things_in_my_belly(int amount, String what) {
-        this.amount = amount;
+    public void I_have_n_things_in_my_belly(int n, String what) {
+        belly.setContents(Collections.nCopies(n, what));
     }
 
     @Given("^I have this in my basket:$")
@@ -38,7 +54,7 @@ public class StepDefs {
 
     @Then("^there are (\\d+) cukes in my belly")
     public void checkCukes(int n) {
-        assertEquals(amount, n);
+        assertEquals(belly.getContents(), Collections.nCopies(n, "cukes"));
     }
 
     @Then("^the (.*) contains (.*)")
