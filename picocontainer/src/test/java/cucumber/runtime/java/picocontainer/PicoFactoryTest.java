@@ -5,6 +5,8 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class PicoFactoryTest {
     @Test
@@ -26,4 +28,23 @@ public class PicoFactoryTest {
         assertNotSame(o1, o2);
     }
 
+    @Test
+    public void shouldDisposeOnStop() {
+        // Given
+        ObjectFactory factory = new PicoFactory();
+        factory.addClass(StepDefs.class);
+
+        // When
+        factory.start();
+        StepDefs steps = factory.getInstance(StepDefs.class);
+
+        // Then
+        assertFalse(steps.getBelly().isDisposed());
+
+        // When
+        factory.stop();
+
+        // Then
+        assertTrue(steps.getBelly().isDisposed());
+    }
 }

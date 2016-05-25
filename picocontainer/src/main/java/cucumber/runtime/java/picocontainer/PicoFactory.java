@@ -14,7 +14,10 @@ public class PicoFactory implements ObjectFactory {
     private final Set<Class<?>> classes = new HashSet<Class<?>>();
 
     public void start() {
-        pico = new PicoBuilder().withCaching().build();
+        pico = new PicoBuilder()
+            .withCaching()
+            .withLifecycle()
+            .build();
         for (Class<?> clazz : classes) {
             pico.addComponent(clazz);
         }
