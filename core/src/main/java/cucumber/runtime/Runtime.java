@@ -85,7 +85,7 @@ public class Runtime implements UnreportedStepExecutor {
         this.backends = backends;
         this.runtimeOptions = runtimeOptions;
         this.stopWatch = stopWatch;
-        this.glue = optionalGlue != null ? optionalGlue : new RuntimeGlue(undefinedStepsTracker, new LocalizedXStreams(classLoader));
+        this.glue = optionalGlue != null ? optionalGlue : new RuntimeGlue(undefinedStepsTracker, new LocalizedXStreams(classLoader, runtimeOptions.getConverters()));
         this.stats = new Stats(runtimeOptions.isMonochrome());
 
         for (Backend backend : backends) {
