@@ -40,11 +40,12 @@ public class Java8StepDefinition implements StepDefinition {
         Class<? extends StepdefBody> bodyClass = body.getClass();
 
         Type genericInterface = bodyClass.getGenericInterfaces()[0];
+        Class<? extends StepdefBody> interfac3 = (Class<? extends StepdefBody>) bodyClass.getInterfaces()[0];
         Type[] argumentTypes;
         if (genericInterface instanceof ParameterizedType) {
             argumentTypes = ((ParameterizedType) genericInterface).getActualTypeArguments();
         } else {
-            argumentTypes = typeIntrospector.getGenericTypes(bodyClass);
+            argumentTypes = typeIntrospector.getGenericTypes(bodyClass, interfac3);
         }
         verifyNotListOrMap(argumentTypes);
         this.parameterInfos = ParameterInfo.fromTypes(argumentTypes);
