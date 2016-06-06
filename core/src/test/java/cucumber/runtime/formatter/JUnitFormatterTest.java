@@ -68,6 +68,101 @@ public class JUnitFormatterTest {
     }
 
     @Test
+    public void should_add_tag_element_from_feature() throws Throwable {
+        CucumberFeature feature = TestHelper.feature("path/test.feature",
+        		"@MyTag\n" +
+        		"Feature: feature name\n" +
+                        "  Scenario: scenario name\n" +
+                        "    Given first step\n" +
+                        "    When second step\n" +
+                        "    Then third step\n");
+        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        stepsToResult.put("first step", result("passed"));
+        stepsToResult.put("second step", result("passed"));
+        stepsToResult.put("third step", result("passed"));
+        long stepDuration = milliSeconds(1);
+
+        String formatterOutput = runFeatureWithJUnitFormatter(feature, stepsToResult, stepDuration);
+
+        String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
+                "<testsuite failures=\"0\" name=\"cucumber.runtime.formatter.JUnitFormatter\" skipped=\"0\" tests=\"1\" time=\"0.003\">\n" +
+                "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0.003\">\n" +
+                "        <system-out><![CDATA[" +
+                "Given first step............................................................passed\n" +
+                "When second step............................................................passed\n" +
+                "Then third step.............................................................passed\n" +
+                "]]></system-out>\n" +
+                "    <tag name=\"@MyTag\"/>\n" +
+                "    </testcase>\n" +
+                "</testsuite>\n";
+        assertXmlEqual(expected, formatterOutput);
+    }    
+    
+    @Test
+    public void should_add_tag_element_from_scenario() throws Throwable {
+        CucumberFeature feature = TestHelper.feature("path/test.feature",
+        		"Feature: feature name\n" +
+                		"  @MyTag\n" +
+                        "  Scenario: scenario name\n" +
+                        "    Given first step\n" +
+                        "    When second step\n" +
+                        "    Then third step\n");
+        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        stepsToResult.put("first step", result("passed"));
+        stepsToResult.put("second step", result("passed"));
+        stepsToResult.put("third step", result("passed"));
+        long stepDuration = milliSeconds(1);
+
+        String formatterOutput = runFeatureWithJUnitFormatter(feature, stepsToResult, stepDuration);
+
+        String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
+                "<testsuite failures=\"0\" name=\"cucumber.runtime.formatter.JUnitFormatter\" skipped=\"0\" tests=\"1\" time=\"0.003\">\n" +
+                "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0.003\">\n" +
+                "        <system-out><![CDATA[" +
+                "Given first step............................................................passed\n" +
+                "When second step............................................................passed\n" +
+                "Then third step.............................................................passed\n" +
+                "]]></system-out>\n" +
+                "    <tag name=\"@MyTag\"/>\n" +
+                "    </testcase>\n" +
+                "</testsuite>\n";
+        assertXmlEqual(expected, formatterOutput);
+    }       
+
+    @Test
+    public void should_add_tag_elements_from_both_scenario_and_feature() throws Throwable {
+        CucumberFeature feature = TestHelper.feature("path/test.feature",
+        		"@FeatureTag\n" +
+        		"Feature: feature name\n" +
+                		"  @ScenarioTag\n" +
+                        "  Scenario: scenario name\n" +
+                        "    Given first step\n" +
+                        "    When second step\n" +
+                        "    Then third step\n");
+        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        stepsToResult.put("first step", result("passed"));
+        stepsToResult.put("second step", result("passed"));
+        stepsToResult.put("third step", result("passed"));
+        long stepDuration = milliSeconds(1);
+
+        String formatterOutput = runFeatureWithJUnitFormatter(feature, stepsToResult, stepDuration);
+
+        String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
+                "<testsuite failures=\"0\" name=\"cucumber.runtime.formatter.JUnitFormatter\" skipped=\"0\" tests=\"1\" time=\"0.003\">\n" +
+                "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0.003\">\n" +
+                "        <system-out><![CDATA[" +
+                "Given first step............................................................passed\n" +
+                "When second step............................................................passed\n" +
+                "Then third step.............................................................passed\n" +
+                "]]></system-out>\n" +
+                "    <tag name=\"@FeatureTag\"/>\n" +
+                "    <tag name=\"@ScenarioTag\"/>\n" +
+                "    </testcase>\n" +
+                "</testsuite>\n";
+        assertXmlEqual(expected, formatterOutput);
+    }       
+    
+    @Test
     public void should_format_passed_scenario() throws Throwable {
         CucumberFeature feature = TestHelper.feature("path/test.feature",
                 "Feature: feature name\n" +

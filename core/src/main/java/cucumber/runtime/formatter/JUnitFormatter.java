@@ -13,6 +13,7 @@ import gherkin.formatter.model.Result;
 import gherkin.formatter.model.Scenario;
 import gherkin.formatter.model.ScenarioOutline;
 import gherkin.formatter.model.Step;
+import gherkin.formatter.model.Tag;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -34,8 +35,10 @@ import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 class JUnitFormatter implements Formatter, Reporter, StrictAware {
     private final Writer out;
@@ -264,6 +267,16 @@ class JUnitFormatter implements Formatter, Reporter, StrictAware {
             tc.setAttribute("name", calculateElementName(scenario));
         }
 
+		private void appendTags(Document doc, Element tc) {
+			HashSet<Tag> tags = new HashSet<Tag>(feature.getTags()); 
+			if (scenario != null) tags.addAll(scenario.getTags());
+            for (Tag t : tags) {
+                Element tag = doc.createElement("tag");
+                tag.setAttribute("name", t.getName());
+                tc.appendChild(tag);
+            }
+		}
+
         private String calculateElementName(Scenario scenario) {
             String scenarioName = scenario.getName();
             if (scenario.getKeyword().equals("Scenario Outline") && scenarioName.equals(previousScenarioOutlineName)) {
@@ -307,13 +320,16 @@ class JUnitFormatter implements Formatter, Reporter, StrictAware {
             } else {
                 child = createElement(doc, sb, "system-out");
             }
+            
 
             Node existingChild = tc.getFirstChild();
             if (existingChild == null) {
                 tc.appendChild(child);
+                appendTags(doc, tc);                
             } else {
                 tc.replaceChild(child, existingChild);
             }
+       
         }
 
         public void handleEmptyTestCase(Document doc, Element tc) {
