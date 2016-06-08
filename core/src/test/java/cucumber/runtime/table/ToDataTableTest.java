@@ -66,6 +66,21 @@ public class ToDataTableTest {
     }
 
     @Test
+    public void gives_explicit_error_message_on_field_name_missing_in_header() {
+        try {
+            tc.toList(TableParser.parse("" +
+                    "| name        |            |\n" +
+                    "| Sid Vicious | 10/05/1957 |\n" +
+                    "| Frank Zappa | 21/12/1940 |\n" +
+                    "", PARAMETER_INFO),
+                    UserPojo.class);
+            fail();
+        } catch (CucumberException e) {
+            assertEquals("Field name cannot be empty. Please check the table header.", e.getMessage());
+        }
+    }
+
+    @Test
     public void gives_a_nice_error_message_when_primitive_field_is_null() {
         try {
             tc.toList(TableParser.parse("" +
