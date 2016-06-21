@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-class Stats {
+public class Stats {
     public static final long ONE_SECOND = 1000000000;
     public static final long ONE_MINUTE = 60 * ONE_SECOND;
     public static final String PENDING = "pending";
@@ -37,6 +37,18 @@ class Stats {
             formats = new MonochromeFormats();
         } else {
             formats = new AnsiFormats();
+        }
+    }
+
+    public void append(Stats stats) {
+        if (stats != null) {
+            scenarioSubCounts.append(stats.scenarioSubCounts);
+            stepSubCounts.append(stats.stepSubCounts);
+
+            failedScenarios.addAll(stats.failedScenarios);
+            pendingScenarios.addAll(stats.pendingScenarios);
+            undefinedScenarios.addAll(stats.undefinedScenarios);
+            passedScenarios.addAll(stats.passedScenarios);
         }
     }
 
@@ -172,6 +184,14 @@ class Stats {
         public int skipped = 0;
         public int pending = 0;
         public int undefined = 0;
+
+        public void append(SubCounts subCounts) {
+            this.passed += subCounts.passed;
+            this.failed += subCounts.failed;
+            this.skipped += subCounts.skipped;
+            this.pending += subCounts.pending;
+            this.undefined += subCounts.undefined;
+        }
 
         public int getTotal() {
             return passed + failed + skipped + pending + undefined;
