@@ -112,6 +112,7 @@ public class TestHelper {
     private static RuntimeGlue createMockedRuntimeGlueThatMatchesTheSteps(Map<String, Result> stepsToResult, Map<String, String> stepsToLocation,
                                                                           final List<SimpleEntry<String, Result>> hooks) throws Throwable {
         RuntimeGlue glue = mock(RuntimeGlue.class);
+        when(glue.getTracker()).thenReturn(new UndefinedStepsTracker());
         TestHelper.mockSteps(glue, stepsToResult, stepsToLocation);
         TestHelper.mockHooks(glue, hooks);
         return glue;

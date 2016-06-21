@@ -1,10 +1,7 @@
 package cucumber.runtime.junit;
 
-import cucumber.runtime.Backend;
+import cucumber.runtime.*;
 import cucumber.runtime.Runtime;
-import cucumber.runtime.RuntimeGlue;
-import cucumber.runtime.RuntimeOptions;
-import cucumber.runtime.StopWatch;
 import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
 import org.junit.Test;
@@ -16,6 +13,7 @@ import java.util.Collections;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class FeatureRunnerTest {
 
@@ -136,6 +134,7 @@ public class FeatureRunnerTest {
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         final ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
         final RuntimeGlue glue = mock(RuntimeGlue.class);
+        when(glue.getTracker()).thenReturn(new UndefinedStepsTracker());
         final Runtime runtime = new Runtime(resourceLoader, classLoader, asList(mock(Backend.class)), runtimeOptions, new StopWatch.Stub(0l), glue);
         FormatterSpy formatterSpy = new FormatterSpy();
         FeatureRunner runner = new FeatureRunner(cucumberFeature, runtime, new JUnitReporter(formatterSpy, formatterSpy, false, new JUnitOptions(Collections.<String>emptyList())));
