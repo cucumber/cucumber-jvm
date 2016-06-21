@@ -119,4 +119,8 @@ public class RuntimeGlue implements Glue {
             }
         }
     }
+
+    public UndefinedStepsTracker getTracker() {
+        return tracker;
+    }
 }

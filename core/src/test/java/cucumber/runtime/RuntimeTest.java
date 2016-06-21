@@ -9,6 +9,7 @@ import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.io.Resource;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
+import cucumber.runtime.xstream.LocalizedXStreams;
 import gherkin.I18n;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.JSONFormatter;
@@ -528,6 +529,21 @@ public class RuntimeTest {
                 "eof\n" +
                 "done\n" +
                 "close\n", formatterOutput);
+    }
+
+    @Test
+    public void should_fail_on_undefined_step_if_optional_glue_created_with_tracker_and_strict_runtime() {
+        ResourceLoader resourceLoader = mock(ResourceLoader.class);
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        RuntimeOptions runtimeOptions = new RuntimeOptions(asList("-g", "anything", "--strict"));
+        Backend backend = mock(Backend.class);
+        Collection<Backend> backends = Arrays.asList(backend);
+        RuntimeGlue optionalGlue = new RuntimeGlue(new UndefinedStepsTracker(), new LocalizedXStreams(classLoader));
+        Runtime runtime = new Runtime(resourceLoader, classLoader, backends, runtimeOptions, optionalGlue);
+
+        optionalGlue.stepDefinitionMatch("", new Step(null, "Given ", "A", 1, null, null), ENGLISH);
+
+        assertEquals(0x1, runtime.exitStatus());
     }
 
     private String runFeatureWithFormatterSpy(CucumberFeature feature, Map<String, Result> stepsToResult) throws Throwable {

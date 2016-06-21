@@ -46,7 +46,7 @@ public class Runtime implements UnreportedStepExecutor {
     private static final byte ERRORS = 0x1;
 
     private final Stats stats;
-    final UndefinedStepsTracker undefinedStepsTracker = new UndefinedStepsTracker();
+    final UndefinedStepsTracker undefinedStepsTracker;
 
     private final Glue glue;
     private final RuntimeOptions runtimeOptions;
@@ -85,7 +85,13 @@ public class Runtime implements UnreportedStepExecutor {
         this.backends = backends;
         this.runtimeOptions = runtimeOptions;
         this.stopWatch = stopWatch;
-        this.glue = optionalGlue != null ? optionalGlue : new RuntimeGlue(undefinedStepsTracker, new LocalizedXStreams(classLoader));
+        if (optionalGlue == null) {
+            this.undefinedStepsTracker = new UndefinedStepsTracker();
+            this.glue = new RuntimeGlue(undefinedStepsTracker, new LocalizedXStreams(classLoader));
+        } else {
+            this.undefinedStepsTracker = optionalGlue.getTracker();
+            this.glue = optionalGlue;
+        }
         this.stats = new Stats(runtimeOptions.isMonochrome());
 
         for (Backend backend : backends) {
