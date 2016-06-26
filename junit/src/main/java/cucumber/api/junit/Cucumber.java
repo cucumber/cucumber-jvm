@@ -14,6 +14,8 @@ import cucumber.runtime.junit.JUnitOptions;
 import cucumber.runtime.junit.JUnitReporter;
 import cucumber.runtime.model.CucumberFeature;
 import org.junit.runner.Description;
+import org.junit.runner.manipulation.Filter;
+import org.junit.runner.manipulation.NoTestsRemainException;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
@@ -88,6 +90,14 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
     @Override
     protected Description describeChild(FeatureRunner child) {
         return child.getDescription();
+    }
+
+    @Override
+    public void filter(Filter filter) throws NoTestsRemainException {
+        // dont pass filter to children as ParentRunner does by default
+        if (!filter.shouldRun(getDescription())) {
+            children.clear();
+        }
     }
 
     @Override
