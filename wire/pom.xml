@@ -16,6 +16,27 @@
     <packaging>jar</packaging>
     <name>Cucumber-JVM: Wire</name>
 
+    <profiles>
+        <profile>
+            <id>default-profile</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <skip.integration.tests>true</skip.integration.tests>
+            </properties>
+        </profile>
+        <profile>
+            <id>run-integration-tests</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+                <skip.integration.tests>false</skip.integration.tests>
+            </properties>
+        </profile>
+    </profiles>
+
     <dependencies>
         <dependency>
             <groupId>com.google.code.gson</groupId>
@@ -89,6 +110,7 @@
                                     <arg value="cucumber.java.CucumberJavaWire" />
                                 </exec>
                             </target>
+                            <skip>${skip.integration.tests}</skip>
                         </configuration>
                         <goals>
                             <goal>run</goal>
@@ -111,6 +133,7 @@
                 <configuration>
                     <executable>cucumber</executable>
                     <workingDirectory>${project.basedir}/src/test/resources</workingDirectory>
+                    <skip>${skip.integration.tests}</skip>
                 </configuration>
             </plugin>
         </plugins>
