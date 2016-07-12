@@ -51,7 +51,8 @@ An integration test using Cucumber-Java-Wire can be found under the `wire/src/te
 
 To run the integration test:
 
-1. In the `wire` folder, execute `mvn integration-test`.
+1. Ensure [`cucumber`][cuke-download] is installed and accessible to Maven.
+2. In the `wire` folder, execute `mvn integration-test`.
 
    You should see output similar to the following:
    
@@ -103,3 +104,5 @@ Since this project began as a port of Cucumber-CPP, the original Cucumber-CPP
 license is included as part of the project to give credit where credit is due.
 
 All original work falls under the Cucumber-JVM license.
+
+[cuke-download]: https://github.com/cucumber/cucumber/wiki/Install
