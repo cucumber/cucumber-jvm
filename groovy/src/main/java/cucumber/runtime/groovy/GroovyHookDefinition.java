@@ -3,8 +3,8 @@ package cucumber.runtime.groovy;
 import cucumber.api.Scenario;
 import cucumber.runtime.HookDefinition;
 import cucumber.runtime.Timeout;
-import gherkin.TagExpression;
-import gherkin.formatter.model.Tag;
+import cucumber.runtime.TagExpression;
+import gherkin.pickles.PickleTag;
 import groovy.lang.Closure;
 
 import java.util.Collection;
@@ -50,7 +50,7 @@ public class GroovyHookDefinition implements HookDefinition {
     }
 
     @Override
-    public boolean matches(Collection<Tag> tags) {
+    public boolean matches(Collection<PickleTag> tags) {
         return tagExpression.evaluate(tags);
     }
 

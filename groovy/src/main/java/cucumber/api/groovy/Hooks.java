@@ -1,8 +1,8 @@
 package cucumber.api.groovy;
 
 import cucumber.runtime.CucumberException;
+import cucumber.runtime.TagExpression;
 import cucumber.runtime.groovy.GroovyBackend;
-import gherkin.TagExpression;
 import groovy.lang.Closure;
 
 import java.util.ArrayList;
