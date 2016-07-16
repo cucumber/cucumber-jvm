@@ -2,11 +2,15 @@ package cucumber.runtime.android;
 
 import android.app.Instrumentation;
 import android.os.Bundle;
+import cucumber.api.Result;
+import cucumber.api.TestCase;
+import cucumber.api.event.EventHandler;
+import cucumber.api.event.EventPublisher;
+import cucumber.api.event.TestCaseFinished;
+import cucumber.api.event.TestCaseStarted;
+import cucumber.api.event.TestStepFinished;
+import cucumber.api.formatter.Formatter;
 import cucumber.runtime.Runtime;
-import gherkin.formatter.model.Feature;
-import gherkin.formatter.model.Match;
-import gherkin.formatter.model.Result;
-import gherkin.formatter.model.Scenario;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -30,7 +34,7 @@ import java.io.StringWriter;
  *     hook threw an exception other than an {@link AssertionError}</li>
  * </ul>
  */
-public class AndroidInstrumentationReporter extends NoOpFormattingReporter {
+public class AndroidInstrumentationReporter implements Formatter {
 
     /**
      * Tests status keys.
@@ -74,9 +78,44 @@ public class AndroidInstrumentationReporter extends NoOpFormattingReporter {
     private Result severestResult;
 
     /**
-     * The feature of the current test execution.
+     * The location in the feature file of the current test case.
      */
-    private Feature currentFeature;
+    private String currentPath;
+
+    /**
+     * The name of the current test case.
+     */
+    private String currentTestCaseName;
+
+    /**
+     * The event handler for the {@link TestCaseStarted} events.
+     */
+    private final EventHandler<TestCaseStarted> testCaseStartedHandler = new EventHandler<TestCaseStarted>() {
+        @Override
+        public void receive(TestCaseStarted event) {
+            startTestCase(event.testCase);
+        }
+    };
+
+    /**
+     * The event handler for the {@link TestStepFinished} events.
+     */
+    private final EventHandler<TestStepFinished> testStepFinishedHandler = new EventHandler<TestStepFinished>() {
+        @Override
+        public void receive(TestStepFinished event) {
+            finishTestStep(event.result);
+        }
+    };
+
+    /**
+     * The event handler for the {@link TestCaseFinished} events.
+     */
+    private final EventHandler<TestCaseFinished> testCaseFinishedHandler = new EventHandler<TestCaseFinished>() {
+        @Override
+        public void receive(TestCaseFinished event) {
+            finishTestCase();
+        }
+    };
 
     /**
      * Creates a new instance for the given parameters
@@ -96,36 +135,26 @@ public class AndroidInstrumentationReporter extends NoOpFormattingReporter {
     }
 
     @Override
-    public void feature(final Feature feature) {
-        currentFeature = feature;
+    public void setEventPublisher(final EventPublisher publisher) {
+        publisher.registerHandlerFor(TestCaseStarted.class, testCaseStartedHandler);
+        publisher.registerHandlerFor(TestCaseFinished.class, testCaseFinishedHandler);
+        publisher.registerHandlerFor(TestStepFinished.class, testStepFinishedHandler);
     }
 
-    @Override
-    public void startOfScenarioLifeCycle(final Scenario scenario) {
+    void startTestCase(final TestCase testCase) {
+        currentPath = testCase.getPath();
+        currentTestCaseName = testCase.getName();
         resetSeverestResult();
-        final Bundle testStart = createBundle(currentFeature, scenario);
+        final Bundle testStart = createBundle(currentPath, currentTestCaseName);
         instrumentation.sendStatus(StatusCodes.START, testStart);
     }
 
-    @Override
-    public void before(final Match match, final Result result) {
+    void finishTestStep(final Result result) {
         checkAndSetSeverestStepResult(result);
     }
 
-    @Override
-    public void result(final Result result) {
-        checkAndSetSeverestStepResult(result);
-    }
-
-    @Override
-    public void after(final Match match, final Result result) {
-        checkAndSetSeverestStepResult(result);
-    }
-
-    @Override
-    public void endOfScenarioLifeCycle(final Scenario scenario) {
-
-        final Bundle testResult = createBundle(currentFeature, scenario);
+    void finishTestCase() {
+        final Bundle testResult = createBundle(currentPath, currentTestCaseName);
 
         if (severestResult.getStatus().equals(Result.FAILED)) {
 
@@ -149,7 +178,7 @@ public class AndroidInstrumentationReporter extends NoOpFormattingReporter {
             return;
         }
 
-        if (severestResult.getStatus().equals(Result.UNDEFINED.getStatus())) {
+        if (severestResult.getStatus().equals(Result.UNDEFINED)) {
             testResult.putString(StatusKeys.STACK, getStackTrace(new MissingStepDefinitionError(getLastSnippet())));
             instrumentation.sendStatus(StatusCodes.ERROR, testResult);
             return;
@@ -161,15 +190,15 @@ public class AndroidInstrumentationReporter extends NoOpFormattingReporter {
     /**
      * Creates a template bundle for reporting the start and end of a test.
      *
-     * @param feature the {@link Feature} of the current execution
-     * @param scenario the {@link Scenario} of the current execution
+     * @param path of the feature file of the current execution
+     * @param name of the test case of the current execution
      * @return the new {@link Bundle}
      */
-    private Bundle createBundle(final Feature feature, final Scenario scenario) {
+    private Bundle createBundle(final String path, final String testCaseName) {
         final Bundle bundle = new Bundle();
         bundle.putInt(StatusKeys.NUMTESTS, numberOfTests);
-        bundle.putString(StatusKeys.CLASS, String.format("%s %s", feature.getKeyword(), feature.getName()));
-        bundle.putString(StatusKeys.TEST, String.format("%s %s", scenario.getKeyword(), scenario.getName()));
+        bundle.putString(StatusKeys.CLASS, String.format("%s", path));
+        bundle.putString(StatusKeys.TEST, String.format("%s", testCaseName));
         return bundle;
     }
 
