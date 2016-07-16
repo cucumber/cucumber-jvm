@@ -8,7 +8,7 @@ import cucumber.runtime.io.Resource;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.snippets.FunctionNameGenerator;
 import cucumber.runtime.snippets.SnippetGenerator;
-import gherkin.formatter.model.Step;
+import gherkin.pickles.PickleStep;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Function;
 import org.mozilla.javascript.NativeFunction;
@@ -90,8 +90,8 @@ public class RhinoBackend implements Backend {
     }
 
     @Override
-    public String getSnippet(Step step, FunctionNameGenerator functionNameGenerator) {
-        return snippetGenerator.getSnippet(step, functionNameGenerator);
+    public String getSnippet(PickleStep step, String keyword, FunctionNameGenerator functionNameGenerator) {
+        return snippetGenerator.getSnippet(step, keyword, functionNameGenerator);
     }
 
     private StackTraceElement jsLocation() {

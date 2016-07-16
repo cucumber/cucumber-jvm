@@ -4,7 +4,7 @@ import cucumber.runtime.HookDefinition;
 import cucumber.runtime.RuntimeGlue;
 import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
-import gherkin.formatter.model.Tag;
+import gherkin.pickles.PickleTag;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -95,10 +95,10 @@ public class RhinoHooksTest {
 
         RhinoHookDefinition rhinoHook = (RhinoHookDefinition) hookDefinition;
 
-        List<Tag> tags = new ArrayList<Tag>();
+        List<PickleTag> tags = new ArrayList<PickleTag>();
 
         for (String tagExpr : tagExprs) {
-            tags.add(new Tag(tagExpr, null));
+            tags.add(new PickleTag(null, tagExpr));
         }
 
         assertTrue(rhinoHook.getTagExpression().evaluate(tags));
