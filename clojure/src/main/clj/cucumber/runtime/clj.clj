@@ -3,10 +3,10 @@
   (:import (cucumber.runtime CucumberException
                              JdkPatternArgumentMatcher
                              StepDefinition
-                             HookDefinition)
+                             HookDefinition
+                             TagExpression)
            (cucumber.runtime.snippets Snippet
                                       SnippetGenerator)
-           (gherkin TagExpression)
            (clojure.lang RT))
   (:gen-class :name cucumber.runtime.clj.Backend
               :implements [cucumber.runtime.Backend]
@@ -56,8 +56,8 @@
 
 (defn- -disposeWorld [cljb])
 
-(defn- -getSnippet [cljb step _]
-  (.getSnippet snippet-generator step nil))
+(defn- -getSnippet [cljb step keyword _]
+  (.getSnippet snippet-generator step keyword nil))
 
 (defn- -setUnreportedStepExecutor [cljb executor]
   "executor")
@@ -72,7 +72,7 @@
      StepDefinition
      (matchedArguments [_ step]
        (.argumentsFrom (JdkPatternArgumentMatcher. pattern)
-                       (.getName step)))
+                       (.getText step)))
      (getLocation [_ detail]
        (location-str location))
      (getParameterCount [_]
