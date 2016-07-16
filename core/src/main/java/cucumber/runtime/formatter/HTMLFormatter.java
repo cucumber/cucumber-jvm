@@ -1,21 +1,12 @@
 package cucumber.runtime.formatter;
 
+import cucumber.api.event.EventPublisher;
+import cucumber.api.formatter.Formatter;
+import cucumber.api.formatter.NiceAppendable;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.io.URLOutputStream;
 import gherkin.deps.com.google.gson.Gson;
 import gherkin.deps.com.google.gson.GsonBuilder;
-import gherkin.formatter.Formatter;
-import gherkin.formatter.Mappable;
-import gherkin.formatter.NiceAppendable;
-import gherkin.formatter.Reporter;
-import gherkin.formatter.model.Background;
-import gherkin.formatter.model.Examples;
-import gherkin.formatter.model.Feature;
-import gherkin.formatter.model.Match;
-import gherkin.formatter.model.Result;
-import gherkin.formatter.model.Scenario;
-import gherkin.formatter.model.ScenarioOutline;
-import gherkin.formatter.model.Step;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,7 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-class HTMLFormatter implements Formatter, Reporter {
+class HTMLFormatter implements Formatter {
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private static final String JS_FORMATTER_VAR = "formatter";
     private static final String JS_REPORT_FILENAME = "report.js";
@@ -54,16 +45,20 @@ class HTMLFormatter implements Formatter, Reporter {
     }
 
     @Override
-    public void uri(String uri) {
-        if (firstFeature) {
-            jsOut().append("$(document).ready(function() {").append("var ")
-                    .append(JS_FORMATTER_VAR).append(" = new CucumberHTML.DOMFormatter($('.cucumber-report'));");
-            firstFeature = false;
-        }
-        jsFunctionCall("uri", uri);
+    public void setEventPublisher(EventPublisher publisher) {
     }
 
-    @Override
+//    @Override
+//    public void uri(String uri) {
+//        if (firstFeature) {
+//            jsOut().append("$(document).ready(function() {").append("var ")
+//                    .append(JS_FORMATTER_VAR).append(" = new CucumberHTML.DOMFormatter($('.cucumber-report'));");
+//            firstFeature = false;
+//        }
+//        jsFunctionCall("uri", uri);
+//    }
+
+/*    @Override
     public void feature(Feature feature) {
         jsFunctionCall("feature", feature);
     }
@@ -91,30 +86,21 @@ class HTMLFormatter implements Formatter, Reporter {
     @Override
     public void step(Step step) {
         jsFunctionCall("step", step);
-    }
+    }*/
 
-    @Override
-    public void eof() {
-    }
-
-    @Override
-    public void syntaxError(String state, String event, List<String> legalEvents, String uri, Integer line) {
-    }
-
-    @Override
-    public void done() {
-        if (!firstFeature) {
-            jsOut().append("});");
-            copyReportFiles();
-        }
-    }
-
-    @Override
+//    @Override
+//    public void done() {
+//        if (!firstFeature) {
+//            jsOut().append("});");
+//            copyReportFiles();
+//        }
+//    }
+//
     public void close() {
         jsOut().close();
     }
 
-    @Override
+/*    @Override
     public void startOfScenarioLifeCycle(Scenario scenario) {
         // NoOp
     }
@@ -142,28 +128,28 @@ class HTMLFormatter implements Formatter, Reporter {
     @Override
     public void match(Match match) {
         jsFunctionCall("match", match);
-    }
+    }*/
 
-    @Override
-    public void embedding(String mimeType, byte[] data) {
-        if(mimeType.startsWith("text/")) {
-            // just pass straight to the formatter to output in the html
-            jsFunctionCall("embedding", mimeType, new String(data));
-        } else {
-            // Creating a file instead of using data urls to not clutter the js file
-            String extension = MIME_TYPES_EXTENSIONS.get(mimeType);
-            if (extension != null) {
-                StringBuilder fileName = new StringBuilder("embedded").append(embeddedIndex++).append(".").append(extension);
-                writeBytesAndClose(data, reportFileOutputStream(fileName.toString()));
-                jsFunctionCall("embedding", mimeType, fileName);
-            }
-        }
-    }
+//    @Override
+//    public void embedding(String mimeType, byte[] data) {
+//        if(mimeType.startsWith("text/")) {
+//            // just pass straight to the formatter to output in the html
+//            jsFunctionCall("embedding", mimeType, new String(data));
+//        } else {
+//            // Creating a file instead of using data urls to not clutter the js file
+//            String extension = MIME_TYPES_EXTENSIONS.get(mimeType);
+//            if (extension != null) {
+//                StringBuilder fileName = new StringBuilder("embedded").append(embeddedIndex++).append(".").append(extension);
+//                writeBytesAndClose(data, reportFileOutputStream(fileName.toString()));
+//                jsFunctionCall("embedding", mimeType, fileName);
+//            }
+//        }
+//    }
 
-    @Override
-    public void write(String text) {
-        jsFunctionCall("write", text);
-    }
+//    @Override
+//    public void write(String text) {
+//        jsFunctionCall("write", text);
+//    }
 
     private void jsFunctionCall(String functionName, Object... args) {
         NiceAppendable out = jsOut().append(JS_FORMATTER_VAR + ".").append(functionName).append("(");
@@ -172,7 +158,7 @@ class HTMLFormatter implements Formatter, Reporter {
             if (comma) {
                 out.append(", ");
             }
-            arg = arg instanceof Mappable ? ((Mappable) arg).toMap() : arg;
+            //arg = arg instanceof Mappable ? ((Mappable) arg).toMap() : arg;
             String stringArg = gson.toJson(arg);
             out.append(stringArg);
             comma = true;

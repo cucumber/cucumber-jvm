@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -26,7 +25,7 @@ public class CucumberFeatureTest {
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
         when(resourceLoader.resources("does/not/exist", ".feature")).thenReturn(Collections.<Resource>emptyList());
 
-        CucumberFeature.load(resourceLoader, singletonList("does/not/exist"), emptyList(), new PrintStream(new ByteArrayOutputStream()));
+        CucumberFeature.load(resourceLoader, singletonList("does/not/exist"), new PrintStream(new ByteArrayOutputStream()));
     }
 
     @Test
@@ -35,19 +34,9 @@ public class CucumberFeatureTest {
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
         when(resourceLoader.resources("does/not/exist", ".feature")).thenReturn(Collections.<Resource>emptyList());
 
-        CucumberFeature.load(resourceLoader, singletonList("does/not/exist"), emptyList(), new PrintStream(baos));
+        CucumberFeature.load(resourceLoader, singletonList("does/not/exist"), new PrintStream(baos));
 
         assertEquals(String.format("No features found at [does/not/exist]%n"), baos.toString());
-    }
-
-    @Test
-    public void logs_message_if_features_are_found_but_filters_are_too_strict() throws IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ResourceLoader resourceLoader = mockFeatureFileResource("features", "Feature: foo");
-
-        CucumberFeature.load(resourceLoader, singletonList("features"), singletonList((Object) "@nowhere"), new PrintStream(baos));
-
-        assertEquals(String.format("None of the features at [features] matched the filters: [@nowhere]%n"), baos.toString());
     }
 
     @Test
@@ -55,31 +44,9 @@ public class CucumberFeatureTest {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
 
-        CucumberFeature.load(resourceLoader, Collections.<String>emptyList(), emptyList(), new PrintStream(baos));
+        CucumberFeature.load(resourceLoader, Collections.<String>emptyList(), new PrintStream(baos));
 
         assertEquals(String.format("Got no path to feature directory or feature file%n"), baos.toString());
-    }
-
-    @Test
-    public void applies_line_filters_when_loading_a_feature() throws Exception {
-        String featurePath = "path/foo.feature";
-        String feature = "" +
-                "Feature: foo\n" +
-                "  Scenario: scenario 1\n" +
-                "    * step\n" +
-                "  Scenario: scenario 2\n" +
-                "    * step\n";
-        ResourceLoader resourceLoader = mockFeatureFileResource(featurePath, feature);
-
-        List<CucumberFeature> features = CucumberFeature.load(
-                resourceLoader,
-                singletonList(featurePath + ":2"),
-                new ArrayList<Object>(),
-                new PrintStream(new ByteArrayOutputStream()));
-
-        assertEquals(1, features.size());
-        assertEquals(1, features.get(0).getFeatureElements().size());
-        assertEquals("Scenario: scenario 1", features.get(0).getFeatureElements().get(0).getVisualName());
     }
 
     @Test
@@ -105,14 +72,14 @@ public class CucumberFeatureTest {
         List<CucumberFeature> features = CucumberFeature.load(
                 resourceLoader,
                 singletonList("@" + rerunPath),
-                new ArrayList<Object>(),
                 new PrintStream(new ByteArrayOutputStream()));
 
         assertEquals(2, features.size());
-        assertEquals(1, features.get(0).getFeatureElements().size());
-        assertEquals("Scenario: scenario bar", features.get(0).getFeatureElements().get(0).getVisualName());
-        assertEquals(1, features.get(1).getFeatureElements().size());
-        assertEquals("Scenario: scenario 2", features.get(1).getFeatureElements().get(0).getVisualName());
+        assertEquals(1, features.get(0).getGherkinFeature().getFeature().getChildren().size());
+        assertEquals("scenario bar", features.get(0).getGherkinFeature().getFeature().getChildren().get(0).getName());
+        assertEquals(2, features.get(1).getGherkinFeature().getFeature().getChildren().size());
+        assertEquals("scenario 1", features.get(1).getGherkinFeature().getFeature().getChildren().get(0).getName());
+        assertEquals("scenario 2", features.get(1).getGherkinFeature().getFeature().getChildren().get(1).getName());
     }
 
     @Test
@@ -129,7 +96,6 @@ public class CucumberFeatureTest {
         List<CucumberFeature> features = CucumberFeature.load(
                 resourceLoader,
                 singletonList("@" + rerunPath),
-                new ArrayList<Object>(),
                 new PrintStream(new ByteArrayOutputStream()));
 
         assertEquals(0, features.size());
@@ -151,12 +117,11 @@ public class CucumberFeatureTest {
         List<CucumberFeature> features = CucumberFeature.load(
                 resourceLoader,
                 singletonList("@" + rerunPath),
-                new ArrayList<Object>(),
                 new PrintStream(new ByteArrayOutputStream()));
 
         assertEquals(1, features.size());
-        assertEquals(1, features.get(0).getFeatureElements().size());
-        assertEquals("Scenario: scenario bar", features.get(0).getFeatureElements().get(0).getVisualName());
+        assertEquals(1, features.get(0).getGherkinFeature().getFeature().getChildren().size());
+        assertEquals("scenario bar", features.get(0).getGherkinFeature().getFeature().getChildren().get(0).getName());
     }
 
     @Test
@@ -173,55 +138,11 @@ public class CucumberFeatureTest {
             CucumberFeature.load(
                     resourceLoader,
                     singletonList("@" + rerunPath),
-                    new ArrayList<Object>(),
                     new PrintStream(new ByteArrayOutputStream()));
             fail("IllegalArgumentException was expected");
         } catch (IllegalArgumentException exception) {
             assertEquals("Neither found on file system or on classpath: " +
                             "Not a file or directory: path/bar.feature, No resource found for: classpath:path/bar.feature",
-                    exception.getMessage());
-        }
-    }
-
-    @Test
-    public void gives_error_message_if_filters_conflicts_with_path_from_rerun_file_on_file_system() throws Exception {
-        String featurePath = "path/bar.feature";
-        String rerunPath = "path/rerun.txt";
-        String rerunFile = featurePath + ":2";
-        ResourceLoader resourceLoader = mockFeatureFileResource(featurePath, "");
-        mockFileResource(resourceLoader, rerunPath, suffix(null), rerunFile);
-
-        try {
-            CucumberFeature.load(
-                    resourceLoader,
-                    singletonList("@" + rerunPath),
-                    Collections.<Object>singletonList("@Tag"),
-                    new PrintStream(new ByteArrayOutputStream()));
-            fail("IllegalArgumentException was expected");
-        } catch (IllegalArgumentException exception) {
-            assertEquals("Inconsistent filters: [@Tag, 2]. Only one type [line,name,tag] can be used at once.",
-                    exception.getMessage());
-        }
-    }
-
-    @Test
-    public void gives_error_message_if_filters_conflicts_with_path_from_rerun_file_on_classpath() throws Exception {
-        String featurePath = "path/bar.feature";
-        String rerunPath = "path/rerun.txt";
-        String rerunFile = featurePath + ":2";
-        ResourceLoader resourceLoader = mockFeatureFileResource("classpath:" + featurePath, "");
-        mockFeaturePathToNotExist(resourceLoader, featurePath);
-        mockFileResource(resourceLoader, rerunPath, suffix(null), rerunFile);
-
-        try {
-            CucumberFeature.load(
-                    resourceLoader,
-                    singletonList("@" + rerunPath),
-                    Collections.<Object>singletonList("@Tag"),
-                    new PrintStream(new ByteArrayOutputStream()));
-            fail("IllegalArgumentException was expected");
-        } catch (IllegalArgumentException exception) {
-            assertEquals("Inconsistent filters: [@Tag, 2]. Only one type [line,name,tag] can be used at once.",
                     exception.getMessage());
         }
     }

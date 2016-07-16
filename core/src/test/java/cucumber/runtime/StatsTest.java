@@ -5,8 +5,8 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.startsWith;
 
-import gherkin.formatter.ansi.AnsiEscapes;
-import gherkin.formatter.model.Result;
+import cucumber.api.Result;
+import cucumber.api.formatter.AnsiEscapes;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -55,7 +55,7 @@ public class StatsTest {
         addOneStepScenario(counter, Result.PASSED);
         addOneStepScenario(counter, Result.FAILED);
         addOneStepScenario(counter, Stats.PENDING);
-        addOneStepScenario(counter, Result.UNDEFINED.getStatus());
+        addOneStepScenario(counter, Result.UNDEFINED);
         addOneStepScenario(counter, Result.SKIPPED.getStatus());
         counter.printStats(new PrintStream(baos), isStrict(false));
 
@@ -72,7 +72,7 @@ public class StatsTest {
         addOneStepScenario(counter, Result.PASSED);
         addOneStepScenario(counter, Result.FAILED);
         addOneStepScenario(counter, Stats.PENDING);
-        addOneStepScenario(counter, Result.UNDEFINED.getStatus());
+        addOneStepScenario(counter, Result.UNDEFINED);
         addOneStepScenario(counter, Result.SKIPPED.getStatus());
         counter.printStats(new PrintStream(baos), isStrict(false));
 
@@ -161,8 +161,8 @@ public class StatsTest {
 
         counter.addStep(createResultWithStatus(Result.FAILED));
         counter.addScenario(Result.FAILED, "path/file.feature:3 # Scenario: scenario_name");
-        counter.addStep(createResultWithStatus(Result.UNDEFINED.getStatus()));
-        counter.addScenario(Result.UNDEFINED.getStatus(), "path/file.feature:3 # Scenario: scenario_name");
+        counter.addStep(createResultWithStatus(Result.UNDEFINED));
+        counter.addScenario(Result.UNDEFINED, "path/file.feature:3 # Scenario: scenario_name");
         counter.addStep(createResultWithStatus(Stats.PENDING));
         counter.addScenario(Stats.PENDING, "path/file.feature:3 # Scenario: scenario_name");
         counter.printStats(new PrintStream(baos), isStrict(false));
@@ -181,8 +181,8 @@ public class StatsTest {
 
         counter.addStep(createResultWithStatus(Result.FAILED));
         counter.addScenario(Result.FAILED, "path/file.feature:3 # Scenario: scenario_name");
-        counter.addStep(createResultWithStatus(Result.UNDEFINED.getStatus()));
-        counter.addScenario(Result.UNDEFINED.getStatus(), "path/file.feature:3 # Scenario: scenario_name");
+        counter.addStep(createResultWithStatus(Result.UNDEFINED));
+        counter.addScenario(Result.UNDEFINED, "path/file.feature:3 # Scenario: scenario_name");
         counter.addStep(createResultWithStatus(Stats.PENDING));
         counter.addScenario(Stats.PENDING, "path/file.feature:3 # Scenario: scenario_name");
         counter.printStats(new PrintStream(baos), isStrict(true));

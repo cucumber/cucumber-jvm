@@ -1,29 +1,31 @@
 package cucumber.runtime;
 
-import cucumber.runtime.snippets.FunctionNameGenerator;
-import cucumber.runtime.snippets.Snippet;
-import cucumber.runtime.snippets.SnippetGenerator;
-import cucumber.runtime.snippets.UnderscoreConcatenator;
-import gherkin.I18n;
-import gherkin.formatter.model.Step;
+import cucumber.api.Result;
+import cucumber.api.TestStep;
+import cucumber.runner.EventBus;
+import cucumber.runtime.model.CucumberFeature;
+import gherkin.pickles.PickleLocation;
+import gherkin.pickles.PickleStep;
+import gherkin.pickles.Argument;
 import org.junit.Test;
 
+import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class UndefinedStepsTrackerTest {
-
-    private static final I18n ENGLISH = new I18n("en");
-    private FunctionNameGenerator functionNameGenerator = new FunctionNameGenerator(new UnderscoreConcatenator());
 
     @Test
     public void has_undefined_steps() {
         UndefinedStepsTracker undefinedStepsTracker = new UndefinedStepsTracker();
-        undefinedStepsTracker.addUndefinedStep(new Step(null, "Given ", "A", 1, null, null), ENGLISH);
+        undefinedStepsTracker.handleTestStepFinished(testStep(), undefinedResultWithSnippets(asList("")));
         assertTrue(undefinedStepsTracker.hasUndefinedSteps());
     }
 
@@ -35,106 +37,133 @@ public class UndefinedStepsTrackerTest {
 
     @Test
     public void removes_duplicates() {
-        Backend backend = new TestBackend();
         UndefinedStepsTracker tracker = new UndefinedStepsTracker();
-        tracker.storeStepKeyword(new Step(null, "Given ", "A", 1, null, null), ENGLISH);
-        tracker.addUndefinedStep(new Step(null, "Given ", "B", 1, null, null), ENGLISH);
-        tracker.addUndefinedStep(new Step(null, "Given ", "B", 1, null, null), ENGLISH);
-        assertEquals("[Given ^B$]", tracker.getSnippets(asList(backend), functionNameGenerator).toString());
+        tracker.handleTestStepFinished(testStep(), undefinedResultWithSnippets(asList("**KEYWORD** ^B$")));
+        tracker.handleTestStepFinished(testStep(), undefinedResultWithSnippets(asList("**KEYWORD** ^B$")));
+        assertEquals("[Given ^B$]", tracker.getSnippets().toString());
     }
 
     @Test
-    public void converts_and_to_previous_step_keyword() {
-        Backend backend = new TestBackend();
+    public void uses_given_when_then_keywords() throws IOException {
+        EventBus bus = new EventBus();
         UndefinedStepsTracker tracker = new UndefinedStepsTracker();
-        tracker.storeStepKeyword(new Step(null, "When ", "A", 1, null, null), ENGLISH);
-        tracker.storeStepKeyword(new Step(null, "And ", "B", 1, null, null), ENGLISH);
-        tracker.addUndefinedStep(new Step(null, "But ", "C", 1, null, null), ENGLISH);
-        assertEquals("[When ^C$]", tracker.getSnippets(asList(backend), functionNameGenerator).toString());
+        tracker.setEventPublisher(bus);
+        CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
+                "Feature: feature name\n" +
+                "  Scenario: scenario name\n" +
+                "    Given A\n" +
+                "    Then B\n");
+        feature.sendTestSourceRead(bus);
+        tracker.handleTestStepFinished(testStep(path("path/test.feature"), line(4)), undefinedResultWithSnippets(asList("**KEYWORD** ^B$")));
+        assertEquals("[Then ^B$]", tracker.getSnippets().toString());
     }
 
     @Test
-    public void doesnt_try_to_use_star_keyword() {
-        Backend backend = new TestBackend();
+    public void converts_and_to_previous_step_keyword() throws IOException {
+        EventBus bus = new EventBus();
         UndefinedStepsTracker tracker = new UndefinedStepsTracker();
-        tracker.storeStepKeyword(new Step(null, "When ", "A", 1, null, null), ENGLISH);
-        tracker.storeStepKeyword(new Step(null, "And ", "B", 1, null, null), ENGLISH);
-        tracker.addUndefinedStep(new Step(null, "* ", "C", 1, null, null), ENGLISH);
-        assertEquals("[When ^C$]", tracker.getSnippets(asList(backend), functionNameGenerator).toString());
+        tracker.setEventPublisher(bus);
+        CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
+                "Feature: feature name\n" +
+                "  Scenario: scenario name\n" +
+                "    When A\n" +
+                "    And B\n" +
+                "    But C\n");
+        feature.sendTestSourceRead(bus);
+        tracker.handleTestStepFinished(testStep(path("path/test.feature"), line(5)), undefinedResultWithSnippets(asList("**KEYWORD** ^C$")));
+        assertEquals("[When ^C$]", tracker.getSnippets().toString());
     }
 
     @Test
-    public void star_keyword_becomes_given_when_no_previous_step() {
-        Backend backend = new TestBackend();
+    public void backtrack_into_background_to_find_step_keyword() throws IOException {
+        EventBus bus = new EventBus();
         UndefinedStepsTracker tracker = new UndefinedStepsTracker();
-        tracker.addUndefinedStep(new Step(null, "* ", "A", 1, null, null), ENGLISH);
-        assertEquals("[Given ^A$]", tracker.getSnippets(asList(backend), functionNameGenerator).toString());
+        tracker.setEventPublisher(bus);
+        CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
+                "Feature: feature name\n" +
+                "  Background:\n" +
+                "    When A\n" +
+                "  Scenario: scenario name\n" +
+                "    And B\n" +
+                "    But C\n");
+        feature.sendTestSourceRead(bus);
+        tracker.handleTestStepFinished(testStep(path("path/test.feature"), line(5)), undefinedResultWithSnippets(asList("**KEYWORD** ^C$")));
+        assertEquals("[When ^C$]", tracker.getSnippets().toString());
+    }
+
+    @Test
+    public void doesnt_try_to_use_star_keyword() throws IOException {
+        EventBus bus = new EventBus();
+        UndefinedStepsTracker tracker = new UndefinedStepsTracker();
+        tracker.setEventPublisher(bus);
+        CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
+                "Feature: feature name\n" +
+                "  Scenario: scenario name\n" +
+                "    When A\n" +
+                "    And B\n" +
+                "    * C\n");
+        feature.sendTestSourceRead(bus);
+        tracker.handleTestStepFinished(testStep(path("path/test.feature"), line(5)), undefinedResultWithSnippets(asList("**KEYWORD** ^C$")));
+        assertEquals("[When ^C$]", tracker.getSnippets().toString());
+    }
+
+    @Test
+    public void star_keyword_becomes_given_when_no_previous_step() throws IOException {
+        EventBus bus = new EventBus();
+        UndefinedStepsTracker tracker = new UndefinedStepsTracker();
+        tracker.setEventPublisher(bus);
+        CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
+                "Feature: feature name\n" +
+                "  Scenario: scenario name\n" +
+                "    * A\n");
+        feature.sendTestSourceRead(bus);
+        tracker.handleTestStepFinished(testStep(path("path/test.feature"), line(3)), undefinedResultWithSnippets(asList("**KEYWORD** ^A$")));
+        assertEquals("[Given ^A$]", tracker.getSnippets().toString());
     }
 
     @Test
     public void snippets_are_generated_for_correct_locale() throws Exception {
-        Backend backend = new TestBackend();
+        EventBus bus = new EventBus();
         UndefinedStepsTracker tracker = new UndefinedStepsTracker();
-        tracker.addUndefinedStep(new Step(null, "Если ", "Б", 1, null, null), new I18n("ru"));
-        assertEquals("[Если ^Б$]", tracker.getSnippets(asList(backend), functionNameGenerator).toString());
+        tracker.setEventPublisher(bus);
+        CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
+                "#language:ru\n" +
+                "Функция:\n" +
+                "  Сценарий: \n" +
+                "    * Б\n");
+        feature.sendTestSourceRead(bus);
+        tracker.handleTestStepFinished(testStep(path("path/test.feature"), line(4)), undefinedResultWithSnippets(asList("**KEYWORD** ^Б$")));
+        assertEquals("[Допустим ^Б$]", tracker.getSnippets().toString());
     }
 
-    private class TestBackend implements Backend {
-        @Override
-        public void loadGlue(Glue glue, List<String> gluePaths) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public void setUnreportedStepExecutor(UnreportedStepExecutor executor) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public void buildWorld() {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public void disposeWorld() {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public String getSnippet(Step step, FunctionNameGenerator functionNameGenerator) {
-            return new SnippetGenerator(new TestSnippet()).getSnippet(step, functionNameGenerator);
-        }
+    private TestStep testStep(String path, int line) {
+        return testStep(asList(new PickleLocation(path, line, 0)));
     }
 
-    private class TestSnippet implements Snippet {
-        @Override
-        public String template() {
-            return "{0} {1}";
-        }
-
-        @Override
-        public String tableHint() {
-            return null;
-        }
-
-        @Override
-        public String arguments(List<Class<?>> argumentTypes) {
-            return argumentTypes.toString();
-        }
-
-        @Override
-        public String namedGroupStart() {
-            return null;
-        }
-
-        @Override
-        public String namedGroupEnd() {
-            return null;
-        }
-
-        @Override
-        public String escapePattern(String pattern) {
-            return pattern;
-        }
+    private TestStep testStep() {
+        return testStep(Collections.<PickleLocation>emptyList());
     }
+
+    private TestStep testStep(List<PickleLocation> locations) {
+        TestStep testStep = mock(TestStep.class);
+        PickleStep pickleStep = new PickleStep("step text", Collections.<Argument>emptyList(), locations);
+        when(testStep.getPickleStep()).thenReturn(pickleStep);
+        return testStep;
+    }
+
+    private String path(String path) {
+        return path;
+    }
+
+    private int line(int line) {
+        return line;
+    }
+
+    private Result undefinedResultWithSnippets(List<String> snippets) {
+        Result result = mock(Result.class);
+        when(result.getStatus()).thenReturn(Result.UNDEFINED);
+        when(result.getSnippets()).thenReturn(snippets);
+        return result;
+    }
+
 }

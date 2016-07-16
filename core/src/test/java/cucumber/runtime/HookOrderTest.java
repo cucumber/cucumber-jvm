@@ -1,9 +1,12 @@
 package cucumber.runtime;
 
 import cucumber.api.Scenario;
+import cucumber.runner.Runner;
 import cucumber.runtime.io.ResourceLoader;
-import gherkin.formatter.Reporter;
-import gherkin.formatter.model.Tag;
+import gherkin.pickles.Pickle;
+import gherkin.pickles.PickleLocation;
+import gherkin.pickles.PickleStep;
+import gherkin.pickles.PickleTag;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
@@ -11,7 +14,6 @@ import org.mockito.Matchers;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -22,17 +24,20 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class HookOrderTest {
+    private final static String ENGLISH = "en";
 
-    private Runtime runtime;
+    private Runner runner;
     private Glue glue;
+    private Pickle pickle;
 
     @Before
     public void buildMockWorld() {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         RuntimeOptions runtimeOptions = new RuntimeOptions("");
-        runtime = new Runtime(mock(ResourceLoader.class), classLoader, asList(mock(Backend.class)), runtimeOptions);
-        runtime.buildBackendWorlds(null, Collections.<Tag>emptySet(), mock(gherkin.formatter.model.Scenario.class));
+        Runtime runtime = new Runtime(mock(ResourceLoader.class), classLoader, asList(mock(Backend.class)), runtimeOptions);
+        runner = runtime.getRunner();
         glue = runtime.getGlue();
+        pickle = new Pickle("name", Collections.<PickleStep>emptyList(), Collections.<PickleTag>emptyList(), asList(mock(PickleLocation.class)));
     }
 
     @Test
@@ -42,7 +47,7 @@ public class HookOrderTest {
             glue.addBeforeHook(hook);
         }
 
-        runtime.runBeforeHooks(mock(Reporter.class), new HashSet<Tag>());
+        runner.runPickle(pickle, ENGLISH);
 
         InOrder inOrder = inOrder(hooks.toArray());
         inOrder.verify(hooks.get(6)).execute(Matchers.<Scenario>any());
@@ -61,7 +66,7 @@ public class HookOrderTest {
             glue.addAfterHook(hook);
         }
 
-        runtime.runAfterHooks(mock(Reporter.class), new HashSet<Tag>());
+        runner.runPickle(pickle, ENGLISH);
 
         InOrder inOrder = inOrder(hooks.toArray());
         inOrder.verify(hooks.get(2)).execute(Matchers.<Scenario>any());
@@ -84,7 +89,7 @@ public class HookOrderTest {
             glue.addBeforeHook(hook);
         }
 
-        runtime.runBeforeHooks(mock(Reporter.class), new HashSet<Tag>());
+        runner.runPickle(pickle, ENGLISH);
 
         List<HookDefinition> allHooks = new ArrayList<HookDefinition>();
         allHooks.addAll(backend1Hooks);
@@ -104,7 +109,7 @@ public class HookOrderTest {
         for (int order : ordering) {
             HookDefinition hook = mock(HookDefinition.class, "Mock number " + order);
             when(hook.getOrder()).thenReturn(order);
-            when(hook.matches(anyListOf(Tag.class))).thenReturn(true);
+            when(hook.matches(anyListOf(PickleTag.class))).thenReturn(true);
             hooks.add(hook);
         }
         return hooks;

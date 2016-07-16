@@ -1,7 +1,7 @@
 package cucumber.runtime;
 
 import cucumber.runtime.snippets.FunctionNameGenerator;
-import gherkin.formatter.model.Step;
+import gherkin.pickles.PickleStep;
 
 import java.util.List;
 
@@ -28,5 +28,5 @@ public interface Backend {
      */
     void disposeWorld();
 
-    String getSnippet(Step step, FunctionNameGenerator functionNameGenerator);
+    String getSnippet(PickleStep step, String keyword, FunctionNameGenerator functionNameGenerator);
 }

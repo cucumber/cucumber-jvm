@@ -1,8 +1,10 @@
 package cucumber.runtime.snippets;
 
 import cucumber.api.DataTable;
-import gherkin.I18n;
-import gherkin.formatter.model.Step;
+import gherkin.pickles.Argument;
+import gherkin.pickles.PickleStep;
+import gherkin.pickles.PickleString;
+import gherkin.pickles.PickleTable;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -37,15 +39,15 @@ public class SnippetGenerator {
         this.snippet = snippet;
     }
 
-    public String getSnippet(Step step, FunctionNameGenerator functionNameGenerator) {
+    public String getSnippet(PickleStep step, String keyword, FunctionNameGenerator functionNameGenerator) {
         return MessageFormat.format(
                 snippet.template(),
-                I18n.codeKeywordFor(step.getKeyword()),
-                snippet.escapePattern(patternFor(step.getName())),
-                functionName(step.getName(), functionNameGenerator),
+                keyword,
+                snippet.escapePattern(patternFor(step.getText())),
+                functionName(step.getText(), functionNameGenerator),
                 snippet.arguments(argumentTypes(step)),
                 REGEXP_HINT,
-                step.getRows() == null ? "" : snippet.tableHint()
+                !step.getArgument().isEmpty() && step.getArgument().get(0) instanceof PickleTable ? snippet.tableHint() : ""
         );
     }
 
@@ -91,8 +93,8 @@ public class SnippetGenerator {
     }
 
 
-    private List<Class<?>> argumentTypes(Step step) {
-        String name = step.getName();
+    private List<Class<?>> argumentTypes(PickleStep step) {
+        String name = step.getText();
         List<Class<?>> argTypes = new ArrayList<Class<?>>();
         Matcher[] matchers = new Matcher[argumentPatterns().length];
         for (int i = 0; i < argumentPatterns().length; i++) {
@@ -119,11 +121,14 @@ public class SnippetGenerator {
                 break;
             }
         }
-        if (step.getDocString() != null) {
-            argTypes.add(String.class);
-        }
-        if (step.getRows() != null) {
-            argTypes.add(DataTable.class);
+        if (!step.getArgument().isEmpty()) {
+            Argument arg = step.getArgument().get(0);
+            if (arg instanceof PickleString) {
+                argTypes.add(String.class);
+            }
+            if (arg instanceof PickleTable) {
+                argTypes.add(DataTable.class);
+            }
         }
         return argTypes;
     }

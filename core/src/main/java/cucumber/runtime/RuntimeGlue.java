@@ -2,9 +2,8 @@ package cucumber.runtime;
 
 import cucumber.api.StepDefinitionReporter;
 import cucumber.runtime.xstream.LocalizedXStreams;
-import gherkin.I18n;
-import gherkin.formatter.Argument;
-import gherkin.formatter.model.Step;
+import gherkin.GherkinDialect;
+import gherkin.pickles.PickleStep;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -58,24 +57,19 @@ public class RuntimeGlue implements Glue {
     }
 
     @Override
-    public StepDefinitionMatch stepDefinitionMatch(String featurePath, Step step, I18n i18n) {
+    public StepDefinitionMatch stepDefinitionMatch(String featurePath, PickleStep step) {
         List<StepDefinitionMatch> matches = stepDefinitionMatches(featurePath, step);
-        try {
-            if (matches.isEmpty()) {
-                tracker.addUndefinedStep(step, i18n);
-                return null;
-            }
-            if (matches.size() == 1) {
-                return matches.get(0);
-            } else {
-                throw new AmbiguousStepDefinitionsException(matches);
-            }
-        } finally {
-            tracker.storeStepKeyword(step, i18n);
+        if (matches.isEmpty()) {
+            return null;
+        }
+        if (matches.size() == 1) {
+            return matches.get(0);
+        } else {
+            throw new AmbiguousStepDefinitionsException(step, matches);
         }
     }
 
-    private List<StepDefinitionMatch> stepDefinitionMatches(String featurePath, Step step) {
+    private List<StepDefinitionMatch> stepDefinitionMatches(String featurePath, PickleStep step) {
         List<StepDefinitionMatch> result = new ArrayList<StepDefinitionMatch>();
         for (StepDefinition stepDefinition : stepDefinitionsByPattern.values()) {
             List<Argument> arguments = stepDefinition.matchedArguments(step);

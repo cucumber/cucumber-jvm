@@ -2,22 +2,15 @@ package cucumber.runtime;
 
 import cucumber.runtime.io.Resource;
 import cucumber.runtime.model.CucumberFeature;
-import gherkin.I18n;
-import gherkin.formatter.FilterFormatter;
-import gherkin.formatter.Formatter;
-import gherkin.formatter.model.Background;
-import gherkin.formatter.model.Examples;
-import gherkin.formatter.model.Feature;
-import gherkin.formatter.model.Scenario;
-import gherkin.formatter.model.ScenarioOutline;
-import gherkin.formatter.model.Step;
-import gherkin.lexer.Encoding;
-import gherkin.parser.Parser;
-import gherkin.util.FixJava;
+import cucumber.util.Encoding;
+import gherkin.AstBuilder;
+import gherkin.Parser;
+import gherkin.ParserException;
+import gherkin.TokenMatcher;
+import gherkin.ast.GherkinDocument;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.math.BigInteger;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
@@ -26,14 +19,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class FeatureBuilder implements Formatter {
+public class FeatureBuilder {
     private static final Charset UTF8 = Charset.forName("UTF-8");
     private final List<CucumberFeature> cucumberFeatures;
     private final char fileSeparatorChar;
     private final MessageDigest md5;
     private final Map<String, String> pathsByChecksum = new HashMap<String, String>();
-    private CucumberFeature currentCucumberFeature;
-    private String featurePath;
 
     public FeatureBuilder(List<CucumberFeature> cucumberFeatures) {
         this(cucumberFeatures, File.separatorChar);
@@ -49,69 +40,7 @@ public class FeatureBuilder implements Formatter {
         }
     }
 
-    @Override
-    public void uri(String uri) {
-        this.featurePath = uri;
-    }
-
-    @Override
-    public void feature(Feature feature) {
-        currentCucumberFeature = new CucumberFeature(feature, featurePath);
-        cucumberFeatures.add(currentCucumberFeature);
-    }
-
-    @Override
-    public void background(Background background) {
-        currentCucumberFeature.background(background);
-    }
-
-    @Override
-    public void scenario(Scenario scenario) {
-        currentCucumberFeature.scenario(scenario);
-    }
-
-    @Override
-    public void scenarioOutline(ScenarioOutline scenarioOutline) {
-        currentCucumberFeature.scenarioOutline(scenarioOutline);
-    }
-
-    @Override
-    public void examples(Examples examples) {
-        currentCucumberFeature.examples(examples);
-    }
-
-    @Override
-    public void step(Step step) {
-        currentCucumberFeature.step(step);
-    }
-
-    @Override
-    public void eof() {
-    }
-
-    @Override
-    public void syntaxError(String state, String event, List<String> legalEvents, String uri, Integer line) {
-    }
-
-    @Override
-    public void done() {
-    }
-
-    @Override
-    public void close() {
-    }
-
-    @Override
-    public void startOfScenarioLifeCycle(Scenario scenario) {
-        // NoOp
-    }
-
-    @Override
-    public void endOfScenarioLifeCycle(Scenario scenario) {
-        // NoOp
-    }
-
-    public void parse(Resource resource, List<Object> filters) {
+    public void parse(Resource resource) {
         String gherkin = read(resource);
 
         String checksum = checksum(gherkin);
@@ -121,24 +50,16 @@ public class FeatureBuilder implements Formatter {
         }
         pathsByChecksum.put(checksum, resource.getPath());
 
-        Formatter formatter = this;
-        if (!filters.isEmpty()) {
-            formatter = new FilterFormatter(this, filters);
-        }
-        Parser parser = new Parser(formatter);
-
+        Parser<GherkinDocument> parser = new Parser<GherkinDocument>(new AstBuilder());
+        TokenMatcher matcher = new TokenMatcher();
         try {
-            parser.parse(gherkin, convertFileSeparatorToForwardSlash(resource.getPath()), 0);
-        } catch (Exception e) {
-            throw new CucumberException(String.format("Error parsing feature file %s", convertFileSeparatorToForwardSlash(resource.getPath())), e);
+            GherkinDocument gherkinDocument = parser.parse(gherkin, matcher);
+            CucumberFeature feature = new CucumberFeature(gherkinDocument, convertFileSeparatorToForwardSlash(resource.getPath()), gherkin);
+            cucumberFeatures.add(feature);
+        } catch (ParserException e) {
+            throw new CucumberException(e);
         }
-        I18n i18n = parser.getI18nLanguage();
-        if (currentCucumberFeature != null) {
-            // The current feature may be null if we used a very restrictive filter, say a tag that isn't used.
-            // Might also happen if the feature file itself is empty.
-            currentCucumberFeature.setI18n(i18n);
-        }
-    }
+     }
 
     private String convertFileSeparatorToForwardSlash(String path) {
         return path.replace(fileSeparatorChar, '/');
@@ -150,11 +71,7 @@ public class FeatureBuilder implements Formatter {
 
     public String read(Resource resource) {
         try {
-            String source = FixJava.readReader(new InputStreamReader(resource.getInputStream(), "UTF-8"));
-            String encoding = new Encoding().encoding(source);
-            if (!"UTF-8".equals(encoding)) {
-                source = FixJava.readReader(new InputStreamReader(resource.getInputStream(), encoding));
-            }
+            String source = Encoding.readFile(resource);
             return source;
         } catch (IOException e) {
             throw new CucumberException("Failed to read resource:" + resource.getPath(), e);

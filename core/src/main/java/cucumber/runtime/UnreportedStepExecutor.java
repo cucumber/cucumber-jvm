@@ -1,12 +1,11 @@
 package cucumber.runtime;
 
-import gherkin.I18n;
-import gherkin.formatter.model.DataTableRow;
-import gherkin.formatter.model.DocString;
+import gherkin.pickles.PickleRow;
+import gherkin.pickles.PickleString;
 
 import java.util.List;
 
 public interface UnreportedStepExecutor {
     //TODO: Maybe this should go into the cucumber step execution model and it should return the result of that execution!
-    void runUnreportedStep(String featurePath, I18n i18n, String stepKeyword, String stepName, int line, List<DataTableRow> dataTableRows, DocString docString) throws Throwable;
+    void runUnreportedStep(String featurePath, String language, String stepName, int line, List<PickleRow> dataTableRows, PickleString docString) throws Throwable;
 }

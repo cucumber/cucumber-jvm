@@ -1,37 +1,35 @@
 package cucumber.runtime;
 
 import cucumber.api.Pending;
+import cucumber.api.Result;
 import cucumber.api.StepDefinitionReporter;
 import cucumber.api.SummaryPrinter;
+import cucumber.api.event.EventHandler;
+import cucumber.api.event.TestCaseFinished;
+import cucumber.api.event.TestRunFinished;
+import cucumber.api.event.TestStepFinished;
+import cucumber.api.formatter.Formatter;
+import cucumber.runner.EventBus;
+import cucumber.runner.Runner;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.xstream.LocalizedXStreams;
-import gherkin.I18n;
-import gherkin.formatter.Argument;
-import gherkin.formatter.Formatter;
-import gherkin.formatter.Reporter;
-import gherkin.formatter.model.Comment;
-import gherkin.formatter.model.DataTableRow;
-import gherkin.formatter.model.DocString;
-import gherkin.formatter.model.Match;
-import gherkin.formatter.model.Result;
-import gherkin.formatter.model.Scenario;
-import gherkin.formatter.model.Step;
-import gherkin.formatter.model.Tag;
+import gherkin.pickles.Compiler;
+import gherkin.pickles.Pickle;
 
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * This is the main entry point for running Cucumber features.
  */
-public class Runtime implements UnreportedStepExecutor {
+public class Runtime {
 
     private static final String[] PENDING_EXCEPTIONS = {
             "org.junit.AssumptionViolatedException",
@@ -42,25 +40,40 @@ public class Runtime implements UnreportedStepExecutor {
         Arrays.sort(PENDING_EXCEPTIONS);
     }
 
-    private static final Object DUMMY_ARG = new Object();
     private static final byte ERRORS = 0x1;
 
     private final Stats stats;
-    final UndefinedStepsTracker undefinedStepsTracker = new UndefinedStepsTracker();
+    UndefinedStepsTracker undefinedStepsTracker = new UndefinedStepsTracker(); // package private to be avaiable for tests.
 
-    private final Glue glue;
     private final RuntimeOptions runtimeOptions;
 
     private final List<Throwable> errors = new ArrayList<Throwable>();
-    private final Collection<? extends Backend> backends;
     private final ResourceLoader resourceLoader;
     private final ClassLoader classLoader;
-    private final StopWatch stopWatch;
-
-    //TODO: These are really state machine variables, and I'm not sure the runtime is the best place for this state machine
-    //They really should be created each time a scenario is run, not in here
-    private boolean skipNextStep = false;
-    private ScenarioImpl scenarioResult = null;
+    private final Runner runner;
+    private final List<PicklePredicate> filters;
+    private final EventBus bus = new EventBus();
+    private final Compiler compiler = new Compiler();
+    private final EventHandler<TestStepFinished> stepFinishedHandler = new EventHandler<TestStepFinished>() {
+        @Override
+        public void receive(TestStepFinished event) {
+            Result result = event.result;
+            if (result.getError() != null) {
+                addError(result.getError());
+            }
+            if (event.testStep.isHook()) {
+                addHookToCounterAndResult(result);
+            } else {
+                addStepToCounterAndResult(result);
+            }
+        }
+    };
+    private final EventHandler<TestCaseFinished> testCaseFinishedHandler = new EventHandler<TestCaseFinished>() {
+        @Override
+        public void receive(TestCaseFinished event) {
+            stats.addScenario(event.result.getStatus(), event.testCase.getScenarioDesignation());
+        }
+    };
 
     public Runtime(ResourceLoader resourceLoader, ClassFinder classFinder, ClassLoader classLoader, RuntimeOptions runtimeOptions) {
         this(resourceLoader, classLoader, loadBackends(resourceLoader, classFinder), runtimeOptions);
@@ -82,16 +95,28 @@ public class Runtime implements UnreportedStepExecutor {
         }
         this.resourceLoader = resourceLoader;
         this.classLoader = classLoader;
-        this.backends = backends;
         this.runtimeOptions = runtimeOptions;
-        this.stopWatch = stopWatch;
-        this.glue = optionalGlue != null ? optionalGlue : new RuntimeGlue(undefinedStepsTracker, new LocalizedXStreams(classLoader));
+        Glue glue = optionalGlue != null ? optionalGlue : new RuntimeGlue(undefinedStepsTracker, new LocalizedXStreams(classLoader));
         this.stats = new Stats(runtimeOptions.isMonochrome());
-
-        for (Backend backend : backends) {
-            backend.loadGlue(glue, runtimeOptions.getGlue());
-            backend.setUnreportedStepExecutor(this);
+        this.runner = new Runner(glue, bus, backends, runtimeOptions, stopWatch);
+        this.filters = new ArrayList<PicklePredicate>();
+        List<String> tagFilters = runtimeOptions.getTagFilters();
+        if (!tagFilters.isEmpty()) {
+            this.filters.add(new TagPredicate(tagFilters));
         }
+        List<Pattern> nameFilters = runtimeOptions.getNameFilters();
+        if (!nameFilters.isEmpty()) {
+            this.filters.add(new NamePredicate(nameFilters));
+        }
+        Map<String, List<Long>> lineFilters = runtimeOptions.getLineFilters(resourceLoader);
+        if (!lineFilters.isEmpty()) {
+            this.filters.add(new LinePredicate(lineFilters));
+        }
+
+        bus.registerHandlerFor(TestStepFinished.class, stepFinishedHandler);
+        bus.registerHandlerFor(TestCaseFinished.class, testCaseFinishedHandler);
+        undefinedStepsTracker.setEventPublisher(bus);
+        runtimeOptions.setEventBus(bus);
     }
 
     private static Collection<? extends Backend> loadBackends(ResourceLoader resourceLoader, ClassFinder classFinder) {
@@ -108,23 +133,44 @@ public class Runtime implements UnreportedStepExecutor {
      */
     public void run() throws IOException {
         // Make sure all features parse before initialising any reporters/formatters
-        List<CucumberFeature> features = runtimeOptions.cucumberFeatures(resourceLoader);
+        List<CucumberFeature> features = runtimeOptions.cucumberFeatures(resourceLoader, bus);
 
         // TODO: This is duplicated in cucumber.api.android.CucumberInstrumentationCore - refactor or keep uptodate
 
         Formatter formatter = runtimeOptions.formatter(classLoader);
-        Reporter reporter = runtimeOptions.reporter(classLoader);
         StepDefinitionReporter stepDefinitionReporter = runtimeOptions.stepDefinitionReporter(classLoader);
 
-        glue.reportStepDefinitions(stepDefinitionReporter);
+        reportStepDefinitions(stepDefinitionReporter);
 
         for (CucumberFeature cucumberFeature : features) {
-            cucumberFeature.run(formatter, reporter, this);
+            runFeature(cucumberFeature);
         }
 
-        formatter.done();
-        formatter.close();
+        bus.send(new TestRunFinished());
         printSummary();
+    }
+
+    public void reportStepDefinitions(StepDefinitionReporter stepDefinitionReporter) {
+        runner.reportStepDefinitions(stepDefinitionReporter);
+    }
+
+    public void runFeature(CucumberFeature feature) {
+        List<Pickle> pickles = new ArrayList<Pickle>();
+        pickles.addAll(compiler.compile(feature.getGherkinFeature(), feature.getPath()));
+        for (Pickle pickle : pickles) {
+            if (matchesFilters(pickle)) {
+                runner.runPickle(pickle, feature.getLanguage());
+            }
+        }
+    }
+
+    public boolean matchesFilters(Pickle pickle) {
+        for (PicklePredicate filter : filters) {
+            if (!filter.apply(pickle)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public void printSummary() {
@@ -134,23 +180,6 @@ public class Runtime implements UnreportedStepExecutor {
 
     void printStats(PrintStream out) {
         stats.printStats(out, runtimeOptions.isStrict());
-    }
-
-    public void buildBackendWorlds(Reporter reporter, Set<Tag> tags, Scenario gherkinScenario) {
-        for (Backend backend : backends) {
-            backend.buildWorld();
-        }
-        undefinedStepsTracker.reset();
-        //TODO: this is the initial state of the state machine, it should not go here, but into something else
-        skipNextStep = false;
-        scenarioResult = new ScenarioImpl(reporter, tags, gherkinScenario);
-    }
-
-    public void disposeBackendWorlds(String scenarioDesignation) {
-        stats.addScenario(scenarioResult.getStatus(), scenarioDesignation);
-        for (Backend backend : backends) {
-            backend.disposeWorld();
-        }
     }
 
     public List<Throwable> getErrors() {
@@ -191,125 +220,11 @@ public class Runtime implements UnreportedStepExecutor {
     }
 
     public List<String> getSnippets() {
-        return undefinedStepsTracker.getSnippets(backends, runtimeOptions.getSnippetType().getFunctionNameGenerator());
+        return undefinedStepsTracker.getSnippets();
     }
 
     public Glue getGlue() {
-        return glue;
-    }
-
-    public void runBeforeHooks(Reporter reporter, Set<Tag> tags) {
-        runHooks(glue.getBeforeHooks(), reporter, tags, true);
-    }
-
-    public void runAfterHooks(Reporter reporter, Set<Tag> tags) {
-        runHooks(glue.getAfterHooks(), reporter, tags, false);
-    }
-
-    private void runHooks(List<HookDefinition> hooks, Reporter reporter, Set<Tag> tags, boolean isBefore) {
-        if (!runtimeOptions.isDryRun()) {
-            for (HookDefinition hook : hooks) {
-                runHookIfTagsMatch(hook, reporter, tags, isBefore);
-            }
-        }
-    }
-
-    private void runHookIfTagsMatch(HookDefinition hook, Reporter reporter, Set<Tag> tags, boolean isBefore) {
-        if (hook.matches(tags)) {
-            String status = Result.PASSED;
-            Throwable error = null;
-            Match match = new Match(Collections.<Argument>emptyList(), hook.getLocation(false));
-            stopWatch.start();
-            try {
-                hook.execute(scenarioResult);
-            } catch (Throwable t) {
-                error = t;
-                status = isPending(t) ? "pending" : Result.FAILED;
-                addError(t);
-                skipNextStep = true;
-            } finally {
-                long duration = stopWatch.stop();
-                Result result = new Result(status, duration, error, DUMMY_ARG);
-                addHookToCounterAndResult(result);
-                if (isBefore) {
-                    reporter.before(match, result);
-                } else {
-                    reporter.after(match, result);
-                }
-            }
-        }
-    }
-
-    //TODO: Maybe this should go into the cucumber step execution model and it should return the result of that execution!
-    @Override
-    public void runUnreportedStep(String featurePath, I18n i18n, String stepKeyword, String stepName, int line, List<DataTableRow> dataTableRows, DocString docString) throws Throwable {
-        Step step = new Step(Collections.<Comment>emptyList(), stepKeyword, stepName, line, dataTableRows, docString);
-
-        StepDefinitionMatch match = glue.stepDefinitionMatch(featurePath, step, i18n);
-        if (match == null) {
-            UndefinedStepException error = new UndefinedStepException(step);
-
-            StackTraceElement[] originalTrace = error.getStackTrace();
-            StackTraceElement[] newTrace = new StackTraceElement[originalTrace.length + 1];
-            newTrace[0] = new StackTraceElement("✽", "StepDefinition", featurePath, line);
-            System.arraycopy(originalTrace, 0, newTrace, 1, originalTrace.length);
-            error.setStackTrace(newTrace);
-
-            throw error;
-        }
-        match.runStep(i18n);
-    }
-
-    public void runStep(String featurePath, Step step, Reporter reporter, I18n i18n) {
-        StepDefinitionMatch match;
-
-        try {
-            match = glue.stepDefinitionMatch(featurePath, step, i18n);
-        } catch (AmbiguousStepDefinitionsException e) {
-            reporter.match(e.getMatches().get(0));
-            Result result = new Result(Result.FAILED, 0L, e, DUMMY_ARG);
-            reporter.result(result);
-            addStepToCounterAndResult(result);
-            addError(e);
-            skipNextStep = true;
-            return;
-        }
-
-        if (match != null) {
-            reporter.match(match);
-        } else {
-            reporter.match(Match.UNDEFINED);
-            reporter.result(Result.UNDEFINED);
-            addStepToCounterAndResult(Result.UNDEFINED);
-            skipNextStep = true;
-            return;
-        }
-
-        if (runtimeOptions.isDryRun()) {
-            skipNextStep = true;
-        }
-
-        if (skipNextStep) {
-            addStepToCounterAndResult(Result.SKIPPED);
-            reporter.result(Result.SKIPPED);
-        } else {
-            String status = Result.PASSED;
-            Throwable error = null;
-            stopWatch.start();
-            try {
-                match.runStep(i18n);
-            } catch (Throwable t) {
-                error = t;
-                status = isPending(t) ? "pending" : Result.FAILED;
-                addError(t);
-                skipNextStep = true;
-            } finally {
-                long duration = stopWatch.stop();
-                Result result = new Result(status, duration, error, DUMMY_ARG);
-                addStepToCounterAndResult(result);
-                reporter.result(result);
-            }
-        }
+        return runner.getGlue();
     }
 
     public static boolean isPending(Throwable t) {
@@ -320,12 +235,18 @@ public class Runtime implements UnreportedStepExecutor {
     }
 
     private void addStepToCounterAndResult(Result result) {
-        scenarioResult.add(result);
         stats.addStep(result);
     }
 
     private void addHookToCounterAndResult(Result result) {
-        scenarioResult.add(result);
         stats.addHookTime(result.getDuration());
+    }
+
+    public EventBus getEventBus() {
+        return bus;
+    }
+
+    public Runner getRunner() {
+        return runner;
     }
 }
