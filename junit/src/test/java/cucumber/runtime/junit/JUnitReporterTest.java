@@ -1,17 +1,9 @@
 package cucumber.runtime.junit;
 
 import cucumber.api.PendingException;
-import cucumber.runtime.CucumberException;
-import gherkin.formatter.Formatter;
-import gherkin.formatter.Reporter;
-import gherkin.formatter.model.Background;
-import gherkin.formatter.model.Examples;
-import gherkin.formatter.model.Feature;
-import gherkin.formatter.model.Match;
-import gherkin.formatter.model.Result;
-import gherkin.formatter.model.Scenario;
-import gherkin.formatter.model.ScenarioOutline;
-import gherkin.formatter.model.Step;
+import cucumber.api.Result;
+import cucumber.runner.EventBus;
+import gherkin.pickles.PickleStep;
 import org.junit.Test;
 import org.junit.internal.runners.model.EachTestNotifier;
 import org.junit.runner.Description;
@@ -27,7 +19,6 @@ import java.util.List;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -39,18 +30,16 @@ public class JUnitReporterTest {
     private RunNotifier runNotifier;
 
     @Test
-    public void match_allow_stared_ignored() {
+    public void match_allow_started_ignored() {
         createAllowStartedIgnoredReporter();
-        Step runnerStep = mockStep();
+        PickleStep runnerStep = mockStep();
         Description runnerStepDescription = stepDescription(runnerStep);
         ExecutionUnitRunner executionUnitRunner = mockExecutionUnitRunner(runnerSteps(runnerStep));
         when(executionUnitRunner.describeChild(runnerStep)).thenReturn(runnerStepDescription);
         runNotifier = mock(RunNotifier.class);
 
         jUnitReporter.startExecutionUnit(executionUnitRunner, runNotifier);
-        jUnitReporter.startOfScenarioLifeCycle(mock(Scenario.class));
-        jUnitReporter.step(runnerStep);
-        jUnitReporter.match(mock(Match.class));
+        jUnitReporter.handleStepStarted(runnerStep);
 
         verify(runNotifier).fireTestStarted(executionUnitRunner.getDescription());
         verify(runNotifier).fireTestStarted(runnerStepDescription);
@@ -66,7 +55,7 @@ public class JUnitReporterTest {
         Description description = mock(Description.class);
         createRunNotifier(description);
 
-        jUnitReporter.result(result);
+        jUnitReporter.handleStepResult(result);
 
         ArgumentCaptor<Failure> failureArgumentCaptor = ArgumentCaptor.forClass(Failure.class);
         verify(runNotifier).fireTestFailure(failureArgumentCaptor.capture());
@@ -82,7 +71,7 @@ public class JUnitReporterTest {
         EachTestNotifier stepNotifier = mock(EachTestNotifier.class);
         jUnitReporter.stepNotifier = stepNotifier;
 
-        jUnitReporter.result(Result.UNDEFINED);
+        jUnitReporter.handleStepResult(mockResult(Result.UNDEFINED));
 
         verify(stepNotifier, times(0)).fireTestStarted();
         verify(stepNotifier, times(0)).fireTestFinished();
@@ -99,7 +88,7 @@ public class JUnitReporterTest {
         EachTestNotifier executionUnitNotifier = mock(EachTestNotifier.class);
         jUnitReporter.executionUnitNotifier = executionUnitNotifier;
 
-        jUnitReporter.result(Result.UNDEFINED);
+        jUnitReporter.handleStepResult(mockResult(Result.UNDEFINED));
 
         verify(stepNotifier, times(1)).fireTestStarted();
         verify(stepNotifier, times(1)).fireTestFinished();
@@ -124,7 +113,7 @@ public class JUnitReporterTest {
         EachTestNotifier stepNotifier = mock(EachTestNotifier.class);
         jUnitReporter.stepNotifier = stepNotifier;
 
-        jUnitReporter.result(result);
+        jUnitReporter.handleStepResult(result);
 
         verify(stepNotifier, times(0)).fireTestStarted();
         verify(stepNotifier, times(0)).fireTestFinished();
@@ -144,7 +133,7 @@ public class JUnitReporterTest {
         EachTestNotifier executionUnitNotifier = mock(EachTestNotifier.class);
         jUnitReporter.executionUnitNotifier = executionUnitNotifier;
 
-        jUnitReporter.result(result);
+        jUnitReporter.handleStepResult(result);
 
         verify(stepNotifier, times(1)).fireTestStarted();
         verify(stepNotifier, times(1)).fireTestFinished();
@@ -161,7 +150,7 @@ public class JUnitReporterTest {
         EachTestNotifier stepNotifier = mock(EachTestNotifier.class);
         jUnitReporter.stepNotifier = stepNotifier;
 
-        jUnitReporter.result(result);
+        jUnitReporter.handleStepResult(result);
 
         verify(stepNotifier).fireTestStarted();
         verify(stepNotifier).fireTestFinished();
@@ -177,7 +166,7 @@ public class JUnitReporterTest {
         EachTestNotifier stepNotifier = mock(EachTestNotifier.class);
         jUnitReporter.stepNotifier = stepNotifier;
 
-        jUnitReporter.result(result);
+        jUnitReporter.handleStepResult(result);
 
         verify(stepNotifier).fireTestStarted();
         verify(stepNotifier).fireTestFinished();
@@ -193,7 +182,7 @@ public class JUnitReporterTest {
         EachTestNotifier stepNotifier = mock(EachTestNotifier.class);
         jUnitReporter.stepNotifier = stepNotifier;
 
-        jUnitReporter.result(result);
+        jUnitReporter.handleStepResult(result);
 
         verify(stepNotifier, times(0)).fireTestStarted();
         verify(stepNotifier).fireTestFinished();
@@ -202,35 +191,33 @@ public class JUnitReporterTest {
     }
 
     @Test
-    public void before_with_pending_exception_strict() {
+    public void hook_with_pending_exception_strict() {
         createStrictReporter();
         createDefaultRunNotifier();
         Result result = mock(Result.class);
-        Match match = mock(Match.class);
         when(result.getStatus()).thenReturn("Pending");
         when(result.getError()).thenReturn(new PendingException());
 
         EachTestNotifier executionUnitNotifier = mock(EachTestNotifier.class);
         jUnitReporter.executionUnitNotifier = executionUnitNotifier;
 
-        jUnitReporter.before(match, result);
+        jUnitReporter.handleHookResult(result);
 
         verifyAddFailureWithPendingException(executionUnitNotifier);
     }
 
     @Test
-    public void after_with_pending_exception_non_strict() {
+    public void hook_with_pending_exception_non_strict() {
         createNonStrictReporter();
         createDefaultRunNotifier();
         Result result = mock(Result.class);
-        Match match = mock(Match.class);
         when(result.getStatus()).thenReturn("Pending");
         when(result.getError()).thenReturn(new PendingException());
 
         EachTestNotifier executionUnitNotifier = mock(EachTestNotifier.class);
         jUnitReporter.executionUnitNotifier = executionUnitNotifier;
 
-        jUnitReporter.after(match, result);
+        jUnitReporter.handleHookResult(result);
         jUnitReporter.finishExecutionUnit();
 
         verify(executionUnitNotifier).fireTestIgnored();
@@ -244,161 +231,69 @@ public class JUnitReporterTest {
         Throwable exception = mock(Throwable.class);
         when(stepResult.getError()).thenReturn(exception);
         Result hookResult = mock(Result.class);
-        Match match = mock(Match.class);
         when(hookResult.getStatus()).thenReturn("Pending");
         when(hookResult.getError()).thenReturn(new PendingException());
 
         EachTestNotifier executionUnitNotifier = mock(EachTestNotifier.class);
         jUnitReporter.executionUnitNotifier = executionUnitNotifier;
 
-        jUnitReporter.result(stepResult);
-        jUnitReporter.after(match, hookResult);
+        jUnitReporter.handleStepResult(stepResult);
+        jUnitReporter.handleHookResult(hookResult);
         jUnitReporter.finishExecutionUnit();
 
         verify(executionUnitNotifier, times(0)).fireTestIgnored();
     }
 
     @Test
-    public void forward_calls_to_formatter_interface_methods() throws Exception {
-        String uri = "uri";
-        Feature feature = mock(Feature.class);
-        Background background = mock(Background.class);
-        ScenarioOutline scenarioOutline = mock(ScenarioOutline.class);
-        Examples examples = mock(Examples.class);
-        Scenario scenario = mock(Scenario.class);
-        Step step = mock(Step.class);
-        Formatter formatter = mock(Formatter.class);
-        jUnitReporter = new JUnitReporter(mock(Reporter.class), formatter, false, new JUnitOptions(Collections.<String>emptyList()));
-
-        jUnitReporter.uri(uri);
-        jUnitReporter.feature(feature);
-        jUnitReporter.scenarioOutline(scenarioOutline);
-        jUnitReporter.examples(examples);
-        jUnitReporter.startOfScenarioLifeCycle(scenario);
-        jUnitReporter.background(background);
-        jUnitReporter.scenario(scenario);
-        jUnitReporter.step(step);
-        jUnitReporter.endOfScenarioLifeCycle(scenario);
-        jUnitReporter.eof();
-        jUnitReporter.done();
-        jUnitReporter.close();
-
-        verify(formatter).uri(uri);
-        verify(formatter).feature(feature);
-        verify(formatter).scenarioOutline(scenarioOutline);
-        verify(formatter).examples(examples);
-        verify(formatter).startOfScenarioLifeCycle(scenario);;
-        verify(formatter).background(background);
-        verify(formatter).scenario(scenario);
-        verify(formatter).step(step);
-        verify(formatter).endOfScenarioLifeCycle(scenario);
-        verify(formatter).eof();
-        verify(formatter).done();
-        verify(formatter).close();
-    }
-
-    @Test
-    public void forward_calls_to_reporter_interface_methods() throws Exception {
-        Match match = mock(Match.class);
-        Result result = mockResult();
-        ExecutionUnitRunner executionUnitRunner = mockExecutionUnitRunner();
-        String mimeType = "mimeType";
-        byte data[] = new byte[] {1};
-        String text = "text";
-        Reporter reporter = mock(Reporter.class);
-        jUnitReporter = new JUnitReporter(reporter, mock(Formatter.class), false, new JUnitOptions(Collections.<String>emptyList()));
-
-        jUnitReporter.startExecutionUnit(executionUnitRunner, mock(RunNotifier.class));
-        jUnitReporter.startOfScenarioLifeCycle(mock(Scenario.class));
-        jUnitReporter.before(match, result);
-        jUnitReporter.step(mockStep());
-        jUnitReporter.match(match);
-        jUnitReporter.embedding(mimeType, data);
-        jUnitReporter.write(text);
-        jUnitReporter.result(result);
-        jUnitReporter.after(match, result);
-
-        verify(reporter).before(match, result);
-        verify(reporter).match(match);
-        verify(reporter).embedding(mimeType, data);
-        verify(reporter).write(text);
-        verify(reporter).result(result);
-        verify(reporter).after(match, result);
-    }
-
-    @Test
     public void creates_step_notifier_with_step_from_execution_unit_runner() throws Exception {
-        Step runnerStep = mockStep("Step Name");
+        PickleStep runnerStep = mockStep("Step Name");
         Description runnerStepDescription = stepDescription(runnerStep);
         ExecutionUnitRunner executionUnitRunner = mockExecutionUnitRunner(runnerSteps(runnerStep));
         when(executionUnitRunner.describeChild(runnerStep)).thenReturn(runnerStepDescription);
         RunNotifier notifier = mock(RunNotifier.class);
-        jUnitReporter = new JUnitReporter(mock(Reporter.class), mock(Formatter.class), false, new JUnitOptions(Collections.<String>emptyList()));
+        jUnitReporter = new JUnitReporter(mock(EventBus.class), false, new JUnitOptions(Collections.<String>emptyList()));
 
         jUnitReporter.startExecutionUnit(executionUnitRunner, notifier);
-        jUnitReporter.startOfScenarioLifeCycle(mock(Scenario.class));
-        jUnitReporter.step(mockStep("Step Name"));
-        jUnitReporter.match(mock(Match.class));
-        jUnitReporter.result(mockResult());
+        jUnitReporter.handleStepStarted(runnerStep);
+        jUnitReporter.handleStepResult(mockResult());
 
         verify(notifier).fireTestFinished(runnerStepDescription);
     }
 
-    @Test
-    public void throws_exception_when_runner_step_name_do_no_match_scenario_step_name() throws Exception {
-        Step runnerStep = mockStep("Runner Step Name");
-        ExecutionUnitRunner executionUnitRunner = mockExecutionUnitRunner(runnerSteps(runnerStep));
-        jUnitReporter = new JUnitReporter(mock(Reporter.class), mock(Formatter.class), false, new JUnitOptions(Collections.<String>emptyList()));
-
-        jUnitReporter.startExecutionUnit(executionUnitRunner, mock(RunNotifier.class));
-        jUnitReporter.startOfScenarioLifeCycle(mock(Scenario.class));
-        jUnitReporter.step(mockStep("Scenario Step Name"));
-        try {
-            jUnitReporter.match(mock(Match.class));
-            fail("CucumberException not thrown");
-        } catch (CucumberException e) {
-            assertEquals("Expected step: \"Scenario Step Name\" got step: \"Runner Step Name\"", e.getMessage());
-        } catch (Exception e) {
-            fail("CucumberException not thrown");
-        }
+    private Result mockResult() {
+        return mockResult("passed");
     }
 
-    private Result mockResult() {
+    private Result mockResult(String status) {
         Result result = mock(Result.class);
-        when(result.getStatus()).thenReturn("passed");
+        when(result.getStatus()).thenReturn(status);
         return result;
     }
 
-    private ExecutionUnitRunner mockExecutionUnitRunner() {
-        List<Step> runnerSteps = runnerSteps(mockStep());
-        return mockExecutionUnitRunner(runnerSteps);
-    }
-
-    private ExecutionUnitRunner mockExecutionUnitRunner(List<Step> runnerSteps) {
+    private ExecutionUnitRunner mockExecutionUnitRunner(List<PickleStep> runnerSteps) {
         ExecutionUnitRunner executionUnitRunner = mock(ExecutionUnitRunner.class);
         when(executionUnitRunner.getDescription()).thenReturn(mock(Description.class));
-        when(executionUnitRunner.getRunnerSteps()).thenReturn(runnerSteps);
         return executionUnitRunner;
     }
 
-    private List<Step> runnerSteps(Step step) {
-        List<Step> runnerSteps = new ArrayList<Step>();
+    private List<PickleStep> runnerSteps(PickleStep step) {
+        List<PickleStep> runnerSteps = new ArrayList<PickleStep>();
         runnerSteps.add(step);
         return runnerSteps;
     }
 
-    private Description stepDescription(Step runnerStep) {
-        return Description.createTestDescription("", "", runnerStep);
+    private Description stepDescription(PickleStep runnerStep) {
+        return Description.createTestDescription("", runnerStep.getText());
     }
 
-    private Step mockStep() {
+    private PickleStep mockStep() {
         String stepName = "step name";
         return mockStep(stepName);
     }
 
-    private Step mockStep(String stepName) {
-        Step step = mock(Step.class);
-        when(step.getName()).thenReturn(stepName);
+    private PickleStep mockStep(String stepName) {
+        PickleStep step = mock(PickleStep.class);
+        when(step.getText()).thenReturn(stepName);
         return step;
     }
 
@@ -426,11 +321,8 @@ public class JUnitReporterTest {
     }
 
     private void createReporter(boolean strict, boolean allowStartedIgnored) {
-        Formatter formatter = mock(Formatter.class);
-        Reporter reporter = mock(Reporter.class);
-
         String allowStartedIgnoredOption = allowStartedIgnored ? "--allow-started-ignored" : "--no-allow-started-ignored";
-        jUnitReporter = new JUnitReporter(reporter, formatter, strict, new JUnitOptions(asList(allowStartedIgnoredOption)));
+        jUnitReporter = new JUnitReporter(mock(EventBus.class), strict, new JUnitOptions(asList(allowStartedIgnoredOption)));
     }
 
 }
