@@ -58,7 +58,8 @@
 
                                 <groovy><![CDATA[
 import groovy.text.SimpleTemplateEngine
-import gherkin.I18n
+import gherkin.GherkinDialect
+import gherkin.GherkinDialectProvider
 
 def engine = new SimpleTemplateEngine()
 
@@ -70,14 +71,21 @@ def normalize(s) {
   }
 }
 
-I18n.all.each { i18n ->
-  def templateSource = new File(project.baseDir, "src${File.separator}main${File.separator}code_generator${File.separator}I18n.java8.txt").getText()
-  def className = "${i18n.underscoredIsoCode}".capitalize()
-  def binding = [ "i18n":i18n, "className":className ]
-  def template = engine.createTemplate(templateSource).make(binding)
-  def file = new File(project.baseDir, "target${File.separator}generated-sources${File.separator}i18n${File.separator}java8${File.separator}cucumber${File.separator}api${File.separator}java8${File.separator}${className}.java")
-  file.parentFile.mkdirs()
-  file.write(template.toString(), "UTF-8")
+def unsupported = ["em"] // The generated files for Emoij do not compile.
+def dialectProvider = new GherkinDialectProvider()
+
+GherkinDialectProvider.DIALECTS.keySet().each { language ->
+  def dialect = dialectProvider.getDialect(language, null)
+  def normalized_language = dialect.language.replaceAll("[\\s-]", "_").toLowerCase()
+  if (!unsupported.contains(normalized_language)) {
+    def templateSource = new File(project.baseDir, "src${File.separator}main${File.separator}code_generator${File.separator}I18n.java8.txt").getText()
+    def className = "${normalized_language}".capitalize()
+    def binding = [ "i18n":dialect, "className":className ]
+    def template = engine.createTemplate(templateSource).make(binding)
+    def file = new File(project.baseDir, "target${File.separator}generated-sources${File.separator}i18n${File.separator}java8${File.separator}cucumber${File.separator}api${File.separator}java8${File.separator}${className}.java")
+    file.parentFile.mkdirs()
+    file.write(template.toString(), "UTF-8")
+  }
 }
 
         ]]></groovy>
