@@ -96,8 +96,8 @@ module Cucumber
   module Runtime
     module JRuby
       module Dsl
-<% i18n.codeKeywords.each { kw -> %>
-        def \${java.text.Normalizer.normalize(kw, java.text.Normalizer.Form.NFC)}(regexp, &proc)
+<% i18n.stepKeywords.findAll { !it.contains('*') && !it.matches("^\\\\d.*") }.unique().each { kw -> %>
+        def \${java.text.Normalizer.normalize(kw.replaceAll("[\\\\s',!]", ""), java.text.Normalizer.Form.NFC)}(regexp, &proc)
           register_stepdef(regexp, proc)
         end
 <% } %>
@@ -107,12 +107,16 @@ module Cucumber
 end
 """
 
-gherkin.I18n.all.each { i18n ->
+def dialectProvider = new gherkin.GherkinDialectProvider()
+
+gherkin.GherkinDialectProvider.DIALECTS.keySet().each { language ->
+    def dialect = dialectProvider.getDialect(language, null)
+    def normalized_language = dialect.language.replaceAll("[\\s-]", "_").toLowerCase()
     def engine = new groovy.text.SimpleTemplateEngine()
-    def binding = ["i18n":i18n]
+    def binding = ["i18n":dialect]
     def source = engine.createTemplate(template).make(binding).toString()
 
-    def file = new File(project.baseDir, "target${File.separator}generated-resources${File.separator}i18n${File.separator}cucumber${File.separator}api${File.separator}jruby${File.separator}${i18n.underscoredIsoCode}.rb")
+    def file = new File(project.baseDir, "target${File.separator}generated-resources${File.separator}i18n${File.separator}cucumber${File.separator}api${File.separator}jruby${File.separator}${normalized_language}.rb")
     file.parentFile.mkdirs()
     file.write(source, "UTF-8")
 }
