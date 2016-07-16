@@ -1,5 +1,6 @@
 package cucumber.api.testng;
 
+import cucumber.api.event.TestRunFinished;
 import cucumber.runtime.ClassFinder;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Runtime;
@@ -9,7 +10,6 @@ import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
 import cucumber.runtime.model.CucumberFeature;
-import gherkin.formatter.Formatter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +19,7 @@ import java.util.List;
  */
 public class TestNGCucumberRunner {
     private Runtime runtime;
+    private TestNgReporter reporter;
     private RuntimeOptions runtimeOptions;
     private ResourceLoader resourceLoader;
     private FeatureResultListener resultListener;
@@ -36,10 +37,12 @@ public class TestNGCucumberRunner {
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(clazz);
         runtimeOptions = runtimeOptionsFactory.create();
 
-        TestNgReporter reporter = new TestNgReporter(System.out);
+        reporter = new TestNgReporter(System.out);
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
-        resultListener = new FeatureResultListener(runtimeOptions.reporter(classLoader), runtimeOptions.isStrict());
+        resultListener = new FeatureResultListener(runtimeOptions.isStrict());
         runtime = new Runtime(resourceLoader, classFinder, classLoader, runtimeOptions);
+        reporter.setEventPublisher(runtime.getEventBus());
+        resultListener.setEventPublisher(runtime.getEventBus());
     }
 
     /**
@@ -47,10 +50,8 @@ public class TestNGCucumberRunner {
      */
     public void runCukes() {
         for (CucumberFeature cucumberFeature : getFeatures()) {
-            cucumberFeature.run(
-                    runtimeOptions.formatter(classLoader),
-                    resultListener,
-                    runtime);
+            reporter.uri(cucumberFeature.getPath());
+            runtime.runFeature(cucumberFeature);
         }
         finish();
         if (!resultListener.isPassed()) {
@@ -60,10 +61,8 @@ public class TestNGCucumberRunner {
 
     public void runCucumber(CucumberFeature cucumberFeature) {
         resultListener.startFeature();
-        cucumberFeature.run(
-                runtimeOptions.formatter(classLoader),
-                resultListener,
-                runtime);
+        reporter.uri(cucumberFeature.getPath());
+        runtime.runFeature(cucumberFeature);
 
         if (!resultListener.isPassed()) {
             throw new CucumberException(resultListener.getFirstError());
@@ -71,10 +70,7 @@ public class TestNGCucumberRunner {
     }
 
     public void finish() {
-        Formatter formatter = runtimeOptions.formatter(classLoader);
-
-        formatter.done();
-        formatter.close();
+        runtime.getEventBus().send(new TestRunFinished());
         runtime.printSummary();
     }
 
@@ -82,7 +78,7 @@ public class TestNGCucumberRunner {
      * @return List of detected cucumber features
      */
     public List<CucumberFeature> getFeatures() {
-        return runtimeOptions.cucumberFeatures(resourceLoader);
+        return runtimeOptions.cucumberFeatures(resourceLoader, runtime.getEventBus());
     }
 
     /**
