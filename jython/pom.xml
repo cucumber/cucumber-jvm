@@ -90,17 +90,22 @@
                                 <taskdef name="groovy" classname="org.codehaus.groovy.ant.Groovy" classpathref="maven.plugin.classpath" />
                                 <groovy><![CDATA[
 import groovy.text.SimpleTemplateEngine
-import gherkin.I18n
+import gherkin.GherkinDialect
+import gherkin.GherkinDialectProvider
 
 def unsupported = ["ar", "bg", "el", "en_old", "fa", "he", "hi", "kn", "is", "ja", "ko", "pa", "pl", "ru", "sr_cyrl", "th", "tl", "tt", "uk", "uz", "zh_cn", "zh_tw"]
 def engine = new SimpleTemplateEngine()
 def templateSource = new File(project.baseDir, "src${File.separator}main${File.separator}code_generator${File.separator}I18n.jython.txt").getText()
 
-I18n.all.each { i18n ->
-  if (!unsupported.contains(i18n.underscoredIsoCode)) {
-    def binding = ["i18n":i18n]
+def dialectProvider = new GherkinDialectProvider()
+
+GherkinDialectProvider.DIALECTS.keySet().each { language ->
+  def dialect = dialectProvider.getDialect(language, null)
+  def normalized_language = dialect.language.replaceAll("[\\s-]", "_").toLowerCase()
+  if (!unsupported.contains(normalized_language)) {
+    def binding = ["i18n":dialect]
     template = engine.createTemplate(templateSource).make(binding)
-    file = new File(project.baseDir, "target${File.separator}generated-resources${File.separator}i18n${File.separator}cucumber${File.separator}runtime${File.separator}jython${File.separator}i18n${File.separator}${i18n.underscoredIsoCode.toUpperCase()}.py")
+    file = new File(project.baseDir, "target${File.separator}generated-resources${File.separator}i18n${File.separator}cucumber${File.separator}runtime${File.separator}jython${File.separator}i18n${File.separator}${normalized_language.toUpperCase()}.py")
     file.parentFile.mkdirs()
     file.write(template.toString(), "UTF-8")
   }
