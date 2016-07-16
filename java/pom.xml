@@ -68,7 +68,8 @@
 
                                 <groovy><![CDATA[
 import groovy.text.SimpleTemplateEngine
-import gherkin.I18n
+import gherkin.GherkinDialect
+import gherkin.GherkinDialectProvider
 
 def engine = new SimpleTemplateEngine()
 def templateSource = new File(project.baseDir, "src${File.separator}main${File.separator}code_generator${File.separator}I18n.java.txt").getText()
@@ -81,37 +82,48 @@ def normalize(s) {
   }
 }
 
+def localeFor(lang) {
+  languageAndCountry = lang.split("-")
+  if (languageAndCountry.length == 1) {
+    return new Locale(lang)
+  } else {
+    return new Locale(languageAndCountry[0], languageAndCountry[1])
+  }
+}
 
 // TODO: Need to add i18n.getName() and i18n.getNative() for better names.
 def package_html = """\
 <body>
 <p>
-    \${i18n.getLocale().getDisplayLanguage()}
+    \${locale.getDisplayLanguage()}
 </p>
 </body>
 """
 
-def unsupported = [] // We used to have problems with "kn", but it seems ok now.
+def unsupported = ["em"] // The generated files for Emoij do not compile.
+def dialectProvider = new GherkinDialectProvider()
 
-I18n.all.each { i18n ->
-  if (!unsupported.contains(i18n.underscoredIsoCode)) {
-    i18n.codeKeywords.each { kw ->
-      def normalized_kw = normalize(kw)
-      def binding = ["i18n":i18n, "kw":normalized_kw]
+GherkinDialectProvider.DIALECTS.keySet().each { language ->
+  def dialect = dialectProvider.getDialect(language, null)
+  def normalized_language = dialect.language.replaceAll("[\\s-]", "_").toLowerCase()
+  if (!unsupported.contains(normalized_language)) {
+    dialect.stepKeywords.findAll { !it.contains('*') && !it.matches("^\\d.*") }.unique().each { kw ->
+      def normalized_kw = normalize(kw.replaceAll("[\\s',!]", ""))
+      def binding = ["lang":normalized_language, "kw":normalized_kw]
       def template = engine.createTemplate(templateSource).make(binding)
-      def file = new File(project.baseDir, "target${File.separator}generated-sources${File.separator}i18n${File.separator}java${File.separator}cucumber${File.separator}api${File.separator}java${File.separator}${i18n.underscoredIsoCode}${File.separator}${normalized_kw}.java")
+      def file = new File(project.baseDir, "target${File.separator}generated-sources${File.separator}i18n${File.separator}java${File.separator}cucumber${File.separator}api${File.separator}java${File.separator}${normalized_language}${File.separator}${normalized_kw}.java")
       file.parentFile.mkdirs()
       file.write(template.toString(), "UTF-8")
     }
 
     // html
-    def binding = ["i18n":i18n]
+    def locale = localeFor(dialect.language)
+    def binding = ["locale":locale]
     def html = engine.createTemplate(package_html).make(binding).toString()
-    def file = new File(project.baseDir, "target${File.separator}generated-sources${File.separator}i18n${File.separator}java${File.separator}cucumber${File.separator}api${File.separator}java${File.separator}${i18n.underscoredIsoCode}${File.separator}package.html")
+    def file = new File(project.baseDir, "target${File.separator}generated-sources${File.separator}i18n${File.separator}java${File.separator}cucumber${File.separator}api${File.separator}java${File.separator}${normalized_language}${File.separator}package.html")
     file.write(html, "UTF-8")
   }
 }
-
         ]]></groovy>
 
                             </target>

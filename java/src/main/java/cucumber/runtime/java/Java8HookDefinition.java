@@ -5,8 +5,8 @@ import cucumber.api.java8.HookBody;
 import cucumber.api.java8.HookNoArgsBody;
 import cucumber.runtime.HookDefinition;
 import cucumber.runtime.Timeout;
-import gherkin.TagExpression;
-import gherkin.formatter.model.Tag;
+import cucumber.runtime.TagExpression;
+import gherkin.pickles.PickleTag;
 
 import java.util.Collection;
 
@@ -59,7 +59,7 @@ public class Java8HookDefinition implements HookDefinition {
     }
 
     @Override
-    public boolean matches(Collection<Tag> tags) {
+    public boolean matches(Collection<PickleTag> tags) {
         return tagExpression.evaluate(tags);
     }
 

@@ -6,8 +6,8 @@ import cucumber.runtime.CucumberException;
 import cucumber.runtime.HookDefinition;
 import cucumber.runtime.MethodFormat;
 import cucumber.runtime.Utils;
-import gherkin.TagExpression;
-import gherkin.formatter.model.Tag;
+import cucumber.runtime.TagExpression;
+import gherkin.pickles.PickleTag;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
@@ -61,7 +61,7 @@ class JavaHookDefinition implements HookDefinition {
     }
 
     @Override
-    public boolean matches(Collection<Tag> tags) {
+    public boolean matches(Collection<PickleTag> tags) {
         return tagExpression.evaluate(tags);
     }
 

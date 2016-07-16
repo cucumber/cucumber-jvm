@@ -9,7 +9,8 @@ import cucumber.runtime.HookDefinition;
 import cucumber.runtime.RuntimeGlue;
 import cucumber.runtime.UndefinedStepsTracker;
 import cucumber.runtime.xstream.LocalizedXStreams;
-import gherkin.formatter.model.Tag;
+import gherkin.pickles.PickleLocation;
+import gherkin.pickles.PickleTag;
 import org.junit.Test;
 
 import java.lang.reflect.Method;
@@ -91,7 +92,7 @@ public class JavaHookTest {
         backend.buildWorld();
         backend.addHook(BEFORE.getAnnotation(Before.class), BEFORE);
         HookDefinition before = glue.getBeforeHooks().get(0);
-        assertTrue(before.matches(asList(new Tag("@bar", 0), new Tag("@zap", 0))));
+        assertTrue(before.matches(asList(new PickleTag(mock(PickleLocation.class), "@bar"), new PickleTag(mock(PickleLocation.class), "@zap"))));
     }
 
     @Test
@@ -100,7 +101,7 @@ public class JavaHookTest {
         backend.buildWorld();
         backend.addHook(BEFORE.getAnnotation(Before.class), BEFORE);
         HookDefinition before = glue.getBeforeHooks().get(0);
-        assertFalse(before.matches(asList(new Tag("@bar", 0))));
+        assertFalse(before.matches(asList(new PickleTag(mock(PickleLocation.class), "@bar"))));
     }
 
     @Test

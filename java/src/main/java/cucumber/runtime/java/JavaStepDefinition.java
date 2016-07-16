@@ -1,14 +1,13 @@
 package cucumber.runtime.java;
 
 import cucumber.api.java.ObjectFactory;
+import cucumber.runtime.Argument;
 import cucumber.runtime.JdkPatternArgumentMatcher;
 import cucumber.runtime.MethodFormat;
 import cucumber.runtime.ParameterInfo;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.Utils;
-import gherkin.I18n;
-import gherkin.formatter.Argument;
-import gherkin.formatter.model.Step;
+import gherkin.pickles.PickleStep;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -34,12 +33,12 @@ class JavaStepDefinition implements StepDefinition {
         this.parameterInfos = ParameterInfo.fromMethod(method);
     }
 
-    public void execute(I18n i18n, Object[] args) throws Throwable {
+    public void execute(String language, Object[] args) throws Throwable {
         Utils.invoke(objectFactory.getInstance(method.getDeclaringClass()), method, timeoutMillis, args);
     }
 
-    public List<Argument> matchedArguments(Step step) {
-        return argumentMatcher.argumentsFrom(step.getName());
+    public List<Argument> matchedArguments(PickleStep step) {
+        return argumentMatcher.argumentsFrom(step.getText());
     }
 
     public String getLocation(boolean detail) {
