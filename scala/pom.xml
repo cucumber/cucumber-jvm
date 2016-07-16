@@ -108,11 +108,15 @@
 
                                     <groovy><![CDATA[
 import groovy.text.SimpleTemplateEngine
+import gherkin.GherkinDialectProvider
 
 def engine = new SimpleTemplateEngine()
 def templateSource = new File(project.baseDir, "..${File.separator}sources${File.separator}src${File.separator}main${File.separator}code_generator${File.separator}I18n.scala.txt").getText()
 
-template = engine.createTemplate(templateSource).make(null)
+def unsupported = ["em"]
+def dialectProvider = new GherkinDialectProvider()
+def binding = ["dialectProvider":dialectProvider, "unsupported":unsupported]
+template = engine.createTemplate(templateSource).make(binding)
 def file = new File(project.baseDir, "target${File.separator}generated-sources${File.separator}i18n${File.separator}cucumber${File.separator}api${File.separator}scala${File.separator}I18n.scala")
 file.parentFile.mkdirs()
 file.write(template.toString(), "UTF-8")
