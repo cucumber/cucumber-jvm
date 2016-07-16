@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>info.cukes</groupId>
     <artifactId>cucumber-jvm</artifactId>
-    <version>1.2.6-SNAPSHOT</version>
+    <version>2.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Cucumber-JVM</name>
     <url>http://cukes.info/</url>
@@ -22,7 +22,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <minimum.maven.version>3.1.1</minimum.maven.version>
         <outputDirectory>${project.build.directory}</outputDirectory>
-        <gherkin.version>2.12.2</gherkin.version>
+        <gherkin.version>4.0.0</gherkin.version>
         <groovy.version>2.4.7</groovy.version>
         <picocontainer.version>2.15</picocontainer.version>
         <scala-maven-plugin.version>3.2.2</scala-maven-plugin.version>
@@ -107,7 +107,7 @@
                 </exclusions>
             </dependency>
             <dependency>
-                <groupId>info.cukes</groupId>
+                <groupId>io.cucumber</groupId>
                 <artifactId>gherkin</artifactId>
                 <version>${gherkin.version}</version>
             </dependency>
@@ -700,7 +700,7 @@
                             <version>${groovy.version}</version>
                         </dependency>
                         <dependency>
-                            <groupId>info.cukes</groupId>
+                            <groupId>io.cucumber</groupId>
                             <artifactId>gherkin</artifactId>
                             <version>${gherkin.version}</version>
                         </dependency>
