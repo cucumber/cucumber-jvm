@@ -6,9 +6,9 @@ import static com.google.inject.matcher.Matchers.any;
 import com.google.inject.Binder;
 import com.google.inject.Module;
 
-import cucumber.metric.regulator.annotation.SpeedRegulator;
-import cucumber.metric.regulator.annotation.SpeedRegulators;
-import cucumber.metric.regulator.annotation.Timed;
+import cucumber.metric.annotation.SpeedRegulator;
+import cucumber.metric.annotation.SpeedRegulators;
+import cucumber.metric.annotation.Timed;
 import cucumber.metric.regulator.interceptor.SpeedRegulatorInterceptor;
 import cucumber.metric.regulator.interceptor.TimedInterceptor;
 

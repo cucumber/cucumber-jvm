@@ -1,4 +1,4 @@
-package cucumber.metric.regulator.annotation;
+package cucumber.metric.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -12,11 +12,11 @@ public @interface SpeedRegulator {
     /**
      * @return the key of targeted application.
      */
-    String[] application();
+    String application() default "";
 
     /**
-     * @return number of interaction with the targeted application server. 1 (default) means no restriction.
+     * @return number of interaction with the targeted application server. -1 (default) means no restriction.
      */
-    int cost() default 1;
+    int cost() default -1;
 
 }
