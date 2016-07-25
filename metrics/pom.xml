@@ -1,51 +1,37 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	
+
 	<parent>
-        <groupId>info.cukes</groupId>
-        <artifactId>cucumber-jvm</artifactId>
-        <relativePath>../pom.xml</relativePath>
-        <version>1.2.4</version>
-    </parent>
-	
+		<groupId>info.cukes</groupId>
+		<artifactId>cucumber-jvm</artifactId>
+		<relativePath>../pom.xml</relativePath>
+		<version>1.2.4</version>
+	</parent>
+
 	<artifactId>cucumber-metrics</artifactId>
 	<packaging>jar</packaging>
 	<name>Cucumber-JVM: Metrics</name>
+
 	
 	<dependencies>
 		<dependency>
 			<groupId>info.cukes</groupId>
 			<artifactId>cucumber-guice</artifactId>
 			<version>${project.version}</version>
-		</dependency>
+			</dependency>
 		<dependency>
 			<groupId>info.cukes</groupId>
 			<artifactId>cucumber-junit</artifactId>
-<!-- 			<version>${cucumber.version}</version> -->
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-<!-- 			<version>${junit.version}</version> -->
 		</dependency>
 		<dependency>
 			<groupId>com.google.inject</groupId>
 			<artifactId>guice</artifactId>
-<!-- 			<version>${guice.version}</version> -->
 		</dependency>
 	</dependencies>
-<!-- 	<build> -->
-<!-- 		<plugins> -->
-<!-- 			<plugin> -->
-<!-- 				<groupId>org.apache.maven.plugins</groupId> -->
-<!-- 				<artifactId>maven-compiler-plugin</artifactId> -->
-<!-- 				<version>3.1</version> -->
-<!-- 				<configuration> -->
-<!-- 					<source>1.7</source> -->
-<!-- 					<target>1.7</target> -->
-<!-- 				</configuration> -->
-<!-- 			</plugin> -->
-<!-- 		</plugins> -->
-<!-- 	</build> -->
+
 </project>
