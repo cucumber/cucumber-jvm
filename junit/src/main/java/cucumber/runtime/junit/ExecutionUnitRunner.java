@@ -12,11 +12,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Runs a scenario, or a "synthetic" scenario derived from an Examples row.
  */
 public class ExecutionUnitRunner extends ParentRunner<Step> {
+    
+    private static final int FILE_NAME_LENGTH_MAX = 240;
+    
     private final Runtime runtime;
     private final CucumberScenario cucumberScenario;
     private final JUnitReporter jUnitReporter;
@@ -42,12 +46,14 @@ public class ExecutionUnitRunner extends ParentRunner<Step> {
 
     @Override
     public String getName() {
-        String name = cucumberScenario.getVisualName();
+        return makeNameFilenameCompatible(cucumberScenario.getVisualName());
+        /*
         if (jUnitReporter.useFilenameCompatibleNames()) {
             return makeNameFilenameCompatible(name);
         } else {
             return name;
         }
+        */
     }
 
     @Override
@@ -83,12 +89,7 @@ public class ExecutionUnitRunner extends ParentRunner<Step> {
     protected Description describeChild(Step step) {
         Description description = stepDescriptions.get(step);
         if (description == null) {
-            String testName;
-            if (jUnitReporter.useFilenameCompatibleNames()) {
-                testName = makeNameFilenameCompatible(step.getKeyword() + step.getName());
-            } else {
-                testName = step.getKeyword() + step.getName();
-            }
+            String testName = makeNameFilenameCompatible(step.getKeyword() + step.getName());
             description = Description.createTestDescription(getName(), testName, step);
             stepDescriptions.put(step, description);
         }
@@ -112,6 +113,14 @@ public class ExecutionUnitRunner extends ParentRunner<Step> {
     }
 
     private String makeNameFilenameCompatible(String name) {
-        return name.replaceAll("[^A-Za-z0-9_]", "_");
+        
+        name = name.replaceAll("[^A-Za-z0-9_]", "_");
+        
+        if (name.length() > FILE_NAME_LENGTH_MAX) {
+            String timestamp = String.valueOf(System.currentTimeMillis());
+            name = name.substring(0, FILE_NAME_LENGTH_MAX - timestamp.length() - 1) + "_" + timestamp;
+        }
+        
+        return name;
     }
 }

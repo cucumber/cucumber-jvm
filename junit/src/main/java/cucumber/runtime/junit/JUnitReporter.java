@@ -121,10 +121,6 @@ public class JUnitReporter implements Reporter, Formatter {
         reporter.result(result);
     }
 
-    public boolean useFilenameCompatibleNames() {
-        return junitOptions.filenameCompatibleNames();
-    }
-
     private boolean isPendingOrUndefined(Result result) {
         Throwable error = result.getError();
         return Result.UNDEFINED == result || isPending(error);
