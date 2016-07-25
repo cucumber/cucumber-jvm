@@ -4,7 +4,7 @@
 * [Core] Specifying plugins on the command line via `--plugin` clobbers settings in the code ([#860](https://github.com/cucumber/cucumber-jvm/pull/860) Björn Rasmusson)
 * [Core] Make test assertion OS agnostic ([#897](https://github.com/cucumber/cucumber-jvm/pull/897/files) sid)
 * [Travis] Improve the travis build ([#829](https://github.com/cucumber/cucumber-jvm/pull/829) Björn Rasmusson)
-* [Core, Junit] Passthrough options for the JUnit Module ([#1002](https://github.com/cucumber/cucumber-jvm/pull/1002) Also resolves [#825](https://github.com/cucumber/cucumber-jvm/pull/825) and [#972](https://github.com/cucumber/cucumber-jvm/issues/972) Björn Rasmusson)
+* [Core, Junit] Passthrough options for the JUnit Module ([#1002](https://github.com/cucumber/cucumber-jvm/pull/1002), [#1029](https://github.com/cucumber/cucumber-jvm/pull/1029). Also resolves [#825](https://github.com/cucumber/cucumber-jvm/pull/825) and [#972](https://github.com/cucumber/cucumber-jvm/issues/972). Björn Rasmusson, with bug fix by Bernd Bindreiter)
 * [Android, Core, Guice, Junit] Improve code quality ensuring Utility Classes cannot be instantiated ([#945](https://github.com/cucumber/cucumber-jvm/pull/945) Kirill Vlasov)
 * [Core, Guice, Testng] Improve code quality using isEmpty instead of size comparison ([#942](https://github.com/cucumber/cucumber-jvm/pull/942) Kirill Vlasov)
 * [Clojure] Don't depend on cucumber-core in the clojure example ([#947](https://github.com/cucumber/cucumber-jvm/pull/947 Joe Corneli)
