@@ -35,8 +35,6 @@
 <!-- 			<version>${guice.version}</version> -->
 		</dependency>
 	</dependencies>
-
-
 <!-- 	<build> -->
 <!-- 		<plugins> -->
 <!-- 			<plugin> -->
