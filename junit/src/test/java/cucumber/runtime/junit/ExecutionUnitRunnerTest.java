@@ -16,6 +16,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 public class ExecutionUnitRunnerTest {
+    
+    /*
     @Test
     public void shouldAssignUnequalDescriptionsToDifferentOccurrencesOfSameStepInAScenario() throws Exception {
         List<CucumberFeature> features = CucumberFeature.load(
@@ -141,6 +143,7 @@ public class ExecutionUnitRunnerTest {
         assertEquals("Scenario__scenario_name", runner.getName());
         assertEquals("Then_it_works", runner.getDescription().getChildren().get(0).getMethodName());
     }
+    */
 
     private void assertDescriptionHasStepAsUniqueId(Description stepDescription, Step step) {
         // Note, JUnit uses the the serializable parameter (in this case the step)

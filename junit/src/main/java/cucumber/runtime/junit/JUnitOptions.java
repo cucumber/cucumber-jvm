@@ -13,7 +13,6 @@ public class JUnitOptions {
     private static String optionsText;
 
     private boolean allowStartedIgnored = false;
-    private boolean filenameCompatibleNames = false;
 
     /**
      * Create a new instance from a list of options, for example:
@@ -36,8 +35,6 @@ public class JUnitOptions {
                 System.exit(0);
             } else if (arg.equals("--no-allow-started-ignored") || arg.equals("--allow-started-ignored")) {
                 allowStartedIgnored = !arg.startsWith("--no-");
-            } else if (arg.equals("--no-filename-compatible-names") || arg.equals("--filename-compatible-names")) {
-                filenameCompatibleNames = !arg.startsWith("--no-");
             } else {
                 throw new CucumberException("Unknown option: " + arg);
             }
@@ -46,9 +43,6 @@ public class JUnitOptions {
 
     public boolean allowStartedIgnored() {
         return allowStartedIgnored;
-    }
-    public boolean filenameCompatibleNames() {
-        return filenameCompatibleNames;
     }
 
     private void printOptions() {
