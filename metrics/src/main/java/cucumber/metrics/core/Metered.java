@@ -1,4 +1,4 @@
-package cucumber.metric.core;
+package cucumber.metrics.core;
 
 /**
  * An object which maintains mean and exponentially-weighted rate.

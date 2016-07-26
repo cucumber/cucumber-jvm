@@ -1,4 +1,4 @@
-package cucumber.metric.regulator.interceptor;
+package cucumber.metrics.regulator.interceptor;
 
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.Method;
@@ -15,9 +15,9 @@ import javax.management.ObjectName;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 
-import cucumber.metric.annotation.Timed;
-import cucumber.metric.core.impl.Meter;
-import cucumber.metric.jmx.impl.Premier;
+import cucumber.metrics.annotation.Timed;
+import cucumber.metrics.core.impl.Meter;
+import cucumber.metrics.jmx.impl.Premier;
 
 public class TimedInterceptor implements MethodInterceptor {
 

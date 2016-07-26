@@ -11,7 +11,7 @@ Cucumber Metrics use Cucumber Guice for configuration.
 
 [Read package documentation offline (raw html)](src/main/java/cucumber/api/guice/package.html)
 
-Add guice.injector-source=cucumber.metric.regulator.injector.CucumberMetricsInjectorSource in src\test\resources\cucumber.properties (in your project)
+Add guice.injector-source=cucumber.metrics.regulator.injector.CucumberMetricsInjectorSource in src\test\resources\cucumber.properties (in your project)
 
 ## how to use Cucumber Metrics
 

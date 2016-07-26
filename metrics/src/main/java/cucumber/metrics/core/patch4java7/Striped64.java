@@ -1,10 +1,24 @@
-package java.util.concurrent.atomic;
+/*
+ * Written by Doug Lea with assistance from members of JCP JSR-166
+ * Expert Group and released to the public domain, as explained at
+ * http://creativecommons.org/publicdomain/zero/1.0/
+ *
+ * http://gee.cs.oswego.edu/cgi-bin/viewcvs.cgi/jsr166/src/jsr166e/Striped64.java?revision=1.8&view=markup
+ */
+package cucumber.metrics.core.patch4java7;
 
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
+import java.util.concurrent.atomic.AtomicLongFieldUpdater;
 
+//CHECKSTYLE:OFF
 /**
  * A package-local class holding common representation and mechanics for classes supporting dynamic striping on 64bit values. The class extends Number so that concrete subclasses must publicly do so.
+ * 
+ * @deprecated use {@link #java.util.concurrent.atomic.Striped64()} instead in java 8 or upper (Remove Striped64 and LongAdder when switching to Java 8).
  */
+@Deprecated
+@SuppressWarnings("all")
 abstract class Striped64 extends Number {
     /*
      * This class maintains a lazily-initialized table of atomically updated variables, plus an extra "base" field. The table size is a power of two. Indexing uses masked per-thread hash codes. Nearly
@@ -18,7 +32,7 @@ abstract class Striped64 extends Number {
      * CAS on base update), the table is initialized to size 2. The table size is doubled upon further contention until reaching the nearest power of two greater than or equal to the number of CPUS.
      * Table slots remain empty (null) until they are needed.
      *
-     * A single spinlock ("busy") is used for initializing and resizing the table, as well as populating slots with new Cells. There is no need for a blocking lock: When the lock is not available,
+     * A single spinlock ("busy") is used for initializing and resizing the table, as well as populating slots with new Cells. There is no need for a blocking lock; when the lock is not available,
      * threads try other slots (or the base). During these retries, there is increased contention and reduced locality, which is still better than alternatives.
      *
      * Per-thread hash codes are initialized to random values. Contention and/or table collisions are indicated by failed CASes when performing an update operation (see method retryUpdate). Upon a
@@ -37,7 +51,7 @@ abstract class Striped64 extends Number {
 
     /**
      * Padded variant of AtomicLong supporting only raw accesses plus CAS. The value field is placed between pads, hoping that the JVM doesn't reorder them.
-     *
+     * <p/>
      * JVM intrinsics note: It would be possible to use a release-only form of CAS here, if it were provided.
      */
     static final class Cell {
@@ -50,21 +64,10 @@ abstract class Striped64 extends Number {
         }
 
         final boolean cas(long cmp, long val) {
-            return UNSAFE.compareAndSwapLong(this, valueOffset, cmp, val);
+            return valueUpdater.compareAndSet(this, cmp, val);
         }
 
-        // Unsafe mechanics
-        private static final sun.misc.Unsafe UNSAFE;
-        private static final long valueOffset;
-        static {
-            try {
-                UNSAFE = getUnsafe();
-                Class<?> ak = Cell.class;
-                valueOffset = UNSAFE.objectFieldOffset(ak.getDeclaredField("value"));
-            } catch (Exception e) {
-                throw new Error(e);
-            }
-        }
+        private static final AtomicLongFieldUpdater<Cell> valueUpdater = AtomicLongFieldUpdater.newUpdater(Cell.class, "value");
 
     }
 
@@ -91,12 +94,17 @@ abstract class Striped64 extends Number {
         }
     }
 
+    static final AtomicLongFieldUpdater<Striped64> baseUpdater = AtomicLongFieldUpdater.newUpdater(Striped64.class, "base");
+    static final AtomicIntegerFieldUpdater<Striped64> busyUpdater = AtomicIntegerFieldUpdater.newUpdater(Striped64.class, "busy");
+
     /**
      * Static per-thread hash codes. Shared across all instances to reduce ThreadLocal pollution and because adjustments due to collisions in one table are likely to be appropriate for others.
      */
     static final ThreadHashCode threadHashCode = new ThreadHashCode();
 
-    /** Number of CPUS, to place bound on table size */
+    /**
+     * Number of CPUS, to place bound on table size
+     */
     static final int NCPU = Runtime.getRuntime().availableProcessors();
 
     /**
@@ -124,14 +132,14 @@ abstract class Striped64 extends Number {
      * CASes the base field.
      */
     final boolean casBase(long cmp, long val) {
-        return UNSAFE.compareAndSwapLong(this, baseOffset, cmp, val);
+        return baseUpdater.compareAndSet(this, cmp, val);
     }
 
     /**
      * CASes the busy field from 0 to 1 to acquire lock.
      */
     final boolean casBusy() {
-        return UNSAFE.compareAndSwapInt(this, busyOffset, 0, 1);
+        return busyUpdater.compareAndSet(this, 0, 1);
     }
 
     /**
@@ -252,49 +260,5 @@ abstract class Striped64 extends Number {
         }
     }
 
-    // Unsafe mechanics
-    private static final sun.misc.Unsafe UNSAFE;
-    private static final long baseOffset;
-    private static final long busyOffset;
-    static {
-        try {
-            UNSAFE = getUnsafe();
-            Class<?> sk = Striped64.class;
-            baseOffset = UNSAFE.objectFieldOffset(sk.getDeclaredField("base"));
-            busyOffset = UNSAFE.objectFieldOffset(sk.getDeclaredField("busy"));
-        } catch (Exception e) {
-            throw new Error(e);
-        }
-    }
-
-    /**
-     * Returns a sun.misc.Unsafe. Suitable for use in a 3rd party package. Replace with a simple call to Unsafe.getUnsafe when integrating into a jdk.
-     *
-     * @return a sun.misc.Unsafe
-     */
-    private static sun.misc.Unsafe getUnsafe() {
-        try {
-            return sun.misc.Unsafe.getUnsafe();
-        } catch (SecurityException tryReflectionInstead) {
-        }
-        try {
-            return java.security.AccessController.doPrivileged(new java.security.PrivilegedExceptionAction<sun.misc.Unsafe>() {
-                @Override
-                public sun.misc.Unsafe run() throws Exception {
-                    Class<sun.misc.Unsafe> k = sun.misc.Unsafe.class;
-                    for (java.lang.reflect.Field f : k.getDeclaredFields()) {
-                        f.setAccessible(true);
-                        Object x = f.get(null);
-                        if (k.isInstance(x)) {
-                            return k.cast(x);
-                        }
-                    }
-                    throw new NoSuchFieldError("the Unsafe");
-                }
-            });
-        } catch (java.security.PrivilegedActionException e) {
-            throw new RuntimeException("Could not initialize intrinsics", e.getCause());
-        }
-    }
-
 }
+// CHECKSTYLE:ON

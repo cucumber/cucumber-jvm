@@ -1,6 +1,6 @@
-package cucumber.metric.jmx.impl;
+package cucumber.metrics.jmx.impl;
 
-import cucumber.metric.jmx.PremierMBean;
+import cucumber.metrics.jmx.PremierMBean;
 
 public class Premier implements PremierMBean {
 

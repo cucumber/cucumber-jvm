@@ -1,6 +1,7 @@
-package java.util.concurrent.atomic;
+package cucumber.metrics.core.patch4java7;
 
 import java.io.Serializable;
+import java.util.concurrent.atomic.AtomicLong;
 
 // CHECKSTYLE:OFF
 /**
@@ -21,7 +22,10 @@ import java.io.Serializable;
  *
  * @author Doug Lea
  * @since 1.8
+ *
+ * @deprecated use {@link #java.util.concurrent.atomic.LongAdder()} instead in java 8 or upper Remove Striped64 and LongAdder when switching to Java 8.
  */
+@Deprecated
 @SuppressWarnings("all")
 public class LongAdder extends Striped64 implements Serializable {
     private static final long serialVersionUID = 7249069246863182397L;

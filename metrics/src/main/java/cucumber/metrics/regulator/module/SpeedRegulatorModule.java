@@ -1,4 +1,4 @@
-package cucumber.metric.regulator.module;
+package cucumber.metrics.regulator.module;
 
 import static com.google.inject.matcher.Matchers.annotatedWith;
 import static com.google.inject.matcher.Matchers.any;
@@ -6,11 +6,11 @@ import static com.google.inject.matcher.Matchers.any;
 import com.google.inject.Binder;
 import com.google.inject.Module;
 
-import cucumber.metric.annotation.SpeedRegulator;
-import cucumber.metric.annotation.SpeedRegulators;
-import cucumber.metric.annotation.Timed;
-import cucumber.metric.regulator.interceptor.SpeedRegulatorInterceptor;
-import cucumber.metric.regulator.interceptor.TimedInterceptor;
+import cucumber.metrics.annotation.SpeedRegulator;
+import cucumber.metrics.annotation.SpeedRegulators;
+import cucumber.metrics.annotation.Timed;
+import cucumber.metrics.regulator.interceptor.SpeedRegulatorInterceptor;
+import cucumber.metrics.regulator.interceptor.TimedInterceptor;
 
 public class SpeedRegulatorModule implements Module {
 

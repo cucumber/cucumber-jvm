@@ -1,9 +1,10 @@
-package cucumber.metric.core.impl;
+package cucumber.metrics.core.impl;
 
 import static java.lang.Math.exp;
 
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.LongAdder;
+
+import cucumber.metrics.core.patch4java7.LongAdder;
 
 /**
  * An exponentially-weighted moving average.

@@ -1,4 +1,4 @@
-package cucumber.metric.regulator.interceptor;
+package cucumber.metrics.regulator.interceptor;
 
 import java.lang.reflect.Method;
 import java.util.concurrent.ConcurrentHashMap;
@@ -7,9 +7,9 @@ import java.util.concurrent.ConcurrentMap;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 
-import cucumber.metric.annotation.SpeedRegulator;
-import cucumber.metric.annotation.SpeedRegulators;
-import cucumber.metric.core.impl.Meter;
+import cucumber.metrics.annotation.SpeedRegulator;
+import cucumber.metrics.annotation.SpeedRegulators;
+import cucumber.metrics.core.impl.Meter;
 
 public class SpeedRegulatorInterceptor implements MethodInterceptor {
 

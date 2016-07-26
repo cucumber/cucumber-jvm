@@ -1,4 +1,4 @@
-package cucumber.metric.jmx;
+package cucumber.metrics.jmx;
 
 public interface PremierMBean {
 

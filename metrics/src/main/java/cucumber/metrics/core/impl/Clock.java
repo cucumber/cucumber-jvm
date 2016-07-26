@@ -1,4 +1,4 @@
-package cucumber.metric.core.impl;
+package cucumber.metrics.core.impl;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
