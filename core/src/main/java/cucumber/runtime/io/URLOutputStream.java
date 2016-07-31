@@ -48,7 +48,7 @@ public class URLOutputStream extends OutputStream {
 
     private void ensureParentDirExists(File file) throws IOException {
         if (file.getParentFile() != null && !file.getParentFile().isDirectory()) {
-            boolean ok = file.getParentFile().mkdirs();
+            boolean ok = file.getParentFile().mkdirs() || file.getParentFile().isDirectory();
             if (!ok) {
                 throw new IOException("Failed to create directory " + file.getParentFile().getAbsolutePath());
             }
