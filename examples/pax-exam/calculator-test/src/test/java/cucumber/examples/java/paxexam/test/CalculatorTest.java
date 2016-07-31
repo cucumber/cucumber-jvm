@@ -49,14 +49,14 @@ public class CalculatorTest {
     public Option[] config() {
 
         return options(
-            mavenBundle("info.cukes", "pax-exam-calculator-api"),
-            mavenBundle("info.cukes", "pax-exam-calculator-service"),
+            mavenBundle("io.cucumber", "pax-exam-calculator-api"),
+            mavenBundle("io.cucumber", "pax-exam-calculator-service"),
 
-            mavenBundle("info.cukes", "gherkin"),
+            mavenBundle("io.cucumber", "gherkin"),
             mavenBundle("info.cukes", "cucumber-jvm-deps"),
-            mavenBundle("info.cukes", "cucumber-core"),
-            mavenBundle("info.cukes", "cucumber-java"),
-            mavenBundle("info.cukes", "cucumber-osgi"),
+            mavenBundle("io.cucumber", "cucumber-core"),
+            mavenBundle("io.cucumber", "cucumber-java"),
+            mavenBundle("io.cucumber", "cucumber-osgi"),
 
             mavenBundle("org.slf4j", "slf4j-api"),
             mavenBundle("ch.qos.logback", "logback-core"),

@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>info.cukes.android-examples</groupId>
+        <groupId>io.cucumber.android-examples</groupId>
         <artifactId>android-examples</artifactId>
         <relativePath>../pom.xml</relativePath>
         <version>2.0.0-SNAPSHOT</version>
@@ -16,27 +16,27 @@
 
     <dependencies>
         <dependency>
-            <groupId>info.cukes</groupId>
+            <groupId>io.cucumber</groupId>
             <artifactId>cucumber-android</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>info.cukes</groupId>
+            <groupId>io.cucumber</groupId>
             <artifactId>cucumber-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>info.cukes</groupId>
+            <groupId>io.cucumber</groupId>
             <artifactId>cucumber-picocontainer</artifactId>
         </dependency>
         <dependency>
-            <groupId>info.cukes.android-examples</groupId>
+            <groupId>io.cucumber.android-examples</groupId>
             <artifactId>cukelator</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
         <!-- declare apk dependency for android:deploy-dependencies target -->
         <dependency>
-            <groupId>info.cukes.android-examples</groupId>
+            <groupId>io.cucumber.android-examples</groupId>
             <artifactId>cukelator</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
