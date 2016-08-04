@@ -161,7 +161,7 @@ public class CucumberFeature {
         formatter.feature(getGherkinFeature());
 
         for (CucumberTagStatement cucumberTagStatement : getFeatureElements()) {
-            //Run the scenario, it should handle before and after hooks
+            //Run the scenario, it should handle before, after and afterStep hooks
             cucumberTagStatement.run(formatter, reporter, runtime);
         }
         formatter.eof();

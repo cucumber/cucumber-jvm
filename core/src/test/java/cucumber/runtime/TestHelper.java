@@ -147,8 +147,9 @@ public class TestHelper {
     private static void mockHooks(RuntimeGlue glue, final List<SimpleEntry<String, Result>> hooks) throws Throwable {
         List<HookDefinition> beforeHooks = new ArrayList<HookDefinition>();
         List<HookDefinition> afterHooks = new ArrayList<HookDefinition>();
+        List<HookDefinition> afterStepHooks = new ArrayList<HookDefinition>();
         for (SimpleEntry<String, Result> hookEntry : hooks) {
-            TestHelper.mockHook(hookEntry, beforeHooks, afterHooks);
+            TestHelper.mockHook(hookEntry, beforeHooks, afterHooks, afterStepHooks);
         }
         if (!beforeHooks.isEmpty()) {
             when(glue.getBeforeHooks()).thenReturn(beforeHooks);
@@ -156,10 +157,13 @@ public class TestHelper {
         if (!afterHooks.isEmpty()) {
             when(glue.getAfterHooks()).thenReturn(afterHooks);
         }
+        if (afterStepHooks.size() != 0) {
+            when(glue.getAfterStepHooks()).thenReturn(afterStepHooks);
+        }
     }
 
     private static void mockHook(SimpleEntry<String, Result> hookEntry, List<HookDefinition> beforeHooks,
-                                 List<HookDefinition> afterHooks) throws Throwable {
+                                 List<HookDefinition> afterHooks, List<HookDefinition> afterStepHooks) throws Throwable {
         HookDefinition hook = mock(HookDefinition.class);
         when(hook.matches(anyCollectionOf(Tag.class))).thenReturn(true);
         if (hookEntry.getValue().getStatus().equals("failed")) {
@@ -167,12 +171,15 @@ public class TestHelper {
         } else if (hookEntry.getValue().getStatus().equals("pending")) {
             doThrow(new PendingException()).when(hook).execute((cucumber.api.Scenario) any());
         }
-        if ("before".equals(hookEntry.getKey())) {
+        String hookType = hookEntry.getKey();
+        if ("before".equals(hookType)) {
             beforeHooks.add(hook);
-        } else if ("after".equals(hookEntry.getKey())) {
+        } else if ("after".equals(hookType)) {
             afterHooks.add(hook);
+        } else if ("afterStep".equals(hookType)) {
+            afterStepHooks.add(hook);
         } else {
-            fail("Only before and after hooks are allowed, hook type found was: " + hookEntry.getKey());
+            fail("Only before, after and afterStep hooks are allowed, hook type found was: " + hookEntry.getKey());
         }
     }
 

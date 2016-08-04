@@ -117,6 +117,11 @@ class ProgressFormatter implements Formatter, Reporter, ColorAware {
         handleHook(match, result, "A");
     }
 
+    @Override
+    public void afterStep(Match match, Result result) {
+        handleHook(match, result, ">");
+    }
+
     private void handleHook(Match match, Result result, String character) {
         if (result.getStatus().equals(Result.FAILED)) {
             if (!monochrome) {

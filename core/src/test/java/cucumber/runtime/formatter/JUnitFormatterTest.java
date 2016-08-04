@@ -292,6 +292,40 @@ public class JUnitFormatterTest {
     }
 
     @Test
+    public void should_handle_failure_in_afterStep_hook() throws Throwable {
+        CucumberFeature feature = TestHelper.feature("path/test.feature",
+                "Feature: feature name\n" +
+                        "  Scenario: scenario name\n" +
+                        "    Given first step\n" +
+                        "    When second step\n" +
+                        "    Then third step\n");
+        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        stepsToResult.put("first step", result("passed"));
+        List<SimpleEntry<String, Result>> hooks = new ArrayList<SimpleEntry<String, Result>>();
+        hooks.add(TestHelper.hookEntry("afterStep", result("failed")));
+        stepsToResult.put("second step", result("skipped"));
+        stepsToResult.put("third step", result("skipped"));
+        long stepHookDuration = milliSeconds(1);
+
+        String formatterOutput = runFeatureWithJUnitFormatter(feature, stepsToResult, hooks, stepHookDuration);
+
+        String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
+                "<testsuite failures=\"1\" name=\"cucumber.runtime.formatter.JUnitFormatter\" skipped=\"0\" tests=\"1\" time=\"0.002\">\n" +
+                "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0.002\">\n" +
+                "        <failure message=\"the stack trace\"><![CDATA[" +
+                "Given first step............................................................passed\n" +
+                "When second step............................................................skipped\n" +
+                "Then third step.............................................................skipped\n" +
+                "\n" +
+                "StackTrace:\n" +
+                "the stack trace" +
+                "]]></failure>\n" +
+                "    </testcase>\n" +
+                "</testsuite>\n";
+        assertXmlEqual(expected, formatterOutput);
+    }
+
+    @Test
     public void should_accumulate_time_from_steps_and_hooks() throws Throwable {
         CucumberFeature feature = TestHelper.feature("path/test.feature",
                 "Feature: feature name\n" +

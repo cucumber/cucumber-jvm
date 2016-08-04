@@ -103,6 +103,11 @@ public class JavaStepDefinitionTest {
             }
 
             @Override
+            public void afterStep(Match match, Result result) {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
             public void match(Match match) {
             }
 

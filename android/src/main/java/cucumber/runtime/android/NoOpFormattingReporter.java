@@ -100,6 +100,11 @@ abstract class NoOpFormattingReporter implements Formatter, Reporter {
     }
 
     @Override
+    public void afterStep(Match match, Result result) {
+        // NoOp
+    }
+
+    @Override
     public void match(Match match) {
         // NoOp
     }

@@ -25,6 +25,12 @@ public class FeatureResultListener implements Reporter {
     }
 
     @Override
+    public void afterStep(Match match, Result result) {
+        collectError(result);
+        reporter.afterStep(match, result);
+    }
+
+    @Override
     public void before(Match match, Result result) {
         collectError(result);
         reporter.before(match, result);

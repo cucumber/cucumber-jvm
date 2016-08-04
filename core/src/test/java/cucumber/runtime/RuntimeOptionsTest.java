@@ -472,6 +472,10 @@ class FormatterMissingLifecycleMethods implements Formatter, Reporter {
     }
 
     @Override
+    public void afterStep(Match arg0, Result arg1) {
+    }
+
+    @Override
     public void before(Match arg0, Result arg1) {
     }
 

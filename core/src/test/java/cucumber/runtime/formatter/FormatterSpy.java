@@ -23,6 +23,11 @@ public class FormatterSpy implements Formatter, Reporter {
     }
 
     @Override
+    public void afterStep(Match arg0, Result arg1) {
+        calls.append("    afterStep\n");
+    }
+
+    @Override
     public void before(Match arg0, Result arg1) {
         calls.append("before\n");
     }

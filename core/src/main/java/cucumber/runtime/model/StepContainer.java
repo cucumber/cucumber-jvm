@@ -5,9 +5,12 @@ import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.BasicStatement;
 import gherkin.formatter.model.Step;
+import gherkin.formatter.model.Tag;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+
 
 public class StepContainer {
     private final List<Step> steps = new ArrayList<Step>();
@@ -34,13 +37,14 @@ public class StepContainer {
         }
     }
 
-    void runSteps(Reporter reporter, Runtime runtime) {
+    void runSteps(Reporter reporter, Runtime runtime, Set<Tag> tags) {
         for (Step step : getSteps()) {
-            runStep(step, reporter, runtime);
+            String stepResult = runStep(step, reporter, runtime);
+            runtime.runAfterStepHooks(reporter, tags, stepResult);
         }
     }
 
-    void runStep(Step step, Reporter reporter, Runtime runtime) {
-        runtime.runStep(cucumberFeature.getPath(), step, reporter, cucumberFeature.getI18n());
+    String runStep(Step step, Reporter reporter, Runtime runtime) {
+        return runtime.runStep(cucumberFeature.getPath(), step, reporter, cucumberFeature.getI18n());
     }
 }

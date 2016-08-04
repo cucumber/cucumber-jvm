@@ -140,6 +140,11 @@ class HTMLFormatter implements Formatter, Reporter {
     }
 
     @Override
+    public void afterStep(Match match, Result result) {
+        jsFunctionCall("afterStep", result);
+    }
+
+    @Override
     public void match(Match match) {
         jsFunctionCall("match", match);
     }
