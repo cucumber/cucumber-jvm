@@ -3,14 +3,16 @@ package cucumber.runtime.xstream;
 import cucumber.runtime.table.CamelCaseStringConverter;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import static java.util.Arrays.asList;
 
 public class ComplexTypeWriter extends CellWriter {
     private final List<String> columnNames;
-    private final List<String> fieldNames = new ArrayList<String>();
-    private final List<String> fieldValues = new ArrayList<String>();
+    private Map<String, String> fields = new LinkedHashMap<String, String>();
+    private String currentKey;
 
     private int nodeDepth = 0;
 
@@ -20,7 +22,7 @@ public class ComplexTypeWriter extends CellWriter {
 
     @Override
     public List<String> getHeader() {
-        return columnNames.isEmpty() ? fieldNames : columnNames;
+        return columnNames.isEmpty() ? new ArrayList<String>(fields.keySet()) : columnNames;
     }
 
     @Override
@@ -30,24 +32,24 @@ public class ComplexTypeWriter extends CellWriter {
             String[] explicitFieldValues = new String[columnNames.size()];
             int n = 0;
             for (String columnName : columnNames) {
-                int index = fieldNames.indexOf(converter.map(columnName));
-                if (index == -1) {
-                    explicitFieldValues[n] = "";
+                final String convertedColumnName = converter.map(columnName);
+                if (fields.containsKey(convertedColumnName)) {
+                    explicitFieldValues[n] = fields.get(convertedColumnName);
                 } else {
-                    explicitFieldValues[n] = fieldValues.get(index);
+                    explicitFieldValues[n] = "";
                 }
                 n++;
             }
             return asList(explicitFieldValues);
         } else {
-            return fieldValues;
+            return new ArrayList<String>(fields.values());
         }
     }
 
     @Override
     public void startNode(String name) {
         if (nodeDepth == 1) {
-            this.fieldNames.add(name);
+            currentKey = name;
         }
         nodeDepth++;
     }
@@ -58,12 +60,13 @@ public class ComplexTypeWriter extends CellWriter {
 
     @Override
     public void setValue(String value) {
-        fieldValues.add(value == null ? "" : value);
+        fields.put(currentKey, value == null ? "" : value);
     }
 
     @Override
     public void endNode() {
         nodeDepth--;
+        currentKey = null;
     }
 
     @Override
