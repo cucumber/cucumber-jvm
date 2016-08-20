@@ -1,7 +1,7 @@
 package cucumber.runtime.java8;
 
-import cucumber.runtime.CucumberException;
 import cucumber.api.java8.StepdefBody;
+import cucumber.runtime.CucumberException;
 import cucumber.runtime.java.TypeIntrospector;
 import sun.reflect.ConstantPool;
 
@@ -42,21 +42,16 @@ public class ConstantPoolTypeIntrospector implements TypeIntrospector {
         return typeArguments;
     }
 
-    private String getLambdaTypeString(ConstantPool constantPool) {
-        int size = constantPool.getSize();
-        String[] memberRef = null;
-
-        // find last element in constantPool with valid memberRef
-        // - previously always at size-2 index but changed with JDK 1.8.0_60
-        for (int i = size - 1; i > -1; i--) {
+    String getLambdaTypeString(ConstantPool constantPool) {
+        int index = constantPool.getSize();
+        while (--index > 0){
             try {
-                memberRef = constantPool.getMemberRefInfoAt(i);
-		return memberRef[2];
-            } catch (IllegalArgumentException e) {
-                // eat error; null entry at ConstantPool index?
+                return constantPool.getMemberRefInfoAt(index)[2];
+            } catch (IllegalArgumentException | IndexOutOfBoundsException e) {
+                // eat error; null entry at ConstantPool index? less than 3 elements?
             }
         }
-	throw new CucumberException("Couldn't find memberRef.");
+        throw new CucumberException("Couldn't find memberRef.");
     }
 
 }
