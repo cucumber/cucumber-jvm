@@ -67,4 +67,32 @@ public class ConstantPoolTypeIntrospectorTest {
         //then
         assertEquals("memberRef", memberRef);
     }
+
+    @Test
+    public void should_return_member_ref_when_first_element_returns_member_ref() {
+        //given
+        given(constantPool.getSize()).willReturn(3);
+        given(constantPool.getMemberRefInfoAt(0)).willReturn(new String[]{"a", "b", "memberRef"});
+        givenThrowIllegalArgumentExceptionAt(1, 2);
+
+        //when
+        String memberRef = constantPoolTypeIntrospector.getLambdaTypeString(constantPool);
+
+        //then
+        assertEquals("memberRef", memberRef);
+    }
+
+    @Test
+    public void should_return_member_ref_when_last_element_returns_member_ref() {
+        //given
+        given(constantPool.getSize()).willReturn(3);
+        given(constantPool.getMemberRefInfoAt(2)).willReturn(new String[]{"a", "b", "memberRef"});
+        givenThrowIllegalArgumentExceptionAt(0, 1);
+
+        //when
+        String memberRef = constantPoolTypeIntrospector.getLambdaTypeString(constantPool);
+
+        //then
+        assertEquals("memberRef", memberRef);
+    }
 }

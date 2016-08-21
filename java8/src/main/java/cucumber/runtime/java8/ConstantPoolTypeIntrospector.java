@@ -44,7 +44,7 @@ public class ConstantPoolTypeIntrospector implements TypeIntrospector {
 
     String getLambdaTypeString(ConstantPool constantPool) {
         int index = constantPool.getSize();
-        while (--index > 0) {
+        while (index-- > 0) {
             try {
                 return constantPool.getMemberRefInfoAt(index)[2];
             } catch (IllegalArgumentException | IndexOutOfBoundsException e) {
