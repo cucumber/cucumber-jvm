@@ -13,7 +13,7 @@
     <name>Cucumber-JVM: Scala (2.12)</name>
 
     <properties>
-        <scala.version>2.12.0-M1</scala.version>
+        <scala.version>2.12.0-M4</scala.version>
     </properties>
 
     <dependencies>
