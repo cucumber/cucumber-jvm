@@ -20,9 +20,7 @@ Cucumber Metrics use java annotations:
 ### @Timed
 
     @Timed
-
     @Given("^me a hello, please. Best Regards '(.*)'.$")
-
     public void hello(String name) {
         logger.info("Hello " + name + "!");
     }
@@ -30,13 +28,9 @@ Cucumber Metrics use java annotations:
 or
 
     @Timed(name="hello")
-
     @Given("^me a hello, please. Best Regards '(.*)'.$")
-
     public void hello(String name) {
-
         logger.info("Hello " + name + "!");
-    
     }
 
 Every time your scenarios using the method "hello" you get the following trace:
@@ -45,16 +39,12 @@ Cucumber Metrics TimedInterceptor invoke method public void your.package.your.cl
 
 ### @SpeedRegulators and @SpeedRegulator
 
-    @SpeedRegulators is a list of @SpeedRegulator
+@SpeedRegulators is a list of @SpeedRegulator
 
     @SpeedRegulators({ @SpeedRegulator(application = "APP_1", cost = 500000000), @SpeedRegulator(application = "APP_2", cost = 2000000000) })
-
     @Given("^me a hello, please. Best Regards '(.*)'.$")
-
     public void hello(String name) {
-
         logger.info("Hello " + name + "!");
-    
     }
 
 application: name or key of targeted application
