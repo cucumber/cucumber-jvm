@@ -14,7 +14,7 @@ public class Demo {
     @Timed
     @SpeedRegulators({ @SpeedRegulator(application = "APP_1"), @SpeedRegulator(application = "APP_2", cost = 2000000000) })
     @Given("^me a hello, please. Best Regards '(.*)'.$")
-    public void hello(String name) throws InterruptedException, InstantiationException, IllegalAccessException {
+    public void hello(String name) {
         logger.info("Hello " + name + "!");
     }
 }
