@@ -20,17 +20,25 @@ Cucumber Metrics use java annotations:
 ### @Timed
 
 @Timed
+
 @Given("^me a hello, please. Best Regards '(.*)'.$")
-public void hello(String name) throws InterruptedException, InstantiationException, IllegalAccessException {
+
+public void hello(String name) {
+
     logger.info("Hello " + name + "!");
+    
 }
 
 or
 
 @Timed(name="hello")
+
 @Given("^me a hello, please. Best Regards '(.*)'.$")
-public void hello(String name) throws InterruptedException, InstantiationException, IllegalAccessException {
+
+public void hello(String name) {
+
     logger.info("Hello " + name + "!");
+    
 }
 
 Every time your scenarios using the method "hello" you get the following trace:
