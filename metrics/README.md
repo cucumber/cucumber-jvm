@@ -19,41 +19,43 @@ Cucumber Metrics use java annotations:
 
 ### @Timed
 
-@Timed
+    @Timed
 
-@Given("^me a hello, please. Best Regards '(.*)'.$")
+    @Given("^me a hello, please. Best Regards '(.*)'.$")
 
-public void hello(String name) {
-
-    logger.info("Hello " + name + "!");
-    
-}
+    public void hello(String name) {
+        logger.info("Hello " + name + "!");
+    }
 
 or
 
-@Timed(name="hello")
+    @Timed(name="hello")
 
-@Given("^me a hello, please. Best Regards '(.*)'.$")
+    @Given("^me a hello, please. Best Regards '(.*)'.$")
 
-public void hello(String name) {
+    public void hello(String name) {
 
-    logger.info("Hello " + name + "!");
+        logger.info("Hello " + name + "!");
     
-}
+    }
 
 Every time your scenarios using the method "hello" you get the following trace:
 
-Cucumber Metrics TimedInterceptor invoke method public void your.package.your.class.hello(java.lang.String) throws java.lang.InterruptedException,java.lang.InstantiationException,java.lang.IllegalAccessException is called on your.package.your.class$$EnhancerByGuice$$9aa0e4ca@cda4919 with args [Ljava.lang.Object;@7f4d9395
+Cucumber Metrics TimedInterceptor invoke method public void your.package.your.class.hello(java.lang.String) is called on your.package.your.class$$EnhancerByGuice$$9aa0e4ca@cda4919 with args [Ljava.lang.Object;@7f4d9395
 
 ### @SpeedRegulators and @SpeedRegulator
 
-@SpeedRegulators is a list of @SpeedRegulator
+    @SpeedRegulators is a list of @SpeedRegulator
 
-@SpeedRegulators({ @SpeedRegulator(application = "APP_1", cost = 500000000), @SpeedRegulator(application = "APP_2", cost = 2000000000) })
-@Given("^me a hello, please. Best Regards '(.*)'.$")
-public void hello(String name) throws InterruptedException, InstantiationException, IllegalAccessException {
-    logger.info("Hello " + name + "!");
-}
+    @SpeedRegulators({ @SpeedRegulator(application = "APP_1", cost = 500000000), @SpeedRegulator(application = "APP_2", cost = 2000000000) })
+
+    @Given("^me a hello, please. Best Regards '(.*)'.$")
+
+    public void hello(String name) {
+
+        logger.info("Hello " + name + "!");
+    
+    }
 
 application: name or key of targeted application
 cost: downtime (in nano second) for the targeted application (example: 0.5s = 500000000)
