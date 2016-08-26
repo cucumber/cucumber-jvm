@@ -1,17 +1,17 @@
-# Cucumber-Java-Wire
+# Cucumber-Wire
 
 ## Background
 
 Cucumber-Java can be used in conjunction with a runner (such as JUnit)
 to write feature steps and run tests solely in Java.
 
-Cucumber-Wire can be used with Cucumber-CPP to write tests in C++ and use
+The [Wire protocol][wire-protocol] can be used with Cucumber-CPP to write tests in C++ and use
 Cucumber to run your feature files integrated using the wire protocol.
 
 ## What this library provides
 
 There are cases where you will want to orchestrate tests of a library
-which is implemented in both C++ and Java. Cucumber-Java-Wire is a port
+which is implemented in both C++ and Java. Cucumber-Wire is a port
 of the Cucumber-CPP implementation (with obvious language-specific
 differences) and supports running Java feature steps using the wire
 protocol.
@@ -43,11 +43,11 @@ With this library, you can do things such as the following:
           | Java | C++  | bar   |
 
 Obviously, the C++ steps will need to be implemented using Cucumber-CPP
-and the Java steps implemented using Cucumber-Java-Wire.
+and the Java steps implemented using Cucumber-Wire.
 
 ## Test
 
-An integration test using Cucumber-Java-Wire can be found under the `wire/src/test` folder.
+An integration test using Cucumber-Wire can be found under the `wire/src/test` folder.
 
 To run the integration test:
 
@@ -105,4 +105,6 @@ license is included as part of the project to give credit where credit is due.
 
 All original work falls under the Cucumber-JVM license.
 
+[wire-protocol]: https://github.com/cucumber/cucumber/wiki/Wire-Protocol
 [cuke-download]: https://github.com/cucumber/cucumber/wiki/Install
+

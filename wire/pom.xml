@@ -12,7 +12,7 @@
         <version>1.2.5-SNAPSHOT</version>
     </parent>
 
-    <artifactId>cucumber-java-wire</artifactId>
+    <artifactId>cucumber-wire</artifactId>
     <packaging>jar</packaging>
     <name>Cucumber-JVM: Wire</name>
 
@@ -121,6 +121,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
+                <version>1.5.0</version>
                 <executions>
                     <execution>
                         <id>start-cuke</id>
