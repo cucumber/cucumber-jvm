@@ -77,6 +77,7 @@
         <pax-url.version>2.2.0</pax-url.version>
         <felix.version>5.4.0</felix.version>
         <tag-expressions.version>1.0.1</tag-expressions.version>
+        <cucumber-expressions.version>1.0.0</cucumber-expressions.version>
     </properties>
     <licenses>
         <license>
@@ -118,6 +119,11 @@
                 <groupId>io.cucumber</groupId>
                 <artifactId>tag-expressions</artifactId>
                 <version>${tag-expressions.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>cucumber-expressions</artifactId>
+                <version>${cucumber-expressions.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.cucumber</groupId>

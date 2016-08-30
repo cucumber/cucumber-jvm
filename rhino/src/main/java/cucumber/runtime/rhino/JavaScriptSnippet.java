@@ -22,7 +22,7 @@ public class JavaScriptSnippet implements Snippet {
 
     @Override
     public String arguments(List<Class<?>> argumentTypes) {
-        return untypedArguments(argumentTypes);
+        return untypedArguments(argumentTypes.size());
     }
 
     @Override

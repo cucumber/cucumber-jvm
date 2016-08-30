@@ -18,13 +18,23 @@ public class JRubySnippetTest {
     private static final List<PickleLocation> NO_LOCATIONS = Collections.emptyList();
 
     @Test
-    public void generatesPlainSnippet() {
+    public void generatesSnippetWithTwoArgs() {
         String expected = "" +
                 "Given /^I have (\\d+) cukes in my \"([^\"]*)\" belly$/ do |arg1, arg2|\n" +
                 "  # Write code here that turns the phrase above into concrete actions\n" +
                 "  pending\n" +
                 "end\n";
         assertEquals(expected, snippetFor("I have 4 cukes in my \"big\" belly"));
+    }
+
+    @Test
+    public void generatesSnippetWithZeroArgs() {
+        String expected = "" +
+                "Given /^I am cucumber$/ do\n" +
+                "  # Write code here that turns the phrase above into concrete actions\n" +
+                "  pending\n" +
+                "end\n";
+        assertEquals(expected, snippetFor("I am cucumber"));
     }
 
     private String snippetFor(String name) {

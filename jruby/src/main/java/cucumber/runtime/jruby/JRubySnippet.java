@@ -4,10 +4,12 @@ import cucumber.runtime.snippets.Snippet;
 
 import java.util.List;
 
+import static cucumber.runtime.snippets.SnippetGenerator.untypedArguments;
+
 public class JRubySnippet implements Snippet {
     @Override
     public String template() {
-        return "{0} '/'{1}'/' do {3}\n" +
+        return "{0} '/'{1}'/' do{3}\n" +
                 "  # {4}\n" +
                 "  pending\n" +
                 "end\n";
@@ -20,15 +22,8 @@ public class JRubySnippet implements Snippet {
 
     @Override
     public String arguments(List<Class<?>> argumentTypes) {
-        StringBuilder sb = new StringBuilder(argumentTypes.isEmpty() ? "" : "|");
-        for (int n = 0; n < argumentTypes.size(); n++) {
-            if (n > 0) {
-                sb.append(", ");
-            }
-            sb.append("arg").append(n + 1);
-        }
-        sb.append(argumentTypes.isEmpty() ? "" : "|");
-        return sb.toString();
+        if (argumentTypes.isEmpty()) return "";
+        return " |" + untypedArguments(argumentTypes.size()) + "|";
     }
 
     @Override

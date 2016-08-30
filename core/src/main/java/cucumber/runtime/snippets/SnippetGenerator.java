@@ -138,9 +138,9 @@ public class SnippetGenerator {
         return DEFAULT_ARGUMENT_PATTERNS;
     }
 
-    public static String untypedArguments(List<Class<?>> argumentTypes) {
+    public static String untypedArguments(int argumentCount) {
         StringBuilder sb = new StringBuilder();
-        for (int n = 0; n < argumentTypes.size(); n++) {
+        for (int n = 0; n < argumentCount; n++) {
             if (n > 0) {
                 sb.append(", ");
             }

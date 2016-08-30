@@ -22,6 +22,7 @@ import cucumber.runtime.snippets.FunctionNameGenerator;
 import cucumber.runtime.snippets.Snippet;
 import cucumber.runtime.snippets.SnippetGenerator;
 import gherkin.pickles.PickleStep;
+import io.cucumber.cucumberexpressions.TransformLookup;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -35,6 +36,7 @@ import static cucumber.runtime.io.MultiLoader.packageName;
 public class JavaBackend implements Backend {
     public static final ThreadLocal<JavaBackend> INSTANCE = new ThreadLocal<JavaBackend>();
     private final SnippetGenerator snippetGenerator = new SnippetGenerator(createSnippet());
+    private final TransformLookup transformLookup;
 
     private Snippet createSnippet() {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
@@ -58,24 +60,27 @@ public class JavaBackend implements Backend {
      *
      * @param resourceLoader
      */
-    public JavaBackend(ResourceLoader resourceLoader) {
+    public JavaBackend(ResourceLoader resourceLoader, TransformLookup transformLookup) {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         methodScanner = new MethodScanner(classFinder);
         objectFactory = ObjectFactoryLoader.loadObjectFactory(classFinder, Env.INSTANCE.get(ObjectFactory.class.getName()));
+        this.transformLookup = transformLookup;
     }
 
-    public JavaBackend(ObjectFactory objectFactory) {
+    public JavaBackend(ObjectFactory objectFactory, TransformLookup transformLookup) {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
         classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         methodScanner = new MethodScanner(classFinder);
         this.objectFactory = objectFactory;
+        this.transformLookup = transformLookup;
     }
 
-    public JavaBackend(ObjectFactory objectFactory, ClassFinder classFinder) {
+    public JavaBackend(ObjectFactory objectFactory, ClassFinder classFinder, TransformLookup transformLookup) {
         this.objectFactory = objectFactory;
         this.classFinder = classFinder;
+        this.transformLookup = transformLookup;
         methodScanner = new MethodScanner(classFinder);
     }
 
@@ -148,7 +153,7 @@ public class JavaBackend implements Backend {
     void addStepDefinition(Annotation annotation, Method method) {
         try {
             if (objectFactory.addClass(method.getDeclaringClass())) {
-                glue.addStepDefinition(new JavaStepDefinition(method, pattern(annotation), timeoutMillis(annotation), objectFactory));
+                glue.addStepDefinition(new JavaStepDefinition(method, expression(annotation), timeoutMillis(annotation), objectFactory, transformLookup));
             }
         } catch (DuplicateStepDefinitionException e) {
             throw e;
@@ -197,10 +202,9 @@ public class JavaBackend implements Backend {
         glue.addAfterHook(new Java8HookDefinition(tagExpressions, order, timeoutMillis, body));
     }
 
-    private Pattern pattern(Annotation annotation) throws Throwable {
-        Method regexpMethod = annotation.getClass().getMethod("value");
-        String regexpString = (String) Utils.invoke(annotation, regexpMethod, 0);
-        return Pattern.compile(regexpString);
+    private String expression(Annotation annotation) throws Throwable {
+        Method expressionMethod = annotation.getClass().getMethod("value");
+        return (String) Utils.invoke(annotation, expressionMethod, 0);
     }
 
     private long timeoutMillis(Annotation annotation) throws Throwable {

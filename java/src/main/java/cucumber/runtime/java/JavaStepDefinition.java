@@ -3,33 +3,36 @@ package cucumber.runtime.java;
 import cucumber.api.java.ObjectFactory;
 import cucumber.runtime.Argument;
 import cucumber.runtime.JdkPatternArgumentMatcher;
+import cucumber.runtime.ArgumentMatcher;
+import cucumber.runtime.ExpressionArgumentMatcher;
 import cucumber.runtime.MethodFormat;
 import cucumber.runtime.ParameterInfo;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.Utils;
 import gherkin.pickles.PickleStep;
+import io.cucumber.cucumberexpressions.Expression;
+import io.cucumber.cucumberexpressions.ExpressionFactory;
+import io.cucumber.cucumberexpressions.TransformLookup;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
 class JavaStepDefinition implements StepDefinition {
     private final Method method;
-    private final Pattern pattern;
+    private final Expression expression;
     private final long timeoutMillis;
     private final ObjectFactory objectFactory;
 
-    private final JdkPatternArgumentMatcher argumentMatcher;
     private final List<ParameterInfo> parameterInfos;
 
-    public JavaStepDefinition(Method method, Pattern pattern, long timeoutMillis, ObjectFactory objectFactory) {
+    public JavaStepDefinition(Method method, String expression, long timeoutMillis, ObjectFactory objectFactory, TransformLookup transformLookup) {
         this.method = method;
-        this.pattern = pattern;
+        this.expression = new ExpressionFactory().createExpression(expression, getArgumentTypes(method), transformLookup);
         this.timeoutMillis = timeoutMillis;
         this.objectFactory = objectFactory;
 
-        this.argumentMatcher = new JdkPatternArgumentMatcher(pattern);
         this.parameterInfos = ParameterInfo.fromMethod(method);
     }
 
@@ -38,7 +41,16 @@ class JavaStepDefinition implements StepDefinition {
     }
 
     public List<Argument> matchedArguments(PickleStep step) {
+        ArgumentMatcher argumentMatcher = new ExpressionArgumentMatcher(expression);
         return argumentMatcher.argumentsFrom(step.getText());
+    }
+
+    private static List<Class<?>> getArgumentTypes(Method method) {
+        List<Class<?>> types = new ArrayList<Class<?>>(method.getParameterTypes().length);
+        for (Class<?> type : method.getParameterTypes()) {
+            types.add(type);
+        }
+        return types;
     }
 
     public String getLocation(boolean detail) {
@@ -62,7 +74,7 @@ class JavaStepDefinition implements StepDefinition {
 
     @Override
     public String getPattern() {
-        return pattern.pattern();
+        return expression.getSource();
     }
 
     @Override

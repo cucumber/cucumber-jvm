@@ -5,13 +5,14 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class JdkPatternArgumentMatcher {
+public class JdkPatternArgumentMatcher implements ArgumentMatcher {
     private final Pattern pattern;
 
     public JdkPatternArgumentMatcher(Pattern pattern) {
         this.pattern = pattern;
     }
 
+    @Override
     public List<Argument> argumentsFrom(String stepName) {
         Matcher matcher = pattern.matcher(stepName);
         if (matcher.lookingAt()) {

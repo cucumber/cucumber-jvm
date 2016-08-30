@@ -1,5 +1,6 @@
 package cucumber.runtime;
 
+import cucumber.api.Configuration;
 import cucumber.api.StepDefinitionReporter;
 import cucumber.api.SummaryPrinter;
 import cucumber.api.event.TestRunFinished;
@@ -21,6 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import static java.util.Collections.singletonList;
+
 /**
  * This is the main entry point for running Cucumber features.
  */
@@ -38,7 +41,7 @@ public class Runtime {
     private final EventBus bus;
     private final Compiler compiler = new Compiler();
     public Runtime(ResourceLoader resourceLoader, ClassFinder classFinder, ClassLoader classLoader, RuntimeOptions runtimeOptions) {
-        this(resourceLoader, classLoader, loadBackends(resourceLoader, classFinder), runtimeOptions);
+        this(resourceLoader, classLoader, loadBackends(resourceLoader, classFinder, runtimeOptions), runtimeOptions);
     }
 
     public Runtime(ResourceLoader resourceLoader, ClassLoader classLoader, Collection<? extends Backend> backends, RuntimeOptions runtimeOptions) {
@@ -82,9 +85,10 @@ public class Runtime {
         runtimeOptions.setEventBus(bus);
     }
 
-    private static Collection<? extends Backend> loadBackends(ResourceLoader resourceLoader, ClassFinder classFinder) {
+    private static Collection<? extends Backend> loadBackends(ResourceLoader resourceLoader, ClassFinder classFinder, RuntimeOptions runtimeOptions) {
         Reflections reflections = new Reflections(classFinder);
-        return reflections.instantiateSubclasses(Backend.class, "cucumber.runtime", new Class[]{ResourceLoader.class}, new Object[]{resourceLoader});
+        Configuration configuration = reflections.instantiateExactlyOneSubclass(Configuration.class, runtimeOptions.getGlue(), new Class[0], new Object[0], new DefaultConfiguration());
+        return reflections.instantiateSubclasses(Backend.class, singletonList("cucumber.runtime"), new Class[]{ResourceLoader.class, Configuration.class}, new Object[]{resourceLoader, configuration});
     }
 
     /**

@@ -26,7 +26,8 @@
        "  (comment  {4}  )\n"
        "  (throw (cucumber.api.PendingException.)))\n"))
     (arguments [_ argumentTypes]
-      (str/replace (SnippetGenerator/untypedArguments argumentTypes)
+
+      (str/replace (SnippetGenerator/untypedArguments (.size argumentTypes))
                    "," ""))
     (namedGroupStart [_] nil)
     (namedGroupEnd [_] nil)
