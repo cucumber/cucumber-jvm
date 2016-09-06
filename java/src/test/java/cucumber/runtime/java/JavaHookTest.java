@@ -120,7 +120,7 @@ public class JavaHookTest {
 
     public static class HasHooks {
 
-        @Before({"@foo,@bar", "@zap"})
+        @Before({"(@foo or @bar) and @zap"})
         public void before() {
 
         }

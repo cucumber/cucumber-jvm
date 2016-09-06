@@ -46,7 +46,7 @@ class ScalaDslTest {
     var actualScenario : Scenario = null
 
     object Befores extends ScalaDsl with EN {
-      Before("@foo,@bar", "@zap"){ actualScenario = _ }
+      Before("(@foo or @bar) and @zap"){ actualScenario = _ }
     }
 
     assertEquals(1, Befores.beforeHooks.size)
@@ -76,7 +76,7 @@ class ScalaDslTest {
   def taggedOrderedBefore {
 
     object Befores extends ScalaDsl with EN {
-      Before(10, "@foo,@bar", "@zap"){  scenario : Scenario => }
+      Before(10, "(@foo or @bar) and @zap"){  scenario : Scenario => }
     }
 
     val hook = Befores.beforeHooks(0)
@@ -104,7 +104,7 @@ class ScalaDslTest {
     var actualScenario : Scenario = null
 
     object Afters extends ScalaDsl with EN {
-      After("@foo,@bar", "@zap"){ actualScenario = _ }
+      After("(@foo or @bar) and @zap"){ actualScenario = _ }
     }
 
     assertEquals(1, Afters.afterHooks.size)

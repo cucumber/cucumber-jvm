@@ -5,7 +5,7 @@ import cucumber.runtime.ClassFinder;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Glue;
 import cucumber.runtime.UnreportedStepExecutor;
-import cucumber.runtime.TagExpression;
+import cucumber.runtime.TagPredicate;
 import cucumber.runtime.io.Resource;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
@@ -140,12 +140,12 @@ public class GroovyBackend implements Backend {
         worldClosures.add(closure);
     }
 
-    public void addBeforeHook(TagExpression tagExpression, long timeoutMillis, int order, Closure body) {
-        glue.addBeforeHook(new GroovyHookDefinition(tagExpression, timeoutMillis, order, body, currentLocation(), this));
+    public void addBeforeHook(TagPredicate tagPredicate, long timeoutMillis, int order, Closure body) {
+        glue.addBeforeHook(new GroovyHookDefinition(tagPredicate, timeoutMillis, order, body, currentLocation(), this));
     }
 
-    public void addAfterHook(TagExpression tagExpression, long timeoutMillis, int order, Closure body) {
-        glue.addAfterHook(new GroovyHookDefinition(tagExpression, timeoutMillis, order, body, currentLocation(), this));
+    public void addAfterHook(TagPredicate tagPredicate, long timeoutMillis, int order, Closure body) {
+        glue.addAfterHook(new GroovyHookDefinition(tagPredicate, timeoutMillis, order, body, currentLocation(), this));
     }
 
     public void invoke(Closure body, Object[] args) throws Throwable {

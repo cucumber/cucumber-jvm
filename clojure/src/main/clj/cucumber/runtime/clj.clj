@@ -4,7 +4,7 @@
                              JdkPatternArgumentMatcher
                              StepDefinition
                              HookDefinition
-                             TagExpression)
+                             TagPredicate)
            (cucumber.runtime.snippets Snippet
                                       SnippetGenerator)
            (clojure.lang RT))
@@ -92,7 +92,7 @@
 (defmulti add-hook-definition (fn [t & _] t))
 
 (defmethod add-hook-definition :before [_ tag-expression hook-fun location]
-  (let [te (TagExpression. tag-expression)]
+  (let [tp (TagPredicate. tag-expression)]
     (.addBeforeHook
      @glue
      (reify
@@ -102,12 +102,12 @@
        (execute [hd scenario-result]
          (hook-fun))
        (matches [hd tags]
-         (.evaluate te tags))
+         (.apply tp tags))
        (getOrder [hd] 0)
        (isScenarioScoped [hd] false)))))
 
 (defmethod add-hook-definition :after [_ tag-expression hook-fun location]
-  (let [te (TagExpression. tag-expression)
+  (let [tp (TagPredicate. tag-expression)
         max-parameter-count (->> hook-fun class .getDeclaredMethods
                                  (filter #(= "invoke" (.getName %)))
                                  (map #(count (.getParameterTypes %)))
@@ -123,7 +123,7 @@
            (hook-fun)
            (hook-fun scenario-result)))
        (matches [hd tags]
-         (.evaluate te tags))
+         (.apply tp tags))
        (getOrder [hd] 0)
        (isScenarioScoped [hd] false)))))
 

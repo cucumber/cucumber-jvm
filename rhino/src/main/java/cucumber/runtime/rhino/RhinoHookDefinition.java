@@ -1,7 +1,7 @@
 package cucumber.runtime.rhino;
 
 import static java.util.Arrays.asList;
-import cucumber.runtime.TagExpression;
+import cucumber.runtime.TagPredicate;
 import gherkin.pickles.PickleTag;
 
 import java.util.Collection;
@@ -19,7 +19,7 @@ public class RhinoHookDefinition implements HookDefinition {
     private Context cx;
     private Scriptable scope;
     private Function fn;
-    private final TagExpression tagExpression;
+    private final TagPredicate tagPredicate;
     private final int order;
     private final long timeoutMillis;
     private StackTraceElement location;
@@ -28,7 +28,7 @@ public class RhinoHookDefinition implements HookDefinition {
         this.cx = cx;
         this.scope = scope;
         this.fn = fn;
-        tagExpression = new TagExpression(asList(tagExpressions));
+        tagPredicate = new TagPredicate(asList(tagExpressions));
         this.order = order;
         this.timeoutMillis = timeoutMillis;
         this.location = location;
@@ -52,7 +52,7 @@ public class RhinoHookDefinition implements HookDefinition {
 
     @Override
     public boolean matches(Collection<PickleTag> tags) {
-        return tagExpression.evaluate(tags);
+        return tagPredicate.apply(tags);
     }
 
     @Override
@@ -60,8 +60,8 @@ public class RhinoHookDefinition implements HookDefinition {
         return order;
     }
 
-    TagExpression getTagExpression() {
-        return tagExpression;
+    TagPredicate getTagPredicate() {
+        return tagPredicate;
     }
 
     long getTimeout() {

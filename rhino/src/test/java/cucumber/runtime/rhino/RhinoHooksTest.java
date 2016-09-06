@@ -101,7 +101,7 @@ public class RhinoHooksTest {
             tags.add(new PickleTag(null, tagExpr));
         }
 
-        assertTrue(rhinoHook.getTagExpression().evaluate(tags));
+        assertTrue(rhinoHook.getTagPredicate().apply(tags));
         assertThat(rhinoHook.getOrder(), equalTo(order));
         assertThat(rhinoHook.getTimeout(), equalTo(timeoutMillis));
     }

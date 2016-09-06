@@ -8,11 +8,26 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class TagExpression {
+import static java.util.Arrays.asList;
+
+public class TagExpressionOld {
     private final Map<String, Integer> limits = new HashMap<String, Integer>();
     private And and = new And();
 
-    public TagExpression(List<String> tagExpressions) {
+    public static boolean isOldTagExpression(String tagExpression) {
+        if (tagExpression == null) {
+            return false;
+        }
+        if (tagExpression.contains(",")) {
+            System.err.println("WARNING: Found tags option '" + tagExpression + "'. Support for '@tag1,@tag2' will be removed from the next release of Cucumber-JVM. Please use '@tag or @tag2' instead");
+        }
+        if (tagExpression.contains("~")) {
+            System.err.println("WARNING: Found tags option '" + tagExpression + "'. Support for '~@tag' will be removed from the next release of Cucumber-JVM. Please use 'not @tag' instead.");
+        }
+        return tagExpression.contains(",") || tagExpression.contains("~");
+    }
+
+    public TagExpressionOld(List<String> tagExpressions) {
         for (String tagExpression : tagExpressions) {
             add(tagExpression.split("\\s*,\\s*"));
         }
