@@ -62,8 +62,8 @@
         <android-maven-plugin.version>4.0.0</android-maven-plugin.version>
         <android.version>4.1.1.4</android.version>
         <!-- Apparently Wicket 8.x requires Java 8.
-        Stay on 7.4 as long as we support Java 7. -->
-        <wicket.version>7.4.0</wicket.version>
+        Stay on 7.0 as long as we support Java 7. -->
+        <wicket.version>7.0.0</wicket.version>
         <!-- We need a version that works with Java 6 and Java 7: http://www.eclipse.org/jetty/documentation/current/what-jetty-version.html -->
         <jetty.version>8.1.12.v20130726</jetty.version>
         <xmlunit.version>1.6</xmlunit.version>
