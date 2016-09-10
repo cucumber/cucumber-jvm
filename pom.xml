@@ -23,23 +23,22 @@
         <minimum.maven.version>3.1.1</minimum.maven.version>
         <outputDirectory>${project.build.directory}</outputDirectory>
         <gherkin.version>2.12.2</gherkin.version>
-        <groovy.version>2.4.3</groovy.version>
+        <groovy.version>2.4.7</groovy.version>
         <picocontainer.version>2.15</picocontainer.version>
-        <!-- There is 3.1.3, but it requires at least mvn 3.0.4 which might still not be widely used. -->
-        <scala-maven-plugin.version>3.2.0</scala-maven-plugin.version>
-        <spring.version>4.1.6.RELEASE</spring.version>
-        <spring.data.version>1.8.0.RELEASE</spring.data.version>
-        <hibernate.version>4.3.9.Final</hibernate.version>
-        <hsqldb.version>2.3.2</hsqldb.version>
+        <scala-maven-plugin.version>3.2.2</scala-maven-plugin.version>
+        <spring.version>4.3.2.RELEASE</spring.version>
+        <spring.data.version>1.10.2.RELEASE</spring.data.version>
+        <hibernate.version>5.2.2.Final</hibernate.version>
+        <hsqldb.version>2.3.4</hsqldb.version>
         <guice.version>4.0</guice.version>
         <!-- Remember to bounce version in examples/clojure_cukes/project.clj as well -->
-        <clojure.version>1.6.0</clojure.version>
+        <clojure.version>1.8.0</clojure.version>
         <!-- This is only here for the example project to use, the 3 scala projects maintain their own versions -->
-        <scala.latest.version>2.11.6</scala.latest.version>
+        <scala.latest.version>2.11.8</scala.latest.version>
         <gosu.version>1.2</gosu.version>
-        <rhino.version>1.7.6</rhino.version>
-        <jsoup.version>1.8.2</jsoup.version>
-        <testng.version>6.9.4</testng.version>
+        <rhino.version>1.7.7.1</rhino.version>
+        <jsoup.version>1.9.2</jsoup.version>
+        <testng.version>6.9.10</testng.version>
         <junit.version>4.12</junit.version>
         <jython.version>2.7.0</jython.version>
         <mockito.version>1.10.19</mockito.version>
@@ -47,30 +46,30 @@
         <webbit.version>0.4.15</webbit.version>
         <webbit-rest.version>0.3.0</webbit-rest.version>
         <jruby.version>9.1.5.0</jruby.version>
-        <weld-se.version>2.2.11.Final</weld-se.version>
+        <weld-se.version>2.3.5.Final</weld-se.version>
         <cdi-api.version>1.2</cdi-api.version>
-        <openejb-core.version>4.7.1</openejb-core.version>
+        <openejb-core.version>4.7.4</openejb-core.version>
         <needle.version>2.2</needle.version>
         <javaee-api.version>7.0</javaee-api.version>
         <javax.inject.version>1</javax.inject.version>
         <!-- For some reason, upgrading cobertura completely breaks the entire build (?!) -->
         <cobertura.version>1.9.4.1</cobertura.version>
-        <dbunit.version>2.5.1</dbunit.version>
-        <logback.version>1.1.3</logback.version>
-        <slf4j.version>1.7.12</slf4j.version>
-        <freemarker.version>2.3.22</freemarker.version>
+        <dbunit.version>2.5.3</dbunit.version>
+        <logback.version>1.1.7</logback.version>
+        <slf4j.version>1.7.21</slf4j.version>
+        <freemarker.version>2.3.23</freemarker.version>
         <javax.servlet-api.version>3.1.0</javax.servlet-api.version>
         <android-maven-plugin.version>4.0.0</android-maven-plugin.version>
         <android.version>4.1.1.4</android.version>
-        <wicket.version>7.0.0-M5</wicket.version>
+        <wicket.version>8.0.0-M1</wicket.version>
         <!-- We need a version that works with Java 6 and Java 7: http://www.eclipse.org/jetty/documentation/current/what-jetty-version.html -->
         <jetty.version>8.1.12.v20130726</jetty.version>
         <xmlunit.version>1.6</xmlunit.version>
-        <joda-time.version>2.7</joda-time.version>
-        <osgi.version>4.3.1</osgi.version>
-        <pax-exam.version>4.3.0</pax-exam.version>
-        <pax-url.version>2.2.0</pax-url.version>
-        <felix.version>4.0.3</felix.version>
+        <joda-time.version>2.9.4</joda-time.version>
+        <osgi.version>6.0.0</osgi.version>
+        <pax-exam.version>4.9.1</pax-exam.version>
+        <pax-url.version>2.4.7</pax-url.version>
+        <felix.version>5.4.0</felix.version>
     </properties>
     <licenses>
         <license>
@@ -525,9 +524,9 @@
 
     <repositories>
         <!--<repository>-->
-            <!--<id>gosu-lang.org-releases</id>-->
-            <!--<name>Official Gosu website (releases)</name>-->
-            <!--<url>http://gosu-lang.org/repositories/m2/releases</url>-->
+        <!--<id>gosu-lang.org-releases</id>-->
+        <!--<name>Official Gosu website (releases)</name>-->
+        <!--<url>http://gosu-lang.org/repositories/m2/releases</url>-->
         <!--</repository>-->
     </repositories>
 
@@ -709,7 +708,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-clean-plugin</artifactId>
-                    <version>2.6.1</version>
+                    <version>3.0.0</version>
                     <configuration>
                         <filesets>
                             <fileset>
@@ -725,7 +724,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.2</version>
+                    <version>3.5.1</version>
                     <configuration>
                         <encoding>UTF-8</encoding>
                         <source>1.6</source>
@@ -737,13 +736,13 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-gpg-plugin</artifactId>
-                    <version>1.5</version>
+                    <version>1.6</version>
                 </plugin>
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>2.10.1</version>
+                    <version>2.10.4</version>
                     <configuration>
                         <aggregate>true</aggregate>
                         <use>false</use>
@@ -770,25 +769,25 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>2.5</version>
+                    <version>3.0.2</version>
                 </plugin>
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-project-info-reports-plugin</artifactId>
-                    <version>2.8</version>
+                    <version>2.9</version>
                 </plugin>
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
-                    <version>2.5</version>
+                    <version>2.5.3</version>
                 </plugin>
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-shade-plugin</artifactId>
-                    <version>2.3</version>
+                    <version>2.4.3</version>
                     <executions>
                         <execution>
                             <phase>package</phase>
@@ -805,19 +804,19 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
-                    <version>3.4</version>
+                    <version>3.5.1</version>
                 </plugin>
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-resources-plugin</artifactId>
-                    <version>2.7</version>
+                    <version>3.0.1</version>
                 </plugin>
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-source-plugin</artifactId>
-                    <version>2.4</version>
+                    <version>3.0.1</version>
                     <executions>
                         <execution>
                             <id>bind-sources</id>
@@ -831,7 +830,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.17</version>
+                    <version>2.19.1</version>
                     <configuration>
                         <argLine>-Duser.language=en</argLine>
                         <argLine>-Xmx1024m</argLine>
@@ -858,18 +857,18 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>build-helper-maven-plugin</artifactId>
-                    <version>1.9.1</version>
+                    <version>1.12</version>
                 </plugin>
 
                 <plugin>
                     <groupId>com.theoryinpractise</groupId>
                     <artifactId>clojure-maven-plugin</artifactId>
-                    <version>1.3.23</version>
+                    <version>1.8.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-deploy-plugin</artifactId>
-                    <version>2.8.1</version>
+                    <version>2.8.2</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -879,20 +878,20 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-enforcer-plugin</artifactId>
-                    <version>1.3.1.2</version>
+                    <version>1.4.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.felix</groupId>
                     <artifactId>maven-bundle-plugin</artifactId>
-                    <version>2.3.7</version>
+                    <version>3.2.0</version>
                     <extensions>true</extensions>
                     <executions>
                         <execution>
-                          <id>bundle-manifest</id>
-                          <phase>process-classes</phase>
-                          <goals>
-                            <goal>manifest</goal>
-                          </goals>
+                            <id>bundle-manifest</id>
+                            <phase>process-classes</phase>
+                            <goals>
+                                <goal>manifest</goal>
+                            </goals>
                         </execution>
                     </executions>
                 </plugin>
@@ -944,7 +943,7 @@
             <extension>
                 <groupId>org.apache.maven.wagon</groupId>
                 <artifactId>wagon-ssh</artifactId>
-                <version>2.8</version>
+                <version>2.10</version>
             </extension>
         </extensions>
     </build>

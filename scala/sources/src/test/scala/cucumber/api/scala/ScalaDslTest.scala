@@ -124,9 +124,7 @@ class ScalaDslTest {
     var called = false
 
     object Dummy extends ScalaDsl with EN {
-      Given("x"){
-        called = true
-      }
+      Given("x") { called = true }
     }
 
     assertEquals(1, Dummy.stepDefinitions.size)
