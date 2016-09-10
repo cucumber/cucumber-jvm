@@ -1,7 +1,18 @@
 require 'cucumber/api/jruby/en'
-require 'minitest/unit'
+require 'minitest'
 
-World(MiniTest::Assertions)
+class MinitestWorld
+  include Minitest::Assertions
+  attr_accessor :assertions
+
+  def initialize
+    self.assertions = 0
+  end
+end
+
+World do
+  MinitestWorld.new
+end
 
 Before do
   raise "There is a leak" if @before_var
@@ -73,7 +84,7 @@ end
 Then /I get an exception with "([^"]*)"$/ do |message|
   assert_match /#{message}$/, @exception.message
   assert_equal(__FILE__, @exception.stackTrace[0].fileName)
-  assert_equal(67, @exception.stackTrace[0].lineNumber)
+  assert_equal(78, @exception.stackTrace[0].lineNumber)
 end
 
 Given /^a data table:$/ do |table|

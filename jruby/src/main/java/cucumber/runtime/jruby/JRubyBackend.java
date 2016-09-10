@@ -53,20 +53,6 @@ public class JRubyBackend implements Backend {
             jruby.runScriptlet("ENV['GEM_PATH']='" + gemPath + "'");
         }
 
-        String rubyVersion = ENV.get("RUBY_VERSION");
-        if (rubyVersion != null) {
-            // RVM typically defines env vars like
-            // RUBY_VERSION=ruby-1.9.3-p362
-            if (rubyVersion.matches(".*1\\.8\\.\\d.*") || rubyVersion.matches(".*1\\.8")) {
-                jruby.setCompatVersion(CompatVersion.RUBY1_8);
-            } else if (rubyVersion.matches(".*1\\.9\\.\\d.*") || rubyVersion.matches(".*1\\.9.*")) {
-                jruby.setCompatVersion(CompatVersion.RUBY1_9);
-            } else if (rubyVersion.matches(".*2\\.0\\.\\d.*") || rubyVersion.matches(".*2\\.0.*")) {
-                jruby.setCompatVersion(CompatVersion.RUBY2_0);
-            } else {
-                throw new CucumberException("Invalid RUBY_VERSION: " + rubyVersion);
-            }
-        }
         for (Resource resource : resourceLoader.resources("classpath:cucumber/runtime/jruby", ".rb")) {
             runScript(resource);
         }
@@ -106,11 +92,10 @@ public class JRubyBackend implements Backend {
     @Override
     public void buildWorld() {
         currentWorld = (RubyObject) JavaEmbedUtils.javaToRuby(jruby.getProvider().getRuntime(), new World());
-        currentWorld.extend(new IRubyObject[]{CucumberRuntimeJRubyWorld});
-
         for (JRubyWorldDefinition definition : worldDefinitions) {
             currentWorld = definition.execute(currentWorld);
         }
+        currentWorld.extend(new IRubyObject[]{CucumberRuntimeJRubyWorld});
     }
 
     private void runScript(Resource resource) {
