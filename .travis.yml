@@ -1,12 +1,17 @@
 ---
 language: java
 
-install:
-  - ls -lad /usr/local/maven
-  - wget -O - http://apache.mirrors.pair.com/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.tar.gz | sudo tar xvz -C /usr/local
-  - sudo rm /usr/local/maven
-  - sudo ln -s /usr/local/apache-maven-3.3.9 /usr/local/maven
-  - ls -lad /usr/local/maven
+before_install:
+  - wget http://apache.claz.org/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.tar.gz
+  - tar zxvf apache-maven-3.3.9-bin.tar.gz
+  - chmod +x apache-maven-3.3.9/bin/mvn
+  - export M2_HOME=$PWD/apache-maven-3.3.9
+  - export PATH=$PWD/apache-maven-3.3.9/bin:${PATH}
+  - hash -r
+
+cache:
+  directories:
+    - $HOME/.m2
 
 script: mvn -q install -P examples
 jdk:
@@ -20,7 +25,8 @@ matrix:
     script: mvn -q install -P java8
     after_success: mvn -q deploy -P java8 -pl java8 --settings .travis-settings.xml -DskipTests=true -Dmaven.javadoc.skip=true
 
-sudo: true
+# get us on the new container based builds, we're not using any fancyness
+sudo: false
 
 branches:
   only:
