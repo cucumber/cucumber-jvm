@@ -46,7 +46,7 @@ public class LambdaStepdefs implements En {
                 -> {
             assertEquals((Integer) 1, a);
             assertEquals((Float) 2.2f, b);
-            assertEquals("threed", c);
+            assertEquals("three", c);
             assertEquals((Integer) 4, d);
         });
     }

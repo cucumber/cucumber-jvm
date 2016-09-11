@@ -9,11 +9,10 @@ Feature: Java8
     And something that isn't defined
 
   Scenario: Parameterless lambdas
-    Given: A statement with a simple match
+    Given A statement with a simple match
 
   Scenario: Multi-param lambdas
-    Given: I will give you 1 and 2.2 and three and 4
-    And: Do I need this to not match
+    Given I will give you 1 and 2.2 and three and 4
 
   Scenario: use a table
     Given this data table:
