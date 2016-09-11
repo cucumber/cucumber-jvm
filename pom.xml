@@ -28,8 +28,8 @@
         <scala-maven-plugin.version>3.2.2</scala-maven-plugin.version>
         <spring.version>4.3.2.RELEASE</spring.version>
         <spring.data.version>1.10.2.RELEASE</spring.data.version>
-        <!-- 5.2.2.Final does not work on Java 7 -->
-        <hibernate.version>5.1.1.Final</hibernate.version>
+        <!-- 5.1.1.Final and above does not work on Java 7 -->
+        <hibernate.version>4.3.11.Final</hibernate.version>
         <hsqldb.version>2.3.4</hsqldb.version>
         <guice.version>4.0</guice.version>
         <!-- Remember to bounce version in examples/clojure_cukes/project.clj as well -->
