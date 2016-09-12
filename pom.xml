@@ -618,7 +618,6 @@
                 <module>examples/groovy-calculator</module>
                 <module>examples/scala-calculator</module>
                 <module>examples/java-webbit-websockets-selenium</module>
-                <module>examples/pax-exam</module>
             </modules>
             <activation>
                 <property>
