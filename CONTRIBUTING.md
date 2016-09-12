@@ -120,13 +120,13 @@ release will fail:
 mvn javadoc:javadoc
 ```
 
-Run `git commit -am "Release X.Y.Z"`
+Run `git commit -am "Prepare for release X.Y.Z"`
 
-Now release everything:
+Now release everything (replace X.Y.Z below with the next release number):
 
 ```
 mvn release:clean
-mvn --batch-mode -P release-sign-artifacts release:prepare -DautoVersionSubmodules=true -DdevelopmentVersion=1.1.5-SNAPSHOT
+mvn --batch-mode -P release-sign-artifacts release:prepare -DautoVersionSubmodules=true -DdevelopmentVersion=X.Y.Z-SNAPSHOT
 mvn -P release-sign-artifacts release:perform
 ```
 
