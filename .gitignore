@@ -14,7 +14,6 @@ target/
 tmp/
 gen-external-apklibs/
 out/
-testng/
 
 # Build & test droppings
 report.js
