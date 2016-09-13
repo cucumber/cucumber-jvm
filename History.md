@@ -12,7 +12,7 @@
 * [Core, Junit] Passthrough options for the JUnit Module ([#1002](https://github.com/cucumber/cucumber-jvm/pull/1002), [#1029](https://github.com/cucumber/cucumber-jvm/pull/1029). Also resolves [#825](https://github.com/cucumber/cucumber-jvm/pull/825) and [#972](https://github.com/cucumber/cucumber-jvm/issues/972). Björn Rasmusson, with bug fix by Bernd Bindreiter)
 * [Android, Core, Guice, Junit] Improve code quality ensuring Utility Classes cannot be instantiated ([#945](https://github.com/cucumber/cucumber-jvm/pull/945) Kirill Vlasov)
 * [Core, Guice, Testng] Improve code quality using isEmpty instead of size comparison ([#942](https://github.com/cucumber/cucumber-jvm/pull/942) Kirill Vlasov)
-* [Clojure] Don't depend on cucumber-core in the clojure example ([#947](https://github.com/cucumber/cucumber-jvm/pull/947 Joe Corneli)
+* [Clojure] Don't depend on cucumber-core in the clojure example ([#947](https://github.com/cucumber/cucumber-jvm/pull/947) Joe Corneli)
 * [Spring] Some spring tests were not being run ([#952](https://github.com/cucumber/cucumber-jvm/pull/952) Lee Wan Geun)
 * [OSGI] Pax-exam is optional ([#1000](https://github.com/cucumber/cucumber-jvm/pull/1000) HendrikSP)
 * [Groovy] Fix Null Pointer Exeption whe using List as parameter type in step defs ([#980](https://github.com/cucumber/cucumber-jvm/pull/980) Steffen Jacobs)
