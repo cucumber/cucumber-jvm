@@ -1,6 +1,9 @@
 ---
 language: java
 
+# get us on the new container based builds, we're not using any fancyness
+sudo: false
+
 before_install:
   - wget http://apache.claz.org/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.tar.gz
   - tar zxvf apache-maven-3.3.9-bin.tar.gz
@@ -14,8 +17,10 @@ cache:
     - $HOME/.m2
 
 script: mvn -q install -P examples
+
 jdk:
 - openjdk7
+
 matrix:
   include:
   - jdk: oraclejdk7
@@ -25,12 +30,10 @@ matrix:
     script: mvn -q install -P java8
     after_success: mvn -q deploy -P java8 -pl java8 --settings .travis-settings.xml -DskipTests=true -Dmaven.javadoc.skip=true
 
-# get us on the new container based builds, we're not using any fancyness
-sudo: false
-
 branches:
   only:
   - master
+
 notifications:
   email:
   - cukes-devs@googlegroups.com
