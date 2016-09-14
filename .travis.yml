@@ -30,6 +30,17 @@ matrix:
     script: mvn -q install -P java8
     after_success: mvn -q deploy -P java8 -pl java8 --settings .travis-settings.xml -DskipTests=true -Dmaven.javadoc.skip=true
 
+env:
+  global:
+  - secure: |-
+      rEtPzPG3bMKzx00AwDJq5tsp8LSCds5ePV6ZP+wgECP2BVIoD16zP8F6T0fY
+      QK/2etRW6pcernOGP8S3SQE4e5ZBT5sqYY0mhKlq2aiem3i3gAwEzZvdLjWV
+      1C6KyQplzdjKdaYWOre8YSXv5vxS3ZVS6NJc+0EQM3olTKV3flQ=
+  - secure: |-
+      BEsHVhETHrO8vR/7huN3MUMQQKZycZgJ+sWszwQPnwaGJEm6ptssJn/LsiUJ
+      K/qQhjdpmPiKZIoTruG4E3vc+adT/B2VcHD0897jNeUBoDd7Vj4vzOH6ePID
+      969vCnA+6hpQuIM02R+4OJIBPXVtr1Ix/ye+KxS69cJ5N8QyTfY=
+
 branches:
   only:
   - master
