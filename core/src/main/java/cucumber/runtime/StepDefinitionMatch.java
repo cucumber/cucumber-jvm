@@ -13,6 +13,7 @@ import gherkin.util.Mapper;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
 
 import static gherkin.util.FixJava.map;
 
@@ -56,7 +57,7 @@ public class StepDefinitionMatch extends Match {
             argumentCount++;
         }
         Integer parameterCount = stepDefinition.getParameterCount();
-        if (parameterCount != null && argumentCount != parameterCount) {
+        if (parameterCount != null && (argumentCount > parameterCount || argumentCount + 1 < parameterCount)) {
             throw arityMismatch(parameterCount);
         }
 
@@ -76,6 +77,18 @@ public class StepDefinitionMatch extends Match {
             ParameterInfo parameterInfo = getParameterType(n, String.class);
             Object arg = parameterInfo.convert(step.getDocString().getValue(), xStream);
             result.add(arg);
+        }
+
+        if (argumentCount + 1 == parameterCount) {
+            Object obj;
+            if (getParameterType(n, DataTable.class).getType().toString().startsWith("java.util.List<")) {
+                obj = new ArrayList<>();
+            } else if (getParameterType(n, DataTable.class).getType().toString().startsWith("java.util.Map<")) {
+                obj = new HashMap<>();
+            } else {
+                throw arityMismatch(parameterCount);
+            }
+            result.add(obj);
         }
         return result.toArray(new Object[result.size()]);
     }
