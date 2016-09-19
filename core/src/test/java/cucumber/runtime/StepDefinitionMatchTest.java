@@ -200,7 +200,7 @@ public class StepDefinitionMatchTest {
     public void throws_arity_mismatch_exception_when_there_are_more_parameters_than_arguments() throws Throwable {
         Step step = new Step(null, "Given ", "I have 4 cukes in my belly", 1, new ArrayList<DataTableRow>(), null);
 
-        StepDefinition stepDefinition = new StubStepDefinition(new Object(), WithThreeParams.class.getMethod("withThreeParams", Integer.TYPE, Short.TYPE, String.TYPE, List.class), "some pattern");
+        StepDefinition stepDefinition = new StubStepDefinition(new Object(), WithThreeParams.class.getMethod("withThreeParams", Integer.TYPE, Short.TYPE, String.class, List.class), "some pattern");
         StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(asList(new Argument(7, "4")), stepDefinition, null, step, new LocalizedXStreams(getClass().getClassLoader()));
         try {
             stepDefinitionMatch.runStep(new I18n("en"));
