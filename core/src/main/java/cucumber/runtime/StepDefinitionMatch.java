@@ -79,7 +79,7 @@ public class StepDefinitionMatch extends Match {
             result.add(arg);
         }
         
-        if (argumentCount + 1 == parameterCount) {
+        if (parameterCount != null && argumentCount + 1 == parameterCount) {
             Object obj;
             if (getParameterType(n, DataTable.class).getType().toString().startsWith("java.util.List<")) {
                 obj = new ArrayList<Object>();
