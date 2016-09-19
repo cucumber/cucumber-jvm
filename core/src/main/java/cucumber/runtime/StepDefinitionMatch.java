@@ -82,9 +82,9 @@ public class StepDefinitionMatch extends Match {
         if (argumentCount + 1 == parameterCount) {
             Object obj;
             if (getParameterType(n, DataTable.class).getType().toString().startsWith("java.util.List<")) {
-                obj = new ArrayList<>();
+                obj = new ArrayList<Object>();
             } else if (getParameterType(n, DataTable.class).getType().toString().startsWith("java.util.Map<")) {
-                obj = new HashMap<>();
+                obj = new HashMap<Object>();
             } else {
                 throw arityMismatch(parameterCount);
             }
