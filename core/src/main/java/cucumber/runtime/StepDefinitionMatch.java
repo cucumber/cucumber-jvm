@@ -76,9 +76,11 @@ public class StepDefinitionMatch extends Match {
         } else if (step.getDocString() != null) {
             ParameterInfo parameterInfo = getParameterType(n, String.class);
             Object arg = parameterInfo.convert(step.getDocString().getValue(), xStream);
+            System.out.println("SGR getDocString");
             result.add(arg);
         }
 
+        System.out.println("SGR " + argumentCount + " " + parameterCount);
         if (argumentCount + 1 == parameterCount) {
             Object obj;
             if (getParameterType(n, DataTable.class).getType().toString().startsWith("java.util.List<")) {
