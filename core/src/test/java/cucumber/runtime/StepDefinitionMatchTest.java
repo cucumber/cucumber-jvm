@@ -206,7 +206,8 @@ public class StepDefinitionMatchTest {
             stepDefinitionMatch.runStep(new I18n("en"));
             fail();
         } catch (CucumberException expected) {
-            assertEquals("Arity mismatch: Step Definition 'withThreeParams' with pattern [some pattern] is declared with 3 parameters. However, the gherkin step has 2 arguments [4, Table:[]]. \n" +
+            System.out.println("SGR:" + expected.getMessage());
+            assertEquals("Arity mismatch: Step Definition 'withThreeParams' with pattern [some pattern] is declared with 4 parameters. However, the gherkin step has 2 arguments [4, Table:[]]. \n" +
                     "Step: Given I have 4 cukes in my belly", expected.getMessage());
         }
     }
