@@ -64,6 +64,10 @@ public class CucumberFeature {
             String source = builder.read(resource);
             if (!source.isEmpty()) {
                 for (String featurePath : source.split(" ")) {
+                    featurePath = featurePath.trim();
+                    if (featurePath.length() == 0) {
+                        continue;
+                    }
                     loadFromFileSystemOrClasspath(builder, resourceLoader, featurePath, filters);
                 }
             }

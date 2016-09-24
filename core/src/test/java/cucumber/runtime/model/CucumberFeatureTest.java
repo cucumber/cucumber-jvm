@@ -226,6 +226,29 @@ public class CucumberFeatureTest {
         }
     }
 
+    @Test
+    public void ignores_whitespace_in_rerun_filepath() throws Exception {
+        String featurePath1 = "path/bar.feature";
+        String feature1 = "" +
+                "Feature: bar\n" +
+                "  Scenario: scenario bar\n" +
+                "    * step\n";
+        String rerunPath = "  path/rerun.txt    \n  ";
+        String rerunFile = featurePath1 + ":2";
+        ResourceLoader resourceLoader = mockFeatureFileResource(featurePath1, feature1);
+        mockFileResource(resourceLoader, rerunPath, null, rerunFile);
+
+        List<CucumberFeature> features = CucumberFeature.load(
+                resourceLoader,
+                singletonList("@" + rerunPath),
+                new ArrayList<Object>(),
+                new PrintStream(new ByteArrayOutputStream()));
+
+        assertEquals(1, features.size());
+        assertEquals(1, features.get(0).getFeatureElements().size());
+        assertEquals("Scenario: scenario bar", features.get(0).getFeatureElements().get(0).getVisualName());
+    }
+
     private ResourceLoader mockFeatureFileResource(String featurePath, String feature)
             throws IOException {
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
