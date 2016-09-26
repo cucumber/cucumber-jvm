@@ -10,6 +10,7 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
+import org.springframework.test.context.BootstrapWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.ContextHierarchy;
 import org.springframework.test.context.TestContextManager;
@@ -196,7 +197,8 @@ public class SpringFactory implements ObjectFactory {
 
     private boolean annotatedWithSupportedSpringRootTestAnnotations(Class<?> type) {
         return type.isAnnotationPresent(ContextConfiguration.class)
-            || type.isAnnotationPresent(ContextHierarchy.class);
+            || type.isAnnotationPresent(ContextHierarchy.class)
+            || type.isAnnotationPresent(BootstrapWith.class);
     }
 }
 
