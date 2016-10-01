@@ -1,0 +1,5 @@
+#
+# [implementationclasspackage.ClassName]S
+# contract={interfaceclass.Classname}
+[cucumber.runtime.java.hk2.Belly]S
+contract={cucumber.runtime.java.hk2.Abdomen}
