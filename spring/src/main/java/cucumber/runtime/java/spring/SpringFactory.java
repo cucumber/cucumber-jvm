@@ -52,6 +52,7 @@ public class SpringFactory implements ObjectFactory {
 
     private final Collection<Class<?>> stepClasses = new HashSet<Class<?>>();
     private Class<?> stepClassWithSpringContext = null;
+    private boolean stepClassWithSpringContextInstanceCreated = false;
 
     public SpringFactory() {
     }
@@ -143,6 +144,19 @@ public class SpringFactory implements ObjectFactory {
         }
     }
 
+    private void notifyContextManagerAboutTestClassInstanceCreation(Object instance) {
+        if (!stepClassWithSpringContextInstanceCreated && testContextManager != null &&
+                testContextManager.getTestContext().getTestClass() != null &&
+                testContextManager.getTestContext().getTestClass().equals(instance.getClass())) {
+            try {
+                testContextManager.prepareTestInstance(instance);
+                stepClassWithSpringContextInstanceCreated = true;
+            } catch (Exception e) {
+                throw new CucumberException(e.getMessage(), e);
+            }
+        }
+    };
+
     private boolean isNewContextCreated() {
         if (testContextManager == null) {
             return false;
@@ -163,6 +177,7 @@ public class SpringFactory implements ObjectFactory {
     public void stop() {
         notifyContextManagerAboutTestClassFinished();
         GlueCodeContext.INSTANCE.stop();
+        stepClassWithSpringContextInstanceCreated = false;
     }
 
     private void notifyContextManagerAboutTestClassFinished() {
@@ -178,7 +193,9 @@ public class SpringFactory implements ObjectFactory {
     @Override
     public <T> T getInstance(final Class<T> type) {
         try {
-            return beanFactory.getBean(type);
+            T bean = beanFactory.getBean(type);
+            notifyContextManagerAboutTestClassInstanceCreation(bean);
+            return bean;
         } catch (BeansException e) {
             throw new CucumberException(e.getMessage(), e);
         }
