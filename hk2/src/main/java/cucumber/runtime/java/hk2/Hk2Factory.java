@@ -30,7 +30,7 @@ public class Hk2Factory implements ObjectFactory {
     public void start() {
         // start is NOT the first method called.
         // start is called once per scenario
-        System.out.println("In Hk2Factory start!");
+        //System.out.println("In Hk2Factory start!");
 
         serviceLocator = getServiceLocator();
         ServiceLocatorUtilities.addClasses(serviceLocator, classes.toArray(new Class<?>[0]));
@@ -55,7 +55,7 @@ public class Hk2Factory implements ObjectFactory {
     @Override
     public void stop() {
         // stop is called once per scenario
-        System.out.println("In Hk2Factory stop!");
+        //System.out.println("In Hk2Factory stop!");
         if (serviceLocator != null) {
             serviceLocator.shutdown();
         }
@@ -63,7 +63,7 @@ public class Hk2Factory implements ObjectFactory {
 
     @Override
     public boolean addClass(Class<?> glueClass) {
-        System.out.println(String.format("In Hk2Factory addClass(%s)!", glueClass.toString()));
+        //System.out.println(String.format("In Hk2Factory addClass(%s)!", glueClass.toString()));
         if (glueClass == null || glueClass.getName().equals("int") || glueClass.getName().equals("boolean")) {
             return false;
         }
@@ -112,7 +112,7 @@ public class Hk2Factory implements ObjectFactory {
 
     @Override
     public <T> T getInstance(Class<T> glueClass) {
-        System.out.println(String.format("In Hk2Factory getInstance(%s)!", glueClass.toString()));
+        //System.out.println(String.format("In Hk2Factory getInstance(%s)!", glueClass.toString()));
 
         T glueClassInstance = getServiceLocator().getService(glueClass);
         return glueClassInstance;
@@ -149,7 +149,7 @@ public class Hk2Factory implements ObjectFactory {
             Hk2Binders hk2Binders = clazz.getAnnotation(Hk2Binders.class);
 
             if (hk2Binders != null) {
-                System.out.println(String.format("Hk2Binders annotation found in (%s)!", clazz.toString()));
+                //System.out.println(String.format("Hk2Binders annotation found in (%s)!", clazz.toString()));
                 Class<? extends Binder>[] hk2BinderClasses = hk2Binders.binders();
 
                 if (hk2BinderClasses.length > 0) {
