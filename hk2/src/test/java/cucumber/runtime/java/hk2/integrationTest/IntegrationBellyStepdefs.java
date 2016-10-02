@@ -3,7 +3,6 @@ package cucumber.runtime.java.hk2.integrationTest;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.runtime.java.hk2.Belly;
-import cucumber.runtime.java.hk2.ConstructorBellyStepdefs;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;

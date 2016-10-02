@@ -3,8 +3,6 @@ package cucumber.runtime.java.hk2;
 import cucumber.api.java.ObjectFactory;
 import org.glassfish.hk2.api.MultiException;
 import org.junit.Test;
-import org.jvnet.hk2.annotations.InhabitantAnnotation;
-import org.jvnet.hk2.config.UnsatisfiedDependencyException;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;

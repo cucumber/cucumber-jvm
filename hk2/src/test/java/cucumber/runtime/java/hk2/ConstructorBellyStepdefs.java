@@ -15,7 +15,7 @@ public class ConstructorBellyStepdefs {
     private Belly belly;
 
     @Inject
-    ConstructorBellyStepdefs(Belly belly){
+    ConstructorBellyStepdefs(Belly belly) {
         this.belly = belly;
     }
 
