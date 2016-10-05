@@ -100,10 +100,14 @@ To run the integration test:
 
 ## License
 
-Since this project began as a port of Cucumber-CPP, the original Cucumber-CPP
-license is included as part of the project to give credit where credit is due.
+Since this project began as a port of Cucumber-CPP, the original Cucumber-CPP license is included as part of the project
+to give credit where credit is due. The Cucumber Organisation is responsible for communicating with Paolo Ambrosio (the
+original author of the Cucumber-CPP implementation) to reassign the license as needed.
 
-All original work falls under the Cucumber-JVM license.
+All original work is currently copyright GE Healthcare (GEHC) and falls under the Apache 2.0 license. It is GEHC's
+intention to donate all original work to the Cucumber Organisation. Once the Cucumber Organisation assumes ownership of
+the Cucumber-Wire work, it is their responsibility to determine the licensing and copyrights going forward. This
+includes lifting the GEHC copyright on original work as needed.
 
 [wire-protocol]: https://github.com/cucumber/cucumber/wiki/Wire-Protocol
 [cuke-download]: https://github.com/cucumber/cucumber/wiki/Install
