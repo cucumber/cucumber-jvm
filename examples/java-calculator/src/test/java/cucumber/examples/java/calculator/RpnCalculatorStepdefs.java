@@ -19,7 +19,7 @@ public class RpnCalculatorStepdefs {
         calc = new RpnCalculator();
     }
 
-    @When("^I add (\\d+) and (\\d+)$")
+    @When("I add {arg1} and {arg2}")
     public void adding(int arg1, int arg2) {
         calc.push(arg1);
         calc.push(arg2);
