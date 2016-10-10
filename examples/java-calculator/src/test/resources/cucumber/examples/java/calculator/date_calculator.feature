@@ -3,6 +3,6 @@ Feature: Dates with different date formats
   corresponding step definition method accordingly.
 
   Scenario: Determine past date
-    Given today is 2011-01-20
+    Given today is Jan 20, 2011
     When I ask if Jan 19, 2011 is in the past
     Then the result should be yes

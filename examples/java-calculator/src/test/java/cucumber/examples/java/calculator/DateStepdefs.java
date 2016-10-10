@@ -13,8 +13,8 @@ public class DateStepdefs {
     private String result;
     private DateCalculator calculator;
 
-    @Given("^today is (.+)$")
-    public void today_is(@Format("yyyy-MM-dd") Date date) {
+    @Given("today is {date}")
+    public void today_is(Date date) {
         calculator = new DateCalculator(date);
     }
 
