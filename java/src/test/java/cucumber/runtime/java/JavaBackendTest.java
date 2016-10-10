@@ -9,10 +9,12 @@ import cucumber.runtime.StepDefinition;
 import cucumber.runtime.StepDefinitionMatch;
 import cucumber.runtime.java.stepdefs.Stepdefs;
 import gherkin.pickles.PickleStep;
+import io.cucumber.cucumberexpressions.TransformLookup;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
@@ -21,7 +23,8 @@ public class JavaBackendTest {
     @Test
     public void finds_step_definitions_by_classpath_url() {
         ObjectFactory factory = new DefaultJavaObjectFactory();
-        JavaBackend backend = new JavaBackend(factory);
+        TransformLookup transformLookup = new TransformLookup(Locale.ENGLISH);
+        JavaBackend backend = new JavaBackend(factory, transformLookup);
         GlueStub glue = new GlueStub();
         backend.loadGlue(glue, asList("classpath:cucumber/runtime/java/stepdefs"));
         backend.buildWorld();
@@ -31,7 +34,8 @@ public class JavaBackendTest {
     @Test
     public void finds_step_definitions_by_package_name() {
         ObjectFactory factory = new DefaultJavaObjectFactory();
-        JavaBackend backend = new JavaBackend(factory);
+        TransformLookup transformLookup = new TransformLookup(Locale.ENGLISH);
+        JavaBackend backend = new JavaBackend(factory, transformLookup);
         GlueStub glue = new GlueStub();
         backend.loadGlue(glue, asList("cucumber.runtime.java.stepdefs"));
         backend.buildWorld();
@@ -41,7 +45,8 @@ public class JavaBackendTest {
     @Test(expected = CucumberException.class)
     public void detects_subclassed_glue_and_throws_exception() {
         ObjectFactory factory = new DefaultJavaObjectFactory();
-        JavaBackend backend = new JavaBackend(factory);
+        TransformLookup transformLookup = new TransformLookup(Locale.ENGLISH);
+        JavaBackend backend = new JavaBackend(factory, transformLookup);
         GlueStub glue = new GlueStub();
         backend.loadGlue(glue, asList("cucumber.runtime.java.stepdefs", "cucumber.runtime.java.incorrectlysubclassedstepdefs"));
     }

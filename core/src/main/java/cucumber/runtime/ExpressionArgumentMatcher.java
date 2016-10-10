@@ -1,6 +1,5 @@
 package cucumber.runtime;
 
-import gherkin.formatter.Argument;
 import io.cucumber.cucumberexpressions.Expression;
 
 import java.util.ArrayList;

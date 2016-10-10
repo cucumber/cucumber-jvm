@@ -16,10 +16,12 @@ import gherkin.pickles.Pickle;
 import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleTag;
+import io.cucumber.cucumberexpressions.TransformLookup;
 import org.junit.Test;
 
 import java.lang.reflect.Method;
 import java.util.Collections;
+import java.util.Locale;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
@@ -43,7 +45,7 @@ public class JavaStepDefinitionTest {
     }
 
     private final Defs defs = new Defs();
-    private final JavaBackend backend = new JavaBackend(new SingletonFactory(defs));
+    private final JavaBackend backend = new JavaBackend(new SingletonFactory(defs), new TransformLookup(Locale.ENGLISH));
     private final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
     private final RuntimeOptions runtimeOptions = new RuntimeOptions("");
     private final Runtime runtime = new Runtime(new ClasspathResourceLoader(classLoader), classLoader, asList(backend), runtimeOptions);

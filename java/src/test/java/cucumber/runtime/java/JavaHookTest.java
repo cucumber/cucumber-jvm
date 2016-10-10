@@ -11,10 +11,12 @@ import cucumber.runtime.UndefinedStepsTracker;
 import cucumber.runtime.xstream.LocalizedXStreams;
 import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleTag;
+import io.cucumber.cucumberexpressions.TransformLookup;
 import org.junit.Test;
 
 import java.lang.reflect.Method;
 import java.util.Collections;
+import java.util.Locale;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
@@ -39,7 +41,8 @@ public class JavaHookTest {
     }
 
     private final SingletonFactory objectFactory = new SingletonFactory();
-    private final JavaBackend backend = new JavaBackend(objectFactory);
+    private TransformLookup transformLookup = new TransformLookup(Locale.ENGLISH);
+    private final JavaBackend backend = new JavaBackend(objectFactory, transformLookup);
     private final LocalizedXStreams localizedXStreams = new LocalizedXStreams(Thread.currentThread().getContextClassLoader());
     private final Glue glue = new RuntimeGlue(localizedXStreams);
 

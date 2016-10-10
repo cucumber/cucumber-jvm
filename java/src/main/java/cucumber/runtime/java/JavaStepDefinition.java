@@ -29,7 +29,7 @@ class JavaStepDefinition implements StepDefinition {
 
     public JavaStepDefinition(Method method, String expression, long timeoutMillis, ObjectFactory objectFactory, TransformLookup transformLookup) {
         this.method = method;
-        this.expression = new ExpressionFactory().createExpression(expression, getArgumentTypes(method), transformLookup);
+        this.expression = new ExpressionFactory(transformLookup).createExpression(expression, getArgumentTypes(method));
         this.timeoutMillis = timeoutMillis;
         this.objectFactory = objectFactory;
 
@@ -45,9 +45,9 @@ class JavaStepDefinition implements StepDefinition {
         return argumentMatcher.argumentsFrom(step.getText());
     }
 
-    private static List<Class<?>> getArgumentTypes(Method method) {
-        List<Class<?>> types = new ArrayList<Class<?>>(method.getParameterTypes().length);
-        for (Class<?> type : method.getParameterTypes()) {
+    private static List<Type> getArgumentTypes(Method method) {
+        List<Type> types = new ArrayList<Type>(method.getGenericParameterTypes().length);
+        for (Type type : method.getGenericParameterTypes()) {
             types.add(type);
         }
         return types;

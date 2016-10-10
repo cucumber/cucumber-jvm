@@ -13,6 +13,7 @@ import cucumber.runtime.xstream.LocalizedXStreams;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.Compiler;
 import gherkin.pickles.Pickle;
+import io.cucumber.cucumberexpressions.TransformLookup;
 
 import java.io.IOException;
 import java.io.PrintStream;
@@ -88,7 +89,7 @@ public class Runtime {
     private static Collection<? extends Backend> loadBackends(ResourceLoader resourceLoader, ClassFinder classFinder, RuntimeOptions runtimeOptions) {
         Reflections reflections = new Reflections(classFinder);
         Configuration configuration = reflections.instantiateExactlyOneSubclass(Configuration.class, runtimeOptions.getGlue(), new Class[0], new Object[0], new DefaultConfiguration());
-        return reflections.instantiateSubclasses(Backend.class, singletonList("cucumber.runtime"), new Class[]{ResourceLoader.class, Configuration.class}, new Object[]{resourceLoader, configuration});
+        return reflections.instantiateSubclasses(Backend.class, singletonList("cucumber.runtime"), new Class[]{ResourceLoader.class, TransformLookup.class}, new Object[]{resourceLoader, configuration.createTransformLookup()});
     }
 
     /**
