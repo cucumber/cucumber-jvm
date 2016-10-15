@@ -2,32 +2,34 @@ package cucumber.runtime.java;
 
 import cucumber.api.java8.StepdefBody;
 import cucumber.runtime.CucumberException;
+import io.cucumber.cucumberexpressions.TransformLookup;
 import org.junit.Test;
 
 import java.util.List;
-import java.util.regex.Pattern;
+import java.util.Locale;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 public class Java8StepDefinitionTest {
+    private final TransformLookup transformLookup = new TransformLookup(Locale.ENGLISH);
 
     @Test
     public void should_calculate_parameters_count_from_body_with_one_param() throws Exception {
-        Java8StepDefinition java8StepDefinition = new Java8StepDefinition(Pattern.compile("^I have (\\d) some step (.*)$"), 0, oneParamStep(), null);
+        Java8StepDefinition java8StepDefinition = new Java8StepDefinition("^I have (\\d) some step (.*)$", 0, oneParamStep(), null, transformLookup);
         assertEquals(new Integer(1), java8StepDefinition.getParameterCount());
     }
 
     @Test
     public void should_calculate_parameters_count_from_body_with_two_params() throws Exception {
-        Java8StepDefinition java8StepDefinition = new Java8StepDefinition(Pattern.compile("^I have some step $"), 0, twoParamStep(), null);
+        Java8StepDefinition java8StepDefinition = new Java8StepDefinition("^I have some step $", 0, twoParamStep(), null, transformLookup);
         assertEquals(new Integer(2), java8StepDefinition.getParameterCount());
     }
 
     @Test
     public void should_fail_for_param_with_non_generic_list() throws Exception {
         try {
-            new Java8StepDefinition(Pattern.compile("^I have (\\d) some step (.*)$"), 0, nonGenericListStep(), null);
+            new Java8StepDefinition("^I have (\\d) some step (.*)$", 0, nonGenericListStep(), null, transformLookup);
             fail();
         } catch (CucumberException expected) {
             assertEquals("Can't use java.util.List in lambda step definition. Declare a DataTable argument instead and convert manually with asList/asLists/asMap/asMaps", expected.getMessage());
@@ -36,7 +38,7 @@ public class Java8StepDefinitionTest {
 
     @Test
     public void should_pass_for_param_with_generic_list() throws Exception {
-        Java8StepDefinition java8StepDefinition = new Java8StepDefinition(Pattern.compile("^I have (\\d) some step (.*)$"), 0, genericListStep(), null);
+        Java8StepDefinition java8StepDefinition = new Java8StepDefinition("^I have (\\d) some step (.*)$", 0, genericListStep(), null, transformLookup);
         assertEquals(new Integer(1), java8StepDefinition.getParameterCount());
     }
 

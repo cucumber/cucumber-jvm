@@ -2,12 +2,16 @@ package cucumber.runtime.java;
 
 import cucumber.api.java8.StepdefBody;
 import cucumber.runtime.Argument;
+import cucumber.runtime.ArgumentMatcher;
 import cucumber.runtime.CucumberException;
-import cucumber.runtime.JdkPatternArgumentMatcher;
+import cucumber.runtime.ExpressionArgumentMatcher;
 import cucumber.runtime.ParameterInfo;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.Utils;
 import gherkin.pickles.PickleStep;
+import io.cucumber.cucumberexpressions.Expression;
+import io.cucumber.cucumberexpressions.ExpressionFactory;
+import io.cucumber.cucumberexpressions.TransformLookup;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -15,35 +19,37 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
+
+import static java.util.Arrays.asList;
 
 public class Java8StepDefinition implements StepDefinition {
 
-    private final Pattern pattern;
     private final long timeoutMillis;
     private final StepdefBody body;
 
-    private final JdkPatternArgumentMatcher argumentMatcher;
+    private final Expression expression;
     private final StackTraceElement location;
 
     private final List<ParameterInfo> parameterInfos;
     private final Method method;
 
-    public Java8StepDefinition(Pattern pattern, long timeoutMillis, StepdefBody body, TypeIntrospector typeIntrospector) throws Exception {
-        this.pattern = pattern;
+    public Java8StepDefinition(String expression, long timeoutMillis, StepdefBody body, TypeIntrospector typeIntrospector, TransformLookup transformLookup) throws Exception {
         this.timeoutMillis = timeoutMillis;
         this.body = body;
 
-        this.argumentMatcher = new JdkPatternArgumentMatcher(pattern);
         this.location = new Exception().getStackTrace()[3];
 
         Class<? extends StepdefBody> bodyClass = body.getClass();
 
         this.method = getAcceptMethod(bodyClass);
-        this.parameterInfos = getParameterInfos(bodyClass, typeIntrospector, method.getParameterTypes().length);
+
+        Type[] argumentTypes = getArgumentTypes(bodyClass, typeIntrospector, method.getParameterTypes().length);
+
+        this.expression = new ExpressionFactory(transformLookup).createExpression(expression, asList(argumentTypes));
+        this.parameterInfos = ParameterInfo.fromTypes(argumentTypes);
     }
 
-    private List<ParameterInfo> getParameterInfos(Class<? extends StepdefBody> bodyClass, TypeIntrospector typeIntrospector, int parameterCount) throws Exception {
+    private Type[] getArgumentTypes(Class<? extends StepdefBody> bodyClass, TypeIntrospector typeIntrospector, int parameterCount) throws Exception {
         Type genericInterface = bodyClass.getGenericInterfaces()[0];
         Type[] argumentTypes;
         if (genericInterface instanceof ParameterizedType) {
@@ -56,7 +62,7 @@ public class Java8StepDefinition implements StepDefinition {
         System.arraycopy(argumentTypes, argumentTypes.length - parameterCount, argumentTypesOfCorrectLength, 0, parameterCount);
         verifyNotListOrMap(argumentTypesOfCorrectLength);
 
-        return ParameterInfo.fromTypes(argumentTypesOfCorrectLength);
+        return argumentTypesOfCorrectLength;
     }
 
     private Method getAcceptMethod(Class<? extends StepdefBody> bodyClass) {
@@ -91,6 +97,7 @@ public class Java8StepDefinition implements StepDefinition {
 
     @Override
     public List<Argument> matchedArguments(PickleStep step) {
+        ArgumentMatcher argumentMatcher = new ExpressionArgumentMatcher(expression);
         return argumentMatcher.argumentsFrom(step.getText());
     }
 
@@ -121,7 +128,7 @@ public class Java8StepDefinition implements StepDefinition {
 
     @Override
     public String getPattern() {
-        return pattern.pattern();
+        return expression.getSource();
     }
 
     @Override

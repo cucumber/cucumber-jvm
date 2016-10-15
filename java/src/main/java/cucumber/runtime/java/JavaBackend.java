@@ -164,7 +164,7 @@ public class JavaBackend implements Backend {
 
     public void addStepDefinition(String regexp, long timeoutMillis, StepdefBody body, TypeIntrospector typeIntrospector) {
         try {
-            glue.addStepDefinition(new Java8StepDefinition(Pattern.compile(regexp), timeoutMillis, body, typeIntrospector));
+            glue.addStepDefinition(new Java8StepDefinition(regexp, timeoutMillis, body, typeIntrospector, transformLookup));
         } catch (CucumberException e) {
             throw e;
         } catch (Exception e) {
