@@ -15,6 +15,7 @@ import cucumber.runtime.snippets.SnippetGenerator;
 import gherkin.pickles.PickleRow;
 import gherkin.pickles.PickleString;
 import gherkin.pickles.PickleStep;
+import io.cucumber.cucumberexpressions.TransformLookup;
 import org.jruby.CompatVersion;
 import org.jruby.Ruby;
 import org.jruby.RubyModule;
@@ -36,6 +37,7 @@ public class JRubyBackend implements Backend {
     private final SnippetGenerator snippetGenerator = new SnippetGenerator(new JRubySnippet());
     private final ScriptingContainer jruby = new ScriptingContainer();
     private final ResourceLoader resourceLoader;
+    private final TransformLookup transformLookup;
     private final Set<JRubyWorldDefinition> worldDefinitions = new HashSet<JRubyWorldDefinition>();
     private final RubyModule CucumberRuntimeJRubyWorld;
 
@@ -43,8 +45,9 @@ public class JRubyBackend implements Backend {
     private UnreportedStepExecutor unreportedStepExecutor;
     private RubyObject currentWorld;
 
-    public JRubyBackend(ResourceLoader resourceLoader) throws UnsupportedEncodingException {
+    public JRubyBackend(ResourceLoader resourceLoader, TransformLookup transformLookup) throws UnsupportedEncodingException {
         this.resourceLoader = resourceLoader;
+        this.transformLookup = transformLookup;
         jruby.put("$backend", this);
         jruby.setClassLoader(getClass().getClassLoader());
         String gemPath = ENV.get("GEM_PATH");
@@ -115,7 +118,7 @@ public class JRubyBackend implements Backend {
     }
 
     public void registerStepdef(RubyObject stepdefRunner) {
-        glue.addStepDefinition(new JRubyStepDefinition(this, stepdefRunner));
+        glue.addStepDefinition(new JRubyStepDefinition(this, stepdefRunner, transformLookup));
     }
 
     public void registerBeforeHook(RubyObject procRunner, String[] tagExpressions) {

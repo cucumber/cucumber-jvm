@@ -58,26 +58,12 @@ module Cucumber
         include Locatable
 
         def initialize(regexp, proc)
-          @regexp, @proc = regexp, proc
+          @expression = regexp.class.name == "Regexp" ? regexp.inspect : regexp
+          @proc = proc
         end
 
         def execute(world, *args)
           world.instance_exec(*args, &@proc)
-        end
-
-        # Lifted from regexp_argument_matcher.rb in Cucumber 1.0
-        def matched_arguments(step_name)
-          match = @regexp.match(step_name)
-          if (match)
-            n = 0
-            match.captures.map do |val|
-              n += 1
-              start = match.offset(n)[0]
-              Java::CucumberRuntime::Argument.new(start, val)
-            end
-          else
-            nil
-          end
         end
 
         def param_count
@@ -85,7 +71,7 @@ module Cucumber
         end
 
         def pattern
-          @regexp.inspect
+          @expression
         end
       end
 

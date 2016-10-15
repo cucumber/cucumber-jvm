@@ -19,7 +19,7 @@ Before do
   @before_var = 10
 end
 
-Given /I have (\d+) "(.?*)" in my belly/ do |n, what|
+Given 'I have {n} "{what}" in my belly' do |n, what|
   assert_equal(10, @before_var)
   @n = n.to_i
   @what = what

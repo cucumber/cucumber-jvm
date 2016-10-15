@@ -9,7 +9,7 @@ import static cucumber.runtime.snippets.SnippetGenerator.untypedArguments;
 public class JRubySnippet implements Snippet {
     @Override
     public String template() {
-        return "{0} '/'{1}'/' do{3}\n" +
+        return "{0} ''{1}'' do{3}\n" +
                 "  # {4}\n" +
                 "  pending\n" +
                 "end\n";

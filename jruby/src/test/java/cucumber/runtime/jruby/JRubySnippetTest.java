@@ -20,7 +20,7 @@ public class JRubySnippetTest {
     @Test
     public void generatesSnippetWithTwoArgs() {
         String expected = "" +
-                "Given /^I have (\\d+) cukes in my \"([^\"]*)\" belly$/ do |arg1, arg2|\n" +
+                "Given '^I have (\\d+) cukes in my \"([^\"]*)\" belly$' do |arg1, arg2|\n" +
                 "  # Write code here that turns the phrase above into concrete actions\n" +
                 "  pending\n" +
                 "end\n";
@@ -30,7 +30,7 @@ public class JRubySnippetTest {
     @Test
     public void generatesSnippetWithZeroArgs() {
         String expected = "" +
-                "Given /^I am cucumber$/ do\n" +
+                "Given '^I am cucumber$' do\n" +
                 "  # Write code here that turns the phrase above into concrete actions\n" +
                 "  pending\n" +
                 "end\n";

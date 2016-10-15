@@ -1,38 +1,40 @@
 package cucumber.runtime.jruby;
 
 import cucumber.runtime.Argument;
+import cucumber.runtime.ArgumentMatcher;
+import cucumber.runtime.ExpressionArgumentMatcher;
 import cucumber.runtime.ParameterInfo;
 import cucumber.runtime.StepDefinition;
 import gherkin.pickles.PickleStep;
+import io.cucumber.cucumberexpressions.Expression;
+import io.cucumber.cucumberexpressions.ExpressionFactory;
+import io.cucumber.cucumberexpressions.TransformLookup;
 import org.jruby.RubyObject;
 import org.jruby.RubyString;
 import org.jruby.runtime.builtin.IRubyObject;
 
 import java.lang.reflect.Type;
+import java.util.Collections;
 import java.util.List;
 
 public class JRubyStepDefinition implements StepDefinition {
 
     private final JRubyBackend jRubyBackend;
     private final RubyObject stepdefRunner;
+    private final Expression expression;
     private String file;
     private Long line;
 
-    public JRubyStepDefinition(JRubyBackend jRubyBackend, RubyObject stepdefRunner) {
+    public JRubyStepDefinition(JRubyBackend jRubyBackend, RubyObject stepdefRunner, TransformLookup transformLookup) {
         this.jRubyBackend = jRubyBackend;
         this.stepdefRunner = stepdefRunner;
+        this.expression = new ExpressionFactory(transformLookup).createExpression(getPattern(), Collections.<Type>emptyList());
     }
 
     @Override
     public List<Argument> matchedArguments(PickleStep step) {
-        RubyString stepName = stepdefRunner.getRuntime().newString(step.getText());
-        IRubyObject arguments = stepdefRunner.callMethod("matched_arguments", stepName);
-        return toJava(arguments);
-    }
-
-    @SuppressWarnings("unchecked")
-    private List<Argument> toJava(IRubyObject arguments) {
-        return (List<Argument>) arguments.toJava(List.class);
+        ArgumentMatcher argumentMatcher = new ExpressionArgumentMatcher(expression);
+        return argumentMatcher.argumentsFrom(step.getText());
     }
 
     @Override
@@ -43,6 +45,11 @@ public class JRubyStepDefinition implements StepDefinition {
             line = (Long) fileAndLine.get(1);
         }
         return file + ":" + line;
+    }
+
+    @SuppressWarnings("unchecked")
+    private List toJava(IRubyObject list) {
+        return (List) list.toJava(List.class);
     }
 
     @Override
