@@ -34,7 +34,7 @@ import java.util.Set;
 
 public class JRubyBackend implements Backend {
     private static final Env ENV = Env.INSTANCE;
-    private final SnippetGenerator snippetGenerator = new SnippetGenerator(new JRubySnippet());
+    private final SnippetGenerator snippetGenerator;
     private final ScriptingContainer jruby = new ScriptingContainer();
     private final ResourceLoader resourceLoader;
     private final TransformLookup transformLookup;
@@ -48,6 +48,7 @@ public class JRubyBackend implements Backend {
     public JRubyBackend(ResourceLoader resourceLoader, TransformLookup transformLookup) throws UnsupportedEncodingException {
         this.resourceLoader = resourceLoader;
         this.transformLookup = transformLookup;
+	this.snippetGenerator = new SnippetGenerator(new JRubySnippet(), transformLookup);
         jruby.put("$backend", this);
         jruby.setClassLoader(getClass().getClassLoader());
         String gemPath = ENV.get("GEM_PATH");

@@ -5,6 +5,8 @@ import gherkin.pickles.Argument;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleString;
 import gherkin.pickles.PickleTable;
+import io.cucumber.cucumberexpressions.CucumberExpressionGenerator;
+import io.cucumber.cucumberexpressions.TransformLookup;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -14,59 +16,29 @@ import java.util.regex.Pattern;
 
 public class SnippetGenerator {
     private static final ArgumentPattern[] DEFAULT_ARGUMENT_PATTERNS = new ArgumentPattern[]{
-            new ArgumentPattern(Pattern.compile("\"([^\"]*)\""), String.class),
-            new ArgumentPattern(Pattern.compile("(\\d+)"), Integer.TYPE),
-            new ArgumentPattern(Pattern.compile("<([^>]*)>"), "(.*)", String.class)
-    };
-    private static final Pattern GROUP_PATTERN = Pattern.compile("\\(");
-    private static final Pattern[] ESCAPE_PATTERNS = new Pattern[]{
-            Pattern.compile("\\$"),
-            Pattern.compile("\\("),
-            Pattern.compile("\\)"),
-            Pattern.compile("\\["),
-            Pattern.compile("\\]"),
-            Pattern.compile("\\?"),
-            Pattern.compile("\\*"),
-            Pattern.compile("\\+"),
-            Pattern.compile("\\."),
-            Pattern.compile("\\^")
+            new ArgumentPattern(Pattern.compile("(\\d+)"), Integer.TYPE)
     };
 
     private static final String REGEXP_HINT = "Write code here that turns the phrase above into concrete actions";
 
     private final Snippet snippet;
+    private final CucumberExpressionGenerator generator;
 
-    public SnippetGenerator(Snippet snippet) {
+    public SnippetGenerator(Snippet snippet, TransformLookup transformLookup) {
         this.snippet = snippet;
+        this.generator = new CucumberExpressionGenerator(transformLookup);
     }
 
     public String getSnippet(PickleStep step, String keyword, FunctionNameGenerator functionNameGenerator) {
         return MessageFormat.format(
                 snippet.template(),
                 keyword,
-                snippet.escapePattern(patternFor(step.getText())),
+                snippet.escapePattern(generator.generateExpression(step.getText(), false).getSource()),
                 functionName(step.getText(), functionNameGenerator),
                 snippet.arguments(argumentTypes(step)),
                 REGEXP_HINT,
                 !step.getArgument().isEmpty() && step.getArgument().get(0) instanceof PickleTable ? snippet.tableHint() : ""
         );
-    }
-
-    String patternFor(String stepName) {
-        String pattern = stepName;
-        for (Pattern escapePattern : ESCAPE_PATTERNS) {
-            Matcher m = escapePattern.matcher(pattern);
-            String replacement = Matcher.quoteReplacement(escapePattern.toString());
-            pattern = m.replaceAll(replacement);
-        }
-        for (ArgumentPattern argumentPattern : argumentPatterns()) {
-            pattern = argumentPattern.replaceMatchesWithGroups(pattern);
-        }
-        if (snippet.namedGroupStart() != null) {
-            pattern = withNamedGroups(pattern);
-        }
-
-        return "^" + pattern + "$";
     }
 
     private String functionName(String sentence, FunctionNameGenerator functionNameGenerator) {
@@ -77,20 +49,6 @@ public class SnippetGenerator {
             sentence = argumentPattern.replaceMatchesWithSpace(sentence);
         }
         return functionNameGenerator.generateFunctionName(sentence);
-    }
-
-
-    private String withNamedGroups(String snippetPattern) {
-        Matcher m = GROUP_PATTERN.matcher(snippetPattern);
-
-        StringBuffer sb = new StringBuffer();
-        int n = 1;
-        while (m.find()) {
-            m.appendReplacement(sb, "(" + snippet.namedGroupStart() + n++ + snippet.namedGroupEnd());
-        }
-        m.appendTail(sb);
-
-        return sb.toString();
     }
 
 

@@ -10,10 +10,12 @@ import gherkin.pickles.PickleRow;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleString;
 import gherkin.pickles.PickleTable;
+import io.cucumber.cucumberexpressions.TransformLookup;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Collections;
+import java.util.Locale;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
@@ -26,8 +28,8 @@ public class JavaSnippetTest {
     @Test
     public void generatesPlainSnippet() {
         String expected = "" +
-                "@Given(\"^I have (\\\\d+) cukes in my \\\"([^\\\"]*)\\\" belly$\")\n" +
-                "public void i_have_cukes_in_my_belly(int arg1, String arg2) throws Throwable {\n" +
+                "@Given(\"I have {arg1} cukes in my \\\"big\\\" belly\")\n" +
+                "public void i_have_cukes_in_my_big_belly(int arg1) throws Throwable {\n" +
                 "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException();\n" +
                 "}\n";
@@ -37,7 +39,7 @@ public class JavaSnippetTest {
     @Test
     public void generatesCopyPasteReadyStepSnippetForNumberParameters() throws Exception {
         String expected = "" +
-                "@Given(\"^before (\\\\d+) after$\")\n" +
+                "@Given(\"before {arg1} after\")\n" +
                 "public void before_after(int arg1) throws Throwable {\n" +
                 "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException();\n" +
@@ -49,8 +51,8 @@ public class JavaSnippetTest {
     @Test
     public void generatesCopyPasteReadySnippetWhenStepHasIllegalJavaIdentifierChars() {
         String expected = "" +
-                "@Given(\"^I have (\\\\d+) cukes in: my \\\"([^\\\"]*)\\\" red-belly!$\")\n" +
-                "public void i_have_cukes_in_my_red_belly(int arg1, String arg2) throws Throwable {\n" +
+                "@Given(\"I have {arg1} cukes in: my \\\"big\\\" red-belly!\")\n" +
+                "public void i_have_cukes_in_my_big_red_belly(int arg1) throws Throwable {\n" +
                 "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException();\n" +
                 "}\n";
@@ -58,20 +60,9 @@ public class JavaSnippetTest {
     }
 
     @Test
-    public void generatesCopyPasteReadySnippetWhenStepHasIntegersInsideStringParameter() {
-        String expected = "" +
-                "@Given(\"^the DI system receives a message saying \\\"([^\\\"]*)\\\"$\")\n" +
-                "public void the_DI_system_receives_a_message_saying(String arg1) throws Throwable {\n" +
-                "    // Write code here that turns the phrase above into concrete actions\n" +
-                "    throw new PendingException();\n" +
-                "}\n";
-        assertEquals(expected, snippetFor("the DI system receives a message saying \"{ dataIngestion: { feeds: [ feed: { merchantId: 666, feedId: 1, feedFileLocation: feed.csv } ] }\""));
-    }
-
-    @Test
     public void generatesSnippetWithEscapedDollarSigns() {
         String expected = "" +
-                "@Given(\"^I have \\\\$(\\\\d+)$\")\n" +
+                "@Given(\"I have ${arg1}\")\n" +
                 "public void i_have_$(int arg1) throws Throwable {\n" +
                 "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException();\n" +
@@ -82,7 +73,7 @@ public class JavaSnippetTest {
     @Test
     public void generatesSnippetWithEscapedQuestionMarks() {
         String expected = "" +
-                "@Given(\"^is there an error\\\\?:$\")\n" +
+                "@Given(\"is there an error?:\")\n" +
                 "public void is_there_an_error() throws Throwable {\n" +
                 "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException();\n" +
@@ -91,20 +82,9 @@ public class JavaSnippetTest {
     }
 
     @Test
-    public void generatesSnippetWithLotsOfEscapes() {
-        String expected = "" +
-                "@Given(\"^\\\\^\\\\(\\\\[a-z\\\\]\\\\*\\\\)\\\\?\\\\.\\\\+\\\\$$\")\n" +
-                "public void a_z_$() throws Throwable {\n" +
-                "    // Write code here that turns the phrase above into concrete actions\n" +
-                "    throw new PendingException();\n" +
-                "}\n";
-        assertEquals(expected, snippetFor("^([a-z]*)?.+$"));
-    }
-
-    @Test
     public void generatesSnippetWithEscapedParentheses() {
         String expected = "" +
-                "@Given(\"^I have (\\\\d+) cukes \\\\(maybe more\\\\)$\")\n" +
+                "@Given(\"I have {arg1} cukes (maybe more)\")\n" +
                 "public void i_have_cukes_maybe_more(int arg1) throws Throwable {\n" +
                 "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException();\n" +
@@ -115,7 +95,7 @@ public class JavaSnippetTest {
     @Test
     public void generatesSnippetWithEscapedBrackets() {
         String expected = "" +
-                "@Given(\"^I have (\\\\d+) cukes \\\\[maybe more\\\\]$\")\n" +
+                "@Given(\"I have {arg1} cukes [maybe more]\")\n" +
                 "public void i_have_cukes_maybe_more(int arg1) throws Throwable {\n" +
                 "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException();\n" +
@@ -126,7 +106,7 @@ public class JavaSnippetTest {
     @Test
     public void generatesSnippetWithDocString() {
         String expected = "" +
-                "@Given(\"^I have:$\")\n" +
+                "@Given(\"I have:\")\n" +
                 "public void i_have(String arg1) throws Throwable {\n" +
                 "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException();\n" +
@@ -148,7 +128,7 @@ public class JavaSnippetTest {
     @Test
     public void generatesSnippetWithDataTable() {
         String expected = "" +
-                "@Given(\"^I have:$\")\n" +
+                "@Given(\"I have:\")\n" +
                 "public void i_have(DataTable arg1) throws Throwable {\n" +
                 "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    // For automatic transformation, change DataTable to one of\n" +
@@ -174,16 +154,16 @@ public class JavaSnippetTest {
 
     private String snippetFor(String name) {
         PickleStep step = new PickleStep(name, Collections.<Argument>emptyList(), Collections.<PickleLocation>emptyList());
-        return new SnippetGenerator(new JavaSnippet()).getSnippet(step, GIVEN_KEYWORD, functionNameGenerator);
+        return new SnippetGenerator(new JavaSnippet(), new TransformLookup(Locale.ENGLISH)).getSnippet(step, GIVEN_KEYWORD, functionNameGenerator);
     }
 
     private String snippetForDocString(String name, PickleString docString) {
         PickleStep step = new PickleStep(name, asList((Argument)docString), Collections.<PickleLocation>emptyList());
-        return new SnippetGenerator(new JavaSnippet()).getSnippet(step, GIVEN_KEYWORD, functionNameGenerator);
+        return new SnippetGenerator(new JavaSnippet(), new TransformLookup(Locale.ENGLISH)).getSnippet(step, GIVEN_KEYWORD, functionNameGenerator);
     }
 
     private String snippetForDataTable(String name, PickleTable dataTable) {
         PickleStep step = new PickleStep(name, asList((Argument)dataTable), Collections.<PickleLocation>emptyList());
-        return new SnippetGenerator(new JavaSnippet()).getSnippet(step, GIVEN_KEYWORD, functionNameGenerator);
+        return new SnippetGenerator(new JavaSnippet(), new TransformLookup(Locale.ENGLISH)).getSnippet(step, GIVEN_KEYWORD, functionNameGenerator);
     }
 }

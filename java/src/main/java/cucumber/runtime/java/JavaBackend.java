@@ -29,13 +29,12 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import static cucumber.runtime.io.MultiLoader.packageName;
 
 public class JavaBackend implements Backend {
     public static final ThreadLocal<JavaBackend> INSTANCE = new ThreadLocal<JavaBackend>();
-    private final SnippetGenerator snippetGenerator = new SnippetGenerator(createSnippet());
+    private final SnippetGenerator snippetGenerator;
     private final TransformLookup transformLookup;
 
     private Snippet createSnippet() {
@@ -66,6 +65,7 @@ public class JavaBackend implements Backend {
         methodScanner = new MethodScanner(classFinder);
         objectFactory = ObjectFactoryLoader.loadObjectFactory(classFinder, Env.INSTANCE.get(ObjectFactory.class.getName()));
         this.transformLookup = transformLookup;
+        this.snippetGenerator = new SnippetGenerator(createSnippet(), transformLookup);
     }
 
     public JavaBackend(ObjectFactory objectFactory, TransformLookup transformLookup) {
@@ -75,12 +75,14 @@ public class JavaBackend implements Backend {
         methodScanner = new MethodScanner(classFinder);
         this.objectFactory = objectFactory;
         this.transformLookup = transformLookup;
+        this.snippetGenerator = new SnippetGenerator(createSnippet(), transformLookup);
     }
 
     public JavaBackend(ObjectFactory objectFactory, ClassFinder classFinder, TransformLookup transformLookup) {
         this.objectFactory = objectFactory;
         this.classFinder = classFinder;
         this.transformLookup = transformLookup;
+        this.snippetGenerator = new SnippetGenerator(createSnippet(), transformLookup);
         methodScanner = new MethodScanner(classFinder);
     }
 

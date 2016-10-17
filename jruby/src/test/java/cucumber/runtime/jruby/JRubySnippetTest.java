@@ -4,10 +4,12 @@ import cucumber.runtime.snippets.SnippetGenerator;
 import gherkin.pickles.Argument;
 import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleStep;
+import io.cucumber.cucumberexpressions.TransformLookup;
 import org.junit.Test;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
@@ -20,7 +22,7 @@ public class JRubySnippetTest {
     @Test
     public void generatesSnippetWithTwoArgs() {
         String expected = "" +
-                "Given '^I have (\\d+) cukes in my \"([^\"]*)\" belly$' do |arg1, arg2|\n" +
+                "Given 'I have {arg1} cukes in my \"big\" belly' do |arg1|\n" +
                 "  # Write code here that turns the phrase above into concrete actions\n" +
                 "  pending\n" +
                 "end\n";
@@ -30,7 +32,7 @@ public class JRubySnippetTest {
     @Test
     public void generatesSnippetWithZeroArgs() {
         String expected = "" +
-                "Given '^I am cucumber$' do\n" +
+                "Given 'I am cucumber' do\n" +
                 "  # Write code here that turns the phrase above into concrete actions\n" +
                 "  pending\n" +
                 "end\n";
@@ -39,6 +41,6 @@ public class JRubySnippetTest {
 
     private String snippetFor(String name) {
         PickleStep step = new PickleStep(name, NO_ARGUMENTS, NO_LOCATIONS);
-        return new SnippetGenerator(new JRubySnippet()).getSnippet(step, "Given", null);
+        return new SnippetGenerator(new JRubySnippet(), new TransformLookup(Locale.ENGLISH)).getSnippet(step, "Given", null);
     }
 }
