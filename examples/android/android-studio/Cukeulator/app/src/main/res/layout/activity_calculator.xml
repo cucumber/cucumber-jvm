@@ -36,7 +36,7 @@
             android:layout_marginBottom="24dp"
             android:layout_centerHorizontal="true"
             android:layout_alignParentBottom="true"
-            android:useDefaultMargins="true"
+            android:layout_marginRight="4dp"
             android:columnCount="4">
 
         <!-- row 4 -->
