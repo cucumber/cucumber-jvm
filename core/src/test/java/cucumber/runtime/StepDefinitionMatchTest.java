@@ -19,7 +19,7 @@ import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-@org.junit.Ignore
+
 public class StepDefinitionMatchTest {
     private final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
     private static final String ENGLISH = "en";
@@ -125,7 +125,7 @@ public class StepDefinitionMatchTest {
         verify(stepDefinition).execute(ENGLISH, new Object[]{5, "HELLO"});
     }
 
-    @Test
+    @Test @org.junit.Ignore
     public void gives_nice_error_message_when_conversion_fails() throws Throwable {
         StepDefinition stepDefinition = mock(StepDefinition.class);
         when(stepDefinition.getParameterCount()).thenReturn(1);

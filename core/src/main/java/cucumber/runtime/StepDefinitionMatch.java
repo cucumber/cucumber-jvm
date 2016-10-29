@@ -4,6 +4,9 @@ import cucumber.api.DataTable;
 import cucumber.api.Scenario;
 import cucumber.runtime.table.TableConverter;
 import cucumber.runtime.xstream.LocalizedXStreams;
+import cucumber.util.Mapper;
+import gherkin.pickles.PickleCell;
+import gherkin.pickles.PickleRow;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleString;
 import gherkin.pickles.PickleTable;
@@ -17,6 +20,8 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
+import static cucumber.util.FixJava.map;
 
 public class StepDefinitionMatch extends Match implements DefinitionMatch {
     private final StepDefinition stepDefinition;
@@ -36,6 +41,15 @@ public class StepDefinitionMatch extends Match implements DefinitionMatch {
 
     @Override
     public void runStep(String language, Scenario scenario) throws Throwable {
+        int argumentCount = getArguments().size();
+
+        if (!step.getArgument().isEmpty()) {
+            argumentCount++;
+        }
+        Integer parameterCount = stepDefinition.getParameterCount();
+        if (parameterCount != null && argumentCount != parameterCount) {
+            throw arityMismatch(parameterCount);
+        }
         try {
             List<Object> result = new ArrayList<Object>();
             for (Argument argument : getArguments()) {
@@ -93,6 +107,45 @@ public class StepDefinitionMatch extends Match implements DefinitionMatch {
         DataTable table = new DataTable(stepArgument, tableConverter);
         Type type = parameterInfo.getType();
         return tableConverter.convert(table, type, parameterInfo.isTransposed());
+    }
+
+    private CucumberException arityMismatch(int parameterCount) {
+        List<String> arguments = createArgumentsForErrorMessage(step);
+        return new CucumberException(String.format(
+                "Arity mismatch: Step Definition '%s' with pattern [%s] is declared with %s parameters. However, the gherkin step has %s arguments %s. \nStep text: %s",
+                stepDefinition.getLocation(true),
+                stepDefinition.getPattern(),
+                parameterCount,
+                arguments.size(),
+                arguments,
+                step.getText()
+        ));
+    }
+
+    private List<String> createArgumentsForErrorMessage(PickleStep step) {
+        List<String> arguments = new ArrayList<String>(getArguments().size());
+        for (Argument argument : getArguments()) {
+            arguments.add(argument.getValue());
+        }
+        if (!step.getArgument().isEmpty()) {
+            gherkin.pickles.Argument stepArgument = step.getArgument().get(0);
+            if (stepArgument instanceof PickleString) {
+                arguments.add("DocString:" + ((PickleString) stepArgument).getContent());
+            } else if (stepArgument instanceof PickleTable) {
+                List<List<String>> rows = map(((PickleTable) stepArgument).getRows(), new Mapper<PickleRow, List<String>>() {
+                    @Override
+                    public List<String> map(PickleRow row) {
+                        List<String> raw = new ArrayList<String>(row.getCells().size());
+                        for (PickleCell pickleCell : row.getCells()) {
+                            raw.add(pickleCell.getValue());
+                        }
+                        return raw;
+                    }
+                });
+                arguments.add("Table:" + rows.toString());
+            }
+        }
+        return arguments;
     }
 
     protected Throwable removeFrameworkFramesAndAppendStepLocation(Throwable error, StackTraceElement stepLocation) {
