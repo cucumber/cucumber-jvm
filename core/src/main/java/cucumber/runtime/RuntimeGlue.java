@@ -3,6 +3,7 @@ package cucumber.runtime;
 import cucumber.api.StepDefinitionReporter;
 import cucumber.runtime.xstream.LocalizedXStreams;
 import gherkin.pickles.PickleStep;
+import io.cucumber.cucumberexpressions.Argument;
 
 import java.util.ArrayList;
 import java.util.Collections;

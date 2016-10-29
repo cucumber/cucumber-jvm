@@ -1,11 +1,11 @@
 package cucumber.runtime.autocomplete;
 
-import cucumber.runtime.Argument;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.model.CucumberFeature;
 import gherkin.pickles.Compiler;
 import gherkin.pickles.Pickle;
 import gherkin.pickles.PickleStep;
+import io.cucumber.cucumberexpressions.Argument;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -45,7 +45,7 @@ public class StepdefGenerator {
                             for (Argument argument : arguments) {
                                 MetaStepdef.MetaArgument ma = new MetaStepdef.MetaArgument();
                                 ma.offset = argument.getOffset();
-                                ma.val = argument.getVal();
+                                ma.val = argument.getValue();
                                 ms.args.add(ma);
                             }
                             metaStepdef.steps.add(ms);

@@ -1,7 +1,6 @@
 package cucumber.runner;
 
 import cucumber.api.Scenario;
-import cucumber.runtime.Argument;
 import cucumber.runtime.Backend;
 import cucumber.runtime.HookDefinition;
 import cucumber.runtime.Runtime;
@@ -14,6 +13,7 @@ import gherkin.pickles.Pickle;
 import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleTag;
+import io.cucumber.cucumberexpressions.Argument;
 import org.junit.Test;
 import org.mockito.InOrder;
 import org.mockito.Matchers;

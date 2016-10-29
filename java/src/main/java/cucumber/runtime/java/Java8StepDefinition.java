@@ -1,7 +1,6 @@
 package cucumber.runtime.java;
 
 import cucumber.api.java8.StepdefBody;
-import cucumber.runtime.Argument;
 import cucumber.runtime.ArgumentMatcher;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.ExpressionArgumentMatcher;
@@ -9,6 +8,7 @@ import cucumber.runtime.ParameterInfo;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.Utils;
 import gherkin.pickles.PickleStep;
+import io.cucumber.cucumberexpressions.Argument;
 import io.cucumber.cucumberexpressions.Expression;
 import io.cucumber.cucumberexpressions.ExpressionFactory;
 import io.cucumber.cucumberexpressions.TransformLookup;

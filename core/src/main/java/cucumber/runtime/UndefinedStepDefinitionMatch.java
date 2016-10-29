@@ -2,6 +2,7 @@ package cucumber.runtime;
 
 import cucumber.api.Scenario;
 import gherkin.pickles.PickleStep;
+import io.cucumber.cucumberexpressions.Argument;
 
 import java.util.Collections;
 

@@ -1,8 +1,7 @@
 package cucumber.runtime.autocomplete;
 
-import cucumber.runtime.Argument;
+import cucumber.runtime.ExpressionArgumentMatcher;
 import cucumber.runtime.FeatureBuilder;
-import cucumber.runtime.JdkPatternArgumentMatcher;
 import cucumber.runtime.ParameterInfo;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.io.Resource;
@@ -10,6 +9,10 @@ import cucumber.runtime.model.CucumberFeature;
 import gherkin.deps.com.google.gson.Gson;
 import gherkin.deps.com.google.gson.GsonBuilder;
 import gherkin.pickles.PickleStep;
+import io.cucumber.cucumberexpressions.Argument;
+import io.cucumber.cucumberexpressions.Expression;
+import io.cucumber.cucumberexpressions.ExpressionFactory;
+import io.cucumber.cucumberexpressions.TransformLookup;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
@@ -20,7 +23,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
+import java.util.Locale;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
@@ -32,18 +35,18 @@ public class StepdefGeneratorTest {
     public void generates_code_completion_metadata() throws IOException {
         StepdefGenerator meta = new StepdefGenerator();
 
-        List<StepDefinition> stepDefs = asList(def("I have (\\d+) cukes in my belly"), def("I have (\\d+) apples in my bowl"));
+        List<StepDefinition> stepDefs = asList(def("I have {arg1} cukes in my belly"), def("I have {arg1} apples in my bowl"));
 
         List<MetaStepdef> metadata = meta.generate(stepDefs, features());
         String expectedJson = "" +
                 "[\n" +
                 "  {\n" +
-                "    \"source\": \"I have (\\\\d+) apples in my bowl\",\n" +
+                "    \"source\": \"I have {arg1} apples in my bowl\",\n" +
                 "    \"flags\": \"\",\n" +
                 "    \"steps\": []\n" +
                 "  },\n" +
                 "  {\n" +
-                "    \"source\": \"I have (\\\\d+) cukes in my belly\",\n" +
+                "    \"source\": \"I have {arg1} cukes in my belly\",\n" +
                 "    \"flags\": \"\",\n" +
                 "    \"steps\": [\n" +
                 "      {\n" +
@@ -110,11 +113,12 @@ public class StepdefGeneratorTest {
 
     private StepDefinition def(final String pattern) {
         return new StepDefinition() {
-            Pattern regexp = Pattern.compile(pattern);
+            ExpressionFactory factory = new ExpressionFactory(new TransformLookup(Locale.ENGLISH));
+            Expression expression = factory.createExpression(pattern, asList((Type)Integer.class));
 
             @Override
             public List<Argument> matchedArguments(PickleStep step) {
-                return new JdkPatternArgumentMatcher(regexp).argumentsFrom(step.getText());
+                return new ExpressionArgumentMatcher(expression).argumentsFrom(step.getText());
             }
 
             @Override

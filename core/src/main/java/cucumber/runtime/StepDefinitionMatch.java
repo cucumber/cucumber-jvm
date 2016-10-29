@@ -4,19 +4,19 @@ import cucumber.api.DataTable;
 import cucumber.api.Scenario;
 import cucumber.runtime.table.TableConverter;
 import cucumber.runtime.xstream.LocalizedXStreams;
-import cucumber.util.Mapper;
-import gherkin.pickles.PickleCell;
-import gherkin.pickles.PickleRow;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleString;
 import gherkin.pickles.PickleTable;
+import io.cucumber.cucumberexpressions.Argument;
+import io.cucumber.cucumberexpressions.ClassTransform;
+import io.cucumber.cucumberexpressions.ConstructorTransform;
+import io.cucumber.cucumberexpressions.Transform;
+import io.cucumber.cucumberexpressions.TransformLookup;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
-import static cucumber.util.FixJava.map;
 
 public class StepDefinitionMatch extends Match implements DefinitionMatch {
     private final StepDefinition stepDefinition;
@@ -37,7 +37,35 @@ public class StepDefinitionMatch extends Match implements DefinitionMatch {
     @Override
     public void runStep(String language, Scenario scenario) throws Throwable {
         try {
-            stepDefinition.execute(language, transformedArgs(step, localizedXStreams.get(localeFor(language))));
+            List<Object> result = new ArrayList<Object>();
+            for (Argument argument : getArguments()) {
+                result.add(argument.getTransformedValue());
+            }
+            if (!step.getArgument().isEmpty()) {
+                gherkin.pickles.Argument stepArgument = step.getArgument().get(0);
+                TransformLookup transformLookup = new TransformLookup(Locale.ENGLISH);
+                if (stepArgument instanceof PickleTable) {
+                    result.add(tableArgument((PickleTable) stepArgument, result.size(), localizedXStreams.get(localeFor(language))));
+                } else if (stepArgument instanceof PickleString) {
+                    Type type = stepDefinition.getParameterType(result.size(), String.class).getType();
+                    Transform<?> transform = null;
+                    if (type != null) {
+                        transform = transformLookup.lookupByType(type);
+                    }
+                    if (transform == null && type != null && type instanceof Class) {
+                        transform = new ClassTransform((Class) type);
+                    }
+                    if (transform == null) {
+                        transform = new ConstructorTransform(String.class);
+                    }
+                    if (transform == null) {
+
+                    }
+                    String stepArgumentContent = ((PickleString)stepArgument).getContent();
+                    result.add(transform.transform(stepArgumentContent));
+                }
+            }
+            stepDefinition.execute(language, result.toArray(new Object[result.size()]));
         } catch (CucumberException e) {
             throw e;
         } catch (Throwable t) {
@@ -48,45 +76,6 @@ public class StepDefinitionMatch extends Match implements DefinitionMatch {
     @Override
     public void dryRunStep(String language, Scenario scenario) throws Throwable {
         // Do nothing
-    }
-
-    /**
-     * @param step    the step to run
-     * @param xStream used to convert a string to declared stepdef arguments
-     * @return an Array matching the types or {@code parameterTypes}, or an array of String if {@code parameterTypes} is null
-     */
-    private Object[] transformedArgs(PickleStep step, LocalizedXStreams.LocalizedXStream xStream) {
-        int argumentCount = getArguments().size();
-
-        if (!step.getArgument().isEmpty()) {
-            argumentCount++;
-        }
-        Integer parameterCount = stepDefinition.getParameterCount();
-        if (parameterCount != null && argumentCount != parameterCount) {
-            throw arityMismatch(parameterCount);
-        }
-
-        List<Object> result = new ArrayList<Object>();
-
-        int n = 0;
-        for (Argument a : getArguments()) {
-            ParameterInfo parameterInfo = getParameterType(n, String.class);
-            Object arg = parameterInfo.convert(a.getVal(), xStream);
-            result.add(arg);
-            n++;
-        }
-
-        if (!step.getArgument().isEmpty()) {
-            gherkin.pickles.Argument stepArgument = step.getArgument().get(0);
-            if (stepArgument instanceof PickleTable) {
-                result.add(tableArgument((PickleTable) stepArgument, n, xStream));
-            } else if (stepArgument instanceof PickleString) {
-                ParameterInfo parameterInfo = getParameterType(n, String.class);
-                Object arg = parameterInfo.convert(((PickleString) stepArgument).getContent(), xStream);
-                result.add(arg);
-            }
-        }
-        return result.toArray(new Object[result.size()]);
     }
 
     private ParameterInfo getParameterType(int n, Type argumentType) {
@@ -104,42 +93,6 @@ public class StepDefinitionMatch extends Match implements DefinitionMatch {
         DataTable table = new DataTable(stepArgument, tableConverter);
         Type type = parameterInfo.getType();
         return tableConverter.convert(table, type, parameterInfo.isTransposed());
-    }
-
-    private CucumberException arityMismatch(int parameterCount) {
-        List<Argument> arguments = createArgumentsForErrorMessage(step);
-        return new CucumberException(String.format(
-                "Arity mismatch: Step Definition '%s' with pattern [%s] is declared with %s parameters. However, the gherkin step has %s arguments %s. \nStep text: %s",
-                stepDefinition.getLocation(true),
-                stepDefinition.getPattern(),
-                parameterCount,
-                arguments.size(),
-                arguments,
-                step.getText()
-        ));
-    }
-
-    private List<Argument> createArgumentsForErrorMessage(PickleStep step) {
-        List<Argument> arguments = new ArrayList<Argument>(getArguments());
-        if (!step.getArgument().isEmpty()) {
-            gherkin.pickles.Argument stepArgument = step.getArgument().get(0);
-            if (stepArgument instanceof PickleString) {
-                arguments.add(new Argument(-1, "DocString:" + ((PickleString) stepArgument).getContent()));
-            } else if (stepArgument instanceof PickleTable) {
-                List<List<String>> rows = map(((PickleTable) stepArgument).getRows(), new Mapper<PickleRow, List<String>>() {
-                    @Override
-                    public List<String> map(PickleRow row) {
-                        List<String> raw = new ArrayList<String>(row.getCells().size());
-                        for (PickleCell pickleCell : row.getCells()) {
-                            raw.add(pickleCell.getValue());
-                        }
-                        return raw;
-                    }
-                });
-                arguments.add(new Argument(-1, "Table:" + rows.toString()));
-            }
-        }
-        return arguments;
     }
 
     protected Throwable removeFrameworkFramesAndAppendStepLocation(Throwable error, StackTraceElement stepLocation) {

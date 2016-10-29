@@ -1,8 +1,8 @@
 package cucumber.runtime;
 
+import io.cucumber.cucumberexpressions.Argument;
 import io.cucumber.cucumberexpressions.Expression;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ExpressionArgumentMatcher implements ArgumentMatcher {
@@ -14,12 +14,6 @@ public class ExpressionArgumentMatcher implements ArgumentMatcher {
 
     @Override
     public List<Argument> argumentsFrom(String stepName) {
-        List<io.cucumber.cucumberexpressions.Argument> args = expression.match(stepName);
-        if(args == null) return null;
-        List<Argument> result = new ArrayList<Argument>(args.size());
-        for (io.cucumber.cucumberexpressions.Argument arg : args) {
-            result.add(new Argument(arg.getOffset(), arg.getValue()));
-        }
-        return result;
+        return expression.match(stepName);
     }
 }

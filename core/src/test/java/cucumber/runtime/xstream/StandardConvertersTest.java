@@ -5,6 +5,7 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -46,6 +47,13 @@ public class StandardConvertersTest {
     public void shouldTransformDate() {
         assertEquals(getDateToTest(), new DateConverter(Locale.US).fromString("11/29/2011"));
         assertEquals(getDateToTest(), new DateConverter(Locale.FRANCE).fromString("29/11/2011"));
+    }
+
+    @Test
+    public void shouldTransformDate_2() {
+        DateConverter dateConverter = new DateConverter(Locale.ENGLISH);
+        dateConverter.add(new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH));
+        assertEquals(getDateToTest(), dateConverter.fromString("2011-11-29"));
     }
 
     @Test(expected = ConversionException.class)
