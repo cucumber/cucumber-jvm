@@ -158,6 +158,18 @@ public class JavaSnippetTest {
         assertEquals(expected, snippetForDataTable("I have:", dataTable));
     }
 
+    @Test
+    public void generateSnippetWithOutlineParam() {
+        String expected = "" +
+                "@Given(\"^Then it responds (.*)$\")\n" +
+                "public void then_it_responds(String arg1) throws Throwable {\n" +
+                "    // Write code here that turns the phrase above into concrete actions\n" +
+                "    throw new PendingException();\n" +
+                "}\n";
+
+        assertEquals(expected, snippetFor("Then it responds <param>"));
+    }
+
     private String snippetFor(String name) {
         Step step = new Step(NO_COMMENTS, "Given ", name, 0, null, null);
         return new SnippetGenerator(new JavaSnippet()).getSnippet(step, functionNameGenerator);
