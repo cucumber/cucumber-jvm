@@ -11,7 +11,19 @@
     <artifactId>cucumber-gosu</artifactId>
     <packaging>jar</packaging>
     <name>Cucumber-JVM: Gosu</name>
-
+    
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <skipTests>${gosu.skipTests}</skipTests>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    
     <dependencies>
         <dependency>
             <groupId>info.cukes</groupId>

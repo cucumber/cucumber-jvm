@@ -37,6 +37,8 @@
         <!-- This is only here for the example project to use, the 3 scala projects maintain their own versions -->
         <scala.latest.version>2.11.8</scala.latest.version>
         <gosu.version>1.14.2</gosu.version>
+        <!-- used by Gosu to skip test execution on Java 7 -->
+        <gosu.skipTests>true</gosu.skipTests>
         <rhino.version>1.7.7.1</rhino.version>
         <jsoup.version>1.9.2</jsoup.version>
         <testng.version>6.9.10</testng.version>
@@ -568,6 +570,9 @@
             <modules>
                 <module>java8</module>
             </modules>
+            <properties>
+                <gosu.skipTests>false</gosu.skipTests>
+            </properties>
         </profile>
 
         <profile>
