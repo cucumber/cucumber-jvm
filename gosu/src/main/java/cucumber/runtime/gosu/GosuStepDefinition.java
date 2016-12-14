@@ -1,11 +1,10 @@
 package cucumber.runtime.gosu;
 
+import cucumber.runtime.Argument;
 import cucumber.runtime.JdkPatternArgumentMatcher;
 import cucumber.runtime.ParameterInfo;
 import cucumber.runtime.StepDefinition;
-import gherkin.I18n;
-import gherkin.formatter.Argument;
-import gherkin.formatter.model.Step;
+import gherkin.pickles.PickleStep;
 import gw.lang.function.AbstractBlock;
 import gw.lang.reflect.IType;
 
@@ -41,8 +40,8 @@ public class GosuStepDefinition implements StepDefinition {
         return result;
     }
     @Override
-    public List<Argument> matchedArguments(Step step) {
-        return argumentMatcher.argumentsFrom(step.getName());
+    public List<Argument> matchedArguments(PickleStep step) {
+        return argumentMatcher.argumentsFrom(step.getText());
     }
 
     @Override
@@ -61,7 +60,7 @@ public class GosuStepDefinition implements StepDefinition {
     }
 
     @Override
-    public void execute(I18n i18n, Object[] args) throws Throwable {
+    public void execute(String language, Object[] args) throws Throwable {
         // TODO: Add timeout
         block.invokeWithArgs(args);
     }

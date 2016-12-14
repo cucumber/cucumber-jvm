@@ -25,7 +25,7 @@ matrix:
     after_success: mvn -q deploy --settings .travis-settings.xml -Dno.gem.deploy=true -DskipTests=true -Dmaven.javadoc.skip=true
   - jdk: oraclejdk8
     script: mvn -q install -P java8
-    after_success: mvn -q deploy -P java8 -pl java8 --settings .travis-settings.xml -DskipTests=true -Dmaven.javadoc.skip=true
+    after_success: mvn -q deploy -P java8 -pl java8,gosu --settings .travis-settings.xml -DskipTests=true -Dmaven.javadoc.skip=true
 
 env:
   global:
