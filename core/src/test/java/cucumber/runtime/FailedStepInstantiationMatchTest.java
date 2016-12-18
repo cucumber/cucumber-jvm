@@ -25,7 +25,7 @@ public class FailedStepInstantiationMatchTest {
         Exception exception = mock(Exception.class);
         StackTraceElement[] stackTrace = {new StackTraceElement("declaringClass", "methodName", "fileName", 1)};
         when(exception.getStackTrace()).thenReturn(stackTrace);
-        match = new FailedStepInstantiationMatch(step, exception);
+        match = new FailedStepInstantiationMatch("uri", step, exception);
     }
 
     @Test(expected=Exception.class)

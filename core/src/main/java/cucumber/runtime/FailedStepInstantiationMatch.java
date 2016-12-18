@@ -8,8 +8,8 @@ import java.util.Collections;
 public class FailedStepInstantiationMatch extends StepDefinitionMatch {
     private final Throwable throwable;
 
-    public FailedStepInstantiationMatch(PickleStep step, Throwable throwable) {
-        super(Collections.<Argument>emptyList(), new NoStepDefinition(), step.getLocations().get(0).getPath(), step, null);
+    public FailedStepInstantiationMatch(String uri, PickleStep step, Throwable throwable) {
+        super(Collections.<Argument>emptyList(), new NoStepDefinition(), uri, step, null);
         this.throwable = removeFrameworkFramesAndAppendStepLocation(throwable, getStepLocation());
     }
 

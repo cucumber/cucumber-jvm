@@ -10,10 +10,12 @@ import gherkin.pickles.PickleStep;
 import java.util.List;
 
 public class PickleTestStep extends TestStep {
+    private String uri;
     private PickleStep step;
 
-    public PickleTestStep(PickleStep step, DefinitionMatch definitionMatch) {
+    public PickleTestStep(String uri, PickleStep step, DefinitionMatch definitionMatch) {
         super(definitionMatch);
+        this.uri = uri;
         this.step = step;
     }
 
@@ -29,7 +31,7 @@ public class PickleTestStep extends TestStep {
 
     @Override
     public String getStepLocation() {
-        return step.getLocations().get(0).getPath() + ":" + Integer.toString(getStepLine());
+        return uri + ":" + Integer.toString(getStepLine());
     }
 
     @Override

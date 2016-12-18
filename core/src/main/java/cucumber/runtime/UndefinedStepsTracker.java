@@ -1,10 +1,12 @@
 package cucumber.runtime;
 
 import cucumber.api.Result;
+import cucumber.api.TestCase;
 import cucumber.api.TestStep;
 import cucumber.api.event.EventHandler;
 import cucumber.api.event.EventListener;
 import cucumber.api.event.EventPublisher;
+import cucumber.api.event.TestCaseStarted;
 import cucumber.api.event.TestSourceRead;
 import cucumber.api.event.TestStepFinished;
 import gherkin.AstBuilder;
@@ -32,11 +34,18 @@ public class UndefinedStepsTracker implements EventListener {
     private final Map<String, String> pathToSourceMap = new HashMap<String, String>();
     private final Map<String, FeatureStepMap> pathToStepMap = new HashMap<String, FeatureStepMap>();
     private boolean hasUndefinedSteps = false;
+    private String currentUri;
 
     private EventHandler<TestSourceRead> testSourceReadHandler = new EventHandler<TestSourceRead>() {
         @Override
         public void receive(TestSourceRead event) {
             pathToSourceMap.put(event.path, event.source);
+        }
+    };
+    private EventHandler<TestCaseStarted> testCaseStartedHandler = new EventHandler<TestCaseStarted>() {
+        @Override
+        public void receive(TestCaseStarted event) {
+            handleTestCaseStarted(event.testCase);
         }
     };
     private EventHandler<TestStepFinished> testStepFinishedHandler = new EventHandler<TestStepFinished>() {
@@ -49,6 +58,7 @@ public class UndefinedStepsTracker implements EventListener {
     @Override
     public void setEventPublisher(EventPublisher publisher) {
         publisher.registerHandlerFor(TestSourceRead.class, testSourceReadHandler);
+        publisher.registerHandlerFor(TestCaseStarted.class, testCaseStartedHandler);
         publisher.registerHandlerFor(TestStepFinished.class, testStepFinishedHandler);
     }
 
@@ -58,6 +68,10 @@ public class UndefinedStepsTracker implements EventListener {
 
     public List<String> getSnippets() {
         return snippets;
+    }
+
+    void handleTestCaseStarted(TestCase testCase) {
+        currentUri = testCase.getPath();
     }
 
     void handleTestStepFinished(TestStep step, Result result) {
@@ -77,9 +91,8 @@ public class UndefinedStepsTracker implements EventListener {
         String keyword = null;
         if (!step.getLocations().isEmpty()) {
             List<PickleLocation> stepLocations = step.getLocations();
-            String path = stepLocations.get(0).getPath();
-            if (pathToSourceMap.containsKey(path)) {
-                keyword = getKeywordFromSource(path, stepLocations);
+            if (pathToSourceMap.containsKey(currentUri)) {
+                keyword = getKeywordFromSource(currentUri, stepLocations);
             }
         }
         return keyword != null ? keyword : getFirstGivenKeyword(dialectProvider.getDefaultDialect());

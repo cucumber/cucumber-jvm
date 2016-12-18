@@ -15,6 +15,7 @@ import cucumber.runner.TimeService;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.xstream.LocalizedXStreams;
+import gherkin.events.PickleEvent;
 import gherkin.pickles.Compiler;
 import gherkin.pickles.Pickle;
 
@@ -157,18 +158,20 @@ public class Runtime {
     }
 
     public void runFeature(CucumberFeature feature) {
-        List<Pickle> pickles = new ArrayList<Pickle>();
-        pickles.addAll(compiler.compile(feature.getGherkinFeature(), feature.getPath()));
-        for (Pickle pickle : pickles) {
-            if (matchesFilters(pickle)) {
-                runner.runPickle(pickle, feature.getLanguage());
+        List<PickleEvent> pickleEvents = new ArrayList<PickleEvent>();
+        for (Pickle pickle : compiler.compile(feature.getGherkinFeature())) {
+            pickleEvents.add(new PickleEvent(feature.getPath(), pickle));
+        }
+        for (PickleEvent pickleEvent : pickleEvents) {
+            if (matchesFilters(pickleEvent)) {
+                runner.runPickle(pickleEvent, feature.getLanguage());
             }
         }
     }
 
-    public boolean matchesFilters(Pickle pickle) {
+    public boolean matchesFilters(PickleEvent pickleEvent) {
         for (PicklePredicate filter : filters) {
-            if (!filter.apply(pickle)) {
+            if (!filter.apply(pickleEvent)) {
                 return false;
             }
         }

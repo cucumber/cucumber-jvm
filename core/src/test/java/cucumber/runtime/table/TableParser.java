@@ -26,7 +26,7 @@ public class TableParser {
                 source;
         Parser<GherkinDocument> parser = new Parser<GherkinDocument>(new AstBuilder());
         Compiler compiler = new Compiler();
-        List<Pickle> pickles = compiler.compile(parser.parse(feature), "path");
+        List<Pickle> pickles = compiler.compile(parser.parse(feature));
         PickleTable pickleTable = (PickleTable)pickles.get(0).getSteps().get(0).getArgument().get(0);
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         return new DataTable(pickleTable, new TableConverter(new LocalizedXStreams(classLoader).get(Locale.US), parameterInfo));

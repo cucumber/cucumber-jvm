@@ -36,7 +36,7 @@ public class StepdefGenerator {
             metaStepdef.source = stepDefinition.getPattern();
             metaStepdef.flags = ""; // TODO = get the flags too
             for (CucumberFeature feature : features) {
-                for (Pickle pickle : compiler.compile(feature.getGherkinFeature(), feature.getPath())) {
+                for (Pickle pickle : compiler.compile(feature.getGherkinFeature())) {
                     for (PickleStep step : pickle.getSteps()) {
                         List<Argument> arguments = stepDefinition.matchedArguments(step);
                         if (arguments != null) {

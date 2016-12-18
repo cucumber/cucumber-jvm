@@ -1,6 +1,6 @@
 package cucumber.runtime;
 
-import gherkin.pickles.Pickle;
+import gherkin.events.PickleEvent;
 import gherkin.pickles.PickleLocation;
 
 import java.util.List;
@@ -14,13 +14,13 @@ public class LinePredicate implements PicklePredicate {
     }
 
     @Override
-    public boolean apply(Pickle pickle) {
-        String picklePath = pickle.getLocations().get(0).getPath();
+    public boolean apply(PickleEvent pickleEvent) {
+        String picklePath = pickleEvent.uri;
         if (!lineFilters.containsKey(picklePath)) {
             return true;
         }
         for (Long line : lineFilters.get(picklePath)) {
-            for (PickleLocation location : pickle.getLocations()) {
+            for (PickleLocation location : pickleEvent.pickle.getLocations()) {
                 if (line == location.getLine()) {
                     return true;
                 }

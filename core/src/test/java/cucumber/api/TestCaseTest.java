@@ -7,6 +7,7 @@ import cucumber.api.TestStep;
 import cucumber.api.event.TestCaseFinished;
 import cucumber.api.event.TestCaseStarted;
 import cucumber.runner.EventBus;
+import gherkin.events.PickleEvent;
 import gherkin.pickles.Pickle;
 import org.junit.Test;
 import org.mockito.InOrder;
@@ -30,7 +31,7 @@ public class TestCaseTest {
         TestStep testStep = mock(TestStep.class);
         when(testStep.run(eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(resultWithStatus(Result.UNDEFINED));
 
-        TestCase testCase = new TestCase(Arrays.asList(testStep), mock(Pickle.class));
+        TestCase testCase = new TestCase(Arrays.asList(testStep), pickleEvent());
         testCase.run(bus, language);
 
         InOrder order = inOrder(bus, testStep);
@@ -48,7 +49,7 @@ public class TestCaseTest {
         TestStep testStep2 = mock(TestStep.class);
         when(testStep2.run(eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(resultWithStatus(Result.PASSED));
 
-        TestCase testCase = new TestCase(Arrays.asList(testStep1, testStep2), mock(Pickle.class));
+        TestCase testCase = new TestCase(Arrays.asList(testStep1, testStep2), pickleEvent());
         testCase.run(bus, language);
 
         InOrder order = inOrder(testStep1, testStep2);
@@ -65,12 +66,16 @@ public class TestCaseTest {
         TestStep testStep2 = mock(TestStep.class);
         when(testStep2.run(eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(Result.SKIPPED);
 
-        TestCase testCase = new TestCase(Arrays.asList(testStep1, testStep2), mock(Pickle.class));
+        TestCase testCase = new TestCase(Arrays.asList(testStep1, testStep2), pickleEvent());
         testCase.run(bus, language);
 
         InOrder order = inOrder(testStep1, testStep2);
         order.verify(testStep1).run(eq(bus), eq(language), isA(Scenario.class), eq(false));
         order.verify(testStep2).run(eq(bus), eq(language), isA(Scenario.class), eq(true));
+    }
+
+    private PickleEvent pickleEvent() {
+        return new PickleEvent("uri", mock(Pickle.class));
     }
 
     private Result resultWithStatus(String status) {

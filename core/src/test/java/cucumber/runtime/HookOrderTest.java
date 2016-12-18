@@ -3,6 +3,7 @@ package cucumber.runtime;
 import cucumber.api.Scenario;
 import cucumber.runner.Runner;
 import cucumber.runtime.io.ResourceLoader;
+import gherkin.events.PickleEvent;
 import gherkin.pickles.Pickle;
 import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleStep;
@@ -28,7 +29,7 @@ public class HookOrderTest {
 
     private Runner runner;
     private Glue glue;
-    private Pickle pickle;
+    private PickleEvent pickleEvent;
 
     @Before
     public void buildMockWorld() {
@@ -37,7 +38,7 @@ public class HookOrderTest {
         Runtime runtime = new Runtime(mock(ResourceLoader.class), classLoader, asList(mock(Backend.class)), runtimeOptions);
         runner = runtime.getRunner();
         glue = runtime.getGlue();
-        pickle = new Pickle("name", Collections.<PickleStep>emptyList(), Collections.<PickleTag>emptyList(), asList(mock(PickleLocation.class)));
+        pickleEvent = new PickleEvent("uri", new Pickle("name", Collections.<PickleStep>emptyList(), Collections.<PickleTag>emptyList(), asList(mock(PickleLocation.class))));
     }
 
     @Test
@@ -47,7 +48,7 @@ public class HookOrderTest {
             glue.addBeforeHook(hook);
         }
 
-        runner.runPickle(pickle, ENGLISH);
+        runner.runPickle(pickleEvent, ENGLISH);
 
         InOrder inOrder = inOrder(hooks.toArray());
         inOrder.verify(hooks.get(6)).execute(Matchers.<Scenario>any());
@@ -66,7 +67,7 @@ public class HookOrderTest {
             glue.addAfterHook(hook);
         }
 
-        runner.runPickle(pickle, ENGLISH);
+        runner.runPickle(pickleEvent, ENGLISH);
 
         InOrder inOrder = inOrder(hooks.toArray());
         inOrder.verify(hooks.get(2)).execute(Matchers.<Scenario>any());
@@ -89,7 +90,7 @@ public class HookOrderTest {
             glue.addBeforeHook(hook);
         }
 
-        runner.runPickle(pickle, ENGLISH);
+        runner.runPickle(pickleEvent, ENGLISH);
 
         List<HookDefinition> allHooks = new ArrayList<HookDefinition>();
         allHooks.addAll(backend1Hooks);

@@ -9,6 +9,7 @@ import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.snippets.FunctionNameGenerator;
+import gherkin.events.PickleEvent;
 import gherkin.pickles.Pickle;
 import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleStep;
@@ -45,7 +46,7 @@ public class RunnerTest {
         HookDefinition beforeHook = addBeforeHook(runtime);
         HookDefinition afterHook = addAfterHook(runtime);
 
-        runner.runPickle(createEmptyPickle(), ENGLISH);
+        runner.runPickle(createEmptyPickleEvent(), ENGLISH);
 
         InOrder inOrder = inOrder(beforeHook, afterHook, backend);
         inOrder.verify(backend).buildWorld();
@@ -60,7 +61,7 @@ public class RunnerTest {
         doThrow(RuntimeException.class).when(failingBeforeHook).execute(Matchers.<Scenario>any());
         StepDefinition stepDefinition = mock(StepDefinition.class);
 
-        runner.runPickle(createPickleMatchingStepDefinitions(asList(stepDefinition)), ENGLISH);
+        runner.runPickle(createPickleEventMatchingStepDefinitions(asList(stepDefinition)), ENGLISH);
 
         InOrder inOrder = inOrder(failingBeforeHook, stepDefinition);
         inOrder.verify(failingBeforeHook).execute(Matchers.<Scenario>any());
@@ -74,7 +75,7 @@ public class RunnerTest {
         HookDefinition beforeHook = addBeforeHook(runtime);
         HookDefinition afterHook = addAfterHook(runtime);
 
-        runner.runPickle(createEmptyPickle(), ENGLISH);
+        runner.runPickle(createEmptyPickleEvent(), ENGLISH);
 
         InOrder inOrder = inOrder(failingBeforeHook, beforeHook, afterHook);
         inOrder.verify(failingBeforeHook).execute(Matchers.<Scenario>any());
@@ -89,7 +90,7 @@ public class RunnerTest {
         HookDefinition beforeHook = addBeforeHook(runtime);
         HookDefinition afterHook = addAfterHook(runtime);
 
-        runner.runPickle(createEmptyPickle(), ENGLISH);
+        runner.runPickle(createEmptyPickleEvent(), ENGLISH);
 
         verify(beforeHook, never()).execute(Matchers.<Scenario>any());
         verify(afterHook, never()).execute(Matchers.<Scenario>any());
@@ -98,7 +99,7 @@ public class RunnerTest {
     @Test
     public void backends_are_asked_for_snippets_for_undefined_steps() throws Throwable {
         PickleStep step = mock(PickleStep.class);
-        runner.runPickle(createPickleWithSteps(asList(step)), ENGLISH);
+        runner.runPickle(createPickleEventWithSteps(asList(step)), ENGLISH);
 
         verify(backend).getSnippet(Matchers.eq(step), Matchers.anyString(), Matchers.<FunctionNameGenerator>any());
     }
@@ -136,11 +137,11 @@ public class RunnerTest {
         return hook;
     }
 
-    private Pickle createEmptyPickle() {
-        return new Pickle(NAME, NO_STEPS, NO_TAGS, MOCK_LOCATIONS);
+    private PickleEvent createEmptyPickleEvent() {
+        return new PickleEvent("uri", new Pickle(NAME, NO_STEPS, NO_TAGS, MOCK_LOCATIONS));
     }
 
-    private Pickle createPickleMatchingStepDefinitions(List<StepDefinition> stepDefinitions) {
+    private PickleEvent createPickleEventMatchingStepDefinitions(List<StepDefinition> stepDefinitions) {
         List<PickleStep> steps = new ArrayList<PickleStep>(stepDefinitions.size());
         int i = 0;
         for (StepDefinition stepDefinition : stepDefinitions) {
@@ -150,10 +151,10 @@ public class RunnerTest {
             when(stepDefinition.getPattern()).thenReturn("pattern" + Integer.toString(++i));
             runtime.getGlue().addStepDefinition(stepDefinition);
         }
-        return new Pickle(NAME, steps, NO_TAGS, MOCK_LOCATIONS);
+        return new PickleEvent("uri", new Pickle(NAME, steps, NO_TAGS, MOCK_LOCATIONS));
     }
 
-    private Pickle createPickleWithSteps(List<PickleStep> steps) {
-        return new Pickle(NAME, steps, NO_TAGS, MOCK_LOCATIONS);
+    private PickleEvent createPickleEventWithSteps(List<PickleStep> steps) {
+        return new PickleEvent("uri", new Pickle(NAME, steps, NO_TAGS, MOCK_LOCATIONS));
     }
 }

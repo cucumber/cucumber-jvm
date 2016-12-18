@@ -4,25 +4,25 @@ import cucumber.api.event.TestCaseFinished;
 import cucumber.api.event.TestCaseStarted;
 import cucumber.runner.EventBus;
 import cucumber.runtime.ScenarioImpl;
-import gherkin.pickles.Pickle;
+import gherkin.events.PickleEvent;
 import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleTag;
 
 import java.util.List;
 
 public class TestCase {
-    private final Pickle pickle;
+    private final PickleEvent pickleEvent;
     private final List<TestStep> testSteps;
 
-    public TestCase(List<TestStep> testSteps, Pickle pickle) {
+    public TestCase(List<TestStep> testSteps, PickleEvent pickleEvent) {
         this.testSteps = testSteps;
-        this.pickle = pickle;
+        this.pickleEvent = pickleEvent;
     }
 
     public void run(EventBus bus, String language) {
         boolean skipNextStep = false;
         bus.send(new TestCaseStarted(bus.getTime(), this));
-        ScenarioImpl scenarioResult = new ScenarioImpl(bus, pickle);
+        ScenarioImpl scenarioResult = new ScenarioImpl(bus, pickleEvent.pickle);
         for (TestStep step : testSteps) {
             Result stepResult = step.run(bus, language, scenarioResult, skipNextStep);
             if (stepResult.getStatus() != Result.PASSED) {
@@ -38,26 +38,26 @@ public class TestCase {
     }
 
     public String getName() {
-        return pickle.getName();
+        return pickleEvent.pickle.getName();
     }
 
     public String getScenarioDesignation() {
-        return fileColonLine(pickle.getLocations().get(0)) + " # " + getName();
+        return fileColonLine(pickleEvent.pickle.getLocations().get(0)) + " # " + getName();
     }
 
     public String getPath() {
-        return pickle.getLocations().get(0).getPath();
+        return pickleEvent.uri;
     }
 
     public int getLine() {
-        return pickle.getLocations().get(0).getLine();
+        return pickleEvent.pickle.getLocations().get(0).getLine();
     }
 
     private String fileColonLine(PickleLocation location) {
-        return location.getPath() + ":" + Integer.toString(location.getLine());
+        return pickleEvent.uri + ":" + Integer.toString(location.getLine());
     }
 
     public List<PickleTag> getTags() {
-        return pickle.getTags();
+        return pickleEvent.pickle.getTags();
     }
 }

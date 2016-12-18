@@ -11,6 +11,7 @@ import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.io.Resource;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
+import gherkin.events.PickleEvent;
 import gherkin.pickles.Argument;
 import gherkin.pickles.Pickle;
 import gherkin.pickles.PickleLocation;
@@ -569,9 +570,9 @@ public class RuntimeTest {
         for (int i = 0; i < stepCount; ++i) {
             steps.add(mock(PickleStep.class));
         }
-        Pickle pickle = new Pickle("name", steps, Collections.<PickleTag>emptyList(), asList(mock(PickleLocation.class)));
+        PickleEvent pickleEvent = new PickleEvent("uri", new Pickle("name", steps, Collections.<PickleTag>emptyList(), asList(mock(PickleLocation.class))));
 
-        runtime.getRunner().runPickle(pickle, ENGLISH);
+        runtime.getRunner().runPickle(pickleEvent, ENGLISH);
     }
 
     private int stepCount(int stepCount) {

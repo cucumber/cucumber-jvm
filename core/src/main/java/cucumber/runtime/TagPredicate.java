@@ -1,6 +1,6 @@
 package cucumber.runtime;
 
-import gherkin.pickles.Pickle;
+import gherkin.events.PickleEvent;
 import gherkin.pickles.PickleTag;
 import io.cucumber.tagexpressions.Expression;
 import io.cucumber.tagexpressions.TagExpressionParser;
@@ -31,8 +31,8 @@ public class TagPredicate implements PicklePredicate {
     }
 
     @Override
-    public boolean apply(Pickle pickle) {
-        return apply(pickle.getTags());
+    public boolean apply(PickleEvent pickleEvent) {
+        return apply(pickleEvent.pickle.getTags());
     }
 
     public boolean apply(Collection<PickleTag> pickleTags) {

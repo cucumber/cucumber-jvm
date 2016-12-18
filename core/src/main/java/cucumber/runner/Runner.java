@@ -15,8 +15,8 @@ import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.StepDefinitionMatch;
 import cucumber.runtime.UndefinedStepDefinitionMatch;
 import cucumber.runtime.UnreportedStepExecutor;
+import gherkin.events.PickleEvent;
 import gherkin.pickles.Argument;
-import gherkin.pickles.Pickle;
 import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleRow;
 import gherkin.pickles.PickleStep;
@@ -73,7 +73,7 @@ public class Runner implements UnreportedStepExecutor {
         match.runStep(language, null);
     }
 
-    public void runPickle(Pickle pickle, String language) {
+    public void runPickle(PickleEvent pickle, String language) {
         buildBackendWorlds(); // Java8 step definitions will be added to the glue here
         TestCase testCase = createTestCaseForPickle(pickle);
         testCase.run(bus, language);
@@ -89,24 +89,24 @@ public class Runner implements UnreportedStepExecutor {
         glue.reportStepDefinitions(stepDefinitionReporter);
     }
 
-    private TestCase createTestCaseForPickle(Pickle pickle) {
+    private TestCase createTestCaseForPickle(PickleEvent pickleEvent) {
         List<TestStep> testSteps = new ArrayList<TestStep>();
         if (!runtimeOptions.isDryRun()) {
-            addTestStepsForBeforeHooks(testSteps, pickle.getTags());
+            addTestStepsForBeforeHooks(testSteps, pickleEvent.pickle.getTags());
         }
-        addTestStepsForPickleSteps(testSteps, pickle);
+        addTestStepsForPickleSteps(testSteps, pickleEvent);
         if (!runtimeOptions.isDryRun()) {
-            addTestStepsForAfterHooks(testSteps, pickle.getTags());
+            addTestStepsForAfterHooks(testSteps, pickleEvent.pickle.getTags());
         }
-        TestCase testCase = new TestCase(testSteps, pickle);
+        TestCase testCase = new TestCase(testSteps, pickleEvent);
         return testCase;
     }
 
-    private void addTestStepsForPickleSteps(List<TestStep> testSteps, Pickle pickle) {
-        for (PickleStep step : pickle.getSteps()) {
+    private void addTestStepsForPickleSteps(List<TestStep> testSteps, PickleEvent pickleEvent) {
+        for (PickleStep step : pickleEvent.pickle.getSteps()) {
             StepDefinitionMatch match;
             try {
-                match = glue.stepDefinitionMatch(pickle.getLocations().get(0).getPath(), step);
+                match = glue.stepDefinitionMatch(pickleEvent.uri, step);
                 if (match == null) {
                     List<String> snippets = new ArrayList<String>();
                     for (Backend backend : backends) {
@@ -120,9 +120,9 @@ public class Runner implements UnreportedStepExecutor {
             } catch (AmbiguousStepDefinitionsException e) {
                 match = new AmbiguousStepDefinitionsMatch(step, e);
             } catch (Throwable t) {
-                match = new FailedStepInstantiationMatch(step, t);
+                match = new FailedStepInstantiationMatch(pickleEvent.uri, step, t);
             }
-            testSteps.add(new PickleTestStep(step, match));
+            testSteps.add(new PickleTestStep(pickleEvent.uri, step, match));
         }
     }
 

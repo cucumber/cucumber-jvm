@@ -1,6 +1,7 @@
 package cucumber.runtime;
 
 import cucumber.api.Result;
+import cucumber.api.TestCase;
 import cucumber.api.TestStep;
 import cucumber.runner.EventBus;
 import cucumber.runner.TimeService;
@@ -55,7 +56,8 @@ public class UndefinedStepsTrackerTest {
                 "    Given A\n" +
                 "    Then B\n");
         feature.sendTestSourceRead(bus);
-        tracker.handleTestStepFinished(testStep(path("path/test.feature"), line(4)), undefinedResultWithSnippets(asList("**KEYWORD** ^B$")));
+        tracker.handleTestCaseStarted(testCase(path("path/test.feature")));
+        tracker.handleTestStepFinished(testStep(line(4)), undefinedResultWithSnippets(asList("**KEYWORD** ^B$")));
         assertEquals("[Then ^B$]", tracker.getSnippets().toString());
     }
 
@@ -71,7 +73,8 @@ public class UndefinedStepsTrackerTest {
                 "    And B\n" +
                 "    But C\n");
         feature.sendTestSourceRead(bus);
-        tracker.handleTestStepFinished(testStep(path("path/test.feature"), line(5)), undefinedResultWithSnippets(asList("**KEYWORD** ^C$")));
+        tracker.handleTestCaseStarted(testCase(path("path/test.feature")));
+        tracker.handleTestStepFinished(testStep(line(5)), undefinedResultWithSnippets(asList("**KEYWORD** ^C$")));
         assertEquals("[When ^C$]", tracker.getSnippets().toString());
     }
 
@@ -88,7 +91,8 @@ public class UndefinedStepsTrackerTest {
                 "    And B\n" +
                 "    But C\n");
         feature.sendTestSourceRead(bus);
-        tracker.handleTestStepFinished(testStep(path("path/test.feature"), line(5)), undefinedResultWithSnippets(asList("**KEYWORD** ^C$")));
+        tracker.handleTestCaseStarted(testCase(path("path/test.feature")));
+        tracker.handleTestStepFinished(testStep(line(5)), undefinedResultWithSnippets(asList("**KEYWORD** ^C$")));
         assertEquals("[When ^C$]", tracker.getSnippets().toString());
     }
 
@@ -104,7 +108,8 @@ public class UndefinedStepsTrackerTest {
                 "    And B\n" +
                 "    * C\n");
         feature.sendTestSourceRead(bus);
-        tracker.handleTestStepFinished(testStep(path("path/test.feature"), line(5)), undefinedResultWithSnippets(asList("**KEYWORD** ^C$")));
+        tracker.handleTestCaseStarted(testCase(path("path/test.feature")));
+        tracker.handleTestStepFinished(testStep(line(5)), undefinedResultWithSnippets(asList("**KEYWORD** ^C$")));
         assertEquals("[When ^C$]", tracker.getSnippets().toString());
     }
 
@@ -118,7 +123,8 @@ public class UndefinedStepsTrackerTest {
                 "  Scenario: scenario name\n" +
                 "    * A\n");
         feature.sendTestSourceRead(bus);
-        tracker.handleTestStepFinished(testStep(path("path/test.feature"), line(3)), undefinedResultWithSnippets(asList("**KEYWORD** ^A$")));
+        tracker.handleTestCaseStarted(testCase(path("path/test.feature")));
+        tracker.handleTestStepFinished(testStep(line(3)), undefinedResultWithSnippets(asList("**KEYWORD** ^A$")));
         assertEquals("[Given ^A$]", tracker.getSnippets().toString());
     }
 
@@ -133,12 +139,19 @@ public class UndefinedStepsTrackerTest {
                 "  Сценарий: \n" +
                 "    * Б\n");
         feature.sendTestSourceRead(bus);
-        tracker.handleTestStepFinished(testStep(path("path/test.feature"), line(4)), undefinedResultWithSnippets(asList("**KEYWORD** ^Б$")));
+        tracker.handleTestCaseStarted(testCase(path("path/test.feature")));
+        tracker.handleTestStepFinished(testStep(line(4)), undefinedResultWithSnippets(asList("**KEYWORD** ^Б$")));
         assertEquals("[Допустим ^Б$]", tracker.getSnippets().toString());
     }
 
-    private TestStep testStep(String path, int line) {
-        return testStep(asList(new PickleLocation(path, line, 0)));
+    private TestCase testCase(String path) {
+        TestCase testCase = mock(TestCase.class);
+        when(testCase.getPath()).thenReturn(path);
+        return testCase;
+    }
+
+    private TestStep testStep(int line) {
+        return testStep(asList(new PickleLocation(line, 0)));
     }
 
     private TestStep testStep() {

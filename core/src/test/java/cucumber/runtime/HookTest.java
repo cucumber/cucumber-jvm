@@ -3,6 +3,7 @@ package cucumber.runtime;
 import cucumber.api.Scenario;
 import cucumber.runner.Runner;
 import cucumber.runtime.io.ClasspathResourceLoader;
+import gherkin.events.PickleEvent;
 import gherkin.pickles.Pickle;
 import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleStep;
@@ -38,9 +39,9 @@ public class HookTest {
         Runtime runtime = new Runtime(new ClasspathResourceLoader(classLoader), classLoader, asList(backend), runtimeOptions);
         runtime.getGlue().addAfterHook(hook);
         Runner runner = runtime.getRunner();
-        Pickle pickle = new Pickle("name", Collections.<PickleStep>emptyList(), Collections.<PickleTag>emptyList(), asList(mock(PickleLocation.class)));
+        PickleEvent pickleEvent = new PickleEvent("uri", new Pickle("name", Collections.<PickleStep>emptyList(), Collections.<PickleTag>emptyList(), asList(mock(PickleLocation.class))));
 
-        runner.runPickle(pickle, ENGLISH);
+        runner.runPickle(pickleEvent, ENGLISH);
 
         InOrder inOrder = inOrder(hook, backend);
         inOrder.verify(hook).execute(Matchers.<Scenario>any());
