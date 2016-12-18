@@ -8,8 +8,6 @@ import gherkin.pickles.Pickle;
 import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleTag;
 
-import java.lang.reflect.Field;
-import java.util.Collections;
 import java.util.List;
 
 public class TestCase {
@@ -60,15 +58,6 @@ public class TestCase {
     }
 
     public List<PickleTag> getTags() {
-        List<PickleTag> tags;
-        try { // TODO: Fix when Gherkin provide a getter for the tags.
-            Field f;
-            f = pickle.getClass().getDeclaredField("tags");
-            f.setAccessible(true);
-            tags = (List<PickleTag>) f.get(pickle);
-        } catch (Exception e) {
-            tags = Collections.<PickleTag>emptyList();
-        }
-        return tags;
+        return pickle.getTags();
     }
 }

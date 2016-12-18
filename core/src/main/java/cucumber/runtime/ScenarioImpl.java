@@ -8,10 +8,8 @@ import cucumber.runner.EventBus;
 import gherkin.pickles.Pickle;
 import gherkin.pickles.PickleTag;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -27,16 +25,7 @@ public class ScenarioImpl implements Scenario {
 
     public ScenarioImpl(EventBus bus, Pickle gherkinScenario) {
         this.bus = bus;
-        List<PickleTag> tags;
-        try { // TODO: Fix when Gherkin provide a getter for the tags.
-            Field f;
-            f = gherkinScenario.getClass().getDeclaredField("tags");
-            f.setAccessible(true);
-            tags = (List<PickleTag>) f.get(gherkinScenario);
-        } catch (Exception e) {
-            tags = Collections.<PickleTag>emptyList();
-        }
-        this.tags = tags;
+        this.tags = gherkinScenario.getTags();
         this.scenarioName = gherkinScenario.getName();
     }
 

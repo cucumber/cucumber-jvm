@@ -21,9 +21,7 @@ import gherkin.ast.Step;
 import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleStep;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -145,34 +143,19 @@ public class UndefinedStepsTracker implements EventListener {
     }
 
     private List<String> getGivenWhenThenKeywords(GherkinDialect dialect) {
-        Map<String, List<String>> keywordsMap;
-        try { // TODO: Fix when Gherkin provide a getter for the keywords.
-            Field f;
-            f = dialect.getClass().getDeclaredField("keywords");
-            f.setAccessible(true);
-            keywordsMap = (Map<String, List<String>>) f.get(dialect);
-        } catch (Exception e) {
-            return Collections.<String>emptyList();
-        }
         List<String> keywords = new ArrayList<String>();
-        keywords.addAll(keywordsMap.get("given"));
-        keywords.addAll(keywordsMap.get("when"));
-        keywords.addAll(keywordsMap.get("then"));
+        keywords.addAll(dialect.getGivenKeywords());
+        keywords.addAll(dialect.getWhenKeywords());
+        keywords.addAll(dialect.getThenKeywords());
         return keywords;
     }
 
     private String getFirstGivenKeyword(GherkinDialect i18n) {
-        try { // TODO: Fix when Gherkin provide a getter for the keywords.
-            Field f;
-            f = i18n.getClass().getDeclaredField("keywords");
-            f.setAccessible(true);
-            Map<String, List<String>> keywordsMap = (Map<String, List<String>>) f.get(i18n);
-            for (String keyword : keywordsMap.get("given")) {
-                if (!keyword.equals("* ")) {
-                    return convertToCodeKeyword(keyword);
-                }
+        for (String keyword : i18n.getGivenKeywords()) {
+            if (!keyword.equals("* ")) {
+                return convertToCodeKeyword(keyword);
             }
-        } catch (Exception e) {}
+        }
         return null;
     }
 

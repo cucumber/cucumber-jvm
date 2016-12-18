@@ -14,12 +14,12 @@ import cucumber.runtime.model.PathWithLines;
 import cucumber.runtime.table.TablePrinter;
 import cucumber.util.FixJava;
 import cucumber.util.Mapper;
+import gherkin.GherkinDialect;
 import gherkin.GherkinDialectProvider;
 import gherkin.IGherkinDialectProvider;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -246,50 +246,55 @@ public class RuntimeOptions {
 
     private int printI18n(String language) {
         IGherkinDialectProvider dialectProvider = new GherkinDialectProvider();
-        Map<String, Map<String, List<String>>> languages;
-        try { // TODO: Fix when Gherkin provide a getter for the dialects.
-            Field f;
-            f = dialectProvider.getClass().getDeclaredField("DIALECTS");
-            f.setAccessible(true);
-            languages = (Map<String, Map<String, List<String>>>) f.get(dialectProvider);
-        } catch (Exception e) {
-            System.err.println("Failed to get the list of languages.");
-            return 1;
-        }
+        List<String> languages = dialectProvider.getLanguages();
 
         if (language.equalsIgnoreCase("help")) {
-            for (String code : languages.keySet()) {
+            for (String code : languages) {
                 System.out.println(code);
             }
             return 0;
         }
-        if (languages.containsKey(language)) {
-            return printKeywordsFor(languages.get(language));
+        if (languages.contains(language)) {
+            return printKeywordsFor(dialectProvider.getDialect(language, null));
         }
 
         System.err.println("Unrecognised ISO language code");
         return 1;
     }
 
-    private int printKeywordsFor(Map<String, List<String>> language) {
+    private int printKeywordsFor(GherkinDialect dialect) {
         StringBuilder builder = new StringBuilder();
         TablePrinter printer = new TablePrinter();
         List<List<String>> table = new ArrayList<List<String>>();
-        for (String key : asList("feature", "background", "scenario", "scenarioOutline", "examples", "given", "when", "then", "and", "but")) {
-            List<String> cells = asList(key, join(map(language.get(key), QUOTE_MAPPER), ", "));
-            table.add(cells);
-        }
-        for (String key : asList("given", "when", "then", "and", "but")) {
-            List<String> codeKeywordList = new ArrayList<String>(language.get(key));
-            codeKeywordList.remove("* ");
-            String codeKeywords = join(map(map(codeKeywordList, CODE_KEYWORD_MAPPER), QUOTE_MAPPER), ", ");
-
-            List<String> cells = asList(key + " (code)", codeKeywords);
-            table.add(cells);
-        }
+        addKeywordRow(table, "feature", dialect.getFeatureKeywords());
+        addKeywordRow(table, "background", dialect.getBackgroundKeywords());
+        addKeywordRow(table, "scenario", dialect.getScenarioKeywords());
+        addKeywordRow(table, "scenario outline", dialect.getScenarioOutlineKeywords());
+        addKeywordRow(table, "examples", dialect.getExamplesKeywords());
+        addKeywordRow(table, "given", dialect.getGivenKeywords());
+        addKeywordRow(table, "when", dialect.getWhenKeywords());
+        addKeywordRow(table, "then", dialect.getThenKeywords());
+        addKeywordRow(table, "and", dialect.getAndKeywords());
+        addKeywordRow(table, "but", dialect.getButKeywords());
+        addCodeKeywordRow(table, "given", dialect.getGivenKeywords());
+        addCodeKeywordRow(table, "when", dialect.getWhenKeywords());
+        addCodeKeywordRow(table, "then", dialect.getThenKeywords());
+        addCodeKeywordRow(table, "and", dialect.getAndKeywords());
+        addCodeKeywordRow(table, "but", dialect.getButKeywords());
         printer.printTable(table, builder);
         System.out.println(builder.toString());
         return 0;
+    }
+
+    private void addCodeKeywordRow(List<List<String>> table, String key, List<String> keywords) {
+        List<String> codeKeywordList = new ArrayList<String>(keywords);
+        codeKeywordList.remove("* ");
+        addKeywordRow(table, key + " (code)", map(codeKeywordList, CODE_KEYWORD_MAPPER));
+    }
+
+    private void addKeywordRow(List<List<String>> table, String key, List<String> keywords) {
+        List<String> cells = asList(key, join(map(keywords, QUOTE_MAPPER), ", "));
+        table.add(cells);
     }
 
     public List<CucumberFeature> cucumberFeatures(ResourceLoader resourceLoader, EventBus bus) {

@@ -5,10 +5,8 @@ import gherkin.pickles.PickleTag;
 import io.cucumber.tagexpressions.Expression;
 import io.cucumber.tagexpressions.TagExpressionParser;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -34,16 +32,7 @@ public class TagPredicate implements PicklePredicate {
 
     @Override
     public boolean apply(Pickle pickle) {
-        List<PickleTag> tags;
-        try { // TODO: Fix when Gherkin provide a getter for the tags.
-            Field f;
-            f = pickle.getClass().getDeclaredField("tags");
-            f.setAccessible(true);
-            tags = (List<PickleTag>) f.get(pickle);
-        } catch (Exception e) {
-            tags = Collections.<PickleTag>emptyList();
-        }
-        return apply(tags);
+        return apply(pickle.getTags());
     }
 
     public boolean apply(Collection<PickleTag> pickleTags) {
