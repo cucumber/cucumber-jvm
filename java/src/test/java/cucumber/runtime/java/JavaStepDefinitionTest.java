@@ -10,6 +10,7 @@ import cucumber.runtime.Glue;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.io.ClasspathResourceLoader;
+import gherkin.events.PickleEvent;
 import gherkin.pickles.Argument;
 import gherkin.pickles.Pickle;
 import gherkin.pickles.PickleLocation;
@@ -75,7 +76,8 @@ public class JavaStepDefinitionTest {
         PickleTag tag = new PickleTag(mock(PickleLocation.class), "@foo");
         PickleStep step = new PickleStep("three blind mice", Collections.<Argument>emptyList(), asList(mock(PickleLocation.class)));
         Pickle pickle = new Pickle("pickle name", asList(step), asList(tag), asList(mock(PickleLocation.class)));
-        runtime.getRunner().runPickle(pickle, ENGLISH);
+        PickleEvent pickleEvent = new PickleEvent("uri", pickle);
+        runtime.getRunner().runPickle(pickleEvent, ENGLISH);
 
         assertEquals(AmbiguousStepDefinitionsException.class, latestReceivedResult.getError().getClass());
     }
@@ -87,7 +89,8 @@ public class JavaStepDefinitionTest {
         PickleTag tag = new PickleTag(mock(PickleLocation.class), "@foo");
         PickleStep step = new PickleStep("three blind mice", Collections.<Argument>emptyList(), asList(mock(PickleLocation.class)));
         Pickle pickle = new Pickle("pickle name", asList(step), asList(tag), asList(mock(PickleLocation.class)));
-        runtime.getRunner().runPickle(pickle, ENGLISH);
+        PickleEvent pickleEvent = new PickleEvent("uri", pickle);
+        runtime.getRunner().runPickle(pickleEvent, ENGLISH);
 
         assertNull(latestReceivedResult.getError());
         assertTrue(defs.foo);
