@@ -4,6 +4,7 @@ import cucumber.runner.EventBus;
 import cucumber.runner.Runner;
 import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
+import gherkin.events.PickleEvent;
 import gherkin.pickles.Compiler;
 import gherkin.pickles.Pickle;
 import gherkin.pickles.PickleStep;
@@ -31,12 +32,14 @@ public class ExecutionUnitRunnerTest {
                 null
         );
         Compiler compiler = new Compiler();
-        List<Pickle> pickles = new ArrayList<Pickle>();
-        pickles.addAll(compiler.compile(features.get(0).getGherkinFeature(), features.get(0).getPath()));
+        List<PickleEvent> pickleEvents = new ArrayList<PickleEvent>();
+        for (Pickle pickle : compiler.compile(features.get(0).getGherkinFeature())) {
+            pickleEvents.add(new PickleEvent(features.get(0).getPath(), pickle));
+        };
 
         ExecutionUnitRunner runner = new ExecutionUnitRunner(
                 mock(Runner.class),
-                pickles.get(0),
+                pickleEvents.get(0),
                 ENGLISH,
                 createStandardJUnitReporter()
         );
@@ -63,12 +66,14 @@ public class ExecutionUnitRunnerTest {
                 null
         );
         Compiler compiler = new Compiler();
-        List<Pickle> pickles = new ArrayList<Pickle>();
-        pickles.addAll(compiler.compile(features.get(0).getGherkinFeature(), features.get(0).getPath()));
+        List<PickleEvent> pickleEvents = new ArrayList<PickleEvent>();
+        for (Pickle pickle : compiler.compile(features.get(0).getGherkinFeature())) {
+            pickleEvents.add(new PickleEvent(features.get(0).getPath(), pickle));
+        };
 
         ExecutionUnitRunner runner = new ExecutionUnitRunner(
                 mock(Runner.class),
-                pickles.get(0),
+                pickleEvents.get(0),
                 ENGLISH,
                 createStandardJUnitReporter()
         );
@@ -84,7 +89,7 @@ public class ExecutionUnitRunnerTest {
 
     @Test
     public void shouldUseScenarioNameForRunnerName() throws Exception {
-        List<Pickle> pickles = TestPickleBuilder.picklesFromFeature("featurePath", "" +
+        List<PickleEvent> pickles = TestPickleBuilder.pickleEventsFromFeature("featurePath", "" +
                 "Feature: feature name\n" +
                 "  Scenario: scenario name\n" +
                 "    Then it works\n");
@@ -101,14 +106,14 @@ public class ExecutionUnitRunnerTest {
 
     @Test
     public void shouldUseStepKeyworkAndNameForChildName() throws Exception {
-        List<Pickle> pickles = TestPickleBuilder.picklesFromFeature("featurePath", "" +
+        List<PickleEvent> pickleEvents = TestPickleBuilder.pickleEventsFromFeature("featurePath", "" +
                 "Feature: feature name\n" +
                 "  Scenario: scenario name\n" +
                 "    Then it works\n");
 
         ExecutionUnitRunner runner = new ExecutionUnitRunner(
                 mock(Runner.class),
-                pickles.get(0),
+                pickleEvents.get(0),
                 ENGLISH,
                 createStandardJUnitReporter()
         );
@@ -118,7 +123,7 @@ public class ExecutionUnitRunnerTest {
 
     @Test
     public void shouldConvertTextFromFeatureFileForNamesWithFilenameCompatibleNameOption() throws Exception {
-        List<Pickle> pickles = TestPickleBuilder.picklesFromFeature("featurePath", "" +
+        List<PickleEvent> pickles = TestPickleBuilder.pickleEventsFromFeature("featurePath", "" +
                 "Feature: feature name\n" +
                 "  Scenario: scenario name\n" +
                 "    Then it works\n");

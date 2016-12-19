@@ -1,7 +1,7 @@
 package cucumber.runtime.junit;
 
 import cucumber.runner.Runner;
-import gherkin.pickles.Pickle;
+import gherkin.events.PickleEvent;
 import gherkin.pickles.PickleStep;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
@@ -18,28 +18,28 @@ import java.util.Map;
  */
 public class ExecutionUnitRunner extends ParentRunner<PickleStep> {
     private final Runner runner;
-    private final Pickle pickle;
+    private final PickleEvent pickleEvent;
     private final String language;
     private final JUnitReporter jUnitReporter;
     private final Map<PickleStep, Description> stepDescriptions = new HashMap<PickleStep, Description>();
     private Description description;
 
-    public ExecutionUnitRunner(Runner runner, Pickle pickle, String language, JUnitReporter jUnitReporter) throws InitializationError {
+    public ExecutionUnitRunner(Runner runner, PickleEvent pickleEvent, String language, JUnitReporter jUnitReporter) throws InitializationError {
         super(ExecutionUnitRunner.class);
         this.runner = runner;
-        this.pickle = pickle;
+        this.pickleEvent = pickleEvent;
         this.language = language;
         this.jUnitReporter = jUnitReporter;
     }
 
     @Override
     protected List<PickleStep> getChildren() {
-        return pickle.getSteps();
+        return pickleEvent.pickle.getSteps();
     }
 
     @Override
     public String getName() {
-        String name = pickle.getName();
+        String name = pickleEvent.pickle.getName();
         if (jUnitReporter.useFilenameCompatibleNames()) {
             return makeNameFilenameCompatible(name);
         } else {
@@ -51,7 +51,7 @@ public class ExecutionUnitRunner extends ParentRunner<PickleStep> {
     public Description getDescription() {
         if (description == null) {
             String nameForDescription = getName().isEmpty() ? "EMPTY_NAME" : getName();
-            description = Description.createSuiteDescription(nameForDescription, new PickleWrapper(pickle));
+            description = Description.createSuiteDescription(nameForDescription, new PickleWrapper(pickleEvent));
 
             for (PickleStep step : getChildren()) {
                 description.addChild(describeChild(step));
@@ -80,7 +80,7 @@ public class ExecutionUnitRunner extends ParentRunner<PickleStep> {
     public void run(final RunNotifier notifier) {
         jUnitReporter.startExecutionUnit(this, notifier);
         // This causes runChild to never be called, which seems OK.
-        runner.runPickle(pickle, language);
+        runner.runPickle(pickleEvent, language);
         jUnitReporter.finishExecutionUnit();
     }
 
@@ -99,10 +99,10 @@ public class ExecutionUnitRunner extends ParentRunner<PickleStep> {
 
 class PickleWrapper implements Serializable {
     private static final long serialVersionUID = 1L;
-    private Pickle pickle;
+    private PickleEvent pickleEvent;
 
-    public PickleWrapper(Pickle pickle) {
-        this.pickle = pickle;
+    public PickleWrapper(PickleEvent pickleEvent) {
+        this.pickleEvent = pickleEvent;
     }
 }
 

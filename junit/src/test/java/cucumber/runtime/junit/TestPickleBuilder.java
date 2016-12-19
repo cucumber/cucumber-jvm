@@ -5,6 +5,7 @@ import gherkin.AstBuilder;
 import gherkin.Parser;
 import gherkin.TokenMatcher;
 import gherkin.ast.GherkinDocument;
+import gherkin.events.PickleEvent;
 import gherkin.pickles.Compiler;
 import gherkin.pickles.Pickle;
 
@@ -16,13 +17,15 @@ public class TestPickleBuilder {
     private TestPickleBuilder() {
     }
 
-    static List<Pickle> picklesFromFeature(final String path, final String source) {
-        List<Pickle> pickles = new ArrayList<Pickle>();
+    static List<PickleEvent> pickleEventsFromFeature(final String path, final String source) {
+        List<PickleEvent> pickleEvents = new ArrayList<PickleEvent>();
         Compiler compiler = new Compiler();
 
         CucumberFeature feature = parseFeature(path, source);
-        pickles.addAll(compiler.compile(feature.getGherkinFeature(), feature.getPath()));
-        return pickles;
+        for (Pickle pickle : compiler.compile(feature.getGherkinFeature())) {
+            pickleEvents.add(new PickleEvent(feature.getPath(), pickle));
+        };
+        return pickleEvents;
     }
 
     static CucumberFeature parseFeature(final String path, final String source) {

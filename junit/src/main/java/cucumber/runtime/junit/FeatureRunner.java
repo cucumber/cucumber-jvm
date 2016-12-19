@@ -4,6 +4,7 @@ import cucumber.runtime.CucumberException;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.model.CucumberFeature;
 import gherkin.ast.Feature;
+import gherkin.events.PickleEvent;
 import gherkin.pickles.Compiler;
 import gherkin.pickles.Pickle;
 import org.junit.runner.Description;
@@ -69,12 +70,15 @@ public class FeatureRunner extends ParentRunner<ParentRunner> {
 
     private void buildFeatureElementRunners(Runtime runtime, JUnitReporter jUnitReporter) {
         Compiler compiler = new Compiler();
-        List<Pickle> pickles = compiler.compile(cucumberFeature.getGherkinFeature(), cucumberFeature.getPath());
-        for (Pickle pickle : pickles) {
-            if (runtime.matchesFilters(pickle)) {
+        List<PickleEvent> pickleEvents = new ArrayList<PickleEvent>();
+        for (Pickle pickle : compiler.compile(cucumberFeature.getGherkinFeature())) {
+            pickleEvents.add(new PickleEvent(cucumberFeature.getPath(), pickle));
+        }
+        for (PickleEvent pickleEvent : pickleEvents) {
+            if (runtime.matchesFilters(pickleEvent)) {
                 try {
                     ParentRunner pickleRunner;
-                    pickleRunner = new ExecutionUnitRunner(runtime.getRunner(), pickle, cucumberFeature.getLanguage(), jUnitReporter);
+                    pickleRunner = new ExecutionUnitRunner(runtime.getRunner(), pickleEvent, cucumberFeature.getLanguage(), jUnitReporter);
                     children.add(pickleRunner);
                 } catch (InitializationError e) {
                     throw new CucumberException("Failed to create scenario runner", e);
