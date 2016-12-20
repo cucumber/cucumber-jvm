@@ -2,6 +2,7 @@ package cucumber.runtime.android;
 
 import cucumber.runtime.Runtime;
 import cucumber.runtime.model.CucumberFeature;
+import gherkin.events.PickleEvent;
 import gherkin.pickles.Compiler;
 import gherkin.pickles.Pickle;
 
@@ -23,9 +24,10 @@ public class FeatureCompiler {
         List<PickleStruct> pickles = new ArrayList<PickleStruct>();
         Compiler compiler = new Compiler();
         for (final CucumberFeature feature : cucumberFeatures) {
-            for (final Pickle pickle : compiler.compile(feature.getGherkinFeature(), feature.getPath())) {
-                if (runtime.matchesFilters(pickle)) {
-                    pickles.add(new PickleStruct(pickle, feature.getLanguage()));
+            for (final Pickle pickle : compiler.compile(feature.getGherkinFeature())) {
+                final PickleEvent pickleEvent = new PickleEvent(feature.getPath(), pickle);
+                if (runtime.matchesFilters(pickleEvent)) {
+                    pickles.add(new PickleStruct(pickleEvent, feature.getLanguage()));
                 }
             }
         }

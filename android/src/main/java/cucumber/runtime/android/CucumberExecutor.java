@@ -20,7 +20,6 @@ import cucumber.runtime.java.JavaBackend;
 import cucumber.runtime.java.ObjectFactoryLoader;
 import cucumber.runtime.model.CucumberFeature;
 import dalvik.system.DexFile;
-import gherkin.pickles.Pickle;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -68,9 +67,9 @@ public class CucumberExecutor {
     private final Runtime runtime;
 
     /**
-     * The actual {@link Pickle}s to run stored in {@link PickleStruct}s.
+     * The actual {@link PickleEvent}s to run stored in {@link PickleStruct}s.
      */
-    private final List<PickleStruct> pickles;
+    private final List<PickleStruct> pickleEvents;
 
     /**
      * Creates a new instance for the given parameters.
@@ -91,7 +90,7 @@ public class CucumberExecutor {
         ResourceLoader resourceLoader = new AndroidResourceLoader(context);
         this.runtime = new Runtime(resourceLoader, classLoader, createBackends(), runtimeOptions);
         List<CucumberFeature> cucumberFeatures = runtimeOptions.cucumberFeatures(resourceLoader, runtime.getEventBus());
-        this.pickles = FeatureCompiler.compile(cucumberFeatures, this.runtime);
+        this.pickleEvents = FeatureCompiler.compile(cucumberFeatures, this.runtime);
     }
 
     /**
@@ -109,8 +108,8 @@ public class CucumberExecutor {
         final StepDefinitionReporter stepDefinitionReporter = runtimeOptions.stepDefinitionReporter(classLoader);
         runtime.reportStepDefinitions(stepDefinitionReporter);
 
-        for (final PickleStruct pickle : pickles) {
-            runtime.getRunner().runPickle(pickle.pickle, pickle.language);
+        for (final PickleStruct pickleEvent : pickleEvents) {
+            runtime.getRunner().runPickle(pickleEvent.pickleEvent, pickleEvent.language);
         }
 
         runtime.getEventBus().send(new TestRunFinished(runtime.getEventBus().getTime()));
@@ -120,7 +119,7 @@ public class CucumberExecutor {
      * @return the number of actual scenarios, including outlined
      */
     public int getNumberOfConcreteScenarios() {
-        return pickles.size();
+        return pickleEvents.size();
     }
 
     private void trySetCucumberOptionsToSystemProperties(final Arguments arguments) {
