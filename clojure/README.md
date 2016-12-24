@@ -59,11 +59,12 @@ There are several ways to run scenarios with Cucumber-Clojure:
   (:use [clojure.test]))
 
 (deftest run-cukes
-  (. cucumber.api.cli.Main (main (into-array ["--plugin" "pretty" "--glue" "test/features/step_definitions" "test/features"]))))
+  (. cucumber.api.cli.Main (main (into-array ["--plugin
+" "pretty" "--glue" "test/features/step_definitions" "test/features"]))))
 
 ```
 
-You then need to add `[lein-cucumber "1.0.2"]` to `:plugins` in your project.clj. This allows you to run all Cucumber features with `lein cucumber`
+You then need to add `[com.siili/lein-cucumber "1.0.7"]` to `:plugins` in your project.clj. This allows you to run all Cucumber features with `lein cucumber`
 
 ### JUnitRunner
 
