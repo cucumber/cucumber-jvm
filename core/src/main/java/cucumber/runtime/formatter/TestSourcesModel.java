@@ -59,6 +59,9 @@ public class TestSourcesModel {
         if (node instanceof ExamplesRowWrapperNode) {
             return calculateId(astNode.parent) + ";" + Integer.toString(((ExamplesRowWrapperNode)node).bodyRowIndex + 2);
         }
+        if (node instanceof TableRow) {
+            return calculateId(astNode.parent) + ";" + Integer.toString(1);
+        }
         if (node instanceof Examples) {
             return calculateId(astNode.parent) + ";" + convertToId(((Examples)node).getName());
         }
@@ -145,6 +148,9 @@ public class TestSourcesModel {
     private void processScenarioOutlineExamples(Map<Integer, AstNode> nodeMap, ScenarioOutline scenarioOutline, AstNode childNode) {
         for (Examples examples : scenarioOutline.getExamples()) {
             AstNode examplesNode = new AstNode(examples, childNode);
+            TableRow headerRow = examples.getTableHeader();
+            AstNode headerNode = new AstNode(headerRow, examplesNode);
+            nodeMap.put(headerRow.getLocation().getLine(), headerNode);
             for (int i = 0; i < examples.getTableBody().size(); ++i) {
                 TableRow examplesRow = examples.getTableBody().get(i);
                 Node rowNode = new ExamplesRowWrapperNode(examplesRow, i);
