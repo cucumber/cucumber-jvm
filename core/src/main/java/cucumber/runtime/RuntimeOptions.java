@@ -328,7 +328,7 @@ public class RuntimeOptions {
     }
 
     private boolean notUpdatedFormatter(String pluginName) {
-        List<String> NOT_UPDATED_FORMATTERS = java.util.Arrays.asList("html", "pretty");
+        List<String> NOT_UPDATED_FORMATTERS = java.util.Arrays.asList("html");
         for (String name : NOT_UPDATED_FORMATTERS) {
             if (name.equals(pluginName.split(":")[0])) {
                 return true;

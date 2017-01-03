@@ -35,6 +35,10 @@ public class TestCase {
         bus.send(new TestCaseFinished(this, new Result(scenarioResult.getStatus(), null, null)));
     }
 
+    public List<TestStep> getTestSteps() {
+        return testSteps;
+    }
+
     public String getName() {
         return pickle.getName();
     }

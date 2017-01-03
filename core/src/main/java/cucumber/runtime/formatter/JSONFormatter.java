@@ -15,19 +15,10 @@ import cucumber.api.event.TestStepStarted;
 import cucumber.api.event.WriteEvent;
 import cucumber.api.formatter.Formatter;
 import cucumber.api.formatter.NiceAppendable;
-import gherkin.AstBuilder;
-import gherkin.Parser;
-import gherkin.ParserException;
-import gherkin.TokenMatcher;
 import gherkin.ast.Background;
-import gherkin.ast.Examples;
 import gherkin.ast.Feature;
-import gherkin.ast.GherkinDocument;
-import gherkin.ast.Node;
 import gherkin.ast.ScenarioDefinition;
-import gherkin.ast.ScenarioOutline;
 import gherkin.ast.Step;
-import gherkin.ast.TableRow;
 import gherkin.deps.com.google.gson.Gson;
 import gherkin.deps.com.google.gson.GsonBuilder;
 import gherkin.deps.net.iharder.Base64;
@@ -54,9 +45,7 @@ public class JSONFormatter implements Formatter {
     private Map<String, Object> currentStepOrHookMap;
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private final NiceAppendable out;
-    private final Map<String, String> pathToSourceMap = new HashMap<String, String>();
-    private final Map<String, GherkinDocument> pathToAstMap = new HashMap<String, GherkinDocument>();
-    private final Map<String, Map<Integer, AstNode>> pathToNodeMap = new HashMap<String, Map<Integer, AstNode>>();
+    private final TestSourcesModel testSources = new TestSourcesModel();
 
     private EventHandler<TestSourceRead> testSourceReadHandler = new EventHandler<TestSourceRead>() {
         @Override
@@ -70,13 +59,13 @@ public class JSONFormatter implements Formatter {
             handleTestCaseStarted(event);
         }
     };
-    private EventHandler<TestStepStarted> stepStartedhandler = new EventHandler<TestStepStarted>() {
+    private EventHandler<TestStepStarted> stepStartedHandler = new EventHandler<TestStepStarted>() {
         @Override
         public void receive(TestStepStarted event) {
             handleTestStepStarted(event);
         }
     };
-    private EventHandler<TestStepFinished> stepFinishedhandler = new EventHandler<TestStepFinished>() {
+    private EventHandler<TestStepFinished> stepFinishedHandler = new EventHandler<TestStepFinished>() {
         @Override
         public void receive(TestStepFinished event) {
             handleTestStepFinished(event);
@@ -109,15 +98,15 @@ public class JSONFormatter implements Formatter {
     public void setEventPublisher(EventPublisher publisher) {
         publisher.registerHandlerFor(TestSourceRead.class, testSourceReadHandler);
         publisher.registerHandlerFor(TestCaseStarted.class, caseStartedHandler);
-        publisher.registerHandlerFor(TestStepStarted.class, stepStartedhandler);
-        publisher.registerHandlerFor(TestStepFinished.class, stepFinishedhandler);
+        publisher.registerHandlerFor(TestStepStarted.class, stepStartedHandler);
+        publisher.registerHandlerFor(TestStepFinished.class, stepFinishedHandler);
         publisher.registerHandlerFor(WriteEvent.class, writeEventhandler);
         publisher.registerHandlerFor(EmbedEvent.class, embedEventhandler);
         publisher.registerHandlerFor(TestRunFinished.class, runFinishedHandler);
     }
 
     private void handleTestSourceRead(TestSourceRead event) {
-        pathToSourceMap.put(event.path, event.source);
+        testSources.addSource(event.path, event.source);
     }
 
     private void handleTestCaseStarted(TestCaseStarted event) {
@@ -128,7 +117,7 @@ public class JSONFormatter implements Formatter {
             currentElementsList = (List<Map<String, Object>>) currentFeatureMap.get("elements");
         }
         currentTestCaseMap = createTestCase(event.testCase);
-        if (hasBackground(event.testCase)) {
+        if (testSources.hasBackground(currentFeatureFile, event.testCase.getLine())) {
             currentElementMap = createBackground(event.testCase);
             currentElementsList.add(currentElementMap);
         } else {
@@ -174,65 +163,15 @@ public class JSONFormatter implements Formatter {
         Map<String, Object> featureMap = new HashMap<String, Object>();
         featureMap.put("uri", testCase.getPath());
         featureMap.put("elements", new ArrayList<Map<String, Object>>());
-        if (!pathToAstMap.containsKey(testCase.getPath())) {
-            parseGherkinSource(testCase.getPath());
-        }
-        if (pathToAstMap.containsKey(testCase.getPath())) {
-            Feature feature = pathToAstMap.get(testCase.getPath()).getFeature();
+        Feature feature = testSources.getFeature(testCase.getPath());
+        if (feature != null) {
             featureMap.put("keyword", feature.getKeyword());
             featureMap.put("name", feature.getName());
             featureMap.put("description", feature.getDescription() != null ? feature.getDescription() : "");
             featureMap.put("line", feature.getLocation().getLine());
-            featureMap.put("id", convertToId(feature.getName()));
+            featureMap.put("id", TestSourcesModel.convertToId(feature.getName()));
         }
         return featureMap;
-    }
-
-    private void parseGherkinSource(String path) {
-        if (!pathToSourceMap.containsKey(path)) {
-            return;
-        }
-        Parser<GherkinDocument> parser = new Parser<GherkinDocument>(new AstBuilder());
-        TokenMatcher matcher = new TokenMatcher();
-        try {
-            GherkinDocument gherkinDocument = parser.parse(pathToSourceMap.get(path), matcher);
-            pathToAstMap.put(path, gherkinDocument);
-            Map<Integer, AstNode> nodeMap = new HashMap<Integer, AstNode>();
-            AstNode currentParent = new AstNode(gherkinDocument.getFeature(), null);
-            for (ScenarioDefinition child : gherkinDocument.getFeature().getChildren()) {
-                processScenarioDefinition(nodeMap, child, currentParent);
-            }
-            pathToNodeMap.put(path, nodeMap);
-        } catch (ParserException e) {
-            // Ignore exceptions
-        }
-    }
-
-    private void processScenarioDefinition(Map<Integer, AstNode> nodeMap, ScenarioDefinition child, AstNode currentParent) {
-        AstNode childNode = new AstNode(child, currentParent);
-        nodeMap.put(child.getLocation().getLine(), childNode);
-        for (Step step : child.getSteps()) {
-            nodeMap.put(step.getLocation().getLine(), new AstNode(step, childNode));
-        }
-        if (child instanceof ScenarioOutline) {
-            processScenarioOutlineExamples(nodeMap, (ScenarioOutline)child, childNode);
-        }
-    }
-
-    private void processScenarioOutlineExamples(Map<Integer, AstNode> nodeMap, ScenarioOutline scenarioOutline, AstNode childNode) {
-        for (Examples examples : scenarioOutline.getExamples()) {
-            AstNode examplesNode = new AstNode(examples, childNode);
-            for (int i = 0; i < examples.getTableBody().size(); ++i) {
-                TableRow examplesRow = examples.getTableBody().get(i);
-                Node rowNode = new ExamplesRowWrapperNode(examplesRow, i);
-                AstNode expandedScenarioNode = new AstNode(rowNode, examplesNode);
-                nodeMap.put(examplesRow.getLocation().getLine(), expandedScenarioNode);
-            }
-        }
-    }
-
-    private String convertToId(String name) {
-        return name.replaceAll("[\\s'_,!]", "-").toLowerCase();
     }
 
     private Map<String, Object> createTestCase(TestCase testCase) {
@@ -240,10 +179,10 @@ public class JSONFormatter implements Formatter {
         testCaseMap.put("name", testCase.getName());
         testCaseMap.put("line", testCase.getLine());
         testCaseMap.put("type", "scenario");
-        if (pathToNodeMap.containsKey(currentFeatureFile)) {
-            AstNode astNode = pathToNodeMap.get(currentFeatureFile).get(testCase.getLine());
-            testCaseMap.put("id", calculateId(astNode));
-            ScenarioDefinition scenarioDefinition = astNode.node instanceof ScenarioDefinition ? (ScenarioDefinition)astNode.node : (ScenarioDefinition)astNode.parent.parent.node;
+        TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeatureFile, testCase.getLine());
+        if (astNode != null) {
+            testCaseMap.put("id", TestSourcesModel.calculateId(astNode));
+            ScenarioDefinition scenarioDefinition = TestSourcesModel.getScenarioDefinition(astNode);
             testCaseMap.put("keyword", scenarioDefinition.getKeyword());
             testCaseMap.put("description", scenarioDefinition.getDescription() != null ? scenarioDefinition.getDescription() : "");
         }
@@ -260,46 +199,10 @@ public class JSONFormatter implements Formatter {
         return testCaseMap;
     }
 
-    private String calculateId(AstNode astNode) {
-        Node node = astNode.node;
-        if (node instanceof ScenarioDefinition) {
-            return calculateId(astNode.parent) + ";" + convertToId(((ScenarioDefinition)node).getName());
-        }
-        if (node instanceof ExamplesRowWrapperNode) {
-            return calculateId(astNode.parent) + ";" + Integer.toString(((ExamplesRowWrapperNode)node).bodyRowIndex + 2);
-        }
-        if (node instanceof Examples) {
-            return calculateId(astNode.parent) + ";" + convertToId(((Examples)node).getName());
-        }
-        if (node instanceof Feature) {
-            return convertToId(((Feature)node).getName());
-        }
-        return "";
-    }
-
-    private boolean hasBackground(TestCase testCase) {
-        if (pathToNodeMap.containsKey(currentFeatureFile)) {
-            AstNode astNode = pathToNodeMap.get(currentFeatureFile).get(testCase.getLine());
-            Feature feature = getFeatureForTestCase(astNode);
-            if (feature.getChildren().get(0) instanceof Background) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private Feature getFeatureForTestCase(AstNode astNode) {
-        while (astNode.parent != null) {
-            astNode = astNode.parent;
-        }
-        return (Feature)astNode.node;
-    }
-
     private Map<String, Object> createBackground(TestCase testCase) {
-        if (pathToNodeMap.containsKey(currentFeatureFile)) {
-            AstNode astNode = pathToNodeMap.get(currentFeatureFile).get(testCase.getLine());
-            Feature feature = getFeatureForTestCase(astNode);
-            Background background = (Background)feature.getChildren().get(0);
+        TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeatureFile, testCase.getLine());
+        if (astNode != null) {
+            Background background = TestSourcesModel.getBackgoundForTestCase(astNode);
             Map<String, Object> testCaseMap = new HashMap<String, Object>();
             testCaseMap.put("name", background.getName());
             testCaseMap.put("line", background.getLocation().getLine());
@@ -313,9 +216,9 @@ public class JSONFormatter implements Formatter {
     }
 
     private boolean isFirstStepAfterBackground(TestStep testStep) {
-        if (pathToNodeMap.containsKey(currentFeatureFile)) {
-            AstNode astNode = pathToNodeMap.get(currentFeatureFile).get(testStep.getStepLine());
-            if (currentElementMap != currentTestCaseMap && !(astNode.parent.node instanceof Background)) {
+        TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeatureFile, testStep.getStepLine());
+        if (astNode != null) {
+            if (currentElementMap != currentTestCaseMap && !TestSourcesModel.isBackgroundStep(astNode)) {
                 return true;
             }
         }
@@ -334,8 +237,9 @@ public class JSONFormatter implements Formatter {
                 stepMap.put("rows", createDataTableList(argument));
             }
         }
-        if (pathToNodeMap.containsKey(currentFeatureFile)) {
-            Step step = (Step) pathToNodeMap.get(currentFeatureFile).get(testStep.getStepLine()).node;
+        TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeatureFile, testStep.getStepLine());
+        if (astNode != null) {
+            Step step = (Step) astNode.node;
             stepMap.put("keyword", step.getKeyword());
         }
 
@@ -429,24 +333,5 @@ public class JSONFormatter implements Formatter {
             resultMap.put("duration", result.getDuration());
         }
         return resultMap;
-    }
-
-    private class AstNode {
-        public final Node node;
-        public final AstNode parent;
-
-        public AstNode(Node node, AstNode parent) {
-            this.node = node;
-            this.parent = parent;
-        }
-    }
-
-    private class ExamplesRowWrapperNode extends Node {
-        public final int bodyRowIndex;
-
-        protected ExamplesRowWrapperNode(Node examplesRow, int bodyRowIndex) {
-            super(examplesRow.getLocation());
-            this.bodyRowIndex = bodyRowIndex;
-        }
     }
 }
