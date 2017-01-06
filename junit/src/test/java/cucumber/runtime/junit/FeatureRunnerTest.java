@@ -1,10 +1,10 @@
 package cucumber.runtime.junit;
 
+import cucumber.runner.TimeService;
 import cucumber.runtime.Backend;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeGlue;
 import cucumber.runtime.RuntimeOptions;
-import cucumber.runtime.StopWatch;
 import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
 import org.junit.Test;
@@ -93,7 +93,7 @@ public class FeatureRunnerTest {
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         final ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
         final RuntimeGlue glue = mock(RuntimeGlue.class);
-        final Runtime runtime = new Runtime(resourceLoader, classLoader, asList(mock(Backend.class)), runtimeOptions, new StopWatch.Stub(0l), glue);
+        final Runtime runtime = new Runtime(resourceLoader, classLoader, asList(mock(Backend.class)), runtimeOptions, new TimeService.Stub(0l), glue);
         FeatureRunner runner = new FeatureRunner(cucumberFeature, runtime, new JUnitReporter(runtime.getEventBus(), false, new JUnitOptions(Collections.<String>emptyList())));
         RunNotifier notifier = mock(RunNotifier.class);
         runner.run(notifier);

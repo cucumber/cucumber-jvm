@@ -13,7 +13,6 @@ import cucumber.runtime.HookDefinition;
 import cucumber.runtime.HookDefinitionMatch;
 import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.StepDefinitionMatch;
-import cucumber.runtime.StopWatch;
 import cucumber.runtime.UndefinedStepDefinitionMatch;
 import cucumber.runtime.UnreportedStepExecutor;
 import gherkin.pickles.Argument;
@@ -36,13 +35,11 @@ public class Runner implements UnreportedStepExecutor {
     private final EventBus bus;
     private final Collection<? extends Backend> backends;
     private final RuntimeOptions runtimeOptions;
-    private final StopWatch stopWatch;
 
-    public Runner(Glue glue, EventBus bus, Collection<? extends Backend> backends, RuntimeOptions runtimeOptions, StopWatch stopWatch) {
+    public Runner(Glue glue, EventBus bus, Collection<? extends Backend> backends, RuntimeOptions runtimeOptions) {
         this.glue = glue;
         this.bus = bus;
         this.runtimeOptions = runtimeOptions;
-        this.stopWatch = stopWatch;
         this.backends = backends;
         for (Backend backend : backends) {
             backend.loadGlue(glue, runtimeOptions.getGlue());
@@ -135,7 +132,7 @@ public class Runner implements UnreportedStepExecutor {
             } catch (Throwable t) {
                 match = new FailedStepInstantiationMatch(step, t);
             }
-            testSteps.add(new PickleTestStep(step, match, stopWatch));
+            testSteps.add(new PickleTestStep(step, match));
         }
     }
 
@@ -150,7 +147,7 @@ public class Runner implements UnreportedStepExecutor {
     private void addTestStepsForHooks(List<TestStep> testSteps, List<PickleTag> tags,  List<HookDefinition> hooks, HookType hookType) {
         for (HookDefinition hook : hooks) {
             if (hook.matches(tags)) {
-                TestStep testStep = new UnskipableStep(hookType, new HookDefinitionMatch(hook), stopWatch);
+                TestStep testStep = new UnskipableStep(hookType, new HookDefinitionMatch(hook));
                 testSteps.add(testStep);
             }
         }

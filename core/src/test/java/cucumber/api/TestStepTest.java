@@ -1,15 +1,10 @@
 package cucumber.api;
 
-import cucumber.api.PendingException;
-import cucumber.api.Result;
-import cucumber.api.Scenario;
-import cucumber.api.TestStep;
 import cucumber.api.event.TestStepFinished;
 import cucumber.api.event.TestStepStarted;
 import cucumber.runner.EventBus;
 import cucumber.runner.PickleTestStep;
 import cucumber.runtime.DefinitionMatch;
-import cucumber.runtime.StopWatch;
 import gherkin.pickles.PickleStep;
 import org.junit.Test;
 import org.mockito.InOrder;
@@ -18,16 +13,17 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.isA;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
 
 public class TestStepTest {
     private final EventBus bus = mock(EventBus.class);
     private final String language = "en";
     private final Scenario scenario = mock(Scenario.class);
     private final DefinitionMatch definitionMatch = mock(DefinitionMatch.class);
-    private final TestStep step = new PickleTestStep(mock(PickleStep.class), definitionMatch, StopWatch.SYSTEM);
+    private final TestStep step = new PickleTestStep(mock(PickleStep.class), definitionMatch);
 
     @Test
     public void run_wraps_run_step_in_test_step_started_and_finished_events() throws Throwable {
@@ -84,7 +80,8 @@ public class TestStepTest {
     @Test
     public void step_execution_time_is_measured() throws Throwable {
         Long duration = new Long(1234);
-        TestStep step = new PickleTestStep(mock(PickleStep.class), definitionMatch, new StopWatch.Stub(duration));
+        TestStep step = new PickleTestStep(mock(PickleStep.class), definitionMatch);
+        when(bus.getTime()).thenReturn(0l, 1234l);
 
         Result result = step.run(bus, language, scenario, false);
 

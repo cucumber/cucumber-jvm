@@ -4,7 +4,6 @@ import cucumber.api.event.TestStepFinished;
 import cucumber.api.event.TestStepStarted;
 import cucumber.runner.EventBus;
 import cucumber.runtime.DefinitionMatch;
-import cucumber.runtime.StopWatch;
 import cucumber.runtime.UndefinedStepDefinitionException;
 import gherkin.pickles.Argument;
 import gherkin.pickles.PickleStep;
@@ -20,12 +19,10 @@ public abstract class TestStep {
     static {
         Arrays.sort(PENDING_EXCEPTIONS);
     }
-    private final StopWatch stopWatch;
     protected final DefinitionMatch definitionMatch;
 
-    public TestStep(DefinitionMatch definitionMatch, StopWatch stopWatch) {
+    public TestStep(DefinitionMatch definitionMatch) {
         this.definitionMatch = definitionMatch;
-        this.stopWatch = stopWatch;
     }
 
     public String getPattern() {
@@ -55,19 +52,19 @@ public abstract class TestStep {
     public abstract HookType getHookType();
 
     public Result run(EventBus bus, String language, Scenario scenario, boolean skipSteps) {
-        bus.send(new TestStepStarted(this));
+        Long startTime = bus.getTime();
+        bus.send(new TestStepStarted(startTime, this));
         String status;
         Throwable error = null;
-        stopWatch.start();
         try {
             status = executeStep(language, scenario, skipSteps);
         } catch (Throwable t) {
             error = t;
             status = mapThrowableToStatus(t);
         }
-        long duration = stopWatch.stop();
-        Result result = mapStatusToResult(status, error, duration);
-        bus.send(new TestStepFinished(this, result));
+        Long stopTime = bus.getTime();
+        Result result = mapStatusToResult(status, error, stopTime - startTime);
+        bus.send(new TestStepFinished(stopTime, this, result));
         return result;
     }
 

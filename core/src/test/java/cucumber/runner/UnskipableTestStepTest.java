@@ -6,7 +6,6 @@ import cucumber.api.Scenario;
 import cucumber.api.event.TestStepFinished;
 import cucumber.api.event.TestStepStarted;
 import cucumber.runtime.DefinitionMatch;
-import cucumber.runtime.StopWatch;
 import org.junit.Test;
 import org.mockito.InOrder;
 
@@ -20,7 +19,7 @@ public class UnskipableTestStepTest {
     private final EventBus bus = mock(EventBus.class);
     private final String language = "en";
     private final Scenario scenario = mock(Scenario.class);
-    private final UnskipableStep step = new UnskipableStep(HookType.Before, definitionMatch, StopWatch.SYSTEM);
+    private final UnskipableStep step = new UnskipableStep(HookType.Before, definitionMatch);
 
     @Test
     public void run_does_run_step_even_when_skip_steps_is_true() throws Throwable {

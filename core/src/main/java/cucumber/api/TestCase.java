@@ -23,7 +23,7 @@ public class TestCase {
 
     public void run(EventBus bus, String language) {
         boolean skipNextStep = false;
-        bus.send(new TestCaseStarted(this));
+        bus.send(new TestCaseStarted(bus.getTime(), this));
         ScenarioImpl scenarioResult = new ScenarioImpl(bus, pickle);
         for (TestStep step : testSteps) {
             Result stepResult = step.run(bus, language, scenarioResult, skipNextStep);
@@ -32,7 +32,7 @@ public class TestCase {
             }
             scenarioResult.add(stepResult);
         }
-        bus.send(new TestCaseFinished(this, new Result(scenarioResult.getStatus(), null, null)));
+        bus.send(new TestCaseFinished(bus.getTime(), this, new Result(scenarioResult.getStatus(), null, null)));
     }
 
     public List<TestStep> getTestSteps() {

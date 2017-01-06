@@ -103,7 +103,7 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
     @Override
     public void run(RunNotifier notifier) {
         super.run(notifier);
-        runtime.getEventBus().send(new TestRunFinished());
+        runtime.getEventBus().send(new TestRunFinished(runtime.getEventBus().getTime()));
         runtime.printSummary();
     }
 

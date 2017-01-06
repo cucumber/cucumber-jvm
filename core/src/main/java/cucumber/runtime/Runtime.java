@@ -11,6 +11,7 @@ import cucumber.api.event.TestStepFinished;
 import cucumber.api.formatter.Formatter;
 import cucumber.runner.EventBus;
 import cucumber.runner.Runner;
+import cucumber.runner.TimeService;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.xstream.LocalizedXStreams;
@@ -52,7 +53,7 @@ public class Runtime {
     private final ClassLoader classLoader;
     private final Runner runner;
     private final List<PicklePredicate> filters;
-    private final EventBus bus = new EventBus();
+    private final EventBus bus;
     private final Compiler compiler = new Compiler();
     private final EventHandler<TestStepFinished> stepFinishedHandler = new EventHandler<TestStepFinished>() {
         @Override
@@ -80,16 +81,16 @@ public class Runtime {
     }
 
     public Runtime(ResourceLoader resourceLoader, ClassLoader classLoader, Collection<? extends Backend> backends, RuntimeOptions runtimeOptions) {
-        this(resourceLoader, classLoader, backends, runtimeOptions, StopWatch.SYSTEM, null);
+        this(resourceLoader, classLoader, backends, runtimeOptions, TimeService.SYSTEM, null);
     }
 
     public Runtime(ResourceLoader resourceLoader, ClassLoader classLoader, Collection<? extends Backend> backends,
                    RuntimeOptions runtimeOptions, RuntimeGlue optionalGlue) {
-        this(resourceLoader, classLoader, backends, runtimeOptions, StopWatch.SYSTEM, optionalGlue);
+        this(resourceLoader, classLoader, backends, runtimeOptions, TimeService.SYSTEM, optionalGlue);
     }
 
     public Runtime(ResourceLoader resourceLoader, ClassLoader classLoader, Collection<? extends Backend> backends,
-                   RuntimeOptions runtimeOptions, StopWatch stopWatch, RuntimeGlue optionalGlue) {
+                   RuntimeOptions runtimeOptions, TimeService stopWatch, RuntimeGlue optionalGlue) {
         if (backends.isEmpty()) {
             throw new CucumberException("No backends were found. Please make sure you have a backend module on your CLASSPATH.");
         }
@@ -98,7 +99,8 @@ public class Runtime {
         this.runtimeOptions = runtimeOptions;
         Glue glue = optionalGlue != null ? optionalGlue : new RuntimeGlue(undefinedStepsTracker, new LocalizedXStreams(classLoader));
         this.stats = new Stats(runtimeOptions.isMonochrome());
-        this.runner = new Runner(glue, bus, backends, runtimeOptions, stopWatch);
+        this.bus = new EventBus(stopWatch);
+        this.runner = new Runner(glue, bus, backends, runtimeOptions);
         this.filters = new ArrayList<PicklePredicate>();
         List<String> tagFilters = runtimeOptions.getTagFilters();
         if (!tagFilters.isEmpty()) {
@@ -146,7 +148,7 @@ public class Runtime {
             runFeature(cucumberFeature);
         }
 
-        bus.send(new TestRunFinished());
+        bus.send(new TestRunFinished(bus.getTime()));
         printSummary();
     }
 

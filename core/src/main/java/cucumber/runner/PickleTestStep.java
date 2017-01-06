@@ -4,7 +4,6 @@ import cucumber.api.HookType;
 import cucumber.api.TestStep;
 import cucumber.runtime.DefinitionMatch;
 import cucumber.runtime.StepDefinitionMatch;
-import cucumber.runtime.StopWatch;
 import gherkin.pickles.Argument;
 import gherkin.pickles.PickleStep;
 
@@ -13,8 +12,8 @@ import java.util.List;
 public class PickleTestStep extends TestStep {
     private PickleStep step;
 
-    public PickleTestStep(PickleStep step, DefinitionMatch definitionMatch, StopWatch stopWatch) {
-        super(definitionMatch, stopWatch);
+    public PickleTestStep(PickleStep step, DefinitionMatch definitionMatch) {
+        super(definitionMatch);
         this.step = step;
     }
 

@@ -1,11 +1,12 @@
-package cucumber.runtime;
+package cucumber.runner;
 
 import static org.junit.Assert.assertNull;
 
+import cucumber.runner.TimeService;
 import org.junit.Test;
 
-public class StopWatchTest {
-    private final StopWatch stopWatch = StopWatch.SYSTEM;
+public class TimeServiceTest {
+    private final TimeService stopWatch = TimeService.SYSTEM;
     private Throwable exception;
 
     @Test
@@ -36,9 +37,9 @@ public class StopWatchTest {
         @Override
         public void run() {
             try {
-                stopWatch.start();
+                stopWatch.time();
                 Thread.sleep(timeoutMillis);
-                stopWatch.stop();
+                stopWatch.time();
             } catch (NullPointerException e) {
                 exception = e;
             } catch (InterruptedException e) {

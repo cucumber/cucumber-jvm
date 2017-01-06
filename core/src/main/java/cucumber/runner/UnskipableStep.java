@@ -5,7 +5,6 @@ import cucumber.api.Result;
 import cucumber.api.Scenario;
 import cucumber.api.TestStep;
 import cucumber.runtime.DefinitionMatch;
-import cucumber.runtime.StopWatch;
 import gherkin.pickles.Argument;
 import gherkin.pickles.PickleStep;
 
@@ -14,8 +13,8 @@ import java.util.List;
 public class UnskipableStep extends TestStep {
     private final HookType hookType;
 
-    public UnskipableStep(HookType hookType, DefinitionMatch definitionMatch, StopWatch stopWatch) {
-        super(definitionMatch, stopWatch);
+    public UnskipableStep(HookType hookType, DefinitionMatch definitionMatch) {
+        super(definitionMatch);
         this.hookType = hookType;
     }
 

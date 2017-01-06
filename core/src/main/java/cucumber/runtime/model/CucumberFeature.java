@@ -140,7 +140,7 @@ public class CucumberFeature implements Serializable {
     }
 
     public void sendTestSourceRead(EventBus bus) {
-        bus.send(new TestSourceRead(path, gherkinDocument.getFeature().getLanguage(), gherkinSource));
+        bus.send(new TestSourceRead(bus.getTime(), path, gherkinDocument.getFeature().getLanguage(), gherkinSource));
     }
 
     private void setLanguage(String language) {

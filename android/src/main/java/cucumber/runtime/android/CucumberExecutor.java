@@ -113,7 +113,7 @@ public class CucumberExecutor {
             runtime.getRunner().runPickle(pickle.pickle, pickle.language);
         }
 
-        runtime.getEventBus().send(new TestRunFinished());
+        runtime.getEventBus().send(new TestRunFinished(runtime.getEventBus().getTime()));
     }
 
     /**

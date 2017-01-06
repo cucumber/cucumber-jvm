@@ -37,7 +37,7 @@ public class UsageFormatterTest {
         Result result = mock(Result.class);
         when(result.getStatus()).thenReturn(Result.SKIPPED.getStatus());
 
-        usageFormatter.handleTestStepFinished(new TestStepFinished(mockTestStep(), result));
+        usageFormatter.handleTestStepFinished(new TestStepFinished(0l, mockTestStep(), result));
         verifyZeroInteractions(out);
     }
 
@@ -51,7 +51,7 @@ public class UsageFormatterTest {
         when(result.getDuration()).thenReturn(12345L);
         when(result.getStatus()).thenReturn(Result.PASSED);
 
-        usageFormatter.handleTestStepFinished(new TestStepFinished(testStep, result));
+        usageFormatter.handleTestStepFinished(new TestStepFinished(0l, testStep, result));
 
         Map<String, List<UsageFormatter.StepContainer>> usageMap = usageFormatter.usageMap;
         assertEquals(usageMap.size(), 1);
@@ -72,7 +72,7 @@ public class UsageFormatterTest {
         when(result.getDuration()).thenReturn(0L);
         when(result.getStatus()).thenReturn(Result.PASSED);
 
-        usageFormatter.handleTestStepFinished(new TestStepFinished(testStep, result));
+        usageFormatter.handleTestStepFinished(new TestStepFinished(0l, testStep, result));
 
         Map<String, List<UsageFormatter.StepContainer>> usageMap = usageFormatter.usageMap;
         assertEquals(usageMap.size(), 1);
@@ -93,7 +93,7 @@ public class UsageFormatterTest {
         when(result.getDuration()).thenReturn(null);
         when(result.getStatus()).thenReturn(Result.PASSED);
 
-        usageFormatter.handleTestStepFinished(new TestStepFinished(testStep, result));
+        usageFormatter.handleTestStepFinished(new TestStepFinished(0l, testStep, result));
 
         Map<String, List<UsageFormatter.StepContainer>> usageMap = usageFormatter.usageMap;
         assertEquals(usageMap.size(), 1);

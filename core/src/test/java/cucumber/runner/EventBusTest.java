@@ -18,9 +18,9 @@ public class EventBusTest {
         EventHandler<TestStepFinished> handler = mock(EventHandler.class);
         TestStep testStep = mock(TestStep.class);
         Result result = mock(Result.class);
-        TestStepFinished event = new TestStepFinished(testStep, result);
+        TestStepFinished event = new TestStepFinished(0l, testStep, result);
 
-        EventBus bus = new EventBus();
+        EventBus bus = new EventBus(new TimeService.Stub(0));
         bus.registerHandlerFor(TestStepFinished.class, handler);
         bus.send(event);
 
@@ -31,9 +31,9 @@ public class EventBusTest {
     public void handlers_do_not_receive_the_events_they_did_not_registered_for() {
         EventHandler handler = mock(EventHandler.class);
         TestStep testStep = mock(TestStep.class);
-        TestStepStarted event = new TestStepStarted(testStep);
+        TestStepStarted event = new TestStepStarted(0l, testStep);
 
-        EventBus bus = new EventBus();
+        EventBus bus = new EventBus(new TimeService.Stub(0));
         bus.registerHandlerFor(TestStepFinished.class, handler);
         bus.send(event);
 

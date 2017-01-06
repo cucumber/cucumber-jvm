@@ -5,6 +5,7 @@ import cucumber.api.Result;
 import cucumber.api.Scenario;
 import cucumber.api.event.TestRunFinished;
 import cucumber.api.formatter.Formatter;
+import cucumber.runner.TimeService;
 import cucumber.runtime.formatter.PickleStepMatcher;
 import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
@@ -131,14 +132,14 @@ public class TestHelper {
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         final ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
         final RuntimeGlue glue = createMockedRuntimeGlueThatMatchesTheSteps(stepsToResult, stepsToLocation, hooks, hookLocations, hookActions);
-        final Runtime runtime = new Runtime(resourceLoader, classLoader, asList(mock(Backend.class)), runtimeOptions, new StopWatch.Stub(stepHookDuration), glue);
+        final Runtime runtime = new Runtime(resourceLoader, classLoader, asList(mock(Backend.class)), runtimeOptions, new TimeService.Stub(stepHookDuration), glue);
 
         formatter.setEventPublisher(runtime.getEventBus());
         for (CucumberFeature feature : features) {
             feature.sendTestSourceRead(runtime.getEventBus());
             runtime.runFeature(feature);
         }
-        runtime.getEventBus().send(new TestRunFinished());
+        runtime.getEventBus().send(new TestRunFinished(runtime.getEventBus().getTime()));
     }
 
     private static RuntimeGlue createMockedRuntimeGlueThatMatchesTheSteps(final Map<String, Result> stepsToResult, final Map<String, String> stepsToLocation,

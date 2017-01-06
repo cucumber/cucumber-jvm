@@ -10,7 +10,16 @@ import java.util.List;
 import java.util.Map;
 
 public class EventBus implements EventPublisher {
+    private final TimeService stopWatch;
     private Map<Class<? extends Event>, List<EventHandler>> handlers = new HashMap<Class<? extends Event>, List<EventHandler>>();
+
+    public EventBus(TimeService stopWatch) {
+        this.stopWatch = stopWatch;
+    }
+
+    public Long getTime() {
+        return stopWatch.time();
+    }
 
     public void send(Event event) {
         if (handlers.containsKey(event.getClass())) {
