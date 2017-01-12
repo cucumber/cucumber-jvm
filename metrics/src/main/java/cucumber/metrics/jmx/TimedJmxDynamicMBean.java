@@ -107,4 +107,5 @@ public class TimedJmxDynamicMBean implements DynamicMBean {
     private void refresh() {
         logger.info("Refresh Data");
     }
+
 }
