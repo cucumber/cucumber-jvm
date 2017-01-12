@@ -1,17 +1,20 @@
-package cucumber.metrics.regulator.interceptor;
+package cucumber.metrics.interceptor;
 
 import java.lang.reflect.Method;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.logging.Logger;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 
-import cucumber.metrics.annotation.SpeedRegulator;
-import cucumber.metrics.annotation.SpeedRegulators;
+import cucumber.metrics.annotation.regulator.SpeedRegulator;
+import cucumber.metrics.annotation.regulator.SpeedRegulators;
 import cucumber.metrics.core.impl.Meter;
 
 public class SpeedRegulatorInterceptor implements MethodInterceptor {
+
+    private static Logger logger = Logger.getLogger(TimeInterceptor.class.getName());
 
     private final ConcurrentMap<String, Meter> speedometers = new ConcurrentHashMap<String, Meter>();
 
@@ -23,24 +26,20 @@ public class SpeedRegulatorInterceptor implements MethodInterceptor {
         //
         if (m.isAnnotationPresent(SpeedRegulator.class)) {
             SpeedRegulator annotation = m.getAnnotation(SpeedRegulator.class);
-            System.out.println("A:" + annotation.application());
-            System.out.println("A:" + annotation.cost());
             speedLimiter(annotation);
         }
         if (m.isAnnotationPresent(SpeedRegulators.class)) {
             SpeedRegulators annotations = m.getAnnotation(SpeedRegulators.class);
             for (int i = 0; i < annotations.value().length; i++) {
                 SpeedRegulator annotation = annotations.value()[i];
-                System.out.println("B" + i + ": " + annotation.application());
-                System.out.println("B" + i + ": " + annotation.cost());
                 speedLimiter(annotation);
             }
         }
 
         //
-        System.out.println("Cucumber Metrics SpeedRegulatorInterceptor invoke method " + invocation.getMethod() + " is called on " + invocation.getThis() + " with args " + invocation.getArguments());
+        logger.fine("Cucumber Metrics SpeedRegulatorInterceptor invoke method " + invocation.getMethod() + " is called on " + invocation.getThis() + " with args " + invocation.getArguments());
         Object result = invocation.proceed();
-        System.out.println("method " + invocation.getMethod() + " returns " + result);
+        logger.fine("method " + invocation.getMethod() + " returns " + result);
         return result;
     }
 

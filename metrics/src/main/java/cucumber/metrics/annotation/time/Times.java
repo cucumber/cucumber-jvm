@@ -1,4 +1,4 @@
-package cucumber.metrics.annotation;
+package cucumber.metrics.annotation.time;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,11 +7,11 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface SpeedRegulators {
+public @interface Times {
 
     /**
      * Array used for multiple SpeedRegulator declarations.
      */
-    SpeedRegulator[] value();
+    Time[] value();
 
 }

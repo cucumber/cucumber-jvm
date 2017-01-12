@@ -1,4 +1,4 @@
-package cucumber.metrics.annotation;
+package cucumber.metrics.annotation.regulator;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
