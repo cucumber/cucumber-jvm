@@ -7,7 +7,7 @@
         <relativePath>../pom.xml</relativePath>
         <version>1.2.6-SNAPSHOT</version>
     </parent>
- 
+
     <artifactId>pax-exam-calculator-test</artifactId>
     <packaging>jar</packaging>
     <name>Examples: Pax Exam: Calculator Test</name>
