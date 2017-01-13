@@ -75,6 +75,6 @@ All metrics of @Time and @Times are available in the JVM via JMX.
 
 On windows, you can use jconsole of Java (C:\Program Files\Java\jdk1.8.0_66\bin\jconsole.exe)
 
-![jconsole](/screenshots/jconsole.jpg)
+![jconsole](/metrics/screenshots/jconsole.png)
 
-![jconsole2](/screenshots/jconsole2.jpg)
+![jconsole2](/metrics/screenshots/jconsole2.jpg)
