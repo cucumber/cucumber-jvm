@@ -21,6 +21,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <minimum.maven.version>3.1.1</minimum.maven.version>
+        <maven.compiler.source>1.6</maven.compiler.source>
+        <maven.compiler.target>1.6</maven.compiler.target>
         <outputDirectory>${project.build.directory}</outputDirectory>
         <gherkin.version>2.12.2</gherkin.version>
         <groovy.version>2.4.7</groovy.version>
@@ -729,9 +731,11 @@
                     <version>3.5.1</version>
                     <configuration>
                         <encoding>UTF-8</encoding>
-                        <source>1.6</source>
-                        <target>1.6</target>
-                        <compilerArgument>-Werror</compilerArgument>
+                        <fork>true</fork>
+                        <compilerArgs>
+                          <arg>-XDignore.symbol.file=true</arg>
+                          <arg>-Werror</arg>
+                        </compilerArgs>
                     </configuration>
                 </plugin>
 
