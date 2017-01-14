@@ -38,7 +38,7 @@
         <clojure.version>1.8.0</clojure.version>
         <!-- These are only here for the example project to use, the 3 scala projects maintain their own versions -->
         <scala.latest.major>2.12</scala.latest.major>
-        <scala.latest.version>${scala.latest.major}.0-M1</scala.latest.version>
+        <scala.latest.version>${scala.latest.major}.1</scala.latest.version>
         <gosu.version>1.2</gosu.version>
         <rhino.version>1.7.7.1</rhino.version>
         <jsoup.version>1.9.2</jsoup.version>
