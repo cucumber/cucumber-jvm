@@ -12,6 +12,10 @@
     <packaging>jar</packaging>
     <name>Examples: Scala Calculator</name>
 
+    <properties>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>info.cukes</groupId>
@@ -20,7 +24,7 @@
         </dependency>
         <dependency>
             <groupId>info.cukes</groupId>
-            <artifactId>cucumber-scala_2.11</artifactId>
+            <artifactId>cucumber-scala_${scala.latest.major}</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

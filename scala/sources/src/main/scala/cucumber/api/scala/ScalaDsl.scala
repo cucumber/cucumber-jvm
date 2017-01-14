@@ -1,10 +1,10 @@
 package cucumber.api.scala
 
-import _root_.cucumber.api.Scenario
-import _root_.cucumber.runtime.scala.ScalaHookDefinition
-import _root_.cucumber.runtime.scala.ScalaStepDefinition
-import _root_.cucumber.runtime.HookDefinition
-import _root_.cucumber.runtime.StepDefinition
+import cucumber.api.Scenario
+import cucumber.runtime.scala.ScalaHookDefinition
+import cucumber.runtime.scala.ScalaStepDefinition
+import cucumber.runtime.HookDefinition
+import cucumber.runtime.StepDefinition
 import collection.mutable.ArrayBuffer
 import java.lang.reflect.Type
 
