@@ -51,59 +51,23 @@ trait ScalaDsl { self =>
     def apply(regex: String): StepBody = new StepBody(name, regex)
   }
 
-  final class Fun0(val f: Function0[Any])
-
-  object Fun0 {
-    implicit def function02Fun0(f: Function0[Any]) = new Fun0(f)
-  }
-
   final class StepBody(name:String, regex:String) {
 
-    def apply(f: => Unit){ apply(f _) }
-
-    def apply(fun: Fun0) {
-      register(Array[Type]()) {case Nil => fun.f()}
+    def apply(f: => Any) {
+      register() {
+        case Nil => f
+      }
     }
 
-    /**
-     * Concerning the type handling in all apply methods below.
-     *
-     * Unfortunately the obvious approach (as follows) doesn't work as expected in all scenarios :
-     *
-     * {{{
-     *   def apply[T1](f: (T1) => Any)(implicit m1: Manifest[T1]) = {
-     *     register(List(m1)) {
-     *       case List(a1:T1) => f(a1)
-     *     }
-     *   }
-     * }}}
-     *
-     * This is due to the Scala 'Value Classes' being boxed when moving into the Java world,
-     * and then returned into the Scala layer as these boxed types, which causes the following use case.
-     *
-     * - Step definition is defined with expected argument of scala type 'Int'
-     * - Step is 'registered' passing the Scala Int type into the Java layer
-     * - Inside the Java layer this is boxed from a 'primitive' into a java.lang.Integer
-     * - The parsed value is returned into Scala layer, retaining it's boxed type
-     * - When we perform the pattern match in the partial function, a List[Int] is expected but List[java.lang.Integer]
-     *   is passed in and fails the match (causing a match exception)
-     *
-     * Therefore by casting we unbox the java.util.Integer (or other boxed type) back into the expected value working
-     * around this issue - anything else should be the expected object anyway, so it makes no difference in that case.
-     *
-     * There's likely a cleaner way of doing this - please refactor if so.
-     *
-     */
-
     def apply[T1](f: (T1) => Any)(implicit m1: Manifest[T1]) {
-      register(functionParams(m1)) {
+      register(m1) {
         case List(a1:AnyRef) =>
           f(a1.asInstanceOf[T1])
       }
     }
 
     def apply[T1, T2](f: (T1, T2) => Any)(implicit m1: Manifest[T1], m2: Manifest[T2]) {
-      register(functionParams(m1, m2)) {
+      register(m1, m2) {
         case List(a1:AnyRef, a2:AnyRef) =>
           f(a1.asInstanceOf[T1],
             a2.asInstanceOf[T2])
@@ -111,7 +75,7 @@ trait ScalaDsl { self =>
     }
 
     def apply[T1, T2, T3](f: (T1, T2, T3) => Any)(implicit m1: Manifest[T1], m2: Manifest[T2], m3: Manifest[T3]) {
-      register(functionParams(m1, m2, m3)) {
+      register(m1, m2, m3) {
         case List(a1:AnyRef, a2:AnyRef, a3:AnyRef) =>
           f(a1.asInstanceOf[T1],
             a2.asInstanceOf[T2],
@@ -120,7 +84,7 @@ trait ScalaDsl { self =>
     }
 
     def apply[T1, T2, T3, T4](f: (T1, T2, T3, T4) => Any)(implicit m1: Manifest[T1], m2: Manifest[T2], m3: Manifest[T3], m4: Manifest[T4]) {
-      register(functionParams(m1, m2, m3, m4)) {
+      register(m1, m2, m3, m4) {
         case List(a1:AnyRef, a2:AnyRef, a3:AnyRef, a4:AnyRef) =>
           f(a1.asInstanceOf[T1],
             a2.asInstanceOf[T2],
@@ -130,7 +94,7 @@ trait ScalaDsl { self =>
     }
 
     def apply[T1, T2, T3, T4, T5](f: (T1, T2, T3, T4, T5) => Any)(implicit m1: Manifest[T1], m2: Manifest[T2], m3: Manifest[T3], m4: Manifest[T4], m5: Manifest[T5]) {
-      register(functionParams(m1, m2, m3, m4, m5)) {
+      register(m1, m2, m3, m4, m5) {
         case List(a1:AnyRef, a2:AnyRef, a3:AnyRef, a4:AnyRef, a5:AnyRef) =>
           f(a1.asInstanceOf[T1],
             a2.asInstanceOf[T2],
@@ -141,7 +105,7 @@ trait ScalaDsl { self =>
     }
 
     def apply[T1, T2, T3, T4, T5, T6](f: (T1, T2, T3, T4, T5, T6) => Any)(implicit m1: Manifest[T1], m2: Manifest[T2], m3: Manifest[T3], m4: Manifest[T4], m5: Manifest[T5], m6: Manifest[T6]) {
-      register(functionParams(m1, m2, m3, m4, m5, m6)) {
+      register(m1, m2, m3, m4, m5, m6) {
         case List(a1:AnyRef, a2:AnyRef, a3:AnyRef, a4:AnyRef, a5:AnyRef, a6:AnyRef) =>
           f(a1.asInstanceOf[T1],
             a2.asInstanceOf[T2],
@@ -153,7 +117,7 @@ trait ScalaDsl { self =>
     }
 
     def apply[T1, T2, T3, T4, T5, T6, T7](f: (T1, T2, T3, T4, T5, T6, T7) => Any)(implicit m1: Manifest[T1], m2: Manifest[T2], m3: Manifest[T3], m4: Manifest[T4], m5: Manifest[T5], m6: Manifest[T6], m7: Manifest[T7]) {
-      register(functionParams(m1, m2, m3, m4, m5, m6, m7)) {
+      register(m1, m2, m3, m4, m5, m6, m7) {
         case List(a1:AnyRef, a2:AnyRef, a3:AnyRef, a4:AnyRef, a5:AnyRef, a6:AnyRef, a7:AnyRef) =>
           f(a1.asInstanceOf[T1],
             a2.asInstanceOf[T2],
@@ -166,7 +130,7 @@ trait ScalaDsl { self =>
     }
 
     def apply[T1, T2, T3, T4, T5, T6, T7, T8](f: (T1, T2, T3, T4, T5, T6, T7, T8) => Any)(implicit m1: Manifest[T1], m2: Manifest[T2], m3: Manifest[T3], m4: Manifest[T4], m5: Manifest[T5], m6: Manifest[T6], m7: Manifest[T7], m8: Manifest[T8]) {
-      register(functionParams(m1, m2, m3, m4, m5, m6, m7, m8)) {
+      register(m1, m2, m3, m4, m5, m6, m7, m8) {
         case List(a1:AnyRef, a2:AnyRef, a3:AnyRef, a4:AnyRef, a5:AnyRef, a6:AnyRef, a7:AnyRef, a8:AnyRef) =>
           f(a1.asInstanceOf[T1],
             a2.asInstanceOf[T2],
@@ -180,7 +144,7 @@ trait ScalaDsl { self =>
     }
 
     def apply[T1, T2, T3, T4, T5, T6, T7, T8, T9](f: (T1, T2, T3, T4, T5, T6, T7, T8, T9) => Any)(implicit m1: Manifest[T1], m2: Manifest[T2], m3: Manifest[T3], m4: Manifest[T4], m5: Manifest[T5], m6: Manifest[T6], m7: Manifest[T7], m8: Manifest[T8], m9: Manifest[T9]) {
-      register(functionParams(m1, m2, m3, m4, m5, m6, m7, m8, m9)) {
+      register(m1, m2, m3, m4, m5, m6, m7, m8, m9) {
         case List(a1:AnyRef, a2:AnyRef, a3:AnyRef, a4:AnyRef, a5:AnyRef, a6:AnyRef, a7:AnyRef, a8:AnyRef, a9:AnyRef) =>
           f(a1.asInstanceOf[T1],
             a2.asInstanceOf[T2],
@@ -195,7 +159,7 @@ trait ScalaDsl { self =>
     }
 
     def apply[T1, T2, T3, T4, T5, T6, T7, T8, T9, T10](f: (T1, T2, T3, T4, T5, T6, T7, T8, T9, T10) => Any)(implicit m1: Manifest[T1], m2: Manifest[T2], m3: Manifest[T3], m4: Manifest[T4], m5: Manifest[T5], m6: Manifest[T6], m7: Manifest[T7], m8: Manifest[T8], m9: Manifest[T9], m10: Manifest[T10]) {
-      register(functionParams(m1, m2, m3, m4, m5, m6, m7, m8, m9, m10)) {
+      register(m1, m2, m3, m4, m5, m6, m7, m8, m9, m10) {
         case List(a1:AnyRef, a2:AnyRef, a3:AnyRef, a4:AnyRef, a5:AnyRef, a6:AnyRef, a7:AnyRef, a8:AnyRef, a9:AnyRef, a10:AnyRef) =>
           f(a1.asInstanceOf[T1],
             a2.asInstanceOf[T2],
@@ -211,7 +175,7 @@ trait ScalaDsl { self =>
     }
 
     def apply[T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11](f: (T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11) => Any)(implicit m1: Manifest[T1], m2: Manifest[T2], m3: Manifest[T3], m4: Manifest[T4], m5: Manifest[T5], m6: Manifest[T6], m7: Manifest[T7], m8: Manifest[T8], m9: Manifest[T9], m10: Manifest[T10], m11: Manifest[T11]) {
-      register(functionParams(m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11)) {
+      register(m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11) {
         case List(a1:AnyRef, a2:AnyRef, a3:AnyRef, a4:AnyRef, a5:AnyRef, a6:AnyRef, a7:AnyRef, a8:AnyRef, a9:AnyRef, a10:AnyRef, a11:AnyRef) =>
           f(a1.asInstanceOf[T1],
             a2.asInstanceOf[T2],
@@ -228,7 +192,7 @@ trait ScalaDsl { self =>
     }
 
     def apply[T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12](f: (T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12) => Any)(implicit m1: Manifest[T1], m2: Manifest[T2], m3: Manifest[T3], m4: Manifest[T4], m5: Manifest[T5], m6: Manifest[T6], m7: Manifest[T7], m8: Manifest[T8], m9: Manifest[T9], m10: Manifest[T10], m11: Manifest[T11], m12: Manifest[T12]) {
-      register(functionParams(m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12)) {
+      register(m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12) {
         case List(a1:AnyRef, a2:AnyRef, a3:AnyRef, a4:AnyRef, a5:AnyRef, a6:AnyRef, a7:AnyRef, a8:AnyRef, a9:AnyRef, a10:AnyRef, a11:AnyRef, a12:AnyRef) =>
           f(a1.asInstanceOf[T1],
             a2.asInstanceOf[T2],
@@ -246,7 +210,7 @@ trait ScalaDsl { self =>
     }
 
     def apply[T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13](f: (T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13) => Any)(implicit m1: Manifest[T1], m2: Manifest[T2], m3: Manifest[T3], m4: Manifest[T4], m5: Manifest[T5], m6: Manifest[T6], m7: Manifest[T7], m8: Manifest[T8], m9: Manifest[T9], m10: Manifest[T10], m11: Manifest[T11], m12: Manifest[T12], m13: Manifest[T13]) {
-      register(functionParams(m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12, m13)) {
+      register(m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12, m13) {
         case List(a1:AnyRef, a2:AnyRef, a3:AnyRef, a4:AnyRef, a5:AnyRef, a6:AnyRef, a7:AnyRef, a8:AnyRef, a9:AnyRef, a10:AnyRef, a11:AnyRef, a12:AnyRef, a13:AnyRef) =>
           f(a1.asInstanceOf[T1],
             a2.asInstanceOf[T2],
@@ -265,7 +229,7 @@ trait ScalaDsl { self =>
     }
 
     def apply[T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14](f: (T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14) => Any)(implicit m1: Manifest[T1], m2: Manifest[T2], m3: Manifest[T3], m4: Manifest[T4], m5: Manifest[T5], m6: Manifest[T6], m7: Manifest[T7], m8: Manifest[T8], m9: Manifest[T9], m10: Manifest[T10], m11: Manifest[T11], m12: Manifest[T12], m13: Manifest[T13], m14: Manifest[T14]) {
-      register(functionParams(m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12, m13, m14)) {
+      register(m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12, m13, m14) {
         case List(a1:AnyRef, a2:AnyRef, a3:AnyRef, a4:AnyRef, a5:AnyRef, a6:AnyRef, a7:AnyRef, a8:AnyRef, a9:AnyRef, a10:AnyRef, a11:AnyRef, a12:AnyRef, a13:AnyRef, a14:AnyRef) =>
           f(a1.asInstanceOf[T1],
             a2.asInstanceOf[T2],
@@ -285,7 +249,7 @@ trait ScalaDsl { self =>
     }
 
     def apply[T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15](f: (T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15) => Any)(implicit m1: Manifest[T1], m2: Manifest[T2], m3: Manifest[T3], m4: Manifest[T4], m5: Manifest[T5], m6: Manifest[T6], m7: Manifest[T7], m8: Manifest[T8], m9: Manifest[T9], m10: Manifest[T10], m11: Manifest[T11], m12: Manifest[T12], m13: Manifest[T13], m14: Manifest[T14], m15: Manifest[T15]) {
-      register(functionParams(m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12, m13, m14, m15)) {
+      register(m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12, m13, m14, m15) {
         case List(a1:AnyRef, a2:AnyRef, a3:AnyRef, a4:AnyRef, a5:AnyRef, a6:AnyRef, a7:AnyRef, a8:AnyRef, a9:AnyRef, a10:AnyRef, a11:AnyRef, a12:AnyRef, a13:AnyRef, a14:AnyRef, a15:AnyRef) =>
           f(a1.asInstanceOf[T1],
             a2.asInstanceOf[T2],
@@ -306,7 +270,7 @@ trait ScalaDsl { self =>
     }
 
     def apply[T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16](f: (T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16) => Any)(implicit m1: Manifest[T1], m2: Manifest[T2], m3: Manifest[T3], m4: Manifest[T4], m5: Manifest[T5], m6: Manifest[T6], m7: Manifest[T7], m8: Manifest[T8], m9: Manifest[T9], m10: Manifest[T10], m11: Manifest[T11], m12: Manifest[T12], m13: Manifest[T13], m14: Manifest[T14], m15: Manifest[T15], m16: Manifest[T16]) {
-      register(functionParams(m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12, m13, m14, m15, m16)) {
+      register(m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12, m13, m14, m15, m16) {
         case List(a1:AnyRef, a2:AnyRef, a3:AnyRef, a4:AnyRef, a5:AnyRef, a6:AnyRef, a7:AnyRef, a8:AnyRef, a9:AnyRef, a10:AnyRef, a11:AnyRef, a12:AnyRef, a13:AnyRef, a14:AnyRef, a15:AnyRef, a16:AnyRef) =>
           f(a1.asInstanceOf[T1],
             a2.asInstanceOf[T2],
@@ -328,7 +292,7 @@ trait ScalaDsl { self =>
     }
 
     def apply[T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17](f: (T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17) => Any)(implicit m1: Manifest[T1], m2: Manifest[T2], m3: Manifest[T3], m4: Manifest[T4], m5: Manifest[T5], m6: Manifest[T6], m7: Manifest[T7], m8: Manifest[T8], m9: Manifest[T9], m10: Manifest[T10], m11: Manifest[T11], m12: Manifest[T12], m13: Manifest[T13], m14: Manifest[T14], m15: Manifest[T15], m16: Manifest[T16], m17: Manifest[T17]) {
-      register(functionParams(m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12, m13, m14, m15, m16, m17)) {
+      register(m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12, m13, m14, m15, m16, m17) {
         case List(a1:AnyRef, a2:AnyRef, a3:AnyRef, a4:AnyRef, a5:AnyRef, a6:AnyRef, a7:AnyRef, a8:AnyRef, a9:AnyRef, a10:AnyRef, a11:AnyRef, a12:AnyRef, a13:AnyRef, a14:AnyRef, a15:AnyRef, a16:AnyRef, a17:AnyRef) =>
           f(a1.asInstanceOf[T1],
             a2.asInstanceOf[T2],
@@ -351,7 +315,7 @@ trait ScalaDsl { self =>
     }
 
     def apply[T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18](f: (T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18) => Any)(implicit m1: Manifest[T1], m2: Manifest[T2], m3: Manifest[T3], m4: Manifest[T4], m5: Manifest[T5], m6: Manifest[T6], m7: Manifest[T7], m8: Manifest[T8], m9: Manifest[T9], m10: Manifest[T10], m11: Manifest[T11], m12: Manifest[T12], m13: Manifest[T13], m14: Manifest[T14], m15: Manifest[T15], m16: Manifest[T16], m17: Manifest[T17], m18: Manifest[T18]) {
-      register(functionParams(m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12, m13, m14, m15, m16, m17, m18)) {
+      register(m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12, m13, m14, m15, m16, m17, m18) {
         case List(a1:AnyRef, a2:AnyRef, a3:AnyRef, a4:AnyRef, a5:AnyRef, a6:AnyRef, a7:AnyRef, a8:AnyRef, a9:AnyRef, a10:AnyRef, a11:AnyRef, a12:AnyRef, a13:AnyRef, a14:AnyRef, a15:AnyRef, a16:AnyRef, a17:AnyRef, a18:AnyRef) =>
           f(a1.asInstanceOf[T1],
             a2.asInstanceOf[T2],
@@ -375,7 +339,7 @@ trait ScalaDsl { self =>
     }
 
     def apply[T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19](f: (T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19) => Any)(implicit m1: Manifest[T1], m2: Manifest[T2], m3: Manifest[T3], m4: Manifest[T4], m5: Manifest[T5], m6: Manifest[T6], m7: Manifest[T7], m8: Manifest[T8], m9: Manifest[T9], m10: Manifest[T10], m11: Manifest[T11], m12: Manifest[T12], m13: Manifest[T13], m14: Manifest[T14], m15: Manifest[T15], m16: Manifest[T16], m17: Manifest[T17], m18: Manifest[T18], m19: Manifest[T19]) {
-      register(functionParams(m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12, m13, m14, m15, m16, m17, m18, m19)) {
+      register(m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12, m13, m14, m15, m16, m17, m18, m19) {
         case List(a1:AnyRef, a2:AnyRef, a3:AnyRef, a4:AnyRef, a5:AnyRef, a6:AnyRef, a7:AnyRef, a8:AnyRef, a9:AnyRef, a10:AnyRef, a11:AnyRef, a12:AnyRef, a13:AnyRef, a14:AnyRef, a15:AnyRef, a16:AnyRef, a17:AnyRef, a18:AnyRef, a19:AnyRef) =>
           f(a1.asInstanceOf[T1],
             a2.asInstanceOf[T2],
@@ -400,7 +364,7 @@ trait ScalaDsl { self =>
     }
 
     def apply[T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20](f: (T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20) => Any)(implicit m1: Manifest[T1], m2: Manifest[T2], m3: Manifest[T3], m4: Manifest[T4], m5: Manifest[T5], m6: Manifest[T6], m7: Manifest[T7], m8: Manifest[T8], m9: Manifest[T9], m10: Manifest[T10], m11: Manifest[T11], m12: Manifest[T12], m13: Manifest[T13], m14: Manifest[T14], m15: Manifest[T15], m16: Manifest[T16], m17: Manifest[T17], m18: Manifest[T18], m19: Manifest[T19], m20: Manifest[T20]) {
-      register(functionParams(m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12, m13, m14, m15, m16, m17, m18, m19, m20)) {
+      register(m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12, m13, m14, m15, m16, m17, m18, m19, m20) {
         case List(a1:AnyRef, a2:AnyRef, a3:AnyRef, a4:AnyRef, a5:AnyRef, a6:AnyRef, a7:AnyRef, a8:AnyRef, a9:AnyRef, a10:AnyRef, a11:AnyRef, a12:AnyRef, a13:AnyRef, a14:AnyRef, a15:AnyRef, a16:AnyRef, a17:AnyRef, a18:AnyRef, a19:AnyRef, a20:AnyRef) =>
           f(a1.asInstanceOf[T1],
             a2.asInstanceOf[T2],
@@ -426,7 +390,7 @@ trait ScalaDsl { self =>
     }
 
     def apply[T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21](f: (T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21) => Any)(implicit m1: Manifest[T1], m2: Manifest[T2], m3: Manifest[T3], m4: Manifest[T4], m5: Manifest[T5], m6: Manifest[T6], m7: Manifest[T7], m8: Manifest[T8], m9: Manifest[T9], m10: Manifest[T10], m11: Manifest[T11], m12: Manifest[T12], m13: Manifest[T13], m14: Manifest[T14], m15: Manifest[T15], m16: Manifest[T16], m17: Manifest[T17], m18: Manifest[T18], m19: Manifest[T19], m20: Manifest[T20], m21: Manifest[T21]) {
-      register(functionParams(m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12, m13, m14, m15, m16, m17, m18, m19, m20, m21)) {
+      register(m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12, m13, m14, m15, m16, m17, m18, m19, m20, m21) {
         case List(a1:AnyRef, a2:AnyRef, a3:AnyRef, a4:AnyRef, a5:AnyRef, a6:AnyRef, a7:AnyRef, a8:AnyRef, a9:AnyRef, a10:AnyRef, a11:AnyRef, a12:AnyRef, a13:AnyRef, a14:AnyRef, a15:AnyRef, a16:AnyRef, a17:AnyRef, a18:AnyRef, a19:AnyRef, a20:AnyRef, a21:AnyRef) =>
           f(a1.asInstanceOf[T1],
             a2.asInstanceOf[T2],
@@ -453,7 +417,7 @@ trait ScalaDsl { self =>
     }
 
     def apply[T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22](f: (T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22) => Any)(implicit m1: Manifest[T1], m2: Manifest[T2], m3: Manifest[T3], m4: Manifest[T4], m5: Manifest[T5], m6: Manifest[T6], m7: Manifest[T7], m8: Manifest[T8], m9: Manifest[T9], m10: Manifest[T10], m11: Manifest[T11], m12: Manifest[T12], m13: Manifest[T13], m14: Manifest[T14], m15: Manifest[T15], m16: Manifest[T16], m17: Manifest[T17], m18: Manifest[T18], m19: Manifest[T19], m20: Manifest[T20], m21: Manifest[T21], m22: Manifest[T22]) {
-      register(functionParams(m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12, m13, m14, m15, m16, m17, m18, m19, m20, m21, m22)) {
+      register(m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12, m13, m14, m15, m16, m17, m18, m19, m20, m21, m22) {
         case List(a1:AnyRef, a2:AnyRef, a3:AnyRef, a4:AnyRef, a5:AnyRef, a6:AnyRef, a7:AnyRef, a8:AnyRef, a9:AnyRef, a10:AnyRef, a11:AnyRef, a12:AnyRef, a13:AnyRef, a14:AnyRef, a15:AnyRef, a16:AnyRef, a17:AnyRef, a18:AnyRef, a19:AnyRef, a20:AnyRef, a21:AnyRef, a22:AnyRef) =>
           f(a1.asInstanceOf[T1],
             a2.asInstanceOf[T2],
@@ -480,8 +444,9 @@ trait ScalaDsl { self =>
       }
     }
 
-    private def register(types: Array[Type])(pf: PartialFunction[List[Any], Any]) = {
-      val frame: StackTraceElement = obtainFrame
+    private def register(ms: Manifest[_ <: Any]*)(pf: PartialFunction[List[Any], Any]) = {
+      val frame = obtainFrame
+      val types = ms.map(m => toJavaType(m)).toArray
       stepDefinitions += new ScalaStepDefinition(frame, name, regex, types, pf)
     }
 
@@ -493,10 +458,6 @@ trait ScalaDsl { self =>
       val frames = Thread.currentThread().getStackTrace
       val currentClass = self.getClass.getName
       frames.find(_.getClassName == currentClass).get
-    }
-
-    private def functionParams(ms: Manifest[_ <: Any]*): Array[Type] = {
-      ms.map(m => toJavaType(m)).toArray
     }
 
     private def toJavaType(m: Manifest[_]): Type = {
