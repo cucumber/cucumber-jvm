@@ -15,8 +15,19 @@
     <modules>
         <module>scala_2.11</module>
         <module>scala_2.10</module>
-        <module>scala_2.12</module>
     </modules>
+
+    <profiles>
+        <profile>
+            <id>java8</id>
+            <activation>
+                <jdk>1.8</jdk>
+            </activation>
+            <modules>
+                <module>scala_2.12</module>
+            </modules>
+        </profile>
+    </profiles>
 
     <dependencies>
         <dependency>
@@ -56,7 +67,6 @@
                 <plugin>
                     <groupId>net.alchim31.maven</groupId>
                     <artifactId>scala-maven-plugin</artifactId>
-                    <version>${scala-maven-plugin.version}</version>
                     <configuration>
                         <args>
                             <arg>-feature</arg>

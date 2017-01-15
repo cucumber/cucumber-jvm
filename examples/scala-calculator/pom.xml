@@ -13,7 +13,9 @@
     <name>Examples: Scala Calculator</name>
 
     <properties>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <!-- Using 2.11 because it works with both Java 7 and 8 -->
+        <scala.major.version>2.11</scala.major.version>
+        <scala.version>${scala.2.11.version}</scala.version>
     </properties>
 
     <dependencies>
@@ -24,7 +26,8 @@
         </dependency>
         <dependency>
             <groupId>info.cukes</groupId>
-            <artifactId>cucumber-scala_${scala.latest.major}</artifactId>
+            <artifactId>cucumber-scala_${scala.major.version}</artifactId>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -40,13 +43,13 @@
         <dependency>
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>
-            <version>${scala.latest.version}</version>
+            <version>${scala.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-compiler</artifactId>
-            <version>${scala.latest.version}</version>
+            <version>${scala.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -58,7 +61,6 @@
                 <artifactId>maven-scala-plugin</artifactId>
                 <version>2.15.2</version>
                 <configuration>
-                    <!--encoding>UTF-8</encoding-->
                     <excludes>
                         <exclude>**/*.java</exclude>
                     </excludes>
