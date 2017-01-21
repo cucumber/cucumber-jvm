@@ -77,7 +77,7 @@ public class JavaStepDefinitionTest {
         PickleStep step = new PickleStep("three blind mice", Collections.<Argument>emptyList(), asList(mock(PickleLocation.class)));
         Pickle pickle = new Pickle("pickle name", ENGLISH, asList(step), asList(tag), asList(mock(PickleLocation.class)));
         PickleEvent pickleEvent = new PickleEvent("uri", pickle);
-        runtime.getRunner().runPickle(pickleEvent, ENGLISH);
+        runtime.getRunner().runPickle(pickleEvent);
 
         assertEquals(AmbiguousStepDefinitionsException.class, latestReceivedResult.getError().getClass());
     }
@@ -90,7 +90,7 @@ public class JavaStepDefinitionTest {
         PickleStep step = new PickleStep("three blind mice", Collections.<Argument>emptyList(), asList(mock(PickleLocation.class)));
         Pickle pickle = new Pickle("pickle name", ENGLISH, asList(step), asList(tag), asList(mock(PickleLocation.class)));
         PickleEvent pickleEvent = new PickleEvent("uri", pickle);
-        runtime.getRunner().runPickle(pickleEvent, ENGLISH);
+        runtime.getRunner().runPickle(pickleEvent);
 
         assertNull(latestReceivedResult.getError());
         assertTrue(defs.foo);
