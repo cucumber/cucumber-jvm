@@ -54,6 +54,6 @@ public class NamePredicateTest {
     }
 
     private PickleEvent createPickleWithName(String pickleName) {
-        return new PickleEvent("uri", new Pickle(pickleName, NO_STEPS, NO_TAGS, asList(MOCK_LOCATION)));
+        return new PickleEvent("uri", new Pickle(pickleName, "en", NO_STEPS, NO_TAGS, asList(MOCK_LOCATION)));
     }
 }

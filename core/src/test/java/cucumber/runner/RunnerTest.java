@@ -138,7 +138,7 @@ public class RunnerTest {
     }
 
     private PickleEvent createEmptyPickleEvent() {
-        return new PickleEvent("uri", new Pickle(NAME, NO_STEPS, NO_TAGS, MOCK_LOCATIONS));
+        return new PickleEvent("uri", new Pickle(NAME, ENGLISH, NO_STEPS, NO_TAGS, MOCK_LOCATIONS));
     }
 
     private PickleEvent createPickleEventMatchingStepDefinitions(List<StepDefinition> stepDefinitions) {
@@ -151,10 +151,10 @@ public class RunnerTest {
             when(stepDefinition.getPattern()).thenReturn("pattern" + Integer.toString(++i));
             runtime.getGlue().addStepDefinition(stepDefinition);
         }
-        return new PickleEvent("uri", new Pickle(NAME, steps, NO_TAGS, MOCK_LOCATIONS));
+        return new PickleEvent("uri", new Pickle(NAME, ENGLISH, steps, NO_TAGS, MOCK_LOCATIONS));
     }
 
     private PickleEvent createPickleEventWithSteps(List<PickleStep> steps) {
-        return new PickleEvent("uri", new Pickle(NAME, steps, NO_TAGS, MOCK_LOCATIONS));
+        return new PickleEvent("uri", new Pickle(NAME, ENGLISH, steps, NO_TAGS, MOCK_LOCATIONS));
     }
 }

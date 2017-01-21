@@ -17,6 +17,7 @@ import static org.mockito.Mockito.mock;
 
 public class TagPredicateTest {
     private static final String NAME = "pickle_name";
+    private static final String LANGUAGE = "en";
     private static final List<PickleStep> NO_STEPS = Collections.<PickleStep>emptyList();
     private static final PickleLocation MOCK_LOCATION = mock(PickleLocation.class);
     private static final String FOO_TAG_VALUE = "@FOO";
@@ -158,6 +159,6 @@ public class TagPredicateTest {
     }
 
     private PickleEvent createPickleWithTags(List<PickleTag> tags) {
-        return new PickleEvent("uri", new Pickle(NAME, NO_STEPS, tags, asList(MOCK_LOCATION)));
+        return new PickleEvent("uri", new Pickle(NAME, LANGUAGE, NO_STEPS, tags, asList(MOCK_LOCATION)));
     }
 }

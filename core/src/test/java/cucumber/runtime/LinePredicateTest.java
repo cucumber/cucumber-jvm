@@ -17,6 +17,7 @@ import static org.junit.Assert.assertTrue;
 
 public class LinePredicateTest {
     private static final String NAME = "pickle_name";
+    private static final String LANGUAGE = "en";
     private static final List<PickleStep> NO_STEPS = Collections.<PickleStep>emptyList();
     private static final List<PickleTag> NO_TAGS = Collections.<PickleTag>emptyList();
 
@@ -53,7 +54,7 @@ public class LinePredicateTest {
     }
 
     private PickleEvent createPickleEventWithLocations(String uri, List<PickleLocation> locations) {
-        return new PickleEvent(uri, new Pickle(NAME, NO_STEPS, NO_TAGS, locations));
+        return new PickleEvent(uri, new Pickle(NAME, LANGUAGE, NO_STEPS, NO_TAGS, locations));
     }
 
     private PickleLocation pickleLocation(int line) {

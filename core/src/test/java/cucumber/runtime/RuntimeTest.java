@@ -570,7 +570,7 @@ public class RuntimeTest {
         for (int i = 0; i < stepCount; ++i) {
             steps.add(mock(PickleStep.class));
         }
-        PickleEvent pickleEvent = new PickleEvent("uri", new Pickle("name", steps, Collections.<PickleTag>emptyList(), asList(mock(PickleLocation.class))));
+        PickleEvent pickleEvent = new PickleEvent("uri", new Pickle("name", "en", steps, Collections.<PickleTag>emptyList(), asList(mock(PickleLocation.class))));
 
         runtime.getRunner().runPickle(pickleEvent, ENGLISH);
     }

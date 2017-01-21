@@ -39,7 +39,7 @@ public class HookTest {
         Runtime runtime = new Runtime(new ClasspathResourceLoader(classLoader), classLoader, asList(backend), runtimeOptions);
         runtime.getGlue().addAfterHook(hook);
         Runner runner = runtime.getRunner();
-        PickleEvent pickleEvent = new PickleEvent("uri", new Pickle("name", Collections.<PickleStep>emptyList(), Collections.<PickleTag>emptyList(), asList(mock(PickleLocation.class))));
+        PickleEvent pickleEvent = new PickleEvent("uri", new Pickle("name", ENGLISH, Collections.<PickleStep>emptyList(), Collections.<PickleTag>emptyList(), asList(mock(PickleLocation.class))));
 
         runner.runPickle(pickleEvent, ENGLISH);
 
