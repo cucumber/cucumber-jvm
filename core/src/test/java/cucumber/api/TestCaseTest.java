@@ -32,7 +32,7 @@ public class TestCaseTest {
         when(testStep.run(eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(resultWithStatus(Result.UNDEFINED));
 
         TestCase testCase = new TestCase(Arrays.asList(testStep), pickleEvent());
-        testCase.run(bus, language);
+        testCase.run(bus);
 
         InOrder order = inOrder(bus, testStep);
         order.verify(bus).send(isA(TestCaseStarted.class));
@@ -50,7 +50,7 @@ public class TestCaseTest {
         when(testStep2.run(eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(resultWithStatus(Result.PASSED));
 
         TestCase testCase = new TestCase(Arrays.asList(testStep1, testStep2), pickleEvent());
-        testCase.run(bus, language);
+        testCase.run(bus);
 
         InOrder order = inOrder(testStep1, testStep2);
         order.verify(testStep1).run(eq(bus), eq(language), isA(Scenario.class), eq(false));
@@ -67,7 +67,7 @@ public class TestCaseTest {
         when(testStep2.run(eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(Result.SKIPPED);
 
         TestCase testCase = new TestCase(Arrays.asList(testStep1, testStep2), pickleEvent());
-        testCase.run(bus, language);
+        testCase.run(bus);
 
         InOrder order = inOrder(testStep1, testStep2);
         order.verify(testStep1).run(eq(bus), eq(language), isA(Scenario.class), eq(false));
@@ -75,7 +75,9 @@ public class TestCaseTest {
     }
 
     private PickleEvent pickleEvent() {
-        return new PickleEvent("uri", mock(Pickle.class));
+        Pickle pickle = mock(Pickle.class);
+        when(pickle.getLanguage()).thenReturn(ENGLISH);
+        return new PickleEvent("uri", pickle);
     }
 
     private Result resultWithStatus(String status) {

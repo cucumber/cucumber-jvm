@@ -48,7 +48,7 @@ public class HookOrderTest {
             glue.addBeforeHook(hook);
         }
 
-        runner.runPickle(pickleEvent, ENGLISH);
+        runner.runPickle(pickleEvent);
 
         InOrder inOrder = inOrder(hooks.toArray());
         inOrder.verify(hooks.get(6)).execute(Matchers.<Scenario>any());
@@ -67,7 +67,7 @@ public class HookOrderTest {
             glue.addAfterHook(hook);
         }
 
-        runner.runPickle(pickleEvent, ENGLISH);
+        runner.runPickle(pickleEvent);
 
         InOrder inOrder = inOrder(hooks.toArray());
         inOrder.verify(hooks.get(2)).execute(Matchers.<Scenario>any());
@@ -90,7 +90,7 @@ public class HookOrderTest {
             glue.addBeforeHook(hook);
         }
 
-        runner.runPickle(pickleEvent, ENGLISH);
+        runner.runPickle(pickleEvent);
 
         List<HookDefinition> allHooks = new ArrayList<HookDefinition>();
         allHooks.addAll(backend1Hooks);

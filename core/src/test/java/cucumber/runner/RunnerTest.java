@@ -46,7 +46,7 @@ public class RunnerTest {
         HookDefinition beforeHook = addBeforeHook(runtime);
         HookDefinition afterHook = addAfterHook(runtime);
 
-        runner.runPickle(createEmptyPickleEvent(), ENGLISH);
+        runner.runPickle(createEmptyPickleEvent());
 
         InOrder inOrder = inOrder(beforeHook, afterHook, backend);
         inOrder.verify(backend).buildWorld();
@@ -61,7 +61,7 @@ public class RunnerTest {
         doThrow(RuntimeException.class).when(failingBeforeHook).execute(Matchers.<Scenario>any());
         StepDefinition stepDefinition = mock(StepDefinition.class);
 
-        runner.runPickle(createPickleEventMatchingStepDefinitions(asList(stepDefinition)), ENGLISH);
+        runner.runPickle(createPickleEventMatchingStepDefinitions(asList(stepDefinition)));
 
         InOrder inOrder = inOrder(failingBeforeHook, stepDefinition);
         inOrder.verify(failingBeforeHook).execute(Matchers.<Scenario>any());
@@ -75,7 +75,7 @@ public class RunnerTest {
         HookDefinition beforeHook = addBeforeHook(runtime);
         HookDefinition afterHook = addAfterHook(runtime);
 
-        runner.runPickle(createEmptyPickleEvent(), ENGLISH);
+        runner.runPickle(createEmptyPickleEvent());
 
         InOrder inOrder = inOrder(failingBeforeHook, beforeHook, afterHook);
         inOrder.verify(failingBeforeHook).execute(Matchers.<Scenario>any());
@@ -90,7 +90,7 @@ public class RunnerTest {
         HookDefinition beforeHook = addBeforeHook(runtime);
         HookDefinition afterHook = addAfterHook(runtime);
 
-        runner.runPickle(createEmptyPickleEvent(), ENGLISH);
+        runner.runPickle(createEmptyPickleEvent());
 
         verify(beforeHook, never()).execute(Matchers.<Scenario>any());
         verify(afterHook, never()).execute(Matchers.<Scenario>any());
@@ -99,7 +99,7 @@ public class RunnerTest {
     @Test
     public void backends_are_asked_for_snippets_for_undefined_steps() throws Throwable {
         PickleStep step = mock(PickleStep.class);
-        runner.runPickle(createPickleEventWithSteps(asList(step)), ENGLISH);
+        runner.runPickle(createPickleEventWithSteps(asList(step)));
 
         verify(backend).getSnippet(Matchers.eq(step), Matchers.anyString(), Matchers.<FunctionNameGenerator>any());
     }

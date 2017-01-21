@@ -41,7 +41,7 @@ public class HookTest {
         Runner runner = runtime.getRunner();
         PickleEvent pickleEvent = new PickleEvent("uri", new Pickle("name", ENGLISH, Collections.<PickleStep>emptyList(), Collections.<PickleTag>emptyList(), asList(mock(PickleLocation.class))));
 
-        runner.runPickle(pickleEvent, ENGLISH);
+        runner.runPickle(pickleEvent);
 
         InOrder inOrder = inOrder(hook, backend);
         inOrder.verify(hook).execute(Matchers.<Scenario>any());

@@ -19,12 +19,12 @@ public class TestCase {
         this.pickleEvent = pickleEvent;
     }
 
-    public void run(EventBus bus, String language) {
+    public void run(EventBus bus) {
         boolean skipNextStep = false;
         bus.send(new TestCaseStarted(bus.getTime(), this));
         ScenarioImpl scenarioResult = new ScenarioImpl(bus, pickleEvent.pickle);
         for (TestStep step : testSteps) {
-            Result stepResult = step.run(bus, language, scenarioResult, skipNextStep);
+            Result stepResult = step.run(bus, pickleEvent.pickle.getLanguage(), scenarioResult, skipNextStep);
             if (stepResult.getStatus() != Result.PASSED) {
                 skipNextStep = true;
             }

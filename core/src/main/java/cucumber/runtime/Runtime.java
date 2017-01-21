@@ -164,7 +164,7 @@ public class Runtime {
         }
         for (PickleEvent pickleEvent : pickleEvents) {
             if (matchesFilters(pickleEvent)) {
-                runner.runPickle(pickleEvent, feature.getLanguage());
+                runner.runPickle(pickleEvent);
             }
         }
     }
