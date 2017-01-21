@@ -75,7 +75,7 @@ public class JavaStepDefinitionTest {
 
         PickleTag tag = new PickleTag(mock(PickleLocation.class), "@foo");
         PickleStep step = new PickleStep("three blind mice", Collections.<Argument>emptyList(), asList(mock(PickleLocation.class)));
-        Pickle pickle = new Pickle("pickle name", asList(step), asList(tag), asList(mock(PickleLocation.class)));
+        Pickle pickle = new Pickle("pickle name", ENGLISH, asList(step), asList(tag), asList(mock(PickleLocation.class)));
         PickleEvent pickleEvent = new PickleEvent("uri", pickle);
         runtime.getRunner().runPickle(pickleEvent, ENGLISH);
 
@@ -88,7 +88,7 @@ public class JavaStepDefinitionTest {
 
         PickleTag tag = new PickleTag(mock(PickleLocation.class), "@foo");
         PickleStep step = new PickleStep("three blind mice", Collections.<Argument>emptyList(), asList(mock(PickleLocation.class)));
-        Pickle pickle = new Pickle("pickle name", asList(step), asList(tag), asList(mock(PickleLocation.class)));
+        Pickle pickle = new Pickle("pickle name", ENGLISH, asList(step), asList(tag), asList(mock(PickleLocation.class)));
         PickleEvent pickleEvent = new PickleEvent("uri", pickle);
         runtime.getRunner().runPickle(pickleEvent, ENGLISH);
 
