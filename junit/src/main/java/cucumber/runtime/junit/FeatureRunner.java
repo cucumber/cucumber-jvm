@@ -78,7 +78,7 @@ public class FeatureRunner extends ParentRunner<ParentRunner> {
             if (runtime.matchesFilters(pickleEvent)) {
                 try {
                     ParentRunner pickleRunner;
-                    pickleRunner = new ExecutionUnitRunner(runtime.getRunner(), pickleEvent, cucumberFeature.getLanguage(), jUnitReporter);
+                    pickleRunner = new ExecutionUnitRunner(runtime.getRunner(), pickleEvent, jUnitReporter);
                     children.add(pickleRunner);
                 } catch (InitializationError e) {
                     throw new CucumberException("Failed to create scenario runner", e);

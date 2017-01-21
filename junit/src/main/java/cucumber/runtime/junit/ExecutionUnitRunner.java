@@ -19,16 +19,14 @@ import java.util.Map;
 public class ExecutionUnitRunner extends ParentRunner<PickleStep> {
     private final Runner runner;
     private final PickleEvent pickleEvent;
-    private final String language;
     private final JUnitReporter jUnitReporter;
     private final Map<PickleStep, Description> stepDescriptions = new HashMap<PickleStep, Description>();
     private Description description;
 
-    public ExecutionUnitRunner(Runner runner, PickleEvent pickleEvent, String language, JUnitReporter jUnitReporter) throws InitializationError {
+    public ExecutionUnitRunner(Runner runner, PickleEvent pickleEvent, JUnitReporter jUnitReporter) throws InitializationError {
         super(ExecutionUnitRunner.class);
         this.runner = runner;
         this.pickleEvent = pickleEvent;
-        this.language = language;
         this.jUnitReporter = jUnitReporter;
     }
 
@@ -80,7 +78,7 @@ public class ExecutionUnitRunner extends ParentRunner<PickleStep> {
     public void run(final RunNotifier notifier) {
         jUnitReporter.startExecutionUnit(this, notifier);
         // This causes runChild to never be called, which seems OK.
-        runner.runPickle(pickleEvent, language);
+        runner.runPickle(pickleEvent);
         jUnitReporter.finishExecutionUnit();
     }
 

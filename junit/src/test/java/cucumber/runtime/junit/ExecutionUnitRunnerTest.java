@@ -22,7 +22,6 @@ import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.mock;
 
 public class ExecutionUnitRunnerTest {
-    private final static String ENGLISH = "en";
 
     @Test
     public void shouldAssignUnequalDescriptionsToDifferentOccurrencesOfSameStepInAScenario() throws Exception {
@@ -40,7 +39,6 @@ public class ExecutionUnitRunnerTest {
         ExecutionUnitRunner runner = new ExecutionUnitRunner(
                 mock(Runner.class),
                 pickleEvents.get(0),
-                ENGLISH,
                 createStandardJUnitReporter()
         );
 
@@ -74,7 +72,6 @@ public class ExecutionUnitRunnerTest {
         ExecutionUnitRunner runner = new ExecutionUnitRunner(
                 mock(Runner.class),
                 pickleEvents.get(0),
-                ENGLISH,
                 createStandardJUnitReporter()
         );
 
@@ -97,7 +94,6 @@ public class ExecutionUnitRunnerTest {
         ExecutionUnitRunner runner = new ExecutionUnitRunner(
                 mock(Runner.class),
                 pickles.get(0),
-                ENGLISH,
                 createStandardJUnitReporter()
         );
 
@@ -114,7 +110,6 @@ public class ExecutionUnitRunnerTest {
         ExecutionUnitRunner runner = new ExecutionUnitRunner(
                 mock(Runner.class),
                 pickleEvents.get(0),
-                ENGLISH,
                 createStandardJUnitReporter()
         );
 
@@ -131,7 +126,6 @@ public class ExecutionUnitRunnerTest {
         ExecutionUnitRunner runner = new ExecutionUnitRunner(
                 mock(Runner.class),
                 pickles.get(0),
-                ENGLISH,
                 createJUnitReporterWithOption("--filename-compatible-names")
         );
 
