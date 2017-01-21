@@ -20,6 +20,7 @@ import cucumber.runtime.java.JavaBackend;
 import cucumber.runtime.java.ObjectFactoryLoader;
 import cucumber.runtime.model.CucumberFeature;
 import dalvik.system.DexFile;
+import gherkin.events.PickleEvent;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -69,7 +70,7 @@ public class CucumberExecutor {
     /**
      * The actual {@link PickleEvent}s to run stored in {@link PickleStruct}s.
      */
-    private final List<PickleStruct> pickleEvents;
+    private final List<PickleEvent> pickleEvents;
 
     /**
      * Creates a new instance for the given parameters.
@@ -108,8 +109,8 @@ public class CucumberExecutor {
         final StepDefinitionReporter stepDefinitionReporter = runtimeOptions.stepDefinitionReporter(classLoader);
         runtime.reportStepDefinitions(stepDefinitionReporter);
 
-        for (final PickleStruct pickleEvent : pickleEvents) {
-            runtime.getRunner().runPickle(pickleEvent.pickleEvent, pickleEvent.language);
+        for (final PickleEvent pickleEvent : pickleEvents) {
+            runtime.getRunner().runPickle(pickleEvent);
         }
 
         runtime.getEventBus().send(new TestRunFinished(runtime.getEventBus().getTime()));

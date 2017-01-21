@@ -20,14 +20,14 @@ public class FeatureCompiler {
      * @param cucumberFeatures the list of {@link CucumberFeature} to compile
      * @return the compiled pickles in {@link PickleStruct}s
      */
-    public static List<PickleStruct> compile(final List<CucumberFeature> cucumberFeatures, final Runtime runtime) {
-        List<PickleStruct> pickles = new ArrayList<PickleStruct>();
+    public static List<PickleEvent> compile(final List<CucumberFeature> cucumberFeatures, final Runtime runtime) {
+        List<PickleEvent> pickles = new ArrayList<PickleEvent>();
         Compiler compiler = new Compiler();
         for (final CucumberFeature feature : cucumberFeatures) {
             for (final Pickle pickle : compiler.compile(feature.getGherkinFeature())) {
                 final PickleEvent pickleEvent = new PickleEvent(feature.getPath(), pickle);
                 if (runtime.matchesFilters(pickleEvent)) {
-                    pickles.add(new PickleStruct(pickleEvent, feature.getLanguage()));
+                    pickles.add(pickleEvent);
                 }
             }
         }
