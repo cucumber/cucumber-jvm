@@ -14,6 +14,19 @@ public @interface Time {
      */
     String name() default "";
 
+    /**
+     * @return value of increment.
+     */
     int mark() default 1;
+
+    /**
+     * @return Shall it be fully verbose (show full exception trace) or just
+     */
+    boolean verbose() default false;
+
+    /**
+     * @return Shall it be fully verbose (show full exception trace) or just
+     */
+    boolean jmx() default false;
 
 }
