@@ -59,7 +59,7 @@ Cucumber Metrics TimedInterceptor invoke method public void your.package.your.cl
 
 @SpeedRegulators is a list of @SpeedRegulator
 
-    @SpeedRegulators({ @SpeedRegulator(application = "APP_1", cost = 500000000), @SpeedRegulator(application = "APP_2", cost = 2000000000) })
+    @SpeedRegulators({ @SpeedRegulator(application = "APP_1", costString = "${app1.cost}", verbose = true), @SpeedRegulator(application = "APP_2", cost = 2, unit = TimeUnit.SECONDS) })
     @Given("^me a hello, please. Best Regards '(.*)'.$")
     public void hello(String name) {
         logger.info("Hello " + name + "!");
@@ -67,7 +67,7 @@ Cucumber Metrics TimedInterceptor invoke method public void your.package.your.cl
 
 application: name or key of targeted application
 
-cost: downtime (in nano second) for the targeted application (example: 0.5s = 500000000)
+cost: downtime for the targeted application (by default in TimeUnit.SECONDS)
 
 ## JMX
 
