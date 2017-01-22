@@ -20,6 +20,7 @@ public class SpeedRegulatorInterceptor implements MethodInterceptor {
 
     @Override
     public Object invoke(MethodInvocation invocation) throws Throwable {
+        boolean verbose = false;
         //
         Method m = invocation.getMethod();
 
@@ -27,25 +28,43 @@ public class SpeedRegulatorInterceptor implements MethodInterceptor {
         if (m.isAnnotationPresent(SpeedRegulator.class)) {
             SpeedRegulator annotation = m.getAnnotation(SpeedRegulator.class);
             speedLimiter(annotation);
+            verbose = annotation.verbose();
         }
         if (m.isAnnotationPresent(SpeedRegulators.class)) {
             SpeedRegulators annotations = m.getAnnotation(SpeedRegulators.class);
             for (int i = 0; i < annotations.value().length; i++) {
                 SpeedRegulator annotation = annotations.value()[i];
                 speedLimiter(annotation);
+                if (!verbose) {
+                    verbose = annotation.verbose();
+                }
             }
         }
 
         //
-        logger.fine("Cucumber Metrics SpeedRegulatorInterceptor invoke method " + invocation.getMethod() + " is called on " + invocation.getThis() + " with args " + invocation.getArguments());
+        if (verbose) {
+            logger.info("Cucumber Metrics SpeedRegulatorInterceptor invoke method " + invocation.getMethod() + " is called on " + invocation.getThis() + " with args " + invocation.getArguments());
+        }
         Object result = invocation.proceed();
-        logger.fine("method " + invocation.getMethod() + " returns " + result);
+        if (verbose) {
+            logger.info("method " + invocation.getMethod() + " returns " + result);
+        }
         return result;
     }
 
     private void speedLimiter(SpeedRegulator annotation) {
-        if (annotation.cost() != -1) {
-            Meter meter = speedometers.containsKey(annotation.application()) ? speedometers.get(annotation.application()) : new Meter(annotation.cost());
+        if (annotation.cost() != -1 || annotation.costString().startsWith("${") && annotation.costString().endsWith("}")) {
+            int cost = annotation.cost();
+            if (annotation.costString().startsWith("${") && annotation.costString().endsWith("}")) {
+                String costPropertie = System.getProperty(annotation.costString().substring(2, annotation.costString().length() - 1));
+                if (costPropertie != null && costPropertie.matches("\\d")) {
+                    cost = Integer.parseInt(costPropertie);
+                }
+            }
+            if (annotation.verbose()) {
+                logger.info(annotation.application() + " cost " + cost + " " + annotation.unit());
+            }
+            Meter meter = speedometers.containsKey(annotation.application()) ? speedometers.get(annotation.application()) : new Meter(annotation.unit().toNanos(cost));
             meter.waitIfNecessaryAndUpdateNextAvailableTime();
             speedometers.put(annotation.application(), meter);
         }
