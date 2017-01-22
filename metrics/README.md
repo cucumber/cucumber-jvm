@@ -69,6 +69,8 @@ application: name or key of targeted application
 
 cost: downtime for the targeted application (by default in TimeUnit.SECONDS)
 
+costString: is a possibility to get cost in properties.
+
 ## JMX
 
 All metrics of @Time and @Times are available in the JVM via JMX. 
