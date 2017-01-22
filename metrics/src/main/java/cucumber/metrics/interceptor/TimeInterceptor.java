@@ -85,13 +85,19 @@ public class TimeInterceptor implements MethodInterceptor {
     private void timeProceed(Method m, Annotation[][] as, Object[] args, Time timeAnnotation) throws AttributeNotFoundException, InvalidAttributeValueException, MBeanException, ReflectionException {
         String timedName = getTimeName(m, as, args, timeAnnotation);
         int timedMark = getTimeMark(as, args, timeAnnotation);
-        logger.fine("Timed name:" + timedName + "  Timed mark:" + timedMark);
+        if (timeAnnotation.verbose()) {
+            logger.fine("Timed name:" + timedName + "  Timed mark:" + timedMark);
+        }
 
         timed(timedName, timedMark);
-        logger.fine("Timed of :" + timedName + " is " + meters.get(timedName).getCount());
+        if (timeAnnotation.verbose()) {
+            logger.fine("Timed of :" + timedName + " is " + meters.get(timedName).getCount());
+        }
 
         // JMX
-        mbean.setAttribute(new Attribute(timedName, meters.get(timedName).getCount()));
+        if (timeAnnotation.jmx()) {
+            mbean.setAttribute(new Attribute(timedName, meters.get(timedName).getCount()));
+        }
     }
 
     private void timed(String timedName, int timedMark) {
