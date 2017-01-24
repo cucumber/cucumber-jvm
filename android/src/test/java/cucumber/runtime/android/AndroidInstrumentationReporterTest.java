@@ -17,9 +17,14 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import static cucumber.runtime.android.AndroidInstrumentationReporter.StatusCodes;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.inOrder;
@@ -526,5 +531,65 @@ public class AndroidInstrumentationReporterTest {
 
         inOrder.verify(instrumentation).sendStatus(eq(StatusCodes.FAILURE), firstCaptor.capture());
         inOrder.verify(instrumentation).sendStatus(eq(StatusCodes.OK), secondCaptor.capture());
+    }
+
+    /**
+     * Verifies, if different test names are produced, if we uses scenario outlines with multiple examples.
+     */
+    @Test
+    public void scenario_outline_all_test_names_unique() {
+        String[] featureNames = new String[]{"Addition", "Subtraction", "Multiplication", "Division"};
+        String[] scenarioNames = new String[] {"Enter one number", "Enter two numbers"};
+        List<String> testNames = new ArrayList<String>();
+        int totalTestNames = 0;
+        final AndroidInstrumentationReporter formatter = new AndroidInstrumentationReporter(runtime, instrumentation, totalTestNames);
+        final int MAX_EXAMPLES = 3;
+
+        // Normally, it is not good style to use for-loops in tests, but in this case it should be okay.
+        for (int featureIndex = 0; featureIndex < featureNames.length; featureIndex++) {
+            Feature feature = mock(Feature.class);
+            when(feature.getKeyword()).thenReturn("Feature");
+            when(feature.getName()).thenReturn(featureNames[featureIndex]);
+            for (int scenarioIndex = 0; scenarioIndex < scenarioNames.length; scenarioIndex++) {
+                for (int exampleIndex = 0; exampleIndex < MAX_EXAMPLES; exampleIndex++) {
+                    Scenario scenario = mock(Scenario.class);
+                    when(scenario.getKeyword()).thenReturn("Scenario Outline");
+                    when(scenario.getName()).thenReturn(scenarioNames[scenarioIndex]);
+                    totalTestNames++;
+                    // Finally we invoke our method under test.
+                    String testName = formatter.getTestName(feature, scenario);
+                    testNames.add(testName);
+                }
+            }
+        }
+
+        // TODO Consider to split this test method into multiple ones, to fulfil the one-assert-per-test-method-paradigm
+        assertEquals("Scenario Outline Enter one number", testNames.get(0));
+        assertEquals("Scenario Outline Enter one number (2)", testNames.get(1));
+        assertEquals("Scenario Outline Enter one number (3)", testNames.get(2));
+        assertEquals("Scenario Outline Enter two numbers", testNames.get(3));
+        assertEquals("Scenario Outline Enter two numbers (2)", testNames.get(4));
+        assertEquals("Scenario Outline Enter two numbers (3)", testNames.get(5));
+
+        assertEquals("Scenario Outline Enter one number", testNames.get(6));
+        assertEquals("Scenario Outline Enter one number (2)", testNames.get(7));
+        assertEquals("Scenario Outline Enter one number (3)", testNames.get(8));
+        assertEquals("Scenario Outline Enter two numbers", testNames.get(9));
+        assertEquals("Scenario Outline Enter two numbers (2)", testNames.get(10));
+        assertEquals("Scenario Outline Enter two numbers (3)", testNames.get(11));
+
+        assertEquals("Scenario Outline Enter one number", testNames.get(12));
+        assertEquals("Scenario Outline Enter one number (2)", testNames.get(13));
+        assertEquals("Scenario Outline Enter one number (3)", testNames.get(14));
+        assertEquals("Scenario Outline Enter two numbers", testNames.get(15));
+        assertEquals("Scenario Outline Enter two numbers (2)", testNames.get(16));
+        assertEquals("Scenario Outline Enter two numbers (3)", testNames.get(17));
+
+        assertEquals("Scenario Outline Enter one number", testNames.get(18));
+        assertEquals("Scenario Outline Enter one number (2)", testNames.get(19));
+        assertEquals("Scenario Outline Enter one number (3)", testNames.get(20));
+        assertEquals("Scenario Outline Enter two numbers", testNames.get(21));
+        assertEquals("Scenario Outline Enter two numbers (2)", testNames.get(22));
+        assertEquals("Scenario Outline Enter two numbers (3)", testNames.get(23));
     }
 }

@@ -7,9 +7,14 @@ import gherkin.formatter.model.Feature;
 import gherkin.formatter.model.Match;
 import gherkin.formatter.model.Result;
 import gherkin.formatter.model.Scenario;
+import gherkin.formatter.model.BasicStatement;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Reports the test results to the instrumentation through {@link Instrumentation#sendStatus(int, Bundle)} calls.
@@ -100,6 +105,70 @@ public class AndroidInstrumentationReporter extends NoOpFormattingReporter {
         currentFeature = feature;
     }
 
+    /**
+     * Gets the text for a feature, a scenario or other statements.
+     * @param statement the statement
+     * @return the text for the statement which contains keyword and name
+     */
+    private static String getTextForStatement(BasicStatement statement) {
+        return String.format("%s %s", statement.getKeyword(), statement.getName());
+    }
+
+    /** The stored test names for all scenarios. */
+    private final Map<Scenario, String> testNames = new HashMap<Scenario, String>();
+
+    /**
+     * The unique test names grouped by feature.<br/>
+     * The key contains the feature text.<br/>
+     * The mapped value is a set of unique test names for the feature.
+     */
+    private final Map<String, Set<String>> uniqueTestNames = new HashMap<String, Set<String>>();
+
+    /**
+     * Gets the test name for the given feature and scenario.<br/>
+     * If the scenario was not yet passed to this method, a {@link #getUniqueTestName unique test name} will be
+     * computed. If the scenario was already passed to this method, the existing test name will be returned.<br/>
+     * Since, we want to unit test this method, this method has default visibility.
+     * @param feature the feature
+     * @param scenario the scenario
+     * @return the test name
+     */
+    String getTestName(Feature feature, Scenario scenario) {
+        String existingName = testNames.get(scenario);
+        if (existingName != null) {
+            return existingName;
+        }
+        String newName = getUniqueTestName(feature, scenario);
+        testNames.put(scenario, newName);
+        return newName;
+    }
+
+    /**
+     * Gets a unique test name for the given feature/scenario combination.
+     * @param feature the feature
+     * @param scenario the scenario
+     * @return the unique name<br/>
+     *         if the combination of scenario's keyword and name is unique, that combination will be returned<br/>
+     *         otherwise, a unique index will be added "(2)", "(3)", "(4)", ...
+     */
+    private String getUniqueTestName(Feature feature, Scenario scenario) {
+        final String scenarioStartText = getTextForStatement(scenario);
+        final String featureText = getTextForStatement(feature);
+        String scenarioName = scenarioStartText;
+        if (!uniqueTestNames.containsKey(featureText)) {
+            uniqueTestNames.put(featureText, new HashSet<String>());
+        }
+        final Set<String> uniqueTestNamesForClass = uniqueTestNames.get(featureText);
+        // If "name" already exists, the next one is "name (2)"
+        int i = 2;
+        while (uniqueTestNamesForClass.contains(scenarioName)) {
+            scenarioName = scenarioStartText + " (" + i + ")";
+            i++;
+        }
+        uniqueTestNamesForClass.add(scenarioName);
+        return scenarioName;
+    }
+
     @Override
     public void startOfScenarioLifeCycle(final Scenario scenario) {
         resetSeverestResult();
@@ -168,8 +237,8 @@ public class AndroidInstrumentationReporter extends NoOpFormattingReporter {
     private Bundle createBundle(final Feature feature, final Scenario scenario) {
         final Bundle bundle = new Bundle();
         bundle.putInt(StatusKeys.NUMTESTS, numberOfTests);
-        bundle.putString(StatusKeys.CLASS, String.format("%s %s", feature.getKeyword(), feature.getName()));
-        bundle.putString(StatusKeys.TEST, String.format("%s %s", scenario.getKeyword(), scenario.getName()));
+        bundle.putString(StatusKeys.CLASS, getTextForStatement(feature));
+        bundle.putString(StatusKeys.TEST, getTestName(feature, scenario));
         return bundle;
     }
 
