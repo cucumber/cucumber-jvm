@@ -26,8 +26,7 @@ public abstract class AbstractMetricsModule implements Module {
             logger.info(annotationEnable + " set to true.");
             binder.bindInterceptor(any(), annotatedWith(annotationType), interceptors);
         } else {
-            logger.info(annotationEnable + " not set or wrong set (set to true by default).");
-            binder.bindInterceptor(any(), annotatedWith(annotationType), interceptors);
+            logger.info(annotationEnable + " not set or wrong set (set to false by default).");
         }
     }
 
