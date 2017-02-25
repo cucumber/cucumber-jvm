@@ -41,6 +41,7 @@
         <jsoup.version>1.9.2</jsoup.version>
         <testng.version>6.9.10</testng.version>
         <junit.version>4.12</junit.version>
+        <junit-jupiter.version>5.0.0-M3</junit-jupiter.version>
         <jython.version>2.7.0</jython.version>
         <mockito.version>1.10.19</mockito.version>
         <selenium.version>2.45.0</selenium.version>
@@ -327,6 +328,16 @@
                 <version>${junit.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-api</artifactId>
+                <version>${junit-jupiter.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-engine</artifactId>
+                <version>${junit-jupiter.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.testng</groupId>
                 <artifactId>testng</artifactId>
                 <version>${testng.version}</version>
@@ -553,6 +564,7 @@
         <module>picocontainer</module>
         <module>clojure</module>
         <module>junit</module>
+        <module>jupiter</module>
         <module>jruby</module>
         <module>jython</module>
         <module>spring</module>
