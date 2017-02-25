@@ -587,6 +587,7 @@
             </activation>
             <modules>
                 <module>java8</module>
+                <module>jupiter</module>
             </modules>
         </profile>
 
