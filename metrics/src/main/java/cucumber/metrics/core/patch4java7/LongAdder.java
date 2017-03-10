@@ -7,17 +7,15 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * One or more variables that together maintain an initially zero {@code long} sum. When updates (method {@link #add}) are contended across threads, the set of variables may grow dynamically to reduce
  * contention. Method {@link #sum} (or, equivalently, {@link #longValue}) returns the current total combined across the variables maintaining the sum.
- * <p/>
  * <p>
  * This class is usually preferable to {@link AtomicLong} when multiple threads update a common sum that is used for purposes such as collecting statistics, not for fine-grained synchronization
  * control. Under low update contention, the two classes have similar characteristics. But under high contention, expected throughput of this class is significantly higher, at the expense of higher
  * space consumption.
- * <p/>
+ * </p>
  * <p>
  * This class extends {@link Number}, but does <em>not</em> define methods such as {@code
  * equals}, {@code hashCode} and {@code compareTo} because instances are expected to be mutated, and so are not useful as collection keys.
- * <p/>
- * <p>
+ * </p>
  * <em>jsr166e note: This class is targeted to be placed in java.util.concurrent.atomic.</em>
  *
  * @author Doug Lea
