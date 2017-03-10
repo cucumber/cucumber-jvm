@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 public @interface Times {
 
     /**
-     * Array used for multiple SpeedRegulator declarations.
+     * @return Array used for multiple SpeedRegulator declarations.
      */
     Time[] value();
 
