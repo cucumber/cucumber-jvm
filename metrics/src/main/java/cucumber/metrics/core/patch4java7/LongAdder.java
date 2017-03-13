@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * @author Doug Lea
  * @since 1.8
  *
- * @deprecated use {@link #java.util.concurrent.atomic.LongAdder()} instead in java 8 or upper Remove Striped64 and LongAdder when switching to Java 8.
+ * @deprecated use java.util.concurrent.atomic.LongAdder instead in java 8 or upper Remove Striped64 and LongAdder when switching to Java 8.
  */
 @Deprecated
 @SuppressWarnings("all")
