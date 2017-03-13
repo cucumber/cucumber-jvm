@@ -2,7 +2,6 @@
  * Written by Doug Lea with assistance from members of JCP JSR-166
  * Expert Group and released to the public domain, as explained at
  * http://creativecommons.org/publicdomain/zero/1.0/
- *
  * http://gee.cs.oswego.edu/cgi-bin/viewcvs.cgi/jsr166/src/jsr166e/Striped64.java?revision=1.8&view=markup
  */
 package cucumber.metrics.core.patch4java7;
@@ -11,10 +10,10 @@ import java.util.Random;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 import java.util.concurrent.atomic.AtomicLongFieldUpdater;
 
-//CHECKSTYLE:OFF
+// CHECKSTYLE:OFF
 /**
  * A package-local class holding common representation and mechanics for classes supporting dynamic striping on 64bit values. The class extends Number so that concrete subclasses must publicly do so.
- * 
+ *
  * @deprecated use java.util.concurrent.atomic.Striped64 instead in java 8 or upper (Remove Striped64 and LongAdder when switching to Java 8).
  */
 @Deprecated
@@ -23,27 +22,21 @@ abstract class Striped64 extends Number {
     /*
      * This class maintains a lazily-initialized table of atomically updated variables, plus an extra "base" field. The table size is a power of two. Indexing uses masked per-thread hash codes. Nearly
      * all declarations in this class are package-private, accessed directly by subclasses.
-     *
      * Table entries are of class Cell; a variant of AtomicLong padded to reduce cache contention on most processors. Padding is overkill for most Atomics because they are usually irregularly
      * scattered in memory and thus don't interfere much with each other. But Atomic objects residing in arrays will tend to be placed adjacent to each other, and so will most often share cache lines
      * (with a huge negative performance impact) without this precaution.
-     *
      * In part because Cells are relatively large, we avoid creating them until they are needed. When there is no contention, all updates are made to the base field. Upon first contention (a failed
      * CAS on base update), the table is initialized to size 2. The table size is doubled upon further contention until reaching the nearest power of two greater than or equal to the number of CPUS.
      * Table slots remain empty (null) until they are needed.
-     *
      * A single spinlock ("busy") is used for initializing and resizing the table, as well as populating slots with new Cells. There is no need for a blocking lock; when the lock is not available,
      * threads try other slots (or the base). During these retries, there is increased contention and reduced locality, which is still better than alternatives.
-     *
      * Per-thread hash codes are initialized to random values. Contention and/or table collisions are indicated by failed CASes when performing an update operation (see method retryUpdate). Upon a
      * collision, if the table size is less than the capacity, it is doubled in size unless some other thread holds the lock. If a hashed slot is empty, and lock is available, a new Cell is created.
      * Otherwise, if the slot exists, a CAS is tried. Retries proceed by "double hashing", using a secondary hash (Marsaglia XorShift) to try to find a free slot.
-     *
      * The table size is capped because, when there are more threads than CPUs, supposing that each thread were bound to a CPU, there would exist a perfect hash function mapping threads to slots that
      * eliminates collisions. When we reach capacity, we search for this mapping by randomly varying the hash codes of colliding threads. Because search is random, and collisions only become known via
      * CAS failures, convergence can be slow, and because threads are typically not bound to CPUS forever, may not occur at all. However, despite these limitations, observed contention rates are
      * typically low in these cases.
-     *
      * It is possible for a Cell to become unused when threads that once hashed to it terminate, as well as in the case where doubling the table causes no thread to hash to it under expanded mask. We
      * do not try to detect or remove such cells, under the assumption that for long-running instances, observed contention levels will recur, so the cells will eventually be needed again; and for
      * short-lived ones, it does not matter.

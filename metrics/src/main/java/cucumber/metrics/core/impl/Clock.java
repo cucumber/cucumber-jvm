@@ -4,7 +4,7 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
 
 /**
- * An abstraction for how time passes. It is passed to {@link Timer} to track timing.
+ * An abstraction for how time passes.
  */
 public abstract class Clock {
     /**
@@ -29,7 +29,6 @@ public abstract class Clock {
      * The default clock to use.
      *
      * @return the default {@link Clock} instance
-     *
      * @see Clock.UserTimeClock
      */
     public static Clock defaultClock() {

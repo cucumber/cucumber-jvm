@@ -30,6 +30,9 @@ public class Meter implements Metered {
 
     /**
      * Creates a new {@link Meter}.
+     *
+     * @param downtime
+     *            is the value of end.
      */
     public Meter(long downtime) {
         this(downtime, Clock.defaultClock());
@@ -38,6 +41,8 @@ public class Meter implements Metered {
     /**
      * Creates a new {@link Meter}.
      *
+     * @param downtime
+     *            is the value of end.
      * @param clock
      *            the clock to use for the meter ticks
      */
