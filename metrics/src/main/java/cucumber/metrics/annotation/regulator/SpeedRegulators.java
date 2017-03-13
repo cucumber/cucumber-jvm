@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 public @interface SpeedRegulators {
 
     /**
-     * Array used for multiple SpeedRegulator declarations.
+     * @return Array used for multiple SpeedRegulator declarations.
      */
     SpeedRegulator[] value();
 
