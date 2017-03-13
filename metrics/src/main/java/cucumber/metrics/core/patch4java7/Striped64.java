@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicLongFieldUpdater;
 /**
  * A package-local class holding common representation and mechanics for classes supporting dynamic striping on 64bit values. The class extends Number so that concrete subclasses must publicly do so.
  * 
- * @deprecated use {@link #java.util.concurrent.atomic.Striped64()} instead in java 8 or upper (Remove Striped64 and LongAdder when switching to Java 8).
+ * @deprecated use java.util.concurrent.atomic.Striped64 instead in java 8 or upper (Remove Striped64 and LongAdder when switching to Java 8).
  */
 @Deprecated
 @SuppressWarnings("all")
