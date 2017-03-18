@@ -22,7 +22,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <minimum.maven.version>3.1.1</minimum.maven.version>
         <outputDirectory>${project.build.directory}</outputDirectory>
-        <gherkin.version>4.0.0</gherkin.version>
+        <gherkin.version>4.1.1</gherkin.version>
         <groovy.version>2.4.7</groovy.version>
         <picocontainer.version>2.15</picocontainer.version>
         <scala-maven-plugin.version>3.2.2</scala-maven-plugin.version>
