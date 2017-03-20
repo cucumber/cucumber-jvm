@@ -1,8 +1,5 @@
 package cucumber.api.junit.jupiter;
 
-import java.util.List;
-import java.util.stream.Stream;
-
 import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.RuntimeOptionsFactory;
@@ -18,16 +15,17 @@ import gherkin.formatter.model.Result;
 import gherkin.formatter.model.Scenario;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
-import org.junit.jupiter.api.extension.ExtensionContext;
-import org.junit.jupiter.api.extension.ParameterContext;
-import org.junit.jupiter.api.extension.ParameterResolutionException;
-import org.junit.jupiter.api.extension.ParameterResolver;
+import org.junit.jupiter.api.extension.*;
+
+import java.util.List;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 /**
  * A Junit Jupiter extension to inject Cucumber scenarios into a TestFactory.
+ * Annotate your Cucumber runner class with {@code @ExtendsWith(CucumberExtension.class)}.
  * Declare a {@code TestFactory} method with a {@code Stream<DynamicTest>} parameter
  * and return the provided parameter from the method. You can annotate the class with
  * {@code CucumberOptions}.
@@ -37,8 +35,8 @@ import static org.junit.jupiter.api.DynamicTest.dynamicTest;
  *     plugin = {"pretty"},
  *     features = {"classpath:features"}
  *   )
+ *   &#64;ExtendWith(CucumberExtension.class)
  *   public class BehaviourRunner {
- *     &#64;ExtendWith(JunitLambdaExtension.class)
  *     &#64;TestFactory
  *     public Stream&lt;DynamicTest&gt; runAllCucumberScenarios(Stream&lt;DynamicTest&gt; scenarios) {
  *       return scenarios;
@@ -46,7 +44,7 @@ import static org.junit.jupiter.api.DynamicTest.dynamicTest;
  *   }
  * </code></pre>
  */
-public class JunitJupiterExtension implements ParameterResolver {
+public class CucumberExtension implements ParameterResolver, AfterAllCallback {
   @Override
   public boolean supports(ParameterContext parameterContext, ExtensionContext extensionContext)
       throws ParameterResolutionException {
@@ -77,7 +75,9 @@ public class JunitJupiterExtension implements ParameterResolver {
     reporter = new JunitJupiterReporter(options.reporter(classLoader), formatter);
 
     return cucumberFeatures.stream().flatMap(feature -> {
+      reporter.uri(feature.getPath());
       reporter.feature(feature.getGherkinFeature());
+
 
       return feature.getFeatureElements().stream().flatMap(featureElement -> {
         if (featureElement.getClass().equals(CucumberScenario.class)) {
@@ -90,6 +90,7 @@ public class JunitJupiterExtension implements ParameterResolver {
               + " " + featureElement.getVisualName());
         }
       });
+
     });
   }
 
@@ -112,6 +113,13 @@ public class JunitJupiterExtension implements ParameterResolver {
   private Stream<DynamicTest> createDynamicTests(List<CucumberExamples> listOfExamples) {
     return listOfExamples.stream().flatMap(examples ->
         examples.createExampleScenarios().stream().map(this::createDynamicTest));
+  }
+
+  @Override
+  public void afterAll(ContainerExtensionContext context) throws Exception {
+    reporter.done();
+    reporter.eof();
+    reporter.close();
   }
 
   private JunitJupiterReporter reporter;
