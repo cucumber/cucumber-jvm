@@ -18,6 +18,11 @@ public class LambdaStepdefs implements En {
             lastInstance = this;
         });
 
+        Before(this::methodThatDeclaresException);
+
+        Before(this::hookWithArgs);
+
+
         Given("^this data table:$", (DataTable peopleTable) -> {
             List<Person> people = peopleTable.asList(Person.class);
             assertEquals("Hellesøy", people.get(0).last);
@@ -49,7 +54,17 @@ public class LambdaStepdefs implements En {
             assertEquals("three", c);
             assertEquals((Integer) 4, d);
         });
+
+        Given("^A lambda that declares an exception$", this::methodThatDeclaresException);
     }
+
+    private void methodThatDeclaresException() throws Throwable {
+    }
+
+
+    private void hookWithArgs(Scenario scenario) throws Throwable {
+    }
+
 
     public static class Person {
         String first;
