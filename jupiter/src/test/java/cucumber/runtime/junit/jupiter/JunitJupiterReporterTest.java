@@ -1,6 +1,5 @@
 package cucumber.runtime.junit.jupiter;
 
-import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Result;
 import gherkin.formatter.model.Scenario;
@@ -13,9 +12,8 @@ import static org.mockito.Mockito.mock;
 public class JunitJupiterReporterTest {
   @Test
   void scenarioResultsShouldBeRecorded() {
-    Formatter formatter = mock(Formatter.class);
     Reporter reporter = mock(Reporter.class);
-    JunitJupiterReporter jupiterReporter = new JunitJupiterReporter(reporter, formatter);
+    JunitJupiterReporter jupiterReporter = new JunitJupiterReporter(reporter);
 
     Scenario frank = new Scenario(null, null, null,
             "Frank the scenario", null, 1, "scenario-frank");

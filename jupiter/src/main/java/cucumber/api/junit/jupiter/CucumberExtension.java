@@ -11,6 +11,7 @@ import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.model.CucumberScenario;
 import cucumber.runtime.model.CucumberScenarioOutline;
 import gherkin.formatter.Formatter;
+import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Result;
 import gherkin.formatter.model.Scenario;
 import org.junit.jupiter.api.DynamicTest;
@@ -72,11 +73,12 @@ public class CucumberExtension implements ParameterResolver, AfterAllCallback {
     runtime = new Runtime(resourceLoader, classFinder, classLoader, options);
     List<CucumberFeature> cucumberFeatures = options.cucumberFeatures(resourceLoader);
     formatter = options.formatter(classLoader);
-    reporter = new JunitJupiterReporter(options.reporter(classLoader), formatter);
+    reporter = options.reporter(classLoader);
+    jupiterReporter = new JunitJupiterReporter(reporter);
 
     return cucumberFeatures.stream().flatMap(feature -> {
-      reporter.uri(feature.getPath());
-      reporter.feature(feature.getGherkinFeature());
+      formatter.uri(feature.getPath());
+      formatter.feature(feature.getGherkinFeature());
 
 
       return feature.getFeatureElements().stream().flatMap(featureElement -> {
@@ -96,9 +98,9 @@ public class CucumberExtension implements ParameterResolver, AfterAllCallback {
 
   private DynamicTest createDynamicTest(CucumberScenario scenario) {
     return dynamicTest(scenario.getVisualName(), () -> {
-      reporter.scenario((Scenario) scenario.getGherkinModel());
+      jupiterReporter.scenario((Scenario) scenario.getGherkinModel());
       scenario.run(formatter, reporter, runtime);
-      Result result = reporter.getResult(scenario.getGherkinModel());
+      Result result = jupiterReporter.getResult(scenario.getGherkinModel());
 
       Throwable error = result.getError();
       if (error != null) {
@@ -117,12 +119,13 @@ public class CucumberExtension implements ParameterResolver, AfterAllCallback {
 
   @Override
   public void afterAll(ContainerExtensionContext context) throws Exception {
-    reporter.done();
-    reporter.eof();
-    reporter.close();
+    formatter.done();
+    formatter.eof();
+    formatter.close();
   }
 
-  private JunitJupiterReporter reporter;
+  private JunitJupiterReporter jupiterReporter;
+  private Reporter reporter;
   private Formatter formatter;
   private Runtime runtime;
 }
