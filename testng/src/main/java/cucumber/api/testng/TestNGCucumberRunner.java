@@ -9,6 +9,10 @@ import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
 import cucumber.runtime.model.CucumberFeature;
+import cucumber.runtime.model.CucumberTagStatement;
+import cucumber.runtime.model.CucumberScenarioOutline;
+import cucumber.runtime.model.CucumberExamples;
+import cucumber.runtime.model.CucumberScenario;
 import gherkin.formatter.Formatter;
 
 import java.util.ArrayList;
@@ -70,6 +74,18 @@ public class TestNGCucumberRunner {
         }
     }
 
+    public void runCucumberScenario(CucumberTagStatement cucumberTagStatement) throws Throwable {
+        resultListener.startFeature();
+        cucumberTagStatement.run(
+                runtimeOptions.formatter(classLoader),
+                resultListener,
+                runtime);
+
+        if (!resultListener.isPassed()) {
+            throw resultListener.getFirstError();
+        }
+    }
+
     public void finish() {
         Formatter formatter = runtimeOptions.formatter(classLoader);
 
@@ -86,6 +102,21 @@ public class TestNGCucumberRunner {
     }
 
     /**
+     * @return List of detected cucumber scenarios
+     */
+    public List<CucumberTagStatement> getScenarios() {
+        List<CucumberTagStatement> scenarios = new ArrayList<CucumberTagStatement>();
+
+        List<CucumberFeature> features = getFeatures();
+        for (CucumberFeature feature: features) {
+            List<CucumberTagStatement> featureScenarios = feature.getFeatureElements();
+            scenarios.addAll(featureScenarios);
+        }
+
+        return scenarios;
+    }
+
+    /**
      * @return returns the cucumber features as a two dimensional array of
      * {@link CucumberFeatureWrapper} objects.
      */
@@ -97,6 +128,42 @@ public class TestNGCucumberRunner {
                 featuresList.add(new Object[]{new CucumberFeatureWrapperImpl(feature)});
             }
             return featuresList.toArray(new Object[][]{});
+        } catch (CucumberException e) {
+            return new Object[][]{new Object[]{new CucumberExceptionWrapper(e)}};
+        }
+    }
+
+    /**
+     * @return returns the Cucumber Scenarios as a two dimensional array of
+     * {@link CucumberTagStatement} objects and scenario name.
+     */
+    public Object[][] provideScenarios() {
+        try {
+            List<CucumberFeature> features = getFeatures();
+            List<Object[]> scenarioList = new ArrayList<Object[]>(features.size());
+
+            for (CucumberFeature feature : features) {
+                List<CucumberTagStatement> scenarios = feature.getFeatureElements();
+
+                for (CucumberTagStatement scenario: scenarios) {
+                    // If this is a Scenario Outline, split it up so each one is a test.
+                    if (scenario instanceof CucumberScenarioOutline) {
+                        List<CucumberExamples> cucumberExamplesList = ((CucumberScenarioOutline) scenario).getCucumberExamplesList();
+
+                        for (CucumberExamples cucumberExamples : cucumberExamplesList) {
+                            List<CucumberScenario> exampleScenarios = cucumberExamples.createExampleScenarios();
+                            for (CucumberScenario exampleScenario : exampleScenarios) {
+                                scenarioList.add(new Object[]{new CucumberTagStatementWrapperImpl(exampleScenario)});
+                            }
+                        }
+
+                    }
+                    else
+                        scenarioList.add(new Object[]{new CucumberTagStatementWrapperImpl(scenario)});
+                }
+
+            }
+            return scenarioList.toArray(new Object[][]{});
         } catch (CucumberException e) {
             return new Object[][]{new Object[]{new CucumberExceptionWrapper(e)}};
         }
