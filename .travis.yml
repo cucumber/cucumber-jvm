@@ -44,7 +44,3 @@ env:
 branches:
   only:
   - master
-
-notifications:
-  email:
-  - cukes-devs@googlegroups.com
