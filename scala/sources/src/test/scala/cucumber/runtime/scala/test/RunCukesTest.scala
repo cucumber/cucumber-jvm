@@ -1,8 +1,8 @@
 package cucumber.runtime.scala.test
 
-import _root_.org.junit.runner.RunWith
-import _root_.cucumber.api.junit.Cucumber
-import _root_.cucumber.api.CucumberOptions
+import org.junit.runner.RunWith
+import cucumber.api.junit.Cucumber
+import cucumber.api.CucumberOptions
 
 @RunWith(classOf[Cucumber])
 @CucumberOptions(strict=true)

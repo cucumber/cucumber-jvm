@@ -1,8 +1,8 @@
 package cucumber.runtime.scala
 
-import _root_.cucumber.runtime.snippets.Snippet
-import _root_.gherkin.formatter.model.Step
-import _root_.java.util.List
+import cucumber.runtime.snippets.Snippet
+import gherkin.formatter.model.Step
+import java.util.List
 import collection.JavaConverters._
 
 class ScalaSnippetGenerator extends Snippet {

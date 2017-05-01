@@ -1,9 +1,9 @@
 package cucumber.api.scala
 
-import _root_.org.junit.{Test, Assert}
+import org.junit.{Test, Assert}
 import Assert._
-import _root_.gherkin.I18n
-import _root_.gherkin.formatter.model.Tag
+import gherkin.I18n
+import gherkin.formatter.model.Tag
 import collection.JavaConverters._
 import cucumber.api.Scenario
 

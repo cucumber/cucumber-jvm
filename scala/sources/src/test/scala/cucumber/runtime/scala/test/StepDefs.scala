@@ -1,6 +1,6 @@
 package cucumber.runtime.scala.test
 
-import _root_.cucumber.api.scala._
+import cucumber.api.scala._
 
 import cucumber.api.DataTable
 import junit.framework.Assert._
