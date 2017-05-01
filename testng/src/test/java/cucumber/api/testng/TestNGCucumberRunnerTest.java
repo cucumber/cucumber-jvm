@@ -2,6 +2,7 @@ package cucumber.api.testng;
 
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.model.CucumberFeature;
+import cucumber.runtime.model.CucumberTagStatement;
 import cucumber.runtime.testng.RunCukesStrict;
 import cucumber.runtime.testng.RunCukesTest;
 import org.testng.Assert;
@@ -48,6 +49,17 @@ public class TestNGCucumberRunnerTest {
         Assert.assertEquals(features.size(), numberOfFeatures,
                 "Not all features associated with " + RunCukesTest.class.getSimpleName() + " were loaded. ");
         Assert.assertTrue(!features.isEmpty(), "Feature files need to exist in the cucumber/runtime/testng/ folder for this test");
+    }
+
+    @Test
+    public void getScenarios() throws Exception {
+        List<CucumberTagStatement> scenarios = testNGCucumberRunner.getScenarios();
+
+        int numberOfFeatures = getNumberOfFeatures();
+
+        Assert.assertTrue(scenarios.size() >= numberOfFeatures,
+                "Not all features associated with " + RunCukesTest.class.getSimpleName() + " were loaded. ");
+        Assert.assertTrue(!scenarios.isEmpty(), "Feature files need to exist in the cucumber/runtime/testng/ folder for this test");
     }
 
     /**

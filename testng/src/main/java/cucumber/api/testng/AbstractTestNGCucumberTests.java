@@ -1,5 +1,6 @@
 package cucumber.api.testng;
 
+import cucumber.runtime.model.CucumberTagStatement;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
@@ -21,12 +22,26 @@ public abstract class AbstractTestNGCucumberTests {
         testNGCucumberRunner.runCucumber(cucumberFeature.getCucumberFeature());
     }
 
+    @Test(groups = "cucumber-scenarios", description = "Runs Cucumber Scenarios", dataProvider = "scenarios")
+    public void scenario(CucumberTagStatementWrapper cucumberTagStatement) throws Throwable {
+        testNGCucumberRunner.runCucumberScenario(cucumberTagStatement.getCucumberScenario());
+    }
+
     /**
      * @return returns two dimensional array of {@link CucumberFeatureWrapper} objects.
      */
     @DataProvider
     public Object[][] features() {
         return testNGCucumberRunner.provideFeatures();
+    }
+
+    /**
+     * @return returns two dimensional array of {@link CucumberTagStatement} objects with the
+     * scenario name.
+     */
+    @DataProvider
+    public Object[][] scenarios() {
+        return testNGCucumberRunner.provideScenarios();
     }
 
     @AfterClass(alwaysRun = true)
