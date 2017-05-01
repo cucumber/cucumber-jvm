@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
  * @see Transformer
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.PARAMETER, ElementType.ANNOTATION_TYPE})
+@Target({ElementType.PARAMETER, ElementType.ANNOTATION_TYPE, ElementType.FIELD})
 @Documented
 public @interface Transform {
     Class<? extends Transformer<?>> value();

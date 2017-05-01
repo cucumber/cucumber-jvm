@@ -1,6 +1,8 @@
 package cucumber.runtime.table;
 
 import cucumber.api.DataTable;
+import cucumber.api.Transform;
+import cucumber.api.Transformer;
 import cucumber.deps.com.thoughtworks.xstream.annotations.XStreamConverter;
 import cucumber.deps.com.thoughtworks.xstream.converters.javabean.JavaBeanConverter;
 import cucumber.runtime.ParameterInfo;
@@ -8,6 +10,7 @@ import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Currency;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -182,6 +185,101 @@ public class TableConverterTest {
         assertEquals(sidsBirthday(), converted.get(0).getBirthDate());
         assertEquals(sidsDeathcal(), converted.get(0).getDeathCal());
         assertEquals("      | birthDate  | deathCal   |\n      | 1957-05-10 | 1979-02-02 |\n", table.toTable(converted).toString());
+    }
+
+    @Test
+    public void converts_to_list_of_java_bean_with_custom_data_types() {
+        DataTable table = TableParser.parse("|Money|\n|USD 10.0|\n|CAD 2.00|\n", null);
+
+        List<Record> totals = table.asList(Record.class);
+
+        assertEquals(asList(new Record(Money.of(10.0, Currency.getInstance("USD"))), new Record(Money.of(2.00, Currency.getInstance("CAD")))), totals);
+    }
+
+    private static class Record {
+
+        @Transform(MoneyTransformer.class)
+        public Money money;
+
+        public Record(Money money) {
+            this.money = money;
+        }
+
+        @Override
+        public String toString() {
+            return "Record{" +
+                           "money=" + money +
+                           '}';
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            Record record = (Record) o;
+
+            return money != null ? money.equals(record.money) : record.money == null;
+
+        }
+
+        @Override
+        public int hashCode() {
+            return money != null ? money.hashCode() : 0;
+        }
+    }
+
+    public static class MoneyTransformer extends Transformer<Money>{
+        @Override
+        public Money transform(String value) {
+            String[] components = value.split(" ");
+            double amount = Double.valueOf(components[1]);
+            Currency currency = Currency.getInstance(components[0]);
+            return Money.of(amount, currency);
+        }
+    }
+
+    private static class Money {
+        private static int PRECISION = 1000000;
+
+        Currency currency;
+        long amountInMillionths;
+
+        Money(long amountInMillionths, Currency currency) {
+            this.amountInMillionths = amountInMillionths;
+            this.currency = currency;
+        }
+
+        static Money of(double amount, Currency currency) {
+            return new Money((long) (amount * PRECISION), currency);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            Money money = (Money) o;
+
+            if (amountInMillionths != money.amountInMillionths) return false;
+            return currency.equals(money.currency);
+
+        }
+
+        @Override
+        public int hashCode() {
+            int result = currency.hashCode();
+            result = 31 * result + (int) (amountInMillionths ^ (amountInMillionths >>> 32));
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "Money{" +
+                           "currency=" + currency +
+                           ", amountInMillionths=" + amountInMillionths +
+                           '}';
+        }
     }
 
     @Test
