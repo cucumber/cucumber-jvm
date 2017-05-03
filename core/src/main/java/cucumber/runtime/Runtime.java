@@ -198,6 +198,10 @@ public class Runtime implements UnreportedStepExecutor {
         return glue;
     }
 
+    public Stats getStats() {
+        return stats;
+    }
+
     public void runBeforeHooks(Reporter reporter, Set<Tag> tags) {
         runHooks(glue.getBeforeHooks(), reporter, tags, true);
     }

@@ -1,18 +1,15 @@
 package cucumber.runtime;
 
-import static org.junit.Assert.assertThat;
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.endsWith;
-import static org.hamcrest.CoreMatchers.startsWith;
-
 import gherkin.formatter.ansi.AnsiEscapes;
 import gherkin.formatter.model.Result;
+import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.Locale;
 
-import org.junit.Test;
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.assertThat;
 
 public class StatsTest {
     public static final long ONE_MILLI_SECOND = 1000000;
@@ -198,6 +195,25 @@ public class StatsTest {
                 "path/file.feature:3 # Scenario: scenario_name%n" +
                 "%n" +
                 "3 Scenarios")));
+    }
+
+    @Test
+    public void should_print_summarized_counts() {
+        Stats counter1 = createMonochromeSummaryCounter();
+        Stats counter2 = createMonochromeSummaryCounter();
+        addOneStepScenario(counter1, Result.PASSED);
+        addOneStepScenario(counter1, Result.FAILED);
+        addOneStepScenario(counter2, Stats.PENDING);
+        addOneStepScenario(counter2, Result.UNDEFINED.getStatus());
+        addOneStepScenario(counter2, Result.SKIPPED.getStatus());
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        counter1.append(counter2);
+
+        counter1.printStats(new PrintStream(baos), isStrict(false));
+
+        assertThat(baos.toString(), containsString(String.format("" +
+                "5 Scenarios (1 failed, 1 skipped, 1 pending, 1 undefined, 1 passed)%n" +
+                "5 Steps (1 failed, 1 skipped, 1 pending, 1 undefined, 1 passed)%n")));
     }
 
     private void addOneStepScenario(Stats counter, String status) {
