@@ -129,6 +129,13 @@ public class ParameterInfo {
     public String toString() {
         return type.toString();
     }
+    
+    public boolean canConvert(Class<?> type) {
+        if (transformer == null) {
+            return false;
+        }
+        return transformer.canConvert(type);
+    }
 
     public Object convert(String value, LocalizedXStreams.LocalizedXStream xStream) {
         try {

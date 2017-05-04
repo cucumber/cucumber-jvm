@@ -1,6 +1,8 @@
 package cucumber.runtime;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -148,5 +150,19 @@ public class ParameterInfoTest {
         ParameterInfo parameterInfo = ParameterInfo.fromMethod(getClass().getMethod("withDateAndAnnotationFormat", Date.class)).get(0);
         Date sampleDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.ENGLISH).parse("1985-02-12T16:05:12");
         assertEquals(sampleDate, parameterInfo.convert("1985-02-12T16:05:12", US));
+    }
+    
+    @Test
+    public void can_convert_with_transformer_annotation() throws NoSuchMethodException, SecurityException {
+        ParameterInfo parameterInfo = ParameterInfo.fromMethod(getClass().getMethod("intWithCustomTransform", Integer.TYPE)).get(0);
+        assertTrue(parameterInfo.canConvert(Integer.class));
+        assertFalse(parameterInfo.canConvert(String.class));
+    }
+    
+    @Test
+    public void cannot_convert_without_transformer_annotation() throws NoSuchMethodException, SecurityException {
+        ParameterInfo parameterInfo = ParameterInfo.fromMethod(getClass().getMethod("withJodaTimeWithoutTransform", LocalDate.class)).get(0);
+        assertFalse(parameterInfo.canConvert(LocalDate.class));
+        assertFalse(parameterInfo.canConvert(String.class));
     }
 }

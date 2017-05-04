@@ -301,4 +301,16 @@ public class TableConverter {
         }
         return false;
     }
+    
+    public List<String> preConvert(List<String> values) {
+        if (parameterInfo == null || !parameterInfo.canConvert(String.class)) {
+            return values;
+        }
+        
+        List<String> transformedValues = new ArrayList<String>(values.size());
+        for (String value : values) {
+            transformedValues.add((String) parameterInfo.convert(value, xStream));
+        }
+        return transformedValues;
+    }
 }
