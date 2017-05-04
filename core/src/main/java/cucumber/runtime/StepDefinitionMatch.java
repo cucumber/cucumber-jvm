@@ -50,9 +50,7 @@ public class StepDefinitionMatch extends Match {
     private Object[] transformedArgs(Step step, LocalizedXStreams.LocalizedXStream xStream) {
         int argumentCount = getArguments().size();
 
-        if (step.getRows() != null) {
-            argumentCount++;
-        } else if (step.getDocString() != null) {
+        if (step.getRows() != null || step.getDocString() != null) {
             argumentCount++;
         }
         Integer parameterCount = stepDefinition.getParameterCount();
