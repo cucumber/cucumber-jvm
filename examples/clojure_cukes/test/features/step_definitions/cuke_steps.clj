@@ -8,4 +8,4 @@
       (eat (repeat (read-string n) thing)))
 
 (Then #"^I am \"([^\"]*)\"$" [mood-name]
-      (assert (= (name (mood)) mood-name)))
+      (is (= (name (mood)) mood-name)))
