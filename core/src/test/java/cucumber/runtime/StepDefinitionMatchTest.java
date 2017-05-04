@@ -191,8 +191,8 @@ public class StepDefinitionMatchTest {
         }
     }
 
-    public static class WithTwoParams {
-        public void withTwoParams(int anInt, short aShort, List<String> strings) {
+    public static class WithThreeParams {
+        public void withThreeParams(int anInt, short aShort, String aString, List<String> strings) {
         }
     }
 
@@ -200,13 +200,14 @@ public class StepDefinitionMatchTest {
     public void throws_arity_mismatch_exception_when_there_are_more_parameters_than_arguments() throws Throwable {
         Step step = new Step(null, "Given ", "I have 4 cukes in my belly", 1, new ArrayList<DataTableRow>(), null);
 
-        StepDefinition stepDefinition = new StubStepDefinition(new Object(), WithTwoParams.class.getMethod("withTwoParams", Integer.TYPE, Short.TYPE, List.class), "some pattern");
+        StepDefinition stepDefinition = new StubStepDefinition(new Object(), WithThreeParams.class.getMethod("withThreeParams", Integer.TYPE, Short.TYPE, String.class, List.class), "some pattern");
         StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(asList(new Argument(7, "4")), stepDefinition, null, step, new LocalizedXStreams(getClass().getClassLoader()));
         try {
             stepDefinitionMatch.runStep(new I18n("en"));
             fail();
         } catch (CucumberException expected) {
-            assertEquals("Arity mismatch: Step Definition 'withTwoParams' with pattern [some pattern] is declared with 3 parameters. However, the gherkin step has 2 arguments [4, Table:[]]. \n" +
+            System.out.println("SGR:" + expected.getMessage());
+            assertEquals("Arity mismatch: Step Definition 'withThreeParams' with pattern [some pattern] is declared with 4 parameters. However, the gherkin step has 2 arguments [4, Table:[]]. \n" +
                     "Step: Given I have 4 cukes in my belly", expected.getMessage());
         }
     }
