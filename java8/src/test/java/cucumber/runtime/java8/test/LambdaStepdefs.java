@@ -10,7 +10,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 
 public class LambdaStepdefs implements En {
-    private static LambdaStepdefs lastInstance;
+    private static volatile LambdaStepdefs lastInstance;
 
     public LambdaStepdefs() {
         Before((Scenario scenario) -> {

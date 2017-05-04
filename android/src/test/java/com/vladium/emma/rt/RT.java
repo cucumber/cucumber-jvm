@@ -7,7 +7,7 @@ import java.io.File;
  */
 public class RT {
 
-    private static File lastFile;
+    private static volatile File lastFile;
     private static Throwable throwable;
 
     private RT() {
@@ -23,7 +23,7 @@ public class RT {
         lastFile = file;
     }
 
-    public static void throwOnNextInvocation(final Throwable throwable) {
+    public static synchronized void throwOnNextInvocation(final Throwable throwable) {
         RT.throwable = throwable;
     }
 
