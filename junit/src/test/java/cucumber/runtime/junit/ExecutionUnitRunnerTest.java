@@ -2,6 +2,7 @@ package cucumber.runtime.junit;
 
 import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
+import cucumber.runtime.model.CucumberFeaturesLoader;
 import cucumber.runtime.model.CucumberScenario;
 import gherkin.formatter.model.Step;
 import org.junit.Test;
@@ -18,11 +19,10 @@ import static org.junit.Assert.assertFalse;
 public class ExecutionUnitRunnerTest {
     @Test
     public void shouldAssignUnequalDescriptionsToDifferentOccurrencesOfSameStepInAScenario() throws Exception {
-        List<CucumberFeature> features = CucumberFeature.load(
-                new ClasspathResourceLoader(this.getClass().getClassLoader()),
+        List<CucumberFeature> features = new CucumberFeaturesLoader<CucumberFeature>(
                 asList("cucumber/runtime/junit/fb.feature"),
-                Collections.emptyList()
-        );
+                Collections.emptyList(), CucumberFeature.class
+        ).load(new ClasspathResourceLoader(this.getClass().getClassLoader()));
 
         ExecutionUnitRunner runner = new ExecutionUnitRunner(
                 null,
@@ -46,11 +46,10 @@ public class ExecutionUnitRunnerTest {
 
     @Test
     public void shouldIncludeScenarioNameAsClassNameInStepDescriptions() throws Exception {
-        List<CucumberFeature> features = CucumberFeature.load(
-                new ClasspathResourceLoader(this.getClass().getClassLoader()),
-                asList("cucumber/runtime/junit/feature_with_same_steps_in_different_scenarios.feature"),
-                Collections.emptyList()
-        );
+        List<CucumberFeature> features = new CucumberFeaturesLoader<CucumberFeature>(
+                Collections.singletonList("cucumber/runtime/junit/feature_with_same_steps_in_different_scenarios.feature"),
+                Collections.emptyList(), CucumberFeature.class
+        ).load(new ClasspathResourceLoader(this.getClass().getClassLoader()));
 
         ExecutionUnitRunner runner = new ExecutionUnitRunner(
                 null,
