@@ -5,8 +5,16 @@ import java.util.Collection;
 /**
  * Before or After Hooks that declare a parameter of this type will receive an instance of this class.
  * It allows writing text and embedding media into reports, as well as inspecting results (in an After block).
+ * Use @Before with a call to getFeature() on the Scenario object to get the instance of the Feature
+ * e.g.
+ * {@code
+ * public void get_feature_name(Scenario scenario) {
+ *     Feature feature = scenario.getFeature();
+ *     featureName = feature.getName();
+ *     tags = feature.getSourceTagNames();
+ * }}
  */
-public interface Scenario {
+public interface Feature {
     /**
      * @return source_tag_names. Needed for compatibility with Capybara.
      */
@@ -57,9 +65,5 @@ public interface Scenario {
      */
     String getId();
 
-    /**
-     * Get information of the feature that this scenario is part of
-     * @return The Feature
-     */
-    Feature getFeature();
+
 }

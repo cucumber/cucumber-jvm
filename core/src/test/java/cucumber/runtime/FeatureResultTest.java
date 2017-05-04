@@ -1,10 +1,10 @@
 package cucumber.runtime;
 
 import gherkin.formatter.Reporter;
+import gherkin.formatter.model.Feature;
 import gherkin.formatter.model.Result;
 import gherkin.formatter.model.Scenario;
 import gherkin.formatter.model.Tag;
-import cucumber.api.Feature;
 import org.junit.Test;
 
 import java.util.Collections;
@@ -13,10 +13,10 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-public class ScenarioResultTest {
+public class FeatureResultTest {
 
     private Reporter reporter = mock(Reporter.class);
-    private ScenarioImpl s = new ScenarioImpl(reporter, Collections.<Tag>emptySet(), mock(Scenario.class), mock(Feature.class));
+    private FeatureImpl s = new FeatureImpl(reporter, Collections.<Tag>emptySet(), mock(Feature.class));
 
     @Test
     public void no_steps_is_passed() throws Exception {

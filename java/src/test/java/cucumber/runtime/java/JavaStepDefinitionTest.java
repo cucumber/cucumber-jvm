@@ -9,12 +9,7 @@ import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.io.ClasspathResourceLoader;
 import gherkin.I18n;
 import gherkin.formatter.Reporter;
-import gherkin.formatter.model.Comment;
-import gherkin.formatter.model.Match;
-import gherkin.formatter.model.Result;
-import gherkin.formatter.model.Scenario;
-import gherkin.formatter.model.Step;
-import gherkin.formatter.model.Tag;
+import gherkin.formatter.model.*;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
@@ -70,7 +65,7 @@ public class JavaStepDefinitionTest {
         backend.addStepDefinition(THREE_BLIND_ANIMALS.getAnnotation(Given.class), THREE_BLIND_ANIMALS);
 
         Reporter reporter = mock(Reporter.class);
-        runtime.buildBackendWorlds(reporter, Collections.<Tag>emptySet(), mock(Scenario.class));
+        runtime.buildBackendWorlds(reporter, Collections.<Tag>emptySet(), mock(Feature.class), mock(Scenario.class));
         Tag tag = new Tag("@foo", 0);
         runtime.runBeforeHooks(reporter, asSet(tag));
         runtime.runStep("some.feature", new Step(NO_COMMENTS, "Given ", "three blind mice", 1, null, null), reporter, ENGLISH);
@@ -114,7 +109,7 @@ public class JavaStepDefinitionTest {
             public void write(String text) {
             }
         };
-        runtime.buildBackendWorlds(reporter, Collections.<Tag>emptySet(), mock(Scenario.class));
+        runtime.buildBackendWorlds(reporter, Collections.<Tag>emptySet(), mock(Feature.class), mock(Scenario.class));
         Tag tag = new Tag("@foo", 0);
         Set<Tag> tags = asSet(tag);
         runtime.runBeforeHooks(reporter, tags);

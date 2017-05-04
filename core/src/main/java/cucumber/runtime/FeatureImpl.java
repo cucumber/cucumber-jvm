@@ -1,34 +1,27 @@
 package cucumber.runtime;
 
 import cucumber.api.Feature;
-import cucumber.api.Scenario;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.Result;
 import gherkin.formatter.model.Tag;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static java.util.Arrays.asList;
 
-public class ScenarioImpl implements Scenario {
+public class FeatureImpl implements Feature {
     private static final List<String> SEVERITY = asList("passed", "skipped", "pending", "undefined", "failed");
     private final List<Result> stepResults = new ArrayList<Result>();
     private final Reporter reporter;
     private final Set<Tag> tags;
-    private final String scenarioName;
-    private final String scenarioId;
-    private final Feature feature;
+    private final String featureName;
+    private final String featureId;
 
-    public ScenarioImpl(Reporter reporter, Set<Tag> tags, gherkin.formatter.model.Scenario gherkinScenario, Feature feature) {
+    public FeatureImpl(Reporter reporter, Set<Tag> tags, gherkin.formatter.model.Feature gherkinFeature) {
         this.reporter = reporter;
         this.tags = tags;
-        this.scenarioName = gherkinScenario.getName();
-        this.scenarioId = gherkinScenario.getId();
-        this.feature=feature;
+        this.featureName = gherkinFeature.getName();
+        this.featureId = gherkinFeature.getId();
     }
 
     void add(Result result) {
@@ -71,16 +64,11 @@ public class ScenarioImpl implements Scenario {
 
     @Override
     public String getName() {
-        return scenarioName;
+        return featureName;
     }
 
     @Override
     public String getId() {
-        return scenarioId;
-    }
-
-    @Override
-    public Feature getFeature() {
-        return feature;
+        return featureId;
     }
 }
