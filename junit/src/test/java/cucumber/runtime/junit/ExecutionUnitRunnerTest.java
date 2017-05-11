@@ -27,7 +27,8 @@ public class ExecutionUnitRunnerTest {
         ExecutionUnitRunner runner = new ExecutionUnitRunner(
                 null,
                 (CucumberScenario) features.get(0).getFeatureElements().get(0),
-                createStandardJUnitReporter()
+                createStandardJUnitReporter(),
+                createStandardIdGenerator()
         );
 
         // fish out the two occurrences of the same step and check whether we really got them
@@ -55,7 +56,8 @@ public class ExecutionUnitRunnerTest {
         ExecutionUnitRunner runner = new ExecutionUnitRunner(
                 null,
                 (CucumberScenario) features.get(0).getFeatureElements().get(0),
-                createStandardJUnitReporter()
+                createStandardJUnitReporter(),
+                createStandardIdGenerator()
         );
 
         // fish out the data from runner
@@ -67,31 +69,6 @@ public class ExecutionUnitRunnerTest {
         assertEquals("description includes step keyword and name as method name", step.getKeyword() + step.getName(), stepDescription.getMethodName());
     }
 
-    @Test
-    public void shouldPopulateRunnerStepsWithStepsUsedInStepDescriptions() throws Exception {
-        CucumberFeature cucumberFeature = TestFeatureBuilder.feature("featurePath", "" +
-                "Feature: feature name\n" +
-                "  Background:\n" +
-                "    Given background step\n" +
-                "  Scenario:\n" +
-                "    Then scenario name\n");
-
-        ExecutionUnitRunner runner = new ExecutionUnitRunner(
-                null,
-                (CucumberScenario) cucumberFeature.getFeatureElements().get(0),
-                createStandardJUnitReporter()
-        );
-
-        // fish out the data from runner
-        Description runnerDescription = runner.getDescription();
-        Description backgroundStepDescription = runnerDescription.getChildren().get(0);
-        Description scenarioStepDescription = runnerDescription.getChildren().get(1);
-        Step runnerBackgroundStep = runner.getRunnerSteps().get(0);
-        Step runnerScenarioStep = runner.getRunnerSteps().get(1);
-
-        assertDescriptionHasStepAsUniqueId(backgroundStepDescription, runnerBackgroundStep);
-        assertDescriptionHasStepAsUniqueId(scenarioStepDescription, runnerScenarioStep);
-    }
 
     @Test
     public void shouldUseScenarioNameForRunnerName() throws Exception {
@@ -103,7 +80,8 @@ public class ExecutionUnitRunnerTest {
         ExecutionUnitRunner runner = new ExecutionUnitRunner(
                 null,
                 (CucumberScenario) cucumberFeature.getFeatureElements().get(0),
-                createStandardJUnitReporter()
+                createStandardJUnitReporter(),
+                createStandardIdGenerator()
         );
 
         assertEquals("Scenario: scenario name", runner.getName());
@@ -119,7 +97,8 @@ public class ExecutionUnitRunnerTest {
         ExecutionUnitRunner runner = new ExecutionUnitRunner(
                 null,
                 (CucumberScenario) cucumberFeature.getFeatureElements().get(0),
-                createStandardJUnitReporter()
+                createStandardJUnitReporter(),
+                createStandardIdGenerator()
         );
 
         assertEquals("Then it works", runner.getDescription().getChildren().get(0).getMethodName());
@@ -135,17 +114,12 @@ public class ExecutionUnitRunnerTest {
         ExecutionUnitRunner runner = new ExecutionUnitRunner(
                 null,
                 (CucumberScenario) cucumberFeature.getFeatureElements().get(0),
-                createJUnitReporterWithOption("--filename-compatible-names")
+                createJUnitReporterWithOption("--filename-compatible-names"),
+                createStandardIdGenerator()
         );
 
         assertEquals("Scenario__scenario_name", runner.getName());
         assertEquals("Then_it_works", runner.getDescription().getChildren().get(0).getMethodName());
-    }
-
-    private void assertDescriptionHasStepAsUniqueId(Description stepDescription, Step step) {
-        // Note, JUnit uses the the serializable parameter (in this case the step)
-        // as the unique id when comparing Descriptions
-        assertEquals(stepDescription, Description.createTestDescription("", "", step));
     }
 
     private JUnitReporter createStandardJUnitReporter() {
@@ -154,5 +128,9 @@ public class ExecutionUnitRunnerTest {
 
     private JUnitReporter createJUnitReporterWithOption(String option) {
         return new JUnitReporter(null, null, false, new JUnitOptions(Arrays.asList(option)));
+    }
+
+    private IdProvider createStandardIdGenerator() {
+        return new IdProvider("dummy base");
     }
 }

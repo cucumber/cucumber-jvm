@@ -20,6 +20,7 @@ public class FeatureRunner extends ParentRunner<ParentRunner> {
 
     private final CucumberFeature cucumberFeature;
     private final Runtime runtime;
+    private final IdProvider idProvider;
     private final JUnitReporter jUnitReporter;
     private Description description;
 
@@ -27,6 +28,7 @@ public class FeatureRunner extends ParentRunner<ParentRunner> {
         super(null);
         this.cucumberFeature = cucumberFeature;
         this.runtime = runtime;
+        this.idProvider = new IdProvider(cucumberFeature.getPath());
         this.jUnitReporter = jUnitReporter;
         buildFeatureElementRunners();
     }
@@ -40,7 +42,7 @@ public class FeatureRunner extends ParentRunner<ParentRunner> {
     @Override
     public Description getDescription() {
         if (description == null) {
-            description = Description.createSuiteDescription(getName(), cucumberFeature.getGherkinFeature());
+            description = Description.createSuiteDescription(getName(), idProvider.next());
             for (ParentRunner child : getChildren()) {
                 description.addChild(describeChild(child));
             }
@@ -76,9 +78,9 @@ public class FeatureRunner extends ParentRunner<ParentRunner> {
             try {
                 ParentRunner featureElementRunner;
                 if (cucumberTagStatement instanceof CucumberScenario) {
-                    featureElementRunner = new ExecutionUnitRunner(runtime, (CucumberScenario) cucumberTagStatement, jUnitReporter);
+                    featureElementRunner = new ExecutionUnitRunner(runtime, (CucumberScenario) cucumberTagStatement, jUnitReporter, idProvider);
                 } else {
-                    featureElementRunner = new ScenarioOutlineRunner(runtime, (CucumberScenarioOutline) cucumberTagStatement, jUnitReporter);
+                    featureElementRunner = new ScenarioOutlineRunner(runtime, (CucumberScenarioOutline) cucumberTagStatement, jUnitReporter, idProvider);
                 }
                 children.add(featureElementRunner);
             } catch (InitializationError e) {

@@ -15,18 +15,20 @@ import java.util.List;
 public class ScenarioOutlineRunner extends Suite {
     private final CucumberScenarioOutline cucumberScenarioOutline;
     private final JUnitReporter jUnitReporter;
+    private final IdProvider idProvider;
     private Description description;
 
-    public ScenarioOutlineRunner(Runtime runtime, CucumberScenarioOutline cucumberScenarioOutline, JUnitReporter jUnitReporter) throws InitializationError {
-        super(null, buildRunners(runtime, cucumberScenarioOutline, jUnitReporter));
+    public ScenarioOutlineRunner(Runtime runtime, CucumberScenarioOutline cucumberScenarioOutline, JUnitReporter jUnitReporter, IdProvider idProvider) throws InitializationError {
+        super(null, buildRunners(runtime, cucumberScenarioOutline, jUnitReporter, idProvider));
         this.cucumberScenarioOutline = cucumberScenarioOutline;
         this.jUnitReporter = jUnitReporter;
+        this.idProvider = idProvider;
     }
 
-    private static List<Runner> buildRunners(Runtime runtime, CucumberScenarioOutline cucumberScenarioOutline, JUnitReporter jUnitReporter) throws InitializationError {
+    private static List<Runner> buildRunners(Runtime runtime, CucumberScenarioOutline cucumberScenarioOutline, JUnitReporter jUnitReporter, IdProvider idProvider) throws InitializationError {
         List<Runner> runners = new ArrayList<Runner>();
         for (CucumberExamples cucumberExamples : cucumberScenarioOutline.getCucumberExamplesList()) {
-            runners.add(new ExamplesRunner(runtime, cucumberExamples, jUnitReporter));
+            runners.add(new ExamplesRunner(runtime, cucumberExamples, jUnitReporter, idProvider));
         }
         return runners;
     }
@@ -39,7 +41,7 @@ public class ScenarioOutlineRunner extends Suite {
     @Override
     public Description getDescription() {
         if (description == null) {
-            description = Description.createSuiteDescription(getName(), cucumberScenarioOutline.getGherkinModel());
+            description = Description.createSuiteDescription(getName(), idProvider.next());
             for (Runner child : getChildren()) {
                 description.addChild(describeChild(child));
             }
