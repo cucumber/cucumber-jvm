@@ -8,13 +8,18 @@ import cucumber.runtime.StopWatch;
 import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
 import org.junit.Test;
+import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;
 
+import java.io.IOException;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
 public class FeatureRunnerTest {
@@ -143,4 +148,55 @@ public class FeatureRunnerTest {
         return formatterSpy.toString();
     }
 
+    @Test
+    public void shouldPopulateDescriptionsWithStableUniqueIds() throws Exception {
+        FeatureRunner runner = createFeatureRunner();
+        FeatureRunner rerunner = createFeatureRunner();
+
+        Set<Description> descriptions = new HashSet<Description>();
+        assertDescriptionIsUnique(runner.getDescription(), descriptions);
+        assertDescriptionIsPredictable(rerunner.getDescription(), descriptions);
+    }
+
+    private FeatureRunner createFeatureRunner() throws IOException, InitializationError {
+        CucumberFeature cucumberFeature = TestFeatureBuilder.feature("featurePath", "" +
+            "Feature: feature name\n" +
+            "  Background:\n" +
+            "    Given background step\n" +
+            "  Scenario: A\n" +
+            "    Then scenario name\n" +
+            "  Scenario: B\n" +
+            "    Then scenario name\n" +
+            "  Scenario Outline: C\n" +
+            "    Then scenario <name>\n" +
+            "  Examples:\n" +
+            "    | name |\n" +
+            "    | C    |\n" +
+            "    | D    |\n" +
+            "    | E    |\n"
+
+        );
+
+        return new FeatureRunner(cucumberFeature, null, createStandardJUnitReporter());
+    }
+
+    private static void assertDescriptionIsUnique(Description description, Set<Description> descriptions) {
+        // Note, JUnit uses the the serializable parameter (in this case the step)
+        // as the unique id when comparing Descriptions
+        assertTrue(descriptions.add(description));
+        for (Description each : description.getChildren()) {
+            assertDescriptionIsUnique(each, descriptions);
+        }
+    }
+
+    private static void assertDescriptionIsPredictable(Description description, Set<Description> descriptions) {
+        assertTrue(descriptions.contains(description));
+        for (Description each : description.getChildren()) {
+            assertDescriptionIsPredictable(each, descriptions);
+        }
+    }
+
+    private static JUnitReporter createStandardJUnitReporter() {
+        return new JUnitReporter(null, null, false, new JUnitOptions(Collections.<String>emptyList()));
+    }
 }

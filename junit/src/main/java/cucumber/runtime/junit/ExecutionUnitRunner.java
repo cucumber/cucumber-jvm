@@ -20,15 +20,17 @@ public class ExecutionUnitRunner extends ParentRunner<Step> {
     private final Runtime runtime;
     private final CucumberScenario cucumberScenario;
     private final JUnitReporter jUnitReporter;
+    private final IdProvider idProvider;
     private Description description;
     private final Map<Step, Description> stepDescriptions = new HashMap<Step, Description>();
     private final List<Step> runnerSteps = new ArrayList<Step>();
 
-    public ExecutionUnitRunner(Runtime runtime, CucumberScenario cucumberScenario, JUnitReporter jUnitReporter) throws InitializationError {
+    public ExecutionUnitRunner(Runtime runtime, CucumberScenario cucumberScenario, JUnitReporter jUnitReporter, IdProvider idProvider) throws InitializationError {
         super(ExecutionUnitRunner.class);
         this.runtime = runtime;
         this.cucumberScenario = cucumberScenario;
         this.jUnitReporter = jUnitReporter;
+        this.idProvider = idProvider;
     }
 
     public List<Step> getRunnerSteps() {
@@ -53,21 +55,12 @@ public class ExecutionUnitRunner extends ParentRunner<Step> {
     @Override
     public Description getDescription() {
         if (description == null) {
-            description = Description.createSuiteDescription(getName(), cucumberScenario.getGherkinModel());
+            description = Description.createSuiteDescription(getName(), idProvider.next());
 
             if (cucumberScenario.getCucumberBackground() != null) {
-                for (Step backgroundStep : cucumberScenario.getCucumberBackground().getSteps()) {
-                    // We need to make a copy of that step, so we have a unique one per scenario
-                    Step copy = new Step(
-                            backgroundStep.getComments(),
-                            backgroundStep.getKeyword(),
-                            backgroundStep.getName(),
-                            backgroundStep.getLine(),
-                            backgroundStep.getRows(),
-                            backgroundStep.getDocString()
-                    );
-                    description.addChild(describeChild(copy));
-                    runnerSteps.add(copy);
+                for (Step step : cucumberScenario.getCucumberBackground().getSteps()) {
+                    description.addChild(describeChild(step));
+                    runnerSteps.add(step);
                 }
             }
 
@@ -89,7 +82,7 @@ public class ExecutionUnitRunner extends ParentRunner<Step> {
             } else {
                 testName = step.getKeyword() + step.getName();
             }
-            description = Description.createTestDescription(getName(), testName, step);
+            description = Description.createTestDescription(getName(), testName, idProvider.next());
             stepDescriptions.put(step, description);
         }
         return description;
