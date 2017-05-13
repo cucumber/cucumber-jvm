@@ -12,6 +12,7 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,7 +37,7 @@ public class FeatureRunner extends ParentRunner<ParentRunner> {
     @Override
     public Description getDescription() {
         if (description == null) {
-            description = Description.createSuiteDescription(getName(), cucumberFeature);
+            description = Description.createSuiteDescription(getName(), new FeatureId(cucumberFeature));
             for (ParentRunner child : getChildren()) {
                 description.addChild(describeChild(child));
             }
@@ -84,6 +85,34 @@ public class FeatureRunner extends ParentRunner<ParentRunner> {
                     throw new CucumberException("Failed to create scenario runner", e);
                 }
             }
+        }
+    }
+
+    private static final class FeatureId implements Serializable {
+        private static final long serialVersionUID = 1L;
+        private final String uri;
+
+        FeatureId(CucumberFeature feature) {
+            this.uri = feature.getPath();
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            FeatureId featureId = (FeatureId) o;
+            return uri.equals(featureId.uri);
+
+        }
+
+        @Override
+        public int hashCode() {
+            return uri.hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return uri;
         }
     }
 
