@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JUnitOptions {
-    public static final String OPTIONS_RESOURCE = "/cucumber/api/junit/OPTIONS.txt";
+    private static final String OPTIONS_RESOURCE = "/cucumber/api/junit/OPTIONS.txt";
     private static String optionsText;
 
     private boolean allowStartedIgnored = false;
@@ -44,10 +44,10 @@ public class JUnitOptions {
         }
     }
 
-    public boolean allowStartedIgnored() {
+    boolean allowStartedIgnored() {
         return allowStartedIgnored;
     }
-    public boolean filenameCompatibleNames() {
+    boolean filenameCompatibleNames() {
         return filenameCompatibleNames;
     }
 
@@ -56,7 +56,7 @@ public class JUnitOptions {
         System.out.println(optionsText);
     }
 
-    static void loadUsageTextIfNeeded() {
+    private static void loadUsageTextIfNeeded() {
         if (optionsText == null) {
             try {
                 Reader reader = new InputStreamReader(FixJava.class.getResourceAsStream(OPTIONS_RESOURCE), "UTF-8");
