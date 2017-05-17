@@ -1,9 +1,9 @@
 package cucumber.api.event;
 
 abstract class TimeStampedEvent implements Event {
-    private Long timeStamp;
+    private final Long timeStamp;
 
-    public TimeStampedEvent(Long timeStamp) {
+    TimeStampedEvent(Long timeStamp) {
         this.timeStamp = timeStamp;
     }
 

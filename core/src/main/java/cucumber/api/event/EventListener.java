@@ -1,7 +1,5 @@
 package cucumber.api.event;
 
-import cucumber.api.event.EventPublisher;
-
 /**
  * This is the interface you should implement if you want your own custom
  * formatter.

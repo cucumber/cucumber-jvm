@@ -94,13 +94,12 @@ public abstract class TestStep {
 
     private Result mapStatusToResult(String status, Throwable error, long duration) {
         Long resultDuration = duration;
-        Throwable resultError = error;
         if (status == Result.SKIPPED.getStatus()) {
             return Result.SKIPPED;
         }
         if (status == Result.UNDEFINED) {
-            return new Result(status, 0l, null, definitionMatch.getSnippets());
+            return new Result(status, 0L, null, definitionMatch.getSnippets());
         }
-        return new Result(status, resultDuration, resultError);
+        return new Result(status, resultDuration, error);
     }
 }

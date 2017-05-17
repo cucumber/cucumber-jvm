@@ -34,10 +34,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class JSONFormatter implements Formatter {
+class JSONFormatter implements Formatter {
     private String currentFeatureFile;
     private List<Map<String, Object>> featureMaps = new ArrayList<Map<String, Object>>();
-    private Map<String, Object> currentFeatureMap;
     private List<Map<String, Object>> currentElementsList;
     private Map<String, Object> currentElementMap;
     private Map<String, Object> currentTestCaseMap;
@@ -112,7 +111,7 @@ public class JSONFormatter implements Formatter {
     private void handleTestCaseStarted(TestCaseStarted event) {
         if (currentFeatureFile == null || !currentFeatureFile.equals(event.testCase.getPath())) {
             currentFeatureFile = event.testCase.getPath();
-            currentFeatureMap = createFeatureMap(event.testCase);
+            Map<String, Object> currentFeatureMap = createFeatureMap(event.testCase);
             featureMaps.add(currentFeatureMap);
             currentElementsList = (List<Map<String, Object>>) currentFeatureMap.get("elements");
         }

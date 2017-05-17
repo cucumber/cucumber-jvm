@@ -24,13 +24,14 @@ public class EventBus implements EventPublisher {
     public void send(Event event) {
         if (handlers.containsKey(event.getClass())) {
             for (EventHandler handler : handlers.get(event.getClass())) {
+                //noinspection unchecked: protected by registerHandlerFor
                 handler.receive(event);
             }
         }
     }
 
     @Override
-    public void registerHandlerFor(Class<? extends Event> eventType, EventHandler<? extends Event> handler) {
+    public <T extends Event> void registerHandlerFor(Class<T> eventType, EventHandler<T> handler) {
         if (handlers.containsKey(eventType)) {
             handlers.get(eventType).add(handler);
         } else {
@@ -39,5 +40,4 @@ public class EventBus implements EventPublisher {
             handlers.put(eventType, list);
         }
     }
-
 }

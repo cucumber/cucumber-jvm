@@ -30,7 +30,7 @@ public class CucumberFeature implements Serializable {
         final List<CucumberFeature> cucumberFeatures = load(resourceLoader, featurePaths);
         if (cucumberFeatures.isEmpty()) {
             if (featurePaths.isEmpty()) {
-                out.println(String.format("Got no path to feature directory or feature file"));
+                out.println("Got no path to feature directory or feature file");
             } else {
                 out.println(String.format("No features found at %s", featurePaths));
             }
@@ -79,8 +79,7 @@ public class CucumberFeature implements Serializable {
 
     private static String read(Resource resource) {
         try {
-            String source = Encoding.readFile(resource);
-            return source;
+            return Encoding.readFile(resource);
         } catch (IOException e) {
             throw new CucumberException("Failed to read resource:" + resource.getPath(), e);
         }

@@ -2,7 +2,7 @@ package cucumber.runtime;
 
 import gherkin.events.PickleEvent;
 
-public interface PicklePredicate {
+interface PicklePredicate {
 
     boolean apply(PickleEvent pickleEvent);
 }

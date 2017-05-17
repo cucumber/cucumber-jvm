@@ -5,7 +5,6 @@ import cucumber.api.Result;
 import cucumber.api.Scenario;
 import cucumber.api.StepDefinitionReporter;
 import cucumber.api.TestStep;
-import cucumber.runtime.formatter.JSONFormatter;
 import cucumber.runtime.formatter.FormatterSpy;
 import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.io.Resource;
@@ -65,7 +64,8 @@ public class RuntimeTest {
                 "  Scenario: scenario name\n" +
                 "    When s\n");
         StringBuilder out = new StringBuilder();
-        JSONFormatter jsonFormatter = new JSONFormatter(out);
+
+//        JSONFormatter jsonFormatter = new JSONFormatter(out);
         List<Backend> backends = asList(mock(Backend.class));
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         RuntimeOptions runtimeOptions = new RuntimeOptions("");
@@ -222,8 +222,8 @@ public class RuntimeTest {
     }
 
     public static class StepdefsPrinter implements StepDefinitionReporter {
-        public static StepdefsPrinter instance;
-        public StepDefinition stepDefinition;
+        static StepdefsPrinter instance;
+        StepDefinition stepDefinition;
 
         public StepdefsPrinter() {
             instance = this;
