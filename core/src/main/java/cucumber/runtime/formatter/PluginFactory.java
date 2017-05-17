@@ -40,7 +40,6 @@ import static java.util.Arrays.asList;
  * </ul>
  * Plugins must implement one of the following interfaces:
  * <ul>
- * <li>{@link cucumber.api.Formatter}</li>
  * <li>{@link cucumber.api.StepDefinitionReporter}</li>
  * </ul>
  */
@@ -191,26 +190,17 @@ public class PluginFactory {
 
     public static boolean isFormatterName(String name) {
         Class pluginClass = getPluginClass(name);
-        if (Formatter.class.isAssignableFrom(pluginClass)) {
-            return true;
-        }
-        return false;
+        return Formatter.class.isAssignableFrom(pluginClass);
     }
 
     public static boolean isStepDefinitionResporterName(String name) {
         Class pluginClass = getPluginClass(name);
-        if (StepDefinitionReporter.class.isAssignableFrom(pluginClass)) {
-            return true;
-        }
-        return false;
+        return StepDefinitionReporter.class.isAssignableFrom(pluginClass);
     }
 
     public static boolean isSummaryPrinterName(String name) {
         Class pluginClass = getPluginClass(name);
-        if (SummaryPrinter.class.isAssignableFrom(pluginClass)) {
-            return true;
-        }
-        return false;
+        return SummaryPrinter.class.isAssignableFrom(pluginClass);
     }
 
     private static Class getPluginClass(String name) {

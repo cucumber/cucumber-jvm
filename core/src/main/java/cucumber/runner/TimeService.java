@@ -10,7 +10,7 @@ public interface TimeService {
         }
     };
 
-    public static class Stub implements TimeService {
+    class Stub implements TimeService {
         private final long duration;
         private final ThreadLocal<Long> currentTime = new ThreadLocal<Long>();
 

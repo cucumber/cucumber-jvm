@@ -24,7 +24,7 @@ class ExecutionUnitRunner extends ParentRunner<PickleStep> {
     private Description description;
 
     ExecutionUnitRunner(Runner runner, PickleEvent pickleEvent, JUnitReporter jUnitReporter) throws InitializationError {
-        super(ExecutionUnitRunner.class);
+        super(null);
         this.runner = runner;
         this.pickleEvent = pickleEvent;
         this.jUnitReporter = jUnitReporter;
