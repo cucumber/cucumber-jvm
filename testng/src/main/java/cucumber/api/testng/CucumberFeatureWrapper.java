@@ -9,5 +9,5 @@ import cucumber.runtime.model.CucumberFeature;
  * @see CucumberFeatureWrapperImpl
  */
 public interface CucumberFeatureWrapper {
-    public CucumberFeature getCucumberFeature();
+    CucumberFeature getCucumberFeature();
 }
