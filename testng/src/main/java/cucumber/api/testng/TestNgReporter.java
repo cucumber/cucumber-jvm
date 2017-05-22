@@ -59,7 +59,7 @@ class TestNgReporter implements Formatter {
             ITestResult tr = getCurrentTestResult();
             tr.setThrowable(result.getError());
             tr.setStatus(ITestResult.SKIP);
-        } else if (Result.UNDEFINED.equals(result)) {
+        } else if (Result.UNDEFINED.equals(result.getStatus())) {
             ITestResult tr = getCurrentTestResult();
             tr.setThrowable(result.getError());
             tr.setStatus(ITestResult.FAILURE);
