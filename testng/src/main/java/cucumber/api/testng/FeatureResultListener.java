@@ -7,7 +7,7 @@ import cucumber.api.event.EventPublisher;
 import cucumber.api.event.TestStepFinished;
 import cucumber.api.formatter.Formatter;
 
-public class FeatureResultListener implements Formatter {
+class FeatureResultListener implements Formatter {
     static final String UNDEFINED_MESSAGE = "There are undefined steps";
     static final String PENDING_MESSAGE = "There are pending steps";
     private boolean strict;
@@ -19,7 +19,7 @@ public class FeatureResultListener implements Formatter {
         }
     };
 
-    public FeatureResultListener(boolean strict) {
+    FeatureResultListener(boolean strict) {
         this.strict = strict;
     }
 
@@ -52,15 +52,15 @@ public class FeatureResultListener implements Formatter {
         return (error instanceof CucumberException) && error.getMessage().equals(UNDEFINED_MESSAGE);
     }
 
-    public boolean isPassed() {
+    boolean isPassed() {
         return error == null;
     }
 
-    public Throwable getFirstError() {
+    Throwable getFirstError() {
         return error;
     }
 
-    public void startFeature() {
+    void startFeature() {
         error = null;
     }
 }

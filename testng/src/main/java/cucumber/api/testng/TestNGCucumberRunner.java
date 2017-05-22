@@ -17,21 +17,20 @@ import java.util.List;
 /**
  * Glue code for running Cucumber via TestNG.
  */
-public class TestNGCucumberRunner {
+class TestNGCucumberRunner {
     private Runtime runtime;
     private TestNgReporter reporter;
     private RuntimeOptions runtimeOptions;
     private ResourceLoader resourceLoader;
     private FeatureResultListener resultListener;
-    private ClassLoader classLoader;
 
     /**
      * Bootstrap the cucumber runtime
      *
      * @param clazz Which has the cucumber.api.CucumberOptions and org.testng.annotations.Test annotations
      */
-    public TestNGCucumberRunner(Class clazz) {
-        classLoader = clazz.getClassLoader();
+    TestNGCucumberRunner(Class clazz) {
+        ClassLoader classLoader = clazz.getClassLoader();
         resourceLoader = new MultiLoader(classLoader);
 
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(clazz);
@@ -48,7 +47,7 @@ public class TestNGCucumberRunner {
     /**
      * Run the Cucumber features
      */
-    public void runCukes() {
+    void runCukes() {
         for (CucumberFeature cucumberFeature : getFeatures()) {
             reporter.uri(cucumberFeature.getPath());
             runtime.runFeature(cucumberFeature);
@@ -59,7 +58,7 @@ public class TestNGCucumberRunner {
         }
     }
 
-    public void runCucumber(CucumberFeature cucumberFeature) {
+    void runCucumber(CucumberFeature cucumberFeature) {
         resultListener.startFeature();
         reporter.uri(cucumberFeature.getPath());
         runtime.runFeature(cucumberFeature);
@@ -69,7 +68,7 @@ public class TestNGCucumberRunner {
         }
     }
 
-    public void finish() {
+    void finish() {
         runtime.getEventBus().send(new TestRunFinished(runtime.getEventBus().getTime()));
         runtime.printSummary();
     }
@@ -85,7 +84,7 @@ public class TestNGCucumberRunner {
      * @return returns the cucumber features as a two dimensional array of
      * {@link CucumberFeatureWrapper} objects.
      */
-    public Object[][] provideFeatures() {
+    Object[][] provideFeatures() {
         try {
             List<CucumberFeature> features = getFeatures();
             List<Object[]> featuresList = new ArrayList<Object[]>(features.size());

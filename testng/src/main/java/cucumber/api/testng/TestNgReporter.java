@@ -1,7 +1,9 @@
 package cucumber.api.testng;
 
+import static org.testng.Reporter.getCurrentTestResult;
+import static org.testng.Reporter.log;
+
 import cucumber.runtime.Utils;
-import gherkin.pickles.PickleStep;
 import cucumber.api.Result;
 import cucumber.api.event.EventHandler;
 import cucumber.api.event.EventPublisher;
@@ -11,10 +13,7 @@ import cucumber.api.formatter.Formatter;
 import cucumber.api.formatter.NiceAppendable;
 import org.testng.ITestResult;
 
-import static org.testng.Reporter.getCurrentTestResult;
-import static org.testng.Reporter.log;
-
-public class TestNgReporter implements Formatter {
+class TestNgReporter implements Formatter {
     private final NiceAppendable out;
     private final EventHandler<TestStepFinished> testStepFinishedHandler = new EventHandler<TestStepFinished>() {
         @Override
@@ -33,7 +32,7 @@ public class TestNgReporter implements Formatter {
     };
 
 
-    public TestNgReporter(Appendable appendable) {
+    TestNgReporter(Appendable appendable) {
         out = new NiceAppendable(appendable);
     }
 
@@ -43,7 +42,7 @@ public class TestNgReporter implements Formatter {
         publisher.registerHandlerFor(TestRunFinished.class, runFinishHandler);
     }
 
-    public void uri(String uri) {
+    void uri(String uri) {
         // TODO: find an appropriate keyword
         String keyword = "Feature File";
         logDiv(keyword, uri, "featureFile");
