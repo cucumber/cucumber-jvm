@@ -1,6 +1,9 @@
 package cucumber.api;
 
+import gherkin.formatter.model.Result;
+
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Before or After Hooks that declare a parameter of this type will receive an instance of this class.
@@ -56,4 +59,9 @@ public interface Scenario {
      * @return the id of the Scenario.
      */
     String getId();
+
+    /**
+     * @return a list of results for each step of the Scenario.
+     */
+    List<Result> getStepResults();
 }
