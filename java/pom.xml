@@ -112,8 +112,12 @@ GherkinDialectProvider.DIALECTS.keySet().each { language ->
       def binding = ["lang":normalized_language, "kw":normalized_kw]
       def template = engine.createTemplate(templateSource).make(binding)
       def file = new File(project.baseDir, "target${File.separator}generated-sources${File.separator}i18n${File.separator}java${File.separator}cucumber${File.separator}api${File.separator}java${File.separator}${normalized_language}${File.separator}${normalized_kw}.java")
-      file.parentFile.mkdirs()
-      file.write(template.toString(), "UTF-8")
+      if(!file.exists()) {
+        // Haitian has two translations that only differ by case - Sipozeke and SipozeKe
+        // Some file systems are unable to distiguish between them and overwrite the other one :-(
+        file.parentFile.mkdirs()
+        file.write(template.toString(), "UTF-8")
+      }
     }
 
     // html
