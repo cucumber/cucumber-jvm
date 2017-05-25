@@ -54,7 +54,7 @@ public abstract class TestStep {
     public Result run(EventBus bus, String language, Scenario scenario, boolean skipSteps) {
         Long startTime = bus.getTime();
         bus.send(new TestStepStarted(startTime, this));
-        String status;
+        Result.Type status;
         Throwable error = null;
         try {
             status = executeStep(language, scenario, skipSteps);
@@ -68,38 +68,38 @@ public abstract class TestStep {
         return result;
     }
 
-    protected String nonExceptionStatus(boolean skipSteps) {
-        return skipSteps ? Result.SKIPPED.getStatus() : Result.PASSED;
+    protected Result.Type nonExceptionStatus(boolean skipSteps) {
+        return skipSteps ? Result.Type.SKIPPED : Result.Type.PASSED;
     }
 
-    protected String executeStep(String language, Scenario scenario, boolean skipSteps) throws Throwable {
+    protected Result.Type executeStep(String language, Scenario scenario, boolean skipSteps) throws Throwable {
         if (!skipSteps) {
             definitionMatch.runStep(language, scenario);
-            return Result.PASSED;
+            return Result.Type.PASSED;
         } else {
             definitionMatch.dryRunStep(language, scenario);
-            return Result.SKIPPED.getStatus();
+            return Result.Type.SKIPPED;
         }
     }
 
-    private String mapThrowableToStatus(Throwable t) {
+    private Result.Type mapThrowableToStatus(Throwable t) {
         if (t.getClass().isAnnotationPresent(Pending.class) || Arrays.binarySearch(PENDING_EXCEPTIONS, t.getClass().getName()) >= 0) {
-            return Result.PENDING;
+            return Result.Type.PENDING;
         }
         if (t.getClass() == UndefinedStepDefinitionException.class) {
-            return Result.UNDEFINED;
+            return Result.Type.UNDEFINED;
         }
-        return Result.FAILED;
+        return Result.Type.FAILED;
     }
 
-    private Result mapStatusToResult(String status, Throwable error, long duration) {
+    private Result mapStatusToResult(Result.Type status, Throwable error, long duration) {
         Long resultDuration = duration;
         Throwable resultError = error;
-        if (status == Result.SKIPPED.getStatus()) {
+        if (status == Result.Type.SKIPPED) {
             return Result.SKIPPED;
         }
-        if (status == Result.UNDEFINED) {
-            return new Result(status, 0l, null, definitionMatch.getSnippets());
+        if (status == Result.Type.UNDEFINED) {
+            return new Result(status, null, null, definitionMatch.getSnippets());
         }
         return new Result(status, resultDuration, resultError);
     }

@@ -49,14 +49,14 @@ public class TestStepTest {
     public void result_is_passed_when_step_definition_does_not_throw_exception() throws Throwable {
         Result result = step.run(bus, language, scenario, false);
 
-        assertEquals(Result.PASSED, result.getStatus());
+        assertEquals(Result.Type.PASSED, result.getStatus());
     }
 
     @Test
     public void result_is_skipped_when_skip_step_is_true() throws Throwable {
         Result result = step.run(bus, language, scenario, true);
 
-        assertEquals(Result.SKIPPED, result);
+        assertEquals(Result.Type.SKIPPED, result.getStatus());
     }
 
     @Test
@@ -65,7 +65,7 @@ public class TestStepTest {
 
         Result result = step.run(bus, language, scenario, false);
 
-        assertEquals(Result.FAILED, result.getStatus());
+        assertEquals(Result.Type.FAILED, result.getStatus());
     }
 
     @Test
@@ -74,7 +74,7 @@ public class TestStepTest {
 
         Result result = step.run(bus, language, scenario, false);
 
-        assertEquals(Result.PENDING, result.getStatus());
+        assertEquals(Result.Type.PENDING, result.getStatus());
     }
 
     @Test

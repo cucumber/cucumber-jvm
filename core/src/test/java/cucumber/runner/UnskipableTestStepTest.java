@@ -35,6 +35,6 @@ public class UnskipableTestStepTest {
     public void result_is_passed_when_step_definition_does_not_throw_exception_and_skip_steps_is_true() throws Throwable {
         Result result = step.run(bus, language, scenario, true);
 
-        assertEquals(Result.PASSED, result.getStatus());
+        assertEquals(Result.Type.PASSED, result.getStatus());
     }
 }

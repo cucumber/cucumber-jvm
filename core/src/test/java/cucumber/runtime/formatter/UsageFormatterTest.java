@@ -35,7 +35,7 @@ public class UsageFormatterTest {
         Appendable out = mock(Appendable.class);
         UsageFormatter usageFormatter = new UsageFormatter(out);
         Result result = mock(Result.class);
-        when(result.getStatus()).thenReturn(Result.SKIPPED.getStatus());
+        when(result.is(Result.Type.PASSED)).thenReturn(false);
 
         usageFormatter.handleTestStepFinished(new TestStepFinished(0l, mockTestStep(), result));
         verifyZeroInteractions(out);
@@ -49,7 +49,7 @@ public class UsageFormatterTest {
         TestStep testStep = mockTestStep();
         Result result = mock(Result.class);
         when(result.getDuration()).thenReturn(12345L);
-        when(result.getStatus()).thenReturn(Result.PASSED);
+        when(result.is(Result.Type.PASSED)).thenReturn(true);
 
         usageFormatter.handleTestStepFinished(new TestStepFinished(0l, testStep, result));
 
@@ -70,7 +70,7 @@ public class UsageFormatterTest {
         TestStep testStep = mockTestStep();
         Result result = mock(Result.class);
         when(result.getDuration()).thenReturn(0L);
-        when(result.getStatus()).thenReturn(Result.PASSED);
+        when(result.is(Result.Type.PASSED)).thenReturn(true);
 
         usageFormatter.handleTestStepFinished(new TestStepFinished(0l, testStep, result));
 
@@ -91,7 +91,7 @@ public class UsageFormatterTest {
         TestStep testStep = mockTestStep();
         Result result = mock(Result.class);
         when(result.getDuration()).thenReturn(null);
-        when(result.getStatus()).thenReturn(Result.PASSED);
+        when(result.is(Result.Type.PASSED)).thenReturn(true);
 
         usageFormatter.handleTestStepFinished(new TestStepFinished(0l, testStep, result));
 

@@ -133,27 +133,31 @@ public class FeatureResultListenerTest {
     }
 
     private Result mockPassedResult() {
-        Result result = mock(Result.class);
-        when(result.getStatus()).thenReturn(Result.PASSED);
+        Result result = mockResult(Result.Type.PASSED);
         return result;
     }
 
     private Result mockUndefinedResult() {
-        Result result = mock(Result.class);
-        when(result.getStatus()).thenReturn(Result.UNDEFINED);
+        Result result = mockResult(Result.Type.UNDEFINED);
         return result;
     }
 
     private Result mockFailedResult() {
-        Result result = mock(Result.class);
-        when(result.getStatus()).thenReturn(Result.FAILED);
+        Result result = mockResult(Result.Type.FAILED);
         when(result.getError()).thenReturn(mock(Throwable.class));
         return result;
     }
 
     private Result mockPendingResult() {
+        Result result = mockResult(Result.Type.PENDING);
+        return result;
+    }
+
+    private Result mockResult(Result.Type status) {
         Result result = mock(Result.class);
-        when(result.getStatus()).thenReturn(FeatureResultListener.PENDING_STATUS);
+        for (Result.Type type : Result.Type.values()) {
+            when(result.is(type)).thenReturn(type == status);
+        }
         return result;
     }
 }

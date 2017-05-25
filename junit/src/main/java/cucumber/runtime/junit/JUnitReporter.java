@@ -82,7 +82,7 @@ public class JUnitReporter {
 
     void handleStepResult(Result result) {
         Throwable error = result.getError();
-        if (Result.SKIPPED == result) {
+        if (result.is(Result.Type.SKIPPED)) {
             stepNotifier.fireTestIgnored();
         } else if (isPendingOrUndefined(result)) {
             addFailureOrIgnoreStep(result);
@@ -105,7 +105,7 @@ public class JUnitReporter {
     }
 
     void handleHookResult(Result result) {
-        if (result.getStatus().equals(Result.FAILED) || (strict && isPending(result.getError()))) {
+        if (result.is(Result.Type.FAILED) || (strict && isPending(result.getError()))) {
             executionUnitNotifier.addFailure(result.getError());
         } else if (isPending(result.getError())) {
             ignoredStep = true;
@@ -118,7 +118,7 @@ public class JUnitReporter {
 
     private boolean isPendingOrUndefined(Result result) {
         Throwable error = result.getError();
-        return Result.UNDEFINED.equals(result.getStatus()) || isPending(error);
+        return result.is(Result.Type.UNDEFINED) || isPending(error);
     }
 
     private void addFailureOrIgnoreStep(Result result) {

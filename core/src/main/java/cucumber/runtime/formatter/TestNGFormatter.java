@@ -226,15 +226,15 @@ class TestNGFormatter implements Formatter, StrictAware {
             Result skipped = null;
             Result failed = null;
             for (Result result : results) {
-                if ("failed".equals(result.getStatus())) {
+                if (result.is(Result.Type.FAILED)) {
                     failed = result;
                 }
-                if ("undefined".equals(result.getStatus()) || "pending".equals(result.getStatus())) {
+                if (result.is(Result.Type.UNDEFINED) || result.is(Result.Type.PENDING)) {
                     skipped = result;
                 }
             }
             for (Result result : hooks) {
-                if (failed == null && "failed".equals(result.getStatus())) {
+                if (failed == null && result.is(Result.Type.FAILED)) {
                     failed = result;
                 }
             }
@@ -273,7 +273,7 @@ class TestNGFormatter implements Formatter, StrictAware {
                 int length = sb.length();
                 String resultStatus = "not executed";
                 if (i < results.size()) {
-                    resultStatus = results.get(i).getStatus();
+                    resultStatus = results.get(i).getStatus().lowerCaseName();
                 }
                 sb.append(steps.get(i).getStepText());
                 do {

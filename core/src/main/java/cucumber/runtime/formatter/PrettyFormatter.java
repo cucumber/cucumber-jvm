@@ -203,7 +203,7 @@ public class PrettyFormatter implements Formatter, ColorAware {
         String keyword = getStepKeyword(testStep);
         String stepText = testStep.getStepText();
         String locationPadding = createPaddingToLocation(STEP_INDENT, keyword + stepText);
-        String formattedStepText = formatStepText(keyword, stepText, formats.get(result.getStatus()), formats.get(result.getStatus() + "_arg"), testStep.getDefinitionArgument());
+        String formattedStepText = formatStepText(keyword, stepText, formats.get(result.getStatus().lowerCaseName()), formats.get(result.getStatus().lowerCaseName() + "_arg"), testStep.getDefinitionArgument());
         out.println(STEP_INDENT + formattedStepText + locationPadding + getLocationText(testStep.getCodeLocation()));
     }
 
@@ -323,7 +323,7 @@ public class PrettyFormatter implements Formatter, ColorAware {
 
     private void printError(Result result) {
         if (result.getError() != null) {
-            out.println("      " + formats.get(result.getStatus()).text(result.getErrorMessage()));
+            out.println("      " + formats.get(result.getStatus().lowerCaseName()).text(result.getErrorMessage()));
         }
     }
 

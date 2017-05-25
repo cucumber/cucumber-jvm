@@ -96,7 +96,9 @@ public class PluginFactoryTest {
             ProgressFormatter plugin = (ProgressFormatter) fc.create("progress");
             EventBus bus = new EventBus(new TimeService.Stub(0));
             plugin.setEventPublisher(bus);
-            bus.send(new TestStepFinished(bus.getTime(), mock(TestStep.class), new Result("passed", null, null)));
+            Result result = new Result(Result.Type.PASSED, null, null);
+            TestStepFinished event = new TestStepFinished(bus.getTime(), mock(TestStep.class), result);
+            bus.send(event);
 
             assertThat(mockSystemOut.toString(), is(not("")));
         } finally {

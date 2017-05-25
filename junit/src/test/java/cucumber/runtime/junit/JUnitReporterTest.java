@@ -71,7 +71,7 @@ public class JUnitReporterTest {
         EachTestNotifier stepNotifier = mock(EachTestNotifier.class);
         jUnitReporter.stepNotifier = stepNotifier;
 
-        jUnitReporter.handleStepResult(mockResult(Result.UNDEFINED));
+        jUnitReporter.handleStepResult(mockResult(Result.Type.UNDEFINED));
 
         verify(stepNotifier, times(0)).fireTestStarted();
         verify(stepNotifier, times(0)).fireTestFinished();
@@ -88,7 +88,7 @@ public class JUnitReporterTest {
         EachTestNotifier executionUnitNotifier = mock(EachTestNotifier.class);
         jUnitReporter.executionUnitNotifier = executionUnitNotifier;
 
-        jUnitReporter.handleStepResult(mockResult(Result.UNDEFINED));
+        jUnitReporter.handleStepResult(mockResult(Result.Type.UNDEFINED));
 
         verify(stepNotifier, times(1)).fireTestStarted();
         verify(stepNotifier, times(1)).fireTestFinished();
@@ -194,8 +194,7 @@ public class JUnitReporterTest {
     public void hook_with_pending_exception_strict() {
         createStrictReporter();
         createDefaultRunNotifier();
-        Result result = mock(Result.class);
-        when(result.getStatus()).thenReturn("Pending");
+        Result result = mockResult(Result.Type.PENDING);
         when(result.getError()).thenReturn(new PendingException());
 
         EachTestNotifier executionUnitNotifier = mock(EachTestNotifier.class);
@@ -210,8 +209,7 @@ public class JUnitReporterTest {
     public void hook_with_pending_exception_non_strict() {
         createNonStrictReporter();
         createDefaultRunNotifier();
-        Result result = mock(Result.class);
-        when(result.getStatus()).thenReturn("Pending");
+        Result result = mockResult(Result.Type.PENDING);
         when(result.getError()).thenReturn(new PendingException());
 
         EachTestNotifier executionUnitNotifier = mock(EachTestNotifier.class);
@@ -230,8 +228,7 @@ public class JUnitReporterTest {
         Result stepResult = mock(Result.class);
         Throwable exception = mock(Throwable.class);
         when(stepResult.getError()).thenReturn(exception);
-        Result hookResult = mock(Result.class);
-        when(hookResult.getStatus()).thenReturn("Pending");
+        Result hookResult = mockResult(Result.Type.PENDING);
         when(hookResult.getError()).thenReturn(new PendingException());
 
         EachTestNotifier executionUnitNotifier = mock(EachTestNotifier.class);
@@ -261,12 +258,14 @@ public class JUnitReporterTest {
     }
 
     private Result mockResult() {
-        return mockResult("passed");
+        return mockResult(Result.Type.PASSED);
     }
 
-    private Result mockResult(String status) {
+    private Result mockResult(Result.Type status) {
         Result result = mock(Result.class);
-        when(result.getStatus()).thenReturn(status);
+        for (Result.Type type : Result.Type.values()) {
+            when(result.is(type)).thenReturn(type == status);
+        }
         return result;
     }
 

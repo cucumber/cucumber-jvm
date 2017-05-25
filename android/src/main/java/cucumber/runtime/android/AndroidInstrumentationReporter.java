@@ -156,8 +156,8 @@ public class AndroidInstrumentationReporter implements Formatter {
     void finishTestCase() {
         final Bundle testResult = createBundle(currentPath, currentTestCaseName);
 
-        if (severestResult.getStatus().equals(Result.FAILED)) {
-
+        switch (severestResult.getStatus()) {
+        case FAILED:
             if (severestResult.getError() instanceof AssertionError) {
                 testResult.putString(StatusKeys.STACK, severestResult.getErrorMessage());
                 instrumentation.sendStatus(StatusCodes.FAILURE, testResult);
@@ -165,26 +165,22 @@ public class AndroidInstrumentationReporter implements Formatter {
                 testResult.putString(StatusKeys.STACK, getStackTrace(severestResult.getError()));
                 instrumentation.sendStatus(StatusCodes.ERROR, testResult);
             }
-            return;
-        }
-
-        if (severestResult.getStatus().equals(Result.PASSED)) {
-            instrumentation.sendStatus( StatusCodes.OK, testResult);
-            return;
-        }
-
-        if (severestResult.getStatus().equals(Result.SKIPPED.getStatus())) {
+            break;
+        case PENDING:
+            testResult.putString(StatusKeys.STACK, severestResult.getErrorMessage());
+            instrumentation.sendStatus(StatusCodes.ERROR, testResult);
+            break;
+        case PASSED:
+        case SKIPPED:
             instrumentation.sendStatus(StatusCodes.OK, testResult);
-            return;
-        }
-
-        if (severestResult.getStatus().equals(Result.UNDEFINED)) {
+            break;
+        case UNDEFINED:
             testResult.putString(StatusKeys.STACK, getStackTrace(new MissingStepDefinitionError(getLastSnippet())));
             instrumentation.sendStatus(StatusCodes.ERROR, testResult);
-            return;
+            break;
+        default:
+            throw new IllegalStateException("Unexpected result status: " + severestResult.getStatus());
         }
-
-        throw new IllegalStateException("Unexpected result status: " + severestResult.getStatus());
     }
 
     /**
@@ -231,8 +227,8 @@ public class AndroidInstrumentationReporter implements Formatter {
             return;
         }
 
-        final boolean currentIsPassed = severestResult.getStatus().equals(Result.PASSED);
-        final boolean nextIsNotPassed = !result.getStatus().equals(Result.PASSED);
+        final boolean currentIsPassed = severestResult.is(Result.Type.PASSED);
+        final boolean nextIsNotPassed = !result.is(Result.Type.PASSED);
         if (currentIsPassed && nextIsNotPassed) {
             severestResult = result;
         }

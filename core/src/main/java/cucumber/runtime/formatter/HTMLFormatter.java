@@ -425,7 +425,7 @@ class HTMLFormatter implements Formatter {
 
     private Map<String, Object> createMatchMap(TestStep testStep, Result result) {
         Map<String, Object> matchMap = new HashMap<String, Object>();
-        if (!result.getStatus().equals(Result.UNDEFINED)) {
+        if (!result.is(Result.Type.UNDEFINED)) {
             matchMap.put("location", testStep.getCodeLocation());
         }
         return matchMap;
@@ -433,7 +433,7 @@ class HTMLFormatter implements Formatter {
 
     private Map<String, Object> createResultMap(Result result) {
         Map<String, Object> resultMap = new HashMap<String, Object>();
-        resultMap.put("status", result.getStatus());
+        resultMap.put("status", result.getStatus().lowerCaseName());
         if (result.getErrorMessage() != null) {
             resultMap.put("error_message", result.getErrorMessage());
         }
