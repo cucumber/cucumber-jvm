@@ -1,4 +1,6 @@
-## [1.2.6-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v1.2.5...master) (In Git)
+## [2.0.0-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v1.2.5...master) (In Git)
+
+* Upgrade to Gherkin 4 ([#1035](https://github.com/cucumber/cucumber-jvm/pull/1035) Björn Rasmusson, mpkorstanje)
 
 ## [1.2.5](https://github.com/cucumber/cucumber-jvm/compare/v1.2.4...v1.2.5) (2016-09-12)
 
