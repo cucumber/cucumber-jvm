@@ -1,6 +1,5 @@
 package cucumber.runtime;
 
-import gherkin.formatter.Argument;
 import org.junit.Test;
 
 import java.io.UnsupportedEncodingException;

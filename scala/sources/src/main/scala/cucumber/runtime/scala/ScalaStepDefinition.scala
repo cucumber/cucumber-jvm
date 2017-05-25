@@ -1,8 +1,7 @@
 package cucumber.runtime.scala
 
 import _root_.java.lang.reflect.Type
-import _root_.gherkin.formatter.model.Step
-import _root_.gherkin.I18n
+import _root_.gherkin.pickles.PickleStep
 import _root_.java.util.regex.Pattern
 import _root_.cucumber.runtime.StepDefinition
 import _root_.cucumber.runtime.JdkPatternArgumentMatcher
@@ -40,7 +39,7 @@ class ScalaStepDefinition(frame:StackTraceElement,
    * doesn't match at all. Return an empty List if it matches with 0 arguments
    * and bigger sizes if it matches several.
    */
-  def matchedArguments(step: Step) = argumentMatcher.argumentsFrom(step.getName)
+  def matchedArguments(step: PickleStep) = argumentMatcher.argumentsFrom(step.getText)
 
   /**
    * The source line where the step definition is defined.
@@ -68,7 +67,7 @@ class ScalaStepDefinition(frame:StackTraceElement,
    * Invokes the step definition. The method should raise a Throwable
    * if the invocation fails, which will cause the step to fail.
    */
-  def execute(i18n: I18n, args: Array[AnyRef]) { f(args.toList) }
+  def execute(language: String, args: Array[AnyRef]) { f(args.toList) }
 
   /**
    * Return true if this matches the location. This is used to filter

@@ -1,6 +1,8 @@
 package cucumber.api.junit;
 
 import cucumber.api.CucumberOptions;
+import cucumber.api.event.TestRunFinished;
+import cucumber.api.formatter.Formatter;
 import cucumber.runtime.ClassFinder;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeOptions;
@@ -21,6 +23,8 @@ import org.junit.runners.model.InitializationError;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * <p>
@@ -39,6 +43,7 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
     private final JUnitReporter jUnitReporter;
     private final List<FeatureRunner> children = new ArrayList<FeatureRunner>();
     private final Runtime runtime;
+    private final Formatter formatter;
 
     /**
      * Constructor called by JUnit.
@@ -57,10 +62,10 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
 
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
         runtime = createRuntime(resourceLoader, classLoader, runtimeOptions);
-
+        formatter = runtimeOptions.formatter(classLoader);
         final JUnitOptions junitOptions = new JUnitOptions(runtimeOptions.getJunitOptions());
-        final List<CucumberFeature> cucumberFeatures = runtimeOptions.cucumberFeatures(resourceLoader);
-        jUnitReporter = new JUnitReporter(runtimeOptions.reporter(classLoader), runtimeOptions.formatter(classLoader), runtimeOptions.isStrict(), junitOptions);
+        final List<CucumberFeature> cucumberFeatures = runtimeOptions.cucumberFeatures(resourceLoader, runtime.getEventBus());
+        jUnitReporter = new JUnitReporter(runtime.getEventBus(), runtimeOptions.isStrict(), junitOptions);
         addChildren(cucumberFeatures);
     }
 
@@ -98,14 +103,16 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
     @Override
     public void run(RunNotifier notifier) {
         super.run(notifier);
-        jUnitReporter.done();
-        jUnitReporter.close();
+        runtime.getEventBus().send(new TestRunFinished(runtime.getEventBus().getTime()));
         runtime.printSummary();
     }
 
     private void addChildren(List<CucumberFeature> cucumberFeatures) throws InitializationError {
         for (CucumberFeature cucumberFeature : cucumberFeatures) {
-            children.add(new FeatureRunner(cucumberFeature, runtime, jUnitReporter));
+            FeatureRunner featureRunner = new FeatureRunner(cucumberFeature, runtime, jUnitReporter);
+            if (!featureRunner.isEmpty()) {
+                children.add(featureRunner);
+            }
         }
     }
 }

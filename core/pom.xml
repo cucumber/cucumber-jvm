@@ -2,10 +2,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>info.cukes</groupId>
+        <groupId>io.cucumber</groupId>
         <artifactId>cucumber-jvm</artifactId>
         <relativePath>../pom.xml</relativePath>
-        <version>1.2.6-SNAPSHOT</version>
+        <version>2.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>cucumber-core</artifactId>
@@ -22,8 +22,12 @@
             <artifactId>cucumber-jvm-deps</artifactId>
         </dependency>
         <dependency>
-            <groupId>info.cukes</groupId>
+            <groupId>io.cucumber</groupId>
             <artifactId>gherkin</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>tag-expressions</artifactId>
         </dependency>
 
         <dependency>

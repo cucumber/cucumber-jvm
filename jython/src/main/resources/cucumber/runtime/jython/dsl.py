@@ -1,5 +1,5 @@
 import re
-from gherkin.formatter import Argument
+from cucumber.runtime import Argument
 from cucumber.api import PendingException
 
 class I18NKeywordTemplate(object):

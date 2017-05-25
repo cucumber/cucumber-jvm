@@ -1,14 +1,14 @@
 package cucumber.runtime.junit;
 
-import cucumber.runtime.Runtime;
-import cucumber.runtime.model.CucumberScenario;
-import gherkin.formatter.model.Step;
+import cucumber.runner.Runner;
+import gherkin.events.PickleEvent;
+import gherkin.pickles.PickleStep;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
 
-import java.util.ArrayList;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,33 +16,28 @@ import java.util.Map;
 /**
  * Runs a scenario, or a "synthetic" scenario derived from an Examples row.
  */
-public class ExecutionUnitRunner extends ParentRunner<Step> {
-    private final Runtime runtime;
-    private final CucumberScenario cucumberScenario;
+public class ExecutionUnitRunner extends ParentRunner<PickleStep> {
+    private final Runner runner;
+    private final PickleEvent pickleEvent;
     private final JUnitReporter jUnitReporter;
+    private final Map<PickleStep, Description> stepDescriptions = new HashMap<PickleStep, Description>();
     private Description description;
-    private final Map<Step, Description> stepDescriptions = new HashMap<Step, Description>();
-    private final List<Step> runnerSteps = new ArrayList<Step>();
 
-    public ExecutionUnitRunner(Runtime runtime, CucumberScenario cucumberScenario, JUnitReporter jUnitReporter) throws InitializationError {
+    public ExecutionUnitRunner(Runner runner, PickleEvent pickleEvent, JUnitReporter jUnitReporter) throws InitializationError {
         super(ExecutionUnitRunner.class);
-        this.runtime = runtime;
-        this.cucumberScenario = cucumberScenario;
+        this.runner = runner;
+        this.pickleEvent = pickleEvent;
         this.jUnitReporter = jUnitReporter;
     }
 
-    public List<Step> getRunnerSteps() {
-    	return runnerSteps;
-    }
-
     @Override
-    protected List<Step> getChildren() {
-        return cucumberScenario.getSteps();
+    protected List<PickleStep> getChildren() {
+        return pickleEvent.pickle.getSteps();
     }
 
     @Override
     public String getName() {
-        String name = cucumberScenario.getVisualName();
+        String name = pickleEvent.pickle.getName();
         if (jUnitReporter.useFilenameCompatibleNames()) {
             return makeNameFilenameCompatible(name);
         } else {
@@ -53,43 +48,27 @@ public class ExecutionUnitRunner extends ParentRunner<Step> {
     @Override
     public Description getDescription() {
         if (description == null) {
-            description = Description.createSuiteDescription(getName(), cucumberScenario.getGherkinModel());
+            String nameForDescription = getName().isEmpty() ? "EMPTY_NAME" : getName();
+            description = Description.createSuiteDescription(nameForDescription, new PickleWrapper(pickleEvent));
 
-            if (cucumberScenario.getCucumberBackground() != null) {
-                for (Step backgroundStep : cucumberScenario.getCucumberBackground().getSteps()) {
-                    // We need to make a copy of that step, so we have a unique one per scenario
-                    Step copy = new Step(
-                            backgroundStep.getComments(),
-                            backgroundStep.getKeyword(),
-                            backgroundStep.getName(),
-                            backgroundStep.getLine(),
-                            backgroundStep.getRows(),
-                            backgroundStep.getDocString()
-                    );
-                    description.addChild(describeChild(copy));
-                    runnerSteps.add(copy);
-                }
-            }
-
-            for (Step step : getChildren()) {
+            for (PickleStep step : getChildren()) {
                 description.addChild(describeChild(step));
-                runnerSteps.add(step);
             }
         }
         return description;
     }
 
     @Override
-    protected Description describeChild(Step step) {
+    protected Description describeChild(PickleStep step) {
         Description description = stepDescriptions.get(step);
         if (description == null) {
             String testName;
             if (jUnitReporter.useFilenameCompatibleNames()) {
-                testName = makeNameFilenameCompatible(step.getKeyword() + step.getName());
+                testName = makeNameFilenameCompatible(step.getText());
             } else {
-                testName = step.getKeyword() + step.getName();
+                testName = step.getText();
             }
-            description = Description.createTestDescription(getName(), testName, step);
+            description = Description.createTestDescription(getName(), testName, new PickleStepWrapper(step));
             stepDescriptions.put(step, description);
         }
         return description;
@@ -99,12 +78,12 @@ public class ExecutionUnitRunner extends ParentRunner<Step> {
     public void run(final RunNotifier notifier) {
         jUnitReporter.startExecutionUnit(this, notifier);
         // This causes runChild to never be called, which seems OK.
-        cucumberScenario.run(jUnitReporter, jUnitReporter, runtime);
+        runner.runPickle(pickleEvent);
         jUnitReporter.finishExecutionUnit();
     }
 
     @Override
-    protected void runChild(Step step, RunNotifier notifier) {
+    protected void runChild(PickleStep step, RunNotifier notifier) {
         // The way we override run(RunNotifier) causes this method to never be called.
         // Instead it happens via cucumberScenario.run(jUnitReporter, jUnitReporter, runtime);
         throw new UnsupportedOperationException();
@@ -113,5 +92,23 @@ public class ExecutionUnitRunner extends ParentRunner<Step> {
 
     private String makeNameFilenameCompatible(String name) {
         return name.replaceAll("[^A-Za-z0-9_]", "_");
+    }
+}
+
+class PickleWrapper implements Serializable {
+    private static final long serialVersionUID = 1L;
+    private PickleEvent pickleEvent;
+
+    public PickleWrapper(PickleEvent pickleEvent) {
+        this.pickleEvent = pickleEvent;
+    }
+}
+
+class PickleStepWrapper implements Serializable {
+    private static final long serialVersionUID = 1L;
+    private PickleStep step;
+
+    public PickleStepWrapper(PickleStep step) {
+        this.step = step;
     }
 }

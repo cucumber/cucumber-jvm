@@ -1,14 +1,14 @@
 package cucumber.runtime.table;
 
-import gherkin.formatter.model.Row;
+import gherkin.pickles.PickleRow;
 
 import java.util.List;
 
 public class DiffableRow {
-    public final Row row;
+    public final PickleRow row;
     public final List<String> convertedRow;
 
-    public DiffableRow(Row row, List<String> convertedRow) {
+    public DiffableRow(PickleRow row, List<String> convertedRow) {
         this.row = row;
         this.convertedRow = convertedRow;
     }

@@ -1,7 +1,7 @@
 package cucumber.runtime.io;
 
 import gherkin.deps.com.google.gson.Gson;
-import gherkin.util.FixJava;
+import cucumber.util.FixJava;
 
 import java.io.*;
 import java.net.HttpURLConnection;

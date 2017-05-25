@@ -1,8 +1,8 @@
 package cucumber.runtime;
 
 import cucumber.api.StepDefinitionReporter;
-import gherkin.I18n;
-import gherkin.formatter.model.Step;
+import gherkin.GherkinDialect;
+import gherkin.pickles.PickleStep;
 
 import java.util.List;
 
@@ -21,7 +21,7 @@ public interface Glue {
 
     List<HookDefinition> getAfterHooks();
 
-    StepDefinitionMatch stepDefinitionMatch(String featurePath, Step step, I18n i18n);
+    StepDefinitionMatch stepDefinitionMatch(String featurePath, PickleStep step);
 
     void reportStepDefinitions(StepDefinitionReporter stepDefinitionReporter);
 

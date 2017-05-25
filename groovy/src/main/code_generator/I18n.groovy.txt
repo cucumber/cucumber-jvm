@@ -5,13 +5,13 @@ import cucumber.runtime.groovy.*;
 
 import java.util.regex.Pattern;
 
-public class ${i18n.underscoredIsoCode.toUpperCase()} {
-<% i18n.codeKeywords.each { kw -> %>
-    public static void ${kw}(Pattern regexp, Closure body) throws Throwable {
+public class ${normalized_language} {
+<% i18n.stepKeywords.findAll { !it.contains('*') && !it.matches("^\\d.*") }.unique().each { kw -> %>
+    public static void ${kw.replaceAll("[\\s',!]", "")}(Pattern regexp, Closure body) throws Throwable {
         GroovyBackend.getInstance().addStepDefinition(regexp, 0, body);
     }
 
-    public static void ${java.text.Normalizer.normalize(kw, java.text.Normalizer.Form.NFC)}(Pattern regexp, long timeoutMillis, Closure body) throws Throwable {
+    public static void ${java.text.Normalizer.normalize(kw.replaceAll("[\\s',!]", ""), java.text.Normalizer.Form.NFC)}(Pattern regexp, long timeoutMillis, Closure body) throws Throwable {
         GroovyBackend.getInstance().addStepDefinition(regexp, timeoutMillis, body);
     }
 <% } %>

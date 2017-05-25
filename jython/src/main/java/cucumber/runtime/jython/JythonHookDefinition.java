@@ -2,8 +2,8 @@ package cucumber.runtime.jython;
 
 import cucumber.api.Scenario;
 import cucumber.runtime.HookDefinition;
-import gherkin.TagExpression;
-import gherkin.formatter.model.Tag;
+import cucumber.runtime.TagPredicate;
+import gherkin.pickles.PickleTag;
 import org.python.core.PyInstance;
 import org.python.core.PyTuple;
 
@@ -11,14 +11,14 @@ import java.util.Collection;
 
 public class JythonHookDefinition implements HookDefinition {
     private final PyInstance hookDefinition;
-    private final TagExpression tagExpression;
+    private final TagPredicate tagPredicate;
     private final JythonBackend backend;
 
     public JythonHookDefinition(JythonBackend backend, PyInstance hookDefinition) {
         this.backend = backend;
         this.hookDefinition = hookDefinition;
         PyTuple tags = (PyTuple) hookDefinition.__dict__.__finditem__("tags");
-        this.tagExpression = new TagExpression(tags);
+        this.tagPredicate = new TagPredicate(tags);
     }
 
     @Override
@@ -27,8 +27,8 @@ public class JythonHookDefinition implements HookDefinition {
     }
 
     @Override
-    public boolean matches(Collection<Tag> tags) {
-        return tagExpression.evaluate(tags);
+    public boolean matches(Collection<PickleTag> tags) {
+        return tagPredicate.apply(tags);
     }
 
     @Override

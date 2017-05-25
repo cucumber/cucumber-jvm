@@ -3,10 +3,10 @@
   (:import (cucumber.runtime CucumberException
                              JdkPatternArgumentMatcher
                              StepDefinition
-                             HookDefinition)
+                             HookDefinition
+                             TagPredicate)
            (cucumber.runtime.snippets Snippet
                                       SnippetGenerator)
-           (gherkin TagExpression)
            (clojure.lang RT))
   (:gen-class :name cucumber.runtime.clj.Backend
               :implements [cucumber.runtime.Backend]
@@ -56,8 +56,8 @@
 
 (defn- -disposeWorld [cljb])
 
-(defn- -getSnippet [cljb step _]
-  (.getSnippet snippet-generator step nil))
+(defn- -getSnippet [cljb step keyword _]
+  (.getSnippet snippet-generator step keyword nil))
 
 (defn- -setUnreportedStepExecutor [cljb executor]
   "executor")
@@ -72,7 +72,7 @@
      StepDefinition
      (matchedArguments [_ step]
        (.argumentsFrom (JdkPatternArgumentMatcher. pattern)
-                       (.getName step)))
+                       (.getText step)))
      (getLocation [_ detail]
        (location-str location))
      (getParameterCount [_]
@@ -92,7 +92,7 @@
 (defmulti add-hook-definition (fn [t & _] t))
 
 (defmethod add-hook-definition :before [_ tag-expression hook-fun location]
-  (let [te (TagExpression. tag-expression)]
+  (let [tp (TagPredicate. tag-expression)]
     (.addBeforeHook
      @glue
      (reify
@@ -102,12 +102,12 @@
        (execute [hd scenario-result]
          (hook-fun))
        (matches [hd tags]
-         (.evaluate te tags))
+         (.apply tp tags))
        (getOrder [hd] 0)
        (isScenarioScoped [hd] false)))))
 
 (defmethod add-hook-definition :after [_ tag-expression hook-fun location]
-  (let [te (TagExpression. tag-expression)
+  (let [tp (TagPredicate. tag-expression)
         max-parameter-count (->> hook-fun class .getDeclaredMethods
                                  (filter #(= "invoke" (.getName %)))
                                  (map #(count (.getParameterTypes %)))
@@ -123,7 +123,7 @@
            (hook-fun)
            (hook-fun scenario-result)))
        (matches [hd tags]
-         (.evaluate te tags))
+         (.apply tp tags))
        (getOrder [hd] 0)
        (isScenarioScoped [hd] false)))))
 

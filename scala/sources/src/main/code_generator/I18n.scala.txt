@@ -1,10 +1,10 @@
 package cucumber.api.scala
 
-<% gherkin.I18n.all.each { i18n -> %>
-trait ${i18n.underscoredIsoCode.toUpperCase()} {
+<% gherkin.GherkinDialectProvider.DIALECTS.keySet().findAll { !unsupported.contains(it) }.each { language -> %>
+trait ${language.replaceAll("[\\s-]", "_").toUpperCase()} {
   this: ScalaDsl =>
-<% i18n.codeKeywords.sort().each { kw -> %>
-  val ${java.text.Normalizer.normalize(kw, java.text.Normalizer.Form.NFC)} = new Step("${java.text.Normalizer.normalize(kw, java.text.Normalizer.Form.NFC)}")
+<% dialectProvider.getDialect(language, null).stepKeywords.findAll { !it.contains('*') && !it.matches("^\\d.*") }.sort().unique().each { kw -> %>
+  val ${java.text.Normalizer.normalize(kw.replaceAll("[\\s',!]", ""), java.text.Normalizer.Form.NFC)} = new Step("${java.text.Normalizer.normalize(kw.replaceAll("[\\s',!]", ""), java.text.Normalizer.Form.NFC)}")
 <% } %>
 }
 <% } %>

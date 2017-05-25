@@ -1,8 +1,8 @@
 package cucumber.api.groovy;
 
 import cucumber.runtime.CucumberException;
+import cucumber.runtime.TagPredicate;
 import cucumber.runtime.groovy.GroovyBackend;
-import gherkin.TagExpression;
 import groovy.lang.Closure;
 
 import java.util.ArrayList;
@@ -82,11 +82,11 @@ public class Hooks {
             }
         }
 
-        TagExpression tagExpression = new TagExpression(tagExpressions);
+        TagPredicate tagPredicate = new TagPredicate(tagExpressions);
         if (before) {
-            GroovyBackend.getInstance().addBeforeHook(tagExpression, timeoutMillis, order, body);
+            GroovyBackend.getInstance().addBeforeHook(tagPredicate, timeoutMillis, order, body);
         } else {
-            GroovyBackend.getInstance().addAfterHook(tagExpression, timeoutMillis, order, body);
+            GroovyBackend.getInstance().addAfterHook(tagPredicate, timeoutMillis, order, body);
         }
     }
 }

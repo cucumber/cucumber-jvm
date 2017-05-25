@@ -1,103 +1,56 @@
 package cucumber.api.testng;
 
 import cucumber.runtime.Utils;
-import gherkin.formatter.Formatter;
-import gherkin.formatter.NiceAppendable;
-import gherkin.formatter.Reporter;
-import gherkin.formatter.model.Background;
-import gherkin.formatter.model.Examples;
-import gherkin.formatter.model.Feature;
-import gherkin.formatter.model.Match;
-import gherkin.formatter.model.Result;
-import gherkin.formatter.model.Scenario;
-import gherkin.formatter.model.ScenarioOutline;
-import gherkin.formatter.model.Step;
+import gherkin.pickles.PickleStep;
+import cucumber.api.Result;
+import cucumber.api.event.EventHandler;
+import cucumber.api.event.EventPublisher;
+import cucumber.api.event.TestRunFinished;
+import cucumber.api.event.TestStepFinished;
+import cucumber.api.formatter.Formatter;
+import cucumber.api.formatter.NiceAppendable;
 import org.testng.ITestResult;
-
-import java.util.LinkedList;
-import java.util.List;
 
 import static org.testng.Reporter.getCurrentTestResult;
 import static org.testng.Reporter.log;
 
-public class TestNgReporter implements Formatter, Reporter {
+public class TestNgReporter implements Formatter {
     private final NiceAppendable out;
-    private final LinkedList<Step> steps = new LinkedList<Step>();
+    private final EventHandler<TestStepFinished> testStepFinishedHandler = new EventHandler<TestStepFinished>() {
+        @Override
+        public void receive(TestStepFinished event) {
+            if (!event.testStep.isHook()) {
+                result(event.testStep.getStepText(), event.result);
+            }
+        }
+    };
+    private EventHandler<TestRunFinished> runFinishHandler = new EventHandler<TestRunFinished>() {
+
+        @Override
+        public void receive(TestRunFinished event) {
+            out.close();
+        }
+    };
+
 
     public TestNgReporter(Appendable appendable) {
         out = new NiceAppendable(appendable);
     }
 
     @Override
+    public void setEventPublisher(EventPublisher publisher) {
+        publisher.registerHandlerFor(TestStepFinished.class, testStepFinishedHandler);
+        publisher.registerHandlerFor(TestRunFinished.class, runFinishHandler);
+    }
+
     public void uri(String uri) {
         // TODO: find an appropriate keyword
         String keyword = "Feature File";
         logDiv(keyword, uri, "featureFile");
     }
 
-    @Override
-    public void feature(Feature feature) {
-        logDiv(feature.getKeyword(), feature.getName(), "feature");
-    }
-
-    @Override
-    public void background(Background background) {
-    }
-
-    @Override
-    public void scenario(Scenario scenario) {
-        logDiv(scenario.getKeyword(), scenario.getName(), "scenario");
-    }
-
-    @Override
-    public void scenarioOutline(ScenarioOutline scenarioOutline) {
-        logDiv(scenarioOutline.getKeyword(), scenarioOutline.getName(), "scenarioOutline");
-    }
-
-    @Override
-    public void examples(Examples examples) {
-    }
-
-    @Override
-    public void step(Step step) {
-        steps.add(step);
-    }
-
-    @Override
-    public void eof() {
-    }
-
-    @Override
-    public void syntaxError(String s, String s2, List<String> strings, String s3, Integer integer) {
-    }
-
-    @Override
-    public void done() {
-        steps.clear();
-    }
-
-    @Override
-    public void close() {
-        out.close();
-    }
-
-    @Override
-    public void startOfScenarioLifeCycle(Scenario scenario) {
-        // NoOp
-    }
-
-    @Override
-    public void endOfScenarioLifeCycle(Scenario scenario) {
-        // NoOp
-    }
-
-    @Override
-    public void before(Match match, Result result) {
-    }
-
-    @Override
-    public void result(Result result) {
-        logResult(result);
+    private void result(String stepText, Result result) {
+        logResult(stepText, result);
 
         if (Result.FAILED.equals(result.getStatus())) {
             ITestResult tr = getCurrentTestResult();
@@ -114,19 +67,11 @@ public class TestNgReporter implements Formatter, Reporter {
         }
     }
 
-    private void logResult(Result result) {
+    private void logResult(String stepText, Result result) {
         String timing = computeTiming(result);
 
-        Step step;
-        if (steps.isEmpty()) {
-            step = new Step(null, "MISMATCH BETWEEN STEPS AND RESULTS", "", 0, null, null);
-        } else {
-            step = steps.pop();
-        }
-
-        String format = "%s %s (%s%s)";
-        String message = String.format(format, step.getKeyword(),
-                step.getName(), result.getStatus(), timing);
+        String format = "%s (%s%s)";
+        String message = String.format(format, stepText, result.getStatus(), timing);
 
         logDiv(message, "result");
     }
@@ -141,22 +86,6 @@ public class TestNgReporter implements Formatter, Reporter {
         }
 
         return timing;
-    }
-
-    @Override
-    public void after(Match match, Result result) {
-    }
-
-    @Override
-    public void write(String s) {
-    }
-
-    @Override
-    public void match(Match match) {
-    }
-
-    @Override
-    public void embedding(String s, byte[] bytes) {
     }
 
     private void logDiv(String message, String cssClassName) {

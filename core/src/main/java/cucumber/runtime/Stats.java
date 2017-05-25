@@ -1,10 +1,10 @@
 package cucumber.runtime;
 
-import gherkin.formatter.AnsiFormats;
-import gherkin.formatter.Format;
-import gherkin.formatter.Formats;
-import gherkin.formatter.MonochromeFormats;
-import gherkin.formatter.model.Result;
+import cucumber.api.Result;
+import cucumber.runtime.formatter.AnsiFormats;
+import cucumber.runtime.formatter.Format;
+import cucumber.runtime.formatter.Formats;
+import cucumber.runtime.formatter.MonochromeFormats;
 
 import java.io.PrintStream;
 import java.text.DecimalFormat;
@@ -71,7 +71,7 @@ class Stats {
         addComma = printSubCount(out, subCounts.failed, Result.FAILED, addComma);
         addComma = printSubCount(out, subCounts.skipped, Result.SKIPPED.getStatus(), addComma);
         addComma = printSubCount(out, subCounts.pending, PENDING, addComma);
-        addComma = printSubCount(out, subCounts.undefined, Result.UNDEFINED.getStatus(), addComma);
+        addComma = printSubCount(out, subCounts.undefined, Result.UNDEFINED, addComma);
         addComma = printSubCount(out, subCounts.passed, Result.PASSED, addComma);
     }
 
@@ -97,7 +97,7 @@ class Stats {
         printScenarios(out, failedScenarios, Result.FAILED);
         if (isStrict) {
             printScenarios(out, pendingScenarios, PENDING);
-            printScenarios(out, undefinedScenarios, Result.UNDEFINED.getStatus());
+            printScenarios(out, undefinedScenarios, Result.UNDEFINED);
         }
     }
 
@@ -144,7 +144,7 @@ class Stats {
             subCounts.failed++;
         } else if (resultStatus.equals(PENDING)) {
             subCounts.pending++;
-        } else if (resultStatus.equals(Result.UNDEFINED.getStatus())) {
+        } else if (resultStatus.equals(Result.UNDEFINED)) {
             subCounts.undefined++;
         } else if (resultStatus.equals(Result.SKIPPED.getStatus())) {
             subCounts.skipped++;
@@ -159,7 +159,7 @@ class Stats {
             failedScenarios.add(scenarioDesignation);
         } else if (resultStatus.equals(PENDING)) {
             pendingScenarios.add(scenarioDesignation);
-        } else if (resultStatus.equals(Result.UNDEFINED.getStatus())) {
+        } else if (resultStatus.equals(Result.UNDEFINED)) {
             undefinedScenarios.add(scenarioDesignation);
         } else if (resultStatus.equals(Result.PASSED)) {
             passedScenarios.add(scenarioDesignation);

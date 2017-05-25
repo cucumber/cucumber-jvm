@@ -6,15 +6,16 @@ import cucumber.api.Transformer;
 import cucumber.api.Transpose;
 import cucumber.deps.com.thoughtworks.xstream.annotations.XStreamConverter;
 import cucumber.deps.com.thoughtworks.xstream.converters.javabean.JavaBeanConverter;
+import cucumber.runtime.Argument;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.StepDefinitionMatch;
 import cucumber.runtime.StubStepDefinition;
 import cucumber.runtime.xstream.LocalizedXStreams;
-import gherkin.I18n;
-import gherkin.formatter.Argument;
-import gherkin.formatter.model.Comment;
-import gherkin.formatter.model.DataTableRow;
-import gherkin.formatter.model.Step;
+import gherkin.pickles.PickleCell;
+import gherkin.pickles.PickleLocation;
+import gherkin.pickles.PickleRow;
+import gherkin.pickles.PickleStep;
+import gherkin.pickles.PickleTable;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -30,13 +31,14 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.mock;
 
 public class FromDataTableTest {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
     private static final List<Argument> NO_ARGS = emptyList();
-    private static final List<Comment> NO_COMMENTS = emptyList();
+    private static final String ENGLISH = "en";
 
     public static class StepDefs {
         public List<PrimitiveContainer> listOfPrimitiveContainers;
@@ -112,16 +114,16 @@ public class FromDataTableTest {
     @Test
     public void transforms_to_list_of_pojos() throws Throwable {
         Method m = StepDefs.class.getMethod("listOfPojos", List.class);
-        StepDefs stepDefs = runStepDef(m, listOfDatesAndCalWithHeader());
+        StepDefs stepDefs = runStepDef(m, new PickleTable(listOfDatesAndCalWithHeader()));
         assertEquals(sidsBirthday(), stepDefs.listOfPojos.get(0).birthDate);
         assertEquals(sidsDeathcal().getTime(), stepDefs.listOfPojos.get(0).deathCal.getTime());
         assertNull(stepDefs.listOfPojos.get(1).deathCal);
     }
-    
+
     @Test
     public void transforms_to_list_of_pojos_transposed() throws Throwable {
         Method m = StepDefs.class.getMethod("listOfPojosTransposed", List.class);
-        StepDefs stepDefs = runStepDef(m, transposedListOfDatesAndCalWithHeader());
+        StepDefs stepDefs = runStepDef(m, new PickleTable(transposedListOfDatesAndCalWithHeader()));
         assertEquals(sidsBirthday(), stepDefs.listOfPojos.get(0).birthDate);
         assertEquals(sidsDeathcal().getTime(), stepDefs.listOfPojos.get(0).deathCal.getTime());
         assertNull(stepDefs.listOfPojos.get(1).deathCal);
@@ -131,12 +133,13 @@ public class FromDataTableTest {
     public void assigns_null_to_objects_when_empty_except_boolean_special_case() throws Throwable {
         Method m = StepDefs.class.getMethod("listOfPrimitiveContainers", List.class);
 
-        List<DataTableRow> rows = new ArrayList<DataTableRow>();
-        rows.add(new DataTableRow(NO_COMMENTS, asList("number", "bool", "bool2"), 1));
-        rows.add(new DataTableRow(NO_COMMENTS, asList("1", "false", "true"), 2));
-        rows.add(new DataTableRow(NO_COMMENTS, asList("", "", ""), 3));
+        List<PickleRow> rows = new ArrayList<PickleRow>();
+        rows.add(new PickleRow(asList(new PickleCell(mock(PickleLocation.class), "number"), new PickleCell(mock(PickleLocation.class), "bool"), new PickleCell(mock(PickleLocation.class), "bool2"))));
+        rows.add(new PickleRow(asList(new PickleCell(mock(PickleLocation.class), "1"), new PickleCell(mock(PickleLocation.class), "false"), new PickleCell(mock(PickleLocation.class), "true"))));
+        rows.add(new PickleRow(asList(new PickleCell(mock(PickleLocation.class), ""), new PickleCell(mock(PickleLocation.class), ""), new PickleCell(mock(PickleLocation.class), ""))));
+        PickleTable table = new PickleTable(rows);
 
-        StepDefs stepDefs = runStepDef(m, rows);
+        StepDefs stepDefs = runStepDef(m, table);
 
         assertEquals(new Integer(1), stepDefs.listOfPrimitiveContainers.get(0).number);
         assertEquals(new Boolean(false), stepDefs.listOfPrimitiveContainers.get(0).bool);
@@ -150,21 +153,21 @@ public class FromDataTableTest {
     @Test
     public void transforms_to_list_of_beans() throws Throwable {
         Method m = StepDefs.class.getMethod("listOfBeans", List.class);
-        StepDefs stepDefs = runStepDef(m, listOfDatesWithHeader());
+        StepDefs stepDefs = runStepDef(m, new PickleTable(listOfDatesWithHeader()));
         assertEquals(sidsBirthday(), stepDefs.listOfBeans.get(0).getBirthDate());
     }
 
     @Test
     public void transforms_to_list_of_beans_transposed() throws Throwable {
         Method m = StepDefs.class.getMethod("listOfBeansTransposed", List.class);
-        StepDefs stepDefs = runStepDef(m, transposedListOfDatesWithHeader());
+        StepDefs stepDefs = runStepDef(m, new PickleTable(transposedListOfDatesWithHeader()));
         assertEquals(sidsBirthday(), stepDefs.listOfBeans.get(0).getBirthDate());
     }
 
     @Test
     public void converts_table_to_list_of_class_with_special_fields() throws Throwable {
         Method m = StepDefs.class.getMethod("listOfUsersWithNameField", List.class);
-        StepDefs stepDefs = runStepDef(m, listOfDatesAndNamesWithHeader());
+        StepDefs stepDefs = runStepDef(m, new PickleTable(listOfDatesAndNamesWithHeader()));
         assertEquals(sidsBirthday(), stepDefs.listOfUsersWithNameField.get(0).birthDate);
         assertEquals("Sid", stepDefs.listOfUsersWithNameField.get(0).name.first);
         assertEquals("Vicious", stepDefs.listOfUsersWithNameField.get(0).name.last);
@@ -173,7 +176,7 @@ public class FromDataTableTest {
     @Test
     public void converts_table_to_list_of_class_with_special_fields_transposed() throws Throwable {
         Method m = StepDefs.class.getMethod("listOfUsersTransposedWithNameField", List.class);
-        StepDefs stepDefs = runStepDef(m, transposedListOfDatesAndNamesWithHeader());
+        StepDefs stepDefs = runStepDef(m, new PickleTable(transposedListOfDatesAndNamesWithHeader()));
         assertEquals(sidsBirthday(), stepDefs.listOfUsersWithNameField.get(0).birthDate);
         assertEquals("Sid", stepDefs.listOfUsersWithNameField.get(0).name.first);
         assertEquals("Vicious", stepDefs.listOfUsersWithNameField.get(0).name.last);
@@ -182,7 +185,7 @@ public class FromDataTableTest {
     @Test
     public void transforms_to_map_of_double_to_double() throws Throwable {
         Method m = StepDefs.class.getMethod("mapOfDoubleToDouble", Map.class);
-        StepDefs stepDefs = runStepDef(m, listOfDoublesWithoutHeader());
+        StepDefs stepDefs = runStepDef(m, new PickleTable(listOfDoublesWithoutHeader()));
         assertEquals(Double.valueOf(999.0), stepDefs.mapOfDoubleToDouble.get(1000.0));
         assertEquals(Double.valueOf(-0.5), stepDefs.mapOfDoubleToDouble.get(0.5));
         assertEquals(Double.valueOf(99.5), stepDefs.mapOfDoubleToDouble.get(100.5));
@@ -191,105 +194,105 @@ public class FromDataTableTest {
     @Test
     public void transforms_to_list_of_single_values() throws Throwable {
         Method m = StepDefs.class.getMethod("listOfListOfDoubles", List.class);
-        StepDefs stepDefs = runStepDef(m, listOfDoublesWithoutHeader());
+        StepDefs stepDefs = runStepDef(m, new PickleTable(listOfDoublesWithoutHeader()));
         assertEquals("[[100.5, 99.5], [0.5, -0.5], [1000.0, 999.0]]", stepDefs.listOfListOfDoubles.toString());
     }
 
     @Test
     public void transforms_to_list_of_single_values_transposed() throws Throwable {
         Method m = StepDefs.class.getMethod("listOfListOfDoublesTransposed", List.class);
-        StepDefs stepDefs = runStepDef(m, transposedListOfDoublesWithoutHeader());
+        StepDefs stepDefs = runStepDef(m, new PickleTable(transposedListOfDoublesWithoutHeader()));
         assertEquals("[[100.5, 99.5], [0.5, -0.5], [1000.0, 999.0]]", stepDefs.listOfListOfDoubles.toString());
     }
 
     @Test
     public void transforms_to_list_of_map_of_string_to_date() throws Throwable {
         Method m = StepDefs.class.getMethod("listOfMapsOfStringToDate", List.class);
-        StepDefs stepDefs = runStepDef(m, listOfDatesWithHeader());
+        StepDefs stepDefs = runStepDef(m, new PickleTable(listOfDatesWithHeader()));
         assertEquals(sidsBirthday(), stepDefs.listOfMapsOfStringToDate.get(0).get("Birth Date"));
     }
 
     @Test
     public void transforms_to_list_of_map_of_string_to_object() throws Throwable {
         Method m = StepDefs.class.getMethod("listOfMapsOfStringToObject", List.class);
-        StepDefs stepDefs = runStepDef(m, listOfDatesWithHeader());
+        StepDefs stepDefs = runStepDef(m, new PickleTable(listOfDatesWithHeader()));
         assertEquals("1957-05-10", stepDefs.listOfMapsOfStringToObject.get(0).get("Birth Date"));
     }
 
     @Test
     public void passes_plain_data_table() throws Throwable {
         Method m = StepDefs.class.getMethod("plainDataTable", DataTable.class);
-        StepDefs stepDefs = runStepDef(m, listOfDatesWithHeader());
+        StepDefs stepDefs = runStepDef(m, new PickleTable(listOfDatesWithHeader()));
         assertEquals("1957-05-10", stepDefs.dataTable.raw().get(1).get(0));
         assertEquals("Birth Date", stepDefs.dataTable.raw().get(0).get(0));
     }
 
-    private StepDefs runStepDef(Method method, List<DataTableRow> rows) throws Throwable {
+    private StepDefs runStepDef(Method method, PickleTable table) throws Throwable {
         StepDefs stepDefs = new StepDefs();
         StepDefinition stepDefinition = new StubStepDefinition(stepDefs, method, "some pattern");
 
-        Step stepWithRows = new Step(NO_COMMENTS, "Given ", "something", 10, rows, null);
+        PickleStep stepWithTable = new PickleStep("something", asList((gherkin.pickles.Argument)table), asList(mock(PickleLocation.class)));
 
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(NO_ARGS, stepDefinition, "some.feature", stepWithRows, new LocalizedXStreams(classLoader));
-        stepDefinitionMatch.runStep(new I18n("en"));
+        StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(NO_ARGS, stepDefinition, "some.feature", stepWithTable, new LocalizedXStreams(classLoader));
+        stepDefinitionMatch.runStep(ENGLISH, null);
         return stepDefs;
     }
 
-    private List<DataTableRow> listOfDatesWithHeader() {
-        List<DataTableRow> rows = new ArrayList<DataTableRow>();
-        rows.add(new DataTableRow(NO_COMMENTS, asList("Birth Date"), 1));
-        rows.add(new DataTableRow(NO_COMMENTS, asList("1957-05-10"), 2));
+    private List<PickleRow> listOfDatesWithHeader() {
+        List<PickleRow> rows = new ArrayList<PickleRow>();
+        rows.add(new PickleRow(asList(new PickleCell(mock(PickleLocation.class), "Birth Date"))));
+        rows.add(new PickleRow(asList(new PickleCell(mock(PickleLocation.class), "1957-05-10"))));
         return rows;
     }
 
-    private List<DataTableRow> listOfDatesAndCalWithHeader() {
-        List<DataTableRow> rows = new ArrayList<DataTableRow>();
-        rows.add(new DataTableRow(NO_COMMENTS, asList("Birth Date", "Death Cal"), 1));
-        rows.add(new DataTableRow(NO_COMMENTS, asList("1957-05-10", "1979-02-02"), 2));
-        rows.add(new DataTableRow(NO_COMMENTS, asList("", ""), 3));
+    private List<PickleRow> listOfDatesAndCalWithHeader() {
+        List<PickleRow> rows = new ArrayList<PickleRow>();
+        rows.add(new PickleRow(asList(new PickleCell(mock(PickleLocation.class), "Birth Date"), new PickleCell(mock(PickleLocation.class), "Death Cal"))));
+        rows.add(new PickleRow(asList(new PickleCell(mock(PickleLocation.class), "1957-05-10"), new PickleCell(mock(PickleLocation.class), "1979-02-02"))));
+        rows.add(new PickleRow(asList(new PickleCell(mock(PickleLocation.class), ""), new PickleCell(mock(PickleLocation.class), ""))));
         return rows;
     }
 
-    private List<DataTableRow> listOfDatesAndNamesWithHeader() {
-        List<DataTableRow> rows = new ArrayList<DataTableRow>();
-        rows.add(new DataTableRow(NO_COMMENTS, asList("Birth Date", "Name"), 1));
-        rows.add(new DataTableRow(NO_COMMENTS, asList("1957-05-10", "Sid Vicious"), 2));
+    private List<PickleRow> listOfDatesAndNamesWithHeader() {
+        List<PickleRow> rows = new ArrayList<PickleRow>();
+        rows.add(new PickleRow(asList(new PickleCell(mock(PickleLocation.class), "Birth Date"), new PickleCell(mock(PickleLocation.class), "Name"))));
+        rows.add(new PickleRow(asList(new PickleCell(mock(PickleLocation.class), "1957-05-10"), new PickleCell(mock(PickleLocation.class), "Sid Vicious"))));
         return rows;
     }
 
-    private List<DataTableRow> listOfDoublesWithoutHeader() {
-        List<DataTableRow> rows = new ArrayList<DataTableRow>();
-        rows.add(new DataTableRow(NO_COMMENTS, asList("100.5", "99.5"), 2));
-        rows.add(new DataTableRow(NO_COMMENTS, asList("0.5", "-0.5"), 2));
-        rows.add(new DataTableRow(NO_COMMENTS, asList("1000", "999"), 2));
+    private List<PickleRow> listOfDoublesWithoutHeader() {
+        List<PickleRow> rows = new ArrayList<PickleRow>();
+        rows.add(new PickleRow(asList(new PickleCell(mock(PickleLocation.class), "100.5"), new PickleCell(mock(PickleLocation.class), "99.5"))));
+        rows.add(new PickleRow(asList(new PickleCell(mock(PickleLocation.class), "0.5"), new PickleCell(mock(PickleLocation.class), "-0.5"))));
+        rows.add(new PickleRow(asList(new PickleCell(mock(PickleLocation.class), "1000"), new PickleCell(mock(PickleLocation.class), "999"))));
         return rows;
     }
 
-    private List<DataTableRow> transposedListOfDatesWithHeader() {
-        List<DataTableRow> rows = new ArrayList<DataTableRow>();
-        rows.add(new DataTableRow(NO_COMMENTS, asList("Birth Date", "1957-05-10"), 1));
+    private List<PickleRow> transposedListOfDatesWithHeader() {
+        List<PickleRow> rows = new ArrayList<PickleRow>();
+        rows.add(new PickleRow(asList(new PickleCell(mock(PickleLocation.class), "Birth Date"), new PickleCell(mock(PickleLocation.class), "1957-05-10"))));
         return rows;
     }
 
-    private List<DataTableRow> transposedListOfDatesAndCalWithHeader() {
-        List<DataTableRow> rows = new ArrayList<DataTableRow>();
-        rows.add(new DataTableRow(NO_COMMENTS, asList("Birth Date", "1957-05-10", ""), 1));
-        rows.add(new DataTableRow(NO_COMMENTS, asList("Death Cal", "1979-02-02", ""), 2));
+    private List<PickleRow> transposedListOfDatesAndCalWithHeader() {
+        List<PickleRow> rows = new ArrayList<PickleRow>();
+        rows.add(new PickleRow(asList(new PickleCell(mock(PickleLocation.class), "Birth Date"), new PickleCell(mock(PickleLocation.class), "1957-05-10"), new PickleCell(mock(PickleLocation.class), ""))));
+        rows.add(new PickleRow(asList(new PickleCell(mock(PickleLocation.class), "Death Cal"), new PickleCell(mock(PickleLocation.class), "1979-02-02"), new PickleCell(mock(PickleLocation.class), ""))));
         return rows;
     }
 
-    private List<DataTableRow> transposedListOfDatesAndNamesWithHeader() {
-        List<DataTableRow> rows = new ArrayList<DataTableRow>();
-        rows.add(new DataTableRow(NO_COMMENTS, asList("Birth Date", "1957-05-10"), 1));
-        rows.add(new DataTableRow(NO_COMMENTS, asList("Name", "Sid Vicious"), 2));
+    private List<PickleRow> transposedListOfDatesAndNamesWithHeader() {
+        List<PickleRow> rows = new ArrayList<PickleRow>();
+        rows.add(new PickleRow(asList(new PickleCell(mock(PickleLocation.class), "Birth Date"), new PickleCell(mock(PickleLocation.class), "1957-05-10"))));
+        rows.add(new PickleRow(asList(new PickleCell(mock(PickleLocation.class), "Name"), new PickleCell(mock(PickleLocation.class), "Sid Vicious"))));
         return rows;
     }
 
-    private List<DataTableRow> transposedListOfDoublesWithoutHeader() {
-        List<DataTableRow> rows = new ArrayList<DataTableRow>();
-        rows.add(new DataTableRow(NO_COMMENTS, asList("100.5", "0.5", "1000"), 1));
-        rows.add(new DataTableRow(NO_COMMENTS, asList("99.5", "-0.5", "999"), 2));
+    private List<PickleRow> transposedListOfDoublesWithoutHeader() {
+        List<PickleRow> rows = new ArrayList<PickleRow>();
+        rows.add(new PickleRow(asList(new PickleCell(mock(PickleLocation.class), "100.5"), new PickleCell(mock(PickleLocation.class), "0.5"), new PickleCell(mock(PickleLocation.class), "1000"))));
+        rows.add(new PickleRow(asList(new PickleCell(mock(PickleLocation.class), "99.5"), new PickleCell(mock(PickleLocation.class), "-0.5"), new PickleCell(mock(PickleLocation.class), "999"))));
         return rows;
     }
 

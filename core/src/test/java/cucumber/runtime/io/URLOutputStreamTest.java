@@ -1,7 +1,7 @@
 package cucumber.runtime.io;
 
 import cucumber.runtime.Utils;
-import gherkin.util.FixJava;
+import cucumber.util.FixJava;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;

@@ -1,30 +1,20 @@
 package cucumber.runtime.junit;
 
 import cucumber.api.PendingException;
-import cucumber.runtime.CucumberException;
-import gherkin.formatter.Formatter;
-import gherkin.formatter.Reporter;
-import gherkin.formatter.model.Background;
-import gherkin.formatter.model.Examples;
-import gherkin.formatter.model.Match;
-import gherkin.formatter.model.Result;
-import gherkin.formatter.model.Scenario;
-import gherkin.formatter.model.ScenarioOutline;
-import gherkin.formatter.model.Step;
+import cucumber.api.Result;
+import cucumber.api.event.EventHandler;
+import cucumber.api.event.TestStepFinished;
+import cucumber.api.event.TestStepStarted;
+import cucumber.runner.EventBus;
+import gherkin.pickles.PickleStep;
 import org.junit.internal.runners.model.EachTestNotifier;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static cucumber.runtime.Runtime.isPending;
 
-public class JUnitReporter implements Reporter, Formatter {
-    private final List<Step> steps = new ArrayList<Step>();
+public class JUnitReporter {
 
-    private final Reporter reporter;
-    private final Formatter formatter;
     private final boolean strict;
     private final JUnitOptions junitOptions;
 
@@ -34,13 +24,34 @@ public class JUnitReporter implements Reporter, Formatter {
     EachTestNotifier executionUnitNotifier;
     private boolean failedStep;
     private boolean ignoredStep;
-    private boolean inScenarioLifeCycle;
+    private EventHandler<TestStepStarted> testStepStartedHandler = new EventHandler<TestStepStarted>() {
 
-    public JUnitReporter(Reporter reporter, Formatter formatter, boolean strict, JUnitOptions junitOption) {
-        this.reporter = reporter;
-        this.formatter = formatter;
+        @Override
+        public void receive(TestStepStarted event) {
+            if (!event.testStep.isHook()) {
+                handleStepStarted(event.testStep.getPickleStep());
+            }
+        }
+
+    };
+    private EventHandler<TestStepFinished> testStepFinishedHandler = new EventHandler<TestStepFinished>() {
+
+        @Override
+        public void receive(TestStepFinished event) {
+            if (event.testStep.isHook()) {
+                handleHookResult(event.result);
+            } else {
+                handleStepResult(event.result);
+            }
+        }
+
+    };
+
+    public JUnitReporter(EventBus bus, boolean strict, JUnitOptions junitOption) {
         this.strict = strict;
         this.junitOptions = junitOption;
+        bus.registerHandlerFor(TestStepStarted.class, testStepStartedHandler);
+        bus.registerHandlerFor(TestStepFinished.class, testStepFinishedHandler);
     }
 
     public void startExecutionUnit(ExecutionUnitRunner executionUnitRunner, RunNotifier runNotifier) {
@@ -61,36 +72,15 @@ public class JUnitReporter implements Reporter, Formatter {
         executionUnitNotifier.fireTestFinished();
     }
 
-    public void match(Match match) {
-        Step runnerStep = fetchAndCheckRunnerStep();
-        Description description = executionUnitRunner.describeChild(runnerStep);
+    void handleStepStarted(PickleStep step) {
+        Description description = executionUnitRunner.describeChild(step);
         stepNotifier = new EachTestNotifier(runNotifier, description);
-        reporter.match(match);
         if (junitOptions.allowStartedIgnored()) {
             stepNotifier.fireTestStarted();
         }
     }
 
-    private Step fetchAndCheckRunnerStep() {
-        Step scenarioStep = steps.remove(0);
-        Step runnerStep = executionUnitRunner.getRunnerSteps().remove(0);
-        if (!scenarioStep.getName().equals(runnerStep.getName())) {
-            throw new CucumberException("Expected step: \"" + scenarioStep.getName() + "\" got step: \"" + runnerStep.getName() + "\"");
-        }
-        return runnerStep;
-    }
-
-    @Override
-    public void embedding(String mimeType, byte[] data) {
-        reporter.embedding(mimeType, data);
-    }
-
-    @Override
-    public void write(String text) {
-        reporter.write(text);
-    }
-
-    public void result(Result result) {
+    void handleStepResult(Result result) {
         Throwable error = result.getError();
         if (Result.SKIPPED == result) {
             stepNotifier.fireTestIgnored();
@@ -112,13 +102,14 @@ public class JUnitReporter implements Reporter, Formatter {
                 executionUnitNotifier.addFailure(error);
             }
         }
-        if (steps.isEmpty()) {
-            // We have run all of our steps. Set the stepNotifier to null so that
-            // if an error occurs in an After block, it's reported against the scenario
-            // instead (via executionUnitNotifier).
-            stepNotifier = null;
+    }
+
+    void handleHookResult(Result result) {
+        if (result.getStatus().equals(Result.FAILED) || (strict && isPending(result.getError()))) {
+            executionUnitNotifier.addFailure(result.getError());
+        } else if (isPending(result.getError())) {
+            ignoredStep = true;
         }
-        reporter.result(result);
     }
 
     public boolean useFilenameCompatibleNames() {
@@ -127,7 +118,7 @@ public class JUnitReporter implements Reporter, Formatter {
 
     private boolean isPendingOrUndefined(Result result) {
         Throwable error = result.getError();
-        return Result.UNDEFINED == result || isPending(error);
+        return Result.UNDEFINED.equals(result.getStatus()) || isPending(error);
     }
 
     private void addFailureOrIgnoreStep(Result result) {
@@ -144,7 +135,6 @@ public class JUnitReporter implements Reporter, Formatter {
     }
 
     private void addFailure(Result result) {
-
         Throwable error = result.getError();
         if (error == null) {
             error = new PendingException();
@@ -152,95 +142,5 @@ public class JUnitReporter implements Reporter, Formatter {
         failedStep = true;
         stepNotifier.addFailure(error);
         executionUnitNotifier.addFailure(error);
-    }
-
-    @Override
-    public void before(Match match, Result result) {
-        handleHook(result);
-        reporter.before(match, result);
-    }
-
-    @Override
-    public void after(Match match, Result result) {
-        handleHook(result);
-        reporter.after(match, result);
-    }
-
-    private void handleHook(Result result) {
-        if (result.getStatus().equals(Result.FAILED) || (strict && isPending(result.getError()))) {
-            executionUnitNotifier.addFailure(result.getError());
-        } else if (isPending(result.getError())) {
-            ignoredStep = true;
-        }
-    }
-
-    @Override
-    public void uri(String uri) {
-        formatter.uri(uri);
-    }
-
-    @Override
-    public void feature(gherkin.formatter.model.Feature feature) {
-        formatter.feature(feature);
-    }
-
-    @Override
-    public void background(Background background) {
-        formatter.background(background);
-    }
-
-    @Override
-    public void scenario(Scenario scenario) {
-        formatter.scenario(scenario);
-    }
-
-    @Override
-    public void scenarioOutline(ScenarioOutline scenarioOutline) {
-        formatter.scenarioOutline(scenarioOutline);
-    }
-
-    @Override
-    public void examples(Examples examples) {
-        formatter.examples(examples);
-    }
-
-    @Override
-    public void step(Step step) {
-        if (inScenarioLifeCycle) {
-            steps.add(step);
-        }
-        formatter.step(step);
-    }
-
-    @Override
-    public void eof() {
-        formatter.eof();
-    }
-
-    @Override
-    public void syntaxError(String state, String event, List<String> legalEvents, String uri, Integer line) {
-        formatter.syntaxError(state, event, legalEvents, uri, line);
-    }
-
-    @Override
-    public void done() {
-        formatter.done();
-    }
-
-    @Override
-    public void close() {
-        formatter.close();
-    }
-
-    @Override
-    public void startOfScenarioLifeCycle(Scenario scenario) {
-        inScenarioLifeCycle = true;
-        formatter.startOfScenarioLifeCycle(scenario);
-    }
-
-    @Override
-    public void endOfScenarioLifeCycle(Scenario scenario) {
-        formatter.endOfScenarioLifeCycle(scenario);
-        inScenarioLifeCycle = false;
     }
 }
