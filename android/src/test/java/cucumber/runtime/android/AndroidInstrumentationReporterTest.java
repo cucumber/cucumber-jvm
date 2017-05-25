@@ -2,6 +2,7 @@ package cucumber.runtime.android;
 
 import android.app.Instrumentation;
 import android.os.Bundle;
+import cucumber.api.PendingException;
 import cucumber.api.Result;
 import cucumber.api.TestCase;
 import cucumber.runtime.Runtime;
@@ -70,7 +71,7 @@ public class AndroidInstrumentationReporterTest {
 
         // given
         final AndroidInstrumentationReporter formatter = new AndroidInstrumentationReporter(runtime, instrumentation, 1);
-        when(firstResult.getStatus()).thenReturn(Result.PASSED);
+        mockResultStatus(firstResult, Result.Type.PASSED);
 
         // when
         formatter.startTestCase(testCase);
@@ -111,7 +112,7 @@ public class AndroidInstrumentationReporterTest {
 
         // given
         final AndroidInstrumentationReporter formatter = new AndroidInstrumentationReporter(runtime, instrumentation, 1);
-        when(firstResult.getStatus()).thenReturn(Result.PASSED);
+        mockResultStatus(firstResult, Result.Type.PASSED);
 
         // when
         formatter.startTestCase(testCase);
@@ -133,7 +134,7 @@ public class AndroidInstrumentationReporterTest {
 
         // given
         final AndroidInstrumentationReporter formatter = new AndroidInstrumentationReporter(runtime, instrumentation, 1);
-        when(firstResult.getStatus()).thenReturn(Result.FAILED);
+        mockResultStatus(firstResult, Result.Type.FAILED);
         when(firstResult.getError()).thenReturn(new RuntimeException("some random runtime exception"));
 
         // when
@@ -155,7 +156,7 @@ public class AndroidInstrumentationReporterTest {
 
         // given
         final AndroidInstrumentationReporter formatter = new AndroidInstrumentationReporter(runtime, instrumentation, 1);
-        when(firstResult.getStatus()).thenReturn(Result.FAILED);
+        mockResultStatus(firstResult, Result.Type.FAILED);
         when(firstResult.getError()).thenReturn(new AssertionError("some test assertion went wrong"));
         when(firstResult.getErrorMessage()).thenReturn("some test assertion went wrong");
 
@@ -177,7 +178,7 @@ public class AndroidInstrumentationReporterTest {
 
         // given
         final AndroidInstrumentationReporter formatter = new AndroidInstrumentationReporter(runtime, instrumentation, 1);
-        when(firstResult.getStatus()).thenReturn(Result.UNDEFINED);
+        mockResultStatus(firstResult, Result.Type.UNDEFINED);
         when(runtime.getSnippets()).thenReturn(Collections.singletonList("some snippet"));
 
         // when
@@ -198,7 +199,7 @@ public class AndroidInstrumentationReporterTest {
 
         // given
         final AndroidInstrumentationReporter formatter = new AndroidInstrumentationReporter(runtime, instrumentation, 1);
-        when(firstResult.getStatus()).thenReturn(Result.PASSED);
+        mockResultStatus(firstResult, Result.Type.PASSED);
 
         // when
         formatter.startTestCase(testCase);
@@ -214,8 +215,8 @@ public class AndroidInstrumentationReporterTest {
 
         // given
         final AndroidInstrumentationReporter formatter = new AndroidInstrumentationReporter(runtime, instrumentation, 2);
-        when(firstResult.getStatus()).thenReturn(Result.PASSED);
-        when(secondResult.getStatus()).thenReturn(Result.SKIPPED.getStatus());
+        mockResultStatus(firstResult, Result.Type.PASSED);
+        mockResultStatus(secondResult, Result.Type.SKIPPED);
 
         // when
         formatter.startTestCase(testCase);
@@ -233,10 +234,10 @@ public class AndroidInstrumentationReporterTest {
 
         // given
         final AndroidInstrumentationReporter formatter = new AndroidInstrumentationReporter(runtime, instrumentation, 2);
-        when(firstResult.getStatus()).thenReturn(Result.FAILED);
+        mockResultStatus(firstResult, Result.Type.FAILED);
         when(firstResult.getError()).thenReturn(new RuntimeException("first exception"));
 
-        when(secondResult.getStatus()).thenReturn(Result.FAILED);
+        mockResultStatus(secondResult, Result.Type.FAILED);
         when(secondResult.getError()).thenReturn(new RuntimeException("second exception"));
 
         // when
@@ -258,9 +259,9 @@ public class AndroidInstrumentationReporterTest {
 
         // given
         final AndroidInstrumentationReporter formatter = new AndroidInstrumentationReporter(runtime, instrumentation, 2);
-        when(firstResult.getStatus()).thenReturn(Result.PASSED);
+        mockResultStatus(firstResult, Result.Type.PASSED);
 
-        when(secondResult.getStatus()).thenReturn(Result.UNDEFINED);
+        mockResultStatus(secondResult, Result.Type.UNDEFINED);
         when(runtime.getSnippets()).thenReturn(Collections.singletonList("some snippet"));
 
         // when
@@ -278,13 +279,38 @@ public class AndroidInstrumentationReporterTest {
     }
 
     @Test
+    public void pending_step_overrides_preceding_passed_step() {
+
+        // given
+        final AndroidInstrumentationReporter formatter = new AndroidInstrumentationReporter(runtime, instrumentation, 2);
+        mockResultStatus(firstResult, Result.Type.PASSED);
+
+        mockResultStatus(secondResult, Result.Type.PENDING);
+        when(secondResult.getError()).thenReturn(new PendingException("step is pending"));
+        when(secondResult.getErrorMessage()).thenReturn("step is pending");
+
+        // when
+        formatter.startTestCase(testCase);
+        formatter.finishTestStep(firstResult);
+        formatter.finishTestStep(secondResult);
+        formatter.finishTestCase();
+
+        // then
+        final ArgumentCaptor<Bundle> captor = ArgumentCaptor.forClass(Bundle.class);
+        verify(instrumentation).sendStatus(eq(StatusCodes.ERROR), captor.capture());
+
+        final Bundle actualBundle = captor.getValue();
+        assertThat(actualBundle.getString(AndroidInstrumentationReporter.StatusKeys.STACK), containsString("step is pending"));
+    }
+
+    @Test
     public void failed_step_overrides_preceding_passed_step() {
 
         // given
         final AndroidInstrumentationReporter formatter = new AndroidInstrumentationReporter(runtime, instrumentation, 2);
-        when(firstResult.getStatus()).thenReturn(Result.PASSED);
+        mockResultStatus(firstResult, Result.Type.PASSED);
 
-        when(secondResult.getStatus()).thenReturn(Result.FAILED);
+        mockResultStatus(secondResult, Result.Type.FAILED);
         when(secondResult.getError()).thenReturn(new AssertionError("some assertion went wrong"));
         when(secondResult.getErrorMessage()).thenReturn("some assertion went wrong");
 
@@ -307,9 +333,9 @@ public class AndroidInstrumentationReporterTest {
 
         // given
         final AndroidInstrumentationReporter formatter = new AndroidInstrumentationReporter(runtime, instrumentation, 2);
-        when(firstResult.getStatus()).thenReturn(Result.PASSED);
+        mockResultStatus(firstResult, Result.Type.PASSED);
 
-        when(secondResult.getStatus()).thenReturn(Result.FAILED);
+        mockResultStatus(secondResult, Result.Type.FAILED);
         when(secondResult.getError()).thenReturn(new RuntimeException("some exception"));
 
         // when
@@ -331,10 +357,10 @@ public class AndroidInstrumentationReporterTest {
 
         // given
         final AndroidInstrumentationReporter formatter = new AndroidInstrumentationReporter(runtime, instrumentation, 2);
-        when(firstResult.getStatus()).thenReturn(Result.UNDEFINED);
+        mockResultStatus(firstResult, Result.Type.UNDEFINED);
         when(runtime.getSnippets()).thenReturn(Collections.singletonList("some snippet"));
 
-        when(secondResult.getStatus()).thenReturn(Result.FAILED);
+        mockResultStatus(secondResult, Result.Type.FAILED);
         when(secondResult.getError()).thenReturn(new AssertionError("some assertion went wrong"));
         when(secondResult.getErrorMessage()).thenReturn("some assertion went wrong");
 
@@ -357,11 +383,11 @@ public class AndroidInstrumentationReporterTest {
 
         // given
         final AndroidInstrumentationReporter formatter = new AndroidInstrumentationReporter(runtime, instrumentation, 2);
-        when(firstResult.getStatus()).thenReturn(Result.FAILED);
+        mockResultStatus(firstResult, Result.Type.FAILED);
         when(firstResult.getError()).thenReturn(new AssertionError("some assertion went wrong"));
         when(firstResult.getErrorMessage()).thenReturn("some assertion went wrong");
 
-        when(secondResult.getStatus()).thenReturn(Result.FAILED);
+        mockResultStatus(secondResult, Result.Type.FAILED);
         when(secondResult.getError()).thenReturn(new RuntimeException("some exception"));
 
         // when
@@ -379,30 +405,14 @@ public class AndroidInstrumentationReporterTest {
     }
 
     @Test
-    public void unexpected_status_code_causes_IllegalStateException() {
-        // given
-        final AndroidInstrumentationReporter formatter = new AndroidInstrumentationReporter(runtime, instrumentation, 2);
-        when(firstResult.getStatus()).thenReturn("foobar");
-
-        // then
-        expectedException.expect(IllegalStateException.class);
-        expectedException.expectMessage(containsString("foobar"));
-
-        // when
-        formatter.startTestCase(testCase);
-        formatter.finishTestStep(firstResult);
-        formatter.finishTestCase();
-    }
-
-    @Test
     public void step_result_contains_only_the_current_scenarios_severest_result() {
         // given
         final AndroidInstrumentationReporter formatter = new AndroidInstrumentationReporter(runtime, instrumentation, 2);
-        when(firstResult.getStatus()).thenReturn(Result.FAILED);
+        mockResultStatus(firstResult, Result.Type.FAILED);
         when(firstResult.getError()).thenReturn(new AssertionError("some assertion went wrong"));
         when(firstResult.getErrorMessage()).thenReturn("some assertion went wrong");
 
-        when(secondResult.getStatus()).thenReturn(Result.PASSED);
+        mockResultStatus(secondResult, Result.Type.PASSED);
 
         // when
         formatter.startTestCase(testCase);
@@ -421,5 +431,10 @@ public class AndroidInstrumentationReporterTest {
 
         inOrder.verify(instrumentation).sendStatus(eq(StatusCodes.FAILURE), firstCaptor.capture());
         inOrder.verify(instrumentation).sendStatus(eq(StatusCodes.OK), secondCaptor.capture());
+    }
+
+    private void mockResultStatus(Result result, Result.Type status) {
+        when(result.getStatus()).thenReturn(status);
+        when(result.is(Result.Type.PASSED)).thenReturn(status == Result.Type.PASSED);
     }
 }

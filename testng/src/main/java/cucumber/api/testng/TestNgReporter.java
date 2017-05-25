@@ -52,15 +52,15 @@ public class TestNgReporter implements Formatter {
     private void result(String stepText, Result result) {
         logResult(stepText, result);
 
-        if (Result.FAILED.equals(result.getStatus())) {
+        if (result.is(Result.Type.FAILED)) {
             ITestResult tr = getCurrentTestResult();
             tr.setThrowable(result.getError());
             tr.setStatus(ITestResult.FAILURE);
-        } else if (Result.SKIPPED.equals(result)) {
+        } else if (result.is(Result.Type.SKIPPED)) {
             ITestResult tr = getCurrentTestResult();
             tr.setThrowable(result.getError());
             tr.setStatus(ITestResult.SKIP);
-        } else if (Result.UNDEFINED.equals(result)) {
+        } else if (result.is(Result.Type.UNDEFINED)) {
             ITestResult tr = getCurrentTestResult();
             tr.setThrowable(result.getError());
             tr.setStatus(ITestResult.FAILURE);

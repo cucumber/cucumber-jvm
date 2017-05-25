@@ -254,12 +254,12 @@ class JUnitFormatter implements Formatter, StrictAware {
             addStepAndResultListing(sb);
             Result skipped = null, failed = null;
             for (Result result : results) {
-                if ("failed".equals(result.getStatus())) failed = result;
-                if ("undefined".equals(result.getStatus()) || "pending".equals(result.getStatus())) skipped = result;
+                if (result.is(Result.Type.FAILED)) failed = result;
+                if (result.is(Result.Type.UNDEFINED) || result.is(Result.Type.PENDING)) skipped = result;
             }
             for (Result result : hookResults) {
-                if (failed == null && "failed".equals(result.getStatus())) failed = result;
-                if (skipped == null && "pending".equals(result.getStatus())) skipped = result;
+                if (failed == null && result.is(Result.Type.FAILED)) failed = result;
+                if (skipped == null && result.is(Result.Type.PENDING)) skipped = result;
             }
             Element child;
             if (failed != null) {
@@ -310,7 +310,7 @@ class JUnitFormatter implements Formatter, StrictAware {
                 int length = sb.length();
                 String resultStatus = "not executed";
                 if (i < results.size()) {
-                    resultStatus = results.get(i).getStatus();
+                    resultStatus = results.get(i).getStatus().lowerCaseName();
                 }
                 sb.append(getKeywordFromSource(steps.get(i).getStepLine()) + steps.get(i).getStepText());
                 do {

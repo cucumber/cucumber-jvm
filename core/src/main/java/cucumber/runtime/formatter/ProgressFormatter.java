@@ -15,19 +15,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 class ProgressFormatter implements Formatter, ColorAware {
-    private static final Map<String, Character> CHARS = new HashMap<String, Character>() {{
-        put("passed", '.');
-        put("undefined", 'U');
-        put("pending", 'P');
-        put("skipped", '-');
-        put("failed", 'F');
+    private static final Map<Result.Type, Character> CHARS = new HashMap<Result.Type, Character>() {{
+        put(Result.Type.PASSED, '.');
+        put(Result.Type.UNDEFINED, 'U');
+        put(Result.Type.PENDING, 'P');
+        put(Result.Type.SKIPPED, '-');
+        put(Result.Type.FAILED, 'F');
     }};
-    private static final Map<String, AnsiEscapes> ANSI_ESCAPES = new HashMap<String, AnsiEscapes>() {{
-        put("passed", AnsiEscapes.GREEN);
-        put("undefined", AnsiEscapes.YELLOW);
-        put("pending", AnsiEscapes.YELLOW);
-        put("skipped", AnsiEscapes.CYAN);
-        put("failed", AnsiEscapes.RED);
+    private static final Map<Result.Type, AnsiEscapes> ANSI_ESCAPES = new HashMap<Result.Type, AnsiEscapes>() {{
+        put(Result.Type.PASSED, AnsiEscapes.GREEN);
+        put(Result.Type.UNDEFINED, AnsiEscapes.YELLOW);
+        put(Result.Type.PENDING, AnsiEscapes.YELLOW);
+        put(Result.Type.SKIPPED, AnsiEscapes.CYAN);
+        put(Result.Type.FAILED, AnsiEscapes.RED);
     }};
 
     private final NiceAppendable out;
@@ -68,7 +68,7 @@ class ProgressFormatter implements Formatter, ColorAware {
     }
 
     private void handleTestStepFinished(TestStepFinished event) {
-        if (!event.testStep.isHook() || event.result.getStatus().equals(Result.FAILED)) {
+        if (!event.testStep.isHook() || event.result.is(Result.Type.FAILED)) {
             if (!monochrome) {
                 ANSI_ESCAPES.get(event.result.getStatus()).appendTo(out);
             }

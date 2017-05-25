@@ -588,7 +588,7 @@ public class RuntimeTest {
 
     private Result mockResultWithSnippets() {
         Result result = mock(Result.class);
-        when(result.getStatus()).thenReturn(Result.UNDEFINED);
+        when(result.getStatus()).thenReturn(Result.Type.UNDEFINED);
         when(result.getSnippets()).thenReturn(asList(""));
         return result;
     }

@@ -8,7 +8,9 @@ import gherkin.pickles.Pickle;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 
+import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Matchers.argThat;
@@ -20,41 +22,41 @@ public class ScenarioResultTest {
 
     @Test
     public void no_steps_is_passed() throws Exception {
-        assertEquals("passed", s.getStatus());
+        assertEquals(Result.Type.PASSED, s.getStatus());
     }
 
     @Test
     public void passed_failed_pending_undefined_skipped_is_failed() throws Exception {
-        s.add(new Result("passed", 0L, null));
-        s.add(new Result("failed", 0L, null));
-        s.add(new Result("pending", 0L, null));
-        s.add(new Result("undefined", 0L, null));
-        s.add(new Result("skipped", 0L, null));
-        assertEquals("failed", s.getStatus());
+        s.add(new Result(Result.Type.PASSED, 0L, null));
+        s.add(new Result(Result.Type.FAILED, 0L, null));
+        s.add(new Result(Result.Type.PENDING, 0L, null));
+        s.add(new Result(Result.Type.UNDEFINED, 0L, null));
+        s.add(new Result(Result.Type.SKIPPED, 0L, null));
+        assertEquals(Result.Type.FAILED, s.getStatus());
     }
 
     @Test
     public void passed_and_skipped_is_skipped_although_we_cant_have_skipped_without_undefined_or_pending() throws Exception {
-        s.add(new Result("passed", 0L, null));
-        s.add(new Result("skipped", 0L, null));
-        assertEquals("skipped", s.getStatus());
+        s.add(new Result(Result.Type.PASSED, 0L, null));
+        s.add(new Result(Result.Type.SKIPPED, 0L, null));
+        assertEquals(Result.Type.SKIPPED, s.getStatus());
     }
 
     @Test
     public void passed_pending_undefined_skipped_is_pending() throws Exception {
-        s.add(new Result("passed", 0L, null));
-        s.add(new Result("undefined", 0L, null));
-        s.add(new Result("pending", 0L, null));
-        s.add(new Result("skipped", 0L, null));
-        assertEquals("undefined", s.getStatus());
+        s.add(new Result(Result.Type.PASSED, 0L, null));
+        s.add(new Result(Result.Type.UNDEFINED, 0L, null));
+        s.add(new Result(Result.Type.PENDING, 0L, null));
+        s.add(new Result(Result.Type.SKIPPED, 0L, null));
+        assertEquals(Result.Type.UNDEFINED, s.getStatus());
     }
 
     @Test
     public void passed_undefined_skipped_is_undefined() throws Exception {
-        s.add(new Result("passed", 0L, null));
-        s.add(new Result("undefined", 0L, null));
-        s.add(new Result("skipped", 0L, null));
-        assertEquals("undefined", s.getStatus());
+        s.add(new Result(Result.Type.PASSED, 0L, null));
+        s.add(new Result(Result.Type.UNDEFINED, 0L, null));
+        s.add(new Result(Result.Type.SKIPPED, 0L, null));
+        assertEquals(Result.Type.UNDEFINED, s.getStatus());
     }
 
     @Test
@@ -68,6 +70,28 @@ public class ScenarioResultTest {
     public void prints_output() {
         s.write("Hi");
         verify(bus).send(argThat(new WriteEventMatcher("Hi")));
+    }
+
+    @Test
+    public void failed_followed_by_pending_yields_failed_error() {
+        Throwable failedError = mock(Throwable.class);
+        Throwable pendingError = mock(Throwable.class);
+
+        s.add(new Result(Result.Type.FAILED, 0L, failedError));
+        s.add(new Result(Result.Type.PENDING, 0L, pendingError));
+
+        assertThat(s.getError(), sameInstance(failedError));
+    }
+
+    @Test
+    public void pending_followed_by_failed_yields_failed_error() {
+        Throwable pendingError = mock(Throwable.class);
+        Throwable failedError = mock(Throwable.class);
+
+        s.add(new Result(Result.Type.PENDING, 0L, pendingError));
+        s.add(new Result(Result.Type.FAILED, 0L, failedError));
+
+        assertThat(s.getError(), sameInstance(failedError));
     }
 }
 

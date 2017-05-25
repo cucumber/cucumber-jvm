@@ -16,7 +16,6 @@ import java.util.Locale;
 class Stats {
     public static final long ONE_SECOND = 1000000000;
     public static final long ONE_MINUTE = 60 * ONE_SECOND;
-    public static final String PENDING = "pending";
     private SubCounts scenarioSubCounts = new SubCounts();
     private SubCounts stepSubCounts = new SubCounts();
     private long totalDuration = 0;
@@ -25,7 +24,6 @@ class Stats {
     private List<String> failedScenarios = new ArrayList<String>();
     private List<String> pendingScenarios = new ArrayList<String>();
     private List<String> undefinedScenarios = new ArrayList<String>();
-    private List<String> passedScenarios = new ArrayList<String>();
 
     public Stats(boolean monochrome) {
         this(monochrome, Locale.getDefault());
@@ -68,20 +66,20 @@ class Stats {
 
     private void printSubCounts(PrintStream out, SubCounts subCounts) {
         boolean addComma = false;
-        addComma = printSubCount(out, subCounts.failed, Result.FAILED, addComma);
-        addComma = printSubCount(out, subCounts.skipped, Result.SKIPPED.getStatus(), addComma);
-        addComma = printSubCount(out, subCounts.pending, PENDING, addComma);
-        addComma = printSubCount(out, subCounts.undefined, Result.UNDEFINED, addComma);
-        addComma = printSubCount(out, subCounts.passed, Result.PASSED, addComma);
+        addComma = printSubCount(out, subCounts.failed, Result.Type.FAILED, addComma);
+        addComma = printSubCount(out, subCounts.skipped, Result.Type.SKIPPED, addComma);
+        addComma = printSubCount(out, subCounts.pending, Result.Type.PENDING, addComma);
+        addComma = printSubCount(out, subCounts.undefined, Result.Type.UNDEFINED, addComma);
+        addComma = printSubCount(out, subCounts.passed, Result.Type.PASSED, addComma);
     }
 
-    private boolean printSubCount(PrintStream out, int count, String type, boolean addComma) {
+    private boolean printSubCount(PrintStream out, int count, Result.Type type, boolean addComma) {
         if (count != 0) {
             if (addComma) {
                 out.print(", ");
             }
-            Format format = formats.get(type);
-            out.print(format.text(count + " " + type));
+            Format format = formats.get(type.lowerCaseName());
+            out.print(format.text(count + " " + type.lowerCaseName()));
             addComma = true;
         }
         return addComma;
@@ -94,17 +92,17 @@ class Stats {
     }
 
     private void printNonZeroResultScenarios(PrintStream out, boolean isStrict) {
-        printScenarios(out, failedScenarios, Result.FAILED);
+        printScenarios(out, failedScenarios, Result.Type.FAILED);
         if (isStrict) {
-            printScenarios(out, pendingScenarios, PENDING);
-            printScenarios(out, undefinedScenarios, Result.UNDEFINED);
+            printScenarios(out, pendingScenarios, Result.Type.PENDING);
+            printScenarios(out, undefinedScenarios, Result.Type.UNDEFINED);
         }
     }
 
-    private void printScenarios(PrintStream out, List<String> scenarios, String type) {
-        Format format = formats.get(type);
+    private void printScenarios(PrintStream out, List<String> scenarios, Result.Type type) {
+        Format format = formats.get(type.lowerCaseName());
         if (!scenarios.isEmpty()) {
-            out.println(format.text(capitalizeFirstLetter(type) + " scenarios:"));
+            out.println(format.text(type.firstLetterCapitalizedName() + " scenarios:"));
         }
         for (String scenario : scenarios) {
             String[] parts = scenario.split("#");
@@ -118,16 +116,12 @@ class Stats {
         }
     }
 
-    private String capitalizeFirstLetter(String type) {
-        return type.substring(0, 1).toUpperCase(locale) + type.substring(1);
-    }
-
     public void addStep(Result result) {
         addResultToSubCount(stepSubCounts, result.getStatus());
         addTime(result.getDuration());
     }
 
-    public void addScenario(String resultStatus) {
+    public void addScenario(Result.Type resultStatus) {
         addResultToSubCount(scenarioSubCounts, resultStatus);
     }
 
@@ -139,30 +133,39 @@ class Stats {
         totalDuration += duration != null ? duration : 0;
     }
 
-    private void addResultToSubCount(SubCounts subCounts, String resultStatus) {
-        if (resultStatus.equals(Result.FAILED)) {
+    private void addResultToSubCount(SubCounts subCounts, Result.Type resultStatus) {
+        switch (resultStatus) {
+        case FAILED:
             subCounts.failed++;
-        } else if (resultStatus.equals(PENDING)) {
+            break;
+        case PENDING:
             subCounts.pending++;
-        } else if (resultStatus.equals(Result.UNDEFINED)) {
+            break;
+        case UNDEFINED:
             subCounts.undefined++;
-        } else if (resultStatus.equals(Result.SKIPPED.getStatus())) {
+            break;
+        case SKIPPED:
             subCounts.skipped++;
-        } else if (resultStatus.equals(Result.PASSED)) {
+            break;
+        default:
             subCounts.passed++;
         }
     }
 
-    public void addScenario(String resultStatus, String scenarioDesignation) {
+    public void addScenario(Result.Type resultStatus, String scenarioDesignation) {
         addResultToSubCount(scenarioSubCounts, resultStatus);
-        if (resultStatus.equals(Result.FAILED)) {
+        switch (resultStatus) {
+        case FAILED:
             failedScenarios.add(scenarioDesignation);
-        } else if (resultStatus.equals(PENDING)) {
+            break;
+        case PENDING:
             pendingScenarios.add(scenarioDesignation);
-        } else if (resultStatus.equals(Result.UNDEFINED)) {
+            break;
+        case UNDEFINED:
             undefinedScenarios.add(scenarioDesignation);
-        } else if (resultStatus.equals(Result.PASSED)) {
-            passedScenarios.add(scenarioDesignation);
+            break;
+        default:
+            // intentionally left blank
         }
     }
 

@@ -8,15 +8,32 @@ import java.util.List;
 public class Result {
     private static final long serialVersionUID = 1L;
 
-    private final String status;
+    private final Result.Type status;
     private final Long duration;
     private final Throwable error;
     private final List<String> snippets;
-    public static final Result SKIPPED = new Result("skipped", null, null);
-    public static final String UNDEFINED = "undefined";
-    public static final String PASSED = "passed";
-    public static final String PENDING = "pending";
-    public static final String FAILED = "failed";
+    public static final Result SKIPPED = new Result(Result.Type.SKIPPED, null, null);
+    public static enum Type {
+        PASSED,
+        SKIPPED,
+        PENDING,
+        UNDEFINED,
+        FAILED;
+
+        public static Type fromLowerCaseName(String lowerCaseName) {
+            return valueOf(lowerCaseName.toUpperCase());
+        }
+
+        public String lowerCaseName() {
+            return name().toLowerCase();
+        }
+
+        public String firstLetterCapitalizedName() {
+            return name().substring(0, 1) + name().substring(1).toLowerCase();
+        }
+
+
+    }
 
     /**
      * Used at runtime
@@ -25,7 +42,7 @@ public class Result {
      * @param duration
      * @param error
      */
-    public Result(String status, Long duration, Throwable error) {
+    public Result(Result.Type status, Long duration, Throwable error) {
         this(status, duration, error, Collections.<String>emptyList());
     }
 
@@ -37,14 +54,14 @@ public class Result {
      * @param error
      * @param snippets
      */
-    public Result(String status, Long duration, Throwable error, List<String> snippets) {
+    public Result(Result.Type status, Long duration, Throwable error, List<String> snippets) {
         this.status = status;
         this.duration = duration;
         this.error = error;
         this.snippets = snippets;
     }
 
-    public String getStatus() {
+    public Result.Type getStatus() {
         return status;
     }
 
@@ -64,16 +81,20 @@ public class Result {
         return snippets;
     }
 
+    public boolean is(Result.Type status) {
+        return this.status == status;
+    }
+
     public boolean isOk(boolean isStrict) {
         return hasAlwaysOkStatus() || !isStrict && hasOkWhenNotStrictStatus();
     }
 
     private boolean hasAlwaysOkStatus() {
-        return Result.PASSED.equals(status) || Result.SKIPPED.getStatus().equals(status);
+        return is(Result.Type.PASSED) || is(Result.Type.SKIPPED);
     }
 
     private boolean hasOkWhenNotStrictStatus() {
-        return Result.UNDEFINED.equals(status) || Result.PENDING.equals(status);
+        return is(Result.Type.UNDEFINED) || is(Result.Type.PENDING);
     }
 
     private String getErrorMessage(Throwable error) {
