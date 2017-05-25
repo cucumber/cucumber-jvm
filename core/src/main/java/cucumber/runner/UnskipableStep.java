@@ -18,9 +18,9 @@ public class UnskipableStep extends TestStep {
         this.hookType = hookType;
     }
 
-    protected String executeStep(String language, Scenario scenario, boolean skipSteps) throws Throwable {
+    protected Result.Type executeStep(String language, Scenario scenario, boolean skipSteps) throws Throwable {
         definitionMatch.runStep(language, scenario);
-        return Result.PASSED;
+        return Result.Type.PASSED;
     }
 
     @Override

@@ -60,7 +60,7 @@ class UsageFormatter implements Formatter {
     }
 
     void handleTestStepFinished(TestStepFinished event) {
-        if (!event.testStep.isHook() && event.result.getStatus().equals(Result.PASSED)) {
+        if (!event.testStep.isHook() && event.result.is(Result.Type.PASSED)) {
             addUsageEntry(event.result, event.testStep.getPattern(), event.testStep.getStepText(), event.testStep.getStepLocation());
         }
     }

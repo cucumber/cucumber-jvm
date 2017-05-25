@@ -29,7 +29,7 @@ public class TestCaseTest {
         EventBus bus = mock(EventBus.class);
         String language = ENGLISH;
         TestStep testStep = mock(TestStep.class);
-        when(testStep.run(eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(resultWithStatus(Result.UNDEFINED));
+        when(testStep.run(eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(resultWithStatus(Result.Type.UNDEFINED));
 
         TestCase testCase = new TestCase(Arrays.asList(testStep), pickleEvent());
         testCase.run(bus);
@@ -45,9 +45,9 @@ public class TestCaseTest {
         EventBus bus = mock(EventBus.class);
         String language = ENGLISH;
         TestStep testStep1 = mock(TestStep.class);
-        when(testStep1.run(eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(resultWithStatus(Result.PASSED));
+        when(testStep1.run(eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(resultWithStatus(Result.Type.PASSED));
         TestStep testStep2 = mock(TestStep.class);
-        when(testStep2.run(eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(resultWithStatus(Result.PASSED));
+        when(testStep2.run(eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(resultWithStatus(Result.Type.PASSED));
 
         TestCase testCase = new TestCase(Arrays.asList(testStep1, testStep2), pickleEvent());
         testCase.run(bus);
@@ -62,9 +62,9 @@ public class TestCaseTest {
         EventBus bus = mock(EventBus.class);
         String language = ENGLISH;
         TestStep testStep1 = mock(TestStep.class);
-        when(testStep1.run(eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(resultWithStatus(Result.UNDEFINED));
+        when(testStep1.run(eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(resultWithStatus(Result.Type.UNDEFINED));
         TestStep testStep2 = mock(TestStep.class);
-        when(testStep2.run(eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(Result.SKIPPED);
+        when(testStep2.run(eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(resultWithStatus(Result.Type.SKIPPED));
 
         TestCase testCase = new TestCase(Arrays.asList(testStep1, testStep2), pickleEvent());
         testCase.run(bus);
@@ -80,7 +80,7 @@ public class TestCaseTest {
         return new PickleEvent("uri", pickle);
     }
 
-    private Result resultWithStatus(String status) {
+    private Result resultWithStatus(Result.Type status) {
         return new Result(status, null, null);
     }
 }

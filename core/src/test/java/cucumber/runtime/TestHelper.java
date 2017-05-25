@@ -58,16 +58,25 @@ public class TestHelper {
     }
 
     public static Result result(String status) {
-        if (status.equals(Result.FAILED)) {
-            return result(status, mockAssertionFailedError());
-        } else if (status.equals(Result.PENDING)){
-            return result(status, new PendingException());
-        } else {
-            return new Result(status, 0L, null, Collections.<String>emptyList());
-        }
+        return result(Result.Type.fromLowerCaseName(status));
     }
 
     public static Result result(String status, Throwable error) {
+        return result(Result.Type.fromLowerCaseName(status), error);
+    }
+
+    public static Result result(Result.Type status) {
+        switch (status) {
+        case FAILED:
+            return result(status, mockAssertionFailedError());
+        case PENDING:
+            return result(status, new PendingException());
+        default:
+            return result(status, null);
+        }
+    }
+
+    public static Result result(Result.Type status, Throwable error) {
         return new Result(status, 0L, error);
     }
 
@@ -154,7 +163,7 @@ public class TestHelper {
     private static void mockSteps(RuntimeGlue glue, Map<String, Result> stepsToResult, Map<String, String> stepsToLocation) throws Throwable {
         for (String stepText : mergeStepSets(stepsToResult, stepsToLocation)) {
             Result stepResult = getResultWithDefaultPassed(stepsToResult, stepText);
-            if (!Result.UNDEFINED.equals(stepResult.getStatus())) {
+            if (!stepResult.is(Result.Type.UNDEFINED)) {
                 StepDefinitionMatch matchStep = mock(StepDefinitionMatch.class);
                 when(matchStep.getMatch()).thenReturn(matchStep);
                 when(glue.stepDefinitionMatch(anyString(), TestHelper.stepWithName(stepText))).thenReturn(matchStep);
@@ -165,12 +174,12 @@ public class TestHelper {
     }
 
     private static void mockStepResult(Result stepResult, StepDefinitionMatch matchStep) throws Throwable {
-        if (Result.PENDING.equals(stepResult.getStatus())) {
+        if (stepResult.is(Result.Type.PENDING)) {
             doThrow(new PendingException()).when(matchStep).runStep(anyString(), (Scenario) any());
-        } else if (Result.FAILED.equals(stepResult.getStatus())) {
+        } else if (stepResult.is(Result.Type.FAILED)) {
             doThrow(stepResult.getError()).when(matchStep).runStep(anyString(), (Scenario) any());
-        } else if (!Result.PASSED.equals(stepResult.getStatus()) &&
-                   !Result.SKIPPED.getStatus().equals(stepResult.getStatus())) {
+        } else if (!stepResult.is(Result.Type.PASSED) &&
+                   !stepResult.is(Result.Type.SKIPPED)) {
             fail("Cannot mock step to the result: " + stepResult.getStatus());
         }
     }
@@ -206,9 +215,9 @@ public class TestHelper {
         if (action != null) {
             doAnswer(action).when(hook).execute((Scenario)any());
         }
-        if (hookEntry.getValue().getStatus().equals("failed")) {
+        if (hookEntry.getValue().is(Result.Type.FAILED)) {
             doThrow(hookEntry.getValue().getError()).when(hook).execute((cucumber.api.Scenario) any());
-        } else if (hookEntry.getValue().getStatus().equals("pending")) {
+        } else if (hookEntry.getValue().is(Result.Type.PENDING)) {
             doThrow(new PendingException()).when(hook).execute((cucumber.api.Scenario) any());
         }
         if ("before".equals(hookEntry.getKey())) {
@@ -249,7 +258,7 @@ public class TestHelper {
     }
 
     private static Result getResultWithDefaultPassed(Map<String, Result> stepsToResult, String step) {
-        return stepsToResult.containsKey(step) ? stepsToResult.get(step) : new Result(Result.PASSED, 0L, null);
+        return stepsToResult.containsKey(step) ? stepsToResult.get(step) : new Result(Result.Type.PASSED, 0L, null);
     }
 
     private static String getLocationWithDefaultEmptyString(Map<String, String> stepsToLocation, String step) {

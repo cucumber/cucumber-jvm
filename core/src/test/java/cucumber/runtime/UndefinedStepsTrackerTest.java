@@ -175,7 +175,7 @@ public class UndefinedStepsTrackerTest {
 
     private Result undefinedResultWithSnippets(List<String> snippets) {
         Result result = mock(Result.class);
-        when(result.getStatus()).thenReturn(Result.UNDEFINED);
+        when(result.is(Result.Type.UNDEFINED)).thenReturn(true);
         when(result.getSnippets()).thenReturn(snippets);
         return result;
     }

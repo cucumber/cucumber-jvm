@@ -17,7 +17,7 @@ import java.util.Set;
 import static java.util.Arrays.asList;
 
 public class ScenarioImpl implements Scenario {
-    private static final List<String> SEVERITY = asList("passed", "skipped", "pending", "undefined", "failed");
+    private static final List<Result.Type> SEVERITY = asList(Result.Type.PASSED, Result.Type.SKIPPED, Result.Type.PENDING, Result.Type.UNDEFINED, Result.Type.FAILED);
     private final List<Result> stepResults = new ArrayList<Result>();
     private final List<PickleTag> tags;
     private final String scenarioName;
@@ -44,7 +44,7 @@ public class ScenarioImpl implements Scenario {
     }
 
     @Override
-    public String getStatus() {
+    public Result.Type getStatus() {
         int pos = 0;
         for (Result stepResult : stepResults) {
             pos = Math.max(pos, SEVERITY.indexOf(stepResult.getStatus()));

@@ -317,7 +317,7 @@ public class JSONFormatter implements Formatter {
             }
             matchMap.put("arguments", argumentList);
         }
-        if (!result.getStatus().equals(Result.UNDEFINED)) {
+        if (!result.is(Result.Type.UNDEFINED)) {
             matchMap.put("location", testStep.getCodeLocation());
         }
         return matchMap;
@@ -325,7 +325,7 @@ public class JSONFormatter implements Formatter {
 
     private Map<String, Object> createResultMap(Result result) {
         Map<String, Object> resultMap = new HashMap<String, Object>();
-        resultMap.put("status", result.getStatus());
+        resultMap.put("status", result.getStatus().lowerCaseName());
         if (result.getErrorMessage() != null) {
             resultMap.put("error_message", result.getErrorMessage());
         }

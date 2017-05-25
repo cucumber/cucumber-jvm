@@ -13,9 +13,9 @@ public interface Scenario {
     Collection<String> getSourceTagNames();
 
     /**
-     * @return the <em>most severe</em> status of the Scenario's Steps. One of "passed", "undefined", "pending", "skipped", "failed"
+     * @return the <em>most severe</em> status of the Scenario's Steps.
      */
-    String getStatus();
+    Result.Type getStatus();
 
     /**
      * @return true if and only if {@link #getStatus()} returns "failed"

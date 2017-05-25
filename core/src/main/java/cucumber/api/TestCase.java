@@ -26,7 +26,7 @@ public class TestCase {
         ScenarioImpl scenarioResult = new ScenarioImpl(bus, pickleEvent.pickle);
         for (TestStep step : testSteps) {
             Result stepResult = step.run(bus, pickleEvent.pickle.getLanguage(), scenarioResult, skipNextStep);
-            if (stepResult.getStatus() != Result.PASSED) {
+            if (!stepResult.is(Result.Type.PASSED)) {
                 skipNextStep = true;
             }
             scenarioResult.add(stepResult);

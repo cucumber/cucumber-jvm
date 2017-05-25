@@ -75,7 +75,7 @@ public class UndefinedStepsTracker implements EventListener {
     }
 
     void handleTestStepFinished(TestStep step, Result result) {
-        if (Result.UNDEFINED.equals(result.getStatus())) {
+        if (result.is(Result.Type.UNDEFINED)) {
             hasUndefinedSteps = true;
             String keyword = givenWhenThenKeyword(step.getPickleStep());
             for (String rawSnippet : result.getSnippets()) {
