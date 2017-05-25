@@ -8,7 +8,9 @@ import gherkin.pickles.Pickle;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 
+import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Matchers.argThat;
@@ -68,6 +70,28 @@ public class ScenarioResultTest {
     public void prints_output() {
         s.write("Hi");
         verify(bus).send(argThat(new WriteEventMatcher("Hi")));
+    }
+
+    @Test
+    public void failed_followed_by_pending_yields_failed_error() {
+        Throwable failedError = mock(Throwable.class);
+        Throwable pendingError = mock(Throwable.class);
+
+        s.add(new Result("failed", 0L, failedError));
+        s.add(new Result("pending", 0L, pendingError));
+
+        assertThat(s.getError(), sameInstance(failedError));
+    }
+
+    @Test
+    public void pending_followed_by_failed_yields_failed_error() {
+        Throwable pendingError = mock(Throwable.class);
+        Throwable failedError = mock(Throwable.class);
+
+        s.add(new Result("pending", 0L, pendingError));
+        s.add(new Result("failed", 0L, failedError));
+
+        assertThat(s.getError(), sameInstance(failedError));
     }
 }
 

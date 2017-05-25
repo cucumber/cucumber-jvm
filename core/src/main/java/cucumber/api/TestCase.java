@@ -21,7 +21,8 @@ public class TestCase {
 
     public void run(EventBus bus) {
         boolean skipNextStep = false;
-        bus.send(new TestCaseStarted(bus.getTime(), this));
+        Long startTime = bus.getTime();
+        bus.send(new TestCaseStarted(startTime, this));
         ScenarioImpl scenarioResult = new ScenarioImpl(bus, pickleEvent.pickle);
         for (TestStep step : testSteps) {
             Result stepResult = step.run(bus, pickleEvent.pickle.getLanguage(), scenarioResult, skipNextStep);
@@ -30,7 +31,8 @@ public class TestCase {
             }
             scenarioResult.add(stepResult);
         }
-        bus.send(new TestCaseFinished(bus.getTime(), this, new Result(scenarioResult.getStatus(), null, null)));
+        Long stopTime = bus.getTime();
+        bus.send(new TestCaseFinished(stopTime, this, new Result(scenarioResult.getStatus(), stopTime - startTime, scenarioResult.getError())));
     }
 
     public List<TestStep> getTestSteps() {

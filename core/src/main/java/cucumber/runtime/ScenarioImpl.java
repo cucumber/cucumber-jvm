@@ -75,4 +75,17 @@ public class ScenarioImpl implements Scenario {
     public String getName() {
         return scenarioName;
     }
+
+    public Throwable getError() {
+        Throwable error = null;
+        int maxPos = 0;
+        for (Result stepResult : stepResults) {
+            int currentPos = SEVERITY.indexOf(stepResult.getStatus());
+            if (currentPos > maxPos) {
+                maxPos = currentPos;
+                error = stepResult.getError();
+            }
+        }
+        return error;
+    }
 }
