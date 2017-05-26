@@ -23,7 +23,6 @@ public class TestNGCucumberRunner {
     private RuntimeOptions runtimeOptions;
     private ResourceLoader resourceLoader;
     private FeatureResultListener resultListener;
-    private ClassLoader classLoader;
 
     /**
      * Bootstrap the cucumber runtime
@@ -31,7 +30,7 @@ public class TestNGCucumberRunner {
      * @param clazz Which has the cucumber.api.CucumberOptions and org.testng.annotations.Test annotations
      */
     public TestNGCucumberRunner(Class clazz) {
-        classLoader = clazz.getClassLoader();
+        ClassLoader classLoader = clazz.getClassLoader();
         resourceLoader = new MultiLoader(classLoader);
 
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(clazz);

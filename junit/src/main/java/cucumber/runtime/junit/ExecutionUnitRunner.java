@@ -16,15 +16,15 @@ import java.util.Map;
 /**
  * Runs a scenario, or a "synthetic" scenario derived from an Examples row.
  */
-public class ExecutionUnitRunner extends ParentRunner<PickleStep> {
+class ExecutionUnitRunner extends ParentRunner<PickleStep> {
     private final Runner runner;
     private final PickleEvent pickleEvent;
     private final JUnitReporter jUnitReporter;
     private final Map<PickleStep, Description> stepDescriptions = new HashMap<PickleStep, Description>();
     private Description description;
 
-    public ExecutionUnitRunner(Runner runner, PickleEvent pickleEvent, JUnitReporter jUnitReporter) throws InitializationError {
-        super(ExecutionUnitRunner.class);
+    ExecutionUnitRunner(Runner runner, PickleEvent pickleEvent, JUnitReporter jUnitReporter) throws InitializationError {
+        super(null);
         this.runner = runner;
         this.pickleEvent = pickleEvent;
         this.jUnitReporter = jUnitReporter;
@@ -99,7 +99,7 @@ class PickleWrapper implements Serializable {
     private static final long serialVersionUID = 1L;
     private PickleEvent pickleEvent;
 
-    public PickleWrapper(PickleEvent pickleEvent) {
+    PickleWrapper(PickleEvent pickleEvent) {
         this.pickleEvent = pickleEvent;
     }
 }
@@ -108,7 +108,7 @@ class PickleStepWrapper implements Serializable {
     private static final long serialVersionUID = 1L;
     private PickleStep step;
 
-    public PickleStepWrapper(PickleStep step) {
+    PickleStepWrapper(PickleStep step) {
         this.step = step;
     }
 }

@@ -56,7 +56,7 @@ public class TestCase {
     }
 
     private String fileColonLine(PickleLocation location) {
-        return pickleEvent.uri + ":" + Integer.toString(location.getLine());
+        return pickleEvent.uri + ":" + location.getLine();
     }
 
     public List<PickleTag> getTags() {

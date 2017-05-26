@@ -28,7 +28,7 @@ import gherkin.pickles.PickleTag;
 
 import java.util.List;
 
-public class PrettyFormatter implements Formatter, ColorAware {
+class PrettyFormatter implements Formatter, ColorAware {
     private static final String SCENARIO_INDENT = "  ";
     private static final String STEP_INDENT = "    ";
     private static final String EXAMPLES_INDENT = "    ";
@@ -209,7 +209,7 @@ public class PrettyFormatter implements Formatter, ColorAware {
 
     String formatStepText(String keyword, String stepText, Format textFormat, Format argFormat, List<Argument> arguments) {
         int textStart = 0;
-        StringBuffer result = new StringBuffer(textFormat.text(keyword));
+        StringBuilder result = new StringBuilder(textFormat.text(keyword));
         for (Argument argument : arguments) {
             // can be null if the argument is missing.
             if (argument.getOffset() != null) {

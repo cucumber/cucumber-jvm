@@ -122,7 +122,7 @@ class HTMLFormatter implements Formatter {
         this.htmlReportDir = htmlReportDir;
     }
 
-    HTMLFormatter(URL htmlReportDir, NiceAppendable jsOut) {
+    public HTMLFormatter(URL htmlReportDir, NiceAppendable jsOut) {
         this(htmlReportDir);
         this.jsOut = jsOut;
     }

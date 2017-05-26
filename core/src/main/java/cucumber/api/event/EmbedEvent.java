@@ -1,6 +1,6 @@
 package cucumber.api.event;
 
-public class EmbedEvent extends TimeStampedEvent {
+public final class EmbedEvent extends TimeStampedEvent {
     public final byte[] data;
     public final String mimeType;
 

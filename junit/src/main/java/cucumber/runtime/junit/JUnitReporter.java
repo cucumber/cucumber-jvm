@@ -18,13 +18,13 @@ public class JUnitReporter {
     private final boolean strict;
     private final JUnitOptions junitOptions;
 
-    EachTestNotifier stepNotifier;
+    EachTestNotifier stepNotifier; // package-private for testing
     private ExecutionUnitRunner executionUnitRunner;
     private RunNotifier runNotifier;
-    EachTestNotifier executionUnitNotifier;
+    EachTestNotifier executionUnitNotifier; // package-private for testing
     private boolean failedStep;
     private boolean ignoredStep;
-    private EventHandler<TestStepStarted> testStepStartedHandler = new EventHandler<TestStepStarted>() {
+    private final EventHandler<TestStepStarted> testStepStartedHandler = new EventHandler<TestStepStarted>() {
 
         @Override
         public void receive(TestStepStarted event) {
@@ -54,7 +54,7 @@ public class JUnitReporter {
         bus.registerHandlerFor(TestStepFinished.class, testStepFinishedHandler);
     }
 
-    public void startExecutionUnit(ExecutionUnitRunner executionUnitRunner, RunNotifier runNotifier) {
+    void startExecutionUnit(ExecutionUnitRunner executionUnitRunner, RunNotifier runNotifier) {
         this.executionUnitRunner = executionUnitRunner;
         this.runNotifier = runNotifier;
         this.stepNotifier = null;
@@ -65,7 +65,7 @@ public class JUnitReporter {
         executionUnitNotifier.fireTestStarted();
     }
 
-    public void finishExecutionUnit() {
+    void finishExecutionUnit() {
         if (ignoredStep && !failedStep) {
             executionUnitNotifier.fireTestIgnored();
         }
@@ -112,7 +112,7 @@ public class JUnitReporter {
         }
     }
 
-    public boolean useFilenameCompatibleNames() {
+    boolean useFilenameCompatibleNames() {
         return junitOptions.filenameCompatibleNames();
     }
 

@@ -52,7 +52,7 @@ public class Runner implements UnreportedStepExecutor {
     public void runUnreportedStep(String featurePath, String language, String stepName, int line, List<PickleRow> dataTableRows, PickleString docString) throws Throwable {
         List<Argument> arguments = new ArrayList<Argument>();
         if (dataTableRows != null && !dataTableRows.isEmpty()) {
-            arguments.add((Argument) new PickleTable(dataTableRows));
+            arguments.add(new PickleTable(dataTableRows));
         } else if (docString != null) {
             arguments.add(docString);
         }
@@ -98,8 +98,7 @@ public class Runner implements UnreportedStepExecutor {
         if (!runtimeOptions.isDryRun()) {
             addTestStepsForAfterHooks(testSteps, pickleEvent.pickle.getTags());
         }
-        TestCase testCase = new TestCase(testSteps, pickleEvent);
-        return testCase;
+        return new TestCase(testSteps, pickleEvent);
     }
 
     private void addTestStepsForPickleSteps(List<TestStep> testSteps, PickleEvent pickleEvent) {
