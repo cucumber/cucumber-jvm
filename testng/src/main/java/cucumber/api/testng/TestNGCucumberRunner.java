@@ -17,7 +17,7 @@ import java.util.List;
 /**
  * Glue code for running Cucumber via TestNG.
  */
-class TestNGCucumberRunner {
+public class TestNGCucumberRunner {
     private Runtime runtime;
     private TestNgReporter reporter;
     private RuntimeOptions runtimeOptions;
@@ -29,7 +29,7 @@ class TestNGCucumberRunner {
      *
      * @param clazz Which has the cucumber.api.CucumberOptions and org.testng.annotations.Test annotations
      */
-    TestNGCucumberRunner(Class clazz) {
+    public TestNGCucumberRunner(Class clazz) {
         ClassLoader classLoader = clazz.getClassLoader();
         resourceLoader = new MultiLoader(classLoader);
 
@@ -47,7 +47,7 @@ class TestNGCucumberRunner {
     /**
      * Run the Cucumber features
      */
-    void runCukes() {
+    public void runCukes() {
         for (CucumberFeature cucumberFeature : getFeatures()) {
             reporter.uri(cucumberFeature.getPath());
             runtime.runFeature(cucumberFeature);
@@ -58,7 +58,7 @@ class TestNGCucumberRunner {
         }
     }
 
-    void runCucumber(CucumberFeature cucumberFeature) {
+    public void runCucumber(CucumberFeature cucumberFeature) {
         resultListener.startFeature();
         reporter.uri(cucumberFeature.getPath());
         runtime.runFeature(cucumberFeature);
@@ -68,7 +68,7 @@ class TestNGCucumberRunner {
         }
     }
 
-    void finish() {
+    public void finish() {
         runtime.getEventBus().send(new TestRunFinished(runtime.getEventBus().getTime()));
         runtime.printSummary();
     }
@@ -84,7 +84,7 @@ class TestNGCucumberRunner {
      * @return returns the cucumber features as a two dimensional array of
      * {@link CucumberFeatureWrapper} objects.
      */
-    Object[][] provideFeatures() {
+    public Object[][] provideFeatures() {
         try {
             List<CucumberFeature> features = getFeatures();
             List<Object[]> featuresList = new ArrayList<Object[]>(features.size());
