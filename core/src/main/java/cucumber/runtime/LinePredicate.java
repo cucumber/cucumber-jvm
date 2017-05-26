@@ -17,7 +17,7 @@ public class LinePredicate implements PicklePredicate {
     public boolean apply(PickleEvent pickleEvent) {
         String picklePath = pickleEvent.uri;
         if (!lineFilters.containsKey(picklePath)) {
-            return true;
+            return false;
         }
         for (Long line : lineFilters.get(picklePath)) {
             for (PickleLocation location : pickleEvent.pickle.getLocations()) {
