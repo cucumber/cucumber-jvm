@@ -3,9 +3,10 @@ package cucumber.runtime.junit;
 import cucumber.api.PendingException;
 import cucumber.api.Result;
 import cucumber.runner.EventBus;
+import cucumber.runtime.junit.PickleRunners.PickleRunner;
 import gherkin.pickles.PickleStep;
+import org.junit.AssumptionViolatedException;
 import org.junit.Test;
-import org.junit.internal.runners.model.EachTestNotifier;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
@@ -34,19 +35,19 @@ public class JUnitReporterTest {
         createAllowStartedIgnoredReporter();
         PickleStep runnerStep = mockStep();
         Description runnerStepDescription = stepDescription(runnerStep);
-        ExecutionUnitRunner executionUnitRunner = mockExecutionUnitRunner(runnerSteps(runnerStep));
-        when(executionUnitRunner.describeChild(runnerStep)).thenReturn(runnerStepDescription);
+        PickleRunner pickleRunner = mockPickleRunner(runnerSteps(runnerStep));
+        when(pickleRunner.describeChild(runnerStep)).thenReturn(runnerStepDescription);
         runNotifier = mock(RunNotifier.class);
 
-        jUnitReporter.startExecutionUnit(executionUnitRunner, runNotifier);
+        jUnitReporter.startExecutionUnit(pickleRunner, runNotifier);
         jUnitReporter.handleStepStarted(runnerStep);
 
-        verify(runNotifier).fireTestStarted(executionUnitRunner.getDescription());
+        verify(runNotifier).fireTestStarted(pickleRunner.getDescription());
         verify(runNotifier).fireTestStarted(runnerStepDescription);
     }
 
     @Test
-    public void resultWithError() {
+    public void result_with_error() {
         createNonStrictReporter();
         Result result = mock(Result.class);
         Throwable exception = mock(Throwable.class);
@@ -66,9 +67,42 @@ public class JUnitReporterTest {
     }
 
     @Test
+    public void result_with_assumption_violated() {
+        createStrictReporter();
+        Result result = mock(Result.class);
+        Throwable exception = new AssumptionViolatedException("Oops");
+        when(result.getError()).thenReturn(exception);
+
+        PickleStep runnerStep = mockStep();
+        Description runnerStepDescription = stepDescription(runnerStep);
+        PickleRunner pickleRunner = mockPickleRunner(runnerSteps(runnerStep));
+        when(pickleRunner.describeChild(runnerStep)).thenReturn(runnerStepDescription);
+        Description pickleRunnerDescription = mock(Description.class);
+        when(pickleRunner.getDescription()).thenReturn(pickleRunnerDescription);
+
+
+        Description description = mock(Description.class);
+        createRunNotifier(description);
+
+        jUnitReporter.startExecutionUnit(pickleRunner, runNotifier);
+        jUnitReporter.handleStepStarted(runnerStep);
+        jUnitReporter.handleStepResult(result);
+
+        ArgumentCaptor<Failure> failureArgumentCaptor = ArgumentCaptor.forClass(Failure.class);
+        verify(runNotifier, times(2)).fireTestAssumptionFailed(failureArgumentCaptor.capture());
+
+        List<Failure> failure = failureArgumentCaptor.getAllValues();
+        assertEquals(runnerStepDescription, failure.get(0).getDescription());
+        assertEquals(exception, failure.get(0).getException());
+
+        assertEquals(pickleRunnerDescription, failure.get(1).getDescription());
+        assertEquals(exception, failure.get(1).getException());
+    }
+
+    @Test
     public void result_with_undefined_step_non_strict() {
         createNonStrictReporter();
-        EachTestNotifier stepNotifier = mock(EachTestNotifier.class);
+        JUnitReporter.EachTestNotifier stepNotifier = mock(JUnitReporter.EachTestNotifier.class);
         jUnitReporter.stepNotifier = stepNotifier;
 
         jUnitReporter.handleStepResult(mockResult(Result.Type.UNDEFINED));
@@ -83,25 +117,34 @@ public class JUnitReporterTest {
     public void result_with_undefined_step_strict() {
         createStrictReporter();
         createDefaultRunNotifier();
-        EachTestNotifier stepNotifier = mock(EachTestNotifier.class);
+        JUnitReporter.EachTestNotifier stepNotifier = mock(JUnitReporter.EachTestNotifier.class);
         jUnitReporter.stepNotifier = stepNotifier;
-        EachTestNotifier executionUnitNotifier = mock(EachTestNotifier.class);
-        jUnitReporter.executionUnitNotifier = executionUnitNotifier;
+        JUnitReporter.EachTestNotifier pickleRunnerNotifier = mock(JUnitReporter.EachTestNotifier.class);
+        jUnitReporter.pickleRunnerNotifier = pickleRunnerNotifier;
 
         jUnitReporter.handleStepResult(mockResult(Result.Type.UNDEFINED));
 
         verify(stepNotifier, times(1)).fireTestStarted();
         verify(stepNotifier, times(1)).fireTestFinished();
         verifyAddFailureWithPendingException(stepNotifier);
-        verifyAddFailureWithPendingException(executionUnitNotifier);
+        verifyAddFailureWithPendingException(pickleRunnerNotifier);
         verify(stepNotifier, times(0)).fireTestIgnored();
     }
 
-    private void verifyAddFailureWithPendingException(EachTestNotifier stepNotifier) {
+    private void verifyAddFailureWithAssumptionViolatedException(JUnitReporter.EachTestNotifier stepNotifier) {
+        verifyAddFailureWithException(AssumptionViolatedException.class, stepNotifier);
+    }
+
+    private void verifyAddFailureWithPendingException(JUnitReporter.EachTestNotifier stepNotifier) {
+        verifyAddFailureWithException(PendingException.class, stepNotifier);
+    }
+
+
+    private void verifyAddFailureWithException(Class<?> exception, JUnitReporter.EachTestNotifier stepNotifier) {
         ArgumentCaptor<Throwable> captor = ArgumentCaptor.forClass(Throwable.class);
         verify(stepNotifier).addFailure(captor.capture());
         Throwable error = captor.getValue();
-        assertTrue(error instanceof PendingException);
+        assertTrue(exception.isInstance(error));
     }
 
     @Test
@@ -110,7 +153,7 @@ public class JUnitReporterTest {
         Result result = mock(Result.class);
         when(result.getError()).thenReturn(new PendingException());
 
-        EachTestNotifier stepNotifier = mock(EachTestNotifier.class);
+        JUnitReporter.EachTestNotifier stepNotifier = mock(JUnitReporter.EachTestNotifier.class);
         jUnitReporter.stepNotifier = stepNotifier;
 
         jUnitReporter.handleStepResult(result);
@@ -128,18 +171,56 @@ public class JUnitReporterTest {
         Result result = mock(Result.class);
         when(result.getError()).thenReturn(new PendingException());
 
-        EachTestNotifier stepNotifier = mock(EachTestNotifier.class);
+        JUnitReporter.EachTestNotifier stepNotifier = mock(JUnitReporter.EachTestNotifier.class);
         jUnitReporter.stepNotifier = stepNotifier;
-        EachTestNotifier executionUnitNotifier = mock(EachTestNotifier.class);
-        jUnitReporter.executionUnitNotifier = executionUnitNotifier;
+        JUnitReporter.EachTestNotifier pickleRunnerNotifier = mock(JUnitReporter.EachTestNotifier.class);
+        jUnitReporter.pickleRunnerNotifier = pickleRunnerNotifier;
 
         jUnitReporter.handleStepResult(result);
 
         verify(stepNotifier, times(1)).fireTestStarted();
         verify(stepNotifier, times(1)).fireTestFinished();
         verifyAddFailureWithPendingException(stepNotifier);
-        verifyAddFailureWithPendingException(executionUnitNotifier);
+        verifyAddFailureWithPendingException(pickleRunnerNotifier);
         verify(stepNotifier, times(0)).fireTestIgnored();
+    }
+
+    @Test
+    public void result_with_assumption_violated_strict() {
+        createStrictReporter();
+        createDefaultRunNotifier();
+        Result result = mock(Result.class);
+        when(result.getError()).thenReturn(new AssumptionViolatedException("Oops"));
+
+        JUnitReporter.EachTestNotifier stepNotifier = mock(JUnitReporter.EachTestNotifier.class);
+        jUnitReporter.stepNotifier = stepNotifier;
+        JUnitReporter.EachTestNotifier pickleRunnerNotifier = mock(JUnitReporter.EachTestNotifier.class);
+        jUnitReporter.pickleRunnerNotifier = pickleRunnerNotifier;
+
+        jUnitReporter.handleStepResult(result);
+
+        verify(stepNotifier, times(1)).fireTestStarted();
+        verify(stepNotifier, times(1)).fireTestFinished();
+        verifyAddFailureWithAssumptionViolatedException(stepNotifier);
+        verifyAddFailureWithAssumptionViolatedException(pickleRunnerNotifier);
+        verify(stepNotifier, times(0)).fireTestIgnored();
+    }
+
+    @Test
+    public void result_with_assumption_violated_non_strict() {
+        createNonStrictReporter();
+        Result result = mock(Result.class);
+        when(result.getError()).thenReturn(new AssumptionViolatedException("Oops"));
+
+        JUnitReporter.EachTestNotifier stepNotifier = mock(JUnitReporter.EachTestNotifier.class);
+        jUnitReporter.stepNotifier = stepNotifier;
+
+        jUnitReporter.handleStepResult(result);
+
+        verify(stepNotifier, times(0)).fireTestStarted();
+        verify(stepNotifier, times(0)).fireTestFinished();
+        verify(stepNotifier, times(0)).addFailure(Matchers.<Throwable>any(Throwable.class));
+        verify(stepNotifier).fireTestIgnored();
     }
 
     @Test
@@ -147,7 +228,7 @@ public class JUnitReporterTest {
         createNonStrictReporter();
         Result result = mock(Result.class);
 
-        EachTestNotifier stepNotifier = mock(EachTestNotifier.class);
+        JUnitReporter.EachTestNotifier stepNotifier = mock(JUnitReporter.EachTestNotifier.class);
         jUnitReporter.stepNotifier = stepNotifier;
 
         jUnitReporter.handleStepResult(result);
@@ -163,7 +244,7 @@ public class JUnitReporterTest {
         createStrictReporter();
         Result result = mock(Result.class);
 
-        EachTestNotifier stepNotifier = mock(EachTestNotifier.class);
+        JUnitReporter.EachTestNotifier stepNotifier = mock(JUnitReporter.EachTestNotifier.class);
         jUnitReporter.stepNotifier = stepNotifier;
 
         jUnitReporter.handleStepResult(result);
@@ -179,7 +260,7 @@ public class JUnitReporterTest {
         createAllowStartedIgnoredReporter();
         Result result = mock(Result.class);
 
-        EachTestNotifier stepNotifier = mock(EachTestNotifier.class);
+        JUnitReporter.EachTestNotifier stepNotifier = mock(JUnitReporter.EachTestNotifier.class);
         jUnitReporter.stepNotifier = stepNotifier;
 
         jUnitReporter.handleStepResult(result);
@@ -197,12 +278,12 @@ public class JUnitReporterTest {
         Result result = mockResult(Result.Type.PENDING);
         when(result.getError()).thenReturn(new PendingException());
 
-        EachTestNotifier executionUnitNotifier = mock(EachTestNotifier.class);
-        jUnitReporter.executionUnitNotifier = executionUnitNotifier;
+        JUnitReporter.EachTestNotifier pickleRunnerNotifier = mock(JUnitReporter.EachTestNotifier.class);
+        jUnitReporter.pickleRunnerNotifier = pickleRunnerNotifier;
 
         jUnitReporter.handleHookResult(result);
 
-        verifyAddFailureWithPendingException(executionUnitNotifier);
+        verifyAddFailureWithPendingException(pickleRunnerNotifier);
     }
 
     @Test
@@ -212,13 +293,13 @@ public class JUnitReporterTest {
         Result result = mockResult(Result.Type.PENDING);
         when(result.getError()).thenReturn(new PendingException());
 
-        EachTestNotifier executionUnitNotifier = mock(EachTestNotifier.class);
-        jUnitReporter.executionUnitNotifier = executionUnitNotifier;
+        JUnitReporter.EachTestNotifier pickleRunnerNotifier = mock(JUnitReporter.EachTestNotifier.class);
+        jUnitReporter.pickleRunnerNotifier = pickleRunnerNotifier;
 
         jUnitReporter.handleHookResult(result);
         jUnitReporter.finishExecutionUnit();
 
-        verify(executionUnitNotifier).fireTestIgnored();
+        verify(pickleRunnerNotifier).fireTestIgnored();
     }
 
     @Test
@@ -231,26 +312,26 @@ public class JUnitReporterTest {
         Result hookResult = mockResult(Result.Type.PENDING);
         when(hookResult.getError()).thenReturn(new PendingException());
 
-        EachTestNotifier executionUnitNotifier = mock(EachTestNotifier.class);
-        jUnitReporter.executionUnitNotifier = executionUnitNotifier;
+        JUnitReporter.EachTestNotifier pickleRunnerNotifier = mock(JUnitReporter.EachTestNotifier.class);
+        jUnitReporter.pickleRunnerNotifier = pickleRunnerNotifier;
 
         jUnitReporter.handleStepResult(stepResult);
         jUnitReporter.handleHookResult(hookResult);
         jUnitReporter.finishExecutionUnit();
 
-        verify(executionUnitNotifier, times(0)).fireTestIgnored();
+        verify(pickleRunnerNotifier, times(0)).fireTestIgnored();
     }
 
     @Test
     public void creates_step_notifier_with_step_from_execution_unit_runner() throws Exception {
         PickleStep runnerStep = mockStep("Step Name");
         Description runnerStepDescription = stepDescription(runnerStep);
-        ExecutionUnitRunner executionUnitRunner = mockExecutionUnitRunner(runnerSteps(runnerStep));
-        when(executionUnitRunner.describeChild(runnerStep)).thenReturn(runnerStepDescription);
+        PickleRunner pickleRunner = mockPickleRunner(runnerSteps(runnerStep));
+        when(pickleRunner.describeChild(runnerStep)).thenReturn(runnerStepDescription);
         RunNotifier notifier = mock(RunNotifier.class);
         jUnitReporter = new JUnitReporter(mock(EventBus.class), false, new JUnitOptions(Collections.<String>emptyList()));
 
-        jUnitReporter.startExecutionUnit(executionUnitRunner, notifier);
+        jUnitReporter.startExecutionUnit(pickleRunner, notifier);
         jUnitReporter.handleStepStarted(runnerStep);
         jUnitReporter.handleStepResult(mockResult());
 
@@ -269,10 +350,10 @@ public class JUnitReporterTest {
         return result;
     }
 
-    private ExecutionUnitRunner mockExecutionUnitRunner(List<PickleStep> runnerSteps) {
-        ExecutionUnitRunner executionUnitRunner = mock(ExecutionUnitRunner.class);
-        when(executionUnitRunner.getDescription()).thenReturn(mock(Description.class));
-        return executionUnitRunner;
+    private PickleRunner mockPickleRunner(List<PickleStep> runnerSteps) {
+        PickleRunner pickleRunner = mock(PickleRunner.class);
+        when(pickleRunner.getDescription()).thenReturn(mock(Description.class));
+        return pickleRunner;
     }
 
     private List<PickleStep> runnerSteps(PickleStep step) {
@@ -302,9 +383,9 @@ public class JUnitReporterTest {
 
     private void createRunNotifier(Description description) {
         runNotifier = mock(RunNotifier.class);
-        ExecutionUnitRunner executionUnitRunner = mock(ExecutionUnitRunner.class);
-        when(executionUnitRunner.getDescription()).thenReturn(description);
-        jUnitReporter.startExecutionUnit(executionUnitRunner, runNotifier);
+        PickleRunner pickleRunner = mock(PickleRunner.class);
+        when(pickleRunner.getDescription()).thenReturn(description);
+        jUnitReporter.startExecutionUnit(pickleRunner, runNotifier);
     }
 
     private void createStrictReporter() {

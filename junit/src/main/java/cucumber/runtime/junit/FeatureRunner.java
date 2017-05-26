@@ -1,7 +1,11 @@
 package cucumber.runtime.junit;
 
+import static cucumber.runtime.junit.PickleRunners.withNoStepDescriptions;
+import static cucumber.runtime.junit.PickleRunners.withStepDescriptions;
+
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Runtime;
+import cucumber.runtime.junit.PickleRunners.PickleRunner;
 import cucumber.runtime.model.CucumberFeature;
 import gherkin.ast.Feature;
 import gherkin.events.PickleEvent;
@@ -16,8 +20,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FeatureRunner extends ParentRunner<ParentRunner> {
-    private final List<ParentRunner> children = new ArrayList<ParentRunner>();
+public class FeatureRunner extends ParentRunner<PickleRunner> {
+    private final List<PickleRunner> children = new ArrayList<PickleRunner>();
 
     private final CucumberFeature cucumberFeature;
     private Description description;
@@ -38,7 +42,7 @@ public class FeatureRunner extends ParentRunner<ParentRunner> {
     public Description getDescription() {
         if (description == null) {
             description = Description.createSuiteDescription(getName(), new FeatureId(cucumberFeature));
-            for (ParentRunner child : getChildren()) {
+            for (PickleRunner child : getChildren()) {
                 description.addChild(describeChild(child));
             }
         }
@@ -50,17 +54,17 @@ public class FeatureRunner extends ParentRunner<ParentRunner> {
     }
 
     @Override
-    protected List<ParentRunner> getChildren() {
+    protected List<PickleRunner> getChildren() {
         return children;
     }
 
     @Override
-    protected Description describeChild(ParentRunner child) {
+    protected Description describeChild(PickleRunner child) {
         return child.getDescription();
     }
 
     @Override
-    protected void runChild(ParentRunner child, RunNotifier notifier) {
+    protected void runChild(PickleRunner child, RunNotifier notifier) {
         child.run(notifier);
     }
 
@@ -78,9 +82,15 @@ public class FeatureRunner extends ParentRunner<ParentRunner> {
         for (PickleEvent pickleEvent : pickleEvents) {
             if (runtime.matchesFilters(pickleEvent)) {
                 try {
-                    ParentRunner pickleRunner;
-                    pickleRunner = new ExecutionUnitRunner(runtime.getRunner(), pickleEvent, jUnitReporter);
-                    children.add(pickleRunner);
+                    if(jUnitReporter.stepNotifications()) {
+                        PickleRunner picklePickleRunner;
+                        picklePickleRunner = withStepDescriptions(runtime.getRunner(), pickleEvent, jUnitReporter);
+                        children.add(picklePickleRunner);
+                    } else {
+                        PickleRunner picklePickleRunner;
+                        picklePickleRunner = withNoStepDescriptions(runtime.getRunner(), pickleEvent, jUnitReporter);
+                        children.add(picklePickleRunner);
+                    }
                 } catch (InitializationError e) {
                     throw new CucumberException("Failed to create scenario runner", e);
                 }

@@ -14,6 +14,7 @@ public class JUnitOptions {
 
     private boolean allowStartedIgnored = false;
     private boolean filenameCompatibleNames = false;
+    private boolean stepNotifications = true;
 
     /**
      * Create a new instance from a list of options, for example:
@@ -38,7 +39,9 @@ public class JUnitOptions {
                 allowStartedIgnored = !arg.startsWith("--no-");
             } else if (arg.equals("--no-filename-compatible-names") || arg.equals("--filename-compatible-names")) {
                 filenameCompatibleNames = !arg.startsWith("--no-");
-            } else {
+            } else if (arg.equals("--no-step-notifications") || arg.equals("--step-notifications")) {
+                stepNotifications = !arg.startsWith("--no-");
+            } else{
                 throw new CucumberException("Unknown option: " + arg);
             }
         }
@@ -49,6 +52,9 @@ public class JUnitOptions {
     }
     boolean filenameCompatibleNames() {
         return filenameCompatibleNames;
+    }
+    public boolean stepNotifications(){
+        return stepNotifications;
     }
 
     private void printOptions() {

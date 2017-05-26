@@ -7,7 +7,6 @@ import cucumber.runtime.RuntimeGlue;
 import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
@@ -15,7 +14,7 @@ import org.junit.runners.model.InitializationError;
 import org.mockito.ArgumentMatcher;
 import org.mockito.InOrder;
 
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -99,13 +98,19 @@ public class FeatureRunnerTest {
         return notifier;
     }
 
-    private FeatureRunner createFeatureRunner(CucumberFeature cucumberFeature) throws InitializationError {
+    private FeatureRunner createFeatureRunner(CucumberFeature cucumberFeature, String... options) throws InitializationError {
+        JUnitOptions junitOption = new JUnitOptions(Arrays.asList(options));
+        return createFeatureRunner(cucumberFeature, junitOption);
+    }
+
+
+    private FeatureRunner createFeatureRunner(CucumberFeature cucumberFeature, JUnitOptions junitOption) throws InitializationError {
         final RuntimeOptions runtimeOptions = new RuntimeOptions("-p null");
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         final ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
         final RuntimeGlue glue = mock(RuntimeGlue.class);
         final Runtime runtime = new Runtime(resourceLoader, classLoader, asList(mock(Backend.class)), runtimeOptions, new TimeService.Stub(0l), glue);
-        return new FeatureRunner(cucumberFeature, runtime, new JUnitReporter(runtime.getEventBus(), false, new JUnitOptions(Collections.<String>emptyList())));
+        return new FeatureRunner(cucumberFeature, runtime, new JUnitReporter(runtime.getEventBus(), false, junitOption));
     }
 
 
@@ -139,9 +144,43 @@ public class FeatureRunnerTest {
 
     }
 
+    @Test
+    public void shouldNotCreateStepDescriptions() throws Exception {
+        CucumberFeature cucumberFeature = TestPickleBuilder.parseFeature("path/test.feature", "" +
+            "Feature: feature name\n" +
+            "  Background:\n" +
+            "    Given background step\n" +
+            "  Scenario: A\n" +
+            "    Then scenario name\n" +
+            "  Scenario: B\n" +
+            "    Then scenario name\n" +
+            "  Scenario Outline: C\n" +
+            "    Then scenario <name>\n" +
+            "  Examples:\n" +
+            "    | name |\n" +
+            "    | C    |\n" +
+            "    | D    |\n" +
+            "    | E    |\n"
+
+        );
+
+        FeatureRunner runner = createFeatureRunner(cucumberFeature, "--no-step-notifications");
+
+        Description feature = runner.getDescription();
+        Description scenarioA = feature.getChildren().get(0);
+        assertTrue(scenarioA.getChildren().isEmpty());
+        Description scenarioB = feature.getChildren().get(1);
+        assertTrue(scenarioB.getChildren().isEmpty());
+        Description scenarioC0 = feature.getChildren().get(2);
+        assertTrue(scenarioC0.getChildren().isEmpty());
+        Description scenarioC1 = feature.getChildren().get(3);
+        assertTrue(scenarioC1.getChildren().isEmpty());
+        Description scenarioC2 = feature.getChildren().get(4);
+        assertTrue(scenarioC2.getChildren().isEmpty());
+    }
+
     private static void assertDescriptionIsUnique(Description description, Set<Description> descriptions) {
-        // Note, JUnit uses the the serializable parameter (in this case the step)
-        // as the unique id when comparing Descriptions
+        // Note: JUnit uses the the serializable parameter as the unique id when comparing Descriptions
         assertTrue(descriptions.add(description));
         for (Description each : description.getChildren()) {
             assertDescriptionIsUnique(each, descriptions);
@@ -154,21 +193,19 @@ public class FeatureRunnerTest {
             assertDescriptionIsPredictable(each, descriptions);
         }
     }
-}
 
-class DescriptionMatcher extends ArgumentMatcher<Description> {
-    private String name;
+    private static final class DescriptionMatcher extends ArgumentMatcher<Description> {
+        private String name;
 
-    public DescriptionMatcher(String name) {
-        this.name = name;
-    }
-
-    @Override
-    public boolean matches(Object argument) {
-        if (argument instanceof Description && ((Description) argument).getDisplayName().equals(name)) {
-            return true;
+        DescriptionMatcher(String name) {
+            this.name = name;
         }
-        return false;
-    }
 
+        @Override
+        public boolean matches(Object argument) {
+            return argument instanceof Description && ((Description) argument).getDisplayName().equals(name);
+        }
+
+    }
 }
+
