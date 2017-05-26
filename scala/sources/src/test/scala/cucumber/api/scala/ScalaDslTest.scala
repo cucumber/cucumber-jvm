@@ -11,7 +11,7 @@ class ScalaDslTest {
   object StubScenario extends Scenario{
     def getSourceTagNames = null
 
-    def getStatus =  ""
+    def getStatus =  null
 
     def isFailed = false
 
