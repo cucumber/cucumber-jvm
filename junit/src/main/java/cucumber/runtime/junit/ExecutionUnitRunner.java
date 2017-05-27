@@ -131,10 +131,10 @@ class ExecutionUnitRunner extends ParentRunner<PickleStep> {
         private final int pickleLine;
         private final int pickleStepLine;
 
-        PickleStepId(PickleEvent pickleEvent, PickleStep pickleStepLine) {
+        PickleStepId(PickleEvent pickleEvent, PickleStep pickleStep) {
             this.uri = pickleEvent.uri;
             this.pickleLine = pickleEvent.pickle.getLocations().get(0).getLine();
-            this.pickleStepLine = pickleStepLine.getLocations().get(0).getLine();
+            this.pickleStepLine = pickleStep.getLocations().get(0).getLine();
         }
 
         @Override
