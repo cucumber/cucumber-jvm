@@ -49,7 +49,7 @@ class ExecutionUnitRunner extends ParentRunner<PickleStep> {
     public Description getDescription() {
         if (description == null) {
             String nameForDescription = getName().isEmpty() ? "EMPTY_NAME" : getName();
-            description = Description.createSuiteDescription(nameForDescription, new PickleWrapper(pickleEvent));
+            description = Description.createSuiteDescription(nameForDescription, new PickleId(pickleEvent));
 
             for (PickleStep step : getChildren()) {
                 description.addChild(describeChild(step));
@@ -68,7 +68,7 @@ class ExecutionUnitRunner extends ParentRunner<PickleStep> {
             } else {
                 testName = step.getText();
             }
-            description = Description.createTestDescription(getName(), testName, new PickleStepWrapper(step));
+            description = Description.createTestDescription(getName(), testName, new PickleStepId(pickleEvent, step));
             stepDescriptions.put(step, description);
         }
         return description;
@@ -93,22 +93,69 @@ class ExecutionUnitRunner extends ParentRunner<PickleStep> {
     private String makeNameFilenameCompatible(String name) {
         return name.replaceAll("[^A-Za-z0-9_]", "_");
     }
-}
 
-class PickleWrapper implements Serializable {
-    private static final long serialVersionUID = 1L;
-    private PickleEvent pickleEvent;
+    private static final class PickleId implements Serializable {
+        private static final long serialVersionUID = 1L;
+        private final String uri;
+        private int pickleLine;
 
-    PickleWrapper(PickleEvent pickleEvent) {
-        this.pickleEvent = pickleEvent;
+        PickleId(PickleEvent pickleEvent) {
+            this.uri = pickleEvent.uri;
+            this.pickleLine = pickleEvent.pickle.getLocations().get(0).getLine();
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            PickleId that = (PickleId) o;
+            return pickleLine == that.pickleLine && uri.equals(that.uri);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = uri.hashCode();
+            result = 31 * result + pickleLine;
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return uri + ":" + pickleLine;
+        }
     }
-}
 
-class PickleStepWrapper implements Serializable {
-    private static final long serialVersionUID = 1L;
-    private PickleStep step;
+    private static final class PickleStepId implements Serializable {
+        private static final long serialVersionUID = 1L;
+        private final String uri;
+        private final int pickleLine;
+        private final int pickleStepLine;
 
-    PickleStepWrapper(PickleStep step) {
-        this.step = step;
+        PickleStepId(PickleEvent pickleEvent, PickleStep pickleStep) {
+            this.uri = pickleEvent.uri;
+            this.pickleLine = pickleEvent.pickle.getLocations().get(0).getLine();
+            this.pickleStepLine = pickleStep.getLocations().get(0).getLine();
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            PickleStepId that = (PickleStepId) o;
+            return pickleLine == that.pickleLine && pickleStepLine == that.pickleStepLine && uri.equals(that.uri);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = pickleLine;
+            result = 31 * result + uri.hashCode();
+            result = 31 * result + pickleStepLine;
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return uri + ":" + pickleLine + ":" + pickleStepLine;
+        }
     }
 }
