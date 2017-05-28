@@ -11,6 +11,7 @@ import gherkin.pickles.PickleStep;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 public abstract class TestStep {
     private static final String[] PENDING_EXCEPTIONS = {
@@ -55,15 +56,15 @@ public abstract class TestStep {
     public Result run(EventBus bus, String language, Scenario scenario, boolean skipSteps) {
         Long startTime = bus.getTime();
         bus.send(new TestStepStarted(startTime, this));
-        Result.Type status = skipSteps ? Result.Type.SKIPPED : Result.Type.PASSED;
+        Result.Type status = nonExceptionStatus(skipSteps); 
         Throwable error = null;
-        Object returnValue;
+        Optional<Object> returnValue;
         try {
         	returnValue = executeStep(language, scenario, skipSteps);
         } catch (Throwable t) {
             error = t;
             status = mapThrowableToStatus(t);
-            returnValue = null;
+            returnValue = Optional.empty();
         }
         Long stopTime = bus.getTime();
         Result result = mapStatusToResult(status, error, stopTime - startTime, returnValue);
@@ -75,12 +76,15 @@ public abstract class TestStep {
         return skipSteps ? Result.Type.SKIPPED : Result.Type.PASSED;
     }
 
-    protected Object executeStep(String language, Scenario scenario, boolean skipSteps) throws Throwable {
+    protected Optional<Object> executeStep(String language, Scenario scenario, boolean skipSteps) throws Throwable {
+    	Object response;
         if (!skipSteps) {
-        	return definitionMatch.runStep(language, scenario);
+        	response = definitionMatch.runStep(language, scenario);
         } else {
-        	return definitionMatch.dryRunStep(language, scenario);
+        	response = definitionMatch.dryRunStep(language, scenario);
         }
+        
+        return Optional.ofNullable(response);
     }
 
     private Result.Type mapThrowableToStatus(Throwable t) {
@@ -93,7 +97,7 @@ public abstract class TestStep {
         return Result.Type.FAILED;
     }
 
-    private Result mapStatusToResult(Result.Type status, Throwable error, long duration, Object returnVlaue) {
+    private Result mapStatusToResult(Result.Type status, Throwable error, long duration, Optional<Object> returnVlaue) {
         Long resultDuration = duration;
         if (status == Result.Type.SKIPPED) {
             return Result.SKIPPED;

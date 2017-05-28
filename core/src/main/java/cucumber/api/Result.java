@@ -14,7 +14,7 @@ public class Result {
     private final Long duration;
     private final Throwable error;
     private final List<String> snippets;
-    private final Object returnValue; 
+    private final Optional<Object> returnValue; 
     
     public static final Result SKIPPED = new Result(Result.Type.SKIPPED, null, null);
     public static enum Type {
@@ -47,7 +47,7 @@ public class Result {
      * @param error
      */
     public Result(Result.Type status, Long duration, Throwable error) {
-        this(status, duration, error, Collections.<String>emptyList(), null);
+        this(status, duration, error, Collections.<String>emptyList(), Optional.empty());
     }    
 
     /**
@@ -58,7 +58,7 @@ public class Result {
      * @param error
      * @param snippets
      */
-    public Result(Result.Type status, Long duration, Throwable error, List<String> snippets, Object returnValue) {
+    public Result(Result.Type status, Long duration, Throwable error, List<String> snippets, Optional<Object> returnValue) {
         this.status = status;
         this.duration = duration;
         this.error = error;
@@ -94,8 +94,8 @@ public class Result {
         return hasAlwaysOkStatus() || !isStrict && hasOkWhenNotStrictStatus();
     }
     
-    public Optional<Object> getReturnValue(){
-    	return Optional.ofNullable(returnValue);
+    public Optional<Object> getReturnValue() {
+    	return returnValue;
     }
 
     private boolean hasAlwaysOkStatus() {

@@ -9,6 +9,7 @@ import gherkin.pickles.Argument;
 import gherkin.pickles.PickleStep;
 
 import java.util.List;
+import java.util.Optional;
 
 public class UnskipableStep extends TestStep {
     private final HookType hookType;
@@ -18,8 +19,13 @@ public class UnskipableStep extends TestStep {
         this.hookType = hookType;
     }
 
-    protected Result.Type executeStep(String language, Scenario scenario, boolean skipSteps) throws Throwable {
-        definitionMatch.runStep(language, scenario);
+    @Override
+    protected Optional<Object> executeStep(String language, Scenario scenario, boolean skipSteps) throws Throwable {
+    	return Optional.ofNullable(definitionMatch.runStep(language, scenario));
+    }
+    
+    @Override
+    protected Result.Type nonExceptionStatus(boolean skipSteps) {
         return Result.Type.PASSED;
     }
 
