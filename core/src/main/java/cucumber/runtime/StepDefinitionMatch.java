@@ -39,11 +39,17 @@ public class StepDefinitionMatch extends Match implements DefinitionMatch {
     @Override
     public Object runStep(String language, Scenario scenario) throws Throwable {
         try {
-        	Optional<Object> responseFromPreviousStep = scenario.getResponseFromPreviousStep();
+        	Optional<Object> responseFromPreviousStep;
+        	if (scenario != null) {
+        		responseFromPreviousStep = scenario.getResponseFromPreviousStep();
+        	} else {
+        		responseFromPreviousStep = Optional.empty();
+        	}
             return stepDefinition.execute(language, transformedArgs(step, localizedXStreams.get(localeFor(language)), new PreviousStepState(responseFromPreviousStep)));
         } catch (CucumberException e) {
             throw e;
         } catch (Throwable t) {
+        	t.printStackTrace();
             throw removeFrameworkFramesAndAppendStepLocation(t, getStepLocation());
         }
     }
