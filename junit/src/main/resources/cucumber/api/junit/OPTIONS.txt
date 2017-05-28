@@ -13,4 +13,9 @@ JUnit Options:
                                          names for certain can be used as file names.
                                          For instance gradle will use these names in 
                                          the file names of the JUnit xml report files.
-
+  --[no-]step-notifications              By default steps are included in notifications
+                                         and descriptions. When interacting with cucumber
+                                         in an IDE it is nice to see the step executions.
+                                         However presenting step executions as tests to
+                                         various reporters such as surefire results in
+                                         strange test counts and weird reports.

@@ -1,5 +1,6 @@
 ## [2.0.0-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v1.2.5...master) (In Git)
 
+* [JUnit] Add `--[no-]step-notifications` option to JunitOptions ([#1135](https://github.com/cucumber/cucumber-jvm/pull/1135), [#263](https://github.com/cucumber/cucumber-jvm/issues/263), [#577](https://github.com/cucumber/cucumber-jvm/issues/577) mpkorstanje)
 * [JUnit] Use deterministic unique ids in Descriptions ([#1134](https://github.com/cucumber/cucumber-jvm/pull/1134), [#1120](https://github.com/cucumber/cucumber-jvm/issues/1120) mpkorstanje)
 * [All] Support [Tag Expressions](https://github.com/cucumber/cucumber/tree/master/tag-expressions) (part of [#1035](https://github.com/cucumber/cucumber-jvm/pull/1035) Björn Rasmusson)
 * [All] Upgrade to Gherkin 4.1 ([#1035](https://github.com/cucumber/cucumber-jvm/pull/1035), [#1131](https://github.com/cucumber/cucumber-jvm/pull/1131), [#1133](https://github.com/cucumber/cucumber-jvm/pull/1133) Björn Rasmusson, mpkorstanje). This also fixes:
