@@ -24,7 +24,7 @@ import java.util.List;
 public class PickleRunnerWithStepDescriptionsTest {
 
     @Test
-    public void shouldAssignUnequalDescriptionsToDifferentOccurrencesOfSameStepInAScenario() throws Exception {
+    public void should_assign_unequal_descriptions_to_different_occurrences_of_same_step_in_a_scenario() throws Exception {
         CucumberFeature features = TestPickleBuilder.parseFeature("path/test.feature", "" +
             "Feature: FB\n" +
             "# Scenario with same step occurring twice\n" +
@@ -64,7 +64,7 @@ public class PickleRunnerWithStepDescriptionsTest {
     }
 
     @Test
-    public void shouldIncludeScenarioNameAsClassNameInStepDescriptions() throws Exception {
+    public void should_include_scenario_name_as_class_name_in_step_descriptions() throws Exception {
         CucumberFeature features = TestPickleBuilder.parseFeature("path/test.feature", "" +
             "Feature: In cucumber.junit\n" +
             "  Scenario: first\n" +
@@ -99,7 +99,7 @@ public class PickleRunnerWithStepDescriptionsTest {
     }
 
     @Test
-    public void shouldUseScenarioNameForDisplayName() throws Exception {
+    public void should_use_scenario_name_for_display_name() throws Exception {
         List<PickleEvent> pickles = TestPickleBuilder.pickleEventsFromFeature("featurePath", "" +
                 "Feature: feature name\n" +
                 "  Scenario: scenario name\n" +
@@ -115,13 +115,13 @@ public class PickleRunnerWithStepDescriptionsTest {
     }
 
     @Test
-    public void shouldUseScenarioNameForDescriptionDisplayName() throws Exception {
+    public void should_use_scenario_name_for_description_display_name() throws Exception {
         List<PickleEvent> pickles = TestPickleBuilder.pickleEventsFromFeature("featurePath", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
             "    Then it works\n");
 
-        PickleRunner runner = PickleRunners.withNoStepDescriptions(
+        PickleRunner runner = PickleRunners.withStepDescriptions(
             mock(Runner.class),
             pickles.get(0),
             createStandardJUnitReporter()
@@ -131,7 +131,7 @@ public class PickleRunnerWithStepDescriptionsTest {
     }
 
     @Test
-    public void shouldUseStepKeyworkAndNameForChildName() throws Exception {
+    public void should_use_step_keyword_and_name_for_child_name() throws Exception {
         List<PickleEvent> pickleEvents = TestPickleBuilder.pickleEventsFromFeature("featurePath", "" +
                 "Feature: feature name\n" +
                 "  Scenario: scenario name\n" +
@@ -147,7 +147,7 @@ public class PickleRunnerWithStepDescriptionsTest {
     }
 
     @Test
-    public void shouldConvertTextFromFeatureFileForNamesWithFilenameCompatibleNameOption() throws Exception {
+    public void should_convert_text_from_feature_file_for_names_with_filename_compatible_name_option() throws Exception {
         List<PickleEvent> pickles = TestPickleBuilder.pickleEventsFromFeature("featurePath", "" +
                 "Feature: feature name\n" +
                 "  Scenario: scenario name\n" +

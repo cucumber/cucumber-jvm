@@ -1,5 +1,7 @@
 package cucumber.runtime.junit;
 
+import static org.junit.runner.Description.createTestDescription;
+
 import cucumber.runner.Runner;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.PickleStep;
@@ -31,8 +33,8 @@ class PickleRunners {
     }
 
 
-    static PickleRunner withNoStepDescriptions(cucumber.runner.Runner runner, PickleEvent pickleEvent, JUnitReporter jUnitReporter) throws InitializationError {
-        return new NoStepDescriptions(runner, pickleEvent, jUnitReporter);
+    static PickleRunner withNoStepDescriptions(Class featurePath, Runner runner, PickleEvent pickleEvent, JUnitReporter jUnitReporter) throws InitializationError {
+        return new NoStepDescriptions(featurePath, runner, pickleEvent, jUnitReporter);
     }
 
 
@@ -81,7 +83,7 @@ class PickleRunners {
                 } else {
                     testName = step.getText();
                 }
-                description = Description.createTestDescription(getName(), testName, new PickleStepId(pickleEvent, step));
+                description = createTestDescription(getName(), testName, new PickleStepId(pickleEvent, step));
                 stepDescriptions.put(step, description);
             }
             return description;
@@ -109,9 +111,11 @@ class PickleRunners {
         private final cucumber.runner.Runner runner;
         private final PickleEvent pickleEvent;
         private final JUnitReporter jUnitReporter;
+        private final Class<?> runnerClass;
         private Description description;
 
-        NoStepDescriptions(cucumber.runner.Runner runner, PickleEvent pickleEvent, JUnitReporter jUnitReporter) throws InitializationError {
+        NoStepDescriptions(Class<?> runnerClass, Runner runner, PickleEvent pickleEvent, JUnitReporter jUnitReporter) throws InitializationError {
+            this.runnerClass = runnerClass;
             this.runner = runner;
             this.pickleEvent = pickleEvent;
             this.jUnitReporter = jUnitReporter;
@@ -120,11 +124,9 @@ class PickleRunners {
         @Override
         public Description getDescription() {
             if (description == null) {
-                // While we are presenting this to junit as a test we use the createSuiteDescription
-                // method to create the description. This grants us full control over the display name.
-                // while Description.createTestDescription would concat a class and method name.
-                String name = getPickleName(pickleEvent, jUnitReporter.useFilenameCompatibleNames());
-                description = Description.createSuiteDescription(name, new PickleId(pickleEvent));
+                final String name = getPickleName(pickleEvent, jUnitReporter.useFilenameCompatibleNames());
+                final String className = runnerClass.getCanonicalName();
+                description = createTestDescription(className, name, new PickleId(pickleEvent));
             }
             return description;
         }

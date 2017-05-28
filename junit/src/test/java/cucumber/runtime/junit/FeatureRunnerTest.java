@@ -110,28 +110,27 @@ public class FeatureRunnerTest {
         final ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
         final RuntimeGlue glue = mock(RuntimeGlue.class);
         final Runtime runtime = new Runtime(resourceLoader, classLoader, asList(mock(Backend.class)), runtimeOptions, new TimeService.Stub(0l), glue);
-        return new FeatureRunner(cucumberFeature, runtime, new JUnitReporter(runtime.getEventBus(), false, junitOption));
+        return new FeatureRunner(RunCukesTest.class, cucumberFeature, runtime, new JUnitReporter(runtime.getEventBus(), false, junitOption));
     }
 
 
     @Test
-    public void shouldPopulateDescriptionsWithStableUniqueIds() throws Exception {
+    public void should_populate_descriptions_with_deterministic_unique_ids() throws Exception {
         CucumberFeature cucumberFeature = TestPickleBuilder.parseFeature("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Background:\n" +
             "    Given background step\n" +
             "  Scenario: A\n" +
             "    Then scenario name\n" +
-            "  Scenario: B\n" +
+            "  Scenario: A\n" +
             "    Then scenario name\n" +
-            "  Scenario Outline: C\n" +
+            "  Scenario Outline: B\n" +
             "    Then scenario <name>\n" +
             "  Examples:\n" +
             "    | name |\n" +
             "    | C    |\n" +
-            "    | D    |\n" +
-            "    | E    |\n"
-
+            "    | C    |\n" +
+            "    | C    |\n"
         );
 
         FeatureRunner runner = createFeatureRunner(cucumberFeature);
@@ -145,7 +144,36 @@ public class FeatureRunnerTest {
     }
 
     @Test
-    public void shouldNotCreateStepDescriptions() throws Exception {
+    public void no_step_notifications_should_populate_descriptions_with_deterministic_unique_ids_without() throws Exception {
+        CucumberFeature cucumberFeature = TestPickleBuilder.parseFeature("path/test.feature", "" +
+            "Feature: feature name\n" +
+            "  Background:\n" +
+            "    Given background step\n" +
+            "  Scenario: A\n" +
+            "    Then scenario name\n" +
+            "  Scenario: A\n" +
+            "    Then scenario name\n" +
+            "  Scenario Outline: B\n" +
+            "    Then scenario <name>\n" +
+            "  Examples:\n" +
+            "    | name |\n" +
+            "    | C    |\n" +
+            "    | C    |\n" +
+            "    | C    |\n"
+        );
+
+        FeatureRunner runner = createFeatureRunner(cucumberFeature, "--no-step-notifications");
+        FeatureRunner rerunner = createFeatureRunner(cucumberFeature, "--no-step-notifications");
+
+        Set<Description> descriptions = new HashSet<Description>();
+        assertDescriptionIsUnique(runner.getDescription(), descriptions);
+        assertDescriptionIsPredictable(runner.getDescription(), descriptions);
+        assertDescriptionIsPredictable(rerunner.getDescription(), descriptions);
+
+    }
+
+    @Test
+    public void no_step_notifications_should_not_create_step_descriptions() throws Exception {
         CucumberFeature cucumberFeature = TestPickleBuilder.parseFeature("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Background:\n" +

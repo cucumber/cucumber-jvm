@@ -64,7 +64,7 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         final JUnitOptions junitOptions = new JUnitOptions(runtimeOptions.getJunitOptions());
         final List<CucumberFeature> cucumberFeatures = runtimeOptions.cucumberFeatures(resourceLoader, runtime.getEventBus());
         jUnitReporter = new JUnitReporter(runtime.getEventBus(), runtimeOptions.isStrict(), junitOptions);
-        addChildren(cucumberFeatures);
+        addChildren(clazz, cucumberFeatures);
     }
 
     /**
@@ -105,9 +105,9 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         runtime.printSummary();
     }
 
-    private void addChildren(List<CucumberFeature> cucumberFeatures) throws InitializationError {
+    private void addChildren(Class clazz, List<CucumberFeature> cucumberFeatures) throws InitializationError {
         for (CucumberFeature cucumberFeature : cucumberFeatures) {
-            FeatureRunner featureRunner = new FeatureRunner(cucumberFeature, runtime, jUnitReporter);
+            FeatureRunner featureRunner = new FeatureRunner(clazz, cucumberFeature, runtime, jUnitReporter);
             if (!featureRunner.isEmpty()) {
                 children.add(featureRunner);
             }
