@@ -74,7 +74,7 @@
         <pax-exam.version>4.3.0</pax-exam.version>
         <pax-url.version>2.2.0</pax-url.version>
         <felix.version>5.4.0</felix.version>
-        <tag-expressions.version>1.0.0</tag-expressions.version>
+        <tag-expressions.version>1.0.1</tag-expressions.version>
     </properties>
     <licenses>
         <license>
