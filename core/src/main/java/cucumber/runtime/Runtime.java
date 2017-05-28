@@ -33,13 +33,13 @@ import java.util.regex.Pattern;
  */
 public class Runtime {
 
-    private static final String[] PENDING_EXCEPTIONS = {
+    private static final String[] ASSUMPTION_VIOLATED_EXCEPTIONS = {
             "org.junit.AssumptionViolatedException",
             "org.junit.internal.AssumptionViolatedException"
     };
 
     static {
-        Arrays.sort(PENDING_EXCEPTIONS);
+        Arrays.sort(ASSUMPTION_VIOLATED_EXCEPTIONS);
     }
 
     private static final byte ERRORS = 0x1;
@@ -236,7 +236,14 @@ public class Runtime {
         if (t == null) {
             return false;
         }
-        return t.getClass().isAnnotationPresent(Pending.class) || Arrays.binarySearch(PENDING_EXCEPTIONS, t.getClass().getName()) >= 0;
+        return t.getClass().isAnnotationPresent(Pending.class) || isAssumptionViolated(t);
+    }
+
+    public static boolean isAssumptionViolated(Throwable t) {
+        if (t == null) {
+            return false;
+        }
+        return Arrays.binarySearch(ASSUMPTION_VIOLATED_EXCEPTIONS, t.getClass().getName()) >= 0;
     }
 
     private void addStepToCounterAndResult(Result result) {

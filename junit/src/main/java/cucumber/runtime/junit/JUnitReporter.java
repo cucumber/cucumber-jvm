@@ -13,6 +13,7 @@ import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.MultipleFailureException;
 
+import static cucumber.runtime.Runtime.isAssumptionViolated;
 import static cucumber.runtime.Runtime.isPending;
 
 public class JUnitReporter {
@@ -202,7 +203,7 @@ public class JUnitReporter {
         public void addFailure(Throwable targetException) {
             if (targetException instanceof MultipleFailureException) {
                 addMultipleFailureException((MultipleFailureException) targetException);
-            } else if (isPending(targetException)) {
+            } else if (isAssumptionViolated(targetException)) {
                 addFailedAssumption(targetException);
             } else {
                 notifier.fireTestFailure(new Failure(description, targetException));
