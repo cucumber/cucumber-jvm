@@ -9,6 +9,7 @@ import gherkin.pickles.Argument;
 import gherkin.pickles.PickleStep;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public abstract class TestStep {
@@ -54,16 +55,18 @@ public abstract class TestStep {
     public Result run(EventBus bus, String language, Scenario scenario, boolean skipSteps) {
         Long startTime = bus.getTime();
         bus.send(new TestStepStarted(startTime, this));
-        Result.Type status;
+        Result.Type status = skipSteps ? Result.Type.SKIPPED : Result.Type.PASSED;
         Throwable error = null;
+        Object returnValue;
         try {
-            status = executeStep(language, scenario, skipSteps);
+        	returnValue = executeStep(language, scenario, skipSteps);
         } catch (Throwable t) {
             error = t;
             status = mapThrowableToStatus(t);
+            returnValue = null;
         }
         Long stopTime = bus.getTime();
-        Result result = mapStatusToResult(status, error, stopTime - startTime);
+        Result result = mapStatusToResult(status, error, stopTime - startTime, returnValue);
         bus.send(new TestStepFinished(stopTime, this, result));
         return result;
     }
@@ -72,13 +75,11 @@ public abstract class TestStep {
         return skipSteps ? Result.Type.SKIPPED : Result.Type.PASSED;
     }
 
-    protected Result.Type executeStep(String language, Scenario scenario, boolean skipSteps) throws Throwable {
+    protected Object executeStep(String language, Scenario scenario, boolean skipSteps) throws Throwable {
         if (!skipSteps) {
-            definitionMatch.runStep(language, scenario);
-            return Result.Type.PASSED;
+        	return definitionMatch.runStep(language, scenario);
         } else {
-            definitionMatch.dryRunStep(language, scenario);
-            return Result.Type.SKIPPED;
+        	return definitionMatch.dryRunStep(language, scenario);
         }
     }
 
@@ -92,14 +93,14 @@ public abstract class TestStep {
         return Result.Type.FAILED;
     }
 
-    private Result mapStatusToResult(Result.Type status, Throwable error, long duration) {
+    private Result mapStatusToResult(Result.Type status, Throwable error, long duration, Object returnVlaue) {
         Long resultDuration = duration;
         if (status == Result.Type.SKIPPED) {
             return Result.SKIPPED;
         }
         if (status == Result.Type.UNDEFINED) {
-            return new Result(status, null, null, definitionMatch.getSnippets());
+            return new Result(status, null, null, definitionMatch.getSnippets(), returnVlaue);
         }
-        return new Result(status, resultDuration, error);
+        return new Result(status, resultDuration, error, Collections.<String>emptyList(), returnVlaue);
     }
 }

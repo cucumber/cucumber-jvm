@@ -41,7 +41,7 @@ class JavaHookDefinition implements HookDefinition {
     }
 
     @Override
-    public void execute(Scenario scenario) throws Throwable {
+    public Object execute(Scenario scenario) throws Throwable {
         Object[] args;
         switch (method.getParameterTypes().length) {
             case 0:
@@ -57,7 +57,7 @@ class JavaHookDefinition implements HookDefinition {
                 throw new CucumberException("Hooks must declare 0 or 1 arguments. " + method.toString());
         }
 
-        Utils.invoke(objectFactory.getInstance(method.getDeclaringClass()), method, timeoutMillis, args);
+        return Utils.invoke(objectFactory.getInstance(method.getDeclaringClass()), method, timeoutMillis, args);
     }
 
     @Override
