@@ -49,6 +49,11 @@ public class LambdaStepdefs implements En {
             assertEquals("three", c);
             assertEquals((Integer) 4, d);
         });
+
+        Given("^A lambda that declares an exception$", this::methodThatDeclaresException);
+    }
+
+    private void methodThatDeclaresException() throws Exception {
     }
 
     public static class Person {
