@@ -143,15 +143,15 @@ public class JRubyBackend implements Backend {
         unreportedStepExecutor.runUnreportedStep(featurePath, language, stepName, line, dataTableRows, docString);
     }
 
-    public void executeHook(RubyObject hookRunner, Scenario scenario) {
+    public IRubyObject executeHook(RubyObject hookRunner, Scenario scenario) {
         IRubyObject[] jrubyArgs = new IRubyObject[2];
         jrubyArgs[0] = currentWorld;
         jrubyArgs[1] = JavaEmbedUtils.javaToRuby(hookRunner.getRuntime(), scenario);
-        hookRunner.callMethod("execute", jrubyArgs);
+        return hookRunner.callMethod("execute", jrubyArgs);
     }
 
-    void executeStepdef(RubyObject stepdef, String language, Object[] args) {
-        ArrayList<IRubyObject> jrubyArgs = new ArrayList<IRubyObject>();
+    IRubyObject executeStepdef(RubyObject stepdef, String language, Object[] args) {
+        ArrayList<IRubyObject> jrubyArgs = new ArrayList<IRubyObject>(); 
 
         // jrubyWorld.@__gherkin_language = language
         RubyObject jrubyI18n = (RubyObject) JavaEmbedUtils.javaToRuby(stepdef.getRuntime(), language);
@@ -170,6 +170,6 @@ public class JRubyBackend implements Backend {
             }
         }
 
-        stepdef.callMethod("execute", jrubyArgs.toArray(new IRubyObject[jrubyArgs.size()]));
+        return stepdef.callMethod("execute", jrubyArgs.toArray(new IRubyObject[jrubyArgs.size()]));
     }
 }
