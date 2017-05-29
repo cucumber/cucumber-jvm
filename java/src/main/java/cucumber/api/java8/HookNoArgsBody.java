@@ -1,5 +1,5 @@
 package cucumber.api.java8;
 
 public interface HookNoArgsBody {
-    void accept();
+    void accept() throws Throwable;
 }

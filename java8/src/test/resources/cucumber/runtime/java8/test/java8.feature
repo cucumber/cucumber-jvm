@@ -19,3 +19,6 @@ Feature: Java8
       | first  | last     |
       | Aslak  | Hellesøy |
       | Donald | Duck     |
+
+  Scenario: using lambdas with exceptions
+    Given A lambda that declares an exception
