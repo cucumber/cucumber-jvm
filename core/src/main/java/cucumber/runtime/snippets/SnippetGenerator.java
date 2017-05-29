@@ -15,7 +15,8 @@ import java.util.regex.Pattern;
 public class SnippetGenerator {
     private static final ArgumentPattern[] DEFAULT_ARGUMENT_PATTERNS = new ArgumentPattern[]{
             new ArgumentPattern(Pattern.compile("\"([^\"]*)\""), String.class),
-            new ArgumentPattern(Pattern.compile("(\\d+)"), Integer.TYPE)
+            new ArgumentPattern(Pattern.compile("(\\d+)"), Integer.TYPE),
+            new ArgumentPattern(Pattern.compile("<([^>]*)>"), "(.*)", String.class)
     };
     private static final Pattern GROUP_PATTERN = Pattern.compile("\\(");
     private static final Pattern[] ESCAPE_PATTERNS = new Pattern[]{
