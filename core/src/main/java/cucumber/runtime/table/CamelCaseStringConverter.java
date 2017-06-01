@@ -1,5 +1,7 @@
 package cucumber.runtime.table;
 
+import cucumber.runtime.CucumberException;
+
 import java.util.regex.Pattern;
 
 public class CamelCaseStringConverter implements StringConverter {
@@ -34,6 +36,9 @@ public class CamelCaseStringConverter implements StringConverter {
     }
 
     private String uncapitalize(String string) {
+        if (string.isEmpty()) {
+            throw new CucumberException("Field name cannot be empty. Please check the table header.");
+        }
         return new StringBuilder(string.length()).append(Character.toLowerCase(string.charAt(0))).append(string.substring(1)).toString();
     }
 
