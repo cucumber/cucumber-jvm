@@ -192,6 +192,16 @@
                 <artifactId>android-examples</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>cucumber-java8</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>cucumber-kotlin-java8</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
             <!-- Spring stuff -->
             <dependency>
@@ -581,6 +591,7 @@
             </activation>
             <modules>
                 <module>java8</module>
+                <module>kotlin-java8</module>
             </modules>
         </profile>
 

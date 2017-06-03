@@ -35,6 +35,11 @@ public class ConstantPoolTypeIntrospector implements TypeIntrospector {
         final String[] member = getMemberReference(constantPool);
         final int parameterCount = interfac3.getTypeParameters().length;
 
+        // Kotlin lambda expression without arguments or closure variables
+        if (member[REFERENCE_METHOD].equals("INSTANCE")) {
+            return handleKotlinInstance();
+        }
+
         final jdk.internal.org.objectweb.asm.Type[] argumentTypes = jdk.internal.org.objectweb.asm.Type.getArgumentTypes(member[REFERENCE_ARGUMENT_TYPES]);
 
         // If we are one parameter short, this is a
@@ -73,6 +78,10 @@ public class ConstantPoolTypeIntrospector implements TypeIntrospector {
             typeArguments[i] = forName(interestingArgumentTypes[i].getClassName());
         }
         return typeArguments;
+    }
+
+    private static Type[] handleKotlinInstance() {
+        return new Type[0];
     }
 
     private static String[] getMemberReference(ConstantPool constantPool) {
