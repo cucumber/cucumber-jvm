@@ -26,10 +26,10 @@ public class FeatureRunner extends ParentRunner<PickleRunner> {
     private final CucumberFeature cucumberFeature;
     private Description description;
 
-    public FeatureRunner(CucumberFeature cucumberFeature, Runtime runtime, JUnitReporter jUnitReporter) throws InitializationError {
-        super(null);
+    public FeatureRunner(Class<?> runnerClass, CucumberFeature cucumberFeature, Runtime runtime, JUnitReporter jUnitReporter) throws InitializationError {
+        super(null); //Don't pass runnerClass to super. It should have been scanned by Cucumber already
         this.cucumberFeature = cucumberFeature;
-        buildFeatureElementRunners(runtime, jUnitReporter);
+        buildFeatureElementRunners(runnerClass, runtime, jUnitReporter);
     }
 
     @Override
@@ -73,7 +73,7 @@ public class FeatureRunner extends ParentRunner<PickleRunner> {
         super.run(notifier);
     }
 
-    private void buildFeatureElementRunners(Runtime runtime, JUnitReporter jUnitReporter) {
+    private void buildFeatureElementRunners(Class<?> runnerClass, Runtime runtime, JUnitReporter jUnitReporter) {
         Compiler compiler = new Compiler();
         List<PickleEvent> pickleEvents = new ArrayList<PickleEvent>();
         for (Pickle pickle : compiler.compile(cucumberFeature.getGherkinFeature())) {
@@ -88,7 +88,7 @@ public class FeatureRunner extends ParentRunner<PickleRunner> {
                         children.add(picklePickleRunner);
                     } else {
                         PickleRunner picklePickleRunner;
-                        picklePickleRunner = withNoStepDescriptions(runtime.getRunner(), pickleEvent, jUnitReporter);
+                        picklePickleRunner = withNoStepDescriptions(runnerClass, runtime.getRunner(), pickleEvent, jUnitReporter);
                         children.add(picklePickleRunner);
                     }
                 } catch (InitializationError e) {
