@@ -1,17 +1,22 @@
 package cucumber.runtime.java8;
 
-import cucumber.runtime.CucumberException;
+import static java.lang.Class.forName;
+import static java.lang.System.arraycopy;
+import static jdk.internal.org.objectweb.asm.Type.getObjectType;
+
 import cucumber.api.java8.StepdefBody;
+import cucumber.runtime.CucumberException;
 import cucumber.runtime.java.TypeIntrospector;
 import sun.reflect.ConstantPool;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.util.Arrays;
-import java.util.List;
 
 public class ConstantPoolTypeIntrospector implements TypeIntrospector {
     private static final Method Class_getConstantPool;
+    private static final int REFERENCE_CLASS = 0;
+    private static final int REFERENCE_METHOD = 1;
+    private static final int REFERENCE_ARGUMENT_TYPES = 2;
 
     static {
         try {
@@ -26,37 +31,63 @@ public class ConstantPoolTypeIntrospector implements TypeIntrospector {
 
     @Override
     public Type[] getGenericTypes(Class<? extends StepdefBody> clazz, Class<? extends StepdefBody> interfac3) throws Exception {
-        ConstantPool constantPool = (ConstantPool) Class_getConstantPool.invoke(clazz);
-        String typeString = getLambdaTypeString(constantPool);
-        int typeParameterCount = interfac3.getTypeParameters().length;
-        jdk.internal.org.objectweb.asm.Type[] argumentTypes = jdk.internal.org.objectweb.asm.Type.getArgumentTypes(typeString);
+        final ConstantPool constantPool = (ConstantPool) Class_getConstantPool.invoke(clazz);
+        final String[] member = getMemberReference(constantPool);
+        final int parameterCount = interfac3.getTypeParameters().length;
+
+        final jdk.internal.org.objectweb.asm.Type[] argumentTypes = jdk.internal.org.objectweb.asm.Type.getArgumentTypes(member[REFERENCE_ARGUMENT_TYPES]);
+
+        // If we are one parameter short, this is a
+        // - Reference to an instance method of an arbitrary object of a particular type
+        if (parameterCount - 1 == argumentTypes.length) {
+            return handleMethodReferenceToObjectOfType(member[REFERENCE_CLASS], handleLambda(argumentTypes, parameterCount - 1));
+        }
+        // If we are not short on parameters this either
+        // - Reference to a static method
+        // - Reference to an instance method of a particular object
+        // - Reference to a constructor
+        // - A lambda expression
+        // We can all treat these as lambda's for figuring out the types.
+        return handleLambda(argumentTypes, parameterCount);
+    }
+
+    private static Type[] handleMethodReferenceToObjectOfType(String containingType, Type[] methodArgumentTypes) throws ClassNotFoundException {
+        Type[] containingTypeAndMethodArgumentTypes = new Type[methodArgumentTypes.length + 1];
+        containingTypeAndMethodArgumentTypes[0] = forName(getObjectType(containingType).getClassName());
+        arraycopy(methodArgumentTypes, 0, containingTypeAndMethodArgumentTypes, 1, methodArgumentTypes.length);
+        return containingTypeAndMethodArgumentTypes;
+    }
+
+    private static Type[] handleLambda(jdk.internal.org.objectweb.asm.Type[] argumentTypes, int typeParameterCount) throws ClassNotFoundException {
+        if (argumentTypes.length < typeParameterCount) {
+            throw new CucumberException(String.format("Expected at least %s arguments but found only %s", typeParameterCount, argumentTypes.length));
+        }
+
         // Only look at the N last arguments to the lambda static method, since the first ones might be variables
         // who only pass in the states of closed variables
-        List<jdk.internal.org.objectweb.asm.Type> interestingArgumentTypes = Arrays.asList(argumentTypes)
-                .subList(argumentTypes.length - typeParameterCount, argumentTypes.length);
+        jdk.internal.org.objectweb.asm.Type[] interestingArgumentTypes = new jdk.internal.org.objectweb.asm.Type[typeParameterCount];
+        arraycopy(argumentTypes, argumentTypes.length - typeParameterCount, interestingArgumentTypes, 0, typeParameterCount);
 
         Type[] typeArguments = new Type[typeParameterCount];
         for (int i = 0; i < typeParameterCount; i++) {
-            typeArguments[i] = Class.forName(interestingArgumentTypes.get(i).getClassName());
+            typeArguments[i] = forName(interestingArgumentTypes[i].getClassName());
         }
         return typeArguments;
     }
 
-    private String getLambdaTypeString(ConstantPool constantPool) {
+    private static String[] getMemberReference(ConstantPool constantPool) {
         int size = constantPool.getSize();
-        String[] memberRef = null;
 
         // find last element in constantPool with valid memberRef
         // - previously always at size-2 index but changed with JDK 1.8.0_60
         for (int i = size - 1; i > -1; i--) {
             try {
-                memberRef = constantPool.getMemberRefInfoAt(i);
-		return memberRef[2];
+                return constantPool.getMemberRefInfoAt(i);
             } catch (IllegalArgumentException e) {
                 // eat error; null entry at ConstantPool index?
             }
         }
-	throw new CucumberException("Couldn't find memberRef.");
+        throw new CucumberException("Couldn't find memberRef.");
     }
 
 }
