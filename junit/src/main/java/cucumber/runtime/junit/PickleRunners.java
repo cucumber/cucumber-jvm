@@ -2,6 +2,7 @@ package cucumber.runtime.junit;
 
 import cucumber.runner.Runner;
 import gherkin.events.PickleEvent;
+import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleStep;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
@@ -199,7 +200,8 @@ class PickleRunners {
         PickleStepId(PickleEvent pickleEvent, PickleStep pickleStep) {
             this.uri = pickleEvent.uri;
             this.pickleLine = pickleEvent.pickle.getLocations().get(0).getLine();
-            this.pickleStepLine = pickleStep.getLocations().get(0).getLine();
+            List<PickleLocation> stepLocations = pickleStep.getLocations();
+            this.pickleStepLine = stepLocations.get(stepLocations.size() - 1).getLine();
         }
 
         @Override

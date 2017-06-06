@@ -64,6 +64,37 @@ public class PickleRunnerWithStepDescriptionsTest {
     }
 
     @Test
+    public void shouldAssignUnequalDescriptionsToDifferentStepsInAScenarioOutline() throws Exception {
+        CucumberFeature features = TestPickleBuilder.parseFeature("path/test.feature", "" +
+            "Feature: FB\n" +
+            "  Scenario Outline: SO\n" +
+            "    When <action>\n" +
+            "    Then <result>\n" +
+            "    Examples:\n" +
+            "    | action | result |\n" +
+            "    |   a1   |   r1   |\n"
+        );
+
+        Compiler compiler = new Compiler();
+        List<PickleEvent> pickleEvents = new ArrayList<PickleEvent>();
+        for (Pickle pickle : compiler.compile(features.getGherkinFeature())) {
+            pickleEvents.add(new PickleEvent(features.getPath(), pickle));
+        };
+
+        WithStepDescriptions runner = (WithStepDescriptions) PickleRunners.withStepDescriptions(
+                mock(Runner.class),
+                pickleEvents.get(0),
+                createStandardJUnitReporter()
+        );
+
+        Description runnerDescription = runner.getDescription();
+        Description stepDescription1 = runnerDescription.getChildren().get(0);
+        Description stepDescription2 = runnerDescription.getChildren().get(1);
+
+        assertFalse("Descriptions must not be equal.", stepDescription1.equals(stepDescription2));
+    }
+
+    @Test
     public void shouldIncludeScenarioNameAsClassNameInStepDescriptions() throws Exception {
         CucumberFeature features = TestPickleBuilder.parseFeature("path/test.feature", "" +
             "Feature: In cucumber.junit\n" +
