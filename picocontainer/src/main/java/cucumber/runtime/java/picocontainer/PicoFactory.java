@@ -9,6 +9,8 @@ import java.lang.reflect.Constructor;
 import java.util.HashSet;
 import java.util.Set;
 
+import static cucumber.runtime.java.picocontainer.ConstructorParameters.getConstructorFor;
+
 public class PicoFactory implements ObjectFactory {
     private MutablePicoContainer pico;
     private final Set<Class<?>> classes = new HashSet<Class<?>>();
@@ -19,7 +21,7 @@ public class PicoFactory implements ObjectFactory {
             .withLifecycle()
             .build();
         for (Class<?> clazz : classes) {
-            pico.addComponent(clazz);
+            pico.addComponent(clazz, clazz, getConstructorFor(clazz));
         }
         pico.start();
     }
