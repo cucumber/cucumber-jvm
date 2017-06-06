@@ -62,9 +62,6 @@
         <javax.servlet-api.version>3.1.0</javax.servlet-api.version>
         <android-maven-plugin.version>4.0.0</android-maven-plugin.version>
         <android.version>4.1.1.4</android.version>
-        <!-- Apparently Wicket 8.x requires Java 8.
-        Stay on 7.0 as long as we support Java 7. -->
-        <wicket.version>7.0.0</wicket.version>
         <!-- We need a version that works with Java 6 and Java 7: http://www.eclipse.org/jetty/documentation/current/what-jetty-version.html -->
         <jetty.version>8.1.12.v20130726</jetty.version>
         <xmlunit.version>1.6</xmlunit.version>
@@ -473,11 +470,6 @@
             </dependency>
 
             <dependency>
-                <groupId>org.apache.wicket</groupId>
-                <artifactId>wicket-core</artifactId>
-                <version>${wicket.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-servlet</artifactId>
                 <version>${jetty.version}</version>
@@ -601,7 +593,6 @@
         <profile>
             <id>examples</id>
             <modules>
-                <module>examples/java-wicket</module>
                 <module>examples/spring-txn</module>
                 <module>examples/clojure_cukes</module>
                 <module>examples/java-calculator</module>
@@ -616,7 +607,6 @@
         <profile>
             <id>release-sign-artifacts</id>
             <modules>
-                <module>examples/java-wicket</module>
                 <module>examples/spring-txn</module>
                 <module>examples/clojure_cukes</module>
                 <module>examples/java-calculator</module>
