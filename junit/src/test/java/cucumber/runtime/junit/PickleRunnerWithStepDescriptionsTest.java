@@ -146,22 +146,6 @@ public class PickleRunnerWithStepDescriptionsTest {
     }
 
     @Test
-    public void shouldUseScenarioNameForDescriptionDisplayName() throws Exception {
-        List<PickleEvent> pickles = TestPickleBuilder.pickleEventsFromFeature("featurePath", "" +
-            "Feature: feature name\n" +
-            "  Scenario: scenario name\n" +
-            "    Then it works\n");
-
-        PickleRunner runner = PickleRunners.withNoStepDescriptions(
-            mock(Runner.class),
-            pickles.get(0),
-            createStandardJUnitReporter()
-        );
-
-        assertEquals("scenario name", runner.getDescription().getDisplayName());
-    }
-
-    @Test
     public void shouldUseStepKeyworkAndNameForChildName() throws Exception {
         List<PickleEvent> pickleEvents = TestPickleBuilder.pickleEventsFromFeature("featurePath", "" +
                 "Feature: feature name\n" +

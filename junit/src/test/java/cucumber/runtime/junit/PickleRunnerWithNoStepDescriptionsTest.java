@@ -16,35 +16,20 @@ import java.util.List;
 public class PickleRunnerWithNoStepDescriptionsTest {
 
     @Test
-    public void shouldUseScenarioNameForDisplayName() throws Exception {
+    public void shouldUseScenarioNameWithFeatureNameAsClassNameForDisplayName() throws Exception {
         List<PickleEvent> pickles = TestPickleBuilder.pickleEventsFromFeature("featurePath", "" +
                 "Feature: feature name\n" +
                 "  Scenario: scenario name\n" +
                 "    Then it works\n");
 
         PickleRunner runner = PickleRunners.withNoStepDescriptions(
+                "feature name",
                 mock(Runner.class),
                 pickles.get(0),
                 createStandardJUnitReporter()
         );
 
-        assertEquals("scenario name", runner.getDescription().getDisplayName());
-    }
-
-    @Test
-    public void shouldUseScenarioNameForDescriptionDisplayName() throws Exception {
-        List<PickleEvent> pickles = TestPickleBuilder.pickleEventsFromFeature("featurePath", "" +
-            "Feature: feature name\n" +
-            "  Scenario: scenario name\n" +
-            "    Then it works\n");
-
-        PickleRunner runner = PickleRunners.withNoStepDescriptions(
-            mock(Runner.class),
-            pickles.get(0),
-            createStandardJUnitReporter()
-        );
-
-        assertEquals("scenario name", runner.getDescription().getDisplayName());
+        assertEquals("scenario name(feature name)", runner.getDescription().getDisplayName());
     }
 
     @Test
@@ -55,12 +40,13 @@ public class PickleRunnerWithNoStepDescriptionsTest {
                 "    Then it works\n");
 
         PickleRunner runner = PickleRunners.withNoStepDescriptions(
+                "feature name",
                 mock(Runner.class),
                 pickles.get(0),
                 createJUnitReporterWithOption("--filename-compatible-names")
         );
 
-        assertEquals("scenario_name", runner.getDescription().getDisplayName());
+        assertEquals("scenario_name(feature_name)", runner.getDescription().getDisplayName());
     }
 
     private JUnitReporter createStandardJUnitReporter() {
