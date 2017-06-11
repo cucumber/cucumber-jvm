@@ -178,6 +178,8 @@ public class TestHelper {
             doThrow(new PendingException()).when(matchStep).runStep(anyString(), (Scenario) any());
         } else if (stepResult.is(Result.Type.FAILED)) {
             doThrow(stepResult.getError()).when(matchStep).runStep(anyString(), (Scenario) any());
+        } else if (stepResult.is(Result.Type.SKIPPED) && stepResult.getError() != null) {
+            doThrow(stepResult.getError()).when(matchStep).runStep(anyString(), (Scenario) any());
         } else if (!stepResult.is(Result.Type.PASSED) &&
                    !stepResult.is(Result.Type.SKIPPED)) {
             fail("Cannot mock step to the result: " + stepResult.getStatus());

@@ -6,6 +6,7 @@ import cucumber.runner.EventBus;
 import cucumber.runner.PickleTestStep;
 import cucumber.runtime.DefinitionMatch;
 import gherkin.pickles.PickleStep;
+import org.junit.AssumptionViolatedException;
 import org.junit.Test;
 import org.mockito.InOrder;
 
@@ -55,6 +56,15 @@ public class TestStepTest {
     @Test
     public void result_is_skipped_when_skip_step_is_true() throws Throwable {
         Result result = step.run(bus, language, scenario, true);
+
+        assertEquals(Result.Type.SKIPPED, result.getStatus());
+    }
+
+    @Test
+    public void result_is_skipped_when_step_definition_throws_assumption_violated_exception() throws Throwable {
+        doThrow(AssumptionViolatedException.class).when(definitionMatch).runStep(anyString(), (Scenario)any());
+
+        Result result = step.run(bus, language, scenario, false);
 
         assertEquals(Result.Type.SKIPPED, result.getStatus());
     }

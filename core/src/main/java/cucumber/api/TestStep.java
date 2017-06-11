@@ -12,12 +12,12 @@ import java.util.Arrays;
 import java.util.List;
 
 public abstract class TestStep {
-    private static final String[] PENDING_EXCEPTIONS = {
+    private static final String[] ASSUMPTION_VIOLATED_EXCEPTIONS = {
             "org.junit.AssumptionViolatedException",
             "org.junit.internal.AssumptionViolatedException"
     };
     static {
-        Arrays.sort(PENDING_EXCEPTIONS);
+        Arrays.sort(ASSUMPTION_VIOLATED_EXCEPTIONS);
     }
     protected final DefinitionMatch definitionMatch;
 
@@ -83,8 +83,11 @@ public abstract class TestStep {
     }
 
     private Result.Type mapThrowableToStatus(Throwable t) {
-        if (t.getClass().isAnnotationPresent(Pending.class) || Arrays.binarySearch(PENDING_EXCEPTIONS, t.getClass().getName()) >= 0) {
+        if (t.getClass().isAnnotationPresent(Pending.class)) {
             return Result.Type.PENDING;
+        }
+        if (Arrays.binarySearch(ASSUMPTION_VIOLATED_EXCEPTIONS, t.getClass().getName()) >= 0) {
+            return Result.Type.SKIPPED;
         }
         if (t.getClass() == UndefinedStepDefinitionException.class) {
             return Result.Type.UNDEFINED;
@@ -94,7 +97,7 @@ public abstract class TestStep {
 
     private Result mapStatusToResult(Result.Type status, Throwable error, long duration) {
         Long resultDuration = duration;
-        if (status == Result.Type.SKIPPED) {
+        if (status == Result.Type.SKIPPED && error == null) {
             return Result.SKIPPED;
         }
         if (status == Result.Type.UNDEFINED) {

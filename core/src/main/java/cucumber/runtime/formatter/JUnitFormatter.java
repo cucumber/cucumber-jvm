@@ -18,7 +18,6 @@ import gherkin.GherkinDialect;
 import gherkin.GherkinDialectProvider;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -71,7 +70,7 @@ class JUnitFormatter implements Formatter, StrictAware {
     private EventHandler<TestCaseFinished> caseFinishedHandler = new EventHandler<TestCaseFinished>() {
         @Override
         public void receive(TestCaseFinished event) {
-            handleTestCaseFinished();
+            handleTestCaseFinished(event);
         }
     };
     private EventHandler<TestRunFinished> runFinishedHandler = new EventHandler<TestRunFinished>() {
@@ -83,7 +82,7 @@ class JUnitFormatter implements Formatter, StrictAware {
 
     public JUnitFormatter(URL out) throws IOException {
         this.out = new UTF8OutputStreamWriter(new URLOutputStream(out));
-        TestCase.treatSkippedAsFailure = false;
+        TestCase.treatConditionallySkippedAsFailure = false;
         TestCase.currentFeatureFile = null;
         TestCase.previousTestCaseName = "";
         TestCase.exampleNumber = 1;
@@ -127,16 +126,16 @@ class JUnitFormatter implements Formatter, StrictAware {
         if (!event.testStep.isHook()) {
             testCase.steps.add(event.testStep);
             testCase.results.add(event.result);
-            testCase.updateElement(doc, root);
         } else {
             testCase.hookResults.add(event.result);
-            testCase.updateElement(doc, root);
         }
     }
 
-    private void handleTestCaseFinished() {
+    private void handleTestCaseFinished(TestCaseFinished event) {
         if (testCase.steps.isEmpty()) {
             testCase.handleEmptyTestCase(doc, root);
+        } else {
+            testCase.addTestCaseElement(doc, root, event.result);
         }
     }
 
@@ -199,7 +198,7 @@ class JUnitFormatter implements Formatter, StrictAware {
 
     @Override
     public void setStrict(boolean strict) {
-        TestCase.treatSkippedAsFailure = strict;
+        TestCase.treatConditionallySkippedAsFailure = strict;
     }
 
     private static class TestCase {
@@ -217,7 +216,7 @@ class JUnitFormatter implements Formatter, StrictAware {
         static String currentFeatureFile;
         static String previousTestCaseName;
         static int exampleNumber;
-        static boolean treatSkippedAsFailure = false;
+        static boolean treatConditionallySkippedAsFailure = false;
         final List<TestStep> steps = new ArrayList<TestStep>();
         final List<Result> results = new ArrayList<Result>();
         final List<Result> hookResults = new ArrayList<Result>();
@@ -247,47 +246,36 @@ class JUnitFormatter implements Formatter, StrictAware {
             return testCaseName.indexOf(' ') != -1;
         }
 
-        public void updateElement(Document doc, Element tc) {
+        public void addTestCaseElement(Document doc, Element tc, Result result) {
             tc.setAttribute("time", calculateTotalDurationString());
 
             StringBuilder sb = new StringBuilder();
             addStepAndResultListing(sb);
-            Result skipped = null, failed = null;
-            for (Result result : results) {
-                if (result.is(Result.Type.FAILED)) failed = result;
-                if (result.is(Result.Type.UNDEFINED) || result.is(Result.Type.PENDING)) skipped = result;
-            }
-            for (Result result : hookResults) {
-                if (failed == null && result.is(Result.Type.FAILED)) failed = result;
-                if (skipped == null && result.is(Result.Type.PENDING)) skipped = result;
-            }
             Element child;
-            if (failed != null) {
-                addStackTrace(sb, failed);
-                child = createElementWithMessage(doc, sb, "failure", failed.getErrorMessage());
-            } else if (skipped != null) {
-                if (treatSkippedAsFailure) {
+            if (result.is(Result.Type.FAILED)) {
+                addStackTrace(sb, result);
+                child = createElementWithMessage(doc, sb, "failure", result.getErrorMessage());
+            } else if (result.is(Result.Type.PENDING) || result.is(Result.Type.UNDEFINED)) {
+                if (treatConditionallySkippedAsFailure) {
                     child = createElementWithMessage(doc, sb, "failure", "The scenario has pending or undefined step(s)");
                 }
                 else {
                     child = createElement(doc, sb, "skipped");
                 }
+            } else if (result.is(Result.Type.SKIPPED) && result.getError() != null) {
+                addStackTrace(sb, result);
+                child = createElementWithMessage(doc, sb, "skipped", result.getErrorMessage());
             } else {
                 child = createElement(doc, sb, "system-out");
             }
 
-            Node existingChild = tc.getFirstChild();
-            if (existingChild == null) {
-                tc.appendChild(child);
-            } else {
-                tc.replaceChild(child, existingChild);
-            }
+            tc.appendChild(child);
         }
 
         public void handleEmptyTestCase(Document doc, Element tc) {
             tc.setAttribute("time", calculateTotalDurationString());
 
-            String resultType = treatSkippedAsFailure ? "failure" : "skipped";
+            String resultType = treatConditionallySkippedAsFailure ? "failure" : "skipped";
             Element child = createElementWithMessage(doc, new StringBuilder(), resultType, "The scenario has no steps");
 
             tc.appendChild(child);

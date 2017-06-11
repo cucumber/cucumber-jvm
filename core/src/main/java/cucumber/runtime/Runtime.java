@@ -217,7 +217,7 @@ public class Runtime {
 
     private boolean hasErrors() {
         for (Throwable error : errors) {
-            if (!isPending(error)) {
+            if (!isPending(error) && !isAssumptionViolated(error)) {
                 return true;
             }
         }
@@ -236,7 +236,7 @@ public class Runtime {
         if (t == null) {
             return false;
         }
-        return t.getClass().isAnnotationPresent(Pending.class) || isAssumptionViolated(t);
+        return t.getClass().isAnnotationPresent(Pending.class);
     }
 
     public static boolean isAssumptionViolated(Throwable t) {

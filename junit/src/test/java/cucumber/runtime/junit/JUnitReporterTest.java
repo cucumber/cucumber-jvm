@@ -69,7 +69,7 @@ public class JUnitReporterTest {
     @Test
     public void result_with_assumption_violated() {
         createStrictReporter();
-        Result result = mock(Result.class);
+        Result result = mockResult(Result.Type.SKIPPED);
         Throwable exception = new AssumptionViolatedException("Oops");
         when(result.getError()).thenReturn(exception);
 
@@ -131,10 +131,6 @@ public class JUnitReporterTest {
         verify(stepNotifier, times(0)).fireTestIgnored();
     }
 
-    private void verifyAddFailureWithAssumptionViolatedException(JUnitReporter.EachTestNotifier stepNotifier) {
-        verifyAddFailureWithException(AssumptionViolatedException.class, stepNotifier);
-    }
-
     private void verifyAddFailureWithPendingException(JUnitReporter.EachTestNotifier stepNotifier) {
         verifyAddFailureWithException(PendingException.class, stepNotifier);
     }
@@ -183,44 +179,6 @@ public class JUnitReporterTest {
         verifyAddFailureWithPendingException(stepNotifier);
         verifyAddFailureWithPendingException(pickleRunnerNotifier);
         verify(stepNotifier, times(0)).fireTestIgnored();
-    }
-
-    @Test
-    public void result_with_assumption_violated_strict() {
-        createStrictReporter();
-        createDefaultRunNotifier();
-        Result result = mock(Result.class);
-        when(result.getError()).thenReturn(new AssumptionViolatedException("Oops"));
-
-        JUnitReporter.EachTestNotifier stepNotifier = mock(JUnitReporter.EachTestNotifier.class);
-        jUnitReporter.stepNotifier = stepNotifier;
-        JUnitReporter.EachTestNotifier pickleRunnerNotifier = mock(JUnitReporter.EachTestNotifier.class);
-        jUnitReporter.pickleRunnerNotifier = pickleRunnerNotifier;
-
-        jUnitReporter.handleStepResult(result);
-
-        verify(stepNotifier, times(1)).fireTestStarted();
-        verify(stepNotifier, times(1)).fireTestFinished();
-        verifyAddFailureWithAssumptionViolatedException(stepNotifier);
-        verifyAddFailureWithAssumptionViolatedException(pickleRunnerNotifier);
-        verify(stepNotifier, times(0)).fireTestIgnored();
-    }
-
-    @Test
-    public void result_with_assumption_violated_non_strict() {
-        createNonStrictReporter();
-        Result result = mock(Result.class);
-        when(result.getError()).thenReturn(new AssumptionViolatedException("Oops"));
-
-        JUnitReporter.EachTestNotifier stepNotifier = mock(JUnitReporter.EachTestNotifier.class);
-        jUnitReporter.stepNotifier = stepNotifier;
-
-        jUnitReporter.handleStepResult(result);
-
-        verify(stepNotifier, times(0)).fireTestStarted();
-        verify(stepNotifier, times(0)).fireTestFinished();
-        verify(stepNotifier, times(0)).addFailure(Matchers.<Throwable>any(Throwable.class));
-        verify(stepNotifier).fireTestIgnored();
     }
 
     @Test
