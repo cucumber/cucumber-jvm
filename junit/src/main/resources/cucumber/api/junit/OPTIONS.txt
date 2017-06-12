@@ -1,13 +1,7 @@
 JUnit Options:
 
   -h, --help                             You're looking at it.
-  --[no-]allow-started-ignored           Fire test started before the execution of a
-                                         step. This makes it possible to use the
-                                         test started and test finished notification
-                                         to calculate the execution time of the step.
-                                         If the step is pending the test started will
-                                         be followed by a test ignored, which can
-                                         confuse some listeners.
+  --[no-]allow-started-ignored           Deprecated, has no effect.
   --[no-]filename-compatible-names       Make sure that the names of the test cases
                                          only is made up of [A-Za-Z0-9_] so that the
                                          names for certain can be used as file names.

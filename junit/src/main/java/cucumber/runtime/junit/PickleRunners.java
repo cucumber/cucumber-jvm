@@ -93,7 +93,6 @@ class PickleRunners {
             jUnitReporter.startExecutionUnit(this, notifier);
             // This causes runChild to never be called, which seems OK.
             runner.runPickle(pickleEvent);
-            jUnitReporter.finishExecutionUnit();
         }
 
         @Override
@@ -139,7 +138,6 @@ class PickleRunners {
         public void run(final RunNotifier notifier) {
             jUnitReporter.startExecutionUnit(this, notifier);
             runner.runPickle(pickleEvent);
-            jUnitReporter.finishExecutionUnit();
         }
     }
 

@@ -9,6 +9,7 @@ import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
 import org.junit.Test;
 import org.junit.runner.Description;
+import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;
 import org.mockito.ArgumentMatcher;
@@ -43,13 +44,13 @@ public class FeatureRunnerTest {
         InOrder order = inOrder(notifier);
 
         order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("scenario_1 name")));
-        order.verify(notifier).fireTestIgnored(argThat(new DescriptionMatcher("first step(scenario_1 name)")));
-        order.verify(notifier).fireTestIgnored(argThat(new DescriptionMatcher("second step(scenario_1 name)")));
-        order.verify(notifier).fireTestIgnored(argThat(new DescriptionMatcher("third step(scenario_1 name)")));
+        order.verify(notifier).fireTestAssumptionFailed(argThat(new FailureMatcher("first step(scenario_1 name)")));
+        order.verify(notifier).fireTestAssumptionFailed(argThat(new FailureMatcher("second step(scenario_1 name)")));
+        order.verify(notifier).fireTestAssumptionFailed(argThat(new FailureMatcher("third step(scenario_1 name)")));
         order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("scenario_1 name")));
         order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("scenario_2 name")));
-        order.verify(notifier).fireTestIgnored(argThat(new DescriptionMatcher("first step(scenario_2 name)")));
-        order.verify(notifier).fireTestIgnored(argThat(new DescriptionMatcher("another second step(scenario_2 name)")));
+        order.verify(notifier).fireTestAssumptionFailed(argThat(new FailureMatcher("first step(scenario_2 name)")));
+        order.verify(notifier).fireTestAssumptionFailed(argThat(new FailureMatcher("another second step(scenario_2 name)")));
         order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("scenario_2 name")));
     }
 
@@ -75,19 +76,19 @@ public class FeatureRunnerTest {
         InOrder order = inOrder(notifier);
 
         order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("scenario outline name")));
-        order.verify(notifier).fireTestIgnored(argThat(new DescriptionMatcher("first step(scenario outline name)")));
-        order.verify(notifier).fireTestIgnored(argThat(new DescriptionMatcher("second step(scenario outline name)")));
-        order.verify(notifier).fireTestIgnored(argThat(new DescriptionMatcher("third step(scenario outline name)")));
+        order.verify(notifier).fireTestAssumptionFailed(argThat(new FailureMatcher("first step(scenario outline name)")));
+        order.verify(notifier).fireTestAssumptionFailed(argThat(new FailureMatcher("second step(scenario outline name)")));
+        order.verify(notifier).fireTestAssumptionFailed(argThat(new FailureMatcher("third step(scenario outline name)")));
         order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("scenario outline name")));
         order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("scenario outline name")));
-        order.verify(notifier).fireTestIgnored(argThat(new DescriptionMatcher("first step(scenario outline name)")));
-        order.verify(notifier).fireTestIgnored(argThat(new DescriptionMatcher("second step(scenario outline name)")));
-        order.verify(notifier).fireTestIgnored(argThat(new DescriptionMatcher("third step(scenario outline name)")));
+        order.verify(notifier).fireTestAssumptionFailed(argThat(new FailureMatcher("first step(scenario outline name)")));
+        order.verify(notifier).fireTestAssumptionFailed(argThat(new FailureMatcher("second step(scenario outline name)")));
+        order.verify(notifier).fireTestAssumptionFailed(argThat(new FailureMatcher("third step(scenario outline name)")));
         order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("scenario outline name")));
         order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("scenario outline name")));
-        order.verify(notifier).fireTestIgnored(argThat(new DescriptionMatcher("first step(scenario outline name)")));
-        order.verify(notifier).fireTestIgnored(argThat(new DescriptionMatcher("second step(scenario outline name)")));
-        order.verify(notifier).fireTestIgnored(argThat(new DescriptionMatcher("third step(scenario outline name)")));
+        order.verify(notifier).fireTestAssumptionFailed(argThat(new FailureMatcher("first step(scenario outline name)")));
+        order.verify(notifier).fireTestAssumptionFailed(argThat(new FailureMatcher("second step(scenario outline name)")));
+        order.verify(notifier).fireTestAssumptionFailed(argThat(new FailureMatcher("third step(scenario outline name)")));
         order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("scenario outline name")));
     }
 
@@ -204,6 +205,20 @@ public class FeatureRunnerTest {
         @Override
         public boolean matches(Object argument) {
             return argument instanceof Description && ((Description) argument).getDisplayName().equals(name);
+        }
+
+    }
+
+    private static final class FailureMatcher extends ArgumentMatcher<Failure> {
+        private String name;
+
+        FailureMatcher(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public boolean matches(Object argument) {
+            return argument instanceof Failure && ((Failure) argument).getDescription().getDisplayName().equals(name);
         }
 
     }
