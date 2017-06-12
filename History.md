@@ -1,5 +1,6 @@
 ## [2.0.0-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v1.2.5...master) (In Git)
 
+* [JUnit] Use AssumptionFailed to mark scenarios/steps as skipped ([#1142](https://github.com/cucumber/cucumber-jvm/pull/1142) Björn Rasmusson)
 * [Core] Map AssumptionViolatedException to Skipped status ([#1145](https://github.com/cucumber/cucumber-jvm/pull/1145), [#1007](https://github.com/cucumber/cucumber-jvm/issues/1007) Björn Rasmusson)
 * [Java] SnippetGenerator recognises parameters from Scenario Outline ([#1078](https://github.com/cucumber/cucumber-jvm/pull/1078) Andrey Vokin)
 * [Java8] Allow lambda steps to throw checked Exceptions ([#1001](https://github.com/cucumber/cucumber-jvm/issues/1001), [#1110](https://github.com/cucumber/cucumber-jvm/pull/1110) Christian Hujer)
