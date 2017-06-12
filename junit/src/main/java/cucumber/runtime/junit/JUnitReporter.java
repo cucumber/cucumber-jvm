@@ -13,7 +13,6 @@ import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.MultipleFailureException;
 
-import static cucumber.runtime.Runtime.isAssumptionViolated;
 import static cucumber.runtime.Runtime.isPending;
 
 public class JUnitReporter {
@@ -94,7 +93,12 @@ public class JUnitReporter {
     void handleStepResult(Result result) {
         Throwable error = result.getError();
         if (result.is(Result.Type.SKIPPED)) {
-            stepNotifier.fireTestIgnored();
+            if (error != null) {
+                stepNotifier.addFailedAssumption(error);
+                pickleRunnerNotifier.addFailedAssumption(error);
+            } else {
+                stepNotifier.fireTestIgnored();
+            }
         } else if (isPendingOrUndefined(result)) {
             addFailureOrIgnoreStep(result);
         } else {
@@ -161,6 +165,8 @@ public class JUnitReporter {
 
         void addFailure(Throwable error);
 
+        void addFailedAssumption(Throwable error);
+
         void fireTestIgnored();
 
         void fireTestFinished();
@@ -176,6 +182,11 @@ public class JUnitReporter {
 
         @Override
         public void addFailure(Throwable error) {
+            // Does nothing
+        }
+
+        @Override
+        public void addFailedAssumption(Throwable error) {
             // Does nothing
         }
 
@@ -203,8 +214,6 @@ public class JUnitReporter {
         public void addFailure(Throwable targetException) {
             if (targetException instanceof MultipleFailureException) {
                 addMultipleFailureException((MultipleFailureException) targetException);
-            } else if (isAssumptionViolated(targetException)) {
-                addFailedAssumption(targetException);
             } else {
                 notifier.fireTestFailure(new Failure(description, targetException));
             }
@@ -216,7 +225,7 @@ public class JUnitReporter {
             }
         }
 
-        private void addFailedAssumption(Throwable e) {
+        public void addFailedAssumption(Throwable e) {
             notifier.fireTestAssumptionFailed(new Failure(description, e));
         }
 

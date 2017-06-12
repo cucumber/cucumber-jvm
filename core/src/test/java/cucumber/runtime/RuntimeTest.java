@@ -171,7 +171,7 @@ public class RuntimeTest {
     @Test
     public void non_strict_with_failed_junit_assumption_prior_to_junit_412() {
         Runtime runtime = createNonStrictRuntime();
-        runtime.addError(new org.junit.internal.AssumptionViolatedException("should be treated like pending"));
+        runtime.addError(new org.junit.internal.AssumptionViolatedException("should be treated like skipped"));
 
         assertEquals(0x0, runtime.exitStatus());
     }
@@ -179,7 +179,7 @@ public class RuntimeTest {
     @Test
     public void non_strict_with_failed_junit_assumption_from_junit_412_on() {
         Runtime runtime = createNonStrictRuntime();
-        runtime.addError(new AssumptionViolatedException("should be treated like pending"));
+        runtime.addError(new AssumptionViolatedException("should be treated like skipped"));
 
         assertEquals(0x0, runtime.exitStatus());
     }
