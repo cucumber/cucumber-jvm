@@ -4,12 +4,22 @@ import java.util.HashMap;
 import java.util.Map;
 
 class GlueCodeContext {
-    public static final GlueCodeContext INSTANCE = new GlueCodeContext();
+
+    private static final ThreadLocal<GlueCodeContext> localContext = new ThreadLocal<GlueCodeContext>() {
+        protected GlueCodeContext initialValue() {
+            return new GlueCodeContext();
+        }
+    };
+
     private final Map<String, Object> objects = new HashMap<String, Object>();
     private final Map<String, Runnable> callbacks = new HashMap<String, Runnable>();
     private int counter;
 
     private GlueCodeContext() {
+    }
+
+    public static GlueCodeContext getInstance() {
+        return localContext.get();
     }
 
     public void start() {
