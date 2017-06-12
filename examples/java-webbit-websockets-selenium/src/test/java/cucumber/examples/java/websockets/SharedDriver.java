@@ -34,7 +34,7 @@ public class SharedDriver extends EventFiringWebDriver {
     private static final Thread CLOSE_THREAD = new Thread() {
         @Override
         public void run() {
-            REAL_DRIVER.close();
+            REAL_DRIVER.quit();
         }
     };
 
