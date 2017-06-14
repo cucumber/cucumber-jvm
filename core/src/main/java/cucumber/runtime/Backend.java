@@ -12,12 +12,6 @@ public interface Backend {
     void loadGlue(Glue glue, List<String> gluePaths);
 
     /**
-     * Invoked once, handing the backend a reference to a step executor
-     * in case the backend needs to call steps defined within other steps
-     */
-    void setUnreportedStepExecutor(UnreportedStepExecutor executor);
-
-    /**
      * Invoked before a new scenario starts. Implementations should do any necessary
      * setup of new, isolated state here.
      */
