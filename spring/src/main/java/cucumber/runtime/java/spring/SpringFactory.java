@@ -112,7 +112,7 @@ public class SpringFactory implements ObjectFactory {
                 registerStepClassBeanDefinition(beanFactory, stepClass);
             }
         }
-        GlueCodeContext.INSTANCE.start();
+        GlueCodeContext.getInstance().start();
     }
 
     @SuppressWarnings("resource")
@@ -161,7 +161,7 @@ public class SpringFactory implements ObjectFactory {
     @Override
     public void stop() {
         notifyContextManagerAboutTestClassFinished();
-        GlueCodeContext.INSTANCE.stop();
+        GlueCodeContext.getInstance().stop();
     }
 
     private void notifyContextManagerAboutTestClassFinished() {
