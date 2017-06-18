@@ -153,7 +153,7 @@ public class InjectorSourceFactoryTest {
         @Override
         protected Class<?> loadClass( String name, boolean resolve ) throws ClassNotFoundException {
             if( name.equals( "cucumber.runtime.java.guice.impl.LivesInChildClassLoader" ) ) {
-                String filename = getClass().getClassLoader().getResource("cucumber/runtime/java/guice/impl/LivesInChildClassLoader.class.txt").getFile();
+                String filename = getClass().getClassLoader().getResource("cucumber/runtime/java/guice/impl/LivesInChildClassLoader.class.bin").getFile();
                 File file = new File( filename );
                 try {
                     FileInputStream in = new FileInputStream( file );
