@@ -128,8 +128,8 @@ Now release everything (replace X.Y.Z below with the next release number):
 
 ```
 mvn release:clean
-mvn --batch-mode -P release-sign-artifacts release:prepare -DautoVersionSubmodules=true -DdevelopmentVersion=X.Y.Z-SNAPSHOT
-mvn -P release-sign-artifacts release:perform
+mvn --batch-mode release:prepare -DautoVersionSubmodules=true -DdevelopmentVersion=X.Y.Z-SNAPSHOT
+mvn release:perform
 ```
 
 Post release the API docs must be generated for each module and manually copied over to a working copy of the [cucumber.github.com](https://github.com/cucumber/cucumber.github.com) which must be a sibling of `cucumber-jvm` (this repo):

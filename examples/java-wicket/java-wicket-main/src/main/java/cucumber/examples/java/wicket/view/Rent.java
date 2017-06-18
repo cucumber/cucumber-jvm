@@ -7,17 +7,14 @@ import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.util.value.ValueMap;
 
 public class Rent extends WebPage {
-    private Application application;
 
     public Rent() {
         RentCarForm rentCarForm = new RentCarForm("rentCarForm");
         add(rentCarForm);
-
-        application = (Application) getApplication();
     }
 
     public void rent() {
-        application.rentCar();
+        ((Application) getApplication()).rentCar();
     }
 
     private class RentCarForm extends Form<ValueMap> {

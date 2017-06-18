@@ -19,7 +19,7 @@ cache:
 matrix:
   include:
   - jdk: openjdk7
-    script: mvn -q install -P examples
+    script: mvn -q install
   - jdk: oraclejdk7
     script: mvn -q install
     after_success: mvn -q deploy --settings .travis-settings.xml -Dno.gem.deploy=true -DskipTests=true -Dmaven.javadoc.skip=true
