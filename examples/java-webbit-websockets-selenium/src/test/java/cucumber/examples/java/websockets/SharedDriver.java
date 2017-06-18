@@ -30,7 +30,8 @@ import org.openqa.selenium.support.events.EventFiringWebDriver;
  * </p>
  */
 public class SharedDriver extends EventFiringWebDriver {
-    private static final WebDriver REAL_DRIVER = new FirefoxDriver();
+    private static final WebDriver REAL_DRIVER = WebDriverFactory.create();
+
     private static final Thread CLOSE_THREAD = new Thread() {
         @Override
         public void run() {
@@ -47,11 +48,11 @@ public class SharedDriver extends EventFiringWebDriver {
     }
 
     @Override
-    public void close() {
+    public void quit() {
         if (Thread.currentThread() != CLOSE_THREAD) {
-            throw new UnsupportedOperationException("You shouldn't close this WebDriver. It's shared and will close when the JVM exits.");
+            throw new UnsupportedOperationException("You shouldn't quit this WebDriver. It's shared and will quit when the JVM exits.");
         }
-        super.close();
+        super.quit();
     }
 
     @Before
