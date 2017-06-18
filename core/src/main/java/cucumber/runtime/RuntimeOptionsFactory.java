@@ -1,6 +1,8 @@
 package cucumber.runtime;
 
 import cucumber.api.CucumberOptions;
+import cucumber.deps.com.thoughtworks.xstream.annotations.XStreamConverter;
+import cucumber.deps.com.thoughtworks.xstream.annotations.XStreamConverters;
 import cucumber.runtime.formatter.PluginFactory;
 import cucumber.runtime.io.MultiLoader;
 
@@ -22,7 +24,9 @@ public class RuntimeOptionsFactory {
 
     public RuntimeOptions create() {
         List<String> args = buildArgsFromOptions();
-        return new RuntimeOptions(args);
+        List<XStreamConverter> converters = buildConverters();
+        return new RuntimeOptions(args)
+            .withConverters(converters);
     }
 
     private List<String> buildArgsFromOptions() {
@@ -139,6 +143,27 @@ public class RuntimeOptionsFactory {
         for (String junitOption : options.junit()) {
             args.add("--junit," + junitOption);
         }
+    }
+
+    private List<XStreamConverter> buildConverters() {
+        List<XStreamConverter> converters = new ArrayList<XStreamConverter>();
+
+        for (Class<?> classWithConverters = clazz;
+            hasSuperClass(classWithConverters);
+            classWithConverters = classWithConverters.getSuperclass()
+        ) {
+            XStreamConverters xstreamConverters = classWithConverters.getAnnotation(XStreamConverters.class);
+            if (xstreamConverters != null) {
+                Collections.addAll(converters, xstreamConverters.value());
+            }
+
+            XStreamConverter xstreamConverter = classWithConverters.getAnnotation(XStreamConverter.class);
+            if (xstreamConverter != null) {
+                converters.add(xstreamConverter);
+            }
+        }
+
+        return converters;
     }
 
     static String packagePath(Class clazz) {
