@@ -1,7 +1,10 @@
 package cucumber.runtime.java.spring;
 
-import cucumber.runtime.CucumberException;
+import static org.springframework.test.context.FixBootstrapUtils.createBootstrapContext;
+import static org.springframework.test.context.FixBootstrapUtils.resolveTestContextBootstrapper;
+
 import cucumber.api.java.ObjectFactory;
+import cucumber.runtime.CucumberException;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -202,12 +205,14 @@ public class SpringFactory implements ObjectFactory {
 
 class CucumberTestContextManager extends TestContextManager {
 
-    public CucumberTestContextManager(Class<?> testClass) {
-        super(testClass);
+    CucumberTestContextManager(Class<?> testClass) {
+        // Does the same as TestContextManager(Class<?>) but creates a
+        // DefaultCacheAwareContextLoaderDelegate that uses a thread local contextCache.
+        super(resolveTestContextBootstrapper(createBootstrapContext(testClass)));
         registerGlueCodeScope(getContext());
     }
 
-    public ConfigurableListableBeanFactory getBeanFactory() {
+    ConfigurableListableBeanFactory getBeanFactory() {
         return getContext().getBeanFactory();
     }
 
