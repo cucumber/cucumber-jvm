@@ -104,8 +104,6 @@ public class CucumberExecutor {
 
         // TODO: This is duplicated in info.cucumber.Runtime.
 
-        final Formatter formatter = runtimeOptions.formatter(classLoader);
-
         final StepDefinitionReporter stepDefinitionReporter = runtimeOptions.stepDefinitionReporter(classLoader);
         runtime.reportStepDefinitions(stepDefinitionReporter);
 

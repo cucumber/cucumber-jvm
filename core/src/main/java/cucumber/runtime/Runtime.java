@@ -140,7 +140,6 @@ public class Runtime {
 
         // TODO: This is duplicated in cucumber.api.android.CucumberInstrumentationCore - refactor or keep uptodate
 
-        Formatter formatter = runtimeOptions.formatter(classLoader);
         StepDefinitionReporter stepDefinitionReporter = runtimeOptions.stepDefinitionReporter(classLoader);
 
         reportStepDefinitions(stepDefinitionReporter);
@@ -158,15 +157,20 @@ public class Runtime {
     }
 
     public void runFeature(CucumberFeature feature) {
-        List<PickleEvent> pickleEvents = new ArrayList<PickleEvent>();
-        for (Pickle pickle : compiler.compile(feature.getGherkinFeature())) {
-            pickleEvents.add(new PickleEvent(feature.getPath(), pickle));
-        }
+        List<PickleEvent> pickleEvents = compileFeature(feature);
         for (PickleEvent pickleEvent : pickleEvents) {
             if (matchesFilters(pickleEvent)) {
                 runner.runPickle(pickleEvent);
             }
         }
+    }
+
+    public List<PickleEvent> compileFeature(CucumberFeature feature) {
+        List<PickleEvent> pickleEvents = new ArrayList<PickleEvent>();
+        for (Pickle pickle : compiler.compile(feature.getGherkinFeature())) {
+            pickleEvents.add(new PickleEvent(feature.getPath(), pickle));
+        }
+        return pickleEvents;
     }
 
     public boolean matchesFilters(PickleEvent pickleEvent) {
