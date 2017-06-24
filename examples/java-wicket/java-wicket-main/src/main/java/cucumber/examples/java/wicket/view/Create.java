@@ -9,14 +9,11 @@ import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.util.value.ValueMap;
 
 public class Create extends WebPage {
-    private Application application;
     private int numberOfCars;
 
     public Create() {
         CreateCarsForm createCarsForm = new CreateCarsForm("createCarsForm");
         add(createCarsForm);
-
-        application = (Application) getApplication();
     }
 
     public void setNumberOfCars(int initialNumberOfCars) {
@@ -25,7 +22,7 @@ public class Create extends WebPage {
 
     public void create() {
         for (int i = 0; i < numberOfCars; i++) {
-            application.createCar();
+            ((Application) getApplication()).createCar();
         }
     }
 

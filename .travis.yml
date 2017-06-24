@@ -1,7 +1,7 @@
 ---
 language: java
 
-# get us on the new container based builds, we're not using any fancyness
+# Use container based builds. They are faster and we do not need sudo.
 sudo: false
 
 before_install:
@@ -16,16 +16,22 @@ cache:
   directories:
     - $HOME/.m2
 
-matrix:
+jdk:
+  - openjdk7
+  - oraclejdk7
+  - oraclejdk8
+
+
+# Stage 0: Test -  Builds against all jdks
+script: mvn -q install
+
+
+jobs:
   include:
-  - jdk: openjdk7
-    script: mvn -q install -P examples
-  - jdk: oraclejdk7
-    script: mvn -q install
-    after_success: mvn -q deploy --settings .travis-settings.xml -Dno.gem.deploy=true -DskipTests=true -Dmaven.javadoc.skip=true
-  - jdk: oraclejdk8
-    script: mvn -q install -P java8
-    after_success: mvn -q deploy -P java8 -pl java8 --settings .travis-settings.xml -DskipTests=true -Dmaven.javadoc.skip=true
+    # Stage 1: Deploy - Builds and deploys all artifacts with java 8.
+    - stage: deploy
+      jdk: oraclejdk8
+      script: mvn -q deploy --settings .travis-settings.xml -Dno.gem.deploy=true -DskipTests=true -Dmaven.javadoc.skip=true
 
 env:
   global:
