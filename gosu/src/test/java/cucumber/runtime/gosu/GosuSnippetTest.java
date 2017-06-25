@@ -1,21 +1,21 @@
 package cucumber.runtime.gosu;
 
 import cucumber.runtime.snippets.SnippetGenerator;
-import gherkin.formatter.model.Comment;
-import gherkin.formatter.model.DataTableRow;
-import gherkin.formatter.model.DocString;
-import gherkin.formatter.model.Step;
+import gherkin.pickles.Argument;
+import gherkin.pickles.PickleCell;
+import gherkin.pickles.PickleRow;
+import gherkin.pickles.PickleStep;
+import gherkin.pickles.PickleString;
+import gherkin.pickles.PickleTable;
 import org.junit.Test;
 
 import java.util.Collections;
-import java.util.List;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 
 public class GosuSnippetTest {
-
-    private static final List<Comment> NO_COMMENTS = Collections.emptyList();
+    private static final String GIVEN_KEYWORD = "Given";
 
     @Test
     public void generatesPlainSnippet() {
@@ -66,7 +66,7 @@ public class GosuSnippetTest {
                 "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException()\n" +
                 "})\n";
-        assertEquals(expected, snippetForDocString("I have:", new DocString("text/plain", "hello", 1)));
+        assertEquals(expected, snippetForDocString("I have:", new PickleString(null, "hello")));
     }
 
     @Test
@@ -76,22 +76,22 @@ public class GosuSnippetTest {
                 "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException()\n" +
                 "})\n";
-        List<DataTableRow> dataTable = asList(new DataTableRow(NO_COMMENTS, asList("col1"), 1));
+        PickleTable dataTable = new PickleTable(asList(new PickleRow(asList(new PickleCell(null, "col1")))));
         assertEquals(expected, snippetForDataTable("I have:", dataTable));
     }
 
     private String snippetFor(String name) {
-        Step step = new Step(NO_COMMENTS, "Given ", name, 0, null, null);
-        return new SnippetGenerator(new GosuSnippet()).getSnippet(step, null);
+        PickleStep step = new PickleStep(name, Collections.emptyList(), Collections.emptyList());
+        return new SnippetGenerator(new GosuSnippet()).getSnippet(step, GIVEN_KEYWORD, null);
     }
 
-    private String snippetForDocString(String name, DocString docString) {
-        Step step = new Step(NO_COMMENTS, "Given ", name, 0, null, docString);
-        return new SnippetGenerator(new GosuSnippet()).getSnippet(step, null);
+    private String snippetForDocString(String name, PickleString docString) {
+        PickleStep step = new PickleStep(name, asList((Argument)docString), Collections.emptyList());
+        return new SnippetGenerator(new GosuSnippet()).getSnippet(step, GIVEN_KEYWORD, null);
     }
 
-    private String snippetForDataTable(String name, List<DataTableRow> dataTable) {
-        Step step = new Step(NO_COMMENTS, "Given ", name, 0, dataTable, null);
-        return new SnippetGenerator(new GosuSnippet()).getSnippet(step, null);
+    private String snippetForDataTable(String name, PickleTable dataTable) {
+        PickleStep step = new PickleStep(name, asList((Argument)dataTable), Collections.emptyList());
+        return new SnippetGenerator(new GosuSnippet()).getSnippet(step, GIVEN_KEYWORD, null);
     }
 }
