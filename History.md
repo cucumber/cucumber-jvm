@@ -19,7 +19,7 @@
   * JsonFormatter attach text to last step when sceneario.write is invoked from after hook ([#1080](https://github.com/cucumber/cucumber-jvm/issues/1080))
   * CucumberOptions: Tags and name do not work well together ([#976](https://github.com/cucumber/cucumber-jvm/issues/976))
   * Tags at the examples block are not treated as actual tags in scenario ([#849](https://github.com/cucumber/cucumber-jvm/issues/849))
-  * NullPointerException from @Before tag ([#701](https://github.com/cucumber/cucumber-jvm/issues/701))
+  * NullPointerException from @Before tag ([#638](https://github.com/cucumber/cucumber-jvm/issues/638), [#701](https://github.com/cucumber/cucumber-jvm/issues/701))
 * [All] Change the maven groupId to io.cucumber (part of [#1035](https://github.com/cucumber/cucumber-jvm/pull/1035) Björn Rasmusson)
 
 ## [1.2.5](https://github.com/cucumber/cucumber-jvm/compare/v1.2.4...v1.2.5) (2016-09-12)
