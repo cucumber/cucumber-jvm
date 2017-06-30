@@ -13,7 +13,7 @@ public class JUnitOptions {
     private static String optionsText;
 
     private boolean filenameCompatibleNames = false;
-    private boolean stepNotifications = true;
+    private boolean stepNotifications = false;
 
     /**
      * Create a new instance from a list of options, for example:
