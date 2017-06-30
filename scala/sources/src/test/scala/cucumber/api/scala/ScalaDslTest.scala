@@ -22,6 +22,11 @@ class ScalaDslTest {
     def getName = ""
 
     def getId = ""
+
+    def getUri = ""
+
+    def getLines = null
+
   }
 
   @Test
@@ -128,7 +133,7 @@ class ScalaDslTest {
 
     assertEquals(1, Dummy.stepDefinitions.size)
     val step = Dummy.stepDefinitions.head
-    assertEquals("ScalaDslTest.scala:126", step.getLocation(true)) // be careful with formatting or this test will break
+    assertEquals("ScalaDslTest.scala:131", step.getLocation(true)) // be careful with formatting or this test will break
     assertEquals("x", step.getPattern)
     step.execute("en", Array())
     assertTrue(called)

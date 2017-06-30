@@ -23,7 +23,7 @@ public class TestCase {
         boolean skipNextStep = false;
         Long startTime = bus.getTime();
         bus.send(new TestCaseStarted(startTime, this));
-        ScenarioImpl scenarioResult = new ScenarioImpl(bus, pickleEvent.pickle);
+        ScenarioImpl scenarioResult = new ScenarioImpl(bus, pickleEvent);
         for (TestStep step : testSteps) {
             Result stepResult = step.run(bus, pickleEvent.pickle.getLanguage(), scenarioResult, skipNextStep);
             if (!stepResult.is(Result.Type.PASSED)) {

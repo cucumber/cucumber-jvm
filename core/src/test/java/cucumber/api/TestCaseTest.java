@@ -9,6 +9,7 @@ import cucumber.api.event.TestCaseStarted;
 import cucumber.runner.EventBus;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.Pickle;
+import gherkin.pickles.PickleLocation;
 import org.junit.Test;
 import org.mockito.InOrder;
 
@@ -77,6 +78,7 @@ public class TestCaseTest {
     private PickleEvent pickleEvent() {
         Pickle pickle = mock(Pickle.class);
         when(pickle.getLanguage()).thenReturn(ENGLISH);
+        when(pickle.getLocations()).thenReturn(Arrays.asList(new PickleLocation(1, 1)));
         return new PickleEvent("uri", pickle);
     }
 
