@@ -33,8 +33,8 @@ class JavaStepDefinition implements StepDefinition {
         this.parameterInfos = ParameterInfo.fromMethod(method);
     }
 
-    public void execute(String language, Object[] args) throws Throwable {
-        Utils.invoke(objectFactory.getInstance(method.getDeclaringClass()), method, timeoutMillis, args);
+    public Object execute(String language, Object[] args) throws Throwable {
+        return Utils.invoke(objectFactory.getInstance(method.getDeclaringClass()), method, timeoutMillis, args);
     }
 
     public List<Argument> matchedArguments(PickleStep step) {

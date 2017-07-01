@@ -40,8 +40,8 @@ public class StubStepDefinition implements StepDefinition {
     }
 
     @Override
-    public void execute(String language, Object[] args) throws Throwable {
-        Utils.invoke(target, method, 0, args);
+    public Object execute(String language, Object[] args) throws Throwable {
+        return Utils.invoke(target, method, 0, args);
     }
 
     @Override

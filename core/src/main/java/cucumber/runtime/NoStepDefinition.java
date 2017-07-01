@@ -29,7 +29,8 @@ class NoStepDefinition implements StepDefinition {
     }
 
     @Override
-    public void execute(String language, Object[] args) throws Throwable {
+    public Object execute(String language, Object[] args) throws Throwable {
+    	return null;
     }
 
     @Override

@@ -43,8 +43,8 @@ public class Java8HookDefinition implements HookDefinition {
     }
 
     @Override
-    public void execute(final Scenario scenario) throws Throwable {
-        Timeout.timeout(new Timeout.Callback<Object>() {
+    public Object execute(final Scenario scenario) throws Throwable {
+        return Timeout.timeout(new Timeout.Callback<Object>() {
             @Override
             public Object call() throws Throwable {
                 if (hookBody != null) {
