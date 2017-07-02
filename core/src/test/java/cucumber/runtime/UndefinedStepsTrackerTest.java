@@ -1,14 +1,9 @@
 package cucumber.runtime;
 
-import cucumber.api.Result;
-import cucumber.api.TestCase;
-import cucumber.api.TestStep;
 import cucumber.runner.EventBus;
 import cucumber.runner.TimeService;
 import cucumber.runtime.model.CucumberFeature;
 import gherkin.pickles.PickleLocation;
-import gherkin.pickles.PickleStep;
-import gherkin.pickles.Argument;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -19,15 +14,13 @@ import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class UndefinedStepsTrackerTest {
 
     @Test
     public void has_undefined_steps() {
         UndefinedStepsTracker undefinedStepsTracker = new UndefinedStepsTracker();
-        undefinedStepsTracker.handleTestStepFinished(testStep(), undefinedResultWithSnippets(asList("")));
+        undefinedStepsTracker.handleSnippetsSuggested(uri(), locations(), asList(""));
         assertTrue(undefinedStepsTracker.hasUndefinedSteps());
     }
 
@@ -40,8 +33,8 @@ public class UndefinedStepsTrackerTest {
     @Test
     public void removes_duplicates() {
         UndefinedStepsTracker tracker = new UndefinedStepsTracker();
-        tracker.handleTestStepFinished(testStep(), undefinedResultWithSnippets(asList("**KEYWORD** ^B$")));
-        tracker.handleTestStepFinished(testStep(), undefinedResultWithSnippets(asList("**KEYWORD** ^B$")));
+        tracker.handleSnippetsSuggested(uri(), locations(), asList("**KEYWORD** ^B$"));
+        tracker.handleSnippetsSuggested(uri(), locations(), asList("**KEYWORD** ^B$"));
         assertEquals("[Given ^B$]", tracker.getSnippets().toString());
     }
 
@@ -56,8 +49,7 @@ public class UndefinedStepsTrackerTest {
                 "    Given A\n" +
                 "    Then B\n");
         feature.sendTestSourceRead(bus);
-        tracker.handleTestCaseStarted(testCase(path("path/test.feature")));
-        tracker.handleTestStepFinished(testStep(line(4)), undefinedResultWithSnippets(asList("**KEYWORD** ^B$")));
+        tracker.handleSnippetsSuggested(uri("path/test.feature"), locations(line(4)), asList("**KEYWORD** ^B$"));
         assertEquals("[Then ^B$]", tracker.getSnippets().toString());
     }
 
@@ -73,8 +65,7 @@ public class UndefinedStepsTrackerTest {
                 "    And B\n" +
                 "    But C\n");
         feature.sendTestSourceRead(bus);
-        tracker.handleTestCaseStarted(testCase(path("path/test.feature")));
-        tracker.handleTestStepFinished(testStep(line(5)), undefinedResultWithSnippets(asList("**KEYWORD** ^C$")));
+        tracker.handleSnippetsSuggested(uri("path/test.feature"), locations(line(5)), asList("**KEYWORD** ^C$"));
         assertEquals("[When ^C$]", tracker.getSnippets().toString());
     }
 
@@ -91,8 +82,7 @@ public class UndefinedStepsTrackerTest {
                 "    And B\n" +
                 "    But C\n");
         feature.sendTestSourceRead(bus);
-        tracker.handleTestCaseStarted(testCase(path("path/test.feature")));
-        tracker.handleTestStepFinished(testStep(line(5)), undefinedResultWithSnippets(asList("**KEYWORD** ^C$")));
+        tracker.handleSnippetsSuggested(uri("path/test.feature"), locations(line(5)), asList("**KEYWORD** ^C$"));
         assertEquals("[When ^C$]", tracker.getSnippets().toString());
     }
 
@@ -108,8 +98,7 @@ public class UndefinedStepsTrackerTest {
                 "    And B\n" +
                 "    * C\n");
         feature.sendTestSourceRead(bus);
-        tracker.handleTestCaseStarted(testCase(path("path/test.feature")));
-        tracker.handleTestStepFinished(testStep(line(5)), undefinedResultWithSnippets(asList("**KEYWORD** ^C$")));
+        tracker.handleSnippetsSuggested(uri("path/test.feature"), locations(line(5)), asList("**KEYWORD** ^C$"));
         assertEquals("[When ^C$]", tracker.getSnippets().toString());
     }
 
@@ -123,8 +112,7 @@ public class UndefinedStepsTrackerTest {
                 "  Scenario: scenario name\n" +
                 "    * A\n");
         feature.sendTestSourceRead(bus);
-        tracker.handleTestCaseStarted(testCase(path("path/test.feature")));
-        tracker.handleTestStepFinished(testStep(line(3)), undefinedResultWithSnippets(asList("**KEYWORD** ^A$")));
+        tracker.handleSnippetsSuggested(uri("path/test.feature"), locations(line(3)), asList("**KEYWORD** ^A$"));
         assertEquals("[Given ^A$]", tracker.getSnippets().toString());
     }
 
@@ -139,45 +127,28 @@ public class UndefinedStepsTrackerTest {
                 "  Сценарий: \n" +
                 "    * Б\n");
         feature.sendTestSourceRead(bus);
-        tracker.handleTestCaseStarted(testCase(path("path/test.feature")));
-        tracker.handleTestStepFinished(testStep(line(4)), undefinedResultWithSnippets(asList("**KEYWORD** ^Б$")));
+        tracker.handleSnippetsSuggested(uri("path/test.feature"), locations(line(4)), asList("**KEYWORD** ^Б$"));
         assertEquals("[Допустим ^Б$]", tracker.getSnippets().toString());
     }
 
-    private TestCase testCase(String path) {
-        TestCase testCase = mock(TestCase.class);
-        when(testCase.getPath()).thenReturn(path);
-        return testCase;
+    private List<PickleLocation> locations(int line) {
+        return asList(new PickleLocation(line, 0));
     }
 
-    private TestStep testStep(int line) {
-        return testStep(asList(new PickleLocation(line, 0)));
+    private List<PickleLocation> locations() {
+        return Collections.<PickleLocation>emptyList();
     }
 
-    private TestStep testStep() {
-        return testStep(Collections.<PickleLocation>emptyList());
+    private String uri() {
+        return uri("");
     }
 
-    private TestStep testStep(List<PickleLocation> locations) {
-        TestStep testStep = mock(TestStep.class);
-        PickleStep pickleStep = new PickleStep("step text", Collections.<Argument>emptyList(), locations);
-        when(testStep.getPickleStep()).thenReturn(pickleStep);
-        return testStep;
-    }
-
-    private String path(String path) {
+    private String uri(String path) {
         return path;
     }
 
     private int line(int line) {
         return line;
-    }
-
-    private Result undefinedResultWithSnippets(List<String> snippets) {
-        Result result = mock(Result.class);
-        when(result.is(Result.Type.UNDEFINED)).thenReturn(true);
-        when(result.getSnippets()).thenReturn(snippets);
-        return result;
     }
 
 }

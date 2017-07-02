@@ -41,9 +41,4 @@ public class HookDefinitionMatch implements DefinitionMatch {
     public List<Argument> getArguments() {
         return Collections.<Argument>emptyList();
     }
-
-    @Override
-    public List<String> getSnippets() {
-        throw new UnsupportedOperationException();
-    }
 }

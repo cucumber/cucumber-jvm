@@ -4,14 +4,11 @@ import cucumber.api.Scenario;
 import gherkin.pickles.PickleStep;
 
 import java.util.Collections;
-import java.util.List;
 
 public class UndefinedStepDefinitionMatch extends StepDefinitionMatch {
-    private final List<String> snippets;
 
-    public UndefinedStepDefinitionMatch(PickleStep step, List<String> snippets) {
+    public UndefinedStepDefinitionMatch(PickleStep step) {
         super(Collections.<Argument>emptyList(), new NoStepDefinition(), null, step, null);
-        this.snippets = snippets;
     }
 
     @Override
@@ -27,10 +24,5 @@ public class UndefinedStepDefinitionMatch extends StepDefinitionMatch {
     @Override
     public Match getMatch() {
         return Match.UNDEFINED;
-    }
-
-    @Override
-    public List<String> getSnippets() {
-        return snippets;
     }
 }
