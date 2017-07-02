@@ -4,21 +4,25 @@ import cucumber.api.Result;
 import cucumber.api.event.EmbedEvent;
 import cucumber.api.event.WriteEvent;
 import cucumber.runner.EventBus;
+import gherkin.events.PickleEvent;
 import gherkin.pickles.Pickle;
+import gherkin.pickles.PickleLocation;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 
+import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.mockito.Matchers.argThat;
 
 public class ScenarioResultTest {
 
     private EventBus bus = mock(EventBus.class);
-    private ScenarioImpl s = new ScenarioImpl(bus, mock(Pickle.class));
+    private ScenarioImpl s = new ScenarioImpl(bus, pickleEvent());
 
     @Test
     public void no_steps_is_passed() throws Exception {
@@ -92,6 +96,13 @@ public class ScenarioResultTest {
         s.add(new Result(Result.Type.FAILED, 0L, failedError));
 
         assertThat(s.getError(), sameInstance(failedError));
+    }
+
+    private PickleEvent pickleEvent() {
+        Pickle pickle = mock(Pickle.class);
+        when(pickle.getLocations()).thenReturn(asList(new PickleLocation(1, 1)));
+        PickleEvent pickleEvent = new PickleEvent("uri", pickle);
+        return pickleEvent;
     }
 }
 
