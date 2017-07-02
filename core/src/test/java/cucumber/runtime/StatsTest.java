@@ -15,6 +15,7 @@ import java.util.Locale;
 import org.junit.Test;
 
 public class StatsTest {
+    public static final long ANY_TIME = 1234567890;
     public static final long ONE_MILLI_SECOND = 1000000;
     private static final long ONE_HOUR = 60 * Stats.ONE_MINUTE;
 
@@ -33,13 +34,12 @@ public class StatsTest {
     @Test
     public void should_only_print_sub_counts_if_not_zero() {
         Stats counter = createMonochromeSummaryCounter();
-        Result passedResult = createResultWithStatus(Result.Type.PASSED);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-        counter.addStep(passedResult);
-        counter.addStep(passedResult);
-        counter.addStep(passedResult);
-        counter.addScenario(Result.Type.PASSED);
+        counter.addStep(Result.Type.PASSED);
+        counter.addStep(Result.Type.PASSED);
+        counter.addStep(Result.Type.PASSED);
+        counter.addScenario(Result.Type.PASSED, "scenario designation");
         counter.printStats(new PrintStream(baos), isStrict(false));
 
         assertThat(baos.toString(), startsWith(String.format(
@@ -102,14 +102,12 @@ public class StatsTest {
     }
 
     @Test
-    public void should_include_hook_time_and_step_time_has_executed() {
+    public void should_report_the_difference_between_finish_time_and_start_time() {
         Stats counter = createMonochromeSummaryCounter();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-        counter.addHookTime(ONE_MILLI_SECOND);
-        counter.addStep(new Result(Result.Type.PASSED, ONE_MILLI_SECOND, null));
-        counter.addStep(new Result(Result.Type.PASSED, ONE_MILLI_SECOND, null));
-        counter.addHookTime(ONE_MILLI_SECOND);
+        counter.setStartTime(ANY_TIME);
+        counter.setFinishTime(ANY_TIME + 4*ONE_MILLI_SECOND);
         counter.printStats(new PrintStream(baos), isStrict(false));
 
         assertThat(baos.toString(), endsWith(String.format(
@@ -121,9 +119,8 @@ public class StatsTest {
         Stats counter = createMonochromeSummaryCounter();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-        counter.addStep(new Result(Result.Type.PASSED, Stats.ONE_MINUTE, null));
-        counter.addStep(new Result(Result.Type.PASSED, Stats.ONE_SECOND, null));
-        counter.addStep(new Result(Result.Type.PASSED, ONE_MILLI_SECOND, null));
+        counter.setStartTime(ANY_TIME);
+        counter.setFinishTime(ANY_TIME + Stats.ONE_MINUTE + Stats.ONE_SECOND + ONE_MILLI_SECOND);
         counter.printStats(new PrintStream(baos), isStrict(false));
 
         assertThat(baos.toString(), endsWith(String.format(
@@ -135,8 +132,8 @@ public class StatsTest {
         Stats counter = createMonochromeSummaryCounter();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-        counter.addStep(new Result(Result.Type.PASSED, ONE_HOUR, null));
-        counter.addStep(new Result(Result.Type.PASSED, Stats.ONE_MINUTE, null));
+        counter.setStartTime(ANY_TIME);
+        counter.setFinishTime(ANY_TIME + ONE_HOUR + Stats.ONE_MINUTE);
         counter.printStats(new PrintStream(baos), isStrict(false));
 
         assertThat(baos.toString(), endsWith(String.format(
@@ -148,9 +145,8 @@ public class StatsTest {
         Stats counter = new Stats(true, Locale.GERMANY);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-        counter.addStep(new Result(Result.Type.PASSED, Stats.ONE_MINUTE, null));
-        counter.addStep(new Result(Result.Type.PASSED, Stats.ONE_SECOND, null));
-        counter.addStep(new Result(Result.Type.PASSED, ONE_MILLI_SECOND, null));
+        counter.setStartTime(ANY_TIME);
+        counter.setFinishTime(ANY_TIME + Stats.ONE_MINUTE + Stats.ONE_SECOND + ONE_MILLI_SECOND);
         counter.printStats(new PrintStream(baos), isStrict(false));
 
         assertThat(baos.toString(), endsWith(String.format(
@@ -162,13 +158,13 @@ public class StatsTest {
         Stats counter = createMonochromeSummaryCounter();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-        counter.addStep(createResultWithStatus(Result.Type.FAILED));
+        counter.addStep(Result.Type.FAILED);
         counter.addScenario(Result.Type.FAILED, "path/file.feature:3 # Scenario: scenario_name");
-        counter.addStep(createResultWithStatus(Result.Type.AMBIGUOUS));
+        counter.addStep(Result.Type.AMBIGUOUS);
         counter.addScenario(Result.Type.AMBIGUOUS, "path/file.feature:3 # Scenario: scenario_name");
-        counter.addStep(createResultWithStatus(Result.Type.UNDEFINED));
+        counter.addStep(Result.Type.UNDEFINED);
         counter.addScenario(Result.Type.UNDEFINED, "path/file.feature:3 # Scenario: scenario_name");
-        counter.addStep(createResultWithStatus(Result.Type.PENDING));
+        counter.addStep(Result.Type.PENDING);
         counter.addScenario(Result.Type.PENDING, "path/file.feature:3 # Scenario: scenario_name");
         counter.printStats(new PrintStream(baos), isStrict(false));
 
@@ -187,13 +183,13 @@ public class StatsTest {
         Stats counter = createMonochromeSummaryCounter();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-        counter.addStep(createResultWithStatus(Result.Type.FAILED));
+        counter.addStep(Result.Type.FAILED);
         counter.addScenario(Result.Type.FAILED, "path/file.feature:3 # Scenario: scenario_name");
-        counter.addStep(createResultWithStatus(Result.Type.AMBIGUOUS));
+        counter.addStep(Result.Type.AMBIGUOUS);
         counter.addScenario(Result.Type.AMBIGUOUS, "path/file.feature:3 # Scenario: scenario_name");
-        counter.addStep(createResultWithStatus(Result.Type.UNDEFINED));
+        counter.addStep(Result.Type.UNDEFINED);
         counter.addScenario(Result.Type.UNDEFINED, "path/file.feature:3 # Scenario: scenario_name");
-        counter.addStep(createResultWithStatus(Result.Type.PENDING));
+        counter.addStep(Result.Type.PENDING);
         counter.addScenario(Result.Type.PENDING, "path/file.feature:3 # Scenario: scenario_name");
         counter.printStats(new PrintStream(baos), isStrict(true));
 
@@ -214,12 +210,8 @@ public class StatsTest {
     }
 
     private void addOneStepScenario(Stats counter, Result.Type status) {
-        counter.addStep(createResultWithStatus(status));
+        counter.addStep(status);
         counter.addScenario(status, "scenario designation");
-    }
-
-    private Result createResultWithStatus(Result.Type status) {
-        return new Result(status, 0l, null);
     }
 
     private Stats createMonochromeSummaryCounter() {
