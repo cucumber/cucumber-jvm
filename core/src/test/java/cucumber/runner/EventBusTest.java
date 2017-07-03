@@ -20,7 +20,7 @@ public class EventBusTest {
         Result result = mock(Result.class);
         TestStepFinished event = new TestStepFinished(0l, testStep, result);
 
-        EventBus bus = new EventBus(new TimeService.Stub(0));
+        EventBus bus = new EventBus(new TimeServiceStub(0));
         bus.registerHandlerFor(TestStepFinished.class, handler);
         bus.send(event);
 
@@ -33,7 +33,7 @@ public class EventBusTest {
         TestStep testStep = mock(TestStep.class);
         TestStepStarted event = new TestStepStarted(0l, testStep);
 
-        EventBus bus = new EventBus(new TimeService.Stub(0));
+        EventBus bus = new EventBus(new TimeServiceStub(0));
         bus.registerHandlerFor(TestStepFinished.class, handler);
         bus.send(event);
 

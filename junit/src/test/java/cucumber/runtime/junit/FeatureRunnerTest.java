@@ -196,7 +196,13 @@ public class FeatureRunnerTest {
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         final ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
         final RuntimeGlue glue = mock(RuntimeGlue.class);
-        final Runtime runtime = new Runtime(resourceLoader, classLoader, asList(mock(Backend.class)), runtimeOptions, new TimeService.Stub(0l), glue);
+        final TimeService timeServiceStub = new TimeService() {
+            @Override
+            public long time() {
+                return 0l;
+            }
+        };
+        final Runtime runtime = new Runtime(resourceLoader, classLoader, asList(mock(Backend.class)), runtimeOptions, timeServiceStub, glue);
         return new FeatureRunner(cucumberFeature, runtime, new JUnitReporter(runtime.getEventBus(), false, junitOption));
     }
 

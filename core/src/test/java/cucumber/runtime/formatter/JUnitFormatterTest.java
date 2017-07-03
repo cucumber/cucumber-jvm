@@ -1,7 +1,7 @@
 package cucumber.runtime.formatter;
 
 import cucumber.api.Result;
-import cucumber.runner.TimeService;
+import cucumber.runner.TimeServiceStub;
 import cucumber.runtime.Backend;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeOptions;
@@ -536,7 +536,7 @@ public class JUnitFormatterTest {
         RuntimeOptions runtimeOptions = new RuntimeOptions(args);
         Backend backend = mock(Backend.class);
         when(backend.getSnippet(any(PickleStep.class), anyString(), any(FunctionNameGenerator.class))).thenReturn("TEST SNIPPET");
-        final cucumber.runtime.Runtime runtime = new Runtime(resourceLoader, classLoader, asList(backend), runtimeOptions, new TimeService.Stub(0L), null);
+        final cucumber.runtime.Runtime runtime = new Runtime(resourceLoader, classLoader, asList(backend), runtimeOptions, new TimeServiceStub(0L), null);
         runtime.run();
         return report;
     }

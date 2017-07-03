@@ -2,7 +2,6 @@ package cucumber.runner;
 
 import static org.junit.Assert.assertNull;
 
-import cucumber.runner.TimeService;
 import org.junit.Test;
 
 public class TimeServiceTest {

@@ -1,7 +1,7 @@
 package cucumber.runtime.formatter;
 
 import cucumber.api.Result;
-import cucumber.runner.TimeService;
+import cucumber.runner.TimeServiceStub;
 import cucumber.runtime.Backend;
 import cucumber.runtime.HookDefinition;
 import cucumber.runtime.Runtime;
@@ -874,7 +874,7 @@ public class JSONFormatterTest {
         RuntimeOptions runtimeOptions = new RuntimeOptions(args);
         Backend backend = mock(Backend.class);
         when(backend.getSnippet(any(PickleStep.class), anyString(), any(FunctionNameGenerator.class))).thenReturn("TEST SNIPPET");
-        final Runtime runtime = new Runtime(resourceLoader, classLoader, asList(backend), runtimeOptions, new TimeService.Stub(1234), null);
+        final Runtime runtime = new Runtime(resourceLoader, classLoader, asList(backend), runtimeOptions, new TimeServiceStub(1234), null);
         runtime.getGlue().addBeforeHook(hook);
         runtime.run();
         Scanner scanner = new Scanner(new FileInputStream(report), "UTF-8");

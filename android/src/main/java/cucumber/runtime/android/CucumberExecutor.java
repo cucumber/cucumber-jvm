@@ -6,7 +6,6 @@ import android.util.Log;
 import cucumber.api.CucumberOptions;
 import cucumber.api.StepDefinitionReporter;
 import cucumber.api.event.TestRunFinished;
-import cucumber.api.formatter.Formatter;
 import cucumber.api.java.ObjectFactory;
 import cucumber.runtime.Backend;
 import cucumber.runtime.ClassFinder;
