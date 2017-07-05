@@ -5,14 +5,14 @@ import cucumber.api.java.ObjectFactory;
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
 
-public class WeldFactory extends Weld implements ObjectFactory {
+public class WeldFactory implements ObjectFactory {
 
-    private WeldContainer weld;
+    private WeldContainer containerInstance;
 
     @Override
     public void start() {
         try {
-            weld = super.initialize();
+            containerInstance = new Weld().initialize();
         } catch (IllegalArgumentException e) {
             throw new CucumberException("" +
                     "\n" +
@@ -31,7 +31,9 @@ public class WeldFactory extends Weld implements ObjectFactory {
     @Override
     public void stop() {
         try {
-            this.shutdown();
+            if (containerInstance.isRunning()) {
+                containerInstance.close();
+            }
         } catch (NullPointerException npe) {
             System.err.println("" +
                     "\nIf you have set enabled=false in org.jboss.weld.executor.properties and you are seeing\n" +
@@ -49,6 +51,6 @@ public class WeldFactory extends Weld implements ObjectFactory {
 
     @Override
     public <T> T getInstance(Class<T> type) {
-        return weld.instance().select(type).get();
+        return containerInstance.select(type).get();
     }
 }
