@@ -516,7 +516,7 @@ public class JSONFormatterTest {
                 "            ],\n" +
                 "            \"result\": {\n" +
                 "              \"status\": \"passed\",\n" +
-                "              \"duration\": 2000000\n" +
+                "              \"duration\": 1000000\n" +
                 "            }\n" +
                 "          }\n" +
                 "        ],\n" +
@@ -592,7 +592,7 @@ public class JSONFormatterTest {
                 "            ],\n" +
                 "            \"result\": {\n" +
                 "              \"status\": \"passed\",\n" +
-                "              \"duration\": 2000000\n" +
+                "              \"duration\": 1000000\n" +
                 "            }\n" +
                 "          }\n" +
                 "        ],\n" +
