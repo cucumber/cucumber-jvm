@@ -11,7 +11,7 @@ import static org.junit.Assert.fail;
 public class AmbiguousStepDefinitionMatchsTest {
     public static final String ENGLISH = "en";
     public final AmbiguousStepDefinitionsException e = mock(AmbiguousStepDefinitionsException.class);
-    public final AmbiguousStepDefinitionsMatch match = new AmbiguousStepDefinitionsMatch(mock(PickleStep.class), e);
+    public final AmbiguousStepDefinitionsMatch match = new AmbiguousStepDefinitionsMatch("uri", mock(PickleStep.class), e);
 
     @Test
     public void throws_ambiguous_step_definitions_exception_when_run() {

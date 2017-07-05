@@ -15,6 +15,7 @@ public class Result {
         SKIPPED,
         PENDING,
         UNDEFINED,
+        AMBIGUOUS,
         FAILED;
 
         public static Type fromLowerCaseName(String lowerCaseName) {

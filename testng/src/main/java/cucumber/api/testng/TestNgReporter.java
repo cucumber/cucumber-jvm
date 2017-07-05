@@ -51,7 +51,7 @@ class TestNgReporter implements Formatter {
     private void result(String stepText, Result result) {
         logResult(stepText, result);
 
-        if (result.is(Result.Type.FAILED)) {
+        if (result.is(Result.Type.FAILED) || result.is(Result.Type.AMBIGUOUS)) {
             ITestResult tr = getCurrentTestResult();
             tr.setThrowable(result.getError());
             tr.setStatus(ITestResult.FAILURE);
@@ -59,7 +59,7 @@ class TestNgReporter implements Formatter {
             ITestResult tr = getCurrentTestResult();
             tr.setThrowable(result.getError());
             tr.setStatus(ITestResult.SKIP);
-        } else if (result.is(Result.Type.UNDEFINED)) {
+        } else if (result.is(Result.Type.UNDEFINED) || result.is(Result.Type.PENDING)) {
             ITestResult tr = getCurrentTestResult();
             tr.setThrowable(result.getError());
             tr.setStatus(ITestResult.FAILURE);

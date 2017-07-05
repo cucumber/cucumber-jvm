@@ -20,7 +20,7 @@ import java.util.Set;
 import static java.util.Arrays.asList;
 
 public class ScenarioImpl implements Scenario {
-    private static final List<Result.Type> SEVERITY = asList(Result.Type.PASSED, Result.Type.SKIPPED, Result.Type.PENDING, Result.Type.UNDEFINED, Result.Type.FAILED);
+    private static final List<Result.Type> SEVERITY = asList(Result.Type.PASSED, Result.Type.SKIPPED, Result.Type.PENDING, Result.Type.UNDEFINED, Result.Type.AMBIGUOUS, Result.Type.FAILED);
     private final List<Result> stepResults = new ArrayList<Result>();
     private final List<PickleTag> tags;
     private final String uri;

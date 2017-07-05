@@ -15,6 +15,8 @@ public class AnsiFormats implements Formats {
         put("executing_arg", new ColorFormat(AnsiEscapes.GREY, AnsiEscapes.INTENSITY_BOLD));
         put("failed", new ColorFormat(AnsiEscapes.RED));
         put("failed_arg", new ColorFormat(AnsiEscapes.RED, AnsiEscapes.INTENSITY_BOLD));
+        put("ambiguous", new ColorFormat(AnsiEscapes.RED));
+        put("ambiguous_arg", new ColorFormat(AnsiEscapes.RED, AnsiEscapes.INTENSITY_BOLD));
         put("passed", new ColorFormat(AnsiEscapes.GREEN));
         put("passed_arg", new ColorFormat(AnsiEscapes.GREEN, AnsiEscapes.INTENSITY_BOLD));
         put("outline", new ColorFormat(AnsiEscapes.CYAN));

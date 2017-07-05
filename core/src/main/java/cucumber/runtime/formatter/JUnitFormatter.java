@@ -250,6 +250,9 @@ class JUnitFormatter implements Formatter, StrictAware {
             if (result.is(Result.Type.FAILED)) {
                 addStackTrace(sb, result);
                 child = createElementWithMessage(doc, sb, "failure", result.getErrorMessage());
+            } else if (result.is(Result.Type.AMBIGUOUS)) {
+                addStackTrace(sb, result);
+                child = createElementWithMessage(doc, sb, "failure", result.getErrorMessage());
             } else if (result.is(Result.Type.PENDING) || result.is(Result.Type.UNDEFINED)) {
                 if (treatConditionallySkippedAsFailure) {
                     child = createElementWithMessage(doc, sb, "failure", "The scenario has pending or undefined step(s)");

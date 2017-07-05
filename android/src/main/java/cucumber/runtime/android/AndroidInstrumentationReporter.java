@@ -194,6 +194,10 @@ public class AndroidInstrumentationReporter implements Formatter {
                     instrumentation.sendStatus(StatusCodes.ERROR, testResult);
                 }
                 break;
+            case AMBIGUOUS:
+                testResult.putString(StatusKeys.STACK, getStackTrace(severestResult.getError()));
+                instrumentation.sendStatus(StatusCodes.ERROR, testResult);
+                break;
             case PENDING:
                 testResult.putString(StatusKeys.STACK, severestResult.getErrorMessage());
                 instrumentation.sendStatus(StatusCodes.ERROR, testResult);
@@ -214,7 +218,7 @@ public class AndroidInstrumentationReporter implements Formatter {
     /**
      * Creates a template bundle for reporting the start and end of a test.
      *
-     * @param path of the feature file of the current execution
+     * @param path         of the feature file of the current execution
      * @param testCaseName of the test case of the current execution
      * @return the new {@link Bundle}
      */
