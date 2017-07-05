@@ -1,8 +1,8 @@
 package cucumber.runtime.formatter;
 
+import cucumber.api.Result;
 import cucumber.runtime.TestHelper;
 import cucumber.runtime.model.CucumberFeature;
-import gherkin.formatter.model.Result;
 import org.junit.Test;
 
 import java.util.AbstractMap.SimpleEntry;
@@ -233,7 +233,7 @@ public class RerunFormatterTest {
             rerunFormatter.setStrict(isStrict);
         }
         final long stepHookDuration = 0;
-        TestHelper.runFeaturesWithFormatter(features, stepsToResult, hooks, stepHookDuration, rerunFormatter, rerunFormatter);
+        TestHelper.runFeaturesWithFormatter(features, stepsToResult, hooks, stepHookDuration, rerunFormatter);
         return buffer.toString();
     }
 

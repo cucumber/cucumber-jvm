@@ -2,13 +2,12 @@ package cucumber.runtime.formatter;
 
 import cucumber.api.StepDefinitionReporter;
 import cucumber.api.SummaryPrinter;
+import cucumber.api.formatter.Formatter;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.DefaultSummaryPrinter;
 import cucumber.runtime.NullSummaryPrinter;
 import cucumber.runtime.io.URLOutputStream;
 import cucumber.runtime.io.UTF8OutputStreamWriter;
-import gherkin.formatter.Formatter;
-import gherkin.formatter.Reporter;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,8 +40,6 @@ import static java.util.Arrays.asList;
  * </ul>
  * Plugins must implement one of the following interfaces:
  * <ul>
- * <li>{@link gherkin.formatter.Formatter}</li>
- * <li>{@link gherkin.formatter.Reporter}</li>
  * <li>{@link cucumber.api.StepDefinitionReporter}</li>
  * </ul>
  */
@@ -54,9 +51,9 @@ public class PluginFactory {
         put("junit", JUnitFormatter.class);
         put("testng", TestNGFormatter.class);
         put("html", HTMLFormatter.class);
-        put("pretty", CucumberPrettyFormatter.class);
+        put("pretty", PrettyFormatter.class);
         put("progress", ProgressFormatter.class);
-        put("json", CucumberJSONFormatter.class);
+        put("json", JSONFormatter.class);
         put("usage", UsageFormatter.class);
         put("rerun", RerunFormatter.class);
         put("default_summary", DefaultSummaryPrinter.class);
@@ -193,26 +190,17 @@ public class PluginFactory {
 
     public static boolean isFormatterName(String name) {
         Class pluginClass = getPluginClass(name);
-        if (Formatter.class.isAssignableFrom(pluginClass) || Reporter.class.isAssignableFrom(pluginClass)) {
-            return true;
-        }
-        return false;
+        return Formatter.class.isAssignableFrom(pluginClass);
     }
 
     public static boolean isStepDefinitionResporterName(String name) {
         Class pluginClass = getPluginClass(name);
-        if (StepDefinitionReporter.class.isAssignableFrom(pluginClass)) {
-            return true;
-        }
-        return false;
+        return StepDefinitionReporter.class.isAssignableFrom(pluginClass);
     }
 
     public static boolean isSummaryPrinterName(String name) {
         Class pluginClass = getPluginClass(name);
-        if (SummaryPrinter.class.isAssignableFrom(pluginClass)) {
-            return true;
-        }
-        return false;
+        return SummaryPrinter.class.isAssignableFrom(pluginClass);
     }
 
     private static Class getPluginClass(String name) {

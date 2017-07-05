@@ -36,7 +36,7 @@ public class RpnCalculatorStepdefs {
         assertEquals(expected, calc.value());
     }
 
-    @Before({"~@foo"})
+    @Before({"not @foo"})
     public void before() {
         System.out.println("Runs before scenarios *not* tagged with @foo");
     }

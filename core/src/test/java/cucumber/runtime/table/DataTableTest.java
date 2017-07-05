@@ -3,8 +3,9 @@ package cucumber.runtime.table;
 import cucumber.api.DataTable;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.xstream.LocalizedXStreams;
-import gherkin.formatter.model.Comment;
-import gherkin.formatter.model.DataTableRow;
+import gherkin.pickles.PickleCell;
+import gherkin.pickles.PickleRow;
+import gherkin.pickles.PickleTable;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -113,12 +114,16 @@ public class DataTableTest {
     }
 
     private DataTable createTable(List<String>... rows) {
-        List<DataTableRow> simpleRows = new ArrayList<DataTableRow>();
+        List<PickleRow> simpleRows = new ArrayList<PickleRow>();
         for (int i = 0; i < rows.length; i++) {
-            simpleRows.add(new DataTableRow(new ArrayList<Comment>(), rows[i], i + 1));
+            List<PickleCell> cells = new ArrayList<PickleCell>();
+            for (String cellContent : rows[i]) {
+                cells.add(new PickleCell(null, cellContent));
+            }
+            simpleRows.add(new PickleRow(cells));
         }
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         LocalizedXStreams.LocalizedXStream xStream = new LocalizedXStreams(classLoader).get(Locale.US);
-        return new DataTable(simpleRows, new TableConverter(xStream, null));
+        return new DataTable(new PickleTable(simpleRows), new TableConverter(xStream, null));
     }
 }

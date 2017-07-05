@@ -2,9 +2,8 @@ package cucumber.runtime.jython;
 
 import cucumber.runtime.ParameterInfo;
 import cucumber.runtime.StepDefinition;
-import gherkin.I18n;
-import gherkin.formatter.Argument;
-import gherkin.formatter.model.Step;
+import cucumber.runtime.Argument;
+import gherkin.pickles.PickleStep;
 import org.python.core.PyInstance;
 import org.python.core.PyList;
 import org.python.core.PyObject;
@@ -25,9 +24,9 @@ public class JythonStepDefinition implements StepDefinition {
     }
 
     @Override
-    public List<Argument> matchedArguments(Step step) {
-        PyObject stepName = new PyString(step.getName());
-        PyObject matched_arguments = stepdef.invoke("matched_arguments", stepName);
+    public List<Argument> matchedArguments(PickleStep step) {
+        PyObject stepText = new PyString(step.getText());
+        PyObject matched_arguments = stepdef.invoke("matched_arguments", stepText);
         if (matched_arguments instanceof PyList) {
             return (PyList) matched_arguments;
         } else {
@@ -51,7 +50,7 @@ public class JythonStepDefinition implements StepDefinition {
     }
 
     @Override
-    public void execute(I18n i18n, Object[] args) throws Throwable {
+    public void execute(String language, Object[] args) throws Throwable {
         jythonBackend.execute(stepdef, args);
     }
 

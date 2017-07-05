@@ -1,7 +1,7 @@
 package cucumber.runtime.scala
 
 import _root_.java.util.{List => JList}
-import _root_.gherkin.formatter.model.Step
+import _root_.gherkin.pickles.PickleStep
 import _root_.java.lang.reflect.Modifier
 import _root_.cucumber.runtime.snippets.SnippetGenerator
 import _root_.cucumber.runtime.snippets.FunctionNameGenerator
@@ -29,7 +29,7 @@ class ScalaBackend(resourceLoader:ResourceLoader) extends Backend {
     instances = Nil
   }
 
-  def getSnippet(step: Step, functionNameGenerator: FunctionNameGenerator) = snippetGenerator.getSnippet(step, functionNameGenerator)
+  def getSnippet(step: PickleStep, keyword: String, functionNameGenerator: FunctionNameGenerator) = snippetGenerator.getSnippet(step, keyword, functionNameGenerator)
 
   def buildWorld() {
     //I don't believe scala has to do anything to clean out its world

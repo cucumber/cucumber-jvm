@@ -16,7 +16,7 @@ import java.util.List;
  */
 public class SanityChecker implements TestListener {
     private static final String INDENT = "  ";
-    public static final String INSANITY = "INSANITY";
+    private static final String INSANITY = "INSANITY";
 
     private List<Test> tests = new ArrayList<Test>();
     private final StringWriter out = new StringWriter();
@@ -53,7 +53,7 @@ public class SanityChecker implements TestListener {
     @Override
     public void startTest(Test started) {
         spaces();
-        out.append("START " + started.toString()).append("\n");
+        out.append("START ").append(started.toString()).append("\n");
         tests.add(started);
     }
 
@@ -62,7 +62,7 @@ public class SanityChecker implements TestListener {
         try {
             Test lastStarted = tests.remove(tests.size() - 1);
             spaces();
-            out.append("END   " + ended.toString()).append("\n");
+            out.append("END   ").append(ended.toString()).append("\n");
             if (!lastStarted.toString().equals(ended.toString())) {
                 out.append(INSANITY).append("\n");
                 String errorMessage = String.format("Started : %s\nEnded   : %s\n", lastStarted, ended);
@@ -80,7 +80,7 @@ public class SanityChecker implements TestListener {
         }
     }
 
-    public String getOutput() {
+    private String getOutput() {
         return out.toString();
     }
 }

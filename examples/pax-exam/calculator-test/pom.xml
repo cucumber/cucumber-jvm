@@ -14,18 +14,18 @@
 
     <dependencies>
         <dependency>
-            <groupId>info.cukes</groupId>
+            <groupId>io.cucumber</groupId>
             <artifactId>pax-exam-calculator-api</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>info.cukes</groupId>
+            <groupId>io.cucumber</groupId>
             <artifactId>pax-exam-calculator-service</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>info.cukes</groupId>
+            <groupId>io.cucumber</groupId>
             <artifactId>cucumber-osgi</artifactId>
             <scope>test</scope>
         </dependency>

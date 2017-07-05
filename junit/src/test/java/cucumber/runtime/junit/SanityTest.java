@@ -12,4 +12,9 @@ public class SanityTest {
     public void reports_events_correctly_with_junit_runner() {
         SanityChecker.run(RunCukesTest.class);
     }
+
+    @Test
+    public void reports_events_correctly_with_no_step_notifications() {
+        SanityChecker.run(RunCukesTestNoStepNotifications.class);
+    }
 }

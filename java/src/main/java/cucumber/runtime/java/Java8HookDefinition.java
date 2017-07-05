@@ -5,15 +5,15 @@ import cucumber.api.java8.HookBody;
 import cucumber.api.java8.HookNoArgsBody;
 import cucumber.runtime.HookDefinition;
 import cucumber.runtime.Timeout;
-import gherkin.TagExpression;
-import gherkin.formatter.model.Tag;
+import cucumber.runtime.TagPredicate;
+import gherkin.pickles.PickleTag;
 
 import java.util.Collection;
 
 import static java.util.Arrays.asList;
 
 public class Java8HookDefinition implements HookDefinition {
-    private final TagExpression tagExpression;
+    private final TagPredicate tagPredicate;
     private final int order;
     private final long timeoutMillis;
     private final HookNoArgsBody hookNoArgsBody;
@@ -23,7 +23,7 @@ public class Java8HookDefinition implements HookDefinition {
     private Java8HookDefinition(String[] tagExpressions, int order, long timeoutMillis, HookBody hookBody, HookNoArgsBody hookNoArgsBody) {
         this.order = order;
         this.timeoutMillis = timeoutMillis;
-        this.tagExpression = new TagExpression(asList(tagExpressions));
+        this.tagPredicate = new TagPredicate(asList(tagExpressions));
         this.hookBody = hookBody;
         this.hookNoArgsBody = hookNoArgsBody;
         this.location = new Exception().getStackTrace()[3];
@@ -59,8 +59,8 @@ public class Java8HookDefinition implements HookDefinition {
     }
 
     @Override
-    public boolean matches(Collection<Tag> tags) {
-        return tagExpression.evaluate(tags);
+    public boolean matches(Collection<PickleTag> tags) {
+        return tagPredicate.apply(tags);
     }
 
     @Override

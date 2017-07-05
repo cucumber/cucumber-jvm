@@ -73,7 +73,7 @@ module Cucumber
             match.captures.map do |val|
               n += 1
               start = match.offset(n)[0]
-              Java::GherkinFormatter::Argument.new(start, val)
+              Java::CucumberRuntime::Argument.new(start, val)
             end
           else
             nil
@@ -128,7 +128,7 @@ module Cucumber
             end
           end
 
-          $backend.runStep(feature_path, @__gherkin_i18n, 'When ', name, line.to_i, data_table, doc_string)
+          $backend.runStep(feature_path, @__gherkin_language, name, line.to_i, data_table, doc_string)
         end
       end
 

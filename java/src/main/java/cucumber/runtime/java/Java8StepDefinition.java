@@ -1,14 +1,13 @@
 package cucumber.runtime.java;
 
 import cucumber.api.java8.StepdefBody;
+import cucumber.runtime.Argument;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.JdkPatternArgumentMatcher;
 import cucumber.runtime.ParameterInfo;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.Utils;
-import gherkin.I18n;
-import gherkin.formatter.Argument;
-import gherkin.formatter.model.Step;
+import gherkin.pickles.PickleStep;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -91,8 +90,8 @@ public class Java8StepDefinition implements StepDefinition {
     }
 
     @Override
-    public List<Argument> matchedArguments(Step step) {
-        return argumentMatcher.argumentsFrom(step.getName());
+    public List<Argument> matchedArguments(PickleStep step) {
+        return argumentMatcher.argumentsFrom(step.getText());
     }
 
     @Override
@@ -111,7 +110,7 @@ public class Java8StepDefinition implements StepDefinition {
     }
 
     @Override
-    public void execute(final I18n i18n, final Object[] args) throws Throwable {
+    public void execute(final String language, final Object[] args) throws Throwable {
         Utils.invoke(body, method, timeoutMillis, args);
     }
 

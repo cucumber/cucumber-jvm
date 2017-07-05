@@ -1,4 +1,27 @@
-## [1.2.6-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v1.2.5...master) (In Git)
+## [2.0.0-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v1.2.5...master) (In Git)
+
+* [Core] Provide a unique id of the current scenario to the hooks. ([#1160](https://github.com/cucumber/cucumber-jvm/pull/1160) Björn Rasmusson)
+* [Gosu] Fix and re-enable Gosu for 2.0.0 ([#1155](https://github.com/cucumber/cucumber-jvm/pull/1155), [#1086](https://github.com/cucumber/cucumber-jvm/pull/1086), [#874](https://github.com/cucumber/cucumber-jvm/pull/874) Kyle Moore, M.P. Korstanje) 
+* [Core] Fix issue where ComplexTypeWriter would create unbalanced tables. ([#1042](https://github.com/cucumber/cucumber-jvm/pull/1042) Roy Jacobs, M.P. Korstanje) 
+* [Guice] Use the ContextClassLoader when loading InjectorSource. ([#1036](https://github.com/cucumber/cucumber-jvm/pull/1036), [#1037](https://github.com/cucumber/cucumber-jvm/pull/1037) Kyle Moore)
+* [Core] Allow global registration of custom XStream converters. ([#1010](https://github.com/cucumber/cucumber-jvm/pull/1010), [#1009](https://github.com/cucumber/cucumber-jvm/issues/1009) Chris Rankin) 
+* [Spring] Support multithreaded execution of scenarios ([#1106](https://github.com/cucumber/cucumber-jvm/issues/1106), [#1107](https://github.com/cucumber/cucumber-jvm/issues/1107), [#1148](https://github.com/cucumber/cucumber-jvm/issues/1148), [#1153](https://github.com/cucumber/cucumber-jvm/pull/1153) Ismail Bhana, M.P. Korstanje) 
+* [Java8, Kotlin Java8] Support java 8 method references ([#1140](https://github.com/cucumber/cucumber-jvm/pull/1140) M.P. Korstanje) 
+* [Core] Show explicit error message when field name missed in table header ([#1014](https://github.com/cucumber/cucumber-jvm/pull/1014) Mykola Gurov) 
+* [Examples] Properly quit selenium in webbit examples ([#1146](https://github.com/cucumber/cucumber-jvm/pull/1146) Alberto Scotto)
+* [JUnit] Use AssumptionFailed to mark scenarios/steps as skipped ([#1142](https://github.com/cucumber/cucumber-jvm/pull/1142) Björn Rasmusson)
+* [Core] Map AssumptionViolatedException to Skipped status ([#1145](https://github.com/cucumber/cucumber-jvm/pull/1145), [#1007](https://github.com/cucumber/cucumber-jvm/issues/1007) Björn Rasmusson)
+* [Java] SnippetGenerator recognises parameters from Scenario Outline ([#1078](https://github.com/cucumber/cucumber-jvm/pull/1078) Andrey Vokin)
+* [Java8] Allow lambda steps to throw checked Exceptions ([#1001](https://github.com/cucumber/cucumber-jvm/issues/1001), [#1110](https://github.com/cucumber/cucumber-jvm/pull/1110) Christian Hujer)
+* [JUnit] Add `--[no-]step-notifications` option to JunitOptions (no step notifications is the default) ([#1135](https://github.com/cucumber/cucumber-jvm/pull/1135), [#1159](https://github.com/cucumber/cucumber-jvm/pull/1159), [#263](https://github.com/cucumber/cucumber-jvm/issues/263), [#935](https://github.com/cucumber/cucumber-jvm/issues/935), [#577](https://github.com/cucumber/cucumber-jvm/issues/577) M.P. Korstanje, Björn Rasmusson)
+* [JUnit] Use deterministic unique ids in Descriptions ([#1134](https://github.com/cucumber/cucumber-jvm/pull/1134), [#1120](https://github.com/cucumber/cucumber-jvm/issues/1120) mpkorstanje)
+* [All] Support [Tag Expressions](https://github.com/cucumber/cucumber/tree/master/tag-expressions) (part of [#1035](https://github.com/cucumber/cucumber-jvm/pull/1035) Björn Rasmusson)
+* [All] Upgrade to Gherkin 4.1 ([#1035](https://github.com/cucumber/cucumber-jvm/pull/1035), [#1131](https://github.com/cucumber/cucumber-jvm/pull/1131), [#1133](https://github.com/cucumber/cucumber-jvm/pull/1133) Björn Rasmusson, M.P. Korstanje). This also fixes:
+  * JsonFormatter attach text to last step when sceneario.write is invoked from after hook ([#1080](https://github.com/cucumber/cucumber-jvm/issues/1080))
+  * CucumberOptions: Tags and name do not work well together ([#976](https://github.com/cucumber/cucumber-jvm/issues/976))
+  * Tags at the examples block are not treated as actual tags in scenario ([#849](https://github.com/cucumber/cucumber-jvm/issues/849))
+  * NullPointerException from @Before tag ([#638](https://github.com/cucumber/cucumber-jvm/issues/638), [#701](https://github.com/cucumber/cucumber-jvm/issues/701))
+* [All] Change the maven groupId to io.cucumber (part of [#1035](https://github.com/cucumber/cucumber-jvm/pull/1035) Björn Rasmusson)
 
 ## [1.2.5](https://github.com/cucumber/cucumber-jvm/compare/v1.2.4...v1.2.5) (2016-09-12)
 

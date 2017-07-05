@@ -5,7 +5,7 @@ import cucumber.runtime.Glue;
 import cucumber.runtime.UnreportedStepExecutor;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.snippets.FunctionNameGenerator;
-import gherkin.formatter.model.Step;
+import gherkin.pickles.PickleStep;
 
 import java.util.List;
 
@@ -34,7 +34,7 @@ public class StubBackend implements Backend {
     }
 
     @Override
-    public String getSnippet(Step step, FunctionNameGenerator functionNameGenerator) {
+    public String getSnippet(PickleStep step, String keyword, FunctionNameGenerator functionNameGenerator) {
         return "STUB SNIPPET";
     }
 }

@@ -5,13 +5,13 @@ import cucumber.runtime.ClassFinder;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Glue;
 import cucumber.runtime.UnreportedStepExecutor;
+import cucumber.runtime.TagPredicate;
 import cucumber.runtime.io.Resource;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
 import cucumber.runtime.snippets.FunctionNameGenerator;
 import cucumber.runtime.snippets.SnippetGenerator;
-import gherkin.TagExpression;
-import gherkin.formatter.model.Step;
+import gherkin.pickles.PickleStep;
 import groovy.lang.Binding;
 import groovy.lang.Closure;
 import groovy.lang.GroovyShell;
@@ -128,8 +128,8 @@ public class GroovyBackend implements Backend {
     }
 
     @Override
-    public String getSnippet(Step step, FunctionNameGenerator functionNameGenerator) {
-        return snippetGenerator.getSnippet(step, null);
+    public String getSnippet(PickleStep step, String keyword, FunctionNameGenerator functionNameGenerator) {
+        return snippetGenerator.getSnippet(step, keyword, null);
     }
 
     public void addStepDefinition(Pattern regexp, long timeoutMillis, Closure body) {
@@ -140,12 +140,12 @@ public class GroovyBackend implements Backend {
         worldClosures.add(closure);
     }
 
-    public void addBeforeHook(TagExpression tagExpression, long timeoutMillis, int order, Closure body) {
-        glue.addBeforeHook(new GroovyHookDefinition(tagExpression, timeoutMillis, order, body, currentLocation(), this));
+    public void addBeforeHook(TagPredicate tagPredicate, long timeoutMillis, int order, Closure body) {
+        glue.addBeforeHook(new GroovyHookDefinition(tagPredicate, timeoutMillis, order, body, currentLocation(), this));
     }
 
-    public void addAfterHook(TagExpression tagExpression, long timeoutMillis, int order, Closure body) {
-        glue.addAfterHook(new GroovyHookDefinition(tagExpression, timeoutMillis, order, body, currentLocation(), this));
+    public void addAfterHook(TagPredicate tagPredicate, long timeoutMillis, int order, Closure body) {
+        glue.addAfterHook(new GroovyHookDefinition(tagPredicate, timeoutMillis, order, body, currentLocation(), this));
     }
 
     public void invoke(Closure body, Object[] args) throws Throwable {

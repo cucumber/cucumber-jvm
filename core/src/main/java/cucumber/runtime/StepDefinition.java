@@ -1,8 +1,6 @@
 package cucumber.runtime;
 
-import gherkin.I18n;
-import gherkin.formatter.Argument;
-import gherkin.formatter.model.Step;
+import gherkin.pickles.PickleStep;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -13,7 +11,7 @@ public interface StepDefinition {
      * doesn't match at all. Return an empty List if it matches with 0 arguments
      * and bigger sizes if it matches several.
      */
-    List<Argument> matchedArguments(Step step);
+    List<Argument> matchedArguments(PickleStep step);
 
     /**
      * The source line where the step definition is defined.
@@ -41,7 +39,7 @@ public interface StepDefinition {
      * Invokes the step definition. The method should raise a Throwable
      * if the invocation fails, which will cause the step to fail.
      */
-    void execute(I18n i18n, Object[] args) throws Throwable;
+    void execute(String language, Object[] args) throws Throwable;
 
     /**
      * Return true if this matches the location. This is used to filter

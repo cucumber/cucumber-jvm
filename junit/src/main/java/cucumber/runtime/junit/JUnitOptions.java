@@ -1,7 +1,7 @@
 package cucumber.runtime.junit;
 
 import cucumber.runtime.CucumberException;
-import gherkin.util.FixJava;
+import cucumber.util.FixJava;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -9,11 +9,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JUnitOptions {
-    public static final String OPTIONS_RESOURCE = "/cucumber/api/junit/OPTIONS.txt";
+    private static final String OPTIONS_RESOURCE = "/cucumber/api/junit/OPTIONS.txt";
     private static String optionsText;
 
-    private boolean allowStartedIgnored = false;
     private boolean filenameCompatibleNames = false;
+    private boolean stepNotifications = false;
 
     /**
      * Create a new instance from a list of options, for example:
@@ -35,20 +35,24 @@ public class JUnitOptions {
                 printOptions();
                 System.exit(0);
             } else if (arg.equals("--no-allow-started-ignored") || arg.equals("--allow-started-ignored")) {
-                allowStartedIgnored = !arg.startsWith("--no-");
+                System.err.println("WARNING: Found tags option '" + arg + "'. " +
+                        "--allow-started-ignored has no effect, testStarted is always fired before a test is started." +
+                        "--allow-started-ignored will be removed from the next release of Cucumber-JVM");
             } else if (arg.equals("--no-filename-compatible-names") || arg.equals("--filename-compatible-names")) {
                 filenameCompatibleNames = !arg.startsWith("--no-");
-            } else {
+            } else if (arg.equals("--no-step-notifications") || arg.equals("--step-notifications")) {
+                stepNotifications = !arg.startsWith("--no-");
+            } else{
                 throw new CucumberException("Unknown option: " + arg);
             }
         }
     }
 
-    public boolean allowStartedIgnored() {
-        return allowStartedIgnored;
-    }
-    public boolean filenameCompatibleNames() {
+    boolean filenameCompatibleNames() {
         return filenameCompatibleNames;
+    }
+    public boolean stepNotifications(){
+        return stepNotifications;
     }
 
     private void printOptions() {
@@ -56,7 +60,7 @@ public class JUnitOptions {
         System.out.println(optionsText);
     }
 
-    static void loadUsageTextIfNeeded() {
+    private static void loadUsageTextIfNeeded() {
         if (optionsText == null) {
             try {
                 Reader reader = new InputStreamReader(FixJava.class.getResourceAsStream(OPTIONS_RESOURCE), "UTF-8");

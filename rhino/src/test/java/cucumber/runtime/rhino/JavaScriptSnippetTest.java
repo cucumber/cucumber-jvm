@@ -1,8 +1,9 @@
 package cucumber.runtime.rhino;
 
 import cucumber.runtime.snippets.SnippetGenerator;
-import gherkin.formatter.model.Comment;
-import gherkin.formatter.model.Step;
+import gherkin.pickles.Argument;
+import gherkin.pickles.PickleLocation;
+import gherkin.pickles.PickleStep;
 import org.junit.Test;
 
 import java.util.Collections;
@@ -22,7 +23,7 @@ public class JavaScriptSnippetTest {
     }
 
     private String snippetFor(String name) {
-        Step step = new Step(Collections.<Comment>emptyList(), "Given ", name, 0, null, null);
-        return new SnippetGenerator(new JavaScriptSnippet()).getSnippet(step, null);
+        PickleStep step = new PickleStep(name, Collections.<Argument>emptyList(), Collections.<PickleLocation>emptyList());
+        return new SnippetGenerator(new JavaScriptSnippet()).getSnippet(step, "Given", null);
     }
 }

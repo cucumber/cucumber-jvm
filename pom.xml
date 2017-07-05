@@ -1,11 +1,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>info.cukes</groupId>
+    <groupId>io.cucumber</groupId>
     <artifactId>cucumber-jvm</artifactId>
-    <version>1.2.6-SNAPSHOT</version>
+    <version>2.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Cucumber-JVM</name>
-    <url>http://cukes.info/</url>
+    <url>http://cucumber.io/</url>
 
     <parent>
         <groupId>org.sonatype.oss</groupId>
@@ -22,7 +22,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <minimum.maven.version>3.1.1</minimum.maven.version>
         <outputDirectory>${project.build.directory}</outputDirectory>
-        <gherkin.version>2.12.2</gherkin.version>
+        <gherkin.version>4.1.3</gherkin.version>
         <groovy.version>2.4.7</groovy.version>
         <picocontainer.version>2.15</picocontainer.version>
         <scala-maven-plugin.version>3.2.2</scala-maven-plugin.version>
@@ -36,14 +36,15 @@
         <clojure.version>1.8.0</clojure.version>
         <!-- This is only here for the example project to use, the 3 scala projects maintain their own versions -->
         <scala.latest.version>2.11.8</scala.latest.version>
-        <gosu.version>1.2</gosu.version>
+        <gosu.version>1.14.6</gosu.version>
         <rhino.version>1.7.7.1</rhino.version>
         <jsoup.version>1.9.2</jsoup.version>
         <testng.version>6.9.10</testng.version>
         <junit.version>4.12</junit.version>
         <jython.version>2.7.0</jython.version>
         <mockito.version>1.10.19</mockito.version>
-        <selenium.version>2.45.0</selenium.version>
+        <selenium.version>3.4.0</selenium.version>
+        <driver-binary-downloader-maven-plugin.version>1.0.14</driver-binary-downloader-maven-plugin.version>
         <webbit.version>0.4.15</webbit.version>
         <webbit-rest.version>0.3.0</webbit-rest.version>
         <jruby.version>9.1.5.0</jruby.version>
@@ -74,6 +75,7 @@
         <pax-exam.version>4.3.0</pax-exam.version>
         <pax-url.version>2.2.0</pax-url.version>
         <felix.version>5.4.0</felix.version>
+        <tag-expressions.version>1.0.1</tag-expressions.version>
     </properties>
     <licenses>
         <license>
@@ -86,7 +88,7 @@
         <connection>scm:git:git://github.com/cucumber/cucumber-jvm.git</connection>
         <developerConnection>scm:git:git@github.com:cucumber/cucumber-jvm.git</developerConnection>
         <url>git://github.com/cucumber/cucumber-jvm.git</url>
-        <tag>HEAD</tag>
+        <tag>cucumber-jvm-2.0.0</tag>
     </scm>
 
     <dependencyManagement>
@@ -107,57 +109,62 @@
                 </exclusions>
             </dependency>
             <dependency>
-                <groupId>info.cukes</groupId>
+                <groupId>io.cucumber</groupId>
                 <artifactId>gherkin</artifactId>
                 <version>${gherkin.version}</version>
             </dependency>
             <dependency>
-                <groupId>info.cukes</groupId>
+                <groupId>io.cucumber</groupId>
+                <artifactId>tag-expressions</artifactId>
+                <version>${tag-expressions.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.cucumber</groupId>
                 <artifactId>cucumber-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>info.cukes</groupId>
+                <groupId>io.cucumber</groupId>
                 <artifactId>cucumber-java</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>info.cukes</groupId>
+                <groupId>io.cucumber</groupId>
                 <artifactId>cucumber-spring</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>info.cukes</groupId>
+                <groupId>io.cucumber</groupId>
                 <artifactId>cucumber-osgi</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>info.cukes</groupId>
+                <groupId>io.cucumber</groupId>
                 <artifactId>cucumber-groovy</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>info.cukes</groupId>
+                <groupId>io.cucumber</groupId>
                 <artifactId>cucumber-clojure</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>info.cukes</groupId>
+                <groupId>io.cucumber</groupId>
                 <artifactId>cucumber-junit</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>info.cukes</groupId>
+                <groupId>io.cucumber</groupId>
                 <artifactId>cucumber-testng</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>info.cukes</groupId>
+                <groupId>io.cucumber</groupId>
                 <artifactId>cucumber-picocontainer</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>info.cukes</groupId>
+                <groupId>io.cucumber</groupId>
                 <artifactId>cucumber-scala_2.11</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -177,13 +184,23 @@
                 <version>${picocontainer.version}</version>
             </dependency>
             <dependency>
-                <groupId>info.cukes</groupId>
+                <groupId>io.cucumber</groupId>
                 <artifactId>cucumber-android</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>info.cukes</groupId>
+                <groupId>io.cucumber</groupId>
                 <artifactId>android-examples</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>cucumber-java8</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>cucumber-kotlin-java8</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
@@ -353,7 +370,7 @@
             </dependency>
             <dependency>
                 <groupId>org.seleniumhq.selenium</groupId>
-                <artifactId>selenium-firefox-driver</artifactId>
+                <artifactId>selenium-remote-driver</artifactId>
                 <version>${selenium.version}</version>
                 <exclusions>
                     <exclusion>
@@ -366,6 +383,12 @@
                 <groupId>org.seleniumhq.selenium</groupId>
                 <artifactId>selenium-server</artifactId>
                 <version>${selenium.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.seleniumhq.selenium</groupId>
@@ -526,14 +549,6 @@
         </dependencies>
     </dependencyManagement>
 
-    <repositories>
-        <!--<repository>-->
-        <!--<id>gosu-lang.org-releases</id>-->
-        <!--<name>Official Gosu website (releases)</name>-->
-        <!--<url>http://gosu-lang.org/repositories/m2/releases</url>-->
-        <!--</repository>-->
-    </repositories>
-
     <!--
      this adds a repository that the plugins will use for dependency resolution
      Any items that we use in a plugin's <dependency> phase can be resolved from here, as well as central
@@ -546,7 +561,6 @@
     </pluginRepositories>
 
     <modules>
-        <!--<module>gosu</module>-->
         <module>core</module>
         <module>java</module>
         <module>testng</module>
@@ -565,6 +579,7 @@
         <module>scala</module>
         <module>needle</module>
         <module>android</module>
+        <module>examples</module>
     </modules>
 
     <profiles>
@@ -574,14 +589,9 @@
                 <jdk>1.8</jdk>
             </activation>
             <modules>
+                <module>gosu</module>
                 <module>java8</module>
-            </modules>
-        </profile>
-
-        <profile>
-            <id>android-examples</id>
-            <modules>
-                <module>examples/android</module>
+                <module>kotlin-java8</module>
             </modules>
         </profile>
 
@@ -593,32 +603,7 @@
         </profile>
 
         <profile>
-            <id>examples</id>
-            <modules>
-                <module>examples/java-wicket</module>
-                <module>examples/spring-txn</module>
-                <module>examples/clojure_cukes</module>
-                <module>examples/java-calculator</module>
-                <module>examples/java-calculator-testng</module>
-                <module>examples/groovy-calculator</module>
-                <module>examples/scala-calculator</module>
-                <module>examples/java-webbit-websockets-selenium</module>
-                <module>examples/pax-exam</module>
-            </modules>
-        </profile>
-
-        <profile>
             <id>release-sign-artifacts</id>
-            <modules>
-                <module>examples/java-wicket</module>
-                <module>examples/spring-txn</module>
-                <module>examples/clojure_cukes</module>
-                <module>examples/java-calculator</module>
-                <module>examples/java-calculator-testng</module>
-                <module>examples/groovy-calculator</module>
-                <module>examples/scala-calculator</module>
-                <module>examples/java-webbit-websockets-selenium</module>
-            </modules>
             <activation>
                 <property>
                     <name>performRelease</name>
@@ -700,7 +685,7 @@
                             <version>${groovy.version}</version>
                         </dependency>
                         <dependency>
-                            <groupId>info.cukes</groupId>
+                            <groupId>io.cucumber</groupId>
                             <artifactId>gherkin</artifactId>
                             <version>${gherkin.version}</version>
                         </dependency>
@@ -726,7 +711,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.5.1</version>
+                    <version>3.6.1</version>
                     <configuration>
                         <encoding>UTF-8</encoding>
                         <source>1.6</source>
@@ -843,6 +828,11 @@
                 </plugin>
 
                 <!-- Non-standard plugins -->
+                <plugin>
+                    <groupId>com.lazerycode.selenium</groupId>
+                    <artifactId>driver-binary-downloader-maven-plugin</artifactId>
+                    <version>${driver-binary-downloader-maven-plugin.version}</version>
+                </plugin>
 
                 <plugin>
                     <groupId>net.alchim31.maven</groupId>

@@ -2,8 +2,7 @@ package cucumber.api.scala
 
 import _root_.org.junit.{Test, Assert}
 import Assert._
-import _root_.gherkin.I18n
-import _root_.gherkin.formatter.model.Tag
+import _root_.gherkin.pickles.PickleTag
 import collection.JavaConverters._
 import cucumber.api.Scenario
 
@@ -12,7 +11,7 @@ class ScalaDslTest {
   object StubScenario extends Scenario{
     def getSourceTagNames = null
 
-    def getStatus =  ""
+    def getStatus =  null
 
     def isFailed = false
 
@@ -23,6 +22,11 @@ class ScalaDslTest {
     def getName = ""
 
     def getId = ""
+
+    def getUri = ""
+
+    def getLines = null
+
   }
 
   @Test
@@ -36,7 +40,7 @@ class ScalaDslTest {
 
     assertEquals(1, Befores.beforeHooks.size)
     val hook = Befores.beforeHooks.head
-    assertTrue(hook.matches(List[Tag]().asJava))
+    assertTrue(hook.matches(List[PickleTag]().asJava))
     hook.execute(StubScenario)
     assertEquals(Int.MaxValue, hook.getOrder)
     assertEquals(StubScenario, actualScenario)
@@ -47,15 +51,15 @@ class ScalaDslTest {
     var actualScenario : Scenario = null
 
     object Befores extends ScalaDsl with EN {
-      Before("@foo,@bar", "@zap"){ actualScenario = _ }
+      Before("(@foo or @bar) and @zap"){ actualScenario = _ }
     }
 
     assertEquals(1, Befores.beforeHooks.size)
 
     val hook = Befores.beforeHooks.head
-    assertFalse(hook.matches(List[Tag]().asJava))
-    assertTrue(hook.matches(List(new Tag("@bar", 0), new Tag("@zap", 0)).asJava))
-    assertFalse(hook.matches(List(new Tag("@bar", 1)).asJava))
+    assertFalse(hook.matches(List[PickleTag]().asJava))
+    assertTrue(hook.matches(List(new PickleTag(null, "@bar"), new PickleTag(null, "@zap")).asJava))
+    assertFalse(hook.matches(List(new PickleTag(null, "@bar")).asJava))
 
     hook.execute(StubScenario)
     assertEquals(StubScenario, actualScenario)
@@ -77,7 +81,7 @@ class ScalaDslTest {
   def taggedOrderedBefore {
 
     object Befores extends ScalaDsl with EN {
-      Before(10, "@foo,@bar", "@zap"){  scenario : Scenario => }
+      Before(10, "(@foo or @bar) and @zap"){  scenario : Scenario => }
     }
 
     val hook = Befores.beforeHooks(0)
@@ -95,7 +99,7 @@ class ScalaDslTest {
 
     assertEquals(1, Afters.afterHooks.size)
     val hook = Afters.afterHooks.head
-    assertTrue(hook.matches(List[Tag]().asJava))
+    assertTrue(hook.matches(List[PickleTag]().asJava))
     hook.execute(StubScenario)
     assertEquals(StubScenario, actualScenario)
   }
@@ -105,15 +109,15 @@ class ScalaDslTest {
     var actualScenario : Scenario = null
 
     object Afters extends ScalaDsl with EN {
-      After("@foo,@bar", "@zap"){ actualScenario = _ }
+      After("(@foo or @bar) and @zap"){ actualScenario = _ }
     }
 
     assertEquals(1, Afters.afterHooks.size)
 
     val hook = Afters.afterHooks.head
-    assertFalse(hook.matches(List[Tag]().asJava))
-    assertTrue(hook.matches(List(new Tag("@bar", 0), new Tag("@zap", 0)).asJava))
-    assertFalse(hook.matches(List(new Tag("@bar", 1)).asJava))
+    assertFalse(hook.matches(List[PickleTag]().asJava))
+    assertTrue(hook.matches(List(new PickleTag(null, "@bar"), new PickleTag(null, "@zap")).asJava))
+    assertFalse(hook.matches(List(new PickleTag(null, "@bar")).asJava))
 
     hook.execute(StubScenario)
     assertEquals(StubScenario, actualScenario)
@@ -129,9 +133,9 @@ class ScalaDslTest {
 
     assertEquals(1, Dummy.stepDefinitions.size)
     val step = Dummy.stepDefinitions.head
-    assertEquals("ScalaDslTest.scala:127", step.getLocation(true)) // be careful with formatting or this test will break
+    assertEquals("ScalaDslTest.scala:131", step.getLocation(true)) // be careful with formatting or this test will break
     assertEquals("x", step.getPattern)
-    step.execute(new I18n("en"), Array())
+    step.execute("en", Array())
     assertTrue(called)
   }
 
@@ -149,7 +153,7 @@ class ScalaDslTest {
 
     assertEquals(1, Dummy.stepDefinitions.size)
     val step = Dummy.stepDefinitions(0)
-    step.execute(new I18n("en"), Array(new java.lang.Integer(5), "green"))
+    step.execute("en", Array(new java.lang.Integer(5), "green"))
     assertEquals(5, thenumber)
     assertEquals("green", thecolour)
   }

@@ -1,16 +1,15 @@
 package cucumber.runtime.autocomplete;
 
+import cucumber.runtime.Argument;
 import cucumber.runtime.FeatureBuilder;
 import cucumber.runtime.JdkPatternArgumentMatcher;
 import cucumber.runtime.ParameterInfo;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.io.Resource;
 import cucumber.runtime.model.CucumberFeature;
-import gherkin.I18n;
 import gherkin.deps.com.google.gson.Gson;
 import gherkin.deps.com.google.gson.GsonBuilder;
-import gherkin.formatter.Argument;
-import gherkin.formatter.model.Step;
+import gherkin.pickles.PickleStep;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
@@ -24,7 +23,6 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
 import static org.junit.Assert.assertEquals;
 
 public class StepdefGeneratorTest {
@@ -106,7 +104,7 @@ public class StepdefGeneratorTest {
             public String getClassName(String extension) {
                 throw new UnsupportedOperationException();
             }
-        }, emptyList());
+        });
         return features;
     }
 
@@ -115,8 +113,8 @@ public class StepdefGeneratorTest {
             Pattern regexp = Pattern.compile(pattern);
 
             @Override
-            public List<Argument> matchedArguments(Step step) {
-                return new JdkPatternArgumentMatcher(regexp).argumentsFrom(step.getName());
+            public List<Argument> matchedArguments(PickleStep step) {
+                return new JdkPatternArgumentMatcher(regexp).argumentsFrom(step.getText());
             }
 
             @Override
@@ -135,7 +133,7 @@ public class StepdefGeneratorTest {
             }
 
             @Override
-            public void execute(I18n i18n, Object[] args) throws Throwable {
+            public void execute(String language, Object[] args) throws Throwable {
                 throw new UnsupportedOperationException();
             }
 

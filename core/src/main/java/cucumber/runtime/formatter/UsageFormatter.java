@@ -1,19 +1,14 @@
 package cucumber.runtime.formatter;
 
-import cucumber.runtime.StepDefinitionMatch;
+import cucumber.api.Result;
+import cucumber.api.event.EventHandler;
+import cucumber.api.event.EventPublisher;
+import cucumber.api.event.TestRunFinished;
+import cucumber.api.event.TestStepFinished;
+import cucumber.api.formatter.Formatter;
+import cucumber.api.formatter.NiceAppendable;
 import gherkin.deps.com.google.gson.Gson;
 import gherkin.deps.com.google.gson.GsonBuilder;
-import gherkin.formatter.Formatter;
-import gherkin.formatter.NiceAppendable;
-import gherkin.formatter.Reporter;
-import gherkin.formatter.model.Background;
-import gherkin.formatter.model.Examples;
-import gherkin.formatter.model.Feature;
-import gherkin.formatter.model.Match;
-import gherkin.formatter.model.Result;
-import gherkin.formatter.model.Scenario;
-import gherkin.formatter.model.ScenarioOutline;
-import gherkin.formatter.model.Step;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -26,14 +21,25 @@ import java.util.Map;
  * Formatter to measure performance of steps. Aggregated results for all steps can be computed
  * by adding {@link UsageStatisticStrategy} to the usageFormatter
  */
-class UsageFormatter implements Formatter, Reporter {
+class UsageFormatter implements Formatter {
     private static final BigDecimal NANOS_PER_SECOND = BigDecimal.valueOf(1000000000);
     final Map<String, List<StepContainer>> usageMap = new HashMap<String, List<StepContainer>>();
     private final Map<String, UsageStatisticStrategy> statisticStrategies = new HashMap<String, UsageStatisticStrategy>();
 
     private final NiceAppendable out;
 
-    private Match match;
+    private EventHandler<TestStepFinished> stepFinishedHandler = new EventHandler<TestStepFinished>() {
+        @Override
+        public void receive(TestStepFinished event) {
+            handleTestStepFinished(event);
+        }
+    };
+    private EventHandler<TestRunFinished> runFinishedHandler = new EventHandler<TestRunFinished>() {
+        @Override
+        public void receive(TestRunFinished event) {
+            finishReport();
+        }
+    };
 
     /**
      * Constructor
@@ -48,61 +54,18 @@ class UsageFormatter implements Formatter, Reporter {
     }
 
     @Override
-    public void uri(String uri) {
+    public void setEventPublisher(EventPublisher publisher) {
+        publisher.registerHandlerFor(TestStepFinished.class, stepFinishedHandler);
+        publisher.registerHandlerFor(TestRunFinished.class, runFinishedHandler);
     }
 
-    @Override
-    public void feature(Feature feature) {
+    void handleTestStepFinished(TestStepFinished event) {
+        if (!event.testStep.isHook() && event.result.is(Result.Type.PASSED)) {
+            addUsageEntry(event.result, event.testStep.getPattern(), event.testStep.getStepText(), event.testStep.getStepLocation());
+        }
     }
 
-    @Override
-    public void background(Background background) {
-    }
-
-    @Override
-    public void scenario(Scenario scenario) {
-    }
-
-    @Override
-    public void scenarioOutline(ScenarioOutline scenarioOutline) {
-    }
-
-    @Override
-    public void examples(Examples examples) {
-    }
-
-    @Override
-    public void embedding(String mimeType, byte[] data) {
-    }
-
-    @Override
-    public void write(String text) {
-    }
-
-    @Override
-    public void step(Step step) {
-    }
-
-    @Override
-    public void eof() {
-    }
-
-    @Override
-    public void syntaxError(String state, String event, List<String> legalEvents, String uri, Integer line) {
-    }
-
-    @Override
-    public void startOfScenarioLifeCycle(Scenario scenario) {
-        // NoOp
-    }
-
-    @Override
-    public void endOfScenarioLifeCycle(Scenario scenario) {
-        // NoOp
-    }
-
-    @Override
-    public void done() {
+    void finishReport() {
         List<StepDefContainer> stepDefContainers = new ArrayList<StepDefContainer>();
         for (Map.Entry<String, List<StepContainer>> usageEntry : usageMap.entrySet()) {
             StepDefContainer stepDefContainer = new StepDefContainer();
@@ -113,6 +76,7 @@ class UsageFormatter implements Formatter, Reporter {
         }
 
         out.append(gson().toJson(stepDefContainers));
+        out.close();
     }
 
     private List<StepContainer> createStepContainer(List<StepContainer> stepContainers) {
@@ -159,35 +123,7 @@ class UsageFormatter implements Formatter, Reporter {
         return new GsonBuilder().setPrettyPrinting().create();
     }
 
-    @Override
-    public void close() {
-        out.close();
-    }
-
-    @Override
-    public void result(Result result) {
-        if (result.getStatus().equals(Result.PASSED)) {
-            addUsageEntry(result, getStepDefinition(), getStepName());
-        }
-    }
-
-    @Override
-    public void before(Match match, Result result) {
-    }
-
-    @Override
-    public void after(Match match, Result result) {
-    }
-
-    private String getStepName() {
-        return ((StepDefinitionMatch) match).getStepName();
-    }
-
-    private String getStepDefinition() {
-        return ((StepDefinitionMatch) match).getPattern();
-    }
-
-    private void addUsageEntry(Result result, String stepDefinition, String stepNameWithArgs) {
+    private void addUsageEntry(Result result, String stepDefinition, String stepNameWithArgs, String stepLocation) {
         List<StepContainer> stepContainers = usageMap.get(stepDefinition);
         if (stepContainers == null) {
             stepContainers = new ArrayList<StepContainer>();
@@ -195,15 +131,9 @@ class UsageFormatter implements Formatter, Reporter {
         }
         StepContainer stepContainer = findOrCreateStepContainer(stepNameWithArgs, stepContainers);
 
-        String stepLocation = getStepLocation();
         Long duration = result.getDuration();
         StepDuration stepDuration = createStepDuration(duration, stepLocation);
         stepContainer.durations.add(stepDuration);
-    }
-
-    private String getStepLocation() {
-        StackTraceElement stepLocation = ((StepDefinitionMatch) match).getStepLocation();
-        return stepLocation.getFileName() + ":" + stepLocation.getLineNumber();
     }
 
     private StepDuration createStepDuration(Long duration, String location) {
@@ -227,11 +157,6 @@ class UsageFormatter implements Formatter, Reporter {
         stepContainer.name = stepNameWithArgs;
         stepContainers.add(stepContainer);
         return stepContainer;
-    }
-
-    @Override
-    public void match(Match match) {
-        this.match = match;
     }
 
     /**

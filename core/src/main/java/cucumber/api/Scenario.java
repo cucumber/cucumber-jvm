@@ -1,6 +1,7 @@
 package cucumber.api;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Before or After Hooks that declare a parameter of this type will receive an instance of this class.
@@ -13,9 +14,9 @@ public interface Scenario {
     Collection<String> getSourceTagNames();
 
     /**
-     * @return the <em>most severe</em> status of the Scenario's Steps. One of "passed", "undefined", "pending", "skipped", "failed"
+     * @return the <em>most severe</em> status of the Scenario's Steps.
      */
-    String getStatus();
+    Result.Type getStatus();
 
     /**
      * @return true if and only if {@link #getStatus()} returns "failed"
@@ -56,4 +57,15 @@ public interface Scenario {
      * @return the id of the Scenario.
      */
     String getId();
+
+    /**
+     * @return the uri of the feature file of the Scenario.
+     */
+    String getUri();
+
+    /**
+     * @return the line(s) in the feature file of the Scenario. Scenarios form Scenario Outlines
+     * return both the line of the example row the the line of the scenario outline.
+     */
+    List<Integer> getLines();
 }

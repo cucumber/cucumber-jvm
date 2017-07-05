@@ -7,8 +7,7 @@ import cucumber.runtime.io.Resource;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.snippets.FunctionNameGenerator;
 import cucumber.runtime.snippets.SnippetGenerator;
-import gherkin.formatter.model.Step;
-import gw.lang.Gosu;
+import gherkin.pickles.PickleStep;
 import gw.lang.function.AbstractBlock;
 
 import java.util.List;
@@ -36,9 +35,6 @@ public class GosuBackend implements Backend {
                 source.addGlueScript(glueScript);
             }
         }
-
-        Gosu gosu = new Gosu();
-        gosu.start(source.toArgInfo());
     }
 
     @Override
@@ -57,10 +53,12 @@ public class GosuBackend implements Backend {
     }
 
     @Override
-    public String getSnippet(Step step, FunctionNameGenerator functionNameGenerator) {
-        return snippetGenerator.getSnippet(step, null);    }
+    public String getSnippet(PickleStep step, String keyword, FunctionNameGenerator functionNameGenerator) {
+        return snippetGenerator.getSnippet(step, keyword, functionNameGenerator);
+    }
 
-    public void addStepDefinition(String regexp, Object body) {
+    @SuppressWarnings("unused") // this is indeed invoked by static methods on cucumber.api.gosu.en.Dsl
+    public void addStepDefinition( String regexp, Object body) {
         AbstractBlock block = (AbstractBlock) body;
         glue.addStepDefinition(new GosuStepDefinition(Pattern.compile(regexp), block, currentLocation()));
     }

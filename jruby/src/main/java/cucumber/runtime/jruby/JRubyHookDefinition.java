@@ -2,8 +2,8 @@ package cucumber.runtime.jruby;
 
 import cucumber.api.Scenario;
 import cucumber.runtime.HookDefinition;
-import gherkin.TagExpression;
-import gherkin.formatter.model.Tag;
+import cucumber.runtime.TagPredicate;
+import gherkin.pickles.PickleTag;
 import org.jruby.RubyObject;
 
 import java.util.Collection;
@@ -13,7 +13,7 @@ import static java.util.Arrays.asList;
 
 public class JRubyHookDefinition implements HookDefinition {
 
-    private final TagExpression tagExpression;
+    private final TagPredicate tagPredicate;
     private final RubyObject hookRunner;
     private String file;
     private Long line;
@@ -21,7 +21,7 @@ public class JRubyHookDefinition implements HookDefinition {
 
     public JRubyHookDefinition(JRubyBackend jRubyBackend, String[] tagExpressions, RubyObject hookRunner) {
         this.jRubyBackend = jRubyBackend;
-        this.tagExpression = new TagExpression(asList(tagExpressions));
+        this.tagPredicate = new TagPredicate(asList(tagExpressions));
         this.hookRunner = hookRunner;
     }
 
@@ -41,8 +41,8 @@ public class JRubyHookDefinition implements HookDefinition {
     }
 
     @Override
-    public boolean matches(Collection<Tag> tags) {
-        return tagExpression.evaluate(tags);
+    public boolean matches(Collection<PickleTag> tags) {
+        return tagPredicate.apply(tags);
     }
 
     @Override
