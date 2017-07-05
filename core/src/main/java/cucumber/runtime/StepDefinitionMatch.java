@@ -13,6 +13,7 @@ import gherkin.pickles.PickleTable;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -86,7 +87,7 @@ public class StepDefinitionMatch extends Match implements DefinitionMatch {
                 result.add(arg);
             }
         }
-
+        
         if (parameterCount != null && argumentCount + 1 == parameterCount) {
             Object obj;
             if (getParameterType(n, DataTable.class).getType().toString().startsWith("java.util.List<")) {
@@ -98,7 +99,7 @@ public class StepDefinitionMatch extends Match implements DefinitionMatch {
             }
             result.add(obj);
         }
- 
+        
         return result.toArray(new Object[result.size()]);
     }
 
