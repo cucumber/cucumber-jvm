@@ -87,7 +87,7 @@ public class StepDefinitionMatch extends Match implements DefinitionMatch {
                 result.add(arg);
             }
         }
-        
+
         if (parameterCount != null && argumentCount + 1 == parameterCount) {
             Object obj;
             if (getParameterType(n, DataTable.class).getType().toString().startsWith("java.util.List<")) {
@@ -99,7 +99,7 @@ public class StepDefinitionMatch extends Match implements DefinitionMatch {
             }
             result.add(obj);
         }
-        
+
         return result.toArray(new Object[result.size()]);
     }
 
