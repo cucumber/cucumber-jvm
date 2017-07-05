@@ -1,0 +1,13 @@
+root = true
+
+[*]
+end_of_line = lf
+charset = utf-8
+
+[*.{java,xml}]
+indent_style = space
+indent_size = 4
+
+[*.{feature, yml}]
+indent_style = space
+indent_size = 2
