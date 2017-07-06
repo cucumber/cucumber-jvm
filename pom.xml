@@ -48,7 +48,7 @@
         <webbit.version>0.4.15</webbit.version>
         <webbit-rest.version>0.3.0</webbit-rest.version>
         <jruby.version>9.1.5.0</jruby.version>
-        <weld-se.version>2.3.5.Final</weld-se.version>
+        <weld-se.version>2.4.4.Final</weld-se.version>
         <cdi-api.version>1.2</cdi-api.version>
         <openejb-core.version>4.7.4</openejb-core.version>
         <needle.version>2.2</needle.version>
