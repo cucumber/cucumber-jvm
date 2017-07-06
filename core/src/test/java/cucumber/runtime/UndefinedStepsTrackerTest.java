@@ -4,7 +4,7 @@ import cucumber.api.Result;
 import cucumber.api.TestCase;
 import cucumber.api.TestStep;
 import cucumber.runner.EventBus;
-import cucumber.runner.TimeService;
+import cucumber.runner.TimeServiceStub;
 import cucumber.runtime.model.CucumberFeature;
 import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleStep;
@@ -47,7 +47,7 @@ public class UndefinedStepsTrackerTest {
 
     @Test
     public void uses_given_when_then_keywords() throws IOException {
-        EventBus bus = new EventBus(new TimeService.Stub(0));
+        EventBus bus = new EventBus(new TimeServiceStub(0));
         UndefinedStepsTracker tracker = new UndefinedStepsTracker();
         tracker.setEventPublisher(bus);
         CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
@@ -63,7 +63,7 @@ public class UndefinedStepsTrackerTest {
 
     @Test
     public void converts_and_to_previous_step_keyword() throws IOException {
-        EventBus bus = new EventBus(new TimeService.Stub(0));
+        EventBus bus = new EventBus(new TimeServiceStub(0));
         UndefinedStepsTracker tracker = new UndefinedStepsTracker();
         tracker.setEventPublisher(bus);
         CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
@@ -80,7 +80,7 @@ public class UndefinedStepsTrackerTest {
 
     @Test
     public void backtrack_into_background_to_find_step_keyword() throws IOException {
-        EventBus bus = new EventBus(new TimeService.Stub(0));
+        EventBus bus = new EventBus(new TimeServiceStub(0));
         UndefinedStepsTracker tracker = new UndefinedStepsTracker();
         tracker.setEventPublisher(bus);
         CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
@@ -98,7 +98,7 @@ public class UndefinedStepsTrackerTest {
 
     @Test
     public void doesnt_try_to_use_star_keyword() throws IOException {
-        EventBus bus = new EventBus(new TimeService.Stub(0));
+        EventBus bus = new EventBus(new TimeServiceStub(0));
         UndefinedStepsTracker tracker = new UndefinedStepsTracker();
         tracker.setEventPublisher(bus);
         CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
@@ -115,7 +115,7 @@ public class UndefinedStepsTrackerTest {
 
     @Test
     public void star_keyword_becomes_given_when_no_previous_step() throws IOException {
-        EventBus bus = new EventBus(new TimeService.Stub(0));
+        EventBus bus = new EventBus(new TimeServiceStub(0));
         UndefinedStepsTracker tracker = new UndefinedStepsTracker();
         tracker.setEventPublisher(bus);
         CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
@@ -130,7 +130,7 @@ public class UndefinedStepsTrackerTest {
 
     @Test
     public void snippets_are_generated_for_correct_locale() throws Exception {
-        EventBus bus = new EventBus(new TimeService.Stub(0));
+        EventBus bus = new EventBus(new TimeServiceStub(0));
         UndefinedStepsTracker tracker = new UndefinedStepsTracker();
         tracker.setEventPublisher(bus);
         CucumberFeature feature = TestHelper.feature("path/test.feature", "" +

@@ -4,7 +4,7 @@ import cucumber.api.Result;
 import cucumber.api.TestStep;
 import cucumber.api.event.TestStepFinished;
 import cucumber.runner.EventBus;
-import cucumber.runner.TimeService;
+import cucumber.runner.TimeServiceStub;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Utils;
 import cucumber.runtime.io.UTF8OutputStreamWriter;
@@ -94,7 +94,7 @@ public class PluginFactoryTest {
             fc = new PluginFactory();
 
             ProgressFormatter plugin = (ProgressFormatter) fc.create("progress");
-            EventBus bus = new EventBus(new TimeService.Stub(0));
+            EventBus bus = new EventBus(new TimeServiceStub(0));
             plugin.setEventPublisher(bus);
             Result result = new Result(Result.Type.PASSED, null, null);
             TestStepFinished event = new TestStepFinished(bus.getTime(), mock(TestStep.class), result);

@@ -89,9 +89,13 @@ public class TestStepTest {
 
     @Test
     public void step_execution_time_is_measured() throws Throwable {
-        Long duration = new Long(1234);
+        Long duration = 1234L;
         TestStep step = new PickleTestStep("uri", mock(PickleStep.class), definitionMatch);
         when(bus.getTime()).thenReturn(0l, 1234l);
+
+        when(bus.getTime())
+            .thenReturn(0L)
+            .thenReturn(1234L);
 
         Result result = step.run(bus, language, scenario, false);
 

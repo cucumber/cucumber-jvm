@@ -126,14 +126,12 @@ class JUnitFormatter implements Formatter, StrictAware {
         if (!event.testStep.isHook()) {
             testCase.steps.add(event.testStep);
             testCase.results.add(event.result);
-        } else {
-            testCase.hookResults.add(event.result);
         }
     }
 
     private void handleTestCaseFinished(TestCaseFinished event) {
         if (testCase.steps.isEmpty()) {
-            testCase.handleEmptyTestCase(doc, root);
+            testCase.handleEmptyTestCase(doc, root, event.result);
         } else {
             testCase.addTestCaseElement(doc, root, event.result);
         }
@@ -219,7 +217,6 @@ class JUnitFormatter implements Formatter, StrictAware {
         static boolean treatConditionallySkippedAsFailure = false;
         final List<TestStep> steps = new ArrayList<TestStep>();
         final List<Result> results = new ArrayList<Result>();
-        final List<Result> hookResults = new ArrayList<Result>();
         private final cucumber.api.TestCase testCase;
 
         private Element createElement(Document doc) {
@@ -247,7 +244,7 @@ class JUnitFormatter implements Formatter, StrictAware {
         }
 
         public void addTestCaseElement(Document doc, Element tc, Result result) {
-            tc.setAttribute("time", calculateTotalDurationString());
+            tc.setAttribute("time", calculateTotalDurationString(result));
 
             StringBuilder sb = new StringBuilder();
             addStepAndResultListing(sb);
@@ -272,8 +269,8 @@ class JUnitFormatter implements Formatter, StrictAware {
             tc.appendChild(child);
         }
 
-        public void handleEmptyTestCase(Document doc, Element tc) {
-            tc.setAttribute("time", calculateTotalDurationString());
+        public void handleEmptyTestCase(Document doc, Element tc, Result result) {
+            tc.setAttribute("time", calculateTotalDurationString(result));
 
             String resultType = treatConditionallySkippedAsFailure ? "failure" : "skipped";
             Element child = createElementWithMessage(doc, new StringBuilder(), resultType, "The scenario has no steps");
@@ -281,16 +278,8 @@ class JUnitFormatter implements Formatter, StrictAware {
             tc.appendChild(child);
         }
 
-        private String calculateTotalDurationString() {
-            long totalDurationNanos = 0;
-            for (Result r : results) {
-                totalDurationNanos += r.getDuration() == null ? 0 : r.getDuration();
-            }
-            for (Result r : hookResults) {
-                totalDurationNanos += r.getDuration() == null ? 0 : r.getDuration();
-            }
-            double totalDurationSeconds = ((double) totalDurationNanos) / 1000000000;
-            return NUMBER_FORMAT.format(totalDurationSeconds);
+        private String calculateTotalDurationString(Result result) {
+            return NUMBER_FORMAT.format(((double) result.getDuration()) / 1000000000);
         }
 
         private void addStepAndResultListing(StringBuilder sb) {
