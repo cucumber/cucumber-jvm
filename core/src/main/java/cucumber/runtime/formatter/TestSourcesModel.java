@@ -1,6 +1,9 @@
 package cucumber.runtime.formatter;
 
+import cucumber.api.event.TestSourceRead;
 import gherkin.AstBuilder;
+import gherkin.GherkinDialect;
+import gherkin.GherkinDialectProvider;
 import gherkin.Parser;
 import gherkin.ParserException;
 import gherkin.TokenMatcher;
@@ -18,7 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TestSourcesModel {
-    private final Map<String, String> pathToSourceMap = new HashMap<String, String>();
+    private final Map<String, TestSourceRead> pathToReadEventMap = new HashMap<String, TestSourceRead>();
     private final Map<String, GherkinDocument> pathToAstMap = new HashMap<String, GherkinDocument>();
     private final Map<String, Map<Integer, AstNode>> pathToNodeMap = new HashMap<String, Map<Integer, AstNode>>();
 
@@ -75,8 +78,8 @@ public class TestSourcesModel {
         return name.replaceAll("[\\s'_,!]", "-").toLowerCase();
     }
 
-    public void addSource(String path, String source) {
-        pathToSourceMap.put(path, source);
+    public void addTestSourceReadEvent(String path, TestSourceRead event) {
+        pathToReadEventMap.put(path, event);
     }
 
     public Feature getFeature(String path) {
@@ -114,14 +117,46 @@ public class TestSourcesModel {
         return false;
     }
 
+    public TestSourceRead getTestSourceReadEvent(String uri) {
+        if (pathToReadEventMap.containsKey(uri)) {
+            return pathToReadEventMap.get(uri);
+        }
+        return null;
+    }
+
+    public String getFeatureName(String uri) {
+        if (pathToReadEventMap.containsKey(uri)) {
+            TestSourceRead event = pathToReadEventMap.get(uri);
+            String featureLine = getFeatureLine(event.source);
+            if (featureLine != null) {
+                GherkinDialect dialect = new GherkinDialectProvider(event.language).getDefaultDialect();
+                for (String keyword : dialect.getFeatureKeywords()) {
+                    if (featureLine.trim().startsWith(keyword)) {
+                        return featureLine.substring(featureLine.indexOf(":") + 1).trim();
+                    }
+                }
+            }
+        }
+        return "";
+    }
+
+    private String getFeatureLine(String source) {
+        for (String line : source.split("\n")) {
+            if (line.contains(":") && !line.contains("#")) {
+                return line;
+            }
+        }
+        return null;
+    }
+
     private void parseGherkinSource(String path) {
-        if (!pathToSourceMap.containsKey(path)) {
+        if (!pathToReadEventMap.containsKey(path)) {
             return;
         }
         Parser<GherkinDocument> parser = new Parser<GherkinDocument>(new AstBuilder());
         TokenMatcher matcher = new TokenMatcher();
         try {
-            GherkinDocument gherkinDocument = parser.parse(pathToSourceMap.get(path), matcher);
+            GherkinDocument gherkinDocument = parser.parse(pathToReadEventMap.get(path).source, matcher);
             pathToAstMap.put(path, gherkinDocument);
             Map<Integer, AstNode> nodeMap = new HashMap<Integer, AstNode>();
             AstNode currentParent = new AstNode(gherkinDocument.getFeature(), null);

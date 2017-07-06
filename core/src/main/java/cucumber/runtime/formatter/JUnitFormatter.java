@@ -36,10 +36,8 @@ import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 class JUnitFormatter implements Formatter, StrictAware {
     private final Writer out;
@@ -105,7 +103,7 @@ class JUnitFormatter implements Formatter, StrictAware {
     }
 
     private void handleTestSourceRead(TestSourceRead event) {
-        TestCase.sourceMap.put(event.path, event);
+        TestCase.testSources.addTestSourceReadEvent(event.path, event);
     }
 
     private void handleTestCaseStarted(TestCaseStarted event) {
@@ -201,7 +199,7 @@ class JUnitFormatter implements Formatter, StrictAware {
 
     private static class TestCase {
         private static final DecimalFormat NUMBER_FORMAT = (DecimalFormat) NumberFormat.getNumberInstance(Locale.US);
-        private static final Map<String, TestSourceRead> sourceMap = new HashMap<String, TestSourceRead>();
+        private static final TestSourcesModel testSources = new TestSourcesModel();
 
         static {
             NUMBER_FORMAT.applyPattern("0.######");
@@ -224,7 +222,7 @@ class JUnitFormatter implements Formatter, StrictAware {
         }
 
         private void writeElement(Document doc, Element tc) {
-            tc.setAttribute("classname", testCase.getPath());
+            tc.setAttribute("classname", testSources.getFeatureName(currentFeatureFile));
             tc.setAttribute("name", calculateElementName(testCase));
         }
 
@@ -299,7 +297,7 @@ class JUnitFormatter implements Formatter, StrictAware {
         }
 
         private String getKeywordFromSource(int stepLine) {
-            TestSourceRead event = sourceMap.get(currentFeatureFile);
+            TestSourceRead event = testSources.getTestSourceReadEvent(currentFeatureFile);
             String trimmedSourceLine = event.source.split("\n")[stepLine - 1].trim();
             GherkinDialect dialect = new GherkinDialectProvider(event.language).getDefaultDialect();
             for (String keyword : dialect.getStepKeywords()) {

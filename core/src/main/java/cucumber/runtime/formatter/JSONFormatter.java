@@ -105,7 +105,7 @@ class JSONFormatter implements Formatter {
     }
 
     private void handleTestSourceRead(TestSourceRead event) {
-        testSources.addSource(event.path, event.source);
+        testSources.addTestSourceReadEvent(event.path, event);
     }
 
     private void handleTestCaseStarted(TestCaseStarted event) {

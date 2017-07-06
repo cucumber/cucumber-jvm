@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <testsuite failures="0" tests="4" skipped="4" time="0" name="cucumber.runtime.formatter.JUnitFormatter">
-    <testcase classname="cucumber/runtime/formatter/JUnitFormatterTest_3.feature" name="Scenario_1" time="0">
+    <testcase classname="Feature_3" name="Scenario_1" time="0">
         <skipped><![CDATA[Given bg_1..................................................................undefined
 When bg_2...................................................................undefined
 Then bg_3...................................................................undefined
@@ -9,7 +9,7 @@ When step_2.................................................................unde
 Then step_3.................................................................undefined
 ]]></skipped>
     </testcase>
-    <testcase classname="cucumber/runtime/formatter/JUnitFormatterTest_3.feature" name="ScenarioOutline_1" time="0">
+    <testcase classname="Feature_3" name="ScenarioOutline_1" time="0">
         <skipped><![CDATA[Given bg_1..................................................................undefined
 When bg_2...................................................................undefined
 Then bg_3...................................................................undefined
@@ -18,7 +18,7 @@ When so_2 7 cucumbers.......................................................unde
 Then 5 so_3.................................................................undefined
 ]]></skipped>
     </testcase>
-    <testcase classname="cucumber/runtime/formatter/JUnitFormatterTest_3.feature" name="ScenarioOutline_1_2" time="0">
+    <testcase classname="Feature_3" name="ScenarioOutline_1_2" time="0">
         <skipped><![CDATA[Given bg_1..................................................................undefined
 When bg_2...................................................................undefined
 Then bg_3...................................................................undefined
@@ -27,7 +27,7 @@ When so_2 15 cucumbers......................................................unde
 Then 5 so_3.................................................................undefined
 ]]></skipped>
     </testcase>
-    <testcase classname="cucumber/runtime/formatter/JUnitFormatterTest_3.feature" name="Scenario_2" time="0">
+    <testcase classname="Feature_3" name="Scenario_2" time="0">
         <skipped><![CDATA[Given bg_1..................................................................undefined
 When bg_2...................................................................undefined
 Then bg_3...................................................................undefined
