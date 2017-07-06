@@ -44,7 +44,7 @@
             <artifactId>clojure</artifactId>
         </dependency>
         <dependency>
-            <groupId>info.cukes</groupId>
+            <groupId>io.cucumber</groupId>
             <artifactId>cucumber-jvm-deps</artifactId>
             <scope>test</scope>
         </dependency>

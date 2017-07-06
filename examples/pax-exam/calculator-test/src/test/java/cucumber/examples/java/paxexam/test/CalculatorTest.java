@@ -54,7 +54,7 @@ public class CalculatorTest {
 
             mavenBundle("io.cucumber", "gherkin"),
             mavenBundle("io.cucumber", "tag-expressions"),
-            mavenBundle("info.cukes", "cucumber-jvm-deps"),
+            mavenBundle("io.cucumber", "cucumber-jvm-deps"),
             mavenBundle("io.cucumber", "cucumber-core"),
             mavenBundle("io.cucumber", "cucumber-java"),
             mavenBundle("io.cucumber", "cucumber-osgi"),
