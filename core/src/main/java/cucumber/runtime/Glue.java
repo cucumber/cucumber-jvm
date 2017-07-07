@@ -26,6 +26,4 @@ public interface Glue {
     void reportStepDefinitions(StepDefinitionReporter stepDefinitionReporter);
 
     void removeScenarioScopedGlue();
-
-    UndefinedStepsTracker getTracker();
 }

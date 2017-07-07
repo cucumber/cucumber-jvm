@@ -16,11 +16,14 @@ public class RuntimeGlue implements Glue {
     final List<HookDefinition> beforeHooks = new ArrayList<HookDefinition>();
     final List<HookDefinition> afterHooks = new ArrayList<HookDefinition>();
 
-    private final UndefinedStepsTracker tracker;
     private final LocalizedXStreams localizedXStreams;
 
+    public RuntimeGlue(LocalizedXStreams localizedXStreams) {
+        this(null, localizedXStreams);
+    }
+
+    @Deprecated
     public RuntimeGlue(UndefinedStepsTracker tracker, LocalizedXStreams localizedXStreams) {
-        this.tracker = tracker;
         this.localizedXStreams = localizedXStreams;
     }
 
@@ -113,7 +116,4 @@ public class RuntimeGlue implements Glue {
         }
     }
 
-    public UndefinedStepsTracker getTracker() {
-        return tracker;
-    }
 }

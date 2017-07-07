@@ -1,8 +1,5 @@
 package cucumber.runtime;
 
-import cucumber.api.Result;
-import cucumber.api.TestCase;
-import cucumber.api.TestStep;
 import cucumber.api.event.EventHandler;
 import cucumber.api.event.EventListener;
 import cucumber.api.event.EventPublisher;
@@ -32,7 +29,6 @@ public class UndefinedStepsTracker implements EventListener {
     private final Map<String, String> pathToSourceMap = new HashMap<String, String>();
     private final Map<String, FeatureStepMap> pathToStepMap = new HashMap<String, FeatureStepMap>();
     private boolean hasUndefinedSteps = false;
-    private String currentUri;
 
     private EventHandler<TestSourceRead> testSourceReadHandler = new EventHandler<TestSourceRead>() {
         @Override
@@ -160,21 +156,21 @@ public class UndefinedStepsTracker implements EventListener {
         return keyword.replaceAll("[\\s',!]", "");
     }
 
-    private class FeatureStepMap {
-        public final GherkinDialect dialect;
-        public final Map<Integer, StepNode> stepMap;
+    private static final class FeatureStepMap {
+        final GherkinDialect dialect;
+        final Map<Integer, StepNode> stepMap;
 
-        public FeatureStepMap(GherkinDialect dialect, Map<Integer, StepNode> stepMap) {
+        FeatureStepMap(GherkinDialect dialect, Map<Integer, StepNode> stepMap) {
             this.dialect = dialect;
             this.stepMap = stepMap;
         }
     }
 
-    private class StepNode {
-        public final Step step;
-        public final StepNode previous;
+    private static final class StepNode {
+        final Step step;
+        final StepNode previous;
 
-        public StepNode(Step step, StepNode previous) {
+        StepNode(Step step, StepNode previous) {
             this.step = step;
             this.previous = previous;
         }

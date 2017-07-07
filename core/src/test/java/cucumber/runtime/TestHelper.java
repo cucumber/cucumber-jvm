@@ -159,7 +159,6 @@ public class TestHelper {
                                                                           final List<SimpleEntry<String, Result>> hooks, final List<String> hookLocations,
                                                                           final List<Answer<Object>> hookActions) throws Throwable {
         RuntimeGlue glue = mock(RuntimeGlue.class);
-        when(glue.getTracker()).thenReturn(new UndefinedStepsTracker());
         TestHelper.mockSteps(glue, stepsToResult, stepsToLocation);
         TestHelper.mockHooks(glue, hooks, hookLocations, hookActions);
         return glue;
