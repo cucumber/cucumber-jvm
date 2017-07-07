@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
 public class Runtime {
 
     final Stats stats; // package private to be avaiable for tests.
-    private final UndefinedStepsTracker undefinedStepsTracker;
+    private final UndefinedStepsTracker undefinedStepsTracker = new UndefinedStepsTracker();
 
     private final RuntimeOptions runtimeOptions;
 
@@ -59,13 +59,7 @@ public class Runtime {
         this.classLoader = classLoader;
         this.runtimeOptions = runtimeOptions;
         final Glue glue;
-        if (optionalGlue == null) {
-            this.undefinedStepsTracker = new UndefinedStepsTracker();
-            glue = new RuntimeGlue(undefinedStepsTracker, new LocalizedXStreams(classLoader));
-        } else {
-            this.undefinedStepsTracker = optionalGlue.getTracker();
-            glue = optionalGlue;
-        }
+        glue = optionalGlue == null ? new RuntimeGlue(new LocalizedXStreams(classLoader)) : optionalGlue;
         this.stats = new Stats(runtimeOptions.isMonochrome());
         this.bus = new EventBus(stopWatch);
         this.runner = new Runner(glue, bus, backends, runtimeOptions);
