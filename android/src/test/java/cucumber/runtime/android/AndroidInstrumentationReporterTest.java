@@ -1,11 +1,21 @@
 package cucumber.runtime.android;
 
+import static cucumber.runtime.android.AndroidInstrumentationReporter.StatusCodes;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import android.app.Instrumentation;
 import android.os.Bundle;
-import cucumber.api.event.TestSourceRead;
 import cucumber.api.PendingException;
 import cucumber.api.Result;
 import cucumber.api.TestCase;
+import cucumber.api.event.TestSourceRead;
 import cucumber.runtime.Runtime;
 import edu.emory.mathcs.backport.java.util.Collections;
 import org.junit.Before;
@@ -17,15 +27,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
-import static cucumber.runtime.android.AndroidInstrumentationReporter.StatusCodes;
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @Config(manifest = Config.NONE)
 @RunWith(RobolectricTestRunner.class)
@@ -38,10 +39,10 @@ public class AndroidInstrumentationReporterTest {
     private final Instrumentation instrumentation = mock(Instrumentation.class);
 
     private final TestSourceRead testSourceRead = new TestSourceRead(
-	    0l,
-	    "path/file.feature",
-	    "en",
-	    "Feature: feature name\n  Scenario: some important scenario\n");
+        0l,
+        "path/file.feature",
+        "en",
+        "Feature: feature name\n  Scenario: some important scenario\n");
     private final TestCase testCase = mock(TestCase.class);
     private final Result firstResult = mock(Result.class);
     private final Result secondResult = mock(Result.class);
@@ -61,7 +62,7 @@ public class AndroidInstrumentationReporterTest {
 
         // when
         formatter.testSourceRead(testSourceRead);
-	formatter.setNumberOfTests(1);
+        formatter.setNumberOfTests(1);
         formatter.startTestCase(testCase);
 
         // then
@@ -83,7 +84,7 @@ public class AndroidInstrumentationReporterTest {
 
         // when
         formatter.testSourceRead(testSourceRead);
-	formatter.setNumberOfTests(1);
+        formatter.setNumberOfTests(1);
         formatter.startTestCase(testCase);
         formatter.finishTestStep(firstResult);
         formatter.finishTestCase();
@@ -105,7 +106,7 @@ public class AndroidInstrumentationReporterTest {
         final AndroidInstrumentationReporter formatter = new AndroidInstrumentationReporter(runtime, instrumentation);
 
         // when
-	formatter.setNumberOfTests(1);
+        formatter.setNumberOfTests(1);
         formatter.startTestCase(testCase);
 
         // then
@@ -126,7 +127,7 @@ public class AndroidInstrumentationReporterTest {
         mockResultStatus(firstResult, Result.Type.PASSED);
 
         // when
-	formatter.setNumberOfTests(1);
+        formatter.setNumberOfTests(1);
         formatter.startTestCase(testCase);
         formatter.finishTestStep(firstResult);
         formatter.finishTestCase();
@@ -150,7 +151,7 @@ public class AndroidInstrumentationReporterTest {
         when(firstResult.getError()).thenReturn(new RuntimeException("some random runtime exception"));
 
         // when
-	formatter.setNumberOfTests(1);
+        formatter.setNumberOfTests(1);
         formatter.startTestCase(testCase);
         formatter.finishTestStep(firstResult);
         formatter.finishTestCase();
@@ -174,7 +175,7 @@ public class AndroidInstrumentationReporterTest {
         when(firstResult.getErrorMessage()).thenReturn("some test assertion went wrong");
 
         // when
-	formatter.setNumberOfTests(1);
+        formatter.setNumberOfTests(1);
         formatter.startTestCase(testCase);
         formatter.finishTestStep(firstResult);
         formatter.finishTestCase();
@@ -196,7 +197,7 @@ public class AndroidInstrumentationReporterTest {
         when(runtime.getSnippets()).thenReturn(Collections.singletonList("some snippet"));
 
         // when
-	formatter.setNumberOfTests(1);
+        formatter.setNumberOfTests(1);
         formatter.startTestCase(testCase);
         formatter.finishTestStep(firstResult);
         formatter.finishTestCase();
@@ -217,7 +218,7 @@ public class AndroidInstrumentationReporterTest {
         mockResultStatus(firstResult, Result.Type.PASSED);
 
         // when
-	formatter.setNumberOfTests(1);
+        formatter.setNumberOfTests(1);
         formatter.startTestCase(testCase);
         formatter.finishTestStep(firstResult);
         formatter.finishTestCase();
@@ -235,7 +236,7 @@ public class AndroidInstrumentationReporterTest {
         mockResultStatus(secondResult, Result.Type.SKIPPED);
 
         // when
-	formatter.setNumberOfTests(2);
+        formatter.setNumberOfTests(2);
         formatter.startTestCase(testCase);
         formatter.finishTestStep(firstResult);
         formatter.finishTestStep(secondResult);
@@ -258,7 +259,7 @@ public class AndroidInstrumentationReporterTest {
         when(secondResult.getError()).thenReturn(new RuntimeException("second exception"));
 
         // when
-	formatter.setNumberOfTests(2);
+        formatter.setNumberOfTests(2);
         formatter.startTestCase(testCase);
         formatter.finishTestStep(firstResult);
         formatter.finishTestStep(secondResult);
@@ -283,7 +284,7 @@ public class AndroidInstrumentationReporterTest {
         when(runtime.getSnippets()).thenReturn(Collections.singletonList("some snippet"));
 
         // when
-	formatter.setNumberOfTests(2);
+        formatter.setNumberOfTests(2);
         formatter.startTestCase(testCase);
         formatter.finishTestStep(firstResult);
         formatter.finishTestStep(secondResult);
@@ -309,7 +310,7 @@ public class AndroidInstrumentationReporterTest {
         when(secondResult.getErrorMessage()).thenReturn("step is pending");
 
         // when
-	formatter.setNumberOfTests(2);
+        formatter.setNumberOfTests(2);
         formatter.startTestCase(testCase);
         formatter.finishTestStep(firstResult);
         formatter.finishTestStep(secondResult);
@@ -335,7 +336,7 @@ public class AndroidInstrumentationReporterTest {
         when(secondResult.getErrorMessage()).thenReturn("some assertion went wrong");
 
         // when
-	formatter.setNumberOfTests(2);
+        formatter.setNumberOfTests(2);
         formatter.startTestCase(testCase);
         formatter.finishTestStep(firstResult);
         formatter.finishTestStep(secondResult);
@@ -360,7 +361,7 @@ public class AndroidInstrumentationReporterTest {
         when(secondResult.getError()).thenReturn(new RuntimeException("some exception"));
 
         // when
-	formatter.setNumberOfTests(2);
+        formatter.setNumberOfTests(2);
         formatter.startTestCase(testCase);
         formatter.finishTestStep(firstResult);
         formatter.finishTestStep(secondResult);
@@ -387,7 +388,7 @@ public class AndroidInstrumentationReporterTest {
         when(secondResult.getErrorMessage()).thenReturn("some assertion went wrong");
 
         // when
-	formatter.setNumberOfTests(2);
+        formatter.setNumberOfTests(2);
         formatter.startTestCase(testCase);
         formatter.finishTestStep(firstResult);
         formatter.finishTestStep(secondResult);
@@ -414,7 +415,7 @@ public class AndroidInstrumentationReporterTest {
         when(secondResult.getError()).thenReturn(new RuntimeException("some exception"));
 
         // when
-	formatter.setNumberOfTests(2);
+        formatter.setNumberOfTests(2);
         formatter.startTestCase(testCase);
         formatter.finishTestStep(firstResult);
         formatter.finishTestStep(secondResult);
@@ -439,7 +440,7 @@ public class AndroidInstrumentationReporterTest {
         mockResultStatus(secondResult, Result.Type.PASSED);
 
         // when
-	formatter.setNumberOfTests(2);
+        formatter.setNumberOfTests(2);
         formatter.startTestCase(testCase);
         formatter.finishTestStep(firstResult);
         formatter.finishTestCase();
