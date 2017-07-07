@@ -12,26 +12,18 @@
     <packaging>jar</packaging>
     <name>Cucumber-JVM: Scala (2.12)</name>
 
-    <properties>
-        <!--
-        Upgrading to 2.12.0-M2 or higher causes:
-
-        initializationError(cucumber.runtime.scala.test.RunCukesTest)  Time elapsed: 0.006 sec  <<< ERROR! java.util.NoSuchElementException: next on empty iterator [no stack trace] -->
-        <scala.version>2.12.0-M1</scala.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-compiler</artifactId>
-            <version>${scala.version}</version>
+            <version>${scala.2.12.version}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>
-            <version>${scala.version}</version>
+            <version>${scala.2.12.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -45,6 +37,14 @@
           </testResource>
         </testResources>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>net.alchim31.maven</groupId>
                 <artifactId>scala-maven-plugin</artifactId>
