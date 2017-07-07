@@ -2,7 +2,6 @@ package cucumber.runtime;
 
 import cucumber.api.StepDefinitionReporter;
 import cucumber.runtime.xstream.LocalizedXStreams;
-import gherkin.GherkinDialect;
 import gherkin.pickles.PickleStep;
 
 import java.util.ArrayList;
@@ -112,5 +111,9 @@ public class RuntimeGlue implements Glue {
                 stepdefs.remove();
             }
         }
+    }
+
+    public UndefinedStepsTracker getTracker() {
+        return tracker;
     }
 }

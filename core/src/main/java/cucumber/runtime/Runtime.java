@@ -3,7 +3,6 @@ package cucumber.runtime;
 import cucumber.api.StepDefinitionReporter;
 import cucumber.api.SummaryPrinter;
 import cucumber.api.event.TestRunFinished;
-import cucumber.api.event.TestStepFinished;
 import cucumber.runner.EventBus;
 import cucumber.runner.Runner;
 import cucumber.runner.TimeService;
@@ -28,7 +27,7 @@ import java.util.regex.Pattern;
 public class Runtime {
 
     final Stats stats; // package private to be avaiable for tests.
-    private final UndefinedStepsTracker undefinedStepsTracker = new UndefinedStepsTracker();
+    private final UndefinedStepsTracker undefinedStepsTracker;
 
     private final RuntimeOptions runtimeOptions;
 
@@ -59,7 +58,14 @@ public class Runtime {
         this.resourceLoader = resourceLoader;
         this.classLoader = classLoader;
         this.runtimeOptions = runtimeOptions;
-        Glue glue = optionalGlue != null ? optionalGlue : new RuntimeGlue(undefinedStepsTracker, new LocalizedXStreams(classLoader, runtimeOptions.getConverters()));
+        final Glue glue;
+        if (optionalGlue == null) {
+            this.undefinedStepsTracker = new UndefinedStepsTracker();
+            glue = new RuntimeGlue(undefinedStepsTracker, new LocalizedXStreams(classLoader));
+        } else {
+            this.undefinedStepsTracker = optionalGlue.getTracker();
+            glue = optionalGlue;
+        }
         this.stats = new Stats(runtimeOptions.isMonochrome());
         this.bus = new EventBus(stopWatch);
         this.runner = new Runner(glue, bus, backends, runtimeOptions);
