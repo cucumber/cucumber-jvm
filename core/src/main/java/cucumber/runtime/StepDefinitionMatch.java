@@ -188,11 +188,6 @@ public class StepDefinitionMatch extends Match implements DefinitionMatch {
         return stepDefinition.getLocation(false);
     }
 
-    @Override
-    public List<String> getSnippets() {
-        throw new UnsupportedOperationException();
-    }
-
     public static int getStepLine(PickleStep step) {
         return step.getLocations().get(step.getLocations().size() - 1).getLine();
     }

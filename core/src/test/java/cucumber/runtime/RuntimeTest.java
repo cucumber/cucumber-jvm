@@ -4,7 +4,9 @@ import cucumber.api.PendingException;
 import cucumber.api.Result;
 import cucumber.api.Scenario;
 import cucumber.api.StepDefinitionReporter;
+import cucumber.api.TestCase;
 import cucumber.api.TestStep;
+import cucumber.api.event.TestCaseFinished;
 import cucumber.runtime.formatter.FormatterSpy;
 import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.io.Resource;
@@ -53,6 +55,7 @@ import static org.mockito.Mockito.when;
 
 public class RuntimeTest {
     private final static String ENGLISH = "en";
+    private final static long ANY_TIMESTAMP = 1234567890;
 
     @Ignore
     @Test
@@ -142,13 +145,13 @@ public class RuntimeTest {
     @Test
     public void non_strict_with_undefined_steps() {
         Runtime runtime = createNonStrictRuntime();
-        runtime.undefinedStepsTracker.handleTestStepFinished(testStep(), mockResultWithSnippets());
+        runtime.getEventBus().send(testCaseFinishedWithStatus(Result.Type.UNDEFINED));
         assertEquals(0x0, runtime.exitStatus());
     }
 
     public void strict_with_undefined_steps() {
         Runtime runtime = createStrictRuntime();
-        runtime.undefinedStepsTracker.handleTestStepFinished(testStep(), mockResultWithSnippets());
+        runtime.getEventBus().send(testCaseFinishedWithStatus(Result.Type.UNDEFINED));
         assertEquals(0x1, runtime.exitStatus());
     }
 
@@ -579,17 +582,7 @@ public class RuntimeTest {
         return stepCount;
     }
 
-    private TestStep testStep() {
-        TestStep testStep = mock(TestStep.class);
-        PickleStep pickleStep = new PickleStep("step text", Collections.<Argument>emptyList(), Collections.<PickleLocation>emptyList());
-        when(testStep.getPickleStep()).thenReturn(pickleStep);
-        return testStep;
-    }
-
-    private Result mockResultWithSnippets() {
-        Result result = mock(Result.class);
-        when(result.getStatus()).thenReturn(Result.Type.UNDEFINED);
-        when(result.getSnippets()).thenReturn(asList(""));
-        return result;
+    private TestCaseFinished testCaseFinishedWithStatus(Result.Type resultStatus) {
+        return new TestCaseFinished(ANY_TIMESTAMP, mock(TestCase.class), new Result(resultStatus, null, null));
     }
 }
