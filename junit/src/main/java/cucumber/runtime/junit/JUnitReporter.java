@@ -132,6 +132,8 @@ public class JUnitReporter {
             stepErrors.add(error);
             stepNotifier.addFailure(error);
             break;
+        default:
+            throw new IllegalStateException("Unexpected result status: " + result.getStatus());
         }
         stepNotifier.fireTestFinished();
     }
