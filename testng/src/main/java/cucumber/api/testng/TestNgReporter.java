@@ -3,7 +3,6 @@ package cucumber.api.testng;
 import static org.testng.Reporter.getCurrentTestResult;
 import static org.testng.Reporter.log;
 
-import cucumber.runtime.Utils;
 import cucumber.api.Result;
 import cucumber.api.event.EventHandler;
 import cucumber.api.event.EventPublisher;
@@ -11,6 +10,7 @@ import cucumber.api.event.TestRunFinished;
 import cucumber.api.event.TestStepFinished;
 import cucumber.api.formatter.Formatter;
 import cucumber.api.formatter.NiceAppendable;
+import cucumber.runtime.Utils;
 import org.testng.ITestResult;
 
 class TestNgReporter implements Formatter {
@@ -50,19 +50,27 @@ class TestNgReporter implements Formatter {
 
     private void result(String stepText, Result result) {
         logResult(stepText, result);
+        ITestResult tr = getCurrentTestResult();
 
-        if (result.is(Result.Type.FAILED)) {
-            ITestResult tr = getCurrentTestResult();
-            tr.setThrowable(result.getError());
-            tr.setStatus(ITestResult.FAILURE);
-        } else if (result.is(Result.Type.SKIPPED)) {
-            ITestResult tr = getCurrentTestResult();
-            tr.setThrowable(result.getError());
-            tr.setStatus(ITestResult.SKIP);
-        } else if (result.is(Result.Type.UNDEFINED)) {
-            ITestResult tr = getCurrentTestResult();
-            tr.setThrowable(result.getError());
-            tr.setStatus(ITestResult.FAILURE);
+        switch (result.getStatus()) {
+            case PASSED:
+                // do nothing
+                break;
+            case FAILED:
+            case AMBIGUOUS:
+                tr.setThrowable(result.getError());
+                tr.setStatus(ITestResult.FAILURE);
+                break;
+            case SKIPPED:
+                tr.setThrowable(result.getError());
+                tr.setStatus(ITestResult.SKIP);
+            case UNDEFINED:
+            case PENDING:
+                tr.setThrowable(result.getError());
+                tr.setStatus(ITestResult.FAILURE);
+                break;
+            default:
+                throw new IllegalStateException("Unexpected result status: " + result.getStatus());
         }
     }
 

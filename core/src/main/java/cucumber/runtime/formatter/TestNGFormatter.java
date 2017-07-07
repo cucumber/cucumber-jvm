@@ -226,7 +226,7 @@ class TestNGFormatter implements Formatter, StrictAware {
             Result skipped = null;
             Result failed = null;
             for (Result result : results) {
-                if (result.is(Result.Type.FAILED)) {
+                if (result.is(Result.Type.FAILED) || result.is(Result.Type.AMBIGUOUS)) {
                     failed = result;
                 }
                 if (result.is(Result.Type.UNDEFINED) || result.is(Result.Type.PENDING)) {

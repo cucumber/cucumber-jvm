@@ -3,6 +3,7 @@ package cucumber.api;
 import cucumber.api.event.TestStepFinished;
 import cucumber.api.event.TestStepStarted;
 import cucumber.runner.EventBus;
+import cucumber.runtime.AmbiguousStepDefinitionsException;
 import cucumber.runtime.DefinitionMatch;
 import cucumber.runtime.UndefinedStepDefinitionException;
 import gherkin.pickles.Argument;
@@ -91,6 +92,9 @@ public abstract class TestStep {
         }
         if (t.getClass() == UndefinedStepDefinitionException.class) {
             return Result.Type.UNDEFINED;
+        }
+        if (t.getClass() == AmbiguousStepDefinitionsException.class) {
+            return Result.Type.AMBIGUOUS;
         }
         return Result.Type.FAILED;
     }

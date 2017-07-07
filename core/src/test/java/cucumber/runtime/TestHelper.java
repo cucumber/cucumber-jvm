@@ -69,6 +69,8 @@ public class TestHelper {
         switch (status) {
         case FAILED:
             return result(status, mockAssertionFailedError());
+        case AMBIGUOUS:
+            return result(status, mockAmbiguousStepDefinitionException());
         case PENDING:
             return result(status, new PendingException());
         default:
@@ -249,6 +251,20 @@ public class TestHelper {
         };
         doAnswer(printStackTraceHandler).when(error).printStackTrace((PrintWriter) any());
         return error;
+    }
+
+    private static AmbiguousStepDefinitionsException mockAmbiguousStepDefinitionException() {
+        AmbiguousStepDefinitionsException exception = mock(AmbiguousStepDefinitionsException.class);
+        Answer<Object> printStackTraceHandler = new Answer<Object>() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                PrintWriter writer = (PrintWriter) invocation.getArguments()[0];
+                writer.print("the stack trace");
+                return null;
+            }
+        };
+        doAnswer(printStackTraceHandler).when(exception).printStackTrace((PrintWriter) any());
+        return exception;
     }
 
     public static SimpleEntry<String, Result> hookEntry(String type, Result result) {

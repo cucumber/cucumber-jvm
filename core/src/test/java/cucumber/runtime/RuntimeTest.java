@@ -302,8 +302,8 @@ public class RuntimeTest {
         runtime.printStats(new PrintStream(baos));
 
         assertThat(baos.toString(), containsString(String.format(""+
-                "1 Scenarios (1 failed)%n" +
-                "1 Steps (1 failed)%n")));
+                "1 Scenarios (1 ambiguous)%n" +
+                "1 Steps (1 ambiguous)%n")));
     }
 
     @Test

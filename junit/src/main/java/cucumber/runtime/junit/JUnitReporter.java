@@ -127,9 +127,13 @@ public class JUnitReporter {
             stepErrors.add(new UndefinedThrowable(testStep.getStepText()));
             addFailureOrFailedAssumptionDependingOnStrictMode(stepNotifier, error);
             break;
+        case AMBIGUOUS:
         case FAILED:
             stepErrors.add(error);
             stepNotifier.addFailure(error);
+            break;
+        default:
+            throw new IllegalStateException("Unexpected result status: " + result.getStatus());
         }
         stepNotifier.fireTestFinished();
     }
@@ -159,10 +163,12 @@ public class JUnitReporter {
                 addFailureOrFailedAssumptionDependingOnStrictMode(pickleRunnerNotifier, error);
             }
             break;
+        case AMBIGUOUS:
         case FAILED:
             for (Throwable error : stepErrors) {
                 pickleRunnerNotifier.addFailure(error);
             }
+            break;
         }
         pickleRunnerNotifier.fireTestFinished();
     }

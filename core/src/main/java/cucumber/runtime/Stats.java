@@ -22,6 +22,7 @@ class Stats {
     private Formats formats;
     private Locale locale;
     private List<String> failedScenarios = new ArrayList<String>();
+    private List<String> ambiguousScenarios = new ArrayList<String>();
     private List<String> pendingScenarios = new ArrayList<String>();
     private List<String> undefinedScenarios = new ArrayList<String>();
 
@@ -67,6 +68,7 @@ class Stats {
     private void printSubCounts(PrintStream out, SubCounts subCounts) {
         boolean addComma = false;
         addComma = printSubCount(out, subCounts.failed, Result.Type.FAILED, addComma);
+        addComma = printSubCount(out, subCounts.ambiguous, Result.Type.AMBIGUOUS, addComma);
         addComma = printSubCount(out, subCounts.skipped, Result.Type.SKIPPED, addComma);
         addComma = printSubCount(out, subCounts.pending, Result.Type.PENDING, addComma);
         addComma = printSubCount(out, subCounts.undefined, Result.Type.UNDEFINED, addComma);
@@ -93,6 +95,7 @@ class Stats {
 
     private void printNonZeroResultScenarios(PrintStream out, boolean isStrict) {
         printScenarios(out, failedScenarios, Result.Type.FAILED);
+        printScenarios(out, ambiguousScenarios, Result.Type.AMBIGUOUS);
         if (isStrict) {
             printScenarios(out, pendingScenarios, Result.Type.PENDING);
             printScenarios(out, undefinedScenarios, Result.Type.UNDEFINED);
@@ -138,6 +141,9 @@ class Stats {
         case FAILED:
             subCounts.failed++;
             break;
+        case AMBIGUOUS:
+            subCounts.ambiguous++;
+            break;
         case PENDING:
             subCounts.pending++;
             break;
@@ -158,6 +164,9 @@ class Stats {
         case FAILED:
             failedScenarios.add(scenarioDesignation);
             break;
+        case AMBIGUOUS:
+            ambiguousScenarios.add(scenarioDesignation);
+            break;
         case PENDING:
             pendingScenarios.add(scenarioDesignation);
             break;
@@ -172,12 +181,13 @@ class Stats {
     class SubCounts {
         public int passed = 0;
         public int failed = 0;
+        public int ambiguous = 0;
         public int skipped = 0;
         public int pending = 0;
         public int undefined = 0;
 
         public int getTotal() {
-            return passed + failed + skipped + pending + undefined;
+            return passed + failed + ambiguous + skipped + pending + undefined;
         }
     }
 }

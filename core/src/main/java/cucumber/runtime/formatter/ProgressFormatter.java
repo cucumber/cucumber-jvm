@@ -21,6 +21,7 @@ class ProgressFormatter implements Formatter, ColorAware {
         put(Result.Type.PENDING, 'P');
         put(Result.Type.SKIPPED, '-');
         put(Result.Type.FAILED, 'F');
+        put(Result.Type.AMBIGUOUS, 'A');
     }};
     private static final Map<Result.Type, AnsiEscapes> ANSI_ESCAPES = new HashMap<Result.Type, AnsiEscapes>() {{
         put(Result.Type.PASSED, AnsiEscapes.GREEN);
@@ -28,6 +29,7 @@ class ProgressFormatter implements Formatter, ColorAware {
         put(Result.Type.PENDING, AnsiEscapes.YELLOW);
         put(Result.Type.SKIPPED, AnsiEscapes.CYAN);
         put(Result.Type.FAILED, AnsiEscapes.RED);
+        put(Result.Type.AMBIGUOUS, AnsiEscapes.RED);
     }};
 
     private final NiceAppendable out;
