@@ -5,7 +5,6 @@ import cucumber.api.Result;
 import cucumber.api.Scenario;
 import cucumber.api.StepDefinitionReporter;
 import cucumber.api.TestCase;
-import cucumber.api.TestStep;
 import cucumber.api.event.TestCaseFinished;
 import cucumber.runtime.formatter.FormatterSpy;
 import cucumber.runtime.io.ClasspathResourceLoader;
@@ -13,14 +12,12 @@ import cucumber.runtime.io.Resource;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
 import gherkin.events.PickleEvent;
-import gherkin.pickles.Argument;
 import gherkin.pickles.Pickle;
 import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleTag;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.AssumptionViolatedException;
 import org.mockito.ArgumentCaptor;
 
 import java.io.ByteArrayOutputStream;
@@ -129,76 +126,79 @@ public class RuntimeTest {
     }
 
     @Test
-    public void strict_without_pending_steps_or_errors() {
+    public void strict_with_passed_scenarios() {
         Runtime runtime = createStrictRuntime();
+        runtime.getEventBus().send(testCaseFinishedWithStatus(Result.Type.PASSED));
 
         assertEquals(0x0, runtime.exitStatus());
     }
 
     @Test
-    public void non_strict_without_pending_steps_or_errors() {
+    public void non_strict_with_passed_scenarios() {
         Runtime runtime = createNonStrictRuntime();
+        runtime.getEventBus().send(testCaseFinishedWithStatus(Result.Type.PASSED));
 
         assertEquals(0x0, runtime.exitStatus());
     }
 
     @Test
-    public void non_strict_with_undefined_steps() {
+    public void non_strict_with_undefined_scenarios() {
         Runtime runtime = createNonStrictRuntime();
         runtime.getEventBus().send(testCaseFinishedWithStatus(Result.Type.UNDEFINED));
         assertEquals(0x0, runtime.exitStatus());
     }
 
-    public void strict_with_undefined_steps() {
+    @Test
+    public void strict_with_undefined_scenarios() {
         Runtime runtime = createStrictRuntime();
         runtime.getEventBus().send(testCaseFinishedWithStatus(Result.Type.UNDEFINED));
         assertEquals(0x1, runtime.exitStatus());
     }
 
     @Test
-    public void strict_with_pending_steps_and_no_errors() {
+    public void strict_with_pending_scenarios() {
         Runtime runtime = createStrictRuntime();
-        runtime.addError(new PendingException());
+        runtime.getEventBus().send(testCaseFinishedWithStatus(Result.Type.PENDING));
 
         assertEquals(0x1, runtime.exitStatus());
     }
 
     @Test
-    public void non_strict_with_pending_steps() {
+    public void non_strict_with_pending_scenarios() {
         Runtime runtime = createNonStrictRuntime();
-        runtime.addError(new PendingException());
+        runtime.getEventBus().send(testCaseFinishedWithStatus(Result.Type.PENDING));
 
         assertEquals(0x0, runtime.exitStatus());
     }
 
     @Test
-    public void non_strict_with_failed_junit_assumption_prior_to_junit_412() {
+    public void non_strict_with_skipped_scenarios() {
         Runtime runtime = createNonStrictRuntime();
-        runtime.addError(new org.junit.internal.AssumptionViolatedException("should be treated like skipped"));
+        runtime.getEventBus().send(testCaseFinishedWithStatus(Result.Type.SKIPPED));
 
         assertEquals(0x0, runtime.exitStatus());
     }
 
     @Test
-    public void non_strict_with_failed_junit_assumption_from_junit_412_on() {
+    public void strict_with_skipped_scenarios() {
         Runtime runtime = createNonStrictRuntime();
-        runtime.addError(new AssumptionViolatedException("should be treated like skipped"));
+        runtime.getEventBus().send(testCaseFinishedWithStatus(Result.Type.SKIPPED));
 
         assertEquals(0x0, runtime.exitStatus());
     }
 
     @Test
-    public void non_strict_with_errors() {
+    public void non_strict_with_failed_scenarios() {
         Runtime runtime = createNonStrictRuntime();
-        runtime.addError(new RuntimeException());
+        runtime.getEventBus().send(testCaseFinishedWithStatus(Result.Type.FAILED));
 
         assertEquals(0x1, runtime.exitStatus());
     }
 
     @Test
-    public void strict_with_errors() {
+    public void strict_with_failed_scenarios() {
         Runtime runtime = createStrictRuntime();
-        runtime.addError(new RuntimeException());
+        runtime.getEventBus().send(testCaseFinishedWithStatus(Result.Type.FAILED));
 
         assertEquals(0x1, runtime.exitStatus());
     }
