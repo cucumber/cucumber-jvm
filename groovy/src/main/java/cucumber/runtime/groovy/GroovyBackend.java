@@ -71,19 +71,24 @@ public class GroovyBackend implements Backend {
         final Binding context = shell.getContext();
 
         for (String gluePath : gluePaths) {
-            // Load sources
-            for (Resource resource : resourceLoader.resources(gluePath, ".groovy")) {
-                Script script = parse(resource);
-                runIfScript(context, script);
-            }
-            // Load compiled scripts
-            for (Class<? extends Script> glueClass : classFinder.getDescendants(Script.class, packageName(gluePath))) {
-                try {
-                    Script script = glueClass.getConstructor(Binding.class).newInstance(context);
+            try {
+                // Load sources
+                for (Resource resource : resourceLoader.resources(gluePath, ".groovy")) {
+                    Script script = parse(resource);
                     runIfScript(context, script);
-                } catch (Exception e) {
-                    throw new CucumberException(e);
                 }
+                // Load compiled scripts
+                for (Class<? extends Script> glueClass : classFinder.getDescendants(Script.class, packageName(gluePath))) {
+                    try {
+                        Script script = glueClass.getConstructor(Binding.class).newInstance(context);
+                        runIfScript(context, script);
+                    } catch (Exception e) {
+                        throw new CucumberException(e);
+                    }
+                }
+            }catch(IllegalArgumentException e){
+                // please see https://github.com/cucumber/cucumber-jvm/issues/1062
+                e.printStackTrace();
             }
         }
     }
