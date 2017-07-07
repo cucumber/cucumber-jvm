@@ -8,9 +8,11 @@ import cucumber.api.event.EventHandler;
 import cucumber.api.event.EventPublisher;
 import cucumber.api.event.TestCaseFinished;
 import cucumber.api.event.TestCaseStarted;
+import cucumber.api.event.TestSourceRead;
 import cucumber.api.event.TestStepFinished;
 import cucumber.api.formatter.Formatter;
 import cucumber.runtime.Runtime;
+import cucumber.runtime.formatter.TestSourcesModel;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -57,6 +59,11 @@ public class AndroidInstrumentationReporter implements Formatter {
     }
 
     /**
+     * The collected TestSourceRead events.
+     */
+    private final TestSourcesModel testSources = new TestSourcesModel();
+
+    /**
      * The current cucumber runtime.
      */
     private final Runtime runtime;
@@ -69,7 +76,7 @@ public class AndroidInstrumentationReporter implements Formatter {
     /**
      * The total number of tests which will be executed.
      */
-    private final int numberOfTests;
+    private int numberOfTests;
 
     /**
      * The severest step result of the current test execution.
@@ -78,14 +85,29 @@ public class AndroidInstrumentationReporter implements Formatter {
     private Result severestResult;
 
     /**
-     * The location in the feature file of the current test case.
+     * The uri of the feature file of the current test case.
      */
-    private String currentPath;
+    private String currentUri;
+
+    /**
+     * The name of the current feature.
+     */
+    private String currentFeatureName;
 
     /**
      * The name of the current test case.
      */
     private String currentTestCaseName;
+
+    /**
+     * The event handler for the {@link TestSourceRead} events.
+     */
+    private final EventHandler<TestSourceRead> testSourceReadHandler = new EventHandler<TestSourceRead>() {
+        @Override
+        public void receive(TestSourceRead event) {
+            testSourceRead(event);
+        }
+    };
 
     /**
      * The event handler for the {@link TestCaseStarted} events.
@@ -120,32 +142,38 @@ public class AndroidInstrumentationReporter implements Formatter {
     /**
      * Creates a new instance for the given parameters
      *
-     * @param runtime the {@link cucumber.runtime.Runtime} to use
+     * @param runtime         the {@link cucumber.runtime.Runtime} to use
      * @param instrumentation the {@link android.app.Instrumentation} to report statuses to
-     * @param numberOfTests the total number of tests to be executed, this is expected to include all scenario outline runs
      */
-    public AndroidInstrumentationReporter(
-            final Runtime runtime,
-            final Instrumentation instrumentation,
-            final int numberOfTests) {
-
+    public AndroidInstrumentationReporter(final Runtime runtime, final Instrumentation instrumentation) {
         this.runtime = runtime;
         this.instrumentation = instrumentation;
-        this.numberOfTests = numberOfTests;
     }
 
     @Override
     public void setEventPublisher(final EventPublisher publisher) {
+        publisher.registerHandlerFor(TestSourceRead.class, testSourceReadHandler);
         publisher.registerHandlerFor(TestCaseStarted.class, testCaseStartedHandler);
         publisher.registerHandlerFor(TestCaseFinished.class, testCaseFinishedHandler);
         publisher.registerHandlerFor(TestStepFinished.class, testStepFinishedHandler);
     }
 
+    public void setNumberOfTests(final int numberOfTests) {
+        this.numberOfTests = numberOfTests;
+    }
+
+    void testSourceRead(final TestSourceRead event) {
+        testSources.addTestSourceReadEvent(event.path, event);
+    }
+
     void startTestCase(final TestCase testCase) {
-        currentPath = testCase.getPath();
+        if (!testCase.getPath().equals(currentUri)) {
+            currentUri = testCase.getPath();
+            currentFeatureName = testSources.getFeatureName(currentUri);
+        }
         currentTestCaseName = testCase.getName();
         resetSeverestResult();
-        final Bundle testStart = createBundle(currentPath, currentTestCaseName);
+        final Bundle testStart = createBundle(currentFeatureName, currentTestCaseName);
         instrumentation.sendStatus(StatusCodes.START, testStart);
     }
 
@@ -154,32 +182,32 @@ public class AndroidInstrumentationReporter implements Formatter {
     }
 
     void finishTestCase() {
-        final Bundle testResult = createBundle(currentPath, currentTestCaseName);
+        final Bundle testResult = createBundle(currentFeatureName, currentTestCaseName);
 
         switch (severestResult.getStatus()) {
-        case FAILED:
-            if (severestResult.getError() instanceof AssertionError) {
+            case FAILED:
+                if (severestResult.getError() instanceof AssertionError) {
+                    testResult.putString(StatusKeys.STACK, severestResult.getErrorMessage());
+                    instrumentation.sendStatus(StatusCodes.FAILURE, testResult);
+                } else {
+                    testResult.putString(StatusKeys.STACK, getStackTrace(severestResult.getError()));
+                    instrumentation.sendStatus(StatusCodes.ERROR, testResult);
+                }
+                break;
+            case PENDING:
                 testResult.putString(StatusKeys.STACK, severestResult.getErrorMessage());
-                instrumentation.sendStatus(StatusCodes.FAILURE, testResult);
-            } else {
-                testResult.putString(StatusKeys.STACK, getStackTrace(severestResult.getError()));
                 instrumentation.sendStatus(StatusCodes.ERROR, testResult);
-            }
-            break;
-        case PENDING:
-            testResult.putString(StatusKeys.STACK, severestResult.getErrorMessage());
-            instrumentation.sendStatus(StatusCodes.ERROR, testResult);
-            break;
-        case PASSED:
-        case SKIPPED:
-            instrumentation.sendStatus(StatusCodes.OK, testResult);
-            break;
-        case UNDEFINED:
-            testResult.putString(StatusKeys.STACK, getStackTrace(new MissingStepDefinitionError(getLastSnippet())));
-            instrumentation.sendStatus(StatusCodes.ERROR, testResult);
-            break;
-        default:
-            throw new IllegalStateException("Unexpected result status: " + severestResult.getStatus());
+                break;
+            case PASSED:
+            case SKIPPED:
+                instrumentation.sendStatus(StatusCodes.OK, testResult);
+                break;
+            case UNDEFINED:
+                testResult.putString(StatusKeys.STACK, getStackTrace(new MissingStepDefinitionError(getLastSnippet())));
+                instrumentation.sendStatus(StatusCodes.ERROR, testResult);
+                break;
+            default:
+                throw new IllegalStateException("Unexpected result status: " + severestResult.getStatus());
         }
     }
 
@@ -187,7 +215,7 @@ public class AndroidInstrumentationReporter implements Formatter {
      * Creates a template bundle for reporting the start and end of a test.
      *
      * @param path of the feature file of the current execution
-     * @param name of the test case of the current execution
+     * @param testCaseName of the test case of the current execution
      * @return the new {@link Bundle}
      */
     private Bundle createBundle(final String path, final String testCaseName) {
@@ -215,8 +243,8 @@ public class AndroidInstrumentationReporter implements Formatter {
     }
 
     /**
-     * Checks if the given {@code result} is more severe than the current {@code severestResult} and updates
-     * the {@code severestResult} if that should be the case.
+     * Checks if the given {@code result} is more severe than the current {@code severestResult} and
+     * updates the {@code severestResult} if that should be the case.
      *
      * @param result the {@link Result} to check
      */
@@ -240,7 +268,7 @@ public class AndroidInstrumentationReporter implements Formatter {
      * @param throwable the {@link Throwable} to get the stacktrace from
      * @return the stacktrace as a string
      */
-    private  static String getStackTrace(final Throwable throwable) {
+    private static String getStackTrace(final Throwable throwable) {
         final StringWriter stringWriter = new StringWriter();
         final PrintWriter printWriter = new PrintWriter(stringWriter, true);
         throwable.printStackTrace(printWriter);

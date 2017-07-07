@@ -74,7 +74,8 @@ public class CucumberExecutor {
     /**
      * Creates a new instance for the given parameters.
      *
-     * @param arguments       the {@link cucumber.runtime.android.Arguments} which configure this execution
+     * @param arguments       the {@link cucumber.runtime.android.Arguments} which configure this
+     *                        execution
      * @param instrumentation the {@link android.app.Instrumentation} to report to
      */
     public CucumberExecutor(final Arguments arguments, final Instrumentation instrumentation) {
@@ -89,17 +90,19 @@ public class CucumberExecutor {
 
         ResourceLoader resourceLoader = new AndroidResourceLoader(context);
         this.runtime = new Runtime(resourceLoader, classLoader, createBackends(), runtimeOptions);
+        AndroidInstrumentationReporter instrumentationReporter = new AndroidInstrumentationReporter(runtime, instrumentation);
+        runtimeOptions.addPlugin(instrumentationReporter);
+        runtimeOptions.addPlugin(new AndroidLogcatReporter(runtime, TAG));
+
         List<CucumberFeature> cucumberFeatures = runtimeOptions.cucumberFeatures(resourceLoader, runtime.getEventBus());
         this.pickleEvents = FeatureCompiler.compile(cucumberFeatures, this.runtime);
+        instrumentationReporter.setNumberOfTests(getNumberOfConcreteScenarios());
     }
 
     /**
      * Runs the cucumber scenarios with the specified arguments.
      */
     public void execute() {
-
-        runtimeOptions.addPlugin(new AndroidInstrumentationReporter(runtime, instrumentation, getNumberOfConcreteScenarios()));
-        runtimeOptions.addPlugin(new AndroidLogcatReporter(runtime, TAG));
 
         // TODO: This is duplicated in info.cucumber.Runtime.
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <testsuite tests="2" failures="0" skipped="2" time="0" name="cucumber.runtime.formatter.JUnitFormatter">
-    <testcase classname="cucumber/runtime/formatter/JUnitFormatterTest_2.feature" name="Scenario_1" time="0">
+    <testcase classname="Feature_2" name="Scenario_1" time="0">
         <skipped><![CDATA[Given bg_1..................................................................undefined
 When bg_2...................................................................undefined
 Then bg_3...................................................................undefined
@@ -9,7 +9,7 @@ When step_2.................................................................unde
 Then step_3.................................................................undefined
 ]]></skipped>
     </testcase>
-    <testcase classname="cucumber/runtime/formatter/JUnitFormatterTest_2.feature" name="Scenario_2" time="0">
+    <testcase classname="Feature_2" name="Scenario_2" time="0">
         <skipped><![CDATA[Given bg_1..................................................................undefined
 When bg_2...................................................................undefined
 Then bg_3...................................................................undefined
