@@ -13,7 +13,7 @@ import cucumber.api.formatter.NiceAppendable;
 import cucumber.runtime.Utils;
 import org.testng.ITestResult;
 
-class TestNgReporter implements Formatter {
+class TestNGReporter implements Formatter {
     private final NiceAppendable out;
     private final EventHandler<TestStepFinished> testStepFinishedHandler = new EventHandler<TestStepFinished>() {
         @Override
@@ -32,7 +32,7 @@ class TestNgReporter implements Formatter {
     };
 
 
-    TestNgReporter(Appendable appendable) {
+    TestNGReporter(Appendable appendable) {
         out = new NiceAppendable(appendable);
     }
 

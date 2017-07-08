@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class TestNGCucumberRunner {
     private Runtime runtime;
-    private TestNgReporter reporter;
+    private TestNGReporter reporter;
     private RuntimeOptions runtimeOptions;
     private ResourceLoader resourceLoader;
     private FeatureResultListener resultListener;
@@ -36,7 +36,7 @@ public class TestNGCucumberRunner {
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(clazz);
         runtimeOptions = runtimeOptionsFactory.create();
 
-        reporter = new TestNgReporter(System.out);
+        reporter = new TestNGReporter(System.out);
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         resultListener = new FeatureResultListener(runtimeOptions.isStrict());
         runtime = new Runtime(resourceLoader, classFinder, classLoader, runtimeOptions);
