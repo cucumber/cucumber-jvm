@@ -1,8 +1,9 @@
 package cucumber.examples.java.calculator;
 
 import cucumber.api.CucumberOptions;
-import cucumber.api.testng.TestNGCucumberRunner;
 import cucumber.api.testng.CucumberFeatureWrapper;
+import cucumber.api.testng.PickleEventWrapper;
+import cucumber.api.testng.TestNGCucumberRunner;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
@@ -10,11 +11,11 @@ import org.testng.annotations.Test;
 
 /**
  * An example of using TestNG when the test class does not inherit from 
- * AbstractTestNGCucumberTests but still executes each feature as a separate
+ * AbstractTestNGCucumberTests but still executes each scenario as a separate
  * TestNG test.
  */
 @CucumberOptions(format = "json:target/cucumber-report-feature-composite.json")
-public class RunCukesByFeatureAndCompositionTest extends RunCukesByCompositionBase {
+public class RunCukesByScenarioAndCompositionTest extends RunCukesByCompositionBase {
     private TestNGCucumberRunner testNGCucumberRunner;
 
     @BeforeClass(alwaysRun = true)
@@ -22,14 +23,14 @@ public class RunCukesByFeatureAndCompositionTest extends RunCukesByCompositionBa
         testNGCucumberRunner = new TestNGCucumberRunner(this.getClass());
     }
 
-    @Test(groups = "cucumber", description = "Runs Cucumber Feature", dataProvider = "features")
-    public void feature(CucumberFeatureWrapper cucumberFeature) {
-        testNGCucumberRunner.runFeature(cucumberFeature.getCucumberFeature());
+    @Test(groups = "cucumber", description = "Runs Cucumber Feature", dataProvider = "scenarios")
+    public void scenario(PickleEventWrapper pickleEvent, CucumberFeatureWrapper cucumberFeature) throws Throwable {
+        testNGCucumberRunner.runScenario(pickleEvent.getPickleEvent());
     }
 
     @DataProvider
-    public Object[][] features() {
-        return testNGCucumberRunner.provideFeatures();
+    public Object[][] scenarios() {
+        return testNGCucumberRunner.provideScenarios();
     }
 
     @AfterClass(alwaysRun = true)

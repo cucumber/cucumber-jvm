@@ -10,6 +10,7 @@ import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
 import cucumber.runtime.model.CucumberFeature;
+import gherkin.events.PickleEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,7 +59,7 @@ public class TestNGCucumberRunner {
         }
     }
 
-    public void runCucumber(CucumberFeature cucumberFeature) {
+    public void runFeature(CucumberFeature cucumberFeature) {
         resultListener.startFeature();
         reporter.uri(cucumberFeature.getPath());
         runtime.runFeature(cucumberFeature);
@@ -66,6 +67,10 @@ public class TestNGCucumberRunner {
         if (!resultListener.isPassed()) {
             throw new CucumberException(resultListener.getFirstError());
         }
+    }
+
+    public void runScenario(PickleEvent pickle) throws Throwable {
+        runtime.runPickle(pickle);
     }
 
     public void finish() {
@@ -97,4 +102,25 @@ public class TestNGCucumberRunner {
         }
     }
 
+    /**
+     * @return returns the cucumber scenarios as a two dimensional array of {@link PickleEventWrapper}
+     * scenarios combined with their {@link CucumberFeatureWrapper} feature.
+     */
+    public Object[][] provideScenarios() {
+        try {
+            List<Object[]> scenarios = new ArrayList<Object[]>();
+
+            List<CucumberFeature> features = getFeatures();
+            for (CucumberFeature feature : features) {
+                List<PickleEvent> pickles = runtime.compileFeature(feature);
+
+                for (PickleEvent pickle : pickles) {
+                    scenarios.add(new Object[]{new PickleEventWrapper(pickle), new CucumberFeatureWrapperImpl(feature)});
+                }
+            }
+            return scenarios.toArray(new Object[][]{});
+        } catch (CucumberException e) {
+            return new Object[][]{new Object[]{new CucumberExceptionWrapper(e)}};
+        }
+    }
 }

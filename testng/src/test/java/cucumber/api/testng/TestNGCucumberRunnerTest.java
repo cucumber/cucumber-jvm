@@ -30,7 +30,7 @@ public class TestNGCucumberRunnerTest {
     @Test
     public void parse_error_propagated_to_testng_test_execution() throws Exception {
         testNGCucumberRunner = new ParseErrorCucumberRunner(RunCukesTest.class);
-        Object[][] features = testNGCucumberRunner.provideFeatures(); // provideFeatures() throws CucumberException
+        Object[][] features = testNGCucumberRunner.provideScenarios(); // provideFeatures() throws CucumberException
         try {
             ((CucumberFeatureWrapper)features[0][0]).getCucumberFeature();
             Assert.fail("CucumberException not thrown");
