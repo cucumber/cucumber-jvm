@@ -1,11 +1,11 @@
 package cucumber.runtime.scala
 
-import _root_.java.lang.reflect.Type
-import _root_.gherkin.pickles.PickleStep
-import _root_.java.util.regex.Pattern
-import _root_.cucumber.runtime.StepDefinition
-import _root_.cucumber.runtime.JdkPatternArgumentMatcher
-import _root_.cucumber.runtime.ParameterInfo
+import java.lang.reflect.Type
+import gherkin.pickles.PickleStep
+import java.util.regex.Pattern
+import cucumber.runtime.StepDefinition
+import cucumber.runtime.JdkPatternArgumentMatcher
+import cucumber.runtime.ParameterInfo
 import collection.JavaConversions._
 import cucumber.api.Transform
 

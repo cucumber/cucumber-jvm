@@ -12,6 +12,7 @@ import cucumber.runtime.io.ResourceLoaderClassFinder;
 import cucumber.runtime.model.CucumberFeature;
 import gherkin.events.PickleEvent;
 
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,7 +39,12 @@ public class TestNGCucumberRunner {
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(clazz);
         runtimeOptions = runtimeOptionsFactory.create();
 
-        reporter = new TestNGReporter(System.out);
+        reporter = new TestNgReporter(new PrintStream(System.out) {
+                @Override
+                public void close() {
+                    // We have no intention to close System.out
+                }
+            });
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         resultListener = new FeatureResultListener(runtimeOptions.isStrict());
         runtime = new Runtime(resourceLoader, classFinder, classLoader, runtimeOptions);
