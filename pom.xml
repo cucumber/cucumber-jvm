@@ -34,8 +34,9 @@
         <guice.version>4.0</guice.version>
         <!-- Remember to bounce version in examples/clojure_cukes/project.clj as well -->
         <clojure.version>1.8.0</clojure.version>
-        <!-- This is only here for the example project to use, the 3 scala projects maintain their own versions -->
-        <scala.latest.version>2.11.8</scala.latest.version>
+        <scala.2.12.version>2.12.2</scala.2.12.version>
+        <scala.2.11.version>2.11.11</scala.2.11.version>
+        <scala.2.10.version>2.10.6</scala.2.10.version>
         <gosu.version>1.14.6</gosu.version>
         <rhino.version>1.7.7.1</rhino.version>
         <jsoup.version>1.9.2</jsoup.version>
@@ -161,11 +162,6 @@
             <dependency>
                 <groupId>io.cucumber</groupId>
                 <artifactId>cucumber-picocontainer</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.cucumber</groupId>
-                <artifactId>cucumber-scala_2.11</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

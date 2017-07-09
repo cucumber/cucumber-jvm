@@ -7,7 +7,7 @@ for (i <- 1 to 22) {
   val f = "(" + ts + ") => Any"
   val p1 = "def apply[" + ts + "](f: " + f + ")"
   val p2 = "(implicit " + (1 to i).map(n => "m" + n + ":Manifest[T" + n + "]").mkString(", ") + ")"
-  val register = "\n  register(functionParams(f)) {\n"
+  val register = "\n  register(" +(1 to i).map(n => "m" + n).mkString(", ")  + ") {\n"
   val pf = "    case List(" + (1 to i).map("a" + _ + ":AnyRef").mkString(", ") + ") => \n      f(" + (1 to i).map(n => "a" + n + ".asInstanceOf[T" + n + "]").mkString(",\n        ") + ")"
   val closeRegister = "\n  }\n}"
 

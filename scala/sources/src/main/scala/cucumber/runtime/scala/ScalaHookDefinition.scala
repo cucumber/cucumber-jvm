@@ -1,11 +1,11 @@
 package cucumber.runtime.scala
 
-import _root_.gherkin.pickles.PickleTag
-import _root_.java.util.Collection
-import _root_.cucumber.api.Scenario
-import _root_.cucumber.runtime.HookDefinition
-import _root_.cucumber.runtime.TagPredicate
-import collection.JavaConverters._
+import gherkin.pickles.PickleTag
+import java.util.Collection
+import cucumber.api.Scenario
+import cucumber.runtime.HookDefinition
+import cucumber.runtime.TagPredicate
+import scala.collection.JavaConverters._
 
 class ScalaHookDefinition(f:Scenario => Unit,
                           order:Int,
