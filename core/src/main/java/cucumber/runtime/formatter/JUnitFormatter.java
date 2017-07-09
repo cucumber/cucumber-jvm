@@ -28,7 +28,10 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+
+import java.io.Closeable;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -151,6 +154,7 @@ class JUnitFormatter implements Formatter, StrictAware {
             StreamResult result = new StreamResult(out);
             DOMSource source = new DOMSource(doc);
             trans.transform(source, result);
+            closeQuietly(out);
         } catch (TransformerException e) {
             throw new CucumberException("Error while transforming.", e);
         }
@@ -332,4 +336,11 @@ class JUnitFormatter implements Formatter, StrictAware {
 
     }
 
+    private static void closeQuietly(Closeable out) {
+        try {
+            out.close();
+        } catch (IOException ignored) {
+            // go gentle into that good night
+        }
+    }
 }
