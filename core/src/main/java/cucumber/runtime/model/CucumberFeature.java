@@ -57,7 +57,7 @@ public class CucumberFeature implements Serializable {
         for (Resource resource : resources) {
             String source = read(resource);
             if (!source.isEmpty()) {
-                for (String featurePath : source.split(" ")) {
+                for (String featurePath : source.split("[\r\n]+")) {
                     PathWithLines pathWithLines = new PathWithLines(featurePath);
                     loadFromFileSystemOrClasspath(builder, resourceLoader, pathWithLines.path);
                 }
