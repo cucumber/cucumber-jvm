@@ -39,7 +39,7 @@ public class TestNGCucumberRunner {
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(clazz);
         runtimeOptions = runtimeOptionsFactory.create();
 
-        reporter = new TestNgReporter(new PrintStream(System.out) {
+        reporter = new TestNGReporter(new PrintStream(System.out) {
                 @Override
                 public void close() {
                     // We have no intention to close System.out
