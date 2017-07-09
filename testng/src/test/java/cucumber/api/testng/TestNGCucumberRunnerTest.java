@@ -4,6 +4,7 @@ import cucumber.runtime.CucumberException;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.testng.RunCukesStrict;
 import cucumber.runtime.testng.RunCukesTest;
+import cucumber.runtime.testng.RunScenarioWithUndefinedStepsStrict;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -25,6 +26,19 @@ public class TestNGCucumberRunnerTest {
     public void runCukesStrict() throws Exception {
         testNGCucumberRunner = new TestNGCucumberRunner(RunCukesStrict.class);
         testNGCucumberRunner.runCukes();
+    }
+
+    @Test(expectedExceptions = CucumberException.class)
+    public void runScenarioWithUndefinedStepsStrict() throws Throwable {
+        testNGCucumberRunner = new TestNGCucumberRunner(RunScenarioWithUndefinedStepsStrict.class);
+        Object[][] scenarios = testNGCucumberRunner.provideScenarios();
+
+        // the feature file only contains one scenario
+        Assert.assertEquals(scenarios.length, 1);
+        Object[] scenario = scenarios[0];
+        PickleEventWrapper pickleEvent = (PickleEventWrapper) scenario[0];
+
+        testNGCucumberRunner.runScenario(pickleEvent.getPickleEvent()); // runScenario() throws CucumberException
     }
 
     @Test
