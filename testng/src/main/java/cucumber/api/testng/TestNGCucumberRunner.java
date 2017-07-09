@@ -24,6 +24,7 @@ public class TestNGCucumberRunner {
     private RuntimeOptions runtimeOptions;
     private ResourceLoader resourceLoader;
     private FeatureResultListener resultListener;
+    private TestCaseResultListener testCaseResultListener;
 
     /**
      * Bootstrap the cucumber runtime
@@ -43,6 +44,8 @@ public class TestNGCucumberRunner {
         runtime = new Runtime(resourceLoader, classFinder, classLoader, runtimeOptions);
         reporter.setEventPublisher(runtime.getEventBus());
         resultListener.setEventPublisher(runtime.getEventBus());
+        testCaseResultListener = new TestCaseResultListener(runtimeOptions.isStrict());
+        testCaseResultListener.setEventPublisher(runtime.getEventBus());
     }
 
     /**
@@ -70,7 +73,12 @@ public class TestNGCucumberRunner {
     }
 
     public void runScenario(PickleEvent pickle) throws Throwable {
-        runtime.runPickle(pickle);
+        testCaseResultListener.startPickle();
+        runtime.getRunner().runPickle(pickle);
+
+        if (!testCaseResultListener.isPassed()) {
+            throw testCaseResultListener.getError();
+        }
     }
 
     public void finish() {
