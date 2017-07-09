@@ -28,6 +28,8 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -149,6 +151,7 @@ class TestNGFormatter implements Formatter, StrictAware {
             StreamResult streamResult = new StreamResult(writer);
             DOMSource domSource = new DOMSource(document);
             transformer.transform(domSource, streamResult);
+            closeQuietly(writer);
         } catch (TransformerException e) {
             throw new CucumberException("Error transforming report.", e);
         }
@@ -299,6 +302,14 @@ class TestNGFormatter implements Formatter, StrictAware {
             exceptionElement.appendChild(stacktraceElement);
 
             return exceptionElement;
+        }
+    }
+
+    private static void closeQuietly(Closeable out) {
+        try {
+            out.close();
+        } catch (IOException ignored) {
+            // go gentle into that good night
         }
     }
 }
