@@ -65,7 +65,7 @@ public class NiceAppendable {
     public void close() {
         try {
             tryFlush();
-            if (out instanceof Closeable) {
+            if (out instanceof Closeable && out != System.out && out != System.err) {
                 ((Closeable) out).close();
             }
         } catch (IOException e) {

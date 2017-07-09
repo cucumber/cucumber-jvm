@@ -1,5 +1,6 @@
 ## [2.0.0-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v1.2.5...master) (In Git)
 
+* [Core] Avoid closing System.out or System.err from formatters ([#1173](https://github.com/cucumber/cucumber-jvm/issues/1173) Björn Rasmusson)
 * [Core] Decouple UndefinedStepsTracker from Glue ([#1019](https://github.com/cucumber/cucumber-jvm/pull/1019) [#1172](https://github.com/cucumber/cucumber-jvm/pull/1172) Illapikov, M.P. Korstanje)
 * [Core] Add TestRunStarted event, let Stats handle the exit code ([#1162](https://github.com/cucumber/cucumber-jvm/pull/1162) Björn Rasmusson)
 * [Core, JUnit, Android] Add the ambiguous result type ([#1168](https://github.com/cucumber/cucumber-jvm/pull/1168) Björn Rasmusson)
