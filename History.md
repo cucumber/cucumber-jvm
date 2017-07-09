@@ -1,9 +1,12 @@
 ## [2.0.0-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v1.2.5...master) (In Git)
+
 * [Scala] Compile cucumber-scala_2.12 against Java 8 ([#1171](https://github.com/cucumber/cucumber-jvm/pull/1171), [#1087](https://github.com/cucumber/cucumber-jvm/issues/1087) M.P. Korstanje, Paolo Ambrosio). This includes:
   * Update Scala Versions
     - 2.12.0-M1 to 2.12.2
     - 2.11.8 to 2.11.11
   * Use Manifest instead of Java reflection to provide type information
+* [Core] Avoid closing System.out or System.err from formatters ([#1173](https://github.com/cucumber/cucumber-jvm/issues/1173) Björn Rasmusson)
+* [Core] Decouple UndefinedStepsTracker from Glue ([#1019](https://github.com/cucumber/cucumber-jvm/pull/1019) [#1172](https://github.com/cucumber/cucumber-jvm/pull/1172) Illapikov, M.P. Korstanje)
 * [Core] Add TestRunStarted event, let Stats handle the exit code ([#1162](https://github.com/cucumber/cucumber-jvm/pull/1162) Björn Rasmusson)
 * [Core, JUnit, Android] Add the ambiguous result type ([#1168](https://github.com/cucumber/cucumber-jvm/pull/1168) Björn Rasmusson)
 * [Core] Add the SnippetsSuggestedEvent ([#1163](https://github.com/cucumber/cucumber-jvm/pull/1163) Björn Rasmusson)

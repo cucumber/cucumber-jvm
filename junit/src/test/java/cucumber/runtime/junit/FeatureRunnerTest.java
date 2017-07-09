@@ -5,6 +5,7 @@ import cucumber.runtime.Backend;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeGlue;
 import cucumber.runtime.RuntimeOptions;
+import cucumber.runtime.UndefinedStepsTracker;
 import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
 import org.junit.Test;
@@ -26,6 +27,7 @@ import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.when;
 
 public class FeatureRunnerTest {
 
