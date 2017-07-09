@@ -7,7 +7,6 @@ import cucumber.runtime.CucumberException;
 import cucumber.runtime.Glue;
 import cucumber.runtime.HookDefinition;
 import cucumber.runtime.RuntimeGlue;
-import cucumber.runtime.UndefinedStepsTracker;
 import cucumber.runtime.xstream.LocalizedXStreams;
 import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleTag;

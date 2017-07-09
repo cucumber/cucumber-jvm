@@ -24,6 +24,7 @@ Feature: Java8
   Scenario: using method references
     Given A method reference that declares an exception
     Given A method reference with an argument 42
+    Given A method reference with an int argument 42
     Given A static method reference with an argument 42
     Given A constructor reference with an argument 42
     Given A method reference to an arbitrary object of a particular type 42
