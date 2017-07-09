@@ -24,7 +24,7 @@ public class RunCukesByFeatureAndCompositionTest extends RunCukesByCompositionBa
 
     @Test(groups = "cucumber", description = "Runs Cucumber Feature", dataProvider = "features")
     public void feature(CucumberFeatureWrapper cucumberFeature) {
-        testNGCucumberRunner.runFeature(cucumberFeature.getCucumberFeature());
+        testNGCucumberRunner.runCucumber(cucumberFeature.getCucumberFeature());
     }
 
     @DataProvider

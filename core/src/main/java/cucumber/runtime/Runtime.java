@@ -121,12 +121,6 @@ public class Runtime {
         }
     }
 
-    public void runPickle(PickleEvent pickle) {
-        if (matchesFilters(pickle)) {
-            runner.runPickle(pickle);
-        }
-    }
-
     public List<PickleEvent> compileFeature(CucumberFeature feature) {
         List<PickleEvent> pickleEvents = new ArrayList<PickleEvent>();
         for (Pickle pickle : compiler.compile(feature.getGherkinFeature())) {

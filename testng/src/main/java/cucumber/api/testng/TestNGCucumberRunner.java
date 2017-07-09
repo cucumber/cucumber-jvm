@@ -68,7 +68,7 @@ public class TestNGCucumberRunner {
         }
     }
 
-    public void runFeature(CucumberFeature cucumberFeature) {
+    public void runCucumber(CucumberFeature cucumberFeature) {
         resultListener.startFeature();
         reporter.uri(cucumberFeature.getPath());
         runtime.runFeature(cucumberFeature);
@@ -129,7 +129,10 @@ public class TestNGCucumberRunner {
                 List<PickleEvent> pickles = runtime.compileFeature(feature);
 
                 for (PickleEvent pickle : pickles) {
-                    scenarios.add(new Object[]{new PickleEventWrapper(pickle), new CucumberFeatureWrapperImpl(feature)});
+                    if (runtime.matchesFilters(pickle)) {
+                        scenarios.add(new Object[]{new PickleEventWrapper(pickle),
+                            new CucumberFeatureWrapperImpl(feature)});
+                    }
                 }
             }
             return scenarios.toArray(new Object[][]{});
