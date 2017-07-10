@@ -1,5 +1,7 @@
 ## [2.0.0-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v1.2.5...master) (In Git)
 
+* [Core] Separate rerun paths by a new line character ([#1177](https://github.com/cucumber/cucumber-jvm/pull/1177) M.P. Korstanje)
+  * Rerun files that separate features by a space will no longer be correctly parsed 
 * [TestNG] Run a separate TestNG test per scenario (deprecate one TestNG test per feature, and one TestNG for the whole suite) ([#1174](https://github.com/cucumber/cucumber-jvm/pull/1174), [#1113](https://github.com/cucumber/cucumber-jvm/issues/1113) Luciano van der Veekens, Björn Rasmusson) 
 * [Core] Close OutputStream for embedded images in HTML formatter ([#1175](https://github.com/cucumber/cucumber-jvm/pull/1175), [#1108](https://github.com/cucumber/cucumber-jvm/issues/1108) M.P. Korstanje) 
 * [Scala] Compile cucumber-scala_2.12 against Java 8 ([#1171](https://github.com/cucumber/cucumber-jvm/pull/1171), [#1087](https://github.com/cucumber/cucumber-jvm/issues/1087) M.P. Korstanje, Paolo Ambrosio). This includes:
