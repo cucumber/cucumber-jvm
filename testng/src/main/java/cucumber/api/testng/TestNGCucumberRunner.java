@@ -58,6 +58,7 @@ public class TestNGCucumberRunner {
      * Run the Cucumber features
      */
     public void runCukes() {
+        System.err.println("WARNING: The TestNGCucumberRunner.runCukes() is deprecated. Please create a runner class by subclassing AbstractTestNGCucumberTest.");
         for (CucumberFeature cucumberFeature : getFeatures()) {
             reporter.uri(cucumberFeature.getPath());
             runtime.runFeature(cucumberFeature);
@@ -104,6 +105,7 @@ public class TestNGCucumberRunner {
      * {@link CucumberFeatureWrapper} objects.
      */
     public Object[][] provideFeatures() {
+        System.err.println("WARNING: Mapping Cucumber Features to TestNG test is deprecated. Please use TestNGCucumberRunner.providePickleEvent as data provider.");
         try {
             List<CucumberFeature> features = getFeatures();
             List<Object[]> featuresList = new ArrayList<Object[]>(features.size());
