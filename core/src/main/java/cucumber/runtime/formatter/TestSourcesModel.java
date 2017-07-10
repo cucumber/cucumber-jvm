@@ -117,6 +117,18 @@ public class TestSourcesModel {
         return false;
     }
 
+    public String getKeywordFromSource(String uri, int stepLine) {
+        TestSourceRead event = getTestSourceReadEvent(uri);
+        String trimmedSourceLine = event.source.split("\n")[stepLine - 1].trim();
+        GherkinDialect dialect = new GherkinDialectProvider(event.language).getDefaultDialect();
+        for (String keyword : dialect.getStepKeywords()) {
+            if (trimmedSourceLine.startsWith(keyword)) {
+                return keyword;
+            }
+        }
+        return "";
+    }
+
     public TestSourceRead getTestSourceReadEvent(String uri) {
         if (pathToReadEventMap.containsKey(uri)) {
             return pathToReadEventMap.get(uri);

@@ -8,6 +8,7 @@ import cucumber.api.event.EventPublisher;
 import cucumber.api.event.TestCaseFinished;
 import cucumber.api.event.TestCaseStarted;
 import cucumber.api.event.TestRunFinished;
+import cucumber.api.event.TestSourceRead;
 import cucumber.api.event.TestStepFinished;
 import cucumber.api.formatter.Formatter;
 import cucumber.api.formatter.StrictAware;
@@ -52,6 +53,12 @@ class TestNGFormatter implements Formatter, StrictAware {
     private Element root;
     private TestMethod testMethod;
 
+    private EventHandler<TestSourceRead> testSourceReadHandler = new EventHandler<TestSourceRead>() {
+        @Override
+        public void receive(TestSourceRead event) {
+            handleTestSourceRead(event);
+        }
+    };
     private EventHandler<TestCaseStarted> caseStartedHandler= new EventHandler<TestCaseStarted>() {
         @Override
         public void receive(TestCaseStarted event) {
@@ -96,6 +103,7 @@ class TestNGFormatter implements Formatter, StrictAware {
 
     @Override
     public void setEventPublisher(EventPublisher publisher) {
+        publisher.registerHandlerFor(TestSourceRead.class, testSourceReadHandler);
         publisher.registerHandlerFor(TestCaseStarted.class, caseStartedHandler);
         publisher.registerHandlerFor(TestCaseFinished.class, caseFinishedHandler);
         publisher.registerHandlerFor(TestStepFinished.class, stepFinishedHandler);
@@ -107,13 +115,17 @@ class TestNGFormatter implements Formatter, StrictAware {
         TestMethod.treatSkippedAsFailure = strict;
     }
 
+    private void handleTestSourceRead(TestSourceRead event) {
+        TestMethod.testSources.addTestSourceReadEvent(event.path, event);
+    }
+
     private void handleTestCaseStarted(TestCaseStarted event) {
         if (TestMethod.currentFeatureFile == null || !TestMethod.currentFeatureFile.equals(event.testCase.getPath())) {
             TestMethod.currentFeatureFile = event.testCase.getPath();
             TestMethod.previousTestCaseName = "";
             TestMethod.exampleNumber = 1;
             clazz = document.createElement("class");
-            clazz.setAttribute("name", event.testCase.getPath());
+            clazz.setAttribute("name", TestMethod.testSources.getFeature(event.testCase.getPath()).getName());
             test.appendChild(clazz);
         }
         root = document.createElement("test-method");
@@ -196,6 +208,7 @@ class TestNGFormatter implements Formatter, StrictAware {
         static boolean treatSkippedAsFailure = false;
         static String previousTestCaseName;
         static int exampleNumber;
+        static final TestSourcesModel testSources = new TestSourcesModel();
         final List<TestStep> steps = new ArrayList<TestStep>();
         final List<Result> results = new ArrayList<Result>();
         final List<Result> hooks = new ArrayList<Result>();
@@ -278,7 +291,7 @@ class TestNGFormatter implements Formatter, StrictAware {
                 if (i < results.size()) {
                     resultStatus = results.get(i).getStatus().lowerCaseName();
                 }
-                sb.append(steps.get(i).getStepText());
+                sb.append(testSources.getKeywordFromSource(currentFeatureFile, steps.get(i).getStepLine()) + steps.get(i).getStepText());
                 do {
                     sb.append(".");
                 } while (sb.length() - length < 76);

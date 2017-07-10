@@ -304,15 +304,7 @@ class JUnitFormatter implements Formatter, StrictAware {
         }
 
         private String getKeywordFromSource(int stepLine) {
-            TestSourceRead event = testSources.getTestSourceReadEvent(currentFeatureFile);
-            String trimmedSourceLine = event.source.split("\n")[stepLine - 1].trim();
-            GherkinDialect dialect = new GherkinDialectProvider(event.language).getDefaultDialect();
-            for (String keyword : dialect.getStepKeywords()) {
-                if (trimmedSourceLine.startsWith(keyword)) {
-                    return keyword;
-                }
-            }
-            return "";
+            return testSources.getKeywordFromSource(currentFeatureFile, stepLine);
         }
 
         private void addStackTrace(StringBuilder sb, Result failed) {
