@@ -1,11 +1,11 @@
 package cucumber.runtime.jruby;
 
-import cucumber.runtime.Argument;
 import cucumber.runtime.ArgumentMatcher;
 import cucumber.runtime.ExpressionArgumentMatcher;
 import cucumber.runtime.ParameterInfo;
 import cucumber.runtime.StepDefinition;
 import gherkin.pickles.PickleStep;
+import io.cucumber.cucumberexpressions.Argument;
 import io.cucumber.cucumberexpressions.Expression;
 import io.cucumber.cucumberexpressions.ExpressionFactory;
 import io.cucumber.cucumberexpressions.TransformLookup;
