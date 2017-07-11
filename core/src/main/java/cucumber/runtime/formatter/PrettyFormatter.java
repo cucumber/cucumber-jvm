@@ -14,7 +14,6 @@ import cucumber.api.event.WriteEvent;
 import cucumber.api.formatter.ColorAware;
 import cucumber.api.formatter.Formatter;
 import cucumber.api.formatter.NiceAppendable;
-import cucumber.runtime.Argument;
 import cucumber.util.FixJava;
 import cucumber.util.Mapper;
 import gherkin.ast.Background;
@@ -25,6 +24,7 @@ import gherkin.ast.ScenarioOutline;
 import gherkin.ast.Step;
 import gherkin.ast.Tag;
 import gherkin.pickles.PickleTag;
+import io.cucumber.cucumberexpressions.Argument;
 
 import java.util.List;
 
@@ -211,16 +211,10 @@ class PrettyFormatter implements Formatter, ColorAware {
         int textStart = 0;
         StringBuilder result = new StringBuilder(textFormat.text(keyword));
         for (Argument argument : arguments) {
-            // can be null if the argument is missing.
-            if (argument.getOffset() != null) {
-                String text = stepText.substring(textStart, argument.getOffset());
-                result.append(textFormat.text(text));
-            }
-            // val can be null if the argument isn't there, for example @And("(it )?has something")
-            if (argument.getVal() != null) {
-                result.append(argFormat.text(argument.getVal()));
-                textStart = argument.getOffset() + argument.getVal().length();
-            }
+            String text = stepText.substring(textStart, argument.getOffset());
+            result.append(textFormat.text(text));
+            result.append(argFormat.text(argument.getValue()));
+            textStart = argument.getOffset() + argument.getValue().length();
         }
         if (textStart != stepText.length()) {
             String text = stepText.substring(textStart, stepText.length());

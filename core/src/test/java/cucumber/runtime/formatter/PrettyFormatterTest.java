@@ -2,9 +2,9 @@ package cucumber.runtime.formatter;
 
 import cucumber.api.Result;
 import cucumber.api.formatter.AnsiEscapes;
-import cucumber.runtime.Argument;
 import cucumber.runtime.TestHelper;
 import cucumber.runtime.model.CucumberFeature;
+import io.cucumber.cucumberexpressions.Argument;
 import org.junit.Test;
 import org.mockito.stubbing.Answer;
 
@@ -368,8 +368,8 @@ public class PrettyFormatterTest {
     @Test
     public void should_mark_arguments_in_steps() throws Throwable {
         Formats formats = new AnsiFormats();
-        Argument arg1 = new Argument(5, "arg1");
-        Argument arg2 = new Argument(15, "arg2");
+        Argument arg1 = new Argument(5, "arg1", "arg1");
+        Argument arg2 = new Argument(15, "arg2", "arg2");
         PrettyFormatter prettyFormatter = new PrettyFormatter(null);
 
         String formattedText = prettyFormatter.formatStepText("Given ", "text arg1 text arg2", formats.get("passed"), formats.get("passed_arg"), asList(arg1, arg2));

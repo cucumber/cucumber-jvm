@@ -134,7 +134,7 @@ public class StepDefinitionMatchTest {
 
         PickleStep stepWithDocString = mock(PickleStep.class);
         when(stepWithDocString.getText()).thenReturn("step text");
-        when(stepWithDocString.getLocations()).thenReturn(asList(new PickleLocation("path", 1, 0)));
+        when(stepWithDocString.getLocations()).thenReturn(asList(new PickleLocation(1, 0)));
         PickleString docString = new PickleString(mock(PickleLocation.class), "blah");
         when(stepWithDocString.getArgument()).thenReturn(asList((gherkin.pickles.Argument)docString));
 
