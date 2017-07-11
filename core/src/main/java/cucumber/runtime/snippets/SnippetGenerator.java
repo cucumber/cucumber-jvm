@@ -6,7 +6,7 @@ import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleString;
 import gherkin.pickles.PickleTable;
 import io.cucumber.cucumberexpressions.CucumberExpressionGenerator;
-import io.cucumber.cucumberexpressions.TransformLookup;
+import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -16,6 +16,7 @@ import java.util.regex.Pattern;
 
 public class SnippetGenerator {
     private static final ArgumentPattern[] DEFAULT_ARGUMENT_PATTERNS = new ArgumentPattern[]{
+            new ArgumentPattern(Pattern.compile("\"([^\"]*)\""), String.class),
             new ArgumentPattern(Pattern.compile("(\\d+)"), Integer.TYPE)
     };
 
@@ -24,16 +25,16 @@ public class SnippetGenerator {
     private final Snippet snippet;
     private final CucumberExpressionGenerator generator;
 
-    public SnippetGenerator(Snippet snippet, TransformLookup transformLookup) {
+    public SnippetGenerator(Snippet snippet, ParameterTypeRegistry parameterTypeRegistry) {
         this.snippet = snippet;
-        this.generator = new CucumberExpressionGenerator(transformLookup);
+        this.generator = new CucumberExpressionGenerator(parameterTypeRegistry);
     }
 
     public String getSnippet(PickleStep step, String keyword, FunctionNameGenerator functionNameGenerator) {
         return MessageFormat.format(
                 snippet.template(),
                 keyword,
-                snippet.escapePattern(generator.generateExpression(step.getText(), false).getSource()),
+                snippet.escapePattern(generator.generateExpression(step.getText()).getSource()),
                 functionName(step.getText(), functionNameGenerator),
                 snippet.arguments(argumentTypes(step)),
                 REGEXP_HINT,

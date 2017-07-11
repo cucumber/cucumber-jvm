@@ -1,7 +1,7 @@
 package cucumber.api;
 
-import io.cucumber.cucumberexpressions.TransformLookup;
+import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
 
 public interface Configuration {
-    TransformLookup createTransformLookup();
+    ParameterTypeRegistry createParameterTypeRegistry();
 }

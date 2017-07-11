@@ -22,7 +22,7 @@ import cucumber.runtime.snippets.FunctionNameGenerator;
 import cucumber.runtime.snippets.Snippet;
 import cucumber.runtime.snippets.SnippetGenerator;
 import gherkin.pickles.PickleStep;
-import io.cucumber.cucumberexpressions.TransformLookup;
+import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -35,7 +35,7 @@ import static cucumber.runtime.io.MultiLoader.packageName;
 public class JavaBackend implements Backend {
     public static final ThreadLocal<JavaBackend> INSTANCE = new ThreadLocal<JavaBackend>();
     private final SnippetGenerator snippetGenerator;
-    private final TransformLookup transformLookup;
+    private final ParameterTypeRegistry parameterTypeRegistry;
 
     private Snippet createSnippet() {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
@@ -59,29 +59,29 @@ public class JavaBackend implements Backend {
      *
      * @param resourceLoader
      */
-    public JavaBackend(ResourceLoader resourceLoader, TransformLookup transformLookup) {
+    public JavaBackend(ResourceLoader resourceLoader, ParameterTypeRegistry parameterTypeRegistry) {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         methodScanner = new MethodScanner(classFinder);
         objectFactory = ObjectFactoryLoader.loadObjectFactory(classFinder, Env.INSTANCE.get(ObjectFactory.class.getName()));
-        this.transformLookup = transformLookup;
-        this.snippetGenerator = new SnippetGenerator(createSnippet(), transformLookup);
+        this.parameterTypeRegistry = parameterTypeRegistry;
+        this.snippetGenerator = new SnippetGenerator(createSnippet(), parameterTypeRegistry);
     }
 
-    public JavaBackend(ObjectFactory objectFactory, TransformLookup transformLookup) {
+    public JavaBackend(ObjectFactory objectFactory, ParameterTypeRegistry transformLookup) {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
         classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         methodScanner = new MethodScanner(classFinder);
         this.objectFactory = objectFactory;
-        this.transformLookup = transformLookup;
+        this.parameterTypeRegistry = transformLookup;
         this.snippetGenerator = new SnippetGenerator(createSnippet(), transformLookup);
     }
 
-    public JavaBackend(ObjectFactory objectFactory, ClassFinder classFinder, TransformLookup transformLookup) {
+    public JavaBackend(ObjectFactory objectFactory, ClassFinder classFinder, ParameterTypeRegistry transformLookup) {
         this.objectFactory = objectFactory;
         this.classFinder = classFinder;
-        this.transformLookup = transformLookup;
+        this.parameterTypeRegistry = transformLookup;
         this.snippetGenerator = new SnippetGenerator(createSnippet(), transformLookup);
         methodScanner = new MethodScanner(classFinder);
     }
@@ -155,7 +155,7 @@ public class JavaBackend implements Backend {
     void addStepDefinition(Annotation annotation, Method method) {
         try {
             if (objectFactory.addClass(method.getDeclaringClass())) {
-                glue.addStepDefinition(new JavaStepDefinition(method, expression(annotation), timeoutMillis(annotation), objectFactory, transformLookup));
+                glue.addStepDefinition(new JavaStepDefinition(method, expression(annotation), timeoutMillis(annotation), objectFactory, parameterTypeRegistry));
             }
         } catch (DuplicateStepDefinitionException e) {
             throw e;
@@ -166,7 +166,7 @@ public class JavaBackend implements Backend {
 
     public void addStepDefinition(String regexp, long timeoutMillis, StepdefBody body, TypeIntrospector typeIntrospector) {
         try {
-            glue.addStepDefinition(new Java8StepDefinition(regexp, timeoutMillis, body, typeIntrospector, transformLookup));
+            glue.addStepDefinition(new Java8StepDefinition(regexp, timeoutMillis, body, typeIntrospector, parameterTypeRegistry));
         } catch (CucumberException e) {
             throw e;
         } catch (Exception e) {

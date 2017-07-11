@@ -12,7 +12,7 @@ import gherkin.pickles.PickleStep;
 import io.cucumber.cucumberexpressions.Argument;
 import io.cucumber.cucumberexpressions.Expression;
 import io.cucumber.cucumberexpressions.ExpressionFactory;
-import io.cucumber.cucumberexpressions.TransformLookup;
+import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
@@ -35,18 +35,18 @@ public class StepdefGeneratorTest {
     public void generates_code_completion_metadata() throws IOException {
         StepdefGenerator meta = new StepdefGenerator();
 
-        List<StepDefinition> stepDefs = asList(def("I have {arg1} cukes in my belly"), def("I have {arg1} apples in my bowl"));
+        List<StepDefinition> stepDefs = asList(def("I have {int} cukes in my belly"), def("I have {int} apples in my bowl"));
 
         List<MetaStepdef> metadata = meta.generate(stepDefs, features());
         String expectedJson = "" +
                 "[\n" +
                 "  {\n" +
-                "    \"source\": \"I have {arg1} apples in my bowl\",\n" +
+                "    \"source\": \"I have {int} apples in my bowl\",\n" +
                 "    \"flags\": \"\",\n" +
                 "    \"steps\": []\n" +
                 "  },\n" +
                 "  {\n" +
-                "    \"source\": \"I have {arg1} cukes in my belly\",\n" +
+                "    \"source\": \"I have {int} cukes in my belly\",\n" +
                 "    \"flags\": \"\",\n" +
                 "    \"steps\": [\n" +
                 "      {\n" +
@@ -113,11 +113,11 @@ public class StepdefGeneratorTest {
 
     private StepDefinition def(final String pattern) {
         return new StepDefinition() {
-            ExpressionFactory factory = new ExpressionFactory(new TransformLookup(Locale.ENGLISH));
+            ExpressionFactory factory = new ExpressionFactory(new ParameterTypeRegistry(Locale.ENGLISH));
             Expression expression = factory.createExpression(pattern, asList((Type)Integer.class));
 
             @Override
-            public List<Argument> matchedArguments(PickleStep step) {
+            public List<Argument<?>> matchedArguments(PickleStep step) {
                 return new ExpressionArgumentMatcher(expression).argumentsFrom(step.getText());
             }
 

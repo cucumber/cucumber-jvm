@@ -12,7 +12,7 @@ public interface StepDefinition {
      * doesn't match at all. Return an empty List if it matches with 0 arguments
      * and bigger sizes if it matches several.
      */
-    List<Argument> matchedArguments(PickleStep step);
+    List<Argument<?>> matchedArguments(PickleStep step);
 
     /**
      * The source line where the step definition is defined.

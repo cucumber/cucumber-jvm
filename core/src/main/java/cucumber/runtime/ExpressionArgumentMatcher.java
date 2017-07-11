@@ -13,7 +13,7 @@ public class ExpressionArgumentMatcher implements ArgumentMatcher {
     }
 
     @Override
-    public List<Argument> argumentsFrom(String stepName) {
+    public List<Argument<?>> argumentsFrom(String stepName) {
         return expression.match(stepName);
     }
 }

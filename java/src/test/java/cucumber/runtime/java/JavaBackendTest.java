@@ -9,7 +9,7 @@ import cucumber.runtime.StepDefinition;
 import cucumber.runtime.StepDefinitionMatch;
 import cucumber.runtime.java.stepdefs.Stepdefs;
 import gherkin.pickles.PickleStep;
-import io.cucumber.cucumberexpressions.TransformLookup;
+import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -23,8 +23,8 @@ public class JavaBackendTest {
     @Test
     public void finds_step_definitions_by_classpath_url() {
         ObjectFactory factory = new DefaultJavaObjectFactory();
-        TransformLookup transformLookup = new TransformLookup(Locale.ENGLISH);
-        JavaBackend backend = new JavaBackend(factory, transformLookup);
+        ParameterTypeRegistry parameterTypeRegistry = new ParameterTypeRegistry(Locale.ENGLISH);
+        JavaBackend backend = new JavaBackend(factory, parameterTypeRegistry);
         GlueStub glue = new GlueStub();
         backend.loadGlue(glue, asList("classpath:cucumber/runtime/java/stepdefs"));
         backend.buildWorld();
@@ -34,8 +34,8 @@ public class JavaBackendTest {
     @Test
     public void finds_step_definitions_by_package_name() {
         ObjectFactory factory = new DefaultJavaObjectFactory();
-        TransformLookup transformLookup = new TransformLookup(Locale.ENGLISH);
-        JavaBackend backend = new JavaBackend(factory, transformLookup);
+        ParameterTypeRegistry parameterTypeRegistry = new ParameterTypeRegistry(Locale.ENGLISH);
+        JavaBackend backend = new JavaBackend(factory, parameterTypeRegistry);
         GlueStub glue = new GlueStub();
         backend.loadGlue(glue, asList("cucumber.runtime.java.stepdefs"));
         backend.buildWorld();
@@ -45,8 +45,8 @@ public class JavaBackendTest {
     @Test(expected = CucumberException.class)
     public void detects_subclassed_glue_and_throws_exception() {
         ObjectFactory factory = new DefaultJavaObjectFactory();
-        TransformLookup transformLookup = new TransformLookup(Locale.ENGLISH);
-        JavaBackend backend = new JavaBackend(factory, transformLookup);
+        ParameterTypeRegistry parameterTypeRegistry = new ParameterTypeRegistry(Locale.ENGLISH);
+        JavaBackend backend = new JavaBackend(factory, parameterTypeRegistry);
         GlueStub glue = new GlueStub();
         backend.loadGlue(glue, asList("cucumber.runtime.java.stepdefs", "cucumber.runtime.java.incorrectlysubclassedstepdefs"));
     }

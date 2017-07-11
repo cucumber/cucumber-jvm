@@ -207,19 +207,19 @@ class PrettyFormatter implements Formatter, ColorAware {
         out.println(STEP_INDENT + formattedStepText + locationPadding + getLocationText(testStep.getCodeLocation()));
     }
 
-    String formatStepText(String keyword, String stepText, Format textFormat, Format argFormat, List<Argument> arguments) {
+    String formatStepText(String keyword, String stepText, Format textFormat, Format argFormat, List<Argument<?>> arguments) {
         int textStart = 0;
         StringBuilder result = new StringBuilder(textFormat.text(keyword));
-        for (Argument argument : arguments) {
-            String text = stepText.substring(textStart, argument.getOffset());
-            result.append(textFormat.text(text));
-            result.append(argFormat.text(argument.getValue()));
-            textStart = argument.getOffset() + argument.getValue().length();
-        }
-        if (textStart != stepText.length()) {
-            String text = stepText.substring(textStart, stepText.length());
-            result.append(textFormat.text(text));
-        }
+//        for (Argument argument : arguments) {
+//            String text = stepText.substring(textStart, argument.getOffset());
+//            result.append(textFormat.text(text));
+//            result.append(argFormat.text(argument.getValue().toString()));
+//            textStart = argument.getOffset() + argument.getValue().toString().length();
+//        }
+//        if (textStart != stepText.length()) {
+//            String text = stepText.substring(textStart, stepText.length());
+//            result.append(textFormat.text(text));
+//        }
         return result.toString();
     }
 

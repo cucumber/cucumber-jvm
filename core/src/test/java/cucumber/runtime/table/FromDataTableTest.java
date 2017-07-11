@@ -37,7 +37,7 @@ public class FromDataTableTest {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
-    private static final List<Argument> NO_ARGS = emptyList();
+    private static final List<Argument<?>> NO_ARGS = emptyList();
     private static final String ENGLISH = "en";
 
     public static class StepDefs {

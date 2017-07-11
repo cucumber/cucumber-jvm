@@ -34,7 +34,7 @@ public abstract class TestStep {
         return definitionMatch.getCodeLocation();
     }
 
-    public List<io.cucumber.cucumberexpressions.Argument> getDefinitionArgument() {
+    public List<io.cucumber.cucumberexpressions.Argument<?>> getDefinitionArgument() {
         return definitionMatch.getArguments();
     }
 

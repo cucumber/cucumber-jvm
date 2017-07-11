@@ -21,7 +21,7 @@ public class StubStepDefinition implements StepDefinition {
     }
 
     @Override
-    public List<Argument> matchedArguments(PickleStep step) {
+    public List<Argument<?>> matchedArguments(PickleStep step) {
         throw new UnsupportedOperationException();
     }
 

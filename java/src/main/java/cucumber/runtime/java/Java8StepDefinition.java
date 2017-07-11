@@ -11,7 +11,7 @@ import gherkin.pickles.PickleStep;
 import io.cucumber.cucumberexpressions.Argument;
 import io.cucumber.cucumberexpressions.Expression;
 import io.cucumber.cucumberexpressions.ExpressionFactory;
-import io.cucumber.cucumberexpressions.TransformLookup;
+import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -33,7 +33,7 @@ public class Java8StepDefinition implements StepDefinition {
     private final List<ParameterInfo> parameterInfos;
     private final Method method;
 
-    public Java8StepDefinition(String expression, long timeoutMillis, StepdefBody body, TypeIntrospector typeIntrospector, TransformLookup transformLookup) throws Exception {
+    public Java8StepDefinition(String expression, long timeoutMillis, StepdefBody body, TypeIntrospector typeIntrospector, ParameterTypeRegistry parameterTypeRegistry) throws Exception {
         this.timeoutMillis = timeoutMillis;
         this.body = body;
 
@@ -45,7 +45,7 @@ public class Java8StepDefinition implements StepDefinition {
 
         Type[] argumentTypes = getArgumentTypes(bodyClass, typeIntrospector, method.getParameterTypes().length);
 
-        this.expression = new ExpressionFactory(transformLookup).createExpression(expression, asList(argumentTypes));
+        this.expression = new ExpressionFactory(parameterTypeRegistry).createExpression(expression, asList(argumentTypes));
         this.parameterInfos = ParameterInfo.fromTypes(argumentTypes);
     }
 
@@ -96,7 +96,7 @@ public class Java8StepDefinition implements StepDefinition {
     }
 
     @Override
-    public List<Argument> matchedArguments(PickleStep step) {
+    public List<Argument<?>> matchedArguments(PickleStep step) {
         ArgumentMatcher argumentMatcher = new ExpressionArgumentMatcher(expression);
         return argumentMatcher.argumentsFrom(step.getText());
     }

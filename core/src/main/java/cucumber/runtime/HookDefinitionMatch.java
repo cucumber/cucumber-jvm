@@ -25,7 +25,7 @@ public class HookDefinitionMatch implements DefinitionMatch {
 
     @Override
     public Match getMatch() {
-        return new Match(Collections.<Argument>emptyList(), hookDefinition.getLocation(false));
+        return new Match(Collections.<Argument<?>>emptyList(), hookDefinition.getLocation(false));
     }
 
     @Override
@@ -39,7 +39,7 @@ public class HookDefinitionMatch implements DefinitionMatch {
     }
 
     @Override
-    public List<Argument> getArguments() {
-        return Collections.<Argument>emptyList();
+    public List<Argument<?>> getArguments() {
+        return Collections.<Argument<?>>emptyList();
     }
 }

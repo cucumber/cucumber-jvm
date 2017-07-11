@@ -11,7 +11,7 @@ import gherkin.pickles.PickleStep;
 import io.cucumber.cucumberexpressions.Argument;
 import io.cucumber.cucumberexpressions.Expression;
 import io.cucumber.cucumberexpressions.ExpressionFactory;
-import io.cucumber.cucumberexpressions.TransformLookup;
+import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -26,9 +26,10 @@ class JavaStepDefinition implements StepDefinition {
 
     private final List<ParameterInfo> parameterInfos;
 
-    public JavaStepDefinition(Method method, String expression, long timeoutMillis, ObjectFactory objectFactory, TransformLookup transformLookup) {
+    public JavaStepDefinition(Method method, String expression, long timeoutMillis, ObjectFactory objectFactory, ParameterTypeRegistry parameterTypeRegistry
+            ) {
         this.method = method;
-        this.expression = new ExpressionFactory(transformLookup).createExpression(expression, getArgumentTypes(method));
+        this.expression = new ExpressionFactory(parameterTypeRegistry).createExpression(expression, getArgumentTypes(method));
         this.timeoutMillis = timeoutMillis;
         this.objectFactory = objectFactory;
 
@@ -39,7 +40,7 @@ class JavaStepDefinition implements StepDefinition {
         Utils.invoke(objectFactory.getInstance(method.getDeclaringClass()), method, timeoutMillis, args);
     }
 
-    public List<Argument> matchedArguments(PickleStep step) {
+    public List<Argument<?>> matchedArguments(PickleStep step) {
         ArgumentMatcher argumentMatcher = new ExpressionArgumentMatcher(expression);
         return argumentMatcher.argumentsFrom(step.getText());
     }

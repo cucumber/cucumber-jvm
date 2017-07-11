@@ -7,7 +7,7 @@ import cucumber.runtime.Glue;
 import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
-import io.cucumber.cucumberexpressions.TransformLookup;
+import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.internal.util.reflection.Whitebox;
@@ -25,9 +25,9 @@ public class MethodScannerTest {
         MethodScanner methodScanner = new MethodScanner(new ResourceLoaderClassFinder(resourceLoader, classLoader));
 
         ObjectFactory factory = Mockito.mock(ObjectFactory.class);
-        TransformLookup transformLookup = Mockito.mock(TransformLookup.class);
+        ParameterTypeRegistry parameterTypeRegistry = Mockito.mock(ParameterTypeRegistry.class);
         Glue world = Mockito.mock(Glue.class);
-        JavaBackend backend = new JavaBackend(factory, transformLookup);
+        JavaBackend backend = new JavaBackend(factory, parameterTypeRegistry);
         Whitebox.setInternalState(backend, "glue", world);
 
         // this delegates to methodScanner.scan which we test
@@ -39,7 +39,7 @@ public class MethodScannerTest {
 
     @Test
     public void loadGlue_fails_when_class_is_not_method_declaring_class() throws NoSuchMethodException {
-        JavaBackend backend = new JavaBackend((ObjectFactory) null, (TransformLookup) null);
+        JavaBackend backend = new JavaBackend((ObjectFactory) null, (ParameterTypeRegistry) null);
         try {
             backend.loadGlue(null, BaseStepDefs.class.getMethod("m"), Stepdefs2.class);
             fail();
@@ -50,7 +50,7 @@ public class MethodScannerTest {
 
     @Test
     public void loadGlue_fails_when_class_is_not_subclass_of_declaring_class() throws NoSuchMethodException {
-        JavaBackend backend = new JavaBackend((ObjectFactory) null, (TransformLookup) null);
+        JavaBackend backend = new JavaBackend((ObjectFactory) null, (ParameterTypeRegistry) null);
         try {
             backend.loadGlue(null, BaseStepDefs.class.getMethod("m"), String.class);
             fail();

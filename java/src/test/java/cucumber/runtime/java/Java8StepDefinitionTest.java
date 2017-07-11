@@ -2,7 +2,7 @@ package cucumber.runtime.java;
 
 import cucumber.api.java8.StepdefBody;
 import cucumber.runtime.CucumberException;
-import io.cucumber.cucumberexpressions.TransformLookup;
+import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
 import org.junit.Test;
 
 import java.util.List;
@@ -12,7 +12,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 public class Java8StepDefinitionTest {
-    private final TransformLookup transformLookup = new TransformLookup(Locale.ENGLISH);
+    private final ParameterTypeRegistry transformLookup = new ParameterTypeRegistry(Locale.ENGLISH);
 
     @Test
     public void should_calculate_parameters_count_from_body_with_one_param() throws Exception {

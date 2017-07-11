@@ -147,7 +147,7 @@ public class RunnerTest {
         for (StepDefinition stepDefinition : stepDefinitions) {
             PickleStep step = mock(PickleStep.class);
             steps.add(step);
-            when(stepDefinition.matchedArguments(step)).thenReturn(Collections.<Argument>emptyList());
+            when(stepDefinition.matchedArguments(step)).thenReturn(Collections.<Argument<?>>emptyList());
             when(stepDefinition.getPattern()).thenReturn("pattern" + Integer.toString(++i));
             runtime.getGlue().addStepDefinition(stepDefinition);
         }

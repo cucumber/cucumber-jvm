@@ -9,7 +9,7 @@ import java.util.List;
 class NoStepDefinition implements StepDefinition {
 
     @Override
-    public List<Argument> matchedArguments(PickleStep step) {
+    public List<Argument<?>> matchedArguments(PickleStep step) {
         return null;
     }
 

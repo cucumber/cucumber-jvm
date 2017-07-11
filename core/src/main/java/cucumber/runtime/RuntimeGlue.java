@@ -75,7 +75,7 @@ public class RuntimeGlue implements Glue {
     private List<StepDefinitionMatch> stepDefinitionMatches(String featurePath, PickleStep step) {
         List<StepDefinitionMatch> result = new ArrayList<StepDefinitionMatch>();
         for (StepDefinition stepDefinition : stepDefinitionsByPattern.values()) {
-            List<Argument> arguments = stepDefinition.matchedArguments(step);
+            List<Argument<?>> arguments = stepDefinition.matchedArguments(step);
             if (arguments != null) {
                 result.add(new StepDefinitionMatch(arguments, stepDefinition, featurePath, step, localizedXStreams));
             }

@@ -38,14 +38,14 @@ public class StepdefGenerator {
             for (CucumberFeature feature : features) {
                 for (Pickle pickle : compiler.compile(feature.getGherkinFeature())) {
                     for (PickleStep step : pickle.getSteps()) {
-                        List<Argument> arguments = stepDefinition.matchedArguments(step);
+                        List<Argument<?>> arguments = stepDefinition.matchedArguments(step);
                         if (arguments != null) {
                             MetaStepdef.MetaStep ms = new MetaStepdef.MetaStep();
                             ms.name = step.getText();
                             for (Argument argument : arguments) {
                                 MetaStepdef.MetaArgument ma = new MetaStepdef.MetaArgument();
-                                ma.offset = argument.getOffset();
-                                ma.val = argument.getValue();
+                                //ma.offset = argument.getOffset();
+                                ma.val = argument.getValue().toString();
                                 ms.args.add(ma);
                             }
                             metaStepdef.steps.add(ms);

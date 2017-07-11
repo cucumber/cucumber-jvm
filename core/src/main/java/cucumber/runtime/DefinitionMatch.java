@@ -16,5 +16,5 @@ public interface DefinitionMatch {
 
     String getCodeLocation();
 
-    List<Argument> getArguments();
+    List<Argument<?>> getArguments();
 }

@@ -10,7 +10,7 @@ import gherkin.pickles.PickleRow;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleString;
 import gherkin.pickles.PickleTable;
-import io.cucumber.cucumberexpressions.TransformLookup;
+import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -28,8 +28,8 @@ public class JavaSnippetTest {
     @Test
     public void generatesPlainSnippet() {
         String expected = "" +
-                "@Given(\"I have {arg1} cukes in my \\\"big\\\" belly\")\n" +
-                "public void i_have_cukes_in_my_big_belly(int arg1) throws Throwable {\n" +
+                "@Given(\"I have {int} cukes in my {string} belly\")\n" +
+                "public void i_have_cukes_in_my_belly(int arg1, String arg2) throws Throwable {\n" +
                 "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException();\n" +
                 "}\n";
@@ -39,7 +39,7 @@ public class JavaSnippetTest {
     @Test
     public void generatesCopyPasteReadyStepSnippetForNumberParameters() throws Exception {
         String expected = "" +
-                "@Given(\"before {arg1} after\")\n" +
+                "@Given(\"before {int} after\")\n" +
                 "public void before_after(int arg1) throws Throwable {\n" +
                 "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException();\n" +
@@ -51,8 +51,8 @@ public class JavaSnippetTest {
     @Test
     public void generatesCopyPasteReadySnippetWhenStepHasIllegalJavaIdentifierChars() {
         String expected = "" +
-                "@Given(\"I have {arg1} cukes in: my \\\"big\\\" red-belly!\")\n" +
-                "public void i_have_cukes_in_my_big_red_belly(int arg1) throws Throwable {\n" +
+                "@Given(\"I have {int} cukes in: my {string} red-belly!\")\n" +
+                "public void i_have_cukes_in_my_red_belly(int arg1, String arg2) throws Throwable {\n" +
                 "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException();\n" +
                 "}\n";
@@ -62,7 +62,7 @@ public class JavaSnippetTest {
     @Test
     public void generatesSnippetWithEscapedDollarSigns() {
         String expected = "" +
-                "@Given(\"I have ${arg1}\")\n" +
+                "@Given(\"I have ${int}\")\n" +
                 "public void i_have_$(int arg1) throws Throwable {\n" +
                 "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException();\n" +
@@ -84,7 +84,7 @@ public class JavaSnippetTest {
     @Test
     public void generatesSnippetWithEscapedParentheses() {
         String expected = "" +
-                "@Given(\"I have {arg1} cukes (maybe more)\")\n" +
+                "@Given(\"I have {int} cukes (maybe more)\")\n" +
                 "public void i_have_cukes_maybe_more(int arg1) throws Throwable {\n" +
                 "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException();\n" +
@@ -95,7 +95,7 @@ public class JavaSnippetTest {
     @Test
     public void generatesSnippetWithEscapedBrackets() {
         String expected = "" +
-                "@Given(\"I have {arg1} cukes [maybe more]\")\n" +
+                "@Given(\"I have {int} cukes [maybe more]\")\n" +
                 "public void i_have_cukes_maybe_more(int arg1) throws Throwable {\n" +
                 "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException();\n" +
@@ -154,16 +154,16 @@ public class JavaSnippetTest {
 
     private String snippetFor(String name) {
         PickleStep step = new PickleStep(name, Collections.<Argument>emptyList(), Collections.<PickleLocation>emptyList());
-        return new SnippetGenerator(new JavaSnippet(), new TransformLookup(Locale.ENGLISH)).getSnippet(step, GIVEN_KEYWORD, functionNameGenerator);
+        return new SnippetGenerator(new JavaSnippet(), new ParameterTypeRegistry(Locale.ENGLISH)).getSnippet(step, GIVEN_KEYWORD, functionNameGenerator);
     }
 
     private String snippetForDocString(String name, PickleString docString) {
         PickleStep step = new PickleStep(name, asList((Argument)docString), Collections.<PickleLocation>emptyList());
-        return new SnippetGenerator(new JavaSnippet(), new TransformLookup(Locale.ENGLISH)).getSnippet(step, GIVEN_KEYWORD, functionNameGenerator);
+        return new SnippetGenerator(new JavaSnippet(), new ParameterTypeRegistry(Locale.ENGLISH)).getSnippet(step, GIVEN_KEYWORD, functionNameGenerator);
     }
 
     private String snippetForDataTable(String name, PickleTable dataTable) {
         PickleStep step = new PickleStep(name, asList((Argument)dataTable), Collections.<PickleLocation>emptyList());
-        return new SnippetGenerator(new JavaSnippet(), new TransformLookup(Locale.ENGLISH)).getSnippet(step, GIVEN_KEYWORD, functionNameGenerator);
+        return new SnippetGenerator(new JavaSnippet(), new ParameterTypeRegistry(Locale.ENGLISH)).getSnippet(step, GIVEN_KEYWORD, functionNameGenerator);
     }
 }

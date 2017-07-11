@@ -11,10 +11,8 @@ import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleString;
 import gherkin.pickles.PickleTable;
 import io.cucumber.cucumberexpressions.Argument;
-import io.cucumber.cucumberexpressions.ClassTransform;
-import io.cucumber.cucumberexpressions.ConstructorTransform;
-import io.cucumber.cucumberexpressions.Transform;
-import io.cucumber.cucumberexpressions.TransformLookup;
+import io.cucumber.cucumberexpressions.ParameterType;
+import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -22,6 +20,7 @@ import java.util.List;
 import java.util.Locale;
 
 import static cucumber.util.FixJava.map;
+import static java.util.Arrays.asList;
 
 public class StepDefinitionMatch extends Match implements DefinitionMatch {
     private final StepDefinition stepDefinition;
@@ -31,7 +30,7 @@ public class StepDefinitionMatch extends Match implements DefinitionMatch {
     private final transient PickleStep step;
     private final LocalizedXStreams localizedXStreams;
 
-    public StepDefinitionMatch(List<Argument> arguments, StepDefinition stepDefinition, String featurePath, PickleStep step, LocalizedXStreams localizedXStreams) {
+    public StepDefinitionMatch(List<Argument<?>> arguments, StepDefinition stepDefinition, String featurePath, PickleStep step, LocalizedXStreams localizedXStreams) {
         super(arguments, stepDefinition.getLocation(false));
         this.stepDefinition = stepDefinition;
         this.featurePath = featurePath;
@@ -53,30 +52,28 @@ public class StepDefinitionMatch extends Match implements DefinitionMatch {
         try {
             List<Object> result = new ArrayList<Object>();
             for (Argument argument : getArguments()) {
-                result.add(argument.getTransformedValue());
+                result.add(argument.getValue());
             }
             if (!step.getArgument().isEmpty()) {
                 gherkin.pickles.Argument stepArgument = step.getArgument().get(0);
-                TransformLookup transformLookup = new TransformLookup(Locale.ENGLISH);
+                ParameterTypeRegistry parameterTypeRegistry = new ParameterTypeRegistry(Locale.ENGLISH);
                 if (stepArgument instanceof PickleTable) {
                     result.add(tableArgument((PickleTable) stepArgument, result.size(), localizedXStreams.get(localeFor(language))));
                 } else if (stepArgument instanceof PickleString) {
                     Type type = stepDefinition.getParameterType(result.size(), String.class).getType();
-                    Transform<?> transform = null;
+                    ParameterType<Object> transform = null;
                     if (type != null) {
-                        transform = transformLookup.lookupByType(type);
-                    }
-                    if (transform == null && type != null && type instanceof Class) {
-                        transform = new ClassTransform((Class) type);
-                    }
-                    if (transform == null) {
-                        transform = new ConstructorTransform(String.class);
+                        String typeName = type.getTypeName();
+                        if (typeName.startsWith("java.lang.")) {
+                            typeName = typeName.substring("java.lang.".length()).toLowerCase();
+                        }
+                        transform = parameterTypeRegistry.lookupByTypeName(typeName);
                     }
                     if (transform == null) {
-
+                        throw new IllegalArgumentException(type.getTypeName());
                     }
                     String stepArgumentContent = ((PickleString)stepArgument).getContent();
-                    result.add(transform.transform(stepArgumentContent));
+                    result.add(transform.transform(asList(stepArgumentContent)));
                 }
             }
             stepDefinition.execute(language, result.toArray(new Object[result.size()]));
@@ -125,7 +122,7 @@ public class StepDefinitionMatch extends Match implements DefinitionMatch {
     private List<String> createArgumentsForErrorMessage(PickleStep step) {
         List<String> arguments = new ArrayList<String>(getArguments().size());
         for (Argument argument : getArguments()) {
-            arguments.add(argument.getValue());
+            arguments.add(argument.getValue().toString());
         }
         if (!step.getArgument().isEmpty()) {
             gherkin.pickles.Argument stepArgument = step.getArgument().get(0);
