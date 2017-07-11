@@ -10,6 +10,7 @@ public class Result {
     private final Long duration;
     private final Throwable error;
     public static final Result SKIPPED = new Result(Result.Type.SKIPPED, null, null);
+    public static final Result UNDEFINED = new Result(Result.Type.UNDEFINED, null, null);
     public static enum Type {
         PASSED,
         SKIPPED,

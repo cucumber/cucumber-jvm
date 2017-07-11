@@ -105,7 +105,7 @@ public abstract class TestStep {
             return Result.SKIPPED;
         }
         if (status == Result.Type.UNDEFINED) {
-            return new Result(status, null, null);
+            return Result.UNDEFINED;
         }
         return new Result(status, resultDuration, error);
     }
