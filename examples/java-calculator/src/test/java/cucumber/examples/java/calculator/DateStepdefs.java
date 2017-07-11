@@ -14,7 +14,7 @@ public class DateStepdefs {
     private DateCalculator calculator;
 
     @Given("today is {date}")
-    public void today_is(Date date) {
+    public void today_is(@Format("yyyy-MM-dd") Date date) {
         calculator = new DateCalculator(date);
     }
 
