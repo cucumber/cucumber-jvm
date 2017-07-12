@@ -119,7 +119,7 @@ public class JUnitFormatterTest {
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
                 "<testsuite failures=\"0\" name=\"cucumber.runtime.formatter.JUnitFormatter\" skipped=\"1\" tests=\"1\" time=\"0.003\">\n" +
                 "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0.003\">\n" +
-                "        <skipped message=\"" + stackTrace.replace("\n\t", "&#10;&#9;") + "\"><![CDATA[" +
+                "        <skipped message=\"" + stackTrace.replace("\n\t", "&#10;&#9;").replaceAll("\r", "&#13;") + "\"><![CDATA[" +
                 "Given first step............................................................skipped\n" +
                 "When second step............................................................skipped\n" +
                 "Then third step.............................................................skipped\n" +

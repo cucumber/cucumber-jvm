@@ -322,7 +322,10 @@ class JUnitFormatter implements Formatter, StrictAware {
 
         private Element createElement(Document doc, StringBuilder sb, String elementType) {
             Element child = doc.createElement(elementType);
-            child.appendChild(doc.createCDATASection(sb.toString()));
+            // the createCDATASection method seems to convert "\n" to "\r\n" on Windows, in case
+            // data originally contains "\r\n" line separators the result becomes "\r\r\n", which
+            // are displayed as double line breaks.
+            child.appendChild(doc.createCDATASection(sb.toString().replace(System.lineSeparator(), "\n")));
             return child;
         }
 
