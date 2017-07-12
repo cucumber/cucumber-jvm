@@ -124,7 +124,7 @@ public class Runtime {
     public List<PickleEvent> compileFeature(CucumberFeature feature) {
         List<PickleEvent> pickleEvents = new ArrayList<PickleEvent>();
         for (Pickle pickle : compiler.compile(feature.getGherkinFeature())) {
-            pickleEvents.add(new PickleEvent(feature.getPath(), pickle));
+            pickleEvents.add(new PickleEvent(feature.getUri(), pickle));
         }
         return pickleEvents;
     }

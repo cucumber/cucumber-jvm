@@ -47,7 +47,7 @@ public class TestCase {
         return fileColonLine(pickleEvent.pickle.getLocations().get(0)) + " # " + getName();
     }
 
-    public String getPath() {
+    public String getUri() {
         return pickleEvent.uri;
     }
 
