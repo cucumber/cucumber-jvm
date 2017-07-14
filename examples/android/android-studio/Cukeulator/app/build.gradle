@@ -34,8 +34,24 @@ android {
 }
 
 dependencies {
-    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.0'
-    androidTestCompile 'com.android.support.test:testing-support-lib:0.1'
-    androidTestCompile 'info.cukes:cucumber-android:1.2.5'
-    androidTestCompile 'info.cukes:cucumber-picocontainer:1.2.5'
+
+    androidTestCompile ('com.android.support.test.espresso:espresso-core:2.2.2') {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    }
+    androidTestCompile ('com.android.support.test:runner:0.5') {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    }
+    androidTestCompile ('com.android.support.test:rules:0.5') {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    }
+
+    // Use v1.0.3 of cucumber-jvm-deps to avoid Android Java 8 issues as described at:
+    // https://github.com/cucumber/cucumber-jvm/issues/893#issuecomment-157859872
+    androidTestCompile ('info.cukes:cucumber-android:1.2.5') {
+        exclude module: 'cucumber-jvm-deps'
+    }
+    androidTestCompile ('info.cukes:cucumber-picocontainer:1.2.5') {
+        exclude module: 'cucumber-jvm-deps'
+    }
+    androidTestCompile 'info.cukes:cucumber-jvm-deps:1.0.3'
 }
