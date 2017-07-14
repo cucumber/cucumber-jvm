@@ -60,7 +60,7 @@ public class TestNGCucumberRunner {
     public void runCukes() {
         System.err.println("WARNING: The TestNGCucumberRunner.runCukes() is deprecated. Please create a runner class by subclassing AbstractTestNGCucumberTest.");
         for (CucumberFeature cucumberFeature : getFeatures()) {
-            reporter.uri(cucumberFeature.getPath());
+            reporter.uri(cucumberFeature.getUri());
             runtime.runFeature(cucumberFeature);
         }
         finish();
@@ -71,7 +71,7 @@ public class TestNGCucumberRunner {
 
     public void runCucumber(CucumberFeature cucumberFeature) {
         resultListener.startFeature();
-        reporter.uri(cucumberFeature.getPath());
+        reporter.uri(cucumberFeature.getUri());
         runtime.runFeature(cucumberFeature);
 
         if (!resultListener.isPassed()) {

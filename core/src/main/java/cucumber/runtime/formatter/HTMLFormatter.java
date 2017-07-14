@@ -140,7 +140,7 @@ class HTMLFormatter implements Formatter {
     }
 
     private void handleTestSourceRead(TestSourceRead event) {
-        testSources.addTestSourceReadEvent(event.path, event);
+        testSources.addTestSourceReadEvent(event.uri, event);
     }
 
     private void handleTestCaseStarted(TestCaseStarted event) {
@@ -208,8 +208,8 @@ class HTMLFormatter implements Formatter {
     }
 
     private void handleStartOfFeature(TestCase testCase) {
-        if (currentFeatureFile == null || !currentFeatureFile.equals(testCase.getPath())) {
-            currentFeatureFile = testCase.getPath();
+        if (currentFeatureFile == null || !currentFeatureFile.equals(testCase.getUri())) {
+            currentFeatureFile = testCase.getUri();
             jsFunctionCall("uri", currentFeatureFile);
             jsFunctionCall("feature", createFeature(testCase));
         }
@@ -217,7 +217,7 @@ class HTMLFormatter implements Formatter {
 
     private Map<String, Object> createFeature(TestCase testCase) {
         Map<String, Object> featureMap = new HashMap<String, Object>();
-        Feature feature = testSources.getFeature(testCase.getPath());
+        Feature feature = testSources.getFeature(testCase.getUri());
         if (feature != null) {
             featureMap.put("keyword", feature.getKeyword());
             featureMap.put("name", feature.getName());

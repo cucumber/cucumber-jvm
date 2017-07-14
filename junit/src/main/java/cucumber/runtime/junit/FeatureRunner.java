@@ -77,7 +77,7 @@ public class FeatureRunner extends ParentRunner<PickleRunner> {
         Compiler compiler = new Compiler();
         List<PickleEvent> pickleEvents = new ArrayList<PickleEvent>();
         for (Pickle pickle : compiler.compile(cucumberFeature.getGherkinFeature())) {
-            pickleEvents.add(new PickleEvent(cucumberFeature.getPath(), pickle));
+            pickleEvents.add(new PickleEvent(cucumberFeature.getUri(), pickle));
         }
         Feature feature = cucumberFeature.getGherkinFeature().getFeature();
         String featureName = feature.getName();
@@ -105,7 +105,7 @@ public class FeatureRunner extends ParentRunner<PickleRunner> {
         private final String uri;
 
         FeatureId(CucumberFeature feature) {
-            this.uri = feature.getPath();
+            this.uri = feature.getUri();
         }
 
         @Override

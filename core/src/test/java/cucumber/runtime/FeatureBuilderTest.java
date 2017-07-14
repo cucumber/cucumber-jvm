@@ -40,7 +40,7 @@ public class FeatureBuilderTest {
         builder.parse(resource);
 
         assertEquals(1, features.size());
-        assertEquals(featurePath, features.get(0).getPath());
+        assertEquals(featurePath, features.get(0).getUri());
     }
 
     @Test
@@ -54,7 +54,7 @@ public class FeatureBuilderTest {
         builder.parse(resource);
 
         assertEquals(1, features.size());
-        assertEquals("path/foo.feature", features.get(0).getPath());
+        assertEquals("path/foo.feature", features.get(0).getUri());
     }
 
     private Resource createResourceMock(String featurePath) throws IOException {

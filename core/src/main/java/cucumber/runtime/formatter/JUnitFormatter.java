@@ -106,12 +106,12 @@ class JUnitFormatter implements Formatter, StrictAware {
     }
 
     private void handleTestSourceRead(TestSourceRead event) {
-        TestCase.testSources.addTestSourceReadEvent(event.path, event);
+        TestCase.testSources.addTestSourceReadEvent(event.uri, event);
     }
 
     private void handleTestCaseStarted(TestCaseStarted event) {
-        if (TestCase.currentFeatureFile == null || !TestCase.currentFeatureFile.equals(event.testCase.getPath())) {
-            TestCase.currentFeatureFile = event.testCase.getPath();
+        if (TestCase.currentFeatureFile == null || !TestCase.currentFeatureFile.equals(event.testCase.getUri())) {
+            TestCase.currentFeatureFile = event.testCase.getUri();
             TestCase.previousTestCaseName = "";
             TestCase.exampleNumber = 1;
         }

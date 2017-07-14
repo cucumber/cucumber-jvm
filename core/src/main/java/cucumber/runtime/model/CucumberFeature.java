@@ -21,7 +21,7 @@ import java.util.List;
 
 public class CucumberFeature implements Serializable {
     private static final long serialVersionUID = 1L;
-    private final String path;
+    private final String uri;
     private String language;
     private GherkinDocument gherkinDocument;
     private String gherkinSource;
@@ -117,9 +117,9 @@ public class CucumberFeature implements Serializable {
         }
     }
 
-    public CucumberFeature(GherkinDocument gherkinDocument, String path, String gherkinSource) {
+    public CucumberFeature(GherkinDocument gherkinDocument, String uri, String gherkinSource) {
         this.gherkinDocument = gherkinDocument;
-        this.path = path;
+        this.uri = uri;
         this.gherkinSource = gherkinSource;
         if (gherkinDocument.getFeature() != null) {
             setLanguage(gherkinDocument.getFeature().getLanguage());
@@ -134,12 +134,12 @@ public class CucumberFeature implements Serializable {
         return language;
     }
 
-    public String getPath() {
-        return path;
+    public String getUri() {
+        return uri;
     }
 
     public void sendTestSourceRead(EventBus bus) {
-        bus.send(new TestSourceRead(bus.getTime(), path, gherkinDocument.getFeature().getLanguage(), gherkinSource));
+        bus.send(new TestSourceRead(bus.getTime(), uri, gherkinDocument.getFeature().getLanguage(), gherkinSource));
     }
 
     private void setLanguage(String language) {
@@ -149,7 +149,7 @@ public class CucumberFeature implements Serializable {
     private static class CucumberFeatureUriComparator implements Comparator<CucumberFeature> {
         @Override
         public int compare(CucumberFeature a, CucumberFeature b) {
-            return a.getPath().compareTo(b.getPath());
+            return a.getUri().compareTo(b.getUri());
         }
     }
 }

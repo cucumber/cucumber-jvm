@@ -115,7 +115,7 @@ class PrettyFormatter implements Formatter, ColorAware {
     }
 
     private void handleTestSourceRead(TestSourceRead event) {
-        testSources.addTestSourceReadEvent(event.path, event);
+        testSources.addTestSourceReadEvent(event.uri, event);
     }
 
     private void handleTestCaseStarted(TestCaseStarted event) {
@@ -155,11 +155,11 @@ class PrettyFormatter implements Formatter, ColorAware {
     }
 
     private void handleStartOfFeature(TestCaseStarted event) {
-        if (currentFeatureFile == null || !currentFeatureFile.equals(event.testCase.getPath())) {
+        if (currentFeatureFile == null || !currentFeatureFile.equals(event.testCase.getUri())) {
             if (currentFeatureFile != null) {
                 out.println();
             }
-            currentFeatureFile = event.testCase.getPath();
+            currentFeatureFile = event.testCase.getUri();
             printFeature(currentFeatureFile);
         }
     }

@@ -50,7 +50,7 @@ public class AndroidInstrumentationReporterTest {
 
     @Before
     public void beforeEachTest() {
-        when(testCase.getPath()).thenReturn("path/file.feature");
+        when(testCase.getUri()).thenReturn("path/file.feature");
         when(testCase.getName()).thenReturn("Some important scenario");
     }
 

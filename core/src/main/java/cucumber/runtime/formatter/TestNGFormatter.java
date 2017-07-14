@@ -116,16 +116,16 @@ class TestNGFormatter implements Formatter, StrictAware {
     }
 
     private void handleTestSourceRead(TestSourceRead event) {
-        TestMethod.testSources.addTestSourceReadEvent(event.path, event);
+        TestMethod.testSources.addTestSourceReadEvent(event.uri, event);
     }
 
     private void handleTestCaseStarted(TestCaseStarted event) {
-        if (TestMethod.currentFeatureFile == null || !TestMethod.currentFeatureFile.equals(event.testCase.getPath())) {
-            TestMethod.currentFeatureFile = event.testCase.getPath();
+        if (TestMethod.currentFeatureFile == null || !TestMethod.currentFeatureFile.equals(event.testCase.getUri())) {
+            TestMethod.currentFeatureFile = event.testCase.getUri();
             TestMethod.previousTestCaseName = "";
             TestMethod.exampleNumber = 1;
             clazz = document.createElement("class");
-            clazz.setAttribute("name", TestMethod.testSources.getFeature(event.testCase.getPath()).getName());
+            clazz.setAttribute("name", TestMethod.testSources.getFeature(event.testCase.getUri()).getName());
             test.appendChild(clazz);
         }
         root = document.createElement("test-method");

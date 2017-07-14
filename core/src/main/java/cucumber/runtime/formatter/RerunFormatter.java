@@ -64,7 +64,7 @@ class RerunFormatter implements Formatter, StrictAware {
     }
 
     private void recordTestFailed(TestCase testCase) {
-        String path = testCase.getPath();
+        String path = testCase.getUri();
         ArrayList<Integer> failedTestCases = this.featureAndFailedLinesMapping.get(path);
         if (failedTestCases == null) {
             failedTestCases = new ArrayList<Integer>();
