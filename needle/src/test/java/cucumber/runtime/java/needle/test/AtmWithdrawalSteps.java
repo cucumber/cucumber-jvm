@@ -3,22 +3,28 @@ package cucumber.runtime.java.needle.test;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
-import javax.inject.Inject;
-
-import org.hamcrest.core.Is;
-
+import cucumber.api.java.Before;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import cucumber.api.needle.InjectionProviderInstancesSupplier;
 import cucumber.api.needle.NeedleInjectionProvider;
+import cucumber.runtime.java.needle.injection.DefaultInstanceInjectionProvider;
 import cucumber.runtime.java.needle.test.atm.AtmService;
 import cucumber.runtime.java.needle.test.atm.AtmServiceBean;
 import cucumber.runtime.java.needle.test.atm.BicGetter;
 import cucumber.runtime.java.needle.test.injectionprovider.ValueInjectionProvider;
 import de.akquinet.jbosscc.needle.annotation.ObjectUnderTest;
 import de.akquinet.jbosscc.needle.injection.InjectionProvider;
+import org.hamcrest.core.Is;
+
+import java.util.Collections;
+import java.util.Set;
+
+import javax.inject.Inject;
 
 public class AtmWithdrawalSteps {
 
@@ -31,11 +37,22 @@ public class AtmWithdrawalSteps {
     @Inject
     private BicGetter bicGetter;
 
+    @Inject
+    private MoreSteps moreSteps;
+
     /*
      * Provider instance will be added dynamically.
      */
     @NeedleInjectionProvider
     private final InjectionProvider<?> valueProvider = new ValueInjectionProvider(VALUE);
+
+    @NeedleInjectionProvider
+    private final InjectionProviderInstancesSupplier thisInjectionProviderSupplier = new InjectionProviderInstancesSupplier() {
+        @Override
+        public Set<InjectionProvider<?>> get() {
+            return Collections.<InjectionProvider<?>>singleton(new DefaultInstanceInjectionProvider<AtmWithdrawalSteps>(AtmWithdrawalSteps.this));
+        }
+    };
 
     /*
      * This is what we test
@@ -65,4 +82,12 @@ public class AtmWithdrawalSteps {
         assertThat(atmService.getAmount(), Is.is(remaining));
     }
 
+    @Before
+    public void checkInjectionWorked() {
+        assertTrue("Got a mock injected instead of the real instance.", moreSteps.isThisReallyYouOrJustAMock());
+    }
+
+    public boolean isThisReallyYouOrJustAMock() {
+        return true;
+    }
 }
