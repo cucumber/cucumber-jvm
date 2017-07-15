@@ -18,7 +18,7 @@
             <artifactId>cucumber-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>info.cukes</groupId>
+            <groupId>io.cucumber</groupId>
             <artifactId>cucumber-jvm-deps</artifactId>
         </dependency>
         <dependency>

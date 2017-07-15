@@ -95,9 +95,9 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>info.cukes</groupId>
+                <groupId>io.cucumber</groupId>
                 <artifactId>cucumber-jvm-deps</artifactId>
-                <version>1.0.5</version>
+                <version>1.0.6</version>
                 <exclusions>
                     <exclusion>
                         <groupId>com.thoughtworks.xstream</groupId>
@@ -113,6 +113,12 @@
                 <groupId>io.cucumber</groupId>
                 <artifactId>gherkin</artifactId>
                 <version>${gherkin.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>io.cucumber</groupId>
+                        <artifactId>gherkin-jvm-deps</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>io.cucumber</groupId>
