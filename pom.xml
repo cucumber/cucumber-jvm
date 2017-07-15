@@ -62,7 +62,7 @@
         <slf4j.version>1.7.21</slf4j.version>
         <freemarker.version>2.3.23</freemarker.version>
         <javax.servlet-api.version>3.1.0</javax.servlet-api.version>
-        <android-maven-plugin.version>4.0.0</android-maven-plugin.version>
+        <android-maven-plugin.version>4.4.3</android-maven-plugin.version>
         <android.version>4.1.1.4</android.version>
         <!-- Apparently Wicket 8.x requires Java 8.
         Stay on 7.0 as long as we support Java 7. -->
