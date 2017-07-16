@@ -64,30 +64,12 @@
                     <target>1.8</target>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <systemPropertyVariables>
-                        <!--
-                            Change this to select the browser to use.  E.g: firefox, chrome, edge, ect.
-                        -->
-                        <webdriver>firefox</webdriver>
-                    </systemPropertyVariables>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
 
     <profiles>
         <profile>
             <id>develop</id>
-            <activation>
-                <property>
-                    <name>env.TRAVIS</name>
-                    <value>true</value>
-                </property>
-            </activation>
             <build>
                 <plugins>
                     <plugin>
@@ -95,7 +77,10 @@
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
                             <systemPropertyVariables>
-                                <webdriver>phantomjs</webdriver>
+                                <!--
+                                   Change this to select the browser to use.  E.g: firefox, chrome, edge, ect.
+                                  -->
+                                <webdriver>firefox</webdriver>
                             </systemPropertyVariables>
                         </configuration>
                     </plugin>
