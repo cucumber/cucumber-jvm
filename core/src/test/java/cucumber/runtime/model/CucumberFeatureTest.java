@@ -64,7 +64,7 @@ public class CucumberFeatureTest {
                 "  Scenario: scenario 2\n" +
                 "    * step\n";
         String rerunPath = "path/rerun.txt";
-        String rerunFile = featurePath1 + ":2 " + featurePath2 + ":4";
+        String rerunFile = featurePath1 + ":2\n" + featurePath2 + ":4\n";
         ResourceLoader resourceLoader = mockFeatureFileResource(featurePath1, feature1);
         mockFeatureFileResource(resourceLoader, featurePath2, feature2);
         mockFileResource(resourceLoader, rerunPath, null, rerunFile);
@@ -99,6 +99,96 @@ public class CucumberFeatureTest {
                 new PrintStream(new ByteArrayOutputStream()));
 
         assertEquals(0, features.size());
+    }
+
+    @Test
+    public void loads_no_features_when_rerun_file_contains_new_line() throws Exception {
+        String feature = "" +
+            "Feature: bar\n" +
+            "  Scenario: scenario bar\n" +
+            "    * step\n";
+        String rerunPath = "path/rerun.txt";
+        String rerunFile = "\n";
+        ResourceLoader resourceLoader = mockFeatureFileResourceForAnyFeaturePath(feature);
+        mockFileResource(resourceLoader, rerunPath, null, rerunFile);
+
+        List<CucumberFeature> features = CucumberFeature.load(
+            resourceLoader,
+            singletonList("@" + rerunPath),
+            new PrintStream(new ByteArrayOutputStream()));
+
+        assertEquals(0, features.size());
+    }
+
+    @Test
+    public void loads_no_features_when_rerun_file_contains_carriage_return() throws Exception {
+        String feature = "" +
+            "Feature: bar\n" +
+            "  Scenario: scenario bar\n" +
+            "    * step\n";
+        String rerunPath = "path/rerun.txt";
+        String rerunFile = "\r";
+        ResourceLoader resourceLoader = mockFeatureFileResourceForAnyFeaturePath(feature);
+        mockFileResource(resourceLoader, rerunPath, null, rerunFile);
+
+        List<CucumberFeature> features = CucumberFeature.load(
+            resourceLoader,
+            singletonList("@" + rerunPath),
+            new PrintStream(new ByteArrayOutputStream()));
+
+        assertEquals(0, features.size());
+    }
+
+    @Test
+    public void loads_no_features_when_rerun_file_contains_new_line_and_carriage_return() throws Exception {
+        String feature = "" +
+            "Feature: bar\n" +
+            "  Scenario: scenario bar\n" +
+            "    * step\n";
+        String rerunPath = "path/rerun.txt";
+        String rerunFile = "\r\n";
+        ResourceLoader resourceLoader = mockFeatureFileResourceForAnyFeaturePath(feature);
+        mockFileResource(resourceLoader, rerunPath, null, rerunFile);
+
+        List<CucumberFeature> features = CucumberFeature.load(
+            resourceLoader,
+            singletonList("@" + rerunPath),
+            new PrintStream(new ByteArrayOutputStream()));
+
+        assertEquals(0, features.size());
+    }
+
+    @Test
+    public void last_new_line_is_optinal() throws Exception {
+        String featurePath1 = "path/bar.feature";
+        String feature1 = "" +
+            "Feature: bar\n" +
+            "  Scenario: scenario bar\n" +
+            "    * step\n";
+        String featurePath2 = "path/foo.feature";
+        String feature2 = "" +
+            "Feature: foo\n" +
+            "  Scenario: scenario 1\n" +
+            "    * step\n" +
+            "  Scenario: scenario 2\n" +
+            "    * step\n";
+        String rerunPath = "path/rerun.txt";
+        String rerunFile = featurePath1 + ":2\n" + featurePath2 + ":4";
+        ResourceLoader resourceLoader = mockFeatureFileResource(featurePath1, feature1);
+        mockFeatureFileResource(resourceLoader, featurePath2, feature2);
+        mockFileResource(resourceLoader, rerunPath, null, rerunFile);
+
+        List<CucumberFeature> features = CucumberFeature.load(
+            resourceLoader,
+            singletonList("@" + rerunPath),
+            new PrintStream(new ByteArrayOutputStream()));
+
+        assertEquals(2, features.size());
+        assertEquals(1, features.get(0).getGherkinFeature().getFeature().getChildren().size());
+        assertEquals("scenario bar", features.get(0).getGherkinFeature().getFeature().getChildren().get(0).getName());
+        assertEquals(2, features.get(1).getGherkinFeature().getFeature().getChildren().size());
+        assertEquals("scenario 1", features.get(1).getGherkinFeature().getFeature().getChildren().get(0).getName());
+        assertEquals("scenario 2", features.get(1).getGherkinFeature().getFeature().getChildren().get(1).getName());
     }
 
     @Test
@@ -145,6 +235,28 @@ public class CucumberFeatureTest {
                             "Not a file or directory: path/bar.feature, No resource found for: classpath:path/bar.feature",
                     exception.getMessage());
         }
+    }
+
+    @Test
+    public void understands_whitespace_in_rerun_filepath() throws Exception {
+        String featurePath1 = "/home/users/mp/My Documents/tests/bar.feature";
+        String feature1 = "" +
+            "Feature: bar\n" +
+            "  Scenario: scenario bar\n" +
+            "    * step\n";
+        String rerunPath = "rerun.txt";
+        String rerunFile = featurePath1 + ":2\n";
+        ResourceLoader resourceLoader = mockFeatureFileResource(featurePath1, feature1);
+        mockFileResource(resourceLoader, rerunPath, null, rerunFile);
+
+        List<CucumberFeature> features = CucumberFeature.load(
+            resourceLoader,
+            singletonList("@" + rerunPath),
+            new PrintStream(new ByteArrayOutputStream()));
+
+        assertEquals(1, features.size());
+        assertEquals(1, features.get(0).getGherkinFeature().getFeature().getChildren().size());
+        assertEquals("scenario bar", features.get(0).getGherkinFeature().getFeature().getChildren().get(0).getName());
     }
 
     private ResourceLoader mockFeatureFileResource(String featurePath, String feature)

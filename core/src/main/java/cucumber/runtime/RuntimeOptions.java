@@ -3,10 +3,12 @@ package cucumber.runtime;
 import cucumber.api.SnippetType;
 import cucumber.api.StepDefinitionReporter;
 import cucumber.api.SummaryPrinter;
+import cucumber.api.event.TestRunStarted;
 import cucumber.api.formatter.ColorAware;
 import cucumber.api.formatter.Formatter;
 import cucumber.api.formatter.StrictAware;
 import cucumber.runner.EventBus;
+import cucumber.deps.com.thoughtworks.xstream.annotations.XStreamConverter;
 import cucumber.runtime.formatter.PluginFactory;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
@@ -34,6 +36,7 @@ import static cucumber.runtime.model.CucumberFeature.load;
 import static cucumber.util.FixJava.join;
 import static cucumber.util.FixJava.map;
 import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
 
 // IMPORTANT! Make sure USAGE.txt is always uptodate if this class changes.
 public class RuntimeOptions {
@@ -66,6 +69,7 @@ public class RuntimeOptions {
     private final List<String> junitOptions = new ArrayList<String>();
     private final PluginFactory pluginFactory;
     private final List<Object> plugins = new ArrayList<Object>();
+    private final List<XStreamConverter> converters = new ArrayList<XStreamConverter>();
     private boolean dryRun;
     private boolean strict = false;
     private boolean monochrome = false;
@@ -211,6 +215,11 @@ public class RuntimeOptions {
         parsedPluginData.updatePluginSummaryPrinterNames(pluginSummaryPrinterNames);
     }
 
+    RuntimeOptions withConverters(List<XStreamConverter> converters) {
+        this.converters.addAll(converters);
+        return this;
+    }
+
     private void addLineFilters(Map<String, List<Long>> parsedLineFilters, String key, List<Long> lines) {
         if (parsedLineFilters.containsKey(key)) {
             parsedLineFilters.get(key).addAll(lines);
@@ -300,6 +309,7 @@ public class RuntimeOptions {
     public List<CucumberFeature> cucumberFeatures(ResourceLoader resourceLoader, EventBus bus) {
         List<CucumberFeature> features = load(resourceLoader, featurePaths, System.out);
         getPlugins(); // to create the formatter objects
+        bus.send(new TestRunStarted(bus.getTime()));
         for (CucumberFeature feature : features) {
             feature.sendTestSourceRead(bus);
         }
@@ -326,6 +336,10 @@ public class RuntimeOptions {
             pluginNamesInstantiated = true;
         }
         return plugins;
+    }
+
+    List<XStreamConverter> getConverters() {
+        return unmodifiableList(converters);
     }
 
     public Formatter formatter(ClassLoader classLoader) {

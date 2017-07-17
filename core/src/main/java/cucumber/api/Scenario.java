@@ -1,6 +1,7 @@
 package cucumber.api;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Before or After Hooks that declare a parameter of this type will receive an instance of this class.
@@ -51,4 +52,20 @@ public interface Scenario {
      * @return the name of the Scenario
      */
     String getName();
+
+    /**
+     * @return the id of the Scenario.
+     */
+    String getId();
+
+    /**
+     * @return the uri of the feature file of the Scenario.
+     */
+    String getUri();
+
+    /**
+     * @return the line(s) in the feature file of the Scenario. Scenarios form Scenario Outlines
+     * return both the line of the example row the the line of the scenario outline.
+     */
+    List<Integer> getLines();
 }

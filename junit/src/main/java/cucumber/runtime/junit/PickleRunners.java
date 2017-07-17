@@ -2,6 +2,7 @@ package cucumber.runtime.junit;
 
 import cucumber.runner.Runner;
 import gherkin.events.PickleEvent;
+import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleStep;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
@@ -31,8 +32,8 @@ class PickleRunners {
     }
 
 
-    static PickleRunner withNoStepDescriptions(cucumber.runner.Runner runner, PickleEvent pickleEvent, JUnitReporter jUnitReporter) throws InitializationError {
-        return new NoStepDescriptions(runner, pickleEvent, jUnitReporter);
+    static PickleRunner withNoStepDescriptions(String featureName, cucumber.runner.Runner runner, PickleEvent pickleEvent, JUnitReporter jUnitReporter) throws InitializationError {
+        return new NoStepDescriptions(featureName, runner, pickleEvent, jUnitReporter);
     }
 
 
@@ -92,7 +93,6 @@ class PickleRunners {
             jUnitReporter.startExecutionUnit(this, notifier);
             // This causes runChild to never be called, which seems OK.
             runner.runPickle(pickleEvent);
-            jUnitReporter.finishExecutionUnit();
         }
 
         @Override
@@ -106,12 +106,14 @@ class PickleRunners {
 
 
     static final class NoStepDescriptions implements PickleRunner {
+        private final String featureName;
         private final cucumber.runner.Runner runner;
         private final PickleEvent pickleEvent;
         private final JUnitReporter jUnitReporter;
         private Description description;
 
-        NoStepDescriptions(cucumber.runner.Runner runner, PickleEvent pickleEvent, JUnitReporter jUnitReporter) throws InitializationError {
+        NoStepDescriptions(String featureName, cucumber.runner.Runner runner, PickleEvent pickleEvent, JUnitReporter jUnitReporter) throws InitializationError {
+            this.featureName = featureName;
             this.runner = runner;
             this.pickleEvent = pickleEvent;
             this.jUnitReporter = jUnitReporter;
@@ -120,11 +122,9 @@ class PickleRunners {
         @Override
         public Description getDescription() {
             if (description == null) {
-                // While we are presenting this to junit as a test we use the createSuiteDescription
-                // method to create the description. This grants us full control over the display name.
-                // while Description.createTestDescription would concat a class and method name.
+                String className = createName(featureName, jUnitReporter.useFilenameCompatibleNames());
                 String name = getPickleName(pickleEvent, jUnitReporter.useFilenameCompatibleNames());
-                description = Description.createSuiteDescription(name, new PickleId(pickleEvent));
+                description = Description.createTestDescription(className, name, new PickleId(pickleEvent));
             }
             return description;
         }
@@ -138,12 +138,16 @@ class PickleRunners {
         public void run(final RunNotifier notifier) {
             jUnitReporter.startExecutionUnit(this, notifier);
             runner.runPickle(pickleEvent);
-            jUnitReporter.finishExecutionUnit();
         }
     }
 
     private static String getPickleName(PickleEvent pickleEvent, boolean useFilenameCompatibleNames) {
         final String name = pickleEvent.pickle.getName();
+        return createName(name, useFilenameCompatibleNames);
+    }
+
+
+    private static String createName(final String name, boolean useFilenameCompatibleNames) {
         if (name.isEmpty()) {
             return "EMPTY_NAME";
         }
@@ -199,7 +203,8 @@ class PickleRunners {
         PickleStepId(PickleEvent pickleEvent, PickleStep pickleStep) {
             this.uri = pickleEvent.uri;
             this.pickleLine = pickleEvent.pickle.getLocations().get(0).getLine();
-            this.pickleStepLine = pickleStep.getLocations().get(0).getLine();
+            List<PickleLocation> stepLocations = pickleStep.getLocations();
+            this.pickleStepLine = stepLocations.get(stepLocations.size() - 1).getLine();
         }
 
         @Override

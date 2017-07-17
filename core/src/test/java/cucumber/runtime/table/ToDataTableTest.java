@@ -7,13 +7,19 @@ import cucumber.runtime.xstream.LocalizedXStreams;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.Set;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
@@ -40,6 +46,54 @@ public class ToDataTableTest {
     }
 
     @Test
+    public void converts_only_selected_fields_of_object_to_table() throws ParseException {
+        RelationPojo relation = new RelationPojo();
+        relation.id = 12;
+        relation.user = new UserPojo(0);
+        relation.user.credits = 1000;
+        relation.user.name = "Tom Scott";
+        relation.user.birthDate = new SimpleDateFormat("yyyy-MM-dd").parse("1984-01-01");
+        relation.created = new SimpleDateFormat("yyyy-MM-dd").parse("2000-01-01");
+        relation.tags = new HashSet<String>(Arrays.asList("A","B", "C"));
+
+        DataTable table = tc.toTable(singletonList(relation), "id", "created");
+        assertEquals("" +
+            "      | id | created    |\n" +
+            "      | 12 | 01/01/2000 |\n" +
+            "", table.toString());
+    }
+
+    @Test
+    public void throws_exception_when_converting_complex_selected_field_to_table() throws ParseException {
+        RelationPojo relation = new RelationPojo();
+        relation.id = 12;
+        relation.user = new UserPojo(0);
+        relation.user.credits = 1000;
+        relation.user.name = "Tom Scott";
+        relation.user.birthDate = new SimpleDateFormat("yyyy-MM-dd").parse("1984-01-01");
+        relation.created = new SimpleDateFormat("yyyy-MM-dd").parse("2000-01-01");
+        relation.tags = new HashSet<String>(Arrays.asList("A","B", "C"));
+
+        try {
+            tc.toTable(singletonList(relation), "id", "created", "tags");
+            fail();
+        } catch (CucumberException expected){
+            assertEquals("" +
+                    "Don't know how to convert \"cucumber.runtime.table.ToDataTableTest$RelationPojo.tags\" into a table entry.\n" +
+                    "Either exclude tags from the table by selecting the fields to include:\n" +
+                    "\n" +
+                    "DataTable.create(entries, \"Field\", \"Other Field\")\n" +
+                    "\n" +
+                    "Or try writing your own converter:\n" +
+                    "\n" +
+                    "@cucumber.deps.com.thoughtworks.xstream.annotations.XStreamConverter(TagsConverter.class)\n" +
+                    "public Set tags;\n",
+                expected.getMessage());
+        }
+    }
+
+
+    @Test
     public void converts_list_of_beans_with_null_to_table() {
         List<UserPojo> users = tc.toList(personTableWithNull(), UserPojo.class);
         DataTable table = tc.toTable(users, "name", "birthDate", "credits");
@@ -62,6 +116,21 @@ public class ToDataTableTest {
             fail();
         } catch (CucumberException e) {
             assertEquals("No such field cucumber.runtime.table.ToDataTableTest$UserPojo.crapola", e.getMessage());
+        }
+    }
+
+    @Test
+    public void gives_explicit_error_message_on_field_name_missing_in_header() {
+        try {
+            tc.toList(TableParser.parse("" +
+                    "| name        |            |\n" +
+                    "| Sid Vicious | 10/05/1957 |\n" +
+                    "| Frank Zappa | 21/12/1940 |\n" +
+                    "", PARAMETER_INFO),
+                    UserPojo.class);
+            fail();
+        } catch (CucumberException e) {
+            assertEquals("Field name cannot be empty. Please check the table header.", e.getMessage());
         }
     }
 
@@ -213,6 +282,17 @@ public class ToDataTableTest {
                 AnEnum.class
         );
         assertEquals("[yes, null]", actual.toString());
+    }
+
+    // No setters
+    public static class RelationPojo {
+        public Integer id;
+        public UserPojo user;
+        public Date created;
+        public Set<String> tags = new HashSet<String>();
+
+        public RelationPojo() {
+        }
     }
 
     // No setters

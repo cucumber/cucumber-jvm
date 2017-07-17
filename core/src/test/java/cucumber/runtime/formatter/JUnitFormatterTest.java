@@ -1,6 +1,7 @@
 package cucumber.runtime.formatter;
 
 import cucumber.api.Result;
+import cucumber.runner.TimeServiceStub;
 import cucumber.runtime.Backend;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeOptions;
@@ -12,6 +13,7 @@ import cucumber.runtime.snippets.FunctionNameGenerator;
 import gherkin.pickles.PickleStep;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
+import org.junit.AssumptionViolatedException;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
@@ -22,6 +24,8 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -83,12 +87,46 @@ public class JUnitFormatterTest {
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
                 "<testsuite failures=\"0\" name=\"cucumber.runtime.formatter.JUnitFormatter\" skipped=\"0\" tests=\"1\" time=\"0.003\">\n" +
-                "    <testcase classname=\"path/test.feature\" name=\"scenario name\" time=\"0.003\">\n" +
+                "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0.003\">\n" +
                 "        <system-out><![CDATA[" +
                 "Given first step............................................................passed\n" +
                 "When second step............................................................passed\n" +
                 "Then third step.............................................................passed\n" +
                 "]]></system-out>\n" +
+                "    </testcase>\n" +
+                "</testsuite>\n";
+        assertXmlEqual(expected, formatterOutput);
+    }
+
+    @Test
+    public void should_format_skipped_scenario() throws Throwable {
+        CucumberFeature feature = TestHelper.feature("path/test.feature",
+                "Feature: feature name\n" +
+                        "  Scenario: scenario name\n" +
+                        "    Given first step\n" +
+                        "    When second step\n" +
+                        "    Then third step\n");
+        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        Throwable exception = new AssumptionViolatedException("message");
+        stepsToResult.put("first step", result("skipped", exception));
+        stepsToResult.put("second step", result("skipped"));
+        stepsToResult.put("third step", result("skipped"));
+        long stepDuration = milliSeconds(1);
+
+        String formatterOutput = runFeatureWithJUnitFormatter(feature, stepsToResult, stepDuration);
+
+        String stackTrace = getStackTrace(exception);
+        String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
+                "<testsuite failures=\"0\" name=\"cucumber.runtime.formatter.JUnitFormatter\" skipped=\"1\" tests=\"1\" time=\"0.003\">\n" +
+                "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0.003\">\n" +
+                "        <skipped message=\"" + stackTrace.replace("\n\t", "&#10;&#9;").replaceAll("\r", "&#13;") + "\"><![CDATA[" +
+                "Given first step............................................................skipped\n" +
+                "When second step............................................................skipped\n" +
+                "Then third step.............................................................skipped\n" +
+                "\n" +
+                "StackTrace:\n" +
+                stackTrace +
+                "]]></skipped>\n" +
                 "    </testcase>\n" +
                 "</testsuite>\n";
         assertXmlEqual(expected, formatterOutput);
@@ -111,8 +149,8 @@ public class JUnitFormatterTest {
         String formatterOutput = runFeatureWithJUnitFormatter(feature, stepsToResult, stepDuration);
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
-                "<testsuite failures=\"0\" name=\"cucumber.runtime.formatter.JUnitFormatter\" skipped=\"1\" tests=\"1\" time=\"0.001\">\n" +
-                "    <testcase classname=\"path/test.feature\" name=\"scenario name\" time=\"0.001\">\n" +
+                "<testsuite failures=\"0\" name=\"cucumber.runtime.formatter.JUnitFormatter\" skipped=\"1\" tests=\"1\" time=\"0.003\">\n" +
+                "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0.003\">\n" +
                 "        <skipped><![CDATA[" +
                 "Given first step............................................................pending\n" +
                 "When second step............................................................skipped\n" +
@@ -141,7 +179,7 @@ public class JUnitFormatterTest {
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
                 "<testsuite failures=\"1\" name=\"cucumber.runtime.formatter.JUnitFormatter\" skipped=\"0\" tests=\"1\" time=\"0.003\">\n" +
-                "    <testcase classname=\"path/test.feature\" name=\"scenario name\" time=\"0.003\">\n" +
+                "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0.003\">\n" +
                 "        <failure message=\"the stack trace\"><![CDATA[" +
                 "Given first step............................................................passed\n" +
                 "When second step............................................................passed\n" +
@@ -174,8 +212,8 @@ public class JUnitFormatterTest {
         String formatterOutput = runFeatureWithJUnitFormatter(feature, stepsToResult, hooks, stepHookDuration);
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
-                "<testsuite failures=\"1\" name=\"cucumber.runtime.formatter.JUnitFormatter\" skipped=\"0\" tests=\"1\" time=\"0.001\">\n" +
-                "    <testcase classname=\"path/test.feature\" name=\"scenario name\" time=\"0.001\">\n" +
+                "<testsuite failures=\"1\" name=\"cucumber.runtime.formatter.JUnitFormatter\" skipped=\"0\" tests=\"1\" time=\"0.004\">\n" +
+                "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0.004\">\n" +
                 "        <failure message=\"the stack trace\"><![CDATA[" +
                 "Given first step............................................................skipped\n" +
                 "When second step............................................................skipped\n" +
@@ -208,8 +246,8 @@ public class JUnitFormatterTest {
         String formatterOutput = runFeatureWithJUnitFormatter(feature, stepsToResult, hooks, stepHookDuration);
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
-                "<testsuite failures=\"0\" name=\"cucumber.runtime.formatter.JUnitFormatter\" skipped=\"1\" tests=\"1\" time=\"0.001\">\n" +
-                "    <testcase classname=\"path/test.feature\" name=\"scenario name\" time=\"0.001\">\n" +
+                "<testsuite failures=\"0\" name=\"cucumber.runtime.formatter.JUnitFormatter\" skipped=\"1\" tests=\"1\" time=\"0.004\">\n" +
+                "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0.004\">\n" +
                 "        <skipped><![CDATA[" +
                 "Given first step............................................................skipped\n" +
                 "When second step............................................................skipped\n" +
@@ -240,8 +278,8 @@ public class JUnitFormatterTest {
         String formatterOutput = runFeatureWithJUnitFormatter(feature, stepsToResult, hooks, stepHookDuration);
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
-                "<testsuite failures=\"1\" name=\"cucumber.runtime.formatter.JUnitFormatter\" skipped=\"0\" tests=\"1\" time=\"0.001\">\n" +
-                "    <testcase classname=\"path/test.feature\" name=\"scenario name\" time=\"0.001\">\n" +
+                "<testsuite failures=\"1\" name=\"cucumber.runtime.formatter.JUnitFormatter\" skipped=\"0\" tests=\"1\" time=\"0.004\">\n" +
+                "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0.004\">\n" +
                 "        <failure message=\"the stack trace\"><![CDATA[" +
                 "Given first step............................................................skipped\n" +
                 "When second step............................................................skipped\n" +
@@ -275,7 +313,7 @@ public class JUnitFormatterTest {
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
                 "<testsuite failures=\"1\" name=\"cucumber.runtime.formatter.JUnitFormatter\" skipped=\"0\" tests=\"1\" time=\"0.004\">\n" +
-                "    <testcase classname=\"path/test.feature\" name=\"scenario name\" time=\"0.004\">\n" +
+                "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0.004\">\n" +
                 "        <failure message=\"the stack trace\"><![CDATA[" +
                 "Given first step............................................................passed\n" +
                 "When second step............................................................passed\n" +
@@ -308,7 +346,7 @@ public class JUnitFormatterTest {
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
                 "<testsuite failures=\"0\" name=\"cucumber.runtime.formatter.JUnitFormatter\" skipped=\"0\" tests=\"1\" time=\"0.004\">\n" +
-                "    <testcase classname=\"path/test.feature\" name=\"scenario name\" time=\"0.004\">\n" +
+                "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0.004\">\n" +
                 "        <system-out><![CDATA[" +
                 "* first step................................................................passed\n" +
                 "* second step...............................................................passed\n" +
@@ -341,14 +379,14 @@ public class JUnitFormatterTest {
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
                 "<testsuite failures=\"0\" name=\"cucumber.runtime.formatter.JUnitFormatter\" skipped=\"0\" tests=\"2\" time=\"0.006\">\n" +
-                "    <testcase classname=\"path/test.feature\" name=\"outline_name\" time=\"0.003\">\n" +
+                "    <testcase classname=\"feature name\" name=\"outline_name\" time=\"0.003\">\n" +
                 "        <system-out><![CDATA[" +
                 "Given first step \"a\"........................................................passed\n" +
                 "When second step............................................................passed\n" +
                 "Then third step.............................................................passed\n" +
                 "]]></system-out>\n" +
                 "    </testcase>\n" +
-                "    <testcase classname=\"path/test.feature\" name=\"outline_name_2\" time=\"0.003\">\n" +
+                "    <testcase classname=\"feature name\" name=\"outline_name_2\" time=\"0.003\">\n" +
                 "        <system-out><![CDATA[" +
                 "Given first step \"b\"........................................................passed\n" +
                 "When second step............................................................passed\n" +
@@ -388,28 +426,28 @@ public class JUnitFormatterTest {
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
                 "<testsuite failures=\"0\" name=\"cucumber.runtime.formatter.JUnitFormatter\" skipped=\"0\" tests=\"4\" time=\"0.012\">\n" +
-                "    <testcase classname=\"path/test.feature\" name=\"outline name\" time=\"0.003\">\n" +
+                "    <testcase classname=\"feature name\" name=\"outline name\" time=\"0.003\">\n" +
                 "        <system-out><![CDATA[" +
                 "Given first step \"a\"........................................................passed\n" +
                 "When second step............................................................passed\n" +
                 "Then third step.............................................................passed\n" +
                 "]]></system-out>\n" +
                 "    </testcase>\n" +
-                "    <testcase classname=\"path/test.feature\" name=\"outline name 2\" time=\"0.003\">\n" +
+                "    <testcase classname=\"feature name\" name=\"outline name 2\" time=\"0.003\">\n" +
                 "        <system-out><![CDATA[" +
                 "Given first step \"b\"........................................................passed\n" +
                 "When second step............................................................passed\n" +
                 "Then third step.............................................................passed\n" +
                 "]]></system-out>\n" +
                 "    </testcase>\n" +
-                "    <testcase classname=\"path/test.feature\" name=\"outline name 3\" time=\"0.003\">\n" +
+                "    <testcase classname=\"feature name\" name=\"outline name 3\" time=\"0.003\">\n" +
                 "        <system-out><![CDATA[" +
                 "Given first step \"c\"........................................................passed\n" +
                 "When second step............................................................passed\n" +
                 "Then third step.............................................................passed\n" +
                 "]]></system-out>\n" +
                 "    </testcase>\n" +
-                "    <testcase classname=\"path/test.feature\" name=\"outline name 4\" time=\"0.003\">\n" +
+                "    <testcase classname=\"feature name\" name=\"outline name 4\" time=\"0.003\">\n" +
                 "        <system-out><![CDATA[" +
                 "Given first step \"d\"........................................................passed\n" +
                 "When second step............................................................passed\n" +
@@ -443,14 +481,14 @@ public class JUnitFormatterTest {
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
                 "<testsuite failures=\"0\" name=\"cucumber.runtime.formatter.JUnitFormatter\" skipped=\"0\" tests=\"2\" time=\"0.006\">\n" +
-                "    <testcase classname=\"path/test.feature\" name=\"outline name a\" time=\"0.003\">\n" +
+                "    <testcase classname=\"feature name\" name=\"outline name a\" time=\"0.003\">\n" +
                 "        <system-out><![CDATA[" +
                 "Given first step \"a\"........................................................passed\n" +
                 "When second step............................................................passed\n" +
                 "Then third step.............................................................passed\n" +
                 "]]></system-out>\n" +
                 "    </testcase>\n" +
-                "    <testcase classname=\"path/test.feature\" name=\"outline name b\" time=\"0.003\">\n" +
+                "    <testcase classname=\"feature name\" name=\"outline name b\" time=\"0.003\">\n" +
                 "        <system-out><![CDATA[" +
                 "Given first step \"b\"........................................................passed\n" +
                 "When second step............................................................passed\n" +
@@ -498,7 +536,7 @@ public class JUnitFormatterTest {
         RuntimeOptions runtimeOptions = new RuntimeOptions(args);
         Backend backend = mock(Backend.class);
         when(backend.getSnippet(any(PickleStep.class), anyString(), any(FunctionNameGenerator.class))).thenReturn("TEST SNIPPET");
-        final cucumber.runtime.Runtime runtime = new Runtime(resourceLoader, classLoader, asList(backend), runtimeOptions);
+        final cucumber.runtime.Runtime runtime = new Runtime(resourceLoader, classLoader, asList(backend), runtimeOptions, new TimeServiceStub(0L), null);
         runtime.run();
         return report;
     }
@@ -542,5 +580,11 @@ public class JUnitFormatterTest {
 
     private Long milliSeconds(int milliSeconds) {
         return milliSeconds * 1000000L;
+    }
+
+    private String getStackTrace(Throwable exception) {
+        StringWriter sw = new StringWriter();
+        exception.printStackTrace(new PrintWriter(sw));
+        return sw.toString();
     }
 }

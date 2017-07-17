@@ -6,7 +6,7 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 /**
- * Runs cucumber every detected feature as separated test
+ * Runs each cucumber scenario found in the features as separated test
  */
 public abstract class AbstractTestNGCucumberTests {
     private TestNGCucumberRunner testNGCucumberRunner;
@@ -16,17 +16,19 @@ public abstract class AbstractTestNGCucumberTests {
         testNGCucumberRunner = new TestNGCucumberRunner(this.getClass());
     }
 
-    @Test(groups = "cucumber", description = "Runs Cucumber Feature", dataProvider = "features")
-    public void feature(CucumberFeatureWrapper cucumberFeature) {
-        testNGCucumberRunner.runCucumber(cucumberFeature.getCucumberFeature());
+    @Test(groups = "cucumber", description = "Runs Cucumber Scenarios", dataProvider = "scenarios")
+    public void runScenario(PickleEventWrapper pickleWrapper, CucumberFeatureWrapper featureWrapper) throws Throwable {
+        // the 'featureWrapper' parameter solely exists to display the feature file in a test report
+        testNGCucumberRunner.runScenario(pickleWrapper.getPickleEvent());
     }
 
     /**
-     * @return returns two dimensional array of {@link CucumberFeatureWrapper} objects.
+     * @return returns a two dimensional array of {@link PickleEventWrapper} scenarios
+     * with their associated {@link CucumberFeatureWrapper) feature.
      */
     @DataProvider
-    public Object[][] features() {
-        return testNGCucumberRunner.provideFeatures();
+    public Object[][] scenarios() {
+        return testNGCucumberRunner.provideScenarios();
     }
 
     @AfterClass(alwaysRun = true)

@@ -1,14 +1,10 @@
 package cucumber.runtime;
 
-import cucumber.api.Result;
-import cucumber.api.TestCase;
-import cucumber.api.TestStep;
 import cucumber.api.event.EventHandler;
 import cucumber.api.event.EventListener;
 import cucumber.api.event.EventPublisher;
-import cucumber.api.event.TestCaseStarted;
+import cucumber.api.event.SnippetsSuggestedEvent;
 import cucumber.api.event.TestSourceRead;
-import cucumber.api.event.TestStepFinished;
 import gherkin.AstBuilder;
 import gherkin.GherkinDialect;
 import gherkin.GherkinDialectProvider;
@@ -21,7 +17,6 @@ import gherkin.ast.GherkinDocument;
 import gherkin.ast.ScenarioDefinition;
 import gherkin.ast.Step;
 import gherkin.pickles.PickleLocation;
-import gherkin.pickles.PickleStep;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,32 +29,24 @@ public class UndefinedStepsTracker implements EventListener {
     private final Map<String, String> pathToSourceMap = new HashMap<String, String>();
     private final Map<String, FeatureStepMap> pathToStepMap = new HashMap<String, FeatureStepMap>();
     private boolean hasUndefinedSteps = false;
-    private String currentUri;
 
     private EventHandler<TestSourceRead> testSourceReadHandler = new EventHandler<TestSourceRead>() {
         @Override
         public void receive(TestSourceRead event) {
-            pathToSourceMap.put(event.path, event.source);
+            pathToSourceMap.put(event.uri, event.source);
         }
     };
-    private EventHandler<TestCaseStarted> testCaseStartedHandler = new EventHandler<TestCaseStarted>() {
+    private EventHandler<SnippetsSuggestedEvent> snippetsSuggestedHandler = new EventHandler<SnippetsSuggestedEvent>() {
         @Override
-        public void receive(TestCaseStarted event) {
-            handleTestCaseStarted(event.testCase);
-        }
-    };
-    private EventHandler<TestStepFinished> testStepFinishedHandler = new EventHandler<TestStepFinished>() {
-        @Override
-        public void receive(TestStepFinished event) {
-            handleTestStepFinished(event.testStep, event.result);
+        public void receive(SnippetsSuggestedEvent event) {
+            handleSnippetsSuggested(event.uri, event.stepLocations, event.snippets);
         }
     };
 
     @Override
     public void setEventPublisher(EventPublisher publisher) {
         publisher.registerHandlerFor(TestSourceRead.class, testSourceReadHandler);
-        publisher.registerHandlerFor(TestCaseStarted.class, testCaseStartedHandler);
-        publisher.registerHandlerFor(TestStepFinished.class, testStepFinishedHandler);
+        publisher.registerHandlerFor(SnippetsSuggestedEvent.class, snippetsSuggestedHandler);
     }
 
     public boolean hasUndefinedSteps() {
@@ -70,29 +57,22 @@ public class UndefinedStepsTracker implements EventListener {
         return snippets;
     }
 
-    void handleTestCaseStarted(TestCase testCase) {
-        currentUri = testCase.getPath();
-    }
-
-    void handleTestStepFinished(TestStep step, Result result) {
-        if (result.is(Result.Type.UNDEFINED)) {
-            hasUndefinedSteps = true;
-            String keyword = givenWhenThenKeyword(step.getPickleStep());
-            for (String rawSnippet : result.getSnippets()) {
-                String snippet = rawSnippet.replace("**KEYWORD**", keyword);
-                if (!snippets.contains(snippet)) {
-                    snippets.add(snippet);
-                }
+    void handleSnippetsSuggested(String uri, List<PickleLocation> stepLocations, List<String> snippets) {
+        hasUndefinedSteps = true;
+        String keyword = givenWhenThenKeyword(uri, stepLocations);
+        for (String rawSnippet : snippets) {
+            String snippet = rawSnippet.replace("**KEYWORD**", keyword);
+            if (!this.snippets.contains(snippet)) {
+                this.snippets.add(snippet);
             }
         }
     }
 
-    private String givenWhenThenKeyword(PickleStep step) {
+    private String givenWhenThenKeyword(String uri, List<PickleLocation> stepLocations) {
         String keyword = null;
-        if (!step.getLocations().isEmpty()) {
-            List<PickleLocation> stepLocations = step.getLocations();
-            if (pathToSourceMap.containsKey(currentUri)) {
-                keyword = getKeywordFromSource(currentUri, stepLocations);
+        if (!stepLocations.isEmpty()) {
+            if (pathToSourceMap.containsKey(uri)) {
+                keyword = getKeywordFromSource(uri, stepLocations);
             }
         }
         return keyword != null ? keyword : getFirstGivenKeyword(dialectProvider.getDefaultDialect());
@@ -176,21 +156,21 @@ public class UndefinedStepsTracker implements EventListener {
         return keyword.replaceAll("[\\s',!]", "");
     }
 
-    private class FeatureStepMap {
-        public final GherkinDialect dialect;
-        public final Map<Integer, StepNode> stepMap;
+    private static final class FeatureStepMap {
+        final GherkinDialect dialect;
+        final Map<Integer, StepNode> stepMap;
 
-        public FeatureStepMap(GherkinDialect dialect, Map<Integer, StepNode> stepMap) {
+        FeatureStepMap(GherkinDialect dialect, Map<Integer, StepNode> stepMap) {
             this.dialect = dialect;
             this.stepMap = stepMap;
         }
     }
 
-    private class StepNode {
-        public final Step step;
-        public final StepNode previous;
+    private static final class StepNode {
+        final Step step;
+        final StepNode previous;
 
-        public StepNode(Step step, StepNode previous) {
+        StepNode(Step step, StepNode previous) {
             this.step = step;
             this.previous = previous;
         }

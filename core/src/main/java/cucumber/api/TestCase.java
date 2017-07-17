@@ -23,7 +23,7 @@ public class TestCase {
         boolean skipNextStep = false;
         Long startTime = bus.getTime();
         bus.send(new TestCaseStarted(startTime, this));
-        ScenarioImpl scenarioResult = new ScenarioImpl(bus, pickleEvent.pickle);
+        ScenarioImpl scenarioResult = new ScenarioImpl(bus, pickleEvent);
         for (TestStep step : testSteps) {
             Result stepResult = step.run(bus, pickleEvent.pickle.getLanguage(), scenarioResult, skipNextStep);
             if (!stepResult.is(Result.Type.PASSED)) {
@@ -47,7 +47,7 @@ public class TestCase {
         return fileColonLine(pickleEvent.pickle.getLocations().get(0)) + " # " + getName();
     }
 
-    public String getPath() {
+    public String getUri() {
         return pickleEvent.uri;
     }
 

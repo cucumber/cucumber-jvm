@@ -6,6 +6,7 @@ import cucumber.runner.EventBus;
 import cucumber.runner.PickleTestStep;
 import cucumber.runtime.DefinitionMatch;
 import gherkin.pickles.PickleStep;
+import org.junit.AssumptionViolatedException;
 import org.junit.Test;
 import org.mockito.InOrder;
 
@@ -60,6 +61,15 @@ public class TestStepTest {
     }
 
     @Test
+    public void result_is_skipped_when_step_definition_throws_assumption_violated_exception() throws Throwable {
+        doThrow(AssumptionViolatedException.class).when(definitionMatch).runStep(anyString(), (Scenario)any());
+
+        Result result = step.run(bus, language, scenario, false);
+
+        assertEquals(Result.Type.SKIPPED, result.getStatus());
+    }
+
+    @Test
     public void result_is_failed_when_step_definition_throws_exception() throws Throwable {
         doThrow(RuntimeException.class).when(definitionMatch).runStep(anyString(), (Scenario)any());
 
@@ -79,9 +89,13 @@ public class TestStepTest {
 
     @Test
     public void step_execution_time_is_measured() throws Throwable {
-        Long duration = new Long(1234);
+        Long duration = 1234L;
         TestStep step = new PickleTestStep("uri", mock(PickleStep.class), definitionMatch);
         when(bus.getTime()).thenReturn(0l, 1234l);
+
+        when(bus.getTime())
+            .thenReturn(0L)
+            .thenReturn(1234L);
 
         Result result = step.run(bus, language, scenario, false);
 

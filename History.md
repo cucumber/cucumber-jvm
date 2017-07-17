@@ -1,15 +1,45 @@
 ## [2.0.0-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v1.2.5...master) (In Git)
 
+* [Android] Update the version of the cucumber-jvm-deps dependency - to a version without Java8 bytecode ([#1170](https://github.com/cucumber/cucumber-jvm/pull/1170), [#893](https://github.com/cucumber/cucumber-jvm/issues/893) Björn Rasmusson)
+* [Needle] Handle circular dependencies ([#853](https://github.com/cucumber/cucumber-jvm/pull/853) Lars Bilger)  
+* [Core] Use "uri" instead of "path" to reference feature files in externa APIs ([#1179](https://github.com/cucumber/cucumber-jvm/pull/1179) Björn Rasmusson)
+* [Core] Separate rerun paths by a new line character ([#1177](https://github.com/cucumber/cucumber-jvm/pull/1177) M.P. Korstanje)
+  * Rerun files that separate features by a space will no longer be correctly parsed 
+* [TestNG] Run a separate TestNG test per scenario (deprecate one TestNG test per feature, and one TestNG for the whole suite) ([#1174](https://github.com/cucumber/cucumber-jvm/pull/1174), [#1113](https://github.com/cucumber/cucumber-jvm/issues/1113) Luciano van der Veekens, Björn Rasmusson) 
+* [Core] Close OutputStream for embedded images in HTML formatter ([#1175](https://github.com/cucumber/cucumber-jvm/pull/1175), [#1108](https://github.com/cucumber/cucumber-jvm/issues/1108) M.P. Korstanje) 
+* [Scala] Compile cucumber-scala_2.12 against Java 8 ([#1171](https://github.com/cucumber/cucumber-jvm/pull/1171), [#1087](https://github.com/cucumber/cucumber-jvm/issues/1087) M.P. Korstanje, Paolo Ambrosio). This includes:
+  * Update Scala Versions
+    - 2.12.0-M1 to 2.12.2
+    - 2.11.8 to 2.11.11
+  * Use Manifest instead of Java reflection to provide type information
+* [Core] Avoid closing System.out or System.err from formatters ([#1173](https://github.com/cucumber/cucumber-jvm/issues/1173) Björn Rasmusson)
+* [Core] Decouple UndefinedStepsTracker from Glue ([#1019](https://github.com/cucumber/cucumber-jvm/pull/1019) [#1172](https://github.com/cucumber/cucumber-jvm/pull/1172) Illapikov, M.P. Korstanje)
+* [Core] Add TestRunStarted event, let Stats handle the exit code ([#1162](https://github.com/cucumber/cucumber-jvm/pull/1162) Björn Rasmusson)
+* [Core, JUnit, Android] Add the ambiguous result type ([#1168](https://github.com/cucumber/cucumber-jvm/pull/1168) Björn Rasmusson)
+* [Core] Add the SnippetsSuggestedEvent ([#1163](https://github.com/cucumber/cucumber-jvm/pull/1163) Björn Rasmusson)
+* [Java] Prevent MethodScanner from checking Object.class methods ([#940](https://github.com/cucumber/cucumber-jvm/pull/940) Łukasz Suski)
+* [Weld] Use Weld SE 2.4.4.Final ([#1166](https://github.com/cucumber/cucumber-jvm/pull/1166) Frank Seidinger)
+* [Core] Provide a unique id of the current scenario to the hooks. ([#1160](https://github.com/cucumber/cucumber-jvm/pull/1160) Björn Rasmusson)
+* [Gosu] Fix and re-enable Gosu for 2.0.0 ([#1155](https://github.com/cucumber/cucumber-jvm/pull/1155), [#1086](https://github.com/cucumber/cucumber-jvm/pull/1086), [#874](https://github.com/cucumber/cucumber-jvm/pull/874) Kyle Moore, M.P. Korstanje) 
+* [Core] Fix issue where ComplexTypeWriter would create unbalanced tables. ([#1042](https://github.com/cucumber/cucumber-jvm/pull/1042) Roy Jacobs, M.P. Korstanje) 
+* [Guice] Use the ContextClassLoader when loading InjectorSource. ([#1036](https://github.com/cucumber/cucumber-jvm/pull/1036), [#1037](https://github.com/cucumber/cucumber-jvm/pull/1037) Kyle Moore)
+* [Core] Allow global registration of custom XStream converters. ([#1010](https://github.com/cucumber/cucumber-jvm/pull/1010), [#1009](https://github.com/cucumber/cucumber-jvm/issues/1009) Chris Rankin) 
+* [Spring] Support multithreaded execution of scenarios ([#1106](https://github.com/cucumber/cucumber-jvm/issues/1106), [#1107](https://github.com/cucumber/cucumber-jvm/issues/1107), [#1148](https://github.com/cucumber/cucumber-jvm/issues/1148), [#1153](https://github.com/cucumber/cucumber-jvm/pull/1153) Ismail Bhana, M.P. Korstanje) 
+* [Java8, Kotlin Java8] Support java 8 method references ([#1140](https://github.com/cucumber/cucumber-jvm/pull/1140) M.P. Korstanje) 
+* [Core] Show explicit error message when field name missed in table header ([#1014](https://github.com/cucumber/cucumber-jvm/pull/1014) Mykola Gurov) 
+* [Examples] Properly quit selenium in webbit examples ([#1146](https://github.com/cucumber/cucumber-jvm/pull/1146) Alberto Scotto)
+* [JUnit] Use AssumptionFailed to mark scenarios/steps as skipped ([#1142](https://github.com/cucumber/cucumber-jvm/pull/1142) Björn Rasmusson)
+* [Core] Map AssumptionViolatedException to Skipped status ([#1145](https://github.com/cucumber/cucumber-jvm/pull/1145), [#1007](https://github.com/cucumber/cucumber-jvm/issues/1007) Björn Rasmusson)
 * [Java] SnippetGenerator recognises parameters from Scenario Outline ([#1078](https://github.com/cucumber/cucumber-jvm/pull/1078) Andrey Vokin)
 * [Java8] Allow lambda steps to throw checked Exceptions ([#1001](https://github.com/cucumber/cucumber-jvm/issues/1001), [#1110](https://github.com/cucumber/cucumber-jvm/pull/1110) Christian Hujer)
-* [JUnit] Add `--[no-]step-notifications` option to JunitOptions ([#1135](https://github.com/cucumber/cucumber-jvm/pull/1135), [#263](https://github.com/cucumber/cucumber-jvm/issues/263), [#577](https://github.com/cucumber/cucumber-jvm/issues/577) M.P. Korstanje)
+* [JUnit] Add `--[no-]step-notifications` option to JunitOptions (no step notifications is the default) ([#1135](https://github.com/cucumber/cucumber-jvm/pull/1135), [#1159](https://github.com/cucumber/cucumber-jvm/pull/1159), [#263](https://github.com/cucumber/cucumber-jvm/issues/263), [#935](https://github.com/cucumber/cucumber-jvm/issues/935), [#577](https://github.com/cucumber/cucumber-jvm/issues/577) M.P. Korstanje, Björn Rasmusson)
 * [JUnit] Use deterministic unique ids in Descriptions ([#1134](https://github.com/cucumber/cucumber-jvm/pull/1134), [#1120](https://github.com/cucumber/cucumber-jvm/issues/1120) mpkorstanje)
 * [All] Support [Tag Expressions](https://github.com/cucumber/cucumber/tree/master/tag-expressions) (part of [#1035](https://github.com/cucumber/cucumber-jvm/pull/1035) Björn Rasmusson)
 * [All] Upgrade to Gherkin 4.1 ([#1035](https://github.com/cucumber/cucumber-jvm/pull/1035), [#1131](https://github.com/cucumber/cucumber-jvm/pull/1131), [#1133](https://github.com/cucumber/cucumber-jvm/pull/1133) Björn Rasmusson, M.P. Korstanje). This also fixes:
   * JsonFormatter attach text to last step when sceneario.write is invoked from after hook ([#1080](https://github.com/cucumber/cucumber-jvm/issues/1080))
   * CucumberOptions: Tags and name do not work well together ([#976](https://github.com/cucumber/cucumber-jvm/issues/976))
   * Tags at the examples block are not treated as actual tags in scenario ([#849](https://github.com/cucumber/cucumber-jvm/issues/849))
-  * NullPointerException from @Before tag ([#701](https://github.com/cucumber/cucumber-jvm/issues/701))
+  * NullPointerException from @Before tag ([#638](https://github.com/cucumber/cucumber-jvm/issues/638), [#701](https://github.com/cucumber/cucumber-jvm/issues/701))
 * [All] Change the maven groupId to io.cucumber (part of [#1035](https://github.com/cucumber/cucumber-jvm/pull/1035) Björn Rasmusson)
 
 ## [1.2.5](https://github.com/cucumber/cucumber-jvm/compare/v1.2.4...v1.2.5) (2016-09-12)

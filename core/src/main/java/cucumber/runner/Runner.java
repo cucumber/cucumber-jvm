@@ -4,6 +4,7 @@ import cucumber.api.HookType;
 import cucumber.api.StepDefinitionReporter;
 import cucumber.api.TestCase;
 import cucumber.api.TestStep;
+import cucumber.api.event.SnippetsSuggestedEvent;
 import cucumber.runtime.AmbiguousStepDefinitionsMatch;
 import cucumber.runtime.AmbiguousStepDefinitionsException;
 import cucumber.runtime.Backend;
@@ -114,10 +115,13 @@ public class Runner implements UnreportedStepExecutor {
                             snippets.add(snippet);
                         }
                     }
-                    match = new UndefinedStepDefinitionMatch(step, snippets);
+                    if (!snippets.isEmpty()) {
+                        bus.send(new SnippetsSuggestedEvent(bus.getTime(), pickleEvent.uri, step.getLocations(), snippets));
+                    }
+                    match = new UndefinedStepDefinitionMatch(step);
                 }
             } catch (AmbiguousStepDefinitionsException e) {
-                match = new AmbiguousStepDefinitionsMatch(step, e);
+                match = new AmbiguousStepDefinitionsMatch(pickleEvent.uri, step, e);
             } catch (Throwable t) {
                 match = new FailedStepInstantiationMatch(pickleEvent.uri, step, t);
             }

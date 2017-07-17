@@ -37,6 +37,7 @@ import gherkin.pickles.PickleString;
 import gherkin.pickles.PickleTable;
 import gherkin.pickles.PickleTag;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -119,11 +120,11 @@ class HTMLFormatter implements Formatter {
     };
 
     public HTMLFormatter(URL htmlReportDir) {
-        this.htmlReportDir = htmlReportDir;
+        this(htmlReportDir, createJsOut(htmlReportDir));
     }
 
-    public HTMLFormatter(URL htmlReportDir, NiceAppendable jsOut) {
-        this(htmlReportDir);
+    HTMLFormatter(URL htmlReportDir, NiceAppendable jsOut) {
+        this.htmlReportDir = htmlReportDir;
         this.jsOut = jsOut;
     }
 
@@ -139,12 +140,12 @@ class HTMLFormatter implements Formatter {
     }
 
     private void handleTestSourceRead(TestSourceRead event) {
-        testSources.addSource(event.path, event.source);
+        testSources.addTestSourceReadEvent(event.uri, event);
     }
 
     private void handleTestCaseStarted(TestCaseStarted event) {
         if (firstFeature) {
-            jsOut().append("$(document).ready(function() {").append("var ")
+            jsOut.append("$(document).ready(function() {").append("var ")
                     .append(JS_FORMATTER_VAR).append(" = new CucumberHTML.DOMFormatter($('.cucumber-report'));");
             firstFeature = false;
         }
@@ -188,7 +189,7 @@ class HTMLFormatter implements Formatter {
             String extension = MIME_TYPES_EXTENSIONS.get(mimeType);
             if (extension != null) {
                 StringBuilder fileName = new StringBuilder("embedded").append(embeddedIndex++).append(".").append(extension);
-                writeBytesAndClose(event.data, reportFileOutputStream(fileName.toString()));
+                writeBytesToURL(event.data, toUrl(fileName.toString()));
                 jsFunctionCall("embedding", mimeType, fileName);
             }
         }
@@ -200,15 +201,15 @@ class HTMLFormatter implements Formatter {
 
     private void finishReport() {
         if (!firstFeature) {
-            jsOut().append("});");
+            jsOut.append("});");
             copyReportFiles();
         }
-        jsOut().close();
+        jsOut.close();
     }
 
     private void handleStartOfFeature(TestCase testCase) {
-        if (currentFeatureFile == null || !currentFeatureFile.equals(testCase.getPath())) {
-            currentFeatureFile = testCase.getPath();
+        if (currentFeatureFile == null || !currentFeatureFile.equals(testCase.getUri())) {
+            currentFeatureFile = testCase.getUri();
             jsFunctionCall("uri", currentFeatureFile);
             jsFunctionCall("feature", createFeature(testCase));
         }
@@ -216,7 +217,7 @@ class HTMLFormatter implements Formatter {
 
     private Map<String, Object> createFeature(TestCase testCase) {
         Map<String, Object> featureMap = new HashMap<String, Object>();
-        Feature feature = testSources.getFeature(testCase.getPath());
+        Feature feature = testSources.getFeature(testCase.getUri());
         if (feature != null) {
             featureMap.put("keyword", feature.getKeyword());
             featureMap.put("name", feature.getName());
@@ -441,7 +442,7 @@ class HTMLFormatter implements Formatter {
     }
 
     private void jsFunctionCall(String functionName, Object... args) {
-        NiceAppendable out = jsOut().append(JS_FORMATTER_VAR + ".").append(functionName).append("(");
+        NiceAppendable out = jsOut.append(JS_FORMATTER_VAR + ".").append(functionName).append("(");
         boolean comma = false;
         for (Object arg : args) {
             if (comma) {
@@ -463,12 +464,22 @@ class HTMLFormatter implements Formatter {
             if (textAssetStream == null) {
                 throw new CucumberException("Couldn't find " + textAsset + ". Is cucumber-html on your classpath? Make sure you have the right version.");
             }
-            String baseName = new File(textAsset).getName();
-            writeStreamAndClose(textAssetStream, reportFileOutputStream(baseName));
+            String fileName = new File(textAsset).getName();
+            writeStreamToURL(textAssetStream, toUrl(fileName));
         }
     }
 
-    private void writeStreamAndClose(InputStream in, OutputStream out) {
+    private URL toUrl(String fileName) {
+        try {
+            return new URL(htmlReportDir, fileName);
+        } catch (IOException e) {
+           throw new CucumberException(e);
+        }
+    }
+
+    private static void writeStreamToURL(InputStream in, URL url) {
+        OutputStream out = createReportFileOutputStream(url);
+
         byte[] buffer = new byte[16 * 1024];
         try {
             int len = in.read(buffer);
@@ -476,36 +487,45 @@ class HTMLFormatter implements Formatter {
                 out.write(buffer, 0, len);
                 len = in.read(buffer);
             }
-            out.close();
         } catch (IOException e) {
             throw new CucumberException("Unable to write to report file item: ", e);
+        } finally {
+            closeQuietly(out);
         }
     }
 
-    private void writeBytesAndClose(byte[] buf, OutputStream out) {
+    private static void writeBytesToURL(byte[] buf, URL url) throws CucumberException {
+        OutputStream out = createReportFileOutputStream(url);
         try {
             out.write(buf);
         } catch (IOException e) {
             throw new CucumberException("Unable to write to report file item: ", e);
+        } finally {
+            closeQuietly(out);
         }
     }
 
-    private NiceAppendable jsOut() {
-        if (jsOut == null) {
-            try {
-                jsOut = new NiceAppendable(new OutputStreamWriter(reportFileOutputStream(JS_REPORT_FILENAME), "UTF-8"));
-            } catch (IOException e) {
-                throw new CucumberException(e);
-            }
-        }
-        return jsOut;
-    }
-
-    private OutputStream reportFileOutputStream(String fileName) {
+    private static NiceAppendable createJsOut(URL htmlReportDir) {
         try {
-            return new URLOutputStream(new URL(htmlReportDir, fileName));
+            return new NiceAppendable(new OutputStreamWriter(createReportFileOutputStream(new URL(htmlReportDir, JS_REPORT_FILENAME)), "UTF-8"));
         } catch (IOException e) {
             throw new CucumberException(e);
+        }
+    }
+
+    private static OutputStream createReportFileOutputStream(URL url) {
+        try {
+            return new URLOutputStream(url);
+        } catch (IOException e) {
+            throw new CucumberException(e);
+        }
+    }
+
+    private static void closeQuietly(Closeable out) {
+        try {
+            out.close();
+        } catch (IOException ignored) {
+            // go gentle into that good night
         }
     }
 

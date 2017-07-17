@@ -18,7 +18,6 @@ import gherkin.GherkinDialect;
 import gherkin.GherkinDialectProvider;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -29,7 +28,10 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+
+import java.io.Closeable;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -37,10 +39,8 @@ import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 class JUnitFormatter implements Formatter, StrictAware {
     private final Writer out;
@@ -71,7 +71,7 @@ class JUnitFormatter implements Formatter, StrictAware {
     private EventHandler<TestCaseFinished> caseFinishedHandler = new EventHandler<TestCaseFinished>() {
         @Override
         public void receive(TestCaseFinished event) {
-            handleTestCaseFinished();
+            handleTestCaseFinished(event);
         }
     };
     private EventHandler<TestRunFinished> runFinishedHandler = new EventHandler<TestRunFinished>() {
@@ -83,7 +83,7 @@ class JUnitFormatter implements Formatter, StrictAware {
 
     public JUnitFormatter(URL out) throws IOException {
         this.out = new UTF8OutputStreamWriter(new URLOutputStream(out));
-        TestCase.treatSkippedAsFailure = false;
+        TestCase.treatConditionallySkippedAsFailure = false;
         TestCase.currentFeatureFile = null;
         TestCase.previousTestCaseName = "";
         TestCase.exampleNumber = 1;
@@ -106,12 +106,12 @@ class JUnitFormatter implements Formatter, StrictAware {
     }
 
     private void handleTestSourceRead(TestSourceRead event) {
-        TestCase.sourceMap.put(event.path, event);
+        TestCase.testSources.addTestSourceReadEvent(event.uri, event);
     }
 
     private void handleTestCaseStarted(TestCaseStarted event) {
-        if (TestCase.currentFeatureFile == null || !TestCase.currentFeatureFile.equals(event.testCase.getPath())) {
-            TestCase.currentFeatureFile = event.testCase.getPath();
+        if (TestCase.currentFeatureFile == null || !TestCase.currentFeatureFile.equals(event.testCase.getUri())) {
+            TestCase.currentFeatureFile = event.testCase.getUri();
             TestCase.previousTestCaseName = "";
             TestCase.exampleNumber = 1;
         }
@@ -127,16 +127,14 @@ class JUnitFormatter implements Formatter, StrictAware {
         if (!event.testStep.isHook()) {
             testCase.steps.add(event.testStep);
             testCase.results.add(event.result);
-            testCase.updateElement(doc, root);
-        } else {
-            testCase.hookResults.add(event.result);
-            testCase.updateElement(doc, root);
         }
     }
 
-    private void handleTestCaseFinished() {
+    private void handleTestCaseFinished(TestCaseFinished event) {
         if (testCase.steps.isEmpty()) {
-            testCase.handleEmptyTestCase(doc, root);
+            testCase.handleEmptyTestCase(doc, root, event.result);
+        } else {
+            testCase.addTestCaseElement(doc, root, event.result);
         }
     }
 
@@ -156,6 +154,7 @@ class JUnitFormatter implements Formatter, StrictAware {
             StreamResult result = new StreamResult(out);
             DOMSource source = new DOMSource(doc);
             trans.transform(source, result);
+            closeQuietly(out);
         } catch (TransformerException e) {
             throw new CucumberException("Error while transforming.", e);
         }
@@ -199,12 +198,12 @@ class JUnitFormatter implements Formatter, StrictAware {
 
     @Override
     public void setStrict(boolean strict) {
-        TestCase.treatSkippedAsFailure = strict;
+        TestCase.treatConditionallySkippedAsFailure = strict;
     }
 
     private static class TestCase {
         private static final DecimalFormat NUMBER_FORMAT = (DecimalFormat) NumberFormat.getNumberInstance(Locale.US);
-        private static final Map<String, TestSourceRead> sourceMap = new HashMap<String, TestSourceRead>();
+        private static final TestSourcesModel testSources = new TestSourcesModel();
 
         static {
             NUMBER_FORMAT.applyPattern("0.######");
@@ -217,10 +216,9 @@ class JUnitFormatter implements Formatter, StrictAware {
         static String currentFeatureFile;
         static String previousTestCaseName;
         static int exampleNumber;
-        static boolean treatSkippedAsFailure = false;
+        static boolean treatConditionallySkippedAsFailure = false;
         final List<TestStep> steps = new ArrayList<TestStep>();
         final List<Result> results = new ArrayList<Result>();
-        final List<Result> hookResults = new ArrayList<Result>();
         private final cucumber.api.TestCase testCase;
 
         private Element createElement(Document doc) {
@@ -228,7 +226,7 @@ class JUnitFormatter implements Formatter, StrictAware {
         }
 
         private void writeElement(Document doc, Element tc) {
-            tc.setAttribute("classname", testCase.getPath());
+            tc.setAttribute("classname", testSources.getFeatureName(currentFeatureFile));
             tc.setAttribute("name", calculateElementName(testCase));
         }
 
@@ -247,62 +245,46 @@ class JUnitFormatter implements Formatter, StrictAware {
             return testCaseName.indexOf(' ') != -1;
         }
 
-        public void updateElement(Document doc, Element tc) {
-            tc.setAttribute("time", calculateTotalDurationString());
+        public void addTestCaseElement(Document doc, Element tc, Result result) {
+            tc.setAttribute("time", calculateTotalDurationString(result));
 
             StringBuilder sb = new StringBuilder();
             addStepAndResultListing(sb);
-            Result skipped = null, failed = null;
-            for (Result result : results) {
-                if (result.is(Result.Type.FAILED)) failed = result;
-                if (result.is(Result.Type.UNDEFINED) || result.is(Result.Type.PENDING)) skipped = result;
-            }
-            for (Result result : hookResults) {
-                if (failed == null && result.is(Result.Type.FAILED)) failed = result;
-                if (skipped == null && result.is(Result.Type.PENDING)) skipped = result;
-            }
             Element child;
-            if (failed != null) {
-                addStackTrace(sb, failed);
-                child = createElementWithMessage(doc, sb, "failure", failed.getErrorMessage());
-            } else if (skipped != null) {
-                if (treatSkippedAsFailure) {
+            if (result.is(Result.Type.FAILED)) {
+                addStackTrace(sb, result);
+                child = createElementWithMessage(doc, sb, "failure", result.getErrorMessage());
+            } else if (result.is(Result.Type.AMBIGUOUS)) {
+                addStackTrace(sb, result);
+                child = createElementWithMessage(doc, sb, "failure", result.getErrorMessage());
+            } else if (result.is(Result.Type.PENDING) || result.is(Result.Type.UNDEFINED)) {
+                if (treatConditionallySkippedAsFailure) {
                     child = createElementWithMessage(doc, sb, "failure", "The scenario has pending or undefined step(s)");
                 }
                 else {
                     child = createElement(doc, sb, "skipped");
                 }
+            } else if (result.is(Result.Type.SKIPPED) && result.getError() != null) {
+                addStackTrace(sb, result);
+                child = createElementWithMessage(doc, sb, "skipped", result.getErrorMessage());
             } else {
                 child = createElement(doc, sb, "system-out");
             }
 
-            Node existingChild = tc.getFirstChild();
-            if (existingChild == null) {
-                tc.appendChild(child);
-            } else {
-                tc.replaceChild(child, existingChild);
-            }
+            tc.appendChild(child);
         }
 
-        public void handleEmptyTestCase(Document doc, Element tc) {
-            tc.setAttribute("time", calculateTotalDurationString());
+        public void handleEmptyTestCase(Document doc, Element tc, Result result) {
+            tc.setAttribute("time", calculateTotalDurationString(result));
 
-            String resultType = treatSkippedAsFailure ? "failure" : "skipped";
+            String resultType = treatConditionallySkippedAsFailure ? "failure" : "skipped";
             Element child = createElementWithMessage(doc, new StringBuilder(), resultType, "The scenario has no steps");
 
             tc.appendChild(child);
         }
 
-        private String calculateTotalDurationString() {
-            long totalDurationNanos = 0;
-            for (Result r : results) {
-                totalDurationNanos += r.getDuration() == null ? 0 : r.getDuration();
-            }
-            for (Result r : hookResults) {
-                totalDurationNanos += r.getDuration() == null ? 0 : r.getDuration();
-            }
-            double totalDurationSeconds = ((double) totalDurationNanos) / 1000000000;
-            return NUMBER_FORMAT.format(totalDurationSeconds);
+        private String calculateTotalDurationString(Result result) {
+            return NUMBER_FORMAT.format(((double) result.getDuration()) / 1000000000);
         }
 
         private void addStepAndResultListing(StringBuilder sb) {
@@ -322,15 +304,7 @@ class JUnitFormatter implements Formatter, StrictAware {
         }
 
         private String getKeywordFromSource(int stepLine) {
-            TestSourceRead event = sourceMap.get(currentFeatureFile);
-            String trimmedSourceLine = event.source.split("\n")[stepLine - 1].trim();
-            GherkinDialect dialect = new GherkinDialectProvider(event.language).getDefaultDialect();
-            for (String keyword : dialect.getStepKeywords()) {
-                if (trimmedSourceLine.startsWith(keyword)) {
-                    return keyword;
-                }
-            }
-            return "";
+            return testSources.getKeywordFromSource(currentFeatureFile, stepLine);
         }
 
         private void addStackTrace(StringBuilder sb, Result failed) {
@@ -348,10 +322,20 @@ class JUnitFormatter implements Formatter, StrictAware {
 
         private Element createElement(Document doc, StringBuilder sb, String elementType) {
             Element child = doc.createElement(elementType);
-            child.appendChild(doc.createCDATASection(sb.toString()));
+            // the createCDATASection method seems to convert "\n" to "\r\n" on Windows, in case
+            // data originally contains "\r\n" line separators the result becomes "\r\r\n", which
+            // are displayed as double line breaks.
+            child.appendChild(doc.createCDATASection(sb.toString().replace(System.lineSeparator(), "\n")));
             return child;
         }
 
     }
 
+    private static void closeQuietly(Closeable out) {
+        try {
+            out.close();
+        } catch (IOException ignored) {
+            // go gentle into that good night
+        }
+    }
 }

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <testsuite failures="2" name="cucumber.runtime.formatter.JUnitFormatter" skipped="0" tests="2" time="0">
-    <testcase classname="cucumber/runtime/formatter/JUnitFormatterTest_1.feature" name="Scenario_1" time="0">
+    <testcase classname="Feature_1" name="Scenario_1" time="0">
         <failure message="The scenario has pending or undefined step(s)"><![CDATA[Given step_1................................................................undefined
 When step_2.................................................................undefined
 Then step_3.................................................................undefined
 ]]></failure>
     </testcase>
-    <testcase classname="cucumber/runtime/formatter/JUnitFormatterTest_1.feature" name="Scenario_2" time="0">
+    <testcase classname="Feature_1" name="Scenario_2" time="0">
         <failure message="The scenario has pending or undefined step(s)"><![CDATA[Given step_1................................................................undefined
 When step_2.................................................................undefined
 Then step_3.................................................................undefined

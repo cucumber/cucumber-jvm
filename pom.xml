@@ -34,20 +34,22 @@
         <guice.version>4.0</guice.version>
         <!-- Remember to bounce version in examples/clojure_cukes/project.clj as well -->
         <clojure.version>1.8.0</clojure.version>
-        <!-- This is only here for the example project to use, the 3 scala projects maintain their own versions -->
-        <scala.latest.version>2.11.8</scala.latest.version>
-        <gosu.version>1.2</gosu.version>
+        <scala.2.12.version>2.12.2</scala.2.12.version>
+        <scala.2.11.version>2.11.11</scala.2.11.version>
+        <scala.2.10.version>2.10.6</scala.2.10.version>
+        <gosu.version>1.14.6</gosu.version>
         <rhino.version>1.7.7.1</rhino.version>
         <jsoup.version>1.9.2</jsoup.version>
         <testng.version>6.9.10</testng.version>
         <junit.version>4.12</junit.version>
         <jython.version>2.7.0</jython.version>
         <mockito.version>1.10.19</mockito.version>
-        <selenium.version>2.45.0</selenium.version>
+        <selenium.version>3.4.0</selenium.version>
+        <driver-binary-downloader-maven-plugin.version>1.0.14</driver-binary-downloader-maven-plugin.version>
         <webbit.version>0.4.15</webbit.version>
         <webbit-rest.version>0.3.0</webbit-rest.version>
         <jruby.version>9.1.5.0</jruby.version>
-        <weld-se.version>2.3.5.Final</weld-se.version>
+        <weld-se.version>2.4.4.Final</weld-se.version>
         <cdi-api.version>1.2</cdi-api.version>
         <openejb-core.version>4.7.4</openejb-core.version>
         <needle.version>2.2</needle.version>
@@ -60,7 +62,7 @@
         <slf4j.version>1.7.21</slf4j.version>
         <freemarker.version>2.3.23</freemarker.version>
         <javax.servlet-api.version>3.1.0</javax.servlet-api.version>
-        <android-maven-plugin.version>4.0.0</android-maven-plugin.version>
+        <android-maven-plugin.version>4.4.3</android-maven-plugin.version>
         <android.version>4.1.1.4</android.version>
         <!-- Apparently Wicket 8.x requires Java 8.
         Stay on 7.0 as long as we support Java 7. -->
@@ -88,15 +90,15 @@
         <connection>scm:git:git://github.com/cucumber/cucumber-jvm.git</connection>
         <developerConnection>scm:git:git@github.com:cucumber/cucumber-jvm.git</developerConnection>
         <url>git://github.com/cucumber/cucumber-jvm.git</url>
-        <tag>HEAD</tag>
+        <tag>cucumber-jvm-2.0.0</tag>
     </scm>
 
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>info.cukes</groupId>
+                <groupId>io.cucumber</groupId>
                 <artifactId>cucumber-jvm-deps</artifactId>
-                <version>1.0.5</version>
+                <version>1.0.6</version>
                 <exclusions>
                     <exclusion>
                         <groupId>com.thoughtworks.xstream</groupId>
@@ -112,6 +114,12 @@
                 <groupId>io.cucumber</groupId>
                 <artifactId>gherkin</artifactId>
                 <version>${gherkin.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>io.cucumber</groupId>
+                        <artifactId>gherkin-jvm-deps</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>io.cucumber</groupId>
@@ -164,11 +172,6 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>io.cucumber</groupId>
-                <artifactId>cucumber-scala_2.11</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>info.cukes</groupId>
                 <artifactId>cucumber-html</artifactId>
                 <version>0.2.3</version>
@@ -191,6 +194,16 @@
             <dependency>
                 <groupId>io.cucumber</groupId>
                 <artifactId>android-examples</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>cucumber-java8</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>cucumber-kotlin-java8</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
@@ -360,7 +373,7 @@
             </dependency>
             <dependency>
                 <groupId>org.seleniumhq.selenium</groupId>
-                <artifactId>selenium-firefox-driver</artifactId>
+                <artifactId>selenium-remote-driver</artifactId>
                 <version>${selenium.version}</version>
                 <exclusions>
                     <exclusion>
@@ -373,6 +386,12 @@
                 <groupId>org.seleniumhq.selenium</groupId>
                 <artifactId>selenium-server</artifactId>
                 <version>${selenium.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.seleniumhq.selenium</groupId>
@@ -538,14 +557,6 @@
         </dependencies>
     </dependencyManagement>
 
-    <repositories>
-        <!--<repository>-->
-        <!--<id>gosu-lang.org-releases</id>-->
-        <!--<name>Official Gosu website (releases)</name>-->
-        <!--<url>http://gosu-lang.org/repositories/m2/releases</url>-->
-        <!--</repository>-->
-    </repositories>
-
     <!--
      this adds a repository that the plugins will use for dependency resolution
      Any items that we use in a plugin's <dependency> phase can be resolved from here, as well as central
@@ -558,7 +569,6 @@
     </pluginRepositories>
 
     <modules>
-        <!--<module>gosu</module>-->
         <module>core</module>
         <module>java</module>
         <module>testng</module>
@@ -577,6 +587,7 @@
         <module>scala</module>
         <module>needle</module>
         <module>android</module>
+        <module>examples</module>
         <module>hk2</module>
     </modules>
 
@@ -587,14 +598,9 @@
                 <jdk>1.8</jdk>
             </activation>
             <modules>
+                <module>gosu</module>
                 <module>java8</module>
-            </modules>
-        </profile>
-
-        <profile>
-            <id>android-examples</id>
-            <modules>
-                <module>examples/android</module>
+                <module>kotlin-java8</module>
             </modules>
         </profile>
 
@@ -606,32 +612,7 @@
         </profile>
 
         <profile>
-            <id>examples</id>
-            <modules>
-                <module>examples/java-wicket</module>
-                <module>examples/spring-txn</module>
-                <module>examples/clojure_cukes</module>
-                <module>examples/java-calculator</module>
-                <module>examples/java-calculator-testng</module>
-                <module>examples/groovy-calculator</module>
-                <module>examples/scala-calculator</module>
-                <module>examples/java-webbit-websockets-selenium</module>
-                <module>examples/pax-exam</module>
-            </modules>
-        </profile>
-
-        <profile>
             <id>release-sign-artifacts</id>
-            <modules>
-                <module>examples/java-wicket</module>
-                <module>examples/spring-txn</module>
-                <module>examples/clojure_cukes</module>
-                <module>examples/java-calculator</module>
-                <module>examples/java-calculator-testng</module>
-                <module>examples/groovy-calculator</module>
-                <module>examples/scala-calculator</module>
-                <module>examples/java-webbit-websockets-selenium</module>
-            </modules>
             <activation>
                 <property>
                     <name>performRelease</name>
@@ -739,7 +720,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.5.1</version>
+                    <version>3.6.1</version>
                     <configuration>
                         <encoding>UTF-8</encoding>
                         <source>1.6</source>
@@ -856,6 +837,11 @@
                 </plugin>
 
                 <!-- Non-standard plugins -->
+                <plugin>
+                    <groupId>com.lazerycode.selenium</groupId>
+                    <artifactId>driver-binary-downloader-maven-plugin</artifactId>
+                    <version>${driver-binary-downloader-maven-plugin.version}</version>
+                </plugin>
 
                 <plugin>
                     <groupId>net.alchim31.maven</groupId>

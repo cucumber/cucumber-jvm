@@ -5,7 +5,7 @@ import cucumber.api.Result;
 import cucumber.api.Scenario;
 import cucumber.api.event.TestRunFinished;
 import cucumber.api.formatter.Formatter;
-import cucumber.runner.TimeService;
+import cucumber.runner.StepDurationTimeService;
 import cucumber.runtime.formatter.PickleStepMatcher;
 import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
@@ -69,6 +69,8 @@ public class TestHelper {
         switch (status) {
         case FAILED:
             return result(status, mockAssertionFailedError());
+        case AMBIGUOUS:
+            return result(status, mockAmbiguousStepDefinitionException());
         case PENDING:
             return result(status, new PendingException());
         default:
@@ -141,7 +143,9 @@ public class TestHelper {
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         final ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
         final RuntimeGlue glue = createMockedRuntimeGlueThatMatchesTheSteps(stepsToResult, stepsToLocation, hooks, hookLocations, hookActions);
-        final Runtime runtime = new Runtime(resourceLoader, classLoader, asList(mock(Backend.class)), runtimeOptions, new TimeService.Stub(stepHookDuration), glue);
+        final StepDurationTimeService timeService = new StepDurationTimeService(stepHookDuration);
+        final Runtime runtime = new Runtime(resourceLoader, classLoader, asList(mock(Backend.class)), runtimeOptions, timeService, glue);
+        timeService.setEventPublisher(runtime.getEventBus());
 
         formatter.setEventPublisher(runtime.getEventBus());
         for (CucumberFeature feature : features) {
@@ -177,6 +181,8 @@ public class TestHelper {
         if (stepResult.is(Result.Type.PENDING)) {
             doThrow(new PendingException()).when(matchStep).runStep(anyString(), (Scenario) any());
         } else if (stepResult.is(Result.Type.FAILED)) {
+            doThrow(stepResult.getError()).when(matchStep).runStep(anyString(), (Scenario) any());
+        } else if (stepResult.is(Result.Type.SKIPPED) && stepResult.getError() != null) {
             doThrow(stepResult.getError()).when(matchStep).runStep(anyString(), (Scenario) any());
         } else if (!stepResult.is(Result.Type.PASSED) &&
                    !stepResult.is(Result.Type.SKIPPED)) {
@@ -245,6 +251,20 @@ public class TestHelper {
         };
         doAnswer(printStackTraceHandler).when(error).printStackTrace((PrintWriter) any());
         return error;
+    }
+
+    private static AmbiguousStepDefinitionsException mockAmbiguousStepDefinitionException() {
+        AmbiguousStepDefinitionsException exception = mock(AmbiguousStepDefinitionsException.class);
+        Answer<Object> printStackTraceHandler = new Answer<Object>() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                PrintWriter writer = (PrintWriter) invocation.getArguments()[0];
+                writer.print("the stack trace");
+                return null;
+            }
+        };
+        doAnswer(printStackTraceHandler).when(exception).printStackTrace((PrintWriter) any());
+        return exception;
     }
 
     public static SimpleEntry<String, Result> hookEntry(String type, Result result) {

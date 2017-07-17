@@ -8,6 +8,7 @@ import cucumber.api.event.EventPublisher;
 import cucumber.api.event.TestCaseFinished;
 import cucumber.api.event.TestCaseStarted;
 import cucumber.api.event.TestRunFinished;
+import cucumber.api.event.TestSourceRead;
 import cucumber.api.event.TestStepFinished;
 import cucumber.api.formatter.Formatter;
 import cucumber.api.formatter.StrictAware;
@@ -28,6 +29,8 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -50,6 +53,12 @@ class TestNGFormatter implements Formatter, StrictAware {
     private Element root;
     private TestMethod testMethod;
 
+    private EventHandler<TestSourceRead> testSourceReadHandler = new EventHandler<TestSourceRead>() {
+        @Override
+        public void receive(TestSourceRead event) {
+            handleTestSourceRead(event);
+        }
+    };
     private EventHandler<TestCaseStarted> caseStartedHandler= new EventHandler<TestCaseStarted>() {
         @Override
         public void receive(TestCaseStarted event) {
@@ -94,6 +103,7 @@ class TestNGFormatter implements Formatter, StrictAware {
 
     @Override
     public void setEventPublisher(EventPublisher publisher) {
+        publisher.registerHandlerFor(TestSourceRead.class, testSourceReadHandler);
         publisher.registerHandlerFor(TestCaseStarted.class, caseStartedHandler);
         publisher.registerHandlerFor(TestCaseFinished.class, caseFinishedHandler);
         publisher.registerHandlerFor(TestStepFinished.class, stepFinishedHandler);
@@ -105,13 +115,17 @@ class TestNGFormatter implements Formatter, StrictAware {
         TestMethod.treatSkippedAsFailure = strict;
     }
 
+    private void handleTestSourceRead(TestSourceRead event) {
+        TestMethod.testSources.addTestSourceReadEvent(event.uri, event);
+    }
+
     private void handleTestCaseStarted(TestCaseStarted event) {
-        if (TestMethod.currentFeatureFile == null || !TestMethod.currentFeatureFile.equals(event.testCase.getPath())) {
-            TestMethod.currentFeatureFile = event.testCase.getPath();
+        if (TestMethod.currentFeatureFile == null || !TestMethod.currentFeatureFile.equals(event.testCase.getUri())) {
+            TestMethod.currentFeatureFile = event.testCase.getUri();
             TestMethod.previousTestCaseName = "";
             TestMethod.exampleNumber = 1;
             clazz = document.createElement("class");
-            clazz.setAttribute("name", event.testCase.getPath());
+            clazz.setAttribute("name", TestMethod.testSources.getFeature(event.testCase.getUri()).getName());
             test.appendChild(clazz);
         }
         root = document.createElement("test-method");
@@ -149,6 +163,7 @@ class TestNGFormatter implements Formatter, StrictAware {
             StreamResult streamResult = new StreamResult(writer);
             DOMSource domSource = new DOMSource(document);
             transformer.transform(domSource, streamResult);
+            closeQuietly(writer);
         } catch (TransformerException e) {
             throw new CucumberException("Error transforming report.", e);
         }
@@ -193,6 +208,7 @@ class TestNGFormatter implements Formatter, StrictAware {
         static boolean treatSkippedAsFailure = false;
         static String previousTestCaseName;
         static int exampleNumber;
+        static final TestSourcesModel testSources = new TestSourcesModel();
         final List<TestStep> steps = new ArrayList<TestStep>();
         final List<Result> results = new ArrayList<Result>();
         final List<Result> hooks = new ArrayList<Result>();
@@ -226,7 +242,7 @@ class TestNGFormatter implements Formatter, StrictAware {
             Result skipped = null;
             Result failed = null;
             for (Result result : results) {
-                if (result.is(Result.Type.FAILED)) {
+                if (result.is(Result.Type.FAILED) || result.is(Result.Type.AMBIGUOUS)) {
                     failed = result;
                 }
                 if (result.is(Result.Type.UNDEFINED) || result.is(Result.Type.PENDING)) {
@@ -275,7 +291,7 @@ class TestNGFormatter implements Formatter, StrictAware {
                 if (i < results.size()) {
                     resultStatus = results.get(i).getStatus().lowerCaseName();
                 }
-                sb.append(steps.get(i).getStepText());
+                sb.append(testSources.getKeywordFromSource(currentFeatureFile, steps.get(i).getStepLine()) + steps.get(i).getStepText());
                 do {
                     sb.append(".");
                 } while (sb.length() - length < 76);
@@ -299,6 +315,14 @@ class TestNGFormatter implements Formatter, StrictAware {
             exceptionElement.appendChild(stacktraceElement);
 
             return exceptionElement;
+        }
+    }
+
+    private static void closeQuietly(Closeable out) {
+        try {
+            out.close();
+        } catch (IOException ignored) {
+            // go gentle into that good night
         }
     }
 }

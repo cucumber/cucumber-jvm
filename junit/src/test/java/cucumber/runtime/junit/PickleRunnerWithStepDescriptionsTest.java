@@ -40,7 +40,7 @@ public class PickleRunnerWithStepDescriptionsTest {
         Compiler compiler = new Compiler();
         List<PickleEvent> pickleEvents = new ArrayList<PickleEvent>();
         for (Pickle pickle : compiler.compile(features.getGherkinFeature())) {
-            pickleEvents.add(new PickleEvent(features.getPath(), pickle));
+            pickleEvents.add(new PickleEvent(features.getUri(), pickle));
         };
 
         WithStepDescriptions runner = (WithStepDescriptions) PickleRunners.withStepDescriptions(
@@ -64,6 +64,37 @@ public class PickleRunnerWithStepDescriptionsTest {
     }
 
     @Test
+    public void shouldAssignUnequalDescriptionsToDifferentStepsInAScenarioOutline() throws Exception {
+        CucumberFeature features = TestPickleBuilder.parseFeature("path/test.feature", "" +
+            "Feature: FB\n" +
+            "  Scenario Outline: SO\n" +
+            "    When <action>\n" +
+            "    Then <result>\n" +
+            "    Examples:\n" +
+            "    | action | result |\n" +
+            "    |   a1   |   r1   |\n"
+        );
+
+        Compiler compiler = new Compiler();
+        List<PickleEvent> pickleEvents = new ArrayList<PickleEvent>();
+        for (Pickle pickle : compiler.compile(features.getGherkinFeature())) {
+            pickleEvents.add(new PickleEvent(features.getUri(), pickle));
+        };
+
+        WithStepDescriptions runner = (WithStepDescriptions) PickleRunners.withStepDescriptions(
+                mock(Runner.class),
+                pickleEvents.get(0),
+                createStandardJUnitReporter()
+        );
+
+        Description runnerDescription = runner.getDescription();
+        Description stepDescription1 = runnerDescription.getChildren().get(0);
+        Description stepDescription2 = runnerDescription.getChildren().get(1);
+
+        assertFalse("Descriptions must not be equal.", stepDescription1.equals(stepDescription2));
+    }
+
+    @Test
     public void shouldIncludeScenarioNameAsClassNameInStepDescriptions() throws Exception {
         CucumberFeature features = TestPickleBuilder.parseFeature("path/test.feature", "" +
             "Feature: In cucumber.junit\n" +
@@ -79,7 +110,7 @@ public class PickleRunnerWithStepDescriptionsTest {
         Compiler compiler = new Compiler();
         List<PickleEvent> pickleEvents = new ArrayList<PickleEvent>();
         for (Pickle pickle : compiler.compile(features.getGherkinFeature())) {
-            pickleEvents.add(new PickleEvent(features.getPath(), pickle));
+            pickleEvents.add(new PickleEvent(features.getUri(), pickle));
         }
 
         PickleRunner runner = PickleRunners.withStepDescriptions(
@@ -109,22 +140,6 @@ public class PickleRunnerWithStepDescriptionsTest {
                 mock(Runner.class),
                 pickles.get(0),
                 createStandardJUnitReporter()
-        );
-
-        assertEquals("scenario name", runner.getDescription().getDisplayName());
-    }
-
-    @Test
-    public void shouldUseScenarioNameForDescriptionDisplayName() throws Exception {
-        List<PickleEvent> pickles = TestPickleBuilder.pickleEventsFromFeature("featurePath", "" +
-            "Feature: feature name\n" +
-            "  Scenario: scenario name\n" +
-            "    Then it works\n");
-
-        PickleRunner runner = PickleRunners.withNoStepDescriptions(
-            mock(Runner.class),
-            pickles.get(0),
-            createStandardJUnitReporter()
         );
 
         assertEquals("scenario name", runner.getDescription().getDisplayName());

@@ -1,10 +1,11 @@
 package cucumber.api.testng;
 
+import cucumber.runtime.AmbiguousStepDefinitionsException;
 import cucumber.runtime.CucumberException;
 import cucumber.api.Result;
 import cucumber.api.event.EventHandler;
 import cucumber.api.event.EventPublisher;
-import cucumber.api.event.TestStepFinished;
+import cucumber.api.event.TestCaseFinished;
 import cucumber.api.formatter.Formatter;
 
 class FeatureResultListener implements Formatter {
@@ -12,9 +13,9 @@ class FeatureResultListener implements Formatter {
     static final String PENDING_MESSAGE = "There are pending steps";
     private boolean strict;
     private Throwable error = null;
-    private final EventHandler<TestStepFinished> testStepFinishedHandler = new EventHandler<TestStepFinished>() {
+    private final EventHandler<TestCaseFinished> testCaseFinishedHandler = new EventHandler<TestCaseFinished>() {
         @Override
-        public void receive(TestStepFinished event) {
+        public void receive(TestCaseFinished event) {
             collectError(event.result);
         }
     };
@@ -25,15 +26,20 @@ class FeatureResultListener implements Formatter {
 
     @Override
     public void setEventPublisher(EventPublisher publisher) {
-        publisher.registerHandlerFor(TestStepFinished.class, testStepFinishedHandler);
+        publisher.registerHandlerFor(TestCaseFinished.class, testCaseFinishedHandler);
     }
 
     void collectError(Result result) {
         if (result.is(Result.Type.FAILED)) {
+            if (error == null || isAmbiguousError(error) || isUndefinedError(error) || isPendingError(error)) {
+                error = result.getError();
+            }
+        } else if (result.is(Result.Type.AMBIGUOUS)) {
             if (error == null || isUndefinedError(error) || isPendingError(error)) {
                 error = result.getError();
             }
-        } else if (result.is(Result.Type.PENDING) && strict) {
+        }
+        else if (result.is(Result.Type.PENDING) && strict) {
             if (error == null || isUndefinedError(error)) {
                 error = new CucumberException(PENDING_MESSAGE);
             }
@@ -50,6 +56,10 @@ class FeatureResultListener implements Formatter {
 
     private boolean isUndefinedError(Throwable error) {
         return (error instanceof CucumberException) && error.getMessage().equals(UNDEFINED_MESSAGE);
+    }
+
+    private boolean isAmbiguousError(Throwable error) {
+        return (error instanceof AmbiguousStepDefinitionsException);
     }
 
     boolean isPassed() {

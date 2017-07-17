@@ -3,8 +3,7 @@
 
     <parent>
         <groupId>io.cucumber</groupId>
-        <artifactId>cucumber-jvm</artifactId>
-        <relativePath>../../pom.xml</relativePath>
+        <artifactId>cucumber-examples</artifactId>
         <version>2.0.0-SNAPSHOT</version>
     </parent>
 
@@ -18,7 +17,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>info.cukes</groupId>
+            <groupId>io.cucumber</groupId>
             <artifactId>cucumber-jvm-deps</artifactId>
             <scope>test</scope>
         </dependency>

@@ -2,8 +2,6 @@ package cucumber.api;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Collections;
-import java.util.List;
 
 public class Result {
     private static final long serialVersionUID = 1L;
@@ -11,13 +9,14 @@ public class Result {
     private final Result.Type status;
     private final Long duration;
     private final Throwable error;
-    private final List<String> snippets;
     public static final Result SKIPPED = new Result(Result.Type.SKIPPED, null, null);
+    public static final Result UNDEFINED = new Result(Result.Type.UNDEFINED, null, null);
     public static enum Type {
         PASSED,
         SKIPPED,
         PENDING,
         UNDEFINED,
+        AMBIGUOUS,
         FAILED;
 
         public static Type fromLowerCaseName(String lowerCaseName) {
@@ -43,22 +42,9 @@ public class Result {
      * @param error
      */
     public Result(Result.Type status, Long duration, Throwable error) {
-        this(status, duration, error, Collections.<String>emptyList());
-    }
-
-    /**
-     * Used at runtime
-     *
-     * @param status
-     * @param duration
-     * @param error
-     * @param snippets
-     */
-    public Result(Result.Type status, Long duration, Throwable error, List<String> snippets) {
         this.status = status;
         this.duration = duration;
         this.error = error;
-        this.snippets = snippets;
     }
 
     public Result.Type getStatus() {
@@ -75,10 +61,6 @@ public class Result {
 
     public Throwable getError() {
         return error;
-    }
-
-    public List<String> getSnippets() {
-        return snippets;
     }
 
     public boolean is(Result.Type status) {

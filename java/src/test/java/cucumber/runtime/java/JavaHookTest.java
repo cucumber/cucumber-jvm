@@ -41,7 +41,7 @@ public class JavaHookTest {
     private final SingletonFactory objectFactory = new SingletonFactory();
     private final JavaBackend backend = new JavaBackend(objectFactory);
     private final LocalizedXStreams localizedXStreams = new LocalizedXStreams(Thread.currentThread().getContextClassLoader());
-    private final Glue glue = new RuntimeGlue(new UndefinedStepsTracker(), localizedXStreams);
+    private final Glue glue = new RuntimeGlue(localizedXStreams);
 
     @org.junit.Before
     public void loadNoGlue() {

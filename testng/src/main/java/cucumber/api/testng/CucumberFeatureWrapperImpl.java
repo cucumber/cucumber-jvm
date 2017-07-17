@@ -22,6 +22,6 @@ class CucumberFeatureWrapperImpl implements CucumberFeatureWrapper {
 
     @Override
     public String toString() {
-        return cucumberFeature.getGherkinFeature().getFeature().getName();
+        return "\"" + cucumberFeature.getGherkinFeature().getFeature().getName() + "\"";
     }
 }

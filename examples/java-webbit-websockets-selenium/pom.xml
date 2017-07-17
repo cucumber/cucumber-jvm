@@ -1,10 +1,11 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>io.cucumber</groupId>
-        <artifactId>cucumber-jvm</artifactId>
-        <relativePath>../../pom.xml</relativePath>
+        <artifactId>cucumber-examples</artifactId>
         <version>2.0.0-SNAPSHOT</version>
     </parent>
 
@@ -12,21 +13,81 @@
     <packaging>jar</packaging>
     <name>Examples: Webbit WebSockets tested with Selenium</name>
 
-    <!-- skipTests -->
     <build>
         <plugins>
+            <plugin>
+                <groupId>com.lazerycode.selenium</groupId>
+                <artifactId>driver-binary-downloader-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>selenium</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <!-- we don't want to run these tests on travis TRAVIS will be set to true in the travis CI
-                    They WILL be compiled -->
-                    <!-- TODO: there's PhantomJS, and xvfb, so we could maybe re-enable these -->
-                    <skipTests>${env.TRAVIS}</skipTests>
+                    <systemPropertyVariables>
+                        <!--
+                               Run phantomjs by default. It probably works every where.
+
+                               Check the develop profile to configure which web driver to use
+                               when developing.
+                        -->
+                        <webdriver>phantomjs</webdriver>
+                        <!--Provided by the driver-binary-downloader-maven-plugin-->
+                        <!--suppress MavenModelInspection -->
+                        <webdriver.gecko.driver>${webdriver.gecko.driver}</webdriver.gecko.driver>
+                        <!--suppress MavenModelInspection -->
+                        <webdriver.chrome.driver>${webdriver.chrome.driver}
+                        </webdriver.chrome.driver>
+                        <!--suppress MavenModelInspection -->
+                        <webdriver.opera.driver>${webdriver.opera.driver}</webdriver.opera.driver>
+                        <!--suppress MavenModelInspection -->
+                        <phantomjs.binary.path>${phantomjs.binary.path}</phantomjs.binary.path>
+                        <!--suppress MavenModelInspection -->
+                        <webdriver.ie.driver>${webdriver.ie.driver}</webdriver.ie.driver>
+                        <!--suppress MavenModelInspection -->
+                        <webdriver.edge.driver>${webdriver.ie.driver}</webdriver.edge.driver>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>develop</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <systemPropertyVariables>
+                                <!--
+                                   Change this to select the browser to use.  E.g: firefox, chrome, edge, ect.
+                                  -->
+                                <webdriver>firefox</webdriver>
+                            </systemPropertyVariables>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
     <dependencies>
         <dependency>
@@ -35,8 +96,8 @@
         </dependency>
 
         <dependency>
-            <groupId>info.cukes</groupId>
-            <artifactId>cucumber-jvm-deps</artifactId>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-java8</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -56,7 +117,12 @@
         </dependency>
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-firefox-driver</artifactId>
+            <artifactId>selenium-java</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-remote-driver</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

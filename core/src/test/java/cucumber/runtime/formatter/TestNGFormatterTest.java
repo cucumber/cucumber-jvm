@@ -45,7 +45,7 @@ public final class TestNGFormatterTest {
                 "<testng-results total=\"1\" passed=\"0\" failed=\"0\" skipped=\"1\">" +
                 "    <suite name=\"cucumber.runtime.formatter.TestNGFormatter\" duration-ms=\"0\">" +
                 "        <test name=\"cucumber.runtime.formatter.TestNGFormatter\" duration-ms=\"0\">" +
-                "            <class name=\"path/test.feature\">" +
+                "            <class name=\"feature\">" +
                 "                <test-method name=\"scenario\" status=\"SKIP\" duration-ms=\"0\" started-at=\"yyyy-MM-ddTHH:mm:ssZ\" finished-at=\"yyyy-MM-ddTHH:mm:ssZ\"/>" +
                 "            </class>" +
                 "        </test>" +
@@ -69,11 +69,11 @@ public final class TestNGFormatterTest {
                 "<testng-results total=\"1\" passed=\"0\" failed=\"1\" skipped=\"0\">" +
                 "    <suite name=\"cucumber.runtime.formatter.TestNGFormatter\" duration-ms=\"0\">" +
                 "        <test name=\"cucumber.runtime.formatter.TestNGFormatter\" duration-ms=\"0\">" +
-                "            <class name=\"path/test.feature\">" +
+                "            <class name=\"feature\">" +
                 "                <test-method name=\"scenario\" status=\"FAIL\" duration-ms=\"0\" started-at=\"yyyy-MM-ddTHH:mm:ssZ\" finished-at=\"yyyy-MM-ddTHH:mm:ssZ\">" +
                 "                    <exception class=\"The scenario has pending or undefined step(s)\">" +
-                "                        <message><![CDATA[step........................................................................undefined\n" +
-                "step........................................................................undefined\n" +
+                "                        <message><![CDATA[When step...................................................................undefined\n" +
+                "Then step...................................................................undefined\n" +
                 "]]></message>" +
                 "                        <full-stacktrace><![CDATA[The scenario has pending or undefined step(s)]]></full-stacktrace>" +
                 "                    </exception>" +
@@ -101,7 +101,7 @@ public final class TestNGFormatterTest {
                 "<testng-results total=\"1\" passed=\"0\" failed=\"0\" skipped=\"1\">" +
                 "    <suite name=\"cucumber.runtime.formatter.TestNGFormatter\" duration-ms=\"0\">" +
                 "        <test name=\"cucumber.runtime.formatter.TestNGFormatter\" duration-ms=\"0\">" +
-                "            <class name=\"path/test.feature\">" +
+                "            <class name=\"feature\">" +
                 "                <test-method name=\"scenario\" status=\"SKIP\" duration-ms=\"0\" started-at=\"yyyy-MM-ddTHH:mm:ssZ\" finished-at=\"yyyy-MM-ddTHH:mm:ssZ\"/>" +
                 "            </class>" +
                 "        </test>" +
@@ -126,11 +126,11 @@ public final class TestNGFormatterTest {
                 "<testng-results total=\"1\" passed=\"0\" failed=\"1\" skipped=\"0\">" +
                 "    <suite name=\"cucumber.runtime.formatter.TestNGFormatter\" duration-ms=\"0\">" +
                 "        <test name=\"cucumber.runtime.formatter.TestNGFormatter\" duration-ms=\"0\">" +
-                "            <class name=\"path/test.feature\">" +
+                "            <class name=\"feature\">" +
                 "                <test-method name=\"scenario\" status=\"FAIL\" duration-ms=\"0\" started-at=\"yyyy-MM-ddTHH:mm:ssZ\" finished-at=\"yyyy-MM-ddTHH:mm:ssZ\">" +
                 "                    <exception class=\"cucumber.runtime.formatter.TestNGFormatterTest$TestNGException\">" +
-                "                        <message><![CDATA[step1.......................................................................failed\n" +
-                "step2.......................................................................skipped\n" +
+                "                        <message><![CDATA[When step1..................................................................failed\n" +
+                "Then step2..................................................................skipped\n" +
                 "]]></message>" +
                 "                        <full-stacktrace><![CDATA[stacktrace]]></full-stacktrace>" +
                 "                    </exception>" +
@@ -157,7 +157,7 @@ public final class TestNGFormatterTest {
                 "<testng-results total=\"1\" passed=\"1\" failed=\"0\" skipped=\"0\">" +
                 "    <suite name=\"cucumber.runtime.formatter.TestNGFormatter\" duration-ms=\"0\">" +
                 "        <test name=\"cucumber.runtime.formatter.TestNGFormatter\" duration-ms=\"0\">" +
-                "            <class name=\"path/test.feature\">" +
+                "            <class name=\"feature\">" +
                 "                <test-method name=\"scenario\" status=\"PASS\" duration-ms=\"0\" started-at=\"yyyy-MM-ddTHH:mm:ssZ\" finished-at=\"yyyy-MM-ddTHH:mm:ssZ\"/>" +
                 "            </class>" +
                 "        </test>" +
@@ -185,7 +185,7 @@ public final class TestNGFormatterTest {
                 "<testng-results total=\"1\" passed=\"0\" failed=\"0\" skipped=\"1\">" +
                 "    <suite name=\"cucumber.runtime.formatter.TestNGFormatter\" duration-ms=\"0\">" +
                 "        <test name=\"cucumber.runtime.formatter.TestNGFormatter\" duration-ms=\"0\">" +
-                "            <class name=\"path/test.feature\">" +
+                "            <class name=\"feature\">" +
                 "                <test-method name=\"scenario\" status=\"SKIP\" duration-ms=\"0\" started-at=\"yyyy-MM-ddTHH:mm:ssZ\" finished-at=\"yyyy-MM-ddTHH:mm:ssZ\"/>" +
                 "            </class>" +
                 "        </test>" +
@@ -213,7 +213,7 @@ public final class TestNGFormatterTest {
                     "<testng-results total=\"2\" passed=\"0\" failed=\"0\" skipped=\"2\">" +
                     "    <suite name=\"cucumber.runtime.formatter.TestNGFormatter\" duration-ms=\"0\">" +
                     "        <test name=\"cucumber.runtime.formatter.TestNGFormatter\" duration-ms=\"0\">" +
-                    "            <class name=\"path/test.feature\">" +
+                    "            <class name=\"feature\">" +
                     "                <test-method name=\"scenario\" status=\"SKIP\" duration-ms=\"0\" started-at=\"yyyy-MM-ddTHH:mm:ssZ\" finished-at=\"yyyy-MM-ddTHH:mm:ssZ\"/>" +
                     "                <test-method name=\"scenario_2\" status=\"SKIP\" duration-ms=\"0\" started-at=\"yyyy-MM-ddTHH:mm:ssZ\" finished-at=\"yyyy-MM-ddTHH:mm:ssZ\"/>" +
                     "            </class>" +
@@ -249,11 +249,11 @@ public final class TestNGFormatterTest {
                 "<testng-results total=\"3\" passed=\"3\" failed=\"0\" skipped=\"0\">" +
                 "    <suite name=\"cucumber.runtime.formatter.TestNGFormatter\" duration-ms=\"12\">" +
                 "        <test name=\"cucumber.runtime.formatter.TestNGFormatter\" duration-ms=\"12\">" +
-                "            <class name=\"path/feature1.feature\">" +
+                "            <class name=\"feature_1\">" +
                 "                <test-method name=\"scenario_1\" status=\"PASS\" duration-ms=\"4\" started-at=\"yyyy-MM-ddTHH:mm:ssZ\" finished-at=\"yyyy-MM-ddTHH:mm:ssZ\"/>" +
                 "                <test-method name=\"scenario_2\" status=\"PASS\" duration-ms=\"4\" started-at=\"yyyy-MM-ddTHH:mm:ssZ\" finished-at=\"yyyy-MM-ddTHH:mm:ssZ\"/>" +
                 "            </class>" +
-                "            <class name=\"path/feature2.feature\">" +
+                "            <class name=\"feature_2\">" +
                 "                <test-method name=\"scenario_3\" status=\"PASS\" duration-ms=\"4\" started-at=\"yyyy-MM-ddTHH:mm:ssZ\" finished-at=\"yyyy-MM-ddTHH:mm:ssZ\"/>" +
                 "            </class>" +
                 "        </test>" +
@@ -279,11 +279,11 @@ public final class TestNGFormatterTest {
                 "<testng-results total=\"1\" passed=\"0\" failed=\"1\" skipped=\"0\">" +
                 "    <suite name=\"cucumber.runtime.formatter.TestNGFormatter\" duration-ms=\"0\">" +
                 "        <test name=\"cucumber.runtime.formatter.TestNGFormatter\" duration-ms=\"0\">" +
-                "            <class name=\"path/test.feature\">" +
+                "            <class name=\"feature\">" +
                 "                <test-method name=\"scenario\" status=\"FAIL\" duration-ms=\"0\" started-at=\"yyyy-MM-ddTHH:mm:ssZ\" finished-at=\"yyyy-MM-ddTHH:mm:ssZ\">" +
                 "                    <exception class=\"cucumber.runtime.formatter.TestNGFormatterTest$TestNGException\">" +
-                "                        <message><![CDATA[step........................................................................skipped\n" +
-                "step........................................................................skipped\n" +
+                "                        <message><![CDATA[When step...................................................................skipped\n" +
+                "Then step...................................................................skipped\n" +
                 "]]></message>" +
                 "                        <full-stacktrace><![CDATA[stacktrace]]></full-stacktrace>" +
                 "                    </exception>" +
@@ -312,11 +312,11 @@ public final class TestNGFormatterTest {
                 "<testng-results total=\"1\" passed=\"0\" failed=\"1\" skipped=\"0\">" +
                 "    <suite name=\"cucumber.runtime.formatter.TestNGFormatter\" duration-ms=\"0\">" +
                 "        <test name=\"cucumber.runtime.formatter.TestNGFormatter\" duration-ms=\"0\">" +
-                "            <class name=\"path/test.feature\">" +
+                "            <class name=\"feature\">" +
                 "                <test-method name=\"scenario\" status=\"FAIL\" duration-ms=\"0\" started-at=\"yyyy-MM-ddTHH:mm:ssZ\" finished-at=\"yyyy-MM-ddTHH:mm:ssZ\">" +
                 "                    <exception class=\"cucumber.runtime.formatter.TestNGFormatterTest$TestNGException\">" +
-                "                        <message><![CDATA[step........................................................................passed\n" +
-                "step........................................................................passed\n" +
+                "                        <message><![CDATA[When step...................................................................passed\n" +
+                "Then step...................................................................passed\n" +
                 "]]></message>" +
                 "                        <full-stacktrace><![CDATA[stacktrace]]></full-stacktrace>" +
                 "                    </exception>" +
