@@ -27,14 +27,15 @@ jobs:
   include:
     # Stage Test - Job 1-3:  Builds against all Jdks.
     - stage: test
-      jdk: openjdk7
-      script: mvn -q install
-    - jdk: oraclejdk7
-      script: mvn -q install
-    - jdk: oraclejdk8
-      script: mvn -q install
+#      jdk: openjdk7
+#      script: mvn -q install
+#    - jdk: oraclejdk7
+#      script: mvn -q install
+#    - jdk: oraclejdk8
+#      script: mvn -q install
     # Stage Test - Job 4: Build Android Examples.
-    - jdk: oraclejdk8
+#    - jdk: oraclejdk8
+      jdk: oraclejdk8
       env: ANDROID_EXAMPLES=true
       language: android
       android:
@@ -57,33 +58,13 @@ jobs:
         - android-wait-for-emulator
       script:
         # Run Android tests with output. Travis will stop the build if it receives no output for 10 minutes.
-        - mvn install --activate-profiles android-examples --projects examples/android --also-make-dependents -Dandroid.device=test
-    # Stage Test - Job 5: Build Android Studio Example (does not use snapshots releases)
-    - jdk: oraclejdk8
-      env: ANDROID_STUDIO_EXAMPLES=true
-      language: android
-      android:
-        components:
-          - tools
-          - platform-tools
-          - tools # Note that the tools section appears twice on purpose as it’s required to get the newest Android SDK tools.
-          - build-tools-26.0.0
-          - android-21
-          - sys-img-armeabi-v7a-android-21
-      before_install:
-        # Keep android version in sync with  platform.sdk in android-studio/Cukeulator.
-        - echo no | android create avd --force -n test -t android-21 --abi armeabi-v7a
-        # Create and start the emulator. This takes some time.
-        - emulator -avd test -no-skin -no-audio -no-window &
-      before_script:
-        - android-wait-for-emulator
-      script:
+#        - mvn install --activate-profiles android-examples --projects examples/android --also-make-dependents -Dandroid.device=test
         - cd examples/android/android-studio/Cukeulator
         - ./gradlew build connectedCheck
     # Stage Deploy - Job 1: Builds and deploys all artifacts with java 8.
-    - stage: deploy
-      jdk: oraclejdk8
-      script: mvn -q deploy --settings .travis-settings.xml -Dno.gem.deploy=true -DskipTests=true -Dmaven.javadoc.skip=true
+#    - stage: deploy
+#      jdk: oraclejdk8
+#      script: mvn -q deploy --settings .travis-settings.xml -Dno.gem.deploy=true -DskipTests=true -Dmaven.javadoc.skip=true
 
 env:
   global:
