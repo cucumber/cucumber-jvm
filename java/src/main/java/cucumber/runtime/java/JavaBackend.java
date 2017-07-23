@@ -67,14 +67,6 @@ public class JavaBackend implements Backend {
         this(loadObjectFactory(classFinder, Env.INSTANCE.get(ObjectFactory.class.getName())), classFinder);
     }
 
-    public JavaBackend(ObjectFactory objectFactory) {
-        this(objectFactory, new MultiLoader(currentThread().getContextClassLoader()));
-    }
-
-    private JavaBackend(ObjectFactory objectFactory, ResourceLoader resourceLoader) {
-       this(objectFactory, new ResourceLoaderClassFinder(resourceLoader, currentThread().getContextClassLoader()));
-    }
-
     public JavaBackend(ObjectFactory objectFactory, ClassFinder classFinder) {
         this.classFinder = classFinder;
         this.objectFactory = objectFactory;
