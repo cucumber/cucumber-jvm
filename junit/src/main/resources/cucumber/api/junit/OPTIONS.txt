@@ -9,9 +9,9 @@ JUnit Options:
                                          the file names of the JUnit xml report files.
   --[no-]step-notifications              By default steps are not included in
                                          notifications and descriptions. This aligns
-					 test case in the Cucumber-JVM domain
-					 (Scenarios) with the test case in the JUnit
-					 domain (the leafs in the description tree),
-					 and works better with the report files of
-					 the notification listeners like maven surefire
-					 or gradle.
+                                         test case in the Cucumber-JVM domain
+                                         (Scenarios) with the test case in the JUnit
+                                         domain (the leafs in the description tree),
+                                         and works better with the report files of
+                                         the notification listeners like maven surefire
+                                         or gradle.
