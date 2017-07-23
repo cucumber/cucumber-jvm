@@ -60,7 +60,7 @@ jobs:
         # Run Android tests with output. Travis will stop the build if it receives no output for 10 minutes.
 #        - mvn install --activate-profiles android-examples --projects examples/android --also-make-dependents -Dandroid.device=test
         - cd examples/android/android-studio/Cukeulator
-        - ./gradlew build connectedCheck
+        - ./gradlew build connectedCheck --stacktrace --debug
     # Stage Deploy - Job 1: Builds and deploys all artifacts with java 8.
 #    - stage: deploy
 #      jdk: oraclejdk8
