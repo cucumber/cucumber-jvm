@@ -20,8 +20,6 @@ jobs:
     - stage: test
       jdk: openjdk7
       script: mvn -q install
-    - jdk: oraclejdk7
-      script: mvn -q install
     - jdk: oraclejdk8
       script: mvn -q install
     # Stage Test - Job 4: Build Android Examples.
