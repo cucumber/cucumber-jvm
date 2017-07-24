@@ -14,10 +14,11 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class CucumberFeature implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -25,6 +26,7 @@ public class CucumberFeature implements Serializable {
     private String language;
     private GherkinDocument gherkinDocument;
     private String gherkinSource;
+    public static final Pattern RERUN_PATH_SPECIFICATION = Pattern.compile("(?m:^| |)(.*?\\.feature(?:(?::\\d+)*))");
 
     public static List<CucumberFeature> load(ResourceLoader resourceLoader, List<String> featurePaths, PrintStream out) {
         final List<CucumberFeature> cucumberFeatures = load(resourceLoader, featurePaths);
@@ -53,15 +55,8 @@ public class CucumberFeature implements Serializable {
     }
 
     private static void loadFromRerunFile(FeatureBuilder builder, ResourceLoader resourceLoader, String rerunPath) {
-        Iterable<Resource> resources = resourceLoader.resources(rerunPath, null);
-        for (Resource resource : resources) {
-            String source = read(resource);
-            if (!source.isEmpty()) {
-                for (String featurePath : source.split("[\r\n]+")) {
-                    PathWithLines pathWithLines = new PathWithLines(featurePath);
-                    loadFromFileSystemOrClasspath(builder, resourceLoader, pathWithLines.path);
-                }
-            }
+        for(String path : loadRerunFile(resourceLoader, rerunPath)){
+            loadFromFileSystemOrClasspath(builder, resourceLoader, new PathWithLines(path).path);
         }
     }
 
@@ -71,7 +66,10 @@ public class CucumberFeature implements Serializable {
         for (Resource resource : resources) {
             String source = read(resource);
             if (!source.isEmpty()) {
-                featurePaths.addAll(Arrays.asList(source.split(" ")));
+                Matcher matcher = RERUN_PATH_SPECIFICATION.matcher(source);
+                while(matcher.find()){
+                    featurePaths.add(matcher.group(1));
+                }
             }
         }
         return featurePaths;
