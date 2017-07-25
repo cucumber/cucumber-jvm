@@ -55,20 +55,20 @@ public class CucumberFeature implements Serializable {
     }
 
     private static void loadFromRerunFile(FeatureBuilder builder, ResourceLoader resourceLoader, String rerunPath) {
-        for(String path : loadRerunFile(resourceLoader, rerunPath)){
-            loadFromFileSystemOrClasspath(builder, resourceLoader, new PathWithLines(path).path);
+        for(PathWithLines pathWithLines : loadRerunFile(resourceLoader, rerunPath)){
+            loadFromFileSystemOrClasspath(builder, resourceLoader, pathWithLines.path);
         }
     }
 
-    public static List<String> loadRerunFile(ResourceLoader resourceLoader, String rerunPath) {
-        List<String> featurePaths = new ArrayList<String>();
+    public static List<PathWithLines> loadRerunFile(ResourceLoader resourceLoader, String rerunPath) {
+        List<PathWithLines> featurePaths = new ArrayList<PathWithLines>();
         Iterable<Resource> resources = resourceLoader.resources(rerunPath, null);
         for (Resource resource : resources) {
             String source = read(resource);
             if (!source.isEmpty()) {
                 Matcher matcher = RERUN_PATH_SPECIFICATION.matcher(source);
                 while(matcher.find()){
-                    featurePaths.add(matcher.group(1));
+                    featurePaths.add(new PathWithLines(matcher.group(1)));
                 }
             }
         }
