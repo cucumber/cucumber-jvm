@@ -113,14 +113,14 @@ public class RuntimeOptionsFactoryTest {
         assertPluginExists(runtimeOptions.getPlugins(), "cucumber.runtime.DefaultSummaryPrinter");
     }
 
-    @Test @org.junit.Ignore
+    @Test
     public void inherit_plugin_from_baseclass() {
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(SubClassWithFormatter.class);
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
 
         List<Object> plugins = runtimeOptions.getPlugins();
-        assertPluginExists(plugins, "cucumber.runtime.formatter.CucumberJSONFormatter");
-        assertPluginExists(plugins, "cucumber.runtime.formatter.CucumberPrettyFormatter");
+        assertPluginExists(plugins, "cucumber.runtime.formatter.JSONFormatter");
+        assertPluginExists(plugins, "cucumber.runtime.formatter.PrettyFormatter");
     }
 
     @Test
