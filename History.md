@@ -4,8 +4,7 @@
 * [Android] Update the version of the cucumber-jvm-deps dependency - to a version without Java8 bytecode ([#1170](https://github.com/cucumber/cucumber-jvm/pull/1170), [#893](https://github.com/cucumber/cucumber-jvm/issues/893) Björn Rasmusson)
 * [Needle] Handle circular dependencies ([#853](https://github.com/cucumber/cucumber-jvm/pull/853) Lars Bilger)  
 * [Core] Use "uri" instead of "path" to reference feature files in externa APIs ([#1179](https://github.com/cucumber/cucumber-jvm/pull/1179) Björn Rasmusson)
-* [Core] Separate rerun paths by a new line character ([#1177](https://github.com/cucumber/cucumber-jvm/pull/1177) M.P. Korstanje)
-  * Rerun files that separate features by a space will no longer be correctly parsed 
+* [Core] Separate rerun paths by a new line character ([#1177](https://github.com/cucumber/cucumber-jvm/pull/1177), [#1187](https://github.com/cucumber/cucumber-jvm/pull/1187) M.P. Korstanje)
 * [TestNG] Run a separate TestNG test per scenario (deprecate one TestNG test per feature, and one TestNG for the whole suite) ([#1174](https://github.com/cucumber/cucumber-jvm/pull/1174), [#1113](https://github.com/cucumber/cucumber-jvm/issues/1113) Luciano van der Veekens, Björn Rasmusson) 
 * [Core] Close OutputStream for embedded images in HTML formatter ([#1175](https://github.com/cucumber/cucumber-jvm/pull/1175), [#1108](https://github.com/cucumber/cucumber-jvm/issues/1108) M.P. Korstanje) 
 * [Scala] Compile cucumber-scala_2.12 against Java 8 ([#1171](https://github.com/cucumber/cucumber-jvm/pull/1171), [#1087](https://github.com/cucumber/cucumber-jvm/issues/1087) M.P. Korstanje, Paolo Ambrosio). This includes:
