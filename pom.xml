@@ -77,6 +77,7 @@
         <pax-url.version>2.2.0</pax-url.version>
         <felix.version>5.4.0</felix.version>
         <tag-expressions.version>1.0.1</tag-expressions.version>
+        <hk2.version>2.4.0</hk2.version>
     </properties>
     <licenses>
         <license>
@@ -548,6 +549,11 @@
                 <artifactId>org.apache.felix.framework</artifactId>
                 <version>${felix.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.glassfish.hk2</groupId>
+                <artifactId>hk2</artifactId>
+                <version>${hk2.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -582,6 +588,7 @@
         <module>needle</module>
         <module>android</module>
         <module>examples</module>
+        <module>hk2</module>
     </modules>
 
     <profiles>

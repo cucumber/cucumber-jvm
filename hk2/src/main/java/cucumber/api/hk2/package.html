@@ -1,0 +1,24 @@
+<body>
+<div>
+    <p>The HK2 module follows the patterns used by the Guice dependency module. An annotation binding scope named <code>@ScenarioScoped</code>
+        has been added, which when set as the binding scope for a class, will limit the object's lifespan to the
+        lifespan of a Cucumber scenario. I.e. a new instance of this object will be created for each Cucumber scenario.
+    </p>
+    <p>The ServiceLocator used by the module is provided by the user's implementation of ServiceLocatorSource. Expose
+        your implementation to the Cucumber runtime by setting the environment key <code>hk2.locator-source</code> to
+        the fully qualified name of the implementing class.
+    </p>
+    <p>The easiest way to do this is by creating a cucumber.properties file with the configuration values, and placing
+        this file at the root of your classpath.
+    </p>
+    <p>
+        If you do not provide your own custom ServiceLocatorSource, a default ServiceLocatorSource will be created by
+        the module. This default ServiceLocator will be populated by services found in the <code>META-INF/hk2-locator/default</code>
+        file.
+    </p>
+    <p>
+        Please refer to the <a href="https://hk2-project.github.io/" target="_parent">HK2 project page</a> for further
+        information on HK2.
+    </p>
+</div>
+</body>
