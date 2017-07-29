@@ -77,6 +77,7 @@
         <pax-url.version>2.2.0</pax-url.version>
         <felix.version>5.4.0</felix.version>
         <tag-expressions.version>1.0.1</tag-expressions.version>
+        <typetools.version>0.5.0</typetools.version>
     </properties>
     <licenses>
         <license>
@@ -547,6 +548,11 @@
                 <groupId>org.apache.felix</groupId>
                 <artifactId>org.apache.felix.framework</artifactId>
                 <version>${felix.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.jodah</groupId>
+                <artifactId>typetools</artifactId>
+                <version>${typetools.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -3,24 +3,29 @@ package cucumber.runtime.java;
 import cucumber.api.Result;
 import cucumber.api.event.EventHandler;
 import cucumber.api.event.TestStepFinished;
+import cucumber.api.java.ObjectFactory;
 import cucumber.api.java.en.Given;
 import cucumber.runtime.AmbiguousStepDefinitionsException;
 import cucumber.runtime.DuplicateStepDefinitionException;
-import cucumber.runtime.Glue;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.io.ClasspathResourceLoader;
+import cucumber.runtime.io.MultiLoader;
+import cucumber.runtime.io.ResourceLoader;
+import cucumber.runtime.io.ResourceLoaderClassFinder;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.Argument;
 import gherkin.pickles.Pickle;
 import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleTag;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.lang.reflect.Method;
 import java.util.Collections;
 
+import static java.lang.Thread.currentThread;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -43,23 +48,27 @@ public class JavaStepDefinitionTest {
     }
 
     private final Defs defs = new Defs();
-    private final JavaBackend backend = new JavaBackend(new SingletonFactory(defs));
-    private final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-    private final RuntimeOptions runtimeOptions = new RuntimeOptions("");
-    private final Runtime runtime = new Runtime(new ClasspathResourceLoader(classLoader), classLoader, asList(backend), runtimeOptions);
-    private final Glue glue = runtime.getGlue();
-    private final EventHandler<TestStepFinished> testStepFinishedHandler = new EventHandler<TestStepFinished>() {
-        @Override
-        public void receive(TestStepFinished event) {
-            latestReceivedResult = event.result;
-        }
-    };
+    private JavaBackend backend;
+    private Runtime runtime;
     private Result latestReceivedResult;
 
-    @org.junit.Before
-    public void loadNoGlue() {
-        backend.loadGlue(glue, Collections.<String>emptyList());
-        runtime.getEventBus().registerHandlerFor(TestStepFinished.class, testStepFinishedHandler);
+    @Before
+    public void createBackendAndLoadNoGlue() {
+        ClassLoader classLoader = currentThread().getContextClassLoader();
+        ResourceLoader resourceLoader = new MultiLoader(classLoader);
+        ResourceLoaderClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
+        ObjectFactory factory = new SingletonFactory(defs);
+        this.backend = new JavaBackend(factory, classFinder);
+        RuntimeOptions runtimeOptions = new RuntimeOptions("");
+        this.runtime = new Runtime(new ClasspathResourceLoader(classLoader), classLoader, asList(backend), runtimeOptions);
+
+        backend.loadGlue(runtime.getGlue(), Collections.<String>emptyList());
+        runtime.getEventBus().registerHandlerFor(TestStepFinished.class, new EventHandler<TestStepFinished>() {
+            @Override
+            public void receive(TestStepFinished event) {
+                latestReceivedResult = event.result;
+            }
+        });
     }
 
     @Test(expected = DuplicateStepDefinitionException.class)

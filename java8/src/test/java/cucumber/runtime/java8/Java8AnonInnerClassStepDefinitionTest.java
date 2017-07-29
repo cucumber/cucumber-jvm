@@ -1,33 +1,33 @@
-package cucumber.runtime.java;
-
-import cucumber.api.java8.StepdefBody;
-import cucumber.runtime.CucumberException;
-import org.junit.Test;
-
-import java.util.List;
-import java.util.regex.Pattern;
+package cucumber.runtime.java8;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-public class Java8StepDefinitionTest {
+import cucumber.api.java8.StepdefBody;
+import cucumber.runtime.CucumberException;
+import org.junit.Ignore;
+import org.junit.Test;
+
+import java.util.List;
+
+public class Java8AnonInnerClassStepDefinitionTest {
 
     @Test
     public void should_calculate_parameters_count_from_body_with_one_param() throws Exception {
-        Java8StepDefinition java8StepDefinition = new Java8StepDefinition(Pattern.compile("^I have (\\d) some step (.*)$"), 0, oneParamStep(), null);
-        assertEquals(new Integer(1), java8StepDefinition.getParameterCount());
+        Java8StepDefinition java8StepDefinition = new Java8StepDefinition("^I have (\\d) some step (.*)$", 0, StepdefBody.A1.class, oneParamStep());
+        assertEquals(Integer.valueOf(1), java8StepDefinition.getParameterCount());
     }
 
     @Test
     public void should_calculate_parameters_count_from_body_with_two_params() throws Exception {
-        Java8StepDefinition java8StepDefinition = new Java8StepDefinition(Pattern.compile("^I have some step $"), 0, twoParamStep(), null);
-        assertEquals(new Integer(2), java8StepDefinition.getParameterCount());
+        Java8StepDefinition java8StepDefinition = new Java8StepDefinition("^I have some step $", 0, StepdefBody.A2.class, twoParamStep());
+        assertEquals(Integer.valueOf(2), java8StepDefinition.getParameterCount());
     }
 
     @Test
     public void should_fail_for_param_with_non_generic_list() throws Exception {
         try {
-            new Java8StepDefinition(Pattern.compile("^I have (\\d) some step (.*)$"), 0, nonGenericListStep(), null);
+            new Java8StepDefinition("^I have (\\d) some step (.*)$", 0, StepdefBody.A1.class, nonGenericListStep());
             fail();
         } catch (CucumberException expected) {
             assertEquals("Can't use java.util.List in lambda step definition. Declare a DataTable argument instead and convert manually with asList/asLists/asMap/asMaps", expected.getMessage());
@@ -35,12 +35,16 @@ public class Java8StepDefinitionTest {
     }
 
     @Test
-    public void should_pass_for_param_with_generic_list() throws Exception {
-        Java8StepDefinition java8StepDefinition = new Java8StepDefinition(Pattern.compile("^I have (\\d) some step (.*)$"), 0, genericListStep(), null);
-        assertEquals(new Integer(1), java8StepDefinition.getParameterCount());
+    public void should_fail_for_param_with_generic_list() throws Exception {
+        try {
+            new Java8StepDefinition("^I have (\\d) some step (.*)$", 0, StepdefBody.A1.class, genericListStep());
+            fail();
+        } catch (CucumberException expected) {
+            assertEquals("Can't use java.util.List in lambda step definition. Declare a DataTable argument instead and convert manually with asList/asLists/asMap/asMaps", expected.getMessage());
+        }
     }
 
-    private StepdefBody oneParamStep() {
+    private StepdefBody.A1 oneParamStep() {
         return new StepdefBody.A1<String>() {
             @Override
             public void accept(String p1) {
@@ -48,7 +52,7 @@ public class Java8StepDefinitionTest {
         };
     }
 
-    private StepdefBody twoParamStep() {
+    private StepdefBody.A2 twoParamStep() {
         return new StepdefBody.A2<String, String>() {
             @Override
             public void accept(String p1, String p2) {
@@ -56,7 +60,7 @@ public class Java8StepDefinitionTest {
         };
     }
 
-    private StepdefBody genericListStep() {
+    private StepdefBody.A1 genericListStep() {
         return new StepdefBody.A1<List<String>>() {
             @Override
             public void accept(List<String> p1) {
@@ -65,7 +69,7 @@ public class Java8StepDefinitionTest {
         };
     }
 
-    private StepdefBody nonGenericListStep() {
+    private StepdefBody.A1 nonGenericListStep() {
         return new StepdefBody.A1<List>() {
             @Override
             public void accept(List p1) {
