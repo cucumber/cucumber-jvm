@@ -16,6 +16,6 @@ public class FileResourceIterable implements Iterable<Resource> {
 
     @Override
     public Iterator<Resource> iterator() {
-        return new FileResourceIterator(root, file, suffix);
+        return FileResourceIterator.createFileResourceIterator(root, file, suffix);
     }
 }

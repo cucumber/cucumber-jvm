@@ -9,20 +9,24 @@ import static org.junit.Assert.assertEquals;
 public class FileResourceTest {
 
     @Test
-    public void get_path_should_return_short_path_when_root_same_as_file() {
+    public void for_classpath_files_get_path_should_return_relative_path_from_classpath_root() {
         // setup
-        FileResource toTest = new FileResource(new File("test1/test.feature"), new File("test1/test.feature"));
+        FileResource toTest1 = FileResource.createClasspathFileResource(new File("/testPath"), new File("/testPath/test1/test.feature"));
+        FileResource toTest2 = FileResource.createClasspathFileResource(new File("testPath"), new File("testPath/test1/test.feature"));
 
         // test
-        assertEquals("test1" + File.separator + "test.feature", toTest.getPath());
+        assertEquals("test1" + File.separator + "test.feature", toTest1.getPath());
+        assertEquals("test1" + File.separator + "test.feature", toTest2.getPath());
     }
 
     @Test
-    public void get_path_should_return_truncated_path_when_absolute_file_paths_are_input() {
+    public void for_filesystem_files_get_path_should_return_the_path() {
         // setup
-        FileResource toTest = new FileResource(new File("/testPath/test1"), new File("/testPath/test1/test.feature"));
+        FileResource toTest1 = FileResource.createFileResource(new File("test1"), new File("test1/test.feature"));
+        FileResource toTest2 = FileResource.createFileResource(new File("test1/test.feature"), new File("test1/test.feature"));
 
         // test
-        assertEquals("test.feature", toTest.getPath());
+        assertEquals("test1" + File.separator + "test.feature", toTest1.getPath());
+        assertEquals("test1" + File.separator + "test.feature", toTest2.getPath());
     }
 }
