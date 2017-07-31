@@ -74,13 +74,15 @@ public class FeatureRunner extends ParentRunner<PickleRunner> {
     }
 
     private void buildFeatureElementRunners(Runtime runtime, JUnitReporter jUnitReporter) {
+        Feature feature = cucumberFeature.getGherkinFeature().getFeature();
+        if (feature == null) {
+            return;
+        }
         Compiler compiler = new Compiler();
         List<PickleEvent> pickleEvents = new ArrayList<PickleEvent>();
         for (Pickle pickle : compiler.compile(cucumberFeature.getGherkinFeature())) {
             pickleEvents.add(new PickleEvent(cucumberFeature.getUri(), pickle));
         }
-        Feature feature = cucumberFeature.getGherkinFeature().getFeature();
-        String featureName = feature.getName();
         for (PickleEvent pickleEvent : pickleEvents) {
             if (runtime.matchesFilters(pickleEvent)) {
                 try {
@@ -90,7 +92,7 @@ public class FeatureRunner extends ParentRunner<PickleRunner> {
                         children.add(picklePickleRunner);
                     } else {
                         PickleRunner picklePickleRunner;
-                        picklePickleRunner = withNoStepDescriptions(featureName, runtime.getRunner(), pickleEvent, jUnitReporter);
+                        picklePickleRunner = withNoStepDescriptions(feature.getName(), runtime.getRunner(), pickleEvent, jUnitReporter);
                         children.add(picklePickleRunner);
                     }
                 } catch (InitializationError e) {
