@@ -41,7 +41,6 @@ public class AndroidInstrumentationReporterTest {
     private final TestSourceRead testSourceRead = new TestSourceRead(
         0l,
         "path/file.feature",
-        "en",
         "Feature: feature name\n  Scenario: some important scenario\n");
     private final TestCase testCase = mock(TestCase.class);
     private final Result firstResult = mock(Result.class);

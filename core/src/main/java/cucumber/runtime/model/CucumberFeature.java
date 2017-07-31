@@ -23,7 +23,6 @@ import java.util.regex.Pattern;
 public class CucumberFeature implements Serializable {
     private static final long serialVersionUID = 1L;
     private final String uri;
-    private String language;
     private GherkinDocument gherkinDocument;
     private String gherkinSource;
     public static final Pattern RERUN_PATH_SPECIFICATION = Pattern.compile("(?m:^| |)(.*?\\.feature(?:(?::\\d+)*))");
@@ -119,17 +118,10 @@ public class CucumberFeature implements Serializable {
         this.gherkinDocument = gherkinDocument;
         this.uri = uri;
         this.gherkinSource = gherkinSource;
-        if (gherkinDocument.getFeature() != null) {
-            setLanguage(gherkinDocument.getFeature().getLanguage());
-        }
     }
 
     public GherkinDocument getGherkinFeature() {
         return gherkinDocument;
-    }
-
-    public String getLanguage() {
-        return language;
     }
 
     public String getUri() {
@@ -137,11 +129,7 @@ public class CucumberFeature implements Serializable {
     }
 
     public void sendTestSourceRead(EventBus bus) {
-        bus.send(new TestSourceRead(bus.getTime(), uri, gherkinDocument.getFeature().getLanguage(), gherkinSource));
-    }
-
-    private void setLanguage(String language) {
-        this.language = language;
+        bus.send(new TestSourceRead(bus.getTime(), uri, gherkinSource));
     }
 
     private static class CucumberFeatureUriComparator implements Comparator<CucumberFeature> {
