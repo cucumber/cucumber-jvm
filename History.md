@@ -1,5 +1,6 @@
 ## [2.0.0-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v1.2.5...master) (In Git)
 
+* [JUnit] Invoke (Before|After)Class and TestRules around Cucumber execution ([#1190](https://github.com/cucumber/cucumber-jvm/pull/1190) M.P. Korstanje) 
 * [Core] Use whole path for uri:s for file system feature files ([#1189](https://github.com/cucumber/cucumber-jvm/pull/1189), [#854](https://github.com/cucumber/cucumber-jvm/issues/854) Björn Rasmusson)
 * [Java, Java8, Kotlin Java8] Support method references ([#1178](https://github.com/cucumber/cucumber-jvm/pull/1178), [#1140](https://github.com/cucumber/cucumber-jvm/pull/1140) M.P. Korstanje) 
   * Java8 method references can be used in lambda step definitions
