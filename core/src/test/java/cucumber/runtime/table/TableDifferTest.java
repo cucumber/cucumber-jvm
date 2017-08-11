@@ -234,7 +234,7 @@ public class TableDifferTest {
         try {
             DataTable emptyTable = DataTable.create(Collections.emptyList());
             table().diff(emptyTable);
-        } catch (IndexOutOfBoundsException e) {
+        } catch (TableDiffException e) {
             String expected = "" +
                 "Tables were not identical:\n" +
                 "    - | Aslak | aslak@email.com | 123 |\n" +
@@ -248,20 +248,9 @@ public class TableDifferTest {
 
     @Test
     public void empty_list_should_not_diff_with_empty_table() {
-        try {
-            List<List<String>> emptyList = new ArrayList<List<String>>();
-            DataTable emptyTable = DataTable.create(Collections.emptyList());
-            emptyTable.diff(emptyList);
-        } catch (IndexOutOfBoundsException e) {
-            String expected = "" +
-                "Tables were not identical:\n" +
-                "    - | Aslak | aslak@email.com | 123 |\n" +
-                "    - | Joe   | joe@email.com   | 234 |\n" +
-                "    - | Bryan | bryan@email.org | 456 |\n" +
-                "    - | Ni    | ni@email.com    | 654 |\n";
-            assertEquals(expected, e.getMessage());
-            throw e;
-        }
+        List<List<String>> emptyList = new ArrayList<List<String>>();
+        DataTable emptyTable = DataTable.create(Collections.emptyList());
+        assertEquals(emptyTable.raw(), emptyList);
     }
 
     @Test(expected = TableDiffException.class)
