@@ -161,6 +161,16 @@
                 <artifactId>cucumber-junit</artifactId>
                 <version>${project.version}</version>
             </dependency>
+			<dependency>
+			    <groupId>info.cukes</groupId>
+			    <artifactId>cucumber-guice</artifactId>
+			    <version>${project.version}</version>
+		    </dependency>
+			<dependency>
+			    <groupId>info.cukes</groupId>
+			    <artifactId>cucumber-metrics</artifactId>
+			    <version>${project.version}</version>
+		    </dependency>
             <dependency>
                 <groupId>io.cucumber</groupId>
                 <artifactId>cucumber-testng</artifactId>
@@ -580,6 +590,7 @@
         <module>spring</module>
         <module>osgi</module>
         <module>guice</module>
+		<module>metrics</module>
         <module>weld</module>
         <module>groovy</module>
         <module>rhino</module>
