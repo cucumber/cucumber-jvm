@@ -382,35 +382,18 @@ public class PrettyFormatterTest {
                                           AnsiEscapes.GREEN + AnsiEscapes.INTENSITY_BOLD + "arg2"  + AnsiEscapes.RESET));
     }
 
-    // Reproduce issue #619: This test should now fail!
-    @Test(expected = StringIndexOutOfBoundsException.class)
-    public void nested_capture_groups_cannot_be_handled(){
-        Formats formats = new AnsiFormats();
-        Argument fullArg = new Argument(0, "this is the nested argument full argument");
-        Argument nestedArg = new Argument(-29, "nested argument");
-        PrettyFormatter prettyFormatter = new PrettyFormatter(null);
-
-        try {
-            String formattedText = prettyFormatter.formatStepText("Given ", "this is the (nested argument) full argument", formats.get("passed"), formats.get("passed_arg"), asList(fullArg, nestedArg));
-        } catch (StringIndexOutOfBoundsException e) {
-            assertEquals("String index out of range: -70", e.getMessage());
-            throw e;
-        }
-    }
-
     @Test
-    public void nested_capture_groups_cannot_be_formatted(){
+    public void should_mark_nested_argument_as_part_of_full_argument(){
         Formats formats = new AnsiFormats();
-        Argument fullArg = new Argument(0, "this is the nested argument full argument");
-        Argument nestedArg = new Argument(-29, "nested argument");
+        Argument fullArg = new Argument(20, "and not yet confirmed");
+        Argument nestedArg = new Argument(-21, "not yet ");
         PrettyFormatter prettyFormatter = new PrettyFormatter(null);
 
-        try {
-            String formattedText = prettyFormatter.formatStepText("Given ", "this is the (nested argument) full argument", formats.get("passed"), formats.get("passed_arg"), asList(fullArg, nestedArg));
-        } catch (StringIndexOutOfBoundsException e) {
-            assertEquals("String index out of range: -70", e.getMessage());
-            throw e;
-        }
+        String formattedText = prettyFormatter.formatStepText("Given ", "the order is placed and not yet confirmed", formats.get("passed"), formats.get("passed_arg"), asList(fullArg, nestedArg));
+
+        assertThat(formattedText, equalTo(AnsiEscapes.GREEN + "Given " + AnsiEscapes.RESET +
+            AnsiEscapes.GREEN + "the order is placed " + AnsiEscapes.RESET +
+            AnsiEscapes.GREEN + AnsiEscapes.INTENSITY_BOLD + "and not yet confirmed"  + AnsiEscapes.RESET));
     }
 
     private String runFeatureWithPrettyFormatter(final CucumberFeature feature, final Map<String, String> stepsToLocation) throws Throwable {
