@@ -39,6 +39,30 @@
                 <module>android</module>
             </modules>
         </profile>
+
+        <profile>
+            <id>coveralls.io</id>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.codehaus.mojo</groupId>
+                            <artifactId>cobertura-maven-plugin</artifactId>
+                            <version>${cobertura-maven-plugin.version}</version>
+                            <configuration>
+                                <skip>true</skip>
+                            </configuration>
+                        </plugin>
+                        <plugin>
+                            <artifactId>maven-surefire-plugin</artifactId>
+                            <configuration>
+                                <skip>true</skip>
+                            </configuration>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
+        </profile>
     </profiles>
 
     <build>
