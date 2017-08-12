@@ -21,6 +21,7 @@ import static cucumber.runtime.TestHelper.result;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 public class PrettyFormatterTest {
@@ -50,7 +51,7 @@ public class PrettyFormatterTest {
     }
 
     @Test
-    public void should_handle_backgound() throws Throwable {
+    public void should_handle_background() throws Throwable {
         CucumberFeature feature = feature("path/test.feature", "" +
                 "Feature: feature name\n" +
                 "  Background: background name\n" +
@@ -379,6 +380,37 @@ public class PrettyFormatterTest {
                                           AnsiEscapes.GREEN + AnsiEscapes.INTENSITY_BOLD + "arg1"  + AnsiEscapes.RESET +
                                           AnsiEscapes.GREEN + " text " + AnsiEscapes.RESET +
                                           AnsiEscapes.GREEN + AnsiEscapes.INTENSITY_BOLD + "arg2"  + AnsiEscapes.RESET));
+    }
+
+    // Reproduce issue #619: This test should now fail!
+    @Test(expected = StringIndexOutOfBoundsException.class)
+    public void nested_capture_groups_cannot_be_handled(){
+        Formats formats = new AnsiFormats();
+        Argument fullArg = new Argument(0, "this is the nested argument full argument");
+        Argument nestedArg = new Argument(-29, "nested argument");
+        PrettyFormatter prettyFormatter = new PrettyFormatter(null);
+
+        try {
+            String formattedText = prettyFormatter.formatStepText("Given ", "this is the (nested argument) full argument", formats.get("passed"), formats.get("passed_arg"), asList(fullArg, nestedArg));
+        } catch (StringIndexOutOfBoundsException e) {
+            assertEquals("String index out of range: -70", e.getMessage());
+            throw e;
+        }
+    }
+
+    @Test
+    public void nested_capture_groups_cannot_be_formatted(){
+        Formats formats = new AnsiFormats();
+        Argument fullArg = new Argument(0, "this is the nested argument full argument");
+        Argument nestedArg = new Argument(-29, "nested argument");
+        PrettyFormatter prettyFormatter = new PrettyFormatter(null);
+
+        try {
+            String formattedText = prettyFormatter.formatStepText("Given ", "this is the (nested argument) full argument", formats.get("passed"), formats.get("passed_arg"), asList(fullArg, nestedArg));
+        } catch (StringIndexOutOfBoundsException e) {
+            assertEquals("String index out of range: -70", e.getMessage());
+            throw e;
+        }
     }
 
     private String runFeatureWithPrettyFormatter(final CucumberFeature feature, final Map<String, String> stepsToLocation) throws Throwable {
