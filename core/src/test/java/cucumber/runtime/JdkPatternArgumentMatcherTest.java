@@ -59,6 +59,13 @@ public class JdkPatternArgumentMatcherTest {
         assertNull(matcher.argumentsFrom("I wait for some time").get(0).getVal());
     }
 
+    @Test
+    public void canHandleNestedCaptureGroups() throws UnsupportedEncodingException {
+        assertVariables("the order is placed( and( not yet)? confirmed)?", "the order is placed and not yet confirmed",
+            " and not yet confirmed", 19,
+            " not yet", 23);
+    }
+
     private void assertVariables(String regex, String string, String v1, Integer pos1, String v2, Integer pos2) throws UnsupportedEncodingException {
         List<Argument> args = new JdkPatternArgumentMatcher(Pattern.compile(regex)).argumentsFrom(string);
         assertEquals(2, args.size());
