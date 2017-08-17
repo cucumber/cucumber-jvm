@@ -208,22 +208,27 @@ class PrettyFormatter implements Formatter, ColorAware {
     }
 
     String formatStepText(String keyword, String stepText, Format textFormat, Format argFormat, List<Argument> arguments) {
-        int textStart = 0;
+        int beginIndex = 0;
         StringBuilder result = new StringBuilder(textFormat.text(keyword));
         for (Argument argument : arguments) {
             // can be null if the argument is missing.
             if (argument.getOffset() != null) {
-                String text = stepText.substring(textStart, argument.getOffset());
+                int argumentOffset = argument.getOffset();
+                if (argumentOffset < beginIndex ) { // a nested argument starts before the enclosing argument ends; ignore it when formatting
+                    continue;
+                }
+                String text = stepText.substring(beginIndex, argumentOffset);
                 result.append(textFormat.text(text));
             }
             // val can be null if the argument isn't there, for example @And("(it )?has something")
             if (argument.getVal() != null) {
                 result.append(argFormat.text(argument.getVal()));
-                textStart = argument.getOffset() + argument.getVal().length();
+                int argumentEnd = argument.getOffset() + argument.getVal().length(); // end of current argument; can be < 0 for nested argument
+                beginIndex = argumentEnd;
             }
         }
-        if (textStart != stepText.length()) {
-            String text = stepText.substring(textStart, stepText.length());
+        if (beginIndex != stepText.length() && beginIndex >= 0) {
+            String text = stepText.substring(beginIndex, stepText.length());
             result.append(textFormat.text(text));
         }
         return result.toString();
