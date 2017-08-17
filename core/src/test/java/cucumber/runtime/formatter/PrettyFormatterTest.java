@@ -21,7 +21,6 @@ import static cucumber.runtime.TestHelper.result;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 public class PrettyFormatterTest {
@@ -51,7 +50,7 @@ public class PrettyFormatterTest {
     }
 
     @Test
-    public void should_handle_background() throws Throwable {
+    public void should_handle_backgound() throws Throwable {
         CucumberFeature feature = feature("path/test.feature", "" +
                 "Feature: feature name\n" +
                 "  Background: background name\n" +
@@ -380,20 +379,6 @@ public class PrettyFormatterTest {
                                           AnsiEscapes.GREEN + AnsiEscapes.INTENSITY_BOLD + "arg1"  + AnsiEscapes.RESET +
                                           AnsiEscapes.GREEN + " text " + AnsiEscapes.RESET +
                                           AnsiEscapes.GREEN + AnsiEscapes.INTENSITY_BOLD + "arg2"  + AnsiEscapes.RESET));
-    }
-
-    @Test
-    public void should_mark_nested_argument_as_part_of_full_argument(){
-        Formats formats = new AnsiFormats();
-        Argument fullArg = new Argument(20, "and not yet confirmed");
-        Argument nestedArg = new Argument(-21, "not yet ");
-        PrettyFormatter prettyFormatter = new PrettyFormatter(null);
-
-        String formattedText = prettyFormatter.formatStepText("Given ", "the order is placed and not yet confirmed", formats.get("passed"), formats.get("passed_arg"), asList(fullArg, nestedArg));
-
-        assertThat(formattedText, equalTo(AnsiEscapes.GREEN + "Given " + AnsiEscapes.RESET +
-            AnsiEscapes.GREEN + "the order is placed " + AnsiEscapes.RESET +
-            AnsiEscapes.GREEN + AnsiEscapes.INTENSITY_BOLD + "and not yet confirmed"  + AnsiEscapes.RESET));
     }
 
     private String runFeatureWithPrettyFormatter(final CucumberFeature feature, final Map<String, String> stepsToLocation) throws Throwable {

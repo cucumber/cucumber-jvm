@@ -144,14 +144,5 @@ Now, update the dependency in example projects:
 
 * https://github.com/cucumber/cucumber-java-skeleton
 
-## Code Coverage
-
-Code coverage is collected mainly to identify code that can be deleted or needs to be tested better.
-To generate a report, run:
-
-```
-COBERTURA_HOME=/some/where ./cobertura.sh
-```
-
 This technique to collect coverage for a multi-module Maven project is based on a
 [blog post](http://thomassundberg.wordpress.com/2012/02/18/test-coverage-in-a-multi-module-maven-project/) by Thomas Sundberg.
