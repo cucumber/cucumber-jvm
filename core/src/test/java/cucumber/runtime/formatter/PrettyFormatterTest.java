@@ -385,47 +385,26 @@ public class PrettyFormatterTest {
     @Test
     public void should_mark_nested_argument_as_part_of_full_argument(){
         Formats formats = new AnsiFormats();
-        Argument fullArg = new Argument(20, "and not yet confirmed");
+        Argument enclosingArg = new Argument(20, "and not yet confirmed");
         Argument nestedArg = new Argument(-17, "not yet ");
         PrettyFormatter prettyFormatter = new PrettyFormatter(null);
 
-        String formattedText = prettyFormatter.formatStepText("Given ", "the order is placed and not yet confirmed", formats.get("passed"), formats.get("passed_arg"), asList(fullArg, nestedArg));
+        String formattedText = prettyFormatter.formatStepText("Given ", "the order is placed and not yet confirmed", formats.get("passed"), formats.get("passed_arg"), asList(enclosingArg, nestedArg));
 
         assertThat(formattedText, equalTo(AnsiEscapes.GREEN + "Given " + AnsiEscapes.RESET +
             AnsiEscapes.GREEN + "the order is placed " + AnsiEscapes.RESET +
             AnsiEscapes.GREEN + AnsiEscapes.INTENSITY_BOLD + "and not yet confirmed"  + AnsiEscapes.RESET));
     }
-    /* @Dado("^a empresa (\\d+) (não )?possui esse NCM( e (não )?tem mesmo enquadramento tributário)?$")
-               01234567890     1 2345  678901234567890 123 4567  8901234567890123456789012345678901
-                                                          -38 (tov einde van enclosing argument)
-    Since each capture groups maps to an argument, this sort of gives an argument in an argument,
-    the third argument (e não tem mesmo enquadramento tributário), will end at a position after the forth argument starts (não).
-    Exactly 38 positions before the end the third argument thereby the String index out of range: -38
-
-subString(from, to)
-IndexOutOfBoundsException -
-if the beginIndex is negative,
-57or endIndex is larger than the length of this String object,
-or beginIndex is larger than endIndex.
-
-
-    *  What is the expected range of offset values for nested capture groups? negative
-    *
-    *  Can you explain (or even better write a test) for the scenario where textStart becomes less then zero or longer
-    *  then the stepText now that we are skipping nested arguments?
-    *
-    *  Or alternatively, if you can't find such a scenario, can you proof that it can't happen?
-    */
 
     @Test
     public void should_mark_nested_arguments_as_part_of_enclosing_argument(){
         Formats formats = new AnsiFormats();
-        Argument fullArg = new Argument(20, "and not yet confirmed");
+        Argument enclosingArg = new Argument(20, "and not yet confirmed");
         Argument nestedArg = new Argument(-17, "not yet ");
-        Argument nestedInNestedArg = new Argument(-5, "yet ");
+        Argument nestedNestedArg = new Argument(-5, "yet ");
         PrettyFormatter prettyFormatter = new PrettyFormatter(null);
 
-        String formattedText = prettyFormatter.formatStepText("Given ", "the order is placed and not yet confirmed", formats.get("passed"), formats.get("passed_arg"), asList(fullArg, nestedArg, nestedInNestedArg));
+        String formattedText = prettyFormatter.formatStepText("Given ", "the order is placed and not yet confirmed", formats.get("passed"), formats.get("passed_arg"), asList(enclosingArg, nestedArg, nestedNestedArg));
 
         assertThat(formattedText, equalTo(AnsiEscapes.GREEN + "Given " + AnsiEscapes.RESET +
             AnsiEscapes.GREEN + "the order is placed " + AnsiEscapes.RESET +
