@@ -213,11 +213,8 @@ class PrettyFormatter implements Formatter, ColorAware {
         for (Argument argument : arguments) {
             // can be null if the argument is missing.
             if (argument.getOffset() != null) {
-                int textEnd = argument.getOffset();
-                if (textStart <= textEnd ) { // textStart can be > textEnd with nested capture groups
-                    String text = stepText.substring(textStart, textEnd);
-                    result.append(textFormat.text(text));
-                }
+                String text = stepText.substring(textStart, argument.getOffset());
+                result.append(textFormat.text(text));
             }
             // val can be null if the argument isn't there, for example @And("(it )?has something")
             if (argument.getVal() != null) {
@@ -225,7 +222,7 @@ class PrettyFormatter implements Formatter, ColorAware {
                 textStart = argument.getOffset() + argument.getVal().length();
             }
         }
-        if (textStart != stepText.length() && textStart >= 0) { // textStart can be < 0 with nested capture groups
+        if (textStart != stepText.length()) {
             String text = stepText.substring(textStart, stepText.length());
             result.append(textFormat.text(text));
         }
