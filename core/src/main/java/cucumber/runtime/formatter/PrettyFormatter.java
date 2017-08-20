@@ -224,7 +224,7 @@ class PrettyFormatter implements Formatter, ColorAware {
             // val can be null if the argument isn't there, for example @And("(it )?has something")
             if (argument.getVal() != null) {
                 result.append(argFormat.text(argument.getVal()));
-                // set beginIndex to end of argumentgit
+                // set beginIndex to end of argument
                 beginIndex = argument.getOffset() + argument.getVal().length();
             }
         }
