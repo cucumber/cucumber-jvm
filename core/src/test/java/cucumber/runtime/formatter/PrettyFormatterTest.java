@@ -21,6 +21,7 @@ import static cucumber.runtime.TestHelper.result;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 public class PrettyFormatterTest {
@@ -50,7 +51,7 @@ public class PrettyFormatterTest {
     }
 
     @Test
-    public void should_handle_backgound() throws Throwable {
+    public void should_handle_background() throws Throwable {
         CucumberFeature feature = feature("path/test.feature", "" +
                 "Feature: feature name\n" +
                 "  Background: background name\n" +
@@ -366,7 +367,7 @@ public class PrettyFormatterTest {
     }
 
     @Test
-    public void should_mark_arguments_in_steps() throws Throwable {
+    public void should_mark_subsequent_arguments_in_steps() throws Throwable {
         Formats formats = new AnsiFormats();
         Argument arg1 = new Argument(5, "arg1");
         Argument arg2 = new Argument(15, "arg2");
@@ -379,6 +380,35 @@ public class PrettyFormatterTest {
                                           AnsiEscapes.GREEN + AnsiEscapes.INTENSITY_BOLD + "arg1"  + AnsiEscapes.RESET +
                                           AnsiEscapes.GREEN + " text " + AnsiEscapes.RESET +
                                           AnsiEscapes.GREEN + AnsiEscapes.INTENSITY_BOLD + "arg2"  + AnsiEscapes.RESET));
+    }
+
+    @Test
+    public void should_mark_nested_argument_as_part_of_full_argument(){
+        Formats formats = new AnsiFormats();
+        Argument enclosingArg = new Argument(19, " and not yet confirmed");
+        Argument nestedArg = new Argument(23, " not yet ");
+        PrettyFormatter prettyFormatter = new PrettyFormatter(null);
+
+        String formattedText = prettyFormatter.formatStepText("Given ", "the order is placed and not yet confirmed", formats.get("passed"), formats.get("passed_arg"), asList(enclosingArg, nestedArg));
+
+        assertThat(formattedText, equalTo(AnsiEscapes.GREEN + "Given " + AnsiEscapes.RESET +
+            AnsiEscapes.GREEN + "the order is placed" + AnsiEscapes.RESET +
+            AnsiEscapes.GREEN + AnsiEscapes.INTENSITY_BOLD + " and not yet confirmed"  + AnsiEscapes.RESET));
+    }
+
+    @Test
+    public void should_mark_nested_arguments_as_part_of_enclosing_argument(){
+        Formats formats = new AnsiFormats();
+        Argument enclosingArg = new Argument(19, " and not yet confirmed");
+        Argument nestedArg = new Argument(23, " not yet ");
+        Argument nestedNestedArg = new Argument(27, "yet ");
+        PrettyFormatter prettyFormatter = new PrettyFormatter(null);
+
+        String formattedText = prettyFormatter.formatStepText("Given ", "the order is placed and not yet confirmed", formats.get("passed"), formats.get("passed_arg"), asList(enclosingArg, nestedArg, nestedNestedArg));
+
+        assertThat(formattedText, equalTo(AnsiEscapes.GREEN + "Given " + AnsiEscapes.RESET +
+            AnsiEscapes.GREEN + "the order is placed" + AnsiEscapes.RESET +
+            AnsiEscapes.GREEN + AnsiEscapes.INTENSITY_BOLD + " and not yet confirmed"  + AnsiEscapes.RESET));
     }
 
     private String runFeatureWithPrettyFormatter(final CucumberFeature feature, final Map<String, String> stepsToLocation) throws Throwable {
