@@ -46,11 +46,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>net.sourceforge.cobertura</groupId>
-            <artifactId>cobertura</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>de.akquinet.jbosscc</groupId>
             <artifactId>jbosscc-needle</artifactId>
         </dependency>

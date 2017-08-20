@@ -5,6 +5,8 @@ sudo: false # Use container based builds. They are faster and we do not need sud
 cache:
   directories:
     - $HOME/.m2
+before_cache:
+  - rm -f $HOME/.m2/repository/io/cucumber
 
 before_install:
   - wget http://apache.claz.org/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.tar.gz
@@ -16,13 +18,15 @@ before_install:
 
 jobs:
   include:
-    # Stage Test - Job 1-3:  Builds against all Jdks.
+    # Stage Test - Job 1-2:  Builds against all available Jdks.
     - stage: test
       jdk: openjdk7
       script: mvn -q install
     - jdk: oraclejdk8
       script: mvn -q install
-    # Stage Test - Job 4: Build Android Examples.
+      after_success:
+        - mvn clean cobertura:cobertura coveralls:report -P coveralls.io
+    # Stage Test - Job 3: Build Android Examples.
     - jdk: oraclejdk8
       env: ANDROID_EXAMPLES=true
       language: android
