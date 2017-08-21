@@ -1,5 +1,6 @@
 ## [2.0.0-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v1.2.5...master) (In Git)
 
+* [Core] Fix PrettyFormatter exception on nested arguments ([#1200](https://github.com/cucumber/cucumber-jvm/pull/1200) Marit van Dijk, M.P. Korstanje) 
 * [Core] Added tests for diffing with empty table and list ([#1194](https://github.com/cucumber/cucumber-jvm/pull/1194) Marit van Dijk, M.P. Korstanje) 
 * [JUnit] Invoke (Before|After)Class and TestRules around Cucumber execution ([#1190](https://github.com/cucumber/cucumber-jvm/pull/1190) M.P. Korstanje) 
 * [Core] Use whole path for uri:s for file system feature files ([#1189](https://github.com/cucumber/cucumber-jvm/pull/1189), [#854](https://github.com/cucumber/cucumber-jvm/issues/854) Björn Rasmusson)
