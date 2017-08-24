@@ -20,7 +20,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <minimum.maven.version>3.1.1</minimum.maven.version>
+        <minimum.maven.version>3.3</minimum.maven.version>
         <outputDirectory>${project.build.directory}</outputDirectory>
         <gherkin.version>4.1.3</gherkin.version>
         <groovy.version>2.4.7</groovy.version>
@@ -739,7 +739,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.6.1</version>
+                    <version>3.6.2</version>
                     <configuration>
                         <encoding>UTF-8</encoding>
                         <source>1.6</source>
@@ -757,7 +757,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>2.10.4</version>
+                    <version>3.0.0-M1</version>
                     <configuration>
                         <aggregate>true</aggregate>
                         <use>false</use>
@@ -802,7 +802,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-shade-plugin</artifactId>
-                    <version>2.4.3</version>
+                    <version>3.0.0</version>
                     <executions>
                         <execution>
                             <phase>package</phase>
@@ -819,13 +819,13 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
-                    <version>3.5.1</version>
+                    <version>3.6</version>
                 </plugin>
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-resources-plugin</artifactId>
-                    <version>3.0.1</version>
+                    <version>3.0.2</version>
                 </plugin>
 
                 <plugin>
@@ -845,7 +845,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.19.1</version>
+                    <version>2.20</version>
                     <configuration>
                         <argLine>-Duser.language=en</argLine>
                         <argLine>-Xmx1024m</argLine>
@@ -877,7 +877,7 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>build-helper-maven-plugin</artifactId>
-                    <version>1.12</version>
+                    <version>3.0.0</version>
                 </plugin>
 
                 <plugin>
@@ -898,12 +898,12 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-enforcer-plugin</artifactId>
-                    <version>1.4.1</version>
+                    <version>3.0.0-M1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.felix</groupId>
                     <artifactId>maven-bundle-plugin</artifactId>
-                    <version>3.2.0</version>
+                    <version>3.3.0</version>
                     <extensions>true</extensions>
                     <executions>
                         <execution>
