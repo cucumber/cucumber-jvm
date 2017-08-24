@@ -19,13 +19,8 @@ import org.mozilla.javascript.tools.shell.Global;
 import java.io.File;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.*;
 import java.util.AbstractMap.SimpleEntry;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -60,6 +55,8 @@ public class HTMLFormatterTest {
 
     @Test
     public void writes_valid_report_js() throws Throwable {
+        Locale original = Locale.getDefault();
+        Locale.setDefault(new Locale("en", "US"));
         writeReport();
         URL reportJs = new URL(outputDir, "report.js");
         Context cx = Context.enter();
@@ -69,6 +66,8 @@ public class HTMLFormatterTest {
             fail("Should have failed");
         } catch (EcmaError expected) {
             assertTrue(expected.getMessage().startsWith("ReferenceError: \"document\" is not defined."));
+        } finally {
+            Locale.setDefault(original);
         }
     }
 
