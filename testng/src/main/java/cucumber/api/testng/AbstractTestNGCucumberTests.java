@@ -23,8 +23,9 @@ public abstract class AbstractTestNGCucumberTests {
     }
 
     /**
-     * @return returns a two dimensional array of {@link PickleEventWrapper} scenarios
-     * with their associated {@link CucumberFeatureWrapper) feature.
+     * Returns two dimensional array of PickleEventWrapper scenarios with their associated CucumberFeatureWrapper feature.
+     *
+     * @return a two dimensional array of scenarios features.
      */
     @DataProvider
     public Object[][] scenarios() {

@@ -11,7 +11,7 @@ public class Result {
     private final Throwable error;
     public static final Result SKIPPED = new Result(Result.Type.SKIPPED, null, null);
     public static final Result UNDEFINED = new Result(Result.Type.UNDEFINED, null, null);
-    public static enum Type {
+    public enum Type {
         PASSED,
         SKIPPED,
         PENDING,
@@ -35,11 +35,11 @@ public class Result {
     }
 
     /**
-     * Used at runtime
+     * The result of a step or scenario
      *
-     * @param status
-     * @param duration
-     * @param error
+     * @param status status of the step or scenario
+     * @param duration the duration in nanoseconds
+     * @param error the error that caused the failure if any
      */
     public Result(Result.Type status, Long duration, Throwable error) {
         this.status = status;
