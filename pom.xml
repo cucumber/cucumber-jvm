@@ -781,7 +781,8 @@
                             </group>
                         </groups>
                         <!-- Won't work for children, but works for top level javadoc:aggregate. Good enough. -->
-                        <stylesheetfile>${basedir}/doc/javadoc.css</stylesheetfile>
+                        <!--<stylesheetfile>${basedir}/doc/javadoc.css</stylesheetfile>-->
+                        <stylesheet>java</stylesheet>
                     </configuration>
                 </plugin>
 
