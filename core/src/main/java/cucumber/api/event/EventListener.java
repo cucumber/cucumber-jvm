@@ -7,7 +7,9 @@ package cucumber.api.event;
 public interface EventListener {
 
     /**
-     * Set the event bus that the formatter can register event listeners in.
+     * Set the event publisher. The formatter can register event listeners with the publisher.
+     *
+     * @param publisher the event publisher
      */
     void setEventPublisher(EventPublisher publisher);
 
