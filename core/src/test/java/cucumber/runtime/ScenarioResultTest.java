@@ -12,8 +12,7 @@ import org.mockito.ArgumentMatcher;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.sameInstance;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -37,6 +36,7 @@ public class ScenarioResultTest {
         s.add(new Result(Result.Type.UNDEFINED, 0L, null));
         s.add(new Result(Result.Type.SKIPPED, 0L, null));
         assertEquals(Result.Type.FAILED, s.getStatus());
+        assertTrue(s.isFailed());
     }
 
     @Test
@@ -44,6 +44,7 @@ public class ScenarioResultTest {
         s.add(new Result(Result.Type.PASSED, 0L, null));
         s.add(new Result(Result.Type.SKIPPED, 0L, null));
         assertEquals(Result.Type.SKIPPED, s.getStatus());
+        assertFalse(s.isFailed());
     }
 
     @Test
@@ -53,6 +54,7 @@ public class ScenarioResultTest {
         s.add(new Result(Result.Type.PENDING, 0L, null));
         s.add(new Result(Result.Type.SKIPPED, 0L, null));
         assertEquals(Result.Type.UNDEFINED, s.getStatus());
+        assertFalse(s.isFailed());
     }
 
     @Test
@@ -61,6 +63,7 @@ public class ScenarioResultTest {
         s.add(new Result(Result.Type.UNDEFINED, 0L, null));
         s.add(new Result(Result.Type.SKIPPED, 0L, null));
         assertEquals(Result.Type.UNDEFINED, s.getStatus());
+        assertFalse(s.isFailed());
     }
 
     @Test
