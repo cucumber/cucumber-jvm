@@ -2,6 +2,16 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 
 ## [2.0.1-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v2.0.0...master) (In Git)
 
+### Added
+### Changed 
+### Deprecated
+### Removed
+### Fixed
+ * Scenario.isFailed always return false ([#1215](https://github.com/cucumber/cucumber-jvm/issues/1215) Olivier Lemasle)
+ * Javadoc stylesheet issue ([#796](https://github.com/cucumber/cucumber-jvm/issues/796) Marit Van Dijk) 
+### Security
+
+
 ## [2.0.0](https://github.com/cucumber/cucumber-jvm/compare/v1.2.5...v2.0.0) (2017-08-29)
 
 * [Java] Reduce Throwable to Exception in JavaSnippet ([#1207](https://github.com/cucumber/cucumber-jvm/issues/1207), [#1208](https://github.com/cucumber/cucumber-jvm/pull/1208) M.P. Korstanje)
