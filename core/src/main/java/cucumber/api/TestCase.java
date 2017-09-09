@@ -19,8 +19,8 @@ public class TestCase {
         this.pickleEvent = pickleEvent;
     }
 
-    public void run(EventBus bus) {
-        boolean skipNextStep = false;
+    public void run(EventBus bus, boolean dryRun) {
+        boolean skipNextStep = dryRun;
         Long startTime = bus.getTime();
         bus.send(new TestCaseStarted(startTime, this));
         ScenarioImpl scenarioResult = new ScenarioImpl(bus, pickleEvent);

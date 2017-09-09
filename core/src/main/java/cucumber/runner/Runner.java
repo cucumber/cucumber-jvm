@@ -77,7 +77,7 @@ public class Runner implements UnreportedStepExecutor {
     public void runPickle(PickleEvent pickle) {
         buildBackendWorlds(); // Java8 step definitions will be added to the glue here
         TestCase testCase = createTestCaseForPickle(pickle);
-        testCase.run(bus);
+        testCase.run(bus, runtimeOptions.isDryRun());
         disposeBackendWorlds();
     }
 
