@@ -33,7 +33,7 @@ public class TestCaseTest {
         when(testStep.run(eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(resultWithStatus(Result.Type.UNDEFINED));
 
         TestCase testCase = new TestCase(Arrays.asList(testStep), pickleEvent());
-        testCase.run(bus);
+        testCase.run(bus, false);
 
         InOrder order = inOrder(bus, testStep);
         order.verify(bus).send(isA(TestCaseStarted.class));
@@ -51,7 +51,7 @@ public class TestCaseTest {
         when(testStep2.run(eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(resultWithStatus(Result.Type.PASSED));
 
         TestCase testCase = new TestCase(Arrays.asList(testStep1, testStep2), pickleEvent());
-        testCase.run(bus);
+        testCase.run(bus, false);
 
         InOrder order = inOrder(testStep1, testStep2);
         order.verify(testStep1).run(eq(bus), eq(language), isA(Scenario.class), eq(false));
@@ -68,7 +68,7 @@ public class TestCaseTest {
         when(testStep2.run(eq(bus), eq(language), isA(Scenario.class), anyBoolean())).thenReturn(resultWithStatus(Result.Type.SKIPPED));
 
         TestCase testCase = new TestCase(Arrays.asList(testStep1, testStep2), pickleEvent());
-        testCase.run(bus);
+        testCase.run(bus, false);
 
         InOrder order = inOrder(testStep1, testStep2);
         order.verify(testStep1).run(eq(bus), eq(language), isA(Scenario.class), eq(false));
