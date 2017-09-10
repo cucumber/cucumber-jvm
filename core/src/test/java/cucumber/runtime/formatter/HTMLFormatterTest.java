@@ -59,37 +59,37 @@ public class HTMLFormatterTest {
     public void writes_valid_report_js() throws Throwable {
         writeReport();
         String reportJs = FixJava.readReader(new InputStreamReader(new URL(outputDir, "report.js").openStream(), "UTF-8"));
-        assertEquals("$(document).ready(function() {var formatter = new CucumberHTML.DOMFormatter($('.cucumber-report'));formatter.uri(\"some\\\\windows\\\\path\\\\some.feature\");\n" +
-            "formatter.feature({\n" +
-            "  \"name\": \"\",\n" +
-            "  \"description\": \"\",\n" +
-            "  \"keyword\": \"Feature\"\n" +
-            "});\n" +
-            "formatter.scenario({\n" +
-            "  \"name\": \"some cukes\",\n" +
-            "  \"description\": \"\",\n" +
-            "  \"keyword\": \"Scenario\"\n" +
-            "});\n" +
-            "formatter.step({\n" +
-            "  \"name\": \"first step\",\n" +
-            "  \"keyword\": \"Given \"\n" +
-            "});\n" +
-            "formatter.match({\n" +
-            "  \"location\": \"path/step_definitions.java:3\"\n" +
-            "});\n" +
-            "formatter.result({\n" +
-            "  \"status\": \"passed\"\n" +
-            "});\n" +
-            "formatter.embedding(\"image/png\", \"embedded0.png\");\n" +
-            "formatter.after({\n" +
-            "  \"status\": \"passed\"\n" +
-            "});\n" +
-            "formatter.embedding(\"text/plain\", \"dodgy stack trace here\");\n" +
-            "formatter.after({\n" +
-            "  \"status\": \"passed\"\n" +
-            "});\n" +
-            "});",
-            reportJs);
+        assertJsFunctionCallSequence(asList("" +
+                "formatter.uri(\"some\\\\windows\\\\path\\\\some.feature\");\n",
+                "formatter.feature({\n" +
+                "  \"name\": \"\",\n" +
+                "  \"description\": \"\",\n" +
+                "  \"keyword\": \"Feature\"\n" +
+                "});\n",
+                "formatter.scenario({\n" +
+                "  \"name\": \"some cukes\",\n" +
+                "  \"description\": \"\",\n" +
+                "  \"keyword\": \"Scenario\"\n" +
+                "});\n",
+                "formatter.step({\n" +
+                "  \"name\": \"first step\",\n" +
+                "  \"keyword\": \"Given \"\n" +
+                "});\n",
+                "formatter.match({\n" +
+                "  \"location\": \"path/step_definitions.java:3\"\n" +
+                "});\n",
+                "formatter.result({\n" +
+                "  \"status\": \"passed\"\n" +
+                "});\n",
+                "formatter.embedding(\"image/png\", \"embedded0.png\");\n",
+                "formatter.after({\n" +
+                "  \"status\": \"passed\"\n" +
+                "});\n",
+                "formatter.embedding(\"text/plain\", \"dodgy stack trace here\");\n",
+                "formatter.after({\n" +
+                "  \"status\": \"passed\"\n" +
+                "});\n"),
+                reportJs);
     }
 
     @Test
