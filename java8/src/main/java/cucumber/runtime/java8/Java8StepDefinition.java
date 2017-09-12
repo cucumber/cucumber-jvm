@@ -108,7 +108,7 @@ public class Java8StepDefinition implements StepDefinition {
 
     @Override
     public boolean isDefinedAt(StackTraceElement stackTraceElement) {
-        return location.getFileName().equals(stackTraceElement.getFileName());
+        return location.getFileName() != null && location.getFileName().equals(stackTraceElement.getFileName());
     }
 
     @Override
