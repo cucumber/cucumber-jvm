@@ -82,24 +82,20 @@ public class RunnerTest {
         inOrder.verify(beforeHook).execute(Matchers.<Scenario>any());
         inOrder.verify(afterHook).execute(Matchers.<Scenario>any());
     }
+    
+    @Test
+    public void steps_are_executed() throws Throwable {
+        final StepDefinition stepDefinition = mock(StepDefinition.class);
+        runtime.getRunner().runPickle(createPickleEventMatchingStepDefinitions(asList(stepDefinition), runtime));
+        verify(stepDefinition).execute(Matchers.anyString(), Matchers.<Object[]>any());
+    }
 
     @Test
     public void steps_are_not_executed_on_dry_run() throws Throwable {
-        // Step without dry-run flag should be executed once
-        {
-            StepDefinition stepDefinition = mock(StepDefinition.class);
-            Runtime runtime = createRuntime(backend);
-            runtime.getRunner().runPickle(createPickleEventMatchingStepDefinitions(asList(stepDefinition), runtime));
-            verify(stepDefinition).execute(Matchers.anyString(), Matchers.<Object[]>any());
-        }
-        
-        // Same step with dry-run flag should not be executred
-        {
-            StepDefinition stepDefinition = mock(StepDefinition.class);
-            Runtime dryRuntime = createRuntime(backend, "--dry-run");
-            dryRuntime.getRunner().runPickle(createPickleEventMatchingStepDefinitions(asList(stepDefinition), dryRuntime));
-            verify(stepDefinition, never()).execute(Matchers.anyString(), Matchers.<Object[]>any());
-        }
+        final StepDefinition stepDefinition = mock(StepDefinition.class);
+        final Runtime dryRuntime = createRuntime(backend, "--dry-run");
+        dryRuntime.getRunner().runPickle(createPickleEventMatchingStepDefinitions(asList(stepDefinition), dryRuntime));
+        verify(stepDefinition, never()).execute(Matchers.anyString(), Matchers.<Object[]>any());
     } 
     
     @Test
