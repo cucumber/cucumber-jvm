@@ -13,14 +13,16 @@ import java.util.List;
 public class TestCase {
     private final PickleEvent pickleEvent;
     private final List<TestStep> testSteps;
+    private final boolean dryRun;
 
-    public TestCase(List<TestStep> testSteps, PickleEvent pickleEvent) {
+    public TestCase(List<TestStep> testSteps, PickleEvent pickleEvent, boolean dryRun) {
         this.testSteps = testSteps;
         this.pickleEvent = pickleEvent;
+        this.dryRun = dryRun;
     }
 
-    public void run(EventBus bus, boolean dryRun) {
-        boolean skipNextStep = dryRun;
+    public void run(EventBus bus) {
+        boolean skipNextStep = this.dryRun;
         Long startTime = bus.getTime();
         bus.send(new TestCaseStarted(startTime, this));
         ScenarioImpl scenarioResult = new ScenarioImpl(bus, pickleEvent);
