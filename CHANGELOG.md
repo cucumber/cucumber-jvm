@@ -3,12 +3,15 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ## [2.0.1-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v2.0.0...master) (In Git)
 
 ### Added
-### Changed 
+### Changed
 ### Deprecated
 ### Removed
 ### Fixed
- * Scenario.isFailed always return false ([#1215](https://github.com/cucumber/cucumber-jvm/issues/1215) Olivier Lemasle)
- * Javadoc stylesheet issue ([#796](https://github.com/cucumber/cucumber-jvm/issues/796) Marit Van Dijk) 
+ * Skip test step execution if --dry-run is specified ([#1220](https://github.com/cucumber/cucumber-jvm/pull/1220) ,[#1219](https://github.com/cucumber/cucumber-jvm/issues/1219) Adrian Baker)
+ * Fix NullPointerException at Java8StepDefinition.isDefinedAt ([#1222](https://github.com/cucumber/cucumber-jvm/pull/1222) ,[#1217](https://github.com/cucumber/cucumber-jvm/issues/1217) M.P. Korstanje)
+ * Scenario.isFailed always return false ([#1216](https://github.com/cucumber/cucumber-jvm/pull/1216) ,[#1215](https://github.com/cucumber/cucumber-jvm/issues/1215) Olivier Lemasle)
+ * Javadoc stylesheet issue ([#1212](https://github.com/cucumber/cucumber-jvm/pull/1212), [#796](https://github.com/cucumber/cucumber-jvm/issues/796) Marit Van Dijk)
+
 ### Security
 
 
