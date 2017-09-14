@@ -7,6 +7,7 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ### Deprecated
 ### Removed
 ### Fixed
+ * Clean up public API ([#1223](https://github.com/cucumber/cucumber-jvm/pull/1223) M.P. Korstanje)
  * Skip test step execution if --dry-run is specified ([#1220](https://github.com/cucumber/cucumber-jvm/pull/1220) ,[#1219](https://github.com/cucumber/cucumber-jvm/issues/1219) Adrian Baker)
  * Fix NullPointerException at Java8StepDefinition.isDefinedAt ([#1222](https://github.com/cucumber/cucumber-jvm/pull/1222) ,[#1217](https://github.com/cucumber/cucumber-jvm/issues/1217) M.P. Korstanje)
  * Scenario.isFailed always return false ([#1216](https://github.com/cucumber/cucumber-jvm/pull/1216) ,[#1215](https://github.com/cucumber/cucumber-jvm/issues/1215) Olivier Lemasle)

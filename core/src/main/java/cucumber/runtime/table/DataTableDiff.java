@@ -1,6 +1,7 @@
 package cucumber.runtime.table;
 
 import cucumber.api.DataTable;
+import cucumber.api.TableConverter;
 import gherkin.pickles.PickleRow;
 import gherkin.pickles.PickleTable;
 

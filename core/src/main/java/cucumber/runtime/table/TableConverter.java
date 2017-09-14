@@ -34,7 +34,7 @@ import static java.util.Arrays.asList;
 /**
  * This class converts a {@link cucumber.api.DataTable} to various other types.
  */
-public class TableConverter {
+public class TableConverter implements cucumber.api.TableConverter {
     private final LocalizedXStreams.LocalizedXStream xStream;
     private final ParameterInfo parameterInfo;
 
@@ -55,6 +55,7 @@ public class TableConverter {
      * @param transposed whether the table should be transposed first.
      * @return the transformed object.
      */
+    @Override
     public <T> T convert(DataTable dataTable, Type type, boolean transposed) {
         if (transposed) {
             dataTable = dataTable.transpose();
@@ -117,6 +118,7 @@ public class TableConverter {
         }
     }
 
+    @Override
     public <T> List<T> toList(DataTable dataTable, Type itemType) {
         SingleValueConverter itemConverter = xStream.getSingleValueConverter(itemType);
         if (itemConverter != null) {
@@ -141,6 +143,7 @@ public class TableConverter {
         return Collections.unmodifiableList(result);
     }
 
+    @Override
     public <T> List<List<T>> toLists(DataTable dataTable, Type itemType) {
         try {
             xStream.setParameterInfo(parameterInfo);
@@ -163,6 +166,7 @@ public class TableConverter {
         }
     }
 
+    @Override
     public <K, V> Map<K, V> toMap(DataTable dataTable, Type keyType, Type valueType) {
         try {
             xStream.setParameterInfo(parameterInfo);
@@ -188,6 +192,7 @@ public class TableConverter {
         }
     }
 
+    @Override
     public <K, V> List<Map<K, V>> toMaps(DataTable dataTable, Type keyType, Type valueType) {
         try {
             xStream.setParameterInfo(parameterInfo);
@@ -227,6 +232,7 @@ public class TableConverter {
      * @param columnNames an explicit list of column names
      * @return a DataTable
      */
+    @Override
     public DataTable toTable(List<?> objects, String... columnNames) {
         try {
             xStream.setParameterInfo(parameterInfo);

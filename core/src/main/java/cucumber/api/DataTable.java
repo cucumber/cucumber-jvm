@@ -3,7 +3,6 @@ package cucumber.api;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.ParameterInfo;
 import cucumber.runtime.table.DiffableRow;
-import cucumber.runtime.table.TableConverter;
 import cucumber.runtime.table.TableDiffException;
 import cucumber.runtime.table.TableDiffer;
 import cucumber.runtime.table.TablePrinter;
@@ -42,7 +41,7 @@ public class DataTable {
 
     private static DataTable create(List<?> raw, Locale locale, String format, String... columnNames) {
         ParameterInfo parameterInfo = new ParameterInfo(null, format, null, null);
-        TableConverter tableConverter = new TableConverter(new LocalizedXStreams(Thread.currentThread().getContextClassLoader()).get(locale), parameterInfo);
+        TableConverter tableConverter = new cucumber.runtime.table.TableConverter(new LocalizedXStreams(Thread.currentThread().getContextClassLoader()).get(locale), parameterInfo);
         return tableConverter.toTable(raw, columnNames);
     }
 
