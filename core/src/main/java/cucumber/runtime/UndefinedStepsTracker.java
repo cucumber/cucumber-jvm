@@ -33,7 +33,7 @@ public class UndefinedStepsTracker implements EventListener {
     private EventHandler<TestSourceRead> testSourceReadHandler = new EventHandler<TestSourceRead>() {
         @Override
         public void receive(TestSourceRead event) {
-            pathToSourceMap.put(event.path, event.source);
+            pathToSourceMap.put(event.uri, event.source);
         }
     };
     private EventHandler<SnippetsSuggestedEvent> snippetsSuggestedHandler = new EventHandler<SnippetsSuggestedEvent>() {

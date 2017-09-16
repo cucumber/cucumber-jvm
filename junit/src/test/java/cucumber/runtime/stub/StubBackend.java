@@ -13,6 +13,7 @@ import java.util.List;
 /**
  * We need an implementation of Backend to prevent Runtime from blowing up.
  */
+@SuppressWarnings("unused")
 public class StubBackend implements Backend {
     public StubBackend(ResourceLoader resourceLoader, ParameterTypeRegistry parameterTypeRegistry) {
 

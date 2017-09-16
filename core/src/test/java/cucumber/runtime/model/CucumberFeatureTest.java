@@ -259,6 +259,74 @@ public class CucumberFeatureTest {
         assertEquals("scenario bar", features.get(0).getGherkinFeature().getFeature().getChildren().get(0).getName());
     }
 
+
+    @Test
+    public void understands_rerun_files_separated_by_with_whitespace() throws Exception {
+        String featurePath1 = "/home/users/mp/My Documents/tests/bar.feature";
+        String feature1 = "" +
+            "Feature: bar\n" +
+            "  Scenario: scenario bar\n" +
+            "    * step\n";
+        String featurePath2 = "/home/users/mp/My Documents/tests/foo.feature";
+        String feature2 = "" +
+            "Feature: foo\n" +
+            "  Scenario: scenario 1\n" +
+            "    * step\n" +
+            "  Scenario: scenario 2\n" +
+            "    * step\n";
+        String rerunPath = "path/rerun.txt";
+        String rerunFile = featurePath1 + ":2 " + featurePath2 + ":4";
+        ResourceLoader resourceLoader = mockFeatureFileResource(featurePath1, feature1);
+        mockFeatureFileResource(resourceLoader, featurePath2, feature2);
+        mockFileResource(resourceLoader, rerunPath, null, rerunFile);
+
+        List<CucumberFeature> features = CucumberFeature.load(
+            resourceLoader,
+            singletonList("@" + rerunPath),
+            new PrintStream(new ByteArrayOutputStream()));
+
+        assertEquals(2, features.size());
+        assertEquals(1, features.get(0).getGherkinFeature().getFeature().getChildren().size());
+        assertEquals("scenario bar", features.get(0).getGherkinFeature().getFeature().getChildren().get(0).getName());
+        assertEquals(2, features.get(1).getGherkinFeature().getFeature().getChildren().size());
+        assertEquals("scenario 1", features.get(1).getGherkinFeature().getFeature().getChildren().get(0).getName());
+        assertEquals("scenario 2", features.get(1).getGherkinFeature().getFeature().getChildren().get(1).getName());
+    }
+
+
+    @Test
+    public void understands_rerun_files_without_separation_in_rerun_filepath() throws Exception {
+        String featurePath1 = "/home/users/mp/My Documents/tests/bar.feature";
+        String feature1 = "" +
+            "Feature: bar\n" +
+            "  Scenario: scenario bar\n" +
+            "    * step\n";
+        String featurePath2 = "/home/users/mp/My Documents/tests/foo.feature";
+        String feature2 = "" +
+            "Feature: foo\n" +
+            "  Scenario: scenario 1\n" +
+            "    * step\n" +
+            "  Scenario: scenario 2\n" +
+            "    * step\n";
+        String rerunPath = "path/rerun.txt";
+        String rerunFile = featurePath1 + ":2" + featurePath2 + ":4";
+        ResourceLoader resourceLoader = mockFeatureFileResource(featurePath1, feature1);
+        mockFeatureFileResource(resourceLoader, featurePath2, feature2);
+        mockFileResource(resourceLoader, rerunPath, null, rerunFile);
+
+        List<CucumberFeature> features = CucumberFeature.load(
+            resourceLoader,
+            singletonList("@" + rerunPath),
+            new PrintStream(new ByteArrayOutputStream()));
+
+        assertEquals(2, features.size());
+        assertEquals(1, features.get(0).getGherkinFeature().getFeature().getChildren().size());
+        assertEquals("scenario bar", features.get(0).getGherkinFeature().getFeature().getChildren().get(0).getName());
+        assertEquals(2, features.get(1).getGherkinFeature().getFeature().getChildren().size());
+        assertEquals("scenario 1", features.get(1).getGherkinFeature().getFeature().getChildren().get(0).getName());
+        assertEquals("scenario 2", features.get(1).getGherkinFeature().getFeature().getChildren().get(1).getName());
+    }
+
     private ResourceLoader mockFeatureFileResource(String featurePath, String feature)
             throws IOException {
         ResourceLoader resourceLoader = mock(ResourceLoader.class);

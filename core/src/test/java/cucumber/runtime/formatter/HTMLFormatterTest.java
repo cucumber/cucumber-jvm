@@ -12,9 +12,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.junit.Test;
 import org.mockito.stubbing.Answer;
-import org.mozilla.javascript.Context;
-import org.mozilla.javascript.EcmaError;
-import org.mozilla.javascript.tools.shell.Global;
 
 import java.io.File;
 import java.io.InputStreamReader;
@@ -61,15 +58,38 @@ public class HTMLFormatterTest {
     @Test
     public void writes_valid_report_js() throws Throwable {
         writeReport();
-        URL reportJs = new URL(outputDir, "report.js");
-        Context cx = Context.enter();
-        Global scope = new Global(cx);
-        try {
-            cx.evaluateReader(scope, new InputStreamReader(reportJs.openStream(), "UTF-8"), reportJs.getFile(), 1, null);
-            fail("Should have failed");
-        } catch (EcmaError expected) {
-            assertTrue(expected.getMessage().startsWith("ReferenceError: \"document\" is not defined."));
-        }
+        String reportJs = FixJava.readReader(new InputStreamReader(new URL(outputDir, "report.js").openStream(), "UTF-8"));
+        assertJsFunctionCallSequence(asList("" +
+                "formatter.uri(\"some\\\\windows\\\\path\\\\some.feature\");\n",
+                "formatter.feature({\n" +
+                "  \"name\": \"\",\n" +
+                "  \"description\": \"\",\n" +
+                "  \"keyword\": \"Feature\"\n" +
+                "});\n",
+                "formatter.scenario({\n" +
+                "  \"name\": \"some cukes\",\n" +
+                "  \"description\": \"\",\n" +
+                "  \"keyword\": \"Scenario\"\n" +
+                "});\n",
+                "formatter.step({\n" +
+                "  \"name\": \"first step\",\n" +
+                "  \"keyword\": \"Given \"\n" +
+                "});\n",
+                "formatter.match({\n" +
+                "  \"location\": \"path/step_definitions.java:3\"\n" +
+                "});\n",
+                "formatter.result({\n" +
+                "  \"status\": \"passed\"\n" +
+                "});\n",
+                "formatter.embedding(\"image/png\", \"embedded0.png\");\n",
+                "formatter.after({\n" +
+                "  \"status\": \"passed\"\n" +
+                "});\n",
+                "formatter.embedding(\"text/plain\", \"dodgy stack trace here\");\n",
+                "formatter.after({\n" +
+                "  \"status\": \"passed\"\n" +
+                "});\n"),
+                reportJs);
     }
 
     @Test

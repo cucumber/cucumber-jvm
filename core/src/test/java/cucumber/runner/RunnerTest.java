@@ -40,7 +40,7 @@ public class RunnerTest {
     private final Backend backend = mock(Backend.class);
     private final Runtime runtime = createRuntime(backend);
     private final Runner runner = runtime.getRunner();
-
+    
     @Test
     public void hooks_execute_when_world_exist() throws Throwable {
         HookDefinition beforeHook = addBeforeHook(runtime);
@@ -61,7 +61,7 @@ public class RunnerTest {
         doThrow(RuntimeException.class).when(failingBeforeHook).execute(Matchers.<Scenario>any());
         StepDefinition stepDefinition = mock(StepDefinition.class);
 
-        runner.runPickle(createPickleEventMatchingStepDefinitions(asList(stepDefinition)));
+        runner.runPickle(createPickleEventMatchingStepDefinitions(asList(stepDefinition), runtime));
 
         InOrder inOrder = inOrder(failingBeforeHook, stepDefinition);
         inOrder.verify(failingBeforeHook).execute(Matchers.<Scenario>any());
@@ -82,7 +82,22 @@ public class RunnerTest {
         inOrder.verify(beforeHook).execute(Matchers.<Scenario>any());
         inOrder.verify(afterHook).execute(Matchers.<Scenario>any());
     }
+    
+    @Test
+    public void steps_are_executed() throws Throwable {
+        final StepDefinition stepDefinition = mock(StepDefinition.class);
+        runtime.getRunner().runPickle(createPickleEventMatchingStepDefinitions(asList(stepDefinition), runtime));
+        verify(stepDefinition).execute(Matchers.anyString(), Matchers.<Object[]>any());
+    }
 
+    @Test
+    public void steps_are_not_executed_on_dry_run() throws Throwable {
+        final StepDefinition stepDefinition = mock(StepDefinition.class);
+        final Runtime dryRuntime = createRuntime(backend, "--dry-run");
+        dryRuntime.getRunner().runPickle(createPickleEventMatchingStepDefinitions(asList(stepDefinition), dryRuntime));
+        verify(stepDefinition, never()).execute(Matchers.anyString(), Matchers.<Object[]>any());
+    } 
+    
     @Test
     public void hooks_not_executed_in_dry_run_mode() throws Throwable {
         Runtime runtime = createRuntime(backend, "--dry-run");
@@ -141,7 +156,7 @@ public class RunnerTest {
         return new PickleEvent("uri", new Pickle(NAME, ENGLISH, NO_STEPS, NO_TAGS, MOCK_LOCATIONS));
     }
 
-    private PickleEvent createPickleEventMatchingStepDefinitions(List<StepDefinition> stepDefinitions) {
+    private PickleEvent createPickleEventMatchingStepDefinitions(List<StepDefinition> stepDefinitions, Runtime runtime) {
         List<PickleStep> steps = new ArrayList<PickleStep>(stepDefinitions.size());
         int i = 0;
         for (StepDefinition stepDefinition : stepDefinitions) {

@@ -118,12 +118,15 @@ public class TestSourcesModel {
     }
 
     public String getKeywordFromSource(String uri, int stepLine) {
-        TestSourceRead event = getTestSourceReadEvent(uri);
-        String trimmedSourceLine = event.source.split("\n")[stepLine - 1].trim();
-        GherkinDialect dialect = new GherkinDialectProvider(event.language).getDefaultDialect();
-        for (String keyword : dialect.getStepKeywords()) {
-            if (trimmedSourceLine.startsWith(keyword)) {
-                return keyword;
+        Feature feature = getFeature(uri);
+        if (feature != null) {
+            TestSourceRead event = getTestSourceReadEvent(uri);
+            String trimmedSourceLine = event.source.split("\n")[stepLine - 1].trim();
+            GherkinDialect dialect = new GherkinDialectProvider(feature.getLanguage()).getDefaultDialect();
+            for (String keyword : dialect.getStepKeywords()) {
+                if (trimmedSourceLine.startsWith(keyword)) {
+                    return keyword;
+                }
             }
         }
         return "";
@@ -137,28 +140,11 @@ public class TestSourcesModel {
     }
 
     public String getFeatureName(String uri) {
-        if (pathToReadEventMap.containsKey(uri)) {
-            TestSourceRead event = pathToReadEventMap.get(uri);
-            String featureLine = getFeatureLine(event.source);
-            if (featureLine != null) {
-                GherkinDialect dialect = new GherkinDialectProvider(event.language).getDefaultDialect();
-                for (String keyword : dialect.getFeatureKeywords()) {
-                    if (featureLine.trim().startsWith(keyword)) {
-                        return featureLine.substring(featureLine.indexOf(":") + 1).trim();
-                    }
-                }
-            }
+        Feature feature = getFeature(uri);
+        if (feature != null) {
+            return feature.getName();
         }
         return "";
-    }
-
-    private String getFeatureLine(String source) {
-        for (String line : source.split("\n")) {
-            if (line.contains(":") && !line.contains("#")) {
-                return line;
-            }
-        }
-        return null;
     }
 
     private void parseGherkinSource(String path) {

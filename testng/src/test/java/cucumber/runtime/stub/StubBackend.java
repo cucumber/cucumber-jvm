@@ -6,15 +6,16 @@ import cucumber.runtime.UnreportedStepExecutor;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.snippets.FunctionNameGenerator;
 import gherkin.pickles.PickleStep;
-import io.cucumber.cucumberexpressions.TransformLookup;
+import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
 
 import java.util.List;
 
 /**
  * We need an implementation of Backend to prevent Runtime from blowing up.
  */
+@SuppressWarnings("unused")
 public class StubBackend implements Backend {
-    public StubBackend(ResourceLoader resourceLoader, TransformLookup transformLookup) {
+    public StubBackend(ResourceLoader resourceLoader, ParameterTypeRegistry parameterTypeRegistry) {
 
     }
 

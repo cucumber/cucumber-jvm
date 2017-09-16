@@ -163,12 +163,12 @@ public class AndroidInstrumentationReporter implements Formatter {
     }
 
     void testSourceRead(final TestSourceRead event) {
-        testSources.addTestSourceReadEvent(event.path, event);
+        testSources.addTestSourceReadEvent(event.uri, event);
     }
 
     void startTestCase(final TestCase testCase) {
-        if (!testCase.getPath().equals(currentUri)) {
-            currentUri = testCase.getPath();
+        if (!testCase.getUri().equals(currentUri)) {
+            currentUri = testCase.getUri();
             currentFeatureName = testSources.getFeatureName(currentUri);
         }
         currentTestCaseName = testCase.getName();

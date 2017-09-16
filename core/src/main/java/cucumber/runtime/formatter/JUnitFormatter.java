@@ -106,12 +106,12 @@ class JUnitFormatter implements Formatter, StrictAware {
     }
 
     private void handleTestSourceRead(TestSourceRead event) {
-        TestCase.testSources.addTestSourceReadEvent(event.path, event);
+        TestCase.testSources.addTestSourceReadEvent(event.uri, event);
     }
 
     private void handleTestCaseStarted(TestCaseStarted event) {
-        if (TestCase.currentFeatureFile == null || !TestCase.currentFeatureFile.equals(event.testCase.getPath())) {
-            TestCase.currentFeatureFile = event.testCase.getPath();
+        if (TestCase.currentFeatureFile == null || !TestCase.currentFeatureFile.equals(event.testCase.getUri())) {
+            TestCase.currentFeatureFile = event.testCase.getUri();
             TestCase.previousTestCaseName = "";
             TestCase.exampleNumber = 1;
         }
@@ -322,7 +322,10 @@ class JUnitFormatter implements Formatter, StrictAware {
 
         private Element createElement(Document doc, StringBuilder sb, String elementType) {
             Element child = doc.createElement(elementType);
-            child.appendChild(doc.createCDATASection(sb.toString()));
+            // the createCDATASection method seems to convert "\n" to "\r\n" on Windows, in case
+            // data originally contains "\r\n" line separators the result becomes "\r\r\n", which
+            // are displayed as double line breaks.
+            child.appendChild(doc.createCDATASection(sb.toString().replace(System.lineSeparator(), "\n")));
             return child;
         }
 

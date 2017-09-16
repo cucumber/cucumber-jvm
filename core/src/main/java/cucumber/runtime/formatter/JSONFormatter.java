@@ -105,12 +105,12 @@ class JSONFormatter implements Formatter {
     }
 
     private void handleTestSourceRead(TestSourceRead event) {
-        testSources.addTestSourceReadEvent(event.path, event);
+        testSources.addTestSourceReadEvent(event.uri, event);
     }
 
     private void handleTestCaseStarted(TestCaseStarted event) {
-        if (currentFeatureFile == null || !currentFeatureFile.equals(event.testCase.getPath())) {
-            currentFeatureFile = event.testCase.getPath();
+        if (currentFeatureFile == null || !currentFeatureFile.equals(event.testCase.getUri())) {
+            currentFeatureFile = event.testCase.getUri();
             Map<String, Object> currentFeatureMap = createFeatureMap(event.testCase);
             featureMaps.add(currentFeatureMap);
             currentElementsList = (List<Map<String, Object>>) currentFeatureMap.get("elements");
@@ -160,9 +160,9 @@ class JSONFormatter implements Formatter {
 
     private Map<String, Object> createFeatureMap(TestCase testCase) {
         Map<String, Object> featureMap = new HashMap<String, Object>();
-        featureMap.put("uri", testCase.getPath());
+        featureMap.put("uri", testCase.getUri());
         featureMap.put("elements", new ArrayList<Map<String, Object>>());
-        Feature feature = testSources.getFeature(testCase.getPath());
+        Feature feature = testSources.getFeature(testCase.getUri());
         if (feature != null) {
             featureMap.put("keyword", feature.getKeyword());
             featureMap.put("name", feature.getName());

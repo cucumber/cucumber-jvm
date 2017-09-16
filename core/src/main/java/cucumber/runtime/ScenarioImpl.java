@@ -69,7 +69,7 @@ public class ScenarioImpl implements Scenario {
 
     @Override
     public boolean isFailed() {
-        return "failed".equals(getStatus());
+        return getStatus() == Result.Type.FAILED;
     }
 
     @Override

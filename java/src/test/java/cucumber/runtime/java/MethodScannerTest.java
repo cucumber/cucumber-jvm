@@ -1,6 +1,5 @@
 package cucumber.runtime.java;
 
-import cucumber.api.java.Before;
 import cucumber.api.java.ObjectFactory;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Glue;
@@ -8,26 +7,39 @@ import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
 import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
+import org.junit.Before;
+import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.internal.util.reflection.Whitebox;
 
+import java.util.Locale;
+
+import static java.lang.Thread.currentThread;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
 
 public class MethodScannerTest {
 
+    private ResourceLoaderClassFinder classFinder;
+    private ObjectFactory factory;
+    private JavaBackend backend;
+
+    @Before
+    public void createBackend(){
+        ClassLoader classLoader = currentThread().getContextClassLoader();
+        ResourceLoader resourceLoader = new MultiLoader(classLoader);
+        this.classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
+        this.factory = Mockito.mock(ObjectFactory.class);
+        ParameterTypeRegistry parameterTypeRegistry = new ParameterTypeRegistry(Locale.ENGLISH);
+        this.backend = new JavaBackend(factory, classFinder, parameterTypeRegistry);
+    }
+
     @Test
     public void loadGlue_registers_the_methods_declaring_class_in_the_object_factory() throws NoSuchMethodException {
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        ResourceLoader resourceLoader = new MultiLoader(classLoader);
-        MethodScanner methodScanner = new MethodScanner(new ResourceLoaderClassFinder(resourceLoader, classLoader));
-
-        ObjectFactory factory = Mockito.mock(ObjectFactory.class);
-        ParameterTypeRegistry parameterTypeRegistry = Mockito.mock(ParameterTypeRegistry.class);
+        MethodScanner methodScanner = new MethodScanner(classFinder);
         Glue world = Mockito.mock(Glue.class);
-        JavaBackend backend = new JavaBackend(factory, parameterTypeRegistry);
         Whitebox.setInternalState(backend, "glue", world);
 
         // this delegates to methodScanner.scan which we test
@@ -39,7 +51,6 @@ public class MethodScannerTest {
 
     @Test
     public void loadGlue_fails_when_class_is_not_method_declaring_class() throws NoSuchMethodException {
-        JavaBackend backend = new JavaBackend((ObjectFactory) null, (ParameterTypeRegistry) null);
         try {
             backend.loadGlue(null, BaseStepDefs.class.getMethod("m"), Stepdefs2.class);
             fail();
@@ -50,7 +61,6 @@ public class MethodScannerTest {
 
     @Test
     public void loadGlue_fails_when_class_is_not_subclass_of_declaring_class() throws NoSuchMethodException {
-        JavaBackend backend = new JavaBackend((ObjectFactory) null, (ParameterTypeRegistry) null);
         try {
             backend.loadGlue(null, BaseStepDefs.class.getMethod("m"), String.class);
             fail();
@@ -65,7 +75,7 @@ public class MethodScannerTest {
     }
 
     public static class BaseStepDefs {
-        @Before
+        @cucumber.api.java.Before
         public void m() {
         }
     }

@@ -12,6 +12,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
+//TODO: Remove @Format from public API
 public class StepDefs {
 
     private final DisposableCucumberBelly belly;

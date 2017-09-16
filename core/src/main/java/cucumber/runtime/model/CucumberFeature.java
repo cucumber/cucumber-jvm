@@ -14,17 +14,18 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class CucumberFeature implements Serializable {
     private static final long serialVersionUID = 1L;
-    private final String path;
-    private String language;
+    private final String uri;
     private GherkinDocument gherkinDocument;
     private String gherkinSource;
+    public static final Pattern RERUN_PATH_SPECIFICATION = Pattern.compile("(?m:^| |)(.*?\\.feature(?:(?::\\d+)*))");
 
     public static List<CucumberFeature> load(ResourceLoader resourceLoader, List<String> featurePaths, PrintStream out) {
         final List<CucumberFeature> cucumberFeatures = load(resourceLoader, featurePaths);
@@ -53,25 +54,21 @@ public class CucumberFeature implements Serializable {
     }
 
     private static void loadFromRerunFile(FeatureBuilder builder, ResourceLoader resourceLoader, String rerunPath) {
-        Iterable<Resource> resources = resourceLoader.resources(rerunPath, null);
-        for (Resource resource : resources) {
-            String source = read(resource);
-            if (!source.isEmpty()) {
-                for (String featurePath : source.split("[\r\n]+")) {
-                    PathWithLines pathWithLines = new PathWithLines(featurePath);
-                    loadFromFileSystemOrClasspath(builder, resourceLoader, pathWithLines.path);
-                }
-            }
+        for(PathWithLines pathWithLines : loadRerunFile(resourceLoader, rerunPath)){
+            loadFromFileSystemOrClasspath(builder, resourceLoader, pathWithLines.path);
         }
     }
 
-    public static List<String> loadRerunFile(ResourceLoader resourceLoader, String rerunPath) {
-        List<String> featurePaths = new ArrayList<String>();
+    public static List<PathWithLines> loadRerunFile(ResourceLoader resourceLoader, String rerunPath) {
+        List<PathWithLines> featurePaths = new ArrayList<PathWithLines>();
         Iterable<Resource> resources = resourceLoader.resources(rerunPath, null);
         for (Resource resource : resources) {
             String source = read(resource);
             if (!source.isEmpty()) {
-                featurePaths.addAll(Arrays.asList(source.split(" ")));
+                Matcher matcher = RERUN_PATH_SPECIFICATION.matcher(source);
+                while(matcher.find()){
+                    featurePaths.add(new PathWithLines(matcher.group(1)));
+                }
             }
         }
         return featurePaths;
@@ -117,39 +114,28 @@ public class CucumberFeature implements Serializable {
         }
     }
 
-    public CucumberFeature(GherkinDocument gherkinDocument, String path, String gherkinSource) {
+    public CucumberFeature(GherkinDocument gherkinDocument, String uri, String gherkinSource) {
         this.gherkinDocument = gherkinDocument;
-        this.path = path;
+        this.uri = uri;
         this.gherkinSource = gherkinSource;
-        if (gherkinDocument.getFeature() != null) {
-            setLanguage(gherkinDocument.getFeature().getLanguage());
-        }
     }
 
     public GherkinDocument getGherkinFeature() {
         return gherkinDocument;
     }
 
-    public String getLanguage() {
-        return language;
-    }
-
-    public String getPath() {
-        return path;
+    public String getUri() {
+        return uri;
     }
 
     public void sendTestSourceRead(EventBus bus) {
-        bus.send(new TestSourceRead(bus.getTime(), path, gherkinDocument.getFeature().getLanguage(), gherkinSource));
-    }
-
-    private void setLanguage(String language) {
-        this.language = language;
+        bus.send(new TestSourceRead(bus.getTime(), uri, gherkinSource));
     }
 
     private static class CucumberFeatureUriComparator implements Comparator<CucumberFeature> {
         @Override
         public int compare(CucumberFeature a, CucumberFeature b) {
-            return a.getPath().compareTo(b.getPath());
+            return a.getUri().compareTo(b.getUri());
         }
     }
 }

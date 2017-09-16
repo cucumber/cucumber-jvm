@@ -13,14 +13,44 @@ import java.util.List;
 public class TestCase {
     private final PickleEvent pickleEvent;
     private final List<TestStep> testSteps;
+    private final boolean dryRun;
 
+    /**
+     * Creates a new instance of a test case.
+     *
+     * @param testSteps   of the test case
+     * @param pickleEvent the pickle executed by this test case
+     * @deprecated not part of the public api
+     */
+    @Deprecated
     public TestCase(List<TestStep> testSteps, PickleEvent pickleEvent) {
-        this.testSteps = testSteps;
-        this.pickleEvent = pickleEvent;
+        this(testSteps, pickleEvent, false);
     }
 
+    /**
+     * Creates a new instance of a test case.
+     *
+     * @param testSteps   of the test case
+     * @param pickleEvent the pickle executed by this test case
+     * @param dryRun      skip execution of the test steps
+     * @deprecated not part of the public api
+     */
+    @Deprecated
+    public TestCase(List<TestStep> testSteps, PickleEvent pickleEvent, boolean dryRun) {
+        this.testSteps = testSteps;
+        this.pickleEvent = pickleEvent;
+        this.dryRun = dryRun;
+    }
+
+    /**
+     * Executes the test case.
+     *
+     * @param bus to which events should be broadcast
+     * @deprecated not part of the public api
+     */
+    @Deprecated
     public void run(EventBus bus) {
-        boolean skipNextStep = false;
+        boolean skipNextStep = this.dryRun;
         Long startTime = bus.getTime();
         bus.send(new TestCaseStarted(startTime, this));
         ScenarioImpl scenarioResult = new ScenarioImpl(bus, pickleEvent);
@@ -47,7 +77,7 @@ public class TestCase {
         return fileColonLine(pickleEvent.pickle.getLocations().get(0)) + " # " + getName();
     }
 
-    public String getPath() {
+    public String getUri() {
         return pickleEvent.uri;
     }
 

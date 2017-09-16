@@ -78,7 +78,7 @@ public class RuntimeOptionsTest {
         assertEquals(asList("somewhere"), options.getGlue());
     }
 
-    @Test @org.junit.Ignore
+    @Test
     public void creates_html_formatter() {
         RuntimeOptions options = new RuntimeOptions(asList("--plugin", "html:some/dir", "--glue", "somewhere"));
         assertEquals("cucumber.runtime.formatter.HTMLFormatter", options.getPlugins().get(0).getClass().getName());
@@ -260,22 +260,22 @@ public class RuntimeOptionsTest {
         assertEquals(asList("@keep_this"), runtimeOptions.getTagFilters());
     }
 
-    @Test @org.junit.Ignore
+    @Test
     public void clobbers_formatter_plugins_from_cli_if_formatters_specified_in_cucumber_options_property() {
         Properties properties = new Properties();
         properties.setProperty("cucumber.options", "--plugin pretty");
         RuntimeOptions options = new RuntimeOptions(new Env(properties), asList("--plugin", "html:some/dir", "--glue", "somewhere"));
-        assertPluginExists(options.getPlugins(), "cucumber.runtime.formatter.CucumberPrettyFormatter");
+        assertPluginExists(options.getPlugins(), "cucumber.runtime.formatter.PrettyFormatter");
         assertPluginNotExists(options.getPlugins(), "cucumber.runtime.formatter.HTMLFormatter");
     }
 
-    @Test @org.junit.Ignore
+    @Test
     public void adds_to_formatter_plugins_with_add_plugin_option() {
         Properties properties = new Properties();
         properties.setProperty("cucumber.options", "--add-plugin pretty");
         RuntimeOptions options = new RuntimeOptions(new Env(properties), asList("--plugin", "html:some/dir", "--glue", "somewhere"));
         assertPluginExists(options.getPlugins(), "cucumber.runtime.formatter.HTMLFormatter");
-        assertPluginExists(options.getPlugins(), "cucumber.runtime.formatter.CucumberPrettyFormatter");
+        assertPluginExists(options.getPlugins(), "cucumber.runtime.formatter.PrettyFormatter");
     }
 
     @Test

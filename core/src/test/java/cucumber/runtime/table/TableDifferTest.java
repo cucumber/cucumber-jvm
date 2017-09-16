@@ -4,6 +4,7 @@ import cucumber.api.DataTable;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -226,6 +227,30 @@ public class TableDifferTest {
             assertEquals(expected, e.getMessage());
             throw e;
         }
+    }
+
+    @Test(expected = TableDiffException.class)
+    public void should_diff_with_empty_table() {
+        try {
+            DataTable emptyTable = DataTable.create(Collections.emptyList());
+            table().diff(emptyTable);
+        } catch (TableDiffException e) {
+            String expected = "" +
+                "Tables were not identical:\n" +
+                "    - | Aslak | aslak@email.com | 123 |\n" +
+                "    - | Joe   | joe@email.com   | 234 |\n" +
+                "    - | Bryan | bryan@email.org | 456 |\n" +
+                "    - | Ni    | ni@email.com    | 654 |\n";
+            assertEquals(expected, e.getMessage());
+            throw e;
+        }
+    }
+
+    @Test
+    public void empty_list_should_not_diff_with_empty_table() {
+        List<List<String>> emptyList = new ArrayList<List<String>>();
+        DataTable emptyTable = DataTable.create(Collections.emptyList());
+        assertEquals(emptyTable.raw(), emptyList);
     }
 
     @Test(expected = TableDiffException.class)

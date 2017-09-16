@@ -8,10 +8,20 @@ import java.io.InputStream;
 public class FileResource implements Resource {
     private final File root;
     private final File file;
+    private final boolean classpathFileResource;
 
-    public FileResource(File root, File file) {
+    public static FileResource createFileResource(File root, File file) {
+        return new FileResource(root, file, false);
+    }
+
+    public static FileResource createClasspathFileResource(File root, File file) {
+        return new FileResource(root, file, true);
+    }
+
+    private FileResource(File root, File file, boolean classpathFileResource) {
         this.root = root;
         this.file = file;
+        this.classpathFileResource = classpathFileResource;
         if (!file.getAbsolutePath().startsWith(root.getAbsolutePath())) {
             throw new IllegalArgumentException(file.getAbsolutePath() + " is not a parent of " + root.getAbsolutePath());
         }
@@ -19,10 +29,10 @@ public class FileResource implements Resource {
 
     @Override
     public String getPath() {
-        if (file.equals(root)) {
-            return file.getPath();
-        } else {
+        if (classpathFileResource) {
             return file.getAbsolutePath().substring(root.getAbsolutePath().length() + 1);
+        } else {
+            return file.getPath();
         }
     }
 

@@ -5,15 +5,21 @@ import cucumber.api.formatter.AnsiEscapes;
 import cucumber.runtime.TestHelper;
 import cucumber.runtime.model.CucumberFeature;
 import io.cucumber.cucumberexpressions.Argument;
+import io.cucumber.cucumberexpressions.CucumberExpression;
+import io.cucumber.cucumberexpressions.Expression;
+import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
+import io.cucumber.cucumberexpressions.RegularExpression;
 import org.junit.Test;
 import org.mockito.stubbing.Answer;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.regex.Pattern;
 
 import static cucumber.runtime.TestHelper.createWriteHookAction;
 import static cucumber.runtime.TestHelper.feature;
@@ -22,7 +28,7 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
-@org.junit.Ignore
+
 public class PrettyFormatterTest {
 
     @Test
@@ -50,7 +56,7 @@ public class PrettyFormatterTest {
     }
 
     @Test
-    public void should_handle_backgound() throws Throwable {
+    public void should_handle_background() throws Throwable {
         CucumberFeature feature = feature("path/test.feature", "" +
                 "Feature: feature name\n" +
                 "  Background: background name\n" +
@@ -366,19 +372,53 @@ public class PrettyFormatterTest {
     }
 
     @Test
-    public void should_mark_arguments_in_steps() throws Throwable {
-//        Formats formats = new AnsiFormats();
-//        Argument arg1 = new Argument(5, "arg1", "arg1");
-//        Argument arg2 = new Argument(15, "arg2", "arg2");
-//        PrettyFormatter prettyFormatter = new PrettyFormatter(null);
-//
-//        String formattedText = prettyFormatter.formatStepText("Given ", "text arg1 text arg2", formats.get("passed"), formats.get("passed_arg"), asList(arg1, arg2));
-//
-//        assertThat(formattedText, equalTo(AnsiEscapes.GREEN + "Given " + AnsiEscapes.RESET +
-//                                          AnsiEscapes.GREEN + "text " + AnsiEscapes.RESET +
-//                                          AnsiEscapes.GREEN + AnsiEscapes.INTENSITY_BOLD + "arg1"  + AnsiEscapes.RESET +
-//                                          AnsiEscapes.GREEN + " text " + AnsiEscapes.RESET +
-//                                          AnsiEscapes.GREEN + AnsiEscapes.INTENSITY_BOLD + "arg2"  + AnsiEscapes.RESET));
+    public void should_mark_subsequent_arguments_in_steps() throws Throwable {
+        Formats formats = new AnsiFormats();
+
+        ParameterTypeRegistry registry = new ParameterTypeRegistry(Locale.ENGLISH);
+        Expression expression = new CucumberExpression("text {string} text {string}", registry);
+
+        PrettyFormatter prettyFormatter = new PrettyFormatter(null);
+        String stepText = "text 'arg1' text 'arg2'";
+        String formattedText = prettyFormatter.formatStepText("Given ", stepText, formats.get("passed"), formats.get("passed_arg"), expression.match(stepText));
+
+        assertThat(formattedText, equalTo(AnsiEscapes.GREEN + "Given " + AnsiEscapes.RESET +
+                                          AnsiEscapes.GREEN + "text " + AnsiEscapes.RESET +
+                                          AnsiEscapes.GREEN + AnsiEscapes.INTENSITY_BOLD + "'arg1'"  + AnsiEscapes.RESET +
+                                          AnsiEscapes.GREEN + " text " + AnsiEscapes.RESET +
+                                          AnsiEscapes.GREEN + AnsiEscapes.INTENSITY_BOLD + "'arg2'"  + AnsiEscapes.RESET));
+    }
+
+    @Test
+    public void should_mark_nested_argument_as_part_of_full_argument(){
+        Formats formats = new AnsiFormats();
+
+        ParameterTypeRegistry registry = new ParameterTypeRegistry(Locale.ENGLISH);
+        Expression expression = new RegularExpression(Pattern.compile("the order is placed( and (not yet )?confirmed)?"), registry);
+
+        PrettyFormatter prettyFormatter = new PrettyFormatter(null);
+        String stepText = "the order is placed and not yet confirmed";
+
+        String formattedText = prettyFormatter.formatStepText("Given ", stepText, formats.get("passed"), formats.get("passed_arg"), expression.match(stepText));
+
+        assertThat(formattedText, equalTo(AnsiEscapes.GREEN + "Given " + AnsiEscapes.RESET +
+            AnsiEscapes.GREEN + "the order is placed" + AnsiEscapes.RESET +
+            AnsiEscapes.GREEN + AnsiEscapes.INTENSITY_BOLD + " and not yet confirmed"  + AnsiEscapes.RESET));
+    }
+
+    @Test
+    public void should_mark_nested_arguments_as_part_of_enclosing_argument(){
+        Formats formats = new AnsiFormats();
+        PrettyFormatter prettyFormatter = new PrettyFormatter(null);
+        ParameterTypeRegistry registry = new ParameterTypeRegistry(Locale.ENGLISH);
+        Expression expression = new RegularExpression(Pattern.compile("the order is placed( and (not( yet)? )?confirmed)?"), registry);
+        String stepText = "the order is placed and not yet confirmed";
+        String formattedText = prettyFormatter.formatStepText("Given ", stepText, formats.get("passed"), formats.get("passed_arg"), expression.match(stepText));
+
+
+        assertThat(formattedText, equalTo(AnsiEscapes.GREEN + "Given " + AnsiEscapes.RESET +
+            AnsiEscapes.GREEN + "the order is placed" + AnsiEscapes.RESET +
+            AnsiEscapes.GREEN + AnsiEscapes.INTENSITY_BOLD + " and not yet confirmed"  + AnsiEscapes.RESET));
     }
 
     private String runFeatureWithPrettyFormatter(final CucumberFeature feature, final Map<String, String> stepsToLocation) throws Throwable {

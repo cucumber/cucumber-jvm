@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 
 import cucumber.api.DataTable;
+import cucumber.api.PendingException;
 import cucumber.api.Scenario;
 import cucumber.api.java8.En;
 
@@ -65,18 +66,20 @@ public class LambdaStepdefs implements En {
 
         Given("^A method reference that declares an exception$", this::methodThatDeclaresException);
         Given("^A method reference with an argument (\\d+)$", this::methodWithAnArgument);
+        Given("^A method reference with an int argument (\\d+)$", this::methodWithAnIntArgument);
         Given("^A constructor reference with an argument (.*)$", Contact::new);
         Given("^A static method reference with an argument (\\d+)$", LambdaStepdefs::staticMethodWithAnArgument);
-
         Given("^A method reference to an arbitrary object of a particular type (\\d+)$", Contact::call);
         Given("^A method reference to an arbitrary object of a particular type (.*) with argument (.*)$", Contact::update);
-
     }
 
     private void methodThatDeclaresException() throws Throwable {
     }
     private void methodWithAnArgument(Integer cuckes) throws Throwable {
         assertEquals(42, cuckes.intValue());
+    }
+    private void methodWithAnIntArgument(int cuckes) throws Throwable {
+        assertEquals(42, cuckes);
     }
 
     public static void staticMethodWithAnArgument(Integer cuckes) throws Throwable {

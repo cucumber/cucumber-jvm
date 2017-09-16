@@ -1,21 +1,23 @@
 package cucumber.runtime.java;
 
+import static cucumber.runtime.io.MultiLoader.packageName;
+import static cucumber.runtime.java.ObjectFactoryLoader.loadObjectFactory;
+import static java.lang.Thread.currentThread;
+
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
 import cucumber.api.java.ObjectFactory;
 import cucumber.api.java8.GlueBase;
-import cucumber.api.java8.HookBody;
-import cucumber.api.java8.HookNoArgsBody;
-import cucumber.api.java8.StepdefBody;
 import cucumber.runtime.Backend;
 import cucumber.runtime.ClassFinder;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.DuplicateStepDefinitionException;
 import cucumber.runtime.Env;
 import cucumber.runtime.Glue;
+import cucumber.runtime.HookDefinition;
+import cucumber.runtime.StepDefinition;
 import cucumber.runtime.UnreportedStepExecutor;
 import cucumber.runtime.Utils;
-import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
 import cucumber.runtime.snippets.FunctionNameGenerator;
@@ -30,15 +32,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static cucumber.runtime.io.MultiLoader.packageName;
-
 public class JavaBackend implements Backend {
     public static final ThreadLocal<JavaBackend> INSTANCE = new ThreadLocal<JavaBackend>();
     private final SnippetGenerator snippetGenerator;
     private final ParameterTypeRegistry parameterTypeRegistry;
 
     private Snippet createSnippet() {
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        ClassLoader classLoader = currentThread().getContextClassLoader();
         try {
             classLoader.loadClass("cucumber.runtime.java8.LambdaGlueBase");
             return new Java8Snippet();
@@ -60,30 +60,19 @@ public class JavaBackend implements Backend {
      * @param resourceLoader
      */
     public JavaBackend(ResourceLoader resourceLoader, ParameterTypeRegistry parameterTypeRegistry) {
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
-        methodScanner = new MethodScanner(classFinder);
-        objectFactory = ObjectFactoryLoader.loadObjectFactory(classFinder, Env.INSTANCE.get(ObjectFactory.class.getName()));
-        this.parameterTypeRegistry = parameterTypeRegistry;
-        this.snippetGenerator = new SnippetGenerator(createSnippet(), parameterTypeRegistry);
+        this(new ResourceLoaderClassFinder(resourceLoader, currentThread().getContextClassLoader()), parameterTypeRegistry);
     }
 
-    public JavaBackend(ObjectFactory objectFactory, ParameterTypeRegistry transformLookup) {
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        ResourceLoader resourceLoader = new MultiLoader(classLoader);
-        classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
-        methodScanner = new MethodScanner(classFinder);
-        this.objectFactory = objectFactory;
-        this.parameterTypeRegistry = transformLookup;
-        this.snippetGenerator = new SnippetGenerator(createSnippet(), transformLookup);
+    private JavaBackend(ClassFinder classFinder, ParameterTypeRegistry parameterTypeRegistry) {
+        this(loadObjectFactory(classFinder, Env.INSTANCE.get(ObjectFactory.class.getName())), classFinder, parameterTypeRegistry);
     }
 
-    public JavaBackend(ObjectFactory objectFactory, ClassFinder classFinder, ParameterTypeRegistry transformLookup) {
-        this.objectFactory = objectFactory;
+    public JavaBackend(ObjectFactory objectFactory, ClassFinder classFinder,  ParameterTypeRegistry parameterTypeRegistry) {
         this.classFinder = classFinder;
-        this.parameterTypeRegistry = transformLookup;
-        this.snippetGenerator = new SnippetGenerator(createSnippet(), transformLookup);
-        methodScanner = new MethodScanner(classFinder);
+        this.objectFactory = objectFactory;
+        this.methodScanner = new MethodScanner(classFinder);
+        this.snippetGenerator = new SnippetGenerator(createSnippet(), parameterTypeRegistry);
+        this.parameterTypeRegistry = parameterTypeRegistry;
     }
 
     @Override
@@ -164,14 +153,8 @@ public class JavaBackend implements Backend {
         }
     }
 
-    public void addStepDefinition(String regexp, long timeoutMillis, StepdefBody body, TypeIntrospector typeIntrospector) {
-        try {
-            glue.addStepDefinition(new Java8StepDefinition(regexp, timeoutMillis, body, typeIntrospector, parameterTypeRegistry));
-        } catch (CucumberException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new CucumberException(e);
-        }
+    public void addStepDefinition(StepDefinition stepDefinition) {
+        glue.addStepDefinition(stepDefinition);
     }
 
     void addHook(Annotation annotation, Method method) {
@@ -179,29 +162,21 @@ public class JavaBackend implements Backend {
             if (annotation.annotationType().equals(Before.class)) {
                 String[] tagExpressions = ((Before) annotation).value();
                 long timeout = ((Before) annotation).timeout();
-                glue.addBeforeHook(new JavaHookDefinition(method, tagExpressions, ((Before) annotation).order(), timeout, objectFactory));
+                addBeforeHookDefinition(new JavaHookDefinition(method, tagExpressions, ((Before) annotation).order(), timeout, objectFactory));
             } else {
                 String[] tagExpressions = ((After) annotation).value();
                 long timeout = ((After) annotation).timeout();
-                glue.addAfterHook(new JavaHookDefinition(method, tagExpressions, ((After) annotation).order(), timeout, objectFactory));
+                addAfterHookDefinition(new JavaHookDefinition(method, tagExpressions, ((After) annotation).order(), timeout, objectFactory));
             }
         }
     }
 
-    public void addBeforeHookDefinition(String[] tagExpressions, long timeoutMillis, int order, HookBody body) {
-        glue.addBeforeHook(new Java8HookDefinition(tagExpressions, order, timeoutMillis, body));
+    public void addBeforeHookDefinition(HookDefinition beforeHook) {
+        glue.addBeforeHook(beforeHook);
     }
 
-    public void addAfterHookDefinition(String[] tagExpressions, long timeoutMillis, int order, HookBody body) {
-        glue.addAfterHook(new Java8HookDefinition(tagExpressions, order, timeoutMillis, body));
-    }
-
-    public void addBeforeHookDefinition(String[] tagExpressions, long timeoutMillis, int order, HookNoArgsBody body) {
-        glue.addBeforeHook(new Java8HookDefinition(tagExpressions, order, timeoutMillis, body));
-    }
-
-    public void addAfterHookDefinition(String[] tagExpressions, long timeoutMillis, int order, HookNoArgsBody body) {
-        glue.addAfterHook(new Java8HookDefinition(tagExpressions, order, timeoutMillis, body));
+    public void addAfterHookDefinition(HookDefinition afterHook) {
+        glue.addAfterHook(afterHook);
     }
 
     private String expression(Annotation annotation) throws Throwable {

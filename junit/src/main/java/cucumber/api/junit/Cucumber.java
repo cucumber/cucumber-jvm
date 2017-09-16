@@ -19,6 +19,7 @@ import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
+import org.junit.runners.model.Statement;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -75,7 +76,7 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
      * @param runtimeOptions configuration
      * @return a new runtime
      * @throws InitializationError if a JUnit error occurred
-     * @throws IOException if a class or resource could not be loaded
+     * @throws IOException         if a class or resource could not be loaded
      */
     protected Runtime createRuntime(ResourceLoader resourceLoader, ClassLoader classLoader,
                                     RuntimeOptions runtimeOptions) throws InitializationError, IOException {
@@ -99,10 +100,16 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
     }
 
     @Override
-    public void run(RunNotifier notifier) {
-        super.run(notifier);
-        runtime.getEventBus().send(new TestRunFinished(runtime.getEventBus().getTime()));
-        runtime.printSummary();
+    protected Statement childrenInvoker(RunNotifier notifier) {
+        final Statement features = super.childrenInvoker(notifier);
+        return new Statement() {
+            @Override
+            public void evaluate() throws Throwable {
+                features.evaluate();
+                runtime.getEventBus().send(new TestRunFinished(runtime.getEventBus().getTime()));
+                runtime.printSummary();
+            }
+        };
     }
 
     private void addChildren(List<CucumberFeature> cucumberFeatures) throws InitializationError {

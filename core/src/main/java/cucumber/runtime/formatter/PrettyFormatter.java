@@ -115,7 +115,7 @@ class PrettyFormatter implements Formatter, ColorAware {
     }
 
     private void handleTestSourceRead(TestSourceRead event) {
-        testSources.addTestSourceReadEvent(event.path, event);
+        testSources.addTestSourceReadEvent(event.uri, event);
     }
 
     private void handleTestCaseStarted(TestCaseStarted event) {
@@ -155,11 +155,11 @@ class PrettyFormatter implements Formatter, ColorAware {
     }
 
     private void handleStartOfFeature(TestCaseStarted event) {
-        if (currentFeatureFile == null || !currentFeatureFile.equals(event.testCase.getPath())) {
+        if (currentFeatureFile == null || !currentFeatureFile.equals(event.testCase.getUri())) {
             if (currentFeatureFile != null) {
                 out.println();
             }
-            currentFeatureFile = event.testCase.getPath();
+            currentFeatureFile = event.testCase.getUri();
             printFeature(currentFeatureFile);
         }
     }
@@ -208,18 +208,31 @@ class PrettyFormatter implements Formatter, ColorAware {
     }
 
     String formatStepText(String keyword, String stepText, Format textFormat, Format argFormat, List<Argument<?>> arguments) {
-        int textStart = 0;
+        int beginIndex = 0;
         StringBuilder result = new StringBuilder(textFormat.text(keyword));
-//        for (Argument argument : arguments) {
-//            String text = stepText.substring(textStart, argument.getOffset());
-//            result.append(textFormat.text(text));
-//            result.append(argFormat.text(argument.getValue().toString()));
-//            textStart = argument.getOffset() + argument.getValue().toString().length();
-//        }
-//        if (textStart != stepText.length()) {
-//            String text = stepText.substring(textStart, stepText.length());
-//            result.append(textFormat.text(text));
-//        }
+        for (Argument argument : arguments) {
+            // can be null if the argument is missing.
+            if (argument.getGroup() != null) {
+                int argumentOffset = argument.getGroup().getStart();
+                // a nested argument starts before the enclosing argument ends; ignore it when formatting
+                if (argumentOffset < beginIndex ) {
+                    continue;
+                }
+                String text = stepText.substring(beginIndex, argumentOffset);
+                result.append(textFormat.text(text));
+            }
+            // val can be null if the argument isn't there, for example @And("(it )?has something")
+            if (argument.getValue() != null) {
+                String text = stepText.substring(argument.getGroup().getStart(), argument.getGroup().getEnd());
+                result.append(argFormat.text(text));
+                // set beginIndex to end of argument
+                beginIndex = argument.getGroup().getEnd();
+            }
+        }
+        if (beginIndex != stepText.length()) {
+            String text = stepText.substring(beginIndex, stepText.length());
+            result.append(textFormat.text(text));
+        }
         return result.toString();
     }
 

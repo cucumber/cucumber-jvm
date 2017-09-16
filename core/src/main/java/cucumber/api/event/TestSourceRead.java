@@ -1,14 +1,12 @@
 package cucumber.api.event;
 
 public final class TestSourceRead extends TimeStampedEvent {
-    public final String path;
-    public final String language;
+    public final String uri;
     public final String source;
 
-    public TestSourceRead(Long timeStamp, String path, String language, String source) {
+    public TestSourceRead(Long timeStamp, String uri, String source) {
         super(timeStamp);
-        this.path = path;
-        this.language = language;
+        this.uri = uri;
         this.source = source;
     }
 

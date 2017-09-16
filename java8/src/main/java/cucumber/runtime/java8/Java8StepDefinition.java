@@ -1,4 +1,7 @@
-package cucumber.runtime.java;
+package cucumber.runtime.java8;
+
+import static cucumber.runtime.ParameterInfo.fromTypes;
+import static net.jodah.typetools.TypeResolver.resolveRawArguments;
 
 import cucumber.api.java8.StepdefBody;
 import cucumber.runtime.ArgumentMatcher;
@@ -8,13 +11,13 @@ import cucumber.runtime.ParameterInfo;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.Utils;
 import gherkin.pickles.PickleStep;
+import net.jodah.typetools.TypeResolver;
 import io.cucumber.cucumberexpressions.Argument;
 import io.cucumber.cucumberexpressions.Expression;
 import io.cucumber.cucumberexpressions.ExpressionFactory;
 import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,36 +36,23 @@ public class Java8StepDefinition implements StepDefinition {
     private final List<ParameterInfo> parameterInfos;
     private final Method method;
 
-    public Java8StepDefinition(String expression, long timeoutMillis, StepdefBody body, TypeIntrospector typeIntrospector, ParameterTypeRegistry parameterTypeRegistry) throws Exception {
+    public <T extends StepdefBody> Java8StepDefinition(String pattern, long timeoutMillis, Class<T> bodyClass, T body, ParameterTypeRegistry parameterTypeRegistry)  {
         this.timeoutMillis = timeoutMillis;
         this.body = body;
 
+        this.argumentMatcher = new JdkPatternArgumentMatcher(this.pattern);
         this.location = new Exception().getStackTrace()[3];
-
-        Class<? extends StepdefBody> bodyClass = body.getClass();
-
-        this.method = getAcceptMethod(bodyClass);
-
-        Type[] argumentTypes = getArgumentTypes(bodyClass, typeIntrospector, method.getParameterTypes().length);
-
-        this.expression = new ExpressionFactory(parameterTypeRegistry).createExpression(expression, asList(argumentTypes));
-        this.parameterInfos = ParameterInfo.fromTypes(argumentTypes);
-    }
-
-    private Type[] getArgumentTypes(Class<? extends StepdefBody> bodyClass, TypeIntrospector typeIntrospector, int parameterCount) throws Exception {
-        Type genericInterface = bodyClass.getGenericInterfaces()[0];
-        Type[] argumentTypes;
-        if (genericInterface instanceof ParameterizedType) {
-            argumentTypes = ((ParameterizedType) genericInterface).getActualTypeArguments();
-        } else {
-            Class<? extends StepdefBody> interfac3 = (Class<? extends StepdefBody>) bodyClass.getInterfaces()[0];
-            argumentTypes = typeIntrospector.getGenericTypes(bodyClass, interfac3);
+        this.method = getAcceptMethod(body.getClass());
+        try {
+            Class<?>[] arguments = resolveRawArguments(bodyClass, body.getClass());
+            Type[] argumentTypes = verifyNotListOrMap(arguments);
+            this.expression = new ExpressionFactory(parameterTypeRegistry).createExpression(expression, asList(argumentTypes));
+            this.parameterInfos = fromTypes(argumentTypes);
+        } catch (CucumberException e){
+            throw e;
+        } catch (Exception e) {
+            throw new CucumberException(e);
         }
-        Type[] argumentTypesOfCorrectLength = new Type[parameterCount];
-        System.arraycopy(argumentTypes, argumentTypes.length - parameterCount, argumentTypesOfCorrectLength, 0, parameterCount);
-        verifyNotListOrMap(argumentTypesOfCorrectLength);
-
-        return argumentTypesOfCorrectLength;
     }
 
     private Method getAcceptMethod(Class<? extends StepdefBody> bodyClass) {
@@ -79,7 +69,7 @@ public class Java8StepDefinition implements StepDefinition {
         return acceptMethods.get(0);
     }
 
-    private void verifyNotListOrMap(Type[] argumentTypes) {
+    private Type[] verifyNotListOrMap(Type[] argumentTypes) {
         for (Type argumentType : argumentTypes) {
             if (argumentType instanceof Class) {
                 Class<?> argumentClass = (Class<?>) argumentType;
@@ -88,6 +78,7 @@ public class Java8StepDefinition implements StepDefinition {
                 }
             }
         }
+        return argumentTypes;
     }
 
     private CucumberException withLocation(CucumberException exception) {
@@ -123,7 +114,7 @@ public class Java8StepDefinition implements StepDefinition {
 
     @Override
     public boolean isDefinedAt(StackTraceElement stackTraceElement) {
-        return location.getFileName().equals(stackTraceElement.getFileName());
+        return location.getFileName() != null && location.getFileName().equals(stackTraceElement.getFileName());
     }
 
     @Override

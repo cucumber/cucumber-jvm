@@ -7,10 +7,12 @@ import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
 
 import java.util.Collections;
+import java.util.Locale;
 
 import javax.inject.Inject;
 
 import cucumber.api.java.ObjectFactory;
+import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Configuration;
@@ -54,7 +56,7 @@ public class CalculatorTest {
 
             mavenBundle("io.cucumber", "gherkin"),
             mavenBundle("io.cucumber", "tag-expressions"),
-            mavenBundle("info.cukes", "cucumber-jvm-deps"),
+            mavenBundle("io.cucumber", "cucumber-jvm-deps"),
             mavenBundle("io.cucumber", "cucumber-core"),
             mavenBundle("io.cucumber", "cucumber-java"),
             mavenBundle("io.cucumber", "cucumber-osgi"),
@@ -75,7 +77,8 @@ public class CalculatorTest {
         final ClassLoader classLoader = Runtime.class.getClassLoader();
         final ObjectFactory objectFactory = new PaxExamObjectFactory(injector);
         final ClassFinder classFinder = new OsgiClassFinder(bundleContext);
-        final Backend backend = new JavaBackend(objectFactory, classFinder);
+        ParameterTypeRegistry parameterTypeRegistry = new ParameterTypeRegistry(Locale.ENGLISH);
+        final Backend backend = new JavaBackend(objectFactory, classFinder,parameterTypeRegistry);
 
         final RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(getClass());
         final RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();

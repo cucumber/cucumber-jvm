@@ -444,8 +444,7 @@ public class RuntimeOptions {
     private void processRerunFiles(ResourceLoader resourceLoader) {
         for (String featurePath : featurePaths) {
             if (featurePath.startsWith("@")) {
-                for (String path : CucumberFeature.loadRerunFile(resourceLoader, featurePath.substring(1))) {
-                    PathWithLines pathWithLines = new PathWithLines(path);
+                for (PathWithLines pathWithLines : CucumberFeature.loadRerunFile(resourceLoader, featurePath.substring(1))) {
                     addLineFilters(lineFilters, pathWithLines.path, pathWithLines.lines);
                 }
             }
