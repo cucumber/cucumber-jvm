@@ -11,7 +11,6 @@ import cucumber.runtime.ParameterInfo;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.Utils;
 import gherkin.pickles.PickleStep;
-import net.jodah.typetools.TypeResolver;
 import io.cucumber.cucumberexpressions.Argument;
 import io.cucumber.cucumberexpressions.Expression;
 import io.cucumber.cucumberexpressions.ExpressionFactory;
@@ -36,16 +35,14 @@ public class Java8StepDefinition implements StepDefinition {
     private final List<ParameterInfo> parameterInfos;
     private final Method method;
 
-    public <T extends StepdefBody> Java8StepDefinition(String pattern, long timeoutMillis, Class<T> bodyClass, T body, ParameterTypeRegistry parameterTypeRegistry)  {
+    public <T extends StepdefBody> Java8StepDefinition(String expression, long timeoutMillis, Class<T> bodyClass, T body, ParameterTypeRegistry parameterTypeRegistry)  {
         this.timeoutMillis = timeoutMillis;
         this.body = body;
 
-        this.argumentMatcher = new JdkPatternArgumentMatcher(this.pattern);
         this.location = new Exception().getStackTrace()[3];
         this.method = getAcceptMethod(body.getClass());
         try {
-            Class<?>[] arguments = resolveRawArguments(bodyClass, body.getClass());
-            Type[] argumentTypes = verifyNotListOrMap(arguments);
+            Type[] argumentTypes = verifyNotListOrMap(resolveRawArguments(bodyClass, body.getClass()));
             this.expression = new ExpressionFactory(parameterTypeRegistry).createExpression(expression, asList(argumentTypes));
             this.parameterInfos = fromTypes(argumentTypes);
         } catch (CucumberException e){

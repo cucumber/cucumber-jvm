@@ -5,29 +5,32 @@ import static org.junit.Assert.fail;
 
 import cucumber.api.java8.StepdefBody;
 import cucumber.runtime.CucumberException;
-import org.junit.Ignore;
+import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
 import org.junit.Test;
 
 import java.util.List;
+import java.util.Locale;
 
 public class Java8AnonInnerClassStepDefinitionTest {
 
+    private final ParameterTypeRegistry parameterTypeRegistry = new ParameterTypeRegistry(Locale.ENGLISH);
+
     @Test
     public void should_calculate_parameters_count_from_body_with_one_param() throws Exception {
-        Java8StepDefinition java8StepDefinition = new Java8StepDefinition("^I have (\\d) some step (.*)$", 0, StepdefBody.A1.class, oneParamStep());
+        Java8StepDefinition java8StepDefinition = new Java8StepDefinition("^I have (\\d) some step (.*)$", 0, StepdefBody.A1.class, oneParamStep(), parameterTypeRegistry);
         assertEquals(Integer.valueOf(1), java8StepDefinition.getParameterCount());
     }
 
     @Test
     public void should_calculate_parameters_count_from_body_with_two_params() throws Exception {
-        Java8StepDefinition java8StepDefinition = new Java8StepDefinition("^I have some step $", 0, StepdefBody.A2.class, twoParamStep());
+        Java8StepDefinition java8StepDefinition = new Java8StepDefinition("^I have some step $", 0, StepdefBody.A2.class, twoParamStep(), parameterTypeRegistry);
         assertEquals(Integer.valueOf(2), java8StepDefinition.getParameterCount());
     }
 
     @Test
     public void should_fail_for_param_with_non_generic_list() throws Exception {
         try {
-            new Java8StepDefinition("^I have (\\d) some step (.*)$", 0, StepdefBody.A1.class, nonGenericListStep());
+            new Java8StepDefinition("^I have (\\d) some step (.*)$", 0, StepdefBody.A1.class, nonGenericListStep(), parameterTypeRegistry);
             fail();
         } catch (CucumberException expected) {
             assertEquals("Can't use java.util.List in lambda step definition. Declare a DataTable argument instead and convert manually with asList/asLists/asMap/asMaps", expected.getMessage());
@@ -37,7 +40,7 @@ public class Java8AnonInnerClassStepDefinitionTest {
     @Test
     public void should_fail_for_param_with_generic_list() throws Exception {
         try {
-            new Java8StepDefinition("^I have (\\d) some step (.*)$", 0, StepdefBody.A1.class, genericListStep());
+            new Java8StepDefinition("^I have (\\d) some step (.*)$", 0, StepdefBody.A1.class, genericListStep(), parameterTypeRegistry);
             fail();
         } catch (CucumberException expected) {
             assertEquals("Can't use java.util.List in lambda step definition. Declare a DataTable argument instead and convert manually with asList/asLists/asMap/asMaps", expected.getMessage());

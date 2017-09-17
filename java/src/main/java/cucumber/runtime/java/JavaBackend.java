@@ -153,8 +153,8 @@ public class JavaBackend implements Backend {
         }
     }
 
-    public void addStepDefinition(StepDefinition stepDefinition) {
-        glue.addStepDefinition(stepDefinition);
+    public void addStepDefinition(Function<ParameterTypeRegistry, StepDefinition> stepDefinitionFunction) {
+        glue.addStepDefinition(stepDefinitionFunction.apply(parameterTypeRegistry));
     }
 
     void addHook(Annotation annotation, Method method) {

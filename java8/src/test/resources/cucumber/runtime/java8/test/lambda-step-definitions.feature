@@ -26,6 +26,7 @@ Feature: Java8
     Given A method reference with an argument 42
     Given A method reference with an int argument 42
     Given A static method reference with an argument 42
-    Given A constructor reference with an argument 42
-    Given A method reference to an arbitrary object of a particular type 42
-    Given A method reference to an arbitrary object of a particular type 42 with argument 314
+    Given A constructor reference with an argument "42"
+  #TODO: Add transfomer to create Contact object
+#    Given A method reference to an arbitrary object of a particular type "42"
+#    Given A method reference to an arbitrary object of a particular type "42" with argument "314"
