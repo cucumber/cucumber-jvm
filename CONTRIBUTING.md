@@ -113,7 +113,7 @@ Replace version numbers in:
 * examples/java-gradle/build.gradle
 * examples/android/android-studio/Cukeulator/app/build.gradle
 * examples/clojure_cukes/project.clj
-* History.md
+* CHANGELOG.md
 
 Make sure you can generate Javadocs for all modules, or else the
 release will fail:
@@ -132,13 +132,13 @@ mvn --batch-mode -P release-sign-artifacts release:prepare -DautoVersionSubmodul
 mvn -P release-sign-artifacts release:perform
 ```
 
-Post release the API docs must be generated for each module and manually copied over to a working copy of the [cucumber.github.com](https://github.com/cucumber/cucumber.github.com) which must be a sibling of `cucumber-jvm` (this repo):
+Post release the API docs must be generated for each module and manually copied over to a working copy of the [api.cucumber.io](https://github.com/cucumber/api.cucumber.io) which must be a sibling of `cucumber-jvm` (this repo):
 
 ```
 ./doc/genapi.sh
 ```
 
-After that's done, commit and push `cucumber.github.com`
+After that's done, commit and push `api.cucumber.io`
 
 Now, update the dependency in example projects:
 
