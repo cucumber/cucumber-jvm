@@ -77,6 +77,7 @@ public class RuntimeOptions {
     private SnippetType snippetType = SnippetType.UNDERSCORE;
     private boolean pluginNamesInstantiated;
     private EventBus bus;
+    private boolean verbose;
 
     /**
      * Create a new instance from a string of options, for example:
@@ -145,6 +146,8 @@ public class RuntimeOptions {
             } else if (arg.equals("--version") || arg.equals("-v")) {
                 System.out.println(VERSION);
                 System.exit(0);
+            } else if (arg.equals("--verbose") || arg.equals("--no-verbose")) {
+                verbose = !arg.startsWith("--no-");
             } else if (arg.equals("--i18n")) {
                 String nextArg = args.remove(0);
                 System.exit(printI18n(nextArg));
@@ -460,6 +463,10 @@ public class RuntimeOptions {
 
     public List<String> getJunitOptions() {
         return junitOptions;
+    }
+
+    public boolean isVerbose() {
+        return verbose;
     }
 
     class ParsedPluginData {
