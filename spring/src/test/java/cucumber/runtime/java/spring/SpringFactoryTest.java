@@ -7,6 +7,8 @@ import cucumber.runtime.java.spring.commonglue.AutowiresPlatformTransactionManag
 import cucumber.runtime.java.spring.commonglue.AutowiresThirdStepDef;
 import cucumber.runtime.java.spring.commonglue.OneStepDef;
 import cucumber.runtime.java.spring.commonglue.ThirdStepDef;
+import cucumber.runtime.java.spring.componentannotation.WithComponentAnnotation;
+import cucumber.runtime.java.spring.componentannotation.WithControllerAnnotation;
 import cucumber.runtime.java.spring.metaconfig.general.BellyMetaStepdefs;
 import cucumber.runtime.java.spring.contextconfig.BellyStepdefs;
 import cucumber.runtime.java.spring.contextconfig.WithSpringAnnotations;
@@ -14,7 +16,9 @@ import cucumber.runtime.java.spring.contexthierarchyconfig.WithContextHierarchyA
 import cucumber.runtime.java.spring.contexthierarchyconfig.WithDifferentContextHierarchyAnnotation;
 import cucumber.runtime.java.spring.dirtiescontextconfig.DirtiesContextBellyStepDefs;
 import cucumber.runtime.java.spring.metaconfig.dirties.DirtiesContextBellyMetaStepDefs;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import static org.junit.Assert.assertEquals;
@@ -24,6 +28,9 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 public class SpringFactoryTest {
+
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
 
     @Test
     public void shouldGiveUsNewStepInstancesForEachScenario() {
@@ -241,10 +248,31 @@ public class SpringFactoryTest {
         factory.addClass(BellyStepdefs.class);
     }
 
-    @Test(expected=CucumberException.class)
+    @Test
     public void shouldFailIfClassesWithDifferentSpringAnnotationsAreFound() {
+        expectedException.expect(CucumberException.class);
+        expectedException.expectMessage("Annotations differs on glue classes found: cucumber.runtime.java.spring.contexthierarchyconfig.WithContextHierarchyAnnotation, cucumber.runtime.java.spring.contexthierarchyconfig.WithDifferentContextHierarchyAnnotation");
         final ObjectFactory factory = new SpringFactory();
         factory.addClass(WithContextHierarchyAnnotation.class);
         factory.addClass(WithDifferentContextHierarchyAnnotation.class);
+    }
+
+    @Test
+    public void shouldFailIfClassWithSpringComponentAnnotationsIsFound() {
+        expectedException.expect(CucumberException.class);
+        expectedException.expectMessage("Glue class cucumber.runtime.java.spring.componentannotation.WithComponentAnnotation was annotated with @Component");
+        expectedException.expectMessage("Please remove the @Component annotation");
+        final ObjectFactory factory = new SpringFactory();
+        factory.addClass(WithComponentAnnotation.class);
+    }
+
+    @Test
+    public void shouldFailIfClassWithAnnotationAnnotatedWithSpringComponentAnnotationsIsFound() {
+        expectedException.expect(CucumberException.class);
+        expectedException.expectMessage("Glue class cucumber.runtime.java.spring.componentannotation.WithControllerAnnotation was annotated with @Controller");
+        expectedException.expectMessage("Please remove the @Controller annotation");
+        final ObjectFactory factory = new SpringFactory();
+        factory.addClass(WithControllerAnnotation.class);
+
     }
 }
