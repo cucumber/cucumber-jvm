@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeoutException;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -56,7 +57,7 @@ public class NashornHooksTest {
     public void shouldCallAddBeforeAndAfterHook() throws IOException {
         // when
         NashornBackend jsBackend = new NashornBackend(resourceLoader);
-        jsBackend.loadGlue(glue, Collections.singletonList("classpath:cucumber/runtime/rhinotest/rhino_hooks"));
+        jsBackend.loadGlue(glue, Collections.singletonList("classpath:cucumber/runtime/nashorntest/nashorn_hooks"));
         List<HookDefinition> beforeHooks = beforeHookCaptor.getAllValues();
         List<HookDefinition> afterHooks = afterHookCaptor.getAllValues();
 
@@ -69,11 +70,11 @@ public class NashornHooksTest {
         assertHooks(beforeHooks.get(5), afterHooks.get(5), TAGS, 20, 600);
     }
 
-    @Test(expected = InterruptedException.class)
+    @Test(expected = TimeoutException.class)
     public void shouldFailWithTimeout() throws Throwable {
         // when
         NashornBackend jsBackend = new NashornBackend(resourceLoader);
-        jsBackend.loadGlue(glue, Collections.singletonList("classpath:cucumber/runtime/rhino_hooks_timeout"));
+        jsBackend.loadGlue(glue, Collections.singletonList("classpath:cucumber/runtime/nashorn_hooks_timeout"));
         List<HookDefinition> beforeHooks = beforeHookCaptor.getAllValues();
 
         beforeHooks.get(0).execute(null);
