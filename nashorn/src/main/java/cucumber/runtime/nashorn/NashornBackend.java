@@ -8,12 +8,11 @@ import cucumber.runtime.io.Resource;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.snippets.FunctionNameGenerator;
 import cucumber.runtime.snippets.SnippetGenerator;
-import gherkin.formatter.model.Step;
+import gherkin.pickles.PickleStep;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.lang.invoke.MethodHandle;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -106,6 +105,7 @@ public class NashornBackend implements Backend {
         }
     }
 
+
     public void registerWorld(Callable buildWorldFn, Callable disposeWorldFn) {
         if (this.buildWorldFn != null) throw new CucumberException("World is already set");
         if (buildWorldFn == null) throw new CucumberException("World requires at least a build function");
@@ -114,9 +114,10 @@ public class NashornBackend implements Backend {
         this.disposeWorldFn = disposeWorldFn;
     }
 
+
     @Override
-    public String getSnippet(Step step, FunctionNameGenerator functionNameGenerator) {
-        return snippetGenerator.getSnippet(step, functionNameGenerator);
+    public String getSnippet(PickleStep step, String keyword, FunctionNameGenerator functionNameGenerator) {
+        return snippetGenerator.getSnippet(step, keyword, functionNameGenerator);
     }
 
     private StackTraceElement jsLocation() {

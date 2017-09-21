@@ -1,10 +1,9 @@
 package cucumber.runtime.nashorn;
 
+import cucumber.runtime.Argument;
 import cucumber.runtime.ParameterInfo;
 import cucumber.runtime.StepDefinition;
-import gherkin.I18n;
-import gherkin.formatter.Argument;
-import gherkin.formatter.model.Step;
+import gherkin.pickles.PickleStep;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -32,8 +31,9 @@ public class NashornStepDefinition implements StepDefinition {
         this.argumentsFromFunc = argumentsFromFunc;
     }
 
-    public List<Argument> matchedArguments(Step step) {
-    	List<Argument> args = (List<Argument>) callOnScriptObjectMirror(argumentsFromFunc, this.engineScope, new Object[]{step.getName(), this});
+    @Override
+    public List<Argument> matchedArguments(PickleStep step) {
+    	List<Argument> args = (List<Argument>) callOnScriptObjectMirror(argumentsFromFunc, this.engineScope, new Object[]{step.getText(), this});
 		return args;
     }
     
@@ -74,20 +74,8 @@ public class NashornStepDefinition implements StepDefinition {
         return new ParameterInfo(argumentType, null, null, null);
     }
 
-    public void execute(I18n i18n, Object[] args) throws Throwable {
-//        try {
-//            bodyFunc.call(cx, scope, scope, args);
-//        } catch (JavaScriptException e) {
-//            Object value = e.getValue();
-//            if (value instanceof NativeJavaObject) {
-//                NativeJavaObject njo = (NativeJavaObject) value;
-//                Object unwrapped = njo.unwrap();
-//                if (unwrapped instanceof Throwable) {
-//                    throw (Throwable) unwrapped;
-//                }
-//            }
-//            throw e.getCause() == null ? e : e.getCause();
-//        }
+    @Override
+    public void execute(String language, Object[] args) throws Throwable {
     	callOnScriptObjectMirror(bodyFunc, this.engineScope, args);
     }
 

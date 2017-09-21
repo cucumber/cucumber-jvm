@@ -4,8 +4,7 @@ import cucumber.runtime.HookDefinition;
 import cucumber.runtime.RuntimeGlue;
 import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
-import cucumber.runtime.nashorn.NashornHookDefinition;
-import gherkin.formatter.model.Tag;
+import gherkin.pickles.PickleTag;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,7 +16,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.TimeoutException;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -58,7 +56,7 @@ public class NashornHooksTest {
     public void shouldCallAddBeforeAndAfterHook() throws IOException {
         // when
         NashornBackend jsBackend = new NashornBackend(resourceLoader);
-        jsBackend.loadGlue(glue, Collections.singletonList("classpath:cucumber/runtime/nashorntest/nashorn_hooks"));
+        jsBackend.loadGlue(glue, Collections.singletonList("classpath:cucumber/runtime/rhinotest/rhino_hooks"));
         List<HookDefinition> beforeHooks = beforeHookCaptor.getAllValues();
         List<HookDefinition> afterHooks = afterHookCaptor.getAllValues();
 
@@ -71,19 +69,15 @@ public class NashornHooksTest {
         assertHooks(beforeHooks.get(5), afterHooks.get(5), TAGS, 20, 600);
     }
 
-    @Test(expected = TimeoutException.class)
+    @Test(expected = InterruptedException.class)
     public void shouldFailWithTimeout() throws Throwable {
         // when
         NashornBackend jsBackend = new NashornBackend(resourceLoader);
-        jsBackend.loadGlue(glue, Collections.singletonList("classpath:cucumber/runtime/nashorn_hooks_timeout"));
+        jsBackend.loadGlue(glue, Collections.singletonList("classpath:cucumber/runtime/rhino_hooks_timeout"));
         List<HookDefinition> beforeHooks = beforeHookCaptor.getAllValues();
 
-        try {
-            beforeHooks.get(0).execute(null);
-            fail();
-        } catch (Exception expected) {
-            throw expected;
-        }
+        beforeHooks.get(0).execute(null);
+        fail();
     }
 
     private void assertHooks(HookDefinition beforeHook, HookDefinition afterHook, String[] tags, int order, long timeoutMillis) {
@@ -94,17 +88,17 @@ public class NashornHooksTest {
     private void assertHook(HookDefinition hookDefinition, String[] tagExprs, int order, long timeoutMillis) {
         assertThat(hookDefinition, instanceOf(NashornHookDefinition.class));
 
-        NashornHookDefinition nashornHook = (NashornHookDefinition) hookDefinition;
+        NashornHookDefinition rhinoHook = (NashornHookDefinition) hookDefinition;
 
-        List<Tag> tags = new ArrayList<Tag>();
+        List<PickleTag> tags = new ArrayList<PickleTag>();
 
         for (String tagExpr : tagExprs) {
-            tags.add(new Tag(tagExpr, null));
+            tags.add(new PickleTag(null, tagExpr));
         }
 
-        assertTrue(nashornHook.getTagExpression().evaluate(tags));
-        assertThat(nashornHook.getOrder(), equalTo(order));
-        assertThat(nashornHook.getTimeout(), equalTo(timeoutMillis));
+        assertTrue(rhinoHook.getTagPredicate().apply(tags));
+        assertThat(rhinoHook.getOrder(), equalTo(order));
+        assertThat(rhinoHook.getTimeout(), equalTo(timeoutMillis));
     }
 
 }

@@ -8,7 +8,7 @@ var registerStepDefinition = function(regexp, bodyFunc) {
             for (var i = 1; i < match.length; i++) {
                 var arg = match[i];
                 offset = s.indexOf(arg, offset);
-                arguments.add(new Packages.gherkin.formatter.Argument(offset, arg));
+                arguments.add(new Packages.cucumber.runtime.Argument(offset, arg));
             }
             return arguments;
         } else {

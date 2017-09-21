@@ -591,6 +591,7 @@
                 <module>gosu</module>
                 <module>java8</module>
                 <module>kotlin-java8</module>
+                <module>nashorn</module>
             </modules>
         </profile>
 

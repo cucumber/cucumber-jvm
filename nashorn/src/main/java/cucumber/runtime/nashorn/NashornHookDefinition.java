@@ -4,10 +4,6 @@ import static java.util.Arrays.asList;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-
-import gherkin.TagExpression;
-import gherkin.formatter.model.Tag;
-
 import java.util.Collection;
 
 import javax.script.Bindings;
@@ -15,14 +11,16 @@ import javax.script.ScriptEngine;
 
 import cucumber.api.Scenario;
 import cucumber.runtime.HookDefinition;
+import cucumber.runtime.TagPredicate;
 import cucumber.runtime.Timeout;
+import gherkin.pickles.PickleTag;
 
 public class NashornHookDefinition implements HookDefinition {
 	private ScriptEngine engine;
 	private Bindings engineScope;
 
     private Object fn;
-    private final TagExpression tagExpression;
+    private final TagPredicate tagPredicate;
     private final int order;
     private final long timeoutMillis;
     private StackTraceElement location;
@@ -31,7 +29,7 @@ public class NashornHookDefinition implements HookDefinition {
     	this.engine = engine;
     	this.engineScope = engineScope;
         this.fn = fn;
-        this.tagExpression = new TagExpression(asList(tagExpressions));
+        this.tagPredicate = new TagPredicate(asList(tagExpressions));
         this.order = order;
         this.timeoutMillis = timeoutMillis;
         this.location = location;
@@ -70,18 +68,18 @@ public class NashornHookDefinition implements HookDefinition {
         }, timeoutMillis);
     }
 
+    TagPredicate getTagPredicate() {
+        return tagPredicate;
+    }
+
     @Override
-    public boolean matches(Collection<Tag> tags) {
-        return tagExpression.evaluate(tags);
+    public boolean matches(Collection<PickleTag> tags) {
+        return tagPredicate.apply(tags);
     }
 
     @Override
     public int getOrder() {
         return order;
-    }
-
-    TagExpression getTagExpression() {
-        return tagExpression;
     }
 
     long getTimeout() {
