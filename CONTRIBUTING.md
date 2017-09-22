@@ -73,6 +73,8 @@ Note that even though development is sometimes easier to do with 1.6, releasing 
 
 ## Releasing
 
+Upload privileges to the Sonatype staging repository and owner rights to the cucumber-jvm gem at RubyGems.org are required.
+
 First, make sure everything builds. Including Android.
 
 Then, see if you can upgrade any dependencies:
@@ -132,10 +134,12 @@ mvn --batch-mode -P release-sign-artifacts release:prepare -DautoVersionSubmodul
 mvn -P release-sign-artifacts release:perform
 ```
 
+Update the pom.xml file for the examples/android modules (which are not automatically updated by the release process), commit and push.
+
 Post release the API docs must be generated for each module and manually copied over to a working copy of the [api.cucumber.io](https://github.com/cucumber/api.cucumber.io) which must be a sibling of `cucumber-jvm` (this repo):
 
 ```
-./doc/genapi.sh
+./doc/genapi.sh VERSION
 ```
 
 After that's done, commit and push `api.cucumber.io`
