@@ -290,11 +290,11 @@ class JSONFormatter implements Formatter {
     }
 
     private void addEmbeddingToHookMap(byte[] data, String mimeType) {
-        if (!currentStepOrHookMap.containsKey("embedding")) {
-            currentStepOrHookMap.put("embedding", new ArrayList<Map<String, Object>>());
+        if (!currentStepOrHookMap.containsKey("embeddings")) {
+            currentStepOrHookMap.put("embeddings", new ArrayList<Map<String, Object>>());
         }
         Map<String, Object> embedMap = createEmbeddingMap(data, mimeType);
-        ((List<Map<String, Object>>)currentStepOrHookMap.get("embedding")).add(embedMap);
+        ((List<Map<String, Object>>)currentStepOrHookMap.get("embeddings")).add(embedMap);
     }
 
     private Map<String, Object> createEmbeddingMap(byte[] data, String mimeType) {
