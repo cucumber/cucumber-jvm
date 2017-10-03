@@ -1,7 +1,7 @@
 # Cucumber JVM
 
-[![OpenCollective](https://opencollective.com/cucumber/backers/badge.svg)](#backers) 
-[![OpenCollective](https://opencollective.com/cucumber/sponsors/badge.svg)](#sponsors)
+[![OpenCollective](https://opencollective.com/cucumber/backers/badge.svg)](https://opencollective.com/cucumber) 
+[![OpenCollective](https://opencollective.com/cucumber/sponsors/badge.svg)](https://opencollective.com/cucumber)
 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.cucumber/cucumber-jvm/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.cucumber/cucumber-jvm)
 [![Build Status](https://secure.travis-ci.org/cucumber/cucumber-jvm.svg)](http://travis-ci.org/cucumber/cucumber-jvm)
