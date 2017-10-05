@@ -56,8 +56,7 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         ClassLoader classLoader = clazz.getClassLoader();
         Assertions.assertNoCucumberAnnotatedMethods(clazz);
 
-        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(clazz);
-        RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
+        RuntimeOptions runtimeOptions = createRuntimeOptions(clazz);
 
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
         runtime = createRuntime(resourceLoader, classLoader, runtimeOptions);
@@ -66,6 +65,17 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         final List<CucumberFeature> cucumberFeatures = runtimeOptions.cucumberFeatures(resourceLoader, runtime.getEventBus());
         jUnitReporter = new JUnitReporter(runtime.getEventBus(), runtimeOptions.isStrict(), junitOptions);
         addChildren(cucumberFeatures);
+    }
+
+    /**
+     * Create the runtime options. Can be overridden to customize the runtime options.
+     * 
+     * @param clazz
+     *            the class with the @RunWith annotation.
+     * @return runtime options
+     */
+    protected RuntimeOptions createRuntimeOptions(Class clazz) {
+        return new RuntimeOptionsFactory(clazz).create();
     }
 
     /**
