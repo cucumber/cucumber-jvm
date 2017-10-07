@@ -11,6 +11,7 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ### Removed
 
 ### Fixed
+ * [Core] Correct the name of the Json Formatter embeddings node ([#1236](https://github.com/cucumber/cucumber-jvm/pull/1236) Haroon Sheikh)
 
 
 ## [2.0.1-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v2.0.0...v2.0.1) (2017-09-17)
