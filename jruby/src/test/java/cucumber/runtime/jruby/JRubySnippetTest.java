@@ -1,8 +1,9 @@
 package cucumber.runtime.jruby;
 
 import cucumber.runtime.snippets.SnippetGenerator;
-import gherkin.formatter.model.Comment;
-import gherkin.formatter.model.Step;
+import gherkin.pickles.Argument;
+import gherkin.pickles.PickleLocation;
+import gherkin.pickles.PickleStep;
 import org.junit.Test;
 
 import java.util.Collections;
@@ -13,7 +14,8 @@ import static org.junit.Assert.assertEquals;
 
 public class JRubySnippetTest {
 
-    private static final List<Comment> NO_COMMENTS = Collections.emptyList();
+    private static final List<Argument> NO_ARGUMENTS = Collections.emptyList();
+    private static final List<PickleLocation> NO_LOCATIONS = Collections.emptyList();
 
     @Test
     public void generatesPlainSnippet() {
@@ -26,7 +28,7 @@ public class JRubySnippetTest {
     }
 
     private String snippetFor(String name) {
-        Step step = new Step(NO_COMMENTS, "Given ", name, 0, null, null);
-        return new SnippetGenerator(new JRubySnippet()).getSnippet(step, null);
+        PickleStep step = new PickleStep(name, NO_ARGUMENTS, NO_LOCATIONS);
+        return new SnippetGenerator(new JRubySnippet()).getSnippet(step, "Given", null);
     }
 }

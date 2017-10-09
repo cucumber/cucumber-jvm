@@ -1,6 +1,7 @@
 package cucumber.examples.scalacalculator
 
-import collection.mutable.Stack
+import scala.collection.mutable.Queue
+
 
 sealed trait Arg
 
@@ -13,10 +14,10 @@ case class Op(value: String) extends Arg
 case class Val(value: Double) extends Arg
 
 class RpnCalculator {
-  private val stack = new Stack[Double]
+  private val stack = new Queue[Double]
 
   private def op(f: (Double, Double) => Double) =
-    stack push f(stack.pop(), stack.pop())
+    stack += f(stack.dequeue(), stack.dequeue())
 
   def push(arg: Arg) {
     arg match {
@@ -24,7 +25,7 @@ class RpnCalculator {
       case Op("-") => op(_ - _)
       case Op("*") => op(_ * _)
       case Op("/") => op(_ / _)
-      case Val(value) => stack push value
+      case Val(value) => stack += value
     }
   }
 

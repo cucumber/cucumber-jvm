@@ -27,6 +27,6 @@ public class FileResourceIteratorFactory implements ResourceIteratorFactory {
     public Iterator<Resource> createIterator(URL url, String path, String suffix) {
         File file = new File(filePath(url));
         File rootDir = new File(file.getAbsolutePath().substring(0, file.getAbsolutePath().length() - path.length()));
-        return new FileResourceIterator(rootDir, file, suffix);
+        return FileResourceIterator.createClasspathFileResourceIterator(rootDir, file, suffix);
     }
 }

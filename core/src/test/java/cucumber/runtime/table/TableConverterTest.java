@@ -2,12 +2,15 @@ package cucumber.runtime.table;
 
 import cucumber.api.DataTable;
 import cucumber.deps.com.thoughtworks.xstream.annotations.XStreamConverter;
+import cucumber.deps.com.thoughtworks.xstream.converters.SingleValueConverter;
 import cucumber.deps.com.thoughtworks.xstream.converters.javabean.JavaBeanConverter;
+import cucumber.runtime.CucumberException;
 import cucumber.runtime.ParameterInfo;
 import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -15,7 +18,9 @@ import java.util.Locale;
 import java.util.Map;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 public class TableConverterTest {
 
@@ -182,6 +187,141 @@ public class TableConverterTest {
         assertEquals(sidsBirthday(), converted.get(0).getBirthDate());
         assertEquals(sidsDeathcal(), converted.get(0).getDeathCal());
         assertEquals("      | birthDate  | deathCal   |\n      | 1957-05-10 | 1979-02-02 |\n", table.toTable(converted).toString());
+    }
+
+    public static class BlogBean {
+        private String author;
+        private List<String> tags;
+        private String post;
+
+        public String getPost() {
+            return post;
+        }
+
+        public void setPost(String post) {
+            this.post = post;
+        }
+
+        public String getAuthor() {
+            return author;
+        }
+
+        public void setAuthor(String author) {
+            this.author = author;
+        }
+
+        public List<String> getTags() {
+            return tags;
+        }
+
+        public void setTags(List<String> tags) {
+            this.tags = tags;
+        }
+    }
+
+    @Test
+    public void throws_cucumber_exception_for_complex_types() {
+        BlogBean blog = new BlogBean();
+        blog.setAuthor("Tom Scott");
+        blog.setTags(asList("Language", "Linguistics", " Mycenaean Greek"));
+        blog.setPost("Linear B is a syllabic script that was used for writing Mycenaean Greek...");
+        try {
+            DataTable.create(Collections.singletonList(blog));
+            fail();
+        } catch (CucumberException expected) {
+            assertEquals("" +
+                    "Don't know how to convert \"cucumber.runtime.table.TableConverterTest$BlogBean.tags\" into a table entry.\n" +
+                    "Either exclude tags from the table by selecting the fields to include:\n" +
+                    "\n" +
+                    "DataTable.create(entries, \"Field\", \"Other Field\")\n" +
+                    "\n" +
+                    "Or try writing your own converter:\n" +
+                    "\n" +
+                    "@cucumber.deps.com.thoughtworks.xstream.annotations.XStreamConverter(TagsConverter.class)\n" +
+                    "private List tags;\n",
+                expected.getMessage());
+        }
+    }
+
+    @Test
+    public void converts_empty_complex_types_and_almost_back() {
+        DataTable table = TableParser.parse("" +
+            "|Author   |Tags |Post            |\n" +
+            "|Tom Scott|     |Linear B is a...|\n", PARAMETER_INFO);
+        List<BlogBean> converted = table.asList(BlogBean.class);
+        BlogBean blog = converted.get(0);
+        assertEquals("Tom Scott", blog.getAuthor());
+        assertEquals(emptyList(), blog.getTags());
+        assertEquals("Linear B is a...", blog.getPost());
+        assertEquals("" +
+                "      | author    | tags | post             |\n" +
+                "      | Tom Scott |      | Linear B is a... |\n",
+            table.toTable(converted).toString());
+    }
+
+    public static class AnnotatedBlogBean {
+        private String author;
+        @XStreamConverter(TagsConverter.class)
+        private List<String> tags;
+        private String post;
+
+        public String getPost() {
+            return post;
+        }
+
+        public void setPost(String post) {
+            this.post = post;
+        }
+
+        public String getAuthor() {
+            return author;
+        }
+
+        public void setAuthor(String author) {
+            this.author = author;
+        }
+
+        public List<String> getTags() {
+            return tags;
+        }
+
+        public void setTags(List<String> tags) {
+            this.tags = tags;
+        }
+    }
+
+    public static class TagsConverter implements SingleValueConverter {
+
+        @Override
+        public String toString(Object o) {
+            return o.toString().replace("[", "").replace("]", "");
+        }
+
+        @Override
+        public Object fromString(String s) {
+            return asList(s.split(", "));
+        }
+
+        @Override
+        public boolean canConvert(Class type) {
+            return List.class.isAssignableFrom(type);
+        }
+    }
+
+    @Test
+    public void converts_annotated_complex_types_and_almost_back() {
+        DataTable table = TableParser.parse("" +
+            "|Author   |Tags                                  |Post            |\n" +
+            "|Tom Scott|Language, Linguistics, Mycenaean Greek|Linear B is a...|\n", PARAMETER_INFO);
+        List<AnnotatedBlogBean> converted = table.asList(AnnotatedBlogBean.class);
+        AnnotatedBlogBean blog = converted.get(0);
+        assertEquals("Tom Scott", blog.getAuthor());
+        assertEquals(asList("Language", "Linguistics", "Mycenaean Greek"), blog.getTags());
+        assertEquals("Linear B is a...", blog.getPost());
+        assertEquals("" +
+                "      | author    | tags                                   | post             |\n" +
+                "      | Tom Scott | Language, Linguistics, Mycenaean Greek | Linear B is a... |\n",
+            table.toTable(converted).toString());
     }
 
     @Test

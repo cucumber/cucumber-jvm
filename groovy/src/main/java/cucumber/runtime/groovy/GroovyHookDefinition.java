@@ -3,14 +3,14 @@ package cucumber.runtime.groovy;
 import cucumber.api.Scenario;
 import cucumber.runtime.HookDefinition;
 import cucumber.runtime.Timeout;
-import gherkin.TagExpression;
-import gherkin.formatter.model.Tag;
+import cucumber.runtime.TagPredicate;
+import gherkin.pickles.PickleTag;
 import groovy.lang.Closure;
 
 import java.util.Collection;
 
 public class GroovyHookDefinition implements HookDefinition {
-    private final TagExpression tagExpression;
+    private final TagPredicate tagPredicate;
     private final long timeoutMillis;
     private final int order;
     private final Closure body;
@@ -18,14 +18,14 @@ public class GroovyHookDefinition implements HookDefinition {
     private final StackTraceElement location;
 
     public GroovyHookDefinition(
-            TagExpression tagExpression,
+            TagPredicate tagPredicate,
             long timeoutMillis,
             int order,
             Closure body,
             StackTraceElement location,
             GroovyBackend backend) {
 
-        this.tagExpression = tagExpression;
+        this.tagPredicate = tagPredicate;
         this.timeoutMillis = timeoutMillis;
         this.order = order;
         this.body = body;
@@ -50,8 +50,8 @@ public class GroovyHookDefinition implements HookDefinition {
     }
 
     @Override
-    public boolean matches(Collection<Tag> tags) {
-        return tagExpression.evaluate(tags);
+    public boolean matches(Collection<PickleTag> tags) {
+        return tagPredicate.apply(tags);
     }
 
     @Override

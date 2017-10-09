@@ -82,3 +82,8 @@ Feature: Cukes
       | Blue  |      2 |
     Then I should have eaten 6 cukes
     And they should have been Green, Red, Blue
+
+  Scenario: Did you know that we can handle call by name and zero arity
+    Given I drink gin and vermouth
+    When I shake my belly
+    Then I should have lots of martinis

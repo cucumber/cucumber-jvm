@@ -1,37 +1,34 @@
 package cucumber.runtime.junit;
 
 import cucumber.api.PendingException;
-import cucumber.runtime.CucumberException;
-import gherkin.formatter.Formatter;
-import gherkin.formatter.Reporter;
-import gherkin.formatter.model.Background;
-import gherkin.formatter.model.Examples;
-import gherkin.formatter.model.Feature;
-import gherkin.formatter.model.Match;
-import gherkin.formatter.model.Result;
-import gherkin.formatter.model.Scenario;
-import gherkin.formatter.model.ScenarioOutline;
-import gherkin.formatter.model.Step;
+import cucumber.api.Result;
+import cucumber.api.TestStep;
+import cucumber.runner.EventBus;
+import cucumber.runtime.junit.JUnitReporter.EachTestNotifier;
+import cucumber.runtime.junit.JUnitReporter.NoTestNotifier;
+import cucumber.runtime.junit.PickleRunners.PickleRunner;
+import gherkin.pickles.PickleStep;
+import org.junit.AssumptionViolatedException;
 import org.junit.Test;
-import org.junit.internal.runners.model.EachTestNotifier;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Matchers;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static java.util.Arrays.asList;
+
 
 public class JUnitReporterTest {
 
@@ -39,37 +36,90 @@ public class JUnitReporterTest {
     private RunNotifier runNotifier;
 
     @Test
-    public void match_allow_stared_ignored() {
-        createAllowStartedIgnoredReporter();
-        Step runnerStep = mockStep();
-        Description runnerStepDescription = stepDescription(runnerStep);
-        ExecutionUnitRunner executionUnitRunner = mockExecutionUnitRunner(runnerSteps(runnerStep));
-        when(executionUnitRunner.describeChild(runnerStep)).thenReturn(runnerStepDescription);
+    public void test_case_started_fires_test_started_for_pickle() {
+        createNonStrictReporter();
+        PickleRunner pickleRunner = mockPickleRunner(Collections.<PickleStep>emptyList());
         runNotifier = mock(RunNotifier.class);
+        jUnitReporter.startExecutionUnit(pickleRunner, runNotifier);
 
-        jUnitReporter.startExecutionUnit(executionUnitRunner, runNotifier);
-        jUnitReporter.startOfScenarioLifeCycle(mock(Scenario.class));
-        jUnitReporter.step(runnerStep);
-        jUnitReporter.match(mock(Match.class));
+        jUnitReporter.handleTestCaseStarted();
 
-        verify(runNotifier).fireTestStarted(executionUnitRunner.getDescription());
-        verify(runNotifier).fireTestStarted(runnerStepDescription);
+        verify(runNotifier).fireTestStarted(pickleRunner.getDescription());
     }
 
     @Test
-    public void resultWithError() {
+    public void test_step_started_does_not_fire_test_started_for_step_by_default() {
         createNonStrictReporter();
-        Result result = mock(Result.class);
-        Throwable exception = mock(Throwable.class);
-        when(result.getError()).thenReturn(exception);
+        PickleStep runnerStep = mockStep();
+        PickleRunner pickleRunner = mockPickleRunner(runnerSteps(runnerStep));
+        runNotifier = mock(RunNotifier.class);
+        jUnitReporter.startExecutionUnit(pickleRunner, runNotifier);
 
+        jUnitReporter.handleStepStarted(runnerStep);
+
+        verify(runNotifier, never()).fireTestStarted(pickleRunner.describeChild(runnerStep));
+    }
+
+    @Test
+    public void test_step_started_fires_test_started_for_step_when_using_step_notifications() {
+        createNonStrictReporter("--step-notifications");
+        PickleStep runnerStep = mockStep();
+        PickleRunner pickleRunner = mockPickleRunner(runnerSteps(runnerStep));
+        runNotifier = mock(RunNotifier.class);
+        jUnitReporter.startExecutionUnit(pickleRunner, runNotifier);
+
+        jUnitReporter.handleStepStarted(runnerStep);
+
+        verify(runNotifier).fireTestStarted(pickleRunner.describeChild(runnerStep));
+    }
+
+    @Test
+    public void test_step_finished_fires_only_test_finished_for_passed_step() {
+        createNonStrictReporter();
+        createDefaultRunNotifier();
         Description description = mock(Description.class);
-        createRunNotifier(description);
+        setUpStepNotifierAndStepErrors(description);
+        Result result = mockResult(Result.Type.PASSED);
 
-        jUnitReporter.result(result);
+        jUnitReporter.handleStepResult(mock(TestStep.class), result);
+
+        verify(runNotifier).fireTestFinished(description);
+    }
+
+    @Test
+    public void test_step_finished_fires_assumption_failed_and_test_finished_for_skipped_step() {
+        createNonStrictReporter();
+        createDefaultRunNotifier();
+        Description description = mock(Description.class);
+        setUpStepNotifierAndStepErrors(description);
+        Result result = mockResult(Result.Type.SKIPPED);
+
+        jUnitReporter.handleStepResult(mock(TestStep.class), result);
 
         ArgumentCaptor<Failure> failureArgumentCaptor = ArgumentCaptor.forClass(Failure.class);
-        verify(runNotifier).fireTestFailure(failureArgumentCaptor.capture());
+        verify(runNotifier).fireTestAssumptionFailed(failureArgumentCaptor.capture());
+        verify(runNotifier).fireTestFinished(description);
+
+        Failure failure = failureArgumentCaptor.getValue();
+        assertEquals(description, failure.getDescription());
+        assertTrue(failure.getException() instanceof SkippedThrowable);
+        assertEquals("This step is skipped", failure.getException().getMessage());
+    }
+
+    @Test
+    public void test_step_finished_fires_assumption_failed_and_test_finished_for_skipped_step_with_assumption_violated() {
+        createNonStrictReporter();
+        createDefaultRunNotifier();
+        Description description = mock(Description.class);
+        setUpStepNotifierAndStepErrors(description);
+        Throwable exception = new AssumptionViolatedException("Oops");
+        Result result = mockResult(Result.Type.SKIPPED, exception);
+
+        jUnitReporter.handleStepResult(mock(TestStep.class), result);
+
+        ArgumentCaptor<Failure> failureArgumentCaptor = ArgumentCaptor.forClass(Failure.class);
+        verify(runNotifier).fireTestAssumptionFailed(failureArgumentCaptor.capture());
+        verify(runNotifier).fireTestFinished(description);
 
         Failure failure = failureArgumentCaptor.getValue();
         assertEquals(description, failure.getDescription());
@@ -77,329 +127,390 @@ public class JUnitReporterTest {
     }
 
     @Test
-    public void result_with_undefined_step_non_strict() {
+    public void test_step_finished_adds_no_step_exeption_for_skipped_step_without_exception() {
         createNonStrictReporter();
-        EachTestNotifier stepNotifier = mock(EachTestNotifier.class);
-        jUnitReporter.stepNotifier = stepNotifier;
+        createDefaultRunNotifier();
+        setUpNoStepNotifierAndStepErrors();
+        Result result = mockResult(Result.Type.SKIPPED);
 
-        jUnitReporter.result(Result.UNDEFINED);
+        jUnitReporter.handleStepResult(mock(TestStep.class), result);
 
-        verify(stepNotifier, times(0)).fireTestStarted();
-        verify(stepNotifier, times(0)).fireTestFinished();
-        verify(stepNotifier, times(0)).addFailure(Matchers.<Throwable>any(Throwable.class));
-        verify(stepNotifier).fireTestIgnored();
+        assertTrue(jUnitReporter.stepErrors.isEmpty());
     }
 
     @Test
-    public void result_with_undefined_step_strict() {
+    public void test_step_finished_adds_the_step_exeption_for_skipped_step_with_assumption_violated() {
+        createNonStrictReporter();
+        createDefaultRunNotifier();
+        setUpNoStepNotifierAndStepErrors();
+        Throwable exception = new AssumptionViolatedException("Oops");
+        Result result = mockResult(Result.Type.SKIPPED, exception);
+
+        jUnitReporter.handleStepResult(mock(TestStep.class), result);
+
+        assertEquals(asList(exception), jUnitReporter.stepErrors);
+    }
+
+    @Test
+    public void test_step_finished_fires_assumption_failed_and_test_finished_for_pending_step_in_non_strict_mode() {
+        createNonStrictReporter();
+        createDefaultRunNotifier();
+        Description description = mock(Description.class);
+        setUpStepNotifierAndStepErrors(description);
+        Throwable exception = new PendingException();
+        Result result = mockResult(Result.Type.PENDING, exception);
+
+        jUnitReporter.handleStepResult(mock(TestStep.class), result);
+
+        ArgumentCaptor<Failure> failureArgumentCaptor = ArgumentCaptor.forClass(Failure.class);
+        verify(runNotifier).fireTestAssumptionFailed(failureArgumentCaptor.capture());
+        verify(runNotifier).fireTestFinished(description);
+
+        Failure failure = failureArgumentCaptor.getValue();
+        assertEquals(description, failure.getDescription());
+        assertEquals(exception, failure.getException());
+    }
+
+    @Test
+    public void test_step_finished_fires_assumption_failed_and_test_finished_for_pending_step_in_strict_mode() {
         createStrictReporter();
         createDefaultRunNotifier();
-        EachTestNotifier stepNotifier = mock(EachTestNotifier.class);
-        jUnitReporter.stepNotifier = stepNotifier;
-        EachTestNotifier executionUnitNotifier = mock(EachTestNotifier.class);
-        jUnitReporter.executionUnitNotifier = executionUnitNotifier;
+        Description description = mock(Description.class);
+        setUpStepNotifierAndStepErrors(description);
+        Throwable exception = new PendingException();
+        Result result = mockResult(Result.Type.PENDING, exception);
 
-        jUnitReporter.result(Result.UNDEFINED);
+        jUnitReporter.handleStepResult(mock(TestStep.class), result);
 
-        verify(stepNotifier, times(1)).fireTestStarted();
-        verify(stepNotifier, times(1)).fireTestFinished();
-        verifyAddFailureWithPendingException(stepNotifier);
-        verifyAddFailureWithPendingException(executionUnitNotifier);
-        verify(stepNotifier, times(0)).fireTestIgnored();
-    }
+        ArgumentCaptor<Failure> failureArgumentCaptor = ArgumentCaptor.forClass(Failure.class);
+        verify(runNotifier).fireTestFailure(failureArgumentCaptor.capture());
+        verify(runNotifier).fireTestFinished(description);
 
-    private void verifyAddFailureWithPendingException(EachTestNotifier stepNotifier) {
-        ArgumentCaptor<Throwable> captor = ArgumentCaptor.forClass(Throwable.class);
-        verify(stepNotifier).addFailure(captor.capture());
-        Throwable error = captor.getValue();
-        assertTrue(error instanceof PendingException);
+        Failure failure = failureArgumentCaptor.getValue();
+        assertEquals(description, failure.getDescription());
+        assertEquals(exception, failure.getException());
     }
 
     @Test
-    public void result_with_pending_step_non_strict() {
+    public void test_step_finished_adds_the_step_exeption_for_pending_steps() {
         createNonStrictReporter();
-        Result result = mock(Result.class);
-        when(result.getError()).thenReturn(new PendingException());
+        createDefaultRunNotifier();
+        setUpNoStepNotifierAndStepErrors();
+        Throwable exception = new PendingException();
+        Result result = mockResult(Result.Type.PENDING, exception);
 
-        EachTestNotifier stepNotifier = mock(EachTestNotifier.class);
-        jUnitReporter.stepNotifier = stepNotifier;
+        jUnitReporter.handleStepResult(mock(TestStep.class), result);
 
-        jUnitReporter.result(result);
-
-        verify(stepNotifier, times(0)).fireTestStarted();
-        verify(stepNotifier, times(0)).fireTestFinished();
-        verify(stepNotifier, times(0)).addFailure(Matchers.<Throwable>any(Throwable.class));
-        verify(stepNotifier).fireTestIgnored();
+        assertEquals(asList(exception), jUnitReporter.stepErrors);
     }
 
     @Test
-    public void result_with_pending_step_strict() {
+    public void test_step_finished_fires_assumption_failed_and_test_finished_for_undefined_step_in_non_strict_mode() {
+        createNonStrictReporter();
+        createDefaultRunNotifier();
+        Description description = mock(Description.class);
+        setUpStepNotifierAndStepErrors(description);
+        Result result = mockResult(Result.Type.UNDEFINED);
+
+        jUnitReporter.handleStepResult(mock(TestStep.class), result);
+
+        ArgumentCaptor<Failure> failureArgumentCaptor = ArgumentCaptor.forClass(Failure.class);
+        verify(runNotifier).fireTestAssumptionFailed(failureArgumentCaptor.capture());
+        verify(runNotifier).fireTestFinished(description);
+
+        Failure failure = failureArgumentCaptor.getValue();
+        assertEquals(description, failure.getDescription());
+        assertTrue(failure.getException() instanceof UndefinedThrowable);
+        assertEquals("This step is undefined", failure.getException().getMessage());
+    }
+
+    @Test
+    public void test_step_finished_fires_failure_and_test_finished_for_undefined_step_in_strict_mode() {
         createStrictReporter();
         createDefaultRunNotifier();
-        Result result = mock(Result.class);
-        when(result.getError()).thenReturn(new PendingException());
+        Description description = mock(Description.class);
+        setUpStepNotifierAndStepErrors(description);
+        Result result = mockResult(Result.Type.UNDEFINED);
 
-        EachTestNotifier stepNotifier = mock(EachTestNotifier.class);
-        jUnitReporter.stepNotifier = stepNotifier;
-        EachTestNotifier executionUnitNotifier = mock(EachTestNotifier.class);
-        jUnitReporter.executionUnitNotifier = executionUnitNotifier;
+        jUnitReporter.handleStepResult(mock(TestStep.class), result);
 
-        jUnitReporter.result(result);
+        ArgumentCaptor<Failure> failureArgumentCaptor = ArgumentCaptor.forClass(Failure.class);
+        verify(runNotifier).fireTestFailure(failureArgumentCaptor.capture());
+        verify(runNotifier).fireTestFinished(description);
 
-        verify(stepNotifier, times(1)).fireTestStarted();
-        verify(stepNotifier, times(1)).fireTestFinished();
-        verifyAddFailureWithPendingException(stepNotifier);
-        verifyAddFailureWithPendingException(executionUnitNotifier);
-        verify(stepNotifier, times(0)).fireTestIgnored();
+        Failure failure = failureArgumentCaptor.getValue();
+        assertEquals(description, failure.getDescription());
+        assertTrue(failure.getException() instanceof UndefinedThrowable);
+        assertEquals("This step is undefined", failure.getException().getMessage());
     }
 
     @Test
-    public void result_without_error_non_strict() {
-        createNonStrictReporter();
-        Result result = mock(Result.class);
-
-        EachTestNotifier stepNotifier = mock(EachTestNotifier.class);
-        jUnitReporter.stepNotifier = stepNotifier;
-
-        jUnitReporter.result(result);
-
-        verify(stepNotifier).fireTestStarted();
-        verify(stepNotifier).fireTestFinished();
-        verify(stepNotifier, times(0)).addFailure(Matchers.<Throwable>any(Throwable.class));
-        verify(stepNotifier, times(0)).fireTestIgnored();
-    }
-
-    @Test
-    public void result_without_error_strict() {
-        createStrictReporter();
-        Result result = mock(Result.class);
-
-        EachTestNotifier stepNotifier = mock(EachTestNotifier.class);
-        jUnitReporter.stepNotifier = stepNotifier;
-
-        jUnitReporter.result(result);
-
-        verify(stepNotifier).fireTestStarted();
-        verify(stepNotifier).fireTestFinished();
-        verify(stepNotifier, times(0)).addFailure(Matchers.<Throwable>any(Throwable.class));
-        verify(stepNotifier, times(0)).fireTestIgnored();
-    }
-
-    @Test
-    public void result_without_error_allow_stared_ignored() {
-        createAllowStartedIgnoredReporter();
-        Result result = mock(Result.class);
-
-        EachTestNotifier stepNotifier = mock(EachTestNotifier.class);
-        jUnitReporter.stepNotifier = stepNotifier;
-
-        jUnitReporter.result(result);
-
-        verify(stepNotifier, times(0)).fireTestStarted();
-        verify(stepNotifier).fireTestFinished();
-        verify(stepNotifier, times(0)).addFailure(Matchers.<Throwable>any(Throwable.class));
-        verify(stepNotifier, times(0)).fireTestIgnored();
-    }
-
-    @Test
-    public void before_with_pending_exception_strict() {
-        createStrictReporter();
-        createDefaultRunNotifier();
-        Result result = mock(Result.class);
-        Match match = mock(Match.class);
-        when(result.getStatus()).thenReturn("Pending");
-        when(result.getError()).thenReturn(new PendingException());
-
-        EachTestNotifier executionUnitNotifier = mock(EachTestNotifier.class);
-        jUnitReporter.executionUnitNotifier = executionUnitNotifier;
-
-        jUnitReporter.before(match, result);
-
-        verifyAddFailureWithPendingException(executionUnitNotifier);
-    }
-
-    @Test
-    public void after_with_pending_exception_non_strict() {
+    public void test_step_finished_adds_a_step_exeption_for_undefined_steps() {
         createNonStrictReporter();
         createDefaultRunNotifier();
-        Result result = mock(Result.class);
-        Match match = mock(Match.class);
-        when(result.getStatus()).thenReturn("Pending");
-        when(result.getError()).thenReturn(new PendingException());
+        setUpNoStepNotifierAndStepErrors();
+        TestStep testStep = mockTestStep("XX");
+        Result result = mockResult(Result.Type.UNDEFINED);
 
-        EachTestNotifier executionUnitNotifier = mock(EachTestNotifier.class);
-        jUnitReporter.executionUnitNotifier = executionUnitNotifier;
+        jUnitReporter.handleStepResult(testStep, result);
 
-        jUnitReporter.after(match, result);
-        jUnitReporter.finishExecutionUnit();
-
-        verify(executionUnitNotifier).fireTestIgnored();
+        assertFalse(jUnitReporter.stepErrors.isEmpty());
+        assertEquals("The step \"XX\" is undefined", jUnitReporter.stepErrors.get(0).getMessage());
     }
 
     @Test
-    public void failed_step_and_after_with_pending_exception_non_strict() {
+    public void test_step_finished_fires_failure_and_test_finished_for_failed_step() {
         createNonStrictReporter();
         createDefaultRunNotifier();
-        Result stepResult = mock(Result.class);
+        Description description = mock(Description.class);
+        setUpStepNotifierAndStepErrors(description);
         Throwable exception = mock(Throwable.class);
-        when(stepResult.getError()).thenReturn(exception);
-        Result hookResult = mock(Result.class);
-        Match match = mock(Match.class);
-        when(hookResult.getStatus()).thenReturn("Pending");
-        when(hookResult.getError()).thenReturn(new PendingException());
+        Result result = mockResult(Result.Type.FAILED, exception);
 
-        EachTestNotifier executionUnitNotifier = mock(EachTestNotifier.class);
-        jUnitReporter.executionUnitNotifier = executionUnitNotifier;
+        jUnitReporter.handleStepResult(mock(TestStep.class), result);
 
-        jUnitReporter.result(stepResult);
-        jUnitReporter.after(match, hookResult);
-        jUnitReporter.finishExecutionUnit();
+        ArgumentCaptor<Failure> failureArgumentCaptor = ArgumentCaptor.forClass(Failure.class);
+        verify(runNotifier).fireTestFailure(failureArgumentCaptor.capture());
+        verify(runNotifier).fireTestFinished(description);
 
-        verify(executionUnitNotifier, times(0)).fireTestIgnored();
+        Failure failure = failureArgumentCaptor.getValue();
+        assertEquals(description, failure.getDescription());
+        assertEquals(exception, failure.getException());
     }
 
     @Test
-    public void forward_calls_to_formatter_interface_methods() throws Exception {
-        String uri = "uri";
-        Feature feature = mock(Feature.class);
-        Background background = mock(Background.class);
-        ScenarioOutline scenarioOutline = mock(ScenarioOutline.class);
-        Examples examples = mock(Examples.class);
-        Scenario scenario = mock(Scenario.class);
-        Step step = mock(Step.class);
-        Formatter formatter = mock(Formatter.class);
-        jUnitReporter = new JUnitReporter(mock(Reporter.class), formatter, false, new JUnitOptions(Collections.<String>emptyList()));
+    public void test_step_finished_adds_the_step_exeption_for_failed_steps() {
+        createNonStrictReporter();
+        createDefaultRunNotifier();
+        setUpNoStepNotifierAndStepErrors();
+        Throwable exception = new PendingException();
+        Result result = mockResult(Result.Type.FAILED, exception);
+        when(result.getError()).thenReturn(exception);
 
-        jUnitReporter.uri(uri);
-        jUnitReporter.feature(feature);
-        jUnitReporter.scenarioOutline(scenarioOutline);
-        jUnitReporter.examples(examples);
-        jUnitReporter.startOfScenarioLifeCycle(scenario);
-        jUnitReporter.background(background);
-        jUnitReporter.scenario(scenario);
-        jUnitReporter.step(step);
-        jUnitReporter.endOfScenarioLifeCycle(scenario);
-        jUnitReporter.eof();
-        jUnitReporter.done();
-        jUnitReporter.close();
+        jUnitReporter.handleStepResult(mock(TestStep.class), result);
 
-        verify(formatter).uri(uri);
-        verify(formatter).feature(feature);
-        verify(formatter).scenarioOutline(scenarioOutline);
-        verify(formatter).examples(examples);
-        verify(formatter).startOfScenarioLifeCycle(scenario);;
-        verify(formatter).background(background);
-        verify(formatter).scenario(scenario);
-        verify(formatter).step(step);
-        verify(formatter).endOfScenarioLifeCycle(scenario);
-        verify(formatter).eof();
-        verify(formatter).done();
-        verify(formatter).close();
+        assertEquals(asList(exception), jUnitReporter.stepErrors);
     }
 
     @Test
-    public void forward_calls_to_reporter_interface_methods() throws Exception {
-        Match match = mock(Match.class);
-        Result result = mockResult();
-        ExecutionUnitRunner executionUnitRunner = mockExecutionUnitRunner();
-        String mimeType = "mimeType";
-        byte data[] = new byte[] {1};
-        String text = "text";
-        Reporter reporter = mock(Reporter.class);
-        jUnitReporter = new JUnitReporter(reporter, mock(Formatter.class), false, new JUnitOptions(Collections.<String>emptyList()));
+    public void test_case_finished_fires_only_test_finished_for_passed_step() {
+        createNonStrictReporter();
+        Description description = mock(Description.class);
+        createRunNotifier(description);
+        Result result = mockResult(Result.Type.PASSED);
 
-        jUnitReporter.startExecutionUnit(executionUnitRunner, mock(RunNotifier.class));
-        jUnitReporter.startOfScenarioLifeCycle(mock(Scenario.class));
-        jUnitReporter.before(match, result);
-        jUnitReporter.step(mockStep());
-        jUnitReporter.match(match);
-        jUnitReporter.embedding(mimeType, data);
-        jUnitReporter.write(text);
-        jUnitReporter.result(result);
-        jUnitReporter.after(match, result);
+        jUnitReporter.handleTestCaseResult(result);
 
-        verify(reporter).before(match, result);
-        verify(reporter).match(match);
-        verify(reporter).embedding(mimeType, data);
-        verify(reporter).write(text);
-        verify(reporter).result(result);
-        verify(reporter).after(match, result);
+        verify(runNotifier).fireTestFinished(description);
     }
 
     @Test
-    public void creates_step_notifier_with_step_from_execution_unit_runner() throws Exception {
-        Step runnerStep = mockStep("Step Name");
-        Description runnerStepDescription = stepDescription(runnerStep);
-        ExecutionUnitRunner executionUnitRunner = mockExecutionUnitRunner(runnerSteps(runnerStep));
-        when(executionUnitRunner.describeChild(runnerStep)).thenReturn(runnerStepDescription);
-        RunNotifier notifier = mock(RunNotifier.class);
-        jUnitReporter = new JUnitReporter(mock(Reporter.class), mock(Formatter.class), false, new JUnitOptions(Collections.<String>emptyList()));
+    public void test_case_finished_fires_assumption_failed_and_test_finished_for_skipped_step() {
+        createNonStrictReporter();
+        Description description = mock(Description.class);
+        createRunNotifier(description);
+        populateStepErrors(Collections.<Throwable>emptyList());
+        Result result = mockResult(Result.Type.SKIPPED);
 
-        jUnitReporter.startExecutionUnit(executionUnitRunner, notifier);
-        jUnitReporter.startOfScenarioLifeCycle(mock(Scenario.class));
-        jUnitReporter.step(mockStep("Step Name"));
-        jUnitReporter.match(mock(Match.class));
-        jUnitReporter.result(mockResult());
+        jUnitReporter.handleTestCaseResult(result);
 
-        verify(notifier).fireTestFinished(runnerStepDescription);
+        ArgumentCaptor<Failure> failureArgumentCaptor = ArgumentCaptor.forClass(Failure.class);
+        verify(runNotifier).fireTestAssumptionFailed(failureArgumentCaptor.capture());
+        verify(runNotifier).fireTestFinished(description);
+
+        Failure failure = failureArgumentCaptor.getValue();
+        assertEquals(description, failure.getDescription());
+        assertTrue(failure.getException() instanceof SkippedThrowable);
     }
 
     @Test
-    public void throws_exception_when_runner_step_name_do_no_match_scenario_step_name() throws Exception {
-        Step runnerStep = mockStep("Runner Step Name");
-        ExecutionUnitRunner executionUnitRunner = mockExecutionUnitRunner(runnerSteps(runnerStep));
-        jUnitReporter = new JUnitReporter(mock(Reporter.class), mock(Formatter.class), false, new JUnitOptions(Collections.<String>emptyList()));
+    public void test_case_finished_fires_assumption_failed_and_test_finished_for_skipped_step_with_assumption_violated() {
+        createNonStrictReporter();
+        Description description = mock(Description.class);
+        createRunNotifier(description);
+        Throwable exception1 = mock(AssumptionViolatedException.class);
+        Throwable exception2 = mock(AssumptionViolatedException.class);
+        populateStepErrors(asList(exception1, exception2));
+        Result result = mockResult(Result.Type.SKIPPED);
 
-        jUnitReporter.startExecutionUnit(executionUnitRunner, mock(RunNotifier.class));
-        jUnitReporter.startOfScenarioLifeCycle(mock(Scenario.class));
-        jUnitReporter.step(mockStep("Scenario Step Name"));
-        try {
-            jUnitReporter.match(mock(Match.class));
-            fail("CucumberException not thrown");
-        } catch (CucumberException e) {
-            assertEquals("Expected step: \"Scenario Step Name\" got step: \"Runner Step Name\"", e.getMessage());
-        } catch (Exception e) {
-            fail("CucumberException not thrown");
-        }
+        jUnitReporter.handleTestCaseResult(result);
+
+        ArgumentCaptor<Failure> failureArgumentCaptor = ArgumentCaptor.forClass(Failure.class);
+        verify(runNotifier, times(2)).fireTestAssumptionFailed(failureArgumentCaptor.capture());
+        verify(runNotifier).fireTestFinished(description);
+
+        List<Failure> failures = failureArgumentCaptor.getAllValues();
+        assertEquals(description, failures.get(0).getDescription());
+        assertEquals(exception1, failures.get(0).getException());
+        assertEquals(description, failures.get(1).getDescription());
+        assertEquals(exception2, failures.get(1).getException());
     }
 
-    private Result mockResult() {
-        Result result = mock(Result.class);
-        when(result.getStatus()).thenReturn("passed");
+    @Test
+    public void test_case_finished_fires_assumption_failed_and_test_finished_for_pending_step_in_non_strict_mode() {
+        createNonStrictReporter();
+        Description description = mock(Description.class);
+        createRunNotifier(description);
+        Throwable exception1 = mock(Throwable.class);
+        Throwable exception2 = mock(Throwable.class);
+        populateStepErrors(asList(exception1, exception2));
+        Result result = mockResult(Result.Type.PENDING);
+
+        jUnitReporter.handleTestCaseResult(result);
+
+        ArgumentCaptor<Failure> failureArgumentCaptor = ArgumentCaptor.forClass(Failure.class);
+        verify(runNotifier, times(2)).fireTestAssumptionFailed(failureArgumentCaptor.capture());
+        verify(runNotifier).fireTestFinished(description);
+
+        List<Failure> failures = failureArgumentCaptor.getAllValues();
+        assertEquals(description, failures.get(0).getDescription());
+        assertEquals(exception1, failures.get(0).getException());
+        assertEquals(description, failures.get(1).getDescription());
+        assertEquals(exception2, failures.get(1).getException());
+    }
+
+    @Test
+    public void test_case_finished_fires_failure_and_test_finished_for_pending_step_in_strict_mode() {
+        createStrictReporter();
+        Description description = mock(Description.class);
+        createRunNotifier(description);
+        Throwable exception1 = mock(Throwable.class);
+        Throwable exception2 = mock(Throwable.class);
+        populateStepErrors(asList(exception1, exception2));
+        Result result = mockResult(Result.Type.PENDING);
+
+        jUnitReporter.handleTestCaseResult(result);
+
+        ArgumentCaptor<Failure> failureArgumentCaptor = ArgumentCaptor.forClass(Failure.class);
+        verify(runNotifier, times(2)).fireTestFailure(failureArgumentCaptor.capture());
+        verify(runNotifier).fireTestFinished(description);
+
+        List<Failure> failures = failureArgumentCaptor.getAllValues();
+        assertEquals(description, failures.get(0).getDescription());
+        assertEquals(exception1, failures.get(0).getException());
+        assertEquals(description, failures.get(1).getDescription());
+        assertEquals(exception2, failures.get(1).getException());
+    }
+
+    @Test
+    public void test_case_finished_fires_assumption_failed_and_test_finished_for_undefined_step_in_non_strict_mode() {
+        createNonStrictReporter();
+        Description description = mock(Description.class);
+        createRunNotifier(description);
+        Throwable exception1 = mock(Throwable.class);
+        Throwable exception2 = mock(Throwable.class);
+        populateStepErrors(asList(exception1, exception2));
+        Result result = mockResult(Result.Type.UNDEFINED);
+
+        jUnitReporter.handleTestCaseResult(result);
+
+        ArgumentCaptor<Failure> failureArgumentCaptor = ArgumentCaptor.forClass(Failure.class);
+        verify(runNotifier, times(2)).fireTestAssumptionFailed(failureArgumentCaptor.capture());
+        verify(runNotifier).fireTestFinished(description);
+
+        List<Failure> failures = failureArgumentCaptor.getAllValues();
+        assertEquals(description, failures.get(0).getDescription());
+        assertEquals(exception1, failures.get(0).getException());
+        assertEquals(description, failures.get(1).getDescription());
+        assertEquals(exception2, failures.get(1).getException());
+    }
+
+    @Test
+    public void test_case_finished_fires_failure_and_test_finished_for_undefined_step_in_strict_mode() {
+        createStrictReporter();
+        Description description = mock(Description.class);
+        createRunNotifier(description);
+        Throwable exception1 = mock(Throwable.class);
+        Throwable exception2 = mock(Throwable.class);
+        populateStepErrors(asList(exception1, exception2));
+        Result result = mockResult(Result.Type.UNDEFINED);
+
+        jUnitReporter.handleTestCaseResult(result);
+
+        ArgumentCaptor<Failure> failureArgumentCaptor = ArgumentCaptor.forClass(Failure.class);
+        verify(runNotifier, times(2)).fireTestFailure(failureArgumentCaptor.capture());
+        verify(runNotifier).fireTestFinished(description);
+
+        List<Failure> failures = failureArgumentCaptor.getAllValues();
+        assertEquals(description, failures.get(0).getDescription());
+        assertEquals(exception1, failures.get(0).getException());
+        assertEquals(description, failures.get(1).getDescription());
+        assertEquals(exception2, failures.get(1).getException());
+    }
+
+    @Test
+    public void test_case_finished_fires_failure_and_test_finished_for_failed_step() {
+        createNonStrictReporter();
+        Description description = mock(Description.class);
+        createRunNotifier(description);
+        Throwable exception1 = mock(Throwable.class);
+        Throwable exception2 = mock(Throwable.class);
+        populateStepErrors(asList(exception1, exception2));
+        Result result = mockResult(Result.Type.FAILED);
+
+        jUnitReporter.handleTestCaseResult(result);
+
+        ArgumentCaptor<Failure> failureArgumentCaptor = ArgumentCaptor.forClass(Failure.class);
+        verify(runNotifier, times(2)).fireTestFailure(failureArgumentCaptor.capture());
+        verify(runNotifier).fireTestFinished(description);
+
+        List<Failure> failures = failureArgumentCaptor.getAllValues();
+        assertEquals(description, failures.get(0).getDescription());
+        assertEquals(exception1, failures.get(0).getException());
+        assertEquals(description, failures.get(1).getDescription());
+        assertEquals(exception2, failures.get(1).getException());
+    }
+
+    private Result mockResult(Result.Type status, Throwable exception) {
+        Result result = mockResult(status);
+        when(result.getError()).thenReturn(exception);
         return result;
     }
 
-    private ExecutionUnitRunner mockExecutionUnitRunner() {
-        List<Step> runnerSteps = runnerSteps(mockStep());
-        return mockExecutionUnitRunner(runnerSteps);
+    private Result mockResult(Result.Type status) {
+        Result result = mock(Result.class);
+        when(result.getStatus()).thenReturn(status);
+        for (Result.Type type : Result.Type.values()) {
+            when(result.is(type)).thenReturn(type == status);
+        }
+        return result;
     }
 
-    private ExecutionUnitRunner mockExecutionUnitRunner(List<Step> runnerSteps) {
-        ExecutionUnitRunner executionUnitRunner = mock(ExecutionUnitRunner.class);
-        when(executionUnitRunner.getDescription()).thenReturn(mock(Description.class));
-        when(executionUnitRunner.getRunnerSteps()).thenReturn(runnerSteps);
-        return executionUnitRunner;
+    private PickleRunner mockPickleRunner(List<PickleStep> runnerSteps) {
+        PickleRunner pickleRunner = mock(PickleRunner.class);
+        when(pickleRunner.getDescription()).thenReturn(mock(Description.class));
+        for (PickleStep runnerStep : runnerSteps) {
+            Description runnerStepDescription = stepDescription(runnerStep);
+            when(pickleRunner.describeChild(runnerStep)).thenReturn(runnerStepDescription);
+        }
+        return pickleRunner;
     }
 
-    private List<Step> runnerSteps(Step step) {
-        List<Step> runnerSteps = new ArrayList<Step>();
+    private List<PickleStep> runnerSteps(PickleStep step) {
+        List<PickleStep> runnerSteps = new ArrayList<PickleStep>();
         runnerSteps.add(step);
         return runnerSteps;
     }
 
-    private Description stepDescription(Step runnerStep) {
-        return Description.createTestDescription("", "", runnerStep);
+    private Description stepDescription(PickleStep runnerStep) {
+        return Description.createTestDescription("", runnerStep.getText());
     }
 
-    private Step mockStep() {
+    private PickleStep mockStep() {
         String stepName = "step name";
         return mockStep(stepName);
     }
 
-    private Step mockStep(String stepName) {
-        Step step = mock(Step.class);
-        when(step.getName()).thenReturn(stepName);
+    private PickleStep mockStep(String stepName) {
+        PickleStep step = mock(PickleStep.class);
+        when(step.getText()).thenReturn(stepName);
         return step;
+    }
+
+    private TestStep mockTestStep(String stepText) {
+        TestStep testStep = mock(TestStep.class);
+        when(testStep.getStepText()).thenReturn(stepText);
+        return testStep;
     }
 
     private void createDefaultRunNotifier() {
@@ -408,29 +519,37 @@ public class JUnitReporterTest {
 
     private void createRunNotifier(Description description) {
         runNotifier = mock(RunNotifier.class);
-        ExecutionUnitRunner executionUnitRunner = mock(ExecutionUnitRunner.class);
-        when(executionUnitRunner.getDescription()).thenReturn(description);
-        jUnitReporter.startExecutionUnit(executionUnitRunner, runNotifier);
+        PickleRunner pickleRunner = mock(PickleRunner.class);
+        when(pickleRunner.getDescription()).thenReturn(description);
+        jUnitReporter.startExecutionUnit(pickleRunner, runNotifier);
     }
 
-    private void createStrictReporter() {
-        createReporter(true, false);
+    private void createStrictReporter(String... options) {
+        createReporter(true, options);
     }
 
-    private void createNonStrictReporter() {
-        createReporter(false, false);
+    private void createNonStrictReporter(String... options) {
+        createReporter(false, options);
     }
 
-    private void createAllowStartedIgnoredReporter() {
-        createReporter(false, true);
+    private void createReporter(boolean strict, String... options) {
+        jUnitReporter = new JUnitReporter(mock(EventBus.class), strict, new JUnitOptions(asList(options)));
     }
 
-    private void createReporter(boolean strict, boolean allowStartedIgnored) {
-        Formatter formatter = mock(Formatter.class);
-        Reporter reporter = mock(Reporter.class);
-
-        String allowStartedIgnoredOption = allowStartedIgnored ? "--allow-started-ignored" : "--no-allow-started-ignored";
-        jUnitReporter = new JUnitReporter(reporter, formatter, strict, new JUnitOptions(asList(allowStartedIgnoredOption)));
+    private void setUpStepNotifierAndStepErrors(Description description) {
+        jUnitReporter.stepNotifier = new EachTestNotifier(runNotifier, description);
+        jUnitReporter.stepErrors = new ArrayList<Throwable>();
     }
 
+    private void setUpNoStepNotifierAndStepErrors() {
+        jUnitReporter.stepNotifier = new NoTestNotifier();
+        jUnitReporter.stepErrors = new ArrayList<Throwable>();
+    }
+
+    private void populateStepErrors(List<Throwable> exceptions) {
+        jUnitReporter.stepErrors = new ArrayList<Throwable>();
+        for (Throwable exception : exceptions) {
+            jUnitReporter.stepErrors.add(exception);
+        }
+    }
 }

@@ -1,22 +1,15 @@
 package cucumber.runtime;
 
-import gherkin.formatter.Reporter;
-import gherkin.formatter.model.Background;
-import gherkin.formatter.model.Examples;
-import gherkin.formatter.model.Feature;
-import gherkin.formatter.model.Match;
-import gherkin.formatter.model.Result;
-import gherkin.formatter.model.ScenarioOutline;
-import gherkin.formatter.model.Step;
-import cucumber.runtime.formatter.FormatterSpy;
+import cucumber.runner.EventBus;
 import cucumber.api.SnippetType;
-import cucumber.runtime.formatter.ColorAware;
+import cucumber.api.formatter.ColorAware;
+import cucumber.api.formatter.Formatter;
+import cucumber.api.formatter.StrictAware;
+import cucumber.runtime.formatter.FormatterSpy;
 import cucumber.runtime.formatter.PluginFactory;
-import cucumber.runtime.formatter.StrictAware;
 import cucumber.runtime.io.Resource;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
-import gherkin.formatter.Formatter;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
@@ -26,6 +19,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
@@ -42,7 +36,7 @@ import static org.mockito.Mockito.withSettings;
 public class RuntimeOptionsTest {
     @Test
     public void has_version_from_properties_file() {
-        assertTrue(RuntimeOptions.VERSION.startsWith("1.2"));
+        assertTrue(RuntimeOptions.VERSION.startsWith("2.0"));
     }
 
     @Test
@@ -58,17 +52,18 @@ public class RuntimeOptionsTest {
     }
 
     @Test
-    public void keep_line_filters_on_feature_paths() {
+    public void strips_line_filters_from_feature_paths_and_put_them_among_line_filters() {
         RuntimeOptions options = new RuntimeOptions("--glue somewhere somewhere_else:3");
-        assertEquals(asList("somewhere_else:3"), options.getFeaturePaths());
-        assertEquals(Collections.<Object>emptyList(), options.getFilters());
+        assertEquals(asList("somewhere_else"), options.getFeaturePaths());
+        Map<String, List<Long>> expectedLineFilters = new HashMap<String, List<Long>>(Collections.singletonMap("somewhere_else", asList(3L)));
+        assertEquals(expectedLineFilters, options.getLineFilters(mock(ResourceLoader.class)));
     }
 
     @Test
     public void assigns_filters_from_tags() {
-        RuntimeOptions options = new RuntimeOptions("--tags @keep_this somewhere_else:3");
-        assertEquals(asList("somewhere_else:3"), options.getFeaturePaths());
-        assertEquals(Arrays.<Object>asList("@keep_this"), options.getFilters());
+        RuntimeOptions options = new RuntimeOptions("--tags @keep_this somewhere_else");
+        assertEquals(asList("somewhere_else"), options.getFeaturePaths());
+        assertEquals(Arrays.<String>asList("@keep_this"), options.getTagFilters());
     }
 
     @Test
@@ -135,14 +130,14 @@ public class RuntimeOptionsTest {
     @Test
     public void name_without_spaces_is_preserved() {
         RuntimeOptions options = new RuntimeOptions(asList("--name", "someName"));
-        Pattern actualPattern = (Pattern) options.getFilters().iterator().next();
+        Pattern actualPattern = (Pattern) options.getNameFilters().iterator().next();
         assertEquals("someName", actualPattern.pattern());
     }
 
     @Test
     public void name_with_spaces_is_preserved() {
         RuntimeOptions options = new RuntimeOptions(asList("--name", "some Name"));
-        Pattern actualPattern = (Pattern) options.getFilters().iterator().next();
+        Pattern actualPattern = (Pattern) options.getNameFilters().iterator().next();
         assertEquals("some Name", actualPattern.pattern());
     }
 
@@ -151,14 +146,14 @@ public class RuntimeOptionsTest {
         Properties properties = new Properties();
         properties.setProperty("cucumber.options", "--name 'some Name'");
         RuntimeOptions options = new RuntimeOptions(new Env(properties), Collections.<String>emptyList());
-        Pattern actualPattern = (Pattern) options.getFilters().iterator().next();
+        Pattern actualPattern = (Pattern) options.getNameFilters().iterator().next();
         assertEquals("some Name", actualPattern.pattern());
     }
 
     @Test
     public void ensure_name_with_spaces_works_with_args() {
         RuntimeOptions options = new RuntimeOptions("--name 'some Name'");
-        Pattern actualPattern = (Pattern) options.getFilters().iterator().next();
+        Pattern actualPattern = (Pattern) options.getNameFilters().iterator().next();
         assertEquals("some Name", actualPattern.pattern());
     }
 
@@ -205,7 +200,7 @@ public class RuntimeOptionsTest {
         Properties properties = new Properties();
         properties.setProperty("cucumber.options", "--tags @clobber_with_this");
         RuntimeOptions runtimeOptions = new RuntimeOptions(new Env(properties), asList("--tags", "@should_be_clobbered"));
-        assertEquals(asList("@clobber_with_this"), runtimeOptions.getFilters());
+        assertEquals(asList("@clobber_with_this"), runtimeOptions.getTagFilters());
     }
 
     @Test
@@ -213,7 +208,7 @@ public class RuntimeOptionsTest {
         Properties properties = new Properties();
         properties.setProperty("cucumber.options", "path/file.feature:3");
         RuntimeOptions runtimeOptions = new RuntimeOptions(new Env(properties), asList("--tags", "@should_be_clobbered", "--name", "should_be_clobbered"));
-        assertEquals(Collections.<Object>emptyList(), runtimeOptions.getFilters());
+        assertEquals(Collections.<Object>emptyList(), runtimeOptions.getTagFilters());
     }
 
     @Test
@@ -221,7 +216,7 @@ public class RuntimeOptionsTest {
         Properties properties = new Properties();
         properties.setProperty("cucumber.options", "@rerun.txt");
         RuntimeOptions runtimeOptions = new RuntimeOptions(new Env(properties), asList("--tags", "@should_be_clobbered", "--name", "should_be_clobbered"));
-        assertEquals(Collections.<Object>emptyList(), runtimeOptions.getFilters());
+        assertEquals(Collections.<Object>emptyList(), runtimeOptions.getTagFilters());
     }
 
     @Test
@@ -229,7 +224,7 @@ public class RuntimeOptionsTest {
         Properties properties = new Properties();
         properties.setProperty("cucumber.options", "--strict");
         RuntimeOptions runtimeOptions = new RuntimeOptions(new Env(properties), asList("--tags", "@keep_this"));
-        assertEquals(asList("@keep_this"), runtimeOptions.getFilters());
+        assertEquals(asList("@keep_this"), runtimeOptions.getTagFilters());
     }
 
     @Test
@@ -262,7 +257,7 @@ public class RuntimeOptionsTest {
         properties.setProperty("cucumber.options", "new newer");
         RuntimeOptions runtimeOptions = new RuntimeOptions(new Env(properties), asList("--tags", "@keep_this", "path/file1.feature:1"));
         assertEquals(asList("new", "newer"), runtimeOptions.getFeaturePaths());
-        assertEquals(asList("@keep_this"), runtimeOptions.getFilters());
+        assertEquals(asList("@keep_this"), runtimeOptions.getTagFilters());
     }
 
     @Test
@@ -270,7 +265,7 @@ public class RuntimeOptionsTest {
         Properties properties = new Properties();
         properties.setProperty("cucumber.options", "--plugin pretty");
         RuntimeOptions options = new RuntimeOptions(new Env(properties), asList("--plugin", "html:some/dir", "--glue", "somewhere"));
-        assertPluginExists(options.getPlugins(), "cucumber.runtime.formatter.CucumberPrettyFormatter");
+        assertPluginExists(options.getPlugins(), "cucumber.runtime.formatter.PrettyFormatter");
         assertPluginNotExists(options.getPlugins(), "cucumber.runtime.formatter.HTMLFormatter");
     }
 
@@ -280,7 +275,7 @@ public class RuntimeOptionsTest {
         properties.setProperty("cucumber.options", "--add-plugin pretty");
         RuntimeOptions options = new RuntimeOptions(new Env(properties), asList("--plugin", "html:some/dir", "--glue", "somewhere"));
         assertPluginExists(options.getPlugins(), "cucumber.runtime.formatter.HTMLFormatter");
-        assertPluginExists(options.getPlugins(), "cucumber.runtime.formatter.CucumberPrettyFormatter");
+        assertPluginExists(options.getPlugins(), "cucumber.runtime.formatter.PrettyFormatter");
     }
 
     @Test
@@ -306,7 +301,7 @@ public class RuntimeOptionsTest {
         Properties properties = new Properties();
         properties.setProperty("cucumber.options", "--plugin default_summary");
         RuntimeOptions options = new RuntimeOptions(new Env(properties), asList("--plugin", "pretty", "--glue", "somewhere"));
-        assertPluginExists(options.getPlugins(), "cucumber.runtime.formatter.CucumberPrettyFormatter");
+//        assertPluginExists(options.getPlugins(), "cucumber.runtime.formatter.CucumberPrettyFormatter");
         assertPluginExists(options.getPlugins(), "cucumber.runtime.DefaultSummaryPrinter");
     }
 
@@ -367,76 +362,6 @@ public class RuntimeOptionsTest {
         assertEquals(SnippetType.CAMELCASE, runtimeOptions.getSnippetType());
     }
 
-    @Test
-    public void applies_line_filters_only_to_own_feature() throws Exception {
-        String featurePath1 = "path/bar.feature";
-        String feature1 = "" +
-                "Feature: bar\n" +
-                "  Scenario: scenario_1_1\n" +
-                "    * step\n" +
-                "  Scenario: scenario_1_2\n" +
-                "    * step\n";
-        String featurePath2 = "path/foo.feature";
-        String feature2 = "" +
-                "Feature: foo\n" +
-                "  Scenario: scenario_2_1\n" +
-                "    * step\n" +
-                "  Scenario: scenario_2_2\n" +
-                "    * step\n";
-        ResourceLoader resourceLoader = mock(ResourceLoader.class);
-        mockResource(resourceLoader, featurePath1, feature1);
-        mockResource(resourceLoader, featurePath2, feature2);
-        RuntimeOptions options = new RuntimeOptions(featurePath1 + ":2 " + featurePath2 + ":4");
-
-        List<CucumberFeature> features = options.cucumberFeatures(resourceLoader);
-
-        assertEquals(2, features.size());
-        assertOnlyScenarioName(features.get(0), "scenario_1_1");
-        assertOnlyScenarioName(features.get(1), "scenario_2_2");
-    }
-
-    @Test
-    public void handles_formatters_missing_startOfScenarioLifeCycle_endOfScenarioLifeCycle() throws Throwable {
-        CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
-                "Feature: feature name\n" +
-                "  Scenario: scenario name\n" +
-                "    Given step\n");
-
-        FormatterSpy formatterSpy = new FormatterSpy();
-        RuntimeOptions runtimeOptions = new RuntimeOptions("");
-        runtimeOptions.addPlugin(new FormatterMissingLifecycleMethods());
-        runtimeOptions.addPlugin(formatterSpy);
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        TestHelper.runFeatureWithFormatter(feature, new HashMap<String, String>(),
-                                           runtimeOptions.formatter(classLoader), runtimeOptions.reporter(classLoader));
-
-        assertEquals("" +
-                "uri\n" +
-                "feature\n" +
-                "  startOfScenarioLifeCycle\n" +
-                "  scenario\n" +
-                "    step\n" +
-                "    match\n" +
-                "    result\n" +
-                "  endOfScenarioLifeCycle\n" +
-                "eof\n" +
-                "done\n" +
-                "close\n", formatterSpy.toString());
-    }
-
-    private void assertOnlyScenarioName(CucumberFeature feature, String scenarioName) {
-        assertEquals("Wrong number of scenarios loaded for feature", 1, feature.getFeatureElements().size());
-        assertEquals("Scenario: " + scenarioName, feature.getFeatureElements().get(0).getVisualName());
-    }
-
-    private void mockResource(ResourceLoader resourceLoader, String featurePath, String feature)
-            throws IOException, UnsupportedEncodingException {
-        Resource resource1 = mock(Resource.class);
-        when(resource1.getPath()).thenReturn(featurePath);
-        when(resource1.getInputStream()).thenReturn(new ByteArrayInputStream(feature.getBytes("UTF-8")));
-        when(resourceLoader.resources(featurePath, ".feature")).thenReturn(asList(resource1));
-    }
-
     private void assertPluginExists(List<Object> plugins, String pluginName) {
         assertTrue(pluginName + " not found among the plugins", pluginExists(plugins, pluginName));
     }
@@ -454,87 +379,4 @@ public class RuntimeOptionsTest {
         }
         return found;
     }
-}
-
-class FormatterMissingLifecycleMethods implements Formatter, Reporter {
-    @Override
-    public void startOfScenarioLifeCycle(gherkin.formatter.model.Scenario arg0) {
-        throw new NoSuchMethodError(); // simulate that this method is not implemented
-    }
-
-    @Override
-    public void endOfScenarioLifeCycle(gherkin.formatter.model.Scenario arg0) {
-        throw new NoSuchMethodError(); // simulate that this method is not implemented
-    }
-
-    @Override
-    public void after(Match arg0, Result arg1) {
-    }
-
-    @Override
-    public void before(Match arg0, Result arg1) {
-    }
-
-    @Override
-    public void embedding(String arg0, byte[] arg1) {
-    }
-
-    @Override
-    public void match(Match arg0) {
-    }
-
-    @Override
-    public void result(Result arg0) {
-    }
-
-    @Override
-    public void write(String arg0) {
-    }
-
-    @Override
-    public void background(Background arg0) {
-    }
-
-    @Override
-    public void close() {
-    }
-
-    @Override
-    public void done() {
-    }
-
-    @Override
-    public void eof() {
-    }
-
-    @Override
-    public void examples(Examples arg0) {
-    }
-
-    @Override
-    public void feature(Feature arg0) {
-
-    }
-
-    @Override
-    public void scenario(gherkin.formatter.model.Scenario arg0) {
-
-    }
-
-    @Override
-    public void scenarioOutline(ScenarioOutline arg0) {
-    }
-
-    @Override
-    public void step(Step arg0) {
-    }
-
-    @Override
-    public void syntaxError(String arg0, String arg1, List<String> arg2, String arg3, Integer arg4) {
-    }
-
-    @Override
-    public void uri(String arg0) {
-    }
-
 }

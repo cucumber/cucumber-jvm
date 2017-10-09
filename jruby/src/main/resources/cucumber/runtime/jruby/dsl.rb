@@ -29,17 +29,14 @@ module Cucumber
       class WorldRunner
         include Locatable
 
-        def initialize(modules_or_proc)
-          @modules_or_proc = modules_or_proc
+        def initialize(modules, proc)
+          @modules, @proc = modules, proc
         end
 
         def execute(world, *args)
-          @modules_or_proc.each do |module_or_proc|
-            if Proc === module_or_proc
-              world = world.instance_exec(*args, &module_or_proc)
-            else
-              world.extend(module_or_proc)
-            end
+          world = world.instance_exec(*args, &@proc) if @proc
+          @modules.each do |mod|
+            world.extend(mod)
           end
           world
         end
@@ -76,7 +73,7 @@ module Cucumber
             match.captures.map do |val|
               n += 1
               start = match.offset(n)[0]
-              Java::GherkinFormatter::Argument.new(start, val)
+              Java::CucumberRuntime::Argument.new(start, val)
             end
           else
             nil
@@ -101,9 +98,8 @@ module Cucumber
           $backend.registerAfterHook(HookRunner.new(proc), tag_expressions)
         end
 
-        def World(*modules_or_proc)
-          # We can reuse the HookDefinition, because it quacks the same
-          $backend.registerWorldBlock(WorldRunner.new(modules_or_proc))
+        def World(*modules, &proc)
+          $backend.registerWorldBlock(WorldRunner.new(modules, proc))
         end
 
         def register_stepdef(regexp, proc)
@@ -132,7 +128,7 @@ module Cucumber
             end
           end
 
-          $backend.runStep(feature_path, @__gherkin_i18n, 'When ', name, line.to_i, data_table, doc_string)
+          $backend.runStep(feature_path, @__gherkin_language, name, line.to_i, data_table, doc_string)
         end
       end
 

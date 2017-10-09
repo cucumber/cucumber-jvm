@@ -2,10 +2,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>info.cukes</groupId>
+        <groupId>io.cucumber</groupId>
         <artifactId>cucumber-jvm</artifactId>
-        <relativePath>../pom.xml</relativePath>
-        <version>1.2.5-SNAPSHOT</version>
+        <version>2.0.2-SNAPSHOT</version>
     </parent>
 
     <artifactId>cucumber-scala-aggregator</artifactId>
@@ -15,37 +14,43 @@
     <modules>
         <module>scala_2.11</module>
         <module>scala_2.10</module>
-        <module>scala_2.12</module>
     </modules>
+
+    <profiles>
+        <profile>
+            <id>java8</id>
+            <activation>
+                <jdk>1.8</jdk>
+            </activation>
+            <modules>
+                <module>scala_2.12</module>
+            </modules>
+        </profile>
+    </profiles>
 
     <dependencies>
         <dependency>
-            <groupId>info.cukes</groupId>
+            <groupId>io.cucumber</groupId>
             <artifactId>cucumber-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>info.cukes</groupId>
+            <groupId>io.cucumber</groupId>
             <artifactId>cucumber-jvm-deps</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>info.cukes</groupId>
+            <groupId>io.cucumber</groupId>
             <artifactId>gherkin</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>info.cukes</groupId>
+            <groupId>io.cucumber</groupId>
             <artifactId>cucumber-junit</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>net.sourceforge.cobertura</groupId>
-            <artifactId>cobertura</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -108,11 +113,15 @@
 
                                     <groovy><![CDATA[
 import groovy.text.SimpleTemplateEngine
+import gherkin.GherkinDialectProvider
 
 def engine = new SimpleTemplateEngine()
 def templateSource = new File(project.baseDir, "..${File.separator}sources${File.separator}src${File.separator}main${File.separator}code_generator${File.separator}I18n.scala.txt").getText()
 
-template = engine.createTemplate(templateSource).make(null)
+def unsupported = ["em"]
+def dialectProvider = new GherkinDialectProvider()
+def binding = ["dialectProvider":dialectProvider, "unsupported":unsupported]
+template = engine.createTemplate(templateSource).make(binding)
 def file = new File(project.baseDir, "target${File.separator}generated-sources${File.separator}i18n${File.separator}cucumber${File.separator}api${File.separator}scala${File.separator}I18n.scala")
 file.parentFile.mkdirs()
 file.write(template.toString(), "UTF-8")

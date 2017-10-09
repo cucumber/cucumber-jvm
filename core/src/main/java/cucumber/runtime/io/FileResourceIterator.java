@@ -10,14 +10,22 @@ import static java.util.Arrays.asList;
 public class FileResourceIterator implements Iterator<Resource> {
     private final FlatteningIterator<Resource> flatteningIterator = new FlatteningIterator<Resource>();
 
-    public FileResourceIterator(File root, File file, final String suffix) {
+    public static FileResourceIterator createFileResourceIterator(File root, File file, final String suffix) {
+        return new FileResourceIterator(root, file, suffix, false);
+    }
+
+    public static FileResourceIterator createClasspathFileResourceIterator(File root, File file, final String suffix) {
+        return new FileResourceIterator(root, file, suffix, true);
+    }
+
+    private FileResourceIterator(File root, File file, final String suffix, boolean classpathFileResourceIterator) {
         FileFilter filter = new FileFilter() {
             @Override
             public boolean accept(File file) {
                 return file.isDirectory() || hasSuffix(suffix, file.getPath());
             }
         };
-        flatteningIterator.push(new FileIterator(root, file, filter));
+        flatteningIterator.push(new FileIterator(root, file, filter, classpathFileResourceIterator));
     }
 
     @Override
@@ -37,14 +45,15 @@ public class FileResourceIterator implements Iterator<Resource> {
 
     /**
      * Iterator to iterate over all the files contained in a directory. It returns
-     * a File object for non directories or a new FileIterator obejct for directories.
+     * a File object for non directories or a new FileIterator object for directories.
      */
     private static class FileIterator implements Iterator<Object> {
         private final Iterator<File> files;
         private final FileFilter filter;
         private final File root;
+        private final boolean classpathFileIterator;
 
-        FileIterator(File root, File file, FileFilter filter) {
+        FileIterator(File root, File file, FileFilter filter, boolean classpathFileIterator) {
             this.root = root;
             if (file.isDirectory()) {
                 this.files = asList(file.listFiles(filter)).iterator();
@@ -54,16 +63,17 @@ public class FileResourceIterator implements Iterator<Resource> {
                 throw new IllegalArgumentException("Not a file or directory: " + file.getAbsolutePath());
             }
             this.filter = filter;
-        }
+            this.classpathFileIterator = classpathFileIterator;
+            }
 
         @Override
         public Object next() {
             File next = files.next();
 
             if (next.isDirectory()) {
-                return new FileIterator(root, next, filter);
+                return new FileIterator(root, next, filter, classpathFileIterator);
             } else {
-                return new FileResource(root, next);
+                return createFileResource(next);
             }
         }
 
@@ -75,6 +85,14 @@ public class FileResourceIterator implements Iterator<Resource> {
         @Override
         public void remove() {
             files.remove();
+        }
+
+        private FileResource createFileResource(File next) {
+            if (classpathFileIterator) {
+                return FileResource.createClasspathFileResource(root, next);
+            } else {
+                return FileResource.createFileResource(root, next);
+            }
         }
     }
 }

@@ -1,18 +1,20 @@
 package cucumber.runtime.formatter;
 
+import cucumber.api.Result;
+import cucumber.api.TestCase;
+import cucumber.api.TestStep;
+import cucumber.api.event.EventHandler;
+import cucumber.api.event.EventPublisher;
+import cucumber.api.event.TestCaseFinished;
+import cucumber.api.event.TestCaseStarted;
+import cucumber.api.event.TestRunFinished;
+import cucumber.api.event.TestSourceRead;
+import cucumber.api.event.TestStepFinished;
+import cucumber.api.formatter.Formatter;
+import cucumber.api.formatter.StrictAware;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.io.URLOutputStream;
 import cucumber.runtime.io.UTF8OutputStreamWriter;
-import gherkin.formatter.Formatter;
-import gherkin.formatter.Reporter;
-import gherkin.formatter.model.Background;
-import gherkin.formatter.model.Examples;
-import gherkin.formatter.model.Feature;
-import gherkin.formatter.model.Match;
-import gherkin.formatter.model.Result;
-import gherkin.formatter.model.Scenario;
-import gherkin.formatter.model.ScenarioOutline;
-import gherkin.formatter.model.Step;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -27,6 +29,8 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -37,7 +41,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-class TestNGFormatter implements Formatter, Reporter, StrictAware {
+class TestNGFormatter implements Formatter, StrictAware {
 
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
     private final Writer writer;
@@ -49,9 +53,41 @@ class TestNGFormatter implements Formatter, Reporter, StrictAware {
     private Element root;
     private TestMethod testMethod;
 
+    private EventHandler<TestSourceRead> testSourceReadHandler = new EventHandler<TestSourceRead>() {
+        @Override
+        public void receive(TestSourceRead event) {
+            handleTestSourceRead(event);
+        }
+    };
+    private EventHandler<TestCaseStarted> caseStartedHandler= new EventHandler<TestCaseStarted>() {
+        @Override
+        public void receive(TestCaseStarted event) {
+            handleTestCaseStarted(event);
+        }
+    };
+    private EventHandler<TestStepFinished> stepFinishedHandler = new EventHandler<TestStepFinished>() {
+        @Override
+        public void receive(TestStepFinished event) {
+            handleTestStepFinished(event);
+        }
+    };
+    private EventHandler<TestCaseFinished> caseFinishedHandler = new EventHandler<TestCaseFinished>() {
+        @Override
+        public void receive(TestCaseFinished event) {
+            handleTestCaseFinished();
+        }
+    };
+    private EventHandler<TestRunFinished> runFinishedHandler = new EventHandler<TestRunFinished>() {
+        @Override
+        public void receive(TestRunFinished event) {
+            finishReport();
+        }
+    };
+
     public TestNGFormatter(URL url) throws IOException {
         this.writer = new UTF8OutputStreamWriter(new URLOutputStream(url));
         TestMethod.treatSkippedAsFailure = false;
+        TestMethod.currentFeatureFile = null;
         try {
             document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
             results = document.createElement("testng-results");
@@ -66,7 +102,12 @@ class TestNGFormatter implements Formatter, Reporter, StrictAware {
     }
 
     @Override
-    public void syntaxError(String state, String event, List<String> legalEvents, String uri, Integer line) {
+    public void setEventPublisher(EventPublisher publisher) {
+        publisher.registerHandlerFor(TestSourceRead.class, testSourceReadHandler);
+        publisher.registerHandlerFor(TestCaseStarted.class, caseStartedHandler);
+        publisher.registerHandlerFor(TestCaseFinished.class, caseFinishedHandler);
+        publisher.registerHandlerFor(TestStepFinished.class, stepFinishedHandler);
+        publisher.registerHandlerFor(TestRunFinished.class, runFinishedHandler);
     }
 
     @Override
@@ -74,88 +115,39 @@ class TestNGFormatter implements Formatter, Reporter, StrictAware {
         TestMethod.treatSkippedAsFailure = strict;
     }
 
-    @Override
-    public void uri(String uri) {
+    private void handleTestSourceRead(TestSourceRead event) {
+        TestMethod.testSources.addTestSourceReadEvent(event.uri, event);
     }
 
-    @Override
-    public void feature(Feature feature) {
-        TestMethod.feature = feature;
-        TestMethod.previousScenarioOutlineName = "";
-        TestMethod.exampleNumber = 1;
-        clazz = document.createElement("class");
-        clazz.setAttribute("name", feature.getName());
-        test.appendChild(clazz);
-    }
-
-    @Override
-    public void scenarioOutline(ScenarioOutline scenarioOutline) {
-        testMethod = new TestMethod(null);
-    }
-
-    @Override
-    public void examples(Examples examples) {
-    }
-
-    @Override
-    public void startOfScenarioLifeCycle(Scenario scenario) {
+    private void handleTestCaseStarted(TestCaseStarted event) {
+        if (TestMethod.currentFeatureFile == null || !TestMethod.currentFeatureFile.equals(event.testCase.getUri())) {
+            TestMethod.currentFeatureFile = event.testCase.getUri();
+            TestMethod.previousTestCaseName = "";
+            TestMethod.exampleNumber = 1;
+            clazz = document.createElement("class");
+            clazz.setAttribute("name", TestMethod.testSources.getFeature(event.testCase.getUri()).getName());
+            test.appendChild(clazz);
+        }
         root = document.createElement("test-method");
         clazz.appendChild(root);
-        testMethod = new TestMethod(scenario);
+        testMethod = new TestMethod(event.testCase);
         testMethod.start(root);
     }
 
-    @Override
-    public void before(Match match, Result result) {
-        testMethod.hooks.add(result);
+    private void handleTestStepFinished(TestStepFinished event) {
+        if (!event.testStep.isHook()) {
+            testMethod.steps.add(event.testStep);
+            testMethod.results.add(event.result);
+        } else {
+            testMethod.hooks.add(event.result);
+        }
     }
 
-    @Override
-    public void background(Background background) {
-    }
-
-    @Override
-    public void scenario(Scenario scenario) {
-    }
-
-    @Override
-    public void step(Step step) {
-        testMethod.steps.add(step);
-    }
-
-    @Override
-    public void match(Match match) {
-    }
-
-    @Override
-    public void result(Result result) {
-        testMethod.results.add(result);
-    }
-
-    @Override
-    public void embedding(String mimeType, byte[] data) {
-    }
-
-    @Override
-    public void write(String text) {
-    }
-
-    @Override
-    public void after(Match match, Result result) {
-        testMethod.hooks.add(result);
-    }
-
-    @Override
-    public void endOfScenarioLifeCycle(Scenario scenario) {
+    private void handleTestCaseFinished() {
         testMethod.finish(document, root);
     }
 
-    @Override
-    public void eof() {
-    }
-
-    @Override
-    public void done() {
+    private void finishReport() {
         try {
             results.setAttribute("total", String.valueOf(getElementsCountByAttribute(suite, "status", ".*")));
             results.setAttribute("passed", String.valueOf(getElementsCountByAttribute(suite, "status", "PASS")));
@@ -171,13 +163,10 @@ class TestNGFormatter implements Formatter, Reporter, StrictAware {
             StreamResult streamResult = new StreamResult(writer);
             DOMSource domSource = new DOMSource(document);
             transformer.transform(domSource, streamResult);
+            closeQuietly(writer);
         } catch (TransformerException e) {
             throw new CucumberException("Error transforming report.", e);
         }
-    }
-
-    @Override
-    public void close() {
     }
 
     private int getElementsCountByAttribute(Node node, String attributeName, String attributeValue) {
@@ -215,16 +204,17 @@ class TestNGFormatter implements Formatter, Reporter, StrictAware {
 
     private static class TestMethod {
 
-        static Feature feature;
+        static String currentFeatureFile;
         static boolean treatSkippedAsFailure = false;
-        static String previousScenarioOutlineName;
+        static String previousTestCaseName;
         static int exampleNumber;
-        final List<Step> steps = new ArrayList<Step>();
+        static final TestSourcesModel testSources = new TestSourcesModel();
+        final List<TestStep> steps = new ArrayList<TestStep>();
         final List<Result> results = new ArrayList<Result>();
         final List<Result> hooks = new ArrayList<Result>();
-        final Scenario scenario;
+        final TestCase scenario;
 
-        private TestMethod(Scenario scenario) {
+        private TestMethod(TestCase scenario) {
             this.scenario = scenario;
         }
 
@@ -233,14 +223,14 @@ class TestNGFormatter implements Formatter, Reporter, StrictAware {
             element.setAttribute("started-at", DATE_FORMAT.format(new Date()));
         }
 
-        private String calculateElementName(Scenario scenario) {
-            String scenarioName = scenario.getName();
-            if (scenario.getKeyword().equals("Scenario Outline") && scenarioName.equals(previousScenarioOutlineName)) {
-                return scenarioName + "_" + ++exampleNumber;
+        private String calculateElementName(TestCase testCase) {
+            String testCaseName = testCase.getName();
+            if (testCaseName.equals(previousTestCaseName)) {
+                return testCaseName + "_" + ++exampleNumber;
             } else {
-                previousScenarioOutlineName = scenario.getKeyword().equals("Scenario Outline") ? scenarioName : "";
+                previousTestCaseName = testCaseName;
                 exampleNumber = 1;
-                return scenarioName;
+                return testCaseName;
             }
          }
 
@@ -252,15 +242,15 @@ class TestNGFormatter implements Formatter, Reporter, StrictAware {
             Result skipped = null;
             Result failed = null;
             for (Result result : results) {
-                if ("failed".equals(result.getStatus())) {
+                if (result.is(Result.Type.FAILED) || result.is(Result.Type.AMBIGUOUS)) {
                     failed = result;
                 }
-                if ("undefined".equals(result.getStatus()) || "pending".equals(result.getStatus())) {
+                if (result.is(Result.Type.UNDEFINED) || result.is(Result.Type.PENDING)) {
                     skipped = result;
                 }
             }
             for (Result result : hooks) {
-                if (failed == null && "failed".equals(result.getStatus())) {
+                if (failed == null && result.is(Result.Type.FAILED)) {
                     failed = result;
                 }
             }
@@ -299,10 +289,9 @@ class TestNGFormatter implements Formatter, Reporter, StrictAware {
                 int length = sb.length();
                 String resultStatus = "not executed";
                 if (i < results.size()) {
-                    resultStatus = results.get(i).getStatus();
+                    resultStatus = results.get(i).getStatus().lowerCaseName();
                 }
-                sb.append(steps.get(i).getKeyword());
-                sb.append(steps.get(i).getName());
+                sb.append(testSources.getKeywordFromSource(currentFeatureFile, steps.get(i).getStepLine()) + steps.get(i).getStepText());
                 do {
                     sb.append(".");
                 } while (sb.length() - length < 76);
@@ -326,6 +315,14 @@ class TestNGFormatter implements Formatter, Reporter, StrictAware {
             exceptionElement.appendChild(stacktraceElement);
 
             return exceptionElement;
+        }
+    }
+
+    private static void closeQuietly(Closeable out) {
+        try {
+            out.close();
+        } catch (IOException ignored) {
+            // go gentle into that good night
         }
     }
 }

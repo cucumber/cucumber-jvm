@@ -7,9 +7,15 @@ public class ArgumentPattern {
 
     private final Pattern pattern;
     private final Class<?> type;
+    private final String replacement;
 
     public ArgumentPattern(Pattern pattern, Class<?> type) {
+        this(pattern, pattern.pattern(), type);
+    }
+
+    public ArgumentPattern(Pattern pattern, String replacement, Class<?> type) {
         this.pattern = pattern;
+        this.replacement = replacement;
         this.type = type;
     }
 
@@ -22,7 +28,7 @@ public class ArgumentPattern {
     }
 
     public String replaceMatchesWithGroups(String name) {
-        return replaceMatchWith(name, pattern.pattern());
+        return replaceMatchWith(name, replacement);
     }
 
     public String replaceMatchesWithSpace(String name) {

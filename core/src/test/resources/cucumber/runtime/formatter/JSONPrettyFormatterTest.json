@@ -156,10 +156,7 @@
             "name": "so_1 12",
             "keyword": "Given ",
             "line": 15,
-            "match": {},
-            "matchedColumns": [
-              0
-            ]
+            "match": {}
           },
           {
             "result": {
@@ -168,10 +165,7 @@
             "name": "so_2 7 cucumbers",
             "keyword": "When ",
             "line": 16,
-            "match": {},
-            "matchedColumns": [
-              2
-            ]
+            "match": {}
           },
           {
             "result": {
@@ -180,10 +174,7 @@
             "name": "5 so_3",
             "keyword": "Then ",
             "line": 17,
-            "match": {},
-            "matchedColumns": [
-              1
-            ]
+            "match": {}
           }
         ],
         "type": "scenario"
@@ -247,10 +238,7 @@
             "name": "so_1 20",
             "keyword": "Given ",
             "line": 15,
-            "match": {},
-            "matchedColumns": [
-              0
-            ]
+            "match": {}
           },
           {
             "result": {
@@ -259,10 +247,7 @@
             "name": "so_2 15 cucumbers",
             "keyword": "When ",
             "line": 16,
-            "match": {},
-            "matchedColumns": [
-              2
-            ]
+            "match": {}
           },
           {
             "result": {
@@ -271,10 +256,7 @@
             "name": "5 so_3",
             "keyword": "Then ",
             "line": 17,
-            "match": {},
-            "matchedColumns": [
-              1
-            ]
+            "match": {}
           }
         ],
         "type": "scenario"

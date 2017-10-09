@@ -3,9 +3,12 @@ package cucumber.runtime.jython;
 import cucumber.runtime.snippets.FunctionNameGenerator;
 import cucumber.runtime.snippets.SnippetGenerator;
 import cucumber.runtime.snippets.UnderscoreConcatenator;
-import gherkin.formatter.model.Comment;
-import gherkin.formatter.model.DataTableRow;
-import gherkin.formatter.model.Step;
+import gherkin.pickles.Argument;
+import gherkin.pickles.PickleCell;
+import gherkin.pickles.PickleLocation;
+import gherkin.pickles.PickleRow;
+import gherkin.pickles.PickleStep;
+import gherkin.pickles.PickleTable;
 import org.junit.Test;
 
 import java.util.Collections;
@@ -15,7 +18,8 @@ import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 
 public class JythonSnippetTest {
-    private static final List<Comment> NO_COMMENTS = Collections.emptyList();
+    private static final List<Argument> NO_ARGUMENTS = Collections.emptyList();
+    private static final List<PickleLocation> NO_LOCATIONS = Collections.emptyList();
 
     @Test
     public void generatesSnippetWithTwoArgs() {
@@ -48,17 +52,17 @@ public class JythonSnippetTest {
                 "  # The last argument is a List of List of String\n" +
                 "  raise(PendingException())\n" +
                 "";
-        List<DataTableRow> dataTable = asList(new DataTableRow(NO_COMMENTS, asList("col1"), 1));
-        assertEquals(expected, snippetForDataTable("I have:", dataTable));
+        PickleTable dataTable = new PickleTable(asList(new PickleRow(asList(new PickleCell(null, "col1")))));
+        assertEquals(expected, snippetForDataTable("I have:", asList((Argument)dataTable)));
     }
 
     private String snippetFor(String name) {
-        Step step = new Step(Collections.<Comment>emptyList(), "Given ", name, 0, null, null);
-        return new SnippetGenerator(new JythonSnippet()).getSnippet(step, new FunctionNameGenerator(new UnderscoreConcatenator()));
+        PickleStep step = new PickleStep(name, NO_ARGUMENTS, NO_LOCATIONS);
+        return new SnippetGenerator(new JythonSnippet()).getSnippet(step, "Given", new FunctionNameGenerator(new UnderscoreConcatenator()));
     }
 
-    private String snippetForDataTable(String name, List<DataTableRow> dataTable) {
-        Step step = new Step(NO_COMMENTS, "Given ", name, 0, dataTable, null);
-        return new SnippetGenerator(new JythonSnippet()).getSnippet(step, new FunctionNameGenerator(new UnderscoreConcatenator()));
+    private String snippetForDataTable(String name, List<Argument> dataTable) {
+        PickleStep step = new PickleStep(name, dataTable, NO_LOCATIONS);
+        return new SnippetGenerator(new JythonSnippet()).getSnippet(step, "Given", new FunctionNameGenerator(new UnderscoreConcatenator()));
     }
 }

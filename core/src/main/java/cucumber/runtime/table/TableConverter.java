@@ -13,9 +13,10 @@ import cucumber.runtime.xstream.ListOfComplexTypeReader;
 import cucumber.runtime.xstream.ListOfSingleValueWriter;
 import cucumber.runtime.xstream.LocalizedXStreams;
 import cucumber.runtime.xstream.MapWriter;
-import gherkin.formatter.model.Comment;
-import gherkin.formatter.model.DataTableRow;
-import gherkin.util.Mapper;
+import cucumber.util.Mapper;
+import gherkin.pickles.PickleCell;
+import gherkin.pickles.PickleRow;
+import gherkin.pickles.PickleTable;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -27,14 +28,13 @@ import java.util.Map;
 import static cucumber.runtime.Utils.listItemType;
 import static cucumber.runtime.Utils.mapKeyType;
 import static cucumber.runtime.Utils.mapValueType;
-import static gherkin.util.FixJava.map;
+import static cucumber.util.FixJava.map;
 import static java.util.Arrays.asList;
 
 /**
  * This class converts a {@link cucumber.api.DataTable} to various other types.
  */
-public class TableConverter {
-    private static final List<Comment> NO_COMMENTS = Collections.emptyList();
+public class TableConverter implements cucumber.api.TableConverter {
     private final LocalizedXStreams.LocalizedXStream xStream;
     private final ParameterInfo parameterInfo;
 
@@ -55,6 +55,7 @@ public class TableConverter {
      * @param transposed whether the table should be transposed first.
      * @return the transformed object.
      */
+    @Override
     public <T> T convert(DataTable dataTable, Type type, boolean transposed) {
         if (transposed) {
             dataTable = dataTable.transpose();
@@ -117,6 +118,7 @@ public class TableConverter {
         }
     }
 
+    @Override
     public <T> List<T> toList(DataTable dataTable, Type itemType) {
         SingleValueConverter itemConverter = xStream.getSingleValueConverter(itemType);
         if (itemConverter != null) {
@@ -141,6 +143,7 @@ public class TableConverter {
         return Collections.unmodifiableList(result);
     }
 
+    @Override
     public <T> List<List<T>> toLists(DataTable dataTable, Type itemType) {
         try {
             xStream.setParameterInfo(parameterInfo);
@@ -163,6 +166,7 @@ public class TableConverter {
         }
     }
 
+    @Override
     public <K, V> Map<K, V> toMap(DataTable dataTable, Type keyType, Type valueType) {
         try {
             xStream.setParameterInfo(parameterInfo);
@@ -188,6 +192,7 @@ public class TableConverter {
         }
     }
 
+    @Override
     public <K, V> List<Map<K, V>> toMaps(DataTable dataTable, Type keyType, Type valueType) {
         try {
             xStream.setParameterInfo(parameterInfo);
@@ -227,6 +232,7 @@ public class TableConverter {
      * @param columnNames an explicit list of column names
      * @return a DataTable
      */
+    @Override
     public DataTable toTable(List<?> objects, String... columnNames) {
         try {
             xStream.setParameterInfo(parameterInfo);
@@ -262,18 +268,23 @@ public class TableConverter {
     }
 
     private DataTable createDataTable(List<String> header, List<List<String>> valuesList) {
-        List<DataTableRow> gherkinRows = new ArrayList<DataTableRow>();
+        List<PickleRow> gherkinRows = new ArrayList<PickleRow>();
         if (header != null) {
             gherkinRows.add(gherkinRow(header));
         }
         for (List<String> values : valuesList) {
             gherkinRows.add(gherkinRow(values));
         }
-        return new DataTable(gherkinRows, this);
+        return new DataTable(new PickleTable(gherkinRows), this);
     }
 
-    private DataTableRow gherkinRow(List<String> cells) {
-        return new DataTableRow(NO_COMMENTS, cells, 0);
+    private PickleRow gherkinRow(List<String> cells) {
+        List<PickleCell> pickleCells = new ArrayList<PickleCell>(cells.size());
+        for (String cell : cells) {
+            PickleCell pickleCell = new PickleCell(null, cell);
+            pickleCells.add(pickleCell);
+        }
+        return new PickleRow(pickleCells);
     }
 
     private List<String> convertTopCellsToFieldNames(DataTable dataTable) {

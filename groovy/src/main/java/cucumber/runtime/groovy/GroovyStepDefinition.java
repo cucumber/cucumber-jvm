@@ -1,12 +1,11 @@
 package cucumber.runtime.groovy;
 
+import cucumber.runtime.Argument;
 import cucumber.runtime.JdkPatternArgumentMatcher;
 import cucumber.runtime.ParameterInfo;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.Timeout;
-import gherkin.I18n;
-import gherkin.formatter.Argument;
-import gherkin.formatter.model.Step;
+import gherkin.pickles.PickleStep;
 import groovy.lang.Closure;
 import org.codehaus.groovy.runtime.StackTraceUtils;
 
@@ -36,8 +35,8 @@ public class GroovyStepDefinition implements StepDefinition {
         this.parameterInfos = getParameterInfos();
     }
 
-    public List<Argument> matchedArguments(Step step) {
-        return argumentMatcher.argumentsFrom(step.getName());
+    public List<Argument> matchedArguments(PickleStep step) {
+        return argumentMatcher.argumentsFrom(step.getText());
     }
 
     public String getLocation(boolean detail) {
@@ -59,7 +58,7 @@ public class GroovyStepDefinition implements StepDefinition {
         return ParameterInfo.fromTypes(parameterTypes);
     }
 
-    public void execute(I18n i18n, final Object[] args) throws Throwable {
+    public void execute(String language, final Object[] args) throws Throwable {
         try {
             Timeout.timeout(new Timeout.Callback<Object>() {
                 @Override

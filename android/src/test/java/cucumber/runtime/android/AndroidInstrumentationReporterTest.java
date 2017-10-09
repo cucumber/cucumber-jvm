@@ -1,22 +1,5 @@
 package cucumber.runtime.android;
 
-import android.app.Instrumentation;
-import android.os.Bundle;
-import cucumber.runtime.Runtime;
-import edu.emory.mathcs.backport.java.util.Collections;
-import gherkin.formatter.model.Feature;
-import gherkin.formatter.model.Match;
-import gherkin.formatter.model.Result;
-import gherkin.formatter.model.Scenario;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InOrder;
-import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Config;
 import static cucumber.runtime.android.AndroidInstrumentationReporter.StatusCodes;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertThat;
@@ -26,6 +9,24 @@ import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import android.app.Instrumentation;
+import android.os.Bundle;
+import cucumber.api.PendingException;
+import cucumber.api.Result;
+import cucumber.api.TestCase;
+import cucumber.api.event.TestSourceRead;
+import cucumber.runtime.Runtime;
+import edu.emory.mathcs.backport.java.util.Collections;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InOrder;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
 
 @Config(manifest = Config.NONE)
 @RunWith(RobolectricTestRunner.class)
@@ -37,30 +38,31 @@ public class AndroidInstrumentationReporterTest {
     private final Runtime runtime = mock(Runtime.class);
     private final Instrumentation instrumentation = mock(Instrumentation.class);
 
-    private final Feature feature = mock(Feature.class);
-    private final Scenario scenario = mock(Scenario.class);
-    private final Match match = mock(Match.class);
+    private final TestSourceRead testSourceRead = new TestSourceRead(
+        0l,
+        "path/file.feature",
+        "Feature: feature name\n  Scenario: some important scenario\n");
+    private final TestCase testCase = mock(TestCase.class);
     private final Result firstResult = mock(Result.class);
     private final Result secondResult = mock(Result.class);
 
 
     @Before
     public void beforeEachTest() {
-        when(feature.getKeyword()).thenReturn("Feature");
-        when(feature.getName()).thenReturn("Some important feature");
-        when(scenario.getKeyword()).thenReturn("Scenario");
-        when(scenario.getName()).thenReturn("Some important scenario");
+        when(testCase.getUri()).thenReturn("path/file.feature");
+        when(testCase.getName()).thenReturn("Some important scenario");
     }
 
     @Test
     public void feature_name_and_keyword_is_contained_in_start_signal() {
 
         // given
-        final AndroidInstrumentationReporter formatter = new AndroidInstrumentationReporter(runtime, instrumentation, 1);
+        final AndroidInstrumentationReporter formatter = new AndroidInstrumentationReporter(runtime, instrumentation);
 
         // when
-        formatter.feature(feature);
-        formatter.startOfScenarioLifeCycle(scenario);
+        formatter.testSourceRead(testSourceRead);
+        formatter.setNumberOfTests(1);
+        formatter.startTestCase(testCase);
 
         // then
         final ArgumentCaptor<Bundle> captor = ArgumentCaptor.forClass(Bundle.class);
@@ -69,21 +71,22 @@ public class AndroidInstrumentationReporterTest {
 
         final Bundle actualBundle = captor.getValue();
 
-        assertThat(actualBundle.getString(AndroidInstrumentationReporter.StatusKeys.CLASS), containsString(feature.getKeyword()));
-        assertThat(actualBundle.getString(AndroidInstrumentationReporter.StatusKeys.CLASS), containsString(feature.getName()));
+        assertThat(actualBundle.getString(AndroidInstrumentationReporter.StatusKeys.CLASS), containsString("feature name"));
     }
 
     @Test
     public void feature_name_and_keyword_is_contained_in_end_signal() {
 
         // given
-        final AndroidInstrumentationReporter formatter = new AndroidInstrumentationReporter(runtime, instrumentation, 1);
-        when(firstResult.getStatus()).thenReturn(Result.PASSED);
+        final AndroidInstrumentationReporter formatter = new AndroidInstrumentationReporter(runtime, instrumentation);
+        mockResultStatus(firstResult, Result.Type.PASSED);
 
         // when
-        formatter.feature(feature);
-        formatter.result(firstResult);
-        formatter.endOfScenarioLifeCycle(scenario);
+        formatter.testSourceRead(testSourceRead);
+        formatter.setNumberOfTests(1);
+        formatter.startTestCase(testCase);
+        formatter.finishTestStep(firstResult);
+        formatter.finishTestCase();
 
         // then
         final ArgumentCaptor<Bundle> captor = ArgumentCaptor.forClass(Bundle.class);
@@ -92,19 +95,18 @@ public class AndroidInstrumentationReporterTest {
 
         final Bundle actualBundle = captor.getValue();
 
-        assertThat(actualBundle.getString(AndroidInstrumentationReporter.StatusKeys.CLASS), containsString(feature.getKeyword()));
-        assertThat(actualBundle.getString(AndroidInstrumentationReporter.StatusKeys.CLASS), containsString(feature.getName()));
+        assertThat(actualBundle.getString(AndroidInstrumentationReporter.StatusKeys.CLASS), containsString("feature name"));
     }
 
     @Test
-    public void scenario_name_and_keyword_is_contained_in_start_signal() {
+    public void scenario_name_is_contained_in_start_signal() {
 
         // given
-        final AndroidInstrumentationReporter formatter = new AndroidInstrumentationReporter(runtime, instrumentation, 1);
+        final AndroidInstrumentationReporter formatter = new AndroidInstrumentationReporter(runtime, instrumentation);
 
         // when
-        formatter.feature(feature);
-        formatter.startOfScenarioLifeCycle(scenario);
+        formatter.setNumberOfTests(1);
+        formatter.startTestCase(testCase);
 
         // then
         final ArgumentCaptor<Bundle> captor = ArgumentCaptor.forClass(Bundle.class);
@@ -113,21 +115,21 @@ public class AndroidInstrumentationReporterTest {
 
         final Bundle actualBundle = captor.getValue();
 
-        assertThat(actualBundle.getString(AndroidInstrumentationReporter.StatusKeys.TEST), containsString(scenario.getKeyword()));
-        assertThat(actualBundle.getString(AndroidInstrumentationReporter.StatusKeys.TEST), containsString(scenario.getName()));
+        assertThat(actualBundle.getString(AndroidInstrumentationReporter.StatusKeys.TEST), containsString(testCase.getName()));
     }
 
     @Test
-    public void scenario_name_and_keyword_is_contained_in_end_signal() {
+    public void scenario_name_is_contained_in_end_signal() {
 
         // given
-        final AndroidInstrumentationReporter formatter = new AndroidInstrumentationReporter(runtime, instrumentation, 1);
-        when(firstResult.getStatus()).thenReturn(Result.PASSED);
+        final AndroidInstrumentationReporter formatter = new AndroidInstrumentationReporter(runtime, instrumentation);
+        mockResultStatus(firstResult, Result.Type.PASSED);
 
         // when
-        formatter.feature(feature);
-        formatter.result(firstResult);
-        formatter.endOfScenarioLifeCycle(scenario);
+        formatter.setNumberOfTests(1);
+        formatter.startTestCase(testCase);
+        formatter.finishTestStep(firstResult);
+        formatter.finishTestCase();
 
         // then
         final ArgumentCaptor<Bundle> captor = ArgumentCaptor.forClass(Bundle.class);
@@ -136,43 +138,22 @@ public class AndroidInstrumentationReporterTest {
 
         final Bundle actualBundle = captor.getValue();
 
-        assertThat(actualBundle.getString(AndroidInstrumentationReporter.StatusKeys.TEST), containsString(scenario.getKeyword()));
-        assertThat(actualBundle.getString(AndroidInstrumentationReporter.StatusKeys.TEST), containsString(scenario.getName()));
-    }
-
-    @Test
-    public void any_before_hook_exception_causes_test_error() {
-
-        // given
-        final AndroidInstrumentationReporter formatter = new AndroidInstrumentationReporter(runtime, instrumentation, 1);
-        when(firstResult.getStatus()).thenReturn(Result.FAILED);
-        when(firstResult.getError()).thenReturn(new RuntimeException("some random runtime exception"));
-
-        // when
-        formatter.feature(feature);
-        formatter.before(match, firstResult);
-        formatter.endOfScenarioLifeCycle(scenario);
-
-        // then
-        final ArgumentCaptor<Bundle> captor = ArgumentCaptor.forClass(Bundle.class);
-        verify(instrumentation).sendStatus(eq(StatusCodes.ERROR), captor.capture());
-
-        final Bundle actualBundle = captor.getValue();
-        assertThat(actualBundle.getString(AndroidInstrumentationReporter.StatusKeys.STACK), containsString("some random runtime exception"));
+        assertThat(actualBundle.getString(AndroidInstrumentationReporter.StatusKeys.TEST), containsString(testCase.getName()));
     }
 
     @Test
     public void any_step_exception_causes_test_error() {
 
         // given
-        final AndroidInstrumentationReporter formatter = new AndroidInstrumentationReporter(runtime, instrumentation, 1);
-        when(firstResult.getStatus()).thenReturn(Result.FAILED);
+        final AndroidInstrumentationReporter formatter = new AndroidInstrumentationReporter(runtime, instrumentation);
+        mockResultStatus(firstResult, Result.Type.FAILED);
         when(firstResult.getError()).thenReturn(new RuntimeException("some random runtime exception"));
 
         // when
-        formatter.feature(feature);
-        formatter.result(firstResult);
-        formatter.endOfScenarioLifeCycle(scenario);
+        formatter.setNumberOfTests(1);
+        formatter.startTestCase(testCase);
+        formatter.finishTestStep(firstResult);
+        formatter.finishTestCase();
 
         // then
         final ArgumentCaptor<Bundle> captor = ArgumentCaptor.forClass(Bundle.class);
@@ -181,42 +162,22 @@ public class AndroidInstrumentationReporterTest {
         final Bundle actualBundle = captor.getValue();
         assertThat(actualBundle.getString(AndroidInstrumentationReporter.StatusKeys.STACK), containsString("some random runtime exception"));
 
-    }
-
-    @Test
-    public void any_after_hook_exception_causes_test_error() {
-
-        // given
-        final AndroidInstrumentationReporter formatter = new AndroidInstrumentationReporter(runtime, instrumentation, 1);
-        when(firstResult.getStatus()).thenReturn(Result.FAILED);
-        when(firstResult.getError()).thenReturn(new RuntimeException("some random runtime exception"));
-
-        // when
-        formatter.feature(feature);
-        formatter.after(match, firstResult);
-        formatter.endOfScenarioLifeCycle(scenario);
-
-        // then
-        final ArgumentCaptor<Bundle> captor = ArgumentCaptor.forClass(Bundle.class);
-        verify(instrumentation).sendStatus(eq(StatusCodes.ERROR), captor.capture());
-
-        final Bundle actualBundle = captor.getValue();
-        assertThat(actualBundle.getString(AndroidInstrumentationReporter.StatusKeys.STACK), containsString("some random runtime exception"));
     }
 
     @Test
     public void any_failing_step_causes_test_failure() {
 
         // given
-        final AndroidInstrumentationReporter formatter = new AndroidInstrumentationReporter(runtime, instrumentation, 1);
-        when(firstResult.getStatus()).thenReturn(Result.FAILED);
+        final AndroidInstrumentationReporter formatter = new AndroidInstrumentationReporter(runtime, instrumentation);
+        mockResultStatus(firstResult, Result.Type.FAILED);
         when(firstResult.getError()).thenReturn(new AssertionError("some test assertion went wrong"));
         when(firstResult.getErrorMessage()).thenReturn("some test assertion went wrong");
 
         // when
-        formatter.feature(feature);
-        formatter.result(firstResult);
-        formatter.endOfScenarioLifeCycle(scenario);
+        formatter.setNumberOfTests(1);
+        formatter.startTestCase(testCase);
+        formatter.finishTestStep(firstResult);
+        formatter.finishTestCase();
 
         // then
         final ArgumentCaptor<Bundle> captor = ArgumentCaptor.forClass(Bundle.class);
@@ -230,14 +191,15 @@ public class AndroidInstrumentationReporterTest {
     public void any_undefined_step_causes_test_error() {
 
         // given
-        final AndroidInstrumentationReporter formatter = new AndroidInstrumentationReporter(runtime, instrumentation, 1);
-        when(firstResult.getStatus()).thenReturn(Result.UNDEFINED.getStatus());
+        final AndroidInstrumentationReporter formatter = new AndroidInstrumentationReporter(runtime, instrumentation);
+        mockResultStatus(firstResult, Result.Type.UNDEFINED);
         when(runtime.getSnippets()).thenReturn(Collections.singletonList("some snippet"));
 
         // when
-        formatter.feature(feature);
-        formatter.result(firstResult);
-        formatter.endOfScenarioLifeCycle(scenario);
+        formatter.setNumberOfTests(1);
+        formatter.startTestCase(testCase);
+        formatter.finishTestStep(firstResult);
+        formatter.finishTestCase();
 
         // then
         final ArgumentCaptor<Bundle> captor = ArgumentCaptor.forClass(Bundle.class);
@@ -251,13 +213,14 @@ public class AndroidInstrumentationReporterTest {
     public void passing_step_causes_test_success() {
 
         // given
-        final AndroidInstrumentationReporter formatter = new AndroidInstrumentationReporter(runtime, instrumentation, 1);
-        when(firstResult.getStatus()).thenReturn(Result.PASSED);
+        final AndroidInstrumentationReporter formatter = new AndroidInstrumentationReporter(runtime, instrumentation);
+        mockResultStatus(firstResult, Result.Type.PASSED);
 
         // when
-        formatter.feature(feature);
-        formatter.result(firstResult);
-        formatter.endOfScenarioLifeCycle(scenario);
+        formatter.setNumberOfTests(1);
+        formatter.startTestCase(testCase);
+        formatter.finishTestStep(firstResult);
+        formatter.finishTestCase();
 
         // then
         verify(instrumentation).sendStatus(eq(StatusCodes.OK), any(Bundle.class));
@@ -267,15 +230,16 @@ public class AndroidInstrumentationReporterTest {
     public void skipped_step_causes_test_success() {
 
         // given
-        final AndroidInstrumentationReporter formatter = new AndroidInstrumentationReporter(runtime, instrumentation, 2);
-        when(firstResult.getStatus()).thenReturn(Result.PASSED);
-        when(secondResult.getStatus()).thenReturn(Result.SKIPPED.getStatus());
+        final AndroidInstrumentationReporter formatter = new AndroidInstrumentationReporter(runtime, instrumentation);
+        mockResultStatus(firstResult, Result.Type.PASSED);
+        mockResultStatus(secondResult, Result.Type.SKIPPED);
 
         // when
-        formatter.feature(feature);
-        formatter.result(firstResult);
-        formatter.result(secondResult);
-        formatter.endOfScenarioLifeCycle(scenario);
+        formatter.setNumberOfTests(2);
+        formatter.startTestCase(testCase);
+        formatter.finishTestStep(firstResult);
+        formatter.finishTestStep(secondResult);
+        formatter.finishTestCase();
 
         // then
         verify(instrumentation).sendStatus(eq(StatusCodes.OK), any(Bundle.class));
@@ -283,71 +247,22 @@ public class AndroidInstrumentationReporterTest {
     }
 
     @Test
-    public void first_before_exception_is_reported() {
-
-        // given
-        final AndroidInstrumentationReporter formatter = new AndroidInstrumentationReporter(runtime, instrumentation, 2);
-        when(firstResult.getStatus()).thenReturn(Result.FAILED);
-        when(firstResult.getError()).thenReturn(new RuntimeException("first exception"));
-
-        when(secondResult.getStatus()).thenReturn(Result.FAILED);
-        when(secondResult.getError()).thenReturn(new RuntimeException("second exception"));
-
-        // when
-        formatter.feature(feature);
-        formatter.before(match, firstResult);
-        formatter.before(match, secondResult);
-        formatter.endOfScenarioLifeCycle(scenario);
-
-        // then
-        final ArgumentCaptor<Bundle> captor = ArgumentCaptor.forClass(Bundle.class);
-        verify(instrumentation).sendStatus(eq(StatusCodes.ERROR), captor.capture());
-
-        final Bundle actualBundle = captor.getValue();
-        assertThat(actualBundle.getString(AndroidInstrumentationReporter.StatusKeys.STACK), containsString("first exception"));
-    }
-
-    @Test
     public void first_step_result_exception_is_reported() {
 
         // given
-        final AndroidInstrumentationReporter formatter = new AndroidInstrumentationReporter(runtime, instrumentation, 2);
-        when(firstResult.getStatus()).thenReturn(Result.FAILED);
+        final AndroidInstrumentationReporter formatter = new AndroidInstrumentationReporter(runtime, instrumentation);
+        mockResultStatus(firstResult, Result.Type.FAILED);
         when(firstResult.getError()).thenReturn(new RuntimeException("first exception"));
 
-        when(secondResult.getStatus()).thenReturn(Result.FAILED);
+        mockResultStatus(secondResult, Result.Type.FAILED);
         when(secondResult.getError()).thenReturn(new RuntimeException("second exception"));
 
         // when
-        formatter.feature(feature);
-        formatter.result(firstResult);
-        formatter.result(secondResult);
-        formatter.endOfScenarioLifeCycle(scenario);
-
-        // then
-        final ArgumentCaptor<Bundle> captor = ArgumentCaptor.forClass(Bundle.class);
-        verify(instrumentation).sendStatus(eq(StatusCodes.ERROR), captor.capture());
-
-        final Bundle actualBundle = captor.getValue();
-        assertThat(actualBundle.getString(AndroidInstrumentationReporter.StatusKeys.STACK), containsString("first exception"));
-    }
-
-    @Test
-    public void first_after_exception_is_reported() {
-
-        // given
-        final AndroidInstrumentationReporter formatter = new AndroidInstrumentationReporter(runtime, instrumentation, 2);
-        when(firstResult.getStatus()).thenReturn(Result.FAILED);
-        when(firstResult.getError()).thenReturn(new RuntimeException("first exception"));
-
-        when(secondResult.getStatus()).thenReturn(Result.FAILED);
-        when(secondResult.getError()).thenReturn(new RuntimeException("second exception"));
-
-        // when
-        formatter.feature(feature);
-        formatter.after(match, firstResult);
-        formatter.after(match, secondResult);
-        formatter.endOfScenarioLifeCycle(scenario);
+        formatter.setNumberOfTests(2);
+        formatter.startTestCase(testCase);
+        formatter.finishTestStep(firstResult);
+        formatter.finishTestStep(secondResult);
+        formatter.finishTestCase();
 
         // then
         final ArgumentCaptor<Bundle> captor = ArgumentCaptor.forClass(Bundle.class);
@@ -361,17 +276,18 @@ public class AndroidInstrumentationReporterTest {
     public void undefined_step_overrides_preceding_passed_step() {
 
         // given
-        final AndroidInstrumentationReporter formatter = new AndroidInstrumentationReporter(runtime, instrumentation, 2);
-        when(firstResult.getStatus()).thenReturn(Result.PASSED);
+        final AndroidInstrumentationReporter formatter = new AndroidInstrumentationReporter(runtime, instrumentation);
+        mockResultStatus(firstResult, Result.Type.PASSED);
 
-        when(secondResult.getStatus()).thenReturn(Result.UNDEFINED.getStatus());
+        mockResultStatus(secondResult, Result.Type.UNDEFINED);
         when(runtime.getSnippets()).thenReturn(Collections.singletonList("some snippet"));
 
         // when
-        formatter.feature(feature);
-        formatter.result(firstResult);
-        formatter.result(secondResult);
-        formatter.endOfScenarioLifeCycle(scenario);
+        formatter.setNumberOfTests(2);
+        formatter.startTestCase(testCase);
+        formatter.finishTestStep(firstResult);
+        formatter.finishTestStep(secondResult);
+        formatter.finishTestCase();
 
         // then
         final ArgumentCaptor<Bundle> captor = ArgumentCaptor.forClass(Bundle.class);
@@ -382,21 +298,48 @@ public class AndroidInstrumentationReporterTest {
     }
 
     @Test
+    public void pending_step_overrides_preceding_passed_step() {
+
+        // given
+        final AndroidInstrumentationReporter formatter = new AndroidInstrumentationReporter(runtime, instrumentation);
+        mockResultStatus(firstResult, Result.Type.PASSED);
+
+        mockResultStatus(secondResult, Result.Type.PENDING);
+        when(secondResult.getError()).thenReturn(new PendingException("step is pending"));
+        when(secondResult.getErrorMessage()).thenReturn("step is pending");
+
+        // when
+        formatter.setNumberOfTests(2);
+        formatter.startTestCase(testCase);
+        formatter.finishTestStep(firstResult);
+        formatter.finishTestStep(secondResult);
+        formatter.finishTestCase();
+
+        // then
+        final ArgumentCaptor<Bundle> captor = ArgumentCaptor.forClass(Bundle.class);
+        verify(instrumentation).sendStatus(eq(StatusCodes.ERROR), captor.capture());
+
+        final Bundle actualBundle = captor.getValue();
+        assertThat(actualBundle.getString(AndroidInstrumentationReporter.StatusKeys.STACK), containsString("step is pending"));
+    }
+
+    @Test
     public void failed_step_overrides_preceding_passed_step() {
 
         // given
-        final AndroidInstrumentationReporter formatter = new AndroidInstrumentationReporter(runtime, instrumentation, 2);
-        when(firstResult.getStatus()).thenReturn(Result.PASSED);
+        final AndroidInstrumentationReporter formatter = new AndroidInstrumentationReporter(runtime, instrumentation);
+        mockResultStatus(firstResult, Result.Type.PASSED);
 
-        when(secondResult.getStatus()).thenReturn(Result.FAILED);
+        mockResultStatus(secondResult, Result.Type.FAILED);
         when(secondResult.getError()).thenReturn(new AssertionError("some assertion went wrong"));
         when(secondResult.getErrorMessage()).thenReturn("some assertion went wrong");
 
         // when
-        formatter.feature(feature);
-        formatter.result(firstResult);
-        formatter.result(secondResult);
-        formatter.endOfScenarioLifeCycle(scenario);
+        formatter.setNumberOfTests(2);
+        formatter.startTestCase(testCase);
+        formatter.finishTestStep(firstResult);
+        formatter.finishTestStep(secondResult);
+        formatter.finishTestCase();
 
         // then
         final ArgumentCaptor<Bundle> captor = ArgumentCaptor.forClass(Bundle.class);
@@ -410,17 +353,18 @@ public class AndroidInstrumentationReporterTest {
     public void error_step_overrides_preceding_passed_step() {
 
         // given
-        final AndroidInstrumentationReporter formatter = new AndroidInstrumentationReporter(runtime, instrumentation, 2);
-        when(firstResult.getStatus()).thenReturn(Result.PASSED);
+        final AndroidInstrumentationReporter formatter = new AndroidInstrumentationReporter(runtime, instrumentation);
+        mockResultStatus(firstResult, Result.Type.PASSED);
 
-        when(secondResult.getStatus()).thenReturn(Result.FAILED);
+        mockResultStatus(secondResult, Result.Type.FAILED);
         when(secondResult.getError()).thenReturn(new RuntimeException("some exception"));
 
         // when
-        formatter.feature(feature);
-        formatter.result(firstResult);
-        formatter.result(secondResult);
-        formatter.endOfScenarioLifeCycle(scenario);
+        formatter.setNumberOfTests(2);
+        formatter.startTestCase(testCase);
+        formatter.finishTestStep(firstResult);
+        formatter.finishTestStep(secondResult);
+        formatter.finishTestCase();
 
         // then
         final ArgumentCaptor<Bundle> captor = ArgumentCaptor.forClass(Bundle.class);
@@ -434,19 +378,20 @@ public class AndroidInstrumentationReporterTest {
     public void failed_step_does_not_overrides_preceding_undefined_step() {
 
         // given
-        final AndroidInstrumentationReporter formatter = new AndroidInstrumentationReporter(runtime, instrumentation, 2);
-        when(firstResult.getStatus()).thenReturn(Result.UNDEFINED.getStatus());
+        final AndroidInstrumentationReporter formatter = new AndroidInstrumentationReporter(runtime, instrumentation);
+        mockResultStatus(firstResult, Result.Type.UNDEFINED);
         when(runtime.getSnippets()).thenReturn(Collections.singletonList("some snippet"));
 
-        when(secondResult.getStatus()).thenReturn(Result.FAILED);
+        mockResultStatus(secondResult, Result.Type.FAILED);
         when(secondResult.getError()).thenReturn(new AssertionError("some assertion went wrong"));
         when(secondResult.getErrorMessage()).thenReturn("some assertion went wrong");
 
         // when
-        formatter.feature(feature);
-        formatter.result(firstResult);
-        formatter.result(secondResult);
-        formatter.endOfScenarioLifeCycle(scenario);
+        formatter.setNumberOfTests(2);
+        formatter.startTestCase(testCase);
+        formatter.finishTestStep(firstResult);
+        formatter.finishTestStep(secondResult);
+        formatter.finishTestCase();
 
         // then
         final ArgumentCaptor<Bundle> captor = ArgumentCaptor.forClass(Bundle.class);
@@ -460,19 +405,20 @@ public class AndroidInstrumentationReporterTest {
     public void error_step_does_not_override_preceding_failed_step() {
 
         // given
-        final AndroidInstrumentationReporter formatter = new AndroidInstrumentationReporter(runtime, instrumentation, 2);
-        when(firstResult.getStatus()).thenReturn(Result.FAILED);
+        final AndroidInstrumentationReporter formatter = new AndroidInstrumentationReporter(runtime, instrumentation);
+        mockResultStatus(firstResult, Result.Type.FAILED);
         when(firstResult.getError()).thenReturn(new AssertionError("some assertion went wrong"));
         when(firstResult.getErrorMessage()).thenReturn("some assertion went wrong");
 
-        when(secondResult.getStatus()).thenReturn(Result.FAILED);
+        mockResultStatus(secondResult, Result.Type.FAILED);
         when(secondResult.getError()).thenReturn(new RuntimeException("some exception"));
 
         // when
-        formatter.feature(feature);
-        formatter.result(firstResult);
-        formatter.result(secondResult);
-        formatter.endOfScenarioLifeCycle(scenario);
+        formatter.setNumberOfTests(2);
+        formatter.startTestCase(testCase);
+        formatter.finishTestStep(firstResult);
+        formatter.finishTestStep(secondResult);
+        formatter.finishTestCase();
 
         // then
         final ArgumentCaptor<Bundle> captor = ArgumentCaptor.forClass(Bundle.class);
@@ -483,40 +429,24 @@ public class AndroidInstrumentationReporterTest {
     }
 
     @Test
-    public void unexpected_status_code_causes_IllegalStateException() {
-        // given
-        final AndroidInstrumentationReporter formatter = new AndroidInstrumentationReporter(runtime, instrumentation, 2);
-        when(firstResult.getStatus()).thenReturn("foobar");
-
-        // then
-        expectedException.expect(IllegalStateException.class);
-        expectedException.expectMessage(containsString("foobar"));
-
-        // when
-        formatter.feature(feature);
-        formatter.result(firstResult);
-        formatter.endOfScenarioLifeCycle(scenario);
-    }
-
-    @Test
     public void step_result_contains_only_the_current_scenarios_severest_result() {
         // given
-        final AndroidInstrumentationReporter formatter = new AndroidInstrumentationReporter(runtime, instrumentation, 2);
-        when(firstResult.getStatus()).thenReturn(Result.FAILED);
+        final AndroidInstrumentationReporter formatter = new AndroidInstrumentationReporter(runtime, instrumentation);
+        mockResultStatus(firstResult, Result.Type.FAILED);
         when(firstResult.getError()).thenReturn(new AssertionError("some assertion went wrong"));
         when(firstResult.getErrorMessage()).thenReturn("some assertion went wrong");
 
-        when(secondResult.getStatus()).thenReturn(Result.PASSED);
+        mockResultStatus(secondResult, Result.Type.PASSED);
 
         // when
-        formatter.feature(feature);
-        formatter.startOfScenarioLifeCycle(scenario);
-        formatter.result(firstResult);
-        formatter.endOfScenarioLifeCycle(scenario);
+        formatter.setNumberOfTests(2);
+        formatter.startTestCase(testCase);
+        formatter.finishTestStep(firstResult);
+        formatter.finishTestCase();
 
-        formatter.startOfScenarioLifeCycle(scenario);
-        formatter.result(secondResult);
-        formatter.endOfScenarioLifeCycle(scenario);
+        formatter.startTestCase(testCase);
+        formatter.finishTestStep(secondResult);
+        formatter.finishTestCase();
 
         // then
 
@@ -526,5 +456,10 @@ public class AndroidInstrumentationReporterTest {
 
         inOrder.verify(instrumentation).sendStatus(eq(StatusCodes.FAILURE), firstCaptor.capture());
         inOrder.verify(instrumentation).sendStatus(eq(StatusCodes.OK), secondCaptor.capture());
+    }
+
+    private void mockResultStatus(Result result, Result.Type status) {
+        when(result.getStatus()).thenReturn(status);
+        when(result.is(Result.Type.PASSED)).thenReturn(status == Result.Type.PASSED);
     }
 }

@@ -10,7 +10,7 @@ import cucumber.runtime.io.Resource;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.snippets.FunctionNameGenerator;
 import cucumber.runtime.snippets.SnippetGenerator;
-import gherkin.formatter.model.Step;
+import gherkin.pickles.PickleStep;
 import org.python.core.Py;
 import org.python.core.PyException;
 import org.python.core.PyInstance;
@@ -79,8 +79,8 @@ public class JythonBackend implements Backend {
     }
 
     @Override
-    public String getSnippet(Step step, FunctionNameGenerator functionNameGenerator) {
-        return snippetGenerator.getSnippet(step, functionNameGenerator);
+    public String getSnippet(PickleStep step, String keyword, FunctionNameGenerator functionNameGenerator) {
+        return snippetGenerator.getSnippet(step, keyword, functionNameGenerator);
     }
 
     public void registerStepdef(PyInstance stepdef, int arity) {

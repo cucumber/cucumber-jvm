@@ -1,8 +1,8 @@
 package cucumber.runtime.formatter;
 
+import cucumber.api.Result;
 import cucumber.runtime.TestHelper;
 import cucumber.runtime.model.CucumberFeature;
-import gherkin.formatter.model.Result;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.Difference;
 import org.custommonkey.xmlunit.XMLUnit;
@@ -341,7 +341,7 @@ public final class TestNGFormatterTest {
             List<SimpleEntry<String, Result>> hooks, long stepDuration) throws IOException, Throwable, FileNotFoundException {
         final File tempFile = File.createTempFile("cucumber-jvm-testng", ".xml");
         final TestNGFormatter formatter = new TestNGFormatter(toURL(tempFile.getAbsolutePath()));
-        TestHelper.runFeaturesWithFormatter(features, stepsToResult, hooks, stepDuration, formatter, formatter);
+        TestHelper.runFeaturesWithFormatter(features, stepsToResult, hooks, stepDuration, formatter);
         return new Scanner(new FileInputStream(tempFile), "UTF-8").useDelimiter("\\A").next();
     }
 
@@ -350,7 +350,7 @@ public final class TestNGFormatterTest {
         final File tempFile = File.createTempFile("cucumber-jvm-testng", ".xml");
         final TestNGFormatter formatter = new TestNGFormatter(toURL(tempFile.getAbsolutePath()));
         formatter.setStrict(true);
-        TestHelper.runFeatureWithFormatter(feature, stepsToResult, Collections.<SimpleEntry<String, Result>>emptyList(), stepDuration, formatter, formatter);
+        TestHelper.runFeatureWithFormatter(feature, stepsToResult, Collections.<SimpleEntry<String, Result>>emptyList(), stepDuration, formatter);
         return new Scanner(new FileInputStream(tempFile), "UTF-8").useDelimiter("\\A").next();
     }
 

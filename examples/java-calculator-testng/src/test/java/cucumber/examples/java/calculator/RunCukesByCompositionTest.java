@@ -1,22 +1,40 @@
 package cucumber.examples.java.calculator;
 
 import cucumber.api.CucumberOptions;
+import cucumber.api.testng.CucumberFeatureWrapper;
+import cucumber.api.testng.PickleEventWrapper;
 import cucumber.api.testng.TestNGCucumberRunner;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 /**
  * An example of using TestNG when the test class does not inherit from 
- * AbstractTestNGCucumberTests.
+ * AbstractTestNGCucumberTests but still executes each scenario as a separate
+ * TestNG test.
  */
-@CucumberOptions(plugin = "json:target/cucumber-report-composite.json")
+@CucumberOptions(strict = true, format = "json:target/cucumber-report-feature-composite.json")
 public class RunCukesByCompositionTest extends RunCukesByCompositionBase {
+    private TestNGCucumberRunner testNGCucumberRunner;
 
-    /**
-     * Create one test method that will be invoked by TestNG and invoke the 
-     * Cucumber runner within that method.
-     */
-    @Test(groups = "examples-testng", description = "Example of using TestNGCucumberRunner to invoke Cucumber")
-    public void runCukes() {
-        new TestNGCucumberRunner(getClass()).runCukes();
+    @BeforeClass(alwaysRun = true)
+    public void setUpClass() throws Exception {
+        testNGCucumberRunner = new TestNGCucumberRunner(this.getClass());
+    }
+
+    @Test(groups = "cucumber", description = "Runs Cucumber Feature", dataProvider = "scenarios")
+    public void scenario(PickleEventWrapper pickleEvent, CucumberFeatureWrapper cucumberFeature) throws Throwable {
+        testNGCucumberRunner.runScenario(pickleEvent.getPickleEvent());
+    }
+
+    @DataProvider
+    public Object[][] scenarios() {
+        return testNGCucumberRunner.provideScenarios();
+    }
+
+    @AfterClass(alwaysRun = true)
+    public void tearDownClass() throws Exception {
+        testNGCucumberRunner.finish();
     }
 }

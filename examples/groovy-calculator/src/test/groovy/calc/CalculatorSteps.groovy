@@ -37,7 +37,7 @@ Before("@notused") {
 
 // Register another that also gets run before each scenario tagged with
 // (@notused or @important) and @alsonotused.
-Before("@notused,@important", "@alsonotused") {
+Before("(@notused or @important) and @alsonotused") {
     throw new RuntimeException("Never happens")
 }
 

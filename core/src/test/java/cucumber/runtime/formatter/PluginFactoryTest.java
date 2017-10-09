@@ -1,9 +1,13 @@
 package cucumber.runtime.formatter;
 
+import cucumber.api.Result;
+import cucumber.api.TestStep;
+import cucumber.api.event.TestStepFinished;
+import cucumber.runner.EventBus;
+import cucumber.runner.TimeServiceStub;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Utils;
 import cucumber.runtime.io.UTF8OutputStreamWriter;
-import gherkin.formatter.model.Result;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -21,6 +25,7 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
 
 public class PluginFactoryTest {
     private PluginFactory fc = new PluginFactory();
@@ -56,13 +61,13 @@ public class PluginFactoryTest {
     @Test
     public void instantiates_pretty_plugin_with_file_arg() throws IOException {
         Object plugin = fc.create("pretty:" + Utils.toURL(TempDir.createTempFile().getAbsolutePath()));
-        assertEquals(CucumberPrettyFormatter.class, plugin.getClass());
+        assertEquals(PrettyFormatter.class, plugin.getClass());
     }
 
     @Test
     public void instantiates_pretty_plugin_without_file_arg() {
         Object plugin = fc.create("pretty");
-        assertEquals(CucumberPrettyFormatter.class, plugin.getClass());
+        assertEquals(PrettyFormatter.class, plugin.getClass());
     }
 
     @Test
@@ -89,8 +94,11 @@ public class PluginFactoryTest {
             fc = new PluginFactory();
 
             ProgressFormatter plugin = (ProgressFormatter) fc.create("progress");
-
-            plugin.result(new Result("passed", null, null));
+            EventBus bus = new EventBus(new TimeServiceStub(0));
+            plugin.setEventPublisher(bus);
+            Result result = new Result(Result.Type.PASSED, null, null);
+            TestStepFinished event = new TestStepFinished(bus.getTime(), mock(TestStep.class), result);
+            bus.send(event);
 
             assertThat(mockSystemOut.toString(), is(not("")));
         } finally {

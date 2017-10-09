@@ -1,84 +1,178 @@
 package cucumber.runtime;
 
-import cucumber.runtime.snippets.FunctionNameGenerator;
-import gherkin.I18n;
-import gherkin.formatter.model.Step;
+import cucumber.api.event.EventHandler;
+import cucumber.api.event.EventListener;
+import cucumber.api.event.EventPublisher;
+import cucumber.api.event.SnippetsSuggestedEvent;
+import cucumber.api.event.TestSourceRead;
+import gherkin.AstBuilder;
+import gherkin.GherkinDialect;
+import gherkin.GherkinDialectProvider;
+import gherkin.IGherkinDialectProvider;
+import gherkin.Parser;
+import gherkin.ParserException;
+import gherkin.TokenMatcher;
+import gherkin.ast.Background;
+import gherkin.ast.GherkinDocument;
+import gherkin.ast.ScenarioDefinition;
+import gherkin.ast.Step;
+import gherkin.pickles.PickleLocation;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import static java.util.Arrays.asList;
+public class UndefinedStepsTracker implements EventListener {
+    private final List<String> snippets = new ArrayList<String>();
+    private final IGherkinDialectProvider dialectProvider = new GherkinDialectProvider();
+    private final Map<String, String> pathToSourceMap = new HashMap<String, String>();
+    private final Map<String, FeatureStepMap> pathToStepMap = new HashMap<String, FeatureStepMap>();
+    private boolean hasUndefinedSteps = false;
 
-public class UndefinedStepsTracker {
-    private final List<Step> undefinedSteps = new ArrayList<Step>();
-
-    private String lastGivenWhenThenStepKeyword;
-
-    public void reset() {
-        lastGivenWhenThenStepKeyword = null;
-    }
-
-    /**
-     * @param backends              what backends we want snippets for
-     * @param functionNameGenerator responsible for generating method name
-     * @return a list of code snippets that the developer can use to implement undefined steps.
-     *         This should be displayed after a run.
-     */
-    public List<String> getSnippets(Iterable<? extends Backend> backends, FunctionNameGenerator functionNameGenerator) {
-        // TODO: Convert "And" and "But" to the Given/When/Then keyword above in the Gherkin source.
-        List<String> snippets = new ArrayList<String>();
-        for (Step step : undefinedSteps) {
-            for (Backend backend : backends) {
-                String snippet = backend.getSnippet(step, functionNameGenerator);
-                if (snippet == null) {
-                    throw new NullPointerException("null snippet");
-                }
-                if (!snippets.contains(snippet)) {
-                    snippets.add(snippet);
-                }
-            }
+    private EventHandler<TestSourceRead> testSourceReadHandler = new EventHandler<TestSourceRead>() {
+        @Override
+        public void receive(TestSourceRead event) {
+            pathToSourceMap.put(event.uri, event.source);
         }
-        return snippets;
-    }
-
-    public void storeStepKeyword(Step step, I18n i18n) {
-        String keyword = step.getKeyword();
-        if (isGivenWhenThenKeyword(keyword, i18n)) {
-            lastGivenWhenThenStepKeyword = keyword;
+    };
+    private EventHandler<SnippetsSuggestedEvent> snippetsSuggestedHandler = new EventHandler<SnippetsSuggestedEvent>() {
+        @Override
+        public void receive(SnippetsSuggestedEvent event) {
+            handleSnippetsSuggested(event.uri, event.stepLocations, event.snippets);
         }
-        if (lastGivenWhenThenStepKeyword == null) {
-            lastGivenWhenThenStepKeyword = keyword;
-        }
-    }
+    };
 
-    public void addUndefinedStep(Step step, I18n i18n) {
-        undefinedSteps.add(givenWhenThenStep(step, i18n));
-    }
-
-    private boolean isGivenWhenThenKeyword(String keyword, I18n i18n) {
-        for (String gwts : asList("given", "when", "then")) {
-            List<String> keywords = i18n.keywords(gwts);
-            if (keywords.contains(keyword) && !"* ".equals(keyword)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private Step givenWhenThenStep(Step step, I18n i18n) {
-        if (isGivenWhenThenKeyword(step.getKeyword(), i18n)) {
-            return step;
-        } else {
-            if (lastGivenWhenThenStepKeyword == null) {
-                List<String> givenKeywords = new ArrayList<String>(i18n.keywords("given"));
-                givenKeywords.remove("* ");
-                lastGivenWhenThenStepKeyword = givenKeywords.get(0);
-            }
-            return new Step(step.getComments(), lastGivenWhenThenStepKeyword, step.getName(), step.getLine(), step.getRows(), step.getDocString());
-        }
+    @Override
+    public void setEventPublisher(EventPublisher publisher) {
+        publisher.registerHandlerFor(TestSourceRead.class, testSourceReadHandler);
+        publisher.registerHandlerFor(SnippetsSuggestedEvent.class, snippetsSuggestedHandler);
     }
 
     public boolean hasUndefinedSteps() {
-        return !undefinedSteps.isEmpty();
+        return hasUndefinedSteps;
+    }
+
+    public List<String> getSnippets() {
+        return snippets;
+    }
+
+    void handleSnippetsSuggested(String uri, List<PickleLocation> stepLocations, List<String> snippets) {
+        hasUndefinedSteps = true;
+        String keyword = givenWhenThenKeyword(uri, stepLocations);
+        for (String rawSnippet : snippets) {
+            String snippet = rawSnippet.replace("**KEYWORD**", keyword);
+            if (!this.snippets.contains(snippet)) {
+                this.snippets.add(snippet);
+            }
+        }
+    }
+
+    private String givenWhenThenKeyword(String uri, List<PickleLocation> stepLocations) {
+        String keyword = null;
+        if (!stepLocations.isEmpty()) {
+            if (pathToSourceMap.containsKey(uri)) {
+                keyword = getKeywordFromSource(uri, stepLocations);
+            }
+        }
+        return keyword != null ? keyword : getFirstGivenKeyword(dialectProvider.getDefaultDialect());
+    }
+
+    private String getKeywordFromSource(String path, List<PickleLocation> stepLocations) {
+        if (!pathToStepMap.containsKey(path)) {
+            createFeatureStepMap(path);
+        }
+        if (!pathToStepMap.containsKey(path)) {
+            return null;
+        }
+        GherkinDialect featureDialect = pathToStepMap.get(path).dialect;
+        List<String> givenThenWhenKeywords = getGivenWhenThenKeywords(featureDialect);
+        Map<Integer, StepNode> stepMap = pathToStepMap.get(path).stepMap;
+        for (PickleLocation stepLocation : stepLocations) {
+            if (!stepMap.containsKey(stepLocation.getLine())) {
+                continue;
+            }
+            for (StepNode stepNode = stepMap.get(stepLocation.getLine()); stepNode != null; stepNode = stepNode.previous) {
+                for (String keyword : givenThenWhenKeywords) {
+                    if (!keyword.equals("* ") && keyword == stepNode.step.getKeyword()) {
+                        return convertToCodeKeyword(keyword);
+                    }
+                }
+            }
+        }
+        return getFirstGivenKeyword(featureDialect);
+    }
+
+    private void createFeatureStepMap(String path) {
+        if (!pathToSourceMap.containsKey(path)) {
+            return;
+        }
+        Parser<GherkinDocument> parser = new Parser<GherkinDocument>(new AstBuilder());
+        TokenMatcher matcher = new TokenMatcher();
+        try {
+            GherkinDocument gherkinDocument = parser.parse(pathToSourceMap.get(path), matcher);
+            Map<Integer, StepNode> stepMap = new HashMap<Integer, StepNode>();
+            StepNode initialPreviousNode = null;
+            for (ScenarioDefinition child : gherkinDocument.getFeature().getChildren()) {
+                StepNode lastStepNode = processScenarioDefinition(stepMap, initialPreviousNode, child);
+                if (child instanceof Background) {
+                    initialPreviousNode = lastStepNode;
+                }
+            }
+            pathToStepMap.put(path, new FeatureStepMap(new GherkinDialectProvider(gherkinDocument.getFeature().getLanguage()).getDefaultDialect(), stepMap));
+        } catch (ParserException e) {
+            // Ignore exceptions
+        }
+    }
+
+    private StepNode processScenarioDefinition(Map<Integer, StepNode> stepMap, StepNode initialPreviousNode, ScenarioDefinition child) {
+        StepNode previousNode = initialPreviousNode;
+        for (Step step : child.getSteps()) {
+            StepNode stepNode = new StepNode(step, previousNode);
+            stepMap.put(step.getLocation().getLine(), stepNode);
+            previousNode = stepNode;
+        }
+        return previousNode;
+    }
+
+    private List<String> getGivenWhenThenKeywords(GherkinDialect dialect) {
+        List<String> keywords = new ArrayList<String>();
+        keywords.addAll(dialect.getGivenKeywords());
+        keywords.addAll(dialect.getWhenKeywords());
+        keywords.addAll(dialect.getThenKeywords());
+        return keywords;
+    }
+
+    private String getFirstGivenKeyword(GherkinDialect i18n) {
+        for (String keyword : i18n.getGivenKeywords()) {
+            if (!keyword.equals("* ")) {
+                return convertToCodeKeyword(keyword);
+            }
+        }
+        return null;
+    }
+
+    private String convertToCodeKeyword(String keyword) {
+        return keyword.replaceAll("[\\s',!]", "");
+    }
+
+    private static final class FeatureStepMap {
+        final GherkinDialect dialect;
+        final Map<Integer, StepNode> stepMap;
+
+        FeatureStepMap(GherkinDialect dialect, Map<Integer, StepNode> stepMap) {
+            this.dialect = dialect;
+            this.stepMap = stepMap;
+        }
+    }
+
+    private static final class StepNode {
+        final Step step;
+        final StepNode previous;
+
+        StepNode(Step step, StepNode previous) {
+            this.step = step;
+            this.previous = previous;
+        }
     }
 }

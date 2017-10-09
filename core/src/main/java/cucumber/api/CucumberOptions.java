@@ -22,7 +22,7 @@ public @interface CucumberOptions {
     boolean strict() default false;
 
     /**
-     * @return the paths to the feature(s)
+     * @return the uris to the feature(s)
      */
     String[] features() default {};
 

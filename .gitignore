@@ -14,7 +14,6 @@ target/
 tmp/
 gen-external-apklibs/
 out/
-testng/
 
 # Build & test droppings
 report.js
@@ -35,3 +34,4 @@ ehthumbs.db
 Icon?
 Thumbs.db
 test-json-report.json
+testng/test-output/

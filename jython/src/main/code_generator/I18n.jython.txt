@@ -1,7 +1,7 @@
 <% 
 import java.text.Normalizer
-def keywords = i18n.codeKeywords.collect { kw ->
-  Normalizer.normalize(kw,  Normalizer.Form.NFD).replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
+def keywords = i18n.stepKeywords.findAll { !it.contains('*') && !it.matches("^\\d.*") }.collect { kw ->
+  Normalizer.normalize(kw.replaceAll("[\\s',!]", ""),  Normalizer.Form.NFD).replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
 }.unique()
 %>
 ${keywords.join(" = ")} = I18NKeywordTemplate

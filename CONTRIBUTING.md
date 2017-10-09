@@ -41,15 +41,17 @@ Just load the root `pom.xml`
 
 To hack on Cucumber-JVM you need a JDK, Maven and Git to get the code. You also need to set your IDE/text editor to use:
 
-* UTF-8 file encoding
-* LF (UNIX) line endings
+* UTF-8 file encoding <sup>+</sup>
+* LF (UNIX) line endings <sup>+</sup>
 * No wildcard imports
 * Curly brace on same line as block
-* 4 Space indent (no tabs)
+* 4 Space indent (no tabs) <sup>+</sup>
   * Java
   * XML
-* 2 Space indent (no tabs)
+* 2 Space indent (no tabs) <sup>+</sup>
   * Gherkin
+
+`+` These are set automatically if you use an editor/IDE that supports [EditorConfig](http://editorconfig.org/#download).
 
 Please do *not* add @author tags - this project embraces collective code ownership. If you want to know who wrote some
 code, look in git. When you are done, send a [pull request](http://help.github.com/send-pull-requests/).
@@ -70,6 +72,8 @@ This can be solved by changing the Compiler settings: `Preferences -> Compiler -
 Note that even though development is sometimes easier to do with 1.6, releasing should be done with 1.7.
 
 ## Releasing
+
+Upload privileges to the Sonatype staging repository and owner rights to the cucumber-jvm gem at RubyGems.org are required.
 
 First, make sure everything builds. Including Android.
 
@@ -111,7 +115,7 @@ Replace version numbers in:
 * examples/java-gradle/build.gradle
 * examples/android/android-studio/Cukeulator/app/build.gradle
 * examples/clojure_cukes/project.clj
-* History.md
+* CHANGELOG.md
 
 Make sure you can generate Javadocs for all modules, or else the
 release will fail:
@@ -120,36 +124,29 @@ release will fail:
 mvn javadoc:javadoc
 ```
 
-Run `git commit -am "Release X.Y.Z"`
+Run `git commit -am "Prepare for release X.Y.Z"`
 
-Now release everything:
+Now release everything (replace X.Y.Z below with the next release number):
 
 ```
 mvn release:clean
-mvn --batch-mode -P release-sign-artifacts release:prepare -DautoVersionSubmodules=true -DdevelopmentVersion=1.1.5-SNAPSHOT
+mvn --batch-mode -P release-sign-artifacts release:prepare -DautoVersionSubmodules=true -DdevelopmentVersion=X.Y.Z-SNAPSHOT
 mvn -P release-sign-artifacts release:perform
 ```
 
-Post release the API docs must be generated for each module and manually copied over to a working copy of the [cucumber.github.com](https://github.com/cucumber/cucumber.github.com) which must be a sibling of `cucumber-jvm` (this repo):
+Update the pom.xml file for the examples/android modules (which are not automatically updated by the release process), commit and push.
+
+Post release the API docs must be generated for each module and manually copied over to a working copy of the [api.cucumber.io](https://github.com/cucumber/api.cucumber.io) which must be a sibling of `cucumber-jvm` (this repo):
 
 ```
-./doc/genapi.sh
+./doc/genapi.sh VERSION
 ```
 
-After that's done, commit and push `cucumber.github.com`
+After that's done, commit and push `api.cucumber.io`
 
 Now, update the dependency in example projects:
 
 * https://github.com/cucumber/cucumber-java-skeleton
-
-## Code Coverage
-
-Code coverage is collected mainly to identify code that can be deleted or needs to be tested better.
-To generate a report, run:
-
-```
-COBERTURA_HOME=/some/where ./cobertura.sh
-```
 
 This technique to collect coverage for a multi-module Maven project is based on a
 [blog post](http://thomassundberg.wordpress.com/2012/02/18/test-coverage-in-a-multi-module-maven-project/) by Thomas Sundberg.

@@ -1,3 +1,0 @@
-Feature: Java8
-  Scenario: use the API with Java7 style
-    Given I have 42 cukes in my belly

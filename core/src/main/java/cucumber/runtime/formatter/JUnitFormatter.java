@@ -1,21 +1,23 @@
 package cucumber.runtime.formatter;
 
+import cucumber.api.Result;
+import cucumber.api.TestStep;
+import cucumber.api.event.EventHandler;
+import cucumber.api.event.EventPublisher;
+import cucumber.api.event.TestCaseFinished;
+import cucumber.api.event.TestCaseStarted;
+import cucumber.api.event.TestRunFinished;
+import cucumber.api.event.TestSourceRead;
+import cucumber.api.event.TestStepFinished;
+import cucumber.api.formatter.Formatter;
+import cucumber.api.formatter.StrictAware;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.io.URLOutputStream;
 import cucumber.runtime.io.UTF8OutputStreamWriter;
-import gherkin.formatter.Formatter;
-import gherkin.formatter.Reporter;
-import gherkin.formatter.model.Background;
-import gherkin.formatter.model.Examples;
-import gherkin.formatter.model.Feature;
-import gherkin.formatter.model.Match;
-import gherkin.formatter.model.Result;
-import gherkin.formatter.model.Scenario;
-import gherkin.formatter.model.ScenarioOutline;
-import gherkin.formatter.model.Step;
+import gherkin.GherkinDialect;
+import gherkin.GherkinDialectProvider;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -26,7 +28,10 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+
+import java.io.Closeable;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -37,7 +42,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-class JUnitFormatter implements Formatter, Reporter, StrictAware {
+class JUnitFormatter implements Formatter, StrictAware {
     private final Writer out;
     private final Document doc;
     private final Element rootElement;
@@ -45,9 +50,43 @@ class JUnitFormatter implements Formatter, Reporter, StrictAware {
     private TestCase testCase;
     private Element root;
 
+    private EventHandler<TestSourceRead> sourceReadHandler= new EventHandler<TestSourceRead>() {
+        @Override
+        public void receive(TestSourceRead event) {
+            handleTestSourceRead(event);
+        }
+    };
+    private EventHandler<TestCaseStarted> caseStartedHandler= new EventHandler<TestCaseStarted>() {
+        @Override
+        public void receive(TestCaseStarted event) {
+            handleTestCaseStarted(event);
+        }
+    };
+    private EventHandler<TestStepFinished> stepFinishedHandler = new EventHandler<TestStepFinished>() {
+        @Override
+        public void receive(TestStepFinished event) {
+            handleTestStepFinished(event);
+        }
+    };
+    private EventHandler<TestCaseFinished> caseFinishedHandler = new EventHandler<TestCaseFinished>() {
+        @Override
+        public void receive(TestCaseFinished event) {
+            handleTestCaseFinished(event);
+        }
+    };
+    private EventHandler<TestRunFinished> runFinishedHandler = new EventHandler<TestRunFinished>() {
+        @Override
+        public void receive(TestRunFinished event) {
+            finishReport();
+        }
+    };
+
     public JUnitFormatter(URL out) throws IOException {
         this.out = new UTF8OutputStreamWriter(new URLOutputStream(out));
-        TestCase.treatSkippedAsFailure = false;
+        TestCase.treatConditionallySkippedAsFailure = false;
+        TestCase.currentFeatureFile = null;
+        TestCase.previousTestCaseName = "";
+        TestCase.exampleNumber = 1;
         try {
             doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
             rootElement = doc.createElement("testsuite");
@@ -58,45 +97,48 @@ class JUnitFormatter implements Formatter, Reporter, StrictAware {
     }
 
     @Override
-    public void feature(Feature feature) {
-        TestCase.feature = feature;
-        TestCase.previousScenarioOutlineName = "";
-        TestCase.exampleNumber = 1;
+    public void setEventPublisher(EventPublisher publisher) {
+        publisher.registerHandlerFor(TestSourceRead.class, sourceReadHandler);
+        publisher.registerHandlerFor(TestCaseStarted.class, caseStartedHandler);
+        publisher.registerHandlerFor(TestCaseFinished.class, caseFinishedHandler);
+        publisher.registerHandlerFor(TestStepFinished.class, stepFinishedHandler);
+        publisher.registerHandlerFor(TestRunFinished.class, runFinishedHandler);
     }
 
-    @Override
-    public void background(Background background) {
-        if (!isCurrentTestCaseCreatedNameless()) {
-            testCase = new TestCase();
-            root = testCase.createElement(doc);
-        }
+    private void handleTestSourceRead(TestSourceRead event) {
+        TestCase.testSources.addTestSourceReadEvent(event.uri, event);
     }
 
-    @Override
-    public void scenario(Scenario scenario) {
-        if (isCurrentTestCaseCreatedNameless()) {
-            testCase.scenario = scenario;
-        } else {
-            testCase = new TestCase(scenario);
-            root = testCase.createElement(doc);
+    private void handleTestCaseStarted(TestCaseStarted event) {
+        if (TestCase.currentFeatureFile == null || !TestCase.currentFeatureFile.equals(event.testCase.getUri())) {
+            TestCase.currentFeatureFile = event.testCase.getUri();
+            TestCase.previousTestCaseName = "";
+            TestCase.exampleNumber = 1;
         }
+        testCase = new TestCase(event.testCase);
+        root = testCase.createElement(doc);
         testCase.writeElement(doc, root);
         rootElement.appendChild(root);
 
         increaseAttributeValue(rootElement, "tests");
     }
 
-    private boolean isCurrentTestCaseCreatedNameless() {
-        return testCase != null && testCase.scenario == null;
+    private void handleTestStepFinished(TestStepFinished event) {
+        if (!event.testStep.isHook()) {
+            testCase.steps.add(event.testStep);
+            testCase.results.add(event.result);
+        }
     }
 
-    @Override
-    public void step(Step step) {
-        if (testCase != null) testCase.steps.add(step);
+    private void handleTestCaseFinished(TestCaseFinished event) {
+        if (testCase.steps.isEmpty()) {
+            testCase.handleEmptyTestCase(doc, root, event.result);
+        } else {
+            testCase.addTestCaseElement(doc, root, event.result);
+        }
     }
 
-    @Override
-    public void done() {
+    private void finishReport() {
         try {
             // set up a transformer
             rootElement.setAttribute("name", JUnitFormatter.class.getName());
@@ -112,20 +154,9 @@ class JUnitFormatter implements Formatter, Reporter, StrictAware {
             StreamResult result = new StreamResult(out);
             DOMSource source = new DOMSource(doc);
             trans.transform(source, result);
+            closeQuietly(out);
         } catch (TransformerException e) {
             throw new CucumberException("Error while transforming.", e);
-        }
-    }
-
-    @Override
-    public void startOfScenarioLifeCycle(Scenario scenario) {
-        // NoOp
-    }
-
-    @Override
-    public void endOfScenarioLifeCycle(Scenario scenario) {
-        if (testCase != null && testCase.steps.isEmpty()) {
-            testCase.handleEmptyTestCase(doc, root);
         }
     }
 
@@ -137,31 +168,6 @@ class JUnitFormatter implements Formatter, Reporter, StrictAware {
         Element skipped = doc.createElement("skipped");
         skipped.setAttribute("message", "No features found");
         dummy.appendChild(skipped);
-    }
-
-    @Override
-    public void result(Result result) {
-        testCase.results.add(result);
-        testCase.updateElement(doc, root);
-    }
-
-    @Override
-    public void before(Match match, Result result) {
-        if (!isCurrentTestCaseCreatedNameless()) {
-            testCase = new TestCase();
-            root = testCase.createElement(doc);
-        }
-        handleHook(result);
-    }
-
-    @Override
-    public void after(Match match, Result result) {
-        handleHook(result);
-    }
-
-    private void handleHook(Result result) {
-        testCase.hookResults.add(result);
-        testCase.updateElement(doc, root);
     }
 
     private String sumTimes(NodeList testCaseNodes) {
@@ -191,150 +197,94 @@ class JUnitFormatter implements Formatter, Reporter, StrictAware {
     }
 
     @Override
-    public void scenarioOutline(ScenarioOutline scenarioOutline) {
-        testCase = null;
-    }
-
-    @Override
-    public void examples(Examples examples) {
-    }
-
-    @Override
-    public void match(Match match) {
-    }
-
-    @Override
-    public void embedding(String mimeType, byte[] data) {
-    }
-
-    @Override
-    public void write(String text) {
-    }
-
-    @Override
-    public void uri(String uri) {
-    }
-
-    @Override
-    public void close() {
-    }
-
-    @Override
-    public void eof() {
-    }
-
-    @Override
-    public void syntaxError(String state, String event, List<String> legalEvents, String uri, Integer line) {
-    }
-
-    @Override
     public void setStrict(boolean strict) {
-        TestCase.treatSkippedAsFailure = strict;
+        TestCase.treatConditionallySkippedAsFailure = strict;
     }
 
     private static class TestCase {
         private static final DecimalFormat NUMBER_FORMAT = (DecimalFormat) NumberFormat.getNumberInstance(Locale.US);
+        private static final TestSourcesModel testSources = new TestSourcesModel();
 
         static {
             NUMBER_FORMAT.applyPattern("0.######");
         }
 
-        private TestCase(Scenario scenario) {
-            this.scenario = scenario;
+        private TestCase(cucumber.api.TestCase testCase) {
+            this.testCase = testCase;
         }
 
-        private TestCase() {
-        }
-
-        Scenario scenario;
-        static Feature feature;
-        static String previousScenarioOutlineName;
+        static String currentFeatureFile;
+        static String previousTestCaseName;
         static int exampleNumber;
-        static boolean treatSkippedAsFailure = false;
-        final List<Step> steps = new ArrayList<Step>();
+        static boolean treatConditionallySkippedAsFailure = false;
+        final List<TestStep> steps = new ArrayList<TestStep>();
         final List<Result> results = new ArrayList<Result>();
-        final List<Result> hookResults = new ArrayList<Result>();
+        private final cucumber.api.TestCase testCase;
 
         private Element createElement(Document doc) {
             return doc.createElement("testcase");
         }
 
         private void writeElement(Document doc, Element tc) {
-            tc.setAttribute("classname", feature.getName());
-            tc.setAttribute("name", calculateElementName(scenario));
+            tc.setAttribute("classname", testSources.getFeatureName(currentFeatureFile));
+            tc.setAttribute("name", calculateElementName(testCase));
         }
 
-        private String calculateElementName(Scenario scenario) {
-            String scenarioName = scenario.getName();
-            if (scenario.getKeyword().equals("Scenario Outline") && scenarioName.equals(previousScenarioOutlineName)) {
-                return scenarioName + (includesBlank(scenarioName) ? " " : "_") + ++exampleNumber;
+        private String calculateElementName(cucumber.api.TestCase testCase) {
+            String testCaseName = testCase.getName();
+            if (testCaseName.equals(previousTestCaseName)) {
+                return testCaseName + (includesBlank(testCaseName) ? " " : "_") + ++exampleNumber;
             } else {
-                previousScenarioOutlineName = scenario.getKeyword().equals("Scenario Outline") ? scenarioName : "";
+                previousTestCaseName = testCase.getName();
                 exampleNumber = 1;
-                return scenarioName;
+                return testCaseName;
             }
         }
 
-        private boolean includesBlank(String scenarioName) {
-            return scenarioName.indexOf(' ') != -1;
+        private boolean includesBlank(String testCaseName) {
+            return testCaseName.indexOf(' ') != -1;
         }
 
-        public void updateElement(Document doc, Element tc) {
-            tc.setAttribute("time", calculateTotalDurationString());
+        public void addTestCaseElement(Document doc, Element tc, Result result) {
+            tc.setAttribute("time", calculateTotalDurationString(result));
 
             StringBuilder sb = new StringBuilder();
             addStepAndResultListing(sb);
-            Result skipped = null, failed = null;
-            for (Result result : results) {
-                if ("failed".equals(result.getStatus())) failed = result;
-                if ("undefined".equals(result.getStatus()) || "pending".equals(result.getStatus())) skipped = result;
-            }
-            for (Result result : hookResults) {
-                if (failed == null && "failed".equals(result.getStatus())) failed = result;
-                if (skipped == null && "pending".equals(result.getStatus())) skipped = result;
-            }
             Element child;
-            if (failed != null) {
-                addStackTrace(sb, failed);
-                child = createElementWithMessage(doc, sb, "failure", failed.getErrorMessage());
-            } else if (skipped != null) {
-                if (treatSkippedAsFailure) {
+            if (result.is(Result.Type.FAILED)) {
+                addStackTrace(sb, result);
+                child = createElementWithMessage(doc, sb, "failure", result.getErrorMessage());
+            } else if (result.is(Result.Type.AMBIGUOUS)) {
+                addStackTrace(sb, result);
+                child = createElementWithMessage(doc, sb, "failure", result.getErrorMessage());
+            } else if (result.is(Result.Type.PENDING) || result.is(Result.Type.UNDEFINED)) {
+                if (treatConditionallySkippedAsFailure) {
                     child = createElementWithMessage(doc, sb, "failure", "The scenario has pending or undefined step(s)");
                 }
                 else {
                     child = createElement(doc, sb, "skipped");
                 }
+            } else if (result.is(Result.Type.SKIPPED) && result.getError() != null) {
+                addStackTrace(sb, result);
+                child = createElementWithMessage(doc, sb, "skipped", result.getErrorMessage());
             } else {
                 child = createElement(doc, sb, "system-out");
             }
 
-            Node existingChild = tc.getFirstChild();
-            if (existingChild == null) {
-                tc.appendChild(child);
-            } else {
-                tc.replaceChild(child, existingChild);
-            }
+            tc.appendChild(child);
         }
 
-        public void handleEmptyTestCase(Document doc, Element tc) {
-            tc.setAttribute("time", calculateTotalDurationString());
+        public void handleEmptyTestCase(Document doc, Element tc, Result result) {
+            tc.setAttribute("time", calculateTotalDurationString(result));
 
-            String resultType = treatSkippedAsFailure ? "failure" : "skipped";
+            String resultType = treatConditionallySkippedAsFailure ? "failure" : "skipped";
             Element child = createElementWithMessage(doc, new StringBuilder(), resultType, "The scenario has no steps");
 
             tc.appendChild(child);
         }
 
-        private String calculateTotalDurationString() {
-            long totalDurationNanos = 0;
-            for (Result r : results) {
-                totalDurationNanos += r.getDuration() == null ? 0 : r.getDuration();
-            }
-            for (Result r : hookResults) {
-                totalDurationNanos += r.getDuration() == null ? 0 : r.getDuration();
-            }
-            double totalDurationSeconds = ((double) totalDurationNanos) / 1000000000;
-            return NUMBER_FORMAT.format(totalDurationSeconds);
+        private String calculateTotalDurationString(Result result) {
+            return NUMBER_FORMAT.format(((double) result.getDuration()) / 1000000000);
         }
 
         private void addStepAndResultListing(StringBuilder sb) {
@@ -342,16 +292,19 @@ class JUnitFormatter implements Formatter, Reporter, StrictAware {
                 int length = sb.length();
                 String resultStatus = "not executed";
                 if (i < results.size()) {
-                    resultStatus = results.get(i).getStatus();
+                    resultStatus = results.get(i).getStatus().lowerCaseName();
                 }
-                sb.append(steps.get(i).getKeyword());
-                sb.append(steps.get(i).getName());
+                sb.append(getKeywordFromSource(steps.get(i).getStepLine()) + steps.get(i).getStepText());
                 do {
                   sb.append(".");
                 } while (sb.length() - length < 76);
                 sb.append(resultStatus);
                 sb.append("\n");
             }
+        }
+
+        private String getKeywordFromSource(int stepLine) {
+            return testSources.getKeywordFromSource(currentFeatureFile, stepLine);
         }
 
         private void addStackTrace(StringBuilder sb, Result failed) {
@@ -369,10 +322,20 @@ class JUnitFormatter implements Formatter, Reporter, StrictAware {
 
         private Element createElement(Document doc, StringBuilder sb, String elementType) {
             Element child = doc.createElement(elementType);
-            child.appendChild(doc.createCDATASection(sb.toString()));
+            // the createCDATASection method seems to convert "\n" to "\r\n" on Windows, in case
+            // data originally contains "\r\n" line separators the result becomes "\r\r\n", which
+            // are displayed as double line breaks.
+            child.appendChild(doc.createCDATASection(sb.toString().replace(System.lineSeparator(), "\n")));
             return child;
         }
 
     }
 
+    private static void closeQuietly(Closeable out) {
+        try {
+            out.close();
+        } catch (IOException ignored) {
+            // go gentle into that good night
+        }
+    }
 }

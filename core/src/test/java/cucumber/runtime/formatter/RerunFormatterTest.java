@@ -1,8 +1,8 @@
 package cucumber.runtime.formatter;
 
+import cucumber.api.Result;
 import cucumber.runtime.TestHelper;
 import cucumber.runtime.model.CucumberFeature;
-import gherkin.formatter.model.Result;
 import org.junit.Test;
 
 import java.util.AbstractMap.SimpleEntry;
@@ -55,7 +55,7 @@ public class RerunFormatterTest {
 
         String formatterOutput = runFeatureWithRerunFormatter(feature, stepsToResult, strict(true));
 
-        assertEquals("path/test.feature:2:4:6", formatterOutput);
+        assertEquals("path/test.feature:2:4:6\n", formatterOutput);
     }
 
     @Test
@@ -73,7 +73,7 @@ public class RerunFormatterTest {
 
         String formatterOutput = runFeatureWithRerunFormatter(feature, stepsToResult);
 
-        assertEquals("path/test.feature:2", formatterOutput);
+        assertEquals("path/test.feature:2\n", formatterOutput);
     }
 
     @Test
@@ -92,7 +92,7 @@ public class RerunFormatterTest {
 
         String formatterOutput = runFeatureWithRerunFormatter(feature, stepsToResult);
 
-        assertEquals("path/test.feature:4", formatterOutput);
+        assertEquals("path/test.feature:4\n", formatterOutput);
     }
 
     @Test
@@ -113,7 +113,7 @@ public class RerunFormatterTest {
 
         String formatterOutput = runFeatureWithRerunFormatter(feature, stepsToResult);
 
-        assertEquals("path/test.feature:8", formatterOutput);
+        assertEquals("path/test.feature:8\n", formatterOutput);
     }
 
     @Test
@@ -133,7 +133,7 @@ public class RerunFormatterTest {
 
         String formatterOutput = runFeatureWithRerunFormatter(feature, stepsToResult, hooks);
 
-        assertEquals("path/test.feature:2", formatterOutput);
+        assertEquals("path/test.feature:2\n", formatterOutput);
     }
 
     @Test
@@ -153,7 +153,7 @@ public class RerunFormatterTest {
 
         String formatterOutput = runFeatureWithRerunFormatter(feature, stepsToResult, hooks);
 
-        assertEquals("path/test.feature:2", formatterOutput);
+        assertEquals("path/test.feature:2\n", formatterOutput);
     }
 
     @Test
@@ -174,7 +174,7 @@ public class RerunFormatterTest {
 
         String formatterOutput = runFeatureWithRerunFormatter(feature, stepsToResult);
 
-        assertEquals("path/test.feature:2:5", formatterOutput);
+        assertEquals("path/test.feature:2:5\n", formatterOutput);
     }
 
     @Test
@@ -197,7 +197,7 @@ public class RerunFormatterTest {
 
         String formatterOutput = runFeaturesWithRerunFormatter(Arrays.asList(feature1, feature2), stepsToResult);
 
-        assertEquals("path/second.feature:2 path/first.feature:2", formatterOutput);
+        assertEquals("path/second.feature:2\npath/first.feature:2\n", formatterOutput);
     }
 
     private String runFeatureWithRerunFormatter(final CucumberFeature feature, final Map<String, Result> stepsToResult)
@@ -233,7 +233,7 @@ public class RerunFormatterTest {
             rerunFormatter.setStrict(isStrict);
         }
         final long stepHookDuration = 0;
-        TestHelper.runFeaturesWithFormatter(features, stepsToResult, hooks, stepHookDuration, rerunFormatter, rerunFormatter);
+        TestHelper.runFeaturesWithFormatter(features, stepsToResult, hooks, stepHookDuration, rerunFormatter);
         return buffer.toString();
     }
 

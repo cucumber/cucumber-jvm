@@ -2,9 +2,8 @@ package cucumber.runtime.rhino;
 
 import cucumber.runtime.ParameterInfo;
 import cucumber.runtime.StepDefinition;
-import gherkin.I18n;
-import gherkin.formatter.Argument;
-import gherkin.formatter.model.Step;
+import cucumber.runtime.Argument;
+import gherkin.pickles.PickleStep;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.JavaScriptException;
 import org.mozilla.javascript.NativeFunction;
@@ -35,8 +34,8 @@ public class RhinoStepDefinition implements StepDefinition {
         this.argumentsFromFunc = argumentsFromFunc;
     }
 
-    public List<Argument> matchedArguments(Step step) {
-        NativeJavaObject args = (NativeJavaObject) argumentsFromFunc.call(cx, scope, jsStepDefinition, new Object[]{step.getName(), this});
+    public List<Argument> matchedArguments(PickleStep step) {
+        NativeJavaObject args = (NativeJavaObject) argumentsFromFunc.call(cx, scope, jsStepDefinition, new Object[]{step.getText(), this});
         return args == null ? null : unwrap(args);
     }
 
@@ -59,7 +58,7 @@ public class RhinoStepDefinition implements StepDefinition {
         return new ParameterInfo(argumentType, null, null, null);
     }
 
-    public void execute(I18n i18n, Object[] args) throws Throwable {
+    public void execute(String language, Object[] args) throws Throwable {
         try {
             bodyFunc.call(cx, scope, scope, args);
         } catch (JavaScriptException e) {

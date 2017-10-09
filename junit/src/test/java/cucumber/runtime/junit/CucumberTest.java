@@ -17,7 +17,9 @@ import java.util.List;
 import static java.util.Collections.emptyList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
+import static org.hamcrest.CoreMatchers.startsWith;
 
 public class CucumberTest {
 
@@ -40,14 +42,14 @@ public class CucumberTest {
     @Test
     public void finds_features_based_on_implicit_package() throws IOException, InitializationError {
         Cucumber cucumber = new Cucumber(ImplicitFeatureAndGluePath.class);
-        assertEquals(3, cucumber.getChildren().size());
+        assertEquals(2, cucumber.getChildren().size());
         assertEquals("Feature: FA", cucumber.getChildren().get(0).getName());
     }
 
     @Test
     public void finds_features_based_on_explicit_root_package() throws IOException, InitializationError {
         Cucumber cucumber = new Cucumber(ExplicitFeaturePath.class);
-        assertEquals(3, cucumber.getChildren().size());
+        assertEquals(2, cucumber.getChildren().size());
         assertEquals("Feature: FA", cucumber.getChildren().get(0).getName());
     }
 
@@ -57,10 +59,10 @@ public class CucumberTest {
             new Cucumber(LexerErrorFeature.class);
             fail("Expecting error");
         } catch (CucumberException e) {
-            assertEquals("Error parsing feature file cucumber/runtime/error/lexer_error.feature", e.getMessage());
+            assertThat(e.getMessage(), startsWith("gherkin.ParserException$CompositeParserException: Parser errors:"));
         }
     }
-    
+
     @Test
     public void testThatFileIsNotCreatedOnParsingError() throws Exception {
         try {
@@ -121,7 +123,7 @@ public class CucumberTest {
     public class LexerErrorFeature {
 
     }
-    
+
     @CucumberOptions(features = {"classpath:cucumber/runtime/error/lexer_error.feature"}, plugin = {"json:lexor_error_feature.json"})
     public class FormatterWithLexerErrorFeature {
 

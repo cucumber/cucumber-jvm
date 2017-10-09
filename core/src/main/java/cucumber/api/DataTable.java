@@ -3,13 +3,13 @@ package cucumber.api;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.ParameterInfo;
 import cucumber.runtime.table.DiffableRow;
-import cucumber.runtime.table.TableConverter;
 import cucumber.runtime.table.TableDiffException;
 import cucumber.runtime.table.TableDiffer;
+import cucumber.runtime.table.TablePrinter;
 import cucumber.runtime.xstream.LocalizedXStreams;
-import gherkin.formatter.PrettyFormatter;
-import gherkin.formatter.model.DataTableRow;
-import gherkin.formatter.model.Row;
+import gherkin.pickles.PickleCell;
+import gherkin.pickles.PickleRow;
+import gherkin.pickles.PickleTable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,7 +24,7 @@ import java.util.Map;
 public class DataTable {
 
     private final List<List<String>> raw;
-    private final List<DataTableRow> gherkinRows;
+    private final PickleTable pickleTable;
     private final TableConverter tableConverter;
 
     public static DataTable create(List<?> raw) {
@@ -41,24 +41,26 @@ public class DataTable {
 
     private static DataTable create(List<?> raw, Locale locale, String format, String... columnNames) {
         ParameterInfo parameterInfo = new ParameterInfo(null, format, null, null);
-        TableConverter tableConverter = new TableConverter(new LocalizedXStreams(Thread.currentThread().getContextClassLoader()).get(locale), parameterInfo);
+        TableConverter tableConverter = new cucumber.runtime.table.TableConverter(new LocalizedXStreams(Thread.currentThread().getContextClassLoader()).get(locale), parameterInfo);
         return tableConverter.toTable(raw, columnNames);
     }
 
     /**
      * Creates a new DataTable. This constructor should not be called by Cucumber users - it's used internally only.
      *
-     * @param gherkinRows    the underlying rows.
+     * @param pickleTable    the underlying table.
      * @param tableConverter how to convert the rows.
      */
-    public DataTable(List<DataTableRow> gherkinRows, TableConverter tableConverter) {
-        this.gherkinRows = gherkinRows;
+    public DataTable(PickleTable pickleTable, TableConverter tableConverter) {
+        this.pickleTable = pickleTable;
         this.tableConverter = tableConverter;
-        int columns = gherkinRows.isEmpty() ? 0 : gherkinRows.get(0).getCells().size();
+        int columns = pickleTable.getRows().isEmpty() ? 0 : pickleTable.getRows().get(0).getCells().size();
         List<List<String>> raw = new ArrayList<List<String>>();
-        for (Row row : gherkinRows) {
+        for (PickleRow row : pickleTable.getRows()) {
             List<String> list = new ArrayList<String>();
-            list.addAll(row.getCells());
+            for (PickleCell cell : row.getCells()) {
+                list.add(cell.getValue());
+            }
             if (columns != row.getCells().size()) {
                 throw new CucumberException(String.format("Table is unbalanced: expected %s column(s) but found %s.", columns, row.getCells().size()));
             }
@@ -67,8 +69,8 @@ public class DataTable {
         this.raw = Collections.unmodifiableList(raw);
     }
 
-    private DataTable(List<DataTableRow> gherkinRows, List<List<String>> raw, TableConverter tableConverter) {
-        this.gherkinRows = gherkinRows;
+    private DataTable(PickleTable pickleTable, List<List<String>> raw, TableConverter tableConverter) {
+        this.pickleTable = pickleTable;
         this.tableConverter = tableConverter;
         this.raw = Collections.unmodifiableList(raw);
     }
@@ -206,16 +208,15 @@ public class DataTable {
      *
      * @return a list of raw rows.
      */
-    public List<DataTableRow> getGherkinRows() {
-        return Collections.unmodifiableList(gherkinRows);
+    public List<PickleRow> getPickleRows() {
+        return Collections.unmodifiableList(pickleTable.getRows());
     }
 
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder();
-        PrettyFormatter pf = new PrettyFormatter(result, true, false);
-        pf.table(getGherkinRows());
-        pf.eof();
+        TablePrinter printer = createTablePrinter();
+        printer.printTable(raw, result);
         return result.toString();
     }
 
@@ -223,7 +224,7 @@ public class DataTable {
         List<DiffableRow> result = new ArrayList<DiffableRow>();
         List<List<String>> convertedRows = raw();
         for (int i = 0; i < convertedRows.size(); i++) {
-            result.add(new DiffableRow(getGherkinRows().get(i), convertedRows.get(i)));
+            result.add(new DiffableRow(getPickleRows().get(i), convertedRows.get(i)));
         }
         return result;
     }
@@ -234,9 +235,9 @@ public class DataTable {
 
     public DataTable transpose() {
         List<List<String>> transposed = new ArrayList<List<String>>();
-        for (int i = 0; i < gherkinRows.size(); i++) {
-            Row gherkinRow = gherkinRows.get(i);
-            for (int j = 0; j < gherkinRow.getCells().size(); j++) {
+        for (int i = 0; i < pickleTable.getRows().size(); i++) {
+            PickleRow pickleRow = pickleTable.getRows().get(i);
+            for (int j = 0; j < pickleRow.getCells().size(); j++) {
                 List<String> row = null;
                 if (j < transposed.size()) {
                     row = transposed.get(j);
@@ -245,26 +246,26 @@ public class DataTable {
                     row = new ArrayList<String>();
                     transposed.add(row);
                 }
-                row.add(gherkinRow.getCells().get(j));
+                row.add(pickleRow.getCells().get(j).getValue());
             }
         }
-        return new DataTable(this.gherkinRows, transposed, this.tableConverter);
+        return new DataTable(this.pickleTable, transposed, this.tableConverter);
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof DataTable)) return false;
-
         DataTable dataTable = (DataTable) o;
-
-        if (!raw.equals(dataTable.raw)) return false;
-
-        return true;
+        return raw.equals(dataTable.raw);
     }
 
     @Override
     public int hashCode() {
         return raw.hashCode();
+    }
+
+    protected TablePrinter createTablePrinter() {
+        return new TablePrinter();
     }
 }

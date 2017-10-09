@@ -1,6 +1,5 @@
 package cucumber.runtime;
 
-import gherkin.formatter.Argument;
 import org.junit.Test;
 
 import java.io.UnsupportedEncodingException;
@@ -58,6 +57,13 @@ public class JdkPatternArgumentMatcherTest {
         assertEquals(1, optionalArguments.size());
         assertNull(matcher.argumentsFrom("I wait for some time").get(0).getOffset());
         assertNull(matcher.argumentsFrom("I wait for some time").get(0).getVal());
+    }
+
+    @Test
+    public void canHandleNestedCaptureGroups() throws UnsupportedEncodingException {
+        assertVariables("the order is placed( and( not yet)? confirmed)?", "the order is placed and not yet confirmed",
+            " and not yet confirmed", 19,
+            " not yet", 23);
     }
 
     private void assertVariables(String regex, String string, String v1, Integer pos1, String v2, Integer pos2) throws UnsupportedEncodingException {

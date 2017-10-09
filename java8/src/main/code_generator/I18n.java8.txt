@@ -1,28 +1,37 @@
 package cucumber.api.java8;
 
-import cucumber.runtime.java8.ConstantPoolTypeIntrospector;
-import cucumber.runtime.java8.LambdaGlueBase;
 import cucumber.runtime.java.JavaBackend;
+import cucumber.runtime.java8.Java8StepDefinition;
+import cucumber.runtime.java8.LambdaGlueBase;
 
 public interface ${className} extends LambdaGlueBase {
-<% i18n.codeKeywords.each { kw -> %>
-    default void ${java.text.Normalizer.normalize(kw, java.text.Normalizer.Form.NFC)}(final String regexp, final StepdefBody.A0 body) {
-        JavaBackend.INSTANCE.get().addStepDefinition(regexp, 0, body, ConstantPoolTypeIntrospector.INSTANCE);
+<% i18n.stepKeywords.findAll { !it.contains('*') && !it.matches("^\\d.*") }.sort().unique().each { kw -> %>
+    default void ${java.text.Normalizer.normalize(kw.replaceAll("[\\s',!]", ""), java.text.Normalizer.Form.NFC)}(final String regexp, final StepdefBody.A0 body) {
+        JavaBackend.INSTANCE.get().addStepDefinition(
+            new Java8StepDefinition(regexp, 0, StepdefBody.A0.class, body)
+        );
     }
 
-    default void ${java.text.Normalizer.normalize(kw, java.text.Normalizer.Form.NFC)}(final String regexp, final long timeoutMillis, final StepdefBody.A0 body) {
-        JavaBackend.INSTANCE.get().addStepDefinition(regexp, timeoutMillis, body, ConstantPoolTypeIntrospector.INSTANCE);
+    default void ${java.text.Normalizer.normalize(kw.replaceAll("[\\s',!]", ""), java.text.Normalizer.Form.NFC)}(final String regexp, final long timeoutMillis, final StepdefBody.A0 body) {
+        JavaBackend.INSTANCE.get().addStepDefinition(
+            new Java8StepDefinition(regexp, timeoutMillis, StepdefBody.A0.class, body)
+        );
     }
     <% (1..9).each { arity ->
       def ts = (1..arity).collect { n -> "T"+n }
       def genericSignature = ts.join(",") %>
 
-    default <${genericSignature}> void ${java.text.Normalizer.normalize(kw, java.text.Normalizer.Form.NFC)}(final String regexp, final StepdefBody.A${arity}<${genericSignature}> body) {
-        JavaBackend.INSTANCE.get().addStepDefinition(regexp, 0, body, ConstantPoolTypeIntrospector.INSTANCE);
+    default <${genericSignature}> void ${java.text.Normalizer.normalize(kw.replaceAll("[\\s',!]", ""), java.text.Normalizer.Form.NFC)}(final String regexp, final StepdefBody.A${arity}<${genericSignature}> body) {
+        JavaBackend.INSTANCE.get().addStepDefinition(
+            new Java8StepDefinition(regexp, 0, StepdefBody.A${arity}.class, body)
+        );
+
     }
 
-    default <${genericSignature}> void ${java.text.Normalizer.normalize(kw, java.text.Normalizer.Form.NFC)}(final String regexp, final long timeoutMillis, final StepdefBody.A${arity}<${genericSignature}> body) {
-        JavaBackend.INSTANCE.get().addStepDefinition(regexp, timeoutMillis, body, ConstantPoolTypeIntrospector.INSTANCE);
+    default <${genericSignature}> void ${java.text.Normalizer.normalize(kw.replaceAll("[\\s',!]", ""), java.text.Normalizer.Form.NFC)}(final String regexp, final long timeoutMillis, final StepdefBody.A${arity}<${genericSignature}> body) {
+        JavaBackend.INSTANCE.get().addStepDefinition(
+            new Java8StepDefinition(regexp, timeoutMillis, StepdefBody.A${arity}.class, body)
+        );
     }
     <% } %>
 <% } %>

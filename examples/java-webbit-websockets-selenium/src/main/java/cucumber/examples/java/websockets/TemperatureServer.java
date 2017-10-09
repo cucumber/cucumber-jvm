@@ -40,12 +40,14 @@ public class TemperatureServer {
         return (double) Math.round(n * 10) / 10;
     }
 
-    public void start() throws IOException, ExecutionException, InterruptedException {
+    public TemperatureServer start() throws IOException, ExecutionException, InterruptedException {
         webServer.start().get();
+        return this;
     }
 
-    public void stop() throws IOException, ExecutionException, InterruptedException {
+    public TemperatureServer stop() throws IOException, ExecutionException, InterruptedException {
         webServer.stop().get();
+        return this;
     }
 
     public static void main(String[] args) throws IOException, ExecutionException, InterruptedException {
