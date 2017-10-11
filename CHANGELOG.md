@@ -3,7 +3,7 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ## [2.0.2-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v2.0.1...master) (In Git)
 
 ### Added
-
+ * [Core] Optimize MethodScanner ([#1238](https://github.com/cucumber/cucumber-jvm/pull/1236) Łukasz Suski) 
 ### Changed
 
 ### Deprecated
@@ -12,7 +12,7 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 
 ### Fixed
  * [Core] Correct the name of the Json Formatter embeddings node ([#1236](https://github.com/cucumber/cucumber-jvm/pull/1236) Haroon Sheikh)
-
+ * [Spring] Exception is thrown complaining about multiple matching beans ([#1225](https://github.com/cucumber/cucumber-jvm/pull/1225), [#1226](https://github.com/cucumber/cucumber-jvm/pull/1226), M.P. Korstanje)
 
 ## [2.0.1-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v2.0.0...v2.0.1) (2017-09-17)
 
