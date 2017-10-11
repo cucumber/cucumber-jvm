@@ -7,6 +7,7 @@ import java.util.concurrent.TimeoutException;
 
 import static java.lang.Thread.sleep;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -61,6 +62,19 @@ public class TimeoutTest {
         fail();
     }
 
+
+    @Test(expected = TimeoutException.class)
+    public void times_out_busy_wait_if_it_takes_too_long() throws Throwable {
+        final Slow slow = new Slow();
+        Timeout.timeout(new Timeout.Callback<Void>() {
+            @Override
+            public Void call() throws Throwable {
+                slow.busyWait();
+                return null;
+            }
+        }, 1);
+    }
+
     @Test
     public void doesnt_leak_threads() throws Throwable {
 
@@ -88,6 +102,8 @@ public class TimeoutTest {
     }
 
     public static class Slow {
+        int busyCounter = Integer.MIN_VALUE;
+
         public String slow(int millis) throws InterruptedException {
             sleep(millis);
             return String.format("slept %sms", millis);
@@ -101,6 +117,14 @@ public class TimeoutTest {
 
         public void infiniteLatchWait() throws InterruptedException {
             new CountDownLatch(1).await();
+        }
+
+        public int busyWait() throws InterruptedException {
+            while (busyCounter < Integer.MAX_VALUE) {
+                busyCounter += 1;
+            }
+
+            return busyCounter;
         }
     }
 }
