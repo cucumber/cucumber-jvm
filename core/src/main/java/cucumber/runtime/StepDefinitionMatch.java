@@ -19,6 +19,7 @@ import java.util.Locale;
 import static cucumber.util.FixJava.map;
 
 public class StepDefinitionMatch extends Match implements DefinitionMatch {
+
     private final StepDefinition stepDefinition;
     private final transient String featurePath;
     // The official JSON gherkin format doesn't have a step attribute, so we're marking this as transient
@@ -79,7 +80,8 @@ public class StepDefinitionMatch extends Match implements DefinitionMatch {
         if (!step.getArgument().isEmpty()) {
             gherkin.pickles.Argument stepArgument = step.getArgument().get(0);
             if (stepArgument instanceof PickleTable) {
-                result.add(tableArgument((PickleTable) stepArgument, n, xStream));
+                Object tableArgument = tableArgument((PickleTable) stepArgument, n, xStream);
+                result.add(tableArgument);
             } else if (stepArgument instanceof PickleString) {
                 ParameterInfo parameterInfo = getParameterType(n, String.class);
                 Object arg = parameterInfo.convert(((PickleString) stepArgument).getContent(), xStream);

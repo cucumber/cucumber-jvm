@@ -66,6 +66,11 @@ public @interface CucumberOptions {
     SnippetType snippets() default SnippetType.UNDERSCORE;
 
     /**
+     * @return true if verbose mode is enabled (provide additional logging to System.out when running Cucumber)
+     */
+    boolean verbose() default false;
+
+    /**
      * @return the options for the JUnit runner
      */
     String[] junit() default {};

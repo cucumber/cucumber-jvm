@@ -1,5 +1,8 @@
 package cucumber.runtime;
 
+import cucumber.util.log.Logger;
+import cucumber.util.log.LoggerFactory;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.MissingResourceException;
@@ -15,6 +18,7 @@ import java.util.ResourceBundle;
  * </ol>
  */
 public class Env {
+    private static final Logger LOGGER = LoggerFactory.getLogger(Env.class);
     public static final Env INSTANCE = new Env("cucumber");
     private final Map<String, String> map = new HashMap<String, String>();
 
@@ -37,6 +41,7 @@ public class Env {
                 for (String key : bundle.keySet()) {
                     put(key, bundle.getString(key));
                 }
+                LOGGER.info("Using properties {} from bundle {}", bundle.keySet(), bundleName);
             } catch (MissingResourceException ignore) {
             }
         }
@@ -45,6 +50,7 @@ public class Env {
             for (String key : properties.stringPropertyNames()) {
                 put(key, properties.getProperty(key));
             }
+            LOGGER.info("Loading System Properties...");
         }
 
         Map<String, String> env = System.getenv();

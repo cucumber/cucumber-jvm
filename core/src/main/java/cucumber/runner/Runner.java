@@ -16,6 +16,8 @@ import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.StepDefinitionMatch;
 import cucumber.runtime.UndefinedStepDefinitionMatch;
 import cucumber.runtime.UnreportedStepExecutor;
+import cucumber.util.log.Logger;
+import cucumber.util.log.LoggerFactory;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.Argument;
 import gherkin.pickles.PickleLocation;
@@ -31,21 +33,25 @@ import java.util.Collections;
 import java.util.List;
 
 public class Runner implements UnreportedStepExecutor {
+    private static final Logger LOGGER = LoggerFactory.getLogger(Runner.class);
+
     private final Glue glue;
     private final EventBus bus;
     private final Collection<? extends Backend> backends;
     private final RuntimeOptions runtimeOptions;
 
     public Runner(Glue glue, EventBus bus, Collection<? extends Backend> backends, RuntimeOptions runtimeOptions) {
+        LOGGER.info("Starting Runner...");
         this.glue = glue;
         this.bus = bus;
         this.runtimeOptions = runtimeOptions;
         this.backends = backends;
+        LOGGER.info("Number of Backends: {}", backends.size());
         for (Backend backend : backends) {
+            LOGGER.info("Backend: {}", backend.getClass());
             backend.loadGlue(glue, runtimeOptions.getGlue());
             backend.setUnreportedStepExecutor(this);
         }
-
     }
 
     //TODO: Maybe this should go into the cucumber step execution model and it should return the result of that execution!

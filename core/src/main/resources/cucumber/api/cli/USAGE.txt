@@ -24,7 +24,8 @@ Options:
       --snippets [underscore|camelcase]  Naming convention for generated snippets.
                                          Defaults to underscore.
   -v, --version                          Print version.
-  -h, --help                             You're looking at it.
+      --[no-]-verbose                     Run Cucumber with verbose logging; additional
+                                         logging is sent to System.out.
   --i18n LANG                            List keywords for in a particular language
                                          Run with "--i18n help" to see all languages
   --junit,OPTION[,OPTION]*               Pass the OPTION(s) to the JUnit module.
