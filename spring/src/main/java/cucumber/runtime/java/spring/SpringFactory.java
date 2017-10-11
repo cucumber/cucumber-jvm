@@ -1,5 +1,6 @@
 package cucumber.runtime.java.spring;
 
+import static java.util.Arrays.asList;
 import static org.springframework.test.context.FixBootstrapUtils.createBootstrapContext;
 import static org.springframework.test.context.FixBootstrapUtils.resolveTestContextBootstrapper;
 
@@ -14,46 +15,53 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.stereotype.Component;
+import org.springframework.test.context.BootstrapWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.ContextHierarchy;
 import org.springframework.test.context.TestContextManager;
 
 import java.lang.annotation.Annotation;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Stack;
 
 /**
  * Spring based implementation of ObjectFactory.
- * <p/>
- * <p>
- * <ul>
- * <li>It uses TestContextManager to manage the spring context.
- * Configuration via: @{@link ContextConfiguration} or @{@link ContextHierarchy}
- * At least one step definition class needs to have a @ContextConfiguration
- * or @ContextHierarchy annotation. If more that one step definition class has such
- * an annotation, the annotations must be equal on the different step definition
- * classes. If no step definition class with @ContextConfiguration or @ContextHierarchy
- * is found, it will try to load cucumber.xml from the classpath.
- * </li>
- * <li>The step definitions class with @ContextConfiguration or @ContextHierarchy
- * annotation, may also have a @{@link org.springframework.test.context.web.WebAppConfiguration}
- * or @{@link org.springframework.test.annotation.DirtiesContext} annotation.
- * </li>
- * <li>The step definitions are added to the TestContextManagers context and
- * is reloaded for each scenario.</li>
- * <li>Step definitions  should not be annotated with @{@link Component} or
- * other annotations that mark it as eligible for detection by classpath scanning.</li>
- * <li>When a step definition class is annotated by @Component or an annotation that has the @Component stereotype an
- * exception will be thrown</li>
- * </li>
- * </ul>
- * <p/>
  * <p>
  * Application beans are accessible from the step definitions using autowiring
  * (with annotations).
- * </p>
+ * <p>
+ * SpringFactory uses TestContextManager to manage the spring context. The step definitions are added to the
+ * TestContextManagers context and the context is reloaded for each scenario.
+ * <p>
+ * The spring context can be configured by:
+ * <ul>
+ * <li>Annotating one step definition with: @{@link ContextConfiguration},  @{@link ContextHierarchy}
+ * or @{@link BootstrapWith}. This step definition can also be annotated
+ * with @{@link org.springframework.test.context.web.WebAppConfiguration}
+ * or @{@link org.springframework.test.annotation.DirtiesContext} annotation.
+ * <p>
+ * If more that one step definition class has such an annotation, the annotations must be equal on
+ * the different step definition. <b>Deprecation warning:</b> Annotating multiple step definitions is deprecated.
+ * </li>
+ * <li>If no step definition class with @ContextConfiguration or @ContextHierarchy
+ * is found, it will try to load cucumber.xml from the classpath.</li>
+ * </ul>
+ * <p>
+ * Notes:
+ * <ul>
+ * <li>
+ * Step definitions should not be annotated with @{@link Component} or other annotations that mark it as eligible for
+ * detection by classpath scanning. When a step definition class is annotated by @Component or an annotation that has
+ * the @Component stereotype an exception will be thrown
+ * </li>
+ * <li>
+ * If more that one step definition class is used to configure the spring context, the annotations must be equal
+ * on the different step definition. Please note that doing so is deprecated.
+ * </li>
+ * </ul>
  */
 public class SpringFactory implements ObjectFactory {
 
@@ -85,7 +93,7 @@ public class SpringFactory implements ObjectFactory {
 
     private static void checkNoComponentAnnotations(Class<?> type) {
         for (Annotation annotation : type.getAnnotations()) {
-            if (hasComponentStereoType(annotation)) {
+            if (hasComponentAnnotation(annotation)) {
                 throw new CucumberException(String.format("" +
                         "Glue class %1$s was annotated with @%2$s; marking it as a candidate for auto-detection by " +
                         "Spring. Glue classes are detected and registered by Cucumber. Auto-detection of glue classes by " +
@@ -96,14 +104,18 @@ public class SpringFactory implements ObjectFactory {
         }
     }
 
-    private static boolean hasComponentStereoType(Annotation annotation) {
+    private static boolean hasComponentAnnotation(Annotation annotation) {
+        return hasAnnotation(annotation, Collections.<Class<? extends Annotation>>singleton(Component.class));
+    }
+
+    private static boolean hasAnnotation(Annotation annotation, Collection<Class<? extends Annotation>> desired) {
         Set<Class<? extends Annotation>> seen = new HashSet<Class<? extends Annotation>>();
         Stack<Class<? extends Annotation>> toCheck = new Stack<Class<? extends Annotation>>();
         toCheck.add(annotation.annotationType());
 
         while (!toCheck.isEmpty()) {
             Class<? extends Annotation> annotationType = toCheck.pop();
-            if (Component.class.equals(annotationType)) {
+            if (desired.contains(annotationType)) {
                 return true;
             }
 
@@ -240,20 +252,20 @@ public class SpringFactory implements ObjectFactory {
         }
     }
 
-    private boolean dependsOnSpringContext(Class<?> type) {
-        boolean hasStandardAnnotations = annotatedWithSupportedSpringRootTestAnnotations(type);
-
-        if(hasStandardAnnotations) {
-            return true;
+    private static boolean dependsOnSpringContext(Class<?> type) {
+        for (Annotation annotation : type.getAnnotations()) {
+            if(annotatedWithSupportedSpringRootTestAnnotations(annotation)){
+                return true;
+            }
         }
-
-        final Annotation[] annotations = type.getDeclaredAnnotations();
-        return (annotations.length == 1) && annotatedWithSupportedSpringRootTestAnnotations(annotations[0].annotationType());
+        return false;
     }
 
-    private boolean annotatedWithSupportedSpringRootTestAnnotations(Class<?> type) {
-        return type.isAnnotationPresent(ContextConfiguration.class)
-            || type.isAnnotationPresent(ContextHierarchy.class);
+    private static boolean annotatedWithSupportedSpringRootTestAnnotations(Annotation type) {
+        return hasAnnotation(type, asList(
+            ContextConfiguration.class,
+            ContextHierarchy.class,
+            BootstrapWith.class));
     }
 }
 
