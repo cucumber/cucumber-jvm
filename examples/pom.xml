@@ -25,7 +25,6 @@
                 <jdk>1.8</jdk>
             </activation>
             <modules>
-                <module>scala-calculator</module>
                 <module>java-wicket</module>
                 <module>java-webbit-websockets-selenium</module>
             </modules>
