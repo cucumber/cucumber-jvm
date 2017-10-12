@@ -469,7 +469,7 @@ public class JSONFormatterTest {
     }
 
     @Test
-    public void should_handle_write_from_a_hooks() throws Throwable {
+    public void should_handle_write_from_a_hook() throws Throwable {
         CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
                 "Feature: Banana party\n" +
                 "\n" +
@@ -542,7 +542,7 @@ public class JSONFormatterTest {
     }
 
     @Test
-    public void should_handle_embed_from_a_hooks() throws Throwable {
+    public void should_handle_embed_from_a_hook() throws Throwable {
         CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
                 "Feature: Banana party\n" +
                 "\n" +

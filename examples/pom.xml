@@ -13,7 +13,6 @@
 
     <modules>
         <module>spring-txn</module>
-        <module>clojure_cukes</module>
         <module>java-calculator</module>
         <module>java-calculator-testng</module>
         <module>groovy-calculator</module>
