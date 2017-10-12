@@ -36,7 +36,6 @@
         <scala.2.12.version>2.12.2</scala.2.12.version>
         <scala.2.11.version>2.11.11</scala.2.11.version>
         <scala.2.10.version>2.10.6</scala.2.10.version>
-        <gosu.version>1.14.6</gosu.version>
         <jsoup.version>1.10.3</jsoup.version>
         <!-- TestNG 6.11 makes the tests of the testng module to fail -->
         <testng.version>6.10</testng.version>
@@ -562,7 +561,6 @@
                 <jdk>1.8</jdk>
             </activation>
             <modules>
-                <module>gosu</module>
                 <module>java8</module>
                 <module>kotlin-java8</module>
             </modules>
