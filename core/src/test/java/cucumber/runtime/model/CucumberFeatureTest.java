@@ -21,7 +21,7 @@ import static org.mockito.Mockito.when;
 
 public class CucumberFeatureTest {
     @Test
-    public void succeds_if_no_features_are_found() {
+    public void succeeds_if_no_features_are_found() {
         ResourceLoader resourceLoader = mock(ResourceLoader.class);
         when(resourceLoader.resources("does/not/exist", ".feature")).thenReturn(Collections.<Resource>emptyList());
 

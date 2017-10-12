@@ -30,7 +30,7 @@ import static java.util.Collections.singletonList;
  */
 public class Runtime {
 
-    final Stats stats; // package private to be avaiable for tests.
+    final Stats stats; // package private to be available for tests.
     private final UndefinedStepsTracker undefinedStepsTracker = new UndefinedStepsTracker();
 
     private final RuntimeOptions runtimeOptions;

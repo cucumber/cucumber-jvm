@@ -584,7 +584,7 @@ public class JSONFormatterTest {
                 "            \"match\": {\n" +
                 "              \"location\": \"Hooks.before_hook_1()\"\n" +
                 "            },\n" +
-                "            \"embedding\": [\n" +
+                "            \"embeddings\": [\n" +
                 "              {\n" +
                 "                \"mime_type\": \"mime-type;base64\",\n" +
                 "                \"data\": \"AQID\"\n" +
