@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/cucumber/cucumber-jvm-jython.git
+	branch = master
+	commit = 1470dcbc2a8e1ad7eab4888fb0666dd43e90b289
+	parent = fb09c8c6e236cdffe20d3b9b20ebac3267815947
+	cmdver = 0.3.1
