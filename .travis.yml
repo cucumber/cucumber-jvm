@@ -32,7 +32,6 @@ jobs:
       script:
         - mvn clean install -DskipTests=true
         - mvn javadoc:aggregate
-        - mvn scala:doc
     # Stage Test - Job 4: Build Android Examples.
     - jdk: oraclejdk8
       env: ANDROID_EXAMPLES=true
