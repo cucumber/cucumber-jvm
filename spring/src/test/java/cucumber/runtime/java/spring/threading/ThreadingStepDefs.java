@@ -31,7 +31,7 @@ public class ThreadingStepDefs {
 
     @When("^when executed in parallel$")
     public void whenExecutedInParallel() throws Throwable {
-        latch.await(10, TimeUnit.SECONDS);
+        latch.await(1, TimeUnit.SECONDS);
     }
 
     @Then("^I should not be shared between threads$")

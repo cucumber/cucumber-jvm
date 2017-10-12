@@ -25,7 +25,6 @@
         <gherkin.version>4.1.3</gherkin.version>
         <groovy.version>2.4.12</groovy.version>
         <picocontainer.version>2.15</picocontainer.version>
-        <scala-maven-plugin.version>3.2.2</scala-maven-plugin.version>
         <spring.version>4.3.10.RELEASE</spring.version>
         <spring.data.version>1.11.6.RELEASE</spring.data.version>
         <!-- 5.2.2.Final or above does not appear to work on Java 7 -->
@@ -33,11 +32,6 @@
         <!-- version 2.4.0 does not work on Java 7 -->
         <hsqldb.version>2.3.5</hsqldb.version>
         <guice.version>4.0</guice.version>
-        <scala.2.12.version>2.12.2</scala.2.12.version>
-        <scala.2.11.version>2.11.11</scala.2.11.version>
-        <scala.2.10.version>2.10.6</scala.2.10.version>
-        <gosu.version>1.14.6</gosu.version>
-        <rhino.version>1.7.7.2</rhino.version>
         <jsoup.version>1.10.3</jsoup.version>
         <!-- TestNG 6.11 makes the tests of the testng module to fail -->
         <testng.version>6.10</testng.version>
@@ -154,11 +148,6 @@
             </dependency>
             <dependency>
                 <groupId>io.cucumber</groupId>
-                <artifactId>cucumber-groovy</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.cucumber</groupId>
                 <artifactId>cucumber-junit</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -176,11 +165,6 @@
                 <groupId>info.cukes</groupId>
                 <artifactId>cucumber-html</artifactId>
                 <version>0.2.6</version>
-            </dependency>
-            <dependency>
-                <groupId>org.codehaus.groovy</groupId>
-                <artifactId>groovy-all</artifactId>
-                <version>${groovy.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.picocontainer</groupId>
@@ -331,11 +315,6 @@
                 <groupId>com.google.inject</groupId>
                 <artifactId>guice</artifactId>
                 <version>${guice.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.mozilla</groupId>
-                <artifactId>rhino</artifactId>
-                <version>${rhino.version}</version>
             </dependency>
             <dependency>
                 <groupId>junit</groupId>
@@ -559,10 +538,7 @@
         <module>osgi</module>
         <module>guice</module>
         <module>weld</module>
-        <module>groovy</module>
-        <module>rhino</module>
         <module>openejb</module>
-        <module>scala</module>
         <module>needle</module>
         <module>android</module>
         <module>examples</module>
@@ -575,7 +551,6 @@
                 <jdk>1.8</jdk>
             </activation>
             <modules>
-                <module>gosu</module>
                 <module>java8</module>
                 <module>kotlin-java8</module>
             </modules>
@@ -674,11 +649,7 @@
                             <configuration>
                                 <sourceDirectories>
                                     <sourceDirectory>${basedir}/java/target/generated-sources/i18n/java</sourceDirectory>
-                                    <sourceDirectory>${basedir}/groovy/target/generated-sources/i18n/java</sourceDirectory>
                                     <sourceDirectory>${basedir}/java8/target/generated-sources/i18n/java8</sourceDirectory>
-                                    <sourceDirectory>${basedir}/scala/scala_2.10/target/generated-sources/i18n</sourceDirectory>
-                                    <sourceDirectory>${basedir}/scala/scala_2.11/target/generated-sources/i18n</sourceDirectory>
-                                    <sourceDirectory>${basedir}/scala/scala_2.12/target/generated-sources/i18n</sourceDirectory>
                                 </sourceDirectories>
                             </configuration>
                         </plugin>
@@ -852,18 +823,6 @@
                     <groupId>com.lazerycode.selenium</groupId>
                     <artifactId>driver-binary-downloader-maven-plugin</artifactId>
                     <version>${driver-binary-downloader-maven-plugin.version}</version>
-                </plugin>
-
-                <plugin>
-                    <groupId>net.alchim31.maven</groupId>
-                    <artifactId>scala-maven-plugin</artifactId>
-                    <version>${scala-maven-plugin.version}</version>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.codehaus.gmaven</groupId>
-                    <artifactId>gmaven-plugin</artifactId>
-                    <version>1.5</version>
                 </plugin>
 
                 <plugin>
