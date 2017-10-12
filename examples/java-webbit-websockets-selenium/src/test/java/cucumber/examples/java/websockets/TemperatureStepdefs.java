@@ -9,10 +9,10 @@ public class TemperatureStepdefs implements En {
 
     public TemperatureStepdefs(SharedDriver webDriver) {
 
-        When("^I enter (.+) (celcius|fahrenheit)$", (Double value, String unit) ->
+        When("I enter {double} (celcius|fahrenheit)", (Double value, String unit) ->
             webDriver.findElement(By.id(unit)).sendKeys(String.valueOf(value)));
 
-        Then("^I should see (.+) (celcius|fahrenheit)$", (Double value, String unit) ->
+        Then("I should see {double} (celcius|fahrenheit)", (Double value, String unit) ->
             assertEquals(String.valueOf(value), webDriver.findElement(By.id(unit)).getAttribute("value")));
     }
 }
