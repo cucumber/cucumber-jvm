@@ -37,7 +37,6 @@
         <scala.2.11.version>2.11.11</scala.2.11.version>
         <scala.2.10.version>2.10.6</scala.2.10.version>
         <gosu.version>1.14.6</gosu.version>
-        <rhino.version>1.7.7.2</rhino.version>
         <jsoup.version>1.10.3</jsoup.version>
         <!-- TestNG 6.11 makes the tests of the testng module to fail -->
         <testng.version>6.10</testng.version>
@@ -327,11 +326,6 @@
                 <version>${guice.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.mozilla</groupId>
-                <artifactId>rhino</artifactId>
-                <version>${rhino.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
                 <version>${junit.version}</version>
@@ -554,7 +548,6 @@
         <module>guice</module>
         <module>weld</module>
         <module>groovy</module>
-        <module>rhino</module>
         <module>openejb</module>
         <module>scala</module>
         <module>needle</module>
