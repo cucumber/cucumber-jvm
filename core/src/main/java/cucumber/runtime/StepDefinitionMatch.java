@@ -56,24 +56,12 @@ public class StepDefinitionMatch extends Match implements DefinitionMatch {
             }
             if (!step.getArgument().isEmpty()) {
                 gherkin.pickles.Argument stepArgument = step.getArgument().get(0);
-                ParameterTypeRegistry parameterTypeRegistry = new ParameterTypeRegistry(Locale.ENGLISH);
                 if (stepArgument instanceof PickleTable) {
                     result.add(tableArgument((PickleTable) stepArgument, result.size(), localizedXStreams.get(localeFor(language))));
                 } else if (stepArgument instanceof PickleString) {
-                    Type type = stepDefinition.getParameterType(result.size(), String.class).getType();
-                    ParameterType<Object> transform = null;
-                    if (type != null) {
-                        String typeName = type.getTypeName();
-                        if (typeName.startsWith("java.lang.")) {
-                            typeName = typeName.substring("java.lang.".length()).toLowerCase();
-                        }
-                        transform = parameterTypeRegistry.lookupByTypeName(typeName);
-                    }
-                    if (transform == null) {
-                        throw new IllegalArgumentException(type.getTypeName());
-                    }
+                    //TODO(M.P. Korstanje) Support transforms here too
                     String stepArgumentContent = ((PickleString)stepArgument).getContent();
-                    result.add(transform.transform(asList(stepArgumentContent)));
+                    result.add(stepArgumentContent);
                 }
             }
             stepDefinition.execute(language, result.toArray(new Object[result.size()]));
