@@ -15,7 +15,6 @@
         <module>spring-txn</module>
         <module>java-calculator</module>
         <module>java-calculator-testng</module>
-        <module>groovy-calculator</module>
         <module>pax-exam</module>
     </modules>
 

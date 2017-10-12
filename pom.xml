@@ -146,11 +146,6 @@
             </dependency>
             <dependency>
                 <groupId>io.cucumber</groupId>
-                <artifactId>cucumber-groovy</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.cucumber</groupId>
                 <artifactId>cucumber-junit</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -168,11 +163,6 @@
                 <groupId>info.cukes</groupId>
                 <artifactId>cucumber-html</artifactId>
                 <version>0.2.6</version>
-            </dependency>
-            <dependency>
-                <groupId>org.codehaus.groovy</groupId>
-                <artifactId>groovy-all</artifactId>
-                <version>${groovy.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.picocontainer</groupId>
@@ -546,7 +536,6 @@
         <module>osgi</module>
         <module>guice</module>
         <module>weld</module>
-        <module>groovy</module>
         <module>openejb</module>
         <module>scala</module>
         <module>needle</module>
@@ -659,7 +648,6 @@
                             <configuration>
                                 <sourceDirectories>
                                     <sourceDirectory>${basedir}/java/target/generated-sources/i18n/java</sourceDirectory>
-                                    <sourceDirectory>${basedir}/groovy/target/generated-sources/i18n/java</sourceDirectory>
                                     <sourceDirectory>${basedir}/java8/target/generated-sources/i18n/java8</sourceDirectory>
                                     <sourceDirectory>${basedir}/scala/scala_2.10/target/generated-sources/i18n</sourceDirectory>
                                     <sourceDirectory>${basedir}/scala/scala_2.11/target/generated-sources/i18n</sourceDirectory>
