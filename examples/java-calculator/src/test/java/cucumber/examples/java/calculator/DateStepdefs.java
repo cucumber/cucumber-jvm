@@ -12,7 +12,7 @@ public class DateStepdefs {
     private String result;
     private DateCalculator calculator;
 
-    @Given("today is {date}")
+    @Given("today is {iso-date}")
     public void today_is(Date date) {
         calculator = new DateCalculator(date);
     }

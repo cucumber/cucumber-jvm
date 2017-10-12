@@ -7,6 +7,7 @@ import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
 import io.cucumber.cucumberexpressions.SingleTransformer;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static java.text.DateFormat.MEDIUM;
@@ -27,6 +28,22 @@ public class ParameterTypes implements Configuration {
                 public Date apply(String text) {
                     try {
                         return getDateInstance(MEDIUM, ENGLISH).parse(text);
+                    } catch (ParseException e) {
+                        throw new IllegalArgumentException(e);
+                    }
+                }
+            })
+        ));
+
+        parameterTypeRegistry.defineParameterType(new ParameterType<Date>(
+            "iso-date",
+            "(\\d{4}-\\d{2}-\\d{2})",
+            Date.class,
+            new SingleTransformer<Date>(new Function<String, Date>() {
+                @Override
+                public Date apply(String text) {
+                    try {
+                        return new SimpleDateFormat("yyyy-mm-dd").parse(text);
                     } catch (ParseException e) {
                         throw new IllegalArgumentException(e);
                     }
