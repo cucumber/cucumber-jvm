@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/cucumber/cucumber-jvm-rhino.git
+	branch = master
+	commit = e8eb8b290f6d9d444b5fc2d4dcedf18be1d89762
+	parent = fdee635ee6fe56b37f3c09851ddb990dd0c0a580
+	cmdver = 0.3.1
