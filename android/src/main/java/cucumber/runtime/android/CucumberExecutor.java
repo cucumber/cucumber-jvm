@@ -3,6 +3,7 @@ package cucumber.runtime.android;
 import android.app.Instrumentation;
 import android.content.Context;
 import android.util.Log;
+import cucumber.api.Configuration;
 import cucumber.api.CucumberOptions;
 import cucumber.api.StepDefinitionReporter;
 import cucumber.api.event.TestRunFinished;
@@ -10,10 +11,13 @@ import cucumber.api.java.ObjectFactory;
 import cucumber.runtime.Backend;
 import cucumber.runtime.ClassFinder;
 import cucumber.runtime.CucumberException;
+import cucumber.runtime.DefaultConfiguration;
 import cucumber.runtime.Env;
+import cucumber.runtime.Reflections;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.RuntimeOptionsFactory;
+import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.java.JavaBackend;
 import cucumber.runtime.java.ObjectFactoryLoader;
@@ -24,7 +28,10 @@ import gherkin.events.PickleEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+
+import static java.util.Collections.singletonList;
 
 /**
  * Executes the cucumber scnearios.
@@ -157,10 +164,10 @@ public class CucumberExecutor {
     }
 
     private Collection<? extends Backend> createBackends() {
+        final Reflections reflections = new Reflections(classFinder);
+        final Configuration configuration = reflections.instantiateExactlyOneSubclass(Configuration.class, MultiLoader.packageName(runtimeOptions.getGlue()), new Class[0], new Object[0], new DefaultConfiguration());
         final ObjectFactory delegateObjectFactory = ObjectFactoryLoader.loadObjectFactory(classFinder, Env.INSTANCE.get(ObjectFactory.class.getName()));
         final AndroidObjectFactory objectFactory = new AndroidObjectFactory(delegateObjectFactory, instrumentation);
-        final List<Backend> backends = new ArrayList<Backend>();
-        backends.add(new JavaBackend(objectFactory, classFinder));
-        return backends;
+        return singletonList(new JavaBackend(objectFactory, classFinder, configuration.createParameterTypeRegistry()));
     }
 }
