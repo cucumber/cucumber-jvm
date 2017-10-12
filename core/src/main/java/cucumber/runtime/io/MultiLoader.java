@@ -1,5 +1,8 @@
 package cucumber.runtime.io;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MultiLoader implements ResourceLoader {
     public static final String CLASSPATH_SCHEME = "classpath:";
 
@@ -20,6 +23,14 @@ public class MultiLoader implements ResourceLoader {
         }
     }
 
+    public static List<String> packageName(List<String> glue) {
+        List<String> packageNames = new ArrayList<String>(glue.size());
+        for (String gluePath : glue) {
+            packageNames.add(packageName(gluePath));
+        }
+        return packageNames;
+    }
+
     public static String packageName(String gluePath) {
         if (isClasspathPath(gluePath)) {
             gluePath = stripClasspathPrefix(gluePath);
@@ -34,5 +45,4 @@ public class MultiLoader implements ResourceLoader {
     private static String stripClasspathPrefix(String path) {
         return path.substring(CLASSPATH_SCHEME.length());
     }
-
 }

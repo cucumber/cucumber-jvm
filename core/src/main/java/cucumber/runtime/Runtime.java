@@ -7,6 +7,7 @@ import cucumber.api.event.TestRunFinished;
 import cucumber.runner.EventBus;
 import cucumber.runner.Runner;
 import cucumber.runner.TimeService;
+import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.xstream.LocalizedXStreams;
@@ -88,7 +89,7 @@ public class Runtime {
 
     private static Collection<? extends Backend> loadBackends(ResourceLoader resourceLoader, ClassFinder classFinder, RuntimeOptions runtimeOptions) {
         Reflections reflections = new Reflections(classFinder);
-        Configuration configuration = reflections.instantiateExactlyOneSubclass(Configuration.class, runtimeOptions.getGlue(), new Class[0], new Object[0], new DefaultConfiguration());
+        Configuration configuration = reflections.instantiateExactlyOneSubclass(Configuration.class, MultiLoader.packageName(runtimeOptions.getGlue()), new Class[0], new Object[0], new DefaultConfiguration());
         return reflections.instantiateSubclasses(Backend.class, singletonList("cucumber.runtime"), new Class[]{ResourceLoader.class, ParameterTypeRegistry.class}, new Object[]{resourceLoader, configuration.createParameterTypeRegistry()});
     }
 
