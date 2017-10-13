@@ -1,5 +1,5 @@
 package cucumber.api.formatter;
 
-public interface StrictAware {
+public interface StrictAware extends Formatter {
     void setStrict(boolean strict);
 }

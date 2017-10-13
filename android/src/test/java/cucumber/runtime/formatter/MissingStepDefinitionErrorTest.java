@@ -1,4 +1,4 @@
-package cucumber.runtime.android;
+package cucumber.runtime.formatter;
 
 import org.junit.Test;
 import static org.hamcrest.core.Is.is;

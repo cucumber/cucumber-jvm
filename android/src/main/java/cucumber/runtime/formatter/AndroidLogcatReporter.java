@@ -1,4 +1,4 @@
-package cucumber.runtime.android;
+package cucumber.runtime.formatter;
 
 import android.util.Log;
 import cucumber.api.event.EventHandler;
@@ -12,7 +12,7 @@ import cucumber.runtime.Runtime;
 /**
  * Logs information about the currently executed statements to androids logcat.
  */
-public class  AndroidLogcatReporter implements Formatter {
+public final class  AndroidLogcatReporter implements Formatter {
 
     /**
      * The {@link cucumber.runtime.Runtime} to get the errors and snippets from for writing them to the logcat at the end of the execution.

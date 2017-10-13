@@ -1,5 +1,5 @@
 package cucumber.api.formatter;
 
-public interface ColorAware {
+public interface ColorAware extends Formatter {
     void setMonochrome(boolean monochrome);
 }

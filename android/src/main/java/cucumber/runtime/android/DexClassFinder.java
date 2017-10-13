@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Android specific implementation of {@link cucumber.runtime.ClassFinder} which loads classes contained in the provided {@link dalvik.system.DexFile}.
  */
-public class DexClassFinder implements ClassFinder {
+final class DexClassFinder implements ClassFinder {
 
     /**
      * Symbol name of the manifest class.
@@ -53,7 +53,7 @@ public class DexClassFinder implements ClassFinder {
      *
      * @param dexFile the {@link dalvik.system.DexFile} to load classes from
      */
-    public DexClassFinder(final DexFile dexFile) {
+    DexClassFinder(final DexFile dexFile) {
         this.dexFile = dexFile;
     }
 

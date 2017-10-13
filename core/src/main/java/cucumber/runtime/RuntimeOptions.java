@@ -1,5 +1,6 @@
 package cucumber.runtime;
 
+import cucumber.api.Plugin;
 import cucumber.api.SnippetType;
 import cucumber.api.StepDefinitionReporter;
 import cucumber.api.SummaryPrinter;
@@ -68,7 +69,7 @@ public class RuntimeOptions {
     private final List<String> pluginSummaryPrinterNames = new ArrayList<String>();
     private final List<String> junitOptions = new ArrayList<String>();
     private final PluginFactory pluginFactory;
-    private final List<Object> plugins = new ArrayList<Object>();
+    private final List<Plugin> plugins = new ArrayList<Plugin>();
     private final List<XStreamConverter> converters = new ArrayList<XStreamConverter>();
     private boolean dryRun;
     private boolean strict = false;
@@ -316,21 +317,21 @@ public class RuntimeOptions {
         return features;
     }
 
-    public List<Object> getPlugins() {
+    public List<Plugin> getPlugins() {
         if (!pluginNamesInstantiated) {
             for (String pluginName : pluginFormatterNames) {
-                Object plugin = pluginFactory.create(pluginName);
+                Plugin plugin = pluginFactory.create(pluginName);
                 plugins.add(plugin);
                 setMonochromeOnColorAwarePlugins(plugin);
                 setStrictOnStrictAwarePlugins(plugin);
                 setEventBusFormatterPlugins(plugin);
             }
             for (String pluginName : pluginStepDefinitionReporterNames) {
-                Object plugin = pluginFactory.create(pluginName);
+                Plugin plugin = pluginFactory.create(pluginName);
                 plugins.add(plugin);
             }
             for (String pluginName : pluginSummaryPrinterNames) {
-                Object plugin = pluginFactory.create(pluginName);
+                Plugin plugin = pluginFactory.create(pluginName);
                 plugins.add(plugin);
             }
             pluginNamesInstantiated = true;
@@ -362,7 +363,7 @@ public class RuntimeOptions {
      * @param <T>         generic proxy type
      * @return a proxy
      */
-    public <T> T pluginProxy(ClassLoader classLoader, final Class<T> type) {
+    private <T> T pluginProxy(ClassLoader classLoader, final Class<T> type) {
         Object proxy = Proxy.newProxyInstance(classLoader, new Class<?>[]{type}, new InvocationHandler() {
             @Override
             public Object invoke(Object target, Method method, Object[] args) throws Throwable {
@@ -421,11 +422,9 @@ public class RuntimeOptions {
         return featurePaths;
     }
 
-    public void addPlugin(Object plugin) {
+    public void addPlugin(Formatter plugin) {
         plugins.add(plugin);
-        if (plugin instanceof Formatter) {
-            setEventBusFormatterPlugins(plugin);
-        }
+        setEventBusFormatterPlugins(plugin);
     }
 
     public List<Pattern> getNameFilters() {
