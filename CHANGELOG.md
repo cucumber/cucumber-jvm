@@ -5,6 +5,7 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ### Added
  * [Core] Optimize MethodScanner ([#1238](https://github.com/cucumber/cucumber-jvm/pull/1236) Łukasz Suski) 
 ### Changed
+ * [Core]  Use gherkin 5.0.0 ([#1252](https://github.com/cucumber/cucumber-jvm/commit/5e305951026a1573ede77e05e86bbe8ed3bca55b) M.P. Korstanje) 
 
 ### Deprecated
 
@@ -14,7 +15,7 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
  * [Core] Correct the name of the Json Formatter embeddings node ([#1236](https://github.com/cucumber/cucumber-jvm/pull/1236) Haroon Sheikh)
  * [Spring] Exception is thrown complaining about multiple matching beans ([#1225](https://github.com/cucumber/cucumber-jvm/pull/1225), [#1226](https://github.com/cucumber/cucumber-jvm/pull/1226), M.P. Korstanje)
 
-## [2.0.1-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v2.0.0...v2.0.1) (2017-09-17)
+## [2.0.1](https://github.com/cucumber/cucumber-jvm/compare/v2.0.0...v2.0.1) (2017-09-17)
 
 ### Added
  * [Core] cucumber.api.TableConverter interface ([#1223](https://github.com/cucumber/cucumber-jvm/pull/1223) M.P. Korstanje) 

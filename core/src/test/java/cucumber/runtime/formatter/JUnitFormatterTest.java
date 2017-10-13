@@ -502,8 +502,7 @@ public class JUnitFormatterTest {
     @Test
     public void should_add_dummy_testcase_if_no_scenarios_are_run_to_aviod_failed_jenkins_jobs() throws Throwable {
         CucumberFeature feature = TestHelper.feature("path/test.feature",
-                "Feature: feature name\n" +
-                        "  Scenario: scenario name\n");
+                "Feature: feature name\n");
 
         String formatterOutput = runFeatureWithJUnitFormatter(feature);
 
