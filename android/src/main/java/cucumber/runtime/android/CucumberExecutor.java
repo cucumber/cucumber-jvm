@@ -14,6 +14,8 @@ import cucumber.runtime.Env;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.RuntimeOptionsFactory;
+import cucumber.runtime.formatter.AndroidInstrumentationReporter;
+import cucumber.runtime.formatter.AndroidLogcatReporter;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.java.JavaBackend;
 import cucumber.runtime.java.ObjectFactoryLoader;
@@ -27,19 +29,19 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Executes the cucumber scnearios.
+ * Executes the cucumber scenarios.
  */
-public class CucumberExecutor {
+public final class CucumberExecutor {
 
     /**
      * The logcat tag to log all cucumber related information to.
      */
-    public static final String TAG = "cucumber-android";
+    static final String TAG = "cucumber-android";
 
     /**
      * The system property name of the cucumber options.
      */
-    public static final String CUCUMBER_OPTIONS_SYSTEM_PROPERTY = "cucumber.options";
+    private static final String CUCUMBER_OPTIONS_SYSTEM_PROPERTY = "cucumber.options";
 
     /**
      * The instrumentation to report to.

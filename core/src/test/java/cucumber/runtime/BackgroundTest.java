@@ -2,7 +2,6 @@ package cucumber.runtime;
 
 import cucumber.runtime.io.ClasspathResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
-//import gherkin.formatter.PrettyFormatter;
 import org.junit.Test;
 
 import java.io.IOException;

@@ -11,7 +11,7 @@ import java.io.InputStream;
  * Android specific implementation of {@link cucumber.runtime.io.Resource} which is apple
  * to create {@link java.io.InputStream}s for android assets.
  */
-public class AndroidResource implements Resource {
+public final class AndroidResource implements Resource {
 
     /**
      * The {@link android.content.Context} to get the {@link java.io.InputStream} from
@@ -29,7 +29,7 @@ public class AndroidResource implements Resource {
      * @param context the {@link android.content.Context} to create the {@link java.io.InputStream} from
      * @param path the path to the ressource
      */
-    public AndroidResource(final Context context, final String path) {
+    AndroidResource(final Context context, final String path) {
         this.context = context;
         this.path = path;
     }

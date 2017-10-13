@@ -49,7 +49,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-class HTMLFormatter implements Formatter {
+final class HTMLFormatter implements Formatter {
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private static final String JS_FORMATTER_VAR = "formatter";
     private static final String JS_REPORT_FILENAME = "report.js";
@@ -356,7 +356,7 @@ class HTMLFormatter implements Formatter {
     private Map<String, Object> createBackground(TestCase testCase) {
         TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeatureFile, testCase.getLine());
         if (astNode != null) {
-            Background background = TestSourcesModel.getBackgoundForTestCase(astNode);
+            Background background = TestSourcesModel.getBackgroundForTestCase(astNode);
             Map<String, Object> testCaseMap = new HashMap<String, Object>();
             testCaseMap.put("name", background.getName());
             testCaseMap.put("keyword", background.getKeyword());

@@ -1,6 +1,5 @@
-package cucumber.runtime.android;
+package cucumber.runtime.formatter;
 
-import static cucumber.runtime.android.AndroidInstrumentationReporter.StatusCodes;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
@@ -17,6 +16,7 @@ import cucumber.api.Result;
 import cucumber.api.TestCase;
 import cucumber.api.event.TestSourceRead;
 import cucumber.runtime.Runtime;
+import cucumber.runtime.formatter.AndroidInstrumentationReporter.StatusCodes;
 import edu.emory.mathcs.backport.java.util.Collections;
 import org.junit.Before;
 import org.junit.Rule;

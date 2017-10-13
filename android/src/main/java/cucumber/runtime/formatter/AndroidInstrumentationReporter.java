@@ -1,4 +1,4 @@
-package cucumber.runtime.android;
+package cucumber.runtime.formatter;
 
 import android.app.Instrumentation;
 import android.os.Bundle;
@@ -12,7 +12,6 @@ import cucumber.api.event.TestSourceRead;
 import cucumber.api.event.TestStepFinished;
 import cucumber.api.formatter.Formatter;
 import cucumber.runtime.Runtime;
-import cucumber.runtime.formatter.TestSourcesModel;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -36,26 +35,26 @@ import java.io.StringWriter;
  *     hook threw an exception other than an {@link AssertionError}</li>
  * </ul>
  */
-public class AndroidInstrumentationReporter implements Formatter {
+public final class AndroidInstrumentationReporter implements Formatter {
 
     /**
      * Tests status keys.
      */
-    public static class StatusKeys {
-        public static final String TEST = "test";
-        public static final String CLASS = "class";
-        public static final String STACK = "stack";
-        public static final String NUMTESTS = "numtests";
+    static class StatusKeys {
+        static final String TEST = "test";
+        static final String CLASS = "class";
+        static final String STACK = "stack";
+        static final String NUMTESTS = "numtests";
     }
 
     /**
      * Test result status codes.
      */
-    public static class StatusCodes {
-        public static final int FAILURE = -2;
-        public static final int START = 1;
-        public static final int ERROR = -1;
-        public static final int OK = 0;
+    static class StatusCodes {
+        static final int FAILURE = -2;
+        static final int START = 1;
+        static final int ERROR = -1;
+        static final int OK = 0;
     }
 
     /**

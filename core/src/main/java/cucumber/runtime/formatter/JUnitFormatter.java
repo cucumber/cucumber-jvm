@@ -42,7 +42,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-class JUnitFormatter implements Formatter, StrictAware {
+final class JUnitFormatter implements Formatter, StrictAware {
     private final Writer out;
     private final Document doc;
     private final Element rootElement;

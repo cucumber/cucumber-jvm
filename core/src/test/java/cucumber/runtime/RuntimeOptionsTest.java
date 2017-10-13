@@ -1,20 +1,14 @@
 package cucumber.runtime;
 
-import cucumber.runner.EventBus;
+import cucumber.api.Plugin;
 import cucumber.api.SnippetType;
+import cucumber.api.event.EventPublisher;
 import cucumber.api.formatter.ColorAware;
-import cucumber.api.formatter.Formatter;
 import cucumber.api.formatter.StrictAware;
-import cucumber.runtime.formatter.FormatterSpy;
 import cucumber.runtime.formatter.PluginFactory;
-import cucumber.runtime.io.Resource;
 import cucumber.runtime.io.ResourceLoader;
-import cucumber.runtime.model.CucumberFeature;
 import org.junit.Test;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -30,8 +24,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.withSettings;
 
 public class RuntimeOptionsTest {
     @Test
@@ -323,28 +315,48 @@ public class RuntimeOptionsTest {
         }
     }
 
+    public static final class AwareFormatter implements StrictAware, ColorAware {
+
+        private boolean strict;
+        private boolean monochrome;
+
+        @Override
+        public void setStrict(boolean strict) {
+            this.strict = strict;
+        }
+
+        private boolean isStrict() {
+            return strict;
+        }
+
+        @Override
+        public void setMonochrome(boolean monochrome) {
+            this.monochrome = monochrome;
+        }
+
+        boolean isMonochrome() {
+            return monochrome;
+        }
+
+        @Override
+        public void setEventPublisher(EventPublisher publisher) {
+
+        }
+    }
+
     @Test
     public void set_monochrome_on_color_aware_formatters() throws Exception {
-        PluginFactory factory = mock(PluginFactory.class);
-        Formatter colorAwareFormatter = mock(Formatter.class, withSettings().extraInterfaces(ColorAware.class));
-        when(factory.create("progress")).thenReturn(colorAwareFormatter);
-
-        RuntimeOptions options = new RuntimeOptions(new Env(), factory, asList("--monochrome", "--plugin", "progress"));
+        RuntimeOptions options = new RuntimeOptions(new Env(), new PluginFactory(), asList("--monochrome", "--plugin", AwareFormatter.class.getName()));
         options.getPlugins();
-
-        verify((ColorAware) colorAwareFormatter).setMonochrome(true);
+        AwareFormatter formatter = (AwareFormatter)options.getPlugins().get(0);
+        assertTrue(formatter.isMonochrome());
     }
 
     @Test
     public void set_strict_on_strict_aware_formatters() throws Exception {
-        PluginFactory factory = mock(PluginFactory.class);
-        Formatter strictAwareFormatter = mock(Formatter.class, withSettings().extraInterfaces(StrictAware.class));
-        when(factory.create("junit:out/dir")).thenReturn(strictAwareFormatter);
-
-        RuntimeOptions options = new RuntimeOptions(new Env(), factory, asList("--strict", "--plugin", "junit:out/dir"));
-        options.getPlugins();
-
-        verify((StrictAware) strictAwareFormatter).setStrict(true);
+        RuntimeOptions options = new RuntimeOptions(new Env(), new PluginFactory(), asList("--strict", "--plugin", AwareFormatter.class.getName()));
+        AwareFormatter formatter = (AwareFormatter)options.getPlugins().get(0);
+        assertTrue(formatter.isStrict());
     }
 
     @Test
@@ -362,18 +374,18 @@ public class RuntimeOptionsTest {
         assertEquals(SnippetType.CAMELCASE, runtimeOptions.getSnippetType());
     }
 
-    private void assertPluginExists(List<Object> plugins, String pluginName) {
+    private void assertPluginExists(List<Plugin> plugins, String pluginName) {
         assertTrue(pluginName + " not found among the plugins", pluginExists(plugins, pluginName));
     }
 
-    private void assertPluginNotExists(List<Object> plugins, String pluginName) {
+    private void assertPluginNotExists(List<Plugin> plugins, String pluginName) {
         assertFalse(pluginName + " found among the plugins", pluginExists(plugins, pluginName));
     }
 
-    private boolean pluginExists(List<Object> plugins, String pluginName) {
+    private boolean pluginExists(List<Plugin> plugins, String pluginName) {
         boolean found = false;
-        for (Object plugin : plugins) {
-            if (plugin.getClass().getName() == pluginName) {
+        for (Plugin plugin : plugins) {
+            if (plugin.getClass().getName().equals(pluginName)) {
                 found = true;
             }
         }

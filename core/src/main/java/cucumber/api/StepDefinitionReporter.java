@@ -2,7 +2,7 @@ package cucumber.api;
 
 import cucumber.runtime.StepDefinition;
 
-public interface StepDefinitionReporter {
+public interface StepDefinitionReporter extends Plugin {
     /**
      * Called when a step definition is defined
      *

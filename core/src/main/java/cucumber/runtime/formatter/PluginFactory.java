@@ -1,5 +1,6 @@
 package cucumber.runtime.formatter;
 
+import cucumber.api.Plugin;
 import cucumber.api.StepDefinitionReporter;
 import cucumber.api.SummaryPrinter;
 import cucumber.api.formatter.Formatter;
@@ -27,26 +28,17 @@ import static java.util.Arrays.asList;
 
 /**
  * This class creates plugin instances from a String.
- * <p/>
- * The String is of the form name[:output] where name is either a fully qualified class name or one of the built-in short names.
- * output is optional for some plugin (and mandatory for some) and must refer to a path on the file system.
- * <p/>
- * The plugin class must have a constructor that is either empty or takes a single argument of one of the following types:
- * <ul>
- * <li>{@link Appendable}</li>
- * <li>{@link File}</li>
- * <li>{@link URL}</li>
- * <li>{@link URI}</li>
- * </ul>
- * Plugins must implement one of the following interfaces:
- * <ul>
- * <li>{@link cucumber.api.StepDefinitionReporter}</li>
- * </ul>
+ * <p>
+ * The String is of the form name[:output] where name is either a fully qualified class name or one of the built-in
+ * short names. The output is optional for some plugin (and mandatory for some) and must refer to a path on the
+ * file system.
+ *
+ * @see Plugin
  */
-public class PluginFactory {
+public final class PluginFactory {
     private final Class[] CTOR_ARGS = new Class[]{null, Appendable.class, URI.class, URL.class, File.class};
 
-    private static final Map<String, Class> PLUGIN_CLASSES = new HashMap<String, Class>() {{
+    private static final HashMap<String, Class<? extends Plugin>> PLUGIN_CLASSES = new HashMap<String, Class<? extends Plugin>>() {{
         put("null", NullFormatter.class);
         put("junit", JUnitFormatter.class);
         put("testng", TestNGFormatter.class);
@@ -69,7 +61,7 @@ public class PluginFactory {
         }
     };
 
-    public Object create(String pluginString) {
+    public Plugin create(String pluginString) {
         Matcher pluginWithFile = PLUGIN_WITH_FILE_PATTERN.matcher(pluginString);
         String pluginName;
         String path = null;
@@ -79,7 +71,7 @@ public class PluginFactory {
         } else {
             pluginName = pluginString;
         }
-        Class pluginClass = pluginClass(pluginName);
+        Class<? extends Plugin> pluginClass = pluginClass(pluginName);
         try {
             return instantiate(pluginString, pluginClass, path);
         } catch (IOException e) {
@@ -89,7 +81,7 @@ public class PluginFactory {
         }
     }
 
-    private <T> T instantiate(String pluginString, Class<T> pluginClass, String pathOrUrl) throws IOException, URISyntaxException {
+    private <T extends Plugin> T instantiate(String pluginString, Class<T> pluginClass, String pathOrUrl) throws IOException, URISyntaxException {
         for (Class ctorArgClass : CTOR_ARGS) {
             Constructor<T> constructor = findConstructor(pluginClass, ctorArgClass);
             if (constructor != null) {
@@ -156,8 +148,8 @@ public class PluginFactory {
         }
     }
 
-    private static <T> Class<T> pluginClass(String pluginName) {
-        Class<T> pluginClass = (Class<T>) PLUGIN_CLASSES.get(pluginName);
+    private static Class<? extends Plugin> pluginClass(String pluginName) {
+        Class<? extends Plugin> pluginClass = PLUGIN_CLASSES.get(pluginName);
         if (pluginClass == null) {
             pluginClass = loadClass(pluginName);
         }
@@ -165,9 +157,14 @@ public class PluginFactory {
     }
 
     @SuppressWarnings("unchecked")
-    private static <T> Class<T> loadClass(String className) {
+    private static Class<? extends Plugin> loadClass(String className) {
         try {
-            return (Class<T>) Thread.currentThread().getContextClassLoader().loadClass(className);
+            Class<?> aClass = Thread.currentThread().getContextClassLoader().loadClass(className);
+
+            if (Plugin.class.isAssignableFrom(aClass)) {
+                return (Class<? extends Plugin>) aClass;
+            }
+            throw new CucumberException("Couldn't load plugin class: " + className + ". It does not implement " + Plugin.class.getName());
         } catch (ClassNotFoundException e) {
             throw new CucumberException("Couldn't load plugin class: " + className, e);
         }
@@ -180,8 +177,8 @@ public class PluginFactory {
                 return defaultOut;
             } else {
                 throw new CucumberException("Only one formatter can use STDOUT, now both " +
-                        defaultOutFormatter + " and " + formatterString + " use it. " +
-                        "If you use more than one formatter you must specify output path with PLUGIN:PATH_OR_URL");
+                    defaultOutFormatter + " and " + formatterString + " use it. " +
+                    "If you use more than one formatter you must specify output path with PLUGIN:PATH_OR_URL");
             }
         } finally {
             defaultOut = null;
