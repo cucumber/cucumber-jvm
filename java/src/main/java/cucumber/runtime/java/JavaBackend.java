@@ -33,8 +33,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public class JavaBackend implements Backend {
-    public static final ThreadLocal<JavaBackend> INSTANCE = new ThreadLocal<JavaBackend>();
+public class JavaBackend implements Backend, LambdaGlueRegistry {
     private final SnippetGenerator snippetGenerator = new SnippetGenerator(createSnippet());
 
     private Snippet createSnippet() {
@@ -151,6 +150,7 @@ public class JavaBackend implements Backend {
         }
     }
 
+    @Override
     public void addStepDefinition(StepDefinition stepDefinition) {
         glue.addStepDefinition(stepDefinition);
     }
@@ -169,10 +169,12 @@ public class JavaBackend implements Backend {
         }
     }
 
+    @Override
     public void addBeforeHookDefinition(HookDefinition beforeHook) {
         glue.addBeforeHook(beforeHook);
     }
 
+    @Override
     public void addAfterHookDefinition(HookDefinition afterHook) {
         glue.addAfterHook(afterHook);
     }
