@@ -16,7 +16,7 @@ public class ParameterTypes implements Configuration {
         ParameterTypeRegistry parameterTypeRegistry = new ParameterTypeRegistry(ENGLISH);
         parameterTypeRegistry.defineParameterType(new ParameterType<Integer>(
             "digit",
-            "([0-9])",
+            "[0-9]",
             Integer.class,
             new SingleTransformer<Integer>(new Function<String, Integer>() {
                 @Override
@@ -28,7 +28,7 @@ public class ParameterTypes implements Configuration {
 
         parameterTypeRegistry.defineParameterType(new ParameterType<Character>(
             "operator",
-            "([+–x\\/=])",
+            "[+–x\\/=]",
             Character.class,
             new SingleTransformer<Character>(new Function<String, Character>() {
                 @Override

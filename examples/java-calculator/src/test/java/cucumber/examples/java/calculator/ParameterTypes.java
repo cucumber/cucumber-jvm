@@ -37,7 +37,7 @@ public class ParameterTypes implements Configuration {
 
         parameterTypeRegistry.defineParameterType(new ParameterType<Date>(
             "iso-date",
-            "(\\d{4}-\\d{2}-\\d{2})",
+            "\\d{4}-\\d{2}-\\d{2}",
             Date.class,
             new SingleTransformer<Date>(new Function<String, Date>() {
                 @Override
