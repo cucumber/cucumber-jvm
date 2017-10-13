@@ -38,7 +38,7 @@ public class Java8StepDefinition implements StepDefinition {
         this.body = body;
 
         this.argumentMatcher = new JdkPatternArgumentMatcher(this.pattern);
-        this.location = new Exception().getStackTrace()[3];
+        this.location = new Exception().getStackTrace()[2];
         this.method = getAcceptMethod(body.getClass());
         try {
             Class<?>[] arguments = resolveRawArguments(bodyClass, body.getClass());
