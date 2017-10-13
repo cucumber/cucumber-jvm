@@ -44,7 +44,7 @@ import static java.util.Arrays.asList;
  * </ul>
  */
 public class PluginFactory {
-    private final Class[] CTOR_ARGS = new Class[]{null, Appendable.class, URI.class, URL.class, File.class};
+    private final Class[] CTOR_ARGS = new Class[]{Appendable.class, URI.class, URL.class, File.class};
 
     private static final Map<String, Class> PLUGIN_CLASSES = new HashMap<String, Class>() {{
         put("null", NullFormatter.class);
@@ -90,19 +90,29 @@ public class PluginFactory {
     }
 
     private <T> T instantiate(String pluginString, Class<T> pluginClass, String pathOrUrl) throws IOException, URISyntaxException {
+        if (pathOrUrl == null) {
+            Constructor<T> constructor = findConstructor(pluginClass, null);
+            if (constructor != null) {
+                try {
+                    return constructor.newInstance();
+                } catch (InstantiationException e) {
+                    throw new CucumberException(e);
+                } catch (IllegalAccessException e) {
+                    throw new CucumberException(e);
+                } catch (InvocationTargetException e) {
+                    throw new CucumberException(e.getTargetException());
+                }
+            }
+        }
         for (Class ctorArgClass : CTOR_ARGS) {
             Constructor<T> constructor = findConstructor(pluginClass, ctorArgClass);
             if (constructor != null) {
                 Object ctorArg = convertOrNull(pathOrUrl, ctorArgClass, pluginString);
                 try {
-                    if (ctorArgClass == null) {
-                        return constructor.newInstance();
-                    } else {
-                        if (ctorArg == null) {
-                            throw new CucumberException(String.format("You must supply an output argument to %s. Like so: %s:output", pluginString, pluginString));
-                        }
-                        return constructor.newInstance(ctorArg);
+                    if (ctorArg == null) {
+                        throw new CucumberException(String.format("You must supply an output argument to %s. Like so: %s:output", pluginString, pluginString));
                     }
+                    return constructor.newInstance(ctorArg);
                 } catch (InstantiationException e) {
                     throw new CucumberException(e);
                 } catch (IllegalAccessException e) {
