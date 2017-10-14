@@ -10,13 +10,14 @@ import cucumber.runtime.junit.jupiter.JunitJupiterReporter;
 import cucumber.runtime.model.CucumberFeature;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.Compiler;
-import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.DynamicContainer;
 import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.api.extension.*;
 
 import java.util.List;
 import java.util.stream.Stream;
 
+import static org.junit.jupiter.api.DynamicContainer.dynamicContainer;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 /**
@@ -34,7 +35,7 @@ import static org.junit.jupiter.api.DynamicTest.dynamicTest;
  *   &#64;ExtendWith(CucumberExtension.class)
  *   public class BehaviourRunner {
  *     &#64;TestFactory
- *     public Stream&lt;DynamicTest&gt; runAllCucumberScenarios(Stream&lt;DynamicTest&gt; scenarios) {
+ *     public Stream&lt;DynamicContainer&gt; runAllCucumberScenarios(Stream&lt;DynamicTest&gt; scenarios) {
  *       return scenarios;
  *     }
  *   }
@@ -42,7 +43,10 @@ import static org.junit.jupiter.api.DynamicTest.dynamicTest;
  */
 public class CucumberExtension implements ParameterResolver, AfterAllCallback {
 
+    private final Compiler compiler = new Compiler();
+
     private Runtime runtime;
+    private RuntimeOptions runtimeOptions;
 
     @Override
     public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext)
@@ -52,40 +56,42 @@ public class CucumberExtension implements ParameterResolver, AfterAllCallback {
             && extensionContext.getTestMethod().isPresent()
             && extensionContext.getTestMethod().get().getAnnotationsByType(TestFactory.class).length > 0
             && Stream.class == parameterContext.getParameter().getType()
-            && "java.util.stream.Stream<org.junit.jupiter.api.DynamicTest>" // Can't find a better way to do this :(
+            && "java.util.stream.Stream<org.junit.jupiter.api.DynamicContainer>" // Can't find a better way to do this :(
             .equals(parameterContext.getParameter().getParameterizedType().getTypeName()));
     }
 
     @Override
-    public Stream<DynamicTest> resolveParameter(ParameterContext parameterContext,
-                                                ExtensionContext extensionContext) throws ParameterResolutionException {
+    public Stream<DynamicContainer> resolveParameter(ParameterContext parameterContext,
+                                                     ExtensionContext extensionContext) throws ParameterResolutionException {
         if (!extensionContext.getTestClass().isPresent()) {
             throw new IllegalStateException("resolve has been called even though the supports check failed");
         }
 
         Class testClass = extensionContext.getTestClass().get();
-        RuntimeOptions runtimeOptions = new RuntimeOptionsFactory(testClass).create();
+        runtimeOptions = new RuntimeOptionsFactory(testClass).create();
         ClassLoader classLoader = testClass.getClassLoader();
         MultiLoader resourceLoader = new MultiLoader(classLoader);
         ResourceLoaderClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         runtime = new Runtime(resourceLoader, classFinder, classLoader, runtimeOptions);
-        List<CucumberFeature> cucumberFeatures = runtimeOptions.cucumberFeatures(resourceLoader, runtime.getEventBus());
-        Compiler compiler = new Compiler();
 
-        Stream<PickleEvent> compiledPickles = cucumberFeatures.stream().flatMap(
-            cucumberFeature -> compiler.compile(cucumberFeature.getGherkinFeature())
-                .stream()
-                .map(pickle -> new PickleEvent(cucumberFeature.getUri(), pickle)));
+        List<CucumberFeature> features = runtimeOptions.cucumberFeatures(resourceLoader, runtime.getEventBus());
 
-        return compiledPickles
-            .filter(runtime::matchesFilters)
-            .map(pickleEvent ->
-                dynamicTest(pickleEvent.pickle.getName(), () -> executeTest(runtime, runtimeOptions, pickleEvent)));
+        return features.stream()
+            .map(feature -> dynamicContainer(
+                feature.getGherkinFeature().getFeature().getName(),
+                compile(feature)
+                    .filter(runtime::matchesFilters)
+                    .map(pickle -> dynamicTest(pickle.pickle.getName(), () -> executeTest(pickle)))));
     }
 
-    private void executeTest(Runtime runtime, RuntimeOptions runtimeOptions, PickleEvent pickleEvent) throws Throwable {
+    private Stream<PickleEvent> compile(CucumberFeature feature) {
+        return compiler.compile(feature.getGherkinFeature()).stream()
+            .map(pickle -> new PickleEvent(feature.getUri(), pickle));
+    }
+
+    private void executeTest(PickleEvent pickle) throws Throwable {
         JunitJupiterReporter reporter = new JunitJupiterReporter(runtime.getEventBus());
-        runtime.getRunner().runPickle(pickleEvent);
+        runtime.getRunner().runPickle(pickle);
         if (reporter.isOk(runtimeOptions.isStrict())) {
             return;
         }
