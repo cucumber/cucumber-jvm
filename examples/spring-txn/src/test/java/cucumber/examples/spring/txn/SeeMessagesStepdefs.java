@@ -14,8 +14,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebAppConfiguration
-@ContextConfiguration("classpath:cucumber.xml")
 public class SeeMessagesStepdefs {
     @Autowired
     private UserRepository userRepository;
