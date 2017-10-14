@@ -7,15 +7,26 @@
 [![Build Status](https://secure.travis-ci.org/cucumber/cucumber-jvm.svg)](http://travis-ci.org/cucumber/cucumber-jvm)
 [![Coverage Status](https://coveralls.io/repos/github/cucumber/cucumber-jvm/badge.svg?branch=master)](https://coveralls.io/github/cucumber/cucumber-jvm?branch=master)
 
-Cucumber-JVM is a pure Java implementation of Cucumber that supports the [most popular programming languages](https://cukes.info/docs/reference/jvm#running) for the JVM.
+Cucumber-JVM is a pure Java implementation of Cucumber that supports the [most popular programming languages](https://cucumber.io/docs/reference/jvm#running) for the JVM.
 
-You can [run](https://cukes.info/docs/reference/jvm#running) it with the tool of your choice.
+You can [run](https://cucumber.io/docs/reference/jvm#running) it with the tool of your choice.
 
-Cucumber-JVM also integrates with all the popular [Dependency Injection containers](https://cukes.info/docs/reference/java-di).
+Cucumber-JVM also integrates with all the popular [Dependency Injection containers](https://cucumber.io/docs/reference/java-di).
+
+Some JVM languages have been moved to their own repository:
+* [Clojure](https://github.com/cucumber/cucumber-jvm-clojure)
+* [Gosu](https://github.com/cucumber/cucumber-jvm-gosu)
+* [Groovy](https://github.com/cucumber/cucumber-jvm-groovy)
+* [JRuby](https://github.com/cucumber/cucumber-jvm-jruby)
+* [Jython](https://github.com/cucumber/cucumber-jvm-jython)
+* [Rhino](https://github.com/cucumber/cucumber-jvm-rhino)
+* [Scala](https://github.com/cucumber/cucumber-jvm-scala)
 
 ## Documentation
 
-[Start Here](https://cukes.info/docs).
+[Start Here](https://cucumber.io/docs).
+
+If you'd like to contribute to the documentation, go [here](https://github.com/cucumber/docs.cucumber.io).
 
 ## Hello World
 
@@ -23,7 +34,7 @@ Check out the simple [cucumber-java-skeleton](https://github.com/cucumber/cucumb
 
 ## Downloading / Installation
 
-[Install](https://cukes.info/docs/reference/jvm#installation)
+[Install](https://cucumber.io/docs/reference/jvm#installation)
 
 ## Bugs and Feature requests
 
