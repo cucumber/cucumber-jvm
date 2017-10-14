@@ -4,10 +4,15 @@ import cucumber.annotation.DummyWhen;
 import cucumber.api.CucumberOptions;
 import cucumber.api.junit.Cucumber;
 import cucumber.runtime.CucumberException;
+import cucumber.runtime.junit.categories.CategoryFilterFactory;
+import cucumber.runtime.junit.categories.UsedCategory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
+import org.junit.runner.FilterFactory;
 import org.junit.runner.RunWith;
+import org.junit.runner.manipulation.NoTestsRemainException;
 import org.junit.runners.model.InitializationError;
 
 import java.io.File;
@@ -68,9 +73,24 @@ public class CucumberTest {
         try {
             new Cucumber(FormatterWithLexerErrorFeature.class);
             fail("Expecting error");
-        } catch (CucumberException e){
+        } catch (CucumberException e) {
             assertFalse("File is created despite Lexor Error", new File("lexor_error_feature.json").exists());
         }
+    }
+
+    @Test
+    public void testThatFilteringBasedOnJunitCategoriesWorks() throws IOException, InitializationError, NoTestsRemainException, FilterFactory.FilterNotCreatedException {
+        Cucumber cucumber = new Cucumber(CategoryFeature.class);
+        cucumber.filter(CategoryFilterFactory.includeCategory(UsedCategory.class));
+        assertEquals(3, cucumber.getChildren().size());
+        assertEquals("Feature: FA", cucumber.getChildren().get(0).getName());
+    }
+
+    @Test
+    public void testThatFilteringBasedOnJunitCategoriesExclude() throws IOException, InitializationError, NoTestsRemainException, FilterFactory.FilterNotCreatedException {
+        Cucumber cucumber = new Cucumber(ImplicitFeatureAndGluePath.class);
+        cucumber.filter(CategoryFilterFactory.includeCategory(UsedCategory.class));
+        assertEquals(0, cucumber.getChildren().size());
     }
 
     @Test
@@ -113,6 +133,10 @@ public class CucumberTest {
 
     @CucumberOptions(features = {"classpath:cucumber/runtime/junit"})
     public class ExplicitFeaturePath {
+    }
+
+    @Category(UsedCategory.class)
+    public class CategoryFeature {
     }
 
     @CucumberOptions(features = {"classpath:gibber/ish"})
