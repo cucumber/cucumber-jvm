@@ -41,7 +41,7 @@ Check out the simple [cucumber-java-skeleton](https://github.com/cucumber/cucumb
 You can register bugs and feature requests in the [Github Issue Tracker](https://github.com/cucumber/cucumber-jvm/issues).
 
 You're most likely going to paste code and output, so familiarise yourself with
-[Github Flavored Markdown](http://github.github.com/github-flavored-markdown/) to make sure it remains readable.
+[Github Flavored Markdown](https://help.github.com/articles/github-flavored-markdown) to make sure it remains readable.
 
 *At the very least - use triple backticks*:
 
