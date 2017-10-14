@@ -16,13 +16,11 @@ public class GuiceFactory implements ObjectFactory {
         this(new InjectorSourceFactory(Env.INSTANCE).create().getInjector());
     }
 
-    /**
-     * Package private constructor that is called by the public constructor at runtime and is also called directly by
-     * tests.
+    /** Construct a GuiceFactory from an existing Injector.
      *
      * @param injector an injector configured with a binding for <code>cucumber.runtime.java.guice.ScenarioScope</code>.
      */
-    GuiceFactory(Injector injector) {
+    public GuiceFactory(Injector injector) {
         this.injector = injector;
     }
 
