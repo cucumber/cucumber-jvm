@@ -32,8 +32,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class JavaBackend implements Backend {
-    public static final ThreadLocal<JavaBackend> INSTANCE = new ThreadLocal<JavaBackend>();
+public class JavaBackend implements Backend, LambdaGlueRegistry {
+
     private final SnippetGenerator snippetGenerator;
     private final ParameterTypeRegistry parameterTypeRegistry;
 
@@ -153,6 +153,7 @@ public class JavaBackend implements Backend {
         }
     }
 
+    @Override
     public void addStepDefinition(Function<ParameterTypeRegistry, StepDefinition> stepDefinitionFunction) {
         glue.addStepDefinition(stepDefinitionFunction.apply(parameterTypeRegistry));
     }
@@ -171,10 +172,12 @@ public class JavaBackend implements Backend {
         }
     }
 
+    @Override
     public void addBeforeHookDefinition(HookDefinition beforeHook) {
         glue.addBeforeHook(beforeHook);
     }
 
+    @Override
     public void addAfterHookDefinition(HookDefinition afterHook) {
         glue.addAfterHook(afterHook);
     }

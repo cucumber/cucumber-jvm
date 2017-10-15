@@ -39,7 +39,7 @@ public class Java8StepDefinition implements StepDefinition {
         this.timeoutMillis = timeoutMillis;
         this.body = body;
 
-        this.location = new Exception().getStackTrace()[3];
+        this.location = new Exception().getStackTrace()[4];
         this.method = getAcceptMethod(body.getClass());
         try {
             Type[] argumentTypes = verifyNotListOrMap(resolveRawArguments(bodyClass, body.getClass()));
