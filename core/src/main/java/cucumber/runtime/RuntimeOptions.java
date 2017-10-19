@@ -470,7 +470,7 @@ public class RuntimeOptions {
         public void addPluginName(String name, boolean isAddPlugin) {
             if (PluginFactory.isFormatterName(name)) {
                 formatterNames.addName(name, isAddPlugin);
-            } else if (PluginFactory.isStepDefinitionResporterName(name)) {
+            } else if (PluginFactory.isStepDefinitionReporterName(name)) {
                 stepDefinitionReporterNames.addName(name, isAddPlugin);
             } else if (PluginFactory.isSummaryPrinterName(name)) {
                 summaryPrinterNames.addName(name, isAddPlugin);
