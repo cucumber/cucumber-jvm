@@ -13,7 +13,7 @@ public class DefaultSummaryPrinter implements SummaryPrinter {
     }
 
     @Override
-    public void print(cucumber.runtime.Runtime runtime) {
+    public void print(Runtime runtime) {
         out.println();
         printStats(runtime);
         out.println();
@@ -21,18 +21,18 @@ public class DefaultSummaryPrinter implements SummaryPrinter {
         printSnippets(runtime);
     }
 
-    private void printStats(cucumber.runtime.Runtime runtime) {
+    private void printStats(Runtime runtime) {
         runtime.printStats(out);
     }
 
-    private void printErrors(cucumber.runtime.Runtime runtime) {
+    private void printErrors(Runtime runtime) {
         for (Throwable error : runtime.getErrors()) {
             error.printStackTrace(out);
             out.println();
         }
     }
 
-    private void printSnippets(cucumber.runtime.Runtime runtime) {
+    private void printSnippets(Runtime runtime) {
         List<String> snippets = runtime.getSnippets();
         if (!snippets.isEmpty()) {
             out.append("\n");

@@ -62,6 +62,7 @@ public class SpringFactory implements ObjectFactory {
 
     private final Collection<Class<?>> stepClasses = new HashSet<Class<?>>();
     private Class<?> stepClassWithSpringContext = null;
+    private boolean deprecationWarningIssued = false;
 
     public SpringFactory() {
     }
@@ -119,6 +120,14 @@ public class SpringFactory implements ObjectFactory {
 
 
     private void checkAnnotationsEqual(Class<?> stepClassWithSpringContext, Class<?> stepClass) {
+        if (!deprecationWarningIssued) {
+            deprecationWarningIssued = true;
+            System.err.println(String.format("" +
+                    "WARNING: Having more than one glue class that configures " +
+                    "the spring context is deprecated. Found both %1$s and %2$s " +
+                    "that attempt to configure the spring context.",
+                    stepClass, stepClassWithSpringContext));
+        }
         Annotation[] annotations1 = stepClassWithSpringContext.getAnnotations();
         Annotation[] annotations2 = stepClass.getAnnotations();
         if (annotations1.length != annotations2.length) {

@@ -1,5 +1,7 @@
 package cucumber.api;
 
-public interface SummaryPrinter {
-    public void print(cucumber.runtime.Runtime runtime);
+import cucumber.runtime.Runtime;
+
+public interface SummaryPrinter extends Plugin {
+    void print(Runtime runtime);
 }

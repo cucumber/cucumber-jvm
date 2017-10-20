@@ -1,7 +1,9 @@
 package cucumber.runtime;
 
 import cucumber.api.CucumberOptions;
+import cucumber.api.Plugin;
 import cucumber.api.SnippetType;
+import cucumber.api.formatter.Formatter;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.deps.com.thoughtworks.xstream.annotations.XStreamConverter;
 import cucumber.deps.com.thoughtworks.xstream.annotations.XStreamConverters;
@@ -118,7 +120,7 @@ public class RuntimeOptionsFactoryTest {
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(SubClassWithFormatter.class);
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
 
-        List<Object> plugins = runtimeOptions.getPlugins();
+        List<Plugin> plugins = runtimeOptions.getPlugins();
         assertPluginExists(plugins, "cucumber.runtime.formatter.JSONFormatter");
         assertPluginExists(plugins, "cucumber.runtime.formatter.PrettyFormatter");
     }
@@ -174,10 +176,10 @@ public class RuntimeOptionsFactoryTest {
         assertEquals(DummyConverter.class, converters.get(1).value());
     }
 
-    private void assertPluginExists(List<Object> plugins, String pluginName) {
+    private void assertPluginExists(List<Plugin> plugins, String pluginName) {
         boolean found = false;
-        for (Object plugin : plugins) {
-            if (plugin.getClass().getName() == pluginName) {
+        for (Plugin plugin : plugins) {
+            if (plugin.getClass().getName().equals(pluginName)) {
                 found = true;
             }
         }

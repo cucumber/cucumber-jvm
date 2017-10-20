@@ -28,7 +28,7 @@ import io.cucumber.cucumberexpressions.Argument;
 
 import java.util.List;
 
-class PrettyFormatter implements Formatter, ColorAware {
+final class PrettyFormatter implements Formatter, ColorAware {
     private static final String SCENARIO_INDENT = "  ";
     private static final String STEP_INDENT = "    ";
     private static final String EXAMPLES_INDENT = "    ";
@@ -306,7 +306,7 @@ class PrettyFormatter implements Formatter, ColorAware {
     private void printBackground(TestCase testCase) {
         TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeatureFile, testCase.getLine());
         if (astNode != null) {
-            Background background = TestSourcesModel.getBackgoundForTestCase(astNode);
+            Background background = TestSourcesModel.getBackgroundForTestCase(astNode);
             String backgroundText = getScenarioDefinitionText(background);
             boolean useBackgroundSteps = true;
             calculateLocationIndentation(SCENARIO_INDENT + backgroundText, testCase.getTestSteps(), useBackgroundSteps);

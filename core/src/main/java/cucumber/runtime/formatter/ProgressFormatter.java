@@ -14,7 +14,7 @@ import cucumber.api.formatter.NiceAppendable;
 import java.util.HashMap;
 import java.util.Map;
 
-class ProgressFormatter implements Formatter, ColorAware {
+final class ProgressFormatter implements Formatter, ColorAware {
     private static final Map<Result.Type, Character> CHARS = new HashMap<Result.Type, Character>() {{
         put(Result.Type.PASSED, '.');
         put(Result.Type.UNDEFINED, 'U');

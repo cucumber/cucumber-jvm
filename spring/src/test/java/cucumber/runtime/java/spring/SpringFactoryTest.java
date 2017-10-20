@@ -16,6 +16,8 @@ import cucumber.runtime.java.spring.contexthierarchyconfig.WithContextHierarchyA
 import cucumber.runtime.java.spring.contexthierarchyconfig.WithDifferentContextHierarchyAnnotation;
 import cucumber.runtime.java.spring.dirtiescontextconfig.DirtiesContextBellyStepDefs;
 import cucumber.runtime.java.spring.metaconfig.dirties.DirtiesContextBellyMetaStepDefs;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -244,8 +246,21 @@ public class SpringFactoryTest {
     @Test
     public void shouldAllowClassesWithSameSpringAnnotations() {
         final ObjectFactory factory = new SpringFactory();
-        factory.addClass(WithSpringAnnotations.class);
-        factory.addClass(BellyStepdefs.class);
+        PrintStream originalErr = System.err;
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            System.setErr(new PrintStream(baos));
+            factory.addClass(WithSpringAnnotations.class);
+            factory.addClass(BellyStepdefs.class);
+            assertEquals("WARNING: Having more than one glue class that configures " +
+                         "the spring context is deprecated. Found both class " +
+                         "cucumber.runtime.java.spring.contextconfig.BellyStepdefs and class " +
+                         "cucumber.runtime.java.spring.contextconfig.WithSpringAnnotations " +
+                         "that attempt to configure the spring context.\n",
+                         baos.toString());
+        } finally {
+            System.setErr(originalErr);
+        }
     }
 
     @Test
@@ -253,8 +268,15 @@ public class SpringFactoryTest {
         expectedException.expect(CucumberException.class);
         expectedException.expectMessage("Annotations differs on glue classes found: cucumber.runtime.java.spring.contexthierarchyconfig.WithContextHierarchyAnnotation, cucumber.runtime.java.spring.contexthierarchyconfig.WithDifferentContextHierarchyAnnotation");
         final ObjectFactory factory = new SpringFactory();
-        factory.addClass(WithContextHierarchyAnnotation.class);
-        factory.addClass(WithDifferentContextHierarchyAnnotation.class);
+        PrintStream originalErr = System.err;
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            System.setErr(new PrintStream(baos));
+            factory.addClass(WithContextHierarchyAnnotation.class);
+            factory.addClass(WithDifferentContextHierarchyAnnotation.class);
+        } finally {
+            System.setErr(originalErr);
+        }
     }
 
     @Test

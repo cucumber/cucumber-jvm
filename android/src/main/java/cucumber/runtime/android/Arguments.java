@@ -7,23 +7,23 @@ import android.os.Bundle;
  */
 public class Arguments {
 
-    public static final String VALUE_SEPARATOR = "--";
+    private static final String VALUE_SEPARATOR = "--";
 
     /**
      * Keys of supported arguments.
      */
-    public static class KEY {
-        public static final String COUNT_ENABLED = "count";
-        public static final String DEBUG_ENABLED = "debug";
-        public static final String COVERAGE_ENABLED = "coverage";
-        public static final String COVERAGE_DATA_FILE_PATH = "coverageFile";
+    static class KEY {
+        static final String COUNT_ENABLED = "count";
+        static final String DEBUG_ENABLED = "debug";
+        static final String COVERAGE_ENABLED = "coverage";
+        static final String COVERAGE_DATA_FILE_PATH = "coverageFile";
     }
 
     /**
      * Default values of supported arguments.
      */
-    public static class DEFAULT {
-        public static final String COVERAGE_DATA_FILE_PATH = "coverage.ec";
+    static class DEFAULT {
+        static final String COVERAGE_DATA_FILE_PATH = "coverage.ec";
     }
 
     private final boolean countEnabled;
