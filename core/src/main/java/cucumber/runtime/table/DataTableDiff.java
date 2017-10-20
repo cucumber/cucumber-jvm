@@ -1,40 +1,38 @@
 package cucumber.runtime.table;
 
-import cucumber.api.DataTable;
-import cucumber.api.TableConverter;
-import gherkin.pickles.PickleRow;
-import gherkin.pickles.PickleTable;
-
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DataTableDiff extends DataTable {
+public class DataTableDiff {
     public enum DiffType {
         NONE, DELETE, INSERT
     }
 
+    private final List<List<String>> table;
     private List<DiffType> diffTypes;
 
-    public static DataTableDiff create(List<SimpleEntry<PickleRow, DiffType>> diffTableRows, TableConverter tableConverter) {
-        List<PickleRow> rows = new ArrayList<PickleRow>(diffTableRows.size());
+    public static DataTableDiff create(List<SimpleEntry<List<String>, DiffType>> diffTableRows) {
         List<DiffType> diffTypes = new ArrayList<DiffType>(diffTableRows.size());
-        for (SimpleEntry<PickleRow, DiffType> row : diffTableRows) {
-            rows.add(row.getKey());
+        List<List<String>> table = new ArrayList<List<String>>();
+
+        for (SimpleEntry<List<String>, DiffType> row : diffTableRows) {
+            table.add(row.getKey());
             diffTypes.add(row.getValue());
         }
-        return new DataTableDiff(new PickleTable(rows), diffTypes, tableConverter);
+        return new DataTableDiff(table, diffTypes);
     }
 
-    public DataTableDiff(PickleTable pickleTable, List<DiffType> diffTypes, TableConverter tableConverter) {
-        super(pickleTable, tableConverter);
+    public DataTableDiff(List<List<String>> table, List<DiffType> diffTypes) {
+        this.table = table;
         this.diffTypes = diffTypes;
-
     }
 
     @Override
-    protected TablePrinter createTablePrinter() {
-        return new DiffTablePrinter(diffTypes);
+    public String toString() {
+        StringBuilder result = new StringBuilder();
+        DiffTablePrinter printer = new DiffTablePrinter(diffTypes);
+        printer.printTable(table, result);
+        return result.toString();
     }
-
 }

@@ -224,13 +224,9 @@ public class DataTable {
         List<DiffableRow> result = new ArrayList<DiffableRow>();
         List<List<String>> convertedRows = raw();
         for (int i = 0; i < convertedRows.size(); i++) {
-            result.add(new DiffableRow(getPickleRows().get(i), convertedRows.get(i)));
+            result.add(new DiffableRow(raw.get(i), convertedRows.get(i)));
         }
         return result;
-    }
-
-    public TableConverter getTableConverter() {
-        return tableConverter;
     }
 
     public DataTable transpose() {
@@ -265,7 +261,7 @@ public class DataTable {
         return raw.hashCode();
     }
 
-    protected TablePrinter createTablePrinter() {
+    private TablePrinter createTablePrinter() {
         return new TablePrinter();
     }
 }

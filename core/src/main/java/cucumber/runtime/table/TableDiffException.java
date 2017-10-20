@@ -5,9 +5,9 @@ import cucumber.api.DataTable;
 public class TableDiffException extends RuntimeException {
     private final DataTable from;
     private final DataTable to;
-    private final DataTable diff;
+    private final DataTableDiff diff;
 
-    public TableDiffException(DataTable from, DataTable to, DataTable diff) {
+    public TableDiffException(DataTable from, DataTable to, DataTableDiff diff) {
         super("Tables were not identical:\n" + diff.toString());
         this.from = from;
         this.to = to;
@@ -31,7 +31,7 @@ public class TableDiffException extends RuntimeException {
     /**
      * @return the diff itself - represented as a table
      */
-    public DataTable getDiff() {
+    public DataTableDiff getDiff() {
         return diff;
     }
 }

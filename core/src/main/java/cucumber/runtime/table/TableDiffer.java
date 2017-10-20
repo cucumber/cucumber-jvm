@@ -4,11 +4,8 @@ import cucumber.api.DataTable;
 import cucumber.deps.difflib.Delta;
 import cucumber.deps.difflib.DiffUtils;
 import cucumber.deps.difflib.Patch;
-import gherkin.pickles.PickleCell;
-import gherkin.pickles.PickleRow;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,8 +41,7 @@ public class TableDiffer {
 
     public void calculateUnorderedDiffs() throws TableDiffException {
         boolean isDifferent = false;
-        List<SimpleEntry<PickleRow, DiffType>> diffTableRows = new ArrayList<SimpleEntry<PickleRow, DiffType>>();
-        List<List<String>> missingRow    = new ArrayList<List<String>>();
+        List<SimpleEntry<List<String>, DiffType>> diffTableRows = new ArrayList<SimpleEntry<List<String>, DiffType>>();
 
         ArrayList<List<String>> extraRows = new ArrayList<List<String>>();
 
@@ -54,44 +50,27 @@ public class TableDiffer {
         // finally, only extra rows are kept and in same order that in "to".
         extraRows.addAll(to.raw());
 
-        for (PickleRow r : from.getPickleRows()) {
-            if (!to.raw().contains(getCellValues(r))) {
-                missingRow.add(getCellValues(r));
+        for (List<String> row : from.raw()) {
+            if (!to.raw().contains(row)) {
                 diffTableRows.add(
-                        new SimpleEntry<PickleRow, DiffType>(new PickleRow(r.getCells()), DiffType.DELETE));
+                    new SimpleEntry<List<String>, DiffType>(row, DiffType.DELETE));
                 isDifferent = true;
             } else {
                 diffTableRows.add(
-                        new SimpleEntry<PickleRow, DiffType>(new PickleRow(r.getCells()), DiffType.NONE));
-                extraRows.remove(getCellValues(r));
+                    new SimpleEntry<List<String>, DiffType>(row, DiffType.NONE));
+                extraRows.remove(row);
             }
         }
 
-        for (List<String> e : extraRows) {
+        for (List<String> cells : extraRows) {
             diffTableRows.add(
-                    new SimpleEntry<PickleRow, DiffType>(new PickleRow(convertToPickleCells(e)), DiffType.INSERT));
+                new SimpleEntry<List<String>, DiffType>(cells, DiffType.INSERT));
             isDifferent = true;
         }
 
         if (isDifferent) {
-            throw new TableDiffException(from, to, DataTableDiff.create(diffTableRows, from.getTableConverter()));
+            throw new TableDiffException(from, to, DataTableDiff.create(diffTableRows));
         }
-    }
-
-    private List<PickleCell> convertToPickleCells(List<String> e) {
-        List<PickleCell> cells = new ArrayList<PickleCell>(e.size());
-        for (String value : e) {
-            cells.add(new PickleCell(null, value));
-        }
-        return cells;
-    }
-
-    private List<String> getCellValues(PickleRow r) {
-        List<String> values = new ArrayList<String>(r.getCells().size());
-        for (PickleCell cell : r.getCells()) {
-            values.add(cell.getValue());
-        }
-        return values;
     }
 
     private Map<Integer, Delta> createDeltasByLine(List<Delta> deltas) {
@@ -102,20 +81,20 @@ public class TableDiffer {
         return deltasByLine;
     }
 
-    private DataTable createTableDiff(Map<Integer, Delta> deltasByLine) {
-        List<SimpleEntry<PickleRow, DiffType>> diffTableRows = new ArrayList<SimpleEntry<PickleRow, DiffType>>();
+    private DataTableDiff createTableDiff(Map<Integer, Delta> deltasByLine) {
+        List<SimpleEntry<List<String>, DiffType>> diffTableRows = new ArrayList<SimpleEntry<List<String>, DiffType>>();
         List<List<String>> rows = from.raw();
         for (int i = 0; i < rows.size(); i++) {
             Delta delta = deltasByLine.get(i);
             if (delta == null) {
-                diffTableRows.add(new SimpleEntry<PickleRow, DiffType>(from.getPickleRows().get(i), DiffType.NONE));
+                diffTableRows.add(new SimpleEntry<List<String>, DiffType>(from.raw().get(i), DiffType.NONE));
             } else {
                 addRowsToTableDiff(diffTableRows, delta);
                 // skipping lines involved in a delta
                 if (delta.getType() == Delta.TYPE.CHANGE || delta.getType() == Delta.TYPE.DELETE) {
                     i += delta.getOriginal().getLines().size() - 1;
                 } else {
-                    diffTableRows.add(new SimpleEntry<PickleRow, DiffType>(from.getPickleRows().get(i), DiffType.NONE));
+                    diffTableRows.add(new SimpleEntry<List<String>, DiffType>(from.raw().get(i), DiffType.NONE));
                 }
             }
         }
@@ -124,25 +103,25 @@ public class TableDiffer {
         if (remainingDelta != null) {
             addRowsToTableDiff(diffTableRows, remainingDelta);
         }
-        return DataTableDiff.create(diffTableRows, from.getTableConverter());
+        return DataTableDiff.create(diffTableRows);
     }
 
-    private void addRowsToTableDiff(List<SimpleEntry<PickleRow, DiffType>> diffTableRows, Delta delta) {
+    private void addRowsToTableDiff(List<SimpleEntry<List<String>, DiffType>> diffTableRows, Delta delta) {
         markChangedAndDeletedRowsInOriginalAsMissing(diffTableRows, delta);
         markChangedAndInsertedRowsInRevisedAsNew(diffTableRows, delta);
     }
 
-    private void markChangedAndDeletedRowsInOriginalAsMissing(List<SimpleEntry<PickleRow, DiffType>> diffTableRows, Delta delta) {
+    private void markChangedAndDeletedRowsInOriginalAsMissing(List<SimpleEntry<List<String>, DiffType>> diffTableRows, Delta delta) {
         List<DiffableRow> deletedLines = (List<DiffableRow>) delta.getOriginal().getLines();
         for (DiffableRow row : deletedLines) {
-            diffTableRows.add(new SimpleEntry<PickleRow, DiffType>(new PickleRow(row.row.getCells()), DiffType.DELETE));
+            diffTableRows.add(new SimpleEntry<List<String>, DiffType>(row.row, DiffType.DELETE));
         }
     }
 
-    private void markChangedAndInsertedRowsInRevisedAsNew(List<SimpleEntry<PickleRow, DiffType>> diffTableRows, Delta delta) {
+    private void markChangedAndInsertedRowsInRevisedAsNew(List<SimpleEntry<List<String>, DiffType>> diffTableRows, Delta delta) {
         List<DiffableRow> insertedLines = (List<DiffableRow>) delta.getRevised().getLines();
         for (DiffableRow row : insertedLines) {
-            diffTableRows.add(new SimpleEntry<PickleRow, DiffType>(new PickleRow(row.row.getCells()), DiffType.INSERT));
+            diffTableRows.add(new SimpleEntry<List<String>, DiffType>(row.row, DiffType.INSERT));
         }
     }
 }
