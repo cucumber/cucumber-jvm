@@ -1,8 +1,7 @@
 package cucumber.runtime.table;
 
 import cucumber.api.DataTable;
-import cucumber.runtime.ParameterInfo;
-import cucumber.runtime.xstream.LocalizedXStreams;
+import cucumber.api.TableConverter;
 import gherkin.AstBuilder;
 import gherkin.Parser;
 import gherkin.ast.GherkinDocument;
@@ -11,7 +10,6 @@ import gherkin.pickles.Pickle;
 import gherkin.pickles.PickleTable;
 
 import java.util.List;
-import java.util.Locale;
 
 import static cucumber.runtime.PickleTableConverter.toTable;
 
@@ -20,7 +18,7 @@ public class TableParser {
     private TableParser() {
     }
 
-    public static DataTable parse(String source, ParameterInfo parameterInfo) {
+    public static DataTable parse(String source, TableConverter tableConverter) {
         String feature = "" +
                 "Feature:\n" +
                 "  Scenario:\n" +
@@ -30,7 +28,6 @@ public class TableParser {
         Compiler compiler = new Compiler();
         List<Pickle> pickles = compiler.compile(parser.parse(feature));
         PickleTable pickleTable = (PickleTable)pickles.get(0).getSteps().get(0).getArgument().get(0);
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        return new DataTable(toTable(pickleTable), new TableConverter(new LocalizedXStreams(classLoader).get(Locale.US), parameterInfo));
+        return new DataTable(toTable(pickleTable), tableConverter);
     }
 }

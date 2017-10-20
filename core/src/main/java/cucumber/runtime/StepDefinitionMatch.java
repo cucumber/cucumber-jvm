@@ -3,6 +3,7 @@ package cucumber.runtime;
 import cucumber.api.DataTable;
 import cucumber.api.Scenario;
 import cucumber.api.TableConverter;
+import cucumber.runtime.table.XStreamTableConverter;
 import cucumber.runtime.xstream.LocalizedXStreams;
 import cucumber.util.Mapper;
 import gherkin.pickles.PickleCell;
@@ -86,7 +87,7 @@ public class StepDefinitionMatch extends Match implements DefinitionMatch {
 
     private Object tableArgument(PickleTable pickleTable, int argIndex, LocalizedXStreams.LocalizedXStream xStream) {
         ParameterInfo parameterInfo = getParameterType(argIndex, DataTable.class);
-        TableConverter tableConverter = new cucumber.runtime.table.TableConverter(xStream, parameterInfo);
+        TableConverter tableConverter = new XStreamTableConverter(xStream, parameterInfo);
         DataTable table = new DataTable(toTable(pickleTable), tableConverter);
         Type type = parameterInfo.getType();
         return tableConverter.convert(table, type, parameterInfo.isTransposed());

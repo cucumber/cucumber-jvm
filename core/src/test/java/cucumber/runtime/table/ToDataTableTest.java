@@ -1,6 +1,7 @@
 package cucumber.runtime.table;
 
 import cucumber.api.DataTable;
+import cucumber.api.TableConverter;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.ParameterInfo;
 import cucumber.runtime.xstream.LocalizedXStreams;
@@ -26,12 +27,16 @@ import static org.junit.Assert.fail;
 public class ToDataTableTest {
     private static final String DD_MM_YYYY = "dd/MM/yyyy";
     private static final ParameterInfo PARAMETER_INFO = new ParameterInfo(null, DD_MM_YYYY);
+    private ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
     private TableConverter tc;
 
+    private TableConverter createTableConverter() {
+        return new XStreamTableConverter(new LocalizedXStreams(classLoader).get(Locale.US), PARAMETER_INFO);
+    }
+
     @Before
-    public void createTableConverterWithDateFormat() {
-        LocalizedXStreams.LocalizedXStream xStream = new LocalizedXStreams(Thread.currentThread().getContextClassLoader()).get(Locale.US);
-        tc = new TableConverter(xStream, new ParameterInfo(null, DD_MM_YYYY));
+    public void setTableConverter() {
+        tc = createTableConverter();
     }
 
     @Test
@@ -110,7 +115,7 @@ public class ToDataTableTest {
                     "| name        | birthDate  | crapola  |\n" +
                     "| Sid Vicious | 10/05/1957 | 1,000    |\n" +
                     "| Frank Zappa | 21/12/1940 | 3,000    |\n" +
-                    "", PARAMETER_INFO),
+                    "", createTableConverter()),
                     UserPojo.class);
             fail();
         } catch (CucumberException e) {
@@ -125,7 +130,7 @@ public class ToDataTableTest {
                     "| name        |            |\n" +
                     "| Sid Vicious | 10/05/1957 |\n" +
                     "| Frank Zappa | 21/12/1940 |\n" +
-                    "", PARAMETER_INFO),
+                    "", createTableConverter()),
                     UserPojo.class);
             fail();
         } catch (CucumberException e) {
@@ -140,7 +145,7 @@ public class ToDataTableTest {
                     "| credits     |\n" +
                     "| 5           |\n" +
                     "|             |\n" +
-                    "", PARAMETER_INFO),
+                    "", createTableConverter()),
                     PojoWithInt.class
             );
             fail();
@@ -155,7 +160,7 @@ public class ToDataTableTest {
             tc.toList(TableParser.parse("" +
                     "| credits     | credits     |\n" +
                     "| 5           | 5           |\n" +
-                    "", PARAMETER_INFO),
+                    "", createTableConverter()),
                     UserPojo.class
             );
             fail();
@@ -186,7 +191,7 @@ public class ToDataTableTest {
                 "| name        | birthDate  | credits  |\n" +
                 "| Sid Vicious | 10/05/1957 | 1,000    |\n" +
                 "| Frank Zappa | 21/12/1940 | 3,000    |\n" +
-                "", PARAMETER_INFO);
+                "", createTableConverter());
     }
 
     private DataTable personTableWithNull() {
@@ -194,7 +199,7 @@ public class ToDataTableTest {
                 "| name        | birthDate  | credits  |\n" +
                 "| Sid Vicious |            | 1,000    |\n" +
                 "| Frank Zappa | 21/12/1940 | 3,000    |\n" +
-                "", PARAMETER_INFO);
+                "", createTableConverter());
     }
 
     @Test
@@ -255,7 +260,7 @@ public class ToDataTableTest {
                 "| agree | \n" +
                 "|  yes  | \n" +
                 "|       | \n" +
-                "", PARAMETER_INFO),
+                "", createTableConverter()),
                 PojoWithEnum.class
         );
         assertEquals("[PojoWithEnum{yes}, PojoWithEnum{null}]", actual.toString());
@@ -266,7 +271,7 @@ public class ToDataTableTest {
         final List<PojoWithEnum> actual = tc.toList(TableParser.parse("" +
                 "| agree            | \n" +
                 "| mayBeMixedCase  | \n" +
-                "", PARAMETER_INFO),
+                "", createTableConverter()),
                 PojoWithEnum.class
         );
         assertEquals("[PojoWithEnum{mayBeMixedCase}]", actual.toString());
@@ -277,7 +282,7 @@ public class ToDataTableTest {
         final List<AnEnum> actual = tc.toList(TableParser.parse("" +
                 "| yes | \n" +
                 "|     | \n" +
-                "", PARAMETER_INFO),
+                "", createTableConverter()),
                 AnEnum.class
         );
         assertEquals("[yes, null]", actual.toString());

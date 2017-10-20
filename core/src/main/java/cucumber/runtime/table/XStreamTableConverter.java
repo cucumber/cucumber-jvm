@@ -1,6 +1,7 @@
 package cucumber.runtime.table;
 
 import cucumber.api.DataTable;
+import cucumber.api.TableConverter;
 import cucumber.deps.com.thoughtworks.xstream.converters.ConversionException;
 import cucumber.deps.com.thoughtworks.xstream.converters.SingleValueConverter;
 import cucumber.deps.com.thoughtworks.xstream.converters.reflection.AbstractReflectionConverter;
@@ -34,11 +35,11 @@ import static java.util.Arrays.asList;
 /**
  * This class converts a {@link cucumber.api.DataTable} to various other types.
  */
-public class TableConverter implements cucumber.api.TableConverter {
+public class XStreamTableConverter implements TableConverter {
     private final LocalizedXStreams.LocalizedXStream xStream;
     private final ParameterInfo parameterInfo;
 
-    public TableConverter(LocalizedXStreams.LocalizedXStream xStream, ParameterInfo parameterInfo) {
+    public XStreamTableConverter(LocalizedXStreams.LocalizedXStream xStream, ParameterInfo parameterInfo) {
         this.xStream = xStream;
         this.parameterInfo = parameterInfo;
     }

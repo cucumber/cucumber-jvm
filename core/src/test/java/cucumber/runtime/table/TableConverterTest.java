@@ -6,6 +6,7 @@ import cucumber.deps.com.thoughtworks.xstream.converters.SingleValueConverter;
 import cucumber.deps.com.thoughtworks.xstream.converters.javabean.JavaBeanConverter;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.ParameterInfo;
+import cucumber.runtime.xstream.LocalizedXStreams;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -29,13 +30,17 @@ public class TableConverterTest {
 
     @Test
     public void converts_table_of_single_column_to_list_of_integers() {
-        DataTable table = TableParser.parse("|3|\n|5|\n|6|\n|7|\n", null);
+        DataTable table = TableParser.parse("|3|\n|5|\n|6|\n|7|\n", createTableConverter());
         assertEquals(asList(3, 5, 6, 7), table.asList(Integer.class));
+    }
+
+    private XStreamTableConverter createTableConverter() {
+        return new XStreamTableConverter(new LocalizedXStreams(Thread.currentThread().getContextClassLoader()).get(Locale.US), null);
     }
 
     @Test
     public void converts_table_of_two_columns_to_map() {
-        DataTable table = TableParser.parse("|3|c|\n|5|e|\n|6|f|\n", null);
+        DataTable table = TableParser.parse("|3|c|\n|5|e|\n|6|f|\n", createTableConverter());
         Map<Integer, String> expected = new HashMap<Integer, String>() {{
             put(3, "c");
             put(5, "e");
@@ -80,7 +85,7 @@ public class TableConverterTest {
 
     @Test
     public void converts_table_of_single_column_to_list_of_without_string_constructor() {
-        DataTable table = TableParser.parse("|count|\n|5|\n|6|\n|7|\n", null);
+        DataTable table = TableParser.parse("|count|\n|5|\n|6|\n|7|\n", createTableConverter());
         List<WithoutStringConstructor> expected = asList(new WithoutStringConstructor().val("5"), new WithoutStringConstructor().val("6"), new WithoutStringConstructor().val("7"));
         assertEquals(expected, table.asList(WithoutStringConstructor.class));
     }
@@ -93,21 +98,21 @@ public class TableConverterTest {
 
     @Test
     public void converts_table_of_single_column_to_list_of_with_string_constructor() {
-        DataTable table = TableParser.parse("|count|\n|5|\n|6|\n|7|\n", null);
+        DataTable table = TableParser.parse("|count|\n|5|\n|6|\n|7|\n", createTableConverter());
         List<WithStringConstructor> expected = asList(new WithStringConstructor("count"), new WithStringConstructor("5"), new WithStringConstructor("6"), new WithStringConstructor("7"));
         assertEquals(expected, table.asList(WithStringConstructor.class));
     }
 
     @Test
     public void converts_table_of_several_columns_to_list_of_integers() {
-        DataTable table = TableParser.parse("|3|5|\n|6|7|\n", null);
+        DataTable table = TableParser.parse("|3|5|\n|6|7|\n", createTableConverter());
         List<Integer> converted = table.asList(Integer.class);
         assertEquals(asList(3, 5, 6, 7), converted);
     }
 
     @Test
     public void converts_table_to_list_of_list_of_integers_and_back() {
-        DataTable table = TableParser.parse("|3|5|\n|6|7|\n", null);
+        DataTable table = TableParser.parse("|3|5|\n|6|7|\n", createTableConverter());
         List<List<Integer>> converted = table.asLists(Integer.class);
         assertEquals(asList(asList(3, 5), asList(6, 7)), converted);
         assertEquals("      | 3 | 5 |\n      | 6 | 7 |\n", table.toTable(converted).toString());
@@ -119,19 +124,19 @@ public class TableConverterTest {
 
     @Test
     public void converts_table_of_single_column_to_enums() {
-        DataTable table = TableParser.parse("|RED|\n|GREEN|\n", null);
+        DataTable table = TableParser.parse("|RED|\n|GREEN|\n", createTableConverter());
         assertEquals(asList(Color.RED, Color.GREEN), table.asList(Color.class));
     }
 
     @Test
     public void converts_table_of_single_column_to_nullable_enums() {
-        DataTable table = TableParser.parse("|RED|\n||\n", null);
+        DataTable table = TableParser.parse("|RED|\n||\n", createTableConverter());
         assertEquals(asList(Color.RED, null), table.asList(Color.class));
     }
 
     @Test
     public void converts_to_map_of_enum_to_int() {
-        DataTable table = TableParser.parse("|RED|BLUE|\n|6|7|\n|8|9|\n", null);
+        DataTable table = TableParser.parse("|RED|BLUE|\n|6|7|\n|8|9|\n", createTableConverter());
         HashMap<Color, Integer> map1 = new HashMap<Color, Integer>() {{
             put(Color.RED, 6);
             put(Color.BLUE, 7);
@@ -151,7 +156,7 @@ public class TableConverterTest {
 
     @Test
     public void converts_table_to_list_of_pojo_and_almost_back() {
-        DataTable table = TableParser.parse("|Birth Date|Death Cal|\n|1957-05-10|1979-02-02|\n", PARAMETER_INFO);
+        DataTable table = TableParser.parse("|Birth Date|Death Cal|\n|1957-05-10|1979-02-02|\n", new XStreamTableConverter(new LocalizedXStreams(Thread.currentThread().getContextClassLoader()).get(Locale.US), PARAMETER_INFO));
         List<UserPojo> converted = table.asList(UserPojo.class);
         assertEquals(sidsBirthday(), converted.get(0).birthDate);
         assertEquals(sidsDeathcal(), converted.get(0).deathCal);
@@ -182,7 +187,7 @@ public class TableConverterTest {
 
     @Test
     public void converts_to_list_of_java_bean_and_almost_back() {
-        DataTable table = TableParser.parse("|Birth Date|Death Cal|\n|1957-05-10|1979-02-02|\n", PARAMETER_INFO);
+        DataTable table = TableParser.parse("|Birth Date|Death Cal|\n|1957-05-10|1979-02-02|\n", new XStreamTableConverter(new LocalizedXStreams(Thread.currentThread().getContextClassLoader()).get(Locale.US), PARAMETER_INFO));
         List<UserBean> converted = table.asList(UserBean.class);
         assertEquals(sidsBirthday(), converted.get(0).getBirthDate());
         assertEquals(sidsDeathcal(), converted.get(0).getDeathCal());
@@ -247,7 +252,7 @@ public class TableConverterTest {
     public void converts_empty_complex_types_and_almost_back() {
         DataTable table = TableParser.parse("" +
             "|Author   |Tags |Post            |\n" +
-            "|Tom Scott|     |Linear B is a...|\n", PARAMETER_INFO);
+            "|Tom Scott|     |Linear B is a...|\n", new XStreamTableConverter(new LocalizedXStreams(Thread.currentThread().getContextClassLoader()).get(Locale.US), PARAMETER_INFO));
         List<BlogBean> converted = table.asList(BlogBean.class);
         BlogBean blog = converted.get(0);
         assertEquals("Tom Scott", blog.getAuthor());
@@ -312,7 +317,7 @@ public class TableConverterTest {
     public void converts_annotated_complex_types_and_almost_back() {
         DataTable table = TableParser.parse("" +
             "|Author   |Tags                                  |Post            |\n" +
-            "|Tom Scott|Language, Linguistics, Mycenaean Greek|Linear B is a...|\n", PARAMETER_INFO);
+            "|Tom Scott|Language, Linguistics, Mycenaean Greek|Linear B is a...|\n", new XStreamTableConverter(new LocalizedXStreams(Thread.currentThread().getContextClassLoader()).get(Locale.US), PARAMETER_INFO));
         List<AnnotatedBlogBean> converted = table.asList(AnnotatedBlogBean.class);
         AnnotatedBlogBean blog = converted.get(0);
         assertEquals("Tom Scott", blog.getAuthor());
@@ -326,14 +331,14 @@ public class TableConverterTest {
 
     @Test
     public void converts_to_list_of_map_of_date() {
-        DataTable table = TableParser.parse("|Birth Date|Death Cal|\n|1957-05-10|1979-02-02|\n", PARAMETER_INFO);
+        DataTable table = TableParser.parse("|Birth Date|Death Cal|\n|1957-05-10|1979-02-02|\n", new XStreamTableConverter(new LocalizedXStreams(Thread.currentThread().getContextClassLoader()).get(Locale.US), PARAMETER_INFO));
         List<Map<String, Date>> converted = table.asMaps(String.class, Date.class);
         assertEquals(sidsBirthday(), converted.get(0).get("Birth Date"));
     }
 
     @Test
     public void converts_to_list_of_map_of_string() {
-        DataTable table = TableParser.parse("|Birth Date|Death Cal|\n|1957-05-10|1979-02-02|\n", null);
+        DataTable table = TableParser.parse("|Birth Date|Death Cal|\n|1957-05-10|1979-02-02|\n", createTableConverter());
         List<Map<String, String>> converted = table.asMaps(String.class, String.class);
         assertEquals("1957-05-10", converted.get(0).get("Birth Date"));
     }
@@ -354,7 +359,7 @@ public class TableConverterTest {
 
     @Test
     public void converts_distinct_tostring_objects_correctly() {
-        DataTable table = TableParser.parse("|first|second|\n|row1.first|row1.second|\n|row2.first|row2.second|\n", null);
+        DataTable table = TableParser.parse("|first|second|\n|row1.first|row1.second|\n|row2.first|row2.second|\n", createTableConverter());
         List<ContainsTwoFromStringableFields> converted = table.asList(ContainsTwoFromStringableFields.class);
 
         List<ContainsTwoFromStringableFields> expected = Arrays.asList(

@@ -1,11 +1,14 @@
 package cucumber.runtime.table;
 
 import cucumber.api.DataTable;
+import cucumber.api.TableConverter;
+import cucumber.runtime.xstream.LocalizedXStreams;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
@@ -19,7 +22,11 @@ public class TableDifferTest {
                 "| Joe   | joe@email.com   | 234 |\n" +
                 "| Bryan | bryan@email.org | 456 |\n" +
                 "| Ni    | ni@email.com    | 654 |\n";
-        return TableParser.parse(source, null);
+        return TableParser.parse(source, createTableConverter());
+    }
+
+    private TableConverter createTableConverter() {
+        return new XStreamTableConverter(new LocalizedXStreams(Thread.currentThread().getContextClassLoader()).get(Locale.US), null);
     }
 
     private DataTable tableWithDuplicate() {
@@ -30,14 +37,14 @@ public class TableDifferTest {
                 "| Joe   | joe@email.com   | 234 |\n" +
                 "| Ni    | ni@email.com    | 654 |\n" +
                 "| Ni    | ni@email.com    | 654 |\n" ;
-        return TableParser.parse(source, null);
+        return TableParser.parse(source, createTableConverter());
     }
 
     private DataTable otherTableWithTwoConsecutiveRowsDeleted() {
         String source = "" +
                 "| Aslak | aslak@email.com | 123 |\n" +
                 "| Ni    | ni@email.com    | 654 |\n";
-        return TableParser.parse(source, null);
+        return TableParser.parse(source, createTableConverter());
 
     }
 
@@ -47,7 +54,7 @@ public class TableDifferTest {
                 "| Joe   | joe@NOSPAM.com   | 234 |\n" +
                 "| Bryan | bryan@NOSPAM.org | 456 |\n" +
                 "| Ni    | ni@email.com     | 654 |\n";
-        return TableParser.parse(source, null);
+        return TableParser.parse(source, createTableConverter());
     }
 
     private DataTable otherTableWithTwoConsecutiveRowsInserted() {
@@ -58,7 +65,7 @@ public class TableDifferTest {
                 "| Foo   | schnickens@email.net | 789 |\n" +
                 "| Bryan | bryan@email.org      | 456 |\n" +
                 "| Ni    | ni@email.com         | 654 |\n";
-        return TableParser.parse(source, null);
+        return TableParser.parse(source, createTableConverter());
     }
 
     private DataTable otherTableWithDeletedAndInserted() {
@@ -67,7 +74,7 @@ public class TableDifferTest {
                 "| Doe   | joe@email.com        | 234 |\n" +
                 "| Foo   | schnickens@email.net | 789 |\n" +
                 "| Bryan | bryan@email.org      | 456 |\n";
-        return TableParser.parse(source, null);
+        return TableParser.parse(source, createTableConverter());
     }
 
     private DataTable otherTableWithInsertedAtEnd() {
@@ -78,7 +85,7 @@ public class TableDifferTest {
                 "| Ni    | ni@email.com         | 654 |\n" +
                 "| Doe   | joe@email.com        | 234 |\n" +
                 "| Foo   | schnickens@email.net | 789 |\n";
-        return TableParser.parse(source, null);
+        return TableParser.parse(source, createTableConverter());
     }
 
     private DataTable otherTableWithDifferentOrder() {
@@ -87,7 +94,7 @@ public class TableDifferTest {
                 "| Aslak | aslak@email.com | 123 |\n" +
                 "| Bryan | bryan@email.org | 456 |\n" +
                 "| Ni    | ni@email.com    | 654 |\n";
-        return TableParser.parse(source, null);
+        return TableParser.parse(source, createTableConverter());
     }
 
     private DataTable otherTableWithDifferentOrderAndDuplicate() {
@@ -98,7 +105,7 @@ public class TableDifferTest {
                 "| Ni    | ni@email.com    | 654 |\n"+
                 "| Ni    | ni@email.com    | 654 |\n" +
                 "| Joe   | joe@email.com   | 234 |\n" ;
-        return TableParser.parse(source, null);
+        return TableParser.parse(source, createTableConverter());
     }
 
     private DataTable  otherTableWithDifferentOrderDuplicateAndDeleted() {
@@ -112,7 +119,7 @@ public class TableDifferTest {
                 "| Ni    | ni@email.com    | 654 |\n" +
                 "| Joe   | joe@email.com   | 234 |\n" ;
 
-        return TableParser.parse(source, null);
+        return TableParser.parse(source, createTableConverter());
     }
 
     private DataTable otherTableWithDeletedAndInsertedDifferentOrder() {
@@ -121,7 +128,7 @@ public class TableDifferTest {
                 "| Foo   | schnickens@email.net | 789 |\n" +
                 "| Aslak | aslak@email.com      | 123 |\n" +
                 "| Bryan | bryan@email.org      | 456 |\n";
-        return TableParser.parse(source, null);
+        return TableParser.parse(source, createTableConverter());
     }
 
     @Test(expected = TableDiffException.class)
@@ -188,7 +195,7 @@ public class TableDifferTest {
     @Test(expected = TableDiffException.class)
     public void should_not_fail_with_out_of_memory() {
         DataTable expected = TableParser.parse("" +
-                "| I'm going to work |\n", null);
+                "| I'm going to work |\n", createTableConverter());
         List<List<String>> actual = new ArrayList<List<String>>();
         actual.add(asList("I just woke up"));
         actual.add(asList("I'm going to work"));
@@ -332,7 +339,7 @@ public class TableDifferTest {
                 "| 2  | you  |\n" +
                 "| 3  | jdoe |\n";
 
-        DataTable expected = TableParser.parse(source, null);
+        DataTable expected = TableParser.parse(source, createTableConverter());
 
         List<TestPojo> actual = new ArrayList<TestPojo>();
         actual.add(new TestPojo(1, "me", 123));
@@ -415,7 +422,7 @@ public class TableDifferTest {
                 "| 2  | you  |\n" +
                 "| 3  | jdoe |\n";
 
-        DataTable expected = TableParser.parse(source, null);
+        DataTable expected = TableParser.parse(source, createTableConverter());
 
         List<TestPojo> actual = new ArrayList<TestPojo>();
         actual.add(new TestPojo(2, "you", 222));
