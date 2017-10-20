@@ -7,9 +7,6 @@ import cucumber.runtime.table.TableDiffException;
 import cucumber.runtime.table.TableDiffer;
 import cucumber.runtime.table.TablePrinter;
 import cucumber.runtime.xstream.LocalizedXStreams;
-import gherkin.pickles.PickleCell;
-import gherkin.pickles.PickleRow;
-import gherkin.pickles.PickleTable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,7 +21,6 @@ import java.util.Map;
 public class DataTable {
 
     private final List<List<String>> raw;
-    private final PickleTable pickleTable;
     private final TableConverter tableConverter;
 
     public static DataTable create(List<?> raw) {
@@ -48,31 +44,20 @@ public class DataTable {
     /**
      * Creates a new DataTable. This constructor should not be called by Cucumber users - it's used internally only.
      *
-     * @param pickleTable    the underlying table.
+     * @param table    the underlying table.
      * @param tableConverter how to convert the rows.
      */
-    public DataTable(PickleTable pickleTable, TableConverter tableConverter) {
-        this.pickleTable = pickleTable;
-        this.tableConverter = tableConverter;
-        int columns = pickleTable.getRows().isEmpty() ? 0 : pickleTable.getRows().get(0).getCells().size();
+    public DataTable(List<List<String>> table, TableConverter tableConverter) {
+        int columns = table.isEmpty() ? 0 : table.get(0).size();
         List<List<String>> raw = new ArrayList<List<String>>();
-        for (PickleRow row : pickleTable.getRows()) {
-            List<String> list = new ArrayList<String>();
-            for (PickleCell cell : row.getCells()) {
-                list.add(cell.getValue());
+        for (List<String> row : table) {
+            if (columns != row.size()) {
+                throw new CucumberException(String.format("Table is unbalanced: expected %s column(s) but found %s.", columns, row.size()));
             }
-            if (columns != row.getCells().size()) {
-                throw new CucumberException(String.format("Table is unbalanced: expected %s column(s) but found %s.", columns, row.getCells().size()));
-            }
-            raw.add(Collections.unmodifiableList(list));
+            raw.add(Collections.unmodifiableList(row));
         }
         this.raw = Collections.unmodifiableList(raw);
-    }
-
-    private DataTable(PickleTable pickleTable, List<List<String>> raw, TableConverter tableConverter) {
-        this.pickleTable = pickleTable;
         this.tableConverter = tableConverter;
-        this.raw = Collections.unmodifiableList(raw);
     }
 
     /**
@@ -90,7 +75,6 @@ public class DataTable {
      * @param <V> value type
      * @param keyType key type
      * @param valueType value type
-     *
      * @return a List of Map.
      */
     public <K, V> List<Map<K, V>> asMaps(Class<K> keyType, Class<V> valueType) {
@@ -203,15 +187,6 @@ public class DataTable {
         unorderedDiff(otherTable);
     }
 
-    /**
-     * Internal method. Do not use.
-     *
-     * @return a list of raw rows.
-     */
-    public List<PickleRow> getPickleRows() {
-        return Collections.unmodifiableList(pickleTable.getRows());
-    }
-
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder();
@@ -231,9 +206,8 @@ public class DataTable {
 
     public DataTable transpose() {
         List<List<String>> transposed = new ArrayList<List<String>>();
-        for (int i = 0; i < pickleTable.getRows().size(); i++) {
-            PickleRow pickleRow = pickleTable.getRows().get(i);
-            for (int j = 0; j < pickleRow.getCells().size(); j++) {
+        for (List<String> pickleRow : raw) {
+            for (int j = 0; j < pickleRow.size(); j++) {
                 List<String> row = null;
                 if (j < transposed.size()) {
                     row = transposed.get(j);
@@ -242,10 +216,10 @@ public class DataTable {
                     row = new ArrayList<String>();
                     transposed.add(row);
                 }
-                row.add(pickleRow.getCells().get(j).getValue());
+                row.add(pickleRow.get(j));
             }
         }
-        return new DataTable(this.pickleTable, transposed, this.tableConverter);
+        return new DataTable(transposed, this.tableConverter);
     }
 
     @Override

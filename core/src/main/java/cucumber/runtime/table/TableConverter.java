@@ -268,23 +268,12 @@ public class TableConverter implements cucumber.api.TableConverter {
     }
 
     private DataTable createDataTable(List<String> header, List<List<String>> valuesList) {
-        List<PickleRow> gherkinRows = new ArrayList<PickleRow>();
+        List<List<String>> table = new ArrayList<List<String>>();
         if (header != null) {
-            gherkinRows.add(gherkinRow(header));
+            table.add(header);
         }
-        for (List<String> values : valuesList) {
-            gherkinRows.add(gherkinRow(values));
-        }
-        return new DataTable(new PickleTable(gherkinRows), this);
-    }
-
-    private PickleRow gherkinRow(List<String> cells) {
-        List<PickleCell> pickleCells = new ArrayList<PickleCell>(cells.size());
-        for (String cell : cells) {
-            PickleCell pickleCell = new PickleCell(null, cell);
-            pickleCells.add(pickleCell);
-        }
-        return new PickleRow(pickleCells);
+        table.addAll(valuesList);
+        return new DataTable(table, this);
     }
 
     private List<String> convertTopCellsToFieldNames(DataTable dataTable) {

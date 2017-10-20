@@ -114,16 +114,9 @@ public class DataTableTest {
     }
 
     private DataTable createTable(List<String>... rows) {
-        List<PickleRow> simpleRows = new ArrayList<PickleRow>();
-        for (int i = 0; i < rows.length; i++) {
-            List<PickleCell> cells = new ArrayList<PickleCell>();
-            for (String cellContent : rows[i]) {
-                cells.add(new PickleCell(null, cellContent));
-            }
-            simpleRows.add(new PickleRow(cells));
-        }
+        List<List<String>> table = asList(rows);
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         LocalizedXStreams.LocalizedXStream xStream = new LocalizedXStreams(classLoader).get(Locale.US);
-        return new DataTable(new PickleTable(simpleRows), new TableConverter(xStream, null));
+        return new DataTable(table, new TableConverter(xStream, null));
     }
 }

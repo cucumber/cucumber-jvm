@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import static cucumber.runtime.PickleTableConverter.toTable;
 import static cucumber.util.FixJava.map;
 
 public class StepDefinitionMatch extends Match implements DefinitionMatch {
@@ -83,10 +84,10 @@ public class StepDefinitionMatch extends Match implements DefinitionMatch {
         return parameterInfo;
     }
 
-    private Object tableArgument(PickleTable stepArgument, int argIndex, LocalizedXStreams.LocalizedXStream xStream) {
+    private Object tableArgument(PickleTable pickleTable, int argIndex, LocalizedXStreams.LocalizedXStream xStream) {
         ParameterInfo parameterInfo = getParameterType(argIndex, DataTable.class);
         TableConverter tableConverter = new cucumber.runtime.table.TableConverter(xStream, parameterInfo);
-        DataTable table = new DataTable(stepArgument, tableConverter);
+        DataTable table = new DataTable(toTable(pickleTable), tableConverter);
         Type type = parameterInfo.getType();
         return tableConverter.convert(table, type, parameterInfo.isTransposed());
     }

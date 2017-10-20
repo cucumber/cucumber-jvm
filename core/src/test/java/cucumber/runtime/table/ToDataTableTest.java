@@ -92,7 +92,6 @@ public class ToDataTableTest {
         }
     }
 
-
     @Test
     public void converts_list_of_beans_with_null_to_table() {
         List<UserPojo> users = tc.toList(personTableWithNull(), UserPojo.class);
