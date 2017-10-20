@@ -11,8 +11,6 @@ import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleString;
 import gherkin.pickles.PickleTable;
 import io.cucumber.cucumberexpressions.Argument;
-import io.cucumber.cucumberexpressions.ParameterType;
-import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -20,7 +18,6 @@ import java.util.List;
 import java.util.Locale;
 
 import static cucumber.util.FixJava.map;
-import static java.util.Arrays.asList;
 
 public class StepDefinitionMatch extends Match implements DefinitionMatch {
     private final StepDefinition stepDefinition;
@@ -81,7 +78,7 @@ public class StepDefinitionMatch extends Match implements DefinitionMatch {
         ParameterInfo parameterInfo = stepDefinition.getParameterType(n, argumentType);
         if (parameterInfo == null) {
             // Some backends return null because they don't know
-            parameterInfo = new ParameterInfo(argumentType, null, null, false, null);
+            parameterInfo = new ParameterInfo(argumentType, null, false);
         }
         return parameterInfo;
     }

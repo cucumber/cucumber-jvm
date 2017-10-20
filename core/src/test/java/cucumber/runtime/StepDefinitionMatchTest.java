@@ -4,13 +4,10 @@ import cucumber.runtime.xstream.LocalizedXStreams;
 import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleString;
-import gherkin.pickles.PickleTable;
 import io.cucumber.cucumberexpressions.Argument;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -58,8 +55,8 @@ public class StepDefinitionMatchTest {
     public void converts_doc_string_with_explicit_converter() throws Throwable {
         StepDefinition stepDefinition = mock(StepDefinition.class);
         when(stepDefinition.getParameterCount()).thenReturn(1);
-        when(stepDefinition.getParameterType(0, String.class)).thenReturn(new ParameterInfo(Thing.class, null, null,
-                null));
+        when(stepDefinition.getParameterType(0, String.class)).thenReturn(new ParameterInfo(Thing.class, null
+        ));
 
         PickleStep stepWithDocString = mock(PickleStep.class);
         PickleString docString = new PickleString(mock(PickleLocation.class), "the thing");
@@ -95,8 +92,8 @@ public class StepDefinitionMatchTest {
     public void can_have_doc_string_as_only_argument() throws Throwable {
         StepDefinition stepDefinition = mock(StepDefinition.class);
         when(stepDefinition.getParameterCount()).thenReturn(1);
-        when(stepDefinition.getParameterType(0, String.class)).thenReturn(new ParameterInfo(String.class, null, null,
-                null));
+        when(stepDefinition.getParameterType(0, String.class)).thenReturn(new ParameterInfo(String.class, null
+        ));
 
         PickleStep stepWithDocString = mock(PickleStep.class);
         PickleString docString = new PickleString(mock(PickleLocation.class), "HELLO");
@@ -129,8 +126,8 @@ public class StepDefinitionMatchTest {
     public void gives_nice_error_message_when_conversion_fails() throws Throwable {
         StepDefinition stepDefinition = mock(StepDefinition.class);
         when(stepDefinition.getParameterCount()).thenReturn(1);
-        when(stepDefinition.getParameterType(0, String.class)).thenReturn(new ParameterInfo(Thang.class, null, null,
-                null));
+        when(stepDefinition.getParameterType(0, String.class)).thenReturn(new ParameterInfo(Thang.class, null
+        ));
 
         PickleStep stepWithDocString = mock(PickleStep.class);
         when(stepWithDocString.getText()).thenReturn("step text");

@@ -25,13 +25,13 @@ import static org.junit.Assert.fail;
 
 public class ToDataTableTest {
     private static final String DD_MM_YYYY = "dd/MM/yyyy";
-    private static final ParameterInfo PARAMETER_INFO = new ParameterInfo(null, DD_MM_YYYY, null, null);
+    private static final ParameterInfo PARAMETER_INFO = new ParameterInfo(null, DD_MM_YYYY);
     private TableConverter tc;
 
     @Before
     public void createTableConverterWithDateFormat() {
         LocalizedXStreams.LocalizedXStream xStream = new LocalizedXStreams(Thread.currentThread().getContextClassLoader()).get(Locale.US);
-        tc = new TableConverter(xStream, new ParameterInfo(null, DD_MM_YYYY, null, null));
+        tc = new TableConverter(xStream, new ParameterInfo(null, DD_MM_YYYY));
     }
 
     @Test

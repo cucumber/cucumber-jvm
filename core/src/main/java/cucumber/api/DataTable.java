@@ -40,7 +40,7 @@ public class DataTable {
     }
 
     private static DataTable create(List<?> raw, Locale locale, String format, String... columnNames) {
-        ParameterInfo parameterInfo = new ParameterInfo(null, format, null, null);
+        ParameterInfo parameterInfo = new ParameterInfo(null, format);
         TableConverter tableConverter = new cucumber.runtime.table.TableConverter(new LocalizedXStreams(Thread.currentThread().getContextClassLoader()).get(locale), parameterInfo);
         return tableConverter.toTable(raw, columnNames);
     }
