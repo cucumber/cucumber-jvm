@@ -3,8 +3,6 @@ package cucumber.runtime.table;
 import cucumber.api.DataTable;
 import cucumber.api.TableConverter;
 import cucumber.runtime.CucumberException;
-import cucumber.runtime.ParameterInfo;
-import cucumber.runtime.xstream.LocalizedXStreams;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -12,32 +10,26 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.Set;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-public class ToDataTableTest {
-    private static final String DD_MM_YYYY = "dd/MM/yyyy";
-    private static final ParameterInfo PARAMETER_INFO = new ParameterInfo(null, DD_MM_YYYY);
-    private ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+public abstract class ToTableContract {
     private TableConverter tc;
-
-    private TableConverter createTableConverter() {
-        return new XStreamTableConverter(new LocalizedXStreams(classLoader).get(Locale.US), PARAMETER_INFO);
-    }
 
     @Before
     public void setTableConverter() {
         tc = createTableConverter();
     }
+
+    protected abstract TableConverter createTableConverter();
 
     @Test
     public void converts_list_of_beans_to_table() {
@@ -84,7 +76,7 @@ public class ToDataTableTest {
             fail();
         } catch (CucumberException expected){
             assertEquals("" +
-                    "Don't know how to convert \"cucumber.runtime.table.ToDataTableTest$RelationPojo.tags\" into a table entry.\n" +
+                    "Don't know how to convert \"cucumber.runtime.table.ToTableContract$RelationPojo.tags\" into a table entry.\n" +
                     "Either exclude tags from the table by selecting the fields to include:\n" +
                     "\n" +
                     "DataTable.create(entries, \"Field\", \"Other Field\")\n" +
@@ -119,7 +111,7 @@ public class ToDataTableTest {
                     UserPojo.class);
             fail();
         } catch (CucumberException e) {
-            assertEquals("No such field cucumber.runtime.table.ToDataTableTest$UserPojo.crapola", e.getMessage());
+            assertEquals("No such field cucumber.runtime.table.ToTableContract$UserPojo.crapola", e.getMessage());
         }
     }
 
@@ -150,7 +142,7 @@ public class ToDataTableTest {
             );
             fail();
         } catch (CucumberException e) {
-            assertEquals("Can't assign null value to one of the primitive fields in cucumber.runtime.table.ToDataTableTest$PojoWithInt. Please use boxed types.", e.getMessage());
+            assertEquals("Can't assign null value to one of the primitive fields in cucumber.runtime.table.ToTableContract$PojoWithInt. Please use boxed types.", e.getMessage());
         }
     }
 
