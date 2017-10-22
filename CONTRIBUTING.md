@@ -114,7 +114,6 @@ Replace version numbers in:
 
 * examples/java-gradle/build.gradle
 * examples/android/android-studio/Cukeulator/app/build.gradle
-* examples/clojure_cukes/project.clj
 * CHANGELOG.md
 
 Make sure you can generate Javadocs for all modules, or else the
