@@ -250,6 +250,7 @@ final class JSONFormatter implements Formatter {
         PickleString docString = ((PickleString)argument);
         docStringMap.put("value", docString.getContent());
         docStringMap.put("line", docString.getLocation().getLine());
+        docStringMap.put("content_type", docString.getContentType());
         return docStringMap;
     }
 
