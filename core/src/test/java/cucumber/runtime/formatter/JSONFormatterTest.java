@@ -678,7 +678,7 @@ public class JSONFormatterTest {
     }
 
     @Test
-    public void should_format_scenario_with_a_step_with_a_doc_string2() throws Throwable {
+    public void should_format_scenario_with_a_step_with_a_doc_string_and_content_type() throws Throwable {
         CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
             "Feature: Banana party\n" +
             "\n" +
