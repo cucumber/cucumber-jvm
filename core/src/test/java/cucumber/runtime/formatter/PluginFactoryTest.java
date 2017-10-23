@@ -153,11 +153,32 @@ public class PluginFactoryTest {
         assertEquals(new File("halp.txt"), plugin.out);
     }
 
+    @Test
+    public void instantiates_custom_string_arg_plugin() throws IOException {
+        WantsString plugin = (WantsString) fc.create("cucumber.runtime.formatter.PluginFactoryTest$WantsString:hello");
+        assertEquals("hello", plugin.arg);
+    }
+
+    @Test
+    public void instantiates_plugin_using_empty_constructor_when_unspecified() throws IOException {
+        WantsStringOrDefault plugin = (WantsStringOrDefault) fc.create("cucumber.runtime.formatter.PluginFactoryTest$WantsStringOrDefault");
+        assertEquals("defaultValue", plugin.arg);
+    }
+
+    @Test
+    public void instantiates_plugin_using_arg_constructor_when_specified() throws IOException {
+        WantsStringOrDefault plugin = (WantsStringOrDefault) fc.create("cucumber.runtime.formatter.PluginFactoryTest$WantsStringOrDefault:hello");
+        assertEquals("hello", plugin.arg);
+    }
+
     public static class WantsAppendable extends StubFormatter {
         public final Appendable out;
 
         public WantsAppendable(Appendable out) {
             this.out = out;
+        }
+        public WantsAppendable() {
+            this.out = null;
         }
     }
 
@@ -182,6 +203,25 @@ public class PluginFactoryTest {
 
         public WantsFile(File out) {
             this.out = out;
+        }
+    }
+
+    public static class WantsString extends StubFormatter {
+        public final String arg;
+
+        public WantsString(String arg) {
+            this.arg = arg;
+        }
+    }
+
+    public static class WantsStringOrDefault extends StubFormatter {
+        public final String arg;
+
+        public WantsStringOrDefault(String arg) {
+            this.arg = arg;
+        }
+        public WantsStringOrDefault() {
+            this("defaultValue");
         }
     }
 }

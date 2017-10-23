@@ -19,7 +19,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,13 +29,21 @@ import static java.util.Arrays.asList;
  * This class creates plugin instances from a String.
  * <p>
  * The String is of the form name[:output] where name is either a fully qualified class name or one of the built-in
- * short names. The output is optional for some plugin (and mandatory for some) and must refer to a path on the
- * file system.
+ * short names. The output is optional for some plugins (and mandatory for some) and must have a single argument constructor
+ * with one of the following types:
+ * <p>
+ * <ul>
+ * <li>{@link String}</li>
+ * <li>{@link Appendable}</li>
+ * <li>{@link URI}</li>
+ * <li>{@link URL}</li>
+ * <li>{@link File}</li>
+ * </ul>
  *
  * @see Plugin
  */
 public final class PluginFactory {
-    private final Class[] CTOR_ARGS = new Class[]{null, Appendable.class, URI.class, URL.class, File.class};
+    private final Class[] CTOR_PARAMETERS = new Class[]{String.class, Appendable.class, URI.class, URL.class, File.class};
 
     private static final HashMap<String, Class<? extends Plugin>> PLUGIN_CLASSES = new HashMap<String, Class<? extends Plugin>>() {{
         put("null", NullFormatter.class);
@@ -51,7 +58,7 @@ public final class PluginFactory {
         put("default_summary", DefaultSummaryPrinter.class);
         put("null_summary", NullSummaryPrinter.class);
     }};
-    private static final Pattern PLUGIN_WITH_FILE_PATTERN = Pattern.compile("([^:]+):(.*)");
+    private static final Pattern PLUGIN_WITH_ARGUMENT_PATTERN = Pattern.compile("([^:]+):(.*)");
     private String defaultOutFormatter = null;
 
     private Appendable defaultOut = new PrintStream(System.out) {
@@ -62,18 +69,19 @@ public final class PluginFactory {
     };
 
     public Plugin create(String pluginString) {
-        Matcher pluginWithFile = PLUGIN_WITH_FILE_PATTERN.matcher(pluginString);
+        Matcher pluginWithArgument = PLUGIN_WITH_ARGUMENT_PATTERN.matcher(pluginString);
         String pluginName;
-        String path = null;
-        if (pluginWithFile.matches()) {
-            pluginName = pluginWithFile.group(1);
-            path = pluginWithFile.group(2);
+        String argument;
+        if (pluginWithArgument.matches()) {
+            pluginName = pluginWithArgument.group(1);
+            argument = pluginWithArgument.group(2);
         } else {
             pluginName = pluginString;
+            argument = null;
         }
         Class<? extends Plugin> pluginClass = pluginClass(pluginName);
         try {
-            return instantiate(pluginString, pluginClass, path);
+            return instantiate(pluginString, pluginClass, argument);
         } catch (IOException e) {
             throw new CucumberException(e);
         } catch (URISyntaxException e) {
@@ -81,69 +89,81 @@ public final class PluginFactory {
         }
     }
 
-    private <T extends Plugin> T instantiate(String pluginString, Class<T> pluginClass, String pathOrUrl) throws IOException, URISyntaxException {
-        for (Class ctorArgClass : CTOR_ARGS) {
-            Constructor<T> constructor = findConstructor(pluginClass, ctorArgClass);
-            if (constructor != null) {
-                Object ctorArg = convertOrNull(pathOrUrl, ctorArgClass, pluginString);
-                try {
-                    if (ctorArgClass == null) {
-                        return constructor.newInstance();
-                    } else {
-                        if (ctorArg == null) {
-                            throw new CucumberException(String.format("You must supply an output argument to %s. Like so: %s:output", pluginString, pluginString));
-                        }
-                        return constructor.newInstance(ctorArg);
-                    }
-                } catch (InstantiationException e) {
-                    throw new CucumberException(e);
-                } catch (IllegalAccessException e) {
-                    throw new CucumberException(e);
-                } catch (InvocationTargetException e) {
-                    throw new CucumberException(e.getTargetException());
-                }
-            }
+    private <T extends Plugin> T instantiate(String pluginString, Class<T> pluginClass, String argument) throws IOException, URISyntaxException {
+        Constructor<T> single = findSingleArgConstructor(pluginClass);
+        Constructor<T> empty = findEmptyConstructor(pluginClass);
+
+        if (single != null) {
+            Object ctorArg = convertOrNull(argument, single.getParameterTypes()[0], pluginString);
+            if (ctorArg != null)
+                return newInstance(single, ctorArg);
         }
-        throw new CucumberException(String.format("%s must have a constructor that is either empty or a single arg of one of: %s", pluginClass, asList(CTOR_ARGS)));
+        if (argument == null && empty != null) {
+            return newInstance(empty);
+        }
+        if (single != null)
+            throw new CucumberException(String.format("You must supply an output argument to %s. Like so: %s:output", pluginString, pluginString));
+
+        throw new CucumberException(String.format("%s must have a constructor that is either empty or a single arg of one of: %s", pluginClass, asList(CTOR_PARAMETERS)));
     }
 
-    private Object convertOrNull(String pathOrUrl, Class ctorArgClass, String formatterString) throws IOException, URISyntaxException {
-        if (ctorArgClass == null) {
-            return null;
+    private <T extends Plugin> T newInstance(Constructor<T> constructor, Object... ctorArgs) {
+        try {
+            return constructor.newInstance(ctorArgs);
+        } catch (InstantiationException e) {
+            throw new CucumberException(e);
+        } catch (IllegalAccessException e) {
+            throw new CucumberException(e);
+        } catch (InvocationTargetException e) {
+            throw new CucumberException(e.getTargetException());
+        }
+    }
+
+    private Object convertOrNull(String arg, Class ctorArgClass, String formatterString) throws IOException, URISyntaxException {
+        if (arg == null) {
+            if (ctorArgClass.equals(Appendable.class)) {
+                return defaultOutOrFailIfAlreadyUsed(formatterString);
+            } else {
+                return null;
+            }
         }
         if (ctorArgClass.equals(URI.class)) {
-            if (pathOrUrl != null) {
-                return new URI(pathOrUrl);
-            }
+            return new URI(arg);
         }
         if (ctorArgClass.equals(URL.class)) {
-            if (pathOrUrl != null) {
-                return toURL(pathOrUrl);
-            }
+            return toURL(arg);
         }
         if (ctorArgClass.equals(File.class)) {
-            if (pathOrUrl != null) {
-                return new File(pathOrUrl);
-            }
+            return new File(arg);
+        }
+        if (ctorArgClass.equals(String.class)) {
+            return arg;
         }
         if (ctorArgClass.equals(Appendable.class)) {
-            if (pathOrUrl != null) {
-                return new UTF8OutputStreamWriter(new URLOutputStream(toURL(pathOrUrl)));
-            } else {
-                return defaultOutOrFailIfAlreadyUsed(formatterString);
-            }
+            return new UTF8OutputStreamWriter(new URLOutputStream(toURL(arg)));
         }
         return null;
     }
 
-    private <T> Constructor<T> findConstructor(Class<T> pluginClass, Class<?> ctorArgClass) {
-        try {
-            if (ctorArgClass == null) {
-                return pluginClass.getConstructor();
-            } else {
-                return pluginClass.getConstructor(ctorArgClass);
+    private <T> Constructor<T> findSingleArgConstructor(Class<T> pluginClass) {
+        Constructor<T> constructor = null;
+        for (Class ctorArgClass : CTOR_PARAMETERS) {
+            try {
+                Constructor<T> candidate = pluginClass.getConstructor(ctorArgClass);
+                if (constructor != null) {
+                    throw new CucumberException(String.format("Plugin %s should only define a single one-argument constructor", pluginClass.getName()));
+                }
+                constructor = candidate;
+            } catch (NoSuchMethodException ignore) {
             }
-        } catch (NoSuchMethodException e) {
+        }
+        return constructor;
+    }
+
+    private <T> Constructor<T> findEmptyConstructor(Class<T> pluginClass) {
+        try {
+            return pluginClass.getConstructor();
+        } catch (NoSuchMethodException ignore) {
             return null;
         }
     }
@@ -201,7 +221,7 @@ public final class PluginFactory {
     }
 
     private static Class getPluginClass(String name) {
-        Matcher pluginWithFile = PLUGIN_WITH_FILE_PATTERN.matcher(name);
+        Matcher pluginWithFile = PLUGIN_WITH_ARGUMENT_PATTERN.matcher(name);
         String pluginName;
         if (pluginWithFile.matches()) {
             pluginName = pluginWithFile.group(1);

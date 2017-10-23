@@ -3,7 +3,9 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ## [2.0.2-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v2.0.1...master) (In Git)
 
 ### Added
+ * [Core] Allow String parameter in plugin constructors (Aslak Hellesøy)
  * [Core] Optimize MethodScanner ([#1238](https://github.com/cucumber/cucumber-jvm/pull/1236) Łukasz Suski) 
+
 ### Changed
  * [Core]  Use gherkin 5.0.0 ([#1252](https://github.com/cucumber/cucumber-jvm/commit/5e305951026a1573ede77e05e86bbe8ed3bca55b) M.P. Korstanje) 
 
