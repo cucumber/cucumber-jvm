@@ -89,6 +89,7 @@ final class JSONFormatter implements Formatter {
         }
     };
 
+    @SuppressWarnings("WeakerAccess") // Used by PluginFactory
     public JSONFormatter(Appendable out) {
         this.out = new NiceAppendable(out);
     }

@@ -29,18 +29,10 @@ import static java.util.Arrays.asList;
  * This class creates plugin instances from a String.
  * <p>
  * The String is of the form name[:output] where name is either a fully qualified class name or one of the built-in
- * short names. The output is optional for some plugins (and mandatory for some) and must have a single argument constructor
- * with one of the following types:
- * <p>
- * <ul>
- * <li>{@link String}</li>
- * <li>{@link Appendable}</li>
- * <li>{@link URI}</li>
- * <li>{@link URL}</li>
- * <li>{@link File}</li>
+ * short names. The output is optional for some plugins (and mandatory for some).
  * </ul>
  *
- * @see Plugin
+ * @see Plugin for specific requirements
  */
 public final class PluginFactory {
     private final Class[] CTOR_PARAMETERS = new Class[]{String.class, Appendable.class, URI.class, URL.class, File.class};
