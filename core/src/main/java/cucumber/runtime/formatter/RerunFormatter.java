@@ -37,6 +37,7 @@ final class RerunFormatter implements Formatter, StrictAware {
         }
     };
 
+    @SuppressWarnings("WeakerAccess") // Used by PluginFactory
     public RerunFormatter(Appendable out) {
         this.out = new NiceAppendable(out);
     }

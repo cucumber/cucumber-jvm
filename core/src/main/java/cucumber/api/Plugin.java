@@ -5,22 +5,30 @@ import java.net.URI;
 import java.net.URL;
 
 /**
- * Interface for all plugins.
+ * Marker interface for all plugins.
  * <p>
- * A plugin must have a constructor that is either empty
- * or takes a single argument of one of the following types:
- * <ul>
- * <li>{@link Appendable}</li>
- * <li>{@link File}</li>
- * <li>{@link URL}</li>
- * <li>{@link URI}</li>
- * </ul>
+ * A plugin can be added to the runtime to listen in on step definition, summary printing and test
+ * execution.
+ * <p>
  * Plugins must implement one of the following interfaces:
  * <ul>
  * <li>{@link cucumber.api.StepDefinitionReporter}</li>
  * <li>{@link cucumber.api.SummaryPrinter}</li>
  * <li>{@link cucumber.api.formatter.Formatter}</li>
  * </ul>
+ * <p>
+ * Plugins are added to the runtime from the command line or @{@link CucumberOptions} and may be provided with a
+ * parameter. To accept this parameter the plugin must have a public constructor that accepts one of the following
+ * arguments:
+ * <ul>
+ * <li>{@link String}</li>
+ * <li>{@link Appendable}</li>
+ * <li>{@link URI}</li>
+ * <li>{@link URL}</li>
+ * <li>{@link File}</li>
+ * </ul>
+ * <p>
+ * To make the parameter optional the plugin must also have a public default constructor.
  */
 public interface Plugin {
 }
