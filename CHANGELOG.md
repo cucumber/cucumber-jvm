@@ -3,12 +3,14 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ## [2.0.2-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v2.0.1...master) (In Git)
 
 ### Added
+ * [JUnit] Print JUnit Options when unknown option is provided ([#1273](https://github.com/cucumber/cucumber-jvm/pull/1273), Marit Van Dijk)
  * [Spring] Support BootstrapWith annotation ([#1245](https://github.com/cucumber/cucumber-jvm/pull/1245), [#1242](https://github.com/cucumber/cucumber-jvm/pull/1242), [#1061](https://github.com/cucumber/cucumber-jvm/pull/1061) M.P. Korstanje)
  * [Core] Allow String parameter in plugin constructors (Aslak Hellesøy)
  * [Core] Prefer single-arg constructors over empty constructors in plugins ([#1104](https://github.com/cucumber/cucumber-jvm/issues/1104), [c6e471c2](https://github.com/cucumber/cucumber-jvm/commit/c6e471c27235fa3c091c6db1162c16291462a0ca) Aslak Hellesøy)
  * [Core] Optimize MethodScanner ([#1238](https://github.com/cucumber/cucumber-jvm/pull/1236) Łukasz Suski) 
 ### Changed
- * [Core]  Use gherkin 5.0.0 ([#1252](https://github.com/cucumber/cucumber-jvm/commit/5e305951026a1573ede77e05e86bbe8ed3bca55b) M.P. Korstanje) 
+ * [Core] Running empty Pickles yields the result undefined ([#1274](https://github.com/cucumber/cucumber-jvm/pull/1274) Björn Rasmusson)
+ * [Core] Use gherkin 5.0.0 ([#1252](https://github.com/cucumber/cucumber-jvm/commit/5e305951026a1573ede77e05e86bbe8ed3bca55b) M.P. Korstanje) 
 
 ### Deprecated
  * [Spring] Deprecate Spring context configuration by more than one class ([#1259](https://github.com/cucumber/cucumber-jvm/pull/1259) Björn Rasmusson)
