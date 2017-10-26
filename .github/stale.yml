@@ -14,5 +14,4 @@ markComment: >
 # Comment to post when closing a stale issue. Set to `false` to disable
 closeComment: >
   This issue has been automatically closed because of inactivity.
-  You can restore attention to this issue by support the Cucumber core team on
-  [opencollective](https://opencollective.com/cucumber).
+  You can support the Cucumber core team on [opencollective](https://opencollective.com/cucumber)
