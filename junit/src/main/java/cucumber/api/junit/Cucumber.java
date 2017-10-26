@@ -28,7 +28,8 @@ import java.util.List;
 /**
  * <p>
  * Classes annotated with {@code @RunWith(Cucumber.class)} will run a Cucumber Feature.
- * The class should be empty without any fields or methods.
+ * In general, the runner class should be empty without any fields or methods.
+ * However, it is possible to use the following JUnit annotations in the runner class: @ClassRule, @BeforeClass and @AfterClass.
  * </p>
  * <p>
  * Cucumber will look for a {@code .feature} file on the classpath, using the same resource
