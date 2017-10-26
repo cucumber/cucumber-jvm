@@ -15,6 +15,9 @@ import cucumber.runtime.junit.FeatureRunner;
 import cucumber.runtime.junit.JUnitOptions;
 import cucumber.runtime.junit.JUnitReporter;
 import cucumber.runtime.model.CucumberFeature;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.ClassRule;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
@@ -29,7 +32,7 @@ import java.util.List;
  * <p>
  * Classes annotated with {@code @RunWith(Cucumber.class)} will run a Cucumber Feature.
  * In general, the runner class should be empty without any fields or methods.
- * However, it is possible to use the following JUnit annotations in the runner class: @ClassRule, @BeforeClass and @AfterClass.
+ * However, it is possible to use the following JUnit annotations in the runner class: {@link ClassRule}, {@link BeforeClass} and {@link AfterClass}.
  * </p>
  * <p>
  * Cucumber will look for a {@code .feature} file on the classpath, using the same resource
