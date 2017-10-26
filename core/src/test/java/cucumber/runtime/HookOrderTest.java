@@ -38,7 +38,8 @@ public class HookOrderTest {
         Runtime runtime = new Runtime(mock(ResourceLoader.class), classLoader, asList(mock(Backend.class)), runtimeOptions);
         runner = runtime.getRunner();
         glue = runtime.getGlue();
-        pickleEvent = new PickleEvent("uri", new Pickle("name", ENGLISH, Collections.<PickleStep>emptyList(), Collections.<PickleTag>emptyList(), asList(mock(PickleLocation.class))));
+        PickleStep step = mock(PickleStep.class);
+        pickleEvent = new PickleEvent("uri", new Pickle("name", ENGLISH, asList(step), Collections.<PickleTag>emptyList(), asList(mock(PickleLocation.class))));
     }
 
     @Test
