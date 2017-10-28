@@ -6,7 +6,7 @@
     <parent>
         <groupId>io.cucumber.android-examples</groupId>
         <artifactId>android-examples</artifactId>
-        <version>2.0.2-SNAPSHOT</version>
+        <version>2.1.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>cukelator</artifactId>

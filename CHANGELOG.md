@@ -1,6 +1,14 @@
 Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CONTRIBUTING.md) on how to contribute to Cucumber.
 
-## [2.0.2-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v2.0.1...master) (In Git)
+## [2.1.1-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v2.1.0...master) (In Git)
+
+### Added
+### Changed
+### Deprecated
+### Removed
+### Fixed
+
+## [2.1.0](https://github.com/cucumber/cucumber-jvm/compare/v2.0.1...v2.1.0) (In Git)
 
 ### Added
  * [JUnit] Print JUnit Options when unknown option is provided ([#1273](https://github.com/cucumber/cucumber-jvm/pull/1273), Marit Van Dijk)

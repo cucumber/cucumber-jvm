@@ -36,6 +36,6 @@ android {
 dependencies {
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.0'
     androidTestCompile 'com.android.support.test:testing-support-lib:0.1'
-    androidTestCompile 'io.cucumber:cucumber-android:2.0.1'
-    androidTestCompile 'io.cucumber:cucumber-picocontainer:2.0.1'
+    androidTestCompile 'io.cucumber:cucumber-android:2.1.0'
+    androidTestCompile 'io.cucumber:cucumber-picocontainer:2.1.0'
 }
