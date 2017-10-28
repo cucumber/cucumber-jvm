@@ -8,7 +8,7 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ### Removed
 ### Fixed
 
-## [2.1.0](https://github.com/cucumber/cucumber-jvm/compare/v2.0.1...v2.1.0) (In Git)
+## [2.1.0](https://github.com/cucumber/cucumber-jvm/compare/v2.0.1...v2.1.0)
 
 ### Added
  * [JUnit] Print JUnit Options when unknown option is provided ([#1273](https://github.com/cucumber/cucumber-jvm/pull/1273), Marit Van Dijk)
