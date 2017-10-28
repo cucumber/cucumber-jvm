@@ -22,7 +22,7 @@ chromedriver.log
 .scala_dependencies
 nexus.properties
 pom.xml.releaseBackup
-pom.xml.versionBackup
+pom.xml.versionsBackup
 release.properties
 *.ser
 dependency-reduced-pom.xml
