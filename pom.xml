@@ -716,7 +716,7 @@
                     <version>3.0.0-M1</version>
                     <configuration>
                         <use>false</use>
-                        <excludePackageNames>cucumber.runtime,cucumber.runtime.*</excludePackageNames>
+                        <excludePackageNames>cucumber.runtime,cucumber.runtime.*,org.springframework</excludePackageNames>
                         <links>
                             <link>http://docs.oracle.com/javase/7/docs/api/</link>
                             <link>http://junit.sourceforge.net/javadoc/</link>

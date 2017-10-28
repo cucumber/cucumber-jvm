@@ -10,9 +10,5 @@ if [ "$#" -ne 1 ]; then
 fi
 
 mkdir -p ../api.cucumber.io/cucumber-jvm/${1}
-
-# JavaDoc
-pushd target/checkout/
-  mvn javadoc:aggregate
-  cp -R target/site/apidocs/ ../../../api.cucumber.io/cucumber-jvm/${1}/javadoc/
-popd
+mvn javadoc:aggregate
+cp -R target/site/apidocs/ ../api.cucumber.io/cucumber-jvm/${1}/javadoc
