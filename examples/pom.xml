@@ -22,7 +22,7 @@
         <profile>
             <id>java8</id>
             <activation>
-                <jdk>[1.8,)</jdk>
+                <jdk>${java.min.version.lambda}</jdk>
             </activation>
             <modules>
                 <module>java-wicket</module>
