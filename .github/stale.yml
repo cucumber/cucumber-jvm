@@ -6,7 +6,7 @@ daysUntilClose: 7
 exemptLabels:
   - Slow Burner
 # Label to use when marking an issue as stale
-staleLabel: stale
+staleLabel: Stale
 # Comment to post when marking an issue as stale. Set to `false` to disable
 markComment: >
   This issue has been automatically marked as stale because it has not had
@@ -14,4 +14,4 @@ markComment: >
 # Comment to post when closing a stale issue. Set to `false` to disable
 closeComment: >
   This issue has been automatically closed because of inactivity.
-  You can support the Cucumber core team on [opencollective](https://opencollective.com/cucumber)
+  You can support the Cucumber core team on [opencollective](https://opencollective.com/cucumber).
