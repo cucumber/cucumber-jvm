@@ -14,7 +14,7 @@ import static org.junit.Assert.assertEquals;
 public class RpnCalculatorStepdefs {
     private RpnCalculator calc;
 
-    @Given("^a calculator I just turned on$")
+    @Given("a calculator I just turned on")
     public void a_calculator_I_just_turned_on() {
         calc = new RpnCalculator();
     }
@@ -26,12 +26,12 @@ public class RpnCalculatorStepdefs {
         calc.push("+");
     }
 
-    @Given("^I press (.+)$")
+    @Given("I press (.+)")
     public void I_press(String what) {
         calc.push(what);
     }
 
-    @Then("^the result is (\\d+)$")
+    @Then("the result is {int}")
     public void the_result_is(double expected) {
         assertEquals(expected, calc.value());
     }
@@ -46,18 +46,42 @@ public class RpnCalculatorStepdefs {
         // result.write("HELLLLOO");
     }
 
-    @Given("^the previous entries:$")
+    @Given("the previous entries:")
     public void thePreviousEntries(List<Entry> entries) {
         for (Entry entry : entries) {
-            calc.push(entry.first);
-            calc.push(entry.second);
-            calc.push(entry.operation);
+            calc.push(entry.getFirst());
+            calc.push(entry.getSecond());
+            calc.push(entry.getOperation());
         }
     }
 
-    public class Entry {
-        Integer first;
-        Integer second;
-        String operation;
+    public static final class Entry {
+        private Integer first;
+        private Integer second;
+        private String operation;
+
+        public Integer getFirst() {
+            return first;
+        }
+
+        public void setFirst(Integer first) {
+            this.first = first;
+        }
+
+        public Integer getSecond() {
+            return second;
+        }
+
+        public void setSecond(Integer second) {
+            this.second = second;
+        }
+
+        public String getOperation() {
+            return operation;
+        }
+
+        public void setOperation(String operation) {
+            this.operation = operation;
+        }
     }
 }

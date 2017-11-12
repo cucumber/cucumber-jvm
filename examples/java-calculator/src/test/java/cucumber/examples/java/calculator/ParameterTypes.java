@@ -1,14 +1,18 @@
 package cucumber.examples.java.calculator;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import cucumber.api.Configuration;
 import io.cucumber.cucumberexpressions.Function;
 import io.cucumber.cucumberexpressions.ParameterType;
 import io.cucumber.cucumberexpressions.SingleTransformer;
+import io.cucumber.datatable.DataTableType;
+import io.cucumber.datatable.TableRowTransformer;
 import io.cucumber.java.TypeRegistry;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
 
 import static java.text.DateFormat.MEDIUM;
 import static java.text.DateFormat.getDateInstance;
@@ -25,12 +29,8 @@ public class ParameterTypes implements Configuration {
             Date.class,
             new SingleTransformer<Date>(new Function<String, Date>() {
                 @Override
-                public Date apply(String text) {
-                    try {
-                        return getDateInstance(MEDIUM, ENGLISH).parse(text);
-                    } catch (ParseException e) {
-                        throw new IllegalArgumentException(e);
-                    }
+                public Date apply(String text) throws ParseException {
+                    return getDateInstance(MEDIUM, ENGLISH).parse(text);
                 }
             })
         ));
@@ -41,15 +41,25 @@ public class ParameterTypes implements Configuration {
             Date.class,
             new SingleTransformer<Date>(new Function<String, Date>() {
                 @Override
-                public Date apply(String text) {
-                    try {
-                        return new SimpleDateFormat("yyyy-mm-dd").parse(text);
-                    } catch (ParseException e) {
-                        throw new IllegalArgumentException(e);
-                    }
+                public Date apply(String text) throws ParseException {
+                    return new SimpleDateFormat("yyyy-mm-dd").parse(text);
                 }
             })
         ));
+
+        parameterTypeRegistry.defineDataTableType(DataTableType.tableOf("entry", RpnCalculatorStepdefs.Entry.class, new TableRowTransformer<RpnCalculatorStepdefs.Entry>() {
+            @Override
+            public RpnCalculatorStepdefs.Entry transform(Map<String, String> row) {
+                return new ObjectMapper().convertValue(row, RpnCalculatorStepdefs.Entry.class);
+            }
+        }));
+
+        parameterTypeRegistry.defineDataTableType(DataTableType.tableOf("groceries", ShoppingStepdefs.Grocery.class, new TableRowTransformer<ShoppingStepdefs.Grocery>() {
+            @Override
+            public ShoppingStepdefs.Grocery transform(Map<String, String> row) {
+                return new ObjectMapper().convertValue(row, ShoppingStepdefs.Grocery.class);
+            }
+        }));
 
         return parameterTypeRegistry;
     }

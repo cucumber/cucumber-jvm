@@ -13,7 +13,7 @@ import static org.junit.Assert.assertEquals;
 public class ShoppingStepdefs {
     private RpnCalculator calc = new RpnCalculator();
 
-    @Given("^the following groceries:$")
+    @Given("the following groceries:")
     public void the_following_groceries(List<Grocery> groceries) {
         for (Grocery grocery : groceries) {
             calc.push(grocery.price.value);
@@ -21,39 +21,51 @@ public class ShoppingStepdefs {
         }
     }
 
-    @When("^I pay (\\d+)$")
+    @When("I pay {int}")
     public void i_pay(int amount) {
         calc.push(amount);
         calc.push("-");
     }
 
-    @Then("^my change should be (\\d+)$")
+    @Then("my change should be {int}")
     public void my_change_should_be_(int change) {
         assertEquals(-calc.value().intValue(), change);
     }
 
-    public static class Grocery {
-        public String name;
-        @XStreamConverter(Price.Converter.class)
-        public Price price;
+    public static final class Grocery {
+        private String name;
+        private Price price;
 
-        public Grocery() {
-            super();
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public Price getPrice() {
+            return price;
+        }
+
+        public void setPrice(Price price) {
+            this.price = price;
         }
     }
 
-    public static class Price {
-        public int value;
+    public static final class Price {
+        private int value;
 
         public Price(int value) {
             this.value = value;
         }
 
-        public static class Converter extends Transformer<Price> {
-            @Override
-            public Price transform(String value) {
-                return new Price(Integer.parseInt(value));
-            }
+        public static Price fromString(String value) {
+            return new Price(Integer.parseInt(value));
+        }
+
+        public int getValue() {
+            return value;
         }
     }
 }
