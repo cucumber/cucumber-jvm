@@ -62,7 +62,7 @@ public class StepDefinitionMatchTest {
         PickleString docString = new PickleString(mock(PickleLocation.class), "the thing");
         when(stepWithDocString.getArgument()).thenReturn(asList((gherkin.pickles.Argument)docString));
 
-        StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(new ArrayList<Argument<?>>(), stepDefinition, "some.feature", stepWithDocString, new LocalizedXStreams(classLoader));
+        StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(new ArrayList<Argument<?>>(), stepDefinition, "some.feature", stepWithDocString);
         stepDefinitionMatch.runStep(ENGLISH, null);
         verify(stepDefinition).execute(ENGLISH, new Object[]{new Thing("the thing")});
     }
@@ -99,7 +99,7 @@ public class StepDefinitionMatchTest {
         PickleString docString = new PickleString(mock(PickleLocation.class), "HELLO");
         when(stepWithDocString.getArgument()).thenReturn(asList((gherkin.pickles.Argument)docString));
 
-        StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(new ArrayList<Argument<?>>(), stepDefinition, "some.feature", stepWithDocString, new LocalizedXStreams(classLoader));
+        StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(new ArrayList<Argument<?>>(), stepDefinition, "some.feature", stepWithDocString);
         stepDefinitionMatch.runStep(ENGLISH, null);
         verify(stepDefinition).execute(ENGLISH, new Object[]{"HELLO"});
     }
@@ -135,7 +135,7 @@ public class StepDefinitionMatchTest {
         PickleString docString = new PickleString(mock(PickleLocation.class), "blah");
         when(stepWithDocString.getArgument()).thenReturn(asList((gherkin.pickles.Argument)docString));
 
-        StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(new ArrayList<Argument<?>>(), stepDefinition, "some.feature", stepWithDocString, new LocalizedXStreams(classLoader));
+        StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(new ArrayList<Argument<?>>(), stepDefinition, "some.feature", stepWithDocString);
         try {
 
             stepDefinitionMatch.runStep(ENGLISH, null);

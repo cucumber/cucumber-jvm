@@ -19,7 +19,7 @@ import gherkin.pickles.Pickle;
 import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleTag;
-import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
+import io.cucumber.java.TypeRegistry;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -60,7 +60,7 @@ public class JavaStepDefinitionTest {
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
         ResourceLoaderClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         ObjectFactory factory = new SingletonFactory(defs);
-        ParameterTypeRegistry parameterTypeRegistry = new ParameterTypeRegistry(Locale.ENGLISH);
+        TypeRegistry parameterTypeRegistry = new TypeRegistry(Locale.ENGLISH);
         this.backend = new JavaBackend(factory, classFinder, parameterTypeRegistry);
         RuntimeOptions runtimeOptions = new RuntimeOptions("");
         this.runtime = new Runtime(new ClasspathResourceLoader(classLoader), classLoader, asList(backend), runtimeOptions);

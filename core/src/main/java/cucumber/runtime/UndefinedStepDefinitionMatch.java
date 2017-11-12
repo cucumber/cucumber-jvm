@@ -9,7 +9,7 @@ import java.util.Collections;
 public class UndefinedStepDefinitionMatch extends StepDefinitionMatch {
 
     public UndefinedStepDefinitionMatch(PickleStep step) {
-        super(Collections.<Argument<?>>emptyList(), new NoStepDefinition(), null, step, null);
+        super(Collections.<Argument<?>>emptyList(), new NoStepDefinition(), null, step);
     }
 
     @Override

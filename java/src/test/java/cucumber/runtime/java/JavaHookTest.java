@@ -11,10 +11,9 @@ import cucumber.runtime.RuntimeGlue;
 import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
-import cucumber.runtime.xstream.LocalizedXStreams;
 import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleTag;
-import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
+import io.cucumber.java.TypeRegistry;
 import org.junit.Test;
 
 import java.lang.reflect.Method;
@@ -55,11 +54,9 @@ public class JavaHookTest {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
-        ParameterTypeRegistry parameterTypeRegistry = new ParameterTypeRegistry(Locale.ENGLISH);
+        TypeRegistry parameterTypeRegistry = new TypeRegistry(Locale.ENGLISH);
         this.backend = new JavaBackend(objectFactory, classFinder, parameterTypeRegistry);
-
-        LocalizedXStreams localizedXStreams = new LocalizedXStreams(classLoader);
-        this.glue = new RuntimeGlue(localizedXStreams);
+        this.glue = new RuntimeGlue();
 
         backend.loadGlue(glue, Collections.<String>emptyList());
     }

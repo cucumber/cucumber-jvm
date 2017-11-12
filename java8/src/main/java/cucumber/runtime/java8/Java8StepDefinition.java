@@ -12,9 +12,9 @@ import cucumber.runtime.StepDefinition;
 import cucumber.runtime.Utils;
 import gherkin.pickles.PickleStep;
 import io.cucumber.cucumberexpressions.Argument;
-import io.cucumber.cucumberexpressions.Expression;
-import io.cucumber.cucumberexpressions.ExpressionFactory;
-import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
+import io.cucumber.java.StepExpression;
+import io.cucumber.java.StepExpressionFactory;
+import io.cucumber.java.TypeRegistry;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -22,29 +22,31 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static java.util.Arrays.asList;
-
 public class Java8StepDefinition implements StepDefinition {
 
     private final long timeoutMillis;
     private final StepdefBody body;
 
-    private final Expression expression;
+    private final StepExpression expression;
     private final StackTraceElement location;
 
     private final List<ParameterInfo> parameterInfos;
     private final Method method;
 
-    public <T extends StepdefBody> Java8StepDefinition(String expression, long timeoutMillis, Class<T> bodyClass, T body, ParameterTypeRegistry parameterTypeRegistry)  {
+    public <T extends StepdefBody> Java8StepDefinition(String expression, long timeoutMillis, Class<T> bodyClass, T body, TypeRegistry parameterTypeRegistry)  {
         this.timeoutMillis = timeoutMillis;
         this.body = body;
 
         this.location = new Exception().getStackTrace()[4];
         this.method = getAcceptMethod(body.getClass());
         try {
-            Type[] argumentTypes = verifyNotListOrMap(resolveRawArguments(bodyClass, body.getClass()));
-            this.expression = new ExpressionFactory(parameterTypeRegistry).createExpression(expression, asList(argumentTypes));
-            this.parameterInfos = fromTypes(argumentTypes);
+            this.parameterInfos = fromTypes(verifyNotListOrMap(resolveRawArguments(bodyClass, body.getClass())));
+            if(parameterInfos.isEmpty()){
+                this.expression = new StepExpressionFactory(parameterTypeRegistry).createExpression(expression);
+            } else {
+                ParameterInfo parameterInfo = parameterInfos.get(parameterInfos.size() - 1);
+                this.expression = new StepExpressionFactory(parameterTypeRegistry).createExpression(expression, parameterInfo.getType());
+            }
         } catch (CucumberException e){
             throw e;
         } catch (Exception e) {
@@ -86,7 +88,7 @@ public class Java8StepDefinition implements StepDefinition {
     @Override
     public List<Argument<?>> matchedArguments(PickleStep step) {
         ArgumentMatcher argumentMatcher = new ExpressionArgumentMatcher(expression);
-        return argumentMatcher.argumentsFrom(step.getText());
+        return argumentMatcher.argumentsFrom(step);
     }
 
     @Override

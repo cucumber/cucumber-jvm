@@ -10,7 +10,7 @@ public class FailedStepInstantiationMatch extends StepDefinitionMatch {
     private final Throwable throwable;
 
     public FailedStepInstantiationMatch(String uri, PickleStep step, Throwable throwable) {
-        super(Collections.<Argument<?>>emptyList(), new NoStepDefinition(), uri, step, null);
+        super(Collections.<Argument<?>>emptyList(), new NoStepDefinition(), uri, step);
         this.throwable = removeFrameworkFramesAndAppendStepLocation(throwable, getStepLocation());
     }
 

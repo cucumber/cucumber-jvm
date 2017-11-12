@@ -141,41 +141,6 @@ public class RuntimeOptionsFactoryTest {
         assertEquals(asList("option1", "option2=value"), runtimeOptions.getJunitOptions());
     }
 
-    @Test
-    public void create_with_xstream_converter() {
-        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(ClassWithConverter.class);
-        RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
-
-        List<XStreamConverter> converters = runtimeOptions.getConverters();
-        assertNotNull(converters);
-        assertEquals(1, converters.size());
-        assertEquals(DummyConverter.class, converters.get(0).value());
-    }
-
-    @Test
-    public void create_with_xstream_converters() {
-        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(ClassWithConverters.class);
-        RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
-
-        List<XStreamConverter> converters = runtimeOptions.getConverters();
-        assertNotNull(converters);
-        assertEquals(2, converters.size());
-        assertEquals(DummyConverter.class, converters.get(0).value());
-        assertEquals(PatternConverter.class, converters.get(1).value());
-    }
-
-    @Test
-    public void create_with_xstream_converter_from_baseclass() {
-        RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(SubclassWithConverter.class);
-        RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
-
-        List<XStreamConverter> converters = runtimeOptions.getConverters();
-        assertNotNull(converters);
-        assertEquals(2, converters.size());
-        assertEquals(LongConverter.class, converters.get(0).value());
-        assertEquals(DummyConverter.class, converters.get(1).value());
-    }
-
     private void assertPluginExists(List<Plugin> plugins, String pluginName) {
         boolean found = false;
         for (Plugin plugin : plugins) {

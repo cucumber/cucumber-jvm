@@ -10,7 +10,7 @@ public class AmbiguousStepDefinitionsMatch extends StepDefinitionMatch {
     private AmbiguousStepDefinitionsException exception;
 
     public AmbiguousStepDefinitionsMatch(String uri, PickleStep step, AmbiguousStepDefinitionsException e) {
-        super(Collections.<Argument<?>>emptyList(), new NoStepDefinition(), uri, step, null);
+        super(Collections.<Argument<?>>emptyList(), new NoStepDefinition(), uri, step);
         this.exception = e;
     }
 

@@ -6,7 +6,7 @@ import cucumber.runtime.UnreportedStepExecutor;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.snippets.FunctionNameGenerator;
 import gherkin.pickles.PickleStep;
-import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
+import io.cucumber.java.TypeRegistry;
 
 import java.util.List;
 
@@ -15,7 +15,7 @@ import java.util.List;
  */
 @SuppressWarnings("unused")
 public class StubBackend implements Backend {
-    public StubBackend(ResourceLoader resourceLoader, ParameterTypeRegistry parameterTypeRegistry) {
+    public StubBackend(ResourceLoader resourceLoader, TypeRegistry parameterTypeRegistry) {
 
     }
 

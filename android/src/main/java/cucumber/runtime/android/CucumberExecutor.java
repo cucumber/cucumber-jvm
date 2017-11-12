@@ -168,6 +168,6 @@ public final class CucumberExecutor {
         final Configuration configuration = reflections.instantiateExactlyOneSubclass(Configuration.class, MultiLoader.packageName(runtimeOptions.getGlue()), new Class[0], new Object[0], new DefaultConfiguration());
         final ObjectFactory delegateObjectFactory = ObjectFactoryLoader.loadObjectFactory(classFinder, Env.INSTANCE.get(ObjectFactory.class.getName()));
         final AndroidObjectFactory objectFactory = new AndroidObjectFactory(delegateObjectFactory, instrumentation);
-        return singletonList(new JavaBackend(objectFactory, classFinder, configuration.createParameterTypeRegistry()));
+        return singletonList(new JavaBackend(objectFactory, classFinder, configuration.createTypeRegistry()));
     }
 }

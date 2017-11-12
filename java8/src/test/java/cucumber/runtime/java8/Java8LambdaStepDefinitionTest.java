@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import cucumber.api.java8.StepdefBody;
 import cucumber.runtime.CucumberException;
-import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
+import io.cucumber.java.TypeRegistry;
 import org.junit.Test;
 
 import java.util.List;
@@ -12,7 +12,7 @@ import java.util.Locale;
 
 public class Java8LambdaStepDefinitionTest {
 
-    private final ParameterTypeRegistry parameterTypeRegistry = new ParameterTypeRegistry(Locale.ENGLISH);
+    private final TypeRegistry parameterTypeRegistry = new TypeRegistry(Locale.ENGLISH);
 
     @Test
     public void should_calculate_parameters_count_from_body_with_one_param() throws Exception {

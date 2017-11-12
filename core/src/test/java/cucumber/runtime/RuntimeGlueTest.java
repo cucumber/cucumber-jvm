@@ -1,6 +1,5 @@
 package cucumber.runtime;
 
-import cucumber.runtime.xstream.LocalizedXStreams;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -11,7 +10,7 @@ import static org.mockito.Mockito.when;
 public class RuntimeGlueTest {
     @Test
     public void throws_duplicate_error_on_dupe_stepdefs() {
-        RuntimeGlue glue = new RuntimeGlue(new LocalizedXStreams(Thread.currentThread().getContextClassLoader()));
+        RuntimeGlue glue = new RuntimeGlue();
 
         StepDefinition a = mock(StepDefinition.class);
         when(a.getPattern()).thenReturn("hello");
@@ -35,7 +34,7 @@ public class RuntimeGlueTest {
         // But it was too much hassle creating a better test without refactoring RuntimeGlue
         // and probably some of its immediate collaborators... Aslak.
 
-        RuntimeGlue glue = new RuntimeGlue(new LocalizedXStreams(Thread.currentThread().getContextClassLoader()));
+        RuntimeGlue glue = new RuntimeGlue();
 
         StepDefinition sd = mock(StepDefinition.class);
         when(sd.isScenarioScoped()).thenReturn(true);

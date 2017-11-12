@@ -9,31 +9,35 @@ import cucumber.runtime.StepDefinition;
 import cucumber.runtime.Utils;
 import gherkin.pickles.PickleStep;
 import io.cucumber.cucumberexpressions.Argument;
-import io.cucumber.cucumberexpressions.Expression;
-import io.cucumber.cucumberexpressions.ExpressionFactory;
-import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
+import io.cucumber.java.StepExpression;
+import io.cucumber.java.StepExpressionFactory;
+import io.cucumber.java.TypeRegistry;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
 
 class JavaStepDefinition implements StepDefinition {
     private final Method method;
-    private final Expression expression;
+    private final StepExpression expression;
     private final long timeoutMillis;
     private final ObjectFactory objectFactory;
 
     private final List<ParameterInfo> parameterInfos;
 
-    public JavaStepDefinition(Method method, String expression, long timeoutMillis, ObjectFactory objectFactory, ParameterTypeRegistry parameterTypeRegistry
+    public JavaStepDefinition(Method method, String expression, long timeoutMillis, ObjectFactory objectFactory, TypeRegistry parameterTypeRegistry
             ) {
         this.method = method;
-        this.expression = new ExpressionFactory(parameterTypeRegistry).createExpression(expression, getArgumentTypes(method));
         this.timeoutMillis = timeoutMillis;
         this.objectFactory = objectFactory;
-
         this.parameterInfos = ParameterInfo.fromMethod(method);
+
+        if(parameterInfos.isEmpty()){
+            this.expression = new StepExpressionFactory(parameterTypeRegistry).createExpression(expression);
+        } else {
+            ParameterInfo parameterInfo = parameterInfos.get(parameterInfos.size() - 1);
+            this.expression = new StepExpressionFactory(parameterTypeRegistry).createExpression(expression, parameterInfo.getType(), parameterInfo.isTransposed());
+        }
     }
 
     public void execute(String language, Object[] args) throws Throwable {
@@ -42,15 +46,7 @@ class JavaStepDefinition implements StepDefinition {
 
     public List<Argument<?>> matchedArguments(PickleStep step) {
         ArgumentMatcher argumentMatcher = new ExpressionArgumentMatcher(expression);
-        return argumentMatcher.argumentsFrom(step.getText());
-    }
-
-    private static List<Type> getArgumentTypes(Method method) {
-        List<Type> types = new ArrayList<Type>(method.getGenericParameterTypes().length);
-        for (Type type : method.getGenericParameterTypes()) {
-            types.add(type);
-        }
-        return types;
+        return argumentMatcher.argumentsFrom(step);
     }
 
     public String getLocation(boolean detail) {

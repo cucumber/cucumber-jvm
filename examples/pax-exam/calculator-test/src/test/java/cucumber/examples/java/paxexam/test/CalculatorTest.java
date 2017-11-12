@@ -12,7 +12,7 @@ import java.util.Locale;
 import javax.inject.Inject;
 
 import cucumber.api.java.ObjectFactory;
-import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
+import io.cucumber.java.TypeRegistry;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Configuration;
@@ -78,7 +78,7 @@ public class CalculatorTest {
         final ClassLoader classLoader = Runtime.class.getClassLoader();
         final ObjectFactory objectFactory = new PaxExamObjectFactory(injector);
         final ClassFinder classFinder = new OsgiClassFinder(bundleContext);
-        ParameterTypeRegistry parameterTypeRegistry = new ParameterTypeRegistry(Locale.ENGLISH);
+        TypeRegistry parameterTypeRegistry = new TypeRegistry(Locale.ENGLISH);
         final Backend backend = new JavaBackend(objectFactory, classFinder,parameterTypeRegistry);
 
         final RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(getClass());

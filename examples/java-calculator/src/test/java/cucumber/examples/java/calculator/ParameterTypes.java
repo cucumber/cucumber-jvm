@@ -3,8 +3,8 @@ package cucumber.examples.java.calculator;
 import cucumber.api.Configuration;
 import io.cucumber.cucumberexpressions.Function;
 import io.cucumber.cucumberexpressions.ParameterType;
-import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
 import io.cucumber.cucumberexpressions.SingleTransformer;
+import io.cucumber.java.TypeRegistry;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -17,8 +17,8 @@ import static java.util.Locale.ENGLISH;
 public class ParameterTypes implements Configuration {
 
     @Override
-    public ParameterTypeRegistry createParameterTypeRegistry() {
-        ParameterTypeRegistry parameterTypeRegistry = new ParameterTypeRegistry(ENGLISH);
+    public TypeRegistry createTypeRegistry() {
+        TypeRegistry parameterTypeRegistry = new TypeRegistry(ENGLISH);
         parameterTypeRegistry.defineParameterType(new ParameterType<Date>(
             "date",
             "((.*) \\d{1,2}, \\d{4})",

@@ -24,7 +24,7 @@ import cucumber.runtime.snippets.FunctionNameGenerator;
 import cucumber.runtime.snippets.Snippet;
 import cucumber.runtime.snippets.SnippetGenerator;
 import gherkin.pickles.PickleStep;
-import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
+import io.cucumber.java.TypeRegistry;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -35,7 +35,7 @@ import java.util.List;
 public class JavaBackend implements Backend, LambdaGlueRegistry {
 
     private final SnippetGenerator snippetGenerator;
-    private final ParameterTypeRegistry parameterTypeRegistry;
+    private final TypeRegistry parameterTypeRegistry;
 
     private Snippet createSnippet() {
         ClassLoader classLoader = currentThread().getContextClassLoader();
@@ -59,20 +59,20 @@ public class JavaBackend implements Backend, LambdaGlueRegistry {
      *
      * @param resourceLoader
      */
-    public JavaBackend(ResourceLoader resourceLoader, ParameterTypeRegistry parameterTypeRegistry) {
+    public JavaBackend(ResourceLoader resourceLoader, TypeRegistry parameterTypeRegistry) {
         this(new ResourceLoaderClassFinder(resourceLoader, currentThread().getContextClassLoader()), parameterTypeRegistry);
     }
 
-    private JavaBackend(ClassFinder classFinder, ParameterTypeRegistry parameterTypeRegistry) {
+    private JavaBackend(ClassFinder classFinder, TypeRegistry parameterTypeRegistry) {
         this(loadObjectFactory(classFinder, Env.INSTANCE.get(ObjectFactory.class.getName())), classFinder, parameterTypeRegistry);
     }
 
-    public JavaBackend(ObjectFactory objectFactory, ClassFinder classFinder,  ParameterTypeRegistry parameterTypeRegistry) {
+    public JavaBackend(ObjectFactory objectFactory, ClassFinder classFinder,  TypeRegistry typeRegistry) {
         this.classFinder = classFinder;
         this.objectFactory = objectFactory;
         this.methodScanner = new MethodScanner(classFinder);
-        this.snippetGenerator = new SnippetGenerator(createSnippet(), parameterTypeRegistry);
-        this.parameterTypeRegistry = parameterTypeRegistry;
+        this.snippetGenerator = new SnippetGenerator(createSnippet(), typeRegistry.parameterTypeRegistry());
+        this.parameterTypeRegistry = typeRegistry;
     }
 
     @Override
@@ -154,7 +154,7 @@ public class JavaBackend implements Backend, LambdaGlueRegistry {
     }
 
     @Override
-    public void addStepDefinition(Function<ParameterTypeRegistry, StepDefinition> stepDefinitionFunction) {
+    public void addStepDefinition(Function<TypeRegistry, StepDefinition> stepDefinitionFunction) {
         glue.addStepDefinition(stepDefinitionFunction.apply(parameterTypeRegistry));
     }
 

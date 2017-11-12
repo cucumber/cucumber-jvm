@@ -12,8 +12,8 @@ import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
 import cucumber.runtime.java.stepdefs.Stepdefs;
 import gherkin.pickles.PickleStep;
+import io.cucumber.java.TypeRegistry;
 import org.junit.Before;
-import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -35,7 +35,7 @@ public class JavaBackendTest {
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
         ResourceLoaderClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
         this.factory = new DefaultJavaObjectFactory();
-        ParameterTypeRegistry parameterTypeRegistry = new ParameterTypeRegistry(Locale.ENGLISH);
+        TypeRegistry parameterTypeRegistry = new TypeRegistry(Locale.ENGLISH);
         this.backend = new JavaBackend(factory, classFinder, parameterTypeRegistry);
     }
 

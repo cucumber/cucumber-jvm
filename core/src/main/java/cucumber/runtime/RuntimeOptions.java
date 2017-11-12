@@ -9,7 +9,6 @@ import cucumber.api.formatter.ColorAware;
 import cucumber.api.formatter.Formatter;
 import cucumber.api.formatter.StrictAware;
 import cucumber.runner.EventBus;
-import cucumber.deps.com.thoughtworks.xstream.annotations.XStreamConverter;
 import cucumber.runtime.formatter.PluginFactory;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
@@ -37,7 +36,6 @@ import static cucumber.runtime.model.CucumberFeature.load;
 import static cucumber.util.FixJava.join;
 import static cucumber.util.FixJava.map;
 import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
 
 // IMPORTANT! Make sure USAGE.txt is always uptodate if this class changes.
 public class RuntimeOptions {
@@ -70,7 +68,6 @@ public class RuntimeOptions {
     private final List<String> junitOptions = new ArrayList<String>();
     private final PluginFactory pluginFactory;
     private final List<Plugin> plugins = new ArrayList<Plugin>();
-    private final List<XStreamConverter> converters = new ArrayList<XStreamConverter>();
     private boolean dryRun;
     private boolean strict = false;
     private boolean monochrome = false;
@@ -216,11 +213,6 @@ public class RuntimeOptions {
         parsedPluginData.updatePluginSummaryPrinterNames(pluginSummaryPrinterNames);
     }
 
-    RuntimeOptions withConverters(List<XStreamConverter> converters) {
-        this.converters.addAll(converters);
-        return this;
-    }
-
     private void addLineFilters(Map<String, List<Long>> parsedLineFilters, String key, List<Long> lines) {
         if (parsedLineFilters.containsKey(key)) {
             parsedLineFilters.get(key).addAll(lines);
@@ -337,10 +329,6 @@ public class RuntimeOptions {
             pluginNamesInstantiated = true;
         }
         return plugins;
-    }
-
-    List<XStreamConverter> getConverters() {
-        return unmodifiableList(converters);
     }
 
     public Formatter formatter(ClassLoader classLoader) {

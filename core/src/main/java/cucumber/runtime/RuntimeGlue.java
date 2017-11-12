@@ -1,7 +1,6 @@
 package cucumber.runtime;
 
 import cucumber.api.StepDefinitionReporter;
-import cucumber.runtime.xstream.LocalizedXStreams;
 import gherkin.pickles.PickleStep;
 import io.cucumber.cucumberexpressions.Argument;
 
@@ -16,17 +15,6 @@ public class RuntimeGlue implements Glue {
     final Map<String, StepDefinition> stepDefinitionsByPattern = new TreeMap<String, StepDefinition>();
     final List<HookDefinition> beforeHooks = new ArrayList<HookDefinition>();
     final List<HookDefinition> afterHooks = new ArrayList<HookDefinition>();
-
-    private final LocalizedXStreams localizedXStreams;
-
-    public RuntimeGlue(LocalizedXStreams localizedXStreams) {
-        this(null, localizedXStreams);
-    }
-
-    @Deprecated
-    public RuntimeGlue(UndefinedStepsTracker tracker, LocalizedXStreams localizedXStreams) {
-        this.localizedXStreams = localizedXStreams;
-    }
 
     @Override
     public void addStepDefinition(StepDefinition stepDefinition) {
@@ -77,7 +65,7 @@ public class RuntimeGlue implements Glue {
         for (StepDefinition stepDefinition : stepDefinitionsByPattern.values()) {
             List<Argument<?>> arguments = stepDefinition.matchedArguments(step);
             if (arguments != null) {
-                result.add(new StepDefinitionMatch(arguments, stepDefinition, featurePath, step, localizedXStreams));
+                result.add(new StepDefinitionMatch(arguments, stepDefinition, featurePath, step));
             }
         }
         return result;

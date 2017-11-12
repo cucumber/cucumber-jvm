@@ -1,13 +1,13 @@
 package cucumber.runtime;
 
 import cucumber.api.Configuration;
-import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
+import io.cucumber.java.TypeRegistry;
 
 import java.util.Locale;
 
 public class DefaultConfiguration implements Configuration {
     @Override
-    public ParameterTypeRegistry createParameterTypeRegistry() {
-        return new ParameterTypeRegistry(Locale.ENGLISH);
+    public TypeRegistry createTypeRegistry() {
+        return new TypeRegistry(Locale.ENGLISH);
     }
 }

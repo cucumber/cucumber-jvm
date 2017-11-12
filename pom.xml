@@ -72,7 +72,7 @@
         <felix.version>5.6.6</felix.version>
         <tag-expressions.version>1.0.1</tag-expressions.version>
         <typetools.version>0.5.0</typetools.version>
-        <cucumber-expressions.version>5.0.2</cucumber-expressions.version>
+        <cucumber-expressions.version>5.0.4-SNAPSHOT</cucumber-expressions.version>
     </properties>
     <licenses>
         <license>
@@ -721,7 +721,6 @@
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <version>3.0.0-M1</version>
                     <configuration>
-                        <aggregate>true</aggregate>
                         <use>false</use>
                         <excludePackageNames>cucumber.runtime,cucumber.runtime.*</excludePackageNames>
                         <links>

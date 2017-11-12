@@ -4,13 +4,11 @@ import cucumber.runtime.HookDefinition;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.java.Function;
 import cucumber.runtime.java.LambdaGlueRegistry;
-import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
+import io.cucumber.java.TypeRegistry;
 import org.hamcrest.CustomTypeSafeMatcher;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-
-import java.util.Locale;
 
 import static java.util.Locale.ENGLISH;
 
@@ -49,8 +47,8 @@ public class Java8LambdaStepDefinitionMarksCorrectStackElementTest {
         private StepDefinition stepDefinition;
 
         @Override
-        public void addStepDefinition(Function<ParameterTypeRegistry, StepDefinition> stepDefinitionFunction) {
-            stepDefinition = stepDefinitionFunction.apply(new ParameterTypeRegistry(ENGLISH));
+        public void addStepDefinition(Function<TypeRegistry, StepDefinition> stepDefinitionFunction) {
+            stepDefinition = stepDefinitionFunction.apply(new TypeRegistry(ENGLISH));
         }
 
         @Override

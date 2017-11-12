@@ -8,14 +8,14 @@ import cucumber.runtime.StepDefinition;
 import cucumber.runtime.java.Function;
 import cucumber.runtime.java.JavaBackend;
 import cucumber.runtime.java8.Java8StepDefinition;
-import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
+import io.cucumber.java.TypeRegistry;
 
 public class AnonInnerClassStepdefs implements GlueBase {
 
     public AnonInnerClassStepdefs() {
-        JavaBackend.INSTANCE.get().addStepDefinition(new Function<ParameterTypeRegistry, StepDefinition>() {
+        JavaBackend.INSTANCE.get().addStepDefinition(new Function<TypeRegistry, StepDefinition>() {
             @Override
-            public StepDefinition apply(ParameterTypeRegistry parameterTypeRegistry) {
+            public StepDefinition apply(TypeRegistry parameterTypeRegistry) {
                 return new Java8StepDefinition(
                     "I have {int} java7 beans in my {word}", 0, StepdefBody.A2.class,
                     new StepdefBody.A2<Integer, String>() {

@@ -1,7 +1,7 @@
 package cucumber.api;
 
-import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
+import io.cucumber.java.TypeRegistry;
 
 public interface Configuration {
-    ParameterTypeRegistry createParameterTypeRegistry();
+    TypeRegistry createTypeRegistry();
 }
