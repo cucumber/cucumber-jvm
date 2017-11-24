@@ -7,6 +7,8 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ### Deprecated
 ### Removed
 ### Fixed
+ * [TestNG] Fix null pointer exception when invalid options are used ([#1282](https://github.com/cucumber/cucumber-jvm/pull/1282), M.P. Korstanje)
+
 
 ## [2.1.0](https://github.com/cucumber/cucumber-jvm/compare/v2.0.1...v2.1.0)
 
