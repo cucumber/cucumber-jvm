@@ -47,7 +47,7 @@ import java.util.List;
  * Additional hints can be given to Cucumber by annotating the class with {@link CucumberOptions}.
  * <p>
  * Cucumber also supports JUnits {@link ClassRule}, {@link BeforeClass} and {@link AfterClass} annotations.
- * These will executed before and after all scenarios. Using these is not recommended as it limits the portability
+ * These will be executed before and after all scenarios. Using these is not recommended as it limits the portability
  * between different runners; they may not execute correctly when using the commandline, IntelliJ IDEA or
  * Cucumber-Eclipse. Instead it is recommended to use Cucumbers `Before` and `After` hooks.
  *
@@ -75,32 +75,13 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
 
         ResourceLoader resourceLoader = new MultiLoader(classLoader);
-        runtime = createRuntime(resourceLoader, classLoader, runtimeOptions);
+        ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
+        runtime = new Runtime(resourceLoader, classFinder, classLoader, runtimeOptions);
         formatter = runtimeOptions.formatter(classLoader);
         final JUnitOptions junitOptions = new JUnitOptions(runtimeOptions.getJunitOptions());
         final List<CucumberFeature> cucumberFeatures = runtimeOptions.cucumberFeatures(resourceLoader, runtime.getEventBus());
         jUnitReporter = new JUnitReporter(runtime.getEventBus(), runtimeOptions.isStrict(), junitOptions);
         addChildren(cucumberFeatures);
-    }
-
-    /**
-     * Create the Runtime. Can be overridden to customize the runtime or backend.
-     *
-     * @param resourceLoader used to load resources
-     * @param classLoader    used to load classes
-     * @param runtimeOptions configuration
-     * @return a new runtime
-     * @throws InitializationError if a JUnit error occurred
-     * @throws IOException         if a class or resource could not be loaded
-     * @deprecated Neither the runtime nor the backend or any of the classes involved in their construction are part of
-     * the public API. As such they should not be  exposed. The recommended way to observe the cucumber process is to
-     * listen to events by using a plugin. For example the JSONFormatter.
-     */
-    @Deprecated
-    protected Runtime createRuntime(ResourceLoader resourceLoader, ClassLoader classLoader,
-                                    RuntimeOptions runtimeOptions) throws InitializationError, IOException {
-        ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
-        return new Runtime(resourceLoader, classFinder, classLoader, runtimeOptions);
     }
 
     @Override
