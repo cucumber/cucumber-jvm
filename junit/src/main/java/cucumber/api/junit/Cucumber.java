@@ -77,7 +77,11 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
      * @return a new runtime
      * @throws InitializationError if a JUnit error occurred
      * @throws IOException         if a class or resource could not be loaded
+     * @deprecated Neither the runtime nor the backend or any of the classes involved in their construction are part of
+     * the public API. As such they should not be  exposed. The recommended way to observe the cucumber process is to
+     * listen to events by using a plugin. For example the {@link cucumber.runtime.formatter.JSONFormatter}.
      */
+    @Deprecated
     protected Runtime createRuntime(ResourceLoader resourceLoader, ClassLoader classLoader,
                                     RuntimeOptions runtimeOptions) throws InitializationError, IOException {
         ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
