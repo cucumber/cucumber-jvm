@@ -15,6 +15,9 @@ import cucumber.runtime.junit.FeatureRunner;
 import cucumber.runtime.junit.JUnitOptions;
 import cucumber.runtime.junit.JUnitReporter;
 import cucumber.runtime.model.CucumberFeature;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.ClassRule;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
@@ -28,13 +31,24 @@ import java.util.List;
 /**
  * <p>
  * Classes annotated with {@code @RunWith(Cucumber.class)} will run a Cucumber Feature.
- * The class should be empty without any fields or methods.
- * </p>
+ * In general, the runner class should be empty without any fields or methods.
+ * For example:
+ *
+ * <blockquote><pre>
+ * &#64;RunWith(Cucumber.class)
+ * &#64;CucumberOptions(plugin = "pretty")
+ * public class RunCukesTest {
+ *
+ * }
+ * </pre></blockquote>
  * <p>
  * Cucumber will look for a {@code .feature} file on the classpath, using the same resource
  * path as the annotated class ({@code .class} substituted by {@code .feature}).
- * </p>
+ * <p>
  * Additional hints can be given to Cucumber by annotating the class with {@link CucumberOptions}.
+ * <p>
+ * Cucumber also supports JUnits {@link ClassRule}, {@link BeforeClass} and {@link AfterClass} annotations.
+ * These will be invoked around the suite of features" and moved to the end of the java doc.
  *
  * @see CucumberOptions
  */
@@ -79,7 +93,7 @@ public class Cucumber extends ParentRunner<FeatureRunner> {
      * @throws IOException         if a class or resource could not be loaded
      * @deprecated Neither the runtime nor the backend or any of the classes involved in their construction are part of
      * the public API. As such they should not be  exposed. The recommended way to observe the cucumber process is to
-     * listen to events by using a plugin. For example the {@link cucumber.runtime.formatter.JSONFormatter}.
+     * listen to events by using a plugin. For example the JSONFormatter.
      */
     @Deprecated
     protected Runtime createRuntime(ResourceLoader resourceLoader, ClassLoader classLoader,
