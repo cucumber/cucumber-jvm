@@ -91,7 +91,8 @@ public class JSONFormatterTest {
                 "          }\n" +
                 "        ]\n" +
                 "      }\n" +
-                "    ]\n" +
+                "    ],\n" +
+                "    \"tags\": []\n" +
                 "  }\n" +
                 "]";
         assertPrettyJsonEquals(expected, formatterOutput);
@@ -144,7 +145,8 @@ public class JSONFormatterTest {
                 "          }\n" +
                 "        ]\n" +
                 "      }\n" +
-                "    ]\n" +
+                "    ],\n" +
+                "    \"tags\": []\n" +
                 "  }\n" +
                 "]";
         assertPrettyJsonEquals(expected, formatterOutput);
@@ -198,7 +200,8 @@ public class JSONFormatterTest {
                 "          }\n" +
                 "        ]\n" +
                 "      }\n" +
-                "    ]\n" +
+                "    ],\n" +
+                "    \"tags\": []\n" +
                 "  }\n" +
                 "]";
         assertPrettyJsonEquals(expected, formatterOutput);
@@ -254,7 +257,8 @@ public class JSONFormatterTest {
                 "          }\n" +
                 "        ]\n" +
                 "      }\n" +
-                "    ]\n" +
+                "    ],\n" +
+                "    \"tags\": []\n" +
                 "  }\n" +
                 "]";
         assertPrettyJsonEquals(expected, formatterOutput);
@@ -381,7 +385,8 @@ public class JSONFormatterTest {
                 "          }\n" +
                 "        ]\n" +
                 "      }\n" +
-                "    ]\n" +
+                "    ],\n" +
+                "    \"tags\": []\n" +
                 "  }\n" +
                 "]";
         assertPrettyJsonEquals(expected, formatterOutput);
@@ -462,7 +467,8 @@ public class JSONFormatterTest {
                 "          }\n" +
                 "        ]\n" +
                 "      }\n" +
-                "    ]\n" +
+                "    ],\n" +
+                "    \"tags\": []\n" +
                 "  }\n" +
                 "]";
         assertPrettyJsonEquals(expected, formatterOutput);
@@ -535,7 +541,8 @@ public class JSONFormatterTest {
                 "          }\n" +
                 "        ]\n" +
                 "      }\n" +
-                "    ]\n" +
+                "    ],\n" +
+                "    \"tags\": []\n" +
                 "  }\n" +
                 "]";
         assertPrettyJsonEquals(expected, formatterOutput);
@@ -611,7 +618,8 @@ public class JSONFormatterTest {
                 "          }\n" +
                 "        ]\n" +
                 "      }\n" +
-                "    ]\n" +
+                "    ],\n" +
+                "    \"tags\": []\n" +
                 "  }\n" +
                 "]";
         assertPrettyJsonEquals(expected, formatterOutput);
@@ -671,7 +679,8 @@ public class JSONFormatterTest {
                 "          }\n" +
                 "        ]\n" +
                 "      }\n" +
-                "    ]\n" +
+                "    ],\n" +
+                "    \"tags\": []\n" +
                 "  }\n" +
                 "]";
         assertPrettyJsonEquals(expected, formatterOutput);
@@ -740,7 +749,8 @@ public class JSONFormatterTest {
                 "          }\n" +
                 "        ]\n" +
                 "      }\n" +
-                "    ]\n" +
+                "    ],\n" +
+                "    \"tags\": []\n" +
                 "  }\n" +
                 "]";
         assertPrettyJsonEquals(expected, formatterOutput);
@@ -800,7 +810,8 @@ public class JSONFormatterTest {
                 "          }\n" +
                 "        ]\n" +
                 "      }\n" +
-                "    ]\n" +
+                "    ],\n" +
+                "    \"tags\": []\n" +
                 "  },\n" +
                 "  {\n" +
                 "    \"id\": \"orange-party\",\n" +
@@ -832,7 +843,8 @@ public class JSONFormatterTest {
                 "          }\n" +
                 "        ]\n" +
                 "      }\n" +
-                "    ]\n" +
+                "    ],\n" +
+                "    \"tags\": []\n" +
                 "  }\n" +
                 "]";
         assertPrettyJsonEquals(expected, formatterOutput);
