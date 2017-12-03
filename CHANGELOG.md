@@ -8,7 +8,7 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ### Changed
  * [Core] Upgraded tag-expressions to 1.1.1 (M.P. Korstanje)
    * Allows empty tag expressions ([cucumber/#296](https://github.com/cucumber/cucumber/issues/296))
-   * Allows reverse polish notation in tag expressions ([cucumber/#304](https://github.com/cucumber/cucumber/issues/304))
+   * Don't allow reverse polish notation in tag expressions ([cucumber/#304](https://github.com/cucumber/cucumber/issues/304))
   
 ### Deprecated
  * [JUnit] `Cucumber.createRuntime` has been deprecated ([#1287](https://github.com/cucumber/cucumber-jvm/pull/1287) M.P. Korstanje)
