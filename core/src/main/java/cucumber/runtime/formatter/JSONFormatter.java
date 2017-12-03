@@ -170,6 +170,8 @@ final class JSONFormatter implements Formatter {
             featureMap.put("description", feature.getDescription() != null ? feature.getDescription() : "");
             featureMap.put("line", feature.getLocation().getLine());
             featureMap.put("id", TestSourcesModel.convertToId(feature.getName()));
+            featureMap.put("tags", feature.getTags());
+
         }
         return featureMap;
     }
