@@ -28,7 +28,7 @@ import static org.mockito.Mockito.verify;
 public class RuntimeOptionsTest {
     @Test
     public void has_version_from_properties_file() {
-        assertTrue(RuntimeOptions.VERSION.startsWith("2.1"));
+        assertTrue(RuntimeOptions.VERSION.startsWith("2.2"));
     }
 
     @Test

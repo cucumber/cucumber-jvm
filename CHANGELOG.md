@@ -1,6 +1,15 @@
 Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CONTRIBUTING.md) on how to contribute to Cucumber.
 
-## [2.1.1-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v2.1.0...master) (In Git)
+## [2.2.1-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v2.2.0...master) (In Git)
+
+### Added
+### Changed
+### Deprecated
+### Removed
+### Fixed
+
+
+## [2.2.0](https://github.com/cucumber/cucumber-jvm/compare/v2.1.0...v2.2.0) (In Git)
 
 ### Added
  * [JUnit] Document supported JUnit annotations ([#1272](https://github.com/cucumber/cucumber-jvm/pull/1272) Marit van Dijk)
