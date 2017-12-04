@@ -93,7 +93,7 @@ After that's done, push `api.cucumber.io`
 
 ## Last bits ##
 
-Finally update the dependency in example projects:
+Wait for the release to show up on maven central. Then update the dependency in example projects:
 
 * https://github.com/cucumber/cucumber-java-skeleton
 
