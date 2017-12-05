@@ -25,6 +25,7 @@
                 <jdk>${java.min.version.lambda}</jdk>
             </activation>
             <modules>
+                <module>java-calculator-jupiter</module>
                 <module>java-wicket</module>
                 <module>java-webbit-websockets-selenium</module>
             </modules>
