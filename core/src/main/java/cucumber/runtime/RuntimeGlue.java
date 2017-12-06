@@ -6,6 +6,7 @@ import gherkin.pickles.PickleStep;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +16,7 @@ public class RuntimeGlue implements Glue {
     final Map<String, StepDefinition> stepDefinitionsByPattern = new TreeMap<String, StepDefinition>();
     final List<HookDefinition> beforeHooks = new ArrayList<HookDefinition>();
     final List<HookDefinition> afterHooks = new ArrayList<HookDefinition>();
-
+    final Map<String, CacheEntry> matchedStepDefinitionsCache = new HashMap<String, CacheEntry>();
     private final LocalizedXStreams localizedXStreams;
 
     public RuntimeGlue(LocalizedXStreams localizedXStreams) {
@@ -73,9 +74,26 @@ public class RuntimeGlue implements Glue {
 
     private List<StepDefinitionMatch> stepDefinitionMatches(String featurePath, PickleStep step) {
         List<StepDefinitionMatch> result = new ArrayList<StepDefinitionMatch>();
+
+        String stepText = step.getText();
+
+        CacheEntry cacheEntry = matchedStepDefinitionsCache.get(stepText);
+        if (cacheEntry != null) {
+            result.add(new StepDefinitionMatch(cacheEntry.arguments, cacheEntry.stepDefinition, featurePath, step, localizedXStreams));
+            return result;
+        }
+        boolean notFound = true;
         for (StepDefinition stepDefinition : stepDefinitionsByPattern.values()) {
             List<Argument> arguments = stepDefinition.matchedArguments(step);
             if (arguments != null) {
+                if (notFound) {
+                    matchedStepDefinitionsCache.put(stepText, new CacheEntry(stepDefinition, arguments));
+                    notFound = false;
+                }
+                else {
+                    //duplicate step - remove from cache
+                    matchedStepDefinitionsCache.remove(stepText);
+                }
                 result.add(new StepDefinitionMatch(arguments, stepDefinition, featurePath, step, localizedXStreams));
             }
         }
@@ -113,6 +131,18 @@ public class RuntimeGlue implements Glue {
             if(stepDefinition.isScenarioScoped()) {
                 stepdefs.remove();
             }
+        }
+    }
+
+    static final class CacheEntry
+    {
+        StepDefinition stepDefinition;
+        List<Argument> arguments;
+
+        private CacheEntry(StepDefinition stepDefinition, List<Argument> arguments)
+        {
+            this.stepDefinition = stepDefinition;
+            this.arguments = arguments;
         }
     }
 
