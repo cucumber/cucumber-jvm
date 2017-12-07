@@ -7,23 +7,18 @@ import cucumber.api.formatter.ColorAware;
 import cucumber.api.formatter.StrictAware;
 import cucumber.runtime.formatter.PluginFactory;
 import cucumber.runtime.io.ResourceLoader;
+import gherkin.GherkinDialect;
+import org.junit.Ignore;
 import org.junit.Test;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import static java.util.Arrays.asList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class RuntimeOptionsTest {
     @Test
@@ -315,6 +310,51 @@ public class RuntimeOptionsTest {
         }
     }
 
+    @Test
+    public void should_find_widest_language() {
+        List<GherkinDialect> dialects = new LinkedList<GherkinDialect>();
+
+        GherkinDialect swedish = mock(GherkinDialect.class);
+        when(swedish.getLanguage()).thenReturn("sv");
+        dialects.add(swedish);
+
+        GherkinDialect pirate = mock(GherkinDialect.class);
+        when(pirate.getLanguage()).thenReturn("en-pirate");
+        dialects.add(pirate);
+
+        assertThat(RuntimeOptions.findWidestLanguage(dialects), is(9));
+    }
+
+    @Test
+    public void should_find_widest_name() {
+        List<GherkinDialect> dialects = new LinkedList<GherkinDialect>();
+
+        GherkinDialect swedish = mock(GherkinDialect.class);
+        when(swedish.getName()).thenReturn("Swedish");
+        dialects.add(swedish);
+
+        GherkinDialect norwegian = mock(GherkinDialect.class);
+        when(norwegian.getName()).thenReturn("Norwegian");
+        dialects.add(norwegian);
+
+        assertThat(RuntimeOptions.findWidestName(dialects), is(9));
+    }
+
+    @Test
+    public void should_find_widest_native_name() {
+        List<GherkinDialect> dialects = new LinkedList<GherkinDialect>();
+
+        GherkinDialect swedish = mock(GherkinDialect.class);
+        when(swedish.getNativeName()).thenReturn("Svenska");
+        dialects.add(swedish);
+
+        GherkinDialect norwegian = mock(GherkinDialect.class);
+        when(norwegian.getNativeName()).thenReturn("Norsk");
+        dialects.add(norwegian);
+
+        assertThat(RuntimeOptions.findWidestNativeName(dialects), is(7));
+    }
+
     public static final class AwareFormatter implements StrictAware, ColorAware {
 
         private boolean strict;
@@ -348,14 +388,14 @@ public class RuntimeOptionsTest {
     public void set_monochrome_on_color_aware_formatters() throws Exception {
         RuntimeOptions options = new RuntimeOptions(new Env(), new PluginFactory(), asList("--monochrome", "--plugin", AwareFormatter.class.getName()));
         options.getPlugins();
-        AwareFormatter formatter = (AwareFormatter)options.getPlugins().get(0);
+        AwareFormatter formatter = (AwareFormatter) options.getPlugins().get(0);
         assertTrue(formatter.isMonochrome());
     }
 
     @Test
     public void set_strict_on_strict_aware_formatters() throws Exception {
         RuntimeOptions options = new RuntimeOptions(new Env(), new PluginFactory(), asList("--strict", "--plugin", AwareFormatter.class.getName()));
-        AwareFormatter formatter = (AwareFormatter)options.getPlugins().get(0);
+        AwareFormatter formatter = (AwareFormatter) options.getPlugins().get(0);
         assertTrue(formatter.isStrict());
     }
 

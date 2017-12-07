@@ -29,6 +29,7 @@ import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.regex.Pattern;
@@ -256,20 +257,81 @@ public class RuntimeOptions {
 
     private int printI18n(String language) {
         IGherkinDialectProvider dialectProvider = new GherkinDialectProvider();
-        List<String> languages = dialectProvider.getLanguages();
 
         if (language.equalsIgnoreCase("help")) {
-            for (String code : languages) {
-                System.out.println(code);
+            List<GherkinDialect> dialects = dialectProvider.getDialects();
+            int widestLanguage = findWidestLanguage(dialects);
+            int widestName = findWidestName(dialects);
+            int widestNativeName = findWidestNativeName(dialects);
+
+            for (GherkinDialect dialect : dialects) {
+                printDialect(dialect, widestLanguage, widestName, widestNativeName);
             }
+
             return 0;
         }
+
+        List<String> languages = dialectProvider.getLanguages();
         if (languages.contains(language)) {
             return printKeywordsFor(dialectProvider.getDialect(language, null));
         }
 
         System.err.println("Unrecognised ISO language code");
         return 1;
+    }
+
+    static int findWidestLanguage(List<GherkinDialect> dialects) {
+        List<String> candidates = new LinkedList<String>();
+        for (GherkinDialect dialect : dialects) {
+            candidates.add(dialect.getLanguage());
+        }
+
+        return findWidestString(candidates);
+    }
+
+    static int findWidestName(List<GherkinDialect> dialects) {
+        List<String> candidates = new LinkedList<String>();
+        for (GherkinDialect dialect : dialects) {
+            candidates.add(dialect.getName());
+        }
+
+        return findWidestString(candidates);
+    }
+
+    static int findWidestNativeName(List<GherkinDialect> dialects) {
+        List<String> candidates = new LinkedList<String>();
+        for (GherkinDialect dialect : dialects) {
+            candidates.add(dialect.getNativeName());
+        }
+
+        return findWidestString(candidates);
+    }
+
+    private static int findWidestString(List<String> candidates) {
+        int max = 0;
+
+        for (String candidate : candidates) {
+            if (candidate.length() > max) {
+                max = candidate.length();
+            }
+        }
+
+        return max;
+    }
+
+    private void printDialect(GherkinDialect dialect, int widestLanguage, int widestName, int widestNativeName) {
+        String langCode = rightPad(dialect.getLanguage(), widestLanguage);
+        String name = rightPad(dialect.getName(), widestName);
+        String nativeName = rightPad(dialect.getNativeName(), widestNativeName);
+
+        System.out.println(langCode + name + nativeName);
+    }
+
+    private String rightPad(String text, int maxWidth) {
+        int padding = 7;
+        int width = maxWidth + padding;
+
+        return String.format("%" + -width + "s", text);
     }
 
     private int printKeywordsFor(GherkinDialect dialect) {
