@@ -16,20 +16,11 @@
         <module>java-calculator</module>
         <module>java-calculator-testng</module>
         <module>pax-exam</module>
+        <module>java-wicket</module>
+        <module>java-webbit-websockets-selenium</module>
     </modules>
 
     <profiles>
-        <profile>
-            <id>java8</id>
-            <activation>
-                <jdk>${java.min.version.lambda}</jdk>
-            </activation>
-            <modules>
-                <module>java-wicket</module>
-                <module>java-webbit-websockets-selenium</module>
-            </modules>
-        </profile>
-
         <profile>
             <id>android-examples</id>
             <modules>

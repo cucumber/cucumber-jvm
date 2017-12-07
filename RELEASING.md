@@ -1,53 +1,21 @@
 Releasing
 =========
 
-Run `mvn --version` to ensure your java version is 8 or higher.
+The process of deploying to maven central has been automated based on 
+the [Complete guide to continuous deployment to maven central from Travis CI](http://www.debonair.io/post/maven-cd/)
+and will be executed whenever a non-snapshot version is committed.
 
-Upload privileges to the Sonatype staging repository are required.
+## Check [![Build Status](https://travis-ci.org/cucumber/cucumber-jvm.svg?branch=master)](https://travis-ci.org/cucumber/cucumber-jvm) ##
 
-First, make sure everything builds. Including Android.
+Is the build passing?
 
-Then, see if you can upgrade any dependencies:
+Also check if you can upgrade any dependencies:
 
 ```
 mvn versions:display-dependency-updates
 ```
 
-This is a reminder to the developers:
-
-Then, make sure you have the proper keys set up - in your `~/.m2/settings.xml` - for example:
-
-```
-<settings>
-  <servers>
-    <server>
-      <id>cukes.info</id>
-      <username>yourcukesinfouser</username>
-      <privateKey>fullkeypath</privateKey>
-    </server>
-    <!-- See https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide -->
-    <server>
-      <id>sonatype-nexus-snapshots</id>
-      <username>yoursonatypeuser</username>
-      <password>TOPSECRET</password>
-    </server>
-    <server>
-      <id>sonatype-nexus-staging</id>
-      <username>yoursonatypeuser</username>
-      <password>TOPSECRET</password>
-    </server>
-  </servers>
-</settings>
-```
-
-Make sure you can generate Javadocs for all modules, or else the
-release will fail:
-
-```
-mvn javadoc:javadoc
-```
-
-## Update versions ##
+## Prepare for release ##
 
 Replace version numbers in:
 
@@ -66,15 +34,15 @@ git commit -am "Prepare for release X.Y.Z"
 Now release everything:
 
 ```
-mvn release:clean
-mvn --batch-mode -P release-sign-artifacts release:prepare -DautoVersionSubmodules=true -DdevelopmentVersion=X.Y.Z-SNAPSHOT
-mvn -P release-sign-artifacts release:perform
+mvn release:clean release:prepare -Pandroid-examples -DautoVersionSubmodules=true -Darguments="-DskipTests=true"  
 ```
 
-Update the pom.xml file for the examples/android modules using `mvn versions:set` (which are not automatically updated 
-by the release process), commit and push.
+Travis will now deploy everything. Once travis is done go into [Nexus](https://oss.sonatype.org/) and inspect, 
+close and release the staging repository.
 
-Then go into [Nexus](https://oss.sonatype.org/) and inspect, close and release the staging repository.
+It is preferable to use the automated deployment process over the manual process. However should travis.ci fail or should the 
+need arise to setup another continuous integration system the [Manual deployment](#manual-deployment) section 
+describes how this works.
 
 ## Publish the Javadoc ##
 
@@ -98,3 +66,63 @@ Wait for the release to show up on maven central. Then update the dependency in 
 * https://github.com/cucumber/cucumber-java-skeleton
 
 All done! Hurray!
+
+
+# Manual deployment #
+
+It is preferable to use the automated deployment process over the manual process.
+
+The deployment process of `cucumber-jvm` is based on 
+[Deploying to OSSRH with Apache Maven](http://central.sonatype.org/pages/apache-maven.html#deploying-to-ossrh-with-apache-maven-introduction).
+This process is nearly identical for both snapshot deployments and releases. Whether a snapshot 
+deployment or release is executed is determined by the version number.
+
+To make a release you must have the `devs@cucumber.io` GPG private key imported in gpg2.
+
+```
+gpg --import devs-cucumber.io.key
+```
+
+Additionally upload privileges to the Sonatype repositories are required. See the 
+[OSSRH Guide](http://central.sonatype.org/pages/ossrh-guide.html) for instructions. Then an 
+administrator will have to grant you access to the cucumber repository.
+
+Finally both your OSSRH credentials and private key must be setup in your `~/.m2/settings.xml` - 
+for example:
+
+```
+<settings>
+    <servers>
+        <server>
+            <id>ossrh</id>
+            <username>sonatype-user-name</username>
+            <password>sonatype-password</password>
+        </server>
+    </servers>
+    <profiles>
+        <profile>
+            <id>ossrh</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <gpg.executable>gpg2</gpg.executable>
+                <gpg.useagent>true</gpg.useagent>
+            </properties>
+        </profile>
+        <profile>
+            <id>sign-with-cucumber-key</id>
+            <properties>
+                <gpg.keyname>dev-cucumber.io-key-id</gpg.keyname>
+            </properties>
+        </profile>
+    </profiles>
+</settings>
+```
+
+
+# Deploy the release #
+
+```
+mvn release:perform -Psign-source-javadoc -DskipTests=true
+```
