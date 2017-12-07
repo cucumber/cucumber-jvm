@@ -183,6 +183,10 @@ public class StepDefinitionMatch extends Match implements DefinitionMatch {
         return this;
     }
 
+    StepDefinition getStepDefinition() {
+        return stepDefinition;
+    }
+
     @Override
     public String getCodeLocation() {
         return stepDefinition.getLocation(false);

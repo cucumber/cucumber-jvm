@@ -61,12 +61,21 @@ public class RuntimeGlue implements Glue {
 
     @Override
     public StepDefinitionMatch stepDefinitionMatch(String featurePath, PickleStep step) {
+        String stepText = step.getText();
+
+        CacheEntry cacheEntry = matchedStepDefinitionsCache.get(stepText);
+        if (cacheEntry != null) {
+            return new StepDefinitionMatch(cacheEntry.arguments, cacheEntry.stepDefinition, featurePath, step, localizedXStreams);
+        }
+
         List<StepDefinitionMatch> matches = stepDefinitionMatches(featurePath, step);
         if (matches.isEmpty()) {
             return null;
         }
         if (matches.size() == 1) {
-            return matches.get(0);
+            StepDefinitionMatch match = matches.get(0);
+            matchedStepDefinitionsCache.put(stepText, new CacheEntry(match.getStepDefinition(),match.getArguments()));
+            return match;
         } else {
             throw new AmbiguousStepDefinitionsException(step, matches);
         }
@@ -75,25 +84,9 @@ public class RuntimeGlue implements Glue {
     private List<StepDefinitionMatch> stepDefinitionMatches(String featurePath, PickleStep step) {
         List<StepDefinitionMatch> result = new ArrayList<StepDefinitionMatch>();
 
-        String stepText = step.getText();
-
-        CacheEntry cacheEntry = matchedStepDefinitionsCache.get(stepText);
-        if (cacheEntry != null) {
-            result.add(new StepDefinitionMatch(cacheEntry.arguments, cacheEntry.stepDefinition, featurePath, step, localizedXStreams));
-            return result;
-        }
-        boolean notFound = true;
         for (StepDefinition stepDefinition : stepDefinitionsByPattern.values()) {
             List<Argument> arguments = stepDefinition.matchedArguments(step);
             if (arguments != null) {
-                if (notFound) {
-                    matchedStepDefinitionsCache.put(stepText, new CacheEntry(stepDefinition, arguments));
-                    notFound = false;
-                }
-                else {
-                    //duplicate step - remove from cache
-                    matchedStepDefinitionsCache.remove(stepText);
-                }
                 result.add(new StepDefinitionMatch(arguments, stepDefinition, featurePath, step, localizedXStreams));
             }
         }
@@ -134,13 +127,11 @@ public class RuntimeGlue implements Glue {
         }
     }
 
-    static final class CacheEntry
-    {
+    static final class CacheEntry {
         StepDefinition stepDefinition;
         List<Argument> arguments;
 
-        private CacheEntry(StepDefinition stepDefinition, List<Argument> arguments)
-        {
+        private CacheEntry(StepDefinition stepDefinition, List<Argument> arguments) {
             this.stepDefinition = stepDefinition;
             this.arguments = arguments;
         }
