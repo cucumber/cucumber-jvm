@@ -7,16 +7,6 @@
     <name>Cucumber-JVM</name>
     <url>http://cucumber.io/</url>
 
-    <parent>
-        <groupId>org.sonatype.oss</groupId>
-        <artifactId>oss-parent</artifactId>
-        <version>7</version>
-    </parent>
-
-    <prerequisites>
-        <maven>${minimum.maven.version}</maven>
-    </prerequisites>
-
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -47,7 +37,6 @@
         <cdi-api.version>1.2</cdi-api.version>
         <openejb-core.version>4.7.4</openejb-core.version>
         <needle.version>2.2</needle.version>
-        <java.min.version.lambda>[1.8,)</java.min.version.lambda>
         <javaee-api.version>7.0</javaee-api.version>
         <javax.inject.version>1</javax.inject.version>
         <cobertura-maven-plugin.version>2.7</cobertura-maven-plugin.version>
@@ -85,7 +74,7 @@
         <connection>scm:git:git://github.com/cucumber/cucumber-jvm.git</connection>
         <developerConnection>scm:git:git@github.com:cucumber/cucumber-jvm.git</developerConnection>
         <url>git://github.com/cucumber/cucumber-jvm.git</url>
-        <tag>cucumber-jvm-2.0.0</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <dependencyManagement>
@@ -523,9 +512,22 @@
         </pluginRepository>
     </pluginRepositories>
 
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
+
     <modules>
         <module>core</module>
         <module>java</module>
+        <module>java8</module>
+        <module>kotlin-java8</module>
         <module>testng</module>
         <module>picocontainer</module>
         <module>junit</module>
@@ -541,43 +543,38 @@
 
     <profiles>
         <profile>
-            <id>java8</id>
-            <activation>
-                <jdk>${java.min.version.lambda}</jdk>
-            </activation>
-            <modules>
-                <module>java8</module>
-                <module>kotlin-java8</module>
-            </modules>
-        </profile>
-
-        <profile>
-            <id>release-sign-artifacts</id>
-            <activation>
-                <property>
-                    <name>performRelease</name>
-                    <value>true</value>
-                </property>
-            </activation>
+            <id>sign-source-javadoc</id>
             <build>
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-release-plugin</artifactId>
-                        <configuration>
-                            <tagNameFormat>v@{project.version}</tagNameFormat>
-                        </configuration>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
                     </plugin>
-
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <configuration>
-                            <useAgent>true</useAgent>
-                        </configuration>
                         <executions>
                             <execution>
-                                <id>sign-artifacts</id>
                                 <phase>verify</phase>
                                 <goals>
                                     <goal>sign</goal>
@@ -585,57 +582,10 @@
                             </execution>
                         </executions>
                     </plugin>
-
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-enforcer-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>enforce-java</id>
-                                <goals>
-                                    <goal>enforce</goal>
-                                </goals>
-                                <configuration>
-                                    <rules>
-                                        <requireJavaVersion>
-                                            <version>${java.min.version.lambda}</version>
-                                        </requireJavaVersion>
-                                    </rules>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-
                 </plugins>
             </build>
         </profile>
 
-        <profile>
-            <id>travis-disable-deploy-by-default</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-                <property>
-                    <name>env.TRAVIS</name>
-                    <value>true</value>
-                </property>
-            </activation>
-            <properties>
-                <maven.deploy.skip>true</maven.deploy.skip>
-            </properties>
-        </profile>
-        <profile>
-            <id>travis-enable-deploy-if-not-pull-request</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-                <property>
-                    <name>env.TRAVIS_PULL_REQUEST</name>
-                    <value>false</value>
-                </property>
-            </activation>
-            <properties>
-                <maven.deploy.skip>false</maven.deploy.skip>
-            </properties>
-        </profile>
         <profile>
             <id>coveralls.io</id>
             <build>
@@ -663,8 +613,10 @@
                             <version>4.3.0</version>
                             <configuration>
                                 <sourceDirectories>
-                                    <sourceDirectory>${basedir}/java/target/generated-sources/i18n/java</sourceDirectory>
-                                    <sourceDirectory>${basedir}/java8/target/generated-sources/i18n/java8</sourceDirectory>
+                                    <sourceDirectory>${basedir}/java/target/generated-sources/i18n/java
+                                    </sourceDirectory>
+                                    <sourceDirectory>${basedir}/java8/target/generated-sources/i18n/java8
+                                    </sourceDirectory>
                                 </sourceDirectories>
                             </configuration>
                         </plugin>
@@ -737,7 +689,8 @@
                     <version>3.0.0-M1</version>
                     <configuration>
                         <use>false</use>
-                        <excludePackageNames>cucumber.runtime,cucumber.runtime.*,org.springframework</excludePackageNames>
+                        <excludePackageNames>cucumber.runtime,cucumber.runtime.*,org.springframework
+                        </excludePackageNames>
                         <links>
                             <link>http://docs.oracle.com/javase/7/docs/api/</link>
                             <link>http://junit.sourceforge.net/javadoc/</link>
@@ -774,6 +727,9 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
                     <version>2.5.3</version>
+                    <configuration>
+                        <tagNameFormat>v@{project.version}</tagNameFormat>
+                    </configuration>
                 </plugin>
 
                 <plugin>
@@ -809,14 +765,6 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-source-plugin</artifactId>
                     <version>3.0.1</version>
-                    <executions>
-                        <execution>
-                            <id>bind-sources</id>
-                            <goals>
-                                <goal>jar</goal>
-                            </goals>
-                        </execution>
-                    </executions>
                 </plugin>
 
                 <plugin>
@@ -832,6 +780,11 @@
                     </configuration>
                 </plugin>
 
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-war-plugin</artifactId>
+                    <version>3.2.0</version>
+                </plugin>
                 <!-- Non-standard plugins -->
                 <plugin>
                     <groupId>com.lazerycode.selenium</groupId>
@@ -876,6 +829,13 @@
                     </executions>
                 </plugin>
 
+                <plugin>
+                    <groupId>org.sonatype.plugins</groupId>
+                    <artifactId>nexus-staging-maven-plugin</artifactId>
+                    <version>1.6.7</version>
+                </plugin>
+
+
             </plugins>
         </pluginManagement>
 
@@ -889,7 +849,7 @@
                         <configuration>
                             <rules>
                                 <requireJavaVersion>
-                                    <version>1.7.0-9</version>
+                                    <version>[1.8,)</version>
                                 </requireJavaVersion>
                                 <requireMavenVersion>
                                     <version>[${minimum.maven.version},)</version>
@@ -900,7 +860,6 @@
                                     <banRelease>true</banRelease>
                                     <banSnapshots>true</banSnapshots>
                                     <phases>clean,deploy,site</phases>
-                                    <unCheckedPluginList>org.codehaus.mojo</unCheckedPluginList>
                                 </requirePluginVersions>
                                 <bannedDependencies>
                                     <excludes>
@@ -917,6 +876,27 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <configuration>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                    <useReleaseProfile>false</useReleaseProfile>
+                    <releaseProfiles>release</releaseProfiles>
+                    <goals>deploy</goals>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                    <!--Manually review the non-snapshot artifacts for a while before automating the release -->
+                    <autoReleaseAfterClose>false</autoReleaseAfterClose>
+                </configuration>
             </plugin>
         </plugins>
 
