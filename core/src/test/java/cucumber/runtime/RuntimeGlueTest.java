@@ -18,6 +18,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class RuntimeGlueTest {
@@ -25,7 +26,7 @@ public class RuntimeGlueTest {
     private RuntimeGlue glue;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         glue = new RuntimeGlue(new LocalizedXStreams(Thread.currentThread().getContextClassLoader()));
     }
 
@@ -80,26 +81,59 @@ public class RuntimeGlueTest {
     }
 
     @Test
-    public void step_definition_match() {
+    public void returns_null_if_no_matching_steps_found() {
+        StepDefinition stepDefinition = getStepDefinitionMockWithPattern("pattern1");
+        glue.addStepDefinition(stepDefinition);
+        String featurePath = "someFeature.feature";
 
+        PickleStep pickleStep = getPickleStep("pattern");
+        assertNull(glue.stepDefinitionMatch(featurePath, pickleStep));
+        verify(stepDefinition).matchedArguments(pickleStep);
+    }
+
+    @Test
+    public void returns_match_from_cache_if_single_found() {
+        StepDefinition stepDefinition1 = getStepDefinitionMockWithPattern("^pattern1");
+        StepDefinition stepDefinition2 = getStepDefinitionMockWithPattern("^pattern2");
+        glue.addStepDefinition(stepDefinition1);
+        glue.addStepDefinition(stepDefinition2);
+        String featurePath = "someFeature.feature";
+        String stepText = "pattern1";
+
+        PickleStep pickleStep1 = getPickleStep(stepText);
+        assertEquals(stepDefinition1, glue.stepDefinitionMatch(featurePath, pickleStep1).getStepDefinition());
+        //verify if all defs are checked
+        verify(stepDefinition1).matchedArguments(pickleStep1);
+        verify(stepDefinition2).matchedArguments(pickleStep1);
+
+        //check cache
+        RuntimeGlue.CacheEntry entry = glue.matchedStepDefinitionsCache.get(stepText);
+        assertEquals(stepDefinition1,entry.stepDefinition);
+
+        PickleStep pickleStep2 = getPickleStep(stepText);
+        assertEquals(stepDefinition1, glue.stepDefinitionMatch(featurePath, pickleStep2).getStepDefinition());
+        //verify that match wasn't called again
+        verify(stepDefinition1).matchedArguments(any(PickleStep.class));
+        verify(stepDefinition2).matchedArguments(any(PickleStep.class));
+
+    }
+
+    @Test
+    public void throws_ambiguous_steps_def_exception_when_many_patterns_match() {
         StepDefinition stepDefinition1 = getStepDefinitionMockWithPattern("pattern1");
         StepDefinition stepDefinition2 = getStepDefinitionMockWithPattern("^pattern2");
         StepDefinition stepDefinition3 = getStepDefinitionMockWithPattern("^pattern[1,3]");
-
         glue.addStepDefinition(stepDefinition1);
         glue.addStepDefinition(stepDefinition2);
         glue.addStepDefinition(stepDefinition3);
-
         String featurePath = "someFeature.feature";
-        assertNull(glue.stepDefinitionMatch(featurePath, getPickleStep("pattern")));
 
-        assertEquals("^pattern2",glue.stepDefinitionMatch(featurePath, getPickleStep("pattern2")).getPattern());
-        assertEquals("^pattern2",glue.matchedStepDefinitionsCache.get("pattern2").stepDefinition.getPattern());
-        assertTrue(glue.matchedStepDefinitionsCache.get("pattern2").arguments.isEmpty());
-        assertEquals("^pattern2",glue.stepDefinitionMatch(featurePath, getPickleStep("pattern2")).getPattern());
+        checkAmbiguousCalled(featurePath);
+        //try again to verify if we don't cache when there is ambiguous step
+        checkAmbiguousCalled(featurePath);
+    }
 
-        assertEquals("^pattern[1,3]",glue.stepDefinitionMatch(featurePath, getPickleStep("pattern3")).getPattern());
-
+    private void checkAmbiguousCalled(String featurePath) {
         boolean ambiguousCalled = false;
         try {
 
@@ -109,29 +143,19 @@ public class RuntimeGlueTest {
             ambiguousCalled = true;
         }
         assertTrue(ambiguousCalled);
-        ambiguousCalled = false;
-        //try again to verify if we don't cache when there is duplicate step
-        try {
-
-            glue.stepDefinitionMatch(featurePath, getPickleStep("pattern1"));
-        } catch (AmbiguousStepDefinitionsException e) {
-            assertEquals(2,e.getMatches().size());
-            ambiguousCalled = true;
-        }
-        assertTrue(ambiguousCalled);
     }
 
-    private PickleStep getPickleStep(String text) {
+    private static PickleStep getPickleStep(String text) {
         return new PickleStep(text, Collections.<Argument>emptyList(), Collections.<PickleLocation>emptyList());
     }
 
-    private StepDefinition getStepDefinitionMockWithPattern(String pattern) {
+    private static StepDefinition getStepDefinitionMockWithPattern(String pattern) {
         final JdkPatternArgumentMatcher jdkPatternArgumentMatcher = new JdkPatternArgumentMatcher(Pattern.compile(pattern));
         StepDefinition stepDefinition = mock(StepDefinition.class);
         when(stepDefinition.getPattern()).thenReturn(pattern);
         when(stepDefinition.matchedArguments(any(PickleStep.class))).then(new Answer<Object>() {
             @Override
-            public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
+            public Object answer(InvocationOnMock invocationOnMock) {
                 return jdkPatternArgumentMatcher.argumentsFrom(invocationOnMock.getArgumentAt(0,PickleStep.class).getText());
             }
         });
