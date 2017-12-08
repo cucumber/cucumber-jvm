@@ -74,16 +74,14 @@ public class RuntimeGlue implements Glue {
         }
         if (matches.size() == 1) {
             StepDefinitionMatch match = matches.get(0);
-            matchedStepDefinitionsCache.put(stepText, new CacheEntry(match.getStepDefinition(),match.getArguments()));
+            matchedStepDefinitionsCache.put(stepText, new CacheEntry(match.getStepDefinition(), match.getArguments()));
             return match;
-        } else {
-            throw new AmbiguousStepDefinitionsException(step, matches);
         }
+        throw new AmbiguousStepDefinitionsException(step, matches);
     }
 
     private List<StepDefinitionMatch> stepDefinitionMatches(String featurePath, PickleStep step) {
         List<StepDefinitionMatch> result = new ArrayList<StepDefinitionMatch>();
-
         for (StepDefinition stepDefinition : stepDefinitionsByPattern.values()) {
             List<Argument> arguments = stepDefinition.matchedArguments(step);
             if (arguments != null) {
@@ -109,9 +107,9 @@ public class RuntimeGlue implements Glue {
 
     private void removeScenarioScopedHooks(List<HookDefinition> beforeHooks1) {
         Iterator<HookDefinition> hookIterator = beforeHooks1.iterator();
-        while(hookIterator.hasNext()) {
+        while (hookIterator.hasNext()) {
             HookDefinition hook = hookIterator.next();
-            if(hook.isScenarioScoped()) {
+            if (hook.isScenarioScoped()) {
                 hookIterator.remove();
             }
         }
@@ -119,15 +117,16 @@ public class RuntimeGlue implements Glue {
 
     private void removeScenarioScopedStepdefs() {
         Iterator<Map.Entry<String, StepDefinition>> stepdefs = stepDefinitionsByPattern.entrySet().iterator();
-        while(stepdefs.hasNext()) {
+        while (stepdefs.hasNext()) {
             StepDefinition stepDefinition = stepdefs.next().getValue();
-            if(stepDefinition.isScenarioScoped()) {
+            if (stepDefinition.isScenarioScoped()) {
                 stepdefs.remove();
             }
         }
     }
 
     static final class CacheEntry {
+
         StepDefinition stepDefinition;
         List<Argument> arguments;
 
@@ -136,5 +135,4 @@ public class RuntimeGlue implements Glue {
             this.arguments = arguments;
         }
     }
-
 }
