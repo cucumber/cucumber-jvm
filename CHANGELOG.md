@@ -1,12 +1,32 @@
 Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CONTRIBUTING.md) on how to contribute to Cucumber.
 
-## [2.1.1-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v2.1.0...master) (In Git)
+## [2.2.1-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v2.2.0...master) (In Git)
 
 ### Added
 ### Changed
 ### Deprecated
 ### Removed
 ### Fixed
+
+
+## [2.2.0](https://github.com/cucumber/cucumber-jvm/compare/v2.1.0...v2.2.0) (In Git)
+
+### Added
+ * [JUnit] Document supported JUnit annotations ([#1272](https://github.com/cucumber/cucumber-jvm/pull/1272) Marit van Dijk)
+
+### Changed
+ * [Core] Upgraded tag-expressions to 1.1.1 (M.P. Korstanje)
+   * Allows empty tag expressions ([cucumber/#296](https://github.com/cucumber/cucumber/issues/296))
+   * Don't allow reverse polish notation in tag expressions ([cucumber/#304](https://github.com/cucumber/cucumber/issues/304))
+  
+### Deprecated
+ * [JUnit] `Cucumber.createRuntime` has been deprecated ([#1287](https://github.com/cucumber/cucumber-jvm/pull/1287) M.P. Korstanje)
+
+### Removed
+### Fixed
+ * [Core] Add missing feature tags in the JSON output ([#1288](https://github.com/cucumber/cucumber-jvm/pull/1284) Pierre Gentile)
+ * [Core] Fix detection of XStreamsConverters annotation ([#1283](https://github.com/cucumber/cucumber-jvm/pull/1283), [#1284](https://github.com/cucumber/cucumber-jvm/pull/1284) Dmitrii Demin)
+ * [TestNG] Fix null pointer exception when invalid options are used ([#1282](https://github.com/cucumber/cucumber-jvm/pull/1282) M.P. Korstanje)
 
 ## [2.1.0](https://github.com/cucumber/cucumber-jvm/compare/v2.0.1...v2.1.0)
 
