@@ -3,6 +3,8 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ## [2.2.1-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v2.2.0...master) (In Git)
 
 ### Added
+ * [Core] Cache matched steps definitions ([#1289](https://github.com/cucumber/cucumber-jvm/pull/1289) Łukasz Suski) 
+
 ### Changed
 ### Deprecated
 ### Removed
