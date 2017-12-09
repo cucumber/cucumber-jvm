@@ -44,21 +44,6 @@ It is preferable to use the automated deployment process over the manual process
 need arise to setup another continuous integration system the [Manual deployment](#manual-deployment) section 
 describes how this works.
 
-## Publish the Javadoc ##
-
-Post release the API docs must be generated for each module and manually copied over to a working copy of the 
-[api.cucumber.io](https://github.com/cucumber/api.cucumber.io) which must be a sibling of `cucumber-jvm` (this repo):
-
-```
-git checkout vX.Y.Z
-./doc/genapi.sh X.Y.Z
-cd ../api.cucumber.io/cucumber-jvm
-git add X.Y.Z 
-git commit -m "Add the docs for Cucumber-JVM vX.Y.Z."
-```
-
-After that's done, push `api.cucumber.io`
-
 ## Last bits ##
 
 Wait for the release to show up on maven central. Then update the dependency in example projects:
