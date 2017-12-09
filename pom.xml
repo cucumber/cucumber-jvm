@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.cucumber</groupId>
     <artifactId>cucumber-jvm</artifactId>
@@ -604,7 +605,7 @@
                                 <instrumentation>
                                     <ignoreTrivial>true</ignoreTrivial>
                                 </instrumentation>
-                                <check />
+                                <check/>
                             </configuration>
                         </plugin>
                         <plugin>
@@ -894,6 +895,9 @@
                 <configuration>
                     <serverId>ossrh</serverId>
                     <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                    <!--When using local staging the deployment is deferred to the last module. Because half the
+                    project is not deployed this causes the whole whole project to skip deployment -->
+                    <skipLocalStaging>true</skipLocalStaging>
                     <!--Manually review the non-snapshot artifacts for a while before automating the release -->
                     <autoReleaseAfterClose>false</autoReleaseAfterClose>
                 </configuration>
