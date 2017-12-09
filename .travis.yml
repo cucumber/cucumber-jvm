@@ -45,6 +45,7 @@ jobs:
     jdk: oraclejdk8
     before_script: "./continuous-deployment/before-deploy.sh"
     script: "./continuous-deployment/deploy.sh"
+    after_script: "./continuous-deployment/after-deploy-upload-api-docs.sh"
     on:
       repo: cucumber/cucumber-jvm
 
@@ -66,6 +67,10 @@ env:
       Zq9aGkt4PJQ0MVTrbbNbe8OEV68wWjIDfYiCumrGZ1n8sIy3AgERxRjsHgiD
       QzDDaLAw2ynHFXq9OuxlgY922ltPOQBkio0ARNmfRFJo2ArUyqeK53BPrnxJ
       tjZwOM9sWlmckoRz5iv3k28Z7yim9N+mHZ9/DcogEdDi0O0X2tY=
+  - secure: |-
+      ambMvk6phoaLJYntjF67zHYWll+xTIZ/hJinfAzN1H1477/oUvxs9+S4BoLq
+      YRuaNCosy5WaZQGmK2DXoLE97ILhpukK9aAO4JW2LbjBJdEZTOg6DQrSluqN
+      k5fmA23NhdoGACwU+guqnJ4jcNDBLWXXsOuJ2J4AKUXJLR5VL+Q=
 
 branches:
   only:
