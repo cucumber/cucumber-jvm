@@ -48,13 +48,6 @@
                                 <skip>true</skip>
                             </configuration>
                         </plugin>
-                        <plugin>
-                            <groupId>org.sonatype.plugins</groupId>
-                            <artifactId>nexus-staging-maven-plugin</artifactId>
-                            <configuration>
-                                <skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>
-                            </configuration>
-                        </plugin>
                     </plugins>
                 </pluginManagement>
             </build>
@@ -64,6 +57,12 @@
     <build>
         <pluginManagement>
             <plugins>
+                <plugin>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <configuration>
+                        <skip>true</skip>
+                    </configuration>
+                </plugin>
                 <plugin>
                     <artifactId>maven-deploy-plugin</artifactId>
                     <configuration>
