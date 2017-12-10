@@ -46,9 +46,9 @@ public class Runner implements UnreportedStepExecutor {
         this.bus = bus;
         this.runtimeOptions = runtimeOptions;
         this.backends = backends;
-        LOGGER.info("Number of Backends: {}", backends.size());
+        LOGGER.info("Number of Backends: {0}", backends.size());
         for (Backend backend : backends) {
-            LOGGER.info("Backend: {}", backend.getClass());
+            LOGGER.info("Backend: {0}", backend.getClass());
             backend.loadGlue(glue, runtimeOptions.getGlue());
             backend.setUnreportedStepExecutor(this);
         }

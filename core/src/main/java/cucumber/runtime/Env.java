@@ -41,7 +41,7 @@ public class Env {
                 for (String key : bundle.keySet()) {
                     put(key, bundle.getString(key));
                 }
-                LOGGER.info("Using properties {} from bundle {}", bundle.keySet(), bundleName);
+                LOGGER.info("Using properties {0} from bundle {0}", bundle.keySet(), bundleName);
             } catch (MissingResourceException ignore) {
             }
         }
