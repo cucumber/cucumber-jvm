@@ -55,9 +55,33 @@ public class RpnCalculatorStepdefs {
         }
     }
 
-    public class Entry {
-        Integer first;
-        Integer second;
-        String operation;
+    public static final class Entry {
+        private Integer first;
+        private Integer second;
+        private String operation;
+
+        public Integer getFirst() {
+            return first;
+        }
+
+        public void setFirst(Integer first) {
+            this.first = first;
+        }
+
+        public Integer getSecond() {
+            return second;
+        }
+
+        public void setSecond(Integer second) {
+            this.second = second;
+        }
+
+        public String getOperation() {
+            return operation;
+        }
+
+        public void setOperation(String operation) {
+            this.operation = operation;
+        }
     }
 }

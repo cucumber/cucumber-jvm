@@ -55,19 +55,26 @@ public class RuntimeGlue implements Glue {
 
         CacheEntry cacheEntry = matchedStepDefinitionsCache.get(stepText);
         if (cacheEntry != null) {
-            return new StepDefinitionMatch(cacheEntry.arguments, cacheEntry.stepDefinition, featurePath, step);
+            return new StepDefinitionMatch(Collections.<Argument<?>>emptyList(), cacheEntry.stepDefinition, featurePath, step);
         }
 
         List<StepDefinitionMatch> matches = stepDefinitionMatches(featurePath, step);
         if (matches.isEmpty()) {
             return null;
         }
-        if (matches.size() == 1) {
-            StepDefinitionMatch match = matches.get(0);
-            matchedStepDefinitionsCache.put(stepText, new CacheEntry(match.getStepDefinition(), match.getArguments()));
-            return match;
+        if (matches.size() > 1) {
+            throw new AmbiguousStepDefinitionsException(step, matches);
         }
-        throw new AmbiguousStepDefinitionsException(step, matches);
+
+        StepDefinitionMatch match = matches.get(0);
+
+        // We can only cache step definitions without arguments.
+        // DocString and TableArguments are not included in the stepText used as the cache key.
+        if(match.getArguments().isEmpty()) {
+            matchedStepDefinitionsCache.put(stepText, new CacheEntry(match.getStepDefinition()));
+        }
+
+        return match;
     }
 
     private List<StepDefinitionMatch> stepDefinitionMatches(String featurePath, PickleStep step) {
@@ -118,11 +125,9 @@ public class RuntimeGlue implements Glue {
     static final class CacheEntry {
 
         StepDefinition stepDefinition;
-        List<Argument<?>> arguments;
 
-        private CacheEntry(StepDefinition stepDefinition, List<Argument<?>> arguments) {
+        private CacheEntry(StepDefinition stepDefinition) {
             this.stepDefinition = stepDefinition;
-            this.arguments = arguments;
         }
     }
 }

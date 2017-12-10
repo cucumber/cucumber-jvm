@@ -1,8 +1,8 @@
 package cucumber.runtime.kotlin.test;
 
-import cucumber.api.DataTable
 import cucumber.api.Scenario
 import cucumber.api.java8.En
+import io.cucumber.datatable.DataTable
 import org.junit.Assert.*
 
 var lastInstance : LambdaStepdefs? = null
@@ -16,7 +16,7 @@ class LambdaStepdefs : En {
         }
 
         Given("this data table:") { peopleTable: DataTable ->
-            val people = peopleTable.asList(Person::class.java)
+            val people : List<Person> = peopleTable.asList(Person::class.java)
             assertEquals("Aslak", people[0].first)
             assertEquals("Hellesøy", people[0].last)
         }
@@ -49,7 +49,7 @@ class LambdaStepdefs : En {
     }
 
     class Person {
-        internal var first: String? = null
-        internal var last: String? = null
+        var first: String? = null
+        var last: String? = null
     }
 }

@@ -8,6 +8,7 @@ import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleString;
 import gherkin.pickles.PickleTable;
 import io.cucumber.cucumberexpressions.Argument;
+import io.cucumber.cucumberexpressions.CucumberExpressionException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,11 +38,18 @@ public class StepDefinitionMatch extends Match implements DefinitionMatch {
         if (parameterCount != null && argumentCount != parameterCount) {
             throw arityMismatch(parameterCount);
         }
+        List<Object> result = new ArrayList<Object>();
         try {
-            List<Object> result = new ArrayList<Object>();
             for (Argument argument : getArguments()) {
                 result.add(argument.getValue());
             }
+        } catch (CucumberExpressionException e){
+            throw new CucumberException(
+                String.format("Could not convert arguments for Step Definition '%s'", stepDefinition.getLocation(true)),
+                e);
+        }
+
+        try {
             stepDefinition.execute(language, result.toArray(new Object[result.size()]));
         } catch (CucumberException e) {
             throw e;
