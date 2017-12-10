@@ -1,10 +1,8 @@
 package cucumber.runtime;
 
-import cucumber.runtime.xstream.LocalizedXStreams;
 import gherkin.pickles.Argument;
 import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleStep;
-import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
 import io.cucumber.java.StepExpression;
 import io.cucumber.java.StepExpressionFactory;
 import io.cucumber.java.TypeRegistry;
@@ -14,8 +12,6 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import java.util.Collections;
-import java.util.Locale;
-import java.util.regex.Pattern;
 
 import static java.util.Locale.ENGLISH;
 import static org.junit.Assert.assertEquals;
