@@ -6,7 +6,33 @@
     <version>2.2.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Cucumber-JVM</name>
+    <description>Cucumber for the JVM</description>
     <url>http://cucumber.io/</url>
+
+    <developers>
+        <developer>
+            <id>ahellesoy</id>
+            <name>Aslak Hellesøy</name>
+            <email>aslak.hellesoy@gmail.com</email>
+            <organization>Cucumber</organization>
+            <organizationUrl>https://github.com/cucumber</organizationUrl>
+        </developer>
+        <developer>
+            <id>brasmusson</id>
+            <name>Björn Rasmusson</name>
+            <email>brasmusson@computer.org</email>
+            <organization>Cucumber</organization>
+            <organizationUrl>https://github.com/cucumber</organizationUrl>
+        </developer>
+        <developer>
+            <id>mpkorstanje</id>
+            <name>M.P. Korstanje</name>
+            <email>rien.korstanje@gmail.com</email>
+            <organization>Cucumber</organization>
+            <organizationUrl>https://github.com/cucumber</organizationUrl>
+        </developer>
+    </developers>
+
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -540,6 +566,8 @@
         <module>needle</module>
         <module>android</module>
         <module>examples</module>
+        <!--This should always be the last module -->
+        <module>staging</module>
     </modules>
 
     <profiles>
@@ -895,9 +923,6 @@
                 <configuration>
                     <serverId>ossrh</serverId>
                     <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                    <!--When using local staging the deployment is deferred to the last module. Because half the
-                    project is not deployed this causes the whole whole project to skip deployment -->
-                    <skipLocalStaging>true</skipLocalStaging>
                     <!--Manually review the non-snapshot artifacts for a while before automating the release -->
                     <autoReleaseAfterClose>false</autoReleaseAfterClose>
                 </configuration>

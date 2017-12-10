@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
 #
-# Post-release script that generates API docs and puts them in the Web Site's source tree.
+# Script that generates API docs and puts them in the Web Site's source tree.
 #
 
 if  [[ -z ${TRAVIS_TAG} ]] || [ "$TRAVIS_PULL_REQUEST" == 'true' ]; then
-  echo "Skipping uploading of api docs to api.cucumber.io"
+  echo "API Docs are only uploaded on a tag build"
   exit 0
 fi
 
@@ -14,7 +14,7 @@ git clone --depth=1 https://github.com/cucumber/api.cucumber.io.git
 mkdir -p api.cucumber.io/cucumber-jvm/${TRAVIS_TAG}
 
 # Create the javadoc
-mvn --quite javadoc:aggregate
+mvn --quiet javadoc:aggregate
 cp -R target/site/apidocs/ api.cucumber.io/cucumber-jvm/${TRAVIS_TAG}/javadoc
 
 # Setup up credentials
