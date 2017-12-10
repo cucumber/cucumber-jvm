@@ -566,7 +566,7 @@
         <module>android</module>
         <module>examples</module>
         <!--This should always be the last module -->
-        <module>staging</module>
+        <module>continuous-deployment</module>
     </modules>
 
     <profiles>

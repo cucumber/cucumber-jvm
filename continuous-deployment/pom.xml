@@ -6,8 +6,8 @@
         <version>2.3.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>staging</artifactId>
-    <name>Nexus Staging</name>
+    <artifactId>continuous-deployment</artifactId>
+    <name>Continuous Deployment</name>
     <description>
         When using local staging the deployment is deferred to the last module.
         Because half the project consists of examples that should not be deployed and thus skip the execution of the
