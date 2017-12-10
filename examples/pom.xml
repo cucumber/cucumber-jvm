@@ -13,7 +13,6 @@
 
     <modules>
         <module>spring-txn</module>
-        <module>java-calculator</module>
         <module>java-calculator-testng</module>
         <module>pax-exam</module>
     </modules>
@@ -25,6 +24,7 @@
                 <jdk>1.8</jdk>
             </activation>
             <modules>
+                <module>java-calculator</module>
                 <module>java-wicket</module>
                 <module>java-webbit-websockets-selenium</module>
             </modules>
