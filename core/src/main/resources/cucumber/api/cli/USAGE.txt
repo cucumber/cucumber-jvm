@@ -14,6 +14,7 @@ Options:
                                          registration of 3rd party plugins.
                                          --add-plugin does not clobber plugins of that 
                                          type defined from a different source.
+  -f, --format FORMAT[:PATH_OR_URL]      Deprecated. Use --plugin instead.
   -t, --tags TAG_EXPRESSION              Only run scenarios tagged with tags matching
                                          TAG_EXPRESSION.
   -n, --name REGEXP                      Only run scenarios whose names match REGEXP.
