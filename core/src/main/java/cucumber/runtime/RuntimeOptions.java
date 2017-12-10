@@ -155,6 +155,9 @@ public class RuntimeOptions {
                 parsedTagFilters.add(args.remove(0));
             } else if (arg.equals("--plugin") || arg.equals("--add-plugin") || arg.equals("-p")) {
                 parsedPluginData.addPluginName(args.remove(0), arg.equals("--add-plugin"));
+            } else if (arg.equals("--format") || arg.equals("-f")) {
+                System.err.println("WARNING: Cucumber-JVM's --format option is deprecated. Please use --plugin instead.");
+                parsedPluginData.addPluginName(args.remove(0), true);
             } else if (arg.equals("--no-dry-run") || arg.equals("--dry-run") || arg.equals("-d")) {
                 dryRun = !arg.startsWith("--no-");
             } else if (arg.equals("--no-strict") || arg.equals("--strict") || arg.equals("-s")) {
