@@ -84,6 +84,7 @@ class TestNGFormatter implements Formatter, StrictAware {
         }
     };
 
+    @SuppressWarnings("WeakerAccess") // Used by PluginFactory
     public TestNGFormatter(URL url) throws IOException {
         this.writer = new UTF8OutputStreamWriter(new URLOutputStream(url));
         TestMethod.treatSkippedAsFailure = false;

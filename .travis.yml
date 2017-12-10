@@ -1,67 +1,52 @@
----
 language: java
-sudo: false # Use container based builds. They are faster and we do not need sudo.
+sudo: false
 
 cache:
   directories:
-    - $HOME/.m2
+  - "$HOME/.m2"
 before_cache:
-  - rm -f $HOME/.m2/repository/io/cucumber
-
-before_install:
-  - wget http://apache.claz.org/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.tar.gz
-  - tar zxvf apache-maven-3.3.9-bin.tar.gz
-  - chmod +x apache-maven-3.3.9/bin/mvn
-  - export M2_HOME=$PWD/apache-maven-3.3.9
-  - export PATH=$PWD/apache-maven-3.3.9/bin:${PATH}
-  - hash -r
+- rm -rf $HOME/.m2/repository/io/cucumber
 
 jobs:
   include:
-    # Stage Test - Job 1-2:  Builds against all available Jdks.
-    - stage: test
-      jdk: openjdk7
-      script: mvn -q install
-    - jdk: oraclejdk8
-      script: mvn -q install
-      after_success:
-        - mvn clean cobertura:cobertura coveralls:report -P coveralls.io
-    # Stage Test - Job 3: Build java and scala doc
-    - jdk: oraclejdk8
-      env: JAVADOC=true
-      script:
-        - mvn clean install -DskipTests=true
-        - mvn javadoc:aggregate
-    # Stage Test - Job 4: Build Android Examples.
-    - jdk: oraclejdk8
-      env: ANDROID_EXAMPLES=true
-      language: android
-      android:
-        components:
-          - tools
-          - platform-tools
-          - tools # Note that the tools section appears twice on purpose as it’s required to get the newest Android SDK tools.
-          - build-tools-26.0.0
-          - android-21
-          - sys-img-armeabi-v7a-android-21
-      before_install:
-        # Keep android version in sync with  platform.sdk in android-examples.pom.
-        - echo no | android create avd --force -n test -t android-21 --abi armeabi-v7a
-        # Create and start the emulator. This takes some time.
-        - emulator -avd test -no-skin -no-audio -no-window &
-      install:
-        # Build the dependencies for the android examples while the emulator starts.
-        - mvn -q install --also-make --projects android,picocontainer -DskipTests=true -Dmaven.javadoc.skip=true
-      before_script:
-        - android-wait-for-emulator
-      script:
-        # Run Android tests without put. Travis will stop the build if it receives no output for 10 minutes.
-        - mvn install --activate-profiles android-examples --projects examples/android --also-make-dependents -Dandroid.device=test
-
-    # Stage Deploy - Job 1: Builds and deploys all artifacts with java 8.
-    - stage: deploy
-      jdk: oraclejdk8
-      script: mvn -q deploy --settings .travis-settings.xml -Dno.gem.deploy=true -DskipTests=true -Dmaven.javadoc.skip=true
+  - stage: test
+    jdk: oraclejdk8
+    script: mvn -q install
+    after_success:
+    - mvn clean cobertura:cobertura coveralls:report -P coveralls.io
+  - jdk: oraclejdk8
+    env: JAVADOC=true
+    script:
+    - mvn clean install -DskipTests=true
+    - mvn javadoc:aggregate
+  - jdk: oraclejdk8
+    env: ANDROID_EXAMPLES=true
+    language: android
+    android:
+      components:
+      - tools
+      - platform-tools
+      - tools
+      - build-tools-26.0.0
+      - android-21
+      - sys-img-armeabi-v7a-android-21
+    before_install:
+    - echo no | android create avd --force -n test -t android-21 --abi armeabi-v7a
+    - emulator -avd test -no-skin -no-audio -no-window &
+    install:
+    - mvn -q install --also-make --projects android,picocontainer -DskipTests=true
+      -Dmaven.javadoc.skip=true
+    before_script:
+    - android-wait-for-emulator
+    script:
+    - mvn install --activate-profiles android-examples --projects examples/android
+      --also-make-dependents -Dandroid.device=test
+  - stage: deploy
+    jdk: oraclejdk8
+    before_script: "./continuous-deployment/before-deploy.sh"
+    script: "./continuous-deployment/deploy.sh"
+    on:
+      repo: cucumber/cucumber-jvm
 
 env:
   global:
@@ -73,7 +58,16 @@ env:
       BEsHVhETHrO8vR/7huN3MUMQQKZycZgJ+sWszwQPnwaGJEm6ptssJn/LsiUJ
       K/qQhjdpmPiKZIoTruG4E3vc+adT/B2VcHD0897jNeUBoDd7Vj4vzOH6ePID
       969vCnA+6hpQuIM02R+4OJIBPXVtr1Ix/ye+KxS69cJ5N8QyTfY=
+  - secure: |-
+      YFC36RaO9gnbOlqDt94mp5s6ipOiAjs32J+fo1plaL02WceKfgVvcKOlirfO
+      58vytZ0hu9SdV1KYWOqr787cg7B7EZcUUKzDE/9ldsNr/WfwTIIt34Umu2oZ
+      v2dOSpimxxMXJCjW+nFcfjENVJfg2flT31kjtzsGiZtpHK3TxqY=
+  - secure: |-
+      Zq9aGkt4PJQ0MVTrbbNbe8OEV68wWjIDfYiCumrGZ1n8sIy3AgERxRjsHgiD
+      QzDDaLAw2ynHFXq9OuxlgY922ltPOQBkio0ARNmfRFJo2ArUyqeK53BPrnxJ
+      tjZwOM9sWlmckoRz5iv3k28Z7yim9N+mHZ9/DcogEdDi0O0X2tY=
 
 branches:
   only:
   - master
+  - "/^v\\d+\\.\\d+\\.\\d+(-\\S*)?$/"

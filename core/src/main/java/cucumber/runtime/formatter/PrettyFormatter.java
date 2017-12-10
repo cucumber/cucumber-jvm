@@ -90,6 +90,7 @@ final class PrettyFormatter implements Formatter, ColorAware {
         }
     };
 
+    @SuppressWarnings("WeakerAccess") // Used by PluginFactory
     public PrettyFormatter(Appendable out) {
         this.out = new NiceAppendable(out);
         this.formats = new AnsiFormats();

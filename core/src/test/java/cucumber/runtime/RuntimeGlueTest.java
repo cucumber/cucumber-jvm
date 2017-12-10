@@ -1,13 +1,41 @@
 package cucumber.runtime;
 
+import cucumber.runtime.xstream.LocalizedXStreams;
+import gherkin.pickles.Argument;
+import gherkin.pickles.PickleLocation;
+import gherkin.pickles.PickleStep;
+import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
+import io.cucumber.java.StepExpression;
+import io.cucumber.java.StepExpressionFactory;
+import io.cucumber.java.TypeRegistry;
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
+import java.util.Collections;
+import java.util.Locale;
+import java.util.regex.Pattern;
+
+import static java.util.Locale.ENGLISH;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class RuntimeGlueTest {
+
+    private RuntimeGlue glue;
+
+    @Before
+    public void setUp() {
+        glue = new RuntimeGlue();
+    }
+
     @Test
     public void throws_duplicate_error_on_dupe_stepdefs() {
         RuntimeGlue glue = new RuntimeGlue();
@@ -34,8 +62,6 @@ public class RuntimeGlueTest {
         // But it was too much hassle creating a better test without refactoring RuntimeGlue
         // and probably some of its immediate collaborators... Aslak.
 
-        RuntimeGlue glue = new RuntimeGlue();
-
         StepDefinition sd = mock(StepDefinition.class);
         when(sd.isScenarioScoped()).thenReturn(true);
         when(sd.getPattern()).thenReturn("pattern");
@@ -58,5 +84,88 @@ public class RuntimeGlueTest {
         assertEquals(0, glue.stepDefinitionsByPattern.size());
         assertEquals(0, glue.beforeHooks.size());
         assertEquals(0, glue.afterHooks.size());
+    }
+
+    @Test
+    public void returns_null_if_no_matching_steps_found() {
+        StepDefinition stepDefinition = getStepDefinitionMockWithPattern("pattern1");
+        glue.addStepDefinition(stepDefinition);
+        String featurePath = "someFeature.feature";
+
+        PickleStep pickleStep = getPickleStep("pattern");
+        assertNull(glue.stepDefinitionMatch(featurePath, pickleStep));
+        verify(stepDefinition).matchedArguments(pickleStep);
+    }
+
+    @Test
+    public void returns_match_from_cache_if_single_found() {
+        StepDefinition stepDefinition1 = getStepDefinitionMockWithPattern("^pattern1");
+        StepDefinition stepDefinition2 = getStepDefinitionMockWithPattern("^pattern2");
+        glue.addStepDefinition(stepDefinition1);
+        glue.addStepDefinition(stepDefinition2);
+        String featurePath = "someFeature.feature";
+        String stepText = "pattern1";
+
+        PickleStep pickleStep1 = getPickleStep(stepText);
+        assertEquals(stepDefinition1, glue.stepDefinitionMatch(featurePath, pickleStep1).getStepDefinition());
+        //verify if all defs are checked
+        verify(stepDefinition1).matchedArguments(pickleStep1);
+        verify(stepDefinition2).matchedArguments(pickleStep1);
+
+        //check cache
+        RuntimeGlue.CacheEntry entry = glue.matchedStepDefinitionsCache.get(stepText);
+        assertEquals(stepDefinition1,entry.stepDefinition);
+
+        PickleStep pickleStep2 = getPickleStep(stepText);
+        assertEquals(stepDefinition1, glue.stepDefinitionMatch(featurePath, pickleStep2).getStepDefinition());
+        //verify that match wasn't called again
+        verify(stepDefinition1).matchedArguments(any(PickleStep.class));
+        verify(stepDefinition2).matchedArguments(any(PickleStep.class));
+
+    }
+
+    @Test
+    public void throws_ambiguous_steps_def_exception_when_many_patterns_match() {
+        StepDefinition stepDefinition1 = getStepDefinitionMockWithPattern("pattern1");
+        StepDefinition stepDefinition2 = getStepDefinitionMockWithPattern("^pattern2");
+        StepDefinition stepDefinition3 = getStepDefinitionMockWithPattern("^pattern[1,3]");
+        glue.addStepDefinition(stepDefinition1);
+        glue.addStepDefinition(stepDefinition2);
+        glue.addStepDefinition(stepDefinition3);
+        String featurePath = "someFeature.feature";
+
+        checkAmbiguousCalled(featurePath);
+        //try again to verify if we don't cache when there is ambiguous step
+        checkAmbiguousCalled(featurePath);
+    }
+
+    private void checkAmbiguousCalled(String featurePath) {
+        boolean ambiguousCalled = false;
+        try {
+
+            glue.stepDefinitionMatch(featurePath, getPickleStep("pattern1"));
+        } catch (AmbiguousStepDefinitionsException e) {
+            assertEquals(2,e.getMatches().size());
+            ambiguousCalled = true;
+        }
+        assertTrue(ambiguousCalled);
+    }
+
+    private static PickleStep getPickleStep(String text) {
+        return new PickleStep(text, Collections.<Argument>emptyList(), Collections.<PickleLocation>emptyList());
+    }
+
+    private static StepDefinition getStepDefinitionMockWithPattern(String pattern) {
+        StepExpression expression = new StepExpressionFactory(new TypeRegistry(ENGLISH)).createExpression(pattern);
+        final ArgumentMatcher argumentMatcher = new ExpressionArgumentMatcher(expression);
+        StepDefinition stepDefinition = mock(StepDefinition.class);
+        when(stepDefinition.getPattern()).thenReturn(pattern);
+        when(stepDefinition.matchedArguments(any(PickleStep.class))).then(new Answer<Object>() {
+            @Override
+            public Object answer(InvocationOnMock invocationOnMock) {
+                return argumentMatcher.argumentsFrom(invocationOnMock.getArgumentAt(0, PickleStep.class));
+            }
+        });
+        return stepDefinition;
     }
 }
