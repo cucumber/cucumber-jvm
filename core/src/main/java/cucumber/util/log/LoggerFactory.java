@@ -12,7 +12,11 @@ public final class LoggerFactory {
 
     private static final long startTime = System.currentTimeMillis();
 
-    private transient static boolean verbose = false;
+    private static ThreadLocal<Boolean> verbose = new ThreadLocal<Boolean>();
+
+    {
+        verbose.set(true);
+    }
 
     private static final Formatter logFormat = new SimpleFormatter() {
 
@@ -50,7 +54,7 @@ public final class LoggerFactory {
 
         @Override
         public boolean isLoggable(LogRecord record) {
-            return verbose && super.isLoggable(record);
+            return verbose.get() && super.isLoggable(record);
         }
     };
 
@@ -61,6 +65,6 @@ public final class LoggerFactory {
     }
 
     public static void setVerbose(boolean verbose) {
-        LoggerFactory.verbose = verbose;
+        LoggerFactory.verbose.set(verbose);
     }
 }
