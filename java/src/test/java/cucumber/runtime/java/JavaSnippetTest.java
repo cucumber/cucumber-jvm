@@ -154,6 +154,8 @@ public class JavaSnippetTest {
                 "    // For automatic transformation, change DataTable to one of\n" +
                 "    // List<YourType>, List<List<E>>, List<Map<K,V>> or Map<K,V>.\n" +
                 "    // E,K,V must be a scalar (String, Integer, Date, enum etc)\n" +
+                "    // Make sure the variable names for YourType match the column names\n" +
+                "    // in your feature file.\n" +
                 "    throw new PendingException();\n" +
                 "}\n";
         PickleTable dataTable = new PickleTable(asList(new PickleRow(asList(new PickleCell(null, "col1")))));
