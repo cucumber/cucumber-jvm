@@ -1,6 +1,14 @@
 Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CONTRIBUTING.md) on how to contribute to Cucumber.
 
-## [2.3.1-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v2.3.0...master) (In Git)
+## [2.3.1-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v2.3.1...master) (In Git)
+
+### Added
+### Changed
+### Deprecated
+### Removed
+### Fixed
+
+## [2.3.1](https://github.com/cucumber/cucumber-jvm/compare/v2.3.0...v2.3.1)
 
 ### Added
 ### Changed
@@ -9,7 +17,7 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ### Fixed
  * [Core] Remove scenario scoped step definitions from step definition cache ([#1301](https://github.com/cucumber/cucumber-jvm/pull/1301) M.P. Korstanje)
 
-## [2.3.0](https://github.com/cucumber/cucumber-jvm/compare/v2.2.0...v2.3.0) (In Git)
+## [2.3.0](https://github.com/cucumber/cucumber-jvm/compare/v2.2.0...v2.3.0)
 
 ### Added
  * [Core] Cache matched steps definitions ([#1289](https://github.com/cucumber/cucumber-jvm/pull/1289) Łukasz Suski) 
@@ -19,7 +27,7 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ### Removed
 ### Fixed
 
-## [2.2.0](https://github.com/cucumber/cucumber-jvm/compare/v2.1.0...v2.2.0) (In Git)
+## [2.2.0](https://github.com/cucumber/cucumber-jvm/compare/v2.1.0...v2.2.0)
 
 ### Added
  * [JUnit] Document supported JUnit annotations ([#1272](https://github.com/cucumber/cucumber-jvm/pull/1272) Marit van Dijk)
