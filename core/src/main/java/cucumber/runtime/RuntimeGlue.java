@@ -123,6 +123,14 @@ public class RuntimeGlue implements Glue {
                 stepdefs.remove();
             }
         }
+
+        Iterator<Map.Entry<String, CacheEntry>> cachedStepDefs = matchedStepDefinitionsCache.entrySet().iterator();
+        while(cachedStepDefs.hasNext()){
+            StepDefinition stepDefinition = cachedStepDefs.next().getValue().stepDefinition;
+            if(stepDefinition.isScenarioScoped()){
+                cachedStepDefs.remove();
+            }
+        }
     }
 
     static final class CacheEntry {

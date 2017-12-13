@@ -81,6 +81,24 @@ public class RuntimeGlueTest {
     }
 
     @Test
+    public void removes_scenario_scoped_cache_entries() {
+        StepDefinition sd = getStepDefinitionMockWithPattern("pattern");
+        when(sd.isScenarioScoped()).thenReturn(true);
+        glue.addStepDefinition(sd);
+        String featurePath = "someFeature.feature";
+
+        String stepText = "pattern1";
+        PickleStep pickleStep1 = getPickleStep(stepText);
+        assertEquals(sd, glue.stepDefinitionMatch(featurePath, pickleStep1).getStepDefinition());
+
+        assertEquals(1, glue.matchedStepDefinitionsCache.size());
+
+        glue.removeScenarioScopedGlue();
+
+        assertEquals(0, glue.matchedStepDefinitionsCache.size());
+    }
+
+    @Test
     public void returns_null_if_no_matching_steps_found() {
         StepDefinition stepDefinition = getStepDefinitionMockWithPattern("pattern1");
         glue.addStepDefinition(stepDefinition);
