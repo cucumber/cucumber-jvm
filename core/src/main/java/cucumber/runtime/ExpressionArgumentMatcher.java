@@ -4,7 +4,6 @@ import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleString;
 import gherkin.pickles.PickleTable;
 import io.cucumber.cucumberexpressions.Argument;
-import io.cucumber.java.StepExpression;
 
 import java.util.List;
 

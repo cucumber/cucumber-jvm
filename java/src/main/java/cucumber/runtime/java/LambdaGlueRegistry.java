@@ -1,8 +1,8 @@
 package cucumber.runtime.java;
 
+import cucumber.api.TypeRegistry;
 import cucumber.runtime.HookDefinition;
 import cucumber.runtime.StepDefinition;
-import io.cucumber.java.TypeRegistry;
 
 public interface LambdaGlueRegistry {
     ThreadLocal<LambdaGlueRegistry> INSTANCE = new ThreadLocal<LambdaGlueRegistry>();

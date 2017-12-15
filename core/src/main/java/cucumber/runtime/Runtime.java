@@ -3,6 +3,7 @@ package cucumber.runtime;
 import cucumber.api.Configuration;
 import cucumber.api.StepDefinitionReporter;
 import cucumber.api.SummaryPrinter;
+import cucumber.api.TypeRegistry;
 import cucumber.api.event.TestRunFinished;
 import cucumber.runner.EventBus;
 import cucumber.runner.Runner;
@@ -13,7 +14,6 @@ import cucumber.runtime.model.CucumberFeature;
 import gherkin.events.PickleEvent;
 import gherkin.pickles.Compiler;
 import gherkin.pickles.Pickle;
-import io.cucumber.java.TypeRegistry;
 
 import java.io.IOException;
 import java.io.PrintStream;

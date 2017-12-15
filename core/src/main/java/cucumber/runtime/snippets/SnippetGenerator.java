@@ -7,7 +7,6 @@ import gherkin.pickles.PickleString;
 import gherkin.pickles.PickleTable;
 import io.cucumber.cucumberexpressions.CucumberExpressionGenerator;
 import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
-import io.cucumber.java.TypeRegistry;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;

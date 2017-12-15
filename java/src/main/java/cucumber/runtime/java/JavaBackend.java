@@ -4,6 +4,7 @@ import static cucumber.runtime.io.MultiLoader.packageName;
 import static cucumber.runtime.java.ObjectFactoryLoader.loadObjectFactory;
 import static java.lang.Thread.currentThread;
 
+import cucumber.api.TypeRegistry;
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
 import cucumber.api.java.ObjectFactory;
@@ -24,7 +25,6 @@ import cucumber.runtime.snippets.FunctionNameGenerator;
 import cucumber.runtime.snippets.Snippet;
 import cucumber.runtime.snippets.SnippetGenerator;
 import gherkin.pickles.PickleStep;
-import io.cucumber.java.TypeRegistry;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;

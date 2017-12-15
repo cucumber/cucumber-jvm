@@ -1,7 +1,7 @@
 package cucumber.runtime;
 
 import cucumber.api.Configuration;
-import io.cucumber.java.TypeRegistry;
+import cucumber.api.TypeRegistry;
 
 import java.util.Locale;
 

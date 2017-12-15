@@ -1,18 +1,19 @@
 package cucumber.runtime.autocomplete;
 
+import cucumber.api.TypeRegistry;
 import cucumber.runtime.ExpressionArgumentMatcher;
 import cucumber.runtime.FeatureBuilder;
 import cucumber.runtime.ParameterInfo;
 import cucumber.runtime.StepDefinition;
+import cucumber.runtime.StepExpression;
+import cucumber.runtime.StepExpressionFactory;
 import cucumber.runtime.io.Resource;
 import cucumber.runtime.model.CucumberFeature;
 import gherkin.deps.com.google.gson.Gson;
 import gherkin.deps.com.google.gson.GsonBuilder;
 import gherkin.pickles.PickleStep;
 import io.cucumber.cucumberexpressions.Argument;
-import io.cucumber.java.StepExpression;
-import io.cucumber.java.StepExpressionFactory;
-import io.cucumber.java.TypeRegistry;
+
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;

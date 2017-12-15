@@ -1,11 +1,10 @@
 package cucumber.runtime;
 
+import cucumber.api.TypeRegistry;
 import gherkin.pickles.Argument;
 import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleStep;
-import io.cucumber.java.StepExpression;
-import io.cucumber.java.StepExpressionFactory;
-import io.cucumber.java.TypeRegistry;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
