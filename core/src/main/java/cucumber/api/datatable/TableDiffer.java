@@ -1,6 +1,5 @@
-package cucumber.runtime.table;
+package cucumber.api.datatable;
 
-import cucumber.api.DataTable;
 import cucumber.deps.difflib.Delta;
 import cucumber.deps.difflib.DiffUtils;
 import cucumber.deps.difflib.Patch;
@@ -10,16 +9,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static cucumber.runtime.table.DataTableDiff.DiffType;
+import static cucumber.api.datatable.DataTableDiff.DiffType;
 import static java.util.AbstractMap.SimpleEntry;
 
-@Deprecated
-public class TableDiffer {
+class TableDiffer {
 
     private final DataTable from;
     private final DataTable to;
 
-    public TableDiffer(DataTable fromTable, DataTable toTable) {
+    TableDiffer(DataTable fromTable, DataTable toTable) {
         checkColumns(fromTable, toTable);
         this.from = fromTable;
         this.to = toTable;

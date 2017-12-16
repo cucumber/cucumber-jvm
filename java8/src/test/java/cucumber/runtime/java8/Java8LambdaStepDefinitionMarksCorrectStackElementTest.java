@@ -1,10 +1,10 @@
 package cucumber.runtime.java8;
 
+import cucumber.api.TypeRegistry;
 import cucumber.runtime.HookDefinition;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.java.Function;
 import cucumber.runtime.java.LambdaGlueRegistry;
-import io.cucumber.java.TypeRegistry;
 import org.hamcrest.CustomTypeSafeMatcher;
 import org.junit.Rule;
 import org.junit.Test;

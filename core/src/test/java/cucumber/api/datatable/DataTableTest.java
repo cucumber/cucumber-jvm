@@ -1,7 +1,8 @@
-package cucumber.runtime.table;
+package cucumber.api.datatable;
 
 import cucumber.api.DataTable;
 import cucumber.runtime.CucumberException;
+import cucumber.runtime.table.XStreamTableConverter;
 import cucumber.runtime.xstream.LocalizedXStreams;
 import org.junit.Test;
 
@@ -14,7 +15,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotSame;
 
-@Deprecated
 public class DataTableTest {
 
     @Test

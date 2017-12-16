@@ -1,17 +1,26 @@
 package cucumber.api.datatable;
 
+import cucumber.api.Format;
+
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import static java.util.Collections.emptyList;
 
 public final class DataTable {
-    private final List<List<String>> raw;
 
+    private final List<List<String>> raw;
     private final TableConverter tableConverter;
+
+    public DataTable() {
+        this(Collections.<List<String>>emptyList());
+    }
 
     public DataTable(List<List<String>> raw) {
         this(raw, new NoConverterDefined());
@@ -24,14 +33,43 @@ public final class DataTable {
         this.tableConverter = tableConverter;
     }
 
+    @Deprecated
+    public List<String> topCells() {
+        return topRow();
+    }
 
     public List<String> topRow() {
-        if (raw.isEmpty()) {
-            return null;
-        }
-
-        return raw.get(0);
+        return raw.isEmpty() ? Collections.<String>emptyList() : raw.get(0);
     }
+
+    List<DiffableRow> diffableRows() {
+        List<DiffableRow> result = new ArrayList<DiffableRow>();
+        for (List<String> row : raw) {
+            result.add(new DiffableRow(row, row));
+        }
+        return result;
+    }
+
+    /**
+     * Diffs this table with {@code other}.
+     *
+     * @param other the other table to diff with.
+     * @throws TableDiffException if the tables are different.
+     */
+    public void diff(DataTable other) throws TableDiffException {
+        new TableDiffer(this, other).calculateDiffs();
+    }
+
+    /**
+     * Diffs this table with {@code other}.
+     * The order is not important. A set-difference is applied.
+     * @param other the other table to diff with.
+     * @throws TableDiffException if the tables are different.
+     */
+    public void unorderedDiff(DataTable other) throws TableDiffException {
+        new TableDiffer(this, other).calculateUnorderedDiffs();
+    }
+
 
     public List<List<String>> rows(int fromRow) {
         return rows(fromRow, raw.size());
@@ -63,7 +101,7 @@ public final class DataTable {
         return new DataTable(transposed, tableConverter);
     }
 
-    public List<List<String>> asLists(){
+    public List<List<String>> asLists() {
         //TODO: Implement
         return null;
     }
@@ -109,6 +147,41 @@ public final class DataTable {
         return tableConverter.toMaps(this, keyType, valueType);
     }
 
+    /**
+     * Creates another table using the same {@link Locale} and {@link Format} that was used to create this table.
+     *
+     * @param raw         a list of objects
+     * @param columnNames optional explicit header columns
+     * @return a new table
+     */
+    public DataTable toTable(List<?> raw, String... columnNames) {
+        return tableConverter.toTable(raw, columnNames);
+    }
+
+
+    @Override
+    public String toString() {
+        StringBuilder result = new StringBuilder();
+        print(result);
+        return result.toString();
+    }
+
+    public void print(StringBuilder appendable)  {
+        TablePrinter printer = new TablePrinter();
+        printer.printTable(raw, appendable);
+    }
+
+    public void print(Appendable appendable) throws IOException {
+        TablePrinter printer = new TablePrinter();
+        printer.printTable(raw, appendable);
+    }
+
+
+    @Deprecated
+    public List<List<String>> raw() {
+        return cells();
+    }
+
     private static final class NoConverterDefined implements TableConverter {
 
         @Override
@@ -140,5 +213,6 @@ public final class DataTable {
         public DataTable toTable(List<?> objects, String... columnNames) {
             throw new CucumberDataTableException("Can't create a DataTable. DataTable was created without a converter");
         }
+
     }
 }

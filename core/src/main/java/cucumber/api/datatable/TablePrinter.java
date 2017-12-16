@@ -1,22 +1,29 @@
-package cucumber.runtime.table;
+package cucumber.api.datatable;
 
+import java.io.IOException;
 import java.util.List;
 
-@Deprecated
-public class TablePrinter {
+class TablePrinter {
     private int[][] cellLengths;
     private int[] maxLengths;
 
-    public void printTable(List<List<String>> table, StringBuilder result) {
+    public void printTable(List<List<String>> table, StringBuilder appendable) {
+        try {
+            printTable(table, (Appendable) appendable);
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+    public void printTable(List<List<String>> table, Appendable appendable) throws IOException {
         calculateColumnAndMaxLengths(table);
         for (int i = 0; i < table.size(); ++i) {
-            printRow(table.get(i), i, result);
-            result.append("\n");
+            printRow(table.get(i), i, appendable);
+            appendable.append("\n");
         }
 
     }
 
-    protected void printStartIndent(StringBuilder buffer, int rowIndex) {
+    protected void printStartIndent(Appendable buffer, int rowIndex) throws IOException {
         buffer.append("      ");
     }
 
@@ -46,7 +53,7 @@ public class TablePrinter {
         return (colIndex < cells.size()) ? cells.get(colIndex) : "";
     }
 
-    private void printRow(List<String> cells, int rowIndex, StringBuilder buffer) {
+    private void printRow(List<String> cells, int rowIndex, Appendable buffer) throws IOException {
         printStartIndent(buffer, rowIndex);
         buffer.append("| ");
         for (int colIndex = 0; colIndex < maxLengths.length; colIndex++) {
@@ -66,7 +73,7 @@ public class TablePrinter {
         return cell.replaceAll("\\\\(?!\\|)", "\\\\\\\\").replaceAll("\\n", "\\\\n").replaceAll("\\|", "\\\\|");
     }
 
-    private void padSpace(StringBuilder buffer, int indent) {
+    private void padSpace(Appendable buffer, int indent) throws IOException {
         for (int i = 0; i < indent; i++) {
             buffer.append(" ");
         }

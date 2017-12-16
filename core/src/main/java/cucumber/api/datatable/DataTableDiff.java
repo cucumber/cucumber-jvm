@@ -1,11 +1,10 @@
-package cucumber.runtime.table;
+package cucumber.api.datatable;
 
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.List;
 
-@Deprecated
-public class DataTableDiff {
+class DataTableDiff {
     public enum DiffType {
         NONE, DELETE, INSERT
     }
@@ -13,7 +12,7 @@ public class DataTableDiff {
     private final List<List<String>> table;
     private List<DiffType> diffTypes;
 
-    public static DataTableDiff create(List<SimpleEntry<List<String>, DiffType>> diffTableRows) {
+    static DataTableDiff create(List<SimpleEntry<List<String>, DiffType>> diffTableRows) {
         List<DiffType> diffTypes = new ArrayList<DiffType>(diffTableRows.size());
         List<List<String>> table = new ArrayList<List<String>>();
 
@@ -24,7 +23,7 @@ public class DataTableDiff {
         return new DataTableDiff(table, diffTypes);
     }
 
-    public DataTableDiff(List<List<String>> table, List<DiffType> diffTypes) {
+    private DataTableDiff(List<List<String>> table, List<DiffType> diffTypes) {
         this.table = table;
         this.diffTypes = diffTypes;
     }

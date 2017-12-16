@@ -4,6 +4,7 @@ import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 
+@Deprecated
 public interface TableConverter {
     <T> T convert(DataTable dataTable, Type type, boolean transposed);
 

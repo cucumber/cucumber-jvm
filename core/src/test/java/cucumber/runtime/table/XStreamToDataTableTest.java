@@ -6,6 +6,7 @@ import cucumber.runtime.xstream.LocalizedXStreams;
 
 import java.util.Locale;
 
+@Deprecated
 public class XStreamToDataTableTest extends ToTableContract {
     private static final String DD_MM_YYYY = "dd/MM/yyyy";
     private static final ParameterInfo PARAMETER_INFO = new ParameterInfo(null, XStreamToDataTableTest.DD_MM_YYYY);

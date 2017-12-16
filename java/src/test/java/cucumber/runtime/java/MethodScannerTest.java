@@ -1,12 +1,12 @@
 package cucumber.runtime.java;
 
+import cucumber.api.TypeRegistry;
 import cucumber.api.java.ObjectFactory;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Glue;
 import cucumber.runtime.io.MultiLoader;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
-import io.cucumber.java.TypeRegistry;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;

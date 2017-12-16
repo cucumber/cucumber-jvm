@@ -1,13 +1,12 @@
-package cucumber.runtime.table;
+package cucumber.api.datatable;
 
 import java.util.List;
 
-@Deprecated
-public class DiffableRow {
+class DiffableRow {
     public final List<String> row;
     public final List<String> convertedRow;
 
-    public DiffableRow(List<String> row, List<String> convertedRow) {
+    DiffableRow(List<String> row, List<String> convertedRow) {
         this.row = row;
         this.convertedRow = convertedRow;
     }

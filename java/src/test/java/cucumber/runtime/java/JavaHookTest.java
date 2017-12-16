@@ -1,6 +1,7 @@
 package cucumber.runtime.java;
 
 import cucumber.api.Scenario;
+import cucumber.api.TypeRegistry;
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
 import cucumber.runtime.ClassFinder;
@@ -13,7 +14,6 @@ import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
 import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleTag;
-import io.cucumber.java.TypeRegistry;
 import org.junit.Test;
 
 import java.lang.reflect.Method;

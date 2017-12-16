@@ -1,19 +1,19 @@
-package cucumber.runtime.table;
+package cucumber.api.datatable;
 
-import cucumber.runtime.table.DataTableDiff.DiffType;
+import cucumber.api.datatable.DataTableDiff.DiffType;
 
+import java.io.IOException;
 import java.util.List;
 
-@Deprecated
-public class DiffTablePrinter extends TablePrinter {
+class DiffTablePrinter extends TablePrinter {
     private final List<DiffType> diffTypes;
 
-    public DiffTablePrinter(List<DiffType> diffTypes) {
+    DiffTablePrinter(List<DiffType> diffTypes) {
         this.diffTypes = diffTypes;
     }
 
     @Override
-    protected void printStartIndent(StringBuilder buffer, int rowIndex) {
+    protected void printStartIndent(Appendable buffer, int rowIndex) throws IOException {
         switch (diffTypes.get(rowIndex)) {
         case NONE:
             buffer.append("      ");

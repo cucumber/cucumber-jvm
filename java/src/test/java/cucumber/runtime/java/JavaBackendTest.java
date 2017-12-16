@@ -1,6 +1,7 @@
 package cucumber.runtime.java;
 
 import cucumber.api.StepDefinitionReporter;
+import cucumber.api.TypeRegistry;
 import cucumber.api.java.ObjectFactory;
 import cucumber.runtime.CucumberException;
 import cucumber.runtime.Glue;
@@ -12,7 +13,6 @@ import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
 import cucumber.runtime.java.stepdefs.Stepdefs;
 import gherkin.pickles.PickleStep;
-import io.cucumber.java.TypeRegistry;
 import org.junit.Before;
 import org.junit.Test;
 

@@ -2,13 +2,13 @@ package cucumber.runtime.java8.test;
 
 import static org.junit.Assert.assertEquals;
 
+import cucumber.api.TypeRegistry;
 import cucumber.api.java8.GlueBase;
 import cucumber.api.java8.StepdefBody;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.java.Function;
 import cucumber.runtime.java.JavaBackend;
 import cucumber.runtime.java8.Java8StepDefinition;
-import io.cucumber.java.TypeRegistry;
 
 public class AnonInnerClassStepdefs implements GlueBase {
 

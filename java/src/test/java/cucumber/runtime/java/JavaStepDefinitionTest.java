@@ -1,6 +1,7 @@
 package cucumber.runtime.java;
 
 import cucumber.api.Result;
+import cucumber.api.TypeRegistry;
 import cucumber.api.event.EventHandler;
 import cucumber.api.event.TestStepFinished;
 import cucumber.api.java.ObjectFactory;
@@ -19,7 +20,6 @@ import gherkin.pickles.Pickle;
 import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleTag;
-import io.cucumber.java.TypeRegistry;
 import org.junit.Before;
 import org.junit.Test;
 

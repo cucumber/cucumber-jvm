@@ -1,4 +1,4 @@
-package cucumber.runtime.table;
+package cucumber.api.datatable;
 
 import cucumber.api.DataTable;
 import cucumber.api.Format;
@@ -33,7 +33,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
 
-@Deprecated
+@Ignore
 public class FromDataTableTest {
     @Rule
     public ExpectedException thrown = ExpectedException.none();

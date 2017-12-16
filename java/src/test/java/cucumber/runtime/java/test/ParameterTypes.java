@@ -1,11 +1,11 @@
 package cucumber.runtime.java.test;
 
 import cucumber.api.Configuration;
+import cucumber.api.TypeRegistry;
+import cucumber.api.datatable.DataTableType;
+import cucumber.api.datatable.TableRowTransformer;
 import cucumber.runtime.java.test.CPH.Consumption;
 import cucumber.runtime.java.test.Stepdefs.Person;
-import io.cucumber.datatable.DataTableType;
-import io.cucumber.datatable.TableRowTransformer;
-import io.cucumber.java.TypeRegistry;
 
 import java.util.Map;
 

@@ -1,6 +1,6 @@
 package cucumber.runtime.snippets;
 
-import cucumber.api.DataTable;
+import cucumber.api.datatable.DataTable;
 import gherkin.pickles.Argument;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleString;

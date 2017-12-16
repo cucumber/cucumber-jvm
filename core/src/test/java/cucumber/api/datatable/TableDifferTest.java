@@ -1,20 +1,15 @@
-package cucumber.runtime.table;
+package cucumber.api.datatable;
 
-import cucumber.api.DataTable;
-import cucumber.api.TableConverter;
-import cucumber.runtime.xstream.LocalizedXStreams;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 
-@Deprecated
 public class TableDifferTest {
 
     private DataTable table() {
@@ -27,7 +22,7 @@ public class TableDifferTest {
     }
 
     private TableConverter createTableConverter() {
-        return new XStreamTableConverter(new LocalizedXStreams(Thread.currentThread().getContextClassLoader()).get(Locale.US), null);
+        return new JacksonTableConverter();
     }
 
     private DataTable tableWithDuplicate() {
@@ -171,13 +166,13 @@ public class TableDifferTest {
 
     @Test
     public void considers_same_table_as_equal() {
-        table().diff(table().raw());
+        table().diff(table());
     }
 
     @Test(expected = TableDiffException.class)
     public void should_find_new_lines_at_end_when_using_diff() {
         try {
-            List<List<String>> other = otherTableWithInsertedAtEnd().raw();
+            DataTable other = otherTableWithInsertedAtEnd();
             table().diff(other);
         } catch (TableDiffException e) {
             String expected = "" +
@@ -200,13 +195,13 @@ public class TableDifferTest {
         List<List<String>> actual = new ArrayList<List<String>>();
         actual.add(asList("I just woke up"));
         actual.add(asList("I'm going to work"));
-        expected.diff(actual);
+        expected.diff(new DataTable(actual));
     }
 
     @Test(expected = TableDiffException.class)
     public void should_diff_when_consecutive_deleted_lines() {
         try {
-            List<List<String>> other = otherTableWithTwoConsecutiveRowsDeleted().raw();
+            DataTable other = otherTableWithTwoConsecutiveRowsDeleted();
             table().diff(other);
         } catch (TableDiffException e) {
             String expected = "" +
@@ -224,7 +219,7 @@ public class TableDifferTest {
     public void should_diff_with_empty_list() {
         try {
             List<List<String>> other = new ArrayList<List<String>>();
-            table().diff(other);
+            table().diff(new DataTable(other));
         } catch (TableDiffException e) {
             String expected = "" +
                     "Tables were not identical:\n" +
@@ -240,7 +235,7 @@ public class TableDifferTest {
     @Test(expected = TableDiffException.class)
     public void should_diff_with_empty_table() {
         try {
-            DataTable emptyTable = DataTable.create(Collections.emptyList());
+            DataTable emptyTable = new DataTable();
             table().diff(emptyTable);
         } catch (TableDiffException e) {
             String expected = "" +
@@ -257,14 +252,14 @@ public class TableDifferTest {
     @Test
     public void empty_list_should_not_diff_with_empty_table() {
         List<List<String>> emptyList = new ArrayList<List<String>>();
-        DataTable emptyTable = DataTable.create(Collections.emptyList());
+        DataTable emptyTable = new DataTable();
         assertEquals(emptyTable.raw(), emptyList);
     }
 
     @Test(expected = TableDiffException.class)
     public void should_diff_when_consecutive_changed_lines() {
         try {
-            List<List<String>> other = otherTableWithTwoConsecutiveRowsChanged().raw();
+            DataTable other = otherTableWithTwoConsecutiveRowsChanged();
             table().diff(other);
         } catch (TableDiffException e) {
             String expected = "" +
@@ -283,7 +278,7 @@ public class TableDifferTest {
     @Test(expected = TableDiffException.class)
     public void should_diff_when_consecutive_inserted_lines() {
         try {
-            List<List<String>> other = otherTableWithTwoConsecutiveRowsInserted().raw();
+            DataTable other = otherTableWithTwoConsecutiveRowsInserted();
             table().diff(other);
         } catch (TableDiffException e) {
             String expected = "" +
@@ -346,7 +341,7 @@ public class TableDifferTest {
         actual.add(new TestPojo(1, "me", 123));
         actual.add(new TestPojo(2, "you", 222));
         actual.add(new TestPojo(3, "jdoe", 34545));
-        expected.diff(actual);
+        expected.diff(createTableConverter().toTable(actual));
     }
 
     @Test
@@ -429,7 +424,7 @@ public class TableDifferTest {
         actual.add(new TestPojo(2, "you", 222));
         actual.add(new TestPojo(3, "jdoe", 34545));
         actual.add(new TestPojo(1, "me", 123));
-        expected.unorderedDiff(actual);
+        expected.unorderedDiff(createTableConverter().toTable(actual));
     }
 
     @Test(expected = TableDiffException.class)

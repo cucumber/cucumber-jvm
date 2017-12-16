@@ -35,6 +35,7 @@ import static java.util.Arrays.asList;
 /**
  * This class converts a {@link cucumber.api.DataTable} to various other types.
  */
+@Deprecated
 public class XStreamTableConverter implements TableConverter {
     private final LocalizedXStreams.LocalizedXStream xStream;
     private final ParameterInfo parameterInfo;

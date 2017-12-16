@@ -173,7 +173,7 @@ public final class TypeRegistryTableConverter implements cucumber.api.datatable.
         }
 
         List<String> keyStrings = dataTable.topRow();
-        if (keyStrings == null) {
+        if (keyStrings.isEmpty()) {
             return emptyList();
         }
 

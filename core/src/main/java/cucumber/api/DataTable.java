@@ -19,6 +19,7 @@ import java.util.Map;
  * Represents the data from a <a href="http://cucumber.info/gherkin.html#data-tables">Gherkin DataTable</a>. Cucumber will convert the table in Gherkin
  * to a DataTable instance and pass it to a step definition.
  */
+@Deprecated //TODO: Remove for cucumber expressions
 public class DataTable {
 
     private final List<List<String>> raw;

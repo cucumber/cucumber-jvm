@@ -1,14 +1,11 @@
-package cucumber.runtime.table;
+package cucumber.api.datatable;
 
-import cucumber.api.DataTable;
-
-@Deprecated
-public class TableDiffException extends RuntimeException {
+class TableDiffException extends RuntimeException {
     private final DataTable from;
     private final DataTable to;
     private final DataTableDiff diff;
 
-    public TableDiffException(DataTable from, DataTable to, DataTableDiff diff) {
+    TableDiffException(DataTable from, DataTable to, DataTableDiff diff) {
         super("Tables were not identical:\n" + diff.toString());
         this.from = from;
         this.to = to;

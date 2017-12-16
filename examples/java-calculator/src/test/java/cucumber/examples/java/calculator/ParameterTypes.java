@@ -2,11 +2,11 @@ package cucumber.examples.java.calculator;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import cucumber.api.Configuration;
+import cucumber.api.TypeRegistry;
+import cucumber.api.datatable.DataTableType;
 import cucumber.examples.java.calculator.RpnCalculatorStepdefs.Entry;
 import cucumber.examples.java.calculator.ShoppingStepdefs.Grocery;
 import io.cucumber.cucumberexpressions.ParameterType;
-import io.cucumber.datatable.DataTableType;
-import io.cucumber.java.TypeRegistry;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

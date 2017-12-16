@@ -4,6 +4,7 @@ import cucumber.api.Plugin;
 import cucumber.api.SnippetType;
 import cucumber.api.StepDefinitionReporter;
 import cucumber.api.SummaryPrinter;
+import cucumber.api.datatable.DataTable;
 import cucumber.api.event.TestRunStarted;
 import cucumber.api.formatter.ColorAware;
 import cucumber.api.formatter.Formatter;
@@ -13,7 +14,6 @@ import cucumber.runtime.formatter.PluginFactory;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.model.PathWithLines;
-import cucumber.runtime.table.TablePrinter;
 import cucumber.util.FixJava;
 import cucumber.util.Mapper;
 import gherkin.GherkinDialect;
@@ -266,7 +266,6 @@ public class RuntimeOptions {
 
     private int printKeywordsFor(GherkinDialect dialect) {
         StringBuilder builder = new StringBuilder();
-        TablePrinter printer = new TablePrinter();
         List<List<String>> table = new ArrayList<List<String>>();
         addKeywordRow(table, "feature", dialect.getFeatureKeywords());
         addKeywordRow(table, "background", dialect.getBackgroundKeywords());
@@ -283,7 +282,7 @@ public class RuntimeOptions {
         addCodeKeywordRow(table, "then", dialect.getThenKeywords());
         addCodeKeywordRow(table, "and", dialect.getAndKeywords());
         addCodeKeywordRow(table, "but", dialect.getButKeywords());
-        printer.printTable(table, builder);
+        new DataTable(table).print(builder);
         System.out.println(builder.toString());
         return 0;
     }

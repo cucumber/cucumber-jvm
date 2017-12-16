@@ -1,7 +1,5 @@
-package cucumber.runtime.table;
+package cucumber.api.datatable;
 
-import cucumber.api.DataTable;
-import cucumber.api.TableConverter;
 import cucumber.runtime.CucumberException;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,7 +19,6 @@ import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-@Deprecated
 public abstract class ToTableContract {
     private TableConverter tc;
 
@@ -176,7 +173,7 @@ public abstract class ToTableContract {
     @Test
     public void diffs_round_trip() {
         List<UserPojo> users = tc.toList(personTable(), UserPojo.class);
-        personTable().diff(users);
+        personTable().diff(createTableConverter().toTable(users));
     }
 
     private DataTable personTable() {
