@@ -38,6 +38,7 @@ public class StepdefGenerator {
             for (CucumberFeature feature : features) {
                 for (Pickle pickle : compiler.compile(feature.getGherkinFeature())) {
                     for (PickleStep step : pickle.getSteps()) {
+                        //TODO: This list now also includes the DataTable or DocString Arguments
                         List<Argument<?>> arguments = stepDefinition.matchedArguments(step);
                         if (arguments != null) {
                             MetaStepdef.MetaStep ms = new MetaStepdef.MetaStep();
