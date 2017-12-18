@@ -155,7 +155,7 @@ public class JavaSnippetTest {
                 "    // List<YourType>, List<List<E>>, List<Map<K,V>> or Map<K,V>.\n" +
                 "    // E,K,V must be a scalar (String, Integer, Date, enum etc)\n" +
                 "    // Field names for YourType must match the column names in \n" +
-                "    // your feature file.\n" +
+                "    // your feature file (except for spaces and calitalization).\n" +
                 "    throw new PendingException();\n" +
                 "}\n";
         PickleTable dataTable = new PickleTable(asList(new PickleRow(asList(new PickleCell(null, "col1")))));
