@@ -30,12 +30,21 @@ class TableDiffer {
     }
 
     public void calculateDiffs() throws TableDiffException {
-        Patch patch = DiffUtils.diff(from.diffableRows(), to.diffableRows());
+        Patch patch = DiffUtils.diff(getDiffableRows(from), getDiffableRows(to));
         List<Delta> deltas = patch.getDeltas();
         if (!deltas.isEmpty()) {
             Map<Integer, Delta> deltasByLine = createDeltasByLine(deltas);
             throw new TableDiffException(from, to, createTableDiff(deltasByLine));
         }
+    }
+
+
+    private static List<DiffableRow> getDiffableRows(DataTable raw) {
+        List<DiffableRow> result = new ArrayList<DiffableRow>();
+        for (List<String> row : raw.raw()) {
+            result.add(new DiffableRow(row, row));
+        }
+        return result;
     }
 
     public void calculateUnorderedDiffs() throws TableDiffException {

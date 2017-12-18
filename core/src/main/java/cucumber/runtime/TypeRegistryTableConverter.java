@@ -149,6 +149,7 @@ public final class TypeRegistryTableConverter implements cucumber.api.datatable.
         Map<K, V> result = new LinkedHashMap<K,V>();
         for (List<String> row : dataTable.cells()) {
             if (row.size() != 2) {
+                //TODO: Use table converter instead to map remaining row to object
                 throw new CucumberExpressionException("A DataTable can only be converted to a Map when there are 2 columns"); //TODO: LIES!
             }
             K key = keyConverter.transform(singletonList(row.get(0)));
@@ -172,7 +173,7 @@ public final class TypeRegistryTableConverter implements cucumber.api.datatable.
             throw new CucumberExpressionException(String.format("Can't convert DataTable to List<Map<%s,%s>>", keyType, valueType));
         }
 
-        List<String> keyStrings = dataTable.topRow();
+        List<String> keyStrings = dataTable.topCells();
         if (keyStrings.isEmpty()) {
             return emptyList();
         }

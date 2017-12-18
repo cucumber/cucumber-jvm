@@ -1,6 +1,5 @@
 package cucumber.api.datatable;
 
-import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import cucumber.runtime.CucumberException;
 import io.cucumber.cucumberexpressions.CucumberExpressionException;
