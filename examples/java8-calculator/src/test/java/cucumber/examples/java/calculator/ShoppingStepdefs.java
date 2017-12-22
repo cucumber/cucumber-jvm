@@ -35,29 +35,40 @@ public class ShoppingStepdefs implements En {
         });
     }
 
+    public static final class Grocery {
+        private String name;
+        private Price price;
 
-    static class Grocery {
-        public String name;
-        @XStreamConverter(Price.Converter.class)
-        public Price price;
+        public String getName() {
+            return name;
+        }
 
-        public Grocery() {
-            super();
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public Price getPrice() {
+            return price;
+        }
+
+        public void setPrice(Price price) {
+            this.price = price;
         }
     }
 
-    static class Price {
-        public int value;
+    public static final class Price {
+        private int value;
 
         public Price(int value) {
             this.value = value;
         }
 
-        public static class Converter extends Transformer<Price> {
-            @Override
-            public Price transform(String value) {
-                return new Price(Integer.parseInt(value));
-            }
+        public static Price fromString(String value) {
+            return new Price(Integer.parseInt(value));
+        }
+
+        public int getValue() {
+            return value;
         }
     }
 }

@@ -15,6 +15,8 @@ import cucumber.api.event.TestStepStarted;
 import cucumber.api.event.WriteEvent;
 import cucumber.api.formatter.Formatter;
 import cucumber.api.formatter.NiceAppendable;
+import cucumber.runtime.datatable.DataTableArgument;
+import cucumber.runtime.datatable.DocStringArgument;
 import gherkin.ast.Background;
 import gherkin.ast.Feature;
 import gherkin.ast.ScenarioDefinition;
@@ -28,6 +30,7 @@ import gherkin.pickles.PickleRow;
 import gherkin.pickles.PickleString;
 import gherkin.pickles.PickleTable;
 import gherkin.pickles.PickleTag;
+import io.cucumber.cucumberexpressions.ExpressionArgument;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -313,7 +316,17 @@ final class JSONFormatter implements Formatter {
             List<Map<String, Object>> argumentList = new ArrayList<Map<String, Object>>();
             for (io.cucumber.cucumberexpressions.Argument argument : testStep.getDefinitionArgument()) {
                 Map<String, Object> argumentMap = new HashMap<String, Object>();
-                argumentMap.put("val", argument.getValue());
+
+                if(argument instanceof ExpressionArgument){
+                    argumentMap.put("val", argument.getGroup().getValue());
+                } else if (argument instanceof  DocStringArgument ){
+                    //TODO: Skip the doc string argument?
+                } else if (argument instanceof DataTableArgument){
+                    //TODO: Skip the data table argument?
+                } else {
+                    throw new IllegalArgumentException("Don't know what to do with " + argument.getClass());
+                }
+
                 argumentList.add(argumentMap);
             }
             matchMap.put("arguments", argumentList);

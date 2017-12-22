@@ -14,7 +14,7 @@ import static org.testng.Assert.assertEquals;
 public class RpnCalculatorStepdefs {
     private RpnCalculator calc;
 
-    @Given("^a calculator I just turned on$")
+    @Given("a calculator I just turned on")
     public void a_calculator_I_just_turned_on() {
         calc = new RpnCalculator();
     }
