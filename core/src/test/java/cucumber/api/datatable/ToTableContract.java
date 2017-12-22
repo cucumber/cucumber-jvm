@@ -105,7 +105,7 @@ public abstract class ToTableContract {
                     "| name        | birthDate  | crapola  |\n" +
                     "| Sid Vicious | 10/05/1957 | 1,000    |\n" +
                     "| Frank Zappa | 21/12/1940 | 3,000    |\n" +
-                    "", createTableConverter()),
+                    ""),
                     UserPojo.class);
             fail();
         } catch (CucumberException e) {
@@ -120,7 +120,7 @@ public abstract class ToTableContract {
                     "| name        |            |\n" +
                     "| Sid Vicious | 10/05/1957 |\n" +
                     "| Frank Zappa | 21/12/1940 |\n" +
-                    "", createTableConverter()),
+                    ""),
                     UserPojo.class);
             fail();
         } catch (CucumberException e) {
@@ -135,7 +135,7 @@ public abstract class ToTableContract {
                     "| credits     |\n" +
                     "| 5           |\n" +
                     "|             |\n" +
-                    "", createTableConverter()),
+                    ""),
                     PojoWithInt.class
             );
             fail();
@@ -150,7 +150,7 @@ public abstract class ToTableContract {
             tc.toList(TableParser.parse("" +
                     "| credits     | credits     |\n" +
                     "| 5           | 5           |\n" +
-                    "", createTableConverter()),
+                    ""),
                     UserPojo.class
             );
             fail();
@@ -181,7 +181,7 @@ public abstract class ToTableContract {
                 "| name        | birthDate  | credits  |\n" +
                 "| Sid Vicious | 10/05/1957 | 1,000    |\n" +
                 "| Frank Zappa | 21/12/1940 | 3,000    |\n" +
-                "", createTableConverter());
+                "");
     }
 
     private DataTable personTableWithNull() {
@@ -189,7 +189,7 @@ public abstract class ToTableContract {
                 "| name        | birthDate  | credits  |\n" +
                 "| Sid Vicious |            | 1,000    |\n" +
                 "| Frank Zappa | 21/12/1940 | 3,000    |\n" +
-                "", createTableConverter());
+                "");
     }
 
     @Test
@@ -250,7 +250,7 @@ public abstract class ToTableContract {
                 "| agree | \n" +
                 "|  yes  | \n" +
                 "|       | \n" +
-                "", createTableConverter()),
+                ""),
                 PojoWithEnum.class
         );
         assertEquals("[PojoWithEnum{yes}, PojoWithEnum{null}]", actual.toString());
@@ -261,7 +261,7 @@ public abstract class ToTableContract {
         final List<PojoWithEnum> actual = tc.toList(TableParser.parse("" +
                 "| agree            | \n" +
                 "| mayBeMixedCase  | \n" +
-                "", createTableConverter()),
+                ""),
                 PojoWithEnum.class
         );
         assertEquals("[PojoWithEnum{mayBeMixedCase}]", actual.toString());
@@ -272,7 +272,7 @@ public abstract class ToTableContract {
         final List<AnEnum> actual = tc.toList(TableParser.parse("" +
                 "| yes | \n" +
                 "|     | \n" +
-                "", createTableConverter()),
+                ""),
                 AnEnum.class
         );
         assertEquals("[yes, null]", actual.toString());

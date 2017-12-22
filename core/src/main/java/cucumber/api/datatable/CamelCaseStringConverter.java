@@ -1,8 +1,10 @@
-package cucumber.runtime.table;
+package cucumber.api.datatable;
+
+import cucumber.runtime.CucumberException;
 
 import java.util.regex.Pattern;
 
-public class PascalCaseStringConverter implements StringConverter {
+class CamelCaseStringConverter implements StringConverter {
 
     private static final String WHITESPACE = " ";
     private static final Pattern WHITESPACE_PATTERN = Pattern.compile("\\s+");
@@ -10,7 +12,8 @@ public class PascalCaseStringConverter implements StringConverter {
     @Override
     public String map(String string) {
         String[] splitted = normalizeSpace(string).split(WHITESPACE);
-        for (int i = 0; i < splitted.length; i++) {
+        splitted[0] = uncapitalize(splitted[0]);
+        for (int i = 1; i < splitted.length; i++) {
             splitted[i] = capitalize(splitted[i]);
         }
         return join(splitted);
@@ -29,7 +32,14 @@ public class PascalCaseStringConverter implements StringConverter {
     }
 
     private String capitalize(String string) {
-        return new StringBuilder(string.length()).append(Character.toTitleCase(string.charAt(0))).append(string.substring(1)).toString();
+        return Character.toTitleCase(string.charAt(0)) + string.substring(1);
+    }
+
+    private String uncapitalize(String string) {
+        if (string.isEmpty()) {
+            throw new CucumberException("Field name cannot be empty. Please check the table header.");
+        }
+        return Character.toLowerCase(string.charAt(0)) + string.substring(1);
     }
 
 }

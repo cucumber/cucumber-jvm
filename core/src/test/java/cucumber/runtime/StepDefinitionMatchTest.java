@@ -1,6 +1,5 @@
 package cucumber.runtime;
 
-import cucumber.runtime.xstream.LocalizedXStreams;
 import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleString;
@@ -16,7 +15,7 @@ import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-@org.junit.Ignore
+@org.junit.Ignore //TODO: Fix tests
 public class StepDefinitionMatchTest {
     private final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
     private static final String ENGLISH = "en";

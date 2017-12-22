@@ -88,7 +88,7 @@ public class RuntimeGlueTest {
         glue.addStepDefinition(sd);
         String featurePath = "someFeature.feature";
 
-        String stepText = "pattern1";
+        String stepText = "pattern";
         PickleStep pickleStep1 = getPickleStep(stepText);
         assertEquals(sd, glue.stepDefinitionMatch(featurePath, pickleStep1).getStepDefinition());
 

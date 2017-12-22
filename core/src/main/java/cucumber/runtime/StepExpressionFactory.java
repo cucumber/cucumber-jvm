@@ -30,7 +30,7 @@ public final class StepExpressionFactory {
     private static final RawTableTransformer<DataTable> TO_DATA_TABLE = new RawTableTransformer<DataTable>() {
         @Override
         public DataTable transform(List<List<String>> raw) {
-            return new DataTable(raw);
+            return DataTable.create(raw);
         }
     };
 
@@ -60,7 +60,7 @@ public final class StepExpressionFactory {
         RawTableTransformer<?> tableTransform = new RawTableTransformer<Object>() {
             @Override
             public Object transform(List<List<String>> raw) {
-                return new DataTable(raw, StepExpressionFactory.this.tableConverter).convert(tableOrDocStringType, transpose);
+                return DataTable.create(raw, StepExpressionFactory.this.tableConverter).convert(tableOrDocStringType, transpose);
             }
         };
 

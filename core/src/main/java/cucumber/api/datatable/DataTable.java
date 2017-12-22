@@ -24,7 +24,11 @@ public final class DataTable {
     }
 
     public static DataTable create(List<List<String>> raw) {
-        return new DataTable(raw, new NoConverterDefined());
+        return create(raw, new NoConverterDefined());
+    }
+
+    public static DataTable create(List<List<String>> raw, TableConverter tableConverter) {
+        return new DataTable(raw, tableConverter);
     }
 
     /**
@@ -50,14 +54,11 @@ public final class DataTable {
             }
             List<String> rowCopy = new ArrayList<String>(row.size());
             rowCopy.addAll(row);
-            rawCopy.add(rowCopy);
+            rawCopy.add(unmodifiableList(rowCopy));
         }
-        return rawCopy;
+        return unmodifiableList(rawCopy);
     }
 
-    /**
-     * @return the raw modifiable backing table
-     */
     List<List<String>> raw() {
         return raw;
     }
@@ -154,13 +155,12 @@ public final class DataTable {
 
 
     public List<List<String>> cells() {
-        List<List<String>> rawCopy = new ArrayList<List<String>>(raw.size());
-        for (List<String> row : raw) {
-            List<String> rowCopy = new ArrayList<String>(row.size());
-            rowCopy.addAll(row);
-            rawCopy.add(unmodifiableList(rowCopy));
-        }
-        return unmodifiableList(rawCopy);
+       return raw;
+    }
+
+
+    public String cell(int x, int y) {
+        return raw.get(y).get(x);
     }
 
     public List<String> topCells() {

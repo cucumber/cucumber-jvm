@@ -3,7 +3,6 @@ package cucumber.runtime;
 import cucumber.api.CucumberOptions;
 import cucumber.api.Plugin;
 import cucumber.api.SnippetType;
-import cucumber.api.formatter.Formatter;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.deps.com.thoughtworks.xstream.annotations.XStreamConverter;
 import cucumber.deps.com.thoughtworks.xstream.annotations.XStreamConverters;
@@ -16,11 +15,9 @@ import java.util.regex.Pattern;
 
 import static cucumber.runtime.RuntimeOptionsFactory.packageName;
 import static cucumber.runtime.RuntimeOptionsFactory.packagePath;
-import cucumber.runtime.xstream.PatternConverter;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
@@ -216,24 +213,6 @@ public class RuntimeOptionsFactoryTest {
 
     @CucumberOptions(junit = {"option1", "option2=value"})
     static class ClassWithJunitOption {
-        // empty
-    }
-
-    @XStreamConverter(DummyConverter.class)
-    static class ClassWithConverter {
-        // empty
-    }
-
-    @XStreamConverters({
-        @XStreamConverter(DummyConverter.class),
-        @XStreamConverter(PatternConverter.class)
-    })
-    static class ClassWithConverters {
-        // empty
-    }
-
-    @XStreamConverter(LongConverter.class)
-    static class SubclassWithConverter extends ClassWithConverter {
         // empty
     }
 

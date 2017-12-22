@@ -1,6 +1,5 @@
 package cucumber.api.datatable;
 
-import cucumber.api.DataTable;
 import cucumber.api.Format;
 import cucumber.api.Transformer;
 import cucumber.api.Transpose;

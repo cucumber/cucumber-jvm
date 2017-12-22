@@ -1,21 +1,30 @@
 package cucumber.api.datatable;
 
-import cucumber.api.DataTable;
 import cucumber.runtime.CucumberException;
-import cucumber.runtime.table.XStreamTableConverter;
-import cucumber.runtime.xstream.LocalizedXStreams;
+import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoJUnitRule;
+import org.mockito.junit.MockitoRule;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotSame;
+import static org.mockito.Mockito.verify;
 
 public class DataTableTest {
+
+    @Rule
+    public final MockitoRule mockitoRule = MockitoJUnit.rule();
+
+    @Mock
+    private TableConverter tableConverter;
 
     @Test
     public void rawShouldHaveThreeColumnsAndTwoRows() {
@@ -38,25 +47,25 @@ public class DataTableTest {
     @Test(expected = CucumberException.class)
     public void canNotSupportNonRectangularTablesMissingColumn() {
         createTable(asList("one", "four", "seven"),
-                asList("a1", "a4444"),
-                asList("b1")).raw();
+            asList("a1", "a4444"),
+            asList("b1")).raw();
     }
 
     @Test(expected = CucumberException.class)
     public void canNotSupportNonRectangularTablesExceedingColumn() {
         createTable(asList("one", "four", "seven"),
-                asList("a1", "a4444", "b7777777", "zero")).raw();
+            asList("a1", "a4444", "b7777777", "zero")).raw();
     }
 
     @Test
     public void canCreateTableFromListOfListOfString() {
         DataTable dataTable = createSimpleTable();
         List<List<String>> listOfListOfString = dataTable.raw();
-        DataTable other = dataTable.toTable(listOfListOfString);
+        DataTable other = DataTable.create(listOfListOfString);
         assertEquals("" +
                 "      | one  | four  | seven  |\n" +
                 "      | 4444 | 55555 | 666666 |\n",
-                other.toString());
+            other.toString());
     }
 
     @Test(expected = UnsupportedOperationException.class)
@@ -69,17 +78,17 @@ public class DataTableTest {
         createSimpleTable().raw().get(0).remove(0);
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void asMaps_is_immutable() {
-        List<Map<String, String>> maps = createSimpleTable().asMaps(String.class, String.class);
-        maps.remove(0);
+    public void asMaps_delegates_to_converter() {
+        DataTable table = createTable(asList("hundred", "100"), asList("thousand", "1000"));
+        table.asMaps(String.class, Long.class);
+        verify(tableConverter).toMaps(table, String.class, Long.class);
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void asMap_is_immutable() {
-        Map<String, Long> map = createTable(asList("hundred", "100"), asList("thousand", "1000")).asMap(String.class, Long.class);
-        assertEquals(new Long(1000L), map.get("thousand"));
-        map.remove("hundred");
+    @Test
+    public void asMap_delegates_to_converter() {
+        DataTable table = createTable(asList("hundred", "100"), asList("thousand", "1000"));
+        table.asMap(String.class, Long.class);
+        verify(tableConverter).toMap(table, String.class, Long.class);
     }
 
     @Test
@@ -112,8 +121,6 @@ public class DataTableTest {
 
     private DataTable createTable(List<String>... rows) {
         List<List<String>> table = asList(rows);
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        LocalizedXStreams.LocalizedXStream xStream = new LocalizedXStreams(classLoader).get(Locale.US);
-        return new DataTable(table, new XStreamTableConverter(xStream, null));
+        return DataTable.create(table, tableConverter);
     }
 }

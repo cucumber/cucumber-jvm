@@ -39,7 +39,7 @@ public class TypeRegistryTableConverterTest {
 
     @Test
     public void converts_empty_table_to_empty_list() {
-        DataTable table = new DataTable(Collections.<List<String>>emptyList());
+        DataTable table = DataTable.emptyDataTable();
         assertEquals(emptyList(), converter.toList(table, Integer.class));
         assertEquals(emptyList(), converter.convert(table, new TypeReference<List<Integer>>() {
         }.getType(), false));
@@ -48,17 +48,16 @@ public class TypeRegistryTableConverterTest {
 
     @Test
     public void converts_table_with_empty_row_to_empty_list() {
-        DataTable table = new DataTable(singletonList(Collections.<String>emptyList()));
+        DataTable table = DataTable.create(singletonList(Collections.<String>emptyList()));
         assertEquals(emptyList(), converter.toList(table, Integer.class));
-        assertEquals(emptyList(), converter.convert(table, new TypeReference<List<Integer>>() {
-        }.getType(), false));
+        assertEquals(emptyList(), converter.convert(table, new TypeReference<List<Integer>>() {}.getType(), false));
     }
 
     @Test
     public void to_list_cant_convert_to_list_of_unknown_type() {
         expectedException.expectMessage(String.format("Can't convert DataTable to List<%s>", Animal.class));
-        DataTable table = new DataTable(
-                singletonList(
+        DataTable table = DataTable.create(
+            singletonList(
                         singletonList("42")
                 ));
         converter.toList(table, Animal.class);
@@ -67,7 +66,7 @@ public class TypeRegistryTableConverterTest {
     @Test
     public void convert_cant_convert_to_list_of_unknown_type() {
         expectedException.expectMessage(String.format("Can't convert DataTable to List<%s>", Animal.class));
-        DataTable table = new DataTable(
+        DataTable table = DataTable.create(
                 singletonList(
                         singletonList("42")
                 ));
@@ -78,7 +77,7 @@ public class TypeRegistryTableConverterTest {
 
     @Test
     public void converts_table_of_single_column_to_list() {
-        DataTable table = new DataTable(
+        DataTable table = DataTable.create(
                 asList(
                         singletonList("3"),
                         singletonList("5"),
@@ -93,7 +92,7 @@ public class TypeRegistryTableConverterTest {
 
     @Test
     public void converts_table_of_several_columns_to_list() {
-        DataTable table = new DataTable(
+        DataTable table = DataTable.create(
                 asList(
                         asList("3", "5"),
                         asList("6", "7")
@@ -125,7 +124,7 @@ public class TypeRegistryTableConverterTest {
         };
         registry.defineDataTableType(new DataTableType("animal", Animal.class, transformer));
 
-        DataTable table = new DataTable(asList(
+        DataTable table = DataTable.create(asList(
                 asList("name", "life expectancy"),
                 asList("Muffalo", "15")
         ));
@@ -138,7 +137,7 @@ public class TypeRegistryTableConverterTest {
 
     @Test
     public void when_converting_to_data_table_table_type_takes_precedence_over_item_type() {
-        final DataTable expected = new DataTable(Collections.<List<String>>emptyList());
+        final DataTable expected = DataTable.emptyDataTable();
 
         registry.defineDataTableType(new DataTableType("table", DataTable.class, new RawTableTransformer<DataTable>() {
             @Override
@@ -147,7 +146,7 @@ public class TypeRegistryTableConverterTest {
             }
         }));
 
-        DataTable table = new DataTable(asList(
+        DataTable table = DataTable.create(asList(
                 asList("name", "life expectancy"),
                 asList("Muffalo", "15")
         ));
@@ -171,7 +170,7 @@ public class TypeRegistryTableConverterTest {
         //TODO:
         // registry.defineDataTableType(new DataTableType("muffalo-barn", barnAnimalType, transformer));
 
-        DataTable table = new DataTable(asList(
+        DataTable table = DataTable.create(asList(
                 asList("name", "life expectancy"),
                 asList("Muffalo", "15")
         ));
@@ -182,7 +181,7 @@ public class TypeRegistryTableConverterTest {
 
     @Test
     public void converts_empty_table_to_empty_lists() {
-        DataTable table = new DataTable(Collections.<List<String>>emptyList());
+        DataTable table = DataTable.create(Collections.<List<String>>emptyList());
         assertEquals(emptyList(), converter.toLists(table, Integer.class));
         assertEquals(emptyList(), converter.convert(table, new TypeReference<List<List<Integer>>>() {
         }.getType(), false));
@@ -190,7 +189,7 @@ public class TypeRegistryTableConverterTest {
 
     @Test
     public void converts_table_with_empty_row_to_list_of_empty_lists() {
-        DataTable table = new DataTable(singletonList(Collections.<String>emptyList()));
+        DataTable table = DataTable.create(singletonList(Collections.<String>emptyList()));
         assertEquals(singletonList(emptyList()), converter.toLists(table, Integer.class));
         assertEquals(singletonList(emptyList()), converter.convert(table, new TypeReference<List<List<Integer>>>() {
         }.getType(), false));
@@ -199,7 +198,7 @@ public class TypeRegistryTableConverterTest {
 
     @Test
     public void converts_table_of_single_column_to_lists() {
-        DataTable table = new DataTable(
+        DataTable table = DataTable.create(
                 asList(
                         singletonList("3"),
                         singletonList("5"),
@@ -219,7 +218,7 @@ public class TypeRegistryTableConverterTest {
 
     @Test
     public void converts_table_of_several_columns_to_lists() {
-        DataTable table = new DataTable(
+        DataTable table = DataTable.create(
                 asList(
                         asList("3", "5"),
                         asList("6", "7")
@@ -235,7 +234,7 @@ public class TypeRegistryTableConverterTest {
 
     @Test
     public void to_lists_cant_convert_to_lists_of_unknown_type() {
-        DataTable table = new DataTable(
+        DataTable table = DataTable.create(
                 singletonList(
                         singletonList("42")
                 ));
@@ -247,7 +246,7 @@ public class TypeRegistryTableConverterTest {
 
     @Test
     public void convert_cant_convert_to_lists_of_unknown_type() {
-        DataTable table = new DataTable(
+        DataTable table = DataTable.create(
                 singletonList(
                         singletonList("42")
                 ));
@@ -263,7 +262,7 @@ public class TypeRegistryTableConverterTest {
 
     @Test
     public void converts_empty_table_to_empty_map() {
-        DataTable table = new DataTable(Collections.<List<String>>emptyList());
+        DataTable table = DataTable.create(Collections.<List<String>>emptyList());
         assertEquals(emptyMap(), converter.toMap(table, Integer.class, Integer.class));
     }
 
@@ -271,13 +270,13 @@ public class TypeRegistryTableConverterTest {
     public void cant_convert_table_with_empty_row_to_map() {
         expectedException.expectMessage("A DataTable can only be converted to a Map when there are 2 columns");
 
-        DataTable table = new DataTable(singletonList(Collections.<String>emptyList()));
+        DataTable table = DataTable.create(singletonList(Collections.<String>emptyList()));
         converter.toMap(table, Integer.class, Integer.class);
     }
 
     @Test
     public void converts_table_of_two_columns_to_map() {
-        DataTable table = new DataTable(
+        DataTable table = DataTable.create(
                 asList(
                         asList("3", "c"),
                         asList("5", "e"),
@@ -298,7 +297,7 @@ public class TypeRegistryTableConverterTest {
     public void cant_convert_to_map_of_unknown_key_type() {
         expectedException.expectMessage(String.format("Can't convert DataTable to Map<%s,%s>", Animal.class, String.class));
 
-        DataTable table = new DataTable(
+        DataTable table = DataTable.create(
                 asList(
                         asList("Alphabeaver", "Hare"),
                         asList("Cassowary", "Husky"),
@@ -312,7 +311,7 @@ public class TypeRegistryTableConverterTest {
     public void cant_convert_to_map_of_unknown_value_type() {
         expectedException.expectMessage(String.format("Can't convert DataTable to Map<%s,%s>", String.class, Animal.class));
 
-        DataTable table = new DataTable(
+        DataTable table = DataTable.create(
                 asList(
                         asList("Alphabeaver", "Hare"),
                         asList("Cassowary", "Husky"),
@@ -326,7 +325,7 @@ public class TypeRegistryTableConverterTest {
 
     @Test
     public void converts_table_to_maps() {
-        DataTable table = new DataTable(
+        DataTable table = DataTable.create(
                 asList(
                         asList("1", "2", "3"),
                         asList("4", "5", "6"),
@@ -351,13 +350,13 @@ public class TypeRegistryTableConverterTest {
 
     @Test
     public void converts_empty_table_to_empty_list_of_maps() {
-        DataTable table = new DataTable(Collections.<List<String>>emptyList());
+        DataTable table = DataTable.create(Collections.<List<String>>emptyList());
         assertEquals(emptyList(), converter.toMaps(table, Integer.class, Integer.class));
     }
 
     @Test
     public void converts_table_with_single_row_to_empty_list_of_maps() {
-        DataTable table = new DataTable(singletonList(asList("1", "2", "3")));
+        DataTable table = DataTable.create(singletonList(asList("1", "2", "3")));
         assertEquals(emptyList(), converter.toMaps(table, Integer.class, Integer.class));
     }
 
@@ -366,7 +365,7 @@ public class TypeRegistryTableConverterTest {
     public void cant_convert_to_maps_of_unknown_key_type() {
         expectedException.expectMessage(String.format("Can't convert DataTable to List<Map<%s,%s>>", Animal.class, String.class));
 
-        DataTable table = new DataTable(
+        DataTable table = DataTable.create(
                 asList(
                         asList("Alphabeaver", "Hare"),
                         asList("Cassowary", "Husky"),
@@ -380,7 +379,7 @@ public class TypeRegistryTableConverterTest {
     public void cant_convert_to_maps_of_unknown_value_type() {
         expectedException.expectMessage(String.format("Can't convert DataTable to List<Map<%s,%s>>", String.class, Animal.class));
 
-        DataTable table = new DataTable(
+        DataTable table = DataTable.create(
                 asList(
                         asList("Alphabeaver", "Hare"),
                         asList("Cassowary", "Husky"),

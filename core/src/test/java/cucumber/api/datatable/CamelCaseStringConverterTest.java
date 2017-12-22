@@ -1,5 +1,6 @@
-package cucumber.runtime.table;
+package cucumber.api.datatable;
 
+import cucumber.api.datatable.CamelCaseStringConverter;
 import cucumber.runtime.CucumberException;
 import org.junit.Test;
 

@@ -16,16 +16,23 @@ public class TableParser {
     private TableParser() {
     }
 
-    public static DataTable parse(String source, TableConverter tableConverter) {
+    public static DataTable parse(String source) {
+        return parse(source, null);
+    }
+
+    public static DataTable parse(String source, TableConverter converter) {
         String feature = "" +
-                "Feature:\n" +
-                "  Scenario:\n" +
-                "    Given x\n" +
-                source;
+            "Feature:\n" +
+            "  Scenario:\n" +
+            "    Given x\n" +
+            source;
         Parser<GherkinDocument> parser = new Parser<GherkinDocument>(new AstBuilder());
         Compiler compiler = new Compiler();
         List<Pickle> pickles = compiler.compile(parser.parse(feature));
-        PickleTable pickleTable = (PickleTable)pickles.get(0).getSteps().get(0).getArgument().get(0);
-        return new DataTable(toTable(pickleTable), tableConverter);
+        PickleTable pickleTable = (PickleTable) pickles.get(0).getSteps().get(0).getArgument().get(0);
+        if (converter == null) {
+            return DataTable.create(toTable(pickleTable));
+        }
+        return DataTable.create(toTable(pickleTable), converter);
     }
 }

@@ -282,7 +282,7 @@ public class RuntimeOptions {
         addCodeKeywordRow(table, "then", dialect.getThenKeywords());
         addCodeKeywordRow(table, "and", dialect.getAndKeywords());
         addCodeKeywordRow(table, "but", dialect.getButKeywords());
-        new DataTable(table).print(builder);
+        DataTable.create(table).print(builder);
         System.out.println(builder.toString());
         return 0;
     }
