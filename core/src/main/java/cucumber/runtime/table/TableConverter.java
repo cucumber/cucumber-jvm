@@ -44,7 +44,7 @@ public class TableConverter implements cucumber.api.TableConverter {
     }
 
     /**
-     * This method converts a {@link cucumber.api.DataTable} to abother type.
+     * This method converts a {@link cucumber.api.DataTable} to another type.
      * When a Step Definition is passed a Gherkin Data Table, the runtime will use this method to convert the
      * {@link cucumber.api.DataTable} to the declared type before invoking the Step Definition.
      * <p/>
