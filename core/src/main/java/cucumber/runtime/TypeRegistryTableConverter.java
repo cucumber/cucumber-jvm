@@ -3,20 +3,20 @@ package cucumber.runtime;
 import cucumber.api.TypeRegistry;
 import io.cucumber.cucumberexpressions.CucumberExpressionException;
 import cucumber.api.datatable.DataTableType;
-import io.cucumber.cucumberexpressions.ParameterType;
 import cucumber.api.datatable.DataTable;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import static cucumber.api.datatable.DataTableType.aListOf;
-import static io.cucumber.cucumberexpressions.TypeUtils.listItemType;
-import static io.cucumber.cucumberexpressions.TypeUtils.mapKeyType;
-import static io.cucumber.cucumberexpressions.TypeUtils.mapValueType;
+import static cucumber.runtime.Utils.listItemType;
+import static cucumber.runtime.Utils.mapKeyType;
+import static cucumber.runtime.Utils.mapValueType;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.unmodifiableList;
@@ -89,22 +89,7 @@ public final class TypeRegistryTableConverter implements cucumber.api.datatable.
             return unmodifiableList((List<T>) tableType.transform(dataTable.cells()));
         }
 
-        ParameterType<T> parameterType = registry.lookupParameterTypeByType(itemType);
-        if (parameterType != null) {
-            return toList(dataTable, parameterType);
-        }
-
         throw new CucumberExpressionException(String.format("Can't convert DataTable to List<%s>", itemType));
-    }
-
-    private <T> List<T> toList(DataTable dataTable, ParameterType<T> parameterType) {
-        List<T> result = new ArrayList<T>();
-        for (List<String> row : dataTable.cells()) {
-            for (String cell : row) {
-                result.add(parameterType.transform(singletonList(cell)));
-            }
-        }
-        return unmodifiableList(result);
     }
 
 
@@ -113,24 +98,12 @@ public final class TypeRegistryTableConverter implements cucumber.api.datatable.
         if (dataTable == null) throw new CucumberExpressionException("dataTable may not be null");
         if (itemType == null) throw new CucumberExpressionException("itemType may not be null");
 
-        ParameterType<T> parameterType = registry.lookupParameterTypeByType(itemType);
-        if (parameterType != null) {
-            return toLists(dataTable, parameterType);
+        DataTableType tableType = registry.lookupTableTypeByType(aListOf(aListOf(itemType)));
+        if (tableType != null) {
+            return unmodifiableList((List<List<T>>) tableType.transform(dataTable.cells()));
         }
 
         throw new CucumberExpressionException(String.format("Can't convert DataTable to List<List<%s>>", itemType));
-    }
-
-    private <T> List<List<T>> toLists(DataTable dataTable, ParameterType<T> parameterType) {
-        List<List<T>> result = new ArrayList<List<T>>();
-        for (List<String> row : dataTable.cells()) {
-            List<T> convertedRow = new ArrayList<T>();
-            for (String cell : row) {
-                convertedRow.add(parameterType.transform(singletonList(cell)));
-            }
-            result.add(unmodifiableList(convertedRow));
-        }
-        return unmodifiableList(result);
     }
 
     @Override
@@ -139,23 +112,39 @@ public final class TypeRegistryTableConverter implements cucumber.api.datatable.
         if (keyType == null) throw new CucumberExpressionException("keyType may not be null");
         if (valueType == null) throw new CucumberExpressionException("valueType may not be null");
 
-        ParameterType<K> keyConverter = registry.lookupParameterTypeByType(keyType);
-        ParameterType<V> valueConverter = registry.lookupParameterTypeByType(valueType);
+        DataTableType keyConverter = registry.lookupTableTypeByType(aListOf(keyType));
+        DataTableType valueConverter = registry.lookupTableTypeByType(aListOf(valueType));
 
-        if (keyConverter == null || valueConverter == null) {
-            throw new CucumberExpressionException(String.format("Can't convert DataTable to Map<%s,%s>", keyType, valueType));
+        if (keyConverter == null) {
+            throw new CucumberExpressionException(String.format(
+                "Can't convert DataTable to Map<%s,%s>. " +
+                    "Please register a converter from DataTable to List<%s>", keyType, valueType, keyType));
         }
 
-        Map<K, V> result = new LinkedHashMap<K,V>();
-        for (List<String> row : dataTable.cells()) {
-            if (row.size() != 2) {
-                //TODO: Use table converter instead to map remaining row to object
-                throw new CucumberExpressionException("A DataTable can only be converted to a Map when there are 2 columns"); //TODO: LIES!
-            }
-            K key = keyConverter.transform(singletonList(row.get(0)));
-            V value = valueConverter.transform(singletonList(row.get(1)));
-            result.put(key, value);
+        if (valueConverter == null) {
+            throw new CucumberExpressionException(String.format(
+                "Can't convert DataTable to Map<%s,%s>" +
+                    "Please register a converter from DataTable to List<%s>", keyType, valueType, valueType));
         }
+
+        if (dataTable.width() < 2) {
+            throw new CucumberExpressionException("A DataTable can only be converted to a Map when there are at least 2 columns");
+        }
+
+        List<List<String>> keyColumn = dataTable.columns(0, 2);
+        List<List<String>> valueColumn = dataTable.columns(2, dataTable.width());
+
+        List<K> keys = (List<K>) keyConverter.transform(keyColumn);
+        List<V> values = (List<V>) valueConverter.transform(valueColumn);
+
+        Iterator<K> keyIterator = keys.iterator();
+        Iterator<V> valueIterator = values.iterator();
+
+        Map<K, V> result = new LinkedHashMap<K, V>();
+        while (keyIterator.hasNext() && valueIterator.hasNext()) {
+            result.put(keyIterator.next(), valueIterator.next());
+        }
+
         return Collections.unmodifiableMap(result);
     }
 
@@ -165,30 +154,40 @@ public final class TypeRegistryTableConverter implements cucumber.api.datatable.
         if (keyType == null) throw new CucumberExpressionException("keyType may not be null");
         if (valueType == null) throw new CucumberExpressionException("valueType may not be null");
 
-        ParameterType<K> keyConverter = registry.lookupParameterTypeByType(keyType);
-        ParameterType<V> valueConverter = registry.lookupParameterTypeByType(valueType);
+        DataTableType keyConverter = registry.lookupTableTypeByType(aListOf(keyType));
+        DataTableType valueConverter = registry.lookupTableTypeByType(aListOf(valueType));
 
-
-        if (keyConverter == null || valueConverter == null) {
-            throw new CucumberExpressionException(String.format("Can't convert DataTable to List<Map<%s,%s>>", keyType, valueType));
+        if (keyConverter == null) {
+            //TODO: Replace with CucumberDataTableException and dedupe
+            throw new CucumberExpressionException(String.format(
+                "Can't convert DataTable to Map<%s,%s>. " +
+                    "Please register a converter from DataTable to List<%s>", keyType, valueType, keyType));
         }
 
+        if (valueConverter == null) {
+            throw new CucumberExpressionException(String.format(
+                "Can't convert DataTable to Map<%s,%s>" +
+                    "Please register a converter from DataTable to List<%s>", keyType, valueType, valueType));
+        }
+        
         List<String> keyStrings = dataTable.topCells();
         if (keyStrings.isEmpty()) {
             return emptyList();
         }
 
-        List<Map<K, V>> result = new ArrayList<Map<K,V>>();
+        List<Map<K, V>> result = new ArrayList<Map<K, V>>();
         List<K> keys = new ArrayList<K>();
         for (String keyString : keyStrings) {
-            keys.add(keyConverter.transform(singletonList(keyString)));
+            List<List<String>> raw = singletonList(singletonList(keyString));
+            keys.add((K) keyConverter.transform(raw));
         }
         List<List<String>> valueRows = dataTable.rows(1);
         for (List<String> valueRow : valueRows) {
-            Map<K, V> map = new LinkedHashMap<K,V>();
+            Map<K, V> map = new LinkedHashMap<K, V>();
             int i = 0;
             for (String cell : valueRow) {
-                map.put(keys.get(i), valueConverter.transform(singletonList(cell)));
+                List<List<String>> raw = singletonList(singletonList(cell));
+                map.put(keys.get(i), (V) valueConverter.transform(raw));
                 i++;
             }
             result.add(Collections.unmodifiableMap(map));

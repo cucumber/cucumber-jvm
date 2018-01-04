@@ -6,7 +6,6 @@ import cucumber.runner.EventBus;
 import cucumber.runtime.AmbiguousStepDefinitionsException;
 import cucumber.runtime.DefinitionMatch;
 import cucumber.runtime.UndefinedStepDefinitionException;
-import gherkin.pickles.Argument;
 import gherkin.pickles.PickleStep;
 
 import java.util.Arrays;
@@ -47,7 +46,7 @@ public abstract class TestStep {
         return definitionMatch.getCodeLocation();
     }
 
-    public List<io.cucumber.cucumberexpressions.Argument<?>> getDefinitionArgument() {
+    public List<Argument> getDefinitionArgument() {
         return definitionMatch.getArguments();
     }
 
@@ -61,7 +60,7 @@ public abstract class TestStep {
 
     public abstract int getStepLine();
 
-    public abstract List<Argument> getStepArgument();
+    public abstract List<gherkin.pickles.Argument> getStepArgument();
 
     public abstract HookType getHookType();
 

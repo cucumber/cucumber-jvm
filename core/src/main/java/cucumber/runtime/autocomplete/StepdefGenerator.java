@@ -1,11 +1,11 @@
 package cucumber.runtime.autocomplete;
 
+import cucumber.api.Argument;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.model.CucumberFeature;
 import gherkin.pickles.Compiler;
 import gherkin.pickles.Pickle;
 import gherkin.pickles.PickleStep;
-import io.cucumber.cucumberexpressions.Argument;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,13 +39,14 @@ public class StepdefGenerator {
                 for (Pickle pickle : compiler.compile(feature.getGherkinFeature())) {
                     for (PickleStep step : pickle.getSteps()) {
                         //TODO: This list now also includes the DataTable or DocString Arguments
-                        List<Argument<?>> arguments = stepDefinition.matchedArguments(step);
+                        List<Argument> arguments = stepDefinition.matchedArguments(step);
                         if (arguments != null) {
                             MetaStepdef.MetaStep ms = new MetaStepdef.MetaStep();
                             ms.name = step.getText();
                             for (Argument argument : arguments) {
                                 MetaStepdef.MetaArgument ma = new MetaStepdef.MetaArgument();
                                 //ma.offset = argument.getOffset();
+                                //TODO: Get value is not a string and possibly not its string representation.
                                 ma.val = argument.getValue().toString();
                                 ms.args.add(ma);
                             }

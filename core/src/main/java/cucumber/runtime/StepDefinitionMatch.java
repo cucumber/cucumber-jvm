@@ -1,5 +1,6 @@
 package cucumber.runtime;
 
+import cucumber.api.Argument;
 import cucumber.api.Scenario;
 import cucumber.util.Mapper;
 import gherkin.pickles.PickleCell;
@@ -7,7 +8,6 @@ import gherkin.pickles.PickleRow;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleString;
 import gherkin.pickles.PickleTable;
-import io.cucumber.cucumberexpressions.Argument;
 import io.cucumber.cucumberexpressions.CucumberExpressionException;
 
 import java.util.ArrayList;
@@ -23,7 +23,7 @@ public class StepDefinitionMatch extends Match implements DefinitionMatch {
     // to prevent it from ending up in the JSON.
     private final transient PickleStep step;
 
-    public StepDefinitionMatch(List<Argument<?>> arguments, StepDefinition stepDefinition, String featurePath, PickleStep step) {
+    public StepDefinitionMatch(List<Argument> arguments, StepDefinition stepDefinition, String featurePath, PickleStep step) {
         super(arguments, stepDefinition.getLocation(false));
         this.stepDefinition = stepDefinition;
         this.featurePath = featurePath;
@@ -77,6 +77,7 @@ public class StepDefinitionMatch extends Match implements DefinitionMatch {
     }
 
     private List<String> createArgumentsForErrorMessage(PickleStep step) {
+        //TODO: This looks wrong
         List<String> arguments = new ArrayList<String>(getArguments().size());
         for (Argument argument : getArguments()) {
             arguments.add(argument.getValue().toString());

@@ -67,12 +67,8 @@ public final class StepExpressionFactory {
         DocStringTransformer<?> docStringTransform = new DocStringTransformer<Object>() {
             @Override
             public Object transform(String raw) {
-                ParameterType<Object> type = registry.lookupParameterTypeByType(tableOrDocStringType);
-                if (type == null) {
-                    //TODO:
-                    throw new UnsupportedOperationException();
-                }
-                return type.transform(Collections.singletonList(raw));
+                //TODO: Fetch a transform from a registry
+                return raw;
             }
         };
         return new StepExpression(expression, docStringTransform, tableTransform);

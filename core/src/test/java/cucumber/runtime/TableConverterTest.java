@@ -7,7 +7,9 @@ import cucumber.api.datatable.TableConverter;
 import cucumber.api.datatable.TableParser;
 import cucumber.api.datatable.TableRowTransformer;
 import cucumber.deps.com.thoughtworks.xstream.converters.SingleValueConverter;
+import io.cucumber.cucumberexpressions.Function;
 import io.cucumber.cucumberexpressions.ParameterType;
+import io.cucumber.cucumberexpressions.SingleTransformer;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -106,14 +108,14 @@ public class TableConverterTest {
 
     @Test
     public void converts_to_map_of_enum_to_int() {
-        registry.defineParameterType(new ParameterType<Color>("color","[A-Z]+",
+        registry.defineParameterType(new ParameterType<Color>("color", "[A-Z]+",
             Color.class,
-            new io.cucumber.cucumberexpressions.Function<String, Color>() {
+            new SingleTransformer<Color>(new Function<String, Color>() {
                 @Override
-                public Color apply(String s) throws Throwable {
+                public Color apply(String s) {
                     return Color.valueOf(s);
                 }
-            }));
+            })));
 
         DataTable table = TableParser.parse("|RED|BLUE|\n|6|7|\n|8|9|\n", converter);
         HashMap<Color, Integer> map1 = new HashMap<Color, Integer>() {{

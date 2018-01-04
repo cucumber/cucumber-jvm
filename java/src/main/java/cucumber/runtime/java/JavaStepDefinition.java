@@ -2,6 +2,7 @@ package cucumber.runtime.java;
 
 import cucumber.api.TypeRegistry;
 import cucumber.api.java.ObjectFactory;
+import cucumber.api.Argument;
 import cucumber.runtime.ArgumentMatcher;
 import cucumber.runtime.ExpressionArgumentMatcher;
 import cucumber.runtime.MethodFormat;
@@ -11,7 +12,6 @@ import cucumber.runtime.StepExpression;
 import cucumber.runtime.StepExpressionFactory;
 import cucumber.runtime.Utils;
 import gherkin.pickles.PickleStep;
-import io.cucumber.cucumberexpressions.Argument;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -44,7 +44,7 @@ class JavaStepDefinition implements StepDefinition {
         Utils.invoke(objectFactory.getInstance(method.getDeclaringClass()), method, timeoutMillis, args);
     }
 
-    public List<Argument<?>> matchedArguments(PickleStep step) {
+    public List<Argument> matchedArguments(PickleStep step) {
         ArgumentMatcher argumentMatcher = new ExpressionArgumentMatcher(expression);
         return argumentMatcher.argumentsFrom(step);
     }

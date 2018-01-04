@@ -1,8 +1,8 @@
 package cucumber.runtime;
 
+import cucumber.api.Argument;
 import cucumber.api.StepDefinitionReporter;
 import gherkin.pickles.PickleStep;
-import io.cucumber.cucumberexpressions.Argument;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -55,7 +55,7 @@ public class RuntimeGlue implements Glue {
 
         CacheEntry cacheEntry = matchedStepDefinitionsCache.get(stepText);
         if (cacheEntry != null) {
-            return new StepDefinitionMatch(Collections.<Argument<?>>emptyList(), cacheEntry.stepDefinition, featurePath, step);
+            return new StepDefinitionMatch(Collections.<Argument>emptyList(), cacheEntry.stepDefinition, featurePath, step);
         }
 
         List<StepDefinitionMatch> matches = stepDefinitionMatches(featurePath, step);
@@ -80,7 +80,7 @@ public class RuntimeGlue implements Glue {
     private List<StepDefinitionMatch> stepDefinitionMatches(String featurePath, PickleStep step) {
         List<StepDefinitionMatch> result = new ArrayList<StepDefinitionMatch>();
         for (StepDefinition stepDefinition : stepDefinitionsByPattern.values()) {
-            List<Argument<?>> arguments = stepDefinition.matchedArguments(step);
+            List<Argument> arguments = stepDefinition.matchedArguments(step);
             if (arguments != null) {
                 result.add(new StepDefinitionMatch(arguments, stepDefinition, featurePath, step));
             }

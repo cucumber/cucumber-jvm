@@ -1,7 +1,7 @@
 package cucumber.runtime;
 
+import cucumber.api.Argument;
 import gherkin.pickles.PickleStep;
-import io.cucumber.cucumberexpressions.Argument;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -21,7 +21,7 @@ public class StubStepDefinition implements StepDefinition {
     }
 
     @Override
-    public List<Argument<?>> matchedArguments(PickleStep step) {
+    public List<Argument> matchedArguments(PickleStep step) {
         throw new UnsupportedOperationException();
     }
 

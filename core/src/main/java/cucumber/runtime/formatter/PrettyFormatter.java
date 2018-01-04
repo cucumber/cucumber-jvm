@@ -1,5 +1,6 @@
 package cucumber.runtime.formatter;
 
+import cucumber.api.Argument;
 import cucumber.api.Result;
 import cucumber.api.TestCase;
 import cucumber.api.TestStep;
@@ -14,6 +15,8 @@ import cucumber.api.event.WriteEvent;
 import cucumber.api.formatter.ColorAware;
 import cucumber.api.formatter.Formatter;
 import cucumber.api.formatter.NiceAppendable;
+import cucumber.runtime.StepExpression;
+import cucumber.runtime.StepExpression.ExpressionArgument;
 import cucumber.util.FixJava;
 import cucumber.util.Mapper;
 import gherkin.ast.Background;
@@ -24,7 +27,6 @@ import gherkin.ast.ScenarioOutline;
 import gherkin.ast.Step;
 import gherkin.ast.Tag;
 import gherkin.pickles.PickleTag;
-import io.cucumber.cucumberexpressions.Argument;
 
 import java.util.List;
 
@@ -59,7 +61,7 @@ final class PrettyFormatter implements Formatter, ColorAware {
             handleTestSourceRead(event);
         }
     };
-    private EventHandler<TestCaseStarted> caseStartedHandler= new EventHandler<TestCaseStarted>() {
+    private EventHandler<TestCaseStarted> caseStartedHandler = new EventHandler<TestCaseStarted>() {
         @Override
         public void receive(TestCaseStarted event) {
             handleTestCaseStarted(event);
@@ -168,13 +170,13 @@ final class PrettyFormatter implements Formatter, ColorAware {
     private void handleScenarioOutline(TestCaseStarted event) {
         TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeatureFile, event.testCase.getLine());
         if (TestSourcesModel.isScenarioOutlineScenario(astNode)) {
-            ScenarioOutline scenarioOutline = (ScenarioOutline)TestSourcesModel.getScenarioDefinition(astNode);
+            ScenarioOutline scenarioOutline = (ScenarioOutline) TestSourcesModel.getScenarioDefinition(astNode);
             if (currentScenarioOutline == null || !currentScenarioOutline.equals(scenarioOutline)) {
                 currentScenarioOutline = scenarioOutline;
                 printScenarioOutline(currentScenarioOutline);
             }
             if (currentExamples == null || !currentExamples.equals(astNode.parent.node)) {
-                currentExamples = (Examples)astNode.parent.node;
+                currentExamples = (Examples) astNode.parent.node;
                 printExamples(currentExamples);
             }
         } else {
@@ -208,15 +210,20 @@ final class PrettyFormatter implements Formatter, ColorAware {
         out.println(STEP_INDENT + formattedStepText + locationPadding + getLocationText(testStep.getCodeLocation()));
     }
 
-    String formatStepText(String keyword, String stepText, Format textFormat, Format argFormat, List<Argument<?>> arguments) {
+    String formatStepText(String keyword, String stepText, Format textFormat, Format argFormat, List<Argument> arguments) {
         int beginIndex = 0;
         StringBuilder result = new StringBuilder(textFormat.text(keyword));
-        for (Argument argument : arguments) {
+        for (Argument a : arguments) {
+            if (!(a instanceof ExpressionArgument)) {
+                continue;
+            }
+            ExpressionArgument argument = (ExpressionArgument) a;
+
             // can be null if the argument is missing.
             if (argument.getGroup() != null) {
                 int argumentOffset = argument.getGroup().getStart();
                 // a nested argument starts before the enclosing argument ends; ignore it when formatting
-                if (argumentOffset < beginIndex ) {
+                if (argumentOffset < beginIndex) {
                     continue;
                 }
                 String text = stepText.substring(beginIndex, argumentOffset);
@@ -286,6 +293,7 @@ final class PrettyFormatter implements Formatter, ColorAware {
     private void printTags(List<Tag> tags) {
         printTags(tags, "");
     }
+
     private void printTags(List<Tag> tags, String indent) {
         if (!tags.isEmpty()) {
             out.println(indent + FixJava.join(FixJava.map(tags, tagNameMapper), " "));

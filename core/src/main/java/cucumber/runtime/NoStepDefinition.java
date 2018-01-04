@@ -1,7 +1,7 @@
 package cucumber.runtime;
 
+import cucumber.api.Argument;
 import gherkin.pickles.PickleStep;
-import io.cucumber.cucumberexpressions.Argument;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -9,7 +9,7 @@ import java.util.List;
 class NoStepDefinition implements StepDefinition {
 
     @Override
-    public List<Argument<?>> matchedArguments(PickleStep step) {
+    public List<Argument> matchedArguments(PickleStep step) {
         return null;
     }
 

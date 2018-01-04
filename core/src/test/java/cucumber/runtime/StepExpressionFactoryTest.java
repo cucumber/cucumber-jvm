@@ -1,7 +1,7 @@
 package cucumber.runtime;
 
+import cucumber.api.Argument;
 import cucumber.api.TypeRegistry;
-import io.cucumber.cucumberexpressions.Argument;
 import io.cucumber.cucumberexpressions.ParameterType;
 import cucumber.api.datatable.DataTableType;
 import cucumber.api.datatable.TableRowTransformer;
@@ -41,11 +41,9 @@ public class StepExpressionFactoryTest {
             @Override
             public Ingredient transform(Map<String, String> tableRow) {
                 Ingredient bean = new Ingredient();
-                ParameterType<Integer> intType = registry.lookupParameterTypeByType(Integer.class);
-                bean.amount = intType.transform(singletonList(tableRow.get("amount")));
-                ParameterType<String> stringType = registry.lookupParameterTypeByType(String.class);
-                bean.name = stringType.transform(singletonList(tableRow.get("name")));
-                bean.unit = stringType.transform(singletonList(tableRow.get("unit")));
+                bean.amount = Integer.valueOf(tableRow.get("amount"));
+                bean.name = tableRow.get("name");
+                bean.unit = tableRow.get("unit");
                 return bean;
             }
         };
@@ -69,7 +67,7 @@ public class StepExpressionFactoryTest {
         StepExpression expression = new StepExpressionFactory(registry).createExpression("Given some stuff:", DataTable.class);
 
 
-        List<Argument<?>> match = expression.match("Given some stuff:", table);
+        List<Argument> match = expression.match("Given some stuff:", table);
 
         DataTable dataTable = (DataTable) match.get(0).getValue();
         assertEquals(table, dataTable.cells());
@@ -81,7 +79,7 @@ public class StepExpressionFactoryTest {
 
         StepExpression expression = new StepExpressionFactory(registry).createExpression("Given some stuff:", "ingredient");
 
-        List<Argument<?>> match = expression.match("Given some stuff:", tableTransposed);
+        List<Argument> match = expression.match("Given some stuff:", tableTransposed);
         Ingredient ingredient = (Ingredient) match.get(0).getValue();
         assertEquals(ingredient.name, "chocolate");
     }
@@ -92,7 +90,7 @@ public class StepExpressionFactoryTest {
 
         registry.defineDataTableType(new DataTableType("ingredient", Ingredient.class, beanMapper(registry)));
         StepExpression expression = new StepExpressionFactory(registry).createExpression("Given some stuff:", Ingredient.class);
-        List<Argument<?>> match = expression.match("Given some stuff:", tableTransposed);
+        List<Argument> match = expression.match("Given some stuff:", tableTransposed);
 
 
         Ingredient ingredient = (Ingredient) match.get(0).getValue();
@@ -106,7 +104,7 @@ public class StepExpressionFactoryTest {
         registry.defineDataTableType(new DataTableType("ingredients", Ingredient.class, listBeanMapper(registry)));
         StepExpression expression = new StepExpressionFactory(registry).createExpression("Given some stuff:", "ingredients");
 
-        List<Argument<?>> match = expression.match("Given some stuff:", table);
+        List<Argument> match = expression.match("Given some stuff:", table);
 
 
         List<Ingredient> ingredients = (List<Ingredient>) match.get(0).getValue();
@@ -120,7 +118,7 @@ public class StepExpressionFactoryTest {
         registry.defineDataTableType(new DataTableType("ingredients", Ingredient.class, listBeanMapper(registry)));
 
         StepExpression expression = new StepExpressionFactory(registry).createExpression("Given some stuff:", getTypeFromStepDefinition());
-        List<Argument<?>> match = expression.match("Given some stuff:", table);
+        List<Argument> match = expression.match("Given some stuff:", table);
 
         List<Ingredient> ingredients = (List<Ingredient>) match.get(0).getValue();
         Ingredient ingredient = ingredients.get(0);

@@ -1,7 +1,7 @@
 package cucumber.runtime;
 
+import cucumber.api.Argument;
 import cucumber.api.Scenario;
-import io.cucumber.cucumberexpressions.Argument;
 
 import java.util.List;
 
@@ -16,5 +16,5 @@ public interface DefinitionMatch {
 
     String getCodeLocation();
 
-    List<Argument<?>> getArguments();
+    List<Argument> getArguments();
 }

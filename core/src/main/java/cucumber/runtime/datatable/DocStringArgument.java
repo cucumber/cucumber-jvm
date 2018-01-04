@@ -1,26 +1,20 @@
 package cucumber.runtime.datatable;
 
-import io.cucumber.cucumberexpressions.Argument;
-import io.cucumber.cucumberexpressions.Group;
 import cucumber.api.datatable.DocStringTransformer;
+import cucumber.api.Argument;
 
-public final class DocStringArgument<T> implements Argument<T> {
+public final class DocStringArgument implements Argument {
 
-    private final DocStringTransformer<T> docStringType;
+    private final DocStringTransformer<?> docStringType;
     private final String argument;
 
-    public DocStringArgument(DocStringTransformer<T> docStringType, String argument) {
+    public DocStringArgument(DocStringTransformer<?> docStringType, String argument) {
         this.docStringType = docStringType;
         this.argument = argument;
     }
 
     @Override
-    public Group getGroup() {
-        return null;
-    }
-
-    @Override
-    public T getValue() {
+    public Object getValue() {
         return docStringType.transform(argument);
     }
 }

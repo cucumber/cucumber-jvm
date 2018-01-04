@@ -3,6 +3,7 @@ package cucumber.runtime.java8;
 import static cucumber.runtime.ParameterInfo.fromTypes;
 import static net.jodah.typetools.TypeResolver.resolveRawArguments;
 
+import cucumber.api.Argument;
 import cucumber.api.TypeRegistry;
 import cucumber.api.java8.StepdefBody;
 import cucumber.runtime.ArgumentMatcher;
@@ -14,7 +15,6 @@ import cucumber.runtime.StepExpression;
 import cucumber.runtime.StepExpressionFactory;
 import cucumber.runtime.Utils;
 import gherkin.pickles.PickleStep;
-import io.cucumber.cucumberexpressions.Argument;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -86,7 +86,7 @@ public class Java8StepDefinition implements StepDefinition {
     }
 
     @Override
-    public List<Argument<?>> matchedArguments(PickleStep step) {
+    public List<Argument> matchedArguments(PickleStep step) {
         ArgumentMatcher argumentMatcher = new ExpressionArgumentMatcher(expression);
         return argumentMatcher.argumentsFrom(step);
     }

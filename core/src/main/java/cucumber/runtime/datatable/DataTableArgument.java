@@ -1,29 +1,23 @@
 package cucumber.runtime.datatable;
 
-import io.cucumber.cucumberexpressions.Argument;
-import io.cucumber.cucumberexpressions.Group;
+import cucumber.api.Argument;
 import cucumber.api.datatable.RawTableTransformer;
 
 import java.util.List;
 
-public class DataTableArgument<T> implements Argument<T> {
+public class DataTableArgument implements Argument {
 
 
-    private final RawTableTransformer<T> tableType;
+    private final RawTableTransformer<?> tableType;
     private final List<List<String>> argument;
 
-    public DataTableArgument(RawTableTransformer<T> tableType, List<List<String>> argument) {
+    public DataTableArgument(RawTableTransformer<?> tableType, List<List<String>> argument) {
         this.tableType = tableType;
         this.argument = argument;
     }
 
     @Override
-    public Group getGroup() {
-        return null;
-    }
-
-    @Override
-    public T getValue() {
+    public Object getValue() {
         return tableType.transform(argument);
     }
 }

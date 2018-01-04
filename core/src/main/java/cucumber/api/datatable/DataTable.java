@@ -4,6 +4,7 @@ import cucumber.runtime.CucumberException;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -176,6 +177,10 @@ public final class DataTable {
     }
 
 
+    public List<List<String>> columns(final int fromRow, final int toRow) {
+        return new ColumnView(fromRow, toRow);
+    }
+
     /**
      * Diffs this table with {@code other}.
      *
@@ -264,6 +269,7 @@ public final class DataTable {
         return raw.hashCode();
     }
 
+
     private static final class NoConverterDefined implements TableConverter {
 
         @Override
@@ -296,5 +302,25 @@ public final class DataTable {
             throw new CucumberDataTableException("Can't create a DataTable. DataTable was created without a converter");
         }
 
+    }
+
+    private final class ColumnView extends AbstractList<List<String>> {
+        private final int fromColumn;
+        private final int toColumn;
+
+        ColumnView(int fromColumn, int toColumn) {
+            this.fromColumn = fromColumn;
+            this.toColumn = toColumn;
+        }
+
+        @Override
+        public List<String> get(int index) {
+            return raw.get(index).subList(fromColumn, toColumn);
+        }
+
+        @Override
+        public int size() {
+            return raw.size();
+        }
     }
 }

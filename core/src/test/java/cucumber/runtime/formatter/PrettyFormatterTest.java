@@ -1,12 +1,16 @@
 package cucumber.runtime.formatter;
 
 import cucumber.api.Result;
+import cucumber.api.TypeRegistry;
 import cucumber.api.formatter.AnsiEscapes;
+import cucumber.runtime.StepExpression;
+import cucumber.runtime.StepExpressionFactory;
 import cucumber.runtime.TestHelper;
 import cucumber.runtime.model.CucumberFeature;
 import io.cucumber.cucumberexpressions.Argument;
 import io.cucumber.cucumberexpressions.CucumberExpression;
 import io.cucumber.cucumberexpressions.Expression;
+import io.cucumber.cucumberexpressions.ExpressionFactory;
 import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
 import io.cucumber.cucumberexpressions.RegularExpression;
 import org.junit.Test;
@@ -375,8 +379,9 @@ public class PrettyFormatterTest {
     public void should_mark_subsequent_arguments_in_steps() throws Throwable {
         Formats formats = new AnsiFormats();
 
-        ParameterTypeRegistry registry = new ParameterTypeRegistry(Locale.ENGLISH);
-        Expression expression = new CucumberExpression("text {string} text {string}", registry);
+        TypeRegistry registry = new TypeRegistry(Locale.ENGLISH);
+        StepExpressionFactory stepExpressionFactory = new StepExpressionFactory(registry);
+        StepExpression expression = stepExpressionFactory.createExpression("text {string} text {string}");
 
         PrettyFormatter prettyFormatter = new PrettyFormatter(null);
         String stepText = "text 'arg1' text 'arg2'";
@@ -393,8 +398,9 @@ public class PrettyFormatterTest {
     public void should_mark_nested_argument_as_part_of_full_argument(){
         Formats formats = new AnsiFormats();
 
-        ParameterTypeRegistry registry = new ParameterTypeRegistry(Locale.ENGLISH);
-        Expression expression = new RegularExpression(Pattern.compile("the order is placed( and (not yet )?confirmed)?"), registry);
+        TypeRegistry registry = new TypeRegistry(Locale.ENGLISH);
+        StepExpressionFactory stepExpressionFactory = new StepExpressionFactory(registry);
+        StepExpression expression = stepExpressionFactory.createExpression("the order is placed( and (not yet )?confirmed)?");
 
         PrettyFormatter prettyFormatter = new PrettyFormatter(null);
         String stepText = "the order is placed and not yet confirmed";
@@ -410,8 +416,9 @@ public class PrettyFormatterTest {
     public void should_mark_nested_arguments_as_part_of_enclosing_argument(){
         Formats formats = new AnsiFormats();
         PrettyFormatter prettyFormatter = new PrettyFormatter(null);
-        ParameterTypeRegistry registry = new ParameterTypeRegistry(Locale.ENGLISH);
-        Expression expression = new RegularExpression(Pattern.compile("the order is placed( and (not( yet)? )?confirmed)?"), registry);
+        TypeRegistry registry = new TypeRegistry(Locale.ENGLISH);
+        StepExpressionFactory stepExpressionFactory = new StepExpressionFactory(registry);
+        StepExpression expression = stepExpressionFactory.createExpression("the order is placed( and (not( yet)? )?confirmed)?");
         String stepText = "the order is placed and not yet confirmed";
         String formattedText = prettyFormatter.formatStepText("Given ", stepText, formats.get("passed"), formats.get("passed_arg"), expression.match(stepText));
 

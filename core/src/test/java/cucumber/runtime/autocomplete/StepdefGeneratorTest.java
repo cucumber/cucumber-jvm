@@ -1,5 +1,6 @@
 package cucumber.runtime.autocomplete;
 
+import cucumber.api.Argument;
 import cucumber.api.TypeRegistry;
 import cucumber.runtime.ExpressionArgumentMatcher;
 import cucumber.runtime.FeatureBuilder;
@@ -12,7 +13,6 @@ import cucumber.runtime.model.CucumberFeature;
 import gherkin.deps.com.google.gson.Gson;
 import gherkin.deps.com.google.gson.GsonBuilder;
 import gherkin.pickles.PickleStep;
-import io.cucumber.cucumberexpressions.Argument;
 
 import org.junit.Test;
 
@@ -118,7 +118,7 @@ public class StepdefGeneratorTest {
             StepExpression expression = factory.createExpression(pattern);
 
             @Override
-            public List<Argument<?>> matchedArguments(PickleStep step) {
+            public List<Argument> matchedArguments(PickleStep step) {
                 return new ExpressionArgumentMatcher(expression).argumentsFrom(step);
             }
 

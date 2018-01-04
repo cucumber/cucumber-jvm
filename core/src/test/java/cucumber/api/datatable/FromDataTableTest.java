@@ -1,5 +1,6 @@
 package cucumber.api.datatable;
 
+import cucumber.api.Argument;
 import cucumber.api.Format;
 import cucumber.api.Transformer;
 import cucumber.api.Transpose;
@@ -13,7 +14,6 @@ import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleRow;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleTable;
-import io.cucumber.cucumberexpressions.Argument;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
@@ -37,7 +37,7 @@ public class FromDataTableTest {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
-    private static final List<Argument<?>> NO_ARGS = emptyList();
+    private static final List<Argument> NO_ARGS = emptyList();
     private static final String ENGLISH = "en";
 
     public static class StepDefs {

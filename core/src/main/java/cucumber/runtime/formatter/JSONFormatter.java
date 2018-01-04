@@ -15,6 +15,8 @@ import cucumber.api.event.TestStepStarted;
 import cucumber.api.event.WriteEvent;
 import cucumber.api.formatter.Formatter;
 import cucumber.api.formatter.NiceAppendable;
+import cucumber.runtime.StepExpression;
+import cucumber.runtime.StepExpression.ExpressionArgument;
 import cucumber.runtime.datatable.DataTableArgument;
 import cucumber.runtime.datatable.DocStringArgument;
 import gherkin.ast.Background;
@@ -30,7 +32,6 @@ import gherkin.pickles.PickleRow;
 import gherkin.pickles.PickleString;
 import gherkin.pickles.PickleTable;
 import gherkin.pickles.PickleTag;
-import io.cucumber.cucumberexpressions.ExpressionArgument;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -314,11 +315,11 @@ final class JSONFormatter implements Formatter {
         Map<String, Object> matchMap = new HashMap<String, Object>();
         if (!testStep.getDefinitionArgument().isEmpty()) {
             List<Map<String, Object>> argumentList = new ArrayList<Map<String, Object>>();
-            for (io.cucumber.cucumberexpressions.Argument argument : testStep.getDefinitionArgument()) {
+            for (cucumber.api.Argument argument : testStep.getDefinitionArgument()) {
                 Map<String, Object> argumentMap = new HashMap<String, Object>();
 
                 if(argument instanceof ExpressionArgument){
-                    argumentMap.put("val", argument.getGroup().getValue());
+                    argumentMap.put("val", ((ExpressionArgument)argument).getGroup().getValue());
                 } else if (argument instanceof  DocStringArgument ){
                     //TODO: Skip the doc string argument?
                 } else if (argument instanceof DataTableArgument){

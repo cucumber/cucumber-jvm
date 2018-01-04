@@ -1,6 +1,6 @@
 package cucumber.runtime;
 
-import io.cucumber.cucumberexpressions.Argument;
+import cucumber.api.Argument;
 
 import java.util.Collections;
 import java.util.List;
@@ -8,16 +8,16 @@ import java.util.List;
 // public for testing with mockito.
 public class Match {
 
-    private final List<Argument<?>> arguments;
+    private final List<Argument> arguments;
     private final String location;
-    public static final Match UNDEFINED = new Match(Collections.<Argument<?>>emptyList(), null);
+    public static final Match UNDEFINED = new Match(Collections.<Argument>emptyList(), null);
 
-    Match(List<Argument<?>> arguments, String location) {
+    Match(List<Argument> arguments, String location) {
         this.arguments = arguments;
         this.location = location;
     }
 
-    public List<Argument<?>> getArguments() {
+    public List<Argument> getArguments() {
         return arguments;
     }
 

@@ -104,38 +104,6 @@ public class TypeRegistryTableConverterTest {
     }
 
     @Test
-    public void when_converting_to_list_table_type_takes_precedence_over_item_type() {
-        registry.defineParameterType(new ParameterType<Animal>("animalId", "Animal[0-9]", Animal.class, new SingleTransformer<Animal>(new Function<String, Animal>() {
-            @Override
-            public Animal apply(String animalId) {
-                // Pretend this uses some lookup to find the animal by its animalId.
-                return new Animal("Boomalope", 12);
-            }
-        })));
-
-        final TableRowTransformer<Animal> transformer = new TableRowTransformer<Animal>() {
-
-            @Override
-            public Animal transform(Map<String, String> values) {
-                ParameterType<Integer> parameterType = registry.lookupParameterTypeByType(Integer.class);
-
-                return new Animal(values.get("name"), parameterType.transform(singletonList(values.get("life expectancy"))));
-            }
-        };
-        registry.defineDataTableType(new DataTableType("animal", Animal.class, transformer));
-
-        DataTable table = DataTable.create(asList(
-                asList("name", "life expectancy"),
-                asList("Muffalo", "15")
-        ));
-
-        assertEquals(singletonList(new Animal("Muffalo", 15)), converter.toList(table, Animal.class));
-        assertEquals(singletonList(new Animal("Muffalo", 15)), converter.convert(table, new TypeReference<List<Animal>>() {
-        }.getType(), false));
-    }
-
-
-    @Test
     public void when_converting_to_data_table_table_type_takes_precedence_over_item_type() {
         final DataTable expected = DataTable.emptyDataTable();
 
