@@ -54,7 +54,7 @@ public final class StepExpression {
     }
 
     public List<Argument> match(String text, List<List<String>> tableArgument) {
-        List<Argument> list = wrapPlusOne(expression.match(text));
+        List<Argument> list = match(text);
 
         if (list == null) {
             return null;
@@ -67,7 +67,7 @@ public final class StepExpression {
     }
 
     public List<Argument> match(String text, String docStringArgument) {
-        List<Argument> list = wrapPlusOne(expression.match(text));
+        List<Argument> list = match(text);
         if (list == null) {
             return null;
         }
