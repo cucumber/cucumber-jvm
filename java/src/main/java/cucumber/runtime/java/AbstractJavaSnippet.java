@@ -24,7 +24,9 @@ public abstract class AbstractJavaSnippet implements Snippet {
     public String tableHint() {
         return "    // For automatic transformation, change DataTable to one of\n" +
                 "    // List<YourType>, List<List<E>>, List<Map<K,V>> or Map<K,V>.\n" +
-                "    // E,K,V must be a scalar (String, Integer, Date, enum etc)\n";
+                "    // E,K,V must be a scalar (String, Integer, Date, enum etc).\n" +
+                "    // Field names for YourType must match the column names in \n" +
+                "    // your feature file (except for spaces and capitalization).\n";
     }
 
     @Override

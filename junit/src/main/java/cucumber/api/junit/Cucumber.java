@@ -33,12 +33,11 @@ import java.util.List;
  * Classes annotated with {@code @RunWith(Cucumber.class)} will run a Cucumber Feature.
  * In general, the runner class should be empty without any fields or methods.
  * For example:
- *
+ * <p>
  * <blockquote><pre>
  * &#64;RunWith(Cucumber.class)
  * &#64;CucumberOptions(plugin = "pretty")
  * public class RunCukesTest {
- *
  * }
  * </pre></blockquote>
  * <p>
@@ -48,7 +47,9 @@ import java.util.List;
  * Additional hints can be given to Cucumber by annotating the class with {@link CucumberOptions}.
  * <p>
  * Cucumber also supports JUnits {@link ClassRule}, {@link BeforeClass} and {@link AfterClass} annotations.
- * These will be invoked around the suite of features" and moved to the end of the java doc.
+ * These will executed before and after all scenarios. Using these is not recommended as it limits the portability
+ * between different runners; they may not execute correctly when using the commandline, IntelliJ IDEA or
+ * Cucumber-Eclipse. Instead it is recommended to use Cucumbers `Before` and `After` hooks.
  *
  * @see CucumberOptions
  */

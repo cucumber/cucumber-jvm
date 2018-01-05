@@ -3,7 +3,12 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ## [2.3.1-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v2.3.1...master) (In Git)
 
 ### Added
+ * [JUnit] Add readme to cucumber-junit ([#1306](https://github.com/cucumber/cucumber-jvm/pull/1306) M.P. Korstanje)
+ * [Java] Add detail to DataTable hint in JavaSnippet ([#1298](https://github.com/cucumber/cucumber-jvm/pull/1298) Marit van Dijk)
+
 ### Changed
+ * [Java] Remove 'throws Exception' from JavaSnippet ([#1308](https://github.com/cucumber/cucumber-jvm/pull/1308) Marit van Dijk)
+
 ### Deprecated
 ### Removed
 ### Fixed

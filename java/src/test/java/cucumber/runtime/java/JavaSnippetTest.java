@@ -29,7 +29,7 @@ public class JavaSnippetTest {
     public void generatesPlainSnippet() {
         String expected = "" +
                 "@Given(\"I have {int} cukes in my {string} belly\")\n" +
-                "public void i_have_cukes_in_my_belly(int arg1, String arg2) throws Exception {\n" +
+                "public void i_have_cukes_in_my_belly(int arg1, String arg2) {\n" +
                 "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException();\n" +
                 "}\n";
@@ -37,10 +37,10 @@ public class JavaSnippetTest {
     }
 
     @Test
-    public void generatesCopyPasteReadyStepSnippetForNumberParameters() throws Exception {
+    public void generatesCopyPasteReadyStepSnippetForNumberParameters() {
         String expected = "" +
                 "@Given(\"before {int} after\")\n" +
-                "public void before_after(int arg1) throws Exception {\n" +
+                "public void before_after(int arg1) {\n" +
                 "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException();\n" +
                 "}\n";
@@ -52,7 +52,7 @@ public class JavaSnippetTest {
     public void generatesCopyPasteReadySnippetWhenStepHasIllegalJavaIdentifierChars() {
         String expected = "" +
                 "@Given(\"I have {int} cukes in: my {string} red-belly!\")\n" +
-                "public void i_have_cukes_in_my_red_belly(int arg1, String arg2) throws Exception {\n" +
+                "public void i_have_cukes_in_my_red_belly(int arg1, String arg2) {\n" +
                 "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException();\n" +
                 "}\n";
@@ -63,7 +63,7 @@ public class JavaSnippetTest {
     public void generatesCopyPasteReadySnippetWhenStepHasIntegersInsideStringParameter() {
         String expected = "" +
                 "@Given(\"the DI system receives a message saying {string}\")\n" +
-                "public void the_DI_system_receives_a_message_saying(String arg1) throws Exception {\n" +
+                "public void the_DI_system_receives_a_message_saying(String arg1) {\n" +
                 "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException();\n" +
                 "}\n";
@@ -99,7 +99,7 @@ public class JavaSnippetTest {
     public void generatesSnippetWithLotsOfEscapes() {
         String expected = "" +
                 "@Given(\"\\\\\\\\(\\\\[a-z\\\\]\\\\*\\\\)\\\\?\\\\.\\\\+\\\\\")\n" +
-                "public void a_z_() throws Exception {\n" +
+                "public void a_z_() {\n" +
                 "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException();\n" +
                 "}\n";
@@ -111,7 +111,7 @@ public class JavaSnippetTest {
     public void generatesSnippetWithEscapedParentheses() {
         String expected = "" +
                 "@Given(\"I have {int} cukes (maybe more)\")\n" +
-                "public void i_have_cukes_maybe_more(int arg1) throws Exception {\n" +
+                "public void i_have_cukes_maybe_more(int arg1) {\n" +
                 "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException();\n" +
                 "}\n";
@@ -123,7 +123,7 @@ public class JavaSnippetTest {
     public void generatesSnippetWithEscapedBrackets() {
         String expected = "" +
                 "@Given(\"I have {int} cukes [maybe more]\")\n" +
-                "public void i_have_cukes_maybe_more(int arg1) throws Exception {\n" +
+                "public void i_have_cukes_maybe_more(int arg1) {\n" +
                 "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException();\n" +
                 "}\n";
@@ -134,7 +134,7 @@ public class JavaSnippetTest {
     public void generatesSnippetWithDocString() {
         String expected = "" +
                 "@Given(\"I have:\")\n" +
-                "public void i_have(String arg1) throws Exception {\n" +
+                "public void i_have(String arg1) {\n" +
                 "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException();\n" +
                 "}\n";
@@ -146,7 +146,7 @@ public class JavaSnippetTest {
     public void recognisesWordWithNumbers() {
         String expected = "" +
                 "@Given(\"Then it responds ([\\\"]*)\")\n" +
-                "public void Then_it_responds(String arg1) throws Exception {\n" +
+                "public void Then_it_responds(String arg1) {\n" +
                 "    // Write code here that turns the phrase above into concrete actions\n" +
                 "}\n";
         assertEquals(expected, snippetFor("Then it responds UTF-8"));
@@ -156,11 +156,13 @@ public class JavaSnippetTest {
     public void generatesSnippetWithDataTable() {
         String expected = "" +
                 "@Given(\"I have:\")\n" +
-                "public void i_have(DataTable arg1) throws Exception {\n" +
+                "public void i_have(DataTable arg1) {\n" +
                 "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    // For automatic transformation, change DataTable to one of\n" +
                 "    // List<YourType>, List<List<E>>, List<Map<K,V>> or Map<K,V>.\n" +
-                "    // E,K,V must be a scalar (String, Integer, Date, enum etc)\n" +
+                "    // E,K,V must be a scalar (String, Integer, Date, enum etc).\n" +
+                "    // Field names for YourType must match the column names in \n" +
+                "    // your feature file (except for spaces and capitalization).\n" +
                 "    throw new PendingException();\n" +
                 "}\n";
         PickleTable dataTable = new PickleTable(asList(new PickleRow(asList(new PickleCell(null, "col1")))));
@@ -172,7 +174,7 @@ public class JavaSnippetTest {
     public void generateSnippetWithOutlineParam() {
         String expected = "" +
                 "@Given(\"Then it responds <param>\")\n" +
-                "public void then_it_responds_param() throws Exception {\n" +
+                "public void then_it_responds_param() {\n" +
                 "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException();\n" +
                 "}\n";
