@@ -23,12 +23,4 @@ public interface TableConverter {
 
     <K, V> List<Map<K, V>> toMaps(DataTable dataTable, Type keyType, Type valueType);
 
-    /**
-     * Converts a List of objects to a DataTable.
-     *
-     * @param objects     the objects to convert
-     * @param columnNames an explicit list of column names
-     * @return a DataTable
-     */
-    DataTable toTable(List<?> objects, String... columnNames);
 }

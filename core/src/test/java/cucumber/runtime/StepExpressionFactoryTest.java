@@ -2,9 +2,8 @@ package cucumber.runtime;
 
 import cucumber.api.Argument;
 import cucumber.api.TypeRegistry;
-import io.cucumber.cucumberexpressions.ParameterType;
 import cucumber.api.datatable.DataTableType;
-import cucumber.api.datatable.TableRowTransformer;
+import cucumber.api.datatable.TableEntryTransformer;
 import cucumber.api.datatable.TableTransformer;
 import cucumber.api.datatable.DataTable;
 import org.junit.Test;
@@ -16,7 +15,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 
 public class StepExpressionFactoryTest {
@@ -34,9 +32,9 @@ public class StepExpressionFactoryTest {
     private final List<List<String>> tableTransposed = asList(asList("name", "chocolate"), asList("amount", "2"), asList("unit", "tbsp"));
 
 
-    private TableRowTransformer<Ingredient> listBeanMapper(final TypeRegistry registry) {
+    private TableEntryTransformer<Ingredient> listBeanMapper(final TypeRegistry registry) {
         //Just pretend this is a bean mapper.
-        return new TableRowTransformer<Ingredient>() {
+        return new TableEntryTransformer<Ingredient>() {
 
             @Override
             public Ingredient transform(Map<String, String> tableRow) {

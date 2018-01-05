@@ -3,7 +3,7 @@ package cucumber.runtime.java.test;
 import cucumber.api.Configuration;
 import cucumber.api.TypeRegistry;
 import cucumber.api.datatable.DataTableType;
-import cucumber.api.datatable.TableRowTransformer;
+import cucumber.api.datatable.TableEntryTransformer;
 import cucumber.runtime.java.test.CPH.Consumption;
 import cucumber.runtime.java.test.Stepdefs.Person;
 
@@ -20,7 +20,7 @@ public class ParameterTypes implements Configuration {
         parameterTypeRegistry.defineDataTableType(new DataTableType(
             "consumption",
             Consumption.class,
-            new TableRowTransformer<Consumption>() {
+            new TableEntryTransformer<Consumption>() {
                 @Override
                 public Consumption transform(Map<String, String> map) {
                     Consumption consumption = new Consumption();
@@ -33,7 +33,7 @@ public class ParameterTypes implements Configuration {
         parameterTypeRegistry.defineDataTableType(new DataTableType(
             "person",
             Person.class,
-            new TableRowTransformer<Person>() {
+            new TableEntryTransformer<Person>() {
                 @Override
                 public Person transform(Map<String, String> map) {
                     Person person = new Person();

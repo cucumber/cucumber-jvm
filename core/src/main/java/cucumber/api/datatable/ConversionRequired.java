@@ -31,8 +31,4 @@ final class ConversionRequired implements TableConverter {
         throw new CucumberDataTableException(String.format("Can't convert DataTable to List<Map<%s,%s>>. You have to write the conversion for it in this method", keyType, valueType));
     }
 
-    @Override
-    public DataTable toTable(List<?> objects, String... columnNames) {
-        throw new CucumberDataTableException("Can't create a DataTable. You have to write the conversion for it in this method");
-    }
 }

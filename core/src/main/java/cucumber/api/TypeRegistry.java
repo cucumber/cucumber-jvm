@@ -17,7 +17,7 @@ public final class TypeRegistry {
 
     public TypeRegistry(Locale locale) {
         parameterTypeRegistry = new ParameterTypeRegistry(locale);
-        dataTableTypeRegistry = new DataTableTypeRegistry();
+        dataTableTypeRegistry = new DataTableTypeRegistry(locale);
     }
 
     public ParameterTypeRegistry parameterTypeRegistry() {

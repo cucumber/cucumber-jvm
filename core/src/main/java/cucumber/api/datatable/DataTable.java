@@ -297,11 +297,6 @@ public final class DataTable {
             throw new CucumberDataTableException(String.format("Can't convert DataTable to List<Map<%s,%s>>. DataTable was created without a converter", keyType, valueType));
         }
 
-        @Override
-        public DataTable toTable(List<?> objects, String... columnNames) {
-            throw new CucumberDataTableException("Can't create a DataTable. DataTable was created without a converter");
-        }
-
     }
 
     private final class ColumnView extends AbstractList<List<String>> {

@@ -1,11 +1,11 @@
 package cucumber.runtime;
 
 import cucumber.api.Argument;
+import cucumber.api.datatable.DocStringTransformer;
+import cucumber.api.datatable.RawTableTransformer;
 import cucumber.runtime.datatable.DataTableArgument;
 import cucumber.runtime.datatable.DocStringArgument;
 import io.cucumber.cucumberexpressions.Expression;
-import cucumber.api.datatable.DocStringTransformer;
-import cucumber.api.datatable.RawTableTransformer;
 import io.cucumber.cucumberexpressions.Group;
 
 import java.util.ArrayList;
@@ -42,7 +42,11 @@ public final class StepExpression {
     }
 
     public List<Argument> match(String text) {
-        return wrapPlusOne(expression.match(text));
+        List<io.cucumber.cucumberexpressions.Argument<?>> match = expression.match(text);
+        if (match == null) {
+            return null;
+        }
+        return wrapPlusOne(match);
     }
 
     public String getSource() {

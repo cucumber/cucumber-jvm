@@ -1,7 +1,7 @@
 package cucumber.api.datatable;
 
-import java.util.Map;
+import java.util.List;
 
 public interface TableRowTransformer<T> {
-    T transform(Map<String, String> tableRow);
+    T transform(List<String> tableRow);
 }
