@@ -45,4 +45,5 @@ public class MultiLoader implements ResourceLoader {
     private static String stripClasspathPrefix(String path) {
         return path.substring(CLASSPATH_SCHEME.length());
     }
+
 }

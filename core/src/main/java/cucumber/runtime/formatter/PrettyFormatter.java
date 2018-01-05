@@ -15,7 +15,6 @@ import cucumber.api.event.WriteEvent;
 import cucumber.api.formatter.ColorAware;
 import cucumber.api.formatter.Formatter;
 import cucumber.api.formatter.NiceAppendable;
-import cucumber.runtime.StepExpression;
 import cucumber.runtime.StepExpression.ExpressionArgument;
 import cucumber.util.FixJava;
 import cucumber.util.Mapper;
@@ -170,13 +169,13 @@ final class PrettyFormatter implements Formatter, ColorAware {
     private void handleScenarioOutline(TestCaseStarted event) {
         TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeatureFile, event.testCase.getLine());
         if (TestSourcesModel.isScenarioOutlineScenario(astNode)) {
-            ScenarioOutline scenarioOutline = (ScenarioOutline) TestSourcesModel.getScenarioDefinition(astNode);
+            ScenarioOutline scenarioOutline = (ScenarioOutline)TestSourcesModel.getScenarioDefinition(astNode);
             if (currentScenarioOutline == null || !currentScenarioOutline.equals(scenarioOutline)) {
                 currentScenarioOutline = scenarioOutline;
                 printScenarioOutline(currentScenarioOutline);
             }
             if (currentExamples == null || !currentExamples.equals(astNode.parent.node)) {
-                currentExamples = (Examples) astNode.parent.node;
+                currentExamples = (Examples)astNode.parent.node;
                 printExamples(currentExamples);
             }
         } else {
@@ -293,7 +292,6 @@ final class PrettyFormatter implements Formatter, ColorAware {
     private void printTags(List<Tag> tags) {
         printTags(tags, "");
     }
-
     private void printTags(List<Tag> tags, String indent) {
         if (!tags.isEmpty()) {
             out.println(indent + FixJava.join(FixJava.map(tags, tagNameMapper), " "));

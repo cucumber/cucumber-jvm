@@ -4,9 +4,6 @@ import cucumber.api.CucumberOptions;
 import cucumber.api.Plugin;
 import cucumber.api.SnippetType;
 import cucumber.runtime.io.ResourceLoader;
-import cucumber.deps.com.thoughtworks.xstream.annotations.XStreamConverter;
-import cucumber.deps.com.thoughtworks.xstream.annotations.XStreamConverters;
-import cucumber.deps.com.thoughtworks.xstream.converters.basic.LongConverter;
 import org.junit.Test;
 
 import java.util.Iterator;

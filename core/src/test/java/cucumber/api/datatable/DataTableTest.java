@@ -4,13 +4,10 @@ import cucumber.runtime.CucumberException;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoJUnitRule;
 import org.mockito.junit.MockitoRule;
 
 import java.util.List;
-import java.util.Map;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
@@ -78,6 +75,7 @@ public class DataTableTest {
         createSimpleTable().raw().get(0).remove(0);
     }
 
+    @Test
     public void asMaps_delegates_to_converter() {
         DataTable table = createTable(asList("hundred", "100"), asList("thousand", "1000"));
         table.asMaps(String.class, Long.class);

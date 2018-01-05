@@ -15,7 +15,6 @@ import cucumber.api.event.TestStepStarted;
 import cucumber.api.event.WriteEvent;
 import cucumber.api.formatter.Formatter;
 import cucumber.api.formatter.NiceAppendable;
-import cucumber.runtime.StepExpression;
 import cucumber.runtime.StepExpression.ExpressionArgument;
 import cucumber.runtime.datatable.DataTableArgument;
 import cucumber.runtime.datatable.DocStringArgument;

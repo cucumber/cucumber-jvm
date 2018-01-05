@@ -4,7 +4,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -21,7 +20,6 @@ public class TableDifferTest {
                 "| Ni    | ni@email.com    | 654 |\n";
         return TableParser.parse(source);
     }
-
 
     private DataTable tableWithDuplicate() {
         String source = "" +
