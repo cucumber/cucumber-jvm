@@ -26,7 +26,7 @@ public interface TableConverter {
     /**
      * Converts a {@link DataTable} to another type.
      * <p>
-     * Delegates <code>toList</code>, <code>toLists</code>, <code>toMap</code> and <code>toMaps</code>
+     * Delegates to <code>toList</code>, <code>toLists</code>, <code>toMap</code> and <code>toMaps</code>
      * for <code>List&lt;T&gt;</code>, <code>List&lt;List&lt;T&gt;&gt;</code>, <code>Map&lt;K,V&gt;</code> and
      * <code>List&lt;Map&lt;K,V&gt;&gt;</code> respectively.
      *
@@ -55,7 +55,6 @@ public interface TableConverter {
      *  [ "Eva de Roovere", "1978-06-14", "Herman van Veen", "1945-03-14" ]
      * </pre>
      * <p>
-     * <p>
      * While:
      * <pre>
      *   convert.toList(table, Artist.class);
@@ -70,7 +69,7 @@ public interface TableConverter {
      * ]
      * </pre>
      * <p>
-     * Like wise:
+     * Likewise:
      * <p>
      * <pre>
      *  | firstName | lastName   | birthDate  |
@@ -97,6 +96,23 @@ public interface TableConverter {
      * Converts a {@link DataTable} to a list of lists.
      * <p>
      * Each row maps to a list, each table cell a list entry.
+     * <p>
+     * For example:
+     * <p>
+     * <pre>
+     * | Eva de Roovere  | 1978-06-14 |
+     * | Herman van Veen | 1945-03-14 |
+     *
+     * convert.toLists(table, String.class);
+     * </pre>
+     * can become
+     * <pre>
+     *  [
+     *    [ "Eva de Roovere",  "1978-06-14" ],
+     *    [ "Herman van Veen", "1945-03-14" ]
+     *  ]
+     * </pre>
+     * <p>
      *
      * @param dataTable the table to convert
      * @param itemType  the  list item type to convert to
