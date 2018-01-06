@@ -1,7 +1,7 @@
 package cucumber.stepexpression;
 
 import cucumber.api.datatable.DataTable;
-import cucumber.api.datatable.TableConverter;
+import cucumber.api.datatable.DataTable.TableConverter;
 import gherkin.AstBuilder;
 import gherkin.Parser;
 import gherkin.ast.GherkinDocument;

@@ -7,7 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static cucumber.api.datatable.DataTableTypeRegistry.aListOf;
+import static cucumber.api.datatable.TypeFactory.aListOf;
+import static cucumber.api.datatable.TypeFactory.constructType;
 
 
 public final class DataTableType implements Comparable<DataTableType> {
@@ -23,7 +24,7 @@ public final class DataTableType implements Comparable<DataTableType> {
         if (type == null) throw new CucumberDataTableException("type cannot be null");
         if (transformer == null) throw new CucumberDataTableException("transformer cannot be null");
         this.name = name;
-        this.type = DataTableTypeRegistry.constructType(type);
+        this.type = constructType(type);
         this.transformer = transformer;
         this.preferForTypeMatch = preferForTypeMatch;
     }

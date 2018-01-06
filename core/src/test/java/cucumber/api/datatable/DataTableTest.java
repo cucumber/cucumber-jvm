@@ -1,5 +1,6 @@
 package cucumber.api.datatable;
 
+import cucumber.api.datatable.DataTable.TableConverter;
 import cucumber.runtime.CucumberException;
 import org.junit.Rule;
 import org.junit.Test;
@@ -132,14 +133,14 @@ public class DataTableTest {
         }
     }
 
-    @Test(expected = CucumberException.class)
+    @Test(expected = CucumberDataTableException.class)
     public void canNotSupportNonRectangularTablesMissingColumn() {
         createTable(asList("one", "four", "seven"),
             asList("a1", "a4444"),
             asList("b1")).raw();
     }
 
-    @Test(expected = CucumberException.class)
+    @Test(expected = CucumberDataTableException.class)
     public void canNotSupportNonRectangularTablesExceedingColumn() {
         createTable(asList("one", "four", "seven"),
             asList("a1", "a4444", "b7777777", "zero")).raw();

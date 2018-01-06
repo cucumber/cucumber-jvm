@@ -1,19 +1,20 @@
 package cucumber.api.datatable;
 
-import cucumber.runtime.CucumberException;
+import cucumber.api.datatable.DataTable.TableConverter;
+
 import io.cucumber.cucumberexpressions.CucumberExpressionException;
 
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static cucumber.api.datatable.DataTableTypeRegistry.aListOf;
-import static cucumber.runtime.Utils.listItemType;
-import static cucumber.runtime.Utils.mapKeyType;
-import static cucumber.runtime.Utils.mapValueType;
+import static cucumber.api.datatable.TypeFactory.aListOf;
+
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.nCopies;
@@ -27,6 +28,7 @@ public final class DataTableTypeRegistryTableConverter implements TableConverter
     public DataTableTypeRegistryTableConverter(DataTableTypeRegistry registry) {
         this.registry = registry;
     }
+
 
     @Override
     public <T> T convert(DataTable dataTable, Type type, boolean transposed) {
@@ -164,7 +166,7 @@ public final class DataTableTypeRegistryTableConverter implements TableConverter
             V value = valueIterator.next();
             V replaced = result.put(key, value);
             if (replaced != null) {
-                throw new CucumberException(String.format("Can't convert DataTable to Map<%s,%s>. " +
+                throw new CucumberDataTableException(String.format("Can't convert DataTable to Map<%s,%s>. " +
                         "Encountered duplicate key %s with values %s and %s",
                     keyType, valueType, key, replaced, value));
             }
@@ -178,7 +180,7 @@ public final class DataTableTypeRegistryTableConverter implements TableConverter
             DataTableType keyConverter;
             keyConverter = registry.lookupTableTypeByType(aListOf(aListOf(keyType)));
             if (keyConverter == null) {
-                throw new CucumberException(String.format(
+                throw new CucumberDataTableException(String.format(
                     "Can't convert DataTable to Map<%s,%s>. " +
                         "Please register a DataTableType with a TableCellTransformer for %s", keyType, valueType, keyType));
             }
@@ -195,7 +197,7 @@ public final class DataTableTypeRegistryTableConverter implements TableConverter
             return unpack((List<List<K>>) cellKeyConverter.transform(keyColumn));
         }
 
-        throw new CucumberException(String.format(
+        throw new CucumberDataTableException(String.format(
             "Can't convert DataTable to Map<%s,%s>. " +
                 "Please register a DataTableType with a TableEntryTransformer or TableCellTransformer for %s", keyType, valueType, keyType));
     }
@@ -207,7 +209,7 @@ public final class DataTableTypeRegistryTableConverter implements TableConverter
         }
 
         if (keysImplyTableEntryTransformer) {
-            throw new CucumberException(String.format(
+            throw new CucumberDataTableException(String.format(
                 "Can't convert DataTable to Map<%s,%s>" +
                     "Please register a DataTableType with a TableEntryTransformer for %s", keyType, valueType, valueType));
         }
@@ -217,7 +219,7 @@ public final class DataTableTypeRegistryTableConverter implements TableConverter
             return unpack((List<List<V>>) cellValueConverter.transform(valueColumns));
         }
 
-        throw new CucumberException(String.format(
+        throw new CucumberDataTableException(String.format(
             "Can't convert DataTable to Map<%s,%s>" +
                 "Please register a DataTableType with a TableEntryTransformer or TableCellTransformer for %s", keyType, valueType, valueType));
     }
@@ -237,14 +239,14 @@ public final class DataTableTypeRegistryTableConverter implements TableConverter
 
         if (keyConverter == null) {
             //TODO: Replace with CucumberDataTableException and dedupe
-            throw new CucumberException(String.format(
+            throw new CucumberDataTableException(String.format(
                 "Can't convert DataTable to Map<%s,%s>. " +
                     "Please register a DataTableType with a TableCellTransformer for %s",
                 keyType, valueType, keyType));
         }
 
         if (valueConverter == null) {
-            throw new CucumberException(String.format(
+            throw new CucumberDataTableException(String.format(
                 "Can't convert DataTable to Map<%s,%s>. " +
                     "Please register a DataTableType with a TableCellTransformer for %s",
                 keyType, valueType, valueType));
@@ -277,16 +279,16 @@ public final class DataTableTypeRegistryTableConverter implements TableConverter
         return unpacked;
     }
 
-    private static CucumberException createKeyValueMismatchException(boolean firstHeaderCellIsBlank, int keySize, Type keyType, int valueSize, Type valueType) {
+    private static CucumberDataTableException createKeyValueMismatchException(boolean firstHeaderCellIsBlank, int keySize, Type keyType, int valueSize, Type valueType) {
         if (firstHeaderCellIsBlank) {
-            return new CucumberException(String.format(
+            return new CucumberDataTableException(String.format(
                 "Can't convert DataTable to Map<%s,%s>. " +
                     "There are more values then keys. The first header cell was left blank. You can add a value there",
                 keyType, valueType));
         }
 
         if (keySize > valueSize) {
-            return new CucumberException(String.format(
+            return new CucumberDataTableException(String.format(
                 "Can't convert DataTable to Map<%s,%s>. " +
                     "There are more keys then values. " +
                     "Did you use a TableEntryTransformer for the value while using a TableRow or TableCellTransformer for the keys?",
@@ -294,14 +296,14 @@ public final class DataTableTypeRegistryTableConverter implements TableConverter
         }
 
         if (valueSize % keySize == 0) {
-            return new CucumberException(String.format(
+            return new CucumberDataTableException(String.format(
                 "Can't convert DataTable to Map<%s,%s>. " +
                     "There is more then one values per key. " +
                     "Did you mean to transform to Map<%s,List<%s>> instead?",
                 keyType, valueType, keyType, valueType));
         }
 
-        return new CucumberException(String.format(
+        return new CucumberDataTableException(String.format(
             "Can't convert DataTable to Map<%s,%s>. " +
                 "There are more values then keys. " +
                 "Did you use a TableEntryTransformer for the key while using a TableRow or TableCellTransformer for the value?",
@@ -309,4 +311,33 @@ public final class DataTableTypeRegistryTableConverter implements TableConverter
 
     }
 
+    private static Type listItemType(Type type) {
+        return typeArg(type, List.class, 0);
+    }
+
+    private static Type mapKeyType(Type type) {
+        return typeArg(type, Map.class, 0);
+    }
+
+    private static Type mapValueType(Type type) {
+        return typeArg(type, Map.class, 1);
+    }
+
+    private static Type typeArg(Type type, Class<?> wantedRawType, int index) {
+        if (type instanceof ParameterizedType) {
+            ParameterizedType parameterizedType = (ParameterizedType) type;
+            Type rawType = parameterizedType.getRawType();
+            if (rawType instanceof Class && wantedRawType.isAssignableFrom((Class) rawType)) {
+                Type result = parameterizedType.getActualTypeArguments()[index];
+                if (result instanceof TypeVariable) {
+                    throw new CucumberDataTableException("Generic types must be explicit");
+                }
+                return result;
+            } else {
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
 }

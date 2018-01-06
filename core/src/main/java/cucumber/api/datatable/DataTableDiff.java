@@ -4,13 +4,10 @@ import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.List;
 
-class DataTableDiff {
-    public enum DiffType {
-        NONE, DELETE, INSERT
-    }
+public class DataTableDiff {
 
     private final List<List<String>> table;
-    private List<DiffType> diffTypes;
+    private final List<DiffType> diffTypes;
 
     static DataTableDiff create(List<SimpleEntry<List<String>, DiffType>> diffTableRows) {
         List<DiffType> diffTypes = new ArrayList<DiffType>(diffTableRows.size());

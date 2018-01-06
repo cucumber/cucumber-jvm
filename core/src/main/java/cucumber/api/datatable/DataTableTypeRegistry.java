@@ -1,7 +1,6 @@
 package cucumber.api.datatable;
 
 import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.type.TypeFactory;
 import io.cucumber.cucumberexpressions.CucumberExpressionException;
 
 import java.lang.reflect.Type;
@@ -9,15 +8,15 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.NumberFormat;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import static cucumber.api.datatable.TypeFactory.constructType;
+
 public final class DataTableTypeRegistry {
 
-    private static final TypeFactory typeFactory = TypeFactory.defaultInstance();
 
     private final Map<String, DataTableType> tableTypeByName = new HashMap<String, DataTableType>();
     private final HashMap<JavaType, SortedSet<DataTableType>> tableTypeByType = new HashMap<JavaType, SortedSet<DataTableType>>();
@@ -113,8 +112,7 @@ public final class DataTableTypeRegistry {
     }
 
     public DataTableType lookupTableTypeByType(final Type tableType) {
-        JavaType javaType = typeFactory.constructType(tableType);
-        SortedSet<DataTableType> dataTableTypes = tableTypeByType.get(javaType);
+        SortedSet<DataTableType> dataTableTypes = tableTypeByType.get(constructType(tableType));
         if (dataTableTypes == null) return null;
         if (dataTableTypes.size() > 1 && !dataTableTypes.first().preferForTypeMatch()) {
             throw new CucumberExpressionException("TODO: Throw ambigous exception");
@@ -126,13 +124,6 @@ public final class DataTableTypeRegistry {
         return tableTypeByName.get(tableName);
     }
 
-    static JavaType aListOf(Type type) {
-        return typeFactory.constructCollectionType(List.class, typeFactory.constructType(type));
-    }
-
-    static JavaType constructType(Type type) {
-        return typeFactory.constructType(type);
-    }
 }
 
 

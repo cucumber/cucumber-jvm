@@ -4,20 +4,18 @@ import cucumber.deps.difflib.Delta;
 import cucumber.deps.difflib.DiffUtils;
 import cucumber.deps.difflib.Patch;
 
+import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static cucumber.api.datatable.DataTableDiff.DiffType;
-import static java.util.AbstractMap.SimpleEntry;
-
-class TableDiffer {
+public final class TableDiffer {
 
     private final DataTable from;
     private final DataTable to;
 
-    TableDiffer(DataTable fromTable, DataTable toTable) {
+    public TableDiffer(DataTable fromTable, DataTable toTable) {
         checkColumns(fromTable, toTable);
         this.from = fromTable;
         this.to = toTable;
@@ -29,7 +27,8 @@ class TableDiffer {
         }
     }
 
-    void calculateDiffs() throws TableDiffException {
+    //TODO: Don't throw
+    public void calculateDiffs() throws TableDiffException {
         Patch patch = DiffUtils.diff(getDiffableRows(from), getDiffableRows(to));
         List<Delta> deltas = patch.getDeltas();
         if (!deltas.isEmpty()) {
@@ -47,7 +46,8 @@ class TableDiffer {
         return result;
     }
 
-    void calculateUnorderedDiffs() throws TableDiffException {
+    //TODO: Don't throw
+    public void calculateUnorderedDiffs() throws TableDiffException {
         boolean isDifferent = false;
         List<SimpleEntry<List<String>, DiffType>> diffTableRows = new ArrayList<SimpleEntry<List<String>, DiffType>>();
 

@@ -2,7 +2,7 @@ package cucumber.runtime.autocomplete;
 
 import cucumber.stepexpression.Argument;
 import cucumber.api.TypeRegistry;
-import cucumber.runtime.FeatureBuilder;
+import cucumber.runtime.model.FeatureBuilder;
 import cucumber.runtime.ParameterInfo;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.io.Resource;

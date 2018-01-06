@@ -1,5 +1,7 @@
 package cucumber.api.datatable;
 
+import cucumber.api.datatable.DataTable.TableConverter;
+
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;

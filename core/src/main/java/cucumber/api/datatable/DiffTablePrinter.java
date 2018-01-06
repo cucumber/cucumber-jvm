@@ -1,7 +1,5 @@
 package cucumber.api.datatable;
 
-import cucumber.api.datatable.DataTableDiff.DiffType;
-
 import java.io.IOException;
 import java.util.List;
 

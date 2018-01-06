@@ -1,7 +1,7 @@
-package cucumber.runtime;
+package cucumber.runtime.model;
 
+import cucumber.runtime.CucumberException;
 import cucumber.runtime.io.Resource;
-import cucumber.runtime.model.CucumberFeature;
 import cucumber.util.Encoding;
 import gherkin.AstBuilder;
 import gherkin.Parser;

@@ -1,6 +1,7 @@
 package cucumber.api.datatable;
 
 import cucumber.api.TypeRegistry;
+import cucumber.api.datatable.DataTable.TableConverter;
 import io.cucumber.cucumberexpressions.TypeReference;
 import org.junit.Rule;
 import org.junit.Test;

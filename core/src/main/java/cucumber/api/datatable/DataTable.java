@@ -1,7 +1,5 @@
 package cucumber.api.datatable;
 
-import cucumber.runtime.CucumberException;
-
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.AbstractList;
@@ -51,7 +49,7 @@ public final class DataTable {
         List<List<String>> rawCopy = new ArrayList<List<String>>(table.size());
         for (List<String> row : table) {
             if (columns != row.size()) {
-                throw new CucumberException(String.format("Table is unbalanced: expected %s column(s) but found %s.", columns, row.size()));
+                throw new CucumberDataTableException(String.format("Table is unbalanced: expected %s column(s) but found %s.", columns, row.size()));
             }
             if (row.isEmpty()) {
                 continue;
@@ -114,7 +112,6 @@ public final class DataTable {
      * @param keyType   key type
      * @param valueType value type
      * @return a Map.
-     * @throws cucumber.runtime.CucumberException if the table doesn't have 2 columns.
      */
     public <K, V> Map<K, V> asMap(Type keyType, Type valueType) {
         return tableConverter.toMap(this, keyType, valueType);
@@ -185,27 +182,6 @@ public final class DataTable {
 
     public List<List<String>> columns(final int fromColumn, final int toColumn) {
         return new ColumnView(fromColumn, toColumn);
-    }
-
-    /**
-     * Diffs this table with {@code other}.
-     *
-     * @param other the other table to diff with.
-     * @throws TableDiffException if the tables are different.
-     */
-    public void diff(DataTable other) throws TableDiffException {
-        new TableDiffer(this, other).calculateDiffs();
-    }
-
-    /**
-     * Diffs this table with {@code other}.
-     * The order is not important. A set-difference is applied.
-     *
-     * @param other the other table to diff with.
-     * @throws TableDiffException if the tables are different.
-     */
-    public void unorderedDiff(DataTable other) throws TableDiffException {
-        new TableDiffer(this, other).calculateUnorderedDiffs();
     }
 
     @Override
@@ -295,4 +271,233 @@ public final class DataTable {
             return raw.size();
         }
     }
+
+    private static final class NoConverterDefined implements TableConverter {
+
+        NoConverterDefined() {
+
+        }
+
+        @Override
+        public <T> T convert(DataTable dataTable, Type type, boolean transposed) {
+            throw new CucumberDataTableException(String.format("Can't convert DataTable to %s. DataTable was created without a converter", type));
+        }
+
+        @Override
+        public <T> List<T> toList(DataTable dataTable, Type itemType) {
+            throw new CucumberDataTableException(String.format("Can't convert DataTable to List<%s>. DataTable was created without a converter", itemType));
+        }
+
+        @Override
+        public <T> List<List<T>> toLists(DataTable dataTable, Type itemType) {
+            throw new CucumberDataTableException(String.format("Can't convert DataTable to List<List<%s>>. DataTable was created without a converter", itemType));
+        }
+
+        @Override
+        public <K, V> Map<K, V> toMap(DataTable dataTable, Type keyType, Type valueType) {
+            throw new CucumberDataTableException(String.format("Can't convert DataTable to Map<%s,%s>. DataTable was created without a converter", keyType, valueType));
+        }
+
+        @Override
+        public <K, V> List<Map<K, V>> toMaps(DataTable dataTable, Type keyType, Type valueType) {
+            throw new CucumberDataTableException(String.format("Can't convert DataTable to List<Map<%s,%s>>. DataTable was created without a converter", keyType, valueType));
+        }
+
+    }
+
+    /**
+     * Converts a {@link DataTable} to another type.
+     * <p>
+     * There are three ways in which a table might be mapped to a certain type. The table converter considers the
+     * possible conversions in this order:
+     * <ol>
+     * <li>
+     * Using the whole table to create a single instance.
+     * </li>
+     * <li>
+     * Using individual rows to create a collection of instances. The first row may be used as header.
+     * </li>
+     * <li>
+     * Using individual cells to a create a collection of instances.
+     * </li>
+     * </ol>
+     */
+    public interface TableConverter {
+
+        /**
+         * Converts a {@link DataTable} to another type.
+         * <p>
+         * Delegates to <code>toList</code>, <code>toLists</code>, <code>toMap</code> and <code>toMaps</code>
+         * for <code>List&lt;T&gt;</code>, <code>List&lt;List&lt;T&gt;&gt;</code>, <code>Map&lt;K,V&gt;</code> and
+         * <code>List&lt;Map&lt;K,V&gt;&gt;</code> respectively.
+         *
+         * @param dataTable  the table to convert
+         * @param type       the type to convert to
+         * @param transposed whether the table should be transposed first.
+         * @return an object of type
+         */
+        <T> T convert(DataTable dataTable, Type type, boolean transposed);
+
+        /**
+         * Converts a {@link DataTable} to a list.
+         * <p>
+         * A table converter may either map each row or each individual cell to a list element.
+         * <p>
+         * For example:
+         * <p>
+         * <pre>
+         * | Eva de Roovere  | 1978-06-14 |
+         * | Herman van Veen | 1945-03-14 |
+         *
+         * convert.toList(table, String.class);
+         * </pre>
+         * can become
+         * <pre>
+         *  [ "Eva de Roovere", "1978-06-14", "Herman van Veen", "1945-03-14" ]
+         * </pre>
+         * <p>
+         * While:
+         * <pre>
+         *   convert.toList(table, Artist.class);
+         * </pre>
+         * <p>
+         * can become:
+         * <p>
+         * <pre>
+         * [
+         *   Artist[ name: Eva de Roovere,  birthDate: 1978-06-14 ],
+         *   Artist[ name: Herman van Veen, birthDate: 1945-03-14 ]
+         * ]
+         * </pre>
+         * <p>
+         * Likewise:
+         * <p>
+         * <pre>
+         *  | firstName | lastName   | birthDate  |
+         *  | Eva       | de Roovere | 1978-06-14 |
+         *  | Herman    | van Veen   | 1945-03-14 |
+         *
+         * convert.toList(table, Artists.class);
+         * </pre>
+         * can become:
+         * <pre>
+         *  [
+         *   Artist[ firstName: Eva, lastName: de Roovere,  birthDate: 1978-06-14 ],
+         *   Artist[ firstName: Herman, lastName: van Veen, birthDate: 1945-03-14 ]
+         *  ]
+         * </pre>
+         *
+         * @param dataTable the table to convert
+         * @param itemType  the  list item type to convert to
+         * @return a list of objects of <code>itemType</code>
+         */
+        <T> List<T> toList(DataTable dataTable, Type itemType);
+
+        /**
+         * Converts a {@link DataTable} to a list of lists.
+         * <p>
+         * Each row maps to a list, each table cell a list entry.
+         * <p>
+         * For example:
+         * <p>
+         * <pre>
+         * | Eva de Roovere  | 1978-06-14 |
+         * | Herman van Veen | 1945-03-14 |
+         *
+         * convert.toLists(table, String.class);
+         * </pre>
+         * can become
+         * <pre>
+         *  [
+         *    [ "Eva de Roovere",  "1978-06-14" ],
+         *    [ "Herman van Veen", "1945-03-14" ]
+         *  ]
+         * </pre>
+         * <p>
+         *
+         * @param dataTable the table to convert
+         * @param itemType  the  list item type to convert to
+         * @return a list of lists of objects of <code>itemType</code>
+         */
+        <T> List<List<T>> toLists(DataTable dataTable, Type itemType);
+
+        /**
+         * Converts a {@link DataTable} to a map.
+         * <p>
+         * The left column of the table is used to instantiate the key values. The other columns are used to instantiate
+         * the values.
+         * <p>
+         * For example:
+         * <p>
+         * <pre>
+         * | 4a1 | Eva de Roovere  | 1978-06-14 |
+         * | c92 | Herman van Veen | 1945-03-14 |
+         *
+         * convert.toMap(table, Id.class, Artists.class);
+         * </pre>
+         * can become:
+         * <pre>
+         *  {
+         *   Id[ 4a1 ]: Artist[ name: Eva de Roovere,  birthDate: 1978-06-14 ],
+         *   Id[ c92 ]: Artist[ name: Herman van Veen, birthDate: 1945-03-14 ]
+         *  }
+         * </pre>
+         * <p>
+         * The header cells may be used to map values into the types. When doing so the first header cell may be
+         * left blank.
+         * <p>
+         * For example:
+         * <p>
+         * <pre>
+         * |     | firstName | lastName   | birthDate  |
+         * | 4a1 | Eva       | de Roovere | 1978-06-14 |
+         * | c92 | Herman    | van Veen   | 1945-03-14 |
+         *
+         * convert.toMap(table, Id.class, Artists.class);
+         * </pre>
+         * can becomes:
+         * <pre>
+         *  {
+         *   Id[ 4a1 ]: Artist[ firstName: Eva, lastName: de Roovere,  birthDate: 1978-06-14 ],
+         *   Id[ c92 ]: Artist[ firstName: Herman, lastName: van Veen, birthDate: 1945-03-14 ]
+         *  }
+         * </pre>
+         *
+         * @param dataTable the table to convert
+         * @param keyType   the  key type to convert to
+         * @param valueType the  value to convert to
+         * @return a map of <code>keyType</code> <code>valueType</code>
+         */
+
+        <K, V> Map<K, V> toMap(DataTable dataTable, Type keyType, Type valueType);
+
+        /**
+         * Converts a {@link DataTable} to a list of maps.
+         * <p>
+         * Each map represents a row in the table. The map keys are the column headers.
+         * <p>
+         * For example:
+         * <p>
+         * <pre>
+         * | firstName | lastName   | birthDate  |
+         * | Eva       | de Roovere | 1978-06-14 |
+         * | Herman    | van Veen   | 1945-03-14 |
+         * </pre>
+         * can become:
+         * <pre>
+         *  [
+         *   {firstName: Eva, lastName: de Roovere,  birthDate: 1978-06-14 }
+         *   {firstName: Herman, lastName: van Veen, birthDate: 1945-03-14 }
+         *  ]
+         * </pre>
+         *
+         * @param dataTable the table to convert
+         * @param keyType   the  key type to convert to
+         * @param valueType the  value to convert to
+         * @return a list of maps of <code>keyType</code> <code>valueType</code>
+         */
+        <K, V> List<Map<K, V>> toMaps(DataTable dataTable, Type keyType, Type valueType);
+
+    }
+
 }

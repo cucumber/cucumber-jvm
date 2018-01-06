@@ -162,14 +162,14 @@ public class TableDifferTest {
 
     @Test
     public void considers_same_table_as_equal() {
-        table().diff(table());
+        diff(table(), table());
     }
 
     @Test(expected = TableDiffException.class)
     public void should_find_new_lines_at_end_when_using_diff() {
         try {
             DataTable other = otherTableWithInsertedAtEnd();
-            table().diff(other);
+            diff(table(), other);
         } catch (TableDiffException e) {
             String expected = "" +
                     "Tables were not identical:\n" +
@@ -191,14 +191,14 @@ public class TableDifferTest {
         List<List<String>> actual = new ArrayList<List<String>>();
         actual.add(asList("I just woke up"));
         actual.add(asList("I'm going to work"));
-        expected.diff(DataTable.create(actual));
+        diff(expected, DataTable.create(actual));
     }
 
     @Test(expected = TableDiffException.class)
     public void should_diff_when_consecutive_deleted_lines() {
         try {
             DataTable other = otherTableWithTwoConsecutiveRowsDeleted();
-            table().diff(other);
+            diff(table(), other);
         } catch (TableDiffException e) {
             String expected = "" +
                     "Tables were not identical:\n" +
@@ -215,7 +215,7 @@ public class TableDifferTest {
     public void should_diff_with_empty_list() {
         try {
             List<List<String>> other = new ArrayList<List<String>>();
-            table().diff(DataTable.create(other));
+            diff(table(), DataTable.create(other));
         } catch (TableDiffException e) {
             String expected = "" +
                     "Tables were not identical:\n" +
@@ -232,7 +232,7 @@ public class TableDifferTest {
     public void should_diff_with_empty_table() {
         try {
             DataTable emptyTable = DataTable.emptyDataTable();
-            table().diff(emptyTable);
+            diff(table(), emptyTable);
         } catch (TableDiffException e) {
             String expected = "" +
                 "Tables were not identical:\n" +
@@ -256,7 +256,7 @@ public class TableDifferTest {
     public void should_diff_when_consecutive_changed_lines() {
         try {
             DataTable other = otherTableWithTwoConsecutiveRowsChanged();
-            table().diff(other);
+            diff(table(), other);
         } catch (TableDiffException e) {
             String expected = "" +
                     "Tables were not identical:\n" +
@@ -275,7 +275,7 @@ public class TableDifferTest {
     public void should_diff_when_consecutive_inserted_lines() {
         try {
             DataTable other = otherTableWithTwoConsecutiveRowsInserted();
-            table().diff(other);
+            diff(table(), other);
         } catch (TableDiffException e) {
             String expected = "" +
                     "Tables were not identical:\n" +
@@ -292,10 +292,10 @@ public class TableDifferTest {
 
     @Test(expected = TableDiffException.class)
     public void should_return_tables() {
-        DataTable from = table();
-        DataTable to = otherTableWithTwoConsecutiveRowsInserted();
+        DataTable table = table();
+        DataTable other = otherTableWithTwoConsecutiveRowsInserted();
         try {
-            from.diff(to);
+            diff(table, other);
         } catch (TableDiffException e) {
             String expected = "" +
                     "      | Aslak | aslak@email.com      | 123 |\n" +
@@ -304,8 +304,8 @@ public class TableDifferTest {
                     "    + | Foo   | schnickens@email.net | 789 |\n" +
                     "      | Bryan | bryan@email.org      | 456 |\n" +
                     "      | Ni    | ni@email.com         | 654 |\n";
-            assertSame(from, e.getFrom());
-            assertSame(to, e.getTo());
+            assertSame(table, e.getFrom());
+            assertSame(other, e.getTo());
             assertEquals(expected, e.getDiff().toString());
             throw e;
         }
@@ -337,20 +337,20 @@ public class TableDifferTest {
 
     @Test
     public void diff_set_with_itself() {
-        table().unorderedDiff(table());
+        unorderedDiff(table(), table());
     }
 
     @Test
     public void diff_set_with_itself_in_different_order() {
         DataTable other = otherTableWithDifferentOrder();
-        table().unorderedDiff(other);
+        unorderedDiff(table(), other);
     }
 
     @Test(expected = TableDiffException.class)
     public void diff_set_with_less_lines_in_other() {
         DataTable other = otherTableWithTwoConsecutiveRowsDeleted();
         try {
-            table().unorderedDiff(other);
+            unorderedDiff(table(), other);
         } catch (TableDiffException e) {
             String expected = "" +
                     "Tables were not identical:\n" +
@@ -367,7 +367,7 @@ public class TableDifferTest {
     public void unordered_diff_with_more_lines_in_other() {
         DataTable other = otherTableWithTwoConsecutiveRowsInserted();
         try {
-            table().unorderedDiff(other);
+            unorderedDiff(table(), other);
         } catch (TableDiffException e) {
             String expected = "" +
                     "Tables were not identical:\n" +
@@ -386,7 +386,7 @@ public class TableDifferTest {
     public void unordered_diff_with_added_and_deleted_rows_in_other() {
         DataTable other = otherTableWithDeletedAndInsertedDifferentOrder();
         try {
-            table().unorderedDiff(other);
+            unorderedDiff(table(), other);
         } catch (TableDiffException e) {
             String expected = "" +
                     "Tables were not identical:\n" +
@@ -405,7 +405,7 @@ public class TableDifferTest {
     public void unordered_diff_with_added_duplicate_in_other() {
         DataTable other = otherTableWithDifferentOrderAndDuplicate();
         try {
-            table().unorderedDiff(other);
+            unorderedDiff(table(), other);
         } catch (TableDiffException e) {
             String expected = "" +
                     "Tables were not identical:\n" +
@@ -424,7 +424,7 @@ public class TableDifferTest {
     public void unordered_diff_with_added_duplicate_and_deleted_in_other() {
         DataTable other = otherTableWithDifferentOrderDuplicateAndDeleted();
         try {
-            tableWithDuplicate().unorderedDiff(other);
+            unorderedDiff(tableWithDuplicate(), other);
         } catch (TableDiffException e) {
             String expected = "" +
                     "Tables were not identical:\n" +
@@ -441,4 +441,13 @@ public class TableDifferTest {
             throw e;
         }
     }
+
+    private void unorderedDiff(DataTable table, DataTable other) {
+        new TableDiffer(table, other).calculateUnorderedDiffs();
+    }
+
+    private static void diff(DataTable table, DataTable other) {
+        new TableDiffer(table, other).calculateDiffs();
+    }
+
 }
