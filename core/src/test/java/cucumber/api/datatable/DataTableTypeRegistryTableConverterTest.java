@@ -160,9 +160,9 @@ public class DataTableTypeRegistryTableConverterTest {
     public void when_converting_to_data_table_table_type_takes_precedence_over_item_type() {
         final DataTable expected = emptyDataTable();
 
-        registry.defineDataTableType(new DataTableType("table", DataTable.class, new RawTableTransformer<DataTable>() {
+        registry.defineDataTableType(new DataTableType("table", DataTable.class, new TableTransformer<DataTable>() {
             @Override
-            public DataTable transform(List<List<String>> raw) {
+            public DataTable transform(DataTable raw) {
                 return expected;
             }
         }));
@@ -177,11 +177,11 @@ public class DataTableTypeRegistryTableConverterTest {
 
     @Test
     public void converts_table_to_list_of_generic_item_type() {
-        final RawTableTransformer<List<Barn<Animal>>> transformer = new RawTableTransformer<List<Barn<Animal>>>() {
+        final TableTransformer<List<Barn<Animal>>> transformer = new TableTransformer<List<Barn<Animal>>>() {
             @Override
-            public List<Barn<Animal>> transform(List<List<String>> raw) {
+            public List<Barn<Animal>> transform(DataTable table) {
                 List<Barn<Animal>> ret = new ArrayList<Barn<Animal>>();
-                for (Map<String, String> row : DataTable.create(raw).asMaps()) {
+                for (Map<String, String> row : table.asMaps()) {
                     ret.add(new Barn<Animal>(new Animal(row.get("name"), Integer.parseInt(row.get("life expectancy")))));
                 }
                 return ret;

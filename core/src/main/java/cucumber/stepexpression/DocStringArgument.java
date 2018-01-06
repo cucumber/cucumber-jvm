@@ -1,6 +1,5 @@
-package cucumber.runtime.datatable;
+package cucumber.stepexpression;
 
-import cucumber.api.datatable.DocStringTransformer;
 import cucumber.api.Argument;
 
 public final class DocStringArgument implements Argument {
@@ -8,7 +7,7 @@ public final class DocStringArgument implements Argument {
     private final DocStringTransformer<?> docStringType;
     private final String argument;
 
-    public DocStringArgument(DocStringTransformer<?> docStringType, String argument) {
+    DocStringArgument(DocStringTransformer<?> docStringType, String argument) {
         this.docStringType = docStringType;
         this.argument = argument;
     }

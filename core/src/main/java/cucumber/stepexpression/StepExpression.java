@@ -1,35 +1,12 @@
-package cucumber.runtime;
+package cucumber.stepexpression;
 
 import cucumber.api.Argument;
-import cucumber.api.datatable.DocStringTransformer;
-import cucumber.api.datatable.RawTableTransformer;
-import cucumber.runtime.datatable.DataTableArgument;
-import cucumber.runtime.datatable.DocStringArgument;
 import io.cucumber.cucumberexpressions.Expression;
-import io.cucumber.cucumberexpressions.Group;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public final class StepExpression {
-
-    public static final class ExpressionArgument implements Argument {
-
-        private final io.cucumber.cucumberexpressions.Argument<?> argument;
-
-        private ExpressionArgument(io.cucumber.cucumberexpressions.Argument<?> argument) {
-            this.argument = argument;
-        }
-
-        @Override
-        public Object getValue() {
-            return argument.getValue();
-        }
-
-        public Group getGroup() {
-            return argument.getGroup();
-        }
-    }
 
     private final Expression expression;
     private final DocStringTransformer<?> docStringType;

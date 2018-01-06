@@ -6,13 +6,13 @@ import static net.jodah.typetools.TypeResolver.resolveRawArguments;
 import cucumber.api.Argument;
 import cucumber.api.TypeRegistry;
 import cucumber.api.java8.StepdefBody;
-import cucumber.runtime.ArgumentMatcher;
+import cucumber.stepexpression.ArgumentMatcher;
 import cucumber.runtime.CucumberException;
-import cucumber.runtime.ExpressionArgumentMatcher;
+import cucumber.stepexpression.ExpressionArgumentMatcher;
 import cucumber.runtime.ParameterInfo;
 import cucumber.runtime.StepDefinition;
-import cucumber.runtime.StepExpression;
-import cucumber.runtime.StepExpressionFactory;
+import cucumber.stepexpression.StepExpression;
+import cucumber.stepexpression.StepExpressionFactory;
 import cucumber.runtime.Utils;
 import gherkin.pickles.PickleStep;
 
@@ -40,6 +40,7 @@ public class Java8StepDefinition implements StepDefinition {
         this.location = new Exception().getStackTrace()[4];
         this.method = getAcceptMethod(body.getClass());
         try {
+            //TODO: Add "tableName" to the lambda steps as an alternative to type matching
             this.parameterInfos = fromTypes(verifyNotListOrMap(resolveRawArguments(bodyClass, body.getClass())));
             if(parameterInfos.isEmpty()){
                 this.expression = new StepExpressionFactory(parameterTypeRegistry).createExpression(expression);
@@ -73,6 +74,7 @@ public class Java8StepDefinition implements StepDefinition {
             if (argumentType instanceof Class) {
                 Class<?> argumentClass = (Class<?>) argumentType;
                 if (List.class.isAssignableFrom(argumentClass) || Map.class.isAssignableFrom(argumentClass)) {
+                    //TODO: Mention making the table name explicit
                     throw withLocation(new CucumberException("Can't use " + argumentClass.getName() + " in lambda step definition. Declare a DataTable argument instead and convert manually with asList/asLists/asMap/asMaps"));
                 }
             }

@@ -1,5 +1,7 @@
-package cucumber.api.datatable;
+package cucumber.stepexpression;
 
+import cucumber.api.datatable.DataTable;
+import cucumber.api.datatable.TableConverter;
 import gherkin.AstBuilder;
 import gherkin.Parser;
 import gherkin.ast.GherkinDocument;
@@ -9,7 +11,7 @@ import gherkin.pickles.PickleTable;
 
 import java.util.List;
 
-import static cucumber.runtime.PickleTableConverter.toTable;
+import static cucumber.stepexpression.PickleTableConverter.toTable;
 
 public class TableParser {
 

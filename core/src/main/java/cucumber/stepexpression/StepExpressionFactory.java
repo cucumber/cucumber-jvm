@@ -1,4 +1,4 @@
-package cucumber.runtime;
+package cucumber.stepexpression;
 
 import cucumber.api.TypeRegistry;
 import cucumber.api.datatable.DataTableTypeRegistryTableConverter;
@@ -6,9 +6,6 @@ import io.cucumber.cucumberexpressions.CucumberExpressionException;
 import io.cucumber.cucumberexpressions.Expression;
 import cucumber.api.datatable.DataTableType;
 import io.cucumber.cucumberexpressions.ParameterType;
-import cucumber.api.datatable.DocStringTransformer;
-import cucumber.api.datatable.RawTableTransformer;
-import cucumber.runtime.datatable.UndefinedTableTypeException;
 import cucumber.api.datatable.DataTable;
 
 import java.lang.reflect.Type;

@@ -3,13 +3,13 @@ package cucumber.runtime.java;
 import cucumber.api.TypeRegistry;
 import cucumber.api.java.ObjectFactory;
 import cucumber.api.Argument;
-import cucumber.runtime.ArgumentMatcher;
-import cucumber.runtime.ExpressionArgumentMatcher;
+import cucumber.stepexpression.ArgumentMatcher;
+import cucumber.stepexpression.ExpressionArgumentMatcher;
 import cucumber.runtime.MethodFormat;
 import cucumber.runtime.ParameterInfo;
 import cucumber.runtime.StepDefinition;
-import cucumber.runtime.StepExpression;
-import cucumber.runtime.StepExpressionFactory;
+import cucumber.stepexpression.StepExpression;
+import cucumber.stepexpression.StepExpressionFactory;
 import cucumber.runtime.Utils;
 import gherkin.pickles.PickleStep;
 

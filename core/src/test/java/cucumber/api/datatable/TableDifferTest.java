@@ -1,5 +1,6 @@
 package cucumber.api.datatable;
 
+import cucumber.stepexpression.TableParser;
 import org.junit.Ignore;
 import org.junit.Test;
 

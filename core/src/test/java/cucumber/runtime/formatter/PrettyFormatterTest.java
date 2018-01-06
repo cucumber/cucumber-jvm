@@ -3,10 +3,10 @@ package cucumber.runtime.formatter;
 import cucumber.api.Result;
 import cucumber.api.TypeRegistry;
 import cucumber.api.formatter.AnsiEscapes;
-import cucumber.runtime.StepExpression;
-import cucumber.runtime.StepExpressionFactory;
 import cucumber.runtime.TestHelper;
 import cucumber.runtime.model.CucumberFeature;
+import cucumber.stepexpression.StepExpression;
+import cucumber.stepexpression.StepExpressionFactory;
 import org.junit.Test;
 import org.mockito.stubbing.Answer;
 

@@ -18,11 +18,7 @@ public final class DataTableType implements Comparable<DataTableType> {
     private final RawTableTransformer<?> transformer;
     private final boolean preferForTypeMatch;
 
-    public DataTableType(String name, Type type, RawTableTransformer<?> transformer) {
-        this(name, type, transformer, false);
-    }
-
-    public DataTableType(String name, Type type, RawTableTransformer<?> transformer, boolean preferForTypeMatch) {
+    private DataTableType(String name, Type type, RawTableTransformer<?> transformer, boolean preferForTypeMatch) {
         if (name == null) throw new CucumberDataTableException("name cannot be null");
         if (type == null) throw new CucumberDataTableException("type cannot be null");
         if (transformer == null) throw new CucumberDataTableException("transformer cannot be null");
@@ -32,12 +28,12 @@ public final class DataTableType implements Comparable<DataTableType> {
         this.preferForTypeMatch = preferForTypeMatch;
     }
 
-    public <T> DataTableType(String name, Class<T> type, RawTableTransformer<T> transformer) {
-        this(name, (Type) type, transformer, false);
+    public <T> DataTableType(String name, Type type, final TableTransformer<T> transformer) {
+        this(name, type, transformer, false);
     }
 
-    public <T> DataTableType(String name, Class<T> type, RawTableTransformer<T> transformer, boolean preferForTypeMatch) {
-        this(name, (Type) type, transformer, preferForTypeMatch);
+    public <T> DataTableType(String name, Type type, final TableTransformer<T> transformer, boolean preferForTypeMatch) {
+        this(name, type, new TableTransformerAdaptor<T>(transformer), preferForTypeMatch);
     }
 
     public <T> DataTableType(String name, Class<T> type, final TableTransformer<T> transformer) {
@@ -95,7 +91,7 @@ public final class DataTableType implements Comparable<DataTableType> {
     boolean preferForTypeMatch() {
         return preferForTypeMatch;
     }
-    
+
     private static class TableCellTransformerAdaptor<T> implements RawTableTransformer<List<List<T>>> {
         private final TableCellTransformer<T> transformer;
 
