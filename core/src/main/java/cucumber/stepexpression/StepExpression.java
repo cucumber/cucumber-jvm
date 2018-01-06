@@ -1,6 +1,5 @@
 package cucumber.stepexpression;
 
-import cucumber.api.Argument;
 import io.cucumber.cucumberexpressions.Expression;
 
 import java.util.ArrayList;

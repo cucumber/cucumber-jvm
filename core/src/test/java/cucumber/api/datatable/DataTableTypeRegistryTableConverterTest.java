@@ -36,6 +36,8 @@ public class DataTableTypeRegistryTableConverterTest {
     }.getType();
     private static final Type MAP_OF_INT_STRING_TYPE = new TypeReference<Map<Integer, String>>() {
     }.getType();
+    private static final Type MAP_OF_INT_LIST_STRING_TYPE = new TypeReference<Map<Integer, List<String>>>() {
+    }.getType();
     private static final Type LIST_OF_MAP_OF_INT_INT_TYPE = new TypeReference<List<Map<Integer, Integer>>>() {
     }.getType();
     private static final Type LIST_OF_LIST_OF_ANIMAL_TYPE = new TypeReference<List<List<Animal>>>() {
@@ -335,6 +337,24 @@ public class DataTableTypeRegistryTableConverterTest {
 
         assertEquals(expected, converter.toMap(table, Integer.class, String.class));
         assertEquals(expected, converter.convert(table, MAP_OF_INT_STRING_TYPE, false));
+    }
+
+    @Test
+    public void converts_table_of_three_columns_without_header_to_map_with_list_value() {
+        DataTable table = DataTable.create(
+            asList(
+                asList("3", "c", "x"),
+                asList("5", "e", "y"),
+                asList("6", "f", "z")));
+
+
+        Map<Integer, List<String>> expected = new HashMap<Integer, List<String>>() {{
+            put(3, asList("c", "x"));
+            put(5, asList("e", "y"));
+            put(6, asList("f", "z"));
+        }};
+
+        assertEquals(expected, converter.convert(table, MAP_OF_INT_LIST_STRING_TYPE, false));
     }
 
     @Test

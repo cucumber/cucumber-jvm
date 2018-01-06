@@ -4,6 +4,6 @@ import cucumber.api.junit.Cucumber;
 import org.junit.runner.RunWith;
 
 
-//@RunWith(Cucumber.class) //TODO: Remove @Format from public API
+@RunWith(Cucumber.class)
 public class RunCukesTest {
 }

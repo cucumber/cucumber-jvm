@@ -1,6 +1,6 @@
 package cucumber.runtime;
 
-import cucumber.api.Argument;
+import cucumber.stepexpression.Argument;
 import cucumber.api.Scenario;
 
 import java.util.List;

@@ -1,4 +1,4 @@
-package cucumber.api;
+package cucumber.stepexpression;
 
 public interface Argument {
 

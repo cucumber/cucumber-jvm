@@ -1,6 +1,5 @@
 package cucumber.stepexpression;
 
-import cucumber.api.Argument;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleString;
 import gherkin.pickles.PickleTable;

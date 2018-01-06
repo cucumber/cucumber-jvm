@@ -3,7 +3,7 @@ package cucumber.runtime.java8;
 import static cucumber.runtime.ParameterInfo.fromTypes;
 import static net.jodah.typetools.TypeResolver.resolveRawArguments;
 
-import cucumber.api.Argument;
+import cucumber.stepexpression.Argument;
 import cucumber.api.TypeRegistry;
 import cucumber.api.java8.StepdefBody;
 import cucumber.stepexpression.ArgumentMatcher;
@@ -33,7 +33,7 @@ public class Java8StepDefinition implements StepDefinition {
     private final List<ParameterInfo> parameterInfos;
     private final Method method;
 
-    public <T extends StepdefBody> Java8StepDefinition(String expression, long timeoutMillis, Class<T> bodyClass, T body, TypeRegistry parameterTypeRegistry)  {
+    public <T extends StepdefBody> Java8StepDefinition(String expression, long timeoutMillis, Class<T> bodyClass, T body, TypeRegistry typeRegistry)  {
         this.timeoutMillis = timeoutMillis;
         this.body = body;
 
@@ -43,10 +43,10 @@ public class Java8StepDefinition implements StepDefinition {
             //TODO: Add "tableName" to the lambda steps as an alternative to type matching
             this.parameterInfos = fromTypes(verifyNotListOrMap(resolveRawArguments(bodyClass, body.getClass())));
             if(parameterInfos.isEmpty()){
-                this.expression = new StepExpressionFactory(parameterTypeRegistry).createExpression(expression);
+                this.expression = new StepExpressionFactory(typeRegistry).createExpression(expression);
             } else {
                 ParameterInfo parameterInfo = parameterInfos.get(parameterInfos.size() - 1);
-                this.expression = new StepExpressionFactory(parameterTypeRegistry).createExpression(expression, parameterInfo.getType());
+                this.expression = new StepExpressionFactory(typeRegistry).createExpression(expression, parameterInfo.getType());
             }
         } catch (CucumberException e){
             throw e;

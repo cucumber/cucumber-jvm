@@ -2,5 +2,5 @@ package cucumber.api.datatable;
 
 
 public interface TableTransformer<T> {
-    T transform(DataTable table);
+    T transform(DataTable table) throws Throwable;
 }

@@ -1,6 +1,5 @@
 package cucumber.stepexpression;
 
-import cucumber.api.Argument;
 import cucumber.api.TypeRegistry;
 import cucumber.api.datatable.DataTable;
 import cucumber.api.datatable.DataTableType;

@@ -1,6 +1,6 @@
 package cucumber.runtime.formatter;
 
-import cucumber.api.Argument;
+import cucumber.stepexpression.Argument;
 import cucumber.api.Result;
 import cucumber.api.TestCase;
 import cucumber.api.TestStep;

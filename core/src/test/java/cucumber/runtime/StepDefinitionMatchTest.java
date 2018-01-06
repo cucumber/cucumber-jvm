@@ -1,12 +1,13 @@
 package cucumber.runtime;
 
-import cucumber.api.Argument;
+import cucumber.stepexpression.Argument;
 import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleString;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -54,7 +55,7 @@ public class StepDefinitionMatchTest {
     public void converts_doc_string_with_explicit_converter() throws Throwable {
         StepDefinition stepDefinition = mock(StepDefinition.class);
         when(stepDefinition.getParameterCount()).thenReturn(1);
-        when(stepDefinition.getParameterType(0, String.class)).thenReturn(new ParameterInfo(Thing.class, null
+        when(stepDefinition.getParameterType(0, String.class)).thenReturn(new ParameterInfo(Thing.class
         ));
 
         PickleStep stepWithDocString = mock(PickleStep.class);
@@ -91,14 +92,14 @@ public class StepDefinitionMatchTest {
     public void can_have_doc_string_as_only_argument() throws Throwable {
         StepDefinition stepDefinition = mock(StepDefinition.class);
         when(stepDefinition.getParameterCount()).thenReturn(1);
-        when(stepDefinition.getParameterType(0, String.class)).thenReturn(new ParameterInfo(String.class, null
+        when(stepDefinition.getParameterType(0, String.class)).thenReturn(new ParameterInfo(String.class
         ));
 
         PickleStep stepWithDocString = mock(PickleStep.class);
         PickleString docString = new PickleString(mock(PickleLocation.class), "HELLO");
         when(stepWithDocString.getArgument()).thenReturn(asList((gherkin.pickles.Argument)docString));
 
-        StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(new ArrayList<Argument>(), stepDefinition, "some.feature", stepWithDocString);
+        StepDefinitionMatch stepDefinitionMatch = new StepDefinitionMatch(Collections.<Argument>emptyList(), stepDefinition, "some.feature", stepWithDocString);
         stepDefinitionMatch.runStep(ENGLISH, null);
         verify(stepDefinition).execute(ENGLISH, new Object[]{"HELLO"});
     }
@@ -125,7 +126,7 @@ public class StepDefinitionMatchTest {
     public void gives_nice_error_message_when_conversion_fails() throws Throwable {
         StepDefinition stepDefinition = mock(StepDefinition.class);
         when(stepDefinition.getParameterCount()).thenReturn(1);
-        when(stepDefinition.getParameterType(0, String.class)).thenReturn(new ParameterInfo(Thang.class, null
+        when(stepDefinition.getParameterType(0, String.class)).thenReturn(new ParameterInfo(Thang.class
         ));
 
         PickleStep stepWithDocString = mock(PickleStep.class);

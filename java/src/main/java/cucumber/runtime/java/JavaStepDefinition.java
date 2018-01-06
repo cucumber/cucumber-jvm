@@ -2,7 +2,7 @@ package cucumber.runtime.java;
 
 import cucumber.api.TypeRegistry;
 import cucumber.api.java.ObjectFactory;
-import cucumber.api.Argument;
+import cucumber.stepexpression.Argument;
 import cucumber.stepexpression.ArgumentMatcher;
 import cucumber.stepexpression.ExpressionArgumentMatcher;
 import cucumber.runtime.MethodFormat;
@@ -25,7 +25,7 @@ class JavaStepDefinition implements StepDefinition {
 
     private final List<ParameterInfo> parameterInfos;
 
-    public JavaStepDefinition(Method method, String expression, long timeoutMillis, ObjectFactory objectFactory, TypeRegistry parameterTypeRegistry
+    public JavaStepDefinition(Method method, String expression, long timeoutMillis, ObjectFactory objectFactory, TypeRegistry typeRegistry
             ) {
         this.method = method;
         this.timeoutMillis = timeoutMillis;
@@ -33,10 +33,10 @@ class JavaStepDefinition implements StepDefinition {
         this.parameterInfos = ParameterInfo.fromMethod(method);
 
         if(parameterInfos.isEmpty()){
-            this.expression = new StepExpressionFactory(parameterTypeRegistry).createExpression(expression);
+            this.expression = new StepExpressionFactory(typeRegistry).createExpression(expression);
         } else {
             ParameterInfo parameterInfo = parameterInfos.get(parameterInfos.size() - 1);
-            this.expression = new StepExpressionFactory(parameterTypeRegistry).createExpression(expression, parameterInfo.getType(), parameterInfo.isTransposed());
+            this.expression = new StepExpressionFactory(typeRegistry).createExpression(expression, parameterInfo.getType(), parameterInfo.isTransposed());
         }
     }
 

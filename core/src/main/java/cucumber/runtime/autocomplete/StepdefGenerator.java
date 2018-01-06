@@ -1,6 +1,6 @@
 package cucumber.runtime.autocomplete;
 
-import cucumber.api.Argument;
+import cucumber.stepexpression.Argument;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.model.CucumberFeature;
 import gherkin.pickles.Compiler;

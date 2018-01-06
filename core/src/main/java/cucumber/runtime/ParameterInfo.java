@@ -1,6 +1,5 @@
 package cucumber.runtime;
 
-import cucumber.api.Format;
 import cucumber.api.Transpose;
 
 import java.lang.annotation.Annotation;
@@ -14,7 +13,6 @@ import java.util.List;
  */
 public class ParameterInfo {
     private final Type type;
-    private final String format;
     private final boolean transposed;
 
     public static List<ParameterInfo> fromMethod(Method method) {
@@ -22,48 +20,31 @@ public class ParameterInfo {
         Type[] genericParameterTypes = method.getGenericParameterTypes();
         Annotation[][] annotations = method.getParameterAnnotations();
         for (int i = 0; i < genericParameterTypes.length; i++) {
-            String format = null;
             boolean transposed = false;
             for (Annotation annotation : annotations[i]) {
-                if (annotation instanceof Format) {
-                    format = ((Format) annotation).value();
-                } else if (isAnnotatedWith(annotation, Format.class)) {
-                    format = getAnnotationForAnnotation(annotation, Format.class).value();
-                }
                 if (annotation instanceof Transpose) {
                     transposed = ((Transpose) annotation).value();
                 }
             }
-            result.add(new ParameterInfo(genericParameterTypes[i], format, transposed));
+            result.add(new ParameterInfo(genericParameterTypes[i], transposed));
         }
         return result;
     }
 
     public static List<ParameterInfo> fromTypes(Type[] genericParameterTypes) {
         List<ParameterInfo> result = new ArrayList<ParameterInfo>();
-        for (int i = 0; i < genericParameterTypes.length; i++) {
-            String format = null;
-            boolean transposed = false;
-            result.add(new ParameterInfo(genericParameterTypes[i], format, transposed));
+        for (Type genericParameterType : genericParameterTypes) {
+            result.add(new ParameterInfo(genericParameterType, false));
         }
         return result;
     }
 
-    private static boolean isAnnotatedWith(Annotation source, Class<? extends Annotation> requiredAnnotation) {
-        return getAnnotationForAnnotation(source, requiredAnnotation) != null;
+    ParameterInfo(Type type) {
+        this(type, false);
     }
 
-    private static <T extends Annotation> T getAnnotationForAnnotation(Annotation source, Class<T> requiredAnnotation) {
-        return source.annotationType().getAnnotation(requiredAnnotation);
-    }
-
-    public ParameterInfo(Type type, String format) {
-        this(type, format, false);
-    }
-
-    public ParameterInfo(Type type, String format, boolean transposed) {
+    private ParameterInfo(Type type, boolean transposed) {
         this.type = type;
-        this.format = format;
         this.transposed = transposed;
     }
 
@@ -80,7 +61,4 @@ public class ParameterInfo {
         return type.toString();
     }
 
-    public String getFormat() {
-        return format;
-    }
 }

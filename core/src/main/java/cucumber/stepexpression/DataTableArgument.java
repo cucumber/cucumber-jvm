@@ -1,7 +1,5 @@
 package cucumber.stepexpression;
 
-import cucumber.api.Argument;
-
 import java.util.List;
 
 public class DataTableArgument implements Argument {

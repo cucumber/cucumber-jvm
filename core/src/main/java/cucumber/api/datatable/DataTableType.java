@@ -69,7 +69,13 @@ public final class DataTableType implements Comparable<DataTableType> {
     }
 
     public Object transform(List<List<String>> raw) {
-        return transformer.transform(raw);
+        try {
+            return transformer.transform(raw);
+        } catch (Throwable throwable) {
+            ;
+            throw new CucumberDataTableException(
+                String.format("'%s' could not transform%n%s", name, DataTable.create(raw)), throwable);
+        }
     }
 
     @Override
@@ -100,7 +106,7 @@ public final class DataTableType implements Comparable<DataTableType> {
         }
 
         @Override
-        public List<List<T>> transform(List<List<String>> raw) {
+        public List<List<T>> transform(List<List<String>> raw) throws Throwable {
             List<List<T>> list = new ArrayList<List<T>>(raw.size());
             for (List<String> tableRow : raw) {
                 List<T> row = new ArrayList<T>(tableRow.size());
@@ -121,7 +127,7 @@ public final class DataTableType implements Comparable<DataTableType> {
         }
 
         @Override
-        public List<T> transform(List<List<String>> raw) {
+        public List<T> transform(List<List<String>> raw) throws Throwable {
             List<T> list = new ArrayList<T>();
             for (List<String> tableRow : raw) {
                 list.add(transformer.transform(tableRow));
@@ -158,7 +164,7 @@ public final class DataTableType implements Comparable<DataTableType> {
         }
 
         @Override
-        public T transform(List<List<String>> raw) {
+        public T transform(List<List<String>> raw) throws Throwable {
             return transformer.transform(new DataTable(raw, CONVERSION_REQUIRED));
         }
     }

@@ -1,7 +1,5 @@
 package cucumber.stepexpression;
 
-import cucumber.api.Argument;
-
 public final class DocStringArgument implements Argument {
 
     private final DocStringTransformer<?> docStringType;

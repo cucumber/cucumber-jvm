@@ -1,6 +1,6 @@
 package cucumber.runtime;
 
-import cucumber.api.Argument;
+import cucumber.stepexpression.Argument;
 import gherkin.pickles.PickleStep;
 
 import java.lang.reflect.Method;
@@ -13,7 +13,7 @@ public class StubStepDefinition implements StepDefinition {
     private final String pattern;
     private List<ParameterInfo> parameterInfos;
 
-    public StubStepDefinition(Object target, Method method, String pattern) {
+    StubStepDefinition(Object target, Method method, String pattern) {
         this.target = target;
         this.method = method;
         this.pattern = pattern;

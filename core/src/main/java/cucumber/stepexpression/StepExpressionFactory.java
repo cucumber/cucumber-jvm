@@ -2,11 +2,12 @@ package cucumber.stepexpression;
 
 import cucumber.api.TypeRegistry;
 import cucumber.api.datatable.DataTableTypeRegistryTableConverter;
+import cucumber.api.datatable.DataTableType;
+import cucumber.api.datatable.DataTable;
+
 import io.cucumber.cucumberexpressions.CucumberExpressionException;
 import io.cucumber.cucumberexpressions.Expression;
-import cucumber.api.datatable.DataTableType;
 import io.cucumber.cucumberexpressions.ParameterType;
-import cucumber.api.datatable.DataTable;
 
 import java.lang.reflect.Type;
 import java.util.Collections;

@@ -53,7 +53,7 @@ public final class DataTable {
             if (columns != row.size()) {
                 throw new CucumberException(String.format("Table is unbalanced: expected %s column(s) but found %s.", columns, row.size()));
             }
-            if(row.isEmpty()){
+            if (row.isEmpty()) {
                 continue;
             }
             List<String> rowCopy = new ArrayList<String>(row.size());
@@ -159,29 +159,32 @@ public final class DataTable {
 
 
     public List<List<String>> cells() {
-       return raw;
+        return raw;
     }
 
 
-    public String cell(int x, int y) {
-        return raw.get(y).get(x);
+    public String cell(int column, int row) {
+        return raw.get(row).get(column);
     }
 
-    public List<String> topCells() {
+    List<String> topCells() {
         return raw.isEmpty() ? Collections.<String>emptyList() : unmodifiableList(raw.get(0));
     }
 
     public List<List<String>> rows(int fromRow) {
-        return rows(fromRow, raw.size());
+        return rows(fromRow, height());
     }
 
     public List<List<String>> rows(int fromRow, int toRow) {
         return raw.subList(fromRow, toRow);
     }
 
+    public List<List<String>> columns(final int fromColumn) {
+        return new ColumnView(fromColumn, width());
+    }
 
-    public List<List<String>> columns(final int fromRow, final int toRow) {
-        return new ColumnView(fromRow, toRow);
+    public List<List<String>> columns(final int fromColumn, final int toColumn) {
+        return new ColumnView(fromColumn, toColumn);
     }
 
     /**
@@ -272,35 +275,6 @@ public final class DataTable {
         return raw.hashCode();
     }
 
-
-    private static final class NoConverterDefined implements TableConverter {
-
-        @Override
-        public <T> T convert(DataTable dataTable, Type type, boolean transposed) {
-            throw new CucumberDataTableException(String.format("Can't convert DataTable to %s. DataTable was created without a converter", type));
-        }
-
-        @Override
-        public <T> List<T> toList(DataTable dataTable, Type itemType) {
-            throw new CucumberDataTableException(String.format("Can't convert DataTable to List<%s>. DataTable was created without a converter", itemType));
-        }
-
-        @Override
-        public <T> List<List<T>> toLists(DataTable dataTable, Type itemType) {
-            throw new CucumberDataTableException(String.format("Can't convert DataTable to List<List<%s>>. DataTable was created without a converter", itemType));
-        }
-
-        @Override
-        public <K, V> Map<K, V> toMap(DataTable dataTable, Type keyType, Type valueType) {
-            throw new CucumberDataTableException(String.format("Can't convert DataTable to Map<%s,%s>. DataTable was created without a converter", keyType, valueType));
-        }
-
-        @Override
-        public <K, V> List<Map<K, V>> toMaps(DataTable dataTable, Type keyType, Type valueType) {
-            throw new CucumberDataTableException(String.format("Can't convert DataTable to List<Map<%s,%s>>. DataTable was created without a converter", keyType, valueType));
-        }
-
-    }
 
     private final class ColumnView extends AbstractList<List<String>> {
         private final int fromColumn;

@@ -314,7 +314,7 @@ final class JSONFormatter implements Formatter {
         Map<String, Object> matchMap = new HashMap<String, Object>();
         if (!testStep.getDefinitionArgument().isEmpty()) {
             List<Map<String, Object>> argumentList = new ArrayList<Map<String, Object>>();
-            for (cucumber.api.Argument argument : testStep.getDefinitionArgument()) {
+            for (cucumber.stepexpression.Argument argument : testStep.getDefinitionArgument()) {
                 Map<String, Object> argumentMap = new HashMap<String, Object>();
 
                 if(argument instanceof ExpressionArgument){

@@ -1,6 +1,6 @@
 package cucumber.runtime.autocomplete;
 
-import cucumber.api.Argument;
+import cucumber.stepexpression.Argument;
 import cucumber.api.TypeRegistry;
 import cucumber.runtime.FeatureBuilder;
 import cucumber.runtime.ParameterInfo;

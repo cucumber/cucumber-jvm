@@ -1,6 +1,5 @@
 package cucumber.stepexpression;
 
-import cucumber.api.Argument;
 import io.cucumber.cucumberexpressions.Group;
 
 public final class ExpressionArgument implements Argument {

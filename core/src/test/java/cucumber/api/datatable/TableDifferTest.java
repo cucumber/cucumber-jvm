@@ -1,7 +1,6 @@
 package cucumber.api.datatable;
 
 import cucumber.stepexpression.TableParser;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -400,24 +399,6 @@ public class TableDifferTest {
             assertEquals(expected, e.getMessage());
             throw e;
         }
-    }
-
-    @Test
-    @Ignore //TODO: How?
-    public void unordered_diff_with_list_of_pojos_and_camelcase_header_mapping() {
-        String source = "" +
-                "| id | Given Name |\n" +
-                "| 1  | me   |\n" +
-                "| 2  | you  |\n" +
-                "| 3  | jdoe |\n";
-
-        DataTable expected = TableParser.parse(source);
-
-        List<TestPojo> actual = new ArrayList<TestPojo>();
-        actual.add(new TestPojo(2, "you", 222));
-        actual.add(new TestPojo(3, "jdoe", 34545));
-        actual.add(new TestPojo(1, "me", 123));
-//        expected.unorderedDiff(createTableConverter().toTable(actual));
     }
 
     @Test(expected = TableDiffException.class)

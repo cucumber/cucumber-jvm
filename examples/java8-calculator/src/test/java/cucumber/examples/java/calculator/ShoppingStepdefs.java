@@ -1,10 +1,7 @@
 package cucumber.examples.java.calculator;
 
-import cucumber.api.Transformer;
 import cucumber.api.datatable.DataTable;
 import cucumber.api.java8.En;
-import cucumber.deps.com.thoughtworks.xstream.annotations.XStreamConverter;
-
 
 import java.util.List;
 
