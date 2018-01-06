@@ -7,14 +7,14 @@ class TablePrinter {
     private int[][] cellLengths;
     private int[] maxLengths;
 
-    public void printTable(List<List<String>> table, StringBuilder appendable) {
+    void printTable(List<List<String>> table, StringBuilder appendable) {
         try {
             printTable(table, (Appendable) appendable);
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
     }
-    public void printTable(List<List<String>> table, Appendable appendable) throws IOException {
+    void printTable(List<List<String>> table, Appendable appendable) throws IOException {
         calculateColumnAndMaxLengths(table);
         for (int i = 0; i < table.size(); ++i) {
             printRow(table.get(i), i, appendable);

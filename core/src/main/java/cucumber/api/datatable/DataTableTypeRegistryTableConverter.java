@@ -1,10 +1,7 @@
-package cucumber.runtime;
+package cucumber.api.datatable;
 
-import cucumber.api.TypeRegistry;
-import cucumber.api.datatable.TableConverter;
+import cucumber.runtime.CucumberException;
 import io.cucumber.cucumberexpressions.CucumberExpressionException;
-import cucumber.api.datatable.DataTableType;
-import cucumber.api.datatable.DataTable;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -13,7 +10,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static cucumber.api.datatable.DataTableType.aListOf;
+import static cucumber.api.datatable.DataTableTypeRegistry.aListOf;
 import static cucumber.runtime.Utils.listItemType;
 import static cucumber.runtime.Utils.mapKeyType;
 import static cucumber.runtime.Utils.mapValueType;
@@ -23,11 +20,11 @@ import static java.util.Collections.nCopies;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
 
-public final class TypeRegistryTableConverter implements TableConverter {
+public final class DataTableTypeRegistryTableConverter implements TableConverter {
 
-    private final TypeRegistry registry;
+    private final DataTableTypeRegistry registry;
 
-    TypeRegistryTableConverter(TypeRegistry registry) {
+    public DataTableTypeRegistryTableConverter(DataTableTypeRegistry registry) {
         this.registry = registry;
     }
 

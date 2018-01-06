@@ -29,7 +29,7 @@ class TableDiffer {
         }
     }
 
-    public void calculateDiffs() throws TableDiffException {
+    void calculateDiffs() throws TableDiffException {
         Patch patch = DiffUtils.diff(getDiffableRows(from), getDiffableRows(to));
         List<Delta> deltas = patch.getDeltas();
         if (!deltas.isEmpty()) {
@@ -47,7 +47,7 @@ class TableDiffer {
         return result;
     }
 
-    public void calculateUnorderedDiffs() throws TableDiffException {
+    void calculateUnorderedDiffs() throws TableDiffException {
         boolean isDifferent = false;
         List<SimpleEntry<List<String>, DiffType>> diffTableRows = new ArrayList<SimpleEntry<List<String>, DiffType>>();
 

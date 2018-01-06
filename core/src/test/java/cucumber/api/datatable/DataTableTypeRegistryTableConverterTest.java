@@ -1,13 +1,6 @@
-package cucumber.runtime;
+package cucumber.api.datatable;
 
 import cucumber.api.TypeRegistry;
-import cucumber.api.datatable.DataTable;
-import cucumber.api.datatable.DataTableType;
-import cucumber.api.datatable.RawTableTransformer;
-import cucumber.api.datatable.TableCellTransformer;
-import cucumber.api.datatable.TableConverter;
-import cucumber.api.datatable.TableEntryTransformer;
-import cucumber.api.datatable.TableRowTransformer;
 import io.cucumber.cucumberexpressions.TypeReference;
 import org.junit.Rule;
 import org.junit.Test;
@@ -29,7 +22,7 @@ import static java.util.Locale.ENGLISH;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 
-public class TypeRegistryTableConverterTest {
+public class DataTableTypeRegistryTableConverterTest {
 
     private static final Type LIST_OF_ANIMAL_TYPE = new TypeReference<List<Animal>>() {
     }.getType();
@@ -62,7 +55,7 @@ public class TypeRegistryTableConverterTest {
     public ExpectedException expectedException = ExpectedException.none();
 
     private final TypeRegistry registry = new TypeRegistry(ENGLISH);
-    private final TableConverter converter = new TypeRegistryTableConverter(registry);
+    private final TableConverter converter = new DataTableTypeRegistryTableConverter(registry.dataTableTypeRegistry());
 
     @Test
     public void converts_datatable_to_datatable() {

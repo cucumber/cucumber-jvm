@@ -12,6 +12,13 @@
     <name>Cucumber-JVM: Core</name>
 
     <dependencies>
+        <!--TODO: Clean this up-->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.9.3</version>
+        </dependency>
+
         <dependency>
             <groupId>info.cukes</groupId>
             <artifactId>cucumber-html</artifactId>
@@ -66,14 +73,6 @@
         <dependency>
             <groupId>org.webbitserver</groupId>
             <artifactId>webbit-rest</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <!--TODO: Clean this up-->
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>2.9.3</version>
             <scope>test</scope>
         </dependency>
 

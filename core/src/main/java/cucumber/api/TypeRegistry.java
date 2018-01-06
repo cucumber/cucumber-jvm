@@ -24,6 +24,10 @@ public final class TypeRegistry {
         return parameterTypeRegistry;
     }
 
+    public DataTableTypeRegistry dataTableTypeRegistry() {
+        return dataTableTypeRegistry;
+    }
+
     public void defineParameterType(ParameterType<?> parameterType) {
         parameterTypeRegistry.defineParameterType(parameterType);
     }
@@ -43,4 +47,5 @@ public final class TypeRegistry {
     public DataTableType lookupTableTypeByName(String tableType) {
         return dataTableTypeRegistry.lookupTableTypeByName(tableType);
     }
+
 }
