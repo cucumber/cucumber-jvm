@@ -7,12 +7,14 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
+import java.util.Collections;
 import java.util.List;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.verify;
 
 public class DataTableTest {
@@ -22,6 +24,13 @@ public class DataTableTest {
 
     @Mock
     private TableConverter tableConverter;
+
+    @Test
+    public void emptyRowsAreIgnored() {
+        DataTable table = createTable(Collections.<String>emptyList(), Collections.<String>emptyList());
+        assertTrue(table.isEmpty());
+        assertTrue(table.raw().isEmpty());
+    }
 
     @Test
     public void rawShouldHaveThreeColumnsAndTwoRows() {

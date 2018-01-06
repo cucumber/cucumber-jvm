@@ -1,6 +1,7 @@
 package cucumber.runtime;
 
 import cucumber.api.TypeRegistry;
+import cucumber.api.datatable.TableConverter;
 import io.cucumber.cucumberexpressions.CucumberExpressionException;
 import cucumber.api.datatable.DataTableType;
 import cucumber.api.datatable.DataTable;
@@ -18,10 +19,11 @@ import static cucumber.runtime.Utils.mapKeyType;
 import static cucumber.runtime.Utils.mapValueType;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
+import static java.util.Collections.nCopies;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
 
-public final class TypeRegistryTableConverter implements cucumber.api.datatable.TableConverter {
+public final class TypeRegistryTableConverter implements TableConverter {
 
     private final TypeRegistry registry;
 
@@ -31,8 +33,8 @@ public final class TypeRegistryTableConverter implements cucumber.api.datatable.
 
     @Override
     public <T> T convert(DataTable dataTable, Type type, boolean transposed) {
-        if (dataTable == null) throw new CucumberExpressionException("dataTable may not be null");
-        if (type == null) throw new CucumberExpressionException("type may not be null");
+        if (dataTable == null) throw new NullPointerException("dataTable may not be null");
+        if (type == null) throw new NullPointerException("type may not be null");
 
         if (transposed) {
             dataTable = dataTable.transpose();
@@ -60,7 +62,7 @@ public final class TypeRegistryTableConverter implements cucumber.api.datatable.
 
         Type mapKeyItemType = mapKeyType(itemType);
         if (mapKeyItemType != null) {
-            Type mapValueType = mapValueType(type);
+            Type mapValueType = mapValueType(itemType);
             return (T) toMaps(dataTable, mapKeyItemType, mapValueType);
         } else if (Map.class.equals(itemType)) {
             // Non-generic map
@@ -80,8 +82,8 @@ public final class TypeRegistryTableConverter implements cucumber.api.datatable.
 
     @Override
     public <T> List<T> toList(DataTable dataTable, Type itemType) {
-        if (dataTable == null) throw new CucumberExpressionException("dataTable may not be null");
-        if (itemType == null) throw new CucumberExpressionException("itemType may not be null");
+        if (dataTable == null) throw new NullPointerException("dataTable may not be null");
+        if (itemType == null) throw new NullPointerException("itemType may not be null");
 
         if (dataTable.isEmpty()) {
             return emptyList();
@@ -92,7 +94,6 @@ public final class TypeRegistryTableConverter implements cucumber.api.datatable.
             return unmodifiableList((List<T>) tableType.transform(dataTable.cells()));
         }
 
-
         DataTableType tableCellType = registry.lookupTableTypeByType(aListOf(aListOf(itemType)));
         if (tableCellType != null) {
             List<List<T>> cells = (List<List<T>>) tableCellType.transform(dataTable.cells());
@@ -102,7 +103,7 @@ public final class TypeRegistryTableConverter implements cucumber.api.datatable.
         if (dataTable.width() > 1) {
             throw new CucumberExpressionException(String.format(
                 "Can't convert DataTable to List<%s>. " +
-                    "Please register a DataTableType with a TableEntryTransformer, TableRowTransformer or TableCellTransformer for %s", itemType, itemType));
+                    "Please register a DataTableType with a TableEntryTransformer or TableRowTransformer for %s", itemType, itemType));
         }
 
         throw new CucumberExpressionException(String.format(
@@ -110,19 +111,10 @@ public final class TypeRegistryTableConverter implements cucumber.api.datatable.
                 "Please register a DataTableType with a TableCellTransformer for %s", itemType, itemType));
     }
 
-    private <T> List<T> unpack(List<List<T>> cells) {
-        List<T> unpacked = new ArrayList<T>(cells.size());
-        for (List<T> row : cells) {
-            unpacked.addAll(row);
-        }
-        return unpacked;
-    }
-
-
     @Override
     public <T> List<List<T>> toLists(DataTable dataTable, Type itemType) {
-        if (dataTable == null) throw new CucumberExpressionException("dataTable may not be null");
-        if (itemType == null) throw new CucumberExpressionException("itemType may not be null");
+        if (dataTable == null) throw new NullPointerException("dataTable may not be null");
+        if (itemType == null) throw new NullPointerException("itemType may not be null");
 
         if (dataTable.isEmpty()) {
             return emptyList();
@@ -133,97 +125,111 @@ public final class TypeRegistryTableConverter implements cucumber.api.datatable.
             return unmodifiableList((List<List<T>>) tableType.transform(dataTable.cells()));
         }
 
-        throw new CucumberExpressionException(String.format("Can't convert DataTable to List<List<%s>>", itemType));
+        throw new NullPointerException(String.format("Can't convert DataTable to List<List<%s>>", itemType));
     }
 
     @Override
     public <K, V> Map<K, V> toMap(DataTable dataTable, Type keyType, Type valueType) {
-        if (dataTable == null) throw new CucumberExpressionException("dataTable may not be null");
-        if (keyType == null) throw new CucumberExpressionException("keyType may not be null");
-        if (valueType == null) throw new CucumberExpressionException("valueType may not be null");
+        if (dataTable == null) throw new NullPointerException("dataTable may not be null");
+        if (keyType == null) throw new NullPointerException("keyType may not be null");
+        if (valueType == null) throw new NullPointerException("valueType may not be null");
 
         if (dataTable.isEmpty()) {
             return emptyMap();
         }
-
-        if (dataTable.width() < 2) {
-            throw new CucumberExpressionException("A DataTable can only be converted to a Map when there are at least 2 columns");
-        }
-
         List<List<String>> keyColumn = dataTable.columns(0, 1);
         List<List<String>> valueColumns = dataTable.columns(1, dataTable.width());
 
-        if (dataTable.width() == 2) {
-            return toMapOfCells(keyType, keyColumn, valueType, valueColumns);
-        } else {
-            return toMapOfEntries(keyType, keyColumn, valueType, valueColumns);
+        String firstHeaderCell = keyColumn.get(0).get(0);
+        boolean firstHeaderCellIsBlank = firstHeaderCell == null || firstHeaderCell.isEmpty();
+        List<K> keys = convertEntryKeys(keyType, keyColumn, valueType, firstHeaderCellIsBlank);
+
+        if (valueColumns.get(0).isEmpty()) {
+            return createMap(keyType, keys, valueType, nCopies(keys.size(), (V) null));
         }
 
+        boolean keysImplyTableRowTransformer = keys.size() == dataTable.height() - 1;
+        List<V> values = convertEntryValues(keyType, valueType, valueColumns, keysImplyTableRowTransformer);
+
+        if (keys.size() != values.size()) {
+            throw createKeyValueMismatchException(firstHeaderCellIsBlank, keys.size(), keyType, values.size(), valueType);
+        }
+
+        return createMap(keyType, keys, valueType, values);
     }
 
-    private <K, V> Map<K, V> toMapOfCells(Type keyType, List<List<String>> keyColumn, Type valueType, List<List<String>> valueColumns) {
-        DataTableType keyConverter = registry.lookupTableTypeByType(aListOf(aListOf(keyType)));
-        if (keyConverter == null) {
-            throw new CucumberExpressionException(String.format(
-                "Can't convert DataTable to Map<%s,%s>. " +
-                    "Please register a DataTableType with a TableCellTransformer for %s", keyType, valueType, keyType));
-        }
-
-        DataTableType valueConverter = registry.lookupTableTypeByType(aListOf(aListOf(valueType)));
-        if (valueConverter == null) {
-            throw new CucumberExpressionException(String.format(
-                "Can't convert DataTable to Map<%s,%s>" +
-                    "Please register a DataTableType with a TableCellTransformer for %s", keyType, valueType, valueType));
-        }
-
-        List<List<K>> keys = (List<List<K>>) keyConverter.transform(keyColumn);
-        List<List<V>> values = (List<List<V>>) valueConverter.transform(valueColumns);
-
-        Iterator<List<K>> keyIterator = keys.iterator();
-        Iterator<List<V>> valueIterator = values.iterator();
-
+    private static <K, V> Map<K, V> createMap(Type keyType, List<K> keys, Type valueType, List<V> values) {
+        Iterator<K> keyIterator = keys.iterator();
+        Iterator<V> valueIterator = values.iterator();
         Map<K, V> result = new LinkedHashMap<K, V>();
         while (keyIterator.hasNext() && valueIterator.hasNext()) {
-            result.put(keyIterator.next().get(0), valueIterator.next().get(0));
+            K key = keyIterator.next();
+            V value = valueIterator.next();
+            V replaced = result.put(key, value);
+            if (replaced != null) {
+                throw new CucumberException(String.format("Can't convert DataTable to Map<%s,%s>. " +
+                        "Encountered duplicate key %s with values %s and %s",
+                    keyType, valueType, key, replaced, value));
+            }
         }
 
         return unmodifiableMap(result);
     }
 
-    private <K, V> Map<K, V> toMapOfEntries(Type keyType, List<List<String>> keyColumn, Type valueType, List<List<String>> valueColumns) {
-        DataTableType keyConverter = registry.lookupTableTypeByType(aListOf(keyType));
-        if (keyConverter == null) {
-            throw new CucumberExpressionException(String.format(
-                "Can't convert DataTable to Map<%s,%s>. " +
-                    "Please register a DataTableType with a TableEntryTransformer for %s", keyType, valueType, keyType));
+    private <K> List<K> convertEntryKeys(Type keyType, List<List<String>> keyColumn, Type valueType, boolean firstHeaderCellIsBlank) {
+        if (firstHeaderCellIsBlank) {
+            DataTableType keyConverter;
+            keyConverter = registry.lookupTableTypeByType(aListOf(aListOf(keyType)));
+            if (keyConverter == null) {
+                throw new CucumberException(String.format(
+                    "Can't convert DataTable to Map<%s,%s>. " +
+                        "Please register a DataTableType with a TableCellTransformer for %s", keyType, valueType, keyType));
+            }
+            return unpack((List<List<K>>) keyConverter.transform(keyColumn.subList(1, keyColumn.size())));
         }
 
-        DataTableType valueConverter = registry.lookupTableTypeByType(aListOf(valueType));
-        if (valueConverter == null) {
-            throw new CucumberExpressionException(String.format(
+        DataTableType entryKeyConverter = registry.lookupTableTypeByType(aListOf(keyType));
+        if (entryKeyConverter != null) {
+            return (List<K>) entryKeyConverter.transform(keyColumn);
+        }
+
+        DataTableType cellKeyConverter = registry.lookupTableTypeByType(aListOf(aListOf(keyType)));
+        if (cellKeyConverter != null) {
+            return unpack((List<List<K>>) cellKeyConverter.transform(keyColumn));
+        }
+
+        throw new CucumberException(String.format(
+            "Can't convert DataTable to Map<%s,%s>. " +
+                "Please register a DataTableType with a TableEntryTransformer or TableCellTransformer for %s", keyType, valueType, keyType));
+    }
+
+    private <V> List<V> convertEntryValues(Type keyType, Type valueType, List<List<String>> valueColumns, boolean keysImplyTableEntryTransformer) {
+        DataTableType entryValueConverter = registry.lookupTableTypeByType(aListOf(valueType));
+        if (entryValueConverter != null) {
+            return (List<V>) entryValueConverter.transform(valueColumns);
+        }
+
+        if (keysImplyTableEntryTransformer) {
+            throw new CucumberException(String.format(
                 "Can't convert DataTable to Map<%s,%s>" +
                     "Please register a DataTableType with a TableEntryTransformer for %s", keyType, valueType, valueType));
         }
 
-        List<K> keys = (List<K>) keyConverter.transform(keyColumn);
-        List<V> values = (List<V>) valueConverter.transform(valueColumns);
-
-        Iterator<K> keyIterator = keys.iterator();
-        Iterator<V> valueIterator = values.iterator();
-
-        Map<K, V> result = new LinkedHashMap<K, V>();
-        while (keyIterator.hasNext() && valueIterator.hasNext()) {
-            result.put(keyIterator.next(), valueIterator.next());
+        DataTableType cellValueConverter = registry.lookupTableTypeByType(aListOf(aListOf(valueType)));
+        if (cellValueConverter != null) {
+            return unpack((List<List<V>>) cellValueConverter.transform(valueColumns));
         }
 
-        return unmodifiableMap(result);
+        throw new CucumberException(String.format(
+            "Can't convert DataTable to Map<%s,%s>" +
+                "Please register a DataTableType with a TableEntryTransformer or TableCellTransformer for %s", keyType, valueType, valueType));
     }
 
     @Override
     public <K, V> List<Map<K, V>> toMaps(DataTable dataTable, Type keyType, Type valueType) {
-        if (dataTable == null) throw new CucumberExpressionException("dataTable may not be null");
-        if (keyType == null) throw new CucumberExpressionException("keyType may not be null");
-        if (valueType == null) throw new CucumberExpressionException("valueType may not be null");
+        if (dataTable == null) throw new NullPointerException("dataTable may not be null");
+        if (keyType == null) throw new NullPointerException("keyType may not be null");
+        if (valueType == null) throw new NullPointerException("valueType may not be null");
 
         if (dataTable.isEmpty()) {
             return emptyList();
@@ -234,40 +240,68 @@ public final class TypeRegistryTableConverter implements cucumber.api.datatable.
 
         if (keyConverter == null) {
             //TODO: Replace with CucumberDataTableException and dedupe
-            throw new CucumberExpressionException(String.format(
+            throw new CucumberException(String.format(
                 "Can't convert DataTable to Map<%s,%s>. " +
                     "Please register a DataTableType with a TableCellTransformer for %s",
                 keyType, valueType, keyType));
         }
 
         if (valueConverter == null) {
-            throw new CucumberExpressionException(String.format(
+            throw new CucumberException(String.format(
                 "Can't convert DataTable to Map<%s,%s>. " +
                     "Please register a DataTableType with a TableCellTransformer for %s",
                 keyType, valueType, valueType));
         }
 
         List<List<String>> keyStrings = dataTable.rows(0, 1);
-        if (keyStrings.isEmpty() || keyStrings.get(0).isEmpty()) {
+
+        List<Map<K, V>> result = new ArrayList<Map<K, V>>();
+        List<K> keys = unpack((List<List<K>>) keyConverter.transform(keyStrings));
+
+        List<List<String>> valueRows = dataTable.rows(1);
+
+        if (valueRows.isEmpty()) {
             return emptyList();
         }
 
-        List<Map<K, V>> result = new ArrayList<Map<K, V>>();
-        List<List<K>> keys = (List<List<K>>) keyConverter.transform(keyStrings);
-
-        List<List<String>> valueRows = dataTable.rows(1);
         List<List<V>> transform = (List<List<V>>) valueConverter.transform(valueRows);
 
         for (List<V> valueRow : transform) {
-            Map<K, V> map = new LinkedHashMap<K, V>();
-            int i = 0;
-            for (V cell : valueRow) {
-                map.put(keys.get(0).get(i), cell);
-                i++;
-            }
-            result.add(unmodifiableMap(map));
+            result.add(createMap(keyType, keys, valueType, valueRow));
         }
         return unmodifiableList(result);
+    }
+
+    private static <T> List<T> unpack(List<List<T>> cells) {
+        List<T> unpacked = new ArrayList<T>(cells.size());
+        for (List<T> row : cells) {
+            unpacked.addAll(row);
+        }
+        return unpacked;
+    }
+
+    private static CucumberException createKeyValueMismatchException(boolean firstHeaderCellIsBlank, int keySize, Type keyType, int valueSize, Type valueType) {
+        if (firstHeaderCellIsBlank) {
+            return new CucumberException(String.format(
+                "Can't convert DataTable to Map<%s,%s>. " +
+                    "There are more values then keys. The first header cell was left blank. You can add a value there",
+                keyType, valueType));
+        }
+
+        if (keySize < valueSize) {
+            return new CucumberException(String.format(
+                "Can't convert DataTable to Map<%s,%s>. " +
+                    "There are more values then keys. " +
+                    "Did you use a TableEntryTransformer for the key while using a TableRow or TableCellTransformer for the value?",
+                keyType, valueType));
+        }
+
+        return new CucumberException(String.format(
+            "Can't convert DataTable to Map<%s,%s>. " +
+                "There are more keys then values. " +
+                "Did you use a TableEntryTransformer for the value while using a TableRow or TableCellTransformer for the keys?",
+            keyType, valueType));
+
     }
 
 }

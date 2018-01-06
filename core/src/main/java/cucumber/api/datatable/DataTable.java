@@ -53,6 +53,9 @@ public final class DataTable {
             if (columns != row.size()) {
                 throw new CucumberException(String.format("Table is unbalanced: expected %s column(s) but found %s.", columns, row.size()));
             }
+            if(row.isEmpty()){
+                continue;
+            }
             List<String> rowCopy = new ArrayList<String>(row.size());
             rowCopy.addAll(row);
             rawCopy.add(unmodifiableList(rowCopy));
