@@ -2,8 +2,6 @@ package cucumber.api.datatable;
 
 import cucumber.api.datatable.DataTable.TableConverter;
 
-import io.cucumber.cucumberexpressions.CucumberExpressionException;
-
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
@@ -13,8 +11,14 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import static cucumber.api.datatable.CucumberDataTableException.cantConvertTo;
+import static cucumber.api.datatable.CucumberDataTableException.cantConvertToList;
+import static cucumber.api.datatable.CucumberDataTableException.cantConvertToLists;
+import static cucumber.api.datatable.CucumberDataTableException.cantConvertToMap;
+import static cucumber.api.datatable.CucumberDataTableException.cantConvertToMaps;
 import static cucumber.api.datatable.TypeFactory.aListOf;
 
+import static java.lang.String.format;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.nCopies;
@@ -28,7 +32,6 @@ public final class DataTableTypeRegistryTableConverter implements TableConverter
     public DataTableTypeRegistryTableConverter(DataTableTypeRegistry registry) {
         this.registry = registry;
     }
-
 
     @Override
     public <T> T convert(DataTable dataTable, Type type, boolean transposed) {
@@ -56,7 +59,8 @@ public final class DataTableTypeRegistryTableConverter implements TableConverter
 
         Type itemType = listItemType(type);
         if (itemType == null) {
-            throw new CucumberExpressionException(String.format("Can't convert DataTable to %1$s", type));
+            throw cantConvertTo(type,
+                format("Please register a DataTableType with a TableTransformer for %s", type));
         }
 
         Type mapKeyItemType = mapKeyType(itemType);
@@ -100,14 +104,12 @@ public final class DataTableTypeRegistryTableConverter implements TableConverter
         }
 
         if (dataTable.width() > 1) {
-            throw new CucumberExpressionException(String.format(
-                "Can't convert DataTable to List<%s>. " +
-                    "Please register a DataTableType with a TableEntryTransformer or TableRowTransformer for %s", itemType, itemType));
+            throw cantConvertToList(itemType,
+                format("Please register a DataTableType with a TableEntryTransformer or TableRowTransformer for %s", itemType));
         }
 
-        throw new CucumberExpressionException(String.format(
-            "Can't convert DataTable to List<%s>. " +
-                "Please register a DataTableType with a TableEntryTransformer, TableRowTransformer or TableCellTransformer for %s", itemType, itemType));
+        throw cantConvertToList(itemType,
+            format("Please register a DataTableType with a TableEntryTransformer, TableRowTransformer or TableCellTransformer for %s", itemType));
     }
 
     @Override
@@ -123,8 +125,8 @@ public final class DataTableTypeRegistryTableConverter implements TableConverter
         if (tableType != null) {
             return unmodifiableList((List<List<T>>) tableType.transform(dataTable.cells()));
         }
-
-        throw new NullPointerException(String.format("Can't convert DataTable to List<List<%s>>", itemType));
+        throw cantConvertToLists(itemType,
+            format("Please register a TableCellTransformer for %s", itemType));
     }
 
     @Override
@@ -166,9 +168,8 @@ public final class DataTableTypeRegistryTableConverter implements TableConverter
             V value = valueIterator.next();
             V replaced = result.put(key, value);
             if (replaced != null) {
-                throw new CucumberDataTableException(String.format("Can't convert DataTable to Map<%s,%s>. " +
-                        "Encountered duplicate key %s with values %s and %s",
-                    keyType, valueType, key, replaced, value));
+                throw cantConvertToMap(keyType, valueType,
+                    format("Encountered duplicate key %s with values %s and %s", key, replaced, value));
             }
         }
 
@@ -180,9 +181,8 @@ public final class DataTableTypeRegistryTableConverter implements TableConverter
             DataTableType keyConverter;
             keyConverter = registry.lookupTableTypeByType(aListOf(aListOf(keyType)));
             if (keyConverter == null) {
-                throw new CucumberDataTableException(String.format(
-                    "Can't convert DataTable to Map<%s,%s>. " +
-                        "Please register a DataTableType with a TableCellTransformer for %s", keyType, valueType, keyType));
+                throw cantConvertToMap(keyType, valueType,
+                    format("Please register a DataTableType with a TableCellTransformer for %s", keyType));
             }
             return unpack((List<List<K>>) keyConverter.transform(keyColumn.subList(1, keyColumn.size())));
         }
@@ -197,9 +197,8 @@ public final class DataTableTypeRegistryTableConverter implements TableConverter
             return unpack((List<List<K>>) cellKeyConverter.transform(keyColumn));
         }
 
-        throw new CucumberDataTableException(String.format(
-            "Can't convert DataTable to Map<%s,%s>. " +
-                "Please register a DataTableType with a TableEntryTransformer or TableCellTransformer for %s", keyType, valueType, keyType));
+        throw cantConvertToMap(keyType, valueType,
+            format("Please register a DataTableType with a TableEntryTransformer or TableCellTransformer for %s", keyType));
     }
 
     private <V> List<V> convertEntryValues(Type keyType, Type valueType, List<List<String>> valueColumns, boolean keysImplyTableEntryTransformer) {
@@ -209,9 +208,8 @@ public final class DataTableTypeRegistryTableConverter implements TableConverter
         }
 
         if (keysImplyTableEntryTransformer) {
-            throw new CucumberDataTableException(String.format(
-                "Can't convert DataTable to Map<%s,%s>" +
-                    "Please register a DataTableType with a TableEntryTransformer for %s", keyType, valueType, valueType));
+            throw cantConvertToMap(keyType, valueType,
+                format("Please register a DataTableType with a TableEntryTransformer for %s", valueType));
         }
 
         DataTableType cellValueConverter = registry.lookupTableTypeByType(aListOf(aListOf(valueType)));
@@ -219,9 +217,8 @@ public final class DataTableTypeRegistryTableConverter implements TableConverter
             return unpack((List<List<V>>) cellValueConverter.transform(valueColumns));
         }
 
-        throw new CucumberDataTableException(String.format(
-            "Can't convert DataTable to Map<%s,%s>" +
-                "Please register a DataTableType with a TableEntryTransformer or TableCellTransformer for %s", keyType, valueType, valueType));
+        throw cantConvertToMap(keyType, valueType,
+            format("Please register a DataTableType with a TableEntryTransformer or TableCellTransformer for %s", valueType));
     }
 
     @Override
@@ -238,18 +235,13 @@ public final class DataTableTypeRegistryTableConverter implements TableConverter
         DataTableType valueConverter = registry.lookupTableTypeByType(aListOf(aListOf(valueType)));
 
         if (keyConverter == null) {
-            //TODO: Replace with CucumberDataTableException and dedupe
-            throw new CucumberDataTableException(String.format(
-                "Can't convert DataTable to Map<%s,%s>. " +
-                    "Please register a DataTableType with a TableCellTransformer for %s",
-                keyType, valueType, keyType));
+            throw cantConvertToMaps(keyType, valueType,
+                format("Please register a DataTableType with a TableCellTransformer for %s", keyType));
         }
 
         if (valueConverter == null) {
-            throw new CucumberDataTableException(String.format(
-                "Can't convert DataTable to Map<%s,%s>. " +
-                    "Please register a DataTableType with a TableCellTransformer for %s",
-                keyType, valueType, valueType));
+            throw cantConvertToMaps(keyType, valueType,
+                format("Please register a DataTableType with a TableCellTransformer for %s", valueType));
         }
 
         List<List<String>> keyStrings = dataTable.rows(0, 1);
@@ -281,33 +273,27 @@ public final class DataTableTypeRegistryTableConverter implements TableConverter
 
     private static CucumberDataTableException createKeyValueMismatchException(boolean firstHeaderCellIsBlank, int keySize, Type keyType, int valueSize, Type valueType) {
         if (firstHeaderCellIsBlank) {
-            return new CucumberDataTableException(String.format(
-                "Can't convert DataTable to Map<%s,%s>. " +
-                    "There are more values then keys. The first header cell was left blank. You can add a value there",
-                keyType, valueType));
+            return cantConvertToMap(keyType, valueType,
+                "There are more values then keys. The first header cell was left blank. You can add a value there");
         }
 
         if (keySize > valueSize) {
-            return new CucumberDataTableException(String.format(
-                "Can't convert DataTable to Map<%s,%s>. " +
-                    "There are more keys then values. " +
-                    "Did you use a TableEntryTransformer for the value while using a TableRow or TableCellTransformer for the keys?",
-                keyType, valueType));
+            return cantConvertToMap(keyType, valueType,
+                "There are more keys then values. " +
+                    "Did you use a TableEntryTransformer for the value while using a TableRow or TableCellTransformer for the keys?");
         }
 
         if (valueSize % keySize == 0) {
-            return new CucumberDataTableException(String.format(
-                "Can't convert DataTable to Map<%s,%s>. " +
+            return cantConvertToMap(keyType, valueType,
+                format(
                     "There is more then one values per key. " +
-                    "Did you mean to transform to Map<%s,List<%s>> instead?",
-                keyType, valueType, keyType, valueType));
+                        "Did you mean to transform to Map<%s,List<%s>> instead?",
+                    keyType, valueType));
         }
 
-        return new CucumberDataTableException(String.format(
-            "Can't convert DataTable to Map<%s,%s>. " +
-                "There are more values then keys. " +
-                "Did you use a TableEntryTransformer for the key while using a TableRow or TableCellTransformer for the value?",
-            keyType, valueType));
+        return cantConvertToMap(keyType, valueType,
+            "There are more values then keys. " +
+                "Did you use a TableEntryTransformer for the key while using a TableRow or TableCellTransformer for the value?");
 
     }
 

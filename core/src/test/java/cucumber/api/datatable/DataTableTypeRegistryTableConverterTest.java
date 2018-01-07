@@ -704,7 +704,7 @@ public class DataTableTypeRegistryTableConverterTest {
     @Test
     public void cant_convert_to_maps_of_unknown_key_type() {
         expectedException.expectMessage(String.format(
-            "Can't convert DataTable to Map<%s,%s>.",
+            "Can't convert DataTable to List<Map<%s,%s>>.",
             Animal.class, String.class));
 
         DataTable table = DataTable.create(
@@ -720,7 +720,7 @@ public class DataTableTypeRegistryTableConverterTest {
     @Test
     public void cant_convert_to_maps_of_unknown_value_type() {
         expectedException.expectMessage(String.format(
-            "Can't convert DataTable to Map<%s,%s>.",
+            "Can't convert DataTable to List<Map<%s,%s>>.",
             String.class, Animal.class));
 
         DataTable table = DataTable.create(
