@@ -22,4 +22,9 @@ public final class ExpressionArgument implements Argument {
     public Group getGroup() {
         return argument.getGroup();
     }
+
+    @Override
+    public String toString() {
+        return getText();
+    }
 }

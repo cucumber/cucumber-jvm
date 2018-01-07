@@ -15,7 +15,8 @@ public final class DocStringArgument implements Argument {
         return docStringType.transform(argument);
     }
 
-    public String getText() {
-        return argument;
+    @Override
+    public String toString() {
+        return "DocString: " + argument;
     }
 }

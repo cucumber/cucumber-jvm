@@ -23,7 +23,8 @@ public final class DataTableArgument implements Argument {
         return DataTable.create(argument).toString();
     }
 
-    public List<List<String>> getRawTable(){
-        return argument;
+    @Override
+    public String toString() {
+        return "Table: " + argument;
     }
 }

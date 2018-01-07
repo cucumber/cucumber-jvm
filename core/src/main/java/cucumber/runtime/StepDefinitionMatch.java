@@ -75,18 +75,7 @@ public class StepDefinitionMatch extends Match implements DefinitionMatch {
     private List<String> createArgumentsForErrorMessage() {
         List<String> arguments = new ArrayList<String>(getArguments().size());
         for (Argument argument : getArguments()) {
-            if (argument instanceof DataTableArgument) {
-                DataTableArgument tableArgument = (DataTableArgument) argument;
-                arguments.add("Table: " + tableArgument.getRawTable());
-            } else if (argument instanceof DocStringArgument) {
-                DocStringArgument docStringArgument = (DocStringArgument) argument;
-                arguments.add("DocString:" + docStringArgument.getText());
-            } else if (argument instanceof ExpressionArgument) {
-                ExpressionArgument expressionArgument = (ExpressionArgument) argument;
-                arguments.add(expressionArgument.getText());
-            } else {
-                throw new IllegalStateException("" + argument.getClass());
-            }
+            arguments.add(argument.toString());
         }
         return arguments;
     }
