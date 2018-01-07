@@ -346,44 +346,44 @@ public final class DataTable {
          * For example:
          * <p>
          * <pre>
-         * | Eva de Roovere  | 1978-06-14 |
-         * | Herman van Veen | 1945-03-14 |
+         * | Annie M. G. Schmidt | 1911-03-20 |
+         * | Roald Dahl          | 1916-09-13 |
          *
          * convert.toList(table, String.class);
          * </pre>
          * can become
          * <pre>
-         *  [ "Eva de Roovere", "1978-06-14", "Herman van Veen", "1945-03-14" ]
+         *  [ "Annie M. G. Schmidt", "1911-03-20", "Roald Dahl", "1916-09-13" ]
          * </pre>
          * <p>
          * While:
          * <pre>
-         *   convert.toList(table, Artist.class);
+         *   convert.toList(table, Author.class);
          * </pre>
          * <p>
          * can become:
          * <p>
          * <pre>
          * [
-         *   Artist[ name: Eva de Roovere,  birthDate: 1978-06-14 ],
-         *   Artist[ name: Herman van Veen, birthDate: 1945-03-14 ]
+         *   Author[ name: Annie M. G. Schmidt, birthDate: 1911-03-20 ],
+         *   Author[ name: Roald Dahl,          birthDate: 1916-09-13 ]
          * ]
          * </pre>
          * <p>
          * Likewise:
          * <p>
          * <pre>
-         *  | firstName | lastName   | birthDate  |
-         *  | Eva       | de Roovere | 1978-06-14 |
-         *  | Herman    | van Veen   | 1945-03-14 |
+         *  | firstName   | lastName | birthDate  |
+         *  | Annie M. G. | Schmidt  | 1911-03-20 |
+         *  | Roald       | Dahl     | 1916-09-13 |
          *
-         * convert.toList(table, Artists.class);
+         * convert.toList(table, Authors.class);
          * </pre>
          * can become:
          * <pre>
          *  [
-         *   Artist[ firstName: Eva, lastName: de Roovere,  birthDate: 1978-06-14 ],
-         *   Artist[ firstName: Herman, lastName: van Veen, birthDate: 1945-03-14 ]
+         *   Author[ firstName: Annie M. G., lastName: Schmidt,  birthDate: 1911-03-20 ],
+         *   Author[ firstName: Roald,       lastName: Dahl,     birthDate: 1916-09-13 ]
          *  ]
          * </pre>
          *
@@ -401,16 +401,16 @@ public final class DataTable {
          * For example:
          * <p>
          * <pre>
-         * | Eva de Roovere  | 1978-06-14 |
-         * | Herman van Veen | 1945-03-14 |
+         * | Annie M. G. Schmidt | 1911-03-20 |
+         * | Roald Dahl          | 1916-09-13 |
          *
          * convert.toLists(table, String.class);
          * </pre>
          * can become
          * <pre>
          *  [
-         *    [ "Eva de Roovere",  "1978-06-14" ],
-         *    [ "Herman van Veen", "1945-03-14" ]
+         *    [ "Annie M. G. Schmidt", "1911-03-20" ],
+         *    [ "Roald Dahl",          "1916-09-13" ]
          *  ]
          * </pre>
          * <p>
@@ -430,16 +430,16 @@ public final class DataTable {
          * For example:
          * <p>
          * <pre>
-         * | 4a1 | Eva de Roovere  | 1978-06-14 |
-         * | c92 | Herman van Veen | 1945-03-14 |
+         * | 4a1 | Annie M. G. Schmidt | 1911-03-20 |
+         * | c92 | Roald Dahl          | 1916-09-13 |
          *
-         * convert.toMap(table, Id.class, Artists.class);
+         * convert.toMap(table, Id.class, Authors.class);
          * </pre>
          * can become:
          * <pre>
          *  {
-         *   Id[ 4a1 ]: Artist[ name: Eva de Roovere,  birthDate: 1978-06-14 ],
-         *   Id[ c92 ]: Artist[ name: Herman van Veen, birthDate: 1945-03-14 ]
+         *   Id[ 4a1 ]: Author[ name: Annie M. G. Schmidt, birthDate: 1911-03-20 ],
+         *   Id[ c92 ]: Author[ name: Roald Dahl,          birthDate: 1916-09-13 ]
          *  }
          * </pre>
          * <p>
@@ -449,17 +449,17 @@ public final class DataTable {
          * For example:
          * <p>
          * <pre>
-         * |     | firstName | lastName   | birthDate  |
-         * | 4a1 | Eva       | de Roovere | 1978-06-14 |
-         * | c92 | Herman    | van Veen   | 1945-03-14 |
+         * |     | firstName   | lastName | birthDate  |
+         * | 4a1 | Annie M. G. | Schmidt  | 1911-03-20 |
+         * | c92 | Roald       | Dahl     | 1916-09-13 |
          *
-         * convert.toMap(table, Id.class, Artists.class);
+         * convert.toMap(table, Id.class, Authors.class);
          * </pre>
          * can becomes:
          * <pre>
          *  {
-         *   Id[ 4a1 ]: Artist[ firstName: Eva, lastName: de Roovere,  birthDate: 1978-06-14 ],
-         *   Id[ c92 ]: Artist[ firstName: Herman, lastName: van Veen, birthDate: 1945-03-14 ]
+         *   Id[ 4a1 ]: Author[ firstName: Annie M. G., lastName: Schmidt, birthDate: 1911-03-20 ],
+         *   Id[ c92 ]: Author[ firstName: Roald,       lastName: Dahl,    birthDate: 1916-09-13 ]
          *  }
          * </pre>
          *
@@ -479,15 +479,15 @@ public final class DataTable {
          * For example:
          * <p>
          * <pre>
-         * | firstName | lastName   | birthDate  |
-         * | Eva       | de Roovere | 1978-06-14 |
-         * | Herman    | van Veen   | 1945-03-14 |
+         * | firstName   | lastName | birthDate  |
+         * | Annie M. G. | Schmidt  | 1911-03-20 |
+         * | Roald       | Dahl     | 1916-09-13 |
          * </pre>
          * can become:
          * <pre>
          *  [
-         *   {firstName: Eva, lastName: de Roovere,  birthDate: 1978-06-14 }
-         *   {firstName: Herman, lastName: van Veen, birthDate: 1945-03-14 }
+         *   {firstName: Annie M. G., lastName: Schmidt, birthDate: 1911-03-20 }
+         *   {firstName: Roald,       lastName: Dahl,    birthDate: 1916-09-13 }
          *  ]
          * </pre>
          *
