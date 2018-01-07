@@ -1,10 +1,15 @@
 package cucumber.runtime.formatter;
 
 import cucumber.api.Result;
+import cucumber.api.TestStep;
 import cucumber.api.TypeRegistry;
 import cucumber.api.formatter.AnsiEscapes;
+import cucumber.runtime.DefinitionArgument;
+import cucumber.runtime.StepDefinitionMatch;
 import cucumber.runtime.TestHelper;
 import cucumber.runtime.model.CucumberFeature;
+import cucumber.stepexpression.Argument;
+import cucumber.stepexpression.ExpressionArgument;
 import cucumber.stepexpression.StepExpression;
 import cucumber.stepexpression.StepExpressionFactory;
 import org.junit.Test;
@@ -377,7 +382,7 @@ public class PrettyFormatterTest {
 
         PrettyFormatter prettyFormatter = new PrettyFormatter(null);
         String stepText = "text 'arg1' text 'arg2'";
-        String formattedText = prettyFormatter.formatStepText("Given ", stepText, formats.get("passed"), formats.get("passed_arg"), expression.match(stepText));
+        String formattedText = prettyFormatter.formatStepText("Given ", stepText, formats.get("passed"), formats.get("passed_arg"), createArguments(expression.match(stepText)));
 
         assertThat(formattedText, equalTo(AnsiEscapes.GREEN + "Given " + AnsiEscapes.RESET +
                                           AnsiEscapes.GREEN + "text " + AnsiEscapes.RESET +
@@ -397,11 +402,21 @@ public class PrettyFormatterTest {
         PrettyFormatter prettyFormatter = new PrettyFormatter(null);
         String stepText = "the order is placed and not yet confirmed";
 
-        String formattedText = prettyFormatter.formatStepText("Given ", stepText, formats.get("passed"), formats.get("passed_arg"), expression.match(stepText));
+        String formattedText = prettyFormatter.formatStepText("Given ", stepText, formats.get("passed"), formats.get("passed_arg"), createArguments(expression.match(stepText)));
 
         assertThat(formattedText, equalTo(AnsiEscapes.GREEN + "Given " + AnsiEscapes.RESET +
             AnsiEscapes.GREEN + "the order is placed" + AnsiEscapes.RESET +
             AnsiEscapes.GREEN + AnsiEscapes.INTENSITY_BOLD + " and not yet confirmed"  + AnsiEscapes.RESET));
+    }
+
+    private static List<cucumber.api.Argument> createArguments(List<Argument> match) {
+        List<cucumber.api.Argument> args = new ArrayList<cucumber.api.Argument>();
+        for (Argument argument : match) {
+            if (argument instanceof ExpressionArgument) {
+                args.add(new DefinitionArgument((ExpressionArgument) argument));
+            }
+        }
+        return args;
     }
 
     @Test
@@ -412,7 +427,7 @@ public class PrettyFormatterTest {
         StepExpressionFactory stepExpressionFactory = new StepExpressionFactory(registry);
         StepExpression expression = stepExpressionFactory.createExpression("the order is placed( and (not( yet)? )?confirmed)?");
         String stepText = "the order is placed and not yet confirmed";
-        String formattedText = prettyFormatter.formatStepText("Given ", stepText, formats.get("passed"), formats.get("passed_arg"), expression.match(stepText));
+        String formattedText = prettyFormatter.formatStepText("Given ", stepText, formats.get("passed"), formats.get("passed_arg"), createArguments(expression.match(stepText)));
 
 
         assertThat(formattedText, equalTo(AnsiEscapes.GREEN + "Given " + AnsiEscapes.RESET +

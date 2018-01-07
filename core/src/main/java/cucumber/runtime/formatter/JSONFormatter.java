@@ -15,7 +15,6 @@ import cucumber.api.event.TestStepStarted;
 import cucumber.api.event.WriteEvent;
 import cucumber.api.formatter.Formatter;
 import cucumber.api.formatter.NiceAppendable;
-import cucumber.stepexpression.ExpressionArgument;
 import gherkin.ast.Background;
 import gherkin.ast.Feature;
 import gherkin.ast.ScenarioDefinition;
@@ -29,7 +28,6 @@ import gherkin.pickles.PickleRow;
 import gherkin.pickles.PickleString;
 import gherkin.pickles.PickleTable;
 import gherkin.pickles.PickleTag;
-import io.cucumber.cucumberexpressions.Group;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -313,17 +311,11 @@ final class JSONFormatter implements Formatter {
         Map<String, Object> matchMap = new HashMap<String, Object>();
         if (!testStep.getDefinitionArgument().isEmpty()) {
             List<Map<String, Object>> argumentList = new ArrayList<Map<String, Object>>();
-            for (cucumber.stepexpression.Argument argument : testStep.getDefinitionArgument()) {
+            for (cucumber.api.Argument argument : testStep.getDefinitionArgument()) {
                 Map<String, Object> argumentMap = new HashMap<String, Object>();
-
-                if (argument instanceof ExpressionArgument) {
-                    ExpressionArgument expressionArgument = (ExpressionArgument) argument;
-
-                    Group group = expressionArgument.getGroup();
-                    if (group != null) {
-                        argumentMap.put("val", group.getValue());
-                        argumentMap.put("offset", group.getStart());
-                    }
+                if (argument.getValue() != null) {
+                    argumentMap.put("val", argument.getValue());
+                    argumentMap.put("offset", argument.getStart());
                 }
                 argumentList.add(argumentMap);
             }

@@ -4,11 +4,13 @@ import cucumber.api.event.TestStepFinished;
 import cucumber.api.event.TestStepStarted;
 import cucumber.runner.EventBus;
 import cucumber.runtime.AmbiguousStepDefinitionsException;
+import cucumber.runtime.DefinitionArgument;
 import cucumber.runtime.DefinitionMatch;
 import cucumber.runtime.UndefinedStepDefinitionException;
-import cucumber.stepexpression.Argument;
+import cucumber.stepexpression.ExpressionArgument;
 import gherkin.pickles.PickleStep;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -47,8 +49,16 @@ public abstract class TestStep {
         return definitionMatch.getCodeLocation();
     }
 
-    public List<Argument> getDefinitionArgument() {
-        return definitionMatch.getArguments();
+    public List<cucumber.api.Argument> getDefinitionArgument() {
+        List<cucumber.api.Argument> definitionArguments = new ArrayList<Argument>();
+        for (cucumber.stepexpression.Argument argument : definitionMatch.getArguments()) {
+            if (argument instanceof ExpressionArgument) {
+                final ExpressionArgument expressionArgument = (ExpressionArgument) argument;
+                definitionArguments.add(new DefinitionArgument(expressionArgument));
+            }
+        }
+
+        return definitionArguments;
     }
 
     public abstract boolean isHook();
@@ -133,4 +143,5 @@ public abstract class TestStep {
         }
         return new Result(status, resultDuration, error);
     }
+
 }

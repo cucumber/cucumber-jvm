@@ -1,6 +1,6 @@
 package cucumber.runtime.formatter;
 
-import cucumber.stepexpression.Argument;
+import cucumber.api.Argument;
 import cucumber.api.Result;
 import cucumber.api.TestCase;
 import cucumber.api.TestStep;
@@ -15,7 +15,6 @@ import cucumber.api.event.WriteEvent;
 import cucumber.api.formatter.ColorAware;
 import cucumber.api.formatter.Formatter;
 import cucumber.api.formatter.NiceAppendable;
-import cucumber.stepexpression.ExpressionArgument;
 import cucumber.util.FixJava;
 import cucumber.util.Mapper;
 import gherkin.ast.Background;
@@ -212,15 +211,10 @@ final class PrettyFormatter implements Formatter, ColorAware {
     String formatStepText(String keyword, String stepText, Format textFormat, Format argFormat, List<Argument> arguments) {
         int beginIndex = 0;
         StringBuilder result = new StringBuilder(textFormat.text(keyword));
-        for (Argument a : arguments) {
-            if (!(a instanceof ExpressionArgument)) {
-                continue;
-            }
-            ExpressionArgument argument = (ExpressionArgument) a;
-
+        for (Argument argument : arguments) {
             // can be null if the argument is missing.
-            if (argument.getGroup() != null) {
-                int argumentOffset = argument.getGroup().getStart();
+            if (argument.getValue() != null) {
+                int argumentOffset = argument.getStart();
                 // a nested argument starts before the enclosing argument ends; ignore it when formatting
                 if (argumentOffset < beginIndex) {
                     continue;
@@ -229,11 +223,11 @@ final class PrettyFormatter implements Formatter, ColorAware {
                 result.append(textFormat.text(text));
             }
             // val can be null if the argument isn't there, for example @And("(it )?has something")
-            if (argument.getGroup() != null) {
-                String text = stepText.substring(argument.getGroup().getStart(), argument.getGroup().getEnd());
+            if (argument.getValue() != null) {
+                String text = stepText.substring(argument.getStart(), argument.getEnd());
                 result.append(argFormat.text(text));
                 // set beginIndex to end of argument
-                beginIndex = argument.getGroup().getEnd();
+                beginIndex = argument.getEnd();
             }
         }
         if (beginIndex != stepText.length()) {
