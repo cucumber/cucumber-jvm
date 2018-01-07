@@ -71,11 +71,10 @@ public class JavaSnippetTest {
     }
 
     @Test
-    @Ignore //TODO: no longer relevant for cucumber-expressions
-    public void generatesSnippetWithEscapedDollarSigns() {
+    public void generatesSnippetWithDollarSigns() {
         String expected = "" +
                 "@Given(\"I have ${int}\")\n" +
-                "public void i_have_$(int arg1) throws Throwable {\n" +
+                "public void i_have_$(int arg1) {\n" +
                 "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException();\n" +
                 "}\n";
@@ -83,11 +82,10 @@ public class JavaSnippetTest {
     }
 
     @Test
-    @Ignore //TODO: no longer relevant for cucumber-expressions
-    public void generatesSnippetWithEscapedQuestionMarks() {
+    public void generatesSnippetWithQuestionMarks() {
         String expected = "" +
                 "@Given(\"is there an error?:\")\n" +
-                "public void is_there_an_error() throws Throwable {\n" +
+                "public void is_there_an_error() {\n" +
                 "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException();\n" +
                 "}\n";
@@ -95,11 +93,10 @@ public class JavaSnippetTest {
     }
 
     @Test
-    @Ignore //TODO: no longer relevant for cucumber-expressions
-    public void generatesSnippetWithLotsOfEscapes() {
+    public void generatesSnippetWithLotsOfNonIdentifierCharacters() {
         String expected = "" +
-                "@Given(\"\\\\\\\\(\\\\[a-z\\\\]\\\\*\\\\)\\\\?\\\\.\\\\+\\\\\")\n" +
-                "public void a_z_() {\n" +
+                "@Given(\"([a-z]*)?.+\")\n" +
+                "public void a_z() {\n" +
                 "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new PendingException();\n" +
                 "}\n";
@@ -107,8 +104,7 @@ public class JavaSnippetTest {
     }
 
     @Test
-    @Ignore //TODO: no longer relevant for cucumber-expressions
-    public void generatesSnippetWithEscapedParentheses() {
+    public void generatesSnippetWithParentheses() {
         String expected = "" +
                 "@Given(\"I have {int} cukes (maybe more)\")\n" +
                 "public void i_have_cukes_maybe_more(int arg1) {\n" +
@@ -119,8 +115,7 @@ public class JavaSnippetTest {
     }
 
     @Test
-    @Ignore //TODO: no longer relevant for cucumber-expressions
-    public void generatesSnippetWithEscapedBrackets() {
+    public void generatesSnippetWithBrackets() {
         String expected = "" +
                 "@Given(\"I have {int} cukes [maybe more]\")\n" +
                 "public void i_have_cukes_maybe_more(int arg1) {\n" +
@@ -170,7 +165,6 @@ public class JavaSnippetTest {
     }
 
     @Test
-    @Ignore //TODO: Fix for cucumber-expressions
     public void generateSnippetWithOutlineParam() {
         String expected = "" +
                 "@Given(\"Then it responds <param>\")\n" +
