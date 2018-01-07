@@ -59,8 +59,7 @@ public final class DataTableTypeRegistryTableConverter implements TableConverter
 
         Type itemType = listItemType(type);
         if (itemType == null) {
-            throw cantConvertTo(type,
-                format("Please register a DataTableType with a TableTransformer for %s", type));
+            return toSingleton(dataTable, type);
         }
 
         Type mapKeyItemType = mapKeyType(itemType);
@@ -83,6 +82,29 @@ public final class DataTableTypeRegistryTableConverter implements TableConverter
         return (T) toList(dataTable, itemType);
     }
 
+    private <T> T toSingleton(DataTable dataTable, Type type) {
+        if (dataTable.isEmpty()) {
+            throw cantConvertTo(type, "The table was empty");
+        }
+
+        List<T> singletonList = toListOrNull(dataTable, type);
+        if (singletonList == null) {
+            throw cantConvertTo(type, format(
+                "Please register a DataTableType with a " +
+                    "TableTransformer, TableEntryTransformer or TableRowTransformer for %s", type));
+        }
+
+        if (singletonList.isEmpty()) {
+            throw cantConvertTo(type, "The transform yielded no results");
+        }
+
+        if (singletonList.size() == 1) {
+            return singletonList.get(0);
+        }
+
+        throw cantConvertTo(type, "The table contained more then one item");
+    }
+
     @Override
     public <T> List<T> toList(DataTable dataTable, Type itemType) {
         if (dataTable == null) throw new NullPointerException("dataTable may not be null");
@@ -92,15 +114,9 @@ public final class DataTableTypeRegistryTableConverter implements TableConverter
             return emptyList();
         }
 
-        DataTableType tableType = registry.lookupTableTypeByType(aListOf(itemType));
-        if (tableType != null) {
-            return unmodifiableList((List<T>) tableType.transform(dataTable.cells()));
-        }
-
-        DataTableType tableCellType = registry.lookupTableTypeByType(aListOf(aListOf(itemType)));
-        if (tableCellType != null) {
-            List<List<T>> cells = (List<List<T>>) tableCellType.transform(dataTable.cells());
-            return unmodifiableList(unpack(cells));
+        List<T> list = toListOrNull(dataTable, itemType);
+        if (list != null) {
+            return unmodifiableList(list);
         }
 
         if (dataTable.width() > 1) {
@@ -110,6 +126,19 @@ public final class DataTableTypeRegistryTableConverter implements TableConverter
 
         throw cantConvertToList(itemType,
             format("Please register a DataTableType with a TableEntryTransformer, TableRowTransformer or TableCellTransformer for %s", itemType));
+    }
+
+    private <T> List<T> toListOrNull(DataTable dataTable, Type itemType) {
+        DataTableType tableType = registry.lookupTableTypeByType(aListOf(itemType));
+        if (tableType != null) {
+            return (List<T>) tableType.transform(dataTable.cells());
+        }
+
+        DataTableType cellValueType = registry.lookupTableTypeByType(aListOf(aListOf(itemType)));
+        if (cellValueType != null) {
+            return unpack((List<List<T>>) cellValueType.transform(dataTable.cells()));
+        }
+        return null;
     }
 
     @Override

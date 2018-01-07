@@ -134,6 +134,34 @@ public class DataTableTypeRegistryTableConverterTest {
     }
 
     @Test
+    public void converts_table_of_single_cell_to_single_item() {
+        DataTable table = DataTable.create(
+            asList(
+                singletonList("3")
+            ));
+
+        assertEquals(3, converter.convert(table, Integer.class, false));
+    }
+
+
+    @Test
+    public void converts_table_to_single_item() {
+        DataTable table = DataTable.create(asList(
+            asList("name", "life expectancy"),
+            asList("Muffalo", "15")
+        ));
+
+        registry.defineDataTableType(new DataTableType("animal", Animal.class, new TableEntryTransformer<Animal>() {
+            @Override
+            public Animal transform(Map<String, String> tableEntry) {
+                return new Animal(tableEntry.get("name"), Integer.valueOf(tableEntry.get("life expectancy")));
+            }
+        }));
+
+        assertEquals(new Animal("Muffalo", 15), converter.convert(table, Animal.class, false));
+    }
+
+    @Test
     public void converts_table_of_single_column_to_list() {
         DataTable table = DataTable.create(
             asList(
