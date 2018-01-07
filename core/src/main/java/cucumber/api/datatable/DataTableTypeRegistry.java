@@ -1,7 +1,6 @@
 package cucumber.api.datatable;
 
 import com.fasterxml.jackson.databind.JavaType;
-import io.cucumber.cucumberexpressions.CucumberExpressionException;
 
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
@@ -14,6 +13,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import static cucumber.api.datatable.TypeFactory.constructType;
+import static java.lang.String.format;
 
 public final class DataTableTypeRegistry {
 
@@ -92,7 +92,8 @@ public final class DataTableTypeRegistry {
 
     public void defineDataTableType(DataTableType dataTableType) {
         if (tableTypeByName.containsKey(dataTableType.getName())) {
-            throw new DuplicateTypeNameException(String.format("There is already a data table type with name %s", dataTableType.getName()));
+            throw new DuplicateTypeNameException(format(
+                "There is already a data table type with name %s", dataTableType.getName()));
         }
 
         tableTypeByName.put(dataTableType.getName(), dataTableType);
@@ -102,10 +103,10 @@ public final class DataTableTypeRegistry {
         }
         SortedSet<DataTableType> dataTableTypes = tableTypeByType.get(dataTableType.getType());
         if (!dataTableTypes.isEmpty() && dataTableTypes.first().preferForTypeMatch() && dataTableType.preferForTypeMatch()) {
-            throw new CucumberExpressionException(String.format(
+            throw new CucumberDataTableException(format(
                 "There can only be one preferential data table type per type. " +
-                    "The type %s is used for two preferential parameter types, {%s} and {%s}",
-                dataTableType, dataTableTypes.first().getName(), dataTableType.getName()
+                    "Both {%s} and {%s} are preferential for the same type.",
+                dataTableTypes.first().getName(), dataTableType.getName()
             ));
         }
         dataTableTypes.add(dataTableType);
@@ -115,7 +116,10 @@ public final class DataTableTypeRegistry {
         SortedSet<DataTableType> dataTableTypes = tableTypeByType.get(constructType(tableType));
         if (dataTableTypes == null) return null;
         if (dataTableTypes.size() > 1 && !dataTableTypes.first().preferForTypeMatch()) {
-            throw new CucumberExpressionException("TODO: Throw ambigous exception");
+            // We don't do this check on insertion because we only want to restrict
+            // ambiguity when we look up by Regexp. Users of CucumberExpression should
+            // not be restricted.
+            throw new AmbiguousDataTableTypeException(tableType, dataTableTypes);
         }
         return dataTableTypes.first();
     }

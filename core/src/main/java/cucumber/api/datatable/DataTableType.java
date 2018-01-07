@@ -99,6 +99,26 @@ public final class DataTableType implements Comparable<DataTableType> {
         return preferForTypeMatch;
     }
 
+    @Override
+    public String toString() {
+        return "{" + name + "}";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        DataTableType that = (DataTableType) o;
+
+        return name.equals(that.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return name.hashCode();
+    }
+
     private static class TableCellTransformerAdaptor<T> implements RawTableTransformer<List<List<T>>> {
         private final TableCellTransformer<T> transformer;
 
