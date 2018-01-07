@@ -129,14 +129,18 @@ public final class DataTableTypeRegistryTableConverter implements TableConverter
     }
 
     private <T> List<T> toListOrNull(DataTable dataTable, Type itemType) {
+        return toListOrNull(dataTable.cells(), itemType);
+    }
+
+    private <T> List<T> toListOrNull(List<List<String>> cells, Type itemType) {
         DataTableType tableType = registry.lookupTableTypeByType(aListOf(itemType));
         if (tableType != null) {
-            return (List<T>) tableType.transform(dataTable.cells());
+            return (List<T>) tableType.transform(cells);
         }
 
         DataTableType cellValueType = registry.lookupTableTypeByType(aListOf(aListOf(itemType)));
         if (cellValueType != null) {
-            return unpack((List<List<T>>) cellValueType.transform(dataTable.cells()));
+            return unpack((List<List<T>>) cellValueType.transform(cells));
         }
         return null;
     }
@@ -216,14 +220,9 @@ public final class DataTableTypeRegistryTableConverter implements TableConverter
             return unpack((List<List<K>>) keyConverter.transform(keyColumn.subList(1, keyColumn.size())));
         }
 
-        DataTableType entryKeyConverter = registry.lookupTableTypeByType(aListOf(keyType));
-        if (entryKeyConverter != null) {
-            return (List<K>) entryKeyConverter.transform(keyColumn);
-        }
-
-        DataTableType cellKeyConverter = registry.lookupTableTypeByType(aListOf(aListOf(keyType)));
-        if (cellKeyConverter != null) {
-            return unpack((List<List<K>>) cellKeyConverter.transform(keyColumn));
+        List<K> list = toListOrNull(keyColumn, keyType);
+        if (list != null) {
+            return list;
         }
 
         throw cantConvertToMap(keyType, valueType,
