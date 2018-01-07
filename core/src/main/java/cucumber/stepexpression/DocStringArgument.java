@@ -14,4 +14,8 @@ public final class DocStringArgument implements Argument {
     public Object getValue() {
         return docStringType.transform(argument);
     }
+
+    public String getText() {
+        return argument;
+    }
 }

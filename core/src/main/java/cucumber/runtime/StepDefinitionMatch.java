@@ -2,19 +2,15 @@ package cucumber.runtime;
 
 import cucumber.stepexpression.Argument;
 import cucumber.api.Scenario;
-import cucumber.util.Mapper;
-import gherkin.pickles.PickleCell;
-import gherkin.pickles.PickleRow;
+import cucumber.stepexpression.DataTableArgument;
+import cucumber.stepexpression.DocStringArgument;
+import cucumber.stepexpression.ExpressionArgument;
 import gherkin.pickles.PickleStep;
-import gherkin.pickles.PickleString;
-import gherkin.pickles.PickleTable;
 import io.cucumber.cucumberexpressions.CucumberExpressionException;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
-import static cucumber.util.FixJava.map;
 
 public class StepDefinitionMatch extends Match implements DefinitionMatch {
     private final StepDefinition stepDefinition;
@@ -64,7 +60,7 @@ public class StepDefinitionMatch extends Match implements DefinitionMatch {
     }
 
     private CucumberException arityMismatch(int parameterCount) {
-        List<String> arguments = createArgumentsForErrorMessage(step);
+        List<String> arguments = createArgumentsForErrorMessage();
         return new CucumberException(String.format(
                 "Arity mismatch: Step Definition '%s' with pattern [%s] is declared with %s parameters. However, the gherkin step has %s arguments %s. \nStep text: %s",
                 stepDefinition.getLocation(true),
@@ -76,28 +72,20 @@ public class StepDefinitionMatch extends Match implements DefinitionMatch {
         ));
     }
 
-    private List<String> createArgumentsForErrorMessage(PickleStep step) {
-        //TODO: This looks wrong
+    private List<String> createArgumentsForErrorMessage() {
         List<String> arguments = new ArrayList<String>(getArguments().size());
         for (Argument argument : getArguments()) {
-            arguments.add(argument.getValue().toString());
-        }
-        if (!step.getArgument().isEmpty()) {
-            gherkin.pickles.Argument stepArgument = step.getArgument().get(0);
-            if (stepArgument instanceof PickleString) {
-                arguments.add("DocString:" + ((PickleString) stepArgument).getContent());
-            } else if (stepArgument instanceof PickleTable) {
-                List<List<String>> rows = map(((PickleTable) stepArgument).getRows(), new Mapper<PickleRow, List<String>>() {
-                    @Override
-                    public List<String> map(PickleRow row) {
-                        List<String> raw = new ArrayList<String>(row.getCells().size());
-                        for (PickleCell pickleCell : row.getCells()) {
-                            raw.add(pickleCell.getValue());
-                        }
-                        return raw;
-                    }
-                });
-                arguments.add("Table:" + rows.toString());
+            if (argument instanceof DataTableArgument) {
+                DataTableArgument tableArgument = (DataTableArgument) argument;
+                arguments.add("Table: " + tableArgument.getRawTable());
+            } else if (argument instanceof DocStringArgument) {
+                DocStringArgument docStringArgument = (DocStringArgument) argument;
+                arguments.add("DocString:" + docStringArgument.getText());
+            } else if (argument instanceof ExpressionArgument) {
+                ExpressionArgument expressionArgument = (ExpressionArgument) argument;
+                arguments.add(expressionArgument.getText());
+            } else {
+                throw new IllegalStateException("" + argument.getClass());
             }
         }
         return arguments;

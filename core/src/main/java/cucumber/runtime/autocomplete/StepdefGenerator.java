@@ -3,6 +3,7 @@ package cucumber.runtime.autocomplete;
 import cucumber.stepexpression.Argument;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.model.CucumberFeature;
+import cucumber.stepexpression.ExpressionArgument;
 import gherkin.pickles.Compiler;
 import gherkin.pickles.Pickle;
 import gherkin.pickles.PickleStep;
@@ -38,17 +39,18 @@ public class StepdefGenerator {
             for (CucumberFeature feature : features) {
                 for (Pickle pickle : compiler.compile(feature.getGherkinFeature())) {
                     for (PickleStep step : pickle.getSteps()) {
-                        //TODO: This list now also includes the DataTable or DocString Arguments
                         List<Argument> arguments = stepDefinition.matchedArguments(step);
                         if (arguments != null) {
                             MetaStepdef.MetaStep ms = new MetaStepdef.MetaStep();
                             ms.name = step.getText();
                             for (Argument argument : arguments) {
-                                MetaStepdef.MetaArgument ma = new MetaStepdef.MetaArgument();
-                                //ma.offset = argument.getOffset();
-                                //TODO: Get value is not a string and possibly not its string representation.
-                                ma.val = argument.getValue().toString();
-                                ms.args.add(ma);
+                                if(argument instanceof ExpressionArgument) {
+                                    ExpressionArgument expressionArgument = (ExpressionArgument) argument;
+                                    MetaStepdef.MetaArgument ma = new MetaStepdef.MetaArgument();
+                                    //ma.offset = expressionArgument.getOffset();
+                                    ma.val = expressionArgument.getText();
+                                    ms.args.add(ma);
+                                }
                             }
                             metaStepdef.steps.add(ms);
                         }
