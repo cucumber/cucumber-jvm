@@ -7,6 +7,7 @@ import cucumber.stepexpression.ExpressionArgument;
 import gherkin.pickles.Compiler;
 import gherkin.pickles.Pickle;
 import gherkin.pickles.PickleStep;
+import io.cucumber.cucumberexpressions.Group;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -45,10 +46,13 @@ public class StepdefGenerator {
                             ms.name = step.getText();
                             for (Argument argument : arguments) {
                                 if(argument instanceof ExpressionArgument) {
-                                    ExpressionArgument expressionArgument = (ExpressionArgument) argument;
                                     MetaStepdef.MetaArgument ma = new MetaStepdef.MetaArgument();
-                                    //ma.offset = expressionArgument.getOffset();
-                                    ma.val = expressionArgument.getText();
+                                    ExpressionArgument expressionArgument = (ExpressionArgument) argument;
+                                    Group group = expressionArgument.getGroup();
+                                    if(group != null){
+                                        ma.offset = group.getStart();
+                                        ma.val = group.getValue();
+                                    }
                                     ms.args.add(ma);
                                 }
                             }

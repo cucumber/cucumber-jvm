@@ -15,16 +15,12 @@ public final class ExpressionArgument implements Argument {
         return argument.getValue();
     }
 
-    public String getText() {
-        return argument.getGroup() == null ? null : argument.getGroup().getValue();
-    }
-
     public Group getGroup() {
         return argument.getGroup();
     }
 
     @Override
     public String toString() {
-        return getText();
+        return argument.getGroup() == null ? null : argument.getGroup().getValue();
     }
 }

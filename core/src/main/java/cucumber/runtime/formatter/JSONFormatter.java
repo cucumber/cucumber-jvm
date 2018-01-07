@@ -16,8 +16,6 @@ import cucumber.api.event.WriteEvent;
 import cucumber.api.formatter.Formatter;
 import cucumber.api.formatter.NiceAppendable;
 import cucumber.stepexpression.ExpressionArgument;
-import cucumber.stepexpression.DataTableArgument;
-import cucumber.stepexpression.DocStringArgument;
 import gherkin.ast.Background;
 import gherkin.ast.Feature;
 import gherkin.ast.ScenarioDefinition;
@@ -31,6 +29,7 @@ import gherkin.pickles.PickleRow;
 import gherkin.pickles.PickleString;
 import gherkin.pickles.PickleTable;
 import gherkin.pickles.PickleTag;
+import io.cucumber.cucumberexpressions.Group;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -55,7 +54,7 @@ final class JSONFormatter implements Formatter {
             handleTestSourceRead(event);
         }
     };
-    private EventHandler<TestCaseStarted> caseStartedHandler= new EventHandler<TestCaseStarted>() {
+    private EventHandler<TestCaseStarted> caseStartedHandler = new EventHandler<TestCaseStarted>() {
         @Override
         public void receive(TestCaseStarted event) {
             handleTestCaseStarted(event);
@@ -317,16 +316,15 @@ final class JSONFormatter implements Formatter {
             for (cucumber.stepexpression.Argument argument : testStep.getDefinitionArgument()) {
                 Map<String, Object> argumentMap = new HashMap<String, Object>();
 
-                if(argument instanceof ExpressionArgument){
-                    argumentMap.put("val", ((ExpressionArgument)argument).getGroup().getValue());
-                } else if (argument instanceof  DocStringArgument ){
-                    //TODO: Skip the doc string argument?
-                } else if (argument instanceof DataTableArgument){
-                    //TODO: Skip the data table argument?
-                } else {
-                    throw new IllegalArgumentException("Don't know what to do with " + argument.getClass());
-                }
+                if (argument instanceof ExpressionArgument) {
+                    ExpressionArgument expressionArgument = (ExpressionArgument) argument;
 
+                    Group group = expressionArgument.getGroup();
+                    if (group != null) {
+                        argumentMap.put("val", group.getValue());
+                        argumentMap.put("offset", group.getStart());
+                    }
+                }
                 argumentList.add(argumentMap);
             }
             matchMap.put("arguments", argumentList);
