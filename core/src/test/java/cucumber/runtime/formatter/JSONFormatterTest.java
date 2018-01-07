@@ -770,6 +770,69 @@ public class JSONFormatterTest {
     }
 
     @Test
+    public void should_format_scenario_with_a_step_with_a_doc_string_and_content_type() throws Throwable {
+        CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
+            "Feature: Banana party\n" +
+            "\n" +
+            "  Scenario: Monkey eats bananas\n" +
+            "    Given there are bananas\n" +
+            "    \"\"\"doc\n" +
+            "    doc string content\n" +
+            "    \"\"\"\n");
+        Map<String, Result> stepsToResult = new HashMap<String, Result>();
+        stepsToResult.put("there are bananas", result("passed"));
+        Map<String, String> stepsToLocation = new HashMap<String, String>();
+        stepsToLocation.put("there are bananas", "StepDefs.there_are_bananas()");
+        Long stepDuration = milliSeconds(1);
+
+        String formatterOutput = runFeatureWithJSONPrettyFormatter(feature, stepsToResult, stepsToLocation, stepDuration);
+
+        String expected = "" +
+                "[\n" +
+                "  {\n" +
+                "    \"id\": \"banana-party\",\n" +
+                "    \"uri\": \"path/test.feature\",\n" +
+                "    \"keyword\": \"Feature\",\n" +
+                "    \"name\": \"Banana party\",\n" +
+                "    \"line\": 1,\n" +
+                "    \"description\": \"\",\n" +
+                "    \"elements\": [\n" +
+                "      {\n" +
+                "        \"id\": \"banana-party;monkey-eats-bananas\",\n" +
+                "        \"keyword\": \"Scenario\",\n" +
+                "        \"name\": \"Monkey eats bananas\",\n" +
+                "        \"line\": 3,\n" +
+                "        \"description\": \"\",\n" +
+                "        \"type\": \"scenario\",\n" +
+                "        \"steps\": [\n" +
+                "          {\n" +
+                "            \"keyword\": \"Given \",\n" +
+                "            \"name\": \"there are bananas\",\n" +
+                "            \"line\": 4,\n" +
+                "            \"doc_string\": {\n" +
+                "              \"content_type\": \"doc\",\n" +
+                "              \"value\": \"doc string content\",\n" +
+                "              \"line\": 5\n" +
+                "            },\n" +
+                "            \"match\": {\n" +
+                "              \"location\": \"StepDefs.there_are_bananas()\"\n" +
+                "            },\n" +
+                "            \"result\": {\n" +
+                "              \"status\": \"passed\",\n" +
+                "              \"duration\": 1000000\n" +
+                "            }\n" +
+                "          }\n" +
+                "        ]\n" +
+                "      }\n" +
+                "    ],\n" +
+                "    \"tags\": []\n" +
+                "  }\n" +
+                "]";
+        assertPrettyJsonEquals(expected, formatterOutput);
+    }
+
+
+    @Test
     public void should_format_scenario_with_a_step_with_a_data_table() throws Throwable {
         CucumberFeature feature = TestHelper.feature("path/test.feature", "" +
                 "Feature: Banana party\n" +
