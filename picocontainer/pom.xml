@@ -55,17 +55,16 @@
                             <goal>run</goal>
                         </goals>
                         <configuration>
-                            <!--TODO: Fix for cucumber-expressions-->
-                            <!--<target>-->
-                                <!--<echo message="Running CLI test for picocontainer" />-->
-                                <!--<java classname="cucumber.api.cli.Main" fork="true" failonerror="true" newenvironment="true" maxmemory="512m" classpathref="maven.test.classpath">-->
-                                    <!--<arg value="&#45;&#45;plugin" />-->
-                                    <!--<arg value="progress" />-->
-                                    <!--<arg value="&#45;&#45;glue" />-->
-                                    <!--<arg value="cucumber.runtime.java.picocontainer" />-->
-                                    <!--<arg value="${basedir}/src/test/resources/cucumber/runtime/java/picocontainer" />-->
-                                <!--</java>-->
-                            <!--</target>-->
+                            <target>
+                                <echo message="Running CLI test for picocontainer" />
+                                <java classname="cucumber.api.cli.Main" fork="true" failonerror="true" newenvironment="true" maxmemory="512m" classpathref="maven.test.classpath">
+                                    <arg value="--plugin" />
+                                    <arg value="progress" />
+                                    <arg value="--glue" />
+                                    <arg value="cucumber.runtime.java.picocontainer" />
+                                    <arg value="${basedir}/src/test/resources/cucumber/runtime/java/picocontainer" />
+                                </java>
+                            </target>
                         </configuration>
                     </execution>
                 </executions>
