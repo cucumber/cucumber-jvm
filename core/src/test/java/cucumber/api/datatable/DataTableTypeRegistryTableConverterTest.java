@@ -37,7 +37,9 @@ public class DataTableTypeRegistryTableConverterTest {
     }.getType();
     private static final Type MAP_OF_INT_STRING_TYPE = new TypeReference<Map<Integer, String>>() {
     }.getType();
-    private static final Type MAP_OF_INT_LIST_STRING_TYPE = new TypeReference<Map<Integer, List<String>>>() {
+    private static final Type MAP_OF_INT_TO_LIST_OF_STRING_TYPE = new TypeReference<Map<Integer, List<String>>>() {
+    }.getType();
+    private static final Type MAP_OF_INT_TO_MAP_OF_STRING_INT_TYPE = new TypeReference<Map<Integer, Map<String, Integer>>>() {
     }.getType();
     private static final Type LIST_OF_MAP_OF_INT_INT_TYPE = new TypeReference<List<Map<Integer, Integer>>>() {
     }.getType();
@@ -369,7 +371,7 @@ public class DataTableTypeRegistryTableConverterTest {
     }
 
     @Test
-    public void converts_table_of_three_columns_without_header_to_map_with_list_value() {
+    public void converts_table_of_three_columns_without_header_to_map_of_list_values() {
         DataTable table = DataTable.create(
             asList(
                 asList("3", "c", "x"),
@@ -383,11 +385,33 @@ public class DataTableTypeRegistryTableConverterTest {
             put(6, asList("f", "z"));
         }};
 
-        assertEquals(expected, converter.convert(table, MAP_OF_INT_LIST_STRING_TYPE, false));
+        assertEquals(expected, converter.convert(table, MAP_OF_INT_TO_LIST_OF_STRING_TYPE, false));
     }
 
     @Test
-    public void to_map_cant_convert_table_with_blank_first_header_cell_to_map() {
+    public void converts_table_of_three_columns_with_header_to_map_of_map_values() {
+        DataTable table = DataTable.create(
+            asList(
+                asList("", "c", "x"),
+                asList("5", "42", "12"),
+                asList("6", "1", "13")));
+
+        Map<Integer, Map<String, Integer>> expected = new HashMap<Integer, Map<String, Integer>>() {{
+            put(5, new HashMap<String, Integer>() {{
+                put("c", 42);
+                put("x", 12);
+            }});
+            put(6, new HashMap<String, Integer>() {{
+                put("c", 1);
+                put("x", 13);
+            }});
+        }};
+
+        assertEquals(expected, converter.convert(table, MAP_OF_INT_TO_MAP_OF_STRING_INT_TYPE, false));
+    }
+
+    @Test
+    public void to_map_cant_convert_table_without_header_with_blank_first_header_cell_to_map() {
         expectedException.expectMessage(String.format("Can't convert DataTable to Map<%s,%s>", Id.class, Animal.class));
 
         DataTable table = DataTable.create(

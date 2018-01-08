@@ -230,6 +230,41 @@ public final class DataTableTypeRegistryTableConverter implements TableConverter
     }
 
     private <V> List<V> convertEntryValues(Type keyType, Type valueType, List<List<String>> valueColumns, boolean keysImplyTableEntryTransformer) {
+        // When converting a table to a Map we split the table into two sub tables. The left column
+        // contains the keys and remaining columns values.
+        //
+        // Example:
+        //
+        // |     | name  | age |
+        // | a1d | Jack  | 31  |
+        // | 6b3 | Jones | 25  |
+        //
+        // to:
+        //
+        // {
+        //   a1b  : { name: Jack  age: 31 },
+        //   6b3  : { name: Jones age: 25 }
+        // }
+        //
+        // Because the remaining columns are a table and we want to convert them to a specific type
+        // we could call convert again. However the recursion here is limited:
+        //
+        // 1. valueType instanceOf List => toLists => no further recursion
+        // 2. valueType instanceOf Map  => toMaps  => no further recursion
+        // 3. otherwise                 => toList  => no further recursion
+        //
+        // So instead we unroll these steps here. This keeps the error handling and messages sane.
+
+        // Handle case #2
+        Type valueMapKeyType = mapKeyType(valueType);
+        if (valueMapKeyType != null) {
+            Type valueMapValueType = mapValueType(valueType);
+            return (List<V>) DataTable.create(valueColumns, this).asMaps(valueMapKeyType, valueMapValueType);
+        } else if (valueType instanceof Map){
+            return (List<V>) DataTable.create(valueColumns, this).asMaps(String.class, String.class);
+        }
+
+        // Try to handle case #3. We are required to check the most specific solution first.
         DataTableType entryValueConverter = registry.lookupTableTypeByType(aListOf(valueType));
         if (entryValueConverter != null) {
             return (List<V>) entryValueConverter.transform(valueColumns);
@@ -240,6 +275,7 @@ public final class DataTableTypeRegistryTableConverter implements TableConverter
                 format("Please register a DataTableType with a TableEntryTransformer for %s", valueType));
         }
 
+        // Try to handle case #1. This may result in multiple values per key if the table is too wide.
         DataTableType cellValueConverter = registry.lookupTableTypeByType(aListOf(aListOf(valueType)));
         if (cellValueConverter != null) {
             return unpack((List<List<V>>) cellValueConverter.transform(valueColumns));
@@ -350,8 +386,8 @@ public final class DataTableTypeRegistryTableConverter implements TableConverter
             } else {
                 return null;
             }
-        } else {
-            return null;
         }
+
+        return null;
     }
 }
