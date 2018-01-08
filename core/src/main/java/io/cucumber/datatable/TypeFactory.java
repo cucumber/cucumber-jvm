@@ -1,4 +1,4 @@
-package cucumber.api.datatable;
+package io.cucumber.datatable;
 
 import com.fasterxml.jackson.databind.JavaType;
 

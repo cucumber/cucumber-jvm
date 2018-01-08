@@ -2,8 +2,8 @@ package cucumber.api;
 
 import io.cucumber.cucumberexpressions.ParameterType;
 import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
-import cucumber.api.datatable.DataTableType;
-import cucumber.api.datatable.DataTableTypeRegistry;
+import io.cucumber.datatable.DataTableType;
+import io.cucumber.datatable.DataTableTypeRegistry;
 
 import java.lang.reflect.Type;
 import java.util.Locale;

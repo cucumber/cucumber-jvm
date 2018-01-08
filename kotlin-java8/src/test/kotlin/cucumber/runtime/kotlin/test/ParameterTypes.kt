@@ -2,8 +2,8 @@ package cucumber.runtime.kotlin.test
 
 import cucumber.api.Configuration
 import cucumber.api.TypeRegistry
-import cucumber.api.datatable.DataTableType
-import cucumber.api.datatable.TableEntryTransformer
+import io.cucumber.datatable.DataTableType
+import io.cucumber.datatable.TableEntryTransformer
 import java.util.Locale.ENGLISH
 
 class ParameterTypes : Configuration {

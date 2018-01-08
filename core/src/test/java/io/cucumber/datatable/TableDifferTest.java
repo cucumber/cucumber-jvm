@@ -1,4 +1,4 @@
-package cucumber.api.datatable;
+package io.cucumber.datatable;
 
 import cucumber.stepexpression.TableParser;
 import org.junit.Test;

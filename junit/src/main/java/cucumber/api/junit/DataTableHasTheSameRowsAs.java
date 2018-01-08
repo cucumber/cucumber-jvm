@@ -1,8 +1,8 @@
 package cucumber.api.junit;
 
-import cucumber.api.datatable.DataTable;
-import cucumber.api.datatable.TableDiffException;
-import cucumber.api.datatable.TableDiffer;
+import io.cucumber.datatable.DataTable;
+import io.cucumber.datatable.TableDiffException;
+import io.cucumber.datatable.TableDiffer;
 import org.hamcrest.Description;
 import org.hamcrest.Factory;
 import org.hamcrest.TypeSafeDiagnosingMatcher;

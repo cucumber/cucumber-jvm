@@ -1,6 +1,6 @@
-package cucumber.api.datatable;
+package io.cucumber.datatable;
 
-import cucumber.api.datatable.DataTable.TableConverter;
+import io.cucumber.datatable.DataTable.TableConverter;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -11,12 +11,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static cucumber.api.datatable.CucumberDataTableException.cantConvertTo;
-import static cucumber.api.datatable.CucumberDataTableException.cantConvertToList;
-import static cucumber.api.datatable.CucumberDataTableException.cantConvertToLists;
-import static cucumber.api.datatable.CucumberDataTableException.cantConvertToMap;
-import static cucumber.api.datatable.CucumberDataTableException.cantConvertToMaps;
-import static cucumber.api.datatable.TypeFactory.aListOf;
+import static io.cucumber.datatable.CucumberDataTableException.cantConvertTo;
+import static io.cucumber.datatable.CucumberDataTableException.cantConvertToList;
+import static io.cucumber.datatable.CucumberDataTableException.cantConvertToLists;
+import static io.cucumber.datatable.CucumberDataTableException.cantConvertToMap;
+import static io.cucumber.datatable.CucumberDataTableException.cantConvertToMaps;
+import static io.cucumber.datatable.TypeFactory.aListOf;
 
 import static java.lang.String.format;
 import static java.util.Collections.emptyList;

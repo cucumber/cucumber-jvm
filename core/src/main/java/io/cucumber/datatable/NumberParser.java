@@ -1,4 +1,4 @@
-package cucumber.api.datatable;
+package io.cucumber.datatable;
 
 import java.text.NumberFormat;
 import java.text.ParseException;

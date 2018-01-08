@@ -1,10 +1,10 @@
 package cucumber.stepexpression;
 
 import cucumber.api.TypeRegistry;
-import cucumber.api.datatable.DataTable;
-import cucumber.api.datatable.DataTableType;
-import cucumber.api.datatable.TableEntryTransformer;
-import cucumber.api.datatable.TableTransformer;
+import io.cucumber.datatable.DataTable;
+import io.cucumber.datatable.DataTableType;
+import io.cucumber.datatable.TableEntryTransformer;
+import io.cucumber.datatable.TableTransformer;
 import org.junit.Test;
 
 import java.lang.reflect.Method;

@@ -1,4 +1,4 @@
-package cucumber.api.datatable;
+package io.cucumber.datatable;
 
 public final class TableDiffException extends RuntimeException {
     private final DataTable from;

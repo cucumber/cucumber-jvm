@@ -1,9 +1,9 @@
 package cucumber.stepexpression;
 
 import cucumber.api.TypeRegistry;
-import cucumber.api.datatable.DataTableTypeRegistryTableConverter;
-import cucumber.api.datatable.DataTableType;
-import cucumber.api.datatable.DataTable;
+import io.cucumber.datatable.DataTableTypeRegistryTableConverter;
+import io.cucumber.datatable.DataTableType;
+import io.cucumber.datatable.DataTable;
 
 import io.cucumber.cucumberexpressions.CucumberExpressionException;
 import io.cucumber.cucumberexpressions.Expression;

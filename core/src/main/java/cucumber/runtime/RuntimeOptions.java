@@ -4,7 +4,7 @@ import cucumber.api.Plugin;
 import cucumber.api.SnippetType;
 import cucumber.api.StepDefinitionReporter;
 import cucumber.api.SummaryPrinter;
-import cucumber.api.datatable.DataTable;
+import io.cucumber.datatable.DataTable;
 import cucumber.api.event.TestRunStarted;
 import cucumber.api.formatter.ColorAware;
 import cucumber.api.formatter.Formatter;

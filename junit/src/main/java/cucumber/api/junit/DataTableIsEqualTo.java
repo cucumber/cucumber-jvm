@@ -1,6 +1,6 @@
 package cucumber.api.junit;
 
-import cucumber.api.datatable.DataTable;
+import io.cucumber.datatable.DataTable;
 import org.hamcrest.Description;
 import org.hamcrest.Factory;
 import org.hamcrest.TypeSafeMatcher;

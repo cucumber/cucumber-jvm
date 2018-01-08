@@ -1,4 +1,4 @@
-package cucumber.api.datatable;
+package io.cucumber.datatable;
 
 import java.io.IOException;
 import java.util.List;

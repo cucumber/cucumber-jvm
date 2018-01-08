@@ -1,6 +1,6 @@
 package cucumber.stepexpression;
 
-import cucumber.api.datatable.DataTable;
+import io.cucumber.datatable.DataTable;
 
 import java.util.List;
 

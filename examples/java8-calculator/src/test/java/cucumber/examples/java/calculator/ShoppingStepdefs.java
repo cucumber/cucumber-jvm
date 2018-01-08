@@ -1,6 +1,6 @@
 package cucumber.examples.java.calculator;
 
-import cucumber.api.datatable.DataTable;
+import io.cucumber.datatable.DataTable;
 import cucumber.api.java8.En;
 
 import java.util.List;

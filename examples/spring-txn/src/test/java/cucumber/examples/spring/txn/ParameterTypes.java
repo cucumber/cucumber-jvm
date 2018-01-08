@@ -2,8 +2,8 @@ package cucumber.examples.spring.txn;
 
 import cucumber.api.Configuration;
 import cucumber.api.TypeRegistry;
-import cucumber.api.datatable.DataTableType;
-import cucumber.api.datatable.TableEntryTransformer;
+import io.cucumber.datatable.DataTableType;
+import io.cucumber.datatable.TableEntryTransformer;
 
 import java.util.Map;
 

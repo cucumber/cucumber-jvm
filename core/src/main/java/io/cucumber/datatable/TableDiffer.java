@@ -1,4 +1,4 @@
-package cucumber.api.datatable;
+package io.cucumber.datatable;
 
 import cucumber.deps.difflib.Delta;
 import cucumber.deps.difflib.DiffUtils;

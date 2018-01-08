@@ -2,7 +2,7 @@ package cucumber.runtime.java;
 
 import cucumber.api.Transpose;
 import cucumber.api.TypeRegistry;
-import cucumber.api.datatable.DataTable;
+import io.cucumber.datatable.DataTable;
 import cucumber.api.java.ObjectFactory;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.StepDefinitionMatch;

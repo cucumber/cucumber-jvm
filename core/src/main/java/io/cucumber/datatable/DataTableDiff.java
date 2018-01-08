@@ -1,4 +1,4 @@
-package cucumber.api.datatable;
+package io.cucumber.datatable;
 
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;

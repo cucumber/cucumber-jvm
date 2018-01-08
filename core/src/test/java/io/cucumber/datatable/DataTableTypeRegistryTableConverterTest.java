@@ -1,7 +1,7 @@
-package cucumber.api.datatable;
+package io.cucumber.datatable;
 
 import cucumber.api.TypeRegistry;
-import cucumber.api.datatable.DataTable.TableConverter;
+import io.cucumber.datatable.DataTable.TableConverter;
 import io.cucumber.cucumberexpressions.TypeReference;
 import org.junit.Rule;
 import org.junit.Test;
@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static cucumber.api.datatable.DataTable.emptyDataTable;
+import static io.cucumber.datatable.DataTable.emptyDataTable;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;

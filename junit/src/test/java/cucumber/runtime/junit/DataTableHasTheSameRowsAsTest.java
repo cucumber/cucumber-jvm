@@ -1,6 +1,6 @@
 package cucumber.runtime.junit;
 
-import cucumber.api.datatable.DataTable;
+import io.cucumber.datatable.DataTable;
 import org.junit.Test;
 
 import static cucumber.api.junit.DataTableHasTheSameRowsAs.hasTheSameRowsInOrderAs;

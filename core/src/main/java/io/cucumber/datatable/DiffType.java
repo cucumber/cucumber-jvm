@@ -1,4 +1,4 @@
-package cucumber.api.datatable;
+package io.cucumber.datatable;
 
 enum DiffType {
     NONE, DELETE, INSERT

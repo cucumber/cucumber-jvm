@@ -2,8 +2,8 @@ package cucumber.runtime.java8.test;
 
 import cucumber.api.Configuration;
 import cucumber.api.TypeRegistry;
-import cucumber.api.datatable.DataTableType;
-import cucumber.api.datatable.TableEntryTransformer;
+import io.cucumber.datatable.DataTableType;
+import io.cucumber.datatable.TableEntryTransformer;
 import cucumber.runtime.java8.test.LambdaStepdefs.Person;
 
 import static java.util.Locale.ENGLISH;

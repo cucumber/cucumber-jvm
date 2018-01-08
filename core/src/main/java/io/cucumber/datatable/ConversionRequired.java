@@ -1,6 +1,6 @@
-package cucumber.api.datatable;
+package io.cucumber.datatable;
 
-import cucumber.api.datatable.DataTable.TableConverter;
+import io.cucumber.datatable.DataTable.TableConverter;
 
 import java.lang.reflect.Type;
 import java.util.List;

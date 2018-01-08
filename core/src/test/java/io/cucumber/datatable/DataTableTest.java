@@ -1,7 +1,6 @@
-package cucumber.api.datatable;
+package io.cucumber.datatable;
 
-import cucumber.api.datatable.DataTable.TableConverter;
-import cucumber.runtime.CucumberException;
+import io.cucumber.datatable.DataTable.TableConverter;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;

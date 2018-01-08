@@ -1,4 +1,4 @@
-package cucumber.api.datatable;
+package io.cucumber.datatable;
 
 import com.fasterxml.jackson.databind.JavaType;
 
@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import static cucumber.api.datatable.TypeFactory.constructType;
+import static io.cucumber.datatable.TypeFactory.constructType;
 import static java.lang.String.format;
 
 public final class DataTableTypeRegistry {

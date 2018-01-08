@@ -1,4 +1,4 @@
-package cucumber.api.datatable;
+package io.cucumber.datatable;
 
 import com.fasterxml.jackson.databind.JavaType;
 
@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static cucumber.api.datatable.TypeFactory.aListOf;
-import static cucumber.api.datatable.TypeFactory.constructType;
+import static io.cucumber.datatable.TypeFactory.aListOf;
+import static io.cucumber.datatable.TypeFactory.constructType;
 
 
 public final class DataTableType implements Comparable<DataTableType> {
