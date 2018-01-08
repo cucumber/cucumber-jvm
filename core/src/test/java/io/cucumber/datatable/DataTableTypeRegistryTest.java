@@ -84,7 +84,8 @@ public class DataTableTypeRegistryTest {
         }, false));
 
         expectedException.expectMessage(
-            "Your table type class cucumber.api.datatable.DataTableTypeRegistryTest$Place matches multiple data table types:\n" +
+            "\n" +
+                "The type class io.cucumber.datatable.DataTableTypeRegistryTest$Place matches multiple data table types:\n" +
                 "\n" +
                 "   {location}\n" +
                 "   {place}\n" +
@@ -93,7 +94,7 @@ public class DataTableTypeRegistryTest {
                 "\n" +
                 "1) Add an explicit table name to your step definition\n" +
                 "\n" +
-                "2) Make one of the data table types preferential and continue to use a Regular Expression.");
+                "2) Make one of the data table types preferential and continue to use an implicit data table.\n");
 
         registry.lookupTableTypeByType(Place.class);
     }

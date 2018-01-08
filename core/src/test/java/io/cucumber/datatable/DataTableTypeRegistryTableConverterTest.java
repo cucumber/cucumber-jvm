@@ -21,6 +21,7 @@ import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
 import static java.util.Locale.ENGLISH;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 
 public class DataTableTypeRegistryTableConverterTest {
@@ -135,6 +136,15 @@ public class DataTableTypeRegistryTableConverterTest {
         converter.convert(table, Animal.class, false);
     }
 
+
+    @Test
+    public void converts_empty_table_to_null() {
+        DataTable table = emptyDataTable();
+        assertNull(converter.convert(table, Integer.class, false));
+    }
+
+
+
     @Test
     public void converts_table_of_single_cell_to_single_item() {
         DataTable table = DataTable.create(
@@ -234,7 +244,7 @@ public class DataTableTypeRegistryTableConverterTest {
 
     @Test
     public void converts_empty_table_to_empty_lists() {
-        DataTable table = DataTable.create(Collections.<List<String>>emptyList());
+        DataTable table = emptyDataTable();
         assertEquals(emptyList(), converter.toLists(table, Integer.class));
         assertEquals(emptyList(), converter.convert(table, LIST_OF_LIST_OF_INT_TYPE, false));
     }

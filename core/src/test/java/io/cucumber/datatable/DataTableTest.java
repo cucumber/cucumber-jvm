@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
@@ -132,14 +133,14 @@ public class DataTableTest {
         }
     }
 
-    @Test(expected = CucumberDataTableException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void canNotSupportNonRectangularTablesMissingColumn() {
         createTable(asList("one", "four", "seven"),
             asList("a1", "a4444"),
             asList("b1")).raw();
     }
 
-    @Test(expected = CucumberDataTableException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void canNotSupportNonRectangularTablesExceedingColumn() {
         createTable(asList("one", "four", "seven"),
             asList("a1", "a4444", "b7777777", "zero")).raw();
@@ -164,6 +165,14 @@ public class DataTableTest {
     @Test(expected = UnsupportedOperationException.class)
     public void raw_col_is_immutable() {
         createSimpleTable().raw().get(0).remove(0);
+    }
+
+
+    @Test
+    public void convert_delegates_to_converter() {
+        DataTable table = createTable(asList("1", "100"), asList("2", "1000"));
+        table.convert(Long.class, false);
+        verify(tableConverter).convert(table, Long.class, false);
     }
 
     @Test
@@ -218,7 +227,29 @@ public class DataTableTest {
         assertNotSame(createSimpleTable().transpose().hashCode(), createTable(asList("one")).transpose().hashCode());
     }
 
-    public DataTable createSimpleTable() {
+    @Test
+    public void can_print_table_to_appendable() throws IOException {
+        DataTable table = createSimpleTable();
+        Appendable appendable = new StringBuilder();
+        table.print(appendable);
+        String expected = "" +
+            "      | one  | four  | seven  |\n" +
+            "      | 4444 | 55555 | 666666 |\n";
+        assertEquals(expected, appendable.toString());
+    }
+
+    @Test
+    public void can_print_table_to_string_builder() {
+        DataTable table = createSimpleTable();
+        StringBuilder appendable = new StringBuilder();
+        table.print(appendable);
+        String expected = "" +
+            "      | one  | four  | seven  |\n" +
+            "      | 4444 | 55555 | 666666 |\n";
+        assertEquals(expected, appendable.toString());
+    }
+
+    private DataTable createSimpleTable() {
         return createTable(asList("one", "four", "seven"), asList("4444", "55555", "666666"));
     }
 

@@ -12,8 +12,8 @@ class AmbiguousDataTableTypeException extends CucumberDataTableException {
 
     AmbiguousDataTableTypeException(Type tableType, SortedSet<DataTableType> dataTableTypes) {
         super(format(
-            "" +
-                "Your table type %s matches multiple data table types:\n" +
+            "\n" +
+                "The type %s matches multiple data table types:\n" +
                 "\n" +
                 "   %s\n" +
                 "\n" +
@@ -21,8 +21,7 @@ class AmbiguousDataTableTypeException extends CucumberDataTableException {
                 "\n" +
                 "1) Add an explicit table name to your step definition\n" +
                 "\n" +
-                "2) Make one of the data table types preferential and continue to use a Regular Expression.\n" +
-                "\n",
+                "2) Make one of the data table types preferential and continue to use an implicit data table.\n",
             tableType, dataTableTypeNames(dataTableTypes))
         );
     }

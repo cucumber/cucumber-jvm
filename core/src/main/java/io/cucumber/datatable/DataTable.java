@@ -1,7 +1,9 @@
 package io.cucumber.datatable;
 
 import java.io.IOException;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,47 +12,82 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
 
+/**
+ * A DataTable is an m-by-n table that contains string values. For example:
+ * <p>
+ * <pre>
+ * |     | firstName   | lastName | birthDate  |
+ * | 4a1 | Annie M. G. | Schmidt  | 1911-03-20 |
+ * | c92 | Roald       | Dahl     | 1916-09-13 |
+ * </pre>
+ * <p>
+ * A table can be converted into an objects of an arbitrary type by a {@link TableConverter}.
+ * <p>
+ * A DataTable is immutable.
+ */
 public final class DataTable {
 
     private final List<List<String>> raw;
     private final TableConverter tableConverter;
 
+    /**
+     * Creates an empty DataTable.
+     *
+     * @return an empty DataTable
+     */
     public static DataTable emptyDataTable() {
-        return create(Collections.<List<String>>emptyList());
+        return new DataTable(Collections.<List<String>>emptyList(), new EmptyDataTableConverter(), true);
     }
 
+    /**
+     * Creates a new DataTable.
+     *
+     * @param raw the underlying table
+     * @return an new data table containing the raw values
+     * @throws IllegalArgumentException when the table is not balanced
+     */
     public static DataTable create(List<List<String>> raw) {
         return create(raw, new NoConverterDefined());
     }
 
+    /**
+     * Creates a new DataTable.
+     *
+     * @param raw            the underlying table
+     * @param tableConverter to transform the table
+     * @return an new data table containing the raw values
+     * @throws IllegalArgumentException when the table is not balanced
+     */
     public static DataTable create(List<List<String>> raw, TableConverter tableConverter) {
-        return new DataTable(raw, tableConverter);
+        return new DataTable(copy(requireBalancedTable(raw)), tableConverter, true);
     }
 
     /**
-     * Creates a new DataTable. This constructor should not be called by Cucumber users - it's used internally only.
+     * Creates a new DataTable.
+     * <p>
+     * To improve performance this constructor assumes the provided raw table
+     * is both balanced and safe for use.
+     * <p>
+     * The third parameter is used create a specific signature only.
      *
-     * @param raw            the underlying table.
-     * @param tableConverter how to convert the rows.
+     * @param raw             the underlying table
+     * @param tableConverter  to transform the table
+     * @param copyNotRequired marker to show the provided table is both balanced and safe for use
      */
-    DataTable(List<List<String>> raw, TableConverter tableConverter) {
+    DataTable(List<List<String>> raw, TableConverter tableConverter, @SuppressWarnings("unused") boolean copyNotRequired) {
         if (raw == null) throw new CucumberDataTableException("cells can not be null");
         if (tableConverter == null) throw new CucumberDataTableException("tableConverter can not be null");
-        this.raw = copyAndRequireBalancedTable(raw);
+        this.raw = raw;
         this.tableConverter = tableConverter;
     }
 
-    private static List<List<String>> copyAndRequireBalancedTable(List<List<String>> table) {
-        int columns = table.isEmpty() ? 0 : table.get(0).size();
-
+    private static List<List<String>> copy(List<List<String>> table) {
         List<List<String>> rawCopy = new ArrayList<List<String>>(table.size());
         for (List<String> row : table) {
-            if (columns != row.size()) {
-                throw new CucumberDataTableException(String.format("Table is unbalanced: expected %s column(s) but found %s.", columns, row.size()));
-            }
             if (row.isEmpty()) {
                 continue;
             }
@@ -59,6 +96,16 @@ public final class DataTable {
             rawCopy.add(unmodifiableList(rowCopy));
         }
         return unmodifiableList(rawCopy);
+    }
+
+    private static List<List<String>> requireBalancedTable(List<List<String>> table) {
+        int columns = table.isEmpty() ? 0 : table.get(0).size();
+        for (List<String> row : table) {
+            if (columns != row.size()) {
+                throw new IllegalArgumentException(String.format("Table is unbalanced: expected %s column(s) but found %s.", columns, row.size()));
+            }
+        }
+        return table;
     }
 
     List<List<String>> raw() {
@@ -216,7 +263,12 @@ public final class DataTable {
                 row.add(pickleRow.get(j));
             }
         }
-        return new DataTable(transposed, tableConverter);
+
+        for (int i = 0; i < transposed.size(); i++) {
+            transposed.set(i, unmodifiableList(transposed.get(i)));
+        }
+
+        return new DataTable(unmodifiableList(transposed), tableConverter, true);
     }
 
     public <T> T convert(Type type, boolean transposed) {
@@ -272,7 +324,94 @@ public final class DataTable {
         }
     }
 
-    private static final class NoConverterDefined implements TableConverter {
+    static abstract class AbstractTableConverter implements TableConverter {
+
+        AbstractTableConverter() {
+
+        }
+
+        static Type listItemType(Type type) {
+            return typeArg(type, List.class, 0);
+        }
+
+        static Type mapKeyType(Type type) {
+            return typeArg(type, Map.class, 0);
+        }
+
+        static Type mapValueType(Type type) {
+            return typeArg(type, Map.class, 1);
+        }
+
+        static Type typeArg(Type type, Class<?> wantedRawType, int index) {
+            if (type instanceof ParameterizedType) {
+                ParameterizedType parameterizedType = (ParameterizedType) type;
+                Type rawType = parameterizedType.getRawType();
+                if (rawType instanceof Class && wantedRawType.isAssignableFrom((Class) rawType)) {
+                    Type result = parameterizedType.getActualTypeArguments()[index];
+                    if (result instanceof TypeVariable) {
+                        throw new CucumberDataTableException("Generic types must be explicit");
+                    }
+                    return result;
+                } else {
+                    return null;
+                }
+            }
+
+            return null;
+        }
+    }
+
+    static final class EmptyDataTableConverter extends AbstractTableConverter {
+
+        EmptyDataTableConverter() {
+
+        }
+
+        @Override
+        public <T> T convert(DataTable dataTable, Type type, boolean transposed) {
+            if (dataTable == null) throw new NullPointerException("dataTable may not be null");
+            if (type == null) throw new NullPointerException("type may not be null");
+
+            if (type.equals(DataTable.class)) {
+                return (T) dataTable;
+            }
+
+            Type mapKeyType = mapKeyType(type);
+            if (mapKeyType != null) {
+                return (T) emptyMap();
+            }
+
+            Type itemType = listItemType(type);
+            if (itemType == null) {
+                return null;
+            }
+
+            return (T) emptyList();
+        }
+
+        @Override
+        public <T> List<T> toList(DataTable dataTable, Type itemType) {
+            return emptyList();
+        }
+
+        @Override
+        public <T> List<List<T>> toLists(DataTable dataTable, Type itemType) {
+            return emptyList();
+        }
+
+        @Override
+        public <K, V> Map<K, V> toMap(DataTable dataTable, Type keyType, Type valueType) {
+            return emptyMap();
+        }
+
+        @Override
+        public <K, V> List<Map<K, V>> toMaps(DataTable dataTable, Type keyType, Type valueType) {
+            return emptyList();
+        }
+
+    }
+
+    static final class NoConverterDefined implements TableConverter {
 
         NoConverterDefined() {
 

@@ -74,7 +74,7 @@ public class StepExpressionFactoryTest {
     public void table_expression_with_name_creates_single_ingredients_from_table() {
         registry.defineDataTableType(new DataTableType("ingredient", Ingredient.class, beanMapper(registry)));
 
-        StepExpression expression = new StepExpressionFactory(registry).createExpression("Given some stuff:", "ingredient");
+        StepExpression expression = new StepExpressionFactory(registry).createExpression("Given some stuff:", "ingredient", false);
 
         List<Argument> match = expression.match("Given some stuff:", tableTransposed);
         Ingredient ingredient = (Ingredient) match.get(0).getValue();
@@ -99,7 +99,7 @@ public class StepExpressionFactoryTest {
     public void table_expression_with_name_creates_list_of_ingredients_from_table() {
 
         registry.defineDataTableType(new DataTableType("ingredients", Ingredient.class, listBeanMapper(registry)));
-        StepExpression expression = new StepExpressionFactory(registry).createExpression("Given some stuff:", "ingredients");
+        StepExpression expression = new StepExpressionFactory(registry).createExpression("Given some stuff:", "ingredients", false);
 
         List<Argument> match = expression.match("Given some stuff:", table);
 

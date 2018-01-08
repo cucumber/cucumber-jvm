@@ -2,5 +2,5 @@ package io.cucumber.stepexpression;
 
 
 interface DocStringTransformer<T> {
-    T transform(String table);
+    T transform(String docString);
 }

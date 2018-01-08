@@ -1,10 +1,8 @@
 package io.cucumber.datatable;
 
-import io.cucumber.datatable.DataTable.TableConverter;
+import io.cucumber.datatable.DataTable.AbstractTableConverter;
 
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -17,7 +15,6 @@ import static io.cucumber.datatable.CucumberDataTableException.cantConvertToList
 import static io.cucumber.datatable.CucumberDataTableException.cantConvertToMap;
 import static io.cucumber.datatable.CucumberDataTableException.cantConvertToMaps;
 import static io.cucumber.datatable.TypeFactory.aListOf;
-
 import static java.lang.String.format;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
@@ -25,7 +22,7 @@ import static java.util.Collections.nCopies;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
 
-public final class DataTableTypeRegistryTableConverter implements TableConverter {
+public final class DataTableTypeRegistryTableConverter extends AbstractTableConverter {
 
     private final DataTableTypeRegistry registry;
 
@@ -84,7 +81,7 @@ public final class DataTableTypeRegistryTableConverter implements TableConverter
 
     private <T> T toSingleton(DataTable dataTable, Type type) {
         if (dataTable.isEmpty()) {
-            throw cantConvertTo(type, "The table was empty");
+            return null;
         }
 
         List<T> singletonList = toListOrNull(dataTable, type);
@@ -259,9 +256,9 @@ public final class DataTableTypeRegistryTableConverter implements TableConverter
         Type valueMapKeyType = mapKeyType(valueType);
         if (valueMapKeyType != null) {
             Type valueMapValueType = mapValueType(valueType);
-            return (List<V>) DataTable.create(valueColumns, this).asMaps(valueMapKeyType, valueMapValueType);
-        } else if (valueType instanceof Map){
-            return (List<V>) DataTable.create(valueColumns, this).asMaps(String.class, String.class);
+            return (List<V>) new DataTable(valueColumns, this, true).asMaps(valueMapKeyType, valueMapValueType);
+        } else if (valueType instanceof Map) {
+            return (List<V>) new DataTable(valueColumns, this, true).asMaps(String.class, String.class);
         }
 
         // Try to handle case #3. We are required to check the most specific solution first.
@@ -359,35 +356,5 @@ public final class DataTableTypeRegistryTableConverter implements TableConverter
             "There are more values then keys. " +
                 "Did you use a TableEntryTransformer for the key while using a TableRow or TableCellTransformer for the value?");
 
-    }
-
-    private static Type listItemType(Type type) {
-        return typeArg(type, List.class, 0);
-    }
-
-    private static Type mapKeyType(Type type) {
-        return typeArg(type, Map.class, 0);
-    }
-
-    private static Type mapValueType(Type type) {
-        return typeArg(type, Map.class, 1);
-    }
-
-    private static Type typeArg(Type type, Class<?> wantedRawType, int index) {
-        if (type instanceof ParameterizedType) {
-            ParameterizedType parameterizedType = (ParameterizedType) type;
-            Type rawType = parameterizedType.getRawType();
-            if (rawType instanceof Class && wantedRawType.isAssignableFrom((Class) rawType)) {
-                Type result = parameterizedType.getActualTypeArguments()[index];
-                if (result instanceof TypeVariable) {
-                    throw new CucumberDataTableException("Generic types must be explicit");
-                }
-                return result;
-            } else {
-                return null;
-            }
-        }
-
-        return null;
     }
 }
