@@ -1,6 +1,6 @@
 package cucumber.runner;
 
-import cucumber.stepexpression.Argument;
+import io.cucumber.stepexpression.Argument;
 import cucumber.api.Scenario;
 import cucumber.runtime.Backend;
 import cucumber.runtime.HookDefinition;

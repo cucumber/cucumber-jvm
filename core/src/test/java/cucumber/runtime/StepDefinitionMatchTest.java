@@ -1,6 +1,6 @@
 package cucumber.runtime;
 
-import cucumber.stepexpression.Argument;
+import io.cucumber.stepexpression.Argument;
 import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleTable;

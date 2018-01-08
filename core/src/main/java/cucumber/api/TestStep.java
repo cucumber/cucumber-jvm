@@ -7,7 +7,7 @@ import cucumber.runtime.AmbiguousStepDefinitionsException;
 import cucumber.runtime.DefinitionArgument;
 import cucumber.runtime.DefinitionMatch;
 import cucumber.runtime.UndefinedStepDefinitionException;
-import cucumber.stepexpression.ExpressionArgument;
+import io.cucumber.stepexpression.ExpressionArgument;
 import gherkin.pickles.PickleStep;
 
 import java.util.ArrayList;
@@ -51,7 +51,7 @@ public abstract class TestStep {
 
     public List<cucumber.api.Argument> getDefinitionArgument() {
         List<cucumber.api.Argument> definitionArguments = new ArrayList<Argument>();
-        for (cucumber.stepexpression.Argument argument : definitionMatch.getArguments()) {
+        for (io.cucumber.stepexpression.Argument argument : definitionMatch.getArguments()) {
             if (argument instanceof ExpressionArgument) {
                 final ExpressionArgument expressionArgument = (ExpressionArgument) argument;
                 definitionArguments.add(new DefinitionArgument(expressionArgument));

@@ -6,7 +6,7 @@ import io.cucumber.datatable.DataTable;
 import cucumber.api.java.ObjectFactory;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.StepDefinitionMatch;
-import cucumber.stepexpression.Argument;
+import io.cucumber.stepexpression.Argument;
 import gherkin.pickles.PickleCell;
 import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleRow;

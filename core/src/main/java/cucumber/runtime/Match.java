@@ -1,6 +1,6 @@
 package cucumber.runtime;
 
-import cucumber.stepexpression.Argument;
+import io.cucumber.stepexpression.Argument;
 
 import java.util.Collections;
 import java.util.List;

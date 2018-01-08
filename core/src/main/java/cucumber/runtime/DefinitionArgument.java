@@ -1,7 +1,7 @@
 package cucumber.runtime;
 
 import cucumber.api.Argument;
-import cucumber.stepexpression.ExpressionArgument;
+import io.cucumber.stepexpression.ExpressionArgument;
 
 public final class DefinitionArgument implements Argument {
 

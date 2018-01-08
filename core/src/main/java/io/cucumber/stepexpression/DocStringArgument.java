@@ -1,4 +1,4 @@
-package cucumber.stepexpression;
+package io.cucumber.stepexpression;
 
 public final class DocStringArgument implements Argument {
 

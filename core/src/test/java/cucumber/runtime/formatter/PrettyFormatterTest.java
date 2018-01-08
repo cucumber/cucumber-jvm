@@ -1,17 +1,15 @@
 package cucumber.runtime.formatter;
 
 import cucumber.api.Result;
-import cucumber.api.TestStep;
 import cucumber.api.TypeRegistry;
 import cucumber.api.formatter.AnsiEscapes;
 import cucumber.runtime.DefinitionArgument;
-import cucumber.runtime.StepDefinitionMatch;
 import cucumber.runtime.TestHelper;
 import cucumber.runtime.model.CucumberFeature;
-import cucumber.stepexpression.Argument;
-import cucumber.stepexpression.ExpressionArgument;
-import cucumber.stepexpression.StepExpression;
-import cucumber.stepexpression.StepExpressionFactory;
+import io.cucumber.stepexpression.Argument;
+import io.cucumber.stepexpression.ExpressionArgument;
+import io.cucumber.stepexpression.StepExpression;
+import io.cucumber.stepexpression.StepExpressionFactory;
 import org.junit.Test;
 import org.mockito.stubbing.Answer;
 

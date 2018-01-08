@@ -1,4 +1,4 @@
-package cucumber.stepexpression;
+package io.cucumber.stepexpression;
 
 
 interface DocStringTransformer<T> {

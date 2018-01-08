@@ -1,6 +1,6 @@
 package io.cucumber.datatable;
 
-import cucumber.stepexpression.TableParser;
+import io.cucumber.stepexpression.TableParser;
 import org.junit.Test;
 
 import java.util.ArrayList;

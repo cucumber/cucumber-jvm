@@ -1,9 +1,9 @@
 package cucumber.runtime.autocomplete;
 
-import cucumber.stepexpression.Argument;
+import io.cucumber.stepexpression.Argument;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.model.CucumberFeature;
-import cucumber.stepexpression.ExpressionArgument;
+import io.cucumber.stepexpression.ExpressionArgument;
 import gherkin.pickles.Compiler;
 import gherkin.pickles.Pickle;
 import gherkin.pickles.PickleStep;

@@ -1,4 +1,4 @@
-package cucumber.stepexpression;
+package io.cucumber.stepexpression;
 
 import io.cucumber.datatable.DataTable;
 import io.cucumber.datatable.DataTable.TableConverter;
@@ -11,7 +11,7 @@ import gherkin.pickles.PickleTable;
 
 import java.util.List;
 
-import static cucumber.stepexpression.PickleTableConverter.toTable;
+import static io.cucumber.stepexpression.PickleTableConverter.toTable;
 
 public class TableParser {
 

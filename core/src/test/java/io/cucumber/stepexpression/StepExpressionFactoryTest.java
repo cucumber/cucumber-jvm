@@ -1,4 +1,4 @@
-package cucumber.stepexpression;
+package io.cucumber.stepexpression;
 
 import cucumber.api.TypeRegistry;
 import io.cucumber.datatable.DataTable;

@@ -1,10 +1,10 @@
 package cucumber.runtime;
 
 import cucumber.api.TypeRegistry;
-import cucumber.stepexpression.ArgumentMatcher;
-import cucumber.stepexpression.ExpressionArgumentMatcher;
-import cucumber.stepexpression.StepExpression;
-import cucumber.stepexpression.StepExpressionFactory;
+import io.cucumber.stepexpression.ArgumentMatcher;
+import io.cucumber.stepexpression.ExpressionArgumentMatcher;
+import io.cucumber.stepexpression.StepExpression;
+import io.cucumber.stepexpression.StepExpressionFactory;
 import gherkin.pickles.Argument;
 import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleStep;

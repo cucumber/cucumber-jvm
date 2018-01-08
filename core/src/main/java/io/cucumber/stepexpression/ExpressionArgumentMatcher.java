@@ -1,4 +1,4 @@
-package cucumber.stepexpression;
+package io.cucumber.stepexpression;
 
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleString;
