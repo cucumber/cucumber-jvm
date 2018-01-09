@@ -19,6 +19,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
+import static java.util.Collections.singletonMap;
 import static java.util.Locale.ENGLISH;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -251,6 +252,13 @@ public class DataTableTypeRegistryTableConverterTest {
 
     @Test
     public void converts_table_with_empty_row_to_empty_lists() {
+        DataTable table = DataTable.create(Collections.<List<String>>emptyList());
+        assertEquals(emptyList(), converter.toLists(table, Integer.class));
+        assertEquals(emptyList(), converter.convert(table, LIST_OF_LIST_OF_INT_TYPE, false));
+    }
+
+    @Test
+    public void converts_table_with_empty_column_to_empty_lists() {
         DataTable table = DataTable.create(singletonList(Collections.<String>emptyList()));
         assertEquals(emptyList(), converter.toLists(table, Integer.class));
         assertEquals(emptyList(), converter.convert(table, LIST_OF_LIST_OF_INT_TYPE, false));
@@ -354,8 +362,16 @@ public class DataTableTypeRegistryTableConverterTest {
 
 
     @Test
-    public void convert_table_with_empty_column_to_map() {
+    public void convert_table_with_empty_first_cell_to_map() {
         DataTable table = DataTable.create(singletonList(singletonList("")));
+
+        assertEquals(emptyMap(), converter.toMap(table, Integer.class, Integer.class));
+        assertEquals(emptyMap(), converter.convert(table, MAP_OF_INT_INT_TYPE, false));
+    }
+
+    @Test
+    public void convert_empty_table_to_empty_map() {
+        DataTable table = emptyDataTable();
 
         assertEquals(emptyMap(), converter.toMap(table, Integer.class, Integer.class));
         assertEquals(emptyMap(), converter.convert(table, MAP_OF_INT_INT_TYPE, false));

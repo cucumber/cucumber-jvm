@@ -168,19 +168,19 @@ public final class DataTableTypeRegistryTableConverter extends AbstractTableConv
         if (dataTable.isEmpty()) {
             return emptyMap();
         }
-        List<List<String>> keyColumn = dataTable.columns(0, 1);
-        List<List<String>> valueColumns = dataTable.columns(1);
+        DataTable keyColumn = dataTable.columns(0, 1);
+        DataTable valueColumns = dataTable.columns(1);
 
-        String firstHeaderCell = keyColumn.get(0).get(0);
+        String firstHeaderCell = keyColumn.cell(0,0);
         boolean firstHeaderCellIsBlank = firstHeaderCell == null || firstHeaderCell.isEmpty();
-        List<K> keys = convertEntryKeys(keyType, keyColumn, valueType, firstHeaderCellIsBlank);
+        List<K> keys = convertEntryKeys(keyType, keyColumn.cells(), valueType, firstHeaderCellIsBlank);
 
-        if (valueColumns.get(0).isEmpty()) {
+        if (valueColumns.isEmpty()) {
             return createMap(keyType, keys, valueType, nCopies(keys.size(), (V) null));
         }
 
         boolean keysImplyTableRowTransformer = keys.size() == dataTable.height() - 1;
-        List<V> values = convertEntryValues(keyType, valueType, valueColumns, keysImplyTableRowTransformer);
+        List<V> values = convertEntryValues(valueColumns, keyType, valueType, keysImplyTableRowTransformer);
 
         if (keys.size() != values.size()) {
             throw createKeyValueMismatchException(firstHeaderCellIsBlank, keys.size(), keyType, values.size(), valueType);
@@ -226,7 +226,7 @@ public final class DataTableTypeRegistryTableConverter extends AbstractTableConv
             format("Please register a DataTableType with a TableEntryTransformer or TableCellTransformer for %s", keyType));
     }
 
-    private <V> List<V> convertEntryValues(Type keyType, Type valueType, List<List<String>> valueColumns, boolean keysImplyTableEntryTransformer) {
+    private <V> List<V> convertEntryValues(DataTable dataTable, Type keyType, Type valueType, boolean keysImplyTableEntryTransformer) {
         // When converting a table to a Map we split the table into two sub tables. The left column
         // contains the keys and remaining columns values.
         //
@@ -256,15 +256,15 @@ public final class DataTableTypeRegistryTableConverter extends AbstractTableConv
         Type valueMapKeyType = mapKeyType(valueType);
         if (valueMapKeyType != null) {
             Type valueMapValueType = mapValueType(valueType);
-            return (List<V>) new DataTable(valueColumns, this, true).asMaps(valueMapKeyType, valueMapValueType);
+            return (List<V>) toMaps(dataTable, valueMapKeyType, valueMapValueType);
         } else if (valueType instanceof Map) {
-            return (List<V>) new DataTable(valueColumns, this, true).asMaps(String.class, String.class);
+            return (List<V>) toMaps(dataTable, String.class, String.class);
         }
 
         // Try to handle case #3. We are required to check the most specific solution first.
         DataTableType entryValueConverter = registry.lookupTableTypeByType(aListOf(valueType));
         if (entryValueConverter != null) {
-            return (List<V>) entryValueConverter.transform(valueColumns);
+            return (List<V>) entryValueConverter.transform(dataTable.cells());
         }
 
         if (keysImplyTableEntryTransformer) {
@@ -275,7 +275,7 @@ public final class DataTableTypeRegistryTableConverter extends AbstractTableConv
         // Try to handle case #1. This may result in multiple values per key if the table is too wide.
         DataTableType cellValueConverter = registry.lookupTableTypeByType(aListOf(aListOf(valueType)));
         if (cellValueConverter != null) {
-            return unpack((List<List<V>>) cellValueConverter.transform(valueColumns));
+            return unpack((List<List<V>>) cellValueConverter.transform(dataTable.cells()));
         }
 
         throw cantConvertToMap(keyType, valueType,
@@ -305,21 +305,21 @@ public final class DataTableTypeRegistryTableConverter extends AbstractTableConv
                 format("Please register a DataTableType with a TableCellTransformer for %s", valueType));
         }
 
-        List<List<String>> keyStrings = dataTable.rows(0, 1);
+        DataTable header = dataTable.rows(0, 1);
 
         List<Map<K, V>> result = new ArrayList<Map<K, V>>();
-        List<K> keys = unpack((List<List<K>>) keyConverter.transform(keyStrings));
+        List<K> keys = unpack((List<List<K>>) keyConverter.transform(header.cells()));
 
-        List<List<String>> valueRows = dataTable.rows(1);
+        DataTable rows = dataTable.rows(1);
 
-        if (valueRows.isEmpty()) {
+        if (rows.isEmpty()) {
             return emptyList();
         }
 
-        List<List<V>> transform = (List<List<V>>) valueConverter.transform(valueRows);
+        List<List<V>> transform = (List<List<V>>) valueConverter.transform(rows.cells());
 
-        for (List<V> valueRow : transform) {
-            result.add(createMap(keyType, keys, valueType, valueRow));
+        for (List<V> values : transform) {
+            result.add(createMap(keyType, keys, valueType, values));
         }
         return unmodifiableList(result);
     }

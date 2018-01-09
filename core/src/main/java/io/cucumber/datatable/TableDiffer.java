@@ -22,7 +22,7 @@ public final class TableDiffer {
     }
 
     private void checkColumns(DataTable a, DataTable b) {
-        if (a.topCells().size() != b.topCells().size() && !b.topCells().isEmpty()) {
+        if (a.width() != b.width() && !b.isEmpty()) {
             throw new IllegalArgumentException("Tables must have equal number of columns:\n" + a + "\n" + b);
         }
     }
@@ -40,7 +40,7 @@ public final class TableDiffer {
 
     private static List<DiffableRow> getDiffableRows(DataTable raw) {
         List<DiffableRow> result = new ArrayList<DiffableRow>();
-        for (List<String> row : raw.raw()) {
+        for (List<String> row : raw.cells()) {
             result.add(new DiffableRow(row, row));
         }
         return result;
@@ -56,10 +56,10 @@ public final class TableDiffer {
         // 1. add all "to" row in extra table
         // 2. iterate over "from", when a common row occurs, remove it from extraRows
         // finally, only extra rows are kept and in same order that in "to".
-        extraRows.addAll(to.raw());
+        extraRows.addAll(to.cells());
 
-        for (List<String> row : from.raw()) {
-            if (!to.raw().contains(row)) {
+        for (List<String> row : from.cells()) {
+            if (!to.cells().contains(row)) {
                 diffTableRows.add(
                     new SimpleEntry<List<String>, DiffType>(row, DiffType.DELETE));
                 isDifferent = true;
@@ -91,18 +91,18 @@ public final class TableDiffer {
 
     private DataTableDiff createTableDiff(Map<Integer, Delta> deltasByLine) {
         List<SimpleEntry<List<String>, DiffType>> diffTableRows = new ArrayList<SimpleEntry<List<String>, DiffType>>();
-        List<List<String>> rows = from.raw();
+        List<List<String>> rows = from.cells();
         for (int i = 0; i < rows.size(); i++) {
             Delta delta = deltasByLine.get(i);
             if (delta == null) {
-                diffTableRows.add(new SimpleEntry<List<String>, DiffType>(from.raw().get(i), DiffType.NONE));
+                diffTableRows.add(new SimpleEntry<List<String>, DiffType>(from.row(i), DiffType.NONE));
             } else {
                 addRowsToTableDiff(diffTableRows, delta);
                 // skipping lines involved in a delta
                 if (delta.getType() == Delta.TYPE.CHANGE || delta.getType() == Delta.TYPE.DELETE) {
                     i += delta.getOriginal().getLines().size() - 1;
                 } else {
-                    diffTableRows.add(new SimpleEntry<List<String>, DiffType>(from.raw().get(i), DiffType.NONE));
+                    diffTableRows.add(new SimpleEntry<List<String>, DiffType>(from.row(i), DiffType.NONE));
                 }
             }
         }

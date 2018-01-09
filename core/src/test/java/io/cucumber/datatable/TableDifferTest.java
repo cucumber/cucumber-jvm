@@ -249,7 +249,7 @@ public class TableDifferTest {
     public void empty_list_should_not_diff_with_empty_table() {
         List<List<String>> emptyList = new ArrayList<List<String>>();
         DataTable emptyTable = DataTable.emptyDataTable();
-        assertEquals(emptyTable.raw(), emptyList);
+        assertEquals(emptyTable.cells(), emptyList);
     }
 
     @Test(expected = TableDiffException.class)

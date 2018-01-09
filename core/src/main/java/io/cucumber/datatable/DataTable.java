@@ -10,9 +10,9 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.RandomAccess;
 
 import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
 
@@ -40,7 +40,7 @@ public final class DataTable {
      * @return an empty DataTable
      */
     public static DataTable emptyDataTable() {
-        return new DataTable(Collections.<List<String>>emptyList(), new EmptyDataTableConverter(), true);
+        return new DataTable(Collections.<List<String>>emptyList(), new NoConverterDefined());
     }
 
     /**
@@ -63,33 +63,31 @@ public final class DataTable {
      * @throws IllegalArgumentException when the table is not balanced
      */
     public static DataTable create(List<List<String>> raw, TableConverter tableConverter) {
-        return new DataTable(copy(requireBalancedTable(raw)), tableConverter, true);
+        return new DataTable(copy(requireBalancedTable(raw)), tableConverter);
     }
 
     /**
      * Creates a new DataTable.
      * <p>
      * To improve performance this constructor assumes the provided raw table
-     * is both balanced and safe for use.
-     * <p>
-     * The third parameter is used create a specific signature only.
+     * is balanced, immutable and a safe copy.
      *
-     * @param raw             the underlying table
-     * @param tableConverter  to transform the table
-     * @param copyNotRequired marker to show the provided table is both balanced and safe for use
+     * @param raw            the underlying table
+     * @param tableConverter to transform the table
      */
-    DataTable(List<List<String>> raw, TableConverter tableConverter, @SuppressWarnings("unused") boolean copyNotRequired) {
+    private DataTable(List<List<String>> raw, TableConverter tableConverter) {
         if (raw == null) throw new CucumberDataTableException("cells can not be null");
         if (tableConverter == null) throw new CucumberDataTableException("tableConverter can not be null");
         this.raw = raw;
         this.tableConverter = tableConverter;
     }
 
-    private static List<List<String>> copy(List<List<String>> table) {
-        List<List<String>> rawCopy = new ArrayList<List<String>>(table.size());
-        for (List<String> row : table) {
+    private static List<List<String>> copy(List<List<String>> balanced) {
+        List<List<String>> rawCopy = new ArrayList<List<String>>(balanced.size());
+        for (List<String> row : balanced) {
+            // A table without columns is an empty table and has no rows.
             if (row.isEmpty()) {
-                continue;
+                return emptyList();
             }
             List<String> rowCopy = new ArrayList<String>(row.size());
             rowCopy.addAll(row);
@@ -106,10 +104,6 @@ public final class DataTable {
             }
         }
         return table;
-    }
-
-    List<List<String>> raw() {
-        return raw;
     }
 
     /**
@@ -206,29 +200,39 @@ public final class DataTable {
         return raw;
     }
 
+    public DataTable subTable(final int fromRow, final int fromColumn, final int toRow, final int toColumn) {
+        return new DataTable(new RawDataTableView(fromRow, fromColumn, toColumn, toRow), tableConverter);
+    }
 
-    public String cell(int column, int row) {
+    public String cell(int row, int column) {
+        rangeCheckRow(row, height());
+        rangeCheckColumn(column, width());
         return raw.get(row).get(column);
     }
 
-    List<String> topCells() {
-        return raw.isEmpty() ? Collections.<String>emptyList() : unmodifiableList(raw.get(0));
+    public List<String> row(int row) {
+        rangeCheckRow(row, height());
+        return raw.get(row);
     }
 
-    public List<List<String>> rows(int fromRow) {
+    public DataTable rows(int fromRow) {
         return rows(fromRow, height());
     }
 
-    public List<List<String>> rows(int fromRow, int toRow) {
-        return raw.subList(fromRow, toRow);
+    public DataTable rows(int fromRow, int toRow) {
+        return subTable(fromRow, 0, toRow, width());
     }
 
-    public List<List<String>> columns(final int fromColumn) {
-        return new ColumnView(fromColumn, width());
+    public List<String> column(final int column) {
+        return new ColumnView(column);
     }
 
-    public List<List<String>> columns(final int fromColumn, final int toColumn) {
-        return new ColumnView(fromColumn, toColumn);
+    public DataTable columns(final int fromColumn) {
+        return columns(fromColumn, width());
+    }
+
+    public DataTable columns(final int fromColumn, final int toColumn) {
+        return subTable(0, fromColumn, height(), toColumn);
     }
 
     @Override
@@ -249,26 +253,11 @@ public final class DataTable {
     }
 
     public DataTable transpose() {
-        List<List<String>> transposed = new ArrayList<List<String>>();
-        for (List<String> pickleRow : raw) {
-            for (int j = 0; j < pickleRow.size(); j++) {
-                List<String> row = null;
-                if (j < transposed.size()) {
-                    row = transposed.get(j);
-                }
-                if (row == null) {
-                    row = new ArrayList<String>();
-                    transposed.add(row);
-                }
-                row.add(pickleRow.get(j));
-            }
+        if (raw instanceof TransposedRawDataTableView) {
+            TransposedRawDataTableView tranposed = (TransposedRawDataTableView) this.raw;
+            return tranposed.dataTable();
         }
-
-        for (int i = 0; i < transposed.size(); i++) {
-            transposed.set(i, unmodifiableList(transposed.get(i)));
-        }
-
-        return new DataTable(unmodifiableList(transposed), tableConverter, true);
+        return new DataTable(new TransposedRawDataTableView(), tableConverter);
     }
 
     public <T> T convert(Type type, boolean transposed) {
@@ -301,27 +290,6 @@ public final class DataTable {
     @Override
     public int hashCode() {
         return raw.hashCode();
-    }
-
-
-    private final class ColumnView extends AbstractList<List<String>> {
-        private final int fromColumn;
-        private final int toColumn;
-
-        ColumnView(int fromColumn, int toColumn) {
-            this.fromColumn = fromColumn;
-            this.toColumn = toColumn;
-        }
-
-        @Override
-        public List<String> get(int index) {
-            return raw.get(index).subList(fromColumn, toColumn);
-        }
-
-        @Override
-        public int size() {
-            return raw.size();
-        }
     }
 
     static abstract class AbstractTableConverter implements TableConverter {
@@ -359,56 +327,6 @@ public final class DataTable {
 
             return null;
         }
-    }
-
-    static final class EmptyDataTableConverter extends AbstractTableConverter {
-
-        EmptyDataTableConverter() {
-
-        }
-
-        @Override
-        public <T> T convert(DataTable dataTable, Type type, boolean transposed) {
-            if (dataTable == null) throw new NullPointerException("dataTable may not be null");
-            if (type == null) throw new NullPointerException("type may not be null");
-
-            if (type.equals(DataTable.class)) {
-                return (T) dataTable;
-            }
-
-            Type mapKeyType = mapKeyType(type);
-            if (mapKeyType != null) {
-                return (T) emptyMap();
-            }
-
-            Type itemType = listItemType(type);
-            if (itemType == null) {
-                return null;
-            }
-
-            return (T) emptyList();
-        }
-
-        @Override
-        public <T> List<T> toList(DataTable dataTable, Type itemType) {
-            return emptyList();
-        }
-
-        @Override
-        public <T> List<List<T>> toLists(DataTable dataTable, Type itemType) {
-            return emptyList();
-        }
-
-        @Override
-        public <K, V> Map<K, V> toMap(DataTable dataTable, Type keyType, Type valueType) {
-            return emptyMap();
-        }
-
-        @Override
-        public <K, V> List<Map<K, V>> toMaps(DataTable dataTable, Type keyType, Type valueType) {
-            return emptyList();
-        }
-
     }
 
     static final class NoConverterDefined implements TableConverter {
@@ -639,4 +557,112 @@ public final class DataTable {
 
     }
 
+    private final class RawDataTableView extends AbstractList<List<String>> implements RandomAccess {
+        private final int fromRow;
+        private final int fromColumn;
+        private final int toColumn;
+        private final int toRow;
+
+        RawDataTableView(int fromRow, int fromColumn, int toColumn, int toRow) {
+            if (fromRow < 0)
+                throw new IndexOutOfBoundsException("fromRow: " + fromRow);
+            if (fromColumn < 0)
+                throw new IndexOutOfBoundsException("fromColumn: " + fromColumn);
+            if (toRow > height())
+                throw new IndexOutOfBoundsException("toRow: " + toRow + ", Height: " + height());
+            if (toColumn > width())
+                throw new IndexOutOfBoundsException("toColumn: " + toColumn + ", Width: " + width());
+            if (fromRow > toRow)
+                throw new IllegalArgumentException("fromRow(" + fromRow + ") > toRow(" + toRow + ")");
+            if (fromColumn > toColumn)
+                throw new IllegalArgumentException("fromColumn(" + fromColumn + ") > toColumn(" + toColumn + ")");
+
+            this.fromRow = fromRow;
+            this.fromColumn = fromColumn;
+            this.toColumn = toColumn;
+            this.toRow = toRow;
+        }
+
+        @Override
+        public List<String> get(final int row) {
+            rangeCheckRow(row, size());
+            return new AbstractList<String>() {
+                @Override
+                public String get(final int column) {
+                    rangeCheckColumn(column, size());
+                    return raw.get(fromRow + row).get(fromColumn + column);
+                }
+
+                @Override
+                public int size() {
+                    return toColumn - fromColumn;
+                }
+            };
+        }
+
+        @Override
+        public int size() {
+            // If there are no columns this is an empty table. An empty table has no rows.
+            return fromColumn == toColumn ? 0 : toRow - fromRow;
+        }
+    }
+
+    private final class ColumnView extends AbstractList<String> implements RandomAccess {
+        private final int column;
+
+        ColumnView(int column) {
+            rangeCheckColumn(column, width());
+            this.column = column;
+        }
+
+        @Override
+        public String get(final int row) {
+            rangeCheckRow(row, size());
+            return raw.get(row).get(column);
+        }
+
+        @Override
+        public int size() {
+            return height();
+        }
+    }
+
+    private final class TransposedRawDataTableView extends AbstractList<List<String>> implements RandomAccess {
+
+        @Override
+        public List<String> get(final int row) {
+            rangeCheckRow(row, size());
+            return new AbstractList<String>() {
+                @Override
+                public String get(final int column) {
+                    rangeCheckColumn(column, size());
+                    return raw.get(column).get(row);
+                }
+
+                @Override
+                public int size() {
+                    return height();
+                }
+            };
+        }
+
+        @Override
+        public int size() {
+            return width();
+        }
+
+        DataTable dataTable() {
+            return DataTable.this;
+        }
+    }
+
+    private static void rangeCheckRow(int row, int height) {
+        if (row < 0 || row >= height)
+            throw new IndexOutOfBoundsException("row: " + row + ", Height: " + height);
+    }
+
+    private static void rangeCheckColumn(int column, int width) {
+        if (column < 0 || column >= width)
+            throw new IndexOutOfBoundsException("column: " + column + ", Width: " + width);
+    }
 }
