@@ -16,8 +16,8 @@ public class AnonInnerClassStepdefs implements GlueBase {
         JavaBackend.INSTANCE.get().addStepDefinition(new Function<TypeRegistry, StepDefinition>() {
             @Override
             public StepDefinition apply(TypeRegistry parameterTypeRegistry) {
-                return new Java8StepDefinition(
-                    "I have {int} java7 beans in my {word}", 0, StepdefBody.A2.class,
+                return Java8StepDefinition.create(
+                    "I have {int} java7 beans in my {word}", StepdefBody.A2.class,
                     new StepdefBody.A2<Integer, String>() {
                         @Override
                         public void accept(Integer cukes, String what) throws Throwable {

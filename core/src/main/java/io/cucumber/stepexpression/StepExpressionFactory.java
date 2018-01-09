@@ -26,13 +26,6 @@ public final class StepExpressionFactory {
         }
     };
 
-    private static final RawTableTransformer<DataTable> TO_DATA_TABLE = new RawTableTransformer<DataTable>() {
-        @Override
-        public DataTable transform(List<List<String>> raw) {
-            return DataTable.create(raw);
-        }
-    };
-
     public StepExpressionFactory(TypeRegistry registry) {
         this.registry = registry;
         this.expressionFactory = new io.cucumber.cucumberexpressions.ExpressionFactory(registry.parameterTypeRegistry());
@@ -42,14 +35,28 @@ public final class StepExpressionFactory {
     public StepExpression createExpression(String expressionString) {
         if (expressionString == null) throw new CucumberExpressionException("expression can not be null");
         Expression expression = expressionFactory.createExpression(expressionString);
-        return new StepExpression(expression, DOC_STRING_IDENTITY, TO_DATA_TABLE);
+
+        RawTableTransformer<DataTable> toDataTable = new RawTableTransformer<DataTable>() {
+            @Override
+            public DataTable transform(List<List<String>> raw) {
+                return DataTable.create(raw, tableConverter);
+            }
+        };
+        return new StepExpression(expression, DOC_STRING_IDENTITY, toDataTable);
     }
 
     public StepExpression createExpression(String expressionString, Type tableOrDocStringType) {
-        return createExpression(expressionString, tableOrDocStringType, false);
+        return createExpression(expressionString, new ResolvedType(tableOrDocStringType), false);
     }
 
+    public StepExpression createExpression(String expressionString, TypeResolver tableOrDocStringType) {
+        return createExpression(expressionString, tableOrDocStringType, false);
+    }
     public StepExpression createExpression(String expressionString, final Type tableOrDocStringType, final boolean transpose) {
+        return createExpression(expressionString, new ResolvedType(tableOrDocStringType), transpose);
+    }
+
+    public StepExpression createExpression(String expressionString, final TypeResolver tableOrDocStringType, final boolean transpose) {
         if (expressionString == null) throw new CucumberExpressionException("expressionString can not be null");
         if (tableOrDocStringType == null) throw new CucumberExpressionException("tableOrDocStringType can not be null");
 
@@ -59,7 +66,7 @@ public final class StepExpressionFactory {
             @Override
             public Object transform(List<List<String>> raw) {
                 return DataTable.create(raw, StepExpressionFactory.this.tableConverter)
-                    .convert(tableOrDocStringType, transpose);
+                    .convert(tableOrDocStringType.resolve(), transpose);
             }
         };
 
@@ -67,10 +74,15 @@ public final class StepExpressionFactory {
             @Override
             public Object transform(String docString) {
                 return DataTable.create(singletonList(singletonList(docString)), StepExpressionFactory.this.tableConverter)
-                    .convert(tableOrDocStringType, transpose);
+                    .convert(tableOrDocStringType.resolve(), transpose);
             }
         };
         return new StepExpression(expression, docStringTransform, tableTransform);
+    }
+
+
+    public StepExpression createExpression(String expressionString, String tableOrDocStringType) {
+        return createExpression(expressionString, tableOrDocStringType, false);
     }
 
     public StepExpression createExpression(String expressionString, final String tableOrDocStringType, final boolean transpose) {
@@ -86,7 +98,7 @@ public final class StepExpressionFactory {
                 if (type == null) {
                     throw new UndefinedTableTypeException(tableOrDocStringType);
                 }
-                if(transpose) {
+                if (transpose) {
                     raw = DataTable.create(raw, StepExpressionFactory.this.tableConverter).transpose().cells();
                 }
                 return type.transform(raw);
@@ -105,6 +117,20 @@ public final class StepExpressionFactory {
         };
 
         return new StepExpression(expression, docStringTransform, tableTransform);
+    }
+
+    private static final class ResolvedType implements TypeResolver {
+
+        private final Type type;
+
+        private ResolvedType(Type type) {
+            this.type = type;
+        }
+
+        @Override
+        public Type resolve() {
+            return type;
+        }
     }
 
 }
