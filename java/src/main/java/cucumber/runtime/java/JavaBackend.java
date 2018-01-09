@@ -144,7 +144,14 @@ public class JavaBackend implements Backend, LambdaGlueRegistry {
     void addStepDefinition(Annotation annotation, Method method) {
         try {
             if (objectFactory.addClass(method.getDeclaringClass())) {
-                glue.addStepDefinition(new JavaStepDefinition(method, expression(annotation), timeoutMillis(annotation), objectFactory, parameterTypeRegistry));
+                glue.addStepDefinition(
+                    new JavaStepDefinition(
+                        method,
+                        expression(annotation),
+                        argumentName(annotation),
+                        timeoutMillis(annotation),
+                        objectFactory,
+                        parameterTypeRegistry));
             }
         } catch (DuplicateStepDefinitionException e) {
             throw e;
@@ -185,6 +192,13 @@ public class JavaBackend implements Backend, LambdaGlueRegistry {
     private String expression(Annotation annotation) throws Throwable {
         Method expressionMethod = annotation.getClass().getMethod("value");
         return (String) Utils.invoke(annotation, expressionMethod, 0);
+    }
+
+
+    private String argumentName(Annotation annotation) throws Throwable {
+        Method expressionMethod = annotation.getClass().getMethod("argumentName");
+        String argumentName = (String) Utils.invoke(annotation, expressionMethod, 0);
+        return argumentName.isEmpty() ? null : argumentName;
     }
 
     private long timeoutMillis(Annotation annotation) throws Throwable {

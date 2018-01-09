@@ -101,7 +101,7 @@ public class JavaStepDefinitionTransposeTest {
         Method m = StepDefs.class.getMethod("plainDataTable", DataTable.class);
         StepDefs stepDefs = runStepDef(m, new PickleTable(listOfDatesWithHeader()));
         assertEquals("Birth Date", stepDefs.dataTable.cell(0, 0));
-        assertEquals("1957-05-10", stepDefs.dataTable.cell(0, 1));
+        assertEquals("1957-05-10", stepDefs.dataTable.cell(1, 0));
     }
 
     @Test
@@ -109,14 +109,14 @@ public class JavaStepDefinitionTransposeTest {
         Method m = StepDefs.class.getMethod("transposedDataTable", DataTable.class);
         StepDefs stepDefs = runStepDef(m, new PickleTable(listOfDatesWithHeader()));
         assertEquals("Birth Date", stepDefs.dataTable.cell(0, 0));
-        assertEquals("1957-05-10", stepDefs.dataTable.cell(1, 0));
+        assertEquals("1957-05-10", stepDefs.dataTable.cell(0, 1));
     }
 
     private StepDefs runStepDef(Method method, PickleTable table) throws Throwable {
         StepDefs stepDefs = new StepDefs();
         ObjectFactory objectFactory = new SingletonFactory(stepDefs);
 
-        StepDefinition stepDefinition = new JavaStepDefinition(method, "some text", 0, objectFactory, typeRegistry);
+        StepDefinition stepDefinition = new JavaStepDefinition(method, "some text", null,0, objectFactory, typeRegistry);
         PickleStep stepWithTable = new PickleStep("some text", asList((gherkin.pickles.Argument) table), asList(mock(PickleLocation.class)));
         List<Argument> arguments = stepDefinition.matchedArguments(stepWithTable);
 

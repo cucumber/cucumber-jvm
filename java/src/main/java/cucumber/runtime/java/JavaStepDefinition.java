@@ -25,18 +25,28 @@ class JavaStepDefinition implements StepDefinition {
 
     private final List<ParameterInfo> parameterInfos;
 
-    public JavaStepDefinition(Method method, String expression, long timeoutMillis, ObjectFactory objectFactory, TypeRegistry typeRegistry
-            ) {
+    JavaStepDefinition(Method method,
+                       String expression,
+                       String argumentName,
+                       long timeoutMillis,
+                       ObjectFactory objectFactory,
+                       TypeRegistry typeRegistry) {
         this.method = method;
         this.timeoutMillis = timeoutMillis;
         this.objectFactory = objectFactory;
         this.parameterInfos = ParameterInfo.fromMethod(method);
+        this.expression = createExpression(expression, argumentName, typeRegistry);
+    }
 
-        if(parameterInfos.isEmpty()){
-            this.expression = new StepExpressionFactory(typeRegistry).createExpression(expression);
+    private StepExpression createExpression(String expression, String argumentName, TypeRegistry typeRegistry) {
+        if (parameterInfos.isEmpty()) {
+            return new StepExpressionFactory(typeRegistry).createExpression(expression);
+        } else if (argumentName == null) {
+            ParameterInfo parameterInfo = parameterInfos.get(parameterInfos.size() - 1);
+            return new StepExpressionFactory(typeRegistry).createExpression(expression, parameterInfo.getType(), parameterInfo.isTransposed());
         } else {
             ParameterInfo parameterInfo = parameterInfos.get(parameterInfos.size() - 1);
-            this.expression = new StepExpressionFactory(typeRegistry).createExpression(expression, parameterInfo.getType(), parameterInfo.isTransposed());
+            return new StepExpressionFactory(typeRegistry).createExpression(expression, argumentName, parameterInfo.isTransposed());
         }
     }
 
