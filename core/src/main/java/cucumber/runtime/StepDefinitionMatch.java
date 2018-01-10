@@ -2,9 +2,6 @@ package cucumber.runtime;
 
 import io.cucumber.stepexpression.Argument;
 import cucumber.api.Scenario;
-import io.cucumber.stepexpression.DataTableArgument;
-import io.cucumber.stepexpression.DocStringArgument;
-import io.cucumber.stepexpression.ExpressionArgument;
 import gherkin.pickles.PickleStep;
 import io.cucumber.cucumberexpressions.CucumberExpressionException;
 

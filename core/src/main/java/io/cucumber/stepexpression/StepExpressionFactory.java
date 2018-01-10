@@ -5,7 +5,6 @@ import io.cucumber.datatable.DataTableTypeRegistryTableConverter;
 import io.cucumber.datatable.DataTableType;
 import io.cucumber.datatable.DataTable;
 
-import io.cucumber.cucumberexpressions.CucumberExpressionException;
 import io.cucumber.cucumberexpressions.Expression;
 
 import java.lang.reflect.Type;
@@ -33,7 +32,7 @@ public final class StepExpressionFactory {
     }
 
     public StepExpression createExpression(String expressionString) {
-        if (expressionString == null) throw new CucumberExpressionException("expression can not be null");
+        if (expressionString == null) throw new CucumberStepExpressionException("expression can not be null");
         Expression expression = expressionFactory.createExpression(expressionString);
 
         RawTableTransformer<DataTable> toDataTable = new RawTableTransformer<DataTable>() {
@@ -57,8 +56,8 @@ public final class StepExpressionFactory {
     }
 
     public StepExpression createExpression(String expressionString, final TypeResolver tableOrDocStringType, final boolean transpose) {
-        if (expressionString == null) throw new CucumberExpressionException("expressionString can not be null");
-        if (tableOrDocStringType == null) throw new CucumberExpressionException("tableOrDocStringType can not be null");
+        if (expressionString == null) throw new CucumberStepExpressionException("expressionString can not be null");
+        if (tableOrDocStringType == null) throw new CucumberStepExpressionException("tableOrDocStringType can not be null");
 
         Expression expression = expressionFactory.createExpression(expressionString);
 
@@ -86,8 +85,8 @@ public final class StepExpressionFactory {
     }
 
     public StepExpression createExpression(String expressionString, final String tableOrDocStringType, final boolean transpose) {
-        if (expressionString == null) throw new CucumberExpressionException("expressionString can not be null");
-        if (tableOrDocStringType == null) throw new CucumberExpressionException("tableOrDocStringType can not be null");
+        if (expressionString == null) throw new CucumberStepExpressionException("expressionString can not be null");
+        if (tableOrDocStringType == null) throw new CucumberStepExpressionException("tableOrDocStringType can not be null");
 
         Expression expression = expressionFactory.createExpression(expressionString);
 
