@@ -27,14 +27,11 @@ public final class TableDiffer {
         }
     }
 
-    //TODO: Don't throw
-    public void calculateDiffs() throws TableDiffException {
+    public DataTableDiff calculateDiffs() {
         Patch patch = DiffUtils.diff(getDiffableRows(from), getDiffableRows(to));
         List<Delta> deltas = patch.getDeltas();
-        if (!deltas.isEmpty()) {
-            Map<Integer, Delta> deltasByLine = createDeltasByLine(deltas);
-            throw new TableDiffException(from, to, createTableDiff(deltasByLine));
-        }
+        Map<Integer, Delta> deltasByLine = createDeltasByLine(deltas);
+        return createTableDiff(deltasByLine);
     }
 
 
@@ -46,9 +43,7 @@ public final class TableDiffer {
         return result;
     }
 
-    //TODO: Don't throw
-    public void calculateUnorderedDiffs() throws TableDiffException {
-        boolean isDifferent = false;
+    public DataTableDiff calculateUnorderedDiffs() {
         List<SimpleEntry<List<String>, DiffType>> diffTableRows = new ArrayList<SimpleEntry<List<String>, DiffType>>();
 
         ArrayList<List<String>> extraRows = new ArrayList<List<String>>();
@@ -62,7 +57,6 @@ public final class TableDiffer {
             if (!to.cells().contains(row)) {
                 diffTableRows.add(
                     new SimpleEntry<List<String>, DiffType>(row, DiffType.DELETE));
-                isDifferent = true;
             } else {
                 diffTableRows.add(
                     new SimpleEntry<List<String>, DiffType>(row, DiffType.NONE));
@@ -73,12 +67,9 @@ public final class TableDiffer {
         for (List<String> cells : extraRows) {
             diffTableRows.add(
                 new SimpleEntry<List<String>, DiffType>(cells, DiffType.INSERT));
-            isDifferent = true;
         }
 
-        if (isDifferent) {
-            throw new TableDiffException(from, to, DataTableDiff.create(diffTableRows));
-        }
+        return DataTableDiff.create(diffTableRows);
     }
 
     private Map<Integer, Delta> createDeltasByLine(List<Delta> deltas) {

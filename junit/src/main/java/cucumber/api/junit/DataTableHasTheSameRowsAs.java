@@ -1,7 +1,7 @@
 package cucumber.api.junit;
 
 import io.cucumber.datatable.DataTable;
-import io.cucumber.datatable.TableDiffException;
+import io.cucumber.datatable.DataTableDiff;
 import io.cucumber.datatable.TableDiffer;
 import org.hamcrest.Description;
 import org.hamcrest.Factory;
@@ -28,18 +28,14 @@ public class DataTableHasTheSameRowsAs extends TypeSafeDiagnosingMatcher<DataTab
 
     @Override
     protected boolean matchesSafely(DataTable item, Description description) {
-        try {
-            TableDiffer tableDiffer = new TableDiffer(expectedValue, item);
-            if (unordered) {
-                tableDiffer.calculateUnorderedDiffs();
-            } else {
-                tableDiffer.calculateDiffs();
-            }
+        TableDiffer tableDiffer = new TableDiffer(expectedValue, item);
+        DataTableDiff diff = unordered ? tableDiffer.calculateUnorderedDiffs() : tableDiffer.calculateDiffs();
+
+        if (diff.isEmpty()) {
             return true;
-        } catch (TableDiffException e) {
-            description.appendText("the tables were different\n");
-            description.appendText(e.getDiff().toString());
         }
+        description.appendText("the tables were different\n");
+        description.appendText(diff.toString());
         return false;
     }
 

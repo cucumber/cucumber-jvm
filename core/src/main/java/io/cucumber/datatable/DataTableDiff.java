@@ -25,6 +25,10 @@ public class DataTableDiff {
         this.diffTypes = diffTypes;
     }
 
+    public boolean isEmpty() {
+        return !diffTypes.contains(DiffType.DELETE) && !diffTypes.contains(DiffType.INSERT);
+    }
+
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder();
