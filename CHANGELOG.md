@@ -16,26 +16,17 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ### Fixed
 * [Core] Json Formatter: include the content type of doc strings ([#1309](https://github.com/cucumber/cucumber-jvm/pull/1309) Björn Rasmusson)
 
-## [2.3.1](https://github.com/cucumber/cucumber-jvm/compare/v2.3.0...v2.3.1)
+## [2.3.1](https://github.com/cucumber/cucumber-jvm/compare/v2.3.0...v2.3.1) (2017-12-14)
 
-### Added
-### Changed
-### Deprecated
-### Removed
 ### Fixed
  * [Core] Remove scenario scoped step definitions from step definition cache ([#1301](https://github.com/cucumber/cucumber-jvm/pull/1301) M.P. Korstanje)
 
-## [2.3.0](https://github.com/cucumber/cucumber-jvm/compare/v2.2.0...v2.3.0)
+## [2.3.0](https://github.com/cucumber/cucumber-jvm/compare/v2.2.0...v2.3.0) (2017-12-10)
 
 ### Added
  * [Core] Cache matched steps definitions ([#1289](https://github.com/cucumber/cucumber-jvm/pull/1289) Łukasz Suski) 
 
-### Changed
-### Deprecated
-### Removed
-### Fixed
-
-## [2.2.0](https://github.com/cucumber/cucumber-jvm/compare/v2.1.0...v2.2.0)
+## [2.2.0](https://github.com/cucumber/cucumber-jvm/compare/v2.1.0...v2.2.0) (2017-12-04)
 
 ### Added
  * [JUnit] Document supported JUnit annotations ([#1272](https://github.com/cucumber/cucumber-jvm/pull/1272) Marit van Dijk)
@@ -48,13 +39,12 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 ### Deprecated
  * [JUnit] `Cucumber.createRuntime` has been deprecated ([#1287](https://github.com/cucumber/cucumber-jvm/pull/1287) M.P. Korstanje)
 
-### Removed
 ### Fixed
  * [Core] Add missing feature tags in the JSON output ([#1288](https://github.com/cucumber/cucumber-jvm/pull/1284) Pierre Gentile)
  * [Core] Fix detection of XStreamsConverters annotation ([#1283](https://github.com/cucumber/cucumber-jvm/pull/1283), [#1284](https://github.com/cucumber/cucumber-jvm/pull/1284) Dmitrii Demin)
  * [TestNG] Fix null pointer exception when invalid options are used ([#1282](https://github.com/cucumber/cucumber-jvm/pull/1282) M.P. Korstanje)
 
-## [2.1.0](https://github.com/cucumber/cucumber-jvm/compare/v2.0.1...v2.1.0)
+## [2.1.0](https://github.com/cucumber/cucumber-jvm/compare/v2.0.1...v2.1.0) (2017-10-28)
 
 ### Added
  * [JUnit] Print JUnit Options when unknown option is provided ([#1273](https://github.com/cucumber/cucumber-jvm/pull/1273), Marit Van Dijk)
@@ -68,8 +58,6 @@ Please see [CONTRIBUTING.md](https://github.com/cucumber/cucumber/blob/master/CO
 
 ### Deprecated
  * [Spring] Deprecate Spring context configuration by more than one class ([#1259](https://github.com/cucumber/cucumber-jvm/pull/1259) Björn Rasmusson)
-
-### Removed
 
 ### Fixed
  * [Java8] Fix Java8StepDefinition.isDefinedA ([#1254](https://github.com/cucumber/cucumber-jvm/pull/1254), [#1255](https://github.com/cucumber/cucumber-jvm/pull/1255) tts-ll, M.P. Korstanje)
