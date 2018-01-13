@@ -64,7 +64,7 @@ public interface Scenario {
     String getUri();
 
     /**
-     * @return the line(s) in the feature file of the Scenario. Scenarios form Scenario Outlines
+     * @return the line(s) in the feature file of the Scenario. Scenarios from Scenario Outlines
      * return both the line of the example row the the line of the scenario outline.
      */
     List<Integer> getLines();
