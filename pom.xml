@@ -65,6 +65,7 @@
         <needle.version>2.2</needle.version>
         <javaee-api.version>7.0</javaee-api.version>
         <javax.inject.version>1</javax.inject.version>
+        <jaxb-api.version>2.3.0</jaxb-api.version>
         <cobertura-maven-plugin.version>2.7</cobertura-maven-plugin.version>
         <dbunit.version>2.5.4</dbunit.version>
         <logback.version>1.2.3</logback.version>
@@ -320,7 +321,11 @@
                 <artifactId>javax.servlet-api</artifactId>
                 <version>${javax.servlet-api.version}</version>
             </dependency>
-
+            <dependency>
+                <groupId>javax.xml.bind</groupId>
+                <artifactId>jaxb-api</artifactId>
+                <version>${jaxb-api.version}</version>
+            </dependency>
             <dependency>
                 <groupId>com.google.inject</groupId>
                 <artifactId>guice</artifactId>
