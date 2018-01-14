@@ -325,7 +325,9 @@ final class JUnitFormatter implements Formatter, StrictAware {
             // the createCDATASection method seems to convert "\n" to "\r\n" on Windows, in case
             // data originally contains "\r\n" line separators the result becomes "\r\r\n", which
             // are displayed as double line breaks.
-            child.appendChild(doc.createCDATASection(sb.toString().replace(System.lineSeparator(), "\n")));
+            // TODO Java 7 PR #1147: Inlined System.lineSeparator()
+            String systemLineSeperator = System.getProperty("line.separator");
+            child.appendChild(doc.createCDATASection(sb.toString().replace(systemLineSeperator, "\n")));
             return child;
         }
 
