@@ -40,15 +40,5 @@ public @interface ${kw} {
      */
     long timeout() default 0;
 
-    /**
-     * Returns the name of the {@link cucumber.api.datatable.DataTableType} used
-     * by cucumber to transform a {@link cucumber.api.datatable.DataTable}.
-     * <p>
-     * When no name is provided the type of the last argument will be used instead.
-     *
-     * @return the name of the argument type
-     */
-    String argumentName() default "";
-
 }
 

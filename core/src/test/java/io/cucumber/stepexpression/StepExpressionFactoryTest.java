@@ -50,7 +50,7 @@ public class StepExpressionFactoryTest {
     private TableTransformer<Ingredient> beanMapper(final TypeRegistry registry) {
         return new TableTransformer<Ingredient>() {
             @Override
-            public Ingredient transform(DataTable table) {
+            public Ingredient transform(DataTable table) throws Throwable {
                 Map<String, String> tableRow = table.transpose().asMaps().get(0);
                 return listBeanMapper(registry).transform(tableRow);
             }

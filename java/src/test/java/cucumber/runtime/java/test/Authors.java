@@ -22,33 +22,13 @@ public class Authors {
         assertTrue(authors.contains(expected));
     }
 
-    @Given(value = "a list of authors in a table without headers", argumentName = "simpleAuthor")
-    public void aListOfAuthorsInATableWithoutHeaders(List<Author> authors) throws Throwable {
-        assertTrue(authors.contains(expected));
-    }
-
-    @Given(value = "a list of authors in a transposed table without headers", argumentName = "simpleAuthor")
-    public void aListOfAuthorsInATransposedTableWithoutHeaders(@Transpose List<Author> authors) throws Throwable {
-        assertTrue(authors.contains(expected));
-    }
-
     @Given("a single author in a table")
     public void aSingleAuthorInATable(Author author) throws Throwable {
         assertEquals(expected, author);
     }
 
-    @Given(value = "a single author in a table without headers", argumentName = "singleAuthor")
-    public void aSingleAuthorInATableWithoutHeaders(Author author) throws Throwable {
-        assertEquals(expected, author);
-    }
-
     @Given("a single author in a transposed table")
     public void aSingleAuthorInATransposedTable(@Transpose Author author) throws Throwable {
-        assertEquals(expected, author);
-    }
-
-    @Given(value = "a single author in a transposed table without headers", argumentName = "singleAuthor")
-    public void aSingleAuthorInATransposedTableWithoutHeaders(@Transpose Author author) throws Throwable {
         assertEquals(expected, author);
     }
 

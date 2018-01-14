@@ -196,9 +196,8 @@ public class JavaBackend implements Backend, LambdaGlueRegistry {
 
 
     private String argumentName(Annotation annotation) throws Throwable {
-        Method expressionMethod = annotation.getClass().getMethod("argumentName");
-        String argumentName = (String) Utils.invoke(annotation, expressionMethod, 0);
-        return argumentName.isEmpty() ? null : argumentName;
+        //TODO: Implement argument expressions
+        return null;
     }
 
     private long timeoutMillis(Annotation annotation) throws Throwable {
