@@ -16,6 +16,12 @@
             <plugin>
                 <groupId>com.lazerycode.selenium</groupId>
                 <artifactId>driver-binary-downloader-maven-plugin</artifactId>
+                <configuration>
+                    <!-- root directory that downloaded driver binaries will be stored in -->
+                    <rootStandaloneServerDirectory>${project.basedir}/webdriver/binaries</rootStandaloneServerDirectory>
+                    <!-- Where you want to store downloaded zip files -->
+                    <downloadedZipFileDirectory>${project.basedir}/webdriver/zips</downloadedZipFileDirectory>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>
