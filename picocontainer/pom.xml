@@ -18,10 +18,6 @@
         </dependency>
         <dependency>
             <groupId>io.cucumber</groupId>
-            <artifactId>cucumber-jvm-deps</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.cucumber</groupId>
             <artifactId>gherkin</artifactId>
         </dependency>
         <dependency>

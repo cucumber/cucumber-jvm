@@ -1,8 +1,6 @@
 package cucumber.runtime;
 
 import cucumber.api.CucumberOptions;
-import cucumber.deps.com.thoughtworks.xstream.annotations.XStreamConverter;
-import cucumber.deps.com.thoughtworks.xstream.annotations.XStreamConverters;
 import cucumber.runtime.formatter.PluginFactory;
 import cucumber.runtime.io.MultiLoader;
 

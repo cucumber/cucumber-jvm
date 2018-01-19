@@ -108,21 +108,6 @@
         <dependencies>
             <dependency>
                 <groupId>io.cucumber</groupId>
-                <artifactId>cucumber-jvm-deps</artifactId>
-                <version>1.0.6</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>com.thoughtworks.xstream</groupId>
-                        <artifactId>xstream</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.googlecode.java-diff-utils</groupId>
-                        <artifactId>diffutils</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>io.cucumber</groupId>
                 <artifactId>gherkin</artifactId>
                 <version>${gherkin.version}</version>
                 <exclusions>
@@ -692,16 +677,6 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-clean-plugin</artifactId>
                     <version>3.0.0</version>
-                    <configuration>
-                        <filesets>
-                            <fileset>
-                                <directory>.</directory>
-                                <includes>
-                                    <include>**/*.ser</include>
-                                </includes>
-                            </fileset>
-                        </filesets>
-                    </configuration>
                 </plugin>
 
                 <plugin>
@@ -939,12 +914,5 @@
             </plugin>
         </plugins>
 
-        <extensions>
-            <extension>
-                <groupId>org.apache.maven.wagon</groupId>
-                <artifactId>wagon-ssh</artifactId>
-                <version>2.10</version>
-            </extension>
-        </extensions>
     </build>
 </project>
