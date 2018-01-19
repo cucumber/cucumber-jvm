@@ -1,5 +1,10 @@
 package cucumber.runtime.formatter;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import cucumber.api.HookType;
 import cucumber.api.Result;
 import cucumber.api.TestCase;
@@ -29,11 +34,6 @@ import gherkin.pickles.PickleRow;
 import gherkin.pickles.PickleString;
 import gherkin.pickles.PickleTable;
 import gherkin.pickles.PickleTag;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 final class JSONFormatter implements Formatter {
     private String currentFeatureFile;
@@ -128,7 +128,17 @@ final class JSONFormatter implements Formatter {
         currentStepsList = (List<Map<String, Object>>) currentElementMap.get("steps");
     }
 
+    private void handleRerunTestCase() {
+        this.currentElementMap.put("steps", new ArrayList<Map<String, Object>>());
+        currentStepsList = (List<Map<String, Object>>) currentElementMap.get("steps");
+        this.currentElementMap.put("before", new ArrayList<Map<String, Object>>());
+        this.currentElementMap.put("after", new ArrayList<Map<String, Object>>());
+    }
+
     private void handleTestStepStarted(TestStepStarted event) {
+        if (event.reRunTestCase) {
+            handleRerunTestCase();
+        }
         if (!event.testStep.isHook()) {
             if (isFirstStepAfterBackground(event.testStep)) {
                 currentElementMap = currentTestCaseMap;
@@ -185,6 +195,7 @@ final class JSONFormatter implements Formatter {
         TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeatureFile, testCase.getLine());
         if (astNode != null) {
             testCaseMap.put("id", TestSourcesModel.calculateId(astNode));
+            testCase.setTestCaseId(TestSourcesModel.calculateId(astNode));
             ScenarioDefinition scenarioDefinition = TestSourcesModel.getScenarioDefinition(astNode);
             testCaseMap.put("keyword", scenarioDefinition.getKeyword());
             testCaseMap.put("description", scenarioDefinition.getDescription() != null ? scenarioDefinition.getDescription() : "");

@@ -165,6 +165,8 @@ public class Arguments {
                 appendOption(sb, "--plugin", bundle.getString(key));
             } else if ("tags".equals(key)) {
                 appendOption(sb, "--tags", bundle.getString(key));
+            } else if ("rerun".equals(key)) {
+                appendOption(sb, "--rerun", bundle.getString(key));
             } else if ("name".equals(key)) {
                 appendOption(sb, "--name", bundle.getString(key));
             } else if ("dryRun".equals(key) && getBooleanArgument(bundle, key)) {

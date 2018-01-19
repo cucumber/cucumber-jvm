@@ -1,13 +1,14 @@
 package cucumber.runner;
 
+import org.junit.Test;
+import org.mockito.InOrder;
+
 import cucumber.api.HookType;
 import cucumber.api.Result;
 import cucumber.api.Scenario;
 import cucumber.api.event.TestStepFinished;
 import cucumber.api.event.TestStepStarted;
 import cucumber.runtime.DefinitionMatch;
-import org.junit.Test;
-import org.mockito.InOrder;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.isA;
@@ -23,7 +24,7 @@ public class UnskipableTestStepTest {
 
     @Test
     public void run_does_run_step_even_when_skip_steps_is_true() throws Throwable {
-        step.run(bus, language, scenario, true);
+        step.run(bus, language, scenario, true, false);
 
         InOrder order = inOrder(bus, definitionMatch);
         order.verify(bus).send(isA(TestStepStarted.class));
@@ -33,7 +34,7 @@ public class UnskipableTestStepTest {
 
     @Test
     public void result_is_passed_when_step_definition_does_not_throw_exception_and_skip_steps_is_true() throws Throwable {
-        Result result = step.run(bus, language, scenario, true);
+        Result result = step.run(bus, language, scenario, true, false);
 
         assertEquals(Result.Type.PASSED, result.getStatus());
     }

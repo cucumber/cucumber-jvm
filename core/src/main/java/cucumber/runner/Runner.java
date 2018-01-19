@@ -101,7 +101,7 @@ public class Runner implements UnreportedStepExecutor {
                 addTestStepsForAfterHooks(testSteps, pickleEvent.pickle.getTags());
             }
         }
-        return new TestCase(testSteps, pickleEvent, runtimeOptions.isDryRun());
+        return new TestCase(testSteps, pickleEvent, runtimeOptions.isDryRun(), runtimeOptions.getReRunCounter());
     }
 
     private void addTestStepsForPickleSteps(List<TestStep> testSteps, PickleEvent pickleEvent) {

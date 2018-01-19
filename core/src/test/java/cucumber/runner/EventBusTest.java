@@ -1,11 +1,12 @@
 package cucumber.runner;
 
+import org.junit.Test;
+
 import cucumber.api.Result;
 import cucumber.api.TestStep;
 import cucumber.api.event.EventHandler;
 import cucumber.api.event.TestStepFinished;
 import cucumber.api.event.TestStepStarted;
-import org.junit.Test;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -31,7 +32,7 @@ public class EventBusTest {
     public void handlers_do_not_receive_the_events_they_did_not_registered_for() {
         EventHandler handler = mock(EventHandler.class);
         TestStep testStep = mock(TestStep.class);
-        TestStepStarted event = new TestStepStarted(0l, testStep);
+        TestStepStarted event = new TestStepStarted(0l, testStep, false);
 
         EventBus bus = new EventBus(new TimeServiceStub(0));
         bus.registerHandlerFor(TestStepFinished.class, handler);

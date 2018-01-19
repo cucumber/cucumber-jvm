@@ -1,5 +1,8 @@
 package cucumber.api;
 
+import java.util.Arrays;
+import java.util.List;
+
 import cucumber.api.event.TestStepFinished;
 import cucumber.api.event.TestStepStarted;
 import cucumber.runner.EventBus;
@@ -8,9 +11,6 @@ import cucumber.runtime.DefinitionMatch;
 import cucumber.runtime.UndefinedStepDefinitionException;
 import gherkin.pickles.Argument;
 import gherkin.pickles.PickleStep;
-
-import java.util.Arrays;
-import java.util.List;
 
 public abstract class TestStep {
     private static final String[] ASSUMPTION_VIOLATED_EXCEPTIONS = {
@@ -75,11 +75,12 @@ public abstract class TestStep {
      * @deprecated not part of the public api
      */
     @Deprecated
-    public Result run(EventBus bus, String language, Scenario scenario, boolean skipSteps) {
+    public Result run(EventBus bus, String language, Scenario scenario, boolean skipSteps, boolean reRunTestCase) {
         Long startTime = bus.getTime();
-        bus.send(new TestStepStarted(startTime, this));
+        bus.send(new TestStepStarted(startTime, this, reRunTestCase));
         Result.Type status;
         Throwable error = null;
+
         try {
             status = executeStep(language, scenario, skipSteps);
         } catch (Throwable t) {

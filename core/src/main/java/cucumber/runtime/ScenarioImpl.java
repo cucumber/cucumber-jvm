@@ -1,5 +1,12 @@
 package cucumber.runtime;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import cucumber.api.Result;
 import cucumber.api.Scenario;
 import cucumber.api.event.EmbedEvent;
@@ -10,13 +17,6 @@ import gherkin.pickles.Pickle;
 import gherkin.pickles.PickleLocation;
 import gherkin.pickles.PickleTag;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import static java.util.Arrays.asList;
 
 public class ScenarioImpl implements Scenario {
@@ -25,7 +25,7 @@ public class ScenarioImpl implements Scenario {
     private final List<PickleTag> tags;
     private final String uri;
     private final String scenarioName;
-    private final String scenarioId;
+    private String scenarioId;
     private final List<Integer> scenarioLines;
     private final EventBus bus;
 
@@ -97,6 +97,10 @@ public class ScenarioImpl implements Scenario {
     @Override
     public String getId() {
         return scenarioId;
+    }
+
+    public void setScenarioId(String id) {
+        this.scenarioId = id;
     }
 
     @Override
